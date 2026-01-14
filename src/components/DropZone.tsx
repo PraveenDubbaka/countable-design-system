@@ -263,7 +263,7 @@ export function DropZone({ onGenerate }: DropZoneProps) {
           icon={<Upload className="h-10 w-10 text-primary" />}
           iconBg="bg-gradient-to-br from-sky-200 via-teal-100 to-green-200"
           title="Import file or URL"
-          description="Enhance existing docs, presentations, or webpages"
+          description="Upload or paste the URL to generate"
           onClick={() => setMode('import')}
         />
         
