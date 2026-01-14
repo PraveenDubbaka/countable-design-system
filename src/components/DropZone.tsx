@@ -1,6 +1,5 @@
 import { useState, useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Sparkles, FileText, Upload, LayoutTemplate, MessageSquare } from 'lucide-react';
+import { Sparkles, FileText, Upload, LayoutTemplate } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { GenerationScope } from '@/types/checklist';
@@ -8,8 +7,6 @@ import { GenerationScope } from '@/types/checklist';
 interface DropZoneProps {
   onGenerate: (prompt: string, scope: GenerationScope, file?: File) => void;
 }
-
-type CreationMode = 'generate' | 'import' | 'template' | null;
 
 interface CreationOptionProps {
   icon: React.ReactNode;
@@ -50,8 +47,7 @@ function CreationOption({ icon, iconBg, title, description, badge, onClick }: Cr
 }
 
 export function DropZone({ onGenerate }: DropZoneProps) {
-  const navigate = useNavigate();
-  const [mode, setMode] = useState<CreationMode>(null);
+  const [mode, setMode] = useState<'generate' | 'import' | 'template' | null>(null);
   const [prompt, setPrompt] = useState('');
   const [file, setFile] = useState<File | null>(null);
   const [scope, setScope] = useState<GenerationScope>('standard');
@@ -257,7 +253,7 @@ export function DropZone({ onGenerate }: DropZoneProps) {
           title="Generate"
           description="Create from a one-line prompt in a few seconds"
           badge={{ text: 'RECOMMENDED', variant: 'recommended' }}
-          onClick={() => navigate('/generate')}
+          onClick={() => setMode('generate')}
         />
         
         

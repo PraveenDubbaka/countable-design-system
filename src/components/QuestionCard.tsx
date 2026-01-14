@@ -263,15 +263,56 @@ export function QuestionCard({
               Ref
             </Button>
 
-            {/* Sub-questions */}
+            {/* Sub-questions (nested blocks with indentation) */}
             {question.subQuestions && question.subQuestions.length > 0 && (
-              <div className="mt-5 space-y-4">
+              <div className="mt-5 ml-4 border-l-2 border-muted pl-4 space-y-3">
                 {question.subQuestions.map((sub, i) => (
-                  <div key={sub.id} className="text-sm text-foreground">
-                    <span className="text-muted-foreground font-medium mr-2">
-                      {String.fromCharCode(97 + i)}.
-                    </span>
-                    {sub.text}
+                  <div key={sub.id} className="bg-muted/30 rounded-lg p-3 group hover:bg-muted/50 transition-colors">
+                    <div className="flex items-start gap-3">
+                      <button className="drag-handle mt-0.5 opacity-0 group-hover:opacity-50 hover:!opacity-100 transition-opacity">
+                        <GripVertical className="h-4 w-4" />
+                      </button>
+                      <div className="flex-1">
+                        <p className="text-sm text-foreground">
+                          <span className="text-muted-foreground font-medium mr-2">
+                            {String.fromCharCode(97 + i)}.
+                          </span>
+                          {sub.text}
+                        </p>
+                        {/* Render sub-question answer type */}
+                        <div className="mt-2">
+                          {sub.answerType === 'short-answer' && (
+                            <Input 
+                              placeholder="Enter your answer..." 
+                              className="h-8 text-sm bg-background" 
+                            />
+                          )}
+                          {sub.answerType === 'long-answer' && (
+                            <div className="relative">
+                              <Textarea 
+                                placeholder="Enter your detailed answer..." 
+                                className="min-h-[60px] text-sm resize-none bg-background pr-16" 
+                              />
+                              <div className="absolute bottom-2 right-2 flex items-center gap-1">
+                                <button className="p-1 rounded text-accent hover:bg-accent/10 transition-colors">
+                                  <Sparkles className="h-3.5 w-3.5" />
+                                </button>
+                              </div>
+                            </div>
+                          )}
+                          {(sub.answerType === 'yes-no' || sub.answerType === 'yes-no-na') && (
+                            <div className="flex gap-4 mt-1">
+                              {(sub.answerType === 'yes-no' ? ['Yes', 'No'] : ['Yes', 'No', 'N/A']).map((opt) => (
+                                <label key={opt} className="flex items-center gap-1.5 cursor-pointer text-xs">
+                                  <div className="w-3 h-3 rounded-full border border-muted-foreground/50 hover:border-primary/50 transition-colors" />
+                                  <span>{opt}</span>
+                                </label>
+                              ))}
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 ))}
               </div>

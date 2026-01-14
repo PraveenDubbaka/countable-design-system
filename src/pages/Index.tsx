@@ -2,130 +2,107 @@ import { useState } from 'react';
 import { Layout } from '@/components/Layout';
 import { DropZone } from '@/components/DropZone';
 import { ChecklistBuilder } from '@/components/ChecklistBuilder';
-import { Checklist, GenerationScope, Section } from '@/types/checklist';
+import { Checklist, GenerationScope, Section, Question } from '@/types/checklist';
 
 const generateMockChecklist = (prompt: string, scope: GenerationScope): Checklist => {
-  const baseQuestions = [
+  // Seed content as per specification
+  const independenceQuestions: Question[] = [
     {
       id: 'q1',
-      text: 'Determine whether accepting this engagement would contravene any of the firm\'s quality management policies',
-      answerType: 'yes-no-na' as const,
+      text: 'Has the engagement team confirmed independence for this engagement?',
+      answerType: 'yes-no',
       required: true,
       answer: ''
     },
     {
       id: 'q2',
-      text: 'Have all independence requirements been verified and documented?',
-      answerType: 'yes-no-na' as const,
+      text: 'Describe identified threats and safeguards.',
+      answerType: 'long-answer',
+      required: true,
+      // Seed the "We → I" demo text
+      answer: 'We believe all necessary steps have been completed to comply with the independence requirements.'
+    },
+    {
+      id: 'q3',
+      text: 'Which independence threats apply?',
+      answerType: 'multiple-choice',
+      required: false,
+      options: ['Self-interest', 'Self-review', 'Advocacy', 'Familiarity', 'Intimidation'],
+      answer: ''
+    }
+  ];
+
+  const documentationQuestions: Question[] = [
+    {
+      id: 'q4',
+      text: 'Where is the independence documentation stored?',
+      answerType: 'short-answer',
       required: true,
       answer: ''
     }
   ];
 
-  const detailedQuestions = [
-    ...baseQuestions,
-    {
-      id: 'q3',
-      text: 'Document the preliminary assessment of engagement risk factors',
-      answerType: 'long-answer' as const,
-      required: false,
-      answer: 'We believe all necessary steps have been completed to comply with the independence requirements.'
-    },
-    {
-      id: 'q4',
-      text: 'Identify any potential conflicts of interest',
-      answerType: 'yes-no-na' as const,
+  // Add more questions based on scope
+  if (scope === 'standard' || scope === 'detailed') {
+    independenceQuestions.push({
+      id: 'q5',
+      text: 'Have all team members confirmed their independence in writing?',
+      answerType: 'yes-no',
       required: true,
+      answer: ''
+    });
+  }
+
+  if (scope === 'detailed') {
+    independenceQuestions.push({
+      id: 'q6',
+      text: 'Document any relationships that may impair independence.',
+      answerType: 'long-answer',
+      required: false,
       answer: '',
       subQuestions: [
         {
           id: 'sq1',
-          text: 'Indicate who in the firm has knowledge about the prospective client and whether they recommend that this entity be accepted as a new client.',
-          answerType: 'short-answer' as const,
+          text: 'What safeguards have been implemented?',
+          answerType: 'long-answer',
           required: false
         },
         {
           id: 'sq2',
-          text: 'Contact the predecessor practitioner to inquire about any reasons the engagement should not be accepted. If no response is received, explain what alternative procedures were performed.',
-          answerType: 'long-answer' as const,
+          text: 'Who reviewed the independence assessment?',
+          answerType: 'short-answer',
           required: false
         }
       ]
-    }
-  ];
+    });
 
-  const riskFactorQuestions = [
-    {
-      id: 'q5',
-      text: 'Does management understand the limited nature of the engagement?',
-      answerType: 'yes-no-na' as const,
+    documentationQuestions.push({
+      id: 'q7',
+      text: 'Has the engagement letter been signed by both parties?',
+      answerType: 'yes-no',
       required: true,
-      answer: '',
-      subQuestions: scope === 'detailed' ? [
-        {
-          id: 'sq3',
-          text: 'Make inquiries and perform web searches for any new or emerging engagement risks that would impact the decision to accept or continue with this engagement.',
-          answerType: 'long-answer' as const,
-          required: false
-        },
-        {
-          id: 'sq4',
-          text: 'Consider any risk factors identified from other sources.',
-          answerType: 'short-answer' as const,
-          required: false
-        },
-        {
-          id: 'sq5',
-          text: 'Based on preliminary understanding, is there any indication that the financial information will be misleading?',
-          answerType: 'yes-no-na' as const,
-          required: true
-        }
-      ] : undefined
-    }
-  ];
+      answer: ''
+    });
+  }
 
   const sections: Section[] = [
     {
       id: 'section-1',
-      title: 'Quality management',
-      questions: scope === 'concise' ? baseQuestions.slice(0, 1) : baseQuestions,
+      title: 'Independence',
+      questions: independenceQuestions,
       isExpanded: true
     },
     {
       id: 'section-2',
-      title: 'Engagement risk factors',
-      questions: scope === 'detailed' ? [...detailedQuestions.slice(2), ...riskFactorQuestions] : riskFactorQuestions,
+      title: 'Documentation',
+      questions: documentationQuestions,
       isExpanded: true
     }
   ];
 
-  if (scope === 'detailed') {
-    sections.push({
-      id: 'section-3',
-      title: 'Independence verification',
-      questions: [
-        {
-          id: 'q6',
-          text: 'Have all team members confirmed their independence in writing?',
-          answerType: 'yes-no' as const,
-          required: true,
-          answer: ''
-        },
-        {
-          id: 'q7',
-          text: 'List any relationships that may impair independence',
-          answerType: 'long-answer' as const,
-          required: false,
-          answer: ''
-        }
-      ],
-      isExpanded: true
-    });
-  }
-
   return {
     id: 'checklist-1',
-    title: 'Client Acceptance and Continuance',
+    title: prompt ? `Checklist: ${prompt.substring(0, 50)}...` : 'Independence Checklist (CSRS 4200)',
     description: prompt,
     sections,
     createdAt: new Date(),
