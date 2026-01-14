@@ -13,10 +13,12 @@ import {
   Expand,
   Trash2,
   Folder,
-  File
+  File,
+  CheckSquare
 } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
+import { Checkbox } from '@/components/ui/checkbox';
 
 interface Template {
   id: string;
@@ -79,26 +81,27 @@ export function Sidebar() {
     <div key={template.id}>
       <div 
         className={`flex items-center gap-2 py-1.5 px-2 rounded-md cursor-pointer hover:bg-muted transition-colors text-sm ${
-          depth > 0 ? 'ml-4' : ''
+          depth > 0 ? 'ml-6' : ''
         }`}
         onClick={() => template.type === 'folder' && toggleFolder(template.id)}
       >
+        <Checkbox className="h-4 w-4 border-border" />
         {template.type === 'folder' ? (
           <>
             {template.isExpanded ? (
-              <ChevronDown className="h-4 w-4 text-muted-foreground" />
+              <ChevronDown className="h-4 w-4 text-muted-foreground flex-shrink-0" />
             ) : (
-              <ChevronRight className="h-4 w-4 text-muted-foreground" />
+              <ChevronRight className="h-4 w-4 text-muted-foreground flex-shrink-0" />
             )}
-            <Folder className="h-4 w-4 text-primary" />
+            <Folder className="h-4 w-4 text-accent flex-shrink-0" />
           </>
         ) : (
           <>
-            <span className="w-4" />
-            <File className="h-4 w-4 text-primary" />
+            <span className="w-4 flex-shrink-0" />
+            <CheckSquare className="h-4 w-4 text-accent flex-shrink-0" />
           </>
         )}
-        <span className="truncate flex-1">{template.name}</span>
+        <span className="truncate flex-1 text-foreground">{template.name}</span>
       </div>
       {template.type === 'folder' && template.isExpanded && template.children?.map(child => 
         renderTemplate(child, depth + 1)
@@ -109,14 +112,26 @@ export function Sidebar() {
   return (
     <div className="flex h-screen">
       {/* Icon sidebar */}
-      <div className="sidebar-nav w-16 flex flex-col items-center py-4 gap-2">
-        <div className="w-10 h-10 rounded-xl bg-primary flex items-center justify-center mb-4">
-          <span className="text-primary-foreground font-bold text-lg">C</span>
+      <div className="sidebar-nav w-14 flex flex-col items-center py-4 gap-2">
+        {/* Logo */}
+        <div className="w-8 h-8 mb-4 flex items-center justify-center">
+          <svg viewBox="0 0 32 32" className="w-8 h-8" fill="none">
+            <path 
+              d="M16 4C9.373 4 4 9.373 4 16s5.373 12 12 12 12-5.373 12-12S22.627 4 16 4zm0 2c5.523 0 10 4.477 10 10s-4.477 10-10 10S6 21.523 6 16 10.477 6 16 6z" 
+              fill="hsl(var(--sidebar-foreground))"
+            />
+            <path 
+              d="M16 8c-4.418 0-8 3.582-8 8s3.582 8 8 8c1.5 0 2.5-.5 3.5-1l-2-3.5c-.5.3-1 .5-1.5.5-2.21 0-4-1.79-4-4s1.79-4 4-4c1.5 0 2.8.83 3.5 2l3-2c-1.2-1.8-3.2-3-5.5-3z" 
+              fill="hsl(var(--sidebar-foreground))"
+            />
+          </svg>
         </div>
+        
         {navItems.map((item, index) => (
           <div
             key={index}
-            className={`sidebar-item !p-3 !rounded-xl ${item.active ? 'active' : ''}`}
+            className={`sidebar-item ${item.active ? 'active' : ''}`}
+            title={item.label}
           >
             <item.icon className="h-5 w-5" />
           </div>
@@ -124,16 +139,16 @@ export function Sidebar() {
       </div>
 
       {/* Templates panel */}
-      <div className="w-56 border-r bg-card flex flex-col">
+      <div className="w-60 border-r bg-card flex flex-col">
         <div className="p-4 border-b">
           <h2 className="font-semibold text-primary text-lg">Templates</h2>
           <div className="mt-3 relative">
-            <select className="w-full px-3 py-2 bg-background border rounded-lg text-sm appearance-none pr-8">
+            <select className="w-full px-3 py-2 bg-background border rounded-lg text-sm appearance-none pr-8 focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors">
               <option>Checklists</option>
               <option>Forms</option>
               <option>Reports</option>
             </select>
-            <ChevronDown className="absolute right-2 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
+            <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
           </div>
         </div>
 
@@ -166,7 +181,7 @@ export function Sidebar() {
               <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <Input 
                 placeholder="Search" 
-                className="pl-8 h-8 text-sm"
+                className="pl-8 h-8 text-sm bg-background"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
@@ -175,9 +190,9 @@ export function Sidebar() {
               <Expand className="h-4 w-4" />
             </Button>
             <Button size="icon" className="h-8 w-8 bg-primary hover:bg-primary/90">
-              <Plus className="h-4 w-4" />
+              <Plus className="h-4 w-4 text-primary-foreground" />
             </Button>
-            <Button size="icon" variant="ghost" className="h-8 w-8 text-muted-foreground">
+            <Button size="icon" variant="ghost" className="h-8 w-8 text-destructive hover:text-destructive hover:bg-destructive/10">
               <Trash2 className="h-4 w-4" />
             </Button>
           </div>

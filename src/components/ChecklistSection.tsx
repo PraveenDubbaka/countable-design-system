@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { ChevronDown, ChevronUp, GripVertical, MoreVertical, Plus, Trash2 } from 'lucide-react';
+import { ChevronDown, ChevronUp, MoreVertical, Plus, Trash2 } from 'lucide-react';
 import { Section, Question, AnswerType } from '@/types/checklist';
 import { QuestionCard } from './QuestionCard';
 import { Button } from '@/components/ui/button';
@@ -76,21 +76,17 @@ export function ChecklistSection({
     <div className="mb-6 animate-slide-up" style={{ animationDelay: `${index * 100}ms` }}>
       {/* Section Header */}
       <div className="flex items-center gap-2 mb-3">
-        <button className="drag-handle">
-          <GripVertical className="h-5 w-5" />
-        </button>
-        
         <button
           onClick={toggleExpanded}
-          className="section-header flex-1"
+          className="flex items-center gap-3 flex-1 bg-muted/30 rounded-lg px-4 py-3 font-medium text-foreground hover:bg-muted/50 transition-colors text-left"
         >
           {section.isExpanded ? (
-            <ChevronDown className="h-5 w-5 text-muted-foreground" />
+            <ChevronUp className="h-5 w-5 text-muted-foreground flex-shrink-0" />
           ) : (
-            <ChevronUp className="h-5 w-5 text-muted-foreground" />
+            <ChevronDown className="h-5 w-5 text-muted-foreground flex-shrink-0" />
           )}
           
-          <span className="text-muted-foreground mr-2">{index + 1}.</span>
+          <span className="text-muted-foreground mr-1">{index + 1}.</span>
           
           {isEditingTitle ? (
             <Input
@@ -100,7 +96,7 @@ export function ChecklistSection({
               onKeyDown={(e) => e.key === 'Enter' && setIsEditingTitle(false)}
               onClick={(e) => e.stopPropagation()}
               autoFocus
-              className="max-w-md"
+              className="max-w-md bg-card"
             />
           ) : (
             <span 
@@ -108,7 +104,7 @@ export function ChecklistSection({
                 e.stopPropagation();
                 setIsEditingTitle(true);
               }}
-              className="hover:underline cursor-text"
+              className="hover:underline cursor-text font-semibold"
             >
               {section.title}
             </span>
@@ -165,7 +161,7 @@ export function ChecklistSection({
 
       {/* Questions */}
       {section.isExpanded && (
-        <div className="pl-7">
+        <div className="ml-4">
           {section.questions.map((question, qIndex) => (
             <QuestionCard
               key={question.id}
@@ -184,7 +180,7 @@ export function ChecklistSection({
           <Button
             variant="outline"
             onClick={handleAddQuestion}
-            className="w-full mt-2 border-dashed text-muted-foreground hover:text-foreground hover:border-primary"
+            className="w-full mt-2 border-dashed text-muted-foreground hover:text-primary hover:border-primary"
           >
             <Plus className="h-4 w-4 mr-2" />
             Add Question

@@ -5,10 +5,9 @@ import {
   Plus, 
   Trash2, 
   Sparkles,
-  ChevronDown,
-  ChevronUp,
   Check,
-  ArrowRight
+  ArrowRight,
+  Mic
 } from 'lucide-react';
 import { Question, AnswerType } from '@/types/checklist';
 import { Button } from '@/components/ui/button';
@@ -87,19 +86,22 @@ export function QuestionCard({
     switch (question.answerType) {
       case 'yes-no':
         return (
-          <div className="flex gap-6 mt-3">
+          <div className="flex gap-8 mt-3">
             {['Yes', 'No'].map((option) => (
-              <label key={option} className="flex items-center gap-2 cursor-pointer">
-                <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center transition-colors ${
-                  question.answer === option 
-                    ? 'border-primary bg-primary' 
-                    : 'border-muted-foreground'
-                }`}>
+              <label key={option} className="flex items-center gap-2.5 cursor-pointer group">
+                <div 
+                  className={`w-4 h-4 rounded-full border-2 flex items-center justify-center transition-all ${
+                    question.answer === option 
+                      ? 'border-primary bg-primary' 
+                      : 'border-muted-foreground/50 group-hover:border-primary/50'
+                  }`}
+                  onClick={() => handleAnswerChange(option)}
+                >
                   {question.answer === option && (
-                    <div className="w-2 h-2 rounded-full bg-primary-foreground" />
+                    <div className="w-1.5 h-1.5 rounded-full bg-primary-foreground" />
                   )}
                 </div>
-                <span className="text-sm">{option}</span>
+                <span className="text-sm text-foreground">{option}</span>
               </label>
             ))}
           </div>
@@ -107,21 +109,22 @@ export function QuestionCard({
 
       case 'yes-no-na':
         return (
-          <div className="flex gap-6 mt-3">
+          <div className="flex gap-8 mt-3">
             {['Yes', 'No', 'Not applicable'].map((option) => (
-              <label key={option} className="flex items-center gap-2 cursor-pointer">
-                <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center transition-colors ${
-                  question.answer === option 
-                    ? 'border-primary bg-primary' 
-                    : 'border-muted-foreground'
-                }`}
-                onClick={() => handleAnswerChange(option)}
+              <label key={option} className="flex items-center gap-2.5 cursor-pointer group">
+                <div 
+                  className={`w-4 h-4 rounded-full border-2 flex items-center justify-center transition-all ${
+                    question.answer === option 
+                      ? 'border-primary bg-primary' 
+                      : 'border-muted-foreground/50 group-hover:border-primary/50'
+                  }`}
+                  onClick={() => handleAnswerChange(option)}
                 >
                   {question.answer === option && (
-                    <div className="w-2 h-2 rounded-full bg-primary-foreground" />
+                    <div className="w-1.5 h-1.5 rounded-full bg-primary-foreground" />
                   )}
                 </div>
-                <span className="text-sm">{option}</span>
+                <span className="text-sm text-foreground">{option}</span>
               </label>
             ))}
           </div>
@@ -133,7 +136,7 @@ export function QuestionCard({
             placeholder="Enter your answer..."
             value={question.answer || ''}
             onChange={(e) => handleAnswerChange(e.target.value)}
-            className="mt-3"
+            className="mt-3 bg-background"
           />
         );
 
@@ -145,15 +148,19 @@ export function QuestionCard({
               placeholder="Enter your detailed answer..."
               value={question.answer || ''}
               onChange={(e) => handleAnswerChange(e.target.value)}
-              className="min-h-[100px] pr-16 resize-none"
+              className="min-h-[100px] pr-20 resize-none bg-background"
             />
-            <button
-              onClick={handleAIClick}
-              className="absolute bottom-3 right-3 flex items-center gap-1.5 px-2 py-1 rounded-md bg-primary/10 text-primary hover:bg-primary/20 transition-colors"
-            >
-              <Sparkles className="h-3.5 w-3.5" />
-              <span className="text-xs font-medium">AI</span>
-            </button>
+            <div className="absolute bottom-3 right-3 flex items-center gap-1">
+              <button
+                onClick={handleAIClick}
+                className="flex items-center gap-1 px-2 py-1 rounded text-accent hover:bg-accent/10 transition-colors"
+              >
+                <Sparkles className="h-4 w-4" />
+              </button>
+              <button className="flex items-center gap-1 px-2 py-1 rounded text-accent hover:bg-accent/10 transition-colors">
+                <Mic className="h-4 w-4" />
+              </button>
+            </div>
           </div>
         );
 
@@ -162,19 +169,20 @@ export function QuestionCard({
         return (
           <div className="mt-3 space-y-2">
             {(question.options || ['Option 1', 'Option 2', 'Option 3']).map((option, i) => (
-              <label key={i} className="flex items-center gap-2 cursor-pointer p-2 rounded-md hover:bg-muted transition-colors">
-                <div className={`w-5 h-5 rounded border-2 flex items-center justify-center transition-colors ${
-                  question.answer === option 
-                    ? 'border-primary bg-primary' 
-                    : 'border-muted-foreground'
-                }`}
-                onClick={() => handleAnswerChange(option)}
+              <label key={i} className="flex items-center gap-2.5 cursor-pointer p-2 rounded-md hover:bg-muted transition-colors group">
+                <div 
+                  className={`w-4 h-4 rounded border-2 flex items-center justify-center transition-all ${
+                    question.answer === option 
+                      ? 'border-primary bg-primary' 
+                      : 'border-muted-foreground/50 group-hover:border-primary/50'
+                  }`}
+                  onClick={() => handleAnswerChange(option)}
                 >
                   {question.answer === option && (
-                    <Check className="h-3 w-3 text-primary-foreground" />
+                    <Check className="h-2.5 w-2.5 text-primary-foreground" />
                   )}
                 </div>
-                <span className="text-sm">{option}</span>
+                <span className="text-sm text-foreground">{option}</span>
               </label>
             ))}
           </div>
@@ -188,13 +196,13 @@ export function QuestionCard({
   return (
     <>
       <div 
-        className={`question-card p-4 mb-3 animate-slide-up ${isDragging ? 'dragging' : ''}`}
+        className={`question-card p-5 mb-3 animate-slide-up ${isDragging ? 'dragging' : ''}`}
         style={{ animationDelay: `${index * 50}ms` }}
       >
-        <div className="flex gap-3">
+        <div className="flex gap-4">
           {/* Drag handle */}
           <button
-            className="drag-handle mt-1"
+            className="drag-handle mt-0.5 opacity-50 hover:opacity-100 transition-opacity"
             onMouseDown={onDragStart}
             onMouseUp={onDragEnd}
           >
@@ -202,7 +210,7 @@ export function QuestionCard({
           </button>
 
           {/* Content */}
-          <div className="flex-1">
+          <div className="flex-1 min-w-0">
             {/* Question text */}
             {isEditingQuestion ? (
               <Input
@@ -211,11 +219,11 @@ export function QuestionCard({
                 onBlur={() => setIsEditingQuestion(false)}
                 onKeyDown={(e) => e.key === 'Enter' && setIsEditingQuestion(false)}
                 autoFocus
-                className="font-medium"
+                className="font-medium bg-background"
               />
             ) : (
               <p 
-                className="font-medium cursor-text hover:bg-muted/50 px-2 py-1 -mx-2 -my-1 rounded transition-colors"
+                className="text-foreground cursor-text hover:bg-muted/50 px-2 py-1 -mx-2 -my-1 rounded transition-colors"
                 onClick={() => setIsEditingQuestion(true)}
               >
                 {question.text}
@@ -232,30 +240,35 @@ export function QuestionCard({
                 <div className="relative">
                   <Textarea
                     placeholder="Add any additional context or explanation..."
-                    className="min-h-[80px] pr-16 resize-none"
+                    className="min-h-[80px] pr-20 resize-none bg-background"
                   />
-                  <button
-                    onClick={handleAIClick}
-                    className="absolute bottom-3 right-3 flex items-center gap-1.5 px-2 py-1 rounded-md bg-primary/10 text-primary hover:bg-primary/20 transition-colors"
-                  >
-                    <Sparkles className="h-3.5 w-3.5" />
-                  </button>
+                  <div className="absolute bottom-3 right-3 flex items-center gap-1">
+                    <button
+                      onClick={handleAIClick}
+                      className="flex items-center gap-1 px-2 py-1 rounded text-accent hover:bg-accent/10 transition-colors"
+                    >
+                      <Sparkles className="h-4 w-4" />
+                    </button>
+                    <button className="flex items-center gap-1 px-2 py-1 rounded text-accent hover:bg-accent/10 transition-colors">
+                      <Mic className="h-4 w-4" />
+                    </button>
+                  </div>
                 </div>
               </div>
             )}
 
             {/* Add reference button */}
-            <Button variant="outline" size="sm" className="mt-3 text-muted-foreground">
-              <Plus className="h-3.5 w-3.5 mr-1" />
+            <Button variant="outline" size="sm" className="mt-4 text-muted-foreground hover:text-primary hover:border-primary">
+              <Plus className="h-3.5 w-3.5 mr-1.5" />
               Ref
             </Button>
 
             {/* Sub-questions */}
             {question.subQuestions && question.subQuestions.length > 0 && (
-              <div className="mt-4 pl-4 border-l-2 border-primary/20 space-y-3">
+              <div className="mt-5 space-y-4">
                 {question.subQuestions.map((sub, i) => (
-                  <div key={sub.id} className="text-sm">
-                    <span className="text-muted-foreground mr-2">
+                  <div key={sub.id} className="text-sm text-foreground">
+                    <span className="text-muted-foreground font-medium mr-2">
                       {String.fromCharCode(97 + i)}.
                     </span>
                     {sub.text}
