@@ -135,10 +135,7 @@ const generateMockChecklist = (prompt: string, scope: GenerationScope): Checklis
 };
 
 export default function Index() {
-  const [checklist, setChecklist] = useState<Checklist | null>(() => {
-    // Start with a pre-generated checklist for demo
-    return generateMockChecklist('Client acceptance checklist', 'detailed');
-  });
+  const [checklist, setChecklist] = useState<Checklist | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
 
   const handleGenerate = async (prompt: string, scope: GenerationScope, file?: File) => {
