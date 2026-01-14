@@ -47,11 +47,41 @@ const generateMockChecklist = (prompt: string, scope: GenerationScope): Checklis
         },
         {
           id: 'sq2',
-          text: 'Contact the predecessor practitioner to inquire about any reasons the engagement should not be accepted.',
+          text: 'Contact the predecessor practitioner to inquire about any reasons the engagement should not be accepted. If no response is received, explain what alternative procedures were performed.',
           answerType: 'long-answer' as const,
           required: false
         }
       ]
+    }
+  ];
+
+  const riskFactorQuestions = [
+    {
+      id: 'q5',
+      text: 'Does management understand the limited nature of the engagement?',
+      answerType: 'yes-no-na' as const,
+      required: true,
+      answer: '',
+      subQuestions: scope === 'detailed' ? [
+        {
+          id: 'sq3',
+          text: 'Make inquiries and perform web searches for any new or emerging engagement risks that would impact the decision to accept or continue with this engagement.',
+          answerType: 'long-answer' as const,
+          required: false
+        },
+        {
+          id: 'sq4',
+          text: 'Consider any risk factors identified from other sources.',
+          answerType: 'short-answer' as const,
+          required: false
+        },
+        {
+          id: 'sq5',
+          text: 'Based on preliminary understanding, is there any indication that the financial information will be misleading?',
+          answerType: 'yes-no-na' as const,
+          required: true
+        }
+      ] : undefined
     }
   ];
 
@@ -65,15 +95,7 @@ const generateMockChecklist = (prompt: string, scope: GenerationScope): Checklis
     {
       id: 'section-2',
       title: 'Engagement risk factors',
-      questions: scope === 'detailed' ? detailedQuestions.slice(2) : [
-        {
-          id: 'q5',
-          text: 'Does management understand the limited nature of the engagement?',
-          answerType: 'yes-no-na' as const,
-          required: true,
-          answer: ''
-        }
-      ],
+      questions: scope === 'detailed' ? [...detailedQuestions.slice(2), ...riskFactorQuestions] : riskFactorQuestions,
       isExpanded: true
     }
   ];
@@ -113,13 +135,15 @@ const generateMockChecklist = (prompt: string, scope: GenerationScope): Checklis
 };
 
 export default function Index() {
-  const [checklist, setChecklist] = useState<Checklist | null>(null);
+  const [checklist, setChecklist] = useState<Checklist | null>(() => {
+    // Start with a pre-generated checklist for demo
+    return generateMockChecklist('Client acceptance checklist', 'detailed');
+  });
   const [isGenerating, setIsGenerating] = useState(false);
 
   const handleGenerate = async (prompt: string, scope: GenerationScope, file?: File) => {
     setIsGenerating(true);
     
-    // Simulate AI generation delay
     await new Promise(resolve => setTimeout(resolve, 1500));
     
     const generated = generateMockChecklist(prompt, scope);
@@ -136,19 +160,22 @@ export default function Index() {
       <Sidebar />
       
       <div className="flex-1 flex flex-col overflow-hidden">
-        <Header />
+        <Header 
+          title={checklist?.title || "Countable AI Checklist Generator"} 
+          showActions={!!checklist}
+        />
         
         <main className="flex-1 overflow-hidden">
           {isGenerating ? (
             <div className="flex-1 flex items-center justify-center h-full">
               <div className="text-center animate-pulse">
-                <div className="w-16 h-16 rounded-full bg-gradient-to-br from-primary to-blue-500 flex items-center justify-center mx-auto mb-4 animate-pulse-glow">
-                  <svg className="w-8 h-8 text-white animate-spin" fill="none" viewBox="0 0 24 24">
+                <div className="w-16 h-16 rounded-full bg-primary flex items-center justify-center mx-auto mb-4 animate-pulse-glow">
+                  <svg className="w-8 h-8 text-primary-foreground animate-spin" fill="none" viewBox="0 0 24 24">
                     <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
                     <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
                   </svg>
                 </div>
-                <p className="text-lg font-medium">Generating your checklist...</p>
+                <p className="text-lg font-medium text-foreground">Generating your checklist...</p>
                 <p className="text-sm text-muted-foreground mt-1">AI is analyzing your requirements</p>
               </div>
             </div>

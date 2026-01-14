@@ -67,6 +67,13 @@ export default {
           border: "hsl(var(--dropzone-border))",
           hover: "hsl(var(--dropzone-hover))",
         },
+        countable: {
+          blue: "hsl(var(--countable-blue))",
+          "blue-light": "hsl(var(--countable-blue-light))",
+          "blue-dark": "hsl(var(--countable-blue-dark))",
+          teal: "hsl(var(--countable-teal))",
+          navy: "hsl(var(--countable-navy))",
+        },
       },
       borderRadius: {
         lg: "var(--radius)",
@@ -103,8 +110,8 @@ export default {
           to: { opacity: "1", transform: "scale(1)" },
         },
         "pulse-glow": {
-          "0%, 100%": { boxShadow: "0 0 5px hsl(168 76% 36% / 0.3)" },
-          "50%": { boxShadow: "0 0 20px hsl(168 76% 36% / 0.5)" },
+          "0%, 100%": { boxShadow: "0 0 5px hsl(207 78% 43% / 0.3)" },
+          "50%": { boxShadow: "0 0 20px hsl(207 78% 43% / 0.5)" },
         },
       },
       animation: {
