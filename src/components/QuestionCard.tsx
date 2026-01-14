@@ -7,7 +7,9 @@ import {
   Sparkles,
   Check,
   ArrowRight,
-  Mic
+  Mic,
+  ChevronDown,
+  ChevronUp
 } from 'lucide-react';
 import { Question, AnswerType } from '@/types/checklist';
 import { Button } from '@/components/ui/button';
@@ -22,10 +24,12 @@ interface QuestionCardProps {
   onUpdate: (question: Question) => void;
   onDelete: () => void;
   onAddSubQuestion: () => void;
-  onDragStart: () => void;
-  onDragEnd: () => void;
-  isDragging?: boolean;
+  onMoveUp: () => void;
+  onMoveDown: () => void;
+  isFirst: boolean;
+  isLast: boolean;
 }
+
 
 export function QuestionCard({
   question,
@@ -34,13 +38,15 @@ export function QuestionCard({
   onUpdate,
   onDelete,
   onAddSubQuestion,
-  onDragStart,
-  onDragEnd,
-  isDragging
+  onMoveUp,
+  onMoveDown,
+  isFirst,
+  isLast
 }: QuestionCardProps) {
   const [showMenu, setShowMenu] = useState(false);
   const [showAIMenu, setShowAIMenu] = useState(false);
   const [isEditingQuestion, setIsEditingQuestion] = useState(false);
+  const [isExpanded, setIsExpanded] = useState(true);
   const [aiMenuPosition, setAiMenuPosition] = useState({ x: 0, y: 0 });
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
@@ -196,18 +202,40 @@ export function QuestionCard({
   return (
     <>
       <div 
-        className={`question-card p-5 mb-3 animate-slide-up ${isDragging ? 'dragging' : ''}`}
+        className="question-card p-5 mb-3 animate-slide-up"
         style={{ animationDelay: `${index * 50}ms` }}
       >
         <div className="flex gap-4">
-          {/* Drag handle */}
-          <button
-            className="drag-handle mt-0.5 opacity-50 hover:opacity-100 transition-opacity"
-            onMouseDown={onDragStart}
-            onMouseUp={onDragEnd}
-          >
-            <GripVertical className="h-5 w-5" />
-          </button>
+          {/* Collapse toggle + reorder controls */}
+          <div className="flex flex-col items-center gap-1 pt-0.5">
+            <button
+              onClick={() => setIsExpanded(!isExpanded)}
+              className="p-1 rounded hover:bg-muted transition-colors"
+              aria-label={isExpanded ? 'Collapse question' : 'Expand question'}
+            >
+              {isExpanded ? (
+                <ChevronUp className="h-4 w-4 text-muted-foreground" />
+              ) : (
+                <ChevronDown className="h-4 w-4 text-muted-foreground" />
+              )}
+            </button>
+            <button
+              onClick={onMoveUp}
+              disabled={isFirst}
+              className="p-1 rounded hover:bg-muted transition-colors disabled:opacity-30 disabled:pointer-events-none"
+              aria-label="Move up"
+            >
+              <ChevronUp className="h-4 w-4 text-muted-foreground" />
+            </button>
+            <button
+              onClick={onMoveDown}
+              disabled={isLast}
+              className="p-1 rounded hover:bg-muted transition-colors disabled:opacity-30 disabled:pointer-events-none"
+              aria-label="Move down"
+            >
+              <ChevronDown className="h-4 w-4 text-muted-foreground" />
+            </button>
+          </div>
 
           {/* Content */}
           <div className="flex-1 min-w-0">
@@ -230,38 +258,43 @@ export function QuestionCard({
               </p>
             )}
 
-            {/* Answer field */}
-            {renderAnswerField()}
+            {/* Collapsible answer section */}
+            {isExpanded && (
+              <>
+                {/* Answer field */}
+                {renderAnswerField()}
 
-            {/* Additional explanation for Yes/No types */}
-            {(question.answerType === 'yes-no' || question.answerType === 'yes-no-na') && (
-              <div className="mt-4">
-                <p className="text-sm text-muted-foreground mb-2">Additional Explanation</p>
-                <div className="relative">
-                  <Textarea
-                    placeholder="Add any additional context or explanation..."
-                    className="min-h-[80px] pr-20 resize-none bg-background"
-                  />
-                  <div className="absolute bottom-3 right-3 flex items-center gap-1">
-                    <button
-                      onClick={handleAIClick}
-                      className="flex items-center gap-1 px-2 py-1 rounded text-accent hover:bg-accent/10 transition-colors"
-                    >
-                      <Sparkles className="h-4 w-4" />
-                    </button>
-                    <button className="flex items-center gap-1 px-2 py-1 rounded text-accent hover:bg-accent/10 transition-colors">
-                      <Mic className="h-4 w-4" />
-                    </button>
+                {/* Additional explanation for Yes/No types */}
+                {(question.answerType === 'yes-no' || question.answerType === 'yes-no-na') && (
+                  <div className="mt-4">
+                    <p className="text-sm text-muted-foreground mb-2">Additional Explanation</p>
+                    <div className="relative">
+                      <Textarea
+                        placeholder="Add any additional context or explanation..."
+                        className="min-h-[80px] pr-20 resize-none bg-background"
+                      />
+                      <div className="absolute bottom-3 right-3 flex items-center gap-1">
+                        <button
+                          onClick={handleAIClick}
+                          className="flex items-center gap-1 px-2 py-1 rounded text-accent hover:bg-accent/10 transition-colors"
+                        >
+                          <Sparkles className="h-4 w-4" />
+                        </button>
+                        <button className="flex items-center gap-1 px-2 py-1 rounded text-accent hover:bg-accent/10 transition-colors">
+                          <Mic className="h-4 w-4" />
+                        </button>
+                      </div>
+                    </div>
                   </div>
-                </div>
-              </div>
-            )}
+                )}
 
-            {/* Add reference button */}
-            <Button variant="outline" size="sm" className="mt-4 text-muted-foreground hover:text-primary hover:border-primary">
-              <Plus className="h-3.5 w-3.5 mr-1.5" />
-              Ref
-            </Button>
+                {/* Add reference button */}
+                <Button variant="outline" size="sm" className="mt-4 text-muted-foreground hover:text-primary hover:border-primary">
+                  <Plus className="h-3.5 w-3.5 mr-1.5" />
+                  Ref
+                </Button>
+              </>
+            )}
 
             {/* Sub-questions (nested blocks with indentation) */}
             {question.subQuestions && question.subQuestions.length > 0 && (

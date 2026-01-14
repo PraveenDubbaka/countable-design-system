@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { ChevronDown, ChevronUp, MoreVertical, Plus, Trash2 } from 'lucide-react';
-import { Section, Question, AnswerType } from '@/types/checklist';
+import { Section, Question } from '@/types/checklist';
 import { QuestionCard } from './QuestionCard';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -26,7 +26,6 @@ export function ChecklistSection({
 }: ChecklistSectionProps) {
   const [showMenu, setShowMenu] = useState(false);
   const [isEditingTitle, setIsEditingTitle] = useState(false);
-  const [draggedQuestion, setDraggedQuestion] = useState<number | null>(null);
 
   const toggleExpanded = () => {
     onUpdate({ ...section, isExpanded: !section.isExpanded });
@@ -70,6 +69,13 @@ export function ChecklistSection({
       subQuestions: [...(question.subQuestions || []), newSubQuestion]
     };
     handleQuestionUpdate(questionIndex, updatedQuestion);
+  };
+
+  const handleQuestionMove = (questionIndex: number, direction: 'up' | 'down') => {
+    const newQuestions = [...section.questions];
+    const targetIndex = direction === 'up' ? questionIndex - 1 : questionIndex + 1;
+    [newQuestions[questionIndex], newQuestions[targetIndex]] = [newQuestions[targetIndex], newQuestions[questionIndex]];
+    onUpdate({ ...section, questions: newQuestions });
   };
 
   return (
@@ -171,9 +177,10 @@ export function ChecklistSection({
               onUpdate={(q) => handleQuestionUpdate(qIndex, q)}
               onDelete={() => handleQuestionDelete(qIndex)}
               onAddSubQuestion={() => handleAddSubQuestion(qIndex)}
-              onDragStart={() => setDraggedQuestion(qIndex)}
-              onDragEnd={() => setDraggedQuestion(null)}
-              isDragging={draggedQuestion === qIndex}
+              onMoveUp={() => handleQuestionMove(qIndex, 'up')}
+              onMoveDown={() => handleQuestionMove(qIndex, 'down')}
+              isFirst={qIndex === 0}
+              isLast={qIndex === section.questions.length - 1}
             />
           ))}
 
