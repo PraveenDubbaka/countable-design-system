@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { Layout } from '@/components/Layout';
 import { DropZone } from '@/components/DropZone';
 import { ChecklistBuilder } from '@/components/ChecklistBuilder';
@@ -110,19 +111,44 @@ const generateMockChecklist = (prompt: string, scope: GenerationScope): Checklis
   };
 };
 
+type GenerateNavState = {
+  generate?: {
+    prompt: string;
+    scope: GenerationScope;
+    cardSize?: string;
+  };
+};
+
 export default function Index() {
+  const location = useLocation();
+  const navigate = useNavigate();
+
   const [checklist, setChecklist] = useState<Checklist | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
 
   const handleGenerate = async (prompt: string, scope: GenerationScope, file?: File) => {
     setIsGenerating(true);
-    
+
     await new Promise(resolve => setTimeout(resolve, 1500));
-    
+
     const generated = generateMockChecklist(prompt, scope);
     setChecklist(generated);
     setIsGenerating(false);
   };
+
+  // If the user came from /generate, start generation automatically
+  useEffect(() => {
+    const navState = location.state as GenerateNavState | null;
+    const gen = navState?.generate;
+
+    if (!gen?.prompt) return;
+
+    // Clear the navigation state so we don't regenerate on refresh/back
+    navigate('/', { replace: true, state: null });
+
+    void handleGenerate(gen.prompt, gen.scope ?? 'standard');
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [location.state, navigate]);
 
   const handleChecklistUpdate = (updated: Checklist) => {
     setChecklist(updated);

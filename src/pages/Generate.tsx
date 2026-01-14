@@ -208,13 +208,24 @@ export default function Generate() {
       toast.error('Please enter a prompt to generate content');
       return;
     }
+
+    if (contentType !== 'checklist') {
+      toast.error('Only Checklist generation is available in this prototype');
+      return;
+    }
+
     setIsGenerating(true);
-    // Simulate generation
-    setTimeout(() => {
-      setIsGenerating(false);
-      toast.success('Content generated successfully!');
-      navigate('/');
-    }, 2000);
+
+    // Hand off to the home page generator (mock generation lives there)
+    navigate('/', {
+      state: {
+        generate: {
+          prompt,
+          scope: detailLevel,
+          cardSize,
+        },
+      },
+    });
   };
 
   return (
