@@ -1,4 +1,5 @@
 import { useState, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Sparkles, FileText, Upload, LayoutTemplate } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
@@ -7,7 +8,6 @@ import { GenerationScope } from '@/types/checklist';
 interface DropZoneProps {
   onGenerate: (prompt: string, scope: GenerationScope, file?: File) => void;
 }
-
 interface CreationOptionProps {
   icon: React.ReactNode;
   iconBg: string;
@@ -47,7 +47,8 @@ function CreationOption({ icon, iconBg, title, description, badge, onClick }: Cr
 }
 
 export function DropZone({ onGenerate }: DropZoneProps) {
-  const [mode, setMode] = useState<'generate' | 'import' | 'template' | null>(null);
+  const navigate = useNavigate();
+  const [mode, setMode] = useState<'import' | 'template' | null>(null);
   const [prompt, setPrompt] = useState('');
   const [file, setFile] = useState<File | null>(null);
   const [scope, setScope] = useState<GenerationScope>('standard');
@@ -103,19 +104,6 @@ export function DropZone({ onGenerate }: DropZoneProps) {
           <span>Back to options</span>
         </button>
 
-        {mode === 'generate' && (
-          <div>
-            <h2 className="text-2xl font-bold text-foreground mb-2">Generate with AI</h2>
-            <p className="text-muted-foreground mb-6">Create a checklist from a simple prompt</p>
-            <Textarea
-              placeholder="Generate the full independence checklist as per CSRS 4200 requirements for compilation..."
-              value={prompt}
-              onChange={(e) => setPrompt(e.target.value)}
-              className="min-h-[160px] resize-none text-base mb-4"
-              autoFocus
-            />
-          </div>
-        )}
 
 
         {mode === 'import' && (
@@ -253,7 +241,7 @@ export function DropZone({ onGenerate }: DropZoneProps) {
           title="Generate"
           description="Create from a one-line prompt in a few seconds"
           badge={{ text: 'RECOMMENDED', variant: 'recommended' }}
-          onClick={() => setMode('generate')}
+          onClick={() => navigate('/generate')}
         />
         
         
