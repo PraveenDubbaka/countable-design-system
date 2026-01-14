@@ -1,4 +1,5 @@
 import { useState, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Sparkles, FileText, Upload, LayoutTemplate, MessageSquare } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
@@ -49,6 +50,7 @@ function CreationOption({ icon, iconBg, title, description, badge, onClick }: Cr
 }
 
 export function DropZone({ onGenerate }: DropZoneProps) {
+  const navigate = useNavigate();
   const [mode, setMode] = useState<CreationMode>(null);
   const [prompt, setPrompt] = useState('');
   const [file, setFile] = useState<File | null>(null);
@@ -255,7 +257,7 @@ export function DropZone({ onGenerate }: DropZoneProps) {
           title="Generate"
           description="Create from a one-line prompt in a few seconds"
           badge={{ text: 'RECOMMENDED', variant: 'recommended' }}
-          onClick={() => setMode('generate')}
+          onClick={() => navigate('/generate')}
         />
         
         
