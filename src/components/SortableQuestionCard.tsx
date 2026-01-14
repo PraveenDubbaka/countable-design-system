@@ -1,22 +1,22 @@
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { 
   GripVertical, 
-  MoreVertical, 
   Plus, 
-  Trash2, 
   Sparkles,
   Check,
-  ArrowRight,
   Mic,
-  ChevronRight
+  ChevronRight,
+  X
 } from 'lucide-react';
 import { Question, AnswerType } from '@/types/checklist';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { AIEditMenu } from './AIEditMenu';
+import { QuestionToolbar } from './QuestionToolbar';
+import { EditableOption } from './EditableOption';
 
 interface SortableQuestionCardProps {
   question: Question;
@@ -25,6 +25,7 @@ interface SortableQuestionCardProps {
   onUpdate: (question: Question) => void;
   onDelete: () => void;
   onAddSubQuestion: () => void;
+  onDuplicate?: () => void;
 }
 
 export function SortableQuestionCard({
@@ -34,13 +35,18 @@ export function SortableQuestionCard({
   onUpdate,
   onDelete,
   onAddSubQuestion,
+  onDuplicate,
 }: SortableQuestionCardProps) {
-  const [showMenu, setShowMenu] = useState(false);
   const [showAIMenu, setShowAIMenu] = useState(false);
   const [isEditingQuestion, setIsEditingQuestion] = useState(false);
   const [isExpanded, setIsExpanded] = useState(true);
+  const [isFocused, setIsFocused] = useState(false);
+  const [hasNote, setHasNote] = useState(false);
+  const [noteText, setNoteText] = useState('');
   const [aiMenuPosition, setAiMenuPosition] = useState({ x: 0, y: 0 });
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const cardRef = useRef<HTMLDivElement>(null);
+  const questionInputRef = useRef<HTMLInputElement>(null);
 
   const {
     attributes,
@@ -58,6 +64,17 @@ export function SortableQuestionCard({
     zIndex: isDragging ? 50 : 'auto',
   };
 
+  // Click outside handler
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (cardRef.current && !cardRef.current.contains(e.target as Node)) {
+        setIsFocused(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
   const handleQuestionChange = (text: string) => {
     onUpdate({ ...question, text });
   };
@@ -67,13 +84,29 @@ export function SortableQuestionCard({
   };
 
   const handleTypeChange = (answerType: AnswerType) => {
-    onUpdate({ ...question, answerType, answer: '' });
-    setShowMenu(false);
+    // Preserve options when switching between multiple-choice and dropdown
+    const options = (answerType === 'multiple-choice' || answerType === 'dropdown') 
+      ? (question.options || ['Option 1', 'Option 2', 'Option 3'])
+      : undefined;
+    onUpdate({ ...question, answerType, answer: '', options });
   };
 
-  const toggleRequired = () => {
-    onUpdate({ ...question, required: !question.required });
-    setShowMenu(false);
+  const handleOptionUpdate = (index: number, value: string) => {
+    const newOptions = [...(question.options || [])];
+    newOptions[index] = value;
+    onUpdate({ ...question, options: newOptions });
+  };
+
+  const handleOptionRemove = (index: number) => {
+    const newOptions = (question.options || []).filter((_, i) => i !== index);
+    if (newOptions.length > 0) {
+      onUpdate({ ...question, options: newOptions });
+    }
+  };
+
+  const handleAddOption = () => {
+    const newOptions = [...(question.options || []), `Option ${(question.options?.length || 0) + 1}`];
+    onUpdate({ ...question, options: newOptions });
   };
 
   const handleAIClick = (e: React.MouseEvent) => {
@@ -87,22 +120,21 @@ export function SortableQuestionCard({
     setShowAIMenu(false);
   };
 
-  const answerTypeLabels: Record<AnswerType, string> = {
-    'yes-no': 'Yes / No',
-    'yes-no-na': 'Yes / No / N/A',
-    'multiple-choice': 'Multiple Choice',
-    'short-answer': 'Short Answer',
-    'long-answer': 'Long Answer',
-    'dropdown': 'Dropdown'
+  const handleDuplicate = () => {
+    onDuplicate?.();
+  };
+
+  const handleAddNote = () => {
+    setHasNote(true);
   };
 
   const renderAnswerField = () => {
     switch (question.answerType) {
       case 'yes-no':
         return (
-          <div className="flex gap-8 mt-3">
+          <div className="flex flex-wrap gap-3 mt-3">
             {['Yes', 'No'].map((option) => (
-              <label key={option} className="flex items-center gap-2.5 cursor-pointer group">
+              <label key={option} className="flex items-center gap-2.5 cursor-pointer group px-3 py-2 rounded-lg hover:bg-muted transition-colors">
                 <div 
                   className={`w-4 h-4 rounded-full border-2 flex items-center justify-center transition-all ${
                     question.answer === option 
@@ -123,9 +155,9 @@ export function SortableQuestionCard({
 
       case 'yes-no-na':
         return (
-          <div className="flex gap-8 mt-3">
+          <div className="flex flex-wrap gap-3 mt-3">
             {['Yes', 'No', 'Not applicable'].map((option) => (
-              <label key={option} className="flex items-center gap-2.5 cursor-pointer group">
+              <label key={option} className="flex items-center gap-2.5 cursor-pointer group px-3 py-2 rounded-lg hover:bg-muted transition-colors">
                 <div 
                   className={`w-4 h-4 rounded-full border-2 flex items-center justify-center transition-all ${
                     question.answer === option 
@@ -180,25 +212,29 @@ export function SortableQuestionCard({
 
       case 'dropdown':
       case 'multiple-choice':
+        const options = question.options || ['Option 1', 'Option 2', 'Option 3'];
         return (
-          <div className="mt-3 space-y-2">
-            {(question.options || ['Option 1', 'Option 2', 'Option 3']).map((option, i) => (
-              <label key={i} className="flex items-center gap-2.5 cursor-pointer p-2 rounded-md hover:bg-muted transition-colors group">
-                <div 
-                  className={`w-4 h-4 rounded border-2 flex items-center justify-center transition-all ${
-                    question.answer === option 
-                      ? 'border-primary bg-primary' 
-                      : 'border-muted-foreground/50 group-hover:border-primary/50'
-                  }`}
-                  onClick={() => handleAnswerChange(option)}
-                >
-                  {question.answer === option && (
-                    <Check className="h-2.5 w-2.5 text-primary-foreground" />
-                  )}
-                </div>
-                <span className="text-sm text-foreground">{option}</span>
-              </label>
+          <div className="mt-3 space-y-1">
+            {options.map((option, i) => (
+              <EditableOption
+                key={i}
+                value={option}
+                index={i}
+                isSelected={question.answer === option}
+                onUpdate={(value) => handleOptionUpdate(i, value)}
+                onRemove={() => handleOptionRemove(i)}
+                onSelect={() => handleAnswerChange(option)}
+                type={question.answerType === 'dropdown' ? 'radio' : 'checkbox'}
+              />
             ))}
+            {/* Add option button */}
+            <button
+              onClick={handleAddOption}
+              className="flex items-center gap-2 px-2 py-2 text-sm text-muted-foreground hover:text-foreground hover:bg-muted rounded-md transition-colors w-full"
+            >
+              <Plus className="h-4 w-4" />
+              Add option
+            </button>
           </div>
         );
 
@@ -210,10 +246,30 @@ export function SortableQuestionCard({
   return (
     <>
       <div 
-        ref={setNodeRef}
+        ref={(node) => {
+          setNodeRef(node);
+          (cardRef as React.MutableRefObject<HTMLDivElement | null>).current = node;
+        }}
         style={style}
-        className={`question-card p-5 mb-3 animate-slide-up group/card ${isDragging ? 'shadow-xl ring-2 ring-primary/20' : ''}`}
+        className={`question-card p-5 mb-3 animate-slide-up group/card relative ${
+          isDragging ? 'shadow-xl ring-2 ring-primary/20' : ''
+        } ${isFocused ? 'ring-2 ring-primary/30' : ''}`}
+        onClick={() => setIsFocused(true)}
       >
+        {/* Floating Toolbar - appears when focused */}
+        {isFocused && (
+          <div className="absolute -top-12 left-1/2 -translate-x-1/2 z-30">
+            <QuestionToolbar
+              currentType={question.answerType}
+              onChangeType={handleTypeChange}
+              onDuplicate={handleDuplicate}
+              onDelete={onDelete}
+              onAddSubQuestion={onAddSubQuestion}
+              onAddNote={handleAddNote}
+            />
+          </div>
+        )}
+
         <div className="flex gap-3">
           {/* Drag Handle - appears on hover */}
           <div
@@ -227,7 +283,10 @@ export function SortableQuestionCard({
 
           {/* Collapse Toggle */}
           <button
-            onClick={() => setIsExpanded(!isExpanded)}
+            onClick={(e) => {
+              e.stopPropagation();
+              setIsExpanded(!isExpanded);
+            }}
             className="flex items-center justify-center w-6 h-6 rounded hover:bg-muted transition-all mt-0.5 shrink-0"
             aria-label={isExpanded ? 'Collapse question' : 'Expand question'}
           >
@@ -238,20 +297,24 @@ export function SortableQuestionCard({
 
           {/* Content */}
           <div className="flex-1 min-w-0">
-            {/* Question text */}
+            {/* Question text - inline editable */}
             {isEditingQuestion ? (
               <Input
+                ref={questionInputRef}
                 value={question.text}
                 onChange={(e) => handleQuestionChange(e.target.value)}
                 onBlur={() => setIsEditingQuestion(false)}
                 onKeyDown={(e) => e.key === 'Enter' && setIsEditingQuestion(false)}
                 autoFocus
-                className="font-medium bg-background"
+                className="font-medium bg-background text-base"
               />
             ) : (
               <p 
-                className="text-foreground cursor-text hover:bg-muted/50 px-2 py-1 -mx-2 -my-1 rounded transition-colors"
-                onClick={() => setIsEditingQuestion(true)}
+                className="text-foreground font-medium cursor-text hover:bg-muted/50 px-2 py-1 -mx-2 -my-1 rounded transition-colors"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setIsEditingQuestion(true);
+                }}
               >
                 {question.text}
               </p>
@@ -261,6 +324,30 @@ export function SortableQuestionCard({
             <div className={`overflow-hidden transition-all duration-200 ${isExpanded ? 'max-h-[2000px] opacity-100 mt-3' : 'max-h-0 opacity-0'}`}>
               {/* Answer field */}
               {renderAnswerField()}
+
+              {/* Note section */}
+              {hasNote && (
+                <div className="mt-4 relative">
+                  <div className="flex items-center justify-between mb-2">
+                    <p className="text-sm text-muted-foreground">Note</p>
+                    <button 
+                      onClick={() => {
+                        setHasNote(false);
+                        setNoteText('');
+                      }}
+                      className="p-1 rounded hover:bg-muted transition-colors"
+                    >
+                      <X className="h-3.5 w-3.5 text-muted-foreground" />
+                    </button>
+                  </div>
+                  <Textarea
+                    placeholder="Add a note..."
+                    value={noteText}
+                    onChange={(e) => setNoteText(e.target.value)}
+                    className="min-h-[60px] resize-none bg-muted/30 border-muted"
+                  />
+                </div>
+              )}
 
               {/* Additional explanation for Yes/No types */}
               {(question.answerType === 'yes-no' || question.answerType === 'yes-no-na') && (
@@ -347,82 +434,6 @@ export function SortableQuestionCard({
                 </div>
               )}
             </div>
-          </div>
-
-          {/* Actions Menu */}
-          <div className="relative shrink-0">
-            <button
-              onClick={() => setShowMenu(!showMenu)}
-              className="p-1.5 rounded-md hover:bg-muted transition-colors"
-            >
-              <MoreVertical className="h-5 w-5 text-muted-foreground" />
-            </button>
-
-            {showMenu && (
-              <div className="absolute top-full right-0 mt-1 bg-card border rounded-lg shadow-lg p-1 z-20 w-56 animate-scale-in">
-                <button
-                  onClick={toggleRequired}
-                  className="w-full flex items-center justify-between px-3 py-2 text-sm rounded-md hover:bg-muted transition-colors"
-                >
-                  <span>Required</span>
-                  <div className={`w-8 h-5 rounded-full transition-colors ${
-                    question.required ? 'bg-primary' : 'bg-muted-foreground/30'
-                  }`}>
-                    <div className={`w-4 h-4 rounded-full bg-white shadow transition-transform mt-0.5 ${
-                      question.required ? 'translate-x-3.5' : 'translate-x-0.5'
-                    }`} />
-                  </div>
-                </button>
-                
-                <div className="h-px bg-border my-1" />
-                
-                <div className="px-3 py-2">
-                  <p className="text-xs text-muted-foreground mb-2">Convert to:</p>
-                  <div className="space-y-1">
-                    {(Object.keys(answerTypeLabels) as AnswerType[]).map((type) => (
-                      <button
-                        key={type}
-                        onClick={() => handleTypeChange(type)}
-                        className={`w-full text-left px-2 py-1.5 text-sm rounded-md transition-colors ${
-                          question.answerType === type 
-                            ? 'bg-primary/10 text-primary' 
-                            : 'hover:bg-muted'
-                        }`}
-                      >
-                        {answerTypeLabels[type]}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
-                <div className="h-px bg-border my-1" />
-
-                <button
-                  onClick={onAddSubQuestion}
-                  className="w-full flex items-center gap-2 px-3 py-2 text-sm rounded-md hover:bg-muted transition-colors"
-                >
-                  <Plus className="h-4 w-4" />
-                  Add Sub-Question
-                </button>
-
-                <button
-                  className="w-full flex items-center gap-2 px-3 py-2 text-sm rounded-md hover:bg-muted transition-colors"
-                >
-                  <ArrowRight className="h-4 w-4" />
-                  Move to Category
-                </button>
-
-                <div className="h-px bg-border my-1" />
-
-                <button
-                  onClick={onDelete}
-                  className="w-full flex items-center gap-2 px-3 py-2 text-sm rounded-md hover:bg-destructive/10 text-destructive transition-colors"
-                >
-                  <Trash2 className="h-4 w-4" />
-                  Delete Question
-                </button>
-              </div>
-            )}
           </div>
         </div>
       </div>
