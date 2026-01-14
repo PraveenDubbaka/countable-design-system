@@ -6,16 +6,15 @@ import {
   Eye, 
   Sparkles,
   FileText,
-  Expand,
-  ArrowUpDown,
-  MessageSquarePlus,
   Wand2,
-  ChevronDown
+  ChevronDown,
+  FileDown
 } from 'lucide-react';
-import { Checklist, Section, Question, GenerationScope } from '@/types/checklist';
+import { Checklist, Section, Question } from '@/types/checklist';
 import { ChecklistSection } from './ChecklistSection';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { toast } from 'sonner';
 
 interface ChecklistBuilderProps {
   checklist: Checklist;
@@ -117,41 +116,77 @@ export function ChecklistBuilder({ checklist, onUpdate }: ChecklistBuilderProps)
 
   return (
     <div className="flex-1 flex flex-col h-full overflow-hidden bg-background">
-      {/* Floating Action Buttons */}
-      <div className="fixed right-6 top-1/2 -translate-y-1/2 flex flex-col gap-2 z-30">
-        <Button
-          size="icon"
-          variant="outline"
-          className="h-10 w-10 rounded-lg bg-card shadow-md border-border"
-        >
-          <Expand className="h-4 w-4" />
-        </Button>
-        <Button
-          size="icon"
-          variant="outline"
-          className="h-10 w-10 rounded-lg bg-card shadow-md border-border"
-        >
-          <ArrowUpDown className="h-4 w-4" />
-        </Button>
-        <div className="relative group">
-          <Button
-            size="icon"
-            className="h-10 w-10 rounded-lg bg-primary shadow-md hover:bg-primary/90"
-            onClick={() => setShowAddMenu(!showAddMenu)}
-          >
-            <MessageSquarePlus className="h-4 w-4 text-primary-foreground" />
-          </Button>
-          <span className="absolute right-full mr-2 top-1/2 -translate-y-1/2 text-xs text-muted-foreground whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity bg-card px-2 py-1 rounded shadow-sm">
-            Add Question
-          </span>
+      {/* Top Toolbar */}
+      <div className="border-b bg-card px-6 py-3 flex items-center justify-between">
+        <div className="flex items-center gap-4">
+          {isEditingTitle ? (
+            <Input
+              value={checklist.title}
+              onChange={(e) => handleTitleChange(e.target.value)}
+              onBlur={() => setIsEditingTitle(false)}
+              onKeyDown={(e) => e.key === 'Enter' && setIsEditingTitle(false)}
+              autoFocus
+              className="text-lg font-semibold max-w-md"
+            />
+          ) : (
+            <h1 
+              className="text-lg font-semibold cursor-text hover:bg-muted px-2 py-1 -mx-2 rounded transition-colors"
+              onClick={() => setIsEditingTitle(true)}
+            >
+              {checklist.title}
+            </h1>
+          )}
         </div>
-        <Button
-          size="icon"
-          variant="outline"
-          className="h-10 w-10 rounded-lg bg-card shadow-md border-border"
-        >
-          <Sparkles className="h-4 w-4 text-primary" />
-        </Button>
+        
+        <div className="flex items-center gap-2">
+          <Button variant="outline" size="sm" className="gap-2">
+            <Eye className="h-4 w-4" />
+            Preview
+          </Button>
+          
+          <div className="relative">
+            <Button 
+              variant="outline" 
+              size="sm" 
+              className="gap-2"
+              onClick={() => setShowExportMenu(!showExportMenu)}
+            >
+              <Download className="h-4 w-4" />
+              Export
+              <ChevronDown className="h-3 w-3" />
+            </Button>
+            
+            {showExportMenu && (
+              <div className="absolute top-full right-0 mt-1 bg-card border rounded-lg shadow-lg p-1 z-20 w-40 animate-scale-in">
+                <button
+                  onClick={() => {
+                    toast.success('Exporting to PDF...');
+                    setShowExportMenu(false);
+                  }}
+                  className="w-full flex items-center gap-2 px-3 py-2 text-sm rounded-md hover:bg-muted transition-colors"
+                >
+                  <FileDown className="h-4 w-4" />
+                  Export as PDF
+                </button>
+                <button
+                  onClick={() => {
+                    toast.success('Exporting to Word...');
+                    setShowExportMenu(false);
+                  }}
+                  className="w-full flex items-center gap-2 px-3 py-2 text-sm rounded-md hover:bg-muted transition-colors"
+                >
+                  <FileText className="h-4 w-4" />
+                  Export as Word
+                </button>
+              </div>
+            )}
+          </div>
+          
+          <Button variant="outline" size="sm" className="gap-2">
+            <Share2 className="h-4 w-4" />
+            Share
+          </Button>
+        </div>
       </div>
 
       {/* Content */}
