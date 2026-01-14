@@ -112,6 +112,22 @@ export function SortableSection({
     handleQuestionUpdate(questionIndex, updatedQuestion);
   };
 
+  const handleDuplicateQuestion = (questionIndex: number) => {
+    const question = section.questions[questionIndex];
+    const duplicatedQuestion: Question = {
+      ...question,
+      id: `q-${Date.now()}`,
+      text: question.text,
+      subQuestions: question.subQuestions?.map((sq, i) => ({
+        ...sq,
+        id: `sq-${Date.now()}-${i}`
+      }))
+    };
+    const newQuestions = [...section.questions];
+    newQuestions.splice(questionIndex + 1, 0, duplicatedQuestion);
+    onUpdate({ ...section, questions: newQuestions });
+  };
+
   const handleQuestionDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
     
@@ -226,6 +242,7 @@ export function SortableSection({
                   onUpdate={(q) => handleQuestionUpdate(qIndex, q)}
                   onDelete={() => handleQuestionDelete(qIndex)}
                   onAddSubQuestion={() => handleAddSubQuestion(qIndex)}
+                  onDuplicate={() => handleDuplicateQuestion(qIndex)}
                 />
               ))}
             </SortableContext>
