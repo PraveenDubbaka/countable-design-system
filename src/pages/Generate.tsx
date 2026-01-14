@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { 
   Presentation, 
   Globe, 
@@ -14,9 +13,9 @@ import {
   BookOpen,
   PenTool,
   Building,
-  CloudSun,
-  ArrowLeft
+  CloudSun
 } from 'lucide-react';
+import { Layout } from '@/components/Layout';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import {
@@ -79,7 +78,6 @@ const allPrompts: ExamplePrompt[] = [
 ];
 
 export default function Generate() {
-  const navigate = useNavigate();
   const [contentType, setContentType] = useState<ContentType>('presentation');
   const [cardCount, setCardCount] = useState(10);
   const [style, setStyle] = useState('classic');
@@ -105,17 +103,9 @@ export default function Generate() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-sky-100 via-blue-50 to-sky-100">
+    <Layout title="Generate">
+      <div className="min-h-full bg-gradient-to-b from-sky-100 via-blue-50 to-sky-100">
       <div className="max-w-4xl mx-auto px-4 py-8">
-        {/* Back Button */}
-        <button
-          onClick={() => navigate('/')}
-          className="flex items-center gap-2 text-muted-foreground hover:text-foreground mb-8 transition-colors"
-        >
-          <ArrowLeft className="h-4 w-4" />
-          <span>Back</span>
-        </button>
-
         {/* Header */}
         <div className="text-center mb-8">
           <h1 className="text-4xl font-bold text-foreground mb-2 italic">Generate</h1>
@@ -249,6 +239,7 @@ export default function Generate() {
           </Button>
         </div>
       </div>
-    </div>
+      </div>
+    </Layout>
   );
 }
