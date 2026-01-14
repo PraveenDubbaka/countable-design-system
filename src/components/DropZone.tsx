@@ -8,7 +8,7 @@ interface DropZoneProps {
   onGenerate: (prompt: string, scope: GenerationScope, file?: File) => void;
 }
 
-type CreationMode = 'generate' | 'paste' | 'import' | 'template' | null;
+type CreationMode = 'generate' | 'import' | 'template' | null;
 
 interface CreationOptionProps {
   icon: React.ReactNode;
@@ -119,19 +119,6 @@ export function DropZone({ onGenerate }: DropZoneProps) {
           </div>
         )}
 
-        {mode === 'paste' && (
-          <div>
-            <h2 className="text-2xl font-bold text-foreground mb-2">Paste in Text</h2>
-            <p className="text-muted-foreground mb-6">Create from notes, an outline, or existing content</p>
-            <Textarea
-              placeholder="Paste your existing checklist content, notes, or outline here..."
-              value={prompt}
-              onChange={(e) => setPrompt(e.target.value)}
-              className="min-h-[200px] resize-none text-base mb-4"
-              autoFocus
-            />
-          </div>
-        )}
 
         {mode === 'import' && (
           <div>
@@ -261,7 +248,7 @@ export function DropZone({ onGenerate }: DropZoneProps) {
       </div>
 
       {/* Creation Options Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         <CreationOption
           icon={<Sparkles className="h-10 w-10 text-white" />}
           iconBg="bg-gradient-to-br from-pink-400 via-purple-400 to-indigo-400"
@@ -271,13 +258,6 @@ export function DropZone({ onGenerate }: DropZoneProps) {
           onClick={() => setMode('generate')}
         />
         
-        <CreationOption
-          icon={<MessageSquare className="h-10 w-10 text-white" />}
-          iconBg="bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-400"
-          title="Paste in text"
-          description="Create from notes, an outline, or existing content"
-          onClick={() => setMode('paste')}
-        />
         
         <CreationOption
           icon={<Upload className="h-10 w-10 text-primary" />}
