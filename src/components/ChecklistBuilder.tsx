@@ -1,17 +1,30 @@
 import { useState } from 'react';
 import { 
+  DndContext, 
+  closestCenter, 
+  KeyboardSensor, 
+  PointerSensor, 
+  useSensor, 
+  useSensors,
+  DragEndEvent 
+} from '@dnd-kit/core';
+import {
+  SortableContext,
+  sortableKeyboardCoordinates,
+  verticalListSortingStrategy,
+} from '@dnd-kit/sortable';
+import { 
   Plus, 
   Download, 
   Share2, 
   Eye, 
-  Sparkles,
   FileText,
   Wand2,
   ChevronDown,
   FileDown
 } from 'lucide-react';
-import { Checklist, Section, Question } from '@/types/checklist';
-import { ChecklistSection } from './ChecklistSection';
+import { Checklist, Section } from '@/types/checklist';
+import { SortableSection } from './SortableSection';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { toast } from 'sonner';
@@ -26,6 +39,17 @@ export function ChecklistBuilder({ checklist, onUpdate }: ChecklistBuilderProps)
   const [showAddMenu, setShowAddMenu] = useState(false);
   const [showExportMenu, setShowExportMenu] = useState(false);
   const [descriptionExpanded, setDescriptionExpanded] = useState(false);
+
+  const sensors = useSensors(
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        distance: 8,
+      },
+    }),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    })
+  );
 
   const handleTitleChange = (title: string) => {
     onUpdate({ ...checklist, title });
@@ -42,11 +66,19 @@ export function ChecklistBuilder({ checklist, onUpdate }: ChecklistBuilderProps)
     onUpdate({ ...checklist, sections: newSections });
   };
 
-  const handleSectionMove = (index: number, direction: 'up' | 'down') => {
-    const newSections = [...checklist.sections];
-    const targetIndex = direction === 'up' ? index - 1 : index + 1;
-    [newSections[index], newSections[targetIndex]] = [newSections[targetIndex], newSections[index]];
-    onUpdate({ ...checklist, sections: newSections });
+  const handleSectionDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event;
+    
+    if (over && active.id !== over.id) {
+      const oldIndex = checklist.sections.findIndex(s => s.id === active.id);
+      const newIndex = checklist.sections.findIndex(s => s.id === over.id);
+      
+      const newSections = [...checklist.sections];
+      const [removed] = newSections.splice(oldIndex, 1);
+      newSections.splice(newIndex, 0, removed);
+      
+      onUpdate({ ...checklist, sections: newSections });
+    }
   };
 
   const handleAddSection = () => {
@@ -201,19 +233,29 @@ export function ChecklistBuilder({ checklist, onUpdate }: ChecklistBuilderProps)
             <span className="text-sm font-medium">Description</span>
           </button>
 
-          {/* Sections */}
-          {checklist.sections.map((section, index) => (
-            <ChecklistSection
-              key={section.id}
-              section={section}
-              index={index}
-              onUpdate={(s) => handleSectionUpdate(index, s)}
-              onDelete={() => handleSectionDelete(index)}
-              onMove={(dir) => handleSectionMove(index, dir)}
-              isFirst={index === 0}
-              isLast={index === checklist.sections.length - 1}
-            />
-          ))}
+          {/* Sections with drag-and-drop */}
+          <DndContext
+            sensors={sensors}
+            collisionDetection={closestCenter}
+            onDragEnd={handleSectionDragEnd}
+          >
+            <SortableContext
+              items={checklist.sections.map(s => s.id)}
+              strategy={verticalListSortingStrategy}
+            >
+              {checklist.sections.map((section, index) => (
+                <SortableSection
+                  key={section.id}
+                  section={section}
+                  index={index}
+                  onUpdate={(s) => handleSectionUpdate(index, s)}
+                  onDelete={() => handleSectionDelete(index)}
+                  isFirst={index === 0}
+                  isLast={index === checklist.sections.length - 1}
+                />
+              ))}
+            </SortableContext>
+          </DndContext>
 
           {/* Add New Block */}
           <div className="relative mt-6">
