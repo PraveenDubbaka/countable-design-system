@@ -295,7 +295,7 @@ export function RichTextToolbar({ position, onFormatAction, onAIAssist }: RichTe
         title="AI Assist"
       >
         <Sparkles className="h-3.5 w-3.5" />
-        <span>Visualize this text</span>
+        <span>Enhance this text</span>
       </Button>
     </div>
   );
