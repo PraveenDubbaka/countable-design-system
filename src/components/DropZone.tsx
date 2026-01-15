@@ -279,7 +279,19 @@ export function DropZone({ onGenerate }: DropZoneProps) {
         />
         
         <CreationOption
-          icon={<LayoutTemplate className="h-10 w-10 text-white" />}
+          icon={
+            <svg className="h-10 w-10" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <defs>
+                <linearGradient id="templateIconGradient" x1="0" y1="0" x2="24" y2="24" gradientUnits="userSpaceOnUse">
+                  <stop stopColor="#3379C9"/>
+                  <stop offset="1" stopColor="#8A5BD9"/>
+                </linearGradient>
+              </defs>
+              <rect x="3" y="3" width="18" height="18" rx="2" stroke="url(#templateIconGradient)" strokeWidth="2"/>
+              <path d="M3 9H21" stroke="url(#templateIconGradient)" strokeWidth="2"/>
+              <path d="M9 21V9" stroke="url(#templateIconGradient)" strokeWidth="2"/>
+            </svg>
+          }
           iconBg="bg-gradient-to-r from-[#ECD4F6] to-[#CFE1FC]"
           title="Generate from template"
           description="Generate from existing templates"
