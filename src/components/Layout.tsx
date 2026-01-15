@@ -7,7 +7,7 @@ interface LayoutProps {
   showActions?: boolean;
 }
 
-export function Layout({ children, title, showActions = false }: LayoutProps) {
+export function Layout({ children, title = "LUKA Generator", showActions = false }: LayoutProps) {
   return (
     <div className="flex h-screen bg-sidebar">
       <Sidebar />
