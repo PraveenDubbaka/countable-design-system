@@ -230,7 +230,7 @@ export default function Generate() {
 
   return (
     <Layout title="Generate">
-      <div className="min-h-full bg-gradient-to-b from-sky-100 via-blue-50 to-sky-100">
+      <div className="min-h-full bg-gradient-to-r from-[#ECD4F6] to-[#CFE1FC]">
         <div className="max-w-4xl mx-auto px-4 py-8">
           {/* Back Button */}
           <button
