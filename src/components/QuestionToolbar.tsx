@@ -30,20 +30,30 @@ interface QuestionToolbarProps {
 
 const answerTypeLabels: Record<AnswerType, string> = {
   'yes-no': 'Yes / No',
-  'yes-no-na': 'Yes / No / N/A',
   'multiple-choice': 'Multiple Choice',
-  'short-answer': 'Short Answer',
+  'date': 'Date',
   'long-answer': 'Long Answer',
-  'dropdown': 'Dropdown'
+  'short-answer': 'Short Answer',
+  'reference': 'Reference Capability',
+  'amount': 'Amount',
+  'follow-up': 'Follow-up Question',
+  'dropdown': 'Dropdown',
+  'file-upload': 'File Upload',
+  'toggle': 'Switch/Toggle'
 };
 
 const answerTypeIcons: Record<AnswerType, React.ReactNode> = {
   'yes-no': <div className="w-3 h-3 rounded-full border-2 border-current" />,
-  'yes-no-na': <div className="w-3 h-3 rounded-full border-2 border-current" />,
   'multiple-choice': <div className="w-3 h-3 rounded border-2 border-current" />,
-  'short-answer': <Type className="h-3 w-3" />,
+  'date': <Type className="h-3 w-3" />,
   'long-answer': <AlignLeft className="h-3 w-3" />,
-  'dropdown': <AlignLeft className="h-3 w-3" />
+  'short-answer': <Type className="h-3 w-3" />,
+  'reference': <Type className="h-3 w-3" />,
+  'amount': <Type className="h-3 w-3" />,
+  'follow-up': <Plus className="h-3 w-3" />,
+  'dropdown': <AlignLeft className="h-3 w-3" />,
+  'file-upload': <Paperclip className="h-3 w-3" />,
+  'toggle': <div className="w-3 h-3 rounded-full border-2 border-current" />
 };
 
 export function QuestionToolbar({

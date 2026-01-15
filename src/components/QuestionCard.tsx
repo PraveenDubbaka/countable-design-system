@@ -81,11 +81,16 @@ export function QuestionCard({
 
   const answerTypeLabels: Record<AnswerType, string> = {
     'yes-no': 'Yes / No',
-    'yes-no-na': 'Yes / No / N/A',
     'multiple-choice': 'Multiple Choice',
-    'short-answer': 'Short Answer',
+    'date': 'Date',
     'long-answer': 'Long Answer',
-    'dropdown': 'Dropdown'
+    'short-answer': 'Short Answer',
+    'reference': 'Reference Capability',
+    'amount': 'Amount',
+    'follow-up': 'Follow-up Question',
+    'dropdown': 'Dropdown',
+    'file-upload': 'File Upload',
+    'toggle': 'Switch/Toggle'
   };
 
   const renderAnswerField = () => {
@@ -113,28 +118,6 @@ export function QuestionCard({
           </div>
         );
 
-      case 'yes-no-na':
-        return (
-          <div className="flex gap-8 mt-3">
-            {['Yes', 'No', 'Not applicable'].map((option) => (
-              <label key={option} className="flex items-center gap-2.5 cursor-pointer group">
-                <div 
-                  className={`w-4 h-4 rounded-full border-2 flex items-center justify-center transition-all ${
-                    question.answer === option 
-                      ? 'border-primary bg-primary' 
-                      : 'border-muted-foreground/50 group-hover:border-primary/50'
-                  }`}
-                  onClick={() => handleAnswerChange(option)}
-                >
-                  {question.answer === option && (
-                    <div className="w-1.5 h-1.5 rounded-full bg-primary-foreground" />
-                  )}
-                </div>
-                <span className="text-sm text-foreground">{option}</span>
-              </label>
-            ))}
-          </div>
-        );
 
       case 'short-answer':
         return (
@@ -265,7 +248,7 @@ export function QuestionCard({
                 {renderAnswerField()}
 
                 {/* Additional explanation for Yes/No types */}
-                {(question.answerType === 'yes-no' || question.answerType === 'yes-no-na') && (
+                {question.answerType === 'yes-no' && (
                   <div className="mt-4">
                     <p className="text-sm text-muted-foreground mb-2">Additional Explanation</p>
                     <div className="relative">
@@ -333,9 +316,9 @@ export function QuestionCard({
                               </div>
                             </div>
                           )}
-                          {(sub.answerType === 'yes-no' || sub.answerType === 'yes-no-na') && (
+                          {sub.answerType === 'yes-no' && (
                             <div className="flex gap-4 mt-1">
-                              {(sub.answerType === 'yes-no' ? ['Yes', 'No'] : ['Yes', 'No', 'N/A']).map((opt) => (
+                              {['Yes', 'No'].map((opt) => (
                                 <label key={opt} className="flex items-center gap-1.5 cursor-pointer text-xs">
                                   <div className="w-3 h-3 rounded-full border border-muted-foreground/50 hover:border-primary/50 transition-colors" />
                                   <span>{opt}</span>

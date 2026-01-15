@@ -89,10 +89,7 @@ export function InlineSubQuestion({
   const renderAnswerField = () => {
     switch (question.answerType) {
       case 'yes-no':
-      case 'yes-no-na':
-        const yesNoOptions = question.answerType === 'yes-no' 
-          ? ['Yes', 'No'] 
-          : ['Yes', 'No', 'N/A'];
+        const yesNoOptions = ['Yes', 'No'];
         return (
           <div className="flex flex-wrap gap-2 mt-2">
             {yesNoOptions.map((opt) => (
@@ -228,12 +225,17 @@ export function InlineSubQuestion({
               onChange={(e) => handleTypeChange(e.target.value as AnswerType)}
               className="text-xs bg-muted border-none rounded px-2 py-1 text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
             >
-              <option value="yes-no">Yes/No</option>
-              <option value="yes-no-na">Yes/No/N/A</option>
-              <option value="short-answer">Short Answer</option>
-              <option value="long-answer">Long Answer</option>
+              <option value="yes-no">Yes / No</option>
               <option value="multiple-choice">Multiple Choice</option>
+              <option value="date">Date</option>
+              <option value="long-answer">Long Answer</option>
+              <option value="short-answer">Short Answer</option>
+              <option value="reference">Reference Capability</option>
+              <option value="amount">Amount</option>
+              <option value="follow-up">Follow-up Question</option>
               <option value="dropdown">Dropdown</option>
+              <option value="file-upload">File Upload</option>
+              <option value="toggle">Switch/Toggle</option>
             </select>
           </div>
 
