@@ -136,15 +136,34 @@ export function SortableQuestionCard({
   };
 
   const handleOptionUpdate = (optIndex: number, value: string) => {
-    const newOptions = [...(question.options || [])];
+    const baseOptions = question.options || ['Option 1', 'Option 2', 'Option 3'];
+    const oldValue = baseOptions[optIndex];
+
+    const newOptions = [...baseOptions];
     newOptions[optIndex] = value;
-    onUpdate({ ...question, options: newOptions });
+
+    const next: Question = {
+      ...question,
+      options: newOptions,
+      // keep the selected value in sync when a label changes
+      answer: question.answer === oldValue ? value : question.answer,
+    };
+
+    onUpdate(next);
   };
 
   const handleOptionRemove = (optIndex: number) => {
-    const newOptions = (question.options || []).filter((_, i) => i !== optIndex);
+    const baseOptions = question.options || ['Option 1', 'Option 2', 'Option 3'];
+    const removedValue = baseOptions[optIndex];
+    const newOptions = baseOptions.filter((_, i) => i !== optIndex);
+
     if (newOptions.length > 0) {
-      onUpdate({ ...question, options: newOptions });
+      onUpdate({
+        ...question,
+        options: newOptions,
+        // if the selected option was removed, clear the answer
+        answer: question.answer === removedValue ? '' : question.answer,
+      });
     }
   };
 
