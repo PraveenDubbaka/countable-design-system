@@ -311,50 +311,6 @@ export function ChecklistBuilder({ checklist, onUpdate }: ChecklistBuilderProps)
             <Eye className="h-4 w-4" />
             Preview
           </Button>
-
-          
-          <div className="relative">
-            <Button 
-              variant="outline" 
-              size="sm" 
-              className="gap-2"
-              onClick={() => setShowExportMenu(!showExportMenu)}
-            >
-              <Download className="h-4 w-4" />
-              Export
-              <ChevronDown className="h-3 w-3" />
-            </Button>
-            
-            {showExportMenu && (
-              <div className="absolute top-full right-0 mt-1 bg-card border rounded-lg shadow-lg p-1 z-20 w-40 animate-scale-in">
-                <button
-                  onClick={() => {
-                    toast.success('Exporting to PDF...');
-                    setShowExportMenu(false);
-                  }}
-                  className="w-full flex items-center gap-2 px-3 py-2 text-sm rounded-md hover:bg-muted transition-colors"
-                >
-                  <FileDown className="h-4 w-4" />
-                  Export as PDF
-                </button>
-                <button
-                  onClick={() => {
-                    toast.success('Exporting to Word...');
-                    setShowExportMenu(false);
-                  }}
-                  className="w-full flex items-center gap-2 px-3 py-2 text-sm rounded-md hover:bg-muted transition-colors"
-                >
-                  <FileText className="h-4 w-4" />
-                  Export as Word
-                </button>
-              </div>
-            )}
-          </div>
-          
-          <Button variant="outline" size="sm" className="gap-2">
-            <Share2 className="h-4 w-4" />
-            Share
-          </Button>
         </div>
       </div>
 
