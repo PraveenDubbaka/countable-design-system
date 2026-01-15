@@ -228,7 +228,7 @@ export function DropZone({ onGenerate }: DropZoneProps) {
       {/* Header */}
       <div className="text-center mb-10">
         <h1 className="text-3xl font-bold text-foreground mb-2">
-          Create with AI
+          Create with LUKA
         </h1>
         <p className="text-muted-foreground text-lg">
           How would you like to get started?
