@@ -19,6 +19,7 @@ interface SortableInlineSubQuestionProps {
   onUpdate: (question: Question) => void;
   onDelete: () => void;
   showLetter?: boolean;
+  isPreviewMode?: boolean;
 }
 
 export function SortableInlineSubQuestion({
@@ -27,6 +28,7 @@ export function SortableInlineSubQuestion({
   onUpdate,
   onDelete,
   showLetter = true,
+  isPreviewMode = false,
 }: SortableInlineSubQuestionProps) {
   const [isEditingText, setIsEditingText] = useState(false);
   const [draftText, setDraftText] = useState(question.text);
@@ -209,14 +211,16 @@ export function SortableInlineSubQuestion({
       className={`bg-muted/30 rounded-lg p-3 group hover:bg-muted/50 transition-colors ${isDragging ? 'shadow-lg ring-2 ring-primary/20' : ''}`}
     >
       <div className="flex items-start gap-2">
-        {/* Drag handle */}
-        <button 
-          {...attributes}
-          {...listeners}
-          className="mt-1 opacity-0 group-hover:opacity-50 hover:!opacity-100 transition-opacity cursor-grab active:cursor-grabbing"
-        >
-          <GripVertical className="h-4 w-4 text-muted-foreground" />
-        </button>
+        {/* Drag handle - hidden in preview mode */}
+        {!isPreviewMode && (
+          <button 
+            {...attributes}
+            {...listeners}
+            className="mt-1 opacity-0 group-hover:opacity-50 hover:!opacity-100 transition-opacity cursor-grab active:cursor-grabbing"
+          >
+            <GripVertical className="h-4 w-4 text-muted-foreground" />
+          </button>
+        )}
 
         {/* Collapse toggle */}
         <button
@@ -237,7 +241,7 @@ export function SortableInlineSubQuestion({
               </span>
             )}
             
-            {isEditingText ? (
+            {isEditingText && !isPreviewMode ? (
               <Input
                 ref={inputRef}
                 value={draftText}
@@ -258,46 +262,50 @@ export function SortableInlineSubQuestion({
               />
             ) : (
               <span
-                className="text-sm text-foreground cursor-text hover:bg-muted px-1 py-0.5 -mx-1 rounded transition-colors flex-1"
-                onClick={() => setIsEditingText(true)}
+                className={`text-sm text-foreground px-1 py-0.5 -mx-1 rounded transition-colors flex-1 ${!isPreviewMode ? 'cursor-text hover:bg-muted' : ''}`}
+                onClick={() => !isPreviewMode && setIsEditingText(true)}
               >
                 {question.text}
               </span>
             )}
           </div>
 
-          {/* Answer type selector */}
-          <div className="flex items-center gap-1 mt-2">
-            <select
-              value={question.answerType}
-              onChange={(e) => handleTypeChange(e.target.value as AnswerType)}
-              className="text-xs bg-muted border-none rounded px-2 py-1 text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
-            >
-              <option value="yes-no">Yes / No</option>
-              <option value="multiple-choice">Multiple Choice</option>
-              <option value="date">Date</option>
-              <option value="long-answer">Long Answer</option>
-              <option value="short-answer">Short Answer</option>
-              <option value="reference">Reference Capability</option>
-              <option value="amount">Amount</option>
-              <option value="follow-up">Follow-up Question</option>
-              <option value="dropdown">Dropdown</option>
-              <option value="file-upload">File Upload</option>
-              <option value="toggle">Switch/Toggle</option>
-            </select>
-          </div>
+          {/* Answer type selector - hidden in preview mode */}
+          {!isPreviewMode && (
+            <div className="flex items-center gap-1 mt-2">
+              <select
+                value={question.answerType}
+                onChange={(e) => handleTypeChange(e.target.value as AnswerType)}
+                className="text-xs bg-muted border-none rounded px-2 py-1 text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
+              >
+                <option value="yes-no">Yes / No</option>
+                <option value="multiple-choice">Multiple Choice</option>
+                <option value="date">Date</option>
+                <option value="long-answer">Long Answer</option>
+                <option value="short-answer">Short Answer</option>
+                <option value="reference">Reference Capability</option>
+                <option value="amount">Amount</option>
+                <option value="follow-up">Follow-up Question</option>
+                <option value="dropdown">Dropdown</option>
+                <option value="file-upload">File Upload</option>
+                <option value="toggle">Switch/Toggle</option>
+              </select>
+            </div>
+          )}
 
           {/* Collapsible answer field */}
           {isExpanded && renderAnswerField()}
         </div>
 
-        {/* Delete button */}
-        <button
-          onClick={onDelete}
-          className="opacity-0 group-hover:opacity-50 hover:!opacity-100 p-1 rounded hover:bg-destructive/10 hover:text-destructive transition-all"
-        >
-          <Trash2 className="h-3.5 w-3.5" />
-        </button>
+        {/* Delete button - hidden in preview mode */}
+        {!isPreviewMode && (
+          <button
+            onClick={onDelete}
+            className="opacity-0 group-hover:opacity-50 hover:!opacity-100 p-1 rounded hover:bg-destructive/10 hover:text-destructive transition-all"
+          >
+            <Trash2 className="h-3.5 w-3.5" />
+          </button>
+        )}
       </div>
     </div>
   );

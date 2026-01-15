@@ -49,6 +49,7 @@ interface SortableQuestionCardProps {
   onDelete: () => void;
   onAddSubQuestion: () => void;
   onDuplicate?: () => void;
+  isPreviewMode?: boolean;
 }
 
 export function SortableQuestionCard({
@@ -59,6 +60,7 @@ export function SortableQuestionCard({
   onDelete,
   onAddSubQuestion,
   onDuplicate,
+  isPreviewMode = false,
 }: SortableQuestionCardProps) {
   const [showAIMenu, setShowAIMenu] = useState(false);
   const [isEditingQuestion, setIsEditingQuestion] = useState(false);
@@ -566,11 +568,11 @@ export function SortableQuestionCard({
         style={style}
         className={`question-card p-5 mb-3 animate-slide-up group/card relative ${
           isDragging ? 'shadow-xl ring-2 ring-primary/20' : ''
-        } ${isFocused ? 'ring-2 ring-primary/30' : ''}`}
-        onClick={() => setIsFocused(true)}
+        } ${isFocused && !isPreviewMode ? 'ring-2 ring-primary/30' : ''}`}
+        onClick={() => !isPreviewMode && setIsFocused(true)}
       >
-        {/* Floating Toolbar - appears when focused */}
-        {isFocused && (
+        {/* Floating Toolbar - appears when focused, hidden in preview mode */}
+        {isFocused && !isPreviewMode && (
           <div ref={toolbarRef} className="absolute -top-12 left-1/2 -translate-x-1/2 z-30">
             <QuestionToolbar
               currentType={question.answerType}
@@ -586,15 +588,17 @@ export function SortableQuestionCard({
         )}
 
         <div className="flex gap-3">
-          {/* Drag Handle - appears on hover */}
-          <div
-            {...attributes}
-            {...listeners}
-            className="flex items-center justify-center w-6 h-6 rounded cursor-grab active:cursor-grabbing opacity-0 group-hover/card:opacity-100 hover:bg-muted transition-all mt-0.5 shrink-0"
-            title="Drag to reorder"
-          >
-            <GripVertical className="h-4 w-4 text-muted-foreground" />
-          </div>
+          {/* Drag Handle - appears on hover, hidden in preview mode */}
+          {!isPreviewMode && (
+            <div
+              {...attributes}
+              {...listeners}
+              className="flex items-center justify-center w-6 h-6 rounded cursor-grab active:cursor-grabbing opacity-0 group-hover/card:opacity-100 hover:bg-muted transition-all mt-0.5 shrink-0"
+              title="Drag to reorder"
+            >
+              <GripVertical className="h-4 w-4 text-muted-foreground" />
+            </div>
+          )}
 
           {/* Collapse Toggle */}
           <button
@@ -612,8 +616,8 @@ export function SortableQuestionCard({
 
           {/* Content */}
           <div className="flex-1 min-w-0">
-            {/* Question text - inline editable with rich text */}
-            {isEditingQuestion ? (
+            {/* Question text - inline editable with rich text (read-only in preview) */}
+            {isEditingQuestion && !isPreviewMode ? (
               <RichTextQuestionEditor
                 value={draftQuestionText}
                 onChange={handleQuestionChange}
@@ -626,23 +630,27 @@ export function SortableQuestionCard({
               />
             ) : (
               <div 
-                className="question-content text-foreground font-medium cursor-text hover:bg-muted/50 px-2 py-1 -mx-2 -my-1 rounded transition-colors"
+                className={`question-content text-foreground font-medium px-2 py-1 -mx-2 -my-1 rounded transition-colors ${!isPreviewMode ? 'cursor-text hover:bg-muted/50' : ''}`}
                 onClick={(e) => {
-                  e.stopPropagation();
-                  setIsEditingQuestion(true);
+                  if (!isPreviewMode) {
+                    e.stopPropagation();
+                    setIsEditingQuestion(true);
+                  }
                 }}
                 dangerouslySetInnerHTML={{ __html: question.text }}
               />
             )}
 
-            {/* Sub-question button - between question and answer */}
-            <button
-              onClick={handleAddInlineSubQuestion}
-              className="mt-3 flex items-center gap-2 px-3 py-1.5 text-sm text-muted-foreground hover:text-primary hover:bg-muted/50 rounded-md transition-colors border border-dashed border-muted hover:border-primary"
-            >
-              <Plus className="h-4 w-4" />
-              Sub-question
-            </button>
+            {/* Sub-question button - between question and answer (hidden in preview mode) */}
+            {!isPreviewMode && (
+              <button
+                onClick={handleAddInlineSubQuestion}
+                className="mt-3 flex items-center gap-2 px-3 py-1.5 text-sm text-muted-foreground hover:text-primary hover:bg-muted/50 rounded-md transition-colors border border-dashed border-muted hover:border-primary"
+              >
+                <Plus className="h-4 w-4" />
+                Sub-question
+              </button>
+            )}
 
             {/* Sub-questions (nested blocks - between question and answer) */}
             {question.subQuestions && question.subQuestions.length > 0 && (
@@ -663,6 +671,7 @@ export function SortableQuestionCard({
                         index={i}
                         onUpdate={(updated) => handleSubQuestionUpdate(i, updated)}
                         onDelete={() => handleSubQuestionDelete(i)}
+                        isPreviewMode={isPreviewMode}
                       />
                     ))}
                   </div>
@@ -753,20 +762,22 @@ export function SortableQuestionCard({
                 </div>
               )}
 
-              {/* Action buttons for adding explanation only (Ref is added via toolbar) */}
-              <div className="mt-4 flex items-center gap-2">
-                {!hasExplanation && (
-                  <Button 
-                    variant="outline" 
-                    size="sm" 
-                    className="text-muted-foreground hover:text-white hover:border-[#1C63A6] hover:bg-[#1C63A6] transition-colors"
-                    onClick={handleAddExplanation}
-                  >
-                    <Plus className="h-3.5 w-3.5 mr-1.5" />
-                    Explanation
-                  </Button>
-                )}
-              </div>
+              {/* Action buttons for adding explanation only (hidden in preview mode) */}
+              {!isPreviewMode && (
+                <div className="mt-4 flex items-center gap-2">
+                  {!hasExplanation && (
+                    <Button 
+                      variant="outline" 
+                      size="sm" 
+                      className="text-muted-foreground hover:text-white hover:border-[#1C63A6] hover:bg-[#1C63A6] transition-colors"
+                      onClick={handleAddExplanation}
+                    >
+                      <Plus className="h-3.5 w-3.5 mr-1.5" />
+                      Explanation
+                    </Button>
+                  )}
+                </div>
+              )}
 
             </div>
           </div>

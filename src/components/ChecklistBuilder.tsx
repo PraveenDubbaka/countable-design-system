@@ -29,7 +29,8 @@ import {
   Wand2,
   ChevronDown,
   FileDown,
-  Save
+  Save,
+  Pencil
 } from 'lucide-react';
 import { Checklist, Section, Question } from '@/types/checklist';
 import { SortableSection } from './SortableSection';
@@ -55,6 +56,7 @@ export function ChecklistBuilder({ checklist, onUpdate, onSave }: ChecklistBuild
   const [isEditingObjective, setIsEditingObjective] = useState(false);
   const [objectiveDraft, setObjectiveDraft] = useState(checklist.objective || '');
   const [activeQuestion, setActiveQuestion] = useState<Question | null>(null);
+  const [isPreviewMode, setIsPreviewMode] = useState(false);
   const objectiveTextareaRef = useRef<HTMLTextAreaElement>(null);
   const { toolbarState, showToolbar, hideToolbar, handleFormatAction, toolbarRef } = useRichTextToolbarContext();
 
@@ -289,7 +291,11 @@ export function ChecklistBuilder({ checklist, onUpdate, onSave }: ChecklistBuild
       {/* Top Toolbar */}
       <div className="border-b bg-card px-6 py-3 flex items-center justify-between">
         <div className="flex items-center gap-4">
-          {isEditingTitle ? (
+          {isPreviewMode ? (
+            <h1 className="text-lg font-semibold px-2 py-1">
+              {checklist.title}
+            </h1>
+          ) : isEditingTitle ? (
             <Input
               value={checklist.title}
               onChange={(e) => handleTitleChange(e.target.value)}
@@ -309,18 +315,34 @@ export function ChecklistBuilder({ checklist, onUpdate, onSave }: ChecklistBuild
         </div>
         
         <div className="flex items-center gap-2">
+          {!isPreviewMode && (
+            <Button 
+              variant="outline" 
+              size="sm" 
+              className="gap-2 hover:bg-[#1C63A6] hover:text-white hover:border-[#1C63A6] transition-colors"
+              onClick={onSave}
+            >
+              <Save className="h-4 w-4" />
+              Save
+            </Button>
+          )}
           <Button 
             variant="outline" 
             size="sm" 
             className="gap-2 hover:bg-[#1C63A6] hover:text-white hover:border-[#1C63A6] transition-colors"
-            onClick={onSave}
+            onClick={() => setIsPreviewMode(!isPreviewMode)}
           >
-            <Save className="h-4 w-4" />
-            Save
-          </Button>
-          <Button variant="outline" size="sm" className="gap-2 hover:bg-[#1C63A6] hover:text-white hover:border-[#1C63A6] transition-colors">
-            <Eye className="h-4 w-4" />
-            Preview
+            {isPreviewMode ? (
+              <>
+                <Pencil className="h-4 w-4" />
+                Edit
+              </>
+            ) : (
+              <>
+                <Eye className="h-4 w-4" />
+                Preview
+              </>
+            )}
           </Button>
         </div>
       </div>
@@ -340,7 +362,7 @@ export function ChecklistBuilder({ checklist, onUpdate, onSave }: ChecklistBuild
             
             {objectiveExpanded && (
               <div className="bg-card border border-t-0 rounded-b-lg p-4">
-                {isEditingObjective ? (
+                {isEditingObjective && !isPreviewMode ? (
                   <div className="space-y-3">
                     <textarea
                       ref={objectiveTextareaRef}
@@ -391,21 +413,25 @@ export function ChecklistBuilder({ checklist, onUpdate, onSave }: ChecklistBuild
                   </div>
                 ) : (
                   <div 
-                    onClick={() => setIsEditingObjective(true)}
-                    className="cursor-pointer hover:bg-muted/50 rounded-lg p-3 -m-3 transition-colors group"
+                    onClick={() => !isPreviewMode && setIsEditingObjective(true)}
+                    className={`rounded-lg p-3 -m-3 transition-colors ${!isPreviewMode ? 'cursor-pointer hover:bg-muted/50 group' : ''}`}
                   >
                     {checklist.objective ? (
                       <p className="text-sm text-foreground whitespace-pre-wrap leading-relaxed">
                         {checklist.objective}
                       </p>
                     ) : (
-                      <p className="text-sm text-muted-foreground italic">
-                        Click to add objective...
+                      !isPreviewMode && (
+                        <p className="text-sm text-muted-foreground italic">
+                          Click to add objective...
+                        </p>
+                      )
+                    )}
+                    {!isPreviewMode && (
+                      <p className="text-xs text-muted-foreground mt-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                        Click to edit
                       </p>
                     )}
-                    <p className="text-xs text-muted-foreground mt-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                      Click to edit
-                    </p>
                   </div>
                 )}
               </div>
@@ -433,82 +459,87 @@ export function ChecklistBuilder({ checklist, onUpdate, onSave }: ChecklistBuild
                   isFirst={index === 0}
                   isLast={index === checklist.sections.length - 1}
                   disableQuestionDnd={true}
+                  isPreviewMode={isPreviewMode}
                 />
               ))}
             </SortableContext>
           </DndContext>
 
-          {/* Add New Block */}
-          <div className="relative mt-6">
-            <Button
-              variant="outline"
-              onClick={() => setShowAddMenu(!showAddMenu)}
-              className="w-full border-dashed py-8 text-muted-foreground hover:text-white hover:border-[#1C63A6] hover:bg-[#1C63A6] group transition-colors"
-            >
-              <Plus className="h-5 w-5 mr-2 group-hover:scale-110 transition-transform" />
-              Add New Category
-            </Button>
+          {/* Add New Block - Hidden in preview mode */}
+          {!isPreviewMode && (
+            <div className="relative mt-6">
+              <Button
+                variant="outline"
+                onClick={() => setShowAddMenu(!showAddMenu)}
+                className="w-full border-dashed py-8 text-muted-foreground hover:text-white hover:border-[#1C63A6] hover:bg-[#1C63A6] group transition-colors"
+              >
+                <Plus className="h-5 w-5 mr-2 group-hover:scale-110 transition-transform" />
+                Add New Category
+              </Button>
 
-            {showAddMenu && (
-              <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 bg-card border rounded-xl shadow-xl p-2 z-20 w-64 animate-scale-in">
-                <button
-                  onClick={handleAddSection}
-                  className="w-full flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-muted transition-colors"
-                >
-                  <div className="w-8 h-8 rounded-lg bg-secondary flex items-center justify-center">
-                    <Plus className="h-4 w-4 text-foreground" />
-                  </div>
-                  <div className="text-left">
-                    <p className="text-sm font-medium text-foreground">Empty Section</p>
-                    <p className="text-xs text-muted-foreground">Start from scratch</p>
-                  </div>
-                </button>
+              {showAddMenu && (
+                <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 bg-card border rounded-xl shadow-xl p-2 z-20 w-64 animate-scale-in">
+                  <button
+                    onClick={handleAddSection}
+                    className="w-full flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-muted transition-colors"
+                  >
+                    <div className="w-8 h-8 rounded-lg bg-secondary flex items-center justify-center">
+                      <Plus className="h-4 w-4 text-foreground" />
+                    </div>
+                    <div className="text-left">
+                      <p className="text-sm font-medium text-foreground">Empty Section</p>
+                      <p className="text-xs text-muted-foreground">Start from scratch</p>
+                    </div>
+                  </button>
 
-                <button
-                  onClick={handleAddFromTemplate}
-                  className="w-full flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-muted transition-colors"
-                >
-                  <div className="w-8 h-8 rounded-lg bg-secondary flex items-center justify-center">
-                    <FileText className="h-4 w-4 text-foreground" />
-                  </div>
-                  <div className="text-left">
-                    <p className="text-sm font-medium text-foreground">From Template</p>
-                    <p className="text-xs text-muted-foreground">Use existing template</p>
-                  </div>
-                </button>
+                  <button
+                    onClick={handleAddFromTemplate}
+                    className="w-full flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-muted transition-colors"
+                  >
+                    <div className="w-8 h-8 rounded-lg bg-secondary flex items-center justify-center">
+                      <FileText className="h-4 w-4 text-foreground" />
+                    </div>
+                    <div className="text-left">
+                      <p className="text-sm font-medium text-foreground">From Template</p>
+                      <p className="text-xs text-muted-foreground">Use existing template</p>
+                    </div>
+                  </button>
 
-                <button
-                  onClick={handleAddWithAI}
-                  className="w-full flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-muted transition-colors"
-                >
-                  <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center">
-                    <Wand2 className="h-4 w-4 text-primary-foreground" />
-                  </div>
-                  <div className="text-left">
-                    <p className="text-sm font-medium text-foreground">Generate with AI</p>
-                    <p className="text-xs text-muted-foreground">AI-powered generation</p>
-                  </div>
-                </button>
-              </div>
-            )}
-          </div>
+                  <button
+                    onClick={handleAddWithAI}
+                    className="w-full flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-muted transition-colors"
+                  >
+                    <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center">
+                      <Wand2 className="h-4 w-4 text-primary-foreground" />
+                    </div>
+                    <div className="text-left">
+                      <p className="text-sm font-medium text-foreground">Generate with AI</p>
+                      <p className="text-xs text-muted-foreground">AI-powered generation</p>
+                    </div>
+                  </button>
+                </div>
+              )}
+            </div>
+          )}
         </div>
       </div>
 
-      {/* Floating Action Bar */}
-      <FloatingActionBar
-        checklist={checklist}
-        onUpdate={onUpdate}
-        onCollapseSections={handleCollapseSections}
-        onExpandSections={handleExpandSections}
-        onCollapseQuestions={handleCollapseQuestions}
-        onExpandQuestions={handleExpandQuestions}
-        allSectionsCollapsed={allSectionsCollapsed}
-        allQuestionsCollapsed={allQuestionsCollapsed}
-      />
+      {/* Floating Action Bar - Hidden in preview mode */}
+      {!isPreviewMode && (
+        <FloatingActionBar
+          checklist={checklist}
+          onUpdate={onUpdate}
+          onCollapseSections={handleCollapseSections}
+          onExpandSections={handleExpandSections}
+          onCollapseQuestions={handleCollapseQuestions}
+          onExpandQuestions={handleExpandQuestions}
+          allSectionsCollapsed={allSectionsCollapsed}
+          allQuestionsCollapsed={allQuestionsCollapsed}
+        />
+      )}
 
-      {/* Rich Text Toolbar */}
-      {toolbarState.isVisible && (
+      {/* Rich Text Toolbar - Hidden in preview mode */}
+      {!isPreviewMode && toolbarState.isVisible && (
         <RichTextToolbar
           position={toolbarState.position}
           onFormatAction={handleFormatAction}
