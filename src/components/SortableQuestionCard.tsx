@@ -1,4 +1,19 @@
 import { useSortable } from '@dnd-kit/sortable';
+import { 
+  DndContext, 
+  closestCenter, 
+  KeyboardSensor, 
+  PointerSensor, 
+  useSensor, 
+  useSensors,
+  DragEndEvent 
+} from '@dnd-kit/core';
+import { 
+  SortableContext, 
+  sortableKeyboardCoordinates, 
+  verticalListSortingStrategy,
+  arrayMove 
+} from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { useState, useRef, useEffect } from 'react';
 import { 
@@ -16,7 +31,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { AIEditMenu } from './AIEditMenu';
 import { QuestionToolbar } from './QuestionToolbar';
 import { EditableOption } from './EditableOption';
-import { InlineSubQuestion } from './InlineSubQuestion';
+import { SortableInlineSubQuestion } from './SortableInlineSubQuestion';
 
 interface SortableQuestionCardProps {
   question: Question;
@@ -181,6 +196,25 @@ export function SortableQuestionCard({
   const handleSubQuestionDelete = (subIndex: number) => {
     const newSubQuestions = (question.subQuestions || []).filter((_, i) => i !== subIndex);
     onUpdate({ ...question, subQuestions: newSubQuestions });
+  };
+
+  const subQuestionSensors = useSensors(
+    useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),
+    useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
+  );
+
+  const handleSubQuestionDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event;
+    if (!over || active.id === over.id) return;
+
+    const subQuestions = question.subQuestions || [];
+    const oldIndex = subQuestions.findIndex((q) => q.id === active.id);
+    const newIndex = subQuestions.findIndex((q) => q.id === over.id);
+
+    if (oldIndex !== -1 && newIndex !== -1) {
+      const reordered = arrayMove(subQuestions, oldIndex, newIndex);
+      onUpdate({ ...question, subQuestions: reordered });
+    }
   };
 
   const handleAddInlineSubQuestion = () => {
@@ -433,17 +467,28 @@ export function SortableQuestionCard({
 
             {/* Sub-questions (nested blocks - between question and answer) */}
             {question.subQuestions && question.subQuestions.length > 0 && (
-              <div className="mt-3 ml-4 border-l-2 border-muted pl-4 space-y-3">
-                {question.subQuestions.map((sub, i) => (
-                  <InlineSubQuestion
-                    key={sub.id}
-                    question={sub}
-                    index={i}
-                    onUpdate={(updated) => handleSubQuestionUpdate(i, updated)}
-                    onDelete={() => handleSubQuestionDelete(i)}
-                  />
-                ))}
-              </div>
+              <DndContext
+                sensors={subQuestionSensors}
+                collisionDetection={closestCenter}
+                onDragEnd={handleSubQuestionDragEnd}
+              >
+                <SortableContext
+                  items={question.subQuestions.map((sq) => sq.id)}
+                  strategy={verticalListSortingStrategy}
+                >
+                  <div className="mt-3 ml-4 border-l-2 border-muted pl-4 space-y-3">
+                    {question.subQuestions.map((sub, i) => (
+                      <SortableInlineSubQuestion
+                        key={sub.id}
+                        question={sub}
+                        index={i}
+                        onUpdate={(updated) => handleSubQuestionUpdate(i, updated)}
+                        onDelete={() => handleSubQuestionDelete(i)}
+                      />
+                    ))}
+                  </div>
+                </SortableContext>
+              </DndContext>
             )}
 
             {/* Collapsible answer section */}
