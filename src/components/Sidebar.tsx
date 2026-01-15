@@ -56,8 +56,9 @@ const GlassesIcon = () => (
 
 const ChatIcon = () => (
   <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-    {/* Chat bubble icon */}
-    <path d="M4 4h12a1 1 0 011 1v8a1 1 0 01-1 1H8l-4 3v-3a1 1 0 01-1-1V5a1 1 0 011-1z" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round"/>
+    {/* Chat bubble icon with tail on right */}
+    <path d="M3 4h11a2 2 0 012 2v6a2 2 0 01-2 2H8l-3 3v-3H3a2 2 0 01-2-2V6a2 2 0 012-2z" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round"/>
+    <path d="M6 8h6M6 11h4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
   </svg>
 );
 
