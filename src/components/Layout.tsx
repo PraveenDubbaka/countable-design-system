@@ -7,20 +7,20 @@ interface LayoutProps {
   showActions?: boolean;
 }
 
-export function Layout({ children, title = "Countable AI Checklist Generator", showActions = false }: LayoutProps) {
+export function Layout({ children, title, showActions = false }: LayoutProps) {
   return (
     <div className="flex h-screen bg-sidebar">
       <Sidebar />
       
       <div className="flex-1 flex flex-col overflow-hidden">
         {/* Curved corner container for header and main content */}
-        <div className="flex-1 flex flex-col overflow-hidden bg-background rounded-tl-[20px]">
+        <div className="flex-1 flex flex-col overflow-hidden bg-card rounded-tl-[24px]">
           <Header 
             title={title} 
             showActions={showActions}
           />
           
-          <main className="flex-1 overflow-auto">
+          <main className="flex-1 overflow-auto bg-background">
             {children}
           </main>
         </div>
