@@ -202,7 +202,7 @@ export function SortableSection({
 
       {/* Questions - now using parent's DndContext for cross-section drag */}
       {section.isExpanded && (
-        <div className="pl-10">
+        <div className="w-full">
           <SortableContext
             items={section.questions.map(q => q.id)}
             strategy={verticalListSortingStrategy}
