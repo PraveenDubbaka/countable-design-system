@@ -445,7 +445,7 @@ export function ChecklistBuilder({ checklist, onUpdate }: ChecklistBuilderProps)
             <Button
               variant="outline"
               onClick={() => setShowAddMenu(!showAddMenu)}
-              className="w-full border-dashed py-8 text-muted-foreground hover:text-primary hover:border-primary group"
+              className="w-full border-dashed py-8 text-muted-foreground hover:text-white hover:border-[#1C63A6] hover:bg-[#1C63A6] group transition-colors"
             >
               <Plus className="h-5 w-5 mr-2 group-hover:scale-110 transition-transform" />
               Add New Category
