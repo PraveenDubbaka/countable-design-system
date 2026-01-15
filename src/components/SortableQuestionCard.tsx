@@ -431,6 +431,21 @@ export function SortableQuestionCard({
               Sub-question
             </button>
 
+            {/* Sub-questions (nested blocks - between question and answer) */}
+            {question.subQuestions && question.subQuestions.length > 0 && (
+              <div className="mt-3 ml-4 border-l-2 border-muted pl-4 space-y-3">
+                {question.subQuestions.map((sub, i) => (
+                  <InlineSubQuestion
+                    key={sub.id}
+                    question={sub}
+                    index={i}
+                    onUpdate={(updated) => handleSubQuestionUpdate(i, updated)}
+                    onDelete={() => handleSubQuestionDelete(i)}
+                  />
+                ))}
+              </div>
+            )}
+
             {/* Collapsible answer section */}
             <div className={`overflow-hidden transition-all duration-200 ${isExpanded ? 'max-h-[3000px] opacity-100 mt-3' : 'max-h-0 opacity-0'}`}>
               {/* Answer field */}
@@ -488,21 +503,6 @@ export function SortableQuestionCard({
                 <Plus className="h-3.5 w-3.5 mr-1.5" />
                 Ref
               </Button>
-
-              {/* Sub-questions (nested blocks with full inline editing) */}
-              {question.subQuestions && question.subQuestions.length > 0 && (
-                <div className="mt-5 ml-4 border-l-2 border-muted pl-4 space-y-3">
-                  {question.subQuestions.map((sub, i) => (
-                    <InlineSubQuestion
-                      key={sub.id}
-                      question={sub}
-                      index={i}
-                      onUpdate={(updated) => handleSubQuestionUpdate(i, updated)}
-                      onDelete={() => handleSubQuestionDelete(i)}
-                    />
-                  ))}
-                </div>
-              )}
 
             </div>
           </div>
