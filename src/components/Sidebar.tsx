@@ -44,27 +44,29 @@ const AnalyticsIcon = () => (
   </svg>
 );
 
-const BuildingIcon = () => (
+const GlassesIcon = () => (
   <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-    {/* Building/office grid icon */}
-    <rect x="3" y="3" width="14" height="14" rx="1" stroke="currentColor" strokeWidth="1.5"/>
-    <path d="M3 7h14M3 11h14M3 15h14M7 3v14M11 3v14" stroke="currentColor" strokeWidth="1.5"/>
+    {/* Glasses/spectacles icon */}
+    <circle cx="5.5" cy="11" r="3.5" stroke="currentColor" strokeWidth="1.5"/>
+    <circle cx="14.5" cy="11" r="3.5" stroke="currentColor" strokeWidth="1.5"/>
+    <path d="M9 11h2" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+    <path d="M2 11V9M18 11V9" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
   </svg>
 );
 
-const ContactIcon = () => (
+const ChatIcon = () => (
   <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-    {/* Person with inbox */}
-    <circle cx="10" cy="6" r="3" stroke="currentColor" strokeWidth="1.5"/>
-    <path d="M4 17c0-3 2.5-5 6-5s6 2 6 5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+    {/* Chat bubble icon */}
+    <path d="M4 4h12a1 1 0 011 1v8a1 1 0 01-1 1H8l-4 3v-3a1 1 0 01-1-1V5a1 1 0 011-1z" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round"/>
   </svg>
 );
 
-const InboxIcon = () => (
+const BriefcaseIcon = () => (
   <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-    {/* Inbox/tray icon */}
-    <path d="M3 10l2-6h10l2 6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-    <path d="M3 10v5a1 1 0 001 1h12a1 1 0 001-1v-5H13l-1 2H8l-1-2H3z" stroke="currentColor" strokeWidth="1.5"/>
+    {/* Briefcase/bag icon */}
+    <rect x="2" y="6" width="16" height="11" rx="1.5" stroke="currentColor" strokeWidth="1.5"/>
+    <path d="M6 6V4a2 2 0 012-2h4a2 2 0 012 2v2" stroke="currentColor" strokeWidth="1.5"/>
+    <path d="M2 10h16" stroke="currentColor" strokeWidth="1.5"/>
   </svg>
 );
 
@@ -78,9 +80,9 @@ const FileIcon = () => (
 
 const navItems = [
   { icon: AnalyticsIcon, label: 'Analytics', active: true },
-  { icon: BuildingIcon, label: 'Organization' },
-  { icon: ContactIcon, label: 'Contacts' },
-  { icon: InboxIcon, label: 'Inbox' },
+  { icon: GlassesIcon, label: 'Review' },
+  { icon: ChatIcon, label: 'Messages' },
+  { icon: BriefcaseIcon, label: 'Engagements' },
   { icon: FileIcon, label: 'Templates' },
 ];
 
