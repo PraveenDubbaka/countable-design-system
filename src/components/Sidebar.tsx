@@ -79,11 +79,11 @@ const FileIcon = () => (
 );
 
 const navItems = [
-  { icon: AnalyticsIcon, label: 'Analytics', active: true },
+  { icon: AnalyticsIcon, label: 'Analytics' },
   { icon: GlassesIcon, label: 'Review' },
   { icon: ChatIcon, label: 'Messages' },
   { icon: BriefcaseIcon, label: 'Engagements' },
-  { icon: FileIcon, label: 'Templates' },
+  { icon: FileIcon, label: 'Templates', active: true },
 ];
 
 // Luka Logo Component
