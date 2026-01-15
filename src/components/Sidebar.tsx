@@ -35,55 +35,53 @@ const initialTemplates: Template[] = [
 ];
 
 // Icon components matching the screenshot
-const DashboardIcon = () => (
+const AnalyticsIcon = () => (
   <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <rect x="3" y="3" width="6" height="6" rx="1" stroke="currentColor" strokeWidth="1.5"/>
-    <rect x="11" y="3" width="6" height="6" rx="1" stroke="currentColor" strokeWidth="1.5"/>
-    <rect x="3" y="11" width="6" height="6" rx="1" stroke="currentColor" strokeWidth="1.5"/>
-    <rect x="11" y="11" width="6" height="6" rx="1" stroke="currentColor" strokeWidth="1.5"/>
+    {/* Bar chart icon */}
+    <rect x="3" y="10" width="3" height="7" rx="0.5" fill="currentColor"/>
+    <rect x="8.5" y="6" width="3" height="11" rx="0.5" fill="currentColor"/>
+    <rect x="14" y="3" width="3" height="14" rx="0.5" fill="currentColor"/>
   </svg>
 );
 
-const UsersIcon = () => (
+const BuildingIcon = () => (
   <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <circle cx="7" cy="6" r="2.5" stroke="currentColor" strokeWidth="1.5"/>
-    <path d="M2 16c0-2.5 2-4.5 5-4.5s5 2 5 4.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
-    <circle cx="14" cy="6" r="2" stroke="currentColor" strokeWidth="1.5"/>
-    <path d="M14 11.5c2 0 4 1.5 4 3.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+    {/* Building/office grid icon */}
+    <rect x="3" y="3" width="14" height="14" rx="1" stroke="currentColor" strokeWidth="1.5"/>
+    <path d="M3 7h14M3 11h14M3 15h14M7 3v14M11 3v14" stroke="currentColor" strokeWidth="1.5"/>
   </svg>
 );
 
-const DocumentIcon = () => (
+const ContactIcon = () => (
   <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <path d="M5 3h7l4 4v10a1 1 0 01-1 1H5a1 1 0 01-1-1V4a1 1 0 011-1z" stroke="currentColor" strokeWidth="1.5"/>
-    <path d="M12 3v4h4" stroke="currentColor" strokeWidth="1.5"/>
-    <path d="M7 10h6M7 13h4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+    {/* Person with inbox */}
+    <circle cx="10" cy="6" r="3" stroke="currentColor" strokeWidth="1.5"/>
+    <path d="M4 17c0-3 2.5-5 6-5s6 2 6 5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
   </svg>
 );
 
-const ChatIcon = () => (
+const InboxIcon = () => (
   <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <path d="M4 4h12a1 1 0 011 1v8a1 1 0 01-1 1h-3l-3 3-3-3H4a1 1 0 01-1-1V5a1 1 0 011-1z" stroke="currentColor" strokeWidth="1.5"/>
+    {/* Inbox/tray icon */}
+    <path d="M3 10l2-6h10l2 6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+    <path d="M3 10v5a1 1 0 001 1h12a1 1 0 001-1v-5H13l-1 2H8l-1-2H3z" stroke="currentColor" strokeWidth="1.5"/>
   </svg>
 );
 
-const TemplatesIcon = () => (
+const FileIcon = () => (
   <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-    {/* Back page */}
-    <rect x="5" y="2" width="12" height="14" rx="1.5" stroke="currentColor" strokeWidth="1.5"/>
-    {/* Front page */}
-    <rect x="3" y="4" width="12" height="14" rx="1.5" fill="hsl(var(--sidebar-bg))" stroke="currentColor" strokeWidth="1.5"/>
-    {/* Lines on front page */}
-    <path d="M6 8h6M6 11h4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+    {/* Document/file icon */}
+    <path d="M5 2h7l4 4v11a1 1 0 01-1 1H5a1 1 0 01-1-1V3a1 1 0 011-1z" stroke="currentColor" strokeWidth="1.5"/>
+    <path d="M12 2v4h4" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round"/>
   </svg>
 );
 
 const navItems = [
-  { icon: DashboardIcon, label: 'Dashboard' },
-  { icon: UsersIcon, label: 'Clients' },
-  { icon: DocumentIcon, label: 'Documents' },
-  { icon: ChatIcon, label: 'Messages' },
-  { icon: TemplatesIcon, label: 'Templates', active: true },
+  { icon: AnalyticsIcon, label: 'Analytics', active: true },
+  { icon: BuildingIcon, label: 'Organization' },
+  { icon: ContactIcon, label: 'Contacts' },
+  { icon: InboxIcon, label: 'Inbox' },
+  { icon: FileIcon, label: 'Templates' },
 ];
 
 // Luka Logo Component
