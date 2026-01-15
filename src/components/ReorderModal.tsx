@@ -74,20 +74,29 @@ export function ReorderModal({ isOpen, onClose, checklist, onUpdate }: ReorderMo
   const moveSelectedUp = () => {
     if (selectedItems.size === 0) return;
     
-    const newSections = [...localSections];
+    const newSections = JSON.parse(JSON.stringify(localSections)) as Section[];
     
-    // Get selected questions and move them up within their sections
-    selectedItems.forEach(itemId => {
-      const item = flatItems.find(i => i.id === itemId);
+    // Process selected questions - sort by their position to move in order
+    const selectedArray = Array.from(selectedItems);
+    
+    selectedArray.forEach(itemId => {
+      const currentFlatItems = buildFlatListFromSections(newSections);
+      const itemIndex = currentFlatItems.findIndex(i => i.id === itemId);
+      const item = currentFlatItems[itemIndex];
+      
       if (!item || item.type !== 'question' || item.questionIndex === undefined) return;
       
       const section = newSections[item.sectionIndex];
       const qIndex = section.questions.findIndex(q => q.id === itemId);
       
       if (qIndex > 0) {
-        // Swap with previous question
-        [section.questions[qIndex - 1], section.questions[qIndex]] = 
-          [section.questions[qIndex], section.questions[qIndex - 1]];
+        // Move up within same section
+        const [question] = section.questions.splice(qIndex, 1);
+        section.questions.splice(qIndex - 1, 0, question);
+      } else if (item.sectionIndex > 0) {
+        // Move to previous section (at the end)
+        const [question] = section.questions.splice(qIndex, 1);
+        newSections[item.sectionIndex - 1].questions.push(question);
       }
     });
     
@@ -97,25 +106,57 @@ export function ReorderModal({ isOpen, onClose, checklist, onUpdate }: ReorderMo
   const moveSelectedDown = () => {
     if (selectedItems.size === 0) return;
     
-    const newSections = [...localSections];
+    const newSections = JSON.parse(JSON.stringify(localSections)) as Section[];
     
-    // Get selected questions and move them down (process in reverse to avoid conflicts)
+    // Process selected questions in reverse order to avoid conflicts
     const selectedArray = Array.from(selectedItems).reverse();
+    
     selectedArray.forEach(itemId => {
-      const item = flatItems.find(i => i.id === itemId);
+      const currentFlatItems = buildFlatListFromSections(newSections);
+      const item = currentFlatItems.find(i => i.id === itemId);
+      
       if (!item || item.type !== 'question' || item.questionIndex === undefined) return;
       
       const section = newSections[item.sectionIndex];
       const qIndex = section.questions.findIndex(q => q.id === itemId);
       
       if (qIndex < section.questions.length - 1) {
-        // Swap with next question
-        [section.questions[qIndex], section.questions[qIndex + 1]] = 
-          [section.questions[qIndex + 1], section.questions[qIndex]];
+        // Move down within same section
+        const [question] = section.questions.splice(qIndex, 1);
+        section.questions.splice(qIndex + 1, 0, question);
+      } else if (item.sectionIndex < newSections.length - 1) {
+        // Move to next section (at the beginning)
+        const [question] = section.questions.splice(qIndex, 1);
+        newSections[item.sectionIndex + 1].questions.unshift(question);
       }
     });
     
     setLocalSections(newSections);
+  };
+
+  // Helper function to build flat list from given sections
+  const buildFlatListFromSections = (sections: Section[]): FlatItem[] => {
+    const items: FlatItem[] = [];
+    sections.forEach((section, sIndex) => {
+      items.push({
+        id: section.id,
+        type: 'section',
+        sectionIndex: sIndex,
+        label: section.title,
+        indent: false
+      });
+      section.questions.forEach((question, qIndex) => {
+        items.push({
+          id: question.id,
+          type: 'question',
+          sectionIndex: sIndex,
+          questionIndex: qIndex,
+          label: question.text.length > 35 ? question.text.substring(0, 35) + '...' : question.text,
+          indent: true
+        });
+      });
+    });
+    return items;
   };
 
   const handleSave = () => {
