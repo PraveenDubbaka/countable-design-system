@@ -46,7 +46,9 @@ export function ChecklistBuilder({ checklist, onUpdate }: ChecklistBuilderProps)
   const [isEditingTitle, setIsEditingTitle] = useState(false);
   const [showAddMenu, setShowAddMenu] = useState(false);
   const [showExportMenu, setShowExportMenu] = useState(false);
-  const [descriptionExpanded, setDescriptionExpanded] = useState(false);
+  const [objectiveExpanded, setObjectiveExpanded] = useState(false);
+  const [isEditingObjective, setIsEditingObjective] = useState(false);
+  const [objectiveDraft, setObjectiveDraft] = useState(checklist.objective || '');
   const [activeQuestion, setActiveQuestion] = useState<Question | null>(null);
 
   const sensors = useSensors(
@@ -324,14 +326,71 @@ export function ChecklistBuilder({ checklist, onUpdate }: ChecklistBuilderProps)
       {/* Content */}
       <div className="flex-1 overflow-y-auto px-6 py-6">
         <div className="max-w-4xl mx-auto">
-          {/* Description accordion */}
-          <button 
-            onClick={() => setDescriptionExpanded(!descriptionExpanded)}
-            className="w-full flex items-center gap-2 bg-card border rounded-lg px-4 py-3 mb-6 text-muted-foreground hover:text-foreground transition-colors"
-          >
-            <ChevronDown className={`h-4 w-4 transition-transform ${descriptionExpanded ? 'rotate-180' : ''}`} />
-            <span className="text-sm font-medium">Description</span>
-          </button>
+          {/* Objective accordion */}
+          <div className="mb-6">
+            <button 
+              onClick={() => setObjectiveExpanded(!objectiveExpanded)}
+              className="w-full flex items-center gap-2 bg-card border rounded-t-lg px-4 py-3 text-muted-foreground hover:text-foreground transition-colors"
+            >
+              <ChevronDown className={`h-4 w-4 transition-transform ${objectiveExpanded ? 'rotate-180' : ''}`} />
+              <span className="text-sm font-medium">Objective</span>
+            </button>
+            
+            {objectiveExpanded && (
+              <div className="bg-card border border-t-0 rounded-b-lg p-4">
+                {isEditingObjective ? (
+                  <div className="space-y-3">
+                    <textarea
+                      value={objectiveDraft}
+                      onChange={(e) => setObjectiveDraft(e.target.value)}
+                      className="w-full min-h-[200px] p-3 bg-background border rounded-lg text-sm resize-y focus:outline-none focus:ring-2 focus:ring-primary"
+                      placeholder="Enter the objective for this checklist..."
+                      autoFocus
+                    />
+                    <div className="flex items-center gap-2 justify-end">
+                      <Button 
+                        variant="outline" 
+                        size="sm"
+                        onClick={() => {
+                          setObjectiveDraft(checklist.objective || '');
+                          setIsEditingObjective(false);
+                        }}
+                      >
+                        Cancel
+                      </Button>
+                      <Button 
+                        size="sm"
+                        onClick={() => {
+                          onUpdate({ ...checklist, objective: objectiveDraft });
+                          setIsEditingObjective(false);
+                        }}
+                      >
+                        Save
+                      </Button>
+                    </div>
+                  </div>
+                ) : (
+                  <div 
+                    onClick={() => setIsEditingObjective(true)}
+                    className="cursor-pointer hover:bg-muted/50 rounded-lg p-3 -m-3 transition-colors group"
+                  >
+                    {checklist.objective ? (
+                      <p className="text-sm text-foreground whitespace-pre-wrap leading-relaxed">
+                        {checklist.objective}
+                      </p>
+                    ) : (
+                      <p className="text-sm text-muted-foreground italic">
+                        Click to add objective...
+                      </p>
+                    )}
+                    <p className="text-xs text-muted-foreground mt-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                      Click to edit
+                    </p>
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
 
           {/* Sections with drag-and-drop */}
           <DndContext
