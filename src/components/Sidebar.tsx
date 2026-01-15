@@ -45,12 +45,8 @@ const AnalyticsIcon = () => (
 );
 
 const GlassesIcon = () => (
-  <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-    {/* Glasses/spectacles icon */}
-    <circle cx="5.5" cy="11" r="3.5" stroke="currentColor" strokeWidth="1.5"/>
-    <circle cx="14.5" cy="11" r="3.5" stroke="currentColor" strokeWidth="1.5"/>
-    <path d="M9 11h2" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
-    <path d="M2 11V9M18 11V9" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+  <svg width="19" height="18" viewBox="0 0 19 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M17.8332 16.5V14.8333C17.8332 13.2801 16.7709 11.9751 15.3332 11.605M12.4165 1.7423C13.6381 2.23679 14.4998 3.43443 14.4998 4.83333C14.4998 6.23224 13.6381 7.42988 12.4165 7.92437M13.6665 16.5C13.6665 14.9469 13.6665 14.1703 13.4128 13.5577C13.0745 12.741 12.4255 12.092 11.6088 11.7537C10.9962 11.5 10.2196 11.5 8.6665 11.5H6.1665C4.61337 11.5 3.8368 11.5 3.22423 11.7537C2.40747 12.092 1.75855 12.741 1.42024 13.5577C1.1665 14.1703 1.1665 14.9469 1.1665 16.5M10.7498 4.83333C10.7498 6.67428 9.25745 8.16667 7.4165 8.16667C5.57555 8.16667 4.08317 6.67428 4.08317 4.83333C4.08317 2.99238 5.57555 1.5 7.4165 1.5C9.25745 1.5 10.7498 2.99238 10.7498 4.83333Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
   </svg>
 );
 
