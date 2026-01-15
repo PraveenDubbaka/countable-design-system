@@ -524,19 +524,17 @@ export function ChecklistBuilder({ checklist, onUpdate, onSave }: ChecklistBuild
         </div>
       </div>
 
-      {/* Floating Action Bar - Hidden in preview mode */}
-      {!isPreviewMode && (
-        <FloatingActionBar
-          checklist={checklist}
-          onUpdate={onUpdate}
-          onCollapseSections={handleCollapseSections}
-          onExpandSections={handleExpandSections}
-          onCollapseQuestions={handleCollapseQuestions}
-          onExpandQuestions={handleExpandQuestions}
-          allSectionsCollapsed={allSectionsCollapsed}
-          allQuestionsCollapsed={allQuestionsCollapsed}
-        />
-      )}
+      {/* Floating Action Bar - visible in preview mode for collapse/expand/reorder */}
+      <FloatingActionBar
+        checklist={checklist}
+        onUpdate={onUpdate}
+        onCollapseSections={handleCollapseSections}
+        onExpandSections={handleExpandSections}
+        onCollapseQuestions={handleCollapseQuestions}
+        onExpandQuestions={handleExpandQuestions}
+        allSectionsCollapsed={allSectionsCollapsed}
+        allQuestionsCollapsed={allQuestionsCollapsed}
+      />
 
       {/* Rich Text Toolbar - Hidden in preview mode */}
       {!isPreviewMode && toolbarState.isVisible && (
