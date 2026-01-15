@@ -54,15 +54,30 @@ export function InlineSubQuestion({
   };
 
   const handleOptionUpdate = (optIndex: number, value: string) => {
-    const newOptions = [...(question.options || [])];
+    const baseOptions = question.options || ['Option 1', 'Option 2'];
+    const oldValue = baseOptions[optIndex];
+
+    const newOptions = [...baseOptions];
     newOptions[optIndex] = value;
-    onUpdate({ ...question, options: newOptions });
+
+    onUpdate({
+      ...question,
+      options: newOptions,
+      answer: question.answer === oldValue ? value : question.answer,
+    });
   };
 
   const handleOptionRemove = (optIndex: number) => {
-    const newOptions = (question.options || []).filter((_, i) => i !== optIndex);
+    const baseOptions = question.options || ['Option 1', 'Option 2'];
+    const removedValue = baseOptions[optIndex];
+    const newOptions = baseOptions.filter((_, i) => i !== optIndex);
+
     if (newOptions.length > 0) {
-      onUpdate({ ...question, options: newOptions });
+      onUpdate({
+        ...question,
+        options: newOptions,
+        answer: question.answer === removedValue ? '' : question.answer,
+      });
     }
   };
 
