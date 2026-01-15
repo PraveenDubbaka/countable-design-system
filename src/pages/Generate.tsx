@@ -326,19 +326,19 @@ export default function Generate() {
 
           {/* Generate Button */}
           <div className="flex justify-center mb-8">
-            <button
-              onClick={handleGenerate}
-              disabled={isGenerating}
-              className="relative px-8 py-4 text-base font-medium text-white rounded-xl shadow-md bg-gradient-to-r from-[#3379C9] to-[#8A5BD9] overflow-hidden group disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              {/* Animated shine effect on hover */}
-              <span className="absolute inset-0 overflow-hidden rounded-xl">
-                <span className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700 ease-in-out" />
+            <div className="relative group">
+              {/* Animated border shine - only on hover */}
+              <span className="absolute inset-0 rounded-xl overflow-hidden opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                <span className="absolute inset-[-2px] rounded-xl bg-gradient-to-r from-[#3379C9] via-white to-[#8A5BD9]" />
+                <span className="absolute inset-[-2px] rounded-xl overflow-hidden">
+                  <span className="absolute inset-0 bg-gradient-to-r from-transparent via-white/80 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-in-out" />
+                </span>
               </span>
-              {/* Animated border glow */}
-              <span className="absolute inset-0 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                <span className="absolute inset-[-2px] rounded-xl bg-gradient-to-r from-[#3379C9] via-white to-[#8A5BD9] animate-pulse" style={{ zIndex: -1 }} />
-              </span>
+              <button
+                onClick={handleGenerate}
+                disabled={isGenerating}
+                className="relative px-8 py-4 text-base font-medium text-white rounded-xl shadow-md bg-gradient-to-r from-[#3379C9] to-[#8A5BD9] disabled:opacity-50 disabled:cursor-not-allowed"
+              >
               <span className="relative flex items-center justify-center">
                 {isGenerating ? (
                   <>
@@ -359,6 +359,7 @@ export default function Generate() {
                 )}
               </span>
             </button>
+            </div>
           </div>
 
           {/* Example Prompts */}
