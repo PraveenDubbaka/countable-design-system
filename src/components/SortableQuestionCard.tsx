@@ -313,25 +313,69 @@ export function SortableQuestionCard({
   const renderAnswerField = () => {
     switch (question.answerType) {
       case 'yes-no':
+        const yesNoOptions = question.options || ['Yes', 'No', 'Not Applicable'];
+        const handleRemoveYesNoOption = (optionToRemove: string) => {
+          const newOptions = yesNoOptions.filter(opt => opt !== optionToRemove);
+          if (question.answer === optionToRemove) {
+            onUpdate({ ...question, options: newOptions, answer: undefined });
+          } else {
+            onUpdate({ ...question, options: newOptions });
+          }
+        };
+        const handleAddYesNoOption = (option: string) => {
+          if (!yesNoOptions.includes(option)) {
+            onUpdate({ ...question, options: [...yesNoOptions, option] });
+          }
+        };
+        const allYesNoOptions = ['Yes', 'No', 'Not Applicable'];
+        const missingOptions = allYesNoOptions.filter(opt => !yesNoOptions.includes(opt));
+        
         return (
-          <div className="flex flex-wrap gap-3 mt-3">
-            {['Yes', 'No'].map((option) => (
-              <label key={option} className="flex items-center gap-2.5 cursor-pointer group px-3 py-2 rounded-lg hover:bg-muted transition-colors">
-                <div 
-                  className={`w-4 h-4 rounded-full border-2 flex items-center justify-center transition-all ${
-                    question.answer === option 
-                      ? 'border-primary bg-primary' 
-                      : 'border-muted-foreground/50 group-hover:border-primary/50'
-                  }`}
-                  onClick={() => handleAnswerChange(option)}
-                >
-                  {question.answer === option && (
-                    <div className="w-1.5 h-1.5 rounded-full bg-primary-foreground" />
+          <div className="mt-3 space-y-2">
+            <div className="flex flex-wrap gap-3">
+              {yesNoOptions.map((option) => (
+                <label key={option} className="flex items-center gap-2.5 cursor-pointer group px-3 py-2 rounded-lg hover:bg-muted transition-colors">
+                  <div 
+                    className={`w-4 h-4 rounded-full border-2 flex items-center justify-center transition-all ${
+                      question.answer === option 
+                        ? 'border-primary bg-primary' 
+                        : 'border-muted-foreground/50 group-hover:border-primary/50'
+                    }`}
+                    onClick={() => handleAnswerChange(option)}
+                  >
+                    {question.answer === option && (
+                      <div className="w-1.5 h-1.5 rounded-full bg-primary-foreground" />
+                    )}
+                  </div>
+                  <span className="text-sm text-foreground">{option}</span>
+                  {yesNoOptions.length > 1 && (
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleRemoveYesNoOption(option);
+                      }}
+                      className="opacity-0 group-hover:opacity-100 transition-opacity text-muted-foreground hover:text-destructive ml-1"
+                    >
+                      <X className="h-3 w-3" />
+                    </button>
                   )}
-                </div>
-                <span className="text-sm text-foreground">{option}</span>
-              </label>
-            ))}
+                </label>
+              ))}
+            </div>
+            {missingOptions.length > 0 && (
+              <div className="flex gap-2 pt-1">
+                {missingOptions.map((option) => (
+                  <button
+                    key={option}
+                    onClick={() => handleAddYesNoOption(option)}
+                    className="text-xs text-muted-foreground hover:text-primary flex items-center gap-1"
+                  >
+                    <Plus className="h-3 w-3" />
+                    Add {option}
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
         );
 
