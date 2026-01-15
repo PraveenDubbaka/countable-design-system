@@ -5,7 +5,8 @@ import {
   AlignLeft,
   Sparkles,
   StickyNote,
-  Plus
+  Plus,
+  Paperclip
 } from 'lucide-react';
 import { AnswerType } from '@/types/checklist';
 import {
@@ -22,6 +23,8 @@ interface QuestionToolbarProps {
   onDelete: () => void;
   onAddSubQuestion: () => void;
   onAddNote: () => void;
+  onToggleReference: () => void;
+  hasReference: boolean;
   currentType: AnswerType;
 }
 
@@ -49,6 +52,8 @@ export function QuestionToolbar({
   onDelete,
   onAddSubQuestion,
   onAddNote,
+  onToggleReference,
+  hasReference,
   currentType,
 }: QuestionToolbarProps) {
   return (
@@ -86,6 +91,16 @@ export function QuestionToolbar({
         title="Add sub-question"
       >
         <Plus className="h-3.5 w-3.5" />
+      </Button>
+
+      <Button 
+        variant="ghost" 
+        size="sm" 
+        className={`h-7 w-7 p-0 ${hasReference ? 'bg-primary/10 text-primary' : ''}`}
+        onClick={onToggleReference}
+        title={hasReference ? "Remove attachment option" : "Add attachment option"}
+      >
+        <Paperclip className="h-3.5 w-3.5" />
       </Button>
 
       <Button 

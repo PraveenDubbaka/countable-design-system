@@ -22,7 +22,8 @@ import {
   Sparkles,
   Mic,
   ChevronRight,
-  X
+  X,
+  Paperclip
 } from 'lucide-react';
 import { Question, AnswerType } from '@/types/checklist';
 import { Button } from '@/components/ui/button';
@@ -439,6 +440,8 @@ export function SortableQuestionCard({
               onDelete={onDelete}
               onAddSubQuestion={onAddSubQuestion}
               onAddNote={handleAddNote}
+              onToggleReference={hasReference ? handleRemoveReference : handleAddReference}
+              hasReference={hasReference}
             />
           </div>
         )}
@@ -598,40 +601,29 @@ export function SortableQuestionCard({
                 </div>
               )}
 
-              {/* Reference field - deletable */}
+              {/* Reference/Attachment field - deletable */}
               {hasReference && (
                 <div className="mt-4">
                   <div className="flex items-center justify-between mb-2">
-                    <p className="text-sm text-muted-foreground">Reference</p>
+                    <p className="text-sm text-muted-foreground">Attach Reference</p>
                     <button 
                       onClick={handleRemoveReference}
                       className="p-1 rounded hover:bg-muted transition-colors"
+                      title="Remove attachment option"
                     >
                       <X className="h-3.5 w-3.5 text-muted-foreground" />
                     </button>
                   </div>
-                  <Input
-                    placeholder="Add reference link or citation..."
-                    value={question.reference || ''}
-                    onChange={(e) => handleReferenceChange(e.target.value)}
-                    className="bg-background"
-                  />
+                  <label className="flex items-center justify-center gap-2 p-4 border-2 border-dashed border-muted rounded-lg cursor-pointer hover:border-primary hover:bg-muted/50 transition-colors">
+                    <Paperclip className="h-4 w-4 text-muted-foreground" />
+                    <span className="text-sm text-muted-foreground">Click to attach file</span>
+                    <input type="file" className="hidden" />
+                  </label>
                 </div>
               )}
 
-              {/* Action buttons for adding note/explanation/reference */}
+              {/* Action buttons for adding explanation only (Ref is added via toolbar) */}
               <div className="mt-4 flex items-center gap-2">
-                {!hasReference && (
-                  <Button 
-                    variant="outline" 
-                    size="sm" 
-                    className="text-muted-foreground hover:text-primary hover:border-primary"
-                    onClick={handleAddReference}
-                  >
-                    <Plus className="h-3.5 w-3.5 mr-1.5" />
-                    Ref
-                  </Button>
-                )}
                 {!hasExplanation && (
                   <Button 
                     variant="outline" 
