@@ -327,14 +327,22 @@ export function SortableQuestionCard({
             onUpdate({ ...question, options: [...yesNoOptions, option] });
           }
         };
+        const handleEditYesNoOption = (oldOption: string, newOption: string) => {
+          const newOptions = yesNoOptions.map(opt => opt === oldOption ? newOption : opt);
+          if (question.answer === oldOption) {
+            onUpdate({ ...question, options: newOptions, answer: newOption });
+          } else {
+            onUpdate({ ...question, options: newOptions });
+          }
+        };
         const allYesNoOptions = ['Yes', 'No', 'Not Applicable'];
         const missingOptions = allYesNoOptions.filter(opt => !yesNoOptions.includes(opt));
         
         return (
           <div className="mt-3 space-y-2">
             <div className="flex flex-wrap gap-3">
-              {yesNoOptions.map((option) => (
-                <label key={option} className="flex items-center gap-2.5 cursor-pointer group px-3 py-2 rounded-lg hover:bg-muted transition-colors">
+              {yesNoOptions.map((option, index) => (
+                <label key={index} className="flex items-center gap-2.5 cursor-pointer group px-3 py-2 rounded-lg hover:bg-muted transition-colors">
                   <div 
                     className={`w-4 h-4 rounded-full border-2 flex items-center justify-center transition-all ${
                       question.answer === option 
@@ -347,7 +355,14 @@ export function SortableQuestionCard({
                       <div className="w-1.5 h-1.5 rounded-full bg-primary-foreground" />
                     )}
                   </div>
-                  <span className="text-sm text-foreground">{option}</span>
+                  <input
+                    type="text"
+                    value={option}
+                    onChange={(e) => handleEditYesNoOption(option, e.target.value)}
+                    onClick={(e) => e.stopPropagation()}
+                    className="text-sm text-foreground bg-transparent border-none outline-none w-auto min-w-[40px] focus:ring-1 focus:ring-primary/50 rounded px-1"
+                    style={{ width: `${Math.max(option.length, 3)}ch` }}
+                  />
                   {yesNoOptions.length > 1 && (
                     <button
                       onClick={(e) => {
