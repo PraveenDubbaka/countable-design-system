@@ -39,6 +39,7 @@ export function SortableQuestionCard({
 }: SortableQuestionCardProps) {
   const [showAIMenu, setShowAIMenu] = useState(false);
   const [isEditingQuestion, setIsEditingQuestion] = useState(false);
+  const [draftQuestionText, setDraftQuestionText] = useState(question.text);
   const [isExpanded, setIsExpanded] = useState(true);
   const [isFocused, setIsFocused] = useState(false);
   const [hasNote, setHasNote] = useState(!!question.note);
@@ -74,13 +75,45 @@ export function SortableQuestionCard({
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
+  // Keep draft in sync if the question is updated externally (e.g., reorder, duplicate)
+  useEffect(() => {
+    setDraftQuestionText(question.text);
+  }, [question.text]);
+
+  // Focus/select input when entering edit mode
+  useEffect(() => {
+    if (!isEditingQuestion) return;
+    // next tick so the input exists
+    queueMicrotask(() => {
+      questionInputRef.current?.focus();
+      questionInputRef.current?.select();
+    });
+  }, [isEditingQuestion]);
+
   // Sync hasNote with question.note
   useEffect(() => {
     setHasNote(!!question.note);
   }, [question.note]);
 
+  const commitQuestionText = () => {
+    const trimmed = draftQuestionText.trim();
+
+    // If user clears the field, revert (don’t allow empty question text)
+    if (!trimmed) {
+      setDraftQuestionText(question.text);
+      setIsEditingQuestion(false);
+      return;
+    }
+
+    if (trimmed !== question.text) {
+      onUpdate({ ...question, text: trimmed });
+    }
+
+    setIsEditingQuestion(false);
+  };
+
   const handleQuestionChange = (text: string) => {
-    onUpdate({ ...question, text });
+    setDraftQuestionText(text);
   };
 
   const handleAnswerChange = (answer: string) => {
@@ -341,10 +374,20 @@ export function SortableQuestionCard({
             {isEditingQuestion ? (
               <Input
                 ref={questionInputRef}
-                value={question.text}
+                value={draftQuestionText}
                 onChange={(e) => handleQuestionChange(e.target.value)}
-                onBlur={() => setIsEditingQuestion(false)}
-                onKeyDown={(e) => e.key === 'Enter' && setIsEditingQuestion(false)}
+                onBlur={commitQuestionText}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    e.preventDefault();
+                    commitQuestionText();
+                  }
+                  if (e.key === 'Escape') {
+                    e.preventDefault();
+                    setDraftQuestionText(question.text);
+                    setIsEditingQuestion(false);
+                  }
+                }}
                 autoFocus
                 className="font-medium bg-background text-base"
               />
