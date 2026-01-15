@@ -38,6 +38,7 @@ import { Input } from '@/components/ui/input';
 import { toast } from 'sonner';
 import { RichTextToolbar } from './RichTextToolbar';
 import { useRichTextToolbarContext } from '@/contexts/RichTextToolbarContext';
+import { consolidateSectionsToThree } from '@/lib/consolidateSections';
 
 interface ChecklistBuilderProps {
   checklist: Checklist;
@@ -79,6 +80,12 @@ export function ChecklistBuilder({ checklist, onUpdate }: ChecklistBuilderProps)
   const handleSectionDelete = (index: number) => {
     const newSections = checklist.sections.filter((_, i) => i !== index);
     onUpdate({ ...checklist, sections: newSections });
+  };
+
+  const handleConsolidateCategories = () => {
+    const nextSections = consolidateSectionsToThree(checklist.sections);
+    onUpdate({ ...checklist, sections: nextSections });
+    toast.success('Categories consolidated');
   };
 
   // Get all question IDs for the sortable context
@@ -303,6 +310,16 @@ export function ChecklistBuilder({ checklist, onUpdate }: ChecklistBuilderProps)
           <Button variant="outline" size="sm" className="gap-2">
             <Eye className="h-4 w-4" />
             Preview
+          </Button>
+
+          <Button
+            variant="outline"
+            size="sm"
+            className="gap-2"
+            onClick={handleConsolidateCategories}
+          >
+            <Wand2 className="h-4 w-4" />
+            Consolidate
           </Button>
           
           <div className="relative">
