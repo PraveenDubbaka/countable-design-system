@@ -237,7 +237,7 @@ export function DropZone({ onGenerate }: DropZoneProps) {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         <CreationOption
           icon={<Sparkles className="h-10 w-10 text-white" />}
-          iconBg="bg-gradient-to-br from-pink-400 via-purple-400 to-indigo-400"
+          iconBg="bg-gradient-to-r from-[#9249FB] to-[#2462AC]"
           title="Generate"
           description="Create from a one-line prompt in a few seconds"
           badge={{ text: 'RECOMMENDED', variant: 'recommended' }}
