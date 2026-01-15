@@ -211,7 +211,7 @@ export function SortableSection({
           <Button
             variant="outline"
             onClick={handleAddQuestion}
-            className="w-full mt-2 border-dashed text-muted-foreground hover:text-primary hover:border-primary"
+            className="w-full mt-2 border-dashed text-muted-foreground hover:text-white hover:border-[#1C63A6] hover:bg-[#1C63A6] transition-colors"
           >
             <Plus className="h-4 w-4 mr-2" />
             Add Question
