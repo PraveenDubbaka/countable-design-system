@@ -6,12 +6,19 @@ import {
   PointerSensor, 
   useSensor, 
   useSensors,
-  DragEndEvent 
+  DragEndEvent,
+  DragOverEvent,
+  DragStartEvent,
+  DragOverlay,
+  pointerWithin,
+  rectIntersection,
+  getFirstCollision
 } from '@dnd-kit/core';
 import {
   SortableContext,
   sortableKeyboardCoordinates,
   verticalListSortingStrategy,
+  arrayMove,
 } from '@dnd-kit/sortable';
 import { 
   Plus, 
@@ -23,7 +30,7 @@ import {
   ChevronDown,
   FileDown
 } from 'lucide-react';
-import { Checklist, Section } from '@/types/checklist';
+import { Checklist, Section, Question } from '@/types/checklist';
 import { SortableSection } from './SortableSection';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -39,6 +46,7 @@ export function ChecklistBuilder({ checklist, onUpdate }: ChecklistBuilderProps)
   const [showAddMenu, setShowAddMenu] = useState(false);
   const [showExportMenu, setShowExportMenu] = useState(false);
   const [descriptionExpanded, setDescriptionExpanded] = useState(false);
+  const [activeQuestion, setActiveQuestion] = useState<Question | null>(null);
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -66,17 +74,93 @@ export function ChecklistBuilder({ checklist, onUpdate }: ChecklistBuilderProps)
     onUpdate({ ...checklist, sections: newSections });
   };
 
-  const handleSectionDragEnd = (event: DragEndEvent) => {
+  // Get all question IDs for the sortable context
+  const allQuestionIds = checklist.sections.flatMap(s => s.questions.map(q => q.id));
+
+  // Find which section a question belongs to
+  const findSectionByQuestionId = (questionId: string): { sectionIndex: number; questionIndex: number } | null => {
+    for (let sIndex = 0; sIndex < checklist.sections.length; sIndex++) {
+      const qIndex = checklist.sections[sIndex].questions.findIndex(q => q.id === questionId);
+      if (qIndex !== -1) {
+        return { sectionIndex: sIndex, questionIndex: qIndex };
+      }
+    }
+    return null;
+  };
+
+  const handleDragStart = (event: DragStartEvent) => {
+    const { active } = event;
+    // Check if dragging a question (not a section)
+    const location = findSectionByQuestionId(active.id as string);
+    if (location) {
+      setActiveQuestion(checklist.sections[location.sectionIndex].questions[location.questionIndex]);
+    }
+  };
+
+  const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
+    setActiveQuestion(null);
     
-    if (over && active.id !== over.id) {
-      const oldIndex = checklist.sections.findIndex(s => s.id === active.id);
-      const newIndex = checklist.sections.findIndex(s => s.id === over.id);
-      
+    if (!over) return;
+
+    // Check if this is a section drag
+    const isSectionDrag = checklist.sections.some(s => s.id === active.id);
+    
+    if (isSectionDrag) {
+      // Handle section reordering
+      if (active.id !== over.id) {
+        const oldIndex = checklist.sections.findIndex(s => s.id === active.id);
+        const newIndex = checklist.sections.findIndex(s => s.id === over.id);
+        
+        if (oldIndex !== -1 && newIndex !== -1) {
+          const newSections = arrayMove(checklist.sections, oldIndex, newIndex);
+          onUpdate({ ...checklist, sections: newSections });
+        }
+      }
+      return;
+    }
+
+    // Handle question drag
+    const activeLocation = findSectionByQuestionId(active.id as string);
+    if (!activeLocation) return;
+
+    // Check if dropping onto a section
+    const targetSectionIndex = checklist.sections.findIndex(s => s.id === over.id);
+    
+    if (targetSectionIndex !== -1) {
+      // Dropping onto a section - add to end of that section
+      if (targetSectionIndex !== activeLocation.sectionIndex) {
+        const newSections = [...checklist.sections];
+        const [movedQuestion] = newSections[activeLocation.sectionIndex].questions.splice(activeLocation.questionIndex, 1);
+        newSections[targetSectionIndex].questions.push(movedQuestion);
+        onUpdate({ ...checklist, sections: newSections });
+      }
+      return;
+    }
+
+    // Check if dropping onto another question
+    const overLocation = findSectionByQuestionId(over.id as string);
+    if (!overLocation) return;
+
+    if (activeLocation.sectionIndex === overLocation.sectionIndex) {
+      // Same section - just reorder
+      if (activeLocation.questionIndex !== overLocation.questionIndex) {
+        const newSections = [...checklist.sections];
+        newSections[activeLocation.sectionIndex] = {
+          ...newSections[activeLocation.sectionIndex],
+          questions: arrayMove(
+            newSections[activeLocation.sectionIndex].questions,
+            activeLocation.questionIndex,
+            overLocation.questionIndex
+          )
+        };
+        onUpdate({ ...checklist, sections: newSections });
+      }
+    } else {
+      // Different section - move question
       const newSections = [...checklist.sections];
-      const [removed] = newSections.splice(oldIndex, 1);
-      newSections.splice(newIndex, 0, removed);
-      
+      const [movedQuestion] = newSections[activeLocation.sectionIndex].questions.splice(activeLocation.questionIndex, 1);
+      newSections[overLocation.sectionIndex].questions.splice(overLocation.questionIndex, 0, movedQuestion);
       onUpdate({ ...checklist, sections: newSections });
     }
   };
@@ -237,10 +321,11 @@ export function ChecklistBuilder({ checklist, onUpdate }: ChecklistBuilderProps)
           <DndContext
             sensors={sensors}
             collisionDetection={closestCenter}
-            onDragEnd={handleSectionDragEnd}
+            onDragStart={handleDragStart}
+            onDragEnd={handleDragEnd}
           >
             <SortableContext
-              items={checklist.sections.map(s => s.id)}
+              items={[...checklist.sections.map(s => s.id), ...allQuestionIds]}
               strategy={verticalListSortingStrategy}
             >
               {checklist.sections.map((section, index) => (
@@ -252,6 +337,7 @@ export function ChecklistBuilder({ checklist, onUpdate }: ChecklistBuilderProps)
                   onDelete={() => handleSectionDelete(index)}
                   isFirst={index === 0}
                   isLast={index === checklist.sections.length - 1}
+                  disableQuestionDnd={true}
                 />
               ))}
             </SortableContext>

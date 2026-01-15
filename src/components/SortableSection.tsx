@@ -2,17 +2,7 @@ import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { useState } from 'react';
 import { 
-  DndContext, 
-  closestCenter, 
-  KeyboardSensor, 
-  PointerSensor, 
-  useSensor, 
-  useSensors,
-  DragEndEvent 
-} from '@dnd-kit/core';
-import {
   SortableContext,
-  sortableKeyboardCoordinates,
   verticalListSortingStrategy,
 } from '@dnd-kit/sortable';
 import { ChevronDown, ChevronUp, MoreVertical, Plus, Trash2, GripVertical } from 'lucide-react';
@@ -28,6 +18,7 @@ interface SortableSectionProps {
   onDelete: () => void;
   isFirst: boolean;
   isLast: boolean;
+  disableQuestionDnd?: boolean;
 }
 
 export function SortableSection({
@@ -36,7 +27,8 @@ export function SortableSection({
   onUpdate,
   onDelete,
   isFirst,
-  isLast
+  isLast,
+  disableQuestionDnd = false
 }: SortableSectionProps) {
   const [showMenu, setShowMenu] = useState(false);
   const [isEditingTitle, setIsEditingTitle] = useState(false);
@@ -56,17 +48,6 @@ export function SortableSection({
     opacity: isDragging ? 0.5 : 1,
     zIndex: isDragging ? 50 : 'auto',
   };
-
-  const sensors = useSensors(
-    useSensor(PointerSensor, {
-      activationConstraint: {
-        distance: 8,
-      },
-    }),
-    useSensor(KeyboardSensor, {
-      coordinateGetter: sortableKeyboardCoordinates,
-    })
-  );
 
   const toggleExpanded = () => {
     onUpdate({ ...section, isExpanded: !section.isExpanded });
@@ -126,21 +107,6 @@ export function SortableSection({
     const newQuestions = [...section.questions];
     newQuestions.splice(questionIndex + 1, 0, duplicatedQuestion);
     onUpdate({ ...section, questions: newQuestions });
-  };
-
-  const handleQuestionDragEnd = (event: DragEndEvent) => {
-    const { active, over } = event;
-    
-    if (over && active.id !== over.id) {
-      const oldIndex = section.questions.findIndex(q => q.id === active.id);
-      const newIndex = section.questions.findIndex(q => q.id === over.id);
-      
-      const newQuestions = [...section.questions];
-      const [removed] = newQuestions.splice(oldIndex, 1);
-      newQuestions.splice(newIndex, 0, removed);
-      
-      onUpdate({ ...section, questions: newQuestions });
-    }
   };
 
   return (
@@ -221,32 +187,26 @@ export function SortableSection({
         </div>
       </div>
 
-      {/* Questions with drag-and-drop */}
+      {/* Questions - now using parent's DndContext for cross-section drag */}
       {section.isExpanded && (
         <div className="ml-12">
-          <DndContext
-            sensors={sensors}
-            collisionDetection={closestCenter}
-            onDragEnd={handleQuestionDragEnd}
+          <SortableContext
+            items={section.questions.map(q => q.id)}
+            strategy={verticalListSortingStrategy}
           >
-            <SortableContext
-              items={section.questions.map(q => q.id)}
-              strategy={verticalListSortingStrategy}
-            >
-              {section.questions.map((question, qIndex) => (
-                <SortableQuestionCard
-                  key={question.id}
-                  question={question}
-                  index={qIndex}
-                  sectionIndex={index}
-                  onUpdate={(q) => handleQuestionUpdate(qIndex, q)}
-                  onDelete={() => handleQuestionDelete(qIndex)}
-                  onAddSubQuestion={() => handleAddSubQuestion(qIndex)}
-                  onDuplicate={() => handleDuplicateQuestion(qIndex)}
-                />
-              ))}
-            </SortableContext>
-          </DndContext>
+            {section.questions.map((question, qIndex) => (
+              <SortableQuestionCard
+                key={question.id}
+                question={question}
+                index={qIndex}
+                sectionIndex={index}
+                onUpdate={(q) => handleQuestionUpdate(qIndex, q)}
+                onDelete={() => handleQuestionDelete(qIndex)}
+                onAddSubQuestion={() => handleAddSubQuestion(qIndex)}
+                onDuplicate={() => handleDuplicateQuestion(qIndex)}
+              />
+            ))}
+          </SortableContext>
 
           <Button
             variant="outline"
