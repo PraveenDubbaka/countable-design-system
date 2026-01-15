@@ -23,8 +23,13 @@ import {
   Mic,
   ChevronRight,
   X,
-  Paperclip
+  Paperclip,
+  Calendar,
+  DollarSign,
+  Upload,
+  Link
 } from 'lucide-react';
+import { Switch } from '@/components/ui/switch';
 import { Question, AnswerType } from '@/types/checklist';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -330,7 +335,6 @@ export function SortableQuestionCard({
           </div>
         );
 
-
       case 'short-answer':
         return (
           <Input
@@ -396,6 +400,92 @@ export function SortableQuestionCard({
               <Plus className="h-4 w-4" />
               Add option
             </button>
+          </div>
+        );
+
+      case 'date':
+        return (
+          <div className="mt-3 relative">
+            <div className="flex items-center gap-2">
+              <Calendar className="h-4 w-4 text-muted-foreground absolute left-3" />
+              <Input
+                type="date"
+                value={question.answer || ''}
+                onChange={(e) => handleAnswerChange(e.target.value)}
+                className="bg-background pl-10"
+              />
+            </div>
+          </div>
+        );
+
+      case 'amount':
+        return (
+          <div className="mt-3 relative">
+            <DollarSign className="h-4 w-4 text-muted-foreground absolute left-3 top-1/2 -translate-y-1/2" />
+            <Input
+              type="number"
+              placeholder="0.00"
+              value={question.answer || ''}
+              onChange={(e) => handleAnswerChange(e.target.value)}
+              className="bg-background pl-10"
+              step="0.01"
+            />
+          </div>
+        );
+
+      case 'reference':
+        return (
+          <div className="mt-3 relative">
+            <Link className="h-4 w-4 text-muted-foreground absolute left-3 top-1/2 -translate-y-1/2" />
+            <Input
+              placeholder="Enter reference (e.g., document, link, or citation)..."
+              value={question.answer || ''}
+              onChange={(e) => handleAnswerChange(e.target.value)}
+              className="bg-background pl-10"
+            />
+          </div>
+        );
+
+      case 'follow-up':
+        return (
+          <div className="mt-3 space-y-3">
+            <Textarea
+              placeholder="Enter follow-up question or clarification..."
+              value={question.answer || ''}
+              onChange={(e) => handleAnswerChange(e.target.value)}
+              className="min-h-[80px] resize-none bg-background"
+            />
+            <p className="text-xs text-muted-foreground">This question prompts additional information based on previous responses.</p>
+          </div>
+        );
+
+      case 'file-upload':
+        return (
+          <div className="mt-3">
+            <div 
+              className="border-2 border-dashed border-muted-foreground/30 rounded-lg p-6 text-center hover:border-primary/50 hover:bg-muted/30 transition-colors cursor-pointer"
+              onClick={() => {/* File upload logic */}}
+            >
+              <Upload className="h-8 w-8 text-muted-foreground mx-auto mb-2" />
+              <p className="text-sm text-muted-foreground">Click to upload or drag and drop</p>
+              <p className="text-xs text-muted-foreground/70 mt-1">PDF, DOC, DOCX, XLS, XLSX up to 10MB</p>
+            </div>
+            {question.answer && (
+              <p className="text-sm text-primary mt-2">Uploaded: {question.answer}</p>
+            )}
+          </div>
+        );
+
+      case 'toggle':
+        return (
+          <div className="mt-3 flex items-center gap-3">
+            <Switch
+              checked={question.answer === 'true'}
+              onCheckedChange={(checked) => handleAnswerChange(checked ? 'true' : 'false')}
+            />
+            <span className="text-sm text-muted-foreground">
+              {question.answer === 'true' ? 'Yes' : 'No'}
+            </span>
           </div>
         );
 
