@@ -33,6 +33,7 @@ import { AIEditMenu } from './AIEditMenu';
 import { QuestionToolbar } from './QuestionToolbar';
 import { EditableOption } from './EditableOption';
 import { SortableInlineSubQuestion } from './SortableInlineSubQuestion';
+import { useRichTextToolbarContext } from '@/contexts/RichTextToolbarContext';
 
 interface SortableQuestionCardProps {
   question: Question;
@@ -66,6 +67,7 @@ export function SortableQuestionCard({
   const cardRef = useRef<HTMLDivElement>(null);
   const questionInputRef = useRef<HTMLInputElement>(null);
   const toolbarRef = useRef<HTMLDivElement>(null);
+  const { showToolbar } = useRichTextToolbarContext();
 
   const {
     attributes,
@@ -369,6 +371,13 @@ export function SortableQuestionCard({
               placeholder="Enter your detailed answer..."
               value={question.answer || ''}
               onChange={(e) => handleAnswerChange(e.target.value)}
+              onFocus={(e) => showToolbar(e.target)}
+              onSelect={(e) => {
+                const target = e.target as HTMLTextAreaElement;
+                if (target.selectionStart !== target.selectionEnd) {
+                  showToolbar(target);
+                }
+              }}
               className="min-h-[100px] pr-20 resize-none bg-background"
             />
             <div className="absolute bottom-3 right-3 flex items-center gap-1">
@@ -562,6 +571,7 @@ export function SortableQuestionCard({
                     placeholder="Add a note..."
                     value={question.note || ''}
                     onChange={(e) => handleNoteChange(e.target.value)}
+                    onFocus={(e) => showToolbar(e.target)}
                     className="min-h-[60px] resize-none bg-muted/30 border-muted"
                   />
                 </div>
@@ -584,6 +594,7 @@ export function SortableQuestionCard({
                       placeholder="Add any additional context or explanation..."
                       value={question.explanation || ''}
                       onChange={(e) => handleExplanationChange(e.target.value)}
+                      onFocus={(e) => showToolbar(e.target)}
                       className="min-h-[80px] pr-20 resize-none bg-background"
                     />
                     <div className="absolute bottom-3 right-3 flex items-center gap-1">

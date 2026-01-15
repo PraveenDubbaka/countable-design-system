@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useRef, useCallback } from 'react';
 import { 
   DndContext, 
   closestCenter, 
@@ -36,6 +36,8 @@ import { FloatingActionBar } from './FloatingActionBar';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { toast } from 'sonner';
+import { RichTextToolbar } from './RichTextToolbar';
+import { useRichTextToolbarContext } from '@/contexts/RichTextToolbarContext';
 
 interface ChecklistBuilderProps {
   checklist: Checklist;
@@ -50,6 +52,8 @@ export function ChecklistBuilder({ checklist, onUpdate }: ChecklistBuilderProps)
   const [isEditingObjective, setIsEditingObjective] = useState(false);
   const [objectiveDraft, setObjectiveDraft] = useState(checklist.objective || '');
   const [activeQuestion, setActiveQuestion] = useState<Question | null>(null);
+  const objectiveTextareaRef = useRef<HTMLTextAreaElement>(null);
+  const { toolbarState, showToolbar, hideToolbar, handleFormatAction } = useRichTextToolbarContext();
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -341,8 +345,24 @@ export function ChecklistBuilder({ checklist, onUpdate }: ChecklistBuilderProps)
                 {isEditingObjective ? (
                   <div className="space-y-3">
                     <textarea
+                      ref={objectiveTextareaRef}
                       value={objectiveDraft}
                       onChange={(e) => setObjectiveDraft(e.target.value)}
+                      onFocus={(e) => showToolbar(e.target)}
+                      onBlur={(e) => {
+                        // Delay hiding to allow toolbar clicks
+                        setTimeout(() => {
+                          if (!e.relatedTarget?.closest('[data-rich-text-toolbar]')) {
+                            // Don't hide if clicking toolbar
+                          }
+                        }, 100);
+                      }}
+                      onSelect={(e) => {
+                        const target = e.target as HTMLTextAreaElement;
+                        if (target.selectionStart !== target.selectionEnd) {
+                          showToolbar(target);
+                        }
+                      }}
                       className="w-full min-h-[200px] p-3 bg-background border rounded-lg text-sm resize-y focus:outline-none focus:ring-2 focus:ring-primary"
                       placeholder="Enter the objective for this checklist..."
                       autoFocus
@@ -354,6 +374,7 @@ export function ChecklistBuilder({ checklist, onUpdate }: ChecklistBuilderProps)
                         onClick={() => {
                           setObjectiveDraft(checklist.objective || '');
                           setIsEditingObjective(false);
+                          hideToolbar();
                         }}
                       >
                         Cancel
@@ -363,6 +384,7 @@ export function ChecklistBuilder({ checklist, onUpdate }: ChecklistBuilderProps)
                         onClick={() => {
                           onUpdate({ ...checklist, objective: objectiveDraft });
                           setIsEditingObjective(false);
+                          hideToolbar();
                         }}
                       >
                         Save
@@ -483,6 +505,18 @@ export function ChecklistBuilder({ checklist, onUpdate }: ChecklistBuilderProps)
         onExpandAll={handleExpandAll}
         allCollapsed={allCollapsed}
       />
+
+      {/* Rich Text Toolbar */}
+      {toolbarState.isVisible && (
+        <RichTextToolbar
+          position={toolbarState.position}
+          onFormatAction={handleFormatAction}
+          onAIAssist={() => {
+            toast.info('AI assist coming soon!');
+          }}
+        />
+      )}
     </div>
   );
 }
+
