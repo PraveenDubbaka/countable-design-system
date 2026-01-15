@@ -24,7 +24,9 @@ function CreationOption({ icon, iconBg, title, description, badge, onClick }: Cr
       className="group relative flex flex-col bg-card border border-border rounded-xl p-4 hover:border-primary/50 hover:shadow-lg transition-all duration-200 text-left h-full"
     >
       <div className={`w-full aspect-[4/3] rounded-lg mb-4 flex items-center justify-center ${iconBg}`}>
-        {icon}
+        <div className="transition-transform duration-500 group-hover:rotate-[360deg]">
+          {icon}
+        </div>
       </div>
       <h3 className="font-semibold text-foreground mb-1 group-hover:text-primary transition-colors">
         {title}
