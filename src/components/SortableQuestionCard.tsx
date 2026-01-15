@@ -315,6 +315,7 @@ export function SortableQuestionCard({
   const renderAnswerField = () => {
     switch (question.answerType) {
       case 'yes-no':
+      case 'yes-no-na':
         const yesNoOptions = question.options || ['Yes', 'No', 'Not Applicable'];
         const handleRemoveYesNoOption = (optionToRemove: string) => {
           const newOptions = yesNoOptions.filter(opt => opt !== optionToRemove);
