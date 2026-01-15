@@ -39,10 +39,10 @@
     --radius: 0.5rem;
 
     /* Custom tokens - Countable palette */
-    --sidebar-bg: 220 30% 18%;
+    --sidebar-bg: 213 60% 24%;
     --sidebar-foreground: 0 0% 100%;
-    --sidebar-muted: 220 30% 25%;
-    --sidebar-accent: 207 78% 43%;
+    --sidebar-muted: 213 50% 32%;
+    --sidebar-accent: 207 78% 50%;
     
     --dropzone-bg: 207 78% 98%;
     --dropzone-border: 207 78% 70%;
@@ -53,7 +53,7 @@
     --countable-blue-light: 207 78% 55%;
     --countable-blue-dark: 207 78% 35%;
     --countable-teal: 180 50% 45%;
-    --countable-navy: 220 30% 18%;
+    --countable-navy: 213 60% 24%;
     
     --card-shadow: 0 1px 3px 0 hsl(0 0% 0% / 0.05), 0 1px 2px -1px hsl(0 0% 0% / 0.05);
     --card-shadow-hover: 0 4px 6px -1px hsl(0 0% 0% / 0.08), 0 2px 4px -2px hsl(0 0% 0% / 0.05);
