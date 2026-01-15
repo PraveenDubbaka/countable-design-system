@@ -53,7 +53,7 @@ export function ChecklistBuilder({ checklist, onUpdate }: ChecklistBuilderProps)
   const [objectiveDraft, setObjectiveDraft] = useState(checklist.objective || '');
   const [activeQuestion, setActiveQuestion] = useState<Question | null>(null);
   const objectiveTextareaRef = useRef<HTMLTextAreaElement>(null);
-  const { toolbarState, showToolbar, hideToolbar, handleFormatAction } = useRichTextToolbarContext();
+  const { toolbarState, showToolbar, hideToolbar, handleFormatAction, toolbarRef } = useRichTextToolbarContext();
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -514,6 +514,7 @@ export function ChecklistBuilder({ checklist, onUpdate }: ChecklistBuilderProps)
           onAIAssist={() => {
             toast.info('AI assist coming soon!');
           }}
+          toolbarRef={toolbarRef}
         />
       )}
     </div>
