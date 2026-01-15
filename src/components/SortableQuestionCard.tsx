@@ -15,12 +15,13 @@ import {
   arrayMove 
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 import { 
   GripVertical, 
   Plus, 
   Sparkles,
   Mic,
+  MicOff,
   ChevronRight,
   X,
   Paperclip,
@@ -40,6 +41,8 @@ import { EditableOption } from './EditableOption';
 import { SortableInlineSubQuestion } from './SortableInlineSubQuestion';
 import { useRichTextToolbarContext } from '@/contexts/RichTextToolbarContext';
 import { RichTextQuestionEditor } from './RichTextQuestionEditor';
+import { useVoiceToText } from '@/hooks/useVoiceToText';
+import { useToast } from '@/hooks/use-toast';
 
 interface SortableQuestionCardProps {
   question: Question;
@@ -71,11 +74,62 @@ export function SortableQuestionCard({
   const [hasExplanation, setHasExplanation] = useState(question.explanation !== undefined);
   const [hasReference, setHasReference] = useState(question.reference !== undefined);
   const [aiMenuPosition, setAiMenuPosition] = useState({ x: 0, y: 0 });
+  const [activeVoiceField, setActiveVoiceField] = useState<'answer' | 'explanation' | null>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const cardRef = useRef<HTMLDivElement>(null);
   const questionInputRef = useRef<HTMLInputElement>(null);
   const toolbarRef = useRef<HTMLDivElement>(null);
   const { showToolbar } = useRichTextToolbarContext();
+  const { toast } = useToast();
+
+  // Voice-to-text for answer field
+  const handleVoiceResult = useCallback((transcript: string) => {
+    if (activeVoiceField === 'answer') {
+      const currentAnswer = question.answer || '';
+      const newAnswer = currentAnswer ? `${currentAnswer} ${transcript}` : transcript;
+      handleAnswerChange(newAnswer);
+      toast({
+        title: "Voice input captured",
+        description: transcript.length > 50 ? transcript.substring(0, 50) + '...' : transcript,
+      });
+    } else if (activeVoiceField === 'explanation') {
+      const currentExplanation = question.explanation || '';
+      const newExplanation = currentExplanation ? `${currentExplanation} ${transcript}` : transcript;
+      handleExplanationChange(newExplanation);
+      toast({
+        title: "Voice input captured",
+        description: transcript.length > 50 ? transcript.substring(0, 50) + '...' : transcript,
+      });
+    }
+    setActiveVoiceField(null);
+  }, [activeVoiceField, question.answer, question.explanation]);
+
+  const handleVoiceError = useCallback((error: string) => {
+    toast({
+      title: "Voice input error",
+      description: error,
+      variant: "destructive",
+    });
+    setActiveVoiceField(null);
+  }, []);
+
+  const { isListening, toggleListening, isSupported } = useVoiceToText({
+    onResult: handleVoiceResult,
+    onError: handleVoiceError,
+  });
+
+  const handleMicClick = (field: 'answer' | 'explanation') => {
+    if (!isSupported) {
+      toast({
+        title: "Not supported",
+        description: "Voice input is not supported in this browser. Try Chrome or Edge.",
+        variant: "destructive",
+      });
+      return;
+    }
+    setActiveVoiceField(field);
+    toggleListening();
+  };
 
   const {
     attributes,
@@ -433,8 +487,16 @@ export function SortableQuestionCard({
               >
                 <Sparkles className="h-4 w-4" />
               </button>
-              <button className="flex items-center gap-1 px-2 py-1 rounded text-accent hover:bg-accent/10 transition-colors">
-                <Mic className="h-4 w-4" />
+              <button 
+                onClick={() => handleMicClick('answer')}
+                className={`flex items-center gap-1 px-2 py-1 rounded transition-colors ${
+                  isListening && activeVoiceField === 'answer' 
+                    ? 'text-red-500 bg-red-100 animate-pulse' 
+                    : 'text-accent hover:bg-accent/10'
+                }`}
+                title={isListening && activeVoiceField === 'answer' ? 'Stop recording' : 'Start voice input'}
+              >
+                {isListening && activeVoiceField === 'answer' ? <MicOff className="h-4 w-4" /> : <Mic className="h-4 w-4" />}
               </button>
             </div>
           </div>
@@ -735,8 +797,16 @@ export function SortableQuestionCard({
                       >
                         <Sparkles className="h-4 w-4" />
                       </button>
-                      <button className="flex items-center gap-1 px-2 py-1 rounded text-accent hover:bg-accent/10 transition-colors">
-                        <Mic className="h-4 w-4" />
+                      <button 
+                        onClick={() => handleMicClick('explanation')}
+                        className={`flex items-center gap-1 px-2 py-1 rounded transition-colors ${
+                          isListening && activeVoiceField === 'explanation' 
+                            ? 'text-red-500 bg-red-100 animate-pulse' 
+                            : 'text-accent hover:bg-accent/10'
+                        }`}
+                        title={isListening && activeVoiceField === 'explanation' ? 'Stop recording' : 'Start voice input'}
+                      >
+                        {isListening && activeVoiceField === 'explanation' ? <MicOff className="h-4 w-4" /> : <Mic className="h-4 w-4" />}
                       </button>
                     </div>
                   </div>

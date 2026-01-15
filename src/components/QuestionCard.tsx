@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useCallback } from 'react';
 import { 
   GripVertical, 
   MoreVertical, 
@@ -8,6 +8,7 @@ import {
   Check,
   ArrowRight,
   Mic,
+  MicOff,
   ChevronDown,
   ChevronUp
 } from 'lucide-react';
@@ -16,6 +17,8 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { AIEditMenu } from './AIEditMenu';
+import { useVoiceToText } from '@/hooks/useVoiceToText';
+import { useToast } from '@/hooks/use-toast';
 
 interface QuestionCardProps {
   question: Question;
@@ -48,7 +51,58 @@ export function QuestionCard({
   const [isEditingQuestion, setIsEditingQuestion] = useState(false);
   const [isExpanded, setIsExpanded] = useState(true);
   const [aiMenuPosition, setAiMenuPosition] = useState({ x: 0, y: 0 });
+  const [activeVoiceField, setActiveVoiceField] = useState<'answer' | 'explanation' | null>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const { toast } = useToast();
+
+  // Voice-to-text handlers
+  const handleVoiceResult = useCallback((transcript: string) => {
+    if (activeVoiceField === 'answer') {
+      const currentAnswer = question.answer || '';
+      const newAnswer = currentAnswer ? `${currentAnswer} ${transcript}` : transcript;
+      onUpdate({ ...question, answer: newAnswer });
+      toast({
+        title: "Voice input captured",
+        description: transcript.length > 50 ? transcript.substring(0, 50) + '...' : transcript,
+      });
+    } else if (activeVoiceField === 'explanation') {
+      const currentExplanation = question.explanation || '';
+      const newExplanation = currentExplanation ? `${currentExplanation} ${transcript}` : transcript;
+      onUpdate({ ...question, explanation: newExplanation });
+      toast({
+        title: "Voice input captured",
+        description: transcript.length > 50 ? transcript.substring(0, 50) + '...' : transcript,
+      });
+    }
+    setActiveVoiceField(null);
+  }, [activeVoiceField, question, onUpdate, toast]);
+
+  const handleVoiceError = useCallback((error: string) => {
+    toast({
+      title: "Voice input error",
+      description: error,
+      variant: "destructive",
+    });
+    setActiveVoiceField(null);
+  }, [toast]);
+
+  const { isListening, toggleListening, isSupported } = useVoiceToText({
+    onResult: handleVoiceResult,
+    onError: handleVoiceError,
+  });
+
+  const handleMicClick = (field: 'answer' | 'explanation') => {
+    if (!isSupported) {
+      toast({
+        title: "Not supported",
+        description: "Voice input is not supported in this browser. Try Chrome or Edge.",
+        variant: "destructive",
+      });
+      return;
+    }
+    setActiveVoiceField(field);
+    toggleListening();
+  };
 
   const handleQuestionChange = (text: string) => {
     onUpdate({ ...question, text });
@@ -170,8 +224,16 @@ export function QuestionCard({
               >
                 <Sparkles className="h-4 w-4" />
               </button>
-              <button className="flex items-center gap-1 px-2 py-1 rounded text-accent hover:bg-accent/10 transition-colors">
-                <Mic className="h-4 w-4" />
+              <button 
+                onClick={() => handleMicClick('answer')}
+                className={`flex items-center gap-1 px-2 py-1 rounded transition-colors ${
+                  isListening && activeVoiceField === 'answer' 
+                    ? 'text-red-500 bg-red-100 animate-pulse' 
+                    : 'text-accent hover:bg-accent/10'
+                }`}
+                title={isListening && activeVoiceField === 'answer' ? 'Stop recording' : 'Start voice input'}
+              >
+                {isListening && activeVoiceField === 'answer' ? <MicOff className="h-4 w-4" /> : <Mic className="h-4 w-4" />}
               </button>
             </div>
           </div>
@@ -291,8 +353,16 @@ export function QuestionCard({
                         >
                           <Sparkles className="h-4 w-4" />
                         </button>
-                        <button className="flex items-center gap-1 px-2 py-1 rounded text-accent hover:bg-accent/10 transition-colors">
-                          <Mic className="h-4 w-4" />
+                        <button 
+                          onClick={() => handleMicClick('explanation')}
+                          className={`flex items-center gap-1 px-2 py-1 rounded transition-colors ${
+                            isListening && activeVoiceField === 'explanation' 
+                              ? 'text-red-500 bg-red-100 animate-pulse' 
+                              : 'text-accent hover:bg-accent/10'
+                          }`}
+                          title={isListening && activeVoiceField === 'explanation' ? 'Stop recording' : 'Start voice input'}
+                        >
+                          {isListening && activeVoiceField === 'explanation' ? <MicOff className="h-4 w-4" /> : <Mic className="h-4 w-4" />}
                         </button>
                       </div>
                     </div>
