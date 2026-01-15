@@ -63,6 +63,7 @@ export function SortableQuestionCard({
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const cardRef = useRef<HTMLDivElement>(null);
   const questionInputRef = useRef<HTMLInputElement>(null);
+  const toolbarRef = useRef<HTMLDivElement>(null);
 
   const {
     attributes,
@@ -80,12 +81,22 @@ export function SortableQuestionCard({
     zIndex: isDragging ? 50 : 'auto',
   };
 
-  // Click outside handler
+  // Click outside handler - exclude toolbar and its dropdown menus
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
-      if (cardRef.current && !cardRef.current.contains(e.target as Node)) {
-        setIsFocused(false);
-      }
+      const target = e.target as Node;
+      
+      // Check if click is inside the card
+      if (cardRef.current?.contains(target)) return;
+      
+      // Check if click is inside the toolbar
+      if (toolbarRef.current?.contains(target)) return;
+      
+      // Check if click is inside a Radix dropdown menu (rendered via portal)
+      const dropdownContent = (target as Element).closest?.('[data-radix-menu-content]');
+      if (dropdownContent) return;
+      
+      setIsFocused(false);
     };
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
@@ -400,7 +411,7 @@ export function SortableQuestionCard({
       >
         {/* Floating Toolbar - appears when focused */}
         {isFocused && (
-          <div className="absolute -top-12 left-1/2 -translate-x-1/2 z-30">
+          <div ref={toolbarRef} className="absolute -top-12 left-1/2 -translate-x-1/2 z-30">
             <QuestionToolbar
               currentType={question.answerType}
               onChangeType={handleTypeChange}
