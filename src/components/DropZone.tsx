@@ -262,14 +262,14 @@ export function DropZone({ onGenerate }: DropZoneProps) {
           icon={
             <svg className="h-10 w-10" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
               <defs>
-                <linearGradient id="uploadGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                  <stop offset="0%" stopColor="#3379C9"/>
-                  <stop offset="100%" stopColor="#8A5BD9"/>
+                <linearGradient id="uploadIconGradient" x1="0" y1="0" x2="24" y2="24" gradientUnits="userSpaceOnUse">
+                  <stop stopColor="#3379C9"/>
+                  <stop offset="1" stopColor="#8A5BD9"/>
                 </linearGradient>
               </defs>
-              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" stroke="url(#uploadGradient)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-              <polyline points="17 8 12 3 7 8" stroke="url(#uploadGradient)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-              <line x1="12" y1="3" x2="12" y2="15" stroke="url(#uploadGradient)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" stroke="url(#uploadIconGradient)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+              <path d="M17 8L12 3L7 8" stroke="url(#uploadIconGradient)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+              <path d="M12 3L12 15" stroke="url(#uploadIconGradient)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
             </svg>
           }
           iconBg="bg-gradient-to-r from-[#ECD4F6] to-[#CFE1FC]"
