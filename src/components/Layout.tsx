@@ -5,9 +5,11 @@ interface LayoutProps {
   children: React.ReactNode;
   title?: string;
   showActions?: boolean;
+  showBackButton?: boolean;
+  onBack?: () => void;
 }
 
-export function Layout({ children, title = "LUKA Generator", showActions = false }: LayoutProps) {
+export function Layout({ children, title = "LUKA Generator", showActions = false, showBackButton = false, onBack }: LayoutProps) {
   return (
     <div className="flex h-screen bg-sidebar">
       <Sidebar />
@@ -18,6 +20,8 @@ export function Layout({ children, title = "LUKA Generator", showActions = false
           <Header 
             title={title} 
             showActions={showActions}
+            showBackButton={showBackButton}
+            onBack={onBack}
           />
           
           <main className="flex-1 overflow-auto bg-background">

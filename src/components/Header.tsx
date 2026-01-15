@@ -1,17 +1,30 @@
-import { Bell, ChevronDown, User } from 'lucide-react';
+import { Bell, ChevronDown, User, ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import lukaAiIcon from '@/assets/luka-ai-icon.png';
 
 interface HeaderProps {
   title?: string;
   showActions?: boolean;
+  showBackButton?: boolean;
+  onBack?: () => void;
 }
 
-export function Header({ title, showActions = true }: HeaderProps) {
+export function Header({ title, showActions = true, showBackButton = false, onBack }: HeaderProps) {
   return (
     <header className="h-14 bg-card flex items-center justify-between px-6">
-      {/* Left side - empty or with title if provided */}
-      <div className="flex items-center gap-4">
+      {/* Left side - back button and title */}
+      <div className="flex items-center gap-3">
+        {showBackButton && (
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={onBack}
+            className="gap-2 text-muted-foreground hover:text-foreground hover:bg-[#1C63A6] hover:text-white transition-colors"
+          >
+            <ArrowLeft className="h-4 w-4" />
+            Back
+          </Button>
+        )}
         {title && (
           <h1 className="text-lg font-semibold text-foreground">{title}</h1>
         )}
