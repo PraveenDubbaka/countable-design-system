@@ -67,10 +67,14 @@ const ChatIcon = () => (
   </svg>
 );
 
-const ChecklistIcon = () => (
+const TemplatesIcon = () => (
   <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <rect x="3" y="3" width="14" height="14" rx="2" stroke="currentColor" strokeWidth="1.5"/>
-    <path d="M6 10l2 2 4-4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+    {/* Back page */}
+    <rect x="5" y="2" width="12" height="14" rx="1.5" stroke="currentColor" strokeWidth="1.5"/>
+    {/* Front page */}
+    <rect x="3" y="4" width="12" height="14" rx="1.5" fill="hsl(var(--sidebar-bg))" stroke="currentColor" strokeWidth="1.5"/>
+    {/* Lines on front page */}
+    <path d="M6 8h6M6 11h4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
   </svg>
 );
 
@@ -79,7 +83,7 @@ const navItems = [
   { icon: UsersIcon, label: 'Clients' },
   { icon: DocumentIcon, label: 'Documents' },
   { icon: ChatIcon, label: 'Messages' },
-  { icon: ChecklistIcon, label: 'Checklists', active: true },
+  { icon: TemplatesIcon, label: 'Templates', active: true },
 ];
 
 // Luka Logo Component
