@@ -1,0 +1,219 @@
+import { useRef, useEffect, useState, useCallback } from 'react';
+import { RichTextToolbar } from './RichTextToolbar';
+
+interface RichTextQuestionEditorProps {
+  value: string;
+  onChange: (value: string) => void;
+  onBlur: () => void;
+  onCancel: () => void;
+  className?: string;
+}
+
+export function RichTextQuestionEditor({
+  value,
+  onChange,
+  onBlur,
+  onCancel,
+  className = '',
+}: RichTextQuestionEditorProps) {
+  const editorRef = useRef<HTMLDivElement>(null);
+  const toolbarRef = useRef<HTMLDivElement>(null);
+  const [toolbarPosition, setToolbarPosition] = useState({ x: 0, y: 0 });
+  const [showToolbar, setShowToolbar] = useState(true);
+
+  // Initialize editor content
+  useEffect(() => {
+    if (editorRef.current && editorRef.current.innerHTML !== value) {
+      editorRef.current.innerHTML = value;
+    }
+  }, []);
+
+  // Update toolbar position
+  useEffect(() => {
+    if (editorRef.current) {
+      const rect = editorRef.current.getBoundingClientRect();
+      const toolbarWidth = 700;
+      
+      let x = rect.left + rect.width / 2;
+      let y = rect.top - 50;
+      
+      const minX = toolbarWidth / 2 + 10;
+      const maxX = window.innerWidth - toolbarWidth / 2 - 10;
+      x = Math.max(minX, Math.min(maxX, x));
+      
+      if (y < 60) {
+        y = rect.bottom + 10;
+      }
+      
+      setToolbarPosition({ x, y });
+    }
+  }, []);
+
+  // Focus editor on mount
+  useEffect(() => {
+    if (editorRef.current) {
+      editorRef.current.focus();
+      // Move cursor to end
+      const range = document.createRange();
+      const sel = window.getSelection();
+      range.selectNodeContents(editorRef.current);
+      range.collapse(false);
+      sel?.removeAllRanges();
+      sel?.addRange(range);
+    }
+  }, []);
+
+  const handleInput = useCallback(() => {
+    if (editorRef.current) {
+      onChange(editorRef.current.innerHTML);
+    }
+  }, [onChange]);
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Escape') {
+      e.preventDefault();
+      onCancel();
+    }
+    // Ctrl/Cmd + Enter to save
+    if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) {
+      e.preventDefault();
+      onBlur();
+    }
+  };
+
+  const handleClickOutside = useCallback((e: MouseEvent) => {
+    const target = e.target as Node;
+    
+    // Don't close if clicking toolbar or editor
+    if (editorRef.current?.contains(target)) return;
+    if (toolbarRef.current?.contains(target)) return;
+    
+    // Don't close if clicking Radix menu content
+    const radixContent = (e.target as Element)?.closest('[data-radix-menu-content]');
+    if (radixContent) return;
+    
+    // Don't close if clicking on data-rich-text-toolbar
+    const richTextToolbar = (e.target as Element)?.closest('[data-rich-text-toolbar]');
+    if (richTextToolbar) return;
+    
+    onBlur();
+  }, [onBlur]);
+
+  useEffect(() => {
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [handleClickOutside]);
+
+  const handleFormatAction = (action: string, value?: string) => {
+    const editor = editorRef.current;
+    if (!editor) return;
+
+    editor.focus();
+
+    switch (action) {
+      case 'bold':
+        document.execCommand('bold', false);
+        break;
+      case 'italic':
+        document.execCommand('italic', false);
+        break;
+      case 'underline':
+        document.execCommand('underline', false);
+        break;
+      case 'strikethrough':
+        document.execCommand('strikeThrough', false);
+        break;
+      case 'code':
+        // Wrap selection in <code> tag
+        const selection = window.getSelection();
+        if (selection && selection.rangeCount > 0) {
+          const range = selection.getRangeAt(0);
+          const selectedText = range.toString();
+          if (selectedText) {
+            const code = document.createElement('code');
+            code.textContent = selectedText;
+            range.deleteContents();
+            range.insertNode(code);
+          }
+        }
+        break;
+      case 'removeFormatting':
+        document.execCommand('removeFormat', false);
+        break;
+      case 'link':
+        const url = prompt('Enter URL:');
+        if (url) {
+          document.execCommand('createLink', false, url);
+        }
+        break;
+      case 'superscript':
+        document.execCommand('superscript', false);
+        break;
+      case 'bulletList':
+        document.execCommand('insertUnorderedList', false);
+        break;
+      case 'numberedList':
+        document.execCommand('insertOrderedList', false);
+        break;
+      case 'checkList':
+        // Insert checkbox list item
+        document.execCommand('insertHTML', false, '☐ ');
+        break;
+      case 'alignLeft':
+        document.execCommand('justifyLeft', false);
+        break;
+      case 'alignCenter':
+        document.execCommand('justifyCenter', false);
+        break;
+      case 'alignRight':
+        document.execCommand('justifyRight', false);
+        break;
+      case 'undo':
+        document.execCommand('undo', false);
+        break;
+      case 'redo':
+        document.execCommand('redo', false);
+        break;
+      case 'textStyle':
+        if (value) {
+          document.execCommand('formatBlock', false, value);
+        }
+        break;
+      case 'textColor':
+        if (value) {
+          document.execCommand('foreColor', false, value);
+        }
+        break;
+    }
+
+    // Update the value after formatting
+    handleInput();
+  };
+
+  const handleAIAssist = () => {
+    // Placeholder for AI assist functionality
+    console.log('AI Assist clicked');
+  };
+
+  return (
+    <>
+      {showToolbar && (
+        <RichTextToolbar
+          position={toolbarPosition}
+          onFormatAction={handleFormatAction}
+          onAIAssist={handleAIAssist}
+          toolbarRef={toolbarRef}
+        />
+      )}
+      <div
+        ref={editorRef}
+        contentEditable
+        onInput={handleInput}
+        onKeyDown={handleKeyDown}
+        className={`question-content outline-none border-2 border-primary rounded-md p-2 bg-background min-h-[60px] ${className}`}
+        style={{ whiteSpace: 'pre-wrap' }}
+        suppressContentEditableWarning
+      />
+    </>
+  );
+}
