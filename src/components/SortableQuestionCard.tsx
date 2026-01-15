@@ -418,9 +418,18 @@ export function SortableQuestionCard({
                   setIsEditingQuestion(true);
                 }}
               >
-                {question.text}
+              {question.text}
               </p>
             )}
+
+            {/* Sub-question button - between question and answer */}
+            <button
+              onClick={handleAddInlineSubQuestion}
+              className="mt-3 flex items-center gap-2 px-3 py-1.5 text-sm text-muted-foreground hover:text-primary hover:bg-muted/50 rounded-md transition-colors border border-dashed border-muted hover:border-primary"
+            >
+              <Plus className="h-4 w-4" />
+              Sub-question
+            </button>
 
             {/* Collapsible answer section */}
             <div className={`overflow-hidden transition-all duration-200 ${isExpanded ? 'max-h-[3000px] opacity-100 mt-3' : 'max-h-0 opacity-0'}`}>
@@ -495,14 +504,6 @@ export function SortableQuestionCard({
                 </div>
               )}
 
-              {/* Add sub-question inline button */}
-              <button
-                onClick={handleAddInlineSubQuestion}
-                className="mt-4 flex items-center gap-2 px-3 py-2 text-sm text-muted-foreground hover:text-primary hover:bg-muted/50 rounded-md transition-colors border border-dashed border-muted hover:border-primary"
-              >
-                <Plus className="h-4 w-4" />
-                Add sub-question inside
-              </button>
             </div>
           </div>
         </div>
