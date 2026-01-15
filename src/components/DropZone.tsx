@@ -236,7 +236,21 @@ export function DropZone({ onGenerate }: DropZoneProps) {
       {/* Creation Options Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         <CreationOption
-          icon={<Sparkles className="h-10 w-10 text-white" />}
+          icon={
+            <div className="relative">
+              {/* Main icon */}
+              <svg width="48" height="52" viewBox="0 0 186 203" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M119.717 82.3955H166.681C170.547 82.6949 182.147 84.042 185.165 89.8796C187.428 94.2204 184.976 100.133 179.223 104.848C139.898 137.254 100.668 169.735 61.3425 202.141C57.9476 203.039 55.7786 203.039 54.8355 202.141C52.9494 200.42 55.59 195.48 62.9457 187.173C91.2371 159.706 119.529 132.314 147.82 104.848L67.2837 82.3955H119.623H119.717Z" fill="white"/>
+                <path d="M66.3304 120.419H19.333C15.4638 120.12 3.856 118.773 0.836085 112.935C-1.42885 108.594 1.02483 102.682 6.78153 97.9669C46.0404 65.4859 85.3936 33.0797 124.652 0.673569C128.05 -0.224523 130.22 -0.224523 131.164 0.673569C133.052 2.39491 130.409 7.33442 123.048 15.6418C94.7364 43.1084 66.4248 70.5003 38.1131 97.9669L118.707 120.419H66.3304Z" fill="white"/>
+              </svg>
+              {/* Sparkle effects */}
+              <span className="absolute -top-1 -right-1 w-2 h-2 bg-white rounded-full animate-pulse" />
+              <span className="absolute -top-2 right-3 w-1.5 h-1.5 bg-white/80 rounded-full animate-pulse delay-100" />
+              <span className="absolute top-1 -right-3 w-1 h-1 bg-white/60 rounded-full animate-pulse delay-200" />
+              <span className="absolute -bottom-1 -left-1 w-1.5 h-1.5 bg-white rounded-full animate-pulse delay-150" />
+              <span className="absolute bottom-2 -left-2 w-1 h-1 bg-white/70 rounded-full animate-pulse delay-75" />
+            </div>
+          }
           iconBg="bg-gradient-to-r from-[#9249FB] to-[#2462AC]"
           title="Generate"
           description="Create from a one-line prompt in a few seconds"
