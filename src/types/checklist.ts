@@ -8,6 +8,8 @@ export interface Question {
   options?: string[];
   required: boolean;
   subQuestions?: Question[];
+  note?: string;
+  explanation?: string;
 }
 
 export interface Section {

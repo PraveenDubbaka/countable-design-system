@@ -25,6 +25,11 @@ export function EditableOption({
   const [editValue, setEditValue] = useState(value);
   const inputRef = useRef<HTMLInputElement>(null);
 
+  // Sync editValue with prop value when it changes externally
+  useEffect(() => {
+    setEditValue(value);
+  }, [value]);
+
   useEffect(() => {
     if (isEditing && inputRef.current) {
       inputRef.current.focus();
@@ -33,9 +38,10 @@ export function EditableOption({
   }, [isEditing]);
 
   const handleSave = () => {
-    if (editValue.trim()) {
-      onUpdate(editValue.trim());
-    } else {
+    const trimmed = editValue.trim();
+    if (trimmed && trimmed !== value) {
+      onUpdate(trimmed);
+    } else if (!trimmed) {
       setEditValue(value);
     }
     setIsEditing(false);
@@ -43,11 +49,16 @@ export function EditableOption({
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter') {
+      e.preventDefault();
       handleSave();
     } else if (e.key === 'Escape') {
       setEditValue(value);
       setIsEditing(false);
     }
+  };
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setEditValue(e.target.value);
   };
 
   return (
@@ -82,7 +93,7 @@ export function EditableOption({
         <Input
           ref={inputRef}
           value={editValue}
-          onChange={(e) => setEditValue(e.target.value)}
+          onChange={handleChange}
           onBlur={handleSave}
           onKeyDown={handleKeyDown}
           className="h-7 text-sm flex-1"
