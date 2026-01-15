@@ -46,12 +46,14 @@ export function ReorderModal({ isOpen, onClose, checklist, onUpdate }: ReorderMo
         indent: false
       });
       section.questions.forEach((question, qIndex) => {
+        // Strip HTML tags for display
+        const plainText = question.text.replace(/<[^>]*>/g, '').trim();
         items.push({
           id: question.id,
           type: 'question',
           sectionIndex: sIndex,
           questionIndex: qIndex,
-          label: question.text.length > 35 ? question.text.substring(0, 35) + '...' : question.text,
+          label: plainText.length > 50 ? plainText.substring(0, 50) + '...' : plainText,
           indent: true
         });
       });
