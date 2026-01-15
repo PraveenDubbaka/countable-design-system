@@ -11,6 +11,7 @@ export interface Question {
   note?: string;
   explanation?: string;
   reference?: string;
+  isExpanded?: boolean;
 }
 
 export interface Section {

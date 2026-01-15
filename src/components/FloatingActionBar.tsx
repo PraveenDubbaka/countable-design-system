@@ -3,7 +3,8 @@ import {
   Minimize2, 
   ArrowUpDown, 
   Layers,
-  Link2
+  ChevronDown,
+  ChevronUp
 } from 'lucide-react';
 import { Checklist } from '@/types/checklist';
 import { ReorderModal } from './ReorderModal';
@@ -11,25 +12,39 @@ import { ReorderModal } from './ReorderModal';
 interface FloatingActionBarProps {
   checklist: Checklist;
   onUpdate: (checklist: Checklist) => void;
-  onCollapseAll: () => void;
-  onExpandAll: () => void;
-  allCollapsed: boolean;
+  onCollapseSections: () => void;
+  onExpandSections: () => void;
+  onCollapseQuestions: () => void;
+  onExpandQuestions: () => void;
+  allSectionsCollapsed: boolean;
+  allQuestionsCollapsed: boolean;
 }
 
 export function FloatingActionBar({ 
   checklist, 
   onUpdate, 
-  onCollapseAll, 
-  onExpandAll,
-  allCollapsed 
+  onCollapseSections, 
+  onExpandSections,
+  onCollapseQuestions,
+  onExpandQuestions,
+  allSectionsCollapsed,
+  allQuestionsCollapsed
 }: FloatingActionBarProps) {
   const [showReorderModal, setShowReorderModal] = useState(false);
 
-  const handleToggleAll = () => {
-    if (allCollapsed) {
-      onExpandAll();
+  const handleToggleSections = () => {
+    if (allSectionsCollapsed) {
+      onExpandSections();
     } else {
-      onCollapseAll();
+      onCollapseSections();
+    }
+  };
+
+  const handleToggleQuestions = () => {
+    if (allQuestionsCollapsed) {
+      onExpandQuestions();
+    } else {
+      onCollapseQuestions();
     }
   };
 
@@ -38,13 +53,22 @@ export function FloatingActionBar({
       {/* Floating pill button */}
       <div className="fixed right-6 top-1/2 -translate-y-1/2 z-40">
         <div className="flex flex-col gap-1 bg-card border rounded-full p-2 shadow-lg">
-          {/* Collapse/Expand All */}
+          {/* Collapse/Expand Sections */}
           <button
-            onClick={handleToggleAll}
+            onClick={handleToggleSections}
             className="w-9 h-9 flex items-center justify-center rounded-full hover:bg-muted transition-colors group"
-            title={allCollapsed ? "Expand all sections" : "Collapse all sections"}
+            title={allSectionsCollapsed ? "Expand all categories" : "Collapse all categories"}
           >
-            <Minimize2 className={`h-4 w-4 text-muted-foreground group-hover:text-foreground transition-transform ${allCollapsed ? 'rotate-180' : ''}`} />
+            <Layers className={`h-4 w-4 text-muted-foreground group-hover:text-foreground transition-transform ${allSectionsCollapsed ? 'opacity-50' : ''}`} />
+          </button>
+
+          {/* Collapse/Expand Questions */}
+          <button
+            onClick={handleToggleQuestions}
+            className="w-9 h-9 flex items-center justify-center rounded-full hover:bg-muted transition-colors group"
+            title={allQuestionsCollapsed ? "Expand all questions" : "Collapse all questions"}
+          >
+            <Minimize2 className={`h-4 w-4 text-muted-foreground group-hover:text-foreground transition-transform ${allQuestionsCollapsed ? 'rotate-180' : ''}`} />
           </button>
 
           {/* Reorder Questions */}
