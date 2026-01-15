@@ -81,6 +81,7 @@ export function QuestionCard({
 
   const answerTypeLabels: Record<AnswerType, string> = {
     'yes-no': 'Yes / No',
+    'yes-no-na': 'Yes / No / N/A',
     'multiple-choice': 'Multiple Choice',
     'date': 'Date',
     'long-answer': 'Long Answer',
@@ -99,6 +100,29 @@ export function QuestionCard({
         return (
           <div className="flex gap-8 mt-3">
             {['Yes', 'No'].map((option) => (
+              <label key={option} className="flex items-center gap-2.5 cursor-pointer group">
+                <div 
+                  className={`w-4 h-4 rounded-full border-2 flex items-center justify-center transition-all ${
+                    question.answer === option 
+                      ? 'border-primary bg-primary' 
+                      : 'border-muted-foreground/50 group-hover:border-primary/50'
+                  }`}
+                  onClick={() => handleAnswerChange(option)}
+                >
+                  {question.answer === option && (
+                    <div className="w-1.5 h-1.5 rounded-full bg-primary-foreground" />
+                  )}
+                </div>
+                <span className="text-sm text-foreground">{option}</span>
+              </label>
+            ))}
+          </div>
+        );
+
+      case 'yes-no-na':
+        return (
+          <div className="flex gap-8 mt-3">
+            {['Yes', 'No', 'Not Applicable'].map((option) => (
               <label key={option} className="flex items-center gap-2.5 cursor-pointer group">
                 <div 
                   className={`w-4 h-4 rounded-full border-2 flex items-center justify-center transition-all ${
@@ -248,12 +272,12 @@ export function QuestionCard({
                 {renderAnswerField()}
 
                 {/* Additional explanation for Yes/No types */}
-                {question.answerType === 'yes-no' && (
+                {(question.answerType === 'yes-no' || question.answerType === 'yes-no-na') && (
                   <div className="mt-4">
                     <p className="text-sm text-muted-foreground mb-2">Additional Explanation</p>
                     <div className="relative">
                       <Textarea
-                        placeholder="Add any additional context or explanation..."
+                        placeholder=""
                         className="min-h-[80px] pr-20 resize-none bg-background"
                       />
                       <div className="absolute bottom-3 right-3 flex items-center gap-1">

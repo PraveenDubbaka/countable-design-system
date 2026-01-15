@@ -11,97 +11,128 @@ import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 
 const generateMockChecklist = (prompt: string, scope: GenerationScope): Checklist => {
-  // Seed content as per specification
-  const independenceQuestions: Question[] = [
-    {
-      id: 'q1',
-      text: 'Has the engagement team confirmed independence for this engagement?',
-      answerType: 'yes-no',
-      required: true,
-      answer: ''
-    },
-    {
-      id: 'q2',
-      text: 'Describe identified threats and safeguards.',
-      answerType: 'long-answer',
-      required: true,
-      // Seed the "We → I" demo text
-      answer: 'We believe all necessary steps have been completed to comply with the independence requirements.'
-    },
-    {
-      id: 'q3',
-      text: 'Which independence threats apply?',
-      answerType: 'multiple-choice',
-      required: false,
-      options: ['Self-interest', 'Self-review', 'Advocacy', 'Familiarity', 'Intimidation'],
-      answer: ''
-    }
-  ];
-
-  const documentationQuestions: Question[] = [
-    {
-      id: 'q4',
-      text: 'Where is the independence documentation stored?',
-      answerType: 'short-answer',
-      required: true,
-      answer: ''
-    }
-  ];
-
-  // Add more questions based on scope
-  if (scope === 'standard' || scope === 'detailed') {
-    independenceQuestions.push({
-      id: 'q5',
-      text: 'Have all team members confirmed their independence in writing?',
-      answerType: 'yes-no',
-      required: true,
-      answer: ''
-    });
-  }
-
-  if (scope === 'detailed') {
-    independenceQuestions.push({
-      id: 'q6',
-      text: 'Document any relationships that may impair independence.',
-      answerType: 'long-answer',
-      required: false,
-      answer: '',
-      subQuestions: [
-        {
-          id: 'sq1',
-          text: 'What safeguards have been implemented?',
-          answerType: 'long-answer',
-          required: false
-        },
-        {
-          id: 'sq2',
-          text: 'Who reviewed the independence assessment?',
-          answerType: 'short-answer',
-          required: false
-        }
-      ]
-    });
-
-    documentationQuestions.push({
-      id: 'q7',
-      text: 'Has the engagement letter been signed by both parties?',
-      answerType: 'yes-no',
-      required: true,
-      answer: ''
-    });
-  }
-
+  // Questions matching the screenshot - each in its own block/section
   const sections: Section[] = [
     {
       id: 'section-1',
-      title: 'Independence',
-      questions: independenceQuestions,
+      title: '1. Quality management',
+      questions: [
+        {
+          id: 'q1',
+          text: 'Determine whether accepting this engagement would contravene any of the firm\'s quality management policies.',
+          answerType: 'yes-no-na',
+          required: true,
+          answer: ''
+        }
+      ],
       isExpanded: true
     },
     {
       id: 'section-2',
-      title: 'Documentation',
-      questions: documentationQuestions,
+      title: '2. Engagement risk factors',
+      questions: [
+        {
+          id: 'q2',
+          text: `New Clients
+
+a. Indicate who in the firm has knowledge about the prospective client and whether they recommend that this entity be accepted as a new client.
+
+b. Contact the predecessor practitioner to inquire about any reasons the engagement should not be accepted. If no response is received, explain what alternative procedures were performed.
+
+All Clients
+
+c. Make inquiries and perform web searches for any new or emerging engagement risks that would impact the decision to accept or continue with this engagement.
+
+d. Consider any risk factors identified from other sources.
+
+e. Based on preliminary understanding, is there any indication that the financial information will be misleading?
+
+f. Does management understand the limited nature of the engagement?`,
+          answerType: 'yes-no-na',
+          required: true,
+          answer: ''
+        }
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'section-3',
+      title: '3. Intended use of FI',
+      questions: [
+        {
+          id: 'q3',
+          text: `Inquire to management about:
+a. Intended use of the FI.
+b. Whether the FI is intended to be used by a third party.`,
+          answerType: 'yes-no-na',
+          required: true,
+          answer: ''
+        }
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'section-4',
+      title: '4. Expected basis of accounting',
+      questions: [
+        {
+          id: 'q4',
+          text: `Discuss the expected basis of accounting with management and obtain management's acknowledgement that it is appropriate in the circumstances:
+a. A written communication (e.g., paper or electronic).
+b. An oral communication documented in the working paper file.
+
+Note: Use of a general purpose framework is considered rare (such as ASPE). In such cases, consideration should be given to whether an audit or review engagement would be more appropriate.`,
+          answerType: 'yes-no-na',
+          required: true,
+          answer: ''
+        }
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'section-5',
+      title: '5. Third-party use of the FI',
+      questions: [
+        {
+          id: 'q5',
+          text: `If the FI is intended to be used by a third party, inquire of management about:
+
+a. The ability of the third party to request and obtain additional information.
+b. Whether the third party agrees with the basis of accounting.`,
+          answerType: 'yes-no-na',
+          required: true,
+          answer: ''
+        }
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'section-6',
+      title: '6. Engagement quality review',
+      questions: [
+        {
+          id: 'q6',
+          text: `Are there any circumstances that would require this engagement to be subject to an engagement quality review?
+If so, has a reviewer been appointed?`,
+          answerType: 'yes-no-na',
+          required: true,
+          answer: ''
+        }
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'section-7',
+      title: '7. test',
+      questions: [
+        {
+          id: 'q7',
+          text: '',
+          answerType: 'yes-no-na',
+          required: false,
+          answer: ''
+        }
+      ],
       isExpanded: true
     }
   ];
@@ -115,7 +146,7 @@ When assisting management in developing an appropriate basis of accounting, take
 
   return {
     id: 'checklist-1',
-    title: prompt ? `Checklist: ${prompt.substring(0, 50)}...` : 'Independence Checklist (CSRS 4200)',
+    title: prompt ? `Checklist: ${prompt.substring(0, 50)}...` : 'Engagement Acceptance Checklist',
     description: prompt,
     objective: defaultObjective,
     sections,
