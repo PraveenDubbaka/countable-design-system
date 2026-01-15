@@ -71,7 +71,7 @@ export function QuestionToolbar({
       {/* Change Type Dropdown */}
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button variant="ghost" size="sm" className="h-7 px-2 gap-1.5">
+          <Button variant="ghost" size="sm" className="h-7 px-2 gap-1.5 hover:bg-[#1C63A6] hover:text-white focus:bg-[#1C63A6] focus:text-white transition-colors">
             {answerTypeIcons[currentType]}
             <span className="text-xs">{answerTypeLabels[currentType]}</span>
           </Button>
