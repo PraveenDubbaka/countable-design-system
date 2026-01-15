@@ -8,7 +8,7 @@ interface HeaderProps {
 
 export function Header({ title = "Client Acceptance and Continuance", showActions = true }: HeaderProps) {
   return (
-    <header className="h-14 border-b bg-card flex items-center justify-between px-6">
+    <header className="h-14 bg-card flex items-center justify-between px-6 relative">
       {/* Left side - Collapse toggle */}
       <div className="flex items-center gap-4">
         <button className="text-muted-foreground hover:text-foreground transition-colors">
@@ -53,16 +53,11 @@ export function Header({ title = "Client Acceptance and Continuance", showAction
           <Bell className="h-5 w-5 text-muted-foreground" />
           <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-destructive" />
         </Button>
-        
-        <Button size="icon" variant="ghost" className="h-9 w-9">
-          <Bell className="h-5 w-5 text-muted-foreground" />
-        </Button>
 
         <div className="flex items-center gap-2 ml-1 cursor-pointer hover:bg-muted px-3 py-1.5 rounded-lg transition-colors">
           <div className="w-8 h-8 rounded-full bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center">
             <User className="h-4 w-4 text-white" />
           </div>
-          <span className="text-sm font-medium text-foreground">Asha Counta</span>
           <ChevronDown className="h-4 w-4 text-muted-foreground" />
         </div>
       </div>

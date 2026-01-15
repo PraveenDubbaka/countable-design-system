@@ -157,6 +157,10 @@
     background-color: hsl(var(--sidebar-bg));
   }
   
+  .bg-sidebar {
+    background-color: hsl(var(--sidebar-bg));
+  }
+  
   .sidebar-item {
     @apply flex items-center justify-center w-10 h-10 rounded-lg transition-colors cursor-pointer;
     color: hsl(var(--sidebar-foreground) / 0.6);
