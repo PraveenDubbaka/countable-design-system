@@ -121,17 +121,19 @@ export function SortableSection({
     >
       {/* Section Header */}
       <div className="flex items-center gap-2 mb-3 group/section">
-        {/* Drag Handle for Section - Hidden in preview mode */}
-        {!isPreviewMode && (
-          <div
-            {...attributes}
-            {...listeners}
-            className="flex items-center justify-center w-8 h-8 rounded cursor-grab active:cursor-grabbing opacity-0 group-hover/section:opacity-100 hover:bg-muted transition-all shrink-0"
-            title="Drag to reorder section"
-          >
-            <GripVertical className="h-5 w-5 text-muted-foreground" />
-          </div>
-        )}
+        {/* Drag Handle for Section - Hidden in preview mode, but space preserved */}
+        <div className={`flex items-center justify-center w-8 h-8 shrink-0 ${isPreviewMode ? '' : 'rounded cursor-grab active:cursor-grabbing opacity-0 group-hover/section:opacity-100 hover:bg-muted transition-all'}`}>
+          {!isPreviewMode && (
+            <div
+              {...attributes}
+              {...listeners}
+              className="flex items-center justify-center w-full h-full"
+              title="Drag to reorder section"
+            >
+              <GripVertical className="h-5 w-5 text-muted-foreground" />
+            </div>
+          )}
+        </div>
 
         <button
           onClick={toggleExpanded}
@@ -200,7 +202,7 @@ export function SortableSection({
 
       {/* Questions - now using parent's DndContext for cross-section drag */}
       {section.isExpanded && (
-        <div className="ml-12">
+        <div className="pl-10">
           <SortableContext
             items={section.questions.map(q => q.id)}
             strategy={verticalListSortingStrategy}
