@@ -166,7 +166,6 @@ export default function Index() {
   return (
     <RichTextToolbarProvider>
       <Layout 
-        title={checklist?.title || "Countable AI Checklist Generator"} 
         showActions={!!checklist}
       >
         {isGenerating ? (
