@@ -59,6 +59,7 @@ export function SortableQuestionCard({
   const [isFocused, setIsFocused] = useState(false);
   const [hasNote, setHasNote] = useState(!!question.note);
   const [hasExplanation, setHasExplanation] = useState(question.explanation !== undefined);
+  const [hasReference, setHasReference] = useState(question.reference !== undefined);
   const [aiMenuPosition, setAiMenuPosition] = useState({ x: 0, y: 0 });
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const cardRef = useRef<HTMLDivElement>(null);
@@ -126,6 +127,11 @@ export function SortableQuestionCard({
   useEffect(() => {
     setHasExplanation(question.explanation !== undefined);
   }, [question.explanation]);
+
+  // Sync hasReference with question.reference
+  useEffect(() => {
+    setHasReference(question.reference !== undefined);
+  }, [question.reference]);
 
   const commitQuestionText = () => {
     const trimmed = draftQuestionText.trim();
@@ -280,6 +286,20 @@ export function SortableQuestionCard({
   const handleRemoveExplanation = () => {
     setHasExplanation(false);
     onUpdate({ ...question, explanation: undefined });
+  };
+
+  const handleAddReference = () => {
+    setHasReference(true);
+    onUpdate({ ...question, reference: question.reference || '' });
+  };
+
+  const handleRemoveReference = () => {
+    setHasReference(false);
+    onUpdate({ ...question, reference: undefined });
+  };
+
+  const handleReferenceChange = (reference: string) => {
+    onUpdate({ ...question, reference });
   };
 
   const renderAnswerField = () => {
@@ -578,12 +598,40 @@ export function SortableQuestionCard({
                 </div>
               )}
 
-              {/* Action buttons for adding note/explanation */}
+              {/* Reference field - deletable */}
+              {hasReference && (
+                <div className="mt-4">
+                  <div className="flex items-center justify-between mb-2">
+                    <p className="text-sm text-muted-foreground">Reference</p>
+                    <button 
+                      onClick={handleRemoveReference}
+                      className="p-1 rounded hover:bg-muted transition-colors"
+                    >
+                      <X className="h-3.5 w-3.5 text-muted-foreground" />
+                    </button>
+                  </div>
+                  <Input
+                    placeholder="Add reference link or citation..."
+                    value={question.reference || ''}
+                    onChange={(e) => handleReferenceChange(e.target.value)}
+                    className="bg-background"
+                  />
+                </div>
+              )}
+
+              {/* Action buttons for adding note/explanation/reference */}
               <div className="mt-4 flex items-center gap-2">
-                <Button variant="outline" size="sm" className="text-muted-foreground hover:text-primary hover:border-primary">
-                  <Plus className="h-3.5 w-3.5 mr-1.5" />
-                  Ref
-                </Button>
+                {!hasReference && (
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    className="text-muted-foreground hover:text-primary hover:border-primary"
+                    onClick={handleAddReference}
+                  >
+                    <Plus className="h-3.5 w-3.5 mr-1.5" />
+                    Ref
+                  </Button>
+                )}
                 {!hasExplanation && (
                   <Button 
                     variant="outline" 
