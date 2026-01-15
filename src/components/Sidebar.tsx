@@ -64,9 +64,10 @@ const ChatIcon = () => (
 const BriefcaseIcon = () => (
   <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
     {/* Briefcase/bag icon */}
-    <rect x="2" y="6" width="16" height="11" rx="1.5" stroke="currentColor" strokeWidth="1.5"/>
-    <path d="M6 6V4a2 2 0 012-2h4a2 2 0 012 2v2" stroke="currentColor" strokeWidth="1.5"/>
-    <path d="M2 10h16" stroke="currentColor" strokeWidth="1.5"/>
+    <rect x="2" y="7" width="16" height="10" rx="2" stroke="currentColor" strokeWidth="1.5"/>
+    <path d="M6 7V5a2 2 0 012-2h4a2 2 0 012 2v2" stroke="currentColor" strokeWidth="1.5"/>
+    <path d="M10 10v4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+    <path d="M2 11h6M12 11h6" stroke="currentColor" strokeWidth="1.5"/>
   </svg>
 );
 
