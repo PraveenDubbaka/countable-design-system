@@ -5,7 +5,6 @@ import {
   GripVertical, 
   Plus, 
   Sparkles,
-  Check,
   Mic,
   ChevronRight,
   X
@@ -17,6 +16,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { AIEditMenu } from './AIEditMenu';
 import { QuestionToolbar } from './QuestionToolbar';
 import { EditableOption } from './EditableOption';
+import { InlineSubQuestion } from './InlineSubQuestion';
 
 interface SortableQuestionCardProps {
   question: Question;
@@ -41,8 +41,7 @@ export function SortableQuestionCard({
   const [isEditingQuestion, setIsEditingQuestion] = useState(false);
   const [isExpanded, setIsExpanded] = useState(true);
   const [isFocused, setIsFocused] = useState(false);
-  const [hasNote, setHasNote] = useState(false);
-  const [noteText, setNoteText] = useState('');
+  const [hasNote, setHasNote] = useState(!!question.note);
   const [aiMenuPosition, setAiMenuPosition] = useState({ x: 0, y: 0 });
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const cardRef = useRef<HTMLDivElement>(null);
@@ -75,6 +74,11 @@ export function SortableQuestionCard({
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
+  // Sync hasNote with question.note
+  useEffect(() => {
+    setHasNote(!!question.note);
+  }, [question.note]);
+
   const handleQuestionChange = (text: string) => {
     onUpdate({ ...question, text });
   };
@@ -83,22 +87,29 @@ export function SortableQuestionCard({
     onUpdate({ ...question, answer });
   };
 
+  const handleNoteChange = (note: string) => {
+    onUpdate({ ...question, note });
+  };
+
+  const handleExplanationChange = (explanation: string) => {
+    onUpdate({ ...question, explanation });
+  };
+
   const handleTypeChange = (answerType: AnswerType) => {
-    // Preserve options when switching between multiple-choice and dropdown
     const options = (answerType === 'multiple-choice' || answerType === 'dropdown') 
       ? (question.options || ['Option 1', 'Option 2', 'Option 3'])
       : undefined;
     onUpdate({ ...question, answerType, answer: '', options });
   };
 
-  const handleOptionUpdate = (index: number, value: string) => {
+  const handleOptionUpdate = (optIndex: number, value: string) => {
     const newOptions = [...(question.options || [])];
-    newOptions[index] = value;
+    newOptions[optIndex] = value;
     onUpdate({ ...question, options: newOptions });
   };
 
-  const handleOptionRemove = (index: number) => {
-    const newOptions = (question.options || []).filter((_, i) => i !== index);
+  const handleOptionRemove = (optIndex: number) => {
+    const newOptions = (question.options || []).filter((_, i) => i !== optIndex);
     if (newOptions.length > 0) {
       onUpdate({ ...question, options: newOptions });
     }
@@ -107,6 +118,30 @@ export function SortableQuestionCard({
   const handleAddOption = () => {
     const newOptions = [...(question.options || []), `Option ${(question.options?.length || 0) + 1}`];
     onUpdate({ ...question, options: newOptions });
+  };
+
+  const handleSubQuestionUpdate = (subIndex: number, subQuestion: Question) => {
+    const newSubQuestions = [...(question.subQuestions || [])];
+    newSubQuestions[subIndex] = subQuestion;
+    onUpdate({ ...question, subQuestions: newSubQuestions });
+  };
+
+  const handleSubQuestionDelete = (subIndex: number) => {
+    const newSubQuestions = (question.subQuestions || []).filter((_, i) => i !== subIndex);
+    onUpdate({ ...question, subQuestions: newSubQuestions });
+  };
+
+  const handleAddInlineSubQuestion = () => {
+    const newSubQuestion: Question = {
+      id: `sq-${Date.now()}`,
+      text: 'New sub-question - click to edit',
+      answerType: 'short-answer',
+      required: false
+    };
+    onUpdate({ 
+      ...question, 
+      subQuestions: [...(question.subQuestions || []), newSubQuestion] 
+    });
   };
 
   const handleAIClick = (e: React.MouseEvent) => {
@@ -126,6 +161,12 @@ export function SortableQuestionCard({
 
   const handleAddNote = () => {
     setHasNote(true);
+    onUpdate({ ...question, note: question.note || '' });
+  };
+
+  const handleRemoveNote = () => {
+    setHasNote(false);
+    onUpdate({ ...question, note: undefined });
   };
 
   const renderAnswerField = () => {
@@ -217,7 +258,7 @@ export function SortableQuestionCard({
           <div className="mt-3 space-y-1">
             {options.map((option, i) => (
               <EditableOption
-                key={i}
+                key={`${question.id}-opt-${i}`}
                 value={option}
                 index={i}
                 isSelected={question.answer === option}
@@ -227,7 +268,6 @@ export function SortableQuestionCard({
                 type={question.answerType === 'dropdown' ? 'radio' : 'checkbox'}
               />
             ))}
-            {/* Add option button */}
             <button
               onClick={handleAddOption}
               className="flex items-center gap-2 px-2 py-2 text-sm text-muted-foreground hover:text-foreground hover:bg-muted rounded-md transition-colors w-full"
@@ -321,20 +361,17 @@ export function SortableQuestionCard({
             )}
 
             {/* Collapsible answer section */}
-            <div className={`overflow-hidden transition-all duration-200 ${isExpanded ? 'max-h-[2000px] opacity-100 mt-3' : 'max-h-0 opacity-0'}`}>
+            <div className={`overflow-hidden transition-all duration-200 ${isExpanded ? 'max-h-[3000px] opacity-100 mt-3' : 'max-h-0 opacity-0'}`}>
               {/* Answer field */}
               {renderAnswerField()}
 
-              {/* Note section */}
+              {/* Note section - persisted */}
               {hasNote && (
                 <div className="mt-4 relative">
                   <div className="flex items-center justify-between mb-2">
                     <p className="text-sm text-muted-foreground">Note</p>
                     <button 
-                      onClick={() => {
-                        setHasNote(false);
-                        setNoteText('');
-                      }}
+                      onClick={handleRemoveNote}
                       className="p-1 rounded hover:bg-muted transition-colors"
                     >
                       <X className="h-3.5 w-3.5 text-muted-foreground" />
@@ -342,20 +379,22 @@ export function SortableQuestionCard({
                   </div>
                   <Textarea
                     placeholder="Add a note..."
-                    value={noteText}
-                    onChange={(e) => setNoteText(e.target.value)}
+                    value={question.note || ''}
+                    onChange={(e) => handleNoteChange(e.target.value)}
                     className="min-h-[60px] resize-none bg-muted/30 border-muted"
                   />
                 </div>
               )}
 
-              {/* Additional explanation for Yes/No types */}
+              {/* Additional explanation for Yes/No types - persisted */}
               {(question.answerType === 'yes-no' || question.answerType === 'yes-no-na') && (
                 <div className="mt-4">
                   <p className="text-sm text-muted-foreground mb-2">Additional Explanation</p>
                   <div className="relative">
                     <Textarea
                       placeholder="Add any additional context or explanation..."
+                      value={question.explanation || ''}
+                      onChange={(e) => handleExplanationChange(e.target.value)}
                       className="min-h-[80px] pr-20 resize-none bg-background"
                     />
                     <div className="absolute bottom-3 right-3 flex items-center gap-1">
@@ -379,60 +418,29 @@ export function SortableQuestionCard({
                 Ref
               </Button>
 
-              {/* Sub-questions (nested blocks with indentation) */}
+              {/* Sub-questions (nested blocks with full inline editing) */}
               {question.subQuestions && question.subQuestions.length > 0 && (
                 <div className="mt-5 ml-4 border-l-2 border-muted pl-4 space-y-3">
                   {question.subQuestions.map((sub, i) => (
-                    <div key={sub.id} className="bg-muted/30 rounded-lg p-3 group hover:bg-muted/50 transition-colors">
-                      <div className="flex items-start gap-3">
-                        <button className="drag-handle mt-0.5 opacity-0 group-hover:opacity-50 hover:!opacity-100 transition-opacity">
-                          <GripVertical className="h-4 w-4" />
-                        </button>
-                        <div className="flex-1">
-                          <p className="text-sm text-foreground">
-                            <span className="text-muted-foreground font-medium mr-2">
-                              {String.fromCharCode(97 + i)}.
-                            </span>
-                            {sub.text}
-                          </p>
-                          {/* Render sub-question answer type */}
-                          <div className="mt-2">
-                            {sub.answerType === 'short-answer' && (
-                              <Input 
-                                placeholder="Enter your answer..." 
-                                className="h-8 text-sm bg-background" 
-                              />
-                            )}
-                            {sub.answerType === 'long-answer' && (
-                              <div className="relative">
-                                <Textarea 
-                                  placeholder="Enter your detailed answer..." 
-                                  className="min-h-[60px] text-sm resize-none bg-background pr-16" 
-                                />
-                                <div className="absolute bottom-2 right-2 flex items-center gap-1">
-                                  <button className="p-1 rounded text-accent hover:bg-accent/10 transition-colors">
-                                    <Sparkles className="h-3.5 w-3.5" />
-                                  </button>
-                                </div>
-                              </div>
-                            )}
-                            {(sub.answerType === 'yes-no' || sub.answerType === 'yes-no-na') && (
-                              <div className="flex gap-4 mt-1">
-                                {(sub.answerType === 'yes-no' ? ['Yes', 'No'] : ['Yes', 'No', 'N/A']).map((opt) => (
-                                  <label key={opt} className="flex items-center gap-1.5 cursor-pointer text-xs">
-                                    <div className="w-3 h-3 rounded-full border border-muted-foreground/50 hover:border-primary/50 transition-colors" />
-                                    <span>{opt}</span>
-                                  </label>
-                                ))}
-                              </div>
-                            )}
-                          </div>
-                        </div>
-                      </div>
-                    </div>
+                    <InlineSubQuestion
+                      key={sub.id}
+                      question={sub}
+                      index={i}
+                      onUpdate={(updated) => handleSubQuestionUpdate(i, updated)}
+                      onDelete={() => handleSubQuestionDelete(i)}
+                    />
                   ))}
                 </div>
               )}
+
+              {/* Add sub-question inline button */}
+              <button
+                onClick={handleAddInlineSubQuestion}
+                className="mt-4 flex items-center gap-2 px-3 py-2 text-sm text-muted-foreground hover:text-primary hover:bg-muted/50 rounded-md transition-colors border border-dashed border-muted hover:border-primary"
+              >
+                <Plus className="h-4 w-4" />
+                Add sub-question inside
+              </button>
             </div>
           </div>
         </div>
