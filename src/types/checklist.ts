@@ -24,6 +24,7 @@ export interface Checklist {
   id: string;
   title: string;
   description?: string;
+  objective?: string;
   sections: Section[];
   createdAt: Date;
   updatedAt: Date;

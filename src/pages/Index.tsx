@@ -101,10 +101,18 @@ const generateMockChecklist = (prompt: string, scope: GenerationScope): Checklis
     }
   ];
 
+  const defaultObjective = `Basis of accounting:
+When assisting management in developing an appropriate basis of accounting, take into account the following:
+  • The nature of the entity
+  • The intended use of the compiled financial information (such as for third parties)
+  • Whether there are any specific financial reporting requirements under applicable law, regulation, or contractional provisions with third parties
+  • Through the terms of their lending agreements, financial institutions usually have the ability to request and obtain additional information about the compiled financial information. Such terms would be sufficient to meet the criteria to accept the engagement.`;
+
   return {
     id: 'checklist-1',
     title: prompt ? `Checklist: ${prompt.substring(0, 50)}...` : 'Independence Checklist (CSRS 4200)',
     description: prompt,
+    objective: defaultObjective,
     sections,
     createdAt: new Date(),
     updatedAt: new Date()
