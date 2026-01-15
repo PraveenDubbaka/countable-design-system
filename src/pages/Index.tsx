@@ -5,6 +5,10 @@ import { DropZone } from '@/components/DropZone';
 import { ChecklistBuilder } from '@/components/ChecklistBuilder';
 import { Checklist, GenerationScope, Section, Question } from '@/types/checklist';
 import { RichTextToolbarProvider } from '@/contexts/RichTextToolbarContext';
+import { SaveDialog } from '@/components/SaveDialog';
+import { ArrowLeft } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { toast } from 'sonner';
 
 const generateMockChecklist = (prompt: string, scope: GenerationScope): Checklist => {
   // Seed content as per specification
@@ -163,11 +167,51 @@ export default function Index() {
     setChecklist(updated);
   };
 
+  const [showSaveDialog, setShowSaveDialog] = useState(false);
+
+  const handleBack = () => {
+    if (checklist) {
+      setShowSaveDialog(true);
+    } else {
+      // No checklist, just go back
+      navigate(-1);
+    }
+  };
+
+  const handleSaveAsDraft = () => {
+    toast.success('Checklist saved as draft');
+    setChecklist(null);
+  };
+
+  const handleSaveToFolder = (folderId: string, folderName: string) => {
+    toast.success(`Checklist saved to "${folderName}"`);
+    setChecklist(null);
+  };
+
+  const handleCreateFolder = (folderName: string) => {
+    toast.success(`Folder "${folderName}" created`);
+  };
+
   return (
     <RichTextToolbarProvider>
       <Layout 
         showActions={!!checklist}
       >
+        {/* Back Button - only show when checklist is active */}
+        {checklist && (
+          <div className="px-6 pt-4">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={handleBack}
+              className="gap-2 text-muted-foreground hover:text-foreground hover:bg-[#1C63A6] hover:text-white transition-colors"
+            >
+              <ArrowLeft className="h-4 w-4" />
+              Back
+            </Button>
+          </div>
+        )}
+
         {isGenerating ? (
           <div className="flex-1 flex items-center justify-center h-full">
             <div className="text-center animate-pulse">
@@ -191,6 +235,15 @@ export default function Index() {
             <DropZone onGenerate={handleGenerate} />
           </div>
         )}
+
+        {/* Save Dialog */}
+        <SaveDialog
+          open={showSaveDialog}
+          onOpenChange={setShowSaveDialog}
+          onSaveAsDraft={handleSaveAsDraft}
+          onSaveToFolder={handleSaveToFolder}
+          onCreateFolder={handleCreateFolder}
+        />
       </Layout>
     </RichTextToolbarProvider>
   );
