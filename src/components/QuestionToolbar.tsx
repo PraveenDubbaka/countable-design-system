@@ -30,6 +30,7 @@ interface QuestionToolbarProps {
 
 const answerTypeLabels: Record<AnswerType, string> = {
   'yes-no': 'Yes / No',
+  'yes-no-na': 'Yes / No / N/A',
   'multiple-choice': 'Multiple Choice',
   'date': 'Date',
   'long-answer': 'Long Answer',
@@ -44,6 +45,7 @@ const answerTypeLabels: Record<AnswerType, string> = {
 
 const answerTypeIcons: Record<AnswerType, React.ReactNode> = {
   'yes-no': <div className="w-3 h-3 rounded-full border-2 border-current" />,
+  'yes-no-na': <div className="w-3 h-3 rounded-full border-2 border-current" />,
   'multiple-choice': <div className="w-3 h-3 rounded border-2 border-current" />,
   'date': <Type className="h-3 w-3" />,
   'long-answer': <AlignLeft className="h-3 w-3" />,
