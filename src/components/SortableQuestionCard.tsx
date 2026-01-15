@@ -39,6 +39,7 @@ import { QuestionToolbar } from './QuestionToolbar';
 import { EditableOption } from './EditableOption';
 import { SortableInlineSubQuestion } from './SortableInlineSubQuestion';
 import { useRichTextToolbarContext } from '@/contexts/RichTextToolbarContext';
+import { RichTextQuestionEditor } from './RichTextQuestionEditor';
 
 interface SortableQuestionCardProps {
   question: Question;
@@ -142,17 +143,18 @@ export function SortableQuestionCard({
   }, [question.reference]);
 
   const commitQuestionText = () => {
-    const trimmed = draftQuestionText.trim();
+    // Strip HTML tags to check if content is empty
+    const textContent = draftQuestionText.replace(/<[^>]*>/g, '').trim();
 
     // If user clears the field, revert (don’t allow empty question text)
-    if (!trimmed) {
+    if (!textContent) {
       setDraftQuestionText(question.text);
       setIsEditingQuestion(false);
       return;
     }
 
-    if (trimmed !== question.text) {
-      onUpdate({ ...question, text: trimmed });
+    if (draftQuestionText !== question.text) {
+      onUpdate({ ...question, text: draftQuestionText });
     }
 
     setIsEditingQuestion(false);
@@ -609,26 +611,17 @@ export function SortableQuestionCard({
 
           {/* Content */}
           <div className="flex-1 min-w-0">
-            {/* Question text - inline editable */}
+            {/* Question text - inline editable with rich text */}
             {isEditingQuestion ? (
-              <Input
-                ref={questionInputRef}
+              <RichTextQuestionEditor
                 value={draftQuestionText}
-                onChange={(e) => handleQuestionChange(e.target.value)}
+                onChange={handleQuestionChange}
                 onBlur={commitQuestionText}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter') {
-                    e.preventDefault();
-                    commitQuestionText();
-                  }
-                  if (e.key === 'Escape') {
-                    e.preventDefault();
-                    setDraftQuestionText(question.text);
-                    setIsEditingQuestion(false);
-                  }
+                onCancel={() => {
+                  setDraftQuestionText(question.text);
+                  setIsEditingQuestion(false);
                 }}
-                autoFocus
-                className="font-medium bg-background text-base"
+                className="font-medium text-base"
               />
             ) : (
               <div 
