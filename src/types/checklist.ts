@@ -10,6 +10,7 @@ export interface Question {
   subQuestions?: Question[];
   note?: string;
   explanation?: string;
+  reference?: string;
 }
 
 export interface Section {
