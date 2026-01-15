@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useCallback, ReactNode } from 'react';
+import React, { createContext, useContext, useState, useCallback, useEffect, useRef, ReactNode } from 'react';
 
 interface ToolbarState {
   isVisible: boolean;
@@ -11,6 +11,7 @@ interface RichTextToolbarContextType {
   showToolbar: (element: HTMLTextAreaElement | HTMLInputElement) => void;
   hideToolbar: () => void;
   handleFormatAction: (action: string, value?: string) => void;
+  toolbarRef: React.RefObject<HTMLDivElement>;
 }
 
 const RichTextToolbarContext = createContext<RichTextToolbarContextType | null>(null);
@@ -21,6 +22,8 @@ export function RichTextToolbarProvider({ children }: { children: ReactNode }) {
     position: { x: 0, y: 0 },
     targetElement: null,
   });
+  
+  const toolbarRef = useRef<HTMLDivElement>(null);
 
   const showToolbar = useCallback((element: HTMLTextAreaElement | HTMLInputElement) => {
     const rect = element.getBoundingClientRect();
@@ -51,6 +54,40 @@ export function RichTextToolbarProvider({ children }: { children: ReactNode }) {
       targetElement: null,
     }));
   }, []);
+
+  // Click outside handler
+  useEffect(() => {
+    if (!toolbarState.isVisible) return;
+
+    const handleClickOutside = (event: MouseEvent) => {
+      const target = event.target as Node;
+      
+      // Don't hide if clicking inside toolbar
+      if (toolbarRef.current?.contains(target)) {
+        return;
+      }
+      
+      // Don't hide if clicking inside the target element
+      if (toolbarState.targetElement?.contains(target)) {
+        return;
+      }
+      
+      // Don't hide if clicking on Radix menu content (dropdowns)
+      const radixContent = (event.target as Element)?.closest('[data-radix-menu-content]');
+      if (radixContent) {
+        return;
+      }
+      
+      hideToolbar();
+    };
+
+    // Use mousedown for immediate response
+    document.addEventListener('mousedown', handleClickOutside);
+    
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [toolbarState.isVisible, toolbarState.targetElement, hideToolbar]);
 
   const handleFormatAction = useCallback((action: string, value?: string) => {
     const element = toolbarState.targetElement;
@@ -137,7 +174,7 @@ export function RichTextToolbarProvider({ children }: { children: ReactNode }) {
   }, [toolbarState.targetElement]);
 
   return (
-    <RichTextToolbarContext.Provider value={{ toolbarState, showToolbar, hideToolbar, handleFormatAction }}>
+    <RichTextToolbarContext.Provider value={{ toolbarState, showToolbar, hideToolbar, handleFormatAction, toolbarRef }}>
       {children}
     </RichTextToolbarContext.Provider>
   );

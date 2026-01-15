@@ -32,10 +32,12 @@ interface RichTextToolbarProps {
   position: { x: number; y: number };
   onFormatAction?: (action: string, value?: string) => void;
   onAIAssist?: () => void;
+  toolbarRef?: React.RefObject<HTMLDivElement>;
 }
 
-export function RichTextToolbar({ position, onFormatAction, onAIAssist }: RichTextToolbarProps) {
-  const toolbarRef = useRef<HTMLDivElement>(null);
+export function RichTextToolbar({ position, onFormatAction, onAIAssist, toolbarRef }: RichTextToolbarProps) {
+  const localRef = useRef<HTMLDivElement>(null);
+  const ref = toolbarRef || localRef;
   const [textColor, setTextColor] = useState('#000000');
 
   const handleFormat = (action: string, value?: string) => {
@@ -61,7 +63,7 @@ export function RichTextToolbar({ position, onFormatAction, onAIAssist }: RichTe
 
   return (
     <div
-      ref={toolbarRef}
+      ref={ref}
       className="fixed z-[100] flex items-center gap-0.5 bg-card border rounded-lg shadow-lg px-2 py-1.5 animate-in fade-in slide-in-from-bottom-2 duration-200"
       style={{
         left: `${position.x}px`,
