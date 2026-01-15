@@ -307,7 +307,7 @@ export function ChecklistBuilder({ checklist, onUpdate }: ChecklistBuilderProps)
         </div>
         
         <div className="flex items-center gap-2">
-          <Button variant="outline" size="sm" className="gap-2">
+          <Button variant="outline" size="sm" className="gap-2 hover:bg-[#1C63A6] hover:text-white hover:border-[#1C63A6] transition-colors">
             <Eye className="h-4 w-4" />
             Preview
           </Button>
