@@ -58,6 +58,7 @@ export function SortableQuestionCard({
   const [isExpanded, setIsExpanded] = useState(true);
   const [isFocused, setIsFocused] = useState(false);
   const [hasNote, setHasNote] = useState(!!question.note);
+  const [hasExplanation, setHasExplanation] = useState(question.explanation !== undefined);
   const [aiMenuPosition, setAiMenuPosition] = useState({ x: 0, y: 0 });
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const cardRef = useRef<HTMLDivElement>(null);
@@ -109,6 +110,11 @@ export function SortableQuestionCard({
   useEffect(() => {
     setHasNote(!!question.note);
   }, [question.note]);
+
+  // Sync hasExplanation with question.explanation
+  useEffect(() => {
+    setHasExplanation(question.explanation !== undefined);
+  }, [question.explanation]);
 
   const commitQuestionText = () => {
     const trimmed = draftQuestionText.trim();
@@ -253,6 +259,16 @@ export function SortableQuestionCard({
   const handleRemoveNote = () => {
     setHasNote(false);
     onUpdate({ ...question, note: undefined });
+  };
+
+  const handleAddExplanation = () => {
+    setHasExplanation(true);
+    onUpdate({ ...question, explanation: question.explanation || '' });
+  };
+
+  const handleRemoveExplanation = () => {
+    setHasExplanation(false);
+    onUpdate({ ...question, explanation: undefined });
   };
 
   const renderAnswerField = () => {
@@ -517,10 +533,18 @@ export function SortableQuestionCard({
                 </div>
               )}
 
-              {/* Additional explanation for Yes/No types - persisted */}
-              {(question.answerType === 'yes-no' || question.answerType === 'yes-no-na') && (
+              {/* Additional explanation - now deletable and available for all types */}
+              {hasExplanation && (
                 <div className="mt-4">
-                  <p className="text-sm text-muted-foreground mb-2">Additional Explanation</p>
+                  <div className="flex items-center justify-between mb-2">
+                    <p className="text-sm text-muted-foreground">Additional Explanation</p>
+                    <button 
+                      onClick={handleRemoveExplanation}
+                      className="p-1 rounded hover:bg-muted transition-colors"
+                    >
+                      <X className="h-3.5 w-3.5 text-muted-foreground" />
+                    </button>
+                  </div>
                   <div className="relative">
                     <Textarea
                       placeholder="Add any additional context or explanation..."
@@ -543,11 +567,24 @@ export function SortableQuestionCard({
                 </div>
               )}
 
-              {/* Add reference button */}
-              <Button variant="outline" size="sm" className="mt-4 text-muted-foreground hover:text-primary hover:border-primary">
-                <Plus className="h-3.5 w-3.5 mr-1.5" />
-                Ref
-              </Button>
+              {/* Action buttons for adding note/explanation */}
+              <div className="mt-4 flex items-center gap-2">
+                <Button variant="outline" size="sm" className="text-muted-foreground hover:text-primary hover:border-primary">
+                  <Plus className="h-3.5 w-3.5 mr-1.5" />
+                  Ref
+                </Button>
+                {!hasExplanation && (
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    className="text-muted-foreground hover:text-primary hover:border-primary"
+                    onClick={handleAddExplanation}
+                  >
+                    <Plus className="h-3.5 w-3.5 mr-1.5" />
+                    Explanation
+                  </Button>
+                )}
+              </div>
 
             </div>
           </div>
