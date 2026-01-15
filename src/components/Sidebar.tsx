@@ -13,6 +13,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
+import lukaLogo from '@/assets/luka-logo.png';
 
 interface Template {
   id: string;
@@ -81,16 +82,9 @@ const navItems = [
   { icon: ChecklistIcon, label: 'Checklists', active: true },
 ];
 
-// Countable Logo SVG
-const CountableLogo = () => (
-  <svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <circle cx="14" cy="14" r="12" stroke="white" strokeWidth="1.5"/>
-    <path 
-      d="M14 5C9.029 5 5 9.029 5 14s4.029 9 9 9c1.8 0 3.5-.53 4.9-1.44l-2.4-2.4A5.5 5.5 0 1119.5 14h3.5c0-4.971-4.029-9-9-9z" 
-      fill="white"
-    />
-    <circle cx="14" cy="14" r="3" fill="white"/>
-  </svg>
+// Luka Logo Component
+const LukaLogo = () => (
+  <img src={lukaLogo} alt="Luka" className="w-7 h-7 object-contain" />
 );
 
 export function Sidebar() {
@@ -140,9 +134,9 @@ export function Sidebar() {
     <div className="flex h-screen">
       {/* Icon sidebar - dark navy with curved corner */}
       <div className="sidebar-nav w-14 flex flex-col items-center py-4 gap-2 rounded-tr-[20px]">
-        {/* Countable Logo */}
+        {/* Luka Logo */}
         <div className="w-10 h-10 mb-4 flex items-center justify-center">
-          <CountableLogo />
+          <LukaLogo />
         </div>
         
         {/* Nav items */}
