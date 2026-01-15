@@ -96,7 +96,7 @@ export function QuestionToolbar({
       <Button 
         variant="ghost" 
         size="sm" 
-        className="h-7 w-7 p-0" 
+        className="h-7 w-7 p-0 hover:bg-[#1C63A6] hover:text-white focus:bg-[#1C63A6] focus:text-white transition-colors" 
         onClick={onAddSubQuestion}
         title="Add sub-question"
       >
@@ -106,7 +106,7 @@ export function QuestionToolbar({
       <Button 
         variant="ghost" 
         size="sm" 
-        className={`h-7 w-7 p-0 ${hasReference ? 'bg-primary/10 text-primary' : ''}`}
+        className={`h-7 w-7 p-0 hover:bg-[#1C63A6] hover:text-white focus:bg-[#1C63A6] focus:text-white transition-colors ${hasReference ? 'bg-primary/10 text-primary' : ''}`}
         onClick={onToggleReference}
         title={hasReference ? "Remove attachment option" : "Add attachment option"}
       >
@@ -116,7 +116,7 @@ export function QuestionToolbar({
       <Button 
         variant="ghost" 
         size="sm" 
-        className="h-7 w-7 p-0" 
+        className="h-7 w-7 p-0 hover:bg-[#1C63A6] hover:text-white focus:bg-[#1C63A6] focus:text-white transition-colors" 
         onClick={onAddNote}
         title="Add note"
       >
@@ -126,7 +126,7 @@ export function QuestionToolbar({
       <Button 
         variant="ghost" 
         size="sm" 
-        className="h-7 w-7 p-0" 
+        className="h-7 w-7 p-0 hover:bg-[#1C63A6] hover:text-white focus:bg-[#1C63A6] focus:text-white transition-colors" 
         onClick={onDuplicate}
         title="Duplicate"
       >
@@ -139,7 +139,7 @@ export function QuestionToolbar({
       <Button 
         variant="ghost" 
         size="sm" 
-        className="h-7 px-2 gap-1.5 text-accent hover:text-accent"
+        className="h-7 px-2 gap-1.5 text-accent hover:bg-[#1C63A6] hover:text-white focus:bg-[#1C63A6] focus:text-white transition-colors"
         title="AI assist"
       >
         <Sparkles className="h-3.5 w-3.5" />
@@ -151,7 +151,7 @@ export function QuestionToolbar({
       <Button 
         variant="ghost" 
         size="sm" 
-        className="h-7 w-7 p-0 text-destructive hover:text-destructive hover:bg-destructive/10" 
+        className="h-7 w-7 p-0 text-destructive hover:text-destructive hover:bg-destructive/10 transition-colors" 
         onClick={onDelete}
         title="Delete"
       >
