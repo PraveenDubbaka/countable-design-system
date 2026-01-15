@@ -85,17 +85,40 @@ export function ChecklistBuilder({ checklist, onUpdate }: ChecklistBuilderProps)
   const allQuestionIds = checklist.sections.flatMap(s => s.questions.map(q => q.id));
 
   // Check if all sections are collapsed
-  const allCollapsed = useMemo(() => {
+  const allSectionsCollapsed = useMemo(() => {
     return checklist.sections.every(s => !s.isExpanded);
   }, [checklist.sections]);
 
-  const handleCollapseAll = () => {
+  // Check if all questions are collapsed
+  const allQuestionsCollapsed = useMemo(() => {
+    return checklist.sections.every(s => 
+      s.questions.every(q => q.isExpanded === false)
+    );
+  }, [checklist.sections]);
+
+  const handleCollapseSections = () => {
     const newSections = checklist.sections.map(s => ({ ...s, isExpanded: false }));
     onUpdate({ ...checklist, sections: newSections });
   };
 
-  const handleExpandAll = () => {
+  const handleExpandSections = () => {
     const newSections = checklist.sections.map(s => ({ ...s, isExpanded: true }));
+    onUpdate({ ...checklist, sections: newSections });
+  };
+
+  const handleCollapseQuestions = () => {
+    const newSections = checklist.sections.map(s => ({
+      ...s,
+      questions: s.questions.map(q => ({ ...q, isExpanded: false }))
+    }));
+    onUpdate({ ...checklist, sections: newSections });
+  };
+
+  const handleExpandQuestions = () => {
+    const newSections = checklist.sections.map(s => ({
+      ...s,
+      questions: s.questions.map(q => ({ ...q, isExpanded: true }))
+    }));
     onUpdate({ ...checklist, sections: newSections });
   };
 
@@ -501,9 +524,12 @@ export function ChecklistBuilder({ checklist, onUpdate }: ChecklistBuilderProps)
       <FloatingActionBar
         checklist={checklist}
         onUpdate={onUpdate}
-        onCollapseAll={handleCollapseAll}
-        onExpandAll={handleExpandAll}
-        allCollapsed={allCollapsed}
+        onCollapseSections={handleCollapseSections}
+        onExpandSections={handleExpandSections}
+        onCollapseQuestions={handleCollapseQuestions}
+        onExpandQuestions={handleExpandQuestions}
+        allSectionsCollapsed={allSectionsCollapsed}
+        allQuestionsCollapsed={allQuestionsCollapsed}
       />
 
       {/* Rich Text Toolbar */}

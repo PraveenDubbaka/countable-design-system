@@ -57,7 +57,7 @@ export function SortableQuestionCard({
   const [showAIMenu, setShowAIMenu] = useState(false);
   const [isEditingQuestion, setIsEditingQuestion] = useState(false);
   const [draftQuestionText, setDraftQuestionText] = useState(question.text);
-  const [isExpanded, setIsExpanded] = useState(true);
+  const isExpanded = question.isExpanded !== false; // Default to expanded if not set
   const [isFocused, setIsFocused] = useState(false);
   const [hasNote, setHasNote] = useState(!!question.note);
   const [hasExplanation, setHasExplanation] = useState(question.explanation !== undefined);
@@ -470,7 +470,7 @@ export function SortableQuestionCard({
           <button
             onClick={(e) => {
               e.stopPropagation();
-              setIsExpanded(!isExpanded);
+              onUpdate({ ...question, isExpanded: !isExpanded });
             }}
             className="flex items-center justify-center w-6 h-6 rounded hover:bg-muted transition-all mt-0.5 shrink-0"
             aria-label={isExpanded ? 'Collapse question' : 'Expand question'}
