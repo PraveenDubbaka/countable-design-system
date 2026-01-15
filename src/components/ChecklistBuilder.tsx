@@ -28,7 +28,8 @@ import {
   FileText,
   Wand2,
   ChevronDown,
-  FileDown
+  FileDown,
+  Save
 } from 'lucide-react';
 import { Checklist, Section, Question } from '@/types/checklist';
 import { SortableSection } from './SortableSection';
@@ -43,9 +44,10 @@ import { consolidateSectionsToThree } from '@/lib/consolidateSections';
 interface ChecklistBuilderProps {
   checklist: Checklist;
   onUpdate: (checklist: Checklist) => void;
+  onSave?: () => void;
 }
 
-export function ChecklistBuilder({ checklist, onUpdate }: ChecklistBuilderProps) {
+export function ChecklistBuilder({ checklist, onUpdate, onSave }: ChecklistBuilderProps) {
   const [isEditingTitle, setIsEditingTitle] = useState(false);
   const [showAddMenu, setShowAddMenu] = useState(false);
   const [showExportMenu, setShowExportMenu] = useState(false);
@@ -307,6 +309,15 @@ export function ChecklistBuilder({ checklist, onUpdate }: ChecklistBuilderProps)
         </div>
         
         <div className="flex items-center gap-2">
+          <Button 
+            variant="outline" 
+            size="sm" 
+            className="gap-2 hover:bg-[#1C63A6] hover:text-white hover:border-[#1C63A6] transition-colors"
+            onClick={onSave}
+          >
+            <Save className="h-4 w-4" />
+            Save
+          </Button>
           <Button variant="outline" size="sm" className="gap-2 hover:bg-[#1C63A6] hover:text-white hover:border-[#1C63A6] transition-colors">
             <Eye className="h-4 w-4" />
             Preview
