@@ -229,7 +229,7 @@ export function ChecklistBuilder({ checklist, onUpdate }: ChecklistBuilderProps)
         {
           id: `q-${Date.now()}-1`,
           text: 'Has the engagement letter been signed by both parties?',
-          answerType: 'yes-no-na',
+          answerType: 'yes-no',
           required: true
         },
         {
@@ -253,13 +253,13 @@ export function ChecklistBuilder({ checklist, onUpdate }: ChecklistBuilderProps)
         {
           id: `q-${Date.now()}-1`,
           text: 'Have all regulatory requirements been identified and documented?',
-          answerType: 'yes-no-na',
+          answerType: 'yes-no',
           required: true
         },
         {
           id: `q-${Date.now()}-2`,
           text: 'Is there evidence of management\'s acknowledgment of their responsibilities?',
-          answerType: 'yes-no-na',
+          answerType: 'yes-no',
           required: true
         },
         {

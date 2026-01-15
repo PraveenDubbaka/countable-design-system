@@ -330,28 +330,6 @@ export function SortableQuestionCard({
           </div>
         );
 
-      case 'yes-no-na':
-        return (
-          <div className="flex flex-wrap gap-3 mt-3">
-            {['Yes', 'No', 'Not applicable'].map((option) => (
-              <label key={option} className="flex items-center gap-2.5 cursor-pointer group px-3 py-2 rounded-lg hover:bg-muted transition-colors">
-                <div 
-                  className={`w-4 h-4 rounded-full border-2 flex items-center justify-center transition-all ${
-                    question.answer === option 
-                      ? 'border-primary bg-primary' 
-                      : 'border-muted-foreground/50 group-hover:border-primary/50'
-                  }`}
-                  onClick={() => handleAnswerChange(option)}
-                >
-                  {question.answer === option && (
-                    <div className="w-1.5 h-1.5 rounded-full bg-primary-foreground" />
-                  )}
-                </div>
-                <span className="text-sm text-foreground">{option}</span>
-              </label>
-            ))}
-          </div>
-        );
 
       case 'short-answer':
         return (

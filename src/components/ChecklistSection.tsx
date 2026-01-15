@@ -50,7 +50,7 @@ export function ChecklistSection({
     const newQuestion: Question = {
       id: `q-${Date.now()}`,
       text: 'New question - click to edit',
-      answerType: 'yes-no-na',
+      answerType: 'yes-no',
       required: false
     };
     onUpdate({ ...section, questions: [...section.questions, newQuestion] });
