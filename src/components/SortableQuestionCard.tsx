@@ -588,17 +588,19 @@ export function SortableQuestionCard({
         )}
 
         <div className="flex gap-3">
-          {/* Drag Handle - appears on hover, hidden in preview mode */}
-          {!isPreviewMode && (
-            <div
-              {...attributes}
-              {...listeners}
-              className="flex items-center justify-center w-6 h-6 rounded cursor-grab active:cursor-grabbing opacity-0 group-hover/card:opacity-100 hover:bg-muted transition-all mt-0.5 shrink-0"
-              title="Drag to reorder"
-            >
-              <GripVertical className="h-4 w-4 text-muted-foreground" />
-            </div>
-          )}
+          {/* Drag Handle - appears on hover, hidden in preview mode but space preserved */}
+          <div className={`flex items-center justify-center w-6 h-6 mt-0.5 shrink-0 ${isPreviewMode ? '' : 'rounded cursor-grab active:cursor-grabbing opacity-0 group-hover/card:opacity-100 hover:bg-muted transition-all'}`}>
+            {!isPreviewMode && (
+              <div
+                {...attributes}
+                {...listeners}
+                className="flex items-center justify-center w-full h-full"
+                title="Drag to reorder"
+              >
+                <GripVertical className="h-4 w-4 text-muted-foreground" />
+              </div>
+            )}
+          </div>
 
           {/* Collapse Toggle */}
           <button
