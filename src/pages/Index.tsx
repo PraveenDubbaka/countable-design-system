@@ -199,21 +199,9 @@ export default function Index() {
     <RichTextToolbarProvider>
       <Layout 
         showActions={!!checklist}
+        showBackButton={!!checklist}
+        onBack={handleBack}
       >
-        {/* Back Button - only show when checklist is active */}
-        {checklist && (
-          <div className="px-6 pt-4">
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={handleBack}
-              className="gap-2 text-muted-foreground hover:text-foreground hover:bg-[#1C63A6] hover:text-white transition-colors"
-            >
-              <ArrowLeft className="h-4 w-4" />
-              Back
-            </Button>
-          </div>
-        )}
 
         {isGenerating ? (
           <div className="flex-1 flex items-center justify-center h-full">
