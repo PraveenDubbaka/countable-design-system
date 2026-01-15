@@ -1,11 +1,5 @@
 import { useState } from 'react';
 import { 
-  BarChart3, 
-  Users, 
-  Building2, 
-  MessageSquare, 
-  FileText, 
-  Headphones,
   ChevronDown,
   ChevronRight,
   Search,
@@ -13,8 +7,8 @@ import {
   Expand,
   Trash2,
   Folder,
-  File,
-  CheckSquare
+  Headphones,
+  LogOut
 } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -29,42 +23,75 @@ interface Template {
 }
 
 const initialTemplates: Template[] = [
-  {
-    id: '1',
-    name: 'DEF Compilation',
-    type: 'folder',
-    isExpanded: true,
-    children: [
-      { id: '1-1', name: 'Client Acceptance and C...', type: 'file' },
-      { id: '1-2', name: 'Independence', type: 'file' },
-      { id: '1-3', name: 'Knowledge of client busi...', type: 'file' },
-      { id: '1-4', name: 'Planning', type: 'file' },
-      { id: '1-5', name: 'Withdrawal', type: 'file' },
-      { id: '1-6', name: 'Completion', type: 'file' },
-    ]
-  },
-  {
-    id: '2',
-    name: 'DEF Review',
-    type: 'folder',
-    children: []
-  },
-  {
-    id: '3',
-    name: 'DEF Tax',
-    type: 'folder',
-    children: []
-  }
+  { id: '1', name: 'Before Release V22Comp', type: 'folder', children: [] },
+  { id: '2', name: 'Before Release V22 Revi...', type: 'folder', children: [] },
+  { id: '3', name: 'Carissa_13208', type: 'folder', children: [] },
+  { id: '4', name: 'carisa 37.3', type: 'folder', children: [] },
+  { id: '5', name: 'Compilation Checklists', type: 'folder', children: [] },
+  { id: '6', name: 'release 38 before', type: 'folder', children: [] },
+  { id: '7', name: 'Review Checklists', type: 'folder', children: [] },
+  { id: '8', name: 'Tax Release', type: 'folder', children: [] },
 ];
 
+// Icon components matching the screenshot
+const DashboardIcon = () => (
+  <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <rect x="3" y="3" width="6" height="6" rx="1" stroke="currentColor" strokeWidth="1.5"/>
+    <rect x="11" y="3" width="6" height="6" rx="1" stroke="currentColor" strokeWidth="1.5"/>
+    <rect x="3" y="11" width="6" height="6" rx="1" stroke="currentColor" strokeWidth="1.5"/>
+    <rect x="11" y="11" width="6" height="6" rx="1" stroke="currentColor" strokeWidth="1.5"/>
+  </svg>
+);
+
+const UsersIcon = () => (
+  <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <circle cx="7" cy="6" r="2.5" stroke="currentColor" strokeWidth="1.5"/>
+    <path d="M2 16c0-2.5 2-4.5 5-4.5s5 2 5 4.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+    <circle cx="14" cy="6" r="2" stroke="currentColor" strokeWidth="1.5"/>
+    <path d="M14 11.5c2 0 4 1.5 4 3.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+  </svg>
+);
+
+const DocumentIcon = () => (
+  <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M5 3h7l4 4v10a1 1 0 01-1 1H5a1 1 0 01-1-1V4a1 1 0 011-1z" stroke="currentColor" strokeWidth="1.5"/>
+    <path d="M12 3v4h4" stroke="currentColor" strokeWidth="1.5"/>
+    <path d="M7 10h6M7 13h4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+  </svg>
+);
+
+const ChatIcon = () => (
+  <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M4 4h12a1 1 0 011 1v8a1 1 0 01-1 1h-3l-3 3-3-3H4a1 1 0 01-1-1V5a1 1 0 011-1z" stroke="currentColor" strokeWidth="1.5"/>
+  </svg>
+);
+
+const ChecklistIcon = () => (
+  <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <rect x="3" y="3" width="14" height="14" rx="2" stroke="currentColor" strokeWidth="1.5"/>
+    <path d="M6 10l2 2 4-4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+  </svg>
+);
+
 const navItems = [
-  { icon: BarChart3, label: 'Dashboard' },
-  { icon: Users, label: 'Clients' },
-  { icon: Building2, label: 'Firm' },
-  { icon: MessageSquare, label: 'Messages' },
-  { icon: FileText, label: 'Documents', active: true },
-  { icon: Headphones, label: 'Support' },
+  { icon: DashboardIcon, label: 'Dashboard' },
+  { icon: UsersIcon, label: 'Clients' },
+  { icon: DocumentIcon, label: 'Documents' },
+  { icon: ChatIcon, label: 'Messages' },
+  { icon: ChecklistIcon, label: 'Checklists', active: true },
 ];
+
+// Countable Logo SVG
+const CountableLogo = () => (
+  <svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <circle cx="14" cy="14" r="12" stroke="white" strokeWidth="1.5"/>
+    <path 
+      d="M14 5C9.029 5 5 9.029 5 14s4.029 9 9 9c1.8 0 3.5-.53 4.9-1.44l-2.4-2.4A5.5 5.5 0 1119.5 14h3.5c0-4.971-4.029-9-9-9z" 
+      fill="white"
+    />
+    <circle cx="14" cy="14" r="3" fill="white"/>
+  </svg>
+);
 
 export function Sidebar() {
   const [templates, setTemplates] = useState<Template[]>(initialTemplates);
@@ -93,12 +120,12 @@ export function Sidebar() {
             ) : (
               <ChevronRight className="h-4 w-4 text-muted-foreground flex-shrink-0" />
             )}
-            <Folder className="h-4 w-4 text-accent flex-shrink-0" />
+            <Folder className="h-4 w-4 text-primary flex-shrink-0" />
           </>
         ) : (
           <>
             <span className="w-4 flex-shrink-0" />
-            <CheckSquare className="h-4 w-4 text-accent flex-shrink-0" />
+            <Folder className="h-4 w-4 text-primary flex-shrink-0" />
           </>
         )}
         <span className="truncate flex-1 text-foreground">{template.name}</span>
@@ -111,31 +138,34 @@ export function Sidebar() {
 
   return (
     <div className="flex h-screen">
-      {/* Icon sidebar */}
-      <div className="sidebar-nav w-14 flex flex-col items-center py-4 gap-2">
-        {/* Logo */}
-        <div className="w-8 h-8 mb-4 flex items-center justify-center">
-          <svg viewBox="0 0 32 32" className="w-8 h-8" fill="none">
-            <path 
-              d="M16 4C9.373 4 4 9.373 4 16s5.373 12 12 12 12-5.373 12-12S22.627 4 16 4zm0 2c5.523 0 10 4.477 10 10s-4.477 10-10 10S6 21.523 6 16 10.477 6 16 6z" 
-              fill="hsl(var(--sidebar-foreground))"
-            />
-            <path 
-              d="M16 8c-4.418 0-8 3.582-8 8s3.582 8 8 8c1.5 0 2.5-.5 3.5-1l-2-3.5c-.5.3-1 .5-1.5.5-2.21 0-4-1.79-4-4s1.79-4 4-4c1.5 0 2.8.83 3.5 2l3-2c-1.2-1.8-3.2-3-5.5-3z" 
-              fill="hsl(var(--sidebar-foreground))"
-            />
-          </svg>
+      {/* Icon sidebar - dark navy with curved corner */}
+      <div className="sidebar-nav w-14 flex flex-col items-center py-4 gap-2 rounded-tr-[20px]">
+        {/* Countable Logo */}
+        <div className="w-10 h-10 mb-4 flex items-center justify-center">
+          <CountableLogo />
         </div>
         
+        {/* Nav items */}
         {navItems.map((item, index) => (
           <div
             key={index}
             className={`sidebar-item ${item.active ? 'active' : ''}`}
             title={item.label}
           >
-            <item.icon className="h-5 w-5" />
+            <item.icon />
           </div>
         ))}
+        
+        {/* Spacer */}
+        <div className="flex-1" />
+        
+        {/* Bottom icons */}
+        <div className="sidebar-item" title="Support">
+          <Headphones className="h-5 w-5" />
+        </div>
+        <div className="sidebar-item" title="Logout">
+          <LogOut className="h-5 w-5" />
+        </div>
       </div>
 
       {/* Templates panel */}
