@@ -179,6 +179,40 @@
   .btn-primary-outline {
     @apply border border-primary text-primary bg-transparent hover:bg-primary/5 transition-colors;
   }
+
+  /* Rich text content styling for question cards */
+  .question-content {
+    @apply text-foreground;
+  }
+
+  .question-content ol {
+    list-style-type: lower-alpha;
+    @apply ml-6 my-2 space-y-1;
+  }
+
+  .question-content ol[start="3"] {
+    counter-reset: list-item 2;
+  }
+
+  .question-content li {
+    @apply pl-1;
+  }
+
+  .question-content p {
+    @apply my-2;
+  }
+
+  .question-content p:first-child {
+    @apply mt-0;
+  }
+
+  .question-content strong {
+    @apply font-semibold;
+  }
+
+  .question-content em {
+    @apply italic text-muted-foreground;
+  }
 }
 
 @layer utilities {

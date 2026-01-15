@@ -33,21 +33,18 @@ const generateMockChecklist = (prompt: string, scope: GenerationScope): Checklis
       questions: [
         {
           id: 'q2',
-          text: `New Clients
-
-a. Indicate who in the firm has knowledge about the prospective client and whether they recommend that this entity be accepted as a new client.
-
-b. Contact the predecessor practitioner to inquire about any reasons the engagement should not be accepted. If no response is received, explain what alternative procedures were performed.
-
-All Clients
-
-c. Make inquiries and perform web searches for any new or emerging engagement risks that would impact the decision to accept or continue with this engagement.
-
-d. Consider any risk factors identified from other sources.
-
-e. Based on preliminary understanding, is there any indication that the financial information will be misleading?
-
-f. Does management understand the limited nature of the engagement?`,
+          text: `<p><strong>New Clients</strong></p>
+<ol type="a">
+<li>Indicate who in the firm has knowledge about the prospective client and whether they recommend that this entity be accepted as a new client.</li>
+<li>Contact the predecessor practitioner to inquire about any reasons the engagement should not be accepted. If no response is received, explain what alternative procedures were performed.</li>
+</ol>
+<p><strong>All Clients</strong></p>
+<ol type="a" start="3">
+<li>Make inquiries and perform web searches for any new or emerging engagement risks that would impact the decision to accept or continue with this engagement.</li>
+<li>Consider any risk factors identified from other sources.</li>
+<li>Based on preliminary understanding, is there any indication that the financial information will be misleading?</li>
+<li>Does management understand the limited nature of the engagement?</li>
+</ol>`,
           answerType: 'yes-no-na',
           required: true,
           answer: ''
@@ -61,9 +58,11 @@ f. Does management understand the limited nature of the engagement?`,
       questions: [
         {
           id: 'q3',
-          text: `Inquire to management about:
-a. Intended use of the FI.
-b. Whether the FI is intended to be used by a third party.`,
+          text: `<p>Inquire to management about:</p>
+<ol type="a">
+<li>Intended use of the FI.</li>
+<li>Whether the FI is intended to be used by a third party.</li>
+</ol>`,
           answerType: 'yes-no-na',
           required: true,
           answer: ''
@@ -77,11 +76,12 @@ b. Whether the FI is intended to be used by a third party.`,
       questions: [
         {
           id: 'q4',
-          text: `Discuss the expected basis of accounting with management and obtain management's acknowledgement that it is appropriate in the circumstances:
-a. A written communication (e.g., paper or electronic).
-b. An oral communication documented in the working paper file.
-
-Note: Use of a general purpose framework is considered rare (such as ASPE). In such cases, consideration should be given to whether an audit or review engagement would be more appropriate.`,
+          text: `<p>Discuss the expected basis of accounting with management and obtain management's acknowledgement that it is appropriate in the circumstances:</p>
+<ol type="a">
+<li>A written communication (e.g., paper or electronic).</li>
+<li>An oral communication documented in the working paper file.</li>
+</ol>
+<p><em>Note: Use of a general purpose framework is considered rare (such as ASPE). In such cases, consideration should be given to whether an audit or review engagement would be more appropriate.</em></p>`,
           answerType: 'yes-no-na',
           required: true,
           answer: ''
@@ -95,10 +95,11 @@ Note: Use of a general purpose framework is considered rare (such as ASPE). In s
       questions: [
         {
           id: 'q5',
-          text: `If the FI is intended to be used by a third party, inquire of management about:
-
-a. The ability of the third party to request and obtain additional information.
-b. Whether the third party agrees with the basis of accounting.`,
+          text: `<p>If the FI is intended to be used by a third party, inquire of management about:</p>
+<ol type="a">
+<li>The ability of the third party to request and obtain additional information.</li>
+<li>Whether the third party agrees with the basis of accounting.</li>
+</ol>`,
           answerType: 'yes-no-na',
           required: true,
           answer: ''
@@ -112,8 +113,8 @@ b. Whether the third party agrees with the basis of accounting.`,
       questions: [
         {
           id: 'q6',
-          text: `Are there any circumstances that would require this engagement to be subject to an engagement quality review?
-If so, has a reviewer been appointed?`,
+          text: `<p>Are there any circumstances that would require this engagement to be subject to an engagement quality review?</p>
+<p>If so, has a reviewer been appointed?</p>`,
           answerType: 'yes-no-na',
           required: true,
           answer: ''

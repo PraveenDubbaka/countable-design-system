@@ -246,23 +246,27 @@ export function QuestionCard({
 
           {/* Content */}
           <div className="flex-1 min-w-0">
-            {/* Question text */}
+            {/* Question text - with rich text support */}
             {isEditingQuestion ? (
-              <Input
-                value={question.text}
+              <Textarea
+                value={question.text.replace(/<[^>]*>/g, '')}
                 onChange={(e) => handleQuestionChange(e.target.value)}
                 onBlur={() => setIsEditingQuestion(false)}
-                onKeyDown={(e) => e.key === 'Enter' && setIsEditingQuestion(false)}
                 autoFocus
-                className="font-medium bg-background"
+                className="font-medium bg-background min-h-[100px] resize-none"
+                placeholder="Enter question text..."
               />
             ) : (
-              <p 
-                className="text-foreground cursor-text hover:bg-muted/50 px-2 py-1 -mx-2 -my-1 rounded transition-colors"
+              <div 
+                className="text-foreground cursor-text hover:bg-muted/50 px-2 py-1 -mx-2 -my-1 rounded transition-colors prose prose-sm max-w-none
+                  [&_ol]:list-[lower-alpha] [&_ol]:ml-4 [&_ol]:my-2
+                  [&_li]:my-1 [&_li]:pl-1
+                  [&_p]:my-2 [&_p:first-child]:mt-0
+                  [&_strong]:font-semibold
+                  [&_em]:italic [&_em]:text-muted-foreground"
                 onClick={() => setIsEditingQuestion(true)}
-              >
-                {question.text}
-              </p>
+                dangerouslySetInnerHTML={{ __html: question.text || '<span class="text-muted-foreground">Click to add question text...</span>' }}
+              />
             )}
 
             {/* Collapsible answer section */}
