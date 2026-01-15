@@ -367,7 +367,7 @@ export function ChecklistBuilder({ checklist, onUpdate }: ChecklistBuilderProps)
               className="w-full border-dashed py-8 text-muted-foreground hover:text-primary hover:border-primary group"
             >
               <Plus className="h-5 w-5 mr-2 group-hover:scale-110 transition-transform" />
-              Add New Block
+              Add New Category
             </Button>
 
             {showAddMenu && (
