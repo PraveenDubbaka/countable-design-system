@@ -326,24 +326,33 @@ export default function Generate() {
 
           {/* Generate Button */}
           <div className="flex justify-center mb-8">
-            <Button
+            <button
               onClick={handleGenerate}
               disabled={isGenerating}
-              size="lg"
-              className="px-8 py-6 text-base rounded-xl shadow-md"
+              className="relative px-8 py-4 text-base font-medium text-white rounded-xl shadow-md bg-gradient-to-r from-[#3379C9] to-[#8A5BD9] overflow-hidden group disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {isGenerating ? (
-                <>
-                  <Sparkles className="h-5 w-5 mr-2 animate-pulse" />
-                  Generating...
-                </>
-              ) : (
-                <>
-                  <Sparkles className="h-5 w-5 mr-2" />
-                  Generate
-                </>
-              )}
-            </Button>
+              {/* Animated shine effect on hover */}
+              <span className="absolute inset-0 overflow-hidden rounded-xl">
+                <span className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700 ease-in-out" />
+              </span>
+              {/* Animated border glow */}
+              <span className="absolute inset-0 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                <span className="absolute inset-[-2px] rounded-xl bg-gradient-to-r from-[#3379C9] via-white to-[#8A5BD9] animate-pulse" style={{ zIndex: -1 }} />
+              </span>
+              <span className="relative flex items-center justify-center">
+                {isGenerating ? (
+                  <>
+                    <Sparkles className="h-5 w-5 mr-2 animate-pulse" />
+                    Generating...
+                  </>
+                ) : (
+                  <>
+                    <Sparkles className="h-5 w-5 mr-2" />
+                    Generate
+                  </>
+                )}
+              </span>
+            </button>
           </div>
 
           {/* Example Prompts */}
