@@ -56,14 +56,6 @@ export function FloatingActionBar({
             <ArrowUpDown className="h-4 w-4 text-muted-foreground group-hover:text-foreground" />
           </button>
 
-          {/* Group/Sections (placeholder) */}
-          <button
-            className="w-9 h-9 flex items-center justify-center rounded-full hover:bg-muted transition-colors group"
-            title="Manage sections"
-          >
-            <Layers className="h-4 w-4 text-muted-foreground group-hover:text-foreground" />
-          </button>
-
           {/* Link (placeholder) */}
           <button
             className="w-9 h-9 flex items-center justify-center rounded-full hover:bg-muted transition-colors group"
