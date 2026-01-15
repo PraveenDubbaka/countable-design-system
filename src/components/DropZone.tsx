@@ -244,7 +244,7 @@ export function DropZone({ onGenerate }: DropZoneProps) {
               <path d="M66.3304 120.419H19.333C15.4638 120.12 3.856 118.773 0.836085 112.935C-1.42885 108.594 1.02483 102.682 6.78153 97.9669C46.0404 65.4859 85.3936 33.0797 124.652 0.673569C128.05 -0.224523 130.22 -0.224523 131.164 0.673569C133.052 2.39491 130.409 7.33442 123.048 15.6418C94.7364 43.1084 66.4248 70.5003 38.1131 97.9669L118.707 120.419H66.3304Z" fill="white"/>
             </svg>
           }
-          iconBg="bg-gradient-to-r from-[#9249FB] to-[#2462AC]"
+          iconBg="bg-gradient-to-r from-[#3379C9] to-[#8A5BD9]"
           title="Generate"
           description="Create from a one-line prompt in a few seconds"
           badge={{ text: 'RECOMMENDED', variant: 'recommended' }}
