@@ -78,6 +78,8 @@ export function ChecklistSection({
     onUpdate({ ...section, questions: newQuestions });
   };
 
+  const displayTitle = section.title.replace(/^\s*\d+(?:\.\d+)*\.\s*/, '').trim();
+
   return (
     <div className="mb-6 animate-slide-up" style={{ animationDelay: `${index * 100}ms` }}>
       {/* Section Header */}
@@ -112,7 +114,7 @@ export function ChecklistSection({
               }}
               className="hover:underline cursor-text font-semibold"
             >
-              {section.title}
+              {displayTitle}
             </span>
           )}
         </button>

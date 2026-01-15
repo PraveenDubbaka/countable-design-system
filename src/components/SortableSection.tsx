@@ -109,6 +109,8 @@ export function SortableSection({
     onUpdate({ ...section, questions: newQuestions });
   };
 
+  const displayTitle = section.title.replace(/^\s*\d+(?:\.\d+)*\.\s*/, '').trim();
+
   return (
     <div 
       ref={setNodeRef}
@@ -157,7 +159,7 @@ export function SortableSection({
               }}
               className="hover:underline cursor-text font-semibold"
             >
-              {section.title}
+              {displayTitle}
             </span>
           )}
         </button>
