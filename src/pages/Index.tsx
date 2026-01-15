@@ -15,7 +15,7 @@ const generateMockChecklist = (prompt: string, scope: GenerationScope): Checklis
   const sections: Section[] = [
     {
       id: 'section-1',
-      title: '1. Quality management',
+      title: 'Quality Management & Risk Assessment',
       questions: [
         {
           id: 'q1',
@@ -23,14 +23,7 @@ const generateMockChecklist = (prompt: string, scope: GenerationScope): Checklis
           answerType: 'yes-no-na',
           required: true,
           answer: ''
-        }
-      ],
-      isExpanded: true
-    },
-    {
-      id: 'section-2',
-      title: '2. Engagement risk factors',
-      questions: [
+        },
         {
           id: 'q2',
           text: `<p><strong>New Clients</strong></p>
@@ -53,8 +46,8 @@ const generateMockChecklist = (prompt: string, scope: GenerationScope): Checklis
       isExpanded: true
     },
     {
-      id: 'section-3',
-      title: '3. Intended use of FI',
+      id: 'section-2',
+      title: 'Financial Information & Basis of Accounting',
       questions: [
         {
           id: 'q3',
@@ -66,14 +59,7 @@ const generateMockChecklist = (prompt: string, scope: GenerationScope): Checklis
           answerType: 'yes-no-na',
           required: true,
           answer: ''
-        }
-      ],
-      isExpanded: true
-    },
-    {
-      id: 'section-4',
-      title: '4. Expected basis of accounting',
-      questions: [
+        },
         {
           id: 'q4',
           text: `<p>Discuss the expected basis of accounting with management and obtain management's acknowledgement that it is appropriate in the circumstances:</p>
@@ -90,8 +76,8 @@ const generateMockChecklist = (prompt: string, scope: GenerationScope): Checklis
       isExpanded: true
     },
     {
-      id: 'section-5',
-      title: '5. Third-party use of the FI',
+      id: 'section-3',
+      title: 'Third-Party Use & Quality Review',
       questions: [
         {
           id: 'q5',
@@ -103,34 +89,13 @@ const generateMockChecklist = (prompt: string, scope: GenerationScope): Checklis
           answerType: 'yes-no-na',
           required: true,
           answer: ''
-        }
-      ],
-      isExpanded: true
-    },
-    {
-      id: 'section-6',
-      title: '6. Engagement quality review',
-      questions: [
+        },
         {
           id: 'q6',
           text: `<p>Are there any circumstances that would require this engagement to be subject to an engagement quality review?</p>
 <p>If so, has a reviewer been appointed?</p>`,
           answerType: 'yes-no-na',
           required: true,
-          answer: ''
-        }
-      ],
-      isExpanded: true
-    },
-    {
-      id: 'section-7',
-      title: '7. test',
-      questions: [
-        {
-          id: 'q7',
-          text: '',
-          answerType: 'yes-no-na',
-          required: false,
           answer: ''
         }
       ],
