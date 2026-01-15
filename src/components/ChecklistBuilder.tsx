@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { 
   DndContext, 
   closestCenter, 
@@ -32,6 +32,7 @@ import {
 } from 'lucide-react';
 import { Checklist, Section, Question } from '@/types/checklist';
 import { SortableSection } from './SortableSection';
+import { FloatingActionBar } from './FloatingActionBar';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { toast } from 'sonner';
@@ -76,6 +77,21 @@ export function ChecklistBuilder({ checklist, onUpdate }: ChecklistBuilderProps)
 
   // Get all question IDs for the sortable context
   const allQuestionIds = checklist.sections.flatMap(s => s.questions.map(q => q.id));
+
+  // Check if all sections are collapsed
+  const allCollapsed = useMemo(() => {
+    return checklist.sections.every(s => !s.isExpanded);
+  }, [checklist.sections]);
+
+  const handleCollapseAll = () => {
+    const newSections = checklist.sections.map(s => ({ ...s, isExpanded: false }));
+    onUpdate({ ...checklist, sections: newSections });
+  };
+
+  const handleExpandAll = () => {
+    const newSections = checklist.sections.map(s => ({ ...s, isExpanded: true }));
+    onUpdate({ ...checklist, sections: newSections });
+  };
 
   // Find which section a question belongs to
   const findSectionByQuestionId = (questionId: string): { sectionIndex: number; questionIndex: number } | null => {
@@ -399,6 +415,15 @@ export function ChecklistBuilder({ checklist, onUpdate }: ChecklistBuilderProps)
           </div>
         </div>
       </div>
+
+      {/* Floating Action Bar */}
+      <FloatingActionBar
+        checklist={checklist}
+        onUpdate={onUpdate}
+        onCollapseAll={handleCollapseAll}
+        onExpandAll={handleExpandAll}
+        allCollapsed={allCollapsed}
+      />
     </div>
   );
 }
