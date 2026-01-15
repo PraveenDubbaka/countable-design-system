@@ -262,7 +262,7 @@ export function DropZone({ onGenerate }: DropZoneProps) {
         
         <CreationOption
           icon={<LayoutTemplate className="h-10 w-10 text-white" />}
-          iconBg="bg-gradient-to-br from-teal-400 via-emerald-400 to-green-400"
+          iconBg="bg-gradient-to-r from-[#2A7BCB] to-[#1C63A6]"
           title="Generate from template"
           description="Generate from existing templates"
           badge={{ text: 'NEW', variant: 'new' }}
