@@ -326,18 +326,18 @@ export default function Generate() {
 
           {/* Generate Button */}
           <div className="flex justify-center mb-8">
-            <div className="relative group">
-              {/* Animated border shine - only on hover */}
-              <span className="absolute inset-0 rounded-xl overflow-hidden opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+            <div className="relative group focus-within:scale-105 hover:scale-105 transition-transform duration-200">
+              {/* Animated border shine - only on hover/focus */}
+              <span className="absolute inset-0 rounded-xl overflow-hidden opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 transition-opacity duration-300">
                 <span className="absolute inset-[-2px] rounded-xl bg-gradient-to-r from-[#3379C9] via-white to-[#8A5BD9]" />
                 <span className="absolute inset-[-2px] rounded-xl overflow-hidden">
-                  <span className="absolute inset-0 bg-gradient-to-r from-transparent via-white/80 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-in-out" />
+                  <span className="absolute inset-0 bg-gradient-to-r from-transparent via-white/80 to-transparent -translate-x-full group-hover:translate-x-full group-focus-within:translate-x-full transition-transform duration-1000 ease-in-out" />
                 </span>
               </span>
               <button
                 onClick={handleGenerate}
                 disabled={isGenerating}
-                className="relative px-8 py-4 text-base font-medium text-white rounded-xl shadow-md bg-gradient-to-r from-[#3379C9] to-[#8A5BD9] disabled:opacity-50 disabled:cursor-not-allowed"
+                className="relative px-8 py-4 text-base font-medium text-white rounded-xl shadow-md bg-gradient-to-r from-[#3379C9] to-[#8A5BD9] disabled:opacity-50 disabled:cursor-not-allowed hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-[#8A5BD9] focus:ring-offset-2 transition-shadow duration-200"
               >
               <span className="relative flex items-center justify-center">
                 {isGenerating ? (
