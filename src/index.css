@@ -39,9 +39,9 @@
     --radius: 0.5rem;
 
     /* Custom tokens - Countable palette */
-    --sidebar-bg: 213 60% 24%;
+    --sidebar-bg: 220 78% 27%;
     --sidebar-foreground: 0 0% 100%;
-    --sidebar-muted: 213 50% 32%;
+    --sidebar-muted: 220 70% 35%;
     --sidebar-accent: 207 78% 50%;
     
     --dropzone-bg: 207 78% 98%;
