@@ -1,5 +1,6 @@
-import { Bell, Zap, ChevronDown, User } from 'lucide-react';
+import { Bell, ChevronDown, User } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import lukaAiIcon from '@/assets/luka-ai-icon.png';
 
 interface HeaderProps {
   title?: string;
@@ -18,11 +19,9 @@ export function Header({ title, showActions = true }: HeaderProps) {
 
       {/* Right side - Actions matching screenshot */}
       <div className="flex items-center gap-3">
-        {/* Lightning/Zap icon with green circle */}
-        <Button size="icon" variant="ghost" className="relative h-9 w-9">
-          <div className="w-7 h-7 rounded-full bg-green-500 flex items-center justify-center">
-            <Zap className="h-4 w-4 text-white" />
-          </div>
+        {/* Luka AI icon */}
+        <Button size="icon" variant="ghost" className="relative h-9 w-9 p-0">
+          <img src={lukaAiIcon} alt="Luka AI" className="w-7 h-7 rounded-full object-cover" />
         </Button>
         
         {/* Bell with notification badge */}
