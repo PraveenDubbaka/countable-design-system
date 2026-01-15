@@ -631,15 +631,14 @@ export function SortableQuestionCard({
                 className="font-medium bg-background text-base"
               />
             ) : (
-              <p 
-                className="text-foreground font-medium cursor-text hover:bg-muted/50 px-2 py-1 -mx-2 -my-1 rounded transition-colors"
+              <div 
+                className="question-content text-foreground font-medium cursor-text hover:bg-muted/50 px-2 py-1 -mx-2 -my-1 rounded transition-colors"
                 onClick={(e) => {
                   e.stopPropagation();
                   setIsEditingQuestion(true);
                 }}
-              >
-              {question.text}
-              </p>
+                dangerouslySetInnerHTML={{ __html: question.text }}
+              />
             )}
 
             {/* Sub-question button - between question and answer */}
