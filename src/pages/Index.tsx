@@ -21,6 +21,7 @@ const generateMockChecklist = (prompt: string, scope: GenerationScope): Checklis
           id: 'q1',
           text: 'Determine whether accepting this engagement would contravene any of the firm\'s quality management policies.',
           answerType: 'yes-no-na',
+          options: ['Yes', 'No', 'Not Applicable'],
           required: true,
           answer: ''
         },
@@ -39,6 +40,7 @@ const generateMockChecklist = (prompt: string, scope: GenerationScope): Checklis
 <li>Does management understand the limited nature of the engagement?</li>
 </ol>`,
           answerType: 'yes-no-na',
+          options: ['Yes', 'No', 'Not Applicable'],
           required: true,
           answer: ''
         }
@@ -57,6 +59,7 @@ const generateMockChecklist = (prompt: string, scope: GenerationScope): Checklis
 <li>Whether the FI is intended to be used by a third party.</li>
 </ol>`,
           answerType: 'yes-no-na',
+          options: ['Yes', 'No', 'Not Applicable'],
           required: true,
           answer: ''
         },
@@ -69,6 +72,7 @@ const generateMockChecklist = (prompt: string, scope: GenerationScope): Checklis
 </ol>
 <p><em>Note: Use of a general purpose framework is considered rare (such as ASPE). In such cases, consideration should be given to whether an audit or review engagement would be more appropriate.</em></p>`,
           answerType: 'yes-no-na',
+          options: ['Yes', 'No', 'Not Applicable'],
           required: true,
           answer: ''
         }
@@ -87,6 +91,7 @@ const generateMockChecklist = (prompt: string, scope: GenerationScope): Checklis
 <li>Whether the third party agrees with the basis of accounting.</li>
 </ol>`,
           answerType: 'yes-no-na',
+          options: ['Yes', 'No', 'Not Applicable'],
           required: true,
           answer: ''
         },
@@ -95,6 +100,7 @@ const generateMockChecklist = (prompt: string, scope: GenerationScope): Checklis
           text: `<p>Are there any circumstances that would require this engagement to be subject to an engagement quality review?</p>
 <p>If so, has a reviewer been appointed?</p>`,
           answerType: 'yes-no-na',
+          options: ['Yes', 'No', 'Not Applicable'],
           required: true,
           answer: ''
         }
