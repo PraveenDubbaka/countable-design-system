@@ -117,7 +117,7 @@ export function SortableSection({
     <div 
       ref={setNodeRef}
       style={style}
-      className={`mb-6 animate-slide-up ${isDragging ? 'shadow-xl' : ''}`}
+      className={`mb-6 animate-slide-up w-full ${isDragging ? 'shadow-xl' : ''}`}
     >
       {/* Section Header */}
       <div className="flex items-center gap-2 mb-3 group/section">
