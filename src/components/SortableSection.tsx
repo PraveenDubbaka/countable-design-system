@@ -19,6 +19,7 @@ interface SortableSectionProps {
   isFirst: boolean;
   isLast: boolean;
   disableQuestionDnd?: boolean;
+  isPreviewMode?: boolean;
 }
 
 export function SortableSection({
@@ -28,7 +29,8 @@ export function SortableSection({
   onDelete,
   isFirst,
   isLast,
-  disableQuestionDnd = false
+  disableQuestionDnd = false,
+  isPreviewMode = false
 }: SortableSectionProps) {
   const [showMenu, setShowMenu] = useState(false);
   const [isEditingTitle, setIsEditingTitle] = useState(false);
@@ -119,15 +121,17 @@ export function SortableSection({
     >
       {/* Section Header */}
       <div className="flex items-center gap-2 mb-3 group/section">
-        {/* Drag Handle for Section */}
-        <div
-          {...attributes}
-          {...listeners}
-          className="flex items-center justify-center w-8 h-8 rounded cursor-grab active:cursor-grabbing opacity-0 group-hover/section:opacity-100 hover:bg-muted transition-all shrink-0"
-          title="Drag to reorder section"
-        >
-          <GripVertical className="h-5 w-5 text-muted-foreground" />
-        </div>
+        {/* Drag Handle for Section - Hidden in preview mode */}
+        {!isPreviewMode && (
+          <div
+            {...attributes}
+            {...listeners}
+            className="flex items-center justify-center w-8 h-8 rounded cursor-grab active:cursor-grabbing opacity-0 group-hover/section:opacity-100 hover:bg-muted transition-all shrink-0"
+            title="Drag to reorder section"
+          >
+            <GripVertical className="h-5 w-5 text-muted-foreground" />
+          </div>
+        )}
 
         <button
           onClick={toggleExpanded}
@@ -141,7 +145,7 @@ export function SortableSection({
           
           <span className="text-muted-foreground mr-1">{index + 1}.</span>
           
-          {isEditingTitle ? (
+          {isEditingTitle && !isPreviewMode ? (
             <Input
               value={section.title}
               onChange={(e) => handleTitleChange(e.target.value)}
@@ -154,39 +158,44 @@ export function SortableSection({
           ) : (
             <span 
               onClick={(e) => {
-                e.stopPropagation();
-                setIsEditingTitle(true);
+                if (!isPreviewMode) {
+                  e.stopPropagation();
+                  setIsEditingTitle(true);
+                }
               }}
-              className="hover:underline cursor-text font-semibold"
+              className={`font-semibold ${!isPreviewMode ? 'hover:underline cursor-text' : ''}`}
             >
               {displayTitle}
             </span>
           )}
         </button>
 
-        <div className="relative">
-          <button
-            onClick={() => setShowMenu(!showMenu)}
-            className="p-2 rounded-md hover:bg-muted transition-colors"
-          >
-            <MoreVertical className="h-5 w-5 text-muted-foreground" />
-          </button>
+        {/* Section menu - Hidden in preview mode */}
+        {!isPreviewMode && (
+          <div className="relative">
+            <button
+              onClick={() => setShowMenu(!showMenu)}
+              className="p-2 rounded-md hover:bg-muted transition-colors"
+            >
+              <MoreVertical className="h-5 w-5 text-muted-foreground" />
+            </button>
 
-          {showMenu && (
-            <div className="absolute top-full right-0 mt-1 bg-card border rounded-lg shadow-lg p-1 z-20 w-48 animate-scale-in">
-              <button
-                onClick={() => {
-                  onDelete();
-                  setShowMenu(false);
-                }}
-                className="w-full flex items-center gap-2 px-3 py-2 text-sm rounded-md hover:bg-destructive/10 text-destructive transition-colors"
-              >
-                <Trash2 className="h-4 w-4" />
-                Delete Section
-              </button>
-            </div>
-          )}
-        </div>
+            {showMenu && (
+              <div className="absolute top-full right-0 mt-1 bg-card border rounded-lg shadow-lg p-1 z-20 w-48 animate-scale-in">
+                <button
+                  onClick={() => {
+                    onDelete();
+                    setShowMenu(false);
+                  }}
+                  className="w-full flex items-center gap-2 px-3 py-2 text-sm rounded-md hover:bg-destructive/10 text-destructive transition-colors"
+                >
+                  <Trash2 className="h-4 w-4" />
+                  Delete Section
+                </button>
+              </div>
+            )}
+          </div>
+        )}
       </div>
 
       {/* Questions - now using parent's DndContext for cross-section drag */}
@@ -206,18 +215,22 @@ export function SortableSection({
                 onDelete={() => handleQuestionDelete(qIndex)}
                 onAddSubQuestion={() => handleAddSubQuestion(qIndex)}
                 onDuplicate={() => handleDuplicateQuestion(qIndex)}
+                isPreviewMode={isPreviewMode}
               />
             ))}
           </SortableContext>
 
-          <Button
-            variant="outline"
-            onClick={handleAddQuestion}
-            className="w-full mt-2 border-dashed text-muted-foreground hover:text-white hover:border-[#1C63A6] hover:bg-[#1C63A6] transition-colors"
-          >
-            <Plus className="h-4 w-4 mr-2" />
-            Add Question
-          </Button>
+          {/* Add Question button - Hidden in preview mode */}
+          {!isPreviewMode && (
+            <Button
+              variant="outline"
+              onClick={handleAddQuestion}
+              className="w-full mt-2 border-dashed text-muted-foreground hover:text-white hover:border-[#1C63A6] hover:bg-[#1C63A6] transition-colors"
+            >
+              <Plus className="h-4 w-4 mr-2" />
+              Add Question
+            </Button>
+          )}
         </div>
       )}
     </div>
