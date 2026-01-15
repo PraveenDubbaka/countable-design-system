@@ -326,7 +326,7 @@ export default function Generate() {
 
           {/* Generate Button */}
           <div className="flex justify-center mb-8">
-            <div className="relative group focus-within:scale-105 hover:scale-105 transition-transform duration-200">
+            <div className="relative group focus-within:scale-105 hover:scale-105 active:scale-95 transition-transform duration-200 active:duration-75">
               {/* Animated border shine - only on hover/focus */}
               <span className="absolute inset-0 rounded-xl overflow-hidden opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 transition-opacity duration-300">
                 <span className="absolute inset-[-2px] rounded-xl bg-gradient-to-r from-[#3379C9] via-white to-[#8A5BD9]" />
