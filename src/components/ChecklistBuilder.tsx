@@ -312,15 +312,6 @@ export function ChecklistBuilder({ checklist, onUpdate }: ChecklistBuilderProps)
             Preview
           </Button>
 
-          <Button
-            variant="outline"
-            size="sm"
-            className="gap-2"
-            onClick={handleConsolidateCategories}
-          >
-            <Wand2 className="h-4 w-4" />
-            Consolidate
-          </Button>
           
           <div className="relative">
             <Button 
