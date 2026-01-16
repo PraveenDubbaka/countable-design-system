@@ -195,6 +195,11 @@ export default function Index() {
     toast.success(`Folder "${folderName}" created`);
   };
 
+  const handleDeleteChecklist = () => {
+    setChecklist(null);
+    toast.success('Checklist deleted');
+  };
+
   return (
     <RichTextToolbarProvider>
       <Layout 
@@ -235,6 +240,8 @@ export default function Index() {
           onSaveAsDraft={handleSaveAsDraft}
           onSaveToFolder={handleSaveToFolder}
           onCreateFolder={handleCreateFolder}
+          onDelete={handleDeleteChecklist}
+          showDeleteOption={true}
         />
       </Layout>
     </RichTextToolbarProvider>
