@@ -318,7 +318,6 @@ export function ChecklistBuilder({ checklist, onUpdate, onSave }: ChecklistBuild
         </div>
         
         <div className="flex items-center gap-3">
-          <ViewModeToggle value={viewMode} onChange={setViewMode} />
           
           {!isPreviewMode && (
             <Button 
@@ -352,9 +351,12 @@ export function ChecklistBuilder({ checklist, onUpdate, onSave }: ChecklistBuild
         </div>
       </div>
 
-      {/* Content */}
       <div className="flex-1 overflow-y-auto px-6 py-6">
         <div className="max-w-4xl mx-auto w-full">
+          {/* View Mode Toggle */}
+          <div className="flex justify-end mb-4">
+            <ViewModeToggle value={viewMode} onChange={setViewMode} />
+          </div>
           {/* Objective accordion */}
           <div className="mb-6">
             <button 
