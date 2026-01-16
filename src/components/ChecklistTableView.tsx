@@ -1,8 +1,25 @@
-import { useState } from 'react';
-import { Plus } from 'lucide-react';
-import { Checklist, Section, Question } from '@/types/checklist';
+import { useState, useRef, useCallback } from 'react';
+import { 
+  Plus, 
+  MoreVertical, 
+  Trash2, 
+  Sparkles, 
+  Mic, 
+  MicOff, 
+  GripVertical,
+  ChevronDown,
+  ChevronUp,
+  Check
+} from 'lucide-react';
+import { Checklist, Question, AnswerType } from '@/types/checklist';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import { QuestionToolbar } from './QuestionToolbar';
+import { AIEditMenu } from './AIEditMenu';
+import { useVoiceToText } from '@/hooks/useVoiceToText';
+import { useToast } from '@/hooks/use-toast';
 import {
   Select,
   SelectContent,
@@ -22,17 +39,91 @@ interface TableRowProps {
   sectionIndex: number;
   questionIndex: number;
   onUpdate: (question: Question) => void;
+  onDelete: () => void;
+  onDuplicate: () => void;
+  onAddSubQuestion: () => void;
   isPreviewMode: boolean;
+  isFirst: boolean;
+  isLast: boolean;
+  onMoveUp: () => void;
+  onMoveDown: () => void;
 }
 
-function TableRow({ question, onUpdate, isPreviewMode }: TableRowProps) {
+function TableRow({ 
+  question, 
+  onUpdate, 
+  onDelete, 
+  onDuplicate, 
+  onAddSubQuestion,
+  isPreviewMode,
+  isFirst,
+  isLast,
+  onMoveUp,
+  onMoveDown
+}: TableRowProps) {
   const [checked, setChecked] = useState(false);
-  const [response, setResponse] = useState(question.answer || '');
   const [procedureStatus, setProcedureStatus] = useState<string>('');
+  const [isEditing, setIsEditing] = useState(false);
+  const [isFocused, setIsFocused] = useState(false);
+  const [showAIMenu, setShowAIMenu] = useState(false);
+  const [aiMenuPosition, setAiMenuPosition] = useState({ x: 0, y: 0 });
+  const [activeVoiceField, setActiveVoiceField] = useState<'answer' | 'explanation' | null>(null);
+  const [hasReference, setHasReference] = useState(!!question.reference);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const rowRef = useRef<HTMLTableRowElement>(null);
+  const { toast } = useToast();
 
-  const handleResponseChange = (value: string) => {
-    setResponse(value);
-    onUpdate({ ...question, answer: value });
+  // Voice-to-text handlers
+  const handleVoiceResult = useCallback((transcript: string) => {
+    if (activeVoiceField === 'answer') {
+      const currentAnswer = question.answer || '';
+      const newAnswer = currentAnswer ? `${currentAnswer} ${transcript}` : transcript;
+      onUpdate({ ...question, answer: newAnswer });
+      toast({
+        title: "Voice input captured",
+        description: transcript.length > 50 ? transcript.substring(0, 50) + '...' : transcript,
+      });
+    }
+    setActiveVoiceField(null);
+  }, [activeVoiceField, question, onUpdate, toast]);
+
+  const handleVoiceError = useCallback((error: string) => {
+    toast({
+      title: "Voice input error",
+      description: error,
+      variant: "destructive",
+    });
+    setActiveVoiceField(null);
+  }, [toast]);
+
+  const { isListening, toggleListening, isSupported } = useVoiceToText({
+    onResult: handleVoiceResult,
+    onError: handleVoiceError,
+  });
+
+  const handleMicClick = () => {
+    if (!isSupported) {
+      toast({
+        title: "Not supported",
+        description: "Voice input is not supported in this browser. Try Chrome or Edge.",
+        variant: "destructive",
+      });
+      return;
+    }
+    setActiveVoiceField('answer');
+    toggleListening();
+  };
+
+  const handleAnswerChange = (answer: string) => {
+    onUpdate({ ...question, answer });
+  };
+
+  const handleTypeChange = (type: AnswerType) => {
+    onUpdate({ ...question, answerType: type, answer: '' });
+  };
+
+  const handleTextChange = (text: string) => {
+    onUpdate({ ...question, text });
   };
 
   const handleProcedureChange = (value: string) => {
@@ -40,61 +131,311 @@ function TableRow({ question, onUpdate, isPreviewMode }: TableRowProps) {
     onUpdate({ ...question, note: value });
   };
 
-  // Strip HTML tags for display
+  const handleAIClick = (e: React.MouseEvent) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    setAiMenuPosition({ x: rect.left, y: rect.bottom + 8 });
+    setShowAIMenu(true);
+  };
+
+  const handleAIEdit = (newText: string) => {
+    onUpdate({ ...question, answer: newText });
+    setShowAIMenu(false);
+  };
+
+  const handleToggleReference = () => {
+    setHasReference(!hasReference);
+    onUpdate({ ...question, reference: !hasReference ? '' : undefined });
+  };
+
+  const handleAddNote = () => {
+    onUpdate({ ...question, explanation: question.explanation || '' });
+  };
+
+  // Strip HTML tags for plain text editing
   const plainText = question.text.replace(/<[^>]*>/g, '');
 
+  const renderAnswerField = () => {
+    if (isPreviewMode) {
+      return (
+        <span className="text-sm text-muted-foreground">
+          {question.answer || '-'}
+        </span>
+      );
+    }
+
+    switch (question.answerType) {
+      case 'yes-no':
+        return (
+          <div className="flex gap-4">
+            {['Yes', 'No'].map((option) => (
+              <label key={option} className="flex items-center gap-2 cursor-pointer group">
+                <div 
+                  className={`w-4 h-4 rounded-full border-2 flex items-center justify-center transition-all ${
+                    question.answer === option 
+                      ? 'border-primary bg-primary' 
+                      : 'border-muted-foreground/50 group-hover:border-primary/50'
+                  }`}
+                  onClick={() => handleAnswerChange(option)}
+                >
+                  {question.answer === option && (
+                    <div className="w-1.5 h-1.5 rounded-full bg-primary-foreground" />
+                  )}
+                </div>
+                <span className="text-sm text-foreground">{option}</span>
+              </label>
+            ))}
+          </div>
+        );
+
+      case 'yes-no-na':
+        return (
+          <div className="flex gap-4">
+            {['Yes', 'No', 'N/A'].map((option) => (
+              <label key={option} className="flex items-center gap-2 cursor-pointer group">
+                <div 
+                  className={`w-4 h-4 rounded-full border-2 flex items-center justify-center transition-all ${
+                    question.answer === option 
+                      ? 'border-primary bg-primary' 
+                      : 'border-muted-foreground/50 group-hover:border-primary/50'
+                  }`}
+                  onClick={() => handleAnswerChange(option)}
+                >
+                  {question.answer === option && (
+                    <div className="w-1.5 h-1.5 rounded-full bg-primary-foreground" />
+                  )}
+                </div>
+                <span className="text-sm text-foreground">{option}</span>
+              </label>
+            ))}
+          </div>
+        );
+
+      case 'short-answer':
+        return (
+          <Input
+            placeholder="Enter your answer..."
+            value={question.answer || ''}
+            onChange={(e) => handleAnswerChange(e.target.value)}
+            className="bg-background h-9"
+          />
+        );
+
+      case 'long-answer':
+        return (
+          <div className="relative">
+            <Textarea
+              ref={textareaRef}
+              placeholder="Enter your detailed answer..."
+              value={question.answer || ''}
+              onChange={(e) => handleAnswerChange(e.target.value)}
+              className="min-h-[80px] pr-16 resize-none bg-background"
+            />
+            <div className="absolute bottom-2 right-2 flex items-center gap-1">
+              <button
+                onClick={handleAIClick}
+                className="flex items-center gap-1 px-2 py-1 rounded text-accent hover:bg-accent/10 transition-colors"
+              >
+                <Sparkles className="h-4 w-4" />
+              </button>
+              <button 
+                onClick={handleMicClick}
+                className={`flex items-center gap-1 px-2 py-1 rounded transition-colors ${
+                  isListening && activeVoiceField === 'answer' 
+                    ? 'text-red-500 bg-red-100 animate-pulse' 
+                    : 'text-accent hover:bg-accent/10'
+                }`}
+                title={isListening && activeVoiceField === 'answer' ? 'Stop recording' : 'Start voice input'}
+              >
+                {isListening && activeVoiceField === 'answer' ? <MicOff className="h-4 w-4" /> : <Mic className="h-4 w-4" />}
+              </button>
+            </div>
+          </div>
+        );
+
+      case 'dropdown':
+      case 'multiple-choice':
+        return (
+          <div className="space-y-1">
+            {(question.options || ['Option 1', 'Option 2', 'Option 3']).map((option, i) => (
+              <label key={i} className="flex items-center gap-2 cursor-pointer p-1 rounded hover:bg-muted transition-colors group">
+                <div 
+                  className={`w-4 h-4 rounded border-2 flex items-center justify-center transition-all ${
+                    question.answer === option 
+                      ? 'border-primary bg-primary' 
+                      : 'border-muted-foreground/50 group-hover:border-primary/50'
+                  }`}
+                  onClick={() => handleAnswerChange(option)}
+                >
+                  {question.answer === option && (
+                    <Check className="h-2.5 w-2.5 text-primary-foreground" />
+                  )}
+                </div>
+                <span className="text-sm text-foreground">{option}</span>
+              </label>
+            ))}
+          </div>
+        );
+
+      default:
+        return (
+          <Input
+            placeholder="Enter your answer..."
+            value={question.answer || ''}
+            onChange={(e) => handleAnswerChange(e.target.value)}
+            className="bg-background h-9"
+          />
+        );
+    }
+  };
+
   return (
-    <tr className="border-b hover:bg-muted/30 transition-colors">
-      <td className="p-3 w-10">
-        <Checkbox
-          checked={checked}
-          onCheckedChange={(val) => setChecked(!!val)}
-          disabled={isPreviewMode}
+    <>
+      <tr 
+        ref={rowRef}
+        className={`border-b hover:bg-muted/30 transition-colors ${isFocused ? 'bg-muted/20' : ''}`}
+        onFocus={() => setIsFocused(true)}
+        onBlur={(e) => {
+          if (!rowRef.current?.contains(e.relatedTarget as Node)) {
+            setIsFocused(false);
+          }
+        }}
+        tabIndex={0}
+      >
+        {/* Checkbox + Drag handle */}
+        <td className="p-3 w-14">
+          <div className="flex items-center gap-1">
+            {!isPreviewMode && (
+              <div className="flex flex-col items-center gap-0.5">
+                <button
+                  onClick={onMoveUp}
+                  disabled={isFirst}
+                  className="p-0.5 rounded hover:bg-muted transition-colors disabled:opacity-30 disabled:pointer-events-none"
+                  aria-label="Move up"
+                >
+                  <ChevronUp className="h-3 w-3 text-muted-foreground" />
+                </button>
+                <GripVertical className="h-4 w-4 text-muted-foreground/50 cursor-grab" />
+                <button
+                  onClick={onMoveDown}
+                  disabled={isLast}
+                  className="p-0.5 rounded hover:bg-muted transition-colors disabled:opacity-30 disabled:pointer-events-none"
+                  aria-label="Move down"
+                >
+                  <ChevronDown className="h-3 w-3 text-muted-foreground" />
+                </button>
+              </div>
+            )}
+            <Checkbox
+              checked={checked}
+              onCheckedChange={(val) => setChecked(!!val)}
+              disabled={isPreviewMode}
+            />
+          </div>
+        </td>
+
+        {/* Description - editable */}
+        <td className="p-3 min-w-[300px] max-w-[400px]">
+          <div className="border rounded-lg p-3 bg-background min-h-[60px] relative group">
+            {isEditing && !isPreviewMode ? (
+              <Textarea
+                value={plainText}
+                onChange={(e) => handleTextChange(e.target.value)}
+                onBlur={() => setIsEditing(false)}
+                autoFocus
+                className="min-h-[60px] resize-none bg-transparent border-0 p-0 focus-visible:ring-0"
+                placeholder="Enter question text..."
+              />
+            ) : (
+              <div 
+                className="text-sm text-foreground whitespace-pre-wrap cursor-text prose prose-sm max-w-none
+                  [&_ol]:list-[lower-alpha] [&_ol]:ml-4 [&_ol]:my-2
+                  [&_li]:my-1 [&_li]:pl-1
+                  [&_p]:my-2 [&_p:first-child]:mt-0
+                  [&_strong]:font-semibold
+                  [&_em]:italic [&_em]:text-muted-foreground"
+                onClick={() => !isPreviewMode && setIsEditing(true)}
+                dangerouslySetInnerHTML={{ __html: question.text || '<span class="text-muted-foreground">Click to add question text...</span>' }}
+              />
+            )}
+
+            {/* Floating Toolbar on focus */}
+            {isFocused && !isPreviewMode && (
+              <div className="absolute -top-12 left-0 z-10">
+                <QuestionToolbar
+                  currentType={question.answerType}
+                  onChangeType={handleTypeChange}
+                  onDuplicate={onDuplicate}
+                  onDelete={onDelete}
+                  onAddSubQuestion={onAddSubQuestion}
+                  onAddNote={handleAddNote}
+                  onToggleReference={handleToggleReference}
+                  hasReference={hasReference}
+                />
+              </div>
+            )}
+          </div>
+
+          {/* Sub-questions */}
+          {question.subQuestions && question.subQuestions.length > 0 && (
+            <div className="mt-2 ml-4 border-l-2 border-muted pl-3 space-y-2">
+              {question.subQuestions.map((sub, i) => (
+                <div key={sub.id} className="bg-muted/30 rounded-lg p-2 text-sm">
+                  <span className="text-muted-foreground font-medium mr-2">
+                    {String.fromCharCode(97 + i)}.
+                  </span>
+                  {sub.text.replace(/<[^>]*>/g, '')}
+                </div>
+              ))}
+            </div>
+          )}
+        </td>
+
+        {/* Procedure Status */}
+        <td className="p-3 w-[160px]">
+          <Select
+            value={procedureStatus}
+            onValueChange={handleProcedureChange}
+            disabled={isPreviewMode}
+          >
+            <SelectTrigger className="bg-background">
+              <SelectValue placeholder="Select" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="completed">Completed</SelectItem>
+              <SelectItem value="in-progress">In Progress</SelectItem>
+              <SelectItem value="not-started">Not Started</SelectItem>
+              <SelectItem value="na">N/A</SelectItem>
+            </SelectContent>
+          </Select>
+        </td>
+
+        {/* Responses - with answer type specific fields */}
+        <td className="p-3 min-w-[250px]">
+          {renderAnswerField()}
+        </td>
+
+        {/* Reference */}
+        <td className="p-3 w-[100px]">
+          <Button
+            variant="ghost"
+            size="sm"
+            className="text-muted-foreground hover:text-foreground hover:bg-[#1C63A6] hover:text-white transition-colors"
+            disabled={isPreviewMode}
+          >
+            + Ref
+          </Button>
+        </td>
+      </tr>
+
+      {showAIMenu && (
+        <AIEditMenu
+          text={question.answer || ''}
+          position={aiMenuPosition}
+          onClose={() => setShowAIMenu(false)}
+          onApply={handleAIEdit}
         />
-      </td>
-      <td className="p-3 min-w-[300px] max-w-[400px]">
-        <div className="border rounded-lg p-3 bg-background min-h-[60px]">
-          <p className="text-sm text-foreground whitespace-pre-wrap">{plainText}</p>
-        </div>
-      </td>
-      <td className="p-3 w-[160px]">
-        <Select
-          value={procedureStatus}
-          onValueChange={handleProcedureChange}
-          disabled={isPreviewMode}
-        >
-          <SelectTrigger className="bg-background">
-            <SelectValue placeholder="Select" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="completed">Completed</SelectItem>
-            <SelectItem value="in-progress">In Progress</SelectItem>
-            <SelectItem value="not-started">Not Started</SelectItem>
-            <SelectItem value="na">N/A</SelectItem>
-          </SelectContent>
-        </Select>
-      </td>
-      <td className="p-3 min-w-[250px]">
-        <input
-          type="text"
-          value={response}
-          onChange={(e) => handleResponseChange(e.target.value)}
-          placeholder="Enter your response"
-          disabled={isPreviewMode}
-          className="w-full px-3 py-2 border rounded-lg bg-background text-sm focus:outline-none focus:ring-2 focus:ring-primary disabled:opacity-50"
-        />
-      </td>
-      <td className="p-3 w-[100px]">
-        <Button
-          variant="ghost"
-          size="sm"
-          className="text-muted-foreground hover:text-foreground"
-          disabled={isPreviewMode}
-        >
-          + Ref
-        </Button>
-      </td>
-    </tr>
+      )}
+    </>
   );
 }
 
@@ -107,6 +448,62 @@ export function ChecklistTableView({ checklist, onUpdate, isPreviewMode }: Check
         idx === questionIndex ? updatedQuestion : q
       ),
     };
+    onUpdate({ ...checklist, sections: newSections });
+  };
+
+  const handleQuestionDelete = (sectionIndex: number, questionIndex: number) => {
+    const newSections = [...checklist.sections];
+    newSections[sectionIndex] = {
+      ...newSections[sectionIndex],
+      questions: newSections[sectionIndex].questions.filter((_, idx) => idx !== questionIndex),
+    };
+    onUpdate({ ...checklist, sections: newSections });
+  };
+
+  const handleQuestionDuplicate = (sectionIndex: number, questionIndex: number) => {
+    const question = checklist.sections[sectionIndex].questions[questionIndex];
+    const newQuestion: Question = {
+      ...question,
+      id: `q-${Date.now()}`,
+    };
+    const newSections = [...checklist.sections];
+    newSections[sectionIndex] = {
+      ...newSections[sectionIndex],
+      questions: [
+        ...newSections[sectionIndex].questions.slice(0, questionIndex + 1),
+        newQuestion,
+        ...newSections[sectionIndex].questions.slice(questionIndex + 1),
+      ],
+    };
+    onUpdate({ ...checklist, sections: newSections });
+  };
+
+  const handleAddSubQuestion = (sectionIndex: number, questionIndex: number) => {
+    const question = checklist.sections[sectionIndex].questions[questionIndex];
+    const newSubQuestion = {
+      id: `sq-${Date.now()}`,
+      text: 'New sub-question',
+      answerType: 'short-answer' as AnswerType,
+      required: false,
+    };
+    const updatedQuestion = {
+      ...question,
+      subQuestions: [...(question.subQuestions || []), newSubQuestion],
+    };
+    handleQuestionUpdate(sectionIndex, questionIndex, updatedQuestion);
+  };
+
+  const handleMoveQuestion = (sectionIndex: number, questionIndex: number, direction: 'up' | 'down') => {
+    const newSections = [...checklist.sections];
+    const questions = [...newSections[sectionIndex].questions];
+    
+    if (direction === 'up' && questionIndex > 0) {
+      [questions[questionIndex - 1], questions[questionIndex]] = [questions[questionIndex], questions[questionIndex - 1]];
+    } else if (direction === 'down' && questionIndex < questions.length - 1) {
+      [questions[questionIndex], questions[questionIndex + 1]] = [questions[questionIndex + 1], questions[questionIndex]];
+    }
+    
+    newSections[sectionIndex] = { ...newSections[sectionIndex], questions };
     onUpdate({ ...checklist, sections: newSections });
   };
 
@@ -142,7 +539,7 @@ export function ChecklistTableView({ checklist, onUpdate, isPreviewMode }: Check
             <table className="w-full">
               <thead>
                 <tr className="border-b bg-muted/30">
-                  <th className="p-3 w-10"></th>
+                  <th className="p-3 w-14"></th>
                   <th className="p-3 text-left text-sm font-medium text-muted-foreground">
                     Description
                   </th>
@@ -165,7 +562,14 @@ export function ChecklistTableView({ checklist, onUpdate, isPreviewMode }: Check
                     sectionIndex={sectionIndex}
                     questionIndex={questionIndex}
                     onUpdate={(q) => handleQuestionUpdate(sectionIndex, questionIndex, q)}
+                    onDelete={() => handleQuestionDelete(sectionIndex, questionIndex)}
+                    onDuplicate={() => handleQuestionDuplicate(sectionIndex, questionIndex)}
+                    onAddSubQuestion={() => handleAddSubQuestion(sectionIndex, questionIndex)}
                     isPreviewMode={isPreviewMode}
+                    isFirst={questionIndex === 0}
+                    isLast={questionIndex === section.questions.length - 1}
+                    onMoveUp={() => handleMoveQuestion(sectionIndex, questionIndex, 'up')}
+                    onMoveDown={() => handleMoveQuestion(sectionIndex, questionIndex, 'down')}
                   />
                 ))}
               </tbody>
