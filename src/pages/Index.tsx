@@ -10,7 +10,158 @@ import { ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 
+const generateClientMeetingChecklist = (prompt: string): Checklist => {
+  const sections: Section[] = [
+    {
+      id: 'section-meeting-info',
+      title: 'Meeting Information',
+      questions: [
+        {
+          id: 'q-client-name',
+          text: '<p><strong>Client Name</strong></p><p>Enter the full name of the client.</p>',
+          answerType: 'short-answer',
+          options: [],
+          required: true,
+          answer: ''
+        },
+        {
+          id: 'q-client-position',
+          text: '<p><strong>Client Position</strong></p><p>Enter the client\'s job title or position within their organization.</p>',
+          answerType: 'short-answer',
+          options: [],
+          required: true,
+          answer: ''
+        },
+        {
+          id: 'q-meeting-date',
+          text: '<p><strong>Meeting Date</strong></p><p>Select the date of the client meeting.</p>',
+          answerType: 'date',
+          options: [],
+          required: true,
+          answer: ''
+        }
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'section-pre-meeting',
+      title: 'Pre-Meeting Preparation',
+      questions: [
+        {
+          id: 'q-agenda-prepared',
+          text: '<p>Has the meeting agenda been prepared and shared with the client?</p>',
+          answerType: 'yes-no',
+          options: ['Yes', 'No'],
+          required: true,
+          answer: ''
+        },
+        {
+          id: 'q-documents-reviewed',
+          text: '<p>Have all relevant client documents been reviewed prior to the meeting?</p>',
+          answerType: 'yes-no',
+          options: ['Yes', 'No'],
+          required: true,
+          answer: ''
+        },
+        {
+          id: 'q-previous-notes',
+          text: '<p>Have notes from previous meetings been reviewed?</p>',
+          answerType: 'yes-no-na',
+          options: ['Yes', 'No', 'Not Applicable'],
+          required: false,
+          answer: ''
+        }
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'section-meeting-topics',
+      title: 'Meeting Discussion Topics',
+      questions: [
+        {
+          id: 'q-primary-objectives',
+          text: '<p><strong>Primary Meeting Objectives</strong></p><p>List the main objectives to be discussed during this meeting.</p>',
+          answerType: 'long-answer',
+          options: [],
+          required: true,
+          answer: ''
+        },
+        {
+          id: 'q-client-concerns',
+          text: '<p><strong>Client Concerns or Questions</strong></p><p>Document any concerns or questions raised by the client.</p>',
+          answerType: 'long-answer',
+          options: [],
+          required: false,
+          answer: ''
+        },
+        {
+          id: 'q-action-items',
+          text: '<p><strong>Action Items</strong></p><p>List action items that need to be addressed following the meeting.</p>',
+          answerType: 'long-answer',
+          options: [],
+          required: true,
+          answer: ''
+        }
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'section-follow-up',
+      title: 'Post-Meeting Follow-Up',
+      questions: [
+        {
+          id: 'q-follow-up-required',
+          text: '<p>Is a follow-up meeting required?</p>',
+          answerType: 'yes-no',
+          options: ['Yes', 'No'],
+          required: true,
+          answer: ''
+        },
+        {
+          id: 'q-follow-up-date',
+          text: '<p><strong>Proposed Follow-Up Date</strong></p><p>If applicable, enter the proposed date for the next meeting.</p>',
+          answerType: 'date',
+          options: [],
+          required: false,
+          answer: ''
+        },
+        {
+          id: 'q-meeting-notes',
+          text: '<p><strong>Additional Meeting Notes</strong></p><p>Capture any additional notes or observations from the meeting.</p>',
+          answerType: 'long-answer',
+          options: [],
+          required: false,
+          answer: ''
+        }
+      ],
+      isExpanded: true
+    }
+  ];
+
+  return {
+    id: 'checklist-client-meeting',
+    title: 'Client Meeting Checklist',
+    description: prompt,
+    objective: `This checklist is designed to help you prepare for, conduct, and follow up on client meetings effectively. Use it to:
+• Capture essential client information
+• Prepare thoroughly before each meeting
+• Document key discussion points and action items
+• Plan appropriate follow-up activities`,
+    sections,
+    createdAt: new Date(),
+    updatedAt: new Date()
+  };
+};
+
 const generateMockChecklist = (prompt: string, scope: GenerationScope): Checklist => {
+  // Check if this is a Client Meeting Checklist prompt
+  const isClientMeetingPrompt = prompt.toLowerCase().includes('client meeting checklist') || 
+                                 prompt.toLowerCase().includes('client meeting') && prompt.toLowerCase().includes('checklist');
+  
+  if (isClientMeetingPrompt) {
+    return generateClientMeetingChecklist(prompt);
+  }
+
   // Questions matching the screenshot - each in its own block/section
   const sections: Section[] = [
     {
