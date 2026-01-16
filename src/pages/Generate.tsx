@@ -52,11 +52,6 @@ const promptsByType: Record<ContentType, ExamplePrompt[]> = {
       text: 'Build a year-end financial statement disclosure checklist'
     },
     {
-      icon: <ClipboardList className="h-5 w-5 text-violet-600" />,
-      iconBg: 'bg-violet-100',
-      text: 'Create a payroll compliance checklist for Canadian SMEs'
-    },
-    {
       icon: <CheckSquare className="h-5 w-5 text-amber-600" />,
       iconBg: 'bg-amber-100',
       text: 'Generate a tax filing preparation checklist for corporate returns'
