@@ -53,6 +53,7 @@ interface SortableQuestionCardProps {
   onAddSubQuestion: () => void;
   onDuplicate?: () => void;
   isPreviewMode?: boolean;
+  isConciseMode?: boolean;
 }
 
 export function SortableQuestionCard({
@@ -64,6 +65,7 @@ export function SortableQuestionCard({
   onAddSubQuestion,
   onDuplicate,
   isPreviewMode = false,
+  isConciseMode = false,
 }: SortableQuestionCardProps) {
   const [showAIMenu, setShowAIMenu] = useState(false);
   const [isEditingQuestion, setIsEditingQuestion] = useState(false);

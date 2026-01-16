@@ -20,6 +20,7 @@ interface SortableSectionProps {
   isLast: boolean;
   disableQuestionDnd?: boolean;
   isPreviewMode?: boolean;
+  isConciseMode?: boolean;
 }
 
 export function SortableSection({
@@ -30,7 +31,8 @@ export function SortableSection({
   isFirst,
   isLast,
   disableQuestionDnd = false,
-  isPreviewMode = false
+  isPreviewMode = false,
+  isConciseMode = false
 }: SortableSectionProps) {
   const [showMenu, setShowMenu] = useState(false);
   const [isEditingTitle, setIsEditingTitle] = useState(false);
@@ -218,6 +220,7 @@ export function SortableSection({
                 onAddSubQuestion={() => handleAddSubQuestion(qIndex)}
                 onDuplicate={() => handleDuplicateQuestion(qIndex)}
                 isPreviewMode={isPreviewMode}
+                isConciseMode={isConciseMode}
               />
             ))}
           </SortableContext>

@@ -41,6 +41,8 @@ import { toast } from 'sonner';
 import { RichTextToolbar } from './RichTextToolbar';
 import { useRichTextToolbarContext } from '@/contexts/RichTextToolbarContext';
 import { consolidateSectionsToThree } from '@/lib/consolidateSections';
+import { ViewModeToggle, ViewMode } from './ViewModeToggle';
+import { ChecklistTableView } from './ChecklistTableView';
 
 interface ChecklistBuilderProps {
   checklist: Checklist;
@@ -57,6 +59,7 @@ export function ChecklistBuilder({ checklist, onUpdate, onSave }: ChecklistBuild
   const [objectiveDraft, setObjectiveDraft] = useState(checklist.objective || '');
   const [activeQuestion, setActiveQuestion] = useState<Question | null>(null);
   const [isPreviewMode, setIsPreviewMode] = useState(false);
+  const [viewMode, setViewMode] = useState<ViewMode>('standard');
   const objectiveTextareaRef = useRef<HTMLTextAreaElement>(null);
   const { toolbarState, showToolbar, hideToolbar, handleFormatAction, toolbarRef } = useRichTextToolbarContext();
 
@@ -314,7 +317,9 @@ export function ChecklistBuilder({ checklist, onUpdate, onSave }: ChecklistBuild
           )}
         </div>
         
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-3">
+          <ViewModeToggle value={viewMode} onChange={setViewMode} />
+          
           {!isPreviewMode && (
             <Button 
               variant="outline" 
@@ -438,32 +443,41 @@ export function ChecklistBuilder({ checklist, onUpdate, onSave }: ChecklistBuild
             )}
           </div>
 
-          {/* Sections with drag-and-drop */}
-          <DndContext
-            sensors={sensors}
-            collisionDetection={closestCenter}
-            onDragStart={handleDragStart}
-            onDragEnd={handleDragEnd}
-          >
-            <SortableContext
-              items={[...checklist.sections.map(s => s.id), ...allQuestionIds]}
-              strategy={verticalListSortingStrategy}
+          {/* Sections - Standard/Concise view with drag-and-drop or Detailed table view */}
+          {viewMode === 'detailed' ? (
+            <ChecklistTableView
+              checklist={checklist}
+              onUpdate={onUpdate}
+              isPreviewMode={isPreviewMode}
+            />
+          ) : (
+            <DndContext
+              sensors={sensors}
+              collisionDetection={closestCenter}
+              onDragStart={handleDragStart}
+              onDragEnd={handleDragEnd}
             >
-              {checklist.sections.map((section, index) => (
-                <SortableSection
-                  key={section.id}
-                  section={section}
-                  index={index}
-                  onUpdate={(s) => handleSectionUpdate(index, s)}
-                  onDelete={() => handleSectionDelete(index)}
-                  isFirst={index === 0}
-                  isLast={index === checklist.sections.length - 1}
-                  disableQuestionDnd={true}
-                  isPreviewMode={isPreviewMode}
-                />
-              ))}
-            </SortableContext>
-          </DndContext>
+              <SortableContext
+                items={[...checklist.sections.map(s => s.id), ...allQuestionIds]}
+                strategy={verticalListSortingStrategy}
+              >
+                {checklist.sections.map((section, index) => (
+                  <SortableSection
+                    key={section.id}
+                    section={section}
+                    index={index}
+                    onUpdate={(s) => handleSectionUpdate(index, s)}
+                    onDelete={() => handleSectionDelete(index)}
+                    isFirst={index === 0}
+                    isLast={index === checklist.sections.length - 1}
+                    disableQuestionDnd={true}
+                    isPreviewMode={isPreviewMode}
+                    isConciseMode={viewMode === 'concise'}
+                  />
+                ))}
+              </SortableContext>
+            </DndContext>
+          )}
 
           {/* Add New Block - Hidden in preview mode */}
           {!isPreviewMode && (
