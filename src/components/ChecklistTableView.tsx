@@ -390,24 +390,6 @@ function TableRow({
           )}
         </td>
 
-        {/* Procedure Status */}
-        <td className="p-3 w-[160px]">
-          <Select
-            value={procedureStatus}
-            onValueChange={handleProcedureChange}
-            disabled={isPreviewMode}
-          >
-            <SelectTrigger className="bg-background">
-              <SelectValue placeholder="Select" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="completed">Completed</SelectItem>
-              <SelectItem value="in-progress">In Progress</SelectItem>
-              <SelectItem value="not-started">Not Started</SelectItem>
-              <SelectItem value="na">N/A</SelectItem>
-            </SelectContent>
-          </Select>
-        </td>
 
         {/* Responses - with answer type specific fields */}
         <td className="p-3 min-w-[250px]">
@@ -542,9 +524,6 @@ export function ChecklistTableView({ checklist, onUpdate, isPreviewMode }: Check
                   <th className="p-3 w-14"></th>
                   <th className="p-3 text-left text-sm font-medium text-muted-foreground">
                     Description
-                  </th>
-                  <th className="p-3 text-left text-sm font-medium text-muted-foreground w-[160px]">
-                    Procedure completed successfully
                   </th>
                   <th className="p-3 text-left text-sm font-medium text-muted-foreground min-w-[250px]">
                     Responses and any difficulties encountered
