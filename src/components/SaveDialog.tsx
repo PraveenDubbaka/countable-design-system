@@ -15,7 +15,8 @@ import {
   ChevronRight,
   ChevronDown,
   Plus,
-  X
+  X,
+  Trash2
 } from 'lucide-react';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
@@ -33,6 +34,8 @@ interface SaveDialogProps {
   onSaveAsDraft: () => void;
   onSaveToFolder: (folderId: string, folderName: string) => void;
   onCreateFolder: (folderName: string) => void;
+  onDelete?: () => void;
+  showDeleteOption?: boolean;
 }
 
 const initialFolders: FolderItem[] = [
@@ -51,7 +54,9 @@ export function SaveDialog({
   onOpenChange, 
   onSaveAsDraft, 
   onSaveToFolder,
-  onCreateFolder 
+  onCreateFolder,
+  onDelete,
+  showDeleteOption = false
 }: SaveDialogProps) {
   const [saveOption, setSaveOption] = useState<'draft' | 'folder'>('draft');
   const [folders, setFolders] = useState<FolderItem[]>(initialFolders);
@@ -212,22 +217,39 @@ export function SaveDialog({
           )}
         </div>
 
-        <DialogFooter className="flex gap-2 sm:gap-2">
-          <Button variant="outline" onClick={() => onOpenChange(false)}>
-            Cancel
-          </Button>
-          <Button 
-            onClick={handleSave}
-            disabled={saveOption === 'folder' && !selectedFolderId}
-            className="bg-[#1C63A6] hover:bg-[#1C63A6]/90"
-          >
-            {saveOption === 'draft' 
-              ? 'Save as Draft' 
-              : selectedFolderName 
-                ? `Save to "${selectedFolderName}"` 
-                : 'Select a folder'
-            }
-          </Button>
+        <DialogFooter className="flex justify-between sm:justify-between gap-2">
+          <div className="flex gap-2">
+            {showDeleteOption && onDelete && (
+              <Button 
+                variant="destructive" 
+                onClick={() => {
+                  onDelete();
+                  onOpenChange(false);
+                }}
+                className="gap-1"
+              >
+                <Trash2 className="h-4 w-4" />
+                Delete
+              </Button>
+            )}
+          </div>
+          <div className="flex gap-2">
+            <Button variant="outline" onClick={() => onOpenChange(false)}>
+              Cancel
+            </Button>
+            <Button 
+              onClick={handleSave}
+              disabled={saveOption === 'folder' && !selectedFolderId}
+              className="bg-[#1C63A6] hover:bg-[#1C63A6]/90"
+            >
+              {saveOption === 'draft' 
+                ? 'Save as Draft' 
+                : selectedFolderName 
+                  ? `Save to "${selectedFolderName}"` 
+                  : 'Select a folder'
+              }
+            </Button>
+          </div>
         </DialogFooter>
       </DialogContent>
     </Dialog>
