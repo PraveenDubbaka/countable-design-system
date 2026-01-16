@@ -183,7 +183,7 @@ export default function Generate() {
 
   const contentTypes = [
     { id: 'checklist', icon: CheckSquare, label: 'Checklist' },
-    { id: 'worksheet', icon: Table, label: 'Worksheet' },
+    { id: 'worksheet', icon: Table, label: 'Reports' },
     { id: 'letter', icon: FileText, label: 'Letter' },
     { id: 'note', icon: StickyNote, label: 'Note' },
   ];
