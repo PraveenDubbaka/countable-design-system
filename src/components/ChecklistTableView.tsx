@@ -18,6 +18,7 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { QuestionToolbar } from './QuestionToolbar';
 import { AIEditMenu } from './AIEditMenu';
+import { InlineSubQuestion } from './InlineSubQuestion';
 import { useVoiceToText } from '@/hooks/useVoiceToText';
 import { useToast } from '@/hooks/use-toast';
 import {
@@ -375,8 +376,29 @@ function TableRow({
             )}
           </div>
 
-          {/* Sub-questions */}
-          {question.subQuestions && question.subQuestions.length > 0 && (
+          {/* Sub-questions - fully editable */}
+          {question.subQuestions && question.subQuestions.length > 0 && !isPreviewMode && (
+            <div className="mt-3 ml-4 border-l-2 border-muted pl-3 space-y-2">
+              {question.subQuestions.map((sub, i) => (
+                <InlineSubQuestion
+                  key={sub.id}
+                  question={sub}
+                  index={i}
+                  onUpdate={(updatedSub) => {
+                    const newSubQuestions = [...(question.subQuestions || [])];
+                    newSubQuestions[i] = updatedSub;
+                    onUpdate({ ...question, subQuestions: newSubQuestions });
+                  }}
+                  onDelete={() => {
+                    const newSubQuestions = (question.subQuestions || []).filter((_, idx) => idx !== i);
+                    onUpdate({ ...question, subQuestions: newSubQuestions });
+                  }}
+                />
+              ))}
+            </div>
+          )}
+          {/* Sub-questions - preview mode (read-only) */}
+          {question.subQuestions && question.subQuestions.length > 0 && isPreviewMode && (
             <div className="mt-2 ml-4 border-l-2 border-muted pl-3 space-y-2">
               {question.subQuestions.map((sub, i) => (
                 <div key={sub.id} className="bg-muted/30 rounded-lg p-2 text-sm">
@@ -384,6 +406,9 @@ function TableRow({
                     {String.fromCharCode(97 + i)}.
                   </span>
                   {sub.text.replace(/<[^>]*>/g, '')}
+                  {sub.answer && (
+                    <span className="ml-2 text-muted-foreground">— {sub.answer}</span>
+                  )}
                 </div>
               ))}
             </div>
