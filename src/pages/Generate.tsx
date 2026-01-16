@@ -66,6 +66,11 @@ const promptsByType: Record<ContentType, ExamplePrompt[]> = {
       iconBg: 'bg-rose-100',
       text: 'Create an internal controls assessment checklist for SOX compliance'
     },
+    {
+      icon: <ClipboardList className="h-5 w-5 text-cyan-600" />,
+      iconBg: 'bg-cyan-100',
+      text: 'Generate a Client Meeting Checklist with fields for client name, client position, and meeting date'
+    },
   ],
   worksheet: [
     {
