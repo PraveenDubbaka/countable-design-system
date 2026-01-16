@@ -526,7 +526,7 @@ export function ChecklistTableView({ checklist, onUpdate, isPreviewMode }: Check
                     Description
                   </th>
                   <th className="p-3 text-left text-sm font-medium text-muted-foreground min-w-[250px]">
-                    Responses and any difficulties encountered
+                    Response
                   </th>
                   <th className="p-3 text-left text-sm font-medium text-muted-foreground w-[100px]">
                     w/p reference
