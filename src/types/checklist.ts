@@ -31,7 +31,7 @@ export interface Checklist {
   updatedAt: Date;
 }
 
-export type GenerationScope = 'concise' | 'standard' | 'detailed';
+export type GenerationScope = 'standard' | 'detailed';
 
 export interface AIEditOption {
   id: string;
