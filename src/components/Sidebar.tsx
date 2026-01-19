@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { 
   ChevronDown,
@@ -34,6 +34,13 @@ interface Template {
   type: 'folder' | 'file';
   children?: Template[];
   isExpanded?: boolean;
+}
+
+interface SavedChecklist {
+  id: string;
+  name: string;
+  folderId: string;
+  folderName: string;
 }
 
 const initialTemplates: Template[] = [
@@ -114,6 +121,28 @@ export function Sidebar() {
   const [activeTab, setActiveTab] = useState<'firm' | 'master'>('firm');
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedDropdown, setSelectedDropdown] = useState('engagements');
+  const [savedChecklists, setSavedChecklists] = useState<SavedChecklist[]>([]);
+
+  // Load saved checklists on mount and listen for new saves
+  useEffect(() => {
+    const loadSavedChecklists = () => {
+      const stored = localStorage.getItem('savedChecklists');
+      if (stored) {
+        setSavedChecklists(JSON.parse(stored));
+      }
+    };
+
+    loadSavedChecklists();
+
+    const handleChecklistSaved = (event: CustomEvent<SavedChecklist>) => {
+      setSavedChecklists(prev => [...prev, event.detail]);
+    };
+
+    window.addEventListener('checklistSaved', handleChecklistSaved as EventListener);
+    return () => {
+      window.removeEventListener('checklistSaved', handleChecklistSaved as EventListener);
+    };
+  }, []);
 
   const handleDropdownSelect = (itemId: string) => {
     setSelectedDropdown(itemId);
@@ -129,37 +158,72 @@ export function Sidebar() {
     ));
   };
 
-  const renderTemplate = (template: Template, depth = 0) => (
-    <div key={template.id}>
-      <div 
-        className={`flex items-center gap-2 py-1.5 px-2 rounded-md cursor-pointer hover:bg-muted transition-colors text-sm ${
-          depth > 0 ? 'ml-6' : ''
-        }`}
-        onClick={() => template.type === 'folder' && toggleFolder(template.id)}
-      >
-        <Checkbox className="h-4 w-4 border-border" />
-        {template.type === 'folder' ? (
+  // Get checklists for a specific folder
+  const getChecklistsForFolder = (folderId: string) => {
+    return savedChecklists.filter(c => c.folderId === folderId);
+  };
+
+  const renderTemplate = (template: Template, depth = 0) => {
+    const folderChecklists = template.type === 'folder' ? getChecklistsForFolder(template.id) : [];
+    const hasChildren = (template.children && template.children.length > 0) || folderChecklists.length > 0;
+    
+    return (
+      <div key={template.id}>
+        <div 
+          className={`flex items-center gap-2 py-1.5 px-2 rounded-md cursor-pointer hover:bg-muted transition-colors text-sm ${
+            depth > 0 ? 'ml-6' : ''
+          }`}
+          onClick={() => template.type === 'folder' && toggleFolder(template.id)}
+        >
+          <Checkbox className="h-4 w-4 border-border" />
+          {template.type === 'folder' ? (
+            <>
+              {hasChildren ? (
+                template.isExpanded ? (
+                  <ChevronDown className="h-4 w-4 text-muted-foreground flex-shrink-0" />
+                ) : (
+                  <ChevronRight className="h-4 w-4 text-muted-foreground flex-shrink-0" />
+                )
+              ) : (
+                <span className="w-4 flex-shrink-0" />
+              )}
+              <Folder className="h-4 w-4 text-primary flex-shrink-0" />
+            </>
+          ) : (
+            <>
+              <span className="w-4 flex-shrink-0" />
+              <ClipboardList className="h-4 w-4 text-orange-500 flex-shrink-0" />
+            </>
+          )}
+          <span className="truncate flex-1 text-foreground">{template.name}</span>
+          {folderChecklists.length > 0 && (
+            <span className="text-xs text-muted-foreground">{folderChecklists.length}</span>
+          )}
+        </div>
+        {template.type === 'folder' && template.isExpanded && (
           <>
-            {template.isExpanded ? (
-              <ChevronDown className="h-4 w-4 text-muted-foreground flex-shrink-0" />
-            ) : (
-              <ChevronRight className="h-4 w-4 text-muted-foreground flex-shrink-0" />
+            {/* Render saved checklists */}
+            {folderChecklists.map(checklist => (
+              <div
+                key={checklist.id}
+                className="flex items-center gap-2 py-1.5 px-2 ml-6 rounded-md cursor-pointer hover:bg-muted transition-colors text-sm"
+                onClick={() => navigate('/', { state: { checklistId: checklist.id } })}
+              >
+                <span className="w-4 flex-shrink-0" />
+                <span className="w-4 flex-shrink-0" />
+                <ClipboardList className="h-4 w-4 text-orange-500 flex-shrink-0" />
+                <span className="truncate flex-1 text-foreground">{checklist.name}</span>
+              </div>
+            ))}
+            {/* Render child folders/templates */}
+            {template.children?.map(child => 
+              renderTemplate(child, depth + 1)
             )}
-            <Folder className="h-4 w-4 text-primary flex-shrink-0" />
-          </>
-        ) : (
-          <>
-            <span className="w-4 flex-shrink-0" />
-            <Folder className="h-4 w-4 text-primary flex-shrink-0" />
           </>
         )}
-        <span className="truncate flex-1 text-foreground">{template.name}</span>
       </div>
-      {template.type === 'folder' && template.isExpanded && template.children?.map(child => 
-        renderTemplate(child, depth + 1)
-      )}
-    </div>
-  );
+    );
+  };
 
   return (
     <div className="flex h-screen">

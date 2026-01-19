@@ -230,8 +230,24 @@ export default function Generate() {
     setPhase('preview');
   };
 
-  const handleAcceptAndSave = (folderId: string, folderName: string) => {
-    toast.success(`Checklist will be saved to "${folderName}"`);
+  const handleAcceptAndSave = (folderId: string, folderName: string, checklistName: string) => {
+    toast.success(`"${checklistName}" saved to "${folderName}"`);
+    
+    // Get existing saved checklists from localStorage
+    const existingChecklists = JSON.parse(localStorage.getItem('savedChecklists') || '[]');
+    const newChecklist = {
+      id: `checklist-${Date.now()}`,
+      name: checklistName,
+      folderId,
+      folderName,
+      prompt,
+      detailLevel,
+      createdAt: new Date().toISOString(),
+    };
+    localStorage.setItem('savedChecklists', JSON.stringify([...existingChecklists, newChecklist]));
+    
+    // Dispatch custom event to notify Sidebar
+    window.dispatchEvent(new CustomEvent('checklistSaved', { detail: newChecklist }));
     
     // Navigate to home page to build the full checklist form
     navigate('/', {
@@ -239,6 +255,7 @@ export default function Generate() {
         generate: {
           prompt,
           scope: detailLevel,
+          checklistName,
         },
       },
     });
