@@ -47,6 +47,7 @@ interface SubQuestionTableRowProps {
   isFirst: boolean;
   isLast: boolean;
   isPreviewMode: boolean;
+  hasExplanationAfter?: boolean;
 }
 
 function SubQuestionTableRow({
@@ -59,6 +60,7 @@ function SubQuestionTableRow({
   isFirst,
   isLast,
   isPreviewMode,
+  hasExplanationAfter,
 }: SubQuestionTableRowProps) {
   const [isEditing, setIsEditing] = useState(false);
   const [draftText, setDraftText] = useState(subQuestion.text);
@@ -382,9 +384,10 @@ function SubQuestionTableRow({
   };
 
   const isLastSubQuestion = isLast;
+  const showBottomBorder = isLastSubQuestion && !hasExplanationAfter;
   
   return (
-    <tr className={`bg-muted/10 hover:bg-muted/20 transition-colors ${isLastSubQuestion ? 'border-b' : 'border-b-0'}`}>
+    <tr className={`bg-muted/10 hover:bg-muted/20 transition-colors ${showBottomBorder ? 'border-b' : 'border-b-0'}`}>
       {/* Drag handle column - indented to show hierarchy */}
       <td className="py-1.5 px-2 w-14">
         <div className="flex items-center gap-1 pl-6">
@@ -503,6 +506,7 @@ interface SubQuestionTableDndContainerProps {
   onUpdateSubQuestion: (index: number, question: Question) => void;
   onDeleteSubQuestion: (index: number) => void;
   isPreviewMode: boolean;
+  hasExplanationAfter?: boolean;
 }
 
 function SubQuestionTableDndContainer({
@@ -511,6 +515,7 @@ function SubQuestionTableDndContainer({
   onUpdateSubQuestion,
   onDeleteSubQuestion,
   isPreviewMode,
+  hasExplanationAfter,
 }: SubQuestionTableDndContainerProps) {
   const handleMoveSubQuestion = (index: number, direction: 'up' | 'down') => {
     if (direction === 'up' && index > 0) {
@@ -536,6 +541,7 @@ function SubQuestionTableDndContainer({
           isFirst={i === 0}
           isLast={i === subQuestions.length - 1}
           isPreviewMode={isPreviewMode}
+          hasExplanationAfter={hasExplanationAfter}
         />
       ))}
     </>
@@ -1055,6 +1061,7 @@ function TableRow({
             onUpdate({ ...question, subQuestions: newSubQuestions });
           }}
           isPreviewMode={isPreviewMode}
+          hasExplanationAfter={hasExplanation}
         />
       )}
 
