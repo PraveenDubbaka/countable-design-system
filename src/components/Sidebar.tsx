@@ -384,46 +384,48 @@ export function Sidebar() {
       {/* Templates panel */}
       <div className="w-60 border-r bg-card flex flex-col">
         <div className="p-4 border-b">
-          <h2 className="font-semibold text-primary text-lg">Templates</h2>
-          <div className="mt-3">
-            <DropdownMenu>
-              <DropdownMenuTrigger className="w-full px-3 py-2 bg-background border rounded-lg text-sm flex items-center justify-between focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors">
-                <div className="flex items-center gap-2">
-                  {(() => {
-                    const selected = dropdownItems.find(item => item.id === selectedDropdown);
-                    if (selected) {
-                      const IconComponent = selected.icon;
-                      return (
-                        <>
-                          <IconComponent className={`h-4 w-4 ${selected.color}`} />
-                          <span>{selected.label}</span>
-                        </>
-                      );
-                    }
-                    return <span>Select...</span>;
-                  })()}
-                </div>
-                <ChevronDown className="h-4 w-4 text-muted-foreground" />
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="start" className="w-[200px]">
-                {dropdownItems.map((item) => (
-                  <DropdownMenuItem
-                    key={item.id}
-                    onClick={() => handleDropdownSelect(item.id)}
-                    className="flex items-center justify-between cursor-pointer"
-                  >
-                    <div className="flex items-center gap-2">
-                      <item.icon className={`h-4 w-4 ${item.color}`} />
-                      <span>{item.label}</span>
-                    </div>
-                    {selectedDropdown === item.id && (
-                      <Check className="h-4 w-4 text-primary" />
-                    )}
-                  </DropdownMenuItem>
-                ))}
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </div>
+          {selectedDropdown !== 'engagements' && (
+            <h2 className="font-semibold text-primary text-lg mb-3">
+              {dropdownItems.find(item => item.id === selectedDropdown)?.label || 'Templates'}
+            </h2>
+          )}
+          <DropdownMenu>
+            <DropdownMenuTrigger className="w-full px-3 py-2 bg-background border rounded-lg text-sm flex items-center justify-between focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors">
+              <div className="flex items-center gap-2">
+                {(() => {
+                  const selected = dropdownItems.find(item => item.id === selectedDropdown);
+                  if (selected) {
+                    const IconComponent = selected.icon;
+                    return (
+                      <>
+                        <IconComponent className={`h-4 w-4 ${selected.color}`} />
+                        <span>{selected.label}</span>
+                      </>
+                    );
+                  }
+                  return <span>Select...</span>;
+                })()}
+              </div>
+              <ChevronDown className="h-4 w-4 text-muted-foreground" />
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="start" className="w-[200px]">
+              {dropdownItems.map((item) => (
+                <DropdownMenuItem
+                  key={item.id}
+                  onClick={() => handleDropdownSelect(item.id)}
+                  className="flex items-center justify-between cursor-pointer"
+                >
+                  <div className="flex items-center gap-2">
+                    <item.icon className={`h-4 w-4 ${item.color}`} />
+                    <span>{item.label}</span>
+                  </div>
+                  {selectedDropdown === item.id && (
+                    <Check className="h-4 w-4 text-primary" />
+                  )}
+                </DropdownMenuItem>
+              ))}
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
 
         <div className="flex border-b">
