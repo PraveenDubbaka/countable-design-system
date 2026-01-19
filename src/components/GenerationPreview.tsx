@@ -422,10 +422,7 @@ export function GenerationPreview({
               disabled={!selectedFolderId}
               className="bg-[#1C63A6] hover:bg-[#1C63A6]/90"
             >
-              {selectedFolderName 
-                ? `Save to "${selectedFolderName}"` 
-                : 'Select a folder'
-              }
+              Save
             </Button>
           </DialogFooter>
         </DialogContent>
