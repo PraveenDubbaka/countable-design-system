@@ -16,13 +16,6 @@ import {
 import { Layout } from '@/components/Layout';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
 import { toast } from 'sonner';
 import { ContentType as SidebarContentType } from '@/components/Sidebar';
 
@@ -193,7 +186,7 @@ export default function Generate() {
   const location = useLocation();
   const [contentType, setContentType] = useState<ContentType>('checklist');
   const [detailLevel, setDetailLevel] = useState<DetailLevel>('standard');
-  const [cardSize, setCardSize] = useState('default');
+  
   const [prompt, setPrompt] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
   const [displayedPrompts, setDisplayedPrompts] = useState<ExamplePrompt[]>(promptsByType.checklist);
@@ -239,7 +232,6 @@ export default function Generate() {
         generate: {
           prompt,
           scope: detailLevel,
-          cardSize,
         },
       },
     });
@@ -285,33 +277,6 @@ export default function Generate() {
               ))}
             </div>
 
-            {/* Card Size Select */}
-            <Select value={cardSize} onValueChange={setCardSize}>
-              <SelectTrigger className="w-36 bg-white/80 border-border rounded-full">
-                <span className="text-sm mr-2">⟨⟩</span>
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="default">
-                  <div className="flex items-center justify-between w-full">
-                    <span>Default</span>
-                    <span className="text-muted-foreground text-xs ml-4">Fluid</span>
-                  </div>
-                </SelectItem>
-                <SelectItem value="traditional">
-                  <div className="flex items-center justify-between w-full">
-                    <span>Traditional</span>
-                    <span className="text-muted-foreground text-xs ml-4">16:9</span>
-                  </div>
-                </SelectItem>
-                <SelectItem value="tall">
-                  <div className="flex items-center justify-between w-full">
-                    <span>Tall</span>
-                    <span className="text-muted-foreground text-xs ml-4">4:3</span>
-                  </div>
-                </SelectItem>
-              </SelectContent>
-            </Select>
           </div>
 
           {/* Prompt Input */}
