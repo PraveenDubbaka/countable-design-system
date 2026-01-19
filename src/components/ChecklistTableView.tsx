@@ -912,7 +912,7 @@ function TableRow({
     <>
       <tr 
         ref={rowRef}
-        className={`hover:bg-muted/30 transition-colors ${isFocused ? 'bg-muted/20' : ''} ${question.subQuestions && question.subQuestions.length > 0 ? '' : 'border-b'}`}
+        className={`hover:bg-muted/30 transition-colors ${isFocused ? 'bg-muted/20' : ''} ${(question.subQuestions && question.subQuestions.length > 0) || hasExplanation ? '' : 'border-b'}`}
         onFocus={() => setIsFocused(true)}
         onBlur={(e) => {
           if (!rowRef.current?.contains(e.relatedTarget as Node)) {
