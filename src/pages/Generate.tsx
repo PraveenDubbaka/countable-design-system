@@ -255,7 +255,6 @@ export default function Generate() {
             <h1 className="text-5xl font-bold text-foreground mb-3 italic tracking-tight">
               Generate {contentTypeLabels[contentType]}
             </h1>
-            <p className="text-muted-foreground text-lg">What would you like to create today?</p>
           </div>
 
           {/* Options Row */}
