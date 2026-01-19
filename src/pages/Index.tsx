@@ -4,7 +4,7 @@ import { Layout } from '@/components/Layout';
 import { ChecklistBuilder } from '@/components/ChecklistBuilder';
 import { Checklist, GenerationScope, Section, Question } from '@/types/checklist';
 import { RichTextToolbarProvider } from '@/contexts/RichTextToolbarContext';
-import { SaveDialog } from '@/components/SaveDialog';
+import { UnsavedChangesDialog } from '@/components/UnsavedChangesDialog';
 import { ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
@@ -320,34 +320,30 @@ export default function Index() {
     setChecklist(updated);
   };
 
-  const [showSaveDialog, setShowSaveDialog] = useState(false);
+  const [showUnsavedDialog, setShowUnsavedDialog] = useState(false);
 
   const handleBack = () => {
     if (checklist) {
-      setShowSaveDialog(true);
+      setShowUnsavedDialog(true);
     } else {
       // No checklist, just go back
       navigate(-1);
     }
   };
 
-  const handleSaveAsDraft = () => {
-    toast.success('Checklist saved as draft');
-    setChecklist(null);
+  const handleSaveChanges = () => {
+    toast.success('Changes saved successfully');
+    // Keep the checklist open after saving
   };
 
-  const handleSaveToFolder = (folderId: string, folderName: string) => {
-    toast.success(`Checklist saved to "${folderName}"`);
+  const handleDiscardChanges = () => {
     setChecklist(null);
+    toast.info('Changes discarded');
   };
 
-  const handleCreateFolder = (folderName: string) => {
-    toast.success(`Folder "${folderName}" created`);
-  };
-
-  const handleDeleteChecklist = () => {
-    setChecklist(null);
-    toast.success('Checklist deleted');
+  const handleDirectSave = () => {
+    toast.success('Checklist saved');
+    // Keep the checklist open after saving
   };
 
   return (
@@ -375,19 +371,16 @@ export default function Index() {
           <ChecklistBuilder 
             checklist={checklist} 
             onUpdate={handleChecklistUpdate}
-            onSave={() => setShowSaveDialog(true)}
+            onSave={handleDirectSave}
           />
         ) : null}
 
-        {/* Save Dialog */}
-        <SaveDialog
-          open={showSaveDialog}
-          onOpenChange={setShowSaveDialog}
-          onSaveAsDraft={handleSaveAsDraft}
-          onSaveToFolder={handleSaveToFolder}
-          onCreateFolder={handleCreateFolder}
-          onDelete={handleDeleteChecklist}
-          showDeleteOption={true}
+        {/* Unsaved Changes Dialog - shown when clicking Back */}
+        <UnsavedChangesDialog
+          open={showUnsavedDialog}
+          onOpenChange={setShowUnsavedDialog}
+          onSave={handleSaveChanges}
+          onDiscard={handleDiscardChanges}
         />
       </Layout>
     </RichTextToolbarProvider>
