@@ -630,16 +630,22 @@ export function SortableQuestionCard({
           (cardRef as React.MutableRefObject<HTMLDivElement | null>).current = node;
         }}
         style={style}
-        className={`question-card p-5 mb-3 animate-slide-up group/card relative ${
+        className={`question-card p-5 mb-3 animate-slide-up group/card relative overflow-visible ${
           isDragging ? 'shadow-xl ring-2 ring-primary/20' : ''
         } ${isFocused && !isPreviewMode ? 'ring-2 ring-primary/30' : ''}`}
+        onPointerDownCapture={() => {
+          if (!isPreviewMode) setIsFocused(true);
+        }}
+        onFocusCapture={() => {
+          if (!isPreviewMode) setIsFocused(true);
+        }}
         onClick={() => !isPreviewMode && setIsFocused(true)}
       >
         {/* Floating Toolbar - appears when focused, hidden in preview mode */}
         {isFocused && !isPreviewMode && (
           <div 
             ref={toolbarRef} 
-            className="absolute -top-12 left-1/2 -translate-x-1/2 z-50"
+            className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 z-50"
             onClick={(e) => e.stopPropagation()}
           >
             <QuestionToolbar
