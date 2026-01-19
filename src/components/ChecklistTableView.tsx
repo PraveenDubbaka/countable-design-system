@@ -18,9 +18,24 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { QuestionToolbar } from './QuestionToolbar';
 import { AIEditMenu } from './AIEditMenu';
-import { InlineSubQuestion } from './InlineSubQuestion';
+import { SortableInlineSubQuestion } from './SortableInlineSubQuestion';
 import { useVoiceToText } from '@/hooks/useVoiceToText';
 import { useToast } from '@/hooks/use-toast';
+import {
+  DndContext,
+  closestCenter,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  DragEndEvent,
+} from '@dnd-kit/core';
+import {
+  arrayMove,
+  SortableContext,
+  sortableKeyboardCoordinates,
+  verticalListSortingStrategy,
+} from '@dnd-kit/sortable';
 import {
   Select,
   SelectContent,
@@ -33,6 +48,68 @@ interface ChecklistTableViewProps {
   checklist: Checklist;
   onUpdate: (checklist: Checklist) => void;
   isPreviewMode: boolean;
+}
+
+// Sub-question drag-and-drop container component
+interface SubQuestionDndContainerProps {
+  subQuestions: Question[];
+  onReorder: (subQuestions: Question[]) => void;
+  onUpdateSubQuestion: (index: number, question: Question) => void;
+  onDeleteSubQuestion: (index: number) => void;
+}
+
+function SubQuestionDndContainer({
+  subQuestions,
+  onReorder,
+  onUpdateSubQuestion,
+  onDeleteSubQuestion,
+}: SubQuestionDndContainerProps) {
+  const sensors = useSensors(
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        distance: 8,
+      },
+    }),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    })
+  );
+
+  const handleDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event;
+
+    if (over && active.id !== over.id) {
+      const oldIndex = subQuestions.findIndex((q) => q.id === active.id);
+      const newIndex = subQuestions.findIndex((q) => q.id === over.id);
+      const reordered = arrayMove(subQuestions, oldIndex, newIndex);
+      onReorder(reordered);
+    }
+  };
+
+  return (
+    <div className="mt-3 ml-4 border-l-2 border-muted pl-3 space-y-2">
+      <DndContext
+        sensors={sensors}
+        collisionDetection={closestCenter}
+        onDragEnd={handleDragEnd}
+      >
+        <SortableContext
+          items={subQuestions.map((q) => q.id)}
+          strategy={verticalListSortingStrategy}
+        >
+          {subQuestions.map((sub, i) => (
+            <SortableInlineSubQuestion
+              key={sub.id}
+              question={sub}
+              index={i}
+              onUpdate={(updatedSub) => onUpdateSubQuestion(i, updatedSub)}
+              onDelete={() => onDeleteSubQuestion(i)}
+            />
+          ))}
+        </SortableContext>
+      </DndContext>
+    </div>
+  );
 }
 
 interface TableRowProps {
@@ -376,26 +453,23 @@ function TableRow({
             )}
           </div>
 
-          {/* Sub-questions - fully editable */}
+          {/* Sub-questions - fully editable with drag-and-drop */}
           {question.subQuestions && question.subQuestions.length > 0 && !isPreviewMode && (
-            <div className="mt-3 ml-4 border-l-2 border-muted pl-3 space-y-2">
-              {question.subQuestions.map((sub, i) => (
-                <InlineSubQuestion
-                  key={sub.id}
-                  question={sub}
-                  index={i}
-                  onUpdate={(updatedSub) => {
-                    const newSubQuestions = [...(question.subQuestions || [])];
-                    newSubQuestions[i] = updatedSub;
-                    onUpdate({ ...question, subQuestions: newSubQuestions });
-                  }}
-                  onDelete={() => {
-                    const newSubQuestions = (question.subQuestions || []).filter((_, idx) => idx !== i);
-                    onUpdate({ ...question, subQuestions: newSubQuestions });
-                  }}
-                />
-              ))}
-            </div>
+            <SubQuestionDndContainer
+              subQuestions={question.subQuestions}
+              onReorder={(newSubQuestions) => {
+                onUpdate({ ...question, subQuestions: newSubQuestions });
+              }}
+              onUpdateSubQuestion={(index, updatedSub) => {
+                const newSubQuestions = [...(question.subQuestions || [])];
+                newSubQuestions[index] = updatedSub;
+                onUpdate({ ...question, subQuestions: newSubQuestions });
+              }}
+              onDeleteSubQuestion={(index) => {
+                const newSubQuestions = (question.subQuestions || []).filter((_, idx) => idx !== index);
+                onUpdate({ ...question, subQuestions: newSubQuestions });
+              }}
+            />
           )}
           {/* Sub-questions - preview mode (read-only) */}
           {question.subQuestions && question.subQuestions.length > 0 && isPreviewMode && (
