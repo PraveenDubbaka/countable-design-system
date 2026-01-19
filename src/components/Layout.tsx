@@ -9,7 +9,7 @@ interface LayoutProps {
   onBack?: () => void;
 }
 
-export function Layout({ children, title = "LUKA Generator", showActions = false, showBackButton = false, onBack }: LayoutProps) {
+export function Layout({ children, title, showActions = false, showBackButton = false, onBack }: LayoutProps) {
   return (
     <div className="flex h-screen bg-sidebar">
       <Sidebar />
