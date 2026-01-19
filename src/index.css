@@ -95,14 +95,14 @@
     --input: var(--m3-outline-variant);
     --ring: var(--m3-primary);
 
-    /* M3 uses larger corner radii */
-    --radius: 0.75rem;
+    /* M3 Shape - Squared with 16px max */
+    --radius: 1rem;
     --radius-xs: 0.25rem;
     --radius-sm: 0.5rem;
     --radius-md: 0.75rem;
     --radius-lg: 1rem;
-    --radius-xl: 1.5rem;
-    --radius-full: 9999px;
+    --radius-xl: 1rem;
+    --radius-full: 1rem;
 
     /* ========================================
        M3 ELEVATION SYSTEM (using shadows)
@@ -356,7 +356,7 @@
     @apply relative overflow-hidden;
     background-color: hsl(var(--m3-primary));
     color: hsl(var(--m3-on-primary));
-    border-radius: var(--radius-full);
+    border-radius: var(--radius-lg);
     padding: 0.625rem 1.5rem;
     font-weight: 500;
     letter-spacing: 0.1px;
@@ -390,7 +390,7 @@
     @apply relative overflow-hidden;
     background-color: hsl(var(--m3-secondary-container));
     color: hsl(var(--m3-on-secondary-container));
-    border-radius: var(--radius-full);
+    border-radius: var(--radius-lg);
     padding: 0.625rem 1.5rem;
     font-weight: 500;
     letter-spacing: 0.1px;
@@ -413,7 +413,7 @@
     background-color: transparent;
     color: hsl(var(--m3-primary));
     border: 1px solid hsl(var(--m3-outline));
-    border-radius: var(--radius-full);
+    border-radius: var(--radius-lg);
     padding: 0.625rem 1.5rem;
     font-weight: 500;
     letter-spacing: 0.1px;
@@ -434,7 +434,7 @@
     @apply relative overflow-hidden;
     background-color: transparent;
     color: hsl(var(--m3-primary));
-    border-radius: var(--radius-full);
+    border-radius: var(--radius-lg);
     padding: 0.625rem 0.75rem;
     font-weight: 500;
     letter-spacing: 0.1px;

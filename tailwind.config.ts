@@ -146,14 +146,14 @@ export default {
         },
       },
       borderRadius: {
-        // M3 Shape scale
+        // M3 Shape scale - Squared with 16px max
         'none': '0',
-        'xs': 'var(--radius-xs)',
-        'sm': 'var(--radius-sm)',
-        'md': 'var(--radius-md)',
-        'lg': 'var(--radius-lg)',
-        'xl': 'var(--radius-xl)',
-        'full': 'var(--radius-full)',
+        'xs': '4px',
+        'sm': '8px',
+        'md': '12px',
+        'lg': '16px',
+        'xl': '16px',
+        'full': '16px',
       },
       boxShadow: {
         // M3 Elevation
