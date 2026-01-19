@@ -287,6 +287,7 @@ type GenerateNavState = {
   };
   checklistId?: string;
   timestamp?: number; // Used to force re-render when clicking same route
+  clearContent?: boolean; // Used to clear content area (e.g., for Engagements)
 };
 
 // Helper to update checklist data in localStorage
@@ -330,9 +331,17 @@ export default function Index() {
     const navState = location.state as GenerateNavState | null;
     const gen = navState?.generate;
     const checklistId = navState?.checklistId;
+    const clearContent = navState?.clearContent;
 
     // Clear the navigation state so we don't regenerate on refresh/back
     navigate('/', { replace: true, state: null });
+
+    // Clear content when Engagements or similar non-creator is selected
+    if (clearContent) {
+      setChecklist(null);
+      setCurrentChecklistId(null);
+      return;
+    }
 
     // Load saved checklist by ID (user clicked on existing checklist)
     if (checklistId) {
