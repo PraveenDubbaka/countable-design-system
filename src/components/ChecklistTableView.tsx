@@ -119,11 +119,92 @@ function SubQuestionTableRow({
 
   const renderSubAnswerField = () => {
     if (isPreviewMode) {
-      return (
-        <span className="text-sm text-muted-foreground">
-          {subQuestion.answer || '-'}
-        </span>
-      );
+      // Show proper answer display in preview mode
+      switch (subQuestion.answerType) {
+        case 'yes-no':
+          return (
+            <div className="flex gap-4">
+              {['Yes', 'No'].map((option) => (
+                <div key={option} className="flex items-center gap-2">
+                  <div 
+                    className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${
+                      subQuestion.answer === option 
+                        ? 'border-primary bg-primary' 
+                        : 'border-muted-foreground/30'
+                    }`}
+                  >
+                    {subQuestion.answer === option && (
+                      <Check className="h-3 w-3 text-primary-foreground" />
+                    )}
+                  </div>
+                  <span className="text-sm">{option}</span>
+                </div>
+              ))}
+            </div>
+          );
+
+        case 'yes-no-na':
+          const yesNoNaOptions = subQuestion.options || ['Yes', 'No', 'Not Applicable'];
+          return (
+            <div className="flex flex-wrap gap-3">
+              {yesNoNaOptions.map((option) => (
+                <div key={option} className="flex items-center gap-2">
+                  <div 
+                    className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${
+                      subQuestion.answer === option 
+                        ? 'border-primary bg-primary' 
+                        : 'border-muted-foreground/30'
+                    }`}
+                  >
+                    {subQuestion.answer === option && (
+                      <Check className="h-3 w-3 text-primary-foreground" />
+                    )}
+                  </div>
+                  <span className="text-sm">{option}</span>
+                </div>
+              ))}
+            </div>
+          );
+
+        case 'short-answer':
+        case 'long-answer':
+          return (
+            <span className="text-sm text-foreground">
+              {subQuestion.answer || <span className="text-muted-foreground italic">No answer provided</span>}
+            </span>
+          );
+
+        case 'dropdown':
+        case 'multiple-choice':
+          const options = subQuestion.options || ['Option 1', 'Option 2'];
+          return (
+            <div className="space-y-1">
+              {options.map((option, i) => (
+                <div key={i} className="flex items-center gap-2">
+                  <div 
+                    className={`w-4 h-4 rounded border-2 flex items-center justify-center ${
+                      subQuestion.answer === option 
+                        ? 'border-primary bg-primary' 
+                        : 'border-muted-foreground/30'
+                    }`}
+                  >
+                    {subQuestion.answer === option && (
+                      <Check className="h-2.5 w-2.5 text-primary-foreground" />
+                    )}
+                  </div>
+                  <span className="text-sm">{option}</span>
+                </div>
+              ))}
+            </div>
+          );
+
+        default:
+          return (
+            <span className="text-sm text-foreground">
+              {subQuestion.answer || <span className="text-muted-foreground italic">No answer provided</span>}
+            </span>
+          );
+      }
     }
 
     switch (subQuestion.answerType) {
@@ -563,11 +644,90 @@ function TableRow({
 
   const renderAnswerField = () => {
     if (isPreviewMode) {
-      return (
-        <span className="text-sm text-muted-foreground">
-          {question.answer || '-'}
-        </span>
-      );
+      // Show proper answer display in preview mode
+      switch (question.answerType) {
+        case 'yes-no':
+          return (
+            <div className="flex gap-4">
+              {['Yes', 'No'].map((option) => (
+                <div key={option} className="flex items-center gap-2">
+                  <div 
+                    className={`w-4 h-4 rounded-full border-2 flex items-center justify-center ${
+                      question.answer === option 
+                        ? 'border-primary bg-primary' 
+                        : 'border-muted-foreground/30'
+                    }`}
+                  >
+                    {question.answer === option && (
+                      <div className="w-1.5 h-1.5 rounded-full bg-primary-foreground" />
+                    )}
+                  </div>
+                  <span className="text-sm text-foreground">{option}</span>
+                </div>
+              ))}
+            </div>
+          );
+
+        case 'yes-no-na':
+          return (
+            <div className="flex gap-4">
+              {['Yes', 'No', 'N/A'].map((option) => (
+                <div key={option} className="flex items-center gap-2">
+                  <div 
+                    className={`w-4 h-4 rounded-full border-2 flex items-center justify-center ${
+                      question.answer === option 
+                        ? 'border-primary bg-primary' 
+                        : 'border-muted-foreground/30'
+                    }`}
+                  >
+                    {question.answer === option && (
+                      <div className="w-1.5 h-1.5 rounded-full bg-primary-foreground" />
+                    )}
+                  </div>
+                  <span className="text-sm text-foreground">{option}</span>
+                </div>
+              ))}
+            </div>
+          );
+
+        case 'short-answer':
+        case 'long-answer':
+          return (
+            <span className="text-sm text-foreground">
+              {question.answer || <span className="text-muted-foreground italic">No answer provided</span>}
+            </span>
+          );
+
+        case 'dropdown':
+        case 'multiple-choice':
+          return (
+            <div className="space-y-1">
+              {(question.options || ['Option 1', 'Option 2', 'Option 3']).map((option, i) => (
+                <div key={i} className="flex items-center gap-2">
+                  <div 
+                    className={`w-4 h-4 rounded border-2 flex items-center justify-center ${
+                      question.answer === option 
+                        ? 'border-primary bg-primary' 
+                        : 'border-muted-foreground/30'
+                    }`}
+                  >
+                    {question.answer === option && (
+                      <Check className="h-2.5 w-2.5 text-primary-foreground" />
+                    )}
+                  </div>
+                  <span className="text-sm text-foreground">{option}</span>
+                </div>
+              ))}
+            </div>
+          );
+
+        default:
+          return (
+            <span className="text-sm text-foreground">
+              {question.answer || <span className="text-muted-foreground italic">No answer provided</span>}
+            </span>
+          );
+      }
     }
 
     switch (question.answerType) {
