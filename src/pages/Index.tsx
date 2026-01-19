@@ -286,6 +286,7 @@ type GenerateNavState = {
     savedChecklistId?: string;
   };
   checklistId?: string;
+  timestamp?: number; // Used to force re-render when clicking same route
 };
 
 // Helper to update checklist data in localStorage
