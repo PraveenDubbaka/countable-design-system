@@ -177,6 +177,9 @@ export function Sidebar() {
     if (item?.showCreator) {
       // Navigate to creation dashboard first, not directly to generate
       navigate('/create', { state: { contentType: itemId } });
+    } else {
+      // For non-creator items like Engagements, navigate to home with empty state
+      navigate('/', { state: { clearContent: true } });
     }
   };
 
