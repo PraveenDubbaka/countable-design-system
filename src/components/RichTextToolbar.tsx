@@ -102,7 +102,7 @@ export function RichTextToolbar({ position, onFormatAction, onAIAssist, toolbarR
             <div className="flex flex-col items-center">
               <Type className="h-3.5 w-3.5" />
               <div 
-                className="w-3 h-0.5 rounded-full mt-0.5" 
+                className="w-3 h-0.5 rounded-sm mt-0.5" 
                 style={{ backgroundColor: textColor }}
               />
             </div>

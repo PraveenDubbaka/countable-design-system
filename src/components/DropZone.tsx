@@ -35,7 +35,7 @@ function CreationOption({ icon, iconBg, title, description, badge, onClick }: Cr
         {description}
       </p>
       {badge && (
-        <span className={`mt-3 inline-flex items-center gap-1 text-xs font-medium px-2 py-1 rounded-full w-fit ${
+        <span className={`mt-3 inline-flex items-center gap-1 text-xs font-medium px-2 py-1 rounded-lg w-fit ${
           badge.variant === 'recommended' 
             ? 'bg-pink-100 text-pink-600' 
             : 'bg-teal-100 text-teal-600'

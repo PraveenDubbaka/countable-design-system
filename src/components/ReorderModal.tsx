@@ -182,7 +182,7 @@ export function ReorderModal({ isOpen, onClose, checklist, onUpdate }: ReorderMo
           </div>
           <button
             onClick={onClose}
-            className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-muted transition-colors"
+            className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-muted transition-colors"
           >
             <X className="h-4 w-4" />
           </button>

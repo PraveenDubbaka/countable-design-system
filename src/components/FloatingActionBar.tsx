@@ -52,11 +52,11 @@ export function FloatingActionBar({
     <>
       {/* Floating pill button */}
       <div className="fixed right-6 top-1/2 -translate-y-1/2 z-40">
-        <div className="flex flex-col gap-1 bg-card border p-2 shadow-lg" style={{ borderRadius: '9999px' }}>
+        <div className="flex flex-col gap-1 bg-card border rounded-lg p-2 shadow-lg">
           {/* Collapse/Expand Sections */}
           <button
             onClick={handleToggleSections}
-            className="w-9 h-9 flex items-center justify-center rounded-full hover:bg-muted transition-colors group"
+            className="w-9 h-9 flex items-center justify-center rounded-lg hover:bg-muted transition-colors group"
             title={allSectionsCollapsed ? "Expand all categories" : "Collapse all categories"}
           >
             <Layers className={`h-4 w-4 text-muted-foreground group-hover:text-foreground transition-transform ${allSectionsCollapsed ? 'opacity-50' : ''}`} />
@@ -65,7 +65,7 @@ export function FloatingActionBar({
           {/* Collapse/Expand Questions */}
           <button
             onClick={handleToggleQuestions}
-            className="w-9 h-9 flex items-center justify-center rounded-full hover:bg-muted transition-colors group"
+            className="w-9 h-9 flex items-center justify-center rounded-lg hover:bg-muted transition-colors group"
             title={allQuestionsCollapsed ? "Expand all questions" : "Collapse all questions"}
           >
             <Minimize2 className={`h-4 w-4 text-muted-foreground group-hover:text-foreground transition-transform ${allQuestionsCollapsed ? 'rotate-180' : ''}`} />
@@ -74,7 +74,7 @@ export function FloatingActionBar({
           {/* Reorder Questions */}
           <button
             onClick={() => setShowReorderModal(true)}
-            className="w-9 h-9 flex items-center justify-center rounded-full hover:bg-muted transition-colors group"
+            className="w-9 h-9 flex items-center justify-center rounded-lg hover:bg-muted transition-colors group"
             title="Reorder questions"
           >
             <ArrowUpDown className="h-4 w-4 text-muted-foreground group-hover:text-foreground" />
