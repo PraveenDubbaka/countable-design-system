@@ -115,7 +115,7 @@ export function AIEditMenu({ text, position, onClose, onApply }: AIEditMenuProps
         }}
       >
         <div className="flex items-center gap-2 px-3 py-2 mb-1">
-          <div className="w-6 h-6 rounded-full bg-gradient-to-br from-primary to-blue-500 flex items-center justify-center">
+          <div className="w-6 h-6 rounded-lg bg-gradient-to-br from-primary to-blue-500 flex items-center justify-center">
             <Wand2 className="h-3.5 w-3.5 text-white" />
           </div>
           <span className="font-medium text-sm">AI Assistant</span>
