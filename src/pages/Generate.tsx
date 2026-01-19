@@ -261,7 +261,10 @@ export default function Generate() {
     });
   };
 
-  const handleRegenerate = () => {
+  const handleRegenerate = (newPrompt?: string) => {
+    if (newPrompt) {
+      setPrompt(newPrompt);
+    }
     // Reset and restart the generation preview
     setPhase('prompt');
     setTimeout(() => setPhase('preview'), 100);

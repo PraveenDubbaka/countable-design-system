@@ -9,10 +9,12 @@ import {
   FolderPlus,
   Plus,
   X,
-  RefreshCw
+  RefreshCw,
+  Pencil
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
 import {
   Dialog,
   DialogContent,
@@ -38,7 +40,7 @@ interface GenerationPreviewProps {
   prompt: string;
   detailLevel: 'standard' | 'detailed';
   onAccept: (folderId: string, folderName: string, checklistName: string) => void;
-  onRegenerate: () => void;
+  onRegenerate: (newPrompt?: string) => void;
   onCancel: () => void;
 }
 
@@ -133,7 +135,13 @@ export function GenerationPreview({
   const [newFolderName, setNewFolderName] = useState('');
   const [expandedSections, setExpandedSections] = useState<Set<string>>(new Set());
   const [checklistName, setChecklistName] = useState('');
+  const [editablePrompt, setEditablePrompt] = useState(prompt);
+  const [isEditingPrompt, setIsEditingPrompt] = useState(false);
 
+  // Sync editable prompt with prop
+  useEffect(() => {
+    setEditablePrompt(prompt);
+  }, [prompt]);
   // Progressive question generation effect
   useEffect(() => {
     setDisplayedQuestions([]);
@@ -237,7 +245,7 @@ export function GenerationPreview({
         {!isGenerating && (
           <Button
             variant="outline"
-            onClick={onRegenerate}
+            onClick={() => onRegenerate()}
             className="gap-2"
           >
             <RefreshCw className="h-4 w-4" />
@@ -246,10 +254,60 @@ export function GenerationPreview({
         )}
       </div>
 
-      {/* Prompt reminder */}
+      {/* Editable Prompt */}
       <div className="bg-muted/50 rounded-lg p-4 border border-border">
-        <p className="text-sm text-muted-foreground mb-1">Your prompt:</p>
-        <p className="text-sm font-medium text-foreground">{prompt}</p>
+        <div className="flex items-center justify-between mb-2">
+          <p className="text-sm text-muted-foreground">Your prompt:</p>
+          {!isEditingPrompt && !isGenerating && (
+            <button
+              onClick={() => setIsEditingPrompt(true)}
+              className="flex items-center gap-1.5 text-xs text-primary hover:text-primary/80 transition-colors"
+            >
+              <Pencil className="h-3 w-3" />
+              Edit
+            </button>
+          )}
+        </div>
+        
+        {isEditingPrompt ? (
+          <div className="space-y-3">
+            <Textarea
+              value={editablePrompt}
+              onChange={(e) => setEditablePrompt(e.target.value)}
+              className="w-full min-h-[80px] text-sm bg-white border-border rounded-lg resize-none"
+              placeholder="Refine your prompt..."
+              autoFocus
+            />
+            <div className="flex items-center gap-2 justify-end">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => {
+                  setEditablePrompt(prompt);
+                  setIsEditingPrompt(false);
+                }}
+              >
+                Cancel
+              </Button>
+              <Button
+                size="sm"
+                onClick={() => {
+                  setIsEditingPrompt(false);
+                  if (editablePrompt.trim() !== prompt.trim()) {
+                    onRegenerate(editablePrompt.trim());
+                  }
+                }}
+                disabled={!editablePrompt.trim()}
+                className="gap-1.5 bg-gradient-to-r from-[#3379C9] to-[#8A5BD9] hover:opacity-90 text-white"
+              >
+                <RefreshCw className="h-3.5 w-3.5" />
+                Regenerate
+              </Button>
+            </div>
+          </div>
+        ) : (
+          <p className="text-sm font-medium text-foreground">{prompt}</p>
+        )}
       </div>
 
       {/* Progressive question display */}
