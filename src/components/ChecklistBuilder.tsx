@@ -445,7 +445,7 @@ export function ChecklistBuilder({ checklist, onUpdate, onSave }: ChecklistBuild
             )}
           </div>
 
-          {/* Sections - Standard/Concise view with drag-and-drop or Detailed table view */}
+          {/* Sections - Standard view with drag-and-drop or Detailed table view */}
           {viewMode === 'detailed' ? (
             <ChecklistTableView
               checklist={checklist}
@@ -474,7 +474,7 @@ export function ChecklistBuilder({ checklist, onUpdate, onSave }: ChecklistBuild
                     isLast={index === checklist.sections.length - 1}
                     disableQuestionDnd={true}
                     isPreviewMode={isPreviewMode}
-                    isConciseMode={viewMode === 'concise'}
+                    isConciseMode={false}
                   />
                 ))}
               </SortableContext>
