@@ -1,98 +1,269 @@
+import { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { Upload, FileStack } from 'lucide-react';
+import { Sparkles, LayoutTemplate } from 'lucide-react';
 import { Layout } from '@/components/Layout';
 import { ContentType } from '@/components/Sidebar';
-import lukaAiIcon from '@/assets/luka-ai-icon.png';
+import { Button } from '@/components/ui/button';
+import { Textarea } from '@/components/ui/textarea';
+import { GenerationScope } from '@/types/checklist';
 
 interface LocationState {
   contentType?: ContentType;
+}
+
+interface CreationOptionProps {
+  icon: React.ReactNode;
+  iconBg: string;
+  title: string;
+  description: string;
+  badge?: { text: string; variant: 'recommended' | 'new' };
+  onClick: () => void;
+}
+
+function CreationOption({ icon, iconBg, title, description, badge, onClick }: CreationOptionProps) {
+  return (
+    <button
+      onClick={onClick}
+      className="group relative flex flex-col bg-card border border-border rounded-xl p-4 hover:border-primary/50 hover:shadow-lg transition-all duration-200 text-left h-full"
+    >
+      <div className={`w-full aspect-[4/3] rounded-lg mb-4 flex items-center justify-center ${iconBg}`}>
+        <div className="transition-transform duration-500 group-hover:rotate-[360deg]">
+          {icon}
+        </div>
+      </div>
+      <h3 className="font-semibold text-foreground mb-1 group-hover:text-primary transition-colors">
+        {title}
+      </h3>
+      <p className="text-sm text-muted-foreground leading-relaxed">
+        {description}
+      </p>
+      {badge && (
+        <span className={`mt-3 inline-flex items-center gap-1 text-xs font-medium px-2 py-1 rounded-lg w-fit ${
+          badge.variant === 'recommended' 
+            ? 'bg-pink-100 text-pink-600' 
+            : 'bg-teal-100 text-teal-600'
+        }`}>
+          {badge.variant === 'recommended' && <span className="text-pink-500">★</span>}
+          {badge.text}
+        </span>
+      )}
+    </button>
+  );
 }
 
 const contentTypeLabels: Record<ContentType, string> = {
   checklists: 'Checklist',
   reports: 'Report',
   letters: 'Letter',
-  notes: 'Note',
+  notes: 'Notes to Financial Statements',
 };
 
 export default function CreationDashboard() {
   const location = useLocation();
   const navigate = useNavigate();
   const { contentType = 'checklists' } = (location.state as LocationState) || {};
+  
+  const [mode, setMode] = useState<'import' | 'template' | null>(null);
+  const [prompt, setPrompt] = useState('');
+  const [scope, setScope] = useState<GenerationScope>('standard');
 
   const label = contentTypeLabels[contentType] || 'Checklist';
+  const heading = contentType 
+    ? `Create ${label} with LUKA`
+    : 'Create with LUKA';
 
   const handleGenerate = () => {
     navigate('/generate', { state: { contentType } });
   };
 
-  const handleUpload = () => {
-    // TODO: Implement upload flow
-    navigate('/generate', { state: { contentType, mode: 'upload' } });
+  const handleBack = () => {
+    setMode(null);
+    setPrompt('');
   };
 
-  const handleFromTemplate = () => {
-    // TODO: Implement template selection flow
-    navigate('/generate', { state: { contentType, mode: 'template' } });
-  };
+  // Import or Template mode view
+  if (mode) {
+    return (
+      <Layout>
+        <div className="flex-1 flex flex-col items-center justify-center p-8">
+          <div className="max-w-2xl w-full bg-card border border-border rounded-xl p-8 animate-fade-in">
+            <button 
+              onClick={handleBack}
+              className="text-sm text-muted-foreground hover:text-foreground mb-4 flex items-center gap-1"
+            >
+              ← Back
+            </button>
+            
+            {mode === 'import' && (
+              <div>
+                <h2 className="text-2xl font-bold text-foreground mb-2">Import file or URL</h2>
+                <p className="text-muted-foreground mb-6">Upload a document or paste a URL to generate your {label.toLowerCase()}</p>
+                
+                <div className="border-2 border-dashed border-border rounded-lg p-8 text-center mb-4 hover:border-primary/50 transition-colors cursor-pointer">
+                  <div className="text-muted-foreground">
+                    <svg className="h-12 w-12 mx-auto mb-4 text-primary/50" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                      <path d="M17 8L12 3L7 8" />
+                      <path d="M12 3L12 15" />
+                    </svg>
+                    <p className="font-medium">Click to upload or drag and drop</p>
+                    <p className="text-sm">PDF, DOC, DOCX, TXT (max 10MB)</p>
+                  </div>
+                </div>
+                
+                <div className="relative mb-4">
+                  <div className="absolute inset-0 flex items-center">
+                    <div className="w-full border-t border-border" />
+                  </div>
+                  <div className="relative flex justify-center text-sm">
+                    <span className="px-2 bg-card text-muted-foreground">or paste a URL</span>
+                  </div>
+                </div>
+                
+                <Textarea
+                  placeholder="Paste a URL to a document or webpage..."
+                  value={prompt}
+                  onChange={(e) => setPrompt(e.target.value)}
+                  className="min-h-[80px] mb-4"
+                />
+              </div>
+            )}
 
+            {mode === 'template' && (
+              <div>
+                <h2 className="text-2xl font-bold text-foreground mb-2">Generate from Template</h2>
+                <p className="text-muted-foreground mb-6">Fill in and customize a structured template</p>
+                <div className="grid grid-cols-2 gap-4 mb-4">
+                  {['Client Acceptance', 'Independence Review', 'Engagement Letter', 'Quality Control'].map((template) => (
+                    <button
+                      key={template}
+                      onClick={() => setPrompt(`Generate a ${template} checklist`)}
+                      className={`p-4 border rounded-lg text-left hover:border-primary/50 transition-colors ${
+                        prompt.includes(template) ? 'border-primary bg-primary/5' : 'border-border'
+                      }`}
+                    >
+                      <LayoutTemplate className="h-5 w-5 text-primary mb-2" />
+                      <p className="font-medium text-sm">{template}</p>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            <div className="mt-6 flex items-center justify-between">
+              <select
+                value={scope}
+                onChange={(e) => setScope(e.target.value as GenerationScope)}
+                className="px-4 py-2 rounded-lg border bg-card text-sm"
+              >
+                <option value="standard">Standard</option>
+                <option value="detailed">Detailed</option>
+              </select>
+
+              <Button
+                onClick={() => {
+                  if (prompt.trim()) {
+                    navigate('/generate', { 
+                      state: { 
+                        contentType, 
+                        mode,
+                        prompt,
+                        scope
+                      } 
+                    });
+                  }
+                }}
+                disabled={!prompt.trim()}
+                className="ai-button !px-6 !py-5"
+              >
+                <Sparkles className="h-4 w-4 mr-2" />
+                Generate {label}
+              </Button>
+            </div>
+          </div>
+        </div>
+      </Layout>
+    );
+  }
+
+  // Main selection view
   return (
     <Layout>
-      <div className="flex-1 flex flex-col items-center justify-center p-8 bg-gradient-to-br from-[#ECD4F6] to-[#CFE1FC] min-h-full">
-        <div className="text-center mb-12">
-          <h1 className="text-3xl font-semibold text-foreground mb-2">
-            Create with LUKA
-          </h1>
-          <p className="text-muted-foreground">
-            Choose how you'd like to create your {label.toLowerCase()}
-          </p>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl w-full">
-          {/* Generate Option */}
-          <button
-            onClick={handleGenerate}
-            className="group relative bg-white/80 backdrop-blur-sm rounded-xl p-8 shadow-md hover:shadow-xl transition-all duration-300 hover:scale-[1.02] border border-white/50 flex flex-col items-center text-center"
-          >
-            <div className="w-16 h-16 rounded-xl bg-gradient-to-br from-[#3379C9] to-[#8A5BD9] flex items-center justify-center mb-4 group-hover:rotate-[360deg] transition-transform duration-700">
-              <svg width="32" height="35" viewBox="0 0 106 115" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M67.6005 46.5271H94.1202C96.3035 46.6961 102.854 47.4569 104.558 50.7532C105.836 53.2044 104.451 56.5431 101.203 59.2055C78.9965 77.5048 56.8436 95.8463 34.6374 114.145C32.7203 114.653 31.4955 114.653 30.963 114.145C29.8979 113.173 31.389 110.384 35.5427 105.693C51.5184 90.1832 67.494 74.7155 83.4697 59.2055L37.9923 46.5271H67.5473H67.6005Z" fill="#FEFEFE"/>
-                <path d="M37.4557 67.9987H10.917C8.73214 67.8297 2.17742 67.069 0.472123 63.7726C-0.806847 61.3214 0.578704 57.9828 3.82942 55.3203C25.9982 36.9788 48.2203 18.6796 70.3892 0.380353C72.3076 -0.126784 73.5333 -0.126784 74.0662 0.380353C75.132 1.35237 73.6399 4.14163 69.4832 8.83265C53.4961 24.3426 37.509 39.8103 21.5218 55.3203L67.0319 67.9987H37.4557Z" fill="#FEFEFE"/>
-              </svg>
-            </div>
-            <h3 className="text-lg font-semibold text-foreground mb-2">Generate</h3>
-            <p className="text-sm text-muted-foreground">
-              Describe what you need and let AI create it for you
+      <div className="flex-1 flex flex-col items-center justify-center p-8">
+        <div className="max-w-4xl mx-auto animate-fade-in">
+          {/* Header */}
+          <div className="text-center mb-10">
+            <h1 className="text-3xl font-bold text-foreground mb-2">
+              {heading}
+            </h1>
+            <p className="text-muted-foreground text-lg">
+              How would you like to get started?
             </p>
-          </button>
+          </div>
 
-          {/* Upload Option */}
-          <button
-            onClick={handleUpload}
-            className="group relative bg-white/80 backdrop-blur-sm rounded-xl p-8 shadow-md hover:shadow-xl transition-all duration-300 hover:scale-[1.02] border border-white/50 flex flex-col items-center text-center"
-          >
-            <div className="w-16 h-16 rounded-xl bg-gradient-to-br from-[#3379C9] to-[#8A5BD9] flex items-center justify-center mb-4 group-hover:rotate-[360deg] transition-transform duration-700">
-              <Upload className="w-8 h-8 text-white" />
-            </div>
-            <h3 className="text-lg font-semibold text-foreground mb-2">Upload</h3>
-            <p className="text-sm text-muted-foreground">
-              Upload or paste the URL to generate
-            </p>
-          </button>
-
-          {/* From Template Option */}
-          <button
-            onClick={handleFromTemplate}
-            className="group relative bg-white/80 backdrop-blur-sm rounded-xl p-8 shadow-md hover:shadow-xl transition-all duration-300 hover:scale-[1.02] border border-white/50 flex flex-col items-center text-center"
-          >
-            <div className="w-16 h-16 rounded-xl bg-gradient-to-br from-[#3379C9] to-[#8A5BD9] flex items-center justify-center mb-4 group-hover:rotate-[360deg] transition-transform duration-700">
-              <FileStack className="w-8 h-8 text-white" />
-            </div>
-            <h3 className="text-lg font-semibold text-foreground mb-2">From Template</h3>
-            <p className="text-sm text-muted-foreground">
-              Generate from existing templates
-            </p>
-          </button>
+          {/* Creation Options Grid */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            <CreationOption
+              icon={
+                <svg width="48" height="52" viewBox="0 0 186 203" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <defs>
+                    <linearGradient id="iconGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                      <stop offset="0%" stopColor="#3379C9"/>
+                      <stop offset="100%" stopColor="#8A5BD9"/>
+                    </linearGradient>
+                  </defs>
+                  <path d="M119.717 82.3955H166.681C170.547 82.6949 182.147 84.042 185.165 89.8796C187.428 94.2204 184.976 100.133 179.223 104.848C139.898 137.254 100.668 169.735 61.3425 202.141C57.9476 203.039 55.7786 203.039 54.8355 202.141C52.9494 200.42 55.59 195.48 62.9457 187.173C91.2371 159.706 119.529 132.314 147.82 104.848L67.2837 82.3955H119.623H119.717Z" fill="url(#iconGradient)"/>
+                  <path d="M66.3304 120.419H19.333C15.4638 120.12 3.856 118.773 0.836085 112.935C-1.42885 108.594 1.02483 102.682 6.78153 97.9669C46.0404 65.4859 85.3936 33.0797 124.652 0.673569C128.05 -0.224523 130.22 -0.224523 131.164 0.673569C133.052 2.39491 130.409 7.33442 123.048 15.6418C94.7364 43.1084 66.4248 70.5003 38.1131 97.9669L118.707 120.419H66.3304Z" fill="url(#iconGradient)"/>
+                </svg>
+              }
+              iconBg="bg-gradient-to-r from-[#ECD4F6] to-[#CFE1FC]"
+              title="Generate"
+              description="Create from a one-line prompt in a few seconds"
+              badge={{ text: 'RECOMMENDED', variant: 'recommended' }}
+              onClick={handleGenerate}
+            />
+            
+            <CreationOption
+              icon={
+                <svg className="h-10 w-10" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <defs>
+                    <linearGradient id="uploadIconGradient" x1="0" y1="0" x2="24" y2="24" gradientUnits="userSpaceOnUse">
+                      <stop stopColor="#3379C9"/>
+                      <stop offset="1" stopColor="#8A5BD9"/>
+                    </linearGradient>
+                  </defs>
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" stroke="url(#uploadIconGradient)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  <path d="M17 8L12 3L7 8" stroke="url(#uploadIconGradient)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  <path d="M12 3L12 15" stroke="url(#uploadIconGradient)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+              }
+              iconBg="bg-gradient-to-r from-[#ECD4F6] to-[#CFE1FC]"
+              title="Import file or URL"
+              description="Upload or paste the URL to generate"
+              onClick={() => setMode('import')}
+            />
+            
+            <CreationOption
+              icon={
+                <svg className="h-10 w-10" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <defs>
+                    <linearGradient id="templateIconGradient" x1="0" y1="0" x2="24" y2="24" gradientUnits="userSpaceOnUse">
+                      <stop stopColor="#3379C9"/>
+                      <stop offset="1" stopColor="#8A5BD9"/>
+                    </linearGradient>
+                  </defs>
+                  <rect x="3" y="3" width="18" height="18" rx="2" stroke="url(#templateIconGradient)" strokeWidth="2"/>
+                  <path d="M3 9H21" stroke="url(#templateIconGradient)" strokeWidth="2"/>
+                  <path d="M9 21V9" stroke="url(#templateIconGradient)" strokeWidth="2"/>
+                </svg>
+              }
+              iconBg="bg-gradient-to-r from-[#ECD4F6] to-[#CFE1FC]"
+              title="Generate from template"
+              description="Generate from existing templates"
+              badge={{ text: 'NEW', variant: 'new' }}
+              onClick={() => setMode('template')}
+            />
+          </div>
         </div>
       </div>
     </Layout>
