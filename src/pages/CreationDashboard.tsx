@@ -1,10 +1,19 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { Sparkles, LayoutTemplate, Folder, ChevronDown, ChevronRight, FileText } from 'lucide-react';
+import { Sparkles, LayoutTemplate, Folder, ChevronDown, ChevronRight, FileText, Upload, X, FolderPlus, Plus } from 'lucide-react';
 import { Layout } from '@/components/Layout';
 import { ContentType } from '@/components/Sidebar';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 import { GenerationScope } from '@/types/checklist';
+import { toast } from 'sonner';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from '@/components/ui/dialog';
 
 // Template folder structure
 const templateFolders = [
@@ -110,6 +119,26 @@ export default function CreationDashboard() {
   const [scope, setScope] = useState<GenerationScope>('standard');
   const [expandedFolders, setExpandedFolders] = useState<Set<string>>(new Set(['compilation']));
   const [selectedTemplate, setSelectedTemplate] = useState<string | null>(null);
+  
+  // File upload state
+  const [uploadedFile, setUploadedFile] = useState<File | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  
+  // Save dialog state
+  const [showSaveDialog, setShowSaveDialog] = useState(false);
+  const [checklistName, setChecklistName] = useState('');
+  const [selectedFolderId, setSelectedFolderId] = useState('1');
+  const [showNewFolderInput, setShowNewFolderInput] = useState(false);
+  const [newFolderName, setNewFolderName] = useState('');
+  
+  // Available folders for saving
+  const saveFolders = [
+    { id: '1', name: 'Before Release V22Comp' },
+    { id: '2', name: 'Before Release V22 Revi...' },
+    { id: '3', name: 'Compilation Checklists' },
+    { id: '4', name: 'Review Checklists' },
+    { id: '5', name: 'Tax Release' },
+  ];
 
   const toggleFolder = (folderId: string) => {
     setExpandedFolders(prev => {
@@ -140,6 +169,85 @@ export default function CreationDashboard() {
   const handleBack = () => {
     setMode(null);
     setPrompt('');
+    setUploadedFile(null);
+    setSelectedTemplate(null);
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setUploadedFile(file);
+      // Auto-generate a name from the file
+      const nameWithoutExt = file.name.replace(/\.[^/.]+$/, '');
+      setChecklistName(nameWithoutExt);
+    }
+  };
+
+  const handleFileDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    const file = e.dataTransfer.files[0];
+    if (file) {
+      setUploadedFile(file);
+      const nameWithoutExt = file.name.replace(/\.[^/.]+$/, '');
+      setChecklistName(nameWithoutExt);
+    }
+  };
+
+  const handleGenerateFromFile = () => {
+    if (uploadedFile) {
+      setShowSaveDialog(true);
+    }
+  };
+
+  const handleSaveAndGenerate = () => {
+    if (!checklistName.trim()) {
+      toast.error('Please enter a name for the checklist');
+      return;
+    }
+
+    const folder = saveFolders.find(f => f.id === selectedFolderId);
+    toast.success(`"${checklistName}" saved to "${folder?.name}"`);
+
+    // Save to localStorage
+    const existingChecklists = JSON.parse(localStorage.getItem('savedChecklists') || '[]');
+    const newChecklistId = `checklist-${Date.now()}`;
+    const newChecklist = {
+      id: newChecklistId,
+      name: checklistName.trim(),
+      folderId: selectedFolderId,
+      folderName: folder?.name || 'Uncategorized',
+      source: 'file',
+      fileName: uploadedFile?.name,
+      createdAt: new Date().toISOString(),
+      data: null,
+    };
+    localStorage.setItem('savedChecklists', JSON.stringify([...existingChecklists, newChecklist]));
+
+    // Dispatch event to notify sidebar
+    window.dispatchEvent(new CustomEvent('checklistSaved', { detail: newChecklist }));
+
+    setShowSaveDialog(false);
+
+    // Navigate to generate the checklist
+    navigate('/', {
+      state: {
+        generate: {
+          prompt: `Generate a checklist from uploaded file: ${uploadedFile?.name}`,
+          scope,
+          checklistName: checklistName.trim(),
+          savedChecklistId: newChecklistId,
+        },
+      },
+    });
+  };
+
+  const handleAddFolder = () => {
+    if (newFolderName.trim()) {
+      // In a real app, this would create a new folder
+      toast.success(`Folder "${newFolderName}" created`);
+      setNewFolderName('');
+      setShowNewFolderInput(false);
+    }
   };
 
   // Import or Template mode view
@@ -160,19 +268,148 @@ export default function CreationDashboard() {
                 <h2 className="text-2xl font-bold text-foreground mb-2">Import file</h2>
                 <p className="text-muted-foreground mb-6">Upload a document to generate your {label.toLowerCase()}</p>
                 
-                <div className="border-2 border-dashed border-border rounded-lg p-8 text-center hover:border-primary/50 transition-colors cursor-pointer">
-                  <div className="text-muted-foreground">
-                    <svg className="h-12 w-12 mx-auto mb-4 text-primary/50" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-                      <path d="M17 8L12 3L7 8" />
-                      <path d="M12 3L12 15" />
-                    </svg>
-                    <p className="font-medium">Click to upload or drag and drop</p>
-                    <p className="text-sm">PDF, DOC, DOCX, TXT (max 10MB)</p>
+                <input
+                  type="file"
+                  ref={fileInputRef}
+                  onChange={handleFileChange}
+                  accept=".pdf,.doc,.docx,.txt"
+                  className="hidden"
+                />
+                
+                {!uploadedFile ? (
+                  <div 
+                    onClick={() => fileInputRef.current?.click()}
+                    onDragOver={(e) => e.preventDefault()}
+                    onDrop={handleFileDrop}
+                    className="border-2 border-dashed border-border rounded-lg p-8 text-center hover:border-primary/50 transition-colors cursor-pointer"
+                  >
+                    <div className="text-muted-foreground">
+                      <Upload className="h-12 w-12 mx-auto mb-4 text-primary/50" />
+                      <p className="font-medium">Click to upload or drag and drop</p>
+                      <p className="text-sm">PDF, DOC, DOCX, TXT (max 10MB)</p>
+                    </div>
                   </div>
+                ) : (
+                  <div className="border border-border rounded-lg p-4">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center">
+                          <FileText className="h-5 w-5 text-primary" />
+                        </div>
+                        <div>
+                          <p className="font-medium text-foreground">{uploadedFile.name}</p>
+                          <p className="text-sm text-muted-foreground">
+                            {(uploadedFile.size / 1024).toFixed(1)} KB
+                          </p>
+                        </div>
+                      </div>
+                      <button
+                        onClick={() => setUploadedFile(null)}
+                        className="p-2 hover:bg-muted rounded-lg transition-colors"
+                      >
+                        <X className="h-4 w-4 text-muted-foreground" />
+                      </button>
+                    </div>
+                  </div>
+                )}
+                
+                <div className="mt-6 flex items-center justify-between">
+                  <select
+                    value={scope}
+                    onChange={(e) => setScope(e.target.value as GenerationScope)}
+                    className="px-4 py-2 rounded-lg border bg-card text-sm"
+                  >
+                    <option value="standard">Standard</option>
+                    <option value="detailed">Detailed</option>
+                  </select>
+
+                  <Button
+                    onClick={handleGenerateFromFile}
+                    disabled={!uploadedFile}
+                    className="ai-button !px-6 !py-5"
+                  >
+                    <Sparkles className="h-4 w-4 mr-2" />
+                    Generate {label}
+                  </Button>
                 </div>
               </div>
             )}
+
+            {/* Save Dialog for File Upload */}
+            <Dialog open={showSaveDialog} onOpenChange={setShowSaveDialog}>
+              <DialogContent className="sm:max-w-md">
+                <DialogHeader>
+                  <DialogTitle>Save {label}</DialogTitle>
+                </DialogHeader>
+                
+                <div className="space-y-4 py-4">
+                  <div>
+                    <label className="text-sm font-medium text-foreground mb-2 block">
+                      {label} Name
+                    </label>
+                    <Input
+                      value={checklistName}
+                      onChange={(e) => setChecklistName(e.target.value)}
+                      placeholder={`Enter ${label.toLowerCase()} name...`}
+                    />
+                  </div>
+                  
+                  <div>
+                    <label className="text-sm font-medium text-foreground mb-2 block">
+                      Save to Folder
+                    </label>
+                    <div className="border border-border rounded-lg max-h-[200px] overflow-y-auto">
+                      {saveFolders.map((folder) => (
+                        <button
+                          key={folder.id}
+                          onClick={() => setSelectedFolderId(folder.id)}
+                          className={`w-full flex items-center gap-2 px-3 py-2 text-left hover:bg-muted transition-colors ${
+                            selectedFolderId === folder.id ? 'bg-primary/5 border-l-2 border-l-primary' : ''
+                          }`}
+                        >
+                          <Folder className="h-4 w-4 text-primary" />
+                          <span className="text-sm">{folder.name}</span>
+                        </button>
+                      ))}
+                    </div>
+                    
+                    {!showNewFolderInput ? (
+                      <button
+                        onClick={() => setShowNewFolderInput(true)}
+                        className="mt-2 flex items-center gap-2 text-sm text-primary hover:text-primary/80"
+                      >
+                        <FolderPlus className="h-4 w-4" />
+                        Create new folder
+                      </button>
+                    ) : (
+                      <div className="mt-2 flex items-center gap-2">
+                        <Input
+                          value={newFolderName}
+                          onChange={(e) => setNewFolderName(e.target.value)}
+                          placeholder="Folder name..."
+                          className="flex-1"
+                        />
+                        <Button size="sm" onClick={handleAddFolder}>
+                          <Plus className="h-4 w-4" />
+                        </Button>
+                        <Button size="sm" variant="ghost" onClick={() => setShowNewFolderInput(false)}>
+                          <X className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    )}
+                  </div>
+                </div>
+                
+                <DialogFooter>
+                  <Button variant="outline" onClick={() => setShowSaveDialog(false)}>
+                    Cancel
+                  </Button>
+                  <Button onClick={handleSaveAndGenerate} disabled={!checklistName.trim()}>
+                    Save & Generate
+                  </Button>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
 
             {mode === 'template' && (
               <div>
