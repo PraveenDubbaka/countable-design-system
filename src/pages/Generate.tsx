@@ -27,7 +27,7 @@ import { toast } from 'sonner';
 import { ContentType as SidebarContentType } from '@/components/Sidebar';
 
 type ContentType = 'checklist' | 'worksheet' | 'letter' | 'note';
-type DetailLevel = 'concise' | 'standard' | 'detailed';
+type DetailLevel = 'standard' | 'detailed';
 
 // Map sidebar content types to generate page types
 const sidebarToGenerateType: Record<SidebarContentType, ContentType> = {
@@ -270,7 +270,7 @@ export default function Generate() {
           <div className="flex flex-wrap items-center justify-center gap-3 mb-6">
             {/* Detail Level Chips */}
             <div className="flex items-center gap-1 bg-white/80 rounded-full p-1 border border-border">
-              {(['concise', 'standard', 'detailed'] as DetailLevel[]).map((level) => (
+              {(['standard', 'detailed'] as DetailLevel[]).map((level) => (
                 <button
                   key={level}
                   onClick={() => setDetailLevel(level)}

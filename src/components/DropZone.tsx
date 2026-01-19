@@ -202,7 +202,6 @@ export function DropZone({ onGenerate, contentType }: DropZoneProps) {
             onChange={(e) => setScope(e.target.value as GenerationScope)}
             className="px-4 py-2 rounded-lg border bg-card text-sm"
           >
-            <option value="concise">Concise</option>
             <option value="standard">Standard</option>
             <option value="detailed">Detailed</option>
           </select>
