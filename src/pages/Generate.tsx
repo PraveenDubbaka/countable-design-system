@@ -252,7 +252,7 @@ export default function Generate() {
 
           {/* Header */}
           <div className="text-center mb-8">
-            <h1 className="text-5xl font-bold text-foreground mb-3 italic tracking-tight">
+            <h1 className="text-3xl font-bold text-foreground mb-3 italic tracking-tight">
               Generate {contentTypeLabels[contentType]}
             </h1>
           </div>
