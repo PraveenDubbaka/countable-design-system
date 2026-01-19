@@ -1,7 +1,8 @@
 import { useLocation, useNavigate } from 'react-router-dom';
-import { Sparkles, Upload, FileStack } from 'lucide-react';
+import { Upload, FileStack } from 'lucide-react';
 import { Layout } from '@/components/Layout';
 import { ContentType } from '@/components/Sidebar';
+import lukaAiIcon from '@/assets/luka-ai-icon.png';
 
 interface LocationState {
   contentType?: ContentType;
@@ -54,7 +55,7 @@ export default function CreationDashboard() {
             className="group relative bg-white/80 backdrop-blur-sm rounded-xl p-8 shadow-md hover:shadow-xl transition-all duration-300 hover:scale-[1.02] border border-white/50 flex flex-col items-center text-center"
           >
             <div className="w-16 h-16 rounded-xl bg-gradient-to-br from-[#3379C9] to-[#8A5BD9] flex items-center justify-center mb-4 group-hover:rotate-[360deg] transition-transform duration-700">
-              <Sparkles className="w-8 h-8 text-white" />
+              <img src={lukaAiIcon} alt="Luka AI" className="w-10 h-10 object-contain" />
             </div>
             <h3 className="text-lg font-semibold text-foreground mb-2">Generate</h3>
             <p className="text-sm text-muted-foreground">
