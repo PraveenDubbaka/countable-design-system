@@ -386,11 +386,7 @@ export function Sidebar() {
       {/* Templates panel */}
       <div className="w-60 border-r bg-card flex flex-col">
         <div className="p-4 border-b">
-          {selectedDropdown !== 'engagements' && (
-            <h2 className="font-semibold text-primary text-lg mb-3">
-              {dropdownItems.find(item => item.id === selectedDropdown)?.label || 'Templates'}
-            </h2>
-          )}
+          <h2 className="font-semibold text-primary text-lg mb-3">Templates</h2>
           <DropdownMenu>
             <DropdownMenuTrigger className="w-full px-3 py-2 bg-background border rounded-lg text-sm flex items-center justify-between focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors">
               <div className="flex items-center gap-2">
