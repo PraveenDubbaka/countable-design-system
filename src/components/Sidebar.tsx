@@ -48,11 +48,12 @@ interface Template {
   isExpanded?: boolean;
 }
 
-interface SavedChecklist {
+export interface SavedChecklist {
   id: string;
   name: string;
   folderId: string;
   folderName: string;
+  data?: any; // Full checklist data for editing
 }
 
 const initialTemplates: Template[] = [

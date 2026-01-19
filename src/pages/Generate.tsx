@@ -235,14 +235,16 @@ export default function Generate() {
     
     // Get existing saved checklists from localStorage
     const existingChecklists = JSON.parse(localStorage.getItem('savedChecklists') || '[]');
+    const newChecklistId = `checklist-${Date.now()}`;
     const newChecklist = {
-      id: `checklist-${Date.now()}`,
+      id: newChecklistId,
       name: checklistName,
       folderId,
       folderName,
       prompt,
       detailLevel,
       createdAt: new Date().toISOString(),
+      data: null, // Will be populated after full generation
     };
     localStorage.setItem('savedChecklists', JSON.stringify([...existingChecklists, newChecklist]));
     
@@ -256,6 +258,7 @@ export default function Generate() {
           prompt,
           scope: detailLevel,
           checklistName,
+          savedChecklistId: newChecklistId, // Pass ID for updating after generation
         },
       },
     });
