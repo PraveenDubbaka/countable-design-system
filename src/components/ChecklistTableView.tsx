@@ -8,7 +8,9 @@ import {
   GripVertical,
   ChevronDown,
   ChevronUp,
-  Check
+  Check,
+  FileText,
+  X
 } from 'lucide-react';
 import { Checklist, Question, AnswerType } from '@/types/checklist';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -575,6 +577,7 @@ function TableRow({
   const [aiMenuPosition, setAiMenuPosition] = useState({ x: 0, y: 0 });
   const [activeVoiceField, setActiveVoiceField] = useState<'answer' | 'explanation' | null>(null);
   const [hasReference, setHasReference] = useState(!!question.reference);
+  const [hasExplanation, setHasExplanation] = useState(question.explanation !== undefined);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const rowRef = useRef<HTMLTableRowElement>(null);
   const { toast } = useToast();
@@ -655,6 +658,20 @@ function TableRow({
 
   const handleAddNote = () => {
     onUpdate({ ...question, explanation: question.explanation || '' });
+  };
+
+  const handleAddExplanation = () => {
+    setHasExplanation(true);
+    onUpdate({ ...question, explanation: question.explanation || '' });
+  };
+
+  const handleRemoveExplanation = () => {
+    setHasExplanation(false);
+    onUpdate({ ...question, explanation: undefined });
+  };
+
+  const handleExplanationChange = (explanation: string) => {
+    onUpdate({ ...question, explanation });
   };
 
   // Strip HTML tags for plain text editing
@@ -974,6 +991,62 @@ function TableRow({
                   onToggleReference={handleToggleReference}
                   hasReference={hasReference}
                 />
+              </div>
+            )}
+
+            {/* Sub-question and Explanation buttons - hidden in preview mode */}
+            {!isPreviewMode && (
+              <div className="flex items-center gap-2 mt-3">
+                <button
+                  onClick={onAddSubQuestion}
+                  className="flex items-center gap-2 px-3 py-1.5 text-sm text-muted-foreground hover:text-primary hover:bg-muted/50 rounded-md transition-colors border border-dashed border-muted hover:border-primary"
+                >
+                  <Plus className="h-4 w-4" />
+                  Sub-question
+                </button>
+                {!hasExplanation && (
+                  <button
+                    onClick={handleAddExplanation}
+                    className="flex items-center gap-2 px-3 py-1.5 text-sm text-muted-foreground hover:text-primary hover:bg-muted/50 rounded-md transition-colors border border-dashed border-muted hover:border-primary"
+                  >
+                    <FileText className="h-4 w-4" />
+                    + Explanation
+                  </button>
+                )}
+              </div>
+            )}
+
+            {/* Additional explanation section */}
+            {hasExplanation && (
+              <div className="mt-3">
+                <div className="flex items-center justify-between mb-2">
+                  <p className="text-xs text-muted-foreground">Additional Explanation</p>
+                  {!isPreviewMode && (
+                    <button 
+                      onClick={handleRemoveExplanation}
+                      className="p-1 rounded hover:bg-muted transition-colors"
+                    >
+                      <X className="h-3.5 w-3.5 text-muted-foreground" />
+                    </button>
+                  )}
+                </div>
+                <div className="relative">
+                  <Textarea
+                    placeholder="Add any additional context or explanation..."
+                    value={question.explanation || ''}
+                    onChange={(e) => handleExplanationChange(e.target.value)}
+                    className="min-h-[60px] pr-12 resize-none bg-muted/30 border-muted text-sm"
+                    disabled={isPreviewMode}
+                  />
+                  {!isPreviewMode && (
+                    <button
+                      onClick={handleAIClick}
+                      className="absolute bottom-2 right-2 p-1.5 rounded text-accent hover:bg-accent/10 transition-colors"
+                    >
+                      <Sparkles className="h-4 w-4" />
+                    </button>
+                  )}
+                </div>
               </div>
             )}
           </div>
