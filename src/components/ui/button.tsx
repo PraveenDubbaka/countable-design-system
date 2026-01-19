@@ -11,35 +11,35 @@ const buttonVariants = cva(
       variant: {
         // M3 Filled Button
         default:
-          "bg-primary text-primary-foreground rounded-full hover:shadow-elevation-1 active:shadow-none before:absolute before:inset-0 before:bg-primary-foreground/0 hover:before:bg-primary-foreground/[0.08] active:before:bg-primary-foreground/[0.12]",
+          "bg-primary text-primary-foreground rounded-lg hover:shadow-elevation-1 active:shadow-none before:absolute before:inset-0 before:bg-primary-foreground/0 hover:before:bg-primary-foreground/[0.08] active:before:bg-primary-foreground/[0.12]",
         // M3 Destructive (Error filled)
         destructive:
-          "bg-destructive text-destructive-foreground rounded-full hover:shadow-elevation-1 before:absolute before:inset-0 before:bg-destructive-foreground/0 hover:before:bg-destructive-foreground/[0.08] active:before:bg-destructive-foreground/[0.12]",
+          "bg-destructive text-destructive-foreground rounded-lg hover:shadow-elevation-1 before:absolute before:inset-0 before:bg-destructive-foreground/0 hover:before:bg-destructive-foreground/[0.08] active:before:bg-destructive-foreground/[0.12]",
         // M3 Outlined Button
         outline:
-          "border border-outline bg-transparent text-primary rounded-full hover:bg-primary/[0.08] active:bg-primary/[0.12] focus-visible:border-primary",
+          "border border-outline bg-transparent text-primary rounded-lg hover:bg-primary/[0.08] active:bg-primary/[0.12] focus-visible:border-primary",
         // M3 Tonal Button (Secondary Container)
         secondary:
-          "bg-secondary text-secondary-foreground rounded-full hover:shadow-elevation-1 before:absolute before:inset-0 before:bg-secondary-foreground/0 hover:before:bg-secondary-foreground/[0.08] active:before:bg-secondary-foreground/[0.12]",
+          "bg-secondary text-secondary-foreground rounded-lg hover:shadow-elevation-1 before:absolute before:inset-0 before:bg-secondary-foreground/0 hover:before:bg-secondary-foreground/[0.08] active:before:bg-secondary-foreground/[0.12]",
         // M3 Text Button
         ghost:
-          "text-primary rounded-full hover:bg-primary/[0.08] active:bg-primary/[0.12]",
+          "text-primary rounded-lg hover:bg-primary/[0.08] active:bg-primary/[0.12]",
         // M3 Text Button with underline
-        link: "text-primary underline-offset-4 hover:underline rounded-md",
+        link: "text-primary underline-offset-4 hover:underline rounded-lg",
         // M3 Elevated Button
         elevated:
-          "bg-surface-container-low text-primary shadow-elevation-1 rounded-full hover:shadow-elevation-2 before:absolute before:inset-0 before:bg-primary/0 hover:before:bg-primary/[0.08] active:before:bg-primary/[0.12]",
+          "bg-surface-container-low text-primary shadow-elevation-1 rounded-lg hover:shadow-elevation-2 before:absolute before:inset-0 before:bg-primary/0 hover:before:bg-primary/[0.08] active:before:bg-primary/[0.12]",
         // M3 Tonal Icon Button
         tonal:
-          "bg-secondary-container text-on-secondary-container rounded-full hover:shadow-elevation-1 before:absolute before:inset-0 before:bg-on-secondary-container/0 hover:before:bg-on-secondary-container/[0.08] active:before:bg-on-secondary-container/[0.12]",
+          "bg-secondary-container text-on-secondary-container rounded-lg hover:shadow-elevation-1 before:absolute before:inset-0 before:bg-on-secondary-container/0 hover:before:bg-on-secondary-container/[0.08] active:before:bg-on-secondary-container/[0.12]",
       },
       size: {
         default: "h-10 px-6 py-2.5",
         sm: "h-9 px-4",
         lg: "h-12 px-8",
-        icon: "h-10 w-10 rounded-full",
-        "icon-sm": "h-8 w-8 rounded-full",
-        "icon-lg": "h-12 w-12 rounded-full",
+        icon: "h-10 w-10 rounded-lg",
+        "icon-sm": "h-8 w-8 rounded-lg",
+        "icon-lg": "h-12 w-12 rounded-lg",
       },
     },
     defaultVariants: {
