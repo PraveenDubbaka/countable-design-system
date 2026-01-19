@@ -704,6 +704,7 @@ export function SortableQuestionCard({
                 onClick={(e) => {
                   if (!isPreviewMode) {
                     e.stopPropagation();
+                    setIsFocused(true);
                     setIsEditingQuestion(true);
                   }
                 }}
@@ -714,7 +715,11 @@ export function SortableQuestionCard({
             {/* Sub-question button - between question and answer (hidden in preview mode) */}
             {!isPreviewMode && (
               <button
-                onClick={handleAddInlineSubQuestion}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setIsFocused(true);
+                  handleAddInlineSubQuestion();
+                }}
                 className="mt-3 flex items-center gap-2 px-3 py-1.5 text-sm text-muted-foreground hover:text-primary hover:bg-muted/50 rounded-md transition-colors border border-dashed border-muted hover:border-primary"
               >
                 <Plus className="h-4 w-4" />
@@ -848,7 +853,11 @@ export function SortableQuestionCard({
                       variant="outline" 
                       size="sm" 
                       className="text-muted-foreground hover:text-white hover:border-[#1C63A6] hover:bg-[#1C63A6] transition-colors"
-                      onClick={handleAddExplanation}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setIsFocused(true);
+                        handleAddExplanation();
+                      }}
                     >
                       <Plus className="h-3.5 w-3.5 mr-1.5" />
                       Explanation
