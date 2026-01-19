@@ -280,8 +280,10 @@ function SubQuestionTableRow({
     }
   };
 
+  const isLastSubQuestion = isLast;
+  
   return (
-    <tr className="border-b-0 bg-muted/10 hover:bg-muted/20 transition-colors">
+    <tr className={`bg-muted/10 hover:bg-muted/20 transition-colors ${isLastSubQuestion ? 'border-b' : 'border-b-0'}`}>
       {/* Drag handle column - indented to show hierarchy */}
       <td className="py-1.5 px-2 w-14">
         <div className="flex items-center gap-1 pl-6">
@@ -697,7 +699,7 @@ function TableRow({
     <>
       <tr 
         ref={rowRef}
-        className={`border-b hover:bg-muted/30 transition-colors ${isFocused ? 'bg-muted/20' : ''}`}
+        className={`hover:bg-muted/30 transition-colors ${isFocused ? 'bg-muted/20' : ''} ${question.subQuestions && question.subQuestions.length > 0 ? '' : 'border-b'}`}
         onFocus={() => setIsFocused(true)}
         onBlur={(e) => {
           if (!rowRef.current?.contains(e.relatedTarget as Node)) {
