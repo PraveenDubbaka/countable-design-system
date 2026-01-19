@@ -1,11 +1,53 @@
 import { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { Sparkles, LayoutTemplate } from 'lucide-react';
+import { Sparkles, LayoutTemplate, Folder, ChevronDown, ChevronRight, FileText } from 'lucide-react';
 import { Layout } from '@/components/Layout';
 import { ContentType } from '@/components/Sidebar';
 import { Button } from '@/components/ui/button';
-import { Textarea } from '@/components/ui/textarea';
 import { GenerationScope } from '@/types/checklist';
+
+// Template folder structure
+const templateFolders = [
+  {
+    id: 'compilation',
+    name: 'Compilation',
+    templates: [
+      'Client Acceptance and Continuance',
+      'Independence',
+      'Knowledge of client business',
+      'Planning',
+      'Withdrawal',
+      'Completion',
+    ],
+  },
+  {
+    id: 'review',
+    name: 'Review',
+    templates: [
+      'New engagement acceptance',
+      'Existing engagement continuance',
+      'Understanding the entity - Basics',
+      'Understanding the entity - Systems',
+      'Engagement Planning',
+      'Completion',
+      'Subsequent events',
+      'Withdrawal',
+      'ASPE - General - Disclosure checklist',
+      'ASPE - Income taxes - Disclosure checklist',
+      'ASPE - Leases - Disclosure checklist',
+      'ASPE - Goodwill and intangible assets - Disclosure checklist',
+      'ASPE - Employee future benefits - Disclosure checklist',
+      'ASPE - Supplementary - Disclosure checklist',
+    ],
+  },
+  {
+    id: 'tax',
+    name: 'Tax',
+    templates: [
+      'Completion',
+    ],
+  },
+];
 
 interface LocationState {
   contentType?: ContentType;
@@ -66,6 +108,25 @@ export default function CreationDashboard() {
   const [mode, setMode] = useState<'import' | 'template' | null>(null);
   const [prompt, setPrompt] = useState('');
   const [scope, setScope] = useState<GenerationScope>('standard');
+  const [expandedFolders, setExpandedFolders] = useState<Set<string>>(new Set(['compilation']));
+  const [selectedTemplate, setSelectedTemplate] = useState<string | null>(null);
+
+  const toggleFolder = (folderId: string) => {
+    setExpandedFolders(prev => {
+      const next = new Set(prev);
+      if (next.has(folderId)) {
+        next.delete(folderId);
+      } else {
+        next.add(folderId);
+      }
+      return next;
+    });
+  };
+
+  const handleTemplateSelect = (templateName: string) => {
+    setSelectedTemplate(templateName);
+    setPrompt(`Generate a ${templateName} checklist`);
+  };
 
   const label = contentTypeLabels[contentType] || 'Checklist';
   const heading = contentType 
@@ -116,21 +177,55 @@ export default function CreationDashboard() {
             {mode === 'template' && (
               <div>
                 <h2 className="text-2xl font-bold text-foreground mb-2">Generate from Template</h2>
-                <p className="text-muted-foreground mb-6">Fill in and customize a structured template</p>
-                <div className="grid grid-cols-2 gap-4 mb-4">
-                  {['Client Acceptance', 'Independence Review', 'Engagement Letter', 'Quality Control'].map((template) => (
-                    <button
-                      key={template}
-                      onClick={() => setPrompt(`Generate a ${template} checklist`)}
-                      className={`p-4 border rounded-lg text-left hover:border-primary/50 transition-colors ${
-                        prompt.includes(template) ? 'border-primary bg-primary/5' : 'border-border'
-                      }`}
-                    >
-                      <LayoutTemplate className="h-5 w-5 text-primary mb-2" />
-                      <p className="font-medium text-sm">{template}</p>
-                    </button>
+                <p className="text-muted-foreground mb-6">Select a folder and choose a template</p>
+                
+                <div className="border border-border rounded-lg overflow-hidden max-h-[400px] overflow-y-auto">
+                  {templateFolders.map((folder) => (
+                    <div key={folder.id}>
+                      {/* Folder Header */}
+                      <button
+                        onClick={() => toggleFolder(folder.id)}
+                        className="w-full flex items-center gap-2 px-4 py-3 bg-muted/50 hover:bg-muted transition-colors text-left border-b border-border"
+                      >
+                        {expandedFolders.has(folder.id) ? (
+                          <ChevronDown className="h-4 w-4 text-muted-foreground" />
+                        ) : (
+                          <ChevronRight className="h-4 w-4 text-muted-foreground" />
+                        )}
+                        <Folder className="h-4 w-4 text-primary" />
+                        <span className="font-medium text-foreground">{folder.name}</span>
+                        <span className="text-xs text-muted-foreground ml-auto">{folder.templates.length}</span>
+                      </button>
+                      
+                      {/* Templates List */}
+                      {expandedFolders.has(folder.id) && (
+                        <div className="bg-background">
+                          {folder.templates.map((template) => (
+                            <button
+                              key={`${folder.id}-${template}`}
+                              onClick={() => handleTemplateSelect(template)}
+                              className={`w-full flex items-center gap-3 px-4 py-2.5 pl-10 text-left hover:bg-muted/50 transition-colors border-b border-border last:border-b-0 ${
+                                selectedTemplate === template ? 'bg-primary/5 border-l-2 border-l-primary' : ''
+                              }`}
+                            >
+                              <FileText className="h-4 w-4 text-orange-500 flex-shrink-0" />
+                              <span className={`text-sm truncate ${selectedTemplate === template ? 'text-primary font-medium' : 'text-foreground'}`}>
+                                {template}
+                              </span>
+                            </button>
+                          ))}
+                        </div>
+                      )}
+                    </div>
                   ))}
                 </div>
+                
+                {selectedTemplate && (
+                  <div className="mt-4 p-3 bg-primary/5 rounded-lg border border-primary/20">
+                    <p className="text-sm text-muted-foreground">Selected template:</p>
+                    <p className="font-medium text-primary">{selectedTemplate}</p>
+                  </div>
+                )}
               </div>
             )}
 
