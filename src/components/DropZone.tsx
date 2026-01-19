@@ -4,9 +4,11 @@ import { Sparkles, FileText, Upload, LayoutTemplate } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { GenerationScope } from '@/types/checklist';
+import { ContentType } from '@/components/Sidebar';
 
 interface DropZoneProps {
   onGenerate: (prompt: string, scope: GenerationScope, file?: File) => void;
+  contentType?: ContentType;
 }
 interface CreationOptionProps {
   icon: React.ReactNode;
@@ -48,7 +50,14 @@ function CreationOption({ icon, iconBg, title, description, badge, onClick }: Cr
   );
 }
 
-export function DropZone({ onGenerate }: DropZoneProps) {
+const contentTypeLabels: Record<ContentType, string> = {
+  letters: 'Letter',
+  checklists: 'Checklist',
+  reports: 'Report',
+  notes: 'Notes to Financial Statements',
+};
+
+export function DropZone({ onGenerate, contentType }: DropZoneProps) {
   const navigate = useNavigate();
   const [mode, setMode] = useState<'import' | 'template' | null>(null);
   const [prompt, setPrompt] = useState('');
@@ -110,8 +119,8 @@ export function DropZone({ onGenerate }: DropZoneProps) {
 
         {mode === 'import' && (
           <div>
-            <h2 className="text-2xl font-bold text-foreground mb-2">Import File or URL</h2>
-            <p className="text-muted-foreground mb-6">Enhance existing docs, presentations, or webpages</p>
+            <h2 className="text-2xl font-bold text-foreground mb-2">Import File</h2>
+            <p className="text-muted-foreground mb-6">Enhance existing docs or presentations</p>
             <div
               className={`border-2 border-dashed rounded-xl p-8 text-center cursor-pointer transition-all ${
                 isDragging ? 'border-primary bg-primary/5' : 'border-border hover:border-primary/50'
@@ -163,17 +172,6 @@ export function DropZone({ onGenerate }: DropZoneProps) {
                 </div>
               )}
             </div>
-            <div className="my-4 flex items-center gap-4">
-              <div className="flex-1 h-px bg-border" />
-              <span className="text-sm text-muted-foreground">or paste a URL</span>
-              <div className="flex-1 h-px bg-border" />
-            </div>
-            <Textarea
-              placeholder="https://example.com/document"
-              value={prompt}
-              onChange={(e) => setPrompt(e.target.value)}
-              className="min-h-[60px] resize-none text-base"
-            />
           </div>
         )}
 
@@ -209,18 +207,23 @@ export function DropZone({ onGenerate }: DropZoneProps) {
             <option value="detailed">Detailed</option>
           </select>
 
-          <Button
+        <Button
             onClick={handleGenerate}
             disabled={!prompt.trim() && !file}
             className="ai-button !px-6 !py-5"
           >
             <Sparkles className="h-4 w-4 mr-2" />
-            Generate Checklist
+            Generate {contentType ? contentTypeLabels[contentType] : 'Checklist'}
           </Button>
         </div>
       </div>
     );
   }
+
+  // Get heading based on content type
+  const heading = contentType 
+    ? `Create ${contentTypeLabels[contentType]} with LUKA`
+    : 'Create with LUKA';
 
   // Main selection view
   return (
@@ -228,7 +231,7 @@ export function DropZone({ onGenerate }: DropZoneProps) {
       {/* Header */}
       <div className="text-center mb-10">
         <h1 className="text-3xl font-bold text-foreground mb-2">
-          Create with LUKA
+          {heading}
         </h1>
         <p className="text-muted-foreground text-lg">
           How would you like to get started?

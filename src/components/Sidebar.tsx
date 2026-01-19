@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { 
   ChevronDown,
   ChevronRight,
@@ -97,19 +98,30 @@ const LukaLogo = () => (
 
 // Dropdown menu items with colored icons
 const dropdownItems = [
-  { id: 'engagements', label: 'Engagements', icon: Folder, color: 'text-blue-500' },
-  { id: 'letters', label: 'Letters', icon: FileText, color: 'text-purple-500' },
-  { id: 'checklists', label: 'Checklists', icon: ClipboardList, color: 'text-orange-500' },
-  { id: 'reports', label: 'Reports', icon: FileBarChart, color: 'text-green-500' },
-  { id: 'notes', label: 'Notes to Financial Stat...', icon: StickyNote, color: 'text-yellow-500' },
-  { id: 'worksheets', label: 'Worksheets', icon: Table, color: 'text-blue-400' },
+  { id: 'engagements', label: 'Engagements', icon: Folder, color: 'text-blue-500', showCreator: false },
+  { id: 'letters', label: 'Letters', icon: FileText, color: 'text-purple-500', showCreator: true },
+  { id: 'checklists', label: 'Checklists', icon: ClipboardList, color: 'text-orange-500', showCreator: true },
+  { id: 'reports', label: 'Reports', icon: FileBarChart, color: 'text-green-500', showCreator: true },
+  { id: 'notes', label: 'Notes to Financial Stat...', icon: StickyNote, color: 'text-yellow-500', showCreator: true },
+  { id: 'worksheets', label: 'Worksheets', icon: Table, color: 'text-blue-400', showCreator: false },
 ];
 
+export type ContentType = 'letters' | 'checklists' | 'reports' | 'notes';
+
 export function Sidebar() {
+  const navigate = useNavigate();
   const [templates, setTemplates] = useState<Template[]>(initialTemplates);
   const [activeTab, setActiveTab] = useState<'firm' | 'master'>('firm');
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedDropdown, setSelectedDropdown] = useState('engagements');
+
+  const handleDropdownSelect = (itemId: string) => {
+    setSelectedDropdown(itemId);
+    const item = dropdownItems.find(i => i.id === itemId);
+    if (item?.showCreator) {
+      navigate('/', { state: { contentType: itemId } });
+    }
+  };
 
   const toggleFolder = (id: string) => {
     setTemplates(prev => prev.map(t => 
@@ -209,7 +221,7 @@ export function Sidebar() {
                 {dropdownItems.map((item) => (
                   <DropdownMenuItem
                     key={item.id}
-                    onClick={() => setSelectedDropdown(item.id)}
+                    onClick={() => handleDropdownSelect(item.id)}
                     className="flex items-center justify-between cursor-pointer"
                   >
                     <div className="flex items-center gap-2">
