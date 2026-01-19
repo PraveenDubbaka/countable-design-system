@@ -1,7 +1,6 @@
 import { useState, useRef, useCallback } from 'react';
 import { 
   Plus, 
-  MoreVertical, 
   Trash2, 
   Sparkles, 
   Mic, 
@@ -18,24 +17,9 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { QuestionToolbar } from './QuestionToolbar';
 import { AIEditMenu } from './AIEditMenu';
-import { SortableInlineSubQuestion } from './SortableInlineSubQuestion';
 import { useVoiceToText } from '@/hooks/useVoiceToText';
 import { useToast } from '@/hooks/use-toast';
-import {
-  DndContext,
-  closestCenter,
-  KeyboardSensor,
-  PointerSensor,
-  useSensor,
-  useSensors,
-  DragEndEvent,
-} from '@dnd-kit/core';
-import {
-  arrayMove,
-  SortableContext,
-  sortableKeyboardCoordinates,
-  verticalListSortingStrategy,
-} from '@dnd-kit/sortable';
+import { arrayMove } from '@dnd-kit/sortable';
 import {
   Select,
   SelectContent,
@@ -50,65 +34,404 @@ interface ChecklistTableViewProps {
   isPreviewMode: boolean;
 }
 
-// Sub-question drag-and-drop container component
-interface SubQuestionDndContainerProps {
+// Sub-question table row component - renders sub-questions as table rows with answers in Response column
+interface SubQuestionTableRowProps {
+  subQuestion: Question;
+  index: number;
+  onUpdate: (question: Question) => void;
+  onDelete: () => void;
+  onMoveUp: () => void;
+  onMoveDown: () => void;
+  isFirst: boolean;
+  isLast: boolean;
+  isPreviewMode: boolean;
+}
+
+function SubQuestionTableRow({
+  subQuestion,
+  index,
+  onUpdate,
+  onDelete,
+  onMoveUp,
+  onMoveDown,
+  isFirst,
+  isLast,
+  isPreviewMode,
+}: SubQuestionTableRowProps) {
+  const [isEditing, setIsEditing] = useState(false);
+  const [draftText, setDraftText] = useState(subQuestion.text);
+
+  const handleAnswerChange = (answer: string) => {
+    onUpdate({ ...subQuestion, answer });
+  };
+
+  const handleTypeChange = (answerType: AnswerType) => {
+    const options = (answerType === 'multiple-choice' || answerType === 'dropdown') 
+      ? (subQuestion.options || ['Option 1', 'Option 2'])
+      : undefined;
+    onUpdate({ ...subQuestion, answerType, answer: '', options });
+  };
+
+  const handleOptionUpdate = (optIndex: number, value: string) => {
+    const baseOptions = subQuestion.options || ['Option 1', 'Option 2'];
+    const oldValue = baseOptions[optIndex];
+    const newOptions = [...baseOptions];
+    newOptions[optIndex] = value;
+
+    onUpdate({
+      ...subQuestion,
+      options: newOptions,
+      answer: subQuestion.answer === oldValue ? value : subQuestion.answer,
+    });
+  };
+
+  const handleOptionRemove = (optIndex: number) => {
+    const baseOptions = subQuestion.options || ['Option 1', 'Option 2'];
+    const removedValue = baseOptions[optIndex];
+    const newOptions = baseOptions.filter((_, i) => i !== optIndex);
+
+    if (newOptions.length > 0) {
+      onUpdate({
+        ...subQuestion,
+        options: newOptions,
+        answer: subQuestion.answer === removedValue ? '' : subQuestion.answer,
+      });
+    }
+  };
+
+  const handleAddOption = () => {
+    const newOptions = [...(subQuestion.options || []), `Option ${(subQuestion.options?.length || 0) + 1}`];
+    onUpdate({ ...subQuestion, options: newOptions });
+  };
+
+  const commitText = () => {
+    const trimmed = draftText.trim();
+    if (!trimmed) {
+      setDraftText(subQuestion.text);
+      setIsEditing(false);
+      return;
+    }
+    if (trimmed !== subQuestion.text) {
+      onUpdate({ ...subQuestion, text: trimmed });
+    }
+    setIsEditing(false);
+  };
+
+  const renderSubAnswerField = () => {
+    if (isPreviewMode) {
+      return (
+        <span className="text-sm text-muted-foreground">
+          {subQuestion.answer || '-'}
+        </span>
+      );
+    }
+
+    switch (subQuestion.answerType) {
+      case 'yes-no':
+        return (
+          <div className="flex gap-4">
+            {['Yes', 'No'].map((option) => (
+              <label key={option} className="flex items-center gap-2 cursor-pointer group">
+                <div 
+                  className={`w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all ${
+                    subQuestion.answer === option 
+                      ? 'border-primary bg-primary' 
+                      : 'border-muted-foreground/50 hover:border-primary/50'
+                  }`}
+                  onClick={() => handleAnswerChange(option)}
+                >
+                  {subQuestion.answer === option && (
+                    <Check className="h-3 w-3 text-primary-foreground" />
+                  )}
+                </div>
+                <span className="text-sm">{option}</span>
+              </label>
+            ))}
+          </div>
+        );
+
+      case 'yes-no-na':
+        const yesNoNaOptions = subQuestion.options || ['Yes', 'No', 'Not Applicable'];
+        return (
+          <div className="flex flex-wrap gap-3">
+            {yesNoNaOptions.map((option) => (
+              <label key={option} className="flex items-center gap-2 cursor-pointer group">
+                <div 
+                  className={`w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all ${
+                    subQuestion.answer === option 
+                      ? 'border-primary bg-primary' 
+                      : 'border-muted-foreground/50 hover:border-primary/50'
+                  }`}
+                  onClick={() => handleAnswerChange(option)}
+                >
+                  {subQuestion.answer === option && (
+                    <Check className="h-3 w-3 text-primary-foreground" />
+                  )}
+                </div>
+                <span className="text-sm">{option}</span>
+              </label>
+            ))}
+          </div>
+        );
+
+      case 'short-answer':
+        return (
+          <Input
+            placeholder="Enter answer..."
+            value={subQuestion.answer || ''}
+            onChange={(e) => handleAnswerChange(e.target.value)}
+            className="h-9 bg-background"
+          />
+        );
+
+      case 'long-answer':
+        return (
+          <div className="relative">
+            <Textarea
+              placeholder="Enter detailed answer..."
+              value={subQuestion.answer || ''}
+              onChange={(e) => handleAnswerChange(e.target.value)}
+              className="min-h-[80px] resize-none bg-background pr-12"
+            />
+            <button className="absolute bottom-2 right-2 p-1.5 rounded text-accent hover:bg-accent/10 transition-colors">
+              <Sparkles className="h-4 w-4" />
+            </button>
+          </div>
+        );
+
+      case 'dropdown':
+      case 'multiple-choice':
+        const options = subQuestion.options || ['Option 1', 'Option 2'];
+        return (
+          <div className="space-y-1">
+            {options.map((option, i) => (
+              <label key={i} className="flex items-center gap-2 cursor-pointer group">
+                <div 
+                  className={`w-4 h-4 rounded border-2 flex items-center justify-center transition-all ${
+                    subQuestion.answer === option 
+                      ? 'border-primary bg-primary' 
+                      : 'border-muted-foreground/50 hover:border-primary/50'
+                  }`}
+                  onClick={() => handleAnswerChange(option)}
+                >
+                  {subQuestion.answer === option && (
+                    <Check className="h-2.5 w-2.5 text-primary-foreground" />
+                  )}
+                </div>
+                {!isPreviewMode ? (
+                  <Input
+                    value={option}
+                    onChange={(e) => handleOptionUpdate(i, e.target.value)}
+                    className="h-7 text-sm flex-1"
+                  />
+                ) : (
+                  <span className="text-sm">{option}</span>
+                )}
+                {!isPreviewMode && options.length > 1 && (
+                  <button
+                    onClick={() => handleOptionRemove(i)}
+                    className="opacity-0 group-hover:opacity-100 p-1 hover:bg-destructive/10 hover:text-destructive rounded transition-all"
+                  >
+                    <Trash2 className="h-3 w-3" />
+                  </button>
+                )}
+              </label>
+            ))}
+            {!isPreviewMode && (
+              <button
+                onClick={handleAddOption}
+                className="flex items-center gap-1.5 px-2 py-1.5 text-xs text-muted-foreground hover:text-foreground hover:bg-muted rounded transition-colors"
+              >
+                <Plus className="h-3 w-3" />
+                Add option
+              </button>
+            )}
+          </div>
+        );
+
+      case 'toggle':
+        return (
+          <label className="flex items-center gap-3 cursor-pointer">
+            <div 
+              className={`w-11 h-6 rounded-full transition-colors relative ${
+                subQuestion.answer === 'true' ? 'bg-primary' : 'bg-muted'
+              }`}
+              onClick={() => handleAnswerChange(subQuestion.answer === 'true' ? 'false' : 'true')}
+            >
+              <div 
+                className={`absolute top-0.5 w-5 h-5 rounded-full bg-white shadow transition-transform ${
+                  subQuestion.answer === 'true' ? 'translate-x-5' : 'translate-x-0.5'
+                }`}
+              />
+            </div>
+            <span className="text-sm">{subQuestion.answer === 'true' ? 'Yes' : 'No'}</span>
+          </label>
+        );
+
+      default:
+        return (
+          <Input
+            placeholder="Enter answer..."
+            value={subQuestion.answer || ''}
+            onChange={(e) => handleAnswerChange(e.target.value)}
+            className="h-9 bg-background"
+          />
+        );
+    }
+  };
+
+  return (
+    <tr className="border-b border-muted/50 bg-muted/20 hover:bg-muted/30 transition-colors">
+      {/* Drag handle column */}
+      <td className="p-2 w-14">
+        <div className="flex items-center gap-1 ml-4">
+          {!isPreviewMode && (
+            <div className="flex flex-col items-center gap-0.5">
+              <button
+                onClick={onMoveUp}
+                disabled={isFirst}
+                className="p-0.5 rounded hover:bg-muted transition-colors disabled:opacity-30 disabled:pointer-events-none"
+                aria-label="Move up"
+              >
+                <ChevronUp className="h-3 w-3 text-muted-foreground" />
+              </button>
+              <GripVertical className="h-3 w-3 text-muted-foreground/50 cursor-grab" />
+              <button
+                onClick={onMoveDown}
+                disabled={isLast}
+                className="p-0.5 rounded hover:bg-muted transition-colors disabled:opacity-30 disabled:pointer-events-none"
+                aria-label="Move down"
+              >
+                <ChevronDown className="h-3 w-3 text-muted-foreground" />
+              </button>
+            </div>
+          )}
+        </div>
+      </td>
+
+      {/* Description - sub-question text with letter prefix */}
+      <td className="p-2 min-w-[300px] max-w-[400px]">
+        <div className="flex items-start gap-2 pl-6 border-l-2 border-muted ml-2">
+          <span className="text-muted-foreground font-medium text-sm shrink-0 mt-0.5">
+            {String.fromCharCode(97 + index)}.
+          </span>
+          <div className="flex-1">
+            {isEditing && !isPreviewMode ? (
+              <Input
+                value={draftText}
+                onChange={(e) => setDraftText(e.target.value)}
+                onBlur={commitText}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    e.preventDefault();
+                    commitText();
+                  }
+                  if (e.key === 'Escape') {
+                    e.preventDefault();
+                    setDraftText(subQuestion.text);
+                    setIsEditing(false);
+                  }
+                }}
+                autoFocus
+                className="h-8 text-sm"
+              />
+            ) : (
+              <span
+                className={`text-sm text-foreground block ${!isPreviewMode ? 'cursor-text hover:bg-muted/50 px-1 py-0.5 -mx-1 rounded' : ''}`}
+                onClick={() => !isPreviewMode && setIsEditing(true)}
+              >
+                {subQuestion.text}
+              </span>
+            )}
+            {/* Answer type selector */}
+            {!isPreviewMode && (
+              <select
+                value={subQuestion.answerType}
+                onChange={(e) => handleTypeChange(e.target.value as AnswerType)}
+                className="mt-1 text-xs bg-muted/50 border-none rounded px-2 py-1 text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
+              >
+                <option value="yes-no">Yes / No</option>
+                <option value="yes-no-na">Yes / No / N/A</option>
+                <option value="multiple-choice">Multiple Choice</option>
+                <option value="date">Date</option>
+                <option value="long-answer">Long Answer</option>
+                <option value="short-answer">Short Answer</option>
+                <option value="reference">Reference Capability</option>
+                <option value="amount">Amount</option>
+                <option value="follow-up">Follow-up Question</option>
+                <option value="dropdown">Dropdown</option>
+                <option value="file-upload">File Upload</option>
+                <option value="toggle">Switch/Toggle</option>
+              </select>
+            )}
+          </div>
+        </div>
+      </td>
+
+      {/* Response column - sub-question answer */}
+      <td className="p-2 min-w-[250px]">
+        {renderSubAnswerField()}
+      </td>
+
+      {/* Reference column */}
+      <td className="p-2 w-[100px]">
+        {!isPreviewMode && (
+          <button
+            onClick={onDelete}
+            className="p-1.5 rounded hover:bg-destructive/10 hover:text-destructive transition-all text-muted-foreground"
+            aria-label="Delete sub-question"
+          >
+            <Trash2 className="h-4 w-4" />
+          </button>
+        )}
+      </td>
+    </tr>
+  );
+}
+
+// Sub-question drag-and-drop container for table rows
+interface SubQuestionTableDndContainerProps {
   subQuestions: Question[];
   onReorder: (subQuestions: Question[]) => void;
   onUpdateSubQuestion: (index: number, question: Question) => void;
   onDeleteSubQuestion: (index: number) => void;
+  isPreviewMode: boolean;
 }
 
-function SubQuestionDndContainer({
+function SubQuestionTableDndContainer({
   subQuestions,
   onReorder,
   onUpdateSubQuestion,
   onDeleteSubQuestion,
-}: SubQuestionDndContainerProps) {
-  const sensors = useSensors(
-    useSensor(PointerSensor, {
-      activationConstraint: {
-        distance: 8,
-      },
-    }),
-    useSensor(KeyboardSensor, {
-      coordinateGetter: sortableKeyboardCoordinates,
-    })
-  );
-
-  const handleDragEnd = (event: DragEndEvent) => {
-    const { active, over } = event;
-
-    if (over && active.id !== over.id) {
-      const oldIndex = subQuestions.findIndex((q) => q.id === active.id);
-      const newIndex = subQuestions.findIndex((q) => q.id === over.id);
-      const reordered = arrayMove(subQuestions, oldIndex, newIndex);
+  isPreviewMode,
+}: SubQuestionTableDndContainerProps) {
+  const handleMoveSubQuestion = (index: number, direction: 'up' | 'down') => {
+    if (direction === 'up' && index > 0) {
+      const reordered = arrayMove(subQuestions, index, index - 1);
+      onReorder(reordered);
+    } else if (direction === 'down' && index < subQuestions.length - 1) {
+      const reordered = arrayMove(subQuestions, index, index + 1);
       onReorder(reordered);
     }
   };
 
   return (
-    <div className="mt-3 ml-4 border-l-2 border-muted pl-3 space-y-2">
-      <DndContext
-        sensors={sensors}
-        collisionDetection={closestCenter}
-        onDragEnd={handleDragEnd}
-      >
-        <SortableContext
-          items={subQuestions.map((q) => q.id)}
-          strategy={verticalListSortingStrategy}
-        >
-          {subQuestions.map((sub, i) => (
-            <SortableInlineSubQuestion
-              key={sub.id}
-              question={sub}
-              index={i}
-              onUpdate={(updatedSub) => onUpdateSubQuestion(i, updatedSub)}
-              onDelete={() => onDeleteSubQuestion(i)}
-            />
-          ))}
-        </SortableContext>
-      </DndContext>
-    </div>
+    <>
+      {subQuestions.map((sub, i) => (
+        <SubQuestionTableRow
+          key={sub.id}
+          subQuestion={sub}
+          index={i}
+          onUpdate={(updatedSub) => onUpdateSubQuestion(i, updatedSub)}
+          onDelete={() => onDeleteSubQuestion(i)}
+          onMoveUp={() => handleMoveSubQuestion(i, 'up')}
+          onMoveDown={() => handleMoveSubQuestion(i, 'down')}
+          isFirst={i === 0}
+          isLast={i === subQuestions.length - 1}
+          isPreviewMode={isPreviewMode}
+        />
+      ))}
+    </>
   );
 }
 
@@ -453,40 +776,6 @@ function TableRow({
             )}
           </div>
 
-          {/* Sub-questions - fully editable with drag-and-drop */}
-          {question.subQuestions && question.subQuestions.length > 0 && !isPreviewMode && (
-            <SubQuestionDndContainer
-              subQuestions={question.subQuestions}
-              onReorder={(newSubQuestions) => {
-                onUpdate({ ...question, subQuestions: newSubQuestions });
-              }}
-              onUpdateSubQuestion={(index, updatedSub) => {
-                const newSubQuestions = [...(question.subQuestions || [])];
-                newSubQuestions[index] = updatedSub;
-                onUpdate({ ...question, subQuestions: newSubQuestions });
-              }}
-              onDeleteSubQuestion={(index) => {
-                const newSubQuestions = (question.subQuestions || []).filter((_, idx) => idx !== index);
-                onUpdate({ ...question, subQuestions: newSubQuestions });
-              }}
-            />
-          )}
-          {/* Sub-questions - preview mode (read-only) */}
-          {question.subQuestions && question.subQuestions.length > 0 && isPreviewMode && (
-            <div className="mt-2 ml-4 border-l-2 border-muted pl-3 space-y-2">
-              {question.subQuestions.map((sub, i) => (
-                <div key={sub.id} className="bg-muted/30 rounded-lg p-2 text-sm">
-                  <span className="text-muted-foreground font-medium mr-2">
-                    {String.fromCharCode(97 + i)}.
-                  </span>
-                  {sub.text.replace(/<[^>]*>/g, '')}
-                  {sub.answer && (
-                    <span className="ml-2 text-muted-foreground">— {sub.answer}</span>
-                  )}
-                </div>
-              ))}
-            </div>
-          )}
         </td>
 
 
@@ -507,6 +796,26 @@ function TableRow({
           </Button>
         </td>
       </tr>
+
+      {/* Sub-questions rendered as separate table rows */}
+      {question.subQuestions && question.subQuestions.length > 0 && (
+        <SubQuestionTableDndContainer
+          subQuestions={question.subQuestions}
+          onReorder={(newSubQuestions) => {
+            onUpdate({ ...question, subQuestions: newSubQuestions });
+          }}
+          onUpdateSubQuestion={(index, updatedSub) => {
+            const newSubQuestions = [...(question.subQuestions || [])];
+            newSubQuestions[index] = updatedSub;
+            onUpdate({ ...question, subQuestions: newSubQuestions });
+          }}
+          onDeleteSubQuestion={(index) => {
+            const newSubQuestions = (question.subQuestions || []).filter((_, idx) => idx !== index);
+            onUpdate({ ...question, subQuestions: newSubQuestions });
+          }}
+          isPreviewMode={isPreviewMode}
+        />
+      )}
 
       {showAIMenu && (
         <AIEditMenu
