@@ -317,8 +317,8 @@ export default function CreationDashboard() {
                 </svg>
               }
               iconBg="bg-gradient-to-r from-[#ECD4F6] to-[#CFE1FC]"
-              title="Import file or URL"
-              description="Upload or paste the URL to generate"
+              title="Import file"
+              description="Upload a document to generate"
               onClick={() => setMode('import')}
             />
             
