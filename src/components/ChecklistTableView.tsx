@@ -281,10 +281,10 @@ function SubQuestionTableRow({
   };
 
   return (
-    <tr className="border-b border-muted/50 bg-muted/20 hover:bg-muted/30 transition-colors">
-      {/* Drag handle column */}
-      <td className="p-2 w-14">
-        <div className="flex items-center gap-1 ml-4">
+    <tr className="border-b-0 bg-muted/10 hover:bg-muted/20 transition-colors">
+      {/* Drag handle column - indented to show hierarchy */}
+      <td className="py-1.5 px-2 w-14">
+        <div className="flex items-center gap-1 pl-6">
           {!isPreviewMode && (
             <div className="flex flex-col items-center gap-0.5">
               <button
@@ -293,26 +293,28 @@ function SubQuestionTableRow({
                 className="p-0.5 rounded hover:bg-muted transition-colors disabled:opacity-30 disabled:pointer-events-none"
                 aria-label="Move up"
               >
-                <ChevronUp className="h-3 w-3 text-muted-foreground" />
+                <ChevronUp className="h-2.5 w-2.5 text-muted-foreground" />
               </button>
-              <GripVertical className="h-3 w-3 text-muted-foreground/50 cursor-grab" />
+              <GripVertical className="h-2.5 w-2.5 text-muted-foreground/40 cursor-grab" />
               <button
                 onClick={onMoveDown}
                 disabled={isLast}
                 className="p-0.5 rounded hover:bg-muted transition-colors disabled:opacity-30 disabled:pointer-events-none"
                 aria-label="Move down"
               >
-                <ChevronDown className="h-3 w-3 text-muted-foreground" />
+                <ChevronDown className="h-2.5 w-2.5 text-muted-foreground" />
               </button>
             </div>
           )}
         </div>
       </td>
 
-      {/* Description - sub-question text with letter prefix */}
-      <td className="p-2 min-w-[300px] max-w-[400px]">
-        <div className="flex items-start gap-2 pl-6 border-l-2 border-muted ml-2">
-          <span className="text-muted-foreground font-medium text-sm shrink-0 mt-0.5">
+      {/* Description - sub-question text with letter prefix and visual connector */}
+      <td className="py-1.5 px-2 min-w-[300px] max-w-[400px]">
+        <div className="flex items-start gap-2 ml-6 pl-4 border-l-2 border-primary/30 relative">
+          {/* Visual connector dot */}
+          <div className="absolute -left-[5px] top-2 w-2 h-2 rounded-full bg-primary/30" />
+          <span className="text-muted-foreground font-medium text-xs shrink-0 mt-0.5">
             {String.fromCharCode(97 + index)}.
           </span>
           <div className="flex-1">
@@ -333,22 +335,22 @@ function SubQuestionTableRow({
                   }
                 }}
                 autoFocus
-                className="h-8 text-sm"
+                className="h-7 text-xs"
               />
             ) : (
               <span
-                className={`text-sm text-foreground block ${!isPreviewMode ? 'cursor-text hover:bg-muted/50 px-1 py-0.5 -mx-1 rounded' : ''}`}
+                className={`text-xs text-foreground/80 block ${!isPreviewMode ? 'cursor-text hover:bg-muted/50 px-1 py-0.5 -mx-1 rounded' : ''}`}
                 onClick={() => !isPreviewMode && setIsEditing(true)}
               >
                 {subQuestion.text}
               </span>
             )}
-            {/* Answer type selector */}
+            {/* Answer type selector - smaller */}
             {!isPreviewMode && (
               <select
                 value={subQuestion.answerType}
                 onChange={(e) => handleTypeChange(e.target.value as AnswerType)}
-                className="mt-1 text-xs bg-muted/50 border-none rounded px-2 py-1 text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
+                className="mt-0.5 text-[10px] bg-muted/30 border-none rounded px-1.5 py-0.5 text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
               >
                 <option value="yes-no">Yes / No</option>
                 <option value="yes-no-na">Yes / No / N/A</option>
@@ -368,20 +370,22 @@ function SubQuestionTableRow({
         </div>
       </td>
 
-      {/* Response column - sub-question answer */}
-      <td className="p-2 min-w-[250px]">
-        {renderSubAnswerField()}
+      {/* Response column - sub-question answer with indent */}
+      <td className="py-1.5 px-2 min-w-[250px]">
+        <div className="pl-4 text-sm">
+          {renderSubAnswerField()}
+        </div>
       </td>
 
-      {/* Reference column */}
-      <td className="p-2 w-[100px]">
+      {/* Reference column - delete button only */}
+      <td className="py-1.5 px-2 w-[100px]">
         {!isPreviewMode && (
           <button
             onClick={onDelete}
-            className="p-1.5 rounded hover:bg-destructive/10 hover:text-destructive transition-all text-muted-foreground"
+            className="p-1 rounded hover:bg-destructive/10 hover:text-destructive transition-all text-muted-foreground/50 hover:text-destructive"
             aria-label="Delete sub-question"
           >
-            <Trash2 className="h-4 w-4" />
+            <Trash2 className="h-3.5 w-3.5" />
           </button>
         )}
       </td>
