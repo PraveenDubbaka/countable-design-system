@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Layout } from '@/components/Layout';
-import { DropZone } from '@/components/DropZone';
 import { ChecklistBuilder } from '@/components/ChecklistBuilder';
 import { Checklist, GenerationScope, Section, Question } from '@/types/checklist';
 import { RichTextToolbarProvider } from '@/contexts/RichTextToolbarContext';
@@ -9,7 +8,6 @@ import { SaveDialog } from '@/components/SaveDialog';
 import { ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
-import { ContentType } from '@/components/Sidebar';
 
 const generateClientMeetingChecklist = (prompt: string): Checklist => {
   const sections: Section[] = [
@@ -285,7 +283,6 @@ type GenerateNavState = {
     scope: GenerationScope;
     cardSize?: string;
   };
-  contentType?: ContentType;
 };
 
 export default function Index() {
@@ -294,7 +291,6 @@ export default function Index() {
 
   const [checklist, setChecklist] = useState<Checklist | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
-  const [contentType, setContentType] = useState<ContentType | undefined>(undefined);
 
   const handleGenerate = async (prompt: string, scope: GenerationScope, file?: File) => {
     setIsGenerating(true);
@@ -306,20 +302,11 @@ export default function Index() {
     setIsGenerating(false);
   };
 
-  // Handle navigation state
+  // If the user came from /generate, start generation automatically
   useEffect(() => {
     const navState = location.state as GenerateNavState | null;
-    
-    // Handle content type from sidebar
-    if (navState?.contentType) {
-      setContentType(navState.contentType);
-      // Clear the navigation state so we don't persist on refresh
-      navigate('/', { replace: true, state: null });
-      return;
-    }
-    
-    // If the user came from /generate, start generation automatically
     const gen = navState?.generate;
+
     if (!gen?.prompt) return;
 
     // Clear the navigation state so we don't regenerate on refresh/back
@@ -390,10 +377,6 @@ export default function Index() {
             onUpdate={handleChecklistUpdate}
             onSave={() => setShowSaveDialog(true)}
           />
-        ) : contentType ? (
-          <div className="flex-1 flex items-center justify-center p-8 h-full">
-            <DropZone onGenerate={handleGenerate} contentType={contentType} />
-          </div>
         ) : null}
 
         {/* Save Dialog */}
