@@ -288,14 +288,15 @@ export function Sidebar() {
               <div
                 key={checklist.id}
                 className="group flex items-center gap-2 py-1.5 px-2 ml-6 rounded-md cursor-pointer hover:bg-muted transition-colors text-sm"
+                onClick={() => {
+                  // Use a unique key to force re-render when clicking same route
+                  navigate('/', { state: { checklistId: checklist.id, timestamp: Date.now() } });
+                }}
               >
                 <span className="w-4 flex-shrink-0" />
                 <span className="w-4 flex-shrink-0" />
                 <ClipboardList className="h-4 w-4 text-orange-500 flex-shrink-0" />
-                <span 
-                  className="truncate flex-1 text-foreground"
-                  onClick={() => navigate('/', { state: { checklistId: checklist.id } })}
-                >
+                <span className="truncate flex-1 text-foreground">
                   {checklist.name}
                 </span>
                 
