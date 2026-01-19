@@ -52,7 +52,7 @@ export function FloatingActionBar({
     <>
       {/* Floating pill button */}
       <div className="fixed right-6 top-1/2 -translate-y-1/2 z-40">
-        <div className="flex flex-col gap-1 bg-card border rounded-lg p-2 shadow-lg">
+        <div className="flex flex-col gap-1 bg-card border p-2 shadow-lg" style={{ borderRadius: '9999px' }}>
           {/* Collapse/Expand Sections */}
           <button
             onClick={handleToggleSections}
