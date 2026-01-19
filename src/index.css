@@ -786,3 +786,8 @@
     box-shadow: 0 0 20px hsl(207 71% 38% / 0.5); 
   }
 }
+
+/* Override rounded-lg to 8px border-radius */
+.rounded-lg {
+  border-radius: 8px;
+}
