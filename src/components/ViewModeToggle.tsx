@@ -1,6 +1,6 @@
 import { cn } from '@/lib/utils';
 
-export type ViewMode = 'concise' | 'standard' | 'detailed';
+export type ViewMode = 'standard' | 'detailed';
 
 interface ViewModeToggleProps {
   value: ViewMode;
@@ -8,7 +8,6 @@ interface ViewModeToggleProps {
 }
 
 const modes: { id: ViewMode; label: string }[] = [
-  { id: 'concise', label: 'Concise' },
   { id: 'standard', label: 'Standard' },
   { id: 'detailed', label: 'Detailed' },
 ];
