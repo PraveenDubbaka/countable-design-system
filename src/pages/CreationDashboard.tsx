@@ -96,10 +96,10 @@ export default function CreationDashboard() {
             
             {mode === 'import' && (
               <div>
-                <h2 className="text-2xl font-bold text-foreground mb-2">Import file or URL</h2>
-                <p className="text-muted-foreground mb-6">Upload a document or paste a URL to generate your {label.toLowerCase()}</p>
+                <h2 className="text-2xl font-bold text-foreground mb-2">Import file</h2>
+                <p className="text-muted-foreground mb-6">Upload a document to generate your {label.toLowerCase()}</p>
                 
-                <div className="border-2 border-dashed border-border rounded-lg p-8 text-center mb-4 hover:border-primary/50 transition-colors cursor-pointer">
+                <div className="border-2 border-dashed border-border rounded-lg p-8 text-center hover:border-primary/50 transition-colors cursor-pointer">
                   <div className="text-muted-foreground">
                     <svg className="h-12 w-12 mx-auto mb-4 text-primary/50" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                       <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
@@ -110,22 +110,6 @@ export default function CreationDashboard() {
                     <p className="text-sm">PDF, DOC, DOCX, TXT (max 10MB)</p>
                   </div>
                 </div>
-                
-                <div className="relative mb-4">
-                  <div className="absolute inset-0 flex items-center">
-                    <div className="w-full border-t border-border" />
-                  </div>
-                  <div className="relative flex justify-center text-sm">
-                    <span className="px-2 bg-card text-muted-foreground">or paste a URL</span>
-                  </div>
-                </div>
-                
-                <Textarea
-                  placeholder="Paste a URL to a document or webpage..."
-                  value={prompt}
-                  onChange={(e) => setPrompt(e.target.value)}
-                  className="min-h-[80px] mb-4"
-                />
               </div>
             )}
 
