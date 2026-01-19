@@ -37,7 +37,7 @@ interface FolderItem {
 interface GenerationPreviewProps {
   prompt: string;
   detailLevel: 'standard' | 'detailed';
-  onAccept: (folderId: string, folderName: string) => void;
+  onAccept: (folderId: string, folderName: string, checklistName: string) => void;
   onRegenerate: () => void;
   onCancel: () => void;
 }
@@ -132,6 +132,7 @@ export function GenerationPreview({
   const [isCreatingFolder, setIsCreatingFolder] = useState(false);
   const [newFolderName, setNewFolderName] = useState('');
   const [expandedSections, setExpandedSections] = useState<Set<string>>(new Set());
+  const [checklistName, setChecklistName] = useState('');
 
   // Progressive question generation effect
   useEffect(() => {
@@ -177,6 +178,9 @@ export function GenerationPreview({
   };
 
   const handleAcceptClick = () => {
+    // Auto-generate a name based on prompt
+    const autoName = prompt.length > 50 ? prompt.substring(0, 50) + '...' : prompt;
+    setChecklistName(autoName);
     setShowFolderDialog(true);
   };
 
@@ -196,8 +200,8 @@ export function GenerationPreview({
 
   const handleConfirmSave = () => {
     const selectedFolder = folders.find(f => f.id === selectedFolderId);
-    if (selectedFolder) {
-      onAccept(selectedFolderId, selectedFolder.name);
+    if (selectedFolder && checklistName.trim()) {
+      onAccept(selectedFolderId, selectedFolder.name, checklistName.trim());
       setShowFolderDialog(false);
     }
   };
@@ -345,71 +349,81 @@ export function GenerationPreview({
             <DialogTitle className="text-lg font-semibold">Save to Folder</DialogTitle>
           </DialogHeader>
           
-          <div className="py-4">
-            <p className="text-sm text-muted-foreground mb-4">
-              Select a folder to save your checklist, or create a new one.
-            </p>
-            
-            <div className="border rounded-lg p-3 space-y-1 max-h-64 overflow-y-auto bg-background">
-              {folders.map((folder) => (
-                <div
-                  key={folder.id}
-                  className={cn(
-                    "flex items-center gap-2 py-2 px-2 rounded-md cursor-pointer transition-colors",
-                    selectedFolderId === folder.id 
-                      ? "bg-primary/10 text-primary" 
-                      : "hover:bg-muted"
-                  )}
-                  onClick={() => setSelectedFolderId(folder.id)}
-                >
-                  <Folder className={cn(
-                    "h-4 w-4",
-                    selectedFolderId === folder.id ? "text-primary" : "text-muted-foreground"
-                  )} />
-                  <span className="text-sm truncate flex-1">{folder.name}</span>
-                  {selectedFolderId === folder.id && (
-                    <Check className="h-4 w-4 text-primary" />
-                  )}
-                </div>
-              ))}
+          <div className="py-4 space-y-4">
+            {/* Checklist Name Input */}
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-foreground">Checklist Name</label>
+              <Input
+                value={checklistName}
+                onChange={(e) => setChecklistName(e.target.value)}
+                placeholder="Enter checklist name"
+                className="w-full"
+              />
+            </div>
 
-              {/* Create New Folder */}
-              {isCreatingFolder ? (
-                <div className="flex items-center gap-2 py-2 px-2">
-                  <FolderPlus className="h-4 w-4 text-primary" />
-                  <Input
-                    autoFocus
-                    placeholder="New folder name"
-                    value={newFolderName}
-                    onChange={(e) => setNewFolderName(e.target.value)}
-                    onKeyDown={(e) => {
-                      if (e.key === 'Enter') handleCreateFolder();
-                      if (e.key === 'Escape') {
-                        setIsCreatingFolder(false);
-                        setNewFolderName('');
-                      }
-                    }}
-                    className="h-7 text-sm flex-1"
-                  />
-                  <Button size="icon" variant="ghost" className="h-7 w-7" onClick={handleCreateFolder}>
-                    <Plus className="h-4 w-4" />
-                  </Button>
-                  <Button size="icon" variant="ghost" className="h-7 w-7" onClick={() => {
-                    setIsCreatingFolder(false);
-                    setNewFolderName('');
-                  }}>
-                    <X className="h-4 w-4" />
-                  </Button>
-                </div>
-              ) : (
-                <button
-                  onClick={() => setIsCreatingFolder(true)}
-                  className="flex items-center gap-2 py-2 px-2 rounded-md text-sm text-primary hover:bg-primary/10 transition-colors w-full"
-                >
-                  <FolderPlus className="h-4 w-4" />
-                  Create New Folder
-                </button>
-              )}
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-foreground">Save to Folder</label>
+              <div className="border rounded-lg p-3 space-y-1 max-h-64 overflow-y-auto bg-background">
+                {folders.map((folder) => (
+                  <div
+                    key={folder.id}
+                    className={cn(
+                      "flex items-center gap-2 py-2 px-2 rounded-md cursor-pointer transition-colors",
+                      selectedFolderId === folder.id 
+                        ? "bg-primary/10 text-primary" 
+                        : "hover:bg-muted"
+                    )}
+                    onClick={() => setSelectedFolderId(folder.id)}
+                  >
+                    <Folder className={cn(
+                      "h-4 w-4",
+                      selectedFolderId === folder.id ? "text-primary" : "text-muted-foreground"
+                    )} />
+                    <span className="text-sm truncate flex-1">{folder.name}</span>
+                    {selectedFolderId === folder.id && (
+                      <Check className="h-4 w-4 text-primary" />
+                    )}
+                  </div>
+                ))}
+
+                {/* Create New Folder */}
+                {isCreatingFolder ? (
+                  <div className="flex items-center gap-2 py-2 px-2">
+                    <FolderPlus className="h-4 w-4 text-primary" />
+                    <Input
+                      autoFocus
+                      placeholder="New folder name"
+                      value={newFolderName}
+                      onChange={(e) => setNewFolderName(e.target.value)}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter') handleCreateFolder();
+                        if (e.key === 'Escape') {
+                          setIsCreatingFolder(false);
+                          setNewFolderName('');
+                        }
+                      }}
+                      className="h-7 text-sm flex-1"
+                    />
+                    <Button size="icon" variant="ghost" className="h-7 w-7" onClick={handleCreateFolder}>
+                      <Plus className="h-4 w-4" />
+                    </Button>
+                    <Button size="icon" variant="ghost" className="h-7 w-7" onClick={() => {
+                      setIsCreatingFolder(false);
+                      setNewFolderName('');
+                    }}>
+                      <X className="h-4 w-4" />
+                    </Button>
+                  </div>
+                ) : (
+                  <button
+                    onClick={() => setIsCreatingFolder(true)}
+                    className="flex items-center gap-2 py-2 px-2 rounded-md text-sm text-primary hover:bg-primary/10 transition-colors w-full"
+                  >
+                    <FolderPlus className="h-4 w-4" />
+                    Create New Folder
+                  </button>
+                )}
+              </div>
             </div>
           </div>
 
@@ -419,7 +433,7 @@ export function GenerationPreview({
             </Button>
             <Button 
               onClick={handleConfirmSave}
-              disabled={!selectedFolderId}
+              disabled={!selectedFolderId || !checklistName.trim()}
               className="bg-[#1C63A6] hover:bg-[#1C63A6]/90"
             >
               Save
