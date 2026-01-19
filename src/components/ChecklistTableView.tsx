@@ -1015,40 +1015,6 @@ function TableRow({
                 )}
               </div>
             )}
-
-            {/* Additional explanation section */}
-            {hasExplanation && (
-              <div className="mt-3">
-                <div className="flex items-center justify-between mb-2">
-                  <p className="text-xs text-muted-foreground">Additional Explanation</p>
-                  {!isPreviewMode && (
-                    <button 
-                      onClick={handleRemoveExplanation}
-                      className="p-1 rounded hover:bg-muted transition-colors"
-                    >
-                      <X className="h-3.5 w-3.5 text-muted-foreground" />
-                    </button>
-                  )}
-                </div>
-                <div className="relative">
-                  <Textarea
-                    placeholder="Add any additional context or explanation..."
-                    value={question.explanation || ''}
-                    onChange={(e) => handleExplanationChange(e.target.value)}
-                    className="min-h-[60px] pr-12 resize-none bg-muted/30 border-muted text-sm"
-                    disabled={isPreviewMode}
-                  />
-                  {!isPreviewMode && (
-                    <button
-                      onClick={handleAIClick}
-                      className="absolute bottom-2 right-2 p-1.5 rounded text-accent hover:bg-accent/10 transition-colors"
-                    >
-                      <Sparkles className="h-4 w-4" />
-                    </button>
-                  )}
-                </div>
-              </div>
-            )}
           </div>
 
         </td>
@@ -1090,6 +1056,45 @@ function TableRow({
           }}
           isPreviewMode={isPreviewMode}
         />
+      )}
+
+      {/* Additional explanation row - shown after sub-questions */}
+      {hasExplanation && (
+        <tr className="bg-muted/5 border-b">
+          <td className="py-2 px-2 w-14"></td>
+          <td colSpan={3} className="py-2 px-3">
+            <div className="ml-6 pl-4 border-l-2 border-accent/30">
+              <div className="flex items-center justify-between mb-2">
+                <p className="text-xs text-muted-foreground font-medium">Additional Explanation</p>
+                {!isPreviewMode && (
+                  <button 
+                    onClick={handleRemoveExplanation}
+                    className="p-1 rounded hover:bg-muted transition-colors"
+                  >
+                    <X className="h-3.5 w-3.5 text-muted-foreground" />
+                  </button>
+                )}
+              </div>
+              <div className="relative">
+                <Textarea
+                  placeholder="Add any additional context or explanation..."
+                  value={question.explanation || ''}
+                  onChange={(e) => handleExplanationChange(e.target.value)}
+                  className="min-h-[60px] pr-12 resize-none bg-background border-muted text-sm"
+                  disabled={isPreviewMode}
+                />
+                {!isPreviewMode && (
+                  <button
+                    onClick={handleAIClick}
+                    className="absolute bottom-2 right-2 p-1.5 rounded text-accent hover:bg-accent/10 transition-colors"
+                  >
+                    <Sparkles className="h-4 w-4" />
+                  </button>
+                )}
+              </div>
+            </div>
+          </td>
+        </tr>
       )}
 
       {showAIMenu && (
