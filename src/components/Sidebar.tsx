@@ -15,7 +15,11 @@ import {
   ClipboardList,
   FileBarChart,
   StickyNote,
-  Table
+  Table,
+  Copy,
+  Pencil,
+  FolderInput,
+  MoreVertical
 } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -25,7 +29,15 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
+  DropdownMenuSeparator,
 } from '@/components/ui/dropdown-menu';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from '@/components/ui/dialog';
 import lukaLogo from '@/assets/luka-logo.png';
 
 interface Template {
@@ -122,6 +134,13 @@ export function Sidebar() {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedDropdown, setSelectedDropdown] = useState('engagements');
   const [savedChecklists, setSavedChecklists] = useState<SavedChecklist[]>([]);
+  
+  // Context menu state
+  const [renameDialogOpen, setRenameDialogOpen] = useState(false);
+  const [moveDialogOpen, setMoveDialogOpen] = useState(false);
+  const [selectedChecklist, setSelectedChecklist] = useState<SavedChecklist | null>(null);
+  const [renameValue, setRenameValue] = useState('');
+  const [selectedMoveFolder, setSelectedMoveFolder] = useState('');
 
   // Load saved checklists on mount and listen for new saves
   useEffect(() => {
@@ -144,6 +163,13 @@ export function Sidebar() {
     };
   }, []);
 
+  // Sync to localStorage whenever savedChecklists changes
+  useEffect(() => {
+    if (savedChecklists.length > 0) {
+      localStorage.setItem('savedChecklists', JSON.stringify(savedChecklists));
+    }
+  }, [savedChecklists]);
+
   const handleDropdownSelect = (itemId: string) => {
     setSelectedDropdown(itemId);
     const item = dropdownItems.find(i => i.id === itemId);
@@ -156,6 +182,60 @@ export function Sidebar() {
     setTemplates(prev => prev.map(t => 
       t.id === id ? { ...t, isExpanded: !t.isExpanded } : t
     ));
+  };
+
+  // Checklist actions
+  const handleDuplicate = (checklist: SavedChecklist) => {
+    const newChecklist: SavedChecklist = {
+      ...checklist,
+      id: `checklist-${Date.now()}`,
+      name: `${checklist.name} (Copy)`,
+    };
+    setSavedChecklists(prev => [...prev, newChecklist]);
+  };
+
+  const handleDelete = (checklistId: string) => {
+    setSavedChecklists(prev => prev.filter(c => c.id !== checklistId));
+    const remaining = savedChecklists.filter(c => c.id !== checklistId);
+    localStorage.setItem('savedChecklists', JSON.stringify(remaining));
+  };
+
+  const handleRenameStart = (checklist: SavedChecklist) => {
+    setSelectedChecklist(checklist);
+    setRenameValue(checklist.name);
+    setRenameDialogOpen(true);
+  };
+
+  const handleRenameConfirm = () => {
+    if (selectedChecklist && renameValue.trim()) {
+      setSavedChecklists(prev => 
+        prev.map(c => c.id === selectedChecklist.id ? { ...c, name: renameValue.trim() } : c)
+      );
+      setRenameDialogOpen(false);
+      setSelectedChecklist(null);
+    }
+  };
+
+  const handleMoveStart = (checklist: SavedChecklist) => {
+    setSelectedChecklist(checklist);
+    setSelectedMoveFolder(checklist.folderId);
+    setMoveDialogOpen(true);
+  };
+
+  const handleMoveConfirm = () => {
+    if (selectedChecklist && selectedMoveFolder) {
+      const targetFolder = templates.find(t => t.id === selectedMoveFolder);
+      if (targetFolder) {
+        setSavedChecklists(prev => 
+          prev.map(c => c.id === selectedChecklist.id 
+            ? { ...c, folderId: selectedMoveFolder, folderName: targetFolder.name } 
+            : c
+          )
+        );
+      }
+      setMoveDialogOpen(false);
+      setSelectedChecklist(null);
+    }
   };
 
   // Get checklists for a specific folder
@@ -206,13 +286,57 @@ export function Sidebar() {
             {folderChecklists.map(checklist => (
               <div
                 key={checklist.id}
-                className="flex items-center gap-2 py-1.5 px-2 ml-6 rounded-md cursor-pointer hover:bg-muted transition-colors text-sm"
-                onClick={() => navigate('/', { state: { checklistId: checklist.id } })}
+                className="group flex items-center gap-2 py-1.5 px-2 ml-6 rounded-md cursor-pointer hover:bg-muted transition-colors text-sm"
               >
                 <span className="w-4 flex-shrink-0" />
                 <span className="w-4 flex-shrink-0" />
                 <ClipboardList className="h-4 w-4 text-orange-500 flex-shrink-0" />
-                <span className="truncate flex-1 text-foreground">{checklist.name}</span>
+                <span 
+                  className="truncate flex-1 text-foreground"
+                  onClick={() => navigate('/', { state: { checklistId: checklist.id } })}
+                >
+                  {checklist.name}
+                </span>
+                
+                {/* Context Menu */}
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild onClick={(e) => e.stopPropagation()}>
+                    <button className="opacity-0 group-hover:opacity-100 p-1 hover:bg-muted-foreground/10 rounded transition-opacity">
+                      <MoreVertical className="h-3.5 w-3.5 text-muted-foreground" />
+                    </button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="start" className="w-48 bg-card border shadow-lg">
+                    <DropdownMenuItem 
+                      onClick={(e) => { e.stopPropagation(); handleDuplicate(checklist); }}
+                      className="gap-2 cursor-pointer"
+                    >
+                      <Copy className="h-4 w-4 text-primary" />
+                      Duplicate
+                    </DropdownMenuItem>
+                    <DropdownMenuItem 
+                      onClick={(e) => { e.stopPropagation(); handleDelete(checklist.id); }}
+                      className="gap-2 cursor-pointer text-destructive focus:text-destructive"
+                    >
+                      <Trash2 className="h-4 w-4" />
+                      Delete
+                    </DropdownMenuItem>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem 
+                      onClick={(e) => { e.stopPropagation(); handleRenameStart(checklist); }}
+                      className="gap-2 cursor-pointer"
+                    >
+                      <Pencil className="h-4 w-4 text-primary" />
+                      Rename
+                    </DropdownMenuItem>
+                    <DropdownMenuItem 
+                      onClick={(e) => { e.stopPropagation(); handleMoveStart(checklist); }}
+                      className="gap-2 cursor-pointer"
+                    >
+                      <FolderInput className="h-4 w-4 text-primary" />
+                      Move to different folder
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
               </div>
             ))}
             {/* Render child folders/templates */}
@@ -352,6 +476,86 @@ export function Sidebar() {
           {templates.map(template => renderTemplate(template))}
         </div>
       </div>
+
+      {/* Rename Dialog */}
+      <Dialog open={renameDialogOpen} onOpenChange={setRenameDialogOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Rename Checklist</DialogTitle>
+          </DialogHeader>
+          <div className="py-4">
+            <Input
+              value={renameValue}
+              onChange={(e) => setRenameValue(e.target.value)}
+              placeholder="Enter new name"
+              className="w-full"
+              autoFocus
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') handleRenameConfirm();
+              }}
+            />
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setRenameDialogOpen(false)}>
+              Cancel
+            </Button>
+            <Button 
+              onClick={handleRenameConfirm}
+              disabled={!renameValue.trim()}
+              className="bg-primary hover:bg-primary/90"
+            >
+              Rename
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Move to Folder Dialog */}
+      <Dialog open={moveDialogOpen} onOpenChange={setMoveDialogOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Move to Folder</DialogTitle>
+          </DialogHeader>
+          <div className="py-4">
+            <p className="text-sm text-muted-foreground mb-3">
+              Select a folder to move "{selectedChecklist?.name}" to:
+            </p>
+            <div className="border rounded-lg p-3 space-y-1 max-h-64 overflow-y-auto bg-background">
+              {templates.map((folder) => (
+                <div
+                  key={folder.id}
+                  className={`flex items-center gap-2 py-2 px-2 rounded-md cursor-pointer transition-colors ${
+                    selectedMoveFolder === folder.id 
+                      ? 'bg-primary/10 text-primary' 
+                      : 'hover:bg-muted'
+                  }`}
+                  onClick={() => setSelectedMoveFolder(folder.id)}
+                >
+                  <Folder className={`h-4 w-4 ${
+                    selectedMoveFolder === folder.id ? 'text-primary' : 'text-muted-foreground'
+                  }`} />
+                  <span className="text-sm truncate flex-1">{folder.name}</span>
+                  {selectedMoveFolder === folder.id && (
+                    <Check className="h-4 w-4 text-primary" />
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setMoveDialogOpen(false)}>
+              Cancel
+            </Button>
+            <Button 
+              onClick={handleMoveConfirm}
+              disabled={!selectedMoveFolder || selectedMoveFolder === selectedChecklist?.folderId}
+              className="bg-primary hover:bg-primary/90"
+            >
+              Move
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
