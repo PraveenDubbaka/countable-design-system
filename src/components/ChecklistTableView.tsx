@@ -119,26 +119,27 @@ function SubQuestionTableRow({
 
   const renderSubAnswerField = () => {
     if (isPreviewMode) {
-      // Show proper answer display in preview mode
+      // Interactive preview mode - users can answer questions to test
       switch (subQuestion.answerType) {
         case 'yes-no':
           return (
             <div className="flex gap-4">
               {['Yes', 'No'].map((option) => (
-                <div key={option} className="flex items-center gap-2">
+                <label key={option} className="flex items-center gap-2 cursor-pointer group">
                   <div 
-                    className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${
+                    className={`w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all ${
                       subQuestion.answer === option 
                         ? 'border-primary bg-primary' 
-                        : 'border-muted-foreground/30'
+                        : 'border-muted-foreground/30 group-hover:border-primary/50'
                     }`}
+                    onClick={() => handleAnswerChange(option)}
                   >
                     {subQuestion.answer === option && (
                       <Check className="h-3 w-3 text-primary-foreground" />
                     )}
                   </div>
                   <span className="text-sm">{option}</span>
-                </div>
+                </label>
               ))}
             </div>
           );
@@ -148,30 +149,43 @@ function SubQuestionTableRow({
           return (
             <div className="flex flex-wrap gap-3">
               {yesNoNaOptions.map((option) => (
-                <div key={option} className="flex items-center gap-2">
+                <label key={option} className="flex items-center gap-2 cursor-pointer group">
                   <div 
-                    className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${
+                    className={`w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all ${
                       subQuestion.answer === option 
                         ? 'border-primary bg-primary' 
-                        : 'border-muted-foreground/30'
+                        : 'border-muted-foreground/30 group-hover:border-primary/50'
                     }`}
+                    onClick={() => handleAnswerChange(option)}
                   >
                     {subQuestion.answer === option && (
                       <Check className="h-3 w-3 text-primary-foreground" />
                     )}
                   </div>
                   <span className="text-sm">{option}</span>
-                </div>
+                </label>
               ))}
             </div>
           );
 
         case 'short-answer':
+          return (
+            <Input
+              placeholder="Enter answer..."
+              value={subQuestion.answer || ''}
+              onChange={(e) => handleAnswerChange(e.target.value)}
+              className="h-9 bg-background"
+            />
+          );
+
         case 'long-answer':
           return (
-            <span className="text-sm text-foreground">
-              {subQuestion.answer || <span className="text-muted-foreground italic">No answer provided</span>}
-            </span>
+            <Textarea
+              placeholder="Enter detailed answer..."
+              value={subQuestion.answer || ''}
+              onChange={(e) => handleAnswerChange(e.target.value)}
+              className="min-h-[80px] resize-none bg-background"
+            />
           );
 
         case 'dropdown':
@@ -180,29 +194,33 @@ function SubQuestionTableRow({
           return (
             <div className="space-y-1">
               {options.map((option, i) => (
-                <div key={i} className="flex items-center gap-2">
+                <label key={i} className="flex items-center gap-2 cursor-pointer group">
                   <div 
-                    className={`w-4 h-4 rounded border-2 flex items-center justify-center ${
+                    className={`w-4 h-4 rounded border-2 flex items-center justify-center transition-all ${
                       subQuestion.answer === option 
                         ? 'border-primary bg-primary' 
-                        : 'border-muted-foreground/30'
+                        : 'border-muted-foreground/30 group-hover:border-primary/50'
                     }`}
+                    onClick={() => handleAnswerChange(option)}
                   >
                     {subQuestion.answer === option && (
                       <Check className="h-2.5 w-2.5 text-primary-foreground" />
                     )}
                   </div>
                   <span className="text-sm">{option}</span>
-                </div>
+                </label>
               ))}
             </div>
           );
 
         default:
           return (
-            <span className="text-sm text-foreground">
-              {subQuestion.answer || <span className="text-muted-foreground italic">No answer provided</span>}
-            </span>
+            <Input
+              placeholder="Enter answer..."
+              value={subQuestion.answer || ''}
+              onChange={(e) => handleAnswerChange(e.target.value)}
+              className="h-9 bg-background"
+            />
           );
       }
     }
@@ -644,26 +662,27 @@ function TableRow({
 
   const renderAnswerField = () => {
     if (isPreviewMode) {
-      // Show proper answer display in preview mode
+      // Interactive preview mode - users can answer questions to test
       switch (question.answerType) {
         case 'yes-no':
           return (
             <div className="flex gap-4">
               {['Yes', 'No'].map((option) => (
-                <div key={option} className="flex items-center gap-2">
+                <label key={option} className="flex items-center gap-2 cursor-pointer group">
                   <div 
-                    className={`w-4 h-4 rounded-full border-2 flex items-center justify-center ${
+                    className={`w-4 h-4 rounded-full border-2 flex items-center justify-center transition-all ${
                       question.answer === option 
                         ? 'border-primary bg-primary' 
-                        : 'border-muted-foreground/30'
+                        : 'border-muted-foreground/30 group-hover:border-primary/50'
                     }`}
+                    onClick={() => handleAnswerChange(option)}
                   >
                     {question.answer === option && (
                       <div className="w-1.5 h-1.5 rounded-full bg-primary-foreground" />
                     )}
                   </div>
                   <span className="text-sm text-foreground">{option}</span>
-                </div>
+                </label>
               ))}
             </div>
           );
@@ -672,30 +691,43 @@ function TableRow({
           return (
             <div className="flex gap-4">
               {['Yes', 'No', 'N/A'].map((option) => (
-                <div key={option} className="flex items-center gap-2">
+                <label key={option} className="flex items-center gap-2 cursor-pointer group">
                   <div 
-                    className={`w-4 h-4 rounded-full border-2 flex items-center justify-center ${
+                    className={`w-4 h-4 rounded-full border-2 flex items-center justify-center transition-all ${
                       question.answer === option 
                         ? 'border-primary bg-primary' 
-                        : 'border-muted-foreground/30'
+                        : 'border-muted-foreground/30 group-hover:border-primary/50'
                     }`}
+                    onClick={() => handleAnswerChange(option)}
                   >
                     {question.answer === option && (
                       <div className="w-1.5 h-1.5 rounded-full bg-primary-foreground" />
                     )}
                   </div>
                   <span className="text-sm text-foreground">{option}</span>
-                </div>
+                </label>
               ))}
             </div>
           );
 
         case 'short-answer':
+          return (
+            <Input
+              placeholder="Enter your answer..."
+              value={question.answer || ''}
+              onChange={(e) => handleAnswerChange(e.target.value)}
+              className="bg-background h-9"
+            />
+          );
+
         case 'long-answer':
           return (
-            <span className="text-sm text-foreground">
-              {question.answer || <span className="text-muted-foreground italic">No answer provided</span>}
-            </span>
+            <Textarea
+              placeholder="Enter your detailed answer..."
+              value={question.answer || ''}
+              onChange={(e) => handleAnswerChange(e.target.value)}
+              className="min-h-[80px] resize-none bg-background"
+            />
           );
 
         case 'dropdown':
@@ -703,29 +735,33 @@ function TableRow({
           return (
             <div className="space-y-1">
               {(question.options || ['Option 1', 'Option 2', 'Option 3']).map((option, i) => (
-                <div key={i} className="flex items-center gap-2">
+                <label key={i} className="flex items-center gap-2 cursor-pointer group">
                   <div 
-                    className={`w-4 h-4 rounded border-2 flex items-center justify-center ${
+                    className={`w-4 h-4 rounded border-2 flex items-center justify-center transition-all ${
                       question.answer === option 
                         ? 'border-primary bg-primary' 
-                        : 'border-muted-foreground/30'
+                        : 'border-muted-foreground/30 group-hover:border-primary/50'
                     }`}
+                    onClick={() => handleAnswerChange(option)}
                   >
                     {question.answer === option && (
                       <Check className="h-2.5 w-2.5 text-primary-foreground" />
                     )}
                   </div>
                   <span className="text-sm text-foreground">{option}</span>
-                </div>
+                </label>
               ))}
             </div>
           );
 
         default:
           return (
-            <span className="text-sm text-foreground">
-              {question.answer || <span className="text-muted-foreground italic">No answer provided</span>}
-            </span>
+            <Input
+              placeholder="Enter your answer..."
+              value={question.answer || ''}
+              onChange={(e) => handleAnswerChange(e.target.value)}
+              className="bg-background h-9"
+            />
           );
       }
     }
