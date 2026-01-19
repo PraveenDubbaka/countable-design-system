@@ -637,7 +637,11 @@ export function SortableQuestionCard({
       >
         {/* Floating Toolbar - appears when focused, hidden in preview mode */}
         {isFocused && !isPreviewMode && (
-          <div ref={toolbarRef} className="absolute -top-12 left-1/2 -translate-x-1/2 z-30">
+          <div 
+            ref={toolbarRef} 
+            className="absolute -top-12 left-1/2 -translate-x-1/2 z-50"
+            onClick={(e) => e.stopPropagation()}
+          >
             <QuestionToolbar
               currentType={question.answerType}
               onChangeType={handleTypeChange}

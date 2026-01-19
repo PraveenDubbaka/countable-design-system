@@ -78,7 +78,7 @@ export function QuestionToolbar({
             <span className="text-xs">{answerTypeLabels[currentType]}</span>
           </Button>
         </DropdownMenuTrigger>
-        <DropdownMenuContent align="start" className="w-48">
+        <DropdownMenuContent align="start" className="w-48 z-[100]">
           {(Object.keys(answerTypeLabels) as AnswerType[]).map((type) => (
             <DropdownMenuItem 
               key={type}
