@@ -1060,8 +1060,8 @@ function TableRow({
 
       {/* Additional explanation row - shown after sub-questions */}
       {hasExplanation && (
-        <tr className="bg-muted/5 border-b border-t-0">
-          <td colSpan={4} className="py-3 px-4">
+        <tr className="bg-muted/5 border-b" style={{ borderTop: 'none' }}>
+          <td colSpan={4} className="py-3 px-4 pt-0">
             <div className="flex items-center justify-between mb-2">
               <p className="text-xs text-muted-foreground font-medium">Additional Explanation</p>
               {!isPreviewMode && (
