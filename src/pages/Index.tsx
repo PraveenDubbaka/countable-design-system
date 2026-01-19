@@ -282,7 +282,22 @@ type GenerateNavState = {
     prompt: string;
     scope: GenerationScope;
     cardSize?: string;
+    checklistName?: string;
+    savedChecklistId?: string;
   };
+  checklistId?: string;
+};
+
+// Helper to update checklist data in localStorage
+const updateChecklistInStorage = (checklistId: string, checklistData: Checklist) => {
+  const stored = localStorage.getItem('savedChecklists');
+  if (stored) {
+    const savedChecklists = JSON.parse(stored);
+    const updated = savedChecklists.map((c: any) => 
+      c.id === checklistId ? { ...c, data: checklistData } : c
+    );
+    localStorage.setItem('savedChecklists', JSON.stringify(updated));
+  }
 };
 
 export default function Index() {
@@ -291,8 +306,9 @@ export default function Index() {
 
   const [checklist, setChecklist] = useState<Checklist | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
+  const [currentChecklistId, setCurrentChecklistId] = useState<string | null>(null);
 
-  const handleGenerate = async (prompt: string, scope: GenerationScope, file?: File) => {
+  const handleGenerate = async (prompt: string, scope: GenerationScope, savedChecklistId?: string) => {
     setIsGenerating(true);
 
     await new Promise(resolve => setTimeout(resolve, 1500));
@@ -300,19 +316,40 @@ export default function Index() {
     const generated = generateMockChecklist(prompt, scope);
     setChecklist(generated);
     setIsGenerating(false);
+
+    // Save the generated checklist data to localStorage if we have a savedChecklistId
+    if (savedChecklistId) {
+      setCurrentChecklistId(savedChecklistId);
+      updateChecklistInStorage(savedChecklistId, generated);
+    }
   };
 
-  // If the user came from /generate, start generation automatically
+  // If the user came from /generate or clicked a saved checklist, handle it
   useEffect(() => {
     const navState = location.state as GenerateNavState | null;
     const gen = navState?.generate;
-
-    if (!gen?.prompt) return;
+    const checklistId = navState?.checklistId;
 
     // Clear the navigation state so we don't regenerate on refresh/back
     navigate('/', { replace: true, state: null });
 
-    void handleGenerate(gen.prompt, gen.scope ?? 'standard');
+    // Load saved checklist by ID (user clicked on existing checklist)
+    if (checklistId) {
+      setCurrentChecklistId(checklistId);
+      const stored = localStorage.getItem('savedChecklists');
+      if (stored) {
+        const savedChecklists = JSON.parse(stored);
+        const found = savedChecklists.find((c: any) => c.id === checklistId);
+        if (found?.data) {
+          setChecklist(found.data);
+          return;
+        }
+      }
+    }
+
+    if (!gen?.prompt) return;
+
+    void handleGenerate(gen.prompt, gen.scope ?? 'standard', gen.savedChecklistId);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [location.state, navigate]);
 
@@ -342,8 +379,10 @@ export default function Index() {
   };
 
   const handleDirectSave = () => {
+    if (checklist && currentChecklistId) {
+      updateChecklistInStorage(currentChecklistId, checklist);
+    }
     toast.success('Checklist saved');
-    // Keep the checklist open after saving
   };
 
   return (
