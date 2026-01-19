@@ -175,7 +175,8 @@ export function Sidebar() {
     setSelectedDropdown(itemId);
     const item = dropdownItems.find(i => i.id === itemId);
     if (item?.showCreator) {
-      navigate('/generate', { state: { contentType: itemId } });
+      // Navigate to creation dashboard first, not directly to generate
+      navigate('/create', { state: { contentType: itemId } });
     }
   };
 
