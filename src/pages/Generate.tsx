@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { 
   CheckSquare, 
   Table, 
@@ -24,9 +24,25 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { toast } from 'sonner';
+import { ContentType as SidebarContentType } from '@/components/Sidebar';
 
 type ContentType = 'checklist' | 'worksheet' | 'letter' | 'note';
 type DetailLevel = 'concise' | 'standard' | 'detailed';
+
+// Map sidebar content types to generate page types
+const sidebarToGenerateType: Record<SidebarContentType, ContentType> = {
+  checklists: 'checklist',
+  reports: 'worksheet',
+  letters: 'letter',
+  notes: 'note',
+};
+
+const contentTypeLabels: Record<ContentType, string> = {
+  checklist: 'Checklist',
+  worksheet: 'Report',
+  letter: 'Letter',
+  note: 'Notes to Financial Statements',
+};
 
 interface ExamplePrompt {
   icon: React.ReactNode;
@@ -174,6 +190,7 @@ const placeholdersByType: Record<ContentType, string> = {
 
 export default function Generate() {
   const navigate = useNavigate();
+  const location = useLocation();
   const [contentType, setContentType] = useState<ContentType>('checklist');
   const [detailLevel, setDetailLevel] = useState<DetailLevel>('standard');
   const [cardSize, setCardSize] = useState('default');
@@ -181,17 +198,17 @@ export default function Generate() {
   const [isGenerating, setIsGenerating] = useState(false);
   const [displayedPrompts, setDisplayedPrompts] = useState<ExamplePrompt[]>(promptsByType.checklist);
 
-  const contentTypes = [
-    { id: 'checklist', icon: CheckSquare, label: 'Checklist' },
-    { id: 'worksheet', icon: Table, label: 'Reports' },
-    { id: 'letter', icon: FileText, label: 'Letter' },
-    { id: 'note', icon: StickyNote, label: 'Note' },
-  ];
-
-  const handleTypeChange = (type: ContentType) => {
-    setContentType(type);
-    setDisplayedPrompts(promptsByType[type]);
-  };
+  // Handle content type from navigation state
+  useEffect(() => {
+    const navState = location.state as { contentType?: SidebarContentType } | null;
+    if (navState?.contentType) {
+      const mappedType = sidebarToGenerateType[navState.contentType];
+      setContentType(mappedType);
+      setDisplayedPrompts(promptsByType[mappedType]);
+      // Clear state to prevent persistence on refresh
+      navigate('/generate', { replace: true, state: null });
+    }
+  }, [location.state, navigate]);
 
   const handleShuffle = () => {
     const currentPrompts = promptsByType[contentType];
@@ -243,26 +260,10 @@ export default function Generate() {
 
           {/* Header */}
           <div className="text-center mb-8">
-            <h1 className="text-5xl font-bold text-foreground mb-3 italic tracking-tight">Generate</h1>
+            <h1 className="text-5xl font-bold text-foreground mb-3 italic tracking-tight">
+              Generate {contentTypeLabels[contentType]}
+            </h1>
             <p className="text-muted-foreground text-lg">What would you like to create today?</p>
-          </div>
-
-          {/* Content Type Tabs */}
-          <div className="flex justify-center gap-2 mb-6">
-            {contentTypes.map(({ id, icon: Icon, label }) => (
-              <button
-                key={id}
-                onClick={() => handleTypeChange(id as ContentType)}
-                className={`flex flex-col items-center gap-2 px-8 py-4 rounded-xl border-2 transition-all min-w-[100px] ${
-                  contentType === id
-                    ? 'border-primary bg-white text-primary shadow-sm'
-                    : 'border-transparent bg-white/60 text-muted-foreground hover:bg-white/80 hover:border-border'
-                }`}
-              >
-                <Icon className="h-6 w-6" />
-                <span className="text-sm font-medium">{label}</span>
-              </button>
-            ))}
           </div>
 
           {/* Options Row */}

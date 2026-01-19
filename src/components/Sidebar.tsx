@@ -119,7 +119,7 @@ export function Sidebar() {
     setSelectedDropdown(itemId);
     const item = dropdownItems.find(i => i.id === itemId);
     if (item?.showCreator) {
-      navigate('/', { state: { contentType: itemId } });
+      navigate('/generate', { state: { contentType: itemId } });
     }
   };
 
