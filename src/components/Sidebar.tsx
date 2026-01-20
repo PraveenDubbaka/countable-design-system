@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { 
   ChevronDown,
   ChevronRight,
@@ -130,10 +130,29 @@ export type ContentType = 'letters' | 'checklists' | 'reports' | 'notes';
 
 export function Sidebar() {
   const navigate = useNavigate();
+  const location = useLocation();
   const [templates, setTemplates] = useState<Template[]>(initialTemplates);
   const [activeTab, setActiveTab] = useState<'firm' | 'master'>('firm');
   const [searchQuery, setSearchQuery] = useState('');
-  const [selectedDropdown, setSelectedDropdown] = useState('engagements');
+  
+  // Persist dropdown selection in localStorage
+  const [selectedDropdown, setSelectedDropdown] = useState(() => {
+    const stored = localStorage.getItem('selectedDropdown');
+    return stored || 'engagements';
+  });
+
+  // Sync selection to localStorage whenever it changes
+  useEffect(() => {
+    localStorage.setItem('selectedDropdown', selectedDropdown);
+  }, [selectedDropdown]);
+
+  // Restore selection from navigation state if contentType is passed
+  useEffect(() => {
+    const navState = location.state as { contentType?: string } | null;
+    if (navState?.contentType) {
+      setSelectedDropdown(navState.contentType);
+    }
+  }, [location.state]);
   const [savedChecklists, setSavedChecklists] = useState<SavedChecklist[]>([]);
   
   // Context menu state
