@@ -558,7 +558,7 @@ function SortableSubItemRow({ subItem, onUpdate, onDelete, isPreviewMode, index,
       className={`group flex items-stretch hover:bg-gray-100 transition-colors relative ${!isPreviewMode ? 'cursor-grab active:cursor-grabbing' : ''}`}
     >
       {/* Checkbox column */}
-      <div className="w-10 flex items-center justify-center">
+      <div className="w-10 shrink-0 flex items-center justify-center">
         <Checkbox 
           checked={isSelected} 
           onCheckedChange={() => setIsSelected(!isSelected)}
@@ -566,8 +566,8 @@ function SortableSubItemRow({ subItem, onUpdate, onDelete, isPreviewMode, index,
         />
       </div>
 
-      {/* Sub-item name */}
-      <div className="flex-1 min-w-[280px] px-3 py-2.5 border-r border-gray-200">
+      {/* Sub-item name - adjusted width to account for being nested inside ml-10 container */}
+      <div className="w-[270px] shrink-0 px-3 py-2.5 border-r border-gray-200">
         {isEditingName && !isPreviewMode ? (
           <RichTextQuestionEditor
             value={subItem.text}
@@ -592,7 +592,7 @@ function SortableSubItemRow({ subItem, onUpdate, onDelete, isPreviewMode, index,
       </div>
 
       {/* Response column with inline type selector and response field */}
-      <div className="w-[200px] px-2 py-2 border-r border-gray-200">
+      <div className="w-[200px] shrink-0 px-2 py-2 border-r border-gray-200">
         <div className="flex flex-col gap-1.5">
           <ResponseTypeDropdown
             currentType={subItem.answerType}
@@ -607,7 +607,7 @@ function SortableSubItemRow({ subItem, onUpdate, onDelete, isPreviewMode, index,
 
       {/* Additional Explanation column - conditionally rendered */}
       {visibleColumns.explanation && (
-        <div className="w-[200px] px-2 py-2 border-r border-gray-200">
+        <div className="w-[200px] shrink-0 px-2 py-2 border-r border-gray-200">
           <AITextarea
             value={subItem.explanation || ''}
             onChange={(val) => onUpdate({ ...subItem, explanation: val })}
@@ -620,7 +620,7 @@ function SortableSubItemRow({ subItem, onUpdate, onDelete, isPreviewMode, index,
 
       {/* Reference column - conditionally rendered */}
       {visibleColumns.reference && (
-        <div className="w-[200px] px-2 py-2 border-r border-gray-200 flex items-center">
+        <div className="w-[200px] shrink-0 px-2 py-2 border-r border-gray-200 flex items-center">
           <RefButton
             reference={(subItem as any).reference}
             onAttach={(doc) => onUpdate({ ...subItem, reference: doc } as any)}
@@ -630,8 +630,13 @@ function SortableSubItemRow({ subItem, onUpdate, onDelete, isPreviewMode, index,
         </div>
       )}
 
+      {/* Add column placeholder to maintain alignment */}
+      {!isPreviewMode && (!visibleColumns.explanation || !visibleColumns.reference) && (
+        <div className="w-[100px] shrink-0" />
+      )}
+
       {/* Actions - delete button */}
-      <div className="w-12 flex items-center justify-center">
+      <div className="w-16 shrink-0 flex items-center justify-center">
         {!isPreviewMode && (
           <button
             onClick={(e) => {
@@ -821,7 +826,7 @@ function SortableItemRow({
         className={`group flex items-center border-b border-gray-200 hover:bg-gray-100 transition-colors ${isSelected ? 'bg-gray-100' : ''} ${!isPreviewMode && !isEditingName ? 'cursor-grab active:cursor-grabbing' : ''}`}
       >
         {/* Checkbox */}
-        <div className="w-10 flex items-center justify-center border-r border-gray-200">
+        <div className="w-10 shrink-0 flex items-center justify-center border-r border-gray-200">
           <Checkbox 
             checked={isSelected} 
             onCheckedChange={() => setIsSelected(!isSelected)}
@@ -830,7 +835,7 @@ function SortableItemRow({
         </div>
 
         {/* Expand arrow */}
-        <div className="w-8 flex items-center justify-center">
+        <div className="w-8 shrink-0 flex items-center justify-center">
           {hasSubItems ? (
             <button 
               onClick={(e) => {
@@ -851,7 +856,7 @@ function SortableItemRow({
         </div>
 
         {/* Item name */}
-        <div className="flex-1 min-w-[280px] px-3 py-1 border-r border-gray-200">
+        <div className="w-[280px] shrink-0 px-3 py-1 border-r border-gray-200">
           {isEditingName && !isPreviewMode ? (
             <RichTextQuestionEditor
               value={item.text}
@@ -874,7 +879,7 @@ function SortableItemRow({
                 dangerouslySetInnerHTML={{ __html: item.text || 'Click to add item name...' }}
               />
               {hasSubItems && (
-                <span className="text-xs bg-blue-100 text-blue-600 px-1.5 py-0.5 rounded font-medium">
+                <span className="text-xs bg-blue-100 text-blue-600 px-1.5 py-0.5 rounded font-medium shrink-0">
                   {item.subQuestions!.length}
                 </span>
               )}
@@ -883,7 +888,7 @@ function SortableItemRow({
         </div>
 
         {/* Response column with inline type selector and response field */}
-        <div className="w-[200px] px-2 py-2 border-r border-gray-200">
+        <div className="w-[200px] shrink-0 px-2 py-2 border-r border-gray-200">
           <div className="flex flex-col gap-1.5">
             <ResponseTypeDropdown
               currentType={item.answerType}
@@ -898,7 +903,7 @@ function SortableItemRow({
 
         {/* Additional Explanation column - conditionally rendered */}
         {visibleColumns.explanation && (
-          <div className="w-[200px] px-2 py-2 border-r border-gray-200">
+          <div className="w-[200px] shrink-0 px-2 py-2 border-r border-gray-200">
             <AITextarea
               value={item.explanation || ''}
               onChange={(val) => onUpdate({ ...item, explanation: val })}
@@ -911,7 +916,7 @@ function SortableItemRow({
 
         {/* Reference column - conditionally rendered */}
         {visibleColumns.reference && (
-          <div className="w-[200px] px-2 py-2 border-r border-gray-200 flex items-center">
+          <div className="w-[200px] shrink-0 px-2 py-2 border-r border-gray-200 flex items-center">
             <RefButton
               reference={(item as any).reference}
               onAttach={(doc) => onUpdate({ ...item, reference: doc } as any)}
@@ -921,9 +926,13 @@ function SortableItemRow({
           </div>
         )}
 
+        {/* Add column placeholder to maintain alignment */}
+        {!isPreviewMode && (!visibleColumns.explanation || !visibleColumns.reference) && (
+          <div className="w-[100px] shrink-0" />
+        )}
 
         {/* Actions menu */}
-        <div className="w-16 flex items-center justify-center gap-1">
+        <div className="w-16 shrink-0 flex items-center justify-center gap-1">
           {!isPreviewMode && (
             <>
               <button
@@ -1227,22 +1236,22 @@ function SortableGroup({
         <>
           {/* Column headers */}
           <div className="flex items-center border-b border-gray-200 bg-gray-100 text-xs font-medium text-gray-500">
-            <div className="w-10 border-r border-gray-200 py-2" />
-            <div className="w-8 py-2" />
-            <div className="flex-1 min-w-[280px] px-3 py-2 border-r border-gray-200">Item</div>
-            <div className="w-[200px] px-2 py-2 border-r border-gray-200">Response</div>
+            <div className="w-10 shrink-0 border-r border-gray-200 py-2" />
+            <div className="w-8 shrink-0 py-2" />
+            <div className="w-[280px] shrink-0 px-3 py-2 border-r border-gray-200">Item</div>
+            <div className="w-[200px] shrink-0 px-2 py-2 border-r border-gray-200">Response</div>
             {visibleColumns.explanation && (
-              <div className="w-[200px] px-2 py-2 border-r border-gray-200">Explanation</div>
+              <div className="w-[200px] shrink-0 px-2 py-2 border-r border-gray-200">Explanation</div>
             )}
             {visibleColumns.reference && (
-              <div className="w-[200px] px-2 py-2 border-r border-gray-200">Reference</div>
+              <div className="w-[200px] shrink-0 px-2 py-2 border-r border-gray-200">Reference</div>
             )}
             {!isPreviewMode && (!visibleColumns.explanation || !visibleColumns.reference) && (
-              <div className="w-[100px] px-2 py-2 text-center text-gray-400">
+              <div className="w-[100px] shrink-0 px-2 py-2 text-center text-gray-400">
                 <AddColumnButton onAddColumn={handleAddColumn} visibleColumns={visibleColumns} />
               </div>
             )}
-            <div className="w-16 py-2" />
+            <div className="w-16 shrink-0 py-2" />
           </div>
 
           {/* Items */}
