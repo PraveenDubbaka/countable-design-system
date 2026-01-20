@@ -23,6 +23,8 @@ import {
   Upload,
   File,
   X,
+  Check,
+  Pencil,
 } from 'lucide-react';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Input as SearchInput } from '@/components/ui/input';
@@ -99,6 +101,190 @@ const EXISTING_DOCUMENTS = [
   { id: 'doc3', name: 'Compliance Checklist.xlsx', type: 'xlsx' },
   { id: 'doc4', name: 'Reference Manual.pdf', type: 'pdf' },
 ];
+
+// Multiple Choice Field Component with multi-select and edit support
+interface MultipleChoiceFieldProps {
+  options: string[];
+  selectedAnswers: string[];
+  onAnswerChange: (answers: string[]) => void;
+  onOptionsChange: (options: string[]) => void;
+  disabled?: boolean;
+  size?: 'sm' | 'md';
+}
+
+function MultipleChoiceField({ 
+  options, 
+  selectedAnswers, 
+  onAnswerChange, 
+  onOptionsChange,
+  disabled,
+  size = 'md'
+}: MultipleChoiceFieldProps) {
+  const [isEditing, setIsEditing] = useState(false);
+  const [editingOptions, setEditingOptions] = useState<string[]>(options);
+  const [newOption, setNewOption] = useState('');
+
+  const toggleSelection = (opt: string) => {
+    if (disabled) return;
+    const isSelected = selectedAnswers.includes(opt);
+    if (isSelected) {
+      onAnswerChange(selectedAnswers.filter(a => a !== opt));
+    } else {
+      onAnswerChange([...selectedAnswers, opt]);
+    }
+  };
+
+  const handleStartEdit = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setEditingOptions([...options]);
+    setIsEditing(true);
+  };
+
+  const handleSaveEdit = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    const validOptions = editingOptions.filter(o => o.trim() !== '');
+    if (validOptions.length > 0) {
+      onOptionsChange(validOptions);
+      // Remove any selected answers that no longer exist in options
+      const validAnswers = selectedAnswers.filter(a => validOptions.includes(a));
+      if (validAnswers.length !== selectedAnswers.length) {
+        onAnswerChange(validAnswers);
+      }
+    }
+    setIsEditing(false);
+    setNewOption('');
+  };
+
+  const handleCancelEdit = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setEditingOptions([...options]);
+    setIsEditing(false);
+    setNewOption('');
+  };
+
+  const handleOptionChange = (index: number, value: string) => {
+    const updated = [...editingOptions];
+    updated[index] = value;
+    setEditingOptions(updated);
+  };
+
+  const handleRemoveOption = (index: number) => {
+    if (editingOptions.length <= 1) return;
+    setEditingOptions(editingOptions.filter((_, i) => i !== index));
+  };
+
+  const handleAddOption = () => {
+    const trimmed = newOption.trim();
+    if (trimmed && !editingOptions.includes(trimmed)) {
+      setEditingOptions([...editingOptions, trimmed]);
+      setNewOption('');
+    }
+  };
+
+  const textSize = size === 'sm' ? 'text-xs' : 'text-sm';
+  const padding = size === 'sm' ? 'px-1.5 py-0.5' : 'px-2 py-1';
+  const checkSize = size === 'sm' ? 'h-3 w-3' : 'h-3.5 w-3.5';
+
+  if (isEditing && !disabled) {
+    return (
+      <div className="flex flex-col gap-2 p-2 bg-gray-50 rounded border border-gray-200" onClick={e => e.stopPropagation()}>
+        <div className="flex flex-col gap-1.5">
+          {editingOptions.map((opt, i) => (
+            <div key={i} className="flex items-center gap-1.5">
+              <input
+                type="text"
+                value={opt}
+                onChange={(e) => handleOptionChange(i, e.target.value)}
+                className={`flex-1 ${padding} ${textSize} bg-white border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-amber-500`}
+                placeholder={`Option ${i + 1}`}
+              />
+              <button
+                onClick={() => handleRemoveOption(i)}
+                disabled={editingOptions.length <= 1}
+                className="p-1 text-gray-400 hover:text-red-500 disabled:opacity-30 disabled:cursor-not-allowed"
+              >
+                <X className="h-3.5 w-3.5" />
+              </button>
+            </div>
+          ))}
+        </div>
+        <div className="flex items-center gap-1.5">
+          <input
+            type="text"
+            value={newOption}
+            onChange={(e) => setNewOption(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') {
+                e.preventDefault();
+                handleAddOption();
+              }
+            }}
+            placeholder="Add new option..."
+            className={`flex-1 ${padding} ${textSize} bg-white border border-gray-300 border-dashed rounded focus:outline-none focus:ring-1 focus:ring-amber-500`}
+          />
+          <button
+            onClick={handleAddOption}
+            disabled={!newOption.trim()}
+            className="p-1 text-gray-400 hover:text-green-600 disabled:opacity-30"
+          >
+            <Plus className="h-3.5 w-3.5" />
+          </button>
+        </div>
+        <div className="flex justify-end gap-1.5 pt-1 border-t border-gray-200">
+          <button
+            onClick={handleCancelEdit}
+            className={`${padding} ${textSize} text-gray-600 hover:bg-gray-200 rounded transition-colors`}
+          >
+            Cancel
+          </button>
+          <button
+            onClick={handleSaveEdit}
+            className={`${padding} ${textSize} bg-amber-500 text-white hover:bg-amber-600 rounded transition-colors`}
+          >
+            Save
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="flex items-center gap-1.5">
+      <div className="flex flex-wrap gap-1">
+        {options.map((opt, i) => {
+          const isSelected = selectedAnswers.includes(opt);
+          return (
+            <button
+              key={i}
+              onClick={(e) => {
+                e.stopPropagation();
+                toggleSelection(opt);
+              }}
+              disabled={disabled}
+              className={`${padding} ${textSize} rounded transition-all flex items-center gap-1 ${
+                isSelected
+                  ? 'bg-amber-500 text-white'
+                  : 'bg-gray-200 hover:bg-gray-300 text-gray-700'
+              }`}
+            >
+              {isSelected && <Check className={checkSize} />}
+              {opt}
+            </button>
+          );
+        })}
+      </div>
+      {!disabled && (
+        <button
+          onClick={handleStartEdit}
+          className="p-1 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded transition-colors"
+          title="Edit options"
+        >
+          <Pencil className="h-3.5 w-3.5" />
+        </button>
+      )}
+    </div>
+  );
+}
 
 // Reference Button Component
 interface RefButtonProps {
@@ -497,27 +683,17 @@ function SortableSubItemRow({ subItem, onUpdate, onDelete, isPreviewMode, index,
         );
 
       case 'multiple-choice':
-        const mcOptions = subItem.options || ['Option 1', 'Option 2', 'Option 3'];
+        const mcSubOptions = subItem.options || ['Option 1', 'Option 2', 'Option 3'];
+        const subSelectedAnswers = subItem.answer ? subItem.answer.split('|||').filter(a => a) : [];
         return (
-          <div className="flex flex-wrap gap-1">
-            {mcOptions.map((opt, i) => (
-              <button
-                key={i}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  handleAnswerChange(opt);
-                }}
-                disabled={isPreviewMode}
-                className={`px-2 py-1 text-xs rounded transition-all ${
-                  subItem.answer === opt
-                    ? 'bg-amber-500 text-white'
-                    : 'bg-gray-200 hover:bg-gray-300 text-gray-700'
-                }`}
-              >
-                {opt}
-              </button>
-            ))}
-          </div>
+          <MultipleChoiceField
+            options={mcSubOptions}
+            selectedAnswers={subSelectedAnswers}
+            onAnswerChange={(answers) => onUpdate({ ...subItem, answer: answers.join('|||') })}
+            onOptionsChange={(opts) => onUpdate({ ...subItem, options: opts })}
+            disabled={isPreviewMode}
+            size="sm"
+          />
         );
 
       case 'dropdown':
@@ -864,26 +1040,16 @@ function SortableItemRow({
 
       case 'multiple-choice':
         const mcItemOptions = item.options || ['Option 1', 'Option 2', 'Option 3'];
+        const itemSelectedAnswers = item.answer ? item.answer.split('|||').filter(a => a) : [];
         return (
-          <div className="flex flex-wrap gap-1">
-            {mcItemOptions.map((opt, i) => (
-              <button
-                key={i}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  handleAnswerChange(opt);
-                }}
-                disabled={isPreviewMode}
-                className={`px-2 py-1 text-xs rounded transition-all ${
-                  item.answer === opt
-                    ? 'bg-amber-500 text-white'
-                    : 'bg-gray-200 hover:bg-gray-300 text-gray-700'
-                }`}
-              >
-                {opt}
-              </button>
-            ))}
-          </div>
+          <MultipleChoiceField
+            options={mcItemOptions}
+            selectedAnswers={itemSelectedAnswers}
+            onAnswerChange={(answers) => onUpdate({ ...item, answer: answers.join('|||') })}
+            onOptionsChange={(opts) => onUpdate({ ...item, options: opts })}
+            disabled={isPreviewMode}
+            size="sm"
+          />
         );
 
       case 'dropdown':
