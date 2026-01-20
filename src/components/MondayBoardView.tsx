@@ -30,6 +30,7 @@ import { Checklist, Question, Section, AnswerType } from '@/types/checklist';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
+import { AITextarea } from '@/components/AITextarea';
 import { RichTextQuestionEditor } from '@/components/RichTextQuestionEditor';
 import {
   DropdownMenu,
@@ -513,6 +514,28 @@ function SortableSubItemRow({ subItem, onUpdate, onDelete, isPreviewMode, index,
           </select>
         );
 
+      case 'long-answer':
+        return (
+          <AITextarea
+            value={subItem.answer || ''}
+            onChange={(val) => handleAnswerChange(val)}
+            placeholder="Enter your detailed answer..."
+            disabled={isPreviewMode}
+            minHeight="60px"
+          />
+        );
+
+      case 'short-answer':
+        return (
+          <AITextarea
+            value={subItem.answer || ''}
+            onChange={(val) => handleAnswerChange(val)}
+            placeholder="Enter response..."
+            disabled={isPreviewMode}
+            minHeight="40px"
+          />
+        );
+
       default:
         return (
           <Input
@@ -584,13 +607,13 @@ function SortableSubItemRow({ subItem, onUpdate, onDelete, isPreviewMode, index,
 
       {/* Additional Explanation column - conditionally rendered */}
       {visibleColumns.explanation && (
-        <div className="w-[200px] px-2 py-2 border-r border-gray-200 flex items-center">
-          <Textarea
+        <div className="w-[200px] px-2 py-2 border-r border-gray-200">
+          <AITextarea
             value={subItem.explanation || ''}
-            onChange={(e) => onUpdate({ ...subItem, explanation: e.target.value })}
+            onChange={(val) => onUpdate({ ...subItem, explanation: val })}
             placeholder="Add explanation..."
             disabled={isPreviewMode}
-            className="min-h-[28px] h-7 text-xs bg-gray-100 border-gray-300 text-gray-700 resize-none py-1"
+            minHeight="40px"
           />
         </div>
       )}
@@ -756,13 +779,23 @@ function SortableItemRow({
 
       case 'long-answer':
         return (
-          <Textarea
+          <AITextarea
             value={item.answer || ''}
-            onChange={(e) => handleAnswerChange(e.target.value)}
-            onClick={(e) => e.stopPropagation()}
+            onChange={(val) => handleAnswerChange(val)}
+            placeholder="Enter your detailed answer..."
+            disabled={isPreviewMode}
+            minHeight="60px"
+          />
+        );
+
+      case 'short-answer':
+        return (
+          <AITextarea
+            value={item.answer || ''}
+            onChange={(val) => handleAnswerChange(val)}
             placeholder="Enter response..."
             disabled={isPreviewMode}
-            className="min-h-[32px] text-sm bg-gray-100 border border-gray-300 text-gray-700 resize-none rounded-md px-2 py-1 w-full"
+            minHeight="40px"
           />
         );
 
@@ -868,12 +901,12 @@ function SortableItemRow({
         {/* Additional Explanation column - conditionally rendered */}
         {visibleColumns.explanation && (
           <div className="w-[200px] px-2 py-2 border-r border-gray-200">
-            <Textarea
+            <AITextarea
               value={item.explanation || ''}
-              onChange={(e) => onUpdate({ ...item, explanation: e.target.value })}
+              onChange={(val) => onUpdate({ ...item, explanation: val })}
               placeholder="Add explanation..."
               disabled={isPreviewMode}
-              className="min-h-[32px] h-8 text-xs bg-gray-100 border-gray-300 text-gray-700 resize-none py-1.5"
+              minHeight="40px"
             />
           </div>
         )}
