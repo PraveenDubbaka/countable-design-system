@@ -30,6 +30,11 @@ interface MondayBoardViewProps {
   isPreviewMode: boolean;
 }
 
+// Strip HTML tags from text for clean display
+const stripHtml = (html: string): string => {
+  return html.replace(/<[^>]*>/g, '').trim();
+};
+
 // Group colors for Monday-style theming
 const GROUP_COLORS = [
   { bg: 'bg-violet-500', light: 'bg-violet-50', border: 'border-violet-500', text: 'text-violet-700' },
@@ -52,15 +57,15 @@ interface SubItemRowProps {
 
 function SubItemRow({ subItem, onUpdate, onDelete, isPreviewMode, groupColor, index }: SubItemRowProps) {
   const [isEditingName, setIsEditingName] = useState(false);
-  const [draftName, setDraftName] = useState(subItem.text);
+  const [draftName, setDraftName] = useState(stripHtml(subItem.text));
   const [isSelected, setIsSelected] = useState(false);
 
   const commitName = () => {
     const trimmed = draftName.trim();
-    if (trimmed && trimmed !== subItem.text) {
+    if (trimmed && trimmed !== stripHtml(subItem.text)) {
       onUpdate({ ...subItem, text: trimmed });
     } else {
-      setDraftName(subItem.text);
+      setDraftName(stripHtml(subItem.text));
     }
     setIsEditingName(false);
   };
@@ -147,7 +152,7 @@ function SubItemRow({ subItem, onUpdate, onDelete, isPreviewMode, groupColor, in
               onKeyDown={(e) => {
                 if (e.key === 'Enter') commitName();
                 if (e.key === 'Escape') {
-                  setDraftName(subItem.text);
+                  setDraftName(stripHtml(subItem.text));
                   setIsEditingName(false);
                 }
               }}
@@ -159,7 +164,8 @@ function SubItemRow({ subItem, onUpdate, onDelete, isPreviewMode, groupColor, in
               onClick={() => !isPreviewMode && setIsEditingName(true)}
               className={`text-sm text-muted-foreground flex-1 ${!isPreviewMode ? 'cursor-text hover:text-foreground' : ''}`}
             >
-              {subItem.text || 'New sub-item'}
+              {stripHtml(subItem.text) || 'New sub-item'}
+              
             </span>
           )}
         </div>
@@ -221,17 +227,17 @@ function ItemRow({
 }: ItemRowProps) {
   const [isExpanded, setIsExpanded] = useState(true);
   const [isEditingName, setIsEditingName] = useState(false);
-  const [draftName, setDraftName] = useState(item.text);
+  const [draftName, setDraftName] = useState(stripHtml(item.text));
   const [isSelected, setIsSelected] = useState(false);
 
   const hasSubItems = item.subQuestions && item.subQuestions.length > 0;
 
   const commitName = () => {
     const trimmed = draftName.trim();
-    if (trimmed && trimmed !== item.text) {
+    if (trimmed && trimmed !== stripHtml(item.text)) {
       onUpdate({ ...item, text: trimmed });
     } else {
-      setDraftName(item.text);
+      setDraftName(stripHtml(item.text));
     }
     setIsEditingName(false);
   };
@@ -354,7 +360,7 @@ function ItemRow({
                   commitName();
                 }
                 if (e.key === 'Escape') {
-                  setDraftName(item.text);
+                  setDraftName(stripHtml(item.text));
                   setIsEditingName(false);
                 }
               }}
@@ -366,7 +372,7 @@ function ItemRow({
               onClick={() => !isPreviewMode && setIsEditingName(true)}
               className={`text-sm font-medium text-foreground ${!isPreviewMode ? 'cursor-text hover:bg-muted/50 px-2 py-1 -mx-2 rounded transition-colors' : ''}`}
             >
-              {item.text || 'Click to add item name...'}
+              {stripHtml(item.text) || 'Click to add item name...'}
             </div>
           )}
         </div>
