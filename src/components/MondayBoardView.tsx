@@ -585,16 +585,22 @@ function SortableItemRow({
         </div>
       </div>
 
-      {/* Sub-items section - Monday.com style with vertical bar */}
+      {/* Sub-items section - Monday.com style with connecting line */}
       {hasSubItems && isExpanded && (
-        <div className="relative ml-8">
-          {/* Continuous vertical amber bar on left */}
-          <div className="absolute left-0 top-0 bottom-0 w-1 bg-amber-600/70 rounded-full" />
+        <div className="relative mt-1 mb-2">
+          {/* Vertical connecting line from parent - positioned at left edge */}
+          <div className="absolute left-3 -top-1 w-0.5 h-4 bg-amber-600/70" />
           
-          {/* Sub-items container */}
-          <div className="ml-4 bg-slate-800/50 border border-slate-700/60 rounded-lg overflow-hidden">
+          {/* Horizontal connector line */}
+          <div className="absolute left-3 top-3 w-6 h-0.5 bg-amber-600/70" />
+          
+          {/* Continuous vertical bar alongside sub-items */}
+          <div className="absolute left-3 top-3 bottom-0 w-0.5 bg-amber-600/70" />
+          
+          {/* Sub-items container with left margin for the bar */}
+          <div className="ml-10 bg-slate-800/40 border border-slate-700/50 rounded-lg overflow-hidden">
             {/* Sub-items header row */}
-            <div className="flex items-center bg-slate-800/80 text-xs font-medium text-slate-400 border-b border-slate-700/50">
+            <div className="flex items-center bg-slate-800/70 text-xs font-medium text-slate-400 border-b border-slate-700/40">
               <div className="w-10 flex items-center justify-center py-2" />
               <div className="flex-1 min-w-[280px] px-3 py-2">Subitem</div>
               <div className="w-[120px] px-2 py-2 text-center">Type</div>
@@ -605,7 +611,7 @@ function SortableItemRow({
 
             <SortableContext items={subItemIds} strategy={verticalListSortingStrategy}>
               {item.subQuestions!.map((sub, idx) => (
-                <div key={sub.id} className="border-b border-slate-700/40 last:border-b-0">
+                <div key={sub.id} className="border-b border-slate-700/30 last:border-b-0">
                   <SortableSubItemRow
                     subItem={sub}
                     index={idx}
@@ -622,18 +628,17 @@ function SortableItemRow({
 
             {/* Add subitem row */}
             {!isPreviewMode && (
-              <div className="flex items-center hover:bg-slate-700/20 transition-colors border-t border-slate-700/40">
-                <div className="w-10 flex items-center justify-center py-2">
+              <div className="flex items-center hover:bg-slate-700/20 transition-colors border-t border-slate-700/30">
+                <div className="w-10 flex items-center justify-center py-2.5">
                   <Checkbox 
                     disabled
-                    className="h-4 w-4 border-slate-600 bg-slate-800 opacity-40"
+                    className="h-4 w-4 border-slate-600 bg-slate-800 opacity-30"
                   />
                 </div>
                 <button
                   onClick={onAddSubItem}
                   className="flex-1 flex items-center gap-2 px-3 py-2.5 text-sm text-slate-500 hover:text-blue-400 transition-colors text-left"
                 >
-                  <Plus className="h-3.5 w-3.5" />
                   + Add subitem
                 </button>
               </div>
