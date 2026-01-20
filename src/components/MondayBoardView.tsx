@@ -20,6 +20,9 @@ import {
   DollarSign,
   FileText,
   Search,
+  Upload,
+  File,
+  X,
 } from 'lucide-react';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Input as SearchInput } from '@/components/ui/input';
@@ -85,8 +88,155 @@ const ANSWER_TYPE_OPTIONS: { value: AnswerType; label: string; icon: React.Eleme
 // Column options for add column dropdown
 const COLUMN_OPTIONS = [
   { id: 'explanation', label: 'Additional Explanation', icon: AlignLeft, bgColor: 'bg-purple-100', iconColor: 'text-purple-600' },
-  { id: 'reference', label: '+ Ref (Attached Document)', icon: FileText, bgColor: 'bg-pink-100', iconColor: 'text-pink-600' },
+  { id: 'reference', label: '+ Ref (Attached Document)', icon: Paperclip, bgColor: 'bg-pink-100', iconColor: 'text-pink-600' },
 ];
+
+// Mock existing documents for demo
+const EXISTING_DOCUMENTS = [
+  { id: 'doc1', name: 'Company Policy.pdf', type: 'pdf' },
+  { id: 'doc2', name: 'Guidelines 2024.docx', type: 'docx' },
+  { id: 'doc3', name: 'Compliance Checklist.xlsx', type: 'xlsx' },
+  { id: 'doc4', name: 'Reference Manual.pdf', type: 'pdf' },
+];
+
+// Reference Button Component
+interface RefButtonProps {
+  reference?: { name: string; id?: string } | null;
+  onAttach: (doc: { name: string; id?: string }) => void;
+  onRemove: () => void;
+  disabled?: boolean;
+}
+
+function RefButton({ reference, onAttach, onRemove, disabled }: RefButtonProps) {
+  const [isOpen, setIsOpen] = useState(false);
+  const [searchTerm, setSearchTerm] = useState('');
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const filteredDocs = EXISTING_DOCUMENTS.filter(doc =>
+    doc.name.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      onAttach({ name: file.name });
+      setIsOpen(false);
+      setSearchTerm('');
+    }
+    e.target.value = '';
+  };
+
+  if (disabled) {
+    return reference ? (
+      <div className="flex items-center gap-1.5 px-2 py-1.5 text-xs text-gray-600 bg-gray-100 rounded">
+        <File className="h-3 w-3" />
+        <span className="truncate max-w-[120px]">{reference.name}</span>
+      </div>
+    ) : (
+      <span className="text-xs text-gray-400">No reference</span>
+    );
+  }
+
+  if (reference) {
+    return (
+      <div className="flex items-center gap-1 px-2 py-1 bg-blue-50 border border-blue-200 rounded text-xs text-blue-700">
+        <File className="h-3 w-3 shrink-0" />
+        <span className="truncate max-w-[100px]">{reference.name}</span>
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            onRemove();
+          }}
+          className="p-0.5 hover:bg-blue-100 rounded shrink-0"
+        >
+          <X className="h-3 w-3" />
+        </button>
+      </div>
+    );
+  }
+
+  return (
+    <>
+      <input
+        ref={fileInputRef}
+        type="file"
+        className="hidden"
+        onChange={handleFileUpload}
+      />
+      <Popover open={isOpen} onOpenChange={setIsOpen}>
+        <PopoverTrigger asChild>
+          <button
+            onClick={(e) => e.stopPropagation()}
+            className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-blue-600 hover:bg-blue-50 rounded-md border border-dashed border-blue-300 transition-colors"
+          >
+            <Paperclip className="h-3.5 w-3.5" />
+            <span>+ Ref</span>
+          </button>
+        </PopoverTrigger>
+        <PopoverContent
+          align="start"
+          className="w-72 p-0 bg-slate-800 border-slate-700 shadow-xl z-50"
+          sideOffset={5}
+        >
+          {/* Search input */}
+          <div className="p-3 border-b border-slate-700">
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+              <SearchInput
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                placeholder="Search documents..."
+                className="pl-9 bg-slate-700 border-slate-600 text-white placeholder:text-slate-400 h-9 text-sm"
+              />
+            </div>
+          </div>
+
+          {/* Upload new document option */}
+          <div className="p-2 border-b border-slate-700">
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                fileInputRef.current?.click();
+              }}
+              className="flex items-center gap-2 w-full px-3 py-2.5 rounded-md hover:bg-slate-700 transition-colors text-left"
+            >
+              <div className="w-7 h-7 rounded flex items-center justify-center bg-green-100">
+                <Upload className="h-4 w-4 text-green-600" />
+              </div>
+              <span className="text-sm text-white">Upload new document</span>
+            </button>
+          </div>
+
+          {/* Existing documents */}
+          <div className="p-2 max-h-48 overflow-y-auto">
+            <p className="text-xs text-slate-400 px-2 py-1 mb-1">Existing documents</p>
+            {filteredDocs.length > 0 ? (
+              <div className="space-y-1">
+                {filteredDocs.map((doc) => (
+                  <button
+                    key={doc.id}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onAttach({ id: doc.id, name: doc.name });
+                      setIsOpen(false);
+                      setSearchTerm('');
+                    }}
+                    className="flex items-center gap-2 w-full px-3 py-2 rounded-md hover:bg-slate-700 transition-colors text-left"
+                  >
+                    <File className="h-4 w-4 text-slate-400" />
+                    <span className="text-sm text-white truncate">{doc.name}</span>
+                  </button>
+                ))}
+              </div>
+            ) : (
+              <p className="text-sm text-slate-400 text-center py-3">No documents found</p>
+            )}
+          </div>
+        </PopoverContent>
+      </Popover>
+    </>
+  );
+}
 
 // Strip HTML tags from text for clean display
 const stripHtml = (html: string): string => {
@@ -443,12 +593,11 @@ function SortableSubItemRow({ subItem, onUpdate, onDelete, isPreviewMode, index,
       {/* Reference column - conditionally rendered */}
       {visibleColumns.reference && (
         <div className="w-[200px] px-2 py-2 border-r border-gray-200 flex items-center">
-          <Input
-            value={(subItem as any).reference || ''}
-            onChange={(e) => onUpdate({ ...subItem, reference: e.target.value } as any)}
-            placeholder="Add reference..."
+          <RefButton
+            reference={(subItem as any).reference}
+            onAttach={(doc) => onUpdate({ ...subItem, reference: doc } as any)}
+            onRemove={() => onUpdate({ ...subItem, reference: null } as any)}
             disabled={isPreviewMode}
-            className="h-7 text-xs bg-gray-100 border-gray-300 text-gray-700"
           />
         </div>
       )}
@@ -721,13 +870,12 @@ function SortableItemRow({
 
         {/* Reference column - conditionally rendered */}
         {visibleColumns.reference && (
-          <div className="w-[200px] px-2 py-2 border-r border-gray-200">
-            <Input
-              value={(item as any).reference || ''}
-              onChange={(e) => onUpdate({ ...item, reference: e.target.value } as any)}
-              placeholder="Add reference..."
+          <div className="w-[200px] px-2 py-2 border-r border-gray-200 flex items-center">
+            <RefButton
+              reference={(item as any).reference}
+              onAttach={(doc) => onUpdate({ ...item, reference: doc } as any)}
+              onRemove={() => onUpdate({ ...item, reference: null } as any)}
               disabled={isPreviewMode}
-              className="h-8 text-xs bg-gray-100 border-gray-300 text-gray-700"
             />
           </div>
         )}
