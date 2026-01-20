@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { 
   Plus, 
   Trash2, 
@@ -67,8 +67,8 @@ interface SortableSubItemRowProps extends SubItemRowProps {
 
 function SortableSubItemRow({ subItem, onUpdate, onDelete, isPreviewMode, index, parentId, isLast, totalCount }: SortableSubItemRowProps) {
   const [isEditingName, setIsEditingName] = useState(false);
-  const [draftName, setDraftName] = useState(stripHtml(subItem.text));
   const [isSelected, setIsSelected] = useState(false);
+  const draftNameRef = useRef(subItem.text);
 
   const {
     attributes,
@@ -88,13 +88,16 @@ function SortableSubItemRow({ subItem, onUpdate, onDelete, isPreviewMode, index,
     opacity: isDragging ? 0.5 : 1,
   };
 
-  const commitName = () => {
-    const trimmed = draftName.trim();
-    if (trimmed && trimmed !== stripHtml(subItem.text)) {
+  const handleSave = () => {
+    const trimmed = draftNameRef.current.trim();
+    if (trimmed && trimmed !== subItem.text) {
       onUpdate({ ...subItem, text: trimmed });
-    } else {
-      setDraftName(stripHtml(subItem.text));
     }
+    setIsEditingName(false);
+  };
+
+  const handleCancel = () => {
+    draftNameRef.current = subItem.text;
     setIsEditingName(false);
   };
 
@@ -193,23 +196,19 @@ function SortableSubItemRow({ subItem, onUpdate, onDelete, isPreviewMode, index,
         {isEditingName && !isPreviewMode ? (
           <RichTextQuestionEditor
             value={subItem.text}
-            onChange={(newValue) => setDraftName(newValue)}
-            onBlur={() => {
-              const trimmed = draftName.trim();
-              if (trimmed && trimmed !== subItem.text) {
-                onUpdate({ ...subItem, text: trimmed });
-              }
-              setIsEditingName(false);
-            }}
-            onCancel={() => {
-              setDraftName(subItem.text);
-              setIsEditingName(false);
-            }}
+            onChange={(newValue) => { draftNameRef.current = newValue; }}
+            onBlur={handleSave}
+            onCancel={handleCancel}
             className="text-sm min-h-[32px] bg-slate-700/50 border-slate-600 text-slate-200"
           />
         ) : (
           <span
-            onClick={() => !isPreviewMode && setIsEditingName(true)}
+            onClick={() => {
+              if (!isPreviewMode) {
+                draftNameRef.current = subItem.text;
+                setIsEditingName(true);
+              }
+            }}
             className={`text-sm text-slate-300 block py-1.5 ${!isPreviewMode ? 'cursor-text hover:text-slate-100' : ''}`}
             dangerouslySetInnerHTML={{ __html: subItem.text || 'New sub-item' }}
           />
@@ -272,8 +271,8 @@ function SortableItemRow({
 }: ItemRowProps) {
   const [isExpanded, setIsExpanded] = useState(true);
   const [isEditingName, setIsEditingName] = useState(false);
-  const [draftName, setDraftName] = useState(stripHtml(item.text));
   const [isSelected, setIsSelected] = useState(false);
+  const draftNameRef = useRef(item.text);
 
   const {
     attributes,
@@ -295,13 +294,16 @@ function SortableItemRow({
 
   const hasSubItems = item.subQuestions && item.subQuestions.length > 0;
 
-  const commitName = () => {
-    const trimmed = draftName.trim();
-    if (trimmed && trimmed !== stripHtml(item.text)) {
+  const handleSave = () => {
+    const trimmed = draftNameRef.current.trim();
+    if (trimmed && trimmed !== item.text) {
       onUpdate({ ...item, text: trimmed });
-    } else {
-      setDraftName(stripHtml(item.text));
     }
+    setIsEditingName(false);
+  };
+
+  const handleCancel = () => {
+    draftNameRef.current = item.text;
     setIsEditingName(false);
   };
 
@@ -431,23 +433,19 @@ function SortableItemRow({
           {isEditingName && !isPreviewMode ? (
             <RichTextQuestionEditor
               value={item.text}
-              onChange={(newValue) => setDraftName(newValue)}
-              onBlur={() => {
-                const trimmed = draftName.trim();
-                if (trimmed && trimmed !== item.text) {
-                  onUpdate({ ...item, text: trimmed });
-                }
-                setIsEditingName(false);
-              }}
-              onCancel={() => {
-                setDraftName(item.text);
-                setIsEditingName(false);
-              }}
+              onChange={(newValue) => { draftNameRef.current = newValue; }}
+              onBlur={handleSave}
+              onCancel={handleCancel}
               className="text-sm min-h-[36px] bg-slate-700/50 border-slate-600 text-slate-200"
             />
           ) : (
             <div 
-              onClick={() => !isPreviewMode && setIsEditingName(true)}
+              onClick={() => {
+                if (!isPreviewMode) {
+                  draftNameRef.current = item.text;
+                  setIsEditingName(true);
+                }
+              }}
               className={`text-sm text-slate-200 py-2 ${!isPreviewMode ? 'cursor-text hover:text-white' : ''}`}
               dangerouslySetInnerHTML={{ __html: item.text || 'Click to add item name...' }}
             />
