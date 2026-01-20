@@ -42,7 +42,7 @@ import { RichTextToolbar } from './RichTextToolbar';
 import { useRichTextToolbarContext } from '@/contexts/RichTextToolbarContext';
 import { consolidateSectionsToThree } from '@/lib/consolidateSections';
 
-import { ChecklistTableView } from './ChecklistTableView';
+import { MondayBoardView } from './MondayBoardView';
 
 interface ChecklistBuilderProps {
   checklist: Checklist;
@@ -441,8 +441,8 @@ export function ChecklistBuilder({ checklist, onUpdate, onSave }: ChecklistBuild
             )}
           </div>
 
-          {/* Checklist Table View */}
-          <ChecklistTableView
+          {/* Monday-style Board View */}
+          <MondayBoardView
             checklist={checklist}
             onUpdate={onUpdate}
             isPreviewMode={isPreviewMode}
