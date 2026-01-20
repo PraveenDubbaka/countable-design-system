@@ -146,7 +146,7 @@ function SortableSubItemRow({ subItem, onUpdate, onDelete, isPreviewMode, index,
                 disabled={isPreviewMode}
                 className={`px-2 py-1 text-xs rounded transition-all ${
                   subItem.answer === opt
-                    ? 'bg-blue-600 text-white'
+                    ? 'bg-slate-500 text-white'
                     : 'bg-slate-700/50 hover:bg-slate-600/50 text-slate-300'
                 }`}
               >
@@ -379,7 +379,7 @@ function SortableItemRow({
                 disabled={isPreviewMode}
                 className={`px-2 py-1 text-xs rounded transition-all ${
                   item.answer === opt
-                    ? 'bg-blue-600 text-white'
+                    ? 'bg-slate-500 text-white'
                     : 'bg-slate-700/50 hover:bg-slate-600/50 text-slate-300'
                 }`}
               >
@@ -492,7 +492,7 @@ function SortableItemRow({
                 dangerouslySetInnerHTML={{ __html: item.text || 'Click to add item name...' }}
               />
               {hasSubItems && (
-                <span className="text-xs bg-blue-500/20 text-blue-400 px-1.5 py-0.5 rounded font-medium">
+                <span className="text-xs bg-slate-600/40 text-slate-300 px-1.5 py-0.5 rounded font-medium">
                   {item.subQuestions!.length}
                 </span>
               )}
@@ -589,13 +589,13 @@ function SortableItemRow({
       {hasSubItems && isExpanded && (
         <div className="relative mt-1 mb-2">
           {/* Vertical connecting line from parent - positioned at left edge */}
-          <div className="absolute left-3 -top-1 w-0.5 h-4 bg-amber-600/70" />
+          <div className="absolute left-3 -top-1 w-0.5 h-4 bg-slate-500/70" />
           
           {/* Horizontal connector line */}
-          <div className="absolute left-3 top-3 w-6 h-0.5 bg-amber-600/70" />
+          <div className="absolute left-3 top-3 w-6 h-0.5 bg-slate-500/70" />
           
           {/* Continuous vertical bar alongside sub-items */}
-          <div className="absolute left-3 top-3 bottom-0 w-0.5 bg-amber-600/70" />
+          <div className="absolute left-3 top-3 bottom-0 w-0.5 bg-slate-500/70" />
           
           {/* Sub-items container with left margin for the bar */}
           <div className="ml-10 bg-slate-800/40 border border-slate-700/50 rounded-lg overflow-hidden">
@@ -637,7 +637,7 @@ function SortableItemRow({
                 </div>
                 <button
                   onClick={onAddSubItem}
-                  className="flex-1 flex items-center gap-2 px-3 py-2.5 text-sm text-slate-500 hover:text-blue-400 transition-colors text-left"
+                  className="flex-1 flex items-center gap-2 px-3 py-2.5 text-sm text-slate-500 hover:text-slate-300 transition-colors text-left"
                 >
                   + Add subitem
                 </button>
@@ -759,7 +759,7 @@ function SortableGroup({
         {...(!isPreviewMode ? { ...attributes, ...listeners } : {})}
         className={`flex items-center gap-3 px-4 py-2 border-b border-slate-700 ${!isPreviewMode ? 'cursor-grab active:cursor-grabbing' : ''}`}
       >
-        <div className="w-1 h-6 bg-amber-600 rounded-full" />
+        <div className="w-1 h-6 bg-slate-500 rounded-full" />
         <button 
           onClick={(e) => {
             e.stopPropagation();
@@ -788,7 +788,7 @@ function SortableGroup({
             }}
             autoFocus
             onClick={(e) => e.stopPropagation()}
-            className="h-7 text-sm font-semibold bg-slate-700/50 border-slate-600 text-amber-400 flex-1"
+            className="h-7 text-sm font-semibold bg-slate-700/50 border-slate-600 text-slate-200 flex-1"
           />
         ) : (
           <h3 
@@ -796,7 +796,7 @@ function SortableGroup({
               e.stopPropagation();
               if (!isPreviewMode) setIsEditingTitle(true);
             }}
-            className={`text-sm font-semibold text-amber-400 flex-1 ${!isPreviewMode ? 'cursor-text hover:text-amber-300' : ''}`}
+            className={`text-sm font-semibold text-slate-200 flex-1 ${!isPreviewMode ? 'cursor-text hover:text-white' : ''}`}
           >
             {cleanTitle(section.title)}
           </h3>
