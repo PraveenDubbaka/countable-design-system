@@ -659,6 +659,7 @@ interface ItemRowProps {
   onAddSubItem: () => void;
   isPreviewMode: boolean;
   onSubItemsReorder: (itemId: string, newSubItems: Question[]) => void;
+  visibleColumns: { explanation: boolean; reference: boolean };
 }
 
 function SortableItemRow({ 
@@ -670,11 +671,11 @@ function SortableItemRow({
   onAddSubItem,
   isPreviewMode,
   onSubItemsReorder,
+  visibleColumns,
 }: ItemRowProps) {
   const [isExpanded, setIsExpanded] = useState(true);
   const [isEditingName, setIsEditingName] = useState(false);
   const [isSelected, setIsSelected] = useState(false);
-  const [visibleColumns, setVisibleColumns] = useState({ explanation: true, reference: false });
   const draftNameRef = useRef(item.text);
 
   const {
@@ -729,9 +730,6 @@ function SortableItemRow({
     onUpdate({ ...item, subQuestions: newSubQuestions });
   };
 
-  const handleAddColumn = (columnId: string) => {
-    setVisibleColumns(prev => ({ ...prev, [columnId]: true }));
-  };
 
   const renderResponseField = () => {
     switch (item.answerType) {
@@ -923,10 +921,6 @@ function SortableItemRow({
           </div>
         )}
 
-        {/* Add column button */}
-        {!isPreviewMode && (!visibleColumns.explanation || !visibleColumns.reference) && (
-          <AddColumnButton onAddColumn={handleAddColumn} visibleColumns={visibleColumns} />
-        )}
 
         {/* Actions menu */}
         <div className="w-16 flex items-center justify-center gap-1">
@@ -1066,6 +1060,11 @@ function SortableGroup({
 }: GroupProps) {
   const [isEditingTitle, setIsEditingTitle] = useState(false);
   const [draftTitle, setDraftTitle] = useState(section.title);
+  const [visibleColumns, setVisibleColumns] = useState({ explanation: true, reference: false });
+
+  const handleAddColumn = (columnId: string) => {
+    setVisibleColumns(prev => ({ ...prev, [columnId]: true }));
+  };
 
   const {
     attributes,
@@ -1232,7 +1231,17 @@ function SortableGroup({
             <div className="w-8 py-2" />
             <div className="flex-1 min-w-[280px] px-3 py-2 border-r border-gray-200">Item</div>
             <div className="w-[200px] px-2 py-2 border-r border-gray-200">Response</div>
-            <div className="flex-1 px-2 py-2 text-center text-gray-400">+ Additional Columns</div>
+            {visibleColumns.explanation && (
+              <div className="w-[200px] px-2 py-2 border-r border-gray-200">Explanation</div>
+            )}
+            {visibleColumns.reference && (
+              <div className="w-[200px] px-2 py-2 border-r border-gray-200">Reference</div>
+            )}
+            {!isPreviewMode && (!visibleColumns.explanation || !visibleColumns.reference) && (
+              <div className="w-[100px] px-2 py-2 text-center text-gray-400">
+                <AddColumnButton onAddColumn={handleAddColumn} visibleColumns={visibleColumns} />
+              </div>
+            )}
             <div className="w-16 py-2" />
           </div>
 
@@ -1250,6 +1259,7 @@ function SortableGroup({
                 onAddSubItem={() => handleAddSubItem(idx)}
                 isPreviewMode={isPreviewMode}
                 onSubItemsReorder={onSubItemsReorder}
+                visibleColumns={visibleColumns}
               />
             ))}
           </SortableContext>
