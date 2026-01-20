@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useCallback } from 'react';
 import { 
   Plus, 
   Trash2, 
@@ -121,8 +121,14 @@ function MultipleChoiceField({
   size = 'md'
 }: MultipleChoiceFieldProps) {
   const [isEditOpen, setIsEditOpen] = useState(false);
-  const [editingOptions, setEditingOptions] = useState<string[]>(options);
+  const [editingOptions, setEditingOptions] = useState<string[]>([...options]);
   const [newOption, setNewOption] = useState('');
+  
+  // Store refs for callbacks to avoid stale closures
+  const onOptionsChangeRef = useRef(onOptionsChange);
+  const onAnswerChangeRef = useRef(onAnswerChange);
+  onOptionsChangeRef.current = onOptionsChange;
+  onAnswerChangeRef.current = onAnswerChange;
 
   const toggleSelection = (opt: string) => {
     if (disabled) return;
@@ -145,11 +151,12 @@ function MultipleChoiceField({
   const handleSaveEdit = () => {
     const validOptions = editingOptions.filter(o => o.trim() !== '');
     if (validOptions.length > 0) {
-      onOptionsChange(validOptions);
+      // Use refs to ensure we have latest callback references
+      onOptionsChangeRef.current(validOptions);
       // Remove any selected answers that no longer exist in options
       const validAnswers = selectedAnswers.filter(a => validOptions.includes(a));
       if (validAnswers.length !== selectedAnswers.length) {
-        onAnswerChange(validAnswers);
+        onAnswerChangeRef.current(validAnswers);
       }
     }
     setIsEditOpen(false);
