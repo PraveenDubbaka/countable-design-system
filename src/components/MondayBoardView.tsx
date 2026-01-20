@@ -8,6 +8,16 @@ import {
   Copy,
   GripVertical,
   PlusCircle,
+  Circle,
+  Square,
+  Type,
+  Calendar,
+  AlignLeft,
+  Paperclip,
+  ToggleLeft,
+  ListPlus,
+  Menu,
+  DollarSign,
 } from 'lucide-react';
 import { Checklist, Question, Section, AnswerType } from '@/types/checklist';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -54,18 +64,18 @@ interface MondayBoardViewProps {
   isPreviewMode: boolean;
 }
 
-// Answer type options for dropdown with colors like Monday.com
-const ANSWER_TYPE_OPTIONS: { value: AnswerType; label: string; color: string; bgColor: string }[] = [
-  { value: 'short-answer', label: 'Text', color: 'text-white', bgColor: 'bg-teal-500' },
-  { value: 'long-answer', label: 'Long Text', color: 'text-white', bgColor: 'bg-emerald-600' },
-  { value: 'yes-no', label: 'Yes/No', color: 'text-white', bgColor: 'bg-pink-500' },
-  { value: 'yes-no-na', label: 'Yes/No/N/A', color: 'text-white', bgColor: 'bg-purple-500' },
-  { value: 'multiple-choice', label: 'Multiple Choice', color: 'text-white', bgColor: 'bg-blue-500' },
-  { value: 'dropdown', label: 'Dropdown', color: 'text-white', bgColor: 'bg-indigo-500' },
-  { value: 'date', label: 'Date', color: 'text-white', bgColor: 'bg-amber-500' },
-  { value: 'amount', label: 'Amount', color: 'text-white', bgColor: 'bg-rose-500' },
-  { value: 'file-upload', label: 'File Upload', color: 'text-white', bgColor: 'bg-slate-500' },
-  { value: 'toggle', label: 'Toggle', color: 'text-white', bgColor: 'bg-cyan-500' },
+// Answer type options for dropdown with icons like Monday.com
+const ANSWER_TYPE_OPTIONS: { value: AnswerType; label: string; icon: React.ElementType }[] = [
+  { value: 'yes-no', label: 'Yes / No', icon: Circle },
+  { value: 'yes-no-na', label: 'Yes / No / N/A', icon: Circle },
+  { value: 'multiple-choice', label: 'Multiple Choice', icon: Square },
+  { value: 'date', label: 'Date', icon: Calendar },
+  { value: 'long-answer', label: 'Long Answer', icon: AlignLeft },
+  { value: 'short-answer', label: 'Short Answer', icon: Type },
+  { value: 'amount', label: 'Amount', icon: DollarSign },
+  { value: 'dropdown', label: 'Dropdown', icon: Menu },
+  { value: 'file-upload', label: 'File Upload', icon: Paperclip },
+  { value: 'toggle', label: 'Switch/Toggle', icon: ToggleLeft },
 ];
 
 // Strip HTML tags from text for clean display
@@ -134,6 +144,7 @@ function SortableSubItemRow({ subItem, onUpdate, onDelete, isPreviewMode, index,
 
   // Get current answer type config
   const currentTypeConfig = ANSWER_TYPE_OPTIONS.find(o => o.value === subItem.answerType) || ANSWER_TYPE_OPTIONS[0];
+  const CurrentTypeIcon = currentTypeConfig.icon;
 
   const renderResponseField = () => {
     switch (subItem.answerType) {
@@ -234,43 +245,45 @@ function SortableSubItemRow({ subItem, onUpdate, onDelete, isPreviewMode, index,
         )}
       </div>
 
-      {/* Response column with type selector dropdown */}
-      <div className="w-[200px] px-2 py-2 flex items-center gap-2 border-r border-gray-200">
+      {/* Response column with inline type selector */}
+      <div className="w-[200px] px-2 py-2 border-r border-gray-200">
         {!isPreviewMode ? (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <button 
                 onClick={(e) => e.stopPropagation()}
-                className={`px-3 py-1.5 text-xs font-medium rounded-md ${currentTypeConfig.bgColor} ${currentTypeConfig.color} hover:opacity-90 transition-opacity min-w-[70px] text-center shrink-0`}
+                className="w-full flex items-center gap-2 px-2 py-1.5 text-sm text-gray-700 hover:bg-gray-100 rounded transition-colors"
               >
-                {currentTypeConfig.label}
+                <CurrentTypeIcon className="h-4 w-4 text-gray-500" />
+                <span>{currentTypeConfig.label}</span>
               </button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="start" className="w-44 bg-white border border-gray-200 shadow-lg z-50 p-2">
-              <div className="grid grid-cols-2 gap-1.5">
-                {ANSWER_TYPE_OPTIONS.map((opt) => (
-                  <button
+            <DropdownMenuContent align="start" className="w-52 bg-white border border-gray-200 shadow-lg z-50 py-1">
+              {ANSWER_TYPE_OPTIONS.map((opt) => {
+                const IconComponent = opt.icon;
+                const isSelected = opt.value === subItem.answerType;
+                return (
+                  <DropdownMenuItem
                     key={opt.value}
                     onClick={(e) => {
                       e.stopPropagation();
                       handleAnswerTypeChange(opt.value);
                     }}
-                    className={`px-2 py-1.5 text-xs font-medium rounded-md ${opt.bgColor} ${opt.color} hover:opacity-90 transition-opacity text-center`}
+                    className={`flex items-center gap-2 px-3 py-2 text-sm cursor-pointer ${isSelected ? 'bg-blue-50 text-blue-600' : 'text-gray-700 hover:bg-gray-100'}`}
                   >
-                    {opt.label}
-                  </button>
-                ))}
-              </div>
+                    <IconComponent className="h-4 w-4" />
+                    <span>{opt.label}</span>
+                  </DropdownMenuItem>
+                );
+              })}
             </DropdownMenuContent>
           </DropdownMenu>
         ) : (
-          <span className={`px-3 py-1.5 text-xs font-medium rounded-md ${currentTypeConfig.bgColor} ${currentTypeConfig.color} shrink-0`}>
-            {currentTypeConfig.label}
-          </span>
+          <div className="flex items-center gap-2 px-2 py-1.5 text-sm text-gray-700">
+            <CurrentTypeIcon className="h-4 w-4 text-gray-500" />
+            <span>{currentTypeConfig.label}</span>
+          </div>
         )}
-        <div className="flex-1 min-w-0">
-          {renderResponseField()}
-        </div>
       </div>
 
       {/* Additional Explanation column */}
@@ -384,6 +397,7 @@ function SortableItemRow({
 
   // Get current answer type config
   const currentTypeConfig = ANSWER_TYPE_OPTIONS.find(o => o.value === item.answerType) || ANSWER_TYPE_OPTIONS[0];
+  const CurrentTypeIcon = currentTypeConfig.icon;
 
   const renderResponseField = () => {
     switch (item.answerType) {
@@ -526,43 +540,45 @@ function SortableItemRow({
           )}
         </div>
 
-        {/* Response column with type selector dropdown */}
-        <div className="w-[240px] px-2 py-2 border-r border-gray-200 flex items-center gap-2">
+        {/* Response column with inline type selector */}
+        <div className="w-[240px] px-2 py-2 border-r border-gray-200">
           {!isPreviewMode ? (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <button 
                   onClick={(e) => e.stopPropagation()}
-                  className={`px-3 py-1.5 text-xs font-medium rounded-md ${currentTypeConfig.bgColor} ${currentTypeConfig.color} hover:opacity-90 transition-opacity min-w-[80px] text-center shrink-0`}
+                  className="w-full flex items-center gap-2 px-2 py-1.5 text-sm text-gray-700 hover:bg-gray-100 rounded transition-colors"
                 >
-                  {currentTypeConfig.label}
+                  <CurrentTypeIcon className="h-4 w-4 text-gray-500" />
+                  <span>{currentTypeConfig.label}</span>
                 </button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="start" className="w-48 bg-white border border-gray-200 shadow-lg z-50 p-2">
-                <div className="grid grid-cols-2 gap-1.5">
-                  {ANSWER_TYPE_OPTIONS.map((opt) => (
-                    <button
+              <DropdownMenuContent align="start" className="w-52 bg-white border border-gray-200 shadow-lg z-50 py-1">
+                {ANSWER_TYPE_OPTIONS.map((opt) => {
+                  const IconComponent = opt.icon;
+                  const isSelected = opt.value === item.answerType;
+                  return (
+                    <DropdownMenuItem
                       key={opt.value}
                       onClick={(e) => {
                         e.stopPropagation();
                         handleAnswerTypeChange(opt.value);
                       }}
-                      className={`px-2 py-1.5 text-xs font-medium rounded-md ${opt.bgColor} ${opt.color} hover:opacity-90 transition-opacity text-center`}
+                      className={`flex items-center gap-2 px-3 py-2 text-sm cursor-pointer ${isSelected ? 'bg-blue-50 text-blue-600' : 'text-gray-700 hover:bg-gray-100'}`}
                     >
-                      {opt.label}
-                    </button>
-                  ))}
-                </div>
+                      <IconComponent className="h-4 w-4" />
+                      <span>{opt.label}</span>
+                    </DropdownMenuItem>
+                  );
+                })}
               </DropdownMenuContent>
             </DropdownMenu>
           ) : (
-            <span className={`px-3 py-1.5 text-xs font-medium rounded-md ${currentTypeConfig.bgColor} ${currentTypeConfig.color} shrink-0`}>
-              {currentTypeConfig.label}
-            </span>
+            <div className="flex items-center gap-2 px-2 py-1.5 text-sm text-gray-700">
+              <CurrentTypeIcon className="h-4 w-4 text-gray-500" />
+              <span>{currentTypeConfig.label}</span>
+            </div>
           )}
-          <div className="flex-1 min-w-0">
-            {renderResponseField()}
-          </div>
         </div>
 
         {/* Additional Explanation column */}
