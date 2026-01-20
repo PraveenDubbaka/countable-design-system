@@ -18,7 +18,11 @@ import {
   ListPlus,
   Menu,
   DollarSign,
+  FileText,
+  Search,
 } from 'lucide-react';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { Input as SearchInput } from '@/components/ui/input';
 import { Checklist, Question, Section, AnswerType } from '@/types/checklist';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
@@ -65,23 +69,195 @@ interface MondayBoardViewProps {
 }
 
 // Answer type options for dropdown with icons like Monday.com
-const ANSWER_TYPE_OPTIONS: { value: AnswerType; label: string; icon: React.ElementType }[] = [
-  { value: 'yes-no', label: 'Yes / No', icon: Circle },
-  { value: 'yes-no-na', label: 'Yes / No / N/A', icon: Circle },
-  { value: 'multiple-choice', label: 'Multiple Choice', icon: Square },
-  { value: 'date', label: 'Date', icon: Calendar },
-  { value: 'long-answer', label: 'Long Answer', icon: AlignLeft },
-  { value: 'short-answer', label: 'Short Answer', icon: Type },
-  { value: 'amount', label: 'Amount', icon: DollarSign },
-  { value: 'dropdown', label: 'Dropdown', icon: Menu },
-  { value: 'file-upload', label: 'File Upload', icon: Paperclip },
-  { value: 'toggle', label: 'Switch/Toggle', icon: ToggleLeft },
+const ANSWER_TYPE_OPTIONS: { value: AnswerType; label: string; icon: React.ElementType; bgColor: string; iconColor: string }[] = [
+  { value: 'yes-no', label: 'Yes / No', icon: Circle, bgColor: 'bg-green-100', iconColor: 'text-green-600' },
+  { value: 'yes-no-na', label: 'Yes / No / N/A', icon: Circle, bgColor: 'bg-green-100', iconColor: 'text-green-600' },
+  { value: 'multiple-choice', label: 'Multiple Choice', icon: Square, bgColor: 'bg-amber-100', iconColor: 'text-amber-600' },
+  { value: 'date', label: 'Date', icon: Calendar, bgColor: 'bg-blue-100', iconColor: 'text-blue-600' },
+  { value: 'long-answer', label: 'Long Answer', icon: AlignLeft, bgColor: 'bg-purple-100', iconColor: 'text-purple-600' },
+  { value: 'short-answer', label: 'Short Answer', icon: Type, bgColor: 'bg-orange-100', iconColor: 'text-orange-600' },
+  { value: 'amount', label: 'Amount', icon: DollarSign, bgColor: 'bg-yellow-100', iconColor: 'text-yellow-600' },
+  { value: 'dropdown', label: 'Dropdown', icon: Menu, bgColor: 'bg-teal-100', iconColor: 'text-teal-600' },
+  { value: 'file-upload', label: 'File Upload', icon: Paperclip, bgColor: 'bg-pink-100', iconColor: 'text-pink-600' },
+  { value: 'toggle', label: 'Switch/Toggle', icon: ToggleLeft, bgColor: 'bg-indigo-100', iconColor: 'text-indigo-600' },
+];
+
+// Column options for add column dropdown
+const COLUMN_OPTIONS = [
+  { id: 'explanation', label: 'Additional Explanation', icon: AlignLeft, bgColor: 'bg-purple-100', iconColor: 'text-purple-600' },
+  { id: 'reference', label: '+ Ref (Attached Document)', icon: FileText, bgColor: 'bg-pink-100', iconColor: 'text-pink-600' },
 ];
 
 // Strip HTML tags from text for clean display
 const stripHtml = (html: string): string => {
   return html.replace(/<[^>]*>/g, '').trim();
 };
+
+// Add Column Button Component
+interface AddColumnButtonProps {
+  onAddColumn: (columnId: string) => void;
+  visibleColumns: { explanation: boolean; reference: boolean };
+}
+
+function AddColumnButton({ onAddColumn, visibleColumns }: AddColumnButtonProps) {
+  const [searchTerm, setSearchTerm] = useState('');
+  const [isOpen, setIsOpen] = useState(false);
+  
+  const filteredOptions = COLUMN_OPTIONS.filter(opt => 
+    opt.label.toLowerCase().includes(searchTerm.toLowerCase()) &&
+    !visibleColumns[opt.id as keyof typeof visibleColumns]
+  );
+
+  return (
+    <Popover open={isOpen} onOpenChange={setIsOpen}>
+      <PopoverTrigger asChild>
+        <button className="w-10 h-full flex items-center justify-center hover:bg-gray-200 transition-colors border-l border-gray-200">
+          <Plus className="h-4 w-4 text-gray-500" />
+        </button>
+      </PopoverTrigger>
+      <PopoverContent 
+        align="end" 
+        className="w-72 p-0 bg-slate-800 border-slate-700 shadow-xl z-50"
+        sideOffset={5}
+      >
+        {/* Search input */}
+        <div className="p-3 border-b border-slate-700">
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+            <SearchInput
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              placeholder="Search or describe your column"
+              className="pl-9 bg-slate-700 border-slate-600 text-white placeholder:text-slate-400 h-9 text-sm"
+            />
+          </div>
+        </div>
+        
+        {/* Column options */}
+        <div className="p-2">
+          {filteredOptions.length > 0 ? (
+            <div className="grid grid-cols-2 gap-2">
+              {filteredOptions.map((opt) => {
+                const IconComponent = opt.icon;
+                return (
+                  <button
+                    key={opt.id}
+                    onClick={() => {
+                      onAddColumn(opt.id);
+                      setIsOpen(false);
+                      setSearchTerm('');
+                    }}
+                    className="flex items-center gap-2 px-3 py-2.5 rounded-md hover:bg-slate-700 transition-colors text-left"
+                  >
+                    <div className={`w-7 h-7 rounded flex items-center justify-center ${opt.bgColor}`}>
+                      <IconComponent className={`h-4 w-4 ${opt.iconColor}`} />
+                    </div>
+                    <span className="text-sm text-white">{opt.label}</span>
+                  </button>
+                );
+              })}
+            </div>
+          ) : (
+            <p className="text-sm text-slate-400 text-center py-4">All columns are already visible</p>
+          )}
+        </div>
+      </PopoverContent>
+    </Popover>
+  );
+}
+
+// Response Type Dropdown Component (Monday.com style)
+interface ResponseTypeDropdownProps {
+  currentType: AnswerType;
+  onTypeChange: (type: AnswerType) => void;
+  disabled?: boolean;
+}
+
+function ResponseTypeDropdown({ currentType, onTypeChange, disabled }: ResponseTypeDropdownProps) {
+  const [searchTerm, setSearchTerm] = useState('');
+  const [isOpen, setIsOpen] = useState(false);
+  
+  const currentTypeConfig = ANSWER_TYPE_OPTIONS.find(o => o.value === currentType) || ANSWER_TYPE_OPTIONS[0];
+  const CurrentTypeIcon = currentTypeConfig.icon;
+  
+  const filteredOptions = ANSWER_TYPE_OPTIONS.filter(opt =>
+    opt.label.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  if (disabled) {
+    return (
+      <div className="flex items-center gap-2 px-2 py-1.5 text-sm text-gray-700">
+        <div className={`w-6 h-6 rounded flex items-center justify-center ${currentTypeConfig.bgColor}`}>
+          <CurrentTypeIcon className={`h-3.5 w-3.5 ${currentTypeConfig.iconColor}`} />
+        </div>
+        <span>{currentTypeConfig.label}</span>
+      </div>
+    );
+  }
+
+  return (
+    <Popover open={isOpen} onOpenChange={setIsOpen}>
+      <PopoverTrigger asChild>
+        <button 
+          onClick={(e) => e.stopPropagation()}
+          className="w-full flex items-center gap-2 px-2 py-1.5 text-sm text-gray-700 hover:bg-gray-100 rounded transition-colors"
+        >
+          <div className={`w-6 h-6 rounded flex items-center justify-center ${currentTypeConfig.bgColor}`}>
+            <CurrentTypeIcon className={`h-3.5 w-3.5 ${currentTypeConfig.iconColor}`} />
+          </div>
+          <span>{currentTypeConfig.label}</span>
+        </button>
+      </PopoverTrigger>
+      <PopoverContent 
+        align="start" 
+        className="w-72 p-0 bg-slate-800 border-slate-700 shadow-xl z-50"
+        sideOffset={5}
+      >
+        {/* Search input */}
+        <div className="p-3 border-b border-slate-700">
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+            <SearchInput
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              placeholder="Search or describe your column"
+              className="pl-9 bg-slate-700 border-slate-600 text-white placeholder:text-slate-400 h-9 text-sm"
+            />
+          </div>
+        </div>
+        
+        {/* Response type options */}
+        <div className="p-2">
+          <div className="grid grid-cols-2 gap-2">
+            {filteredOptions.map((opt) => {
+              const IconComponent = opt.icon;
+              const isSelected = opt.value === currentType;
+              return (
+                <button
+                  key={opt.value}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onTypeChange(opt.value);
+                    setIsOpen(false);
+                    setSearchTerm('');
+                  }}
+                  className={`flex items-center gap-2 px-3 py-2.5 rounded-md transition-colors text-left ${
+                    isSelected ? 'bg-slate-600' : 'hover:bg-slate-700'
+                  }`}
+                >
+                  <div className={`w-7 h-7 rounded flex items-center justify-center ${opt.bgColor}`}>
+                    <IconComponent className={`h-4 w-4 ${opt.iconColor}`} />
+                  </div>
+                  <span className="text-sm text-white">{opt.label}</span>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      </PopoverContent>
+    </Popover>
+  );
+}
 
 // Sortable Sub-item row component
 interface SubItemRowProps {
@@ -91,6 +267,7 @@ interface SubItemRowProps {
   onDelete: () => void;
   isPreviewMode: boolean;
   parentId: string;
+  visibleColumns: { explanation: boolean; reference: boolean };
 }
 
 interface SortableSubItemRowProps extends SubItemRowProps {
@@ -98,7 +275,7 @@ interface SortableSubItemRowProps extends SubItemRowProps {
   totalCount: number;
 }
 
-function SortableSubItemRow({ subItem, onUpdate, onDelete, isPreviewMode, index, parentId, isLast, totalCount }: SortableSubItemRowProps) {
+function SortableSubItemRow({ subItem, onUpdate, onDelete, isPreviewMode, index, parentId, isLast, totalCount, visibleColumns }: SortableSubItemRowProps) {
   const [isEditingName, setIsEditingName] = useState(false);
   const [isSelected, setIsSelected] = useState(false);
   const draftNameRef = useRef(subItem.text);
@@ -141,10 +318,6 @@ function SortableSubItemRow({ subItem, onUpdate, onDelete, isPreviewMode, index,
   const handleAnswerTypeChange = (answerType: AnswerType) => {
     onUpdate({ ...subItem, answerType, answer: '' });
   };
-
-  // Get current answer type config
-  const currentTypeConfig = ANSWER_TYPE_OPTIONS.find(o => o.value === subItem.answerType) || ANSWER_TYPE_OPTIONS[0];
-  const CurrentTypeIcon = currentTypeConfig.icon;
 
   const renderResponseField = () => {
     switch (subItem.answerType) {
@@ -247,57 +420,40 @@ function SortableSubItemRow({ subItem, onUpdate, onDelete, isPreviewMode, index,
 
       {/* Response column with inline type selector */}
       <div className="w-[200px] px-2 py-2 border-r border-gray-200">
-        {!isPreviewMode ? (
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <button 
-                onClick={(e) => e.stopPropagation()}
-                className="w-full flex items-center gap-2 px-2 py-1.5 text-sm text-gray-700 hover:bg-gray-100 rounded transition-colors"
-              >
-                <CurrentTypeIcon className="h-4 w-4 text-gray-500" />
-                <span>{currentTypeConfig.label}</span>
-              </button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="start" className="w-52 bg-white border border-gray-200 shadow-lg z-50 py-1">
-              {ANSWER_TYPE_OPTIONS.map((opt) => {
-                const IconComponent = opt.icon;
-                const isSelected = opt.value === subItem.answerType;
-                return (
-                  <DropdownMenuItem
-                    key={opt.value}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleAnswerTypeChange(opt.value);
-                    }}
-                    className={`flex items-center gap-2 px-3 py-2 text-sm cursor-pointer ${isSelected ? 'bg-blue-50 text-blue-600' : 'text-gray-700 hover:bg-gray-100'}`}
-                  >
-                    <IconComponent className="h-4 w-4" />
-                    <span>{opt.label}</span>
-                  </DropdownMenuItem>
-                );
-              })}
-            </DropdownMenuContent>
-          </DropdownMenu>
-        ) : (
-          <div className="flex items-center gap-2 px-2 py-1.5 text-sm text-gray-700">
-            <CurrentTypeIcon className="h-4 w-4 text-gray-500" />
-            <span>{currentTypeConfig.label}</span>
-          </div>
-        )}
-      </div>
-
-      {/* Additional Explanation column */}
-      <div className="w-[200px] px-2 py-2 flex items-center">
-        <Textarea
-          value={subItem.explanation || ''}
-          onChange={(e) => onUpdate({ ...subItem, explanation: e.target.value })}
-          placeholder="Add explanation..."
+        <ResponseTypeDropdown
+          currentType={subItem.answerType}
+          onTypeChange={handleAnswerTypeChange}
           disabled={isPreviewMode}
-          className="min-h-[28px] h-7 text-xs bg-gray-100 border-gray-300 text-gray-700 resize-none py-1"
         />
       </div>
 
-      {/* Actions - add subitem button */}
+      {/* Additional Explanation column - conditionally rendered */}
+      {visibleColumns.explanation && (
+        <div className="w-[200px] px-2 py-2 border-r border-gray-200 flex items-center">
+          <Textarea
+            value={subItem.explanation || ''}
+            onChange={(e) => onUpdate({ ...subItem, explanation: e.target.value })}
+            placeholder="Add explanation..."
+            disabled={isPreviewMode}
+            className="min-h-[28px] h-7 text-xs bg-gray-100 border-gray-300 text-gray-700 resize-none py-1"
+          />
+        </div>
+      )}
+
+      {/* Reference column - conditionally rendered */}
+      {visibleColumns.reference && (
+        <div className="w-[200px] px-2 py-2 border-r border-gray-200 flex items-center">
+          <Input
+            value={(subItem as any).reference || ''}
+            onChange={(e) => onUpdate({ ...subItem, reference: e.target.value } as any)}
+            placeholder="Add reference..."
+            disabled={isPreviewMode}
+            className="h-7 text-xs bg-gray-100 border-gray-300 text-gray-700"
+          />
+        </div>
+      )}
+
+      {/* Actions - delete button */}
       <div className="w-12 flex items-center justify-center">
         {!isPreviewMode && (
           <button
@@ -305,9 +461,9 @@ function SortableSubItemRow({ subItem, onUpdate, onDelete, isPreviewMode, index,
               e.stopPropagation();
               onDelete();
             }}
-            className="p-1 rounded hover:bg-gray-200 text-gray-400 hover:text-gray-700 transition-colors opacity-0 group-hover:opacity-100"
+            className="p-1 rounded hover:bg-gray-200 text-gray-400 hover:text-red-500 transition-colors opacity-0 group-hover:opacity-100"
           >
-            <PlusCircle className="h-4 w-4" />
+            <Trash2 className="h-4 w-4" />
           </button>
         )}
       </div>
@@ -341,6 +497,7 @@ function SortableItemRow({
   const [isExpanded, setIsExpanded] = useState(true);
   const [isEditingName, setIsEditingName] = useState(false);
   const [isSelected, setIsSelected] = useState(false);
+  const [visibleColumns, setVisibleColumns] = useState({ explanation: true, reference: false });
   const draftNameRef = useRef(item.text);
 
   const {
@@ -395,9 +552,9 @@ function SortableItemRow({
     onUpdate({ ...item, subQuestions: newSubQuestions });
   };
 
-  // Get current answer type config
-  const currentTypeConfig = ANSWER_TYPE_OPTIONS.find(o => o.value === item.answerType) || ANSWER_TYPE_OPTIONS[0];
-  const CurrentTypeIcon = currentTypeConfig.icon;
+  const handleAddColumn = (columnId: string) => {
+    setVisibleColumns(prev => ({ ...prev, [columnId]: true }));
+  };
 
   const renderResponseField = () => {
     switch (item.answerType) {
@@ -541,56 +698,44 @@ function SortableItemRow({
         </div>
 
         {/* Response column with inline type selector */}
-        <div className="w-[240px] px-2 py-2 border-r border-gray-200">
-          {!isPreviewMode ? (
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <button 
-                  onClick={(e) => e.stopPropagation()}
-                  className="w-full flex items-center gap-2 px-2 py-1.5 text-sm text-gray-700 hover:bg-gray-100 rounded transition-colors"
-                >
-                  <CurrentTypeIcon className="h-4 w-4 text-gray-500" />
-                  <span>{currentTypeConfig.label}</span>
-                </button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="start" className="w-52 bg-white border border-gray-200 shadow-lg z-50 py-1">
-                {ANSWER_TYPE_OPTIONS.map((opt) => {
-                  const IconComponent = opt.icon;
-                  const isSelected = opt.value === item.answerType;
-                  return (
-                    <DropdownMenuItem
-                      key={opt.value}
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleAnswerTypeChange(opt.value);
-                      }}
-                      className={`flex items-center gap-2 px-3 py-2 text-sm cursor-pointer ${isSelected ? 'bg-blue-50 text-blue-600' : 'text-gray-700 hover:bg-gray-100'}`}
-                    >
-                      <IconComponent className="h-4 w-4" />
-                      <span>{opt.label}</span>
-                    </DropdownMenuItem>
-                  );
-                })}
-              </DropdownMenuContent>
-            </DropdownMenu>
-          ) : (
-            <div className="flex items-center gap-2 px-2 py-1.5 text-sm text-gray-700">
-              <CurrentTypeIcon className="h-4 w-4 text-gray-500" />
-              <span>{currentTypeConfig.label}</span>
-            </div>
-          )}
-        </div>
-
-        {/* Additional Explanation column */}
         <div className="w-[200px] px-2 py-2 border-r border-gray-200">
-          <Textarea
-            value={item.explanation || ''}
-            onChange={(e) => onUpdate({ ...item, explanation: e.target.value })}
-            placeholder="Add explanation..."
+          <ResponseTypeDropdown
+            currentType={item.answerType}
+            onTypeChange={handleAnswerTypeChange}
             disabled={isPreviewMode}
-            className="min-h-[32px] h-8 text-xs bg-gray-100 border-gray-300 text-gray-700 resize-none py-1.5"
           />
         </div>
+
+        {/* Additional Explanation column - conditionally rendered */}
+        {visibleColumns.explanation && (
+          <div className="w-[200px] px-2 py-2 border-r border-gray-200">
+            <Textarea
+              value={item.explanation || ''}
+              onChange={(e) => onUpdate({ ...item, explanation: e.target.value })}
+              placeholder="Add explanation..."
+              disabled={isPreviewMode}
+              className="min-h-[32px] h-8 text-xs bg-gray-100 border-gray-300 text-gray-700 resize-none py-1.5"
+            />
+          </div>
+        )}
+
+        {/* Reference column - conditionally rendered */}
+        {visibleColumns.reference && (
+          <div className="w-[200px] px-2 py-2 border-r border-gray-200">
+            <Input
+              value={(item as any).reference || ''}
+              onChange={(e) => onUpdate({ ...item, reference: e.target.value } as any)}
+              placeholder="Add reference..."
+              disabled={isPreviewMode}
+              className="h-8 text-xs bg-gray-100 border-gray-300 text-gray-700"
+            />
+          </div>
+        )}
+
+        {/* Add column button */}
+        {!isPreviewMode && (!visibleColumns.explanation || !visibleColumns.reference) && (
+          <AddColumnButton onAddColumn={handleAddColumn} visibleColumns={visibleColumns} />
+        )}
 
         {/* Actions menu */}
         <div className="w-16 flex items-center justify-center gap-1">
@@ -655,7 +800,12 @@ function SortableItemRow({
               <div className="w-10 flex items-center justify-center py-2" />
               <div className="flex-1 min-w-[280px] px-3 py-2 border-r border-gray-200">Subitem</div>
               <div className="w-[200px] px-2 py-2 text-center border-r border-gray-200">Response</div>
-              <div className="w-[200px] px-2 py-2 text-center">Explanation</div>
+              {visibleColumns.explanation && (
+                <div className="w-[200px] px-2 py-2 text-center border-r border-gray-200">Explanation</div>
+              )}
+              {visibleColumns.reference && (
+                <div className="w-[200px] px-2 py-2 text-center border-r border-gray-200">Reference</div>
+              )}
               <div className="w-12" />
             </div>
 
@@ -671,6 +821,7 @@ function SortableItemRow({
                     isPreviewMode={isPreviewMode}
                     isLast={idx === item.subQuestions!.length - 1}
                     totalCount={item.subQuestions!.length}
+                    visibleColumns={visibleColumns}
                   />
                 </div>
               ))}
@@ -886,12 +1037,12 @@ function SortableGroup({
         <>
           {/* Column headers */}
           <div className="flex items-center border-b border-gray-200 bg-gray-100 text-xs font-medium text-gray-500">
-            <div className="w-10 border-r border-gray-200" />
-            <div className="w-8" />
+            <div className="w-10 border-r border-gray-200 py-2" />
+            <div className="w-8 py-2" />
             <div className="flex-1 min-w-[280px] px-3 py-2 border-r border-gray-200">Item</div>
-            <div className="w-[240px] px-2 py-2 border-r border-gray-200">Response</div>
-            <div className="w-[200px] px-2 py-2 border-r border-gray-200">Explanation</div>
-            <div className="w-16" />
+            <div className="w-[200px] px-2 py-2 border-r border-gray-200">Response</div>
+            <div className="flex-1 px-2 py-2 text-center text-gray-400">+ Additional Columns</div>
+            <div className="w-16 py-2" />
           </div>
 
           {/* Items */}
