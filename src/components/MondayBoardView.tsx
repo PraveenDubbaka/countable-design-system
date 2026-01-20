@@ -378,7 +378,7 @@ function ResponseTypeDropdown({ currentType, onTypeChange, disabled }: ResponseT
         
         {/* Response type options */}
         <div className="p-2">
-          <div className="grid grid-cols-2 gap-2">
+          <div className="grid grid-cols-2 gap-1.5">
             {filteredOptions.map((opt) => {
               const IconComponent = opt.icon;
               const isSelected = opt.value === currentType;
@@ -391,14 +391,14 @@ function ResponseTypeDropdown({ currentType, onTypeChange, disabled }: ResponseT
                     setIsOpen(false);
                     setSearchTerm('');
                   }}
-                  className={`flex items-center gap-2 px-3 py-2.5 rounded-md transition-colors text-left ${
+                  className={`flex items-center gap-2 px-2 py-2 rounded-md transition-colors text-left ${
                     isSelected ? 'bg-slate-600' : 'hover:bg-slate-700'
                   }`}
                 >
-                  <div className={`w-7 h-7 rounded flex items-center justify-center ${opt.bgColor}`}>
-                    <IconComponent className={`h-4 w-4 ${opt.iconColor}`} />
+                  <div className={`w-6 h-6 shrink-0 rounded flex items-center justify-center ${opt.bgColor}`}>
+                    <IconComponent className={`h-3.5 w-3.5 ${opt.iconColor}`} />
                   </div>
-                  <span className="text-sm text-white">{opt.label}</span>
+                  <span className="text-xs text-white whitespace-nowrap truncate">{opt.label}</span>
                 </button>
               );
             })}
