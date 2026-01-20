@@ -147,7 +147,7 @@ function SortableSubItemRow({ subItem, onUpdate, onDelete, isPreviewMode, index,
                 className={`px-2 py-1 text-xs rounded transition-all ${
                   subItem.answer === opt
                     ? 'bg-blue-600 text-white'
-                    : 'bg-slate-700/50 hover:bg-slate-600/50 text-slate-300'
+                    : 'bg-gray-200 hover:bg-gray-300 text-gray-700'
                 }`}
               >
                 {opt}
@@ -163,7 +163,7 @@ function SortableSubItemRow({ subItem, onUpdate, onDelete, isPreviewMode, index,
             value={subItem.answer || ''}
             onChange={(e) => handleAnswerChange(e.target.value)}
             disabled={isPreviewMode}
-            className="h-7 px-2 text-xs bg-slate-700/50 border-slate-600 text-slate-200 rounded w-full"
+            className="h-7 px-2 text-xs bg-gray-100 border-gray-300 text-gray-700 rounded w-full"
           >
             <option value="">Select...</option>
             {(subItem.options || ['Option 1', 'Option 2']).map((opt, i) => (
@@ -179,7 +179,7 @@ function SortableSubItemRow({ subItem, onUpdate, onDelete, isPreviewMode, index,
             onChange={(e) => handleAnswerChange(e.target.value)}
             placeholder="Enter response..."
             disabled={isPreviewMode}
-            className="h-7 text-xs bg-slate-700/50 border-slate-600 text-slate-200"
+            className="h-7 text-xs bg-gray-100 border-gray-300 text-gray-700"
           />
         );
     }
@@ -190,14 +190,14 @@ function SortableSubItemRow({ subItem, onUpdate, onDelete, isPreviewMode, index,
       ref={setNodeRef} 
       style={style}
       {...(!isPreviewMode ? { ...attributes, ...listeners } : {})}
-      className={`group flex items-stretch hover:bg-slate-700/20 transition-colors relative ${!isPreviewMode ? 'cursor-grab active:cursor-grabbing' : ''}`}
+      className={`group flex items-stretch hover:bg-gray-100 transition-colors relative ${!isPreviewMode ? 'cursor-grab active:cursor-grabbing' : ''}`}
     >
       {/* Checkbox column */}
       <div className="w-10 flex items-center justify-center">
         <Checkbox 
           checked={isSelected} 
           onCheckedChange={() => setIsSelected(!isSelected)}
-          className="h-4 w-4 border-slate-500 bg-slate-800"
+          className="h-4 w-4 border-gray-400 bg-white"
         />
       </div>
 
@@ -209,7 +209,7 @@ function SortableSubItemRow({ subItem, onUpdate, onDelete, isPreviewMode, index,
             onChange={(newValue) => { draftNameRef.current = newValue; }}
             onBlur={handleSave}
             onCancel={handleCancel}
-            className="text-sm min-h-[32px] bg-slate-700/50 border-slate-600 text-slate-200"
+            className="text-sm min-h-[32px] bg-gray-100 border-gray-300 text-gray-800"
           />
         ) : (
           <div
@@ -220,7 +220,7 @@ function SortableSubItemRow({ subItem, onUpdate, onDelete, isPreviewMode, index,
                 setIsEditingName(true);
               }
             }}
-            className={`text-sm text-slate-300 ${!isPreviewMode ? 'cursor-text hover:text-slate-100' : ''}`}
+            className={`text-sm text-gray-700 ${!isPreviewMode ? 'cursor-text hover:text-gray-900' : ''}`}
             dangerouslySetInnerHTML={{ __html: subItem.text || 'New sub-item' }}
           />
         )}
@@ -233,19 +233,19 @@ function SortableSubItemRow({ subItem, onUpdate, onDelete, isPreviewMode, index,
             value={subItem.answerType}
             onValueChange={(value) => handleAnswerTypeChange(value as AnswerType)}
           >
-            <SelectTrigger className="h-7 text-xs bg-slate-700/50 border-slate-600 text-slate-300">
+            <SelectTrigger className="h-7 text-xs bg-gray-100 border-gray-300 text-gray-700">
               <SelectValue />
             </SelectTrigger>
-            <SelectContent className="bg-slate-800 border-slate-700 z-50">
+            <SelectContent className="bg-white border-gray-200 z-50">
               {ANSWER_TYPE_OPTIONS.map((opt) => (
-                <SelectItem key={opt.value} value={opt.value} className="text-slate-200 focus:bg-slate-700">
+                <SelectItem key={opt.value} value={opt.value} className="text-gray-700 focus:bg-gray-100">
                   {opt.label}
                 </SelectItem>
               ))}
             </SelectContent>
           </Select>
         ) : (
-          <span className="text-xs text-slate-400">
+          <span className="text-xs text-gray-500">
             {ANSWER_TYPE_OPTIONS.find(o => o.value === subItem.answerType)?.label || 'Text'}
           </span>
         )}
@@ -263,7 +263,7 @@ function SortableSubItemRow({ subItem, onUpdate, onDelete, isPreviewMode, index,
           onChange={(e) => onUpdate({ ...subItem, explanation: e.target.value })}
           placeholder="Add explanation..."
           disabled={isPreviewMode}
-          className="min-h-[28px] h-7 text-xs bg-slate-700/50 border-slate-600 text-slate-200 resize-none py-1"
+          className="min-h-[28px] h-7 text-xs bg-gray-100 border-gray-300 text-gray-700 resize-none py-1"
         />
       </div>
 
@@ -275,7 +275,7 @@ function SortableSubItemRow({ subItem, onUpdate, onDelete, isPreviewMode, index,
               e.stopPropagation();
               onDelete();
             }}
-            className="p-1 rounded hover:bg-slate-600 text-slate-400 hover:text-slate-200 transition-colors opacity-0 group-hover:opacity-100"
+            className="p-1 rounded hover:bg-gray-200 text-gray-400 hover:text-gray-700 transition-colors opacity-0 group-hover:opacity-100"
           >
             <PlusCircle className="h-4 w-4" />
           </button>
@@ -380,7 +380,7 @@ function SortableItemRow({
                 className={`px-2 py-1 text-xs rounded transition-all ${
                   item.answer === opt
                     ? 'bg-blue-600 text-white'
-                    : 'bg-slate-700/50 hover:bg-slate-600/50 text-slate-300'
+                    : 'bg-gray-200 hover:bg-gray-300 text-gray-700'
                 }`}
               >
                 {opt}
@@ -396,7 +396,7 @@ function SortableItemRow({
             value={item.answer || ''}
             onChange={(e) => handleAnswerChange(e.target.value)}
             disabled={isPreviewMode}
-            className="h-8 px-2 text-sm bg-slate-700/50 border-slate-600 text-slate-200 rounded w-full"
+            className="h-8 px-2 text-sm bg-gray-100 border-gray-300 text-gray-700 rounded w-full"
           >
             <option value="">Select...</option>
             {(item.options || ['Option 1', 'Option 2']).map((opt, i) => (
@@ -412,7 +412,7 @@ function SortableItemRow({
             onChange={(e) => handleAnswerChange(e.target.value)}
             placeholder="Enter response..."
             disabled={isPreviewMode}
-            className="min-h-[32px] text-sm bg-slate-700/50 border border-slate-600 text-slate-200 resize-none rounded-md px-2 py-1 w-full"
+            className="min-h-[32px] text-sm bg-gray-100 border border-gray-300 text-gray-700 resize-none rounded-md px-2 py-1 w-full"
           />
         );
 
@@ -423,7 +423,7 @@ function SortableItemRow({
             onChange={(e) => handleAnswerChange(e.target.value)}
             placeholder="Enter response..."
             disabled={isPreviewMode}
-            className="h-8 text-sm bg-slate-700/50 border-slate-600 text-slate-200"
+            className="h-8 text-sm bg-gray-100 border-gray-300 text-gray-700"
           />
         );
     }
@@ -436,14 +436,14 @@ function SortableItemRow({
       {/* Main item row - full row is draggable */}
       <div 
         {...(!isPreviewMode && !isEditingName ? { ...attributes, ...listeners } : {})}
-        className={`group flex items-center border-b border-slate-700 hover:bg-slate-700/40 transition-colors ${isSelected ? 'bg-slate-700/30' : ''} ${!isPreviewMode && !isEditingName ? 'cursor-grab active:cursor-grabbing' : ''}`}
+        className={`group flex items-center border-b border-gray-200 hover:bg-gray-100 transition-colors ${isSelected ? 'bg-gray-100' : ''} ${!isPreviewMode && !isEditingName ? 'cursor-grab active:cursor-grabbing' : ''}`}
       >
         {/* Checkbox */}
-        <div className="w-10 flex items-center justify-center border-r border-slate-700">
+        <div className="w-10 flex items-center justify-center border-r border-gray-200">
           <Checkbox 
             checked={isSelected} 
             onCheckedChange={() => setIsSelected(!isSelected)}
-            className="h-4 w-4 border-slate-500"
+            className="h-4 w-4 border-gray-400"
           />
         </div>
 
@@ -455,12 +455,12 @@ function SortableItemRow({
                 e.stopPropagation();
                 setIsExpanded(!isExpanded);
               }}
-              className="p-0.5 rounded hover:bg-slate-600 transition-colors"
+              className="p-0.5 rounded hover:bg-gray-200 transition-colors"
             >
               {isExpanded ? (
-                <ChevronDown className="h-4 w-4 text-slate-400" />
+                <ChevronDown className="h-4 w-4 text-gray-500" />
               ) : (
-                <ChevronRight className="h-4 w-4 text-slate-400" />
+                <ChevronRight className="h-4 w-4 text-gray-500" />
               )}
             </button>
           ) : (
@@ -469,14 +469,14 @@ function SortableItemRow({
         </div>
 
         {/* Item name */}
-        <div className="flex-1 min-w-[280px] px-3 py-1 border-r border-slate-700">
+        <div className="flex-1 min-w-[280px] px-3 py-1 border-r border-gray-200">
           {isEditingName && !isPreviewMode ? (
             <RichTextQuestionEditor
               value={item.text}
               onChange={(newValue) => { draftNameRef.current = newValue; }}
               onBlur={handleSave}
               onCancel={handleCancel}
-              className="text-sm min-h-[36px] bg-slate-700/50 border-slate-600 text-slate-200"
+              className="text-sm min-h-[36px] bg-gray-100 border-gray-300 text-gray-800"
             />
           ) : (
             <div className="flex items-center gap-2">
@@ -488,11 +488,11 @@ function SortableItemRow({
                     setIsEditingName(true);
                   }
                 }}
-                className={`text-sm text-slate-200 py-2 flex-1 ${!isPreviewMode ? 'cursor-text hover:text-white' : ''}`}
+                className={`text-sm text-gray-800 py-2 flex-1 ${!isPreviewMode ? 'cursor-text hover:text-gray-900' : ''}`}
                 dangerouslySetInnerHTML={{ __html: item.text || 'Click to add item name...' }}
               />
               {hasSubItems && (
-                <span className="text-xs bg-blue-500/20 text-blue-400 px-1.5 py-0.5 rounded font-medium">
+                <span className="text-xs bg-blue-100 text-blue-600 px-1.5 py-0.5 rounded font-medium">
                   {item.subQuestions!.length}
                 </span>
               )}
@@ -501,43 +501,43 @@ function SortableItemRow({
         </div>
 
         {/* Response Type column */}
-        <div className="w-[120px] px-2 py-2 border-r border-slate-700">
+        <div className="w-[120px] px-2 py-2 border-r border-gray-200">
           {!isPreviewMode ? (
             <Select
               value={item.answerType}
               onValueChange={(value) => handleAnswerTypeChange(value as AnswerType)}
             >
-              <SelectTrigger className="h-8 text-xs bg-slate-700/50 border-slate-600 text-slate-300">
+              <SelectTrigger className="h-8 text-xs bg-gray-100 border-gray-300 text-gray-700">
                 <SelectValue />
               </SelectTrigger>
-              <SelectContent className="bg-slate-800 border-slate-700 z-50">
+              <SelectContent className="bg-white border-gray-200 z-50">
                 {ANSWER_TYPE_OPTIONS.map((opt) => (
-                  <SelectItem key={opt.value} value={opt.value} className="text-slate-200 focus:bg-slate-700">
+                  <SelectItem key={opt.value} value={opt.value} className="text-gray-700 focus:bg-gray-100">
                     {opt.label}
                   </SelectItem>
                 ))}
               </SelectContent>
             </Select>
           ) : (
-            <span className="text-xs text-slate-400">
+            <span className="text-xs text-gray-500">
               {ANSWER_TYPE_OPTIONS.find(o => o.value === item.answerType)?.label || 'Text'}
             </span>
           )}
         </div>
 
         {/* Response column */}
-        <div className="w-[160px] px-2 py-2 border-r border-slate-700">
+        <div className="w-[160px] px-2 py-2 border-r border-gray-200">
           {renderResponseField()}
         </div>
 
         {/* Additional Explanation column */}
-        <div className="w-[200px] px-2 py-2 border-r border-slate-700">
+        <div className="w-[200px] px-2 py-2 border-r border-gray-200">
           <Textarea
             value={item.explanation || ''}
             onChange={(e) => onUpdate({ ...item, explanation: e.target.value })}
             placeholder="Add explanation..."
             disabled={isPreviewMode}
-            className="min-h-[32px] h-8 text-xs bg-slate-700/50 border-slate-600 text-slate-200 resize-none py-1.5"
+            className="min-h-[32px] h-8 text-xs bg-gray-100 border-gray-300 text-gray-700 resize-none py-1.5"
           />
         </div>
 
@@ -550,7 +550,7 @@ function SortableItemRow({
                   e.stopPropagation();
                   onAddSubItem();
                 }}
-                className="p-1.5 rounded hover:bg-slate-600 opacity-0 group-hover:opacity-100 transition-all text-slate-400 hover:text-slate-200"
+                className="p-1.5 rounded hover:bg-gray-200 opacity-0 group-hover:opacity-100 transition-all text-gray-400 hover:text-gray-700"
                 title="Add sub-item"
               >
                 <PlusCircle className="h-4 w-4" />
@@ -559,22 +559,22 @@ function SortableItemRow({
                 <DropdownMenuTrigger asChild>
                   <button 
                     onClick={(e) => e.stopPropagation()}
-                    className="p-1.5 rounded hover:bg-slate-600 opacity-0 group-hover:opacity-100 transition-all"
+                    className="p-1.5 rounded hover:bg-gray-200 opacity-0 group-hover:opacity-100 transition-all"
                   >
-                    <MoreHorizontal className="h-4 w-4 text-slate-400" />
+                    <MoreHorizontal className="h-4 w-4 text-gray-400" />
                   </button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-48 bg-slate-800 border-slate-700 z-50">
-                  <DropdownMenuItem onClick={onAddSubItem} className="text-slate-200 focus:bg-slate-700 focus:text-white">
+                <DropdownMenuContent align="end" className="w-48 bg-white border-gray-200 z-50">
+                  <DropdownMenuItem onClick={onAddSubItem} className="text-gray-700 focus:bg-gray-100 focus:text-gray-900">
                     <Plus className="h-4 w-4 mr-2" />
                     Add sub-item
                   </DropdownMenuItem>
-                  <DropdownMenuItem onClick={onDuplicate} className="text-slate-200 focus:bg-slate-700 focus:text-white">
+                  <DropdownMenuItem onClick={onDuplicate} className="text-gray-700 focus:bg-gray-100 focus:text-gray-900">
                     <Copy className="h-4 w-4 mr-2" />
                     Duplicate
                   </DropdownMenuItem>
-                  <DropdownMenuSeparator className="bg-slate-700" />
-                  <DropdownMenuItem onClick={onDelete} className="text-red-400 focus:bg-slate-700 focus:text-red-300">
+                  <DropdownMenuSeparator className="bg-gray-200" />
+                  <DropdownMenuItem onClick={onDelete} className="text-red-500 focus:bg-gray-100 focus:text-red-600">
                     <Trash2 className="h-4 w-4 mr-2" />
                     Delete
                   </DropdownMenuItem>
@@ -598,9 +598,9 @@ function SortableItemRow({
           <div className="absolute left-3 top-3 bottom-0 w-0.5 bg-amber-600/70" />
           
           {/* Sub-items container with left margin for the bar */}
-          <div className="ml-10 bg-slate-800/40 border border-slate-700/50 rounded-lg overflow-hidden">
+          <div className="ml-10 bg-gray-50 border border-gray-200 rounded-lg overflow-hidden">
             {/* Sub-items header row */}
-            <div className="flex items-center bg-slate-800/70 text-xs font-medium text-slate-400 border-b border-slate-700/40">
+            <div className="flex items-center bg-gray-100 text-xs font-medium text-gray-500 border-b border-gray-200">
               <div className="w-10 flex items-center justify-center py-2" />
               <div className="flex-1 min-w-[280px] px-3 py-2">Subitem</div>
               <div className="w-[120px] px-2 py-2 text-center">Type</div>
@@ -611,7 +611,7 @@ function SortableItemRow({
 
             <SortableContext items={subItemIds} strategy={verticalListSortingStrategy}>
               {item.subQuestions!.map((sub, idx) => (
-                <div key={sub.id} className="border-b border-slate-700/30 last:border-b-0">
+                <div key={sub.id} className="border-b border-gray-200 last:border-b-0">
                   <SortableSubItemRow
                     subItem={sub}
                     index={idx}
@@ -628,16 +628,16 @@ function SortableItemRow({
 
             {/* Add subitem row */}
             {!isPreviewMode && (
-              <div className="flex items-center hover:bg-slate-700/20 transition-colors border-t border-slate-700/30">
+              <div className="flex items-center hover:bg-gray-100 transition-colors border-t border-gray-200">
                 <div className="w-10 flex items-center justify-center py-2.5">
                   <Checkbox 
                     disabled
-                    className="h-4 w-4 border-slate-600 bg-slate-800 opacity-30"
+                    className="h-4 w-4 border-gray-300 bg-white opacity-30"
                   />
                 </div>
                 <button
                   onClick={onAddSubItem}
-                  className="flex-1 flex items-center gap-2 px-3 py-2.5 text-sm text-slate-500 hover:text-blue-400 transition-colors text-left"
+                  className="flex-1 flex items-center gap-2 px-3 py-2.5 text-sm text-gray-400 hover:text-blue-500 transition-colors text-left"
                 >
                   + Add subitem
                 </button>
@@ -753,11 +753,11 @@ function SortableGroup({
   const itemIds = section.questions.map(q => q.id);
 
   return (
-    <div ref={setNodeRef} style={style} className="bg-slate-900 rounded-lg border border-slate-700 overflow-hidden">
+    <div ref={setNodeRef} style={style} className="bg-white rounded-lg border border-gray-200 overflow-hidden shadow-sm">
       {/* Group header */}
       <div 
         {...(!isPreviewMode ? { ...attributes, ...listeners } : {})}
-        className={`flex items-center gap-3 px-4 py-2 border-b border-slate-700 ${!isPreviewMode ? 'cursor-grab active:cursor-grabbing' : ''}`}
+        className={`flex items-center gap-3 px-4 py-2 border-b border-gray-200 bg-gray-50 ${!isPreviewMode ? 'cursor-grab active:cursor-grabbing' : ''}`}
       >
         <div className="w-1 h-6 bg-amber-600 rounded-full" />
         <button 
@@ -765,12 +765,12 @@ function SortableGroup({
             e.stopPropagation();
             onUpdate({ ...section, isExpanded: !section.isExpanded });
           }}
-          className="p-0.5 rounded hover:bg-slate-700 transition-colors"
+          className="p-0.5 rounded hover:bg-gray-200 transition-colors"
         >
           {section.isExpanded ? (
-            <ChevronDown className="h-4 w-4 text-slate-400" />
+            <ChevronDown className="h-4 w-4 text-gray-500" />
           ) : (
-            <ChevronRight className="h-4 w-4 text-slate-400" />
+            <ChevronRight className="h-4 w-4 text-gray-500" />
           )}
         </button>
         
@@ -788,7 +788,7 @@ function SortableGroup({
             }}
             autoFocus
             onClick={(e) => e.stopPropagation()}
-            className="h-7 text-sm font-semibold bg-slate-700/50 border-slate-600 text-amber-400 flex-1"
+            className="h-7 text-sm font-semibold bg-gray-100 border-gray-300 text-amber-600 flex-1"
           />
         ) : (
           <h3 
@@ -796,13 +796,13 @@ function SortableGroup({
               e.stopPropagation();
               if (!isPreviewMode) setIsEditingTitle(true);
             }}
-            className={`text-sm font-semibold text-amber-400 flex-1 ${!isPreviewMode ? 'cursor-text hover:text-amber-300' : ''}`}
+            className={`text-sm font-semibold text-amber-600 flex-1 ${!isPreviewMode ? 'cursor-text hover:text-amber-700' : ''}`}
           >
             {cleanTitle(section.title)}
           </h3>
         )}
 
-        <span className="text-xs text-slate-400">
+        <span className="text-xs text-gray-500">
           {section.questions.length} Items{totalSubitems > 0 ? ` / ${totalSubitems} Subitems` : ''}
         </span>
 
@@ -811,18 +811,18 @@ function SortableGroup({
             <DropdownMenuTrigger asChild>
               <button 
                 onClick={(e) => e.stopPropagation()}
-                className="p-1 rounded hover:bg-slate-700 transition-colors"
+                className="p-1 rounded hover:bg-gray-200 transition-colors"
               >
-                <MoreHorizontal className="h-4 w-4 text-slate-400" />
+                <MoreHorizontal className="h-4 w-4 text-gray-500" />
               </button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="bg-slate-800 border-slate-700 z-50">
-              <DropdownMenuItem onClick={onAddItem} className="text-slate-200 focus:bg-slate-700 focus:text-white">
+            <DropdownMenuContent align="end" className="bg-white border-gray-200 z-50">
+              <DropdownMenuItem onClick={onAddItem} className="text-gray-700 focus:bg-gray-100 focus:text-gray-900">
                 <Plus className="h-4 w-4 mr-2" />
                 Add item
               </DropdownMenuItem>
-              <DropdownMenuSeparator className="bg-slate-700" />
-              <DropdownMenuItem onClick={onDelete} className="text-red-400 focus:bg-slate-700 focus:text-red-300">
+              <DropdownMenuSeparator className="bg-gray-200" />
+              <DropdownMenuItem onClick={onDelete} className="text-red-500 focus:bg-gray-100 focus:text-red-600">
                 <Trash2 className="h-4 w-4 mr-2" />
                 Delete group
               </DropdownMenuItem>
@@ -835,13 +835,13 @@ function SortableGroup({
       {section.isExpanded && (
         <>
           {/* Column headers */}
-          <div className="flex items-center border-b border-slate-700 bg-slate-800/50 text-xs font-medium text-slate-400">
-            <div className="w-10 border-r border-slate-700" />
+          <div className="flex items-center border-b border-gray-200 bg-gray-100 text-xs font-medium text-gray-500">
+            <div className="w-10 border-r border-gray-200" />
             <div className="w-8" />
-            <div className="flex-1 min-w-[280px] px-3 py-2 border-r border-slate-700">Item</div>
-            <div className="w-[120px] px-2 py-2 border-r border-slate-700">Type</div>
-            <div className="w-[160px] px-2 py-2 border-r border-slate-700">Response</div>
-            <div className="w-[200px] px-2 py-2 border-r border-slate-700">Explanation</div>
+            <div className="flex-1 min-w-[280px] px-3 py-2 border-r border-gray-200">Item</div>
+            <div className="w-[120px] px-2 py-2 border-r border-gray-200">Type</div>
+            <div className="w-[160px] px-2 py-2 border-r border-gray-200">Response</div>
+            <div className="w-[200px] px-2 py-2 border-r border-gray-200">Explanation</div>
             <div className="w-16" />
           </div>
 
@@ -865,11 +865,11 @@ function SortableGroup({
 
           {/* Add item button */}
           {!isPreviewMode && (
-            <div className="flex items-center border-t border-slate-700/50">
+            <div className="flex items-center border-t border-gray-200">
               <div className="w-10" />
               <button
                 onClick={onAddItem}
-                className="flex items-center gap-2 px-6 py-3 text-sm text-slate-400 hover:text-slate-200 hover:bg-slate-700/30 transition-colors w-full text-left"
+                className="flex items-center gap-2 px-6 py-3 text-sm text-gray-400 hover:text-gray-700 hover:bg-gray-100 transition-colors w-full text-left"
               >
                 <Plus className="h-4 w-4" />
                 + Add item
