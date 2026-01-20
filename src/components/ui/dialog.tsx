@@ -34,7 +34,7 @@ DialogHeader.displayName = "DialogHeader";
 const DialogFooter = ({
   className,
   ...props
-}: React.HTMLAttributes<HTMLDivElement>) => <div className={cn("flex-col-reverse sm:space-x-2 sm:flex-col flex items-end sm:justify-start", className)} {...props} />;
+}: React.HTMLAttributes<HTMLDivElement>) => <div className={cn("flex-col-reverse sm:space-x-2 items-center sm:justify-end flex sm:flex-row", className)} {...props} />;
 DialogFooter.displayName = "DialogFooter";
 const DialogTitle = React.forwardRef<React.ElementRef<typeof DialogPrimitive.Title>, React.ComponentPropsWithoutRef<typeof DialogPrimitive.Title>>(({
   className,
