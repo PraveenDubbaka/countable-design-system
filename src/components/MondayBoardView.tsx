@@ -6,6 +6,7 @@ import {
   ChevronRight,
   MoreHorizontal,
   Copy,
+  GripVertical,
 } from 'lucide-react';
 import { Checklist, Question, Section } from '@/types/checklist';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -18,6 +19,25 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import {
+  DndContext,
+  DragEndEvent,
+  DragOverEvent,
+  DragStartEvent,
+  DragOverlay,
+  closestCenter,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+} from '@dnd-kit/core';
+import {
+  SortableContext,
+  sortableKeyboardCoordinates,
+  useSortable,
+  verticalListSortingStrategy,
+} from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
 
 interface MondayBoardViewProps {
   checklist: Checklist;
@@ -30,19 +50,38 @@ const stripHtml = (html: string): string => {
   return html.replace(/<[^>]*>/g, '').trim();
 };
 
-// Sub-item row component
+// Sortable Sub-item row component
 interface SubItemRowProps {
   subItem: Question;
   index: number;
   onUpdate: (question: Question) => void;
   onDelete: () => void;
   isPreviewMode: boolean;
+  parentId: string;
 }
 
-function SubItemRow({ subItem, onUpdate, onDelete, isPreviewMode, index }: SubItemRowProps) {
+function SortableSubItemRow({ subItem, onUpdate, onDelete, isPreviewMode, index, parentId }: SubItemRowProps) {
   const [isEditingName, setIsEditingName] = useState(false);
   const [draftName, setDraftName] = useState(stripHtml(subItem.text));
   const [isSelected, setIsSelected] = useState(false);
+
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ 
+    id: subItem.id,
+    data: { type: 'subitem', parentId, subItem }
+  });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    opacity: isDragging ? 0.5 : 1,
+  };
 
   const commitName = () => {
     const trimmed = draftName.trim();
@@ -109,9 +148,26 @@ function SubItemRow({ subItem, onUpdate, onDelete, isPreviewMode, index }: SubIt
   };
 
   return (
-    <div className="group flex items-center border-b border-slate-700/50 hover:bg-slate-700/30 transition-colors">
+    <div 
+      ref={setNodeRef} 
+      style={style}
+      className="group flex items-center border-b border-slate-700/50 hover:bg-slate-700/30 transition-colors"
+    >
+      {/* Drag handle */}
+      <div className="w-6 flex items-center justify-center">
+        {!isPreviewMode && (
+          <button
+            {...attributes}
+            {...listeners}
+            className="p-1 rounded hover:bg-slate-600 cursor-grab active:cursor-grabbing opacity-0 group-hover:opacity-100 transition-opacity"
+          >
+            <GripVertical className="h-3.5 w-3.5 text-slate-500" />
+          </button>
+        )}
+      </div>
+
       {/* Checkbox */}
-      <div className="w-12 flex items-center justify-center">
+      <div className="w-10 flex items-center justify-center">
         <Checkbox 
           checked={isSelected} 
           onCheckedChange={() => setIsSelected(!isSelected)}
@@ -120,7 +176,7 @@ function SubItemRow({ subItem, onUpdate, onDelete, isPreviewMode, index }: SubIt
       </div>
 
       {/* Sub-item name */}
-      <div className="flex-1 min-w-[300px] px-3 py-2 pl-8">
+      <div className="flex-1 min-w-[300px] px-3 py-2 pl-4">
         {isEditingName && !isPreviewMode ? (
           <Input
             value={draftName}
@@ -177,30 +233,51 @@ function SubItemRow({ subItem, onUpdate, onDelete, isPreviewMode, index }: SubIt
   );
 }
 
-// Main Item row component
+// Sortable Item row component
 interface ItemRowProps {
   item: Question;
-  sectionIndex: number;
+  sectionId: string;
   itemIndex: number;
   onUpdate: (question: Question) => void;
   onDelete: () => void;
   onDuplicate: () => void;
   onAddSubItem: () => void;
   isPreviewMode: boolean;
+  onSubItemsReorder: (itemId: string, newSubItems: Question[]) => void;
 }
 
-function ItemRow({ 
+function SortableItemRow({ 
   item, 
+  sectionId,
   onUpdate, 
   onDelete, 
   onDuplicate, 
   onAddSubItem,
-  isPreviewMode, 
+  isPreviewMode,
+  onSubItemsReorder,
 }: ItemRowProps) {
   const [isExpanded, setIsExpanded] = useState(true);
   const [isEditingName, setIsEditingName] = useState(false);
   const [draftName, setDraftName] = useState(stripHtml(item.text));
   const [isSelected, setIsSelected] = useState(false);
+
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ 
+    id: item.id,
+    data: { type: 'item', sectionId, item }
+  });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    opacity: isDragging ? 0.5 : 1,
+  };
 
   const hasSubItems = item.subQuestions && item.subQuestions.length > 0;
 
@@ -289,12 +366,27 @@ function ItemRow({
     }
   };
 
+  const subItemIds = item.subQuestions?.map(sq => sq.id) || [];
+
   return (
-    <>
+    <div ref={setNodeRef} style={style}>
       {/* Main item row */}
       <div className={`group flex items-center border-b border-slate-700 hover:bg-slate-700/40 transition-colors ${isSelected ? 'bg-slate-700/30' : ''}`}>
-        {/* Checkbox + Expand */}
-        <div className="w-12 flex items-center justify-center gap-1">
+        {/* Drag handle */}
+        <div className="w-6 flex items-center justify-center">
+          {!isPreviewMode && (
+            <button
+              {...attributes}
+              {...listeners}
+              className="p-1 rounded hover:bg-slate-600 cursor-grab active:cursor-grabbing opacity-0 group-hover:opacity-100 transition-opacity"
+            >
+              <GripVertical className="h-4 w-4 text-slate-500" />
+            </button>
+          )}
+        </div>
+
+        {/* Checkbox */}
+        <div className="w-10 flex items-center justify-center">
           <Checkbox 
             checked={isSelected} 
             onCheckedChange={() => setIsSelected(!isSelected)}
@@ -405,29 +497,35 @@ function ItemRow({
         <div className="bg-slate-800/50">
           {/* Subitem header */}
           <div className="flex items-center border-b border-slate-700/50 bg-slate-800/80 text-xs font-medium text-slate-400">
-            <div className="w-12" />
-            <div className="flex-1 min-w-[300px] px-3 py-2 pl-8">Subitem</div>
+            <div className="w-6" />
+            <div className="w-10" />
+            <div className="flex-1 min-w-[300px] px-3 py-2 pl-4">Subitem</div>
             <div className="w-[180px] px-3 py-2">Response</div>
             <div className="w-[120px] px-3 py-2">Reference</div>
             <div className="w-10" />
           </div>
           
-          {item.subQuestions!.map((sub, idx) => (
-            <SubItemRow
-              key={sub.id}
-              subItem={sub}
-              index={idx}
-              onUpdate={(updated) => handleSubItemUpdate(idx, updated)}
-              onDelete={() => handleSubItemDelete(idx)}
-              isPreviewMode={isPreviewMode}
-            />
-          ))}
+          <SortableContext items={subItemIds} strategy={verticalListSortingStrategy}>
+            {item.subQuestions!.map((sub, idx) => (
+              <SortableSubItemRow
+                key={sub.id}
+                subItem={sub}
+                index={idx}
+                parentId={item.id}
+                onUpdate={(updated) => handleSubItemUpdate(idx, updated)}
+                onDelete={() => handleSubItemDelete(idx)}
+                isPreviewMode={isPreviewMode}
+              />
+            ))}
+          </SortableContext>
+
           {!isPreviewMode && (
             <div className="flex items-center border-b border-slate-700/50">
-              <div className="w-12" />
+              <div className="w-6" />
+              <div className="w-10" />
               <button
                 onClick={onAddSubItem}
-                className="flex items-center gap-2 px-3 py-2 pl-8 text-sm text-slate-400 hover:text-slate-200 hover:bg-slate-700/30 transition-colors flex-1 text-left"
+                className="flex items-center gap-2 px-3 py-2 pl-4 text-sm text-slate-400 hover:text-slate-200 hover:bg-slate-700/30 transition-colors flex-1 text-left"
               >
                 <Plus className="h-3.5 w-3.5" />
                 Add subitem
@@ -436,7 +534,7 @@ function ItemRow({
           )}
         </div>
       )}
-    </>
+    </div>
   );
 }
 
@@ -448,11 +546,40 @@ interface GroupProps {
   onDelete: () => void;
   onAddItem: () => void;
   isPreviewMode: boolean;
+  onItemsReorder: (sectionId: string, newItems: Question[]) => void;
+  onSubItemsReorder: (itemId: string, newSubItems: Question[]) => void;
 }
 
-function Group({ section, sectionIndex, onUpdate, onDelete, onAddItem, isPreviewMode }: GroupProps) {
+function SortableGroup({ 
+  section, 
+  sectionIndex, 
+  onUpdate, 
+  onDelete, 
+  onAddItem, 
+  isPreviewMode,
+  onItemsReorder,
+  onSubItemsReorder,
+}: GroupProps) {
   const [isEditingTitle, setIsEditingTitle] = useState(false);
   const [draftTitle, setDraftTitle] = useState(section.title);
+
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ 
+    id: section.id,
+    data: { type: 'group', section }
+  });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    opacity: isDragging ? 0.5 : 1,
+  };
 
   const commitTitle = () => {
     const trimmed = draftTitle.trim();
@@ -511,10 +638,23 @@ function Group({ section, sectionIndex, onUpdate, onDelete, onAddItem, isPreview
   // Count total subitems
   const totalSubitems = section.questions.reduce((acc, q) => acc + (q.subQuestions?.length || 0), 0);
 
+  const itemIds = section.questions.map(q => q.id);
+
   return (
-    <div className="bg-slate-900 rounded-lg border border-slate-700 overflow-hidden">
+    <div ref={setNodeRef} style={style} className="bg-slate-900 rounded-lg border border-slate-700 overflow-hidden">
       {/* Group header */}
       <div className="flex items-center gap-3 px-4 py-2 border-b border-slate-700">
+        {/* Drag handle for group */}
+        {!isPreviewMode && (
+          <button
+            {...attributes}
+            {...listeners}
+            className="p-1 rounded hover:bg-slate-700 cursor-grab active:cursor-grabbing"
+          >
+            <GripVertical className="h-4 w-4 text-slate-500" />
+          </button>
+        )}
+        
         <div className="w-1 h-6 bg-blue-500 rounded-full" />
         <button 
           onClick={() => onUpdate({ ...section, isExpanded: !section.isExpanded })}
@@ -582,7 +722,8 @@ function Group({ section, sectionIndex, onUpdate, onDelete, onAddItem, isPreview
         <>
           {/* Column headers */}
           <div className="flex items-center border-b border-slate-700 bg-slate-800/50 text-xs font-medium text-slate-400">
-            <div className="w-12" />
+            <div className="w-6" />
+            <div className="w-10" />
             <div className="w-8" />
             <div className="flex-1 min-w-[300px] px-3 py-2">Item</div>
             <div className="w-[180px] px-3 py-2">Response</div>
@@ -591,24 +732,28 @@ function Group({ section, sectionIndex, onUpdate, onDelete, onAddItem, isPreview
           </div>
 
           {/* Items */}
-          {section.questions.map((question, idx) => (
-            <ItemRow
-              key={question.id}
-              item={question}
-              sectionIndex={sectionIndex}
-              itemIndex={idx}
-              onUpdate={(q) => handleItemUpdate(idx, q)}
-              onDelete={() => handleItemDelete(idx)}
-              onDuplicate={() => handleItemDuplicate(idx)}
-              onAddSubItem={() => handleAddSubItem(idx)}
-              isPreviewMode={isPreviewMode}
-            />
-          ))}
+          <SortableContext items={itemIds} strategy={verticalListSortingStrategy}>
+            {section.questions.map((question, idx) => (
+              <SortableItemRow
+                key={question.id}
+                item={question}
+                sectionId={section.id}
+                itemIndex={idx}
+                onUpdate={(q) => handleItemUpdate(idx, q)}
+                onDelete={() => handleItemDelete(idx)}
+                onDuplicate={() => handleItemDuplicate(idx)}
+                onAddSubItem={() => handleAddSubItem(idx)}
+                isPreviewMode={isPreviewMode}
+                onSubItemsReorder={onSubItemsReorder}
+              />
+            ))}
+          </SortableContext>
 
           {/* Add item button */}
           {!isPreviewMode && (
             <div className="flex items-center border-t border-slate-700/50">
-              <div className="w-12" />
+              <div className="w-6" />
+              <div className="w-10" />
               <button
                 onClick={onAddItem}
                 className="flex items-center gap-2 px-6 py-3 text-sm text-slate-400 hover:text-slate-200 hover:bg-slate-700/30 transition-colors w-full text-left"
@@ -625,6 +770,17 @@ function Group({ section, sectionIndex, onUpdate, onDelete, onAddItem, isPreview
 }
 
 export function MondayBoardView({ checklist, onUpdate, isPreviewMode }: MondayBoardViewProps) {
+  const [activeId, setActiveId] = useState<string | null>(null);
+
+  const sensors = useSensors(
+    useSensor(PointerSensor, {
+      activationConstraint: { distance: 8 },
+    }),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    })
+  );
+
   const handleSectionUpdate = (index: number, updatedSection: Section) => {
     const newSections = [...checklist.sections];
     newSections[index] = updatedSection;
@@ -651,19 +807,177 @@ export function MondayBoardView({ checklist, onUpdate, isPreviewMode }: MondayBo
     onUpdate({ ...checklist, sections: newSections });
   };
 
+  const handleItemsReorder = (sectionId: string, newItems: Question[]) => {
+    const newSections = checklist.sections.map(section => 
+      section.id === sectionId ? { ...section, questions: newItems } : section
+    );
+    onUpdate({ ...checklist, sections: newSections });
+  };
+
+  const handleSubItemsReorder = (itemId: string, newSubItems: Question[]) => {
+    const newSections = checklist.sections.map(section => ({
+      ...section,
+      questions: section.questions.map(q => 
+        q.id === itemId ? { ...q, subQuestions: newSubItems } : q
+      )
+    }));
+    onUpdate({ ...checklist, sections: newSections });
+  };
+
+  const handleDragStart = (event: DragStartEvent) => {
+    setActiveId(event.active.id as string);
+  };
+
+  const handleDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event;
+    setActiveId(null);
+
+    if (!over || active.id === over.id) return;
+
+    const activeData = active.data.current;
+    const overData = over.data.current;
+
+    // Handle group reordering
+    if (activeData?.type === 'group' && overData?.type === 'group') {
+      const oldIndex = checklist.sections.findIndex(s => s.id === active.id);
+      const newIndex = checklist.sections.findIndex(s => s.id === over.id);
+      
+      if (oldIndex !== -1 && newIndex !== -1) {
+        const newSections = [...checklist.sections];
+        const [removed] = newSections.splice(oldIndex, 1);
+        newSections.splice(newIndex, 0, removed);
+        onUpdate({ ...checklist, sections: newSections });
+      }
+      return;
+    }
+
+    // Handle item reordering within the same section
+    if (activeData?.type === 'item' && overData?.type === 'item') {
+      const activeSectionId = activeData.sectionId;
+      const overSectionId = overData.sectionId;
+
+      if (activeSectionId === overSectionId) {
+        // Same section - reorder
+        const section = checklist.sections.find(s => s.id === activeSectionId);
+        if (section) {
+          const oldIndex = section.questions.findIndex(q => q.id === active.id);
+          const newIndex = section.questions.findIndex(q => q.id === over.id);
+          
+          if (oldIndex !== -1 && newIndex !== -1) {
+            const newQuestions = [...section.questions];
+            const [removed] = newQuestions.splice(oldIndex, 1);
+            newQuestions.splice(newIndex, 0, removed);
+            handleItemsReorder(activeSectionId, newQuestions);
+          }
+        }
+      } else {
+        // Different sections - move item
+        const sourceSection = checklist.sections.find(s => s.id === activeSectionId);
+        const targetSection = checklist.sections.find(s => s.id === overSectionId);
+        
+        if (sourceSection && targetSection) {
+          const itemToMove = sourceSection.questions.find(q => q.id === active.id);
+          if (itemToMove) {
+            const newSourceQuestions = sourceSection.questions.filter(q => q.id !== active.id);
+            const targetIndex = targetSection.questions.findIndex(q => q.id === over.id);
+            const newTargetQuestions = [...targetSection.questions];
+            newTargetQuestions.splice(targetIndex, 0, itemToMove);
+
+            const newSections = checklist.sections.map(section => {
+              if (section.id === activeSectionId) return { ...section, questions: newSourceQuestions };
+              if (section.id === overSectionId) return { ...section, questions: newTargetQuestions };
+              return section;
+            });
+            onUpdate({ ...checklist, sections: newSections });
+          }
+        }
+      }
+      return;
+    }
+
+    // Handle subitem reordering within the same parent
+    if (activeData?.type === 'subitem' && overData?.type === 'subitem') {
+      const activeParentId = activeData.parentId;
+      const overParentId = overData.parentId;
+
+      if (activeParentId === overParentId) {
+        // Same parent - reorder
+        for (const section of checklist.sections) {
+          const item = section.questions.find(q => q.id === activeParentId);
+          if (item && item.subQuestions) {
+            const oldIndex = item.subQuestions.findIndex(sq => sq.id === active.id);
+            const newIndex = item.subQuestions.findIndex(sq => sq.id === over.id);
+            
+            if (oldIndex !== -1 && newIndex !== -1) {
+              const newSubQuestions = [...item.subQuestions];
+              const [removed] = newSubQuestions.splice(oldIndex, 1);
+              newSubQuestions.splice(newIndex, 0, removed);
+              handleSubItemsReorder(activeParentId, newSubQuestions);
+            }
+            break;
+          }
+        }
+      } else {
+        // Different parents - move subitem
+        let sourceItem: Question | undefined;
+        let targetItem: Question | undefined;
+
+        for (const section of checklist.sections) {
+          for (const q of section.questions) {
+            if (q.id === activeParentId) sourceItem = q;
+            if (q.id === overParentId) targetItem = q;
+          }
+        }
+
+        if (sourceItem && targetItem && sourceItem.subQuestions && targetItem.subQuestions) {
+          const subItemToMove = sourceItem.subQuestions.find(sq => sq.id === active.id);
+          if (subItemToMove) {
+            const newSourceSubItems = sourceItem.subQuestions.filter(sq => sq.id !== active.id);
+            const targetIndex = targetItem.subQuestions.findIndex(sq => sq.id === over.id);
+            const newTargetSubItems = [...targetItem.subQuestions];
+            newTargetSubItems.splice(targetIndex, 0, subItemToMove);
+
+            const newSections = checklist.sections.map(section => ({
+              ...section,
+              questions: section.questions.map(q => {
+                if (q.id === activeParentId) return { ...q, subQuestions: newSourceSubItems };
+                if (q.id === overParentId) return { ...q, subQuestions: newTargetSubItems };
+                return q;
+              })
+            }));
+            onUpdate({ ...checklist, sections: newSections });
+          }
+        }
+      }
+    }
+  };
+
+  const sectionIds = checklist.sections.map(s => s.id);
+
   return (
-    <div className="space-y-4">
-      {checklist.sections.map((section, idx) => (
-        <Group
-          key={section.id}
-          section={section}
-          sectionIndex={idx}
-          onUpdate={(s) => handleSectionUpdate(idx, s)}
-          onDelete={() => handleSectionDelete(idx)}
-          onAddItem={() => handleAddItem(idx)}
-          isPreviewMode={isPreviewMode}
-        />
-      ))}
-    </div>
+    <DndContext
+      sensors={sensors}
+      collisionDetection={closestCenter}
+      onDragStart={handleDragStart}
+      onDragEnd={handleDragEnd}
+    >
+      <div className="space-y-4">
+        <SortableContext items={sectionIds} strategy={verticalListSortingStrategy}>
+          {checklist.sections.map((section, idx) => (
+            <SortableGroup
+              key={section.id}
+              section={section}
+              sectionIndex={idx}
+              onUpdate={(s) => handleSectionUpdate(idx, s)}
+              onDelete={() => handleSectionDelete(idx)}
+              onAddItem={() => handleAddItem(idx)}
+              isPreviewMode={isPreviewMode}
+              onItemsReorder={handleItemsReorder}
+              onSubItemsReorder={handleSubItemsReorder}
+            />
+          ))}
+        </SortableContext>
+      </div>
+    </DndContext>
   );
 }
