@@ -4,6 +4,8 @@ import { Textarea } from '@/components/ui/textarea';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { useVoiceToText } from '@/hooks/useVoiceToText';
 import { cn } from '@/lib/utils';
+import { supabase } from '@/integrations/supabase/client';
+import { toast } from 'sonner';
 
 interface AIOption {
   id: string;
@@ -88,35 +90,35 @@ export function AITextarea({
     setSelectedOption(optionId);
     setIsProcessing(true);
 
-    // Simulate AI processing
-    await new Promise(resolve => setTimeout(resolve, 800));
+    try {
+      const { data, error: fnError } = await supabase.functions.invoke('ai-text-improve', {
+        body: { text: value, action: optionId }
+      });
 
-    let result = value;
-    switch (optionId) {
-      case 'replace-we':
-        result = value.replace(/\bWe\b/g, 'I').replace(/\bwe\b/g, 'I').replace(/\bour\b/g, 'my').replace(/\bOur\b/g, 'My');
-        break;
-      case 'shorter':
-        const sentences = value.split('.');
-        result = sentences.slice(0, Math.max(1, Math.ceil(sentences.length / 2))).join('.').trim();
-        if (result && !result.endsWith('.')) result += '.';
-        break;
-      case 'improve':
-        result = value.charAt(0).toUpperCase() + value.slice(1);
-        if (result && !result.endsWith('.')) result += '.';
-        break;
-      case 'summarize':
-        result = value.length > 100 ? 'Summary: ' + value.substring(0, 100) + '...' : value;
-        break;
-      case 'draft':
-        result = 'Based on the requirements, I have verified compliance with all applicable standards and documented the necessary procedures.';
-        break;
+      if (fnError) {
+        console.error('AI function error:', fnError);
+        toast.error('Failed to process text. Please try again.');
+        return;
+      }
+
+      if (data?.error) {
+        console.error('AI service error:', data.error);
+        toast.error(data.error);
+        return;
+      }
+
+      if (data?.result) {
+        onChange(data.result);
+        toast.success('Text updated successfully!');
+      }
+    } catch (err) {
+      console.error('Error calling AI service:', err);
+      toast.error('Failed to connect to AI service.');
+    } finally {
+      setIsProcessing(false);
+      setSelectedOption(null);
+      setIsAIOpen(false);
     }
-
-    onChange(result);
-    setIsProcessing(false);
-    setSelectedOption(null);
-    setIsAIOpen(false);
   };
 
   return (
