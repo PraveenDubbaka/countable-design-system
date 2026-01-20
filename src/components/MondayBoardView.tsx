@@ -120,7 +120,7 @@ function MultipleChoiceField({
   disabled,
   size = 'md'
 }: MultipleChoiceFieldProps) {
-  const [isEditing, setIsEditing] = useState(false);
+  const [isEditOpen, setIsEditOpen] = useState(false);
   const [editingOptions, setEditingOptions] = useState<string[]>(options);
   const [newOption, setNewOption] = useState('');
 
@@ -134,14 +134,15 @@ function MultipleChoiceField({
     }
   };
 
-  const handleStartEdit = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    setEditingOptions([...options]);
-    setIsEditing(true);
+  const handleOpenChange = (open: boolean) => {
+    if (open) {
+      setEditingOptions([...options]);
+      setNewOption('');
+    }
+    setIsEditOpen(open);
   };
 
-  const handleSaveEdit = (e: React.MouseEvent) => {
-    e.stopPropagation();
+  const handleSaveEdit = () => {
     const validOptions = editingOptions.filter(o => o.trim() !== '');
     if (validOptions.length > 0) {
       onOptionsChange(validOptions);
@@ -151,14 +152,7 @@ function MultipleChoiceField({
         onAnswerChange(validAnswers);
       }
     }
-    setIsEditing(false);
-    setNewOption('');
-  };
-
-  const handleCancelEdit = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    setEditingOptions([...options]);
-    setIsEditing(false);
+    setIsEditOpen(false);
     setNewOption('');
   };
 
@@ -184,69 +178,6 @@ function MultipleChoiceField({
   const textSize = size === 'sm' ? 'text-xs' : 'text-sm';
   const padding = size === 'sm' ? 'px-1.5 py-0.5' : 'px-2 py-1';
   const checkSize = size === 'sm' ? 'h-3 w-3' : 'h-3.5 w-3.5';
-
-  if (isEditing && !disabled) {
-    return (
-      <div className="flex flex-col gap-2 p-2 bg-gray-50 rounded border border-gray-200" onClick={e => e.stopPropagation()}>
-        <div className="flex flex-col gap-1.5">
-          {editingOptions.map((opt, i) => (
-            <div key={i} className="flex items-center gap-1.5">
-              <input
-                type="text"
-                value={opt}
-                onChange={(e) => handleOptionChange(i, e.target.value)}
-                className={`flex-1 ${padding} ${textSize} bg-white border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-amber-500`}
-                placeholder={`Option ${i + 1}`}
-              />
-              <button
-                onClick={() => handleRemoveOption(i)}
-                disabled={editingOptions.length <= 1}
-                className="p-1 text-gray-400 hover:text-red-500 disabled:opacity-30 disabled:cursor-not-allowed"
-              >
-                <X className="h-3.5 w-3.5" />
-              </button>
-            </div>
-          ))}
-        </div>
-        <div className="flex items-center gap-1.5">
-          <input
-            type="text"
-            value={newOption}
-            onChange={(e) => setNewOption(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter') {
-                e.preventDefault();
-                handleAddOption();
-              }
-            }}
-            placeholder="Add new option..."
-            className={`flex-1 ${padding} ${textSize} bg-white border border-gray-300 border-dashed rounded focus:outline-none focus:ring-1 focus:ring-amber-500`}
-          />
-          <button
-            onClick={handleAddOption}
-            disabled={!newOption.trim()}
-            className="p-1 text-gray-400 hover:text-green-600 disabled:opacity-30"
-          >
-            <Plus className="h-3.5 w-3.5" />
-          </button>
-        </div>
-        <div className="flex justify-end gap-1.5 pt-1 border-t border-gray-200">
-          <button
-            onClick={handleCancelEdit}
-            className={`${padding} ${textSize} text-gray-600 hover:bg-gray-200 rounded transition-colors`}
-          >
-            Cancel
-          </button>
-          <button
-            onClick={handleSaveEdit}
-            className={`${padding} ${textSize} bg-amber-500 text-white hover:bg-amber-600 rounded transition-colors`}
-          >
-            Save
-          </button>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="flex items-center gap-1.5">
@@ -274,13 +205,82 @@ function MultipleChoiceField({
         })}
       </div>
       {!disabled && (
-        <button
-          onClick={handleStartEdit}
-          className="p-1 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded transition-colors"
-          title="Edit options"
-        >
-          <Pencil className="h-3.5 w-3.5" />
-        </button>
+        <Popover open={isEditOpen} onOpenChange={handleOpenChange}>
+          <PopoverTrigger asChild>
+            <button
+              onClick={(e) => e.stopPropagation()}
+              className="p-1 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded transition-colors"
+              title="Edit options"
+            >
+              <Pencil className="h-3.5 w-3.5" />
+            </button>
+          </PopoverTrigger>
+          <PopoverContent 
+            className="w-64 p-3 bg-white border border-gray-200 shadow-lg" 
+            align="start"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex flex-col gap-2">
+              <div className="text-xs font-medium text-gray-700 mb-1">Edit Options</div>
+              <div className="flex flex-col gap-1.5 max-h-40 overflow-y-auto">
+                {editingOptions.map((opt, i) => (
+                  <div key={i} className="flex items-center gap-1.5">
+                    <input
+                      type="text"
+                      value={opt}
+                      onChange={(e) => handleOptionChange(i, e.target.value)}
+                      className="flex-1 px-2 py-1 text-xs bg-white border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-amber-500"
+                      placeholder={`Option ${i + 1}`}
+                    />
+                    <button
+                      onClick={() => handleRemoveOption(i)}
+                      disabled={editingOptions.length <= 1}
+                      className="p-1 text-gray-400 hover:text-red-500 disabled:opacity-30 disabled:cursor-not-allowed"
+                    >
+                      <X className="h-3.5 w-3.5" />
+                    </button>
+                  </div>
+                ))}
+              </div>
+              <div className="flex items-center gap-1.5">
+                <input
+                  type="text"
+                  value={newOption}
+                  onChange={(e) => setNewOption(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      e.preventDefault();
+                      handleAddOption();
+                    }
+                  }}
+                  placeholder="Add new option..."
+                  className="flex-1 px-2 py-1 text-xs bg-white border border-gray-300 border-dashed rounded focus:outline-none focus:ring-1 focus:ring-amber-500"
+                />
+                <button
+                  onClick={handleAddOption}
+                  disabled={!newOption.trim()}
+                  className="p-1 text-gray-400 hover:text-green-600 disabled:opacity-30"
+                >
+                  <Plus className="h-3.5 w-3.5" />
+                </button>
+              </div>
+              <div className="flex justify-end gap-1.5 pt-2 border-t border-gray-200">
+                <button
+                  onClick={() => setIsEditOpen(false)}
+                  className="px-2 py-1 text-xs text-gray-600 hover:bg-gray-100 rounded transition-colors"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleSaveEdit}
+                  className="px-2 py-1 text-xs bg-amber-500 text-white hover:bg-amber-600 rounded transition-colors"
+                >
+                  Save
+                </button>
+              </div>
+            </div>
+          </PopoverContent>
+        </Popover>
       )}
     </div>
   );
