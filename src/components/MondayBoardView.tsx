@@ -838,7 +838,7 @@ function SortableGroup({
           <div className="flex items-center border-b border-slate-700 bg-slate-800/50 text-xs font-medium text-slate-400">
             <div className="w-10 border-r border-slate-700" />
             <div className="w-8" />
-            <div className="flex-1 min-w-[280px] px-3 py-2 border-r border-slate-700">Item</div>
+            <div className="flex-1 min-w-[280px] px-3 py-2 border-r border-slate-700">Question</div>
             <div className="w-[120px] px-2 py-2 border-r border-slate-700">Type</div>
             <div className="w-[160px] px-2 py-2 border-r border-slate-700">Response</div>
             <div className="w-[200px] px-2 py-2 border-r border-slate-700">Explanation</div>
