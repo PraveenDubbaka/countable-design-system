@@ -497,6 +497,29 @@ function SortableSubItemRow({ subItem, onUpdate, onDelete, isPreviewMode, index,
         );
 
       case 'multiple-choice':
+        const mcOptions = subItem.options || ['Option 1', 'Option 2', 'Option 3'];
+        return (
+          <div className="flex flex-wrap gap-1">
+            {mcOptions.map((opt, i) => (
+              <button
+                key={i}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleAnswerChange(opt);
+                }}
+                disabled={isPreviewMode}
+                className={`px-2 py-1 text-xs rounded transition-all ${
+                  subItem.answer === opt
+                    ? 'bg-amber-500 text-white'
+                    : 'bg-gray-200 hover:bg-gray-300 text-gray-700'
+                }`}
+              >
+                {opt}
+              </button>
+            ))}
+          </div>
+        );
+
       case 'dropdown':
         return (
           <select
@@ -840,6 +863,29 @@ function SortableItemRow({
         );
 
       case 'multiple-choice':
+        const mcItemOptions = item.options || ['Option 1', 'Option 2', 'Option 3'];
+        return (
+          <div className="flex flex-wrap gap-1">
+            {mcItemOptions.map((opt, i) => (
+              <button
+                key={i}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleAnswerChange(opt);
+                }}
+                disabled={isPreviewMode}
+                className={`px-2 py-1 text-xs rounded transition-all ${
+                  item.answer === opt
+                    ? 'bg-amber-500 text-white'
+                    : 'bg-gray-200 hover:bg-gray-300 text-gray-700'
+                }`}
+              >
+                {opt}
+              </button>
+            ))}
+          </div>
+        );
+
       case 'dropdown':
         return (
           <select
