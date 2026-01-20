@@ -11,7 +11,7 @@ import {
 import { Checklist, Question, Section } from '@/types/checklist';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
+import { RichTextQuestionEditor } from '@/components/RichTextQuestionEditor';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -189,29 +189,30 @@ function SortableSubItemRow({ subItem, onUpdate, onDelete, isPreviewMode, index,
       </div>
 
       {/* Sub-item name */}
-      <div className="flex-1 min-w-[280px] px-3 py-2.5">
+      <div className="flex-1 min-w-[280px] px-3 py-1">
         {isEditingName && !isPreviewMode ? (
-          <Input
-            value={draftName}
-            onChange={(e) => setDraftName(e.target.value)}
-            onBlur={commitName}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter') commitName();
-              if (e.key === 'Escape') {
-                setDraftName(stripHtml(subItem.text));
-                setIsEditingName(false);
+          <RichTextQuestionEditor
+            value={subItem.text}
+            onChange={(newValue) => setDraftName(newValue)}
+            onBlur={() => {
+              const trimmed = draftName.trim();
+              if (trimmed && trimmed !== subItem.text) {
+                onUpdate({ ...subItem, text: trimmed });
               }
+              setIsEditingName(false);
             }}
-            autoFocus
-            className="h-7 text-sm bg-slate-700/50 border-slate-600 text-slate-200"
+            onCancel={() => {
+              setDraftName(subItem.text);
+              setIsEditingName(false);
+            }}
+            className="text-sm min-h-[32px] bg-slate-700/50 border-slate-600 text-slate-200"
           />
         ) : (
           <span
             onClick={() => !isPreviewMode && setIsEditingName(true)}
-            className={`text-sm text-slate-300 ${!isPreviewMode ? 'cursor-text hover:text-slate-100' : ''}`}
-          >
-            {stripHtml(subItem.text) || 'New sub-item'}
-          </span>
+            className={`text-sm text-slate-300 block py-1.5 ${!isPreviewMode ? 'cursor-text hover:text-slate-100' : ''}`}
+            dangerouslySetInnerHTML={{ __html: subItem.text || 'New sub-item' }}
+          />
         )}
       </div>
 
@@ -359,11 +360,11 @@ function SortableItemRow({
 
       case 'long-answer':
         return (
-          <Textarea
+          <textarea
             value={item.answer || ''}
             onChange={(e) => handleAnswerChange(e.target.value)}
             placeholder="Enter response..."
-            className="min-h-[40px] text-sm bg-slate-700/50 border-slate-600 text-slate-200 resize-none"
+            className="min-h-[40px] text-sm bg-slate-700/50 border border-slate-600 text-slate-200 resize-none rounded-md px-2 py-1 w-full"
           />
         );
 
@@ -426,34 +427,32 @@ function SortableItemRow({
         </div>
 
         {/* Item name */}
-        <div className="flex-1 min-w-[300px] px-3 py-3">
+        <div className="flex-1 min-w-[300px] px-3 py-1">
           {isEditingName && !isPreviewMode ? (
-            <Textarea
-              value={draftName}
-              onChange={(e) => setDraftName(e.target.value)}
-              onBlur={commitName}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter' && !e.shiftKey) {
-                  e.preventDefault();
-                  commitName();
+            <RichTextQuestionEditor
+              value={item.text}
+              onChange={(newValue) => setDraftName(newValue)}
+              onBlur={() => {
+                const trimmed = draftName.trim();
+                if (trimmed && trimmed !== item.text) {
+                  onUpdate({ ...item, text: trimmed });
                 }
-                if (e.key === 'Escape') {
-                  setDraftName(stripHtml(item.text));
-                  setIsEditingName(false);
-                }
+                setIsEditingName(false);
               }}
-              autoFocus
-              className="text-sm min-h-[36px] resize-none bg-slate-700/50 border-slate-600 text-slate-200"
+              onCancel={() => {
+                setDraftName(item.text);
+                setIsEditingName(false);
+              }}
+              className="text-sm min-h-[36px] bg-slate-700/50 border-slate-600 text-slate-200"
             />
           ) : (
             <div 
               onClick={() => !isPreviewMode && setIsEditingName(true)}
-              className={`text-sm text-slate-200 ${!isPreviewMode ? 'cursor-text hover:text-white' : ''}`}
-            >
-              {stripHtml(item.text) || 'Click to add item name...'}
-            </div>
+              className={`text-sm text-slate-200 py-2 ${!isPreviewMode ? 'cursor-text hover:text-white' : ''}`}
+              dangerouslySetInnerHTML={{ __html: item.text || 'Click to add item name...' }}
+            />
           )}
-          {hasSubItems && (
+          {hasSubItems && !isEditingName && (
             <span className="ml-2 text-xs text-blue-400 font-medium">
               {item.subQuestions!.length}
             </span>
