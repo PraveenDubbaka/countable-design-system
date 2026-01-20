@@ -60,7 +60,12 @@ interface SubItemRowProps {
   parentId: string;
 }
 
-function SortableSubItemRow({ subItem, onUpdate, onDelete, isPreviewMode, index, parentId }: SubItemRowProps) {
+interface SortableSubItemRowProps extends SubItemRowProps {
+  isLast: boolean;
+  totalCount: number;
+}
+
+function SortableSubItemRow({ subItem, onUpdate, onDelete, isPreviewMode, index, parentId, isLast, totalCount }: SortableSubItemRowProps) {
   const [isEditingName, setIsEditingName] = useState(false);
   const [draftName, setDraftName] = useState(stripHtml(subItem.text));
   const [isSelected, setIsSelected] = useState(false);
@@ -151,15 +156,23 @@ function SortableSubItemRow({ subItem, onUpdate, onDelete, isPreviewMode, index,
     <div 
       ref={setNodeRef} 
       style={style}
-      className="group flex items-center border-b border-slate-700/50 hover:bg-slate-700/30 transition-colors"
+      className="group flex items-stretch hover:bg-slate-700/30 transition-colors relative"
     >
-      {/* Drag handle */}
-      <div className="w-6 flex items-center justify-center">
+      {/* Vertical connector line + horizontal line */}
+      <div className="w-16 relative flex items-center justify-end pr-2">
+        {/* Vertical line */}
+        <div 
+          className={`absolute left-6 top-0 w-0.5 bg-slate-600 ${isLast ? 'h-1/2' : 'h-full'}`}
+        />
+        {/* Horizontal connector */}
+        <div className="absolute left-6 top-1/2 w-4 h-0.5 bg-slate-600" />
+        
+        {/* Drag handle */}
         {!isPreviewMode && (
           <button
             {...attributes}
             {...listeners}
-            className="p-1 rounded hover:bg-slate-600 cursor-grab active:cursor-grabbing opacity-0 group-hover:opacity-100 transition-opacity"
+            className="p-1 rounded hover:bg-slate-600 cursor-grab active:cursor-grabbing opacity-0 group-hover:opacity-100 transition-opacity z-10"
           >
             <GripVertical className="h-3.5 w-3.5 text-slate-500" />
           </button>
@@ -171,12 +184,12 @@ function SortableSubItemRow({ subItem, onUpdate, onDelete, isPreviewMode, index,
         <Checkbox 
           checked={isSelected} 
           onCheckedChange={() => setIsSelected(!isSelected)}
-          className="h-4 w-4 border-slate-500"
+          className="h-4 w-4 border-slate-500 bg-slate-800"
         />
       </div>
 
       {/* Sub-item name */}
-      <div className="flex-1 min-w-[300px] px-3 py-2 pl-4">
+      <div className="flex-1 min-w-[280px] px-3 py-2.5">
         {isEditingName && !isPreviewMode ? (
           <Input
             value={draftName}
@@ -492,19 +505,9 @@ function SortableItemRow({
         </div>
       </div>
 
-      {/* Sub-items section */}
+      {/* Sub-items section - Monday.com style with connector lines */}
       {hasSubItems && isExpanded && (
-        <div className="bg-slate-800/50">
-          {/* Subitem header */}
-          <div className="flex items-center border-b border-slate-700/50 bg-slate-800/80 text-xs font-medium text-slate-400">
-            <div className="w-6" />
-            <div className="w-10" />
-            <div className="flex-1 min-w-[300px] px-3 py-2 pl-4">Subitem</div>
-            <div className="w-[180px] px-3 py-2">Response</div>
-            <div className="w-[120px] px-3 py-2">Reference</div>
-            <div className="w-10" />
-          </div>
-          
+        <div className="bg-slate-800/30 relative">
           <SortableContext items={subItemIds} strategy={verticalListSortingStrategy}>
             {item.subQuestions!.map((sub, idx) => (
               <SortableSubItemRow
@@ -515,17 +518,28 @@ function SortableItemRow({
                 onUpdate={(updated) => handleSubItemUpdate(idx, updated)}
                 onDelete={() => handleSubItemDelete(idx)}
                 isPreviewMode={isPreviewMode}
+                isLast={idx === item.subQuestions!.length - 1 && isPreviewMode}
+                totalCount={item.subQuestions!.length}
               />
             ))}
           </SortableContext>
 
+          {/* Add subitem button with connector */}
           {!isPreviewMode && (
-            <div className="flex items-center border-b border-slate-700/50">
-              <div className="w-6" />
-              <div className="w-10" />
+            <div className="flex items-stretch relative group/add">
+              {/* Vertical connector line for add button */}
+              <div className="w-16 relative flex items-center justify-end pr-2">
+                <div className="absolute left-6 top-0 w-0.5 bg-slate-600 h-1/2" />
+                <div className="absolute left-6 top-1/2 w-4 h-0.5 bg-slate-600" />
+              </div>
+              
+              <div className="w-10 flex items-center justify-center">
+                <div className="h-4 w-4 border border-dashed border-slate-500 rounded opacity-50" />
+              </div>
+              
               <button
                 onClick={onAddSubItem}
-                className="flex items-center gap-2 px-3 py-2 pl-4 text-sm text-slate-400 hover:text-slate-200 hover:bg-slate-700/30 transition-colors flex-1 text-left"
+                className="flex items-center gap-2 px-3 py-2.5 text-sm text-slate-400 hover:text-slate-200 transition-colors flex-1 text-left"
               >
                 <Plus className="h-3.5 w-3.5" />
                 Add subitem
