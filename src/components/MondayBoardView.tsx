@@ -568,13 +568,18 @@ function SortableSubItemRow({ subItem, onUpdate, onDelete, isPreviewMode, index,
         )}
       </div>
 
-      {/* Response column with inline type selector */}
+      {/* Response column with inline type selector and response field */}
       <div className="w-[200px] px-2 py-2 border-r border-gray-200">
-        <ResponseTypeDropdown
-          currentType={subItem.answerType}
-          onTypeChange={handleAnswerTypeChange}
-          disabled={isPreviewMode}
-        />
+        <div className="flex flex-col gap-1.5">
+          <ResponseTypeDropdown
+            currentType={subItem.answerType}
+            onTypeChange={handleAnswerTypeChange}
+            disabled={isPreviewMode}
+          />
+          <div className="w-full">
+            {renderResponseField()}
+          </div>
+        </div>
       </div>
 
       {/* Additional Explanation column - conditionally rendered */}
@@ -846,13 +851,18 @@ function SortableItemRow({
           )}
         </div>
 
-        {/* Response column with inline type selector */}
+        {/* Response column with inline type selector and response field */}
         <div className="w-[200px] px-2 py-2 border-r border-gray-200">
-          <ResponseTypeDropdown
-            currentType={item.answerType}
-            onTypeChange={handleAnswerTypeChange}
-            disabled={isPreviewMode}
-          />
+          <div className="flex flex-col gap-1.5">
+            <ResponseTypeDropdown
+              currentType={item.answerType}
+              onTypeChange={handleAnswerTypeChange}
+              disabled={isPreviewMode}
+            />
+            <div className="w-full">
+              {renderResponseField()}
+            </div>
+          </div>
         </div>
 
         {/* Additional Explanation column - conditionally rendered */}
