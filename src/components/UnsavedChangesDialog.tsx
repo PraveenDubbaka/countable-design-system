@@ -32,11 +32,11 @@ export function UnsavedChangesDialog({
           </DialogDescription>
         </DialogHeader>
         
-        <DialogFooter className="flex flex-col-reverse sm:flex-row gap-2 pt-4">
+        <DialogFooter className="flex flex-wrap gap-2 pt-4 justify-end">
           <Button 
             variant="outline" 
             onClick={() => onOpenChange(false)}
-            className="w-full sm:w-auto"
+            className="shrink-0"
           >
             Cancel
           </Button>
@@ -46,7 +46,7 @@ export function UnsavedChangesDialog({
               onDiscard();
               onOpenChange(false);
             }}
-            className="w-full sm:w-auto gap-2"
+            className="shrink-0 gap-2"
           >
             <Trash2 className="h-4 w-4" />
             Discard
@@ -56,7 +56,7 @@ export function UnsavedChangesDialog({
               onSave();
               onOpenChange(false);
             }}
-            className="w-full sm:w-auto gap-2 bg-[#1C63A6] hover:bg-[#1C63A6]/90"
+            className="shrink-0 gap-2 bg-[#1C63A6] hover:bg-[#1C63A6]/90"
           >
             <Save className="h-4 w-4" />
             Save Changes
