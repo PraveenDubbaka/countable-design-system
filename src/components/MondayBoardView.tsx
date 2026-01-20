@@ -337,11 +337,10 @@ function ResponseTypeDropdown({ currentType, onTypeChange, disabled }: ResponseT
 
   if (disabled) {
     return (
-      <div className="flex items-center gap-2 px-2 py-1.5 text-sm text-gray-700">
-        <div className={`w-6 h-6 rounded flex items-center justify-center ${currentTypeConfig.bgColor}`}>
-          <CurrentTypeIcon className={`h-3.5 w-3.5 ${currentTypeConfig.iconColor}`} />
+      <div className="flex items-center justify-center">
+        <div className={`w-7 h-7 rounded flex items-center justify-center ${currentTypeConfig.bgColor}`}>
+          <CurrentTypeIcon className={`h-4 w-4 ${currentTypeConfig.iconColor}`} />
         </div>
-        <span>{currentTypeConfig.label}</span>
       </div>
     );
   }
@@ -351,12 +350,12 @@ function ResponseTypeDropdown({ currentType, onTypeChange, disabled }: ResponseT
       <PopoverTrigger asChild>
         <button 
           onClick={(e) => e.stopPropagation()}
-          className="w-full flex items-center gap-2 px-2 py-1.5 text-sm text-gray-700 hover:bg-gray-100 rounded transition-colors"
+          className="flex items-center justify-center p-1 hover:bg-gray-100 rounded transition-colors"
+          title={currentTypeConfig.label}
         >
-          <div className={`w-6 h-6 rounded flex items-center justify-center ${currentTypeConfig.bgColor}`}>
-            <CurrentTypeIcon className={`h-3.5 w-3.5 ${currentTypeConfig.iconColor}`} />
+          <div className={`w-7 h-7 rounded flex items-center justify-center ${currentTypeConfig.bgColor}`}>
+            <CurrentTypeIcon className={`h-4 w-4 ${currentTypeConfig.iconColor}`} />
           </div>
-          <span>{currentTypeConfig.label}</span>
         </button>
       </PopoverTrigger>
       <PopoverContent 
@@ -593,13 +592,13 @@ function SortableSubItemRow({ subItem, onUpdate, onDelete, isPreviewMode, index,
 
       {/* Response column with inline type selector and response field */}
       <div className="w-[200px] shrink-0 px-2 py-2 border-r border-gray-200">
-        <div className="flex flex-col gap-1.5">
+        <div className="flex items-start gap-2">
           <ResponseTypeDropdown
             currentType={subItem.answerType}
             onTypeChange={handleAnswerTypeChange}
             disabled={isPreviewMode}
           />
-          <div className="w-full">
+          <div className="flex-1 min-w-0">
             {renderResponseField()}
           </div>
         </div>
@@ -889,13 +888,13 @@ function SortableItemRow({
 
         {/* Response column with inline type selector and response field */}
         <div className="w-[200px] shrink-0 px-2 py-2 border-r border-gray-200">
-          <div className="flex flex-col gap-1.5">
+          <div className="flex items-start gap-2">
             <ResponseTypeDropdown
               currentType={item.answerType}
               onTypeChange={handleAnswerTypeChange}
               disabled={isPreviewMode}
             />
-            <div className="w-full">
+            <div className="flex-1 min-w-0">
               {renderResponseField()}
             </div>
           </div>
