@@ -54,18 +54,18 @@ interface MondayBoardViewProps {
   isPreviewMode: boolean;
 }
 
-// Answer type options for dropdown
-const ANSWER_TYPE_OPTIONS: { value: AnswerType; label: string }[] = [
-  { value: 'short-answer', label: 'Text' },
-  { value: 'long-answer', label: 'Long Text' },
-  { value: 'yes-no', label: 'Yes/No' },
-  { value: 'yes-no-na', label: 'Yes/No/N/A' },
-  { value: 'multiple-choice', label: 'Multiple Choice' },
-  { value: 'dropdown', label: 'Dropdown' },
-  { value: 'date', label: 'Date' },
-  { value: 'amount', label: 'Amount' },
-  { value: 'file-upload', label: 'File Upload' },
-  { value: 'toggle', label: 'Toggle' },
+// Answer type options for dropdown with colors like Monday.com
+const ANSWER_TYPE_OPTIONS: { value: AnswerType; label: string; color: string; bgColor: string }[] = [
+  { value: 'short-answer', label: 'Text', color: 'text-white', bgColor: 'bg-teal-500' },
+  { value: 'long-answer', label: 'Long Text', color: 'text-white', bgColor: 'bg-emerald-600' },
+  { value: 'yes-no', label: 'Yes/No', color: 'text-white', bgColor: 'bg-pink-500' },
+  { value: 'yes-no-na', label: 'Yes/No/N/A', color: 'text-white', bgColor: 'bg-purple-500' },
+  { value: 'multiple-choice', label: 'Multiple Choice', color: 'text-white', bgColor: 'bg-blue-500' },
+  { value: 'dropdown', label: 'Dropdown', color: 'text-white', bgColor: 'bg-indigo-500' },
+  { value: 'date', label: 'Date', color: 'text-white', bgColor: 'bg-amber-500' },
+  { value: 'amount', label: 'Amount', color: 'text-white', bgColor: 'bg-rose-500' },
+  { value: 'file-upload', label: 'File Upload', color: 'text-white', bgColor: 'bg-slate-500' },
+  { value: 'toggle', label: 'Toggle', color: 'text-white', bgColor: 'bg-cyan-500' },
 ];
 
 // Strip HTML tags from text for clean display
@@ -132,6 +132,9 @@ function SortableSubItemRow({ subItem, onUpdate, onDelete, isPreviewMode, index,
     onUpdate({ ...subItem, answerType, answer: '' });
   };
 
+  // Get current answer type config
+  const currentTypeConfig = ANSWER_TYPE_OPTIONS.find(o => o.value === subItem.answerType) || ANSWER_TYPE_OPTIONS[0];
+
   const renderResponseField = () => {
     switch (subItem.answerType) {
       case 'yes-no':
@@ -142,7 +145,10 @@ function SortableSubItemRow({ subItem, onUpdate, onDelete, isPreviewMode, index,
             {options.map((opt) => (
               <button
                 key={opt}
-                onClick={() => handleAnswerChange(opt)}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleAnswerChange(opt);
+                }}
                 disabled={isPreviewMode}
                 className={`px-2 py-1 text-xs rounded transition-all ${
                   subItem.answer === opt
@@ -162,6 +168,7 @@ function SortableSubItemRow({ subItem, onUpdate, onDelete, isPreviewMode, index,
           <select
             value={subItem.answer || ''}
             onChange={(e) => handleAnswerChange(e.target.value)}
+            onClick={(e) => e.stopPropagation()}
             disabled={isPreviewMode}
             className="h-7 px-2 text-xs bg-gray-100 border-gray-300 text-gray-700 rounded w-full"
           >
@@ -177,6 +184,7 @@ function SortableSubItemRow({ subItem, onUpdate, onDelete, isPreviewMode, index,
           <Input
             value={subItem.answer || ''}
             onChange={(e) => handleAnswerChange(e.target.value)}
+            onClick={(e) => e.stopPropagation()}
             placeholder="Enter response..."
             disabled={isPreviewMode}
             className="h-7 text-xs bg-gray-100 border-gray-300 text-gray-700"
@@ -202,7 +210,7 @@ function SortableSubItemRow({ subItem, onUpdate, onDelete, isPreviewMode, index,
       </div>
 
       {/* Sub-item name */}
-      <div className="flex-1 min-w-[280px] px-3 py-2.5">
+      <div className="flex-1 min-w-[280px] px-3 py-2.5 border-r border-gray-200">
         {isEditingName && !isPreviewMode ? (
           <RichTextQuestionEditor
             value={subItem.text}
@@ -226,34 +234,43 @@ function SortableSubItemRow({ subItem, onUpdate, onDelete, isPreviewMode, index,
         )}
       </div>
 
-      {/* Response Type column */}
-      <div className="w-[120px] px-2 py-2 flex items-center">
+      {/* Response column with type selector dropdown */}
+      <div className="w-[200px] px-2 py-2 flex items-center gap-2 border-r border-gray-200">
         {!isPreviewMode ? (
-          <Select
-            value={subItem.answerType}
-            onValueChange={(value) => handleAnswerTypeChange(value as AnswerType)}
-          >
-            <SelectTrigger className="h-7 text-xs bg-gray-100 border-gray-300 text-gray-700">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent className="bg-white border-gray-200 z-50">
-              {ANSWER_TYPE_OPTIONS.map((opt) => (
-                <SelectItem key={opt.value} value={opt.value} className="text-gray-700 focus:bg-gray-100">
-                  {opt.label}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <button 
+                onClick={(e) => e.stopPropagation()}
+                className={`px-3 py-1.5 text-xs font-medium rounded-md ${currentTypeConfig.bgColor} ${currentTypeConfig.color} hover:opacity-90 transition-opacity min-w-[70px] text-center shrink-0`}
+              >
+                {currentTypeConfig.label}
+              </button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="start" className="w-44 bg-white border border-gray-200 shadow-lg z-50 p-2">
+              <div className="grid grid-cols-2 gap-1.5">
+                {ANSWER_TYPE_OPTIONS.map((opt) => (
+                  <button
+                    key={opt.value}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleAnswerTypeChange(opt.value);
+                    }}
+                    className={`px-2 py-1.5 text-xs font-medium rounded-md ${opt.bgColor} ${opt.color} hover:opacity-90 transition-opacity text-center`}
+                  >
+                    {opt.label}
+                  </button>
+                ))}
+              </div>
+            </DropdownMenuContent>
+          </DropdownMenu>
         ) : (
-          <span className="text-xs text-gray-500">
-            {ANSWER_TYPE_OPTIONS.find(o => o.value === subItem.answerType)?.label || 'Text'}
+          <span className={`px-3 py-1.5 text-xs font-medium rounded-md ${currentTypeConfig.bgColor} ${currentTypeConfig.color} shrink-0`}>
+            {currentTypeConfig.label}
           </span>
         )}
-      </div>
-
-      {/* Response column */}
-      <div className="w-[160px] px-2 py-2 flex items-center">
-        {renderResponseField()}
+        <div className="flex-1 min-w-0">
+          {renderResponseField()}
+        </div>
       </div>
 
       {/* Additional Explanation column */}
@@ -365,6 +382,9 @@ function SortableItemRow({
     onUpdate({ ...item, subQuestions: newSubQuestions });
   };
 
+  // Get current answer type config
+  const currentTypeConfig = ANSWER_TYPE_OPTIONS.find(o => o.value === item.answerType) || ANSWER_TYPE_OPTIONS[0];
+
   const renderResponseField = () => {
     switch (item.answerType) {
       case 'yes-no':
@@ -375,7 +395,10 @@ function SortableItemRow({
             {options.map((opt) => (
               <button
                 key={opt}
-                onClick={() => handleAnswerChange(opt)}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleAnswerChange(opt);
+                }}
                 disabled={isPreviewMode}
                 className={`px-2 py-1 text-xs rounded transition-all ${
                   item.answer === opt
@@ -395,6 +418,7 @@ function SortableItemRow({
           <select
             value={item.answer || ''}
             onChange={(e) => handleAnswerChange(e.target.value)}
+            onClick={(e) => e.stopPropagation()}
             disabled={isPreviewMode}
             className="h-8 px-2 text-sm bg-gray-100 border-gray-300 text-gray-700 rounded w-full"
           >
@@ -410,6 +434,7 @@ function SortableItemRow({
           <Textarea
             value={item.answer || ''}
             onChange={(e) => handleAnswerChange(e.target.value)}
+            onClick={(e) => e.stopPropagation()}
             placeholder="Enter response..."
             disabled={isPreviewMode}
             className="min-h-[32px] text-sm bg-gray-100 border border-gray-300 text-gray-700 resize-none rounded-md px-2 py-1 w-full"
@@ -421,6 +446,7 @@ function SortableItemRow({
           <Input
             value={item.answer || ''}
             onChange={(e) => handleAnswerChange(e.target.value)}
+            onClick={(e) => e.stopPropagation()}
             placeholder="Enter response..."
             disabled={isPreviewMode}
             className="h-8 text-sm bg-gray-100 border-gray-300 text-gray-700"
@@ -500,34 +526,43 @@ function SortableItemRow({
           )}
         </div>
 
-        {/* Response Type column */}
-        <div className="w-[120px] px-2 py-2 border-r border-gray-200">
+        {/* Response column with type selector dropdown */}
+        <div className="w-[240px] px-2 py-2 border-r border-gray-200 flex items-center gap-2">
           {!isPreviewMode ? (
-            <Select
-              value={item.answerType}
-              onValueChange={(value) => handleAnswerTypeChange(value as AnswerType)}
-            >
-              <SelectTrigger className="h-8 text-xs bg-gray-100 border-gray-300 text-gray-700">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent className="bg-white border-gray-200 z-50">
-                {ANSWER_TYPE_OPTIONS.map((opt) => (
-                  <SelectItem key={opt.value} value={opt.value} className="text-gray-700 focus:bg-gray-100">
-                    {opt.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <button 
+                  onClick={(e) => e.stopPropagation()}
+                  className={`px-3 py-1.5 text-xs font-medium rounded-md ${currentTypeConfig.bgColor} ${currentTypeConfig.color} hover:opacity-90 transition-opacity min-w-[80px] text-center shrink-0`}
+                >
+                  {currentTypeConfig.label}
+                </button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="start" className="w-48 bg-white border border-gray-200 shadow-lg z-50 p-2">
+                <div className="grid grid-cols-2 gap-1.5">
+                  {ANSWER_TYPE_OPTIONS.map((opt) => (
+                    <button
+                      key={opt.value}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleAnswerTypeChange(opt.value);
+                      }}
+                      className={`px-2 py-1.5 text-xs font-medium rounded-md ${opt.bgColor} ${opt.color} hover:opacity-90 transition-opacity text-center`}
+                    >
+                      {opt.label}
+                    </button>
+                  ))}
+                </div>
+              </DropdownMenuContent>
+            </DropdownMenu>
           ) : (
-            <span className="text-xs text-gray-500">
-              {ANSWER_TYPE_OPTIONS.find(o => o.value === item.answerType)?.label || 'Text'}
+            <span className={`px-3 py-1.5 text-xs font-medium rounded-md ${currentTypeConfig.bgColor} ${currentTypeConfig.color} shrink-0`}>
+              {currentTypeConfig.label}
             </span>
           )}
-        </div>
-
-        {/* Response column */}
-        <div className="w-[160px] px-2 py-2 border-r border-gray-200">
-          {renderResponseField()}
+          <div className="flex-1 min-w-0">
+            {renderResponseField()}
+          </div>
         </div>
 
         {/* Additional Explanation column */}
@@ -602,9 +637,8 @@ function SortableItemRow({
             {/* Sub-items header row */}
             <div className="flex items-center bg-gray-100 text-xs font-medium text-gray-500 border-b border-gray-200">
               <div className="w-10 flex items-center justify-center py-2" />
-              <div className="flex-1 min-w-[280px] px-3 py-2">Subitem</div>
-              <div className="w-[120px] px-2 py-2 text-center">Type</div>
-              <div className="w-[160px] px-2 py-2 text-center">Response</div>
+              <div className="flex-1 min-w-[280px] px-3 py-2 border-r border-gray-200">Subitem</div>
+              <div className="w-[200px] px-2 py-2 text-center border-r border-gray-200">Response</div>
               <div className="w-[200px] px-2 py-2 text-center">Explanation</div>
               <div className="w-12" />
             </div>
@@ -839,8 +873,7 @@ function SortableGroup({
             <div className="w-10 border-r border-gray-200" />
             <div className="w-8" />
             <div className="flex-1 min-w-[280px] px-3 py-2 border-r border-gray-200">Item</div>
-            <div className="w-[120px] px-2 py-2 border-r border-gray-200">Type</div>
-            <div className="w-[160px] px-2 py-2 border-r border-gray-200">Response</div>
+            <div className="w-[240px] px-2 py-2 border-r border-gray-200">Response</div>
             <div className="w-[200px] px-2 py-2 border-r border-gray-200">Explanation</div>
             <div className="w-16" />
           </div>
