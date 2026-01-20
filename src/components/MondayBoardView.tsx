@@ -190,20 +190,10 @@ function SortableSubItemRow({ subItem, onUpdate, onDelete, isPreviewMode, index,
       ref={setNodeRef} 
       style={style}
       {...(!isPreviewMode ? { ...attributes, ...listeners } : {})}
-      className={`group flex items-stretch border-b border-slate-700/50 hover:bg-slate-700/30 transition-colors relative ${!isPreviewMode ? 'cursor-grab active:cursor-grabbing' : ''}`}
+      className={`group flex items-stretch hover:bg-slate-700/20 transition-colors relative ${!isPreviewMode ? 'cursor-grab active:cursor-grabbing' : ''}`}
     >
-      {/* Connector lines */}
-      <div className="w-12 relative flex items-center">
-        {/* Vertical line from top */}
-        <div 
-          className={`absolute left-5 top-0 w-0.5 bg-amber-600/60 ${isLast ? 'h-1/2' : 'h-full'}`}
-        />
-        {/* Horizontal connector */}
-        <div className="absolute left-5 top-1/2 w-3 h-0.5 bg-amber-600/60" />
-      </div>
-
-      {/* Checkbox */}
-      <div className="w-10 flex items-center justify-center border-r border-slate-700/50">
+      {/* Checkbox column */}
+      <div className="w-10 flex items-center justify-center">
         <Checkbox 
           checked={isSelected} 
           onCheckedChange={() => setIsSelected(!isSelected)}
@@ -211,8 +201,8 @@ function SortableSubItemRow({ subItem, onUpdate, onDelete, isPreviewMode, index,
         />
       </div>
 
-      {/* Sub-item name - spans the Subitem header column */}
-      <div className="flex-1 min-w-[280px] px-3 py-2 border-r border-slate-700/50">
+      {/* Sub-item name */}
+      <div className="flex-1 min-w-[280px] px-3 py-2.5">
         {isEditingName && !isPreviewMode ? (
           <RichTextQuestionEditor
             value={subItem.text}
@@ -230,14 +220,14 @@ function SortableSubItemRow({ subItem, onUpdate, onDelete, isPreviewMode, index,
                 setIsEditingName(true);
               }
             }}
-            className={`text-sm text-slate-300 py-1 ${!isPreviewMode ? 'cursor-text hover:text-slate-100' : ''}`}
+            className={`text-sm text-slate-300 ${!isPreviewMode ? 'cursor-text hover:text-slate-100' : ''}`}
             dangerouslySetInnerHTML={{ __html: subItem.text || 'New sub-item' }}
           />
         )}
       </div>
 
       {/* Response Type column */}
-      <div className="w-[120px] px-2 py-2 border-r border-slate-700/50">
+      <div className="w-[120px] px-2 py-2 flex items-center">
         {!isPreviewMode ? (
           <Select
             value={subItem.answerType}
@@ -246,7 +236,7 @@ function SortableSubItemRow({ subItem, onUpdate, onDelete, isPreviewMode, index,
             <SelectTrigger className="h-7 text-xs bg-slate-700/50 border-slate-600 text-slate-300">
               <SelectValue />
             </SelectTrigger>
-            <SelectContent className="bg-slate-800 border-slate-700">
+            <SelectContent className="bg-slate-800 border-slate-700 z-50">
               {ANSWER_TYPE_OPTIONS.map((opt) => (
                 <SelectItem key={opt.value} value={opt.value} className="text-slate-200 focus:bg-slate-700">
                   {opt.label}
@@ -262,12 +252,12 @@ function SortableSubItemRow({ subItem, onUpdate, onDelete, isPreviewMode, index,
       </div>
 
       {/* Response column */}
-      <div className="w-[160px] px-2 py-2 border-r border-slate-700/50">
+      <div className="w-[160px] px-2 py-2 flex items-center">
         {renderResponseField()}
       </div>
 
       {/* Additional Explanation column */}
-      <div className="w-[200px] px-2 py-2 border-r border-slate-700/50">
+      <div className="w-[200px] px-2 py-2 flex items-center">
         <Textarea
           value={subItem.explanation || ''}
           onChange={(e) => onUpdate({ ...subItem, explanation: e.target.value })}
@@ -277,8 +267,8 @@ function SortableSubItemRow({ subItem, onUpdate, onDelete, isPreviewMode, index,
         />
       </div>
 
-      {/* Actions */}
-      <div className="w-10 flex items-center justify-center">
+      {/* Actions - add subitem button */}
+      <div className="w-12 flex items-center justify-center">
         {!isPreviewMode && (
           <button
             onClick={(e) => {
@@ -287,7 +277,7 @@ function SortableSubItemRow({ subItem, onUpdate, onDelete, isPreviewMode, index,
             }}
             className="p-1 rounded hover:bg-slate-600 text-slate-400 hover:text-slate-200 transition-colors opacity-0 group-hover:opacity-100"
           >
-            <Trash2 className="h-3.5 w-3.5" />
+            <PlusCircle className="h-4 w-4" />
           </button>
         )}
       </div>
@@ -595,58 +585,60 @@ function SortableItemRow({
         </div>
       </div>
 
-      {/* Sub-items section - Monday.com style with connector lines */}
+      {/* Sub-items section - Monday.com style with vertical bar */}
       {hasSubItems && isExpanded && (
-        <div className="bg-slate-800/40 relative">
-          {/* Sub-items header */}
-          <div className="flex items-center border-b border-slate-700/50 bg-slate-800/60 text-xs font-medium text-slate-500">
-            <div className="w-12" />
-            <div className="w-10 border-r border-slate-700/50" />
-            <div className="flex-1 min-w-[280px] px-3 py-1.5 border-r border-slate-700/50">Subitem</div>
-            <div className="w-[120px] px-2 py-1.5 border-r border-slate-700/50">Type</div>
-            <div className="w-[160px] px-2 py-1.5 border-r border-slate-700/50">Response</div>
-            <div className="w-[200px] px-2 py-1.5 border-r border-slate-700/50">Explanation</div>
-            <div className="w-10" />
-          </div>
-
-          <SortableContext items={subItemIds} strategy={verticalListSortingStrategy}>
-            {item.subQuestions!.map((sub, idx) => (
-              <SortableSubItemRow
-                key={sub.id}
-                subItem={sub}
-                index={idx}
-                parentId={item.id}
-                onUpdate={(updated) => handleSubItemUpdate(idx, updated)}
-                onDelete={() => handleSubItemDelete(idx)}
-                isPreviewMode={isPreviewMode}
-                isLast={idx === item.subQuestions!.length - 1}
-                totalCount={item.subQuestions!.length}
-              />
-            ))}
-          </SortableContext>
-
-          {/* Add subitem button with connector */}
-          {!isPreviewMode && (
-            <div className="flex items-stretch relative group/add border-b border-slate-700/50">
-              {/* Connector lines */}
-              <div className="w-12 relative flex items-center">
-                <div className="absolute left-5 top-0 w-0.5 bg-amber-600/60 h-1/2" />
-                <div className="absolute left-5 top-1/2 w-3 h-0.5 bg-amber-600/60" />
-              </div>
-              
-              <div className="w-10 flex items-center justify-center border-r border-slate-700/50">
-                <div className="h-4 w-4 border border-dashed border-slate-600 rounded opacity-50" />
-              </div>
-              
-              <button
-                onClick={onAddSubItem}
-                className="flex items-center gap-2 px-3 py-2 text-sm text-slate-500 hover:text-slate-300 hover:bg-slate-700/30 transition-colors flex-1 text-left"
-              >
-                <Plus className="h-3.5 w-3.5" />
-                + Add subitem
-              </button>
+        <div className="relative ml-8">
+          {/* Continuous vertical amber bar on left */}
+          <div className="absolute left-0 top-0 bottom-0 w-1 bg-amber-600/70 rounded-full" />
+          
+          {/* Sub-items container */}
+          <div className="ml-4 bg-slate-800/50 border border-slate-700/60 rounded-lg overflow-hidden">
+            {/* Sub-items header row */}
+            <div className="flex items-center bg-slate-800/80 text-xs font-medium text-slate-400 border-b border-slate-700/50">
+              <div className="w-10 flex items-center justify-center py-2" />
+              <div className="flex-1 min-w-[280px] px-3 py-2">Subitem</div>
+              <div className="w-[120px] px-2 py-2 text-center">Type</div>
+              <div className="w-[160px] px-2 py-2 text-center">Response</div>
+              <div className="w-[200px] px-2 py-2 text-center">Explanation</div>
+              <div className="w-12" />
             </div>
-          )}
+
+            <SortableContext items={subItemIds} strategy={verticalListSortingStrategy}>
+              {item.subQuestions!.map((sub, idx) => (
+                <div key={sub.id} className="border-b border-slate-700/40 last:border-b-0">
+                  <SortableSubItemRow
+                    subItem={sub}
+                    index={idx}
+                    parentId={item.id}
+                    onUpdate={(updated) => handleSubItemUpdate(idx, updated)}
+                    onDelete={() => handleSubItemDelete(idx)}
+                    isPreviewMode={isPreviewMode}
+                    isLast={idx === item.subQuestions!.length - 1}
+                    totalCount={item.subQuestions!.length}
+                  />
+                </div>
+              ))}
+            </SortableContext>
+
+            {/* Add subitem row */}
+            {!isPreviewMode && (
+              <div className="flex items-center hover:bg-slate-700/20 transition-colors border-t border-slate-700/40">
+                <div className="w-10 flex items-center justify-center py-2">
+                  <Checkbox 
+                    disabled
+                    className="h-4 w-4 border-slate-600 bg-slate-800 opacity-40"
+                  />
+                </div>
+                <button
+                  onClick={onAddSubItem}
+                  className="flex-1 flex items-center gap-2 px-3 py-2.5 text-sm text-slate-500 hover:text-blue-400 transition-colors text-left"
+                >
+                  <Plus className="h-3.5 w-3.5" />
+                  + Add subitem
+                </button>
+              </div>
+            )}
+          </div>
         </div>
       )}
     </div>
