@@ -64,10 +64,10 @@ const IntegrationBadge = ({ type }: { type: string | null }) => {
   if (type === "xero") {
     return (
       <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#13B5EA] text-white text-xs font-medium">
-        <img 
-          src="https://upload.wikimedia.org/wikipedia/en/9/9f/Xero_software_logo.svg" 
-          alt="Xero" 
-          className="w-4 h-4"
+        <img
+          src="https://upload.wikimedia.org/wikipedia/en/9/9f/Xero_software_logo.svg"
+          alt="Xero"
+          className="w-4 h-4 brightness-0 invert"
         />
         Xero
       </div>
