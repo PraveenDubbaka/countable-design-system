@@ -830,10 +830,12 @@ interface SubItemRowProps {
 interface SortableSubItemRowProps extends SubItemRowProps {
   isLast: boolean;
   totalCount: number;
+  isNewEmpty?: boolean;
+  onBlurCleanup?: () => void;
 }
 
-function SortableSubItemRow({ subItem, onUpdate, onDelete, isPreviewMode, index, parentId, isLast, totalCount, visibleColumns }: SortableSubItemRowProps) {
-  const [isEditingName, setIsEditingName] = useState(false);
+function SortableSubItemRow({ subItem, onUpdate, onDelete, isPreviewMode, index, parentId, isLast, totalCount, visibleColumns, isNewEmpty, onBlurCleanup }: SortableSubItemRowProps) {
+  const [isEditingName, setIsEditingName] = useState(isNewEmpty || false);
   const [isSelected, setIsSelected] = useState(false);
   const draftNameRef = useRef(subItem.text);
 
@@ -866,6 +868,10 @@ function SortableSubItemRow({ subItem, onUpdate, onDelete, isPreviewMode, index,
   const handleCancel = () => {
     draftNameRef.current = subItem.text;
     setIsEditingName(false);
+    // If this was a new empty sub-item and user cancelled, trigger cleanup
+    if (isNewEmpty && subItem.text.trim() === '') {
+      onBlurCleanup?.();
+    }
   };
 
   const handleAnswerChange = (answer: string) => {
@@ -1065,7 +1071,13 @@ function SortableSubItemRow({ subItem, onUpdate, onDelete, isPreviewMode, index,
           <RichTextQuestionEditor
             value={subItem.text}
             onChange={(newValue) => { draftNameRef.current = newValue; }}
-            onBlur={handleSave}
+            onBlur={() => {
+              handleSave();
+              // If text is still empty after blur, trigger cleanup
+              if (draftNameRef.current.trim() === '' && isNewEmpty) {
+                setTimeout(() => onBlurCleanup?.(), 100);
+              }
+            }}
             onCancel={handleCancel}
             className="text-sm min-h-[32px] bg-gray-100 border-gray-300 text-gray-800"
           />
@@ -1079,7 +1091,7 @@ function SortableSubItemRow({ subItem, onUpdate, onDelete, isPreviewMode, index,
               }
             }}
             className={`text-sm text-gray-700 ${!isPreviewMode ? 'cursor-text hover:text-gray-900' : ''}`}
-            dangerouslySetInnerHTML={{ __html: subItem.text || 'New sub-item' }}
+            dangerouslySetInnerHTML={{ __html: subItem.text || 'Click to add sub-item...' }}
           />
         )}
       </div>
@@ -1197,6 +1209,7 @@ function SortableItemRow({
   const [isExpanded, setIsExpanded] = useState(true);
   const [isEditingName, setIsEditingName] = useState(false);
   const [isSelected, setIsSelected] = useState(false);
+  const [isPendingSubItem, setIsPendingSubItem] = useState(false);
   const draftNameRef = useRef(item.text);
 
   const {
@@ -1218,6 +1231,34 @@ function SortableItemRow({
   };
 
   const hasSubItems = item.subQuestions && item.subQuestions.length > 0;
+  const hasRealSubItems = hasSubItems && item.subQuestions!.some(sq => sq.text.trim() !== '');
+
+  // Handle chevron click - expand to add sub-item section
+  const handleChevronClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (hasSubItems) {
+      setIsExpanded(!isExpanded);
+    } else {
+      // Start adding a new sub-item
+      setIsPendingSubItem(true);
+      setIsExpanded(true);
+      onAddSubItem();
+    }
+  };
+
+  // Clean up empty sub-items when collapsing or losing focus
+  const cleanupEmptySubItems = () => {
+    if (item.subQuestions) {
+      const nonEmptySubItems = item.subQuestions.filter(sq => sq.text.trim() !== '');
+      if (nonEmptySubItems.length !== item.subQuestions.length) {
+        onUpdate({ ...item, subQuestions: nonEmptySubItems.length > 0 ? nonEmptySubItems : undefined });
+      }
+      if (nonEmptySubItems.length === 0) {
+        setIsExpanded(false);
+        setIsPendingSubItem(false);
+      }
+    }
+  };
 
   const handleSave = () => {
     const trimmed = draftNameRef.current.trim();
@@ -1437,21 +1478,27 @@ function SortableItemRow({
           />
         </div>
 
-        {/* Expand arrow */}
+        {/* Expand arrow - Monday.com style: dull on hover, solid when has sub-items */}
         <div className="w-8 shrink-0 flex items-center justify-center">
-          {hasSubItems ? (
+          {hasRealSubItems ? (
             <button 
-              onClick={(e) => {
-                e.stopPropagation();
-                setIsExpanded(!isExpanded);
-              }}
+              onClick={handleChevronClick}
               className="p-0.5 rounded hover:bg-gray-200 transition-colors"
+              title={isExpanded ? "Collapse sub-items" : "Expand sub-items"}
             >
               {isExpanded ? (
-                <ChevronDown className="h-4 w-4 text-gray-500" />
+                <ChevronDown className="h-4 w-4 text-gray-600" />
               ) : (
-                <ChevronRight className="h-4 w-4 text-gray-500" />
+                <ChevronRight className="h-4 w-4 text-gray-600" />
               )}
+            </button>
+          ) : !isPreviewMode ? (
+            <button 
+              onClick={handleChevronClick}
+              className="p-0.5 rounded hover:bg-gray-200 transition-colors opacity-0 group-hover:opacity-100"
+              title="Add sub-item"
+            >
+              <ChevronRight className="h-4 w-4 text-gray-400" />
             </button>
           ) : (
             <div className="w-4" />
@@ -1603,7 +1650,15 @@ function SortableItemRow({
 
       {/* Sub-items section - Monday.com style with connecting line */}
       {hasSubItems && isExpanded && (
-        <div className="relative mt-1 mb-2">
+        <div 
+          className="relative mt-1 mb-2"
+          onBlur={(e) => {
+            // Check if focus is leaving the sub-items container entirely
+            if (!e.currentTarget.contains(e.relatedTarget as Node)) {
+              cleanupEmptySubItems();
+            }
+          }}
+        >
           {/* Vertical connecting line from parent - positioned at left edge */}
           <div className="absolute left-3 -top-1 w-0.5 h-4 bg-amber-600/70" />
           
@@ -1645,13 +1700,19 @@ function SortableItemRow({
                     isLast={idx === item.subQuestions!.length - 1}
                     totalCount={item.subQuestions!.length}
                     visibleColumns={visibleColumns}
+                    isNewEmpty={isPendingSubItem && sub.text.trim() === ''}
+                    onBlurCleanup={() => {
+                      if (sub.text.trim() === '') {
+                        cleanupEmptySubItems();
+                      }
+                    }}
                   />
                 </div>
               ))}
             </SortableContext>
 
             {/* Add subitem row */}
-            {!isPreviewMode && (
+            {!isPreviewMode && hasRealSubItems && (
               <div className="flex items-center hover:bg-gray-100 transition-colors border-t border-gray-200">
                 <div className="w-10 flex items-center justify-center py-2.5">
                   <Checkbox 
