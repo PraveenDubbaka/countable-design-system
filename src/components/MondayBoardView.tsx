@@ -1058,7 +1058,7 @@ function SortableSubItemRow({ subItem, onUpdate, onDelete, isPreviewMode, index,
       className={`group flex items-stretch hover:bg-[#EDF2F7] transition-colors relative border-b border-[#E8EDF2] ${!isPreviewMode ? 'cursor-grab active:cursor-grabbing' : ''}`}
     >
       {/* Checkbox column */}
-      <div className="w-10 shrink-0 flex items-center justify-center">
+      <div className="w-10 shrink-0 flex items-center justify-center self-center">
         <Checkbox 
           checked={isSelected} 
           onCheckedChange={() => setIsSelected(!isSelected)}
@@ -1067,7 +1067,7 @@ function SortableSubItemRow({ subItem, onUpdate, onDelete, isPreviewMode, index,
       </div>
 
       {/* Sub-item name - flexible width to fill available space */}
-      <div className="flex-1 min-w-[200px] px-3 py-2.5">
+      <div className="flex-1 min-w-[200px] px-3 py-2.5 flex items-center">
         {isEditingName && !isPreviewMode ? (
           <RichTextQuestionEditor
             value={subItem.text}
@@ -1098,7 +1098,7 @@ function SortableSubItemRow({ subItem, onUpdate, onDelete, isPreviewMode, index,
       </div>
 
       {/* Response column with inline type selector and response field */}
-      <div className="w-[200px] shrink-0 px-2 py-2 border-l border-[#E8EDF2]">
+      <div className="w-[200px] shrink-0 px-2 py-2 border-l border-[#E8EDF2] flex items-center">
         <div className="flex items-start gap-2">
           <ResponseTypeDropdown
             currentType={subItem.answerType}
@@ -1113,7 +1113,7 @@ function SortableSubItemRow({ subItem, onUpdate, onDelete, isPreviewMode, index,
 
       {/* Additional Explanation column - conditionally rendered */}
       {visibleColumns.explanation && (
-        <div className="w-[200px] shrink-0 px-2 py-2 border-l border-[#E8EDF2]">
+        <div className="w-[200px] shrink-0 px-2 py-2 border-l border-[#E8EDF2] flex items-center">
           {(subItem as any).showExplanation !== false ? (
             <div className="relative group/exp">
               <AITextarea
@@ -1165,7 +1165,7 @@ function SortableSubItemRow({ subItem, onUpdate, onDelete, isPreviewMode, index,
       )}
 
       {/* Actions - delete button */}
-      <div className="w-16 shrink-0 flex items-center justify-center">
+      <div className="w-16 shrink-0 flex items-center justify-center self-center">
         {!isPreviewMode && (
           <button
             onClick={(e) => {
@@ -1468,10 +1468,10 @@ function SortableItemRow({
       {/* Main item row - full row is draggable */}
       <div 
         {...(!isPreviewMode && !isEditingName ? { ...attributes, ...listeners } : {})}
-        className={`group flex items-center hover:bg-[#EDF2F7] transition-colors border-b border-[#E8EDF2] ${isSelected ? 'bg-[#EDF2F7]' : ''} ${!isPreviewMode && !isEditingName ? 'cursor-grab active:cursor-grabbing' : ''}`}
+        className={`group flex items-stretch hover:bg-[#EDF2F7] transition-colors border-b border-[#E8EDF2] ${isSelected ? 'bg-[#EDF2F7]' : ''} ${!isPreviewMode && !isEditingName ? 'cursor-grab active:cursor-grabbing' : ''}`}
       >
         {/* Checkbox */}
-        <div className="w-10 shrink-0 flex items-center justify-center">
+        <div className="w-10 shrink-0 flex items-center justify-center self-center">
           <Checkbox 
             checked={isSelected} 
             onCheckedChange={() => setIsSelected(!isSelected)}
@@ -1480,7 +1480,7 @@ function SortableItemRow({
         </div>
 
         {/* Expand arrow - Monday.com style: dull on hover, solid when has sub-items */}
-        <div className="w-8 shrink-0 flex items-center justify-center">
+        <div className="w-8 shrink-0 flex items-center justify-center self-center">
           {hasRealSubItems ? (
             <button 
               onClick={handleChevronClick}
@@ -1507,7 +1507,7 @@ function SortableItemRow({
         </div>
 
         {/* Item name */}
-        <div className="flex-1 min-w-[200px] px-3 py-1">
+        <div className="flex-1 min-w-[200px] px-3 py-1 flex items-center">
           {isEditingName && !isPreviewMode ? (
             <RichTextQuestionEditor
               value={item.text}
@@ -1548,7 +1548,7 @@ function SortableItemRow({
         </div>
 
         {/* Response column with inline type selector and response field */}
-        <div className="w-[200px] shrink-0 px-2 py-2 border-l border-[#E8EDF2]">
+        <div className="w-[200px] shrink-0 px-2 py-2 border-l border-[#E8EDF2] flex items-center">
           <div className="flex items-start gap-2">
             <ResponseTypeDropdown
               currentType={item.answerType}
@@ -1563,7 +1563,7 @@ function SortableItemRow({
 
         {/* Additional Explanation column - conditionally rendered */}
         {visibleColumns.explanation && (
-          <div className="w-[200px] shrink-0 px-2 py-2 border-l border-[#E8EDF2]">
+          <div className="w-[200px] shrink-0 px-2 py-2 border-l border-[#E8EDF2] flex items-center">
             {(item as any).showExplanation !== false ? (
               <div className="relative group/exp">
                 <AITextarea
@@ -1615,7 +1615,7 @@ function SortableItemRow({
         )}
 
         {/* Actions menu */}
-        <div className="w-16 shrink-0 flex items-center justify-center gap-1">
+        <div className="w-16 shrink-0 flex items-center justify-center gap-1 self-center">
           {!isPreviewMode && (
             <>
               <button
