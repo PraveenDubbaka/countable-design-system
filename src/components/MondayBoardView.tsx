@@ -1683,7 +1683,7 @@ function SortableItemRow({
             {/* Sub-items header row */}
             <div className="flex items-center bg-gray-100 text-xs font-medium text-gray-500 border-b border-gray-200">
               <div className="w-10 shrink-0 flex items-center justify-center py-2" />
-              <div className="flex-1 min-w-[200px] px-3 py-2 border-r border-gray-200">Subitem</div>
+              <div className="flex-1 min-w-[200px] px-3 py-2 border-r border-gray-200">Sub-questions</div>
               <div className="w-[200px] shrink-0 px-2 py-2 text-center border-r border-gray-200">Response</div>
               {visibleColumns.explanation && (
                 <div className="w-[200px] shrink-0 px-2 py-2 text-center border-r border-gray-200">Explanation</div>
