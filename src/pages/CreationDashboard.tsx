@@ -1,12 +1,13 @@
 import { useState, useRef } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { Sparkles, LayoutTemplate, Folder, ChevronDown, ChevronRight, FileText, Upload, X, FolderPlus, Plus } from 'lucide-react';
+import { Sparkles, LayoutTemplate, Folder, ChevronDown, ChevronRight, FileText, X, FolderPlus, Plus } from 'lucide-react';
 import { Layout } from '@/components/Layout';
 import { ContentType } from '@/components/Sidebar';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { GenerationScope } from '@/types/checklist';
 import { toast } from 'sonner';
+import uploadCloudAnimated from '@/assets/upload-cloud-animated.gif';
 import {
   Dialog,
   DialogContent,
@@ -284,7 +285,7 @@ export default function CreationDashboard() {
                     className="border-2 border-dashed border-border rounded-lg p-8 text-center hover:border-primary/50 transition-colors cursor-pointer"
                   >
                     <div className="text-muted-foreground">
-                      <img src="/assets/upload-cloud-animated.gif" alt="Upload" className="h-12 w-12 mx-auto mb-4" />
+                      <img src={uploadCloudAnimated} alt="Upload" className="h-12 w-12 mx-auto mb-4" />
                       <p className="font-medium">Click to upload or drag and drop</p>
                       <p className="text-sm">PDF, DOC, DOCX, TXT (max 10MB)</p>
                     </div>
