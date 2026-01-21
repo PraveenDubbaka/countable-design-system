@@ -180,16 +180,14 @@ export default function Dashboard() {
           <div className="bg-white rounded-lg shadow-sm overflow-hidden flex flex-col" style={{
             height: "calc(100vh - 220px)"
           }}>
-            <div className="px-5 py-4 flex items-center justify-between flex-shrink-0 bg-primary-foreground" style={{
-              backgroundColor: "#FAFBFC"
-            }}>
+            <div className="px-5 py-4 flex items-center justify-between flex-shrink-0 bg-white">
               <div>
                 <h2 className="text-base font-semibold text-foreground">Engagements</h2>
                 <p className="text-xs text-muted-foreground mt-0.5">Active engagements from last 6 months</p>
               </div>
               <div className="relative">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground icon-search" />
-                <Input placeholder="Search Engagement" value={searchQuery} onChange={e => setSearchQuery(e.target.value)} className="pl-9 w-56 h-9 text-sm bg-white border-0 shadow-sm focus:ring-1 focus:ring-primary/30" />
+                <Input placeholder="Search Engagement" value={searchQuery} onChange={e => setSearchQuery(e.target.value)} className="pl-9 w-56 h-9 text-sm border-0 shadow-sm focus:ring-1 focus:ring-primary/30" style={{ backgroundColor: "#FAFBFC" }} />
               </div>
             </div>
 
