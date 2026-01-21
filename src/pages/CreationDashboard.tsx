@@ -313,16 +313,7 @@ export default function CreationDashboard() {
                   </div>
                 )}
                 
-                <div className="mt-6 flex items-center justify-between">
-                  <select
-                    value={scope}
-                    onChange={(e) => setScope(e.target.value as GenerationScope)}
-                    className="px-4 py-2 rounded-lg border bg-card text-sm"
-                  >
-                    <option value="standard">Standard</option>
-                    <option value="detailed">Detailed</option>
-                  </select>
-
+                <div className="mt-6 flex justify-end">
                   <Button
                     onClick={handleGenerateFromFile}
                     disabled={!uploadedFile}
