@@ -110,8 +110,8 @@ export default function Dashboard() {
           </div>
 
           {/* Engagements Table - Monday.com style */}
-          <div className="bg-white rounded-lg shadow-sm overflow-hidden">
-            <div className="px-5 py-4 flex items-center justify-between" style={{ backgroundColor: "#FAFBFC" }}>
+          <div className="bg-white rounded-lg shadow-sm overflow-hidden flex flex-col" style={{ height: "calc(100vh - 220px)" }}>
+            <div className="px-5 py-4 flex items-center justify-between flex-shrink-0" style={{ backgroundColor: "#FAFBFC" }}>
               <div>
                 <h2 className="text-base font-semibold text-foreground">Engagements</h2>
                 <p className="text-xs text-muted-foreground mt-0.5">Active engagements from last 6 months</p>
@@ -127,10 +127,10 @@ export default function Dashboard() {
               </div>
             </div>
 
-            {/* Monday.com style table */}
-            <div className="overflow-x-auto">
+            {/* Monday.com style table with sticky header */}
+            <div className="flex-1 overflow-y-auto overflow-x-auto">
               <table className="w-full">
-                <thead>
+                <thead className="sticky top-0 z-10">
                   <tr style={{ backgroundColor: "#F5F8FA" }}>
                     <th className="text-left px-5 py-3 text-xs font-semibold text-muted-foreground uppercase tracking-wider">Engagement ID</th>
                     <th className="text-left px-5 py-3 text-xs font-semibold text-muted-foreground uppercase tracking-wider">Client Name</th>
