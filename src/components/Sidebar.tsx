@@ -534,7 +534,10 @@ export function Sidebar() {
           </div>
         </div>
 
-        <div className="flex-1 overflow-y-auto p-2 pt-0">
+        <div 
+          className="flex-1 overflow-y-auto p-2 pt-0 rounded-tr-[20px] rounded-br-[20px]" 
+          style={{ backgroundColor: '#FDFDFF', boxShadow: '4px 0 12px -2px rgba(0,0,0,0.08)' }}
+        >
           {templates.map(template => renderTemplate(template))}
         </div>
       </div>
