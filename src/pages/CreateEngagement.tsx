@@ -90,9 +90,10 @@ const FloatingSelect = ({
         onFocus={() => setFocused(true)}
         onBlur={() => setFocused(false)}
         className={`
-          w-full h-11 px-4 pt-4 pb-1 text-sm text-foreground
+          w-full h-11 px-4 text-sm text-foreground
           bg-[#F5F8FA] rounded-lg outline-none transition-all duration-200 appearance-none cursor-pointer
           ${focused ? 'ring-2 ring-primary/30' : ''}
+          ${label ? 'pt-4 pb-1' : 'py-0'}
         `}
       >
         <option value=""></option>
