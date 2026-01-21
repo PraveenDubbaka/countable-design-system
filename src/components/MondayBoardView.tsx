@@ -1857,7 +1857,7 @@ function SortableGroup({
   const itemIds = section.questions.map(q => q.id);
 
   return (
-    <div ref={setNodeRef} style={style} className="bg-white rounded-lg overflow-hidden">
+    <div ref={setNodeRef} style={style} className="bg-white rounded-lg overflow-hidden shadow-[0_0_4px_rgba(0,0,0,0.1)]">
       {/* Group header */}
       <div 
         {...(!isPreviewMode ? { ...attributes, ...listeners } : {})}
