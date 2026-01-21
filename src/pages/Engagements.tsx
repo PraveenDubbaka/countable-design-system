@@ -58,8 +58,8 @@ export default function Engagements() {
 
   return (
     <Layout title="Engagements">
-      <div className="flex-1 p-6 overflow-auto flex flex-col h-full" style={{ backgroundColor: "#F5F8FA" }}>
-        <div className="flex flex-col flex-1 gap-5">
+      <div className="flex-1 p-6 overflow-hidden flex flex-col" style={{ backgroundColor: "#F5F8FA" }}>
+        <div className="flex flex-col flex-1 gap-5 min-h-0">
           {/* Stats Cards */}
           <div className="grid grid-cols-4 gap-3">
             {stats.map((stat, index) => (
