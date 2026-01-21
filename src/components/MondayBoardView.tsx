@@ -280,7 +280,7 @@ function MultipleChoiceField({
                 </button>
                 <button
                   onClick={handleSaveEdit}
-                  className="px-2 py-1 text-xs bg-amber-500 text-white hover:bg-amber-600 rounded transition-colors"
+                  className="px-2 py-1 text-xs bg-primary text-primary-foreground hover:bg-primary/90 rounded transition-colors"
                 >
                   Save
                 </button>
