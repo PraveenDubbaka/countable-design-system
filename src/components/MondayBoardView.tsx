@@ -1099,7 +1099,7 @@ function SortableSubItemRow({ subItem, onUpdate, onDelete, isPreviewMode, index,
 
       {/* Response column with inline type selector and response field */}
       <div className="w-[200px] shrink-0 px-2 py-2 border-l border-[#E8EDF2] flex items-center">
-        <div className="flex items-start gap-2">
+        <div className="flex items-center gap-2">
           <ResponseTypeDropdown
             currentType={subItem.answerType}
             onTypeChange={handleAnswerTypeChange}
@@ -1549,7 +1549,7 @@ function SortableItemRow({
 
         {/* Response column with inline type selector and response field */}
         <div className="w-[200px] shrink-0 px-2 py-2 border-l border-[#E8EDF2] flex items-center">
-          <div className="flex items-start gap-2">
+          <div className="flex items-center gap-2">
             <ResponseTypeDropdown
               currentType={item.answerType}
               onTypeChange={handleAnswerTypeChange}
