@@ -152,6 +152,7 @@ const navItems = [
   {
     icon: AnalyticsIcon,
     label: "Dashboard",
+    route: "/dashboard",
   },
   {
     icon: GlassesIcon,
@@ -168,7 +169,7 @@ const navItems = [
   {
     icon: FileIcon,
     label: "Templates",
-    active: true,
+    route: "/",
   },
 ];
 
@@ -554,16 +555,20 @@ export function Sidebar() {
         </div>
 
         {/* Nav items */}
-        {navItems.map((item, index) => (
-          <div
-            key={index}
-            className={`sidebar-item ${item.active ? "active" : ""} ${isNavExpanded ? "w-full justify-start gap-3 px-3" : ""}`}
-            title={!isNavExpanded ? item.label : undefined}
-          >
-            <item.icon />
-            {isNavExpanded && <span className="text-sm font-medium whitespace-nowrap">{item.label}</span>}
-          </div>
-        ))}
+        {navItems.map((item, index) => {
+          const isActive = item.route ? location.pathname === item.route : false;
+          return (
+            <div
+              key={index}
+              className={`sidebar-item ${isActive ? "active" : ""} ${isNavExpanded ? "w-full justify-start gap-3 px-3" : ""} ${item.route ? "cursor-pointer" : ""}`}
+              title={!isNavExpanded ? item.label : undefined}
+              onClick={() => item.route && navigate(item.route)}
+            >
+              <item.icon />
+              {isNavExpanded && <span className="text-sm font-medium whitespace-nowrap">{item.label}</span>}
+            </div>
+          );
+        })}
 
         {/* Spacer */}
         <div className="flex-1" />
@@ -586,142 +591,146 @@ export function Sidebar() {
         </div>
       </div>
 
-      {/* Templates panel */}
-      <div
-        className={`flex flex-col rounded-tr-[20px] rounded-br-[20px] relative z-10 bg-[#f5f8fa] transition-all duration-300 group/templates ${isTemplatesPanelCollapsed ? "w-0 overflow-hidden shadow-none" : "w-60 shadow-md"}`}
-        style={{
-          backgroundColor: "#F5F8FA",
-        }}
-      >
-        <div className={`p-4 ${isTemplatesPanelCollapsed ? "hidden" : ""}`}>
-          <h2 className="font-semibold text-primary text-lg mb-3">Templates</h2>
-          <DropdownMenu>
-            <DropdownMenuTrigger className="w-full px-3 py-2 bg-white/80 rounded-lg text-sm flex items-center justify-between focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors shadow-sm">
-              <div className="flex items-center gap-2">
-                {(() => {
-                  const selected = dropdownItems.find((item) => item.id === selectedDropdown);
-                  if (selected) {
-                    const IconComponent = selected.icon;
-                    return (
-                      <>
-                        <IconComponent className={`h-4 w-4 ${selected.color}`} />
-                        <span>{selected.label}</span>
-                      </>
-                    );
-                  }
-                  return <span>Select...</span>;
-                })()}
-              </div>
-              <ChevronDown className="h-4 w-4 text-muted-foreground" />
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="start" className="w-[200px]">
-              {dropdownItems.map((item) => (
-                <DropdownMenuItem
-                  key={item.id}
-                  onClick={() => handleDropdownSelect(item.id)}
-                  className="flex items-center justify-between cursor-pointer"
-                >
+      {/* Templates panel - hidden on Dashboard */}
+      {location.pathname !== "/dashboard" && (
+        <>
+          <div
+            className={`flex flex-col rounded-tr-[20px] rounded-br-[20px] relative z-10 bg-[#f5f8fa] transition-all duration-300 group/templates ${isTemplatesPanelCollapsed ? "w-0 overflow-hidden shadow-none" : "w-60 shadow-md"}`}
+            style={{
+              backgroundColor: "#F5F8FA",
+            }}
+          >
+            <div className={`p-4 ${isTemplatesPanelCollapsed ? "hidden" : ""}`}>
+              <h2 className="font-semibold text-primary text-lg mb-3">Templates</h2>
+              <DropdownMenu>
+                <DropdownMenuTrigger className="w-full px-3 py-2 bg-white/80 rounded-lg text-sm flex items-center justify-between focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors shadow-sm">
                   <div className="flex items-center gap-2">
-                    <item.icon className={`h-4 w-4 ${item.color}`} />
-                    <span>{item.label}</span>
+                    {(() => {
+                      const selected = dropdownItems.find((item) => item.id === selectedDropdown);
+                      if (selected) {
+                        const IconComponent = selected.icon;
+                        return (
+                          <>
+                            <IconComponent className={`h-4 w-4 ${selected.color}`} />
+                            <span>{selected.label}</span>
+                          </>
+                        );
+                      }
+                      return <span>Select...</span>;
+                    })()}
                   </div>
-                  {selectedDropdown === item.id && <Check className="h-4 w-4 text-primary" />}
-                </DropdownMenuItem>
-              ))}
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </div>
-
-        <div
-          className={`flex mb-2 ${isTemplatesPanelCollapsed ? "hidden" : ""}`}
-          style={{ borderBottom: "1px solid #DDE1E9" }}
-        >
-          <button
-            onClick={() => setActiveTab("firm")}
-            className={`flex-1 py-2 px-1 text-sm font-medium transition-all text-center whitespace-nowrap ${activeTab === "firm" ? "text-primary border-b-[3px]" : "text-muted-foreground hover:text-foreground border-b-[3px] border-transparent"}`}
-            style={
-              activeTab === "firm"
-                ? {
-                    borderBottomColor: "#0A3159",
-                  }
-                : undefined
-            }
-          >
-            Firm Templates
-          </button>
-          <button
-            onClick={() => setActiveTab("master")}
-            className={`flex-1 py-2 px-1 text-sm font-medium transition-all text-center whitespace-nowrap ${activeTab === "master" ? "text-primary border-b-[3px]" : "text-muted-foreground hover:text-foreground border-b-[3px] border-transparent"}`}
-            style={
-              activeTab === "master"
-                ? {
-                    borderBottomColor: "#0A3159",
-                  }
-                : undefined
-            }
-          >
-            Master Library
-          </button>
-        </div>
-
-        <div className={`p-3 pt-1 ${isTemplatesPanelCollapsed ? "hidden" : ""}`}>
-          <div className="flex gap-2">
-            <div className="relative flex-1">
-              <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-              <Input
-                placeholder="Search"
-                className="pl-8 h-8 text-sm bg-white/80 border-0 shadow-sm"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-              />
+                  <ChevronDown className="h-4 w-4 text-muted-foreground" />
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="start" className="w-[200px]">
+                  {dropdownItems.map((item) => (
+                    <DropdownMenuItem
+                      key={item.id}
+                      onClick={() => handleDropdownSelect(item.id)}
+                      className="flex items-center justify-between cursor-pointer"
+                    >
+                      <div className="flex items-center gap-2">
+                        <item.icon className={`h-4 w-4 ${item.color}`} />
+                        <span>{item.label}</span>
+                      </div>
+                      {selectedDropdown === item.id && <Check className="h-4 w-4 text-primary" />}
+                    </DropdownMenuItem>
+                  ))}
+                </DropdownMenuContent>
+              </DropdownMenu>
             </div>
-            <Button size="icon" variant="ghost" className="h-8 w-8 hover:bg-white/50">
-              <Expand className="h-4 w-4" />
-            </Button>
-            <Button size="icon" className="h-8 w-8 bg-primary hover:bg-primary/90 shadow-sm">
-              <Plus className="h-4 w-4 text-primary-foreground" />
-            </Button>
-            <Button
-              size="icon"
-              variant="ghost"
-              className="h-8 w-8 text-destructive hover:text-destructive hover:bg-white/50"
+
+            <div
+              className={`flex mb-2 ${isTemplatesPanelCollapsed ? "hidden" : ""}`}
+              style={{ borderBottom: "1px solid #DDE1E9" }}
             >
-              <Trash2 className="h-4 w-4" />
-            </Button>
-          </div>
-        </div>
+              <button
+                onClick={() => setActiveTab("firm")}
+                className={`flex-1 py-2 px-1 text-sm font-medium transition-all text-center whitespace-nowrap ${activeTab === "firm" ? "text-primary border-b-[3px]" : "text-muted-foreground hover:text-foreground border-b-[3px] border-transparent"}`}
+                style={
+                  activeTab === "firm"
+                    ? {
+                        borderBottomColor: "#0A3159",
+                      }
+                    : undefined
+                }
+              >
+                Firm Templates
+              </button>
+              <button
+                onClick={() => setActiveTab("master")}
+                className={`flex-1 py-2 px-1 text-sm font-medium transition-all text-center whitespace-nowrap ${activeTab === "master" ? "text-primary border-b-[3px]" : "text-muted-foreground hover:text-foreground border-b-[3px] border-transparent"}`}
+                style={
+                  activeTab === "master"
+                    ? {
+                        borderBottomColor: "#0A3159",
+                      }
+                    : undefined
+                }
+              >
+                Master Library
+              </button>
+            </div>
 
-        <div
-          className={`flex-1 overflow-y-auto p-2 pt-0 rounded-tr-[20px] rounded-br-[20px] ${isTemplatesPanelCollapsed ? "hidden" : ""}`}
-        >
-          {templates.map((template) => renderTemplate(template))}
-        </div>
+            <div className={`p-3 pt-1 ${isTemplatesPanelCollapsed ? "hidden" : ""}`}>
+              <div className="flex gap-2">
+                <div className="relative flex-1">
+                  <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                  <Input
+                    placeholder="Search"
+                    className="pl-8 h-8 text-sm bg-white/80 border-0 shadow-sm"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                  />
+                </div>
+                <Button size="icon" variant="ghost" className="h-8 w-8 hover:bg-white/50">
+                  <Expand className="h-4 w-4" />
+                </Button>
+                <Button size="icon" className="h-8 w-8 bg-primary hover:bg-primary/90 shadow-sm">
+                  <Plus className="h-4 w-4 text-primary-foreground" />
+                </Button>
+                <Button
+                  size="icon"
+                  variant="ghost"
+                  className="h-8 w-8 text-destructive hover:text-destructive hover:bg-white/50"
+                >
+                  <Trash2 className="h-4 w-4" />
+                </Button>
+              </div>
+            </div>
 
-        {/* Collapse handle - overlapped on border, visible on hover */}
-        <div
-          className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-1/2 opacity-0 group-hover/templates:opacity-100 transition-opacity duration-200 cursor-pointer z-20"
-          onClick={(e) => {
-            e.stopPropagation();
-            setIsTemplatesPanelCollapsed(!isTemplatesPanelCollapsed);
-          }}
-        >
-          <div className="flex items-center justify-center w-4 h-8 bg-white border border-[#DDE1E9] shadow-sm hover:bg-[#E8EDF2] transition-all rounded-full">
-            {isTemplatesPanelCollapsed ? (
-              <ChevronRight className="h-3 w-3 text-primary" />
-            ) : (
-              <ChevronLeft className="h-3 w-3 text-primary" />
-            )}
-          </div>
-        </div>
-      </div>
+            <div
+              className={`flex-1 overflow-y-auto p-2 pt-0 rounded-tr-[20px] rounded-br-[20px] ${isTemplatesPanelCollapsed ? "hidden" : ""}`}
+            >
+              {templates.map((template) => renderTemplate(template))}
+            </div>
 
-      {/* Expand handle when collapsed - always visible */}
-      {isTemplatesPanelCollapsed && (
-        <div className="flex items-center cursor-pointer" onClick={() => setIsTemplatesPanelCollapsed(false)}>
-          <div className="flex items-center justify-center w-4 h-8 bg-white border border-[#DDE1E9] shadow-sm hover:bg-[#E8EDF2] transition-all rounded-full">
-            <ChevronRight className="h-3 w-3 text-primary" />
+            {/* Collapse handle - overlapped on border, visible on hover */}
+            <div
+              className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-1/2 opacity-0 group-hover/templates:opacity-100 transition-opacity duration-200 cursor-pointer z-20"
+              onClick={(e) => {
+                e.stopPropagation();
+                setIsTemplatesPanelCollapsed(!isTemplatesPanelCollapsed);
+              }}
+            >
+              <div className="flex items-center justify-center w-4 h-8 bg-white border border-[#DDE1E9] shadow-sm hover:bg-[#E8EDF2] transition-all rounded-full">
+                {isTemplatesPanelCollapsed ? (
+                  <ChevronRight className="h-3 w-3 text-primary" />
+                ) : (
+                  <ChevronLeft className="h-3 w-3 text-primary" />
+                )}
+              </div>
+            </div>
           </div>
-        </div>
+
+          {/* Expand handle when collapsed - always visible */}
+          {isTemplatesPanelCollapsed && (
+            <div className="flex items-center cursor-pointer" onClick={() => setIsTemplatesPanelCollapsed(false)}>
+              <div className="flex items-center justify-center w-4 h-8 bg-white border border-[#DDE1E9] shadow-sm hover:bg-[#E8EDF2] transition-all rounded-full">
+                <ChevronRight className="h-3 w-3 text-primary" />
+              </div>
+            </div>
+          )}
+        </>
       )}
 
       {/* Rename Dialog */}
