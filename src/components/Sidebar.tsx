@@ -588,10 +588,9 @@ export function Sidebar() {
 
       {/* Templates panel */}
       <div
-        className={`flex flex-col rounded-tr-[20px] rounded-br-[20px] relative z-10 shadow bg-[#f5f8fa] transition-all duration-300 group/templates ${isTemplatesPanelCollapsed ? "w-0 overflow-hidden" : "w-60"}`}
+        className={`flex flex-col rounded-tr-[20px] rounded-br-[20px] relative z-10 bg-[#f5f8fa] transition-all duration-300 group/templates ${isTemplatesPanelCollapsed ? "w-0 overflow-hidden shadow-none" : "w-60 shadow-sm"}`}
         style={{
           backgroundColor: "#F5F8FA",
-          boxShadow: isTemplatesPanelCollapsed ? "none" : "3px 0 3px 0px rgba(0,0,0,0.05)",
         }}
       >
         <div className={`p-4 ${isTemplatesPanelCollapsed ? "hidden" : ""}`}>
