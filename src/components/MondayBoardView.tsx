@@ -742,13 +742,7 @@ function ResponseTypeDropdown({ currentType, onTypeChange, disabled }: ResponseT
   );
 
   if (disabled) {
-    return (
-      <div className="flex items-center justify-center">
-        <div className={`w-7 h-7 rounded flex items-center justify-center ${currentTypeConfig.bgColor}`}>
-          <CurrentTypeIcon className={`h-4 w-4 ${currentTypeConfig.iconColor}`} />
-        </div>
-      </div>
-    );
+    return null;
   }
 
   return (
