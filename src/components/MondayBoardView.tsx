@@ -670,7 +670,7 @@ function AddColumnButton({ onAddColumn, visibleColumns }: AddColumnButtonProps) 
   return (
     <Popover open={isOpen} onOpenChange={setIsOpen}>
       <PopoverTrigger asChild>
-        <button className="w-10 h-full flex items-center justify-center hover:bg-gray-200 transition-colors border-l border-gray-200">
+        <button className="w-10 h-full flex items-center justify-center hover:bg-[#EDF2F7] transition-colors">
           <Plus className="h-4 w-4 text-gray-500" />
         </button>
       </PopoverTrigger>
@@ -1055,7 +1055,7 @@ function SortableSubItemRow({ subItem, onUpdate, onDelete, isPreviewMode, index,
       ref={setNodeRef} 
       style={style}
       {...(!isPreviewMode ? { ...attributes, ...listeners } : {})}
-      className={`group flex items-stretch hover:bg-gray-100 transition-colors relative ${!isPreviewMode ? 'cursor-grab active:cursor-grabbing' : ''}`}
+      className={`group flex items-stretch hover:bg-[#EDF2F7] transition-colors relative ${!isPreviewMode ? 'cursor-grab active:cursor-grabbing' : ''}`}
     >
       {/* Checkbox column */}
       <div className="w-10 shrink-0 flex items-center justify-center">
@@ -1067,7 +1067,7 @@ function SortableSubItemRow({ subItem, onUpdate, onDelete, isPreviewMode, index,
       </div>
 
       {/* Sub-item name - flexible width to fill available space */}
-      <div className="flex-1 min-w-[200px] px-3 py-2.5 border-r border-gray-200">
+      <div className="flex-1 min-w-[200px] px-3 py-2.5">
         {isEditingName && !isPreviewMode ? (
           <RichTextQuestionEditor
             value={subItem.text}
@@ -1098,7 +1098,7 @@ function SortableSubItemRow({ subItem, onUpdate, onDelete, isPreviewMode, index,
       </div>
 
       {/* Response column with inline type selector and response field */}
-      <div className="w-[200px] shrink-0 px-2 py-2 border-r border-gray-200">
+      <div className="w-[200px] shrink-0 px-2 py-2">
         <div className="flex items-start gap-2">
           <ResponseTypeDropdown
             currentType={subItem.answerType}
@@ -1113,7 +1113,7 @@ function SortableSubItemRow({ subItem, onUpdate, onDelete, isPreviewMode, index,
 
       {/* Additional Explanation column - conditionally rendered */}
       {visibleColumns.explanation && (
-        <div className="w-[200px] shrink-0 px-2 py-2 border-r border-gray-200">
+        <div className="w-[200px] shrink-0 px-2 py-2">
           {(subItem as any).showExplanation !== false ? (
             <div className="relative group/exp">
               <AITextarea
@@ -1137,7 +1137,7 @@ function SortableSubItemRow({ subItem, onUpdate, onDelete, isPreviewMode, index,
             !isPreviewMode && (
               <button
                 onClick={() => onUpdate({ ...subItem, showExplanation: true } as any)}
-                className="flex items-center gap-1 px-2 py-1 text-xs text-gray-500 hover:text-primary hover:bg-gray-100 rounded transition-colors"
+                className="flex items-center gap-1 px-2 py-1 text-xs text-gray-500 hover:text-primary hover:bg-[#EDF2F7] rounded transition-colors"
               >
                 <Plus className="h-3 w-3" />
                 <span>Add</span>
@@ -1149,7 +1149,7 @@ function SortableSubItemRow({ subItem, onUpdate, onDelete, isPreviewMode, index,
 
       {/* Reference column - conditionally rendered */}
       {visibleColumns.reference && (
-        <div className="w-[200px] shrink-0 px-2 py-2 border-r border-gray-200 flex items-center">
+        <div className="w-[200px] shrink-0 px-2 py-2 flex items-center">
           <RefButton
             reference={(subItem as any).reference}
             onAttach={(doc) => onUpdate({ ...subItem, reference: doc } as any)}
@@ -1172,7 +1172,7 @@ function SortableSubItemRow({ subItem, onUpdate, onDelete, isPreviewMode, index,
               e.stopPropagation();
               onDelete();
             }}
-            className="p-1 rounded hover:bg-gray-200 text-gray-400 hover:text-red-500 transition-colors opacity-0 group-hover:opacity-100"
+            className="p-1 rounded hover:bg-[#EDF2F7] text-gray-400 hover:text-red-500 transition-colors opacity-0 group-hover:opacity-100"
           >
             <Trash2 className="h-4 w-4" />
           </button>
@@ -1468,10 +1468,10 @@ function SortableItemRow({
       {/* Main item row - full row is draggable */}
       <div 
         {...(!isPreviewMode && !isEditingName ? { ...attributes, ...listeners } : {})}
-        className={`group flex items-center border-b border-gray-200 hover:bg-gray-100 transition-colors ${isSelected ? 'bg-gray-100' : ''} ${!isPreviewMode && !isEditingName ? 'cursor-grab active:cursor-grabbing' : ''}`}
+        className={`group flex items-center hover:bg-[#EDF2F7] transition-colors ${isSelected ? 'bg-[#EDF2F7]' : ''} ${!isPreviewMode && !isEditingName ? 'cursor-grab active:cursor-grabbing' : ''}`}
       >
         {/* Checkbox */}
-        <div className="w-10 shrink-0 flex items-center justify-center border-r border-gray-200">
+        <div className="w-10 shrink-0 flex items-center justify-center">
           <Checkbox 
             checked={isSelected} 
             onCheckedChange={() => setIsSelected(!isSelected)}
@@ -1507,7 +1507,7 @@ function SortableItemRow({
         </div>
 
         {/* Item name */}
-        <div className="flex-1 min-w-[200px] px-3 py-1 border-r border-gray-200">
+        <div className="flex-1 min-w-[200px] px-3 py-1">
           {isEditingName && !isPreviewMode ? (
             <RichTextQuestionEditor
               value={item.text}
@@ -1548,7 +1548,7 @@ function SortableItemRow({
         </div>
 
         {/* Response column with inline type selector and response field */}
-        <div className="w-[200px] shrink-0 px-2 py-2 border-r border-gray-200">
+        <div className="w-[200px] shrink-0 px-2 py-2">
           <div className="flex items-start gap-2">
             <ResponseTypeDropdown
               currentType={item.answerType}
@@ -1563,7 +1563,7 @@ function SortableItemRow({
 
         {/* Additional Explanation column - conditionally rendered */}
         {visibleColumns.explanation && (
-          <div className="w-[200px] shrink-0 px-2 py-2 border-r border-gray-200">
+          <div className="w-[200px] shrink-0 px-2 py-2">
             {(item as any).showExplanation !== false ? (
               <div className="relative group/exp">
                 <AITextarea
@@ -1587,7 +1587,7 @@ function SortableItemRow({
               !isPreviewMode && (
                 <button
                   onClick={() => onUpdate({ ...item, showExplanation: true } as any)}
-                  className="flex items-center gap-1 px-2 py-1 text-xs text-gray-500 hover:text-primary hover:bg-gray-100 rounded transition-colors"
+                  className="flex items-center gap-1 px-2 py-1 text-xs text-gray-500 hover:text-primary hover:bg-[#EDF2F7] rounded transition-colors"
                 >
                   <Plus className="h-3 w-3" />
                   <span>Add</span>
@@ -1599,7 +1599,7 @@ function SortableItemRow({
 
         {/* Reference column - conditionally rendered */}
         {visibleColumns.reference && (
-          <div className="w-[200px] shrink-0 px-2 py-2 border-r border-gray-200 flex items-center">
+          <div className="w-[200px] shrink-0 px-2 py-2 flex items-center">
             <RefButton
               reference={(item as any).reference}
               onAttach={(doc) => onUpdate({ ...item, reference: doc } as any)}
@@ -1623,7 +1623,7 @@ function SortableItemRow({
                   e.stopPropagation();
                   onAddSubItem();
                 }}
-                className="p-1.5 rounded hover:bg-gray-200 opacity-0 group-hover:opacity-100 transition-all text-gray-400 hover:text-gray-700"
+                className="p-1.5 rounded hover:bg-[#EDF2F7] opacity-0 group-hover:opacity-100 transition-all text-gray-400 hover:text-gray-700"
                 title="Add sub-item"
               >
                 <PlusCircle className="h-4 w-4" />
@@ -1632,22 +1632,22 @@ function SortableItemRow({
                 <DropdownMenuTrigger asChild>
                   <button 
                     onClick={(e) => e.stopPropagation()}
-                    className="p-1.5 rounded hover:bg-gray-200 opacity-0 group-hover:opacity-100 transition-all"
+                    className="p-1.5 rounded hover:bg-[#EDF2F7] opacity-0 group-hover:opacity-100 transition-all"
                   >
                     <MoreHorizontal className="h-4 w-4 text-gray-400" />
                   </button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-48 bg-white border-gray-200 z-50">
-                  <DropdownMenuItem onClick={onAddSubItem} className="text-gray-700 focus:bg-gray-100 focus:text-gray-900">
+                <DropdownMenuContent align="end" className="w-48 bg-white z-50">
+                  <DropdownMenuItem onClick={onAddSubItem} className="text-gray-700 focus:bg-[#EDF2F7] focus:text-gray-900">
                     <Plus className="h-4 w-4 mr-2" />
                     Add sub-item
                   </DropdownMenuItem>
-                  <DropdownMenuItem onClick={onDuplicate} className="text-gray-700 focus:bg-gray-100 focus:text-gray-900">
+                  <DropdownMenuItem onClick={onDuplicate} className="text-gray-700 focus:bg-[#EDF2F7] focus:text-gray-900">
                     <Copy className="h-4 w-4 mr-2" />
                     Duplicate
                   </DropdownMenuItem>
-                  <DropdownMenuSeparator className="bg-gray-200" />
-                  <DropdownMenuItem onClick={onDelete} className="text-red-500 focus:bg-gray-100 focus:text-red-600">
+                  <DropdownMenuSeparator className="bg-[#EDF2F7]" />
+                  <DropdownMenuItem onClick={onDelete} className="text-red-500 focus:bg-[#EDF2F7] focus:text-red-600">
                     <Trash2 className="h-4 w-4 mr-2" />
                     Delete
                   </DropdownMenuItem>
@@ -1679,17 +1679,17 @@ function SortableItemRow({
           <div className="absolute left-3 top-3 bottom-0 w-0.5 bg-amber-600/70" />
           
           {/* Sub-items container with left margin for the bar */}
-          <div className="ml-10 bg-gray-50 border border-gray-200 rounded-lg overflow-hidden">
+          <div className="ml-10 bg-[#F5F8FA] rounded-lg overflow-hidden">
             {/* Sub-items header row */}
-            <div className="flex items-center bg-gray-100 text-xs font-medium text-gray-500 border-b border-gray-200">
+            <div className="flex items-center bg-[#EDF2F7] text-xs font-medium text-gray-500">
               <div className="w-10 shrink-0 flex items-center justify-center py-2" />
-              <div className="flex-1 min-w-[200px] px-3 py-2 border-r border-gray-200">Sub-questions</div>
-              <div className="w-[200px] shrink-0 px-2 py-2 text-center border-r border-gray-200">Response</div>
+              <div className="flex-1 min-w-[200px] px-3 py-2">Sub-questions</div>
+              <div className="w-[200px] shrink-0 px-2 py-2 text-center">Response</div>
               {visibleColumns.explanation && (
-                <div className="w-[200px] shrink-0 px-2 py-2 text-center border-r border-gray-200">Explanation</div>
+                <div className="w-[200px] shrink-0 px-2 py-2 text-center">Explanation</div>
               )}
               {visibleColumns.reference && (
-                <div className="w-[200px] shrink-0 px-2 py-2 text-center border-r border-gray-200">Reference</div>
+                <div className="w-[200px] shrink-0 px-2 py-2 text-center">Reference</div>
               )}
               {(!visibleColumns.explanation || !visibleColumns.reference) && (
                 <div className="w-[100px] shrink-0" />
@@ -1699,7 +1699,7 @@ function SortableItemRow({
 
             <SortableContext items={subItemIds} strategy={verticalListSortingStrategy}>
               {item.subQuestions!.map((sub, idx) => (
-                <div key={sub.id} className="border-b border-gray-200 last:border-b-0">
+                <div key={sub.id} className="">
                   <SortableSubItemRow
                     subItem={sub}
                     index={idx}
@@ -1723,7 +1723,7 @@ function SortableItemRow({
 
             {/* Add subitem row */}
             {!isPreviewMode && hasRealSubItems && (
-              <div className="flex items-center hover:bg-gray-100 transition-colors border-t border-gray-200">
+              <div className="flex items-center hover:bg-[#EDF2F7] transition-colors">
                 <div className="w-10 flex items-center justify-center py-2.5">
                   <Checkbox 
                     disabled
@@ -1857,11 +1857,11 @@ function SortableGroup({
   const itemIds = section.questions.map(q => q.id);
 
   return (
-    <div ref={setNodeRef} style={style} className="bg-white rounded-lg border border-gray-200 overflow-hidden shadow-sm">
+    <div ref={setNodeRef} style={style} className="bg-white rounded-lg overflow-hidden">
       {/* Group header */}
       <div 
         {...(!isPreviewMode ? { ...attributes, ...listeners } : {})}
-        className={`flex items-center gap-3 px-4 py-2 border-b border-gray-200 bg-gray-50 ${!isPreviewMode ? 'cursor-grab active:cursor-grabbing' : ''}`}
+        className={`flex items-center gap-3 px-4 py-2 bg-[#F5F8FA] ${!isPreviewMode ? 'cursor-grab active:cursor-grabbing' : ''}`}
       >
         <div className="w-1 h-6 bg-amber-600 rounded-full" />
         <button 
@@ -1869,7 +1869,7 @@ function SortableGroup({
             e.stopPropagation();
             onUpdate({ ...section, isExpanded: !section.isExpanded });
           }}
-          className="p-0.5 rounded hover:bg-gray-200 transition-colors"
+          className="p-0.5 rounded hover:bg-[#EDF2F7] transition-colors"
         >
           {section.isExpanded ? (
             <ChevronDown className="h-4 w-4 text-gray-500" />
@@ -1939,13 +1939,13 @@ function SortableGroup({
       {section.isExpanded && (
         <>
           {/* Column headers */}
-          <div className="flex items-center border-b border-gray-200 bg-gray-100 text-xs font-medium text-gray-500">
-            <div className="w-10 shrink-0 border-r border-gray-200 py-2" />
+          <div className="flex items-center bg-[#F5F8FA] text-xs font-medium text-gray-500">
+            <div className="w-10 shrink-0 py-2" />
             <div className="w-8 shrink-0 py-2" />
-            <div className="flex-1 min-w-[200px] px-3 py-2 border-r border-gray-200">Questions</div>
-            <div className="w-[200px] shrink-0 px-2 py-2 border-r border-gray-200">Response</div>
+            <div className="flex-1 min-w-[200px] px-3 py-2">Questions</div>
+            <div className="w-[200px] shrink-0 px-2 py-2">Response</div>
             {visibleColumns.explanation && (
-              <div className="w-[200px] shrink-0 px-2 py-2 border-r border-gray-200 flex items-center justify-between group/col">
+              <div className="w-[200px] shrink-0 px-2 py-2 flex items-center justify-between group/col">
                 <span>Explanation</span>
                 {!isPreviewMode && (
                   <button
@@ -1959,7 +1959,7 @@ function SortableGroup({
               </div>
             )}
             {visibleColumns.reference && (
-              <div className="w-[200px] shrink-0 px-2 py-2 border-r border-gray-200 flex items-center justify-between group/col">
+              <div className="w-[200px] shrink-0 px-2 py-2 flex items-center justify-between group/col">
                 <span>Reference</span>
                 {!isPreviewMode && (
                   <button
@@ -2003,11 +2003,11 @@ function SortableGroup({
 
           {/* Add item button */}
           {!isPreviewMode && (
-            <div className="flex items-center border-t border-gray-200">
+            <div className="flex items-center">
               <div className="w-10" />
               <button
                 onClick={onAddItem}
-                className="flex items-center gap-2 px-6 py-3 text-sm text-gray-400 hover:text-gray-700 hover:bg-gray-100 transition-colors w-full text-left"
+                className="flex items-center gap-2 px-6 py-3 text-sm text-gray-400 hover:text-gray-700 hover:bg-[#EDF2F7] transition-colors w-full text-left"
               >
                 <Plus className="h-4 w-4" />
                 + Add item
