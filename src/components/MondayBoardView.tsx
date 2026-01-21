@@ -461,7 +461,7 @@ function DropdownField({
   const textSize = size === 'sm' ? 'text-xs' : 'text-sm';
 
   return (
-    <div className="flex items-center gap-1.5 w-full">
+    <div className="flex items-center gap-1 w-full overflow-hidden">
       <select
         value={selectedValue}
         onChange={(e) => {
@@ -470,7 +470,7 @@ function DropdownField({
         }}
         onClick={(e) => e.stopPropagation()}
         disabled={disabled}
-        className={`${selectHeight} px-2 ${textSize} bg-gray-100 border-gray-300 text-gray-700 rounded flex-1 min-w-0`}
+        className={`${selectHeight} px-2 ${textSize} bg-gray-100 border-gray-300 text-gray-700 rounded flex-1 min-w-0 truncate`}
       >
         <option value="">Select...</option>
         {options.map((opt, i) => (
