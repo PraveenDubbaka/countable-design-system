@@ -377,7 +377,7 @@ export default function CreateEngagement() {
                         icon={<Calendar className="h-4 w-4" />}
                       />
                     </div>
-                    <div className="flex items-center gap-2 pt-4">
+                    <div className="flex items-center gap-2 h-11">
                       <Checkbox 
                         checked={priorYear1NoData} 
                         onCheckedChange={(checked) => setPriorYear1NoData(checked as boolean)} 
@@ -412,7 +412,7 @@ export default function CreateEngagement() {
                         icon={<Calendar className="h-4 w-4" />}
                       />
                     </div>
-                    <div className="flex items-center gap-2 pt-4">
+                    <div className="flex items-center gap-2 h-11">
                       <Checkbox 
                         checked={priorYear2NoData} 
                         onCheckedChange={(checked) => setPriorYear2NoData(checked as boolean)} 
