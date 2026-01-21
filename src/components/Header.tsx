@@ -33,16 +33,8 @@ export function Header({ title, showActions = true, showBackButton = false, onBa
       {/* Right side - Actions matching screenshot */}
       <div className="flex items-center gap-3">
         {/* Luka AI icon */}
-        <Button 
-          size="icon" 
-          variant="ghost" 
-          className="relative h-9 w-9 p-0 group overflow-hidden rounded-full transition-all duration-300 hover:bg-gradient-to-br hover:from-[#3379C9] hover:to-[#8A5BD9] hover:scale-105"
-        >
-          <img 
-            src={lukaAiIcon} 
-            alt="Luka AI" 
-            className="w-7 h-7 rounded-full object-cover drop-shadow-none transition-all duration-300 group-hover:brightness-110" 
-          />
+        <Button size="icon" variant="ghost" className="relative h-9 w-9 p-0">
+          <img src={lukaAiIcon} alt="Luka AI" className="w-7 h-7 rounded-full object-cover" />
         </Button>
         
         {/* Bell with notification badge */}
