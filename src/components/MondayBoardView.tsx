@@ -1055,7 +1055,7 @@ function SortableSubItemRow({ subItem, onUpdate, onDelete, isPreviewMode, index,
       ref={setNodeRef} 
       style={style}
       {...(!isPreviewMode ? { ...attributes, ...listeners } : {})}
-      className={`group flex items-stretch hover:bg-[#EDF2F7] transition-colors relative ${!isPreviewMode ? 'cursor-grab active:cursor-grabbing' : ''}`}
+      className={`group flex items-stretch hover:bg-[#EDF2F7] transition-colors relative border-b border-[#E8EDF2] ${!isPreviewMode ? 'cursor-grab active:cursor-grabbing' : ''}`}
     >
       {/* Checkbox column */}
       <div className="w-10 shrink-0 flex items-center justify-center">
@@ -1468,7 +1468,7 @@ function SortableItemRow({
       {/* Main item row - full row is draggable */}
       <div 
         {...(!isPreviewMode && !isEditingName ? { ...attributes, ...listeners } : {})}
-        className={`group flex items-center hover:bg-[#EDF2F7] transition-colors ${isSelected ? 'bg-[#EDF2F7]' : ''} ${!isPreviewMode && !isEditingName ? 'cursor-grab active:cursor-grabbing' : ''}`}
+        className={`group flex items-center hover:bg-[#EDF2F7] transition-colors border-b border-[#E8EDF2] ${isSelected ? 'bg-[#EDF2F7]' : ''} ${!isPreviewMode && !isEditingName ? 'cursor-grab active:cursor-grabbing' : ''}`}
       >
         {/* Checkbox */}
         <div className="w-10 shrink-0 flex items-center justify-center">
@@ -1681,7 +1681,7 @@ function SortableItemRow({
           {/* Sub-items container with left margin for the bar */}
           <div className="ml-10 bg-[#F5F8FA] rounded-lg overflow-hidden">
             {/* Sub-items header row */}
-            <div className="flex items-center bg-[#EDF2F7] text-xs font-medium text-gray-500">
+            <div className="flex items-center bg-[#EDF2F7] text-xs font-medium text-gray-500 border-b border-[#E8EDF2]">
               <div className="w-10 shrink-0 flex items-center justify-center py-2" />
               <div className="flex-1 min-w-[200px] px-3 py-2">Sub-questions</div>
               <div className="w-[200px] shrink-0 px-2 py-2 text-center">Response</div>
@@ -1861,7 +1861,7 @@ function SortableGroup({
       {/* Group header */}
       <div 
         {...(!isPreviewMode ? { ...attributes, ...listeners } : {})}
-        className={`flex items-center gap-3 px-4 py-2 bg-[#F5F8FA] ${!isPreviewMode ? 'cursor-grab active:cursor-grabbing' : ''}`}
+        className={`flex items-center gap-3 px-4 py-2 bg-[#F5F8FA] border-b border-[#E8EDF2] ${!isPreviewMode ? 'cursor-grab active:cursor-grabbing' : ''}`}
       >
         <div className="w-1 h-6 bg-amber-600 rounded-full" />
         <button 
@@ -1939,7 +1939,7 @@ function SortableGroup({
       {section.isExpanded && (
         <>
           {/* Column headers */}
-          <div className="flex items-center bg-[#F5F8FA] text-xs font-medium text-gray-500">
+          <div className="flex items-center bg-[#F5F8FA] text-xs font-medium text-gray-500 border-b border-[#E8EDF2]">
             <div className="w-10 shrink-0 py-2" />
             <div className="w-8 shrink-0 py-2" />
             <div className="flex-1 min-w-[200px] px-3 py-2">Questions</div>
