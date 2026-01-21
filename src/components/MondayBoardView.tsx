@@ -27,6 +27,7 @@ import {
   Pencil,
 } from 'lucide-react';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { Input as SearchInput } from '@/components/ui/input';
 import { Checklist, Question, Section, AnswerType } from '@/types/checklist';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -1528,10 +1529,19 @@ function SortableItemRow({
                 className={`text-sm text-gray-800 py-2 flex-1 ${!isPreviewMode ? 'cursor-text hover:text-gray-900' : ''}`}
                 dangerouslySetInnerHTML={{ __html: item.text || 'Click to add item name...' }}
               />
-              {hasSubItems && (
-                <span className="text-xs bg-blue-100 text-blue-600 px-1.5 py-0.5 rounded font-medium shrink-0">
-                  {item.subQuestions!.length}
-                </span>
+              {hasRealSubItems && (
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <span className="text-xs bg-blue-100 text-blue-600 px-1.5 py-0.5 rounded font-medium shrink-0 cursor-default">
+                      {item.subQuestions!.filter(sq => sq.text.trim() !== '').length}
+                    </span>
+                  </TooltipTrigger>
+                  <TooltipContent side="top" className="bg-white text-gray-800 border border-gray-200 shadow-lg">
+                    {item.subQuestions!.filter(sq => sq.text.trim() !== '').length === 1 
+                      ? '1 Subitem' 
+                      : `${item.subQuestions!.filter(sq => sq.text.trim() !== '').length} Subitems`}
+                  </TooltipContent>
+                </Tooltip>
               )}
             </div>
           )}
