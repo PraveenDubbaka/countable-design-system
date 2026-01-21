@@ -255,7 +255,7 @@ export default function CreationDashboard() {
     return (
       <Layout>
         <div className="flex-1 flex flex-col items-center justify-center p-8">
-          <div className="max-w-2xl w-full bg-card border border-border rounded-xl p-8 animate-fade-in">
+          <div className="max-w-2xl w-full bg-[#F5F8FA] rounded-xl p-8 animate-fade-in">
             <button 
               onClick={handleBack}
               className="text-sm text-muted-foreground hover:text-foreground mb-4 flex items-center gap-1"
@@ -465,37 +465,6 @@ export default function CreationDashboard() {
                 )}
               </div>
             )}
-
-            <div className="mt-6 flex items-center justify-between">
-              <select
-                value={scope}
-                onChange={(e) => setScope(e.target.value as GenerationScope)}
-                className="px-4 py-2 rounded-lg border bg-card text-sm"
-              >
-                <option value="standard">Standard</option>
-                <option value="detailed">Detailed</option>
-              </select>
-
-              <Button
-                onClick={() => {
-                  if (prompt.trim()) {
-                    navigate('/generate', { 
-                      state: { 
-                        contentType, 
-                        mode,
-                        prompt,
-                        scope
-                      } 
-                    });
-                  }
-                }}
-                disabled={!prompt.trim()}
-                className="ai-button !px-6 !py-5"
-              >
-                <Sparkles className="h-4 w-4 mr-2" />
-                Generate {label}
-              </Button>
-            </div>
           </div>
         </div>
       </Layout>
