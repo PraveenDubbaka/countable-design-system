@@ -2,15 +2,6 @@ import { useState } from "react";
 import { Search, ChevronDown, FileText, MessageSquare, Send } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from "recharts";
 import { Layout } from "@/components/Layout";
 
@@ -100,30 +91,30 @@ export default function Dashboard() {
 
   return (
     <Layout title="Dashboard">
-      <div className="flex-1 p-6 overflow-auto bg-background">
+      <div className="flex-1 p-6 overflow-auto" style={{ backgroundColor: "#F5F8FA" }}>
 
       <div className="flex gap-6">
         {/* Main Content */}
-        <div className="flex-1 space-y-6">
-          {/* Stats Cards */}
-          <div className="grid grid-cols-5 gap-4">
+        <div className="flex-1 space-y-5">
+          {/* Stats Cards - Clean card style */}
+          <div className="grid grid-cols-5 gap-3">
             {stats.map((stat, index) => (
               <div
                 key={index}
-                className="bg-card border border-border rounded-lg p-4"
+                className="bg-white rounded-lg p-4 shadow-sm hover:shadow-md transition-shadow"
               >
-                <p className="text-sm text-muted-foreground">{stat.label}</p>
-                <p className="text-3xl font-bold text-foreground mt-1">{stat.value}</p>
+                <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">{stat.label}</p>
+                <p className="text-2xl font-bold text-primary mt-1">{stat.value}</p>
               </div>
             ))}
           </div>
 
-          {/* Engagements Table */}
-          <div className="bg-card border border-border rounded-lg">
-            <div className="p-4 flex items-center justify-between border-b border-border">
+          {/* Engagements Table - Monday.com style */}
+          <div className="bg-white rounded-lg shadow-sm overflow-hidden">
+            <div className="px-5 py-4 flex items-center justify-between" style={{ backgroundColor: "#FAFBFC" }}>
               <div>
-                <h2 className="text-lg font-semibold text-foreground">Engagements</h2>
-                <p className="text-sm text-muted-foreground">Active engagements from last 6 months</p>
+                <h2 className="text-base font-semibold text-foreground">Engagements</h2>
+                <p className="text-xs text-muted-foreground mt-0.5">Active engagements from last 6 months</p>
               </div>
               <div className="relative">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
@@ -131,73 +122,92 @@ export default function Dashboard() {
                   placeholder="Search Engagement"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="pl-9 w-64"
+                  className="pl-9 w-56 h-9 text-sm bg-white border-0 shadow-sm focus:ring-1 focus:ring-primary/30"
                 />
               </div>
             </div>
 
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Engagement ID</TableHead>
-                  <TableHead>Client Name</TableHead>
-                  <TableHead>Year End</TableHead>
-                  <TableHead>Integrations</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead>Actions</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {engagements.map((engagement) => (
-                  <TableRow key={engagement.id}>
-                    <TableCell className="text-primary font-medium cursor-pointer hover:underline">
-                      {engagement.id}
-                    </TableCell>
-                    <TableCell>{engagement.client}</TableCell>
-                    <TableCell>{engagement.yearEnd}</TableCell>
-                    <TableCell>
-                      <IntegrationBadge type={engagement.integration} />
-                    </TableCell>
-                    <TableCell>
-                      <Badge 
-                        variant={engagement.status === "New" ? "secondary" : "outline"}
-                        className={engagement.status === "New" ? "bg-green-100 text-green-700 hover:bg-green-100" : "bg-blue-100 text-blue-700 hover:bg-blue-100"}
-                      >
-                        {engagement.status}
-                      </Badge>
-                    </TableCell>
-                    <TableCell>
-                      <div className="flex items-center gap-2 text-muted-foreground">
-                        <span className="text-xs font-medium">EL</span>
-                        <FileText className="h-4 w-4 cursor-pointer hover:text-foreground" />
-                        <MessageSquare className="h-4 w-4 cursor-pointer hover:text-foreground" />
-                        <Send className="h-4 w-4 cursor-pointer hover:text-foreground" />
-                        <ChevronDown className="h-4 w-4 cursor-pointer hover:text-foreground" />
-                      </div>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
+            {/* Monday.com style table */}
+            <div className="overflow-x-auto">
+              <table className="w-full">
+                <thead>
+                  <tr style={{ backgroundColor: "#F5F8FA" }}>
+                    <th className="text-left px-5 py-3 text-xs font-semibold text-muted-foreground uppercase tracking-wider">Engagement ID</th>
+                    <th className="text-left px-5 py-3 text-xs font-semibold text-muted-foreground uppercase tracking-wider">Client Name</th>
+                    <th className="text-left px-5 py-3 text-xs font-semibold text-muted-foreground uppercase tracking-wider">Year End</th>
+                    <th className="text-left px-5 py-3 text-xs font-semibold text-muted-foreground uppercase tracking-wider">Integrations</th>
+                    <th className="text-left px-5 py-3 text-xs font-semibold text-muted-foreground uppercase tracking-wider">Status</th>
+                    <th className="text-left px-5 py-3 text-xs font-semibold text-muted-foreground uppercase tracking-wider">Actions</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-gray-100">
+                  {engagements.map((engagement, idx) => (
+                    <tr 
+                      key={engagement.id} 
+                      className="hover:bg-[#F8FAFC] transition-colors group"
+                    >
+                      <td className="px-5 py-3">
+                        <span className="text-sm text-primary font-medium cursor-pointer hover:underline">
+                          {engagement.id}
+                        </span>
+                      </td>
+                      <td className="px-5 py-3 text-sm text-foreground">{engagement.client}</td>
+                      <td className="px-5 py-3 text-sm text-muted-foreground">{engagement.yearEnd}</td>
+                      <td className="px-5 py-3">
+                        <IntegrationBadge type={engagement.integration} />
+                      </td>
+                      <td className="px-5 py-3">
+                        <span 
+                          className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium ${
+                            engagement.status === "New" 
+                              ? "bg-emerald-50 text-emerald-700" 
+                              : "bg-sky-50 text-sky-700"
+                          }`}
+                        >
+                          {engagement.status}
+                        </span>
+                      </td>
+                      <td className="px-5 py-3">
+                        <div className="flex items-center gap-1.5 opacity-60 group-hover:opacity-100 transition-opacity">
+                          <span className="text-xs font-medium text-muted-foreground px-1.5 py-0.5 bg-gray-100 rounded">EL</span>
+                          <button className="p-1 hover:bg-gray-100 rounded transition-colors">
+                            <FileText className="h-3.5 w-3.5 text-muted-foreground" />
+                          </button>
+                          <button className="p-1 hover:bg-gray-100 rounded transition-colors">
+                            <MessageSquare className="h-3.5 w-3.5 text-muted-foreground" />
+                          </button>
+                          <button className="p-1 hover:bg-gray-100 rounded transition-colors">
+                            <Send className="h-3.5 w-3.5 text-muted-foreground" />
+                          </button>
+                          <button className="p-1 hover:bg-gray-100 rounded transition-colors">
+                            <ChevronDown className="h-3.5 w-3.5 text-muted-foreground" />
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
 
         {/* Right Sidebar */}
-        <div className="w-80 space-y-6">
+        <div className="w-72 space-y-4">
           {/* Charts Row */}
-          <div className="flex gap-4">
+          <div className="flex gap-3">
             {/* Team Members Chart */}
-            <div className="flex-1 bg-card border border-border rounded-lg p-4">
-              <h3 className="text-sm font-semibold text-foreground mb-3">Team Members</h3>
-              <div className="h-32">
+            <div className="flex-1 bg-white rounded-lg p-4 shadow-sm">
+              <h3 className="text-xs font-semibold text-foreground mb-2">Team Members</h3>
+              <div className="h-24">
                 <ResponsiveContainer width="100%" height="100%">
                   <PieChart>
                     <Pie
                       data={teamData}
                       cx="50%"
                       cy="50%"
-                      innerRadius={25}
-                      outerRadius={45}
+                      innerRadius={20}
+                      outerRadius={38}
                       dataKey="value"
                       stroke="none"
                     >
@@ -209,31 +219,35 @@ export default function Dashboard() {
                   </PieChart>
                 </ResponsiveContainer>
               </div>
-              <div className="flex flex-wrap gap-2 mt-2 text-xs">
+              <div className="flex flex-wrap gap-1.5 mt-2">
                 {teamData.map((item, index) => (
                   <div key={index} className="flex items-center gap-1">
-                    <div className="w-2 h-2 rounded-full" style={{ backgroundColor: item.color }} />
-                    <span className="text-muted-foreground">{item.name}</span>
+                    <div className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: item.color }} />
+                    <span className="text-[10px] text-muted-foreground">{item.name}</span>
                   </div>
                 ))}
               </div>
-              <Button variant="outline" size="sm" className="w-full mt-3 text-primary border-primary">
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                className="w-full mt-2 h-8 text-xs text-primary hover:bg-primary/5 font-medium"
+              >
                 View Team
               </Button>
             </div>
 
             {/* Clients Chart */}
-            <div className="flex-1 bg-card border border-border rounded-lg p-4">
-              <h3 className="text-sm font-semibold text-foreground mb-3">Clients</h3>
-              <div className="h-32">
+            <div className="flex-1 bg-white rounded-lg p-4 shadow-sm">
+              <h3 className="text-xs font-semibold text-foreground mb-2">Clients</h3>
+              <div className="h-24">
                 <ResponsiveContainer width="100%" height="100%">
                   <PieChart>
                     <Pie
                       data={clientsData}
                       cx="50%"
                       cy="50%"
-                      innerRadius={25}
-                      outerRadius={45}
+                      innerRadius={20}
+                      outerRadius={38}
                       dataKey="value"
                       stroke="none"
                     >
@@ -245,35 +259,41 @@ export default function Dashboard() {
                   </PieChart>
                 </ResponsiveContainer>
               </div>
-              <div className="flex flex-wrap gap-2 mt-2 text-xs">
+              <div className="flex flex-wrap gap-1.5 mt-2">
                 {clientsData.map((item, index) => (
                   <div key={index} className="flex items-center gap-1">
-                    <div className="w-2 h-2 rounded-full" style={{ backgroundColor: item.color }} />
-                    <span className="text-muted-foreground">{item.name}</span>
+                    <div className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: item.color }} />
+                    <span className="text-[10px] text-muted-foreground">{item.name}</span>
                   </div>
                 ))}
               </div>
-              <Button variant="outline" size="sm" className="w-full mt-3 text-primary border-primary">
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                className="w-full mt-2 h-8 text-xs text-primary hover:bg-primary/5 font-medium"
+              >
                 View Clients
               </Button>
             </div>
           </div>
 
           {/* Recent Activity */}
-          <div className="bg-card border border-border rounded-lg p-4">
-            <h3 className="text-sm font-semibold text-foreground mb-4">Recent Activity</h3>
-            <div className="space-y-4">
+          <div className="bg-white rounded-lg p-4 shadow-sm">
+            <h3 className="text-xs font-semibold text-foreground mb-3">Recent Activity</h3>
+            <div className="space-y-3">
               {recentActivity.map((activity, index) => (
-                <div key={index} className="border-l-2 border-primary pl-3">
-                  <div className="flex items-center gap-2 mb-1">
-                    <span className="text-xs font-medium text-foreground">{activity.time}</span>
-                    <div className="w-4 h-4 rounded-full bg-primary/20 flex items-center justify-center">
-                      <div className="w-2 h-2 rounded-full bg-primary" />
+                <div key={index} className="relative pl-4">
+                  <div className="absolute left-0 top-1 w-0.5 h-full bg-primary/20 rounded-full" />
+                  <div className="absolute left-[-3px] top-1 w-2 h-2 rounded-full bg-primary" />
+                  <div className="flex items-center gap-1.5 mb-0.5">
+                    <span className="text-[10px] font-medium text-muted-foreground">{activity.time}</span>
+                    <div className="w-3 h-3 rounded-full bg-emerald-100 flex items-center justify-center">
+                      <div className="w-1.5 h-1.5 text-emerald-600">✓</div>
                     </div>
                   </div>
-                  <p className="text-sm font-medium text-foreground">{activity.title}</p>
-                  <p className="text-xs text-muted-foreground">{activity.description}</p>
-                  <p className="text-xs text-muted-foreground truncate">{activity.path}</p>
+                  <p className="text-xs font-medium text-foreground leading-tight">{activity.title}</p>
+                  <p className="text-[10px] text-muted-foreground">{activity.description}</p>
+                  <p className="text-[10px] text-muted-foreground/70 truncate">{activity.path}</p>
                 </div>
               ))}
             </div>
