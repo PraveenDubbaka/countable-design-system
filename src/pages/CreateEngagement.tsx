@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Layout } from "@/components/Layout";
 import { Checkbox } from "@/components/ui/checkbox";
 
-// Floating label input component - Material 3 Outlined style
+// Floating label input component - Material 3 style
 const FloatingInput = ({ 
   label, 
   value, 
@@ -36,20 +36,19 @@ const FloatingInput = ({
         onBlur={() => setFocused(false)}
         readOnly={readOnly}
         className={`
-          w-full h-14 px-4 pt-4 pb-2 text-sm text-foreground
-          bg-transparent rounded-lg outline-none transition-all duration-200
-          border-2 ${focused ? 'border-primary' : 'border-primary/40'}
+          w-full h-11 px-4 pt-4 pb-1 text-sm text-foreground
+          bg-[#F5F8FA] rounded-lg outline-none transition-all duration-200
+          ${focused ? 'ring-2 ring-primary/30' : ''}
           ${readOnly ? 'cursor-default' : ''}
         `}
       />
       <label
         className={`
-          absolute left-3 transition-all duration-200 pointer-events-none bg-white px-1
+          absolute left-4 transition-all duration-200 pointer-events-none
           ${isActive 
-            ? '-top-2.5 text-xs' 
-            : 'top-1/2 -translate-y-1/2 text-sm'
+            ? 'top-1 text-xs text-muted-foreground' 
+            : 'top-1/2 -translate-y-1/2 text-sm text-muted-foreground'
           }
-          ${focused ? 'text-primary' : 'text-muted-foreground'}
         `}
       >
         {label}
@@ -64,7 +63,7 @@ const FloatingInput = ({
   );
 };
 
-// Floating label select component - Material 3 Outlined style
+// Floating label select component - Material 3 style
 const FloatingSelect = ({ 
   label, 
   value, 
@@ -91,9 +90,9 @@ const FloatingSelect = ({
         onFocus={() => setFocused(true)}
         onBlur={() => setFocused(false)}
         className={`
-          w-full h-14 px-4 pt-4 pb-2 text-sm text-foreground
-          bg-transparent rounded-lg outline-none transition-all duration-200 appearance-none cursor-pointer
-          border-2 ${focused ? 'border-primary' : 'border-primary/40'}
+          w-full h-11 px-4 pt-4 pb-1 text-sm text-foreground
+          bg-[#F5F8FA] rounded-lg outline-none transition-all duration-200 appearance-none cursor-pointer
+          ${focused ? 'ring-2 ring-primary/30' : ''}
         `}
       >
         <option value=""></option>
@@ -103,12 +102,11 @@ const FloatingSelect = ({
       </select>
       <label
         className={`
-          absolute left-3 transition-all duration-200 pointer-events-none bg-white px-1
+          absolute left-4 transition-all duration-200 pointer-events-none
           ${isActive 
-            ? '-top-2.5 text-xs' 
-            : 'top-1/2 -translate-y-1/2 text-sm'
+            ? 'top-1 text-xs text-muted-foreground' 
+            : 'top-1/2 -translate-y-1/2 text-sm text-muted-foreground'
           }
-          ${focused ? 'text-primary' : 'text-muted-foreground'}
         `}
       >
         {label}
