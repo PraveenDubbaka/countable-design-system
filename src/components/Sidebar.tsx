@@ -404,7 +404,7 @@ export function Sidebar() {
 
       {/* Templates panel */}
       <div 
-        className={`flex flex-col rounded-tr-[20px] rounded-br-[20px] relative z-10 shadow bg-[#f5f8fa] transition-all duration-300 ${isTemplatesPanelCollapsed ? 'w-0 overflow-hidden' : 'w-60'}`} 
+        className={`flex flex-col rounded-tr-[20px] rounded-br-[20px] relative z-10 shadow bg-[#f5f8fa] transition-all duration-300 group/templates ${isTemplatesPanelCollapsed ? 'w-0 overflow-hidden' : 'w-60'}`} 
         style={{
           backgroundColor: '#F5F8FA',
           boxShadow: isTemplatesPanelCollapsed ? 'none' : '3px 0 5px 0px rgba(0,0,0,0.1)'
@@ -475,26 +475,40 @@ export function Sidebar() {
         <div className={`flex-1 overflow-y-auto p-2 pt-0 rounded-tr-[20px] rounded-br-[20px] ${isTemplatesPanelCollapsed ? 'hidden' : ''}`}>
           {templates.map(template => renderTemplate(template))}
         </div>
-      </div>
 
-      {/* Collapse/Expand handle */}
-      <div 
-        className="relative flex items-center group cursor-pointer"
-        onClick={() => setIsTemplatesPanelCollapsed(!isTemplatesPanelCollapsed)}
-      >
-        <div className="absolute left-0 top-0 bottom-0 w-1 bg-transparent group-hover:bg-primary/20 transition-colors" />
+        {/* Collapse handle - overlapped on border, visible on hover */}
         <div 
-          className="flex items-center justify-center w-5 h-12 bg-[#F5F8FA] border border-[#DDE1E9] shadow-sm hover:bg-[#E8EDF2] transition-all group-hover:w-6"
-          style={{ marginLeft: '-1px', borderTopRightRadius: '20px', borderBottomRightRadius: '20px' }}
+          className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-1/2 opacity-0 group-hover/templates:opacity-100 transition-opacity duration-200 cursor-pointer z-20"
+          onClick={(e) => {
+            e.stopPropagation();
+            setIsTemplatesPanelCollapsed(!isTemplatesPanelCollapsed);
+          }}
         >
-          <GripVertical className="h-3 w-3 text-muted-foreground group-hover:hidden" />
-          {isTemplatesPanelCollapsed ? (
-            <ChevronRight className="h-4 w-4 text-primary hidden group-hover:block" />
-          ) : (
-            <ChevronLeft className="h-4 w-4 text-primary hidden group-hover:block" />
-          )}
+          <div 
+            className="flex items-center justify-center w-4 h-8 bg-white border border-[#DDE1E9] shadow-sm hover:bg-[#E8EDF2] transition-all rounded-full"
+          >
+            {isTemplatesPanelCollapsed ? (
+              <ChevronRight className="h-3 w-3 text-primary" />
+            ) : (
+              <ChevronLeft className="h-3 w-3 text-primary" />
+            )}
+          </div>
         </div>
       </div>
+
+      {/* Expand handle when collapsed - always visible */}
+      {isTemplatesPanelCollapsed && (
+        <div 
+          className="flex items-center cursor-pointer"
+          onClick={() => setIsTemplatesPanelCollapsed(false)}
+        >
+          <div 
+            className="flex items-center justify-center w-4 h-8 bg-white border border-[#DDE1E9] shadow-sm hover:bg-[#E8EDF2] transition-all rounded-full"
+          >
+            <ChevronRight className="h-3 w-3 text-primary" />
+          </div>
+        </div>
+      )}
 
       {/* Rename Dialog */}
       <Dialog open={renameDialogOpen} onOpenChange={setRenameDialogOpen}>
