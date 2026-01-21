@@ -151,7 +151,7 @@ const FileIcon = () => (
 const navItems = [
   {
     icon: AnalyticsIcon,
-    label: "Analytics",
+    label: "Dashboard",
   },
   {
     icon: GlassesIcon,
