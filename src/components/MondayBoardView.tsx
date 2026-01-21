@@ -891,7 +891,7 @@ function SortableSubItemRow({ subItem, onUpdate, onDelete, isPreviewMode, index,
                 }}
                 className={`px-2 py-1 text-xs rounded transition-all ${
                   subItem.answer === opt
-                    ? 'bg-blue-600 text-white'
+                    ? 'bg-primary text-primary-foreground'
                     : 'bg-gray-200 hover:bg-gray-300 text-gray-700'
                 }`}
               >
@@ -1293,7 +1293,7 @@ function SortableItemRow({
                 }}
                 className={`px-2 py-1 text-xs rounded transition-all ${
                   item.answer === opt
-                    ? 'bg-blue-600 text-white'
+                    ? 'bg-primary text-primary-foreground'
                     : 'bg-gray-200 hover:bg-gray-300 text-gray-700'
                 }`}
               >
