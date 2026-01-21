@@ -1,6 +1,6 @@
 import { Bell, ChevronDown, User, ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import lukaAiIcon from '@/assets/luka-ai-icon.png';
+import lukaAiIcon from '@/assets/luka-ai-icon.svg';
 
 interface HeaderProps {
   title?: string;
