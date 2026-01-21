@@ -49,7 +49,7 @@ export function UnsavedChangesDialog({
             size="sm"
             className="gap-1.5"
           >
-            <Trash2 className="h-4 w-4" />
+            <Trash2 className="h-4 w-4 icon-trash" />
             Discard
           </Button>
           <Button 
@@ -60,7 +60,7 @@ export function UnsavedChangesDialog({
             size="sm"
             className="gap-1.5 bg-[#1C63A6] hover:bg-[#1C63A6]/90"
           >
-            <Save className="h-4 w-4" />
+            <Save className="h-4 w-4 icon-save" />
             Save
           </Button>
         </DialogFooter>

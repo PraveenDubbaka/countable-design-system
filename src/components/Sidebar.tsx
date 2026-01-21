@@ -395,14 +395,14 @@ export function Sidebar() {
             <>
               {hasChildren ? (
                 template.isExpanded ? (
-                  <ChevronDown className="h-4 w-4 text-muted-foreground flex-shrink-0" />
+                  <ChevronDown className="h-4 w-4 text-muted-foreground flex-shrink-0 icon-chevron-down" />
                 ) : (
-                  <ChevronRight className="h-4 w-4 text-muted-foreground flex-shrink-0" />
+                  <ChevronRight className="h-4 w-4 text-muted-foreground flex-shrink-0 icon-arrow-right" />
                 )
               ) : (
                 <span className="w-4 flex-shrink-0" />
               )}
-              <Folder className="h-4 w-4 text-primary flex-shrink-0" />
+              <Folder className="h-4 w-4 text-primary flex-shrink-0 icon-folder" />
             </>
           ) : (
             <>
@@ -439,7 +439,7 @@ export function Sidebar() {
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild onClick={(e) => e.stopPropagation()}>
                     <button className="opacity-0 group-hover:opacity-100 p-1 hover:bg-muted-foreground/10 rounded transition-opacity">
-                      <MoreVertical className="h-3.5 w-3.5 text-muted-foreground" />
+                      <MoreVertical className="h-3.5 w-3.5 text-muted-foreground icon-more" />
                     </button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="start" className="w-48 bg-card border shadow-sm">
@@ -450,7 +450,7 @@ export function Sidebar() {
                       }}
                       className="gap-2 cursor-pointer"
                     >
-                      <Copy className="h-4 w-4 text-primary" />
+                      <Copy className="h-4 w-4 text-primary icon-copy" />
                       Duplicate
                     </DropdownMenuItem>
                     <DropdownMenuItem
@@ -460,7 +460,7 @@ export function Sidebar() {
                       }}
                       className="gap-2 cursor-pointer text-destructive focus:text-destructive"
                     >
-                      <Trash2 className="h-4 w-4" />
+                      <Trash2 className="h-4 w-4 icon-trash" />
                       Delete
                     </DropdownMenuItem>
                     <DropdownMenuSeparator />
@@ -471,7 +471,7 @@ export function Sidebar() {
                       }}
                       className="gap-2 cursor-pointer"
                     >
-                      <Pencil className="h-4 w-4 text-primary" />
+                      <Pencil className="h-4 w-4 text-primary icon-edit" />
                       Rename
                     </DropdownMenuItem>
                     <DropdownMenuItem
@@ -481,7 +481,7 @@ export function Sidebar() {
                       }}
                       className="gap-2 cursor-pointer"
                     >
-                      <FolderInput className="h-4 w-4 text-primary" />
+                      <FolderInput className="h-4 w-4 text-primary icon-folder" />
                       Move to different folder
                     </DropdownMenuItem>
                   </DropdownMenuContent>
@@ -579,7 +579,7 @@ export function Sidebar() {
           className={`sidebar-item ${isNavExpanded ? "w-full justify-start gap-3 px-3" : ""}`}
           title={!isNavExpanded ? "Support" : undefined}
         >
-          <Headphones className="h-5 w-5" />
+          <Headphones className="h-5 w-5 icon-bounce" />
           {isNavExpanded && <span className="text-sm font-medium">Support</span>}
         </div>
         <div
@@ -587,7 +587,7 @@ export function Sidebar() {
           title={!isNavExpanded ? (isNavExpanded ? "Collapse" : "Expand") : undefined}
           onClick={() => setIsNavExpanded(!isNavExpanded)}
         >
-          {isNavExpanded ? <ChevronLeft className="h-5 w-5" /> : <ChevronRight className="h-5 w-5" />}
+          {isNavExpanded ? <ChevronLeft className="h-5 w-5 icon-arrow" /> : <ChevronRight className="h-5 w-5 icon-arrow-right" />}
           {isNavExpanded && <span className="text-sm font-medium">Collapse</span>}
         </div>
       </div>
@@ -620,7 +620,7 @@ export function Sidebar() {
                       return <span>Select...</span>;
                     })()}
                   </div>
-                  <ChevronDown className="h-4 w-4 text-muted-foreground" />
+                  <ChevronDown className="h-4 w-4 text-muted-foreground icon-chevron-down" />
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="start" className="w-[200px]">
                   {dropdownItems.map((item) => (
@@ -675,7 +675,7 @@ export function Sidebar() {
             <div className={`p-3 pt-1 ${isTemplatesPanelCollapsed ? "hidden" : ""}`}>
               <div className="flex gap-2">
                 <div className="relative flex-1">
-                  <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                  <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground icon-search" />
                   <Input
                     placeholder="Search"
                     className="pl-8 h-8 text-sm bg-white/80 border-0 shadow-sm"
@@ -684,17 +684,17 @@ export function Sidebar() {
                   />
                 </div>
                 <Button size="icon" variant="ghost" className="h-8 w-8 hover:bg-white/50">
-                  <Expand className="h-4 w-4" />
+                  <Expand className="h-4 w-4 icon-bounce" />
                 </Button>
                 <Button size="icon" className="h-8 w-8 bg-primary hover:bg-primary/90 shadow-sm">
-                  <Plus className="h-4 w-4 text-primary-foreground" />
+                  <Plus className="h-4 w-4 text-primary-foreground icon-plus" />
                 </Button>
                 <Button
                   size="icon"
                   variant="ghost"
                   className="h-8 w-8 text-destructive hover:text-destructive hover:bg-white/50"
                 >
-                  <Trash2 className="h-4 w-4" />
+                  <Trash2 className="h-4 w-4 icon-trash" />
                 </Button>
               </div>
             </div>
@@ -715,9 +715,9 @@ export function Sidebar() {
             >
               <div className="flex items-center justify-center w-4 h-8 bg-white border border-[#DDE1E9] shadow-sm hover:bg-[#E8EDF2] transition-all rounded-full">
                 {isTemplatesPanelCollapsed ? (
-                  <ChevronRight className="h-3 w-3 text-primary" />
+                  <ChevronRight className="h-3 w-3 text-primary icon-arrow-right" />
                 ) : (
-                  <ChevronLeft className="h-3 w-3 text-primary" />
+                  <ChevronLeft className="h-3 w-3 text-primary icon-arrow" />
                 )}
               </div>
             </div>
@@ -727,7 +727,7 @@ export function Sidebar() {
           {isTemplatesPanelCollapsed && (
             <div className="flex items-center cursor-pointer" onClick={() => setIsTemplatesPanelCollapsed(false)}>
               <div className="flex items-center justify-center w-4 h-8 bg-white border border-[#DDE1E9] shadow-sm hover:bg-[#E8EDF2] transition-all rounded-full">
-                <ChevronRight className="h-3 w-3 text-primary" />
+                <ChevronRight className="h-3 w-3 text-primary icon-arrow-right" />
               </div>
             </div>
           )}

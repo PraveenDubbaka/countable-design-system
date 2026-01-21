@@ -113,7 +113,7 @@ const FloatingSelect = ({
         {label}
         {required && <span className="text-red-500 ml-0.5">*</span>}
       </label>
-      <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
+      <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none icon-chevron-down" />
     </div>
   );
 };
@@ -175,11 +175,11 @@ const TeamMemberRow = ({
     <td className="py-3 px-5 text-sm text-foreground text-right">{member.budgetedHours.toFixed(2)}</td>
     <td className="py-3 px-5">
       <div className="flex items-center gap-1.5 opacity-60 group-hover:opacity-100 transition-opacity">
-        <button onClick={onEdit} className="p-1.5 hover:bg-gray-100 rounded transition-colors">
-          <Pencil className="h-4 w-4 text-muted-foreground" />
+        <button onClick={onEdit} className="p-1.5 hover:bg-gray-100 rounded transition-colors group/edit">
+          <Pencil className="h-4 w-4 text-muted-foreground group-hover/edit:icon-edit" />
         </button>
-        <button onClick={onDelete} className="p-1.5 hover:bg-gray-100 rounded transition-colors">
-          <Trash2 className="h-4 w-4 text-muted-foreground" />
+        <button onClick={onDelete} className="p-1.5 hover:bg-gray-100 rounded transition-colors group/trash">
+          <Trash2 className="h-4 w-4 text-muted-foreground group-hover/trash:icon-trash" />
         </button>
       </div>
     </td>
@@ -257,7 +257,7 @@ export default function CreateEngagement() {
               onClick={() => navigate("/engagements")}
               className="flex items-center gap-1 text-primary hover:underline text-sm font-medium"
             >
-              <ArrowLeft className="h-4 w-4" />
+              <ArrowLeft className="h-4 w-4 icon-arrow" />
               Back
             </button>
           </div>
@@ -434,7 +434,7 @@ export default function CreateEngagement() {
             >
               <div className="flex items-center justify-end gap-3 mb-4">
                 <div className="relative">
-                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground icon-search" />
                   <input
                     type="text"
                     placeholder="Search"
@@ -444,7 +444,7 @@ export default function CreateEngagement() {
                   />
                 </div>
                 <Button variant="outline" className="h-9 px-4 text-sm bg-white hover:bg-gray-50">
-                  <Trash2 className="h-4 w-4 mr-2" />
+                  <Trash2 className="h-4 w-4 mr-2 icon-trash" />
                   Delete
                 </Button>
               </div>

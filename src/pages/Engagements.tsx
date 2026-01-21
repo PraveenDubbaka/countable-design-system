@@ -82,11 +82,11 @@ export default function Engagements() {
               className="h-9 px-4 text-sm font-medium bg-white border border-gray-200 hover:bg-gray-50"
             >
               {filterPeriod}
-              <ChevronDown className="ml-2 h-4 w-4" />
+              <ChevronDown className="ml-2 h-4 w-4 icon-chevron-down" />
             </Button>
             <div className="flex items-center gap-3">
               <div className="relative">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground icon-search" />
                 <Input
                   placeholder="Search"
                   value={searchQuery}
@@ -98,7 +98,7 @@ export default function Engagements() {
                 variant="outline"
                 className="h-9 px-4 text-sm font-medium bg-white border border-gray-200 hover:bg-gray-50"
               >
-                <Download className="mr-2 h-4 w-4" />
+                <Download className="mr-2 h-4 w-4 icon-download" />
                 Export
               </Button>
               <Button 
@@ -151,11 +151,11 @@ export default function Engagements() {
                       <td className="px-5 py-3 text-sm text-muted-foreground">{engagement.dateCreated}</td>
                       <td className="px-5 py-3">
                         <div className="flex items-center gap-1.5 opacity-60 group-hover:opacity-100 transition-opacity">
-                          <button className="p-1.5 hover:bg-gray-100 rounded transition-colors">
-                            <Pencil className="h-4 w-4 text-muted-foreground" />
+                          <button className="p-1.5 hover:bg-gray-100 rounded transition-colors group/edit">
+                            <Pencil className="h-4 w-4 text-muted-foreground group-hover/edit:icon-edit" />
                           </button>
-                          <button className="p-1.5 hover:bg-gray-100 rounded transition-colors">
-                            <Trash2 className="h-4 w-4 text-muted-foreground" />
+                          <button className="p-1.5 hover:bg-gray-100 rounded transition-colors group/trash">
+                            <Trash2 className="h-4 w-4 text-muted-foreground group-hover/trash:icon-trash" />
                           </button>
                         </div>
                       </td>
