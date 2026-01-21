@@ -30,9 +30,9 @@ const StatusBadge = ({ status, hasRF }: { status: string; hasRF: boolean }) => {
   const getStatusStyles = () => {
     switch (status) {
       case "New":
-        return "bg-orange-500 text-white";
+        return "bg-emerald-50 text-emerald-700";
       case "In Progress":
-        return "bg-sky-100 text-sky-700 border border-sky-200";
+        return "bg-sky-50 text-sky-700";
       default:
         return "bg-gray-100 text-gray-700";
     }
@@ -40,11 +40,11 @@ const StatusBadge = ({ status, hasRF }: { status: string; hasRF: boolean }) => {
 
   return (
     <div className="flex items-center gap-1.5">
-      <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusStyles()}`}>
+      <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium ${getStatusStyles()}`}>
         {status}
       </span>
       {hasRF && (
-        <span className="inline-flex items-center px-1.5 py-0.5 rounded-full text-xs font-medium bg-gray-200 text-gray-600">
+        <span className="inline-flex items-center px-1.5 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-600">
           RF
         </span>
       )}
