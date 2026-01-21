@@ -363,7 +363,6 @@ function MultipleChoiceField({
                 e.stopPropagation();
                 toggleSelection(opt);
               }}
-              disabled={disabled}
               className={`${padding} ${textSize} rounded transition-all flex items-center gap-1 whitespace-nowrap ${
                 isSelected
                   ? 'bg-primary text-primary-foreground'
@@ -469,7 +468,6 @@ function DropdownField({
           onValueChange(e.target.value);
         }}
         onClick={(e) => e.stopPropagation()}
-        disabled={disabled}
         className={`${selectHeight} px-2 ${textSize} bg-gray-100 border-gray-300 text-gray-700 rounded flex-1 min-w-0 truncate`}
       >
         <option value="">Select...</option>
@@ -897,7 +895,6 @@ function SortableSubItemRow({ subItem, onUpdate, onDelete, isPreviewMode, index,
                   e.stopPropagation();
                   handleAnswerChange(opt);
                 }}
-                disabled={isPreviewMode}
                 className={`px-2 py-1 text-xs rounded transition-all ${
                   subItem.answer === opt
                     ? 'bg-blue-600 text-white'
@@ -943,7 +940,6 @@ function SortableSubItemRow({ subItem, onUpdate, onDelete, isPreviewMode, index,
             value={subItem.answer || ''}
             onChange={(val) => handleAnswerChange(val)}
             placeholder="Enter your detailed answer..."
-            disabled={isPreviewMode}
             minHeight="60px"
           />
         );
@@ -954,7 +950,6 @@ function SortableSubItemRow({ subItem, onUpdate, onDelete, isPreviewMode, index,
             value={subItem.answer || ''}
             onChange={(val) => handleAnswerChange(val)}
             placeholder="Enter response..."
-            disabled={isPreviewMode}
           minHeight="40px"
         />
       );
@@ -966,7 +961,6 @@ function SortableSubItemRow({ subItem, onUpdate, onDelete, isPreviewMode, index,
           value={subItem.answer || ''}
           onChange={(e) => handleAnswerChange(e.target.value)}
           onClick={(e) => e.stopPropagation()}
-          disabled={isPreviewMode}
           className="h-7 text-xs bg-gray-100 border-gray-300 text-gray-700"
         />
       );
@@ -981,7 +975,6 @@ function SortableSubItemRow({ subItem, onUpdate, onDelete, isPreviewMode, index,
             onChange={(e) => handleAnswerChange(e.target.value)}
             onClick={(e) => e.stopPropagation()}
             placeholder="0.00"
-            disabled={isPreviewMode}
             className="h-7 text-xs bg-gray-100 border-gray-300 text-gray-700 pl-5"
           />
         </div>
@@ -1001,13 +994,12 @@ function SortableSubItemRow({ subItem, onUpdate, onDelete, isPreviewMode, index,
               )}
             </div>
           ) : (
-            <label className={`flex items-center gap-1 px-2 py-1 text-xs bg-gray-100 rounded cursor-pointer hover:bg-gray-200 ${isPreviewMode ? 'opacity-50 cursor-not-allowed' : ''}`}>
+            <label className="flex items-center gap-1 px-2 py-1 text-xs bg-gray-100 rounded cursor-pointer hover:bg-gray-200">
               <Upload className="h-3 w-3" />
               <span>Upload</span>
               <input
                 type="file"
                 className="hidden"
-                disabled={isPreviewMode}
                 onChange={(e) => {
                   const file = e.target.files?.[0];
                   if (file) handleAnswerChange(file.name);
@@ -1025,7 +1017,6 @@ function SortableSubItemRow({ subItem, onUpdate, onDelete, isPreviewMode, index,
             e.stopPropagation();
             handleAnswerChange(subItem.answer === 'true' ? 'false' : 'true');
           }}
-          disabled={isPreviewMode}
           className={`w-10 h-5 rounded-full transition-colors relative ${
             subItem.answer === 'true' ? 'bg-blue-600' : 'bg-gray-300'
           }`}
@@ -1043,7 +1034,6 @@ function SortableSubItemRow({ subItem, onUpdate, onDelete, isPreviewMode, index,
           onChange={(e) => handleAnswerChange(e.target.value)}
           onClick={(e) => e.stopPropagation()}
           placeholder="Enter response..."
-          disabled={isPreviewMode}
           className="h-7 text-xs bg-gray-100 border-gray-300 text-gray-700"
         />
       );
@@ -1308,7 +1298,6 @@ function SortableItemRow({
                   e.stopPropagation();
                   handleAnswerChange(opt);
                 }}
-                disabled={isPreviewMode}
                 className={`px-2 py-1 text-xs rounded transition-all ${
                   item.answer === opt
                     ? 'bg-blue-600 text-white'
@@ -1354,7 +1343,6 @@ function SortableItemRow({
             value={item.answer || ''}
             onChange={(val) => handleAnswerChange(val)}
             placeholder="Enter your detailed answer..."
-            disabled={isPreviewMode}
             minHeight="60px"
           />
         );
@@ -1365,7 +1353,6 @@ function SortableItemRow({
             value={item.answer || ''}
             onChange={(val) => handleAnswerChange(val)}
             placeholder="Enter response..."
-            disabled={isPreviewMode}
           minHeight="40px"
         />
       );
@@ -1377,7 +1364,6 @@ function SortableItemRow({
           value={item.answer || ''}
           onChange={(e) => handleAnswerChange(e.target.value)}
           onClick={(e) => e.stopPropagation()}
-          disabled={isPreviewMode}
           className="h-8 text-sm bg-gray-100 border-gray-300 text-gray-700"
         />
       );
@@ -1392,7 +1378,6 @@ function SortableItemRow({
             onChange={(e) => handleAnswerChange(e.target.value)}
             onClick={(e) => e.stopPropagation()}
             placeholder="0.00"
-            disabled={isPreviewMode}
             className="h-8 text-sm bg-gray-100 border-gray-300 text-gray-700 pl-5"
           />
         </div>
@@ -1405,20 +1390,17 @@ function SortableItemRow({
             <div className="flex items-center gap-1 px-2 py-1 bg-blue-50 border border-blue-200 rounded text-xs text-blue-700">
               <File className="h-3 w-3" />
               <span className="truncate max-w-[100px]">{item.answer}</span>
-              {!isPreviewMode && (
-                <button onClick={() => handleAnswerChange('')} className="hover:text-red-500">
-                  <X className="h-3 w-3" />
-                </button>
-              )}
+              <button onClick={() => handleAnswerChange('')} className="hover:text-red-500">
+                <X className="h-3 w-3" />
+              </button>
             </div>
           ) : (
-            <label className={`flex items-center gap-1.5 px-2 py-1.5 text-xs bg-gray-100 rounded cursor-pointer hover:bg-gray-200 ${isPreviewMode ? 'opacity-50 cursor-not-allowed' : ''}`}>
+            <label className="flex items-center gap-1.5 px-2 py-1.5 text-xs bg-gray-100 rounded cursor-pointer hover:bg-gray-200">
               <Upload className="h-3.5 w-3.5" />
               <span>Upload file</span>
               <input
                 type="file"
                 className="hidden"
-                disabled={isPreviewMode}
                 onChange={(e) => {
                   const file = e.target.files?.[0];
                   if (file) handleAnswerChange(file.name);
@@ -1436,7 +1418,6 @@ function SortableItemRow({
             e.stopPropagation();
             handleAnswerChange(item.answer === 'true' ? 'false' : 'true');
           }}
-          disabled={isPreviewMode}
           className={`w-11 h-6 rounded-full transition-colors relative ${
             item.answer === 'true' ? 'bg-blue-600' : 'bg-gray-300'
           }`}
@@ -1454,7 +1435,6 @@ function SortableItemRow({
           onChange={(e) => handleAnswerChange(e.target.value)}
           onClick={(e) => e.stopPropagation()}
           placeholder="Enter response..."
-          disabled={isPreviewMode}
           className="h-8 text-sm bg-gray-100 border-gray-300 text-gray-700"
         />
       );
