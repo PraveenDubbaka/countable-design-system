@@ -287,8 +287,10 @@ export default function Dashboard() {
                   <div className="absolute left-[-3px] top-1 w-2 h-2 rounded-full bg-primary" />
                   <div className="flex items-center gap-1.5 mb-0.5">
                     <span className="text-[10px] font-medium text-muted-foreground">{activity.time}</span>
-                    <div className="w-3 h-3 rounded-full bg-emerald-100 flex items-center justify-center">
-                      <div className="w-1.5 h-1.5 text-emerald-600">✓</div>
+                    <div className="w-4 h-4 rounded-full bg-emerald-100 flex items-center justify-center">
+                      <svg className="w-2.5 h-2.5 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                      </svg>
                     </div>
                   </div>
                   <p className="text-xs font-medium text-foreground leading-tight">{activity.title}</p>
