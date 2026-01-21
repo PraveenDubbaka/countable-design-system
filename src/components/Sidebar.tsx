@@ -489,23 +489,23 @@ export function Sidebar() {
         <div className="flex mx-4 mb-2 bg-white/50 rounded-lg p-0.5">
           <button
             onClick={() => setActiveTab('firm')}
-            className={`flex-1 py-2 px-1 text-sm font-medium rounded-md transition-all text-center leading-tight ${
+            className={`flex-1 py-2 px-1 text-sm font-medium rounded-md transition-all text-center whitespace-nowrap ${
               activeTab === 'firm' 
                 ? 'text-primary bg-white shadow-sm' 
                 : 'text-muted-foreground hover:text-foreground'
             }`}
           >
-            Firm<br/>Templates
+            Firm Templates
           </button>
           <button
             onClick={() => setActiveTab('master')}
-            className={`flex-1 py-2 px-1 text-sm font-medium rounded-md transition-all text-center leading-tight ${
+            className={`flex-1 py-2 px-1 text-sm font-medium rounded-md transition-all text-center whitespace-nowrap ${
               activeTab === 'master' 
                 ? 'text-primary bg-white shadow-sm' 
                 : 'text-muted-foreground hover:text-foreground'
             }`}
           >
-            Master<br/>Library
+            Master Library
           </button>
         </div>
 
