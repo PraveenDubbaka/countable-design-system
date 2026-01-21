@@ -444,7 +444,7 @@ export function Sidebar() {
       </div>
 
       {/* Templates panel */}
-      <div className="w-60 flex flex-col rounded-tr-[20px] rounded-br-[20px] shadow-[4px_0_16px_-4px_rgba(0,0,0,0.1)]" style={{ backgroundColor: '#F5F8FA' }}>
+      <div className="w-60 flex flex-col rounded-tr-[20px] rounded-br-[20px] relative z-10" style={{ backgroundColor: '#F5F8FA', boxShadow: '6px 0 20px -2px rgba(0,0,0,0.15)' }}>
         <div className="p-4">
           <h2 className="font-semibold text-primary text-lg mb-3">Templates</h2>
           <DropdownMenu>
