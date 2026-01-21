@@ -1679,7 +1679,7 @@ function SortableItemRow({
           <div className="absolute left-3 top-3 bottom-0 w-0.5 bg-amber-600/70" />
           
           {/* Sub-items container with left margin for the bar */}
-          <div className="ml-10 bg-[#F5F8FA] rounded-lg overflow-hidden">
+          <div className="ml-10 bg-[#F5F8FA] rounded-lg overflow-hidden border border-[#E8EDF2]">
             {/* Sub-items header row */}
             <div className="flex items-center bg-[#EDF2F7] text-xs font-medium text-gray-500 border-b border-[#E8EDF2]">
               <div className="w-10 shrink-0 flex items-center justify-center py-2" />
