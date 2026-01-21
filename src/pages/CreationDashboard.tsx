@@ -75,7 +75,7 @@ function CreationOption({ icon, iconBg, title, description, badge, onClick }: Cr
   return (
     <button
       onClick={onClick}
-      className="group relative flex flex-col bg-card border border-border rounded-xl p-4 hover:border-primary/50 hover:shadow-lg transition-all duration-200 text-left h-full"
+      className="group relative flex flex-col bg-[#F5F8FA] rounded-xl p-4 hover:shadow-lg transition-all duration-200 text-left h-full"
     >
       <div className={`w-full aspect-[4/3] rounded-lg mb-4 flex items-center justify-center ${iconBg}`}>
         <div className="transition-transform duration-500 group-hover:rotate-[360deg]">
@@ -536,6 +536,7 @@ export default function CreationDashboard() {
               iconBg="bg-gradient-to-r from-[#ECD4F6] to-[#CFE1FC]"
               title="Import file"
               description="Upload a document to generate"
+              badge={{ text: 'NEW', variant: 'new' }}
               onClick={() => setMode('import')}
             />
             
@@ -556,7 +557,6 @@ export default function CreationDashboard() {
               iconBg="bg-gradient-to-r from-[#ECD4F6] to-[#CFE1FC]"
               title="Generate from template"
               description="Generate from existing templates"
-              badge={{ text: 'NEW', variant: 'new' }}
               onClick={() => setMode('template')}
             />
           </div>
