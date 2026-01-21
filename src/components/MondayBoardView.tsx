@@ -73,6 +73,7 @@ interface MondayBoardViewProps {
   checklist: Checklist;
   onUpdate: (checklist: Checklist) => void;
   isPreviewMode: boolean;
+  isCompactMode?: boolean;
 }
 
 // Answer type options for dropdown with icons like Monday.com
@@ -816,6 +817,7 @@ interface SubItemRowProps {
   onUpdate: (question: Question) => void;
   onDelete: () => void;
   isPreviewMode: boolean;
+  isCompactMode: boolean;
   parentId: string;
   visibleColumns: { explanation: boolean; reference: boolean };
 }
@@ -827,7 +829,7 @@ interface SortableSubItemRowProps extends SubItemRowProps {
   onBlurCleanup?: () => void;
 }
 
-function SortableSubItemRow({ subItem, onUpdate, onDelete, isPreviewMode, index, parentId, isLast, totalCount, visibleColumns, isNewEmpty, onBlurCleanup }: SortableSubItemRowProps) {
+function SortableSubItemRow({ subItem, onUpdate, onDelete, isPreviewMode, isCompactMode, index, parentId, isLast, totalCount, visibleColumns, isNewEmpty, onBlurCleanup }: SortableSubItemRowProps) {
   const [isEditingName, setIsEditingName] = useState(isNewEmpty || false);
   const [isSelected, setIsSelected] = useState(false);
   const draftNameRef = useRef(subItem.text);
@@ -1075,7 +1077,7 @@ function SortableSubItemRow({ subItem, onUpdate, onDelete, isPreviewMode, index,
                 setIsEditingName(true);
               }
             }}
-            className={`text-sm text-gray-700 ${!isPreviewMode ? 'cursor-text hover:text-gray-900' : ''}`}
+            className={`text-sm text-gray-700 ${!isPreviewMode ? 'cursor-text hover:text-gray-900' : ''} ${isCompactMode ? 'line-clamp-1' : ''}`}
             dangerouslySetInnerHTML={{ __html: subItem.text || 'Click to add sub-item...' }}
           />
         )}
@@ -1175,6 +1177,7 @@ interface ItemRowProps {
   onDuplicate: () => void;
   onAddSubItem: () => void;
   isPreviewMode: boolean;
+  isCompactMode: boolean;
   onSubItemsReorder: (itemId: string, newSubItems: Question[]) => void;
   visibleColumns: { explanation: boolean; reference: boolean };
 }
@@ -1187,6 +1190,7 @@ function SortableItemRow({
   onDuplicate, 
   onAddSubItem,
   isPreviewMode,
+  isCompactMode,
   onSubItemsReorder,
   visibleColumns,
 }: ItemRowProps) {
@@ -1499,7 +1503,7 @@ function SortableItemRow({
                     setIsEditingName(true);
                   }
                 }}
-                className={`text-sm text-gray-800 py-2 flex-1 ${!isPreviewMode ? 'cursor-text hover:text-gray-900' : ''}`}
+                className={`text-sm text-gray-800 py-2 flex-1 ${!isPreviewMode ? 'cursor-text hover:text-gray-900' : ''} ${isCompactMode ? 'line-clamp-1' : ''}`}
                 dangerouslySetInnerHTML={{ __html: item.text || 'Click to add item name...' }}
               />
               {hasRealSubItems && (
@@ -1679,6 +1683,7 @@ function SortableItemRow({
                     onUpdate={(updated) => handleSubItemUpdate(idx, updated)}
                     onDelete={() => handleSubItemDelete(idx)}
                     isPreviewMode={isPreviewMode}
+                    isCompactMode={isCompactMode}
                     isLast={idx === item.subQuestions!.length - 1}
                     totalCount={item.subQuestions!.length}
                     visibleColumns={visibleColumns}
@@ -1725,6 +1730,7 @@ interface GroupProps {
   onDelete: () => void;
   onAddItem: () => void;
   isPreviewMode: boolean;
+  isCompactMode: boolean;
   onItemsReorder: (sectionId: string, newItems: Question[]) => void;
   onSubItemsReorder: (itemId: string, newSubItems: Question[]) => void;
 }
@@ -1736,6 +1742,7 @@ function SortableGroup({
   onDelete, 
   onAddItem, 
   isPreviewMode,
+  isCompactMode,
   onItemsReorder,
   onSubItemsReorder,
 }: GroupProps) {
@@ -1967,6 +1974,7 @@ function SortableGroup({
                 onDuplicate={() => handleItemDuplicate(idx)}
                 onAddSubItem={() => handleAddSubItem(idx)}
                 isPreviewMode={isPreviewMode}
+                isCompactMode={isCompactMode}
                 onSubItemsReorder={onSubItemsReorder}
                 visibleColumns={visibleColumns}
               />
@@ -1992,7 +2000,7 @@ function SortableGroup({
   );
 }
 
-export function MondayBoardView({ checklist, onUpdate, isPreviewMode }: MondayBoardViewProps) {
+export function MondayBoardView({ checklist, onUpdate, isPreviewMode, isCompactMode = false }: MondayBoardViewProps) {
   const [activeId, setActiveId] = useState<string | null>(null);
 
   const sensors = useSensors(
@@ -2195,6 +2203,7 @@ export function MondayBoardView({ checklist, onUpdate, isPreviewMode }: MondayBo
               onDelete={() => handleSectionDelete(idx)}
               onAddItem={() => handleAddItem(idx)}
               isPreviewMode={isPreviewMode}
+              isCompactMode={isCompactMode}
               onItemsReorder={handleItemsReorder}
               onSubItemsReorder={handleSubItemsReorder}
             />

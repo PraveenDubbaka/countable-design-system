@@ -59,6 +59,7 @@ export function ChecklistBuilder({ checklist, onUpdate, onSave }: ChecklistBuild
   const [objectiveDraft, setObjectiveDraft] = useState(checklist.objective || '');
   const [activeQuestion, setActiveQuestion] = useState<Question | null>(null);
   const [isPreviewMode, setIsPreviewMode] = useState(false);
+  const [isCompactMode, setIsCompactMode] = useState(false);
   
   const objectiveTextareaRef = useRef<HTMLTextAreaElement>(null);
   const { toolbarState, showToolbar, hideToolbar, handleFormatAction, toolbarRef } = useRichTextToolbarContext();
@@ -446,6 +447,7 @@ export function ChecklistBuilder({ checklist, onUpdate, onSave }: ChecklistBuild
             checklist={checklist}
             onUpdate={onUpdate}
             isPreviewMode={isPreviewMode}
+            isCompactMode={isCompactMode}
           />
 
           {/* Add New Block - Hidden in preview mode */}
@@ -517,6 +519,8 @@ export function ChecklistBuilder({ checklist, onUpdate, onSave }: ChecklistBuild
         onExpandQuestions={handleExpandQuestions}
         allSectionsCollapsed={allSectionsCollapsed}
         allQuestionsCollapsed={allQuestionsCollapsed}
+        isCompactMode={isCompactMode}
+        onToggleCompactMode={() => setIsCompactMode(!isCompactMode)}
       />
 
       {/* Rich Text Toolbar - Hidden in preview mode */}

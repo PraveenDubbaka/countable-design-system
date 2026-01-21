@@ -18,6 +18,8 @@ interface FloatingActionBarProps {
   onExpandQuestions: () => void;
   allSectionsCollapsed: boolean;
   allQuestionsCollapsed: boolean;
+  isCompactMode: boolean;
+  onToggleCompactMode: () => void;
 }
 
 export function FloatingActionBar({ 
@@ -28,7 +30,9 @@ export function FloatingActionBar({
   onCollapseQuestions,
   onExpandQuestions,
   allSectionsCollapsed,
-  allQuestionsCollapsed
+  allQuestionsCollapsed,
+  isCompactMode,
+  onToggleCompactMode
 }: FloatingActionBarProps) {
   const [showReorderModal, setShowReorderModal] = useState(false);
 
@@ -62,13 +66,13 @@ export function FloatingActionBar({
             <Layers className={`h-4 w-4 text-muted-foreground group-hover:text-foreground transition-transform ${allSectionsCollapsed ? 'opacity-50' : ''}`} />
           </button>
 
-          {/* Collapse/Expand Questions */}
+          {/* Collapse/Expand Row Text (Compact Mode) */}
           <button
-            onClick={handleToggleQuestions}
+            onClick={onToggleCompactMode}
             className="w-9 h-9 flex items-center justify-center rounded-lg hover:bg-muted transition-colors group"
-            title={allQuestionsCollapsed ? "Expand all questions" : "Collapse all questions"}
+            title={isCompactMode ? "Expand row text" : "Collapse row text"}
           >
-            <Minimize2 className={`h-4 w-4 text-muted-foreground group-hover:text-foreground transition-transform ${allQuestionsCollapsed ? 'rotate-180' : ''}`} />
+            <Minimize2 className={`h-4 w-4 text-muted-foreground group-hover:text-foreground transition-transform ${isCompactMode ? 'rotate-180' : ''}`} />
           </button>
 
           {/* Reorder Questions */}
