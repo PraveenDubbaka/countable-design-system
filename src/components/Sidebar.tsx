@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { ChevronDown, ChevronRight, ChevronLeft, Search, Plus, Expand, Trash2, Folder, Headphones, Check, FileText, ClipboardList, FileBarChart, StickyNote, Table, Copy, Pencil, FolderInput, MoreVertical } from 'lucide-react';
+import { ChevronDown, ChevronRight, ChevronLeft, Search, Plus, Expand, Trash2, Folder, Headphones, Check, FileText, ClipboardList, FileBarChart, StickyNote, Table, Copy, Pencil, FolderInput, MoreVertical, GripVertical } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -150,6 +150,7 @@ export function Sidebar() {
   const [templates, setTemplates] = useState<Template[]>(initialTemplates);
   const [activeTab, setActiveTab] = useState<'firm' | 'master'>('firm');
   const [searchQuery, setSearchQuery] = useState('');
+  const [isTemplatesPanelCollapsed, setIsTemplatesPanelCollapsed] = useState(false);
 
   // Persist dropdown selection in localStorage
   const [selectedDropdown, setSelectedDropdown] = useState(() => {
@@ -402,11 +403,14 @@ export function Sidebar() {
       </div>
 
       {/* Templates panel */}
-      <div className="w-60 flex flex-col rounded-tr-[20px] rounded-br-[20px] relative z-10 shadow bg-[#f5f8fa]" style={{
-      backgroundColor: '#F5F8FA',
-      boxShadow: '3px 0 5px 0px rgba(0,0,0,0.1)'
-    }}>
-        <div className="p-4">
+      <div 
+        className={`flex flex-col rounded-tr-[20px] rounded-br-[20px] relative z-10 shadow bg-[#f5f8fa] transition-all duration-300 ${isTemplatesPanelCollapsed ? 'w-0 overflow-hidden' : 'w-60'}`} 
+        style={{
+          backgroundColor: '#F5F8FA',
+          boxShadow: isTemplatesPanelCollapsed ? 'none' : '3px 0 5px 0px rgba(0,0,0,0.1)'
+        }}
+      >
+        <div className={`p-4 ${isTemplatesPanelCollapsed ? 'hidden' : ''}`}>
           <h2 className="font-semibold text-primary text-lg mb-3">Templates</h2>
           <DropdownMenu>
             <DropdownMenuTrigger className="w-full px-3 py-2 bg-white/80 rounded-lg text-sm flex items-center justify-between focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors shadow-sm">
@@ -437,7 +441,7 @@ export function Sidebar() {
           </DropdownMenu>
         </div>
 
-        <div className="flex mb-2" style={{ borderBottom: '1px solid #DDE1E9' }}>
+        <div className={`flex mb-2 ${isTemplatesPanelCollapsed ? 'hidden' : ''}`} style={{ borderBottom: '1px solid #DDE1E9' }}>
           <button onClick={() => setActiveTab('firm')} className={`flex-1 py-2 px-1 text-sm font-medium transition-all text-center whitespace-nowrap ${activeTab === 'firm' ? 'text-primary border-b-[3px]' : 'text-muted-foreground hover:text-foreground border-b-[3px] border-transparent'}`} style={activeTab === 'firm' ? {
           borderBottomColor: '#0A3159'
         } : undefined}>
@@ -450,7 +454,7 @@ export function Sidebar() {
           </button>
         </div>
 
-        <div className="p-3 pt-1">
+        <div className={`p-3 pt-1 ${isTemplatesPanelCollapsed ? 'hidden' : ''}`}>
           <div className="flex gap-2">
             <div className="relative flex-1">
               <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
@@ -468,8 +472,27 @@ export function Sidebar() {
           </div>
         </div>
 
-        <div className="flex-1 overflow-y-auto p-2 pt-0 rounded-tr-[20px] rounded-br-[20px]">
+        <div className={`flex-1 overflow-y-auto p-2 pt-0 rounded-tr-[20px] rounded-br-[20px] ${isTemplatesPanelCollapsed ? 'hidden' : ''}`}>
           {templates.map(template => renderTemplate(template))}
+        </div>
+      </div>
+
+      {/* Collapse/Expand handle */}
+      <div 
+        className="relative flex items-center group cursor-pointer"
+        onClick={() => setIsTemplatesPanelCollapsed(!isTemplatesPanelCollapsed)}
+      >
+        <div className="absolute left-0 top-0 bottom-0 w-1 bg-transparent group-hover:bg-primary/20 transition-colors" />
+        <div 
+          className="flex items-center justify-center w-5 h-12 bg-[#F5F8FA] border border-[#DDE1E9] rounded-r-md shadow-sm hover:bg-[#E8EDF2] transition-all group-hover:w-6"
+          style={{ marginLeft: '-1px' }}
+        >
+          <GripVertical className="h-3 w-3 text-muted-foreground group-hover:hidden" />
+          {isTemplatesPanelCollapsed ? (
+            <ChevronRight className="h-4 w-4 text-primary hidden group-hover:block" />
+          ) : (
+            <ChevronLeft className="h-4 w-4 text-primary hidden group-hover:block" />
+          )}
         </div>
       </div>
 
