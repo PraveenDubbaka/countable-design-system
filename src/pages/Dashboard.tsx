@@ -76,10 +76,12 @@ const IntegrationBadge = ({ type }: { type: string | null }) => {
   
   if (type === "quickbooks") {
     return (
-      <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#2CA01C] text-white text-xs font-medium">
-        <div className="w-3.5 h-3.5 bg-white rounded-full flex items-center justify-center">
-          <span className="text-[#2CA01C] text-[8px] font-bold">QB</span>
-        </div>
+      <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#2CA01C]/10 text-[#2CA01C] text-xs font-medium">
+        <img
+          src="https://cdn.worldvectorlogo.com/logos/quickbooks-1.svg"
+          alt="QuickBooks"
+          className="w-4 h-4"
+        />
         QuickBooks
       </div>
     );
