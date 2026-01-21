@@ -1098,7 +1098,7 @@ function SortableSubItemRow({ subItem, onUpdate, onDelete, isPreviewMode, index,
       </div>
 
       {/* Response column with inline type selector and response field */}
-      <div className="w-[200px] shrink-0 px-2 py-2">
+      <div className="w-[200px] shrink-0 px-2 py-2 border-l border-[#E8EDF2]">
         <div className="flex items-start gap-2">
           <ResponseTypeDropdown
             currentType={subItem.answerType}
@@ -1113,7 +1113,7 @@ function SortableSubItemRow({ subItem, onUpdate, onDelete, isPreviewMode, index,
 
       {/* Additional Explanation column - conditionally rendered */}
       {visibleColumns.explanation && (
-        <div className="w-[200px] shrink-0 px-2 py-2">
+        <div className="w-[200px] shrink-0 px-2 py-2 border-l border-[#E8EDF2]">
           {(subItem as any).showExplanation !== false ? (
             <div className="relative group/exp">
               <AITextarea
@@ -1149,7 +1149,7 @@ function SortableSubItemRow({ subItem, onUpdate, onDelete, isPreviewMode, index,
 
       {/* Reference column - conditionally rendered */}
       {visibleColumns.reference && (
-        <div className="w-[200px] shrink-0 px-2 py-2 flex items-center">
+        <div className="w-[200px] shrink-0 px-2 py-2 flex items-center border-l border-[#E8EDF2]">
           <RefButton
             reference={(subItem as any).reference}
             onAttach={(doc) => onUpdate({ ...subItem, reference: doc } as any)}
@@ -1548,7 +1548,7 @@ function SortableItemRow({
         </div>
 
         {/* Response column with inline type selector and response field */}
-        <div className="w-[200px] shrink-0 px-2 py-2">
+        <div className="w-[200px] shrink-0 px-2 py-2 border-l border-[#E8EDF2]">
           <div className="flex items-start gap-2">
             <ResponseTypeDropdown
               currentType={item.answerType}
@@ -1563,7 +1563,7 @@ function SortableItemRow({
 
         {/* Additional Explanation column - conditionally rendered */}
         {visibleColumns.explanation && (
-          <div className="w-[200px] shrink-0 px-2 py-2">
+          <div className="w-[200px] shrink-0 px-2 py-2 border-l border-[#E8EDF2]">
             {(item as any).showExplanation !== false ? (
               <div className="relative group/exp">
                 <AITextarea
@@ -1599,7 +1599,7 @@ function SortableItemRow({
 
         {/* Reference column - conditionally rendered */}
         {visibleColumns.reference && (
-          <div className="w-[200px] shrink-0 px-2 py-2 flex items-center">
+          <div className="w-[200px] shrink-0 px-2 py-2 flex items-center border-l border-[#E8EDF2]">
             <RefButton
               reference={(item as any).reference}
               onAttach={(doc) => onUpdate({ ...item, reference: doc } as any)}
