@@ -67,8 +67,7 @@ const IntegrationBadge = ({ type }: { type: string | null }) => {
         <img 
           src="https://upload.wikimedia.org/wikipedia/en/9/9f/Xero_software_logo.svg" 
           alt="Xero" 
-          className="w-4 h-4 rounded-full"
-          style={{ border: "0.5px solid white" }}
+          className="w-4 h-4"
         />
         Xero
       </div>
