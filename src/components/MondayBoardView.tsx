@@ -1145,7 +1145,7 @@ function SortableSubItemRow({ subItem, onUpdate, onDelete, isPreviewMode, isComp
       )}
 
       {/* Add column placeholder to maintain alignment - always show when columns hidden */}
-      {(!visibleColumns.explanation || !visibleColumns.reference) && (
+      {!isPreviewMode && (!visibleColumns.explanation || !visibleColumns.reference) && (
         <div className="w-[100px] shrink-0" />
       )}
 
@@ -1667,7 +1667,7 @@ function SortableItemRow({
               {visibleColumns.reference && (
                 <div className="w-[200px] shrink-0 px-2 py-2 text-center">Reference</div>
               )}
-              {(!visibleColumns.explanation || !visibleColumns.reference) && (
+              {!isPreviewMode && (!visibleColumns.explanation || !visibleColumns.reference) && (
                 <div className="w-[100px] shrink-0" />
               )}
               <div className="w-16 shrink-0" />
@@ -1951,11 +1951,9 @@ function SortableGroup({
                 )}
               </div>
             )}
-            {(!visibleColumns.explanation || !visibleColumns.reference) && (
+            {!isPreviewMode && (!visibleColumns.explanation || !visibleColumns.reference) && (
               <div className="w-[100px] shrink-0 px-2 py-2 text-center text-gray-400">
-                {!isPreviewMode && (
-                  <AddColumnButton onAddColumn={handleAddColumn} visibleColumns={visibleColumns} />
-                )}
+                <AddColumnButton onAddColumn={handleAddColumn} visibleColumns={visibleColumns} />
               </div>
             )}
             <div className="w-16 shrink-0 py-2" />
