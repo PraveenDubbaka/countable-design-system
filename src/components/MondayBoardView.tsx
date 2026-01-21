@@ -1104,7 +1104,7 @@ function SortableSubItemRow({ subItem, onUpdate, onDelete, isPreviewMode, index,
           <AITextarea
             value={subItem.explanation || ''}
             onChange={(val) => onUpdate({ ...subItem, explanation: val })}
-            placeholder="Add explanation..."
+            placeholder="Additional Explanation"
             disabled={isPreviewMode}
             minHeight="40px"
           />
@@ -1487,7 +1487,7 @@ function SortableItemRow({
             <AITextarea
               value={item.explanation || ''}
               onChange={(val) => onUpdate({ ...item, explanation: val })}
-              placeholder="Add explanation..."
+              placeholder="Additional Explanation"
               disabled={isPreviewMode}
               minHeight="40px"
             />
