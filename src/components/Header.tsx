@@ -34,7 +34,7 @@ export function Header({ title, showActions = true, showBackButton = false, onBa
       <div className="flex items-center gap-3">
         {/* Luka AI icon */}
         <Button size="icon" variant="ghost" className="relative h-9 w-9 p-0">
-          <img src={lukaAiIcon} alt="Luka AI" className="w-7 h-7 rounded-full object-cover" />
+          <img src={lukaAiIcon} alt="Luka AI" className="w-5 h-5 object-contain" />
         </Button>
         
         {/* Bell with notification badge */}
