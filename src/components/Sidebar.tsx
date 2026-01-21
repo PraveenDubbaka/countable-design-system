@@ -155,7 +155,7 @@ const navItems = [
   },
   {
     icon: GlassesIcon,
-    label: "Review",
+    label: "Team",
   },
   {
     icon: ChatIcon,
