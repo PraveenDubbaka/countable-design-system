@@ -592,8 +592,8 @@ export function Sidebar() {
         </div>
       </div>
 
-      {/* Templates panel - hidden on Dashboard */}
-      {location.pathname !== "/dashboard" && (
+      {/* Templates panel - hidden on Dashboard and Engagements */}
+      {location.pathname !== "/dashboard" && location.pathname !== "/engagements" && (
         <>
           <div
             className={`flex flex-col rounded-tr-[20px] rounded-br-[20px] relative z-10 bg-[#f5f8fa] transition-all duration-300 group/templates ${isTemplatesPanelCollapsed ? "w-0 overflow-hidden shadow-none" : "w-60 shadow-md"}`}
