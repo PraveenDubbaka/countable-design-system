@@ -1077,7 +1077,7 @@ function SortableSubItemRow({ subItem, onUpdate, onDelete, isPreviewMode, isComp
                 setIsEditingName(true);
               }
             }}
-            className={`text-sm text-gray-700 ${!isPreviewMode ? 'cursor-text hover:text-gray-900' : ''} ${isCompactMode ? 'line-clamp-1' : ''}`}
+            className={`text-sm text-gray-700 ${!isPreviewMode ? 'cursor-text hover:text-gray-900' : ''} ${isCompactMode ? 'line-clamp-1 overflow-hidden' : ''}`}
             dangerouslySetInnerHTML={{ __html: subItem.text || 'Click to add sub-item...' }}
           />
         )}
@@ -1503,7 +1503,7 @@ function SortableItemRow({
                     setIsEditingName(true);
                   }
                 }}
-                className={`text-sm text-gray-800 py-2 flex-1 ${!isPreviewMode ? 'cursor-text hover:text-gray-900' : ''} ${isCompactMode ? 'line-clamp-1' : ''}`}
+                className={`text-sm text-gray-800 flex-1 ${!isPreviewMode ? 'cursor-text hover:text-gray-900' : ''} ${isCompactMode ? 'line-clamp-1 overflow-hidden py-1' : 'py-2'}`}
                 dangerouslySetInnerHTML={{ __html: item.text || 'Click to add item name...' }}
               />
               {hasRealSubItems && (
