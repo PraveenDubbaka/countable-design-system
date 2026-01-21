@@ -1734,7 +1734,7 @@ function SortableItemRow({
                   onClick={onAddSubItem}
                   className="flex-1 flex items-center gap-2 px-3 py-2.5 text-sm text-gray-400 hover:text-blue-500 transition-colors text-left"
                 >
-                  + Add subitem
+                  + Add Sub-question
                 </button>
               </div>
             )}
