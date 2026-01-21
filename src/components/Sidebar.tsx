@@ -444,11 +444,11 @@ export function Sidebar() {
       </div>
 
       {/* Templates panel */}
-      <div className="w-60 border-r bg-card flex flex-col">
-        <div className="p-4 border-b">
+      <div className="w-60 flex flex-col rounded-tr-[20px] rounded-br-[20px] shadow-[4px_0_16px_-4px_rgba(0,0,0,0.1)]" style={{ backgroundColor: '#DDE1E9' }}>
+        <div className="p-4">
           <h2 className="font-semibold text-primary text-lg mb-3">Templates</h2>
           <DropdownMenu>
-            <DropdownMenuTrigger className="w-full px-3 py-2 bg-background border rounded-lg text-sm flex items-center justify-between focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors">
+            <DropdownMenuTrigger className="w-full px-3 py-2 bg-white/80 rounded-lg text-sm flex items-center justify-between focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors shadow-sm">
               <div className="flex items-center gap-2">
                 {(() => {
                   const selected = dropdownItems.find(item => item.id === selectedDropdown);
@@ -486,12 +486,12 @@ export function Sidebar() {
           </DropdownMenu>
         </div>
 
-        <div className="flex border-b">
+        <div className="flex mx-4 mb-2 bg-white/50 rounded-lg p-0.5">
           <button
             onClick={() => setActiveTab('firm')}
-            className={`flex-1 py-2.5 text-sm font-medium transition-colors ${
+            className={`flex-1 py-2 text-sm font-medium rounded-md transition-all ${
               activeTab === 'firm' 
-                ? 'text-primary border-b-2 border-primary' 
+                ? 'text-primary bg-white shadow-sm' 
                 : 'text-muted-foreground hover:text-foreground'
             }`}
           >
@@ -499,9 +499,9 @@ export function Sidebar() {
           </button>
           <button
             onClick={() => setActiveTab('master')}
-            className={`flex-1 py-2.5 text-sm font-medium transition-colors ${
+            className={`flex-1 py-2 text-sm font-medium rounded-md transition-all ${
               activeTab === 'master' 
-                ? 'text-primary border-b-2 border-primary' 
+                ? 'text-primary bg-white shadow-sm' 
                 : 'text-muted-foreground hover:text-foreground'
             }`}
           >
@@ -509,30 +509,30 @@ export function Sidebar() {
           </button>
         </div>
 
-        <div className="p-3 border-b">
+        <div className="p-3 pt-1">
           <div className="flex gap-2">
             <div className="relative flex-1">
               <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <Input 
                 placeholder="Search" 
-                className="pl-8 h-8 text-sm bg-background"
+                className="pl-8 h-8 text-sm bg-white/80 border-0 shadow-sm"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
             </div>
-            <Button size="icon" variant="ghost" className="h-8 w-8">
+            <Button size="icon" variant="ghost" className="h-8 w-8 hover:bg-white/50">
               <Expand className="h-4 w-4" />
             </Button>
-            <Button size="icon" className="h-8 w-8 bg-primary hover:bg-primary/90">
+            <Button size="icon" className="h-8 w-8 bg-primary hover:bg-primary/90 shadow-sm">
               <Plus className="h-4 w-4 text-primary-foreground" />
             </Button>
-            <Button size="icon" variant="ghost" className="h-8 w-8 text-destructive hover:text-destructive hover:bg-destructive/10">
+            <Button size="icon" variant="ghost" className="h-8 w-8 text-destructive hover:text-destructive hover:bg-white/50">
               <Trash2 className="h-4 w-4" />
             </Button>
           </div>
         </div>
 
-        <div className="flex-1 overflow-y-auto p-2">
+        <div className="flex-1 overflow-y-auto p-2 pt-0">
           {templates.map(template => renderTemplate(template))}
         </div>
       </div>
