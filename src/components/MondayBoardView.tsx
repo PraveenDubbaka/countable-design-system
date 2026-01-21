@@ -293,6 +293,176 @@ function MultipleChoiceField({
   );
 }
 
+// Dropdown Field Component with edit support
+interface DropdownFieldProps {
+  options: string[];
+  selectedValue: string;
+  onValueChange: (value: string) => void;
+  onOptionsChange: (options: string[]) => void;
+  disabled?: boolean;
+  size?: 'sm' | 'md';
+}
+
+function DropdownField({ 
+  options, 
+  selectedValue, 
+  onValueChange, 
+  onOptionsChange,
+  disabled,
+  size = 'md'
+}: DropdownFieldProps) {
+  const [isEditOpen, setIsEditOpen] = useState(false);
+  const [editingOptions, setEditingOptions] = useState<string[]>([...options]);
+  const [newOption, setNewOption] = useState('');
+  
+  // Store refs for callbacks to avoid stale closures
+  const onOptionsChangeRef = useRef(onOptionsChange);
+  const onValueChangeRef = useRef(onValueChange);
+  onOptionsChangeRef.current = onOptionsChange;
+  onValueChangeRef.current = onValueChange;
+
+  const handleOpenChange = (open: boolean) => {
+    if (open) {
+      setEditingOptions([...options]);
+      setNewOption('');
+    }
+    setIsEditOpen(open);
+  };
+
+  const handleSaveEdit = () => {
+    const validOptions = editingOptions.filter(o => o.trim() !== '');
+    if (validOptions.length > 0) {
+      onOptionsChangeRef.current(validOptions);
+      // Clear selection if it no longer exists
+      if (selectedValue && !validOptions.includes(selectedValue)) {
+        onValueChangeRef.current('');
+      }
+    }
+    setIsEditOpen(false);
+    setNewOption('');
+  };
+
+  const handleOptionChange = (index: number, value: string) => {
+    const updated = [...editingOptions];
+    updated[index] = value;
+    setEditingOptions(updated);
+  };
+
+  const handleRemoveOption = (index: number) => {
+    if (editingOptions.length <= 1) return;
+    setEditingOptions(editingOptions.filter((_, i) => i !== index));
+  };
+
+  const handleAddOption = () => {
+    const trimmed = newOption.trim();
+    if (trimmed && !editingOptions.includes(trimmed)) {
+      setEditingOptions([...editingOptions, trimmed]);
+      setNewOption('');
+    }
+  };
+
+  const selectHeight = size === 'sm' ? 'h-7' : 'h-8';
+  const textSize = size === 'sm' ? 'text-xs' : 'text-sm';
+
+  return (
+    <div className="flex items-center gap-1.5 w-full">
+      <select
+        value={selectedValue}
+        onChange={(e) => {
+          e.stopPropagation();
+          onValueChange(e.target.value);
+        }}
+        onClick={(e) => e.stopPropagation()}
+        disabled={disabled}
+        className={`${selectHeight} px-2 ${textSize} bg-gray-100 border-gray-300 text-gray-700 rounded flex-1 min-w-0`}
+      >
+        <option value="">Select...</option>
+        {options.map((opt, i) => (
+          <option key={i} value={opt}>{opt}</option>
+        ))}
+      </select>
+      {!disabled && (
+        <Popover open={isEditOpen} onOpenChange={handleOpenChange}>
+          <PopoverTrigger asChild>
+            <button
+              onClick={(e) => e.stopPropagation()}
+              className="p-1 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded transition-colors shrink-0"
+              title="Edit options"
+            >
+              <Pencil className="h-3.5 w-3.5" />
+            </button>
+          </PopoverTrigger>
+          <PopoverContent 
+            className="w-64 p-3 bg-white border border-gray-200 shadow-lg z-50" 
+            align="start"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex flex-col gap-2">
+              <div className="text-xs font-medium text-gray-700 mb-1">Edit Options</div>
+              <div className="flex flex-col gap-1.5 max-h-40 overflow-y-auto">
+                {editingOptions.map((opt, i) => (
+                  <div key={i} className="flex items-center gap-1.5">
+                    <input
+                      type="text"
+                      value={opt}
+                      onChange={(e) => handleOptionChange(i, e.target.value)}
+                      className="flex-1 px-2 py-1 text-xs bg-white border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-primary"
+                      placeholder={`Option ${i + 1}`}
+                    />
+                    <button
+                      onClick={() => handleRemoveOption(i)}
+                      disabled={editingOptions.length <= 1}
+                      className="p-1 text-gray-400 hover:text-red-500 disabled:opacity-30 disabled:cursor-not-allowed"
+                    >
+                      <X className="h-3.5 w-3.5" />
+                    </button>
+                  </div>
+                ))}
+              </div>
+              <div className="flex items-center gap-1.5">
+                <input
+                  type="text"
+                  value={newOption}
+                  onChange={(e) => setNewOption(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      e.preventDefault();
+                      handleAddOption();
+                    }
+                  }}
+                  placeholder="Add new option..."
+                  className="flex-1 px-2 py-1 text-xs bg-white border border-gray-300 border-dashed rounded focus:outline-none focus:ring-1 focus:ring-primary"
+                />
+                <button
+                  onClick={handleAddOption}
+                  disabled={!newOption.trim()}
+                  className="p-1 text-gray-400 hover:text-green-600 disabled:opacity-30"
+                >
+                  <Plus className="h-3.5 w-3.5" />
+                </button>
+              </div>
+              <div className="flex justify-end gap-1.5 pt-2 border-t border-gray-200">
+                <button
+                  onClick={() => setIsEditOpen(false)}
+                  className="px-2 py-1 text-xs text-gray-600 hover:bg-gray-100 rounded transition-colors"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleSaveEdit}
+                  className="px-2 py-1 text-xs bg-primary text-primary-foreground hover:bg-primary/90 rounded transition-colors"
+                >
+                  Save
+                </button>
+              </div>
+            </div>
+          </PopoverContent>
+        </Popover>
+      )}
+    </div>
+  );
+}
+
 // Reference Button Component
 interface RefButtonProps {
   reference?: { name: string; id?: string } | null;
@@ -704,19 +874,16 @@ function SortableSubItemRow({ subItem, onUpdate, onDelete, isPreviewMode, index,
         );
 
       case 'dropdown':
+        const dropdownSubOptions = subItem.options || ['Option 1', 'Option 2'];
         return (
-          <select
-            value={subItem.answer || ''}
-            onChange={(e) => handleAnswerChange(e.target.value)}
-            onClick={(e) => e.stopPropagation()}
+          <DropdownField
+            options={dropdownSubOptions}
+            selectedValue={subItem.answer || ''}
+            onValueChange={(value) => onUpdate({ ...subItem, answer: value })}
+            onOptionsChange={(opts) => onUpdate({ ...subItem, options: opts })}
             disabled={isPreviewMode}
-            className="h-7 px-2 text-xs bg-gray-100 border-gray-300 text-gray-700 rounded w-full"
-          >
-            <option value="">Select...</option>
-            {(subItem.options || ['Option 1', 'Option 2']).map((opt, i) => (
-              <option key={i} value={opt}>{opt}</option>
-            ))}
-          </select>
+            size="sm"
+          />
         );
 
       case 'long-answer':
@@ -1060,19 +1227,16 @@ function SortableItemRow({
         );
 
       case 'dropdown':
+        const dropdownItemOptions = item.options || ['Option 1', 'Option 2'];
         return (
-          <select
-            value={item.answer || ''}
-            onChange={(e) => handleAnswerChange(e.target.value)}
-            onClick={(e) => e.stopPropagation()}
+          <DropdownField
+            options={dropdownItemOptions}
+            selectedValue={item.answer || ''}
+            onValueChange={(value) => onUpdate({ ...item, answer: value })}
+            onOptionsChange={(opts) => onUpdate({ ...item, options: opts })}
             disabled={isPreviewMode}
-            className="h-8 px-2 text-sm bg-gray-100 border-gray-300 text-gray-700 rounded w-full"
-          >
-            <option value="">Select...</option>
-            {(item.options || ['Option 1', 'Option 2']).map((opt, i) => (
-              <option key={i} value={opt}>{opt}</option>
-            ))}
-          </select>
+            size="md"
+          />
         );
 
       case 'long-answer':
