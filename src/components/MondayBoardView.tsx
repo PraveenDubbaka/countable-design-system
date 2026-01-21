@@ -1538,8 +1538,8 @@ function SortableItemRow({
                   </TooltipTrigger>
                   <TooltipContent side="top" className="bg-white text-gray-800 border border-gray-200 shadow-lg">
                     {item.subQuestions!.filter(sq => sq.text.trim() !== '').length === 1 
-                      ? '1 Subitem' 
-                      : `${item.subQuestions!.filter(sq => sq.text.trim() !== '').length} Subitems`}
+                      ? '1 Sub-question' 
+                      : `${item.subQuestions!.filter(sq => sq.text.trim() !== '').length} Sub-questions`}
                   </TooltipContent>
                 </Tooltip>
               )}
