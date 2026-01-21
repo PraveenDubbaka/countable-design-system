@@ -159,7 +159,7 @@ const navItems = [
   },
   {
     icon: ChatIcon,
-    label: "Messages",
+    label: "Clients",
   },
   {
     icon: BriefcaseIcon,
