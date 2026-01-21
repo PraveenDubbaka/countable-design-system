@@ -1098,7 +1098,7 @@ function SortableSubItemRow({ subItem, onUpdate, onDelete, isPreviewMode, index,
       </div>
 
       {/* Response column with inline type selector and response field */}
-      <div className="w-[200px] shrink-0 px-2 py-2 border-l border-[#E8EDF2] flex items-center">
+      <div className="w-[240px] shrink-0 px-2 py-2 border-l border-[#E8EDF2] flex items-center">
         <div className="flex items-center gap-2">
           <ResponseTypeDropdown
             currentType={subItem.answerType}
@@ -1548,7 +1548,7 @@ function SortableItemRow({
         </div>
 
         {/* Response column with inline type selector and response field */}
-        <div className="w-[200px] shrink-0 px-2 py-2 border-l border-[#E8EDF2] flex items-center">
+        <div className="w-[240px] shrink-0 px-2 py-2 border-l border-[#E8EDF2] flex items-center">
           <div className="flex items-center gap-2">
             <ResponseTypeDropdown
               currentType={item.answerType}
@@ -1684,7 +1684,7 @@ function SortableItemRow({
             <div className="flex items-center bg-[#EDF2F7] text-xs font-medium text-gray-500 border-b border-[#E8EDF2]">
               <div className="w-10 shrink-0 flex items-center justify-center py-2" />
               <div className="flex-1 min-w-[200px] px-3 py-2">Sub-questions</div>
-              <div className="w-[200px] shrink-0 px-2 py-2 text-center">Response</div>
+              <div className="w-[240px] shrink-0 px-2 py-2 text-center">Response</div>
               {visibleColumns.explanation && (
                 <div className="w-[200px] shrink-0 px-2 py-2 text-center">Explanation</div>
               )}
@@ -1943,7 +1943,7 @@ function SortableGroup({
             <div className="w-10 shrink-0 py-2" />
             <div className="w-8 shrink-0 py-2" />
             <div className="flex-1 min-w-[200px] px-3 py-2">Questions</div>
-            <div className="w-[200px] shrink-0 px-2 py-2">Response</div>
+            <div className="w-[240px] shrink-0 px-2 py-2">Response</div>
             {visibleColumns.explanation && (
               <div className="w-[200px] shrink-0 px-2 py-2 flex items-center justify-between group/col">
                 <span>Explanation</span>
