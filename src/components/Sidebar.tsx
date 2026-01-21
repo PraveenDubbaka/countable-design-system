@@ -402,7 +402,7 @@ export function Sidebar() {
       </div>
 
       {/* Templates panel */}
-      <div className="w-60 flex flex-col rounded-tr-[20px] rounded-br-[20px] relative z-10 shadow" style={{
+      <div className="w-60 flex flex-col rounded-tr-[20px] rounded-br-[20px] relative z-10 shadow bg-[#f5f8fa]" style={{
       backgroundColor: '#F5F8FA',
       boxShadow: '3px 0 5px 0px rgba(0,0,0,0.1)'
     }}>
