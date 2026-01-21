@@ -60,25 +60,6 @@ export default function Engagements() {
     <Layout title="Engagements">
       <div className="flex-1 p-6 overflow-auto" style={{ backgroundColor: "#F5F8FA" }}>
         <div className="space-y-5">
-          {/* Header with title, search, and create button */}
-          <div className="flex items-center justify-between">
-            <h1 className="text-2xl font-bold text-primary">Engagements</h1>
-            <div className="flex items-center gap-3">
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                <Input
-                  placeholder="Search"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="pl-9 w-56 h-9 text-sm bg-white border border-gray-200 focus:ring-1 focus:ring-primary/30"
-                />
-              </div>
-              <Button className="bg-primary hover:bg-primary/90 text-white h-9 px-4 text-sm font-medium">
-                Create Engagement
-              </Button>
-            </div>
-          </div>
-
           {/* Stats Cards */}
           <div className="grid grid-cols-4 gap-3">
             {stats.map((stat, index) => (
@@ -92,7 +73,7 @@ export default function Engagements() {
             ))}
           </div>
 
-          {/* Filter and Export Row */}
+          {/* Filter, Search, Export and Create Row */}
           <div className="flex items-center justify-between">
             <Button
               variant="outline"
@@ -101,13 +82,27 @@ export default function Engagements() {
               {filterPeriod}
               <ChevronDown className="ml-2 h-4 w-4" />
             </Button>
-            <Button
-              variant="outline"
-              className="h-9 px-4 text-sm font-medium bg-white border border-gray-200 hover:bg-gray-50"
-            >
-              <Download className="mr-2 h-4 w-4" />
-              Export
-            </Button>
+            <div className="flex items-center gap-3">
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                <Input
+                  placeholder="Search"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="pl-9 w-56 h-9 text-sm bg-white border border-gray-200 focus:ring-1 focus:ring-primary/30"
+                />
+              </div>
+              <Button
+                variant="outline"
+                className="h-9 px-4 text-sm font-medium bg-white border border-gray-200 hover:bg-gray-50"
+              >
+                <Download className="mr-2 h-4 w-4" />
+                Export
+              </Button>
+              <Button className="bg-primary hover:bg-primary/90 text-white h-9 px-4 text-sm font-medium">
+                Create Engagement
+              </Button>
+            </div>
           </div>
 
           {/* Engagements Table */}
