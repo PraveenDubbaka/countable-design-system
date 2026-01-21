@@ -11,7 +11,7 @@ interface HeaderProps {
 
 export function Header({ title, showActions = true, showBackButton = false, onBack }: HeaderProps) {
   return (
-    <header className="h-14 bg-card flex items-center justify-between px-6">
+    <header className="h-14 bg-card flex items-center justify-between px-6 shadow-sm">
       {/* Left side - back button and title */}
       <div className="flex items-center gap-3">
         {showBackButton && (
