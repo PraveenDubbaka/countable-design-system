@@ -67,7 +67,34 @@ export function AITextarea({
   const [isAIOpen, setIsAIOpen] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
   const [selectedOption, setSelectedOption] = useState<string | null>(null);
+  const [isEditing, setIsEditing] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  // Handle click outside to exit edit mode
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        containerRef.current && 
+        !containerRef.current.contains(event.target as Node) &&
+        !isAIOpen
+      ) {
+        setIsEditing(false);
+      }
+    };
+
+    if (isEditing) {
+      document.addEventListener('mousedown', handleClickOutside);
+      return () => document.removeEventListener('mousedown', handleClickOutside);
+    }
+  }, [isEditing, isAIOpen]);
+
+  // Focus textarea when entering edit mode
+  useEffect(() => {
+    if (isEditing && textareaRef.current) {
+      textareaRef.current.focus();
+    }
+  }, [isEditing]);
 
   const { isListening, transcript, toggleListening, isSupported, error } = useVoiceToText({
     onResult: (result) => {
@@ -121,8 +148,36 @@ export function AITextarea({
     }
   };
 
+  const handleEnterEditMode = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (!disabled) {
+      setIsEditing(true);
+    }
+  };
+
+  // Render text display when not editing
+  if (!isEditing && !disabled) {
+    return (
+      <div 
+        ref={containerRef}
+        className={cn("relative w-full", className)}
+        onClick={handleEnterEditMode}
+      >
+        <div
+          className={cn(
+            "w-full px-3 py-2 text-sm bg-gray-50 border border-gray-300 text-gray-700 rounded-md cursor-text hover:bg-gray-100 hover:border-gray-400 transition-colors",
+            !value && "text-gray-400"
+          )}
+          style={{ minHeight }}
+        >
+          {value || placeholder}
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <div className={cn("relative w-full", className)}>
+    <div ref={containerRef} className={cn("relative w-full", className)}>
       <Textarea
         ref={textareaRef}
         value={value}
