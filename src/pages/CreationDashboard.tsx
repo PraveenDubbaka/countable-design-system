@@ -285,7 +285,7 @@ export default function CreationDashboard() {
                     className="border-2 border-dashed border-border rounded-lg p-8 text-center hover:border-primary/50 transition-colors cursor-pointer"
                   >
                     <div className="text-muted-foreground">
-                      <img src={uploadCloudAnimated} alt="Upload" className="h-12 w-12 mx-auto mb-4" />
+                      <img src={uploadCloudAnimated} alt="Upload" className="h-12 w-12 mx-auto mb-4 mix-blend-multiply" />
                       <p className="font-medium">Click to upload or drag and drop</p>
                       <p className="text-sm">PDF, DOC, DOCX, TXT (max 10MB)</p>
                     </div>
