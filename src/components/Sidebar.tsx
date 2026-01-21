@@ -1,16 +1,43 @@
-import { useState, useEffect } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
-import { ChevronDown, ChevronRight, ChevronLeft, Search, Plus, Expand, Trash2, Folder, Headphones, Check, FileText, ClipboardList, FileBarChart, StickyNote, Table, Copy, Pencil, FolderInput, MoreVertical, GripVertical } from 'lucide-react';
-import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
-import { Checkbox } from '@/components/ui/checkbox';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuSeparator } from '@/components/ui/dropdown-menu';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
-import lukaLogo from '@/assets/luka-logo.png';
+import { useState, useEffect } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
+import {
+  ChevronDown,
+  ChevronRight,
+  ChevronLeft,
+  Search,
+  Plus,
+  Expand,
+  Trash2,
+  Folder,
+  Headphones,
+  Check,
+  FileText,
+  ClipboardList,
+  FileBarChart,
+  StickyNote,
+  Table,
+  Copy,
+  Pencil,
+  FolderInput,
+  MoreVertical,
+  GripVertical,
+} from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+  DropdownMenuSeparator,
+} from "@/components/ui/dropdown-menu";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+import lukaLogo from "@/assets/luka-logo.png";
 interface Template {
   id: string;
   name: string;
-  type: 'folder' | 'file';
+  type: "folder" | "file";
   children?: Template[];
   isExpanded?: boolean;
 }
@@ -21,146 +48,196 @@ export interface SavedChecklist {
   folderName: string;
   data?: any; // Full checklist data for editing
 }
-const initialTemplates: Template[] = [{
-  id: '1',
-  name: 'Before Release V22Comp',
-  type: 'folder',
-  children: []
-}, {
-  id: '2',
-  name: 'Before Release V22 Revi...',
-  type: 'folder',
-  children: []
-}, {
-  id: '3',
-  name: 'Carissa_13208',
-  type: 'folder',
-  children: []
-}, {
-  id: '4',
-  name: 'carisa 37.3',
-  type: 'folder',
-  children: []
-}, {
-  id: '5',
-  name: 'Compilation Checklists',
-  type: 'folder',
-  children: []
-}, {
-  id: '6',
-  name: 'release 38 before',
-  type: 'folder',
-  children: []
-}, {
-  id: '7',
-  name: 'Review Checklists',
-  type: 'folder',
-  children: []
-}, {
-  id: '8',
-  name: 'Tax Release',
-  type: 'folder',
-  children: []
-}];
+const initialTemplates: Template[] = [
+  {
+    id: "1",
+    name: "Before Release V22Comp",
+    type: "folder",
+    children: [],
+  },
+  {
+    id: "2",
+    name: "Before Release V22 Revi...",
+    type: "folder",
+    children: [],
+  },
+  {
+    id: "3",
+    name: "Carissa_13208",
+    type: "folder",
+    children: [],
+  },
+  {
+    id: "4",
+    name: "carisa 37.3",
+    type: "folder",
+    children: [],
+  },
+  {
+    id: "5",
+    name: "Compilation Checklists",
+    type: "folder",
+    children: [],
+  },
+  {
+    id: "6",
+    name: "release 38 before",
+    type: "folder",
+    children: [],
+  },
+  {
+    id: "7",
+    name: "Review Checklists",
+    type: "folder",
+    children: [],
+  },
+  {
+    id: "8",
+    name: "Tax Release",
+    type: "folder",
+    children: [],
+  },
+];
 
 // Icon components matching the screenshot
-const AnalyticsIcon = () => <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+const AnalyticsIcon = () => (
+  <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
     {/* Bar chart icon */}
     <rect x="3" y="10" width="3" height="7" rx="0.5" fill="currentColor" />
     <rect x="8.5" y="6" width="3" height="11" rx="0.5" fill="currentColor" />
     <rect x="14" y="3" width="3" height="14" rx="0.5" fill="currentColor" />
-  </svg>;
-const GlassesIcon = () => <svg width="19" height="18" viewBox="0 0 19 18" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <path d="M17.8332 16.5V14.8333C17.8332 13.2801 16.7709 11.9751 15.3332 11.605M12.4165 1.7423C13.6381 2.23679 14.4998 3.43443 14.4998 4.83333C14.4998 6.23224 13.6381 7.42988 12.4165 7.92437M13.6665 16.5C13.6665 14.9469 13.6665 14.1703 13.4128 13.5577C13.0745 12.741 12.4255 12.092 11.6088 11.7537C10.9962 11.5 10.2196 11.5 8.6665 11.5H6.1665C4.61337 11.5 3.8368 11.5 3.22423 11.7537C2.40747 12.092 1.75855 12.741 1.42024 13.5577C1.1665 14.1703 1.1665 14.9469 1.1665 16.5M10.7498 4.83333C10.7498 6.67428 9.25745 8.16667 7.4165 8.16667C5.57555 8.16667 4.08317 6.67428 4.08317 4.83333C4.08317 2.99238 5.57555 1.5 7.4165 1.5C9.25745 1.5 10.7498 2.99238 10.7498 4.83333Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-  </svg>;
-const ChatIcon = () => <svg width="19" height="18" viewBox="0 0 19 18" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <path d="M10.3332 8.16667H14.3332C15.2666 8.16667 15.7333 8.16667 16.0898 8.34832C16.4034 8.50811 16.6584 8.76308 16.8182 9.07668C16.9998 9.4332 16.9998 9.89991 16.9998 10.8333V16.5M10.3332 16.5V4.16667C10.3332 3.23325 10.3332 2.76654 10.1515 2.41002C9.99173 2.09641 9.73676 1.84144 9.42316 1.68166C9.06664 1.5 8.59993 1.5 7.6665 1.5H4.6665C3.73308 1.5 3.26637 1.5 2.90985 1.68166C2.59625 1.84144 2.34128 2.09641 2.18149 2.41002C1.99984 2.76654 1.99984 3.23325 1.99984 4.16667V16.5M17.8332 16.5H1.1665M4.9165 4.83333H7.4165M4.9165 8.16667H7.4165M4.9165 11.5H7.4165" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-  </svg>;
-const BriefcaseIcon = () => <svg width="19" height="16" viewBox="0 0 19 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <path d="M1.58317 7.99992H4.40148C4.97248 7.99992 5.49448 8.32253 5.74984 8.83325C6.0052 9.34397 6.52719 9.66659 7.0982 9.66659H11.9015C12.4725 9.66659 12.9945 9.34397 13.2498 8.83325C13.5052 8.32253 14.0272 7.99992 14.5982 7.99992H17.4165M6.97197 1.33325H12.0277C12.9251 1.33325 13.3738 1.33325 13.7699 1.46989C14.1202 1.59072 14.4393 1.78792 14.704 2.04721C15.0034 2.34042 15.2041 2.74175 15.6054 3.5444L17.4109 7.15534C17.5684 7.47032 17.6471 7.62782 17.7027 7.79287C17.752 7.93946 17.7876 8.09031 17.809 8.24347C17.8332 8.41594 17.8332 8.59202 17.8332 8.94419V10.6666C17.8332 12.0667 17.8332 12.7668 17.5607 13.3016C17.321 13.772 16.9386 14.1544 16.4681 14.3941C15.9334 14.6666 15.2333 14.6666 13.8332 14.6666H5.1665C3.76637 14.6666 3.06631 14.6666 2.53153 14.3941C2.06112 14.1544 1.67867 13.772 1.43899 13.3016C1.1665 12.7668 1.1665 12.0667 1.1665 10.6666V8.94419C1.1665 8.59202 1.1665 8.41594 1.19065 8.24347C1.21209 8.09031 1.2477 7.93946 1.29702 7.79287C1.35255 7.62782 1.4313 7.47032 1.5888 7.15534L3.39426 3.5444C3.79559 2.74174 3.99626 2.34042 4.29562 2.04721C4.56036 1.78792 4.87943 1.59072 5.22974 1.46989C5.62588 1.33325 6.07458 1.33325 6.97197 1.33325Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-  </svg>;
-const FileIcon = () => <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+  </svg>
+);
+const GlassesIcon = () => (
+  <svg width="19" height="18" viewBox="0 0 19 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path
+      d="M17.8332 16.5V14.8333C17.8332 13.2801 16.7709 11.9751 15.3332 11.605M12.4165 1.7423C13.6381 2.23679 14.4998 3.43443 14.4998 4.83333C14.4998 6.23224 13.6381 7.42988 12.4165 7.92437M13.6665 16.5C13.6665 14.9469 13.6665 14.1703 13.4128 13.5577C13.0745 12.741 12.4255 12.092 11.6088 11.7537C10.9962 11.5 10.2196 11.5 8.6665 11.5H6.1665C4.61337 11.5 3.8368 11.5 3.22423 11.7537C2.40747 12.092 1.75855 12.741 1.42024 13.5577C1.1665 14.1703 1.1665 14.9469 1.1665 16.5M10.7498 4.83333C10.7498 6.67428 9.25745 8.16667 7.4165 8.16667C5.57555 8.16667 4.08317 6.67428 4.08317 4.83333C4.08317 2.99238 5.57555 1.5 7.4165 1.5C9.25745 1.5 10.7498 2.99238 10.7498 4.83333Z"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+  </svg>
+);
+const ChatIcon = () => (
+  <svg width="19" height="18" viewBox="0 0 19 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path
+      d="M10.3332 8.16667H14.3332C15.2666 8.16667 15.7333 8.16667 16.0898 8.34832C16.4034 8.50811 16.6584 8.76308 16.8182 9.07668C16.9998 9.4332 16.9998 9.89991 16.9998 10.8333V16.5M10.3332 16.5V4.16667C10.3332 3.23325 10.3332 2.76654 10.1515 2.41002C9.99173 2.09641 9.73676 1.84144 9.42316 1.68166C9.06664 1.5 8.59993 1.5 7.6665 1.5H4.6665C3.73308 1.5 3.26637 1.5 2.90985 1.68166C2.59625 1.84144 2.34128 2.09641 2.18149 2.41002C1.99984 2.76654 1.99984 3.23325 1.99984 4.16667V16.5M17.8332 16.5H1.1665M4.9165 4.83333H7.4165M4.9165 8.16667H7.4165M4.9165 11.5H7.4165"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+  </svg>
+);
+const BriefcaseIcon = () => (
+  <svg width="19" height="16" viewBox="0 0 19 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path
+      d="M1.58317 7.99992H4.40148C4.97248 7.99992 5.49448 8.32253 5.74984 8.83325C6.0052 9.34397 6.52719 9.66659 7.0982 9.66659H11.9015C12.4725 9.66659 12.9945 9.34397 13.2498 8.83325C13.5052 8.32253 14.0272 7.99992 14.5982 7.99992H17.4165M6.97197 1.33325H12.0277C12.9251 1.33325 13.3738 1.33325 13.7699 1.46989C14.1202 1.59072 14.4393 1.78792 14.704 2.04721C15.0034 2.34042 15.2041 2.74175 15.6054 3.5444L17.4109 7.15534C17.5684 7.47032 17.6471 7.62782 17.7027 7.79287C17.752 7.93946 17.7876 8.09031 17.809 8.24347C17.8332 8.41594 17.8332 8.59202 17.8332 8.94419V10.6666C17.8332 12.0667 17.8332 12.7668 17.5607 13.3016C17.321 13.772 16.9386 14.1544 16.4681 14.3941C15.9334 14.6666 15.2333 14.6666 13.8332 14.6666H5.1665C3.76637 14.6666 3.06631 14.6666 2.53153 14.3941C2.06112 14.1544 1.67867 13.772 1.43899 13.3016C1.1665 12.7668 1.1665 12.0667 1.1665 10.6666V8.94419C1.1665 8.59202 1.1665 8.41594 1.19065 8.24347C1.21209 8.09031 1.2477 7.93946 1.29702 7.79287C1.35255 7.62782 1.4313 7.47032 1.5888 7.15534L3.39426 3.5444C3.79559 2.74174 3.99626 2.34042 4.29562 2.04721C4.56036 1.78792 4.87943 1.59072 5.22974 1.46989C5.62588 1.33325 6.07458 1.33325 6.97197 1.33325Z"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+  </svg>
+);
+const FileIcon = () => (
+  <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
     {/* Document/file icon */}
     <path d="M5 2h7l4 4v11a1 1 0 01-1 1H5a1 1 0 01-1-1V3a1 1 0 011-1z" stroke="currentColor" strokeWidth="1.5" />
     <path d="M12 2v4h4" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" />
-  </svg>;
-const navItems = [{
-  icon: AnalyticsIcon,
-  label: 'Analytics'
-}, {
-  icon: GlassesIcon,
-  label: 'Review'
-}, {
-  icon: ChatIcon,
-  label: 'Messages'
-}, {
-  icon: BriefcaseIcon,
-  label: 'Engagements'
-}, {
-  icon: FileIcon,
-  label: 'Templates',
-  active: true
-}];
+  </svg>
+);
+const navItems = [
+  {
+    icon: AnalyticsIcon,
+    label: "Analytics",
+  },
+  {
+    icon: GlassesIcon,
+    label: "Review",
+  },
+  {
+    icon: ChatIcon,
+    label: "Messages",
+  },
+  {
+    icon: BriefcaseIcon,
+    label: "Engagements",
+  },
+  {
+    icon: FileIcon,
+    label: "Templates",
+    active: true,
+  },
+];
 
 // Luka Logo Component
 const LukaLogo = () => <img src={lukaLogo} alt="Luka" className="w-7 h-7 object-contain" />;
 
 // Dropdown menu items with colored icons
-const dropdownItems = [{
-  id: 'engagements',
-  label: 'Engagements',
-  icon: Folder,
-  color: 'text-blue-500',
-  showCreator: false
-}, {
-  id: 'letters',
-  label: 'Letters',
-  icon: FileText,
-  color: 'text-purple-500',
-  showCreator: true
-}, {
-  id: 'checklists',
-  label: 'Checklists',
-  icon: ClipboardList,
-  color: 'text-orange-500',
-  showCreator: true
-}, {
-  id: 'reports',
-  label: 'Reports',
-  icon: FileBarChart,
-  color: 'text-green-500',
-  showCreator: true
-}, {
-  id: 'notes',
-  label: 'Notes to Financial Stat...',
-  icon: StickyNote,
-  color: 'text-yellow-500',
-  showCreator: true
-}, {
-  id: 'worksheets',
-  label: 'Worksheets',
-  icon: Table,
-  color: 'text-blue-400',
-  showCreator: false
-}];
-export type ContentType = 'letters' | 'checklists' | 'reports' | 'notes';
+const dropdownItems = [
+  {
+    id: "engagements",
+    label: "Engagements",
+    icon: Folder,
+    color: "text-blue-500",
+    showCreator: false,
+  },
+  {
+    id: "letters",
+    label: "Letters",
+    icon: FileText,
+    color: "text-purple-500",
+    showCreator: true,
+  },
+  {
+    id: "checklists",
+    label: "Checklists",
+    icon: ClipboardList,
+    color: "text-orange-500",
+    showCreator: true,
+  },
+  {
+    id: "reports",
+    label: "Reports",
+    icon: FileBarChart,
+    color: "text-green-500",
+    showCreator: true,
+  },
+  {
+    id: "notes",
+    label: "Notes to Financial Stat...",
+    icon: StickyNote,
+    color: "text-yellow-500",
+    showCreator: true,
+  },
+  {
+    id: "worksheets",
+    label: "Worksheets",
+    icon: Table,
+    color: "text-blue-400",
+    showCreator: false,
+  },
+];
+export type ContentType = "letters" | "checklists" | "reports" | "notes";
 export function Sidebar() {
   const navigate = useNavigate();
   const location = useLocation();
   const [templates, setTemplates] = useState<Template[]>(initialTemplates);
-  const [activeTab, setActiveTab] = useState<'firm' | 'master'>('firm');
-  const [searchQuery, setSearchQuery] = useState('');
+  const [activeTab, setActiveTab] = useState<"firm" | "master">("firm");
+  const [searchQuery, setSearchQuery] = useState("");
   const [isTemplatesPanelCollapsed, setIsTemplatesPanelCollapsed] = useState(false);
 
   // Persist dropdown selection in localStorage
   const [selectedDropdown, setSelectedDropdown] = useState(() => {
-    const stored = localStorage.getItem('selectedDropdown');
-    return stored || 'engagements';
+    const stored = localStorage.getItem("selectedDropdown");
+    return stored || "engagements";
   });
 
   // Sync selection to localStorage whenever it changes
   useEffect(() => {
-    localStorage.setItem('selectedDropdown', selectedDropdown);
+    localStorage.setItem("selectedDropdown", selectedDropdown);
   }, [selectedDropdown]);
 
   // Restore selection from navigation state if contentType is passed
@@ -178,57 +255,63 @@ export function Sidebar() {
   const [renameDialogOpen, setRenameDialogOpen] = useState(false);
   const [moveDialogOpen, setMoveDialogOpen] = useState(false);
   const [selectedChecklist, setSelectedChecklist] = useState<SavedChecklist | null>(null);
-  const [renameValue, setRenameValue] = useState('');
-  const [selectedMoveFolder, setSelectedMoveFolder] = useState('');
+  const [renameValue, setRenameValue] = useState("");
+  const [selectedMoveFolder, setSelectedMoveFolder] = useState("");
 
   // Load saved checklists on mount and listen for new saves
   useEffect(() => {
     const loadSavedChecklists = () => {
-      const stored = localStorage.getItem('savedChecklists');
+      const stored = localStorage.getItem("savedChecklists");
       if (stored) {
         setSavedChecklists(JSON.parse(stored));
       }
     };
     loadSavedChecklists();
     const handleChecklistSaved = (event: CustomEvent<SavedChecklist>) => {
-      setSavedChecklists(prev => [...prev, event.detail]);
+      setSavedChecklists((prev) => [...prev, event.detail]);
     };
-    window.addEventListener('checklistSaved', handleChecklistSaved as EventListener);
+    window.addEventListener("checklistSaved", handleChecklistSaved as EventListener);
     return () => {
-      window.removeEventListener('checklistSaved', handleChecklistSaved as EventListener);
+      window.removeEventListener("checklistSaved", handleChecklistSaved as EventListener);
     };
   }, []);
 
   // Sync to localStorage whenever savedChecklists changes
   useEffect(() => {
     if (savedChecklists.length > 0) {
-      localStorage.setItem('savedChecklists', JSON.stringify(savedChecklists));
+      localStorage.setItem("savedChecklists", JSON.stringify(savedChecklists));
     }
   }, [savedChecklists]);
   const handleDropdownSelect = (itemId: string) => {
     setSelectedDropdown(itemId);
-    const item = dropdownItems.find(i => i.id === itemId);
+    const item = dropdownItems.find((i) => i.id === itemId);
     if (item?.showCreator) {
       // Navigate to creation dashboard first, not directly to generate
-      navigate('/create', {
+      navigate("/create", {
         state: {
-          contentType: itemId
-        }
+          contentType: itemId,
+        },
       });
     } else {
       // For non-creator items like Engagements, navigate to home with empty state
-      navigate('/', {
+      navigate("/", {
         state: {
-          clearContent: true
-        }
+          clearContent: true,
+        },
       });
     }
   };
   const toggleFolder = (id: string) => {
-    setTemplates(prev => prev.map(t => t.id === id ? {
-      ...t,
-      isExpanded: !t.isExpanded
-    } : t));
+    setTemplates((prev) =>
+      prev.map((t) =>
+        t.id === id
+          ? {
+              ...t,
+              isExpanded: !t.isExpanded,
+            }
+          : t,
+      ),
+    );
   };
 
   // Checklist actions
@@ -236,14 +319,14 @@ export function Sidebar() {
     const newChecklist: SavedChecklist = {
       ...checklist,
       id: `checklist-${Date.now()}`,
-      name: `${checklist.name} (Copy)`
+      name: `${checklist.name} (Copy)`,
     };
-    setSavedChecklists(prev => [...prev, newChecklist]);
+    setSavedChecklists((prev) => [...prev, newChecklist]);
   };
   const handleDelete = (checklistId: string) => {
-    setSavedChecklists(prev => prev.filter(c => c.id !== checklistId));
-    const remaining = savedChecklists.filter(c => c.id !== checklistId);
-    localStorage.setItem('savedChecklists', JSON.stringify(remaining));
+    setSavedChecklists((prev) => prev.filter((c) => c.id !== checklistId));
+    const remaining = savedChecklists.filter((c) => c.id !== checklistId);
+    localStorage.setItem("savedChecklists", JSON.stringify(remaining));
   };
   const handleRenameStart = (checklist: SavedChecklist) => {
     setSelectedChecklist(checklist);
@@ -252,10 +335,16 @@ export function Sidebar() {
   };
   const handleRenameConfirm = () => {
     if (selectedChecklist && renameValue.trim()) {
-      setSavedChecklists(prev => prev.map(c => c.id === selectedChecklist.id ? {
-        ...c,
-        name: renameValue.trim()
-      } : c));
+      setSavedChecklists((prev) =>
+        prev.map((c) =>
+          c.id === selectedChecklist.id
+            ? {
+                ...c,
+                name: renameValue.trim(),
+              }
+            : c,
+        ),
+      );
       setRenameDialogOpen(false);
       setSelectedChecklist(null);
     }
@@ -267,13 +356,19 @@ export function Sidebar() {
   };
   const handleMoveConfirm = () => {
     if (selectedChecklist && selectedMoveFolder) {
-      const targetFolder = templates.find(t => t.id === selectedMoveFolder);
+      const targetFolder = templates.find((t) => t.id === selectedMoveFolder);
       if (targetFolder) {
-        setSavedChecklists(prev => prev.map(c => c.id === selectedChecklist.id ? {
-          ...c,
-          folderId: selectedMoveFolder,
-          folderName: targetFolder.name
-        } : c));
+        setSavedChecklists((prev) =>
+          prev.map((c) =>
+            c.id === selectedChecklist.id
+              ? {
+                  ...c,
+                  folderId: selectedMoveFolder,
+                  folderName: targetFolder.name,
+                }
+              : c,
+          ),
+        );
       }
       setMoveDialogOpen(false);
       setSelectedChecklist(null);
@@ -282,183 +377,304 @@ export function Sidebar() {
 
   // Get checklists for a specific folder
   const getChecklistsForFolder = (folderId: string) => {
-    return savedChecklists.filter(c => c.folderId === folderId);
+    return savedChecklists.filter((c) => c.folderId === folderId);
   };
   const renderTemplate = (template: Template, depth = 0) => {
-    const folderChecklists = template.type === 'folder' ? getChecklistsForFolder(template.id) : [];
-    const hasChildren = template.children && template.children.length > 0 || folderChecklists.length > 0;
-    return <div key={template.id}>
-        <div className={`flex items-center gap-2 py-1.5 px-2 rounded-md cursor-pointer hover:bg-muted transition-colors text-sm ${depth > 0 ? 'ml-6' : ''}`} onClick={() => template.type === 'folder' && toggleFolder(template.id)}>
+    const folderChecklists = template.type === "folder" ? getChecklistsForFolder(template.id) : [];
+    const hasChildren = (template.children && template.children.length > 0) || folderChecklists.length > 0;
+    return (
+      <div key={template.id}>
+        <div
+          className={`flex items-center gap-2 py-1.5 px-2 rounded-md cursor-pointer hover:bg-muted transition-colors text-sm ${depth > 0 ? "ml-6" : ""}`}
+          onClick={() => template.type === "folder" && toggleFolder(template.id)}
+        >
           <Checkbox className="h-4 w-4 border-border" />
-          {template.type === 'folder' ? <>
-              {hasChildren ? template.isExpanded ? <ChevronDown className="h-4 w-4 text-muted-foreground flex-shrink-0" /> : <ChevronRight className="h-4 w-4 text-muted-foreground flex-shrink-0" /> : <span className="w-4 flex-shrink-0" />}
+          {template.type === "folder" ? (
+            <>
+              {hasChildren ? (
+                template.isExpanded ? (
+                  <ChevronDown className="h-4 w-4 text-muted-foreground flex-shrink-0" />
+                ) : (
+                  <ChevronRight className="h-4 w-4 text-muted-foreground flex-shrink-0" />
+                )
+              ) : (
+                <span className="w-4 flex-shrink-0" />
+              )}
               <Folder className="h-4 w-4 text-primary flex-shrink-0" />
-            </> : <>
+            </>
+          ) : (
+            <>
               <span className="w-4 flex-shrink-0" />
               <ClipboardList className="h-4 w-4 text-orange-500 flex-shrink-0" />
-            </>}
+            </>
+          )}
           <span className="truncate flex-1 text-foreground">{template.name}</span>
-          {folderChecklists.length > 0 && <span className="text-xs text-muted-foreground">{folderChecklists.length}</span>}
+          {folderChecklists.length > 0 && (
+            <span className="text-xs text-muted-foreground">{folderChecklists.length}</span>
+          )}
         </div>
-        {template.type === 'folder' && template.isExpanded && <>
+        {template.type === "folder" && template.isExpanded && (
+          <>
             {/* Render saved checklists */}
-            {folderChecklists.map(checklist => <div key={checklist.id} className="group flex items-center gap-2 py-1.5 px-2 pl-8 rounded-md cursor-pointer hover:bg-muted transition-colors text-sm" onClick={() => {
-          // Use a unique key to force re-render when clicking same route
-          navigate('/', {
-            state: {
-              checklistId: checklist.id,
-              timestamp: Date.now()
-            }
-          });
-        }}>
+            {folderChecklists.map((checklist) => (
+              <div
+                key={checklist.id}
+                className="group flex items-center gap-2 py-1.5 px-2 pl-8 rounded-md cursor-pointer hover:bg-muted transition-colors text-sm"
+                onClick={() => {
+                  // Use a unique key to force re-render when clicking same route
+                  navigate("/", {
+                    state: {
+                      checklistId: checklist.id,
+                      timestamp: Date.now(),
+                    },
+                  });
+                }}
+              >
                 <ClipboardList className="h-4 w-4 text-orange-500 flex-shrink-0" />
-                <span className="truncate flex-1 text-foreground">
-                  {checklist.name}
-                </span>
-                
+                <span className="truncate flex-1 text-foreground">{checklist.name}</span>
+
                 {/* Context Menu */}
                 <DropdownMenu>
-                  <DropdownMenuTrigger asChild onClick={e => e.stopPropagation()}>
+                  <DropdownMenuTrigger asChild onClick={(e) => e.stopPropagation()}>
                     <button className="opacity-0 group-hover:opacity-100 p-1 hover:bg-muted-foreground/10 rounded transition-opacity">
                       <MoreVertical className="h-3.5 w-3.5 text-muted-foreground" />
                     </button>
                   </DropdownMenuTrigger>
-                  <DropdownMenuContent align="start" className="w-48 bg-card border shadow-lg">
-                    <DropdownMenuItem onClick={e => {
-                e.stopPropagation();
-                handleDuplicate(checklist);
-              }} className="gap-2 cursor-pointer">
+                  <DropdownMenuContent align="start" className="w-48 bg-card border shadow-sm">
+                    <DropdownMenuItem
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleDuplicate(checklist);
+                      }}
+                      className="gap-2 cursor-pointer"
+                    >
                       <Copy className="h-4 w-4 text-primary" />
                       Duplicate
                     </DropdownMenuItem>
-                    <DropdownMenuItem onClick={e => {
-                e.stopPropagation();
-                handleDelete(checklist.id);
-              }} className="gap-2 cursor-pointer text-destructive focus:text-destructive">
+                    <DropdownMenuItem
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleDelete(checklist.id);
+                      }}
+                      className="gap-2 cursor-pointer text-destructive focus:text-destructive"
+                    >
                       <Trash2 className="h-4 w-4" />
                       Delete
                     </DropdownMenuItem>
                     <DropdownMenuSeparator />
-                    <DropdownMenuItem onClick={e => {
-                e.stopPropagation();
-                handleRenameStart(checklist);
-              }} className="gap-2 cursor-pointer">
+                    <DropdownMenuItem
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleRenameStart(checklist);
+                      }}
+                      className="gap-2 cursor-pointer"
+                    >
                       <Pencil className="h-4 w-4 text-primary" />
                       Rename
                     </DropdownMenuItem>
-                    <DropdownMenuItem onClick={e => {
-                e.stopPropagation();
-                handleMoveStart(checklist);
-              }} className="gap-2 cursor-pointer">
+                    <DropdownMenuItem
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleMoveStart(checklist);
+                      }}
+                      className="gap-2 cursor-pointer"
+                    >
                       <FolderInput className="h-4 w-4 text-primary" />
                       Move to different folder
                     </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>
-              </div>)}
+              </div>
+            ))}
             {/* Render child folders/templates */}
-            {template.children?.map(child => renderTemplate(child, depth + 1))}
-          </>}
-      </div>;
+            {template.children?.map((child) => renderTemplate(child, depth + 1))}
+          </>
+        )}
+      </div>
+    );
   };
   const [isNavExpanded, setIsNavExpanded] = useState(false);
-  return <div className="flex h-screen">
+  return (
+    <div className="flex h-screen">
       {/* Icon sidebar - dark navy with curved corner, expands on hover */}
-      <div className={`sidebar-nav flex flex-col py-4 gap-2 rounded-tr-[20px] rounded-br-[20px] transition-all duration-300 ease-in-out ${isNavExpanded ? 'w-48 items-start px-3' : 'w-14 items-center'}`} onMouseEnter={() => setIsNavExpanded(true)} onMouseLeave={() => setIsNavExpanded(false)}>
+      <div
+        className={`sidebar-nav flex flex-col py-4 gap-2 rounded-tr-[20px] rounded-br-[20px] transition-all duration-300 ease-in-out ${isNavExpanded ? "w-48 items-start px-3" : "w-14 items-center"}`}
+        onMouseEnter={() => setIsNavExpanded(true)}
+        onMouseLeave={() => setIsNavExpanded(false)}
+      >
         {/* Luka Logo */}
-        <div className={`h-10 mb-4 flex items-center ${isNavExpanded ? 'px-2' : 'justify-center w-10'}`}>
-          {isNavExpanded ? <svg width="140" height="19" viewBox="0 0 234 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M7.53909 28.2869C3.03402 25.659 0 20.7708 0 15.1701C0 6.79591 6.79591 0 15.1778 0C23.5597 0 30.3556 6.79591 30.3556 15.1778C30.3556 17.9743 29.5434 20.4184 28.218 22.6709L24.2645 20.3801C25.1456 18.8477 25.6436 17.0702 25.6436 15.1778C25.6436 9.40088 20.9547 4.71193 15.1778 4.71193C9.40088 4.71193 4.71193 9.40088 4.71193 15.1778C4.71193 19.0086 6.77292 22.3644 9.84525 24.1879L7.53909 28.2946V28.2869Z" fill="white" />
-              <path d="M34.3629 2.82739C38.8679 5.45535 41.9019 10.3435 41.9019 15.9442C41.9019 24.3261 35.106 31.122 26.7242 31.122C18.3423 31.122 11.5464 24.3261 11.5464 15.9442C11.5464 13.1477 12.3585 10.7036 13.684 8.45106L17.6374 10.7419C16.7563 12.2742 16.2583 14.0517 16.2583 15.9442C16.2583 21.7211 20.9473 26.41 26.7242 26.41C32.5011 26.41 37.19 21.7211 37.19 15.9442C37.19 12.1133 35.129 8.75753 32.0567 6.93405L34.3629 2.82739Z" fill="white" />
-              <path d="M65.7268 17.9589L70.7146 21.2611C68.9677 23.7281 66.0486 25.2835 62.6162 25.2835C56.9848 25.2835 52.7173 21.1002 52.7173 15.5455C52.7173 9.99076 56.9848 5.83813 62.6162 5.83813C66.0486 5.83813 68.9754 7.39346 70.7146 9.83753L65.7268 13.1397C65.0296 12.228 63.9263 11.6917 62.6162 11.6917C60.3866 11.6917 58.7547 13.3006 58.7547 15.5531C58.7547 17.8057 60.3943 19.4146 62.6162 19.4146C63.934 19.4146 65.0296 18.8783 65.7268 17.9666V17.9589Z" fill="white" />
-              <path d="M93.0561 15.5455C93.0561 21.1002 88.7885 25.2835 83.1572 25.2835C77.5259 25.2835 73.2583 21.1002 73.2583 15.5455C73.2583 9.99076 77.5259 5.83813 83.1572 5.83813C88.7885 5.83813 93.0561 10.0214 93.0561 15.5455ZM87.0187 15.5455C87.0187 13.2929 85.3791 11.684 83.1572 11.684C80.9353 11.684 79.2957 13.2929 79.2957 15.5455C79.2957 17.798 80.9353 19.407 83.1572 19.407C85.3791 19.407 87.0187 17.8287 87.0187 15.5455Z" fill="white" />
-              <path d="M114.853 6.15991V17.346C114.853 22.9237 111.39 25.2835 106.295 25.2835C101.2 25.2835 97.7373 22.9237 97.7373 17.346V6.15991H103.744V16.7024C103.744 18.4492 104.656 19.4146 106.295 19.4146C107.935 19.4146 108.816 18.4492 108.816 16.7024V6.15991H114.853Z" fill="white" />
-              <path d="M137.593 6.15991V24.931H132.146L126.246 15.4382V24.931H120.209V6.15991H125.656L131.556 15.6527V6.15991H137.593Z" fill="white" />
-              <path d="M156.954 11.684H152.556V24.931H146.518V11.684H142.144V6.15991H156.946V11.684H156.954Z" fill="white" />
-              <path d="M171.435 22.0349H166.125L165.32 24.931H158.831L165.106 6.15991H172.454L178.728 24.931H172.239L171.435 22.0349ZM170.278 17.8516L168.776 12.4042L167.274 17.8516H170.278Z" fill="white" />
-              <path d="M198.625 19.384C198.625 23.2225 196.021 24.9387 190.849 24.9387H182.75V6.15991H190.129C195.308 6.15991 197.936 7.6616 197.936 11.2319C197.936 13.1091 197.047 14.3196 195.599 15.0398V15.0934C197.476 15.8443 198.633 17.2157 198.633 19.384H198.625ZM188.78 10.5041V13.3772H189.884C191.14 13.3772 191.814 12.9175 191.814 11.9292C191.814 10.9408 191.14 10.5041 189.884 10.5041H188.78ZM192.534 18.9013C192.534 17.9129 191.837 17.4532 190.604 17.4532H188.78V20.38H190.604C191.837 20.38 192.534 19.8973 192.534 18.9013Z" fill="white" />
+        <div className={`h-10 mb-4 flex items-center ${isNavExpanded ? "px-2" : "justify-center w-10"}`}>
+          {isNavExpanded ? (
+            <svg width="140" height="19" viewBox="0 0 234 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path
+                d="M7.53909 28.2869C3.03402 25.659 0 20.7708 0 15.1701C0 6.79591 6.79591 0 15.1778 0C23.5597 0 30.3556 6.79591 30.3556 15.1778C30.3556 17.9743 29.5434 20.4184 28.218 22.6709L24.2645 20.3801C25.1456 18.8477 25.6436 17.0702 25.6436 15.1778C25.6436 9.40088 20.9547 4.71193 15.1778 4.71193C9.40088 4.71193 4.71193 9.40088 4.71193 15.1778C4.71193 19.0086 6.77292 22.3644 9.84525 24.1879L7.53909 28.2946V28.2869Z"
+                fill="white"
+              />
+              <path
+                d="M34.3629 2.82739C38.8679 5.45535 41.9019 10.3435 41.9019 15.9442C41.9019 24.3261 35.106 31.122 26.7242 31.122C18.3423 31.122 11.5464 24.3261 11.5464 15.9442C11.5464 13.1477 12.3585 10.7036 13.684 8.45106L17.6374 10.7419C16.7563 12.2742 16.2583 14.0517 16.2583 15.9442C16.2583 21.7211 20.9473 26.41 26.7242 26.41C32.5011 26.41 37.19 21.7211 37.19 15.9442C37.19 12.1133 35.129 8.75753 32.0567 6.93405L34.3629 2.82739Z"
+                fill="white"
+              />
+              <path
+                d="M65.7268 17.9589L70.7146 21.2611C68.9677 23.7281 66.0486 25.2835 62.6162 25.2835C56.9848 25.2835 52.7173 21.1002 52.7173 15.5455C52.7173 9.99076 56.9848 5.83813 62.6162 5.83813C66.0486 5.83813 68.9754 7.39346 70.7146 9.83753L65.7268 13.1397C65.0296 12.228 63.9263 11.6917 62.6162 11.6917C60.3866 11.6917 58.7547 13.3006 58.7547 15.5531C58.7547 17.8057 60.3943 19.4146 62.6162 19.4146C63.934 19.4146 65.0296 18.8783 65.7268 17.9666V17.9589Z"
+                fill="white"
+              />
+              <path
+                d="M93.0561 15.5455C93.0561 21.1002 88.7885 25.2835 83.1572 25.2835C77.5259 25.2835 73.2583 21.1002 73.2583 15.5455C73.2583 9.99076 77.5259 5.83813 83.1572 5.83813C88.7885 5.83813 93.0561 10.0214 93.0561 15.5455ZM87.0187 15.5455C87.0187 13.2929 85.3791 11.684 83.1572 11.684C80.9353 11.684 79.2957 13.2929 79.2957 15.5455C79.2957 17.798 80.9353 19.407 83.1572 19.407C85.3791 19.407 87.0187 17.8287 87.0187 15.5455Z"
+                fill="white"
+              />
+              <path
+                d="M114.853 6.15991V17.346C114.853 22.9237 111.39 25.2835 106.295 25.2835C101.2 25.2835 97.7373 22.9237 97.7373 17.346V6.15991H103.744V16.7024C103.744 18.4492 104.656 19.4146 106.295 19.4146C107.935 19.4146 108.816 18.4492 108.816 16.7024V6.15991H114.853Z"
+                fill="white"
+              />
+              <path
+                d="M137.593 6.15991V24.931H132.146L126.246 15.4382V24.931H120.209V6.15991H125.656L131.556 15.6527V6.15991H137.593Z"
+                fill="white"
+              />
+              <path
+                d="M156.954 11.684H152.556V24.931H146.518V11.684H142.144V6.15991H156.946V11.684H156.954Z"
+                fill="white"
+              />
+              <path
+                d="M171.435 22.0349H166.125L165.32 24.931H158.831L165.106 6.15991H172.454L178.728 24.931H172.239L171.435 22.0349ZM170.278 17.8516L168.776 12.4042L167.274 17.8516H170.278Z"
+                fill="white"
+              />
+              <path
+                d="M198.625 19.384C198.625 23.2225 196.021 24.9387 190.849 24.9387H182.75V6.15991H190.129C195.308 6.15991 197.936 7.6616 197.936 11.2319C197.936 13.1091 197.047 14.3196 195.599 15.0398V15.0934C197.476 15.8443 198.633 17.2157 198.633 19.384H198.625ZM188.78 10.5041V13.3772H189.884C191.14 13.3772 191.814 12.9175 191.814 11.9292C191.814 10.9408 191.14 10.5041 189.884 10.5041H188.78ZM192.534 18.9013C192.534 17.9129 191.837 17.4532 190.604 17.4532H188.78V20.38H190.604C191.837 20.38 192.534 19.8973 192.534 18.9013Z"
+                fill="white"
+              />
               <path d="M216.218 19.4069V24.931H203.185V6.15991H209.222V19.4069H216.225H216.218Z" fill="white" />
-              <path d="M234 19.8896V24.931H220.776V6.15991H233.755V11.2013H226.806V13.2929H232.897V17.6371H226.806V19.8896H233.992H234Z" fill="white" />
-            </svg> : <LukaLogo />}
+              <path
+                d="M234 19.8896V24.931H220.776V6.15991H233.755V11.2013H226.806V13.2929H232.897V17.6371H226.806V19.8896H233.992H234Z"
+                fill="white"
+              />
+            </svg>
+          ) : (
+            <LukaLogo />
+          )}
         </div>
-        
+
         {/* Nav items */}
-        {navItems.map((item, index) => <div key={index} className={`sidebar-item ${item.active ? 'active' : ''} ${isNavExpanded ? 'w-full justify-start gap-3 px-3' : ''}`} title={!isNavExpanded ? item.label : undefined}>
+        {navItems.map((item, index) => (
+          <div
+            key={index}
+            className={`sidebar-item ${item.active ? "active" : ""} ${isNavExpanded ? "w-full justify-start gap-3 px-3" : ""}`}
+            title={!isNavExpanded ? item.label : undefined}
+          >
             <item.icon />
             {isNavExpanded && <span className="text-sm font-medium whitespace-nowrap">{item.label}</span>}
-          </div>)}
-        
+          </div>
+        ))}
+
         {/* Spacer */}
         <div className="flex-1" />
-        
+
         {/* Bottom icons */}
-        <div className={`sidebar-item ${isNavExpanded ? 'w-full justify-start gap-3 px-3' : ''}`} title={!isNavExpanded ? "Support" : undefined}>
+        <div
+          className={`sidebar-item ${isNavExpanded ? "w-full justify-start gap-3 px-3" : ""}`}
+          title={!isNavExpanded ? "Support" : undefined}
+        >
           <Headphones className="h-5 w-5" />
           {isNavExpanded && <span className="text-sm font-medium">Support</span>}
         </div>
-        <div className={`sidebar-item cursor-pointer ${isNavExpanded ? 'w-full justify-start gap-3 px-3' : ''}`} title={!isNavExpanded ? isNavExpanded ? "Collapse" : "Expand" : undefined} onClick={() => setIsNavExpanded(!isNavExpanded)}>
+        <div
+          className={`sidebar-item cursor-pointer ${isNavExpanded ? "w-full justify-start gap-3 px-3" : ""}`}
+          title={!isNavExpanded ? (isNavExpanded ? "Collapse" : "Expand") : undefined}
+          onClick={() => setIsNavExpanded(!isNavExpanded)}
+        >
           {isNavExpanded ? <ChevronLeft className="h-5 w-5" /> : <ChevronRight className="h-5 w-5" />}
           {isNavExpanded && <span className="text-sm font-medium">Collapse</span>}
         </div>
       </div>
 
       {/* Templates panel */}
-      <div 
-        className={`flex flex-col rounded-tr-[20px] rounded-br-[20px] relative z-10 shadow bg-[#f5f8fa] transition-all duration-300 group/templates ${isTemplatesPanelCollapsed ? 'w-0 overflow-hidden' : 'w-60'}`} 
+      <div
+        className={`flex flex-col rounded-tr-[20px] rounded-br-[20px] relative z-10 shadow bg-[#f5f8fa] transition-all duration-300 group/templates ${isTemplatesPanelCollapsed ? "w-0 overflow-hidden" : "w-60"}`}
         style={{
-          backgroundColor: '#F5F8FA',
-          boxShadow: isTemplatesPanelCollapsed ? 'none' : '3px 0 3px 0px rgba(0,0,0,0.05)'
+          backgroundColor: "#F5F8FA",
+          boxShadow: isTemplatesPanelCollapsed ? "none" : "3px 0 3px 0px rgba(0,0,0,0.05)",
         }}
       >
-        <div className={`p-4 ${isTemplatesPanelCollapsed ? 'hidden' : ''}`}>
+        <div className={`p-4 ${isTemplatesPanelCollapsed ? "hidden" : ""}`}>
           <h2 className="font-semibold text-primary text-lg mb-3">Templates</h2>
           <DropdownMenu>
             <DropdownMenuTrigger className="w-full px-3 py-2 bg-white/80 rounded-lg text-sm flex items-center justify-between focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors shadow-sm">
               <div className="flex items-center gap-2">
                 {(() => {
-                const selected = dropdownItems.find(item => item.id === selectedDropdown);
-                if (selected) {
-                  const IconComponent = selected.icon;
-                  return <>
+                  const selected = dropdownItems.find((item) => item.id === selectedDropdown);
+                  if (selected) {
+                    const IconComponent = selected.icon;
+                    return (
+                      <>
                         <IconComponent className={`h-4 w-4 ${selected.color}`} />
                         <span>{selected.label}</span>
-                      </>;
-                }
-                return <span>Select...</span>;
-              })()}
+                      </>
+                    );
+                  }
+                  return <span>Select...</span>;
+                })()}
               </div>
               <ChevronDown className="h-4 w-4 text-muted-foreground" />
             </DropdownMenuTrigger>
             <DropdownMenuContent align="start" className="w-[200px]">
-              {dropdownItems.map(item => <DropdownMenuItem key={item.id} onClick={() => handleDropdownSelect(item.id)} className="flex items-center justify-between cursor-pointer">
+              {dropdownItems.map((item) => (
+                <DropdownMenuItem
+                  key={item.id}
+                  onClick={() => handleDropdownSelect(item.id)}
+                  className="flex items-center justify-between cursor-pointer"
+                >
                   <div className="flex items-center gap-2">
                     <item.icon className={`h-4 w-4 ${item.color}`} />
                     <span>{item.label}</span>
                   </div>
                   {selectedDropdown === item.id && <Check className="h-4 w-4 text-primary" />}
-                </DropdownMenuItem>)}
+                </DropdownMenuItem>
+              ))}
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
 
-        <div className={`flex mb-2 ${isTemplatesPanelCollapsed ? 'hidden' : ''}`} style={{ borderBottom: '1px solid #DDE1E9' }}>
-          <button onClick={() => setActiveTab('firm')} className={`flex-1 py-2 px-1 text-sm font-medium transition-all text-center whitespace-nowrap ${activeTab === 'firm' ? 'text-primary border-b-[3px]' : 'text-muted-foreground hover:text-foreground border-b-[3px] border-transparent'}`} style={activeTab === 'firm' ? {
-          borderBottomColor: '#0A3159'
-        } : undefined}>
+        <div
+          className={`flex mb-2 ${isTemplatesPanelCollapsed ? "hidden" : ""}`}
+          style={{ borderBottom: "1px solid #DDE1E9" }}
+        >
+          <button
+            onClick={() => setActiveTab("firm")}
+            className={`flex-1 py-2 px-1 text-sm font-medium transition-all text-center whitespace-nowrap ${activeTab === "firm" ? "text-primary border-b-[3px]" : "text-muted-foreground hover:text-foreground border-b-[3px] border-transparent"}`}
+            style={
+              activeTab === "firm"
+                ? {
+                    borderBottomColor: "#0A3159",
+                  }
+                : undefined
+            }
+          >
             Firm Templates
           </button>
-          <button onClick={() => setActiveTab('master')} className={`flex-1 py-2 px-1 text-sm font-medium transition-all text-center whitespace-nowrap ${activeTab === 'master' ? 'text-primary border-b-[3px]' : 'text-muted-foreground hover:text-foreground border-b-[3px] border-transparent'}`} style={activeTab === 'master' ? {
-          borderBottomColor: '#0A3159'
-        } : undefined}>
+          <button
+            onClick={() => setActiveTab("master")}
+            className={`flex-1 py-2 px-1 text-sm font-medium transition-all text-center whitespace-nowrap ${activeTab === "master" ? "text-primary border-b-[3px]" : "text-muted-foreground hover:text-foreground border-b-[3px] border-transparent"}`}
+            style={
+              activeTab === "master"
+                ? {
+                    borderBottomColor: "#0A3159",
+                  }
+                : undefined
+            }
+          >
             Master Library
           </button>
         </div>
 
-        <div className={`p-3 pt-1 ${isTemplatesPanelCollapsed ? 'hidden' : ''}`}>
+        <div className={`p-3 pt-1 ${isTemplatesPanelCollapsed ? "hidden" : ""}`}>
           <div className="flex gap-2">
             <div className="relative flex-1">
               <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-              <Input placeholder="Search" className="pl-8 h-8 text-sm bg-white/80 border-0 shadow-sm" value={searchQuery} onChange={e => setSearchQuery(e.target.value)} />
+              <Input
+                placeholder="Search"
+                className="pl-8 h-8 text-sm bg-white/80 border-0 shadow-sm"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
             </div>
             <Button size="icon" variant="ghost" className="h-8 w-8 hover:bg-white/50">
               <Expand className="h-4 w-4" />
@@ -466,27 +682,31 @@ export function Sidebar() {
             <Button size="icon" className="h-8 w-8 bg-primary hover:bg-primary/90 shadow-sm">
               <Plus className="h-4 w-4 text-primary-foreground" />
             </Button>
-            <Button size="icon" variant="ghost" className="h-8 w-8 text-destructive hover:text-destructive hover:bg-white/50">
+            <Button
+              size="icon"
+              variant="ghost"
+              className="h-8 w-8 text-destructive hover:text-destructive hover:bg-white/50"
+            >
               <Trash2 className="h-4 w-4" />
             </Button>
           </div>
         </div>
 
-        <div className={`flex-1 overflow-y-auto p-2 pt-0 rounded-tr-[20px] rounded-br-[20px] ${isTemplatesPanelCollapsed ? 'hidden' : ''}`}>
-          {templates.map(template => renderTemplate(template))}
+        <div
+          className={`flex-1 overflow-y-auto p-2 pt-0 rounded-tr-[20px] rounded-br-[20px] ${isTemplatesPanelCollapsed ? "hidden" : ""}`}
+        >
+          {templates.map((template) => renderTemplate(template))}
         </div>
 
         {/* Collapse handle - overlapped on border, visible on hover */}
-        <div 
+        <div
           className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-1/2 opacity-0 group-hover/templates:opacity-100 transition-opacity duration-200 cursor-pointer z-20"
           onClick={(e) => {
             e.stopPropagation();
             setIsTemplatesPanelCollapsed(!isTemplatesPanelCollapsed);
           }}
         >
-          <div 
-            className="flex items-center justify-center w-4 h-8 bg-white border border-[#DDE1E9] shadow-sm hover:bg-[#E8EDF2] transition-all rounded-full"
-          >
+          <div className="flex items-center justify-center w-4 h-8 bg-white border border-[#DDE1E9] shadow-sm hover:bg-[#E8EDF2] transition-all rounded-full">
             {isTemplatesPanelCollapsed ? (
               <ChevronRight className="h-3 w-3 text-primary" />
             ) : (
@@ -498,13 +718,8 @@ export function Sidebar() {
 
       {/* Expand handle when collapsed - always visible */}
       {isTemplatesPanelCollapsed && (
-        <div 
-          className="flex items-center cursor-pointer"
-          onClick={() => setIsTemplatesPanelCollapsed(false)}
-        >
-          <div 
-            className="flex items-center justify-center w-4 h-8 bg-white border border-[#DDE1E9] shadow-sm hover:bg-[#E8EDF2] transition-all rounded-full"
-          >
+        <div className="flex items-center cursor-pointer" onClick={() => setIsTemplatesPanelCollapsed(false)}>
+          <div className="flex items-center justify-center w-4 h-8 bg-white border border-[#DDE1E9] shadow-sm hover:bg-[#E8EDF2] transition-all rounded-full">
             <ChevronRight className="h-3 w-3 text-primary" />
           </div>
         </div>
@@ -517,15 +732,26 @@ export function Sidebar() {
             <DialogTitle>Rename Checklist</DialogTitle>
           </DialogHeader>
           <div className="py-4">
-            <Input value={renameValue} onChange={e => setRenameValue(e.target.value)} placeholder="Enter new name" className="w-full" autoFocus onKeyDown={e => {
-            if (e.key === 'Enter') handleRenameConfirm();
-          }} />
+            <Input
+              value={renameValue}
+              onChange={(e) => setRenameValue(e.target.value)}
+              placeholder="Enter new name"
+              className="w-full"
+              autoFocus
+              onKeyDown={(e) => {
+                if (e.key === "Enter") handleRenameConfirm();
+              }}
+            />
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setRenameDialogOpen(false)}>
               Cancel
             </Button>
-            <Button onClick={handleRenameConfirm} disabled={!renameValue.trim()} className="bg-primary hover:bg-primary/90">
+            <Button
+              onClick={handleRenameConfirm}
+              disabled={!renameValue.trim()}
+              className="bg-primary hover:bg-primary/90"
+            >
               Rename
             </Button>
           </DialogFooter>
@@ -543,22 +769,35 @@ export function Sidebar() {
               Select a folder to move "{selectedChecklist?.name}" to:
             </p>
             <div className="border rounded-lg p-3 space-y-1 max-h-64 overflow-y-auto bg-background">
-              {templates.map(folder => <div key={folder.id} className={`flex items-center gap-2 py-2 px-2 rounded-md cursor-pointer transition-colors ${selectedMoveFolder === folder.id ? 'bg-primary/10 text-primary' : 'hover:bg-muted'}`} onClick={() => setSelectedMoveFolder(folder.id)}>
-                  <Folder className={`h-4 w-4 ${selectedMoveFolder === folder.id ? 'text-primary' : 'text-muted-foreground'}`} />
+              {templates.map((folder) => (
+                <div
+                  key={folder.id}
+                  className={`flex items-center gap-2 py-2 px-2 rounded-md cursor-pointer transition-colors ${selectedMoveFolder === folder.id ? "bg-primary/10 text-primary" : "hover:bg-muted"}`}
+                  onClick={() => setSelectedMoveFolder(folder.id)}
+                >
+                  <Folder
+                    className={`h-4 w-4 ${selectedMoveFolder === folder.id ? "text-primary" : "text-muted-foreground"}`}
+                  />
                   <span className="text-sm truncate flex-1">{folder.name}</span>
                   {selectedMoveFolder === folder.id && <Check className="h-4 w-4 text-primary" />}
-                </div>)}
+                </div>
+              ))}
             </div>
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setMoveDialogOpen(false)}>
               Cancel
             </Button>
-            <Button onClick={handleMoveConfirm} disabled={!selectedMoveFolder || selectedMoveFolder === selectedChecklist?.folderId} className="bg-primary hover:bg-primary/90">
+            <Button
+              onClick={handleMoveConfirm}
+              disabled={!selectedMoveFolder || selectedMoveFolder === selectedChecklist?.folderId}
+              className="bg-primary hover:bg-primary/90"
+            >
               Move
             </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
-    </div>;
+    </div>
+  );
 }
