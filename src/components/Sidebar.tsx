@@ -444,7 +444,7 @@ export function Sidebar() {
       </div>
 
       {/* Templates panel */}
-      <div className="w-60 flex flex-col rounded-tr-[20px] rounded-br-[20px] shadow-[4px_0_16px_-4px_rgba(0,0,0,0.1)]" style={{ backgroundColor: '#DDE1E9' }}>
+      <div className="w-60 flex flex-col rounded-tr-[20px] rounded-br-[20px] shadow-[4px_0_16px_-4px_rgba(0,0,0,0.1)]" style={{ backgroundColor: '#F5F8FA' }}>
         <div className="p-4">
           <h2 className="font-semibold text-primary text-lg mb-3">Templates</h2>
           <DropdownMenu>
@@ -536,7 +536,7 @@ export function Sidebar() {
 
         <div 
           className="flex-1 overflow-y-auto p-2 pt-0 rounded-tr-[20px] rounded-br-[20px]" 
-          style={{ backgroundColor: '#FDFDFF', boxShadow: '4px 0 12px -2px rgba(0,0,0,0.08)' }}
+          style={{ boxShadow: '4px 0 12px -2px rgba(0,0,0,0.08)' }}
         >
           {templates.map(template => renderTemplate(template))}
         </div>
