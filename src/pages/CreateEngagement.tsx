@@ -161,20 +161,20 @@ const TeamMemberRow = ({
   onEdit: () => void;
   onDelete: () => void;
 }) => (
-  <tr className="border-b border-gray-100 last:border-0">
-    <td className="py-3 px-4">
+  <tr className="hover:bg-[#F8FAFC] transition-colors group">
+    <td className="py-3 px-5">
       <Checkbox />
     </td>
-    <td className="py-3 px-4 text-sm text-foreground">{member.role}</td>
-    <td className="py-3 px-4 text-sm text-foreground">{member.name}</td>
-    <td className="py-3 px-4 text-sm text-muted-foreground">{member.email}</td>
-    <td className="py-3 px-4 text-sm text-muted-foreground">{member.title}</td>
-    <td className="py-3 px-4 text-sm text-foreground text-right">{member.hourlyRate.toFixed(2)}</td>
-    <td className="py-3 px-4 text-sm text-foreground text-right">{member.timeAllocation}</td>
-    <td className="py-3 px-4 text-sm text-foreground text-right">{member.budgetedCost.toFixed(2)}</td>
-    <td className="py-3 px-4 text-sm text-foreground text-right">{member.budgetedHours.toFixed(2)}</td>
-    <td className="py-3 px-4">
-      <div className="flex items-center gap-1">
+    <td className="py-3 px-5 text-sm text-foreground">{member.role}</td>
+    <td className="py-3 px-5 text-sm text-foreground">{member.name}</td>
+    <td className="py-3 px-5 text-sm text-muted-foreground">{member.email}</td>
+    <td className="py-3 px-5 text-sm text-muted-foreground">{member.title}</td>
+    <td className="py-3 px-5 text-sm text-foreground text-right">{member.hourlyRate.toFixed(2)}</td>
+    <td className="py-3 px-5 text-sm text-foreground text-right">{member.timeAllocation}</td>
+    <td className="py-3 px-5 text-sm text-foreground text-right">{member.budgetedCost.toFixed(2)}</td>
+    <td className="py-3 px-5 text-sm text-foreground text-right">{member.budgetedHours.toFixed(2)}</td>
+    <td className="py-3 px-5">
+      <div className="flex items-center gap-1.5 opacity-60 group-hover:opacity-100 transition-opacity">
         <button onClick={onEdit} className="p-1.5 hover:bg-gray-100 rounded transition-colors">
           <Pencil className="h-4 w-4 text-muted-foreground" />
         </button>
@@ -452,23 +452,23 @@ export default function CreateEngagement() {
 
               <div className="overflow-x-auto">
                 <table className="w-full">
-                  <thead>
-                    <tr className="border-b border-gray-200">
-                      <th className="py-3 px-4 text-left">
+                  <thead className="sticky top-0 z-10">
+                    <tr style={{ backgroundColor: "#F5F8FA" }}>
+                      <th className="py-3 px-5 text-left">
                         <Checkbox />
                       </th>
-                      <th className="py-3 px-4 text-left text-xs font-medium text-muted-foreground">Role <span className="text-red-500">*</span></th>
-                      <th className="py-3 px-4 text-left text-xs font-medium text-muted-foreground">Team member <span className="text-red-500">*</span></th>
-                      <th className="py-3 px-4 text-left text-xs font-medium text-muted-foreground">Email</th>
-                      <th className="py-3 px-4 text-left text-xs font-medium text-muted-foreground">Title</th>
-                      <th className="py-3 px-4 text-right text-xs font-medium text-muted-foreground">Hourly rate ($) <span className="text-red-500">*</span></th>
-                      <th className="py-3 px-4 text-right text-xs font-medium text-muted-foreground">Time allocation (%) <span className="text-red-500">*</span></th>
-                      <th className="py-3 px-4 text-right text-xs font-medium text-muted-foreground">Budgeted cost ($)</th>
-                      <th className="py-3 px-4 text-right text-xs font-medium text-muted-foreground">Budgeted hours (H)</th>
-                      <th className="py-3 px-4 text-left text-xs font-medium text-muted-foreground">Actions</th>
+                      <th className="text-left px-5 py-3 text-xs font-semibold text-muted-foreground uppercase tracking-wider">Role <span className="text-red-500 normal-case">*</span></th>
+                      <th className="text-left px-5 py-3 text-xs font-semibold text-muted-foreground uppercase tracking-wider">Team Member <span className="text-red-500 normal-case">*</span></th>
+                      <th className="text-left px-5 py-3 text-xs font-semibold text-muted-foreground uppercase tracking-wider">Email</th>
+                      <th className="text-left px-5 py-3 text-xs font-semibold text-muted-foreground uppercase tracking-wider">Title</th>
+                      <th className="text-right px-5 py-3 text-xs font-semibold text-muted-foreground uppercase tracking-wider">Hourly Rate ($) <span className="text-red-500 normal-case">*</span></th>
+                      <th className="text-right px-5 py-3 text-xs font-semibold text-muted-foreground uppercase tracking-wider">Time Allocation (%) <span className="text-red-500 normal-case">*</span></th>
+                      <th className="text-right px-5 py-3 text-xs font-semibold text-muted-foreground uppercase tracking-wider">Budgeted Cost ($)</th>
+                      <th className="text-right px-5 py-3 text-xs font-semibold text-muted-foreground uppercase tracking-wider">Budgeted Hours (H)</th>
+                      <th className="text-left px-5 py-3 text-xs font-semibold text-muted-foreground uppercase tracking-wider">Actions</th>
                     </tr>
                   </thead>
-                  <tbody>
+                  <tbody className="divide-y divide-gray-100">
                     {teamMembers.map((member, index) => (
                       <TeamMemberRow
                         key={index}
@@ -479,13 +479,13 @@ export default function CreateEngagement() {
                     ))}
                   </tbody>
                   <tfoot>
-                    <tr className="border-t border-gray-200 bg-gray-50/50">
+                    <tr style={{ backgroundColor: "#F5F8FA" }}>
                       <td colSpan={4}></td>
-                      <td className="py-3 px-4 text-sm font-medium text-foreground">Avg Engagement Rate</td>
-                      <td className="py-3 px-4 text-sm font-medium text-foreground text-right">0.00</td>
-                      <td className="py-3 px-4 text-sm font-medium text-foreground text-right">0</td>
-                      <td className="py-3 px-4 text-sm font-medium text-foreground text-right">1000.00</td>
-                      <td className="py-3 px-4 text-sm font-medium text-foreground text-right">0.00</td>
+                      <td className="py-3 px-5 text-sm font-medium text-foreground">Avg Engagement Rate</td>
+                      <td className="py-3 px-5 text-sm font-medium text-foreground text-right">0.00</td>
+                      <td className="py-3 px-5 text-sm font-medium text-foreground text-right">0</td>
+                      <td className="py-3 px-5 text-sm font-medium text-foreground text-right">1000.00</td>
+                      <td className="py-3 px-5 text-sm font-medium text-foreground text-right">0.00</td>
                       <td></td>
                     </tr>
                   </tfoot>
