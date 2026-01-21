@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Search, ChevronDown, Pencil, Trash2, Download } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -53,6 +54,7 @@ const StatusBadge = ({ status, hasRF }: { status: string; hasRF: boolean }) => {
 };
 
 export default function Engagements() {
+  const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState("");
   const [filterPeriod, setFilterPeriod] = useState("Last 6 Month Engagements");
 
@@ -99,7 +101,10 @@ export default function Engagements() {
                 <Download className="mr-2 h-4 w-4" />
                 Export
               </Button>
-              <Button className="bg-primary hover:bg-primary/90 text-white h-9 px-4 text-sm font-medium">
+              <Button 
+                onClick={() => navigate("/engagements/create")}
+                className="bg-primary hover:bg-primary/90 text-white h-9 px-4 text-sm font-medium"
+              >
                 Create Engagement
               </Button>
             </div>
