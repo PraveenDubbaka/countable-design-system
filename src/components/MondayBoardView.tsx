@@ -102,6 +102,191 @@ const EXISTING_DOCUMENTS = [
   { id: 'doc4', name: 'Reference Manual.pdf', type: 'pdf' },
 ];
 
+// Sortable Option Row for edit popovers
+interface SortableOptionRowProps {
+  id: string;
+  value: string;
+  index: number;
+  onChange: (value: string) => void;
+  onRemove: () => void;
+  canRemove: boolean;
+}
+
+function SortableOptionRow({ id, value, index, onChange, onRemove, canRemove }: SortableOptionRowProps) {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    opacity: isDragging ? 0.5 : 1,
+  };
+
+  return (
+    <div 
+      ref={setNodeRef} 
+      style={style} 
+      className="flex items-center gap-1"
+    >
+      <button
+        type="button"
+        className="p-0.5 text-gray-400 hover:text-gray-600 cursor-grab active:cursor-grabbing touch-none"
+        {...attributes}
+        {...listeners}
+      >
+        <GripVertical className="h-3 w-3" />
+      </button>
+      <input
+        type="text"
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        className="flex-1 px-2 py-1 text-xs bg-white border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-primary"
+        placeholder={`Option ${index + 1}`}
+      />
+      <button
+        type="button"
+        onClick={onRemove}
+        disabled={!canRemove}
+        className="p-1 text-gray-400 hover:text-red-500 disabled:opacity-30 disabled:cursor-not-allowed"
+      >
+        <X className="h-3.5 w-3.5" />
+      </button>
+    </div>
+  );
+}
+
+// Shared Edit Options Popover Content
+interface EditOptionsPopoverProps {
+  editingOptions: string[];
+  setEditingOptions: (options: string[]) => void;
+  newOption: string;
+  setNewOption: (value: string) => void;
+  onSave: () => void;
+  onCancel: () => void;
+}
+
+function EditOptionsPopoverContent({
+  editingOptions,
+  setEditingOptions,
+  newOption,
+  setNewOption,
+  onSave,
+  onCancel,
+}: EditOptionsPopoverProps) {
+  const sensors = useSensors(
+    useSensor(PointerSensor, { activationConstraint: { distance: 3 } }),
+    useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
+  );
+
+  const handleDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event;
+    if (over && active.id !== over.id) {
+      const oldIndex = editingOptions.findIndex((_, i) => `option-${i}` === active.id);
+      const newIndex = editingOptions.findIndex((_, i) => `option-${i}` === over.id);
+      if (oldIndex !== -1 && newIndex !== -1) {
+        const newOptions = [...editingOptions];
+        const [removed] = newOptions.splice(oldIndex, 1);
+        newOptions.splice(newIndex, 0, removed);
+        setEditingOptions(newOptions);
+      }
+    }
+  };
+
+  const handleOptionChange = (index: number, value: string) => {
+    const updated = [...editingOptions];
+    updated[index] = value;
+    setEditingOptions(updated);
+  };
+
+  const handleRemoveOption = (index: number) => {
+    if (editingOptions.length <= 1) return;
+    setEditingOptions(editingOptions.filter((_, i) => i !== index));
+  };
+
+  const handleAddOption = () => {
+    const trimmed = newOption.trim();
+    if (trimmed && !editingOptions.includes(trimmed)) {
+      setEditingOptions([...editingOptions, trimmed]);
+      setNewOption('');
+    }
+  };
+
+  return (
+    <div className="flex flex-col gap-2">
+      <div className="text-xs font-medium text-gray-700 mb-1">Edit Options</div>
+      <DndContext
+        sensors={sensors}
+        collisionDetection={closestCenter}
+        onDragEnd={handleDragEnd}
+      >
+        <SortableContext
+          items={editingOptions.map((_, i) => `option-${i}`)}
+          strategy={verticalListSortingStrategy}
+        >
+          <div className="flex flex-col gap-1.5 max-h-40 overflow-y-auto">
+            {editingOptions.map((opt, i) => (
+              <SortableOptionRow
+                key={`option-${i}`}
+                id={`option-${i}`}
+                value={opt}
+                index={i}
+                onChange={(value) => handleOptionChange(i, value)}
+                onRemove={() => handleRemoveOption(i)}
+                canRemove={editingOptions.length > 1}
+              />
+            ))}
+          </div>
+        </SortableContext>
+      </DndContext>
+      <div className="flex items-center gap-1.5">
+        <input
+          type="text"
+          value={newOption}
+          onChange={(e) => setNewOption(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter') {
+              e.preventDefault();
+              handleAddOption();
+            }
+          }}
+          placeholder="Add new option..."
+          className="flex-1 px-2 py-1 text-xs bg-white border border-gray-300 border-dashed rounded focus:outline-none focus:ring-1 focus:ring-primary"
+        />
+        <button
+          type="button"
+          onClick={handleAddOption}
+          disabled={!newOption.trim()}
+          className="p-1 text-gray-400 hover:text-green-600 disabled:opacity-30"
+        >
+          <Plus className="h-3.5 w-3.5" />
+        </button>
+      </div>
+      <div className="flex justify-end gap-1.5 pt-2 border-t border-gray-200">
+        <button
+          type="button"
+          onClick={onCancel}
+          className="px-2 py-1 text-xs text-gray-600 hover:bg-gray-100 rounded transition-colors"
+        >
+          Cancel
+        </button>
+        <button
+          type="button"
+          onClick={onSave}
+          className="px-2 py-1 text-xs bg-primary text-primary-foreground hover:bg-primary/90 rounded transition-colors"
+        >
+          Save
+        </button>
+      </div>
+    </div>
+  );
+}
+
 // Multiple Choice Field Component with multi-select and edit support
 interface MultipleChoiceFieldProps {
   options: string[];
@@ -151,9 +336,7 @@ function MultipleChoiceField({
   const handleSaveEdit = () => {
     const validOptions = editingOptions.filter(o => o.trim() !== '');
     if (validOptions.length > 0) {
-      // Use refs to ensure we have latest callback references
       onOptionsChangeRef.current(validOptions);
-      // Remove any selected answers that no longer exist in options
       const validAnswers = selectedAnswers.filter(a => validOptions.includes(a));
       if (validAnswers.length !== selectedAnswers.length) {
         onAnswerChangeRef.current(validAnswers);
@@ -161,25 +344,6 @@ function MultipleChoiceField({
     }
     setIsEditOpen(false);
     setNewOption('');
-  };
-
-  const handleOptionChange = (index: number, value: string) => {
-    const updated = [...editingOptions];
-    updated[index] = value;
-    setEditingOptions(updated);
-  };
-
-  const handleRemoveOption = (index: number) => {
-    if (editingOptions.length <= 1) return;
-    setEditingOptions(editingOptions.filter((_, i) => i !== index));
-  };
-
-  const handleAddOption = () => {
-    const trimmed = newOption.trim();
-    if (trimmed && !editingOptions.includes(trimmed)) {
-      setEditingOptions([...editingOptions, trimmed]);
-      setNewOption('');
-    }
   };
 
   const textSize = size === 'sm' ? 'text-xs' : 'text-sm';
@@ -223,75 +387,25 @@ function MultipleChoiceField({
             </button>
           </PopoverTrigger>
           <PopoverContent 
-            className="w-64 p-3 bg-white border border-gray-200 shadow-lg" 
+            className="w-64 p-3 bg-white border border-gray-200 shadow-lg z-50" 
             align="start"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="flex flex-col gap-2">
-              <div className="text-xs font-medium text-gray-700 mb-1">Edit Options</div>
-              <div className="flex flex-col gap-1.5 max-h-40 overflow-y-auto">
-                {editingOptions.map((opt, i) => (
-                  <div key={i} className="flex items-center gap-1.5">
-                    <input
-                      type="text"
-                      value={opt}
-                      onChange={(e) => handleOptionChange(i, e.target.value)}
-                      className="flex-1 px-2 py-1 text-xs bg-white border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-amber-500"
-                      placeholder={`Option ${i + 1}`}
-                    />
-                    <button
-                      onClick={() => handleRemoveOption(i)}
-                      disabled={editingOptions.length <= 1}
-                      className="p-1 text-gray-400 hover:text-red-500 disabled:opacity-30 disabled:cursor-not-allowed"
-                    >
-                      <X className="h-3.5 w-3.5" />
-                    </button>
-                  </div>
-                ))}
-              </div>
-              <div className="flex items-center gap-1.5">
-                <input
-                  type="text"
-                  value={newOption}
-                  onChange={(e) => setNewOption(e.target.value)}
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter') {
-                      e.preventDefault();
-                      handleAddOption();
-                    }
-                  }}
-                  placeholder="Add new option..."
-                  className="flex-1 px-2 py-1 text-xs bg-white border border-gray-300 border-dashed rounded focus:outline-none focus:ring-1 focus:ring-amber-500"
-                />
-                <button
-                  onClick={handleAddOption}
-                  disabled={!newOption.trim()}
-                  className="p-1 text-gray-400 hover:text-green-600 disabled:opacity-30"
-                >
-                  <Plus className="h-3.5 w-3.5" />
-                </button>
-              </div>
-              <div className="flex justify-end gap-1.5 pt-2 border-t border-gray-200">
-                <button
-                  onClick={() => setIsEditOpen(false)}
-                  className="px-2 py-1 text-xs text-gray-600 hover:bg-gray-100 rounded transition-colors"
-                >
-                  Cancel
-                </button>
-                <button
-                  onClick={handleSaveEdit}
-                  className="px-2 py-1 text-xs bg-primary text-primary-foreground hover:bg-primary/90 rounded transition-colors"
-                >
-                  Save
-                </button>
-              </div>
-            </div>
+            <EditOptionsPopoverContent
+              editingOptions={editingOptions}
+              setEditingOptions={setEditingOptions}
+              newOption={newOption}
+              setNewOption={setNewOption}
+              onSave={handleSaveEdit}
+              onCancel={() => setIsEditOpen(false)}
+            />
           </PopoverContent>
         </Popover>
       )}
     </div>
   );
 }
+
 
 // Dropdown Field Component with edit support
 interface DropdownFieldProps {
@@ -342,25 +456,6 @@ function DropdownField({
     setNewOption('');
   };
 
-  const handleOptionChange = (index: number, value: string) => {
-    const updated = [...editingOptions];
-    updated[index] = value;
-    setEditingOptions(updated);
-  };
-
-  const handleRemoveOption = (index: number) => {
-    if (editingOptions.length <= 1) return;
-    setEditingOptions(editingOptions.filter((_, i) => i !== index));
-  };
-
-  const handleAddOption = () => {
-    const trimmed = newOption.trim();
-    if (trimmed && !editingOptions.includes(trimmed)) {
-      setEditingOptions([...editingOptions, trimmed]);
-      setNewOption('');
-    }
-  };
-
   const selectHeight = size === 'sm' ? 'h-7' : 'h-8';
   const textSize = size === 'sm' ? 'text-xs' : 'text-sm';
 
@@ -397,65 +492,14 @@ function DropdownField({
             align="start"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="flex flex-col gap-2">
-              <div className="text-xs font-medium text-gray-700 mb-1">Edit Options</div>
-              <div className="flex flex-col gap-1.5 max-h-40 overflow-y-auto">
-                {editingOptions.map((opt, i) => (
-                  <div key={i} className="flex items-center gap-1.5">
-                    <input
-                      type="text"
-                      value={opt}
-                      onChange={(e) => handleOptionChange(i, e.target.value)}
-                      className="flex-1 px-2 py-1 text-xs bg-white border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-primary"
-                      placeholder={`Option ${i + 1}`}
-                    />
-                    <button
-                      onClick={() => handleRemoveOption(i)}
-                      disabled={editingOptions.length <= 1}
-                      className="p-1 text-gray-400 hover:text-red-500 disabled:opacity-30 disabled:cursor-not-allowed"
-                    >
-                      <X className="h-3.5 w-3.5" />
-                    </button>
-                  </div>
-                ))}
-              </div>
-              <div className="flex items-center gap-1.5">
-                <input
-                  type="text"
-                  value={newOption}
-                  onChange={(e) => setNewOption(e.target.value)}
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter') {
-                      e.preventDefault();
-                      handleAddOption();
-                    }
-                  }}
-                  placeholder="Add new option..."
-                  className="flex-1 px-2 py-1 text-xs bg-white border border-gray-300 border-dashed rounded focus:outline-none focus:ring-1 focus:ring-primary"
-                />
-                <button
-                  onClick={handleAddOption}
-                  disabled={!newOption.trim()}
-                  className="p-1 text-gray-400 hover:text-green-600 disabled:opacity-30"
-                >
-                  <Plus className="h-3.5 w-3.5" />
-                </button>
-              </div>
-              <div className="flex justify-end gap-1.5 pt-2 border-t border-gray-200">
-                <button
-                  onClick={() => setIsEditOpen(false)}
-                  className="px-2 py-1 text-xs text-gray-600 hover:bg-gray-100 rounded transition-colors"
-                >
-                  Cancel
-                </button>
-                <button
-                  onClick={handleSaveEdit}
-                  className="px-2 py-1 text-xs bg-primary text-primary-foreground hover:bg-primary/90 rounded transition-colors"
-                >
-                  Save
-                </button>
-              </div>
-            </div>
+            <EditOptionsPopoverContent
+              editingOptions={editingOptions}
+              setEditingOptions={setEditingOptions}
+              newOption={newOption}
+              setNewOption={setNewOption}
+              onSave={handleSaveEdit}
+              onCancel={() => setIsEditOpen(false)}
+            />
           </PopoverContent>
         </Popover>
       )}
