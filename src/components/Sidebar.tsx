@@ -486,7 +486,7 @@ export function Sidebar() {
           </DropdownMenu>
         </div>
 
-        <div className="flex mx-4 mb-2 bg-white/50 rounded-lg p-0.5">
+        <div className="flex mb-2 bg-white/50 p-0.5">
           <button
             onClick={() => setActiveTab('firm')}
             className={`flex-1 py-2 px-1 text-sm font-medium rounded-md transition-all text-center whitespace-nowrap ${
