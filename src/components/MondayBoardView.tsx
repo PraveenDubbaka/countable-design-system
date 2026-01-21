@@ -187,8 +187,8 @@ function MultipleChoiceField({
   const checkSize = size === 'sm' ? 'h-3 w-3' : 'h-3.5 w-3.5';
 
   return (
-    <div className="flex items-center gap-1.5">
-      <div className="flex flex-wrap gap-1">
+    <div className="flex items-start gap-1.5">
+      <div className="flex flex-col gap-1">
         {options.map((opt, i) => {
           const isSelected = selectedAnswers.includes(opt);
           return (
@@ -199,9 +199,9 @@ function MultipleChoiceField({
                 toggleSelection(opt);
               }}
               disabled={disabled}
-              className={`${padding} ${textSize} rounded transition-all flex items-center gap-1 ${
+              className={`${padding} ${textSize} rounded transition-all flex items-center gap-1 whitespace-nowrap ${
                 isSelected
-                  ? 'bg-amber-500 text-white'
+                  ? 'bg-primary text-primary-foreground'
                   : 'bg-gray-200 hover:bg-gray-300 text-gray-700'
               }`}
             >
