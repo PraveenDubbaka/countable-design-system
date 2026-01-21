@@ -163,6 +163,48 @@ export default function CreationDashboard() {
       setShowSaveDialog(true);
     }
   };
+
+  const handleGenerateFromTemplate = () => {
+    if (!selectedTemplate) {
+      toast.error('Please select a template first');
+      return;
+    }
+    
+    // Save to localStorage
+    const existingChecklists = JSON.parse(localStorage.getItem('savedChecklists') || '[]');
+    const newChecklistId = `checklist-${Date.now()}`;
+    const folder = templateFolders.find(f => f.templates.includes(selectedTemplate));
+    const newChecklist = {
+      id: newChecklistId,
+      name: selectedTemplate,
+      folderId: folder?.id || 'uncategorized',
+      folderName: folder?.name || 'Uncategorized',
+      source: 'template',
+      templateName: selectedTemplate,
+      createdAt: new Date().toISOString(),
+      data: null
+    };
+    localStorage.setItem('savedChecklists', JSON.stringify([...existingChecklists, newChecklist]));
+
+    // Dispatch event to notify sidebar
+    window.dispatchEvent(new CustomEvent('checklistSaved', {
+      detail: newChecklist
+    }));
+
+    toast.success(`Generating checklist from template: ${selectedTemplate}`);
+
+    // Navigate to generate the checklist
+    navigate('/', {
+      state: {
+        generate: {
+          prompt: `Generate a checklist from template: ${selectedTemplate}`,
+          scope,
+          checklistName: selectedTemplate,
+          savedChecklistId: newChecklistId
+        }
+      }
+    });
+  };
   const handleSaveAndGenerate = () => {
     if (!checklistName.trim()) {
       toast.error('Please enter a name for the checklist');
@@ -345,7 +387,7 @@ export default function CreationDashboard() {
                   </div>}
                 
                 <div className="mt-6 flex justify-end">
-                  <Button onClick={() => handleGenerateFromFile()} disabled={!selectedTemplate} className="ai-button !px-6 !py-5">
+                  <Button onClick={handleGenerateFromTemplate} disabled={!selectedTemplate} className="ai-button !px-6 !py-5">
                     <Sparkles className="h-4 w-4 mr-2" />
                     Generate {label}
                   </Button>
