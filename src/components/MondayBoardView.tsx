@@ -1146,8 +1146,8 @@ function SortableSubItemRow({ subItem, onUpdate, onDelete, isPreviewMode, index,
         </div>
       )}
 
-      {/* Add column placeholder to maintain alignment */}
-      {!isPreviewMode && (!visibleColumns.explanation || !visibleColumns.reference) && (
+      {/* Add column placeholder to maintain alignment - always show when columns hidden */}
+      {(!visibleColumns.explanation || !visibleColumns.reference) && (
         <div className="w-[100px] shrink-0" />
       )}
 
@@ -1617,16 +1617,19 @@ function SortableItemRow({
           <div className="ml-10 bg-gray-50 border border-gray-200 rounded-lg overflow-hidden">
             {/* Sub-items header row */}
             <div className="flex items-center bg-gray-100 text-xs font-medium text-gray-500 border-b border-gray-200">
-              <div className="w-10 flex items-center justify-center py-2" />
-              <div className="flex-1 min-w-[280px] px-3 py-2 border-r border-gray-200">Subitem</div>
-              <div className="w-[200px] px-2 py-2 text-center border-r border-gray-200">Response</div>
+              <div className="w-10 shrink-0 flex items-center justify-center py-2" />
+              <div className="flex-1 min-w-[200px] px-3 py-2 border-r border-gray-200">Subitem</div>
+              <div className="w-[200px] shrink-0 px-2 py-2 text-center border-r border-gray-200">Response</div>
               {visibleColumns.explanation && (
-                <div className="w-[200px] px-2 py-2 text-center border-r border-gray-200">Explanation</div>
+                <div className="w-[200px] shrink-0 px-2 py-2 text-center border-r border-gray-200">Explanation</div>
               )}
               {visibleColumns.reference && (
-                <div className="w-[200px] px-2 py-2 text-center border-r border-gray-200">Reference</div>
+                <div className="w-[200px] shrink-0 px-2 py-2 text-center border-r border-gray-200">Reference</div>
               )}
-              <div className="w-12" />
+              {(!visibleColumns.explanation || !visibleColumns.reference) && (
+                <div className="w-[100px] shrink-0" />
+              )}
+              <div className="w-16 shrink-0" />
             </div>
 
             <SortableContext items={subItemIds} strategy={verticalListSortingStrategy}>
@@ -1898,9 +1901,11 @@ function SortableGroup({
                 )}
               </div>
             )}
-            {!isPreviewMode && (!visibleColumns.explanation || !visibleColumns.reference) && (
+            {(!visibleColumns.explanation || !visibleColumns.reference) && (
               <div className="w-[100px] shrink-0 px-2 py-2 text-center text-gray-400">
-                <AddColumnButton onAddColumn={handleAddColumn} visibleColumns={visibleColumns} />
+                {!isPreviewMode && (
+                  <AddColumnButton onAddColumn={handleAddColumn} visibleColumns={visibleColumns} />
+                )}
               </div>
             )}
             <div className="w-16 shrink-0 py-2" />
