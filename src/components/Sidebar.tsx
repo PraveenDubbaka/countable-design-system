@@ -375,7 +375,7 @@ export function Sidebar() {
   return (
     <div className="flex h-screen">
       {/* Icon sidebar - dark navy with curved corner */}
-      <div className="sidebar-nav w-14 flex flex-col items-center py-4 gap-2 rounded-tr-[20px] rounded-br-[20px]">
+      <div className="sidebar-nav w-14 flex flex-col items-center py-4 gap-2 rounded-tr-[12px] rounded-br-[12px]">
         {/* Luka Logo */}
         <div className="w-10 h-10 mb-4 flex items-center justify-center">
           <LukaLogo />
