@@ -3,13 +3,13 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { 
   ChevronDown,
   ChevronRight,
+  ChevronLeft,
   Search,
   Plus,
   Expand,
   Trash2,
   Folder,
   Headphones,
-  LogOut,
   Check,
   FileText,
   ClipboardList,
@@ -429,9 +429,17 @@ export function Sidebar() {
           <Headphones className="h-5 w-5" />
           {isNavExpanded && <span className="text-sm font-medium">Support</span>}
         </div>
-        <div className={`sidebar-item ${isNavExpanded ? 'w-full justify-start gap-3 px-3' : ''}`} title={!isNavExpanded ? "Logout" : undefined}>
-          <LogOut className="h-5 w-5" />
-          {isNavExpanded && <span className="text-sm font-medium">Logout</span>}
+        <div 
+          className={`sidebar-item cursor-pointer ${isNavExpanded ? 'w-full justify-start gap-3 px-3' : ''}`} 
+          title={!isNavExpanded ? (isNavExpanded ? "Collapse" : "Expand") : undefined}
+          onClick={() => setIsNavExpanded(!isNavExpanded)}
+        >
+          {isNavExpanded ? (
+            <ChevronLeft className="h-5 w-5" />
+          ) : (
+            <ChevronRight className="h-5 w-5" />
+          )}
+          {isNavExpanded && <span className="text-sm font-medium">Collapse</span>}
         </div>
       </div>
 
