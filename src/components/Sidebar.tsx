@@ -372,12 +372,20 @@ export function Sidebar() {
     );
   };
 
+  const [isNavExpanded, setIsNavExpanded] = useState(false);
+
   return (
     <div className="flex h-screen">
-      {/* Icon sidebar - dark navy with curved corner */}
-      <div className="sidebar-nav w-14 flex flex-col items-center py-4 gap-2 rounded-tr-[20px] rounded-br-[20px]">
+      {/* Icon sidebar - dark navy with curved corner, expands on hover */}
+      <div 
+        className={`sidebar-nav flex flex-col py-4 gap-2 rounded-tr-[20px] rounded-br-[20px] transition-all duration-300 ease-in-out ${
+          isNavExpanded ? 'w-48 items-start px-3' : 'w-14 items-center'
+        }`}
+        onMouseEnter={() => setIsNavExpanded(true)}
+        onMouseLeave={() => setIsNavExpanded(false)}
+      >
         {/* Luka Logo */}
-        <div className="w-10 h-10 mb-4 flex items-center justify-center">
+        <div className={`h-10 mb-4 flex items-center ${isNavExpanded ? 'px-2' : 'justify-center w-10'}`}>
           <LukaLogo />
         </div>
         
@@ -385,10 +393,15 @@ export function Sidebar() {
         {navItems.map((item, index) => (
           <div
             key={index}
-            className={`sidebar-item ${item.active ? 'active' : ''}`}
-            title={item.label}
+            className={`sidebar-item ${item.active ? 'active' : ''} ${
+              isNavExpanded ? 'w-full justify-start gap-3 px-3' : ''
+            }`}
+            title={!isNavExpanded ? item.label : undefined}
           >
             <item.icon />
+            {isNavExpanded && (
+              <span className="text-sm font-medium whitespace-nowrap">{item.label}</span>
+            )}
           </div>
         ))}
         
@@ -396,11 +409,13 @@ export function Sidebar() {
         <div className="flex-1" />
         
         {/* Bottom icons */}
-        <div className="sidebar-item" title="Support">
+        <div className={`sidebar-item ${isNavExpanded ? 'w-full justify-start gap-3 px-3' : ''}`} title={!isNavExpanded ? "Support" : undefined}>
           <Headphones className="h-5 w-5" />
+          {isNavExpanded && <span className="text-sm font-medium">Support</span>}
         </div>
-        <div className="sidebar-item" title="Logout">
+        <div className={`sidebar-item ${isNavExpanded ? 'w-full justify-start gap-3 px-3' : ''}`} title={!isNavExpanded ? "Logout" : undefined}>
           <LogOut className="h-5 w-5" />
+          {isNavExpanded && <span className="text-sm font-medium">Logout</span>}
         </div>
       </div>
 
