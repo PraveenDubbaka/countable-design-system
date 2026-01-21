@@ -343,6 +343,13 @@ export default function CreationDashboard() {
                     <p className="text-sm text-muted-foreground">Selected template:</p>
                     <p className="font-medium text-primary">{selectedTemplate}</p>
                   </div>}
+                
+                <div className="mt-6 flex justify-end">
+                  <Button onClick={() => handleGenerateFromFile()} disabled={!selectedTemplate} className="ai-button !px-6 !py-5">
+                    <Sparkles className="h-4 w-4 mr-2" />
+                    Generate {label}
+                  </Button>
+                </div>
               </div>}
           </div>
         </div>
