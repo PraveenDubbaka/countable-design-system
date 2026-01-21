@@ -7,6 +7,7 @@ import Index from "./pages/Index";
 import Generate from "./pages/Generate";
 import CreationDashboard from "./pages/CreationDashboard";
 import Dashboard from "./pages/Dashboard";
+import Engagements from "./pages/Engagements";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -20,6 +21,7 @@ const App = () => (
         <Routes>
           <Route path="/" element={<Index />} />
           <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/engagements" element={<Engagements />} />
           <Route path="/create" element={<CreationDashboard />} />
           <Route path="/generate" element={<Generate />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}

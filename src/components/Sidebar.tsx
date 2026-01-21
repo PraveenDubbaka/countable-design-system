@@ -165,6 +165,7 @@ const navItems = [
   {
     icon: BriefcaseIcon,
     label: "Engagements",
+    route: "/engagements",
   },
   {
     icon: FileIcon,
