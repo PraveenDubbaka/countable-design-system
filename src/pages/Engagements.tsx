@@ -111,7 +111,7 @@ export default function Engagements() {
           </div>
 
           {/* Engagements Table */}
-          <div className="bg-white rounded-lg shadow-sm overflow-hidden flex flex-col flex-1 min-h-0">
+          <div className="bg-white rounded-lg shadow-md overflow-hidden flex flex-col flex-1 min-h-0">
             <div className="flex-1 overflow-y-auto overflow-x-auto">
               <table className="w-full">
                 <thead className="sticky top-0 z-10 shadow-sm">
