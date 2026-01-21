@@ -155,7 +155,7 @@ export function AITextarea({
     }
   };
 
-  // Render text display when not editing
+  // Render text display when not editing (matches question text behavior)
   if (!isEditing && !disabled) {
     return (
       <div 
@@ -165,10 +165,9 @@ export function AITextarea({
       >
         <div
           className={cn(
-            "w-full px-3 py-2 text-sm bg-gray-50 border border-gray-300 text-gray-700 rounded-md cursor-text hover:bg-gray-100 hover:border-gray-400 transition-colors",
-            !value && "text-gray-400"
+            "text-sm text-gray-700 py-1 cursor-text hover:text-gray-900 whitespace-pre-wrap",
+            !value && "text-gray-400 italic"
           )}
-          style={{ minHeight }}
         >
           {value || placeholder}
         </div>
