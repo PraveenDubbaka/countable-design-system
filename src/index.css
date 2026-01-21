@@ -791,3 +791,314 @@
 .rounded-lg {
   border-radius: 8px;
 }
+
+/* ========================================
+   ICON ANIMATION SYSTEM
+   Lottie-style hover animations for icons
+   ======================================== */
+
+/* Base icon animation class */
+.icon-animated {
+  transition: transform 300ms cubic-bezier(0.2, 0, 0, 1);
+}
+
+/* Delete/Trash icon - shake animation */
+.icon-trash:hover,
+.icon-trash:focus {
+  animation: iconShake 400ms cubic-bezier(0.2, 0, 0, 1);
+}
+
+@keyframes iconShake {
+  0%, 100% { transform: rotate(0deg); }
+  20% { transform: rotate(-12deg); }
+  40% { transform: rotate(12deg); }
+  60% { transform: rotate(-8deg); }
+  80% { transform: rotate(8deg); }
+}
+
+/* Edit/Pencil icon - wiggle and scale */
+.icon-edit:hover,
+.icon-edit:focus {
+  animation: iconWiggle 400ms cubic-bezier(0.2, 0, 0, 1);
+}
+
+@keyframes iconWiggle {
+  0% { transform: rotate(0deg) scale(1); }
+  25% { transform: rotate(-15deg) scale(1.1); }
+  50% { transform: rotate(5deg) scale(1.15); }
+  75% { transform: rotate(-5deg) scale(1.1); }
+  100% { transform: rotate(0deg) scale(1); }
+}
+
+/* Plus/Add icon - pop and rotate */
+.icon-plus:hover,
+.icon-plus:focus {
+  animation: iconPop 300ms cubic-bezier(0.2, 0, 0, 1);
+}
+
+@keyframes iconPop {
+  0% { transform: scale(1) rotate(0deg); }
+  50% { transform: scale(1.3) rotate(90deg); }
+  100% { transform: scale(1) rotate(90deg); }
+}
+
+/* Arrow icons - slide animation */
+.icon-arrow:hover,
+.icon-arrow:focus {
+  animation: iconSlide 300ms cubic-bezier(0.2, 0, 0, 1);
+}
+
+@keyframes iconSlide {
+  0%, 100% { transform: translateX(0); }
+  50% { transform: translateX(-4px); }
+}
+
+.icon-arrow-right:hover,
+.icon-arrow-right:focus {
+  animation: iconSlideRight 300ms cubic-bezier(0.2, 0, 0, 1);
+}
+
+@keyframes iconSlideRight {
+  0%, 100% { transform: translateX(0); }
+  50% { transform: translateX(4px); }
+}
+
+/* Chevron icons - bounce animation */
+.icon-chevron:hover,
+.icon-chevron:focus {
+  animation: iconBounce 300ms cubic-bezier(0.2, 0, 0, 1);
+}
+
+@keyframes iconBounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-3px); }
+}
+
+.icon-chevron-down:hover,
+.icon-chevron-down:focus {
+  animation: iconBounceDown 300ms cubic-bezier(0.2, 0, 0, 1);
+}
+
+@keyframes iconBounceDown {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(3px); }
+}
+
+/* Search icon - pulse and scale */
+.icon-search:hover,
+.icon-search:focus {
+  animation: iconPulse 400ms cubic-bezier(0.2, 0, 0, 1);
+}
+
+@keyframes iconPulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.2); }
+}
+
+/* Download/Export icon - bounce down */
+.icon-download:hover,
+.icon-download:focus {
+  animation: iconDownload 400ms cubic-bezier(0.2, 0, 0, 1);
+}
+
+@keyframes iconDownload {
+  0%, 100% { transform: translateY(0); }
+  25% { transform: translateY(3px); }
+  50% { transform: translateY(-2px); }
+  75% { transform: translateY(2px); }
+}
+
+/* Bell/Notification icon - ring animation */
+.icon-bell:hover,
+.icon-bell:focus {
+  animation: iconRing 500ms cubic-bezier(0.2, 0, 0, 1);
+  transform-origin: top center;
+}
+
+@keyframes iconRing {
+  0%, 100% { transform: rotate(0deg); }
+  10% { transform: rotate(14deg); }
+  20% { transform: rotate(-14deg); }
+  30% { transform: rotate(10deg); }
+  40% { transform: rotate(-10deg); }
+  50% { transform: rotate(6deg); }
+  60% { transform: rotate(-6deg); }
+  70% { transform: rotate(2deg); }
+  80% { transform: rotate(-2deg); }
+}
+
+/* Layers icon - stack animation */
+.icon-layers:hover,
+.icon-layers:focus {
+  animation: iconStack 400ms cubic-bezier(0.2, 0, 0, 1);
+}
+
+@keyframes iconStack {
+  0%, 100% { transform: scale(1); }
+  33% { transform: scale(0.9) translateY(2px); }
+  66% { transform: scale(1.1) translateY(-2px); }
+}
+
+/* Minimize icon - squeeze animation */
+.icon-minimize:hover,
+.icon-minimize:focus {
+  animation: iconSqueeze 300ms cubic-bezier(0.2, 0, 0, 1);
+}
+
+@keyframes iconSqueeze {
+  0%, 100% { transform: scale(1, 1); }
+  50% { transform: scale(0.8, 1.2); }
+}
+
+/* Reorder/ArrowUpDown icon - swap animation */
+.icon-reorder:hover,
+.icon-reorder:focus {
+  animation: iconSwap 400ms cubic-bezier(0.2, 0, 0, 1);
+}
+
+@keyframes iconSwap {
+  0%, 100% { transform: translateY(0); }
+  25% { transform: translateY(-4px); }
+  75% { transform: translateY(4px); }
+}
+
+/* Grip/Drag handle - jiggle animation */
+.icon-grip:hover,
+.icon-grip:focus {
+  animation: iconJiggle 300ms cubic-bezier(0.2, 0, 0, 1);
+}
+
+@keyframes iconJiggle {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-2px); }
+  75% { transform: translateX(2px); }
+}
+
+/* Save icon - pulse glow */
+.icon-save:hover,
+.icon-save:focus {
+  animation: iconSaveGlow 400ms cubic-bezier(0.2, 0, 0, 1);
+}
+
+@keyframes iconSaveGlow {
+  0%, 100% { transform: scale(1); filter: brightness(1); }
+  50% { transform: scale(1.15); filter: brightness(1.2); }
+}
+
+/* User icon - wave animation */
+.icon-user:hover,
+.icon-user:focus {
+  animation: iconWave 400ms cubic-bezier(0.2, 0, 0, 1);
+}
+
+@keyframes iconWave {
+  0%, 100% { transform: rotate(0deg); }
+  25% { transform: rotate(-10deg); }
+  75% { transform: rotate(10deg); }
+}
+
+/* Copy/Duplicate icon - split animation */
+.icon-copy:hover,
+.icon-copy:focus {
+  animation: iconSplit 300ms cubic-bezier(0.2, 0, 0, 1);
+}
+
+@keyframes iconSplit {
+  0%, 100% { transform: translate(0, 0); }
+  50% { transform: translate(2px, -2px); }
+}
+
+/* External link icon - fly out */
+.icon-external:hover,
+.icon-external:focus {
+  animation: iconFlyOut 300ms cubic-bezier(0.2, 0, 0, 1);
+}
+
+@keyframes iconFlyOut {
+  0%, 100% { transform: translate(0, 0); }
+  50% { transform: translate(3px, -3px); }
+}
+
+/* Close/X icon - spin */
+.icon-close:hover,
+.icon-close:focus {
+  animation: iconSpin 300ms cubic-bezier(0.2, 0, 0, 1);
+}
+
+@keyframes iconSpin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(90deg); }
+}
+
+/* Folder icon - open animation */
+.icon-folder:hover,
+.icon-folder:focus {
+  animation: iconOpen 300ms cubic-bezier(0.2, 0, 0, 1);
+}
+
+@keyframes iconOpen {
+  0%, 100% { transform: scale(1) rotateX(0deg); }
+  50% { transform: scale(1.1) rotateX(-10deg); }
+}
+
+/* More/Menu icon - dot bounce */
+.icon-more:hover,
+.icon-more:focus {
+  animation: iconDotBounce 400ms cubic-bezier(0.2, 0, 0, 1);
+}
+
+@keyframes iconDotBounce {
+  0%, 100% { transform: scale(1); }
+  25% { transform: scale(1.2); }
+  50% { transform: scale(0.9); }
+  75% { transform: scale(1.1); }
+}
+
+/* Generic bounce for misc icons */
+.icon-bounce:hover,
+.icon-bounce:focus {
+  animation: iconGenericBounce 300ms cubic-bezier(0.2, 0, 0, 1);
+}
+
+@keyframes iconGenericBounce {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.2); }
+}
+
+/* Microphone icon - pulse ring */
+.icon-mic:hover,
+.icon-mic:focus {
+  animation: iconMicPulse 400ms cubic-bezier(0.2, 0, 0, 1);
+}
+
+@keyframes iconMicPulse {
+  0%, 100% { transform: scale(1); }
+  25% { transform: scale(1.15); }
+  50% { transform: scale(1.05); }
+  75% { transform: scale(1.12); }
+}
+
+/* Calendar icon - flip */
+.icon-calendar:hover,
+.icon-calendar:focus {
+  animation: iconFlip 400ms cubic-bezier(0.2, 0, 0, 1);
+}
+
+@keyframes iconFlip {
+  0% { transform: perspective(200px) rotateY(0deg); }
+  50% { transform: perspective(200px) rotateY(15deg); }
+  100% { transform: perspective(200px) rotateY(0deg); }
+}
+
+/* Briefcase icon - swing */
+.icon-briefcase:hover,
+.icon-briefcase:focus {
+  animation: iconSwing 400ms cubic-bezier(0.2, 0, 0, 1);
+  transform-origin: top center;
+}
+
+@keyframes iconSwing {
+  0%, 100% { transform: rotate(0deg); }
+  25% { transform: rotate(8deg); }
+  75% { transform: rotate(-8deg); }
+}
