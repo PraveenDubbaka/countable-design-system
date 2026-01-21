@@ -1655,6 +1655,10 @@ function SortableGroup({
     setVisibleColumns(prev => ({ ...prev, [columnId]: true }));
   };
 
+  const handleRemoveColumn = (columnId: string) => {
+    setVisibleColumns(prev => ({ ...prev, [columnId]: false }));
+  };
+
   const {
     attributes,
     listeners,
@@ -1821,10 +1825,32 @@ function SortableGroup({
             <div className="flex-1 min-w-[200px] px-3 py-2 border-r border-gray-200">Item</div>
             <div className="w-[200px] shrink-0 px-2 py-2 border-r border-gray-200">Response</div>
             {visibleColumns.explanation && (
-              <div className="w-[200px] shrink-0 px-2 py-2 border-r border-gray-200">Explanation</div>
+              <div className="w-[200px] shrink-0 px-2 py-2 border-r border-gray-200 flex items-center justify-between group/col">
+                <span>Explanation</span>
+                {!isPreviewMode && (
+                  <button
+                    onClick={() => handleRemoveColumn('explanation')}
+                    className="p-0.5 text-gray-400 hover:text-red-500 opacity-0 group-hover/col:opacity-100 transition-opacity"
+                    title="Remove column"
+                  >
+                    <X className="h-3.5 w-3.5" />
+                  </button>
+                )}
+              </div>
             )}
             {visibleColumns.reference && (
-              <div className="w-[200px] shrink-0 px-2 py-2 border-r border-gray-200">Reference</div>
+              <div className="w-[200px] shrink-0 px-2 py-2 border-r border-gray-200 flex items-center justify-between group/col">
+                <span>Reference</span>
+                {!isPreviewMode && (
+                  <button
+                    onClick={() => handleRemoveColumn('reference')}
+                    className="p-0.5 text-gray-400 hover:text-red-500 opacity-0 group-hover/col:opacity-100 transition-opacity"
+                    title="Remove column"
+                  >
+                    <X className="h-3.5 w-3.5" />
+                  </button>
+                )}
+              </div>
             )}
             {!isPreviewMode && (!visibleColumns.explanation || !visibleColumns.reference) && (
               <div className="w-[100px] shrink-0 px-2 py-2 text-center text-gray-400">
