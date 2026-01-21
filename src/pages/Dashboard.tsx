@@ -101,8 +101,6 @@ export default function Dashboard() {
   return (
     <Layout title="Dashboard">
       <div className="flex-1 p-6 overflow-auto bg-background">
-      {/* Header */}
-      <h1 className="text-2xl font-bold text-primary mb-6">Dashboard</h1>
 
       <div className="flex gap-6">
         {/* Main Content */}
