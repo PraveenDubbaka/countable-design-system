@@ -354,17 +354,17 @@ export function ChecklistBuilder({ checklist, onUpdate, onSave }: ChecklistBuild
       <div className="flex-1 overflow-y-auto px-4 sm:px-6 py-4 sm:py-6">
         <div className="w-full">
           {/* Objective accordion */}
-          <div className="mb-6">
+          <div className="mb-6 bg-white rounded-lg overflow-hidden shadow-[0_0_4px_rgba(0,0,0,0.1)]">
             <button 
               onClick={() => setObjectiveExpanded(!objectiveExpanded)}
-              className="w-full flex items-center gap-2 bg-card border rounded-t-lg px-4 py-3 text-muted-foreground hover:text-foreground transition-colors"
+              className="w-full flex items-center gap-2 bg-[#F5F8FA] px-4 py-3 text-muted-foreground hover:text-foreground transition-colors border-b border-[#E8EDF2]"
             >
               <ChevronDown className={`h-4 w-4 transition-transform ${objectiveExpanded ? 'rotate-180' : ''}`} />
               <span className="text-sm font-medium">Objective</span>
             </button>
             
             {objectiveExpanded && (
-              <div className="bg-card border border-t-0 rounded-b-lg p-4">
+              <div className="bg-white p-4">
                 {isEditingObjective && !isPreviewMode ? (
                   <div className="space-y-3">
                     <textarea
