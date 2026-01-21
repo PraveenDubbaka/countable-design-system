@@ -1101,13 +1101,36 @@ function SortableSubItemRow({ subItem, onUpdate, onDelete, isPreviewMode, index,
       {/* Additional Explanation column - conditionally rendered */}
       {visibleColumns.explanation && (
         <div className="w-[200px] shrink-0 px-2 py-2 border-r border-gray-200">
-          <AITextarea
-            value={subItem.explanation || ''}
-            onChange={(val) => onUpdate({ ...subItem, explanation: val })}
-            placeholder="Additional Explanation"
-            disabled={isPreviewMode}
-            minHeight="40px"
-          />
+          {(subItem as any).showExplanation !== false ? (
+            <div className="relative group/exp">
+              <AITextarea
+                value={subItem.explanation || ''}
+                onChange={(val) => onUpdate({ ...subItem, explanation: val })}
+                placeholder="Additional Explanation"
+                disabled={isPreviewMode}
+                minHeight="40px"
+              />
+              {!isPreviewMode && (
+                <button
+                  onClick={() => onUpdate({ ...subItem, showExplanation: false, explanation: '' } as any)}
+                  className="absolute -top-1 -right-1 p-0.5 bg-white border border-gray-300 rounded-full text-gray-400 hover:text-red-500 hover:border-red-300 opacity-0 group-hover/exp:opacity-100 transition-opacity shadow-sm"
+                  title="Remove explanation"
+                >
+                  <X className="h-3 w-3" />
+                </button>
+              )}
+            </div>
+          ) : (
+            !isPreviewMode && (
+              <button
+                onClick={() => onUpdate({ ...subItem, showExplanation: true } as any)}
+                className="flex items-center gap-1 px-2 py-1 text-xs text-gray-500 hover:text-primary hover:bg-gray-100 rounded transition-colors"
+              >
+                <Plus className="h-3 w-3" />
+                <span>Add</span>
+              </button>
+            )
+          )}
         </div>
       )}
 
@@ -1484,13 +1507,36 @@ function SortableItemRow({
         {/* Additional Explanation column - conditionally rendered */}
         {visibleColumns.explanation && (
           <div className="w-[200px] shrink-0 px-2 py-2 border-r border-gray-200">
-            <AITextarea
-              value={item.explanation || ''}
-              onChange={(val) => onUpdate({ ...item, explanation: val })}
-              placeholder="Additional Explanation"
-              disabled={isPreviewMode}
-              minHeight="40px"
-            />
+            {(item as any).showExplanation !== false ? (
+              <div className="relative group/exp">
+                <AITextarea
+                  value={item.explanation || ''}
+                  onChange={(val) => onUpdate({ ...item, explanation: val })}
+                  placeholder="Additional Explanation"
+                  disabled={isPreviewMode}
+                  minHeight="40px"
+                />
+                {!isPreviewMode && (
+                  <button
+                    onClick={() => onUpdate({ ...item, showExplanation: false, explanation: '' } as any)}
+                    className="absolute -top-1 -right-1 p-0.5 bg-white border border-gray-300 rounded-full text-gray-400 hover:text-red-500 hover:border-red-300 opacity-0 group-hover/exp:opacity-100 transition-opacity shadow-sm"
+                    title="Remove explanation"
+                  >
+                    <X className="h-3 w-3" />
+                  </button>
+                )}
+              </div>
+            ) : (
+              !isPreviewMode && (
+                <button
+                  onClick={() => onUpdate({ ...item, showExplanation: true } as any)}
+                  className="flex items-center gap-1 px-2 py-1 text-xs text-gray-500 hover:text-primary hover:bg-gray-100 rounded transition-colors"
+                >
+                  <Plus className="h-3 w-3" />
+                  <span>Add</span>
+                </button>
+              )
+            )}
           </div>
         )}
 
