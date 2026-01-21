@@ -260,7 +260,6 @@ export default function CreateEngagement() {
               <ArrowLeft className="h-4 w-4" />
               Back
             </button>
-            <h1 className="text-xl font-semibold text-foreground">Create Engagement</h1>
           </div>
 
           <div className="flex flex-col gap-5">
