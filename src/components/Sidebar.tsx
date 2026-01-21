@@ -484,8 +484,8 @@ export function Sidebar() {
       >
         <div className="absolute left-0 top-0 bottom-0 w-1 bg-transparent group-hover:bg-primary/20 transition-colors" />
         <div 
-          className="flex items-center justify-center w-5 h-12 bg-[#F5F8FA] border border-[#DDE1E9] rounded-r-md shadow-sm hover:bg-[#E8EDF2] transition-all group-hover:w-6"
-          style={{ marginLeft: '-1px' }}
+          className="flex items-center justify-center w-5 h-12 bg-[#F5F8FA] border border-[#DDE1E9] shadow-sm hover:bg-[#E8EDF2] transition-all group-hover:w-6"
+          style={{ marginLeft: '-1px', borderTopRightRadius: '20px', borderBottomRightRadius: '20px' }}
         >
           <GripVertical className="h-3 w-3 text-muted-foreground group-hover:hidden" />
           {isTemplatesPanelCollapsed ? (
