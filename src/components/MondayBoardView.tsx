@@ -1104,7 +1104,6 @@ function SortableSubItemRow({ subItem, onUpdate, onDelete, isPreviewMode, index,
                 value={subItem.explanation || ''}
                 onChange={(val) => onUpdate({ ...subItem, explanation: val })}
                 placeholder="Additional Explanation"
-                disabled={isPreviewMode}
                 minHeight="40px"
               />
               {!isPreviewMode && (
@@ -1544,7 +1543,6 @@ function SortableItemRow({
                   value={item.explanation || ''}
                   onChange={(val) => onUpdate({ ...item, explanation: val })}
                   placeholder="Additional Explanation"
-                  disabled={isPreviewMode}
                   minHeight="40px"
                 />
                 {!isPreviewMode && (
