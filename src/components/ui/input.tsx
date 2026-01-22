@@ -13,7 +13,7 @@ const Input = React.forwardRef<HTMLInputElement, React.ComponentProps<"input"> &
           "flex h-11 w-full rounded-lg px-4 py-2 text-sm ring-offset-background transition-all duration-200",
           "file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground",
           // Default state: light gray background with gray border
-          "bg-[#F5F8FA] border border-[#D0D5DD] text-foreground placeholder:text-muted-foreground",
+          "bg-[#F5F8FA] border border-transparent text-foreground placeholder:text-muted-foreground",
           // Hover state: white background with darker border
           "hover:bg-white hover:border-[#98A2B3]",
           // Focus state: white background with blue border
@@ -44,7 +44,7 @@ const InputFilled = React.forwardRef<HTMLInputElement, React.ComponentProps<"inp
           "flex h-11 w-full rounded-t-lg rounded-b-none px-4 py-2 text-sm ring-offset-background transition-all duration-200",
           "file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground",
           // Default state: light gray background with bottom border
-          "bg-[#F5F8FA] border-b border-[#D0D5DD] text-foreground placeholder:text-muted-foreground",
+          "bg-[#F5F8FA] border-b border-transparent text-foreground placeholder:text-muted-foreground",
           // Hover state: slightly darker background
           "hover:bg-[#EDF2F7] hover:border-[#98A2B3]",
           // Focus state: blue bottom border
