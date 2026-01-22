@@ -711,11 +711,11 @@ export function Sidebar() {
                 setIsTemplatesPanelCollapsed(!isTemplatesPanelCollapsed);
               }}
             >
-              <div className="flex items-center justify-center w-4 h-8 bg-white border border-[#DDE1E9] shadow-sm hover:bg-[#E8EDF2] transition-all rounded-full">
+              <div className="flex items-center justify-center w-4 h-8 bg-primary border border-primary shadow-sm hover:bg-primary/90 transition-all rounded-full">
                 {isTemplatesPanelCollapsed ? (
-                  <ChevronRight className="h-3 w-3 text-primary icon-arrow-right" />
+                  <ChevronRight className="h-3 w-3 text-white icon-arrow-right" />
                 ) : (
-                  <ChevronLeft className="h-3 w-3 text-primary icon-arrow" />
+                  <ChevronLeft className="h-3 w-3 text-white icon-arrow" />
                 )}
               </div>
             </div>
