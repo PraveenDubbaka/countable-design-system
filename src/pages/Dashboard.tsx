@@ -170,14 +170,14 @@ export default function Dashboard() {
         <div className="flex-1 space-y-5">
           {/* Stats Cards - Clean card style */}
           <div className="grid grid-cols-5 gap-3">
-            {stats.map((stat, index) => <div key={index} className="bg-white rounded-lg p-4 shadow-sm hover:shadow-md transition-shadow">
+            {stats.map((stat, index) => <div key={index} className="bg-white rounded-lg p-4 shadow-md hover:shadow-lg transition-shadow">
                 <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">{stat.label}</p>
                 <p className="text-2xl font-bold text-primary mt-1">{stat.value}</p>
               </div>)}
           </div>
 
           {/* Engagements Table - Monday.com style */}
-          <div className="bg-white rounded-lg shadow-sm overflow-hidden flex flex-col" style={{
+          <div className="bg-white rounded-lg shadow-lg overflow-hidden flex flex-col" style={{
             height: "calc(100vh - 220px)"
           }}>
             <div className="px-5 py-4 flex items-center justify-between flex-shrink-0 bg-white">
@@ -252,7 +252,7 @@ export default function Dashboard() {
           {/* Charts Row */}
           <div className="flex gap-3">
             {/* Team Members Chart */}
-            <div className="flex-1 bg-white rounded-lg p-4 shadow-sm">
+            <div className="flex-1 bg-white rounded-lg p-4 shadow-md">
               <h3 className="text-xs font-semibold text-foreground mb-2">Team Members</h3>
               <div className="h-24">
                 <ResponsiveContainer width="100%" height="100%">
@@ -278,7 +278,7 @@ export default function Dashboard() {
             </div>
 
             {/* Clients Chart */}
-            <div className="flex-1 bg-white rounded-lg p-4 shadow-sm">
+            <div className="flex-1 bg-white rounded-lg p-4 shadow-md">
               <h3 className="text-xs font-semibold text-foreground mb-2">Clients</h3>
               <div className="h-24">
                 <ResponsiveContainer width="100%" height="100%">
@@ -305,7 +305,7 @@ export default function Dashboard() {
           </div>
 
           {/* Recent Activity */}
-          <div className="bg-white rounded-lg p-4 shadow-sm">
+          <div className="bg-white rounded-lg p-4 shadow-md">
             <h3 className="text-xs font-semibold text-foreground mb-3">Recent Activity</h3>
             <div className="space-y-3">
               {recentActivity.map((activity, index) => <div key={index} className="relative pl-4">
