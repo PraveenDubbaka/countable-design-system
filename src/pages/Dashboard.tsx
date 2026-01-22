@@ -219,7 +219,7 @@ export default function Dashboard() {
                         <IntegrationBadge type={engagement.integration} />
                       </td>
                       <td className="px-5 py-3">
-                        <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium ${engagement.status === "New" ? "bg-emerald-50 text-emerald-700" : "bg-sky-50 text-sky-700"}`}>
+                        <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium whitespace-nowrap ${engagement.status === "New" ? "bg-emerald-50 text-emerald-700" : "bg-sky-50 text-sky-700"}`}>
                           {engagement.status}
                         </span>
                       </td>
