@@ -2034,7 +2034,7 @@ function SortableGroup({
                 className="flex items-center gap-2 px-6 py-3 text-sm text-gray-400 hover:text-gray-700 hover:bg-[#EDF2F7] transition-colors w-full text-left"
               >
                 <Plus className="h-4 w-4" />
-                + Add item
+                Add item
               </button>
             </div>
           )}
