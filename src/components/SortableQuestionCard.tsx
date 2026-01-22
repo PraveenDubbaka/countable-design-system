@@ -16,6 +16,7 @@ import {
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { useState, useRef, useEffect, useCallback } from 'react';
+import { sanitizeHtml } from '@/lib/sanitize';
 import { 
   GripVertical, 
   Plus, 
@@ -714,7 +715,7 @@ export function SortableQuestionCard({
                     setIsEditingQuestion(true);
                   }
                 }}
-                dangerouslySetInnerHTML={{ __html: question.text }}
+                dangerouslySetInnerHTML={{ __html: sanitizeHtml(question.text) }}
               />
             )}
 

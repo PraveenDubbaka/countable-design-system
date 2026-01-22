@@ -1,4 +1,5 @@
 import { useState, useRef, useCallback } from 'react';
+import { sanitizeHtml } from '@/lib/sanitize';
 import { 
   Plus, 
   Trash2, 
@@ -1082,11 +1083,11 @@ function SortableSubItemRow({ subItem, onUpdate, onDelete, isPreviewMode, isComp
                   }
                 }}
                 className={`text-sm text-gray-700 ${!isPreviewMode ? 'cursor-text hover:text-gray-900' : ''} line-clamp-1 overflow-hidden`}
-                dangerouslySetInnerHTML={{ __html: subItem.text || 'Click to add sub-item...' }}
+                dangerouslySetInnerHTML={{ __html: sanitizeHtml(subItem.text) || 'Click to add sub-item...' }}
               />
             </TooltipTrigger>
             <TooltipContent side="top" className="bg-white text-gray-800 border border-gray-200 shadow-lg max-w-md">
-              <div dangerouslySetInnerHTML={{ __html: subItem.text || '' }} />
+              <div dangerouslySetInnerHTML={{ __html: sanitizeHtml(subItem.text) }} />
             </TooltipContent>
           </Tooltip>
         ) : (
@@ -1099,7 +1100,7 @@ function SortableSubItemRow({ subItem, onUpdate, onDelete, isPreviewMode, isComp
               }
             }}
             className={`text-sm text-gray-700 ${!isPreviewMode ? 'cursor-text hover:text-gray-900' : ''}`}
-            dangerouslySetInnerHTML={{ __html: subItem.text || 'Click to add sub-item...' }}
+            dangerouslySetInnerHTML={{ __html: sanitizeHtml(subItem.text) || 'Click to add sub-item...' }}
           />
         )}
       </div>
@@ -1531,11 +1532,11 @@ function SortableItemRow({
                         }
                       }}
                       className={`text-sm text-gray-800 flex-1 ${!isPreviewMode ? 'cursor-text hover:text-gray-900' : ''} line-clamp-1 overflow-hidden py-1`}
-                      dangerouslySetInnerHTML={{ __html: item.text || 'Click to add item name...' }}
+                      dangerouslySetInnerHTML={{ __html: sanitizeHtml(item.text) || 'Click to add item name...' }}
                     />
                   </TooltipTrigger>
                   <TooltipContent side="top" className="bg-white text-gray-800 border border-gray-200 shadow-lg max-w-md">
-                    <div dangerouslySetInnerHTML={{ __html: item.text || '' }} />
+                    <div dangerouslySetInnerHTML={{ __html: sanitizeHtml(item.text) }} />
                   </TooltipContent>
                 </Tooltip>
               ) : (
@@ -1548,7 +1549,7 @@ function SortableItemRow({
                     }
                   }}
                   className={`text-sm text-gray-800 flex-1 ${!isPreviewMode ? 'cursor-text hover:text-gray-900' : ''} py-2`}
-                  dangerouslySetInnerHTML={{ __html: item.text || 'Click to add item name...' }}
+                  dangerouslySetInnerHTML={{ __html: sanitizeHtml(item.text) || 'Click to add item name...' }}
                 />
               )}
               {hasRealSubItems && (

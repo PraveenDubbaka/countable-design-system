@@ -1,4 +1,5 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -25,6 +26,38 @@ serve(async (req) => {
   }
 
   try {
+    // Authentication check
+    const authHeader = req.headers.get('Authorization');
+    if (!authHeader?.startsWith('Bearer ')) {
+      console.error('Missing or invalid authorization header');
+      return new Response(
+        JSON.stringify({ error: 'Authentication required' }),
+        { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    // Verify the JWT token
+    const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
+    const supabaseAnonKey = Deno.env.get('SUPABASE_ANON_KEY')!;
+    
+    const supabase = createClient(supabaseUrl, supabaseAnonKey, {
+      global: { headers: { Authorization: authHeader } }
+    });
+
+    const token = authHeader.replace('Bearer ', '');
+    const { data: claimsData, error: claimsError } = await supabase.auth.getClaims(token);
+    
+    if (claimsError || !claimsData?.claims) {
+      console.error('JWT verification failed:', claimsError?.message);
+      return new Response(
+        JSON.stringify({ error: 'Invalid or expired token' }),
+        { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    const userId = claimsData.claims.sub;
+    console.log(`Authenticated user: ${userId}`);
+
     const { text, action }: RequestBody = await req.json();
     
     if (!action || !actionPrompts[action]) {
@@ -46,7 +79,7 @@ serve(async (req) => {
     const systemPrompt = actionPrompts[action];
     const userMessage = text || 'Write a professional compliance verification statement.';
 
-    console.log(`Processing AI action: ${action} for text length: ${text?.length || 0}`);
+    console.log(`Processing AI action: ${action} for user: ${userId}, text length: ${text?.length || 0}`);
 
     const response = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
       method: 'POST',
@@ -91,7 +124,7 @@ serve(async (req) => {
     const data = await response.json();
     const result = data.choices?.[0]?.message?.content?.trim() || text;
 
-    console.log(`AI action ${action} completed successfully`);
+    console.log(`AI action ${action} completed successfully for user: ${userId}`);
 
     return new Response(
       JSON.stringify({ result }),
