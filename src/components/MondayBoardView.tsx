@@ -937,6 +937,7 @@ function SortableSubItemRow({ subItem, onUpdate, onDelete, isPreviewMode, isComp
             onChange={(val) => handleAnswerChange(val)}
             placeholder="Enter your detailed answer..."
             minHeight="60px"
+            isCompactMode={isCompactMode}
           />
         );
 
@@ -946,7 +947,8 @@ function SortableSubItemRow({ subItem, onUpdate, onDelete, isPreviewMode, isComp
             value={subItem.answer || ''}
             onChange={(val) => handleAnswerChange(val)}
             placeholder="Enter response..."
-          minHeight="40px"
+            minHeight="40px"
+            isCompactMode={isCompactMode}
         />
       );
 
@@ -1126,6 +1128,7 @@ function SortableSubItemRow({ subItem, onUpdate, onDelete, isPreviewMode, isComp
                 onChange={(val) => onUpdate({ ...subItem, explanation: val })}
                 placeholder="Additional Explanation"
                 minHeight="40px"
+                isCompactMode={isCompactMode}
               />
               {!isPreviewMode && (
                 <button
@@ -1360,6 +1363,7 @@ function SortableItemRow({
             onChange={(val) => handleAnswerChange(val)}
             placeholder="Enter your detailed answer..."
             minHeight="60px"
+            isCompactMode={isCompactMode}
           />
         );
 
@@ -1369,7 +1373,8 @@ function SortableItemRow({
             value={item.answer || ''}
             onChange={(val) => handleAnswerChange(val)}
             placeholder="Enter response..."
-          minHeight="40px"
+            minHeight="40px"
+            isCompactMode={isCompactMode}
         />
       );
 
@@ -1588,6 +1593,7 @@ function SortableItemRow({
                   onChange={(val) => onUpdate({ ...item, explanation: val })}
                   placeholder="Additional Explanation"
                   minHeight="40px"
+                  isCompactMode={isCompactMode}
                 />
                 {!isPreviewMode && (
                   <button

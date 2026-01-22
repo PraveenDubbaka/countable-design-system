@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from 'react';
 import { Sparkles, Mic, MicOff, RefreshCw, Minimize2, Wand2, FileText, PenLine, Loader2 } from 'lucide-react';
 import { Textarea } from '@/components/ui/textarea';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { useVoiceToText } from '@/hooks/useVoiceToText';
 import { cn } from '@/lib/utils';
 import { supabase } from '@/integrations/supabase/client';
@@ -54,6 +55,7 @@ interface AITextareaProps {
   disabled?: boolean;
   className?: string;
   minHeight?: string;
+  isCompactMode?: boolean;
 }
 
 export function AITextarea({ 
@@ -62,7 +64,8 @@ export function AITextarea({
   placeholder = "Enter your detailed answer...", 
   disabled = false,
   className,
-  minHeight = "80px"
+  minHeight = "80px",
+  isCompactMode = false
 }: AITextareaProps) {
   const [isAIOpen, setIsAIOpen] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
@@ -157,6 +160,33 @@ export function AITextarea({
 
   // Render text display when not editing (matches question text behavior)
   if (!isEditing && !disabled) {
+    // Compact mode with tooltip
+    if (isCompactMode && value) {
+      return (
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <div 
+              ref={containerRef}
+              className={cn("relative w-full", className)}
+              onClick={handleEnterEditMode}
+            >
+              <div
+                className={cn(
+                  "text-sm text-gray-700 py-1 cursor-text hover:text-gray-900 line-clamp-1 overflow-hidden",
+                  !value && "text-gray-400 italic"
+                )}
+              >
+                {value || placeholder}
+              </div>
+            </div>
+          </TooltipTrigger>
+          <TooltipContent side="top" className="bg-white text-gray-800 border border-gray-200 shadow-lg max-w-md whitespace-pre-wrap">
+            {value}
+          </TooltipContent>
+        </Tooltip>
+      );
+    }
+
     return (
       <div 
         ref={containerRef}
