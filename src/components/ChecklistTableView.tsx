@@ -1,4 +1,5 @@
 import { useState, useRef, useCallback } from 'react';
+import { sanitizeHtml } from '@/lib/sanitize';
 import { 
   Plus, 
   Trash2, 
@@ -980,7 +981,7 @@ function TableRow({
                   [&_strong]:font-semibold
                   [&_em]:italic [&_em]:text-muted-foreground"
                 onClick={() => !isPreviewMode && setIsEditing(true)}
-                dangerouslySetInnerHTML={{ __html: question.text || '<span class="text-muted-foreground">Click to add question text...</span>' }}
+                dangerouslySetInnerHTML={{ __html: sanitizeHtml(question.text) || '<span class="text-muted-foreground">Click to add question text...</span>' }}
               />
             )}
 
