@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Layout } from "@/components/Layout";
 import { Checkbox } from "@/components/ui/checkbox";
 
-// Floating label input component - Material 3 style
+// Floating label input component - Material 3 style with Figma states
 const FloatingInput = ({ 
   label, 
   value, 
@@ -13,7 +13,9 @@ const FloatingInput = ({
   required = false,
   type = "text",
   icon,
-  readOnly = false
+  readOnly = false,
+  disabled = false,
+  error = false
 }: { 
   label: string; 
   value: string; 
@@ -22,6 +24,8 @@ const FloatingInput = ({
   type?: string;
   icon?: React.ReactNode;
   readOnly?: boolean;
+  disabled?: boolean;
+  error?: boolean;
 }) => {
   const [focused, setFocused] = useState(false);
   const isActive = focused || value;
@@ -35,10 +39,18 @@ const FloatingInput = ({
         onFocus={() => setFocused(true)}
         onBlur={() => setFocused(false)}
         readOnly={readOnly}
+        disabled={disabled}
         className={`
-          w-full h-11 px-4 pt-4 pb-1 text-sm text-foreground
-          bg-[#F5F8FA] rounded-lg outline-none transition-all duration-200
-          ${focused ? 'ring-2 ring-primary/30' : ''}
+          w-full h-11 text-sm text-foreground rounded-lg outline-none transition-all duration-200
+          ${label ? 'px-4 pt-4 pb-1' : 'px-4 py-2'}
+          ${disabled 
+            ? 'bg-[#F9FAFB] border-transparent text-muted-foreground opacity-60 cursor-not-allowed' 
+            : error
+              ? 'bg-white border-2 border-destructive px-[15px]'
+              : focused 
+                ? 'bg-white border-2 border-primary px-[15px]' 
+                : 'bg-[#F5F8FA] border border-[#D0D5DD] hover:bg-white hover:border-[#98A2B3]'
+          }
           ${readOnly ? 'cursor-default' : ''}
         `}
       />
@@ -46,9 +58,10 @@ const FloatingInput = ({
         className={`
           absolute left-4 transition-all duration-200 pointer-events-none
           ${isActive 
-            ? 'top-1 text-xs text-muted-foreground' 
+            ? `top-1 text-xs ${focused ? 'text-primary' : error ? 'text-destructive' : 'text-muted-foreground'}` 
             : 'top-1/2 -translate-y-1/2 text-sm text-muted-foreground'
           }
+          ${disabled ? 'text-muted-foreground opacity-60' : ''}
         `}
       >
         {label}
@@ -63,14 +76,16 @@ const FloatingInput = ({
   );
 };
 
-// Floating label select component - Material 3 style
+// Floating label select component - Material 3 style with Figma states
 const FloatingSelect = ({ 
   label, 
   value, 
   onChange, 
   options,
   required = false,
-  icon
+  icon,
+  disabled = false,
+  error = false
 }: { 
   label: string; 
   value: string; 
@@ -78,6 +93,8 @@ const FloatingSelect = ({
   options: { value: string; label: string }[];
   required?: boolean;
   icon?: React.ReactNode;
+  disabled?: boolean;
+  error?: boolean;
 }) => {
   const [focused, setFocused] = useState(false);
   const isActive = focused || value;
@@ -89,11 +106,18 @@ const FloatingSelect = ({
         onChange={(e) => onChange(e.target.value)}
         onFocus={() => setFocused(true)}
         onBlur={() => setFocused(false)}
+        disabled={disabled}
         className={`
-          w-full h-11 px-4 text-sm text-foreground
-          bg-[#F5F8FA] rounded-lg outline-none transition-all duration-200 appearance-none cursor-pointer
-          ${focused ? 'ring-2 ring-primary/30' : ''}
-          ${label ? 'pt-4 pb-1' : 'py-0'}
+          w-full h-11 text-sm text-foreground rounded-lg outline-none transition-all duration-200 appearance-none
+          ${label ? 'px-4 pt-4 pb-1' : 'px-4 py-2'}
+          ${disabled 
+            ? 'bg-[#F9FAFB] border-transparent text-muted-foreground opacity-60 cursor-not-allowed' 
+            : error
+              ? 'bg-white border-2 border-destructive px-[15px] cursor-pointer'
+              : focused 
+                ? 'bg-white border-2 border-primary px-[15px] cursor-pointer' 
+                : 'bg-[#F5F8FA] border border-[#D0D5DD] hover:bg-white hover:border-[#98A2B3] cursor-pointer'
+          }
         `}
       >
         <option value=""></option>
@@ -105,15 +129,16 @@ const FloatingSelect = ({
         className={`
           absolute left-4 transition-all duration-200 pointer-events-none
           ${isActive 
-            ? 'top-1 text-xs text-muted-foreground' 
+            ? `top-1 text-xs ${focused ? 'text-primary' : error ? 'text-destructive' : 'text-muted-foreground'}` 
             : 'top-1/2 -translate-y-1/2 text-sm text-muted-foreground'
           }
+          ${disabled ? 'text-muted-foreground opacity-60' : ''}
         `}
       >
         {label}
         {required && <span className="text-red-500 ml-0.5">*</span>}
       </label>
-      <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none icon-chevron-down" />
+      <ChevronDown className={`absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 pointer-events-none icon-chevron-down ${disabled ? 'text-muted-foreground opacity-60' : 'text-muted-foreground'}`} />
     </div>
   );
 };
