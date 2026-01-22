@@ -1068,6 +1068,25 @@ function SortableSubItemRow({ subItem, onUpdate, onDelete, isPreviewMode, isComp
             onCancel={handleCancel}
             className="text-sm min-h-[32px] bg-gray-100 border-gray-300 text-gray-800"
           />
+        ) : isCompactMode ? (
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <div
+                onClick={(e) => {
+                  if (!isPreviewMode) {
+                    e.stopPropagation();
+                    draftNameRef.current = subItem.text;
+                    setIsEditingName(true);
+                  }
+                }}
+                className={`text-sm text-gray-700 ${!isPreviewMode ? 'cursor-text hover:text-gray-900' : ''} line-clamp-1 overflow-hidden`}
+                dangerouslySetInnerHTML={{ __html: subItem.text || 'Click to add sub-item...' }}
+              />
+            </TooltipTrigger>
+            <TooltipContent side="top" className="bg-white text-gray-800 border border-gray-200 shadow-lg max-w-md">
+              <div dangerouslySetInnerHTML={{ __html: subItem.text || '' }} />
+            </TooltipContent>
+          </Tooltip>
         ) : (
           <div
             onClick={(e) => {
@@ -1077,7 +1096,7 @@ function SortableSubItemRow({ subItem, onUpdate, onDelete, isPreviewMode, isComp
                 setIsEditingName(true);
               }
             }}
-            className={`text-sm text-gray-700 ${!isPreviewMode ? 'cursor-text hover:text-gray-900' : ''} ${isCompactMode ? 'line-clamp-1 overflow-hidden' : ''}`}
+            className={`text-sm text-gray-700 ${!isPreviewMode ? 'cursor-text hover:text-gray-900' : ''}`}
             dangerouslySetInnerHTML={{ __html: subItem.text || 'Click to add sub-item...' }}
           />
         )}
@@ -1495,17 +1514,38 @@ function SortableItemRow({
             />
           ) : (
             <div className="flex items-center gap-2">
-              <div 
-                onClick={(e) => {
-                  if (!isPreviewMode) {
-                    e.stopPropagation();
-                    draftNameRef.current = item.text;
-                    setIsEditingName(true);
-                  }
-                }}
-                className={`text-sm text-gray-800 flex-1 ${!isPreviewMode ? 'cursor-text hover:text-gray-900' : ''} ${isCompactMode ? 'line-clamp-1 overflow-hidden py-1' : 'py-2'}`}
-                dangerouslySetInnerHTML={{ __html: item.text || 'Click to add item name...' }}
-              />
+              {isCompactMode ? (
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <div 
+                      onClick={(e) => {
+                        if (!isPreviewMode) {
+                          e.stopPropagation();
+                          draftNameRef.current = item.text;
+                          setIsEditingName(true);
+                        }
+                      }}
+                      className={`text-sm text-gray-800 flex-1 ${!isPreviewMode ? 'cursor-text hover:text-gray-900' : ''} line-clamp-1 overflow-hidden py-1`}
+                      dangerouslySetInnerHTML={{ __html: item.text || 'Click to add item name...' }}
+                    />
+                  </TooltipTrigger>
+                  <TooltipContent side="top" className="bg-white text-gray-800 border border-gray-200 shadow-lg max-w-md">
+                    <div dangerouslySetInnerHTML={{ __html: item.text || '' }} />
+                  </TooltipContent>
+                </Tooltip>
+              ) : (
+                <div 
+                  onClick={(e) => {
+                    if (!isPreviewMode) {
+                      e.stopPropagation();
+                      draftNameRef.current = item.text;
+                      setIsEditingName(true);
+                    }
+                  }}
+                  className={`text-sm text-gray-800 flex-1 ${!isPreviewMode ? 'cursor-text hover:text-gray-900' : ''} py-2`}
+                  dangerouslySetInnerHTML={{ __html: item.text || 'Click to add item name...' }}
+                />
+              )}
               {hasRealSubItems && (
                 <Tooltip>
                   <TooltipTrigger asChild>
