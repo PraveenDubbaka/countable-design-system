@@ -111,6 +111,9 @@ export default {
           DEFAULT: "hsl(var(--m3-on-error))",
           container: "hsl(var(--m3-on-error-container))",
         },
+        "on-primary": {
+          DEFAULT: "hsl(var(--primary-foreground))",
+        },
         outline: {
           DEFAULT: "hsl(var(--m3-outline))",
           variant: "hsl(var(--m3-outline-variant))",
@@ -225,6 +228,16 @@ export default {
           "0%, 100%": { boxShadow: "0 0 5px hsl(207 71% 38% / 0.3)" },
           "50%": { boxShadow: "0 0 20px hsl(207 71% 38% / 0.5)" },
         },
+        // M3 Checkbox animations
+        "m3-ripple": {
+          "0%": { transform: "scale(0)", opacity: "1" },
+          "100%": { transform: "scale(2.5)", opacity: "0" },
+        },
+        "m3-checkmark-in": {
+          "0%": { transform: "scale(0)", opacity: "0" },
+          "50%": { transform: "scale(1.2)" },
+          "100%": { transform: "scale(1)", opacity: "1" },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-emphasized",
@@ -233,6 +246,8 @@ export default {
         "slide-up": "slide-up 0.3s ease-emphasized",
         "scale-in": "scale-in 0.2s ease-emphasized",
         "pulse-glow": "pulse-glow 2s ease-in-out infinite",
+        "m3-ripple": "m3-ripple 400ms cubic-bezier(0.2, 0, 0, 1) forwards",
+        "m3-checkmark-in": "m3-checkmark-in 200ms cubic-bezier(0.05, 0.7, 0.1, 1) forwards",
       },
     },
   },
