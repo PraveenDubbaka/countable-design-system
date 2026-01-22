@@ -452,7 +452,7 @@ export default function CreateEngagement() {
               <div className="overflow-x-auto">
                 <table className="w-full">
                   <thead className="sticky top-0 z-10">
-                    <tr style={{ backgroundColor: "#F5F8FA" }}>
+                    <tr style={{ backgroundColor: "color(srgb-linear 0.76 0.82 0.86)" }}>
                       <th className="py-3 px-5 text-left">
                         <Checkbox />
                       </th>
@@ -478,7 +478,7 @@ export default function CreateEngagement() {
                     ))}
                   </tbody>
                   <tfoot>
-                    <tr style={{ backgroundColor: "#F5F8FA" }}>
+                    <tr style={{ backgroundColor: "color(srgb-linear 0.76 0.82 0.86)" }}>
                       <td colSpan={4}></td>
                       <td className="py-3 px-5 text-sm font-medium text-foreground">Avg Engagement Rate</td>
                       <td className="py-3 px-5 text-sm font-medium text-foreground text-right">0.00</td>
