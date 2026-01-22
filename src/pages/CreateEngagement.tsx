@@ -130,7 +130,7 @@ const SectionCard = ({
   children: React.ReactNode;
   badge?: string;
 }) => (
-  <div className="bg-white rounded-lg shadow-sm p-6">
+  <div className="bg-white rounded-lg shadow-md p-6">
     <div className="flex items-center gap-2 mb-5">
       <span className="text-primary">{icon}</span>
       <h2 className="text-base font-semibold text-foreground">{title}</h2>

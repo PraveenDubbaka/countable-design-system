@@ -67,7 +67,7 @@ export default function Engagements() {
             {stats.map((stat, index) => (
               <div
                 key={index}
-                className="bg-white rounded-lg p-4 shadow-sm hover:shadow-md transition-shadow"
+                className="bg-white rounded-lg p-4 shadow-md hover:shadow-lg transition-shadow"
               >
                 <p className="text-xs font-medium text-muted-foreground">{stat.label}</p>
                 <p className="text-3xl font-bold text-foreground mt-1">{stat.value}</p>
@@ -111,7 +111,7 @@ export default function Engagements() {
           </div>
 
           {/* Engagements Table */}
-          <div className="bg-white rounded-lg shadow-md overflow-hidden flex flex-col flex-1 min-h-0">
+          <div className="bg-white rounded-lg shadow-lg overflow-hidden flex flex-col flex-1 min-h-0">
             <div className="flex-1 overflow-y-auto overflow-x-auto">
               <table className="w-full">
                 <thead className="sticky top-0 z-10 shadow-sm">
