@@ -55,6 +55,7 @@ interface AITextareaProps {
   disabled?: boolean;
   className?: string;
   minHeight?: string;
+  defaultHeight?: string;
   isCompactMode?: boolean;
 }
 
@@ -64,7 +65,8 @@ export function AITextarea({
   placeholder = "Enter your detailed answer...", 
   disabled = false,
   className,
-  minHeight = "80px",
+  minHeight = "100px",
+  defaultHeight = "120px",
   isCompactMode = false
 }: AITextareaProps) {
   const [isAIOpen, setIsAIOpen] = useState(false);
@@ -305,11 +307,11 @@ export function AITextarea({
           setShowToolbar(true);
         }}
         className={cn(
-          "w-full pr-16 text-sm bg-gray-50 border border-gray-300 text-gray-700 rounded-md p-3 outline-none focus:ring-2 focus:ring-ring focus:ring-offset-1 resize overflow-auto",
+          "w-full pr-16 text-sm bg-gray-50 border border-gray-300 text-gray-700 rounded-lg p-3 outline-none focus:ring-2 focus:ring-ring focus:ring-offset-1 resize overflow-auto box-border",
           isListening && "border-primary ring-1 ring-primary",
           disabled && "opacity-60"
         )}
-        style={{ minHeight, minWidth: '100%' }}
+        style={{ minHeight, height: defaultHeight, width: '100%' }}
         dangerouslySetInnerHTML={{ __html: value }}
       />
       
