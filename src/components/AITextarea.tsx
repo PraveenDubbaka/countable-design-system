@@ -1,12 +1,12 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 import { Sparkles, Mic, MicOff, RefreshCw, Minimize2, Wand2, FileText, PenLine, Loader2 } from 'lucide-react';
-import { Textarea } from '@/components/ui/textarea';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { useVoiceToText } from '@/hooks/useVoiceToText';
 import { cn } from '@/lib/utils';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
+import { RichTextToolbar } from './RichTextToolbar';
 
 interface AIOption {
   id: string;
@@ -71,18 +71,24 @@ export function AITextarea({
   const [isProcessing, setIsProcessing] = useState(false);
   const [selectedOption, setSelectedOption] = useState<string | null>(null);
   const [isEditing, setIsEditing] = useState(false);
-  const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const [showToolbar, setShowToolbar] = useState(false);
+  const [toolbarPosition, setToolbarPosition] = useState({ x: 0, y: 0 });
+  const editorRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
+  const toolbarRef = useRef<HTMLDivElement>(null);
 
   // Handle click outside to exit edit mode
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
+      const target = event.target as Node;
       if (
         containerRef.current && 
-        !containerRef.current.contains(event.target as Node) &&
-        !isAIOpen
+        !containerRef.current.contains(target) &&
+        !isAIOpen &&
+        !(toolbarRef.current && toolbarRef.current.contains(target))
       ) {
         setIsEditing(false);
+        setShowToolbar(false);
       }
     };
 
@@ -92,18 +98,32 @@ export function AITextarea({
     }
   }, [isEditing, isAIOpen]);
 
-  // Focus textarea when entering edit mode
+  // Focus editor and position toolbar when entering edit mode
   useEffect(() => {
-    if (isEditing && textareaRef.current) {
-      textareaRef.current.focus();
+    if (isEditing && editorRef.current) {
+      editorRef.current.focus();
+      updateToolbarPosition();
+      setShowToolbar(true);
     }
   }, [isEditing]);
 
+  const updateToolbarPosition = useCallback(() => {
+    if (editorRef.current) {
+      const rect = editorRef.current.getBoundingClientRect();
+      setToolbarPosition({
+        x: rect.left + rect.width / 2,
+        y: rect.top - 8,
+      });
+    }
+  }, []);
+
   const { isListening, transcript, toggleListening, isSupported, error } = useVoiceToText({
     onResult: (result) => {
-      // Append transcribed text to current value
       const newValue = value ? `${value} ${result}` : result;
       onChange(newValue);
+      if (editorRef.current) {
+        editorRef.current.innerHTML = newValue;
+      }
     },
     continuous: true,
     language: 'en-US'
@@ -139,6 +159,9 @@ export function AITextarea({
 
       if (data?.result) {
         onChange(data.result);
+        if (editorRef.current) {
+          editorRef.current.innerHTML = data.result;
+        }
         toast.success('Text updated successfully!');
       }
     } catch (err) {
@@ -158,6 +181,62 @@ export function AITextarea({
     }
   };
 
+  const handleInput = () => {
+    if (editorRef.current) {
+      onChange(editorRef.current.innerHTML);
+    }
+  };
+
+  const handleFormatAction = (action: string, formatValue?: string) => {
+    if (!editorRef.current) return;
+
+    editorRef.current.focus();
+
+    switch (action) {
+      case 'bold':
+        document.execCommand('bold', false);
+        break;
+      case 'italic':
+        document.execCommand('italic', false);
+        break;
+      case 'underline':
+        document.execCommand('underline', false);
+        break;
+      case 'superscript':
+        document.execCommand('superscript', false);
+        break;
+      case 'bulletList':
+        document.execCommand('insertUnorderedList', false);
+        break;
+      case 'numberedList':
+        document.execCommand('insertOrderedList', false);
+        break;
+      case 'alignLeft':
+        document.execCommand('justifyLeft', false);
+        break;
+      case 'alignCenter':
+        document.execCommand('justifyCenter', false);
+        break;
+      case 'alignRight':
+        document.execCommand('justifyRight', false);
+        break;
+      case 'textStyle':
+        document.execCommand('formatBlock', false, formatValue);
+        break;
+      case 'textColor':
+        document.execCommand('foreColor', false, formatValue);
+        break;
+      case 'undo':
+        document.execCommand('undo', false);
+        break;
+      case 'redo':
+        document.execCommand('redo', false);
+        break;
+    }
+
+    handleInput();
+  };
+
   // Render text display when not editing (matches question text behavior)
   if (!isEditing && !disabled) {
     // Compact mode with tooltip
@@ -175,13 +254,12 @@ export function AITextarea({
                   "text-sm text-gray-700 py-1 cursor-text hover:text-gray-900 line-clamp-1 overflow-hidden",
                   !value && "text-gray-400 italic"
                 )}
-              >
-                {value || placeholder}
-              </div>
+                dangerouslySetInnerHTML={{ __html: value || placeholder }}
+              />
             </div>
           </TooltipTrigger>
           <TooltipContent side="top" className="bg-white text-gray-800 border border-gray-200 shadow-lg max-w-md whitespace-pre-wrap">
-            {value}
+            <div dangerouslySetInnerHTML={{ __html: value }} />
           </TooltipContent>
         </Tooltip>
       );
@@ -198,28 +276,41 @@ export function AITextarea({
             "text-sm text-gray-700 py-1 cursor-text hover:text-gray-900 whitespace-pre-wrap",
             !value && "text-gray-400 italic"
           )}
-        >
-          {value || placeholder}
-        </div>
+          dangerouslySetInnerHTML={{ __html: value || placeholder }}
+        />
       </div>
     );
   }
 
   return (
     <div ref={containerRef} className={cn("relative w-full", className)}>
-      <Textarea
-        ref={textareaRef}
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        placeholder={placeholder}
-        disabled={disabled || isListening}
+      {/* Rich Text Toolbar */}
+      {showToolbar && !disabled && (
+        <RichTextToolbar
+          position={toolbarPosition}
+          onFormatAction={handleFormatAction}
+          toolbarRef={toolbarRef}
+        />
+      )}
+
+      {/* Editable Content */}
+      <div
+        ref={editorRef}
+        contentEditable={!disabled && !isListening}
+        suppressContentEditableWarning
+        onInput={handleInput}
+        onClick={(e) => e.stopPropagation()}
+        onFocus={() => {
+          updateToolbarPosition();
+          setShowToolbar(true);
+        }}
         className={cn(
-          "pr-16 resize-none text-sm bg-gray-50 border-gray-300 text-gray-700 rounded-md",
+          "pr-16 text-sm bg-gray-50 border border-gray-300 text-gray-700 rounded-md p-3 outline-none focus:ring-2 focus:ring-ring focus:ring-offset-1",
           isListening && "border-primary ring-1 ring-primary",
           disabled && "opacity-60"
         )}
         style={{ minHeight }}
-        onClick={(e) => e.stopPropagation()}
+        dangerouslySetInnerHTML={{ __html: value }}
       />
       
       {/* Action buttons - positioned bottom right */}
@@ -244,7 +335,7 @@ export function AITextarea({
               </button>
             </PopoverTrigger>
             <PopoverContent 
-              className="w-72 p-2" 
+              className="w-72 p-2 bg-card" 
               align="end" 
               side="top"
               onClick={(e) => e.stopPropagation()}
