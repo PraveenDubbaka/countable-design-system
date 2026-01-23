@@ -9,6 +9,7 @@ import { GenerationScope } from '@/types/checklist';
 import { toast } from 'sonner';
 import uploadCloudAnimated from '@/assets/upload-cloud-animated.gif';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
+import { readJsonFromLocalStorage, writeJsonToLocalStorage } from '@/lib/safeJson';
 
 // Template folder structure
 const templateFolders = [{
@@ -171,7 +172,7 @@ export default function CreationDashboard() {
     }
     
     // Save to localStorage
-    const existingChecklists = JSON.parse(localStorage.getItem('savedChecklists') || '[]');
+    const existingChecklists = readJsonFromLocalStorage<any[]>('savedChecklists', []);
     const newChecklistId = `checklist-${Date.now()}`;
     const folder = templateFolders.find(f => f.templates.includes(selectedTemplate));
     const newChecklist = {
@@ -184,7 +185,7 @@ export default function CreationDashboard() {
       createdAt: new Date().toISOString(),
       data: null
     };
-    localStorage.setItem('savedChecklists', JSON.stringify([...existingChecklists, newChecklist]));
+    writeJsonToLocalStorage('savedChecklists', [...existingChecklists, newChecklist]);
 
     // Dispatch event to notify sidebar
     window.dispatchEvent(new CustomEvent('checklistSaved', {
@@ -214,7 +215,7 @@ export default function CreationDashboard() {
     toast.success(`"${checklistName}" saved to "${folder?.name}"`);
 
     // Save to localStorage
-    const existingChecklists = JSON.parse(localStorage.getItem('savedChecklists') || '[]');
+    const existingChecklists = readJsonFromLocalStorage<any[]>('savedChecklists', []);
     const newChecklistId = `checklist-${Date.now()}`;
     const newChecklist = {
       id: newChecklistId,
@@ -226,7 +227,7 @@ export default function CreationDashboard() {
       createdAt: new Date().toISOString(),
       data: null
     };
-    localStorage.setItem('savedChecklists', JSON.stringify([...existingChecklists, newChecklist]));
+    writeJsonToLocalStorage('savedChecklists', [...existingChecklists, newChecklist]);
 
     // Dispatch event to notify sidebar
     window.dispatchEvent(new CustomEvent('checklistSaved', {
