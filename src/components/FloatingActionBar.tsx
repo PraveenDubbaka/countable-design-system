@@ -6,7 +6,10 @@ import {
   Trash2,
   FolderPlus,
   ChevronUp,
-  ChevronDown
+  ChevronDown,
+  Plus,
+  FileText,
+  Columns
 } from 'lucide-react';
 import { Checklist } from '@/types/checklist';
 import { ReorderModal } from './ReorderModal';
@@ -29,7 +32,7 @@ interface FloatingActionBarProps {
   onToggleCompactMode: () => void;
   selectedQuestions: Set<string>;
   onBulkDelete: () => void;
-  onAddCategory: (position: 'top' | 'bottom') => void;
+  onAddCategory: (position: 'top' | 'bottom', type: 'empty' | 'template' | 'form') => void;
 }
 
 export function FloatingActionBar({ 
@@ -49,6 +52,7 @@ export function FloatingActionBar({
 }: FloatingActionBarProps) {
   const [showReorderModal, setShowReorderModal] = useState(false);
   const [showAddCategoryPopover, setShowAddCategoryPopover] = useState(false);
+  const [pendingCategoryType, setPendingCategoryType] = useState<'empty' | 'template' | 'form' | null>(null);
 
   const handleToggleSections = () => {
     if (allSectionsCollapsed) {
@@ -91,7 +95,13 @@ export function FloatingActionBar({
           </button>
 
           {/* Add Category */}
-          <Popover open={showAddCategoryPopover} onOpenChange={setShowAddCategoryPopover}>
+          <Popover 
+            open={showAddCategoryPopover} 
+            onOpenChange={(open) => {
+              setShowAddCategoryPopover(open);
+              if (!open) setPendingCategoryType(null);
+            }}
+          >
             <PopoverTrigger asChild>
               <button
                 className="w-9 h-9 flex items-center justify-center rounded-lg hover:bg-muted transition-colors group"
@@ -100,29 +110,95 @@ export function FloatingActionBar({
                 <FolderPlus className="h-4 w-4 text-muted-foreground group-hover:text-foreground" />
               </button>
             </PopoverTrigger>
-            <PopoverContent side="left" align="center" className="w-40 p-2 bg-card border shadow-lg z-50">
-              <div className="flex flex-col gap-1">
-                <button
-                  onClick={() => {
-                    onAddCategory('top');
-                    setShowAddCategoryPopover(false);
-                  }}
-                  className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-muted transition-colors text-sm"
-                >
-                  <ChevronUp className="h-4 w-4" />
-                  <span>Add to Top</span>
-                </button>
-                <button
-                  onClick={() => {
-                    onAddCategory('bottom');
-                    setShowAddCategoryPopover(false);
-                  }}
-                  className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-muted transition-colors text-sm"
-                >
-                  <ChevronDown className="h-4 w-4" />
-                  <span>Add to Bottom</span>
-                </button>
-              </div>
+            <PopoverContent side="left" align="center" className="w-56 p-2 bg-card border shadow-lg z-50">
+              {!pendingCategoryType ? (
+                <div className="flex flex-col gap-1">
+                  <button
+                    onClick={() => setPendingCategoryType('empty')}
+                    className="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-muted transition-colors"
+                  >
+                    <div className="w-7 h-7 rounded-md bg-secondary flex items-center justify-center">
+                      <Plus className="h-3.5 w-3.5 text-foreground" />
+                    </div>
+                    <div className="text-left">
+                      <p className="text-sm font-medium text-foreground">Empty Section</p>
+                      <p className="text-xs text-muted-foreground">Start from scratch</p>
+                    </div>
+                  </button>
+
+                  <button
+                    onClick={() => setPendingCategoryType('template')}
+                    className="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-muted transition-colors"
+                  >
+                    <div className="w-7 h-7 rounded-md bg-secondary flex items-center justify-center">
+                      <FileText className="h-3.5 w-3.5 text-foreground" />
+                    </div>
+                    <div className="text-left">
+                      <p className="text-sm font-medium text-foreground">From Template</p>
+                      <p className="text-xs text-muted-foreground">Use existing template</p>
+                    </div>
+                  </button>
+
+                  <button
+                    onClick={() => setPendingCategoryType('form')}
+                    className="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-muted transition-colors"
+                  >
+                    <div className="w-7 h-7 rounded-md bg-primary flex items-center justify-center">
+                      <Columns className="h-3.5 w-3.5 text-primary-foreground" />
+                    </div>
+                    <div className="text-left">
+                      <p className="text-sm font-medium text-foreground">Form Column</p>
+                      <p className="text-xs text-muted-foreground">Multi-column form layout</p>
+                    </div>
+                  </button>
+                </div>
+              ) : (
+                <div className="flex flex-col gap-1">
+                  <div className="px-3 py-2 border-b border-border mb-1">
+                    <p className="text-xs text-muted-foreground font-medium">Where to add?</p>
+                  </div>
+                  <button
+                    onClick={() => {
+                      onAddCategory('top', pendingCategoryType);
+                      setShowAddCategoryPopover(false);
+                      setPendingCategoryType(null);
+                    }}
+                    className="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-muted transition-colors"
+                  >
+                    <div className="w-7 h-7 rounded-md bg-[#F5F8FA] flex items-center justify-center">
+                      <ChevronUp className="h-3.5 w-3.5 text-foreground" />
+                    </div>
+                    <div className="text-left">
+                      <p className="text-sm font-medium text-foreground">Add to Top</p>
+                      <p className="text-xs text-muted-foreground">Insert at beginning</p>
+                    </div>
+                  </button>
+
+                  <button
+                    onClick={() => {
+                      onAddCategory('bottom', pendingCategoryType);
+                      setShowAddCategoryPopover(false);
+                      setPendingCategoryType(null);
+                    }}
+                    className="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-muted transition-colors"
+                  >
+                    <div className="w-7 h-7 rounded-md bg-[#F5F8FA] flex items-center justify-center">
+                      <ChevronDown className="h-3.5 w-3.5 text-foreground" />
+                    </div>
+                    <div className="text-left">
+                      <p className="text-sm font-medium text-foreground">Add to Bottom</p>
+                      <p className="text-xs text-muted-foreground">Insert at end</p>
+                    </div>
+                  </button>
+
+                  <button
+                    onClick={() => setPendingCategoryType(null)}
+                    className="text-center text-xs text-muted-foreground hover:text-foreground py-2 mt-1 transition-colors"
+                  >
+                    ← Back
+                  </button>
+                </div>
+              )}
             </PopoverContent>
           </Popover>
 
