@@ -595,8 +595,101 @@ export function Sidebar() {
         </div>
       </div>
 
-      {/* Templates panel - hidden on Dashboard and Engagements */}
-      {location.pathname !== "/dashboard" && location.pathname !== "/engagements" && (
+      {/* Engagement Sections panel - shown only on engagement detail pages */}
+      {location.pathname.startsWith("/engagements/") && location.pathname !== "/engagements/create" && (
+        <>
+          <div
+            className={`flex flex-col rounded-tr-[20px] rounded-br-[20px] relative z-10 bg-[#f5f8fa] transition-all duration-300 group/templates ${isTemplatesPanelCollapsed ? "w-0 overflow-hidden shadow-none" : "w-60 shadow-md"}`}
+            style={{
+              backgroundColor: "#F5F8FA",
+            }}
+          >
+            <div className={`p-4 pb-2 ${isTemplatesPanelCollapsed ? "hidden" : ""}`}>
+              <div className="flex items-center gap-2">
+                <h2 className="font-semibold text-primary text-lg">Engagements</h2>
+                <div className="flex items-center gap-1 text-muted-foreground">
+                  <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <circle cx="12" cy="12" r="10" />
+                    <path d="M9 12l2 2 4-4" />
+                  </svg>
+                  <span className="text-sm">Signoffs</span>
+                </div>
+              </div>
+            </div>
+
+            <div className={`p-3 pt-1 ${isTemplatesPanelCollapsed ? "hidden" : ""}`}>
+              <div className="flex gap-2">
+                <div className="relative flex-1">
+                  <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground icon-search" />
+                  <Input
+                    placeholder="Search"
+                    className="pl-8 h-8 text-sm bg-white/80 border-0 shadow-sm"
+                  />
+                </div>
+                <Button size="icon" variant="ghost" className="h-8 w-8 hover:bg-white/50">
+                  <Expand className="h-4 w-4 icon-bounce" />
+                </Button>
+              </div>
+            </div>
+
+            <div
+              className={`flex-1 overflow-y-auto p-2 pt-0 rounded-tr-[20px] rounded-br-[20px] ${isTemplatesPanelCollapsed ? "hidden" : ""}`}
+            >
+              {/* Engagement Sections */}
+              {[
+                { id: "co", code: "CO", label: "Client Onboarding", hasPlus: false },
+                { id: "do", code: "DO", label: "Documents", hasPlus: true },
+                { id: "tb", code: "TB", label: "Trial Balance & Adj. Entri...", hasPlus: false },
+                { id: "pr", code: "PR", label: "Procedures", hasPlus: false },
+                { id: "fs", code: "FS", label: "Financial Statements", hasPlus: true },
+                { id: "so", code: "SO", label: "Completion & Signoffs", hasPlus: false },
+              ].map((section) => (
+                <div
+                  key={section.id}
+                  className="flex items-center gap-2 py-1.5 px-2 rounded-md cursor-pointer hover:bg-muted transition-colors text-sm"
+                >
+                  <ChevronRight className="h-4 w-4 text-muted-foreground flex-shrink-0 icon-arrow-right" />
+                  <Folder className="h-4 w-4 text-primary flex-shrink-0 icon-folder" />
+                  <span className="font-semibold text-primary">{section.code}</span>
+                  <span className="truncate flex-1 text-foreground">{section.label}</span>
+                  {section.hasPlus && (
+                    <Plus className="h-4 w-4 text-muted-foreground hover:text-foreground flex-shrink-0 icon-plus" />
+                  )}
+                </div>
+              ))}
+            </div>
+
+            {/* Collapse handle - overlapped on border, visible on hover */}
+            <div
+              className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-1/2 opacity-0 group-hover/templates:opacity-100 transition-opacity duration-200 cursor-pointer z-20"
+              onClick={(e) => {
+                e.stopPropagation();
+                setIsTemplatesPanelCollapsed(!isTemplatesPanelCollapsed);
+              }}
+            >
+              <div className="flex items-center justify-center w-4 h-8 bg-primary border border-primary shadow-sm hover:bg-primary/90 transition-all rounded-full">
+                {isTemplatesPanelCollapsed ? (
+                  <ChevronRight className="h-3 w-3 text-white icon-arrow-right" />
+                ) : (
+                  <ChevronLeft className="h-3 w-3 text-white icon-arrow" />
+                )}
+              </div>
+            </div>
+          </div>
+
+          {/* Expand handle when collapsed - always visible */}
+          {isTemplatesPanelCollapsed && (
+            <div className="flex items-center cursor-pointer" onClick={() => setIsTemplatesPanelCollapsed(false)}>
+              <div className="flex items-center justify-center w-4 h-8 bg-primary border border-primary shadow-sm hover:bg-primary/90 transition-all rounded-full">
+                <ChevronRight className="h-3 w-3 text-white icon-arrow-right" />
+              </div>
+            </div>
+          )}
+        </>
+      )}
+
+      {/* Templates panel - hidden on Dashboard, Engagements list, and Engagement detail pages */}
+      {location.pathname !== "/dashboard" && location.pathname !== "/engagements" && !location.pathname.startsWith("/engagements/") && (
         <>
           <div
             className={`flex flex-col rounded-tr-[20px] rounded-br-[20px] relative z-10 bg-[#f5f8fa] transition-all duration-300 group/templates ${isTemplatesPanelCollapsed ? "w-0 overflow-hidden shadow-none" : "w-60 shadow-md"}`}
