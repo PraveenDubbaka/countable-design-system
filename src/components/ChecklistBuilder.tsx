@@ -53,6 +53,7 @@ interface ChecklistBuilderProps {
 export function ChecklistBuilder({ checklist, onUpdate, onSave }: ChecklistBuilderProps) {
   const [isEditingTitle, setIsEditingTitle] = useState(false);
   const [showAddMenu, setShowAddMenu] = useState(false);
+  const [pendingAddType, setPendingAddType] = useState<'empty' | 'template' | 'form' | null>(null);
   const [showExportMenu, setShowExportMenu] = useState(false);
   const [objectiveExpanded, setObjectiveExpanded] = useState(false);
   const [isEditingObjective, setIsEditingObjective] = useState(false);
@@ -239,58 +240,71 @@ export function ChecklistBuilder({ checklist, onUpdate, onSave }: ChecklistBuild
     }
   };
 
-  const handleAddSection = () => {
-    const newSection: Section = {
-      id: `section-${Date.now()}`,
-      title: 'New Section',
-      questions: [],
-      isExpanded: true
-    };
-    onUpdate({ ...checklist, sections: [...checklist.sections, newSection] });
-    setShowAddMenu(false);
+  const handleSelectAddType = (type: 'empty' | 'template' | 'form') => {
+    setPendingAddType(type);
   };
 
-  const handleAddFromTemplate = () => {
-    const templateSection: Section = {
-      id: `section-${Date.now()}`,
-      title: 'Template Section',
-      questions: [
-        {
-          id: `q-${Date.now()}-1`,
-          text: 'Has the engagement letter been signed by both parties?',
-          answerType: 'yes-no',
-          required: true
-        },
-        {
-          id: `q-${Date.now()}-2`,
-          text: 'Describe the scope of services agreed upon.',
-          answerType: 'long-answer',
-          required: false
+  const handleAddAtPosition = (position: 'top' | 'bottom') => {
+    if (!pendingAddType) return;
+
+    let newSection: Section;
+
+    if (pendingAddType === 'empty') {
+      newSection = {
+        id: `section-${Date.now()}`,
+        title: 'New Section',
+        questions: [],
+        isExpanded: true
+      };
+    } else if (pendingAddType === 'template') {
+      newSection = {
+        id: `section-${Date.now()}`,
+        title: 'Template Section',
+        questions: [
+          {
+            id: `q-${Date.now()}-1`,
+            text: 'Has the engagement letter been signed by both parties?',
+            answerType: 'yes-no',
+            required: true
+          },
+          {
+            id: `q-${Date.now()}-2`,
+            text: 'Describe the scope of services agreed upon.',
+            answerType: 'long-answer',
+            required: false
+          }
+        ],
+        isExpanded: true
+      };
+    } else {
+      // Form column
+      newSection = {
+        id: `section-${Date.now()}`,
+        title: 'Form Section',
+        questions: [],
+        isExpanded: true,
+        formLayout: {
+          columns: 1,
+          elements: [{
+            id: `col-${Date.now()}-0`,
+            type: 'empty'
+          }]
         }
-      ],
-      isExpanded: true
-    };
-    onUpdate({ ...checklist, sections: [...checklist.sections, templateSection] });
+      };
+    }
+
+    if (position === 'top') {
+      onUpdate({ ...checklist, sections: [newSection, ...checklist.sections] });
+    } else {
+      onUpdate({ ...checklist, sections: [...checklist.sections, newSection] });
+    }
+
     setShowAddMenu(false);
+    setPendingAddType(null);
   };
 
-  const handleAddFormColumn = () => {
-    // Create form section with 1 column - user can add more columns dynamically
-    const formSection: Section = {
-      id: `section-${Date.now()}`,
-      title: 'Form Section',
-      questions: [],
-      isExpanded: true,
-      formLayout: {
-        columns: 1,
-        elements: [{
-          id: `col-${Date.now()}-0`,
-          type: 'empty'
-        }]
-      }
-    };
-    onUpdate({ ...checklist, sections: [...checklist.sections, formSection] });
-    setShowAddMenu(false);
+  const handleCancelAdd = () => {
+    setPendingAddType(null);
   };
 
   const handleAddCategoryAtPosition = (position: 'top' | 'bottom') => {
@@ -483,44 +497,86 @@ export function ChecklistBuilder({ checklist, onUpdate, onSave }: ChecklistBuild
 
               {showAddMenu && (
                 <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 bg-card border rounded-xl shadow-xl p-2 z-20 w-64 animate-scale-in">
-                  <button
-                    onClick={handleAddSection}
-                    className="w-full flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-muted transition-colors"
-                  >
-                    <div className="w-8 h-8 rounded-lg bg-secondary flex items-center justify-center">
-                      <Plus className="h-4 w-4 text-foreground" />
-                    </div>
-                    <div className="text-left">
-                      <p className="text-sm font-medium text-foreground">Empty Section</p>
-                      <p className="text-xs text-muted-foreground">Start from scratch</p>
-                    </div>
-                  </button>
+                  {!pendingAddType ? (
+                    <>
+                      <button
+                        onClick={() => handleSelectAddType('empty')}
+                        className="w-full flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-muted transition-colors"
+                      >
+                        <div className="w-8 h-8 rounded-lg bg-secondary flex items-center justify-center">
+                          <Plus className="h-4 w-4 text-foreground" />
+                        </div>
+                        <div className="text-left">
+                          <p className="text-sm font-medium text-foreground">Empty Section</p>
+                          <p className="text-xs text-muted-foreground">Start from scratch</p>
+                        </div>
+                      </button>
 
-                  <button
-                    onClick={handleAddFromTemplate}
-                    className="w-full flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-muted transition-colors"
-                  >
-                    <div className="w-8 h-8 rounded-lg bg-secondary flex items-center justify-center">
-                      <FileText className="h-4 w-4 text-foreground" />
-                    </div>
-                    <div className="text-left">
-                      <p className="text-sm font-medium text-foreground">From Template</p>
-                      <p className="text-xs text-muted-foreground">Use existing template</p>
-                    </div>
-                  </button>
+                      <button
+                        onClick={() => handleSelectAddType('template')}
+                        className="w-full flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-muted transition-colors"
+                      >
+                        <div className="w-8 h-8 rounded-lg bg-secondary flex items-center justify-center">
+                          <FileText className="h-4 w-4 text-foreground" />
+                        </div>
+                        <div className="text-left">
+                          <p className="text-sm font-medium text-foreground">From Template</p>
+                          <p className="text-xs text-muted-foreground">Use existing template</p>
+                        </div>
+                      </button>
 
-                  <button
-                    onClick={handleAddFormColumn}
-                    className="w-full flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-muted transition-colors"
-                  >
-                    <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center">
-                      <Columns className="h-4 w-4 text-primary-foreground" />
-                    </div>
-                    <div className="text-left">
-                      <p className="text-sm font-medium text-foreground">Form Column</p>
-                      <p className="text-xs text-muted-foreground">Add multi-column form layout</p>
-                    </div>
-                  </button>
+                      <button
+                        onClick={() => handleSelectAddType('form')}
+                        className="w-full flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-muted transition-colors"
+                      >
+                        <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center">
+                          <Columns className="h-4 w-4 text-primary-foreground" />
+                        </div>
+                        <div className="text-left">
+                          <p className="text-sm font-medium text-foreground">Form Column</p>
+                          <p className="text-xs text-muted-foreground">Add multi-column form layout</p>
+                        </div>
+                      </button>
+                    </>
+                  ) : (
+                    <>
+                      <div className="px-4 py-2 border-b border-border mb-2">
+                        <p className="text-xs text-muted-foreground font-medium">Where to add?</p>
+                      </div>
+                      <button
+                        onClick={() => handleAddAtPosition('top')}
+                        className="w-full flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-muted transition-colors"
+                      >
+                        <div className="w-8 h-8 rounded-lg bg-[#F5F8FA] flex items-center justify-center">
+                          <ChevronDown className="h-4 w-4 text-foreground rotate-180" />
+                        </div>
+                        <div className="text-left">
+                          <p className="text-sm font-medium text-foreground">Add to Top</p>
+                          <p className="text-xs text-muted-foreground">Insert at the beginning</p>
+                        </div>
+                      </button>
+
+                      <button
+                        onClick={() => handleAddAtPosition('bottom')}
+                        className="w-full flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-muted transition-colors"
+                      >
+                        <div className="w-8 h-8 rounded-lg bg-[#F5F8FA] flex items-center justify-center">
+                          <ChevronDown className="h-4 w-4 text-foreground" />
+                        </div>
+                        <div className="text-left">
+                          <p className="text-sm font-medium text-foreground">Add to Bottom</p>
+                          <p className="text-xs text-muted-foreground">Insert at the end</p>
+                        </div>
+                      </button>
+
+                      <button
+                        onClick={handleCancelAdd}
+                        className="w-full text-center text-xs text-muted-foreground hover:text-foreground py-2 mt-1 transition-colors"
+                      >
+                        ← Back
+                      </button>
+                    </>
+                  )}
                 </div>
               )}
             </div>
