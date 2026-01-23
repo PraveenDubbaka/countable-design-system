@@ -14,11 +14,27 @@ export interface Question {
   isExpanded?: boolean;
 }
 
+export interface FormElement {
+  id: string;
+  type: 'empty' | 'text-input' | 'textarea' | 'select' | 'checkbox' | 'radio' | 'button';
+  label?: string;
+  placeholder?: string;
+  options?: string[];
+  buttonStyle?: 'icon-text' | 'text-only' | 'icon-only';
+  icon?: string;
+}
+
+export interface FormLayout {
+  columns: number;
+  elements: FormElement[];
+}
+
 export interface Section {
   id: string;
   title: string;
   questions: Question[];
   isExpanded: boolean;
+  formLayout?: FormLayout;
 }
 
 export interface Checklist {
