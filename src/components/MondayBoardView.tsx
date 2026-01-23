@@ -822,6 +822,8 @@ interface SubItemRowProps {
   parentId: string;
   visibleColumns: { explanation: boolean; reference: boolean };
   columnWidths: { questions: number; response: number; explanation: number; reference: number };
+  sectionNumber: number;
+  itemNumber: number;
 }
 
 interface SortableSubItemRowProps extends SubItemRowProps {
@@ -831,7 +833,7 @@ interface SortableSubItemRowProps extends SubItemRowProps {
   onBlurCleanup?: () => void;
 }
 
-function SortableSubItemRow({ subItem, onUpdate, onDelete, isPreviewMode, isCompactMode, index, parentId, isLast, totalCount, visibleColumns, columnWidths, isNewEmpty, onBlurCleanup }: SortableSubItemRowProps) {
+function SortableSubItemRow({ subItem, onUpdate, onDelete, isPreviewMode, isCompactMode, index, parentId, isLast, totalCount, visibleColumns, columnWidths, isNewEmpty, onBlurCleanup, sectionNumber, itemNumber }: SortableSubItemRowProps) {
   const [isEditingName, setIsEditingName] = useState(isNewEmpty || false);
   const [isSelected, setIsSelected] = useState(false);
   const draftNameRef = useRef(subItem.text);
@@ -1057,7 +1059,8 @@ function SortableSubItemRow({ subItem, onUpdate, onDelete, isPreviewMode, isComp
       </div>
 
       {/* Sub-item name - width matches header */}
-      <div className="shrink-0 px-3 py-2.5 flex items-center" style={{ width: columnWidths.questions }}>
+      <div className="shrink-0 px-3 py-2.5 flex items-center gap-2" style={{ width: columnWidths.questions }}>
+        <span className="text-xs font-medium text-gray-500 shrink-0">{sectionNumber}.{itemNumber}.{index + 1}</span>
         {isEditingName && !isPreviewMode ? (
           <RichTextQuestionEditor
             value={subItem.text}
@@ -1205,11 +1208,13 @@ interface ItemRowProps {
   onSubItemsReorder: (itemId: string, newSubItems: Question[]) => void;
   visibleColumns: { explanation: boolean; reference: boolean };
   columnWidths: { questions: number; response: number; explanation: number; reference: number };
+  sectionNumber: number;
 }
 
 function SortableItemRow({ 
   item, 
   sectionId,
+  itemIndex,
   onUpdate, 
   onDelete, 
   onDuplicate, 
@@ -1219,6 +1224,7 @@ function SortableItemRow({
   onSubItemsReorder,
   visibleColumns,
   columnWidths,
+  sectionNumber,
 }: ItemRowProps) {
   const [isExpanded, setIsExpanded] = useState(true);
   const [isEditingName, setIsEditingName] = useState(false);
@@ -1512,17 +1518,18 @@ function SortableItemRow({
         </div>
 
         {/* Item name */}
-        <div className="shrink-0 px-3 py-1 flex items-center" style={{ width: columnWidths.questions }}>
+        <div className="shrink-0 px-3 py-1 flex items-center gap-2" style={{ width: columnWidths.questions }}>
+          <span className="text-xs font-medium text-gray-500 shrink-0">{sectionNumber}.{itemIndex + 1}</span>
           {isEditingName && !isPreviewMode ? (
             <RichTextQuestionEditor
               value={item.text}
               onChange={(newValue) => { draftNameRef.current = newValue; }}
               onBlur={handleSave}
               onCancel={handleCancel}
-              className="text-sm min-h-[36px] bg-gray-100 border-gray-300 text-gray-800"
+              className="text-sm min-h-[36px] bg-gray-100 border-gray-300 text-gray-800 flex-1"
             />
           ) : (
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 flex-1 min-w-0">
               {isCompactMode ? (
                 <Tooltip>
                   <TooltipTrigger asChild>
@@ -1744,6 +1751,8 @@ function SortableItemRow({
                         cleanupEmptySubItems();
                       }
                     }}
+                    sectionNumber={sectionNumber}
+                    itemNumber={itemIndex + 1}
                   />
                 </div>
               ))}
@@ -2085,6 +2094,7 @@ function SortableGroup({
             }}
             className={`text-sm font-semibold text-amber-600 flex-1 ${!isPreviewMode ? 'cursor-text hover:text-amber-700' : ''}`}
           >
+            <span className="text-gray-500 mr-1">{sectionIndex + 1}.</span>
             {cleanTitle(section.title)}
           </h3>
         )}
@@ -2194,6 +2204,7 @@ function SortableGroup({
                 onSubItemsReorder={onSubItemsReorder}
                 visibleColumns={visibleColumns}
                 columnWidths={columnWidths}
+                sectionNumber={sectionIndex + 1}
               />
             ))}
           </SortableContext>
