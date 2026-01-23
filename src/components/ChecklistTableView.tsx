@@ -173,15 +173,7 @@ function SubQuestionTableRow({
             </div>
           );
 
-        case 'short-answer':
-          return (
-            <Input
-              placeholder="Enter answer..."
-              value={subQuestion.answer || ''}
-              onChange={(e) => handleAnswerChange(e.target.value)}
-              className="h-9 bg-background"
-            />
-          );
+        case 'long-answer':
 
         case 'long-answer':
           return (
@@ -278,15 +270,7 @@ function SubQuestionTableRow({
           </div>
         );
 
-      case 'short-answer':
-        return (
-          <Input
-            placeholder="Enter answer..."
-            value={subQuestion.answer || ''}
-            onChange={(e) => handleAnswerChange(e.target.value)}
-            className="h-9 bg-background"
-          />
-        );
+        case 'long-answer':
 
       case 'long-answer':
         return (
@@ -734,15 +718,7 @@ function TableRow({
             </div>
           );
 
-        case 'short-answer':
-          return (
-            <Input
-              placeholder="Enter your answer..."
-              value={question.answer || ''}
-              onChange={(e) => handleAnswerChange(e.target.value)}
-              className="bg-background h-9"
-            />
-          );
+        case 'long-answer':
 
         case 'long-answer':
           return (
@@ -837,15 +813,7 @@ function TableRow({
           </div>
         );
 
-      case 'short-answer':
-        return (
-          <Input
-            placeholder="Enter your answer..."
-            value={question.answer || ''}
-            onChange={(e) => handleAnswerChange(e.target.value)}
-            className="bg-background h-9"
-          />
-        );
+        case 'long-answer':
 
       case 'long-answer':
         return (
@@ -1186,7 +1154,7 @@ export function ChecklistTableView({ checklist, onUpdate, isPreviewMode }: Check
     const newQuestion: Question = {
       id: `q-${Date.now()}`,
       text: '',
-      answerType: 'short-answer',
+      answerType: 'long-answer',
       required: false,
     };
     const newSections = [...checklist.sections];

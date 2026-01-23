@@ -135,12 +135,12 @@ export function QuestionCard({
   };
 
   const answerTypeLabels: Record<AnswerType, string> = {
+    'none': 'None',
     'yes-no': 'Yes / No',
     'yes-no-na': 'Yes / No / N/A',
     'multiple-choice': 'Multiple Choice',
     'date': 'Date',
-    'long-answer': 'Long Answer',
-    'short-answer': 'Short Answer',
+    'long-answer': 'Answer',
     'reference': 'Reference Capability',
     'amount': 'Amount',
     'follow-up': 'Follow-up Question',
@@ -198,15 +198,10 @@ export function QuestionCard({
         );
 
 
-      case 'short-answer':
-        return (
-          <Input
-            placeholder="Enter your answer..."
-            value={question.answer || ''}
-            onChange={(e) => handleAnswerChange(e.target.value)}
-            className="mt-3 bg-background"
-          />
-        );
+      case 'none':
+        return null;
+
+      case 'long-answer':
 
       case 'long-answer':
         return (
@@ -396,12 +391,14 @@ export function QuestionCard({
                         </p>
                         {/* Render sub-question answer type */}
                         <div className="mt-2">
-                          {sub.answerType === 'short-answer' && (
-                            <Input 
+                          {sub.answerType === 'long-answer' && (
+                            <Textarea
                               placeholder="Enter your answer..." 
-                              className="h-8 text-sm bg-background" 
+                              className="h-20 text-sm bg-background"
+                              maxLength={500}
                             />
                           )}
+                          {sub.answerType === 'none' && null}
                           {sub.answerType === 'long-answer' && (
                             <div className="relative">
                               <Textarea 

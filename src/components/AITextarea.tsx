@@ -57,6 +57,7 @@ interface AITextareaProps {
   minHeight?: string;
   defaultHeight?: string;
   isCompactMode?: boolean;
+  maxLength?: number;
 }
 
 export function AITextarea({ 
@@ -67,7 +68,8 @@ export function AITextarea({
   className,
   minHeight = "100px",
   defaultHeight = "120px",
-  isCompactMode = false
+  isCompactMode = false,
+  maxLength = 500
 }: AITextareaProps) {
   const [isAIOpen, setIsAIOpen] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
@@ -185,6 +187,25 @@ export function AITextarea({
 
   const handleInput = () => {
     if (editorRef.current) {
+      const text = editorRef.current.textContent || '';
+      if (text.length > maxLength) {
+        // Truncate to maxLength
+        const selection = window.getSelection();
+        const range = selection?.getRangeAt(0);
+        const cursorPosition = range?.startOffset || 0;
+        
+        // Get text and truncate
+        editorRef.current.textContent = text.substring(0, maxLength);
+        
+        // Restore cursor position
+        if (selection && editorRef.current.firstChild) {
+          const newRange = document.createRange();
+          newRange.setStart(editorRef.current.firstChild, Math.min(cursorPosition, maxLength));
+          newRange.collapse(true);
+          selection.removeAllRanges();
+          selection.addRange(newRange);
+        }
+      }
       onChange(editorRef.current.innerHTML);
     }
   };

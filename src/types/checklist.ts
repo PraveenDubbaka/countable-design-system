@@ -1,4 +1,4 @@
-export type AnswerType = 'yes-no' | 'yes-no-na' | 'multiple-choice' | 'date' | 'long-answer' | 'short-answer' | 'reference' | 'amount' | 'follow-up' | 'dropdown' | 'file-upload' | 'toggle';
+export type AnswerType = 'none' | 'yes-no' | 'yes-no-na' | 'multiple-choice' | 'date' | 'long-answer' | 'reference' | 'amount' | 'follow-up' | 'dropdown' | 'file-upload' | 'toggle';
 
 export interface Question {
   id: string;

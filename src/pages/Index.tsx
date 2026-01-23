@@ -19,7 +19,7 @@ const generateClientMeetingChecklist = (prompt: string): Checklist => {
         {
           id: 'q-client-name',
           text: '<p><strong>Client Name</strong></p><p>Enter the full name of the client.</p>',
-          answerType: 'short-answer',
+          answerType: 'long-answer',
           options: [],
           required: true,
           answer: ''
@@ -27,7 +27,7 @@ const generateClientMeetingChecklist = (prompt: string): Checklist => {
         {
           id: 'q-client-position',
           text: '<p><strong>Client Position</strong></p><p>Enter the client\'s job title or position within their organization.</p>',
-          answerType: 'short-answer',
+          answerType: 'long-answer',
           options: [],
           required: true,
           answer: ''

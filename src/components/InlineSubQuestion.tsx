@@ -115,15 +115,8 @@ export function InlineSubQuestion({
           </div>
         );
 
-      case 'short-answer':
-        return (
-          <Input
-            placeholder="Enter answer..."
-            value={question.answer || ''}
-            onChange={(e) => handleAnswerChange(e.target.value)}
-            className="mt-2 h-8 text-sm bg-background"
-          />
-        );
+      case 'none':
+        return null;
 
       case 'long-answer':
         return (
