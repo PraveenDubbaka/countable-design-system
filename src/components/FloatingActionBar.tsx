@@ -72,11 +72,7 @@ export function FloatingActionBar({
             className="w-9 h-9 flex items-center justify-center rounded-lg hover:bg-muted transition-colors group"
             title={isCompactMode ? "Expand row text" : "Collapse row text"}
           >
-<<<<<<< HEAD
             <Minimize2 className={`h-4 w-4 text-muted-foreground group-hover:text-foreground transition-transform ${isCompactMode ? 'rotate-180' : ''}`} />
-=======
-            <Minimize2 className={`h-4 w-4 text-muted-foreground group-hover:text-foreground group-hover:icon-minimize transition-transform ${allQuestionsCollapsed ? 'rotate-180' : ''}`} />
->>>>>>> source/main
           </button>
 
           {/* Reorder Questions */}
