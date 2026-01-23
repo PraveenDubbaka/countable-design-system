@@ -1,22 +1,16 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef } from 'react';
 import { 
   Bold, 
   Italic, 
   Underline, 
-  Strikethrough, 
-  Code, 
-  RemoveFormatting, 
-  Link, 
   Superscript,
   List,
   ListOrdered,
-  CheckSquare,
   AlignLeft,
   AlignCenter,
   AlignRight,
   Undo,
   Redo,
-  Sparkles,
   ChevronDown,
   Type
 } from 'lucide-react';
@@ -158,46 +152,10 @@ export function RichTextToolbar({ position, onFormatAction, onAIAssist, toolbarR
       >
         <Underline className="h-3.5 w-3.5" />
       </Button>
-      <Button 
-        variant="ghost" 
-        size="sm" 
-        className="h-7 w-7 p-0"
-        onClick={() => handleFormat('strikethrough')}
-        title="Strikethrough"
-      >
-        <Strikethrough className="h-3.5 w-3.5" />
-      </Button>
-      <Button 
-        variant="ghost" 
-        size="sm" 
-        className="h-7 w-7 p-0"
-        onClick={() => handleFormat('code')}
-        title="Code"
-      >
-        <Code className="h-3.5 w-3.5" />
-      </Button>
-      <Button 
-        variant="ghost" 
-        size="sm" 
-        className="h-7 w-7 p-0"
-        onClick={() => handleFormat('removeFormatting')}
-        title="Remove formatting"
-      >
-        <RemoveFormatting className="h-3.5 w-3.5" />
-      </Button>
 
       <div className="w-px h-5 bg-border mx-1" />
 
-      {/* Link and Superscript */}
-      <Button 
-        variant="ghost" 
-        size="sm" 
-        className="h-7 w-7 p-0"
-        onClick={() => handleFormat('link')}
-        title="Insert link"
-      >
-        <Link className="h-3.5 w-3.5" />
-      </Button>
+      {/* Superscript */}
       <Button 
         variant="ghost" 
         size="sm" 
@@ -228,15 +186,6 @@ export function RichTextToolbar({ position, onFormatAction, onAIAssist, toolbarR
         title="Numbered list"
       >
         <ListOrdered className="h-3.5 w-3.5" />
-      </Button>
-      <Button 
-        variant="ghost" 
-        size="sm" 
-        className="h-7 w-7 p-0"
-        onClick={() => handleFormat('checkList')}
-        title="Checklist"
-      >
-        <CheckSquare className="h-3.5 w-3.5" />
       </Button>
 
       <div className="w-px h-5 bg-border mx-1" />
@@ -284,20 +233,6 @@ export function RichTextToolbar({ position, onFormatAction, onAIAssist, toolbarR
         title="Redo"
       >
         <Redo className="h-3.5 w-3.5" />
-      </Button>
-
-      <div className="w-px h-5 bg-border mx-1" />
-
-      {/* AI Assist Button */}
-      <Button 
-        variant="ghost" 
-        size="sm" 
-        className="h-7 px-2 gap-1.5 text-xs text-primary hover:text-primary"
-        onClick={onAIAssist}
-        title="AI Assist"
-      >
-        <Sparkles className="h-3.5 w-3.5" />
-        <span>Enhance this text</span>
       </Button>
     </div>
   );
