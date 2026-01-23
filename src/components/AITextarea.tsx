@@ -270,7 +270,7 @@ export function AITextarea({
     return (
       <div 
         ref={containerRef}
-        className={cn("relative w-full", className)}
+        className={cn("relative w-full h-full", className)}
         onClick={handleEnterEditMode}
       >
         <div
@@ -285,7 +285,7 @@ export function AITextarea({
   }
 
   return (
-    <div ref={containerRef} className={cn("relative w-full", className)}>
+    <div ref={containerRef} className={cn("relative w-full h-full", className)}>
       {/* Rich Text Toolbar */}
       {showToolbar && !disabled && (
         <RichTextToolbar

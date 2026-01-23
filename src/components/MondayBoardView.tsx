@@ -1122,14 +1122,14 @@ function SortableSubItemRow({ subItem, onUpdate, onDelete, isPreviewMode, isComp
       </div>
 
       {/* Response column with inline type selector and response field */}
-      <div className="shrink-0 px-2 py-2 border-l border-[#E8EDF2] flex items-center" style={{ width: columnWidths.response }}>
-        <div className="flex items-center gap-2">
+      <div className="shrink-0 px-2 py-2 border-l border-[#E8EDF2] flex items-stretch" style={{ width: columnWidths.response }}>
+        <div className="flex items-start gap-2 w-full">
           <ResponseTypeDropdown
             currentType={subItem.answerType}
             onTypeChange={handleAnswerTypeChange}
             disabled={isPreviewMode}
           />
-          <div className="flex-1 min-w-0 w-full">
+          <div className="flex-1 min-w-0">
             {renderResponseField()}
           </div>
         </div>
@@ -1137,7 +1137,7 @@ function SortableSubItemRow({ subItem, onUpdate, onDelete, isPreviewMode, isComp
 
       {/* Additional Explanation column - conditionally rendered */}
       {visibleColumns.explanation && (
-        <div className="shrink-0 px-2 py-2 border-l border-[#E8EDF2] flex items-center" style={{ width: columnWidths.explanation }}>
+        <div className="shrink-0 px-2 py-2 border-l border-[#E8EDF2] flex items-stretch" style={{ width: columnWidths.explanation }}>
           {(subItem as any).showExplanation !== false ? (
             <div className="relative group/exp w-full">
               <AITextarea
@@ -1607,14 +1607,14 @@ function SortableItemRow({
         </div>
 
         {/* Response column with inline type selector and response field */}
-        <div className="shrink-0 px-2 py-2 border-l border-[#E8EDF2] flex items-center" style={{ width: columnWidths.response }}>
-          <div className="flex items-center gap-2">
+        <div className="shrink-0 px-2 py-2 border-l border-[#E8EDF2] flex items-stretch" style={{ width: columnWidths.response }}>
+          <div className="flex items-start gap-2 w-full">
             <ResponseTypeDropdown
               currentType={item.answerType}
               onTypeChange={handleAnswerTypeChange}
               disabled={isPreviewMode}
             />
-            <div className="flex-1 min-w-0 w-full">
+            <div className="flex-1 min-w-0">
               {renderResponseField()}
             </div>
           </div>
@@ -1622,7 +1622,7 @@ function SortableItemRow({
 
         {/* Additional Explanation column - conditionally rendered */}
         {visibleColumns.explanation && (
-          <div className="shrink-0 px-2 py-2 border-l border-[#E8EDF2] flex items-center" style={{ width: columnWidths.explanation }}>
+          <div className="shrink-0 px-2 py-2 border-l border-[#E8EDF2] flex items-stretch" style={{ width: columnWidths.explanation }}>
             {(item as any).showExplanation !== false ? (
               <div className="relative group/exp w-full">
                 <AITextarea
