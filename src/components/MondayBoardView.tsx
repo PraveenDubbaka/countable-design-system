@@ -1477,7 +1477,7 @@ function SortableGroup({
   const [draftTitle, setDraftTitle] = useState(section.title);
   const [visibleColumns, setVisibleColumns] = useState({
     explanation: true,
-    reference: false
+    reference: true
   });
 
   // Column widths state
