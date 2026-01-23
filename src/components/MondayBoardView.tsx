@@ -864,7 +864,7 @@ function SortableSubItemRow({
       <div className="shrink-0 px-2 py-2 border-l border-[#E8EDF2] flex items-stretch" style={{
       width: columnWidths.response
     }}>
-        <div className="flex items-start gap-2 w-full">
+        <div className="flex items-center gap-2 w-full">
           <ResponseTypeDropdown currentType={subItem.answerType} onTypeChange={handleAnswerTypeChange} disabled={isPreviewMode} />
           <div className="flex-1 min-w-0">
             {renderResponseField()}
@@ -873,7 +873,7 @@ function SortableSubItemRow({
       </div>
 
       {/* Additional Explanation column - conditionally rendered */}
-      {visibleColumns.explanation && <div className="shrink-0 px-2 py-2 border-l border-[#E8EDF2] flex items-stretch" style={{
+      {visibleColumns.explanation && <div className="shrink-0 px-2 py-2 border-l border-[#E8EDF2] flex items-center" style={{
       width: columnWidths.explanation
     }}>
           {(subItem as any).showExplanation !== false ? <div className="relative group/exp w-full">
@@ -1218,7 +1218,7 @@ function SortableItemRow({
         <div className="shrink-0 px-2 py-2 border-l border-[#E8EDF2] flex items-stretch" style={{
         width: columnWidths.response
       }}>
-          <div className="flex items-start gap-2 w-full">
+          <div className="flex items-center gap-2 w-full">
             <ResponseTypeDropdown currentType={item.answerType} onTypeChange={handleAnswerTypeChange} disabled={isPreviewMode} />
             <div className="flex-1 min-w-0">
               {renderResponseField()}
@@ -1227,7 +1227,7 @@ function SortableItemRow({
         </div>
 
         {/* Additional Explanation column - conditionally rendered */}
-        {visibleColumns.explanation && <div className="shrink-0 px-2 py-2 border-l border-[#E8EDF2] flex items-stretch" style={{
+        {visibleColumns.explanation && <div className="shrink-0 px-2 py-2 border-l border-[#E8EDF2] flex items-center" style={{
         width: columnWidths.explanation
       }}>
             {(item as any).showExplanation !== false ? <div className="relative group/exp w-full">
