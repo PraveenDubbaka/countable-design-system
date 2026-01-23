@@ -423,26 +423,63 @@ export function FormLayoutEditor({ formLayout, onUpdate, isPreviewMode }: FormLa
         );
       
       case 'button':
+        const currentStyle = BUTTON_STYLES.find(s => s.value === element.buttonStyle)?.label || 'Text Only';
+        const showIconPicker = element.buttonStyle === 'icon-text' || element.buttonStyle === 'icon-only';
+        const EditorIconComponent = ICON_OPTIONS.find(i => i.value === element.icon)?.Icon || Check;
+        
         return (
           <div className="space-y-3">
             <FloatingSelect
               label="Button Style"
-              value={element.buttonStyle || 'text-only'}
-              onChange={(val) => handleUpdateElement(index, { buttonStyle: val as FormElement['buttonStyle'] })}
+              value={currentStyle}
+              onChange={(val) => {
+                const styleValue = BUTTON_STYLES.find(s => s.label === val)?.value || 'text-only';
+                // Set default icon when switching to icon style
+                const updates: Partial<FormElement> = { buttonStyle: styleValue as FormElement['buttonStyle'] };
+                if ((styleValue === 'icon-text' || styleValue === 'icon-only') && !element.icon) {
+                  updates.icon = 'check';
+                }
+                handleUpdateElement(index, updates);
+              }}
               options={BUTTON_STYLES.map(s => s.label)}
             />
             
-            {(element.buttonStyle === 'icon-text' || element.buttonStyle === 'icon-only') && (
-              <FloatingSelect
-                label="Icon"
-                value={ICON_OPTIONS.find(i => i.value === element.icon)?.label || 'Check'}
-                onChange={(val) => {
-                  const iconValue = ICON_OPTIONS.find(i => i.label === val)?.value || 'check';
-                  handleUpdateElement(index, { icon: iconValue });
-                }}
-                options={ICON_OPTIONS.map(i => i.label)}
-              />
+            {showIconPicker && (
+              <div className="space-y-2">
+                <p className="text-xs text-muted-foreground font-medium">Button Icon</p>
+                <div className="flex flex-wrap gap-2">
+                  {ICON_OPTIONS.map((iconOpt) => {
+                    const isSelected = element.icon === iconOpt.value;
+                    return (
+                      <button
+                        key={iconOpt.value}
+                        onClick={() => handleUpdateElement(index, { icon: iconOpt.value })}
+                        className={`flex items-center gap-2 px-3 py-2 rounded-lg border transition-all ${
+                          isSelected 
+                            ? 'border-primary bg-primary/10 text-primary' 
+                            : 'border-[#E8EDF2] bg-[#F5F8FA] text-muted-foreground hover:border-primary/50 hover:text-foreground'
+                        }`}
+                        title={iconOpt.label}
+                      >
+                        <iconOpt.Icon className="h-4 w-4" />
+                        <span className="text-xs">{iconOpt.label}</span>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
             )}
+
+            {/* Button preview in editor */}
+            <div className="pt-2">
+              <p className="text-xs text-muted-foreground font-medium mb-2">Preview</p>
+              <Button className="h-11" size={element.buttonStyle === 'icon-only' ? 'icon' : 'default'}>
+                {showIconPicker && (
+                  <EditorIconComponent className={`h-4 w-4 ${element.buttonStyle !== 'icon-only' ? 'mr-2' : ''}`} />
+                )}
+                {element.buttonStyle !== 'icon-only' && (element.label || 'Button')}
+              </Button>
+            </div>
           </div>
         );
       
@@ -512,11 +549,12 @@ export function FormLayoutEditor({ formLayout, onUpdate, isPreviewMode }: FormLa
         );
       
       case 'button':
-        const IconComponent = ICON_OPTIONS.find(i => i.value === element.icon)?.Icon || Check;
+        const PreviewIconComponent = ICON_OPTIONS.find(i => i.value === element.icon)?.Icon || Check;
+        const hasIcon = element.buttonStyle === 'icon-text' || element.buttonStyle === 'icon-only';
         return (
-          <Button className="w-full h-11">
-            {(element.buttonStyle === 'icon-text' || element.buttonStyle === 'icon-only') && (
-              <IconComponent className="h-4 w-4 mr-2" />
+          <Button className="w-full h-11" size={element.buttonStyle === 'icon-only' ? 'icon' : 'default'}>
+            {hasIcon && (
+              <PreviewIconComponent className={`h-4 w-4 ${element.buttonStyle !== 'icon-only' ? 'mr-2' : ''}`} />
             )}
             {element.buttonStyle !== 'icon-only' && (label || 'Button')}
           </Button>
