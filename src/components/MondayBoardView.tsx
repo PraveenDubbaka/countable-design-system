@@ -53,7 +53,6 @@ import {
 import {
   DndContext,
   DragEndEvent,
-  DragOverEvent,
   DragStartEvent,
   DragOverlay,
   closestCenter,
@@ -847,10 +846,17 @@ function SortableSubItemRow({ subItem, onUpdate, onDelete, isPreviewMode, isComp
     transform,
     transition,
     isDragging,
+    isOver,
+    active,
   } = useSortable({ 
     id: subItem.id,
     data: { type: 'subitem', parentId, subItem }
   });
+
+  // Check if this is a valid drop target
+  const isDropTarget = isOver && active?.id !== subItem.id;
+  const activeType = active?.data?.current?.type;
+  const isValidDropTarget = isDropTarget && activeType === 'subitem';
 
   const style = {
     transform: CSS.Transform.toString(transform),
@@ -1049,8 +1055,12 @@ function SortableSubItemRow({ subItem, onUpdate, onDelete, isPreviewMode, isComp
       ref={setNodeRef} 
       style={style}
       {...(!isPreviewMode ? { ...attributes, ...listeners } : {})}
-      className={`group flex items-stretch hover:bg-[#EDF2F7] transition-colors relative border-b border-[#E8EDF2] ${!isPreviewMode ? 'cursor-grab active:cursor-grabbing' : ''}`}
+      className={`group flex items-stretch hover:bg-[#EDF2F7] transition-all relative border-b border-[#E8EDF2] ${!isPreviewMode ? 'cursor-grab active:cursor-grabbing' : ''} ${isDragging ? 'opacity-50 ring-2 ring-primary ring-offset-1 z-10' : ''} ${isValidDropTarget ? 'bg-primary/5' : ''}`}
     >
+      {/* Drop indicator line */}
+      {isValidDropTarget && (
+        <div className="absolute -top-[2px] left-0 right-0 h-1 bg-primary rounded-full z-20 shadow-[0_0_8px_rgba(59,130,246,0.5)]" />
+      )}
       {/* Checkbox column */}
       <div className="w-10 shrink-0 flex items-center justify-center self-center">
         <Checkbox 
@@ -1244,10 +1254,17 @@ function SortableItemRow({
     transform,
     transition,
     isDragging,
+    isOver,
+    active,
   } = useSortable({ 
     id: item.id,
     data: { type: 'item', sectionId, item }
   });
+
+  // Check if this is a valid drop target (item being dragged over)
+  const isDropTarget = isOver && active?.id !== item.id;
+  const activeType = active?.data?.current?.type;
+  const isValidDropTarget = isDropTarget && activeType === 'item';
 
   const style = {
     transform: CSS.Transform.toString(transform),
@@ -1480,11 +1497,15 @@ function SortableItemRow({
   const subItemIds = item.subQuestions?.map(sq => sq.id) || [];
 
   return (
-    <div ref={setNodeRef} style={style} className="border-t border-[#E0E6ED]">
+    <div ref={setNodeRef} style={style} className={`border-t border-[#E0E6ED] relative ${isDragging ? 'z-10' : ''}`}>
+      {/* Drop indicator line - shows above item when hovering */}
+      {isValidDropTarget && (
+        <div className="absolute -top-[2px] left-0 right-0 h-1 bg-primary rounded-full z-20 shadow-[0_0_8px_rgba(59,130,246,0.5)]" />
+      )}
       {/* Main item row - full row is draggable */}
       <div 
         {...(!isPreviewMode && !isEditingName ? { ...attributes, ...listeners } : {})}
-        className={`group flex items-stretch hover:bg-[#EDF2F7] transition-colors border-b border-[#E8EDF2] ${isSelected ? 'bg-[#EDF2F7]' : ''} ${!isPreviewMode && !isEditingName ? 'cursor-grab active:cursor-grabbing' : ''}`}
+        className={`group flex items-stretch hover:bg-[#EDF2F7] transition-all border-b border-[#E8EDF2] ${isSelected ? 'bg-[#EDF2F7]' : ''} ${!isPreviewMode && !isEditingName ? 'cursor-grab active:cursor-grabbing' : ''} ${isDragging ? 'opacity-50 ring-2 ring-primary ring-offset-1' : ''} ${isValidDropTarget ? 'bg-primary/5' : ''}`}
       >
         {/* Checkbox */}
         <div className="w-10 shrink-0 flex items-center justify-center self-center">
@@ -1987,10 +2008,17 @@ function SortableGroup({
     transform,
     transition,
     isDragging,
+    isOver,
+    active,
   } = useSortable({ 
     id: section.id,
     data: { type: 'group', section }
   });
+
+  // Check if this is a valid drop target
+  const isDropTarget = isOver && active?.id !== section.id;
+  const activeType = active?.data?.current?.type;
+  const isValidDropTarget = isDropTarget && activeType === 'group';
 
   const style = {
     transform: CSS.Transform.toString(transform),
@@ -2058,11 +2086,15 @@ function SortableGroup({
   const itemIds = section.questions.map(q => q.id);
 
   return (
-    <div ref={setNodeRef} style={style} className="bg-white rounded-lg overflow-hidden shadow-[0_0_4px_rgba(0,0,0,0.1)]">
+    <div ref={setNodeRef} style={style} className={`bg-white rounded-lg overflow-hidden shadow-[0_0_4px_rgba(0,0,0,0.1)] relative ${isDragging ? 'ring-2 ring-primary ring-offset-2 z-10' : ''} ${isValidDropTarget ? 'ring-2 ring-primary/50' : ''}`}>
+      {/* Drop indicator line for groups */}
+      {isValidDropTarget && (
+        <div className="absolute -top-2 left-0 right-0 h-1 bg-primary rounded-full z-20 shadow-[0_0_8px_rgba(59,130,246,0.5)]" />
+      )}
       {/* Group header */}
       <div 
         {...(!isPreviewMode ? { ...attributes, ...listeners } : {})}
-        className={`flex items-center gap-3 px-4 py-2 bg-[#F5F8FA] border-b border-[#E8EDF2] ${!isPreviewMode ? 'cursor-grab active:cursor-grabbing' : ''}`}
+        className={`flex items-center gap-3 px-4 py-2 bg-[#F5F8FA] border-b border-[#E8EDF2] ${!isPreviewMode ? 'cursor-grab active:cursor-grabbing' : ''} ${isDragging ? 'opacity-70' : ''}`}
       >
         <div className="w-1 h-6 bg-amber-600 rounded-full" />
         <button 
@@ -2241,6 +2273,7 @@ function SortableGroup({
 
 export function MondayBoardView({ checklist, onUpdate, isPreviewMode, isCompactMode = false, selectedQuestions = new Set(), onSelectionChange }: MondayBoardViewProps) {
   const [activeId, setActiveId] = useState<string | null>(null);
+  const [activeData, setActiveData] = useState<{ type: string; text: string } | null>(null);
 
   const handleSelectionChange = (questionId: string, selected: boolean) => {
     if (!onSelectionChange) return;
@@ -2306,12 +2339,24 @@ export function MondayBoardView({ checklist, onUpdate, isPreviewMode, isCompactM
   };
 
   const handleDragStart = (event: DragStartEvent) => {
-    setActiveId(event.active.id as string);
+    const { active } = event;
+    setActiveId(active.id as string);
+    
+    // Extract information about what's being dragged
+    const data = active.data.current;
+    if (data?.type === 'group') {
+      setActiveData({ type: 'group', text: data.section?.title || 'Section' });
+    } else if (data?.type === 'item') {
+      setActiveData({ type: 'item', text: data.item?.text || 'Question' });
+    } else if (data?.type === 'subitem') {
+      setActiveData({ type: 'subitem', text: data.subItem?.text || 'Sub-question' });
+    }
   };
 
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
     setActiveId(null);
+    setActiveData(null);
 
     if (!over || active.id === over.id) return;
 
@@ -2462,6 +2507,35 @@ export function MondayBoardView({ checklist, onUpdate, isPreviewMode, isCompactM
           ))}
         </SortableContext>
       </div>
+      
+      {/* Drag Overlay - shows preview of dragged item */}
+      <DragOverlay dropAnimation={{
+        duration: 200,
+        easing: 'cubic-bezier(0.18, 0.67, 0.6, 1.22)',
+      }}>
+        {activeId && activeData && (
+          <div className={`
+            px-4 py-3 rounded-lg shadow-xl border-2 border-primary bg-white
+            ${activeData.type === 'group' ? 'bg-[#F5F8FA]' : ''}
+            ${activeData.type === 'subitem' ? 'ml-10 bg-[#FAFBFC]' : ''}
+          `}>
+            <div className="flex items-center gap-3">
+              <GripVertical className="h-4 w-4 text-gray-400" />
+              <div className="flex items-center gap-2">
+                {activeData.type === 'group' && (
+                  <div className="w-1 h-5 bg-amber-600 rounded-full" />
+                )}
+                <span 
+                  className={`text-sm font-medium truncate max-w-[300px] ${
+                    activeData.type === 'group' ? 'text-amber-600' : 'text-gray-700'
+                  }`}
+                  dangerouslySetInnerHTML={{ __html: sanitizeHtml(activeData.text) || 'Untitled' }}
+                />
+              </div>
+            </div>
+          </div>
+        )}
+      </DragOverlay>
     </DndContext>
   );
 }
