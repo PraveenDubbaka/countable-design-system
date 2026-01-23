@@ -1,4 +1,4 @@
-import { useState, useRef, useCallback } from 'react';
+import { useState, useRef, useCallback, useEffect } from 'react';
 import { sanitizeHtml } from '@/lib/sanitize';
 import { 
   Plus, 
@@ -821,6 +821,7 @@ interface SubItemRowProps {
   isCompactMode: boolean;
   parentId: string;
   visibleColumns: { explanation: boolean; reference: boolean };
+  columnWidths: { questions: number; response: number; explanation: number; reference: number };
 }
 
 interface SortableSubItemRowProps extends SubItemRowProps {
@@ -830,7 +831,7 @@ interface SortableSubItemRowProps extends SubItemRowProps {
   onBlurCleanup?: () => void;
 }
 
-function SortableSubItemRow({ subItem, onUpdate, onDelete, isPreviewMode, isCompactMode, index, parentId, isLast, totalCount, visibleColumns, isNewEmpty, onBlurCleanup }: SortableSubItemRowProps) {
+function SortableSubItemRow({ subItem, onUpdate, onDelete, isPreviewMode, isCompactMode, index, parentId, isLast, totalCount, visibleColumns, columnWidths, isNewEmpty, onBlurCleanup }: SortableSubItemRowProps) {
   const [isEditingName, setIsEditingName] = useState(isNewEmpty || false);
   const [isSelected, setIsSelected] = useState(false);
   const draftNameRef = useRef(subItem.text);
@@ -1055,8 +1056,8 @@ function SortableSubItemRow({ subItem, onUpdate, onDelete, isPreviewMode, isComp
         />
       </div>
 
-      {/* Sub-item name - flexible width to fill available space */}
-      <div className="flex-1 min-w-[200px] px-3 py-2.5 flex items-center">
+      {/* Sub-item name - width matches header */}
+      <div className="shrink-0 px-3 py-2.5 flex items-center" style={{ width: columnWidths.questions }}>
         {isEditingName && !isPreviewMode ? (
           <RichTextQuestionEditor
             value={subItem.text}
@@ -1106,7 +1107,7 @@ function SortableSubItemRow({ subItem, onUpdate, onDelete, isPreviewMode, isComp
       </div>
 
       {/* Response column with inline type selector and response field */}
-      <div className="w-[240px] shrink-0 px-2 py-2 border-l border-[#E8EDF2] flex items-center">
+      <div className="shrink-0 px-2 py-2 border-l border-[#E8EDF2] flex items-center" style={{ width: columnWidths.response }}>
         <div className="flex items-center gap-2">
           <ResponseTypeDropdown
             currentType={subItem.answerType}
@@ -1121,7 +1122,7 @@ function SortableSubItemRow({ subItem, onUpdate, onDelete, isPreviewMode, isComp
 
       {/* Additional Explanation column - conditionally rendered */}
       {visibleColumns.explanation && (
-        <div className="w-[200px] shrink-0 px-2 py-2 border-l border-[#E8EDF2] flex items-center">
+        <div className="shrink-0 px-2 py-2 border-l border-[#E8EDF2] flex items-center" style={{ width: columnWidths.explanation }}>
           {(subItem as any).showExplanation !== false ? (
             <div className="relative group/exp">
               <AITextarea
@@ -1157,7 +1158,7 @@ function SortableSubItemRow({ subItem, onUpdate, onDelete, isPreviewMode, isComp
 
       {/* Reference column - conditionally rendered */}
       {visibleColumns.reference && (
-        <div className="w-[200px] shrink-0 px-2 py-2 flex items-center border-l border-[#E8EDF2]">
+        <div className="shrink-0 px-2 py-2 flex items-center border-l border-[#E8EDF2]" style={{ width: columnWidths.reference }}>
           <RefButton
             reference={(subItem as any).reference}
             onAttach={(doc) => onUpdate({ ...subItem, reference: doc } as any)}
@@ -1203,6 +1204,7 @@ interface ItemRowProps {
   isCompactMode: boolean;
   onSubItemsReorder: (itemId: string, newSubItems: Question[]) => void;
   visibleColumns: { explanation: boolean; reference: boolean };
+  columnWidths: { questions: number; response: number; explanation: number; reference: number };
 }
 
 function SortableItemRow({ 
@@ -1216,6 +1218,7 @@ function SortableItemRow({
   isCompactMode,
   onSubItemsReorder,
   visibleColumns,
+  columnWidths,
 }: ItemRowProps) {
   const [isExpanded, setIsExpanded] = useState(true);
   const [isEditingName, setIsEditingName] = useState(false);
@@ -1509,7 +1512,7 @@ function SortableItemRow({
         </div>
 
         {/* Item name */}
-        <div className="flex-1 min-w-[200px] px-3 py-1 flex items-center">
+        <div className="shrink-0 px-3 py-1 flex items-center" style={{ width: columnWidths.questions }}>
           {isEditingName && !isPreviewMode ? (
             <RichTextQuestionEditor
               value={item.text}
@@ -1571,7 +1574,7 @@ function SortableItemRow({
         </div>
 
         {/* Response column with inline type selector and response field */}
-        <div className="w-[240px] shrink-0 px-2 py-2 border-l border-[#E8EDF2] flex items-center">
+        <div className="shrink-0 px-2 py-2 border-l border-[#E8EDF2] flex items-center" style={{ width: columnWidths.response }}>
           <div className="flex items-center gap-2">
             <ResponseTypeDropdown
               currentType={item.answerType}
@@ -1586,7 +1589,7 @@ function SortableItemRow({
 
         {/* Additional Explanation column - conditionally rendered */}
         {visibleColumns.explanation && (
-          <div className="w-[200px] shrink-0 px-2 py-2 border-l border-[#E8EDF2] flex items-center">
+          <div className="shrink-0 px-2 py-2 border-l border-[#E8EDF2] flex items-center" style={{ width: columnWidths.explanation }}>
             {(item as any).showExplanation !== false ? (
               <div className="relative group/exp">
                 <AITextarea
@@ -1622,7 +1625,7 @@ function SortableItemRow({
 
         {/* Reference column - conditionally rendered */}
         {visibleColumns.reference && (
-          <div className="w-[200px] shrink-0 px-2 py-2 flex items-center border-l border-[#E8EDF2]">
+          <div className="shrink-0 px-2 py-2 flex items-center border-l border-[#E8EDF2]" style={{ width: columnWidths.reference }}>
             <RefButton
               reference={(item as any).reference}
               onAttach={(doc) => onUpdate({ ...item, reference: doc } as any)}
@@ -1706,13 +1709,13 @@ function SortableItemRow({
             {/* Sub-items header row */}
             <div className="flex items-center bg-[#EDF2F7] text-xs font-medium text-gray-500 border-b border-[#E8EDF2]">
               <div className="w-10 shrink-0 flex items-center justify-center py-2" />
-              <div className="flex-1 min-w-[200px] px-3 py-2">Sub-questions</div>
-              <div className="w-[240px] shrink-0 px-2 py-2 text-center">Response</div>
+              <div className="shrink-0 px-3 py-2" style={{ width: columnWidths.questions }}>Sub-questions</div>
+              <div className="shrink-0 px-2 py-2 text-center" style={{ width: columnWidths.response }}>Response</div>
               {visibleColumns.explanation && (
-                <div className="w-[200px] shrink-0 px-2 py-2 text-center">Explanation</div>
+                <div className="shrink-0 px-2 py-2 text-center" style={{ width: columnWidths.explanation }}>Explanation</div>
               )}
               {visibleColumns.reference && (
-                <div className="w-[200px] shrink-0 px-2 py-2 text-center">Reference</div>
+                <div className="shrink-0 px-2 py-2 text-center" style={{ width: columnWidths.reference }}>Reference</div>
               )}
               {!isPreviewMode && (!visibleColumns.explanation || !visibleColumns.reference) && (
                 <div className="w-[100px] shrink-0" />
@@ -1734,6 +1737,7 @@ function SortableItemRow({
                     isLast={idx === item.subQuestions!.length - 1}
                     totalCount={item.subQuestions!.length}
                     visibleColumns={visibleColumns}
+                    columnWidths={columnWidths}
                     isNewEmpty={isPendingSubItem && sub.text.trim() === ''}
                     onBlurCleanup={() => {
                       if (sub.text.trim() === '') {
@@ -1782,6 +1786,143 @@ interface GroupProps {
   onSubItemsReorder: (itemId: string, newSubItems: Question[]) => void;
 }
 
+// Resizable column header component
+interface ResizableColumnHeaderProps {
+  label: string;
+  width: number;
+  minWidth?: number;
+  maxWidth?: number;
+  onWidthChange: (width: number) => void;
+  onLabelChange?: (label: string) => void;
+  onRemove?: () => void;
+  isPreviewMode: boolean;
+  showRemove?: boolean;
+}
+
+function ResizableColumnHeader({
+  label,
+  width,
+  minWidth = 100,
+  maxWidth = 500,
+  onWidthChange,
+  onLabelChange,
+  onRemove,
+  isPreviewMode,
+  showRemove = false,
+}: ResizableColumnHeaderProps) {
+  const [isResizing, setIsResizing] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
+  const [draftLabel, setDraftLabel] = useState(label);
+  const startXRef = useRef(0);
+  const startWidthRef = useRef(width);
+
+  const handleMouseDown = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsResizing(true);
+    startXRef.current = e.clientX;
+    startWidthRef.current = width;
+  };
+
+  const handleMouseMove = useCallback((e: MouseEvent) => {
+    if (!isResizing) return;
+    const delta = e.clientX - startXRef.current;
+    const newWidth = Math.max(minWidth, Math.min(maxWidth, startWidthRef.current + delta));
+    onWidthChange(newWidth);
+  }, [isResizing, minWidth, maxWidth, onWidthChange]);
+
+  const handleMouseUp = useCallback(() => {
+    setIsResizing(false);
+  }, []);
+
+  // Attach/detach global listeners for resize
+  useEffect(() => {
+    if (!isResizing) return;
+    
+    const handleMove = (e: MouseEvent) => {
+      const delta = e.clientX - startXRef.current;
+      const newWidth = Math.max(minWidth, Math.min(maxWidth, startWidthRef.current + delta));
+      onWidthChange(newWidth);
+    };
+    
+    const handleUp = () => {
+      setIsResizing(false);
+    };
+    
+    document.addEventListener('mousemove', handleMove);
+    document.addEventListener('mouseup', handleUp);
+    
+    return () => {
+      document.removeEventListener('mousemove', handleMove);
+      document.removeEventListener('mouseup', handleUp);
+    };
+  }, [isResizing, minWidth, maxWidth, onWidthChange]);
+
+  const commitLabel = () => {
+    const trimmed = draftLabel.trim();
+    if (trimmed && trimmed !== label && onLabelChange) {
+      onLabelChange(trimmed);
+    } else {
+      setDraftLabel(label);
+    }
+    setIsEditing(false);
+  };
+
+  return (
+    <div 
+      className="shrink-0 px-2 py-2 flex items-center justify-between group/col relative"
+      style={{ width }}
+    >
+      {isEditing && !isPreviewMode && onLabelChange ? (
+        <input
+          type="text"
+          value={draftLabel}
+          onChange={(e) => setDraftLabel(e.target.value)}
+          onBlur={commitLabel}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter') commitLabel();
+            if (e.key === 'Escape') {
+              setDraftLabel(label);
+              setIsEditing(false);
+            }
+          }}
+          autoFocus
+          onClick={(e) => e.stopPropagation()}
+          className="h-5 text-xs font-medium bg-white border border-gray-300 rounded px-1 flex-1 min-w-0"
+        />
+      ) : (
+        <span 
+          onClick={() => {
+            if (!isPreviewMode && onLabelChange) setIsEditing(true);
+          }}
+          className={`text-xs font-medium truncate ${!isPreviewMode && onLabelChange ? 'cursor-text hover:text-gray-700' : ''}`}
+        >
+          {label}
+        </span>
+      )}
+      
+      {!isPreviewMode && showRemove && onRemove && (
+        <button
+          onClick={onRemove}
+          className="p-0.5 text-gray-400 hover:text-red-500 opacity-0 group-hover/col:opacity-100 transition-opacity ml-1"
+          title="Remove column"
+        >
+          <X className="h-3.5 w-3.5" />
+        </button>
+      )}
+      
+      {/* Resize handle */}
+      {!isPreviewMode && (
+        <div
+          onMouseDown={handleMouseDown}
+          className={`absolute right-0 top-0 bottom-0 w-1 cursor-col-resize hover:bg-primary/50 transition-colors ${isResizing ? 'bg-primary' : ''}`}
+          style={{ transform: 'translateX(50%)' }}
+        />
+      )}
+    </div>
+  );
+}
+
 function SortableGroup({ 
   section, 
   sectionIndex, 
@@ -1796,6 +1937,22 @@ function SortableGroup({
   const [isEditingTitle, setIsEditingTitle] = useState(false);
   const [draftTitle, setDraftTitle] = useState(section.title);
   const [visibleColumns, setVisibleColumns] = useState({ explanation: true, reference: false });
+  
+  // Column widths state
+  const [columnWidths, setColumnWidths] = useState({
+    questions: 300,
+    response: 240,
+    explanation: 200,
+    reference: 200,
+  });
+  
+  // Column labels state (editable)
+  const [columnLabels, setColumnLabels] = useState({
+    questions: 'Questions',
+    response: 'Response',
+    explanation: 'Explanation',
+    reference: 'Reference',
+  });
 
   const handleAddColumn = (columnId: string) => {
     setVisibleColumns(prev => ({ ...prev, [columnId]: true }));
@@ -1968,35 +2125,49 @@ function SortableGroup({
           <div className="flex items-center bg-[#F5F8FA] text-xs font-medium text-gray-500 border-b border-[#E8EDF2]">
             <div className="w-10 shrink-0 py-2" />
             <div className="w-8 shrink-0 py-2" />
-            <div className="flex-1 min-w-[200px] px-3 py-2">Questions</div>
-            <div className="w-[240px] shrink-0 px-2 py-2">Response</div>
+            <ResizableColumnHeader
+              label={columnLabels.questions}
+              width={columnWidths.questions}
+              minWidth={200}
+              maxWidth={600}
+              onWidthChange={(w) => setColumnWidths(prev => ({ ...prev, questions: w }))}
+              onLabelChange={(l) => setColumnLabels(prev => ({ ...prev, questions: l }))}
+              isPreviewMode={isPreviewMode}
+            />
+            <ResizableColumnHeader
+              label={columnLabels.response}
+              width={columnWidths.response}
+              minWidth={150}
+              maxWidth={400}
+              onWidthChange={(w) => setColumnWidths(prev => ({ ...prev, response: w }))}
+              onLabelChange={(l) => setColumnLabels(prev => ({ ...prev, response: l }))}
+              isPreviewMode={isPreviewMode}
+            />
             {visibleColumns.explanation && (
-              <div className="w-[200px] shrink-0 px-2 py-2 flex items-center justify-between group/col">
-                <span>Explanation</span>
-                {!isPreviewMode && (
-                  <button
-                    onClick={() => handleRemoveColumn('explanation')}
-                    className="p-0.5 text-gray-400 hover:text-red-500 opacity-0 group-hover/col:opacity-100 transition-opacity"
-                    title="Remove column"
-                  >
-                    <X className="h-3.5 w-3.5" />
-                  </button>
-                )}
-              </div>
+              <ResizableColumnHeader
+                label={columnLabels.explanation}
+                width={columnWidths.explanation}
+                minWidth={120}
+                maxWidth={400}
+                onWidthChange={(w) => setColumnWidths(prev => ({ ...prev, explanation: w }))}
+                onLabelChange={(l) => setColumnLabels(prev => ({ ...prev, explanation: l }))}
+                onRemove={() => handleRemoveColumn('explanation')}
+                isPreviewMode={isPreviewMode}
+                showRemove={true}
+              />
             )}
             {visibleColumns.reference && (
-              <div className="w-[200px] shrink-0 px-2 py-2 flex items-center justify-between group/col">
-                <span>Reference</span>
-                {!isPreviewMode && (
-                  <button
-                    onClick={() => handleRemoveColumn('reference')}
-                    className="p-0.5 text-gray-400 hover:text-red-500 opacity-0 group-hover/col:opacity-100 transition-opacity"
-                    title="Remove column"
-                  >
-                    <X className="h-3.5 w-3.5" />
-                  </button>
-                )}
-              </div>
+              <ResizableColumnHeader
+                label={columnLabels.reference}
+                width={columnWidths.reference}
+                minWidth={120}
+                maxWidth={400}
+                onWidthChange={(w) => setColumnWidths(prev => ({ ...prev, reference: w }))}
+                onLabelChange={(l) => setColumnLabels(prev => ({ ...prev, reference: l }))}
+                onRemove={() => handleRemoveColumn('reference')}
+                isPreviewMode={isPreviewMode}
+                showRemove={true}
+              />
             )}
             {!isPreviewMode && (!visibleColumns.explanation || !visibleColumns.reference) && (
               <div className="w-[100px] shrink-0 px-2 py-2 text-center text-gray-400">
@@ -2022,6 +2193,7 @@ function SortableGroup({
                 isCompactMode={isCompactMode}
                 onSubItemsReorder={onSubItemsReorder}
                 visibleColumns={visibleColumns}
+                columnWidths={columnWidths}
               />
             ))}
           </SortableContext>
