@@ -34,6 +34,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import lukaLogo from "@/assets/luka-logo.png";
+import { readJsonFromLocalStorage, removeLocalStorageKey, writeJsonToLocalStorage } from "@/lib/safeJson";
 interface Template {
   id: string;
   name: string;
@@ -263,9 +264,13 @@ export function Sidebar() {
   // Load saved checklists on mount and listen for new saves
   useEffect(() => {
     const loadSavedChecklists = () => {
-      const stored = localStorage.getItem("savedChecklists");
-      if (stored) {
-        setSavedChecklists(JSON.parse(stored));
+      const parsed = readJsonFromLocalStorage<unknown>("savedChecklists", []);
+      if (Array.isArray(parsed)) {
+        setSavedChecklists(parsed as SavedChecklist[]);
+      } else {
+        // Reset corrupted legacy value so it can't crash future loads.
+        removeLocalStorageKey("savedChecklists");
+        setSavedChecklists([]);
       }
     };
     loadSavedChecklists();
@@ -281,7 +286,7 @@ export function Sidebar() {
   // Sync to localStorage whenever savedChecklists changes
   useEffect(() => {
     if (savedChecklists.length > 0) {
-      localStorage.setItem("savedChecklists", JSON.stringify(savedChecklists));
+      writeJsonToLocalStorage("savedChecklists", savedChecklists);
     }
   }, [savedChecklists]);
   const handleDropdownSelect = (itemId: string) => {
@@ -328,7 +333,7 @@ export function Sidebar() {
   const handleDelete = (checklistId: string) => {
     setSavedChecklists((prev) => prev.filter((c) => c.id !== checklistId));
     const remaining = savedChecklists.filter((c) => c.id !== checklistId);
-    localStorage.setItem("savedChecklists", JSON.stringify(remaining));
+    writeJsonToLocalStorage("savedChecklists", remaining);
   };
   const handleRenameStart = (checklist: SavedChecklist) => {
     setSelectedChecklist(checklist);

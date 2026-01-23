@@ -19,6 +19,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { toast } from 'sonner';
 import { ContentType as SidebarContentType } from '@/components/Sidebar';
 import { GenerationPreview } from '@/components/GenerationPreview';
+import { readJsonFromLocalStorage, writeJsonToLocalStorage } from '@/lib/safeJson';
 
 type ContentType = 'checklist' | 'worksheet' | 'letter' | 'note';
 type DetailLevel = 'standard' | 'detailed';
@@ -234,7 +235,7 @@ export default function Generate() {
     toast.success(`"${checklistName}" saved to "${folderName}"`);
     
     // Get existing saved checklists from localStorage
-    const existingChecklists = JSON.parse(localStorage.getItem('savedChecklists') || '[]');
+    const existingChecklists = readJsonFromLocalStorage<any[]>('savedChecklists', []);
     const newChecklistId = `checklist-${Date.now()}`;
     const newChecklist = {
       id: newChecklistId,
@@ -246,7 +247,7 @@ export default function Generate() {
       createdAt: new Date().toISOString(),
       data: null, // Will be populated after full generation
     };
-    localStorage.setItem('savedChecklists', JSON.stringify([...existingChecklists, newChecklist]));
+    writeJsonToLocalStorage('savedChecklists', [...existingChecklists, newChecklist]);
     
     // Dispatch custom event to notify Sidebar
     window.dispatchEvent(new CustomEvent('checklistSaved', { detail: newChecklist }));

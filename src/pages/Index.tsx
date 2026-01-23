@@ -8,6 +8,7 @@ import { UnsavedChangesDialog } from '@/components/UnsavedChangesDialog';
 import { ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
+import { readJsonFromLocalStorage, writeJsonToLocalStorage } from '@/lib/safeJson';
 
 const generateClientMeetingChecklist = (prompt: string): Checklist => {
   const sections: Section[] = [
@@ -292,14 +293,11 @@ type GenerateNavState = {
 
 // Helper to update checklist data in localStorage
 const updateChecklistInStorage = (checklistId: string, checklistData: Checklist) => {
-  const stored = localStorage.getItem('savedChecklists');
-  if (stored) {
-    const savedChecklists = JSON.parse(stored);
-    const updated = savedChecklists.map((c: any) => 
-      c.id === checklistId ? { ...c, data: checklistData } : c
-    );
-    localStorage.setItem('savedChecklists', JSON.stringify(updated));
-  }
+  const savedChecklists = readJsonFromLocalStorage<any[]>('savedChecklists', []);
+  const updated = Array.isArray(savedChecklists)
+    ? savedChecklists.map((c: any) => (c?.id === checklistId ? { ...c, data: checklistData } : c))
+    : [];
+  writeJsonToLocalStorage('savedChecklists', updated);
 };
 
 export default function Index() {
@@ -346,14 +344,13 @@ export default function Index() {
     // Load saved checklist by ID (user clicked on existing checklist)
     if (checklistId) {
       setCurrentChecklistId(checklistId);
-      const stored = localStorage.getItem('savedChecklists');
-      if (stored) {
-        const savedChecklists = JSON.parse(stored);
-        const found = savedChecklists.find((c: any) => c.id === checklistId);
-        if (found?.data) {
-          setChecklist(found.data);
-          return;
-        }
+      const savedChecklists = readJsonFromLocalStorage<any[]>('savedChecklists', []);
+      const found = Array.isArray(savedChecklists)
+        ? savedChecklists.find((c: any) => c?.id === checklistId)
+        : null;
+      if (found?.data) {
+        setChecklist(found.data);
+        return;
       }
     }
 
