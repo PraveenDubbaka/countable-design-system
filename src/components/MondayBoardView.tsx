@@ -12,6 +12,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { AITextarea } from '@/components/AITextarea';
 import { RichTextQuestionEditor } from '@/components/RichTextQuestionEditor';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import { Switch } from '@/components/ui/switch';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { DndContext, DragEndEvent, DragStartEvent, DragOverlay, closestCenter, KeyboardSensor, PointerSensor, useSensor, useSensors } from '@dnd-kit/core';
 import { SortableContext, sortableKeyboardCoordinates, useSortable, verticalListSortingStrategy } from '@dnd-kit/sortable';
@@ -1157,7 +1158,10 @@ function SortableItemRow({
         <div className="shrink-0 px-3 py-1 flex items-center gap-2" style={{
         width: columnWidths.questions
       }}>
-          <span className="text-xs font-medium text-gray-500 shrink-0">{sectionNumber}.{itemIndex + 1}</span>
+          <span className="text-xs font-medium text-gray-500 shrink-0">
+            {sectionNumber}.{itemIndex + 1}
+            {item.required && isPreviewMode && <span className="text-red-500 ml-0.5">*</span>}
+          </span>
           {isEditingName && !isPreviewMode ? <RichTextQuestionEditor value={item.text} onChange={newValue => {
           draftNameRef.current = newValue;
         }} onBlur={handleSave} onCancel={handleCancel} className="text-sm min-h-[36px] bg-gray-100 border-gray-300 text-gray-800 flex-1" /> : <div className="flex items-center gap-2 flex-1 min-w-0">
@@ -1269,6 +1273,22 @@ function SortableItemRow({
                   </button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="w-48 bg-white z-50">
+                  <div 
+                    className="flex items-center justify-between px-2 py-1.5 text-sm text-gray-700 hover:bg-[#EDF2F7] rounded-sm cursor-pointer"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      onUpdate({ ...item, required: !item.required });
+                    }}
+                  >
+                    <span>Required</span>
+                    <Switch 
+                      checked={item.required || false} 
+                      onCheckedChange={(checked) => onUpdate({ ...item, required: checked })}
+                      className="h-4 w-8 data-[state=checked]:bg-primary data-[state=unchecked]:bg-gray-300"
+                    />
+                  </div>
+                  <DropdownMenuSeparator className="bg-[#EDF2F7]" />
                   <DropdownMenuItem onClick={onAddSubItem} className="text-gray-700 focus:bg-[#EDF2F7] focus:text-gray-900">
                     <Plus className="h-4 w-4 mr-2" />
                     Add sub-item
