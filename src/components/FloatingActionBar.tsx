@@ -2,9 +2,7 @@ import { useState } from 'react';
 import { 
   Minimize2, 
   ArrowUpDown, 
-  Layers,
-  ChevronDown,
-  ChevronUp
+  Layers
 } from 'lucide-react';
 import { Checklist } from '@/types/checklist';
 import { ReorderModal } from './ReorderModal';
@@ -41,14 +39,6 @@ export function FloatingActionBar({
       onExpandSections();
     } else {
       onCollapseSections();
-    }
-  };
-
-  const handleToggleQuestions = () => {
-    if (allQuestionsCollapsed) {
-      onExpandQuestions();
-    } else {
-      onCollapseQuestions();
     }
   };
 
