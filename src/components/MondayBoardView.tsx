@@ -541,14 +541,6 @@ function AddColumnButton({
         </button>
       </PopoverTrigger>
       <PopoverContent align="end" className="w-72 p-0 bg-slate-800 border-slate-700 shadow-xl z-50" sideOffset={5}>
-        {/* Search input */}
-        <div className="p-3 border-b border-slate-700">
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
-            <SearchInput value={searchTerm} onChange={e => setSearchTerm(e.target.value)} placeholder="Search or describe your column" className="pl-9 bg-slate-700 border-slate-600 text-white placeholder:text-slate-400 h-9 text-sm" />
-          </div>
-        </div>
-        
         {/* Column options */}
         <div className="p-2">
           {filteredOptions.length > 0 ? <div className="grid grid-cols-2 gap-2">
