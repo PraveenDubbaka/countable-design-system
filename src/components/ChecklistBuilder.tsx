@@ -26,7 +26,7 @@ import {
   Share2, 
   Eye, 
   FileText,
-  Wand2,
+  Columns,
   ChevronDown,
   FileDown,
   Save,
@@ -43,6 +43,7 @@ import { useRichTextToolbarContext } from '@/contexts/RichTextToolbarContext';
 import { consolidateSectionsToThree } from '@/lib/consolidateSections';
 
 import { MondayBoardView } from './MondayBoardView';
+import { FormColumnModal } from './FormColumnModal';
 
 interface ChecklistBuilderProps {
   checklist: Checklist;
@@ -274,34 +275,43 @@ export function ChecklistBuilder({ checklist, onUpdate, onSave }: ChecklistBuild
     setShowAddMenu(false);
   };
 
-  const handleAddWithAI = () => {
-    const aiSection: Section = {
+  const [showFormColumnModal, setShowFormColumnModal] = useState(false);
+
+  const handleAddFormColumn = () => {
+    setShowFormColumnModal(true);
+    setShowAddMenu(false);
+  };
+
+  const handleCreateFormColumn = (columnCount: number) => {
+    const formSection: Section = {
       id: `section-${Date.now()}`,
-      title: 'AI Generated: Compliance Review',
-      questions: [
-        {
-          id: `q-${Date.now()}-1`,
-          text: 'Have all regulatory requirements been identified and documented?',
-          answerType: 'yes-no',
-          required: true
-        },
-        {
-          id: `q-${Date.now()}-2`,
-          text: 'Is there evidence of management\'s acknowledgment of their responsibilities?',
-          answerType: 'yes-no',
-          required: true
-        },
-        {
-          id: `q-${Date.now()}-3`,
-          text: 'Document any compliance concerns or exceptions noted.',
-          answerType: 'long-answer',
-          required: false
-        }
-      ],
+      title: 'Form Section',
+      questions: [],
+      isExpanded: true,
+      formLayout: {
+        columns: columnCount,
+        elements: Array(columnCount).fill(null).map((_, i) => ({
+          id: `col-${Date.now()}-${i}`,
+          type: 'empty'
+        }))
+      }
+    };
+    onUpdate({ ...checklist, sections: [...checklist.sections, formSection] });
+    setShowFormColumnModal(false);
+  };
+
+  const handleAddCategoryAtPosition = (position: 'top' | 'bottom') => {
+    const newSection: Section = {
+      id: `section-${Date.now()}`,
+      title: 'New Category',
+      questions: [],
       isExpanded: true
     };
-    onUpdate({ ...checklist, sections: [...checklist.sections, aiSection] });
-    setShowAddMenu(false);
+    if (position === 'top') {
+      onUpdate({ ...checklist, sections: [newSection, ...checklist.sections] });
+    } else {
+      onUpdate({ ...checklist, sections: [...checklist.sections, newSection] });
+    }
   };
 
   return (
@@ -507,15 +517,15 @@ export function ChecklistBuilder({ checklist, onUpdate, onSave }: ChecklistBuild
                   </button>
 
                   <button
-                    onClick={handleAddWithAI}
+                    onClick={handleAddFormColumn}
                     className="w-full flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-muted transition-colors"
                   >
                     <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center">
-                      <Wand2 className="h-4 w-4 text-primary-foreground" />
+                      <Columns className="h-4 w-4 text-primary-foreground" />
                     </div>
                     <div className="text-left">
-                      <p className="text-sm font-medium text-foreground">Generate with AI</p>
-                      <p className="text-xs text-muted-foreground">AI-powered generation</p>
+                      <p className="text-sm font-medium text-foreground">Form Column</p>
+                      <p className="text-xs text-muted-foreground">Add multi-column form layout</p>
                     </div>
                   </button>
                 </div>
@@ -539,6 +549,14 @@ export function ChecklistBuilder({ checklist, onUpdate, onSave }: ChecklistBuild
         onToggleCompactMode={() => setIsCompactMode(!isCompactMode)}
         selectedQuestions={selectedQuestions}
         onBulkDelete={handleBulkDelete}
+        onAddCategory={handleAddCategoryAtPosition}
+      />
+
+      {/* Form Column Modal */}
+      <FormColumnModal
+        isOpen={showFormColumnModal}
+        onClose={() => setShowFormColumnModal(false)}
+        onSelect={handleCreateFormColumn}
       />
 
       {/* Rich Text Toolbar - Hidden in preview mode */}
