@@ -305,11 +305,11 @@ export function AITextarea({
           setShowToolbar(true);
         }}
         className={cn(
-          "pr-16 text-sm bg-gray-50 border border-gray-300 text-gray-700 rounded-md p-3 outline-none focus:ring-2 focus:ring-ring focus:ring-offset-1",
+          "w-full pr-16 text-sm bg-gray-50 border border-gray-300 text-gray-700 rounded-md p-3 outline-none focus:ring-2 focus:ring-ring focus:ring-offset-1 resize overflow-auto",
           isListening && "border-primary ring-1 ring-primary",
           disabled && "opacity-60"
         )}
-        style={{ minHeight }}
+        style={{ minHeight, minWidth: '100%' }}
         dangerouslySetInnerHTML={{ __html: value }}
       />
       
