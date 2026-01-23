@@ -1,32 +1,6 @@
 import { useState, useRef, useCallback, useEffect } from 'react';
 import { sanitizeHtml } from '@/lib/sanitize';
-import { 
-  Plus, 
-  Trash2, 
-  ChevronDown,
-  ChevronRight,
-  MoreHorizontal,
-  Copy,
-  GripVertical,
-  PlusCircle,
-  Circle,
-  Square,
-  Type,
-  Calendar,
-  AlignLeft,
-  Paperclip,
-  ToggleLeft,
-  ListPlus,
-  Menu,
-  DollarSign,
-  FileText,
-  Search,
-  Upload,
-  File,
-  X,
-  Check,
-  Pencil,
-} from 'lucide-react';
+import { Plus, Trash2, ChevronDown, ChevronRight, MoreHorizontal, Copy, GripVertical, PlusCircle, Circle, Square, Type, Calendar, AlignLeft, Paperclip, ToggleLeft, ListPlus, Menu, DollarSign, FileText, Search, Upload, File, X, Check, Pencil } from 'lucide-react';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { Input as SearchInput } from '@/components/ui/input';
@@ -36,39 +10,11 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { AITextarea } from '@/components/AITextarea';
 import { RichTextQuestionEditor } from '@/components/RichTextQuestionEditor';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
-import {
-  DndContext,
-  DragEndEvent,
-  DragStartEvent,
-  DragOverlay,
-  closestCenter,
-  KeyboardSensor,
-  PointerSensor,
-  useSensor,
-  useSensors,
-} from '@dnd-kit/core';
-import {
-  SortableContext,
-  sortableKeyboardCoordinates,
-  useSortable,
-  verticalListSortingStrategy,
-} from '@dnd-kit/sortable';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { DndContext, DragEndEvent, DragStartEvent, DragOverlay, closestCenter, KeyboardSensor, PointerSensor, useSensor, useSensors } from '@dnd-kit/core';
+import { SortableContext, sortableKeyboardCoordinates, useSortable, verticalListSortingStrategy } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-
 interface MondayBoardViewProps {
   checklist: Checklist;
   onUpdate: (checklist: Checklist) => void;
@@ -79,32 +25,107 @@ interface MondayBoardViewProps {
 }
 
 // Answer type options for dropdown with icons like Monday.com
-const ANSWER_TYPE_OPTIONS: { value: AnswerType; label: string; icon: React.ElementType; bgColor: string; iconColor: string }[] = [
-  { value: 'yes-no', label: 'Yes / No', icon: Circle, bgColor: 'bg-green-100', iconColor: 'text-green-600' },
-  { value: 'yes-no-na', label: 'Yes / No / N/A', icon: Circle, bgColor: 'bg-green-100', iconColor: 'text-green-600' },
-  { value: 'multiple-choice', label: 'Multiple Choice', icon: Square, bgColor: 'bg-amber-100', iconColor: 'text-amber-600' },
-  { value: 'date', label: 'Date', icon: Calendar, bgColor: 'bg-blue-100', iconColor: 'text-blue-600' },
-  { value: 'long-answer', label: 'Long Answer', icon: AlignLeft, bgColor: 'bg-purple-100', iconColor: 'text-purple-600' },
-  { value: 'short-answer', label: 'Short Answer', icon: Type, bgColor: 'bg-orange-100', iconColor: 'text-orange-600' },
-  { value: 'amount', label: 'Amount', icon: DollarSign, bgColor: 'bg-yellow-100', iconColor: 'text-yellow-600' },
-  { value: 'dropdown', label: 'Dropdown', icon: Menu, bgColor: 'bg-teal-100', iconColor: 'text-teal-600' },
-  { value: 'file-upload', label: 'File Upload', icon: Paperclip, bgColor: 'bg-pink-100', iconColor: 'text-pink-600' },
-  { value: 'toggle', label: 'Switch/Toggle', icon: ToggleLeft, bgColor: 'bg-indigo-100', iconColor: 'text-indigo-600' },
-];
+const ANSWER_TYPE_OPTIONS: {
+  value: AnswerType;
+  label: string;
+  icon: React.ElementType;
+  bgColor: string;
+  iconColor: string;
+}[] = [{
+  value: 'yes-no',
+  label: 'Yes / No',
+  icon: Circle,
+  bgColor: 'bg-green-100',
+  iconColor: 'text-green-600'
+}, {
+  value: 'yes-no-na',
+  label: 'Yes / No / N/A',
+  icon: Circle,
+  bgColor: 'bg-green-100',
+  iconColor: 'text-green-600'
+}, {
+  value: 'multiple-choice',
+  label: 'Multiple Choice',
+  icon: Square,
+  bgColor: 'bg-amber-100',
+  iconColor: 'text-amber-600'
+}, {
+  value: 'date',
+  label: 'Date',
+  icon: Calendar,
+  bgColor: 'bg-blue-100',
+  iconColor: 'text-blue-600'
+}, {
+  value: 'long-answer',
+  label: 'Long Answer',
+  icon: AlignLeft,
+  bgColor: 'bg-purple-100',
+  iconColor: 'text-purple-600'
+}, {
+  value: 'short-answer',
+  label: 'Short Answer',
+  icon: Type,
+  bgColor: 'bg-orange-100',
+  iconColor: 'text-orange-600'
+}, {
+  value: 'amount',
+  label: 'Amount',
+  icon: DollarSign,
+  bgColor: 'bg-yellow-100',
+  iconColor: 'text-yellow-600'
+}, {
+  value: 'dropdown',
+  label: 'Dropdown',
+  icon: Menu,
+  bgColor: 'bg-teal-100',
+  iconColor: 'text-teal-600'
+}, {
+  value: 'file-upload',
+  label: 'File Upload',
+  icon: Paperclip,
+  bgColor: 'bg-pink-100',
+  iconColor: 'text-pink-600'
+}, {
+  value: 'toggle',
+  label: 'Switch/Toggle',
+  icon: ToggleLeft,
+  bgColor: 'bg-indigo-100',
+  iconColor: 'text-indigo-600'
+}];
 
 // Column options for add column dropdown
-const COLUMN_OPTIONS = [
-  { id: 'explanation', label: 'Additional Explanation', icon: AlignLeft, bgColor: 'bg-purple-100', iconColor: 'text-purple-600' },
-  { id: 'reference', label: '+ Ref (Attached Document)', icon: Paperclip, bgColor: 'bg-pink-100', iconColor: 'text-pink-600' },
-];
+const COLUMN_OPTIONS = [{
+  id: 'explanation',
+  label: 'Additional Explanation',
+  icon: AlignLeft,
+  bgColor: 'bg-purple-100',
+  iconColor: 'text-purple-600'
+}, {
+  id: 'reference',
+  label: '+ Ref (Attached Document)',
+  icon: Paperclip,
+  bgColor: 'bg-pink-100',
+  iconColor: 'text-pink-600'
+}];
 
 // Mock existing documents for demo
-const EXISTING_DOCUMENTS = [
-  { id: 'doc1', name: 'Company Policy.pdf', type: 'pdf' },
-  { id: 'doc2', name: 'Guidelines 2024.docx', type: 'docx' },
-  { id: 'doc3', name: 'Compliance Checklist.xlsx', type: 'xlsx' },
-  { id: 'doc4', name: 'Reference Manual.pdf', type: 'pdf' },
-];
+const EXISTING_DOCUMENTS = [{
+  id: 'doc1',
+  name: 'Company Policy.pdf',
+  type: 'pdf'
+}, {
+  id: 'doc2',
+  name: 'Guidelines 2024.docx',
+  type: 'docx'
+}, {
+  id: 'doc3',
+  name: 'Compliance Checklist.xlsx',
+  type: 'xlsx'
+}, {
+  id: 'doc4',
+  name: 'Reference Manual.pdf',
+  type: 'pdf'
+}];
 
 // Sortable Option Row for edit popovers
 interface SortableOptionRowProps {
@@ -115,54 +136,38 @@ interface SortableOptionRowProps {
   onRemove: () => void;
   canRemove: boolean;
 }
-
-function SortableOptionRow({ id, value, index, onChange, onRemove, canRemove }: SortableOptionRowProps) {
+function SortableOptionRow({
+  id,
+  value,
+  index,
+  onChange,
+  onRemove,
+  canRemove
+}: SortableOptionRowProps) {
   const {
     attributes,
     listeners,
     setNodeRef,
     transform,
     transition,
-    isDragging,
-  } = useSortable({ id });
-
+    isDragging
+  } = useSortable({
+    id
+  });
   const style = {
     transform: CSS.Transform.toString(transform),
     transition,
-    opacity: isDragging ? 0.5 : 1,
+    opacity: isDragging ? 0.5 : 1
   };
-
-  return (
-    <div 
-      ref={setNodeRef} 
-      style={style} 
-      className="flex items-center gap-1"
-    >
-      <button
-        type="button"
-        className="p-0.5 text-gray-400 hover:text-gray-600 cursor-grab active:cursor-grabbing touch-none"
-        {...attributes}
-        {...listeners}
-      >
+  return <div ref={setNodeRef} style={style} className="flex items-center gap-1">
+      <button type="button" className="p-0.5 text-gray-400 hover:text-gray-600 cursor-grab active:cursor-grabbing touch-none" {...attributes} {...listeners}>
         <GripVertical className="h-3 w-3" />
       </button>
-      <input
-        type="text"
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        className="flex-1 px-2 py-1 text-xs bg-white border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-primary"
-        placeholder={`Option ${index + 1}`}
-      />
-      <button
-        type="button"
-        onClick={onRemove}
-        disabled={!canRemove}
-        className="p-1 text-gray-400 hover:text-red-500 disabled:opacity-30 disabled:cursor-not-allowed"
-      >
+      <input type="text" value={value} onChange={e => onChange(e.target.value)} className="flex-1 px-2 py-1 text-xs bg-white border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-primary" placeholder={`Option ${index + 1}`} />
+      <button type="button" onClick={onRemove} disabled={!canRemove} className="p-1 text-gray-400 hover:text-red-500 disabled:opacity-30 disabled:cursor-not-allowed">
         <X className="h-3.5 w-3.5" />
       </button>
-    </div>
-  );
+    </div>;
 }
 
 // Shared Edit Options Popover Content
@@ -174,22 +179,26 @@ interface EditOptionsPopoverProps {
   onSave: () => void;
   onCancel: () => void;
 }
-
 function EditOptionsPopoverContent({
   editingOptions,
   setEditingOptions,
   newOption,
   setNewOption,
   onSave,
-  onCancel,
+  onCancel
 }: EditOptionsPopoverProps) {
-  const sensors = useSensors(
-    useSensor(PointerSensor, { activationConstraint: { distance: 3 } }),
-    useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
-  );
-
+  const sensors = useSensors(useSensor(PointerSensor, {
+    activationConstraint: {
+      distance: 3
+    }
+  }), useSensor(KeyboardSensor, {
+    coordinateGetter: sortableKeyboardCoordinates
+  }));
   const handleDragEnd = (event: DragEndEvent) => {
-    const { active, over } = event;
+    const {
+      active,
+      over
+    } = event;
     if (over && active.id !== over.id) {
       const oldIndex = editingOptions.findIndex((_, i) => `option-${i}` === active.id);
       const newIndex = editingOptions.findIndex((_, i) => `option-${i}` === over.id);
@@ -201,18 +210,15 @@ function EditOptionsPopoverContent({
       }
     }
   };
-
   const handleOptionChange = (index: number, value: string) => {
     const updated = [...editingOptions];
     updated[index] = value;
     setEditingOptions(updated);
   };
-
   const handleRemoveOption = (index: number) => {
     if (editingOptions.length <= 1) return;
     setEditingOptions(editingOptions.filter((_, i) => i !== index));
   };
-
   const handleAddOption = () => {
     const trimmed = newOption.trim();
     if (trimmed && !editingOptions.includes(trimmed)) {
@@ -220,75 +226,35 @@ function EditOptionsPopoverContent({
       setNewOption('');
     }
   };
-
-  return (
-    <div className="flex flex-col gap-2">
+  return <div className="flex flex-col gap-2">
       <div className="text-xs font-medium text-gray-700 mb-1">Edit Options</div>
-      <DndContext
-        sensors={sensors}
-        collisionDetection={closestCenter}
-        onDragEnd={handleDragEnd}
-      >
-        <SortableContext
-          items={editingOptions.map((_, i) => `option-${i}`)}
-          strategy={verticalListSortingStrategy}
-        >
+      <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+        <SortableContext items={editingOptions.map((_, i) => `option-${i}`)} strategy={verticalListSortingStrategy}>
           <div className="flex flex-col gap-1.5 max-h-40 overflow-y-auto">
-            {editingOptions.map((opt, i) => (
-              <SortableOptionRow
-                key={`option-${i}`}
-                id={`option-${i}`}
-                value={opt}
-                index={i}
-                onChange={(value) => handleOptionChange(i, value)}
-                onRemove={() => handleRemoveOption(i)}
-                canRemove={editingOptions.length > 1}
-              />
-            ))}
+            {editingOptions.map((opt, i) => <SortableOptionRow key={`option-${i}`} id={`option-${i}`} value={opt} index={i} onChange={value => handleOptionChange(i, value)} onRemove={() => handleRemoveOption(i)} canRemove={editingOptions.length > 1} />)}
           </div>
         </SortableContext>
       </DndContext>
       <div className="flex items-center gap-1.5">
-        <input
-          type="text"
-          value={newOption}
-          onChange={(e) => setNewOption(e.target.value)}
-          onKeyDown={(e) => {
-            if (e.key === 'Enter') {
-              e.preventDefault();
-              handleAddOption();
-            }
-          }}
-          placeholder="Add new option..."
-          className="flex-1 px-2 py-1 text-xs bg-white border border-gray-300 border-dashed rounded focus:outline-none focus:ring-1 focus:ring-primary"
-        />
-        <button
-          type="button"
-          onClick={handleAddOption}
-          disabled={!newOption.trim()}
-          className="p-1 text-gray-400 hover:text-green-600 disabled:opacity-30"
-        >
+        <input type="text" value={newOption} onChange={e => setNewOption(e.target.value)} onKeyDown={e => {
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          handleAddOption();
+        }
+      }} placeholder="Add new option..." className="flex-1 px-2 py-1 text-xs bg-white border border-gray-300 border-dashed rounded focus:outline-none focus:ring-1 focus:ring-primary" />
+        <button type="button" onClick={handleAddOption} disabled={!newOption.trim()} className="p-1 text-gray-400 hover:text-green-600 disabled:opacity-30">
           <Plus className="h-3.5 w-3.5" />
         </button>
       </div>
       <div className="flex justify-end gap-1.5 pt-2 border-t border-gray-200">
-        <button
-          type="button"
-          onClick={onCancel}
-          className="px-2 py-1 text-xs text-gray-600 hover:bg-gray-100 rounded transition-colors"
-        >
+        <button type="button" onClick={onCancel} className="px-2 py-1 text-xs text-gray-600 hover:bg-gray-100 rounded transition-colors">
           Cancel
         </button>
-        <button
-          type="button"
-          onClick={onSave}
-          className="px-2 py-1 text-xs bg-primary text-primary-foreground hover:bg-primary/90 rounded transition-colors"
-        >
+        <button type="button" onClick={onSave} className="px-2 py-1 text-xs bg-primary text-primary-foreground hover:bg-primary/90 rounded transition-colors">
           Save
         </button>
       </div>
-    </div>
-  );
+    </div>;
 }
 
 // Multiple Choice Field Component with multi-select and edit support
@@ -300,11 +266,10 @@ interface MultipleChoiceFieldProps {
   disabled?: boolean;
   size?: 'sm' | 'md';
 }
-
-function MultipleChoiceField({ 
-  options, 
-  selectedAnswers, 
-  onAnswerChange, 
+function MultipleChoiceField({
+  options,
+  selectedAnswers,
+  onAnswerChange,
   onOptionsChange,
   disabled,
   size = 'md'
@@ -312,13 +277,12 @@ function MultipleChoiceField({
   const [isEditOpen, setIsEditOpen] = useState(false);
   const [editingOptions, setEditingOptions] = useState<string[]>([...options]);
   const [newOption, setNewOption] = useState('');
-  
+
   // Store refs for callbacks to avoid stale closures
   const onOptionsChangeRef = useRef(onOptionsChange);
   const onAnswerChangeRef = useRef(onAnswerChange);
   onOptionsChangeRef.current = onOptionsChange;
   onAnswerChangeRef.current = onAnswerChange;
-
   const toggleSelection = (opt: string) => {
     if (disabled) return;
     const isSelected = selectedAnswers.includes(opt);
@@ -328,7 +292,6 @@ function MultipleChoiceField({
       onAnswerChange([...selectedAnswers, opt]);
     }
   };
-
   const handleOpenChange = (open: boolean) => {
     if (open) {
       setEditingOptions([...options]);
@@ -336,7 +299,6 @@ function MultipleChoiceField({
     }
     setIsEditOpen(open);
   };
-
   const handleSaveEdit = () => {
     const validOptions = editingOptions.filter(o => o.trim() !== '');
     if (validOptions.length > 0) {
@@ -349,66 +311,34 @@ function MultipleChoiceField({
     setIsEditOpen(false);
     setNewOption('');
   };
-
   const textSize = size === 'sm' ? 'text-xs' : 'text-sm';
   const padding = size === 'sm' ? 'px-1.5 py-0.5' : 'px-2 py-1';
   const checkSize = size === 'sm' ? 'h-3 w-3' : 'h-3.5 w-3.5';
-
-  return (
-    <div className="flex items-start gap-1.5">
+  return <div className="flex items-start gap-1.5">
       <div className="flex flex-col gap-1">
         {options.map((opt, i) => {
-          const isSelected = selectedAnswers.includes(opt);
-          return (
-            <button
-              key={i}
-              onClick={(e) => {
-                e.stopPropagation();
-                toggleSelection(opt);
-              }}
-              className={`${padding} ${textSize} rounded transition-all flex items-center gap-1 whitespace-nowrap ${
-                isSelected
-                  ? 'bg-primary text-primary-foreground'
-                  : 'bg-gray-200 hover:bg-gray-300 text-gray-700'
-              }`}
-            >
+        const isSelected = selectedAnswers.includes(opt);
+        return <button key={i} onClick={e => {
+          e.stopPropagation();
+          toggleSelection(opt);
+        }} className={`${padding} ${textSize} rounded transition-all flex items-center gap-1 whitespace-nowrap ${isSelected ? 'bg-primary text-primary-foreground' : 'bg-gray-200 hover:bg-gray-300 text-gray-700'}`}>
               {isSelected && <Check className={checkSize} />}
               {opt}
-            </button>
-          );
-        })}
+            </button>;
+      })}
       </div>
-      {!disabled && (
-        <Popover open={isEditOpen} onOpenChange={handleOpenChange}>
+      {!disabled && <Popover open={isEditOpen} onOpenChange={handleOpenChange}>
           <PopoverTrigger asChild>
-            <button
-              onClick={(e) => e.stopPropagation()}
-              className="p-1 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded transition-colors"
-              title="Edit options"
-            >
+            <button onClick={e => e.stopPropagation()} className="p-1 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded transition-colors" title="Edit options">
               <Pencil className="h-3.5 w-3.5" />
             </button>
           </PopoverTrigger>
-          <PopoverContent 
-            className="w-64 p-3 bg-white border border-gray-200 shadow-lg z-50" 
-            align="start"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <EditOptionsPopoverContent
-              editingOptions={editingOptions}
-              setEditingOptions={setEditingOptions}
-              newOption={newOption}
-              setNewOption={setNewOption}
-              onSave={handleSaveEdit}
-              onCancel={() => setIsEditOpen(false)}
-            />
+          <PopoverContent className="w-64 p-3 bg-white border border-gray-200 shadow-lg z-50" align="start" onClick={e => e.stopPropagation()}>
+            <EditOptionsPopoverContent editingOptions={editingOptions} setEditingOptions={setEditingOptions} newOption={newOption} setNewOption={setNewOption} onSave={handleSaveEdit} onCancel={() => setIsEditOpen(false)} />
           </PopoverContent>
-        </Popover>
-      )}
-    </div>
-  );
+        </Popover>}
+    </div>;
 }
-
 
 // Dropdown Field Component with edit support
 interface DropdownFieldProps {
@@ -419,11 +349,10 @@ interface DropdownFieldProps {
   disabled?: boolean;
   size?: 'sm' | 'md';
 }
-
-function DropdownField({ 
-  options, 
-  selectedValue, 
-  onValueChange, 
+function DropdownField({
+  options,
+  selectedValue,
+  onValueChange,
   onOptionsChange,
   disabled,
   size = 'md'
@@ -431,13 +360,12 @@ function DropdownField({
   const [isEditOpen, setIsEditOpen] = useState(false);
   const [editingOptions, setEditingOptions] = useState<string[]>([...options]);
   const [newOption, setNewOption] = useState('');
-  
+
   // Store refs for callbacks to avoid stale closures
   const onOptionsChangeRef = useRef(onOptionsChange);
   const onValueChangeRef = useRef(onValueChange);
   onOptionsChangeRef.current = onOptionsChange;
   onValueChangeRef.current = onValueChange;
-
   const handleOpenChange = (open: boolean) => {
     if (open) {
       setEditingOptions([...options]);
@@ -445,7 +373,6 @@ function DropdownField({
     }
     setIsEditOpen(open);
   };
-
   const handleSaveEdit = () => {
     const validOptions = editingOptions.filter(o => o.trim() !== '');
     if (validOptions.length > 0) {
@@ -458,158 +385,105 @@ function DropdownField({
     setIsEditOpen(false);
     setNewOption('');
   };
-
   const selectHeight = size === 'sm' ? 'h-7' : 'h-8';
   const textSize = size === 'sm' ? 'text-xs' : 'text-sm';
-
-  return (
-    <div className="flex items-center gap-1 w-full overflow-hidden">
-      <select
-        value={selectedValue}
-        onChange={(e) => {
-          e.stopPropagation();
-          onValueChange(e.target.value);
-        }}
-        onClick={(e) => e.stopPropagation()}
-        className={`${selectHeight} px-2 ${textSize} bg-gray-100 border-gray-300 text-gray-700 rounded flex-1 min-w-0 truncate`}
-      >
+  return <div className="flex items-center gap-1 w-full overflow-hidden">
+      <select value={selectedValue} onChange={e => {
+      e.stopPropagation();
+      onValueChange(e.target.value);
+    }} onClick={e => e.stopPropagation()} className={`${selectHeight} px-2 ${textSize} bg-gray-100 border-gray-300 text-gray-700 rounded flex-1 min-w-0 truncate`}>
         <option value="">Select...</option>
-        {options.map((opt, i) => (
-          <option key={i} value={opt}>{opt}</option>
-        ))}
+        {options.map((opt, i) => <option key={i} value={opt}>{opt}</option>)}
       </select>
-      {!disabled && (
-        <Popover open={isEditOpen} onOpenChange={handleOpenChange}>
+      {!disabled && <Popover open={isEditOpen} onOpenChange={handleOpenChange}>
           <PopoverTrigger asChild>
-            <button
-              onClick={(e) => e.stopPropagation()}
-              className="p-1 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded transition-colors shrink-0"
-              title="Edit options"
-            >
+            <button onClick={e => e.stopPropagation()} className="p-1 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded transition-colors shrink-0" title="Edit options">
               <Pencil className="h-3.5 w-3.5" />
             </button>
           </PopoverTrigger>
-          <PopoverContent 
-            className="w-64 p-3 bg-white border border-gray-200 shadow-lg z-50" 
-            align="start"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <EditOptionsPopoverContent
-              editingOptions={editingOptions}
-              setEditingOptions={setEditingOptions}
-              newOption={newOption}
-              setNewOption={setNewOption}
-              onSave={handleSaveEdit}
-              onCancel={() => setIsEditOpen(false)}
-            />
+          <PopoverContent className="w-64 p-3 bg-white border border-gray-200 shadow-lg z-50" align="start" onClick={e => e.stopPropagation()}>
+            <EditOptionsPopoverContent editingOptions={editingOptions} setEditingOptions={setEditingOptions} newOption={newOption} setNewOption={setNewOption} onSave={handleSaveEdit} onCancel={() => setIsEditOpen(false)} />
           </PopoverContent>
-        </Popover>
-      )}
-    </div>
-  );
+        </Popover>}
+    </div>;
 }
 
 // Reference Button Component
 interface RefButtonProps {
-  reference?: { name: string; id?: string } | null;
-  onAttach: (doc: { name: string; id?: string }) => void;
+  reference?: {
+    name: string;
+    id?: string;
+  } | null;
+  onAttach: (doc: {
+    name: string;
+    id?: string;
+  }) => void;
   onRemove: () => void;
   disabled?: boolean;
 }
-
-function RefButton({ reference, onAttach, onRemove, disabled }: RefButtonProps) {
+function RefButton({
+  reference,
+  onAttach,
+  onRemove,
+  disabled
+}: RefButtonProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const fileInputRef = useRef<HTMLInputElement>(null);
-
-  const filteredDocs = EXISTING_DOCUMENTS.filter(doc =>
-    doc.name.toLowerCase().includes(searchTerm.toLowerCase())
-  );
-
+  const filteredDocs = EXISTING_DOCUMENTS.filter(doc => doc.name.toLowerCase().includes(searchTerm.toLowerCase()));
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      onAttach({ name: file.name });
+      onAttach({
+        name: file.name
+      });
       setIsOpen(false);
       setSearchTerm('');
     }
     e.target.value = '';
   };
-
   if (disabled) {
-    return reference ? (
-      <div className="flex items-center gap-1.5 px-2 py-1.5 text-xs text-gray-600 bg-gray-100 rounded">
+    return reference ? <div className="flex items-center gap-1.5 px-2 py-1.5 text-xs text-gray-600 bg-gray-100 rounded">
         <File className="h-3 w-3" />
         <span className="truncate max-w-[120px]">{reference.name}</span>
-      </div>
-    ) : (
-      <span className="text-xs text-gray-400">No reference</span>
-    );
+      </div> : <span className="text-xs text-gray-400">No reference</span>;
   }
-
   if (reference) {
-    return (
-      <div className="flex items-center gap-1 px-2 py-1 bg-blue-50 border border-blue-200 rounded text-xs text-blue-700">
+    return <div className="flex items-center gap-1 px-2 py-1 bg-blue-50 border border-blue-200 rounded text-xs text-blue-700">
         <File className="h-3 w-3 shrink-0" />
         <span className="truncate max-w-[100px]">{reference.name}</span>
-        <button
-          onClick={(e) => {
-            e.stopPropagation();
-            onRemove();
-          }}
-          className="p-0.5 hover:bg-blue-100 rounded shrink-0"
-        >
+        <button onClick={e => {
+        e.stopPropagation();
+        onRemove();
+      }} className="p-0.5 hover:bg-blue-100 rounded shrink-0">
           <X className="h-3 w-3" />
         </button>
-      </div>
-    );
+      </div>;
   }
-
-  return (
-    <>
-      <input
-        ref={fileInputRef}
-        type="file"
-        className="hidden"
-        onChange={handleFileUpload}
-      />
+  return <>
+      <input ref={fileInputRef} type="file" className="hidden" onChange={handleFileUpload} />
       <Popover open={isOpen} onOpenChange={setIsOpen}>
         <PopoverTrigger asChild>
-          <button
-            onClick={(e) => e.stopPropagation()}
-            className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-blue-600 hover:bg-blue-50 rounded-md border border-dashed border-blue-300 transition-colors"
-          >
+          <button onClick={e => e.stopPropagation()} className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-blue-600 hover:bg-blue-50 rounded-md border border-dashed border-blue-300 transition-colors">
             <Paperclip className="h-3.5 w-3.5" />
             <span>+ Ref</span>
           </button>
         </PopoverTrigger>
-        <PopoverContent
-          align="start"
-          className="w-72 p-0 bg-slate-800 border-slate-700 shadow-xl z-50"
-          sideOffset={5}
-        >
+        <PopoverContent align="start" className="w-72 p-0 bg-slate-800 border-slate-700 shadow-xl z-50" sideOffset={5}>
           {/* Search input */}
           <div className="p-3 border-b border-slate-700">
             <div className="relative">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
-              <SearchInput
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                placeholder="Search documents..."
-                className="pl-9 bg-slate-700 border-slate-600 text-white placeholder:text-slate-400 h-9 text-sm"
-              />
+              <SearchInput value={searchTerm} onChange={e => setSearchTerm(e.target.value)} placeholder="Search documents..." className="pl-9 bg-slate-700 border-slate-600 text-white placeholder:text-slate-400 h-9 text-sm" />
             </div>
           </div>
 
           {/* Upload new document option */}
           <div className="p-2 border-b border-slate-700">
-            <button
-              onClick={(e) => {
-                e.stopPropagation();
-                fileInputRef.current?.click();
-              }}
-              className="flex items-center gap-2 w-full px-3 py-2.5 rounded-md hover:bg-slate-700 transition-colors text-left"
-            >
+            <button onClick={e => {
+            e.stopPropagation();
+            fileInputRef.current?.click();
+          }} className="flex items-center gap-2 w-full px-3 py-2.5 rounded-md hover:bg-slate-700 transition-colors text-left">
               <div className="w-7 h-7 rounded flex items-center justify-center bg-green-100">
                 <Upload className="h-4 w-4 text-green-600" />
               </div>
@@ -620,32 +494,24 @@ function RefButton({ reference, onAttach, onRemove, disabled }: RefButtonProps) 
           {/* Existing documents */}
           <div className="p-2 max-h-48 overflow-y-auto">
             <p className="text-xs text-slate-400 px-2 py-1 mb-1">Existing documents</p>
-            {filteredDocs.length > 0 ? (
-              <div className="space-y-1">
-                {filteredDocs.map((doc) => (
-                  <button
-                    key={doc.id}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      onAttach({ id: doc.id, name: doc.name });
-                      setIsOpen(false);
-                      setSearchTerm('');
-                    }}
-                    className="flex items-center gap-2 w-full px-3 py-2 rounded-md hover:bg-slate-700 transition-colors text-left"
-                  >
+            {filteredDocs.length > 0 ? <div className="space-y-1">
+                {filteredDocs.map(doc => <button key={doc.id} onClick={e => {
+              e.stopPropagation();
+              onAttach({
+                id: doc.id,
+                name: doc.name
+              });
+              setIsOpen(false);
+              setSearchTerm('');
+            }} className="flex items-center gap-2 w-full px-3 py-2 rounded-md hover:bg-slate-700 transition-colors text-left">
                     <File className="h-4 w-4 text-slate-400" />
                     <span className="text-sm text-white truncate">{doc.name}</span>
-                  </button>
-                ))}
-              </div>
-            ) : (
-              <p className="text-sm text-slate-400 text-center py-3">No documents found</p>
-            )}
+                  </button>)}
+              </div> : <p className="text-sm text-slate-400 text-center py-3">No documents found</p>}
           </div>
         </PopoverContent>
       </Popover>
-    </>
-  );
+    </>;
 }
 
 // Strip HTML tags from text for clean display
@@ -656,74 +522,53 @@ const stripHtml = (html: string): string => {
 // Add Column Button Component
 interface AddColumnButtonProps {
   onAddColumn: (columnId: string) => void;
-  visibleColumns: { explanation: boolean; reference: boolean };
+  visibleColumns: {
+    explanation: boolean;
+    reference: boolean;
+  };
 }
-
-function AddColumnButton({ onAddColumn, visibleColumns }: AddColumnButtonProps) {
+function AddColumnButton({
+  onAddColumn,
+  visibleColumns
+}: AddColumnButtonProps) {
   const [searchTerm, setSearchTerm] = useState('');
   const [isOpen, setIsOpen] = useState(false);
-  
-  const filteredOptions = COLUMN_OPTIONS.filter(opt => 
-    opt.label.toLowerCase().includes(searchTerm.toLowerCase()) &&
-    !visibleColumns[opt.id as keyof typeof visibleColumns]
-  );
-
-  return (
-    <Popover open={isOpen} onOpenChange={setIsOpen}>
+  const filteredOptions = COLUMN_OPTIONS.filter(opt => opt.label.toLowerCase().includes(searchTerm.toLowerCase()) && !visibleColumns[opt.id as keyof typeof visibleColumns]);
+  return <Popover open={isOpen} onOpenChange={setIsOpen}>
       <PopoverTrigger asChild>
         <button className="w-10 h-full flex items-center justify-center hover:bg-[#EDF2F7] transition-colors">
           <Plus className="h-4 w-4 text-gray-500" />
         </button>
       </PopoverTrigger>
-      <PopoverContent 
-        align="end" 
-        className="w-72 p-0 bg-slate-800 border-slate-700 shadow-xl z-50"
-        sideOffset={5}
-      >
+      <PopoverContent align="end" className="w-72 p-0 bg-slate-800 border-slate-700 shadow-xl z-50" sideOffset={5}>
         {/* Search input */}
         <div className="p-3 border-b border-slate-700">
           <div className="relative">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
-            <SearchInput
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              placeholder="Search or describe your column"
-              className="pl-9 bg-slate-700 border-slate-600 text-white placeholder:text-slate-400 h-9 text-sm"
-            />
+            <SearchInput value={searchTerm} onChange={e => setSearchTerm(e.target.value)} placeholder="Search or describe your column" className="pl-9 bg-slate-700 border-slate-600 text-white placeholder:text-slate-400 h-9 text-sm" />
           </div>
         </div>
         
         {/* Column options */}
         <div className="p-2">
-          {filteredOptions.length > 0 ? (
-            <div className="grid grid-cols-2 gap-2">
-              {filteredOptions.map((opt) => {
-                const IconComponent = opt.icon;
-                return (
-                  <button
-                    key={opt.id}
-                    onClick={() => {
-                      onAddColumn(opt.id);
-                      setIsOpen(false);
-                      setSearchTerm('');
-                    }}
-                    className="flex items-center gap-2 px-3 py-2.5 rounded-md hover:bg-slate-700 transition-colors text-left"
-                  >
+          {filteredOptions.length > 0 ? <div className="grid grid-cols-2 gap-2">
+              {filteredOptions.map(opt => {
+            const IconComponent = opt.icon;
+            return <button key={opt.id} onClick={() => {
+              onAddColumn(opt.id);
+              setIsOpen(false);
+              setSearchTerm('');
+            }} className="flex items-center gap-2 px-3 py-2.5 rounded-md hover:bg-slate-700 transition-colors text-left">
                     <div className={`w-7 h-7 rounded flex items-center justify-center ${opt.bgColor}`}>
                       <IconComponent className={`h-4 w-4 ${opt.iconColor}`} />
                     </div>
                     <span className="text-sm text-white">{opt.label}</span>
-                  </button>
-                );
-              })}
-            </div>
-          ) : (
-            <p className="text-sm text-slate-400 text-center py-4">All columns are already visible</p>
-          )}
+                  </button>;
+          })}
+            </div> : <p className="text-sm text-slate-400 text-center py-4">All columns are already visible</p>}
         </div>
       </PopoverContent>
-    </Popover>
-  );
+    </Popover>;
 }
 
 // Response Type Dropdown Component (Monday.com style)
@@ -732,84 +577,58 @@ interface ResponseTypeDropdownProps {
   onTypeChange: (type: AnswerType) => void;
   disabled?: boolean;
 }
-
-function ResponseTypeDropdown({ currentType, onTypeChange, disabled }: ResponseTypeDropdownProps) {
+function ResponseTypeDropdown({
+  currentType,
+  onTypeChange,
+  disabled
+}: ResponseTypeDropdownProps) {
   const [searchTerm, setSearchTerm] = useState('');
   const [isOpen, setIsOpen] = useState(false);
-  
   const currentTypeConfig = ANSWER_TYPE_OPTIONS.find(o => o.value === currentType) || ANSWER_TYPE_OPTIONS[0];
   const CurrentTypeIcon = currentTypeConfig.icon;
-  
-  const filteredOptions = ANSWER_TYPE_OPTIONS.filter(opt =>
-    opt.label.toLowerCase().includes(searchTerm.toLowerCase())
-  );
-
+  const filteredOptions = ANSWER_TYPE_OPTIONS.filter(opt => opt.label.toLowerCase().includes(searchTerm.toLowerCase()));
   if (disabled) {
     return null;
   }
-
-  return (
-    <Popover open={isOpen} onOpenChange={setIsOpen}>
+  return <Popover open={isOpen} onOpenChange={setIsOpen}>
       <PopoverTrigger asChild>
-        <button 
-          onClick={(e) => e.stopPropagation()}
-          className="flex items-center justify-center p-1 hover:bg-gray-100 rounded transition-colors"
-          title={currentTypeConfig.label}
-        >
+        <button onClick={e => e.stopPropagation()} className="flex items-center justify-center p-1 hover:bg-gray-100 rounded transition-colors pt-0" title={currentTypeConfig.label}>
           <div className={`w-7 h-7 rounded flex items-center justify-center ${currentTypeConfig.bgColor}`}>
             <CurrentTypeIcon className={`h-4 w-4 ${currentTypeConfig.iconColor}`} />
           </div>
         </button>
       </PopoverTrigger>
-      <PopoverContent 
-        align="start" 
-        className="w-72 p-0 bg-slate-800 border-slate-700 shadow-xl z-50"
-        sideOffset={5}
-      >
+      <PopoverContent align="start" className="w-72 p-0 bg-slate-800 border-slate-700 shadow-xl z-50" sideOffset={5}>
         {/* Search input */}
         <div className="p-3 border-b border-slate-700">
           <div className="relative">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
-            <SearchInput
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              placeholder="Search or describe your column"
-              className="pl-9 bg-slate-700 border-slate-600 text-white placeholder:text-slate-400 h-9 text-sm"
-            />
+            <SearchInput value={searchTerm} onChange={e => setSearchTerm(e.target.value)} placeholder="Search or describe your column" className="pl-9 bg-slate-700 border-slate-600 text-white placeholder:text-slate-400 h-9 text-sm" />
           </div>
         </div>
         
         {/* Response type options */}
         <div className="p-2">
           <div className="grid grid-cols-2 gap-1.5">
-            {filteredOptions.map((opt) => {
-              const IconComponent = opt.icon;
-              const isSelected = opt.value === currentType;
-              return (
-                <button
-                  key={opt.value}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    onTypeChange(opt.value);
-                    setIsOpen(false);
-                    setSearchTerm('');
-                  }}
-                  className={`flex items-center gap-2 px-2 py-2 rounded-md transition-colors text-left ${
-                    isSelected ? 'bg-slate-600' : 'hover:bg-slate-700'
-                  }`}
-                >
+            {filteredOptions.map(opt => {
+            const IconComponent = opt.icon;
+            const isSelected = opt.value === currentType;
+            return <button key={opt.value} onClick={e => {
+              e.stopPropagation();
+              onTypeChange(opt.value);
+              setIsOpen(false);
+              setSearchTerm('');
+            }} className={`flex items-center gap-2 px-2 py-2 rounded-md transition-colors text-left ${isSelected ? 'bg-slate-600' : 'hover:bg-slate-700'}`}>
                   <div className={`w-6 h-6 shrink-0 rounded flex items-center justify-center ${opt.bgColor}`}>
                     <IconComponent className={`h-3.5 w-3.5 ${opt.iconColor}`} />
                   </div>
                   <span className="text-xs text-white whitespace-nowrap truncate">{opt.label}</span>
-                </button>
-              );
-            })}
+                </button>;
+          })}
           </div>
         </div>
       </PopoverContent>
-    </Popover>
-  );
+    </Popover>;
 }
 
 // Sortable Sub-item row component
@@ -821,24 +640,45 @@ interface SubItemRowProps {
   isPreviewMode: boolean;
   isCompactMode: boolean;
   parentId: string;
-  visibleColumns: { explanation: boolean; reference: boolean };
-  columnWidths: { questions: number; response: number; explanation: number; reference: number };
+  visibleColumns: {
+    explanation: boolean;
+    reference: boolean;
+  };
+  columnWidths: {
+    questions: number;
+    response: number;
+    explanation: number;
+    reference: number;
+  };
   sectionNumber: number;
   itemNumber: number;
 }
-
 interface SortableSubItemRowProps extends SubItemRowProps {
   isLast: boolean;
   totalCount: number;
   isNewEmpty?: boolean;
   onBlurCleanup?: () => void;
 }
-
-function SortableSubItemRow({ subItem, onUpdate, onDelete, isPreviewMode, isCompactMode, index, parentId, isLast, totalCount, visibleColumns, columnWidths, isNewEmpty, onBlurCleanup, sectionNumber, itemNumber }: SortableSubItemRowProps) {
+function SortableSubItemRow({
+  subItem,
+  onUpdate,
+  onDelete,
+  isPreviewMode,
+  isCompactMode,
+  index,
+  parentId,
+  isLast,
+  totalCount,
+  visibleColumns,
+  columnWidths,
+  isNewEmpty,
+  onBlurCleanup,
+  sectionNumber,
+  itemNumber
+}: SortableSubItemRowProps) {
   const [isEditingName, setIsEditingName] = useState(isNewEmpty || false);
   const [isSelected, setIsSelected] = useState(false);
   const draftNameRef = useRef(subItem.text);
-
   const {
     attributes,
     listeners,
@@ -847,31 +687,35 @@ function SortableSubItemRow({ subItem, onUpdate, onDelete, isPreviewMode, isComp
     transition,
     isDragging,
     isOver,
-    active,
-  } = useSortable({ 
+    active
+  } = useSortable({
     id: subItem.id,
-    data: { type: 'subitem', parentId, subItem }
+    data: {
+      type: 'subitem',
+      parentId,
+      subItem
+    }
   });
 
   // Check if this is a valid drop target
   const isDropTarget = isOver && active?.id !== subItem.id;
   const activeType = active?.data?.current?.type;
   const isValidDropTarget = isDropTarget && activeType === 'subitem';
-
   const style = {
     transform: CSS.Transform.toString(transform),
     transition,
-    opacity: isDragging ? 0.5 : 1,
+    opacity: isDragging ? 0.5 : 1
   };
-
   const handleSave = () => {
     const trimmed = draftNameRef.current.trim();
     if (trimmed && trimmed !== subItem.text) {
-      onUpdate({ ...subItem, text: trimmed });
+      onUpdate({
+        ...subItem,
+        text: trimmed
+      });
     }
     setIsEditingName(false);
   };
-
   const handleCancel = () => {
     draftNameRef.current = subItem.text;
     setIsEditingName(false);
@@ -880,255 +724,148 @@ function SortableSubItemRow({ subItem, onUpdate, onDelete, isPreviewMode, isComp
       onBlurCleanup?.();
     }
   };
-
   const handleAnswerChange = (answer: string) => {
-    onUpdate({ ...subItem, answer });
+    onUpdate({
+      ...subItem,
+      answer
+    });
   };
-
   const handleAnswerTypeChange = (answerType: AnswerType) => {
-    onUpdate({ ...subItem, answerType, answer: '' });
+    onUpdate({
+      ...subItem,
+      answerType,
+      answer: ''
+    });
   };
-
   const renderResponseField = () => {
     switch (subItem.answerType) {
       case 'yes-no':
       case 'yes-no-na':
         const options = subItem.answerType === 'yes-no' ? ['Yes', 'No'] : ['Yes', 'No', 'N/A'];
-        return (
-          <div className="flex gap-1">
-            {options.map((opt) => (
-              <button
-                key={opt}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  handleAnswerChange(opt);
-                }}
-                className={`px-2 py-1 text-xs rounded transition-all ${
-                  subItem.answer === opt
-                    ? 'bg-primary text-primary-foreground'
-                    : 'bg-gray-200 hover:bg-gray-300 text-gray-700'
-                }`}
-              >
+        return <div className="flex gap-1">
+            {options.map(opt => <button key={opt} onClick={e => {
+            e.stopPropagation();
+            handleAnswerChange(opt);
+          }} className={`px-2 py-1 text-xs rounded transition-all ${subItem.answer === opt ? 'bg-primary text-primary-foreground' : 'bg-gray-200 hover:bg-gray-300 text-gray-700'}`}>
                 {opt}
-              </button>
-            ))}
-          </div>
-        );
-
+              </button>)}
+          </div>;
       case 'multiple-choice':
         const mcSubOptions = subItem.options || ['Option 1', 'Option 2', 'Option 3'];
         const subSelectedAnswers = subItem.answer ? subItem.answer.split('|||').filter(a => a) : [];
-        return (
-          <MultipleChoiceField
-            options={mcSubOptions}
-            selectedAnswers={subSelectedAnswers}
-            onAnswerChange={(answers) => onUpdate({ ...subItem, answer: answers.join('|||') })}
-            onOptionsChange={(opts) => onUpdate({ ...subItem, options: opts })}
-            disabled={isPreviewMode}
-            size="sm"
-          />
-        );
-
+        return <MultipleChoiceField options={mcSubOptions} selectedAnswers={subSelectedAnswers} onAnswerChange={answers => onUpdate({
+          ...subItem,
+          answer: answers.join('|||')
+        })} onOptionsChange={opts => onUpdate({
+          ...subItem,
+          options: opts
+        })} disabled={isPreviewMode} size="sm" />;
       case 'dropdown':
         const dropdownSubOptions = subItem.options || ['Option 1', 'Option 2'];
-        return (
-          <DropdownField
-            options={dropdownSubOptions}
-            selectedValue={subItem.answer || ''}
-            onValueChange={(value) => onUpdate({ ...subItem, answer: value })}
-            onOptionsChange={(opts) => onUpdate({ ...subItem, options: opts })}
-            disabled={isPreviewMode}
-            size="sm"
-          />
-        );
-
+        return <DropdownField options={dropdownSubOptions} selectedValue={subItem.answer || ''} onValueChange={value => onUpdate({
+          ...subItem,
+          answer: value
+        })} onOptionsChange={opts => onUpdate({
+          ...subItem,
+          options: opts
+        })} disabled={isPreviewMode} size="sm" />;
       case 'long-answer':
-        return (
-          <AITextarea
-            value={subItem.answer || ''}
-            onChange={(val) => handleAnswerChange(val)}
-            placeholder="Enter your detailed answer..."
-            minHeight="60px"
-            isCompactMode={isCompactMode}
-          />
-        );
-
+        return <AITextarea value={subItem.answer || ''} onChange={val => handleAnswerChange(val)} placeholder="Enter your detailed answer..." minHeight="60px" isCompactMode={isCompactMode} />;
       case 'short-answer':
-        return (
-          <AITextarea
-            value={subItem.answer || ''}
-            onChange={(val) => handleAnswerChange(val)}
-            placeholder="Enter response..."
-            minHeight="40px"
-            isCompactMode={isCompactMode}
-        />
-      );
-
-    case 'date':
-      return (
-        <Input
-          type="date"
-          value={subItem.answer || ''}
-          onChange={(e) => handleAnswerChange(e.target.value)}
-          onClick={(e) => e.stopPropagation()}
-          className="h-7 text-xs bg-gray-100 border-gray-300 text-gray-700"
-        />
-      );
-
-    case 'amount':
-      return (
-        <div className="relative">
+        return <AITextarea value={subItem.answer || ''} onChange={val => handleAnswerChange(val)} placeholder="Enter response..." minHeight="40px" isCompactMode={isCompactMode} />;
+      case 'date':
+        return <Input type="date" value={subItem.answer || ''} onChange={e => handleAnswerChange(e.target.value)} onClick={e => e.stopPropagation()} className="h-7 text-xs bg-gray-100 border-gray-300 text-gray-700" />;
+      case 'amount':
+        return <div className="relative">
           <span className="absolute left-2 top-1/2 -translate-y-1/2 text-gray-500 text-xs">$</span>
-          <Input
-            type="number"
-            value={subItem.answer || ''}
-            onChange={(e) => handleAnswerChange(e.target.value)}
-            onClick={(e) => e.stopPropagation()}
-            placeholder="0.00"
-            className="h-7 text-xs bg-gray-100 border-gray-300 text-gray-700 pl-5"
-          />
-        </div>
-      );
-
-    case 'file-upload':
-      return (
-        <div className="flex items-center gap-1">
-          {subItem.answer ? (
-            <div className="flex items-center gap-1 px-2 py-1 bg-blue-50 border border-blue-200 rounded text-xs text-blue-700">
+          <Input type="number" value={subItem.answer || ''} onChange={e => handleAnswerChange(e.target.value)} onClick={e => e.stopPropagation()} placeholder="0.00" className="h-7 text-xs bg-gray-100 border-gray-300 text-gray-700 pl-5" />
+        </div>;
+      case 'file-upload':
+        return <div className="flex items-center gap-1">
+          {subItem.answer ? <div className="flex items-center gap-1 px-2 py-1 bg-blue-50 border border-blue-200 rounded text-xs text-blue-700">
               <File className="h-3 w-3" />
               <span className="truncate max-w-[80px]">{subItem.answer}</span>
-              {!isPreviewMode && (
-                <button onClick={() => handleAnswerChange('')} className="hover:text-red-500">
+              {!isPreviewMode && <button onClick={() => handleAnswerChange('')} className="hover:text-red-500">
                   <X className="h-3 w-3" />
-                </button>
-              )}
-            </div>
-          ) : (
-            <label className="flex items-center gap-1 px-2 py-1 text-xs bg-gray-100 rounded cursor-pointer hover:bg-gray-200">
+                </button>}
+            </div> : <label className="flex items-center gap-1 px-2 py-1 text-xs bg-gray-100 rounded cursor-pointer hover:bg-gray-200">
               <Upload className="h-3 w-3" />
               <span>Upload</span>
-              <input
-                type="file"
-                className="hidden"
-                onChange={(e) => {
-                  const file = e.target.files?.[0];
-                  if (file) handleAnswerChange(file.name);
-                }}
-              />
-            </label>
-          )}
-        </div>
-      );
-
-    case 'toggle':
-      return (
-        <button
-          onClick={(e) => {
-            e.stopPropagation();
-            handleAnswerChange(subItem.answer === 'true' ? 'false' : 'true');
-          }}
-          className={`w-10 h-5 rounded-full transition-colors relative ${
-            subItem.answer === 'true' ? 'bg-blue-600' : 'bg-gray-300'
-          }`}
-        >
-          <div className={`absolute top-0.5 w-4 h-4 bg-white rounded-full shadow transition-transform ${
-            subItem.answer === 'true' ? 'translate-x-5' : 'translate-x-0.5'
-          }`} />
-        </button>
-      );
-
-    default:
-      return (
-        <Input
-          value={subItem.answer || ''}
-          onChange={(e) => handleAnswerChange(e.target.value)}
-          onClick={(e) => e.stopPropagation()}
-          placeholder="Enter response..."
-          className="h-7 text-xs bg-gray-100 border-gray-300 text-gray-700"
-        />
-      );
+              <input type="file" className="hidden" onChange={e => {
+              const file = e.target.files?.[0];
+              if (file) handleAnswerChange(file.name);
+            }} />
+            </label>}
+        </div>;
+      case 'toggle':
+        return <button onClick={e => {
+          e.stopPropagation();
+          handleAnswerChange(subItem.answer === 'true' ? 'false' : 'true');
+        }} className={`w-10 h-5 rounded-full transition-colors relative ${subItem.answer === 'true' ? 'bg-blue-600' : 'bg-gray-300'}`}>
+          <div className={`absolute top-0.5 w-4 h-4 bg-white rounded-full shadow transition-transform ${subItem.answer === 'true' ? 'translate-x-5' : 'translate-x-0.5'}`} />
+        </button>;
+      default:
+        return <Input value={subItem.answer || ''} onChange={e => handleAnswerChange(e.target.value)} onClick={e => e.stopPropagation()} placeholder="Enter response..." className="h-7 text-xs bg-gray-100 border-gray-300 text-gray-700" />;
     }
   };
-
-  return (
-    <div 
-      ref={setNodeRef} 
-      style={style}
-      {...(!isPreviewMode ? { ...attributes, ...listeners } : {})}
-      className={`group flex items-stretch hover:bg-[#EDF2F7] transition-all relative border-b border-[#E8EDF2] ${!isPreviewMode ? 'cursor-grab active:cursor-grabbing' : ''} ${isDragging ? 'opacity-50 ring-2 ring-primary ring-offset-1 z-10' : ''} ${isValidDropTarget ? 'bg-primary/5' : ''}`}
-    >
+  return <div ref={setNodeRef} style={style} {...!isPreviewMode ? {
+    ...attributes,
+    ...listeners
+  } : {}} className={`group flex items-stretch hover:bg-[#EDF2F7] transition-all relative border-b border-[#E8EDF2] ${!isPreviewMode ? 'cursor-grab active:cursor-grabbing' : ''} ${isDragging ? 'opacity-50 ring-2 ring-primary ring-offset-1 z-10' : ''} ${isValidDropTarget ? 'bg-primary/5' : ''}`}>
       {/* Drop indicator line */}
-      {isValidDropTarget && (
-        <div className="absolute -top-[2px] left-0 right-0 h-1 bg-primary rounded-full z-20 shadow-[0_0_8px_rgba(59,130,246,0.5)]" />
-      )}
+      {isValidDropTarget && <div className="absolute -top-[2px] left-0 right-0 h-1 bg-primary rounded-full z-20 shadow-[0_0_8px_rgba(59,130,246,0.5)]" />}
       {/* Checkbox column */}
       <div className="w-10 shrink-0 flex items-center justify-center self-center">
-        <Checkbox 
-          checked={isSelected} 
-          onCheckedChange={() => setIsSelected(!isSelected)}
-          className="h-4 w-4 border-gray-400 bg-white"
-        />
+        <Checkbox checked={isSelected} onCheckedChange={() => setIsSelected(!isSelected)} className="h-4 w-4 border-gray-400 bg-white" />
       </div>
 
       {/* Sub-item name - width matches header */}
-      <div className="shrink-0 px-3 py-2.5 flex items-center gap-2" style={{ width: columnWidths.questions }}>
+      <div className="shrink-0 px-3 py-2.5 flex items-center gap-2" style={{
+      width: columnWidths.questions
+    }}>
         <span className="text-xs font-medium text-gray-500 shrink-0">{sectionNumber}.{itemNumber}.{index + 1}</span>
-        {isEditingName && !isPreviewMode ? (
-          <RichTextQuestionEditor
-            value={subItem.text}
-            onChange={(newValue) => { draftNameRef.current = newValue; }}
-            onBlur={() => {
-              handleSave();
-              // If text is still empty after blur, trigger cleanup
-              if (draftNameRef.current.trim() === '' && isNewEmpty) {
-                setTimeout(() => onBlurCleanup?.(), 100);
-              }
-            }}
-            onCancel={handleCancel}
-            className="text-sm min-h-[32px] bg-gray-100 border-gray-300 text-gray-800"
-          />
-        ) : isCompactMode ? (
-          <Tooltip>
+        {isEditingName && !isPreviewMode ? <RichTextQuestionEditor value={subItem.text} onChange={newValue => {
+        draftNameRef.current = newValue;
+      }} onBlur={() => {
+        handleSave();
+        // If text is still empty after blur, trigger cleanup
+        if (draftNameRef.current.trim() === '' && isNewEmpty) {
+          setTimeout(() => onBlurCleanup?.(), 100);
+        }
+      }} onCancel={handleCancel} className="text-sm min-h-[32px] bg-gray-100 border-gray-300 text-gray-800" /> : isCompactMode ? <Tooltip>
             <TooltipTrigger asChild>
-              <div
-                onClick={(e) => {
-                  if (!isPreviewMode) {
-                    e.stopPropagation();
-                    draftNameRef.current = subItem.text;
-                    setIsEditingName(true);
-                  }
-                }}
-                className={`text-sm text-gray-700 ${!isPreviewMode ? 'cursor-text hover:text-gray-900' : ''} line-clamp-1 overflow-hidden`}
-                dangerouslySetInnerHTML={{ __html: sanitizeHtml(subItem.text) || 'Click to add sub-item...' }}
-              />
+              <div onClick={e => {
+            if (!isPreviewMode) {
+              e.stopPropagation();
+              draftNameRef.current = subItem.text;
+              setIsEditingName(true);
+            }
+          }} className={`text-sm text-gray-700 ${!isPreviewMode ? 'cursor-text hover:text-gray-900' : ''} line-clamp-1 overflow-hidden`} dangerouslySetInnerHTML={{
+            __html: sanitizeHtml(subItem.text) || 'Click to add sub-item...'
+          }} />
             </TooltipTrigger>
             <TooltipContent side="top" className="bg-white text-gray-800 border border-gray-200 shadow-lg max-w-md">
-              <div dangerouslySetInnerHTML={{ __html: sanitizeHtml(subItem.text) }} />
+              <div dangerouslySetInnerHTML={{
+            __html: sanitizeHtml(subItem.text)
+          }} />
             </TooltipContent>
-          </Tooltip>
-        ) : (
-          <div
-            onClick={(e) => {
-              if (!isPreviewMode) {
-                e.stopPropagation();
-                draftNameRef.current = subItem.text;
-                setIsEditingName(true);
-              }
-            }}
-            className={`text-sm text-gray-700 ${!isPreviewMode ? 'cursor-text hover:text-gray-900' : ''}`}
-            dangerouslySetInnerHTML={{ __html: sanitizeHtml(subItem.text) || 'Click to add sub-item...' }}
-          />
-        )}
+          </Tooltip> : <div onClick={e => {
+        if (!isPreviewMode) {
+          e.stopPropagation();
+          draftNameRef.current = subItem.text;
+          setIsEditingName(true);
+        }
+      }} className={`text-sm text-gray-700 ${!isPreviewMode ? 'cursor-text hover:text-gray-900' : ''}`} dangerouslySetInnerHTML={{
+        __html: sanitizeHtml(subItem.text) || 'Click to add sub-item...'
+      }} />}
       </div>
 
       {/* Response column with inline type selector and response field */}
-      <div className="shrink-0 px-2 py-2 border-l border-[#E8EDF2] flex items-stretch" style={{ width: columnWidths.response }}>
+      <div className="shrink-0 px-2 py-2 border-l border-[#E8EDF2] flex items-stretch" style={{
+      width: columnWidths.response
+    }}>
         <div className="flex items-start gap-2 w-full">
-          <ResponseTypeDropdown
-            currentType={subItem.answerType}
-            onTypeChange={handleAnswerTypeChange}
-            disabled={isPreviewMode}
-          />
+          <ResponseTypeDropdown currentType={subItem.answerType} onTypeChange={handleAnswerTypeChange} disabled={isPreviewMode} />
           <div className="flex-1 min-w-0">
             {renderResponseField()}
           </div>
@@ -1136,74 +873,56 @@ function SortableSubItemRow({ subItem, onUpdate, onDelete, isPreviewMode, isComp
       </div>
 
       {/* Additional Explanation column - conditionally rendered */}
-      {visibleColumns.explanation && (
-        <div className="shrink-0 px-2 py-2 border-l border-[#E8EDF2] flex items-stretch" style={{ width: columnWidths.explanation }}>
-          {(subItem as any).showExplanation !== false ? (
-            <div className="relative group/exp w-full">
-              <AITextarea
-                value={subItem.explanation || ''}
-                onChange={(val) => onUpdate({ ...subItem, explanation: val })}
-                placeholder="Additional Explanation"
-                minHeight="40px"
-                isCompactMode={isCompactMode}
-              />
-              {!isPreviewMode && (
-                <button
-                  onClick={() => onUpdate({ ...subItem, showExplanation: false, explanation: '' } as any)}
-                  className="absolute -top-1 -right-1 p-0.5 bg-white border border-gray-300 rounded-full text-gray-400 hover:text-red-500 hover:border-red-300 opacity-0 group-hover/exp:opacity-100 transition-opacity shadow-sm"
-                  title="Remove explanation"
-                >
+      {visibleColumns.explanation && <div className="shrink-0 px-2 py-2 border-l border-[#E8EDF2] flex items-stretch" style={{
+      width: columnWidths.explanation
+    }}>
+          {(subItem as any).showExplanation !== false ? <div className="relative group/exp w-full">
+              <AITextarea value={subItem.explanation || ''} onChange={val => onUpdate({
+          ...subItem,
+          explanation: val
+        })} placeholder="Additional Explanation" minHeight="40px" isCompactMode={isCompactMode} />
+              {!isPreviewMode && <button onClick={() => onUpdate({
+          ...subItem,
+          showExplanation: false,
+          explanation: ''
+        } as any)} className="absolute -top-1 -right-1 p-0.5 bg-white border border-gray-300 rounded-full text-gray-400 hover:text-red-500 hover:border-red-300 opacity-0 group-hover/exp:opacity-100 transition-opacity shadow-sm" title="Remove explanation">
                   <X className="h-3 w-3" />
-                </button>
-              )}
-            </div>
-          ) : (
-            !isPreviewMode && (
-              <button
-                onClick={() => onUpdate({ ...subItem, showExplanation: true } as any)}
-                className="flex items-center gap-1 px-2 py-1 text-xs text-gray-500 hover:text-primary hover:bg-[#EDF2F7] rounded transition-colors"
-              >
+                </button>}
+            </div> : !isPreviewMode && <button onClick={() => onUpdate({
+        ...subItem,
+        showExplanation: true
+      } as any)} className="flex items-center gap-1 px-2 py-1 text-xs text-gray-500 hover:text-primary hover:bg-[#EDF2F7] rounded transition-colors">
                 <Plus className="h-3 w-3" />
                 <span>Add</span>
-              </button>
-            )
-          )}
-        </div>
-      )}
+              </button>}
+        </div>}
 
       {/* Reference column - conditionally rendered */}
-      {visibleColumns.reference && (
-        <div className="shrink-0 px-2 py-2 flex items-center border-l border-[#E8EDF2]" style={{ width: columnWidths.reference }}>
-          <RefButton
-            reference={(subItem as any).reference}
-            onAttach={(doc) => onUpdate({ ...subItem, reference: doc } as any)}
-            onRemove={() => onUpdate({ ...subItem, reference: null } as any)}
-            disabled={isPreviewMode}
-          />
-        </div>
-      )}
+      {visibleColumns.reference && <div className="shrink-0 px-2 py-2 flex items-center border-l border-[#E8EDF2]" style={{
+      width: columnWidths.reference
+    }}>
+          <RefButton reference={(subItem as any).reference} onAttach={doc => onUpdate({
+        ...subItem,
+        reference: doc
+      } as any)} onRemove={() => onUpdate({
+        ...subItem,
+        reference: null
+      } as any)} disabled={isPreviewMode} />
+        </div>}
 
       {/* Add column placeholder to maintain alignment - always show when columns hidden */}
-      {!isPreviewMode && (!visibleColumns.explanation || !visibleColumns.reference) && (
-        <div className="w-[100px] shrink-0" />
-      )}
+      {!isPreviewMode && (!visibleColumns.explanation || !visibleColumns.reference) && <div className="w-[100px] shrink-0" />}
 
       {/* Actions - delete button */}
       <div className="w-16 shrink-0 flex items-center justify-center self-center">
-        {!isPreviewMode && (
-          <button
-            onClick={(e) => {
-              e.stopPropagation();
-              onDelete();
-            }}
-            className="p-1 rounded hover:bg-[#EDF2F7] text-gray-400 hover:text-red-500 transition-colors opacity-0 group-hover:opacity-100"
-          >
+        {!isPreviewMode && <button onClick={e => {
+        e.stopPropagation();
+        onDelete();
+      }} className="p-1 rounded hover:bg-[#EDF2F7] text-gray-400 hover:text-red-500 transition-colors opacity-0 group-hover:opacity-100">
             <Trash2 className="h-4 w-4" />
-          </button>
-        )}
+          </button>}
       </div>
-    </div>
-  );
+    </div>;
 }
 
 // Sortable Item row component
@@ -1218,20 +937,27 @@ interface ItemRowProps {
   isPreviewMode: boolean;
   isCompactMode: boolean;
   onSubItemsReorder: (itemId: string, newSubItems: Question[]) => void;
-  visibleColumns: { explanation: boolean; reference: boolean };
-  columnWidths: { questions: number; response: number; explanation: number; reference: number };
+  visibleColumns: {
+    explanation: boolean;
+    reference: boolean;
+  };
+  columnWidths: {
+    questions: number;
+    response: number;
+    explanation: number;
+    reference: number;
+  };
   sectionNumber: number;
   isSelected: boolean;
   onSelectionChange: (selected: boolean) => void;
 }
-
-function SortableItemRow({ 
-  item, 
+function SortableItemRow({
+  item,
   sectionId,
   itemIndex,
-  onUpdate, 
-  onDelete, 
-  onDuplicate, 
+  onUpdate,
+  onDelete,
+  onDuplicate,
   onAddSubItem,
   isPreviewMode,
   isCompactMode,
@@ -1240,13 +966,12 @@ function SortableItemRow({
   columnWidths,
   sectionNumber,
   isSelected,
-  onSelectionChange,
+  onSelectionChange
 }: ItemRowProps) {
   const [isExpanded, setIsExpanded] = useState(true);
   const [isEditingName, setIsEditingName] = useState(false);
   const [isPendingSubItem, setIsPendingSubItem] = useState(false);
   const draftNameRef = useRef(item.text);
-
   const {
     attributes,
     listeners,
@@ -1255,23 +980,25 @@ function SortableItemRow({
     transition,
     isDragging,
     isOver,
-    active,
-  } = useSortable({ 
+    active
+  } = useSortable({
     id: item.id,
-    data: { type: 'item', sectionId, item }
+    data: {
+      type: 'item',
+      sectionId,
+      item
+    }
   });
 
   // Check if this is a valid drop target (item being dragged over)
   const isDropTarget = isOver && active?.id !== item.id;
   const activeType = active?.data?.current?.type;
   const isValidDropTarget = isDropTarget && activeType === 'item';
-
   const style = {
     transform: CSS.Transform.toString(transform),
     transition,
-    opacity: isDragging ? 0.5 : 1,
+    opacity: isDragging ? 0.5 : 1
   };
-
   const hasSubItems = item.subQuestions && item.subQuestions.length > 0;
   const hasRealSubItems = hasSubItems && item.subQuestions!.some(sq => sq.text.trim() !== '');
 
@@ -1293,7 +1020,10 @@ function SortableItemRow({
     if (item.subQuestions) {
       const nonEmptySubItems = item.subQuestions.filter(sq => sq.text.trim() !== '');
       if (nonEmptySubItems.length !== item.subQuestions.length) {
-        onUpdate({ ...item, subQuestions: nonEmptySubItems.length > 0 ? nonEmptySubItems : undefined });
+        onUpdate({
+          ...item,
+          subQuestions: nonEmptySubItems.length > 0 ? nonEmptySubItems : undefined
+        });
       }
       if (nonEmptySubItems.length === 0) {
         setIsExpanded(false);
@@ -1301,319 +1031,195 @@ function SortableItemRow({
       }
     }
   };
-
   const handleSave = () => {
     const trimmed = draftNameRef.current.trim();
     if (trimmed && trimmed !== item.text) {
-      onUpdate({ ...item, text: trimmed });
+      onUpdate({
+        ...item,
+        text: trimmed
+      });
     }
     setIsEditingName(false);
   };
-
   const handleCancel = () => {
     draftNameRef.current = item.text;
     setIsEditingName(false);
   };
-
   const handleAnswerChange = (answer: string) => {
-    onUpdate({ ...item, answer });
+    onUpdate({
+      ...item,
+      answer
+    });
   };
-
   const handleAnswerTypeChange = (answerType: AnswerType) => {
-    onUpdate({ ...item, answerType, answer: '' });
+    onUpdate({
+      ...item,
+      answerType,
+      answer: ''
+    });
   };
-
   const handleSubItemUpdate = (index: number, updatedSub: Question) => {
     const newSubQuestions = [...(item.subQuestions || [])];
     newSubQuestions[index] = updatedSub;
-    onUpdate({ ...item, subQuestions: newSubQuestions });
+    onUpdate({
+      ...item,
+      subQuestions: newSubQuestions
+    });
   };
-
   const handleSubItemDelete = (index: number) => {
     const newSubQuestions = (item.subQuestions || []).filter((_, i) => i !== index);
-    onUpdate({ ...item, subQuestions: newSubQuestions });
+    onUpdate({
+      ...item,
+      subQuestions: newSubQuestions
+    });
   };
-
-
   const renderResponseField = () => {
     switch (item.answerType) {
       case 'yes-no':
       case 'yes-no-na':
         const options = item.answerType === 'yes-no' ? ['Yes', 'No'] : ['Yes', 'No', 'N/A'];
-        return (
-          <div className="flex gap-1">
-            {options.map((opt) => (
-              <button
-                key={opt}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  handleAnswerChange(opt);
-                }}
-                className={`px-2 py-1 text-xs rounded transition-all ${
-                  item.answer === opt
-                    ? 'bg-primary text-primary-foreground'
-                    : 'bg-gray-200 hover:bg-gray-300 text-gray-700'
-                }`}
-              >
+        return <div className="flex gap-1">
+            {options.map(opt => <button key={opt} onClick={e => {
+            e.stopPropagation();
+            handleAnswerChange(opt);
+          }} className={`px-2 py-1 text-xs rounded transition-all ${item.answer === opt ? 'bg-primary text-primary-foreground' : 'bg-gray-200 hover:bg-gray-300 text-gray-700'}`}>
                 {opt}
-              </button>
-            ))}
-          </div>
-        );
-
+              </button>)}
+          </div>;
       case 'multiple-choice':
         const mcItemOptions = item.options || ['Option 1', 'Option 2', 'Option 3'];
         const itemSelectedAnswers = item.answer ? item.answer.split('|||').filter(a => a) : [];
-        return (
-          <MultipleChoiceField
-            options={mcItemOptions}
-            selectedAnswers={itemSelectedAnswers}
-            onAnswerChange={(answers) => onUpdate({ ...item, answer: answers.join('|||') })}
-            onOptionsChange={(opts) => onUpdate({ ...item, options: opts })}
-            disabled={isPreviewMode}
-            size="sm"
-          />
-        );
-
+        return <MultipleChoiceField options={mcItemOptions} selectedAnswers={itemSelectedAnswers} onAnswerChange={answers => onUpdate({
+          ...item,
+          answer: answers.join('|||')
+        })} onOptionsChange={opts => onUpdate({
+          ...item,
+          options: opts
+        })} disabled={isPreviewMode} size="sm" />;
       case 'dropdown':
         const dropdownItemOptions = item.options || ['Option 1', 'Option 2'];
-        return (
-          <DropdownField
-            options={dropdownItemOptions}
-            selectedValue={item.answer || ''}
-            onValueChange={(value) => onUpdate({ ...item, answer: value })}
-            onOptionsChange={(opts) => onUpdate({ ...item, options: opts })}
-            disabled={isPreviewMode}
-            size="md"
-          />
-        );
-
+        return <DropdownField options={dropdownItemOptions} selectedValue={item.answer || ''} onValueChange={value => onUpdate({
+          ...item,
+          answer: value
+        })} onOptionsChange={opts => onUpdate({
+          ...item,
+          options: opts
+        })} disabled={isPreviewMode} size="md" />;
       case 'long-answer':
-        return (
-          <AITextarea
-            value={item.answer || ''}
-            onChange={(val) => handleAnswerChange(val)}
-            placeholder="Enter your detailed answer..."
-            minHeight="60px"
-            isCompactMode={isCompactMode}
-          />
-        );
-
+        return <AITextarea value={item.answer || ''} onChange={val => handleAnswerChange(val)} placeholder="Enter your detailed answer..." minHeight="60px" isCompactMode={isCompactMode} />;
       case 'short-answer':
-        return (
-          <AITextarea
-            value={item.answer || ''}
-            onChange={(val) => handleAnswerChange(val)}
-            placeholder="Enter response..."
-            minHeight="40px"
-            isCompactMode={isCompactMode}
-        />
-      );
-
-    case 'date':
-      return (
-        <Input
-          type="date"
-          value={item.answer || ''}
-          onChange={(e) => handleAnswerChange(e.target.value)}
-          onClick={(e) => e.stopPropagation()}
-          className="h-8 text-sm bg-gray-100 border-gray-300 text-gray-700"
-        />
-      );
-
-    case 'amount':
-      return (
-        <div className="relative">
+        return <AITextarea value={item.answer || ''} onChange={val => handleAnswerChange(val)} placeholder="Enter response..." minHeight="40px" isCompactMode={isCompactMode} />;
+      case 'date':
+        return <Input type="date" value={item.answer || ''} onChange={e => handleAnswerChange(e.target.value)} onClick={e => e.stopPropagation()} className="h-8 text-sm bg-gray-100 border-gray-300 text-gray-700" />;
+      case 'amount':
+        return <div className="relative">
           <span className="absolute left-2 top-1/2 -translate-y-1/2 text-gray-500 text-sm">$</span>
-          <Input
-            type="number"
-            value={item.answer || ''}
-            onChange={(e) => handleAnswerChange(e.target.value)}
-            onClick={(e) => e.stopPropagation()}
-            placeholder="0.00"
-            className="h-8 text-sm bg-gray-100 border-gray-300 text-gray-700 pl-5"
-          />
-        </div>
-      );
-
-    case 'file-upload':
-      return (
-        <div className="flex items-center gap-1">
-          {item.answer ? (
-            <div className="flex items-center gap-1 px-2 py-1 bg-blue-50 border border-blue-200 rounded text-xs text-blue-700">
+          <Input type="number" value={item.answer || ''} onChange={e => handleAnswerChange(e.target.value)} onClick={e => e.stopPropagation()} placeholder="0.00" className="h-8 text-sm bg-gray-100 border-gray-300 text-gray-700 pl-5" />
+        </div>;
+      case 'file-upload':
+        return <div className="flex items-center gap-1">
+          {item.answer ? <div className="flex items-center gap-1 px-2 py-1 bg-blue-50 border border-blue-200 rounded text-xs text-blue-700">
               <File className="h-3 w-3" />
               <span className="truncate max-w-[100px]">{item.answer}</span>
               <button onClick={() => handleAnswerChange('')} className="hover:text-red-500">
                 <X className="h-3 w-3" />
               </button>
-            </div>
-          ) : (
-            <label className="flex items-center gap-1.5 px-2 py-1.5 text-xs bg-gray-100 rounded cursor-pointer hover:bg-gray-200">
+            </div> : <label className="flex items-center gap-1.5 px-2 py-1.5 text-xs bg-gray-100 rounded cursor-pointer hover:bg-gray-200">
               <Upload className="h-3.5 w-3.5" />
               <span>Upload file</span>
-              <input
-                type="file"
-                className="hidden"
-                onChange={(e) => {
-                  const file = e.target.files?.[0];
-                  if (file) handleAnswerChange(file.name);
-                }}
-              />
-            </label>
-          )}
-        </div>
-      );
-
-    case 'toggle':
-      return (
-        <button
-          onClick={(e) => {
-            e.stopPropagation();
-            handleAnswerChange(item.answer === 'true' ? 'false' : 'true');
-          }}
-          className={`w-11 h-6 rounded-full transition-colors relative ${
-            item.answer === 'true' ? 'bg-blue-600' : 'bg-gray-300'
-          }`}
-        >
-          <div className={`absolute top-0.5 w-5 h-5 bg-white rounded-full shadow transition-transform ${
-            item.answer === 'true' ? 'translate-x-5' : 'translate-x-0.5'
-          }`} />
-        </button>
-      );
-
-    default:
-      return (
-        <Input
-          value={item.answer || ''}
-          onChange={(e) => handleAnswerChange(e.target.value)}
-          onClick={(e) => e.stopPropagation()}
-          placeholder="Enter response..."
-          className="h-8 text-sm bg-gray-100 border-gray-300 text-gray-700"
-        />
-      );
-  }
-};
-
+              <input type="file" className="hidden" onChange={e => {
+              const file = e.target.files?.[0];
+              if (file) handleAnswerChange(file.name);
+            }} />
+            </label>}
+        </div>;
+      case 'toggle':
+        return <button onClick={e => {
+          e.stopPropagation();
+          handleAnswerChange(item.answer === 'true' ? 'false' : 'true');
+        }} className={`w-11 h-6 rounded-full transition-colors relative ${item.answer === 'true' ? 'bg-blue-600' : 'bg-gray-300'}`}>
+          <div className={`absolute top-0.5 w-5 h-5 bg-white rounded-full shadow transition-transform ${item.answer === 'true' ? 'translate-x-5' : 'translate-x-0.5'}`} />
+        </button>;
+      default:
+        return <Input value={item.answer || ''} onChange={e => handleAnswerChange(e.target.value)} onClick={e => e.stopPropagation()} placeholder="Enter response..." className="h-8 text-sm bg-gray-100 border-gray-300 text-gray-700" />;
+    }
+  };
   const subItemIds = item.subQuestions?.map(sq => sq.id) || [];
-
-  return (
-    <div ref={setNodeRef} style={style} className={`border-t border-[#E0E6ED] relative ${isDragging ? 'z-10' : ''}`}>
+  return <div ref={setNodeRef} style={style} className={`border-t border-[#E0E6ED] relative ${isDragging ? 'z-10' : ''}`}>
       {/* Drop indicator line - shows above item when hovering */}
-      {isValidDropTarget && (
-        <div className="absolute -top-[2px] left-0 right-0 h-1 bg-primary rounded-full z-20 shadow-[0_0_8px_rgba(59,130,246,0.5)]" />
-      )}
+      {isValidDropTarget && <div className="absolute -top-[2px] left-0 right-0 h-1 bg-primary rounded-full z-20 shadow-[0_0_8px_rgba(59,130,246,0.5)]" />}
       {/* Main item row - full row is draggable */}
-      <div 
-        {...(!isPreviewMode && !isEditingName ? { ...attributes, ...listeners } : {})}
-        className={`group flex items-stretch hover:bg-[#EDF2F7] transition-all border-b border-[#E8EDF2] ${isSelected ? 'bg-[#EDF2F7]' : ''} ${!isPreviewMode && !isEditingName ? 'cursor-grab active:cursor-grabbing' : ''} ${isDragging ? 'opacity-50 ring-2 ring-primary ring-offset-1' : ''} ${isValidDropTarget ? 'bg-primary/5' : ''}`}
-      >
+      <div {...!isPreviewMode && !isEditingName ? {
+      ...attributes,
+      ...listeners
+    } : {}} className={`group flex items-stretch hover:bg-[#EDF2F7] transition-all border-b border-[#E8EDF2] ${isSelected ? 'bg-[#EDF2F7]' : ''} ${!isPreviewMode && !isEditingName ? 'cursor-grab active:cursor-grabbing' : ''} ${isDragging ? 'opacity-50 ring-2 ring-primary ring-offset-1' : ''} ${isValidDropTarget ? 'bg-primary/5' : ''}`}>
         {/* Checkbox */}
         <div className="w-10 shrink-0 flex items-center justify-center self-center">
-          <Checkbox 
-            checked={isSelected} 
-            onCheckedChange={(checked) => onSelectionChange(checked === true)}
-            className="h-4 w-4 border-gray-400"
-          />
+          <Checkbox checked={isSelected} onCheckedChange={checked => onSelectionChange(checked === true)} className="h-4 w-4 border-gray-400" />
         </div>
 
         {/* Expand arrow - Monday.com style: dull on hover, solid when has sub-items */}
         <div className="w-8 shrink-0 flex items-center justify-center self-center">
-          {hasRealSubItems ? (
-            <button 
-              onClick={handleChevronClick}
-              className="p-0.5 rounded hover:bg-gray-200 transition-colors"
-              title={isExpanded ? "Collapse sub-items" : "Expand sub-items"}
-            >
-              {isExpanded ? (
-                <ChevronDown className="h-4 w-4 text-gray-600" />
-              ) : (
-                <ChevronRight className="h-4 w-4 text-gray-600" />
-              )}
-            </button>
-          ) : !isPreviewMode ? (
-            <button 
-              onClick={handleChevronClick}
-              className="p-0.5 rounded hover:bg-gray-200 transition-colors opacity-0 group-hover:opacity-100"
-              title="Add sub-item"
-            >
+          {hasRealSubItems ? <button onClick={handleChevronClick} className="p-0.5 rounded hover:bg-gray-200 transition-colors" title={isExpanded ? "Collapse sub-items" : "Expand sub-items"}>
+              {isExpanded ? <ChevronDown className="h-4 w-4 text-gray-600" /> : <ChevronRight className="h-4 w-4 text-gray-600" />}
+            </button> : !isPreviewMode ? <button onClick={handleChevronClick} className="p-0.5 rounded hover:bg-gray-200 transition-colors opacity-0 group-hover:opacity-100" title="Add sub-item">
               <ChevronRight className="h-4 w-4 text-gray-400" />
-            </button>
-          ) : (
-            <div className="w-4" />
-          )}
+            </button> : <div className="w-4" />}
         </div>
 
         {/* Item name */}
-        <div className="shrink-0 px-3 py-1 flex items-center gap-2" style={{ width: columnWidths.questions }}>
+        <div className="shrink-0 px-3 py-1 flex items-center gap-2" style={{
+        width: columnWidths.questions
+      }}>
           <span className="text-xs font-medium text-gray-500 shrink-0">{sectionNumber}.{itemIndex + 1}</span>
-          {isEditingName && !isPreviewMode ? (
-            <RichTextQuestionEditor
-              value={item.text}
-              onChange={(newValue) => { draftNameRef.current = newValue; }}
-              onBlur={handleSave}
-              onCancel={handleCancel}
-              className="text-sm min-h-[36px] bg-gray-100 border-gray-300 text-gray-800 flex-1"
-            />
-          ) : (
-            <div className="flex items-center gap-2 flex-1 min-w-0">
-              {isCompactMode ? (
-                <Tooltip>
+          {isEditingName && !isPreviewMode ? <RichTextQuestionEditor value={item.text} onChange={newValue => {
+          draftNameRef.current = newValue;
+        }} onBlur={handleSave} onCancel={handleCancel} className="text-sm min-h-[36px] bg-gray-100 border-gray-300 text-gray-800 flex-1" /> : <div className="flex items-center gap-2 flex-1 min-w-0">
+              {isCompactMode ? <Tooltip>
                   <TooltipTrigger asChild>
-                    <div 
-                      onClick={(e) => {
-                        if (!isPreviewMode) {
-                          e.stopPropagation();
-                          draftNameRef.current = item.text;
-                          setIsEditingName(true);
-                        }
-                      }}
-                      className={`text-sm text-gray-800 flex-1 ${!isPreviewMode ? 'cursor-text hover:text-gray-900' : ''} line-clamp-1 overflow-hidden py-1`}
-                      dangerouslySetInnerHTML={{ __html: sanitizeHtml(item.text) || 'Click to add item name...' }}
-                    />
+                    <div onClick={e => {
+                if (!isPreviewMode) {
+                  e.stopPropagation();
+                  draftNameRef.current = item.text;
+                  setIsEditingName(true);
+                }
+              }} className={`text-sm text-gray-800 flex-1 ${!isPreviewMode ? 'cursor-text hover:text-gray-900' : ''} line-clamp-1 overflow-hidden py-1`} dangerouslySetInnerHTML={{
+                __html: sanitizeHtml(item.text) || 'Click to add item name...'
+              }} />
                   </TooltipTrigger>
                   <TooltipContent side="top" className="bg-white text-gray-800 border border-gray-200 shadow-lg max-w-md">
-                    <div dangerouslySetInnerHTML={{ __html: sanitizeHtml(item.text) }} />
+                    <div dangerouslySetInnerHTML={{
+                __html: sanitizeHtml(item.text)
+              }} />
                   </TooltipContent>
-                </Tooltip>
-              ) : (
-                <div 
-                  onClick={(e) => {
-                    if (!isPreviewMode) {
-                      e.stopPropagation();
-                      draftNameRef.current = item.text;
-                      setIsEditingName(true);
-                    }
-                  }}
-                  className={`text-sm text-gray-800 flex-1 ${!isPreviewMode ? 'cursor-text hover:text-gray-900' : ''} py-2`}
-                  dangerouslySetInnerHTML={{ __html: sanitizeHtml(item.text) || 'Click to add item name...' }}
-                />
-              )}
-              {hasRealSubItems && (
-                <Tooltip>
+                </Tooltip> : <div onClick={e => {
+            if (!isPreviewMode) {
+              e.stopPropagation();
+              draftNameRef.current = item.text;
+              setIsEditingName(true);
+            }
+          }} className={`text-sm text-gray-800 flex-1 ${!isPreviewMode ? 'cursor-text hover:text-gray-900' : ''} py-2`} dangerouslySetInnerHTML={{
+            __html: sanitizeHtml(item.text) || 'Click to add item name...'
+          }} />}
+              {hasRealSubItems && <Tooltip>
                   <TooltipTrigger asChild>
                     <span className="text-xs bg-blue-100 text-blue-600 px-1.5 py-0.5 rounded font-medium shrink-0 cursor-default">
                       {item.subQuestions!.filter(sq => sq.text.trim() !== '').length}
                     </span>
                   </TooltipTrigger>
                   <TooltipContent side="top" className="bg-white text-gray-800 border border-gray-200 shadow-lg">
-                    {item.subQuestions!.filter(sq => sq.text.trim() !== '').length === 1 
-                      ? '1 Sub-question' 
-                      : `${item.subQuestions!.filter(sq => sq.text.trim() !== '').length} Sub-questions`}
+                    {item.subQuestions!.filter(sq => sq.text.trim() !== '').length === 1 ? '1 Sub-question' : `${item.subQuestions!.filter(sq => sq.text.trim() !== '').length} Sub-questions`}
                   </TooltipContent>
-                </Tooltip>
-              )}
-            </div>
-          )}
+                </Tooltip>}
+            </div>}
         </div>
 
         {/* Response column with inline type selector and response field */}
-        <div className="shrink-0 px-2 py-2 border-l border-[#E8EDF2] flex items-stretch" style={{ width: columnWidths.response }}>
+        <div className="shrink-0 px-2 py-2 border-l border-[#E8EDF2] flex items-stretch" style={{
+        width: columnWidths.response
+      }}>
           <div className="flex items-start gap-2 w-full">
-            <ResponseTypeDropdown
-              currentType={item.answerType}
-              onTypeChange={handleAnswerTypeChange}
-              disabled={isPreviewMode}
-            />
+            <ResponseTypeDropdown currentType={item.answerType} onTypeChange={handleAnswerTypeChange} disabled={isPreviewMode} />
             <div className="flex-1 min-w-0">
               {renderResponseField()}
             </div>
@@ -1621,78 +1227,58 @@ function SortableItemRow({
         </div>
 
         {/* Additional Explanation column - conditionally rendered */}
-        {visibleColumns.explanation && (
-          <div className="shrink-0 px-2 py-2 border-l border-[#E8EDF2] flex items-stretch" style={{ width: columnWidths.explanation }}>
-            {(item as any).showExplanation !== false ? (
-              <div className="relative group/exp w-full">
-                <AITextarea
-                  value={item.explanation || ''}
-                  onChange={(val) => onUpdate({ ...item, explanation: val })}
-                  placeholder="Additional Explanation"
-                  minHeight="40px"
-                  isCompactMode={isCompactMode}
-                />
-                {!isPreviewMode && (
-                  <button
-                    onClick={() => onUpdate({ ...item, showExplanation: false, explanation: '' } as any)}
-                    className="absolute -top-1 -right-1 p-0.5 bg-white border border-gray-300 rounded-full text-gray-400 hover:text-red-500 hover:border-red-300 opacity-0 group-hover/exp:opacity-100 transition-opacity shadow-sm"
-                    title="Remove explanation"
-                  >
+        {visibleColumns.explanation && <div className="shrink-0 px-2 py-2 border-l border-[#E8EDF2] flex items-stretch" style={{
+        width: columnWidths.explanation
+      }}>
+            {(item as any).showExplanation !== false ? <div className="relative group/exp w-full">
+                <AITextarea value={item.explanation || ''} onChange={val => onUpdate({
+            ...item,
+            explanation: val
+          })} placeholder="Additional Explanation" minHeight="40px" isCompactMode={isCompactMode} />
+                {!isPreviewMode && <button onClick={() => onUpdate({
+            ...item,
+            showExplanation: false,
+            explanation: ''
+          } as any)} className="absolute -top-1 -right-1 p-0.5 bg-white border border-gray-300 rounded-full text-gray-400 hover:text-red-500 hover:border-red-300 opacity-0 group-hover/exp:opacity-100 transition-opacity shadow-sm" title="Remove explanation">
                     <X className="h-3 w-3" />
-                  </button>
-                )}
-              </div>
-            ) : (
-              !isPreviewMode && (
-                <button
-                  onClick={() => onUpdate({ ...item, showExplanation: true } as any)}
-                  className="flex items-center gap-1 px-2 py-1 text-xs text-gray-500 hover:text-primary hover:bg-[#EDF2F7] rounded transition-colors"
-                >
+                  </button>}
+              </div> : !isPreviewMode && <button onClick={() => onUpdate({
+          ...item,
+          showExplanation: true
+        } as any)} className="flex items-center gap-1 px-2 py-1 text-xs text-gray-500 hover:text-primary hover:bg-[#EDF2F7] rounded transition-colors">
                   <Plus className="h-3 w-3" />
                   <span>Add</span>
-                </button>
-              )
-            )}
-          </div>
-        )}
+                </button>}
+          </div>}
 
         {/* Reference column - conditionally rendered */}
-        {visibleColumns.reference && (
-          <div className="shrink-0 px-2 py-2 flex items-center border-l border-[#E8EDF2]" style={{ width: columnWidths.reference }}>
-            <RefButton
-              reference={(item as any).reference}
-              onAttach={(doc) => onUpdate({ ...item, reference: doc } as any)}
-              onRemove={() => onUpdate({ ...item, reference: null } as any)}
-              disabled={isPreviewMode}
-            />
-          </div>
-        )}
+        {visibleColumns.reference && <div className="shrink-0 px-2 py-2 flex items-center border-l border-[#E8EDF2]" style={{
+        width: columnWidths.reference
+      }}>
+            <RefButton reference={(item as any).reference} onAttach={doc => onUpdate({
+          ...item,
+          reference: doc
+        } as any)} onRemove={() => onUpdate({
+          ...item,
+          reference: null
+        } as any)} disabled={isPreviewMode} />
+          </div>}
 
         {/* Add column placeholder to maintain alignment */}
-        {!isPreviewMode && (!visibleColumns.explanation || !visibleColumns.reference) && (
-          <div className="w-[100px] shrink-0" />
-        )}
+        {!isPreviewMode && (!visibleColumns.explanation || !visibleColumns.reference) && <div className="w-[100px] shrink-0" />}
 
         {/* Actions menu */}
         <div className="w-16 shrink-0 flex items-center justify-center gap-1 self-center">
-          {!isPreviewMode && (
-            <>
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  onAddSubItem();
-                }}
-                className="p-1.5 rounded hover:bg-[#EDF2F7] opacity-0 group-hover:opacity-100 transition-all text-gray-400 hover:text-gray-700"
-                title="Add sub-item"
-              >
+          {!isPreviewMode && <>
+              <button onClick={e => {
+            e.stopPropagation();
+            onAddSubItem();
+          }} className="p-1.5 rounded hover:bg-[#EDF2F7] opacity-0 group-hover:opacity-100 transition-all text-gray-400 hover:text-gray-700" title="Add sub-item">
                 <PlusCircle className="h-4 w-4" />
               </button>
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <button 
-                    onClick={(e) => e.stopPropagation()}
-                    className="p-1.5 rounded hover:bg-[#EDF2F7] opacity-0 group-hover:opacity-100 transition-all"
-                  >
+                  <button onClick={e => e.stopPropagation()} className="p-1.5 rounded hover:bg-[#EDF2F7] opacity-0 group-hover:opacity-100 transition-all">
                     <MoreHorizontal className="h-4 w-4 text-gray-400" />
                   </button>
                 </DropdownMenuTrigger>
@@ -1712,22 +1298,17 @@ function SortableItemRow({
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
-            </>
-          )}
+            </>}
         </div>
       </div>
 
       {/* Sub-items section - Monday.com style with connecting line */}
-      {hasSubItems && isExpanded && (
-        <div 
-          className="relative mt-1 mb-2"
-          onBlur={(e) => {
-            // Check if focus is leaving the sub-items container entirely
-            if (!e.currentTarget.contains(e.relatedTarget as Node)) {
-              cleanupEmptySubItems();
-            }
-          }}
-        >
+      {hasSubItems && isExpanded && <div className="relative mt-1 mb-2" onBlur={e => {
+      // Check if focus is leaving the sub-items container entirely
+      if (!e.currentTarget.contains(e.relatedTarget as Node)) {
+        cleanupEmptySubItems();
+      }
+    }}>
           {/* Vertical connecting line from parent - positioned at left edge */}
           <div className="absolute left-3 -top-1 w-0.5 h-4 bg-amber-600/70" />
           
@@ -1742,70 +1323,44 @@ function SortableItemRow({
             {/* Sub-items header row */}
             <div className="flex items-center bg-[#EDF2F7] text-xs font-medium text-gray-500 border-b border-[#E8EDF2]">
               <div className="w-10 shrink-0 flex items-center justify-center py-2" />
-              <div className="shrink-0 px-3 py-2" style={{ width: columnWidths.questions }}>Sub-questions</div>
-              <div className="shrink-0 px-2 py-2 text-center" style={{ width: columnWidths.response }}>Response</div>
-              {visibleColumns.explanation && (
-                <div className="shrink-0 px-2 py-2 text-center" style={{ width: columnWidths.explanation }}>Explanation</div>
-              )}
-              {visibleColumns.reference && (
-                <div className="shrink-0 px-2 py-2 text-center" style={{ width: columnWidths.reference }}>Reference</div>
-              )}
-              {!isPreviewMode && (!visibleColumns.explanation || !visibleColumns.reference) && (
-                <div className="w-[100px] shrink-0" />
-              )}
+              <div className="shrink-0 px-3 py-2" style={{
+            width: columnWidths.questions
+          }}>Sub-questions</div>
+              <div className="shrink-0 px-2 py-2 text-center" style={{
+            width: columnWidths.response
+          }}>Response</div>
+              {visibleColumns.explanation && <div className="shrink-0 px-2 py-2 text-center" style={{
+            width: columnWidths.explanation
+          }}>Explanation</div>}
+              {visibleColumns.reference && <div className="shrink-0 px-2 py-2 text-center" style={{
+            width: columnWidths.reference
+          }}>Reference</div>}
+              {!isPreviewMode && (!visibleColumns.explanation || !visibleColumns.reference) && <div className="w-[100px] shrink-0" />}
               <div className="w-16 shrink-0" />
             </div>
 
             <SortableContext items={subItemIds} strategy={verticalListSortingStrategy}>
-              {item.subQuestions!.map((sub, idx) => (
-                <div key={sub.id} className="">
-                  <SortableSubItemRow
-                    subItem={sub}
-                    index={idx}
-                    parentId={item.id}
-                    onUpdate={(updated) => handleSubItemUpdate(idx, updated)}
-                    onDelete={() => handleSubItemDelete(idx)}
-                    isPreviewMode={isPreviewMode}
-                    isCompactMode={isCompactMode}
-                    isLast={idx === item.subQuestions!.length - 1}
-                    totalCount={item.subQuestions!.length}
-                    visibleColumns={visibleColumns}
-                    columnWidths={columnWidths}
-                    isNewEmpty={isPendingSubItem && sub.text.trim() === ''}
-                    onBlurCleanup={() => {
-                      if (sub.text.trim() === '') {
-                        cleanupEmptySubItems();
-                      }
-                    }}
-                    sectionNumber={sectionNumber}
-                    itemNumber={itemIndex + 1}
-                  />
-                </div>
-              ))}
+              {item.subQuestions!.map((sub, idx) => <div key={sub.id} className="">
+                  <SortableSubItemRow subItem={sub} index={idx} parentId={item.id} onUpdate={updated => handleSubItemUpdate(idx, updated)} onDelete={() => handleSubItemDelete(idx)} isPreviewMode={isPreviewMode} isCompactMode={isCompactMode} isLast={idx === item.subQuestions!.length - 1} totalCount={item.subQuestions!.length} visibleColumns={visibleColumns} columnWidths={columnWidths} isNewEmpty={isPendingSubItem && sub.text.trim() === ''} onBlurCleanup={() => {
+              if (sub.text.trim() === '') {
+                cleanupEmptySubItems();
+              }
+            }} sectionNumber={sectionNumber} itemNumber={itemIndex + 1} />
+                </div>)}
             </SortableContext>
 
             {/* Add subitem row */}
-            {!isPreviewMode && hasRealSubItems && (
-              <div className="flex items-center hover:bg-[#EDF2F7] transition-colors">
+            {!isPreviewMode && hasRealSubItems && <div className="flex items-center hover:bg-[#EDF2F7] transition-colors">
                 <div className="w-10 flex items-center justify-center py-2.5">
-                  <Checkbox 
-                    disabled
-                    className="h-4 w-4 border-gray-300 bg-white opacity-30"
-                  />
+                  <Checkbox disabled className="h-4 w-4 border-gray-300 bg-white opacity-30" />
                 </div>
-                <button
-                  onClick={onAddSubItem}
-                  className="flex-1 flex items-center gap-2 px-3 py-2.5 text-sm text-gray-400 hover:text-blue-500 transition-colors text-left"
-                >
+                <button onClick={onAddSubItem} className="flex-1 flex items-center gap-2 px-3 py-2.5 text-sm text-gray-400 hover:text-blue-500 transition-colors text-left">
                   + Add Sub-question
                 </button>
-              </div>
-            )}
+              </div>}
           </div>
-        </div>
-      )}
-    </div>
-  );
+        </div>}
+    </div>;
 }
 
 // Group component (Section)
@@ -1835,7 +1390,6 @@ interface ResizableColumnHeaderProps {
   isPreviewMode: boolean;
   showRemove?: boolean;
 }
-
 function ResizableColumnHeader({
   label,
   width,
@@ -1845,14 +1399,13 @@ function ResizableColumnHeader({
   onLabelChange,
   onRemove,
   isPreviewMode,
-  showRemove = false,
+  showRemove = false
 }: ResizableColumnHeaderProps) {
   const [isResizing, setIsResizing] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [draftLabel, setDraftLabel] = useState(label);
   const startXRef = useRef(0);
   const startWidthRef = useRef(width);
-
   const handleMouseDown = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
@@ -1860,14 +1413,12 @@ function ResizableColumnHeader({
     startXRef.current = e.clientX;
     startWidthRef.current = width;
   };
-
   const handleMouseMove = useCallback((e: MouseEvent) => {
     if (!isResizing) return;
     const delta = e.clientX - startXRef.current;
     const newWidth = Math.max(minWidth, Math.min(maxWidth, startWidthRef.current + delta));
     onWidthChange(newWidth);
   }, [isResizing, minWidth, maxWidth, onWidthChange]);
-
   const handleMouseUp = useCallback(() => {
     setIsResizing(false);
   }, []);
@@ -1875,26 +1426,21 @@ function ResizableColumnHeader({
   // Attach/detach global listeners for resize
   useEffect(() => {
     if (!isResizing) return;
-    
     const handleMove = (e: MouseEvent) => {
       const delta = e.clientX - startXRef.current;
       const newWidth = Math.max(minWidth, Math.min(maxWidth, startWidthRef.current + delta));
       onWidthChange(newWidth);
     };
-    
     const handleUp = () => {
       setIsResizing(false);
     };
-    
     document.addEventListener('mousemove', handleMove);
     document.addEventListener('mouseup', handleUp);
-    
     return () => {
       document.removeEventListener('mousemove', handleMove);
       document.removeEventListener('mouseup', handleUp);
     };
   }, [isResizing, minWidth, maxWidth, onWidthChange]);
-
   const commitLabel = () => {
     const trimmed = draftLabel.trim();
     if (trimmed && trimmed !== label && onLabelChange) {
@@ -1904,103 +1450,78 @@ function ResizableColumnHeader({
     }
     setIsEditing(false);
   };
-
-  return (
-    <div 
-      className="shrink-0 px-2 py-2 flex items-center justify-between group/col relative"
-      style={{ width }}
-    >
-      {isEditing && !isPreviewMode && onLabelChange ? (
-        <input
-          type="text"
-          value={draftLabel}
-          onChange={(e) => setDraftLabel(e.target.value)}
-          onBlur={commitLabel}
-          onKeyDown={(e) => {
-            if (e.key === 'Enter') commitLabel();
-            if (e.key === 'Escape') {
-              setDraftLabel(label);
-              setIsEditing(false);
-            }
-          }}
-          autoFocus
-          onClick={(e) => e.stopPropagation()}
-          className="h-5 text-xs font-medium bg-white border border-gray-300 rounded px-1 flex-1 min-w-0"
-        />
-      ) : (
-        <span 
-          onClick={() => {
-            if (!isPreviewMode && onLabelChange) setIsEditing(true);
-          }}
-          className={`text-xs font-medium truncate ${!isPreviewMode && onLabelChange ? 'cursor-text hover:text-gray-700' : ''}`}
-        >
+  return <div className="shrink-0 px-2 py-2 flex items-center justify-between group/col relative" style={{
+    width
+  }}>
+      {isEditing && !isPreviewMode && onLabelChange ? <input type="text" value={draftLabel} onChange={e => setDraftLabel(e.target.value)} onBlur={commitLabel} onKeyDown={e => {
+      if (e.key === 'Enter') commitLabel();
+      if (e.key === 'Escape') {
+        setDraftLabel(label);
+        setIsEditing(false);
+      }
+    }} autoFocus onClick={e => e.stopPropagation()} className="h-5 text-xs font-medium bg-white border border-gray-300 rounded px-1 flex-1 min-w-0" /> : <span onClick={() => {
+      if (!isPreviewMode && onLabelChange) setIsEditing(true);
+    }} className={`text-xs font-medium truncate ${!isPreviewMode && onLabelChange ? 'cursor-text hover:text-gray-700' : ''}`}>
           {label}
-        </span>
-      )}
+        </span>}
       
-      {!isPreviewMode && showRemove && onRemove && (
-        <button
-          onClick={onRemove}
-          className="p-0.5 text-gray-400 hover:text-red-500 opacity-0 group-hover/col:opacity-100 transition-opacity ml-1"
-          title="Remove column"
-        >
+      {!isPreviewMode && showRemove && onRemove && <button onClick={onRemove} className="p-0.5 text-gray-400 hover:text-red-500 opacity-0 group-hover/col:opacity-100 transition-opacity ml-1" title="Remove column">
           <X className="h-3.5 w-3.5" />
-        </button>
-      )}
+        </button>}
       
       {/* Resize handle */}
-      {!isPreviewMode && (
-        <div
-          onMouseDown={handleMouseDown}
-          className={`absolute right-0 top-0 bottom-0 w-1 cursor-col-resize hover:bg-primary/50 transition-colors ${isResizing ? 'bg-primary' : ''}`}
-          style={{ transform: 'translateX(50%)' }}
-        />
-      )}
-    </div>
-  );
+      {!isPreviewMode && <div onMouseDown={handleMouseDown} className={`absolute right-0 top-0 bottom-0 w-1 cursor-col-resize hover:bg-primary/50 transition-colors ${isResizing ? 'bg-primary' : ''}`} style={{
+      transform: 'translateX(50%)'
+    }} />}
+    </div>;
 }
-
-function SortableGroup({ 
-  section, 
-  sectionIndex, 
-  onUpdate, 
-  onDelete, 
-  onAddItem, 
+function SortableGroup({
+  section,
+  sectionIndex,
+  onUpdate,
+  onDelete,
+  onAddItem,
   isPreviewMode,
   isCompactMode,
   onItemsReorder,
   onSubItemsReorder,
   selectedQuestions,
-  onSelectionChange,
+  onSelectionChange
 }: GroupProps) {
   const [isEditingTitle, setIsEditingTitle] = useState(false);
   const [draftTitle, setDraftTitle] = useState(section.title);
-  const [visibleColumns, setVisibleColumns] = useState({ explanation: true, reference: false });
-  
+  const [visibleColumns, setVisibleColumns] = useState({
+    explanation: true,
+    reference: false
+  });
+
   // Column widths state
   const [columnWidths, setColumnWidths] = useState({
     questions: 300,
     response: 320,
     explanation: 280,
-    reference: 200,
+    reference: 200
   });
-  
+
   // Column labels state (editable)
   const [columnLabels, setColumnLabels] = useState({
     questions: 'Questions',
     response: 'Response',
     explanation: 'Explanation',
-    reference: 'Reference',
+    reference: 'Reference'
   });
-
   const handleAddColumn = (columnId: string) => {
-    setVisibleColumns(prev => ({ ...prev, [columnId]: true }));
+    setVisibleColumns(prev => ({
+      ...prev,
+      [columnId]: true
+    }));
   };
-
   const handleRemoveColumn = (columnId: string) => {
-    setVisibleColumns(prev => ({ ...prev, [columnId]: false }));
+    setVisibleColumns(prev => ({
+      ...prev,
+      [columnId]: false
+    }));
   };
-
   const {
     attributes,
     listeners,
@@ -2009,70 +1530,78 @@ function SortableGroup({
     transition,
     isDragging,
     isOver,
-    active,
-  } = useSortable({ 
+    active
+  } = useSortable({
     id: section.id,
-    data: { type: 'group', section }
+    data: {
+      type: 'group',
+      section
+    }
   });
 
   // Check if this is a valid drop target
   const isDropTarget = isOver && active?.id !== section.id;
   const activeType = active?.data?.current?.type;
   const isValidDropTarget = isDropTarget && activeType === 'group';
-
   const style = {
     transform: CSS.Transform.toString(transform),
     transition,
-    opacity: isDragging ? 0.5 : 1,
+    opacity: isDragging ? 0.5 : 1
   };
-
   const commitTitle = () => {
     const trimmed = draftTitle.trim();
     if (trimmed && trimmed !== section.title) {
-      onUpdate({ ...section, title: trimmed });
+      onUpdate({
+        ...section,
+        title: trimmed
+      });
     } else {
       setDraftTitle(section.title);
     }
     setIsEditingTitle(false);
   };
-
   const handleItemUpdate = (index: number, updatedQuestion: Question) => {
     const newQuestions = [...section.questions];
     newQuestions[index] = updatedQuestion;
-    onUpdate({ ...section, questions: newQuestions });
+    onUpdate({
+      ...section,
+      questions: newQuestions
+    });
   };
-
   const handleItemDelete = (index: number) => {
     const newQuestions = section.questions.filter((_, i) => i !== index);
-    onUpdate({ ...section, questions: newQuestions });
+    onUpdate({
+      ...section,
+      questions: newQuestions
+    });
   };
-
   const handleItemDuplicate = (index: number) => {
     const question = section.questions[index];
     const newQuestion: Question = {
       ...question,
       id: `q-${Date.now()}`,
-      subQuestions: question.subQuestions?.map(sq => ({ ...sq, id: `sq-${Date.now()}-${Math.random()}` }))
+      subQuestions: question.subQuestions?.map(sq => ({
+        ...sq,
+        id: `sq-${Date.now()}-${Math.random()}`
+      }))
     };
-    const newQuestions = [
-      ...section.questions.slice(0, index + 1),
-      newQuestion,
-      ...section.questions.slice(index + 1)
-    ];
-    onUpdate({ ...section, questions: newQuestions });
+    const newQuestions = [...section.questions.slice(0, index + 1), newQuestion, ...section.questions.slice(index + 1)];
+    onUpdate({
+      ...section,
+      questions: newQuestions
+    });
   };
-
   const handleAddSubItem = (index: number) => {
     const question = section.questions[index];
     const newSubQuestion: Question = {
       id: `sq-${Date.now()}`,
       text: 'New sub-item',
       answerType: 'short-answer',
-      required: false,
+      required: false
     };
     const updatedQuestion = {
       ...question,
-      subQuestions: [...(question.subQuestions || []), newSubQuestion],
+      subQuestions: [...(question.subQuestions || []), newSubQuestion]
     };
     handleItemUpdate(index, updatedQuestion);
   };
@@ -2082,75 +1611,47 @@ function SortableGroup({
 
   // Count total subitems
   const totalSubitems = section.questions.reduce((acc, q) => acc + (q.subQuestions?.length || 0), 0);
-
   const itemIds = section.questions.map(q => q.id);
-
-  return (
-    <div ref={setNodeRef} style={style} className={`bg-white rounded-lg overflow-hidden shadow-[0_0_4px_rgba(0,0,0,0.1)] relative ${isDragging ? 'ring-2 ring-primary ring-offset-2 z-10' : ''} ${isValidDropTarget ? 'ring-2 ring-primary/50' : ''}`}>
+  return <div ref={setNodeRef} style={style} className={`bg-white rounded-lg overflow-hidden shadow-[0_0_4px_rgba(0,0,0,0.1)] relative ${isDragging ? 'ring-2 ring-primary ring-offset-2 z-10' : ''} ${isValidDropTarget ? 'ring-2 ring-primary/50' : ''}`}>
       {/* Drop indicator line for groups */}
-      {isValidDropTarget && (
-        <div className="absolute -top-2 left-0 right-0 h-1 bg-primary rounded-full z-20 shadow-[0_0_8px_rgba(59,130,246,0.5)]" />
-      )}
+      {isValidDropTarget && <div className="absolute -top-2 left-0 right-0 h-1 bg-primary rounded-full z-20 shadow-[0_0_8px_rgba(59,130,246,0.5)]" />}
       {/* Group header */}
-      <div 
-        {...(!isPreviewMode ? { ...attributes, ...listeners } : {})}
-        className={`flex items-center gap-3 px-4 py-2 bg-[#F5F8FA] border-b border-[#E8EDF2] ${!isPreviewMode ? 'cursor-grab active:cursor-grabbing' : ''} ${isDragging ? 'opacity-70' : ''}`}
-      >
+      <div {...!isPreviewMode ? {
+      ...attributes,
+      ...listeners
+    } : {}} className={`flex items-center gap-3 px-4 py-2 bg-[#F5F8FA] border-b border-[#E8EDF2] ${!isPreviewMode ? 'cursor-grab active:cursor-grabbing' : ''} ${isDragging ? 'opacity-70' : ''}`}>
         <div className="w-1 h-6 bg-amber-600 rounded-full" />
-        <button 
-          onClick={(e) => {
-            e.stopPropagation();
-            onUpdate({ ...section, isExpanded: !section.isExpanded });
-          }}
-          className="p-0.5 rounded hover:bg-[#EDF2F7] transition-colors"
-        >
-          {section.isExpanded ? (
-            <ChevronDown className="h-4 w-4 text-gray-500" />
-          ) : (
-            <ChevronRight className="h-4 w-4 text-gray-500" />
-          )}
+        <button onClick={e => {
+        e.stopPropagation();
+        onUpdate({
+          ...section,
+          isExpanded: !section.isExpanded
+        });
+      }} className="p-0.5 rounded hover:bg-[#EDF2F7] transition-colors">
+          {section.isExpanded ? <ChevronDown className="h-4 w-4 text-gray-500" /> : <ChevronRight className="h-4 w-4 text-gray-500" />}
         </button>
         
-        {isEditingTitle && !isPreviewMode ? (
-          <Input
-            value={draftTitle}
-            onChange={(e) => setDraftTitle(e.target.value)}
-            onBlur={commitTitle}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter') commitTitle();
-              if (e.key === 'Escape') {
-                setDraftTitle(section.title);
-                setIsEditingTitle(false);
-              }
-            }}
-            autoFocus
-            onClick={(e) => e.stopPropagation()}
-            className="h-7 text-sm font-semibold bg-gray-100 border-gray-300 text-amber-600 flex-1"
-          />
-        ) : (
-          <h3 
-            onClick={(e) => {
-              e.stopPropagation();
-              if (!isPreviewMode) setIsEditingTitle(true);
-            }}
-            className={`text-sm font-semibold text-amber-600 flex-1 ${!isPreviewMode ? 'cursor-text hover:text-amber-700' : ''}`}
-          >
+        {isEditingTitle && !isPreviewMode ? <Input value={draftTitle} onChange={e => setDraftTitle(e.target.value)} onBlur={commitTitle} onKeyDown={e => {
+        if (e.key === 'Enter') commitTitle();
+        if (e.key === 'Escape') {
+          setDraftTitle(section.title);
+          setIsEditingTitle(false);
+        }
+      }} autoFocus onClick={e => e.stopPropagation()} className="h-7 text-sm font-semibold bg-gray-100 border-gray-300 text-amber-600 flex-1" /> : <h3 onClick={e => {
+        e.stopPropagation();
+        if (!isPreviewMode) setIsEditingTitle(true);
+      }} className={`text-sm font-semibold text-amber-600 flex-1 ${!isPreviewMode ? 'cursor-text hover:text-amber-700' : ''}`}>
             <span className="text-gray-500 mr-1">{sectionIndex + 1}.</span>
             {cleanTitle(section.title)}
-          </h3>
-        )}
+          </h3>}
 
         <span className="text-xs text-gray-500">
           {section.questions.length} Items{totalSubitems > 0 ? ` / ${totalSubitems} Subitems` : ''}
         </span>
 
-        {!isPreviewMode && (
-          <DropdownMenu>
+        {!isPreviewMode && <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <button 
-                onClick={(e) => e.stopPropagation()}
-                className="p-1 rounded hover:bg-gray-200 transition-colors"
-              >
+              <button onClick={e => e.stopPropagation()} className="p-1 rounded hover:bg-gray-200 transition-colors">
                 <MoreHorizontal className="h-4 w-4 text-gray-500" />
               </button>
             </DropdownMenuTrigger>
@@ -2165,116 +1666,78 @@ function SortableGroup({
                 Delete group
               </DropdownMenuItem>
             </DropdownMenuContent>
-          </DropdownMenu>
-        )}
+          </DropdownMenu>}
       </div>
 
       {/* Content */}
-      {section.isExpanded && (
-        <>
+      {section.isExpanded && <>
           {/* Column headers */}
           <div className="flex items-center bg-[#F5F8FA] text-xs font-medium text-gray-500 border-b border-[#E8EDF2]">
             <div className="w-10 shrink-0 py-2" />
             <div className="w-8 shrink-0 py-2" />
-            <ResizableColumnHeader
-              label={columnLabels.questions}
-              width={columnWidths.questions}
-              minWidth={200}
-              maxWidth={600}
-              onWidthChange={(w) => setColumnWidths(prev => ({ ...prev, questions: w }))}
-              onLabelChange={(l) => setColumnLabels(prev => ({ ...prev, questions: l }))}
-              isPreviewMode={isPreviewMode}
-            />
-            <ResizableColumnHeader
-              label={columnLabels.response}
-              width={columnWidths.response}
-              minWidth={200}
-              maxWidth={600}
-              onWidthChange={(w) => setColumnWidths(prev => ({ ...prev, response: w }))}
-              onLabelChange={(l) => setColumnLabels(prev => ({ ...prev, response: l }))}
-              isPreviewMode={isPreviewMode}
-            />
-            {visibleColumns.explanation && (
-              <ResizableColumnHeader
-                label={columnLabels.explanation}
-                width={columnWidths.explanation}
-                minWidth={180}
-                maxWidth={600}
-                onWidthChange={(w) => setColumnWidths(prev => ({ ...prev, explanation: w }))}
-                onLabelChange={(l) => setColumnLabels(prev => ({ ...prev, explanation: l }))}
-                onRemove={() => handleRemoveColumn('explanation')}
-                isPreviewMode={isPreviewMode}
-                showRemove={true}
-              />
-            )}
-            {visibleColumns.reference && (
-              <ResizableColumnHeader
-                label={columnLabels.reference}
-                width={columnWidths.reference}
-                minWidth={120}
-                maxWidth={400}
-                onWidthChange={(w) => setColumnWidths(prev => ({ ...prev, reference: w }))}
-                onLabelChange={(l) => setColumnLabels(prev => ({ ...prev, reference: l }))}
-                onRemove={() => handleRemoveColumn('reference')}
-                isPreviewMode={isPreviewMode}
-                showRemove={true}
-              />
-            )}
-            {!isPreviewMode && (!visibleColumns.explanation || !visibleColumns.reference) && (
-              <div className="w-[100px] shrink-0 px-2 py-2 text-center text-gray-400">
+            <ResizableColumnHeader label={columnLabels.questions} width={columnWidths.questions} minWidth={200} maxWidth={600} onWidthChange={w => setColumnWidths(prev => ({
+          ...prev,
+          questions: w
+        }))} onLabelChange={l => setColumnLabels(prev => ({
+          ...prev,
+          questions: l
+        }))} isPreviewMode={isPreviewMode} />
+            <ResizableColumnHeader label={columnLabels.response} width={columnWidths.response} minWidth={200} maxWidth={600} onWidthChange={w => setColumnWidths(prev => ({
+          ...prev,
+          response: w
+        }))} onLabelChange={l => setColumnLabels(prev => ({
+          ...prev,
+          response: l
+        }))} isPreviewMode={isPreviewMode} />
+            {visibleColumns.explanation && <ResizableColumnHeader label={columnLabels.explanation} width={columnWidths.explanation} minWidth={180} maxWidth={600} onWidthChange={w => setColumnWidths(prev => ({
+          ...prev,
+          explanation: w
+        }))} onLabelChange={l => setColumnLabels(prev => ({
+          ...prev,
+          explanation: l
+        }))} onRemove={() => handleRemoveColumn('explanation')} isPreviewMode={isPreviewMode} showRemove={true} />}
+            {visibleColumns.reference && <ResizableColumnHeader label={columnLabels.reference} width={columnWidths.reference} minWidth={120} maxWidth={400} onWidthChange={w => setColumnWidths(prev => ({
+          ...prev,
+          reference: w
+        }))} onLabelChange={l => setColumnLabels(prev => ({
+          ...prev,
+          reference: l
+        }))} onRemove={() => handleRemoveColumn('reference')} isPreviewMode={isPreviewMode} showRemove={true} />}
+            {!isPreviewMode && (!visibleColumns.explanation || !visibleColumns.reference) && <div className="w-[100px] shrink-0 px-2 py-2 text-center text-gray-400">
                 <AddColumnButton onAddColumn={handleAddColumn} visibleColumns={visibleColumns} />
-              </div>
-            )}
+              </div>}
             <div className="w-16 shrink-0 py-2" />
           </div>
 
           {/* Items */}
           <SortableContext items={itemIds} strategy={verticalListSortingStrategy}>
-            {section.questions.map((question, idx) => (
-              <SortableItemRow
-                key={question.id}
-                item={question}
-                sectionId={section.id}
-                itemIndex={idx}
-                onUpdate={(q) => handleItemUpdate(idx, q)}
-                onDelete={() => handleItemDelete(idx)}
-                onDuplicate={() => handleItemDuplicate(idx)}
-                onAddSubItem={() => handleAddSubItem(idx)}
-                isPreviewMode={isPreviewMode}
-                isCompactMode={isCompactMode}
-                onSubItemsReorder={onSubItemsReorder}
-                visibleColumns={visibleColumns}
-                columnWidths={columnWidths}
-                sectionNumber={sectionIndex + 1}
-                isSelected={selectedQuestions.has(question.id)}
-                onSelectionChange={(selected) => onSelectionChange(question.id, selected)}
-              />
-            ))}
+            {section.questions.map((question, idx) => <SortableItemRow key={question.id} item={question} sectionId={section.id} itemIndex={idx} onUpdate={q => handleItemUpdate(idx, q)} onDelete={() => handleItemDelete(idx)} onDuplicate={() => handleItemDuplicate(idx)} onAddSubItem={() => handleAddSubItem(idx)} isPreviewMode={isPreviewMode} isCompactMode={isCompactMode} onSubItemsReorder={onSubItemsReorder} visibleColumns={visibleColumns} columnWidths={columnWidths} sectionNumber={sectionIndex + 1} isSelected={selectedQuestions.has(question.id)} onSelectionChange={selected => onSelectionChange(question.id, selected)} />)}
           </SortableContext>
 
           {/* Add item button */}
-          {!isPreviewMode && (
-            <div className="flex items-center">
+          {!isPreviewMode && <div className="flex items-center">
               <div className="w-10" />
-              <button
-                onClick={onAddItem}
-                className="flex items-center gap-2 px-6 py-3 text-sm text-gray-400 hover:text-gray-700 hover:bg-[#EDF2F7] transition-colors w-full text-left"
-              >
+              <button onClick={onAddItem} className="flex items-center gap-2 px-6 py-3 text-sm text-gray-400 hover:text-gray-700 hover:bg-[#EDF2F7] transition-colors w-full text-left">
                 <Plus className="h-4 w-4" />
                 Add item
               </button>
-            </div>
-          )}
-        </>
-      )}
-    </div>
-  );
+            </div>}
+        </>}
+    </div>;
 }
-
-export function MondayBoardView({ checklist, onUpdate, isPreviewMode, isCompactMode = false, selectedQuestions = new Set(), onSelectionChange }: MondayBoardViewProps) {
+export function MondayBoardView({
+  checklist,
+  onUpdate,
+  isPreviewMode,
+  isCompactMode = false,
+  selectedQuestions = new Set(),
+  onSelectionChange
+}: MondayBoardViewProps) {
   const [activeId, setActiveId] = useState<string | null>(null);
-  const [activeData, setActiveData] = useState<{ type: string; text: string } | null>(null);
-
+  const [activeData, setActiveData] = useState<{
+    type: string;
+    text: string;
+  } | null>(null);
   const handleSelectionChange = (questionId: string, selected: boolean) => {
     if (!onSelectionChange) return;
     const newSelected = new Set(selectedQuestions);
@@ -2285,81 +1748,101 @@ export function MondayBoardView({ checklist, onUpdate, isPreviewMode, isCompactM
     }
     onSelectionChange(newSelected);
   };
-
-  const sensors = useSensors(
-    useSensor(PointerSensor, {
-      activationConstraint: { distance: 8 },
-    }),
-    useSensor(KeyboardSensor, {
-      coordinateGetter: sortableKeyboardCoordinates,
-    })
-  );
-
+  const sensors = useSensors(useSensor(PointerSensor, {
+    activationConstraint: {
+      distance: 8
+    }
+  }), useSensor(KeyboardSensor, {
+    coordinateGetter: sortableKeyboardCoordinates
+  }));
   const handleSectionUpdate = (index: number, updatedSection: Section) => {
     const newSections = [...checklist.sections];
     newSections[index] = updatedSection;
-    onUpdate({ ...checklist, sections: newSections });
+    onUpdate({
+      ...checklist,
+      sections: newSections
+    });
   };
-
   const handleSectionDelete = (index: number) => {
     const newSections = checklist.sections.filter((_, i) => i !== index);
-    onUpdate({ ...checklist, sections: newSections });
+    onUpdate({
+      ...checklist,
+      sections: newSections
+    });
   };
-
   const handleAddItem = (sectionIndex: number) => {
     const newQuestion: Question = {
       id: `q-${Date.now()}`,
       text: '',
       answerType: 'short-answer',
-      required: false,
+      required: false
     };
     const newSections = [...checklist.sections];
     newSections[sectionIndex] = {
       ...newSections[sectionIndex],
-      questions: [...newSections[sectionIndex].questions, newQuestion],
+      questions: [...newSections[sectionIndex].questions, newQuestion]
     };
-    onUpdate({ ...checklist, sections: newSections });
+    onUpdate({
+      ...checklist,
+      sections: newSections
+    });
   };
-
   const handleItemsReorder = (sectionId: string, newItems: Question[]) => {
-    const newSections = checklist.sections.map(section => 
-      section.id === sectionId ? { ...section, questions: newItems } : section
-    );
-    onUpdate({ ...checklist, sections: newSections });
+    const newSections = checklist.sections.map(section => section.id === sectionId ? {
+      ...section,
+      questions: newItems
+    } : section);
+    onUpdate({
+      ...checklist,
+      sections: newSections
+    });
   };
-
   const handleSubItemsReorder = (itemId: string, newSubItems: Question[]) => {
     const newSections = checklist.sections.map(section => ({
       ...section,
-      questions: section.questions.map(q => 
-        q.id === itemId ? { ...q, subQuestions: newSubItems } : q
-      )
+      questions: section.questions.map(q => q.id === itemId ? {
+        ...q,
+        subQuestions: newSubItems
+      } : q)
     }));
-    onUpdate({ ...checklist, sections: newSections });
+    onUpdate({
+      ...checklist,
+      sections: newSections
+    });
   };
-
   const handleDragStart = (event: DragStartEvent) => {
-    const { active } = event;
+    const {
+      active
+    } = event;
     setActiveId(active.id as string);
-    
+
     // Extract information about what's being dragged
     const data = active.data.current;
     if (data?.type === 'group') {
-      setActiveData({ type: 'group', text: data.section?.title || 'Section' });
+      setActiveData({
+        type: 'group',
+        text: data.section?.title || 'Section'
+      });
     } else if (data?.type === 'item') {
-      setActiveData({ type: 'item', text: data.item?.text || 'Question' });
+      setActiveData({
+        type: 'item',
+        text: data.item?.text || 'Question'
+      });
     } else if (data?.type === 'subitem') {
-      setActiveData({ type: 'subitem', text: data.subItem?.text || 'Sub-question' });
+      setActiveData({
+        type: 'subitem',
+        text: data.subItem?.text || 'Sub-question'
+      });
     }
   };
-
   const handleDragEnd = (event: DragEndEvent) => {
-    const { active, over } = event;
+    const {
+      active,
+      over
+    } = event;
     setActiveId(null);
     setActiveData(null);
-
     if (!over || active.id === over.id) return;
-
     const activeData = active.data.current;
     const overData = over.data.current;
 
@@ -2367,12 +1850,14 @@ export function MondayBoardView({ checklist, onUpdate, isPreviewMode, isCompactM
     if (activeData?.type === 'group' && overData?.type === 'group') {
       const oldIndex = checklist.sections.findIndex(s => s.id === active.id);
       const newIndex = checklist.sections.findIndex(s => s.id === over.id);
-      
       if (oldIndex !== -1 && newIndex !== -1) {
         const newSections = [...checklist.sections];
         const [removed] = newSections.splice(oldIndex, 1);
         newSections.splice(newIndex, 0, removed);
-        onUpdate({ ...checklist, sections: newSections });
+        onUpdate({
+          ...checklist,
+          sections: newSections
+        });
       }
       return;
     }
@@ -2381,14 +1866,12 @@ export function MondayBoardView({ checklist, onUpdate, isPreviewMode, isCompactM
     if (activeData?.type === 'item' && overData?.type === 'item') {
       const activeSectionId = activeData.sectionId;
       const overSectionId = overData.sectionId;
-
       if (activeSectionId === overSectionId) {
         // Same section - reorder
         const section = checklist.sections.find(s => s.id === activeSectionId);
         if (section) {
           const oldIndex = section.questions.findIndex(q => q.id === active.id);
           const newIndex = section.questions.findIndex(q => q.id === over.id);
-          
           if (oldIndex !== -1 && newIndex !== -1) {
             const newQuestions = [...section.questions];
             const [removed] = newQuestions.splice(oldIndex, 1);
@@ -2400,7 +1883,6 @@ export function MondayBoardView({ checklist, onUpdate, isPreviewMode, isCompactM
         // Different sections - move item
         const sourceSection = checklist.sections.find(s => s.id === activeSectionId);
         const targetSection = checklist.sections.find(s => s.id === overSectionId);
-        
         if (sourceSection && targetSection) {
           const itemToMove = sourceSection.questions.find(q => q.id === active.id);
           if (itemToMove) {
@@ -2408,13 +1890,21 @@ export function MondayBoardView({ checklist, onUpdate, isPreviewMode, isCompactM
             const targetIndex = targetSection.questions.findIndex(q => q.id === over.id);
             const newTargetQuestions = [...targetSection.questions];
             newTargetQuestions.splice(targetIndex, 0, itemToMove);
-
             const newSections = checklist.sections.map(section => {
-              if (section.id === activeSectionId) return { ...section, questions: newSourceQuestions };
-              if (section.id === overSectionId) return { ...section, questions: newTargetQuestions };
+              if (section.id === activeSectionId) return {
+                ...section,
+                questions: newSourceQuestions
+              };
+              if (section.id === overSectionId) return {
+                ...section,
+                questions: newTargetQuestions
+              };
               return section;
             });
-            onUpdate({ ...checklist, sections: newSections });
+            onUpdate({
+              ...checklist,
+              sections: newSections
+            });
           }
         }
       }
@@ -2425,7 +1915,6 @@ export function MondayBoardView({ checklist, onUpdate, isPreviewMode, isCompactM
     if (activeData?.type === 'subitem' && overData?.type === 'subitem') {
       const activeParentId = activeData.parentId;
       const overParentId = overData.parentId;
-
       if (activeParentId === overParentId) {
         // Same parent - reorder
         for (const section of checklist.sections) {
@@ -2433,7 +1922,6 @@ export function MondayBoardView({ checklist, onUpdate, isPreviewMode, isCompactM
           if (item && item.subQuestions) {
             const oldIndex = item.subQuestions.findIndex(sq => sq.id === active.id);
             const newIndex = item.subQuestions.findIndex(sq => sq.id === over.id);
-            
             if (oldIndex !== -1 && newIndex !== -1) {
               const newSubQuestions = [...item.subQuestions];
               const [removed] = newSubQuestions.splice(oldIndex, 1);
@@ -2447,14 +1935,12 @@ export function MondayBoardView({ checklist, onUpdate, isPreviewMode, isCompactM
         // Different parents - move subitem
         let sourceItem: Question | undefined;
         let targetItem: Question | undefined;
-
         for (const section of checklist.sections) {
           for (const q of section.questions) {
             if (q.id === activeParentId) sourceItem = q;
             if (q.id === overParentId) targetItem = q;
           }
         }
-
         if (sourceItem && targetItem && sourceItem.subQuestions && targetItem.subQuestions) {
           const subItemToMove = sourceItem.subQuestions.find(sq => sq.id === active.id);
           if (subItemToMove) {
@@ -2462,59 +1948,43 @@ export function MondayBoardView({ checklist, onUpdate, isPreviewMode, isCompactM
             const targetIndex = targetItem.subQuestions.findIndex(sq => sq.id === over.id);
             const newTargetSubItems = [...targetItem.subQuestions];
             newTargetSubItems.splice(targetIndex, 0, subItemToMove);
-
             const newSections = checklist.sections.map(section => ({
               ...section,
               questions: section.questions.map(q => {
-                if (q.id === activeParentId) return { ...q, subQuestions: newSourceSubItems };
-                if (q.id === overParentId) return { ...q, subQuestions: newTargetSubItems };
+                if (q.id === activeParentId) return {
+                  ...q,
+                  subQuestions: newSourceSubItems
+                };
+                if (q.id === overParentId) return {
+                  ...q,
+                  subQuestions: newTargetSubItems
+                };
                 return q;
               })
             }));
-            onUpdate({ ...checklist, sections: newSections });
+            onUpdate({
+              ...checklist,
+              sections: newSections
+            });
           }
         }
       }
     }
   };
-
   const sectionIds = checklist.sections.map(s => s.id);
-
-  return (
-    <DndContext
-      sensors={sensors}
-      collisionDetection={closestCenter}
-      onDragStart={handleDragStart}
-      onDragEnd={handleDragEnd}
-    >
+  return <DndContext sensors={sensors} collisionDetection={closestCenter} onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
       <div className="space-y-4">
         <SortableContext items={sectionIds} strategy={verticalListSortingStrategy}>
-          {checklist.sections.map((section, idx) => (
-            <SortableGroup
-              key={section.id}
-              section={section}
-              sectionIndex={idx}
-              onUpdate={(s) => handleSectionUpdate(idx, s)}
-              onDelete={() => handleSectionDelete(idx)}
-              onAddItem={() => handleAddItem(idx)}
-              isPreviewMode={isPreviewMode}
-              isCompactMode={isCompactMode}
-              onItemsReorder={handleItemsReorder}
-              onSubItemsReorder={handleSubItemsReorder}
-              selectedQuestions={selectedQuestions}
-              onSelectionChange={handleSelectionChange}
-            />
-          ))}
+          {checklist.sections.map((section, idx) => <SortableGroup key={section.id} section={section} sectionIndex={idx} onUpdate={s => handleSectionUpdate(idx, s)} onDelete={() => handleSectionDelete(idx)} onAddItem={() => handleAddItem(idx)} isPreviewMode={isPreviewMode} isCompactMode={isCompactMode} onItemsReorder={handleItemsReorder} onSubItemsReorder={handleSubItemsReorder} selectedQuestions={selectedQuestions} onSelectionChange={handleSelectionChange} />)}
         </SortableContext>
       </div>
       
       {/* Drag Overlay - shows preview of dragged item */}
       <DragOverlay dropAnimation={{
-        duration: 200,
-        easing: 'cubic-bezier(0.18, 0.67, 0.6, 1.22)',
-      }}>
-        {activeId && activeData && (
-          <div className={`
+      duration: 200,
+      easing: 'cubic-bezier(0.18, 0.67, 0.6, 1.22)'
+    }}>
+        {activeId && activeData && <div className={`
             px-4 py-3 rounded-lg shadow-xl border-2 border-primary bg-white
             ${activeData.type === 'group' ? 'bg-[#F5F8FA]' : ''}
             ${activeData.type === 'subitem' ? 'ml-10 bg-[#FAFBFC]' : ''}
@@ -2522,20 +1992,13 @@ export function MondayBoardView({ checklist, onUpdate, isPreviewMode, isCompactM
             <div className="flex items-center gap-3">
               <GripVertical className="h-4 w-4 text-gray-400" />
               <div className="flex items-center gap-2">
-                {activeData.type === 'group' && (
-                  <div className="w-1 h-5 bg-amber-600 rounded-full" />
-                )}
-                <span 
-                  className={`text-sm font-medium truncate max-w-[300px] ${
-                    activeData.type === 'group' ? 'text-amber-600' : 'text-gray-700'
-                  }`}
-                  dangerouslySetInnerHTML={{ __html: sanitizeHtml(activeData.text) || 'Untitled' }}
-                />
+                {activeData.type === 'group' && <div className="w-1 h-5 bg-amber-600 rounded-full" />}
+                <span className={`text-sm font-medium truncate max-w-[300px] ${activeData.type === 'group' ? 'text-amber-600' : 'text-gray-700'}`} dangerouslySetInnerHTML={{
+              __html: sanitizeHtml(activeData.text) || 'Untitled'
+            }} />
               </div>
             </div>
-          </div>
-        )}
+          </div>}
       </DragOverlay>
-    </DndContext>
-  );
+    </DndContext>;
 }
