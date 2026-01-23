@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { 
   ChevronRight, 
   ChevronDown, 
@@ -12,7 +12,6 @@ import {
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Layout } from "@/components/Layout";
-import { EngagementSidebar } from "@/components/EngagementSidebar";
 import { MondayBoardView } from "@/components/MondayBoardView";
 import { Checklist } from "@/types/checklist";
 
@@ -88,8 +87,6 @@ const headerActions = [
 
 export default function EngagementDetail() {
   const { engagementId } = useParams<{ engagementId: string }>();
-  const navigate = useNavigate();
-  const [selectedSection, setSelectedSection] = useState("so");
   const [checklist, setChecklist] = useState<Checklist>(sampleChecklist);
 
   const engagement = engagementId ? engagementsData[engagementId] : null;
@@ -103,78 +100,69 @@ export default function EngagementDetail() {
 
   return (
     <Layout>
-      <div className="flex h-full">
-        {/* Engagement-specific sidebar */}
-        <EngagementSidebar 
-          selectedSection={selectedSection}
-          onSectionSelect={setSelectedSection}
-        />
-
-        {/* Main Content Area */}
-        <div className="flex-1 flex flex-col min-w-0">
-          {/* Top Header Bar with breadcrumb and actions */}
-          <div className="flex items-center justify-between px-4 py-3 border-b border-border bg-card">
-            {/* Left side - Breadcrumb */}
-            <div className="flex items-center gap-2">
-              <Badge variant="outline" className="bg-primary text-primary-foreground font-semibold px-2 py-0.5">
-                COM
-              </Badge>
-              <span className="text-foreground font-medium">{clientName}</span>
-              <ChevronRight className="h-4 w-4 text-muted-foreground" />
-              <div className="flex items-center gap-1">
-                <span className="text-foreground">{displayId}</span>
-                <ChevronDown className="h-4 w-4 text-muted-foreground" />
-              </div>
-              <Badge variant="outline" className="bg-sky-50 text-sky-700 border-sky-200 text-xs">
-                {status}
-              </Badge>
+      <div className="flex flex-col h-full">
+        {/* Top Header Bar with breadcrumb and actions */}
+        <div className="flex items-center justify-between px-4 py-3 border-b border-border bg-card">
+          {/* Left side - Breadcrumb */}
+          <div className="flex items-center gap-2">
+            <Badge variant="outline" className="bg-primary text-primary-foreground font-semibold px-2 py-0.5">
+              COM
+            </Badge>
+            <span className="text-foreground font-medium">{clientName}</span>
+            <ChevronRight className="h-4 w-4 text-muted-foreground" />
+            <div className="flex items-center gap-1">
+              <span className="text-foreground">{displayId}</span>
+              <ChevronDown className="h-4 w-4 text-muted-foreground" />
             </div>
+            <Badge variant="outline" className="bg-sky-50 text-sky-700 border-sky-200 text-xs">
+              {status}
+            </Badge>
+          </div>
 
-            {/* Right side - Action buttons */}
+          {/* Right side - Action buttons */}
+          <div className="flex items-center gap-2">
+            {headerActions.map((action) => (
+              <Button
+                key={action.id}
+                variant="outline"
+                size="sm"
+                className="h-8 px-3 text-xs font-medium"
+              >
+                <action.icon className="h-3.5 w-3.5 mr-1.5" />
+                {action.label}
+              </Button>
+            ))}
+          </div>
+        </div>
+
+        {/* Content Area - Preview Mode Checklist */}
+        <div className="flex-1 overflow-auto p-6" style={{ backgroundColor: "#F5F8FA" }}>
+          {/* Section Title */}
+          <div className="flex items-center justify-between mb-4">
+            <h1 className="text-xl font-semibold text-primary">
+              {checklist.title}
+            </h1>
             <div className="flex items-center gap-2">
-              {headerActions.map((action) => (
-                <Button
-                  key={action.id}
-                  variant="outline"
-                  size="sm"
-                  className="h-8 px-3 text-xs font-medium"
-                >
-                  <action.icon className="h-3.5 w-3.5 mr-1.5" />
-                  {action.label}
-                </Button>
-              ))}
+              <Button variant="default" size="sm" className="h-8">
+                Save
+              </Button>
+              <Button variant="outline" size="sm" className="h-8">
+                Replace
+              </Button>
+              <Button variant="outline" size="sm" className="h-8">
+                Delete
+              </Button>
             </div>
           </div>
 
-          {/* Content Area - Preview Mode Checklist */}
-          <div className="flex-1 overflow-auto p-6" style={{ backgroundColor: "#F5F8FA" }}>
-            {/* Section Title */}
-            <div className="flex items-center justify-between mb-4">
-              <h1 className="text-xl font-semibold text-primary">
-                {checklist.title}
-              </h1>
-              <div className="flex items-center gap-2">
-                <Button variant="default" size="sm" className="h-8">
-                  Save
-                </Button>
-                <Button variant="outline" size="sm" className="h-8">
-                  Replace
-                </Button>
-                <Button variant="outline" size="sm" className="h-8">
-                  Delete
-                </Button>
-              </div>
-            </div>
-
-            {/* Monday Board View in Preview Mode */}
-            <div className="bg-white rounded-lg shadow-sm">
-              <MondayBoardView
-                checklist={checklist}
-                onUpdate={handleChecklistUpdate}
-                isPreviewMode={true}
-                isCompactMode={false}
-              />
-            </div>
+          {/* Monday Board View in Preview Mode */}
+          <div className="bg-white rounded-lg shadow-sm">
+            <MondayBoardView
+              checklist={checklist}
+              onUpdate={handleChecklistUpdate}
+              isPreviewMode={true}
+              isCompactMode={false}
+            />
           </div>
         </div>
       </div>
