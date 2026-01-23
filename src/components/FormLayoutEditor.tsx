@@ -8,15 +8,17 @@ import {
   Square, 
   Circle, 
   MousePointer,
-  Image,
-  GripVertical
+  Calendar,
+  Check,
+  ArrowRight,
+  Star,
+  Search
 } from 'lucide-react';
 import { FormElement, FormLayout } from '@/types/checklist';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Checkbox } from '@/components/ui/checkbox';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 
 interface FormLayoutEditorProps {
   formLayout: FormLayout;
@@ -40,12 +42,193 @@ const BUTTON_STYLES = [
 ] as const;
 
 const ICON_OPTIONS = [
-  { value: 'check', label: 'Check', icon: '✓' },
-  { value: 'plus', label: 'Plus', icon: '+' },
-  { value: 'arrow', label: 'Arrow', icon: '→' },
-  { value: 'star', label: 'Star', icon: '★' },
-  { value: 'search', label: 'Search', icon: '🔍' },
+  { value: 'check', label: 'Check', Icon: Check },
+  { value: 'plus', label: 'Plus', Icon: Plus },
+  { value: 'arrow', label: 'Arrow', Icon: ArrowRight },
+  { value: 'star', label: 'Star', Icon: Star },
+  { value: 'search', label: 'Search', Icon: Search },
 ] as const;
+
+// Floating label input - M3 style matching CreateEngagement
+const FloatingInput = ({ 
+  label, 
+  value, 
+  onChange, 
+  placeholder,
+  required = false,
+  disabled = false,
+}: { 
+  label?: string; 
+  value: string; 
+  onChange: (value: string) => void;
+  placeholder?: string;
+  required?: boolean;
+  disabled?: boolean;
+}) => {
+  const [focused, setFocused] = useState(false);
+  const isActive = focused || value;
+
+  return (
+    <div className="relative">
+      <input
+        type="text"
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        onFocus={() => setFocused(true)}
+        onBlur={() => setFocused(false)}
+        placeholder={!label ? placeholder : (isActive ? placeholder : '')}
+        disabled={disabled}
+        className={`
+          w-full h-11 text-sm text-foreground rounded-lg outline-none transition-all duration-200
+          ${label ? 'px-4 pt-4 pb-1' : 'px-4 py-2'}
+          ${disabled 
+            ? 'bg-[#F9FAFB] border-transparent text-muted-foreground opacity-60 cursor-not-allowed' 
+            : focused 
+              ? 'bg-white border-2 border-primary px-[15px]' 
+              : 'bg-[#F5F8FA] border border-transparent hover:bg-white hover:border-[#98A2B3]'
+          }
+        `}
+      />
+      {label && (
+        <label
+          className={`
+            absolute left-4 transition-all duration-200 pointer-events-none
+            ${isActive 
+              ? `top-1 text-xs ${focused ? 'text-primary' : 'text-muted-foreground'}` 
+              : 'top-1/2 -translate-y-1/2 text-sm text-muted-foreground'
+            }
+            ${disabled ? 'text-muted-foreground opacity-60' : ''}
+          `}
+        >
+          {label}
+          {required && <span className="text-red-500 ml-0.5">*</span>}
+        </label>
+      )}
+    </div>
+  );
+};
+
+// Floating label textarea - M3 style
+const FloatingTextarea = ({ 
+  label, 
+  value, 
+  onChange, 
+  placeholder,
+  required = false,
+  disabled = false,
+}: { 
+  label?: string; 
+  value: string; 
+  onChange: (value: string) => void;
+  placeholder?: string;
+  required?: boolean;
+  disabled?: boolean;
+}) => {
+  const [focused, setFocused] = useState(false);
+  const isActive = focused || value;
+
+  return (
+    <div className="relative">
+      <textarea
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        onFocus={() => setFocused(true)}
+        onBlur={() => setFocused(false)}
+        placeholder={!label ? placeholder : (isActive ? placeholder : '')}
+        disabled={disabled}
+        rows={3}
+        className={`
+          w-full text-sm text-foreground rounded-lg outline-none transition-all duration-200 resize-none
+          ${label ? 'px-4 pt-5 pb-2' : 'px-4 py-3'}
+          ${disabled 
+            ? 'bg-[#F9FAFB] border-transparent text-muted-foreground opacity-60 cursor-not-allowed' 
+            : focused 
+              ? 'bg-white border-2 border-primary px-[15px]' 
+              : 'bg-[#F5F8FA] border border-transparent hover:bg-white hover:border-[#98A2B3]'
+          }
+        `}
+      />
+      {label && (
+        <label
+          className={`
+            absolute left-4 transition-all duration-200 pointer-events-none
+            ${isActive 
+              ? `top-1.5 text-xs ${focused ? 'text-primary' : 'text-muted-foreground'}` 
+              : 'top-4 text-sm text-muted-foreground'
+            }
+            ${disabled ? 'text-muted-foreground opacity-60' : ''}
+          `}
+        >
+          {label}
+          {required && <span className="text-red-500 ml-0.5">*</span>}
+        </label>
+      )}
+    </div>
+  );
+};
+
+// Floating label select - M3 style matching CreateEngagement
+const FloatingSelect = ({ 
+  label, 
+  value, 
+  onChange, 
+  options,
+  required = false,
+  disabled = false,
+}: { 
+  label?: string; 
+  value: string; 
+  onChange: (value: string) => void;
+  options: string[];
+  required?: boolean;
+  disabled?: boolean;
+}) => {
+  const [focused, setFocused] = useState(false);
+  const isActive = focused || value;
+
+  return (
+    <div className="relative">
+      <select
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        onFocus={() => setFocused(true)}
+        onBlur={() => setFocused(false)}
+        disabled={disabled}
+        className={`
+          w-full h-11 text-sm text-foreground rounded-lg outline-none transition-all duration-200 appearance-none
+          ${label ? 'px-4 pt-4 pb-1' : 'px-4 py-2'}
+          ${disabled 
+            ? 'bg-[#F9FAFB] border-transparent text-muted-foreground opacity-60 cursor-not-allowed' 
+            : focused 
+              ? 'bg-white border-2 border-primary px-[15px] cursor-pointer' 
+              : 'bg-[#F5F8FA] border border-transparent hover:bg-white hover:border-[#98A2B3] cursor-pointer'
+          }
+        `}
+      >
+        <option value="">Select...</option>
+        {options.map((opt, i) => (
+          <option key={i} value={opt}>{opt}</option>
+        ))}
+      </select>
+      {label && (
+        <label
+          className={`
+            absolute left-4 transition-all duration-200 pointer-events-none
+            ${isActive 
+              ? `top-1 text-xs ${focused ? 'text-primary' : 'text-muted-foreground'}` 
+              : 'top-1/2 -translate-y-1/2 text-sm text-muted-foreground'
+            }
+            ${disabled ? 'text-muted-foreground opacity-60' : ''}
+          `}
+        >
+          {label}
+          {required && <span className="text-red-500 ml-0.5">*</span>}
+        </label>
+      )}
+      <ChevronDown className={`absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 pointer-events-none ${disabled ? 'text-muted-foreground opacity-60' : 'text-muted-foreground'}`} />
+    </div>
+  );
+};
 
 export function FormLayoutEditor({ formLayout, onUpdate, isPreviewMode }: FormLayoutEditorProps) {
   const handleAddColumn = () => {
@@ -95,11 +278,11 @@ export function FormLayoutEditor({ formLayout, onUpdate, isPreviewMode }: FormLa
 
     if (element.type === 'empty') {
       return (
-        <div className="h-full min-h-[100px] flex items-center justify-center border-2 border-dashed border-gray-200 rounded-lg bg-gray-50/50 hover:border-primary/50 hover:bg-primary/5 transition-all">
+        <div className="h-full min-h-[80px] flex items-center justify-center border-2 border-dashed border-[#E8EDF2] rounded-lg bg-[#F5F8FA]/50 hover:border-primary/50 hover:bg-primary/5 transition-all">
           <Popover>
             <PopoverTrigger asChild>
-              <button className="flex flex-col items-center gap-2 text-gray-400 hover:text-primary transition-colors p-4">
-                <Plus className="h-6 w-6" />
+              <button className="flex flex-col items-center gap-2 text-muted-foreground hover:text-primary transition-colors p-4">
+                <Plus className="h-5 w-5" />
                 <span className="text-xs font-medium">Add Element</span>
               </button>
             </PopoverTrigger>
@@ -109,9 +292,9 @@ export function FormLayoutEditor({ formLayout, onUpdate, isPreviewMode }: FormLa
                   <button
                     key={opt.type}
                     onClick={() => handleSetElementType(index, opt.type)}
-                    className="flex items-center gap-2 px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-md transition-colors"
+                    className="flex items-center gap-2 px-3 py-2 text-sm text-foreground hover:bg-[#F5F8FA] rounded-md transition-colors"
                   >
-                    <opt.icon className="h-4 w-4" />
+                    <opt.icon className="h-4 w-4 text-muted-foreground" />
                     {opt.label}
                   </button>
                 ))}
@@ -123,12 +306,12 @@ export function FormLayoutEditor({ formLayout, onUpdate, isPreviewMode }: FormLa
     }
 
     return (
-      <div className="h-full min-h-[100px] flex flex-col border border-gray-200 rounded-lg bg-white p-3 group relative">
+      <div className="h-full min-h-[80px] flex flex-col bg-white rounded-lg p-4 group relative border border-[#E8EDF2]">
         {/* Element controls */}
         <div className="absolute top-2 right-2 flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
           <Popover>
             <PopoverTrigger asChild>
-              <button className="p-1 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded">
+              <button className="p-1.5 text-muted-foreground hover:text-foreground hover:bg-[#F5F8FA] rounded transition-colors">
                 <ChevronDown className="h-4 w-4" />
               </button>
             </PopoverTrigger>
@@ -139,7 +322,7 @@ export function FormLayoutEditor({ formLayout, onUpdate, isPreviewMode }: FormLa
                     key={opt.type}
                     onClick={() => handleSetElementType(index, opt.type)}
                     className={`flex items-center gap-2 px-3 py-2 text-sm rounded-md transition-colors ${
-                      element.type === opt.type ? 'bg-primary/10 text-primary' : 'text-gray-700 hover:bg-gray-100'
+                      element.type === opt.type ? 'bg-primary/10 text-primary' : 'text-foreground hover:bg-[#F5F8FA]'
                     }`}
                   >
                     <opt.icon className="h-4 w-4" />
@@ -151,23 +334,22 @@ export function FormLayoutEditor({ formLayout, onUpdate, isPreviewMode }: FormLa
           </Popover>
           <button
             onClick={() => handleUpdateElement(index, { type: 'empty', label: undefined, placeholder: undefined, options: undefined, buttonStyle: undefined, icon: undefined })}
-            className="p-1 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded"
+            className="p-1.5 text-muted-foreground hover:text-destructive hover:bg-destructive/10 rounded transition-colors"
           >
             <Trash2 className="h-4 w-4" />
           </button>
         </div>
 
         {/* Element editor */}
-        <div className="flex-1 flex flex-col gap-2">
+        <div className="flex-1 flex flex-col gap-3 pt-6">
           {/* Label input */}
-          <Input
+          <FloatingInput
+            label="Label"
             value={element.label || ''}
-            onChange={(e) => handleUpdateElement(index, { label: e.target.value })}
-            placeholder="Label"
-            className="text-xs h-7"
+            onChange={(val) => handleUpdateElement(index, { label: val })}
           />
 
-          {/* Type-specific preview/settings */}
+          {/* Type-specific settings */}
           {renderElementEditor(element, index)}
         </div>
       </div>
@@ -178,54 +360,54 @@ export function FormLayoutEditor({ formLayout, onUpdate, isPreviewMode }: FormLa
     switch (element.type) {
       case 'text-input':
         return (
-          <Input
+          <FloatingInput
+            label="Placeholder"
             value={element.placeholder || ''}
-            onChange={(e) => handleUpdateElement(index, { placeholder: e.target.value })}
-            placeholder="Placeholder text..."
-            className="text-xs h-8"
+            onChange={(val) => handleUpdateElement(index, { placeholder: val })}
           />
         );
       
       case 'textarea':
         return (
-          <Textarea
+          <FloatingInput
+            label="Placeholder"
             value={element.placeholder || ''}
-            onChange={(e) => handleUpdateElement(index, { placeholder: e.target.value })}
-            placeholder="Placeholder text..."
-            className="text-xs min-h-[60px] resize-none"
+            onChange={(val) => handleUpdateElement(index, { placeholder: val })}
           />
         );
       
       case 'select':
       case 'radio':
         return (
-          <div className="space-y-1">
-            <p className="text-xs text-gray-500">Options:</p>
+          <div className="space-y-2">
+            <p className="text-xs text-muted-foreground font-medium">Options</p>
             {(element.options || []).map((opt, i) => (
-              <div key={i} className="flex items-center gap-1">
-                <Input
-                  value={opt}
-                  onChange={(e) => {
-                    const newOptions = [...(element.options || [])];
-                    newOptions[i] = e.target.value;
-                    handleUpdateElement(index, { options: newOptions });
-                  }}
-                  className="text-xs h-6 flex-1"
-                />
+              <div key={i} className="flex items-center gap-2">
+                <div className="flex-1">
+                  <FloatingInput
+                    value={opt}
+                    onChange={(val) => {
+                      const newOptions = [...(element.options || [])];
+                      newOptions[i] = val;
+                      handleUpdateElement(index, { options: newOptions });
+                    }}
+                    placeholder={`Option ${i + 1}`}
+                  />
+                </div>
                 <button
                   onClick={() => {
                     const newOptions = (element.options || []).filter((_, j) => j !== i);
                     handleUpdateElement(index, { options: newOptions.length ? newOptions : ['Option 1'] });
                   }}
-                  className="p-0.5 text-gray-400 hover:text-red-500"
+                  className="p-2 text-muted-foreground hover:text-destructive hover:bg-destructive/10 rounded transition-colors"
                 >
-                  <Trash2 className="h-3 w-3" />
+                  <Trash2 className="h-4 w-4" />
                 </button>
               </div>
             ))}
             <button
               onClick={() => handleUpdateElement(index, { options: [...(element.options || []), `Option ${(element.options?.length || 0) + 1}`] })}
-              className="text-xs text-primary hover:underline"
+              className="text-xs text-primary hover:underline font-medium"
             >
               + Add option
             </button>
@@ -234,50 +416,32 @@ export function FormLayoutEditor({ formLayout, onUpdate, isPreviewMode }: FormLa
       
       case 'checkbox':
         return (
-          <div className="flex items-center gap-2 p-2 bg-gray-50 rounded">
-            <Square className="h-4 w-4 text-gray-400" />
-            <span className="text-xs text-gray-500">Checkbox</span>
+          <div className="flex items-center gap-3 p-3 bg-[#F5F8FA] rounded-lg">
+            <Checkbox disabled />
+            <span className="text-sm text-muted-foreground">Checkbox preview</span>
           </div>
         );
       
       case 'button':
         return (
-          <div className="space-y-2">
-            <Select
+          <div className="space-y-3">
+            <FloatingSelect
+              label="Button Style"
               value={element.buttonStyle || 'text-only'}
-              onValueChange={(v) => handleUpdateElement(index, { buttonStyle: v as FormElement['buttonStyle'] })}
-            >
-              <SelectTrigger className="h-7 text-xs">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                {BUTTON_STYLES.map((style) => (
-                  <SelectItem key={style.value} value={style.value} className="text-xs">
-                    {style.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+              onChange={(val) => handleUpdateElement(index, { buttonStyle: val as FormElement['buttonStyle'] })}
+              options={BUTTON_STYLES.map(s => s.label)}
+            />
             
             {(element.buttonStyle === 'icon-text' || element.buttonStyle === 'icon-only') && (
-              <Select
-                value={element.icon || 'check'}
-                onValueChange={(v) => handleUpdateElement(index, { icon: v })}
-              >
-                <SelectTrigger className="h-7 text-xs">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  {ICON_OPTIONS.map((icon) => (
-                    <SelectItem key={icon.value} value={icon.value} className="text-xs">
-                      <span className="flex items-center gap-2">
-                        <span>{icon.icon}</span>
-                        {icon.label}
-                      </span>
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <FloatingSelect
+                label="Icon"
+                value={ICON_OPTIONS.find(i => i.value === element.icon)?.label || 'Check'}
+                onChange={(val) => {
+                  const iconValue = ICON_OPTIONS.find(i => i.label === val)?.value || 'check';
+                  handleUpdateElement(index, { icon: iconValue });
+                }}
+                options={ICON_OPTIONS.map(i => i.label)}
+              />
             )}
           </div>
         );
@@ -296,66 +460,63 @@ export function FormLayoutEditor({ formLayout, onUpdate, isPreviewMode }: FormLa
       
       case 'text-input':
         return (
-          <div className="space-y-1">
-            {label && <label className="text-sm font-medium text-gray-700">{label}</label>}
-            <Input placeholder={element.placeholder} className="h-9" />
-          </div>
+          <FloatingInput
+            label={label}
+            value=""
+            onChange={() => {}}
+            placeholder={element.placeholder}
+          />
         );
       
       case 'textarea':
         return (
-          <div className="space-y-1">
-            {label && <label className="text-sm font-medium text-gray-700">{label}</label>}
-            <Textarea placeholder={element.placeholder} className="min-h-[80px]" />
-          </div>
+          <FloatingTextarea
+            label={label}
+            value=""
+            onChange={() => {}}
+            placeholder={element.placeholder}
+          />
         );
       
       case 'select':
         return (
-          <div className="space-y-1">
-            {label && <label className="text-sm font-medium text-gray-700">{label}</label>}
-            <Select>
-              <SelectTrigger className="h-9">
-                <SelectValue placeholder="Select..." />
-              </SelectTrigger>
-              <SelectContent>
-                {(element.options || []).map((opt, i) => (
-                  <SelectItem key={i} value={opt}>{opt}</SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
+          <FloatingSelect
+            label={label}
+            value=""
+            onChange={() => {}}
+            options={element.options || []}
+          />
         );
       
       case 'checkbox':
         return (
-          <div className="flex items-center gap-2">
-            <input type="checkbox" className="h-4 w-4 rounded border-gray-300" />
-            {label && <label className="text-sm text-gray-700">{label}</label>}
+          <div className="flex items-center gap-3 h-11">
+            <Checkbox />
+            {label && <span className="text-sm text-foreground">{label}</span>}
           </div>
         );
       
       case 'radio':
         return (
-          <div className="space-y-1">
-            {label && <label className="text-sm font-medium text-gray-700">{label}</label>}
-            <div className="space-y-1">
+          <div className="space-y-2">
+            {label && <label className="text-xs text-muted-foreground font-medium">{label}</label>}
+            <RadioGroup>
               {(element.options || []).map((opt, i) => (
-                <div key={i} className="flex items-center gap-2">
-                  <input type="radio" name={element.id} className="h-4 w-4" />
-                  <span className="text-sm text-gray-700">{opt}</span>
+                <div key={i} className="flex items-center gap-3">
+                  <RadioGroupItem value={opt} id={`${element.id}-${i}`} />
+                  <label htmlFor={`${element.id}-${i}`} className="text-sm text-foreground">{opt}</label>
                 </div>
               ))}
-            </div>
+            </RadioGroup>
           </div>
         );
       
       case 'button':
-        const iconChar = ICON_OPTIONS.find(i => i.value === element.icon)?.icon || '✓';
+        const IconComponent = ICON_OPTIONS.find(i => i.value === element.icon)?.Icon || Check;
         return (
-          <Button className="w-full">
+          <Button className="w-full h-11">
             {(element.buttonStyle === 'icon-text' || element.buttonStyle === 'icon-only') && (
-              <span className="mr-1">{iconChar}</span>
+              <IconComponent className="h-4 w-4 mr-2" />
             )}
             {element.buttonStyle !== 'icon-only' && (label || 'Button')}
           </Button>
@@ -375,14 +536,14 @@ export function FormLayoutEditor({ formLayout, onUpdate, isPreviewMode }: FormLa
   }[formLayout.columns] || 'grid-cols-1';
 
   return (
-    <div className="p-4">
-      <div className={`grid ${gridCols} gap-3`}>
+    <div className="p-5">
+      <div className={`grid ${gridCols} gap-4`}>
         {formLayout.elements.map((element, index) => (
           <div key={element.id} className="relative">
             {!isPreviewMode && formLayout.columns > 1 && (
               <button
                 onClick={() => handleRemoveColumn(index)}
-                className="absolute -top-2 -right-2 z-10 p-1 bg-white border border-gray-200 rounded-full shadow-sm text-gray-400 hover:text-red-500 hover:border-red-200 transition-colors"
+                className="absolute -top-2 -right-2 z-10 p-1 bg-white border border-[#E8EDF2] rounded-full shadow-sm text-muted-foreground hover:text-destructive hover:border-destructive/50 transition-colors"
                 title="Remove column"
               >
                 <Trash2 className="h-3 w-3" />
@@ -396,7 +557,7 @@ export function FormLayoutEditor({ formLayout, onUpdate, isPreviewMode }: FormLa
         {!isPreviewMode && formLayout.columns < 5 && (
           <button
             onClick={handleAddColumn}
-            className="h-full min-h-[100px] flex items-center justify-center border-2 border-dashed border-gray-200 rounded-lg text-gray-400 hover:border-primary/50 hover:text-primary hover:bg-primary/5 transition-all"
+            className="h-full min-h-[80px] flex items-center justify-center border-2 border-dashed border-[#E8EDF2] rounded-lg text-muted-foreground hover:border-primary/50 hover:text-primary hover:bg-primary/5 transition-all"
           >
             <div className="flex flex-col items-center gap-1">
               <Plus className="h-5 w-5" />
