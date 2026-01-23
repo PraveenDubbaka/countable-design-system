@@ -502,7 +502,7 @@ export function Sidebar() {
   };
   const [isNavExpanded, setIsNavExpanded] = useState(false);
   return (
-    <div className="flex h-screen">
+    <div className="flex h-screen relative">
       {/* Icon sidebar - dark navy with curved corner, expands on click only */}
       <div
         className={`sidebar-nav flex flex-col py-4 gap-2 rounded-tr-[20px] rounded-br-[20px] transition-all duration-300 ease-in-out ${isNavExpanded ? "w-48 items-start px-3" : "w-14 items-center"}`}
@@ -674,9 +674,12 @@ export function Sidebar() {
             </div>
           </div>
 
-          {/* Expand handle when collapsed - always visible */}
+          {/* Expand handle when collapsed - absolutely positioned */}
           {isTemplatesPanelCollapsed && (
-            <div className="flex items-center cursor-pointer" onClick={() => setIsTemplatesPanelCollapsed(false)}>
+            <div 
+              className="absolute left-[56px] top-1/2 -translate-y-1/2 flex items-center cursor-pointer z-20" 
+              onClick={() => setIsTemplatesPanelCollapsed(false)}
+            >
               <div className="flex items-center justify-center w-4 h-8 bg-primary border border-primary shadow-sm hover:bg-primary/90 transition-all rounded-full">
                 <ChevronRight className="h-3 w-3 text-white icon-arrow-right" />
               </div>
@@ -813,9 +816,12 @@ export function Sidebar() {
             </div>
           </div>
 
-          {/* Expand handle when collapsed - always visible */}
+          {/* Expand handle when collapsed - absolutely positioned */}
           {isTemplatesPanelCollapsed && (
-            <div className="flex items-center cursor-pointer" onClick={() => setIsTemplatesPanelCollapsed(false)}>
+            <div 
+              className="absolute left-[56px] top-1/2 -translate-y-1/2 flex items-center cursor-pointer z-20" 
+              onClick={() => setIsTemplatesPanelCollapsed(false)}
+            >
               <div className="flex items-center justify-center w-4 h-8 bg-primary border border-primary shadow-sm hover:bg-primary/90 transition-all rounded-full">
                 <ChevronRight className="h-3 w-3 text-white icon-arrow-right" />
               </div>
