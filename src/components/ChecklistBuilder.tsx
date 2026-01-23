@@ -60,6 +60,7 @@ export function ChecklistBuilder({ checklist, onUpdate, onSave }: ChecklistBuild
   const [activeQuestion, setActiveQuestion] = useState<Question | null>(null);
   const [isPreviewMode, setIsPreviewMode] = useState(false);
   const [isCompactMode, setIsCompactMode] = useState(false);
+  const [selectedQuestions, setSelectedQuestions] = useState<Set<string>>(new Set());
   
   const objectiveTextareaRef = useRef<HTMLTextAreaElement>(null);
   const { toolbarState, showToolbar, hideToolbar, handleFormatAction, toolbarRef } = useRichTextToolbarContext();
@@ -134,6 +135,19 @@ export function ChecklistBuilder({ checklist, onUpdate, onSave }: ChecklistBuild
       ...s,
       questions: s.questions.map(q => ({ ...q, isExpanded: true }))
     }));
+    onUpdate({ ...checklist, sections: newSections });
+  };
+
+  const handleBulkDelete = () => {
+    if (selectedQuestions.size === 0) return;
+    
+    const newSections = checklist.sections.map(section => ({
+      ...section,
+      questions: section.questions.filter(q => !selectedQuestions.has(q.id))
+    })).filter(section => section.questions.length > 0 || checklist.sections.length === 1);
+    
+    onUpdate({ ...checklist, sections: newSections });
+    setSelectedQuestions(new Set());
     onUpdate({ ...checklist, sections: newSections });
   };
 
@@ -448,6 +462,8 @@ export function ChecklistBuilder({ checklist, onUpdate, onSave }: ChecklistBuild
             onUpdate={onUpdate}
             isPreviewMode={isPreviewMode}
             isCompactMode={isCompactMode}
+            selectedQuestions={selectedQuestions}
+            onSelectionChange={setSelectedQuestions}
           />
 
           {/* Add New Block - Hidden in preview mode */}
@@ -521,6 +537,8 @@ export function ChecklistBuilder({ checklist, onUpdate, onSave }: ChecklistBuild
         allQuestionsCollapsed={allQuestionsCollapsed}
         isCompactMode={isCompactMode}
         onToggleCompactMode={() => setIsCompactMode(!isCompactMode)}
+        selectedQuestions={selectedQuestions}
+        onBulkDelete={handleBulkDelete}
       />
 
       {/* Rich Text Toolbar - Hidden in preview mode */}

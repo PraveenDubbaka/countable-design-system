@@ -75,6 +75,8 @@ interface MondayBoardViewProps {
   onUpdate: (checklist: Checklist) => void;
   isPreviewMode: boolean;
   isCompactMode?: boolean;
+  selectedQuestions?: Set<string>;
+  onSelectionChange?: (selected: Set<string>) => void;
 }
 
 // Answer type options for dropdown with icons like Monday.com
@@ -1209,6 +1211,8 @@ interface ItemRowProps {
   visibleColumns: { explanation: boolean; reference: boolean };
   columnWidths: { questions: number; response: number; explanation: number; reference: number };
   sectionNumber: number;
+  isSelected: boolean;
+  onSelectionChange: (selected: boolean) => void;
 }
 
 function SortableItemRow({ 
@@ -1225,10 +1229,11 @@ function SortableItemRow({
   visibleColumns,
   columnWidths,
   sectionNumber,
+  isSelected,
+  onSelectionChange,
 }: ItemRowProps) {
   const [isExpanded, setIsExpanded] = useState(true);
   const [isEditingName, setIsEditingName] = useState(false);
-  const [isSelected, setIsSelected] = useState(false);
   const [isPendingSubItem, setIsPendingSubItem] = useState(false);
   const draftNameRef = useRef(item.text);
 
@@ -1485,7 +1490,7 @@ function SortableItemRow({
         <div className="w-10 shrink-0 flex items-center justify-center self-center">
           <Checkbox 
             checked={isSelected} 
-            onCheckedChange={() => setIsSelected(!isSelected)}
+            onCheckedChange={(checked) => onSelectionChange(checked === true)}
             className="h-4 w-4 border-gray-400"
           />
         </div>
@@ -1793,6 +1798,8 @@ interface GroupProps {
   isCompactMode: boolean;
   onItemsReorder: (sectionId: string, newItems: Question[]) => void;
   onSubItemsReorder: (itemId: string, newSubItems: Question[]) => void;
+  selectedQuestions: Set<string>;
+  onSelectionChange: (questionId: string, selected: boolean) => void;
 }
 
 // Resizable column header component
@@ -1942,6 +1949,8 @@ function SortableGroup({
   isCompactMode,
   onItemsReorder,
   onSubItemsReorder,
+  selectedQuestions,
+  onSelectionChange,
 }: GroupProps) {
   const [isEditingTitle, setIsEditingTitle] = useState(false);
   const [draftTitle, setDraftTitle] = useState(section.title);
@@ -2205,6 +2214,8 @@ function SortableGroup({
                 visibleColumns={visibleColumns}
                 columnWidths={columnWidths}
                 sectionNumber={sectionIndex + 1}
+                isSelected={selectedQuestions.has(question.id)}
+                onSelectionChange={(selected) => onSelectionChange(question.id, selected)}
               />
             ))}
           </SortableContext>
@@ -2228,8 +2239,19 @@ function SortableGroup({
   );
 }
 
-export function MondayBoardView({ checklist, onUpdate, isPreviewMode, isCompactMode = false }: MondayBoardViewProps) {
+export function MondayBoardView({ checklist, onUpdate, isPreviewMode, isCompactMode = false, selectedQuestions = new Set(), onSelectionChange }: MondayBoardViewProps) {
   const [activeId, setActiveId] = useState<string | null>(null);
+
+  const handleSelectionChange = (questionId: string, selected: boolean) => {
+    if (!onSelectionChange) return;
+    const newSelected = new Set(selectedQuestions);
+    if (selected) {
+      newSelected.add(questionId);
+    } else {
+      newSelected.delete(questionId);
+    }
+    onSelectionChange(newSelected);
+  };
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -2434,6 +2456,8 @@ export function MondayBoardView({ checklist, onUpdate, isPreviewMode, isCompactM
               isCompactMode={isCompactMode}
               onItemsReorder={handleItemsReorder}
               onSubItemsReorder={handleSubItemsReorder}
+              selectedQuestions={selectedQuestions}
+              onSelectionChange={handleSelectionChange}
             />
           ))}
         </SortableContext>
