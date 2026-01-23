@@ -307,13 +307,52 @@ export function ChecklistBuilder({ checklist, onUpdate, onSave }: ChecklistBuild
     setPendingAddType(null);
   };
 
-  const handleAddCategoryAtPosition = (position: 'top' | 'bottom') => {
-    const newSection: Section = {
-      id: `section-${Date.now()}`,
-      title: 'New Category',
-      questions: [],
-      isExpanded: true
-    };
+  const handleAddCategoryAtPosition = (position: 'top' | 'bottom', type: 'empty' | 'template' | 'form') => {
+    let newSection: Section;
+
+    if (type === 'empty') {
+      newSection = {
+        id: `section-${Date.now()}`,
+        title: 'New Section',
+        questions: [],
+        isExpanded: true
+      };
+    } else if (type === 'template') {
+      newSection = {
+        id: `section-${Date.now()}`,
+        title: 'Template Section',
+        questions: [
+          {
+            id: `q-${Date.now()}-1`,
+            text: 'Has the engagement letter been signed by both parties?',
+            answerType: 'yes-no',
+            required: true
+          },
+          {
+            id: `q-${Date.now()}-2`,
+            text: 'Describe the scope of services agreed upon.',
+            answerType: 'long-answer',
+            required: false
+          }
+        ],
+        isExpanded: true
+      };
+    } else {
+      newSection = {
+        id: `section-${Date.now()}`,
+        title: 'Form Section',
+        questions: [],
+        isExpanded: true,
+        formLayout: {
+          columns: 1,
+          elements: [{
+            id: `col-${Date.now()}-0`,
+            type: 'empty'
+          }]
+        }
+      };
+    }
+
     if (position === 'top') {
       onUpdate({ ...checklist, sections: [newSection, ...checklist.sections] });
     } else {
