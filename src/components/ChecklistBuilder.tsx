@@ -43,7 +43,6 @@ import { useRichTextToolbarContext } from '@/contexts/RichTextToolbarContext';
 import { consolidateSectionsToThree } from '@/lib/consolidateSections';
 
 import { MondayBoardView } from './MondayBoardView';
-import { FormColumnModal } from './FormColumnModal';
 
 interface ChecklistBuilderProps {
   checklist: Checklist;
@@ -275,29 +274,23 @@ export function ChecklistBuilder({ checklist, onUpdate, onSave }: ChecklistBuild
     setShowAddMenu(false);
   };
 
-  const [showFormColumnModal, setShowFormColumnModal] = useState(false);
-
   const handleAddFormColumn = () => {
-    setShowFormColumnModal(true);
-    setShowAddMenu(false);
-  };
-
-  const handleCreateFormColumn = (columnCount: number) => {
+    // Create form section with 1 column - user can add more columns dynamically
     const formSection: Section = {
       id: `section-${Date.now()}`,
       title: 'Form Section',
       questions: [],
       isExpanded: true,
       formLayout: {
-        columns: columnCount,
-        elements: Array(columnCount).fill(null).map((_, i) => ({
-          id: `col-${Date.now()}-${i}`,
+        columns: 1,
+        elements: [{
+          id: `col-${Date.now()}-0`,
           type: 'empty'
-        }))
+        }]
       }
     };
     onUpdate({ ...checklist, sections: [...checklist.sections, formSection] });
-    setShowFormColumnModal(false);
+    setShowAddMenu(false);
   };
 
   const handleAddCategoryAtPosition = (position: 'top' | 'bottom') => {
@@ -552,12 +545,6 @@ export function ChecklistBuilder({ checklist, onUpdate, onSave }: ChecklistBuild
         onAddCategory={handleAddCategoryAtPosition}
       />
 
-      {/* Form Column Modal */}
-      <FormColumnModal
-        isOpen={showFormColumnModal}
-        onClose={() => setShowFormColumnModal(false)}
-        onSelect={handleCreateFormColumn}
-      />
 
       {/* Rich Text Toolbar - Hidden in preview mode */}
       {!isPreviewMode && toolbarState.isVisible && (

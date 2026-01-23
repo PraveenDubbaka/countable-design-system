@@ -1,10 +1,11 @@
 import { useState, useRef, useCallback, useEffect } from 'react';
 import { sanitizeHtml } from '@/lib/sanitize';
-import { Plus, Trash2, ChevronDown, ChevronRight, MoreHorizontal, Copy, GripVertical, PlusCircle, Circle, Square, Type, Calendar, AlignLeft, Paperclip, ToggleLeft, ListPlus, Menu, DollarSign, FileText, Search, Upload, File, X, Check, Pencil } from 'lucide-react';
+import { Plus, Trash2, ChevronDown, ChevronRight, MoreHorizontal, Copy, GripVertical, PlusCircle, Circle, Square, Type, Calendar, AlignLeft, Paperclip, ToggleLeft, ListPlus, Menu, DollarSign, FileText, Search, Upload, File, X, Check, Pencil, LayoutGrid } from 'lucide-react';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { Input as SearchInput } from '@/components/ui/input';
-import { Checklist, Question, Section, AnswerType } from '@/types/checklist';
+import { Checklist, Question, Section, AnswerType, FormLayout } from '@/types/checklist';
+import { FormLayoutEditor } from '@/components/FormLayoutEditor';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -1630,8 +1631,15 @@ function SortableGroup({
             {cleanTitle(section.title)}
           </h3>}
 
-        <span className="text-xs text-gray-500">
-          {section.questions.length} Items{totalSubitems > 0 ? ` / ${totalSubitems} Subitems` : ''}
+        <span className="text-xs text-gray-500 flex items-center gap-1">
+          {section.formLayout ? (
+            <>
+              <LayoutGrid className="h-3 w-3" />
+              {section.formLayout.columns} Column Form
+            </>
+          ) : (
+            <>{section.questions.length} Items{totalSubitems > 0 ? ` / ${totalSubitems} Subitems` : ''}</>
+          )}
         </span>
 
         {!isPreviewMode && <DropdownMenu>
@@ -1641,11 +1649,13 @@ function SortableGroup({
               </button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="bg-white border-gray-200 z-50">
-              <DropdownMenuItem onClick={onAddItem} className="text-gray-700 focus:bg-gray-100 focus:text-gray-900">
-                <Plus className="h-4 w-4 mr-2" />
-                Add item
-              </DropdownMenuItem>
-              <DropdownMenuSeparator className="bg-gray-200" />
+              {!section.formLayout && (
+                <DropdownMenuItem onClick={onAddItem} className="text-gray-700 focus:bg-gray-100 focus:text-gray-900">
+                  <Plus className="h-4 w-4 mr-2" />
+                  Add item
+                </DropdownMenuItem>
+              )}
+              {!section.formLayout && <DropdownMenuSeparator className="bg-gray-200" />}
               <DropdownMenuItem onClick={onDelete} className="text-red-500 focus:bg-gray-100 focus:text-red-600">
                 <Trash2 className="h-4 w-4 mr-2" />
                 Delete group
@@ -1656,57 +1666,68 @@ function SortableGroup({
 
       {/* Content */}
       {section.isExpanded && <>
-          {/* Column headers */}
-          <div className="flex items-center bg-[#F5F8FA] text-xs font-medium text-gray-500 border-b border-[#E8EDF2]">
-            <div className="w-10 shrink-0 py-2" />
-            <div className="w-8 shrink-0 py-2" />
-            <ResizableColumnHeader label={columnLabels.questions} width={columnWidths.questions} minWidth={200} maxWidth={600} onWidthChange={w => setColumnWidths(prev => ({
-          ...prev,
-          questions: w
-        }))} onLabelChange={l => setColumnLabels(prev => ({
-          ...prev,
-          questions: l
-        }))} isPreviewMode={isPreviewMode} />
-            <ResizableColumnHeader label={columnLabels.response} width={columnWidths.response} minWidth={200} maxWidth={600} onWidthChange={w => setColumnWidths(prev => ({
-          ...prev,
-          response: w
-        }))} onLabelChange={l => setColumnLabels(prev => ({
-          ...prev,
-          response: l
-        }))} isPreviewMode={isPreviewMode} />
-            {visibleColumns.explanation && <ResizableColumnHeader label={columnLabels.explanation} width={columnWidths.explanation} minWidth={180} maxWidth={600} onWidthChange={w => setColumnWidths(prev => ({
-          ...prev,
-          explanation: w
-        }))} onLabelChange={l => setColumnLabels(prev => ({
-          ...prev,
-          explanation: l
-        }))} onRemove={() => handleRemoveColumn('explanation')} isPreviewMode={isPreviewMode} showRemove={true} />}
-            {visibleColumns.reference && <ResizableColumnHeader label={columnLabels.reference} width={columnWidths.reference} minWidth={120} maxWidth={400} onWidthChange={w => setColumnWidths(prev => ({
-          ...prev,
-          reference: w
-        }))} onLabelChange={l => setColumnLabels(prev => ({
-          ...prev,
-          reference: l
-        }))} onRemove={() => handleRemoveColumn('reference')} isPreviewMode={isPreviewMode} showRemove={true} />}
-            {!isPreviewMode && (!visibleColumns.explanation || !visibleColumns.reference) && <div className="w-[100px] shrink-0 px-2 py-2 text-center text-gray-400">
-                <AddColumnButton onAddColumn={handleAddColumn} visibleColumns={visibleColumns} />
-              </div>}
-            <div className="w-16 shrink-0 py-2" />
-          </div>
+          {/* Check if this is a form layout section */}
+          {section.formLayout ? (
+            <FormLayoutEditor
+              formLayout={section.formLayout}
+              onUpdate={(newFormLayout) => onUpdate({ ...section, formLayout: newFormLayout })}
+              isPreviewMode={isPreviewMode}
+            />
+          ) : (
+            <>
+              {/* Column headers */}
+              <div className="flex items-center bg-[#F5F8FA] text-xs font-medium text-gray-500 border-b border-[#E8EDF2]">
+                <div className="w-10 shrink-0 py-2" />
+                <div className="w-8 shrink-0 py-2" />
+                <ResizableColumnHeader label={columnLabels.questions} width={columnWidths.questions} minWidth={200} maxWidth={600} onWidthChange={w => setColumnWidths(prev => ({
+              ...prev,
+              questions: w
+            }))} onLabelChange={l => setColumnLabels(prev => ({
+              ...prev,
+              questions: l
+            }))} isPreviewMode={isPreviewMode} />
+                <ResizableColumnHeader label={columnLabels.response} width={columnWidths.response} minWidth={200} maxWidth={600} onWidthChange={w => setColumnWidths(prev => ({
+              ...prev,
+              response: w
+            }))} onLabelChange={l => setColumnLabels(prev => ({
+              ...prev,
+              response: l
+            }))} isPreviewMode={isPreviewMode} />
+                {visibleColumns.explanation && <ResizableColumnHeader label={columnLabels.explanation} width={columnWidths.explanation} minWidth={180} maxWidth={600} onWidthChange={w => setColumnWidths(prev => ({
+              ...prev,
+              explanation: w
+            }))} onLabelChange={l => setColumnLabels(prev => ({
+              ...prev,
+              explanation: l
+            }))} onRemove={() => handleRemoveColumn('explanation')} isPreviewMode={isPreviewMode} showRemove={true} />}
+                {visibleColumns.reference && <ResizableColumnHeader label={columnLabels.reference} width={columnWidths.reference} minWidth={120} maxWidth={400} onWidthChange={w => setColumnWidths(prev => ({
+              ...prev,
+              reference: w
+            }))} onLabelChange={l => setColumnLabels(prev => ({
+              ...prev,
+              reference: l
+            }))} onRemove={() => handleRemoveColumn('reference')} isPreviewMode={isPreviewMode} showRemove={true} />}
+                {!isPreviewMode && (!visibleColumns.explanation || !visibleColumns.reference) && <div className="w-[100px] shrink-0 px-2 py-2 text-center text-gray-400">
+                    <AddColumnButton onAddColumn={handleAddColumn} visibleColumns={visibleColumns} />
+                  </div>}
+                <div className="w-16 shrink-0 py-2" />
+              </div>
 
-          {/* Items */}
-          <SortableContext items={itemIds} strategy={verticalListSortingStrategy}>
-            {section.questions.map((question, idx) => <SortableItemRow key={question.id} item={question} sectionId={section.id} itemIndex={idx} onUpdate={q => handleItemUpdate(idx, q)} onDelete={() => handleItemDelete(idx)} onDuplicate={() => handleItemDuplicate(idx)} onAddSubItem={() => handleAddSubItem(idx)} isPreviewMode={isPreviewMode} isCompactMode={isCompactMode} onSubItemsReorder={onSubItemsReorder} visibleColumns={visibleColumns} columnWidths={columnWidths} sectionNumber={sectionIndex + 1} isSelected={selectedQuestions.has(question.id)} onSelectionChange={selected => onSelectionChange(question.id, selected)} />)}
-          </SortableContext>
+              {/* Items */}
+              <SortableContext items={itemIds} strategy={verticalListSortingStrategy}>
+                {section.questions.map((question, idx) => <SortableItemRow key={question.id} item={question} sectionId={section.id} itemIndex={idx} onUpdate={q => handleItemUpdate(idx, q)} onDelete={() => handleItemDelete(idx)} onDuplicate={() => handleItemDuplicate(idx)} onAddSubItem={() => handleAddSubItem(idx)} isPreviewMode={isPreviewMode} isCompactMode={isCompactMode} onSubItemsReorder={onSubItemsReorder} visibleColumns={visibleColumns} columnWidths={columnWidths} sectionNumber={sectionIndex + 1} isSelected={selectedQuestions.has(question.id)} onSelectionChange={selected => onSelectionChange(question.id, selected)} />)}
+              </SortableContext>
 
-          {/* Add item button */}
-          {!isPreviewMode && <div className="flex items-center">
-              <div className="w-10" />
-              <button onClick={onAddItem} className="flex items-center gap-2 px-6 py-3 text-sm text-gray-400 hover:text-gray-700 hover:bg-[#EDF2F7] transition-colors w-full text-left">
-                <Plus className="h-4 w-4" />
-                Add item
-              </button>
-            </div>}
+              {/* Add item button */}
+              {!isPreviewMode && <div className="flex items-center">
+                  <div className="w-10" />
+                  <button onClick={onAddItem} className="flex items-center gap-2 px-6 py-3 text-sm text-gray-400 hover:text-gray-700 hover:bg-[#EDF2F7] transition-colors w-full text-left">
+                    <Plus className="h-4 w-4" />
+                    Add item
+                  </button>
+                </div>}
+            </>
+          )}
         </>}
     </div>;
 }
