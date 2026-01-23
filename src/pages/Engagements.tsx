@@ -133,7 +133,10 @@ export default function Engagements() {
                       className="hover:bg-[#F8FAFC] transition-colors group"
                     >
                       <td className="px-5 py-3">
-                        <span className="text-sm text-primary font-medium cursor-pointer hover:underline">
+                        <span 
+                          onClick={() => navigate(`/engagements/${engagement.id}`)}
+                          className="text-sm text-primary font-medium cursor-pointer hover:underline"
+                        >
                           {engagement.id}
                         </span>
                       </td>
