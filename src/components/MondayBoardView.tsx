@@ -1129,7 +1129,7 @@ function SortableSubItemRow({ subItem, onUpdate, onDelete, isPreviewMode, isComp
             onTypeChange={handleAnswerTypeChange}
             disabled={isPreviewMode}
           />
-          <div className="flex-1 min-w-0">
+          <div className="flex-1 min-w-0 w-full">
             {renderResponseField()}
           </div>
         </div>
@@ -1139,7 +1139,7 @@ function SortableSubItemRow({ subItem, onUpdate, onDelete, isPreviewMode, isComp
       {visibleColumns.explanation && (
         <div className="shrink-0 px-2 py-2 border-l border-[#E8EDF2] flex items-center" style={{ width: columnWidths.explanation }}>
           {(subItem as any).showExplanation !== false ? (
-            <div className="relative group/exp">
+            <div className="relative group/exp w-full">
               <AITextarea
                 value={subItem.explanation || ''}
                 onChange={(val) => onUpdate({ ...subItem, explanation: val })}
@@ -1614,7 +1614,7 @@ function SortableItemRow({
               onTypeChange={handleAnswerTypeChange}
               disabled={isPreviewMode}
             />
-            <div className="flex-1 min-w-0">
+            <div className="flex-1 min-w-0 w-full">
               {renderResponseField()}
             </div>
           </div>
@@ -1624,7 +1624,7 @@ function SortableItemRow({
         {visibleColumns.explanation && (
           <div className="shrink-0 px-2 py-2 border-l border-[#E8EDF2] flex items-center" style={{ width: columnWidths.explanation }}>
             {(item as any).showExplanation !== false ? (
-              <div className="relative group/exp">
+              <div className="relative group/exp w-full">
                 <AITextarea
                   value={item.explanation || ''}
                   onChange={(val) => onUpdate({ ...item, explanation: val })}
@@ -1980,8 +1980,8 @@ function SortableGroup({
   // Column widths state
   const [columnWidths, setColumnWidths] = useState({
     questions: 300,
-    response: 240,
-    explanation: 200,
+    response: 320,
+    explanation: 280,
     reference: 200,
   });
   
@@ -2188,8 +2188,8 @@ function SortableGroup({
             <ResizableColumnHeader
               label={columnLabels.response}
               width={columnWidths.response}
-              minWidth={150}
-              maxWidth={400}
+              minWidth={200}
+              maxWidth={600}
               onWidthChange={(w) => setColumnWidths(prev => ({ ...prev, response: w }))}
               onLabelChange={(l) => setColumnLabels(prev => ({ ...prev, response: l }))}
               isPreviewMode={isPreviewMode}
@@ -2198,8 +2198,8 @@ function SortableGroup({
               <ResizableColumnHeader
                 label={columnLabels.explanation}
                 width={columnWidths.explanation}
-                minWidth={120}
-                maxWidth={400}
+                minWidth={180}
+                maxWidth={600}
                 onWidthChange={(w) => setColumnWidths(prev => ({ ...prev, explanation: w }))}
                 onLabelChange={(l) => setColumnLabels(prev => ({ ...prev, explanation: l }))}
                 onRemove={() => handleRemoveColumn('explanation')}
