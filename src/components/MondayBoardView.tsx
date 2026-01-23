@@ -592,7 +592,7 @@ function ResponseTypeDropdown({
   }
   return <Popover open={isOpen} onOpenChange={setIsOpen}>
       <PopoverTrigger asChild>
-        <button onClick={e => e.stopPropagation()} className="flex items-center justify-center p-1 hover:bg-gray-100 rounded transition-colors pt-0" title={currentTypeConfig.label}>
+        <button onClick={e => e.stopPropagation()} className="flex items-center justify-center p-1 hover:bg-gray-100 rounded transition-colors pt-[4px]" title={currentTypeConfig.label}>
           <div className={`w-7 h-7 rounded flex items-center justify-center ${currentTypeConfig.bgColor}`}>
             <CurrentTypeIcon className={`h-4 w-4 ${currentTypeConfig.iconColor}`} />
           </div>
