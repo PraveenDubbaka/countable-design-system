@@ -61,7 +61,7 @@ export function ChecklistSection({
     const newSubQuestion: Question = {
       id: `sq-${Date.now()}`,
       text: 'New sub-question',
-      answerType: 'short-answer',
+      answerType: 'long-answer',
       required: false
     };
     const updatedQuestion = {

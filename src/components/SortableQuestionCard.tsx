@@ -313,7 +313,7 @@ export function SortableQuestionCard({
     const newSubQuestion: Question = {
       id: `sq-${Date.now()}`,
       text: 'New sub-question - click to edit',
-      answerType: 'short-answer',
+      answerType: 'long-answer',
       required: false
     };
     onUpdate({ 
@@ -456,15 +456,8 @@ export function SortableQuestionCard({
           </div>
         );
 
-      case 'short-answer':
-        return (
-          <Input
-            placeholder="Enter your answer..."
-            value={question.answer || ''}
-            onChange={(e) => handleAnswerChange(e.target.value)}
-            className="mt-3 bg-background"
-          />
-        );
+      case 'none':
+        return null;
 
       case 'long-answer':
         return (

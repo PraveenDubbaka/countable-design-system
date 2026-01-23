@@ -32,6 +32,12 @@ const ANSWER_TYPE_OPTIONS: {
   bgColor: string;
   iconColor: string;
 }[] = [{
+  value: 'none',
+  label: 'None',
+  icon: Circle,
+  bgColor: 'bg-gray-100',
+  iconColor: 'text-gray-400'
+}, {
   value: 'yes-no',
   label: 'Yes / No',
   icon: Circle,
@@ -57,16 +63,10 @@ const ANSWER_TYPE_OPTIONS: {
   iconColor: 'text-blue-600'
 }, {
   value: 'long-answer',
-  label: 'Long Answer',
+  label: 'Answer',
   icon: AlignLeft,
   bgColor: 'bg-purple-100',
   iconColor: 'text-purple-600'
-}, {
-  value: 'short-answer',
-  label: 'Short Answer',
-  icon: Type,
-  bgColor: 'bg-orange-100',
-  iconColor: 'text-orange-600'
 }, {
   value: 'amount',
   label: 'Amount',
@@ -764,8 +764,8 @@ function SortableSubItemRow({
         })} disabled={isPreviewMode} size="sm" />;
       case 'long-answer':
         return <AITextarea value={subItem.answer || ''} onChange={val => handleAnswerChange(val)} placeholder="Enter your detailed answer..." minHeight="60px" isCompactMode={isCompactMode} />;
-      case 'short-answer':
-        return <AITextarea value={subItem.answer || ''} onChange={val => handleAnswerChange(val)} placeholder="Enter response..." minHeight="40px" isCompactMode={isCompactMode} />;
+      case 'none':
+        return null;
       case 'date':
         return <Input type="date" value={subItem.answer || ''} onChange={e => handleAnswerChange(e.target.value)} onClick={e => e.stopPropagation()} className="h-7 text-xs bg-gray-100 border-gray-300 text-gray-700" />;
       case 'amount':
@@ -1100,8 +1100,8 @@ function SortableItemRow({
         })} disabled={isPreviewMode} size="md" />;
       case 'long-answer':
         return <AITextarea value={item.answer || ''} onChange={val => handleAnswerChange(val)} placeholder="Enter your detailed answer..." minHeight="60px" isCompactMode={isCompactMode} />;
-      case 'short-answer':
-        return <AITextarea value={item.answer || ''} onChange={val => handleAnswerChange(val)} placeholder="Enter response..." minHeight="40px" isCompactMode={isCompactMode} />;
+      case 'none':
+        return null;
       case 'date':
         return <Input type="date" value={item.answer || ''} onChange={e => handleAnswerChange(e.target.value)} onClick={e => e.stopPropagation()} className="h-8 text-sm bg-gray-100 border-gray-300 text-gray-700" />;
       case 'amount':
@@ -1589,7 +1589,7 @@ function SortableGroup({
     const newSubQuestion: Question = {
       id: `sq-${Date.now()}`,
       text: 'New sub-item',
-      answerType: 'short-answer',
+      answerType: 'long-answer',
       required: false
     };
     const updatedQuestion = {
@@ -1767,7 +1767,7 @@ export function MondayBoardView({
     const newQuestion: Question = {
       id: `q-${Date.now()}`,
       text: '',
-      answerType: 'short-answer',
+      answerType: 'long-answer',
       required: false
     };
     const newSections = [...checklist.sections];
