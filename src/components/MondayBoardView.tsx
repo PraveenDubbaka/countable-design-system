@@ -1175,11 +1175,11 @@ function SortableItemRow({
                   draftNameRef.current = item.text;
                   setIsEditingName(true);
                 }
-              }} className={`text-sm text-gray-800 ${!isPreviewMode ? 'cursor-text hover:text-gray-900' : ''} py-1`}>
-                      <span className="line-clamp-1" dangerouslySetInnerHTML={{
+              }} className={`text-sm text-gray-800 ${!isPreviewMode ? 'cursor-text hover:text-gray-900' : ''} py-1 line-clamp-1`} style={{display: 'flex', alignItems: 'baseline'}}>
+                      <span className="inline" style={{display: 'inline'}} dangerouslySetInnerHTML={{
                 __html: sanitizeHtml(item.text) || 'Click to add item name...'
               }} />
-                      {item.required && isPreviewMode && <span className="text-red-500 font-medium">*</span>}
+                      {item.required && isPreviewMode && <span className="text-red-500 font-medium shrink-0">*</span>}
                     </div>
                   </TooltipTrigger>
                   <TooltipContent side="top" className="bg-white text-gray-800 border border-gray-200 shadow-lg max-w-md">
@@ -1193,11 +1193,11 @@ function SortableItemRow({
               draftNameRef.current = item.text;
               setIsEditingName(true);
             }
-          }} className={`text-sm text-gray-800 flex-1 ${!isPreviewMode ? 'cursor-text hover:text-gray-900' : ''} py-2`}>
-                <span dangerouslySetInnerHTML={{
+          }} className={`text-sm text-gray-800 flex-1 ${!isPreviewMode ? 'cursor-text hover:text-gray-900' : ''} py-2`} style={{display: 'flex', alignItems: 'baseline', flexWrap: 'wrap'}}>
+                <span className="inline" style={{display: 'inline'}} dangerouslySetInnerHTML={{
             __html: sanitizeHtml(item.text) || 'Click to add item name...'
           }} />
-                {item.required && isPreviewMode && <span className="text-red-500 font-medium">*</span>}
+                {item.required && isPreviewMode && <span className="text-red-500 font-medium shrink-0">*</span>}
               </div>}
               {hasRealSubItems && <Tooltip>
                   <TooltipTrigger asChild>
