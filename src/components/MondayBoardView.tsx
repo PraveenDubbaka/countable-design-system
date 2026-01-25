@@ -444,11 +444,12 @@ function RefButton({
     }
     e.target.value = '';
   };
-  if (disabled) {
-    return reference ? <div className="flex items-center gap-1.5 px-2 py-1.5 text-xs text-gray-600 bg-gray-100 rounded">
+  // In preview mode, still show the + Ref button but display attached reference read-only style
+  if (disabled && reference) {
+    return <div className="flex items-center gap-1.5 px-2 py-1.5 text-xs text-gray-600 bg-gray-100 rounded">
         <File className="h-3 w-3" />
         <span className="truncate max-w-[120px]">{reference.name}</span>
-      </div> : <span className="text-xs text-gray-400">No reference</span>;
+      </div>;
   }
   if (reference) {
     return <div className="flex items-center gap-1 px-2 py-1 bg-blue-50 border border-blue-200 rounded text-xs text-blue-700">
