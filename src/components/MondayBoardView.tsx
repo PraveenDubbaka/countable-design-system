@@ -1164,35 +1164,51 @@ function SortableItemRow({
           <span className="text-xs font-medium text-gray-500 shrink-0">
             {sectionNumber}.{itemIndex + 1}
           </span>
-          {isEditingName && !isPreviewMode ? <RichTextQuestionEditor value={item.text} onChange={newValue => {
-          draftNameRef.current = newValue;
-        }} onBlur={handleSave} onCancel={handleCancel} className="text-sm min-h-[36px] bg-gray-100 border-gray-300 text-gray-800 flex-1" /> : <div className="flex items-center gap-2 flex-1 min-w-0">
+          {(() => {
+            const getTextWithAsterisk = (text: string) => {
+              const sanitized = sanitizeHtml(text);
+              if (!sanitized) return 'Click to add item name...';
+              if (!(item.required && isPreviewMode)) return sanitized;
+              
+              // Insert asterisk before the last closing tag to keep it inline
+              const asterisk = '<span style="color: #ef4444; font-weight: 500;">*</span>';
+              const lastTagMatch = sanitized.match(/<\/[^>]+>$/);
+              if (lastTagMatch) {
+                const insertPos = sanitized.lastIndexOf(lastTagMatch[0]);
+                return sanitized.slice(0, insertPos) + asterisk + sanitized.slice(insertPos);
+              }
+              return sanitized + asterisk;
+            };
+            
+            return isEditingName && !isPreviewMode ? <RichTextQuestionEditor value={item.text} onChange={newValue => {
+              draftNameRef.current = newValue;
+            }} onBlur={handleSave} onCancel={handleCancel} className="text-sm min-h-[36px] bg-gray-100 border-gray-300 text-gray-800 flex-1" /> : <div className="flex items-center gap-2 flex-1 min-w-0">
               {isCompactMode ? <Tooltip>
                   <TooltipTrigger asChild>
                     <div onClick={e => {
-                if (!isPreviewMode) {
-                  e.stopPropagation();
-                  draftNameRef.current = item.text;
-                  setIsEditingName(true);
-                }
-              }} className={`text-sm text-gray-800 ${!isPreviewMode ? 'cursor-text hover:text-gray-900' : ''} line-clamp-1 overflow-hidden py-1`} dangerouslySetInnerHTML={{
-                __html: (sanitizeHtml(item.text) || 'Click to add item name...') + (item.required && isPreviewMode ? '<span style="color: #ef4444;">*</span>' : '')
-              }} />
+                      if (!isPreviewMode) {
+                        e.stopPropagation();
+                        draftNameRef.current = item.text;
+                        setIsEditingName(true);
+                      }
+                    }} className={`text-sm text-gray-800 ${!isPreviewMode ? 'cursor-text hover:text-gray-900' : ''} line-clamp-1 overflow-hidden py-1`} dangerouslySetInnerHTML={{
+                      __html: getTextWithAsterisk(item.text)
+                    }} />
                   </TooltipTrigger>
                   <TooltipContent side="top" className="bg-white text-gray-800 border border-gray-200 shadow-lg max-w-md">
                     <div dangerouslySetInnerHTML={{
-                __html: sanitizeHtml(item.text)
-              }} />
+                      __html: sanitizeHtml(item.text)
+                    }} />
                   </TooltipContent>
                 </Tooltip> : <div onClick={e => {
-            if (!isPreviewMode) {
-              e.stopPropagation();
-              draftNameRef.current = item.text;
-              setIsEditingName(true);
-            }
-          }} className={`text-sm text-gray-800 flex-1 ${!isPreviewMode ? 'cursor-text hover:text-gray-900' : ''} py-2`} dangerouslySetInnerHTML={{
-            __html: (sanitizeHtml(item.text) || 'Click to add item name...') + (item.required && isPreviewMode ? '<span style="color: #ef4444;">*</span>' : '')
-          }} />}
+                  if (!isPreviewMode) {
+                    e.stopPropagation();
+                    draftNameRef.current = item.text;
+                    setIsEditingName(true);
+                  }
+                }} className={`text-sm text-gray-800 flex-1 ${!isPreviewMode ? 'cursor-text hover:text-gray-900' : ''} py-2`} dangerouslySetInnerHTML={{
+                  __html: getTextWithAsterisk(item.text)
+                }} />}
               {hasRealSubItems && <Tooltip>
                   <TooltipTrigger asChild>
                     <span className="text-xs bg-blue-100 text-blue-600 px-1.5 py-0.5 rounded font-medium shrink-0 cursor-default">
@@ -1203,7 +1219,8 @@ function SortableItemRow({
                     {item.subQuestions!.filter(sq => sq.text.trim() !== '').length === 1 ? '1 Sub-question' : `${item.subQuestions!.filter(sq => sq.text.trim() !== '').length} Sub-questions`}
                   </TooltipContent>
                 </Tooltip>}
-            </div>}
+            </div>;
+          })()}
         </div>
 
         {/* Response column with inline type selector and response field */}
