@@ -1163,6 +1163,7 @@ function SortableItemRow({
       }}>
           <span className="text-xs font-medium text-gray-500 shrink-0">
             {sectionNumber}.{itemIndex + 1}
+            {item.required && isPreviewMode && <span className="text-red-500 ml-0.5">*</span>}
           </span>
           {isEditingName && !isPreviewMode ? <RichTextQuestionEditor value={item.text} onChange={newValue => {
           draftNameRef.current = newValue;
@@ -1175,12 +1176,9 @@ function SortableItemRow({
                   draftNameRef.current = item.text;
                   setIsEditingName(true);
                 }
-              }} className={`text-sm text-gray-800 ${!isPreviewMode ? 'cursor-text hover:text-gray-900' : ''} py-1 line-clamp-1`} style={{display: 'flex', alignItems: 'baseline'}}>
-                      <span className="inline" style={{display: 'inline'}} dangerouslySetInnerHTML={{
+              }} className={`text-sm text-gray-800 flex-1 ${!isPreviewMode ? 'cursor-text hover:text-gray-900' : ''} line-clamp-1 overflow-hidden py-1`} dangerouslySetInnerHTML={{
                 __html: sanitizeHtml(item.text) || 'Click to add item name...'
               }} />
-                      {item.required && isPreviewMode && <span className="text-red-500 font-medium shrink-0">*</span>}
-                    </div>
                   </TooltipTrigger>
                   <TooltipContent side="top" className="bg-white text-gray-800 border border-gray-200 shadow-lg max-w-md">
                     <div dangerouslySetInnerHTML={{
@@ -1193,12 +1191,9 @@ function SortableItemRow({
               draftNameRef.current = item.text;
               setIsEditingName(true);
             }
-          }} className={`text-sm text-gray-800 flex-1 ${!isPreviewMode ? 'cursor-text hover:text-gray-900' : ''} py-2`} style={{display: 'flex', alignItems: 'baseline', flexWrap: 'wrap'}}>
-                <span className="inline" style={{display: 'inline'}} dangerouslySetInnerHTML={{
+          }} className={`text-sm text-gray-800 flex-1 ${!isPreviewMode ? 'cursor-text hover:text-gray-900' : ''} py-2`} dangerouslySetInnerHTML={{
             __html: sanitizeHtml(item.text) || 'Click to add item name...'
-          }} />
-                {item.required && isPreviewMode && <span className="text-red-500 font-medium shrink-0">*</span>}
-              </div>}
+          }} />}
               {hasRealSubItems && <Tooltip>
                   <TooltipTrigger asChild>
                     <span className="text-xs bg-blue-100 text-blue-600 px-1.5 py-0.5 rounded font-medium shrink-0 cursor-default">
