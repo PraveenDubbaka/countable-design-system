@@ -1390,6 +1390,7 @@ interface GroupProps {
   onUpdate: (section: Section) => void;
   onDelete: () => void;
   onAddItem: () => void;
+  onAddCategoryAtPosition: (position: 'above' | 'below') => void;
   isPreviewMode: boolean;
   isCompactMode: boolean;
   onItemsReorder: (sectionId: string, newItems: Question[]) => void;
@@ -1501,6 +1502,7 @@ function SortableGroup({
   onUpdate,
   onDelete,
   onAddItem,
+  onAddCategoryAtPosition,
   isPreviewMode,
   isCompactMode,
   onItemsReorder,
@@ -1709,9 +1711,19 @@ function SortableGroup({
                 </DropdownMenuItem>
               )}
               {!section.formLayout && <DropdownMenuSeparator className="bg-gray-200" />}
+              <div className="px-2 py-1.5 text-xs font-medium text-gray-500">Add category</div>
+              <DropdownMenuItem onClick={() => onAddCategoryAtPosition('above')} className="text-gray-700 focus:bg-gray-100 focus:text-gray-900 pl-4">
+                <ChevronDown className="h-4 w-4 mr-2 rotate-180" />
+                Above this category
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => onAddCategoryAtPosition('below')} className="text-gray-700 focus:bg-gray-100 focus:text-gray-900 pl-4">
+                <ChevronDown className="h-4 w-4 mr-2" />
+                Below this category
+              </DropdownMenuItem>
+              <DropdownMenuSeparator className="bg-gray-200" />
               <DropdownMenuItem onClick={onDelete} className="text-red-500 focus:bg-gray-100 focus:text-red-600">
                 <Trash2 className="h-4 w-4 mr-2" />
-                Delete group
+                Delete category
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>}
@@ -1841,6 +1853,25 @@ export function MondayBoardView({
       ...newSections[sectionIndex],
       questions: [...newSections[sectionIndex].questions, newQuestion]
     };
+    onUpdate({
+      ...checklist,
+      sections: newSections
+    });
+  };
+
+  const handleAddCategoryAtPosition = (sectionIndex: number, position: 'above' | 'below') => {
+    const newSection: Section = {
+      id: `section-${Date.now()}`,
+      title: 'New Category',
+      questions: [],
+      isExpanded: true
+    };
+    const insertIndex = position === 'above' ? sectionIndex : sectionIndex + 1;
+    const newSections = [
+      ...checklist.sections.slice(0, insertIndex),
+      newSection,
+      ...checklist.sections.slice(insertIndex)
+    ];
     onUpdate({
       ...checklist,
       sections: newSections
@@ -2034,7 +2065,7 @@ export function MondayBoardView({
   return <DndContext sensors={sensors} collisionDetection={closestCenter} onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
       <div className="space-y-4">
         <SortableContext items={sectionIds} strategy={verticalListSortingStrategy}>
-          {checklist.sections.map((section, idx) => <SortableGroup key={section.id} section={section} sectionIndex={idx} onUpdate={s => handleSectionUpdate(idx, s)} onDelete={() => handleSectionDelete(idx)} onAddItem={() => handleAddItem(idx)} isPreviewMode={isPreviewMode} isCompactMode={isCompactMode} onItemsReorder={handleItemsReorder} onSubItemsReorder={handleSubItemsReorder} selectedQuestions={selectedQuestions} onSelectionChange={handleSelectionChange} />)}
+          {checklist.sections.map((section, idx) => <SortableGroup key={section.id} section={section} sectionIndex={idx} onUpdate={s => handleSectionUpdate(idx, s)} onDelete={() => handleSectionDelete(idx)} onAddItem={() => handleAddItem(idx)} onAddCategoryAtPosition={(position) => handleAddCategoryAtPosition(idx, position)} isPreviewMode={isPreviewMode} isCompactMode={isCompactMode} onItemsReorder={handleItemsReorder} onSubItemsReorder={handleSubItemsReorder} selectedQuestions={selectedQuestions} onSelectionChange={handleSelectionChange} />)}
         </SortableContext>
       </div>
       
