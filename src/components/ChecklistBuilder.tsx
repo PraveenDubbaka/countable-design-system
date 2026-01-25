@@ -638,6 +638,7 @@ export function ChecklistBuilder({ checklist, onUpdate, onSave }: ChecklistBuild
         selectedQuestions={selectedQuestions}
         onBulkDelete={handleBulkDelete}
         onAddCategory={handleAddCategoryAtPosition}
+        isPreviewMode={isPreviewMode}
       />
 
 
