@@ -921,6 +921,7 @@ interface ItemRowProps {
   onDelete: () => void;
   onDuplicate: () => void;
   onAddSubItem: () => void;
+  onAddItemAtPosition: (position: 'above' | 'below') => void;
   isPreviewMode: boolean;
   isCompactMode: boolean;
   onSubItemsReorder: (itemId: string, newSubItems: Question[]) => void;
@@ -946,6 +947,7 @@ function SortableItemRow({
   onDelete,
   onDuplicate,
   onAddSubItem,
+  onAddItemAtPosition,
   isPreviewMode,
   isCompactMode,
   onSubItemsReorder,
@@ -1293,6 +1295,17 @@ function SortableItemRow({
                     <Plus className="h-4 w-4 mr-2" />
                     Add sub-item
                   </DropdownMenuItem>
+                  <DropdownMenuSeparator className="bg-[#EDF2F7]" />
+                  <div className="px-2 py-1.5 text-xs font-medium text-gray-500">Add item</div>
+                  <DropdownMenuItem onClick={() => onAddItemAtPosition('above')} className="text-gray-700 focus:bg-[#EDF2F7] focus:text-gray-900 pl-4">
+                    <ChevronDown className="h-4 w-4 mr-2 rotate-180" />
+                    Above this item
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => onAddItemAtPosition('below')} className="text-gray-700 focus:bg-[#EDF2F7] focus:text-gray-900 pl-4">
+                    <ChevronDown className="h-4 w-4 mr-2" />
+                    Below this item
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator className="bg-[#EDF2F7]" />
                   <DropdownMenuItem onClick={onDuplicate} className="text-gray-700 focus:bg-[#EDF2F7] focus:text-gray-900">
                     <Copy className="h-4 w-4 mr-2" />
                     Duplicate
@@ -1612,6 +1625,25 @@ function SortableGroup({
     handleItemUpdate(index, updatedQuestion);
   };
 
+  const handleAddItemAtPosition = (index: number, position: 'above' | 'below') => {
+    const newQuestion: Question = {
+      id: `q-${Date.now()}`,
+      text: '',
+      answerType: 'long-answer',
+      required: false
+    };
+    const insertIndex = position === 'above' ? index : index + 1;
+    const newQuestions = [
+      ...section.questions.slice(0, insertIndex),
+      newQuestion,
+      ...section.questions.slice(insertIndex)
+    ];
+    onUpdate({
+      ...section,
+      questions: newQuestions
+    });
+  };
+
   // Clean number prefix from title
   const cleanTitle = (title: string) => title.replace(/^\d+\.\s*/, '');
 
@@ -1735,7 +1767,7 @@ function SortableGroup({
 
               {/* Items */}
               <SortableContext items={itemIds} strategy={verticalListSortingStrategy}>
-                {section.questions.map((question, idx) => <SortableItemRow key={question.id} item={question} sectionId={section.id} itemIndex={idx} onUpdate={q => handleItemUpdate(idx, q)} onDelete={() => handleItemDelete(idx)} onDuplicate={() => handleItemDuplicate(idx)} onAddSubItem={() => handleAddSubItem(idx)} isPreviewMode={isPreviewMode} isCompactMode={isCompactMode} onSubItemsReorder={onSubItemsReorder} visibleColumns={visibleColumns} columnWidths={columnWidths} sectionNumber={sectionIndex + 1} isSelected={selectedQuestions.has(question.id)} onSelectionChange={selected => onSelectionChange(question.id, selected)} />)}
+                {section.questions.map((question, idx) => <SortableItemRow key={question.id} item={question} sectionId={section.id} itemIndex={idx} onUpdate={q => handleItemUpdate(idx, q)} onDelete={() => handleItemDelete(idx)} onDuplicate={() => handleItemDuplicate(idx)} onAddSubItem={() => handleAddSubItem(idx)} onAddItemAtPosition={(position) => handleAddItemAtPosition(idx, position)} isPreviewMode={isPreviewMode} isCompactMode={isCompactMode} onSubItemsReorder={onSubItemsReorder} visibleColumns={visibleColumns} columnWidths={columnWidths} sectionNumber={sectionIndex + 1} isSelected={selectedQuestions.has(question.id)} onSelectionChange={selected => onSelectionChange(question.id, selected)} />)}
               </SortableContext>
 
               {/* Add item button */}
