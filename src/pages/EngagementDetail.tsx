@@ -9,6 +9,9 @@ import {
   FileSpreadsheet,
   PencilLine,
   Settings2,
+  Download,
+  FileType,
+  Share2,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -17,6 +20,10 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
+  DropdownMenuSub,
+  DropdownMenuSubTrigger,
+  DropdownMenuSubContent,
+  DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
 import { Layout } from "@/components/Layout";
 import { MondayBoardView } from "@/components/MondayBoardView";
@@ -304,6 +311,36 @@ export default function EngagementDetail() {
                   <span>{action.label}</span>
                 </DropdownMenuItem>
               ))}
+              <DropdownMenuSeparator />
+              <DropdownMenuSub>
+                <DropdownMenuSubTrigger className="flex items-center gap-2 cursor-pointer">
+                  <Download className="h-4 w-4 text-muted-foreground" />
+                  <span>Export Checklist</span>
+                </DropdownMenuSubTrigger>
+                <DropdownMenuSubContent className="bg-card border shadow-lg z-50">
+                  <DropdownMenuItem 
+                    className="flex items-center gap-2 cursor-pointer"
+                    onClick={() => toast.info('Exporting as PDF...')}
+                  >
+                    <FileText className="h-4 w-4 text-muted-foreground" />
+                    <span>PDF</span>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem 
+                    className="flex items-center gap-2 cursor-pointer"
+                    onClick={() => toast.info('Exporting as Word...')}
+                  >
+                    <FileType className="h-4 w-4 text-muted-foreground" />
+                    <span>Word</span>
+                  </DropdownMenuItem>
+                </DropdownMenuSubContent>
+              </DropdownMenuSub>
+              <DropdownMenuItem 
+                className="flex items-center gap-2 cursor-pointer"
+                onClick={() => toast.info('Share with client options coming soon')}
+              >
+                <Share2 className="h-4 w-4 text-muted-foreground" />
+                <span>Share with Client</span>
+              </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
