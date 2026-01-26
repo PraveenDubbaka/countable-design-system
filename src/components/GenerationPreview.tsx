@@ -10,7 +10,8 @@ import {
   Plus,
   X,
   RefreshCw,
-  Pencil
+  Pencil,
+  Save
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Input } from '@/components/ui/input';
@@ -487,13 +488,14 @@ export function GenerationPreview({
 
           <DialogFooter className="flex gap-2">
             <Button variant="outline" onClick={() => setShowFolderDialog(false)}>
+              <X className="h-4 w-4" />
               Cancel
             </Button>
             <Button 
               onClick={handleConfirmSave}
               disabled={!selectedFolderId || !checklistName.trim()}
-              className="bg-[#1C63A6] hover:bg-[#1C63A6]/90"
             >
+              <Save className="h-4 w-4" />
               Save
             </Button>
           </DialogFooter>

@@ -21,6 +21,8 @@ import {
   FolderInput,
   MoreVertical,
   GripVertical,
+  X,
+  Save,
 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -852,13 +854,14 @@ export function Sidebar() {
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setRenameDialogOpen(false)}>
+              <X className="h-4 w-4" />
               Cancel
             </Button>
             <Button
               onClick={handleRenameConfirm}
               disabled={!renameValue.trim()}
-              className="bg-primary hover:bg-primary/90"
             >
+              <Pencil className="h-4 w-4" />
               Rename
             </Button>
           </DialogFooter>
@@ -893,13 +896,14 @@ export function Sidebar() {
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setMoveDialogOpen(false)}>
+              <X className="h-4 w-4" />
               Cancel
             </Button>
             <Button
               onClick={handleMoveConfirm}
               disabled={!selectedMoveFolder || selectedMoveFolder === selectedChecklist?.folderId}
-              className="bg-primary hover:bg-primary/90"
             >
+              <FolderInput className="h-4 w-4" />
               Move
             </Button>
           </DialogFooter>

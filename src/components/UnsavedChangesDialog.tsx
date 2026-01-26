@@ -7,7 +7,7 @@ import {
   DialogDescription
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
-import { Save, Trash2 } from 'lucide-react';
+import { Save, Trash2, X } from 'lucide-react';
 
 interface UnsavedChangesDialogProps {
   open: boolean;
@@ -38,6 +38,7 @@ export function UnsavedChangesDialog({
             onClick={() => onOpenChange(false)}
             size="sm"
           >
+            <X className="h-4 w-4" />
             Cancel
           </Button>
           <Button 
@@ -47,9 +48,8 @@ export function UnsavedChangesDialog({
               onOpenChange(false);
             }}
             size="sm"
-            className="gap-1.5"
           >
-            <Trash2 className="h-4 w-4 icon-trash" />
+            <Trash2 className="h-4 w-4" />
             Discard
           </Button>
           <Button 
@@ -58,9 +58,8 @@ export function UnsavedChangesDialog({
               onOpenChange(false);
             }}
             size="sm"
-            className="gap-1.5 bg-[#1C63A6] hover:bg-[#1C63A6]/90"
           >
-            <Save className="h-4 w-4 icon-save" />
+            <Save className="h-4 w-4" />
             Save
           </Button>
         </DialogFooter>

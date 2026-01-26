@@ -8,7 +8,7 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Share2, Monitor } from "lucide-react";
+import { Share2, Monitor, X, Check } from "lucide-react";
 import { toast } from "sonner";
 
 interface ShareWithClientDialogProps {
@@ -82,6 +82,7 @@ export function ShareWithClientDialog({
             onClick={handleCancel}
             className="flex-1"
           >
+            <X className="h-4 w-4" />
             Cancel
           </Button>
           <Button
@@ -89,6 +90,7 @@ export function ShareWithClientDialog({
             disabled={!clientPortalSelected}
             className="flex-1"
           >
+            <Check className="h-4 w-4" />
             Confirm
           </Button>
         </DialogFooter>

@@ -1,6 +1,6 @@
 import { useState, useRef } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { Sparkles, LayoutTemplate, Folder, ChevronDown, ChevronRight, FileText, X, FolderPlus, Plus } from 'lucide-react';
+import { Sparkles, LayoutTemplate, Folder, ChevronDown, ChevronRight, FileText, X, FolderPlus, Plus, Save } from 'lucide-react';
 import { Layout } from '@/components/Layout';
 import { ContentType } from '@/components/Sidebar';
 import { Button } from '@/components/ui/button';
@@ -373,9 +373,11 @@ export default function CreationDashboard() {
                 
                 <DialogFooter>
                   <Button variant="outline" onClick={() => setShowSaveDialog(false)}>
+                    <X className="h-4 w-4" />
                     Cancel
                   </Button>
                   <Button onClick={handleSaveAndGenerate} disabled={!checklistName.trim()}>
+                    <Sparkles className="h-4 w-4" />
                     Save & Generate
                   </Button>
                 </DialogFooter>
@@ -464,9 +466,11 @@ export default function CreationDashboard() {
                 
                 <DialogFooter>
                   <Button variant="outline" onClick={() => setShowTemplateSaveDialog(false)}>
+                    <X className="h-4 w-4" />
                     Cancel
                   </Button>
                   <Button onClick={handleTemplateSaveAndGenerate} disabled={!templateChecklistName.trim()}>
+                    <Sparkles className="h-4 w-4" />
                     Save & Generate
                   </Button>
                 </DialogFooter>

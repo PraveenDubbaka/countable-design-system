@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Search, ChevronDown, FileText, MessageSquare, Send } from "lucide-react";
+import { Search, ChevronDown, FileText, MessageSquare, Send, Users, Building2 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from "recharts";
@@ -271,6 +271,7 @@ export default function Dashboard() {
                   </div>)}
               </div>
               <Button variant="ghost" size="sm" className="w-full mt-2 h-8 text-xs text-primary hover:bg-primary/5 font-medium">
+                <Users className="h-3.5 w-3.5" />
                 View Team
               </Button>
             </div>
@@ -297,6 +298,7 @@ export default function Dashboard() {
                   </div>)}
               </div>
               <Button variant="ghost" size="sm" className="w-full mt-2 h-8 text-xs text-primary hover:bg-primary/5 font-medium">
+                <Building2 className="h-3.5 w-3.5" />
                 View Clients
               </Button>
             </div>
