@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { cn } from '@/lib/utils';
 
 interface EngagementRightPanelProps {
@@ -129,7 +130,16 @@ export function EngagementRightPanel({ className }: EngagementRightPanelProps) {
                 <TabsList className="w-full h-9 p-0.5 bg-muted/50 overflow-hidden">
                   <TabsTrigger value="all" className="flex-1 text-[10px] h-full px-1 min-w-0 truncate">All Requests</TabsTrigger>
                   <TabsTrigger value="available" className="flex-1 text-[10px] h-full px-1 min-w-0 truncate">Available</TabsTrigger>
-                  <TabsTrigger value="backlog" className="flex-1 text-[10px] h-full px-1 min-w-0 truncate">Batch</TabsTrigger>
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <TabsTrigger value="backlog" className="flex-1 text-[10px] h-full px-1 min-w-0 truncate">Batch</TabsTrigger>
+                      </TooltipTrigger>
+                      <TooltipContent side="bottom">
+                        <p>Batch Requests</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
                 </TabsList>
                 <TabsContent value="all" className="mt-4">
                   {/* Empty State */}
