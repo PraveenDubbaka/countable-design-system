@@ -173,7 +173,7 @@ const navItems = [
   {
     icon: FileIcon,
     label: "Templates",
-    route: "/",
+    route: "/create",
   },
 ];
 
