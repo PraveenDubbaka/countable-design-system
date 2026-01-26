@@ -12,7 +12,7 @@ const buttonVariants = cva("inline-flex items-center justify-center gap-2 whites
       // M3 Outlined Button
       outline: "border border-outline bg-transparent text-primary rounded-lg hover:bg-primary/[0.08] active:bg-primary/[0.12] focus-visible:border-primary",
       // M3 Tonal Button (Secondary Container)
-      secondary: "bg-secondary text-secondary-foreground border border-muted-foreground/50 rounded-lg hover:shadow-elevation-1 before:absolute before:inset-0 before:bg-secondary-foreground/0 hover:before:bg-secondary-foreground/[0.08] active:before:bg-secondary-foreground/[0.12]",
+      secondary: "bg-secondary text-secondary-foreground border border-outline rounded-lg hover:shadow-elevation-1 before:absolute before:inset-0 before:bg-secondary-foreground/0 hover:before:bg-secondary-foreground/[0.08] active:before:bg-secondary-foreground/[0.12]",
       // M3 Text Button
       ghost: "text-primary rounded-lg hover:bg-primary/[0.08] active:bg-primary/[0.12]",
       // M3 Text Button with underline
