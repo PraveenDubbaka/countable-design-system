@@ -25,7 +25,7 @@ const DropdownMenuSubTrigger = React.forwardRef<
   <DropdownMenuPrimitive.SubTrigger
     ref={ref}
     className={cn(
-      "group flex cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none transition-colors hover:bg-accent hover:text-accent-foreground data-[state=open]:bg-accent data-[state=open]:text-accent-foreground focus:bg-accent focus:text-accent-foreground [&>svg]:text-muted-foreground [&>svg]:transition-colors [&:hover>svg]:text-accent-foreground [&[data-state=open]>svg]:text-accent-foreground",
+      "group flex cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none transition-colors hover:bg-primary hover:text-primary-foreground data-[state=open]:bg-primary data-[state=open]:text-primary-foreground focus:bg-primary focus:text-primary-foreground [&>svg]:text-muted-foreground [&>svg]:transition-colors [&:hover>svg]:text-primary-foreground [&[data-state=open]>svg]:text-primary-foreground [&:focus>svg]:text-primary-foreground",
       inset && "pl-8",
       className,
     )}
@@ -79,7 +79,7 @@ const DropdownMenuItem = React.forwardRef<
   <DropdownMenuPrimitive.Item
     ref={ref}
     className={cn(
-      "relative flex cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none transition-colors data-[disabled]:pointer-events-none data-[disabled]:opacity-50 hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground [&>svg]:text-muted-foreground [&>svg]:transition-colors [&:hover>svg]:text-accent-foreground [&:focus>svg]:text-accent-foreground",
+      "relative flex cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none transition-colors data-[disabled]:pointer-events-none data-[disabled]:opacity-50 hover:bg-primary hover:text-primary-foreground focus:bg-primary focus:text-primary-foreground [&>svg]:text-muted-foreground [&>svg]:transition-colors [&:hover>svg]:text-primary-foreground [&:focus>svg]:text-primary-foreground",
       inset && "pl-8",
       className,
     )}
