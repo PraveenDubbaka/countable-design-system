@@ -1218,13 +1218,13 @@ function SortableItemRow({
         </div>
 
         {/* Response column with inline type selector and response field */}
-        <div className="flex-1 min-w-0 px-2 py-2 border-l border-[#E8EDF2] flex items-stretch overflow-hidden" style={{
+        <div className="flex-1 min-w-0 px-2 py-2 border-l border-[#E8EDF2] flex items-stretch" style={{
         flexBasis: columnWidths.response,
         maxWidth: columnWidths.response
       }}>
-          <div className="flex items-center gap-2 w-full overflow-hidden">
+          <div className="flex items-center gap-2 w-full min-w-0">
             <ResponseTypeDropdown currentType={item.answerType} onTypeChange={handleAnswerTypeChange} disabled={isPreviewMode} />
-            <div className="flex-1 min-w-0 overflow-hidden">
+            <div className="flex-1 min-w-0 flex flex-wrap">
               {renderResponseField()}
             </div>
           </div>
