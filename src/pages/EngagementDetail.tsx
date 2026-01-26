@@ -20,6 +20,10 @@ import {
   Check,
   AlertTriangle,
   Loader2,
+  History,
+  Upload,
+  FileUp,
+  ClipboardList,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -524,6 +528,69 @@ export default function EngagementDetail() {
                 </DropdownMenuItem>
               ))}
               <DropdownMenuSeparator />
+              {/* Prior Year Responses Submenu */}
+              <DropdownMenuSub>
+                <DropdownMenuSubTrigger className="flex items-center gap-2 cursor-pointer group">
+                  <History className="h-4 w-4 text-muted-foreground group-hover:text-foreground group-data-[state=open]:text-foreground transition-colors" />
+                  <span>Prior Year Responses</span>
+                </DropdownMenuSubTrigger>
+                <DropdownMenuSubContent className="bg-card border shadow-lg z-50 w-56">
+                  <DropdownMenuItem 
+                    className="flex items-center gap-2 cursor-pointer group"
+                    onClick={() => toast.info('Loading responses from Dec 31, 2023...')}
+                  >
+                    <Calendar className="h-4 w-4 text-muted-foreground group-hover:text-foreground transition-colors" />
+                    <span>Dec 31, 2023</span>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem 
+                    className="flex items-center gap-2 cursor-pointer group"
+                    onClick={() => toast.info('Loading responses from Dec 31, 2022...')}
+                  >
+                    <Calendar className="h-4 w-4 text-muted-foreground group-hover:text-foreground transition-colors" />
+                    <span>Dec 31, 2022</span>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem 
+                    className="flex items-center gap-2 cursor-pointer group"
+                    onClick={() => toast.info('Loading responses from Dec 31, 2021...')}
+                  >
+                    <Calendar className="h-4 w-4 text-muted-foreground group-hover:text-foreground transition-colors" />
+                    <span>Dec 31, 2021</span>
+                  </DropdownMenuItem>
+                </DropdownMenuSubContent>
+              </DropdownMenuSub>
+              {/* Population Submenu */}
+              <DropdownMenuSub>
+                <DropdownMenuSubTrigger className="flex items-center gap-2 cursor-pointer group">
+                  <ClipboardList className="h-4 w-4 text-muted-foreground group-hover:text-foreground group-data-[state=open]:text-foreground transition-colors" />
+                  <span>Population</span>
+                </DropdownMenuSubTrigger>
+                <DropdownMenuSubContent className="bg-card border shadow-lg z-50 w-64">
+                  <DropdownMenuItem 
+                    className="flex items-center gap-2 cursor-pointer group"
+                    onClick={() => toast.info('Populating from latest available file...')}
+                  >
+                    <FileText className="h-4 w-4 text-muted-foreground group-hover:text-foreground transition-colors" />
+                    <span>From Latest File</span>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem 
+                    className="flex items-center gap-2 cursor-pointer group"
+                    onClick={() => toast.info('Upload a file to populate responses...')}
+                  >
+                    <FileUp className="h-4 w-4 text-muted-foreground group-hover:text-foreground transition-colors" />
+                    <span>Upload Older File</span>
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem 
+                    className="flex items-center gap-2 cursor-pointer group"
+                    onClick={() => toast.info('Loading responses from prior year...')}
+                  >
+                    <History className="h-4 w-4 text-muted-foreground group-hover:text-foreground transition-colors" />
+                    <span>From Previous Year Responses</span>
+                  </DropdownMenuItem>
+                </DropdownMenuSubContent>
+              </DropdownMenuSub>
+              <DropdownMenuSeparator />
+              {/* Export Checklist Submenu */}
               <DropdownMenuSub>
                 <DropdownMenuSubTrigger className="flex items-center gap-2 cursor-pointer group">
                   <Download className="h-4 w-4 text-muted-foreground group-hover:text-foreground group-data-[state=open]:text-foreground transition-colors" />
