@@ -87,12 +87,19 @@ export default function CreationDashboard() {
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // Save dialog state
+  // Save dialog state (for file upload)
   const [showSaveDialog, setShowSaveDialog] = useState(false);
   const [checklistName, setChecklistName] = useState('');
   const [selectedFolderId, setSelectedFolderId] = useState('1');
   const [showNewFolderInput, setShowNewFolderInput] = useState(false);
   const [newFolderName, setNewFolderName] = useState('');
+
+  // Save dialog state (for template)
+  const [showTemplateSaveDialog, setShowTemplateSaveDialog] = useState(false);
+  const [templateChecklistName, setTemplateChecklistName] = useState('');
+  const [templateSelectedFolderId, setTemplateSelectedFolderId] = useState('1');
+  const [showTemplateNewFolderInput, setShowTemplateNewFolderInput] = useState(false);
+  const [templateNewFolderName, setTemplateNewFolderName] = useState('');
 
   // Available folders for saving
   const saveFolders = [{
@@ -125,6 +132,7 @@ export default function CreationDashboard() {
   const handleTemplateSelect = (templateName: string) => {
     setSelectedTemplate(templateName);
     setPrompt(`Generate a ${templateName} checklist`);
+    setTemplateChecklistName(templateName);
   };
   const label = contentTypeLabels[contentType] || 'Checklist';
   const heading = contentType ? `Create ${label} with LUKA` : 'Create with LUKA';
@@ -170,15 +178,25 @@ export default function CreationDashboard() {
       toast.error('Please select a template first');
       return;
     }
+    setShowTemplateSaveDialog(true);
+  };
+
+  const handleTemplateSaveAndGenerate = () => {
+    if (!templateChecklistName.trim()) {
+      toast.error('Please enter a name for the checklist');
+      return;
+    }
     
+    const folder = saveFolders.find(f => f.id === templateSelectedFolderId);
+    toast.success(`"${templateChecklistName}" saved to "${folder?.name}"`);
+
     // Save to localStorage
     const existingChecklists = readJsonFromLocalStorage<any[]>('savedChecklists', []);
     const newChecklistId = `checklist-${Date.now()}`;
-    const folder = templateFolders.find(f => f.templates.includes(selectedTemplate));
     const newChecklist = {
       id: newChecklistId,
-      name: selectedTemplate,
-      folderId: folder?.id || 'uncategorized',
+      name: templateChecklistName.trim(),
+      folderId: templateSelectedFolderId,
       folderName: folder?.name || 'Uncategorized',
       source: 'template',
       templateName: selectedTemplate,
@@ -192,7 +210,7 @@ export default function CreationDashboard() {
       detail: newChecklist
     }));
 
-    toast.success(`Generating checklist from template: ${selectedTemplate}`);
+    setShowTemplateSaveDialog(false);
 
     // Navigate to generate the checklist
     navigate('/', {
@@ -200,11 +218,19 @@ export default function CreationDashboard() {
         generate: {
           prompt: `Generate a checklist from template: ${selectedTemplate}`,
           scope,
-          checklistName: selectedTemplate,
+          checklistName: templateChecklistName.trim(),
           savedChecklistId: newChecklistId
         }
       }
     });
+  };
+
+  const handleTemplateAddFolder = () => {
+    if (templateNewFolderName.trim()) {
+      toast.success(`Folder "${templateNewFolderName}" created`);
+      setTemplateNewFolderName('');
+      setShowTemplateNewFolderInput(false);
+    }
   };
   const handleSaveAndGenerate = () => {
     if (!checklistName.trim()) {
@@ -394,6 +420,58 @@ export default function CreationDashboard() {
                   </Button>
                 </div>
               </div>}
+
+            {/* Save Dialog for Template */}
+            <Dialog open={showTemplateSaveDialog} onOpenChange={setShowTemplateSaveDialog}>
+              <DialogContent className="sm:max-w-md">
+                <DialogHeader>
+                  <DialogTitle>Save {label}</DialogTitle>
+                </DialogHeader>
+                
+                <div className="space-y-4 py-4">
+                  <div>
+                    <label className="text-sm font-medium text-foreground mb-2 block">
+                      {label} Name
+                    </label>
+                    <Input value={templateChecklistName} onChange={e => setTemplateChecklistName(e.target.value)} placeholder={`Enter ${label.toLowerCase()} name...`} />
+                  </div>
+                  
+                  <div>
+                    <label className="text-sm font-medium text-foreground mb-2 block">
+                      Save to Folder
+                    </label>
+                    <div className="border border-border rounded-lg max-h-[200px] overflow-y-auto">
+                      {saveFolders.map(folder => <button key={folder.id} onClick={() => setTemplateSelectedFolderId(folder.id)} className={`w-full flex items-center gap-2 px-3 py-2 text-left hover:bg-muted transition-colors ${templateSelectedFolderId === folder.id ? 'bg-primary/5 border-l-2 border-l-primary' : ''}`}>
+                          <Folder className="h-4 w-4 text-primary" />
+                          <span className="text-sm">{folder.name}</span>
+                        </button>)}
+                    </div>
+                    
+                    {!showTemplateNewFolderInput ? <button onClick={() => setShowTemplateNewFolderInput(true)} className="mt-2 flex items-center gap-2 text-sm text-primary hover:text-primary/80">
+                        <FolderPlus className="h-4 w-4" />
+                        Create new folder
+                      </button> : <div className="mt-2 flex items-center gap-2">
+                        <Input value={templateNewFolderName} onChange={e => setTemplateNewFolderName(e.target.value)} placeholder="Folder name..." className="flex-1" />
+                        <Button size="sm" onClick={handleTemplateAddFolder}>
+                          <Plus className="h-4 w-4" />
+                        </Button>
+                        <Button size="sm" variant="ghost" onClick={() => setShowTemplateNewFolderInput(false)}>
+                          <X className="h-4 w-4" />
+                        </Button>
+                      </div>}
+                  </div>
+                </div>
+                
+                <DialogFooter>
+                  <Button variant="outline" onClick={() => setShowTemplateSaveDialog(false)}>
+                    Cancel
+                  </Button>
+                  <Button onClick={handleTemplateSaveAndGenerate} disabled={!templateChecklistName.trim()}>
+                    Save & Generate
+                  </Button>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
           </div>
         </div>
       </Layout>;
