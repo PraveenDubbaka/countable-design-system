@@ -309,7 +309,7 @@ export default function EngagementDetail() {
         </div>
 
         {/* Content Area - Preview Mode Checklist */}
-        <div className="flex-1 overflow-auto p-6" style={{ backgroundColor: "#F5F8FA" }}>
+        <div className="flex-1 overflow-auto p-6 bg-white">
           {/* Section Title */}
           <div className="flex items-center justify-between mb-4">
             <h1 className="text-xl font-semibold text-primary">
