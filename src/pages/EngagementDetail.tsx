@@ -19,6 +19,7 @@ import {
   Calendar,
   Check,
   AlertTriangle,
+  Loader2,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -140,6 +141,7 @@ export default function EngagementDetail() {
   const { engagementId } = useParams<{ engagementId: string }>();
   const navigate = useNavigate();
   const [checklist, setChecklist] = useState<Checklist | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
   const [isCompactMode, setIsCompactMode] = useState(false);
   const [selectedQuestions, setSelectedQuestions] = useState<Set<string>>(new Set());
   const [objectiveExpanded, setObjectiveExpanded] = useState(false);
@@ -217,19 +219,30 @@ export default function EngagementDetail() {
 
   // Load checklist from localStorage - use first saved checklist or fallback
   useEffect(() => {
-    const savedChecklists = readJsonFromLocalStorage<any[]>('savedChecklists', []);
+    // Set loading state when engagement changes
+    setIsLoading(true);
+    setChecklist(null);
     
-    if (Array.isArray(savedChecklists) && savedChecklists.length > 0) {
-      // Use the first saved checklist's data
-      const firstChecklist = savedChecklists[0];
-      if (firstChecklist?.data) {
-        setChecklist(firstChecklist.data);
-        return;
+    // Simulate loading delay for better UX feedback
+    const loadTimer = setTimeout(() => {
+      const savedChecklists = readJsonFromLocalStorage<any[]>('savedChecklists', []);
+      
+      if (Array.isArray(savedChecklists) && savedChecklists.length > 0) {
+        // Use the first saved checklist's data
+        const firstChecklist = savedChecklists[0];
+        if (firstChecklist?.data) {
+          setChecklist(firstChecklist.data);
+          setIsLoading(false);
+          return;
+        }
       }
-    }
-    
-    // Fallback to sample checklist if no saved checklists exist
-    setChecklist(fallbackChecklist);
+      
+      // Fallback to sample checklist if no saved checklists exist
+      setChecklist(fallbackChecklist);
+      setIsLoading(false);
+    }, 500);
+
+    return () => clearTimeout(loadTimer);
   }, [engagementId]);
 
   // Listen for real-time sync events from templates page (same tab)
@@ -574,16 +587,26 @@ export default function EngagementDetail() {
           </div>
 
           {/* Monday Board View in Preview Mode */}
-          <div className="bg-white rounded-lg shadow-sm">
-            <MondayBoardView
-              checklist={checklist}
-              onUpdate={handleChecklistUpdate}
-              isPreviewMode={true}
-              isCompactMode={isCompactMode}
-              selectedQuestions={selectedQuestions}
-              onSelectionChange={setSelectedQuestions}
-            />
-          </div>
+          {isLoading ? (
+            <div className="bg-white rounded-lg shadow-sm p-12 flex flex-col items-center justify-center gap-4">
+              <Loader2 className="h-8 w-8 text-primary animate-spin" />
+              <div className="text-center">
+                <p className="text-sm font-medium text-foreground">Loading engagement checklist...</p>
+                <p className="text-xs text-muted-foreground mt-1">Please wait while we fetch the data</p>
+              </div>
+            </div>
+          ) : (
+            <div className="bg-white rounded-lg shadow-sm">
+              <MondayBoardView
+                checklist={checklist}
+                onUpdate={handleChecklistUpdate}
+                isPreviewMode={true}
+                isCompactMode={isCompactMode}
+                selectedQuestions={selectedQuestions}
+                onSelectionChange={setSelectedQuestions}
+              />
+            </div>
+          )}
             </div>
           </div>
 
