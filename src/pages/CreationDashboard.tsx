@@ -47,7 +47,7 @@ function CreationOption({
   badge,
   onClick
 }: CreationOptionProps) {
-  return <button onClick={onClick} className="group relative flex flex-col bg-[#F5F8FA] rounded-xl p-4 hover:shadow-lg transition-all duration-200 text-left h-full">
+  return <button onClick={onClick} className="group relative flex flex-col bg-[#F5F8FA] rounded-xl p-4 shadow-md hover:shadow-lg transition-all duration-200 text-left h-full">
       <div className={`w-full aspect-[4/3] rounded-lg mb-4 flex items-center justify-center ${iconBg}`}>
         <div className="transition-transform duration-500 group-hover:rotate-[360deg]">
           {icon}
