@@ -8,9 +8,16 @@ import {
   Triangle,
   FileSpreadsheet,
   PencilLine,
+  Settings2,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { Layout } from "@/components/Layout";
 import { MondayBoardView } from "@/components/MondayBoardView";
 import { FloatingActionBar } from "@/components/FloatingActionBar";
@@ -281,20 +288,24 @@ export default function EngagementDetail() {
             </Badge>
           </div>
 
-          {/* Right side - Action buttons */}
-          <div className="flex items-center gap-2">
-            {headerActions.map((action) => (
-              <Button
-                key={action.id}
-                variant="outline"
-                size="sm"
-                className="h-8 px-3 text-xs font-medium"
-              >
-                <action.icon className="h-3.5 w-3.5 mr-1.5" />
-                {action.label}
+          {/* Right side - Tools dropdown */}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline" size="sm" className="h-8 px-3 text-xs font-medium">
+                <Settings2 className="h-3.5 w-3.5 mr-1.5" />
+                Tools
+                <ChevronDown className="h-3 w-3 ml-1.5" />
               </Button>
-            ))}
-          </div>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-48 bg-card border shadow-lg z-50">
+              {headerActions.map((action) => (
+                <DropdownMenuItem key={action.id} className="flex items-center gap-2 cursor-pointer">
+                  <action.icon className="h-4 w-4 text-muted-foreground" />
+                  <span>{action.label}</span>
+                </DropdownMenuItem>
+              ))}
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
 
         {/* Content Area - Preview Mode Checklist */}
