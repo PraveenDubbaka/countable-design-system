@@ -161,15 +161,15 @@ const IntegrationBadge = ({
 export default function Dashboard() {
   const [searchQuery, setSearchQuery] = useState("");
   return <Layout title="Dashboard">
-      <div className="flex-1 p-6 overflow-auto" style={{
+      <div className="flex-1 p-6 overflow-hidden" style={{
       backgroundColor: "#F5F8FA"
     }}>
 
-      <div className="flex gap-6">
+      <div className="flex gap-6 h-full overflow-hidden">
         {/* Main Content */}
-        <div className="flex-1 space-y-5">
+        <div className="flex-1 min-w-0 space-y-5 overflow-hidden">
           {/* Stats Cards - Clean card style */}
-          <div className="grid grid-cols-5 gap-3">
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
             {stats.map((stat, index) => <div key={index} className="bg-white rounded-lg p-4 shadow-sm hover:shadow-md transition-shadow">
                 <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">{stat.label}</p>
                 <p className="text-2xl font-bold text-primary mt-1">{stat.value}</p>
@@ -246,7 +246,7 @@ export default function Dashboard() {
         </div>
 
         {/* Right Sidebar */}
-        <div className="w-72 space-y-4">
+        <div className="w-72 flex-shrink-0 space-y-4 overflow-y-auto">
           {/* Charts Row */}
           <div className="flex gap-3">
             {/* Team Members Chart */}
