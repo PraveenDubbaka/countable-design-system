@@ -272,7 +272,6 @@ export function ReorderModal({ isOpen, onClose, checklist, onUpdate }: ReorderMo
                 <Checkbox
                   checked={selectedItems.has(item.id)}
                   onCheckedChange={() => toggleItem(item.id)}
-                  className={item.type === 'section' ? 'border-amber-600 data-[state=checked]:bg-amber-600' : ''}
                 />
                 <span className={`text-sm flex-1 ${item.type === 'section' ? 'font-semibold text-foreground' : 'text-muted-foreground'}`}>
                   {item.type === 'section' ? `${item.hierarchicalNumber} ` : `${item.hierarchicalNumber}. `}{item.label}
