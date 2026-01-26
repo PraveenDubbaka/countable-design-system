@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Search, ChevronDown, FileText, MessageSquare, Send, Users, Building2 } from "lucide-react";
+import { Search, ChevronDown, FileText, MessageSquare, Send } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from "recharts";
@@ -161,15 +161,15 @@ const IntegrationBadge = ({
 export default function Dashboard() {
   const [searchQuery, setSearchQuery] = useState("");
   return <Layout title="Dashboard">
-      <div className="flex-1 p-6 overflow-hidden" style={{
+      <div className="flex-1 p-6 overflow-auto" style={{
       backgroundColor: "#F5F8FA"
     }}>
 
-      <div className="flex gap-6 h-full overflow-hidden">
+      <div className="flex gap-6">
         {/* Main Content */}
-        <div className="flex-1 min-w-0 space-y-5 overflow-hidden">
+        <div className="flex-1 space-y-5">
           {/* Stats Cards - Clean card style */}
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
+          <div className="grid grid-cols-5 gap-3">
             {stats.map((stat, index) => <div key={index} className="bg-white rounded-lg p-4 shadow-sm hover:shadow-md transition-shadow">
                 <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">{stat.label}</p>
                 <p className="text-2xl font-bold text-primary mt-1">{stat.value}</p>
@@ -187,7 +187,9 @@ export default function Dashboard() {
               </div>
               <div className="relative">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground icon-search" />
-                <Input placeholder="Search Engagement" value={searchQuery} onChange={e => setSearchQuery(e.target.value)} className="pl-9 w-56 h-9 text-sm border-0 shadow-sm focus:ring-1 focus:ring-primary/30" style={{ backgroundColor: "#FAFBFC" }} />
+                <Input placeholder="Search Engagement" value={searchQuery} onChange={e => setSearchQuery(e.target.value)} className="pl-9 w-56 h-9 text-sm border-0 shadow-sm focus:ring-1 focus:ring-primary/30" style={{
+                  backgroundColor: "#FAFBFC"
+                }} />
               </div>
             </div>
 
@@ -195,7 +197,9 @@ export default function Dashboard() {
             <div className="flex-1 overflow-y-auto overflow-x-auto">
               <table className="w-full">
                 <thead className="sticky top-0 z-10">
-                  <tr style={{ backgroundColor: "color(srgb-linear 0.76 0.82 0.86)" }}>
+                  <tr style={{
+                    backgroundColor: "color(srgb-linear 0.76 0.82 0.86)"
+                  }}>
                     <th className="text-left px-5 py-3 text-xs font-semibold text-muted-foreground uppercase tracking-wider">Engagement ID</th>
                     <th className="text-left px-5 py-3 text-xs font-semibold text-muted-foreground uppercase tracking-wider">Client Name</th>
                     <th className="text-left px-5 py-3 text-xs font-semibold text-muted-foreground uppercase tracking-wider">Year End</th>
@@ -246,7 +250,7 @@ export default function Dashboard() {
         </div>
 
         {/* Right Sidebar */}
-        <div className="w-72 flex-shrink-0 space-y-4 overflow-y-auto">
+        <div className="w-72 space-y-4">
           {/* Charts Row */}
           <div className="flex gap-3">
             {/* Team Members Chart */}
@@ -271,7 +275,6 @@ export default function Dashboard() {
                   </div>)}
               </div>
               <Button variant="ghost" size="sm" className="w-full mt-2 h-8 text-xs text-primary hover:bg-primary/5 font-medium">
-                <Users className="h-3.5 w-3.5" />
                 View Team
               </Button>
             </div>
@@ -290,7 +293,7 @@ export default function Dashboard() {
                 </ResponsiveContainer>
               </div>
               <div className="flex flex-wrap gap-1.5 mt-2">
-                {clientsData.map((item, index) => <div key={index} className="flex items-center gap-1">
+                {clientsData.map((item, index) => <div key={index} className="gap-1 flex-col flex items-start justify-start">
                     <div className="w-1.5 h-1.5 rounded-full" style={{
                     backgroundColor: item.color
                   }} />
@@ -298,7 +301,6 @@ export default function Dashboard() {
                   </div>)}
               </div>
               <Button variant="ghost" size="sm" className="w-full mt-2 h-8 text-xs text-primary hover:bg-primary/5 font-medium">
-                <Building2 className="h-3.5 w-3.5" />
                 View Clients
               </Button>
             </div>
