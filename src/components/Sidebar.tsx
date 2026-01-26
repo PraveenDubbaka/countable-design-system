@@ -776,9 +776,11 @@ export function Sidebar() {
                     onChange={(e) => setSearchQuery(e.target.value)}
                   />
                 </div>
-                <Button size="icon" variant="ghost" className="h-8 w-8 hover:bg-white/50">
-                  <Expand className="h-4 w-4 icon-bounce" />
-                </Button>
+                <button className="h-8 w-8 rounded-md flex items-center justify-center bg-[#E1EEFA] hover:bg-[#d0e4f5] transition-colors">
+                  <svg width="18" height="18" viewBox="0 0 37 37" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M19.7221 16.9441L24.5833 12.083M24.5833 12.083H20.4166M24.5833 12.083V16.2497M16.9444 19.7219L12.0833 24.583M12.0833 24.583H16.2499M12.0833 24.583L12.0833 20.4163" stroke="#074075" strokeWidth="1.38889" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                </button>
                 <Button size="icon" className="h-8 w-8 bg-primary hover:bg-primary/90 shadow-sm">
                   <Plus className="h-4 w-4 text-primary-foreground icon-plus" />
                 </Button>
