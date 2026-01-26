@@ -129,7 +129,7 @@ export function EngagementRightPanel({ className }: EngagementRightPanelProps) {
                 <TabsList className="w-full h-9 p-0.5 bg-muted/50">
                   <TabsTrigger value="all" className="flex-1 text-xs h-full">All Requests</TabsTrigger>
                   <TabsTrigger value="available" className="flex-1 text-xs h-full">Available</TabsTrigger>
-                  <TabsTrigger value="backlog" className="flex-1 text-xs h-full">Backlog</TabsTrigger>
+                  <TabsTrigger value="backlog" className="flex-1 text-xs h-full">Batch Requests</TabsTrigger>
                 </TabsList>
                 <TabsContent value="all" className="mt-4">
                   {/* Empty State */}
