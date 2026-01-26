@@ -256,22 +256,25 @@ export function ReorderModal({ isOpen, onClose, checklist, onUpdate }: ReorderMo
             </div>
           </div>
 
-          <div className="max-h-80 overflow-y-auto space-y-1 border rounded-lg p-2">
+          <div className="max-h-80 overflow-y-auto space-y-2 border rounded-lg p-2">
             {flatItems.map((item, index) => (
               <label
                 key={item.id}
                 className={`flex items-center gap-3 py-2 px-3 rounded-lg cursor-pointer transition-colors ${
                   item.type === 'section' 
-                    ? 'bg-muted/50 border-l-4 border-primary hover:bg-muted' 
+                    ? 'bg-[#F5F8FA] border border-[#E8EDF2] shadow-sm hover:shadow-md' 
                     : 'ml-6 hover:bg-muted/50'
-                } ${selectedItems.has(item.id) ? 'bg-primary/10 border border-primary/30' : ''}`}
+                } ${selectedItems.has(item.id) ? 'ring-2 ring-primary ring-offset-1' : ''}`}
               >
+                {item.type === 'section' && (
+                  <div className="w-1 h-5 bg-amber-600 rounded-full shrink-0" />
+                )}
                 <Checkbox
                   checked={selectedItems.has(item.id)}
                   onCheckedChange={() => toggleItem(item.id)}
-                  className={item.type === 'section' ? 'border-primary data-[state=checked]:bg-primary' : ''}
+                  className={item.type === 'section' ? 'border-amber-600 data-[state=checked]:bg-amber-600' : ''}
                 />
-                <span className={`text-sm flex-1 ${item.type === 'section' ? 'font-semibold text-primary' : 'text-muted-foreground'}`}>
+                <span className={`text-sm flex-1 ${item.type === 'section' ? 'font-semibold text-foreground' : 'text-muted-foreground'}`}>
                   {item.type === 'section' ? `${item.hierarchicalNumber} ` : `${item.hierarchicalNumber}. `}{item.label}
                 </span>
               </label>
