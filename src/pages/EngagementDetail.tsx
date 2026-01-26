@@ -527,25 +527,25 @@ export default function EngagementDetail() {
           </div>
             </div>
           </div>
-        </div>
 
-        {/* Floating Action Bar for Preview Mode */}
-        <FloatingActionBar
-          checklist={checklist}
-          onUpdate={handleChecklistUpdate}
-          onCollapseSections={handleCollapseSections}
-          onExpandSections={handleExpandSections}
-          onCollapseQuestions={handleCollapseQuestions}
-          onExpandQuestions={handleExpandQuestions}
-          allSectionsCollapsed={allSectionsCollapsed}
-          allQuestionsCollapsed={allQuestionsCollapsed}
-          isCompactMode={isCompactMode}
-          onToggleCompactMode={handleToggleCompactMode}
-          selectedQuestions={selectedQuestions}
-          onBulkDelete={handleBulkDelete}
-          onAddCategory={handleAddCategory}
-          isPreviewMode={true}
-        />
+          {/* Floating Action Bar for Preview Mode - Inside content area */}
+          <FloatingActionBar
+            checklist={checklist}
+            onUpdate={handleChecklistUpdate}
+            onCollapseSections={handleCollapseSections}
+            onExpandSections={handleExpandSections}
+            onCollapseQuestions={handleCollapseQuestions}
+            onExpandQuestions={handleExpandQuestions}
+            allSectionsCollapsed={allSectionsCollapsed}
+            allQuestionsCollapsed={allQuestionsCollapsed}
+            isCompactMode={isCompactMode}
+            onToggleCompactMode={handleToggleCompactMode}
+            selectedQuestions={selectedQuestions}
+            onBulkDelete={handleBulkDelete}
+            onAddCategory={handleAddCategory}
+            isPreviewMode={true}
+          />
+        </div>
 
         {/* Right Panel - Fixed Position */}
         <EngagementRightPanel />
