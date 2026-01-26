@@ -904,7 +904,7 @@ function SortableSubItemRow({
 
 
       {/* Actions - delete button */}
-      {!isPreviewMode && <div className="w-12 shrink-0 flex items-center justify-center self-center">
+      {!isPreviewMode && <div className="w-16 shrink-0 flex items-center justify-center self-center px-2">
         <button onClick={e => {
           e.stopPropagation();
           onDelete();
@@ -1265,7 +1265,7 @@ function SortableItemRow({
 
 
         {/* Actions menu */}
-        {!isPreviewMode && <div className="w-12 shrink-0 flex items-center justify-center gap-0.5 self-center">
+        {!isPreviewMode && <div className="w-16 shrink-0 flex items-center justify-center gap-0.5 self-center px-2">
           <button onClick={e => {
             e.stopPropagation();
             onAddSubItem();
@@ -1780,7 +1780,7 @@ function SortableGroup({
                   {!isPreviewMode && (!visibleColumns.explanation || !visibleColumns.reference) && <div className="w-[100px] shrink-0 px-2 py-2 text-center text-gray-400">
                       <AddColumnButton onAddColumn={handleAddColumn} visibleColumns={visibleColumns} />
                     </div>}
-                  {!isPreviewMode && <div className="w-12 shrink-0 py-2" />}
+                  {!isPreviewMode && <div className="w-16 shrink-0 py-2 px-2" />}
                 </div>
 
                 {/* Items */}
