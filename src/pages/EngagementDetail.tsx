@@ -325,7 +325,7 @@ export default function EngagementDetail() {
     >
       <div className="flex h-full overflow-hidden">
         {/* Main Content Area */}
-        <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
+        <div className="flex-1 flex flex-col min-w-0 overflow-hidden relative">
           {/* Top Header Bar with breadcrumb and actions */}
         <div className="flex items-center justify-between px-4 py-1.5 border-b border-border bg-gradient-to-r from-card via-card to-secondary/20">
           {/* Left side - Interactive Breadcrumb */}
