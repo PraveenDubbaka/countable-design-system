@@ -905,12 +905,19 @@ function SortableSubItemRow({
 
       {/* Actions - delete button */}
       {!isPreviewMode && <div className="w-16 shrink-0 flex items-center justify-center self-center px-2">
-        <button onClick={e => {
-          e.stopPropagation();
-          onDelete();
-        }} className="p-1 rounded hover:bg-[#EDF2F7] text-gray-400 hover:text-red-500 transition-colors opacity-0 group-hover:opacity-100">
-          <Trash2 className="h-4 w-4" />
-        </button>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <button onClick={e => {
+              e.stopPropagation();
+              onDelete();
+            }} className="p-1.5 rounded hover:bg-[#EDF2F7] text-gray-400 hover:text-red-500 transition-colors opacity-0 group-hover:opacity-100">
+              <Trash2 className="h-5 w-5" />
+            </button>
+          </TooltipTrigger>
+          <TooltipContent side="top" className="bg-white text-gray-800 border border-gray-200 shadow-lg">
+            Delete sub-item
+          </TooltipContent>
+        </Tooltip>
       </div>}
     </div>;
 }
@@ -1211,20 +1218,20 @@ function SortableItemRow({
         </div>
 
         {/* Response column with inline type selector and response field */}
-        <div className="flex-1 min-w-0 px-2 py-2 border-l border-[#E8EDF2] flex items-stretch" style={{
+        <div className="flex-1 min-w-0 px-2 py-2 border-l border-[#E8EDF2] flex items-stretch overflow-hidden" style={{
         flexBasis: columnWidths.response,
         maxWidth: columnWidths.response
       }}>
-          <div className="flex items-center gap-2 w-full">
+          <div className="flex items-center gap-2 w-full overflow-hidden">
             <ResponseTypeDropdown currentType={item.answerType} onTypeChange={handleAnswerTypeChange} disabled={isPreviewMode} />
-            <div className="flex-1 min-w-0">
+            <div className="flex-1 min-w-0 overflow-hidden">
               {renderResponseField()}
             </div>
           </div>
         </div>
 
         {/* Additional Explanation column - conditionally rendered */}
-        {visibleColumns.explanation && <div className="flex-1 min-w-0 px-2 py-2 border-l border-[#E8EDF2] flex items-center" style={{
+        {visibleColumns.explanation && <div className="flex-1 min-w-0 px-2 py-2 border-l border-[#E8EDF2] flex items-center overflow-hidden" style={{
         flexBasis: columnWidths.explanation,
         maxWidth: columnWidths.explanation
       }}>
@@ -1250,7 +1257,7 @@ function SortableItemRow({
           </div>}
 
         {/* Reference column - conditionally rendered */}
-        {visibleColumns.reference && <div className="flex-1 min-w-0 px-2 py-2 flex items-center border-l border-[#E8EDF2]" style={{
+        {visibleColumns.reference && <div className="flex-1 min-w-0 px-2 py-2 flex items-center border-l border-[#E8EDF2] overflow-hidden" style={{
         flexBasis: columnWidths.reference,
         maxWidth: columnWidths.reference
       }}>
@@ -1266,16 +1273,23 @@ function SortableItemRow({
 
         {/* Actions menu */}
         {!isPreviewMode && <div className="w-16 shrink-0 flex items-center justify-center gap-0.5 self-center px-2">
-          <button onClick={e => {
-            e.stopPropagation();
-            onAddSubItem();
-          }} className="p-1.5 rounded hover:bg-[#EDF2F7] opacity-0 group-hover:opacity-100 transition-all text-gray-400 hover:text-gray-700" title="Add sub-item">
-            <PlusCircle className="h-4 w-4" />
-          </button>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <button onClick={e => {
+                e.stopPropagation();
+                onAddSubItem();
+              }} className="p-1.5 rounded hover:bg-[#EDF2F7] opacity-0 group-hover:opacity-100 transition-all text-gray-400 hover:text-gray-700">
+                <PlusCircle className="h-5 w-5" />
+              </button>
+            </TooltipTrigger>
+            <TooltipContent side="top" className="bg-white text-gray-800 border border-gray-200 shadow-lg">
+              Add sub-item
+            </TooltipContent>
+          </Tooltip>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <button onClick={e => e.stopPropagation()} className="p-1.5 rounded hover:bg-[#EDF2F7] opacity-0 group-hover:opacity-100 transition-all">
-                <MoreHorizontal className="h-4 w-4 text-gray-400" />
+              <button onClick={e => e.stopPropagation()} className="p-1.5 rounded hover:bg-[#EDF2F7] opacity-0 group-hover:opacity-100 transition-all" title="More actions">
+                <MoreHorizontal className="h-5 w-5 text-gray-400" />
               </button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-48 bg-white z-50">
