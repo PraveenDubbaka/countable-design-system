@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Search, ChevronDown, FileText, MessageSquare, Send } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -159,6 +160,7 @@ const IntegrationBadge = ({
   return null;
 };
 export default function Dashboard() {
+  const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState("");
   return <Layout title="Dashboard">
       <div className="flex-1 p-6 overflow-auto" style={{
@@ -211,7 +213,10 @@ export default function Dashboard() {
                 <tbody className="divide-y divide-gray-100">
                   {engagements.map((engagement, idx) => <tr key={engagement.id} className="hover:bg-[#F8FAFC] transition-colors group">
                       <td className="px-5 py-3">
-                        <span className="text-sm text-primary font-medium cursor-pointer hover:underline">
+                        <span 
+                          className="text-sm text-primary font-medium cursor-pointer hover:underline"
+                          onClick={() => navigate(`/engagements/${engagement.id}`)}
+                        >
                           {engagement.id}
                         </span>
                       </td>
