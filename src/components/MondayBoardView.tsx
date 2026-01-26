@@ -906,9 +906,9 @@ function SortableSubItemRow({
         <Tooltip>
           <TooltipTrigger asChild>
             <button onClick={e => {
-              e.stopPropagation();
-              onDelete();
-            }} className="p-1.5 rounded hover:bg-[#EDF2F7] text-gray-400 hover:text-red-500 transition-colors opacity-0 group-hover:opacity-100">
+            e.stopPropagation();
+            onDelete();
+          }} className="p-1.5 rounded hover:bg-[#EDF2F7] text-gray-400 hover:text-red-500 transition-colors opacity-0 group-hover:opacity-100">
               <Trash2 className="h-5 w-5" />
             </button>
           </TooltipTrigger>
@@ -1145,11 +1145,11 @@ function SortableItemRow({
   return <div ref={setNodeRef} style={style} className={`border-t border-[#E0E6ED] relative ${isDragging ? 'z-10' : ''}`}>
       {/* Drop indicator line - shows above item when hovering */}
       {isValidDropTarget && <div className="absolute -top-[2px] left-0 right-0 h-1 bg-primary rounded-full z-20 shadow-[0_0_8px_rgba(59,130,246,0.5)]" />}
-      {/* Main item row - full row is draggable (enabled in preview mode too) */}
-      <div {...!isEditingName ? {
+      {/* Main item row - full row is draggable */}
+      <div {...!isPreviewMode && !isEditingName ? {
       ...attributes,
       ...listeners
-    } : {}} className={`group flex items-stretch hover:bg-[#EDF2F7] transition-all border-b border-[#E8EDF2] ${isSelected ? 'bg-[#EDF2F7]' : ''} ${!isEditingName ? 'cursor-grab active:cursor-grabbing' : ''} ${isDragging ? 'opacity-50 ring-2 ring-primary ring-offset-1' : ''} ${isValidDropTarget ? 'bg-primary/5' : ''}`}>
+    } : {}} className={`group flex items-stretch hover:bg-[#EDF2F7] transition-all border-b border-[#E8EDF2] ${isSelected ? 'bg-[#EDF2F7]' : ''} ${!isPreviewMode && !isEditingName ? 'cursor-grab active:cursor-grabbing' : ''} ${isDragging ? 'opacity-50 ring-2 ring-primary ring-offset-1' : ''} ${isValidDropTarget ? 'bg-primary/5' : ''}`}>
         {/* Checkbox */}
         <div className="w-10 shrink-0 flex items-center justify-center self-center">
           <Checkbox checked={isSelected} onCheckedChange={checked => onSelectionChange(checked === true)} className="h-4 w-4 border-gray-400" />
@@ -1272,9 +1272,9 @@ function SortableItemRow({
           <Tooltip>
             <TooltipTrigger asChild>
               <button onClick={e => {
-                e.stopPropagation();
-                onAddSubItem();
-              }} className="p-1.5 rounded hover:bg-[#EDF2F7] opacity-0 group-hover:opacity-100 transition-all text-gray-400 hover:text-gray-700">
+              e.stopPropagation();
+              onAddSubItem();
+            }} className="p-1.5 rounded hover:bg-[#EDF2F7] opacity-0 group-hover:opacity-100 transition-all text-gray-400 hover:text-gray-700">
                 <PlusCircle className="h-5 w-5" />
               </button>
             </TooltipTrigger>
@@ -1289,20 +1289,19 @@ function SortableItemRow({
               </button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-48 bg-white z-50">
-              <div 
-                className="flex items-center justify-between px-2 py-1.5 text-sm text-gray-700 hover:bg-[#EDF2F7] rounded-sm cursor-pointer"
-                onClick={(e) => {
-                  e.preventDefault();
-                  e.stopPropagation();
-                  onUpdate({ ...item, required: !item.required });
-                }}
-              >
+              <div className="flex items-center justify-between px-2 py-1.5 text-sm text-gray-700 hover:bg-[#EDF2F7] rounded-sm cursor-pointer" onClick={e => {
+              e.preventDefault();
+              e.stopPropagation();
+              onUpdate({
+                ...item,
+                required: !item.required
+              });
+            }}>
                 <span>Required</span>
-                <Switch 
-                  checked={item.required || false} 
-                  onCheckedChange={(checked) => onUpdate({ ...item, required: checked })}
-                  className="h-4 w-8 data-[state=checked]:bg-primary data-[state=unchecked]:bg-gray-300"
-                />
+                <Switch checked={item.required || false} onCheckedChange={checked => onUpdate({
+                ...item,
+                required: checked
+              })} className="h-4 w-8 data-[state=checked]:bg-primary data-[state=unchecked]:bg-gray-300" />
               </div>
               <DropdownMenuSeparator className="bg-[#EDF2F7]" />
               <DropdownMenuItem onClick={onAddSubItem} className="text-gray-700 focus:bg-[#EDF2F7] focus:text-gray-900">
@@ -1387,7 +1386,7 @@ function SortableItemRow({
                   <Checkbox disabled className="h-4 w-4 border-gray-300 bg-white opacity-30" />
                 </div>
                 <button onClick={onAddSubItem} className="flex-1 flex items-center gap-2 px-3 py-2.5 text-sm text-gray-400 hover:text-blue-500 transition-colors text-left">
-                  + Add Sub-question
+                  + Add 
                 </button>
               </div>}
           </div>
@@ -1442,7 +1441,6 @@ function ResizableColumnHeader({
   const headerRef = useRef<HTMLDivElement>(null);
   const startXRef = useRef(0);
   const startWidthRef = useRef(0);
-
   const handleMouseDown = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
@@ -1456,11 +1454,10 @@ function ResizableColumnHeader({
   useEffect(() => {
     if (!isResizing || !containerRef?.current) return;
     const containerWidth = containerRef.current.offsetWidth;
-    
     const handleMove = (e: MouseEvent) => {
       const delta = e.clientX - startXRef.current;
       const newWidthPx = Math.max(minWidth, Math.min(maxWidth, startWidthRef.current + delta));
-      const newWidthPercent = Math.round((newWidthPx / containerWidth) * 100);
+      const newWidthPercent = Math.round(newWidthPx / containerWidth * 100);
       onWidthChange?.(`${newWidthPercent}%`);
     };
     const handleUp = () => {
@@ -1473,7 +1470,6 @@ function ResizableColumnHeader({
       document.removeEventListener('mouseup', handleUp);
     };
   }, [isResizing, minWidth, maxWidth, onWidthChange, containerRef]);
-
   const commitLabel = () => {
     const trimmed = draftLabel.trim();
     if (trimmed && trimmed !== label && onLabelChange) {
@@ -1641,7 +1637,6 @@ function SortableGroup({
     };
     handleItemUpdate(index, updatedQuestion);
   };
-
   const handleAddItemAtPosition = (index: number, position: 'above' | 'below') => {
     const newQuestion: Question = {
       id: `q-${Date.now()}`,
@@ -1650,11 +1645,7 @@ function SortableGroup({
       required: false
     };
     const insertIndex = position === 'above' ? index : index + 1;
-    const newQuestions = [
-      ...section.questions.slice(0, insertIndex),
-      newQuestion,
-      ...section.questions.slice(insertIndex)
-    ];
+    const newQuestions = [...section.questions.slice(0, insertIndex), newQuestion, ...section.questions.slice(insertIndex)];
     onUpdate({
       ...section,
       questions: newQuestions
@@ -1701,14 +1692,10 @@ function SortableGroup({
           </h3>}
 
         <span className="text-xs text-gray-500 flex items-center gap-1">
-          {section.formLayout ? (
-            <>
+          {section.formLayout ? <>
               <LayoutGrid className="h-3 w-3" />
               {section.formLayout.columns} Column Form
-            </>
-          ) : (
-            <>{section.questions.length} Items{totalSubitems > 0 ? ` / ${totalSubitems} Subitems` : ''}</>
-          )}
+            </> : <>{section.questions.length} Items{totalSubitems > 0 ? ` / ${totalSubitems} Subitems` : ''}</>}
         </span>
 
         {!isPreviewMode && <DropdownMenu>
@@ -1718,12 +1705,10 @@ function SortableGroup({
               </button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="bg-white border-gray-200 z-50">
-              {!section.formLayout && (
-                <DropdownMenuItem onClick={onAddItem} className="text-gray-700 focus:bg-gray-100 focus:text-gray-900">
+              {!section.formLayout && <DropdownMenuItem onClick={onAddItem} className="text-gray-700 focus:bg-gray-100 focus:text-gray-900">
                   <Plus className="h-4 w-4 mr-2" />
                   Add item
-                </DropdownMenuItem>
-              )}
+                </DropdownMenuItem>}
               {!section.formLayout && <DropdownMenuSeparator className="bg-gray-200" />}
               <div className="px-2 py-1.5 text-xs font-medium text-gray-500">Add category</div>
               <DropdownMenuItem onClick={() => onAddCategoryAtPosition('above')} className="text-gray-700 focus:bg-gray-100 focus:text-gray-900 pl-4">
@@ -1746,47 +1731,43 @@ function SortableGroup({
       {/* Content */}
       {section.isExpanded && <>
           {/* Check if this is a form layout section */}
-          {section.formLayout ? (
-            <FormLayoutEditor
-              formLayout={section.formLayout}
-              onUpdate={(newFormLayout) => onUpdate({ ...section, formLayout: newFormLayout })}
-              isPreviewMode={isPreviewMode}
-            />
-          ) : (
-            <div ref={tableContainerRef} className="overflow-x-auto sm:overflow-x-visible">
+          {section.formLayout ? <FormLayoutEditor formLayout={section.formLayout} onUpdate={newFormLayout => onUpdate({
+        ...section,
+        formLayout: newFormLayout
+      })} isPreviewMode={isPreviewMode} /> : <div ref={tableContainerRef} className="overflow-x-auto sm:overflow-x-visible">
               <div className="min-w-[600px] sm:min-w-0">
                 {/* Column headers */}
                 <div className="flex items-center bg-[#F5F8FA] text-xs font-medium text-gray-500 border-b border-[#E8EDF2]">
                   <div className="w-10 shrink-0 py-2" />
                   <div className="w-8 shrink-0 py-2" />
                   <ResizableColumnHeader label={columnLabels.questions} width={columnWidths.questions} minWidth={200} maxWidth={600} onWidthChange={w => setColumnWidths(prev => ({
-                    ...prev,
-                    questions: w
-                  }))} onLabelChange={l => setColumnLabels(prev => ({
-                    ...prev,
-                    questions: l
-                  }))} isPreviewMode={isPreviewMode} containerRef={tableContainerRef} />
+              ...prev,
+              questions: w
+            }))} onLabelChange={l => setColumnLabels(prev => ({
+              ...prev,
+              questions: l
+            }))} isPreviewMode={isPreviewMode} containerRef={tableContainerRef} />
                   <ResizableColumnHeader label={columnLabels.response} width={columnWidths.response} minWidth={150} maxWidth={400} onWidthChange={w => setColumnWidths(prev => ({
-                    ...prev,
-                    response: w
-                  }))} onLabelChange={l => setColumnLabels(prev => ({
-                    ...prev,
-                    response: l
-                  }))} isPreviewMode={isPreviewMode} containerRef={tableContainerRef} />
+              ...prev,
+              response: w
+            }))} onLabelChange={l => setColumnLabels(prev => ({
+              ...prev,
+              response: l
+            }))} isPreviewMode={isPreviewMode} containerRef={tableContainerRef} />
                   {visibleColumns.explanation && <ResizableColumnHeader label={columnLabels.explanation} width={columnWidths.explanation} minWidth={150} maxWidth={400} onWidthChange={w => setColumnWidths(prev => ({
-                    ...prev,
-                    explanation: w
-                  }))} onLabelChange={l => setColumnLabels(prev => ({
-                    ...prev,
-                    explanation: l
-                  }))} onRemove={() => handleRemoveColumn('explanation')} isPreviewMode={isPreviewMode} showRemove={true} containerRef={tableContainerRef} />}
+              ...prev,
+              explanation: w
+            }))} onLabelChange={l => setColumnLabels(prev => ({
+              ...prev,
+              explanation: l
+            }))} onRemove={() => handleRemoveColumn('explanation')} isPreviewMode={isPreviewMode} showRemove={true} containerRef={tableContainerRef} />}
                   {visibleColumns.reference && <ResizableColumnHeader label={columnLabels.reference} width={columnWidths.reference} minWidth={100} maxWidth={300} onWidthChange={w => setColumnWidths(prev => ({
-                    ...prev,
-                    reference: w
-                  }))} onLabelChange={l => setColumnLabels(prev => ({
-                    ...prev,
-                    reference: l
-                  }))} onRemove={() => handleRemoveColumn('reference')} isPreviewMode={isPreviewMode} showRemove={true} containerRef={tableContainerRef} />}
+              ...prev,
+              reference: w
+            }))} onLabelChange={l => setColumnLabels(prev => ({
+              ...prev,
+              reference: l
+            }))} onRemove={() => handleRemoveColumn('reference')} isPreviewMode={isPreviewMode} showRemove={true} containerRef={tableContainerRef} />}
                   {!isPreviewMode && (!visibleColumns.explanation || !visibleColumns.reference) && <div className="w-[100px] shrink-0 px-2 py-2 text-center text-gray-400">
                       <AddColumnButton onAddColumn={handleAddColumn} visibleColumns={visibleColumns} />
                     </div>}
@@ -1795,7 +1776,7 @@ function SortableGroup({
 
                 {/* Items */}
                 <SortableContext items={itemIds} strategy={verticalListSortingStrategy}>
-                  {section.questions.map((question, idx) => <SortableItemRow key={question.id} item={question} sectionId={section.id} itemIndex={idx} onUpdate={q => handleItemUpdate(idx, q)} onDelete={() => handleItemDelete(idx)} onDuplicate={() => handleItemDuplicate(idx)} onAddSubItem={() => handleAddSubItem(idx)} onAddItemAtPosition={(position) => handleAddItemAtPosition(idx, position)} isPreviewMode={isPreviewMode} isCompactMode={isCompactMode} onSubItemsReorder={onSubItemsReorder} visibleColumns={visibleColumns} columnWidths={columnWidths} sectionNumber={sectionIndex + 1} isSelected={selectedQuestions.has(question.id)} onSelectionChange={selected => onSelectionChange(question.id, selected)} />)}
+                  {section.questions.map((question, idx) => <SortableItemRow key={question.id} item={question} sectionId={section.id} itemIndex={idx} onUpdate={q => handleItemUpdate(idx, q)} onDelete={() => handleItemDelete(idx)} onDuplicate={() => handleItemDuplicate(idx)} onAddSubItem={() => handleAddSubItem(idx)} onAddItemAtPosition={position => handleAddItemAtPosition(idx, position)} isPreviewMode={isPreviewMode} isCompactMode={isCompactMode} onSubItemsReorder={onSubItemsReorder} visibleColumns={visibleColumns} columnWidths={columnWidths} sectionNumber={sectionIndex + 1} isSelected={selectedQuestions.has(question.id)} onSelectionChange={selected => onSelectionChange(question.id, selected)} />)}
                 </SortableContext>
 
                 {/* Add item button */}
@@ -1807,8 +1788,7 @@ function SortableGroup({
                     </button>
                   </div>}
               </div>
-            </div>
-          )}
+            </div>}
         </>}
     </div>;
 }
@@ -1874,7 +1854,6 @@ export function MondayBoardView({
       sections: newSections
     });
   };
-
   const handleAddCategoryAtPosition = (sectionIndex: number, position: 'above' | 'below') => {
     const newSection: Section = {
       id: `section-${Date.now()}`,
@@ -1883,11 +1862,7 @@ export function MondayBoardView({
       isExpanded: true
     };
     const insertIndex = position === 'above' ? sectionIndex : sectionIndex + 1;
-    const newSections = [
-      ...checklist.sections.slice(0, insertIndex),
-      newSection,
-      ...checklist.sections.slice(insertIndex)
-    ];
+    const newSections = [...checklist.sections.slice(0, insertIndex), newSection, ...checklist.sections.slice(insertIndex)];
     onUpdate({
       ...checklist,
       sections: newSections
@@ -2081,7 +2056,7 @@ export function MondayBoardView({
   return <DndContext sensors={sensors} collisionDetection={closestCenter} onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
       <div className="space-y-4">
         <SortableContext items={sectionIds} strategy={verticalListSortingStrategy}>
-          {checklist.sections.map((section, idx) => <SortableGroup key={section.id} section={section} sectionIndex={idx} onUpdate={s => handleSectionUpdate(idx, s)} onDelete={() => handleSectionDelete(idx)} onAddItem={() => handleAddItem(idx)} onAddCategoryAtPosition={(position) => handleAddCategoryAtPosition(idx, position)} isPreviewMode={isPreviewMode} isCompactMode={isCompactMode} onItemsReorder={handleItemsReorder} onSubItemsReorder={handleSubItemsReorder} selectedQuestions={selectedQuestions} onSelectionChange={handleSelectionChange} />)}
+          {checklist.sections.map((section, idx) => <SortableGroup key={section.id} section={section} sectionIndex={idx} onUpdate={s => handleSectionUpdate(idx, s)} onDelete={() => handleSectionDelete(idx)} onAddItem={() => handleAddItem(idx)} onAddCategoryAtPosition={position => handleAddCategoryAtPosition(idx, position)} isPreviewMode={isPreviewMode} isCompactMode={isCompactMode} onItemsReorder={handleItemsReorder} onSubItemsReorder={handleSubItemsReorder} selectedQuestions={selectedQuestions} onSelectionChange={handleSelectionChange} />)}
         </SortableContext>
       </div>
       
