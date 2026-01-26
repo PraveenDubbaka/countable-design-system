@@ -808,9 +808,9 @@ function SortableSubItemRow({
       </div>
 
       {/* Sub-item name - width matches header */}
-      <div className="shrink-0 px-3 py-2.5 flex items-center gap-2 border-l border-[#E8EDF2]" style={{
-      width: columnWidths.questions,
-      minWidth: 200
+      <div className="flex-1 min-w-0 px-3 py-2.5 flex items-center gap-2 border-l border-[#E8EDF2]" style={{
+      flexBasis: columnWidths.questions,
+      maxWidth: columnWidths.questions
     }}>
         <span className="text-xs font-medium text-gray-500 shrink-0">{sectionNumber}.{itemNumber}.{index + 1}</span>
         {isEditingName && !isPreviewMode ? <RichTextQuestionEditor value={subItem.text} onChange={newValue => {
@@ -850,9 +850,9 @@ function SortableSubItemRow({
       </div>
 
       {/* Response column with inline type selector and response field */}
-      <div className="shrink-0 px-2 py-2 border-l border-[#E8EDF2] flex items-stretch" style={{
-      width: columnWidths.response,
-      minWidth: 150
+      <div className="flex-1 min-w-0 px-2 py-2 border-l border-[#E8EDF2] flex items-stretch" style={{
+      flexBasis: columnWidths.response,
+      maxWidth: columnWidths.response
     }}>
         <div className="flex items-center gap-2 w-full">
           <ResponseTypeDropdown currentType={subItem.answerType} onTypeChange={handleAnswerTypeChange} disabled={isPreviewMode} />
@@ -863,9 +863,9 @@ function SortableSubItemRow({
       </div>
 
       {/* Additional Explanation column - conditionally rendered */}
-      {visibleColumns.explanation && <div className="shrink-0 px-2 py-2 border-l border-[#E8EDF2] flex items-center" style={{
-      width: columnWidths.explanation,
-      minWidth: 150
+      {visibleColumns.explanation && <div className="flex-1 min-w-0 px-2 py-2 border-l border-[#E8EDF2] flex items-center" style={{
+      flexBasis: columnWidths.explanation,
+      maxWidth: columnWidths.explanation
     }}>
           {(subItem as any).showExplanation !== false ? <div className="relative group/exp w-full">
               <AITextarea value={subItem.explanation || ''} onChange={val => onUpdate({
@@ -889,9 +889,9 @@ function SortableSubItemRow({
         </div>}
 
       {/* Reference column - conditionally rendered */}
-      {visibleColumns.reference && <div className="shrink-0 px-2 py-2 flex items-center border-l border-[#E8EDF2]" style={{
-      width: columnWidths.reference,
-      minWidth: 100
+      {visibleColumns.reference && <div className="flex-1 min-w-0 px-2 py-2 flex items-center border-l border-[#E8EDF2]" style={{
+      flexBasis: columnWidths.reference,
+      maxWidth: columnWidths.reference
     }}>
           <RefButton reference={(subItem as any).reference} onAttach={doc => onUpdate({
         ...subItem,
@@ -902,11 +902,9 @@ function SortableSubItemRow({
       } as any)} disabled={isPreviewMode} />
         </div>}
 
-      {/* Add column placeholder to maintain alignment - always show when columns hidden */}
-      {!isPreviewMode && (!visibleColumns.explanation || !visibleColumns.reference) && <div className="w-[100px] shrink-0" />}
 
-      {/* Actions - delete button - sticky right */}
-      {!isPreviewMode && <div className="w-16 shrink-0 flex items-center justify-center self-center sticky right-0 bg-white z-10 shadow-[-4px_0_8px_-4px_rgba(0,0,0,0.1)]">
+      {/* Actions - delete button */}
+      {!isPreviewMode && <div className="w-12 shrink-0 flex items-center justify-center self-center">
         <button onClick={e => {
           e.stopPropagation();
           onDelete();
@@ -1162,9 +1160,9 @@ function SortableItemRow({
         </div>
 
         {/* Item name */}
-        <div className="shrink-0 px-3 py-1 flex items-center gap-2 border-l border-[#E8EDF2]" style={{
-        width: columnWidths.questions,
-        minWidth: 200
+        <div className="flex-1 min-w-0 px-3 py-1 flex items-center gap-2 border-l border-[#E8EDF2]" style={{
+        flexBasis: columnWidths.questions,
+        maxWidth: columnWidths.questions
       }}>
           <span className="text-xs font-medium text-gray-500 shrink-0">
             {sectionNumber}.{itemIndex + 1}
@@ -1213,9 +1211,9 @@ function SortableItemRow({
         </div>
 
         {/* Response column with inline type selector and response field */}
-        <div className="shrink-0 px-2 py-2 border-l border-[#E8EDF2] flex items-stretch" style={{
-        width: columnWidths.response,
-        minWidth: 150
+        <div className="flex-1 min-w-0 px-2 py-2 border-l border-[#E8EDF2] flex items-stretch" style={{
+        flexBasis: columnWidths.response,
+        maxWidth: columnWidths.response
       }}>
           <div className="flex items-center gap-2 w-full">
             <ResponseTypeDropdown currentType={item.answerType} onTypeChange={handleAnswerTypeChange} disabled={isPreviewMode} />
@@ -1226,9 +1224,9 @@ function SortableItemRow({
         </div>
 
         {/* Additional Explanation column - conditionally rendered */}
-        {visibleColumns.explanation && <div className="shrink-0 px-2 py-2 border-l border-[#E8EDF2] flex items-center" style={{
-        width: columnWidths.explanation,
-        minWidth: 150
+        {visibleColumns.explanation && <div className="flex-1 min-w-0 px-2 py-2 border-l border-[#E8EDF2] flex items-center" style={{
+        flexBasis: columnWidths.explanation,
+        maxWidth: columnWidths.explanation
       }}>
             {(item as any).showExplanation !== false ? <div className="relative group/exp w-full">
                 <AITextarea value={item.explanation || ''} onChange={val => onUpdate({
@@ -1252,9 +1250,9 @@ function SortableItemRow({
           </div>}
 
         {/* Reference column - conditionally rendered */}
-        {visibleColumns.reference && <div className="shrink-0 px-2 py-2 flex items-center border-l border-[#E8EDF2]" style={{
-        width: columnWidths.reference,
-        minWidth: 100
+        {visibleColumns.reference && <div className="flex-1 min-w-0 px-2 py-2 flex items-center border-l border-[#E8EDF2]" style={{
+        flexBasis: columnWidths.reference,
+        maxWidth: columnWidths.reference
       }}>
             <RefButton reference={(item as any).reference} onAttach={doc => onUpdate({
           ...item,
@@ -1265,11 +1263,9 @@ function SortableItemRow({
         } as any)} disabled={isPreviewMode} />
           </div>}
 
-        {/* Add column placeholder to maintain alignment */}
-        {!isPreviewMode && (!visibleColumns.explanation || !visibleColumns.reference) && <div className="w-[100px] shrink-0" />}
 
-        {/* Actions menu - sticky right */}
-        {!isPreviewMode && <div className="w-16 shrink-0 flex items-center justify-center gap-1 self-center sticky right-0 bg-white z-10 shadow-[-4px_0_8px_-4px_rgba(0,0,0,0.1)]">
+        {/* Actions menu */}
+        {!isPreviewMode && <div className="w-12 shrink-0 flex items-center justify-center gap-0.5 self-center">
           <button onClick={e => {
             e.stopPropagation();
             onAddSubItem();
@@ -1477,9 +1473,9 @@ function ResizableColumnHeader({
     }
     setIsEditing(false);
   };
-  return <div ref={headerRef} className="shrink-0 px-2 py-2 flex items-center justify-between group/col relative border-l border-[#E8EDF2] first:border-l-0" style={{
-    width,
-    minWidth
+  return <div ref={headerRef} className="flex-1 min-w-0 px-2 py-2 flex items-center justify-between group/col relative border-l border-[#E8EDF2] first:border-l-0" style={{
+    flexBasis: width,
+    maxWidth: typeof width === 'string' && width.includes('%') ? width : undefined
   }}>
       {isEditing && !isPreviewMode && onLabelChange ? <input type="text" value={draftLabel} onChange={e => setDraftLabel(e.target.value)} onBlur={commitLabel} onKeyDown={e => {
       if (e.key === 'Enter') commitLabel();
@@ -1747,8 +1743,8 @@ function SortableGroup({
               isPreviewMode={isPreviewMode}
             />
           ) : (
-            <div ref={tableContainerRef} className="overflow-x-auto">
-              <div className="min-w-[800px]">
+            <div ref={tableContainerRef} className="overflow-x-auto sm:overflow-x-visible">
+              <div className="min-w-[600px] sm:min-w-0">
                 {/* Column headers */}
                 <div className="flex items-center bg-[#F5F8FA] text-xs font-medium text-gray-500 border-b border-[#E8EDF2]">
                   <div className="w-10 shrink-0 py-2" />
@@ -1784,7 +1780,7 @@ function SortableGroup({
                   {!isPreviewMode && (!visibleColumns.explanation || !visibleColumns.reference) && <div className="w-[100px] shrink-0 px-2 py-2 text-center text-gray-400">
                       <AddColumnButton onAddColumn={handleAddColumn} visibleColumns={visibleColumns} />
                     </div>}
-                  {!isPreviewMode && <div className="w-16 shrink-0 py-2 sticky right-0 bg-[#F5F8FA] z-10" />}
+                  {!isPreviewMode && <div className="w-12 shrink-0 py-2" />}
                 </div>
 
                 {/* Items */}
