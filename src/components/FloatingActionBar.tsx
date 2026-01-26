@@ -66,8 +66,8 @@ export function FloatingActionBar({
 
   return (
     <>
-      {/* Floating pill button */}
-      <div className="fixed right-6 top-1/2 -translate-y-1/2 z-40">
+      {/* Floating pill button - positioned relative to parent container */}
+      <div className="absolute right-6 top-1/2 -translate-y-1/2 z-40 transition-all duration-300 ease-out">
         <div className="flex flex-col gap-1 bg-card border p-2 shadow-lg" style={{ borderRadius: '9999px' }}>
           {/* Collapse/Expand Sections */}
           <button
