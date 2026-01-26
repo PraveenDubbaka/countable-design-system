@@ -308,39 +308,39 @@ export default function EngagementDetail() {
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-48 bg-card border shadow-lg z-50">
               {headerActions.map((action) => (
-                <DropdownMenuItem key={action.id} className="flex items-center gap-2 cursor-pointer">
-                  <action.icon className="h-4 w-4 text-muted-foreground" />
+                <DropdownMenuItem key={action.id} className="flex items-center gap-2 cursor-pointer group">
+                  <action.icon className="h-4 w-4 text-muted-foreground group-hover:text-foreground transition-colors" />
                   <span>{action.label}</span>
                 </DropdownMenuItem>
               ))}
               <DropdownMenuSeparator />
               <DropdownMenuSub>
-                <DropdownMenuSubTrigger className="flex items-center gap-2 cursor-pointer">
-                  <Download className="h-4 w-4 text-muted-foreground" />
+                <DropdownMenuSubTrigger className="flex items-center gap-2 cursor-pointer group">
+                  <Download className="h-4 w-4 text-muted-foreground group-hover:text-foreground group-data-[state=open]:text-foreground transition-colors" />
                   <span>Export Checklist</span>
                 </DropdownMenuSubTrigger>
                 <DropdownMenuSubContent className="bg-card border shadow-lg z-50">
                   <DropdownMenuItem 
-                    className="flex items-center gap-2 cursor-pointer"
+                    className="flex items-center gap-2 cursor-pointer group"
                     onClick={() => toast.info('Exporting as PDF...')}
                   >
-                    <FileText className="h-4 w-4 text-muted-foreground" />
+                    <FileText className="h-4 w-4 text-muted-foreground group-hover:text-foreground transition-colors" />
                     <span>PDF</span>
                   </DropdownMenuItem>
                   <DropdownMenuItem 
-                    className="flex items-center gap-2 cursor-pointer"
+                    className="flex items-center gap-2 cursor-pointer group"
                     onClick={() => toast.info('Exporting as Word...')}
                   >
-                    <FileType className="h-4 w-4 text-muted-foreground" />
+                    <FileType className="h-4 w-4 text-muted-foreground group-hover:text-foreground transition-colors" />
                     <span>Word</span>
                   </DropdownMenuItem>
                 </DropdownMenuSubContent>
               </DropdownMenuSub>
               <DropdownMenuItem 
-                className="flex items-center gap-2 cursor-pointer"
+                className="flex items-center gap-2 cursor-pointer group"
                 onClick={() => setShowShareDialog(true)}
               >
-                <Share2 className="h-4 w-4 text-muted-foreground" />
+                <Share2 className="h-4 w-4 text-muted-foreground group-hover:text-foreground transition-colors" />
                 <span>Share with Client</span>
               </DropdownMenuItem>
             </DropdownMenuContent>
