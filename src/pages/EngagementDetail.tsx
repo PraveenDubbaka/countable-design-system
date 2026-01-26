@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { 
   ChevronRight, 
   ChevronDown, 
@@ -15,6 +15,9 @@ import {
   Save,
   RefreshCw,
   Trash2,
+  Building2,
+  Calendar,
+  Check,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -42,6 +45,21 @@ const engagementsData: Record<string, { id: string; client: string; type: string
   "COM-CON-Dec312024": { id: "COM-CON-Dec312024", client: "Shipping Line Inc.", type: "Compilation (COM)", yearEnd: "Dec 31, 2024", status: "In Progress" },
   "COM-PSP-Dec312023": { id: "COM-PSP-Dec312023", client: "Source 40", type: "Compilation (COM)", yearEnd: "Dec 31, 2023", status: "In Progress" },
   "COM-QB-Dec312025": { id: "COM-QB-Dec312025", client: "qb 40.1", type: "Compilation (COM)", yearEnd: "Dec 31, 2025", status: "In Progress" },
+  "AUD-SL-Mar312024": { id: "AUD-SL-Mar312024", client: "Shipping Line Inc.", type: "Audit (AUD)", yearEnd: "Mar 31, 2024", status: "Completed" },
+  "REV-SL-Jun302024": { id: "REV-SL-Jun302024", client: "Shipping Line Inc.", type: "Review (REV)", yearEnd: "Jun 30, 2024", status: "In Progress" },
+  "COM-S40-Jun302024": { id: "COM-S40-Jun302024", client: "Source 40", type: "Compilation (COM)", yearEnd: "Jun 30, 2024", status: "Not Started" },
+};
+
+// Get unique clients from engagements
+const getUniqueClients = () => {
+  const clients = new Set<string>();
+  Object.values(engagementsData).forEach(e => clients.add(e.client));
+  return Array.from(clients);
+};
+
+// Get engagements for a specific client
+const getEngagementsForClient = (clientName: string) => {
+  return Object.values(engagementsData).filter(e => e.client === clientName);
 };
 
 // Fallback checklist when no saved checklist exists
@@ -109,6 +127,7 @@ const headerActions = [
 
 export default function EngagementDetail() {
   const { engagementId } = useParams<{ engagementId: string }>();
+  const navigate = useNavigate();
   const [checklist, setChecklist] = useState<Checklist | null>(null);
   const [isCompactMode, setIsCompactMode] = useState(false);
   const [selectedQuestions, setSelectedQuestions] = useState<Set<string>>(new Set());
@@ -119,6 +138,24 @@ export default function EngagementDetail() {
   const displayId = engagementId || "Unknown";
   const clientName = engagement?.client || "Unknown Client";
   const status = engagement?.status || "In Progress";
+
+  // Get unique clients and current client's engagements
+  const uniqueClients = useMemo(() => getUniqueClients(), []);
+  const clientEngagements = useMemo(() => getEngagementsForClient(clientName), [clientName]);
+
+  // Handle client change
+  const handleClientChange = (newClient: string) => {
+    const clientEngs = getEngagementsForClient(newClient);
+    if (clientEngs.length > 0) {
+      // Navigate to the first engagement of the selected client
+      navigate(`/engagements/${clientEngs[0].id}`);
+    }
+  };
+
+  // Handle engagement change
+  const handleEngagementChange = (newEngagementId: string) => {
+    navigate(`/engagements/${newEngagementId}`);
+  };
 
   // Load checklist from localStorage - use first saved checklist or fallback
   useEffect(() => {
@@ -283,19 +320,97 @@ export default function EngagementDetail() {
     <Layout>
       <div className="flex flex-col h-full">
         {/* Top Header Bar with breadcrumb and actions */}
-        <div className="flex items-center justify-between px-4 py-3 border-b border-border bg-card">
-          {/* Left side - Breadcrumb */}
-          <div className="flex items-center gap-2">
-            <Badge variant="outline" className="bg-primary text-primary-foreground font-semibold px-2 py-0.5">
-              COM
-            </Badge>
-            <span className="text-foreground font-medium">{clientName}</span>
+        <div className="flex items-center justify-between px-4 py-3 border-b border-border bg-gradient-to-r from-card via-card to-secondary/20">
+          {/* Left side - Interactive Breadcrumb */}
+          <div className="flex items-center gap-3">
+            {/* Client Selector */}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <button className="group flex items-center gap-2 px-3 py-1.5 rounded-lg hover:bg-primary/5 transition-colors">
+                  <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary/20 to-primary/10 flex items-center justify-center">
+                    <Building2 className="h-4 w-4 text-primary" />
+                  </div>
+                  <div className="flex flex-col items-start">
+                    <span className="text-[10px] uppercase tracking-wider text-muted-foreground font-medium">Client</span>
+                    <span className="text-sm font-semibold text-foreground group-hover:text-primary transition-colors">{clientName}</span>
+                  </div>
+                  <ChevronDown className="h-3.5 w-3.5 text-muted-foreground group-hover:text-primary transition-colors ml-1" />
+                </button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="start" className="w-56 bg-card border shadow-lg z-50">
+                <div className="px-2 py-1.5 text-xs font-medium text-muted-foreground">Select Client</div>
+                <DropdownMenuSeparator />
+                {uniqueClients.map((client) => (
+                  <DropdownMenuItem 
+                    key={client}
+                    onClick={() => handleClientChange(client)}
+                    className="flex items-center gap-2 cursor-pointer group"
+                  >
+                    <Building2 className="h-4 w-4 text-muted-foreground group-hover:text-primary-foreground transition-colors" />
+                    <span className="flex-1">{client}</span>
+                    {client === clientName && (
+                      <Check className="h-4 w-4 text-primary group-hover:text-primary-foreground" />
+                    )}
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
+
             <ChevronRight className="h-4 w-4 text-muted-foreground" />
-            <div className="flex items-center gap-1">
-              <span className="text-foreground">{displayId}</span>
-              <ChevronDown className="h-4 w-4 text-muted-foreground" />
-            </div>
-            <Badge variant="outline" className="bg-sky-50 text-sky-700 border-sky-200 text-xs">
+
+            {/* Engagement Selector */}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <button className="group flex items-center gap-2 px-3 py-1.5 rounded-lg hover:bg-primary/5 transition-colors">
+                  <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-secondary to-secondary/50 flex items-center justify-center">
+                    <FileText className="h-4 w-4 text-secondary-foreground" />
+                  </div>
+                  <div className="flex flex-col items-start">
+                    <span className="text-[10px] uppercase tracking-wider text-muted-foreground font-medium">Engagement</span>
+                    <span className="text-sm font-semibold text-foreground group-hover:text-primary transition-colors font-mono">{displayId}</span>
+                  </div>
+                  <ChevronDown className="h-3.5 w-3.5 text-muted-foreground group-hover:text-primary transition-colors ml-1" />
+                </button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="start" className="w-72 bg-card border shadow-lg z-50">
+                <div className="px-2 py-1.5 text-xs font-medium text-muted-foreground">
+                  Engagements for {clientName}
+                </div>
+                <DropdownMenuSeparator />
+                {clientEngagements.map((eng) => (
+                  <DropdownMenuItem 
+                    key={eng.id}
+                    onClick={() => handleEngagementChange(eng.id)}
+                    className="flex items-center gap-3 cursor-pointer group py-2"
+                  >
+                    <div className="flex flex-col flex-1 min-w-0">
+                      <span className="font-mono text-sm font-medium truncate">{eng.id}</span>
+                      <div className="flex items-center gap-2 mt-0.5">
+                        <Calendar className="h-3 w-3 text-muted-foreground" />
+                        <span className="text-xs text-muted-foreground">{eng.yearEnd}</span>
+                        <span className="text-xs text-muted-foreground">•</span>
+                        <span className="text-xs text-muted-foreground">{eng.type}</span>
+                      </div>
+                    </div>
+                    {eng.id === displayId && (
+                      <Check className="h-4 w-4 text-primary group-hover:text-primary-foreground flex-shrink-0" />
+                    )}
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
+
+            {/* Status Badge */}
+            <Badge 
+              variant="outline" 
+              className={`ml-2 text-xs font-medium ${
+                status === 'Completed' 
+                  ? 'bg-emerald-50 text-emerald-700 border-emerald-200' 
+                  : status === 'Not Started'
+                  ? 'bg-slate-50 text-slate-600 border-slate-200'
+                  : 'bg-sky-50 text-sky-700 border-sky-200'
+              }`}
+            >
               {status}
             </Badge>
           </div>
