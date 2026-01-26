@@ -93,6 +93,7 @@ export default function EngagementDetail() {
   const [checklist, setChecklist] = useState<Checklist | null>(null);
   const [isCompactMode, setIsCompactMode] = useState(false);
   const [selectedQuestions, setSelectedQuestions] = useState<Set<string>>(new Set());
+  const [objectiveExpanded, setObjectiveExpanded] = useState(false);
 
   const engagement = engagementId ? engagementsData[engagementId] : null;
   const displayId = engagementId || "Unknown";
@@ -291,6 +292,31 @@ export default function EngagementDetail() {
                 Delete
               </Button>
             </div>
+          </div>
+
+          {/* Objective Section */}
+          <div className="mb-6 bg-white rounded-lg overflow-hidden shadow-md border-t border-black/10">
+            <button 
+              onClick={() => setObjectiveExpanded(!objectiveExpanded)}
+              className="w-full flex items-center gap-2 bg-[#F5F8FA] px-4 py-3 text-muted-foreground hover:text-foreground transition-colors border-b border-[#E8EDF2]"
+            >
+              <ChevronDown className={`h-4 w-4 transition-transform ${objectiveExpanded ? 'rotate-180' : ''}`} />
+              <span className="text-sm font-medium">Objective</span>
+            </button>
+            
+            {objectiveExpanded && (
+              <div className="bg-white p-4">
+                {checklist.objective ? (
+                  <p className="text-sm text-foreground whitespace-pre-wrap leading-relaxed">
+                    {checklist.objective}
+                  </p>
+                ) : (
+                  <p className="text-sm text-muted-foreground italic">
+                    No objective defined
+                  </p>
+                )}
+              </div>
+            )}
           </div>
 
           {/* Monday Board View in Preview Mode */}
