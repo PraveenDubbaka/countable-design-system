@@ -146,6 +146,9 @@ export default function EngagementDetail() {
   const [showShareDialog, setShowShareDialog] = useState(false);
   const [pendingEngagementId, setPendingEngagementId] = useState<string | null>(null);
   const [showSwitchDialog, setShowSwitchDialog] = useState(false);
+  const [pendingClient, setPendingClient] = useState<string | null>(null);
+  const [showClientSwitchDialog, setShowClientSwitchDialog] = useState(false);
+  const [selectedClientEngagement, setSelectedClientEngagement] = useState<string | null>(null);
 
   const engagement = engagementId ? engagementsData[engagementId] : null;
   const displayId = engagementId || "Unknown";
@@ -156,13 +159,37 @@ export default function EngagementDetail() {
   const uniqueClients = useMemo(() => getUniqueClients(), []);
   const clientEngagements = useMemo(() => getEngagementsForClient(clientName), [clientName]);
 
-  // Handle client change
+  // Handle client change - show dialog with engagements
   const handleClientChange = (newClient: string) => {
-    const clientEngs = getEngagementsForClient(newClient);
-    if (clientEngs.length > 0) {
-      // Navigate to the first engagement of the selected client
-      navigate(`/engagements/${clientEngs[0].id}`);
+    if (newClient !== clientName) {
+      const clientEngs = getEngagementsForClient(newClient);
+      setPendingClient(newClient);
+      // Pre-select the first engagement
+      setSelectedClientEngagement(clientEngs.length > 0 ? clientEngs[0].id : null);
+      setShowClientSwitchDialog(true);
     }
+  };
+
+  // Get engagements for pending client
+  const pendingClientEngagements = useMemo(() => {
+    return pendingClient ? getEngagementsForClient(pendingClient) : [];
+  }, [pendingClient]);
+
+  // Confirm client switch
+  const confirmClientSwitch = () => {
+    if (selectedClientEngagement) {
+      navigate(`/engagements/${selectedClientEngagement}`);
+    }
+    setShowClientSwitchDialog(false);
+    setPendingClient(null);
+    setSelectedClientEngagement(null);
+  };
+
+  // Cancel client switch
+  const cancelClientSwitch = () => {
+    setShowClientSwitchDialog(false);
+    setPendingClient(null);
+    setSelectedClientEngagement(null);
   };
 
   // Handle engagement change - show confirmation dialog
@@ -620,6 +647,75 @@ export default function EngagementDetail() {
                 </Button>
                 <Button
                   onClick={confirmEngagementSwitch}
+                  className="flex-1 h-10 bg-primary hover:bg-primary/90"
+                >
+                  Yes
+                </Button>
+              </DialogFooter>
+            </div>
+          </DialogContent>
+        </Dialog>
+
+        {/* Switch Client Confirmation Dialog */}
+        <Dialog open={showClientSwitchDialog} onOpenChange={setShowClientSwitchDialog}>
+          <DialogContent className="sm:max-w-[440px] bg-white border shadow-xl rounded-2xl p-6">
+            <DialogClose className="absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-accent data-[state=open]:text-muted-foreground" />
+            <div className="flex flex-col items-center text-center gap-4">
+              {/* Warning Icon */}
+              <div className="w-12 h-12 rounded-full bg-amber-100 flex items-center justify-center">
+                <AlertTriangle className="h-6 w-6 text-amber-500" />
+              </div>
+              
+              {/* Title */}
+              <DialogHeader className="space-y-2">
+                <DialogTitle className="text-lg font-semibold text-foreground">
+                  You are switching to another client
+                </DialogTitle>
+                <DialogDescription className="text-sm text-muted-foreground">
+                  Select an engagement for {pendingClient} to continue.
+                </DialogDescription>
+              </DialogHeader>
+              
+              {/* Engagement List */}
+              <div className="w-full border rounded-lg divide-y max-h-48 overflow-y-auto">
+                {pendingClientEngagements.map((eng) => (
+                  <button
+                    key={eng.id}
+                    onClick={() => setSelectedClientEngagement(eng.id)}
+                    className={`w-full flex items-center gap-3 px-4 py-3 text-left transition-colors ${
+                      selectedClientEngagement === eng.id 
+                        ? 'bg-primary/10 border-l-2 border-l-primary' 
+                        : 'hover:bg-muted/50'
+                    }`}
+                  >
+                    <div className="flex flex-col flex-1 min-w-0">
+                      <span className="font-mono text-sm font-medium truncate">{eng.id}</span>
+                      <div className="flex items-center gap-2 mt-0.5">
+                        <Calendar className="h-3 w-3 text-muted-foreground" />
+                        <span className="text-xs text-muted-foreground">{eng.yearEnd}</span>
+                        <span className="text-xs text-muted-foreground">•</span>
+                        <span className="text-xs text-muted-foreground">{eng.type}</span>
+                      </div>
+                    </div>
+                    {selectedClientEngagement === eng.id && (
+                      <Check className="h-4 w-4 text-primary flex-shrink-0" />
+                    )}
+                  </button>
+                ))}
+              </div>
+              
+              {/* Action Buttons */}
+              <DialogFooter className="flex flex-row gap-3 w-full sm:justify-center pt-2">
+                <Button
+                  variant="outline"
+                  onClick={cancelClientSwitch}
+                  className="flex-1 h-10"
+                >
+                  No
+                </Button>
+                <Button
+                  onClick={confirmClientSwitch}
+                  disabled={!selectedClientEngagement}
                   className="flex-1 h-10 bg-primary hover:bg-primary/90"
                 >
                   Yes
