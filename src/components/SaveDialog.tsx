@@ -16,7 +16,8 @@ import {
   ChevronDown,
   Plus,
   X,
-  Trash2
+  Trash2,
+  Save
 } from 'lucide-react';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
@@ -235,13 +236,14 @@ export function SaveDialog({
           </div>
           <div className="flex gap-2">
             <Button variant="outline" onClick={() => onOpenChange(false)}>
+              <X className="h-4 w-4" />
               Cancel
             </Button>
             <Button 
               onClick={handleSave}
               disabled={saveOption === 'folder' && !selectedFolderId}
-              className="bg-[#1C63A6] hover:bg-[#1C63A6]/90"
             >
+              <Save className="h-4 w-4" />
               {saveOption === 'draft' 
                 ? 'Save as Draft' 
                 : selectedFolderName 

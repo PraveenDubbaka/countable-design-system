@@ -12,6 +12,9 @@ import {
   Download,
   FileType,
   Share2,
+  Save,
+  RefreshCw,
+  Trash2,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -355,13 +358,16 @@ export default function EngagementDetail() {
               {checklist.title}
             </h1>
             <div className="flex items-center gap-2">
-              <Button variant="default" size="sm" className="h-8" onClick={handleSave}>
+              <Button variant="default" size="sm" onClick={handleSave}>
+                <Save className="h-4 w-4" />
                 Save
               </Button>
-              <Button variant="outline" size="sm" className="h-8">
+              <Button variant="outline" size="sm">
+                <RefreshCw className="h-4 w-4" />
                 Replace
               </Button>
-              <Button variant="outline" size="sm" className="h-8">
+              <Button variant="destructive" size="sm">
+                <Trash2 className="h-4 w-4" />
                 Delete
               </Button>
             </div>

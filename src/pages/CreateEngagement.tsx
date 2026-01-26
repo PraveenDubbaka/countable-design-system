@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, Briefcase, Calendar, Users, ChevronDown, Plus, Pencil, Trash2, Search, ExternalLink } from "lucide-react";
+import { ArrowLeft, Briefcase, Calendar, Users, ChevronDown, Plus, Pencil, Trash2, Search, ExternalLink, X, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Layout } from "@/components/Layout";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -528,13 +528,13 @@ export default function CreateEngagement() {
             <Button 
               variant="outline" 
               onClick={() => navigate("/engagements")}
-              className="h-10 px-6 text-sm bg-white hover:bg-gray-50"
             >
+              <X className="h-4 w-4" />
               Cancel
             </Button>
-            <Button className="bg-primary hover:bg-primary/90 text-white h-10 px-6 text-sm font-medium">
+            <Button>
+              <Plus className="h-4 w-4" />
               Create Engagement
-              <ArrowLeft className="h-4 w-4 ml-2 rotate-180" />
             </Button>
           </div>
         </div>

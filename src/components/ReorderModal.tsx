@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { X, ArrowUp, ArrowDown, ArrowUpDown } from 'lucide-react';
+import { X, ArrowUp, ArrowDown, ArrowUpDown, Save } from 'lucide-react';
 import { Checklist, Section, Question } from '@/types/checklist';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -284,9 +284,11 @@ export function ReorderModal({ isOpen, onClose, checklist, onUpdate }: ReorderMo
         {/* Footer */}
         <div className="flex items-center justify-end gap-3 px-6 py-4 border-t bg-muted/30 rounded-b-xl">
           <Button variant="outline" onClick={onClose}>
+            <X className="h-4 w-4" />
             Cancel
           </Button>
           <Button onClick={handleSave}>
+            <Save className="h-4 w-4" />
             Save
           </Button>
         </div>
