@@ -401,18 +401,19 @@ export default function EngagementDetail() {
             </DropdownMenu>
 
             {/* Status Badge */}
-            <Badge 
-              variant="outline" 
-              className={`ml-2 text-xs font-medium ${
+            <span 
+              className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium whitespace-nowrap ml-2 ${
                 status === 'Completed' 
-                  ? 'bg-emerald-50 text-emerald-700 border-emerald-200' 
+                  ? 'bg-emerald-50 text-emerald-700' 
                   : status === 'Not Started'
-                  ? 'bg-slate-50 text-slate-600 border-slate-200'
-                  : 'bg-sky-50 text-sky-700 border-sky-200'
+                  ? 'bg-slate-100 text-slate-600'
+                  : status === 'New'
+                  ? 'bg-emerald-50 text-emerald-700'
+                  : 'bg-sky-50 text-sky-700'
               }`}
             >
               {status}
-            </Badge>
+            </span>
           </div>
 
           {/* Right side - Tools dropdown */}
