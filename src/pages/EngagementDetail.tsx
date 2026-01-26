@@ -18,6 +18,7 @@ import {
   Building2,
   Calendar,
   Check,
+  AlertTriangle,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -40,6 +41,15 @@ import { readJsonFromLocalStorage, writeJsonToLocalStorage } from "@/lib/safeJso
 import { subscribeToChecklistSync, dispatchChecklistSync } from "@/lib/checklistSync";
 import { toast } from "sonner";
 import { ShareWithClientDialog } from "@/components/ShareWithClientDialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+  DialogClose,
+} from "@/components/ui/dialog";
 
 // Sample engagement data matching the engagements page
 const engagementsData: Record<string, { id: string; client: string; type: string; yearEnd: string; status: string; checklistId?: string }> = {
@@ -134,6 +144,8 @@ export default function EngagementDetail() {
   const [selectedQuestions, setSelectedQuestions] = useState<Set<string>>(new Set());
   const [objectiveExpanded, setObjectiveExpanded] = useState(false);
   const [showShareDialog, setShowShareDialog] = useState(false);
+  const [pendingEngagementId, setPendingEngagementId] = useState<string | null>(null);
+  const [showSwitchDialog, setShowSwitchDialog] = useState(false);
 
   const engagement = engagementId ? engagementsData[engagementId] : null;
   const displayId = engagementId || "Unknown";
@@ -153,9 +165,27 @@ export default function EngagementDetail() {
     }
   };
 
-  // Handle engagement change
+  // Handle engagement change - show confirmation dialog
   const handleEngagementChange = (newEngagementId: string) => {
-    navigate(`/engagements/${newEngagementId}`);
+    if (newEngagementId !== engagementId) {
+      setPendingEngagementId(newEngagementId);
+      setShowSwitchDialog(true);
+    }
+  };
+
+  // Confirm engagement switch
+  const confirmEngagementSwitch = () => {
+    if (pendingEngagementId) {
+      navigate(`/engagements/${pendingEngagementId}`);
+    }
+    setShowSwitchDialog(false);
+    setPendingEngagementId(null);
+  };
+
+  // Cancel engagement switch
+  const cancelEngagementSwitch = () => {
+    setShowSwitchDialog(false);
+    setPendingEngagementId(null);
   };
 
   // Load checklist from localStorage - use first saved checklist or fallback
@@ -558,6 +588,46 @@ export default function EngagementDetail() {
           onOpenChange={setShowShareDialog}
           checklistName={checklist?.title}
         />
+
+        {/* Switch Engagement Confirmation Dialog */}
+        <Dialog open={showSwitchDialog} onOpenChange={setShowSwitchDialog}>
+          <DialogContent className="sm:max-w-[400px] bg-white border shadow-xl rounded-2xl p-6">
+            <DialogClose className="absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-accent data-[state=open]:text-muted-foreground" />
+            <div className="flex flex-col items-center text-center gap-4">
+              {/* Warning Icon */}
+              <div className="w-12 h-12 rounded-full bg-amber-100 flex items-center justify-center">
+                <AlertTriangle className="h-6 w-6 text-amber-500" />
+              </div>
+              
+              {/* Title */}
+              <DialogHeader className="space-y-2">
+                <DialogTitle className="text-lg font-semibold text-foreground">
+                  You are switching to another engagement
+                </DialogTitle>
+                <DialogDescription className="text-sm text-muted-foreground">
+                  Are you sure you want to switch to the selected engagement?
+                </DialogDescription>
+              </DialogHeader>
+              
+              {/* Action Buttons */}
+              <DialogFooter className="flex flex-row gap-3 w-full sm:justify-center pt-2">
+                <Button
+                  variant="outline"
+                  onClick={cancelEngagementSwitch}
+                  className="flex-1 h-10"
+                >
+                  No
+                </Button>
+                <Button
+                  onClick={confirmEngagementSwitch}
+                  className="flex-1 h-10 bg-primary hover:bg-primary/90"
+                >
+                  Yes
+                </Button>
+              </DialogFooter>
+            </div>
+          </DialogContent>
+        </Dialog>
       </div>
     </Layout>
   );
