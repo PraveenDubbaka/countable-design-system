@@ -16,6 +16,7 @@ import { MondayBoardView } from "@/components/MondayBoardView";
 import { FloatingActionBar } from "@/components/FloatingActionBar";
 import { Checklist } from "@/types/checklist";
 import { readJsonFromLocalStorage, writeJsonToLocalStorage } from "@/lib/safeJson";
+import { subscribeToChecklistSync, dispatchChecklistSync } from "@/lib/checklistSync";
 import { toast } from "sonner";
 
 // Sample engagement data matching the engagements page
@@ -117,7 +118,19 @@ export default function EngagementDetail() {
     setChecklist(fallbackChecklist);
   }, [engagementId]);
 
-  // Listen for storage changes (when templates page saves)
+  // Listen for real-time sync events from templates page (same tab)
+  useEffect(() => {
+    const unsubscribe = subscribeToChecklistSync((payload) => {
+      // Update checklist when sync event is received
+      if (payload.data) {
+        setChecklist(payload.data);
+      }
+    });
+
+    return unsubscribe;
+  }, []);
+
+  // Listen for storage changes (cross-tab sync)
   useEffect(() => {
     const handleStorageChange = (e: StorageEvent) => {
       if (e.key === 'savedChecklists') {
@@ -137,13 +150,18 @@ export default function EngagementDetail() {
 
   const handleChecklistUpdate = (updatedChecklist: Checklist) => {
     setChecklist(updatedChecklist);
-    // In preview mode, we also save changes back to localStorage
+    // In preview mode, we also save changes back to localStorage and dispatch sync
     const savedChecklists = readJsonFromLocalStorage<any[]>('savedChecklists', []);
     if (Array.isArray(savedChecklists) && savedChecklists.length > 0) {
+      const checklistId = savedChecklists[0]?.id;
       const updated = savedChecklists.map((c: any, index: number) => 
         index === 0 ? { ...c, data: updatedChecklist } : c
       );
       writeJsonToLocalStorage('savedChecklists', updated);
+      // Dispatch sync event for real-time updates
+      if (checklistId) {
+        dispatchChecklistSync(checklistId, updatedChecklist);
+      }
     }
   };
 
@@ -151,10 +169,15 @@ export default function EngagementDetail() {
     if (checklist) {
       const savedChecklists = readJsonFromLocalStorage<any[]>('savedChecklists', []);
       if (Array.isArray(savedChecklists) && savedChecklists.length > 0) {
+        const checklistId = savedChecklists[0]?.id;
         const updated = savedChecklists.map((c: any, index: number) => 
           index === 0 ? { ...c, data: checklist } : c
         );
         writeJsonToLocalStorage('savedChecklists', updated);
+        // Dispatch sync event for real-time updates
+        if (checklistId) {
+          dispatchChecklistSync(checklistId, checklist);
+        }
       }
       toast.success('Checklist saved');
     }
