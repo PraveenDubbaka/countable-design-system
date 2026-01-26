@@ -692,7 +692,7 @@ export function Sidebar() {
       {location.pathname !== "/dashboard" && location.pathname !== "/engagements" && !location.pathname.startsWith("/engagements/") && (
         <>
           <div
-            className={`flex flex-col rounded-tr-[20px] rounded-br-[20px] relative z-10 transition-all duration-300 group/templates ${isTemplatesPanelCollapsed ? "w-0 overflow-hidden shadow-none bg-transparent" : "w-[300px] shadow-md bg-[#f5f8fa]"}`}
+            className={`flex flex-col rounded-tr-[20px] rounded-br-[20px] relative z-10 transition-all duration-300 group/templates ${isTemplatesPanelCollapsed ? "w-0 overflow-hidden shadow-none bg-transparent border-r-0" : "w-[300px] shadow-md bg-[#f5f8fa] border-r border-black/10"}`}
           >
             <div className={`p-4 ${isTemplatesPanelCollapsed ? "hidden" : ""}`}>
               <h2 className="font-semibold text-primary text-lg mb-3">Templates</h2>
