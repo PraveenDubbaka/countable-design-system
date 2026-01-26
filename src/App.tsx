@@ -27,6 +27,7 @@ const App = () => (
           <Route path="/engagements/:engagementId" element={<EngagementDetail />} />
           <Route path="/engagements/create" element={<CreateEngagement />} />
           <Route path="/create" element={<CreationDashboard />} />
+          <Route path="/builder" element={<Index />} />
           <Route path="/generate" element={<Generate />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
