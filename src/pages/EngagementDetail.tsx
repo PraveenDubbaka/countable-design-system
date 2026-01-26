@@ -317,7 +317,11 @@ export default function EngagementDetail() {
   }
 
   return (
-    <Layout>
+    <Layout 
+      title={`Checklist: ${checklist.title}`}
+      showBackButton={true}
+      onBack={() => navigate(-1)}
+    >
       <div className="flex flex-col h-full">
         {/* Top Header Bar with breadcrumb and actions */}
         <div className="flex items-center justify-between px-4 py-1.5 border-b border-border bg-gradient-to-r from-card via-card to-secondary/20">
@@ -462,11 +466,8 @@ export default function EngagementDetail() {
 
         {/* Content Area - Preview Mode Checklist */}
         <div className="flex-1 overflow-auto bg-white">
-          {/* Section Title - Sticky Header */}
-          <div className="sticky top-0 z-10 bg-white px-4 py-2 flex items-center justify-between border-b border-border/50">
-            <h1 className="text-base font-semibold text-primary truncate mr-4">
-              {checklist.title}
-            </h1>
+          {/* Action Buttons - Sticky Header */}
+          <div className="sticky top-0 z-10 bg-white px-4 py-2 flex items-center justify-end border-b border-border/50">
             <div className="flex items-center gap-1.5">
               <Button variant="default" size="sm" className="h-7 px-2 text-xs" onClick={handleSave}>
                 <Save className="h-3.5 w-3.5" />
