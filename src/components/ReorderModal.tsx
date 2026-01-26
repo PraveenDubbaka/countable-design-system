@@ -18,6 +18,7 @@ interface FlatItem {
   questionIndex?: number;
   label: string;
   indent: boolean;
+  hierarchicalNumber: string;
 }
 
 export function ReorderModal({ isOpen, onClose, checklist, onUpdate }: ReorderModalProps) {
@@ -43,7 +44,8 @@ export function ReorderModal({ isOpen, onClose, checklist, onUpdate }: ReorderMo
         type: 'section',
         sectionIndex: sIndex,
         label: section.title,
-        indent: false
+        indent: false,
+        hierarchicalNumber: `${sIndex + 1}.`
       });
       section.questions.forEach((question, qIndex) => {
         // Strip HTML tags for display
@@ -54,7 +56,8 @@ export function ReorderModal({ isOpen, onClose, checklist, onUpdate }: ReorderMo
           sectionIndex: sIndex,
           questionIndex: qIndex,
           label: plainText.length > 50 ? plainText.substring(0, 50) + '...' : plainText,
-          indent: true
+          indent: true,
+          hierarchicalNumber: `${sIndex + 1}.${qIndex + 1}`
         });
       });
     });
@@ -145,7 +148,8 @@ export function ReorderModal({ isOpen, onClose, checklist, onUpdate }: ReorderMo
         type: 'section',
         sectionIndex: sIndex,
         label: section.title,
-        indent: false
+        indent: false,
+        hierarchicalNumber: `${sIndex + 1}.`
       });
       section.questions.forEach((question, qIndex) => {
         items.push({
@@ -154,7 +158,8 @@ export function ReorderModal({ isOpen, onClose, checklist, onUpdate }: ReorderMo
           sectionIndex: sIndex,
           questionIndex: qIndex,
           label: question.text.length > 35 ? question.text.substring(0, 35) + '...' : question.text,
-          indent: true
+          indent: true,
+          hierarchicalNumber: `${sIndex + 1}.${qIndex + 1}`
         });
       });
     });
@@ -227,7 +232,7 @@ export function ReorderModal({ isOpen, onClose, checklist, onUpdate }: ReorderMo
                   className={item.type === 'section' ? 'opacity-0' : ''}
                 />
                 <span className={`text-sm flex-1 ${item.type === 'section' ? 'font-medium' : 'text-muted-foreground'}`}>
-                  {item.type === 'question' ? `${index}. ` : ''}{item.label}
+                  {item.type === 'question' ? `${item.hierarchicalNumber}. ` : ''}{item.label}
                 </span>
               </label>
             ))}
