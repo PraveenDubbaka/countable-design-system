@@ -558,34 +558,19 @@ export default function EngagementDetail() {
                   </DropdownMenuItem>
                 </DropdownMenuSubContent>
               </DropdownMenuSub>
-              {/* Population Submenu */}
+              {/* Populate Submenu */}
               <DropdownMenuSub>
                 <DropdownMenuSubTrigger className="flex items-center gap-2 cursor-pointer group">
                   <ClipboardList className="h-4 w-4 text-muted-foreground group-hover:text-foreground group-data-[state=open]:text-foreground transition-colors" />
-                  <span>Population</span>
+                  <span>Populate</span>
                 </DropdownMenuSubTrigger>
-                <DropdownMenuSubContent className="bg-card border shadow-lg z-50 w-64">
-                  <DropdownMenuItem 
-                    className="flex items-center gap-2 cursor-pointer group"
-                    onClick={() => toast.info('Populating from latest available file...')}
-                  >
-                    <FileText className="h-4 w-4 text-muted-foreground group-hover:text-foreground transition-colors" />
-                    <span>From Latest File</span>
-                  </DropdownMenuItem>
+                <DropdownMenuSubContent className="bg-card border shadow-lg z-50 w-48">
                   <DropdownMenuItem 
                     className="flex items-center gap-2 cursor-pointer group"
                     onClick={() => toast.info('Upload a file to populate responses...')}
                   >
                     <FileUp className="h-4 w-4 text-muted-foreground group-hover:text-foreground transition-colors" />
-                    <span>Upload Older File</span>
-                  </DropdownMenuItem>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem 
-                    className="flex items-center gap-2 cursor-pointer group"
-                    onClick={() => toast.info('Loading responses from prior year...')}
-                  >
-                    <History className="h-4 w-4 text-muted-foreground group-hover:text-foreground transition-colors" />
-                    <span>From Previous Year Responses</span>
+                    <span>Upload File</span>
                   </DropdownMenuItem>
                 </DropdownMenuSubContent>
               </DropdownMenuSub>
