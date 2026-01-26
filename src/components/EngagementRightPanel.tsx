@@ -79,8 +79,8 @@ export function EngagementRightPanel({ className }: EngagementRightPanelProps) {
             {/* Content */}
             <div className="flex-1 overflow-y-auto p-4 space-y-4">
               {/* New Request Button */}
-              <Button variant="outline" className="w-full justify-center gap-2 h-9">
-                <Plus className="h-4 w-4" />
+              <Button variant="outline" className="w-full justify-center gap-2 h-9 text-xs">
+                <Plus className="h-3.5 w-3.5" />
                 New Request
               </Button>
 
@@ -119,8 +119,8 @@ export function EngagementRightPanel({ className }: EngagementRightPanelProps) {
               </div>
 
               {/* Schedule Button */}
-              <Button variant="outline" className="w-full justify-center gap-2 h-9">
-                <CalendarClock className="h-4 w-4" />
+              <Button variant="outline" className="w-full justify-center gap-2 h-9 text-xs">
+                <CalendarClock className="h-3.5 w-3.5" />
                 Schedule Document Request
               </Button>
 
