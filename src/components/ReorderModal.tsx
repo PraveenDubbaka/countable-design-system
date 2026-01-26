@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { X, ArrowUp, ArrowDown, ArrowUpDown } from 'lucide-react';
+import { X, ArrowUp, ArrowDown, ArrowUpDown, Folder } from 'lucide-react';
 import { Checklist, Section, Question } from '@/types/checklist';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -221,17 +221,21 @@ export function ReorderModal({ isOpen, onClose, checklist, onUpdate }: ReorderMo
             {flatItems.map((item, index) => (
               <label
                 key={item.id}
-                className={`flex items-center gap-3 py-2 px-3 rounded-lg hover:bg-muted/50 cursor-pointer transition-colors ${
-                  selectedItems.has(item.id) ? 'bg-primary/10 border border-primary/30' : ''
-                } ${item.indent ? 'ml-4' : ''}`}
+                className={`flex items-center gap-3 py-2 px-3 rounded-lg cursor-pointer transition-colors ${
+                  item.type === 'section' 
+                    ? 'bg-muted/50 border-l-4 border-primary' 
+                    : 'ml-6 hover:bg-muted/50'
+                } ${selectedItems.has(item.id) ? 'bg-primary/10 border border-primary/30' : ''}`}
               >
-                <Checkbox
-                  checked={selectedItems.has(item.id)}
-                  onCheckedChange={() => toggleItem(item.id)}
-                  disabled={item.type === 'section'}
-                  className={item.type === 'section' ? 'opacity-0' : ''}
-                />
-                <span className={`text-sm flex-1 ${item.type === 'section' ? 'font-medium' : 'text-muted-foreground'}`}>
+                {item.type === 'section' ? (
+                  <Folder className="h-4 w-4 text-primary" />
+                ) : (
+                  <Checkbox
+                    checked={selectedItems.has(item.id)}
+                    onCheckedChange={() => toggleItem(item.id)}
+                  />
+                )}
+                <span className={`text-sm flex-1 ${item.type === 'section' ? 'font-semibold text-primary' : 'text-muted-foreground'}`}>
                   {item.type === 'section' ? `${item.hierarchicalNumber} ` : `${item.hierarchicalNumber}. `}{item.label}
                 </span>
               </label>
