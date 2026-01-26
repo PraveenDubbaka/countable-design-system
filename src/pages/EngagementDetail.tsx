@@ -320,21 +320,18 @@ export default function EngagementDetail() {
     <Layout>
       <div className="flex flex-col h-full">
         {/* Top Header Bar with breadcrumb and actions */}
-        <div className="flex items-center justify-between px-4 py-3 border-b border-border bg-gradient-to-r from-card via-card to-secondary/20">
+        <div className="flex items-center justify-between px-4 py-1.5 border-b border-border bg-gradient-to-r from-card via-card to-secondary/20">
           {/* Left side - Interactive Breadcrumb */}
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2">
             {/* Client Selector */}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <button className="group flex items-center gap-2 px-3 py-1.5 rounded-lg hover:bg-primary/5 transition-colors">
-                  <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary/20 to-primary/10 flex items-center justify-center">
-                    <Building2 className="h-4 w-4 text-primary" />
+                <button className="group flex items-center gap-1.5 px-2 py-1 rounded-md hover:bg-primary/5 transition-colors">
+                  <div className="w-6 h-6 rounded-md bg-gradient-to-br from-primary/20 to-primary/10 flex items-center justify-center">
+                    <Building2 className="h-3.5 w-3.5 text-primary" />
                   </div>
-                  <div className="flex flex-col items-start">
-                    <span className="text-[10px] uppercase tracking-wider text-muted-foreground font-medium">Client</span>
-                    <span className="text-sm font-semibold text-foreground group-hover:text-primary transition-colors">{clientName}</span>
-                  </div>
-                  <ChevronDown className="h-3.5 w-3.5 text-muted-foreground group-hover:text-primary transition-colors ml-1" />
+                  <span className="text-sm font-medium text-foreground group-hover:text-primary transition-colors">{clientName}</span>
+                  <ChevronDown className="h-3 w-3 text-muted-foreground group-hover:text-primary transition-colors" />
                 </button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="start" className="w-56 bg-card border shadow-lg z-50">
@@ -356,20 +353,17 @@ export default function EngagementDetail() {
               </DropdownMenuContent>
             </DropdownMenu>
 
-            <ChevronRight className="h-4 w-4 text-muted-foreground" />
+            <ChevronRight className="h-3.5 w-3.5 text-muted-foreground" />
 
             {/* Engagement Selector */}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <button className="group flex items-center gap-2 px-3 py-1.5 rounded-lg hover:bg-primary/5 transition-colors">
-                  <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-secondary to-secondary/50 flex items-center justify-center">
-                    <FileText className="h-4 w-4 text-secondary-foreground" />
+                <button className="group flex items-center gap-1.5 px-2 py-1 rounded-md hover:bg-primary/5 transition-colors">
+                  <div className="w-6 h-6 rounded-md bg-gradient-to-br from-secondary to-secondary/50 flex items-center justify-center">
+                    <FileText className="h-3.5 w-3.5 text-secondary-foreground" />
                   </div>
-                  <div className="flex flex-col items-start">
-                    <span className="text-[10px] uppercase tracking-wider text-muted-foreground font-medium">Engagement</span>
-                    <span className="text-sm font-semibold text-foreground group-hover:text-primary transition-colors font-mono">{displayId}</span>
-                  </div>
-                  <ChevronDown className="h-3.5 w-3.5 text-muted-foreground group-hover:text-primary transition-colors ml-1" />
+                  <span className="text-sm font-medium text-foreground group-hover:text-primary transition-colors font-mono">{displayId}</span>
+                  <ChevronDown className="h-3 w-3 text-muted-foreground group-hover:text-primary transition-colors" />
                 </button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="start" className="w-72 bg-card border shadow-lg z-50">
@@ -469,28 +463,28 @@ export default function EngagementDetail() {
         {/* Content Area - Preview Mode Checklist */}
         <div className="flex-1 overflow-auto bg-white">
           {/* Section Title - Sticky Header */}
-          <div className="sticky top-0 z-10 bg-white px-6 pt-6 pb-4 flex items-center justify-between border-b border-border/50">
-            <h1 className="text-xl font-semibold text-primary">
+          <div className="sticky top-0 z-10 bg-white px-4 py-2 flex items-center justify-between border-b border-border/50">
+            <h1 className="text-base font-semibold text-primary truncate mr-4">
               {checklist.title}
             </h1>
-            <div className="flex items-center gap-2">
-              <Button variant="default" size="sm" onClick={handleSave}>
-                <Save className="h-4 w-4" />
+            <div className="flex items-center gap-1.5">
+              <Button variant="default" size="sm" className="h-7 px-2 text-xs" onClick={handleSave}>
+                <Save className="h-3.5 w-3.5" />
                 Save
               </Button>
-              <Button variant="outline" size="sm">
-                <RefreshCw className="h-4 w-4" />
+              <Button variant="outline" size="sm" className="h-7 px-2 text-xs">
+                <RefreshCw className="h-3.5 w-3.5" />
                 Replace
               </Button>
-              <Button variant="destructive" size="sm">
-                <Trash2 className="h-4 w-4" />
+              <Button variant="destructive" size="sm" className="h-7 px-2 text-xs">
+                <Trash2 className="h-3.5 w-3.5" />
                 Delete
               </Button>
             </div>
           </div>
 
           {/* Scrollable Content */}
-          <div className="p-6">
+          <div className="p-4">
             {/* Objective Section */}
             <div className="mb-6 bg-white rounded-lg overflow-hidden shadow-md border-t border-black/10">
             <button 
