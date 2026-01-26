@@ -232,7 +232,7 @@ export function ReorderModal({ isOpen, onClose, checklist, onUpdate }: ReorderMo
                   className={item.type === 'section' ? 'opacity-0' : ''}
                 />
                 <span className={`text-sm flex-1 ${item.type === 'section' ? 'font-medium' : 'text-muted-foreground'}`}>
-                  {item.type === 'question' ? `${item.hierarchicalNumber}. ` : ''}{item.label}
+                  {item.type === 'section' ? `${item.hierarchicalNumber} ` : `${item.hierarchicalNumber}. `}{item.label}
                 </span>
               </label>
             ))}
