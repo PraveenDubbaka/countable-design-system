@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { X, ArrowUp, ArrowDown, ArrowUpDown, Folder } from 'lucide-react';
+import { X, ArrowUp, ArrowDown, ArrowUpDown } from 'lucide-react';
 import { Checklist, Section, Question } from '@/types/checklist';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -81,13 +81,32 @@ export function ReorderModal({ isOpen, onClose, checklist, onUpdate }: ReorderMo
     
     const newSections = JSON.parse(JSON.stringify(localSections)) as Section[];
     
-    // Process selected questions - sort by their position to move in order
-    const selectedArray = Array.from(selectedItems);
+    // Separate sections and questions
+    const selectedSections: string[] = [];
+    const selectedQuestions: string[] = [];
     
-    selectedArray.forEach(itemId => {
+    selectedItems.forEach(itemId => {
+      const item = flatItems.find(i => i.id === itemId);
+      if (item?.type === 'section') {
+        selectedSections.push(itemId);
+      } else {
+        selectedQuestions.push(itemId);
+      }
+    });
+    
+    // Move sections up (process in order from top to bottom)
+    selectedSections.forEach(sectionId => {
+      const sectionIndex = newSections.findIndex(s => s.id === sectionId);
+      if (sectionIndex > 0) {
+        const [section] = newSections.splice(sectionIndex, 1);
+        newSections.splice(sectionIndex - 1, 0, section);
+      }
+    });
+    
+    // Move questions up
+    selectedQuestions.forEach(itemId => {
       const currentFlatItems = buildFlatListFromSections(newSections);
-      const itemIndex = currentFlatItems.findIndex(i => i.id === itemId);
-      const item = currentFlatItems[itemIndex];
+      const item = currentFlatItems.find(i => i.id === itemId);
       
       if (!item || item.type !== 'question' || item.questionIndex === undefined) return;
       
@@ -113,10 +132,30 @@ export function ReorderModal({ isOpen, onClose, checklist, onUpdate }: ReorderMo
     
     const newSections = JSON.parse(JSON.stringify(localSections)) as Section[];
     
-    // Process selected questions in reverse order to avoid conflicts
-    const selectedArray = Array.from(selectedItems).reverse();
+    // Separate sections and questions
+    const selectedSections: string[] = [];
+    const selectedQuestions: string[] = [];
     
-    selectedArray.forEach(itemId => {
+    selectedItems.forEach(itemId => {
+      const item = flatItems.find(i => i.id === itemId);
+      if (item?.type === 'section') {
+        selectedSections.push(itemId);
+      } else {
+        selectedQuestions.push(itemId);
+      }
+    });
+    
+    // Move sections down (process in reverse order from bottom to top)
+    [...selectedSections].reverse().forEach(sectionId => {
+      const sectionIndex = newSections.findIndex(s => s.id === sectionId);
+      if (sectionIndex < newSections.length - 1) {
+        const [section] = newSections.splice(sectionIndex, 1);
+        newSections.splice(sectionIndex + 1, 0, section);
+      }
+    });
+    
+    // Move questions down (process in reverse order)
+    [...selectedQuestions].reverse().forEach(itemId => {
       const currentFlatItems = buildFlatListFromSections(newSections);
       const item = currentFlatItems.find(i => i.id === itemId);
       
@@ -223,18 +262,15 @@ export function ReorderModal({ isOpen, onClose, checklist, onUpdate }: ReorderMo
                 key={item.id}
                 className={`flex items-center gap-3 py-2 px-3 rounded-lg cursor-pointer transition-colors ${
                   item.type === 'section' 
-                    ? 'bg-muted/50 border-l-4 border-primary' 
+                    ? 'bg-muted/50 border-l-4 border-primary hover:bg-muted' 
                     : 'ml-6 hover:bg-muted/50'
                 } ${selectedItems.has(item.id) ? 'bg-primary/10 border border-primary/30' : ''}`}
               >
-                {item.type === 'section' ? (
-                  <Folder className="h-4 w-4 text-primary" />
-                ) : (
-                  <Checkbox
-                    checked={selectedItems.has(item.id)}
-                    onCheckedChange={() => toggleItem(item.id)}
-                  />
-                )}
+                <Checkbox
+                  checked={selectedItems.has(item.id)}
+                  onCheckedChange={() => toggleItem(item.id)}
+                  className={item.type === 'section' ? 'border-primary data-[state=checked]:bg-primary' : ''}
+                />
                 <span className={`text-sm flex-1 ${item.type === 'section' ? 'font-semibold text-primary' : 'text-muted-foreground'}`}>
                   {item.type === 'section' ? `${item.hierarchicalNumber} ` : `${item.hierarchicalNumber}. `}{item.label}
                 </span>
