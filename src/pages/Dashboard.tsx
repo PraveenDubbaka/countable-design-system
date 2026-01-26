@@ -293,8 +293,8 @@ export default function Dashboard() {
                 </ResponsiveContainer>
               </div>
               <div className="flex flex-wrap gap-1.5 mt-2">
-                {clientsData.map((item, index) => <div key={index} className="gap-1 flex-col flex items-start justify-start">
-                    <div className="w-1.5 h-1.5 rounded-full" style={{
+                {clientsData.map((item, index) => <div key={index} className="flex items-center gap-1.5">
+                    <div className="w-2 h-2 rounded-full flex-shrink-0" style={{
                     backgroundColor: item.color
                   }} />
                     <span className="text-[10px] text-muted-foreground">{item.name}</span>
