@@ -34,6 +34,7 @@ import {
 import { Layout } from "@/components/Layout";
 import { MondayBoardView } from "@/components/MondayBoardView";
 import { FloatingActionBar } from "@/components/FloatingActionBar";
+import { EngagementRightPanel } from "@/components/EngagementRightPanel";
 import { Checklist } from "@/types/checklist";
 import { readJsonFromLocalStorage, writeJsonToLocalStorage } from "@/lib/safeJson";
 import { subscribeToChecklistSync, dispatchChecklistSync } from "@/lib/checklistSync";
@@ -322,8 +323,10 @@ export default function EngagementDetail() {
       showBackButton={true}
       onBack={() => navigate(-1)}
     >
-      <div className="flex flex-col h-full">
-        {/* Top Header Bar with breadcrumb and actions */}
+      <div className="flex h-full overflow-hidden">
+        {/* Main Content Area */}
+        <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
+          {/* Top Header Bar with breadcrumb and actions */}
         <div className="flex items-center justify-between px-4 py-1.5 border-b border-border bg-gradient-to-r from-card via-card to-secondary/20">
           {/* Left side - Interactive Breadcrumb */}
           <div className="flex items-center gap-2">
@@ -464,8 +467,8 @@ export default function EngagementDetail() {
           </DropdownMenu>
         </div>
 
-        {/* Content Area - Preview Mode Checklist */}
-        <div className="flex-1 overflow-auto bg-white">
+          {/* Content Area - Preview Mode Checklist */}
+          <div className="flex-1 overflow-auto bg-white">
           {/* Action Buttons - Sticky Header */}
           <div className="sticky top-0 z-10 bg-white px-4 py-2 flex items-center justify-end border-b border-border/50">
             <div className="flex items-center gap-1.5">
@@ -522,6 +525,7 @@ export default function EngagementDetail() {
               onSelectionChange={setSelectedQuestions}
             />
           </div>
+            </div>
           </div>
         </div>
 
@@ -542,6 +546,9 @@ export default function EngagementDetail() {
           onAddCategory={handleAddCategory}
           isPreviewMode={true}
         />
+
+        {/* Right Panel - Fixed Position */}
+        <EngagementRightPanel />
 
         {/* Share with Client Dialog */}
         <ShareWithClientDialog
