@@ -253,7 +253,7 @@ export default function Generate() {
     window.dispatchEvent(new CustomEvent('checklistSaved', { detail: newChecklist }));
     
     // Navigate to home page to build the full checklist form
-    navigate('/', {
+    navigate('/builder', {
       state: {
         generate: {
           prompt,
