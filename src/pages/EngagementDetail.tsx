@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useParams } from "react-router-dom";
 import { 
   ChevronRight, 
@@ -13,17 +13,20 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Layout } from "@/components/Layout";
 import { MondayBoardView } from "@/components/MondayBoardView";
+import { FloatingActionBar } from "@/components/FloatingActionBar";
 import { Checklist } from "@/types/checklist";
+import { readJsonFromLocalStorage, writeJsonToLocalStorage } from "@/lib/safeJson";
+import { toast } from "sonner";
 
 // Sample engagement data matching the engagements page
-const engagementsData: Record<string, { id: string; client: string; type: string; yearEnd: string; status: string }> = {
+const engagementsData: Record<string, { id: string; client: string; type: string; yearEnd: string; status: string; checklistId?: string }> = {
   "COM-CON-Dec312024": { id: "COM-CON-Dec312024", client: "Shipping Line Inc.", type: "Compilation (COM)", yearEnd: "Dec 31, 2024", status: "In Progress" },
   "COM-PSP-Dec312023": { id: "COM-PSP-Dec312023", client: "Source 40", type: "Compilation (COM)", yearEnd: "Dec 31, 2023", status: "In Progress" },
   "COM-QB-Dec312025": { id: "COM-QB-Dec312025", client: "qb 40.1", type: "Compilation (COM)", yearEnd: "Dec 31, 2025", status: "In Progress" },
 };
 
-// Sample checklist for preview mode
-const sampleChecklist: Checklist = {
+// Fallback checklist when no saved checklist exists
+const fallbackChecklist: Checklist = {
   id: "engagement-checklist",
   title: "Client acceptance and continuance",
   description: "Engagement quality review checklist",
@@ -87,16 +90,151 @@ const headerActions = [
 
 export default function EngagementDetail() {
   const { engagementId } = useParams<{ engagementId: string }>();
-  const [checklist, setChecklist] = useState<Checklist>(sampleChecklist);
+  const [checklist, setChecklist] = useState<Checklist | null>(null);
+  const [isCompactMode, setIsCompactMode] = useState(false);
+  const [selectedQuestions, setSelectedQuestions] = useState<Set<string>>(new Set());
 
   const engagement = engagementId ? engagementsData[engagementId] : null;
   const displayId = engagementId || "Unknown";
   const clientName = engagement?.client || "Unknown Client";
   const status = engagement?.status || "In Progress";
 
+  // Load checklist from localStorage - use first saved checklist or fallback
+  useEffect(() => {
+    const savedChecklists = readJsonFromLocalStorage<any[]>('savedChecklists', []);
+    
+    if (Array.isArray(savedChecklists) && savedChecklists.length > 0) {
+      // Use the first saved checklist's data
+      const firstChecklist = savedChecklists[0];
+      if (firstChecklist?.data) {
+        setChecklist(firstChecklist.data);
+        return;
+      }
+    }
+    
+    // Fallback to sample checklist if no saved checklists exist
+    setChecklist(fallbackChecklist);
+  }, [engagementId]);
+
+  // Listen for storage changes (when templates page saves)
+  useEffect(() => {
+    const handleStorageChange = (e: StorageEvent) => {
+      if (e.key === 'savedChecklists') {
+        const savedChecklists = readJsonFromLocalStorage<any[]>('savedChecklists', []);
+        if (Array.isArray(savedChecklists) && savedChecklists.length > 0) {
+          const firstChecklist = savedChecklists[0];
+          if (firstChecklist?.data) {
+            setChecklist(firstChecklist.data);
+          }
+        }
+      }
+    };
+
+    window.addEventListener('storage', handleStorageChange);
+    return () => window.removeEventListener('storage', handleStorageChange);
+  }, []);
+
   const handleChecklistUpdate = (updatedChecklist: Checklist) => {
     setChecklist(updatedChecklist);
+    // In preview mode, we also save changes back to localStorage
+    const savedChecklists = readJsonFromLocalStorage<any[]>('savedChecklists', []);
+    if (Array.isArray(savedChecklists) && savedChecklists.length > 0) {
+      const updated = savedChecklists.map((c: any, index: number) => 
+        index === 0 ? { ...c, data: updatedChecklist } : c
+      );
+      writeJsonToLocalStorage('savedChecklists', updated);
+    }
   };
+
+  const handleSave = () => {
+    if (checklist) {
+      const savedChecklists = readJsonFromLocalStorage<any[]>('savedChecklists', []);
+      if (Array.isArray(savedChecklists) && savedChecklists.length > 0) {
+        const updated = savedChecklists.map((c: any, index: number) => 
+          index === 0 ? { ...c, data: checklist } : c
+        );
+        writeJsonToLocalStorage('savedChecklists', updated);
+      }
+      toast.success('Checklist saved');
+    }
+  };
+
+  // Floating action bar handlers
+  const allSectionsCollapsed = useMemo(() => {
+    if (!checklist) return false;
+    return checklist.sections.every(s => !s.isExpanded);
+  }, [checklist]);
+
+  const allQuestionsCollapsed = useMemo(() => {
+    if (!checklist) return false;
+    return checklist.sections.every(s => 
+      s.questions.every(q => !q.isExpanded)
+    );
+  }, [checklist]);
+
+  const handleCollapseSections = () => {
+    if (!checklist) return;
+    const updated = {
+      ...checklist,
+      sections: checklist.sections.map(s => ({ ...s, isExpanded: false }))
+    };
+    setChecklist(updated);
+  };
+
+  const handleExpandSections = () => {
+    if (!checklist) return;
+    const updated = {
+      ...checklist,
+      sections: checklist.sections.map(s => ({ ...s, isExpanded: true }))
+    };
+    setChecklist(updated);
+  };
+
+  const handleCollapseQuestions = () => {
+    if (!checklist) return;
+    const updated = {
+      ...checklist,
+      sections: checklist.sections.map(s => ({
+        ...s,
+        questions: s.questions.map(q => ({ ...q, isExpanded: false }))
+      }))
+    };
+    setChecklist(updated);
+  };
+
+  const handleExpandQuestions = () => {
+    if (!checklist) return;
+    const updated = {
+      ...checklist,
+      sections: checklist.sections.map(s => ({
+        ...s,
+        questions: s.questions.map(q => ({ ...q, isExpanded: true }))
+      }))
+    };
+    setChecklist(updated);
+  };
+
+  const handleToggleCompactMode = () => {
+    setIsCompactMode(!isCompactMode);
+  };
+
+  const handleBulkDelete = () => {
+    // No-op in preview mode
+  };
+
+  const handleAddCategory = () => {
+    // No-op in preview mode
+  };
+
+  if (!checklist) {
+    return (
+      <Layout>
+        <div className="flex items-center justify-center h-full">
+          <p className="text-muted-foreground">Loading checklist...</p>
+        </div>
+      </Layout>
+    );
+  }
 
   return (
     <Layout>
@@ -143,7 +281,7 @@ export default function EngagementDetail() {
               {checklist.title}
             </h1>
             <div className="flex items-center gap-2">
-              <Button variant="default" size="sm" className="h-8">
+              <Button variant="default" size="sm" className="h-8" onClick={handleSave}>
                 Save
               </Button>
               <Button variant="outline" size="sm" className="h-8">
@@ -161,10 +299,30 @@ export default function EngagementDetail() {
               checklist={checklist}
               onUpdate={handleChecklistUpdate}
               isPreviewMode={true}
-              isCompactMode={false}
+              isCompactMode={isCompactMode}
+              selectedQuestions={selectedQuestions}
+              onSelectionChange={setSelectedQuestions}
             />
           </div>
         </div>
+
+        {/* Floating Action Bar for Preview Mode */}
+        <FloatingActionBar
+          checklist={checklist}
+          onUpdate={handleChecklistUpdate}
+          onCollapseSections={handleCollapseSections}
+          onExpandSections={handleExpandSections}
+          onCollapseQuestions={handleCollapseQuestions}
+          onExpandQuestions={handleExpandQuestions}
+          allSectionsCollapsed={allSectionsCollapsed}
+          allQuestionsCollapsed={allQuestionsCollapsed}
+          isCompactMode={isCompactMode}
+          onToggleCompactMode={handleToggleCompactMode}
+          selectedQuestions={selectedQuestions}
+          onBulkDelete={handleBulkDelete}
+          onAddCategory={handleAddCategory}
+          isPreviewMode={true}
+        />
       </div>
     </Layout>
   );
