@@ -366,6 +366,10 @@ export default function Index() {
 
   const handleChecklistUpdate = (updated: Checklist) => {
     setChecklist(updated);
+    // Sync changes in real-time to engagement page
+    if (currentChecklistId) {
+      updateChecklistInStorage(currentChecklistId, updated);
+    }
   };
 
   const [showUnsavedDialog, setShowUnsavedDialog] = useState(false);
