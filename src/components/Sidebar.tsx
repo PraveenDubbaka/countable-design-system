@@ -601,7 +601,7 @@ export function Sidebar() {
       {location.pathname.startsWith("/engagements/") && location.pathname !== "/engagements/create" && (
         <>
           <div
-            className={`flex flex-col rounded-tr-[20px] rounded-br-[20px] relative z-10 transition-all duration-300 group/templates ${isTemplatesPanelCollapsed ? "w-0 overflow-hidden shadow-none bg-transparent" : "w-60 shadow-md bg-[#f5f8fa]"}`}
+            className={`flex flex-col rounded-tr-[20px] rounded-br-[20px] relative z-40 transition-all duration-300 group/templates ${isTemplatesPanelCollapsed ? "w-0 overflow-hidden shadow-none bg-transparent" : "w-60 shadow-md bg-[#f5f8fa]"}`}
           >
             <div className={`p-4 pb-2 ${isTemplatesPanelCollapsed ? "hidden" : ""}`}>
               <div className="flex items-center gap-2">
