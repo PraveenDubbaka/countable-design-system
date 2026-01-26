@@ -1798,6 +1798,7 @@ export function MondayBoardView({
   const [activeData, setActiveData] = useState<{
     type: string;
     text: string;
+    selectedCount?: number;
   } | null>(null);
   const handleSelectionChange = (questionId: string, selected: boolean) => {
     if (!onSelectionChange) return;
@@ -1893,6 +1894,11 @@ export function MondayBoardView({
 
     // Extract information about what's being dragged
     const data = active.data.current;
+    
+    // Check if dragging a selected item (for multi-drag)
+    const isDraggingSelectedItem = data?.type === 'item' && selectedQuestions.has(active.id as string);
+    const selectedCount = isDraggingSelectedItem ? selectedQuestions.size : 1;
+    
     if (data?.type === 'group') {
       setActiveData({
         type: 'group',
@@ -1901,7 +1907,8 @@ export function MondayBoardView({
     } else if (data?.type === 'item') {
       setActiveData({
         type: 'item',
-        text: data.item?.text || 'Question'
+        text: data.item?.text || 'Question',
+        selectedCount: selectedCount
       });
     } else if (data?.type === 'subitem') {
       setActiveData({
@@ -1937,49 +1944,106 @@ export function MondayBoardView({
       return;
     }
 
-    // Handle item reordering within the same section
+    // Handle item reordering (with multi-select support)
     if (activeData?.type === 'item' && overData?.type === 'item') {
       const activeSectionId = activeData.sectionId;
       const overSectionId = overData.sectionId;
-      if (activeSectionId === overSectionId) {
-        // Same section - reorder
-        const section = checklist.sections.find(s => s.id === activeSectionId);
-        if (section) {
-          const oldIndex = section.questions.findIndex(q => q.id === active.id);
-          const newIndex = section.questions.findIndex(q => q.id === over.id);
-          if (oldIndex !== -1 && newIndex !== -1) {
-            const newQuestions = [...section.questions];
-            const [removed] = newQuestions.splice(oldIndex, 1);
-            newQuestions.splice(newIndex, 0, removed);
-            handleItemsReorder(activeSectionId, newQuestions);
+      
+      // Check if we're doing a multi-select drag
+      const isDraggingSelected = selectedQuestions.has(active.id as string) && selectedQuestions.size > 1;
+      
+      if (isDraggingSelected) {
+        // Multi-select drag: move all selected items to the drop position
+        const targetSection = checklist.sections.find(s => s.id === overSectionId);
+        if (!targetSection) return;
+        
+        // Collect all selected items from all sections, preserving their order
+        const selectedItems: Question[] = [];
+        const selectedIds = new Set(selectedQuestions);
+        
+        checklist.sections.forEach(section => {
+          section.questions.forEach(q => {
+            if (selectedIds.has(q.id)) {
+              selectedItems.push(q);
+            }
+          });
+        });
+        
+        // Find the drop index in the target section
+        const dropIndex = targetSection.questions.findIndex(q => q.id === over.id);
+        
+        // Build new sections with selected items removed from their original positions
+        // and inserted at the drop position
+        const newSections = checklist.sections.map(section => {
+          // Remove selected items from this section
+          const filteredQuestions = section.questions.filter(q => !selectedIds.has(q.id));
+          
+          if (section.id === overSectionId) {
+            // Insert all selected items at the drop position
+            const insertIndex = filteredQuestions.findIndex(q => q.id === over.id);
+            const actualInsertIndex = insertIndex === -1 ? filteredQuestions.length : insertIndex;
+            const newQuestions = [
+              ...filteredQuestions.slice(0, actualInsertIndex),
+              ...selectedItems,
+              ...filteredQuestions.slice(actualInsertIndex)
+            ];
+            return { ...section, questions: newQuestions };
           }
+          
+          return { ...section, questions: filteredQuestions };
+        });
+        
+        onUpdate({
+          ...checklist,
+          sections: newSections
+        });
+        
+        // Clear selection after move
+        if (onSelectionChange) {
+          onSelectionChange(new Set());
         }
       } else {
-        // Different sections - move item
-        const sourceSection = checklist.sections.find(s => s.id === activeSectionId);
-        const targetSection = checklist.sections.find(s => s.id === overSectionId);
-        if (sourceSection && targetSection) {
-          const itemToMove = sourceSection.questions.find(q => q.id === active.id);
-          if (itemToMove) {
-            const newSourceQuestions = sourceSection.questions.filter(q => q.id !== active.id);
-            const targetIndex = targetSection.questions.findIndex(q => q.id === over.id);
-            const newTargetQuestions = [...targetSection.questions];
-            newTargetQuestions.splice(targetIndex, 0, itemToMove);
-            const newSections = checklist.sections.map(section => {
-              if (section.id === activeSectionId) return {
-                ...section,
-                questions: newSourceQuestions
-              };
-              if (section.id === overSectionId) return {
-                ...section,
-                questions: newTargetQuestions
-              };
-              return section;
-            });
-            onUpdate({
-              ...checklist,
-              sections: newSections
-            });
+        // Single item drag (original logic)
+        if (activeSectionId === overSectionId) {
+          // Same section - reorder
+          const section = checklist.sections.find(s => s.id === activeSectionId);
+          if (section) {
+            const oldIndex = section.questions.findIndex(q => q.id === active.id);
+            const newIndex = section.questions.findIndex(q => q.id === over.id);
+            if (oldIndex !== -1 && newIndex !== -1) {
+              const newQuestions = [...section.questions];
+              const [removed] = newQuestions.splice(oldIndex, 1);
+              newQuestions.splice(newIndex, 0, removed);
+              handleItemsReorder(activeSectionId, newQuestions);
+            }
+          }
+        } else {
+          // Different sections - move item
+          const sourceSection = checklist.sections.find(s => s.id === activeSectionId);
+          const targetSection = checklist.sections.find(s => s.id === overSectionId);
+          if (sourceSection && targetSection) {
+            const itemToMove = sourceSection.questions.find(q => q.id === active.id);
+            if (itemToMove) {
+              const newSourceQuestions = sourceSection.questions.filter(q => q.id !== active.id);
+              const targetIndex = targetSection.questions.findIndex(q => q.id === over.id);
+              const newTargetQuestions = [...targetSection.questions];
+              newTargetQuestions.splice(targetIndex, 0, itemToMove);
+              const newSections = checklist.sections.map(section => {
+                if (section.id === activeSectionId) return {
+                  ...section,
+                  questions: newSourceQuestions
+                };
+                if (section.id === overSectionId) return {
+                  ...section,
+                  questions: newTargetQuestions
+                };
+                return section;
+              });
+              onUpdate({
+                ...checklist,
+                sections: newSections
+              });
+            }
           }
         }
       }
@@ -2060,10 +2124,16 @@ export function MondayBoardView({
       easing: 'cubic-bezier(0.18, 0.67, 0.6, 1.22)'
     }}>
         {activeId && activeData && <div className={`
-            px-4 py-3 rounded-lg shadow-xl border-2 border-primary bg-white
+            px-4 py-3 rounded-lg shadow-xl border-2 border-primary bg-white relative
             ${activeData.type === 'group' ? 'bg-[#F5F8FA]' : ''}
             ${activeData.type === 'subitem' ? 'ml-10 bg-[#FAFBFC]' : ''}
           `}>
+            {/* Multi-select count badge */}
+            {activeData.selectedCount && activeData.selectedCount > 1 && (
+              <div className="absolute -top-2 -right-2 bg-primary text-primary-foreground text-xs font-bold rounded-full h-6 w-6 flex items-center justify-center shadow-md">
+                {activeData.selectedCount}
+              </div>
+            )}
             <div className="flex items-center gap-3">
               <GripVertical className="h-4 w-4 text-gray-400" />
               <div className="flex items-center gap-2">
@@ -2071,6 +2141,11 @@ export function MondayBoardView({
                 <span className={`text-sm font-medium truncate max-w-[300px] ${activeData.type === 'group' ? 'text-amber-600' : 'text-gray-700'}`} dangerouslySetInnerHTML={{
               __html: sanitizeHtml(activeData.text) || 'Untitled'
             }} />
+                {activeData.selectedCount && activeData.selectedCount > 1 && (
+                  <span className="text-xs text-muted-foreground ml-1">
+                    +{activeData.selectedCount - 1} more
+                  </span>
+                )}
               </div>
             </div>
           </div>}
