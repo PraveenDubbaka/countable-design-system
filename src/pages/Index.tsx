@@ -336,7 +336,9 @@ export default function Index() {
     const clearContent = navState?.clearContent;
 
     // Clear the navigation state so we don't regenerate on refresh/back
-    navigate('/', { replace: true, state: null });
+    if (navState) {
+      navigate('/builder', { replace: true, state: null });
+    }
 
     // Clear content when Engagements or similar non-creator is selected
     if (clearContent) {
