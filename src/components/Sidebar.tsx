@@ -626,7 +626,9 @@ export function Sidebar() {
                   />
                 </div>
                 <Button size="icon" variant="ghost" className="h-8 w-8 hover:bg-white/50">
-                  <Expand className="h-4 w-4 icon-bounce" />
+                  <svg width="17" height="17" viewBox="0 0 17 17" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M9.72214 6.94412L14.5833 2.08301M14.5833 2.08301H10.4166M14.5833 2.08301V6.24967M6.94436 9.7219L2.08325 14.583M2.08325 14.583H6.24992M2.08325 14.583L2.08325 10.4163" stroke="#074075" strokeWidth="1.38889" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
                 </Button>
               </div>
             </div>
