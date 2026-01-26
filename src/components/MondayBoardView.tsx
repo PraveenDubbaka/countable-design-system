@@ -809,8 +809,7 @@ function SortableSubItemRow({
 
       {/* Sub-item name - width matches header */}
       <div className="flex-1 min-w-0 px-3 py-2.5 flex items-center gap-2 border-l border-[#E8EDF2]" style={{
-      flexBasis: columnWidths.questions,
-      maxWidth: columnWidths.questions
+      flexBasis: columnWidths.questions
     }}>
         <span className="text-xs font-medium text-gray-500 shrink-0">{sectionNumber}.{itemNumber}.{index + 1}</span>
         {isEditingName && !isPreviewMode ? <RichTextQuestionEditor value={subItem.text} onChange={newValue => {
@@ -851,21 +850,21 @@ function SortableSubItemRow({
 
       {/* Response column with inline type selector and response field */}
       <div className="flex-1 min-w-0 px-2 py-2 border-l border-[#E8EDF2] flex items-stretch" style={{
-      flexBasis: columnWidths.response,
-      maxWidth: columnWidths.response
+      flexBasis: columnWidths.response
     }}>
-        <div className="flex items-center gap-2 w-full">
+        <div className="flex items-center gap-2 w-full min-w-0">
           <ResponseTypeDropdown currentType={subItem.answerType} onTypeChange={handleAnswerTypeChange} disabled={isPreviewMode} />
           <div className="flex-1 min-w-0">
-            {renderResponseField()}
+            <div className="flex flex-wrap gap-1">
+              {renderResponseField()}
+            </div>
           </div>
         </div>
       </div>
 
       {/* Additional Explanation column - conditionally rendered */}
       {visibleColumns.explanation && <div className="flex-1 min-w-0 px-2 py-2 border-l border-[#E8EDF2] flex items-center" style={{
-      flexBasis: columnWidths.explanation,
-      maxWidth: columnWidths.explanation
+      flexBasis: columnWidths.explanation
     }}>
           {(subItem as any).showExplanation !== false ? <div className="relative group/exp w-full">
               <AITextarea value={subItem.explanation || ''} onChange={val => onUpdate({
@@ -890,8 +889,7 @@ function SortableSubItemRow({
 
       {/* Reference column - conditionally rendered */}
       {visibleColumns.reference && <div className="flex-1 min-w-0 px-2 py-2 flex items-center border-l border-[#E8EDF2]" style={{
-      flexBasis: columnWidths.reference,
-      maxWidth: columnWidths.reference
+      flexBasis: columnWidths.reference
     }}>
           <RefButton reference={(subItem as any).reference} onAttach={doc => onUpdate({
         ...subItem,
@@ -1168,8 +1166,7 @@ function SortableItemRow({
 
         {/* Item name */}
         <div className="flex-1 min-w-0 px-3 py-1 flex items-center gap-2 border-l border-[#E8EDF2]" style={{
-        flexBasis: columnWidths.questions,
-        maxWidth: columnWidths.questions
+        flexBasis: columnWidths.questions
       }}>
           <span className="text-xs font-medium text-gray-500 shrink-0">
             {sectionNumber}.{itemIndex + 1}
@@ -1219,21 +1216,21 @@ function SortableItemRow({
 
         {/* Response column with inline type selector and response field */}
         <div className="flex-1 min-w-0 px-2 py-2 border-l border-[#E8EDF2] flex items-stretch" style={{
-        flexBasis: columnWidths.response,
-        maxWidth: columnWidths.response
+        flexBasis: columnWidths.response
       }}>
           <div className="flex items-center gap-2 w-full min-w-0">
             <ResponseTypeDropdown currentType={item.answerType} onTypeChange={handleAnswerTypeChange} disabled={isPreviewMode} />
-            <div className="flex-1 min-w-0 flex flex-wrap">
-              {renderResponseField()}
+            <div className="flex-1 min-w-0">
+              <div className="flex flex-wrap gap-1">
+                {renderResponseField()}
+              </div>
             </div>
           </div>
         </div>
 
         {/* Additional Explanation column - conditionally rendered */}
-        {visibleColumns.explanation && <div className="flex-1 min-w-0 px-2 py-2 border-l border-[#E8EDF2] flex items-center overflow-hidden" style={{
-        flexBasis: columnWidths.explanation,
-        maxWidth: columnWidths.explanation
+        {visibleColumns.explanation && <div className="flex-1 min-w-0 px-2 py-2 border-l border-[#E8EDF2] flex items-center" style={{
+        flexBasis: columnWidths.explanation
       }}>
             {(item as any).showExplanation !== false ? <div className="relative group/exp w-full">
                 <AITextarea value={item.explanation || ''} onChange={val => onUpdate({
@@ -1257,9 +1254,8 @@ function SortableItemRow({
           </div>}
 
         {/* Reference column - conditionally rendered */}
-        {visibleColumns.reference && <div className="flex-1 min-w-0 px-2 py-2 flex items-center border-l border-[#E8EDF2] overflow-hidden" style={{
-        flexBasis: columnWidths.reference,
-        maxWidth: columnWidths.reference
+        {visibleColumns.reference && <div className="flex-1 min-w-0 px-2 py-2 flex items-center border-l border-[#E8EDF2]" style={{
+        flexBasis: columnWidths.reference
       }}>
             <RefButton reference={(item as any).reference} onAttach={doc => onUpdate({
           ...item,
