@@ -9,6 +9,7 @@ import { ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 import { readJsonFromLocalStorage, writeJsonToLocalStorage } from '@/lib/safeJson';
+import { dispatchChecklistSync } from '@/lib/checklistSync';
 
 const generateClientMeetingChecklist = (prompt: string): Checklist => {
   const sections: Section[] = [
@@ -291,13 +292,16 @@ type GenerateNavState = {
   clearContent?: boolean; // Used to clear content area (e.g., for Engagements)
 };
 
-// Helper to update checklist data in localStorage
+// Helper to update checklist data in localStorage and dispatch sync event
 const updateChecklistInStorage = (checklistId: string, checklistData: Checklist) => {
   const savedChecklists = readJsonFromLocalStorage<any[]>('savedChecklists', []);
   const updated = Array.isArray(savedChecklists)
     ? savedChecklists.map((c: any) => (c?.id === checklistId ? { ...c, data: checklistData } : c))
     : [];
   writeJsonToLocalStorage('savedChecklists', updated);
+  
+  // Dispatch sync event for real-time updates
+  dispatchChecklistSync(checklistId, checklistData);
 };
 
 export default function Index() {
