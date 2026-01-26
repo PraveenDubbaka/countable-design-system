@@ -784,7 +784,7 @@ export function Sidebar() {
                 </Button>
                 <Button
                   size="icon"
-                  variant="ghost"
+                  variant="secondary"
                   className="h-8 w-8 text-destructive hover:text-destructive hover:bg-white/50"
                 >
                   <Trash2 className="h-4 w-4 icon-trash" />
