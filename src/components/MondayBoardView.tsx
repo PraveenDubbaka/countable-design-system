@@ -905,15 +905,15 @@ function SortableSubItemRow({
       {/* Add column placeholder to maintain alignment - always show when columns hidden */}
       {!isPreviewMode && (!visibleColumns.explanation || !visibleColumns.reference) && <div className="w-[100px] shrink-0" />}
 
-      {/* Actions - delete button */}
-      <div className="w-16 shrink-0 flex items-center justify-center self-center">
-        {!isPreviewMode && <button onClick={e => {
-        e.stopPropagation();
-        onDelete();
-      }} className="p-1 rounded hover:bg-[#EDF2F7] text-gray-400 hover:text-red-500 transition-colors opacity-0 group-hover:opacity-100">
-            <Trash2 className="h-4 w-4" />
-          </button>}
-      </div>
+      {/* Actions - delete button - sticky right */}
+      {!isPreviewMode && <div className="w-16 shrink-0 flex items-center justify-center self-center sticky right-0 bg-white z-10 shadow-[-4px_0_8px_-4px_rgba(0,0,0,0.1)]">
+        <button onClick={e => {
+          e.stopPropagation();
+          onDelete();
+        }} className="p-1 rounded hover:bg-[#EDF2F7] text-gray-400 hover:text-red-500 transition-colors opacity-0 group-hover:opacity-100">
+          <Trash2 className="h-4 w-4" />
+        </button>
+      </div>}
     </div>;
 }
 
@@ -1268,66 +1268,64 @@ function SortableItemRow({
         {/* Add column placeholder to maintain alignment */}
         {!isPreviewMode && (!visibleColumns.explanation || !visibleColumns.reference) && <div className="w-[100px] shrink-0" />}
 
-        {/* Actions menu */}
-        <div className="w-16 shrink-0 flex items-center justify-center gap-1 self-center">
-          {!isPreviewMode && <>
-              <button onClick={e => {
+        {/* Actions menu - sticky right */}
+        {!isPreviewMode && <div className="w-16 shrink-0 flex items-center justify-center gap-1 self-center sticky right-0 bg-white z-10 shadow-[-4px_0_8px_-4px_rgba(0,0,0,0.1)]">
+          <button onClick={e => {
             e.stopPropagation();
             onAddSubItem();
           }} className="p-1.5 rounded hover:bg-[#EDF2F7] opacity-0 group-hover:opacity-100 transition-all text-gray-400 hover:text-gray-700" title="Add sub-item">
-                <PlusCircle className="h-4 w-4" />
+            <PlusCircle className="h-4 w-4" />
+          </button>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <button onClick={e => e.stopPropagation()} className="p-1.5 rounded hover:bg-[#EDF2F7] opacity-0 group-hover:opacity-100 transition-all">
+                <MoreHorizontal className="h-4 w-4 text-gray-400" />
               </button>
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <button onClick={e => e.stopPropagation()} className="p-1.5 rounded hover:bg-[#EDF2F7] opacity-0 group-hover:opacity-100 transition-all">
-                    <MoreHorizontal className="h-4 w-4 text-gray-400" />
-                  </button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-48 bg-white z-50">
-                  <div 
-                    className="flex items-center justify-between px-2 py-1.5 text-sm text-gray-700 hover:bg-[#EDF2F7] rounded-sm cursor-pointer"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      e.stopPropagation();
-                      onUpdate({ ...item, required: !item.required });
-                    }}
-                  >
-                    <span>Required</span>
-                    <Switch 
-                      checked={item.required || false} 
-                      onCheckedChange={(checked) => onUpdate({ ...item, required: checked })}
-                      className="h-4 w-8 data-[state=checked]:bg-primary data-[state=unchecked]:bg-gray-300"
-                    />
-                  </div>
-                  <DropdownMenuSeparator className="bg-[#EDF2F7]" />
-                  <DropdownMenuItem onClick={onAddSubItem} className="text-gray-700 focus:bg-[#EDF2F7] focus:text-gray-900">
-                    <Plus className="h-4 w-4 mr-2" />
-                    Add sub-item
-                  </DropdownMenuItem>
-                  <DropdownMenuSeparator className="bg-[#EDF2F7]" />
-                  <div className="px-2 py-1.5 text-xs font-medium text-gray-500">Add item</div>
-                  <DropdownMenuItem onClick={() => onAddItemAtPosition('above')} className="text-gray-700 focus:bg-[#EDF2F7] focus:text-gray-900 pl-4">
-                    <ChevronDown className="h-4 w-4 mr-2 rotate-180" />
-                    Above this item
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => onAddItemAtPosition('below')} className="text-gray-700 focus:bg-[#EDF2F7] focus:text-gray-900 pl-4">
-                    <ChevronDown className="h-4 w-4 mr-2" />
-                    Below this item
-                  </DropdownMenuItem>
-                  <DropdownMenuSeparator className="bg-[#EDF2F7]" />
-                  <DropdownMenuItem onClick={onDuplicate} className="text-gray-700 focus:bg-[#EDF2F7] focus:text-gray-900">
-                    <Copy className="h-4 w-4 mr-2" />
-                    Duplicate
-                  </DropdownMenuItem>
-                  <DropdownMenuSeparator className="bg-[#EDF2F7]" />
-                  <DropdownMenuItem onClick={onDelete} className="text-red-500 focus:bg-[#EDF2F7] focus:text-red-600">
-                    <Trash2 className="h-4 w-4 mr-2" />
-                    Delete
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-            </>}
-        </div>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-48 bg-white z-50">
+              <div 
+                className="flex items-center justify-between px-2 py-1.5 text-sm text-gray-700 hover:bg-[#EDF2F7] rounded-sm cursor-pointer"
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  onUpdate({ ...item, required: !item.required });
+                }}
+              >
+                <span>Required</span>
+                <Switch 
+                  checked={item.required || false} 
+                  onCheckedChange={(checked) => onUpdate({ ...item, required: checked })}
+                  className="h-4 w-8 data-[state=checked]:bg-primary data-[state=unchecked]:bg-gray-300"
+                />
+              </div>
+              <DropdownMenuSeparator className="bg-[#EDF2F7]" />
+              <DropdownMenuItem onClick={onAddSubItem} className="text-gray-700 focus:bg-[#EDF2F7] focus:text-gray-900">
+                <Plus className="h-4 w-4 mr-2" />
+                Add sub-item
+              </DropdownMenuItem>
+              <DropdownMenuSeparator className="bg-[#EDF2F7]" />
+              <div className="px-2 py-1.5 text-xs font-medium text-gray-500">Add item</div>
+              <DropdownMenuItem onClick={() => onAddItemAtPosition('above')} className="text-gray-700 focus:bg-[#EDF2F7] focus:text-gray-900 pl-4">
+                <ChevronDown className="h-4 w-4 mr-2 rotate-180" />
+                Above this item
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => onAddItemAtPosition('below')} className="text-gray-700 focus:bg-[#EDF2F7] focus:text-gray-900 pl-4">
+                <ChevronDown className="h-4 w-4 mr-2" />
+                Below this item
+              </DropdownMenuItem>
+              <DropdownMenuSeparator className="bg-[#EDF2F7]" />
+              <DropdownMenuItem onClick={onDuplicate} className="text-gray-700 focus:bg-[#EDF2F7] focus:text-gray-900">
+                <Copy className="h-4 w-4 mr-2" />
+                Duplicate
+              </DropdownMenuItem>
+              <DropdownMenuSeparator className="bg-[#EDF2F7]" />
+              <DropdownMenuItem onClick={onDelete} className="text-red-500 focus:bg-[#EDF2F7] focus:text-red-600">
+                <Trash2 className="h-4 w-4 mr-2" />
+                Delete
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>}
       </div>
 
       {/* Sub-items section - Monday.com style with connecting line */}
@@ -1786,7 +1784,7 @@ function SortableGroup({
                   {!isPreviewMode && (!visibleColumns.explanation || !visibleColumns.reference) && <div className="w-[100px] shrink-0 px-2 py-2 text-center text-gray-400">
                       <AddColumnButton onAddColumn={handleAddColumn} visibleColumns={visibleColumns} />
                     </div>}
-                  <div className="w-16 shrink-0 py-2" />
+                  {!isPreviewMode && <div className="w-16 shrink-0 py-2 sticky right-0 bg-[#F5F8FA] z-10" />}
                 </div>
 
                 {/* Items */}
