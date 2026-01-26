@@ -467,9 +467,9 @@ export default function EngagementDetail() {
         </div>
 
         {/* Content Area - Preview Mode Checklist */}
-        <div className="flex-1 overflow-auto p-6 bg-white">
-          {/* Section Title */}
-          <div className="flex items-center justify-between mb-4">
+        <div className="flex-1 overflow-auto bg-white">
+          {/* Section Title - Sticky Header */}
+          <div className="sticky top-0 z-10 bg-white px-6 pt-6 pb-4 flex items-center justify-between border-b border-border/50">
             <h1 className="text-xl font-semibold text-primary">
               {checklist.title}
             </h1>
@@ -489,8 +489,10 @@ export default function EngagementDetail() {
             </div>
           </div>
 
-          {/* Objective Section */}
-          <div className="mb-6 bg-white rounded-lg overflow-hidden shadow-md border-t border-black/10">
+          {/* Scrollable Content */}
+          <div className="p-6">
+            {/* Objective Section */}
+            <div className="mb-6 bg-white rounded-lg overflow-hidden shadow-md border-t border-black/10">
             <button 
               onClick={() => setObjectiveExpanded(!objectiveExpanded)}
               className="w-full flex items-center gap-2 bg-[#F5F8FA] px-4 py-3 text-muted-foreground hover:text-foreground transition-colors border-b border-[#E8EDF2]"
@@ -524,6 +526,7 @@ export default function EngagementDetail() {
               selectedQuestions={selectedQuestions}
               onSelectionChange={setSelectedQuestions}
             />
+          </div>
           </div>
         </div>
 
