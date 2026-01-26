@@ -213,7 +213,7 @@ export default function CreationDashboard() {
     setShowTemplateSaveDialog(false);
 
     // Navigate to generate the checklist
-    navigate('/', {
+    navigate('/builder', {
       state: {
         generate: {
           prompt: `Generate a checklist from template: ${selectedTemplate}`,
@@ -262,7 +262,7 @@ export default function CreationDashboard() {
     setShowSaveDialog(false);
 
     // Navigate to generate the checklist
-    navigate('/', {
+    navigate('/builder', {
       state: {
         generate: {
           prompt: `Generate a checklist from uploaded file: ${uploadedFile?.name}`,
