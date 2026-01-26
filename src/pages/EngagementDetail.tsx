@@ -32,6 +32,7 @@ import { Checklist } from "@/types/checklist";
 import { readJsonFromLocalStorage, writeJsonToLocalStorage } from "@/lib/safeJson";
 import { subscribeToChecklistSync, dispatchChecklistSync } from "@/lib/checklistSync";
 import { toast } from "sonner";
+import { ShareWithClientDialog } from "@/components/ShareWithClientDialog";
 
 // Sample engagement data matching the engagements page
 const engagementsData: Record<string, { id: string; client: string; type: string; yearEnd: string; status: string; checklistId?: string }> = {
@@ -109,6 +110,7 @@ export default function EngagementDetail() {
   const [isCompactMode, setIsCompactMode] = useState(false);
   const [selectedQuestions, setSelectedQuestions] = useState<Set<string>>(new Set());
   const [objectiveExpanded, setObjectiveExpanded] = useState(false);
+  const [showShareDialog, setShowShareDialog] = useState(false);
 
   const engagement = engagementId ? engagementsData[engagementId] : null;
   const displayId = engagementId || "Unknown";
@@ -336,7 +338,7 @@ export default function EngagementDetail() {
               </DropdownMenuSub>
               <DropdownMenuItem 
                 className="flex items-center gap-2 cursor-pointer"
-                onClick={() => toast.info('Share with client options coming soon')}
+                onClick={() => setShowShareDialog(true)}
               >
                 <Share2 className="h-4 w-4 text-muted-foreground" />
                 <span>Share with Client</span>
@@ -419,6 +421,13 @@ export default function EngagementDetail() {
           onBulkDelete={handleBulkDelete}
           onAddCategory={handleAddCategory}
           isPreviewMode={true}
+        />
+
+        {/* Share with Client Dialog */}
+        <ShareWithClientDialog
+          open={showShareDialog}
+          onOpenChange={setShowShareDialog}
+          checklistName={checklist?.title}
         />
       </div>
     </Layout>
