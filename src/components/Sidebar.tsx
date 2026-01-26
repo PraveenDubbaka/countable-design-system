@@ -779,8 +779,8 @@ export function Sidebar() {
                 <Button size="icon" variant="ghost" className="h-8 w-8 hover:bg-white/50">
                   <Expand className="h-4 w-4 icon-bounce" />
                 </Button>
-                <Button size="icon" className="h-8 w-8 bg-primary hover:bg-primary/90 shadow-sm">
-                  <Plus className="h-4 w-4 text-primary-foreground icon-plus" />
+                <Button size="icon" variant="secondary" className="h-8 w-8 border-2 shadow-sm">
+                  <Plus className="h-4 w-4 icon-plus" />
                 </Button>
                 <Button
                   size="icon"
