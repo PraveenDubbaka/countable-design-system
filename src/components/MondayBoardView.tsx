@@ -796,10 +796,7 @@ function SortableSubItemRow({
         return <Input value={subItem.answer || ''} onChange={e => handleAnswerChange(e.target.value)} onClick={e => e.stopPropagation()} placeholder="Enter response..." className="h-7 text-xs bg-gray-100 border-gray-300 text-gray-700" />;
     }
   };
-  return <div ref={setNodeRef} style={style} {...!isPreviewMode ? {
-    ...attributes,
-    ...listeners
-  } : {}} className={`group flex items-stretch hover:bg-[#EDF2F7] transition-all relative border-b border-[#E8EDF2] ${!isPreviewMode ? 'cursor-grab active:cursor-grabbing' : ''} ${isDragging ? 'opacity-50 ring-2 ring-primary ring-offset-1 z-10' : ''} ${isValidDropTarget ? 'bg-primary/5' : ''}`}>
+  return <div ref={setNodeRef} style={style} {...attributes} {...listeners} className={`group flex items-stretch hover:bg-[#EDF2F7] transition-all relative border-b border-[#E8EDF2] cursor-grab active:cursor-grabbing ${isDragging ? 'opacity-50 ring-2 ring-primary ring-offset-1 z-10' : ''} ${isValidDropTarget ? 'bg-primary/5' : ''}`}>
       {/* Drop indicator line */}
       {isValidDropTarget && <div className="absolute -top-[2px] left-0 right-0 h-1 bg-primary rounded-full z-20 shadow-[0_0_8px_rgba(59,130,246,0.5)]" />}
       {/* Checkbox column */}
@@ -1146,10 +1143,10 @@ function SortableItemRow({
       {/* Drop indicator line - shows above item when hovering */}
       {isValidDropTarget && <div className="absolute -top-[2px] left-0 right-0 h-1 bg-primary rounded-full z-20 shadow-[0_0_8px_rgba(59,130,246,0.5)]" />}
       {/* Main item row - full row is draggable */}
-      <div {...!isPreviewMode && !isEditingName ? {
+      <div {...!isEditingName ? {
       ...attributes,
       ...listeners
-    } : {}} className={`group flex items-stretch hover:bg-[#EDF2F7] transition-all border-b border-[#E8EDF2] ${isSelected ? 'bg-[#EDF2F7]' : ''} ${!isPreviewMode && !isEditingName ? 'cursor-grab active:cursor-grabbing' : ''} ${isDragging ? 'opacity-50 ring-2 ring-primary ring-offset-1' : ''} ${isValidDropTarget ? 'bg-primary/5' : ''}`}>
+    } : {}} className={`group flex items-stretch hover:bg-[#EDF2F7] transition-all border-b border-[#E8EDF2] ${isSelected ? 'bg-[#EDF2F7]' : ''} ${!isEditingName ? 'cursor-grab active:cursor-grabbing' : ''} ${isDragging ? 'opacity-50 ring-2 ring-primary ring-offset-1' : ''} ${isValidDropTarget ? 'bg-primary/5' : ''}`}>
         {/* Checkbox */}
         <div className="w-10 shrink-0 flex items-center justify-center self-center">
           <Checkbox checked={isSelected} onCheckedChange={checked => onSelectionChange(checked === true)} className="h-4 w-4 border-gray-400" />
@@ -1662,10 +1659,7 @@ function SortableGroup({
       {/* Drop indicator line for groups */}
       {isValidDropTarget && <div className="absolute -top-2 left-0 right-0 h-1 bg-primary rounded-full z-20 shadow-[0_0_8px_rgba(59,130,246,0.5)]" />}
       {/* Group header */}
-      <div {...!isPreviewMode ? {
-      ...attributes,
-      ...listeners
-    } : {}} className={`flex items-center gap-3 px-4 py-2 bg-[#F5F8FA] border-b border-[#E8EDF2] ${!isPreviewMode ? 'cursor-grab active:cursor-grabbing' : ''} ${isDragging ? 'opacity-70' : ''}`}>
+      <div {...attributes} {...listeners} className={`flex items-center gap-3 px-4 py-2 bg-[#F5F8FA] border-b border-[#E8EDF2] cursor-grab active:cursor-grabbing ${isDragging ? 'opacity-70' : ''}`}>
         <div className="w-1 h-6 bg-amber-600 rounded-full" />
         <button onClick={e => {
         e.stopPropagation();
