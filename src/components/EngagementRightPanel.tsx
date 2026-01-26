@@ -126,10 +126,10 @@ export function EngagementRightPanel({ className }: EngagementRightPanelProps) {
 
               {/* Tabs */}
               <Tabs defaultValue="all" className="w-full">
-                <TabsList className="w-full h-9 p-0.5 bg-muted/50">
-                  <TabsTrigger value="all" className="flex-1 text-xs h-full">All Requests</TabsTrigger>
-                  <TabsTrigger value="available" className="flex-1 text-xs h-full">Available</TabsTrigger>
-                  <TabsTrigger value="backlog" className="flex-1 text-xs h-full">Batch Requests</TabsTrigger>
+                <TabsList className="w-full h-9 p-0.5 bg-muted/50 overflow-hidden">
+                  <TabsTrigger value="all" className="flex-1 text-[10px] h-full px-1 min-w-0 truncate">All Requests</TabsTrigger>
+                  <TabsTrigger value="available" className="flex-1 text-[10px] h-full px-1 min-w-0 truncate">Available</TabsTrigger>
+                  <TabsTrigger value="backlog" className="flex-1 text-[10px] h-full px-1 min-w-0 truncate">Batch</TabsTrigger>
                 </TabsList>
                 <TabsContent value="all" className="mt-4">
                   {/* Empty State */}
