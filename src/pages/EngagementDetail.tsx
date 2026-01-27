@@ -481,10 +481,10 @@ export default function EngagementDetail() {
                     <div className="flex flex-col flex-1 min-w-0">
                       <span className="font-mono text-sm font-medium truncate">{eng.id}</span>
                       <div className="flex items-center gap-2 mt-0.5">
-                        <Calendar className="h-3 w-3 text-muted-foreground" />
-                        <span className="text-xs text-muted-foreground">{eng.yearEnd}</span>
-                        <span className="text-xs text-muted-foreground">•</span>
-                        <span className="text-xs text-muted-foreground">{eng.type}</span>
+                        <Calendar className="h-3 w-3 text-muted-foreground group-hover:text-white transition-colors" />
+                        <span className="text-xs text-muted-foreground group-hover:text-white transition-colors">{eng.yearEnd}</span>
+                        <span className="text-xs text-muted-foreground group-hover:text-white transition-colors">•</span>
+                        <span className="text-xs text-muted-foreground group-hover:text-white transition-colors">{eng.type}</span>
                       </div>
                     </div>
                     {eng.id === displayId && (
