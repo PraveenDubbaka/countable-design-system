@@ -153,7 +153,7 @@ const IntegrationBadge = ({
   
   if (!type) return null;
   
-  const badgeClasses = "inline-flex items-center justify-center h-8 w-24 px-1 rounded-full cursor-pointer hover:opacity-80 transition-opacity";
+  const badgeClasses = "inline-flex items-center justify-center h-8 w-24 px-1 rounded-[16px] cursor-pointer hover:opacity-80 transition-opacity bg-white border border-[#E2E5EB]";
   
   const getIntegrationName = () => {
     switch (type) {
@@ -166,18 +166,18 @@ const IntegrationBadge = ({
 
   const BadgeContent = () => {
     if (type === "xero") {
-      return <div className={`${badgeClasses} gap-1.5 bg-[#13B5EA]/10`}>
+      return <div className={`${badgeClasses} gap-1.5`}>
           <img src="https://upload.wikimedia.org/wikipedia/en/9/9f/Xero_software_logo.svg" alt="Xero" className="h-5" />
           <span className="text-xs font-medium text-black">Xero</span>
         </div>;
     }
     if (type === "quickbooks") {
-      return <div className={`${badgeClasses} bg-[#2CA01C]/10`}>
+      return <div className={badgeClasses}>
           <img src={intuitQuickbooksLogo} alt="Intuit QuickBooks" className="h-5" />
         </div>;
     }
     if (type === "sage") {
-      return <div className={`${badgeClasses} gap-1.5 bg-[#00D639]/10`}>
+      return <div className={`${badgeClasses} gap-1.5`}>
           <div className="h-5 w-5 rounded-full bg-black flex items-center justify-center p-1">
             <img src={sageLogo} alt="Sage" className="h-3 w-auto" />
           </div>
