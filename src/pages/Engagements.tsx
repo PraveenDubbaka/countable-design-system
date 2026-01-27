@@ -156,12 +156,12 @@ export default function Engagements() {
                       </td>
                       <td className="px-5 py-3 text-sm text-muted-foreground">{engagement.dateCreated}</td>
                       <td className="px-5 py-3">
-                        <div className="flex items-center gap-1.5 opacity-60 group-hover:opacity-100 transition-opacity">
+                        <div className="flex items-center gap-1.5">
                           <button className="p-1.5 hover:bg-gray-100 rounded transition-colors group/edit">
-                            <Pencil className="h-4 w-4 text-muted-foreground group-hover/edit:icon-edit" />
+                            <Pencil className="h-4 w-4 text-primary group-hover/edit:icon-edit" />
                           </button>
                           <button className="p-1.5 hover:bg-gray-100 rounded transition-colors group/trash">
-                            <Trash2 className="h-4 w-4 text-muted-foreground group-hover/trash:icon-trash" />
+                            <Trash2 className="h-4 w-4 text-primary group-hover/trash:icon-trash" />
                           </button>
                         </div>
                       </td>

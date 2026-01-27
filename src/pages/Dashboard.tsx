@@ -287,19 +287,19 @@ export default function Dashboard() {
                         </Badge>
                       </td>
                       <td className="px-5 py-3">
-                        <div className="flex items-center gap-1.5 opacity-60 group-hover:opacity-100 transition-opacity">
+                        <div className="flex items-center gap-1.5">
                           <span className="text-xs font-medium text-muted-foreground px-1.5 py-0.5 bg-gray-100 rounded">EL</span>
                           <button className="p-1 hover:bg-gray-100 rounded transition-colors group/file">
-                            <FileText className="h-3.5 w-3.5 text-muted-foreground group-hover/file:icon-bounce" />
+                            <FileText className="h-3.5 w-3.5 text-primary group-hover/file:icon-bounce" />
                           </button>
                           <button className="p-1 hover:bg-gray-100 rounded transition-colors group/msg">
-                            <MessageSquare className="h-3.5 w-3.5 text-muted-foreground group-hover/msg:icon-bounce" />
+                            <MessageSquare className="h-3.5 w-3.5 text-primary group-hover/msg:icon-bounce" />
                           </button>
                           <button className="p-1 hover:bg-gray-100 rounded transition-colors group/send">
-                            <Send className="h-3.5 w-3.5 text-muted-foreground group-hover/send:icon-external" />
+                            <Send className="h-3.5 w-3.5 text-primary group-hover/send:icon-external" />
                           </button>
                           <button className="p-1 hover:bg-gray-100 rounded transition-colors group/chev">
-                            <ChevronDown className="h-3.5 w-3.5 text-muted-foreground group-hover/chev:icon-chevron-down" />
+                            <ChevronDown className="h-3.5 w-3.5 text-primary group-hover/chev:icon-chevron-down" />
                           </button>
                         </div>
                       </td>
