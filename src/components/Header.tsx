@@ -1,5 +1,8 @@
-import { Bell, ChevronDown, User, ArrowLeft } from 'lucide-react';
+import { useState } from 'react';
+import { Bell, ChevronDown, User, ArrowLeft, Sparkles, Moon, Sun } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import lukaAiIcon from '@/assets/luka-ai-icon.svg';
 
 interface HeaderProps {
@@ -10,6 +13,14 @@ interface HeaderProps {
 }
 
 export function Header({ title, showActions = true, showBackButton = false, onBack }: HeaderProps) {
+  const [isDarkMode, setIsDarkMode] = useState(false);
+  const [askLukaQuery, setAskLukaQuery] = useState('');
+
+  const toggleDarkMode = () => {
+    setIsDarkMode(!isDarkMode);
+    document.documentElement.classList.toggle('dark');
+  };
+
   return (
     <header className="h-14 bg-card flex items-center justify-between px-6 shadow-md relative z-20">
       {/* Left side - back button and title */}
@@ -30,12 +41,60 @@ export function Header({ title, showActions = true, showBackButton = false, onBa
         )}
       </div>
 
-      {/* Right side - Actions matching screenshot */}
+      {/* Right side - Actions */}
       <div className="flex items-center gap-3">
-        {/* Luka AI icon */}
-        <Button size="icon" variant="ghost" className="relative h-9 w-9 p-0">
-          <img src={lukaAiIcon} alt="Luka AI" className="w-5 h-5 object-contain transition-transform duration-500 hover:rotate-180" />
-        </Button>
+        {/* Ask Luka input with button */}
+        <div className="flex items-center bg-muted rounded-full px-3 py-1 gap-2">
+          <Sparkles className="h-4 w-4 text-muted-foreground" />
+          <Input 
+            type="text"
+            placeholder="Type here.."
+            value={askLukaQuery}
+            onChange={(e) => setAskLukaQuery(e.target.value)}
+            className="border-0 bg-transparent h-7 w-32 text-sm placeholder:text-muted-foreground focus-visible:ring-0 focus-visible:ring-offset-0 px-0"
+          />
+          <Button 
+            size="sm" 
+            className="h-6 px-3 text-xs rounded-full bg-gradient-to-r from-[#7A31D8] to-[#1C63A6] hover:opacity-90 text-white"
+          >
+            Ask Luka
+          </Button>
+        </div>
+
+        {/* Luka AI Credits */}
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <div className="flex items-center gap-1 bg-muted rounded-full px-2 py-1 cursor-pointer hover:bg-muted/80 transition-colors">
+                <div className="w-5 h-5 rounded-full bg-gradient-to-br from-[#7A31D8] to-[#1C63A6] flex items-center justify-center">
+                  <span className="text-[10px] font-bold text-white">L</span>
+                </div>
+              </div>
+            </TooltipTrigger>
+            <TooltipContent>Luka AI Credits</TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+
+        {/* Dark/Light mode toggle */}
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button 
+                size="icon" 
+                variant="ghost" 
+                className="h-9 w-9"
+                onClick={toggleDarkMode}
+              >
+                {isDarkMode ? (
+                  <Sun className="h-5 w-5 text-muted-foreground" />
+                ) : (
+                  <Moon className="h-5 w-5 text-muted-foreground" />
+                )}
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>{isDarkMode ? 'Light Mode' : 'Dark Mode'}</TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
         
         {/* Bell with notification badge */}
         <Button size="icon" variant="ghost" className="relative h-9 w-9 group/bell">
