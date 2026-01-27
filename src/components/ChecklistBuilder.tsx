@@ -40,6 +40,17 @@ import { FloatingActionBar } from './FloatingActionBar';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/components/ui/alert-dialog';
 import { toast } from 'sonner';
 import { RichTextToolbar } from './RichTextToolbar';
 import { useRichTextToolbarContext } from '@/contexts/RichTextToolbarContext';
@@ -408,57 +419,88 @@ export function ChecklistBuilder({ checklist, onUpdate, onSave }: ChecklistBuild
                 <TooltipContent>Save</TooltipContent>
               </Tooltip>
               
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Button 
-                    variant="outline" 
-                    size="icon" 
-                    className="h-8 w-8 hover:bg-[#1C63A6] hover:text-white hover:border-[#1C63A6] transition-colors"
-                    onClick={() => {
-                      toast.success('Checklist duplicated');
-                    }}
-                  >
-                    <Copy className="h-4 w-4" />
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent>Duplicate</TooltipContent>
-              </Tooltip>
+              <AlertDialog>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <AlertDialogTrigger asChild>
+                      <Button 
+                        variant="outline" 
+                        size="icon" 
+                        className="h-8 w-8 hover:bg-[#1C63A6] hover:text-white hover:border-[#1C63A6] transition-colors"
+                      >
+                        <Copy className="h-4 w-4" />
+                      </Button>
+                    </AlertDialogTrigger>
+                  </TooltipTrigger>
+                  <TooltipContent>Duplicate</TooltipContent>
+                </Tooltip>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>Duplicate Checklist</AlertDialogTitle>
+                    <AlertDialogDescription>
+                      Are you sure you want to duplicate this checklist? A copy will be created with all current content.
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                    <AlertDialogAction onClick={() => toast.success('Checklist duplicated')}>
+                      Duplicate
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
               
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Button 
-                    variant="outline" 
-                    size="icon" 
-                    className="h-8 w-8 bg-destructive text-white border-destructive hover:bg-destructive/90 transition-colors"
-                    onClick={() => {
-                      toast.success('Checklist deleted');
-                    }}
-                  >
-                    <Trash2 className="h-4 w-4" />
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent>Delete</TooltipContent>
-              </Tooltip>
+              <AlertDialog>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <AlertDialogTrigger asChild>
+                      <Button 
+                        variant="outline" 
+                        size="icon" 
+                        className="h-8 w-8 bg-destructive text-white border-destructive hover:bg-destructive/90 transition-colors"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </AlertDialogTrigger>
+                  </TooltipTrigger>
+                  <TooltipContent>Delete</TooltipContent>
+                </Tooltip>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>Delete Checklist</AlertDialogTitle>
+                    <AlertDialogDescription>
+                      Are you sure you want to delete this checklist? This action cannot be undone.
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                    <AlertDialogAction 
+                      className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                      onClick={() => toast.success('Checklist deleted')}
+                    >
+                      Delete
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
             </TooltipProvider>
           )}
-          <Button 
-            variant="outline" 
-            size="sm" 
-            className="gap-2 hover:bg-[#1C63A6] hover:text-white hover:border-[#1C63A6] transition-colors"
-            onClick={() => setIsPreviewMode(!isPreviewMode)}
-          >
-            {isPreviewMode ? (
-              <>
-                <Pencil className="h-4 w-4" />
-                Edit
-              </>
-            ) : (
-              <>
-                <Eye className="h-4 w-4" />
-                Preview
-              </>
-            )}
-          </Button>
+          
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button 
+                  variant="outline" 
+                  size="icon"
+                  className="h-8 w-8 hover:bg-[#1C63A6] hover:text-white hover:border-[#1C63A6] transition-colors"
+                  onClick={() => setIsPreviewMode(!isPreviewMode)}
+                >
+                  {isPreviewMode ? <Pencil className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>{isPreviewMode ? 'Edit' : 'Preview'}</TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
         </div>
       </div>
 
