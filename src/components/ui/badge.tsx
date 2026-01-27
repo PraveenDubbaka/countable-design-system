@@ -18,6 +18,9 @@ const badgeVariants = cva(
         inProgress: "bg-sky-50 text-sky-700 border-sky-700",
         notStarted: "bg-slate-100 text-slate-600 border-slate-600",
         rf: "bg-gray-100 text-gray-600 border-gray-600",
+        // Client status variants
+        accepted: "bg-emerald-50 text-emerald-700 border-emerald-700",
+        inviteNow: "bg-sky-50 text-sky-700 border-sky-700",
         // Additional utility variants
         recommended: "bg-pink-100 text-pink-600 border-pink-600",
         feature: "bg-teal-100 text-teal-600 border-teal-600",
