@@ -7,6 +7,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Layout } from "@/components/Layout";
 import { StyledCard } from "@/components/ui/card";
 import { ClientRightPanel } from "@/components/ClientRightPanel";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import intuitQuickbooksLogo from "@/assets/intuit-quickbooks-logo.svg";
 
 // Sample stats data
@@ -230,39 +231,70 @@ export default function Clients() {
 
               {/* Actions */}
               <div className="flex items-center gap-2">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="h-9 px-3 text-sm font-medium bg-white border border-[#E2E5EB] hover:bg-gray-50"
-                >
-                  <RefreshCw className="h-4 w-4 mr-1.5" />
-                  Refresh
-                </Button>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="h-9 px-3 text-sm font-medium bg-white border border-[#E2E5EB] hover:bg-gray-50 text-muted-foreground"
-                >
-                  <UserPlus className="h-4 w-4 mr-1.5" />
-                  Assign Partner
-                  <ChevronDown className="h-3.5 w-3.5 ml-1" />
-                </Button>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="h-9 px-3 text-sm font-medium bg-white border border-[#E2E5EB] hover:bg-gray-50 text-muted-foreground"
-                >
-                  <Mail className="h-4 w-4 mr-1.5" />
-                  Invite All
-                </Button>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="h-9 px-3 text-sm font-medium bg-white border border-[#E2E5EB] hover:bg-gray-50"
-                >
-                  <Download className="h-4 w-4 mr-1.5" />
-                  Export
-                </Button>
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button
+                        variant="outline"
+                        size="icon"
+                        className="h-9 w-9 bg-white border border-[#E2E5EB] hover:bg-gray-50"
+                      >
+                        <RefreshCw className="h-4 w-4" />
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>Refresh</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button
+                        variant="outline"
+                        size="icon"
+                        className="h-9 w-9 bg-white border border-[#E2E5EB] hover:bg-gray-50 text-muted-foreground"
+                      >
+                        <UserPlus className="h-4 w-4" />
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>Assign Partner</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button
+                        variant="outline"
+                        size="icon"
+                        className="h-9 w-9 bg-white border border-[#E2E5EB] hover:bg-gray-50 text-muted-foreground"
+                      >
+                        <Mail className="h-4 w-4" />
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>Invite All</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button
+                        variant="outline"
+                        size="icon"
+                        className="h-9 w-9 bg-white border border-[#E2E5EB] hover:bg-gray-50"
+                      >
+                        <Download className="h-4 w-4" />
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>Export</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
                 <div className="relative">
                   <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                   <Input
