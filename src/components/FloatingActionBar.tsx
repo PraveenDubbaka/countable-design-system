@@ -111,7 +111,7 @@ export function FloatingActionBar({
   };
 
   // Top offset to clear the sticky header (Save, Replace, Delete buttons area)
-  const TOP_HEADER_OFFSET = 56; // ~3.5rem to clear sticky header
+  const TOP_HEADER_OFFSET = 156; // Clear sticky header + action buttons area
 
   // Get position styles based on snap position
   const getPositionStyles = (): React.CSSProperties => {
