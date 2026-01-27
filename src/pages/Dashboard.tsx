@@ -189,9 +189,7 @@ export default function Dashboard() {
               </div>
               <div className="relative">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground icon-search" />
-                <Input placeholder="Search Engagement" value={searchQuery} onChange={e => setSearchQuery(e.target.value)} className="pl-9 w-56 h-9 text-sm border-0 shadow-sm focus:ring-1 focus:ring-primary/30" style={{
-                  backgroundColor: "#FAFBFC"
-                }} />
+                <Input placeholder="Search Engagement" value={searchQuery} onChange={e => setSearchQuery(e.target.value)} className="pl-9 w-56 h-9 text-sm" />
               </div>
             </div>
 
