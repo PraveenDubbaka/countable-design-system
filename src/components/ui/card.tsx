@@ -15,6 +15,22 @@ const Card = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElemen
 ));
 Card.displayName = "Card";
 
+// Styled Card - Standard card with shadow-md and border-t styling
+const StyledCard = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement> & { hover?: boolean }>(
+  ({ className, hover = false, ...props }, ref) => (
+    <div
+      ref={ref}
+      className={cn(
+        "rounded-lg bg-white text-card-foreground shadow-md border-t border-[#E2E5EB] transition-shadow duration-200",
+        hover && "hover:shadow-lg",
+        className
+      )}
+      {...props}
+    />
+  )
+);
+StyledCard.displayName = "StyledCard";
+
 // M3 Card - Filled variant
 const CardFilled = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(
   ({ className, ...props }, ref) => (
@@ -78,4 +94,4 @@ const CardFooter = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDiv
 );
 CardFooter.displayName = "CardFooter";
 
-export { Card, CardFilled, CardOutlined, CardHeader, CardFooter, CardTitle, CardDescription, CardContent };
+export { Card, StyledCard, CardFilled, CardOutlined, CardHeader, CardFooter, CardTitle, CardDescription, CardContent };
