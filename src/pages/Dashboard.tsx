@@ -152,8 +152,9 @@ const IntegrationBadge = ({
   const badgeClasses = "inline-flex items-center justify-center h-8 px-3 rounded-full";
   
   if (type === "xero") {
-    return <div className={`${badgeClasses} bg-[#13B5EA]/10`}>
+    return <div className={`${badgeClasses} gap-1.5 bg-[#13B5EA]/10`}>
         <img src="https://upload.wikimedia.org/wikipedia/en/9/9f/Xero_software_logo.svg" alt="Xero" className="h-5" />
+        <span className="text-xs font-medium text-black">Xero</span>
       </div>;
   }
   if (type === "quickbooks") {
