@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { Search, ChevronDown, FileText, MessageSquare, Send } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from "recharts";
 import { Layout } from "@/components/Layout";
 import { StyledCard } from "@/components/ui/card";
@@ -220,9 +221,9 @@ export default function Dashboard() {
                         <IntegrationBadge type={engagement.integration} />
                       </td>
                       <td className="px-5 py-3">
-                        <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium whitespace-nowrap ${engagement.status === "New" ? "bg-emerald-50 text-emerald-700" : "bg-sky-50 text-sky-700"}`}>
+                        <Badge variant={engagement.status === "New" ? "new" : "inProgress"}>
                           {engagement.status}
-                        </span>
+                        </Badge>
                       </td>
                       <td className="px-5 py-3">
                         <div className="flex items-center gap-1.5 opacity-60 group-hover:opacity-100 transition-opacity">
