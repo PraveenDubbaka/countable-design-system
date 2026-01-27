@@ -14,8 +14,8 @@ export default {
     },
     extend: {
       fontFamily: {
-        sans: ["'Google Sans'", 'Roboto', 'system-ui', 'sans-serif'],
-        display: ["'Google Sans'", 'Roboto', 'system-ui', 'sans-serif'],
+        sans: ['Inter', 'system-ui', 'sans-serif'],
+        display: ['Inter', 'system-ui', 'sans-serif'],
       },
       fontSize: {
         // M3 Typography Scale

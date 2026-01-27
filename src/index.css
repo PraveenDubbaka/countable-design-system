@@ -15,8 +15,8 @@
   box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
 }
 
-/* Material 3 Typography - Google Sans / Roboto fallback */
-@import url('https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700&family=Roboto:wght@400;500;700&display=swap');
+/* Inter Font */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
 @layer base {
   :root {
@@ -211,9 +211,8 @@
 
   body {
     @apply bg-background text-foreground antialiased;
-    font-family: 'Google Sans', 'Roboto', system-ui, sans-serif;
-    /* M3 uses slightly different letter-spacing */
-    letter-spacing: 0.01em;
+    font-family: 'Inter', system-ui, sans-serif;
+    letter-spacing: 0;
   }
 
   /* M3 Typography Scale */
