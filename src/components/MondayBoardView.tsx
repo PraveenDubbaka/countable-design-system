@@ -804,9 +804,6 @@ function SortableSubItemRow({
         <Checkbox checked={isSelected} onCheckedChange={() => setIsSelected(!isSelected)} className="h-4 w-4 border-gray-400 bg-white" />
       </div>
 
-      {/* Spacer to align with parent chevron column */}
-      <div className="w-8 shrink-0" />
-
       {/* Sub-item name - width matches header */}
       <div className="flex-1 min-w-0 px-3 py-2.5 flex items-center gap-2 border-l border-[#E8EDF2]" style={{
       flexBasis: columnWidths.questions
@@ -1334,14 +1331,23 @@ function SortableItemRow({
       </div>
 
       {/* Sub-items section - Monday.com style with connecting line */}
-      {hasSubItems && isExpanded && <div className="relative" onBlur={e => {
+      {hasSubItems && isExpanded && <div className="relative mt-1 mb-2" onBlur={e => {
       // Check if focus is leaving the sub-items container entirely
       if (!e.currentTarget.contains(e.relatedTarget as Node)) {
         cleanupEmptySubItems();
       }
     }}>
-          {/* Sub-items container - no margin, columns align with parent */}
-          <div className="bg-[#F5F8FA] overflow-hidden">
+          {/* Vertical connecting line from parent - positioned at left edge */}
+          <div className="absolute left-3 -top-1 w-0.5 h-4 bg-amber-600/70" />
+          
+          {/* Horizontal connector line */}
+          <div className="absolute left-3 top-3 w-6 h-0.5 bg-amber-600/70" />
+          
+          {/* Continuous vertical bar alongside sub-items */}
+          <div className="absolute left-3 top-3 bottom-0 w-0.5 bg-amber-600/70" />
+          
+          {/* Sub-items container with left margin for the bar */}
+          <div className="ml-10 bg-[#F5F8FA] rounded-lg overflow-hidden">
 
             <SortableContext items={subItemIds} strategy={verticalListSortingStrategy}>
               {item.subQuestions!.map((sub, idx) => <div key={sub.id} className="">
@@ -1358,8 +1364,6 @@ function SortableItemRow({
                 <div className="w-10 flex items-center justify-center py-2.5">
                   <Checkbox disabled className="h-4 w-4 border-gray-300 bg-white opacity-30" />
                 </div>
-                {/* Spacer to align with parent chevron column */}
-                <div className="w-8 shrink-0" />
                 <button onClick={onAddSubItem} className="flex-1 flex items-center gap-2 px-3 py-2.5 text-sm text-gray-400 hover:text-blue-500 transition-colors text-left border-l border-[#E8EDF2]" style={{ flexBasis: columnWidths.questions }}>
                   + Add 
                 </button>
