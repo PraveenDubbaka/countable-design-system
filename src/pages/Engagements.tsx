@@ -115,15 +115,15 @@ export default function Engagements() {
             <div className="flex-1 overflow-y-auto overflow-x-auto">
               <table className="w-full">
                 <thead className="sticky top-0 z-10 shadow-sm">
-                  <tr style={{ backgroundColor: "color(srgb-linear 0.76 0.82 0.86)" }}>
-                    <th className="text-left px-5 py-3 text-xs font-semibold text-muted-foreground uppercase tracking-wider">Engagement ID</th>
-                    <th className="text-left px-5 py-3 text-xs font-semibold text-muted-foreground uppercase tracking-wider">Client Name</th>
-                    <th className="text-left px-5 py-3 text-xs font-semibold text-muted-foreground uppercase tracking-wider">Type</th>
-                    <th className="text-left px-5 py-3 text-xs font-semibold text-muted-foreground uppercase tracking-wider">Period/Year End Date</th>
-                    <th className="text-left px-5 py-3 text-xs font-semibold text-muted-foreground uppercase tracking-wider">Assigned Team</th>
-                    <th className="text-left px-5 py-3 text-xs font-semibold text-muted-foreground uppercase tracking-wider">Status</th>
-                    <th className="text-left px-5 py-3 text-xs font-semibold text-muted-foreground uppercase tracking-wider">Date Created</th>
-                    <th className="text-left px-5 py-3 text-xs font-semibold text-muted-foreground uppercase tracking-wider">Actions</th>
+                  <tr style={{ backgroundColor: "#f1f1f3" }}>
+                    <th className="text-left px-5 py-3 text-xs font-semibold text-[#000000] uppercase tracking-wider">Engagement ID</th>
+                    <th className="text-left px-5 py-3 text-xs font-semibold text-[#000000] uppercase tracking-wider">Client Name</th>
+                    <th className="text-left px-5 py-3 text-xs font-semibold text-[#000000] uppercase tracking-wider">Type</th>
+                    <th className="text-left px-5 py-3 text-xs font-semibold text-[#000000] uppercase tracking-wider">Period/Year End Date</th>
+                    <th className="text-left px-5 py-3 text-xs font-semibold text-[#000000] uppercase tracking-wider">Assigned Team</th>
+                    <th className="text-left px-5 py-3 text-xs font-semibold text-[#000000] uppercase tracking-wider">Status</th>
+                    <th className="text-left px-5 py-3 text-xs font-semibold text-[#000000] uppercase tracking-wider">Date Created</th>
+                    <th className="text-left px-5 py-3 text-xs font-semibold text-[#000000] uppercase tracking-wider">Actions</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-100">
