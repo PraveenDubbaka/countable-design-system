@@ -24,7 +24,7 @@ export function Layout({ children, title, showActions = false, showBackButton = 
             onBack={onBack}
           />
           
-          <main className="flex-1 overflow-auto bg-background text-foreground">
+          <main className="flex-1 overflow-auto bg-card text-foreground">
             {children}
           </main>
         </div>
