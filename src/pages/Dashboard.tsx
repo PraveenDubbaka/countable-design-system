@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Search, ChevronDown, FileText, MessageSquare, Send } from "lucide-react";
+import { Search, ChevronDown, AlertCircle } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -290,16 +290,16 @@ export default function Dashboard() {
                         <div className="flex items-center gap-1.5">
                           <span className="text-xs font-medium text-muted-foreground px-1.5 py-0.5 bg-gray-100 rounded">EL</span>
                           <button className="p-1 hover:bg-gray-100 rounded transition-colors group/file">
-                            <FileText className="h-3.5 w-3.5 text-primary group-hover/file:icon-bounce" />
+                            <AlertCircle className="h-3.5 w-3.5 text-primary group-hover/file:icon-bounce" />
                           </button>
                           <button className="p-1 hover:bg-gray-100 rounded transition-colors group/msg">
-                            <MessageSquare className="h-3.5 w-3.5 text-primary group-hover/msg:icon-bounce" />
+                            <AlertCircle className="h-3.5 w-3.5 text-primary group-hover/msg:icon-bounce" />
                           </button>
                           <button className="p-1 hover:bg-gray-100 rounded transition-colors group/send">
-                            <Send className="h-3.5 w-3.5 text-primary group-hover/send:icon-external" />
+                            <AlertCircle className="h-3.5 w-3.5 text-primary group-hover/send:icon-external" />
                           </button>
                           <button className="p-1 hover:bg-gray-100 rounded transition-colors group/chev">
-                            <ChevronDown className="h-3.5 w-3.5 text-primary group-hover/chev:icon-chevron-down" />
+                            <AlertCircle className="h-3.5 w-3.5 text-primary group-hover/chev:icon-chevron-down" />
                           </button>
                         </div>
                       </td>
