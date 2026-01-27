@@ -16,7 +16,7 @@ export function Layout({ children, title, showActions = false, showBackButton = 
       
       <div className="flex-1 flex flex-col overflow-hidden">
         {/* Curved corner container for header and main content */}
-        <div className="flex-1 flex flex-col overflow-hidden bg-card rounded-tl-[24px]">
+        <div className="flex-1 flex flex-col overflow-hidden bg-card">
           <Header 
             title={title} 
             showActions={showActions}
