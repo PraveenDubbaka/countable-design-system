@@ -156,7 +156,7 @@ const IntegrationBadge = ({
   }
   if (type === "quickbooks") {
     return <div className="inline-flex items-center px-2.5 py-1 rounded-full bg-[#2CA01C]/10">
-        <img src={intuitQuickbooksLogo} alt="Intuit QuickBooks" className="h-4" />
+        <img src={intuitQuickbooksLogo} alt="Intuit QuickBooks" className="h-3.5" />
       </div>;
   }
   return null;
