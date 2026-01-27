@@ -11,7 +11,7 @@ interface LayoutProps {
 
 export function Layout({ children, title, showActions = false, showBackButton = false, onBack }: LayoutProps) {
   return (
-    <div className="flex h-screen bg-sidebar">
+    <div className="flex h-screen bg-sidebar-bg dark:bg-background">
       <Sidebar />
       
       <div className="flex-1 flex flex-col overflow-hidden">
@@ -24,7 +24,7 @@ export function Layout({ children, title, showActions = false, showBackButton = 
             onBack={onBack}
           />
           
-          <main className="flex-1 overflow-auto bg-background">
+          <main className="flex-1 overflow-auto bg-background text-foreground">
             {children}
           </main>
         </div>

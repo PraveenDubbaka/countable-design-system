@@ -151,7 +151,7 @@ const IntegrationBadge = ({
 }) => {
   const [showPopover, setShowPopover] = React.useState(false);
   if (!type) return null;
-  const badgeClasses = "inline-flex items-center justify-center h-8 w-24 px-1 rounded-lg cursor-pointer hover:opacity-80 transition-opacity bg-white border border-[#E2E5EB]";
+  const badgeClasses = "inline-flex items-center justify-center h-8 w-24 px-1 rounded-lg cursor-pointer hover:opacity-80 transition-opacity bg-card border border-border";
   const getIntegrationName = () => {
     switch (type) {
       case "xero":
@@ -168,7 +168,7 @@ const IntegrationBadge = ({
     if (type === "xero") {
       return <div className={`${badgeClasses} gap-1.5`}>
           <img src="https://upload.wikimedia.org/wikipedia/en/9/9f/Xero_software_logo.svg" alt="Xero" className="h-5" />
-          <span className="text-xs font-medium text-black">Xero</span>
+          <span className="text-xs font-medium text-foreground">Xero</span>
         </div>;
     }
     if (type === "quickbooks") {
@@ -181,7 +181,7 @@ const IntegrationBadge = ({
           <div className="h-5 w-5 rounded-full bg-black flex items-center justify-center p-1">
             <img src={sageLogo} alt="Sage" className="h-3 w-auto" />
           </div>
-          <span className="text-xs font-medium text-black">Sage</span>
+          <span className="text-xs font-medium text-foreground">Sage</span>
         </div>;
     }
     return null;
@@ -218,9 +218,7 @@ export default function Dashboard() {
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState("");
   return <Layout title="Dashboard">
-      <div className="flex-1 p-6 overflow-auto" style={{
-      backgroundColor: "#F5F8FA"
-    }}>
+      <div className="flex-1 p-6 overflow-auto bg-background">
 
       <div className="flex gap-6">
         {/* Main Content */}
@@ -228,7 +226,7 @@ export default function Dashboard() {
           {/* Stats Cards - Clean card style */}
           <div className="grid grid-cols-5 gap-3">
             {stats.map((stat, index) => <StyledCard key={index} hover className="p-4">
-                <p className="text-xs font-medium uppercase tracking-wide text-black">{stat.label}</p>
+                <p className="text-xs font-medium uppercase tracking-wide text-foreground">{stat.label}</p>
                 <p className="text-2xl font-bold text-primary mt-1">{stat.value}</p>
               </StyledCard>)}
           </div>
@@ -237,7 +235,7 @@ export default function Dashboard() {
           <StyledCard className="overflow-hidden flex flex-col" style={{
             height: "calc(100vh - 220px)"
           }}>
-            <div className="px-5 py-4 flex items-center justify-between flex-shrink-0 bg-white">
+            <div className="px-5 py-4 flex items-center justify-between flex-shrink-0 bg-card">
               <div>
                 <h2 className="text-base font-semibold text-foreground">Engagements</h2>
                 <p className="text-xs text-muted-foreground mt-0.5">Active engagements from last 6 months</p>
@@ -252,19 +250,17 @@ export default function Dashboard() {
             <div className="flex-1 overflow-y-auto overflow-x-auto">
               <table className="w-full">
                 <thead className="sticky top-0 z-10">
-                  <tr style={{
-                    backgroundColor: "#f1f1f3"
-                  }}>
-                    <th className="text-left px-5 py-3 text-xs font-semibold text-[#000000] uppercase tracking-wider">Engagement ID</th>
-                    <th className="text-left px-5 py-3 text-xs font-semibold text-[#000000] uppercase tracking-wider">Client Name</th>
-                    <th className="text-left px-5 py-3 text-xs font-semibold text-[#000000] uppercase tracking-wider">Year End</th>
-                    <th className="text-left px-5 py-3 text-xs font-semibold text-[#000000] uppercase tracking-wider">Integrations</th>
-                    <th className="text-left px-5 py-3 text-xs font-semibold text-[#000000] uppercase tracking-wider">Status</th>
-                    <th className="text-left px-5 py-3 text-xs font-semibold text-[#000000] uppercase tracking-wider">Actions</th>
+                  <tr className="bg-muted">
+                    <th className="text-left px-5 py-3 text-xs font-semibold text-foreground uppercase tracking-wider">Engagement ID</th>
+                    <th className="text-left px-5 py-3 text-xs font-semibold text-foreground uppercase tracking-wider">Client Name</th>
+                    <th className="text-left px-5 py-3 text-xs font-semibold text-foreground uppercase tracking-wider">Year End</th>
+                    <th className="text-left px-5 py-3 text-xs font-semibold text-foreground uppercase tracking-wider">Integrations</th>
+                    <th className="text-left px-5 py-3 text-xs font-semibold text-foreground uppercase tracking-wider">Status</th>
+                    <th className="text-left px-5 py-3 text-xs font-semibold text-foreground uppercase tracking-wider">Actions</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-gray-100">
-                  {engagements.map((engagement, idx) => <tr key={engagement.id} className="hover:bg-[#F8FAFC] transition-colors group">
+                <tbody className="divide-y divide-border">
+                  {engagements.map((engagement, idx) => <tr key={engagement.id} className="hover:bg-muted/50 transition-colors group">
                       <td className="px-5 py-3">
                         <span className="text-sm text-primary font-medium cursor-pointer hover:underline" onClick={() => navigate(`/engagements/${engagement.id}`)}>
                           {engagement.id}
@@ -282,17 +278,17 @@ export default function Dashboard() {
                       </td>
                       <td className="px-5 py-3">
                         <div className="flex items-center gap-1.5">
-                          <span className="text-xs font-medium text-muted-foreground px-1.5 py-0.5 bg-gray-100 rounded">EL</span>
-                          <button className="p-1 hover:bg-gray-100 rounded transition-colors group/file">
+                          <span className="text-xs font-medium text-muted-foreground px-1.5 py-0.5 bg-muted rounded">EL</span>
+                          <button className="p-1 hover:bg-muted rounded transition-colors group/file">
                             <AlertCircle className="h-3.5 w-3.5 text-primary group-hover/file:icon-bounce" />
                           </button>
-                          <button className="p-1 hover:bg-gray-100 rounded transition-colors group/msg">
+                          <button className="p-1 hover:bg-muted rounded transition-colors group/msg">
                             <MessageSquare className="h-3.5 w-3.5 text-primary group-hover/msg:icon-bounce" />
                           </button>
-                          <button className="p-1 hover:bg-gray-100 rounded transition-colors group/send">
+                          <button className="p-1 hover:bg-muted rounded transition-colors group/send">
                             <Send className="h-3.5 w-3.5 text-primary group-hover/send:icon-external" />
                           </button>
-                          <button className="p-1 hover:bg-gray-100 rounded transition-colors group/chev">
+                          <button className="p-1 hover:bg-muted rounded transition-colors group/chev">
                             <ChevronDown className="h-3.5 w-3.5 text-primary group-hover/chev:icon-chevron-down" />
                           </button>
                         </div>

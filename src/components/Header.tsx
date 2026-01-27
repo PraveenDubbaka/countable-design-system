@@ -3,7 +3,7 @@ import { Bell, ChevronDown, User, ArrowLeft, Sparkles, Moon, Sun } from 'lucide-
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
-import lukaAiIcon from '@/assets/luka-ai-icon.svg';
+import { useThemeContext } from '@/contexts/ThemeContext';
 
 interface HeaderProps {
   title?: string;
@@ -13,13 +13,8 @@ interface HeaderProps {
 }
 
 export function Header({ title, showActions = true, showBackButton = false, onBack }: HeaderProps) {
-  const [isDarkMode, setIsDarkMode] = useState(false);
+  const { isDarkMode, toggleTheme } = useThemeContext();
   const [askLukaQuery, setAskLukaQuery] = useState('');
-
-  const toggleDarkMode = () => {
-    setIsDarkMode(!isDarkMode);
-    document.documentElement.classList.toggle('dark');
-  };
 
   return (
     <header className="h-14 bg-card flex items-center justify-between px-6 shadow-md relative z-20">
@@ -30,9 +25,9 @@ export function Header({ title, showActions = true, showBackButton = false, onBa
             variant="ghost"
             size="sm"
             onClick={onBack}
-            className="gap-2 text-muted-foreground hover:text-foreground hover:bg-[#1C63A6] hover:text-white transition-colors"
+            className="gap-2 text-muted-foreground hover:text-foreground hover:bg-primary hover:text-primary-foreground transition-colors"
           >
-            <ArrowLeft className="h-4 w-4 icon-arrow" />
+            <ArrowLeft className="h-4 w-4" />
             Back
           </Button>
         )}
@@ -82,13 +77,13 @@ export function Header({ title, showActions = true, showBackButton = false, onBa
               <Button 
                 size="icon" 
                 variant="ghost" 
-                className="h-9 w-9"
-                onClick={toggleDarkMode}
+                className="h-9 w-9 transition-transform duration-200 hover:scale-110"
+                onClick={toggleTheme}
               >
                 {isDarkMode ? (
-                  <Sun className="h-5 w-5 text-muted-foreground" />
+                  <Sun className="h-5 w-5 text-muted-foreground transition-transform duration-300 rotate-0 scale-100" />
                 ) : (
-                  <Moon className="h-5 w-5 text-muted-foreground" />
+                  <Moon className="h-5 w-5 text-muted-foreground transition-transform duration-300 rotate-0 scale-100" />
                 )}
               </Button>
             </TooltipTrigger>
@@ -98,16 +93,16 @@ export function Header({ title, showActions = true, showBackButton = false, onBa
         
         {/* Bell with notification badge */}
         <Button size="icon" variant="ghost" className="relative h-9 w-9 group/bell">
-          <Bell className="h-5 w-5 text-muted-foreground group-hover/bell:icon-bell" />
+          <Bell className="h-5 w-5 text-muted-foreground group-hover/bell:text-primary transition-colors" />
           <span className="absolute top-1 right-1 w-4 h-4 rounded-full bg-destructive text-[10px] text-white flex items-center justify-center font-medium">2</span>
         </Button>
 
         {/* User avatar with dropdown */}
         <div className="flex items-center gap-1 ml-1 cursor-pointer hover:bg-muted px-2 py-1.5 rounded-lg transition-colors">
           <div className="w-8 h-8 rounded-full bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center">
-            <User className="h-4 w-4 text-white icon-user" />
+            <User className="h-4 w-4 text-white" />
           </div>
-          <ChevronDown className="h-4 w-4 text-muted-foreground icon-chevron-down" />
+          <ChevronDown className="h-4 w-4 text-muted-foreground" />
         </div>
       </div>
     </header>
