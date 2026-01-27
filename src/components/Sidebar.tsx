@@ -693,8 +693,8 @@ export function Sidebar() {
         </>
       )}
 
-      {/* Templates panel - hidden on Dashboard, Engagements list, and Engagement detail pages */}
-      {location.pathname !== "/dashboard" && location.pathname !== "/engagements" && !location.pathname.startsWith("/engagements/") && (
+      {/* Templates panel - hidden on Dashboard, Clients, Engagements list, and Engagement detail pages */}
+      {location.pathname !== "/dashboard" && location.pathname !== "/clients" && location.pathname !== "/engagements" && !location.pathname.startsWith("/engagements/") && (
         <>
           <div
             className={`flex flex-col rounded-tr-[20px] rounded-br-[20px] relative z-10 transition-all duration-300 group/templates ${isTemplatesPanelCollapsed ? "w-0 overflow-hidden shadow-none bg-transparent border-r-0" : "w-[300px] shadow-md bg-[#f5f8fa] border-r border-black/10"}`}
