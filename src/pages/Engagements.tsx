@@ -4,6 +4,7 @@ import { Search, ChevronDown, Pencil, Trash2, Download } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Layout } from "@/components/Layout";
+import { StyledCard } from "@/components/ui/card";
 
 // Sample stats data
 const stats = [
@@ -65,13 +66,14 @@ export default function Engagements() {
           {/* Stats Cards */}
           <div className="grid grid-cols-4 gap-3">
             {stats.map((stat, index) => (
-              <div
+              <StyledCard
                 key={index}
-                className="bg-white rounded-lg p-4 shadow-sm hover:shadow-md transition-shadow"
+                hover
+                className="p-4"
               >
                 <p className="text-xs font-medium text-muted-foreground">{stat.label}</p>
                 <p className="text-3xl font-bold text-foreground mt-1">{stat.value}</p>
-              </div>
+              </StyledCard>
             ))}
           </div>
 
@@ -91,7 +93,7 @@ export default function Engagements() {
                   placeholder="Search"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="pl-9 w-56 h-9 text-sm bg-white border border-gray-200 focus:ring-1 focus:ring-primary/30"
+                  className="pl-9 w-56 h-9 text-sm"
                 />
               </div>
               <Button
@@ -111,7 +113,7 @@ export default function Engagements() {
           </div>
 
           {/* Engagements Table */}
-          <div className="bg-white rounded-lg shadow-md overflow-hidden flex flex-col flex-1 min-h-0">
+          <StyledCard className="overflow-hidden flex flex-col flex-1 min-h-0">
             <div className="flex-1 overflow-y-auto overflow-x-auto">
               <table className="w-full">
                 <thead className="sticky top-0 z-10 shadow-sm">
@@ -167,7 +169,7 @@ export default function Engagements() {
                 </tbody>
               </table>
             </div>
-          </div>
+          </StyledCard>
         </div>
       </div>
     </Layout>
