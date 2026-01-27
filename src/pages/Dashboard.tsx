@@ -148,15 +148,17 @@ const IntegrationBadge = ({
   type: string | null;
 }) => {
   if (!type) return null;
+  
+  const badgeClasses = "inline-flex items-center justify-center h-8 px-3 rounded-full";
+  
   if (type === "xero") {
-    return <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#13B5EA]/10 text-[#13B5EA] text-xs font-medium">
-        <img src="https://upload.wikimedia.org/wikipedia/en/9/9f/Xero_software_logo.svg" alt="Xero" className="w-4 h-4" />
-        Xero
+    return <div className={`${badgeClasses} bg-[#13B5EA]/10`}>
+        <img src="https://upload.wikimedia.org/wikipedia/en/9/9f/Xero_software_logo.svg" alt="Xero" className="h-5" />
       </div>;
   }
   if (type === "quickbooks") {
-    return <div className="inline-flex items-center px-3 py-1.5 rounded-full bg-[#2CA01C]/10">
-        <img src={intuitQuickbooksLogo} alt="Intuit QuickBooks" className="h-6" />
+    return <div className={`${badgeClasses} bg-[#2CA01C]/10`}>
+        <img src={intuitQuickbooksLogo} alt="Intuit QuickBooks" className="h-5" />
       </div>;
   }
   return null;
