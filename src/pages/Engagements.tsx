@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { Search, ChevronDown, Pencil, Trash2, Download } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import { Layout } from "@/components/Layout";
 import { StyledCard } from "@/components/ui/card";
 
@@ -29,26 +30,26 @@ const engagements = [
 ];
 
 const StatusBadge = ({ status, hasRF }: { status: string; hasRF: boolean }) => {
-  const getStatusStyles = () => {
+  const getStatusVariant = () => {
     switch (status) {
       case "New":
-        return "bg-emerald-50 text-emerald-700";
+        return "new" as const;
       case "In Progress":
-        return "bg-sky-50 text-sky-700";
+        return "inProgress" as const;
       default:
-        return "bg-gray-100 text-gray-700";
+        return "notStarted" as const;
     }
   };
 
   return (
     <div className="flex items-center gap-1.5">
-      <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium ${getStatusStyles()}`}>
+      <Badge variant={getStatusVariant()}>
         {status}
-      </span>
+      </Badge>
       {hasRF && (
-        <span className="inline-flex items-center px-1.5 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-600">
+        <Badge variant="rf" className="px-1.5">
           RF
-        </span>
+        </Badge>
       )}
     </div>
   );
