@@ -244,7 +244,7 @@ export default function Clients() {
                 ))}
               </div>
 
-              {/* Actions */}
+              {/* Actions and Add Client Button */}
               <div className="flex items-center gap-2">
                 <TooltipProvider>
                   <Tooltip>
@@ -366,15 +366,11 @@ export default function Clients() {
                     className="pl-9 w-44 h-9 text-sm"
                   />
                 </div>
+                <Button className="bg-primary hover:bg-primary/90 text-white h-9 px-4 text-sm font-medium">
+                  Add Client
+                  <ChevronDown className="h-4 w-4 ml-1.5" />
+                </Button>
               </div>
-            </div>
-
-            {/* Add Client Button - Positioned top right */}
-            <div className="flex justify-end -mt-3 flex-shrink-0">
-              <Button className="bg-primary hover:bg-primary/90 text-white h-9 px-4 text-sm font-medium">
-                Add Client
-                <ChevronDown className="h-4 w-4 ml-1.5" />
-              </Button>
             </div>
 
             {/* Clients Table */}
