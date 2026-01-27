@@ -1334,23 +1334,14 @@ function SortableItemRow({
       </div>
 
       {/* Sub-items section - Monday.com style with connecting line */}
-      {hasSubItems && isExpanded && <div className="relative mt-1 mb-2" onBlur={e => {
+      {hasSubItems && isExpanded && <div className="relative" onBlur={e => {
       // Check if focus is leaving the sub-items container entirely
       if (!e.currentTarget.contains(e.relatedTarget as Node)) {
         cleanupEmptySubItems();
       }
     }}>
-          {/* Vertical connecting line from parent - positioned at left edge */}
-          <div className="absolute left-3 -top-1 w-0.5 h-4 bg-amber-600/70" />
-          
-          {/* Horizontal connector line */}
-          <div className="absolute left-3 top-3 w-6 h-0.5 bg-amber-600/70" />
-          
-          {/* Continuous vertical bar alongside sub-items */}
-          <div className="absolute left-3 top-3 bottom-0 w-0.5 bg-amber-600/70" />
-          
-          {/* Sub-items container with left margin for the bar */}
-          <div className="ml-10 bg-[#F5F8FA] rounded-lg overflow-hidden">
+          {/* Sub-items container - no margin, columns align with parent */}
+          <div className="bg-[#F5F8FA] overflow-hidden">
 
             <SortableContext items={subItemIds} strategy={verticalListSortingStrategy}>
               {item.subQuestions!.map((sub, idx) => <div key={sub.id} className="">
