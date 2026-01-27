@@ -21,7 +21,7 @@ const StyledCard = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDiv
     <div
       ref={ref}
       className={cn(
-        "rounded-lg bg-white text-card-foreground shadow-md border-t border-[#E2E5EB] transition-shadow duration-200",
+        "rounded-lg bg-card text-card-foreground shadow-md border-t border-border transition-shadow duration-200",
         hover && "hover:shadow-lg",
         className
       )}

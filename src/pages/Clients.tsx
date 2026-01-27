@@ -207,7 +207,7 @@ export default function Clients() {
 
   return (
     <Layout title="Clients">
-      <div className="flex h-full overflow-hidden" style={{ backgroundColor: "#F5F8FA" }}>
+      <div className="flex h-full overflow-hidden bg-background">
         {/* Main Content */}
         <div className="flex-1 p-6 overflow-hidden flex flex-col min-w-0">
           <div className="flex flex-col flex-1 gap-5 min-h-0">
@@ -219,7 +219,7 @@ export default function Clients() {
                   hover
                   className="p-4"
                 >
-                  <p className="text-xs font-medium uppercase tracking-wide text-black">{stat.label}</p>
+                  <p className="text-xs font-medium uppercase tracking-wide text-foreground">{stat.label}</p>
                   <p className="text-2xl font-bold text-primary mt-1">{stat.value}</p>
                 </StyledCard>
               ))}
@@ -228,7 +228,7 @@ export default function Clients() {
             {/* Tabs and Actions Row */}
             <div className="flex items-center justify-between flex-shrink-0">
               {/* Tabs */}
-              <div className="flex items-center gap-1 bg-white rounded-lg border border-[#E2E5EB] p-1">
+              <div className="flex items-center gap-1 bg-card rounded-lg border border-border p-1">
                 {tabs.map((tab) => (
                   <button
                     key={tab.id}
@@ -252,7 +252,7 @@ export default function Clients() {
                       <Button
                         variant="outline"
                         size="icon"
-                        className="h-9 w-9 bg-white border border-[#E2E5EB] hover:bg-gray-50"
+                        className="h-9 w-9 bg-card border-border hover:bg-muted"
                       >
                         <RefreshCw className="h-4 w-4" />
                       </Button>
@@ -270,7 +270,7 @@ export default function Clients() {
                           <Button
                             variant="outline"
                             size="icon"
-                            className="h-9 w-9 bg-white border border-[#E2E5EB] hover:bg-gray-50 text-muted-foreground"
+                            className="h-9 w-9 bg-card border-border hover:bg-muted text-muted-foreground"
                           >
                             <UserPlus className="h-4 w-4" />
                           </Button>
@@ -281,8 +281,8 @@ export default function Clients() {
                       </TooltipContent>
                     </Tooltip>
                   </TooltipProvider>
-                  <PopoverContent className="w-72 p-0 bg-white" align="start">
-                    <div className="p-3 border-b border-[#E2E5EB]">
+                  <PopoverContent className="w-72 p-0 bg-card" align="start">
+                    <div className="p-3 border-b border-border">
                       <div className="relative">
                         <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                         <Input
@@ -293,8 +293,8 @@ export default function Clients() {
                         />
                       </div>
                     </div>
-                    <div className="p-2 border-b border-[#E2E5EB]">
-                      <button className="flex items-center gap-2 w-full px-2 py-1.5 text-sm text-muted-foreground hover:bg-gray-50 rounded transition-colors">
+                    <div className="p-2 border-b border-border">
+                      <button className="flex items-center gap-2 w-full px-2 py-1.5 text-sm text-muted-foreground hover:bg-muted rounded transition-colors">
                         <UserX className="h-4 w-4" />
                         Unassign
                       </button>
@@ -331,7 +331,7 @@ export default function Clients() {
                       <Button
                         variant="outline"
                         size="icon"
-                        className="h-9 w-9 bg-white border border-[#E2E5EB] hover:bg-gray-50 text-muted-foreground"
+                        className="h-9 w-9 bg-card border-border hover:bg-muted text-muted-foreground"
                       >
                         <Mail className="h-4 w-4" />
                       </Button>
@@ -347,7 +347,7 @@ export default function Clients() {
                       <Button
                         variant="outline"
                         size="icon"
-                        className="h-9 w-9 bg-white border border-[#E2E5EB] hover:bg-gray-50"
+                        className="h-9 w-9 bg-card border-border hover:bg-muted"
                       >
                         <Download className="h-4 w-4" />
                       </Button>
@@ -378,30 +378,30 @@ export default function Clients() {
               <div className="flex-1 overflow-y-auto overflow-x-auto">
                 <table className="w-full">
                   <thead className="sticky top-0 z-10 shadow-sm">
-                    <tr style={{ backgroundColor: "#f1f1f3" }}>
-                      <th className="text-left px-3 py-3 text-xs font-semibold text-[#000000] uppercase tracking-wider whitespace-nowrap w-10">
+                    <tr className="bg-muted">
+                      <th className="text-left px-3 py-3 text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap w-10">
                         <Checkbox />
                       </th>
-                      <th className="text-left px-3 py-3 text-xs font-semibold text-[#000000] uppercase tracking-wider whitespace-nowrap">Client ID</th>
-                      <th className="text-left px-3 py-3 text-xs font-semibold text-[#000000] uppercase tracking-wider whitespace-nowrap">Entity Name</th>
-                      <th className="text-left px-3 py-3 text-xs font-semibold text-[#000000] uppercase tracking-wider whitespace-nowrap">Entity Type</th>
-                      <th className="text-left px-3 py-3 text-xs font-semibold text-[#000000] uppercase tracking-wider whitespace-nowrap">Status</th>
-                      <th className="text-left px-3 py-3 text-xs font-semibold text-[#000000] uppercase tracking-wider whitespace-nowrap">Integrations</th>
-                      <th className="text-left px-3 py-3 text-xs font-semibold text-[#000000] uppercase tracking-wider whitespace-nowrap">Contact Name</th>
-                      <th className="text-left px-3 py-3 text-xs font-semibold text-[#000000] uppercase tracking-wider whitespace-nowrap">Email</th>
-                      <th className="text-left px-3 py-3 text-xs font-semibold text-[#000000] uppercase tracking-wider whitespace-nowrap">Repository</th>
-                      <th className="text-left px-3 py-3 text-xs font-semibold text-[#000000] uppercase tracking-wider whitespace-nowrap">Assigned Partner</th>
-                      <th className="text-left px-3 py-3 text-xs font-semibold text-[#000000] uppercase tracking-wider whitespace-nowrap">Assigned Team</th>
-                      <th className="text-left px-3 py-3 text-xs font-semibold text-[#000000] uppercase tracking-wider whitespace-nowrap">Cell Phone</th>
-                      <th className="text-left px-3 py-3 text-xs font-semibold text-[#000000] uppercase tracking-wider whitespace-nowrap">Engagements</th>
-                      <th className="text-left px-3 py-3 text-xs font-semibold text-[#000000] uppercase tracking-wider whitespace-nowrap">Actions</th>
+                      <th className="text-left px-3 py-3 text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap">Client ID</th>
+                      <th className="text-left px-3 py-3 text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap">Entity Name</th>
+                      <th className="text-left px-3 py-3 text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap">Entity Type</th>
+                      <th className="text-left px-3 py-3 text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap">Status</th>
+                      <th className="text-left px-3 py-3 text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap">Integrations</th>
+                      <th className="text-left px-3 py-3 text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap">Contact Name</th>
+                      <th className="text-left px-3 py-3 text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap">Email</th>
+                      <th className="text-left px-3 py-3 text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap">Repository</th>
+                      <th className="text-left px-3 py-3 text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap">Assigned Partner</th>
+                      <th className="text-left px-3 py-3 text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap">Assigned Team</th>
+                      <th className="text-left px-3 py-3 text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap">Cell Phone</th>
+                      <th className="text-left px-3 py-3 text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap">Engagements</th>
+                      <th className="text-left px-3 py-3 text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap">Actions</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-gray-100">
+                  <tbody className="divide-y divide-border">
                     {clients.map((client) => (
                       <tr 
                         key={client.id} 
-                        className={`hover:bg-[#F8FAFC] transition-colors group cursor-pointer ${
+                        className={`hover:bg-muted/50 transition-colors group cursor-pointer ${
                           selectedClient === client.id ? 'bg-primary/5' : ''
                         }`}
                         onClick={() => setSelectedClient(client.id)}

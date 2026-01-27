@@ -62,7 +62,7 @@ export default function Engagements() {
 
   return (
     <Layout title="Engagements">
-      <div className="flex-1 p-6 overflow-hidden flex flex-col" style={{ backgroundColor: "#F5F8FA" }}>
+      <div className="flex-1 p-6 overflow-hidden flex flex-col bg-background">
         <div className="flex flex-col flex-1 gap-5 min-h-0">
           {/* Stats Cards */}
           <div className="grid grid-cols-4 gap-3">
@@ -82,7 +82,7 @@ export default function Engagements() {
           <div className="flex items-center justify-between">
             <Button
               variant="outline"
-              className="h-9 px-4 text-sm font-medium bg-white border border-gray-200 hover:bg-gray-50"
+              className="h-9 px-4 text-sm font-medium bg-card border-border hover:bg-muted"
             >
               {filterPeriod}
               <ChevronDown className="ml-2 h-4 w-4 icon-chevron-down" />
@@ -99,7 +99,7 @@ export default function Engagements() {
               </div>
               <Button
                 variant="outline"
-                className="h-9 px-4 text-sm font-medium bg-white border border-gray-200 hover:bg-gray-50"
+                className="h-9 px-4 text-sm font-medium bg-card border-border hover:bg-muted"
               >
                 <Download className="mr-2 h-4 w-4 icon-download" />
                 Export
@@ -118,22 +118,22 @@ export default function Engagements() {
             <div className="flex-1 overflow-y-auto overflow-x-auto">
               <table className="w-full">
                 <thead className="sticky top-0 z-10 shadow-sm">
-                  <tr style={{ backgroundColor: "#f1f1f3" }}>
-                    <th className="text-left px-5 py-3 text-xs font-semibold text-[#000000] uppercase tracking-wider">Engagement ID</th>
-                    <th className="text-left px-5 py-3 text-xs font-semibold text-[#000000] uppercase tracking-wider">Client Name</th>
-                    <th className="text-left px-5 py-3 text-xs font-semibold text-[#000000] uppercase tracking-wider">Type</th>
-                    <th className="text-left px-5 py-3 text-xs font-semibold text-[#000000] uppercase tracking-wider">Period/Year End Date</th>
-                    <th className="text-left px-5 py-3 text-xs font-semibold text-[#000000] uppercase tracking-wider">Assigned Team</th>
-                    <th className="text-left px-5 py-3 text-xs font-semibold text-[#000000] uppercase tracking-wider">Status</th>
-                    <th className="text-left px-5 py-3 text-xs font-semibold text-[#000000] uppercase tracking-wider">Date Created</th>
-                    <th className="text-left px-5 py-3 text-xs font-semibold text-[#000000] uppercase tracking-wider">Actions</th>
+                  <tr className="bg-muted">
+                    <th className="text-left px-5 py-3 text-xs font-semibold text-foreground uppercase tracking-wider">Engagement ID</th>
+                    <th className="text-left px-5 py-3 text-xs font-semibold text-foreground uppercase tracking-wider">Client Name</th>
+                    <th className="text-left px-5 py-3 text-xs font-semibold text-foreground uppercase tracking-wider">Type</th>
+                    <th className="text-left px-5 py-3 text-xs font-semibold text-foreground uppercase tracking-wider">Period/Year End Date</th>
+                    <th className="text-left px-5 py-3 text-xs font-semibold text-foreground uppercase tracking-wider">Assigned Team</th>
+                    <th className="text-left px-5 py-3 text-xs font-semibold text-foreground uppercase tracking-wider">Status</th>
+                    <th className="text-left px-5 py-3 text-xs font-semibold text-foreground uppercase tracking-wider">Date Created</th>
+                    <th className="text-left px-5 py-3 text-xs font-semibold text-foreground uppercase tracking-wider">Actions</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-gray-100">
+                <tbody className="divide-y divide-border">
                   {engagements.map((engagement) => (
                     <tr 
                       key={engagement.id} 
-                      className="hover:bg-[#F8FAFC] transition-colors group"
+                      className="hover:bg-muted/50 transition-colors group"
                     >
                       <td className="px-5 py-3">
                         <span 
@@ -157,10 +157,10 @@ export default function Engagements() {
                       <td className="px-5 py-3 text-sm text-muted-foreground">{engagement.dateCreated}</td>
                       <td className="px-5 py-3">
                         <div className="flex items-center gap-1.5">
-                          <button className="p-1.5 hover:bg-gray-100 rounded transition-colors group/edit">
+                          <button className="p-1.5 hover:bg-muted rounded transition-colors group/edit">
                             <Pencil className="h-4 w-4 text-primary group-hover/edit:icon-edit" />
                           </button>
-                          <button className="p-1.5 hover:bg-gray-100 rounded transition-colors group/trash">
+                          <button className="p-1.5 hover:bg-muted rounded transition-colors group/trash">
                             <Trash2 className="h-4 w-4 text-primary group-hover/trash:icon-trash" />
                           </button>
                         </div>
