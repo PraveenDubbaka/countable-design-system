@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from "recharts";
 import { Layout } from "@/components/Layout";
 import { StyledCard } from "@/components/ui/card";
+import intuitQuickbooksLogo from "@/assets/intuit-quickbooks-logo.svg";
 
 // Sample data for stats
 const stats = [{
@@ -154,9 +155,8 @@ const IntegrationBadge = ({
       </div>;
   }
   if (type === "quickbooks") {
-    return <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#2CA01C]/10 text-[#14324F] text-xs font-medium">
-        <img src="/quickbooks-icon.svg" alt="Intuit QuickBooks" className="w-4 h-4" />
-        Intuit QuickBooks
+    return <div className="inline-flex items-center px-2.5 py-1 rounded-full bg-[#2CA01C]/10">
+        <img src={intuitQuickbooksLogo} alt="Intuit QuickBooks" className="h-4" />
       </div>;
   }
   return null;
