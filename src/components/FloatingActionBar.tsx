@@ -110,6 +110,9 @@ export function FloatingActionBar({
     setTimeout(() => setIsSnapping(false), 400);
   };
 
+  // Top offset to clear the sticky header (Save, Replace, Delete buttons area)
+  const TOP_HEADER_OFFSET = 56; // ~3.5rem to clear sticky header
+
   // Get position styles based on snap position
   const getPositionStyles = (): React.CSSProperties => {
     if (isDragging && dragY !== null) {
@@ -121,7 +124,7 @@ export function FloatingActionBar({
     
     switch (snapPosition) {
       case 'top':
-        return { top: '1rem', transform: 'translateX(0)' };
+        return { top: `${TOP_HEADER_OFFSET}px`, transform: 'translateX(0)' };
       case 'bottom':
         return { bottom: '1rem', transform: 'translateX(0)' };
       case 'center':
@@ -149,7 +152,8 @@ export function FloatingActionBar({
         const moveClientY = 'touches' in moveEvent ? moveEvent.touches[0].clientY : moveEvent.clientY;
         const newY = moveClientY - containerRect.top - (barRect.height / 2);
         const maxY = containerRect.height - barRect.height - 16;
-        const clampedY = Math.max(16, Math.min(newY, maxY));
+        // Use TOP_HEADER_OFFSET as minimum to prevent overlapping sticky header
+        const clampedY = Math.max(TOP_HEADER_OFFSET, Math.min(newY, maxY));
         setDragY(clampedY);
         dragYRef.current = clampedY;
       };
