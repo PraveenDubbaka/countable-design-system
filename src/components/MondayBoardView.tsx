@@ -162,11 +162,11 @@ function SortableOptionRow({
     opacity: isDragging ? 0.5 : 1
   };
   return <div ref={setNodeRef} style={style} className="flex items-center gap-1">
-      <button type="button" className="p-0.5 text-gray-400 hover:text-gray-600 cursor-grab active:cursor-grabbing touch-none" {...attributes} {...listeners}>
+      <button type="button" className="p-0.5 text-muted-foreground hover:text-foreground cursor-grab active:cursor-grabbing touch-none" {...attributes} {...listeners}>
         <GripVertical className="h-3 w-3" />
       </button>
-      <input type="text" value={value} onChange={e => onChange(e.target.value)} className="flex-1 px-2 py-1 text-xs bg-white border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-primary" placeholder={`Option ${index + 1}`} />
-      <button type="button" onClick={onRemove} disabled={!canRemove} className="p-1 text-gray-400 hover:text-red-500 disabled:opacity-30 disabled:cursor-not-allowed">
+      <input type="text" value={value} onChange={e => onChange(e.target.value)} className="flex-1 px-2 py-1 text-xs bg-background border border-border rounded focus:outline-none focus:ring-1 focus:ring-primary" placeholder={`Option ${index + 1}`} />
+      <button type="button" onClick={onRemove} disabled={!canRemove} className="p-1 text-muted-foreground hover:text-red-500 disabled:opacity-30 disabled:cursor-not-allowed">
         <X className="h-3.5 w-3.5" />
       </button>
     </div>;
@@ -229,7 +229,7 @@ function EditOptionsPopoverContent({
     }
   };
   return <div className="flex flex-col gap-2">
-      <div className="text-xs font-medium text-gray-700 mb-1">Edit Options</div>
+      <div className="text-xs font-medium text-foreground mb-1">Edit Options</div>
       <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
         <SortableContext items={editingOptions.map((_, i) => `option-${i}`)} strategy={verticalListSortingStrategy}>
           <div className="flex flex-col gap-1.5 max-h-40 overflow-y-auto">
@@ -243,13 +243,13 @@ function EditOptionsPopoverContent({
           e.preventDefault();
           handleAddOption();
         }
-      }} placeholder="Add new option..." className="flex-1 px-2 py-1 text-xs bg-white border border-gray-300 border-dashed rounded focus:outline-none focus:ring-1 focus:ring-primary" />
-        <button type="button" onClick={handleAddOption} disabled={!newOption.trim()} className="p-1 text-gray-400 hover:text-green-600 disabled:opacity-30">
+      }} placeholder="Add new option..." className="flex-1 px-2 py-1 text-xs bg-background border border-border border-dashed rounded focus:outline-none focus:ring-1 focus:ring-primary" />
+        <button type="button" onClick={handleAddOption} disabled={!newOption.trim()} className="p-1 text-muted-foreground hover:text-green-600 disabled:opacity-30">
           <Plus className="h-3.5 w-3.5" />
         </button>
       </div>
-      <div className="flex justify-end gap-1.5 pt-2 border-t border-gray-200">
-        <button type="button" onClick={onCancel} className="px-2 py-1 text-xs text-gray-600 hover:bg-gray-100 rounded transition-colors">
+      <div className="flex justify-end gap-1.5 pt-2 border-t border-border">
+        <button type="button" onClick={onCancel} className="px-2 py-1 text-xs text-muted-foreground hover:bg-muted rounded transition-colors">
           Cancel
         </button>
         <button type="button" onClick={onSave} className="px-2 py-1 text-xs bg-primary text-primary-foreground hover:bg-primary/90 rounded transition-colors">
@@ -323,7 +323,7 @@ function MultipleChoiceField({
         return <button key={i} onClick={e => {
           e.stopPropagation();
           toggleSelection(opt);
-        }} className={`${padding} ${textSize} rounded transition-all flex items-center gap-1 whitespace-nowrap ${isSelected ? 'bg-primary text-primary-foreground' : 'bg-gray-200 hover:bg-gray-300 text-gray-700'}`}>
+        }} className={`${padding} ${textSize} rounded transition-all flex items-center gap-1 whitespace-nowrap ${isSelected ? 'bg-primary text-primary-foreground' : 'bg-muted hover:bg-muted/80 text-foreground'}`}>
               {isSelected && <Check className={checkSize} />}
               {opt}
             </button>;
@@ -331,11 +331,11 @@ function MultipleChoiceField({
       </div>
       {!disabled && <Popover open={isEditOpen} onOpenChange={handleOpenChange}>
           <PopoverTrigger asChild>
-            <button onClick={e => e.stopPropagation()} className="p-1 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded transition-colors" title="Edit options">
+            <button onClick={e => e.stopPropagation()} className="p-1 text-muted-foreground hover:text-foreground hover:bg-muted rounded transition-colors" title="Edit options">
               <Pencil className="h-3.5 w-3.5" />
             </button>
           </PopoverTrigger>
-          <PopoverContent className="w-64 p-3 bg-white border border-gray-200 shadow-lg z-50" align="start" onClick={e => e.stopPropagation()}>
+          <PopoverContent className="w-64 p-3 bg-popover border border-border shadow-lg z-50" align="start" onClick={e => e.stopPropagation()}>
             <EditOptionsPopoverContent editingOptions={editingOptions} setEditingOptions={setEditingOptions} newOption={newOption} setNewOption={setNewOption} onSave={handleSaveEdit} onCancel={() => setIsEditOpen(false)} />
           </PopoverContent>
         </Popover>}
@@ -393,17 +393,17 @@ function DropdownField({
       <select value={selectedValue} onChange={e => {
       e.stopPropagation();
       onValueChange(e.target.value);
-    }} onClick={e => e.stopPropagation()} className={`${selectHeight} px-2 ${textSize} bg-gray-100 border-gray-300 text-gray-700 rounded flex-1 min-w-0 truncate`}>
+    }} onClick={e => e.stopPropagation()} className={`${selectHeight} px-2 ${textSize} bg-muted border-border text-foreground rounded flex-1 min-w-0 truncate`}>
         <option value="">Select...</option>
         {options.map((opt, i) => <option key={i} value={opt}>{opt}</option>)}
       </select>
       {!disabled && <Popover open={isEditOpen} onOpenChange={handleOpenChange}>
           <PopoverTrigger asChild>
-            <button onClick={e => e.stopPropagation()} className="p-1 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded transition-colors shrink-0" title="Edit options">
+            <button onClick={e => e.stopPropagation()} className="p-1 text-muted-foreground hover:text-foreground hover:bg-muted rounded transition-colors shrink-0" title="Edit options">
               <Pencil className="h-3.5 w-3.5" />
             </button>
           </PopoverTrigger>
-          <PopoverContent className="w-64 p-3 bg-white border border-gray-200 shadow-lg z-50" align="start" onClick={e => e.stopPropagation()}>
+          <PopoverContent className="w-64 p-3 bg-popover border border-border shadow-lg z-50" align="start" onClick={e => e.stopPropagation()}>
             <EditOptionsPopoverContent editingOptions={editingOptions} setEditingOptions={setEditingOptions} newOption={newOption} setNewOption={setNewOption} onSave={handleSaveEdit} onCancel={() => setIsEditOpen(false)} />
           </PopoverContent>
         </Popover>}
@@ -446,19 +446,19 @@ function RefButton({
   };
   // In preview mode, still show the + Ref button but display attached reference read-only style
   if (disabled && reference) {
-    return <div className="flex items-center gap-1.5 px-2 py-1.5 text-xs text-gray-600 bg-gray-100 rounded">
+    return <div className="flex items-center gap-1.5 px-2 py-1.5 text-xs text-muted-foreground bg-muted rounded">
         <File className="h-3 w-3" />
         <span className="truncate max-w-[120px]">{reference.name}</span>
       </div>;
   }
   if (reference) {
-    return <div className="flex items-center gap-1 px-2 py-1 bg-blue-50 border border-blue-200 rounded text-xs text-blue-700">
+    return <div className="flex items-center gap-1 px-2 py-1 bg-primary/10 border border-primary/30 rounded text-xs text-primary">
         <File className="h-3 w-3 shrink-0" />
         <span className="truncate max-w-[100px]">{reference.name}</span>
         <button onClick={e => {
         e.stopPropagation();
         onRemove();
-      }} className="p-0.5 hover:bg-blue-100 rounded shrink-0">
+      }} className="p-0.5 hover:bg-primary/20 rounded shrink-0">
           <X className="h-3 w-3" />
         </button>
       </div>;
@@ -539,11 +539,11 @@ function AddColumnButton({
   const filteredOptions = COLUMN_OPTIONS.filter(opt => opt.label.toLowerCase().includes(searchTerm.toLowerCase()) && !visibleColumns[opt.id as keyof typeof visibleColumns]);
   return <Popover open={isOpen} onOpenChange={setIsOpen}>
       <PopoverTrigger asChild>
-        <button className="w-10 h-full flex items-center justify-center hover:bg-[#EDF2F7] transition-colors">
-          <Plus className="h-4 w-4 text-gray-500" />
+        <button className="w-10 h-full flex items-center justify-center hover:bg-muted transition-colors">
+          <Plus className="h-4 w-4 text-muted-foreground" />
         </button>
       </PopoverTrigger>
-      <PopoverContent align="end" className="w-72 p-0 bg-slate-800 border-slate-700 shadow-xl z-50" sideOffset={5}>
+      <PopoverContent align="end" className="w-72 p-0 bg-popover border-border shadow-xl z-50" sideOffset={5}>
         {/* Column options */}
         <div className="p-2">
           {filteredOptions.length > 0 ? <div className="grid grid-cols-2 gap-2">
@@ -553,14 +553,14 @@ function AddColumnButton({
               onAddColumn(opt.id);
               setIsOpen(false);
               setSearchTerm('');
-            }} className="flex items-center gap-2 px-3 py-2.5 rounded-md hover:bg-slate-700 transition-colors text-left">
+            }} className="flex items-center gap-2 px-3 py-2.5 rounded-md hover:bg-muted transition-colors text-left">
                     <div className={`w-7 h-7 rounded flex items-center justify-center ${opt.bgColor}`}>
                       <IconComponent className={`h-4 w-4 ${opt.iconColor}`} />
                     </div>
-                    <span className="text-sm text-white">{opt.label}</span>
+                    <span className="text-sm text-popover-foreground">{opt.label}</span>
                   </button>;
           })}
-            </div> : <p className="text-sm text-slate-400 text-center py-4">All columns are already visible</p>}
+            </div> : <p className="text-sm text-muted-foreground text-center py-4">All columns are already visible</p>}
         </div>
       </PopoverContent>
     </Popover>;
@@ -587,13 +587,13 @@ function ResponseTypeDropdown({
   }
   return <Popover open={isOpen} onOpenChange={setIsOpen}>
       <PopoverTrigger asChild>
-        <button onClick={e => e.stopPropagation()} className="flex items-center justify-center p-1 hover:bg-gray-100 rounded transition-colors pt-[4px]" title={currentTypeConfig.label}>
+        <button onClick={e => e.stopPropagation()} className="flex items-center justify-center p-1 hover:bg-muted rounded transition-colors pt-[4px]" title={currentTypeConfig.label}>
           <div className={`w-7 h-7 rounded flex items-center justify-center ${currentTypeConfig.bgColor}`}>
             <CurrentTypeIcon className={`h-4 w-4 ${currentTypeConfig.iconColor}`} />
           </div>
         </button>
       </PopoverTrigger>
-      <PopoverContent align="start" className="w-72 p-0 bg-slate-800 border-slate-700 shadow-xl z-50" sideOffset={5}>
+      <PopoverContent align="start" className="w-72 p-0 bg-popover border-border shadow-xl z-50" sideOffset={5}>
         
         {/* Response type options */}
         <div className="p-2">
@@ -606,11 +606,11 @@ function ResponseTypeDropdown({
               onTypeChange(opt.value);
               setIsOpen(false);
               setSearchTerm('');
-            }} className={`flex items-center gap-2 px-2 py-2 rounded-md transition-colors text-left ${isSelected ? 'bg-slate-600' : 'hover:bg-slate-700'}`}>
+            }} className={`flex items-center gap-2 px-2 py-2 rounded-md transition-colors text-left ${isSelected ? 'bg-muted' : 'hover:bg-muted/50'}`}>
                   <div className={`w-6 h-6 shrink-0 rounded flex items-center justify-center ${opt.bgColor}`}>
                     <IconComponent className={`h-3.5 w-3.5 ${opt.iconColor}`} />
                   </div>
-                  <span className="text-xs text-white whitespace-nowrap truncate">{opt.label}</span>
+                  <span className="text-xs text-popover-foreground whitespace-nowrap truncate">{opt.label}</span>
                 </button>;
           })}
           </div>
@@ -734,7 +734,7 @@ function SortableSubItemRow({
             {options.map(opt => <button key={opt} onClick={e => {
             e.stopPropagation();
             handleAnswerChange(opt);
-          }} className={`px-2 py-1 text-xs rounded transition-all ${subItem.answer === opt ? 'bg-primary text-primary-foreground' : 'bg-gray-200 hover:bg-gray-300 text-gray-700'}`}>
+          }} className={`px-2 py-1 text-xs rounded transition-all ${subItem.answer === opt ? 'bg-primary text-primary-foreground' : 'bg-muted hover:bg-muted/80 text-foreground'}`}>
                 {opt}
               </button>)}
           </div>;
@@ -762,21 +762,21 @@ function SortableSubItemRow({
       case 'none':
         return null;
       case 'date':
-        return <Input type="date" value={subItem.answer || ''} onChange={e => handleAnswerChange(e.target.value)} onClick={e => e.stopPropagation()} className="h-7 text-xs bg-gray-100 border-gray-300 text-gray-700" />;
+        return <Input type="date" value={subItem.answer || ''} onChange={e => handleAnswerChange(e.target.value)} onClick={e => e.stopPropagation()} className="h-7 text-xs bg-muted border-border text-foreground" />;
       case 'amount':
         return <div className="relative">
-          <span className="absolute left-2 top-1/2 -translate-y-1/2 text-gray-500 text-xs">$</span>
-          <Input type="number" value={subItem.answer || ''} onChange={e => handleAnswerChange(e.target.value)} onClick={e => e.stopPropagation()} placeholder="0.00" className="h-7 text-xs bg-gray-100 border-gray-300 text-gray-700 pl-5" />
+          <span className="absolute left-2 top-1/2 -translate-y-1/2 text-muted-foreground text-xs">$</span>
+          <Input type="number" value={subItem.answer || ''} onChange={e => handleAnswerChange(e.target.value)} onClick={e => e.stopPropagation()} placeholder="0.00" className="h-7 text-xs bg-muted border-border text-foreground pl-5" />
         </div>;
       case 'file-upload':
         return <div className="flex items-center gap-1">
-          {subItem.answer ? <div className="flex items-center gap-1 px-2 py-1 bg-blue-50 border border-blue-200 rounded text-xs text-blue-700">
+          {subItem.answer ? <div className="flex items-center gap-1 px-2 py-1 bg-primary/10 border border-primary/30 rounded text-xs text-primary">
               <File className="h-3 w-3" />
               <span className="truncate max-w-[80px]">{subItem.answer}</span>
               {!isPreviewMode && <button onClick={() => handleAnswerChange('')} className="hover:text-red-500">
                   <X className="h-3 w-3" />
                 </button>}
-            </div> : <label className="flex items-center gap-1 px-2 py-1 text-xs bg-gray-100 rounded cursor-pointer hover:bg-gray-200">
+            </div> : <label className="flex items-center gap-1 px-2 py-1 text-xs bg-muted rounded cursor-pointer hover:bg-muted/80">
               <Upload className="h-3 w-3" />
               <span>Upload</span>
               <input type="file" className="hidden" onChange={e => {
@@ -789,26 +789,26 @@ function SortableSubItemRow({
         return <button onClick={e => {
           e.stopPropagation();
           handleAnswerChange(subItem.answer === 'true' ? 'false' : 'true');
-        }} className={`w-10 h-5 rounded-full transition-colors relative ${subItem.answer === 'true' ? 'bg-blue-600' : 'bg-gray-300'}`}>
-          <div className={`absolute top-0.5 w-4 h-4 bg-white rounded-full shadow transition-transform ${subItem.answer === 'true' ? 'translate-x-5' : 'translate-x-0.5'}`} />
+        }} className={`w-10 h-5 rounded-full transition-colors relative ${subItem.answer === 'true' ? 'bg-primary' : 'bg-muted'}`}>
+          <div className={`absolute top-0.5 w-4 h-4 bg-background rounded-full shadow transition-transform ${subItem.answer === 'true' ? 'translate-x-5' : 'translate-x-0.5'}`} />
         </button>;
       default:
-        return <Input value={subItem.answer || ''} onChange={e => handleAnswerChange(e.target.value)} onClick={e => e.stopPropagation()} placeholder="Enter response..." className="h-7 text-xs bg-gray-100 border-gray-300 text-gray-700" />;
+        return <Input value={subItem.answer || ''} onChange={e => handleAnswerChange(e.target.value)} onClick={e => e.stopPropagation()} placeholder="Enter response..." className="h-7 text-xs bg-muted border-border text-foreground" />;
     }
   };
-  return <div ref={setNodeRef} style={style} {...attributes} {...listeners} className={`group flex items-stretch hover:bg-[#EDF2F7] transition-all relative border-b border-[#E8EDF2] cursor-grab active:cursor-grabbing ${isDragging ? 'opacity-50 ring-2 ring-primary ring-offset-1 z-10' : ''} ${isValidDropTarget ? 'bg-primary/5' : ''}`}>
+  return <div ref={setNodeRef} style={style} {...attributes} {...listeners} className={`group flex items-stretch hover:bg-muted/50 transition-all relative border-b border-border cursor-grab active:cursor-grabbing ${isDragging ? 'opacity-50 ring-2 ring-primary ring-offset-1 z-10' : ''} ${isValidDropTarget ? 'bg-primary/5' : ''}`}>
       {/* Drop indicator line */}
       {isValidDropTarget && <div className="absolute -top-[2px] left-0 right-0 h-1 bg-primary rounded-full z-20 shadow-[0_0_8px_rgba(59,130,246,0.5)]" />}
       {/* Checkbox column */}
       <div className="w-10 shrink-0 flex items-center justify-center self-center">
-        <Checkbox checked={isSelected} onCheckedChange={() => setIsSelected(!isSelected)} className="h-4 w-4 border-gray-400 bg-white" />
+        <Checkbox checked={isSelected} onCheckedChange={() => setIsSelected(!isSelected)} className="h-4 w-4 border-border bg-background" />
       </div>
 
       {/* Sub-item name - width matches header */}
-      <div className="flex-1 min-w-0 px-3 py-2.5 flex items-center gap-2 border-l border-[#E8EDF2]" style={{
+      <div className="flex-1 min-w-0 px-3 py-2.5 flex items-center gap-2 border-l border-border" style={{
       flexBasis: columnWidths.questions
     }}>
-        <span className="text-xs font-medium text-gray-500 shrink-0">{sectionNumber}.{itemNumber}.{index + 1}</span>
+        <span className="text-xs font-medium text-muted-foreground shrink-0">{sectionNumber}.{itemNumber}.{index + 1}</span>
         {isEditingName && !isPreviewMode ? <RichTextQuestionEditor value={subItem.text} onChange={newValue => {
         draftNameRef.current = newValue;
       }} onBlur={() => {
@@ -817,7 +817,7 @@ function SortableSubItemRow({
         if (draftNameRef.current.trim() === '' && isNewEmpty) {
           setTimeout(() => onBlurCleanup?.(), 100);
         }
-      }} onCancel={handleCancel} className="text-sm min-h-[32px] bg-gray-100 border-gray-300 text-gray-800" /> : isCompactMode ? <Tooltip>
+      }} onCancel={handleCancel} className="text-sm min-h-[32px] bg-muted border-border text-foreground" /> : isCompactMode ? <Tooltip>
             <TooltipTrigger asChild>
               <div onClick={e => {
             if (!isPreviewMode) {
@@ -825,11 +825,11 @@ function SortableSubItemRow({
               draftNameRef.current = subItem.text;
               setIsEditingName(true);
             }
-          }} className={`text-sm text-gray-700 ${!isPreviewMode ? 'cursor-text hover:text-gray-900' : ''} line-clamp-1 overflow-hidden`} dangerouslySetInnerHTML={{
+          }} className={`text-sm text-foreground ${!isPreviewMode ? 'cursor-text hover:text-foreground' : ''} line-clamp-1 overflow-hidden`} dangerouslySetInnerHTML={{
             __html: sanitizeHtml(subItem.text) || 'Click to add sub-item...'
           }} />
             </TooltipTrigger>
-            <TooltipContent side="top" className="bg-white text-gray-800 border border-gray-200 shadow-lg max-w-md">
+            <TooltipContent side="top" className="bg-popover text-popover-foreground border border-border shadow-lg max-w-md">
               <div dangerouslySetInnerHTML={{
             __html: sanitizeHtml(subItem.text)
           }} />
@@ -840,13 +840,13 @@ function SortableSubItemRow({
           draftNameRef.current = subItem.text;
           setIsEditingName(true);
         }
-      }} className={`text-sm text-gray-700 ${!isPreviewMode ? 'cursor-text hover:text-gray-900' : ''}`} dangerouslySetInnerHTML={{
+      }} className={`text-sm text-foreground ${!isPreviewMode ? 'cursor-text hover:text-foreground' : ''}`} dangerouslySetInnerHTML={{
         __html: sanitizeHtml(subItem.text) || 'Click to add sub-item...'
       }} />}
       </div>
 
       {/* Response column with inline type selector and response field */}
-      <div className="flex-1 min-w-0 px-2 py-2 border-l border-[#E8EDF2] flex items-stretch" style={{
+      <div className="flex-1 min-w-0 px-2 py-2 border-l border-border flex items-stretch" style={{
       flexBasis: columnWidths.response
     }}>
         <div className="flex items-center gap-2 w-full min-w-0">
@@ -860,7 +860,7 @@ function SortableSubItemRow({
       </div>
 
       {/* Additional Explanation column - conditionally rendered */}
-      {visibleColumns.explanation && <div className="flex-1 min-w-0 px-2 py-2 border-l border-[#E8EDF2] flex items-center" style={{
+      {visibleColumns.explanation && <div className="flex-1 min-w-0 px-2 py-2 border-l border-border flex items-center" style={{
       flexBasis: columnWidths.explanation
     }}>
           {(subItem as any).showExplanation !== false ? <div className="relative group/exp w-full">
@@ -872,20 +872,20 @@ function SortableSubItemRow({
           ...subItem,
           showExplanation: false,
           explanation: ''
-        } as any)} className="absolute -top-1 -right-1 p-0.5 bg-white border border-gray-300 rounded-full text-gray-400 hover:text-red-500 hover:border-red-300 opacity-0 group-hover/exp:opacity-100 transition-opacity shadow-sm" title="Remove explanation">
+        } as any)} className="absolute -top-1 -right-1 p-0.5 bg-background border border-border rounded-full text-muted-foreground hover:text-red-500 hover:border-red-300 opacity-0 group-hover/exp:opacity-100 transition-opacity shadow-sm" title="Remove explanation">
                   <X className="h-3 w-3" />
                 </button>}
             </div> : !isPreviewMode && <button onClick={() => onUpdate({
         ...subItem,
         showExplanation: true
-      } as any)} className="flex items-center gap-1 px-2 py-1 text-xs text-gray-500 hover:text-primary hover:bg-[#EDF2F7] rounded transition-colors">
+      } as any)} className="flex items-center gap-1 px-2 py-1 text-xs text-muted-foreground hover:text-primary hover:bg-muted rounded transition-colors">
                 <Plus className="h-3 w-3" />
                 <span>Add</span>
               </button>}
         </div>}
 
       {/* Reference column - conditionally rendered */}
-      {visibleColumns.reference && <div className="flex-1 min-w-0 px-2 py-2 flex items-center border-l border-[#E8EDF2]" style={{
+      {visibleColumns.reference && <div className="flex-1 min-w-0 px-2 py-2 flex items-center border-l border-border" style={{
       flexBasis: columnWidths.reference
     }}>
           <RefButton reference={(subItem as any).reference} onAttach={doc => onUpdate({
@@ -905,11 +905,11 @@ function SortableSubItemRow({
             <button onClick={e => {
             e.stopPropagation();
             onDelete();
-          }} className="p-1.5 rounded hover:bg-[#EDF2F7] text-gray-400 hover:text-red-500 transition-colors opacity-0 group-hover:opacity-100">
+          }} className="p-1.5 rounded hover:bg-muted text-muted-foreground hover:text-red-500 transition-colors opacity-0 group-hover:opacity-100">
               <Trash2 className="h-5 w-5" />
             </button>
           </TooltipTrigger>
-          <TooltipContent side="top" className="bg-white text-gray-800 border border-gray-200 shadow-lg">
+          <TooltipContent side="top" className="bg-popover text-popover-foreground border border-border shadow-lg">
             Delete sub-item
           </TooltipContent>
         </Tooltip>
@@ -1076,7 +1076,7 @@ function SortableItemRow({
             {options.map(opt => <button key={opt} onClick={e => {
             e.stopPropagation();
             handleAnswerChange(opt);
-          }} className={`px-2 py-1 text-xs rounded transition-all ${item.answer === opt ? 'bg-primary text-primary-foreground' : 'bg-gray-200 hover:bg-gray-300 text-gray-700'}`}>
+          }} className={`px-2 py-1 text-xs rounded transition-all ${item.answer === opt ? 'bg-primary text-primary-foreground' : 'bg-muted hover:bg-muted/80 text-foreground'}`}>
                 {opt}
               </button>)}
           </div>;
@@ -1104,21 +1104,21 @@ function SortableItemRow({
       case 'none':
         return null;
       case 'date':
-        return <Input type="date" value={item.answer || ''} onChange={e => handleAnswerChange(e.target.value)} onClick={e => e.stopPropagation()} className="h-8 text-sm bg-gray-100 border-gray-300 text-gray-700" />;
+        return <Input type="date" value={item.answer || ''} onChange={e => handleAnswerChange(e.target.value)} onClick={e => e.stopPropagation()} className="h-8 text-sm bg-muted border-border text-foreground" />;
       case 'amount':
         return <div className="relative">
-          <span className="absolute left-2 top-1/2 -translate-y-1/2 text-gray-500 text-sm">$</span>
-          <Input type="number" value={item.answer || ''} onChange={e => handleAnswerChange(e.target.value)} onClick={e => e.stopPropagation()} placeholder="0.00" className="h-8 text-sm bg-gray-100 border-gray-300 text-gray-700 pl-5" />
+          <span className="absolute left-2 top-1/2 -translate-y-1/2 text-muted-foreground text-sm">$</span>
+          <Input type="number" value={item.answer || ''} onChange={e => handleAnswerChange(e.target.value)} onClick={e => e.stopPropagation()} placeholder="0.00" className="h-8 text-sm bg-muted border-border text-foreground pl-5" />
         </div>;
       case 'file-upload':
         return <div className="flex items-center gap-1">
-          {item.answer ? <div className="flex items-center gap-1 px-2 py-1 bg-blue-50 border border-blue-200 rounded text-xs text-blue-700">
+          {item.answer ? <div className="flex items-center gap-1 px-2 py-1 bg-primary/10 border border-primary/30 rounded text-xs text-primary">
               <File className="h-3 w-3" />
               <span className="truncate max-w-[100px]">{item.answer}</span>
               <button onClick={() => handleAnswerChange('')} className="hover:text-red-500">
                 <X className="h-3 w-3" />
               </button>
-            </div> : <label className="flex items-center gap-1.5 px-2 py-1.5 text-xs bg-gray-100 rounded cursor-pointer hover:bg-gray-200">
+            </div> : <label className="flex items-center gap-1.5 px-2 py-1.5 text-xs bg-muted rounded cursor-pointer hover:bg-muted/80">
               <Upload className="h-3.5 w-3.5" />
               <span>Upload file</span>
               <input type="file" className="hidden" onChange={e => {
@@ -1131,47 +1131,47 @@ function SortableItemRow({
         return <button onClick={e => {
           e.stopPropagation();
           handleAnswerChange(item.answer === 'true' ? 'false' : 'true');
-        }} className={`w-11 h-6 rounded-full transition-colors relative ${item.answer === 'true' ? 'bg-blue-600' : 'bg-gray-300'}`}>
-          <div className={`absolute top-0.5 w-5 h-5 bg-white rounded-full shadow transition-transform ${item.answer === 'true' ? 'translate-x-5' : 'translate-x-0.5'}`} />
+        }} className={`w-11 h-6 rounded-full transition-colors relative ${item.answer === 'true' ? 'bg-primary' : 'bg-muted'}`}>
+          <div className={`absolute top-0.5 w-5 h-5 bg-background rounded-full shadow transition-transform ${item.answer === 'true' ? 'translate-x-5' : 'translate-x-0.5'}`} />
         </button>;
       default:
-        return <Input value={item.answer || ''} onChange={e => handleAnswerChange(e.target.value)} onClick={e => e.stopPropagation()} placeholder="Enter response..." className="h-8 text-sm bg-gray-100 border-gray-300 text-gray-700" />;
+        return <Input value={item.answer || ''} onChange={e => handleAnswerChange(e.target.value)} onClick={e => e.stopPropagation()} placeholder="Enter response..." className="h-8 text-sm bg-muted border-border text-foreground" />;
     }
   };
   const subItemIds = item.subQuestions?.map(sq => sq.id) || [];
-  return <div ref={setNodeRef} style={style} className={`border-t border-[#E0E6ED] relative ${isDragging ? 'z-10' : ''}`}>
+  return <div ref={setNodeRef} style={style} className={`border-t border-border relative ${isDragging ? 'z-10' : ''}`}>
       {/* Drop indicator line - shows above item when hovering */}
       {isValidDropTarget && <div className="absolute -top-[2px] left-0 right-0 h-1 bg-primary rounded-full z-20 shadow-[0_0_8px_rgba(59,130,246,0.5)]" />}
       {/* Main item row - full row is draggable */}
       <div {...!isEditingName ? {
       ...attributes,
       ...listeners
-    } : {}} className={`group flex items-stretch hover:bg-[#EDF2F7] transition-all border-b border-[#E8EDF2] ${isSelected ? 'bg-[#EDF2F7]' : ''} ${!isEditingName ? 'cursor-grab active:cursor-grabbing' : ''} ${isDragging ? 'opacity-50 ring-2 ring-primary ring-offset-1' : ''} ${isValidDropTarget ? 'bg-primary/5' : ''}`}>
+    } : {}} className={`group flex items-stretch hover:bg-muted/50 transition-all border-b border-border ${isSelected ? 'bg-muted/50' : ''} ${!isEditingName ? 'cursor-grab active:cursor-grabbing' : ''} ${isDragging ? 'opacity-50 ring-2 ring-primary ring-offset-1' : ''} ${isValidDropTarget ? 'bg-primary/5' : ''}`}>
         {/* Checkbox */}
         <div className="w-10 shrink-0 flex items-center justify-center self-center">
-          <Checkbox checked={isSelected} onCheckedChange={checked => onSelectionChange(checked === true)} className="h-4 w-4 border-gray-400" />
+          <Checkbox checked={isSelected} onCheckedChange={checked => onSelectionChange(checked === true)} className="h-4 w-4 border-border" />
         </div>
 
         {/* Expand arrow - Monday.com style: dull on hover, solid when has sub-items */}
         <div className="w-8 shrink-0 flex items-center justify-center self-center">
-          {hasRealSubItems ? <button onClick={handleChevronClick} className="p-0.5 rounded hover:bg-gray-200 transition-colors" title={isExpanded ? "Collapse sub-items" : "Expand sub-items"}>
-              {isExpanded ? <ChevronDown className="h-4 w-4 text-gray-600" /> : <ChevronRight className="h-4 w-4 text-gray-600" />}
-            </button> : !isPreviewMode ? <button onClick={handleChevronClick} className="p-0.5 rounded hover:bg-gray-200 transition-colors opacity-0 group-hover:opacity-100" title="Add sub-item">
-              <ChevronRight className="h-4 w-4 text-gray-400" />
+          {hasRealSubItems ? <button onClick={handleChevronClick} className="p-0.5 rounded hover:bg-muted transition-colors" title={isExpanded ? "Collapse sub-items" : "Expand sub-items"}>
+              {isExpanded ? <ChevronDown className="h-4 w-4 text-muted-foreground" /> : <ChevronRight className="h-4 w-4 text-muted-foreground" />}
+            </button> : !isPreviewMode ? <button onClick={handleChevronClick} className="p-0.5 rounded hover:bg-muted transition-colors opacity-0 group-hover:opacity-100" title="Add sub-item">
+              <ChevronRight className="h-4 w-4 text-muted-foreground" />
             </button> : <div className="w-4" />}
         </div>
 
         {/* Item name */}
-        <div className="flex-1 min-w-0 px-3 py-1 flex items-center gap-2 border-l border-[#E8EDF2]" style={{
+        <div className="flex-1 min-w-0 px-3 py-1 flex items-center gap-2 border-l border-border" style={{
         flexBasis: columnWidths.questions
       }}>
-          <span className="text-xs font-medium text-gray-500 shrink-0">
+          <span className="text-xs font-medium text-muted-foreground shrink-0">
             {sectionNumber}.{itemIndex + 1}
             {item.required && isPreviewMode && <span className="text-red-500 ml-0.5">*</span>}
           </span>
           {isEditingName && !isPreviewMode ? <RichTextQuestionEditor value={item.text} onChange={newValue => {
           draftNameRef.current = newValue;
-        }} onBlur={handleSave} onCancel={handleCancel} className="text-sm min-h-[36px] bg-gray-100 border-gray-300 text-gray-800 flex-1" /> : <div className="flex items-center gap-2 flex-1 min-w-0">
+        }} onBlur={handleSave} onCancel={handleCancel} className="text-sm min-h-[36px] bg-muted border-border text-foreground flex-1" /> : <div className="flex items-center gap-2 flex-1 min-w-0">
               {isCompactMode ? <Tooltip>
                   <TooltipTrigger asChild>
                     <div onClick={e => {
@@ -1180,11 +1180,11 @@ function SortableItemRow({
                   draftNameRef.current = item.text;
                   setIsEditingName(true);
                 }
-              }} className={`text-sm text-gray-800 flex-1 ${!isPreviewMode ? 'cursor-text hover:text-gray-900' : ''} line-clamp-1 overflow-hidden py-1`} dangerouslySetInnerHTML={{
+              }} className={`text-sm text-foreground flex-1 ${!isPreviewMode ? 'cursor-text hover:text-foreground' : ''} line-clamp-1 overflow-hidden py-1`} dangerouslySetInnerHTML={{
                 __html: sanitizeHtml(item.text) || 'Click to add item name...'
               }} />
                   </TooltipTrigger>
-                  <TooltipContent side="top" className="bg-white text-gray-800 border border-gray-200 shadow-lg max-w-md">
+                  <TooltipContent side="top" className="bg-popover text-popover-foreground border border-border shadow-lg max-w-md">
                     <div dangerouslySetInnerHTML={{
                 __html: sanitizeHtml(item.text)
               }} />
@@ -1195,16 +1195,16 @@ function SortableItemRow({
               draftNameRef.current = item.text;
               setIsEditingName(true);
             }
-          }} className={`text-sm text-gray-800 flex-1 ${!isPreviewMode ? 'cursor-text hover:text-gray-900' : ''} py-2`} dangerouslySetInnerHTML={{
+          }} className={`text-sm text-foreground flex-1 ${!isPreviewMode ? 'cursor-text hover:text-foreground' : ''} py-2`} dangerouslySetInnerHTML={{
             __html: sanitizeHtml(item.text) || 'Click to add item name...'
           }} />}
               {hasRealSubItems && <Tooltip>
                   <TooltipTrigger asChild>
-                    <span className="text-xs bg-blue-100 text-blue-600 px-1.5 py-0.5 rounded font-medium shrink-0 cursor-default">
+                    <span className="text-xs bg-primary/20 text-primary px-1.5 py-0.5 rounded font-medium shrink-0 cursor-default">
                       {item.subQuestions!.filter(sq => sq.text.trim() !== '').length}
                     </span>
                   </TooltipTrigger>
-                  <TooltipContent side="top" className="bg-white text-gray-800 border border-gray-200 shadow-lg">
+                  <TooltipContent side="top" className="bg-popover text-popover-foreground border border-border shadow-lg">
                     {item.subQuestions!.filter(sq => sq.text.trim() !== '').length === 1 ? '1 Sub-question' : `${item.subQuestions!.filter(sq => sq.text.trim() !== '').length} Sub-questions`}
                   </TooltipContent>
                 </Tooltip>}
@@ -1212,7 +1212,7 @@ function SortableItemRow({
         </div>
 
         {/* Response column with inline type selector and response field */}
-        <div className="flex-1 min-w-0 px-2 py-2 border-l border-[#E8EDF2] flex items-stretch" style={{
+        <div className="flex-1 min-w-0 px-2 py-2 border-l border-border flex items-stretch" style={{
         flexBasis: columnWidths.response
       }}>
           <div className="flex items-center gap-2 w-full min-w-0">
@@ -1226,7 +1226,7 @@ function SortableItemRow({
         </div>
 
         {/* Additional Explanation column - conditionally rendered */}
-        {visibleColumns.explanation && <div className="flex-1 min-w-0 px-2 py-2 border-l border-[#E8EDF2] flex items-center" style={{
+        {visibleColumns.explanation && <div className="flex-1 min-w-0 px-2 py-2 border-l border-border flex items-center" style={{
         flexBasis: columnWidths.explanation
       }}>
             {(item as any).showExplanation !== false ? <div className="relative group/exp w-full">
@@ -1238,20 +1238,20 @@ function SortableItemRow({
             ...item,
             showExplanation: false,
             explanation: ''
-          } as any)} className="absolute -top-1 -right-1 p-0.5 bg-white border border-gray-300 rounded-full text-gray-400 hover:text-red-500 hover:border-red-300 opacity-0 group-hover/exp:opacity-100 transition-opacity shadow-sm" title="Remove explanation">
+          } as any)} className="absolute -top-1 -right-1 p-0.5 bg-background border border-border rounded-full text-muted-foreground hover:text-red-500 hover:border-red-300 opacity-0 group-hover/exp:opacity-100 transition-opacity shadow-sm" title="Remove explanation">
                     <X className="h-3 w-3" />
                   </button>}
               </div> : !isPreviewMode && <button onClick={() => onUpdate({
           ...item,
           showExplanation: true
-        } as any)} className="flex items-center gap-1 px-2 py-1 text-xs text-gray-500 hover:text-primary hover:bg-[#EDF2F7] rounded transition-colors">
+        } as any)} className="flex items-center gap-1 px-2 py-1 text-xs text-muted-foreground hover:text-primary hover:bg-muted rounded transition-colors">
                   <Plus className="h-3 w-3" />
                   <span>Add</span>
                 </button>}
           </div>}
 
         {/* Reference column - conditionally rendered */}
-        {visibleColumns.reference && <div className="flex-1 min-w-0 px-2 py-2 flex items-center border-l border-[#E8EDF2]" style={{
+        {visibleColumns.reference && <div className="flex-1 min-w-0 px-2 py-2 flex items-center border-l border-border" style={{
         flexBasis: columnWidths.reference
       }}>
             <RefButton reference={(item as any).reference} onAttach={doc => onUpdate({
@@ -1271,22 +1271,22 @@ function SortableItemRow({
               <button onClick={e => {
               e.stopPropagation();
               onAddSubItem();
-            }} className="p-1.5 rounded hover:bg-[#EDF2F7] opacity-0 group-hover:opacity-100 transition-all text-gray-400 hover:text-gray-700">
+            }} className="p-1.5 rounded hover:bg-muted opacity-0 group-hover:opacity-100 transition-all text-muted-foreground hover:text-foreground">
                 <PlusCircle className="h-5 w-5" />
               </button>
             </TooltipTrigger>
-            <TooltipContent side="top" className="bg-white text-gray-800 border border-gray-200 shadow-lg">
+            <TooltipContent side="top" className="bg-popover text-popover-foreground border border-border shadow-lg">
               Add sub-item
             </TooltipContent>
           </Tooltip>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <button onClick={e => e.stopPropagation()} className="p-1.5 rounded hover:bg-[#EDF2F7] opacity-0 group-hover:opacity-100 transition-all" title="More actions">
-                <MoreHorizontal className="h-5 w-5 text-gray-400" />
+              <button onClick={e => e.stopPropagation()} className="p-1.5 rounded hover:bg-muted opacity-0 group-hover:opacity-100 transition-all" title="More actions">
+                <MoreHorizontal className="h-5 w-5 text-muted-foreground" />
               </button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-48 bg-white z-50">
-              <div className="flex items-center justify-between px-2 py-1.5 text-sm text-gray-700 hover:bg-[#EDF2F7] rounded-sm cursor-pointer" onClick={e => {
+            <DropdownMenuContent align="end" className="w-48 bg-popover z-50">
+              <div className="flex items-center justify-between px-2 py-1.5 text-sm text-foreground hover:bg-muted rounded-sm cursor-pointer" onClick={e => {
               e.preventDefault();
               e.stopPropagation();
               onUpdate({
@@ -1298,30 +1298,30 @@ function SortableItemRow({
                 <Switch checked={item.required || false} onCheckedChange={checked => onUpdate({
                 ...item,
                 required: checked
-              })} className="h-4 w-8 data-[state=checked]:bg-primary data-[state=unchecked]:bg-gray-300" />
+              })} className="h-4 w-8 data-[state=checked]:bg-primary data-[state=unchecked]:bg-muted" />
               </div>
-              <DropdownMenuSeparator className="bg-[#EDF2F7]" />
-              <DropdownMenuItem onClick={onAddSubItem} className="text-gray-700 focus:bg-[#EDF2F7] focus:text-gray-900">
+              <DropdownMenuSeparator className="bg-border" />
+              <DropdownMenuItem onClick={onAddSubItem} className="text-foreground focus:bg-muted focus:text-foreground">
                 <Plus className="h-4 w-4 mr-2" />
                 Add sub-item
               </DropdownMenuItem>
-              <DropdownMenuSeparator className="bg-[#EDF2F7]" />
-              <div className="px-2 py-1.5 text-xs font-medium text-gray-500">Add item</div>
-              <DropdownMenuItem onClick={() => onAddItemAtPosition('above')} className="text-gray-700 focus:bg-[#EDF2F7] focus:text-gray-900 pl-4">
+              <DropdownMenuSeparator className="bg-border" />
+              <div className="px-2 py-1.5 text-xs font-medium text-muted-foreground">Add item</div>
+              <DropdownMenuItem onClick={() => onAddItemAtPosition('above')} className="text-foreground focus:bg-muted focus:text-foreground pl-4">
                 <ChevronDown className="h-4 w-4 mr-2 rotate-180" />
                 Above this item
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => onAddItemAtPosition('below')} className="text-gray-700 focus:bg-[#EDF2F7] focus:text-gray-900 pl-4">
+              <DropdownMenuItem onClick={() => onAddItemAtPosition('below')} className="text-foreground focus:bg-muted focus:text-foreground pl-4">
                 <ChevronDown className="h-4 w-4 mr-2" />
                 Below this item
               </DropdownMenuItem>
-              <DropdownMenuSeparator className="bg-[#EDF2F7]" />
-              <DropdownMenuItem onClick={onDuplicate} className="text-gray-700 focus:bg-[#EDF2F7] focus:text-gray-900">
+              <DropdownMenuSeparator className="bg-border" />
+              <DropdownMenuItem onClick={onDuplicate} className="text-foreground focus:bg-muted focus:text-foreground">
                 <Copy className="h-4 w-4 mr-2" />
                 Duplicate
               </DropdownMenuItem>
-              <DropdownMenuSeparator className="bg-[#EDF2F7]" />
-              <DropdownMenuItem onClick={onDelete} className="text-red-500 focus:bg-[#EDF2F7] focus:text-red-600">
+              <DropdownMenuSeparator className="bg-border" />
+              <DropdownMenuItem onClick={onDelete} className="text-red-500 focus:bg-muted focus:text-red-600">
                 <Trash2 className="h-4 w-4 mr-2" />
                 Delete
               </DropdownMenuItem>
@@ -1347,7 +1347,7 @@ function SortableItemRow({
           <div className="absolute left-3 top-3 bottom-0 w-0.5 bg-amber-600/70" />
           
           {/* Sub-items container with left margin for the bar */}
-          <div className="ml-8 bg-[#F8F8FA] rounded-lg overflow-hidden">
+          <div className="ml-8 bg-muted/50 rounded-lg overflow-hidden">
 
             <SortableContext items={subItemIds} strategy={verticalListSortingStrategy}>
               {item.subQuestions!.map((sub, idx) => <div key={sub.id} className="">
@@ -1360,11 +1360,11 @@ function SortableItemRow({
             </SortableContext>
 
             {/* Add subitem row */}
-            {!isPreviewMode && hasRealSubItems && <div className="flex items-center hover:bg-[#EDF2F7] transition-colors">
+            {!isPreviewMode && hasRealSubItems && <div className="flex items-center hover:bg-muted transition-colors">
                 <div className="w-10 flex items-center justify-center py-2.5">
-                  <Checkbox disabled className="h-4 w-4 border-gray-300 bg-white opacity-30" />
+                  <Checkbox disabled className="h-4 w-4 border-border bg-background opacity-30" />
                 </div>
-                <button onClick={onAddSubItem} className="flex-1 flex items-center gap-2 px-3 py-2.5 text-sm text-gray-400 hover:text-blue-500 transition-colors text-left border-l border-[#E8EDF2]" style={{ flexBasis: columnWidths.questions }}>
+                <button onClick={onAddSubItem} className="flex-1 flex items-center gap-2 px-3 py-2.5 text-sm text-muted-foreground hover:text-primary transition-colors text-left border-l border-border" style={{ flexBasis: columnWidths.questions }}>
                   + Add 
                 </button>
               </div>}
@@ -1458,7 +1458,7 @@ function ResizableColumnHeader({
     }
     setIsEditing(false);
   };
-  return <div ref={headerRef} className="flex-1 min-w-0 px-2 py-2 flex items-center justify-between group/col relative border-l border-[#E8EDF2] first:border-l-0" style={{
+  return <div ref={headerRef} className="flex-1 min-w-0 px-2 py-2 flex items-center justify-between group/col relative border-l border-border first:border-l-0" style={{
     flexBasis: width,
     maxWidth: typeof width === 'string' && width.includes('%') ? width : undefined
   }}>
@@ -1468,13 +1468,13 @@ function ResizableColumnHeader({
         setDraftLabel(label);
         setIsEditing(false);
       }
-    }} autoFocus onClick={e => e.stopPropagation()} className="h-5 text-xs font-medium bg-white border border-gray-300 rounded px-1 flex-1 min-w-0" /> : <span onClick={() => {
+    }} autoFocus onClick={e => e.stopPropagation()} className="h-5 text-xs font-medium bg-background border border-border rounded px-1 flex-1 min-w-0" /> : <span onClick={() => {
       if (!isPreviewMode && onLabelChange) setIsEditing(true);
-    }} className={`text-xs font-medium truncate ${!isPreviewMode && onLabelChange ? 'cursor-text hover:text-gray-700' : ''}`}>
+    }} className={`text-xs font-medium truncate ${!isPreviewMode && onLabelChange ? 'cursor-text hover:text-foreground' : ''}`}>
           {label}
         </span>}
       
-      {!isPreviewMode && showRemove && onRemove && <button onClick={onRemove} className="p-0.5 text-gray-400 hover:text-red-500 opacity-0 group-hover/col:opacity-100 transition-opacity ml-1" title="Remove column">
+      {!isPreviewMode && showRemove && onRemove && <button onClick={onRemove} className="p-0.5 text-muted-foreground hover:text-red-500 opacity-0 group-hover/col:opacity-100 transition-opacity ml-1" title="Remove column">
           <X className="h-3.5 w-3.5" />
         </button>}
       
@@ -1637,11 +1637,11 @@ function SortableGroup({
   // Count total subitems
   const totalSubitems = section.questions.reduce((acc, q) => acc + (q.subQuestions?.length || 0), 0);
   const itemIds = section.questions.map(q => q.id);
-  return <div ref={setNodeRef} style={style} className={`bg-white rounded-lg overflow-hidden shadow-md border-t border-black/10 relative ${isDragging ? 'ring-2 ring-primary ring-offset-2 z-10' : ''} ${isValidDropTarget ? 'ring-2 ring-primary/50' : ''}`}>
+  return <div ref={setNodeRef} style={style} className={`bg-card rounded-lg overflow-hidden shadow-md border-t border-border relative ${isDragging ? 'ring-2 ring-primary ring-offset-2 z-10' : ''} ${isValidDropTarget ? 'ring-2 ring-primary/50' : ''}`}>
       {/* Drop indicator line for groups */}
       {isValidDropTarget && <div className="absolute -top-2 left-0 right-0 h-1 bg-primary rounded-full z-20 shadow-[0_0_8px_rgba(59,130,246,0.5)]" />}
       {/* Group header */}
-      <div {...attributes} {...listeners} className={`flex items-center gap-3 px-4 py-2 bg-[#F8F8FA] border-b border-[#E8EDF2] cursor-grab active:cursor-grabbing ${isDragging ? 'opacity-70' : ''}`}>
+      <div {...attributes} {...listeners} className={`flex items-center gap-3 px-4 py-2 bg-muted/50 border-b border-border cursor-grab active:cursor-grabbing ${isDragging ? 'opacity-70' : ''}`}>
         <div className="w-1 h-6 bg-amber-600 rounded-full" />
         <button onClick={e => {
         e.stopPropagation();
@@ -1649,8 +1649,8 @@ function SortableGroup({
           ...section,
           isExpanded: !section.isExpanded
         });
-      }} className="p-0.5 rounded hover:bg-[#EDF2F7] transition-colors">
-          {section.isExpanded ? <ChevronDown className="h-4 w-4 text-gray-500" /> : <ChevronRight className="h-4 w-4 text-gray-500" />}
+      }} className="p-0.5 rounded hover:bg-muted transition-colors">
+          {section.isExpanded ? <ChevronDown className="h-4 w-4 text-muted-foreground" /> : <ChevronRight className="h-4 w-4 text-muted-foreground" />}
         </button>
         
         {isEditingTitle && !isPreviewMode ? <Input value={draftTitle} onChange={e => setDraftTitle(e.target.value)} onBlur={commitTitle} onKeyDown={e => {
@@ -1659,15 +1659,15 @@ function SortableGroup({
           setDraftTitle(section.title);
           setIsEditingTitle(false);
         }
-      }} autoFocus onClick={e => e.stopPropagation()} className="h-7 text-sm font-semibold bg-gray-100 border-gray-300 text-amber-600 flex-1" /> : <h3 onClick={e => {
+      }} autoFocus onClick={e => e.stopPropagation()} className="h-7 text-sm font-semibold bg-muted border-border text-amber-600 flex-1" /> : <h3 onClick={e => {
         e.stopPropagation();
         if (!isPreviewMode) setIsEditingTitle(true);
       }} className={`text-sm font-semibold text-amber-600 flex-1 ${!isPreviewMode ? 'cursor-text hover:text-amber-700' : ''}`}>
-            <span className="text-gray-500 mr-1">{sectionIndex + 1}.</span>
+            <span className="text-muted-foreground mr-1">{sectionIndex + 1}.</span>
             {cleanTitle(section.title)}
           </h3>}
 
-        <span className="text-xs text-gray-500 flex items-center gap-1">
+        <span className="text-xs text-muted-foreground flex items-center gap-1">
           {section.formLayout ? <>
               <LayoutGrid className="h-3 w-3" />
               {section.formLayout.columns} Column Form
@@ -1676,27 +1676,27 @@ function SortableGroup({
 
         {!isPreviewMode && <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <button onClick={e => e.stopPropagation()} className="p-1 rounded hover:bg-gray-200 transition-colors">
-                <MoreHorizontal className="h-4 w-4 text-gray-500" />
+              <button onClick={e => e.stopPropagation()} className="p-1 rounded hover:bg-muted transition-colors">
+                <MoreHorizontal className="h-4 w-4 text-muted-foreground" />
               </button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="bg-white border-gray-200 z-50">
-              {!section.formLayout && <DropdownMenuItem onClick={onAddItem} className="text-gray-700 focus:bg-gray-100 focus:text-gray-900">
+            <DropdownMenuContent align="end" className="bg-popover border-border z-50">
+              {!section.formLayout && <DropdownMenuItem onClick={onAddItem} className="text-foreground focus:bg-muted focus:text-foreground">
                   <Plus className="h-4 w-4 mr-2" />
                   Add item
                 </DropdownMenuItem>}
-              {!section.formLayout && <DropdownMenuSeparator className="bg-gray-200" />}
-              <div className="px-2 py-1.5 text-xs font-medium text-gray-500">Add category</div>
-              <DropdownMenuItem onClick={() => onAddCategoryAtPosition('above')} className="text-gray-700 focus:bg-gray-100 focus:text-gray-900 pl-4">
+              {!section.formLayout && <DropdownMenuSeparator className="bg-border" />}
+              <div className="px-2 py-1.5 text-xs font-medium text-muted-foreground">Add category</div>
+              <DropdownMenuItem onClick={() => onAddCategoryAtPosition('above')} className="text-foreground focus:bg-muted focus:text-foreground pl-4">
                 <ChevronDown className="h-4 w-4 mr-2 rotate-180" />
                 Above this category
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => onAddCategoryAtPosition('below')} className="text-gray-700 focus:bg-gray-100 focus:text-gray-900 pl-4">
+              <DropdownMenuItem onClick={() => onAddCategoryAtPosition('below')} className="text-foreground focus:bg-muted focus:text-foreground pl-4">
                 <ChevronDown className="h-4 w-4 mr-2" />
                 Below this category
               </DropdownMenuItem>
-              <DropdownMenuSeparator className="bg-gray-200" />
-              <DropdownMenuItem onClick={onDelete} className="text-red-500 focus:bg-gray-100 focus:text-red-600">
+              <DropdownMenuSeparator className="bg-border" />
+              <DropdownMenuItem onClick={onDelete} className="text-red-500 focus:bg-muted focus:text-red-600">
                 <Trash2 className="h-4 w-4 mr-2" />
                 Delete category
               </DropdownMenuItem>
@@ -1713,7 +1713,7 @@ function SortableGroup({
       })} isPreviewMode={isPreviewMode} /> : <div ref={tableContainerRef} className="overflow-x-auto sm:overflow-x-visible">
               <div className="min-w-[600px] sm:min-w-0">
                 {/* Column headers */}
-                <div className="flex items-center bg-[#F8F8FA] text-xs font-medium text-gray-500 border-b border-[#E8EDF2]">
+                <div className="flex items-center bg-muted/50 text-xs font-medium text-muted-foreground border-b border-border">
                   <div className="w-10 shrink-0 py-2" />
                   <div className="w-8 shrink-0 py-2" />
                   <ResizableColumnHeader label={columnLabels.questions} width={columnWidths.questions} minWidth={200} maxWidth={600} onWidthChange={w => setColumnWidths(prev => ({
@@ -1744,7 +1744,7 @@ function SortableGroup({
               ...prev,
               reference: l
             }))} onRemove={() => handleRemoveColumn('reference')} isPreviewMode={isPreviewMode} showRemove={true} containerRef={tableContainerRef} />}
-                  {!isPreviewMode && (!visibleColumns.explanation || !visibleColumns.reference) && <div className="w-[100px] shrink-0 px-2 py-2 text-center text-gray-400">
+                  {!isPreviewMode && (!visibleColumns.explanation || !visibleColumns.reference) && <div className="w-[100px] shrink-0 px-2 py-2 text-center text-muted-foreground">
                       <AddColumnButton onAddColumn={handleAddColumn} visibleColumns={visibleColumns} />
                     </div>}
                   {!isPreviewMode && <div className="w-16 shrink-0 py-2 px-2" />}
@@ -1758,7 +1758,7 @@ function SortableGroup({
                 {/* Add item button */}
                 {!isPreviewMode && <div className="flex items-center">
                     <div className="w-10" />
-                    <button onClick={onAddItem} className="flex items-center gap-2 px-6 py-3 text-sm text-gray-400 hover:text-gray-700 hover:bg-[#EDF2F7] transition-colors w-full text-left">
+                    <button onClick={onAddItem} className="flex items-center gap-2 px-6 py-3 text-sm text-muted-foreground hover:text-foreground hover:bg-muted transition-colors w-full text-left">
                       <Plus className="h-4 w-4" />
                       Add item
                     </button>
