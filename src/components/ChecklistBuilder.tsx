@@ -422,7 +422,7 @@ export function ChecklistBuilder({ checklist, onUpdate, onSave }: ChecklistBuild
         </div>
       </div>
 
-      <div className="flex-1 overflow-y-auto px-4 sm:px-6 py-4 sm:py-6">
+      <div className="flex-1 overflow-y-auto px-4 sm:px-6 py-4 sm:py-6 bg-white">
         <div className="w-full">
           {/* Objective accordion */}
           <div className="mb-6 bg-white rounded-lg overflow-hidden shadow-md border-t border-black/10">
