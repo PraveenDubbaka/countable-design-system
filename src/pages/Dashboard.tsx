@@ -153,7 +153,7 @@ const IntegrationBadge = ({
   
   if (!type) return null;
   
-  const badgeClasses = "inline-flex items-center justify-center h-8 w-40 px-3 rounded-full cursor-pointer hover:opacity-80 transition-opacity";
+  const badgeClasses = "inline-flex items-center justify-center h-8 w-24 px-1 rounded-full cursor-pointer hover:opacity-80 transition-opacity";
   
   const getIntegrationName = () => {
     switch (type) {
