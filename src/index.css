@@ -201,6 +201,57 @@
     --m3-inverse-surface: 220 15% 90%;
     --m3-inverse-on-surface: 220 25% 15%;
     --m3-inverse-primary: 207 71% 38%;
+
+    /* ========================================
+       SEMANTIC TOKENS - DARK MODE OVERRIDES
+       ======================================== */
+    --background: var(--m3-surface);
+    --foreground: var(--m3-on-surface);
+
+    --card: var(--m3-surface-container-low);
+    --card-foreground: var(--m3-on-surface);
+
+    --popover: var(--m3-surface-container);
+    --popover-foreground: var(--m3-on-surface);
+
+    --primary: var(--m3-primary);
+    --primary-foreground: var(--m3-on-primary);
+
+    --secondary: var(--m3-secondary-container);
+    --secondary-foreground: var(--m3-on-secondary-container);
+
+    --muted: var(--m3-surface-variant);
+    --muted-foreground: var(--m3-on-surface-variant);
+
+    --accent: var(--m3-tertiary);
+    --accent-foreground: var(--m3-on-tertiary);
+
+    --destructive: var(--m3-error);
+    --destructive-foreground: var(--m3-on-error);
+
+    --border: var(--m3-outline-variant);
+    --input: var(--m3-outline-variant);
+    --ring: var(--m3-primary);
+
+    /* Sidebar dark mode */
+    --sidebar-bg: 220 30% 12%;
+    --sidebar-foreground: 220 15% 90%;
+    --sidebar-muted: 220 25% 20%;
+    --sidebar-accent: 207 80% 60%;
+    
+    /* Dropzone dark mode */
+    --dropzone-bg: 220 25% 15%;
+    --dropzone-border: 207 60% 40%;
+    --dropzone-hover: 220 25% 18%;
+    
+    /* Brand colors - adjusted for dark mode */
+    --countable-blue: 207 80% 60%;
+    --countable-blue-light: 207 78% 70%;
+    --countable-blue-dark: 207 78% 45%;
+    --countable-navy: 213 60% 30%;
+    
+    --ai-gradient: linear-gradient(135deg, hsl(207 80% 60%), hsl(213 60% 40%));
+    --ai-glow: 0 0 20px hsl(207 80% 60% / 0.4);
   }
 }
 
