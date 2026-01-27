@@ -85,7 +85,7 @@ const FloatingInput = ({
             ? 'bg-[#F9FAFB] border-transparent text-muted-foreground opacity-60 cursor-not-allowed' 
             : focused 
               ? 'bg-white border-2 border-primary px-[15px]' 
-              : 'bg-[#F5F8FA] border border-transparent hover:bg-white hover:border-[#98A2B3]'
+              : 'bg-white border border-[#E2E5EB] hover:border-[#98A2B3]'
           }
         `}
       />
@@ -144,7 +144,7 @@ const FloatingTextarea = ({
             ? 'bg-[#F9FAFB] border-transparent text-muted-foreground opacity-60 cursor-not-allowed' 
             : focused 
               ? 'bg-white border-2 border-primary px-[15px]' 
-              : 'bg-[#F5F8FA] border border-transparent hover:bg-white hover:border-[#98A2B3]'
+              : 'bg-white border border-[#E2E5EB] hover:border-[#98A2B3]'
           }
         `}
       />
@@ -201,7 +201,7 @@ const FloatingSelect = ({
             ? 'bg-[#F9FAFB] border-transparent text-muted-foreground opacity-60 cursor-not-allowed' 
             : focused 
               ? 'bg-white border-2 border-primary px-[15px] cursor-pointer' 
-              : 'bg-[#F5F8FA] border border-transparent hover:bg-white hover:border-[#98A2B3] cursor-pointer'
+              : 'bg-white border border-[#E2E5EB] hover:border-[#98A2B3] cursor-pointer'
           }
         `}
       >
