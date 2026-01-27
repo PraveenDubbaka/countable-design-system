@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { 
   Minimize2, 
   ArrowUpDown, 
@@ -9,7 +9,8 @@ import {
   ChevronDown,
   Plus,
   FileText,
-  Columns
+  Columns,
+  GripVertical
 } from 'lucide-react';
 import { Checklist } from '@/types/checklist';
 import { ReorderModal } from './ReorderModal';
@@ -18,6 +19,8 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover';
+
+type SnapPosition = 'top' | 'center' | 'bottom';
 
 interface FloatingActionBarProps {
   checklist: Checklist;
@@ -35,6 +38,8 @@ interface FloatingActionBarProps {
   onAddCategory: (position: 'top' | 'bottom', type: 'empty' | 'template' | 'form') => void;
   isPreviewMode?: boolean;
 }
+
+const STORAGE_KEY = 'floating-action-bar-position';
 
 export function FloatingActionBar({ 
   checklist, 
@@ -55,6 +60,21 @@ export function FloatingActionBar({
   const [showReorderModal, setShowReorderModal] = useState(false);
   const [showAddCategoryPopover, setShowAddCategoryPopover] = useState(false);
   const [pendingCategoryType, setPendingCategoryType] = useState<'empty' | 'template' | 'form' | null>(null);
+  
+  // Drag state
+  const [snapPosition, setSnapPosition] = useState<SnapPosition>(() => {
+    const saved = localStorage.getItem(STORAGE_KEY);
+    return (saved as SnapPosition) || 'center';
+  });
+  const [isDragging, setIsDragging] = useState(false);
+  const [dragY, setDragY] = useState<number | null>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const barRef = useRef<HTMLDivElement>(null);
+
+  // Save position to localStorage
+  useEffect(() => {
+    localStorage.setItem(STORAGE_KEY, snapPosition);
+  }, [snapPosition]);
 
   const handleToggleSections = () => {
     if (allSectionsCollapsed) {
@@ -64,11 +84,107 @@ export function FloatingActionBar({
     }
   };
 
+  // Get position styles based on snap position
+  const getPositionStyles = (): React.CSSProperties => {
+    if (isDragging && dragY !== null) {
+      return {
+        top: dragY,
+        transform: 'translateX(0)',
+      };
+    }
+    
+    switch (snapPosition) {
+      case 'top':
+        return { top: '1rem', transform: 'translateX(0)' };
+      case 'bottom':
+        return { bottom: '1rem', transform: 'translateX(0)' };
+      case 'center':
+      default:
+        return { top: '50%', transform: 'translateY(-50%)' };
+    }
+  };
+
+  // Handle drag start
+  const handleDragStart = (e: React.MouseEvent | React.TouchEvent) => {
+    e.preventDefault();
+    setIsDragging(true);
+    
+    const clientY = 'touches' in e ? e.touches[0].clientY : e.clientY;
+    const barRect = barRef.current?.getBoundingClientRect();
+    const containerRect = containerRef.current?.parentElement?.getBoundingClientRect();
+    
+    if (barRect && containerRect) {
+      const initialY = barRect.top - containerRect.top;
+      setDragY(initialY);
+      
+      const handleMove = (moveEvent: MouseEvent | TouchEvent) => {
+        const moveClientY = 'touches' in moveEvent ? moveEvent.touches[0].clientY : moveEvent.clientY;
+        const newY = moveClientY - containerRect.top - (barRect.height / 2);
+        const maxY = containerRect.height - barRect.height - 16;
+        const clampedY = Math.max(16, Math.min(newY, maxY));
+        setDragY(clampedY);
+      };
+      
+      const handleEnd = () => {
+        setIsDragging(false);
+        
+        // Determine snap position based on final Y
+        if (containerRef.current?.parentElement && dragY !== null) {
+          const containerHeight = containerRef.current.parentElement.getBoundingClientRect().height;
+          const barHeight = barRef.current?.getBoundingClientRect().height || 0;
+          const currentY = dragY;
+          
+          const topThreshold = containerHeight * 0.33;
+          const bottomThreshold = containerHeight * 0.66;
+          
+          if (currentY < topThreshold) {
+            setSnapPosition('top');
+          } else if (currentY > bottomThreshold - barHeight) {
+            setSnapPosition('bottom');
+          } else {
+            setSnapPosition('center');
+          }
+        }
+        
+        setDragY(null);
+        document.removeEventListener('mousemove', handleMove);
+        document.removeEventListener('mouseup', handleEnd);
+        document.removeEventListener('touchmove', handleMove);
+        document.removeEventListener('touchend', handleEnd);
+      };
+      
+      document.addEventListener('mousemove', handleMove);
+      document.addEventListener('mouseup', handleEnd);
+      document.addEventListener('touchmove', handleMove);
+      document.addEventListener('touchend', handleEnd);
+    }
+  };
+
   return (
     <>
       {/* Floating pill button - positioned relative to parent container */}
-      <div className="absolute right-6 top-1/2 -translate-y-1/2 z-40 transition-all duration-300 ease-out">
-        <div className="flex flex-col gap-1 bg-card border p-2 shadow-lg" style={{ borderRadius: '9999px' }}>
+      <div 
+        ref={containerRef}
+        className={`absolute right-6 z-40 transition-all ${isDragging ? 'duration-0' : 'duration-300'} ease-out`}
+        style={getPositionStyles()}
+      >
+        <div 
+          ref={barRef}
+          className={`flex flex-col gap-1 bg-card border p-2 shadow-lg ${isDragging ? 'shadow-xl ring-2 ring-primary/20' : ''}`} 
+          style={{ borderRadius: '9999px' }}
+        >
+          {/* Drag Handle */}
+          <button
+            onMouseDown={handleDragStart}
+            onTouchStart={handleDragStart}
+            className={`w-9 h-9 flex items-center justify-center rounded-lg hover:bg-muted transition-colors cursor-grab active:cursor-grabbing group ${isDragging ? 'bg-muted' : ''}`}
+            title="Drag to reposition"
+          >
+            <GripVertical className="h-4 w-4 text-muted-foreground group-hover:text-foreground" />
+          </button>
+
+          <div className="w-full h-px bg-border my-0.5" />
+
           {/* Collapse/Expand Sections */}
           <button
             onClick={handleToggleSections}
