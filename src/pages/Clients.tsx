@@ -191,12 +191,12 @@ export default function Clients() {
 
   return (
     <Layout title="Clients">
-      <div className="flex-1 flex overflow-hidden" style={{ backgroundColor: "#F5F8FA" }}>
+      <div className="flex h-full overflow-hidden" style={{ backgroundColor: "#F5F8FA" }}>
         {/* Main Content */}
         <div className="flex-1 p-6 overflow-hidden flex flex-col min-w-0">
           <div className="flex flex-col flex-1 gap-5 min-h-0">
             {/* Stats Cards */}
-            <div className="grid grid-cols-3 gap-3">
+            <div className="grid grid-cols-3 gap-3 flex-shrink-0">
               {stats.map((stat, index) => (
                 <StyledCard
                   key={index}
@@ -210,7 +210,7 @@ export default function Clients() {
             </div>
 
             {/* Tabs and Actions Row */}
-            <div className="flex items-center justify-between">
+            <div className="flex items-center justify-between flex-shrink-0">
               {/* Tabs */}
               <div className="flex items-center gap-1 bg-white rounded-lg border border-[#E2E5EB] p-1">
                 {tabs.map((tab) => (
@@ -276,7 +276,7 @@ export default function Clients() {
             </div>
 
             {/* Add Client Button - Positioned top right */}
-            <div className="flex justify-end -mt-3">
+            <div className="flex justify-end -mt-3 flex-shrink-0">
               <Button className="bg-primary hover:bg-primary/90 text-white h-9 px-4 text-sm font-medium">
                 Add Client
                 <ChevronDown className="h-4 w-4 ml-1.5" />
@@ -377,9 +377,9 @@ export default function Clients() {
           </div>
         </div>
 
-        {/* Right Panel */}
+        {/* Right Panel - Fixed height, doesn't scroll with content */}
         <ClientRightPanel 
-          className="flex-shrink-0" 
+          className="flex-shrink-0 h-full" 
           clientName={selectedClientData?.entityName || 'Select a client'}
         />
       </div>
