@@ -409,12 +409,12 @@ export default function Clients() {
                         <td className="px-3 py-3">
                           <Checkbox checked={selectedClient === client.id} />
                         </td>
+                        <td className="px-3 py-3 text-sm text-foreground"></td>
                         <td className="px-3 py-3">
-                          <span className="text-sm text-primary font-medium cursor-pointer hover:underline">
+                          <a href="#" className="text-sm text-primary font-medium cursor-pointer hover:underline">
                             {client.entityName}
-                          </span>
+                          </a>
                         </td>
-                        <td className="px-3 py-3 text-sm text-foreground">{client.entityName}</td>
                         <td className="px-3 py-3 text-sm text-foreground">{client.entityType}</td>
                         <td className="px-3 py-3">
                           <StatusBadge status={client.status} />
