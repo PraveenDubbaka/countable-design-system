@@ -1347,7 +1347,7 @@ function SortableItemRow({
           <div className="absolute left-3 top-3 bottom-0 w-0.5 bg-amber-600/70" />
           
           {/* Sub-items container with left margin for the bar */}
-          <div className="ml-8 bg-[#F5F8FA] rounded-lg overflow-hidden">
+          <div className="ml-8 bg-[#F8F8FA] rounded-lg overflow-hidden">
 
             <SortableContext items={subItemIds} strategy={verticalListSortingStrategy}>
               {item.subQuestions!.map((sub, idx) => <div key={sub.id} className="">
