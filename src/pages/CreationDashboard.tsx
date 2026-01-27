@@ -286,7 +286,7 @@ export default function CreationDashboard() {
   if (mode) {
     return <Layout>
         <div className="flex-1 flex flex-col items-center justify-center p-8">
-          <div className="max-w-2xl w-full bg-[#F5F8FA] rounded-xl p-8 shadow-md animate-fade-in">
+          <div className="max-w-2xl w-full bg-[#F5F8FA] rounded-xl p-8 shadow-md animate-fade-in border border-[#E2E5EB]">
             <button onClick={handleBack} className="text-sm text-muted-foreground hover:text-foreground mb-4 flex items-center gap-1">
               ← Back
             </button>
