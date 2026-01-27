@@ -289,22 +289,22 @@ export default function Clients() {
                 <table className="w-full">
                   <thead className="sticky top-0 z-10 shadow-sm">
                     <tr style={{ backgroundColor: "#f1f1f3" }}>
-                      <th className="text-left px-3 py-3 text-xs font-semibold text-[#000000] uppercase tracking-wider w-10">
+                      <th className="text-left px-3 py-3 text-xs font-semibold text-[#000000] uppercase tracking-wider whitespace-nowrap w-10">
                         <Checkbox />
                       </th>
-                      <th className="text-left px-3 py-3 text-xs font-semibold text-[#000000] uppercase tracking-wider">Client ID</th>
-                      <th className="text-left px-3 py-3 text-xs font-semibold text-[#000000] uppercase tracking-wider">Entity Name</th>
-                      <th className="text-left px-3 py-3 text-xs font-semibold text-[#000000] uppercase tracking-wider">Entity Type</th>
-                      <th className="text-left px-3 py-3 text-xs font-semibold text-[#000000] uppercase tracking-wider">Status</th>
-                      <th className="text-left px-3 py-3 text-xs font-semibold text-[#000000] uppercase tracking-wider">Integrations</th>
-                      <th className="text-left px-3 py-3 text-xs font-semibold text-[#000000] uppercase tracking-wider">Contact Name</th>
-                      <th className="text-left px-3 py-3 text-xs font-semibold text-[#000000] uppercase tracking-wider">Email</th>
-                      <th className="text-left px-3 py-3 text-xs font-semibold text-[#000000] uppercase tracking-wider">Repository</th>
-                      <th className="text-left px-3 py-3 text-xs font-semibold text-[#000000] uppercase tracking-wider">Assigned Partner</th>
-                      <th className="text-left px-3 py-3 text-xs font-semibold text-[#000000] uppercase tracking-wider">Assigned Team</th>
-                      <th className="text-left px-3 py-3 text-xs font-semibold text-[#000000] uppercase tracking-wider">Cell Phone</th>
-                      <th className="text-left px-3 py-3 text-xs font-semibold text-[#000000] uppercase tracking-wider">Engagements</th>
-                      <th className="text-left px-3 py-3 text-xs font-semibold text-[#000000] uppercase tracking-wider">Actions</th>
+                      <th className="text-left px-3 py-3 text-xs font-semibold text-[#000000] uppercase tracking-wider whitespace-nowrap">Client ID</th>
+                      <th className="text-left px-3 py-3 text-xs font-semibold text-[#000000] uppercase tracking-wider whitespace-nowrap">Entity Name</th>
+                      <th className="text-left px-3 py-3 text-xs font-semibold text-[#000000] uppercase tracking-wider whitespace-nowrap">Entity Type</th>
+                      <th className="text-left px-3 py-3 text-xs font-semibold text-[#000000] uppercase tracking-wider whitespace-nowrap">Status</th>
+                      <th className="text-left px-3 py-3 text-xs font-semibold text-[#000000] uppercase tracking-wider whitespace-nowrap">Integrations</th>
+                      <th className="text-left px-3 py-3 text-xs font-semibold text-[#000000] uppercase tracking-wider whitespace-nowrap">Contact Name</th>
+                      <th className="text-left px-3 py-3 text-xs font-semibold text-[#000000] uppercase tracking-wider whitespace-nowrap">Email</th>
+                      <th className="text-left px-3 py-3 text-xs font-semibold text-[#000000] uppercase tracking-wider whitespace-nowrap">Repository</th>
+                      <th className="text-left px-3 py-3 text-xs font-semibold text-[#000000] uppercase tracking-wider whitespace-nowrap">Assigned Partner</th>
+                      <th className="text-left px-3 py-3 text-xs font-semibold text-[#000000] uppercase tracking-wider whitespace-nowrap">Assigned Team</th>
+                      <th className="text-left px-3 py-3 text-xs font-semibold text-[#000000] uppercase tracking-wider whitespace-nowrap">Cell Phone</th>
+                      <th className="text-left px-3 py-3 text-xs font-semibold text-[#000000] uppercase tracking-wider whitespace-nowrap">Engagements</th>
+                      <th className="text-left px-3 py-3 text-xs font-semibold text-[#000000] uppercase tracking-wider whitespace-nowrap">Actions</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gray-100">
