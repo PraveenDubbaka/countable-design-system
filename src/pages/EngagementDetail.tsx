@@ -605,9 +605,9 @@ export default function EngagementDetail() {
         </div>
 
           {/* Content Area - Preview Mode Checklist */}
-          <div className="flex-1 overflow-auto bg-white">
+          <div className="flex-1 overflow-auto bg-card">
           {/* Action Buttons - Sticky Header with Title */}
-          <div className="sticky top-0 z-10 bg-white px-4 py-2 flex items-center justify-between border-b border-border/50">
+          <div className="sticky top-0 z-10 bg-card px-4 py-2 flex items-center justify-between border-b border-border/50">
             <h1 className="text-sm font-semibold text-foreground truncate">
               Checklist: {checklist.title}
             </h1>
@@ -632,17 +632,17 @@ export default function EngagementDetail() {
           {/* Scrollable Content */}
           <div className="p-4">
             {/* Objective Section */}
-            <div className="mb-6 bg-white rounded-lg overflow-hidden shadow-md border-t border-black/10">
+            <div className="mb-6 bg-card rounded-lg overflow-hidden shadow-md border border-border">
             <button 
               onClick={() => setObjectiveExpanded(!objectiveExpanded)}
-              className="w-full flex items-center gap-2 bg-[#F5F8FA] px-4 py-3 text-muted-foreground hover:text-foreground transition-colors border-b border-[#E8EDF2]"
+              className="w-full flex items-center gap-2 bg-muted px-4 py-3 text-muted-foreground hover:text-foreground transition-colors border-b border-border"
             >
               <ChevronDown className={`h-4 w-4 transition-transform ${objectiveExpanded ? 'rotate-180' : ''}`} />
               <span className="text-sm font-medium">Objective</span>
             </button>
             
             {objectiveExpanded && (
-              <div className="bg-white p-4">
+              <div className="bg-card p-4">
                 {checklist.objective ? (
                   <p className="text-sm text-foreground whitespace-pre-wrap leading-relaxed">
                     {checklist.objective}
@@ -658,7 +658,7 @@ export default function EngagementDetail() {
 
           {/* Monday Board View in Preview Mode */}
           {isLoading ? (
-            <div className="bg-white rounded-lg shadow-sm p-12 flex flex-col items-center justify-center gap-4">
+            <div className="bg-card rounded-lg shadow-sm p-12 flex flex-col items-center justify-center gap-4">
               <Loader2 className="h-8 w-8 text-primary animate-spin" />
               <div className="text-center">
                 <p className="text-sm font-medium text-foreground">Loading engagement checklist...</p>
@@ -666,7 +666,7 @@ export default function EngagementDetail() {
               </div>
             </div>
           ) : (
-            <div className="bg-white rounded-lg shadow-sm">
+            <div className="bg-card rounded-lg shadow-sm">
               <MondayBoardView
                 checklist={checklist}
                 onUpdate={handleChecklistUpdate}

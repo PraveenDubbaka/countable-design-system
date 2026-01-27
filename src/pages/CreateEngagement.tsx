@@ -44,12 +44,12 @@ const FloatingInput = ({
           w-full h-11 text-sm text-foreground rounded-lg outline-none transition-all duration-200
           ${label ? 'px-4 pt-4 pb-1' : 'px-4 py-2'}
           ${disabled 
-            ? 'bg-[#F9FAFB] border-transparent text-muted-foreground opacity-60 cursor-not-allowed' 
+            ? 'bg-muted border-transparent text-muted-foreground opacity-60 cursor-not-allowed' 
             : error
-              ? 'bg-white border-2 border-destructive px-[15px]'
+              ? 'bg-card border-2 border-destructive px-[15px]'
               : focused 
-                ? 'bg-white border-2 border-primary px-[15px]' 
-                : 'bg-white border border-[#E2E5EB] hover:border-[#98A2B3]'
+                ? 'bg-card border-2 border-primary px-[15px]' 
+                : 'bg-card border border-border hover:border-muted-foreground'
           }
           ${readOnly ? 'cursor-default' : ''}
         `}
@@ -111,12 +111,12 @@ const FloatingSelect = ({
           w-full h-11 text-sm text-foreground rounded-lg outline-none transition-all duration-200 appearance-none
           ${label ? 'px-4 pt-4 pb-1' : 'px-4 py-2'}
           ${disabled 
-            ? 'bg-[#F9FAFB] border-transparent text-muted-foreground opacity-60 cursor-not-allowed' 
+            ? 'bg-muted border-transparent text-muted-foreground opacity-60 cursor-not-allowed' 
             : error
-              ? 'bg-white border-2 border-destructive px-[15px] cursor-pointer'
+              ? 'bg-card border-2 border-destructive px-[15px] cursor-pointer'
               : focused 
-                ? 'bg-white border-2 border-primary px-[15px] cursor-pointer' 
-                : 'bg-white border border-[#E2E5EB] hover:border-[#98A2B3] cursor-pointer'
+                ? 'bg-card border-2 border-primary px-[15px] cursor-pointer' 
+                : 'bg-card border border-border hover:border-muted-foreground cursor-pointer'
           }
         `}
       >
@@ -155,12 +155,12 @@ const SectionCard = ({
   children: React.ReactNode;
   badge?: string;
 }) => (
-  <div className="bg-white rounded-lg shadow-sm p-6">
+  <div className="bg-card rounded-lg shadow-sm p-6 border border-border">
     <div className="flex items-center gap-2 mb-5">
       <span className="text-primary">{icon}</span>
       <h2 className="text-base font-semibold text-foreground">{title}</h2>
       {badge && (
-        <span className="text-xs px-2 py-0.5 bg-gray-100 text-muted-foreground rounded-full">{badge}</span>
+        <span className="text-xs px-2 py-0.5 bg-muted text-muted-foreground rounded-full">{badge}</span>
       )}
     </div>
     {children}
@@ -186,7 +186,7 @@ const TeamMemberRow = ({
   onEdit: () => void;
   onDelete: () => void;
 }) => (
-  <tr className="hover:bg-[#F8FAFC] transition-colors group">
+  <tr className="hover:bg-muted/50 transition-colors group">
     <td className="py-3 px-5">
       <Checkbox />
     </td>
@@ -200,10 +200,10 @@ const TeamMemberRow = ({
     <td className="py-3 px-5 text-sm text-foreground text-right">{member.budgetedHours.toFixed(2)}</td>
     <td className="py-3 px-5">
       <div className="flex items-center gap-1.5 opacity-60 group-hover:opacity-100 transition-opacity">
-        <button onClick={onEdit} className="p-1.5 hover:bg-gray-100 rounded transition-colors group/edit">
+        <button onClick={onEdit} className="p-1.5 hover:bg-muted rounded transition-colors group/edit">
           <Pencil className="h-4 w-4 text-muted-foreground group-hover/edit:icon-edit" />
         </button>
-        <button onClick={onDelete} className="p-1.5 hover:bg-gray-100 rounded transition-colors group/trash">
+        <button onClick={onDelete} className="p-1.5 hover:bg-muted rounded transition-colors group/trash">
           <Trash2 className="h-4 w-4 text-muted-foreground group-hover/trash:icon-trash" />
         </button>
       </div>
@@ -274,7 +274,7 @@ export default function CreateEngagement() {
 
   return (
     <Layout title="Create Engagement">
-      <div className="flex-1 overflow-y-auto" style={{ backgroundColor: "#F5F8FA" }}>
+      <div className="flex-1 overflow-y-auto bg-background">
         <div className="p-6">
           {/* Header with back button */}
           <div className="flex items-center gap-3 mb-6">
@@ -465,10 +465,10 @@ export default function CreateEngagement() {
                     placeholder="Search"
                     value={teamSearch}
                     onChange={(e) => setTeamSearch(e.target.value)}
-                    className="pl-9 pr-4 py-2 text-sm bg-[#F5F8FA] rounded-lg outline-none w-48 focus:ring-2 focus:ring-primary/30"
+                    className="pl-9 pr-4 py-2 text-sm bg-muted rounded-lg outline-none w-48 focus:ring-2 focus:ring-primary/30"
                   />
                 </div>
-                <Button variant="outline" className="h-9 px-4 text-sm bg-white hover:bg-gray-50">
+                <Button variant="outline" className="h-9 px-4 text-sm bg-card hover:bg-muted">
                   <Trash2 className="h-4 w-4 mr-2 icon-trash" />
                   Delete
                 </Button>
@@ -477,7 +477,7 @@ export default function CreateEngagement() {
               <div className="overflow-x-auto">
                 <table className="w-full">
                   <thead className="sticky top-0 z-10">
-                    <tr style={{ backgroundColor: "color(srgb-linear 0.76 0.82 0.86)" }}>
+                    <tr className="bg-muted">
                       <th className="py-3 px-5 text-left">
                         <Checkbox />
                       </th>
@@ -492,7 +492,7 @@ export default function CreateEngagement() {
                       <th className="text-left px-5 py-3 text-xs font-semibold text-muted-foreground uppercase tracking-wider">Actions</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-gray-100">
+                  <tbody className="divide-y divide-border">
                     {teamMembers.map((member, index) => (
                       <TeamMemberRow
                         key={index}
@@ -503,7 +503,7 @@ export default function CreateEngagement() {
                     ))}
                   </tbody>
                   <tfoot>
-                    <tr style={{ backgroundColor: "color(srgb-linear 0.76 0.82 0.86)" }}>
+                    <tr className="bg-muted">
                       <td colSpan={4}></td>
                       <td className="py-3 px-5 text-sm font-medium text-foreground">Avg Engagement Rate</td>
                       <td className="py-3 px-5 text-sm font-medium text-foreground text-right">0.00</td>

@@ -70,21 +70,26 @@ export function Header({ title, showActions = true, showBackButton = false, onBa
           </Tooltip>
         </TooltipProvider>
 
-        {/* Dark/Light mode toggle */}
+        {/* Dark/Light mode toggle with animated icon */}
         <TooltipProvider>
           <Tooltip>
             <TooltipTrigger asChild>
               <Button 
                 size="icon" 
                 variant="ghost" 
-                className="h-9 w-9 transition-transform duration-200 hover:scale-110"
+                className="h-9 w-9 relative overflow-hidden transition-transform duration-200 hover:scale-110"
                 onClick={toggleTheme}
               >
-                {isDarkMode ? (
-                  <Sun className="h-5 w-5 text-muted-foreground transition-transform duration-300 rotate-0 scale-100" />
-                ) : (
-                  <Moon className="h-5 w-5 text-muted-foreground transition-transform duration-300 rotate-0 scale-100" />
-                )}
+                <Sun className={`h-5 w-5 text-amber-500 absolute transition-all duration-500 ${
+                  isDarkMode 
+                    ? 'rotate-0 scale-100 opacity-100' 
+                    : 'rotate-90 scale-0 opacity-0'
+                }`} />
+                <Moon className={`h-5 w-5 text-primary absolute transition-all duration-500 ${
+                  isDarkMode 
+                    ? '-rotate-90 scale-0 opacity-0' 
+                    : 'rotate-0 scale-100 opacity-100'
+                }`} />
               </Button>
             </TooltipTrigger>
             <TooltipContent>{isDarkMode ? 'Light Mode' : 'Dark Mode'}</TooltipContent>
