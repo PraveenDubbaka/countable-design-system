@@ -164,6 +164,7 @@ const navItems = [
   {
     icon: ChatIcon,
     label: "Clients",
+    route: "/clients",
   },
   {
     icon: BriefcaseIcon,
