@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Search, ChevronDown, Pencil, Trash2, Download, Mail, ClipboardPlus, UserPlus, RefreshCw, Users } from "lucide-react";
+import { Search, ChevronDown, Pencil, Trash2, Download, Mail, ClipboardPlus, UserPlus, RefreshCw, Users, UserX } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -8,7 +8,21 @@ import { Layout } from "@/components/Layout";
 import { StyledCard } from "@/components/ui/card";
 import { ClientRightPanel } from "@/components/ClientRightPanel";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import intuitQuickbooksLogo from "@/assets/intuit-quickbooks-logo.svg";
+
+// Sample partners data for the dropdown
+const partners = [
+  { id: "cpt-10176", name: "Cpt Group", email: "cpt10176canada@yopmail.com", role: "cpt-10176", color: "bg-emerald-500" },
+  { id: "tp-1", name: "Test Plaid pla", email: "testplaid@yopmail.com", role: "mrt", color: "bg-gray-400" },
+  { id: "st-1", name: "Staff Test", email: "stafftest@yopmail.com", role: "HV", color: "bg-emerald-500" },
+  { id: "nj-1", name: "nimma joel", email: "nimmab@yopmail.com", role: "kio", color: "bg-indigo-500" },
+  { id: "mh-1", name: "Monte Heilig", email: "ptgamarv36mosagnte@gmail.com", role: "Senior Manager", color: "bg-amber-600" },
+  { id: "ja-1", name: "Jangaiah Arige", email: "ptgamarv36jangaiadah@gmail.com", role: "Manager", color: "bg-lime-500" },
+  { id: "jl-1", name: "Jude Law", email: "ptgamarv36judedad@gmail.com", role: "Staff", color: "bg-purple-500" },
+  { id: "jd-1", name: "Joey doem", email: "joey.team@yopmail.com", role: "", color: "bg-teal-500" },
+];
 
 // Sample stats data
 const stats = [
@@ -178,6 +192,7 @@ const IntegrationCell = ({ type }: { type: string }) => {
 
 export default function Clients() {
   const [searchQuery, setSearchQuery] = useState("");
+  const [partnerSearch, setPartnerSearch] = useState("");
   const [activeTab, setActiveTab] = useState("my-clients");
   const [selectedClient, setSelectedClient] = useState<string | null>("CR001");
 
@@ -247,22 +262,69 @@ export default function Clients() {
                     </TooltipContent>
                   </Tooltip>
                 </TooltipProvider>
-                <TooltipProvider>
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <Button
-                        variant="outline"
-                        size="icon"
-                        className="h-9 w-9 bg-white border border-[#E2E5EB] hover:bg-gray-50 text-muted-foreground"
-                      >
-                        <UserPlus className="h-4 w-4" />
-                      </Button>
-                    </TooltipTrigger>
-                    <TooltipContent>
-                      <p>Assign Partner</p>
-                    </TooltipContent>
-                  </Tooltip>
-                </TooltipProvider>
+                <Popover>
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <PopoverTrigger asChild>
+                          <Button
+                            variant="outline"
+                            size="icon"
+                            className="h-9 w-9 bg-white border border-[#E2E5EB] hover:bg-gray-50 text-muted-foreground"
+                          >
+                            <UserPlus className="h-4 w-4" />
+                          </Button>
+                        </PopoverTrigger>
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p>Assign Partner</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                  <PopoverContent className="w-72 p-0 bg-white" align="start">
+                    <div className="p-3 border-b border-[#E2E5EB]">
+                      <div className="relative">
+                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                        <Input
+                          placeholder="Search"
+                          value={partnerSearch}
+                          onChange={(e) => setPartnerSearch(e.target.value)}
+                          className="pl-9 h-9 text-sm"
+                        />
+                      </div>
+                    </div>
+                    <div className="p-2 border-b border-[#E2E5EB]">
+                      <button className="flex items-center gap-2 w-full px-2 py-1.5 text-sm text-muted-foreground hover:bg-gray-50 rounded transition-colors">
+                        <UserX className="h-4 w-4" />
+                        Unassign
+                      </button>
+                    </div>
+                    <ScrollArea className="h-72">
+                      <div className="p-2">
+                        {partners
+                          .filter(partner => 
+                            partner.name.toLowerCase().includes(partnerSearch.toLowerCase()) ||
+                            partner.email.toLowerCase().includes(partnerSearch.toLowerCase())
+                          )
+                          .map((partner) => (
+                            <button
+                              key={partner.id}
+                              className="flex items-start gap-3 w-full px-2 py-2.5 text-left hover:bg-primary hover:text-primary-foreground rounded transition-colors group"
+                            >
+                              <div className={`h-8 w-8 rounded-full ${partner.color} flex items-center justify-center text-white text-xs font-medium flex-shrink-0`}>
+                                {partner.name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2)}
+                              </div>
+                              <div className="flex-1 min-w-0">
+                                <p className="text-sm font-medium truncate">{partner.name}</p>
+                                <p className="text-xs text-primary group-hover:text-primary-foreground truncate">{partner.email}</p>
+                                {partner.role && <p className="text-xs text-muted-foreground group-hover:text-primary-foreground/70 truncate">{partner.role}</p>}
+                              </div>
+                            </button>
+                          ))}
+                      </div>
+                    </ScrollArea>
+                  </PopoverContent>
+                </Popover>
                 <TooltipProvider>
                   <Tooltip>
                     <TooltipTrigger asChild>
