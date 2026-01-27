@@ -64,7 +64,7 @@ export function FloatingActionBar({
   // Drag state
   const [snapPosition, setSnapPosition] = useState<SnapPosition>(() => {
     const saved = localStorage.getItem(getStorageKey(isPreviewMode));
-    return (saved as SnapPosition) || 'center';
+    return (saved as SnapPosition) || 'bottom';
   });
   const [isDragging, setIsDragging] = useState(false);
   const [isHovering, setIsHovering] = useState(false);
@@ -84,7 +84,7 @@ export function FloatingActionBar({
   // Load position when mode changes
   useEffect(() => {
     const saved = localStorage.getItem(getStorageKey(isPreviewMode));
-    setSnapPosition((saved as SnapPosition) || 'center');
+    setSnapPosition((saved as SnapPosition) || 'bottom');
   }, [isPreviewMode]);
 
   // Save position to localStorage
