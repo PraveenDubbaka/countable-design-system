@@ -8,6 +8,7 @@ import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from "recharts";
 import { Layout } from "@/components/Layout";
 import { StyledCard } from "@/components/ui/card";
 import intuitQuickbooksLogo from "@/assets/intuit-quickbooks-logo.svg";
+import sageLogo from "@/assets/sage-logo.svg";
 
 // Sample data for stats
 const stats = [{
@@ -164,7 +165,7 @@ const IntegrationBadge = ({
   }
   if (type === "sage") {
     return <div className={`${badgeClasses} gap-1.5 bg-[#0077be]/10`}>
-        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/f/f9/Sage_Logo_2021.svg/500px-Sage_Logo_2021.svg.png" alt="Sage" className="h-5" />
+        <img src={sageLogo} alt="Sage" className="h-5 w-auto" />
         <span className="text-xs font-medium text-black">Sage</span>
       </div>;
   }
