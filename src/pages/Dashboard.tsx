@@ -164,8 +164,10 @@ const IntegrationBadge = ({
       </div>;
   }
   if (type === "sage") {
-    return <div className={`${badgeClasses} gap-1.5 bg-[#0077be]/10`}>
-        <img src={sageLogo} alt="Sage" className="h-5 w-auto" />
+    return <div className={`${badgeClasses} gap-1.5 bg-transparent`}>
+        <div className="h-6 w-6 rounded-full bg-black flex items-center justify-center">
+          <img src={sageLogo} alt="Sage" className="h-3.5 w-auto" />
+        </div>
         <span className="text-xs font-medium text-black">Sage</span>
       </div>;
   }
