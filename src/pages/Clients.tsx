@@ -203,8 +203,8 @@ export default function Clients() {
                   hover
                   className="p-4"
                 >
-                  <p className="text-xs font-medium text-muted-foreground">{stat.label}</p>
-                  <p className="text-3xl font-bold text-foreground mt-1">{stat.value}</p>
+                  <p className="text-xs font-medium uppercase tracking-wide text-black">{stat.label}</p>
+                  <p className="text-2xl font-bold text-primary mt-1">{stat.value}</p>
                 </StyledCard>
               ))}
             </div>
