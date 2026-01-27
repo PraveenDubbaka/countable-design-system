@@ -1,9 +1,10 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Search, ChevronDown, FileText, MessageSquare, Send } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from "recharts";
 import { Layout } from "@/components/Layout";
 import { StyledCard } from "@/components/ui/card";
@@ -148,30 +149,78 @@ const IntegrationBadge = ({
 }: {
   type: string | null;
 }) => {
+  const [showPopover, setShowPopover] = React.useState(false);
+  
   if (!type) return null;
   
-  const badgeClasses = "inline-flex items-center justify-center h-8 w-40 px-3 rounded-full";
+  const badgeClasses = "inline-flex items-center justify-center h-8 w-40 px-3 rounded-full cursor-pointer hover:opacity-80 transition-opacity";
   
-  if (type === "xero") {
-    return <div className={`${badgeClasses} gap-1.5 bg-[#13B5EA]/10`}>
-        <img src="https://upload.wikimedia.org/wikipedia/en/9/9f/Xero_software_logo.svg" alt="Xero" className="h-5" />
-        <span className="text-xs font-medium text-black">Xero</span>
-      </div>;
-  }
-  if (type === "quickbooks") {
-    return <div className={`${badgeClasses} bg-[#2CA01C]/10`}>
-        <img src={intuitQuickbooksLogo} alt="Intuit QuickBooks" className="h-5" />
-      </div>;
-  }
-  if (type === "sage") {
-    return <div className={`${badgeClasses} gap-1.5 bg-transparent`}>
-        <div className="h-6 w-6 rounded-full bg-black flex items-center justify-center">
-          <img src={sageLogo} alt="Sage" className="h-3.5 w-auto" />
+  const getIntegrationName = () => {
+    switch (type) {
+      case "xero": return "Xero";
+      case "quickbooks": return "QuickBooks";
+      case "sage": return "Sage";
+      default: return type;
+    }
+  };
+
+  const BadgeContent = () => {
+    if (type === "xero") {
+      return <div className={`${badgeClasses} gap-1.5 bg-[#13B5EA]/10`}>
+          <img src="https://upload.wikimedia.org/wikipedia/en/9/9f/Xero_software_logo.svg" alt="Xero" className="h-5" />
+          <span className="text-xs font-medium text-black">Xero</span>
+        </div>;
+    }
+    if (type === "quickbooks") {
+      return <div className={`${badgeClasses} bg-[#2CA01C]/10`}>
+          <img src={intuitQuickbooksLogo} alt="Intuit QuickBooks" className="h-5" />
+        </div>;
+    }
+    if (type === "sage") {
+      return <div className={`${badgeClasses} gap-1.5 bg-[#00D639]/10`}>
+          <div className="h-5 w-5 rounded-full bg-black flex items-center justify-center p-1">
+            <img src={sageLogo} alt="Sage" className="h-3 w-auto" />
+          </div>
+          <span className="text-xs font-medium text-black">Sage</span>
+        </div>;
+    }
+    return null;
+  };
+
+  return (
+    <Popover open={showPopover} onOpenChange={setShowPopover}>
+      <PopoverTrigger asChild>
+        <div onClick={(e) => e.stopPropagation()}>
+          <BadgeContent />
         </div>
-        <span className="text-xs font-medium text-black">Sage</span>
-      </div>;
-  }
-  return null;
+      </PopoverTrigger>
+      <PopoverContent className="w-56 p-3" align="start">
+        <div className="space-y-3">
+          <div className="flex items-center gap-2">
+            <div className="h-2 w-2 rounded-full bg-emerald-500" />
+            <span className="text-sm font-medium">Connected</span>
+          </div>
+          <p className="text-xs text-muted-foreground">
+            {getIntegrationName()} integration is active and syncing data.
+          </p>
+          <div className="text-xs text-muted-foreground">
+            Last synced: 2 hours ago
+          </div>
+          <Button 
+            variant="outline" 
+            size="sm" 
+            className="w-full text-destructive hover:text-destructive hover:bg-destructive/10"
+            onClick={(e) => {
+              e.stopPropagation();
+              setShowPopover(false);
+            }}
+          >
+            Disconnect
+          </Button>
+        </div>
+      </PopoverContent>
+    </Popover>
+  );
 };
 export default function Dashboard() {
   const navigate = useNavigate();
