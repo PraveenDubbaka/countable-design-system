@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Search, ChevronDown, Pencil, Trash2, Download, Mail, Upload, UserPlus, RefreshCw, Users } from "lucide-react";
+import { Search, ChevronDown, Pencil, Trash2, Download, Mail, ClipboardPlus, UserPlus, RefreshCw, Users } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -356,15 +356,18 @@ export default function Clients() {
                         <td className="px-3 py-3 text-sm text-foreground">{client.cellPhone || '-'}</td>
                         <td className="px-3 py-3 text-sm text-primary font-medium text-center">{client.engagements}</td>
                         <td className="px-3 py-3">
-                          <div className="flex items-center gap-1 opacity-60 group-hover:opacity-100 transition-opacity">
+                          <div className="flex items-center gap-1">
                             <button className="p-1.5 hover:bg-gray-100 rounded transition-colors">
-                              <Upload className="h-4 w-4 text-muted-foreground" />
+                              <ClipboardPlus className="h-4 w-4 text-primary" />
                             </button>
                             <button className="p-1.5 hover:bg-gray-100 rounded transition-colors">
-                              <Pencil className="h-4 w-4 text-muted-foreground" />
+                              <Mail className="h-4 w-4 text-primary" />
                             </button>
                             <button className="p-1.5 hover:bg-gray-100 rounded transition-colors">
-                              <Trash2 className="h-4 w-4 text-muted-foreground" />
+                              <Pencil className="h-4 w-4 text-primary" />
+                            </button>
+                            <button className="p-1.5 hover:bg-gray-100 rounded transition-colors">
+                              <Trash2 className="h-4 w-4 text-primary" />
                             </button>
                           </div>
                         </td>
