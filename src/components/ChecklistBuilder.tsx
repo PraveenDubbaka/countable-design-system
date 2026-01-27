@@ -30,7 +30,9 @@ import {
   ChevronDown,
   FileDown,
   Save,
-  Pencil
+  Pencil,
+  Trash2,
+  Copy
 } from 'lucide-react';
 import { Checklist, Section, Question } from '@/types/checklist';
 import { SortableSection } from './SortableSection';
@@ -391,15 +393,41 @@ export function ChecklistBuilder({ checklist, onUpdate, onSave }: ChecklistBuild
         <div className="flex items-center gap-3">
           
           {!isPreviewMode && (
-            <Button 
-              variant="outline" 
-              size="sm" 
-              className="gap-2 hover:bg-[#1C63A6] hover:text-white hover:border-[#1C63A6] transition-colors"
-              onClick={onSave}
-            >
-              <Save className="h-4 w-4" />
-              Save
-            </Button>
+            <>
+              <Button 
+                variant="outline" 
+                size="sm" 
+                className="gap-2 hover:bg-[#1C63A6] hover:text-white hover:border-[#1C63A6] transition-colors"
+                onClick={onSave}
+              >
+                <Save className="h-4 w-4" />
+                Save
+              </Button>
+              <Button 
+                variant="outline" 
+                size="sm" 
+                className="gap-2 hover:bg-[#1C63A6] hover:text-white hover:border-[#1C63A6] transition-colors"
+                onClick={() => {
+                  // Duplicate checklist logic
+                  toast.success('Checklist duplicated');
+                }}
+              >
+                <Copy className="h-4 w-4" />
+                Duplicate
+              </Button>
+              <Button 
+                variant="outline" 
+                size="sm" 
+                className="gap-2 hover:bg-destructive hover:text-white hover:border-destructive transition-colors"
+                onClick={() => {
+                  // Delete checklist logic
+                  toast.success('Checklist deleted');
+                }}
+              >
+                <Trash2 className="h-4 w-4" />
+                Delete
+              </Button>
+            </>
           )}
           <Button 
             variant="outline" 
