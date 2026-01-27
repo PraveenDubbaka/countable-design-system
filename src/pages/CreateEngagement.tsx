@@ -49,7 +49,7 @@ const FloatingInput = ({
               ? 'bg-white border-2 border-destructive px-[15px]'
               : focused 
                 ? 'bg-white border-2 border-primary px-[15px]' 
-                : 'bg-[#F5F8FA] border border-transparent hover:bg-white hover:border-[#98A2B3]'
+                : 'bg-white border border-[#E2E5EB] hover:border-[#98A2B3]'
           }
           ${readOnly ? 'cursor-default' : ''}
         `}
@@ -116,7 +116,7 @@ const FloatingSelect = ({
               ? 'bg-white border-2 border-destructive px-[15px] cursor-pointer'
               : focused 
                 ? 'bg-white border-2 border-primary px-[15px] cursor-pointer' 
-                : 'bg-[#F5F8FA] border border-transparent hover:bg-white hover:border-[#98A2B3] cursor-pointer'
+                : 'bg-white border border-[#E2E5EB] hover:border-[#98A2B3] cursor-pointer'
           }
         `}
       >
