@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Search, ChevronDown, FileText, MessageSquare, Send } from "lucide-react";
+import { Search, ChevronDown, MessageSquare, Send, AlertCircle } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -150,20 +150,20 @@ const IntegrationBadge = ({
   type: string | null;
 }) => {
   const [showPopover, setShowPopover] = React.useState(false);
-  
   if (!type) return null;
-  
   const badgeClasses = "inline-flex items-center justify-center h-8 w-24 px-1 rounded-lg cursor-pointer hover:opacity-80 transition-opacity bg-white border border-[#E2E5EB]";
-  
   const getIntegrationName = () => {
     switch (type) {
-      case "xero": return "Xero";
-      case "quickbooks": return "QuickBooks";
-      case "sage": return "Sage";
-      default: return type;
+      case "xero":
+        return "Xero";
+      case "quickbooks":
+        return "QuickBooks";
+      case "sage":
+        return "Sage";
+      default:
+        return type;
     }
   };
-
   const BadgeContent = () => {
     if (type === "xero") {
       return <div className={`${badgeClasses} gap-1.5`}>
@@ -186,11 +186,9 @@ const IntegrationBadge = ({
     }
     return null;
   };
-
-  return (
-    <Popover open={showPopover} onOpenChange={setShowPopover}>
+  return <Popover open={showPopover} onOpenChange={setShowPopover}>
       <PopoverTrigger asChild>
-        <div onClick={(e) => e.stopPropagation()}>
+        <div onClick={e => e.stopPropagation()}>
           <BadgeContent />
         </div>
       </PopoverTrigger>
@@ -206,21 +204,15 @@ const IntegrationBadge = ({
           <div className="text-xs text-muted-foreground">
             Last synced: 2 hours ago
           </div>
-          <Button 
-            variant="outline" 
-            size="sm" 
-            className="w-full text-destructive hover:text-destructive hover:bg-destructive/10"
-            onClick={(e) => {
-              e.stopPropagation();
-              setShowPopover(false);
-            }}
-          >
+          <Button variant="outline" size="sm" className="w-full text-destructive hover:text-destructive hover:bg-destructive/10" onClick={e => {
+          e.stopPropagation();
+          setShowPopover(false);
+        }}>
             Disconnect
           </Button>
         </div>
       </PopoverContent>
-    </Popover>
-  );
+    </Popover>;
 };
 export default function Dashboard() {
   const navigate = useNavigate();
@@ -260,7 +252,9 @@ export default function Dashboard() {
             <div className="flex-1 overflow-y-auto overflow-x-auto">
               <table className="w-full">
                 <thead className="sticky top-0 z-10">
-                  <tr style={{ backgroundColor: "#f1f1f3" }}>
+                  <tr style={{
+                    backgroundColor: "#f1f1f3"
+                  }}>
                     <th className="text-left px-5 py-3 text-xs font-semibold text-[#000000] uppercase tracking-wider">Engagement ID</th>
                     <th className="text-left px-5 py-3 text-xs font-semibold text-[#000000] uppercase tracking-wider">Client Name</th>
                     <th className="text-left px-5 py-3 text-xs font-semibold text-[#000000] uppercase tracking-wider">Year End</th>
@@ -290,7 +284,7 @@ export default function Dashboard() {
                         <div className="flex items-center gap-1.5">
                           <span className="text-xs font-medium text-muted-foreground px-1.5 py-0.5 bg-gray-100 rounded">EL</span>
                           <button className="p-1 hover:bg-gray-100 rounded transition-colors group/file">
-                            <FileText className="h-3.5 w-3.5 text-primary group-hover/file:icon-bounce" />
+                            <AlertCircle className="h-3.5 w-3.5 text-primary group-hover/file:icon-bounce" />
                           </button>
                           <button className="p-1 hover:bg-gray-100 rounded transition-colors group/msg">
                             <MessageSquare className="h-3.5 w-3.5 text-primary group-hover/msg:icon-bounce" />
