@@ -9,8 +9,7 @@ import {
   ChevronDown,
   Plus,
   FileText,
-  Columns,
-  GripVertical
+  Columns
 } from 'lucide-react';
 import { Checklist } from '@/types/checklist';
 import { ReorderModal } from './ReorderModal';
@@ -67,6 +66,7 @@ export function FloatingActionBar({
     return (saved as SnapPosition) || 'center';
   });
   const [isDragging, setIsDragging] = useState(false);
+  const [isHovering, setIsHovering] = useState(false);
   const [dragY, setDragY] = useState<number | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const barRef = useRef<HTMLDivElement>(null);
@@ -82,6 +82,14 @@ export function FloatingActionBar({
     } else {
       onCollapseSections();
     }
+  };
+
+  // Cycle through positions on double-click
+  const handleDoubleClick = () => {
+    const positions: SnapPosition[] = ['top', 'center', 'bottom'];
+    const currentIndex = positions.indexOf(snapPosition);
+    const nextIndex = (currentIndex + 1) % positions.length;
+    setSnapPosition(positions[nextIndex]);
   };
 
   // Get position styles based on snap position
@@ -162,6 +170,29 @@ export function FloatingActionBar({
 
   return (
     <>
+      {/* Snap Position Indicators - shown while dragging */}
+      {isDragging && (
+        <div className="absolute right-6 inset-y-0 z-30 pointer-events-none flex flex-col items-center justify-between py-4">
+          {/* Top indicator */}
+          <div className={`flex items-center gap-2 transition-all duration-150 ${snapPosition === 'top' ? 'opacity-100' : 'opacity-40'}`}>
+            <div className={`w-2 h-2 rounded-full ${snapPosition === 'top' ? 'bg-primary' : 'bg-muted-foreground'}`} />
+            <span className="text-[10px] font-medium text-muted-foreground">Top</span>
+          </div>
+          
+          {/* Center indicator */}
+          <div className={`flex items-center gap-2 transition-all duration-150 ${snapPosition === 'center' ? 'opacity-100' : 'opacity-40'}`}>
+            <div className={`w-2 h-2 rounded-full ${snapPosition === 'center' ? 'bg-primary' : 'bg-muted-foreground'}`} />
+            <span className="text-[10px] font-medium text-muted-foreground">Center</span>
+          </div>
+          
+          {/* Bottom indicator */}
+          <div className={`flex items-center gap-2 transition-all duration-150 ${snapPosition === 'bottom' ? 'opacity-100' : 'opacity-40'}`}>
+            <div className={`w-2 h-2 rounded-full ${snapPosition === 'bottom' ? 'bg-primary' : 'bg-muted-foreground'}`} />
+            <span className="text-[10px] font-medium text-muted-foreground">Bottom</span>
+          </div>
+        </div>
+      )}
+
       {/* Floating pill button - positioned relative to parent container */}
       <div 
         ref={containerRef}
@@ -170,24 +201,25 @@ export function FloatingActionBar({
       >
         <div 
           ref={barRef}
-          className={`flex flex-col gap-1 bg-card border p-2 shadow-lg ${isDragging ? 'shadow-xl ring-2 ring-primary/20' : ''}`} 
+          onMouseEnter={() => setIsHovering(true)}
+          onMouseLeave={() => setIsHovering(false)}
+          onMouseDown={handleDragStart}
+          onTouchStart={handleDragStart}
+          onDoubleClick={handleDoubleClick}
+          className={`flex flex-col gap-1 bg-card p-2 shadow-lg transition-all duration-200 ${
+            isDragging 
+              ? 'shadow-xl ring-2 ring-primary/30 border-2 border-dashed border-primary cursor-grabbing' 
+              : isHovering 
+                ? 'border-2 border-dashed border-primary/50 cursor-grab' 
+                : 'border-2 border-solid border-border'
+          }`} 
           style={{ borderRadius: '9999px' }}
+          title="Drag to reposition • Double-click to cycle positions"
         >
-          {/* Drag Handle */}
-          <button
-            onMouseDown={handleDragStart}
-            onTouchStart={handleDragStart}
-            className={`w-9 h-9 flex items-center justify-center rounded-lg hover:bg-muted transition-colors cursor-grab active:cursor-grabbing group ${isDragging ? 'bg-muted' : ''}`}
-            title="Drag to reposition"
-          >
-            <GripVertical className="h-4 w-4 text-muted-foreground group-hover:text-foreground" />
-          </button>
-
-          <div className="w-full h-px bg-border my-0.5" />
-
           {/* Collapse/Expand Sections */}
           <button
-            onClick={handleToggleSections}
+            onClick={(e) => { e.stopPropagation(); handleToggleSections(); }}
+            onMouseDown={(e) => e.stopPropagation()}
             className="w-9 h-9 flex items-center justify-center rounded-lg hover:bg-muted transition-colors group"
             title={allSectionsCollapsed ? "Expand all categories" : "Collapse all categories"}
           >
@@ -196,7 +228,8 @@ export function FloatingActionBar({
 
           {/* Collapse/Expand Row Text (Compact Mode) */}
           <button
-            onClick={onToggleCompactMode}
+            onClick={(e) => { e.stopPropagation(); onToggleCompactMode(); }}
+            onMouseDown={(e) => e.stopPropagation()}
             className="w-9 h-9 flex items-center justify-center rounded-lg hover:bg-muted transition-colors group"
             title={isCompactMode ? "Expand row text" : "Collapse row text"}
           >
@@ -205,7 +238,8 @@ export function FloatingActionBar({
 
           {/* Reorder Questions */}
           <button
-            onClick={() => setShowReorderModal(true)}
+            onClick={(e) => { e.stopPropagation(); setShowReorderModal(true); }}
+            onMouseDown={(e) => e.stopPropagation()}
             className="w-9 h-9 flex items-center justify-center rounded-lg hover:bg-muted transition-colors group"
             title="Reorder questions"
           >
@@ -223,6 +257,8 @@ export function FloatingActionBar({
             >
               <PopoverTrigger asChild>
                 <button
+                  onClick={(e) => e.stopPropagation()}
+                  onMouseDown={(e) => e.stopPropagation()}
                   className="w-9 h-9 flex items-center justify-center rounded-lg hover:bg-muted transition-colors group"
                   title="Add category"
                 >
@@ -325,7 +361,8 @@ export function FloatingActionBar({
           {/* Bulk Delete - Hidden in preview mode */}
           {!isPreviewMode && (
             <button
-              onClick={onBulkDelete}
+              onClick={(e) => { e.stopPropagation(); onBulkDelete(); }}
+              onMouseDown={(e) => e.stopPropagation()}
               disabled={selectedQuestions.size === 0}
               className={`w-9 h-9 flex items-center justify-center rounded-lg transition-colors group ${
                 selectedQuestions.size === 0 
