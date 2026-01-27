@@ -19,8 +19,8 @@ const SelectTrigger = React.forwardRef<
     className={cn(
       // Base styles
       "flex h-11 w-full items-center justify-between rounded-lg px-4 py-2 text-sm ring-offset-background transition-all duration-200 [&>span]:line-clamp-1",
-      // Default state: light gray background with no border
-      "bg-[#F5F8FA] border border-transparent text-foreground placeholder:text-muted-foreground",
+      // Default state: white background with gray border
+      "bg-white border border-[#E2E5EB] text-foreground placeholder:text-muted-foreground",
       // Hover state: white background with darker border
       "hover:bg-white hover:border-[#98A2B3]",
       // Focus state: white background with blue border
