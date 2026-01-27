@@ -39,6 +39,7 @@ import { SortableSection } from './SortableSection';
 import { FloatingActionBar } from './FloatingActionBar';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { toast } from 'sonner';
 import { RichTextToolbar } from './RichTextToolbar';
 import { useRichTextToolbarContext } from '@/contexts/RichTextToolbarContext';
@@ -390,44 +391,55 @@ export function ChecklistBuilder({ checklist, onUpdate, onSave }: ChecklistBuild
           )}
         </div>
         
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2">
           
           {!isPreviewMode && (
-            <>
-              <Button 
-                variant="outline" 
-                size="sm" 
-                className="gap-2 hover:bg-[#1C63A6] hover:text-white hover:border-[#1C63A6] transition-colors"
-                onClick={onSave}
-              >
-                <Save className="h-4 w-4" />
-                Save
-              </Button>
-              <Button 
-                variant="outline" 
-                size="sm" 
-                className="gap-2 hover:bg-[#1C63A6] hover:text-white hover:border-[#1C63A6] transition-colors"
-                onClick={() => {
-                  // Duplicate checklist logic
-                  toast.success('Checklist duplicated');
-                }}
-              >
-                <Copy className="h-4 w-4" />
-                Duplicate
-              </Button>
-              <Button 
-                variant="outline" 
-                size="sm" 
-                className="gap-2 hover:bg-destructive hover:text-white hover:border-destructive transition-colors"
-                onClick={() => {
-                  // Delete checklist logic
-                  toast.success('Checklist deleted');
-                }}
-              >
-                <Trash2 className="h-4 w-4" />
-                Delete
-              </Button>
-            </>
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button 
+                    size="icon" 
+                    className="h-8 w-8"
+                    onClick={onSave}
+                  >
+                    <Save className="h-4 w-4" />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>Save</TooltipContent>
+              </Tooltip>
+              
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button 
+                    variant="outline" 
+                    size="icon" 
+                    className="h-8 w-8 hover:bg-[#1C63A6] hover:text-white hover:border-[#1C63A6] transition-colors"
+                    onClick={() => {
+                      toast.success('Checklist duplicated');
+                    }}
+                  >
+                    <Copy className="h-4 w-4" />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>Duplicate</TooltipContent>
+              </Tooltip>
+              
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button 
+                    variant="outline" 
+                    size="icon" 
+                    className="h-8 w-8 bg-destructive text-white border-destructive hover:bg-destructive/90 transition-colors"
+                    onClick={() => {
+                      toast.success('Checklist deleted');
+                    }}
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>Delete</TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
           )}
           <Button 
             variant="outline" 
