@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 import { 
   Minimize2, 
   ArrowUpDown, 
@@ -38,7 +38,8 @@ interface FloatingActionBarProps {
   isPreviewMode?: boolean;
 }
 
-const STORAGE_KEY = 'floating-action-bar-position';
+const getStorageKey = (isPreviewMode: boolean) => 
+  `floating-action-bar-position-${isPreviewMode ? 'preview' : 'edit'}`;
 
 export function FloatingActionBar({ 
   checklist, 
@@ -62,19 +63,34 @@ export function FloatingActionBar({
   
   // Drag state
   const [snapPosition, setSnapPosition] = useState<SnapPosition>(() => {
-    const saved = localStorage.getItem(STORAGE_KEY);
+    const saved = localStorage.getItem(getStorageKey(isPreviewMode));
     return (saved as SnapPosition) || 'center';
   });
   const [isDragging, setIsDragging] = useState(false);
   const [isHovering, setIsHovering] = useState(false);
   const [dragY, setDragY] = useState<number | null>(null);
+  const [isSnapping, setIsSnapping] = useState(false);
+  
+  // Use ref to track current dragY for closure
+  const dragYRef = useRef<number | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const barRef = useRef<HTMLDivElement>(null);
 
+  // Update ref when dragY changes
+  useEffect(() => {
+    dragYRef.current = dragY;
+  }, [dragY]);
+
+  // Load position when mode changes
+  useEffect(() => {
+    const saved = localStorage.getItem(getStorageKey(isPreviewMode));
+    setSnapPosition((saved as SnapPosition) || 'center');
+  }, [isPreviewMode]);
+
   // Save position to localStorage
   useEffect(() => {
-    localStorage.setItem(STORAGE_KEY, snapPosition);
-  }, [snapPosition]);
+    localStorage.setItem(getStorageKey(isPreviewMode), snapPosition);
+  }, [snapPosition, isPreviewMode]);
 
   const handleToggleSections = () => {
     if (allSectionsCollapsed) {
@@ -86,10 +102,12 @@ export function FloatingActionBar({
 
   // Cycle through positions on double-click
   const handleDoubleClick = () => {
+    setIsSnapping(true);
     const positions: SnapPosition[] = ['top', 'center', 'bottom'];
     const currentIndex = positions.indexOf(snapPosition);
     const nextIndex = (currentIndex + 1) % positions.length;
     setSnapPosition(positions[nextIndex]);
+    setTimeout(() => setIsSnapping(false), 400);
   };
 
   // Get position styles based on snap position
@@ -113,17 +131,19 @@ export function FloatingActionBar({
   };
 
   // Handle drag start
-  const handleDragStart = (e: React.MouseEvent | React.TouchEvent) => {
+  const handleDragStart = useCallback((e: React.MouseEvent | React.TouchEvent) => {
     e.preventDefault();
     setIsDragging(true);
     
     const clientY = 'touches' in e ? e.touches[0].clientY : e.clientY;
     const barRect = barRef.current?.getBoundingClientRect();
-    const containerRect = containerRef.current?.parentElement?.getBoundingClientRect();
+    const parentElement = containerRef.current?.parentElement;
+    const containerRect = parentElement?.getBoundingClientRect();
     
-    if (barRect && containerRect) {
+    if (barRect && containerRect && parentElement) {
       const initialY = barRect.top - containerRect.top;
       setDragY(initialY);
+      dragYRef.current = initialY;
       
       const handleMove = (moveEvent: MouseEvent | TouchEvent) => {
         const moveClientY = 'touches' in moveEvent ? moveEvent.touches[0].clientY : moveEvent.clientY;
@@ -131,30 +151,40 @@ export function FloatingActionBar({
         const maxY = containerRect.height - barRect.height - 16;
         const clampedY = Math.max(16, Math.min(newY, maxY));
         setDragY(clampedY);
+        dragYRef.current = clampedY;
       };
       
       const handleEnd = () => {
         setIsDragging(false);
+        setIsSnapping(true);
         
-        // Determine snap position based on final Y
-        if (containerRef.current?.parentElement && dragY !== null) {
-          const containerHeight = containerRef.current.parentElement.getBoundingClientRect().height;
-          const barHeight = barRef.current?.getBoundingClientRect().height || 0;
-          const currentY = dragY;
-          
+        // Use ref value instead of state (fixes closure issue)
+        const currentY = dragYRef.current;
+        const containerHeight = containerRect.height;
+        const barHeight = barRect.height;
+        
+        if (currentY !== null) {
           const topThreshold = containerHeight * 0.33;
           const bottomThreshold = containerHeight * 0.66;
           
+          let newPosition: SnapPosition;
           if (currentY < topThreshold) {
-            setSnapPosition('top');
+            newPosition = 'top';
           } else if (currentY > bottomThreshold - barHeight) {
-            setSnapPosition('bottom');
+            newPosition = 'bottom';
           } else {
-            setSnapPosition('center');
+            newPosition = 'center';
           }
+          
+          setSnapPosition(newPosition);
         }
         
         setDragY(null);
+        dragYRef.current = null;
+        
+        // Clear snapping animation after transition
+        setTimeout(() => setIsSnapping(false), 400);
+        
         document.removeEventListener('mousemove', handleMove);
         document.removeEventListener('mouseup', handleEnd);
         document.removeEventListener('touchmove', handleMove);
@@ -166,7 +196,29 @@ export function FloatingActionBar({
       document.addEventListener('touchmove', handleMove);
       document.addEventListener('touchend', handleEnd);
     }
+  }, []);
+
+  // Determine which zone we're currently in during drag
+  const getCurrentZone = (): SnapPosition => {
+    if (!isDragging || dragY === null || !containerRef.current?.parentElement) {
+      return snapPosition;
+    }
+    
+    const containerHeight = containerRef.current.parentElement.getBoundingClientRect().height;
+    const barHeight = barRef.current?.getBoundingClientRect().height || 0;
+    
+    const topThreshold = containerHeight * 0.33;
+    const bottomThreshold = containerHeight * 0.66;
+    
+    if (dragY < topThreshold) {
+      return 'top';
+    } else if (dragY > bottomThreshold - barHeight) {
+      return 'bottom';
+    }
+    return 'center';
   };
+
+  const currentZone = getCurrentZone();
 
   return (
     <>
@@ -174,21 +226,21 @@ export function FloatingActionBar({
       {isDragging && (
         <div className="absolute right-6 inset-y-0 z-30 pointer-events-none flex flex-col items-center justify-between py-4">
           {/* Top indicator */}
-          <div className={`flex items-center gap-2 transition-all duration-150 ${snapPosition === 'top' ? 'opacity-100' : 'opacity-40'}`}>
-            <div className={`w-2 h-2 rounded-full ${snapPosition === 'top' ? 'bg-primary' : 'bg-muted-foreground'}`} />
-            <span className="text-[10px] font-medium text-muted-foreground">Top</span>
+          <div className={`flex items-center gap-2 transition-all duration-150 ${currentZone === 'top' ? 'opacity-100 scale-110' : 'opacity-40'}`}>
+            <div className={`w-2.5 h-2.5 rounded-full transition-all duration-150 ${currentZone === 'top' ? 'bg-primary scale-125' : 'bg-muted-foreground'}`} />
+            <span className={`text-[10px] font-medium transition-colors ${currentZone === 'top' ? 'text-primary' : 'text-muted-foreground'}`}>Top</span>
           </div>
           
           {/* Center indicator */}
-          <div className={`flex items-center gap-2 transition-all duration-150 ${snapPosition === 'center' ? 'opacity-100' : 'opacity-40'}`}>
-            <div className={`w-2 h-2 rounded-full ${snapPosition === 'center' ? 'bg-primary' : 'bg-muted-foreground'}`} />
-            <span className="text-[10px] font-medium text-muted-foreground">Center</span>
+          <div className={`flex items-center gap-2 transition-all duration-150 ${currentZone === 'center' ? 'opacity-100 scale-110' : 'opacity-40'}`}>
+            <div className={`w-2.5 h-2.5 rounded-full transition-all duration-150 ${currentZone === 'center' ? 'bg-primary scale-125' : 'bg-muted-foreground'}`} />
+            <span className={`text-[10px] font-medium transition-colors ${currentZone === 'center' ? 'text-primary' : 'text-muted-foreground'}`}>Center</span>
           </div>
           
           {/* Bottom indicator */}
-          <div className={`flex items-center gap-2 transition-all duration-150 ${snapPosition === 'bottom' ? 'opacity-100' : 'opacity-40'}`}>
-            <div className={`w-2 h-2 rounded-full ${snapPosition === 'bottom' ? 'bg-primary' : 'bg-muted-foreground'}`} />
-            <span className="text-[10px] font-medium text-muted-foreground">Bottom</span>
+          <div className={`flex items-center gap-2 transition-all duration-150 ${currentZone === 'bottom' ? 'opacity-100 scale-110' : 'opacity-40'}`}>
+            <div className={`w-2.5 h-2.5 rounded-full transition-all duration-150 ${currentZone === 'bottom' ? 'bg-primary scale-125' : 'bg-muted-foreground'}`} />
+            <span className={`text-[10px] font-medium transition-colors ${currentZone === 'bottom' ? 'text-primary' : 'text-muted-foreground'}`}>Bottom</span>
           </div>
         </div>
       )}
@@ -196,7 +248,13 @@ export function FloatingActionBar({
       {/* Floating pill button - positioned relative to parent container */}
       <div 
         ref={containerRef}
-        className={`absolute right-6 z-40 transition-all ${isDragging ? 'duration-0' : 'duration-300'} ease-out`}
+        className={`absolute right-6 z-40 ${
+          isDragging 
+            ? 'transition-none' 
+            : isSnapping 
+              ? 'transition-all duration-400 ease-out' 
+              : 'transition-all duration-300 ease-out'
+        }`}
         style={getPositionStyles()}
       >
         <div 
@@ -208,11 +266,11 @@ export function FloatingActionBar({
           onDoubleClick={handleDoubleClick}
           className={`flex flex-col gap-1 bg-card p-2 shadow-lg transition-all duration-200 ${
             isDragging 
-              ? 'shadow-xl ring-2 ring-primary/30 border-2 border-dashed border-primary cursor-grabbing' 
+              ? 'shadow-xl ring-2 ring-primary/30 border-2 border-dashed border-primary cursor-grabbing scale-105' 
               : isHovering 
                 ? 'border-2 border-dashed border-primary/50 cursor-grab' 
                 : 'border-2 border-solid border-border'
-          }`} 
+          } ${isSnapping && !isDragging ? 'animate-[scale-in_0.3s_ease-out]' : ''}`} 
           style={{ borderRadius: '9999px' }}
           title="Drag to reposition • Double-click to cycle positions"
         >
