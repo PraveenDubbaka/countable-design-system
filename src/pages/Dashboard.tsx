@@ -154,9 +154,9 @@ const IntegrationBadge = ({
       </div>;
   }
   if (type === "quickbooks") {
-    return <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#2CA01C]/10 text-[#2CA01C] text-xs font-medium">
-        <img src="https://cdn.worldvectorlogo.com/logos/quickbooks-1.svg" alt="QuickBooks" className="w-4 h-4" />
-        QuickBooks
+    return <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#2CA01C]/10 text-[#14324F] text-xs font-medium">
+        <img src="/quickbooks-icon.svg" alt="Intuit QuickBooks" className="w-4 h-4" />
+        Intuit QuickBooks
       </div>;
   }
   return null;
