@@ -413,7 +413,7 @@ export function Sidebar() {
 
       {/* Engagement Sections panel - shown only on engagement detail pages */}
       {location.pathname.startsWith("/engagements/") && location.pathname !== "/engagements/create" && <>
-          <div className={`flex flex-col rounded-tr-[20px] rounded-br-[20px] relative z-40 transition-all duration-300 group/templates ${isTemplatesPanelCollapsed ? "w-0 overflow-hidden shadow-none bg-transparent" : "w-[300px] shadow-md bg-[#f5f8fa]"}`}>
+          <div className={`flex flex-col rounded-tr-[20px] rounded-br-[20px] relative z-40 transition-all duration-300 group/templates ${isTemplatesPanelCollapsed ? "w-0 overflow-hidden shadow-none bg-transparent" : "w-[300px] shadow-md bg-muted"}`}>
             <div className={`p-4 pb-2 ${isTemplatesPanelCollapsed ? "hidden" : ""}`}>
               <div className="flex items-center gap-2">
                 <h2 className="font-semibold text-primary text-lg">Engagements</h2>
@@ -431,9 +431,9 @@ export function Sidebar() {
               <div className="flex gap-2">
                 <div className="relative flex-1">
                   <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground icon-search" />
-                  <Input placeholder="Search" className="pl-8 h-8 text-sm bg-white/80 border-0 shadow-sm" />
+                  <Input placeholder="Search" className="pl-8 h-8 text-sm bg-card/80 border-0 shadow-sm" />
                 </div>
-                <Button size="icon" variant="ghost" className="h-8 w-8 bg-[#E1EEFA] hover:bg-[#E1EEFA]/80">
+                <Button size="icon" variant="ghost" className="h-8 w-8 bg-primary/10 hover:bg-primary/20">
                   <svg width="17" height="17" viewBox="0 0 17 17" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M9.72214 6.94412L14.5833 2.08301M14.5833 2.08301H10.4166M14.5833 2.08301V6.24967M6.94436 9.7219L2.08325 14.583M2.08325 14.583H6.24992M2.08325 14.583L2.08325 10.4163" stroke="#074075" strokeWidth="1.38889" strokeLinecap="round" strokeLinejoin="round" />
                   </svg>
@@ -503,11 +503,11 @@ export function Sidebar() {
 
       {/* Templates panel - hidden on Dashboard, Clients, Engagements list, and Engagement detail pages */}
       {location.pathname !== "/dashboard" && location.pathname !== "/clients" && location.pathname !== "/engagements" && !location.pathname.startsWith("/engagements/") && <>
-          <div className={`flex flex-col rounded-tr-[20px] rounded-br-[20px] relative z-10 transition-all duration-300 group/templates ${isTemplatesPanelCollapsed ? "w-0 overflow-hidden shadow-none bg-transparent border-r-0" : "w-[300px] shadow-md bg-[#f5f8fa] border-r border-black/10"}`}>
+          <div className={`flex flex-col rounded-tr-[20px] rounded-br-[20px] relative z-10 transition-all duration-300 group/templates ${isTemplatesPanelCollapsed ? "w-0 overflow-hidden shadow-none bg-transparent border-r-0" : "w-[300px] shadow-md bg-muted border-r border-border"}`}>
             <div className={`p-4 ${isTemplatesPanelCollapsed ? "hidden" : ""}`}>
               <h2 className="font-semibold text-primary text-lg mb-3">Templates</h2>
               <DropdownMenu>
-                <DropdownMenuTrigger className="w-full px-3 py-2 bg-white/80 rounded-lg text-sm flex items-center justify-between focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors shadow-sm">
+                <DropdownMenuTrigger className="w-full px-3 py-2 bg-card/80 rounded-lg text-sm flex items-center justify-between focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors shadow-sm border border-border">
                   <div className="flex items-center gap-2">
                     {(() => {
                   const selected = dropdownItems.find(item => item.id === selectedDropdown);
@@ -554,9 +554,9 @@ export function Sidebar() {
               <div className="flex gap-2">
                 <div className="relative flex-1">
                   <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground icon-search" />
-                  <Input placeholder="Search" className="pl-8 h-8 text-sm bg-white/80 border-0 shadow-sm" value={searchQuery} onChange={e => setSearchQuery(e.target.value)} />
+                  <Input placeholder="Search" className="pl-8 h-8 text-sm bg-card/80 border-0 shadow-sm" value={searchQuery} onChange={e => setSearchQuery(e.target.value)} />
                 </div>
-                <button className="h-8 w-8 rounded-md flex items-center justify-center bg-[#E1EEFA] hover:bg-[#d0e4f5] transition-colors">
+                <button className="h-8 w-8 rounded-md flex items-center justify-center bg-primary/10 hover:bg-primary/20 transition-colors">
                   <svg width="17" height="17" viewBox="0 0 17 17" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M9.72214 6.94412L14.5833 2.08301M14.5833 2.08301H10.4166M14.5833 2.08301V6.24967M6.94436 9.7219L2.08325 14.583M2.08325 14.583H6.24992M2.08325 14.583L2.08325 10.4163" stroke="#074075" strokeWidth="1.38889" strokeLinecap="round" strokeLinejoin="round" />
                   </svg>
@@ -564,7 +564,7 @@ export function Sidebar() {
                 <Button size="icon" className="h-8 w-8 bg-primary hover:bg-primary/90 shadow-sm">
                   <Plus className="h-4 w-4 text-primary-foreground icon-plus" />
                 </Button>
-                <Button size="icon" variant="secondary" className="h-8 w-8 text-destructive hover:text-destructive hover:bg-white/50">
+                <Button size="icon" variant="secondary" className="h-8 w-8 text-destructive hover:text-destructive hover:bg-card/50">
                   <Trash2 className="h-4 w-4 icon-trash" />
                 </Button>
               </div>

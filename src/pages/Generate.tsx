@@ -307,7 +307,7 @@ export default function Generate() {
                   value={prompt}
                   onChange={(e) => setPrompt(e.target.value)}
                   placeholder={placeholdersByType[contentType]}
-                  className="w-full min-h-[80px] py-4 px-5 text-base bg-white border-border rounded-xl focus:ring-2 focus:ring-primary/20 resize-none"
+                  className="w-full min-h-[80px] py-4 px-5 text-base bg-card border-border rounded-xl focus:ring-2 focus:ring-primary/20 resize-none"
                   rows={2}
                 />
               </div>

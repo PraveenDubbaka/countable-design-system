@@ -852,7 +852,7 @@ export function SortableQuestionCard({
                     <Button 
                       variant="outline" 
                       size="sm" 
-                      className="text-muted-foreground hover:text-white hover:border-[#1C63A6] hover:bg-[#1C63A6] transition-colors"
+                      className="text-muted-foreground hover:text-primary-foreground hover:border-primary hover:bg-primary transition-colors"
                       onClick={(e) => {
                         e.stopPropagation();
                         setIsFocused(true);

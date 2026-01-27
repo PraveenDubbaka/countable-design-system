@@ -73,7 +73,7 @@ export function QuestionToolbar({
       {/* Change Type Dropdown */}
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button variant="ghost" size="sm" className="h-7 px-2 gap-1.5 hover:bg-[#1C63A6] hover:text-white focus:bg-[#1C63A6] focus:text-white transition-colors">
+          <Button variant="ghost" size="sm" className="h-7 px-2 gap-1.5 hover:bg-primary hover:text-primary-foreground focus:bg-primary focus:text-primary-foreground transition-colors">
             {answerTypeIcons[currentType]}
             <span className="text-xs">{answerTypeLabels[currentType]}</span>
           </Button>
@@ -98,7 +98,7 @@ export function QuestionToolbar({
       <Button 
         variant="ghost" 
         size="sm" 
-        className="h-7 w-7 p-0 hover:bg-[#1C63A6] hover:text-white focus:bg-[#1C63A6] focus:text-white transition-colors" 
+        className="h-7 w-7 p-0 hover:bg-primary hover:text-primary-foreground focus:bg-primary focus:text-primary-foreground transition-colors" 
         onClick={onAddSubQuestion}
         title="Add sub-question"
       >
@@ -108,7 +108,7 @@ export function QuestionToolbar({
       <Button 
         variant="ghost" 
         size="sm" 
-        className={`h-7 w-7 p-0 hover:bg-[#1C63A6] hover:text-white focus:bg-[#1C63A6] focus:text-white transition-colors ${hasReference ? 'bg-primary/10 text-primary' : ''}`}
+        className={`h-7 w-7 p-0 hover:bg-primary hover:text-primary-foreground focus:bg-primary focus:text-primary-foreground transition-colors ${hasReference ? 'bg-primary/10 text-primary' : ''}`}
         onClick={onToggleReference}
         title={hasReference ? "Remove attachment option" : "Add attachment option"}
       >
@@ -118,7 +118,7 @@ export function QuestionToolbar({
       <Button 
         variant="ghost" 
         size="sm" 
-        className="h-7 w-7 p-0 hover:bg-[#1C63A6] hover:text-white focus:bg-[#1C63A6] focus:text-white transition-colors" 
+        className="h-7 w-7 p-0 hover:bg-primary hover:text-primary-foreground focus:bg-primary focus:text-primary-foreground transition-colors" 
         onClick={onAddNote}
         title="Add note"
       >
@@ -128,7 +128,7 @@ export function QuestionToolbar({
       <Button 
         variant="ghost" 
         size="sm" 
-        className="h-7 w-7 p-0 hover:bg-[#1C63A6] hover:text-white focus:bg-[#1C63A6] focus:text-white transition-colors" 
+        className="h-7 w-7 p-0 hover:bg-primary hover:text-primary-foreground focus:bg-primary focus:text-primary-foreground transition-colors" 
         onClick={onDuplicate}
         title="Duplicate"
       >
@@ -141,7 +141,7 @@ export function QuestionToolbar({
       <Button 
         variant="ghost" 
         size="sm" 
-        className="h-7 px-2 gap-1.5 text-accent hover:bg-[#1C63A6] hover:text-white focus:bg-[#1C63A6] focus:text-white transition-colors"
+        className="h-7 px-2 gap-1.5 text-accent hover:bg-primary hover:text-primary-foreground focus:bg-primary focus:text-primary-foreground transition-colors"
         title="AI assist"
       >
         <Sparkles className="h-3.5 w-3.5" />
