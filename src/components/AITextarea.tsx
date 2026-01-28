@@ -274,14 +274,14 @@ export function AITextarea({
             >
               <div
                 className={cn(
-                  "text-sm text-gray-700 py-1 cursor-text hover:text-gray-900 line-clamp-1 overflow-hidden",
-                  !value && "text-gray-400 italic"
+                  "text-sm text-foreground py-1 cursor-text hover:text-foreground line-clamp-1 overflow-hidden",
+                  !value && "text-muted-foreground italic"
                 )}
                 dangerouslySetInnerHTML={{ __html: value || placeholder }}
               />
             </div>
           </TooltipTrigger>
-          <TooltipContent side="top" className="bg-white text-gray-800 border border-gray-200 shadow-lg max-w-md whitespace-pre-wrap">
+          <TooltipContent side="top" className="bg-popover text-popover-foreground border border-border shadow-lg max-w-md whitespace-pre-wrap">
             <div dangerouslySetInnerHTML={{ __html: value }} />
           </TooltipContent>
         </Tooltip>
@@ -296,8 +296,8 @@ export function AITextarea({
       >
         <div
           className={cn(
-            "text-sm text-gray-700 py-1 cursor-text hover:text-gray-900 whitespace-pre-wrap",
-            !value && "text-gray-400 italic"
+            "text-sm text-foreground py-1 cursor-text hover:text-foreground whitespace-pre-wrap",
+            !value && "text-muted-foreground italic"
           )}
           dangerouslySetInnerHTML={{ __html: value || placeholder }}
         />
@@ -328,7 +328,7 @@ export function AITextarea({
           setShowToolbar(true);
         }}
         className={cn(
-          "w-full pr-16 text-sm bg-gray-50 border border-gray-300 text-gray-700 rounded-lg p-3 outline-none focus:ring-2 focus:ring-ring focus:ring-offset-1 resize overflow-auto box-border",
+          "w-full pr-16 text-sm bg-muted border border-border text-foreground rounded-lg p-3 outline-none focus:ring-2 focus:ring-ring focus:ring-offset-1 resize overflow-auto box-border",
           isListening && "border-primary ring-1 ring-primary",
           disabled && "opacity-60"
         )}
@@ -349,8 +349,8 @@ export function AITextarea({
                   setIsAIOpen(!isAIOpen);
                 }}
                 className={cn(
-                  "p-1.5 rounded-md transition-all hover:bg-gray-200",
-                  isAIOpen ? "bg-gray-200 text-primary" : "text-gray-500 hover:text-gray-700"
+                  "p-1.5 rounded-md transition-all hover:bg-muted",
+                  isAIOpen ? "bg-muted text-primary" : "text-muted-foreground hover:text-foreground"
                 )}
                 title="AI Assistant"
               >
@@ -379,14 +379,14 @@ export function AITextarea({
                     className={cn(
                       "w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-left transition-all",
                       selectedOption === option.id
-                        ? "bg-blue-50 text-blue-600"
-                        : "hover:bg-gray-100",
+                        ? "bg-primary/10 text-primary"
+                        : "hover:bg-muted",
                       isProcessing && selectedOption !== option.id && "opacity-50"
                     )}
                   >
                     <div className={cn(
-                      "text-gray-500",
-                      selectedOption === option.id && "text-blue-600"
+                      "text-muted-foreground",
+                      selectedOption === option.id && "text-primary"
                     )}>
                       {isProcessing && selectedOption === option.id ? (
                         <Loader2 className="h-4 w-4 animate-spin" />
@@ -396,7 +396,7 @@ export function AITextarea({
                     </div>
                     <div className="flex-1 min-w-0">
                       <p className="text-sm font-medium truncate">{option.label}</p>
-                      <p className="text-xs text-gray-500 truncate">{option.description}</p>
+                      <p className="text-xs text-muted-foreground truncate">{option.description}</p>
                     </div>
                   </button>
                 ))}
@@ -415,8 +415,8 @@ export function AITextarea({
               className={cn(
                 "p-1.5 rounded-md transition-all",
                 isListening 
-                  ? "bg-red-100 text-red-600 animate-pulse" 
-                  : "text-gray-500 hover:text-gray-700 hover:bg-gray-200"
+                  ? "bg-destructive/10 text-destructive animate-pulse" 
+                  : "text-muted-foreground hover:text-foreground hover:bg-muted"
               )}
               title={isListening ? "Stop recording" : "Voice to text"}
             >
