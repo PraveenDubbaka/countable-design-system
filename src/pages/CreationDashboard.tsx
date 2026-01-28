@@ -47,7 +47,7 @@ function CreationOption({
   badge,
   onClick
 }: CreationOptionProps) {
-  return <button onClick={onClick} className="group relative flex flex-col bg-[#F5F8FA] rounded-xl p-4 shadow-md hover:shadow-lg transition-all duration-200 text-left h-full border border-[#E2E5EB]">
+  return <button onClick={onClick} className="group relative flex flex-col bg-card rounded-xl p-4 shadow-md hover:shadow-lg transition-all duration-200 text-left h-full border border-border">
       <div className={`w-full aspect-[4/3] rounded-lg mb-4 flex items-center justify-center ${iconBg}`}>
         <div className="transition-transform duration-500 group-hover:rotate-[360deg]">
           {icon}
@@ -59,8 +59,8 @@ function CreationOption({
       <p className="text-sm text-muted-foreground leading-relaxed">
         {description}
       </p>
-      {badge && <span className={`mt-3 inline-flex items-center gap-1 text-xs font-medium px-2 py-1 rounded-lg w-fit ${badge.variant === 'recommended' ? 'bg-pink-100 text-pink-600' : 'bg-teal-100 text-teal-600'}`}>
-          {badge.variant === 'recommended' && <span className="text-pink-500">★</span>}
+      {badge && <span className={`mt-3 inline-flex items-center gap-1 text-xs font-medium px-2 py-1 rounded-lg w-fit ${badge.variant === 'recommended' ? 'bg-pink-100 dark:bg-pink-900/30 text-pink-600 dark:text-pink-400' : 'bg-teal-100 dark:bg-teal-900/30 text-teal-600 dark:text-teal-400'}`}>
+          {badge.variant === 'recommended' && <span className="text-pink-500 dark:text-pink-400">★</span>}
           {badge.text}
         </span>}
     </button>;
@@ -286,7 +286,7 @@ export default function CreationDashboard() {
   if (mode) {
     return <Layout>
         <div className="flex-1 flex flex-col items-center justify-center p-8">
-          <div className="max-w-2xl w-full bg-[#F5F8FA] rounded-xl p-8 shadow-md animate-fade-in border border-[#E2E5EB]">
+          <div className="max-w-2xl w-full bg-card rounded-xl p-8 shadow-md animate-fade-in border border-border">
             <button onClick={handleBack} className="text-sm text-muted-foreground hover:text-foreground mb-4 flex items-center gap-1">
               ← Back
             </button>
@@ -507,7 +507,7 @@ export default function CreationDashboard() {
                   <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" stroke="url(#uploadIconGradient)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
                   <path d="M17 8L12 3L7 8" stroke="url(#uploadIconGradient)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
                   <path d="M12 3L12 15" stroke="url(#uploadIconGradient)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                </svg>} iconBg="bg-gradient-to-r from-[#ECD4F6] to-[#CFE1FC]" title="Import file" description="Upload a document to generate" badge={{
+                </svg>} iconBg="bg-gradient-to-r from-[#ECD4F6] to-[#CFE1FC] dark:from-purple-900/40 dark:to-blue-900/40" title="Import file" description="Upload a document to generate" badge={{
             text: 'NEW',
             variant: 'new'
           }} onClick={() => setMode('import')} />
@@ -522,7 +522,7 @@ export default function CreationDashboard() {
                   <rect x="3" y="3" width="18" height="18" rx="2" stroke="url(#templateIconGradient)" strokeWidth="2" />
                   <path d="M3 9H21" stroke="url(#templateIconGradient)" strokeWidth="2" />
                   <path d="M9 21V9" stroke="url(#templateIconGradient)" strokeWidth="2" />
-                </svg>} iconBg="bg-gradient-to-r from-[#ECD4F6] to-[#CFE1FC]" title="Generate from template" description="Generate from existing templates" onClick={() => setMode('template')} />
+                </svg>} iconBg="bg-gradient-to-r from-[#ECD4F6] to-[#CFE1FC] dark:from-purple-900/40 dark:to-blue-900/40" title="Generate from template" description="Generate from existing templates" onClick={() => setMode('template')} />
           </div>
         </div>
       </div>
