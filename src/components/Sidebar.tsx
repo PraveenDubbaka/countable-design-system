@@ -368,7 +368,7 @@ export function Sidebar() {
       </div>;
   };
   const [isNavExpanded, setIsNavExpanded] = useState(false);
-  return <div className="flex h-screen relative bg-card">
+  return <div className="flex h-screen relative" style={{ background: 'linear-gradient(to right, hsl(var(--muted)), hsl(var(--card)))', borderRadius: '0px 16px 16px 0px' }}>
       {/* Icon sidebar - dark navy with curved corner, expands on click only */}
       <div className={`sidebar-nav flex flex-col py-4 gap-2 rounded-tr-[20px] rounded-br-[20px] transition-all duration-300 ease-in-out ${isNavExpanded ? "w-48 items-start px-3" : "w-14 items-center"}`}>
         {/* Luka Logo */}
