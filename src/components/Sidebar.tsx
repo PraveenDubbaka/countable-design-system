@@ -368,7 +368,13 @@ export function Sidebar() {
       </div>;
   };
   const [isNavExpanded, setIsNavExpanded] = useState(false);
-  return <div className="flex h-screen relative bg-card">
+  
+  // Determine if a secondary panel is visible and expanded (for dark mode gradient)
+  const isOnEngagementDetail = location.pathname.startsWith("/engagements/") && location.pathname !== "/engagements/create";
+  const isOnTemplatesPage = location.pathname !== "/dashboard" && location.pathname !== "/clients" && location.pathname !== "/engagements" && !location.pathname.startsWith("/engagements/");
+  const hasSecondaryPanelExpanded = (isOnEngagementDetail || isOnTemplatesPage) && !isTemplatesPanelCollapsed;
+  
+  return <div className={`flex h-screen relative bg-card ${hasSecondaryPanelExpanded ? "sidebar-panel-expanded" : ""}`} style={hasSecondaryPanelExpanded ? { borderRadius: '0px 16px 16px 0px' } : undefined}>
       {/* Icon sidebar - dark navy with curved corner, expands on click only */}
       <div className={`sidebar-nav flex flex-col py-4 gap-2 rounded-tr-[20px] rounded-br-[20px] transition-all duration-300 ease-in-out ${isNavExpanded ? "w-48 items-start px-3" : "w-14 items-center"}`}>
         {/* Luka Logo */}
@@ -413,7 +419,7 @@ export function Sidebar() {
 
       {/* Engagement Sections panel - shown only on engagement detail pages */}
       {location.pathname.startsWith("/engagements/") && location.pathname !== "/engagements/create" && <>
-          <div className={`flex flex-col relative z-40 transition-all duration-300 group/templates ${isTemplatesPanelCollapsed ? "w-0 overflow-hidden shadow-none bg-transparent" : "w-[300px] shadow-md bg-muted sidebar-panel-expanded"}`} style={!isTemplatesPanelCollapsed ? { borderRadius: '0px 16px 16px 0px' } : undefined}>
+          <div className={`flex flex-col relative z-40 transition-all duration-300 group/templates ${isTemplatesPanelCollapsed ? "w-0 overflow-hidden shadow-none bg-transparent" : "w-[300px] shadow-md bg-muted"}`}>
             <div className={`p-4 pb-2 ${isTemplatesPanelCollapsed ? "hidden" : ""}`}>
               <div className="flex items-center gap-2">
                 <h2 className="font-semibold text-primary text-lg">Engagements</h2>
@@ -503,7 +509,7 @@ export function Sidebar() {
 
       {/* Templates panel - hidden on Dashboard, Clients, Engagements list, and Engagement detail pages */}
       {location.pathname !== "/dashboard" && location.pathname !== "/clients" && location.pathname !== "/engagements" && !location.pathname.startsWith("/engagements/") && <>
-          <div className={`flex flex-col relative z-40 transition-all duration-300 group/templates ${isTemplatesPanelCollapsed ? "w-0 overflow-hidden shadow-none bg-transparent border-r-0" : "w-[300px] shadow-md bg-muted border-r border-border sidebar-panel-expanded"}`} style={!isTemplatesPanelCollapsed ? { borderRadius: '0px 16px 16px 0px' } : undefined}>
+          <div className={`flex flex-col relative z-40 transition-all duration-300 group/templates ${isTemplatesPanelCollapsed ? "w-0 overflow-hidden shadow-none bg-transparent border-r-0" : "w-[300px] shadow-md bg-muted border-r border-border"}`}>
             <div className={`p-4 ${isTemplatesPanelCollapsed ? "hidden" : ""}`}>
               <h2 className="font-semibold text-primary text-lg mb-3">Templates</h2>
               <DropdownMenu>
