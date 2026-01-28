@@ -368,7 +368,7 @@ export function Sidebar() {
       </div>;
   };
   const [isNavExpanded, setIsNavExpanded] = useState(false);
-  return <div className="flex h-screen relative" style={{ background: 'linear-gradient(to right, hsl(var(--muted)), hsl(var(--card)))', borderRadius: '0px 16px 16px 0px' }}>
+  return <div className="flex h-screen relative bg-card">
       {/* Icon sidebar - dark navy with curved corner, expands on click only */}
       <div className={`sidebar-nav flex flex-col py-4 gap-2 rounded-tr-[20px] rounded-br-[20px] transition-all duration-300 ease-in-out ${isNavExpanded ? "w-48 items-start px-3" : "w-14 items-center"}`}>
         {/* Luka Logo */}
@@ -413,7 +413,7 @@ export function Sidebar() {
 
       {/* Engagement Sections panel - shown only on engagement detail pages */}
       {location.pathname.startsWith("/engagements/") && location.pathname !== "/engagements/create" && <>
-          <div className={`flex flex-col rounded-tr-[20px] rounded-br-[20px] relative z-40 transition-all duration-300 group/templates ${isTemplatesPanelCollapsed ? "w-0 overflow-hidden shadow-none bg-transparent" : "w-[300px] shadow-md bg-muted"}`}>
+          <div className={`flex flex-col relative z-40 transition-all duration-300 group/templates ${isTemplatesPanelCollapsed ? "w-0 overflow-hidden shadow-none bg-transparent" : "w-[300px] shadow-md bg-muted sidebar-panel-expanded"}`} style={!isTemplatesPanelCollapsed ? { borderRadius: '0px 16px 16px 0px' } : undefined}>
             <div className={`p-4 pb-2 ${isTemplatesPanelCollapsed ? "hidden" : ""}`}>
               <div className="flex items-center gap-2">
                 <h2 className="font-semibold text-primary text-lg">Engagements</h2>
@@ -503,7 +503,7 @@ export function Sidebar() {
 
       {/* Templates panel - hidden on Dashboard, Clients, Engagements list, and Engagement detail pages */}
       {location.pathname !== "/dashboard" && location.pathname !== "/clients" && location.pathname !== "/engagements" && !location.pathname.startsWith("/engagements/") && <>
-          <div className={`flex flex-col rounded-tr-[20px] rounded-br-[20px] relative z-10 transition-all duration-300 group/templates ${isTemplatesPanelCollapsed ? "w-0 overflow-hidden shadow-none bg-transparent border-r-0" : "w-[300px] shadow-md bg-muted border-r border-border"}`}>
+          <div className={`flex flex-col relative z-40 transition-all duration-300 group/templates ${isTemplatesPanelCollapsed ? "w-0 overflow-hidden shadow-none bg-transparent border-r-0" : "w-[300px] shadow-md bg-muted border-r border-border sidebar-panel-expanded"}`} style={!isTemplatesPanelCollapsed ? { borderRadius: '0px 16px 16px 0px' } : undefined}>
             <div className={`p-4 ${isTemplatesPanelCollapsed ? "hidden" : ""}`}>
               <h2 className="font-semibold text-primary text-lg mb-3">Templates</h2>
               <DropdownMenu>
