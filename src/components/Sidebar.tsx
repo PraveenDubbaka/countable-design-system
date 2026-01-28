@@ -419,7 +419,10 @@ export function Sidebar() {
 
       {/* Engagement Sections panel - shown only on engagement detail pages */}
       {location.pathname.startsWith("/engagements/") && location.pathname !== "/engagements/create" && <>
-          <div className={`flex flex-col relative z-40 transition-all duration-300 group/templates ${isTemplatesPanelCollapsed ? "w-0 overflow-hidden shadow-none bg-transparent" : "w-[300px] shadow-md bg-muted"}`} style={!isTemplatesPanelCollapsed ? { borderRadius: '0px 16px 16px 0px' } : undefined}>
+          <div 
+            className={`flex flex-col relative z-40 transition-transform duration-300 ease-out group/templates w-[300px] shadow-md bg-muted ${isTemplatesPanelCollapsed ? "-translate-x-full" : "translate-x-0"}`} 
+            style={{ borderRadius: '0px 16px 16px 0px' }}
+          >
             <div className={`p-4 pb-2 ${isTemplatesPanelCollapsed ? "hidden" : ""}`}>
               <div className="flex items-center gap-2">
                 <h2 className="font-semibold text-primary text-lg">Engagements</h2>
@@ -509,7 +512,10 @@ export function Sidebar() {
 
       {/* Templates panel - hidden on Dashboard, Clients, Engagements list, and Engagement detail pages */}
       {location.pathname !== "/dashboard" && location.pathname !== "/clients" && location.pathname !== "/engagements" && !location.pathname.startsWith("/engagements/") && <>
-          <div className={`flex flex-col relative z-40 transition-all duration-300 group/templates ${isTemplatesPanelCollapsed ? "w-0 overflow-hidden shadow-none bg-transparent border-r-0" : "w-[300px] shadow-md bg-muted border-r border-border"}`} style={!isTemplatesPanelCollapsed ? { borderRadius: '0px 16px 16px 0px' } : undefined}>
+          <div 
+            className={`flex flex-col relative z-40 transition-transform duration-300 ease-out group/templates w-[300px] shadow-md bg-muted border-r border-border ${isTemplatesPanelCollapsed ? "-translate-x-full" : "translate-x-0"}`} 
+            style={{ borderRadius: '0px 16px 16px 0px' }}
+          >
             <div className={`p-4 ${isTemplatesPanelCollapsed ? "hidden" : ""}`}>
               <h2 className="font-semibold text-primary text-lg mb-3">Templates</h2>
               <DropdownMenu>
