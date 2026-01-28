@@ -419,90 +419,82 @@ export function Sidebar() {
 
       {/* Engagement Sections panel - shown only on engagement detail pages */}
       {location.pathname.startsWith("/engagements/") && location.pathname !== "/engagements/create" && <>
-          {/* Sliding container that clips and animates width */}
-          <div 
-            className={`overflow-hidden transition-all duration-300 ease-out ${isTemplatesPanelCollapsed ? "w-0" : "w-[300px]"}`}
-          >
-            <div 
-              className="flex flex-col relative z-40 group/templates w-[300px] shadow-md bg-muted" 
-              style={{ borderRadius: '0px 16px 16px 0px' }}
-            >
-              <div className="p-4 pb-2">
-                <div className="flex items-center gap-2">
-                  <h2 className="font-semibold text-primary text-lg">Engagements</h2>
-                  <div className="flex items-center gap-1 text-muted-foreground">
-                    <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                      <circle cx="12" cy="12" r="10" />
-                      <path d="M9 12l2 2 4-4" />
-                    </svg>
-                    <span className="text-sm">Signoffs</span>
-                  </div>
+          <div className={`flex flex-col relative z-40 transition-all duration-300 group/templates ${isTemplatesPanelCollapsed ? "w-0 overflow-hidden shadow-none bg-transparent" : "w-[300px] shadow-md bg-muted"}`} style={!isTemplatesPanelCollapsed ? { borderRadius: '0px 16px 16px 0px' } : undefined}>
+            <div className={`p-4 pb-2 ${isTemplatesPanelCollapsed ? "hidden" : ""}`}>
+              <div className="flex items-center gap-2">
+                <h2 className="font-semibold text-primary text-lg">Engagements</h2>
+                <div className="flex items-center gap-1 text-muted-foreground">
+                  <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <circle cx="12" cy="12" r="10" />
+                    <path d="M9 12l2 2 4-4" />
+                  </svg>
+                  <span className="text-sm">Signoffs</span>
                 </div>
               </div>
+            </div>
 
-              <div className="p-3 pt-1">
-                <div className="flex gap-2">
-                  <div className="relative flex-1">
-                    <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground icon-search" />
-                    <Input placeholder="Search" className="pl-8 h-8 text-sm bg-card/80 border-0 shadow-sm" />
-                  </div>
-                  <Button size="icon" variant="ghost" className="h-8 w-8 bg-primary/10 hover:bg-primary/20">
-                    <svg width="17" height="17" viewBox="0 0 17 17" fill="none" xmlns="http://www.w3.org/2000/svg">
-                      <path d="M9.72214 6.94412L14.5833 2.08301M14.5833 2.08301H10.4166M14.5833 2.08301V6.24967M6.94436 9.7219L2.08325 14.583M2.08325 14.583H6.24992M2.08325 14.583L2.08325 10.4163" stroke="#074075" strokeWidth="1.38889" strokeLinecap="round" strokeLinejoin="round" />
-                    </svg>
-                  </Button>
+            <div className={`p-3 pt-1 ${isTemplatesPanelCollapsed ? "hidden" : ""}`}>
+              <div className="flex gap-2">
+                <div className="relative flex-1">
+                  <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground icon-search" />
+                  <Input placeholder="Search" className="pl-8 h-8 text-sm bg-card/80 border-0 shadow-sm" />
                 </div>
+                <Button size="icon" variant="ghost" className="h-8 w-8 bg-primary/10 hover:bg-primary/20">
+                  <svg width="17" height="17" viewBox="0 0 17 17" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M9.72214 6.94412L14.5833 2.08301M14.5833 2.08301H10.4166M14.5833 2.08301V6.24967M6.94436 9.7219L2.08325 14.583M2.08325 14.583H6.24992M2.08325 14.583L2.08325 10.4163" stroke="#074075" strokeWidth="1.38889" strokeLinecap="round" strokeLinejoin="round" />
+                  </svg>
+                </Button>
               </div>
+            </div>
 
-              <div className="flex-1 overflow-y-auto p-2 pt-0 rounded-tr-[20px] rounded-br-[20px]">
-                {/* Engagement Sections */}
-                {[{
-              id: "co",
-              code: "CO",
-              label: "Client Onboarding",
-              hasPlus: false
-            }, {
-              id: "do",
-              code: "DO",
-              label: "Documents",
-              hasPlus: true
-            }, {
-              id: "tb",
-              code: "TB",
-              label: "Trial Balance & Adj. Entri...",
-              hasPlus: false
-            }, {
-              id: "pr",
-              code: "PR",
-              label: "Procedures",
-              hasPlus: false
-            }, {
-              id: "fs",
-              code: "FS",
-              label: "Financial Statements",
-              hasPlus: true
-            }, {
-              id: "so",
-              code: "SO",
-              label: "Completion & Signoffs",
-              hasPlus: false
-            }].map(section => <div key={section.id} className="flex items-center gap-2 py-1.5 px-2 rounded-md cursor-pointer hover:bg-muted transition-colors text-sm">
-                    <ChevronRight className="h-4 w-4 text-muted-foreground flex-shrink-0 icon-arrow-right" />
-                    <Folder className="h-4 w-4 text-primary flex-shrink-0 icon-folder" />
-                    <span className="font-semibold text-primary">{section.code}</span>
-                    <span className="truncate flex-1 text-foreground">{section.label}</span>
-                    {section.hasPlus && <Plus className="h-4 w-4 text-muted-foreground hover:text-foreground flex-shrink-0 icon-plus" />}
-                  </div>)}
-              </div>
+            <div className={`flex-1 overflow-y-auto p-2 pt-0 rounded-tr-[20px] rounded-br-[20px] ${isTemplatesPanelCollapsed ? "hidden" : ""}`}>
+              {/* Engagement Sections */}
+              {[{
+            id: "co",
+            code: "CO",
+            label: "Client Onboarding",
+            hasPlus: false
+          }, {
+            id: "do",
+            code: "DO",
+            label: "Documents",
+            hasPlus: true
+          }, {
+            id: "tb",
+            code: "TB",
+            label: "Trial Balance & Adj. Entri...",
+            hasPlus: false
+          }, {
+            id: "pr",
+            code: "PR",
+            label: "Procedures",
+            hasPlus: false
+          }, {
+            id: "fs",
+            code: "FS",
+            label: "Financial Statements",
+            hasPlus: true
+          }, {
+            id: "so",
+            code: "SO",
+            label: "Completion & Signoffs",
+            hasPlus: false
+          }].map(section => <div key={section.id} className="flex items-center gap-2 py-1.5 px-2 rounded-md cursor-pointer hover:bg-muted transition-colors text-sm">
+                  <ChevronRight className="h-4 w-4 text-muted-foreground flex-shrink-0 icon-arrow-right" />
+                  <Folder className="h-4 w-4 text-primary flex-shrink-0 icon-folder" />
+                  <span className="font-semibold text-primary">{section.code}</span>
+                  <span className="truncate flex-1 text-foreground">{section.label}</span>
+                  {section.hasPlus && <Plus className="h-4 w-4 text-muted-foreground hover:text-foreground flex-shrink-0 icon-plus" />}
+                </div>)}
+            </div>
 
-              {/* Collapse handle - overlapped on border, visible on hover */}
-              <div className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-1/2 opacity-0 group-hover/templates:opacity-100 transition-opacity duration-200 cursor-pointer z-20" onClick={e => {
-            e.stopPropagation();
-            setIsTemplatesPanelCollapsed(!isTemplatesPanelCollapsed);
-          }}>
-                <div className="flex items-center justify-center w-4 h-8 bg-primary border border-primary shadow-sm hover:bg-primary/90 transition-all rounded-full">
-                  {isTemplatesPanelCollapsed ? <ChevronRight className="h-3 w-3 text-white icon-arrow-right" /> : <ChevronLeft className="h-3 w-3 text-white icon-arrow" />}
-                </div>
+            {/* Collapse handle - overlapped on border, visible on hover */}
+            <div className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-1/2 opacity-0 group-hover/templates:opacity-100 transition-opacity duration-200 cursor-pointer z-20" onClick={e => {
+          e.stopPropagation();
+          setIsTemplatesPanelCollapsed(!isTemplatesPanelCollapsed);
+        }}>
+              <div className="flex items-center justify-center w-4 h-8 bg-primary border border-primary shadow-sm hover:bg-primary/90 transition-all rounded-full">
+                {isTemplatesPanelCollapsed ? <ChevronRight className="h-3 w-3 text-white icon-arrow-right" /> : <ChevronLeft className="h-3 w-3 text-white icon-arrow" />}
               </div>
             </div>
           </div>
@@ -517,92 +509,84 @@ export function Sidebar() {
 
       {/* Templates panel - hidden on Dashboard, Clients, Engagements list, and Engagement detail pages */}
       {location.pathname !== "/dashboard" && location.pathname !== "/clients" && location.pathname !== "/engagements" && !location.pathname.startsWith("/engagements/") && <>
-          {/* Sliding container that clips and animates width */}
-          <div 
-            className={`overflow-hidden transition-all duration-300 ease-out ${isTemplatesPanelCollapsed ? "w-0" : "w-[300px]"}`}
-          >
-            <div 
-              className="flex flex-col relative z-40 group/templates w-[300px] shadow-md bg-muted border-r border-border h-full" 
-              style={{ borderRadius: '0px 16px 16px 0px' }}
-            >
-              <div className="p-4">
-                <h2 className="font-semibold text-primary text-lg mb-3">Templates</h2>
-                <DropdownMenu>
-                  <DropdownMenuTrigger className="w-full px-3 py-2 bg-card/80 rounded-lg text-sm flex items-center justify-between focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors shadow-sm border border-border">
-                    <div className="flex items-center gap-2">
-                      {(() => {
-                    const selected = dropdownItems.find(item => item.id === selectedDropdown);
-                    if (selected) {
-                      const IconComponent = selected.icon;
-                      return <>
-                              <IconComponent className={`h-4 w-4 ${selected.color}`} />
-                              <span>{selected.label}</span>
-                            </>;
-                    }
-                    return <span>Select...</span>;
-                  })()}
-                    </div>
-                    <ChevronDown className="h-4 w-4 text-muted-foreground icon-chevron-down" />
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="start" className="w-[200px]">
-                    {dropdownItems.map(item => <DropdownMenuItem key={item.id} onClick={() => handleDropdownSelect(item.id)} className="flex items-center justify-between cursor-pointer">
-                        <div className="flex items-center gap-2">
-                          <item.icon className={`h-4 w-4 ${item.color}`} />
-                          <span>{item.label}</span>
-                        </div>
-                        {selectedDropdown === item.id && <Check className="h-4 w-4 text-primary" />}
-                      </DropdownMenuItem>)}
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              </div>
-
-              <div className="flex mb-2" style={{
-            borderBottom: "1px solid #DDE1E9"
-          }}>
-                <button onClick={() => setActiveTab("firm")} className={`flex-1 py-2 px-1 text-sm font-medium transition-all text-center whitespace-nowrap ${activeTab === "firm" ? "text-primary border-b-[3px]" : "text-muted-foreground hover:text-foreground border-b-[3px] border-transparent"}`} style={activeTab === "firm" ? {
-              borderBottomColor: "#0A3159"
-            } : undefined}>
-                  Firm Templates
-                </button>
-                <button onClick={() => setActiveTab("master")} className={`flex-1 py-2 px-1 text-sm font-medium transition-all text-center whitespace-nowrap ${activeTab === "master" ? "text-primary border-b-[3px]" : "text-muted-foreground hover:text-foreground border-b-[3px] border-transparent"}`} style={activeTab === "master" ? {
-              borderBottomColor: "#0A3159"
-            } : undefined}>
-                  Master Library
-                </button>
-              </div>
-
-              <div className="p-3 pt-1">
-                <div className="flex gap-2">
-                  <div className="relative flex-1">
-                    <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground icon-search" />
-                    <Input placeholder="Search" className="pl-8 h-8 text-sm bg-card/80 border-0 shadow-sm" value={searchQuery} onChange={e => setSearchQuery(e.target.value)} />
+          <div className={`flex flex-col relative z-40 transition-all duration-300 group/templates ${isTemplatesPanelCollapsed ? "w-0 overflow-hidden shadow-none bg-transparent border-r-0" : "w-[300px] shadow-md bg-muted border-r border-border"}`} style={!isTemplatesPanelCollapsed ? { borderRadius: '0px 16px 16px 0px' } : undefined}>
+            <div className={`p-4 ${isTemplatesPanelCollapsed ? "hidden" : ""}`}>
+              <h2 className="font-semibold text-primary text-lg mb-3">Templates</h2>
+              <DropdownMenu>
+                <DropdownMenuTrigger className="w-full px-3 py-2 bg-card/80 rounded-lg text-sm flex items-center justify-between focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors shadow-sm border border-border">
+                  <div className="flex items-center gap-2">
+                    {(() => {
+                  const selected = dropdownItems.find(item => item.id === selectedDropdown);
+                  if (selected) {
+                    const IconComponent = selected.icon;
+                    return <>
+                            <IconComponent className={`h-4 w-4 ${selected.color}`} />
+                            <span>{selected.label}</span>
+                          </>;
+                  }
+                  return <span>Select...</span>;
+                })()}
                   </div>
-                  <button className="h-8 w-8 rounded-md flex items-center justify-center bg-primary/10 hover:bg-primary/20 transition-colors">
-                    <svg width="17" height="17" viewBox="0 0 17 17" fill="none" xmlns="http://www.w3.org/2000/svg">
-                      <path d="M9.72214 6.94412L14.5833 2.08301M14.5833 2.08301H10.4166M14.5833 2.08301V6.24967M6.94436 9.7219L2.08325 14.583M2.08325 14.583H6.24992M2.08325 14.583L2.08325 10.4163" stroke="#074075" strokeWidth="1.38889" strokeLinecap="round" strokeLinejoin="round" />
-                    </svg>
-                  </button>
-                  <Button size="icon" className="h-8 w-8 bg-primary hover:bg-primary/90 shadow-sm">
-                    <Plus className="h-4 w-4 text-primary-foreground icon-plus" />
-                  </Button>
-                  <Button size="icon" variant="secondary" className="h-8 w-8 text-destructive hover:text-destructive hover:bg-card/50">
-                    <Trash2 className="h-4 w-4 icon-trash" />
-                  </Button>
-                </div>
-              </div>
+                  <ChevronDown className="h-4 w-4 text-muted-foreground icon-chevron-down" />
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="start" className="w-[200px]">
+                  {dropdownItems.map(item => <DropdownMenuItem key={item.id} onClick={() => handleDropdownSelect(item.id)} className="flex items-center justify-between cursor-pointer">
+                      <div className="flex items-center gap-2">
+                        <item.icon className={`h-4 w-4 ${item.color}`} />
+                        <span>{item.label}</span>
+                      </div>
+                      {selectedDropdown === item.id && <Check className="h-4 w-4 text-primary" />}
+                    </DropdownMenuItem>)}
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </div>
 
-              <div className="flex-1 overflow-y-auto p-2 pt-0 rounded-tr-[20px] rounded-br-[20px]">
-                {templates.map(template => renderTemplate(template))}
-              </div>
+            <div className={`flex mb-2 ${isTemplatesPanelCollapsed ? "hidden" : ""}`} style={{
+          borderBottom: "1px solid #DDE1E9"
+        }}>
+              <button onClick={() => setActiveTab("firm")} className={`flex-1 py-2 px-1 text-sm font-medium transition-all text-center whitespace-nowrap ${activeTab === "firm" ? "text-primary border-b-[3px]" : "text-muted-foreground hover:text-foreground border-b-[3px] border-transparent"}`} style={activeTab === "firm" ? {
+            borderBottomColor: "#0A3159"
+          } : undefined}>
+                Firm Templates
+              </button>
+              <button onClick={() => setActiveTab("master")} className={`flex-1 py-2 px-1 text-sm font-medium transition-all text-center whitespace-nowrap ${activeTab === "master" ? "text-primary border-b-[3px]" : "text-muted-foreground hover:text-foreground border-b-[3px] border-transparent"}`} style={activeTab === "master" ? {
+            borderBottomColor: "#0A3159"
+          } : undefined}>
+                Master Library
+              </button>
+            </div>
 
-              {/* Collapse handle - overlapped on border, visible on hover */}
-              <div className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-1/2 opacity-0 group-hover/templates:opacity-100 transition-opacity duration-200 cursor-pointer z-20" onClick={e => {
-            e.stopPropagation();
-            setIsTemplatesPanelCollapsed(!isTemplatesPanelCollapsed);
-          }}>
-                <div className="flex items-center justify-center w-4 h-8 bg-primary border border-primary shadow-sm hover:bg-primary/90 transition-all rounded-full">
-                  {isTemplatesPanelCollapsed ? <ChevronRight className="h-3 w-3 text-white icon-arrow-right" /> : <ChevronLeft className="h-3 w-3 text-white icon-arrow" />}
+            <div className={`p-3 pt-1 ${isTemplatesPanelCollapsed ? "hidden" : ""}`}>
+              <div className="flex gap-2">
+                <div className="relative flex-1">
+                  <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground icon-search" />
+                  <Input placeholder="Search" className="pl-8 h-8 text-sm bg-card/80 border-0 shadow-sm" value={searchQuery} onChange={e => setSearchQuery(e.target.value)} />
                 </div>
+                <button className="h-8 w-8 rounded-md flex items-center justify-center bg-primary/10 hover:bg-primary/20 transition-colors">
+                  <svg width="17" height="17" viewBox="0 0 17 17" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M9.72214 6.94412L14.5833 2.08301M14.5833 2.08301H10.4166M14.5833 2.08301V6.24967M6.94436 9.7219L2.08325 14.583M2.08325 14.583H6.24992M2.08325 14.583L2.08325 10.4163" stroke="#074075" strokeWidth="1.38889" strokeLinecap="round" strokeLinejoin="round" />
+                  </svg>
+                </button>
+                <Button size="icon" className="h-8 w-8 bg-primary hover:bg-primary/90 shadow-sm">
+                  <Plus className="h-4 w-4 text-primary-foreground icon-plus" />
+                </Button>
+                <Button size="icon" variant="secondary" className="h-8 w-8 text-destructive hover:text-destructive hover:bg-card/50">
+                  <Trash2 className="h-4 w-4 icon-trash" />
+                </Button>
+              </div>
+            </div>
+
+            <div className={`flex-1 overflow-y-auto p-2 pt-0 rounded-tr-[20px] rounded-br-[20px] ${isTemplatesPanelCollapsed ? "hidden" : ""}`}>
+              {templates.map(template => renderTemplate(template))}
+            </div>
+
+            {/* Collapse handle - overlapped on border, visible on hover */}
+            <div className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-1/2 opacity-0 group-hover/templates:opacity-100 transition-opacity duration-200 cursor-pointer z-20" onClick={e => {
+          e.stopPropagation();
+          setIsTemplatesPanelCollapsed(!isTemplatesPanelCollapsed);
+        }}>
+              <div className="flex items-center justify-center w-4 h-8 bg-primary border border-primary shadow-sm hover:bg-primary/90 transition-all rounded-full">
+                {isTemplatesPanelCollapsed ? <ChevronRight className="h-3 w-3 text-white icon-arrow-right" /> : <ChevronLeft className="h-3 w-3 text-white icon-arrow" />}
               </div>
             </div>
           </div>
