@@ -15,6 +15,11 @@
   box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
 }
 
+/* Dark mode sidebar gradient - only applies in dark mode when expanded */
+.dark .sidebar-panel-expanded {
+  background: linear-gradient(to right, hsl(var(--muted)), hsl(var(--card)));
+}
+
 /* Inter Font */
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
