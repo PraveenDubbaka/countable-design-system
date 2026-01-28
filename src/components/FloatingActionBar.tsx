@@ -382,7 +382,7 @@ export function FloatingActionBar({
                       }}
                       className="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-muted transition-colors"
                     >
-                      <div className="w-7 h-7 rounded-md bg-[#F5F8FA] flex items-center justify-center">
+                      <div className="w-7 h-7 rounded-md bg-muted flex items-center justify-center">
                         <ChevronUp className="h-3.5 w-3.5 text-foreground" />
                       </div>
                       <div className="text-left">
@@ -399,7 +399,7 @@ export function FloatingActionBar({
                       }}
                       className="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-muted transition-colors"
                     >
-                      <div className="w-7 h-7 rounded-md bg-[#F5F8FA] flex items-center justify-center">
+                      <div className="w-7 h-7 rounded-md bg-muted flex items-center justify-center">
                         <ChevronDown className="h-3.5 w-3.5 text-foreground" />
                       </div>
                       <div className="text-left">
