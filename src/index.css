@@ -112,6 +112,12 @@
     --border: var(--m3-outline-variant);
     --input: var(--m3-outline-variant);
     --ring: var(--m3-primary);
+    
+    /* Sleek border colors - dark blue theme */
+    --border-dark-blue: 213 60% 30%;
+    --border-light: 210 20% 85%;
+    --border-subtle: 210 15% 75%;
+    --border-focus: 207 71% 45%;
 
     /* Futuristic Shape System - Refined curvature */
     --radius: 1.25rem;
