@@ -387,7 +387,7 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
   
   return <div className={`flex h-screen relative bg-card ${hasSecondaryPanelExpanded ? "sidebar-panel-expanded" : ""}`}>
       {/* Icon sidebar - dark navy with curved corner, expands on click only */}
-      <div className={`sidebar-nav flex flex-col py-4 gap-2 rounded-tr-[20px] rounded-br-[20px] transition-all duration-300 ease-in-out ${isNavExpanded ? "w-56 items-start px-3" : "w-14 items-center"}`}>
+      <div className={`sidebar-nav flex flex-col py-4 gap-2 transition-all duration-300 ease-in-out ${isNavExpanded ? "w-56 items-start px-3" : "w-14 items-center"}`}>
         {/* Luka Logo */}
         <div className={`h-10 mb-4 flex items-center ${isNavExpanded ? "px-2" : "justify-center w-10"}`}>
           {isNavExpanded ? <svg width="140" height="19" viewBox="0 0 234 32" fill="none" xmlns="http://www.w3.org/2000/svg">
