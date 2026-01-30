@@ -22,16 +22,22 @@ const SelectTrigger = React.forwardRef<
       // Default state: subtle gray border
       "bg-card text-foreground placeholder:text-muted-foreground",
       "border-2 border-[hsl(210_20%_85%)]",
+      // Dark mode: darker border
+      "dark:border-[hsl(220_15%_30%)] dark:bg-card",
       // Hover state: slightly darker border
       "hover:border-[hsl(210_25%_75%)]",
-      // Focus state: blue border
-      "focus:outline-none focus:border-[hsl(207_71%_38%)]",
+      "dark:hover:border-[hsl(220_15%_40%)]",
+      // Focus state: blue border with ring
+      "focus:outline-none focus:border-[hsl(207_71%_38%)] focus:ring-2 focus:ring-[hsl(207_71%_38%/0.2)]",
+      // Dark mode focus
+      "dark:focus:border-[hsl(207_80%_60%)] dark:focus:ring-[hsl(207_80%_60%/0.25)]",
       // Data state for open - matching focus
-      "data-[state=open]:border-[hsl(207_71%_38%)]",
+      "data-[state=open]:border-[hsl(207_71%_38%)] data-[state=open]:ring-2 data-[state=open]:ring-[hsl(207_71%_38%/0.2)]",
+      "dark:data-[state=open]:border-[hsl(207_80%_60%)] dark:data-[state=open]:ring-[hsl(207_80%_60%/0.25)]",
       // Disabled state
       "disabled:cursor-not-allowed disabled:bg-muted/50 disabled:border-muted disabled:text-muted-foreground disabled:opacity-60",
       // Error state
-      error && "border-destructive hover:border-destructive focus:border-destructive data-[state=open]:border-destructive",
+      error && "border-destructive hover:border-destructive focus:border-destructive data-[state=open]:border-destructive focus:ring-destructive/20 data-[state=open]:ring-destructive/20",
       className,
     )}
     {...props}
@@ -85,6 +91,8 @@ const SelectContent = React.forwardRef<
         // Clean border with shadow
         "border-2 border-[hsl(210_20%_85%)] bg-popover text-popover-foreground",
         "shadow-lg",
+        // Dark mode
+        "dark:border-[hsl(220_15%_30%)] dark:bg-popover",
         // Animations
         "data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2",
         position === "popper" &&
@@ -129,9 +137,12 @@ const SelectItem = React.forwardRef<
       "relative flex w-full cursor-pointer select-none items-center rounded-lg py-2.5 pl-9 pr-3 text-sm outline-none transition-all duration-200 ease-emphasized",
       // Pop-out hover effect
       "hover:bg-primary/[0.08] hover:scale-[1.01] hover:shadow-[0_2px_8px_hsl(213_40%_20%/0.06)]",
+      "dark:hover:bg-primary/[0.15]",
       // Focus/selected state with highlight
       "focus:bg-primary/[0.12] focus:text-foreground focus:scale-[1.01]",
+      "dark:focus:bg-primary/[0.2]",
       "data-[state=checked]:bg-primary/[0.15] data-[state=checked]:text-primary data-[state=checked]:font-medium",
+      "dark:data-[state=checked]:bg-primary/[0.25]",
       "data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
       className,
     )}
