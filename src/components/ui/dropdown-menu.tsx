@@ -91,12 +91,13 @@ const DropdownMenuItem = React.forwardRef<
   <DropdownMenuPrimitive.Item
     ref={ref}
     className={cn(
-      // Curved edges on menu items
-      "relative flex cursor-default select-none items-center rounded-lg px-3 py-2 text-sm outline-none transition-all duration-200",
+      // Curved edges on menu items with pop-out effect
+      "relative flex cursor-pointer select-none items-center rounded-lg px-3 py-2.5 text-sm outline-none transition-all duration-200 ease-emphasized",
       "data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
-      // Hover/focus states
-      "hover:bg-primary hover:text-primary-foreground focus:bg-primary focus:text-primary-foreground",
-      "[&>svg]:text-muted-foreground [&>svg]:transition-colors [&:hover>svg]:text-primary-foreground [&:focus>svg]:text-primary-foreground",
+      // Pop-out hover effect
+      "hover:bg-primary hover:text-primary-foreground hover:scale-[1.01] hover:shadow-[0_2px_8px_hsl(213_40%_20%/0.08)]",
+      "focus:bg-primary focus:text-primary-foreground focus:scale-[1.01]",
+      "[&>svg]:text-muted-foreground [&>svg]:transition-all [&:hover>svg]:text-primary-foreground [&:focus>svg]:text-primary-foreground",
       inset && "pl-8",
       className,
     )}

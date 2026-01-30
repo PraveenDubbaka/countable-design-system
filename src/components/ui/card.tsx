@@ -2,82 +2,119 @@ import * as React from "react";
 
 import { cn } from "@/lib/utils";
 
-// Futuristic Card - Elevated variant with glow (default)
-const Card = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(({ className, ...props }, ref) => (
+// Base Card with optional pop-out effect
+const Card = React.forwardRef<
+  HTMLDivElement,
+  React.HTMLAttributes<HTMLDivElement> & { interactive?: boolean }
+>(({ className, interactive = false, ...props }, ref) => (
   <div
     ref={ref}
     className={cn(
-      "rounded-2xl bg-card text-card-foreground shadow-lg border border-border/40 transition-all duration-300",
-      "hover:shadow-xl hover:border-border/60",
-      className
+      // Base styles
+      "rounded-2xl bg-card text-card-foreground transition-all duration-200 ease-emphasized",
+      "border border-[hsl(210_35%_88%)] shadow-[0_2px_8px_hsl(213_40%_20%/0.06)]",
+      // Interactive pop-out effect
+      interactive && [
+        "cursor-pointer",
+        "hover:scale-[1.01] hover:-translate-y-0.5 hover:shadow-[0_12px_32px_hsl(213_40%_20%/0.12)]",
+        "hover:border-[hsl(210_35%_82%)]",
+        "active:scale-[0.99] active:translate-y-0 active:shadow-[0_4px_12px_hsl(213_40%_20%/0.08)]",
+      ],
+      className,
     )}
     {...props}
   />
 ));
 Card.displayName = "Card";
 
-// Futuristic Styled Card - Enhanced with subtle glow and refined borders
-const StyledCard = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement> & { hover?: boolean; glow?: boolean }>(
-  ({ className, hover = false, glow = false, ...props }, ref) => (
-    <div
-      ref={ref}
-      className={cn(
-        "rounded-2xl bg-card text-card-foreground shadow-lg border border-border/30 transition-all duration-300",
-        hover && "hover:shadow-xl hover:border-primary/20 hover:shadow-[0_8px_30px_hsl(var(--primary)/0.08)]",
-        glow && "shadow-[0_0_30px_hsl(var(--primary)/0.1)]",
-        className
-      )}
-      {...props}
-    />
-  )
-);
+// Styled Card with hover glow
+const StyledCard = React.forwardRef<
+  HTMLDivElement,
+  React.HTMLAttributes<HTMLDivElement> & { hover?: boolean; glow?: boolean }
+>(({ className, hover = true, glow = false, ...props }, ref) => (
+  <div
+    ref={ref}
+    className={cn(
+      "rounded-2xl bg-card text-card-foreground transition-all duration-200 ease-emphasized",
+      "border border-[hsl(210_35%_88%)] shadow-[0_2px_8px_hsl(213_40%_20%/0.06)]",
+      hover && [
+        "hover:scale-[1.01] hover:-translate-y-0.5",
+        "hover:shadow-[0_12px_32px_hsl(213_40%_20%/0.12),0_0_20px_hsl(207_71%_38%/0.08)]",
+        "hover:border-[hsl(207_60%_75%)]",
+      ],
+      glow && "shadow-[0_0_30px_hsl(207_71%_38%/0.1)]",
+      className,
+    )}
+    {...props}
+  />
+));
 StyledCard.displayName = "StyledCard";
 
-// Futuristic Glass Card - Semi-transparent with backdrop blur
-const GlassCard = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(
-  ({ className, ...props }, ref) => (
-    <div
-      ref={ref}
-      className={cn(
-        "rounded-2xl bg-card/70 backdrop-blur-xl text-card-foreground border border-border/20 shadow-lg transition-all duration-300",
-        "hover:bg-card/80 hover:border-border/30",
-        className
-      )}
-      {...props}
-    />
-  )
-);
+// Glass Card with pop-out effect
+const GlassCard = React.forwardRef<
+  HTMLDivElement,
+  React.HTMLAttributes<HTMLDivElement> & { interactive?: boolean }
+>(({ className, interactive = false, ...props }, ref) => (
+  <div
+    ref={ref}
+    className={cn(
+      "rounded-2xl backdrop-blur-xl bg-card/80 text-card-foreground transition-all duration-200 ease-emphasized",
+      "border border-[hsl(210_35%_85%/0.6)] shadow-[0_4px_16px_hsl(213_40%_20%/0.08)]",
+      interactive && [
+        "cursor-pointer",
+        "hover:scale-[1.01] hover:-translate-y-0.5 hover:shadow-[0_16px_40px_hsl(213_40%_20%/0.15)]",
+        "hover:bg-card/90 hover:border-[hsl(210_35%_80%)]",
+        "active:scale-[0.99] active:translate-y-0",
+      ],
+      className,
+    )}
+    {...props}
+  />
+));
 GlassCard.displayName = "GlassCard";
 
-// M3 Card - Filled variant
-const CardFilled = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(
-  ({ className, ...props }, ref) => (
-    <div
-      ref={ref}
-      className={cn(
-        "rounded-2xl bg-muted text-card-foreground transition-colors duration-300",
-        className
-      )}
-      {...props}
-    />
-  )
-);
+// Filled Card variant
+const CardFilled = React.forwardRef<
+  HTMLDivElement,
+  React.HTMLAttributes<HTMLDivElement> & { interactive?: boolean }
+>(({ className, interactive = false, ...props }, ref) => (
+  <div
+    ref={ref}
+    className={cn(
+      "rounded-2xl bg-muted text-card-foreground transition-all duration-200 ease-emphasized",
+      interactive && [
+        "cursor-pointer",
+        "hover:scale-[1.01] hover:bg-[hsl(210_40%_94%)]",
+        "active:scale-[0.99]",
+      ],
+      className,
+    )}
+    {...props}
+  />
+));
 CardFilled.displayName = "CardFilled";
 
-// M3 Card - Outlined variant
-const CardOutlined = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(
-  ({ className, ...props }, ref) => (
-    <div
-      ref={ref}
-      className={cn(
-        "rounded-2xl border border-border/60 bg-card/50 text-card-foreground transition-all duration-300",
-        "hover:border-border hover:bg-card/70",
-        className
-      )}
-      {...props}
-    />
-  )
-);
+// Outlined Card variant
+const CardOutlined = React.forwardRef<
+  HTMLDivElement,
+  React.HTMLAttributes<HTMLDivElement> & { interactive?: boolean }
+>(({ className, interactive = false, ...props }, ref) => (
+  <div
+    ref={ref}
+    className={cn(
+      "rounded-2xl border-2 border-[hsl(213_60%_30%/0.3)] bg-card/50 text-card-foreground transition-all duration-200 ease-emphasized",
+      "shadow-[inset_0_0_0_1px_hsl(210_20%_85%/0.5)]",
+      interactive && [
+        "cursor-pointer",
+        "hover:scale-[1.01] hover:border-[hsl(213_60%_30%/0.5)] hover:bg-card/70",
+        "hover:shadow-[inset_0_0_0_1px_hsl(210_20%_85%/0.8),0_8px_25px_hsl(213_40%_20%/0.1)]",
+        "active:scale-[0.99]",
+      ],
+      className,
+    )}
+    {...props}
+  />
+));
 CardOutlined.displayName = "CardOutlined";
 
 const CardHeader = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(
