@@ -161,6 +161,8 @@ export default {
         '2xl': '24px',
         '3xl': '32px',
         'full': '9999px',
+        // Button specific radius
+        'button': '0.75rem',
       },
       boxShadow: {
         // M3 Elevation
