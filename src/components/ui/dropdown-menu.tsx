@@ -44,7 +44,13 @@ const DropdownMenuSubContent = React.forwardRef<
   <DropdownMenuPrimitive.SubContent
     ref={ref}
     className={cn(
-      "z-50 min-w-[8rem] overflow-hidden rounded-md border bg-popover p-1 text-popover-foreground shadow-lg data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2",
+      // Curved edges matching parent dropdown
+      "z-50 min-w-[8rem] overflow-hidden rounded-xl",
+      // Visible dark blue border
+      "border-2 border-[hsl(213_60%_30%/0.5)] bg-popover p-1.5 text-popover-foreground",
+      "shadow-[0_4px_20px_hsl(213_60%_30%/0.15),inset_0_0_0_1px_hsl(210_20%_85%/0.5)]",
+      // Animations
+      "data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2",
       className,
     )}
     {...props}
@@ -61,7 +67,13 @@ const DropdownMenuContent = React.forwardRef<
       ref={ref}
       sideOffset={sideOffset}
       className={cn(
-        "z-50 min-w-[8rem] overflow-hidden rounded-md border bg-popover p-1 text-popover-foreground shadow-md data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2",
+        // Curved edges matching triggers
+        "z-50 min-w-[8rem] overflow-hidden rounded-xl",
+        // Visible dark blue border with inner light border shadow
+        "border-2 border-[hsl(213_60%_30%/0.5)] bg-popover p-1.5 text-popover-foreground",
+        "shadow-[0_4px_20px_hsl(213_60%_30%/0.15),inset_0_0_0_1px_hsl(210_20%_85%/0.5)]",
+        // Animations
+        "data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2",
         className,
       )}
       {...props}
@@ -79,7 +91,12 @@ const DropdownMenuItem = React.forwardRef<
   <DropdownMenuPrimitive.Item
     ref={ref}
     className={cn(
-      "relative flex cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none transition-colors data-[disabled]:pointer-events-none data-[disabled]:opacity-50 hover:bg-primary hover:text-primary-foreground focus:bg-primary focus:text-primary-foreground [&>svg]:text-muted-foreground [&>svg]:transition-colors [&:hover>svg]:text-primary-foreground [&:focus>svg]:text-primary-foreground",
+      // Curved edges on menu items
+      "relative flex cursor-default select-none items-center rounded-lg px-3 py-2 text-sm outline-none transition-all duration-200",
+      "data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
+      // Hover/focus states
+      "hover:bg-primary hover:text-primary-foreground focus:bg-primary focus:text-primary-foreground",
+      "[&>svg]:text-muted-foreground [&>svg]:transition-colors [&:hover>svg]:text-primary-foreground [&:focus>svg]:text-primary-foreground",
       inset && "pl-8",
       className,
     )}
