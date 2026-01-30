@@ -5,8 +5,8 @@ import { Button } from "@/components/ui/button";
 import { Layout } from "@/components/Layout";
 import { Checkbox } from "@/components/ui/checkbox";
 
-// Floating label input component - Material 3 style with Figma states
-const FloatingInput = ({ 
+// Standard input component with label above - matching design system
+const LabeledInput = ({ 
   label, 
   value, 
   onChange, 
@@ -27,63 +27,50 @@ const FloatingInput = ({
   disabled?: boolean;
   error?: boolean;
 }) => {
-  const [focused, setFocused] = useState(false);
-  const isActive = focused || value;
-
   return (
-    <div className="relative">
-      <input
-        type={type}
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        onFocus={() => setFocused(true)}
-        onBlur={() => setFocused(false)}
-        readOnly={readOnly}
-        disabled={disabled}
-        className={`
-          w-full h-11 text-sm text-foreground rounded-lg outline-none transition-all duration-200
-          ${label ? 'px-4 pt-4 pb-1' : 'px-4 py-2'}
-          ${disabled 
-            ? 'bg-muted border-transparent text-muted-foreground opacity-60 cursor-not-allowed' 
-            : error
-              ? 'bg-card border-2 border-destructive px-[15px]'
-              : focused 
-                ? 'bg-card border-2 border-primary px-[15px]' 
-                : 'bg-card border border-border hover:border-muted-foreground'
-          }
-          ${readOnly ? 'cursor-default' : ''}
-        `}
-      />
-      <label
-        className={`
-          absolute left-4 transition-all duration-200 pointer-events-none
-          ${isActive 
-            ? `top-1 text-xs ${focused ? 'text-primary' : error ? 'text-destructive' : 'text-muted-foreground'}` 
-            : 'top-1/2 -translate-y-1/2 text-sm text-muted-foreground'
-          }
-          ${disabled ? 'text-muted-foreground opacity-60' : ''}
-        `}
-      >
-        {label}
-        {required && <span className="text-red-500 ml-0.5">*</span>}
-      </label>
-      {icon && (
-        <div className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground">
-          {icon}
-        </div>
+    <div className="flex flex-col gap-1.5">
+      {label && (
+        <label className="text-sm font-medium text-foreground">
+          {label}
+          {required && <span className="text-destructive ml-0.5">*</span>}
+        </label>
       )}
+      <div className="relative">
+        <input
+          type={type}
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          readOnly={readOnly}
+          disabled={disabled}
+          className={`
+            w-full h-12 px-4 py-3 text-sm text-foreground rounded-button outline-none transition-all duration-200
+            ${disabled 
+              ? 'bg-muted border-2 border-transparent text-muted-foreground opacity-60 cursor-not-allowed' 
+              : error
+                ? 'bg-card border-2 border-destructive'
+                : 'bg-card border-2 border-[hsl(210_20%_85%)] dark:border-[hsl(220_15%_30%)] hover:border-[hsl(210_25%_75%)] dark:hover:border-[hsl(220_15%_40%)] focus:border-[hsl(207_71%_38%)] focus:ring-2 focus:ring-[hsl(207_71%_38%/0.2)] dark:focus:border-[hsl(207_80%_60%)] dark:focus:ring-[hsl(207_80%_60%/0.25)]'
+            }
+            ${readOnly ? 'cursor-default' : ''}
+            ${icon ? 'pr-10' : ''}
+          `}
+        />
+        {icon && (
+          <div className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground">
+            {icon}
+          </div>
+        )}
+      </div>
     </div>
   );
 };
 
-// Floating label select component - Material 3 style with Figma states
-const FloatingSelect = ({ 
+// Standard select component with label above - matching design system
+const LabeledSelect = ({ 
   label, 
   value, 
   onChange, 
   options,
   required = false,
-  icon,
   disabled = false,
   error = false
 }: { 
@@ -92,53 +79,39 @@ const FloatingSelect = ({
   onChange: (value: string) => void;
   options: { value: string; label: string }[];
   required?: boolean;
-  icon?: React.ReactNode;
   disabled?: boolean;
   error?: boolean;
 }) => {
-  const [focused, setFocused] = useState(false);
-  const isActive = focused || value;
-
   return (
-    <div className="relative">
-      <select
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        onFocus={() => setFocused(true)}
-        onBlur={() => setFocused(false)}
-        disabled={disabled}
-        className={`
-          w-full h-11 text-sm text-foreground rounded-lg outline-none transition-all duration-200 appearance-none
-          ${label ? 'px-4 pt-4 pb-1' : 'px-4 py-2'}
-          ${disabled 
-            ? 'bg-muted border-transparent text-muted-foreground opacity-60 cursor-not-allowed' 
-            : error
-              ? 'bg-card border-2 border-destructive px-[15px] cursor-pointer'
-              : focused 
-                ? 'bg-card border-2 border-primary px-[15px] cursor-pointer' 
-                : 'bg-card border border-border hover:border-muted-foreground cursor-pointer'
-          }
-        `}
-      >
-        <option value=""></option>
-        {options.map((opt) => (
-          <option key={opt.value} value={opt.value}>{opt.label}</option>
-        ))}
-      </select>
-      <label
-        className={`
-          absolute left-4 transition-all duration-200 pointer-events-none
-          ${isActive 
-            ? `top-1 text-xs ${focused ? 'text-primary' : error ? 'text-destructive' : 'text-muted-foreground'}` 
-            : 'top-1/2 -translate-y-1/2 text-sm text-muted-foreground'
-          }
-          ${disabled ? 'text-muted-foreground opacity-60' : ''}
-        `}
-      >
-        {label}
-        {required && <span className="text-red-500 ml-0.5">*</span>}
-      </label>
-      <ChevronDown className={`absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 pointer-events-none icon-chevron-down ${disabled ? 'text-muted-foreground opacity-60' : 'text-muted-foreground'}`} />
+    <div className="flex flex-col gap-1.5">
+      {label && (
+        <label className="text-sm font-medium text-foreground">
+          {label}
+          {required && <span className="text-destructive ml-0.5">*</span>}
+        </label>
+      )}
+      <div className="relative">
+        <select
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          disabled={disabled}
+          className={`
+            w-full h-12 px-4 py-3 text-sm text-foreground rounded-button outline-none transition-all duration-200 appearance-none cursor-pointer
+            ${disabled 
+              ? 'bg-muted border-2 border-transparent text-muted-foreground opacity-60 cursor-not-allowed' 
+              : error
+                ? 'bg-card border-2 border-destructive'
+                : 'bg-card border-2 border-[hsl(210_20%_85%)] dark:border-[hsl(220_15%_30%)] hover:border-[hsl(210_25%_75%)] dark:hover:border-[hsl(220_15%_40%)] focus:border-[hsl(207_71%_38%)] focus:ring-2 focus:ring-[hsl(207_71%_38%/0.2)] dark:focus:border-[hsl(207_80%_60%)] dark:focus:ring-[hsl(207_80%_60%/0.25)]'
+            }
+          `}
+        >
+          <option value="">Select...</option>
+          {options.map((opt) => (
+            <option key={opt.value} value={opt.value}>{opt.label}</option>
+          ))}
+        </select>
+        <ChevronDown className={`absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 pointer-events-none ${disabled ? 'text-muted-foreground opacity-60' : 'text-muted-foreground'}`} />
+      </div>
     </div>
   );
 };
@@ -291,28 +264,28 @@ export default function CreateEngagement() {
             {/* Engagement Details Section */}
             <SectionCard icon={<Briefcase className="h-5 w-5" />} title="Engagement Details">
               <div className="grid grid-cols-4 gap-4">
-                <FloatingInput
+                <LabeledInput
                   label="Engagement ID"
                   value={engagementId}
                   onChange={setEngagementId}
                   required
                   icon={<Pencil className="h-4 w-4" />}
                 />
-                <FloatingInput
+                <LabeledInput
                   label="Engagement Template"
                   value={engagementTemplate}
                   onChange={setEngagementTemplate}
                   required
                   icon={<ExternalLink className="h-4 w-4" />}
                 />
-                <FloatingSelect
+                <LabeledSelect
                   label="Engagement Type"
                   value={engagementType}
                   onChange={setEngagementType}
                   options={engagementTypeOptions}
                   required
                 />
-                <FloatingInput
+                <LabeledInput
                   label="Budget($)"
                   value={budget}
                   onChange={setBudget}
@@ -321,14 +294,14 @@ export default function CreateEngagement() {
                 />
               </div>
               <div className="grid grid-cols-4 gap-4 mt-4">
-                <FloatingSelect
+                <LabeledSelect
                   label="Accounting Standards"
                   value={accountingStandards}
                   onChange={setAccountingStandards}
                   options={accountingStandardsOptions}
                   required
                 />
-                <FloatingSelect
+                <LabeledSelect
                   label="Additional disclosures"
                   value={additionalDisclosures}
                   onChange={setAdditionalDisclosures}
@@ -343,9 +316,9 @@ export default function CreateEngagement() {
               <div className="space-y-5">
                 {/* Period Type */}
                 <div className="flex items-center gap-8">
-                  <label className="text-sm text-muted-foreground w-24">Period Type<span className="text-red-500">*</span></label>
+                  <label className="text-sm text-muted-foreground w-24">Period Type<span className="text-destructive">*</span></label>
                   <div className="w-64">
-                    <FloatingSelect
+                    <LabeledSelect
                       label=""
                       value={periodType}
                       onChange={setPeriodType}
@@ -356,10 +329,10 @@ export default function CreateEngagement() {
 
                 {/* Current Year */}
                 <div className="flex items-start gap-8">
-                  <label className="text-sm text-muted-foreground w-24 pt-4">Current Year<span className="text-red-500">*</span></label>
+                  <label className="text-sm text-muted-foreground w-24 pt-6">Current Year<span className="text-destructive">*</span></label>
                   <div className="flex gap-4">
                     <div className="w-40">
-                      <FloatingInput
+                      <LabeledInput
                         label="Start Date"
                         value={currentYearStart}
                         onChange={setCurrentYearStart}
@@ -368,7 +341,7 @@ export default function CreateEngagement() {
                       />
                     </div>
                     <div className="w-40">
-                      <FloatingInput
+                      <LabeledInput
                         label="End Date"
                         value={currentYearEnd}
                         onChange={setCurrentYearEnd}
@@ -381,10 +354,10 @@ export default function CreateEngagement() {
 
                 {/* Prior Year 1 */}
                 <div className="flex items-start gap-8">
-                  <label className="text-sm text-muted-foreground w-24 pt-4">Prior Year 1<span className="text-red-500">*</span></label>
+                  <label className="text-sm text-muted-foreground w-24 pt-6">Prior Year 1<span className="text-destructive">*</span></label>
                   <div className="flex gap-4">
                     <div className="w-40">
-                      <FloatingInput
+                      <LabeledInput
                         label="Start Date"
                         value={priorYear1Start}
                         onChange={setPriorYear1Start}
@@ -393,7 +366,7 @@ export default function CreateEngagement() {
                       />
                     </div>
                     <div className="w-40">
-                      <FloatingInput
+                      <LabeledInput
                         label="End Date"
                         value={priorYear1End}
                         onChange={setPriorYear1End}
@@ -401,7 +374,7 @@ export default function CreateEngagement() {
                         icon={<Calendar className="h-4 w-4" />}
                       />
                     </div>
-                    <div className="flex items-center gap-2 h-11">
+                    <div className="flex items-end gap-2 pb-3">
                       <Checkbox 
                         checked={priorYear1NoData} 
                         onCheckedChange={(checked) => setPriorYear1NoData(checked as boolean)} 
@@ -416,10 +389,10 @@ export default function CreateEngagement() {
 
                 {/* Prior Year 2 */}
                 <div className="flex items-start gap-8">
-                  <label className="text-sm text-muted-foreground w-24 pt-4">Prior Year 2<span className="text-red-500">*</span></label>
+                  <label className="text-sm text-muted-foreground w-24 pt-6">Prior Year 2<span className="text-destructive">*</span></label>
                   <div className="flex gap-4">
                     <div className="w-40">
-                      <FloatingInput
+                      <LabeledInput
                         label="Start Date"
                         value={priorYear2Start}
                         onChange={setPriorYear2Start}
@@ -428,7 +401,7 @@ export default function CreateEngagement() {
                       />
                     </div>
                     <div className="w-40">
-                      <FloatingInput
+                      <LabeledInput
                         label="End Date"
                         value={priorYear2End}
                         onChange={setPriorYear2End}
@@ -436,7 +409,7 @@ export default function CreateEngagement() {
                         icon={<Calendar className="h-4 w-4" />}
                       />
                     </div>
-                    <div className="flex items-center gap-2 h-11">
+                    <div className="flex items-end gap-2 pb-3">
                       <Checkbox 
                         checked={priorYear2NoData} 
                         onCheckedChange={(checked) => setPriorYear2NoData(checked as boolean)} 
