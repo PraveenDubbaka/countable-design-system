@@ -20,6 +20,13 @@
   background: linear-gradient(to right, hsl(var(--muted)), hsl(var(--card)));
 }
 
+/* Keep the outer "cockpit" curve consistent: when a secondary left panel is expanded,
+   that panel owns the left rounding, so the main content should not round on the left. */
+.sidebar-panel-expanded + .layout-content .app-main {
+  border-top-left-radius: 0 !important;
+  border-bottom-left-radius: 0 !important;
+}
+
 /* Inter Font */
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
