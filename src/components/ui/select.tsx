@@ -17,8 +17,8 @@ const SelectTrigger = React.forwardRef<
   <SelectPrimitive.Trigger
     ref={ref}
     className={cn(
-      // Base styles
-      "flex h-12 w-full items-center justify-between rounded-xl px-4 py-3 text-sm ring-offset-background transition-all duration-200 [&>span]:line-clamp-1",
+      // Base styles - using design token for border radius
+      "flex h-12 w-full items-center justify-between rounded-button px-4 py-3 text-sm ring-offset-background transition-all duration-200 [&>span]:line-clamp-1",
       // Default state: subtle gray border
       "bg-card text-foreground placeholder:text-muted-foreground",
       "border-2 border-[hsl(210_20%_85%)]",
@@ -86,8 +86,8 @@ const SelectContent = React.forwardRef<
     <SelectPrimitive.Content
       ref={ref}
       className={cn(
-        // Base styles - curved edges matching trigger
-        "relative z-50 max-h-96 min-w-[8rem] overflow-hidden rounded-xl",
+        // Base styles - curved edges matching trigger using design token
+        "relative z-50 max-h-96 min-w-[8rem] overflow-hidden rounded-button",
         // Clean border with shadow
         "border-2 border-[hsl(210_20%_85%)] bg-popover text-popover-foreground",
         "shadow-lg",
