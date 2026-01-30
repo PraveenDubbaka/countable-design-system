@@ -129,13 +129,13 @@ const SelectItem = React.forwardRef<
   <SelectPrimitive.Item
     ref={ref}
     className={cn(
-      // Curved edges on items
-      "relative flex w-full cursor-default select-none items-center rounded-lg py-2.5 pl-9 pr-3 text-sm outline-none transition-all duration-200",
-      // Subtle hover effect
-      "hover:bg-muted/80",
-      // Focus/selected state with darker background
-      "focus:bg-muted focus:text-foreground",
-      "data-[state=checked]:bg-primary/10 data-[state=checked]:text-primary",
+      // Curved edges on items with pop-out effect
+      "relative flex w-full cursor-pointer select-none items-center rounded-lg py-2.5 pl-9 pr-3 text-sm outline-none transition-all duration-200 ease-emphasized",
+      // Pop-out hover effect
+      "hover:bg-primary/[0.08] hover:scale-[1.01] hover:shadow-[0_2px_8px_hsl(213_40%_20%/0.06)]",
+      // Focus/selected state with highlight
+      "focus:bg-primary/[0.12] focus:text-foreground focus:scale-[1.01]",
+      "data-[state=checked]:bg-primary/[0.15] data-[state=checked]:text-primary data-[state=checked]:font-medium",
       "data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
       className,
     )}

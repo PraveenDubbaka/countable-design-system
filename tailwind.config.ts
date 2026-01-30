@@ -239,6 +239,32 @@ export default {
           "50%": { transform: "scale(1.2)" },
           "100%": { transform: "scale(1)", opacity: "1" },
         },
+        // Pop-out / hover effects
+        "pop-out": {
+          "0%": { transform: "scale(1)", boxShadow: "0 0 0 transparent" },
+          "100%": { transform: "scale(1.02)", boxShadow: "0 8px 25px hsl(213 40% 20% / 0.12)" },
+        },
+        "pop-in": {
+          "0%": { transform: "scale(1.02)", boxShadow: "0 8px 25px hsl(213 40% 20% / 0.12)" },
+          "100%": { transform: "scale(1)", boxShadow: "0 0 0 transparent" },
+        },
+        "highlight-pulse": {
+          "0%, 100%": { backgroundColor: "transparent" },
+          "50%": { backgroundColor: "hsl(207 71% 38% / 0.08)" },
+        },
+        "button-press": {
+          "0%": { transform: "scale(1)" },
+          "50%": { transform: "scale(0.97)" },
+          "100%": { transform: "scale(1)" },
+        },
+        "glow-pulse": {
+          "0%, 100%": { boxShadow: "0 0 0 0 hsl(207 71% 38% / 0)" },
+          "50%": { boxShadow: "0 0 20px 4px hsl(207 71% 38% / 0.2)" },
+        },
+        "lift-shadow": {
+          "0%": { transform: "translateY(0)", boxShadow: "0 2px 8px hsl(213 40% 20% / 0.08)" },
+          "100%": { transform: "translateY(-2px)", boxShadow: "0 12px 32px hsl(213 40% 20% / 0.15)" },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-emphasized",
@@ -249,6 +275,13 @@ export default {
         "pulse-glow": "pulse-glow 2s ease-in-out infinite",
         "m3-ripple": "m3-ripple 400ms cubic-bezier(0.2, 0, 0, 1) forwards",
         "m3-checkmark-in": "m3-checkmark-in 200ms cubic-bezier(0.05, 0.7, 0.1, 1) forwards",
+        // Interactive micro-animations
+        "pop-out": "pop-out 200ms cubic-bezier(0.2, 0, 0, 1) forwards",
+        "pop-in": "pop-in 150ms cubic-bezier(0.2, 0, 0, 1) forwards",
+        "highlight-pulse": "highlight-pulse 600ms ease-in-out",
+        "button-press": "button-press 150ms ease-out",
+        "glow-pulse": "glow-pulse 2s ease-in-out infinite",
+        "lift-shadow": "lift-shadow 200ms cubic-bezier(0.2, 0, 0, 1) forwards",
       },
     },
   },
