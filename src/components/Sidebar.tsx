@@ -1,11 +1,13 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { ChevronDown, ChevronRight, ChevronLeft, Search, Plus, Expand, Trash2, Folder, Headphones, Check, FileText, ClipboardList, FileBarChart, StickyNote, Table, Copy, Pencil, FolderInput, MoreVertical, GripVertical, X, Save } from "lucide-react";
+import { ChevronDown, ChevronRight, ChevronLeft, Search, Plus, Expand, Trash2, Folder, Headphones, Check, FileText, ClipboardList, FileBarChart, StickyNote, Table, Copy, Pencil, FolderInput, MoreVertical, GripVertical, X, Save, Bell, User, Sparkles, Moon, Sun } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuSeparator } from "@/components/ui/dropdown-menu";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import { useThemeContext } from "@/contexts/ThemeContext";
 import lukaLogo from "@/assets/luka-logo.png";
 import { readJsonFromLocalStorage, removeLocalStorageKey, writeJsonToLocalStorage } from "@/lib/safeJson";
 interface Template {
@@ -375,6 +377,8 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
       </div>;
   };
   const [isNavExpanded, setIsNavExpanded] = useState(false);
+  const { isDarkMode, toggleTheme } = useThemeContext();
+  const [askLukaQuery, setAskLukaQuery] = useState("");
   
   // Determine if a secondary panel is visible and expanded (for dark mode gradient)
   const isOnEngagementDetail = location.pathname.startsWith("/engagements/") && location.pathname !== "/engagements/create";
@@ -383,7 +387,7 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
   
   return <div className={`flex h-screen relative bg-card ${hasSecondaryPanelExpanded ? "sidebar-panel-expanded" : ""}`}>
       {/* Icon sidebar - dark navy with curved corner, expands on click only */}
-      <div className={`sidebar-nav flex flex-col py-4 gap-2 rounded-tr-[20px] rounded-br-[20px] transition-all duration-300 ease-in-out ${isNavExpanded ? "w-48 items-start px-3" : "w-14 items-center"}`}>
+      <div className={`sidebar-nav flex flex-col py-4 gap-2 rounded-tr-[20px] rounded-br-[20px] transition-all duration-300 ease-in-out ${isNavExpanded ? "w-56 items-start px-3" : "w-14 items-center"}`}>
         {/* Luka Logo */}
         <div className={`h-10 mb-4 flex items-center ${isNavExpanded ? "px-2" : "justify-center w-10"}`}>
           {isNavExpanded ? <svg width="140" height="19" viewBox="0 0 234 32" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -401,6 +405,22 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
             </svg> : <LukaLogo />}
         </div>
 
+        {/* Ask Luka AI - only when expanded */}
+        {isNavExpanded && (
+          <div className="w-full px-1 mb-3">
+            <div className="flex items-center bg-sidebar-muted/50 rounded-xl px-3 py-2 gap-2">
+              <Sparkles className="h-4 w-4 text-sidebar-foreground/60 flex-shrink-0" />
+              <Input 
+                type="text"
+                placeholder="Ask Luka..."
+                value={askLukaQuery}
+                onChange={(e) => setAskLukaQuery(e.target.value)}
+                className="border-0 bg-transparent h-6 text-xs text-sidebar-foreground placeholder:text-sidebar-foreground/50 focus-visible:ring-0 focus-visible:ring-offset-0 px-0"
+              />
+            </div>
+          </div>
+        )}
+
         {/* Nav items */}
         {navItems.map((item, index) => {
         const isActive = item.route ? location.pathname === item.route : false;
@@ -413,12 +433,87 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
         {/* Spacer */}
         <div className="flex-1" />
 
-        {/* Bottom icons */}
-        <div className={`sidebar-item ${isNavExpanded ? "w-full justify-start gap-3 px-3" : ""}`} title={!isNavExpanded ? "Support" : undefined}>
-          <Headphones className="h-5 w-5 icon-bounce" />
-          {isNavExpanded && <span className="text-sm font-medium">Support</span>}
-        </div>
-        <div className={`sidebar-item cursor-pointer ${isNavExpanded ? "w-full justify-start gap-3 px-3" : ""}`} title={!isNavExpanded ? isNavExpanded ? "Collapse" : "Expand" : undefined} onClick={() => setIsNavExpanded(!isNavExpanded)}>
+        {/* Divider before utilities */}
+        <div className={`w-full h-px bg-sidebar-foreground/20 my-2 ${isNavExpanded ? "" : "mx-auto w-8"}`} />
+
+        {/* Theme toggle */}
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <div 
+              className={`sidebar-item cursor-pointer ${isNavExpanded ? "w-full justify-start gap-3 px-3" : ""}`} 
+              onClick={toggleTheme}
+            >
+              <div className="relative w-5 h-5">
+                <Sun className={`h-5 w-5 text-amber-400 absolute transition-all duration-500 ${
+                  isDarkMode 
+                    ? 'rotate-0 scale-100 opacity-100' 
+                    : 'rotate-90 scale-0 opacity-0'
+                }`} />
+                <Moon className={`h-5 w-5 absolute transition-all duration-500 ${
+                  isDarkMode 
+                    ? '-rotate-90 scale-0 opacity-0' 
+                    : 'rotate-0 scale-100 opacity-100'
+                }`} />
+              </div>
+              {isNavExpanded && <span className="text-sm font-medium">{isDarkMode ? 'Light Mode' : 'Dark Mode'}</span>}
+            </div>
+          </TooltipTrigger>
+          {!isNavExpanded && <TooltipContent side="right">{isDarkMode ? 'Light Mode' : 'Dark Mode'}</TooltipContent>}
+        </Tooltip>
+
+        {/* Notifications */}
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <div className={`sidebar-item cursor-pointer relative ${isNavExpanded ? "w-full justify-start gap-3 px-3" : ""}`}>
+              <div className="relative">
+                <Bell className="h-5 w-5 icon-bell" />
+                <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-destructive text-[9px] text-white flex items-center justify-center font-medium">2</span>
+              </div>
+              {isNavExpanded && <span className="text-sm font-medium">Notifications</span>}
+            </div>
+          </TooltipTrigger>
+          {!isNavExpanded && <TooltipContent side="right">Notifications</TooltipContent>}
+        </Tooltip>
+
+        {/* AI Credits */}
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <div className={`sidebar-item cursor-pointer ${isNavExpanded ? "w-full justify-start gap-3 px-3" : ""}`}>
+              <div className="w-6 h-6 rounded-full bg-gradient-to-br from-[#7A31D8] to-[#1C63A6] flex items-center justify-center">
+                <span className="text-[10px] font-bold text-white">L</span>
+              </div>
+              {isNavExpanded && <span className="text-sm font-medium">AI Credits</span>}
+            </div>
+          </TooltipTrigger>
+          {!isNavExpanded && <TooltipContent side="right">Luka AI Credits</TooltipContent>}
+        </Tooltip>
+
+        {/* Support */}
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <div className={`sidebar-item cursor-pointer ${isNavExpanded ? "w-full justify-start gap-3 px-3" : ""}`}>
+              <Headphones className="h-5 w-5 icon-bounce" />
+              {isNavExpanded && <span className="text-sm font-medium">Support</span>}
+            </div>
+          </TooltipTrigger>
+          {!isNavExpanded && <TooltipContent side="right">Support</TooltipContent>}
+        </Tooltip>
+
+        {/* User Profile */}
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <div className={`sidebar-item cursor-pointer ${isNavExpanded ? "w-full justify-start gap-3 px-3" : ""}`}>
+              <div className="w-6 h-6 rounded-full bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center">
+                <User className="h-3.5 w-3.5 text-white" />
+              </div>
+              {isNavExpanded && <span className="text-sm font-medium">Profile</span>}
+            </div>
+          </TooltipTrigger>
+          {!isNavExpanded && <TooltipContent side="right">Profile</TooltipContent>}
+        </Tooltip>
+
+        {/* Collapse/Expand toggle */}
+        <div className={`sidebar-item cursor-pointer mt-2 ${isNavExpanded ? "w-full justify-start gap-3 px-3" : ""}`} onClick={() => setIsNavExpanded(!isNavExpanded)}>
           {isNavExpanded ? <ChevronLeft className="h-5 w-5 icon-arrow" /> : <ChevronRight className="h-5 w-5 icon-arrow-right" />}
           {isNavExpanded && <span className="text-sm font-medium">Collapse</span>}
         </div>
