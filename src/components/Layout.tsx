@@ -17,9 +17,9 @@ export function Layout({ children, title, showActions = false, showBackButton = 
         onBack={onBack}
       />
       
-      <div className="flex-1 flex flex-col overflow-hidden">
+      <div className="layout-content flex-1 flex flex-col overflow-hidden">
         {/* Full-height content area without top header */}
-        <main className="flex-1 overflow-auto bg-background text-foreground rounded-tl-2xl rounded-bl-2xl">
+        <main className="app-main flex-1 overflow-auto bg-background text-foreground rounded-tl-2xl rounded-bl-2xl">
           {children}
         </main>
       </div>
