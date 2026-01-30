@@ -148,7 +148,14 @@ const dropdownItems = [{
   showCreator: false
 }];
 export type ContentType = "letters" | "checklists" | "reports" | "notes";
-export function Sidebar() {
+
+interface SidebarProps {
+  pageTitle?: string;
+  showBackButton?: boolean;
+  onBack?: () => void;
+}
+
+export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
   const navigate = useNavigate();
   const location = useLocation();
   const [templates, setTemplates] = useState<Template[]>(initialTemplates);

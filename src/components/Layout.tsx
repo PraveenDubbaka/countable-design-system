@@ -1,5 +1,4 @@
 import { Sidebar } from '@/components/Sidebar';
-import { Header } from '@/components/Header';
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -12,22 +11,17 @@ interface LayoutProps {
 export function Layout({ children, title, showActions = false, showBackButton = false, onBack }: LayoutProps) {
   return (
     <div className="flex h-screen bg-sidebar-bg">
-      <Sidebar />
+      <Sidebar 
+        pageTitle={title}
+        showBackButton={showBackButton}
+        onBack={onBack}
+      />
       
       <div className="flex-1 flex flex-col overflow-hidden">
-        {/* Curved corner container for header and main content */}
-        <div className="flex-1 flex flex-col overflow-hidden bg-card">
-          <Header 
-            title={title} 
-            showActions={showActions}
-            showBackButton={showBackButton}
-            onBack={onBack}
-          />
-          
-          <main className="flex-1 overflow-auto bg-card text-foreground">
-            {children}
-          </main>
-        </div>
+        {/* Full-height content area without top header */}
+        <main className="flex-1 overflow-auto bg-background text-foreground rounded-tl-2xl rounded-bl-2xl">
+          {children}
+        </main>
       </div>
     </div>
   );
