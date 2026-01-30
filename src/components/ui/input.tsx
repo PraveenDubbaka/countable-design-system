@@ -15,8 +15,8 @@ const Input = React.forwardRef<HTMLInputElement, React.ComponentProps<"input"> &
       <input
         type={type}
         className={cn(
-          // Base styles
-          "flex w-full rounded-xl ring-offset-background transition-all duration-200",
+          // Base styles - using design token for border radius
+          "flex w-full rounded-button ring-offset-background transition-all duration-200",
           sizeClasses[size],
           "file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground",
           // Default state: subtle gray border (light mode)

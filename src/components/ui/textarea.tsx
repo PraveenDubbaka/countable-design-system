@@ -18,8 +18,8 @@ const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(({ classNa
   return (
     <textarea
       className={cn(
-        // Base styles
-        "flex w-full rounded-xl ring-offset-background transition-all duration-200",
+        // Base styles - using design token for border radius
+        "flex w-full rounded-button ring-offset-background transition-all duration-200",
         sizeClasses[size],
         // Default state: subtle gray border
         "bg-card text-foreground placeholder:text-muted-foreground/70",
