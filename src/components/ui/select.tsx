@@ -17,25 +17,21 @@ const SelectTrigger = React.forwardRef<
   <SelectPrimitive.Trigger
     ref={ref}
     className={cn(
-      // Base styles - expanded height with curved edges
-      "flex h-12 w-full items-center justify-between rounded-xl px-5 py-3 text-sm ring-offset-background transition-all duration-300 [&>span]:line-clamp-1",
-      // Default state: subtle gray outline with dark blue border
-      "bg-card/90 text-foreground placeholder:text-muted-foreground",
-      "border-2 border-[hsl(213_60%_30%/0.4)]",
-      "shadow-[inset_0_0_0_1px_hsl(210_20%_85%/0.6),0_0_0_1px_hsl(210_15%_75%/0.3)]",
-      // Hover state: darker border
-      "hover:bg-card hover:border-[hsl(213_60%_30%/0.6)]",
-      "hover:shadow-[inset_0_0_0_1px_hsl(210_20%_85%/0.8),0_0_15px_hsl(var(--primary)/0.08)]",
-      // Focus state: dark blue border with glow
-      "focus:outline-none focus:bg-card focus:border-[hsl(207_71%_45%)]",
-      "focus:shadow-[inset_0_0_0_1px_hsl(210_20%_85%),0_0_20px_hsl(var(--primary)/0.15)]",
+      // Base styles
+      "flex h-12 w-full items-center justify-between rounded-xl px-4 py-3 text-sm ring-offset-background transition-all duration-200 [&>span]:line-clamp-1",
+      // Default state: subtle gray border
+      "bg-card text-foreground placeholder:text-muted-foreground",
+      "border-2 border-[hsl(210_20%_85%)]",
+      // Hover state: slightly darker border
+      "hover:border-[hsl(210_25%_75%)]",
+      // Focus state: blue border
+      "focus:outline-none focus:border-[hsl(207_71%_38%)]",
       // Data state for open - matching focus
-      "data-[state=open]:bg-card data-[state=open]:border-[hsl(207_71%_45%)]",
-      "data-[state=open]:shadow-[inset_0_0_0_1px_hsl(210_20%_85%),0_0_20px_hsl(var(--primary)/0.15)]",
+      "data-[state=open]:border-[hsl(207_71%_38%)]",
       // Disabled state
-      "disabled:cursor-not-allowed disabled:bg-muted disabled:border-transparent disabled:text-muted-foreground disabled:opacity-60 disabled:shadow-none",
+      "disabled:cursor-not-allowed disabled:bg-muted/50 disabled:border-muted disabled:text-muted-foreground disabled:opacity-60",
       // Error state
-      error && "border-destructive hover:border-destructive focus:border-destructive data-[state=open]:border-destructive shadow-[inset_0_0_0_1px_hsl(0_85%_92%),0_0_15px_hsl(var(--destructive)/0.1)]",
+      error && "border-destructive hover:border-destructive focus:border-destructive data-[state=open]:border-destructive",
       className,
     )}
     {...props}
@@ -86,9 +82,9 @@ const SelectContent = React.forwardRef<
       className={cn(
         // Base styles - curved edges matching trigger
         "relative z-50 max-h-96 min-w-[8rem] overflow-hidden rounded-xl",
-        // Visible dark blue border with shadow
-        "border-2 border-[hsl(213_60%_30%/0.5)] bg-popover text-popover-foreground",
-        "shadow-[0_4px_20px_hsl(213_60%_30%/0.15),inset_0_0_0_1px_hsl(210_20%_85%/0.5)]",
+        // Clean border with shadow
+        "border-2 border-[hsl(210_20%_85%)] bg-popover text-popover-foreground",
+        "shadow-lg",
         // Animations
         "data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2",
         position === "popper" &&
