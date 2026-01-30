@@ -56,31 +56,36 @@
     --m3-error-container: 0 85% 92%;
     --m3-on-error-container: 0 80% 20%;
     
-    /* Surface palette - M3 uses tonal surfaces */
-    --m3-surface: 210 20% 99%;
-    --m3-on-surface: 210 20% 10%;
-    --m3-surface-variant: 210 20% 92%;
-    --m3-on-surface-variant: 210 15% 35%;
+    /* Surface palette - Fresh white with blue tints */
+    --m3-surface: 0 0% 100%;
+    --m3-on-surface: 213 50% 15%;
+    --m3-surface-variant: 210 40% 96%;
+    --m3-on-surface-variant: 213 30% 40%;
     
-    /* Surface containers - M3 elevation system */
+    /* Surface containers - Blue-tinted grays for fresh look */
     --m3-surface-container-lowest: 0 0% 100%;
-    --m3-surface-container-low: 210 25% 97%;
-    --m3-surface-container: 210 25% 94%;
-    --m3-surface-container-high: 210 25% 91%;
-    --m3-surface-container-highest: 210 25% 88%;
+    --m3-surface-container-low: 210 50% 98%;
+    --m3-surface-container: 210 45% 96%;
+    --m3-surface-container-high: 210 40% 94%;
+    --m3-surface-container-highest: 210 35% 92%;
     
-    /* Outline colors */
-    --m3-outline: 210 15% 60%;
-    --m3-outline-variant: 210 15% 80%;
+    /* Outline colors - Blue-tinted for cohesive look */
+    --m3-outline: 210 25% 55%;
+    --m3-outline-variant: 210 30% 82%;
     
     /* Inverse colors */
-    --m3-inverse-surface: 210 20% 15%;
-    --m3-inverse-on-surface: 210 20% 95%;
+    --m3-inverse-surface: 213 50% 15%;
+    --m3-inverse-on-surface: 210 40% 96%;
     --m3-inverse-primary: 207 80% 70%;
     
-    /* Scrim & shadow */
-    --m3-scrim: 0 0% 0%;
-    --m3-shadow: 0 0% 0%;
+    /* Scrim & shadow - Blue-tinted shadows */
+    --m3-scrim: 213 50% 10%;
+    --m3-shadow: 213 40% 20%;
+    
+    /* Tooltip colors - Fresh blue theme */
+    --tooltip-bg: 210 45% 96%;
+    --tooltip-foreground: 213 50% 20%;
+    --tooltip-border: 210 35% 85%;
 
     /* ========================================
        SEMANTIC TOKENS (mapped to M3)
