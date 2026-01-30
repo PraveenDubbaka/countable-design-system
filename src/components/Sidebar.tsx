@@ -611,7 +611,7 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
 
       {/* Templates panel - hidden on Dashboard, Clients, Engagements list, and Engagement detail pages */}
       {location.pathname !== "/dashboard" && location.pathname !== "/clients" && location.pathname !== "/engagements" && !location.pathname.startsWith("/engagements/") && <>
-          <div className={`flex flex-col relative z-40 transition-all duration-300 group/templates ${isTemplatesPanelCollapsed ? "w-0 overflow-hidden shadow-none bg-transparent border-r-0" : "w-[300px] shadow-md bg-muted border-r border-border"}`} style={!isTemplatesPanelCollapsed ? { borderRadius: '0px 16px 16px 0px' } : undefined}>
+          <div className={`flex flex-col relative z-40 transition-all duration-300 group/templates ${isTemplatesPanelCollapsed ? "w-0 overflow-hidden shadow-none bg-transparent border-r-0" : "w-[300px] shadow-md bg-muted border-r border-border"}`}>
             <div className={`p-4 ${isTemplatesPanelCollapsed ? "hidden" : ""}`}>
               <h2 className="font-semibold text-primary text-lg mb-3">Templates</h2>
               <DropdownMenu>
@@ -678,7 +678,7 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
               </div>
             </div>
 
-            <div className={`flex-1 overflow-y-auto p-2 pt-0 rounded-tr-[20px] rounded-br-[20px] ${isTemplatesPanelCollapsed ? "hidden" : ""}`}>
+            <div className={`flex-1 overflow-y-auto p-2 pt-0 ${isTemplatesPanelCollapsed ? "hidden" : ""}`}>
               {templates.map(template => renderTemplate(template))}
             </div>
 
