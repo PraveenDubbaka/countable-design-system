@@ -218,78 +218,78 @@ export default function Dashboard() {
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState("");
   return <Layout title="Dashboard">
-      <div className="flex-1 p-6 overflow-auto bg-background">
+      <div className="flex-1 p-8 overflow-auto bg-background">
 
-      <div className="flex gap-6">
+      <div className="flex gap-8">
         {/* Main Content */}
-        <div className="flex-1 space-y-5">
-          {/* Stats Cards - Clean card style */}
-          <div className="grid grid-cols-5 gap-3">
-            {stats.map((stat, index) => <StyledCard key={index} hover className="p-4">
-                <p className="text-xs font-medium uppercase tracking-wide text-foreground">{stat.label}</p>
-                <p className="text-2xl font-bold text-primary mt-1">{stat.value}</p>
+        <div className="flex-1 space-y-6">
+          {/* Stats Cards - Enhanced spacing and hover effects */}
+          <div className="grid grid-cols-5 gap-4">
+            {stats.map((stat, index) => <StyledCard key={index} hover className="p-6">
+                <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">{stat.label}</p>
+                <p className="text-3xl font-bold text-primary mt-2">{stat.value}</p>
               </StyledCard>)}
           </div>
 
-          {/* Engagements Table - Monday.com style */}
+          {/* Engagements Table - Enhanced styling */}
           <StyledCard className="overflow-hidden flex flex-col" style={{
-            height: "calc(100vh - 220px)"
+            height: "calc(100vh - 260px)"
           }}>
-            <div className="px-5 py-4 flex items-center justify-between flex-shrink-0 bg-card">
+            <div className="px-6 py-5 flex items-center justify-between flex-shrink-0 bg-card">
               <div>
-                <h2 className="text-base font-semibold text-foreground">Engagements</h2>
-                <p className="text-xs text-muted-foreground mt-0.5">Active engagements from last 6 months</p>
+                <h2 className="text-lg font-semibold text-foreground">Engagements</h2>
+                <p className="text-sm text-muted-foreground mt-1">Active engagements from last 6 months</p>
               </div>
               <div className="relative">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground icon-search" />
-                <Input placeholder="Search Engagement" value={searchQuery} onChange={e => setSearchQuery(e.target.value)} className="pl-9 w-56 h-9 text-sm" />
+                <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground icon-search" />
+                <Input placeholder="Search Engagement" value={searchQuery} onChange={e => setSearchQuery(e.target.value)} className="pl-10 w-64" />
               </div>
             </div>
 
-            {/* Monday.com style table with sticky header */}
+            {/* Enhanced table with better spacing */}
             <div className="flex-1 overflow-y-auto overflow-x-auto">
               <table className="w-full">
                 <thead className="sticky top-0 z-10">
                   <tr className="bg-muted">
-                    <th className="text-left px-5 py-3 text-xs font-semibold text-foreground uppercase tracking-wider">Engagement ID</th>
-                    <th className="text-left px-5 py-3 text-xs font-semibold text-foreground uppercase tracking-wider">Client Name</th>
-                    <th className="text-left px-5 py-3 text-xs font-semibold text-foreground uppercase tracking-wider">Year End</th>
-                    <th className="text-left px-5 py-3 text-xs font-semibold text-foreground uppercase tracking-wider">Integrations</th>
-                    <th className="text-left px-5 py-3 text-xs font-semibold text-foreground uppercase tracking-wider">Status</th>
-                    <th className="text-left px-5 py-3 text-xs font-semibold text-foreground uppercase tracking-wider">Actions</th>
+                    <th className="text-left px-6 py-4 text-xs font-semibold text-foreground uppercase tracking-wider">Engagement ID</th>
+                    <th className="text-left px-6 py-4 text-xs font-semibold text-foreground uppercase tracking-wider">Client Name</th>
+                    <th className="text-left px-6 py-4 text-xs font-semibold text-foreground uppercase tracking-wider">Year End</th>
+                    <th className="text-left px-6 py-4 text-xs font-semibold text-foreground uppercase tracking-wider">Integrations</th>
+                    <th className="text-left px-6 py-4 text-xs font-semibold text-foreground uppercase tracking-wider">Status</th>
+                    <th className="text-left px-6 py-4 text-xs font-semibold text-foreground uppercase tracking-wider">Actions</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-border">
                   {engagements.map((engagement, idx) => <tr key={engagement.id} className="hover:bg-muted/50 transition-colors group">
-                      <td className="px-5 py-3">
+                      <td className="px-6 py-4">
                         <span className="text-sm text-primary font-medium cursor-pointer hover:underline" onClick={() => navigate(`/engagements/${engagement.id}`)}>
                           {engagement.id}
                         </span>
                       </td>
-                      <td className="px-5 py-3 text-sm text-foreground">{engagement.client}</td>
-                      <td className="px-5 py-3 text-sm text-muted-foreground">{engagement.yearEnd}</td>
-                      <td className="px-5 py-3">
+                      <td className="px-6 py-4 text-sm text-foreground">{engagement.client}</td>
+                      <td className="px-6 py-4 text-sm text-muted-foreground">{engagement.yearEnd}</td>
+                      <td className="px-6 py-4">
                         <IntegrationBadge type={engagement.integration} />
                       </td>
-                      <td className="px-5 py-3">
+                      <td className="px-6 py-4">
                         <Badge variant={engagement.status === "New" ? "new" : "inProgress"}>
                           {engagement.status}
                         </Badge>
                       </td>
-                      <td className="px-5 py-3">
-                        <div className="flex items-center gap-1.5">
-                          <span className="text-xs font-medium text-muted-foreground px-1.5 py-0.5 bg-muted rounded">EL</span>
-                          <button className="p-1 hover:bg-muted rounded transition-colors group/file">
-                            <AlertCircle className="h-3.5 w-3.5 text-primary group-hover/file:icon-bounce" />
+                      <td className="px-6 py-4">
+                        <div className="flex items-center gap-2">
+                          <span className="text-xs font-medium text-muted-foreground px-2 py-1 bg-muted rounded-lg">EL</span>
+                          <button className="p-1.5 hover:bg-muted rounded-lg transition-colors group/file">
+                            <AlertCircle className="h-4 w-4 text-primary group-hover/file:icon-bounce" />
                           </button>
-                          <button className="p-1 hover:bg-muted rounded transition-colors group/msg">
-                            <MessageSquare className="h-3.5 w-3.5 text-primary group-hover/msg:icon-bounce" />
+                          <button className="p-1.5 hover:bg-muted rounded-lg transition-colors group/msg">
+                            <MessageSquare className="h-4 w-4 text-primary group-hover/msg:icon-bounce" />
                           </button>
-                          <button className="p-1 hover:bg-muted rounded transition-colors group/send">
-                            <Send className="h-3.5 w-3.5 text-primary group-hover/send:icon-external" />
+                          <button className="p-1.5 hover:bg-muted rounded-lg transition-colors group/send">
+                            <Send className="h-4 w-4 text-primary group-hover/send:icon-external" />
                           </button>
-                          <button className="p-1 hover:bg-muted rounded transition-colors group/chev">
-                            <ChevronDown className="h-3.5 w-3.5 text-primary group-hover/chev:icon-chevron-down" />
+                          <button className="p-1.5 hover:bg-muted rounded-lg transition-colors group/chev">
+                            <ChevronDown className="h-4 w-4 text-primary group-hover/chev:icon-chevron-down" />
                           </button>
                         </div>
                       </td>
@@ -300,81 +300,81 @@ export default function Dashboard() {
           </StyledCard>
         </div>
 
-        {/* Right Sidebar */}
-        <div className="w-72 space-y-4">
+        {/* Right Sidebar - Enhanced spacing */}
+        <div className="w-80 space-y-5">
           {/* Charts Row */}
-          <div className="flex gap-3">
+          <div className="flex gap-4">
             {/* Team Members Chart */}
-            <StyledCard className="flex-1 p-4">
-              <h3 className="text-xs font-semibold text-foreground mb-2">Team Members</h3>
-              <div className="h-24">
+            <StyledCard className="flex-1 p-5">
+              <h3 className="text-sm font-semibold text-foreground mb-3">Team Members</h3>
+              <div className="h-28">
                 <ResponsiveContainer width="100%" height="100%">
                   <PieChart>
-                    <Pie data={teamData} cx="50%" cy="50%" innerRadius={20} outerRadius={38} dataKey="value" stroke="none">
+                    <Pie data={teamData} cx="50%" cy="50%" innerRadius={22} outerRadius={42} dataKey="value" stroke="none">
                       {teamData.map((entry, index) => <Cell key={`cell-${index}`} fill={entry.color} />)}
                     </Pie>
                     <Tooltip />
                   </PieChart>
                 </ResponsiveContainer>
               </div>
-              <div className="flex flex-wrap gap-1.5 mt-2">
-                {teamData.map((item, index) => <div key={index} className="flex items-center gap-1">
-                    <div className="w-1.5 h-1.5 rounded-full" style={{
+              <div className="flex flex-wrap gap-2 mt-3">
+                {teamData.map((item, index) => <div key={index} className="flex items-center gap-1.5">
+                    <div className="w-2 h-2 rounded-full" style={{
                     backgroundColor: item.color
                   }} />
-                    <span className="text-[10px] text-muted-foreground">{item.name}</span>
+                    <span className="text-xs text-muted-foreground">{item.name}</span>
                   </div>)}
               </div>
-              <Button variant="ghost" size="sm" className="w-full mt-2 h-8 text-xs text-primary hover:bg-primary/5 font-medium">
+              <Button variant="ghost" size="sm" className="w-full mt-3 h-9 text-sm text-primary hover:bg-primary/5 font-medium rounded-xl">
                 View Team
               </Button>
             </StyledCard>
 
             {/* Clients Chart */}
-            <StyledCard className="flex-1 p-4">
-              <h3 className="text-xs font-semibold text-foreground mb-2">Clients</h3>
-              <div className="h-24">
+            <StyledCard className="flex-1 p-5">
+              <h3 className="text-sm font-semibold text-foreground mb-3">Clients</h3>
+              <div className="h-28">
                 <ResponsiveContainer width="100%" height="100%">
                   <PieChart>
-                    <Pie data={clientsData} cx="50%" cy="50%" innerRadius={20} outerRadius={38} dataKey="value" stroke="none">
+                    <Pie data={clientsData} cx="50%" cy="50%" innerRadius={22} outerRadius={42} dataKey="value" stroke="none">
                       {clientsData.map((entry, index) => <Cell key={`cell-${index}`} fill={entry.color} />)}
                     </Pie>
                     <Tooltip />
                   </PieChart>
                 </ResponsiveContainer>
               </div>
-              <div className="flex flex-wrap gap-1.5 mt-2">
-                {clientsData.map((item, index) => <div key={index} className="flex items-center gap-1.5">
+              <div className="flex flex-wrap gap-2 mt-3">
+                {clientsData.map((item, index) => <div key={index} className="flex items-center gap-2">
                     <div className="w-2 h-2 rounded-full flex-shrink-0" style={{
                     backgroundColor: item.color
                   }} />
-                    <span className="text-[10px] text-muted-foreground">{item.name}</span>
+                    <span className="text-xs text-muted-foreground">{item.name}</span>
                   </div>)}
               </div>
-              <Button variant="ghost" size="sm" className="w-full mt-2 h-8 text-xs text-primary hover:bg-primary/5 font-medium">
+              <Button variant="ghost" size="sm" className="w-full mt-3 h-9 text-sm text-primary hover:bg-primary/5 font-medium rounded-xl">
                 View Clients
               </Button>
             </StyledCard>
           </div>
 
-          {/* Recent Activity */}
-          <StyledCard className="p-4">
-            <h3 className="text-xs font-semibold text-foreground mb-3">Recent Activity</h3>
-            <div className="space-y-3">
-              {recentActivity.map((activity, index) => <div key={index} className="relative pl-4">
+          {/* Recent Activity - Enhanced spacing */}
+          <StyledCard className="p-5">
+            <h3 className="text-sm font-semibold text-foreground mb-4">Recent Activity</h3>
+            <div className="space-y-4">
+              {recentActivity.map((activity, index) => <div key={index} className="relative pl-5">
                   <div className="absolute left-0 top-1 w-0.5 h-full bg-primary/20 rounded-full" />
                   <div className="absolute left-[-3px] top-1 w-2 h-2 rounded-full bg-primary" />
-                  <div className="flex items-center gap-1.5 mb-0.5">
-                    <span className="text-[10px] font-medium text-muted-foreground">{activity.time}</span>
-                    <div className="w-4 h-4 rounded-full bg-emerald-100 flex items-center justify-center">
-                      <svg className="w-2.5 h-2.5 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+                  <div className="flex items-center gap-2 mb-1">
+                    <span className="text-xs font-medium text-muted-foreground">{activity.time}</span>
+                    <div className="w-5 h-5 rounded-full bg-emerald-100 flex items-center justify-center">
+                      <svg className="w-3 h-3 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
                         <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
                       </svg>
                     </div>
                   </div>
-                  <p className="text-xs font-medium text-foreground leading-tight">{activity.title}</p>
-                  <p className="text-[10px] text-muted-foreground">{activity.description}</p>
-                  <p className="text-[10px] text-muted-foreground/70 truncate">{activity.path}</p>
+                  <p className="text-sm font-medium text-foreground leading-tight">{activity.title}</p>
+                  <p className="text-xs text-muted-foreground mt-0.5">{activity.description}</p>
+                  <p className="text-xs text-muted-foreground/70 truncate mt-0.5">{activity.path}</p>
                 </div>)}
             </div>
           </StyledCard>

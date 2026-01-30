@@ -62,71 +62,71 @@ export default function Engagements() {
 
   return (
     <Layout title="Engagements">
-      <div className="flex-1 p-6 overflow-hidden flex flex-col bg-background">
-        <div className="flex flex-col flex-1 gap-5 min-h-0">
-          {/* Stats Cards */}
-          <div className="grid grid-cols-4 gap-3">
+      <div className="flex-1 p-8 overflow-hidden flex flex-col bg-background">
+        <div className="flex flex-col flex-1 gap-6 min-h-0">
+          {/* Stats Cards - Full width with enhanced spacing */}
+          <div className="grid grid-cols-4 gap-5">
             {stats.map((stat, index) => (
               <StyledCard
                 key={index}
                 hover
-                className="p-4"
+                className="p-6"
               >
-                <p className="text-xs font-medium text-muted-foreground">{stat.label}</p>
-                <p className="text-3xl font-bold text-foreground mt-1">{stat.value}</p>
+                <p className="text-sm font-medium text-muted-foreground">{stat.label}</p>
+                <p className="text-4xl font-bold text-foreground mt-2">{stat.value}</p>
               </StyledCard>
             ))}
           </div>
 
-          {/* Filter, Search, Export and Create Row */}
+          {/* Filter, Search, Export and Create Row - Enhanced spacing */}
           <div className="flex items-center justify-between">
             <Button
               variant="outline"
-              className="h-9 px-4 text-sm font-medium bg-card border-border hover:bg-muted"
+              className="h-12 px-6 text-sm font-medium bg-card border-border/60 hover:bg-muted rounded-xl"
             >
               {filterPeriod}
-              <ChevronDown className="ml-2 h-4 w-4 icon-chevron-down" />
+              <ChevronDown className="ml-3 h-4 w-4 icon-chevron-down" />
             </Button>
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-4">
               <div className="relative">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground icon-search" />
+                <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground icon-search" />
                 <Input
                   placeholder="Search"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="pl-9 w-56 h-9 text-sm"
+                  className="pl-11 w-72"
                 />
               </div>
               <Button
                 variant="outline"
-                className="h-9 px-4 text-sm font-medium bg-card border-border hover:bg-muted"
+                className="h-12 px-6 text-sm font-medium bg-card border-border/60 hover:bg-muted rounded-xl"
               >
                 <Download className="mr-2 h-4 w-4 icon-download" />
                 Export
               </Button>
               <Button 
                 onClick={() => navigate("/engagements/create")}
-                className="bg-primary hover:bg-primary/90 text-white h-9 px-4 text-sm font-medium"
+                className="bg-primary hover:bg-primary/90 text-white h-12 px-6 text-sm font-medium rounded-xl"
               >
                 Create Engagement
               </Button>
             </div>
           </div>
 
-          {/* Engagements Table */}
+          {/* Engagements Table - Full width with enhanced spacing */}
           <StyledCard className="overflow-hidden flex flex-col flex-1 min-h-0">
             <div className="flex-1 overflow-y-auto overflow-x-auto">
               <table className="w-full">
                 <thead className="sticky top-0 z-10 shadow-sm">
                   <tr className="bg-muted">
-                    <th className="text-left px-5 py-3 text-xs font-semibold text-foreground uppercase tracking-wider">Engagement ID</th>
-                    <th className="text-left px-5 py-3 text-xs font-semibold text-foreground uppercase tracking-wider">Client Name</th>
-                    <th className="text-left px-5 py-3 text-xs font-semibold text-foreground uppercase tracking-wider">Type</th>
-                    <th className="text-left px-5 py-3 text-xs font-semibold text-foreground uppercase tracking-wider">Period/Year End Date</th>
-                    <th className="text-left px-5 py-3 text-xs font-semibold text-foreground uppercase tracking-wider">Assigned Team</th>
-                    <th className="text-left px-5 py-3 text-xs font-semibold text-foreground uppercase tracking-wider">Status</th>
-                    <th className="text-left px-5 py-3 text-xs font-semibold text-foreground uppercase tracking-wider">Date Created</th>
-                    <th className="text-left px-5 py-3 text-xs font-semibold text-foreground uppercase tracking-wider">Actions</th>
+                    <th className="text-left px-6 py-4 text-xs font-semibold text-foreground uppercase tracking-wider">Engagement ID</th>
+                    <th className="text-left px-6 py-4 text-xs font-semibold text-foreground uppercase tracking-wider">Client Name</th>
+                    <th className="text-left px-6 py-4 text-xs font-semibold text-foreground uppercase tracking-wider">Type</th>
+                    <th className="text-left px-6 py-4 text-xs font-semibold text-foreground uppercase tracking-wider">Period/Year End Date</th>
+                    <th className="text-left px-6 py-4 text-xs font-semibold text-foreground uppercase tracking-wider">Assigned Team</th>
+                    <th className="text-left px-6 py-4 text-xs font-semibold text-foreground uppercase tracking-wider">Status</th>
+                    <th className="text-left px-6 py-4 text-xs font-semibold text-foreground uppercase tracking-wider">Date Created</th>
+                    <th className="text-left px-6 py-4 text-xs font-semibold text-foreground uppercase tracking-wider">Actions</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-border">
@@ -135,7 +135,7 @@ export default function Engagements() {
                       key={engagement.id} 
                       className="hover:bg-muted/50 transition-colors group"
                     >
-                      <td className="px-5 py-3">
+                      <td className="px-6 py-4">
                         <span 
                           onClick={() => navigate(`/engagements/${engagement.id}`)}
                           className="text-sm text-primary font-medium cursor-pointer hover:underline"
@@ -143,24 +143,24 @@ export default function Engagements() {
                           {engagement.id}
                         </span>
                       </td>
-                      <td className="px-5 py-3 text-sm text-foreground">{engagement.client}</td>
-                      <td className="px-5 py-3 text-sm text-foreground">{engagement.type}</td>
-                      <td className="px-5 py-3 text-sm text-muted-foreground">{engagement.yearEnd}</td>
-                      <td className="px-5 py-3">
+                      <td className="px-6 py-4 text-sm text-foreground">{engagement.client}</td>
+                      <td className="px-6 py-4 text-sm text-foreground">{engagement.type}</td>
+                      <td className="px-6 py-4 text-sm text-muted-foreground">{engagement.yearEnd}</td>
+                      <td className="px-6 py-4">
                         <span className="text-sm text-primary cursor-pointer hover:underline">
                           {engagement.team}
                         </span>
                       </td>
-                      <td className="px-5 py-3">
+                      <td className="px-6 py-4">
                         <StatusBadge status={engagement.status} hasRF={engagement.hasRF} />
                       </td>
-                      <td className="px-5 py-3 text-sm text-muted-foreground">{engagement.dateCreated}</td>
-                      <td className="px-5 py-3">
-                        <div className="flex items-center gap-1.5">
-                          <button className="p-1.5 hover:bg-muted rounded transition-colors group/edit">
+                      <td className="px-6 py-4 text-sm text-muted-foreground">{engagement.dateCreated}</td>
+                      <td className="px-6 py-4">
+                        <div className="flex items-center gap-2">
+                          <button className="p-2 hover:bg-muted rounded-lg transition-colors group/edit">
                             <Pencil className="h-4 w-4 text-primary group-hover/edit:icon-edit" />
                           </button>
-                          <button className="p-1.5 hover:bg-muted rounded transition-colors group/trash">
+                          <button className="p-2 hover:bg-muted rounded-lg transition-colors group/trash">
                             <Trash2 className="h-4 w-4 text-primary group-hover/trash:icon-trash" />
                           </button>
                         </div>
