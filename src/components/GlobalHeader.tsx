@@ -6,11 +6,13 @@ import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { useThemeContext } from "@/contexts/ThemeContext";
 import { SettingsPanel } from "@/components/SettingsPanel";
+import { AskLukaOverlay } from "@/components/AskLukaOverlay";
 
 export function GlobalHeader() {
   const { isDarkMode, toggleTheme } = useThemeContext();
   const [askLukaQuery, setAskLukaQuery] = useState("");
   const [settingsOpen, setSettingsOpen] = useState(false);
+  const [askLukaOpen, setAskLukaOpen] = useState(false);
 
   return (
     <>
@@ -32,6 +34,7 @@ export function GlobalHeader() {
             />
             <Button 
               className="h-8 px-4 rounded-full bg-gradient-to-r from-[#1C63A6] to-[#7A31D8] hover:from-[#1a5a96] hover:to-[#6a2bc2] text-white text-sm font-medium gap-1.5 shadow-md"
+              onClick={() => setAskLukaOpen(true)}
             >
               <Sparkles className="h-4 w-4" />
               Ask Luka
@@ -145,6 +148,9 @@ export function GlobalHeader() {
 
       {/* Settings Panel */}
       <SettingsPanel open={settingsOpen} onOpenChange={setSettingsOpen} />
+
+      {/* Ask Luka Overlay */}
+      <AskLukaOverlay open={askLukaOpen} onOpenChange={setAskLukaOpen} />
     </>
   );
 }
