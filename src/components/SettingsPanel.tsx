@@ -224,8 +224,10 @@ function LukaContent() {
               >
                 <CollapsibleTrigger className="w-full">
                   <div className={cn(
-                    "p-4 border rounded-xl flex items-center justify-between transition-colors hover:bg-muted/50",
-                    openSections.includes(section.id) ? "border-primary bg-primary/5" : "border-border"
+                    "p-4 border flex items-center justify-between transition-colors hover:bg-muted/50",
+                    openSections.includes(section.id) 
+                      ? "border-border rounded-t-xl border-b-0" 
+                      : "border-border rounded-xl"
                   )}>
                     <div className="flex items-center gap-3">
                       <section.icon className="h-5 w-5 text-muted-foreground" />
@@ -243,7 +245,7 @@ function LukaContent() {
                   </div>
                 </CollapsibleTrigger>
                 <CollapsibleContent>
-                  <div className="p-4 border border-t-0 border-border rounded-b-xl bg-muted/20">
+                  <div className="p-4 border border-border rounded-b-xl">
                     {section.id === "autopilot-scope" ? (
                       <div className="space-y-4">
                         <p className="text-sm text-muted-foreground">
