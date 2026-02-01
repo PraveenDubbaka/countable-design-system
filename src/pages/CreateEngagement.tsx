@@ -43,12 +43,12 @@ const LabeledInput = ({
           readOnly={readOnly}
           disabled={disabled}
           className={`
-            w-full h-9 px-3 py-2 text-sm text-foreground rounded-[10px] outline-none transition-all duration-200
+            input-double-border w-full h-9 px-3 py-2 text-sm text-foreground rounded-[10px] outline-none transition-all duration-200
             ${disabled 
               ? 'bg-muted border border-transparent text-muted-foreground opacity-60 cursor-not-allowed' 
               : error
                 ? 'bg-[#f6f7f9] border border-destructive'
-                : 'bg-[#f6f7f9] border border-[#dcdfe4] dark:border-[hsl(220_15%_30%)] dark:bg-card hover:border-[hsl(210_25%_75%)] dark:hover:border-[hsl(220_15%_40%)] focus:border-2 focus:border-[#2b6cb0] focus:[box-shadow:inset_0_0_0_2px_white]'
+                : 'bg-[#f6f7f9] border border-[#dcdfe4] dark:border-[hsl(220_15%_30%)] dark:bg-card hover:border-[hsl(210_25%_75%)] dark:hover:border-[hsl(220_15%_40%)]'
             }
             ${readOnly ? 'cursor-default' : ''}
             ${icon ? 'pr-10' : ''}
@@ -96,12 +96,12 @@ const LabeledSelect = ({
           onChange={(e) => onChange(e.target.value)}
           disabled={disabled}
           className={`
-            w-full h-9 px-3 py-2 text-sm text-foreground rounded-[10px] outline-none transition-all duration-200 appearance-none cursor-pointer
+            input-double-border w-full h-9 px-3 py-2 text-sm text-foreground rounded-[10px] outline-none transition-all duration-200 appearance-none cursor-pointer
             ${disabled 
               ? 'bg-muted border border-transparent text-muted-foreground opacity-60 cursor-not-allowed' 
               : error
                 ? 'bg-[#f6f7f9] border border-destructive'
-                : 'bg-[#f6f7f9] border border-[#dcdfe4] dark:border-[hsl(220_15%_30%)] dark:bg-card hover:border-[hsl(210_25%_75%)] dark:hover:border-[hsl(220_15%_40%)] focus:border-2 focus:border-[#2b6cb0] focus:[box-shadow:inset_0_0_0_2px_white]'
+                : 'bg-[#f6f7f9] border border-[#dcdfe4] dark:border-[hsl(220_15%_30%)] dark:bg-card hover:border-[hsl(210_25%_75%)] dark:hover:border-[hsl(220_15%_40%)]'
             }
           `}
         >
@@ -438,7 +438,7 @@ export default function CreateEngagement() {
                     placeholder="Search"
                     value={teamSearch}
                     onChange={(e) => setTeamSearch(e.target.value)}
-                    className="pl-9 pr-3 h-9 text-sm bg-[#f6f7f9] border border-[#dcdfe4] rounded-[10px] outline-none w-44 focus:border-2 focus:border-[#2b6cb0] focus:[box-shadow:inset_0_0_0_2px_white]"
+                    className="input-double-border pl-9 pr-3 h-9 text-sm bg-[#f6f7f9] border border-[#dcdfe4] rounded-[10px] outline-none w-44"
                   />
                 </div>
                 <Button variant="outline" className="h-9 px-4 text-sm bg-card hover:bg-muted">

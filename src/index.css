@@ -2,6 +2,20 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Double border focus effect for form inputs */
+.input-double-border:focus,
+.input-double-border:focus-visible {
+  outline: none;
+  border: 2px solid #2b6cb0;
+  box-shadow: inset 0 0 0 2px white;
+}
+
+.dark .input-double-border:focus,
+.dark .input-double-border:focus-visible {
+  border-color: hsl(207, 80%, 60%);
+  box-shadow: inset 0 0 0 2px hsl(220, 15%, 20%);
+}
+
 /* Custom shadow overrides */
 .shadow-sm {
   --tw-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.15);
