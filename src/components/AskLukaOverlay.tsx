@@ -171,8 +171,7 @@ export function AskLukaOverlay({ open, onOpenChange }: AskLukaOverlayProps) {
                     <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                     <Input 
                       placeholder="Search by name, ID, member..." 
-                      className="h-9 pl-9 bg-background border-2 border-[hsl(210_20%_85%)] shadow-[inset_0_1px_2px_rgba(0,0,0,0.06)] focus:border-[hsl(207_71%_38%)] focus:ring-1 focus:ring-[hsl(207_71%_38%/0.3)]"
-                      style={{ borderRadius: '12px' }}
+                      className={cn("h-9 pl-9 input-double-border")}
                     />
                   </div>
                 </div>
@@ -356,8 +355,7 @@ export function AskLukaOverlay({ open, onOpenChange }: AskLukaOverlayProps) {
                           value={message}
                           onChange={(e) => setMessage(e.target.value)}
                           placeholder="Ask Luka anything..."
-                          className="h-11 pr-24 border-2 border-[hsl(210_20%_85%)] shadow-[inset_0_1px_2px_rgba(0,0,0,0.06)] bg-background text-sm focus:border-[hsl(207_71%_38%)] focus:ring-1 focus:ring-[hsl(207_71%_38%/0.3)]"
-                          style={{ borderRadius: '12px' }}
+                          className={cn("h-11 pr-24 input-double-border")}
                         />
                         <div className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-1">
                           <Button variant="ghost" size="icon" className="h-9 w-9" style={{ borderRadius: '12px' }}>
