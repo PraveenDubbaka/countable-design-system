@@ -97,7 +97,7 @@
     /* ========================================
        SEMANTIC TOKENS (mapped to M3)
        ======================================== */
-    --background: var(--m3-surface);
+    --background: 220 14% 97%;
     --foreground: var(--m3-on-surface);
 
     --card: var(--m3-surface-container-lowest);
