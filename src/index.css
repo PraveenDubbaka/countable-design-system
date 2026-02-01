@@ -855,7 +855,7 @@
   .sidebar-item {
     @apply flex items-center justify-center w-10 h-10 cursor-pointer;
     color: hsl(var(--sidebar-foreground) / 0.6);
-    border-radius: var(--radius-lg);
+    border-radius: 12px;
     transition: all 200ms ease;
   }
   
