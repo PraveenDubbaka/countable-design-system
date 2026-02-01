@@ -6,14 +6,17 @@
 .input-double-border:focus,
 .input-double-border:focus-visible {
   outline: none;
-  border: 2px solid #2b6cb0;
-  box-shadow: inset 0 0 0 2px white;
+  border-width: 2px !important;
+  border-style: solid;
+  border-color: hsl(var(--border-focus)) !important;
+  /* Inner border uses the current surface color to create the "double border" illusion */
+  box-shadow: inset 0 0 0 2px hsl(var(--background)) !important;
 }
 
 .dark .input-double-border:focus,
 .dark .input-double-border:focus-visible {
-  border-color: hsl(207, 80%, 60%);
-  box-shadow: inset 0 0 0 2px hsl(220, 15%, 20%);
+  border-color: hsl(var(--border-focus)) !important;
+  box-shadow: inset 0 0 0 2px hsl(var(--card)) !important;
 }
 
 /* Custom shadow overrides */
