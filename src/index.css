@@ -22,6 +22,10 @@
 
 /* Keep the outer "cockpit" curve consistent: when a secondary left panel is expanded,
    that panel owns the left rounding, so the main content should not round on the left. */
+.sidebar-panel-expanded + .layout-content .header-wrapper {
+  border-top-left-radius: 0 !important;
+}
+
 .sidebar-panel-expanded + .layout-content .app-main {
   border-top-left-radius: 0 !important;
   border-bottom-left-radius: 0 !important;
