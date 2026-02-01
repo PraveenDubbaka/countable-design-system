@@ -17,27 +17,20 @@ const SelectTrigger = React.forwardRef<
   <SelectPrimitive.Trigger
     ref={ref}
     className={cn(
-      // Base styles - 10px border radius
-      "flex h-9 w-full items-center justify-between rounded-[10px] px-3 py-2 text-sm ring-0 ring-offset-0 transition-all duration-200 [&>span]:line-clamp-1",
-      // Default state: rgb(246, 247, 249) background, rgb(220, 223, 228) border, 1px border
+      // Base styles - 10px border radius + double border focus class
+      "input-double-border flex h-9 w-full items-center justify-between rounded-[10px] px-3 py-2 text-sm transition-all duration-200 [&>span]:line-clamp-1",
+      // Default state: #f6f7f9 background, #dcdfe4 border
       "bg-[#f6f7f9] text-foreground placeholder:text-muted-foreground",
       "border border-[#dcdfe4]",
-      // Dark mode: darker border
+      // Dark mode
       "dark:border-[hsl(220_15%_30%)] dark:bg-card",
-      // Hover state: slightly darker border
+      // Hover state
       "hover:border-[hsl(210_25%_75%)]",
       "dark:hover:border-[hsl(220_15%_40%)]",
-      // Focus state: double border effect
-      "focus:outline-none focus:border-2 focus:border-[#2b6cb0] focus:[box-shadow:inset_0_0_0_2px_white]",
-      // Dark mode focus
-      "dark:focus:border-[hsl(207_80%_60%)] dark:focus:[box-shadow:inset_0_0_0_2px_hsl(220,15%,20%)]",
-      // Data state for open - matching focus with double border
-      "data-[state=open]:border-2 data-[state=open]:border-[#2b6cb0] data-[state=open]:[box-shadow:inset_0_0_0_2px_white]",
-      "dark:data-[state=open]:border-[hsl(207_80%_60%)] dark:data-[state=open]:[box-shadow:inset_0_0_0_2px_hsl(220,15%,20%)]",
       // Disabled state
       "disabled:cursor-not-allowed disabled:bg-muted/50 disabled:border-muted disabled:text-muted-foreground disabled:opacity-60",
       // Error state
-      error && "border-destructive hover:border-destructive focus:border-destructive data-[state=open]:border-destructive",
+      error && "border-destructive hover:border-destructive",
       className,
     )}
     {...props}
