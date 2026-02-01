@@ -52,7 +52,7 @@ export function ClientRightPanel({ className, clientName = 'CR tickets' }: Clien
         <Button
           variant="ghost"
           size="icon"
-          className="h-8 w-8 mb-2 hover:bg-muted"
+          className="h-9 w-9 mb-2 hover:bg-muted"
           onClick={() => setIsExpanded(!isExpanded)}
         >
           {isExpanded ? (

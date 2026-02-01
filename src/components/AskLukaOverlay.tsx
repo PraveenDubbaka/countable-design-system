@@ -66,7 +66,7 @@ export function AskLukaOverlay({ open, onOpenChange }: AskLukaOverlayProps) {
                   variant="ghost"
                   size="icon"
                   className={cn(
-                    "h-10 w-10 rounded-xl mb-2",
+                    "h-9 w-9 rounded-xl mb-2",
                     item.active && "bg-primary/10 text-primary"
                   )}
                 >
@@ -83,7 +83,7 @@ export function AskLukaOverlay({ open, onOpenChange }: AskLukaOverlayProps) {
           {/* Bottom icons */}
           <Tooltip>
             <TooltipTrigger asChild>
-              <Button variant="ghost" size="icon" className="h-10 w-10 rounded-xl mb-2">
+              <Button variant="ghost" size="icon" className="h-9 w-9 rounded-xl mb-2">
                 <Settings className="h-5 w-5 text-muted-foreground" />
               </Button>
             </TooltipTrigger>
@@ -149,7 +149,7 @@ export function AskLukaOverlay({ open, onOpenChange }: AskLukaOverlayProps) {
               <FolderOpen className="h-5 w-5 text-muted-foreground" />
               <span className="font-medium">Workspaces</span>
             </div>
-            <Button variant="ghost" size="icon" className="h-8 w-8">
+            <Button variant="ghost" size="icon" className="h-9 w-9">
               <ChevronDown className="h-4 w-4 rotate-180" />
             </Button>
           </div>
@@ -166,7 +166,7 @@ export function AskLukaOverlay({ open, onOpenChange }: AskLukaOverlayProps) {
               <span className="text-amber-500">★</span>
               Starred (2)
             </Button>
-            <Button variant="outline" size="icon" className="h-8 w-8 rounded-full">
+            <Button variant="outline" size="icon" className="h-9 w-9 rounded-full">
               <Settings className="h-4 w-4" />
             </Button>
             <Button size="sm" className="gap-2 rounded-full ml-auto bg-primary hover:bg-primary/90">
@@ -245,10 +245,10 @@ export function AskLukaOverlay({ open, onOpenChange }: AskLukaOverlayProps) {
               <Unlock className="h-4 w-4" />
               Unlock
             </Button>
-            <Button variant="ghost" size="icon" className="h-8 w-8">
+            <Button variant="ghost" size="icon" className="h-9 w-9">
               <Sun className="h-4 w-4" />
             </Button>
-            <Button variant="ghost" size="icon" className="h-8 w-8">
+            <Button variant="ghost" size="icon" className="h-9 w-9">
               <FolderOpen className="h-4 w-4" />
             </Button>
           </div>
@@ -291,7 +291,7 @@ export function AskLukaOverlay({ open, onOpenChange }: AskLukaOverlayProps) {
                 <span className="text-sm text-muted-foreground">Prompts:</span>
                 <div className="flex gap-1">
                   {promptIcons.map((item, idx) => (
-                    <Button key={idx} variant="ghost" size="icon" className="h-8 w-8">
+                    <Button key={idx} variant="ghost" size="icon" className="h-9 w-9">
                       <item.icon className="h-4 w-4 text-muted-foreground" />
                     </Button>
                   ))}
@@ -319,7 +319,7 @@ export function AskLukaOverlay({ open, onOpenChange }: AskLukaOverlayProps) {
 
               {/* Input field */}
               <div className="relative flex items-center gap-2">
-                <Button variant="ghost" size="icon" className="h-10 w-10 rounded-full">
+                <Button variant="ghost" size="icon" className="h-9 w-9 rounded-full">
                   <span className="text-xl">+</span>
                 </Button>
                 <div className="flex-1 relative">
@@ -330,12 +330,12 @@ export function AskLukaOverlay({ open, onOpenChange }: AskLukaOverlayProps) {
                     className="h-12 pr-24 rounded-full border-2"
                   />
                   <div className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-1">
-                    <Button variant="ghost" size="icon" className="h-8 w-8">
+                    <Button variant="ghost" size="icon" className="h-9 w-9">
                       <Mic className="h-4 w-4 text-muted-foreground" />
                     </Button>
                     <Button 
                       size="icon" 
-                      className="h-8 w-8 rounded-full bg-gradient-to-r from-primary to-[#7A31D8]"
+                      className="h-9 w-9 rounded-full bg-gradient-to-r from-primary to-[#7A31D8]"
                     >
                       <Send className="h-4 w-4 text-white" />
                     </Button>
@@ -359,7 +359,7 @@ export function AskLukaOverlay({ open, onOpenChange }: AskLukaOverlayProps) {
                 </div>
                 <div className="flex items-center gap-1">
                   {bottomIcons.map((item, idx) => (
-                    <Button key={idx} variant="ghost" size="icon" className="h-8 w-8 relative">
+                    <Button key={idx} variant="ghost" size="icon" className="h-9 w-9 relative">
                       <item.icon className="h-4 w-4 text-muted-foreground" />
                       {idx === 4 && (
                         <span className="absolute -top-0.5 -right-0.5 w-4 h-4 rounded-full bg-primary text-[9px] text-white flex items-center justify-center font-medium">2</span>
