@@ -1,8 +1,9 @@
 import { useState } from "react";
-import { Search, Bell, User, Sparkles, Moon, Sun, Zap } from "lucide-react";
+import { Bell, User, Sparkles, Moon, Sun, Zap, UserCircle, Building2, Settings, CreditCard, Monitor, Gift, LogOut } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { useThemeContext } from "@/contexts/ThemeContext";
 
 export function GlobalHeader() {
@@ -88,9 +89,9 @@ export function GlobalHeader() {
           <TooltipContent>Notifications</TooltipContent>
         </Tooltip>
 
-        {/* User Profile */}
-        <Tooltip>
-          <TooltipTrigger asChild>
+        {/* User Profile Dropdown */}
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
             <div 
               className="flex items-center justify-center w-9 h-9 rounded-xl cursor-pointer hover:bg-muted transition-colors"
               style={{ borderRadius: '12px' }}
@@ -99,9 +100,40 @@ export function GlobalHeader() {
                 <User className="h-4 w-4 text-white" />
               </div>
             </div>
-          </TooltipTrigger>
-          <TooltipContent>Profile</TooltipContent>
-        </Tooltip>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end" className="w-56">
+            <DropdownMenuItem className="gap-3 py-3 cursor-pointer">
+              <UserCircle className="h-5 w-5 text-muted-foreground" />
+              <span>My Account</span>
+            </DropdownMenuItem>
+            <DropdownMenuItem className="gap-3 py-3 cursor-pointer">
+              <Building2 className="h-5 w-5 text-muted-foreground" />
+              <span>Firm Profile</span>
+            </DropdownMenuItem>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem className="gap-3 py-3 cursor-pointer">
+              <Settings className="h-5 w-5 text-muted-foreground" />
+              <span>Settings</span>
+            </DropdownMenuItem>
+            <DropdownMenuItem className="gap-3 py-3 cursor-pointer">
+              <CreditCard className="h-5 w-5 text-muted-foreground" />
+              <span>Billing</span>
+            </DropdownMenuItem>
+            <DropdownMenuItem className="gap-3 py-3 cursor-pointer">
+              <Monitor className="h-5 w-5 text-muted-foreground" />
+              <span>Apps & Integrations</span>
+            </DropdownMenuItem>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem className="gap-3 py-3 cursor-pointer">
+              <Gift className="h-5 w-5 text-muted-foreground" />
+              <span>What's New</span>
+            </DropdownMenuItem>
+            <DropdownMenuItem className="gap-3 py-3 cursor-pointer text-destructive focus:text-destructive">
+              <LogOut className="h-5 w-5" />
+              <span>Log out</span>
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </div>
     </header>
   );
