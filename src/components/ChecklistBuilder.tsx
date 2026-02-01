@@ -410,7 +410,7 @@ export function ChecklistBuilder({ checklist, onUpdate, onSave }: ChecklistBuild
                 <TooltipTrigger asChild>
                   <Button 
                     size="icon" 
-                    className="h-8 w-8"
+                    className="h-9 w-9"
                     onClick={onSave}
                   >
                     <Save className="h-4 w-4" />
@@ -426,7 +426,7 @@ export function ChecklistBuilder({ checklist, onUpdate, onSave }: ChecklistBuild
                       <Button 
                         variant="outline" 
                         size="icon" 
-                        className="h-8 w-8 hover:bg-[#1C63A6] hover:text-white hover:border-[#1C63A6] transition-colors"
+                        className="h-9 w-9 hover:bg-[#1C63A6] hover:text-white hover:border-[#1C63A6] transition-colors"
                       >
                         <Copy className="h-4 w-4" />
                       </Button>
@@ -457,7 +457,7 @@ export function ChecklistBuilder({ checklist, onUpdate, onSave }: ChecklistBuild
                       <Button 
                         variant="outline" 
                         size="icon" 
-                        className="h-8 w-8 bg-destructive text-white border-destructive hover:bg-destructive/90 transition-colors"
+                        className="h-9 w-9 bg-destructive text-white border-destructive hover:bg-destructive/90 transition-colors"
                       >
                         <Trash2 className="h-4 w-4" />
                       </Button>
@@ -492,7 +492,7 @@ export function ChecklistBuilder({ checklist, onUpdate, onSave }: ChecklistBuild
                 <Button 
                   variant="outline" 
                   size="icon"
-                  className="h-8 w-8 hover:bg-[#1C63A6] hover:text-white hover:border-[#1C63A6] transition-colors"
+                  className="h-9 w-9 hover:bg-[#1C63A6] hover:text-white hover:border-[#1C63A6] transition-colors"
                   onClick={() => setIsPreviewMode(!isPreviewMode)}
                 >
                   {isPreviewMode ? <Pencil className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
