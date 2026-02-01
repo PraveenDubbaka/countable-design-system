@@ -27,13 +27,13 @@ const SelectTrigger = React.forwardRef<
       // Hover state: slightly darker border
       "hover:border-[hsl(210_25%_75%)]",
       "dark:hover:border-[hsl(220_15%_40%)]",
-      // Focus state: blue border with ring
-      "focus:outline-none focus:border-[hsl(207_71%_38%)] focus:ring-2 focus:ring-[hsl(207_71%_38%/0.2)]",
+      // Focus state: double border effect - outer dark blue, inner light
+      "focus:outline-none focus:border-[hsl(207_71%_38%)] focus:shadow-[inset_0_0_0_2px_white,0_0_0_0_transparent]",
       // Dark mode focus
-      "dark:focus:border-[hsl(207_80%_60%)] dark:focus:ring-[hsl(207_80%_60%/0.25)]",
-      // Data state for open - matching focus
-      "data-[state=open]:border-[hsl(207_71%_38%)] data-[state=open]:ring-2 data-[state=open]:ring-[hsl(207_71%_38%/0.2)]",
-      "dark:data-[state=open]:border-[hsl(207_80%_60%)] dark:data-[state=open]:ring-[hsl(207_80%_60%/0.25)]",
+      "dark:focus:border-[hsl(207_80%_60%)] dark:focus:shadow-[inset_0_0_0_2px_hsl(220_15%_20%),0_0_0_0_transparent]",
+      // Data state for open - matching focus with double border
+      "data-[state=open]:border-[hsl(207_71%_38%)] data-[state=open]:shadow-[inset_0_0_0_2px_white,0_0_0_0_transparent]",
+      "dark:data-[state=open]:border-[hsl(207_80%_60%)] dark:data-[state=open]:shadow-[inset_0_0_0_2px_hsl(220_15%_20%),0_0_0_0_transparent]",
       // Disabled state
       "disabled:cursor-not-allowed disabled:bg-muted/50 disabled:border-muted disabled:text-muted-foreground disabled:opacity-60",
       // Error state

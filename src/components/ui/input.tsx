@@ -27,12 +27,12 @@ const Input = React.forwardRef<HTMLInputElement, React.ComponentProps<"input"> &
           // Hover state: slightly darker border
           "hover:border-[hsl(210_25%_75%)]",
           "dark:hover:border-[hsl(220_15%_40%)]",
-          // Focus state: blue border with ring
-          "focus:outline-none focus:border-[hsl(207_71%_38%)] focus:ring-2 focus:ring-[hsl(207_71%_38%/0.2)]",
-          "focus-visible:outline-none focus-visible:border-[hsl(207_71%_38%)] focus-visible:ring-2 focus-visible:ring-[hsl(207_71%_38%/0.2)]",
-          // Dark mode focus: brighter blue
-          "dark:focus:border-[hsl(207_80%_60%)] dark:focus:ring-[hsl(207_80%_60%/0.25)]",
-          "dark:focus-visible:border-[hsl(207_80%_60%)] dark:focus-visible:ring-[hsl(207_80%_60%/0.25)]",
+          // Focus state: double border effect - outer dark blue, inner light
+          "focus:outline-none focus:border-[hsl(207_71%_38%)] focus:shadow-[inset_0_0_0_2px_white,0_0_0_0_transparent]",
+          "focus-visible:outline-none focus-visible:border-[hsl(207_71%_38%)] focus-visible:shadow-[inset_0_0_0_2px_white,0_0_0_0_transparent]",
+          // Dark mode focus: brighter blue with dark inner
+          "dark:focus:border-[hsl(207_80%_60%)] dark:focus:shadow-[inset_0_0_0_2px_hsl(220_15%_20%),0_0_0_0_transparent]",
+          "dark:focus-visible:border-[hsl(207_80%_60%)] dark:focus-visible:shadow-[inset_0_0_0_2px_hsl(220_15%_20%),0_0_0_0_transparent]",
           // Disabled state
           "disabled:cursor-not-allowed disabled:bg-muted/50 disabled:border-muted disabled:text-muted-foreground disabled:opacity-50",
           // Error state

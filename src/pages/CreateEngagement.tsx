@@ -48,7 +48,7 @@ const LabeledInput = ({
               ? 'bg-muted border border-transparent text-muted-foreground opacity-60 cursor-not-allowed' 
               : error
                 ? 'bg-[#f6f7f9] border border-destructive'
-                : 'bg-[#f6f7f9] border border-[#dcdfe4] dark:border-[hsl(220_15%_30%)] dark:bg-card hover:border-[hsl(210_25%_75%)] dark:hover:border-[hsl(220_15%_40%)] focus:border-[hsl(207_71%_38%)] focus:ring-2 focus:ring-[hsl(207_71%_38%/0.2)] dark:focus:border-[hsl(207_80%_60%)] dark:focus:ring-[hsl(207_80%_60%/0.25)]'
+                : 'bg-[#f6f7f9] border border-[#dcdfe4] dark:border-[hsl(220_15%_30%)] dark:bg-card hover:border-[hsl(210_25%_75%)] dark:hover:border-[hsl(220_15%_40%)] focus:border-[hsl(207_71%_38%)] focus:shadow-[inset_0_0_0_2px_white] dark:focus:border-[hsl(207_80%_60%)] dark:focus:shadow-[inset_0_0_0_2px_hsl(220_15%_20%)]'
             }
             ${readOnly ? 'cursor-default' : ''}
             ${icon ? 'pr-10' : ''}
@@ -101,7 +101,7 @@ const LabeledSelect = ({
               ? 'bg-muted border border-transparent text-muted-foreground opacity-60 cursor-not-allowed' 
               : error
                 ? 'bg-[#f6f7f9] border border-destructive'
-                : 'bg-[#f6f7f9] border border-[#dcdfe4] dark:border-[hsl(220_15%_30%)] dark:bg-card hover:border-[hsl(210_25%_75%)] dark:hover:border-[hsl(220_15%_40%)] focus:border-[hsl(207_71%_38%)] focus:ring-2 focus:ring-[hsl(207_71%_38%/0.2)] dark:focus:border-[hsl(207_80%_60%)] dark:focus:ring-[hsl(207_80%_60%/0.25)]'
+                : 'bg-[#f6f7f9] border border-[#dcdfe4] dark:border-[hsl(220_15%_30%)] dark:bg-card hover:border-[hsl(210_25%_75%)] dark:hover:border-[hsl(220_15%_40%)] focus:border-[hsl(207_71%_38%)] focus:shadow-[inset_0_0_0_2px_white] dark:focus:border-[hsl(207_80%_60%)] dark:focus:shadow-[inset_0_0_0_2px_hsl(220_15%_20%)]'
             }
           `}
         >
@@ -438,7 +438,7 @@ export default function CreateEngagement() {
                     placeholder="Search"
                     value={teamSearch}
                     onChange={(e) => setTeamSearch(e.target.value)}
-                    className="pl-9 pr-3 h-9 text-sm bg-[#f6f7f9] border border-[#dcdfe4] rounded-[10px] outline-none w-44 focus:border-[hsl(207_71%_38%)] focus:ring-2 focus:ring-[hsl(207_71%_38%/0.2)]"
+                    className="pl-9 pr-3 h-9 text-sm bg-[#f6f7f9] border border-[#dcdfe4] rounded-[10px] outline-none w-44 focus:border-[hsl(207_71%_38%)] focus:shadow-[inset_0_0_0_2px_white]"
                   />
                 </div>
                 <Button variant="outline" className="h-9 px-4 text-sm bg-card hover:bg-muted">
