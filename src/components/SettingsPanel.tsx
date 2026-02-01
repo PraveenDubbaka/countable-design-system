@@ -99,10 +99,10 @@ function MyAccountContent() {
   return (
     <div className="space-y-6">
       <Tabs defaultValue="profile" className="w-full">
-        <TabsList className="h-10 bg-card border border-border rounded-lg p-1">
-          <TabsTrigger value="profile" className="px-4 data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-md data-[state=active]:border data-[state=active]:border-border font-medium">Profile</TabsTrigger>
-          <TabsTrigger value="firm-info" className="px-4 data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-md data-[state=active]:border data-[state=active]:border-border font-medium">Firm Info</TabsTrigger>
-          <TabsTrigger value="timezone" className="px-4 data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-md data-[state=active]:border data-[state=active]:border-border font-medium">Time Zone</TabsTrigger>
+        <TabsList className="h-11 bg-[#f0f1f3] dark:bg-muted rounded-full p-1 gap-1">
+          <TabsTrigger value="profile" className="rounded-full px-5 text-muted-foreground data-[state=active]:bg-white dark:data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm">Profile</TabsTrigger>
+          <TabsTrigger value="firm-info" className="rounded-full px-5 text-muted-foreground data-[state=active]:bg-white dark:data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm">Firm Info</TabsTrigger>
+          <TabsTrigger value="timezone" className="rounded-full px-5 text-muted-foreground data-[state=active]:bg-white dark:data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm">Time Zone</TabsTrigger>
         </TabsList>
 
         <TabsContent value="profile" className="mt-6 space-y-8">
