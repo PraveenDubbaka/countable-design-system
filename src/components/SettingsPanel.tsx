@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ArrowLeft, X, User, FileText, Zap, Bell, Users, Shield, Download, ChevronDown, ChevronUp, Sparkles, CheckSquare, Database, CircleHelp, MessageSquare, FileOutput, RotateCcw } from "lucide-react";
+import { ArrowLeft, X, User, FileText, Zap, Bell, Users, Shield, Download, ChevronDown, ChevronUp, Sparkles, CheckSquare, Database, CircleHelp, MessageSquare, FileOutput, RotateCcw, Check, Info } from "lucide-react";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -7,8 +7,8 @@ import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Switch } from "@/components/ui/switch";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { cn } from "@/lib/utils";
-
 interface SettingsPanelProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
@@ -100,6 +100,7 @@ export function SettingsPanel({ open, onOpenChange }: SettingsPanelProps) {
 function LukaContent() {
   const [showAutomatesPanel, setShowAutomatesPanel] = useState(true);
   const [openSections, setOpenSections] = useState<string[]>(["autopilot-scope"]);
+  const [autopilotScope, setAutopilotScope] = useState("recommended");
 
   const toggleSection = (id: string) => {
     setOpenSections(prev => 
@@ -123,6 +124,37 @@ function LukaContent() {
     { id: "client-interaction", label: "Client Interaction Controls", icon: MessageSquare, badge: "All off" },
     { id: "output-review", label: "Output & Review Preferences", icon: FileOutput, badge: null },
     { id: "notifications", label: "Notifications", icon: Bell, badge: null },
+  ];
+
+  const autopilotOptions = [
+    {
+      id: "recommended",
+      label: "Recommended",
+      isDefault: true,
+      features: [
+        { text: "Auto-fill checklists", included: true },
+        { text: "Draft responses & explanations", included: true },
+        { text: "No client communication", included: false },
+      ],
+    },
+    {
+      id: "assisted",
+      label: "Assisted Mode",
+      isDefault: false,
+      features: [
+        { text: "Auto-fill where confident", included: true },
+        { text: "Pause for review on low confidence", included: true },
+      ],
+    },
+    {
+      id: "manual",
+      label: "Manual Review First",
+      isDefault: false,
+      features: [
+        { text: "Preview only", included: true },
+        { text: "No auto-save", included: false },
+      ],
+    },
   ];
 
   return (
@@ -212,7 +244,59 @@ function LukaContent() {
                 </CollapsibleTrigger>
                 <CollapsibleContent>
                   <div className="p-4 border border-t-0 border-border rounded-b-xl bg-muted/20">
-                    <p className="text-sm text-muted-foreground">{section.label} settings content coming soon...</p>
+                    {section.id === "autopilot-scope" ? (
+                      <div className="space-y-4">
+                        <p className="text-sm text-muted-foreground">
+                          Define how far Luka can proceed without stopping for your input.
+                        </p>
+                        
+                        <RadioGroup value={autopilotScope} onValueChange={setAutopilotScope} className="space-y-3">
+                          {autopilotOptions.map((option) => (
+                            <label
+                              key={option.id}
+                              htmlFor={option.id}
+                              className={cn(
+                                "flex items-start gap-3 p-4 rounded-xl border-2 cursor-pointer transition-colors",
+                                autopilotScope === option.id
+                                  ? "border-primary bg-primary/5"
+                                  : "border-border hover:border-muted-foreground/30"
+                              )}
+                            >
+                              <RadioGroupItem value={option.id} id={option.id} className="mt-1" />
+                              <div className="flex-1">
+                                <div className="flex items-center gap-2 mb-2">
+                                  <span className="font-medium">{option.label}</span>
+                                  {option.isDefault && (
+                                    <span className="text-xs text-primary bg-primary/10 px-2 py-0.5 rounded-full font-medium">
+                                      Default
+                                    </span>
+                                  )}
+                                </div>
+                                <div className="space-y-1">
+                                  {option.features.map((feature, idx) => (
+                                    <div key={idx} className="flex items-center gap-2 text-sm text-muted-foreground">
+                                      {feature.included ? (
+                                        <Check className="h-4 w-4 text-muted-foreground" />
+                                      ) : (
+                                        <X className="h-4 w-4 text-muted-foreground" />
+                                      )}
+                                      <span>{feature.text}</span>
+                                    </div>
+                                  ))}
+                                </div>
+                              </div>
+                            </label>
+                          ))}
+                        </RadioGroup>
+
+                        <div className="flex items-center gap-2 text-sm text-muted-foreground pt-2">
+                          <Info className="h-4 w-4" />
+                          <span>You can change this anytime.</span>
+                        </div>
+                      </div>
+                    ) : (
+                      <p className="text-sm text-muted-foreground">{section.label} settings content coming soon...</p>
+                    )}
                   </div>
                 </CollapsibleContent>
               </Collapsible>
