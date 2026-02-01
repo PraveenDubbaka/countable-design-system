@@ -99,10 +99,10 @@ function MyAccountContent() {
   return (
     <div className="space-y-6">
       <Tabs defaultValue="profile" className="w-full">
-        <TabsList className="bg-muted border border-border">
-          <TabsTrigger value="profile" className="data-[state=active]:bg-background data-[state=active]:shadow-sm">Profile</TabsTrigger>
-          <TabsTrigger value="firm-info" className="data-[state=active]:bg-background data-[state=active]:shadow-sm">Firm Info</TabsTrigger>
-          <TabsTrigger value="timezone" className="data-[state=active]:bg-background data-[state=active]:shadow-sm">Time Zone</TabsTrigger>
+        <TabsList className="h-10 bg-card border border-border rounded-lg p-1">
+          <TabsTrigger value="profile" className="px-4 data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-md data-[state=active]:border data-[state=active]:border-border font-medium">Profile</TabsTrigger>
+          <TabsTrigger value="firm-info" className="px-4 data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-md data-[state=active]:border data-[state=active]:border-border font-medium">Firm Info</TabsTrigger>
+          <TabsTrigger value="timezone" className="px-4 data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-md data-[state=active]:border data-[state=active]:border-border font-medium">Time Zone</TabsTrigger>
         </TabsList>
 
         <TabsContent value="profile" className="mt-6 space-y-8">
