@@ -178,14 +178,14 @@ export function AskLukaOverlay({ open, onOpenChange }: AskLukaOverlayProps) {
 
                 {/* Filter buttons */}
                 <div className="px-4 pb-3 flex items-center gap-2">
-                  <Button variant="outline" size="sm" className="h-9 gap-2 border-2 border-[hsl(210_20%_85%)]" style={{ borderRadius: '12px' }}>
+                  <Button variant="outline" size="sm" className="h-9 gap-2">
                     <span className="text-amber-500">★</span>
                     Starred (2)
                   </Button>
-                  <Button variant="outline" size="icon" className="h-9 w-9 border-2 border-[hsl(210_20%_85%)]" style={{ borderRadius: '12px' }}>
+                  <Button variant="outline" size="icon" className="h-9 w-9">
                     <Filter className="h-4 w-4" />
                   </Button>
-                  <Button size="sm" className="h-9 gap-1.5 ml-auto bg-primary hover:bg-primary/90 px-4" style={{ borderRadius: '12px' }}>
+                  <Button size="sm" className="h-9 gap-1.5 ml-auto px-4">
                     <Plus className="h-4 w-4" />
                     New
                   </Button>
@@ -292,11 +292,11 @@ export function AskLukaOverlay({ open, onOpenChange }: AskLukaOverlayProps) {
                           Let's get started — I'll guide you through setup, then handle the rest autonomously.
                         </p>
                         <div className="flex gap-2 mt-4">
-                          <Button variant="outline" size="sm" className="h-9 gap-2 border-2 border-[hsl(210_20%_85%)]" style={{ borderRadius: '12px' }}>
+                          <Button variant="outline" size="sm" className="h-9 gap-2">
                             <Sparkles className="h-4 w-4" />
                             Let's begin
                           </Button>
-                          <Button variant="outline" size="sm" className="h-9 gap-2 border-2 border-[hsl(210_20%_85%)]" style={{ borderRadius: '12px' }}>
+                          <Button variant="outline" size="sm" className="h-9 gap-2">
                             <Settings className="h-4 w-4" />
                             Configure settings first
                           </Button>
@@ -347,7 +347,7 @@ export function AskLukaOverlay({ open, onOpenChange }: AskLukaOverlayProps) {
 
                     {/* Input field */}
                     <div className="flex items-center gap-3">
-                      <Button variant="outline" size="icon" className="h-9 w-9 border-2 border-[hsl(210_20%_85%)] flex-shrink-0" style={{ borderRadius: '12px' }}>
+                      <Button variant="outline" size="icon" className="h-9 w-9 flex-shrink-0">
                         <Plus className="h-5 w-5" />
                       </Button>
                       <div className="flex-1 relative">
@@ -358,13 +358,12 @@ export function AskLukaOverlay({ open, onOpenChange }: AskLukaOverlayProps) {
                           className={cn("h-11 pr-24 input-double-border")}
                         />
                         <div className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-1">
-                          <Button variant="ghost" size="icon" className="h-9 w-9" style={{ borderRadius: '12px' }}>
+                          <Button variant="ghost" size="icon" className="h-9 w-9">
                             <Mic className="h-5 w-5 text-muted-foreground" />
                           </Button>
                           <Button 
                             size="icon" 
                             className="h-9 w-9 bg-gradient-to-r from-primary to-[#7A31D8] hover:opacity-90"
-                            style={{ borderRadius: '12px' }}
                           >
                             <Send className="h-4 w-4 text-white" />
                           </Button>
@@ -375,12 +374,12 @@ export function AskLukaOverlay({ open, onOpenChange }: AskLukaOverlayProps) {
                     {/* Bottom toolbar */}
                     <div className="flex items-center justify-between mt-3">
                       <div className="flex items-center gap-2">
-                        <Button variant="outline" size="sm" className="h-9 gap-2 border-2 border-[hsl(210_20%_85%)] px-3" style={{ borderRadius: '12px' }}>
+                        <Button variant="outline" size="sm" className="h-9 gap-2 px-3">
                           <Sparkles className="h-4 w-4 text-primary" />
                           Gemini 3
                           <ChevronDown className="h-3 w-3 text-muted-foreground" />
                         </Button>
-                        <Button variant="outline" size="sm" className="h-9 gap-2 border-2 border-[hsl(210_20%_85%)] px-3" style={{ borderRadius: '12px' }}>
+                        <Button variant="outline" size="sm" className="h-9 gap-2 px-3">
                           <FileText className="h-4 w-4 text-muted-foreground" />
                           Default
                           <ChevronDown className="h-3 w-3 text-muted-foreground" />
