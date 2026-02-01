@@ -4,8 +4,8 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/utils";
 
 const buttonVariants = cva(
-  // Base styles with micro-animations - using design token for border radius
-  "inline-flex items-center justify-center gap-2 whitespace-nowrap text-label-lg font-medium ring-offset-background transition-all duration-200 ease-emphasized focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-[18px] [&_svg]:shrink-0 relative overflow-hidden cursor-pointer select-none rounded-button",
+  // Base styles with micro-animations - 10px border radius
+  "inline-flex items-center justify-center gap-2 whitespace-nowrap text-label-lg font-medium ring-offset-background transition-all duration-200 ease-emphasized focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-[18px] [&_svg]:shrink-0 relative overflow-hidden cursor-pointer select-none rounded-[10px]",
   {
     variants: {
       variant: {
@@ -26,17 +26,16 @@ const buttonVariants = cva(
           "active:scale-[0.98] active:shadow-[0_2px_8px_hsl(0_50%_30%/0.1)]",
           "before:absolute before:inset-0 before:bg-destructive-foreground/0 hover:before:bg-destructive-foreground/[0.08] active:before:bg-destructive-foreground/[0.12]",
         ].join(" "),
-        // M3 Outlined Button with pop-out
+        // M3 Outlined Button with pop-out - rgb(246, 247, 249) background, rgb(220, 223, 228) border
         outline: [
-          "border-2 border-[hsl(213_60%_30%/0.4)] bg-transparent text-primary",
-          "shadow-[inset_0_0_0_1px_hsl(210_20%_85%/0.6)]",
-          "hover:scale-[1.02] hover:border-[hsl(213_60%_30%/0.6)] hover:bg-primary/[0.05] hover:shadow-[inset_0_0_0_1px_hsl(210_20%_85%/0.8),0_8px_25px_hsl(213_40%_20%/0.1)]",
+          "border border-[rgb(220,223,228)] bg-[rgb(246,247,249)] text-primary",
+          "hover:scale-[1.02] hover:border-[hsl(213_60%_30%/0.6)] hover:bg-primary/[0.05] hover:shadow-[0_8px_25px_hsl(213_40%_20%/0.1)]",
           "active:scale-[0.98] active:bg-primary/[0.12]",
           "focus-visible:border-primary",
         ].join(" "),
-        // M3 Secondary/Tonal with pop-out
+        // M3 Secondary/Tonal with pop-out - rgb(246, 247, 249) background, rgb(220, 223, 228) border
         secondary: [
-          "bg-secondary text-secondary-foreground border border-outline",
+          "bg-[rgb(246,247,249)] text-secondary-foreground border border-[rgb(220,223,228)]",
           "hover:scale-[1.02] hover:shadow-[0_8px_25px_hsl(213_40%_20%/0.12)]",
           "active:scale-[0.98] active:shadow-[0_2px_8px_hsl(213_40%_20%/0.08)]",
           "before:absolute before:inset-0 before:bg-secondary-foreground/0 hover:before:bg-secondary-foreground/[0.08] active:before:bg-secondary-foreground/[0.12]",

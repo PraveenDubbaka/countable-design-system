@@ -15,13 +15,13 @@ const Input = React.forwardRef<HTMLInputElement, React.ComponentProps<"input"> &
       <input
         type={type}
         className={cn(
-          // Base styles - using design token for border radius
-          "flex w-full rounded-button ring-offset-background transition-all duration-200",
+          // Base styles - 10px border radius
+          "flex w-full rounded-[10px] ring-offset-background transition-all duration-200",
           sizeClasses[size],
           "file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground",
-          // Default state: subtle gray border (light mode)
-          "bg-card text-foreground placeholder:text-muted-foreground/70",
-          "border-2 border-[hsl(210_20%_85%)]",
+          // Default state: rgb(246, 247, 249) background, rgb(220, 223, 228) border, 1px border
+          "bg-[rgb(246,247,249)] text-foreground placeholder:text-muted-foreground/70",
+          "border border-[rgb(220,223,228)]",
           // Dark mode: darker border
           "dark:border-[hsl(220_15%_30%)] dark:bg-card",
           // Hover state: slightly darker border

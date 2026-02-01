@@ -17,11 +17,11 @@ const SelectTrigger = React.forwardRef<
   <SelectPrimitive.Trigger
     ref={ref}
     className={cn(
-      // Base styles - using design token for border radius
-      "flex h-12 w-full items-center justify-between rounded-button px-4 py-3 text-sm ring-offset-background transition-all duration-200 [&>span]:line-clamp-1",
-      // Default state: subtle gray border
-      "bg-card text-foreground placeholder:text-muted-foreground",
-      "border-2 border-[hsl(210_20%_85%)]",
+      // Base styles - 10px border radius
+      "flex h-9 w-full items-center justify-between rounded-[10px] px-3 py-2 text-sm ring-offset-background transition-all duration-200 [&>span]:line-clamp-1",
+      // Default state: rgb(246, 247, 249) background, rgb(220, 223, 228) border, 1px border
+      "bg-[rgb(246,247,249)] text-foreground placeholder:text-muted-foreground",
+      "border border-[rgb(220,223,228)]",
       // Dark mode: darker border
       "dark:border-[hsl(220_15%_30%)] dark:bg-card",
       // Hover state: slightly darker border
@@ -86,10 +86,10 @@ const SelectContent = React.forwardRef<
     <SelectPrimitive.Content
       ref={ref}
       className={cn(
-        // Base styles - curved edges matching trigger using design token
-        "relative z-50 max-h-96 min-w-[8rem] overflow-hidden rounded-button",
-        // Clean border with shadow
-        "border-2 border-[hsl(210_20%_85%)] bg-popover text-popover-foreground",
+        // Base styles - 10px border radius matching trigger
+        "relative z-50 max-h-96 min-w-[8rem] overflow-hidden rounded-[10px]",
+        // Clean border with shadow - rgb(246, 247, 249) background, rgb(220, 223, 228) border
+        "border border-[rgb(220,223,228)] bg-[rgb(246,247,249)] text-popover-foreground",
         "shadow-lg",
         // Dark mode
         "dark:border-[hsl(220_15%_30%)] dark:bg-popover",
