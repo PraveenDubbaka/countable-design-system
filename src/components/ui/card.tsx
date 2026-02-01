@@ -27,11 +27,11 @@ const Card = React.forwardRef<
 ));
 Card.displayName = "Card";
 
-// Styled Card with hover glow
+// Styled Card with optional hover glow (hover disabled by default)
 const StyledCard = React.forwardRef<
   HTMLDivElement,
   React.HTMLAttributes<HTMLDivElement> & { hover?: boolean; glow?: boolean }
->(({ className, hover = true, glow = false, ...props }, ref) => (
+>(({ className, hover = false, glow = false, ...props }, ref) => (
   <div
     ref={ref}
     className={cn(
