@@ -20,7 +20,7 @@ export function Layout({ children, title, showActions = false, showBackButton = 
       
       <div className="layout-content flex-1 flex flex-col overflow-hidden">
         {/* Global Header */}
-        <div className="rounded-tl-2xl overflow-hidden">
+        <div className="header-wrapper rounded-tl-2xl overflow-hidden bg-background">
           <GlobalHeader />
         </div>
         
