@@ -241,8 +241,8 @@ export default function Dashboard() {
                 <p className="text-sm text-muted-foreground mt-1">Active engagements from last 6 months</p>
               </div>
               <div className="relative">
-                <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground icon-search" />
-                <Input placeholder="Search Engagement" value={searchQuery} onChange={e => setSearchQuery(e.target.value)} className="pl-10 w-64" />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground icon-search" />
+                <Input placeholder="Search Engagement" value={searchQuery} onChange={e => setSearchQuery(e.target.value)} className="pl-9 w-48 h-9 text-sm" />
               </div>
             </div>
 
