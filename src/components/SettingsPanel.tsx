@@ -99,10 +99,10 @@ function MyAccountContent() {
   return (
     <div className="space-y-6">
       <Tabs defaultValue="profile" className="w-full">
-        <TabsList className="bg-muted/50">
-          <TabsTrigger value="profile">Profile</TabsTrigger>
-          <TabsTrigger value="firm-info">Firm Info</TabsTrigger>
-          <TabsTrigger value="timezone">Time Zone</TabsTrigger>
+        <TabsList className="bg-muted border border-border">
+          <TabsTrigger value="profile" className="data-[state=active]:bg-background data-[state=active]:shadow-sm">Profile</TabsTrigger>
+          <TabsTrigger value="firm-info" className="data-[state=active]:bg-background data-[state=active]:shadow-sm">Firm Info</TabsTrigger>
+          <TabsTrigger value="timezone" className="data-[state=active]:bg-background data-[state=active]:shadow-sm">Time Zone</TabsTrigger>
         </TabsList>
 
         <TabsContent value="profile" className="mt-6 space-y-8">
