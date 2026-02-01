@@ -1,15 +1,24 @@
 import { useState } from "react";
-import { X, Sparkles, Mic, Send, Hash, Download, Globe, AtSign, FolderOpen, Link2, ChevronDown, FileText, BarChart2, TrendingUp, ListChecks, Layers, Sun, Unlock, Settings, MessageSquare, HelpCircle, Cog } from "lucide-react";
+import { X, Sparkles, Mic, Send, Hash, Download, Globe, AtSign, FolderOpen, Link2, ChevronDown, FileText, BarChart2, TrendingUp, ListChecks, Layers, Sun, Unlock, Settings, MessageSquare, HelpCircle, Cog, History, LayoutDashboard, Wrench } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
 
 interface AskLukaOverlayProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }
+
+// Luka overlay sidebar icons
+const lukaSidebarItems = [
+  { icon: History, label: "History", active: false },
+  { icon: MessageSquare, label: "Chat", active: true },
+  { icon: LayoutDashboard, label: "Dashboard", active: false },
+  { icon: Wrench, label: "Tools", active: false },
+];
 
 export function AskLukaOverlay({ open, onOpenChange }: AskLukaOverlayProps) {
   const [message, setMessage] = useState("");
@@ -43,61 +52,98 @@ export function AskLukaOverlay({ open, onOpenChange }: AskLukaOverlayProps) {
   return (
     <div 
       className={cn(
-        "fixed inset-0 z-50 bg-background",
+        "fixed top-0 right-0 bottom-0 left-14 z-50 bg-background",
         "animate-in slide-in-from-top duration-300 ease-out"
       )}
     >
-      {/* Header */}
-      <header className="h-14 flex items-center justify-between px-6 border-b border-border">
-        {/* Left - Logo and title */}
-        <div className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-[#7A31D8] flex items-center justify-center">
-            <Sparkles className="h-4 w-4 text-white" />
-          </div>
-          <div>
-            <h1 className="text-base font-semibold">Luka</h1>
-            <p className="text-xs text-muted-foreground">Workspaces</p>
-          </div>
-        </div>
+      <div className="flex h-full">
+        {/* Luka-specific icon sidebar */}
+        <aside className="w-14 flex flex-col items-center py-4 border-r border-border bg-muted/30">
+          {lukaSidebarItems.map((item, idx) => (
+            <Tooltip key={idx}>
+              <TooltipTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className={cn(
+                    "h-10 w-10 rounded-xl mb-2",
+                    item.active && "bg-primary/10 text-primary"
+                  )}
+                >
+                  <item.icon className="h-5 w-5" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent side="right">{item.label}</TooltipContent>
+            </Tooltip>
+          ))}
+          
+          {/* Spacer */}
+          <div className="flex-1" />
+          
+          {/* Bottom icons */}
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button variant="ghost" size="icon" className="h-10 w-10 rounded-xl mb-2">
+                <Settings className="h-5 w-5 text-muted-foreground" />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent side="right">Settings</TooltipContent>
+          </Tooltip>
+        </aside>
 
-        {/* Right - Controls */}
-        <div className="flex items-center gap-2">
-          <Button variant="default" size="sm" className="gap-2 rounded-full bg-primary hover:bg-primary/90">
-            <Sparkles className="h-4 w-4" />
-            Autonomous
-            <ChevronDown className="h-3 w-3" />
-          </Button>
-          <Button variant="ghost" size="sm" className="gap-2">
-            <Settings className="h-4 w-4" />
-            Settings
-          </Button>
-          <Button variant="ghost" size="icon" className="h-9 w-9">
-            <MessageSquare className="h-5 w-5" />
-          </Button>
-          <Button variant="ghost" size="icon" className="h-9 w-9">
-            <HelpCircle className="h-5 w-5" />
-          </Button>
-          <Button variant="ghost" size="icon" className="h-9 w-9 relative">
-            <Sparkles className="h-5 w-5" />
-            <span className="absolute -top-0.5 -right-0.5 w-4 h-4 rounded-full bg-destructive text-[9px] text-white flex items-center justify-center font-medium">2</span>
-          </Button>
-          <Button variant="ghost" size="icon" className="h-9 w-9">
-            <Cog className="h-5 w-5" />
-          </Button>
-          <Button 
-            variant="ghost" 
-            size="icon" 
-            className="h-9 w-9"
-            onClick={() => onOpenChange(false)}
-          >
-            <X className="h-5 w-5" />
-          </Button>
-        </div>
-      </header>
+        {/* Main overlay content */}
+        <div className="flex-1 flex flex-col">
+          {/* Header */}
+          <header className="h-14 flex items-center justify-between px-6 border-b border-border">
+            {/* Left - Logo and title */}
+            <div className="flex items-center gap-3">
+              <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-[#7A31D8] flex items-center justify-center">
+                <Sparkles className="h-4 w-4 text-white" />
+              </div>
+              <div>
+                <h1 className="text-base font-semibold">Luka</h1>
+                <p className="text-xs text-muted-foreground">Workspaces</p>
+              </div>
+            </div>
 
-      <div className="flex h-[calc(100vh-3.5rem)]">
-        {/* Sidebar */}
-        <aside className="w-80 border-r border-border flex flex-col">
+            {/* Right - Controls */}
+            <div className="flex items-center gap-2">
+              <Button variant="default" size="sm" className="gap-2 rounded-full bg-primary hover:bg-primary/90">
+                <Sparkles className="h-4 w-4" />
+                Autonomous
+                <ChevronDown className="h-3 w-3" />
+              </Button>
+              <Button variant="ghost" size="sm" className="gap-2">
+                <Settings className="h-4 w-4" />
+                Settings
+              </Button>
+              <Button variant="ghost" size="icon" className="h-9 w-9">
+                <MessageSquare className="h-5 w-5" />
+              </Button>
+              <Button variant="ghost" size="icon" className="h-9 w-9">
+                <HelpCircle className="h-5 w-5" />
+              </Button>
+              <Button variant="ghost" size="icon" className="h-9 w-9 relative">
+                <Sparkles className="h-5 w-5" />
+                <span className="absolute -top-0.5 -right-0.5 w-4 h-4 rounded-full bg-destructive text-[9px] text-white flex items-center justify-center font-medium">2</span>
+              </Button>
+              <Button variant="ghost" size="icon" className="h-9 w-9">
+                <Cog className="h-5 w-5" />
+              </Button>
+              <Button 
+                variant="ghost" 
+                size="icon" 
+                className="h-9 w-9"
+                onClick={() => onOpenChange(false)}
+              >
+                <X className="h-5 w-5" />
+              </Button>
+            </div>
+          </header>
+
+          <div className="flex flex-1 overflow-hidden">
+            {/* Workspaces Sidebar */}
+            <aside className="w-80 border-r border-border flex flex-col">
           <div className="p-4 flex items-center justify-between border-b border-border">
             <div className="flex items-center gap-2">
               <FolderOpen className="h-5 w-5 text-muted-foreground" />
@@ -325,6 +371,8 @@ export function AskLukaOverlay({ open, onOpenChange }: AskLukaOverlayProps) {
             </div>
           </div>
         </main>
+          </div>
+        </div>
       </div>
     </div>
   );
