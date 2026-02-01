@@ -5,19 +5,14 @@
 /* Double border focus effect for form inputs */
 .input-double-border:focus,
 .input-double-border:focus-visible {
-  outline: none;
-  /* Keep the inner border neutral, add an outer ring + inner gap to match screenshot */
+  /* Match screenshot: light inner border + blue outer ring separated by a small gap */
   border-color: hsl(var(--border-light)) !important;
   /* Hard override any Tailwind ring vars that could be injected by focus-visible utilities */
   --tw-ring-offset-shadow: 0 0 #0000 !important;
   --tw-ring-shadow: 0 0 #0000 !important;
-  /* Ensure the focus ring renders above adjacent elements */
-  position: relative;
-  z-index: 1;
-  box-shadow:
-    0 0 0 2px hsl(var(--background)) !important,
-    0 0 0 5px hsl(var(--border-focus)) !important,
-    inset 0 1px 2px hsl(var(--m3-shadow) / 0.08) !important;
+  outline: 3px solid hsl(var(--border-focus)) !important;
+  outline-offset: 2px !important;
+  box-shadow: inset 0 1px 2px hsl(var(--m3-shadow) / 0.08) !important;
 }
 
 .dark .input-double-border:focus,
@@ -25,12 +20,9 @@
   border-color: hsl(var(--border)) !important;
   --tw-ring-offset-shadow: 0 0 #0000 !important;
   --tw-ring-shadow: 0 0 #0000 !important;
-  position: relative;
-  z-index: 1;
-  box-shadow:
-    0 0 0 2px hsl(var(--card)) !important,
-    0 0 0 5px hsl(var(--border-focus)) !important,
-    inset 0 1px 2px hsl(var(--m3-shadow) / 0.25) !important;
+  outline: 3px solid hsl(var(--border-focus)) !important;
+  outline-offset: 2px !important;
+  box-shadow: inset 0 1px 2px hsl(var(--m3-shadow) / 0.25) !important;
 }
 
 /* Custom shadow overrides */
