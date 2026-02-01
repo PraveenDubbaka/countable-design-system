@@ -12,13 +12,13 @@ const Card = React.forwardRef<
     className={cn(
       // Base styles
       "rounded-2xl bg-card text-card-foreground transition-all duration-200 ease-emphasized",
-      "border border-[hsl(210_35%_88%)] shadow-[0_2px_8px_hsl(213_40%_20%/0.06)]",
+      "border border-border shadow-lg",
       // Interactive pop-out effect
       interactive && [
         "cursor-pointer",
-        "hover:scale-[1.01] hover:-translate-y-0.5 hover:shadow-[0_12px_32px_hsl(213_40%_20%/0.12)]",
+        "hover:scale-[1.01] hover:-translate-y-0.5 hover:shadow-xl",
         "hover:border-[hsl(210_35%_82%)]",
-        "active:scale-[0.99] active:translate-y-0 active:shadow-[0_4px_12px_hsl(213_40%_20%/0.08)]",
+        "active:scale-[0.99] active:translate-y-0 active:shadow-md",
       ],
       className,
     )}
@@ -36,10 +36,10 @@ const StyledCard = React.forwardRef<
     ref={ref}
     className={cn(
       "rounded-2xl bg-card text-card-foreground transition-all duration-200 ease-emphasized",
-      "border border-[hsl(210_35%_88%)] shadow-[0_2px_8px_hsl(213_40%_20%/0.06)]",
+      "border border-border shadow-lg",
       hover && [
         "hover:scale-[1.01] hover:-translate-y-0.5",
-        "hover:shadow-[0_12px_32px_hsl(213_40%_20%/0.12),0_0_20px_hsl(207_71%_38%/0.08)]",
+        "hover:shadow-xl",
         "hover:border-[hsl(207_60%_75%)]",
       ],
       glow && "shadow-[0_0_30px_hsl(207_71%_38%/0.1)]",
@@ -59,10 +59,10 @@ const GlassCard = React.forwardRef<
     ref={ref}
     className={cn(
       "rounded-2xl backdrop-blur-xl bg-card/80 text-card-foreground transition-all duration-200 ease-emphasized",
-      "border border-[hsl(210_35%_85%/0.6)] shadow-[0_4px_16px_hsl(213_40%_20%/0.08)]",
+      "border border-border shadow-lg",
       interactive && [
         "cursor-pointer",
-        "hover:scale-[1.01] hover:-translate-y-0.5 hover:shadow-[0_16px_40px_hsl(213_40%_20%/0.15)]",
+        "hover:scale-[1.01] hover:-translate-y-0.5 hover:shadow-xl",
         "hover:bg-card/90 hover:border-[hsl(210_35%_80%)]",
         "active:scale-[0.99] active:translate-y-0",
       ],
@@ -102,12 +102,12 @@ const CardOutlined = React.forwardRef<
   <div
     ref={ref}
     className={cn(
-      "rounded-2xl border-2 border-[hsl(213_60%_30%/0.3)] bg-card/50 text-card-foreground transition-all duration-200 ease-emphasized",
-      "shadow-[inset_0_0_0_1px_hsl(210_20%_85%/0.5)]",
+      "rounded-2xl border-2 border-border bg-card/50 text-card-foreground transition-all duration-200 ease-emphasized",
+      "shadow-lg",
       interactive && [
         "cursor-pointer",
         "hover:scale-[1.01] hover:border-[hsl(213_60%_30%/0.5)] hover:bg-card/70",
-        "hover:shadow-[inset_0_0_0_1px_hsl(210_20%_85%/0.8),0_8px_25px_hsl(213_40%_20%/0.1)]",
+        "hover:shadow-xl",
         "active:scale-[0.99]",
       ],
       className,
