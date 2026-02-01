@@ -28,9 +28,9 @@ const LabeledInput = ({
   error?: boolean;
 }) => {
   return (
-    <div className="flex flex-col gap-1.5">
+    <div className="flex flex-col gap-1">
       {label && (
-        <label className="text-sm font-medium text-foreground">
+        <label className="text-xs font-medium text-foreground">
           {label}
           {required && <span className="text-destructive ml-0.5">*</span>}
         </label>
@@ -83,9 +83,9 @@ const LabeledSelect = ({
   error?: boolean;
 }) => {
   return (
-    <div className="flex flex-col gap-1.5">
+    <div className="flex flex-col gap-1">
       {label && (
-        <label className="text-sm font-medium text-foreground">
+        <label className="text-xs font-medium text-foreground">
           {label}
           {required && <span className="text-destructive ml-0.5">*</span>}
         </label>
@@ -438,7 +438,7 @@ export default function CreateEngagement() {
                     placeholder="Search"
                     value={teamSearch}
                     onChange={(e) => setTeamSearch(e.target.value)}
-                    className="pl-9 pr-4 py-2 text-sm bg-muted rounded-lg outline-none w-48 focus:ring-2 focus:ring-primary/30"
+                    className="pl-9 pr-3 h-9 text-sm bg-card border-2 border-[hsl(210_20%_85%)] rounded-button outline-none w-44 focus:border-[hsl(207_71%_38%)] focus:ring-2 focus:ring-[hsl(207_71%_38%/0.2)]"
                   />
                 </div>
                 <Button variant="outline" className="h-9 px-4 text-sm bg-card hover:bg-muted">
