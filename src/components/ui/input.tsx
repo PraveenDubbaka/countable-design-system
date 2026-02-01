@@ -6,9 +6,9 @@ import { cn } from "@/lib/utils";
 const Input = React.forwardRef<HTMLInputElement, React.ComponentProps<"input"> & { error?: boolean; size?: "default" | "lg" | "xl" }>(
   ({ className, type, error, size = "default", ...props }, ref) => {
     const sizeClasses = {
-      default: "h-12 px-4 py-3 text-sm",
-      lg: "h-14 px-5 py-4 text-base",
-      xl: "h-16 px-6 py-5 text-base",
+      default: "h-9 px-3 py-2 text-sm",
+      lg: "h-12 px-4 py-3 text-base",
+      xl: "h-14 px-5 py-4 text-base",
     };
     
     return (
@@ -51,9 +51,9 @@ Input.displayName = "Input";
 const InputFilled = React.forwardRef<HTMLInputElement, React.ComponentProps<"input"> & { error?: boolean; size?: "default" | "lg" | "xl" }>(
   ({ className, type, error, size = "default", ...props }, ref) => {
     const sizeClasses = {
-      default: "h-12 px-4 py-3 text-sm",
-      lg: "h-14 px-5 py-4 text-base",
-      xl: "h-16 px-6 py-5 text-base",
+      default: "h-9 px-3 py-2 text-sm",
+      lg: "h-12 px-4 py-3 text-base",
+      xl: "h-14 px-5 py-4 text-base",
     };
     
     return (

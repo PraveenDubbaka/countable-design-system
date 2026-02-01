@@ -43,7 +43,7 @@ const LabeledInput = ({
           readOnly={readOnly}
           disabled={disabled}
           className={`
-            w-full h-12 px-4 py-3 text-sm text-foreground rounded-button outline-none transition-all duration-200
+            w-full h-9 px-3 py-2 text-sm text-foreground rounded-button outline-none transition-all duration-200
             ${disabled 
               ? 'bg-muted border-2 border-transparent text-muted-foreground opacity-60 cursor-not-allowed' 
               : error
@@ -96,7 +96,7 @@ const LabeledSelect = ({
           onChange={(e) => onChange(e.target.value)}
           disabled={disabled}
           className={`
-            w-full h-12 px-4 py-3 text-sm text-foreground rounded-button outline-none transition-all duration-200 appearance-none cursor-pointer
+            w-full h-9 px-3 py-2 text-sm text-foreground rounded-button outline-none transition-all duration-200 appearance-none cursor-pointer
             ${disabled 
               ? 'bg-muted border-2 border-transparent text-muted-foreground opacity-60 cursor-not-allowed' 
               : error
