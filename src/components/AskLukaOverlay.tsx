@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from "@/components/ui/tooltip";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { cn } from "@/lib/utils";
 
 interface AskLukaOverlayProps {
@@ -374,16 +375,30 @@ export function AskLukaOverlay({ open, onOpenChange }: AskLukaOverlayProps) {
                     {/* Bottom toolbar */}
                     <div className="flex items-center justify-between mt-3">
                       <div className="flex items-center gap-2">
-                        <Button variant="outline" size="sm" className="h-9 gap-2 px-3">
-                          <Sparkles className="h-4 w-4 text-primary" />
-                          Gemini 3
-                          <ChevronDown className="h-3 w-3 text-muted-foreground" />
-                        </Button>
-                        <Button variant="outline" size="sm" className="h-9 gap-2 px-3">
-                          <FileText className="h-4 w-4 text-muted-foreground" />
-                          Default
-                          <ChevronDown className="h-3 w-3 text-muted-foreground" />
-                        </Button>
+                        <Select defaultValue="gemini-3">
+                          <SelectTrigger className="h-9 w-auto gap-2 px-3">
+                            <Sparkles className="h-4 w-4 text-primary" />
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="gemini-3">Gemini 3</SelectItem>
+                            <SelectItem value="gemini-2">Gemini 2</SelectItem>
+                            <SelectItem value="gpt-5">GPT-5</SelectItem>
+                            <SelectItem value="claude-4">Claude 4</SelectItem>
+                          </SelectContent>
+                        </Select>
+                        <Select defaultValue="default">
+                          <SelectTrigger className="h-9 w-auto gap-2 px-3">
+                            <FileText className="h-4 w-4 text-muted-foreground" />
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="default">Default</SelectItem>
+                            <SelectItem value="creative">Creative</SelectItem>
+                            <SelectItem value="precise">Precise</SelectItem>
+                            <SelectItem value="balanced">Balanced</SelectItem>
+                          </SelectContent>
+                        </Select>
                       </div>
                       <div className="flex items-center gap-0.5">
                         {bottomIcons.map((item, idx) => (
