@@ -1,6 +1,7 @@
 import { useState } from "react";
-import { Search, Bell, User, Sparkles, Moon, Sun } from "lucide-react";
+import { Search, Bell, User, Sparkles, Moon, Sun, Zap } from "lucide-react";
 import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { useThemeContext } from "@/contexts/ThemeContext";
 
@@ -15,16 +16,22 @@ export function GlobalHeader() {
 
       {/* Right side - Ask Luka, Credits, Theme, Notifications, Profile */}
       <div className="flex items-center gap-3">
-        {/* Ask Luka AI Search */}
-        <div className="flex items-center bg-muted rounded-xl px-3 py-2 gap-2 min-w-[200px]">
-          <Sparkles className="h-4 w-4 text-muted-foreground flex-shrink-0" />
+        {/* Ask Luka AI Search - styled like screenshot */}
+        <div className="flex items-center bg-[hsl(213_50%_25%)] dark:bg-[hsl(213_40%_20%)] rounded-full pl-4 pr-1.5 py-1.5 gap-2 min-w-[320px]">
+          <Zap className="h-4 w-4 text-slate-400 flex-shrink-0" />
           <Input 
             type="text"
-            placeholder="Ask Luka..."
+            placeholder="Type here.."
             value={askLukaQuery}
             onChange={(e) => setAskLukaQuery(e.target.value)}
-            className="border-0 bg-transparent h-6 text-sm text-foreground placeholder:text-muted-foreground focus-visible:ring-0 focus-visible:ring-offset-0 px-0"
+            className="border-0 bg-transparent h-7 text-sm text-white placeholder:text-slate-400 focus-visible:ring-0 focus-visible:ring-offset-0 px-0 flex-1"
           />
+          <Button 
+            className="h-8 px-4 rounded-full bg-gradient-to-r from-[#1C63A6] to-[#7A31D8] hover:from-[#1a5a96] hover:to-[#6a2bc2] text-white text-sm font-medium gap-1.5 shadow-md"
+          >
+            <Sparkles className="h-4 w-4" />
+            Ask Luka
+          </Button>
         </div>
 
         {/* AI Credits */}
