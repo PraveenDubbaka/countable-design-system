@@ -82,31 +82,31 @@ export default function Engagements() {
           <div className="flex items-center justify-between">
             <Button
               variant="outline"
-              className="h-12 px-6 text-sm font-medium bg-card border-border/60 hover:bg-muted rounded-xl"
+              className="h-9 px-4 text-sm font-medium bg-card border-border hover:bg-muted"
             >
               {filterPeriod}
-              <ChevronDown className="ml-3 h-4 w-4 icon-chevron-down" />
+              <ChevronDown className="ml-2 h-4 w-4 icon-chevron-down" />
             </Button>
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2">
               <div className="relative">
-                <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground icon-search" />
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground icon-search" />
                 <Input
                   placeholder="Search"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="pl-11 w-72"
+                  className="pl-9 w-44 h-9 text-sm"
                 />
               </div>
               <Button
                 variant="outline"
-                className="h-12 px-6 text-sm font-medium bg-card border-border/60 hover:bg-muted rounded-xl"
+                className="h-9 px-4 text-sm font-medium bg-card border-border hover:bg-muted"
               >
                 <Download className="mr-2 h-4 w-4 icon-download" />
                 Export
               </Button>
               <Button 
                 onClick={() => navigate("/engagements/create")}
-                className="bg-primary hover:bg-primary/90 text-white h-12 px-6 text-sm font-medium rounded-xl"
+                className="bg-primary hover:bg-primary/90 text-white h-9 px-4 text-sm font-medium"
               >
                 Create Engagement
               </Button>
