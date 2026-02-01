@@ -1,4 +1,5 @@
 import { Sidebar } from '@/components/Sidebar';
+import { GlobalHeader } from '@/components/GlobalHeader';
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -18,8 +19,13 @@ export function Layout({ children, title, showActions = false, showBackButton = 
       />
       
       <div className="layout-content flex-1 flex flex-col overflow-hidden">
-        {/* Full-height content area without top header */}
-        <main className="app-main flex-1 overflow-auto bg-background text-foreground rounded-tl-2xl rounded-bl-2xl">
+        {/* Global Header */}
+        <div className="rounded-tl-2xl overflow-hidden">
+          <GlobalHeader />
+        </div>
+        
+        {/* Main content area */}
+        <main className="app-main flex-1 overflow-auto bg-background text-foreground rounded-bl-2xl">
           {children}
         </main>
       </div>
