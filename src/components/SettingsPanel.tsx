@@ -39,7 +39,7 @@ export function SettingsPanel({ open, onOpenChange }: SettingsPanelProps) {
             <Button 
               variant="ghost" 
               size="icon" 
-              className="h-8 w-8"
+              className="h-9 w-9"
               onClick={() => onOpenChange(false)}
             >
               <ArrowLeft className="h-4 w-4" />
@@ -75,7 +75,7 @@ export function SettingsPanel({ open, onOpenChange }: SettingsPanelProps) {
             <Button 
               variant="ghost" 
               size="icon" 
-              className="h-8 w-8"
+              className="h-9 w-9"
               onClick={() => onOpenChange(false)}
             >
               <X className="h-4 w-4" />
