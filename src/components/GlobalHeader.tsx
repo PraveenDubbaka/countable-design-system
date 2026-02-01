@@ -30,11 +30,13 @@ export function GlobalHeader() {
         {/* AI Credits */}
         <Tooltip>
           <TooltipTrigger asChild>
-            <div className="flex items-center gap-2 cursor-pointer px-3 py-2 rounded-xl hover:bg-muted transition-colors">
+            <div 
+              className="flex items-center justify-center w-9 h-9 cursor-pointer rounded-xl hover:bg-muted transition-colors"
+              style={{ borderRadius: '12px' }}
+            >
               <div className="w-6 h-6 rounded-full bg-gradient-to-br from-[#7A31D8] to-[#1C63A6] flex items-center justify-center">
                 <span className="text-[10px] font-bold text-white">L</span>
               </div>
-              <span className="text-sm font-medium text-foreground">Credits</span>
             </div>
           </TooltipTrigger>
           <TooltipContent>Luka AI Credits</TooltipContent>
