@@ -225,7 +225,7 @@ export default function Dashboard() {
         <div className="flex-1 space-y-6">
           {/* Stats Cards - Enhanced spacing and hover effects */}
           <div className="grid grid-cols-5 gap-4">
-            {stats.map((stat, index) => <StyledCard key={index} hover className="p-6">
+            {stats.map((stat, index) => <StyledCard key={index} className="p-6">
                 <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">{stat.label}</p>
                 <p className="text-3xl font-bold text-primary mt-2">{stat.value}</p>
               </StyledCard>)}
