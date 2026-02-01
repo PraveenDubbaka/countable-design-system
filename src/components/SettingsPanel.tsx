@@ -1,10 +1,12 @@
 import { useState } from "react";
-import { ArrowLeft, X, User, FileText, Zap, Bell, Users, Shield, Download } from "lucide-react";
+import { ArrowLeft, X, User, FileText, Zap, Bell, Users, Shield, Download, ChevronDown, ChevronUp, Sparkles, CheckSquare, Database, CircleHelp, MessageSquare, FileOutput, RotateCcw } from "lucide-react";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Switch } from "@/components/ui/switch";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { cn } from "@/lib/utils";
 
 interface SettingsPanelProps {
@@ -83,7 +85,7 @@ export function SettingsPanel({ open, onOpenChange }: SettingsPanelProps) {
           <div className="flex-1 overflow-auto p-6">
             {activeSection === "my-account" && <MyAccountContent />}
             {activeSection === "letterhead" && <PlaceholderContent title="Letterhead & Signature" />}
-            {activeSection === "luka" && <PlaceholderContent title="Luka Settings" />}
+            {activeSection === "luka" && <LukaContent />}
             {activeSection === "notifications" && <PlaceholderContent title="Notifications" />}
             {activeSection === "user-access" && <PlaceholderContent title="User & Access" />}
             {activeSection === "privacy" && <PlaceholderContent title="Privacy & Security" />}
@@ -92,6 +94,157 @@ export function SettingsPanel({ open, onOpenChange }: SettingsPanelProps) {
         </div>
       </SheetContent>
     </Sheet>
+  );
+}
+
+function LukaContent() {
+  const [showAutomatesPanel, setShowAutomatesPanel] = useState(true);
+  const [openSections, setOpenSections] = useState<string[]>(["autopilot-scope"]);
+
+  const toggleSection = (id: string) => {
+    setOpenSections(prev => 
+      prev.includes(id) ? prev.filter(s => s !== id) : [...prev, id]
+    );
+  };
+
+  const expandAll = () => {
+    setOpenSections(lukaSettingsSections.map(s => s.id));
+  };
+
+  const collapseAll = () => {
+    setOpenSections([]);
+  };
+
+  const lukaSettingsSections = [
+    { id: "autopilot-scope", label: "Autopilot Scope", icon: Zap, badge: null },
+    { id: "checklist-coverage", label: "Checklist Coverage", icon: CheckSquare, badge: "4 of 4 selected" },
+    { id: "source-data-trust", label: "Source & Data Trust", icon: Database, badge: null },
+    { id: "confidence-threshold", label: "Confidence Threshold", icon: CircleHelp, badge: null },
+    { id: "client-interaction", label: "Client Interaction Controls", icon: MessageSquare, badge: "All off" },
+    { id: "output-review", label: "Output & Review Preferences", icon: FileOutput, badge: null },
+    { id: "notifications", label: "Notifications", icon: Bell, badge: null },
+  ];
+
+  return (
+    <div className="flex flex-col h-full">
+      <Tabs defaultValue="automation" className="w-full flex-1 flex flex-col">
+        <TabsList className="h-11 bg-[#f0f1f3] dark:bg-muted rounded-full p-1 gap-1 w-fit">
+          <TabsTrigger value="automation" className="rounded-full px-5 text-muted-foreground data-[state=active]:bg-white dark:data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm gap-2">
+            <Zap className="h-4 w-4" />
+            Automation
+          </TabsTrigger>
+          <TabsTrigger value="feedback" className="rounded-full px-5 text-muted-foreground data-[state=active]:bg-white dark:data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm">Feedback</TabsTrigger>
+          <TabsTrigger value="terms" className="rounded-full px-5 text-muted-foreground data-[state=active]:bg-white dark:data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm">Terms of use</TabsTrigger>
+          <TabsTrigger value="privacy" className="rounded-full px-5 text-muted-foreground data-[state=active]:bg-white dark:data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm">Privacy policy</TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="automation" className="mt-6 flex-1 flex flex-col">
+          {/* Header */}
+          <div className="flex items-start justify-between mb-6">
+            <div className="flex items-start gap-3">
+              <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
+                <Zap className="h-5 w-5 text-primary" />
+              </div>
+              <div>
+                <h3 className="font-semibold text-lg">Luka Autopilot Settings</h3>
+                <p className="text-sm text-muted-foreground">Defaults are optimized. Change only if needed.</p>
+              </div>
+            </div>
+            <div className="flex items-center gap-4 text-sm">
+              <button 
+                onClick={expandAll}
+                className="flex items-center gap-1.5 text-muted-foreground hover:text-foreground transition-colors"
+              >
+                <ChevronDown className="h-4 w-4" />
+                Expand All
+              </button>
+              <button 
+                onClick={collapseAll}
+                className="flex items-center gap-1.5 text-muted-foreground hover:text-foreground transition-colors"
+              >
+                <ChevronUp className="h-4 w-4" />
+                Collapse All
+              </button>
+            </div>
+          </div>
+
+          {/* Show Automates Panel Toggle */}
+          <div className="p-4 border border-border rounded-xl mb-4 flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
+                <Sparkles className="h-5 w-5 text-primary" />
+              </div>
+              <div>
+                <p className="font-medium">Show "How Luka Automates" Panel</p>
+                <p className="text-sm text-muted-foreground">Display the automation visualization panel on your dashboard</p>
+              </div>
+            </div>
+            <Switch checked={showAutomatesPanel} onCheckedChange={setShowAutomatesPanel} />
+          </div>
+
+          {/* Collapsible Sections */}
+          <div className="space-y-3 flex-1">
+            {lukaSettingsSections.map((section) => (
+              <Collapsible 
+                key={section.id}
+                open={openSections.includes(section.id)}
+                onOpenChange={() => toggleSection(section.id)}
+              >
+                <CollapsibleTrigger className="w-full">
+                  <div className={cn(
+                    "p-4 border rounded-xl flex items-center justify-between transition-colors hover:bg-muted/50",
+                    openSections.includes(section.id) ? "border-primary bg-primary/5" : "border-border"
+                  )}>
+                    <div className="flex items-center gap-3">
+                      <section.icon className="h-5 w-5 text-muted-foreground" />
+                      <span className="font-medium">{section.label}</span>
+                      {section.badge && (
+                        <span className="text-xs text-muted-foreground bg-muted px-2 py-0.5 rounded-full">
+                          {section.badge}
+                        </span>
+                      )}
+                    </div>
+                    <ChevronDown className={cn(
+                      "h-5 w-5 text-muted-foreground transition-transform",
+                      openSections.includes(section.id) && "rotate-180"
+                    )} />
+                  </div>
+                </CollapsibleTrigger>
+                <CollapsibleContent>
+                  <div className="p-4 border border-t-0 border-border rounded-b-xl bg-muted/20">
+                    <p className="text-sm text-muted-foreground">{section.label} settings content coming soon...</p>
+                  </div>
+                </CollapsibleContent>
+              </Collapsible>
+            ))}
+          </div>
+        </TabsContent>
+
+        <TabsContent value="feedback" className="mt-6">
+          <PlaceholderContent title="Feedback" />
+        </TabsContent>
+
+        <TabsContent value="terms" className="mt-6">
+          <PlaceholderContent title="Terms of Use" />
+        </TabsContent>
+
+        <TabsContent value="privacy" className="mt-6">
+          <PlaceholderContent title="Privacy Policy" />
+        </TabsContent>
+      </Tabs>
+
+      {/* Footer */}
+      <div className="border-t border-border pt-4 mt-6 flex items-center justify-between">
+        <Button variant="outline" className="gap-2">
+          <RotateCcw className="h-4 w-4" />
+          Reset to Defaults
+        </Button>
+        <Button className="gap-2 bg-gradient-to-r from-[#1C63A6] to-[#7A31D8] hover:from-[#1a5a96] hover:to-[#6a2bc2]">
+          <Zap className="h-4 w-4" />
+          Review Settings
+        </Button>
+      </div>
+    </div>
   );
 }
 
