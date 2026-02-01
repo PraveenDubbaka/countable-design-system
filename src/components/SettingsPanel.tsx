@@ -28,8 +28,8 @@ export function SettingsPanel({ open, onOpenChange }: SettingsPanelProps) {
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent 
-        side="left" 
-        className="w-full max-w-4xl p-0 flex gap-0 [&>button]:hidden"
+        side="right" 
+        className="w-full max-w-3xl p-0 flex gap-0 [&>button]:hidden sm:rounded-l-2xl"
       >
         {/* Left Navigation */}
         <div className="w-64 border-r border-border bg-muted/30 flex flex-col">
