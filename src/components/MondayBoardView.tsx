@@ -1139,7 +1139,7 @@ function SortableItemRow({
     }
   };
   const subItemIds = item.subQuestions?.map(sq => sq.id) || [];
-  return <div ref={setNodeRef} style={style} className={`border-t border-border relative ${isDragging ? 'z-10' : ''}`}>
+  return <div ref={setNodeRef} style={style} className={`relative ${isDragging ? 'z-10' : ''}`}>
       {/* Drop indicator line - shows above item when hovering */}
       {isValidDropTarget && <div className="absolute -top-[2px] left-0 right-0 h-1 bg-primary rounded-full z-20 shadow-[0_0_8px_rgba(59,130,246,0.5)]" />}
       {/* Main item row - full row is draggable */}
@@ -1637,11 +1637,11 @@ function SortableGroup({
   // Count total subitems
   const totalSubitems = section.questions.reduce((acc, q) => acc + (q.subQuestions?.length || 0), 0);
   const itemIds = section.questions.map(q => q.id);
-  return <div ref={setNodeRef} style={style} className={`bg-card rounded-lg overflow-hidden shadow-md border-t border-border relative ${isDragging ? 'ring-2 ring-primary ring-offset-2 z-10' : ''} ${isValidDropTarget ? 'ring-2 ring-primary/50' : ''}`}>
+  return <div ref={setNodeRef} style={style} className={`bg-card rounded-lg overflow-hidden shadow-md relative ${isDragging ? 'ring-2 ring-primary ring-offset-2 z-10' : ''} ${isValidDropTarget ? 'ring-2 ring-primary/50' : ''}`}>
       {/* Drop indicator line for groups */}
       {isValidDropTarget && <div className="absolute -top-2 left-0 right-0 h-1 bg-primary rounded-full z-20 shadow-[0_0_8px_rgba(59,130,246,0.5)]" />}
       {/* Group header */}
-      <div {...attributes} {...listeners} className={`flex items-center gap-3 px-4 py-2 bg-muted/50 border-b border-border cursor-grab active:cursor-grabbing ${isDragging ? 'opacity-70' : ''}`}>
+      <div {...attributes} {...listeners} className={`flex items-center gap-3 px-4 py-2 bg-muted/50 cursor-grab active:cursor-grabbing ${isDragging ? 'opacity-70' : ''}`}>
         <div className="w-1 h-6 bg-amber-600 rounded-full" />
         <button onClick={e => {
         e.stopPropagation();
