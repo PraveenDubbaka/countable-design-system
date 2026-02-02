@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { ChevronDown, ChevronRight, ChevronLeft, Search, Plus, Expand, Trash2, Folder, Headphones, Check, FileText, ClipboardList, FileBarChart, StickyNote, Table, Copy, Pencil, FolderInput, MoreVertical, GripVertical, X, Save } from "lucide-react";
 import { Input } from "@/components/ui/input";
@@ -9,6 +9,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import lukaLogo from "@/assets/luka-logo.png";
 import { readJsonFromLocalStorage, removeLocalStorageKey, writeJsonToLocalStorage } from "@/lib/safeJson";
+import { cn } from "@/lib/utils";
 interface Template {
   id: string;
   name: string;
@@ -163,6 +164,72 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
   const [activeTab, setActiveTab] = useState<"firm" | "master">("firm");
   const [searchQuery, setSearchQuery] = useState("");
   const [isTemplatesPanelCollapsed, setIsTemplatesPanelCollapsed] = useState(false);
+
+  // Resizable panel state
+  const [panelWidth, setPanelWidth] = useState(() => {
+    const stored = localStorage.getItem("sidebarPanelWidth");
+    if (stored) {
+      const parsed = parseInt(stored, 10);
+      if (!isNaN(parsed) && parsed >= 200 && parsed <= 500) {
+        return parsed;
+      }
+    }
+    return 300;
+  });
+  const [isResizing, setIsResizing] = useState(false);
+  const [isResizeHovering, setIsResizeHovering] = useState(false);
+  const panelRef = useRef<HTMLDivElement>(null);
+
+  // Save panel width to localStorage
+  useEffect(() => {
+    if (!isTemplatesPanelCollapsed) {
+      localStorage.setItem("sidebarPanelWidth", String(panelWidth));
+    }
+  }, [panelWidth, isTemplatesPanelCollapsed]);
+
+  // Resize handlers
+  const startResizing = useCallback((e: React.MouseEvent) => {
+    e.preventDefault();
+    setIsResizing(true);
+  }, []);
+
+  const stopResizing = useCallback(() => {
+    setIsResizing(false);
+  }, []);
+
+  const resize = useCallback(
+    (e: MouseEvent) => {
+      if (isResizing && panelRef.current) {
+        const panelRect = panelRef.current.getBoundingClientRect();
+        const newWidth = e.clientX - panelRect.left;
+        
+        if (newWidth >= 200 && newWidth <= 500) {
+          setPanelWidth(newWidth);
+        } else if (newWidth < 200) {
+          setPanelWidth(200);
+        } else if (newWidth > 500) {
+          setPanelWidth(500);
+        }
+      }
+    },
+    [isResizing]
+  );
+
+  useEffect(() => {
+    if (isResizing) {
+      window.addEventListener("mousemove", resize);
+      window.addEventListener("mouseup", stopResizing);
+      document.body.style.cursor = "col-resize";
+      document.body.style.userSelect = "none";
+    }
+
+    return () => {
+      window.removeEventListener("mousemove", resize);
+      window.removeEventListener("mouseup", stopResizing);
+      document.body.style.cursor = "";
+      document.body.style.userSelect = "";
+    };
+  }, [isResizing, resize, stopResizing]);
 
   // Persist dropdown selection in localStorage
   const [selectedDropdown, setSelectedDropdown] = useState(() => {
@@ -437,7 +504,17 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
 
       {/* Engagement Sections panel - shown only on engagement detail pages */}
       {location.pathname.startsWith("/engagements/") && location.pathname !== "/engagements/create" && <>
-          <div className={`flex flex-col relative z-40 transition-all duration-300 group/templates ${isTemplatesPanelCollapsed ? "w-0 overflow-hidden shadow-none bg-transparent" : "w-[300px] shadow-md bg-muted rounded-tl-2xl rounded-bl-2xl"}`}>
+          <div 
+            ref={panelRef}
+            style={{ width: isTemplatesPanelCollapsed ? 0 : panelWidth }}
+            className={cn(
+              "flex flex-col relative z-40 transition-all group/templates",
+              isTemplatesPanelCollapsed 
+                ? "overflow-hidden shadow-none bg-transparent" 
+                : "shadow-md bg-muted rounded-tl-2xl rounded-bl-2xl",
+              isResizing && "transition-none"
+            )}
+          >
             <div className={`p-4 pb-2 ${isTemplatesPanelCollapsed ? "hidden" : ""}`}>
               <div className="flex items-center gap-2">
                 <h2 className="font-semibold text-primary text-lg">Engagements</h2>
@@ -506,8 +583,27 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
                 </div>)}
             </div>
 
+            {/* Resize handle */}
+            {!isTemplatesPanelCollapsed && (
+              <div
+                className={cn(
+                  "absolute right-0 top-0 bottom-0 w-1 cursor-col-resize z-30 transition-all duration-150",
+                  isResizing
+                    ? "bg-primary"
+                    : isResizeHovering
+                    ? "bg-[rgb(195,209,223)]"
+                    : "bg-transparent hover:bg-[rgb(195,209,223)]"
+                )}
+                onMouseDown={startResizing}
+                onMouseEnter={() => setIsResizeHovering(true)}
+                onMouseLeave={() => !isResizing && setIsResizeHovering(false)}
+              >
+                <div className="absolute -left-1 -right-1 top-0 bottom-0" />
+              </div>
+            )}
+
             {/* Collapse handle - overlapped on border, visible on hover */}
-            <div className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-1/2 opacity-0 group-hover/templates:opacity-100 transition-opacity duration-200 cursor-pointer z-20" onClick={e => {
+            <div className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-1/2 opacity-0 group-hover/templates:opacity-100 transition-opacity duration-200 cursor-pointer z-40" onClick={e => {
           e.stopPropagation();
           setIsTemplatesPanelCollapsed(!isTemplatesPanelCollapsed);
         }}>
@@ -527,7 +623,17 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
 
       {/* Templates panel - hidden on Dashboard, Clients, Engagements list, and Engagement detail pages */}
       {location.pathname !== "/dashboard" && location.pathname !== "/clients" && location.pathname !== "/engagements" && !location.pathname.startsWith("/engagements/") && <>
-          <div className={`flex flex-col relative z-40 transition-all duration-300 group/templates ${isTemplatesPanelCollapsed ? "w-0 overflow-hidden shadow-none bg-transparent border-r-0" : "w-[300px] shadow-md bg-muted border-r border-border rounded-tl-2xl rounded-bl-2xl"}`}>
+          <div 
+            ref={panelRef}
+            style={{ width: isTemplatesPanelCollapsed ? 0 : panelWidth }}
+            className={cn(
+              "flex flex-col relative z-40 transition-all group/templates",
+              isTemplatesPanelCollapsed 
+                ? "overflow-hidden shadow-none bg-transparent border-r-0" 
+                : "shadow-md bg-muted border-r border-border rounded-tl-2xl rounded-bl-2xl",
+              isResizing && "transition-none"
+            )}
+          >
             <div className={`p-4 ${isTemplatesPanelCollapsed ? "hidden" : ""}`}>
               <h2 className="font-semibold text-primary text-lg mb-3">Templates</h2>
               <DropdownMenu>
@@ -598,8 +704,27 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
               {templates.map(template => renderTemplate(template))}
             </div>
 
+            {/* Resize handle */}
+            {!isTemplatesPanelCollapsed && (
+              <div
+                className={cn(
+                  "absolute right-0 top-0 bottom-0 w-1 cursor-col-resize z-30 transition-all duration-150",
+                  isResizing
+                    ? "bg-primary"
+                    : isResizeHovering
+                    ? "bg-[rgb(195,209,223)]"
+                    : "bg-transparent hover:bg-[rgb(195,209,223)]"
+                )}
+                onMouseDown={startResizing}
+                onMouseEnter={() => setIsResizeHovering(true)}
+                onMouseLeave={() => !isResizing && setIsResizeHovering(false)}
+              >
+                <div className="absolute -left-1 -right-1 top-0 bottom-0" />
+              </div>
+            )}
+
             {/* Collapse handle - overlapped on border, visible on hover */}
-            <div className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-1/2 opacity-0 group-hover/templates:opacity-100 transition-opacity duration-200 cursor-pointer z-20" onClick={e => {
+            <div className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-1/2 opacity-0 group-hover/templates:opacity-100 transition-opacity duration-200 cursor-pointer z-40" onClick={e => {
           e.stopPropagation();
           setIsTemplatesPanelCollapsed(!isTemplatesPanelCollapsed);
         }}>
