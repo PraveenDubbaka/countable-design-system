@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { format } from 'date-fns';
 import { 
   Plus, 
   Trash2, 
@@ -12,13 +13,16 @@ import {
   Check,
   ArrowRight,
   Star,
-  Search
+  Search,
+  CalendarIcon
 } from 'lucide-react';
 import { FormElement, FormLayout } from '@/types/checklist';
 import { Button } from '@/components/ui/button';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Checkbox } from '@/components/ui/checkbox';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { Calendar as CalendarComponent } from '@/components/ui/calendar';
+import { cn } from '@/lib/utils';
 
 interface FormLayoutEditorProps {
   formLayout: FormLayout;
@@ -32,6 +36,7 @@ const FORM_ELEMENT_OPTIONS = [
   { type: 'select', label: 'Dropdown', icon: ChevronDown },
   { type: 'checkbox', label: 'Checkbox', icon: Square },
   { type: 'radio', label: 'Radio', icon: Circle },
+  { type: 'date', label: 'Date Picker', icon: CalendarIcon },
   { type: 'button', label: 'Button', icon: MousePointer },
 ] as const;
 
@@ -181,6 +186,50 @@ const LabeledSelect = ({
   );
 };
 
+// Date picker with external label - matching CreateEngagement design system
+const LabeledDatePicker = ({ 
+  label, 
+  required = false,
+}: { 
+  label?: string; 
+  required?: boolean;
+}) => {
+  const [date, setDate] = useState<Date>();
+  
+  return (
+    <div className="flex flex-col gap-1">
+      {label && (
+        <label className="text-xs font-medium text-foreground">
+          {label}
+          {required && <span className="text-destructive ml-0.5">*</span>}
+        </label>
+      )}
+      <Popover>
+        <PopoverTrigger asChild>
+          <button
+            className={cn(
+              "input-double-border w-full h-9 px-3 py-2 text-sm text-left rounded-[10px] outline-none transition-all duration-200 flex items-center justify-between bg-white border border-[#dcdfe4] hover:border-[hsl(210_25%_75%)]",
+              !date && "text-muted-foreground"
+            )}
+          >
+            {date ? format(date, "PPP") : <span>Pick a date</span>}
+            <CalendarIcon className="h-4 w-4 text-muted-foreground" />
+          </button>
+        </PopoverTrigger>
+        <PopoverContent className="w-auto p-0 bg-card border shadow-lg z-50" align="start">
+          <CalendarComponent
+            mode="single"
+            selected={date}
+            onSelect={setDate}
+            initialFocus
+            className={cn("p-3 pointer-events-auto")}
+          />
+        </PopoverContent>
+      </Popover>
+    </div>
+  );
+};
+
 export function FormLayoutEditor({ formLayout, onUpdate, isPreviewMode }: FormLayoutEditorProps) {
   const handleAddColumn = () => {
     if (formLayout.columns >= 5) return;
@@ -214,7 +263,7 @@ export function FormLayoutEditor({ formLayout, onUpdate, isPreviewMode }: FormLa
     const newElement: FormElement = {
       id: element.id,
       type,
-      label: type === 'button' ? 'Submit' : '',
+      label: type === 'button' ? 'Submit' : type === 'date' ? 'Date' : '',
       placeholder: type === 'text-input' || type === 'textarea' ? 'Enter text...' : undefined,
       options: type === 'select' || type === 'radio' ? ['Option 1', 'Option 2'] : undefined,
       buttonStyle: type === 'button' ? 'text-only' : undefined,
@@ -373,6 +422,14 @@ export function FormLayoutEditor({ formLayout, onUpdate, isPreviewMode }: FormLa
           </div>
         );
       
+      case 'date':
+        return (
+          <div className="flex items-center gap-3 p-3 bg-[#F5F8FA] rounded-lg">
+            <CalendarIcon className="h-4 w-4 text-muted-foreground" />
+            <span className="text-sm text-muted-foreground">Date picker preview</span>
+          </div>
+        );
+      
       case 'button':
         const currentStyle = BUTTON_STYLES.find(s => s.value === element.buttonStyle)?.label || 'Text Only';
         const showIconPicker = element.buttonStyle === 'icon-text' || element.buttonStyle === 'icon-only';
@@ -482,6 +539,13 @@ export function FormLayoutEditor({ formLayout, onUpdate, isPreviewMode }: FormLa
             <Checkbox />
             {label && <span className="text-sm text-foreground">{label}</span>}
           </div>
+        );
+      
+      case 'date':
+        return (
+          <LabeledDatePicker
+            label={label}
+          />
         );
       
       case 'radio':
