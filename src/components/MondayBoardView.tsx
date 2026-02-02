@@ -1139,14 +1139,14 @@ function SortableItemRow({
     }
   };
   const subItemIds = item.subQuestions?.map(sq => sq.id) || [];
-  return <div ref={setNodeRef} style={style} className={`relative ${isDragging ? 'z-10' : ''}`}>
+  return <div ref={setNodeRef} style={style} className={`relative border-b border-border ${isDragging ? 'z-10' : ''}`}>
       {/* Drop indicator line - shows above item when hovering */}
       {isValidDropTarget && <div className="absolute -top-[2px] left-0 right-0 h-1 bg-primary rounded-full z-20 shadow-[0_0_8px_rgba(59,130,246,0.5)]" />}
       {/* Main item row - full row is draggable */}
       <div {...!isEditingName ? {
       ...attributes,
       ...listeners
-    } : {}} className={`group flex items-stretch hover:bg-muted/50 transition-all border-b border-border ${isSelected ? 'bg-muted/50' : ''} ${!isEditingName ? 'cursor-grab active:cursor-grabbing' : ''} ${isDragging ? 'opacity-50 ring-2 ring-primary ring-offset-1' : ''} ${isValidDropTarget ? 'bg-primary/5' : ''}`}>
+    } : {}} className={`group flex items-stretch hover:bg-muted/50 transition-all ${isSelected ? 'bg-muted/50' : ''} ${!isEditingName ? 'cursor-grab active:cursor-grabbing' : ''} ${isDragging ? 'opacity-50 ring-2 ring-primary ring-offset-1' : ''} ${isValidDropTarget ? 'bg-primary/5' : ''}`}>
         {/* Checkbox */}
         <div className="w-10 shrink-0 flex items-center justify-center self-center">
           <Checkbox checked={isSelected} onCheckedChange={checked => onSelectionChange(checked === true)} className="h-4 w-4 border-border" />
