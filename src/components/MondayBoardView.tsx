@@ -796,7 +796,7 @@ function SortableSubItemRow({
         return <Input value={subItem.answer || ''} onChange={e => handleAnswerChange(e.target.value)} onClick={e => e.stopPropagation()} placeholder="Enter response..." className="h-7 text-xs bg-muted border-border text-foreground" />;
     }
   };
-  return <div ref={setNodeRef} style={style} {...attributes} {...listeners} className={`group flex items-stretch hover:bg-muted/50 transition-all relative border-b border-border cursor-grab active:cursor-grabbing ${isDragging ? 'opacity-50 ring-2 ring-primary ring-offset-1 z-10' : ''} ${isValidDropTarget ? 'bg-primary/5' : ''}`}>
+  return <div ref={setNodeRef} style={style} {...attributes} {...listeners} className={`group flex items-stretch hover:bg-muted/50 transition-all relative border-b border-border/50 cursor-grab active:cursor-grabbing ${isDragging ? 'opacity-50 ring-2 ring-primary ring-offset-1 z-10' : ''} ${isValidDropTarget ? 'bg-primary/5' : ''}`}>
       {/* Drop indicator line */}
       {isValidDropTarget && <div className="absolute -top-[2px] left-0 right-0 h-1 bg-primary rounded-full z-20 shadow-[0_0_8px_rgba(59,130,246,0.5)]" />}
       {/* Checkbox column */}
@@ -805,7 +805,7 @@ function SortableSubItemRow({
       </div>
 
       {/* Sub-item name - width matches header */}
-      <div className="flex-1 min-w-0 px-3 py-2.5 flex items-center gap-2 border-l border-border" style={{
+      <div className="flex-1 min-w-0 px-3 py-2.5 flex items-center gap-2 border-l border-border/50" style={{
       flexBasis: columnWidths.questions
     }}>
         <span className="text-xs font-medium text-muted-foreground shrink-0">{sectionNumber}.{itemNumber}.{index + 1}</span>
@@ -846,7 +846,7 @@ function SortableSubItemRow({
       </div>
 
       {/* Response column with inline type selector and response field */}
-      <div className="flex-1 min-w-0 px-2 py-2 border-l border-border flex items-stretch" style={{
+      <div className="flex-1 min-w-0 px-2 py-2 border-l border-border/50 flex items-stretch" style={{
       flexBasis: columnWidths.response
     }}>
         <div className="flex items-center gap-2 w-full min-w-0">
@@ -860,7 +860,7 @@ function SortableSubItemRow({
       </div>
 
       {/* Additional Explanation column - conditionally rendered */}
-      {visibleColumns.explanation && <div className="flex-1 min-w-0 px-2 py-2 border-l border-border flex items-center" style={{
+      {visibleColumns.explanation && <div className="flex-1 min-w-0 px-2 py-2 border-l border-border/50 flex items-center" style={{
       flexBasis: columnWidths.explanation
     }}>
           {(subItem as any).showExplanation !== false ? <div className="relative group/exp w-full">
@@ -885,7 +885,7 @@ function SortableSubItemRow({
         </div>}
 
       {/* Reference column - conditionally rendered */}
-      {visibleColumns.reference && <div className="flex-1 min-w-0 px-2 py-2 flex items-center border-l border-border" style={{
+      {visibleColumns.reference && <div className="flex-1 min-w-0 px-2 py-2 flex items-center border-l border-border/50" style={{
       flexBasis: columnWidths.reference
     }}>
           <RefButton reference={(subItem as any).reference} onAttach={doc => onUpdate({
@@ -1139,7 +1139,7 @@ function SortableItemRow({
     }
   };
   const subItemIds = item.subQuestions?.map(sq => sq.id) || [];
-  return <div ref={setNodeRef} style={style} className={`relative border-b border-border ${isDragging ? 'z-10' : ''}`}>
+  return <div ref={setNodeRef} style={style} className={`relative border-b border-border/50 ${isDragging ? 'z-10' : ''}`}>
       {/* Drop indicator line - shows above item when hovering */}
       {isValidDropTarget && <div className="absolute -top-[2px] left-0 right-0 h-1 bg-primary rounded-full z-20 shadow-[0_0_8px_rgba(59,130,246,0.5)]" />}
       {/* Main item row - full row is draggable */}
@@ -1162,7 +1162,7 @@ function SortableItemRow({
         </div>
 
         {/* Item name */}
-        <div className="flex-1 min-w-0 px-3 py-1 flex items-center gap-2 border-l border-border" style={{
+        <div className="flex-1 min-w-0 px-3 py-1 flex items-center gap-2 border-l border-border/50" style={{
         flexBasis: columnWidths.questions
       }}>
           <span className="text-xs font-medium text-muted-foreground shrink-0">
@@ -1212,7 +1212,7 @@ function SortableItemRow({
         </div>
 
         {/* Response column with inline type selector and response field */}
-        <div className="flex-1 min-w-0 px-2 py-2 border-l border-border flex items-stretch" style={{
+        <div className="flex-1 min-w-0 px-2 py-2 border-l border-border/50 flex items-stretch" style={{
         flexBasis: columnWidths.response
       }}>
           <div className="flex items-center gap-2 w-full min-w-0">
@@ -1226,7 +1226,7 @@ function SortableItemRow({
         </div>
 
         {/* Additional Explanation column - conditionally rendered */}
-        {visibleColumns.explanation && <div className="flex-1 min-w-0 px-2 py-2 border-l border-border flex items-center" style={{
+        {visibleColumns.explanation && <div className="flex-1 min-w-0 px-2 py-2 border-l border-border/50 flex items-center" style={{
         flexBasis: columnWidths.explanation
       }}>
             {(item as any).showExplanation !== false ? <div className="relative group/exp w-full">
@@ -1251,7 +1251,7 @@ function SortableItemRow({
           </div>}
 
         {/* Reference column - conditionally rendered */}
-        {visibleColumns.reference && <div className="flex-1 min-w-0 px-2 py-2 flex items-center border-l border-border" style={{
+        {visibleColumns.reference && <div className="flex-1 min-w-0 px-2 py-2 flex items-center border-l border-border/50" style={{
         flexBasis: columnWidths.reference
       }}>
             <RefButton reference={(item as any).reference} onAttach={doc => onUpdate({
@@ -1364,7 +1364,7 @@ function SortableItemRow({
                 <div className="w-10 flex items-center justify-center py-2.5">
                   <Checkbox disabled className="h-4 w-4 border-border bg-background opacity-30" />
                 </div>
-                <button onClick={onAddSubItem} className="flex-1 flex items-center gap-2 px-3 py-2.5 text-sm text-muted-foreground hover:text-primary transition-colors text-left border-l border-border" style={{ flexBasis: columnWidths.questions }}>
+                <button onClick={onAddSubItem} className="flex-1 flex items-center gap-2 px-3 py-2.5 text-sm text-muted-foreground hover:text-primary transition-colors text-left border-l border-border/50" style={{ flexBasis: columnWidths.questions }}>
                   + Add 
                 </button>
               </div>}
@@ -1458,7 +1458,7 @@ function ResizableColumnHeader({
     }
     setIsEditing(false);
   };
-  return <div ref={headerRef} className="flex-1 min-w-0 px-2 py-2 flex items-center justify-between group/col relative border-l border-border first:border-l-0" style={{
+  return <div ref={headerRef} className="flex-1 min-w-0 px-2 py-2 flex items-center justify-between group/col relative border-l border-border/50 first:border-l-0" style={{
     flexBasis: width,
     maxWidth: typeof width === 'string' && width.includes('%') ? width : undefined
   }}>
@@ -1641,7 +1641,7 @@ function SortableGroup({
       {/* Drop indicator line for groups */}
       {isValidDropTarget && <div className="absolute -top-2 left-0 right-0 h-1 bg-primary rounded-full z-20 shadow-[0_0_8px_rgba(59,130,246,0.5)]" />}
       {/* Group header */}
-      <div {...attributes} {...listeners} className={`flex items-center gap-3 px-4 py-2 bg-muted/50 border-b border-border cursor-grab active:cursor-grabbing ${isDragging ? 'opacity-70' : ''}`}>
+      <div {...attributes} {...listeners} className={`flex items-center gap-3 px-4 py-2 bg-muted/50 border-b border-border/50 cursor-grab active:cursor-grabbing ${isDragging ? 'opacity-70' : ''}`}>
         <div className="w-1 h-6 bg-amber-600 rounded-full" />
         <button onClick={e => {
         e.stopPropagation();
@@ -1713,7 +1713,7 @@ function SortableGroup({
       })} isPreviewMode={isPreviewMode} /> : <div ref={tableContainerRef} className="overflow-x-auto sm:overflow-x-visible">
               <div className="min-w-[600px] sm:min-w-0">
                 {/* Column headers */}
-                <div className="flex items-center bg-muted/50 text-xs font-medium text-muted-foreground border-b border-border">
+                <div className="flex items-center bg-muted/50 text-xs font-medium text-muted-foreground border-b border-border/50">
                   <div className="w-10 shrink-0 py-2" />
                   <div className="w-8 shrink-0 py-2" />
                   <ResizableColumnHeader label={columnLabels.questions} width={columnWidths.questions} minWidth={200} maxWidth={600} onWidthChange={w => setColumnWidths(prev => ({

@@ -81,11 +81,9 @@ const SelectContent = React.forwardRef<
       className={cn(
         // Base styles - 10px border radius matching trigger
         "relative z-50 max-h-96 min-w-[8rem] overflow-hidden rounded-[10px]",
-        // Clean border with shadow - rgb(246, 247, 249) background, rgb(220, 223, 228) border
-        "border border-[rgb(220,223,228)] bg-[rgb(246,247,249)] text-popover-foreground",
+        // Clean border with shadow (theme-aware)
+        "border border-border bg-popover text-popover-foreground",
         "shadow-lg",
-        // Dark mode
-        "dark:border-[hsl(220_15%_30%)] dark:bg-popover",
         // Animations
         "data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2",
         position === "popper" &&
