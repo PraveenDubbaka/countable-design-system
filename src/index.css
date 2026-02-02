@@ -157,6 +157,7 @@
     --border-light: 210 20% 85%;
     --border-subtle: 210 15% 75%;
     --border-focus: 207 71% 45%;
+    --border-lighter: 210 20% 90%;
 
     /* Futuristic Shape System - Refined curvature */
     --radius: 1.25rem;
@@ -1340,4 +1341,21 @@
   0%, 100% { transform: rotate(0deg); }
   25% { transform: rotate(8deg); }
   75% { transform: rotate(-8deg); }
+}
+
+/* Monday Board View - Lighter borders */
+.monday-board-light-borders,
+.monday-board-light-borders * {
+  --tw-border-opacity: 1;
+}
+
+.monday-board-light-borders .border-border {
+  border-color: hsl(var(--border-lighter));
+}
+
+.monday-board-light-borders [class*="border-l-border"],
+.monday-board-light-borders [class*="border-r-border"],
+.monday-board-light-borders [class*="border-t-border"],
+.monday-board-light-borders [class*="border-b-border"] {
+  border-color: hsl(var(--border-lighter));
 }
