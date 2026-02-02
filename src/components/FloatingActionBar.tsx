@@ -327,9 +327,14 @@ export function FloatingActionBar({
                   <FolderPlus className="h-4 w-4 text-muted-foreground group-hover:text-foreground" />
                 </button>
               </PopoverTrigger>
-              <PopoverContent side="left" align="center" className="w-56 p-2 bg-card border shadow-lg z-50">
+              <PopoverContent 
+                side="left" 
+                align="center" 
+                className="w-56 p-2 bg-card border shadow-lg z-50"
+                onPointerDownOutside={(e) => e.preventDefault()}
+              >
                 {!pendingCategoryType ? (
-                  <div className="flex flex-col gap-1">
+                  <div className="flex flex-col gap-1 min-h-[180px]">
                     <button
                       onClick={() => setPendingCategoryType('empty')}
                       className="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-muted transition-colors"
@@ -370,7 +375,7 @@ export function FloatingActionBar({
                     </button>
                   </div>
                 ) : (
-                  <div className="flex flex-col gap-1">
+                  <div className="flex flex-col gap-1 min-h-[180px]">
                     <div className="px-3 py-2 border-b border-border mb-1">
                       <p className="text-xs text-muted-foreground font-medium">Where to add?</p>
                     </div>
