@@ -321,7 +321,7 @@ export function ChecklistBuilder({ checklist, onUpdate, onSave }: ChecklistBuild
     setPendingAddType(null);
   };
 
-  const handleAddCategoryAtPosition = (position: 'top' | 'bottom', type: 'empty' | 'template' | 'form') => {
+  const handleAddCategoryAtPosition = (position: 'top' | 'bottom', type: 'empty' | 'template' | 'form' | 'inquires-form') => {
     let newSection: Section;
 
     if (type === 'empty') {
@@ -351,7 +351,34 @@ export function ChecklistBuilder({ checklist, onUpdate, onSave }: ChecklistBuild
         ],
         isExpanded: true
       };
+    } else if (type === 'inquires-form') {
+      // Inquires Form with 3 rows of Name, Position, Date fields
+      const timestamp = Date.now();
+      newSection = {
+        id: `section-${timestamp}`,
+        title: 'Inquiries made of management:',
+        questions: [],
+        isExpanded: true,
+        formLayout: {
+          columns: 3,
+          elements: [
+            // Row 1
+            { id: `col-${timestamp}-0`, type: 'text-input', label: 'Name', placeholder: '' },
+            { id: `col-${timestamp}-1`, type: 'text-input', label: 'Position', placeholder: '' },
+            { id: `col-${timestamp}-2`, type: 'text-input', label: 'Date', placeholder: '' },
+            // Row 2
+            { id: `col-${timestamp}-3`, type: 'text-input', label: 'Name', placeholder: '' },
+            { id: `col-${timestamp}-4`, type: 'text-input', label: 'Position', placeholder: '' },
+            { id: `col-${timestamp}-5`, type: 'text-input', label: 'Date', placeholder: '' },
+            // Row 3
+            { id: `col-${timestamp}-6`, type: 'text-input', label: 'Name', placeholder: '' },
+            { id: `col-${timestamp}-7`, type: 'text-input', label: 'Position', placeholder: '' },
+            { id: `col-${timestamp}-8`, type: 'text-input', label: 'Date', placeholder: '' },
+          ]
+        }
+      };
     } else {
+      // Empty form
       newSection = {
         id: `section-${Date.now()}`,
         title: 'Form Section',
