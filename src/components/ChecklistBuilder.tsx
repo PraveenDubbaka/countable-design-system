@@ -365,15 +365,15 @@ export function ChecklistBuilder({ checklist, onUpdate, onSave }: ChecklistBuild
             // Row 1
             { id: `col-${timestamp}-0`, type: 'text-input', label: 'Name', placeholder: '' },
             { id: `col-${timestamp}-1`, type: 'text-input', label: 'Position', placeholder: '' },
-            { id: `col-${timestamp}-2`, type: 'text-input', label: 'Date', placeholder: '' },
+            { id: `col-${timestamp}-2`, type: 'date', label: 'Date' },
             // Row 2
             { id: `col-${timestamp}-3`, type: 'text-input', label: 'Name', placeholder: '' },
             { id: `col-${timestamp}-4`, type: 'text-input', label: 'Position', placeholder: '' },
-            { id: `col-${timestamp}-5`, type: 'text-input', label: 'Date', placeholder: '' },
+            { id: `col-${timestamp}-5`, type: 'date', label: 'Date' },
             // Row 3
             { id: `col-${timestamp}-6`, type: 'text-input', label: 'Name', placeholder: '' },
             { id: `col-${timestamp}-7`, type: 'text-input', label: 'Position', placeholder: '' },
-            { id: `col-${timestamp}-8`, type: 'text-input', label: 'Date', placeholder: '' },
+            { id: `col-${timestamp}-8`, type: 'date', label: 'Date' },
           ]
         }
       };

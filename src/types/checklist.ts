@@ -16,7 +16,7 @@ export interface Question {
 
 export interface FormElement {
   id: string;
-  type: 'empty' | 'text-input' | 'textarea' | 'select' | 'checkbox' | 'radio' | 'button';
+  type: 'empty' | 'text-input' | 'textarea' | 'select' | 'checkbox' | 'radio' | 'button' | 'date';
   label?: string;
   placeholder?: string;
   options?: string[];
