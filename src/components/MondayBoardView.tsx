@@ -1641,7 +1641,7 @@ function SortableGroup({
       {/* Drop indicator line for groups */}
       {isValidDropTarget && <div className="absolute -top-2 left-0 right-0 h-1 bg-primary rounded-full z-20 shadow-[0_0_8px_rgba(59,130,246,0.5)]" />}
       {/* Group header */}
-      <div {...attributes} {...listeners} className={`flex items-center gap-3 px-4 py-2 bg-muted/50 cursor-grab active:cursor-grabbing ${isDragging ? 'opacity-70' : ''}`}>
+      <div {...attributes} {...listeners} className={`flex items-center gap-3 px-4 py-2 bg-muted/50 border-b border-border cursor-grab active:cursor-grabbing ${isDragging ? 'opacity-70' : ''}`}>
         <div className="w-1 h-6 bg-amber-600 rounded-full" />
         <button onClick={e => {
         e.stopPropagation();
