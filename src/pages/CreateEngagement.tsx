@@ -47,8 +47,8 @@ const LabeledInput = ({
             ${disabled 
               ? 'bg-muted border border-transparent text-muted-foreground opacity-60 cursor-not-allowed' 
               : error
-                ? 'bg-[#f6f7f9] border border-destructive'
-                : 'bg-[#f6f7f9] border border-[#dcdfe4] dark:border-[hsl(220_15%_30%)] dark:bg-card hover:border-[hsl(210_25%_75%)] dark:hover:border-[hsl(220_15%_40%)]'
+                ? 'bg-white border border-destructive'
+                : 'bg-white border border-[#dcdfe4] dark:border-[hsl(220_15%_30%)] dark:bg-card hover:border-[hsl(210_25%_75%)] dark:hover:border-[hsl(220_15%_40%)]'
             }
             ${readOnly ? 'cursor-default' : ''}
             ${icon ? 'pr-10' : ''}
@@ -100,8 +100,8 @@ const LabeledSelect = ({
             ${disabled 
               ? 'bg-muted border border-transparent text-muted-foreground opacity-60 cursor-not-allowed' 
               : error
-                ? 'bg-[#f6f7f9] border border-destructive'
-                : 'bg-[#f6f7f9] border border-[#dcdfe4] dark:border-[hsl(220_15%_30%)] dark:bg-card hover:border-[hsl(210_25%_75%)] dark:hover:border-[hsl(220_15%_40%)]'
+                ? 'bg-white border border-destructive'
+                : 'bg-white border border-[#dcdfe4] dark:border-[hsl(220_15%_30%)] dark:bg-card hover:border-[hsl(210_25%_75%)] dark:hover:border-[hsl(220_15%_40%)]'
             }
           `}
         >
@@ -438,7 +438,7 @@ export default function CreateEngagement() {
                     placeholder="Search"
                     value={teamSearch}
                     onChange={(e) => setTeamSearch(e.target.value)}
-                    className="input-double-border pl-9 pr-3 h-9 text-sm bg-[#f6f7f9] border border-[#dcdfe4] rounded-[10px] outline-none w-44"
+                    className="input-double-border pl-9 pr-3 h-9 text-sm bg-white border border-[#dcdfe4] rounded-[10px] outline-none w-44"
                   />
                 </div>
                 <Button variant="outline" className="h-9 px-4 text-sm bg-card hover:bg-muted">
