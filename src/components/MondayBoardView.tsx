@@ -1637,7 +1637,7 @@ function SortableGroup({
   // Count total subitems
   const totalSubitems = section.questions.reduce((acc, q) => acc + (q.subQuestions?.length || 0), 0);
   const itemIds = section.questions.map(q => q.id);
-  return <div ref={setNodeRef} style={style} className={`bg-card rounded-lg overflow-hidden shadow-md relative ${isDragging ? 'ring-2 ring-primary ring-offset-2 z-10' : ''} ${isValidDropTarget ? 'ring-2 ring-primary/50' : ''}`}>
+  return <div ref={setNodeRef} style={{ ...style, borderTopWidth: '1px', borderTopStyle: 'solid', borderTopColor: 'rgb(195, 209, 223)' }} className={`bg-card rounded-lg overflow-hidden shadow-md relative ${isDragging ? 'ring-2 ring-primary ring-offset-2 z-10' : ''} ${isValidDropTarget ? 'ring-2 ring-primary/50' : ''}`}>
       {/* Drop indicator line for groups */}
       {isValidDropTarget && <div className="absolute -top-2 left-0 right-0 h-1 bg-primary rounded-full z-20 shadow-[0_0_8px_rgba(59,130,246,0.5)]" />}
       {/* Group header */}
