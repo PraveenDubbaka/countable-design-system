@@ -591,8 +591,8 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
                   isResizing
                     ? "bg-primary"
                     : isResizeHovering
-                    ? "bg-[rgb(195,209,223)]"
-                    : "bg-transparent hover:bg-[rgb(195,209,223)]"
+                    ? "bg-border"
+                    : "bg-transparent hover:bg-border"
                 )}
                 onMouseDown={startResizing}
                 onMouseEnter={() => setIsResizeHovering(true)}
@@ -712,8 +712,8 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
                   isResizing
                     ? "bg-primary"
                     : isResizeHovering
-                    ? "bg-[rgb(195,209,223)]"
-                    : "bg-transparent hover:bg-[rgb(195,209,223)]"
+                    ? "bg-border"
+                    : "bg-transparent hover:bg-border"
                 )}
                 onMouseDown={startResizing}
                 onMouseEnter={() => setIsResizeHovering(true)}
