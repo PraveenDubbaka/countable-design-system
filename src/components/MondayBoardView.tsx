@@ -37,8 +37,8 @@ const ANSWER_TYPE_OPTIONS: {
   value: 'none',
   label: 'None',
   icon: Circle,
-  bgColor: 'bg-gray-100',
-  iconColor: 'text-gray-400'
+  bgColor: 'bg-muted',
+  iconColor: 'text-muted-foreground'
 }, {
   value: 'yes-no',
   label: 'Yes / No',
@@ -472,31 +472,31 @@ function RefButton({
             <span>+ Ref</span>
           </button>
         </PopoverTrigger>
-        <PopoverContent align="start" className="w-72 p-0 bg-slate-800 border-slate-700 shadow-xl z-50" sideOffset={5}>
+        <PopoverContent align="start" className="w-72 p-0 bg-popover border-border shadow-xl z-50" sideOffset={5}>
           {/* Search input */}
-          <div className="p-3 border-b border-slate-700">
+          <div className="p-3 border-b border-border">
             <div className="relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
-              <SearchInput value={searchTerm} onChange={e => setSearchTerm(e.target.value)} placeholder="Search documents..." className="pl-9 bg-slate-700 border-slate-600 text-white placeholder:text-slate-400 h-9 text-sm" />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <SearchInput value={searchTerm} onChange={e => setSearchTerm(e.target.value)} placeholder="Search documents..." className="pl-9 bg-muted border-border text-foreground placeholder:text-muted-foreground h-9 text-sm" />
             </div>
           </div>
 
           {/* Upload new document option */}
-          <div className="p-2 border-b border-slate-700">
+          <div className="p-2 border-b border-border">
             <button onClick={e => {
             e.stopPropagation();
             fileInputRef.current?.click();
-          }} className="flex items-center gap-2 w-full px-3 py-2.5 rounded-md hover:bg-slate-700 transition-colors text-left">
-              <div className="w-7 h-7 rounded flex items-center justify-center bg-green-100">
+          }} className="flex items-center gap-2 w-full px-3 py-2.5 rounded-md hover:bg-muted transition-colors text-left">
+              <div className="w-7 h-7 rounded flex items-center justify-center bg-green-100 dark:bg-green-900/30">
                 <Upload className="h-4 w-4 text-green-600" />
               </div>
-              <span className="text-sm text-white">Upload new document</span>
+              <span className="text-sm text-foreground">Upload new document</span>
             </button>
           </div>
 
           {/* Existing documents */}
           <div className="p-2 max-h-48 overflow-y-auto">
-            <p className="text-xs text-slate-400 px-2 py-1 mb-1">Existing documents</p>
+            <p className="text-xs text-muted-foreground px-2 py-1 mb-1">Existing documents</p>
             {filteredDocs.length > 0 ? <div className="space-y-1">
                 {filteredDocs.map(doc => <button key={doc.id} onClick={e => {
               e.stopPropagation();
@@ -506,11 +506,11 @@ function RefButton({
               });
               setIsOpen(false);
               setSearchTerm('');
-            }} className="flex items-center gap-2 w-full px-3 py-2 rounded-md hover:bg-slate-700 transition-colors text-left">
-                    <File className="h-4 w-4 text-slate-400" />
-                    <span className="text-sm text-white truncate">{doc.name}</span>
+            }} className="flex items-center gap-2 w-full px-3 py-2 rounded-md hover:bg-muted transition-colors text-left">
+                    <File className="h-4 w-4 text-muted-foreground" />
+                    <span className="text-sm text-foreground truncate">{doc.name}</span>
                   </button>)}
-              </div> : <p className="text-sm text-slate-400 text-center py-3">No documents found</p>}
+              </div> : <p className="text-sm text-muted-foreground text-center py-3">No documents found</p>}
           </div>
         </PopoverContent>
       </Popover>
@@ -2106,9 +2106,9 @@ export function MondayBoardView({
       easing: 'cubic-bezier(0.18, 0.67, 0.6, 1.22)'
     }}>
         {activeId && activeData && <div className={`
-            px-4 py-3 rounded-lg shadow-xl border-2 border-primary bg-white relative
-            ${activeData.type === 'group' ? 'bg-[#F5F8FA]' : ''}
-            ${activeData.type === 'subitem' ? 'ml-10 bg-[#FAFBFC]' : ''}
+            px-4 py-3 rounded-lg shadow-xl border-2 border-primary bg-card relative
+            ${activeData.type === 'group' ? 'bg-muted' : ''}
+            ${activeData.type === 'subitem' ? 'ml-10 bg-muted/50' : ''}
           `}>
             {/* Multi-select count badge */}
             {activeData.selectedCount && activeData.selectedCount > 1 && (
@@ -2117,10 +2117,10 @@ export function MondayBoardView({
               </div>
             )}
             <div className="flex items-center gap-3">
-              <GripVertical className="h-4 w-4 text-gray-400" />
+              <GripVertical className="h-4 w-4 text-muted-foreground" />
               <div className="flex items-center gap-2">
                 {activeData.type === 'group' && <div className="w-1 h-5 bg-amber-600 rounded-full" />}
-                <span className={`text-sm font-medium truncate max-w-[300px] ${activeData.type === 'group' ? 'text-amber-600' : 'text-gray-700'}`} dangerouslySetInnerHTML={{
+                <span className={`text-sm font-medium truncate max-w-[300px] ${activeData.type === 'group' ? 'text-amber-600' : 'text-foreground'}`} dangerouslySetInnerHTML={{
               __html: sanitizeHtml(activeData.text) || 'Untitled'
             }} />
                 {activeData.selectedCount && activeData.selectedCount > 1 && (
