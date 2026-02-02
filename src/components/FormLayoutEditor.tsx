@@ -49,8 +49,8 @@ const ICON_OPTIONS = [
   { value: 'search', label: 'Search', Icon: Search },
 ] as const;
 
-// Floating label input - M3 style matching CreateEngagement
-const FloatingInput = ({ 
+// Standard input with external label - matching CreateEngagement design system
+const LabeledInput = ({ 
   label, 
   value, 
   onChange, 
@@ -65,51 +65,34 @@ const FloatingInput = ({
   required?: boolean;
   disabled?: boolean;
 }) => {
-  const [focused, setFocused] = useState(false);
-  const isActive = focused || value;
-
   return (
-    <div className="relative">
+    <div className="flex flex-col gap-1">
+      {label && (
+        <label className="text-xs font-medium text-foreground">
+          {label}
+          {required && <span className="text-destructive ml-0.5">*</span>}
+        </label>
+      )}
       <input
         type="text"
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        onFocus={() => setFocused(true)}
-        onBlur={() => setFocused(false)}
-        placeholder={!label ? placeholder : (isActive ? placeholder : '')}
+        placeholder={placeholder}
         disabled={disabled}
         className={`
-          w-full h-11 text-sm text-foreground rounded-lg outline-none transition-all duration-200
-          ${label ? 'px-4 pt-4 pb-1' : 'px-4 py-2'}
+          input-double-border w-full h-9 px-3 py-2 text-sm text-foreground rounded-[10px] outline-none transition-all duration-200
           ${disabled 
-            ? 'bg-[#F9FAFB] border-transparent text-muted-foreground opacity-60 cursor-not-allowed' 
-            : focused 
-              ? 'bg-white border-2 border-primary px-[15px]' 
-              : 'bg-white border border-[#E2E5EB] hover:border-[#98A2B3]'
+            ? 'bg-muted border border-transparent text-muted-foreground opacity-60 cursor-not-allowed' 
+            : 'bg-white border border-[#dcdfe4] hover:border-[hsl(210_25%_75%)]'
           }
         `}
       />
-      {label && (
-        <label
-          className={`
-            absolute left-4 transition-all duration-200 pointer-events-none
-            ${isActive 
-              ? `top-1 text-xs ${focused ? 'text-primary' : 'text-muted-foreground'}` 
-              : 'top-1/2 -translate-y-1/2 text-sm text-muted-foreground'
-            }
-            ${disabled ? 'text-muted-foreground opacity-60' : ''}
-          `}
-        >
-          {label}
-          {required && <span className="text-red-500 ml-0.5">*</span>}
-        </label>
-      )}
     </div>
   );
 };
 
-// Floating label textarea - M3 style
-const FloatingTextarea = ({ 
+// Standard textarea with external label - matching CreateEngagement design system
+const LabeledTextarea = ({ 
   label, 
   value, 
   onChange, 
@@ -124,51 +107,34 @@ const FloatingTextarea = ({
   required?: boolean;
   disabled?: boolean;
 }) => {
-  const [focused, setFocused] = useState(false);
-  const isActive = focused || value;
-
   return (
-    <div className="relative">
+    <div className="flex flex-col gap-1">
+      {label && (
+        <label className="text-xs font-medium text-foreground">
+          {label}
+          {required && <span className="text-destructive ml-0.5">*</span>}
+        </label>
+      )}
       <textarea
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        onFocus={() => setFocused(true)}
-        onBlur={() => setFocused(false)}
-        placeholder={!label ? placeholder : (isActive ? placeholder : '')}
+        placeholder={placeholder}
         disabled={disabled}
         rows={3}
         className={`
-          w-full text-sm text-foreground rounded-lg outline-none transition-all duration-200 resize-none
-          ${label ? 'px-4 pt-5 pb-2' : 'px-4 py-3'}
+          input-double-border w-full px-3 py-2 text-sm text-foreground rounded-[10px] outline-none transition-all duration-200 resize-none
           ${disabled 
-            ? 'bg-[#F9FAFB] border-transparent text-muted-foreground opacity-60 cursor-not-allowed' 
-            : focused 
-              ? 'bg-white border-2 border-primary px-[15px]' 
-              : 'bg-white border border-[#E2E5EB] hover:border-[#98A2B3]'
+            ? 'bg-muted border border-transparent text-muted-foreground opacity-60 cursor-not-allowed' 
+            : 'bg-white border border-[#dcdfe4] hover:border-[hsl(210_25%_75%)]'
           }
         `}
       />
-      {label && (
-        <label
-          className={`
-            absolute left-4 transition-all duration-200 pointer-events-none
-            ${isActive 
-              ? `top-1.5 text-xs ${focused ? 'text-primary' : 'text-muted-foreground'}` 
-              : 'top-4 text-sm text-muted-foreground'
-            }
-            ${disabled ? 'text-muted-foreground opacity-60' : ''}
-          `}
-        >
-          {label}
-          {required && <span className="text-red-500 ml-0.5">*</span>}
-        </label>
-      )}
     </div>
   );
 };
 
-// Floating label select - M3 style matching CreateEngagement
-const FloatingSelect = ({ 
+// Standard select with external label - matching CreateEngagement design system
+const LabeledSelect = ({ 
   label, 
   value, 
   onChange, 
@@ -183,49 +149,34 @@ const FloatingSelect = ({
   required?: boolean;
   disabled?: boolean;
 }) => {
-  const [focused, setFocused] = useState(false);
-  const isActive = focused || value;
-
   return (
-    <div className="relative">
-      <select
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        onFocus={() => setFocused(true)}
-        onBlur={() => setFocused(false)}
-        disabled={disabled}
-        className={`
-          w-full h-11 text-sm text-foreground rounded-lg outline-none transition-all duration-200 appearance-none
-          ${label ? 'px-4 pt-4 pb-1' : 'px-4 py-2'}
-          ${disabled 
-            ? 'bg-[#F9FAFB] border-transparent text-muted-foreground opacity-60 cursor-not-allowed' 
-            : focused 
-              ? 'bg-white border-2 border-primary px-[15px] cursor-pointer' 
-              : 'bg-white border border-[#E2E5EB] hover:border-[#98A2B3] cursor-pointer'
-          }
-        `}
-      >
-        <option value="">Select...</option>
-        {options.map((opt, i) => (
-          <option key={i} value={opt}>{opt}</option>
-        ))}
-      </select>
+    <div className="flex flex-col gap-1">
       {label && (
-        <label
-          className={`
-            absolute left-4 transition-all duration-200 pointer-events-none
-            ${isActive 
-              ? `top-1 text-xs ${focused ? 'text-primary' : 'text-muted-foreground'}` 
-              : 'top-1/2 -translate-y-1/2 text-sm text-muted-foreground'
-            }
-            ${disabled ? 'text-muted-foreground opacity-60' : ''}
-          `}
-        >
+        <label className="text-xs font-medium text-foreground">
           {label}
-          {required && <span className="text-red-500 ml-0.5">*</span>}
+          {required && <span className="text-destructive ml-0.5">*</span>}
         </label>
       )}
-      <ChevronDown className={`absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 pointer-events-none ${disabled ? 'text-muted-foreground opacity-60' : 'text-muted-foreground'}`} />
+      <div className="relative">
+        <select
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          disabled={disabled}
+          className={`
+            input-double-border w-full h-9 px-3 py-2 text-sm text-foreground rounded-[10px] outline-none transition-all duration-200 appearance-none cursor-pointer
+            ${disabled 
+              ? 'bg-muted border border-transparent text-muted-foreground opacity-60 cursor-not-allowed' 
+              : 'bg-white border border-[#dcdfe4] hover:border-[hsl(210_25%_75%)]'
+            }
+          `}
+        >
+          <option value="">Select...</option>
+          {options.map((opt, i) => (
+            <option key={i} value={opt}>{opt}</option>
+          ))}
+        </select>
+        <ChevronDown className={`absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 pointer-events-none ${disabled ? 'text-muted-foreground opacity-60' : 'text-muted-foreground'}`} />
+      </div>
     </div>
   );
 };
@@ -343,7 +294,7 @@ export function FormLayoutEditor({ formLayout, onUpdate, isPreviewMode }: FormLa
         {/* Element editor */}
         <div className="flex-1 flex flex-col gap-3 pt-6">
           {/* Label input */}
-          <FloatingInput
+          <LabeledInput
             label="Label"
             value={element.label || ''}
             onChange={(val) => handleUpdateElement(index, { label: val })}
@@ -360,7 +311,7 @@ export function FormLayoutEditor({ formLayout, onUpdate, isPreviewMode }: FormLa
     switch (element.type) {
       case 'text-input':
         return (
-          <FloatingInput
+          <LabeledInput
             label="Placeholder"
             value={element.placeholder || ''}
             onChange={(val) => handleUpdateElement(index, { placeholder: val })}
@@ -369,7 +320,7 @@ export function FormLayoutEditor({ formLayout, onUpdate, isPreviewMode }: FormLa
       
       case 'textarea':
         return (
-          <FloatingInput
+          <LabeledInput
             label="Placeholder"
             value={element.placeholder || ''}
             onChange={(val) => handleUpdateElement(index, { placeholder: val })}
@@ -384,7 +335,7 @@ export function FormLayoutEditor({ formLayout, onUpdate, isPreviewMode }: FormLa
             {(element.options || []).map((opt, i) => (
               <div key={i} className="flex items-center gap-2">
                 <div className="flex-1">
-                  <FloatingInput
+                  <LabeledInput
                     value={opt}
                     onChange={(val) => {
                       const newOptions = [...(element.options || [])];
@@ -429,7 +380,7 @@ export function FormLayoutEditor({ formLayout, onUpdate, isPreviewMode }: FormLa
         
         return (
           <div className="space-y-3">
-            <FloatingSelect
+            <LabeledSelect
               label="Button Style"
               value={currentStyle}
               onChange={(val) => {
@@ -497,7 +448,7 @@ export function FormLayoutEditor({ formLayout, onUpdate, isPreviewMode }: FormLa
       
       case 'text-input':
         return (
-          <FloatingInput
+          <LabeledInput
             label={label}
             value=""
             onChange={() => {}}
@@ -507,7 +458,7 @@ export function FormLayoutEditor({ formLayout, onUpdate, isPreviewMode }: FormLa
       
       case 'textarea':
         return (
-          <FloatingTextarea
+          <LabeledTextarea
             label={label}
             value=""
             onChange={() => {}}
@@ -517,7 +468,7 @@ export function FormLayoutEditor({ formLayout, onUpdate, isPreviewMode }: FormLa
       
       case 'select':
         return (
-          <FloatingSelect
+          <LabeledSelect
             label={label}
             value=""
             onChange={() => {}}
