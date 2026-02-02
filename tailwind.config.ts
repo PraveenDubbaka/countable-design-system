@@ -38,7 +38,10 @@ export default {
         'financial': ['0.875rem', { lineHeight: '1.5', fontWeight: '400', letterSpacing: '0' }],
       },
       colors: {
-        border: "hsl(var(--border))",
+        border: {
+          DEFAULT: "hsl(var(--border))",
+          lighter: "hsl(var(--border-lighter))",
+        },
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
         background: "hsl(var(--background))",

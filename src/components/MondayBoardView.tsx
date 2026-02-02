@@ -2094,7 +2094,7 @@ export function MondayBoardView({
   };
   const sectionIds = checklist.sections.map(s => s.id);
   return <DndContext sensors={sensors} collisionDetection={closestCenter} onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
-      <div className="space-y-4">
+      <div className="space-y-4 monday-board-light-borders">
         <SortableContext items={sectionIds} strategy={verticalListSortingStrategy}>
           {checklist.sections.map((section, idx) => <SortableGroup key={section.id} section={section} sectionIndex={idx} onUpdate={s => handleSectionUpdate(idx, s)} onDelete={() => handleSectionDelete(idx)} onAddItem={() => handleAddItem(idx)} onAddCategoryAtPosition={position => handleAddCategoryAtPosition(idx, position)} isPreviewMode={isPreviewMode} isCompactMode={isCompactMode} onItemsReorder={handleItemsReorder} onSubItemsReorder={handleSubItemsReorder} selectedQuestions={selectedQuestions} onSelectionChange={handleSelectionChange} />)}
         </SortableContext>
