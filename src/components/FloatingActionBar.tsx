@@ -34,7 +34,7 @@ interface FloatingActionBarProps {
   onToggleCompactMode: () => void;
   selectedQuestions: Set<string>;
   onBulkDelete: () => void;
-  onAddCategory: (position: 'top' | 'bottom', type: 'empty' | 'template' | 'form') => void;
+  onAddCategory: (position: 'top' | 'bottom', type: 'empty' | 'template' | 'form' | 'inquires-form') => void;
   isPreviewMode?: boolean;
 }
 
@@ -59,7 +59,7 @@ export function FloatingActionBar({
 }: FloatingActionBarProps) {
   const [showReorderModal, setShowReorderModal] = useState(false);
   const [showAddCategoryPopover, setShowAddCategoryPopover] = useState(false);
-  const [pendingCategoryType, setPendingCategoryType] = useState<'empty' | 'template' | 'form' | null>(null);
+  const [pendingCategoryType, setPendingCategoryType] = useState<'empty' | 'template' | 'form' | 'inquires-form' | null>(null);
   
   // Drag state
   const [snapPosition, setSnapPosition] = useState<SnapPosition>(() => {
@@ -369,8 +369,21 @@ export function FloatingActionBar({
                         <Columns className="h-3.5 w-3.5 text-primary-foreground" />
                       </div>
                       <div className="text-left">
-                        <p className="text-sm font-medium text-foreground">Form Column</p>
+                        <p className="text-sm font-medium text-foreground">Empty Form</p>
                         <p className="text-xs text-muted-foreground">Multi-column form layout</p>
+                      </div>
+                    </button>
+
+                    <button
+                      onClick={() => setPendingCategoryType('inquires-form')}
+                      className="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-muted transition-colors"
+                    >
+                      <div className="w-7 h-7 rounded-md bg-secondary flex items-center justify-center">
+                        <FileText className="h-3.5 w-3.5 text-foreground" />
+                      </div>
+                      <div className="text-left">
+                        <p className="text-sm font-medium text-foreground">Inquires Form</p>
+                        <p className="text-xs text-muted-foreground">Name, Position, Date fields</p>
                       </div>
                     </button>
                   </div>
