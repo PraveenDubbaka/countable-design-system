@@ -1277,7 +1277,7 @@ function SortableItemRow({
                     required: !item.required
                   });
                 }} 
-                className={`p-1.5 rounded hover:bg-muted transition-colors ${item.required ? 'text-primary' : 'text-muted-foreground hover:text-foreground'}`}
+                className={`p-1.5 rounded hover:bg-muted transition-colors ${item.required ? 'text-red-500' : 'text-muted-foreground hover:text-foreground'}`}
               >
                 <Asterisk className="h-4 w-4" />
               </button>
