@@ -383,6 +383,13 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
               toggleGlobalFolder(template.id);
             } else {
               setSelectedGlobalTemplate(template.id);
+              // Navigate to builder with global template ID for preview
+              navigate("/builder", {
+                state: {
+                  globalTemplateId: template.id,
+                  timestamp: Date.now()
+                }
+              });
             }
           }}
         >

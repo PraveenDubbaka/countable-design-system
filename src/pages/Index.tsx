@@ -10,6 +10,7 @@ import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 import { readJsonFromLocalStorage, writeJsonToLocalStorage } from '@/lib/safeJson';
 import { dispatchChecklistSync } from '@/lib/checklistSync';
+import { getGlobalTemplateChecklist } from '@/lib/globalTemplates';
 
 const generateClientMeetingChecklist = (prompt: string): Checklist => {
   const sections: Section[] = [
@@ -288,6 +289,7 @@ type GenerateNavState = {
     savedChecklistId?: string;
   };
   checklistId?: string;
+  globalTemplateId?: string; // For loading global template previews
   timestamp?: number; // Used to force re-render when clicking same route
   clearContent?: boolean; // Used to clear content area (e.g., for Engagements)
 };
@@ -311,6 +313,7 @@ export default function Index() {
   const [checklist, setChecklist] = useState<Checklist | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
   const [currentChecklistId, setCurrentChecklistId] = useState<string | null>(null);
+  const [isGlobalTemplatePreview, setIsGlobalTemplatePreview] = useState(false);
 
   const handleGenerate = async (prompt: string, scope: GenerationScope, savedChecklistId?: string) => {
     setIsGenerating(true);
@@ -333,6 +336,7 @@ export default function Index() {
     const navState = location.state as GenerateNavState | null;
     const gen = navState?.generate;
     const checklistId = navState?.checklistId;
+    const globalTemplateId = navState?.globalTemplateId;
     const clearContent = navState?.clearContent;
 
     // Clear the navigation state so we don't regenerate on refresh/back
@@ -344,7 +348,24 @@ export default function Index() {
     if (clearContent) {
       setChecklist(null);
       setCurrentChecklistId(null);
+      setIsGlobalTemplatePreview(false);
       return;
+    }
+
+    // Load global template by ID (user clicked on a global template)
+    if (globalTemplateId) {
+      const templateChecklist = getGlobalTemplateChecklist(globalTemplateId);
+      if (templateChecklist) {
+        setChecklist(templateChecklist);
+        setCurrentChecklistId(null);
+        setIsGlobalTemplatePreview(true);
+        return;
+      }
+    }
+
+    // Reset global template preview flag for other cases
+    if (!globalTemplateId) {
+      setIsGlobalTemplatePreview(false);
     }
 
     // Load saved checklist by ID (user clicked on existing checklist)
@@ -428,6 +449,7 @@ export default function Index() {
             checklist={checklist} 
             onUpdate={handleChecklistUpdate}
             onSave={handleDirectSave}
+            initialPreviewMode={isGlobalTemplatePreview}
           />
         ) : null}
 
