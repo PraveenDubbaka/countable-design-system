@@ -16,7 +16,7 @@ import { cn } from '@/lib/utils';
 import { readJsonFromLocalStorage, writeJsonToLocalStorage } from '@/lib/safeJson';
 import { Checklist } from '@/types/checklist';
 import { SavedChecklist } from './Sidebar';
-import { toast } from '@/hooks/use-toast';
+import { toast } from 'sonner';
 
 interface Template {
   id: string;
@@ -124,10 +124,7 @@ export function AddToMyTemplatesDialog({
 
     // Close the main dialog and show success toast
     onOpenChange(false);
-    toast({
-      title: "Success!",
-      description: "Checklist successfully added to My Templates",
-    });
+    toast.success("Checklist successfully added to My Templates");
   };
 
   return (
