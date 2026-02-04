@@ -156,7 +156,7 @@ export function AddToMyTemplatesDialog({
                 id="template-name"
                 value={templateName}
                 disabled
-                className="bg-muted cursor-not-allowed border border-border/50"
+                className="bg-muted cursor-not-allowed border border-border"
               />
             </div>
 
