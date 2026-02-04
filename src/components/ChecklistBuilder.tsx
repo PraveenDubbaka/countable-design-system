@@ -57,15 +57,17 @@ import { useRichTextToolbarContext } from '@/contexts/RichTextToolbarContext';
 import { consolidateSectionsToThree } from '@/lib/consolidateSections';
 
 import { MondayBoardView } from './MondayBoardView';
+import { AddToMyTemplatesDialog } from './AddToMyTemplatesDialog';
 
 interface ChecklistBuilderProps {
   checklist: Checklist;
   onUpdate: (checklist: Checklist) => void;
   onSave?: () => void;
   initialPreviewMode?: boolean;
+  isGlobalTemplate?: boolean;
 }
 
-export function ChecklistBuilder({ checklist, onUpdate, onSave, initialPreviewMode = false }: ChecklistBuilderProps) {
+export function ChecklistBuilder({ checklist, onUpdate, onSave, initialPreviewMode = false, isGlobalTemplate = false }: ChecklistBuilderProps) {
   const [isEditingTitle, setIsEditingTitle] = useState(false);
   const [showAddMenu, setShowAddMenu] = useState(false);
   const [pendingAddType, setPendingAddType] = useState<'empty' | 'template' | 'form' | null>(null);
@@ -77,6 +79,7 @@ export function ChecklistBuilder({ checklist, onUpdate, onSave, initialPreviewMo
   const [isPreviewMode, setIsPreviewMode] = useState(initialPreviewMode);
   const [isCompactMode, setIsCompactMode] = useState(false);
   const [selectedQuestions, setSelectedQuestions] = useState<Set<string>>(new Set());
+  const [showAddToMyTemplatesDialog, setShowAddToMyTemplatesDialog] = useState(false);
   
   const objectiveTextareaRef = useRef<HTMLTextAreaElement>(null);
   const { toolbarState, showToolbar, hideToolbar, handleFormatAction, toolbarRef } = useRichTextToolbarContext();
@@ -515,6 +518,23 @@ export function ChecklistBuilder({ checklist, onUpdate, onSave, initialPreviewMo
           )}
           
           <TooltipProvider>
+          {isGlobalTemplate ? (
+            /* For Global Templates: Show "Add to My Templates" button instead of Edit */
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button 
+                  size="default"
+                  className="h-9 gap-2"
+                  onClick={() => setShowAddToMyTemplatesDialog(true)}
+                >
+                  <Plus className="h-4 w-4" />
+                  Add to My Templates
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>Save to your templates library</TooltipContent>
+            </Tooltip>
+          ) : (
+            /* For regular templates: Show Edit/Preview toggle */
             <Tooltip>
               <TooltipTrigger asChild>
                 <Button 
@@ -528,6 +548,7 @@ export function ChecklistBuilder({ checklist, onUpdate, onSave, initialPreviewMo
               </TooltipTrigger>
               <TooltipContent>{isPreviewMode ? 'Edit' : 'Preview'}</TooltipContent>
             </Tooltip>
+          )}
           </TooltipProvider>
         </div>
       </div>
@@ -763,6 +784,14 @@ export function ChecklistBuilder({ checklist, onUpdate, onSave, initialPreviewMo
           toolbarRef={toolbarRef}
         />
       )}
+
+      {/* Add to My Templates Dialog (for Global Templates) */}
+      <AddToMyTemplatesDialog
+        open={showAddToMyTemplatesDialog}
+        onOpenChange={setShowAddToMyTemplatesDialog}
+        checklist={checklist}
+        checklistName={checklist.title}
+      />
     </div>
   );
 }
