@@ -401,7 +401,7 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
             </>
           ) : (
             <>
-              <FileText className="h-4 w-4 text-muted-foreground flex-shrink-0 ml-1" />
+              <ChecklistIcon className="h-4 w-4 flex-shrink-0 ml-1" />
             </>
           )}
           <span className={cn(
