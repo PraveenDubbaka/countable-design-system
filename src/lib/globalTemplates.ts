@@ -241,6 +241,437 @@ export const generateClientAcceptanceContinuanceChecklist = (): Checklist => {
   };
 };
 
+// Independence template data (based on screenshot)
+export const generateIndependenceChecklist = (): Checklist => {
+  const sections: Section[] = [
+    {
+      id: 'section-independence',
+      title: 'Independence Assessment',
+      questions: [
+        {
+          id: 'ind-q1',
+          text: `<p><strong>Are there any significant "threats" to independence that should be disclosed?</strong></p>
+<ol type="a">
+<li>Self-interest.</li>
+<li>Self-review.</li>
+<li>Advocacy.</li>
+<li>Familiarity.</li>
+<li>Intimidation.</li>
+</ol>`,
+          answerType: 'yes-no-na',
+          options: ['Yes', 'No', 'Not Applicable'],
+          required: true,
+          answer: '',
+          subQuestions: [
+            {
+              id: 'ind-q1-sub1',
+              text: '<p>Additional Explanation</p>',
+              answerType: 'long-answer',
+              options: [],
+              required: false,
+              answer: ''
+            }
+          ]
+        },
+        {
+          id: 'ind-q2',
+          text: `<p><strong>Do any of the following conditions apply to the firm or any staff member who will be performing the engagement?</strong> (One yes or no) and then comment section to add details. Also capability to add document references as needed.</p>
+<ol type="a">
+<li>Having a financial interest in a client.</li>
+<li>Loans and guarantees to/from client.</li>
+<li>Close business relationships with client.</li>
+<li>Family and personal relationships with client.</li>
+<li>Recent employment with client serving as officer, director or company secretary of client.</li>
+<li>Acceptance of significant gifts or hospitality from client.</li>
+<li>Fee quote that is considerably less than the previous accountant (charitable work excluded).</li>
+<li>Other: Making key decisions on behalf of a client, significant journal entries or adjustments without client approval.</li>
+</ol>`,
+          answerType: 'yes-no-na',
+          options: ['Yes', 'No', 'Not Applicable'],
+          required: true,
+          answer: '',
+          subQuestions: [
+            {
+              id: 'ind-q2-sub1',
+              text: '<p>Additional Explanation</p>',
+              answerType: 'long-answer',
+              options: [],
+              required: false,
+              answer: ''
+            }
+          ]
+        },
+        {
+          id: 'ind-q3',
+          text: '<p><strong>Have we identified any impairment of independence under the Code of Professional Conduct / Code of Ethics?</strong> (If yes, it should be disclosed in the compilation engagement report.)</p>',
+          answerType: 'yes-no-na',
+          options: ['Yes', 'No', 'Not Applicable'],
+          required: true,
+          answer: '',
+          subQuestions: [
+            {
+              id: 'ind-q3-sub1',
+              text: '<p>Additional Explanation</p>',
+              answerType: 'long-answer',
+              options: [],
+              required: false,
+              answer: ''
+            }
+          ]
+        },
+        {
+          id: 'ind-q4',
+          text: `<p><strong>Where a prohibition exists or where safeguards will not reduce a threat to an acceptable level, have we disclosed the activity, interest or relationship that impairs our independence?</strong></p>
+<p><em>(Note: The nature and extent of lack of independence are required disclosures in the compilation engagement report.)</em></p>`,
+          answerType: 'yes-no-na',
+          options: ['Yes', 'No', 'Not Applicable'],
+          required: true,
+          answer: '',
+          subQuestions: [
+            {
+              id: 'ind-q4-sub1',
+              text: '<p>Additional Explanation</p>',
+              answerType: 'long-answer',
+              options: [],
+              required: false,
+              answer: ''
+            }
+          ]
+        }
+      ],
+      isExpanded: true
+    }
+  ];
+
+  return {
+    id: 'global-template-independence',
+    title: 'Independence',
+    description: 'Evaluate independence requirements and identify potential threats.',
+    objective: `This checklist ensures proper evaluation of:
+• Threats to independence (self-interest, self-review, advocacy, familiarity, intimidation)
+• Conditions that may impair independence
+• Required disclosures for any independence impairments`,
+    sections,
+    createdAt: new Date(),
+    updatedAt: new Date()
+  };
+};
+
+// Knowledge of Client Business template data (based on screenshot)
+export const generateKnowledgeOfClientBusinessChecklist = (): Checklist => {
+  const sections: Section[] = [
+    {
+      id: 'section-general-info',
+      title: 'General Information',
+      questions: [
+        {
+          id: 'kcb-q1',
+          text: '<p><strong>Type of entity</strong></p>',
+          answerType: 'long-answer',
+          options: [],
+          required: true,
+          answer: ''
+        },
+        {
+          id: 'kcb-q2',
+          text: '<p><strong>Jurisdiction of incorporation/status date</strong></p>',
+          answerType: 'long-answer',
+          options: [],
+          required: false,
+          answer: ''
+        },
+        {
+          id: 'kcb-q3',
+          text: '<p><strong>Changes to structure/ownership, investments, including any related groups</strong></p>',
+          answerType: 'long-answer',
+          options: [],
+          required: false,
+          answer: ''
+        },
+        {
+          id: 'kcb-q4',
+          text: '<p><strong>Governance And Key Management</strong></p>',
+          answerType: 'long-answer',
+          options: [],
+          required: false,
+          answer: ''
+        },
+        {
+          id: 'kcb-q5',
+          text: '<p><strong>Key advisors to the entity (e.g., legal and bank)</strong></p>',
+          answerType: 'long-answer',
+          options: [],
+          required: false,
+          answer: ''
+        },
+        {
+          id: 'kcb-q6',
+          text: `<p><strong>Users of the FI including any third-party users:</strong></p>`,
+          answerType: 'multiple-choice',
+          options: ['Management', 'Shareholders', 'Directors', 'Others', 'Regulators', 'Related parties', 'All of the above'],
+          required: false,
+          answer: '',
+          subQuestions: [
+            {
+              id: 'kcb-q6-sub1',
+              text: '<p>Additional Explanation</p>',
+              answerType: 'long-answer',
+              options: [],
+              required: false,
+              answer: ''
+            }
+          ]
+        }
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'section-business-ops',
+      title: 'Business And Operations',
+      questions: [
+        {
+          id: 'kcb-q7',
+          text: '<p><strong>The industry and the nature of the entity\'s operations</strong></p>',
+          answerType: 'long-answer',
+          options: [],
+          required: false,
+          answer: ''
+        },
+        {
+          id: 'kcb-q8',
+          text: '<p><strong>The entity\'s products and/or services</strong></p>',
+          answerType: 'long-answer',
+          options: [],
+          required: false,
+          answer: ''
+        },
+        {
+          id: 'kcb-q9',
+          text: '<p><strong>The size of the entity (turnover, revenue, assets or number of employees)</strong></p>',
+          answerType: 'long-answer',
+          options: [],
+          required: false,
+          answer: ''
+        },
+        {
+          id: 'kcb-q10',
+          text: '<p><strong>Joint/financing arrangements</strong></p>',
+          answerType: 'long-answer',
+          options: [],
+          required: false,
+          answer: ''
+        },
+        {
+          id: 'kcb-q11',
+          text: '<p><strong>Significant changes from prior period</strong></p>',
+          answerType: 'long-answer',
+          options: [],
+          required: false,
+          answer: ''
+        }
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'section-accounting-system',
+      title: 'Accounting System And Records',
+      questions: [
+        {
+          id: 'kcb-q12',
+          text: '<p><strong>Who prepares the information/prepares the accounting records?</strong></p>',
+          answerType: 'long-answer',
+          options: [],
+          required: false,
+          answer: ''
+        },
+        {
+          id: 'kcb-q13',
+          text: '<p><strong>Primary accounting software used:</strong></p>',
+          answerType: 'multiple-choice',
+          options: ['Manual/none', 'QuickBooks online', 'Xero/Zoho', 'PC Based Desktop, or spreadsheet-style excel'],
+          required: false,
+          answer: '',
+          subQuestions: [
+            {
+              id: 'kcb-q13-sub1',
+              text: '<p>Additional Explanation</p>',
+              answerType: 'long-answer',
+              options: [],
+              required: false,
+              answer: ''
+            }
+          ]
+        },
+        {
+          id: 'kcb-q14',
+          text: `<p><strong>Describe how the entity processes transactions for the preparation of items.</strong> Consider:</p>
+<ul>
+<li>Cash management services (e.g., invoices, cash and debit cards)</li>
+<li>Non-cash activities are identified, classified and accumulated.</li>
+<li>Any concerns with or used in relation to the above or accounting software</li>
+</ul>`,
+          answerType: 'long-answer',
+          options: [],
+          required: false,
+          answer: ''
+        },
+        {
+          id: 'kcb-q15',
+          text: '<p><strong>Revenue</strong> (describe e.g., how the financial information is compiled and summarized, costs recorded, etc.)</p>',
+          answerType: 'long-answer',
+          options: [],
+          required: false,
+          answer: ''
+        },
+        {
+          id: 'kcb-q16',
+          text: '<p><strong>Revenues, receivables, receipts</strong> (e.g., sources of revenue and nature of receivables)</p>',
+          answerType: 'long-answer',
+          options: [],
+          required: false,
+          answer: ''
+        },
+        {
+          id: 'kcb-q17',
+          text: '<p><strong>Purchases, payments, payables</strong> (e.g., major suppliers and liabilities)</p>',
+          answerType: 'long-answer',
+          options: [],
+          required: false,
+          answer: ''
+        },
+        {
+          id: 'kcb-q18',
+          text: '<p><strong>Payroll</strong> (e.g., number of employees, how it operated applicant tax, bonuses)</p>',
+          answerType: 'long-answer',
+          options: [],
+          required: false,
+          answer: ''
+        },
+        {
+          id: 'kcb-q19',
+          text: '<p><strong>Other transactions</strong> (e.g., investments, insurance, inventory, fixed property, is an existing process)</p>',
+          answerType: 'long-answer',
+          options: [],
+          required: false,
+          answer: ''
+        },
+        {
+          id: 'kcb-q20',
+          text: '<p><strong>Describe the period end adjustments expected to be made to the FI on behalf of the entity.</strong></p>',
+          answerType: 'long-answer',
+          options: [],
+          required: false,
+          answer: ''
+        },
+        {
+          id: 'kcb-q21',
+          text: '<p><strong>Describe any matters that required adjustments in prior periods.</strong></p>',
+          answerType: 'long-answer',
+          options: [],
+          required: false,
+          answer: ''
+        }
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'section-bank-reconciling',
+      title: 'Bank Reconciling',
+      questions: [
+        {
+          id: 'kcb-q22',
+          text: '<p><strong>Check the management\'s final basis of accounting and, where applicable, accounting policies used to recognize and measure specific items in the FI.</strong></p>',
+          answerType: 'long-answer',
+          options: [],
+          required: false,
+          answer: ''
+        }
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'section-taxes',
+      title: 'Taxes Of The Entity',
+      questions: [
+        {
+          id: 'kcb-q23',
+          text: '<p><strong>Discuss in general the manner in which the FI intended will be read understanding the entity</strong> (e.g., financial institutions understand the nature of business, foreign customers or transactions, discard whether party transactions and complete the balance)</p>',
+          answerType: 'long-answer',
+          options: [],
+          required: false,
+          answer: ''
+        }
+      ],
+      isExpanded: true
+    }
+  ];
+
+  return {
+    id: 'global-template-knowledge-client-business',
+    title: 'Knowledge of client business',
+    description: 'Document understanding of the client\'s business, operations, and accounting systems.',
+    objective: `This checklist captures essential knowledge about:
+• General entity information and structure
+• Business operations and industry
+• Accounting systems and records
+• Bank reconciliation processes
+• Tax considerations`,
+    sections,
+    createdAt: new Date(),
+    updatedAt: new Date()
+  };
+};
+
+// Planning template data (based on screenshot)
+export const generatePlanningChecklist = (): Checklist => {
+  const sections: Section[] = [
+    {
+      id: 'section-planning',
+      title: 'Planning',
+      questions: [
+        {
+          id: 'plan-q1',
+          text: '<p><strong>Minimum threshold amount which does not require any further investigation or reconciliation by the firm</strong></p>',
+          answerType: 'long-answer',
+          options: [],
+          required: false,
+          answer: ''
+        },
+        {
+          id: 'plan-q2',
+          text: '<p><strong>Document any discussions between client throughout the year regarding their business, major operations or any other information that may be relevant to this engagement.</strong></p>',
+          answerType: 'long-answer',
+          options: [],
+          required: false,
+          answer: ''
+        },
+        {
+          id: 'plan-q3',
+          text: '<p><strong>Any additional comments or thoughts for planning</strong> (To provide space for team to write comments)</p>',
+          answerType: 'long-answer',
+          options: [],
+          required: false,
+          answer: ''
+        }
+      ],
+      isExpanded: true
+    }
+  ];
+
+  return {
+    id: 'global-template-planning',
+    title: 'Planning',
+    description: 'Document planning considerations and discussions for the engagement.',
+    objective: `This checklist documents:
+• Materiality thresholds for the engagement
+• Client discussions throughout the year
+• Additional planning notes and comments`,
+    sections,
+    createdAt: new Date(),
+    updatedAt: new Date()
+  };
+};
+
 // Withdrawal template data (based on screenshot)
 export const generateWithdrawalChecklist = (): Checklist => {
   const sections: Section[] = [
@@ -317,10 +748,224 @@ export const generateWithdrawalChecklist = (): Checklist => {
   };
 };
 
+// Completion template data (based on screenshot)
+export const generateCompletionChecklist = (): Checklist => {
+  const sections: Section[] = [
+    {
+      id: 'section-completion',
+      title: 'Completion',
+      questions: [
+        {
+          id: 'comp-q1',
+          text: `<p><strong>Change in intended use</strong> – Has there been a change in the intended use of the FI? If so, discuss with management whether the intended basis of accounting applied is appropriate.</p>
+<p><em>Note: Consider obtaining a revised engagement letter. (See Form Client acceptance and continuance.)</em></p>`,
+          answerType: 'yes-no-na',
+          options: ['Yes', 'No', 'Not Applicable'],
+          required: true,
+          answer: '',
+          subQuestions: [
+            {
+              id: 'comp-q1-sub1',
+              text: '<p>Additional Explanation</p>',
+              answerType: 'long-answer',
+              options: [],
+              required: false,
+              answer: ''
+            }
+          ]
+        },
+        {
+          id: 'comp-q2',
+          text: `<p><strong>Prepare the FI</strong></p>
+<ol type="a">
+<li>Has the FI been prepared in accordance with the acknowledged basis of accounting documented on Form Knowledge of client business?</li>
+<li>Does the FI disclose the basis of accounting used, and where applicable, accounting policies used to recognize and measure specific items?</li>
+</ol>`,
+          answerType: 'yes-no-na',
+          options: ['Yes', 'No', 'Not Applicable'],
+          required: true,
+          answer: '',
+          subQuestions: [
+            {
+              id: 'comp-q2-sub1',
+              text: '<p>Additional Explanation</p>',
+              answerType: 'long-answer',
+              options: [],
+              required: false,
+              answer: ''
+            }
+          ]
+        },
+        {
+          id: 'comp-q3',
+          text: `<p><strong>Significant judgments made</strong>, where assistance was provided to management in making significant judgments, have those judgments been discussed with management (and documented) to ensure they</p>
+<ol type="a">
+<li>Understand the impact of the judgments on the FI?</li>
+<li>Accept responsibility for the FI?</li>
+</ol>
+<p>Consider:</p>
+<ul>
+<li>Determination of the basis of accounting.</li>
+<li>Selection/application of accounting policies.</li>
+<li>Estimates required (e.g., allowances for doubtful accounts, inventory obsolescence, accounts payable and accruals).</li>
+</ul>`,
+          answerType: 'yes-no-na',
+          options: ['Yes', 'No', 'Not Applicable'],
+          required: true,
+          answer: '',
+          subQuestions: [
+            {
+              id: 'comp-q3-sub1',
+              text: '<p>Additional Explanation</p>',
+              answerType: 'long-answer',
+              options: [],
+              required: false,
+              answer: ''
+            }
+          ]
+        },
+        {
+          id: 'comp-q4',
+          text: `<p><strong>When completed:</strong></p>
+<p>Determine whether any matters exist that would cause the FI to appear misleading.</p>
+<ol type="a">
+<li>Read the FI, taking into consideration knowledge of the entity and the basis of accounting applied.</li>
+<li>Determine whether any matters exist that would cause the FI to appear misleading.</li>
+</ol>`,
+          answerType: 'yes-no-na',
+          options: ['Yes', 'No', 'Not Applicable'],
+          required: true,
+          answer: '',
+          subQuestions: [
+            {
+              id: 'comp-q4-sub1',
+              text: '<p>Additional Explanation</p>',
+              answerType: 'long-answer',
+              options: [],
+              required: false,
+              answer: ''
+            }
+          ]
+        },
+        {
+          id: 'comp-q5',
+          text: `<p><strong>When matters exist that cause the FI to appear misleading:</strong></p>
+<ol type="a">
+<li>Document such matter(s).</li>
+<li>Discuss with management and request additional or corrected information.</li>
+<li>Indicate and document how each matter was resolved.</li>
+</ol>`,
+          answerType: 'yes-no-na',
+          options: ['Yes', 'No', 'Not Applicable'],
+          required: true,
+          answer: '',
+          subQuestions: [
+            {
+              id: 'comp-q5-sub1',
+              text: '<p>Additional Explanation</p>',
+              answerType: 'long-answer',
+              options: [],
+              required: false,
+              answer: ''
+            }
+          ]
+        },
+        {
+          id: 'comp-q6',
+          text: '<p><strong>Reconciliation to accounting records</strong> – Have the accounting records been reconciled to the final FI, including any adjusting journal entries or other amendments that the practitioner has agreed with management?</p>',
+          answerType: 'yes-no-na',
+          options: ['Yes', 'No', 'Not Applicable'],
+          required: true,
+          answer: '',
+          subQuestions: [
+            {
+              id: 'comp-q6-sub1',
+              text: '<p>Additional Explanation</p>',
+              answerType: 'long-answer',
+              options: [],
+              required: false,
+              answer: ''
+            }
+          ]
+        },
+        {
+          id: 'comp-q7',
+          text: `<p><strong>Acknowledgement of responsibility</strong> – Has acknowledgement been obtained from management or those charged with governance, as appropriate, that they have taken responsibility for the final version of the FI, including the basis of accounting?</p>
+<ol type="a">
+<li>A signature on the final version of the FI.</li>
+<li>A written communication (paper or electronic form).</li>
+<li>An oral acknowledgement documented in the working paper file.</li>
+</ol>`,
+          answerType: 'yes-no-na',
+          options: ['Yes', 'No', 'Not Applicable'],
+          required: true,
+          answer: '',
+          subQuestions: [
+            {
+              id: 'comp-q7-sub1',
+              text: '<p>Additional Explanation</p>',
+              answerType: 'long-answer',
+              options: [],
+              required: false,
+              answer: ''
+            }
+          ]
+        },
+        {
+          id: 'comp-q8',
+          text: `<p><strong>Compilation engagement report</strong></p>
+<p>Has the compilation engagement report been:</p>
+<ul>
+<li>Appropriately worded, including any disclosure of impairment of independence in accordance with the provincial Code of Professional Conduct / Code of Ethics?</li>
+<li>Dated when the compilation has been completed in compliance with CSRS 4200?</li>
+<li>Included as documentation in the working papers?</li>
+</ul>`,
+          answerType: 'yes-no-na',
+          options: ['Yes', 'No', 'Not Applicable'],
+          required: true,
+          answer: '',
+          subQuestions: [
+            {
+              id: 'comp-q8-sub1',
+              text: '<p>Additional Explanation</p>',
+              answerType: 'long-answer',
+              options: [],
+              required: false,
+              answer: ''
+            }
+          ]
+        }
+      ],
+      isExpanded: true
+    }
+  ];
+
+  return {
+    id: 'global-template-completion',
+    title: 'Completion',
+    description: 'Final completion checklist for the engagement.',
+    objective: `This checklist ensures proper completion of the engagement:
+• Change in intended use assessment
+• FI preparation verification
+• Significant judgments documentation
+• Misleading matters identification
+• Reconciliation to accounting records
+• Acknowledgement of responsibility
+• Compilation engagement report review`,
+    sections,
+    createdAt: new Date(),
+    updatedAt: new Date()
+  };
+};
+
 // Map of global template IDs to their generator functions
 export const GLOBAL_TEMPLATE_GENERATORS: Record<string, () => Checklist> = {
   'global-1-1': generateClientAcceptanceContinuanceChecklist,
+  'global-1-2': generateIndependenceChecklist,
+  'global-1-3': generateKnowledgeOfClientBusinessChecklist,
+  'global-1-4': generatePlanningChecklist,
   'global-1-5': generateWithdrawalChecklist,
+  'global-1-6': generateCompletionChecklist,
 };
 
 // Get a global template checklist by ID
