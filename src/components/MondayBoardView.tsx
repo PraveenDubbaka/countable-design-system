@@ -804,9 +804,6 @@ function SortableSubItemRow({
         <Checkbox checked={isSelected} onCheckedChange={() => setIsSelected(!isSelected)} className="h-4 w-4 border-border bg-background" />
       </div>
 
-      {/* Spacer column (matches main row chevron column) */}
-      <div className="w-8 shrink-0" />
-
       {/* Sub-item name - width matches header */}
       <div className="flex-1 min-w-0 px-3 py-2.5 flex items-center gap-2 border-l border-border/50" style={{
       flexBasis: columnWidths.questions
@@ -1384,9 +1381,10 @@ function SortableItemRow({
           {/* Continuous vertical bar alongside sub-items */}
           <div className="absolute left-3 top-3 bottom-0 w-0.5 bg-amber-600/70" />
           
-          {/* Sub-items container with left margin for the bar.
-              IMPORTANT: keep width full so % column widths match header/main rows even with ml-8 indent. */}
-          <div className="ml-8 -mr-8 bg-muted/50 rounded-lg overflow-hidden">
+          {/* Sub-items container
+              Keep the ml-8 visual indent, but expand width so percentage-based columns
+              match the header/main rows exactly (no misalignment on resize). */}
+          <div className="ml-8 w-[calc(100%+2rem)] bg-muted/50 rounded-lg overflow-hidden">
 
             <SortableContext items={subItemIds} strategy={verticalListSortingStrategy}>
               {item.subQuestions!.map((sub, idx) => <div key={sub.id} className="">
@@ -1403,8 +1401,6 @@ function SortableItemRow({
                 <div className="w-10 shrink-0 flex items-center justify-center self-center py-2.5">
                   <Checkbox disabled className="h-4 w-4 border-border bg-background opacity-30" />
                 </div>
-
-                <div className="w-8 shrink-0" />
 
                 <div className="flex-1 min-w-0 px-3 py-2.5 flex items-center border-l border-border/50" style={{ flexBasis: columnWidths.questions }}>
                   <button onClick={onAddSubItem} className="w-full text-left text-sm text-muted-foreground hover:text-primary transition-colors">
