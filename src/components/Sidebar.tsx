@@ -671,12 +671,12 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
               <button onClick={() => setActiveTab("firm")} className={`flex-1 py-2 px-1 text-sm font-medium transition-all text-center whitespace-nowrap ${activeTab === "firm" ? "text-primary border-b-[3px]" : "text-muted-foreground hover:text-foreground border-b-[3px] border-transparent"}`} style={activeTab === "firm" ? {
             borderBottomColor: "#0A3159"
           } : undefined}>
-                Firm Templates
+                My Templates
               </button>
               <button onClick={() => setActiveTab("master")} className={`flex-1 py-2 px-1 text-sm font-medium transition-all text-center whitespace-nowrap ${activeTab === "master" ? "text-primary border-b-[3px]" : "text-muted-foreground hover:text-foreground border-b-[3px] border-transparent"}`} style={activeTab === "master" ? {
             borderBottomColor: "#0A3159"
           } : undefined}>
-                Master Library
+                Global Templates
               </button>
             </div>
 
