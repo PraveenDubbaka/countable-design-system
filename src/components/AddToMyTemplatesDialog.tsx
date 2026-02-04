@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react';
-import { Plus, Folder, Check } from 'lucide-react';
+import { useState, useEffect, useMemo } from 'react';
+import { Plus, Folder, Check, FolderPlus } from 'lucide-react';
 import {
   Dialog,
   DialogContent,
@@ -60,15 +60,45 @@ export function AddToMyTemplatesDialog({
   const [selectedFolder, setSelectedFolder] = useState<string | null>(null);
   const [templateName, setTemplateName] = useState(checklistName);
   const [showSuccessDialog, setShowSuccessDialog] = useState(false);
-  const [folders] = useState<Template[]>(initialTemplates);
+  const [folders, setFolders] = useState<Template[]>(initialTemplates);
+  const [isCreatingFolder, setIsCreatingFolder] = useState(false);
+  const [newFolderName, setNewFolderName] = useState('');
+
+  // Get checklist counts per folder
+  const folderChecklistCounts = useMemo(() => {
+    const savedChecklists = readJsonFromLocalStorage<SavedChecklist[]>('savedChecklists', []);
+    const counts: Record<string, number> = {};
+    folders.forEach(folder => {
+      counts[folder.id] = savedChecklists.filter(c => c.folderId === folder.id).length;
+    });
+    return counts;
+  }, [folders, open]); // Recalculate when dialog opens
 
   // Reset state when dialog opens
   useEffect(() => {
     if (open) {
       setTemplateName(checklistName);
       setSelectedFolder(null);
+      setIsCreatingFolder(false);
+      setNewFolderName('');
     }
   }, [open, checklistName]);
+
+  const handleCreateFolder = () => {
+    if (!newFolderName.trim()) return;
+    
+    const newFolder: Template = {
+      id: `folder-${Date.now()}`,
+      name: newFolderName.trim(),
+      type: 'folder',
+      children: [],
+    };
+    
+    setFolders(prev => [...prev, newFolder]);
+    setSelectedFolder(newFolder.id);
+    setIsCreatingFolder(false);
+    setNewFolderName('');
+  };
 
   const handleSave = () => {
     if (!selectedFolder || !templateName.trim()) return;
@@ -125,34 +155,95 @@ export function AddToMyTemplatesDialog({
               <Input
                 id="template-name"
                 value={templateName}
-                onChange={(e) => setTemplateName(e.target.value)}
-                placeholder="Enter template name"
+                readOnly
+                className="bg-muted cursor-default"
               />
             </div>
 
             <div className="space-y-2">
-              <Label>Select Folder</Label>
+              <div className="flex items-center justify-between">
+                <Label>Select Folder</Label>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="h-7 text-xs gap-1"
+                  onClick={() => setIsCreatingFolder(true)}
+                >
+                  <FolderPlus className="h-3.5 w-3.5" />
+                  New Folder
+                </Button>
+              </div>
+              
+              {isCreatingFolder && (
+                <div className="flex gap-2 mb-2">
+                  <Input
+                    value={newFolderName}
+                    onChange={(e) => setNewFolderName(e.target.value)}
+                    placeholder="Folder name"
+                    className="h-8 text-sm"
+                    autoFocus
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter') handleCreateFolder();
+                      if (e.key === 'Escape') {
+                        setIsCreatingFolder(false);
+                        setNewFolderName('');
+                      }
+                    }}
+                  />
+                  <Button
+                    size="sm"
+                    className="h-8"
+                    onClick={handleCreateFolder}
+                    disabled={!newFolderName.trim()}
+                  >
+                    Create
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant="ghost"
+                    className="h-8"
+                    onClick={() => {
+                      setIsCreatingFolder(false);
+                      setNewFolderName('');
+                    }}
+                  >
+                    Cancel
+                  </Button>
+                </div>
+              )}
+              
               <ScrollArea className="h-[200px] rounded-md border p-2">
                 <div className="space-y-1">
-                  {folders.map((folder) => (
-                    <button
-                      key={folder.id}
-                      type="button"
-                      className={cn(
-                        "w-full flex items-center gap-2 px-3 py-2 rounded-md text-sm text-left transition-colors",
-                        selectedFolder === folder.id
-                          ? "bg-primary text-primary-foreground"
-                          : "hover:bg-muted"
-                      )}
-                      onClick={() => setSelectedFolder(folder.id)}
-                    >
-                      <Folder className="h-4 w-4 flex-shrink-0" />
-                      <span className="truncate flex-1">{folder.name}</span>
-                      {selectedFolder === folder.id && (
-                        <Check className="h-4 w-4 flex-shrink-0" />
-                      )}
-                    </button>
-                  ))}
+                  {folders.map((folder) => {
+                    const count = folderChecklistCounts[folder.id] || 0;
+                    return (
+                      <button
+                        key={folder.id}
+                        type="button"
+                        className={cn(
+                          "w-full flex items-center gap-2 px-3 py-2 rounded-md text-sm text-left transition-colors",
+                          selectedFolder === folder.id
+                            ? "bg-primary text-primary-foreground"
+                            : "hover:bg-muted"
+                        )}
+                        onClick={() => setSelectedFolder(folder.id)}
+                      >
+                        <Folder className="h-4 w-4 flex-shrink-0" />
+                        <span className="truncate flex-1">{folder.name}</span>
+                        <span className={cn(
+                          "text-xs flex-shrink-0",
+                          selectedFolder === folder.id
+                            ? "text-primary-foreground/70"
+                            : "text-muted-foreground"
+                        )}>
+                          {count} {count === 1 ? 'Checklist' : 'Checklists'}
+                        </span>
+                        {selectedFolder === folder.id && (
+                          <Check className="h-4 w-4 flex-shrink-0" />
+                        )}
+                      </button>
+                    );
+                  })}
                 </div>
               </ScrollArea>
             </div>
