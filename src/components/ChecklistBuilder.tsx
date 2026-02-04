@@ -62,9 +62,10 @@ interface ChecklistBuilderProps {
   checklist: Checklist;
   onUpdate: (checklist: Checklist) => void;
   onSave?: () => void;
+  initialPreviewMode?: boolean;
 }
 
-export function ChecklistBuilder({ checklist, onUpdate, onSave }: ChecklistBuilderProps) {
+export function ChecklistBuilder({ checklist, onUpdate, onSave, initialPreviewMode = false }: ChecklistBuilderProps) {
   const [isEditingTitle, setIsEditingTitle] = useState(false);
   const [showAddMenu, setShowAddMenu] = useState(false);
   const [pendingAddType, setPendingAddType] = useState<'empty' | 'template' | 'form' | null>(null);
@@ -73,7 +74,7 @@ export function ChecklistBuilder({ checklist, onUpdate, onSave }: ChecklistBuild
   const [isEditingObjective, setIsEditingObjective] = useState(false);
   const [objectiveDraft, setObjectiveDraft] = useState(checklist.objective || '');
   const [activeQuestion, setActiveQuestion] = useState<Question | null>(null);
-  const [isPreviewMode, setIsPreviewMode] = useState(false);
+  const [isPreviewMode, setIsPreviewMode] = useState(initialPreviewMode);
   const [isCompactMode, setIsCompactMode] = useState(false);
   const [selectedQuestions, setSelectedQuestions] = useState<Set<string>>(new Set());
   
