@@ -145,7 +145,7 @@ export function AddToMyTemplatesDialog({
               Select a folder
             </DialogTitle>
             <DialogDescription>
-              Select a folder to save this template to your library.
+              Select an existing folder or Create new folder to add the checklist template to:
             </DialogDescription>
           </DialogHeader>
 
