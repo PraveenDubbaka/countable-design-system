@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo } from 'react';
-import { Plus, Folder, Check, FolderPlus } from 'lucide-react';
+import { Plus, Folder, FolderPlus, Check } from 'lucide-react';
 import {
   Dialog,
   DialogContent,
@@ -8,14 +8,6 @@ import {
   DialogFooter,
   DialogDescription,
 } from '@/components/ui/dialog';
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from '@/components/ui/alert-dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -24,6 +16,7 @@ import { cn } from '@/lib/utils';
 import { readJsonFromLocalStorage, writeJsonToLocalStorage } from '@/lib/safeJson';
 import { Checklist } from '@/types/checklist';
 import { SavedChecklist } from './Sidebar';
+import { toast } from '@/hooks/use-toast';
 
 interface Template {
   id: string;
@@ -59,7 +52,6 @@ export function AddToMyTemplatesDialog({
 }: AddToMyTemplatesDialogProps) {
   const [selectedFolder, setSelectedFolder] = useState<string | null>(null);
   const [templateName, setTemplateName] = useState(checklistName);
-  const [showSuccessDialog, setShowSuccessDialog] = useState(false);
   const [folders, setFolders] = useState<Template[]>(initialTemplates);
   const [isCreatingFolder, setIsCreatingFolder] = useState(false);
   const [newFolderName, setNewFolderName] = useState('');
@@ -130,14 +122,16 @@ export function AddToMyTemplatesDialog({
     const event = new CustomEvent('checklistSaved', { detail: newChecklist });
     window.dispatchEvent(event);
 
-    // Close the main dialog and show success
+    // Close the main dialog and show success toast
     onOpenChange(false);
-    setShowSuccessDialog(true);
+    toast({
+      title: "Success!",
+      description: "Checklist successfully added to My Templates",
+    });
   };
 
   return (
-    <>
-      <Dialog open={open} onOpenChange={onOpenChange}>
+    <Dialog open={open} onOpenChange={onOpenChange}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
@@ -262,27 +256,6 @@ export function AddToMyTemplatesDialog({
             </Button>
           </DialogFooter>
         </DialogContent>
-      </Dialog>
-
-      {/* Success Confirmation Dialog */}
-      <AlertDialog open={showSuccessDialog} onOpenChange={setShowSuccessDialog}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <div className="mx-auto mb-4 h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center">
-              <Check className="h-6 w-6 text-primary" />
-            </div>
-            <AlertDialogTitle className="text-center">Success!</AlertDialogTitle>
-            <AlertDialogDescription className="text-center">
-              Checklist successfully added to My Templates
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <div className="flex justify-center">
-            <AlertDialogAction onClick={() => setShowSuccessDialog(false)}>
-              Done
-            </AlertDialogAction>
-          </div>
-        </AlertDialogContent>
-      </AlertDialog>
-    </>
+    </Dialog>
   );
 }
