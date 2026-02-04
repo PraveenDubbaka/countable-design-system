@@ -804,6 +804,9 @@ function SortableSubItemRow({
         <Checkbox checked={isSelected} onCheckedChange={() => setIsSelected(!isSelected)} className="h-4 w-4 border-border bg-background" />
       </div>
 
+      {/* Expand spacer - matches main row structure */}
+      <div className="w-8 shrink-0" />
+
       {/* Sub-item name - width matches header */}
       <div className="flex-1 min-w-0 px-3 py-2.5 flex items-center gap-2 border-l border-border/50" style={{
       flexBasis: columnWidths.questions
@@ -899,19 +902,17 @@ function SortableSubItemRow({
 
 
       {/* Actions - delete button */}
-      {!isPreviewMode && <div className="w-16 shrink-0 flex items-center justify-center self-center px-2">
+      {!isPreviewMode && <div className="w-[180px] shrink-0 flex items-center justify-end self-center px-2 opacity-0 group-hover:opacity-100 transition-opacity">
         <Tooltip>
           <TooltipTrigger asChild>
             <button onClick={e => {
             e.stopPropagation();
             onDelete();
-          }} className="p-1.5 rounded hover:bg-muted text-muted-foreground hover:text-red-500 transition-colors opacity-0 group-hover:opacity-100">
-              <Trash2 className="h-5 w-5" />
+          }} className="p-1.5 rounded hover:bg-muted text-muted-foreground hover:text-red-500 transition-colors">
+              <Trash2 className="h-4 w-4" />
             </button>
           </TooltipTrigger>
-          <TooltipContent side="top" className="bg-popover text-popover-foreground border border-border shadow-lg">
-            Delete sub-item
-          </TooltipContent>
+          <TooltipContent side="top">Delete sub-item</TooltipContent>
         </Tooltip>
       </div>}
     </div>;
@@ -1383,8 +1384,8 @@ function SortableItemRow({
           {/* Continuous vertical bar alongside sub-items */}
           <div className="absolute left-3 top-3 bottom-0 w-0.5 bg-amber-600/70" />
           
-          {/* Sub-items container with left margin for the bar */}
-          <div className="ml-8 bg-muted/50 rounded-lg overflow-hidden">
+          {/* Sub-items container */}
+          <div className="bg-muted/50 rounded-lg overflow-hidden">
 
             <SortableContext items={subItemIds} strategy={verticalListSortingStrategy}>
               {item.subQuestions!.map((sub, idx) => <div key={sub.id} className="">
@@ -1401,6 +1402,7 @@ function SortableItemRow({
                 <div className="w-10 flex items-center justify-center py-2.5">
                   <Checkbox disabled className="h-4 w-4 border-border bg-background opacity-30" />
                 </div>
+                <div className="w-8 shrink-0" />
                 <button onClick={onAddSubItem} className="flex-1 flex items-center gap-2 px-3 py-2.5 text-sm text-muted-foreground hover:text-primary transition-colors text-left border-l border-border/50" style={{ flexBasis: columnWidths.questions }}>
                   + Add 
                 </button>
