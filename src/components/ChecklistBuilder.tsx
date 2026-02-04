@@ -654,15 +654,15 @@ export function ChecklistBuilder({ checklist, onUpdate, onSave, initialPreviewMo
                 <Tooltip>
                   <TooltipTrigger asChild>
                     <Button 
-                      size="default"
-                      className="h-9 gap-2"
+                      variant="outline"
+                      size="icon"
+                      className="h-9 w-9 hover:bg-[#1C63A6] hover:text-white hover:border-[#1C63A6] transition-colors"
                       onClick={() => setShowAddToMyTemplatesDialog(true)}
                     >
                       <Plus className="h-4 w-4" />
-                      Add to My Templates
                     </Button>
                   </TooltipTrigger>
-                  <TooltipContent>Save to your templates library</TooltipContent>
+                  <TooltipContent>Add to My Templates</TooltipContent>
                 </Tooltip>
               ) : (
                 /* For regular templates: Show Edit/Preview toggle */
