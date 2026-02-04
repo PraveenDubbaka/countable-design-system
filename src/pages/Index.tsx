@@ -314,6 +314,7 @@ export default function Index() {
   const [isGenerating, setIsGenerating] = useState(false);
   const [currentChecklistId, setCurrentChecklistId] = useState<string | null>(null);
   const [isGlobalTemplatePreview, setIsGlobalTemplatePreview] = useState(false);
+  const [isSavedTemplate, setIsSavedTemplate] = useState(false);
 
   const handleGenerate = async (prompt: string, scope: GenerationScope, savedChecklistId?: string) => {
     setIsGenerating(true);
@@ -353,6 +354,7 @@ export default function Index() {
       setChecklist(null);
       setCurrentChecklistId(null);
       setIsGlobalTemplatePreview(false);
+      setIsSavedTemplate(false);
       return;
     }
 
@@ -363,6 +365,7 @@ export default function Index() {
         setChecklist(templateChecklist);
         setCurrentChecklistId(null);
         setIsGlobalTemplatePreview(true);
+        setIsSavedTemplate(false);
         return;
       }
     }
@@ -381,6 +384,7 @@ export default function Index() {
         : null;
       if (found?.data) {
         setChecklist(found.data);
+        setIsSavedTemplate(true); // Mark as saved template for preview mode
         return;
       }
     }
@@ -453,8 +457,9 @@ export default function Index() {
             checklist={checklist} 
             onUpdate={handleChecklistUpdate}
             onSave={handleDirectSave}
-            initialPreviewMode={isGlobalTemplatePreview}
+            initialPreviewMode={isGlobalTemplatePreview || isSavedTemplate}
             isGlobalTemplate={isGlobalTemplatePreview}
+            isSavedTemplate={isSavedTemplate}
           />
         ) : null}
 
