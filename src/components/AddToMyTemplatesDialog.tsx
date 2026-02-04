@@ -141,8 +141,8 @@ export function AddToMyTemplatesDialog({
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
-              <Plus className="h-5 w-5 text-primary" />
-              Add to My Templates
+              <Folder className="h-5 w-5 text-primary" />
+              Select a folder
             </DialogTitle>
             <DialogDescription>
               Select a folder to save this template to your library.
