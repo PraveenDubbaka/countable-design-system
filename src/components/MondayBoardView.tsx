@@ -1265,7 +1265,7 @@ function SortableItemRow({
 
 
         {/* Actions column - inline icons on hover */}
-        {!isPreviewMode && <div className="w-auto shrink-0 flex items-center justify-end gap-1 self-center px-2 opacity-0 group-hover:opacity-100 transition-opacity">
+        {!isPreviewMode && <div className="w-[180px] shrink-0 flex items-center justify-end gap-1 self-center px-2 opacity-0 group-hover:opacity-100 transition-opacity">
           {/* Required toggle */}
           <Tooltip>
             <TooltipTrigger asChild>
@@ -1784,7 +1784,7 @@ function SortableGroup({
                   {!isPreviewMode && (!visibleColumns.explanation || !visibleColumns.reference) && <div className="w-[100px] shrink-0 px-2 py-2 text-center text-muted-foreground">
                       <AddColumnButton onAddColumn={handleAddColumn} visibleColumns={visibleColumns} />
                     </div>}
-                  {!isPreviewMode && <div className="w-16 shrink-0 py-2 px-2" />}
+                  {!isPreviewMode && <div className="w-[180px] shrink-0 py-2 px-2" />}
                 </div>
 
                 {/* Items */}
