@@ -339,8 +339,12 @@ export default function Index() {
     const globalTemplateId = navState?.globalTemplateId;
     const clearContent = navState?.clearContent;
 
-    // Clear the navigation state so we don't regenerate on refresh/back
-    if (navState) {
+    // Clear the navigation state so we don't regenerate on refresh/back.
+    // IMPORTANT: Do NOT clear state for global template previews; we rely on it
+    // to keep `isGlobalTemplatePreview` true (otherwise the UI falls back to Edit).
+    const shouldClearNavState =
+      !!navState && !globalTemplateId && (!!gen || !!checklistId || !!clearContent);
+    if (shouldClearNavState) {
       navigate('/builder', { replace: true, state: null });
     }
 
