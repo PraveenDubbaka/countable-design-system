@@ -450,6 +450,7 @@ export default function Index() {
             onUpdate={handleChecklistUpdate}
             onSave={handleDirectSave}
             initialPreviewMode={isGlobalTemplatePreview}
+            isGlobalTemplate={isGlobalTemplatePreview}
           />
         ) : null}
 
