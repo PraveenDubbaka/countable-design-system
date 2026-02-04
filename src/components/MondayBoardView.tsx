@@ -1,6 +1,6 @@
 import { useState, useRef, useCallback, useEffect } from 'react';
 import { sanitizeHtml } from '@/lib/sanitize';
-import { Plus, Trash2, ChevronDown, ChevronRight, MoreHorizontal, Copy, GripVertical, PlusCircle, Circle, Square, Type, Calendar, AlignLeft, Paperclip, ToggleLeft, ListPlus, Menu, DollarSign, FileText, Search, Upload, File, X, Check, Pencil, LayoutGrid } from 'lucide-react';
+import { Plus, Trash2, ChevronDown, ChevronUp, ChevronRight, MoreHorizontal, Copy, GripVertical, PlusCircle, Circle, Square, Type, Calendar, AlignLeft, Paperclip, ToggleLeft, ListPlus, Menu, DollarSign, FileText, Search, Upload, File, X, Check, Pencil, LayoutGrid, Asterisk } from 'lucide-react';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { Input as SearchInput } from '@/components/ui/input';
@@ -1264,69 +1264,106 @@ function SortableItemRow({
           </div>}
 
 
-        {/* Actions menu */}
-        {!isPreviewMode && <div className="w-16 shrink-0 flex items-center justify-center gap-0.5 self-center px-2">
+        {/* Actions column - inline icons on hover */}
+        {!isPreviewMode && <div className="w-auto shrink-0 flex items-center justify-end gap-1 self-center px-2 opacity-0 group-hover:opacity-100 transition-opacity">
+          {/* Required toggle */}
           <Tooltip>
             <TooltipTrigger asChild>
-              <button onClick={e => {
-              e.stopPropagation();
-              onAddSubItem();
-            }} className="p-1.5 rounded hover:bg-muted opacity-0 group-hover:opacity-100 transition-all text-muted-foreground hover:text-foreground">
-                <PlusCircle className="h-5 w-5" />
+              <button 
+                onClick={e => {
+                  e.stopPropagation();
+                  onUpdate({
+                    ...item,
+                    required: !item.required
+                  });
+                }} 
+                className={`p-1.5 rounded hover:bg-muted transition-colors ${item.required ? 'text-primary' : 'text-muted-foreground hover:text-foreground'}`}
+              >
+                <Asterisk className="h-4 w-4" />
               </button>
             </TooltipTrigger>
-            <TooltipContent side="top" className="bg-popover text-popover-foreground border border-border shadow-lg">
-              Add sub-item
-            </TooltipContent>
+            <TooltipContent side="top">{item.required ? 'Remove required' : 'Mark as required'}</TooltipContent>
           </Tooltip>
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <button onClick={e => e.stopPropagation()} className="p-1.5 rounded hover:bg-muted opacity-0 group-hover:opacity-100 transition-all" title="More actions">
-                <MoreHorizontal className="h-5 w-5 text-muted-foreground" />
+
+          {/* Add sub-item */}
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <button 
+                onClick={e => {
+                  e.stopPropagation();
+                  onAddSubItem();
+                }} 
+                className="p-1.5 rounded hover:bg-muted text-muted-foreground hover:text-foreground transition-colors"
+              >
+                <PlusCircle className="h-4 w-4" />
               </button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-48 bg-popover z-50">
-              <div className="flex items-center justify-between px-2 py-1.5 text-sm text-foreground hover:bg-muted rounded-sm cursor-pointer" onClick={e => {
-              e.preventDefault();
-              e.stopPropagation();
-              onUpdate({
-                ...item,
-                required: !item.required
-              });
-            }}>
-                <span>Required</span>
-                <Switch checked={item.required || false} onCheckedChange={checked => onUpdate({
-                ...item,
-                required: checked
-              })} className="h-4 w-8 data-[state=checked]:bg-primary data-[state=unchecked]:bg-muted" />
-              </div>
-              <DropdownMenuSeparator className="bg-border" />
-              <DropdownMenuItem onClick={onAddSubItem} className="text-foreground focus:bg-muted focus:text-foreground">
-                <Plus className="h-4 w-4 mr-2" />
-                Add sub-item
-              </DropdownMenuItem>
-              <DropdownMenuSeparator className="bg-border" />
-              <div className="px-2 py-1.5 text-xs font-medium text-muted-foreground">Add item</div>
-              <DropdownMenuItem onClick={() => onAddItemAtPosition('above')} className="text-foreground focus:bg-muted focus:text-foreground pl-4">
-                <ChevronDown className="h-4 w-4 mr-2 rotate-180" />
-                Above this item
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => onAddItemAtPosition('below')} className="text-foreground focus:bg-muted focus:text-foreground pl-4">
-                <ChevronDown className="h-4 w-4 mr-2" />
-                Below this item
-              </DropdownMenuItem>
-              <DropdownMenuSeparator className="bg-border" />
-              <DropdownMenuItem onClick={onDuplicate} className="text-foreground focus:bg-muted focus:text-foreground">
-                <Copy className="h-4 w-4 mr-2" />
-                Duplicate
-              </DropdownMenuItem>
-              <DropdownMenuSeparator className="bg-border" />
-              <DropdownMenuItem onClick={onDelete} className="text-red-500 focus:bg-muted focus:text-red-600">
-                <Trash2 className="h-4 w-4 mr-2" />
-                Delete
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+            </TooltipTrigger>
+            <TooltipContent side="top">Add sub-item</TooltipContent>
+          </Tooltip>
+
+          {/* Add item above */}
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <button 
+                onClick={e => {
+                  e.stopPropagation();
+                  onAddItemAtPosition('above');
+                }} 
+                className="p-1.5 rounded hover:bg-muted text-muted-foreground hover:text-foreground transition-colors"
+              >
+                <ChevronUp className="h-4 w-4" />
+              </button>
+            </TooltipTrigger>
+            <TooltipContent side="top">Add item above</TooltipContent>
+          </Tooltip>
+
+          {/* Add item below */}
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <button 
+                onClick={e => {
+                  e.stopPropagation();
+                  onAddItemAtPosition('below');
+                }} 
+                className="p-1.5 rounded hover:bg-muted text-muted-foreground hover:text-foreground transition-colors"
+              >
+                <ChevronDown className="h-4 w-4" />
+              </button>
+            </TooltipTrigger>
+            <TooltipContent side="top">Add item below</TooltipContent>
+          </Tooltip>
+
+          {/* Duplicate */}
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <button 
+                onClick={e => {
+                  e.stopPropagation();
+                  onDuplicate();
+                }} 
+                className="p-1.5 rounded hover:bg-muted text-muted-foreground hover:text-foreground transition-colors"
+              >
+                <Copy className="h-4 w-4" />
+              </button>
+            </TooltipTrigger>
+            <TooltipContent side="top">Duplicate</TooltipContent>
+          </Tooltip>
+
+          {/* Delete */}
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <button 
+                onClick={e => {
+                  e.stopPropagation();
+                  onDelete();
+                }} 
+                className="p-1.5 rounded hover:bg-muted text-muted-foreground hover:text-red-500 transition-colors"
+              >
+                <Trash2 className="h-4 w-4" />
+              </button>
+            </TooltipTrigger>
+            <TooltipContent side="top">Delete</TooltipContent>
+          </Tooltip>
         </div>}
       </div>
 
