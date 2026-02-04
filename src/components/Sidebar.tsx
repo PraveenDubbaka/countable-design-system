@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { ChevronDown, ChevronRight, ChevronLeft, Search, Plus, Expand, Trash2, Folder, Headphones, Check, FileText, FileBarChart, StickyNote, Table, Copy, Pencil, FolderInput, MoreVertical, GripVertical, X, Save } from "lucide-react";
+import { ChevronDown, ChevronRight, ChevronLeft, Search, Plus, Expand, Trash2, Folder, Headphones, Check, FileText, FileBarChart, StickyNote, Table, Copy, Pencil, FolderInput, MoreVertical, GripVertical, X, Save, Files } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -8,6 +8,8 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import lukaLogo from "@/assets/luka-logo.png";
+import { BulkAddToMyTemplatesDialog } from "@/components/BulkAddToMyTemplatesDialog";
+import { getGlobalTemplateChecklist } from "@/lib/globalTemplates";
 import { readJsonFromLocalStorage, removeLocalStorageKey, writeJsonToLocalStorage } from "@/lib/safeJson";
 import { cn } from "@/lib/utils";
 import { ChecklistIcon } from "@/components/icons/ChecklistIcon";
@@ -207,6 +209,11 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
   const [searchQuery, setSearchQuery] = useState("");
   const [isTemplatesPanelCollapsed, setIsTemplatesPanelCollapsed] = useState(false);
   const [selectedGlobalTemplate, setSelectedGlobalTemplate] = useState<string | null>("global-1-1");
+  
+  // Multi-select state for Global Templates
+  const [selectedTemplates, setSelectedTemplates] = useState<Set<string>>(new Set());
+  const [selectedFolder, setSelectedFolder] = useState<string | null>(null);
+  const [bulkAddDialogOpen, setBulkAddDialogOpen] = useState(false);
 
   // Resizable panel state
   const [panelWidth, setPanelWidth] = useState(() => {
@@ -365,10 +372,107 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
     } : t));
   };
 
-  // Render global template item
+  // Get all child template IDs from a folder
+  const getChildTemplateIds = (folder: GlobalTemplate): string[] => {
+    if (!folder.children) return [];
+    return folder.children.filter(c => c.type === 'file').map(c => c.id);
+  };
+
+  // Handle template checkbox change
+  const handleTemplateCheckboxChange = (templateId: string, checked: boolean) => {
+    setSelectedTemplates(prev => {
+      const newSet = new Set(prev);
+      if (checked) {
+        newSet.add(templateId);
+      } else {
+        newSet.delete(templateId);
+      }
+      return newSet;
+    });
+  };
+
+  // Handle folder checkbox change (selects all children)
+  const handleFolderCheckboxChange = (folder: GlobalTemplate, checked: boolean) => {
+    const childIds = getChildTemplateIds(folder);
+    
+    if (checked) {
+      // Unselect any previously selected folder's children
+      if (selectedFolder && selectedFolder !== folder.id) {
+        const prevFolder = globalTemplates.find(t => t.id === selectedFolder);
+        if (prevFolder) {
+          const prevChildIds = getChildTemplateIds(prevFolder);
+          setSelectedTemplates(prev => {
+            const newSet = new Set(prev);
+            prevChildIds.forEach(id => newSet.delete(id));
+            childIds.forEach(id => newSet.add(id));
+            return newSet;
+          });
+        } else {
+          setSelectedTemplates(prev => {
+            const newSet = new Set(prev);
+            childIds.forEach(id => newSet.add(id));
+            return newSet;
+          });
+        }
+      } else {
+        setSelectedTemplates(prev => {
+          const newSet = new Set(prev);
+          childIds.forEach(id => newSet.add(id));
+          return newSet;
+        });
+      }
+      setSelectedFolder(folder.id);
+    } else {
+      setSelectedTemplates(prev => {
+        const newSet = new Set(prev);
+        childIds.forEach(id => newSet.delete(id));
+        return newSet;
+      });
+      setSelectedFolder(null);
+    }
+  };
+
+  // Check if a folder is fully selected
+  const isFolderSelected = (folder: GlobalTemplate): boolean => {
+    const childIds = getChildTemplateIds(folder);
+    if (childIds.length === 0) return false;
+    return childIds.every(id => selectedTemplates.has(id));
+  };
+
+  // Check if folder selection is disabled (another folder is selected)
+  const isFolderDisabled = (folderId: string): boolean => {
+    return selectedFolder !== null && selectedFolder !== folderId;
+  };
+
+  // Clear selection
+  const clearSelection = () => {
+    setSelectedTemplates(new Set());
+    setSelectedFolder(null);
+  };
+
+  // Get selected template details for the dialog
+  const getSelectedTemplateDetails = (): { id: string; name: string }[] => {
+    return Array.from(selectedTemplates).map(id => {
+      // Find the template name from globalTemplates
+      for (const folder of globalTemplates) {
+        if (folder.children) {
+          const child = folder.children.find(c => c.id === id);
+          if (child) {
+            return { id: child.id, name: child.name };
+          }
+        }
+      }
+      return { id, name: id };
+    });
+  };
+
+  // Render global template item with checkbox
   const renderGlobalTemplate = (template: GlobalTemplate, depth = 0) => {
     const hasChildren = template.children && template.children.length > 0;
     const isSelected = selectedGlobalTemplate === template.id;
+    const isTemplateChecked = selectedTemplates.has(template.id);
+    const isFolderChecked = template.type === "folder" && isFolderSelected(template);
+    const folderDisabled = template.type === "folder" && isFolderDisabled(template.id);
     
     return (
       <div key={template.id}>
@@ -376,47 +480,67 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
           className={cn(
             "flex items-center gap-2 py-1.5 px-2 rounded-md cursor-pointer transition-colors text-sm",
             depth > 0 ? "ml-5" : "",
-            isSelected && template.type === "file" ? "bg-primary/10 text-primary" : "hover:bg-muted"
+            isSelected && template.type === "file" ? "bg-primary/10 text-primary" : "hover:bg-muted",
+            folderDisabled && "opacity-50"
           )}
-          onClick={() => {
-            if (template.type === "folder") {
-              toggleGlobalFolder(template.id);
-            } else {
-              setSelectedGlobalTemplate(template.id);
-              // Navigate to builder with global template ID for preview
-              navigate("/builder", {
-                state: {
-                  globalTemplateId: template.id,
-                  timestamp: Date.now()
-                }
-              });
-            }
-          }}
         >
+          {/* Checkbox */}
+          <Checkbox
+            checked={template.type === "folder" ? isFolderChecked : isTemplateChecked}
+            disabled={folderDisabled}
+            onCheckedChange={(checked) => {
+              if (template.type === "folder") {
+                handleFolderCheckboxChange(template, !!checked);
+              } else {
+                handleTemplateCheckboxChange(template.id, !!checked);
+              }
+            }}
+            onClick={(e) => e.stopPropagation()}
+            className="h-4 w-4 border-border flex-shrink-0"
+          />
+          
           {template.type === "folder" ? (
             <>
-              {hasChildren ? (
-                template.isExpanded ? (
-                  <ChevronDown className="h-4 w-4 text-muted-foreground flex-shrink-0" />
+              <div 
+                className="flex items-center gap-1 flex-1 min-w-0"
+                onClick={() => toggleGlobalFolder(template.id)}
+              >
+                {hasChildren ? (
+                  template.isExpanded ? (
+                    <ChevronDown className="h-4 w-4 text-muted-foreground flex-shrink-0" />
+                  ) : (
+                    <ChevronRight className="h-4 w-4 text-muted-foreground flex-shrink-0" />
+                  )
                 ) : (
                   <ChevronRight className="h-4 w-4 text-muted-foreground flex-shrink-0" />
-                )
-              ) : (
-                <ChevronRight className="h-4 w-4 text-muted-foreground flex-shrink-0" />
-              )}
-              <Folder className="h-4 w-4 text-primary flex-shrink-0" />
+                )}
+                <Folder className="h-4 w-4 text-primary flex-shrink-0" />
+                <span className="truncate flex-1">{template.name}</span>
+              </div>
             </>
           ) : (
-            <>
-              <ChecklistIcon className="h-4 w-4 flex-shrink-0 ml-1" />
-            </>
+            <div
+              className="flex items-center gap-2 flex-1 min-w-0"
+              onClick={() => {
+                setSelectedGlobalTemplate(template.id);
+                // Navigate to builder with global template ID for preview
+                navigate("/builder", {
+                  state: {
+                    globalTemplateId: template.id,
+                    timestamp: Date.now()
+                  }
+                });
+              }}
+            >
+              <ChecklistIcon className="h-4 w-4 flex-shrink-0" />
+              <span className={cn(
+                "truncate flex-1",
+                isSelected ? "font-medium" : ""
+              )}>
+                {template.name}
+              </span>
+            </div>
           )}
-          <span className={cn(
-            "truncate flex-1",
-            isSelected && template.type === "file" ? "font-medium" : ""
-          )}>
-            {template.name}
-          </span>
         </div>
         {template.type === "folder" && template.isExpanded && template.children && (
           <div>
@@ -814,6 +938,25 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
                     </Button>
                   </>
                 )}
+                {activeTab === "master" && (
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button 
+                        size="icon" 
+                        className="h-9 w-9 bg-primary hover:bg-primary/90 shadow-sm"
+                        disabled={selectedTemplates.size === 0}
+                        onClick={() => setBulkAddDialogOpen(true)}
+                      >
+                        <Files className="h-4 w-4 text-primary-foreground" />
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      {selectedTemplates.size > 0 
+                        ? `Add ${selectedTemplates.size} selected to My Templates` 
+                        : "Select templates to add"}
+                    </TooltipContent>
+                  </Tooltip>
+                )}
               </div>
             </div>
 
@@ -917,5 +1060,14 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      {/* Bulk Add to My Templates Dialog */}
+      <BulkAddToMyTemplatesDialog
+        open={bulkAddDialogOpen}
+        onOpenChange={setBulkAddDialogOpen}
+        selectedTemplates={getSelectedTemplateDetails()}
+        onSuccess={clearSelection}
+        getChecklistData={(templateId) => getGlobalTemplateChecklist(templateId)}
+      />
     </div>;
 }
