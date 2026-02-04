@@ -804,6 +804,9 @@ function SortableSubItemRow({
         <Checkbox checked={isSelected} onCheckedChange={() => setIsSelected(!isSelected)} className="h-4 w-4 border-border bg-background" />
       </div>
 
+      {/* Chevron spacer column (keeps Questions column divider aligned with header/main rows) */}
+      <div className="w-8 shrink-0" aria-hidden="true" />
+
       {/* Sub-item name - width matches header */}
       <div className="flex-1 min-w-0 px-3 py-2.5 flex items-center gap-2 border-l border-border/50" style={{
       flexBasis: columnWidths.questions
@@ -1381,38 +1384,46 @@ function SortableItemRow({
           {/* Continuous vertical bar alongside sub-items */}
           <div className="absolute left-3 top-3 bottom-0 w-0.5 bg-amber-600/70" />
           
-          {/* Sub-items container
-              Keep the ml-8 visual indent, but expand width so percentage-based columns
-              match the header/main rows exactly (no misalignment on resize). */}
-          <div className="ml-8 w-[calc(100%+2rem)] bg-muted/50 rounded-lg overflow-hidden">
+          {/* Sub-items container:
+              Keep the *visual* indent (ml-8) on a background layer only,
+              while sub-item rows render at full width so column dividers always align
+              with the header/main rows (even when resizing). */}
+          <div className="relative rounded-lg overflow-hidden">
+            <div className="pointer-events-none absolute inset-0" aria-hidden="true">
+              <div className="ml-8 h-full bg-muted/50 rounded-lg" />
+            </div>
 
-            <SortableContext items={subItemIds} strategy={verticalListSortingStrategy}>
-              {item.subQuestions!.map((sub, idx) => <div key={sub.id} className="">
-                  <SortableSubItemRow subItem={sub} index={idx} parentId={item.id} onUpdate={updated => handleSubItemUpdate(idx, updated)} onDelete={() => handleSubItemDelete(idx)} isPreviewMode={isPreviewMode} isCompactMode={isCompactMode} isLast={idx === item.subQuestions!.length - 1} totalCount={item.subQuestions!.length} visibleColumns={visibleColumns} columnWidths={columnWidths} isNewEmpty={isPendingSubItem && sub.text.trim() === ''} onBlurCleanup={() => {
-              if (sub.text.trim() === '') {
-                cleanupEmptySubItems();
-              }
-            }} sectionNumber={sectionNumber} itemNumber={itemIndex + 1} />
-                </div>)}
-            </SortableContext>
+            <div className="relative">
+              <SortableContext items={subItemIds} strategy={verticalListSortingStrategy}>
+                {item.subQuestions!.map((sub, idx) => <div key={sub.id} className="">
+                    <SortableSubItemRow subItem={sub} index={idx} parentId={item.id} onUpdate={updated => handleSubItemUpdate(idx, updated)} onDelete={() => handleSubItemDelete(idx)} isPreviewMode={isPreviewMode} isCompactMode={isCompactMode} isLast={idx === item.subQuestions!.length - 1} totalCount={item.subQuestions!.length} visibleColumns={visibleColumns} columnWidths={columnWidths} isNewEmpty={isPendingSubItem && sub.text.trim() === ''} onBlurCleanup={() => {
+                if (sub.text.trim() === '') {
+                  cleanupEmptySubItems();
+                }
+              }} sectionNumber={sectionNumber} itemNumber={itemIndex + 1} />
+                  </div>)}
+              </SortableContext>
 
-            {/* Add subitem row - keep the full column structure so vertical column lines stay aligned */}
-            {!isPreviewMode && hasRealSubItems && <div className="flex items-stretch hover:bg-muted transition-colors border-b border-border/50">
-                <div className="w-10 shrink-0 flex items-center justify-center self-center py-2.5">
-                  <Checkbox disabled className="h-4 w-4 border-border bg-background opacity-30" />
-                </div>
+              {/* Add subitem row - keep the full column structure so vertical column lines stay aligned */}
+              {!isPreviewMode && hasRealSubItems && <div className="flex items-stretch hover:bg-muted transition-colors border-b border-border/50">
+                  <div className="w-10 shrink-0 flex items-center justify-center self-center py-2.5">
+                    <Checkbox disabled className="h-4 w-4 border-border bg-background opacity-30" />
+                  </div>
 
-                <div className="flex-1 min-w-0 px-3 py-2.5 flex items-center border-l border-border/50" style={{ flexBasis: columnWidths.questions }}>
-                  <button onClick={onAddSubItem} className="w-full text-left text-sm text-muted-foreground hover:text-primary transition-colors">
-                    + Add
-                  </button>
-                </div>
+                  <div className="w-8 shrink-0" aria-hidden="true" />
 
-                <div className="flex-1 min-w-0 px-2 py-2 border-l border-border/50" style={{ flexBasis: columnWidths.response }} />
-                {visibleColumns.explanation && <div className="flex-1 min-w-0 px-2 py-2 border-l border-border/50" style={{ flexBasis: columnWidths.explanation }} />}
-                {visibleColumns.reference && <div className="flex-1 min-w-0 px-2 py-2 border-l border-border/50" style={{ flexBasis: columnWidths.reference }} />}
-                <div className="w-[180px] shrink-0" />
-              </div>}
+                  <div className="flex-1 min-w-0 px-3 py-2.5 flex items-center border-l border-border/50" style={{ flexBasis: columnWidths.questions }}>
+                    <button onClick={onAddSubItem} className="w-full text-left text-sm text-muted-foreground hover:text-primary transition-colors">
+                      + Add
+                    </button>
+                  </div>
+
+                  <div className="flex-1 min-w-0 px-2 py-2 border-l border-border/50" style={{ flexBasis: columnWidths.response }} />
+                  {visibleColumns.explanation && <div className="flex-1 min-w-0 px-2 py-2 border-l border-border/50" style={{ flexBasis: columnWidths.explanation }} />}
+                  {visibleColumns.reference && <div className="flex-1 min-w-0 px-2 py-2 border-l border-border/50" style={{ flexBasis: columnWidths.reference }} />}
+                  <div className="w-[180px] shrink-0" />
+                </div>}
+            </div>
           </div>
         </div>}
     </div>;
