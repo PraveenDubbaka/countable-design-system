@@ -898,8 +898,8 @@ function SortableSubItemRow({
         </div>}
 
 
-      {/* Actions - delete button */}
-      {!isPreviewMode && <div className="w-16 shrink-0 flex items-center justify-center self-center px-2 opacity-0 group-hover:opacity-100 transition-opacity">
+      {/* Actions - keep same reserved width as main rows so columns always align */}
+      {!isPreviewMode && <div className="w-[180px] shrink-0 flex items-center justify-end self-center px-2 opacity-0 group-hover:opacity-100 transition-opacity">
         <Tooltip>
           <TooltipTrigger asChild>
             <button onClick={e => {
@@ -1381,8 +1381,9 @@ function SortableItemRow({
           {/* Continuous vertical bar alongside sub-items */}
           <div className="absolute left-3 top-3 bottom-0 w-0.5 bg-amber-600/70" />
           
-          {/* Sub-items container with left margin for the bar */}
-          <div className="ml-8 bg-muted/50 rounded-lg overflow-hidden">
+          {/* Sub-items container with left margin for the bar.
+              IMPORTANT: keep width full so % column widths match header/main rows even with ml-8 indent. */}
+          <div className="ml-8 w-full bg-muted/50 rounded-lg overflow-hidden">
 
             <SortableContext items={subItemIds} strategy={verticalListSortingStrategy}>
               {item.subQuestions!.map((sub, idx) => <div key={sub.id} className="">
@@ -1394,14 +1395,22 @@ function SortableItemRow({
                 </div>)}
             </SortableContext>
 
-            {/* Add subitem row */}
-            {!isPreviewMode && hasRealSubItems && <div className="flex items-center hover:bg-muted transition-colors">
-                <div className="w-10 flex items-center justify-center py-2.5">
+            {/* Add subitem row - keep the full column structure so vertical column lines stay aligned */}
+            {!isPreviewMode && hasRealSubItems && <div className="flex items-stretch hover:bg-muted transition-colors border-b border-border/50">
+                <div className="w-10 shrink-0 flex items-center justify-center self-center py-2.5">
                   <Checkbox disabled className="h-4 w-4 border-border bg-background opacity-30" />
                 </div>
-                <button onClick={onAddSubItem} className="flex-1 flex items-center gap-2 px-3 py-2.5 text-sm text-muted-foreground hover:text-primary transition-colors text-left border-l border-border/50" style={{ flexBasis: columnWidths.questions }}>
-                  + Add 
-                </button>
+
+                <div className="flex-1 min-w-0 px-3 py-2.5 flex items-center border-l border-border/50" style={{ flexBasis: columnWidths.questions }}>
+                  <button onClick={onAddSubItem} className="w-full text-left text-sm text-muted-foreground hover:text-primary transition-colors">
+                    + Add
+                  </button>
+                </div>
+
+                <div className="flex-1 min-w-0 px-2 py-2 border-l border-border/50" style={{ flexBasis: columnWidths.response }} />
+                {visibleColumns.explanation && <div className="flex-1 min-w-0 px-2 py-2 border-l border-border/50" style={{ flexBasis: columnWidths.explanation }} />}
+                {visibleColumns.reference && <div className="flex-1 min-w-0 px-2 py-2 border-l border-border/50" style={{ flexBasis: columnWidths.reference }} />}
+                <div className="w-[180px] shrink-0" />
               </div>}
           </div>
         </div>}
