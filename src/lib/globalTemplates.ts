@@ -241,9 +241,86 @@ export const generateClientAcceptanceContinuanceChecklist = (): Checklist => {
   };
 };
 
+// Withdrawal template data (based on screenshot)
+export const generateWithdrawalChecklist = (): Checklist => {
+  const sections: Section[] = [
+    {
+      id: 'section-withdrawal-reason',
+      title: 'Reason for Withdrawal',
+      questions: [
+        {
+          id: 'wd-q1',
+          text: `<p><strong>Identify which of the following situations is the reason for your withdrawal; and document the reasoning, actions taken and discussions with management</strong></p>`,
+          answerType: 'multiple-choice',
+          options: [
+            'I. Management has not provided the records, documents, explanations or other information needed to prepare the FI.',
+            'II. A correction is necessary, and management has not provided the additional or corrected information necessary to ensure the FI does not appear misleading.',
+            'III. New Information has become known after engagement acceptance that, if known at the date of the compilation engagement report, would have been cause for the engagement not to have been accepted or continued.'
+          ],
+          required: true,
+          answer: '',
+          subQuestions: [
+            {
+              id: 'wd-q1-sub1',
+              text: '<p>a. Inappropriate use by management of the firm name.</p>',
+              answerType: 'yes-no',
+              options: ['Yes', 'No'],
+              required: false,
+              answer: ''
+            },
+            {
+              id: 'wd-q1-sub2',
+              text: `<p>b. Significant misrepresentations made by management to:</p>
+<ul>
+<li>Our partners or staff</li>
+<li>Third parties about the work performed by our firm</li>
+</ul>`,
+              answerType: 'yes-no',
+              options: ['Yes', 'No'],
+              required: false,
+              answer: ''
+            },
+            {
+              id: 'wd-q1-sub3',
+              text: '<p>c. Disagreements over billing.</p>',
+              answerType: 'yes-no',
+              options: ['Yes', 'No'],
+              required: false,
+              answer: ''
+            }
+          ]
+        },
+        {
+          id: 'wd-q2',
+          text: '<p><strong>Additional Explanation</strong></p>',
+          answerType: 'long-answer',
+          options: [],
+          required: false,
+          answer: ''
+        }
+      ],
+      isExpanded: true
+    }
+  ];
+
+  return {
+    id: 'global-template-withdrawal',
+    title: 'Withdrawal',
+    description: 'Document the reason for withdrawal from an engagement.',
+    objective: `This checklist documents the circumstances and reasoning for withdrawing from an engagement, including:
+• Situations that led to withdrawal
+• Actions taken and discussions with management
+• Additional explanations and documentation`,
+    sections,
+    createdAt: new Date(),
+    updatedAt: new Date()
+  };
+};
+
 // Map of global template IDs to their generator functions
 export const GLOBAL_TEMPLATE_GENERATORS: Record<string, () => Checklist> = {
   'global-1-1': generateClientAcceptanceContinuanceChecklist,
+  'global-1-5': generateWithdrawalChecklist,
 };
 
 // Get a global template checklist by ID
