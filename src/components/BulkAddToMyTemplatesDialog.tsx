@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo } from 'react';
-import { Plus, Folder, FolderPlus, Check, CheckCircle } from 'lucide-react';
+import { Plus, Folder, FolderPlus, Check } from 'lucide-react';
 import {
   Dialog,
   DialogContent,
@@ -157,18 +157,19 @@ export function BulkAddToMyTemplatesDialog({
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-md">
-        {/* Success icon */}
-        <div className="flex justify-center pt-2">
-          <div className="w-16 h-16 rounded-full bg-[hsl(var(--success)/0.15)] flex items-center justify-center">
-            <CheckCircle className="w-10 h-10 text-[hsl(var(--success))]" />
-          </div>
-        </div>
-
-        <DialogHeader className="text-center">
+        <DialogHeader className="flex flex-row items-start gap-4 text-left">
+          {/* Success icon */}
+          <svg width="56" height="56" viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg" className="shrink-0">
+            <rect x="4" y="4" width="48" height="48" rx="24" fill="#D1FADF"/>
+            <rect x="4" y="4" width="48" height="48" rx="24" stroke="#ECFDF3" strokeWidth="8"/>
+            <path d="M23.5 28L26.5 31L32.5 25M38 28C38 33.5228 33.5228 38 28 38C22.4772 38 18 33.5228 18 28C18 22.4772 22.4772 18 28 18C33.5228 18 38 22.4772 38 28Z" stroke="#039855" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+          </svg>
+          <div className="flex flex-col space-y-1.5">
           <DialogTitle className="text-xl">Select a location</DialogTitle>
-          <DialogDescription>
-            Select where you want to add {selectedTemplates.length === 1 ? 'this checklist' : `these ${selectedTemplates.length} checklists`}
-          </DialogDescription>
+            <DialogDescription>
+              Select where you want to add {selectedTemplates.length === 1 ? 'this checklist' : `these ${selectedTemplates.length} checklists`}
+            </DialogDescription>
+          </div>
         </DialogHeader>
 
         <div className="space-y-4 py-4">
