@@ -499,8 +499,8 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
         {template.type === "folder" && template.isExpanded && <>
             {/* Render saved checklists */}
             {folderChecklists.map(checklist => <div key={checklist.id} className="group flex items-center gap-2 py-1.5 px-2 pl-8 rounded-md cursor-pointer hover:bg-muted transition-colors text-sm" onClick={() => {
-          // Use a unique key to force re-render when clicking same route
-          navigate("/", {
+          // Navigate to builder with saved checklist ID
+          navigate("/builder", {
             state: {
               checklistId: checklist.id,
               timestamp: Date.now()
