@@ -8,11 +8,11 @@ import {
   Shuffle,
   ArrowLeft,
   Sparkles,
-  ClipboardList,
   Calculator,
   Mail,
   FileEdit
 } from 'lucide-react';
+import { ChecklistIcon } from '@/components/icons/ChecklistIcon';
 import { Layout } from '@/components/Layout';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
@@ -49,7 +49,7 @@ interface ExamplePrompt {
 const promptsByType: Record<ContentType, ExamplePrompt[]> = {
   checklist: [
     {
-      icon: <ClipboardList className="h-5 w-5 text-primary" />,
+      icon: <ChecklistIcon className="h-5 w-5" />,
       iconBg: 'bg-primary/10',
       text: 'Generate a full Independence checklist for a compilation engagement under CSRS 4200'
     },
@@ -74,7 +74,7 @@ const promptsByType: Record<ContentType, ExamplePrompt[]> = {
       text: 'Create an internal controls assessment checklist for SOX compliance'
     },
     {
-      icon: <ClipboardList className="h-5 w-5 text-cyan-600" />,
+      icon: <ChecklistIcon className="h-5 w-5" />,
       iconBg: 'bg-cyan-100',
       text: 'Generate a Client Meeting Checklist with fields for client name, client position, and meeting date'
     },

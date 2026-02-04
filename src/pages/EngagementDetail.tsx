@@ -23,8 +23,8 @@ import {
   History,
   Upload,
   FileUp,
-  ClipboardList,
 } from "lucide-react";
+import { ChecklistIcon } from "@/components/icons/ChecklistIcon";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -586,7 +586,7 @@ export default function EngagementDetail() {
                   <TooltipTrigger asChild>
                     <DropdownMenuTrigger asChild>
                       <Button variant="outline" size="icon" className="h-9 w-9 bg-card border-border hover:bg-muted">
-                        <ClipboardList className="h-4 w-4" />
+                        <ChecklistIcon className="h-4 w-4" />
                       </Button>
                     </DropdownMenuTrigger>
                   </TooltipTrigger>
