@@ -66,6 +66,46 @@ const initialTemplates: Template[] = [{
   children: []
 }];
 
+// Global Templates data structure for "master" tab
+interface GlobalTemplate {
+  id: string;
+  name: string;
+  type: "folder" | "file";
+  children?: GlobalTemplate[];
+  isExpanded?: boolean;
+}
+
+const initialGlobalTemplates: GlobalTemplate[] = [
+  {
+    id: "global-1",
+    name: "Compilation",
+    type: "folder",
+    isExpanded: true,
+    children: [
+      { id: "global-1-1", name: "Client Acceptance and Continuance", type: "file" },
+      { id: "global-1-2", name: "Independence", type: "file" },
+      { id: "global-1-3", name: "Knowledge of client business", type: "file" },
+      { id: "global-1-4", name: "Planning", type: "file" },
+      { id: "global-1-5", name: "Withdrawal", type: "file" },
+      { id: "global-1-6", name: "Completion", type: "file" },
+    ]
+  },
+  {
+    id: "global-2",
+    name: "Review",
+    type: "folder",
+    isExpanded: false,
+    children: []
+  },
+  {
+    id: "global-3",
+    name: "Tax",
+    type: "folder",
+    isExpanded: false,
+    children: []
+  }
+];
+
 // Icon components matching the screenshot
 const AnalyticsIcon = () => <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
     {/* Bar chart icon */}
@@ -161,9 +201,11 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
   const navigate = useNavigate();
   const location = useLocation();
   const [templates, setTemplates] = useState<Template[]>(initialTemplates);
+  const [globalTemplates, setGlobalTemplates] = useState<GlobalTemplate[]>(initialGlobalTemplates);
   const [activeTab, setActiveTab] = useState<"firm" | "master">("firm");
   const [searchQuery, setSearchQuery] = useState("");
   const [isTemplatesPanelCollapsed, setIsTemplatesPanelCollapsed] = useState(false);
+  const [selectedGlobalTemplate, setSelectedGlobalTemplate] = useState<string | null>("global-1-1");
 
   // Resizable panel state
   const [panelWidth, setPanelWidth] = useState(() => {
@@ -312,6 +354,69 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
       ...t,
       isExpanded: !t.isExpanded
     } : t));
+  };
+
+  // Toggle global template folder
+  const toggleGlobalFolder = (id: string) => {
+    setGlobalTemplates(prev => prev.map(t => t.id === id ? {
+      ...t,
+      isExpanded: !t.isExpanded
+    } : t));
+  };
+
+  // Render global template item
+  const renderGlobalTemplate = (template: GlobalTemplate, depth = 0) => {
+    const hasChildren = template.children && template.children.length > 0;
+    const isSelected = selectedGlobalTemplate === template.id;
+    
+    return (
+      <div key={template.id}>
+        <div 
+          className={cn(
+            "flex items-center gap-2 py-1.5 px-2 rounded-md cursor-pointer transition-colors text-sm",
+            depth > 0 ? "ml-5" : "",
+            isSelected && template.type === "file" ? "bg-primary/10 text-primary" : "hover:bg-muted"
+          )}
+          onClick={() => {
+            if (template.type === "folder") {
+              toggleGlobalFolder(template.id);
+            } else {
+              setSelectedGlobalTemplate(template.id);
+            }
+          }}
+        >
+          {template.type === "folder" ? (
+            <>
+              {hasChildren ? (
+                template.isExpanded ? (
+                  <ChevronDown className="h-4 w-4 text-muted-foreground flex-shrink-0" />
+                ) : (
+                  <ChevronRight className="h-4 w-4 text-muted-foreground flex-shrink-0" />
+                )
+              ) : (
+                <ChevronRight className="h-4 w-4 text-muted-foreground flex-shrink-0" />
+              )}
+              <Folder className="h-4 w-4 text-primary flex-shrink-0" />
+            </>
+          ) : (
+            <>
+              <FileText className="h-4 w-4 text-muted-foreground flex-shrink-0 ml-1" />
+            </>
+          )}
+          <span className={cn(
+            "truncate flex-1",
+            isSelected && template.type === "file" ? "font-medium" : ""
+          )}>
+            {template.name}
+          </span>
+        </div>
+        {template.type === "folder" && template.isExpanded && template.children && (
+          <div>
+            {template.children.map(child => renderGlobalTemplate(child, depth + 1))}
+          </div>
+        )}
+      </div>
+    );
   };
 
   // Checklist actions
@@ -691,17 +796,25 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
                     <path d="M9.72214 6.94412L14.5833 2.08301M14.5833 2.08301H10.4166M14.5833 2.08301V6.24967M6.94436 9.7219L2.08325 14.583M2.08325 14.583H6.24992M2.08325 14.583L2.08325 10.4163" stroke="#074075" strokeWidth="1.38889" strokeLinecap="round" strokeLinejoin="round" />
                   </svg>
                 </button>
-                <Button size="icon" className="h-9 w-9 bg-primary hover:bg-primary/90 shadow-sm">
-                  <Plus className="h-4 w-4 text-primary-foreground icon-plus" />
-                </Button>
-                <Button size="icon" variant="secondary" className="h-9 w-9 text-destructive hover:text-destructive hover:bg-card/50">
-                  <Trash2 className="h-4 w-4 icon-trash" />
-                </Button>
+                {activeTab === "firm" && (
+                  <>
+                    <Button size="icon" className="h-9 w-9 bg-primary hover:bg-primary/90 shadow-sm">
+                      <Plus className="h-4 w-4 text-primary-foreground icon-plus" />
+                    </Button>
+                    <Button size="icon" variant="secondary" className="h-9 w-9 text-destructive hover:text-destructive hover:bg-card/50">
+                      <Trash2 className="h-4 w-4 icon-trash" />
+                    </Button>
+                  </>
+                )}
               </div>
             </div>
 
             <div className={`flex-1 overflow-y-auto p-2 pt-0 ${isTemplatesPanelCollapsed ? "hidden" : ""}`}>
-              {templates.map(template => renderTemplate(template))}
+              {activeTab === "firm" ? (
+                templates.map(template => renderTemplate(template))
+              ) : (
+                globalTemplates.map(template => renderGlobalTemplate(template))
+              )}
             </div>
 
             {/* Resize handle */}
