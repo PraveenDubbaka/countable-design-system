@@ -155,8 +155,8 @@ export function AddToMyTemplatesDialog({
               <Input
                 id="template-name"
                 value={templateName}
-                readOnly
-                className="bg-muted cursor-default"
+                disabled
+                className="bg-muted cursor-not-allowed"
               />
             </div>
 
