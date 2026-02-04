@@ -258,7 +258,7 @@ export function AddToMyTemplatesDialog({
               disabled={!selectedFolder || !templateName.trim()}
             >
               <Plus className="h-4 w-4 mr-2" />
-              Add to My Templates
+              Add
             </Button>
           </DialogFooter>
         </DialogContent>
