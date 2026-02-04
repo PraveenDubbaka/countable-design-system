@@ -654,9 +654,9 @@ export function ChecklistBuilder({ checklist, onUpdate, onSave, initialPreviewMo
                 <Tooltip>
                   <TooltipTrigger asChild>
                     <Button 
-                      variant="outline"
+                      variant="default"
                       size="icon"
-                      className="h-9 w-9 hover:bg-[#1C63A6] hover:text-white hover:border-[#1C63A6] transition-colors"
+                      className="h-9 w-9"
                       onClick={() => setShowAddToMyTemplatesDialog(true)}
                     >
                       <Plus className="h-4 w-4" />
