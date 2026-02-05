@@ -1,6 +1,7 @@
 import { useState, useRef, useCallback, useEffect } from 'react';
 import { sanitizeHtml } from '@/lib/sanitize';
-import { Plus, Trash2, ChevronDown, ChevronUp, ChevronRight, MoreHorizontal, Copy, GripVertical, PlusCircle, Circle, Square, Type, Calendar, AlignLeft, Paperclip, ToggleLeft, ListPlus, Menu, DollarSign, FileText, Search, Upload, File, X, Check, Pencil, LayoutGrid, Asterisk, ArrowUpFromLine, ArrowDownToLine } from 'lucide-react';
+import { Plus, Trash2, ChevronDown, ChevronUp, ChevronRight, MoreHorizontal, Copy, GripVertical, PlusCircle, Circle, Square, Type, Calendar, AlignLeft, Paperclip, ToggleLeft, ListPlus, Menu, DollarSign, FileText, Search, Upload, File, X, Check, Pencil, LayoutGrid, Asterisk } from 'lucide-react';
+import { AddItemAboveIcon, AddItemBelowIcon } from './icons/AddItemIcons';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { Input as SearchInput } from '@/components/ui/input';
@@ -1327,7 +1328,7 @@ function SortableItemRow({
                 }} 
                 className="p-1.5 rounded border border-transparent hover:border-border hover:bg-secondary hover:shadow-sm text-muted-foreground hover:text-secondary-foreground transition-all"
               >
-                <ArrowUpFromLine className="h-4 w-4" />
+                <AddItemAboveIcon className="h-4 w-4" />
               </button>
             </TooltipTrigger>
             <TooltipContent side="top">Add item above</TooltipContent>
@@ -1343,7 +1344,7 @@ function SortableItemRow({
                 }} 
                 className="p-1.5 rounded border border-transparent hover:border-border hover:bg-secondary hover:shadow-sm text-muted-foreground hover:text-secondary-foreground transition-all"
               >
-                <ArrowDownToLine className="h-4 w-4" />
+                <AddItemBelowIcon className="h-4 w-4" />
               </button>
             </TooltipTrigger>
             <TooltipContent side="top">Add item below</TooltipContent>
