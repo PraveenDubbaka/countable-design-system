@@ -78,12 +78,6 @@ const ANSWER_TYPE_OPTIONS: {
   bgColor: 'bg-teal-100',
   iconColor: 'text-teal-600'
 }, {
-  value: 'file-upload',
-  label: 'File Upload',
-  icon: Paperclip,
-  bgColor: 'bg-pink-100',
-  iconColor: 'text-pink-600'
-}, {
   value: 'toggle',
   label: 'Switch/Toggle',
   icon: ToggleLeft,
