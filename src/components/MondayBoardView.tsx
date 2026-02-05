@@ -799,13 +799,10 @@ function SortableSubItemRow({
   return <div ref={setNodeRef} style={style} {...attributes} {...listeners} className={`group flex items-stretch hover:bg-muted/50 transition-all relative border-b border-border/50 cursor-grab active:cursor-grabbing ${isDragging ? 'opacity-50 ring-2 ring-primary ring-offset-1 z-10' : ''} ${isValidDropTarget ? 'bg-primary/5' : ''}`}>
       {/* Drop indicator line */}
       {isValidDropTarget && <div className="absolute -top-[2px] left-0 right-0 h-1 bg-primary rounded-full z-20 shadow-[0_0_8px_rgba(59,130,246,0.5)]" />}
-      {/* Checkbox column (padded so it sits inside the indented sub-question card) */}
-      <div className="w-10 shrink-0 flex items-center justify-start pl-4 self-center">
+      {/* Checkbox column */}
+      <div className="w-10 shrink-0 flex items-center justify-center self-center">
         <Checkbox checked={isSelected} onCheckedChange={() => setIsSelected(!isSelected)} className="h-4 w-4 border-border bg-background" />
       </div>
-
-      {/* Chevron spacer column (keeps Questions column divider aligned with header/main rows) */}
-      <div className="w-8 shrink-0" aria-hidden="true" />
 
       {/* Sub-item name - width matches header */}
       <div className="flex-1 min-w-0 px-3 py-2.5 flex items-center gap-2 border-l border-border/50" style={{
@@ -1388,17 +1385,12 @@ function SortableItemRow({
               Keep the *visual* indent (ml-8) on a background layer only,
               while sub-item rows render at full width so column dividers always align
               with the header/main rows (even when resizing). */}
-          <div className="relative rounded-lg overflow-hidden py-1">
-            {/*
-              Visual-only indented sub-question card background:
-              - Starts after the connector line (left-4) to match the original indentation.
-              - Does not change any column widths/alignment.
-            */}
-            <div className="pointer-events-none absolute inset-0" aria-hidden="true">
-              <div className="absolute left-4 right-0 top-0 bottom-0 rounded-lg bg-muted/50" />
-            </div>
-
-            <div className="relative">
+          {/*
+            Sub-items container:
+            - Restore original indentation via ml-8.
+            - Use -mr-8 so the internal row widths still match the parent/header grid when columns are resized.
+          */}
+          <div className="ml-8 bg-muted/50 rounded-lg overflow-hidden">
               <SortableContext items={subItemIds} strategy={verticalListSortingStrategy}>
                 {item.subQuestions!.map((sub, idx) => <div key={sub.id} className="">
                     <SortableSubItemRow subItem={sub} index={idx} parentId={item.id} onUpdate={updated => handleSubItemUpdate(idx, updated)} onDelete={() => handleSubItemDelete(idx)} isPreviewMode={isPreviewMode} isCompactMode={isCompactMode} isLast={idx === item.subQuestions!.length - 1} totalCount={item.subQuestions!.length} visibleColumns={visibleColumns} columnWidths={columnWidths} isNewEmpty={isPendingSubItem && sub.text.trim() === ''} onBlurCleanup={() => {
@@ -1409,26 +1401,22 @@ function SortableItemRow({
                   </div>)}
               </SortableContext>
 
-              {/* Add subitem row - keep the full column structure so vertical column lines stay aligned */}
-              {!isPreviewMode && hasRealSubItems && <div className="flex items-stretch hover:bg-muted transition-colors border-b border-border/50">
-                  <div className="w-10 shrink-0 flex items-center justify-start pl-4 self-center py-2.5">
+              {/* Add subitem row (match original indented UI) */}
+              {!isPreviewMode && hasRealSubItems && (
+                <div className="flex items-center hover:bg-muted transition-colors">
+                  <div className="w-10 flex items-center justify-center py-2.5">
                     <Checkbox disabled className="h-4 w-4 border-border bg-background opacity-30" />
                   </div>
 
-                  <div className="w-8 shrink-0" aria-hidden="true" />
-
-                  <div className="flex-1 min-w-0 px-3 py-2.5 flex items-center border-l border-border/50" style={{ flexBasis: columnWidths.questions }}>
-                    <button onClick={onAddSubItem} className="w-full text-left text-sm text-muted-foreground hover:text-primary transition-colors">
-                      + Add
-                    </button>
-                  </div>
-
-                  <div className="flex-1 min-w-0 px-2 py-2 border-l border-border/50" style={{ flexBasis: columnWidths.response }} />
-                  {visibleColumns.explanation && <div className="flex-1 min-w-0 px-2 py-2 border-l border-border/50" style={{ flexBasis: columnWidths.explanation }} />}
-                  {visibleColumns.reference && <div className="flex-1 min-w-0 px-2 py-2 border-l border-border/50" style={{ flexBasis: columnWidths.reference }} />}
-                  <div className="w-[180px] shrink-0" />
-                </div>}
-            </div>
+                  <button
+                    onClick={onAddSubItem}
+                    className="flex-1 flex items-center gap-2 px-3 py-2.5 text-sm text-muted-foreground hover:text-primary transition-colors text-left border-l border-border/50"
+                    style={{ flexBasis: columnWidths.questions }}
+                  >
+                    + Add
+                  </button>
+                </div>
+              )}
           </div>
         </div>}
     </div>;
