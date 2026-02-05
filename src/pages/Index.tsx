@@ -155,7 +155,7 @@ const generateClientMeetingChecklist = (prompt: string): Checklist => {
   };
 };
 
-const generateMockChecklist = (prompt: string, scope: GenerationScope): Checklist => {
+const generateMockChecklist = (prompt: string, scope: GenerationScope, checklistName?: string): Checklist => {
   // Check if this is a Client Meeting Checklist prompt
   const isClientMeetingPrompt = prompt.toLowerCase().includes('client meeting checklist') || 
                                  prompt.toLowerCase().includes('client meeting') && prompt.toLowerCase().includes('checklist');
@@ -271,7 +271,7 @@ When assisting management in developing an appropriate basis of accounting, take
 
   return {
     id: 'checklist-1',
-    title: prompt ? `Checklist: ${prompt.substring(0, 50)}...` : 'Engagement Acceptance Checklist',
+    title: checklistName || 'Engagement Acceptance Checklist',
     description: prompt,
     objective: defaultObjective,
     sections,
@@ -316,12 +316,12 @@ export default function Index() {
   const [isGlobalTemplatePreview, setIsGlobalTemplatePreview] = useState(false);
   const [isSavedTemplate, setIsSavedTemplate] = useState(false);
 
-  const handleGenerate = async (prompt: string, scope: GenerationScope, savedChecklistId?: string) => {
+  const handleGenerate = async (prompt: string, scope: GenerationScope, savedChecklistId?: string, checklistName?: string) => {
     setIsGenerating(true);
 
     await new Promise(resolve => setTimeout(resolve, 1500));
 
-    const generated = generateMockChecklist(prompt, scope);
+    const generated = generateMockChecklist(prompt, scope, checklistName);
     setChecklist(generated);
     setIsGenerating(false);
 
@@ -391,7 +391,7 @@ export default function Index() {
 
     if (!gen?.prompt) return;
 
-    void handleGenerate(gen.prompt, gen.scope ?? 'standard', gen.savedChecklistId);
+    void handleGenerate(gen.prompt, gen.scope ?? 'standard', gen.savedChecklistId, gen.checklistName);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [location.state, navigate]);
 
