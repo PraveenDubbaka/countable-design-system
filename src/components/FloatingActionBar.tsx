@@ -343,7 +343,7 @@ export function FloatingActionBar({
                         <Plus className="h-3.5 w-3.5 text-foreground" />
                       </div>
                       <div className="text-left">
-                        <p className="text-sm font-medium text-foreground">Empty Section</p>
+                        <p className="text-sm font-medium text-foreground">Section</p>
                         <p className="text-xs text-muted-foreground">Start from scratch</p>
                       </div>
                     </button>
