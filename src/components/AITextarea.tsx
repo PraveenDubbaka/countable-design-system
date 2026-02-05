@@ -193,8 +193,8 @@ export function AITextarea({
 
   // Shared classes for BOTH view and edit — identical box model so no height jump
   const sharedBoxClasses = cn(
-    "text-sm p-1.5 border-2 border-transparent rounded-md whitespace-pre-wrap box-border",
-    isCompactMode ? "max-h-[2.5rem] line-clamp-1 overflow-hidden" : "min-h-[2.5rem]",
+    "text-sm p-1.5 border-2 border-transparent rounded-md box-border",
+    isCompactMode ? "truncate overflow-hidden whitespace-nowrap" : "min-h-[2.5rem] whitespace-pre-wrap",
   );
 
   // Render text display when not editing (matches question text behavior)
@@ -264,7 +264,7 @@ export function AITextarea({
           onClick={(e) => e.stopPropagation()}
           className={cn(
             "w-full pr-16 text-sm bg-muted border-2 border-primary text-foreground rounded-md p-1.5 outline-none resize-none box-border",
-            isCompactMode ? "max-h-[2.5rem] overflow-hidden" : "min-h-[2.5rem] overflow-y-auto",
+            isCompactMode ? "max-h-[2.5rem] overflow-hidden whitespace-nowrap" : "min-h-[2.5rem] overflow-y-auto",
             isListening && "ring-1 ring-primary",
             disabled && "opacity-60"
           )}
