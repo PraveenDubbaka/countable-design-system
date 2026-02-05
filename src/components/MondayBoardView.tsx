@@ -1,6 +1,6 @@
 import { useState, useRef, useCallback, useEffect } from 'react';
 import { sanitizeHtml } from '@/lib/sanitize';
-import { Plus, Trash2, ChevronDown, ChevronUp, ChevronRight, MoreHorizontal, Copy, GripVertical, PlusCircle, Circle, Square, Type, Calendar, AlignLeft, Paperclip, ToggleLeft, ListPlus, Menu, DollarSign, FileText, Search, Upload, File, X, Check, Pencil, LayoutGrid, Asterisk, Hash, ListOrdered } from 'lucide-react';
+import { Plus, Trash2, ChevronDown, ChevronUp, ChevronRight, MoreHorizontal, Copy, GripVertical, PlusCircle, Circle, Square, Type, Calendar, AlignLeft, Paperclip, ToggleLeft, ListPlus, Menu, DollarSign, FileText, Search, Upload, File, X, Check, Pencil, LayoutGrid, Asterisk, Hash, ListOrdered, Loader2 } from 'lucide-react';
 import { AddItemAboveIcon, AddItemBelowIcon } from './icons/AddItemIcons';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
@@ -26,6 +26,7 @@ interface MondayBoardViewProps {
   selectedQuestions?: Set<string>;
   onSelectionChange?: (selected: Set<string>) => void;
   isEngagementMode?: boolean; // When true, users can add/delete their own questions but cannot modify template questions
+  applyingQuestionId?: string | null; // ID of question currently being filled with client response
 }
 
 // Answer type options for dropdown with icons like Monday.com
@@ -755,6 +756,7 @@ interface SubItemRowProps {
   itemNumber: number;
   isEngagementMode?: boolean;
   numberingFormat: NumberingFormat;
+  applyingQuestionId?: string | null;
 }
 interface SortableSubItemRowProps extends SubItemRowProps {
   isLast: boolean;
@@ -779,8 +781,10 @@ function SortableSubItemRow({
   sectionNumber,
   itemNumber,
   isEngagementMode = false,
-  numberingFormat
+  numberingFormat,
+  applyingQuestionId
 }: SortableSubItemRowProps) {
+  const isApplying = applyingQuestionId === subItem.id;
   const [isEditingName, setIsEditingName] = useState(isNewEmpty || false);
   const [isSelected, setIsSelected] = useState(false);
   const draftNameRef = useRef(subItem.text);
@@ -913,9 +917,15 @@ function SortableSubItemRow({
         return <Input value={subItem.answer || ''} onChange={e => handleAnswerChange(e.target.value)} onClick={e => e.stopPropagation()} placeholder="Enter response..." className="h-7 text-xs bg-muted border-border text-foreground" />;
     }
   };
-  return <div ref={setNodeRef} style={style} {...attributes} {...listeners} className={`group flex items-stretch hover:bg-muted/50 transition-all relative border-b border-border/50 cursor-grab active:cursor-grabbing ${isDragging ? 'opacity-50 ring-2 ring-primary ring-offset-1 z-10' : ''} ${isValidDropTarget ? 'bg-primary/5' : ''}`}>
+  return <div ref={setNodeRef} style={style} {...attributes} {...listeners} className={`group flex items-stretch hover:bg-muted/50 transition-all relative border-b border-border/50 cursor-grab active:cursor-grabbing ${isDragging ? 'opacity-50 ring-2 ring-primary ring-offset-1 z-10' : ''} ${isValidDropTarget ? 'bg-primary/5' : ''} ${isApplying ? 'ring-2 ring-primary ring-inset animate-pulse bg-primary/10' : ''}`}>
       {/* Drop indicator line */}
       {isValidDropTarget && <div className="absolute -top-[2px] left-0 right-0 h-1 bg-primary rounded-full z-20 shadow-[0_0_8px_rgba(59,130,246,0.5)]" />}
+      {/* Loading indicator when applying response */}
+      {isApplying && (
+        <div className="absolute left-2 top-1/2 -translate-y-1/2 z-10">
+          <Loader2 className="h-4 w-4 text-primary animate-spin" />
+        </div>
+      )}
       {/* Checkbox column */}
       <div className="w-10 shrink-0 flex items-center justify-center self-center">
         <Checkbox checked={isSelected} onCheckedChange={() => setIsSelected(!isSelected)} className="h-4 w-4 border-border bg-background" />
@@ -1073,6 +1083,7 @@ interface ItemRowProps {
   onSelectionChange: (selected: boolean) => void;
   isEngagementMode?: boolean;
   numberingFormat: NumberingFormat;
+  applyingQuestionId?: string | null;
 }
 function SortableItemRow({
   item,
@@ -1092,8 +1103,10 @@ function SortableItemRow({
   isSelected,
   onSelectionChange,
   isEngagementMode = false,
-  numberingFormat
+  numberingFormat,
+  applyingQuestionId
 }: ItemRowProps) {
+  const isApplying = applyingQuestionId === item.id;
   const [isExpanded, setIsExpanded] = useState(true);
   const [isEditingName, setIsEditingName] = useState(false);
   const [isPendingSubItem, setIsPendingSubItem] = useState(false);
@@ -1271,14 +1284,20 @@ function SortableItemRow({
     }
   };
   const subItemIds = item.subQuestions?.map(sq => sq.id) || [];
-  return <div ref={setNodeRef} style={style} className={`relative border-b border-border/50 ${isDragging ? 'z-10' : ''}`}>
+  return <div ref={setNodeRef} style={style} className={`relative border-b border-border/50 ${isDragging ? 'z-10' : ''} ${isApplying ? 'ring-2 ring-primary ring-inset animate-pulse' : ''}`}>
       {/* Drop indicator line - shows above item when hovering */}
       {isValidDropTarget && <div className="absolute -top-[2px] left-0 right-0 h-1 bg-primary rounded-full z-20 shadow-[0_0_8px_rgba(59,130,246,0.5)]" />}
+      {/* Loading indicator when applying response */}
+      {isApplying && (
+        <div className="absolute left-2 top-1/2 -translate-y-1/2 z-10">
+          <Loader2 className="h-4 w-4 text-primary animate-spin" />
+        </div>
+      )}
       {/* Main item row - full row is draggable */}
       <div {...!isEditingName ? {
       ...attributes,
       ...listeners
-    } : {}} className={`group flex items-stretch hover:bg-muted/50 transition-all ${isSelected ? 'bg-muted/50' : ''} ${!isEditingName ? 'cursor-grab active:cursor-grabbing' : ''} ${isDragging ? 'opacity-50 ring-2 ring-primary ring-offset-1' : ''} ${isValidDropTarget ? 'bg-primary/5' : ''}`}>
+    } : {}} className={`group flex items-stretch hover:bg-muted/50 transition-all ${isSelected ? 'bg-muted/50' : ''} ${!isEditingName ? 'cursor-grab active:cursor-grabbing' : ''} ${isDragging ? 'opacity-50 ring-2 ring-primary ring-offset-1' : ''} ${isValidDropTarget ? 'bg-primary/5' : ''} ${isApplying ? 'bg-primary/10' : ''}`}>
         {/* Checkbox */}
         <div className="w-10 shrink-0 flex items-center justify-center self-center">
           <Checkbox checked={isSelected} onCheckedChange={checked => onSelectionChange(checked === true)} className="h-4 w-4 border-border" />
@@ -1545,7 +1564,7 @@ function SortableItemRow({
                 if (sub.text.trim() === '') {
                   cleanupEmptySubItems();
                 }
-              }} sectionNumber={sectionNumber} itemNumber={itemIndex + 1} isEngagementMode={isEngagementMode} numberingFormat={numberingFormat} />
+              }} sectionNumber={sectionNumber} itemNumber={itemIndex + 1} isEngagementMode={isEngagementMode} numberingFormat={numberingFormat} applyingQuestionId={applyingQuestionId} />
                   </div>)}
               </SortableContext>
 
@@ -1587,6 +1606,7 @@ interface GroupProps {
   isEngagementMode?: boolean;
   numberingFormat: NumberingFormat;
   onNumberingFormatChange: (format: NumberingFormat) => void;
+  applyingQuestionId?: string | null;
 }
 
 // Resizable column header component
@@ -1699,7 +1719,8 @@ function SortableGroup({
   onSelectionChange,
   isEngagementMode = false,
   numberingFormat,
-  onNumberingFormatChange
+  onNumberingFormatChange,
+  applyingQuestionId
 }: GroupProps) {
   const [isEditingTitle, setIsEditingTitle] = useState(false);
   const [draftTitle, setDraftTitle] = useState(section.title);
@@ -1969,7 +1990,7 @@ function SortableGroup({
 
                 {/* Items */}
                 <SortableContext items={itemIds} strategy={verticalListSortingStrategy}>
-                  {section.questions.map((question, idx) => <SortableItemRow key={question.id} item={question} sectionId={section.id} itemIndex={idx} onUpdate={q => handleItemUpdate(idx, q)} onDelete={() => handleItemDelete(idx)} onDuplicate={() => handleItemDuplicate(idx)} onAddSubItem={() => handleAddSubItem(idx)} onAddItemAtPosition={position => handleAddItemAtPosition(idx, position)} isPreviewMode={isPreviewMode} isCompactMode={isCompactMode} onSubItemsReorder={onSubItemsReorder} visibleColumns={visibleColumns} columnWidths={columnWidths} sectionNumber={sectionIndex + 1} isSelected={selectedQuestions.has(question.id)} onSelectionChange={selected => onSelectionChange(question.id, selected)} isEngagementMode={isEngagementMode} numberingFormat={numberingFormat} />)}
+                  {section.questions.map((question, idx) => <SortableItemRow key={question.id} item={question} sectionId={section.id} itemIndex={idx} onUpdate={q => handleItemUpdate(idx, q)} onDelete={() => handleItemDelete(idx)} onDuplicate={() => handleItemDuplicate(idx)} onAddSubItem={() => handleAddSubItem(idx)} onAddItemAtPosition={position => handleAddItemAtPosition(idx, position)} isPreviewMode={isPreviewMode} isCompactMode={isCompactMode} onSubItemsReorder={onSubItemsReorder} visibleColumns={visibleColumns} columnWidths={columnWidths} sectionNumber={sectionIndex + 1} isSelected={selectedQuestions.has(question.id)} onSelectionChange={selected => onSelectionChange(question.id, selected)} isEngagementMode={isEngagementMode} numberingFormat={numberingFormat} applyingQuestionId={applyingQuestionId} />)}
                 </SortableContext>
 
                 {/* Add item button */}
@@ -1994,7 +2015,8 @@ export function MondayBoardView({
   isCompactMode = false,
   selectedQuestions = new Set(),
   onSelectionChange,
-  isEngagementMode = false
+  isEngagementMode = false,
+  applyingQuestionId = null
 }: MondayBoardViewProps) {
   const [activeId, setActiveId] = useState<string | null>(null);
   const [activeData, setActiveData] = useState<{
@@ -2318,7 +2340,7 @@ export function MondayBoardView({
   return <DndContext sensors={sensors} collisionDetection={closestCenter} onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
       <div className="space-y-4 monday-board-light-borders">
         <SortableContext items={sectionIds} strategy={verticalListSortingStrategy}>
-          {checklist.sections.map((section, idx) => <SortableGroup key={section.id} section={section} sectionIndex={idx} onUpdate={s => handleSectionUpdate(idx, s)} onDelete={() => handleSectionDelete(idx)} onAddItem={() => handleAddItem(idx)} onAddCategoryAtPosition={position => handleAddCategoryAtPosition(idx, position)} isPreviewMode={isPreviewMode} isCompactMode={isCompactMode} onItemsReorder={handleItemsReorder} onSubItemsReorder={handleSubItemsReorder} selectedQuestions={selectedQuestions} onSelectionChange={handleSelectionChange} isEngagementMode={isEngagementMode} numberingFormat={numberingFormat} onNumberingFormatChange={setNumberingFormat} />)}
+          {checklist.sections.map((section, idx) => <SortableGroup key={section.id} section={section} sectionIndex={idx} onUpdate={s => handleSectionUpdate(idx, s)} onDelete={() => handleSectionDelete(idx)} onAddItem={() => handleAddItem(idx)} onAddCategoryAtPosition={position => handleAddCategoryAtPosition(idx, position)} isPreviewMode={isPreviewMode} isCompactMode={isCompactMode} onItemsReorder={handleItemsReorder} onSubItemsReorder={handleSubItemsReorder} selectedQuestions={selectedQuestions} onSelectionChange={handleSelectionChange} isEngagementMode={isEngagementMode} numberingFormat={numberingFormat} onNumberingFormatChange={setNumberingFormat} applyingQuestionId={applyingQuestionId} />)}
         </SortableContext>
       </div>
       

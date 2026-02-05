@@ -15,17 +15,20 @@ interface ShareWithClientDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   checklistName?: string;
+  onConfirm?: () => void;
 }
 
 export function ShareWithClientDialog({
   open,
   onOpenChange,
   checklistName,
+  onConfirm,
 }: ShareWithClientDialogProps) {
   const [clientPortalSelected, setClientPortalSelected] = useState(false);
 
   const handleConfirm = () => {
     if (clientPortalSelected) {
+      onConfirm?.();
       toast.success(`Checklist shared via Client Portal`);
     } else {
       toast.error("Please select a sharing method");

@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useCallback } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { 
   ChevronRight, 
@@ -23,6 +23,7 @@ import {
   History,
   Upload,
   FileUp,
+  Bell,
 } from "lucide-react";
 import { ChecklistIcon } from "@/components/icons/ChecklistIcon";
 import { Button } from "@/components/ui/button";
@@ -46,11 +47,13 @@ import { Layout } from "@/components/Layout";
 import { MondayBoardView } from "@/components/MondayBoardView";
 import { FloatingActionBar } from "@/components/FloatingActionBar";
 import { EngagementRightPanel } from "@/components/EngagementRightPanel";
-import { Checklist } from "@/types/checklist";
+import { Checklist, Question } from "@/types/checklist";
 import { readJsonFromLocalStorage, writeJsonToLocalStorage } from "@/lib/safeJson";
 import { subscribeToChecklistSync, dispatchChecklistSync } from "@/lib/checklistSync";
 import { toast } from "sonner";
 import { ShareWithClientDialog } from "@/components/ShareWithClientDialog";
+import { ClientResponseDialog } from "@/components/ClientResponseDialog";
+import { useClientResponses } from "@/hooks/useClientResponses";
 import {
   Dialog,
   DialogContent,
@@ -175,11 +178,15 @@ export default function EngagementDetail() {
   const [selectedQuestions, setSelectedQuestions] = useState<Set<string>>(new Set());
   const [objectiveExpanded, setObjectiveExpanded] = useState(false);
   const [showShareDialog, setShowShareDialog] = useState(false);
+  const [showResponseDialog, setShowResponseDialog] = useState(false);
   const [pendingEngagementId, setPendingEngagementId] = useState<string | null>(null);
   const [showSwitchDialog, setShowSwitchDialog] = useState(false);
   const [pendingClient, setPendingClient] = useState<string | null>(null);
   const [showClientSwitchDialog, setShowClientSwitchDialog] = useState(false);
   const [selectedClientEngagement, setSelectedClientEngagement] = useState<string | null>(null);
+
+  // Client responses hook
+  const clientResponses = useClientResponses(checklist);
 
   const engagement = engagementId ? engagementsData[engagementId] : null;
   const displayId = engagementId || "Unknown";
@@ -406,6 +413,58 @@ export default function EngagementDetail() {
     // No-op in preview mode
   };
 
+  // Handle share button click - show response dialog if has responses, otherwise show share dialog
+  const handleShareButtonClick = () => {
+    if (clientResponses.hasResponses) {
+      setShowResponseDialog(true);
+    } else {
+      setShowShareDialog(true);
+    }
+  };
+
+  // Handle share confirmation - trigger client response simulation
+  const handleShareConfirm = () => {
+    clientResponses.shareWithClient();
+    toast.success("Checklist shared with client. Waiting for responses...");
+  };
+
+  // Update a specific question's answer
+  const updateQuestionAnswer = useCallback((questionId: string, answer: string) => {
+    if (!checklist) return;
+    
+    const updateQuestion = (questions: Question[]): Question[] => {
+      return questions.map(q => {
+        if (q.id === questionId) {
+          return { ...q, answer };
+        }
+        if (q.subQuestions) {
+          return { ...q, subQuestions: updateQuestion(q.subQuestions) };
+        }
+        return q;
+      });
+    };
+    
+    const updatedChecklist = {
+      ...checklist,
+      sections: checklist.sections.map(s => ({
+        ...s,
+        questions: updateQuestion(s.questions)
+      }))
+    };
+    
+    setChecklist(updatedChecklist);
+  }, [checklist]);
+
+  // Handle adding client responses to checklist
+  const handleAddResponsesToChecklist = () => {
+    clientResponses.applyResponses(
+      updateQuestionAnswer,
+      () => {
+        toast.success("All client responses have been added to the checklist!");
+      }
+    );
+  };
+
   if (!checklist) {
     return (
       <Layout>
@@ -581,11 +640,27 @@ export default function EngagementDetail() {
               {/* Share with Client */}
               <Tooltip>
                 <TooltipTrigger asChild>
-                  <Button variant="outline" size="icon" className="h-9 w-9 bg-card border-border hover:bg-muted" onClick={() => setShowShareDialog(true)}>
+                  <Button 
+                    variant="outline" 
+                    size="icon" 
+                    className={`h-9 w-9 bg-card border-border hover:bg-muted relative ${clientResponses.hasResponses ? 'ring-2 ring-primary ring-offset-2' : ''}`}
+                    onClick={handleShareButtonClick}
+                  >
                     <Share2 className="h-4 w-4" />
+                    {/* Notification badge */}
+                    {clientResponses.hasResponses && (
+                      <span className="absolute -top-1 -right-1 flex h-4 w-4">
+                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
+                        <span className="relative inline-flex rounded-full h-4 w-4 bg-primary items-center justify-center">
+                          <Bell className="h-2.5 w-2.5 text-primary-foreground" />
+                        </span>
+                      </span>
+                    )}
                   </Button>
                 </TooltipTrigger>
-                <TooltipContent>Share with Client</TooltipContent>
+                <TooltipContent>
+                  {clientResponses.hasResponses ? 'Client Responses Received!' : 'Share with Client'}
+                </TooltipContent>
               </Tooltip>
 
               <Tooltip>
@@ -656,6 +731,7 @@ export default function EngagementDetail() {
                 selectedQuestions={selectedQuestions}
                 onSelectionChange={setSelectedQuestions}
                 isEngagementMode={true}
+                applyingQuestionId={clientResponses.applyingQuestionId}
               />
             </div>
           )}
@@ -689,6 +765,17 @@ export default function EngagementDetail() {
           open={showShareDialog}
           onOpenChange={setShowShareDialog}
           checklistName={checklist?.title}
+          onConfirm={handleShareConfirm}
+        />
+
+        {/* Client Response Dialog */}
+        <ClientResponseDialog
+          open={showResponseDialog}
+          onOpenChange={setShowResponseDialog}
+          totalQuestions={clientResponses.totalQuestions}
+          answeredQuestions={clientResponses.answeredQuestions}
+          onAddResponses={handleAddResponsesToChecklist}
+          isApplying={clientResponses.isApplyingResponses}
         />
 
         {/* Switch Engagement Confirmation Dialog */}
