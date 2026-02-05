@@ -335,9 +335,9 @@ export function FloatingActionBar({
                 onPointerDownOutside={(e) => e.preventDefault()}
               >
                 {pendingCategoryType && (
-                  <div className="flex flex-col gap-1 min-h-[180px]">
+                  <div className="flex flex-col gap-1">
                     <div className="px-3 py-2 border-b border-border mb-1">
-                      <p className="text-xs text-muted-foreground font-medium">Where to add?</p>
+                      <p className="text-sm font-semibold text-foreground">Category</p>
                     </div>
                     <button
                       onClick={() => {
@@ -371,13 +371,6 @@ export function FloatingActionBar({
                         <p className="text-sm font-medium text-foreground">Add to Bottom</p>
                         <p className="text-xs text-muted-foreground">Insert at end</p>
                       </div>
-                    </button>
-
-                    <button
-                      onClick={() => setPendingCategoryType(null)}
-                      className="text-center text-xs text-muted-foreground hover:text-foreground py-2 mt-1 transition-colors"
-                    >
-                      ← Back
                     </button>
                   </div>
                 )}
