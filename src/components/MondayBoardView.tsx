@@ -132,7 +132,7 @@ const EXISTING_DOCUMENTS = [{
 }];
 
 // Numbering format types
-type NumberingFormat = 'number' | 'alphabet' | 'number-alphabet';
+type NumberingFormat = 'number' | 'number-alphabet' | 'alphabet-number';
 
 // Helper function to format question numbers
 const formatQuestionNumber = (
@@ -141,27 +141,38 @@ const formatQuestionNumber = (
   itemIndex: number,
   subItemIndex?: number
 ): string => {
-  const toAlphabet = (num: number): string => {
+  const toUpperAlpha = (num: number): string => {
     const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
     return letters[(num - 1) % 26] || 'A';
   };
+  
+  const toLowerAlpha = (num: number): string => {
+    const letters = 'abcdefghijklmnopqrstuvwxyz';
+    return letters[(num - 1) % 26] || 'a';
+  };
 
   switch (format) {
+    // Option 1: 1.1, 1.1.1
     case 'number':
       if (subItemIndex !== undefined) {
         return `${sectionNumber}.${itemIndex + 1}.${subItemIndex + 1}`;
       }
       return `${sectionNumber}.${itemIndex + 1}`;
-    case 'alphabet':
-      if (subItemIndex !== undefined) {
-        return `${toAlphabet(sectionNumber)}.${toAlphabet(itemIndex + 1)}.${toAlphabet(subItemIndex + 1)}`;
-      }
-      return `${toAlphabet(sectionNumber)}.${toAlphabet(itemIndex + 1)}`;
+    
+    // Option 2: 1.A, 1.A.a
     case 'number-alphabet':
       if (subItemIndex !== undefined) {
-        return `${sectionNumber}${toAlphabet(itemIndex + 1)}.${subItemIndex + 1}`;
+        return `${sectionNumber}.${toUpperAlpha(itemIndex + 1)}.${toLowerAlpha(subItemIndex + 1)}`;
       }
-      return `${sectionNumber}${toAlphabet(itemIndex + 1)}`;
+      return `${sectionNumber}.${toUpperAlpha(itemIndex + 1)}`;
+    
+    // Option 3: A.1, A.1.a
+    case 'alphabet-number':
+      if (subItemIndex !== undefined) {
+        return `${toUpperAlpha(sectionNumber)}.${itemIndex + 1}.${toLowerAlpha(subItemIndex + 1)}`;
+      }
+      return `${toUpperAlpha(sectionNumber)}.${itemIndex + 1}`;
+    
     default:
       if (subItemIndex !== undefined) {
         return `${sectionNumber}.${itemIndex + 1}.${subItemIndex + 1}`;
@@ -178,9 +189,9 @@ interface NumberingFormatSelectorProps {
 }
 
 const NUMBERING_OPTIONS: { value: NumberingFormat; label: string; example: string }[] = [
-  { value: 'number', label: 'Numbers', example: '1.1, 1.2, 1.3' },
-  { value: 'alphabet', label: 'Alphabet', example: 'A.A, A.B, A.C' },
-  { value: 'number-alphabet', label: 'Number + Alphabet', example: '1A, 1B, 2A' },
+  { value: 'number', label: 'Numbers Only', example: '1.1 → 1.1.1' },
+  { value: 'number-alphabet', label: 'Number + Alphabet', example: '1.A → 1.A.a' },
+  { value: 'alphabet-number', label: 'Alphabet + Number', example: 'A.1 → A.1.a' },
 ];
 
 function NumberingFormatSelector({ currentFormat, onFormatChange, isPreviewMode }: NumberingFormatSelectorProps) {
