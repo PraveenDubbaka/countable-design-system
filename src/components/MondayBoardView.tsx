@@ -1278,7 +1278,7 @@ function SortableItemRow({
                     required: !item.required
                   });
                 }} 
-                className={`p-1.5 rounded hover:bg-muted transition-colors ${item.required ? 'text-red-500' : 'text-muted-foreground hover:text-foreground'}`}
+                className={`p-1.5 rounded hover:bg-accent hover:scale-105 active:scale-95 transition-all duration-150 ${item.required ? 'text-red-500' : 'text-muted-foreground hover:text-foreground'}`}
               >
                 <Asterisk className="h-4 w-4" />
               </button>
@@ -1294,7 +1294,7 @@ function SortableItemRow({
                   e.stopPropagation();
                   onAddSubItem();
                 }} 
-                className="p-1.5 rounded hover:bg-muted text-muted-foreground hover:text-foreground transition-colors"
+                className="p-1.5 rounded hover:bg-accent hover:scale-105 active:scale-95 text-muted-foreground hover:text-foreground transition-all duration-150"
               >
                 <PlusCircle className="h-4 w-4" />
               </button>
@@ -1310,7 +1310,7 @@ function SortableItemRow({
                   e.stopPropagation();
                   onAddItemAtPosition('above');
                 }} 
-                className="p-1.5 rounded hover:bg-muted text-muted-foreground hover:text-foreground transition-colors"
+                className="p-1.5 rounded hover:bg-accent hover:scale-105 active:scale-95 text-muted-foreground hover:text-foreground transition-all duration-150"
               >
                 <ChevronUp className="h-4 w-4" />
               </button>
@@ -1326,7 +1326,7 @@ function SortableItemRow({
                   e.stopPropagation();
                   onAddItemAtPosition('below');
                 }} 
-                className="p-1.5 rounded hover:bg-muted text-muted-foreground hover:text-foreground transition-colors"
+                className="p-1.5 rounded hover:bg-accent hover:scale-105 active:scale-95 text-muted-foreground hover:text-foreground transition-all duration-150"
               >
                 <ChevronDown className="h-4 w-4" />
               </button>
@@ -1342,7 +1342,7 @@ function SortableItemRow({
                   e.stopPropagation();
                   onDuplicate();
                 }} 
-                className="p-1.5 rounded hover:bg-muted text-muted-foreground hover:text-foreground transition-colors"
+                className="p-1.5 rounded hover:bg-accent hover:scale-105 active:scale-95 text-muted-foreground hover:text-foreground transition-all duration-150"
               >
                 <Copy className="h-4 w-4" />
               </button>
@@ -1358,7 +1358,7 @@ function SortableItemRow({
                   e.stopPropagation();
                   onDelete();
                 }} 
-                className="p-1.5 rounded hover:bg-muted text-muted-foreground hover:text-red-500 transition-colors"
+                className="p-1.5 rounded hover:bg-red-100 hover:scale-105 active:scale-95 text-muted-foreground hover:text-red-500 transition-all duration-150"
               >
                 <Trash2 className="h-4 w-4" />
               </button>
