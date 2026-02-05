@@ -543,65 +543,6 @@ export default function EngagementDetail() {
                 <Save className="h-4 w-4" />
               </Button>
               
-              {/* Prior Year Responses */}
-              <DropdownMenu>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <DropdownMenuTrigger asChild>
-                      <Button variant="outline" size="icon" className="h-9 w-9 bg-card border-border hover:bg-muted">
-                        <History className="h-4 w-4" />
-                      </Button>
-                    </DropdownMenuTrigger>
-                  </TooltipTrigger>
-                  <TooltipContent>Prior Year Responses</TooltipContent>
-                </Tooltip>
-                <DropdownMenuContent align="end" className="bg-card border shadow-lg z-50 w-48">
-                  <DropdownMenuItem 
-                    className="flex items-center gap-2 cursor-pointer group"
-                    onClick={() => toast.info('Loading responses from Dec 31, 2023...')}
-                  >
-                    <Calendar className="h-4 w-4 text-muted-foreground group-hover:text-foreground transition-colors" />
-                    <span>Dec 31, 2023</span>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem 
-                    className="flex items-center gap-2 cursor-pointer group"
-                    onClick={() => toast.info('Loading responses from Dec 31, 2022...')}
-                  >
-                    <Calendar className="h-4 w-4 text-muted-foreground group-hover:text-foreground transition-colors" />
-                    <span>Dec 31, 2022</span>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem 
-                    className="flex items-center gap-2 cursor-pointer group"
-                    onClick={() => toast.info('Loading responses from Dec 31, 2021...')}
-                  >
-                    <Calendar className="h-4 w-4 text-muted-foreground group-hover:text-foreground transition-colors" />
-                    <span>Dec 31, 2021</span>
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-
-              {/* Populate */}
-              <DropdownMenu>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <DropdownMenuTrigger asChild>
-                      <Button variant="outline" size="icon" className="h-9 w-9 bg-card border-border hover:bg-muted">
-                        <ChecklistIcon className="h-4 w-4" />
-                      </Button>
-                    </DropdownMenuTrigger>
-                  </TooltipTrigger>
-                  <TooltipContent>Populate</TooltipContent>
-                </Tooltip>
-                <DropdownMenuContent align="end" className="bg-card border shadow-lg z-50 w-48">
-                  <DropdownMenuItem 
-                    className="flex items-center gap-2 cursor-pointer group"
-                    onClick={() => toast.info('Upload a file to populate responses...')}
-                  >
-                    <FileUp className="h-4 w-4 text-muted-foreground group-hover:text-foreground transition-colors" />
-                    <span>Upload File</span>
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
 
               {/* Export Checklist */}
               <DropdownMenu>
