@@ -12,6 +12,7 @@ export interface Question {
   explanation?: string;
   reference?: string;
   isExpanded?: boolean;
+  isUserAdded?: boolean; // Track if question was added by user in engagement mode
 }
 
 export interface FormElement {
