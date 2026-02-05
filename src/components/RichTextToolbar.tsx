@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useRef } from 'react';
 import { 
   Bold, 
   Italic, 
@@ -11,8 +11,7 @@ import {
   AlignRight,
   Undo,
   Redo,
-  ChevronDown,
-  Type
+  ChevronDown
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
@@ -32,21 +31,10 @@ interface RichTextToolbarProps {
 export function RichTextToolbar({ position, onFormatAction, onAIAssist, toolbarRef }: RichTextToolbarProps) {
   const localRef = useRef<HTMLDivElement>(null);
   const ref = toolbarRef || localRef;
-  const [textColor, setTextColor] = useState('#000000');
 
   const handleFormat = (action: string, value?: string) => {
     onFormatAction?.(action, value);
   };
-
-  const colors = [
-    { name: 'Black', value: '#000000' },
-    { name: 'Red', value: '#ef4444' },
-    { name: 'Orange', value: '#f97316' },
-    { name: 'Yellow', value: '#eab308' },
-    { name: 'Green', value: '#22c55e' },
-    { name: 'Blue', value: '#3b82f6' },
-    { name: 'Purple', value: '#a855f7' },
-  ];
 
   const textStyles = [
     { label: 'Normal text', value: 'p' },
@@ -89,41 +77,6 @@ export function RichTextToolbar({ position, onFormatAction, onAIAssist, toolbarR
 
       <div className="w-px h-5 bg-border mx-1" />
 
-      {/* Text Color Dropdown */}
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <Button variant="ghost" size="sm" className="h-7 w-7 p-0">
-            <div className="flex flex-col items-center">
-              <Type className="h-3.5 w-3.5" />
-              <div 
-                className="w-3 h-0.5 rounded-sm mt-0.5" 
-                style={{ backgroundColor: textColor }}
-              />
-            </div>
-          </Button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent align="start" className="min-w-[120px]">
-          {colors.map((color) => (
-            <DropdownMenuItem
-              key={color.value}
-              onClick={() => {
-                setTextColor(color.value);
-                handleFormat('textColor', color.value);
-              }}
-              className="flex items-center gap-2"
-            >
-              <div 
-                className="w-4 h-4 rounded border" 
-                style={{ backgroundColor: color.value }}
-              />
-              <span className="text-sm">{color.name}</span>
-            </DropdownMenuItem>
-          ))}
-        </DropdownMenuContent>
-      </DropdownMenu>
-
-      <div className="w-px h-5 bg-border mx-1" />
-
       {/* Formatting Buttons */}
       <Button 
         variant="ghost" 
@@ -151,19 +104,6 @@ export function RichTextToolbar({ position, onFormatAction, onAIAssist, toolbarR
         title="Underline"
       >
         <Underline className="h-3.5 w-3.5" />
-      </Button>
-
-      <div className="w-px h-5 bg-border mx-1" />
-
-      {/* Superscript */}
-      <Button 
-        variant="ghost" 
-        size="sm" 
-        className="h-7 w-7 p-0"
-        onClick={() => handleFormat('superscript')}
-        title="Superscript"
-      >
-        <Superscript className="h-3.5 w-3.5" />
       </Button>
 
       <div className="w-px h-5 bg-border mx-1" />
