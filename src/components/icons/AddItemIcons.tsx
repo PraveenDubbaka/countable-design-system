@@ -16,10 +16,12 @@ export function AddItemAboveIcon({ className }: IconProps) {
       strokeLinecap="round"
       strokeLinejoin="round"
     >
-      {/* Up arrow */}
-      <path d="M12 3 L6 9 L9 9 L9 12 L15 12 L15 9 L18 9 Z" fill="currentColor" stroke="none" />
-      {/* Document/item below */}
-      <rect x="4" y="14" width="16" height="7" rx="1" />
+      {/* Up arrow - bold and prominent */}
+      <path d="M12 2L7 7h3v3h4V7h3L12 2z" fill="currentColor" stroke="currentColor" strokeWidth="1.5" />
+      {/* Document/item below with plus */}
+      <rect x="5" y="12" width="14" height="9" rx="2" strokeWidth="2" />
+      <line x1="12" y1="14.5" x2="12" y2="18.5" strokeWidth="2" />
+      <line x1="10" y1="16.5" x2="14" y2="16.5" strokeWidth="2" />
     </svg>
   );
 }
@@ -36,10 +38,12 @@ export function AddItemBelowIcon({ className }: IconProps) {
       strokeLinecap="round"
       strokeLinejoin="round"
     >
-      {/* Document/item on top */}
-      <rect x="4" y="3" width="16" height="7" rx="1" />
-      {/* Down arrow */}
-      <path d="M12 21 L6 15 L9 15 L9 12 L15 12 L15 15 L18 15 Z" fill="currentColor" stroke="none" />
+      {/* Document/item on top with plus */}
+      <rect x="5" y="3" width="14" height="9" rx="2" strokeWidth="2" />
+      <line x1="12" y1="5.5" x2="12" y2="9.5" strokeWidth="2" />
+      <line x1="10" y1="7.5" x2="14" y2="7.5" strokeWidth="2" />
+      {/* Down arrow - bold and prominent */}
+      <path d="M12 22L7 17h3v-3h4v3h3L12 22z" fill="currentColor" stroke="currentColor" strokeWidth="1.5" />
     </svg>
   );
 }
