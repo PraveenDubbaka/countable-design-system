@@ -950,7 +950,7 @@ function SortableSubItemRow({
         if (draftNameRef.current.trim() === '' && isNewEmpty) {
           setTimeout(() => onBlurCleanup?.(), 100);
         }
-      }} onCancel={handleCancel} className="text-sm min-h-[32px] bg-muted border-border text-foreground" /> : isCompactMode ? <Tooltip>
+      }} onCancel={handleCancel} className="text-sm min-h-[32px] bg-muted text-foreground" /> : isCompactMode ? <Tooltip>
             <TooltipTrigger asChild>
               <div onClick={e => {
             // Only allow editing if not preview mode AND (not engagement mode OR user added this)
@@ -1326,7 +1326,7 @@ function SortableItemRow({
       }}>
           {isEditingName && !isPreviewMode && (!isEngagementMode || item.isUserAdded) ? <RichTextQuestionEditor value={item.text} onChange={newValue => {
           draftNameRef.current = newValue;
-        }} onBlur={handleSave} onCancel={handleCancel} className="text-sm min-h-[36px] bg-muted border-border text-foreground flex-1" /> : <div className="flex items-center gap-2 flex-1 min-w-0">
+        }} onBlur={handleSave} onCancel={handleCancel} className="text-sm min-h-[36px] bg-muted text-foreground flex-1" /> : <div className="flex items-center gap-2 flex-1 min-w-0">
               {isCompactMode ? <Tooltip>
                   <TooltipTrigger asChild>
                     <div onClick={e => {
