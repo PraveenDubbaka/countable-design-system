@@ -210,7 +210,7 @@ export function RichTextQuestionEditor({
         contentEditable
         onInput={handleInput}
         onKeyDown={handleKeyDown}
-        className={`question-content outline-none border-2 border-primary rounded-md p-2 bg-background min-h-[60px] ${className}`}
+        className={`question-content outline-none border-2 border-primary rounded-md p-1.5 bg-background max-h-[3rem] overflow-y-auto ${className}`}
         style={{ whiteSpace: 'pre-wrap' }}
         suppressContentEditableWarning
       />
