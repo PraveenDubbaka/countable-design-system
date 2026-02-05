@@ -1597,6 +1597,8 @@ interface GroupProps {
   selectedQuestions: Set<string>;
   onSelectionChange: (questionId: string, selected: boolean) => void;
   isEngagementMode?: boolean;
+  numberingFormat: NumberingFormat;
+  onNumberingFormatChange: (format: NumberingFormat) => void;
 }
 
 // Resizable column header component
@@ -1707,7 +1709,9 @@ function SortableGroup({
   onSubItemsReorder,
   selectedQuestions,
   onSelectionChange,
-  isEngagementMode = false
+  isEngagementMode = false,
+  numberingFormat,
+  onNumberingFormatChange
 }: GroupProps) {
   const [isEditingTitle, setIsEditingTitle] = useState(false);
   const [draftTitle, setDraftTitle] = useState(section.title);
@@ -1733,8 +1737,6 @@ function SortableGroup({
     reference: 'Reference'
   });
 
-  // Numbering format state
-  const [numberingFormat, setNumberingFormat] = useState<NumberingFormat>('number');
   const handleAddColumn = (columnId: string) => {
     setVisibleColumns(prev => ({
       ...prev,
@@ -1940,7 +1942,7 @@ function SortableGroup({
                   {/* Numbering column header with format selector */}
                   <NumberingFormatSelector 
                     currentFormat={numberingFormat}
-                    onFormatChange={setNumberingFormat}
+                    onFormatChange={onNumberingFormatChange}
                     isPreviewMode={isPreviewMode}
                   />
                   <ResizableColumnHeader label={columnLabels.questions} width={columnWidths.questions} minWidth={200} maxWidth={600} onWidthChange={w => setColumnWidths(prev => ({
@@ -2012,6 +2014,7 @@ export function MondayBoardView({
     text: string;
     selectedCount?: number;
   } | null>(null);
+  const [numberingFormat, setNumberingFormat] = useState<NumberingFormat>('number');
   const handleSelectionChange = (questionId: string, selected: boolean) => {
     if (!onSelectionChange) return;
     const newSelected = new Set(selectedQuestions);
@@ -2327,7 +2330,7 @@ export function MondayBoardView({
   return <DndContext sensors={sensors} collisionDetection={closestCenter} onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
       <div className="space-y-4 monday-board-light-borders">
         <SortableContext items={sectionIds} strategy={verticalListSortingStrategy}>
-          {checklist.sections.map((section, idx) => <SortableGroup key={section.id} section={section} sectionIndex={idx} onUpdate={s => handleSectionUpdate(idx, s)} onDelete={() => handleSectionDelete(idx)} onAddItem={() => handleAddItem(idx)} onAddCategoryAtPosition={position => handleAddCategoryAtPosition(idx, position)} isPreviewMode={isPreviewMode} isCompactMode={isCompactMode} onItemsReorder={handleItemsReorder} onSubItemsReorder={handleSubItemsReorder} selectedQuestions={selectedQuestions} onSelectionChange={handleSelectionChange} isEngagementMode={isEngagementMode} />)}
+          {checklist.sections.map((section, idx) => <SortableGroup key={section.id} section={section} sectionIndex={idx} onUpdate={s => handleSectionUpdate(idx, s)} onDelete={() => handleSectionDelete(idx)} onAddItem={() => handleAddItem(idx)} onAddCategoryAtPosition={position => handleAddCategoryAtPosition(idx, position)} isPreviewMode={isPreviewMode} isCompactMode={isCompactMode} onItemsReorder={handleItemsReorder} onSubItemsReorder={handleSubItemsReorder} selectedQuestions={selectedQuestions} onSelectionChange={handleSelectionChange} isEngagementMode={isEngagementMode} numberingFormat={numberingFormat} onNumberingFormatChange={setNumberingFormat} />)}
         </SortableContext>
       </div>
       
