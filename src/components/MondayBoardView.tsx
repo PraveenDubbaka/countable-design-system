@@ -1389,15 +1389,8 @@ function SortableItemRow({
               while sub-item rows render at full width so column dividers always align
               with the header/main rows (even when resizing). */}
           <div className="relative rounded-lg overflow-hidden">
-            {/*
-              Visual-only sub-question card background:
-              - Base spans full width so the sub-question checkbox sits inside the container.
-              - Indented overlay preserves the nested look without affecting the grid layout.
-            */}
-            <div className="pointer-events-none absolute inset-0" aria-hidden="true">
-              <div className="absolute inset-0 rounded-lg bg-muted/30" />
-              <div className="absolute left-8 right-0 top-0 bottom-0 rounded-lg bg-muted/50" />
-            </div>
+            {/* Visual-only sub-question card background - covers entire container including checkbox */}
+            <div className="pointer-events-none absolute inset-0 rounded-lg bg-muted/50" aria-hidden="true" />
 
             <div className="relative">
               <SortableContext items={subItemIds} strategy={verticalListSortingStrategy}>
