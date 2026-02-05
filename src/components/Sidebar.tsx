@@ -631,6 +631,7 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
             }
           });
         }}>
+                <Checkbox className="h-4 w-4 border-border" onClick={e => e.stopPropagation()} />
                 <ChecklistIcon className="h-4 w-4 flex-shrink-0" />
                 <span className="truncate flex-1 text-foreground">{checklist.name}</span>
 
