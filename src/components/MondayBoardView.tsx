@@ -189,10 +189,25 @@ interface NumberingFormatSelectorProps {
 }
 
 const NUMBERING_OPTIONS: { value: NumberingFormat; label: string; example: string }[] = [
-  { value: 'number', label: 'Numbers Only', example: '1.1 → 1.1.1' },
-  { value: 'number-alphabet', label: 'Number + Alphabet', example: '1.A → 1.A.a' },
-  { value: 'alphabet-number', label: 'Alphabet + Number', example: 'A.1 → A.1.a' },
+  { value: 'number', label: 'Numbers Only', example: '1. → 1.1 → 1.1.1' },
+  { value: 'number-alphabet', label: 'Number + Alphabet', example: '1. → 1.A → 1.A.a' },
+  { value: 'alphabet-number', label: 'Alphabet + Number', example: 'A. → A.1 → A.1.a' },
 ];
+
+// Helper to format category/section number
+const formatCategoryNumber = (format: NumberingFormat, sectionNumber: number): string => {
+  const toUpperAlpha = (num: number): string => {
+    const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    return letters[(num - 1) % 26] || 'A';
+  };
+  
+  switch (format) {
+    case 'alphabet-number':
+      return `${toUpperAlpha(sectionNumber)}.`;
+    default:
+      return `${sectionNumber}.`;
+  }
+};
 
 function NumberingFormatSelector({ currentFormat, onFormatChange, isPreviewMode }: NumberingFormatSelectorProps) {
   const [isOpen, setIsOpen] = useState(false);
@@ -1832,8 +1847,8 @@ function SortableGroup({
     });
   };
 
-  // Clean number prefix from title
-  const cleanTitle = (title: string) => title.replace(/^\d+\.\s*/, '');
+  // Clean number/letter prefix from title
+  const cleanTitle = (title: string) => title.replace(/^[A-Z0-9]+\.\s*/i, '');
 
   // Count total subitems
   const totalSubitems = section.questions.reduce((acc, q) => acc + (q.subQuestions?.length || 0), 0);
@@ -1864,7 +1879,7 @@ function SortableGroup({
         e.stopPropagation();
         if (!isPreviewMode) setIsEditingTitle(true);
       }} className={`text-sm font-semibold text-amber-600 flex-1 ${!isPreviewMode ? 'cursor-text hover:text-amber-700' : ''}`}>
-            <span className="text-muted-foreground mr-1">{sectionIndex + 1}.</span>
+            <span className="text-muted-foreground mr-1">{formatCategoryNumber(numberingFormat, sectionIndex + 1)}</span>
             {cleanTitle(section.title)}
           </h3>}
 
