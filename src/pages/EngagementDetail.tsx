@@ -596,7 +596,7 @@ export default function EngagementDetail() {
                     </svg>
                   </Button>
                 </TooltipTrigger>
-                <TooltipContent>Compare & Sync</TooltipContent>
+                <TooltipContent>Replace</TooltipContent>
               </Tooltip>
 
               <Tooltip>
