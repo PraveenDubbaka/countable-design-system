@@ -595,7 +595,7 @@ export default function EngagementDetail() {
           {/* Action Buttons - Sticky Header with Title */}
           <div className="sticky top-0 z-10 bg-card px-4 py-2 flex items-center justify-between border-b border-border/50">
             <h1 className="text-sm font-semibold text-foreground truncate">
-              Checklist: Client acceptance and continuance
+              Client acceptance and continuance
             </h1>
             <div className="flex items-center gap-2">
               <Tooltip>
