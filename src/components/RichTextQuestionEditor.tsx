@@ -141,7 +141,7 @@ export function RichTextQuestionEditor({
         contentEditable
         onInput={handleInput}
         onKeyDown={handleKeyDown}
-        className={`question-content outline-none border-2 border-primary rounded-md p-1.5 bg-muted max-h-[2.5rem] overflow-y-auto resize-none ${className}`}
+        className={`question-content outline-none border-2 border-primary rounded-md p-1.5 bg-background max-h-[2.5rem] overflow-y-auto resize-none ${className}`}
         style={{ whiteSpace: 'pre-wrap' }}
         suppressContentEditableWarning
       />

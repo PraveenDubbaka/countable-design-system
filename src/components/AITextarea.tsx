@@ -193,7 +193,7 @@ export function AITextarea({
 
   // Shared classes for BOTH view and edit — identical box model so no height jump
   const sharedBoxClasses = cn(
-    "text-sm p-1.5 pr-16 border-2 rounded-md overflow-hidden whitespace-pre-wrap box-border bg-muted",
+    "text-sm p-1.5 border-2 border-transparent rounded-md overflow-hidden whitespace-pre-wrap box-border",
     isCompactMode ? "max-h-[2.5rem] line-clamp-1" : "max-h-[4rem]",
   );
 
@@ -211,7 +211,7 @@ export function AITextarea({
               <div
                 className={cn(
                   sharedBoxClasses,
-                  "border-transparent cursor-text text-foreground hover:text-foreground",
+                  "cursor-text text-foreground hover:text-foreground",
                   !value && "text-muted-foreground italic"
                 )}
                 dangerouslySetInnerHTML={{ __html: value || placeholder }}
@@ -234,7 +234,7 @@ export function AITextarea({
         <div
           className={cn(
             sharedBoxClasses,
-            "border-transparent cursor-text text-foreground hover:text-foreground",
+            "cursor-text text-foreground hover:text-foreground",
             !value && "text-muted-foreground italic"
           )}
           dangerouslySetInnerHTML={{ __html: value || placeholder }}
@@ -263,11 +263,12 @@ export function AITextarea({
           onInput={handleInput}
           onClick={(e) => e.stopPropagation()}
           className={cn(
-            sharedBoxClasses,
-            "w-full border-primary text-foreground outline-none overflow-y-auto resize-none",
+            "w-full pr-16 text-sm bg-muted border-2 border-primary text-foreground rounded-md p-1.5 outline-none overflow-y-auto resize-none box-border",
+            isCompactMode ? "max-h-[2.5rem]" : "max-h-[4rem]",
             isListening && "ring-1 ring-primary",
             disabled && "opacity-60"
           )}
+          style={{ width: '100%' }}
           dangerouslySetInnerHTML={{ __html: value }}
         />
         
