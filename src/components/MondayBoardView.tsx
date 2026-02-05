@@ -1,6 +1,6 @@
 import { useState, useRef, useCallback, useEffect } from 'react';
 import { sanitizeHtml } from '@/lib/sanitize';
-import { Plus, Trash2, ChevronDown, ChevronUp, ChevronRight, MoreHorizontal, Copy, GripVertical, PlusCircle, Circle, Square, Type, Calendar, AlignLeft, Paperclip, ToggleLeft, ListPlus, Menu, DollarSign, FileText, Search, Upload, File, X, Check, Pencil, LayoutGrid, Asterisk } from 'lucide-react';
+import { Plus, Trash2, ChevronDown, ChevronUp, ChevronRight, MoreHorizontal, Copy, GripVertical, PlusCircle, Circle, Square, Type, Calendar, AlignLeft, Paperclip, ToggleLeft, ListPlus, Menu, DollarSign, FileText, Search, Upload, File, X, Check, Pencil, LayoutGrid, Asterisk, Hash, ListOrdered } from 'lucide-react';
 import { AddItemAboveIcon, AddItemBelowIcon } from './icons/AddItemIcons';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
@@ -130,6 +130,103 @@ const EXISTING_DOCUMENTS = [{
   name: 'Reference Manual.pdf',
   type: 'pdf'
 }];
+
+// Numbering format types
+type NumberingFormat = 'number' | 'alphabet' | 'number-alphabet';
+
+// Helper function to format question numbers
+const formatQuestionNumber = (
+  format: NumberingFormat,
+  sectionNumber: number,
+  itemIndex: number,
+  subItemIndex?: number
+): string => {
+  const toAlphabet = (num: number): string => {
+    const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    return letters[(num - 1) % 26] || 'A';
+  };
+
+  switch (format) {
+    case 'number':
+      if (subItemIndex !== undefined) {
+        return `${sectionNumber}.${itemIndex + 1}.${subItemIndex + 1}`;
+      }
+      return `${sectionNumber}.${itemIndex + 1}`;
+    case 'alphabet':
+      if (subItemIndex !== undefined) {
+        return `${toAlphabet(sectionNumber)}.${toAlphabet(itemIndex + 1)}.${toAlphabet(subItemIndex + 1)}`;
+      }
+      return `${toAlphabet(sectionNumber)}.${toAlphabet(itemIndex + 1)}`;
+    case 'number-alphabet':
+      if (subItemIndex !== undefined) {
+        return `${sectionNumber}${toAlphabet(itemIndex + 1)}.${subItemIndex + 1}`;
+      }
+      return `${sectionNumber}${toAlphabet(itemIndex + 1)}`;
+    default:
+      if (subItemIndex !== undefined) {
+        return `${sectionNumber}.${itemIndex + 1}.${subItemIndex + 1}`;
+      }
+      return `${sectionNumber}.${itemIndex + 1}`;
+  }
+};
+
+// Numbering format selector component
+interface NumberingFormatSelectorProps {
+  currentFormat: NumberingFormat;
+  onFormatChange: (format: NumberingFormat) => void;
+  isPreviewMode: boolean;
+}
+
+const NUMBERING_OPTIONS: { value: NumberingFormat; label: string; example: string }[] = [
+  { value: 'number', label: 'Numbers', example: '1.1, 1.2, 1.3' },
+  { value: 'alphabet', label: 'Alphabet', example: 'A.A, A.B, A.C' },
+  { value: 'number-alphabet', label: 'Number + Alphabet', example: '1A, 1B, 2A' },
+];
+
+function NumberingFormatSelector({ currentFormat, onFormatChange, isPreviewMode }: NumberingFormatSelectorProps) {
+  const [isOpen, setIsOpen] = useState(false);
+
+  if (isPreviewMode) {
+    return (
+      <div className="w-14 shrink-0 flex items-center justify-center py-2">
+        <ListOrdered className="h-4 w-4 text-muted-foreground" />
+      </div>
+    );
+  }
+
+  return (
+    <Popover open={isOpen} onOpenChange={setIsOpen}>
+      <PopoverTrigger asChild>
+        <button 
+          className="w-14 shrink-0 flex items-center justify-center py-2 hover:bg-muted/50 transition-colors"
+          title="Change numbering format"
+        >
+          <ListOrdered className="h-4 w-4 text-muted-foreground hover:text-foreground" />
+        </button>
+      </PopoverTrigger>
+      <PopoverContent align="start" className="w-56 p-2 bg-popover border-border shadow-xl z-50" sideOffset={5}>
+        <div className="text-xs font-medium text-muted-foreground mb-2 px-2">Numbering Format</div>
+        <div className="space-y-1">
+          {NUMBERING_OPTIONS.map(opt => (
+            <button
+              key={opt.value}
+              onClick={() => {
+                onFormatChange(opt.value);
+                setIsOpen(false);
+              }}
+              className={`w-full flex flex-col items-start px-3 py-2 rounded-md transition-colors text-left ${
+                currentFormat === opt.value ? 'bg-primary/10 text-primary' : 'hover:bg-muted'
+              }`}
+            >
+              <span className="text-sm font-medium">{opt.label}</span>
+              <span className="text-xs text-muted-foreground">{opt.example}</span>
+            </button>
+          ))}
+        </div>
+      </PopoverContent>
+    </Popover>
+  );
+}
 
 // Sortable Option Row for edit popovers
 interface SortableOptionRowProps {
@@ -643,6 +740,7 @@ interface SubItemRowProps {
   sectionNumber: number;
   itemNumber: number;
   isEngagementMode?: boolean;
+  numberingFormat: NumberingFormat;
 }
 interface SortableSubItemRowProps extends SubItemRowProps {
   isLast: boolean;
@@ -666,7 +764,8 @@ function SortableSubItemRow({
   onBlurCleanup,
   sectionNumber,
   itemNumber,
-  isEngagementMode = false
+  isEngagementMode = false,
+  numberingFormat
 }: SortableSubItemRowProps) {
   const [isEditingName, setIsEditingName] = useState(isNewEmpty || false);
   const [isSelected, setIsSelected] = useState(false);
@@ -808,11 +907,17 @@ function SortableSubItemRow({
         <Checkbox checked={isSelected} onCheckedChange={() => setIsSelected(!isSelected)} className="h-4 w-4 border-border bg-background" />
       </div>
 
+      {/* Numbering column for sub-item */}
+      <div className="w-14 shrink-0 flex items-center justify-center self-center px-1 border-l border-border/50">
+        <span className="text-xs font-medium text-muted-foreground">
+          {formatQuestionNumber(numberingFormat, sectionNumber, itemNumber - 1, index)}
+        </span>
+      </div>
+
       {/* Sub-item name - width matches header */}
       <div className="flex-1 min-w-0 px-3 py-2.5 flex items-center gap-2 border-l border-border/50" style={{
       flexBasis: columnWidths.questions
     }}>
-        <span className="text-xs font-medium text-muted-foreground shrink-0">{sectionNumber}.{itemNumber}.{index + 1}</span>
         {isEditingName && !isPreviewMode && (!isEngagementMode || subItem.isUserAdded) ? <RichTextQuestionEditor value={subItem.text} onChange={newValue => {
         draftNameRef.current = newValue;
       }} onBlur={() => {
@@ -953,6 +1058,7 @@ interface ItemRowProps {
   isSelected: boolean;
   onSelectionChange: (selected: boolean) => void;
   isEngagementMode?: boolean;
+  numberingFormat: NumberingFormat;
 }
 function SortableItemRow({
   item,
@@ -971,7 +1077,8 @@ function SortableItemRow({
   sectionNumber,
   isSelected,
   onSelectionChange,
-  isEngagementMode = false
+  isEngagementMode = false,
+  numberingFormat
 }: ItemRowProps) {
   const [isExpanded, setIsExpanded] = useState(true);
   const [isEditingName, setIsEditingName] = useState(false);
@@ -1172,14 +1279,18 @@ function SortableItemRow({
             </button> : <div className="w-4" />}
         </div>
 
+        {/* Numbering column */}
+        <div className="w-14 shrink-0 flex items-center justify-center self-center px-1 border-l border-border/50">
+          <span className="text-xs font-medium text-muted-foreground">
+            {formatQuestionNumber(numberingFormat, sectionNumber, itemIndex)}
+            {item.required && isPreviewMode && <span className="text-red-500 ml-0.5">*</span>}
+          </span>
+        </div>
+
         {/* Item name */}
         <div className="flex-1 min-w-0 px-3 py-1 flex items-center gap-2 border-l border-border/50" style={{
         flexBasis: columnWidths.questions
       }}>
-          <span className="text-xs font-medium text-muted-foreground shrink-0">
-            {sectionNumber}.{itemIndex + 1}
-            {item.required && isPreviewMode && <span className="text-red-500 ml-0.5">*</span>}
-          </span>
           {isEditingName && !isPreviewMode && (!isEngagementMode || item.isUserAdded) ? <RichTextQuestionEditor value={item.text} onChange={newValue => {
           draftNameRef.current = newValue;
         }} onBlur={handleSave} onCancel={handleCancel} className="text-sm min-h-[36px] bg-muted border-border text-foreground flex-1" /> : <div className="flex items-center gap-2 flex-1 min-w-0">
@@ -1420,7 +1531,7 @@ function SortableItemRow({
                 if (sub.text.trim() === '') {
                   cleanupEmptySubItems();
                 }
-              }} sectionNumber={sectionNumber} itemNumber={itemIndex + 1} isEngagementMode={isEngagementMode} />
+              }} sectionNumber={sectionNumber} itemNumber={itemIndex + 1} isEngagementMode={isEngagementMode} numberingFormat={numberingFormat} />
                   </div>)}
               </SortableContext>
 
@@ -1430,7 +1541,7 @@ function SortableItemRow({
                   <div className="w-10 flex items-center justify-center py-2.5">
                     <Checkbox disabled className="h-4 w-4 border-border bg-background opacity-30" />
                   </div>
-
+                  <div className="w-14 shrink-0" /> {/* Numbering column spacer */}
                   <button
                     onClick={onAddSubItem}
                     className="flex-1 flex items-center gap-2 px-3 py-2.5 text-sm text-muted-foreground hover:text-primary transition-colors text-left border-l border-border/50"
@@ -1595,6 +1706,9 @@ function SortableGroup({
     explanation: 'Explanation',
     reference: 'Reference'
   });
+
+  // Numbering format state
+  const [numberingFormat, setNumberingFormat] = useState<NumberingFormat>('number');
   const handleAddColumn = (columnId: string) => {
     setVisibleColumns(prev => ({
       ...prev,
@@ -1797,6 +1911,12 @@ function SortableGroup({
                 <div className="flex items-center bg-muted/50 text-xs font-medium text-muted-foreground border-b border-border/50">
                   <div className="w-10 shrink-0 py-2" />
                   <div className="w-8 shrink-0 py-2" />
+                  {/* Numbering column header with format selector */}
+                  <NumberingFormatSelector 
+                    currentFormat={numberingFormat}
+                    onFormatChange={setNumberingFormat}
+                    isPreviewMode={isPreviewMode}
+                  />
                   <ResizableColumnHeader label={columnLabels.questions} width={columnWidths.questions} minWidth={200} maxWidth={600} onWidthChange={w => setColumnWidths(prev => ({
               ...prev,
               questions: w
@@ -1833,12 +1953,14 @@ function SortableGroup({
 
                 {/* Items */}
                 <SortableContext items={itemIds} strategy={verticalListSortingStrategy}>
-                  {section.questions.map((question, idx) => <SortableItemRow key={question.id} item={question} sectionId={section.id} itemIndex={idx} onUpdate={q => handleItemUpdate(idx, q)} onDelete={() => handleItemDelete(idx)} onDuplicate={() => handleItemDuplicate(idx)} onAddSubItem={() => handleAddSubItem(idx)} onAddItemAtPosition={position => handleAddItemAtPosition(idx, position)} isPreviewMode={isPreviewMode} isCompactMode={isCompactMode} onSubItemsReorder={onSubItemsReorder} visibleColumns={visibleColumns} columnWidths={columnWidths} sectionNumber={sectionIndex + 1} isSelected={selectedQuestions.has(question.id)} onSelectionChange={selected => onSelectionChange(question.id, selected)} isEngagementMode={isEngagementMode} />)}
+                  {section.questions.map((question, idx) => <SortableItemRow key={question.id} item={question} sectionId={section.id} itemIndex={idx} onUpdate={q => handleItemUpdate(idx, q)} onDelete={() => handleItemDelete(idx)} onDuplicate={() => handleItemDuplicate(idx)} onAddSubItem={() => handleAddSubItem(idx)} onAddItemAtPosition={position => handleAddItemAtPosition(idx, position)} isPreviewMode={isPreviewMode} isCompactMode={isCompactMode} onSubItemsReorder={onSubItemsReorder} visibleColumns={visibleColumns} columnWidths={columnWidths} sectionNumber={sectionIndex + 1} isSelected={selectedQuestions.has(question.id)} onSelectionChange={selected => onSelectionChange(question.id, selected)} isEngagementMode={isEngagementMode} numberingFormat={numberingFormat} />)}
                 </SortableContext>
 
                 {/* Add item button */}
                 {!isPreviewMode && <div className="flex items-center">
                     <div className="w-10" />
+                    <div className="w-8" />
+                    <div className="w-14" /> {/* Numbering column spacer */}
                     <button onClick={onAddItem} className="flex items-center gap-2 px-6 py-3 text-sm text-muted-foreground hover:text-foreground hover:bg-muted transition-colors w-full text-left">
                       <Plus className="h-4 w-4" />
                       Add item
