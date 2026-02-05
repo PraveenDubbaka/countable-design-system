@@ -8,16 +8,18 @@ export function AddItemAboveIcon({ className }: IconProps) {
   return (
     <svg 
       xmlns="http://www.w3.org/2000/svg" 
-      viewBox="0 0 512 512" 
+      viewBox="0 0 24 24" 
       className={className}
-      fill="currentColor"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
     >
-      {/* Up arrow at top */}
-      <path d="M256 40 L306 100 L276 100 L276 160 L236 160 L236 100 L206 100 Z" />
-      {/* Base document/item icon */}
-      <g transform="translate(0, 80) scale(0.85)">
-        <path fillRule="nonzero" d="m105.77 362.14 60.82-58.31c2.08 10.53 5.05 20.9 8.9 31.01l-73.32 70.31a14.327 14.327 0 0 1-10.72 4.81c-7.91 0-14.32-6.41-14.32-14.32v-69.23H34.74c-9.01 0-17.24-3.54-23.42-9.22l-1.1-.99C3.93 309.9 0 301.17 0 291.67V34.74c0-9.49 3.98-18.21 10.25-24.49C16.53 3.98 25.25 0 34.74 0h325.58c9.48 0 18.22 3.94 24.51 10.24 6.25 6.25 10.21 14.95 10.21 24.5v46.68c-9.44-2.12-19.02-3.54-28.64-4.2V34.74c0-1.64-.71-3.16-1.81-4.26-1.11-1.12-2.66-1.84-4.27-1.84H34.74c-1.6 0-3.13.74-4.25 1.85-1.11 1.12-1.85 2.65-1.85 4.25v256.93c0 1.62.71 3.17 1.82 4.29l.4.4c1.05.86 2.42 1.4 3.88 1.4h56.71c7.91 0 14.32 6.42 14.32 14.32v50.06z"/>
-      </g>
+      {/* Up arrow */}
+      <path d="M12 3 L6 9 L9 9 L9 12 L15 12 L15 9 L18 9 Z" fill="currentColor" stroke="none" />
+      {/* Document/item below */}
+      <rect x="4" y="14" width="16" height="7" rx="1" />
     </svg>
   );
 }
@@ -26,16 +28,18 @@ export function AddItemBelowIcon({ className }: IconProps) {
   return (
     <svg 
       xmlns="http://www.w3.org/2000/svg" 
-      viewBox="0 0 512 512" 
+      viewBox="0 0 24 24" 
       className={className}
-      fill="currentColor"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
     >
-      {/* Base document/item icon */}
-      <g transform="translate(0, -20) scale(0.85)">
-        <path fillRule="nonzero" d="m105.77 362.14 60.82-58.31c2.08 10.53 5.05 20.9 8.9 31.01l-73.32 70.31a14.327 14.327 0 0 1-10.72 4.81c-7.91 0-14.32-6.41-14.32-14.32v-69.23H34.74c-9.01 0-17.24-3.54-23.42-9.22l-1.1-.99C3.93 309.9 0 301.17 0 291.67V34.74c0-9.49 3.98-18.21 10.25-24.49C16.53 3.98 25.25 0 34.74 0h325.58c9.48 0 18.22 3.94 24.51 10.24 6.25 6.25 10.21 14.95 10.21 24.5v46.68c-9.44-2.12-19.02-3.54-28.64-4.2V34.74c0-1.64-.71-3.16-1.81-4.26-1.11-1.12-2.66-1.84-4.27-1.84H34.74c-1.6 0-3.13.74-4.25 1.85-1.11 1.12-1.85 2.65-1.85 4.25v256.93c0 1.62.71 3.17 1.82 4.29l.4.4c1.05.86 2.42 1.4 3.88 1.4h56.71c7.91 0 14.32 6.42 14.32 14.32v50.06z"/>
-      </g>
-      {/* Down arrow at bottom */}
-      <path d="M256 472 L206 412 L236 412 L236 352 L276 352 L276 412 L306 412 Z" />
+      {/* Document/item on top */}
+      <rect x="4" y="3" width="16" height="7" rx="1" />
+      {/* Down arrow */}
+      <path d="M12 21 L6 15 L9 15 L9 12 L15 12 L15 15 L18 15 Z" fill="currentColor" stroke="none" />
     </svg>
   );
 }
