@@ -858,7 +858,7 @@ function SortableSubItemRow({
     switch (subItem.answerType) {
       case 'yes-no':
       case 'yes-no-na':
-        const options = subItem.answerType === 'yes-no' ? ['Yes', 'No'] : ['Yes', 'No', 'N/A'];
+        const options = subItem.answerType === 'yes-no' ? ['Yes', 'No'] : ['Yes', 'No', 'NA'];
         return <div className="flex gap-1">
             {options.map(opt => <button key={opt} onClick={e => {
             e.stopPropagation();
@@ -1215,7 +1215,7 @@ function SortableItemRow({
     switch (item.answerType) {
       case 'yes-no':
       case 'yes-no-na':
-        const options = item.answerType === 'yes-no' ? ['Yes', 'No'] : ['Yes', 'No', 'N/A'];
+        const options = item.answerType === 'yes-no' ? ['Yes', 'No'] : ['Yes', 'No', 'NA'];
         return <div className="flex gap-1">
             {options.map(opt => <button key={opt} onClick={e => {
             e.stopPropagation();
