@@ -40,12 +40,13 @@ export function RichTextQuestionEditor({
 
       const rect = editorRef.current.getBoundingClientRect();
       const toolbarWidth = 700;
+      const toolbarHeight = 40;
       let x = rect.left + rect.width / 2;
-      let y = rect.top - 8;
+      let y = rect.top - toolbarHeight - 4;
       const minX = toolbarWidth / 2 + 10;
       const maxX = window.innerWidth - toolbarWidth / 2 - 10;
       x = Math.max(minX, Math.min(maxX, x));
-      if (y < 60) y = rect.bottom + 10;
+      if (y < 10) y = rect.bottom + 4;
       setToolbarPosition({ x, y });
     }
   }, []);

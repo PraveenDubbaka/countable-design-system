@@ -79,9 +79,10 @@ export function AITextarea({
   const updateToolbarPosition = useCallback(() => {
     if (editorRef.current) {
       const rect = editorRef.current.getBoundingClientRect();
+      const toolbarHeight = 40;
       setToolbarPosition({
         x: rect.left + rect.width / 2,
-        y: rect.top - 8,
+        y: rect.top - toolbarHeight - 4,
       });
     }
   }, []);
