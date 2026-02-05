@@ -428,37 +428,37 @@ export default function EngagementDetail() {
     toast.success("Checklist shared with client. Waiting for responses...");
   };
 
-  // Update a specific question's answer
-  const updateQuestionAnswer = useCallback((questionId: string, answer: string) => {
-    if (!checklist) return;
-    
-    const updateQuestion = (questions: Question[]): Question[] => {
-      return questions.map(q => {
-        if (q.id === questionId) {
-          return { ...q, answer };
-        }
-        if (q.subQuestions) {
-          return { ...q, subQuestions: updateQuestion(q.subQuestions) };
-        }
-        return q;
-      });
-    };
-    
-    const updatedChecklist = {
-      ...checklist,
-      sections: checklist.sections.map(s => ({
-        ...s,
-        questions: updateQuestion(s.questions)
-      }))
-    };
-    
-    setChecklist(updatedChecklist);
-  }, [checklist]);
+  // Update a specific question's answer and optional explanation using functional state update
+  const updateQuestionAnswer = useCallback((questionId: string, answer: string, explanation?: string) => {
+    setChecklist(prev => {
+      if (!prev) return prev;
+      
+      const updateQuestion = (questions: Question[]): Question[] => {
+        return questions.map(q => {
+          if (q.id === questionId) {
+            return { ...q, answer, ...(explanation ? { explanation } : {}) };
+          }
+          if (q.subQuestions) {
+            return { ...q, subQuestions: updateQuestion(q.subQuestions) };
+          }
+          return q;
+        });
+      };
+      
+      return {
+        ...prev,
+        sections: prev.sections.map(s => ({
+          ...s,
+          questions: updateQuestion(s.questions)
+        }))
+      };
+    });
+  }, []);
 
   // Handle adding client responses to checklist
   const handleAddResponsesToChecklist = () => {
     clientResponses.applyResponses(
-      updateQuestionAnswer,
+      (questionId, answer, explanation) => updateQuestionAnswer(questionId, answer, explanation),
       () => {
         toast.success("All client responses have been added to the checklist!");
       }
