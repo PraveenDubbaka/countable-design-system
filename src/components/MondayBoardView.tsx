@@ -1389,8 +1389,14 @@ function SortableItemRow({
               while sub-item rows render at full width so column dividers always align
               with the header/main rows (even when resizing). */}
           <div className="relative rounded-lg overflow-hidden">
+            {/*
+              Background layers:
+              - Base layer spans full width so the sub-question checkbox sits *inside* the container.
+              - Inner (indented) layer preserves the visual nested look without affecting column layout.
+            */}
             <div className="pointer-events-none absolute inset-0" aria-hidden="true">
-              <div className="ml-8 h-full bg-muted/50 rounded-lg" />
+              <div className="absolute inset-0 rounded-lg bg-muted/30" />
+              <div className="absolute inset-0 ml-8 rounded-lg bg-muted/50" />
             </div>
 
             <div className="relative">
