@@ -18,6 +18,7 @@ export function RichTextQuestionEditor({
 }: RichTextQuestionEditorProps) {
   const editorRef = useRef<HTMLDivElement>(null);
   const toolbarRef = useRef<HTMLDivElement>(null);
+  const [toolbarPosition, setToolbarPosition] = useState({ x: 0, y: 0 });
 
   // Initialize editor content
   useEffect(() => {
@@ -26,7 +27,7 @@ export function RichTextQuestionEditor({
     }
   }, []);
 
-  // Focus editor on mount
+  // Focus editor on mount and position toolbar
   useEffect(() => {
     if (editorRef.current) {
       editorRef.current.focus();
@@ -36,6 +37,16 @@ export function RichTextQuestionEditor({
       range.collapse(false);
       sel?.removeAllRanges();
       sel?.addRange(range);
+
+      const rect = editorRef.current.getBoundingClientRect();
+      const toolbarWidth = 700;
+      let x = rect.left + rect.width / 2;
+      let y = rect.top - 8;
+      const minX = toolbarWidth / 2 + 10;
+      const maxX = window.innerWidth - toolbarWidth / 2 - 10;
+      x = Math.max(minX, Math.min(maxX, x));
+      if (y < 60) y = rect.bottom + 10;
+      setToolbarPosition({ x, y });
     }
   }, []);
 
@@ -118,11 +129,11 @@ export function RichTextQuestionEditor({
   };
 
   return (
-    <div className="flex flex-col w-full">
+    <>
       <RichTextToolbar
+        position={toolbarPosition}
         onFormatAction={handleFormatAction}
         toolbarRef={toolbarRef}
-        inline
       />
       <div
         ref={editorRef}
@@ -133,6 +144,6 @@ export function RichTextQuestionEditor({
         style={{ whiteSpace: 'pre-wrap' }}
         suppressContentEditableWarning
       />
-    </div>
+    </>
   );
 }
