@@ -1390,13 +1390,13 @@ function SortableItemRow({
               with the header/main rows (even when resizing). */}
           <div className="relative rounded-lg overflow-hidden">
             {/*
-              Background layers:
-              - Base layer spans full width so the sub-question checkbox sits *inside* the container.
-              - Inner (indented) layer preserves the visual nested look without affecting column layout.
+              Visual-only sub-question card background:
+              - Base spans full width so the sub-question checkbox sits inside the container.
+              - Indented overlay preserves the nested look without affecting the grid layout.
             */}
             <div className="pointer-events-none absolute inset-0" aria-hidden="true">
               <div className="absolute inset-0 rounded-lg bg-muted/30" />
-              <div className="absolute inset-0 ml-8 rounded-lg bg-muted/50" />
+              <div className="absolute left-8 right-0 top-0 bottom-0 rounded-lg bg-muted/50" />
             </div>
 
             <div className="relative">
