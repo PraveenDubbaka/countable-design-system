@@ -191,9 +191,9 @@ export function AITextarea({
     handleInput();
   };
 
-  // Shared text display classes — same padding/sizing as the editor so no height jump
-  const sharedTextClasses = cn(
-    "text-sm py-1 px-2 whitespace-pre-wrap overflow-hidden",
+  // Shared classes for BOTH view and edit — identical box model so no height jump
+  const sharedBoxClasses = cn(
+    "text-sm p-1.5 border-2 border-transparent rounded-md overflow-hidden whitespace-pre-wrap box-border",
     isCompactMode ? "max-h-[2.5rem] line-clamp-1" : "max-h-[4rem]",
   );
 
@@ -210,7 +210,7 @@ export function AITextarea({
             >
               <div
                 className={cn(
-                  sharedTextClasses,
+                  sharedBoxClasses,
                   "cursor-text text-foreground hover:text-foreground",
                   !value && "text-muted-foreground italic"
                 )}
@@ -233,7 +233,7 @@ export function AITextarea({
       >
         <div
           className={cn(
-            sharedTextClasses,
+            sharedBoxClasses,
             "cursor-text text-foreground hover:text-foreground",
             !value && "text-muted-foreground italic"
           )}
@@ -265,7 +265,7 @@ export function AITextarea({
           className={cn(
             "w-full pr-16 text-sm bg-muted border-2 border-primary text-foreground rounded-md p-1.5 outline-none overflow-y-auto resize-none box-border",
             isCompactMode ? "max-h-[2.5rem]" : "max-h-[4rem]",
-            isListening && "border-primary ring-1 ring-primary",
+            isListening && "ring-1 ring-primary",
             disabled && "opacity-60"
           )}
           style={{ width: '100%' }}
