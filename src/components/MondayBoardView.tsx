@@ -36,12 +36,6 @@ const ANSWER_TYPE_OPTIONS: {
   bgColor: string;
   iconColor: string;
 }[] = [{
-  value: 'none',
-  label: 'None',
-  icon: Circle,
-  bgColor: 'bg-muted',
-  iconColor: 'text-muted-foreground'
-}, {
   value: 'yes-no',
   label: 'Yes / No',
   icon: Circle,
