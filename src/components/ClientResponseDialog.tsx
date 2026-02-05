@@ -77,7 +77,7 @@ export function ClientResponseDialog({
             disabled={isApplying}
           >
             <X className="h-4 w-4" />
-            Cancel
+            Reject
           </Button>
           <Button
             onClick={handleAddResponses}
@@ -85,7 +85,7 @@ export function ClientResponseDialog({
             className="flex-1"
           >
             <Download className="h-4 w-4" />
-            Add Responses to Checklist
+            Accept
           </Button>
         </DialogFooter>
       </DialogContent>
