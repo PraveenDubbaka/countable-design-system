@@ -4,6 +4,7 @@ import { Checklist, Question } from '@/types/checklist';
 export interface ClientResponse {
   questionId: string;
   answer: string;
+  explanation?: string;
 }
 
 export interface ClientResponseState {
@@ -15,29 +16,69 @@ export interface ClientResponseState {
   responses: ClientResponse[];
 }
 
+// Realistic explanation templates based on question context
+const EXPLANATIONS: Record<string, string[]> = {
+  'yes': [
+    'Confirmed — all relevant documentation has been reviewed and verified.',
+    'Yes, this was completed as part of our annual compliance review process.',
+    'Verified and approved by management during the last board meeting on Jan 15, 2025.',
+    'All required procedures were followed per firm policy.',
+  ],
+  'no': [
+    'This item is pending — we are awaiting confirmation from the legal department.',
+    'Not yet completed. Expected completion date is March 2025.',
+    'This was deferred to next quarter due to resource constraints.',
+  ],
+  'na': [
+    'Not applicable — the client is a private entity and this requirement only applies to public companies.',
+    'N/A for this engagement type per CSQC standards.',
+    'This does not apply as the entity falls below the threshold.',
+  ],
+  'long': [
+    'We have reviewed the client\'s financial statements and confirmed all material balances are properly supported. The engagement team has documented key judgments in the working papers.',
+    'Based on our assessment, the client maintains adequate internal controls over financial reporting. No significant deficiencies were identified during our review.',
+    'The client provided all requested documentation within the agreed timeline. We have verified the completeness and accuracy of the information received.',
+    'Management has represented that all related party transactions have been disclosed. We have performed independent verification procedures to corroborate these representations.',
+  ],
+  'amount': ['15000.00', '7500.50', '125000.00', '3200.75', '48500.00'],
+  'date': ['2025-01-15', '2025-02-28', '2025-03-31', '2024-12-31'],
+};
+
+const pickRandom = <T,>(arr: T[]): T => arr[Math.floor(Math.random() * arr.length)];
+
 // Simulate client responses after sharing
 const generateMockResponses = (checklist: Checklist): ClientResponse[] => {
   const responses: ClientResponse[] = [];
   
   const processQuestion = (question: Question) => {
-    // Simulate random responses based on answer type
     let answer = '';
+    let explanation: string | undefined;
+    
     switch (question.answerType) {
       case 'yes-no':
-        answer = Math.random() > 0.5 ? 'Yes' : 'No';
+        answer = Math.random() > 0.4 ? 'Yes' : 'No';
+        // ~60% chance of adding an explanation
+        if (Math.random() > 0.4) {
+          explanation = pickRandom(EXPLANATIONS[answer.toLowerCase()]);
+        }
         break;
       case 'yes-no-na':
-        const options = ['Yes', 'No', 'NA'];
-        answer = options[Math.floor(Math.random() * options.length)];
+        const opts = ['Yes', 'No', 'NA'];
+        const weights = [0.6, 0.25, 0.15];
+        const r = Math.random();
+        answer = r < weights[0] ? opts[0] : r < weights[0] + weights[1] ? opts[1] : opts[2];
+        if (Math.random() > 0.35) {
+          explanation = pickRandom(EXPLANATIONS[answer.toLowerCase()]);
+        }
         break;
       case 'long-answer':
-        answer = 'Client provided response for this question. This is a sample answer that demonstrates the client\'s input.';
+        answer = pickRandom(EXPLANATIONS['long']);
         break;
       case 'date':
-        answer = new Date().toISOString().split('T')[0];
+        answer = pickRandom(EXPLANATIONS['date']);
         break;
       case 'amount':
-        answer = (Math.random() * 10000).toFixed(2);
+        answer = pickRandom(EXPLANATIONS['amount']);
         break;
       case 'dropdown':
       case 'multiple-choice':
@@ -49,17 +90,13 @@ const generateMockResponses = (checklist: Checklist): ClientResponse[] => {
         answer = Math.random() > 0.5 ? 'true' : 'false';
         break;
       default:
-        answer = 'Sample response';
+        answer = 'Confirmed';
     }
     
     if (answer) {
-      responses.push({
-        questionId: question.id,
-        answer
-      });
+      responses.push({ questionId: question.id, answer, explanation });
     }
     
-    // Process sub-questions
     if (question.subQuestions) {
       question.subQuestions.forEach(processQuestion);
     }
@@ -137,7 +174,7 @@ export function useClientResponses(checklist: Checklist | null) {
 
   // Apply responses to checklist one by one
   const applyResponses = useCallback((
-    onUpdateQuestion: (questionId: string, answer: string) => void,
+    onUpdateQuestion: (questionId: string, answer: string, explanation?: string) => void,
     onComplete: () => void
   ) => {
     const responses = state.responses;
@@ -170,7 +207,7 @@ export function useClientResponses(checklist: Checklist | null) {
       
       // Apply the answer after a brief delay for visual effect
       setTimeout(() => {
-        onUpdateQuestion(response.questionId, response.answer);
+        onUpdateQuestion(response.questionId, response.answer, response.explanation);
         
         // Schedule next update
         setTimeout(() => {
