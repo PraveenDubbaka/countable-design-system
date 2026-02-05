@@ -960,7 +960,7 @@ function SortableSubItemRow({
               draftNameRef.current = subItem.text;
               setIsEditingName(true);
             }
-          }} className={`text-sm text-foreground ${!isPreviewMode && (!isEngagementMode || subItem.isUserAdded) ? 'cursor-text hover:text-foreground' : ''} line-clamp-1 overflow-hidden p-1.5 border-2 border-transparent rounded-md box-border`} dangerouslySetInnerHTML={{
+}} className={`question-content text-sm text-foreground ${!isPreviewMode && (!isEngagementMode || subItem.isUserAdded) ? 'cursor-text hover:text-foreground' : ''} line-clamp-1 overflow-hidden p-1.5 border-2 border-transparent rounded-md box-border`} dangerouslySetInnerHTML={{
             __html: sanitizeHtml(subItem.text) || 'Click to add sub-item...'
           }} />
             </TooltipTrigger>
@@ -977,7 +977,7 @@ function SortableSubItemRow({
           draftNameRef.current = subItem.text;
           setIsEditingName(true);
         }
-      }} className={`text-sm text-foreground ${!isPreviewMode && (!isEngagementMode || subItem.isUserAdded) ? 'cursor-text hover:text-foreground' : ''} p-1.5 border-2 border-transparent rounded-md box-border`} dangerouslySetInnerHTML={{
+}} className={`question-content text-sm text-foreground ${!isPreviewMode && (!isEngagementMode || subItem.isUserAdded) ? 'cursor-text hover:text-foreground' : ''} p-1.5 border-2 border-transparent rounded-md box-border`} dangerouslySetInnerHTML={{
         __html: sanitizeHtml(subItem.text) || 'Click to add sub-item...'
       }} />}
       </div>
@@ -1337,7 +1337,7 @@ function SortableItemRow({
                   draftNameRef.current = item.text;
                   setIsEditingName(true);
                 }
-              }} className={`text-sm text-foreground flex-1 ${!isPreviewMode && (!isEngagementMode || item.isUserAdded) ? 'cursor-text hover:text-foreground' : ''} line-clamp-1 overflow-hidden p-1.5 border-2 border-transparent rounded-md box-border`} dangerouslySetInnerHTML={{
+}} className={`question-content text-sm text-foreground flex-1 ${!isPreviewMode && (!isEngagementMode || item.isUserAdded) ? 'cursor-text hover:text-foreground' : ''} line-clamp-1 overflow-hidden p-1.5 border-2 border-transparent rounded-md box-border`} dangerouslySetInnerHTML={{
                 __html: sanitizeHtml(item.text) || 'Click to add item name...'
               }} />
                   </TooltipTrigger>
@@ -1354,7 +1354,7 @@ function SortableItemRow({
               draftNameRef.current = item.text;
               setIsEditingName(true);
             }
-          }} className={`text-sm text-foreground flex-1 ${!isPreviewMode && (!isEngagementMode || item.isUserAdded) ? 'cursor-text hover:text-foreground' : ''} p-1.5 border-2 border-transparent rounded-md box-border`} dangerouslySetInnerHTML={{
+}} className={`question-content text-sm text-foreground flex-1 ${!isPreviewMode && (!isEngagementMode || item.isUserAdded) ? 'cursor-text hover:text-foreground' : ''} p-1.5 border-2 border-transparent rounded-md box-border`} dangerouslySetInnerHTML={{
             __html: sanitizeHtml(item.text) || 'Click to add item name...'
           }} />}
               {hasRealSubItems && <Tooltip>
