@@ -1390,7 +1390,8 @@ function SortableItemRow({
               with the header/main rows (even when resizing). */}
           <div className="relative rounded-lg overflow-hidden">
             <div className="pointer-events-none absolute inset-0" aria-hidden="true">
-              <div className="ml-8 h-full bg-muted/50 rounded-lg" />
+              {/* Full-width background so the sub-question checkbox stays inside the sub-question container */}
+              <div className="h-full bg-muted/50 rounded-lg" />
             </div>
 
             <div className="relative">
