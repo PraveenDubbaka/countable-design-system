@@ -135,7 +135,7 @@ export default function CreationDashboard() {
     setTemplateChecklistName(templateName);
   };
   const label = contentTypeLabels[contentType] || 'Checklist';
-  const heading = contentType ? `Create ${label} with LUKA` : 'Create with LUKA';
+  const heading = contentType ? `Create ${label}` : 'Create Checklist';
   const handleGenerate = () => {
     navigate('/generate', {
       state: {
