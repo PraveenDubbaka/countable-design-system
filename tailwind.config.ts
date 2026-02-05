@@ -44,6 +44,7 @@ export default {
           category: "hsl(var(--border-category))",
         },
         "category-accent": "hsl(var(--category-accent))",
+        "category-title": "hsl(var(--category-title))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
         background: "hsl(var(--background))",

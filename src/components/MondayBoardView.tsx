@@ -1886,10 +1886,10 @@ function SortableGroup({
           setDraftTitle(section.title);
           setIsEditingTitle(false);
         }
-      }} autoFocus onClick={e => e.stopPropagation()} className="h-7 text-sm font-semibold bg-muted border-border text-category-accent flex-1" /> : <h3 onClick={e => {
+      }} autoFocus onClick={e => e.stopPropagation()} className="h-7 text-sm font-semibold bg-muted border-border text-category-title flex-1" /> : <h3 onClick={e => {
         e.stopPropagation();
         if (!isPreviewMode) setIsEditingTitle(true);
-      }} className={`text-sm font-semibold text-category-accent flex-1 ${!isPreviewMode ? 'cursor-text hover:text-category-accent/80' : ''}`}>
+      }} className={`text-sm font-semibold text-category-title flex-1 ${!isPreviewMode ? 'cursor-text hover:text-category-title/80' : ''}`}>
             <span className="text-muted-foreground mr-1">{formatCategoryNumber(numberingFormat, sectionIndex + 1)}</span>
             {cleanTitle(section.title)}
           </h3>}
@@ -2364,7 +2364,7 @@ export function MondayBoardView({
               <GripVertical className="h-4 w-4 text-muted-foreground" />
               <div className="flex items-center gap-2">
                 {activeData.type === 'group' && <div className="w-1 h-5 bg-category-accent rounded-full" />}
-                <span className={`text-sm font-medium truncate max-w-[300px] ${activeData.type === 'group' ? 'text-category-accent' : 'text-foreground'}`} dangerouslySetInnerHTML={{
+                <span className={`text-sm font-medium truncate max-w-[300px] ${activeData.type === 'group' ? 'text-category-title' : 'text-foreground'}`} dangerouslySetInnerHTML={{
               __html: sanitizeHtml(activeData.text) || 'Untitled'
             }} />
                 {activeData.selectedCount && activeData.selectedCount > 1 && (
