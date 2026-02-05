@@ -328,11 +328,13 @@ export function AITextarea({
           setShowToolbar(true);
         }}
         className={cn(
-          "w-full pr-16 text-sm bg-muted border border-border text-foreground rounded-lg p-3 outline-none focus:ring-2 focus:ring-ring focus:ring-offset-1 resize overflow-auto box-border",
+          "w-full pr-16 text-sm bg-muted border border-border text-foreground rounded-lg p-2 outline-none focus:ring-2 focus:ring-ring focus:ring-offset-1 overflow-auto box-border",
+          isCompactMode && "line-clamp-none max-h-[2.5rem] overflow-y-auto resize-none",
+          !isCompactMode && "max-h-[4rem] overflow-y-auto resize-none",
           isListening && "border-primary ring-1 ring-primary",
           disabled && "opacity-60"
         )}
-        style={{ minHeight, height: defaultHeight, width: '100%' }}
+        style={{ width: '100%' }}
         dangerouslySetInnerHTML={{ __html: value }}
       />
       
