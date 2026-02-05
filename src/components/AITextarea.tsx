@@ -234,7 +234,7 @@ export function AITextarea({
         <div
           className={cn(
             sharedBoxClasses,
-            "cursor-text text-foreground hover:text-foreground",
+            "pr-16 cursor-text text-foreground hover:text-foreground",
             !value && "text-muted-foreground italic"
           )}
           dangerouslySetInnerHTML={{ __html: value || placeholder }}
