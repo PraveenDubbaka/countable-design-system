@@ -1540,13 +1540,13 @@ function SortableItemRow({
       }
     }}>
           {/* Vertical connecting line from parent - positioned at left edge */}
-          <div className="absolute left-3 -top-1 w-0.5 h-4 bg-amber-600/70" />
+          <div className="absolute left-3 -top-1 w-0.5 h-4 bg-category-accent/70" />
           
           {/* Horizontal connector line */}
-          <div className="absolute left-3 top-3 w-6 h-0.5 bg-amber-600/70" />
+          <div className="absolute left-3 top-3 w-6 h-0.5 bg-category-accent/70" />
           
           {/* Continuous vertical bar alongside sub-items */}
-          <div className="absolute left-3 top-3 bottom-0 w-0.5 bg-amber-600/70" />
+          <div className="absolute left-3 top-3 bottom-0 w-0.5 bg-category-accent/70" />
           
           {/* Sub-items container:
               Keep the *visual* indent (ml-8) on a background layer only,
@@ -1869,7 +1869,7 @@ function SortableGroup({
       {isValidDropTarget && <div className="absolute -top-2 left-0 right-0 h-1 bg-primary rounded-full z-20 shadow-[0_0_8px_rgba(59,130,246,0.5)]" />}
       {/* Group header */}
       <div {...attributes} {...listeners} className={`flex items-center gap-3 px-4 py-2 bg-muted/50 border-b border-border/50 cursor-grab active:cursor-grabbing ${isDragging ? 'opacity-70' : ''}`}>
-        <div className="w-1 h-6 bg-amber-600 rounded-full" />
+        <div className="w-1 h-6 bg-category-accent rounded-full" />
         <button onClick={e => {
         e.stopPropagation();
         onUpdate({
@@ -1886,10 +1886,10 @@ function SortableGroup({
           setDraftTitle(section.title);
           setIsEditingTitle(false);
         }
-      }} autoFocus onClick={e => e.stopPropagation()} className="h-7 text-sm font-semibold bg-muted border-border text-amber-600 flex-1" /> : <h3 onClick={e => {
+      }} autoFocus onClick={e => e.stopPropagation()} className="h-7 text-sm font-semibold bg-muted border-border text-category-accent flex-1" /> : <h3 onClick={e => {
         e.stopPropagation();
         if (!isPreviewMode) setIsEditingTitle(true);
-      }} className={`text-sm font-semibold text-amber-600 flex-1 ${!isPreviewMode ? 'cursor-text hover:text-amber-700' : ''}`}>
+      }} className={`text-sm font-semibold text-category-accent flex-1 ${!isPreviewMode ? 'cursor-text hover:text-category-accent/80' : ''}`}>
             <span className="text-muted-foreground mr-1">{formatCategoryNumber(numberingFormat, sectionIndex + 1)}</span>
             {cleanTitle(section.title)}
           </h3>}
@@ -2363,8 +2363,8 @@ export function MondayBoardView({
             <div className="flex items-center gap-3">
               <GripVertical className="h-4 w-4 text-muted-foreground" />
               <div className="flex items-center gap-2">
-                {activeData.type === 'group' && <div className="w-1 h-5 bg-amber-600 rounded-full" />}
-                <span className={`text-sm font-medium truncate max-w-[300px] ${activeData.type === 'group' ? 'text-amber-600' : 'text-foreground'}`} dangerouslySetInnerHTML={{
+                {activeData.type === 'group' && <div className="w-1 h-5 bg-category-accent rounded-full" />}
+                <span className={`text-sm font-medium truncate max-w-[300px] ${activeData.type === 'group' ? 'text-category-accent' : 'text-foreground'}`} dangerouslySetInnerHTML={{
               __html: sanitizeHtml(activeData.text) || 'Untitled'
             }} />
                 {activeData.selectedCount && activeData.selectedCount > 1 && (
