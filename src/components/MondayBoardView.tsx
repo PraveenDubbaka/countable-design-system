@@ -49,7 +49,7 @@ const ANSWER_TYPE_OPTIONS: {
   iconColor: 'text-green-600'
 }, {
   value: 'yes-no-na',
-  label: 'Yes / No / N/A',
+  label: 'Yes / No / NA',
   icon: Circle,
   bgColor: 'bg-green-100',
   iconColor: 'text-green-600'
