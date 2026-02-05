@@ -1877,7 +1877,7 @@ function SortableGroup({
           {section.formLayout ? <>
               <LayoutGrid className="h-3 w-3" />
               {section.formLayout.columns} Column Form
-            </> : <>{section.questions.length} Items{totalSubitems > 0 ? ` / ${totalSubitems} Subitems` : ''}</>}
+            </> : <>{section.questions.length} Questions{totalSubitems > 0 ? ` / ${totalSubitems} Sub Questions` : ''}</>}
         </span>
 
         {!isPreviewMode && <DropdownMenu>
