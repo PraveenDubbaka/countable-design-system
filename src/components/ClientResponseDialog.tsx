@@ -3,6 +3,7 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
+  DialogDescription,
   DialogFooter,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
@@ -40,6 +41,9 @@ export function ClientResponseDialog({
           <DialogTitle className="text-lg font-semibold">
             Client Responses Received
           </DialogTitle>
+          <DialogDescription className="sr-only">
+            Review client responses and add them to the checklist
+          </DialogDescription>
         </DialogHeader>
 
         <div className="py-6">

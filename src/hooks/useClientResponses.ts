@@ -140,15 +140,15 @@ export function useClientResponses(checklist: Checklist | null) {
     onUpdateQuestion: (questionId: string, answer: string) => void,
     onComplete: () => void
   ) => {
-    if (state.responses.length === 0) return;
+    const responses = state.responses;
+    if (responses.length === 0) return;
     
     setIsApplyingResponses(true);
     setCurrentApplyingIndex(0);
     
-    let index = 0;
-    const interval = setInterval(() => {
-      if (index >= state.responses.length) {
-        clearInterval(interval);
+    // Use a recursive setTimeout approach for more reliable state updates
+    const applyNext = (index: number) => {
+      if (index >= responses.length) {
         setIsApplyingResponses(false);
         setCurrentApplyingIndex(-1);
         setApplyingQuestionId(null);
@@ -164,17 +164,23 @@ export function useClientResponses(checklist: Checklist | null) {
         return;
       }
       
-      const response = state.responses[index];
+      const response = responses[index];
       setApplyingQuestionId(response.questionId);
       setCurrentApplyingIndex(index);
       
-      // Apply the answer
-      onUpdateQuestion(response.questionId, response.answer);
-      
-      index++;
-    }, 600); // Apply one answer every 600ms
+      // Apply the answer after a brief delay for visual effect
+      setTimeout(() => {
+        onUpdateQuestion(response.questionId, response.answer);
+        
+        // Schedule next update
+        setTimeout(() => {
+          applyNext(index + 1);
+        }, 400);
+      }, 200);
+    };
     
-    return () => clearInterval(interval);
+    // Start the sequence
+    applyNext(0);
   }, [state.responses]);
 
   // Reset state

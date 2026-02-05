@@ -640,23 +640,25 @@ export default function EngagementDetail() {
               {/* Share with Client */}
               <Tooltip>
                 <TooltipTrigger asChild>
-                  <Button 
-                    variant="outline" 
-                    size="icon" 
-                    className={`h-9 w-9 bg-card border-border hover:bg-muted relative ${clientResponses.hasResponses ? 'ring-2 ring-primary ring-offset-2' : ''}`}
-                    onClick={handleShareButtonClick}
-                  >
-                    <Share2 className="h-4 w-4" />
-                    {/* Notification badge */}
+                  <div className="relative">
+                    <Button 
+                      variant="outline" 
+                      size="icon" 
+                      className={`h-9 w-9 bg-card border-border hover:bg-muted ${clientResponses.hasResponses ? 'ring-2 ring-primary ring-offset-2' : ''}`}
+                      onClick={handleShareButtonClick}
+                    >
+                      <Share2 className="h-4 w-4" />
+                    </Button>
+                    {/* Notification badge - outside button to prevent clipping */}
                     {clientResponses.hasResponses && (
-                      <span className="absolute -top-1 -right-1 flex h-4 w-4">
+                      <span className="absolute -top-1.5 -right-1.5 flex h-5 w-5 pointer-events-none">
                         <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
-                        <span className="relative inline-flex rounded-full h-4 w-4 bg-primary items-center justify-center">
-                          <Bell className="h-2.5 w-2.5 text-primary-foreground" />
+                        <span className="relative inline-flex rounded-full h-5 w-5 bg-primary items-center justify-center">
+                          <Bell className="h-3 w-3 text-primary-foreground" />
                         </span>
                       </span>
                     )}
-                  </Button>
+                  </div>
                 </TooltipTrigger>
                 <TooltipContent>
                   {clientResponses.hasResponses ? 'Client Responses Received!' : 'Share with Client'}
