@@ -24,6 +24,7 @@ interface MondayBoardViewProps {
   isCompactMode?: boolean;
   selectedQuestions?: Set<string>;
   onSelectionChange?: (selected: Set<string>) => void;
+  isEngagementMode?: boolean; // When true, users can add/delete their own questions but cannot modify template questions
 }
 
 // Answer type options for dropdown with icons like Monday.com
@@ -640,6 +641,7 @@ interface SubItemRowProps {
   };
   sectionNumber: number;
   itemNumber: number;
+  isEngagementMode?: boolean;
 }
 interface SortableSubItemRowProps extends SubItemRowProps {
   isLast: boolean;
@@ -662,7 +664,8 @@ function SortableSubItemRow({
   isNewEmpty,
   onBlurCleanup,
   sectionNumber,
-  itemNumber
+  itemNumber,
+  isEngagementMode = false
 }: SortableSubItemRowProps) {
   const [isEditingName, setIsEditingName] = useState(isNewEmpty || false);
   const [isSelected, setIsSelected] = useState(false);
@@ -809,7 +812,7 @@ function SortableSubItemRow({
       flexBasis: columnWidths.questions
     }}>
         <span className="text-xs font-medium text-muted-foreground shrink-0">{sectionNumber}.{itemNumber}.{index + 1}</span>
-        {isEditingName && !isPreviewMode ? <RichTextQuestionEditor value={subItem.text} onChange={newValue => {
+        {isEditingName && !isPreviewMode && (!isEngagementMode || subItem.isUserAdded) ? <RichTextQuestionEditor value={subItem.text} onChange={newValue => {
         draftNameRef.current = newValue;
       }} onBlur={() => {
         handleSave();
@@ -820,12 +823,14 @@ function SortableSubItemRow({
       }} onCancel={handleCancel} className="text-sm min-h-[32px] bg-muted border-border text-foreground" /> : isCompactMode ? <Tooltip>
             <TooltipTrigger asChild>
               <div onClick={e => {
-            if (!isPreviewMode) {
+            // Only allow editing if not preview mode AND (not engagement mode OR user added this)
+            const canEditText = !isPreviewMode && (!isEngagementMode || subItem.isUserAdded);
+            if (canEditText) {
               e.stopPropagation();
               draftNameRef.current = subItem.text;
               setIsEditingName(true);
             }
-          }} className={`text-sm text-foreground ${!isPreviewMode ? 'cursor-text hover:text-foreground' : ''} line-clamp-1 overflow-hidden`} dangerouslySetInnerHTML={{
+          }} className={`text-sm text-foreground ${!isPreviewMode && (!isEngagementMode || subItem.isUserAdded) ? 'cursor-text hover:text-foreground' : ''} line-clamp-1 overflow-hidden`} dangerouslySetInnerHTML={{
             __html: sanitizeHtml(subItem.text) || 'Click to add sub-item...'
           }} />
             </TooltipTrigger>
@@ -835,12 +840,14 @@ function SortableSubItemRow({
           }} />
             </TooltipContent>
           </Tooltip> : <div onClick={e => {
-        if (!isPreviewMode) {
+        // Only allow editing if not preview mode AND (not engagement mode OR user added this)
+        const canEditText = !isPreviewMode && (!isEngagementMode || subItem.isUserAdded);
+        if (canEditText) {
           e.stopPropagation();
           draftNameRef.current = subItem.text;
           setIsEditingName(true);
         }
-      }} className={`text-sm text-foreground ${!isPreviewMode ? 'cursor-text hover:text-foreground' : ''}`} dangerouslySetInnerHTML={{
+      }} className={`text-sm text-foreground ${!isPreviewMode && (!isEngagementMode || subItem.isUserAdded) ? 'cursor-text hover:text-foreground' : ''}`} dangerouslySetInnerHTML={{
         __html: sanitizeHtml(subItem.text) || 'Click to add sub-item...'
       }} />}
       </div>
@@ -850,7 +857,7 @@ function SortableSubItemRow({
       flexBasis: columnWidths.response
     }}>
         <div className="flex items-center gap-2 w-full min-w-0">
-          <ResponseTypeDropdown currentType={subItem.answerType} onTypeChange={handleAnswerTypeChange} disabled={isPreviewMode} />
+          <ResponseTypeDropdown currentType={subItem.answerType} onTypeChange={handleAnswerTypeChange} disabled={isPreviewMode || (isEngagementMode && !subItem.isUserAdded)} />
           <div className="flex-1 min-w-0">
             <div className="flex flex-wrap gap-1">
               {renderResponseField()}
@@ -899,7 +906,8 @@ function SortableSubItemRow({
 
 
       {/* Actions - keep same reserved width as main rows so columns always align */}
-      {!isPreviewMode && <div className="w-[180px] shrink-0 flex items-center justify-end self-center px-2 opacity-0 group-hover:opacity-100 transition-opacity">
+      {/* Only show delete if not engagement mode OR if user added this sub-item */}
+      {!isPreviewMode && (!isEngagementMode || subItem.isUserAdded) && <div className="w-[180px] shrink-0 flex items-center justify-end self-center px-2 opacity-0 group-hover:opacity-100 transition-opacity">
         <Tooltip>
           <TooltipTrigger asChild>
             <button onClick={e => {
@@ -912,6 +920,8 @@ function SortableSubItemRow({
           <TooltipContent side="top">Delete sub-item</TooltipContent>
         </Tooltip>
       </div>}
+      {/* Reserve space when delete is hidden in engagement mode */}
+      {!isPreviewMode && isEngagementMode && !subItem.isUserAdded && <div className="w-[180px] shrink-0" />}
     </div>;
 }
 
@@ -941,6 +951,7 @@ interface ItemRowProps {
   sectionNumber: number;
   isSelected: boolean;
   onSelectionChange: (selected: boolean) => void;
+  isEngagementMode?: boolean;
 }
 function SortableItemRow({
   item,
@@ -958,7 +969,8 @@ function SortableItemRow({
   columnWidths,
   sectionNumber,
   isSelected,
-  onSelectionChange
+  onSelectionChange,
+  isEngagementMode = false
 }: ItemRowProps) {
   const [isExpanded, setIsExpanded] = useState(true);
   const [isEditingName, setIsEditingName] = useState(false);
@@ -1167,18 +1179,20 @@ function SortableItemRow({
             {sectionNumber}.{itemIndex + 1}
             {item.required && isPreviewMode && <span className="text-red-500 ml-0.5">*</span>}
           </span>
-          {isEditingName && !isPreviewMode ? <RichTextQuestionEditor value={item.text} onChange={newValue => {
+          {isEditingName && !isPreviewMode && (!isEngagementMode || item.isUserAdded) ? <RichTextQuestionEditor value={item.text} onChange={newValue => {
           draftNameRef.current = newValue;
         }} onBlur={handleSave} onCancel={handleCancel} className="text-sm min-h-[36px] bg-muted border-border text-foreground flex-1" /> : <div className="flex items-center gap-2 flex-1 min-w-0">
               {isCompactMode ? <Tooltip>
                   <TooltipTrigger asChild>
                     <div onClick={e => {
-                if (!isPreviewMode) {
+                // Only allow editing if not preview mode AND (not engagement mode OR user added this)
+                const canEditText = !isPreviewMode && (!isEngagementMode || item.isUserAdded);
+                if (canEditText) {
                   e.stopPropagation();
                   draftNameRef.current = item.text;
                   setIsEditingName(true);
                 }
-              }} className={`text-sm text-foreground flex-1 ${!isPreviewMode ? 'cursor-text hover:text-foreground' : ''} line-clamp-1 overflow-hidden py-1`} dangerouslySetInnerHTML={{
+              }} className={`text-sm text-foreground flex-1 ${!isPreviewMode && (!isEngagementMode || item.isUserAdded) ? 'cursor-text hover:text-foreground' : ''} line-clamp-1 overflow-hidden py-1`} dangerouslySetInnerHTML={{
                 __html: sanitizeHtml(item.text) || 'Click to add item name...'
               }} />
                   </TooltipTrigger>
@@ -1188,12 +1202,14 @@ function SortableItemRow({
               }} />
                   </TooltipContent>
                 </Tooltip> : <div onClick={e => {
-            if (!isPreviewMode) {
+            // Only allow editing if not preview mode AND (not engagement mode OR user added this)
+            const canEditText = !isPreviewMode && (!isEngagementMode || item.isUserAdded);
+            if (canEditText) {
               e.stopPropagation();
               draftNameRef.current = item.text;
               setIsEditingName(true);
             }
-          }} className={`text-sm text-foreground flex-1 ${!isPreviewMode ? 'cursor-text hover:text-foreground' : ''} py-2`} dangerouslySetInnerHTML={{
+          }} className={`text-sm text-foreground flex-1 ${!isPreviewMode && (!isEngagementMode || item.isUserAdded) ? 'cursor-text hover:text-foreground' : ''} py-2`} dangerouslySetInnerHTML={{
             __html: sanitizeHtml(item.text) || 'Click to add item name...'
           }} />}
               {hasRealSubItems && <Tooltip>
@@ -1214,7 +1230,7 @@ function SortableItemRow({
         flexBasis: columnWidths.response
       }}>
           <div className="flex items-center gap-2 w-full min-w-0">
-            <ResponseTypeDropdown currentType={item.answerType} onTypeChange={handleAnswerTypeChange} disabled={isPreviewMode} />
+            <ResponseTypeDropdown currentType={item.answerType} onTypeChange={handleAnswerTypeChange} disabled={isPreviewMode || (isEngagementMode && !item.isUserAdded)} />
             <div className="flex-1 min-w-0">
               <div className="flex flex-wrap gap-1">
                 {renderResponseField()}
@@ -1264,24 +1280,26 @@ function SortableItemRow({
 
         {/* Actions column - inline icons on hover */}
         {!isPreviewMode && <div className="w-[180px] shrink-0 flex items-center justify-end gap-1 self-center px-2 opacity-0 group-hover:opacity-100 transition-opacity">
-          {/* Required toggle */}
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <button 
-                onClick={e => {
-                  e.stopPropagation();
-                  onUpdate({
-                    ...item,
-                    required: !item.required
-                  });
-                }} 
-                className={`p-1.5 rounded hover:bg-muted transition-colors ${item.required ? 'text-red-500' : 'text-muted-foreground hover:text-foreground'}`}
-              >
-                <Asterisk className="h-4 w-4" />
-              </button>
-            </TooltipTrigger>
-            <TooltipContent side="top">{item.required ? 'Remove required' : 'Mark as required'}</TooltipContent>
-          </Tooltip>
+          {/* Required toggle - only show if not engagement mode or if user-added */}
+          {(!isEngagementMode || item.isUserAdded) && (
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <button 
+                  onClick={e => {
+                    e.stopPropagation();
+                    onUpdate({
+                      ...item,
+                      required: !item.required
+                    });
+                  }} 
+                  className={`p-1.5 rounded hover:bg-muted transition-colors ${item.required ? 'text-red-500' : 'text-muted-foreground hover:text-foreground'}`}
+                >
+                  <Asterisk className="h-4 w-4" />
+                </button>
+              </TooltipTrigger>
+              <TooltipContent side="top">{item.required ? 'Remove required' : 'Mark as required'}</TooltipContent>
+            </Tooltip>
+          )}
 
           {/* Add sub-item */}
           <Tooltip>
@@ -1331,37 +1349,41 @@ function SortableItemRow({
             <TooltipContent side="top">Add item below</TooltipContent>
           </Tooltip>
 
-          {/* Duplicate */}
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <button 
-                onClick={e => {
-                  e.stopPropagation();
-                  onDuplicate();
-                }} 
-                className="p-1.5 rounded hover:bg-muted text-muted-foreground hover:text-foreground transition-colors"
-              >
-                <Copy className="h-4 w-4" />
-              </button>
-            </TooltipTrigger>
-            <TooltipContent side="top">Duplicate</TooltipContent>
-          </Tooltip>
+          {/* Duplicate - only show if not engagement mode or if user-added */}
+          {(!isEngagementMode || item.isUserAdded) && (
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <button 
+                  onClick={e => {
+                    e.stopPropagation();
+                    onDuplicate();
+                  }} 
+                  className="p-1.5 rounded hover:bg-muted text-muted-foreground hover:text-foreground transition-colors"
+                >
+                  <Copy className="h-4 w-4" />
+                </button>
+              </TooltipTrigger>
+              <TooltipContent side="top">Duplicate</TooltipContent>
+            </Tooltip>
+          )}
 
-          {/* Delete */}
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <button 
-                onClick={e => {
-                  e.stopPropagation();
-                  onDelete();
-                }} 
-                className="p-1.5 rounded hover:bg-muted text-muted-foreground hover:text-red-500 transition-colors"
-              >
-                <Trash2 className="h-4 w-4" />
-              </button>
-            </TooltipTrigger>
-            <TooltipContent side="top">Delete</TooltipContent>
-          </Tooltip>
+          {/* Delete - only show if not engagement mode OR if user added this question */}
+          {(!isEngagementMode || item.isUserAdded) && (
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <button 
+                  onClick={e => {
+                    e.stopPropagation();
+                    onDelete();
+                  }} 
+                  className="p-1.5 rounded hover:bg-muted text-muted-foreground hover:text-red-500 transition-colors"
+                >
+                  <Trash2 className="h-4 w-4" />
+                </button>
+              </TooltipTrigger>
+              <TooltipContent side="top">Delete</TooltipContent>
+            </Tooltip>
+          )}
         </div>}
       </div>
 
@@ -1397,7 +1419,7 @@ function SortableItemRow({
                 if (sub.text.trim() === '') {
                   cleanupEmptySubItems();
                 }
-              }} sectionNumber={sectionNumber} itemNumber={itemIndex + 1} />
+              }} sectionNumber={sectionNumber} itemNumber={itemIndex + 1} isEngagementMode={isEngagementMode} />
                   </div>)}
               </SortableContext>
 
@@ -1436,6 +1458,7 @@ interface GroupProps {
   onSubItemsReorder: (itemId: string, newSubItems: Question[]) => void;
   selectedQuestions: Set<string>;
   onSelectionChange: (questionId: string, selected: boolean) => void;
+  isEngagementMode?: boolean;
 }
 
 // Resizable column header component
@@ -1545,7 +1568,8 @@ function SortableGroup({
   onItemsReorder,
   onSubItemsReorder,
   selectedQuestions,
-  onSelectionChange
+  onSelectionChange,
+  isEngagementMode = false
 }: GroupProps) {
   const [isEditingTitle, setIsEditingTitle] = useState(false);
   const [draftTitle, setDraftTitle] = useState(section.title);
@@ -1657,7 +1681,8 @@ function SortableGroup({
       id: `sq-${Date.now()}`,
       text: 'New sub-item',
       answerType: 'long-answer',
-      required: false
+      required: false,
+      isUserAdded: isEngagementMode ? true : undefined // Mark as user-added in engagement mode
     };
     const updatedQuestion = {
       ...question,
@@ -1670,7 +1695,8 @@ function SortableGroup({
       id: `q-${Date.now()}`,
       text: '',
       answerType: 'long-answer',
-      required: false
+      required: false,
+      isUserAdded: isEngagementMode ? true : undefined // Mark as user-added in engagement mode
     };
     const insertIndex = position === 'above' ? index : index + 1;
     const newQuestions = [...section.questions.slice(0, insertIndex), newQuestion, ...section.questions.slice(insertIndex)];
@@ -1744,11 +1770,16 @@ function SortableGroup({
                 <ChevronDown className="h-4 w-4 mr-2" />
                 Below this category
               </DropdownMenuItem>
-              <DropdownMenuSeparator className="bg-border" />
-              <DropdownMenuItem onClick={onDelete} className="text-red-500 focus:bg-muted focus:text-red-600">
-                <Trash2 className="h-4 w-4 mr-2" />
-                Delete category
-              </DropdownMenuItem>
+              {/* Hide delete category in engagement mode */}
+              {!isEngagementMode && (
+                <>
+                  <DropdownMenuSeparator className="bg-border" />
+                  <DropdownMenuItem onClick={onDelete} className="text-red-500 focus:bg-muted focus:text-red-600">
+                    <Trash2 className="h-4 w-4 mr-2" />
+                    Delete category
+                  </DropdownMenuItem>
+                </>
+              )}
             </DropdownMenuContent>
           </DropdownMenu>}
       </div>
@@ -1801,7 +1832,7 @@ function SortableGroup({
 
                 {/* Items */}
                 <SortableContext items={itemIds} strategy={verticalListSortingStrategy}>
-                  {section.questions.map((question, idx) => <SortableItemRow key={question.id} item={question} sectionId={section.id} itemIndex={idx} onUpdate={q => handleItemUpdate(idx, q)} onDelete={() => handleItemDelete(idx)} onDuplicate={() => handleItemDuplicate(idx)} onAddSubItem={() => handleAddSubItem(idx)} onAddItemAtPosition={position => handleAddItemAtPosition(idx, position)} isPreviewMode={isPreviewMode} isCompactMode={isCompactMode} onSubItemsReorder={onSubItemsReorder} visibleColumns={visibleColumns} columnWidths={columnWidths} sectionNumber={sectionIndex + 1} isSelected={selectedQuestions.has(question.id)} onSelectionChange={selected => onSelectionChange(question.id, selected)} />)}
+                  {section.questions.map((question, idx) => <SortableItemRow key={question.id} item={question} sectionId={section.id} itemIndex={idx} onUpdate={q => handleItemUpdate(idx, q)} onDelete={() => handleItemDelete(idx)} onDuplicate={() => handleItemDuplicate(idx)} onAddSubItem={() => handleAddSubItem(idx)} onAddItemAtPosition={position => handleAddItemAtPosition(idx, position)} isPreviewMode={isPreviewMode} isCompactMode={isCompactMode} onSubItemsReorder={onSubItemsReorder} visibleColumns={visibleColumns} columnWidths={columnWidths} sectionNumber={sectionIndex + 1} isSelected={selectedQuestions.has(question.id)} onSelectionChange={selected => onSelectionChange(question.id, selected)} isEngagementMode={isEngagementMode} />)}
                 </SortableContext>
 
                 {/* Add item button */}
@@ -1823,7 +1854,8 @@ export function MondayBoardView({
   isPreviewMode,
   isCompactMode = false,
   selectedQuestions = new Set(),
-  onSelectionChange
+  onSelectionChange,
+  isEngagementMode = false
 }: MondayBoardViewProps) {
   const [activeId, setActiveId] = useState<string | null>(null);
   const [activeData, setActiveData] = useState<{
@@ -1868,7 +1900,8 @@ export function MondayBoardView({
       id: `q-${Date.now()}`,
       text: '',
       answerType: 'long-answer',
-      required: false
+      required: false,
+      isUserAdded: isEngagementMode ? true : undefined // Mark as user-added in engagement mode
     };
     const newSections = [...checklist.sections];
     newSections[sectionIndex] = {
@@ -2145,7 +2178,7 @@ export function MondayBoardView({
   return <DndContext sensors={sensors} collisionDetection={closestCenter} onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
       <div className="space-y-4 monday-board-light-borders">
         <SortableContext items={sectionIds} strategy={verticalListSortingStrategy}>
-          {checklist.sections.map((section, idx) => <SortableGroup key={section.id} section={section} sectionIndex={idx} onUpdate={s => handleSectionUpdate(idx, s)} onDelete={() => handleSectionDelete(idx)} onAddItem={() => handleAddItem(idx)} onAddCategoryAtPosition={position => handleAddCategoryAtPosition(idx, position)} isPreviewMode={isPreviewMode} isCompactMode={isCompactMode} onItemsReorder={handleItemsReorder} onSubItemsReorder={handleSubItemsReorder} selectedQuestions={selectedQuestions} onSelectionChange={handleSelectionChange} />)}
+          {checklist.sections.map((section, idx) => <SortableGroup key={section.id} section={section} sectionIndex={idx} onUpdate={s => handleSectionUpdate(idx, s)} onDelete={() => handleSectionDelete(idx)} onAddItem={() => handleAddItem(idx)} onAddCategoryAtPosition={position => handleAddCategoryAtPosition(idx, position)} isPreviewMode={isPreviewMode} isCompactMode={isCompactMode} onItemsReorder={handleItemsReorder} onSubItemsReorder={handleSubItemsReorder} selectedQuestions={selectedQuestions} onSelectionChange={handleSelectionChange} isEngagementMode={isEngagementMode} />)}
         </SortableContext>
       </div>
       

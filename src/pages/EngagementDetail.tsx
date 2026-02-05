@@ -695,10 +695,11 @@ export default function EngagementDetail() {
               <MondayBoardView
                 checklist={checklist}
                 onUpdate={handleChecklistUpdate}
-                isPreviewMode={true}
+                isPreviewMode={false}
                 isCompactMode={isCompactMode}
                 selectedQuestions={selectedQuestions}
                 onSelectionChange={setSelectedQuestions}
+                isEngagementMode={true}
               />
             </div>
           )}
