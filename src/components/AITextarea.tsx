@@ -193,52 +193,60 @@ export function AITextarea({
 
   // Shared classes for BOTH view and edit — identical box model so no height jump
   const sharedBoxClasses = cn(
-    "text-sm p-1.5 border-2 rounded-md box-border pr-16",
+    "text-sm p-1.5 border-2 border-transparent rounded-md box-border",
     isCompactMode ? "truncate overflow-hidden whitespace-nowrap" : "min-h-[2.5rem] whitespace-pre-wrap",
   );
 
-  // Sync editor content when value changes externally (e.g. AI rewrite)
-  useEffect(() => {
-    if (isEditing && editorRef.current) {
-      // Only sync if the editor content differs (avoids cursor reset)
-      if (editorRef.current.innerHTML !== value) {
-        editorRef.current.innerHTML = value;
-      }
+  // Render text display when not editing (matches question text behavior)
+  if (!isEditing && !disabled) {
+    if (isCompactMode && value) {
+      return (
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <div 
+              ref={containerRef}
+              className={cn("relative w-full", className)}
+              onClick={handleEnterEditMode}
+            >
+              <div
+                className={cn(
+                  sharedBoxClasses,
+                  "cursor-text text-foreground hover:text-foreground",
+                  !value && "text-muted-foreground italic"
+                )}
+                dangerouslySetInnerHTML={{ __html: value || placeholder }}
+              />
+            </div>
+          </TooltipTrigger>
+          <TooltipContent side="top" className="bg-popover text-popover-foreground border border-border shadow-lg max-w-md whitespace-pre-wrap">
+            <div dangerouslySetInnerHTML={{ __html: value }} />
+          </TooltipContent>
+        </Tooltip>
+      );
     }
-  }, [value, isEditing]);
 
-  // --- COMPACT VIEW with tooltip (unchanged) ---
-  if (!isEditing && !disabled && isCompactMode && value) {
     return (
-      <Tooltip>
-        <TooltipTrigger asChild>
-          <div 
-            ref={containerRef}
-            className={cn("relative w-full", className)}
-            onClick={handleEnterEditMode}
-          >
-            <div
-              className={cn(
-                sharedBoxClasses,
-                "border-transparent cursor-text text-foreground hover:text-foreground",
-                !value && "text-muted-foreground italic"
-              )}
-              dangerouslySetInnerHTML={{ __html: value || placeholder }}
-            />
-          </div>
-        </TooltipTrigger>
-        <TooltipContent side="top" className="bg-popover text-popover-foreground border border-border shadow-lg max-w-md whitespace-pre-wrap">
-          <div dangerouslySetInnerHTML={{ __html: value }} />
-        </TooltipContent>
-      </Tooltip>
+      <div 
+        ref={containerRef}
+        className={cn("relative w-full h-full", className)}
+        onClick={handleEnterEditMode}
+      >
+        <div
+          className={cn(
+            sharedBoxClasses,
+            "pr-16 cursor-text text-foreground hover:text-foreground",
+            !value && "text-muted-foreground italic"
+          )}
+          dangerouslySetInnerHTML={{ __html: value || placeholder }}
+        />
+      </div>
     );
   }
 
-  // --- UNIFIED VIEW: single DOM element for both view & edit (no flicker) ---
   return (
     <div ref={containerRef} className={cn("relative w-full h-full", className)}>
       {/* Rich Text Toolbar — floating above */}
-      {showToolbar && !disabled && isEditing && (
+      {showToolbar && !disabled && (
         <RichTextToolbar
           position={toolbarPosition}
           onFormatAction={handleFormatAction}
@@ -246,32 +254,22 @@ export function AITextarea({
         />
       )}
 
+      {/* Editable Content — same sizing as the read-only view */}
       <div className="relative">
         <div
           ref={editorRef}
-          contentEditable={isEditing && !disabled && !isListening}
+          contentEditable={!disabled && !isListening}
           suppressContentEditableWarning
-          onInput={isEditing ? handleInput : undefined}
-          onClick={(e) => {
-            if (!isEditing && !disabled) {
-              handleEnterEditMode(e);
-            } else {
-              e.stopPropagation();
-            }
-          }}
+          onInput={handleInput}
+          onClick={(e) => e.stopPropagation()}
           className={cn(
-            sharedBoxClasses,
-            "w-full outline-none resize-none",
-            isEditing
-              ? "bg-muted border-primary"
-              : "border-transparent cursor-text hover:text-foreground",
-            isEditing && !isCompactMode && "overflow-y-auto",
+            "w-full pr-16 text-sm bg-muted border-2 border-primary text-foreground rounded-md p-1.5 outline-none resize-none box-border",
+            isCompactMode ? "max-h-[2.5rem] overflow-hidden whitespace-nowrap" : "min-h-[2.5rem] overflow-y-auto",
             isListening && "ring-1 ring-primary",
-            disabled && "opacity-60",
-            !value && !isEditing && "text-muted-foreground italic"
+            disabled && "opacity-60"
           )}
           style={{ width: '100%' }}
-          dangerouslySetInnerHTML={{ __html: value || (!isEditing ? placeholder : '') }}
+          dangerouslySetInnerHTML={{ __html: value }}
         />
         
         {/* Action buttons — bottom right inside editor area */}
