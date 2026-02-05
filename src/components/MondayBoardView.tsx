@@ -799,8 +799,8 @@ function SortableSubItemRow({
   return <div ref={setNodeRef} style={style} {...attributes} {...listeners} className={`group flex items-stretch hover:bg-muted/50 transition-all relative border-b border-border/50 cursor-grab active:cursor-grabbing ${isDragging ? 'opacity-50 ring-2 ring-primary ring-offset-1 z-10' : ''} ${isValidDropTarget ? 'bg-primary/5' : ''}`}>
       {/* Drop indicator line */}
       {isValidDropTarget && <div className="absolute -top-[2px] left-0 right-0 h-1 bg-primary rounded-full z-20 shadow-[0_0_8px_rgba(59,130,246,0.5)]" />}
-      {/* Checkbox column */}
-      <div className="w-10 shrink-0 flex items-center justify-center self-center">
+      {/* Checkbox column (padded so it sits inside the indented sub-question card) */}
+      <div className="w-10 shrink-0 flex items-center justify-start pl-4 self-center">
         <Checkbox checked={isSelected} onCheckedChange={() => setIsSelected(!isSelected)} className="h-4 w-4 border-border bg-background" />
       </div>
 
@@ -1388,9 +1388,15 @@ function SortableItemRow({
               Keep the *visual* indent (ml-8) on a background layer only,
               while sub-item rows render at full width so column dividers always align
               with the header/main rows (even when resizing). */}
-          <div className="relative rounded-lg overflow-hidden">
-            {/* Visual-only sub-question card background - covers entire container including checkbox */}
-            <div className="pointer-events-none absolute inset-0 rounded-lg bg-muted/50" aria-hidden="true" />
+          <div className="relative rounded-lg overflow-hidden py-1">
+            {/*
+              Visual-only indented sub-question card background:
+              - Starts after the connector line (left-4) to match the original indentation.
+              - Does not change any column widths/alignment.
+            */}
+            <div className="pointer-events-none absolute inset-0" aria-hidden="true">
+              <div className="absolute left-4 right-0 top-0 bottom-0 rounded-lg bg-muted/50" />
+            </div>
 
             <div className="relative">
               <SortableContext items={subItemIds} strategy={verticalListSortingStrategy}>
@@ -1405,7 +1411,7 @@ function SortableItemRow({
 
               {/* Add subitem row - keep the full column structure so vertical column lines stay aligned */}
               {!isPreviewMode && hasRealSubItems && <div className="flex items-stretch hover:bg-muted transition-colors border-b border-border/50">
-                  <div className="w-10 shrink-0 flex items-center justify-center self-center py-2.5">
+                  <div className="w-10 shrink-0 flex items-center justify-start pl-4 self-center py-2.5">
                     <Checkbox disabled className="h-4 w-4 border-border bg-background opacity-30" />
                   </div>
 
