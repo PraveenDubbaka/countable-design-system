@@ -334,7 +334,7 @@ export function FloatingActionBar({
                 onPointerDownOutside={(e) => e.preventDefault()}
               >
                 {!pendingCategoryType ? (
-                  <div className="flex flex-col gap-1 min-h-[180px]">
+                  <div className="flex flex-col gap-1">
                     <button
                       onClick={() => setPendingCategoryType('empty')}
                       className="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-muted transition-colors"
@@ -345,45 +345,6 @@ export function FloatingActionBar({
                       <div className="text-left">
                         <p className="text-sm font-medium text-foreground">Empty Section</p>
                         <p className="text-xs text-muted-foreground">Start from scratch</p>
-                      </div>
-                    </button>
-
-                    <button
-                      onClick={() => setPendingCategoryType('template')}
-                      className="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-muted transition-colors"
-                    >
-                      <div className="w-7 h-7 rounded-md bg-secondary flex items-center justify-center">
-                        <FileText className="h-3.5 w-3.5 text-foreground" />
-                      </div>
-                      <div className="text-left">
-                        <p className="text-sm font-medium text-foreground">From Template</p>
-                        <p className="text-xs text-muted-foreground">Use existing template</p>
-                      </div>
-                    </button>
-
-                    <button
-                      onClick={() => setPendingCategoryType('form')}
-                      className="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-muted transition-colors"
-                    >
-                      <div className="w-7 h-7 rounded-md bg-primary flex items-center justify-center">
-                        <Columns className="h-3.5 w-3.5 text-primary-foreground" />
-                      </div>
-                      <div className="text-left">
-                        <p className="text-sm font-medium text-foreground">Empty Form</p>
-                        <p className="text-xs text-muted-foreground">Multi-column form layout</p>
-                      </div>
-                    </button>
-
-                    <button
-                      onClick={() => setPendingCategoryType('inquires-form')}
-                      className="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-muted transition-colors"
-                    >
-                      <div className="w-7 h-7 rounded-md bg-secondary flex items-center justify-center">
-                        <FileText className="h-3.5 w-3.5 text-foreground" />
-                      </div>
-                      <div className="text-left">
-                        <p className="text-sm font-medium text-foreground">Inquires Form</p>
-                        <p className="text-xs text-muted-foreground">Name, Position, Date fields</p>
                       </div>
                     </button>
                   </div>
