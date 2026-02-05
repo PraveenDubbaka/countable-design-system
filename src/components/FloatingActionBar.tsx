@@ -314,6 +314,7 @@ export function FloatingActionBar({
               open={showAddCategoryPopover} 
               onOpenChange={(open) => {
                 setShowAddCategoryPopover(open);
+                if (open) setPendingCategoryType('empty');
                 if (!open) setPendingCategoryType(null);
               }}
             >
@@ -333,22 +334,7 @@ export function FloatingActionBar({
                 className="w-56 p-2 bg-card border shadow-lg z-50"
                 onPointerDownOutside={(e) => e.preventDefault()}
               >
-                {!pendingCategoryType ? (
-                  <div className="flex flex-col gap-1">
-                    <button
-                      onClick={() => setPendingCategoryType('empty')}
-                      className="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-muted transition-colors"
-                    >
-                      <div className="w-7 h-7 rounded-md bg-secondary flex items-center justify-center">
-                        <Plus className="h-3.5 w-3.5 text-foreground" />
-                      </div>
-                      <div className="text-left">
-                        <p className="text-sm font-medium text-foreground">Section</p>
-                        <p className="text-xs text-muted-foreground">Start from scratch</p>
-                      </div>
-                    </button>
-                  </div>
-                ) : (
+                {pendingCategoryType && (
                   <div className="flex flex-col gap-1 min-h-[180px]">
                     <div className="px-3 py-2 border-b border-border mb-1">
                       <p className="text-xs text-muted-foreground font-medium">Where to add?</p>
