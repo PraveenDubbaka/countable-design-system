@@ -76,13 +76,26 @@ export function AITextarea({
     }
   }, [isEditing, isAIOpen]);
 
+  const updateToolbarPosition = useCallback(() => {
+    if (editorRef.current) {
+      const rect = editorRef.current.getBoundingClientRect();
+      setToolbarPosition({
+        x: rect.left + rect.width / 2,
+        y: rect.top - 8,
+      });
+    }
+  }, []);
+
+  const [toolbarPosition, setToolbarPosition] = useState({ x: 0, y: 0 });
+
   // Focus editor when entering edit mode
   useEffect(() => {
     if (isEditing && editorRef.current) {
       editorRef.current.focus();
+      updateToolbarPosition();
       setShowToolbar(true);
     }
-  }, [isEditing]);
+  }, [isEditing, updateToolbarPosition]);
 
   const { isListening, transcript, toggleListening, isSupported, error } = useVoiceToText({
     onResult: (result) => {
@@ -230,13 +243,13 @@ export function AITextarea({
   }
 
   return (
-    <div ref={containerRef} className={cn("relative w-full h-full flex flex-col", className)}>
-      {/* Rich Text Toolbar — inline, sits above editor */}
+    <div ref={containerRef} className={cn("relative w-full h-full", className)}>
+      {/* Rich Text Toolbar — floating above */}
       {showToolbar && !disabled && (
         <RichTextToolbar
+          position={toolbarPosition}
           onFormatAction={handleFormatAction}
           toolbarRef={toolbarRef}
-          inline
         />
       )}
 
