@@ -12,6 +12,7 @@ import Engagements from "./pages/Engagements";
 import EngagementDetail from "./pages/EngagementDetail";
 import CreateEngagement from "./pages/CreateEngagement";
 import Clients from "./pages/Clients";
+import TrialBalance from "./pages/TrialBalance";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -30,6 +31,7 @@ const App = () => (
             <Route path="/engagements" element={<Engagements />} />
             <Route path="/engagements/:engagementId" element={<EngagementDetail />} />
             <Route path="/engagements/create" element={<CreateEngagement />} />
+            <Route path="/engagements/:engagementId/trial-balance" element={<TrialBalance />} />
             <Route path="/create" element={<CreationDashboard />} />
             <Route path="/builder" element={<Index />} />
             <Route path="/generate" element={<Generate />} />
