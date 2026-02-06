@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Search, ChevronDown, Pencil, Trash2, Download } from "lucide-react";
+import { Search, ChevronDown, Pencil, Trash2, Download, Briefcase, Loader, CheckCircle2, Archive } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -64,18 +64,32 @@ export default function Engagements() {
     <Layout title="Engagements">
       <div className="flex-1 p-8 overflow-hidden flex flex-col bg-background">
         <div className="flex flex-col flex-1 gap-6 min-h-0">
-          {/* Stats Cards - Full width with enhanced spacing */}
-          <div className="grid grid-cols-4 gap-5">
-            {stats.map((stat, index) => (
-              <StyledCard
-                key={index}
-                hover
-                className="p-6"
-              >
-                <p className="text-sm font-medium text-muted-foreground">{stat.label}</p>
-                <p className="text-4xl font-bold text-foreground mt-2">{stat.value}</p>
-              </StyledCard>
-            ))}
+          {/* Stats Cards */}
+          <div className="flex items-center gap-3 flex-shrink-0">
+            {stats.map((stat, index) => {
+              const config = [
+                { color: 'text-primary', bg: 'bg-primary/10', icon: Briefcase, animation: '' },
+                { color: 'text-amber-600', bg: 'bg-amber-50', icon: Loader, animation: 'animate-[spin_3s_linear_infinite]' },
+                { color: 'text-emerald-600', bg: 'bg-emerald-50', icon: CheckCircle2, animation: '' },
+                { color: 'text-muted-foreground', bg: 'bg-muted', icon: Archive, animation: '' },
+              ];
+              const { color, bg, icon: Icon, animation } = config[index];
+              return (
+                <div
+                  key={index}
+                  className="flex items-center gap-3 px-5 py-3 flex-1 bg-card border border-border shadow-sm cursor-default hover:shadow-md transition-shadow"
+                  style={{ borderRadius: '12px' }}
+                >
+                  <div className={`w-9 h-9 rounded-lg ${bg} flex items-center justify-center shrink-0`}>
+                    <Icon className={`h-4.5 w-4.5 ${color} ${animation}`} strokeWidth={2} />
+                  </div>
+                  <div className="flex flex-col">
+                    <span className={`text-xl font-bold leading-none ${color}`}>{stat.value}</span>
+                    <span className="text-[11px] font-medium text-foreground/60 leading-tight mt-0.5 whitespace-nowrap">{stat.label}</span>
+                  </div>
+                </div>
+              );
+            })}
           </div>
 
           {/* Filter, Search, Export and Create Row - Enhanced spacing */}
