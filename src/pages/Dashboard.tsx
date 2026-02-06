@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Search, ChevronDown, MessageSquare, Send, AlertCircle } from "lucide-react";
+import { Search, ChevronDown, MessageSquare, Send, AlertCircle, Layers, Sparkles, Loader, CheckCircle2, Archive } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -223,22 +223,28 @@ export default function Dashboard() {
       <div className="flex gap-8">
         {/* Main Content */}
         <div className="flex-1 space-y-6">
-          {/* Stats Bar - Compact inline display */}
-          <div className="flex items-center gap-1 bg-card rounded-xl border border-border px-2 py-2 shadow-sm">
+          {/* Stats Bar - Creative compact display with micro-animated icons */}
+          <div className="flex items-center bg-card rounded-xl border border-border shadow-sm overflow-hidden">
             {stats.map((stat, index) => {
-              const colors = [
-                'text-primary',      // Total
-                'text-emerald-600',  // New
-                'text-[#074075]',    // In Progress
-                'text-violet-600',   // Completed
-                'text-slate-500',    // Archived
+              const config = [
+                { color: 'text-primary', bg: 'bg-primary/10', icon: Layers, animation: 'animate-pulse' },
+                { color: 'text-emerald-600', bg: 'bg-emerald-50', icon: Sparkles, animation: 'animate-[spin_3s_linear_infinite]' },
+                { color: 'text-[#074075]', bg: 'bg-[#e1eefa]', icon: Loader, animation: 'animate-[spin_2s_linear_infinite]' },
+                { color: 'text-violet-600', bg: 'bg-violet-50', icon: CheckCircle2, animation: 'animate-[bounce_2s_ease-in-out_infinite]' },
+                { color: 'text-slate-500', bg: 'bg-slate-100', icon: Archive, animation: '' },
               ];
+              const { color, bg, icon: Icon, animation } = config[index];
               return (
                 <React.Fragment key={index}>
-                  {index > 0 && <div className="w-px h-8 bg-border" />}
-                  <div className="flex items-center gap-2.5 px-4 py-1">
-                    <span className={`text-2xl font-bold ${colors[index]}`}>{stat.value}</span>
-                    <span className="text-xs font-medium text-foreground/70 leading-tight max-w-[80px]">{stat.label}</span>
+                  {index > 0 && <div className="w-px self-stretch bg-border" />}
+                  <div className="flex items-center gap-3 px-5 py-3 flex-1 group cursor-default hover:bg-muted/40 transition-colors">
+                    <div className={`w-9 h-9 rounded-lg ${bg} flex items-center justify-center shrink-0`}>
+                      <Icon className={`h-4.5 w-4.5 ${color} ${animation}`} strokeWidth={2} />
+                    </div>
+                    <div className="flex flex-col">
+                      <span className={`text-xl font-bold leading-none ${color}`}>{stat.value}</span>
+                      <span className="text-[11px] font-medium text-foreground/60 leading-tight mt-0.5 whitespace-nowrap">{stat.label}</span>
+                    </div>
                   </div>
                 </React.Fragment>
               );
