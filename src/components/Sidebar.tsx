@@ -12,6 +12,7 @@ import { BulkAddToMyTemplatesDialog } from "@/components/BulkAddToMyTemplatesDia
 import { getGlobalTemplateChecklist } from "@/lib/globalTemplates";
 import { readJsonFromLocalStorage, removeLocalStorageKey, writeJsonToLocalStorage } from "@/lib/safeJson";
 import { cn } from "@/lib/utils";
+import { LetterIcon } from "@/components/icons/LetterIcon";
 import { ChecklistIcon } from "@/components/icons/ChecklistIcon";
 interface Template {
   id: string;
@@ -848,7 +849,7 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
                       {section.children!.map(child => (
                         <div key={child.id} className="flex items-center gap-2 py-1.5 px-2 rounded-md cursor-pointer hover:bg-muted transition-colors text-sm">
                           <span className="w-4 flex-shrink-0" />
-                          {child.icon === "letter" ? <FileText className="h-4 w-4 text-muted-foreground flex-shrink-0" /> : <ChecklistIcon className="h-4 w-4 flex-shrink-0" />}
+                          {child.icon === "letter" ? <LetterIcon className="h-4 w-4 flex-shrink-0" /> : <ChecklistIcon className="h-4 w-4 flex-shrink-0" />}
                           <span className="font-semibold text-primary">{child.code}</span>
                           <span className="truncate flex-1 text-foreground">{child.label}</span>
                         </div>
