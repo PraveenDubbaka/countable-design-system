@@ -32,7 +32,7 @@ import {
   MoreVertical,
   GripVertical,
   FileX2,
-  Wand2,
+  Network,
   Settings2,
   Building2,
   Calendar,
@@ -253,7 +253,7 @@ export default function TrialBalance() {
             <Tooltip>
               <TooltipTrigger asChild>
                 <Button variant="outline" size="icon" className="h-9 w-9 bg-card border-border hover:bg-muted">
-                  <Wand2 className="h-4 w-4" />
+                  <Network className="h-4 w-4" />
                 </Button>
               </TooltipTrigger>
               <TooltipContent>Auto Map</TooltipContent>
