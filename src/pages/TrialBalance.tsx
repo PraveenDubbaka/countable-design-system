@@ -75,7 +75,7 @@ const headerActions = [
 ];
 
 // Sample trial balance data matching screenshot
-const trialBalanceData = [
+const baseTrialBalanceData = [
   { id: "1", accNo: "1.112", description: "Asset AIM renamed", original: 145.00, adj: 0.00, final: 145.00, py1: 0.00, changePct: "0.00%", py2: "(110.10)", mapNo: 1480.00, ls: "I", grouping: "Assets", subGrouping: "Current assets", cfCategory: "CFO", taxCode: 1480, fxRate: 1.00 },
   { id: "2", accNo: "2.1", description: "Assets-AIM2 2.1", original: 1260.10, adj: 0.00, final: 1260.10, py1: 1260.00, changePct: "0.01%", py2: "100.00", mapNo: 2960.00, ls: "BB", grouping: "Liabilities", subGrouping: "Current liabilities", cfCategory: "CFO", taxCode: 2960, fxRate: 1.00 },
   { id: "3", accNo: "2.12", description: "Add locally 40 test 2", original: "(10.10)", adj: 0.00, final: "(10.10)", py1: "(10.10)", changePct: "0.00%", py2: "0.00", mapNo: 1480.00, ls: "I", grouping: "Assets", subGrouping: "Current assets", cfCategory: "CFO", taxCode: 1480, fxRate: 1.00 },
@@ -86,6 +86,46 @@ const trialBalanceData = [
   { id: "8", accNo: "007.1", description: "MSD-WK renamed", original: 8.00, adj: 0.00, final: 8.00, py1: "(151.00)", changePct: "(105.30)%", py2: "(0.20)", mapNo: 9270.00, ls: "40", grouping: "Expenses", subGrouping: "Operating expe...", cfCategory: "Excl", taxCode: 9270, fxRate: 1.00 },
   { id: "9", accNo: "8.1010", description: "test ga uat v8.1", original: 10.00, adj: 0.00, final: 10.00, py1: 10.00, changePct: "0.00%", py2: "10.00", mapNo: 1480.00, ls: "I", grouping: "Assets", subGrouping: "Current assets", cfCategory: "CFO", taxCode: 1480, fxRate: 1.00 },
 ];
+
+// Generate 100 additional rows
+const descriptions = ["Accounts Receivable", "Prepaid Insurance", "Office Equipment", "Accumulated Depreciation", "Notes Payable", "Unearned Revenue", "Common Stock", "Retained Earnings", "Service Revenue", "Salary Expense", "Rent Expense", "Utilities Expense", "Insurance Expense", "Depreciation Expense", "Supplies Expense", "Interest Expense", "Interest Income", "Dividend Income", "Gain on Sale", "Loss on Disposal", "Inventory", "Cost of Goods Sold", "Sales Returns", "Purchase Discounts", "Freight In", "Bad Debt Expense", "Allowance for Doubtful", "Bonds Payable", "Premium on Bonds", "Treasury Stock", "Cash Equivalents", "Short-term Investments", "Long-term Investments", "Goodwill", "Patents", "Copyright", "Trademark", "Franchise Rights", "Leasehold Improvements", "Land", "Building", "Machinery", "Vehicles", "Furniture & Fixtures", "Computer Equipment", "Software Licenses", "Mortgage Payable", "Lease Liability", "Deferred Tax Asset", "Deferred Tax Liability"];
+const groupings = ["Assets", "Liabilities", "Equity", "Revenue", "Expenses"];
+const subGroupings: Record<string, string[]> = { Assets: ["Current assets", "Non-current assets", "Fixed assets"], Liabilities: ["Current liabilities", "Long-term liabilities"], Equity: ["Share capital", "Retained earnings", "Other compreh..."], Revenue: ["Operating revenue", "Other income"], Expenses: ["Operating expe...", "Admin expenses", "Finance costs"] };
+const lsCodes = ["I", "BB", "TT", "40", "IS", "RE"];
+const cfCategories = ["CFO", "CFI", "CFF", "Excl", "NA"];
+
+const generatedRows = Array.from({ length: 100 }, (_, i) => {
+  const idx = i + 10;
+  const grp = groupings[i % groupings.length];
+  const subGrps = subGroupings[grp];
+  const orig = parseFloat((Math.random() * 5000 - 1000).toFixed(2));
+  const adjVal = parseFloat((Math.random() * 100 - 50).toFixed(2));
+  const finalVal = parseFloat((orig + adjVal).toFixed(2));
+  const py1Val = parseFloat((orig + (Math.random() * 200 - 100)).toFixed(2));
+  const changePct = py1Val !== 0 ? `${(((finalVal - py1Val) / Math.abs(py1Val)) * 100).toFixed(2)}%` : "0.00%";
+  const py2Val = parseFloat((Math.random() * 3000 - 500).toFixed(2));
+  const mapNo = [1480, 2960, 7006, 9270, 4100, 5200, 6300][i % 7];
+  return {
+    id: String(idx),
+    accNo: `${idx}.${String(i % 100).padStart(2, "0")}`,
+    description: descriptions[i % descriptions.length],
+    original: orig,
+    adj: adjVal,
+    final: finalVal,
+    py1: py1Val,
+    changePct,
+    py2: formatNumber(py2Val),
+    mapNo,
+    ls: lsCodes[i % lsCodes.length],
+    grouping: grp,
+    subGrouping: subGrps[i % subGrps.length],
+    cfCategory: cfCategories[i % cfCategories.length],
+    taxCode: mapNo,
+    fxRate: 1.00,
+  };
+});
+
+const trialBalanceData = [...baseTrialBalanceData, ...generatedRows];
 
 const totals = { original: 0.00, adj: 0.00, final: 0.00, py1: 0.00, py2: 0.00 };
 const netIncome = { original: 14.35, adj: 0.00, final: 14.35, py1: 149.22, py2: "(2,150.10)" };
@@ -387,8 +427,10 @@ export default function TrialBalance() {
                   </tr>
                 ))}
 
+              </tbody>
+              <tfoot className="sticky bottom-0 z-10">
                 {/* Totals row */}
-                <tr className="border-b border-border bg-muted/20">
+                <tr className="bg-muted border-t border-border">
                   <td className="px-3 py-2" colSpan={4}></td>
                   <td className="px-3 py-2 text-right font-semibold text-foreground whitespace-nowrap">{formatNumber(totals.original)}</td>
                   <td className="px-3 py-2 text-right font-semibold text-foreground whitespace-nowrap">{formatNumber(totals.adj)}</td>
@@ -400,7 +442,7 @@ export default function TrialBalance() {
                 </tr>
 
                 {/* Net Income row */}
-                <tr className="bg-muted/10">
+                <tr className="bg-muted border-t border-border">
                   <td className="px-3 py-2" colSpan={3}></td>
                   <td className="px-3 py-2 text-right font-bold text-foreground whitespace-nowrap">Net Income (loss)</td>
                   <td className="px-3 py-2 text-right font-bold text-foreground whitespace-nowrap">{formatNumber(netIncome.original)}</td>
@@ -411,7 +453,7 @@ export default function TrialBalance() {
                   <td className="px-3 py-2 text-right font-bold text-foreground whitespace-nowrap">{netIncome.py2}</td>
                   <td colSpan={7}></td>
                 </tr>
-              </tbody>
+              </tfoot>
             </table>
           </div>
          </StyledCard>
