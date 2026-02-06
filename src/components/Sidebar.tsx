@@ -806,7 +806,8 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
             id: "tb",
             code: "TB",
             label: "Trial Balance & Adj. Entri...",
-            hasPlus: false
+            hasPlus: false,
+            route: "trial-balance"
           }, {
             id: "pr",
             code: "PR",
@@ -828,7 +829,10 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
                 return <div key={section.id}>
                   <div className="flex items-center gap-2 py-1.5 px-2 rounded-md cursor-pointer hover:bg-muted transition-colors text-sm"
                     onClick={() => {
-                      if (hasChildren) {
+                      if (section.route) {
+                        const engId = location.pathname.split("/engagements/")[1]?.split("/")[0];
+                        if (engId) navigate(`/engagements/${engId}/${section.route}`);
+                      } else if (hasChildren) {
                         setExpandedSections(prev => {
                           const next = new Set(prev);
                           if (next.has(section.id)) next.delete(section.id);
