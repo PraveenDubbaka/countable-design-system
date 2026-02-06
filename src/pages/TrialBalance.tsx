@@ -199,38 +199,39 @@ export default function TrialBalance() {
           </DropdownMenu>
         </div>
 
-        {/* Title and Filter Bar */}
-        <div className="flex items-center justify-between px-6 pb-3 flex-shrink-0">
-          <div className="flex items-center gap-4">
-            <h2 className="text-lg font-bold text-primary">Trial Balance</h2>
+        {/* Action Buttons - Sticky Header with Title (matching Engagement Detail) */}
+        <div className="sticky top-0 z-10 bg-card px-4 py-2 flex items-center justify-between border-b border-border/50">
+          <div className="flex items-center gap-3">
+            <h1 className="text-sm font-semibold text-foreground truncate">
+              Trial Balance
+            </h1>
+            <span className="text-xs text-muted-foreground">
+              Last updated: <span className="font-medium text-foreground">54 min ago</span>
+            </span>
           </div>
-          <span className="text-xs text-muted-foreground">
-            Last updated on: <span className="font-bold text-foreground">54 minutes ago</span>
-          </span>
-        </div>
-
-        {/* Filters Row */}
-        <div className="flex items-center justify-between px-6 pb-3 flex-shrink-0">
           <div className="flex items-center gap-2">
+            {/* Date Selector - dropdown */}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="outline" size="sm" className="h-8 text-xs gap-1.5">
+                <Button variant="outline" size="sm" className="h-9 text-xs gap-1.5 bg-card border-border hover:bg-muted">
                   {dateFilter}
                   <ChevronDown className="h-3.5 w-3.5" />
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent>
+              <DropdownMenuContent className="bg-card border shadow-lg z-50">
                 <DropdownMenuItem>Nov 27 2025</DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
+
+            {/* Filter - dropdown */}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="outline" size="sm" className="h-8 text-xs gap-1.5">
+                <Button variant="outline" size="sm" className="h-9 text-xs gap-1.5 bg-card border-border hover:bg-muted">
                   <span className="text-muted-foreground">≡</span> Filter by
                   <ChevronDown className="h-3.5 w-3.5" />
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent>
+              <DropdownMenuContent className="bg-card border shadow-lg z-50">
                 <DropdownMenuItem>All</DropdownMenuItem>
                 <DropdownMenuItem>Assets</DropdownMenuItem>
                 <DropdownMenuItem>Liabilities</DropdownMenuItem>
@@ -238,36 +239,80 @@ export default function TrialBalance() {
                 <DropdownMenuItem>Expenses</DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
-          </div>
 
-          <div className="flex items-center gap-2">
-            <Button variant="outline" size="sm" className="h-8 text-xs gap-1.5">
-              <MapPin className="h-3.5 w-3.5" />
-              Unmap
-            </Button>
-            <Button variant="outline" size="sm" className="h-8 text-xs gap-1.5">
-              <Wand2 className="h-3.5 w-3.5" />
-              Auto Map
-            </Button>
-            <Button variant="outline" size="sm" className="h-8 text-xs gap-1.5">
-              <Upload className="h-3.5 w-3.5" />
-              Import
-            </Button>
-            <Button variant="outline" size="sm" className="h-8 text-xs gap-1.5">
-              <Download className="h-3.5 w-3.5" />
-              Export
-            </Button>
-            <Button variant="outline" size="sm" className="h-8 text-xs gap-1.5">
-              <RefreshCw className="h-3.5 w-3.5" />
-              Refresh
-            </Button>
-            <Button variant="outline" size="sm" className="h-8 text-xs gap-1.5">
-              + $0 Bal. Acc.
-              <ChevronDown className="h-3.5 w-3.5" />
-            </Button>
-            <Button variant="outline" size="icon" className="h-8 w-8">
-              <Search className="h-3.5 w-3.5" />
-            </Button>
+            {/* Icon-only buttons with tooltips */}
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button variant="outline" size="icon" className="h-9 w-9 bg-card border-border hover:bg-muted">
+                  <MapPin className="h-4 w-4" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>Unmap</TooltipContent>
+            </Tooltip>
+
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button variant="outline" size="icon" className="h-9 w-9 bg-card border-border hover:bg-muted">
+                  <Wand2 className="h-4 w-4" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>Auto Map</TooltipContent>
+            </Tooltip>
+
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button variant="outline" size="icon" className="h-9 w-9 bg-card border-border hover:bg-muted">
+                  <Upload className="h-4 w-4" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>Import</TooltipContent>
+            </Tooltip>
+
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button variant="outline" size="icon" className="h-9 w-9 bg-card border-border hover:bg-muted">
+                  <Download className="h-4 w-4" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>Export</TooltipContent>
+            </Tooltip>
+
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button variant="outline" size="icon" className="h-9 w-9 bg-card border-border hover:bg-muted">
+                  <RefreshCw className="h-4 w-4" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>Refresh</TooltipContent>
+            </Tooltip>
+
+            {/* $0 Bal. Acc. - dropdown */}
+            <DropdownMenu>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="outline" size="sm" className="h-9 text-xs gap-1.5 bg-card border-border hover:bg-muted">
+                      + $0 Bal. Acc.
+                      <ChevronDown className="h-3.5 w-3.5" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                </TooltipTrigger>
+                <TooltipContent>Zero Balance Accounts</TooltipContent>
+              </Tooltip>
+              <DropdownMenuContent className="bg-card border shadow-lg z-50">
+                <DropdownMenuItem>Show $0 Balance</DropdownMenuItem>
+                <DropdownMenuItem>Hide $0 Balance</DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button variant="outline" size="icon" className="h-9 w-9 bg-card border-border hover:bg-muted">
+                  <Search className="h-4 w-4" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>Search</TooltipContent>
+            </Tooltip>
           </div>
         </div>
 
