@@ -194,7 +194,7 @@ export default function Clients() {
   const [searchQuery, setSearchQuery] = useState("");
   const [partnerSearch, setPartnerSearch] = useState("");
   const [activeTab, setActiveTab] = useState("my-clients");
-  const [selectedClient, setSelectedClient] = useState<string | null>("CR001");
+  const [selectedClient, setSelectedClient] = useState<string | null>(null);
 
   const tabs = [
     { id: "my-clients", label: "My Clients" },
