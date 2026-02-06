@@ -227,17 +227,17 @@ export default function Dashboard() {
           <div className="flex items-center gap-3 flex-shrink-0">
             {stats.map((stat, index) => {
               const config = [
-                { color: 'text-primary', bg: 'bg-primary/10', border: 'border-primary/20', icon: Layers, animation: 'animate-pulse' },
-                { color: 'text-emerald-600', bg: 'bg-emerald-50', border: 'border-emerald-200', icon: Sparkles, animation: 'animate-[spin_3s_linear_infinite]' },
-                { color: 'text-[#074075]', bg: 'bg-[#e1eefa]', border: 'border-[#074075]/20', icon: Loader, animation: 'animate-[spin_2s_linear_infinite]' },
-                { color: 'text-violet-600', bg: 'bg-violet-50', border: 'border-violet-200', icon: CheckCircle2, animation: 'animate-[bounce_2s_ease-in-out_infinite]' },
-                { color: 'text-slate-500', bg: 'bg-slate-50', border: 'border-slate-200', icon: Archive, animation: '' },
+                { color: 'text-primary', bg: 'bg-primary/10', icon: Layers, animation: 'animate-pulse' },
+                { color: 'text-emerald-600', bg: 'bg-emerald-50', icon: Sparkles, animation: 'animate-[spin_3s_linear_infinite]' },
+                { color: 'text-[#074075]', bg: 'bg-[#e1eefa]', icon: Loader, animation: 'animate-[spin_2s_linear_infinite]' },
+                { color: 'text-violet-600', bg: 'bg-violet-50', icon: CheckCircle2, animation: 'animate-[bounce_2s_ease-in-out_infinite]' },
+                { color: 'text-slate-500', bg: 'bg-slate-50', icon: Archive, animation: '' },
               ];
-              const { color, bg, border, icon: Icon, animation } = config[index];
+              const { color, bg, icon: Icon, animation } = config[index];
               return (
                 <div
                   key={index}
-                  className={`flex items-center gap-3 px-5 py-3 flex-1 bg-card border ${border} shadow-sm cursor-default hover:shadow-md transition-shadow`}
+                  className={`flex items-center gap-3 px-5 py-3 flex-1 bg-card border border-border shadow-sm cursor-default hover:shadow-md transition-shadow`}
                   style={{ borderRadius: '12px' }}
                 >
                   <div className={`w-9 h-9 rounded-lg ${bg} flex items-center justify-center shrink-0`}>
