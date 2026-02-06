@@ -771,8 +771,8 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
             <div className={`p-3 pt-1 ${isTemplatesPanelCollapsed ? "hidden" : ""}`}>
               <div className="flex gap-2">
                 <div className="relative flex-1">
-                  <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground icon-search" />
-                  <Input placeholder="Search" className="pl-8 h-8 text-sm bg-card/80 border-0 shadow-sm" />
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground icon-search" />
+                  <Input placeholder="Search" className="pl-9 h-9 text-sm" />
                 </div>
                 <Button size="icon" variant="ghost" className="h-9 w-9 bg-primary/10 hover:bg-primary/20">
                   <svg width="17" height="17" viewBox="0 0 17 17" fill="none" xmlns="http://www.w3.org/2000/svg">
