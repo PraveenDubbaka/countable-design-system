@@ -25,9 +25,9 @@ const badgeVariants = cva(
         accepted: "bg-emerald-50 text-emerald-600 border border-emerald-200",
         
         // Blue - In Progress, Invite Now
-        inProgress: "bg-sky-50 text-sky-600 border border-sky-200",
-        inviteNow: "bg-sky-50 text-sky-600 border border-sky-200",
-        processing: "bg-sky-50 text-sky-600 border border-sky-200",
+        inProgress: "bg-[#e1eefa] text-[#074075] border border-[#1c63a6]",
+        inviteNow: "bg-[#e1eefa] text-[#074075] border border-[#1c63a6]",
+        processing: "bg-[#e1eefa] text-[#074075] border border-[#1c63a6]",
         
         // Orange - Pending, Invite Sent
         pending: "bg-orange-50 text-orange-600 border border-orange-200",
