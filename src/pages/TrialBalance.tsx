@@ -33,7 +33,45 @@ import {
   GripVertical,
   MapPin,
   Wand2,
+  Settings2,
+  Building2,
+  Calendar,
+  Check,
 } from "lucide-react";
+// Engagement data for breadcrumb
+const engagementsData: Record<string, { id: string; client: string; type: string; yearEnd: string; status: string }> = {
+  "COM-CON-Dec312024": { id: "COM-CON-Dec312024", client: "Shipping Line Inc.", type: "Compilation (COM)", yearEnd: "Dec 31, 2024", status: "In Progress" },
+  "COM-PSP-Dec312023": { id: "COM-PSP-Dec312023", client: "Source 40", type: "Compilation (COM)", yearEnd: "Dec 31, 2023", status: "In Progress" },
+  "COM-QB-Dec312025": { id: "COM-QB-Dec312025", client: "qb 40.1", type: "Compilation (COM)", yearEnd: "Dec 31, 2025", status: "In Progress" },
+  "AUD-SL-Mar312024": { id: "AUD-SL-Mar312024", client: "Shipping Line Inc.", type: "Audit (AUD)", yearEnd: "Mar 31, 2024", status: "In Progress" },
+  "REV-SL-Jun302024": { id: "REV-SL-Jun302024", client: "Shipping Line Inc.", type: "Review (REV)", yearEnd: "Jun 30, 2024", status: "In Progress" },
+  "COM-S40-Jun302024": { id: "COM-S40-Jun302024", client: "Source 40", type: "Compilation (COM)", yearEnd: "Jun 30, 2024", status: "In Progress" },
+};
+
+const getUniqueClients = () => {
+  const clients = new Set<string>();
+  Object.values(engagementsData).forEach(e => clients.add(e.client));
+  return Array.from(clients);
+};
+
+const getEngagementsForClient = (clientName: string) => {
+  return Object.values(engagementsData).filter(e => e.client === clientName);
+};
+
+// Custom TB Check icon
+const TBCheckIcon = ({ className }: { className?: string }) => (
+  <svg width="16" height="14" viewBox="0 0 16 14" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
+    <path d="M7.84228 5.33609V8.00276M7.84228 10.6694H7.84895M6.91916 1.93057L1.43591 11.4017C1.13177 11.927 0.979701 12.1896 1.00218 12.4052C1.02178 12.5933 1.12029 12.7641 1.2732 12.8753C1.4485 13.0028 1.75201 13.0028 2.35903 13.0028H13.3255C13.9326 13.0028 14.2361 13.0028 14.4114 12.8753C14.5643 12.7641 14.6628 12.5933 14.6824 12.4052C14.7049 12.1896 14.5528 11.927 14.2487 11.4017L8.76541 1.93057C8.46236 1.40713 8.31084 1.14541 8.11315 1.05751C7.94071 0.980831 7.74386 0.980831 7.57142 1.05751C7.37373 1.14541 7.22221 1.40713 6.91916 1.93057Z" stroke="#F04438" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+  </svg>
+);
+
+const headerActions = [
+  { id: "bank", label: "Connect Bank", icon: Landmark },
+  { id: "docs", label: "Source Docs", icon: FileText },
+  { id: "tb", label: "TB Check", icon: TBCheckIcon },
+  { id: "adj", label: "Adj. Entries", icon: PencilLine },
+  { id: "workbook", label: "Workbook", icon: FileSpreadsheet },
+];
 
 // Sample trial balance data matching screenshot
 const trialBalanceData = [
@@ -63,60 +101,102 @@ export default function TrialBalance() {
   const { engagementId } = useParams();
   const [dateFilter] = useState("Nov 27 2025");
 
+  const engagement = engagementId ? engagementsData[engagementId] : null;
+  const displayId = engagementId || "Unknown";
+  const clientName = engagement?.client || "Unknown Client";
+  const status = engagement?.status || "In Progress";
+  const uniqueClients = getUniqueClients();
+  const clientEngagements = getEngagementsForClient(clientName);
+
   return (
-    <Layout
-      title=""
-      showBackButton
-      onBack={() => navigate(`/engagements/${engagementId || "eng-fst-001"}`)}
-    >
+    <Layout>
       <div className="flex flex-col h-full overflow-hidden">
-        {/* Top Breadcrumb and Actions Bar */}
-        <div className="flex items-center justify-between px-6 pt-4 pb-2 flex-shrink-0">
-          {/* Left: Breadcrumb */}
-          <div className="flex items-center gap-2 text-sm">
-            <span className="font-semibold text-primary cursor-pointer hover:underline" onClick={() => navigate(`/engagements/${engagementId || "eng-fst-001"}`)}>FST</span>
-            <ChevronRight className="h-3.5 w-3.5 text-muted-foreground" />
+        {/* Top Header Bar - matching Engagement Detail style */}
+        <div className="flex items-center justify-between px-4 py-1.5 border-b border-border bg-gradient-to-r from-card via-card to-secondary/20">
+          {/* Left side - Interactive Breadcrumb */}
+          <div className="flex items-center gap-2">
+            {/* Client Selector */}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <button className="flex items-center gap-1.5 font-medium text-foreground hover:text-primary transition-colors">
-                  COM-FST-Nov272025
-                  <ChevronDown className="h-3.5 w-3.5" />
+                <button className="group flex items-center gap-1.5 px-2 py-1 rounded-md hover:bg-primary/5 transition-colors">
+                  <div className="w-6 h-6 rounded-md bg-gradient-to-br from-primary/20 to-primary/10 flex items-center justify-center">
+                    <Building2 className="h-3.5 w-3.5 text-primary" />
+                  </div>
+                  <span className="text-sm font-medium text-foreground group-hover:text-primary transition-colors">{clientName}</span>
+                  <ChevronDown className="h-3 w-3 text-muted-foreground group-hover:text-primary transition-colors" />
                 </button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="start">
-                <DropdownMenuItem>COM-FST-Nov272025</DropdownMenuItem>
+              <DropdownMenuContent align="start" className="w-56 bg-card border shadow-lg z-50">
+                <div className="px-2 py-1.5 text-xs font-medium text-muted-foreground">Select Client</div>
+                {uniqueClients.map((client) => (
+                  <DropdownMenuItem key={client} className="flex items-center gap-2 cursor-pointer group">
+                    <Building2 className="h-4 w-4 text-muted-foreground group-hover:text-primary-foreground transition-colors" />
+                    <span className="flex-1">{client}</span>
+                    {client === clientName && <Check className="h-4 w-4 text-primary group-hover:text-primary-foreground" />}
+                  </DropdownMenuItem>
+                ))}
               </DropdownMenuContent>
             </DropdownMenu>
-            <Badge variant="inProgress" className="text-[10px] px-2 py-0.5">In Progress</Badge>
-            <div className="flex items-center gap-1 ml-1 px-2 py-1 rounded-md bg-[#e8f5e9]">
-              <img src="https://upload.wikimedia.org/wikipedia/en/9/9f/Xero_software_logo.svg" alt="Xero" className="h-3.5" />
-              <span className="text-[11px] font-medium text-[#1a7340]">Xero</span>
-            </div>
+
+            <ChevronRight className="h-3.5 w-3.5 text-muted-foreground" />
+
+            {/* Engagement Selector */}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <button className="group flex items-center gap-1.5 px-2 py-1 rounded-md hover:bg-primary/5 transition-colors">
+                  <div className="w-6 h-6 rounded-md bg-gradient-to-br from-secondary to-secondary/50 flex items-center justify-center">
+                    <FileText className="h-3.5 w-3.5 text-secondary-foreground" />
+                  </div>
+                  <span className="text-sm font-medium text-foreground group-hover:text-primary transition-colors font-mono">{displayId}</span>
+                  <ChevronDown className="h-3 w-3 text-muted-foreground group-hover:text-primary transition-colors" />
+                </button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="start" className="w-72 bg-card border shadow-lg z-50">
+                <div className="px-2 py-1.5 text-xs font-medium text-muted-foreground">Engagements for {clientName}</div>
+                {clientEngagements.map((eng) => (
+                  <DropdownMenuItem key={eng.id} onClick={() => navigate(`/engagements/${eng.id}/trial-balance`)} className="flex items-center gap-3 cursor-pointer group py-2">
+                    <div className="flex flex-col flex-1 min-w-0">
+                      <span className="font-mono text-sm font-medium truncate">{eng.id}</span>
+                      <div className="flex items-center gap-2 mt-0.5">
+                        <Calendar className="h-3 w-3 text-muted-foreground group-hover:text-white transition-colors" />
+                        <span className="text-xs text-muted-foreground group-hover:text-white transition-colors">{eng.yearEnd}</span>
+                        <span className="text-xs text-muted-foreground group-hover:text-white transition-colors">•</span>
+                        <span className="text-xs text-muted-foreground group-hover:text-white transition-colors">{eng.type}</span>
+                      </div>
+                    </div>
+                    {eng.id === displayId && <Check className="h-4 w-4 text-primary group-hover:text-primary-foreground flex-shrink-0" />}
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
+
+            {/* Status Badge */}
+            <Badge
+              variant={status === 'Completed' || status === 'New' ? 'completed' : status === 'Not Started' ? 'notStarted' : 'inProgress'}
+              className="ml-2 whitespace-nowrap"
+            >
+              {status}
+            </Badge>
           </div>
 
-          {/* Right: Action Buttons */}
-          <div className="flex items-center gap-2">
-            <Button variant="outline" size="sm" className="h-8 text-xs gap-1.5 font-medium">
-              <Landmark className="h-3.5 w-3.5" />
-              Connect Bank
-            </Button>
-            <Button variant="outline" size="sm" className="h-8 text-xs gap-1.5 font-medium">
-              <FileText className="h-3.5 w-3.5" />
-              Source Docs
-            </Button>
-            <Button variant="outline" size="sm" className="h-8 text-xs gap-1.5 font-medium">
-              <Triangle className="h-3.5 w-3.5" />
-              TB Check
-            </Button>
-            <Button variant="outline" size="sm" className="h-8 text-xs gap-1.5 font-medium">
-              <PencilLine className="h-3.5 w-3.5" />
-              Adj. Entries
-            </Button>
-            <Button variant="outline" size="sm" className="h-8 text-xs gap-1.5 font-medium">
-              <FileSpreadsheet className="h-3.5 w-3.5" />
-              Workbook
-            </Button>
-          </div>
+          {/* Right side - Tools dropdown */}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline" size="sm" className="h-8 px-3 text-xs font-medium">
+                <Settings2 className="h-3.5 w-3.5 mr-1.5" />
+                Tools
+                <ChevronDown className="h-3 w-3 ml-1.5" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-48 bg-card border shadow-lg z-50">
+              {headerActions.map((action) => (
+                <DropdownMenuItem key={action.id} className="flex items-center gap-2 cursor-pointer group">
+                  <action.icon className="h-4 w-4 text-muted-foreground group-hover:text-foreground transition-colors" />
+                  <span>{action.label}</span>
+                </DropdownMenuItem>
+              ))}
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
 
         {/* Title and Filter Bar */}
