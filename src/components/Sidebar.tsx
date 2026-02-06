@@ -681,6 +681,7 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
       </div>;
   };
   const [isNavExpanded, setIsNavExpanded] = useState(false);
+  const [expandedSections, setExpandedSections] = useState<Set<string>>(new Set(["co"]));
   
   // Determine if a secondary panel is visible and expanded (for dark mode gradient)
   const isOnEngagementDetail = location.pathname.startsWith("/engagements/") && location.pathname !== "/engagements/create";
@@ -781,12 +782,20 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
             </div>
 
             <div className={`flex-1 overflow-y-auto p-2 pt-0 ${isTemplatesPanelCollapsed ? "hidden" : ""}`}>
-              {/* Engagement Sections */}
+            {/* Engagement Sections */}
               {[{
             id: "co",
             code: "CO",
             label: "Client Onboarding",
-            hasPlus: false
+            hasPlus: false,
+            children: [
+              { id: "co-ca", code: "CA", label: "Client acceptance and continuance", icon: "checklist" },
+              { id: "co-ind", code: "IND", label: "Independence", icon: "checklist" },
+              { id: "co-kcb", code: "KCB", label: "Knowledge of client business", icon: "checklist" },
+              { id: "co-pl", code: "PL", label: "Planning", icon: "checklist" },
+              { id: "co-el", code: "EL", label: "Engagement Letter", icon: "letter" },
+              { id: "co-mr", code: "MR", label: "Management responsibility and acknowledgem...", icon: "letter" },
+            ]
           }, {
             id: "do",
             code: "DO",
@@ -812,13 +821,42 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
             code: "SO",
             label: "Completion & Signoffs",
             hasPlus: false
-          }].map(section => <div key={section.id} className="flex items-center gap-2 py-1.5 px-2 rounded-md cursor-pointer hover:bg-muted transition-colors text-sm">
-                  <ChevronRight className="h-4 w-4 text-muted-foreground flex-shrink-0 icon-arrow-right" />
-                  <Folder className="h-4 w-4 text-primary flex-shrink-0 icon-folder" />
-                  <span className="font-semibold text-primary">{section.code}</span>
-                  <span className="truncate flex-1 text-foreground">{section.label}</span>
-                  {section.hasPlus && <Plus className="h-4 w-4 text-muted-foreground hover:text-foreground flex-shrink-0 icon-plus" />}
-                </div>)}
+          }].map(section => {
+                const isOpen = expandedSections.has(section.id);
+                const hasChildren = section.children && section.children.length > 0;
+                return <div key={section.id}>
+                  <div className="flex items-center gap-2 py-1.5 px-2 rounded-md cursor-pointer hover:bg-muted transition-colors text-sm"
+                    onClick={() => {
+                      if (hasChildren) {
+                        setExpandedSections(prev => {
+                          const next = new Set(prev);
+                          if (next.has(section.id)) next.delete(section.id);
+                          else next.add(section.id);
+                          return next;
+                        });
+                      }
+                    }}
+                  >
+                    {isOpen ? <ChevronDown className="h-4 w-4 text-muted-foreground flex-shrink-0" /> : <ChevronRight className="h-4 w-4 text-muted-foreground flex-shrink-0" />}
+                    <Folder className="h-4 w-4 text-primary flex-shrink-0" />
+                    <span className="font-semibold text-primary">{section.code}</span>
+                    <span className="truncate flex-1 text-foreground">{section.label}</span>
+                    {section.hasPlus && <Plus className="h-4 w-4 text-muted-foreground hover:text-foreground flex-shrink-0" />}
+                  </div>
+                  {isOpen && hasChildren && (
+                    <div className="ml-4">
+                      {section.children!.map(child => (
+                        <div key={child.id} className="flex items-center gap-2 py-1.5 px-2 rounded-md cursor-pointer hover:bg-muted transition-colors text-sm">
+                          <span className="w-4 flex-shrink-0" />
+                          {child.icon === "letter" ? <FileText className="h-4 w-4 text-muted-foreground flex-shrink-0" /> : <ChecklistIcon className="h-4 w-4 flex-shrink-0" />}
+                          <span className="font-semibold text-primary">{child.code}</span>
+                          <span className="truncate flex-1 text-foreground">{child.label}</span>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>;
+          })}
             </div>
 
             {/* Resize handle */}
