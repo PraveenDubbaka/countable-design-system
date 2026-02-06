@@ -222,7 +222,7 @@ export default function Dashboard() {
 
       <div className="flex gap-8 h-full">
         {/* Main Content */}
-        <div className="flex-1 space-y-6">
+        <div className="flex-1 flex flex-col gap-6 min-h-0">
           {/* Stats Bar - Creative compact display with micro-animated icons */}
           <div className="flex items-center gap-3 flex-shrink-0">
             {stats.map((stat, index) => {
@@ -253,9 +253,7 @@ export default function Dashboard() {
           </div>
 
           {/* Engagements Table - Enhanced styling */}
-          <StyledCard className="overflow-hidden flex flex-col" style={{
-            height: "calc(100vh - 260px)"
-          }}>
+          <StyledCard className="overflow-hidden flex flex-col flex-1 min-h-0">
             <div className="px-6 py-5 flex items-center justify-between flex-shrink-0 bg-card">
               <div>
                 <h2 className="text-lg font-semibold text-foreground">Engagements</h2>
