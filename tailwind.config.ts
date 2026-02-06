@@ -275,6 +275,15 @@ export default {
           "0%": { transform: "translateY(0)", boxShadow: "0 2px 8px hsl(213 40% 20% / 0.08)" },
           "100%": { transform: "translateY(-2px)", boxShadow: "0 12px 32px hsl(213 40% 20% / 0.15)" },
         },
+        "swing": {
+          "0%": { transform: "rotate(0deg)" },
+          "15%": { transform: "rotate(12deg)" },
+          "30%": { transform: "rotate(-10deg)" },
+          "45%": { transform: "rotate(6deg)" },
+          "60%": { transform: "rotate(-4deg)" },
+          "75%": { transform: "rotate(2deg)" },
+          "100%": { transform: "rotate(0deg)" },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-emphasized",
