@@ -348,13 +348,14 @@ export default function TrialBalance() {
               </DropdownMenuContent>
             </DropdownMenu>
 
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-              <Input
-                placeholder="Search"
-                className="pl-9 w-48 h-9 text-sm"
-              />
-            </div>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button variant="outline" size="icon" className="h-9 w-9 bg-card border-border hover:bg-muted">
+                  <Search className="h-4 w-4" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>Search</TooltipContent>
+            </Tooltip>
           </div>
         </div>
 
