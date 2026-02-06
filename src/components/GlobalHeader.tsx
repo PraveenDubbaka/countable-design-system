@@ -88,7 +88,7 @@ export function GlobalHeader() {
                 className="flex items-center justify-center w-9 h-9 rounded-xl cursor-pointer hover:bg-muted transition-colors relative"
                 style={{ borderRadius: '12px' }}
               >
-                <Bell className="h-5 w-5 text-muted-foreground" />
+                <Bell className="h-5 w-5 text-muted-foreground animate-[swing_1.5s_ease-in-out_infinite]" />
                 <span className="absolute -top-0.5 -right-0.5 w-4 h-4 rounded-full bg-destructive text-[9px] text-white flex items-center justify-center font-medium">2</span>
               </div>
             </TooltipTrigger>
