@@ -317,7 +317,7 @@ export default function TrialBalance() {
         </div>
 
         {/* Table */}
-        <StyledCard className="mx-6 mb-6 overflow-hidden flex flex-col flex-1 min-h-0">
+        <StyledCard className="mx-6 mt-6 mb-6 overflow-hidden flex flex-col flex-1 min-h-0">
           <div className="flex-1 overflow-auto">
             <table className="w-full text-sm">
               <thead className="sticky top-0 z-10">
