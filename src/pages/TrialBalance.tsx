@@ -94,6 +94,13 @@ const subGroupings: Record<string, string[]> = { Assets: ["Current assets", "Non
 const lsCodes = ["I", "BB", "TT", "40", "IS", "RE"];
 const cfCategories = ["CFO", "CFI", "CFF", "Excl", "NA"];
 
+const formatNumber = (val: number | string) => {
+  if (typeof val === "string") return val;
+  if (val === 0) return "0.00";
+  if (val < 0) return `(${Math.abs(val).toFixed(2)})`;
+  return val.toFixed(2);
+};
+
 const generatedRows = Array.from({ length: 100 }, (_, i) => {
   const idx = i + 10;
   const grp = groupings[i % groupings.length];
@@ -130,12 +137,6 @@ const trialBalanceData = [...baseTrialBalanceData, ...generatedRows];
 const totals = { original: 0.00, adj: 0.00, final: 0.00, py1: 0.00, py2: 0.00 };
 const netIncome = { original: 14.35, adj: 0.00, final: 14.35, py1: 149.22, py2: "(2,150.10)" };
 
-const formatNumber = (val: number | string) => {
-  if (typeof val === "string") return val;
-  if (val === 0) return "0.00";
-  if (val < 0) return `(${Math.abs(val).toFixed(2)})`;
-  return val.toFixed(2);
-};
 
 export default function TrialBalance() {
   const navigate = useNavigate();
