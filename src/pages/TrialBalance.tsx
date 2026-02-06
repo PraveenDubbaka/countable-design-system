@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import { EngagementRightPanel } from "@/components/EngagementRightPanel";
 import { Layout } from "@/components/Layout";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -110,7 +111,8 @@ export default function TrialBalance() {
 
   return (
     <Layout>
-      <div className="flex flex-col h-full overflow-hidden">
+      <div className="flex h-full overflow-hidden">
+        <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
         {/* Top Header Bar - matching Engagement Detail style */}
         <div className="flex items-center justify-between px-4 py-1.5 border-b border-border bg-gradient-to-r from-card via-card to-secondary/20">
           {/* Left side - Interactive Breadcrumb */}
@@ -412,7 +414,11 @@ export default function TrialBalance() {
               </tbody>
             </table>
           </div>
-        </StyledCard>
+         </StyledCard>
+        </div>
+
+        {/* Right Panel */}
+        <EngagementRightPanel />
       </div>
     </Layout>
   );
