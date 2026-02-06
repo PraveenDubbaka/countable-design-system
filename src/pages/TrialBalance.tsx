@@ -31,7 +31,7 @@ import {
   Search,
   MoreVertical,
   GripVertical,
-  MapPin,
+  FileX2,
   Wand2,
   Settings2,
   Building2,
@@ -244,7 +244,7 @@ export default function TrialBalance() {
             <Tooltip>
               <TooltipTrigger asChild>
                 <Button variant="outline" size="icon" className="h-9 w-9 bg-card border-border hover:bg-muted">
-                  <MapPin className="h-4 w-4" />
+                  <FileX2 className="h-4 w-4" />
                 </Button>
               </TooltipTrigger>
               <TooltipContent>Unmap</TooltipContent>
