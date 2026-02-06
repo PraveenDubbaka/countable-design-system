@@ -133,9 +133,10 @@ export default function Engagements() {
                   {engagements.map((engagement) => (
                     <tr 
                       key={engagement.id} 
-                      className="hover:bg-muted/50 transition-colors group"
+                      className="hover:bg-muted/50 transition-colors group max-h-[50px]"
+                      style={{ maxHeight: '50px' }}
                     >
-                      <td className="px-6 py-4">
+                      <td className="px-6 py-2 whitespace-nowrap">
                         <span 
                           onClick={() => navigate(`/engagements/${engagement.id}`)}
                           className="text-sm text-primary font-medium cursor-pointer hover:underline"
@@ -143,24 +144,24 @@ export default function Engagements() {
                           {engagement.id}
                         </span>
                       </td>
-                      <td className="px-6 py-4 text-sm text-foreground">{engagement.client}</td>
-                      <td className="px-6 py-4 text-sm text-foreground">{engagement.type}</td>
-                      <td className="px-6 py-4 text-sm text-muted-foreground">{engagement.yearEnd}</td>
-                      <td className="px-6 py-4">
+                      <td className="px-6 py-2 text-sm text-foreground whitespace-nowrap truncate max-w-[200px]">{engagement.client}</td>
+                      <td className="px-6 py-2 text-sm text-foreground whitespace-nowrap">{engagement.type}</td>
+                      <td className="px-6 py-2 text-sm text-muted-foreground whitespace-nowrap">{engagement.yearEnd}</td>
+                      <td className="px-6 py-2 whitespace-nowrap">
                         <span className="text-sm text-primary cursor-pointer hover:underline">
                           {engagement.team}
                         </span>
                       </td>
-                      <td className="px-6 py-4">
+                      <td className="px-6 py-2 whitespace-nowrap">
                         <StatusBadge status={engagement.status} hasRF={engagement.hasRF} />
                       </td>
-                      <td className="px-6 py-4 text-sm text-muted-foreground">{engagement.dateCreated}</td>
-                      <td className="px-6 py-4">
+                      <td className="px-6 py-2 text-sm text-muted-foreground whitespace-nowrap">{engagement.dateCreated}</td>
+                      <td className="px-6 py-2 whitespace-nowrap">
                         <div className="flex items-center gap-2">
-                          <button className="p-2 hover:bg-muted rounded-lg transition-colors group/edit">
+                          <button className="p-1.5 hover:bg-muted rounded-lg transition-colors group/edit">
                             <Pencil className="h-4 w-4 text-primary group-hover/edit:icon-edit" />
                           </button>
-                          <button className="p-2 hover:bg-muted rounded-lg transition-colors group/trash">
+                          <button className="p-1.5 hover:bg-muted rounded-lg transition-colors group/trash">
                             <Trash2 className="h-4 w-4 text-primary group-hover/trash:icon-trash" />
                           </button>
                         </div>
