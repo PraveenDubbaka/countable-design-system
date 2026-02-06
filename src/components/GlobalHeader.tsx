@@ -1,10 +1,14 @@
 import { useState } from "react";
-import { Bell, User, Sparkles, Moon, Sun, Zap, UserCircle, Building2, Settings, CreditCard, Monitor, Gift, LogOut } from "lucide-react";
+import { Bell, User, Sparkles, Moon, Sun, Zap, UserCircle, Building2, Settings, CreditCard, Monitor, Gift, LogOut, Check, Trash2, Search, MoreVertical } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { useThemeContext } from "@/contexts/ThemeContext";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Switch } from "@/components/ui/switch";
+import { Input as SearchInput } from "@/components/ui/input";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import { SettingsPanel } from "@/components/SettingsPanel";
 import { AskLukaOverlay } from "@/components/AskLukaOverlay";
 
@@ -13,7 +17,33 @@ export function GlobalHeader() {
   const [askLukaQuery, setAskLukaQuery] = useState("");
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [askLukaOpen, setAskLukaOpen] = useState(false);
+  const [notificationsEnabled, setNotificationsEnabled] = useState(true);
+  const [notifSearch, setNotifSearch] = useState("");
+  const [notifOpen, setNotifOpen] = useState(false);
+  
+  const [notifications, setNotifications] = useState([
+    { id: '1', sender: 'Cpt Group', initials: 'CG', message: 'New engagement created Cpt Group', read: false, time: '2m ago' },
+    { id: '2', sender: 'Cpt Group', initials: 'CG', message: '1 team members added', read: false, time: '5m ago' },
+    { id: '3', sender: 'Cpt Group', initials: 'CG', message: 'New engagement created Cpt Group', read: true, time: '1h ago' },
+    { id: '4', sender: 'Cpt Group', initials: 'CG', message: '1 team members added', read: true, time: '2h ago' },
+    { id: '5', sender: 'Cpt Group', initials: 'CG', message: 'You have been assigned as the packager for Cpt Group', read: true, time: '3h ago' },
+    { id: '6', sender: 'Cpt Group', initials: 'CG', message: 'New engagement created Cpt Group', read: true, time: '5h ago' },
+  ]);
 
+  const unreadCount = notifications.filter(n => !n.read).length;
+
+  const handleMarkAllRead = () => {
+    setNotifications(prev => prev.map(n => ({ ...n, read: true })));
+  };
+
+  const handleDeleteAll = () => {
+    setNotifications([]);
+  };
+
+  const filteredNotifications = notifications.filter(n =>
+    n.message.toLowerCase().includes(notifSearch.toLowerCase()) ||
+    n.sender.toLowerCase().includes(notifSearch.toLowerCase())
+  );
   return (
     <>
       <header className="h-14 flex items-center justify-between px-6 bg-background border-b border-border">
@@ -82,18 +112,90 @@ export function GlobalHeader() {
           </Tooltip>
 
           {/* Notifications */}
-          <Tooltip>
-            <TooltipTrigger asChild>
+          <Popover open={notifOpen} onOpenChange={setNotifOpen}>
+            <PopoverTrigger asChild>
               <div 
                 className="flex items-center justify-center w-9 h-9 rounded-xl cursor-pointer hover:bg-muted transition-colors relative"
                 style={{ borderRadius: '12px' }}
               >
-                <Bell className="h-5 w-5 text-muted-foreground animate-[swing_1.5s_ease-in-out_infinite]" />
-                <span className="absolute -top-0.5 -right-0.5 w-4 h-4 rounded-full bg-destructive text-[9px] text-white flex items-center justify-center font-medium">2</span>
+                <Bell className={`h-5 w-5 text-muted-foreground ${unreadCount > 0 ? 'animate-[swing_1.5s_ease-in-out_infinite]' : ''}`} />
+                {unreadCount > 0 && (
+                  <span className="absolute -top-0.5 -right-0.5 w-4 h-4 rounded-full bg-destructive text-[9px] text-white flex items-center justify-center font-medium">{unreadCount}</span>
+                )}
               </div>
-            </TooltipTrigger>
-            <TooltipContent>Notifications</TooltipContent>
-          </Tooltip>
+            </PopoverTrigger>
+            <PopoverContent align="end" className="w-[380px] p-0 bg-card border border-border shadow-xl" style={{ borderRadius: '12px' }}>
+              {/* Header */}
+              <div className="flex items-center justify-between px-4 py-3 border-b border-border">
+                <div className="flex items-center gap-2">
+                  <span className="text-sm font-semibold text-foreground">Notifications</span>
+                  <Switch checked={notificationsEnabled} onCheckedChange={setNotificationsEnabled} className="scale-75" />
+                </div>
+              </div>
+
+              {/* Search + Actions */}
+              <div className="flex items-center gap-2 px-4 py-2.5 border-b border-border">
+                <div className="relative flex-1">
+                  <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
+                  <SearchInput
+                    value={notifSearch}
+                    onChange={(e) => setNotifSearch(e.target.value)}
+                    placeholder="Search"
+                    className="h-8 pl-8 text-xs"
+                  />
+                </div>
+                <button
+                  onClick={handleMarkAllRead}
+                  className="flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-medium text-foreground hover:bg-muted rounded-lg transition-colors whitespace-nowrap"
+                >
+                  <Check className="h-3.5 w-3.5" />
+                  Mark All As Read
+                </button>
+                <button
+                  onClick={handleDeleteAll}
+                  className="flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-medium text-destructive hover:bg-destructive/10 rounded-lg transition-colors whitespace-nowrap"
+                >
+                  <Trash2 className="h-3.5 w-3.5" />
+                  Delete All
+                </button>
+              </div>
+
+              {/* Notification List */}
+              <ScrollArea className="max-h-[360px]">
+                {filteredNotifications.length === 0 ? (
+                  <div className="flex items-center justify-center py-10 text-sm text-muted-foreground">
+                    No notifications
+                  </div>
+                ) : (
+                  <div className="divide-y divide-border">
+                    {filteredNotifications.map((notif) => (
+                      <div
+                        key={notif.id}
+                        className={`flex items-start gap-3 px-4 py-3.5 hover:bg-muted/50 transition-colors cursor-pointer ${!notif.read ? 'bg-primary/5' : ''}`}
+                        onClick={() => setNotifications(prev => prev.map(n => n.id === notif.id ? { ...n, read: true } : n))}
+                      >
+                        <div className="w-8 h-8 rounded-full bg-primary/10 border border-primary/30 flex items-center justify-center shrink-0 mt-0.5">
+                          <span className="text-[10px] font-semibold text-primary">{notif.initials}</span>
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm font-medium text-foreground">{notif.sender}</p>
+                          <p className="text-xs text-muted-foreground mt-0.5 leading-relaxed">
+                            <span className="text-primary">Notified you:</span> {notif.message}
+                          </p>
+                        </div>
+                        <div className="flex items-center gap-1 shrink-0">
+                          <span className="text-[10px] text-muted-foreground">{notif.time}</span>
+                          <button className="p-1 hover:bg-muted rounded transition-colors" onClick={(e) => e.stopPropagation()}>
+                            <MoreVertical className="h-3.5 w-3.5 text-muted-foreground" />
+                          </button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </ScrollArea>
+            </PopoverContent>
+          </Popover>
 
           {/* User Profile Dropdown */}
           <DropdownMenu>
