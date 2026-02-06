@@ -237,7 +237,8 @@ export default function Dashboard() {
               return (
                 <div
                   key={index}
-                  className={`flex items-center gap-3 px-5 py-3 flex-1 bg-card rounded-xl border ${border} shadow-sm cursor-default hover:shadow-md transition-shadow`}
+                  className={`flex items-center gap-3 px-5 py-3 flex-1 bg-card border ${border} shadow-sm cursor-default hover:shadow-md transition-shadow`}
+                  style={{ borderRadius: '12px' }}
                 >
                   <div className={`w-9 h-9 rounded-lg ${bg} flex items-center justify-center shrink-0`}>
                     <Icon className={`h-4.5 w-4.5 ${color} ${animation}`} strokeWidth={2} />
