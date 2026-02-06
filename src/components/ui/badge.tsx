@@ -20,9 +20,9 @@ const badgeVariants = cva(
         
         // === Colorful Status Variants (matching reference) ===
         // Green - New, Completed, Accepted
-        new: "bg-emerald-50 text-emerald-600 border border-emerald-200",
-        completed: "bg-emerald-50 text-emerald-600 border border-emerald-200",
-        accepted: "bg-emerald-50 text-emerald-600 border border-emerald-200",
+        new: "bg-emerald-50 text-emerald-600 border border-emerald-600",
+        completed: "bg-emerald-50 text-emerald-600 border border-emerald-600",
+        accepted: "bg-emerald-50 text-emerald-600 border border-emerald-600",
         
         // Blue - In Progress, Invite Now
         inProgress: "bg-[#e1eefa] text-[#074075] border border-[#1c63a6]",
