@@ -36,7 +36,7 @@ export function GlobalHeader() {
               className="h-8 px-4 rounded-full bg-gradient-to-r from-[#1C63A6] to-[#7A31D8] hover:from-[#1a5a96] hover:to-[#6a2bc2] text-white text-sm font-medium gap-1.5 shadow-md"
               onClick={() => setAskLukaOpen(true)}
             >
-              <Sparkles className="h-4 w-4" />
+              <Sparkles className="h-4 w-4 animate-[spin_3s_linear_infinite]" />
               Ask Luka
             </Button>
           </div>
