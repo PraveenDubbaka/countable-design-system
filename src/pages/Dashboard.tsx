@@ -218,7 +218,7 @@ export default function Dashboard() {
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState("");
   return <Layout title="Dashboard">
-      <div className="flex-1 p-8 overflow-auto bg-background">
+      <div className="flex-1 p-8 overflow-auto bg-background h-full">
 
       <div className="flex gap-8">
         {/* Main Content */}
