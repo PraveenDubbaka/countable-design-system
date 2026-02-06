@@ -223,12 +223,26 @@ export default function Dashboard() {
       <div className="flex gap-8">
         {/* Main Content */}
         <div className="flex-1 space-y-6">
-          {/* Stats Cards - Enhanced spacing and hover effects */}
-          <div className="grid grid-cols-5 gap-4">
-            {stats.map((stat, index) => <StyledCard key={index} className="p-6">
-                <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">{stat.label}</p>
-                <p className="text-3xl font-bold text-primary mt-2">{stat.value}</p>
-              </StyledCard>)}
+          {/* Stats Bar - Compact inline display */}
+          <div className="flex items-center gap-1 bg-card rounded-xl border border-border px-2 py-2 shadow-sm">
+            {stats.map((stat, index) => {
+              const colors = [
+                'text-primary',      // Total
+                'text-emerald-600',  // New
+                'text-[#074075]',    // In Progress
+                'text-violet-600',   // Completed
+                'text-slate-500',    // Archived
+              ];
+              return (
+                <React.Fragment key={index}>
+                  {index > 0 && <div className="w-px h-8 bg-border" />}
+                  <div className="flex items-center gap-2.5 px-4 py-1">
+                    <span className={`text-2xl font-bold ${colors[index]}`}>{stat.value}</span>
+                    <span className="text-xs font-medium text-foreground/70 leading-tight max-w-[80px]">{stat.label}</span>
+                  </div>
+                </React.Fragment>
+              );
+            })}
           </div>
 
           {/* Engagements Table - Enhanced styling */}
