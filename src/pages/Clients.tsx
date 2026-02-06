@@ -377,63 +377,64 @@ export default function Clients() {
             <StyledCard className="overflow-hidden flex flex-col flex-1 min-h-0 -mt-2">
               <div className="flex-1 overflow-y-auto overflow-x-auto">
                 <table className="w-full">
-                  <thead className="sticky top-0 z-10 shadow-sm">
+                  <thead className="sticky top-0 z-10">
                     <tr className="bg-muted">
-                      <th className="text-left px-3 py-3 text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap w-10">
+                      <th className="text-left px-6 py-4 text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap w-10">
                         <Checkbox />
                       </th>
-                      <th className="text-left px-3 py-3 text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap">Client ID</th>
-                      <th className="text-left px-3 py-3 text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap">Entity Name</th>
-                      <th className="text-left px-3 py-3 text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap">Entity Type</th>
-                      <th className="text-left px-3 py-3 text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap">Status</th>
-                      <th className="text-left px-3 py-3 text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap">Integrations</th>
-                      <th className="text-left px-3 py-3 text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap">Contact Name</th>
-                      <th className="text-left px-3 py-3 text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap">Email</th>
-                      <th className="text-left px-3 py-3 text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap">Repository</th>
-                      <th className="text-left px-3 py-3 text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap">Assigned Partner</th>
-                      <th className="text-left px-3 py-3 text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap">Assigned Team</th>
-                      <th className="text-left px-3 py-3 text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap">Cell Phone</th>
-                      <th className="text-left px-3 py-3 text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap">Engagements</th>
-                      <th className="text-left px-3 py-3 text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap">Actions</th>
+                      <th className="text-left px-6 py-4 text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap">Client ID</th>
+                      <th className="text-left px-6 py-4 text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap">Entity Name</th>
+                      <th className="text-left px-6 py-4 text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap">Entity Type</th>
+                      <th className="text-left px-6 py-4 text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap">Status</th>
+                      <th className="text-left px-6 py-4 text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap">Integrations</th>
+                      <th className="text-left px-6 py-4 text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap">Contact Name</th>
+                      <th className="text-left px-6 py-4 text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap">Email</th>
+                      <th className="text-left px-6 py-4 text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap">Repository</th>
+                      <th className="text-left px-6 py-4 text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap">Assigned Partner</th>
+                      <th className="text-left px-6 py-4 text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap">Assigned Team</th>
+                      <th className="text-left px-6 py-4 text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap">Cell Phone</th>
+                      <th className="text-left px-6 py-4 text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap">Engagements</th>
+                      <th className="text-left px-6 py-4 text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap">Actions</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-border">
                     {clients.map((client) => (
                       <tr 
                         key={client.id} 
-                        className={`hover:bg-muted/50 transition-colors group cursor-pointer ${
+                        className={`hover:bg-muted/50 transition-colors group cursor-pointer max-h-[50px] ${
                           selectedClient === client.id ? 'bg-primary/5' : ''
                         }`}
+                        style={{ maxHeight: '50px' }}
                         onClick={() => setSelectedClient(client.id)}
                       >
-                        <td className="px-3 py-3">
+                        <td className="px-6 py-2 whitespace-nowrap">
                           <Checkbox checked={selectedClient === client.id} />
                         </td>
-                        <td className="px-3 py-3 text-sm text-foreground"></td>
-                        <td className="px-3 py-3">
+                        <td className="px-6 py-2 text-sm text-foreground whitespace-nowrap"></td>
+                        <td className="px-6 py-2 whitespace-nowrap">
                           <a href="#" className="text-sm text-primary font-medium cursor-pointer hover:underline">
                             {client.entityName}
                           </a>
                         </td>
-                        <td className="px-3 py-3 text-sm text-foreground">{client.entityType}</td>
-                        <td className="px-3 py-3">
+                        <td className="px-6 py-2 text-sm text-foreground whitespace-nowrap">{client.entityType}</td>
+                        <td className="px-6 py-2 whitespace-nowrap">
                           <StatusBadge status={client.status} />
                         </td>
-                        <td className="px-3 py-3">
+                        <td className="px-6 py-2 whitespace-nowrap">
                           <IntegrationCell type={client.integration} />
                         </td>
-                        <td className="px-3 py-3 text-sm text-foreground">{client.contactName}</td>
-                        <td className="px-3 py-3 text-sm text-primary cursor-pointer hover:underline">{client.email}</td>
-                        <td className="px-3 py-3">
+                        <td className="px-6 py-2 text-sm text-foreground whitespace-nowrap">{client.contactName}</td>
+                        <td className="px-6 py-2 text-sm text-primary cursor-pointer hover:underline whitespace-nowrap">{client.email}</td>
+                        <td className="px-6 py-2 whitespace-nowrap">
                           <span className="text-sm text-primary cursor-pointer hover:underline">{client.repository}</span>
                         </td>
-                        <td className="px-3 py-3">
+                        <td className="px-6 py-2 whitespace-nowrap">
                           <div className="flex items-center gap-1">
                             <span className="text-sm text-primary">{client.assignedPartner}</span>
                             <Users className="h-3.5 w-3.5 text-primary" />
                           </div>
                         </td>
-                        <td className="px-3 py-3">
+                        <td className="px-6 py-2 whitespace-nowrap">
                           {client.assignedTeam ? (
                             <div className="flex items-center gap-1">
                               <span className="text-sm text-foreground">{client.assignedTeam}</span>
@@ -443,17 +444,17 @@ export default function Clients() {
                             <Users className="h-3.5 w-3.5 text-primary" />
                           )}
                         </td>
-                        <td className="px-3 py-3 text-sm text-foreground">{client.cellPhone || '-'}</td>
-                        <td className="px-3 py-3 text-sm text-primary font-medium text-center">{client.engagements}</td>
-                        <td className="px-3 py-3">
-                          <div className="flex items-center gap-1">
-                            <button className="p-1.5 hover:bg-gray-100 rounded transition-colors" title="Create Engagement">
+                        <td className="px-6 py-2 text-sm text-foreground whitespace-nowrap">{client.cellPhone || '-'}</td>
+                        <td className="px-6 py-2 text-sm text-primary font-medium text-center whitespace-nowrap">{client.engagements}</td>
+                        <td className="px-6 py-2 whitespace-nowrap">
+                          <div className="flex items-center gap-2">
+                            <button className="p-1.5 hover:bg-muted rounded-lg transition-colors" title="Create Engagement">
                               <ClipboardPlus className="h-4 w-4 text-primary" />
                             </button>
-                            <button className="p-1.5 hover:bg-gray-100 rounded transition-colors" title="Edit Client">
+                            <button className="p-1.5 hover:bg-muted rounded-lg transition-colors" title="Edit Client">
                               <Pencil className="h-4 w-4 text-primary" />
                             </button>
-                            <button className="p-1.5 hover:bg-gray-100 rounded transition-colors" title="Delete Client">
+                            <button className="p-1.5 hover:bg-muted rounded-lg transition-colors" title="Delete Client">
                               <Trash2 className="h-4 w-4 text-primary" />
                             </button>
                           </div>
