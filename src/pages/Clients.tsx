@@ -212,7 +212,7 @@ export default function Clients() {
         <div className="flex-1 p-6 overflow-hidden flex flex-col min-w-0">
           <div className="flex flex-col flex-1 gap-5 min-h-0">
             {/* Stats Cards */}
-            <div className="flex items-center bg-card rounded-xl border border-border shadow-sm overflow-hidden flex-shrink-0">
+            <div className="flex items-center gap-3 flex-shrink-0">
               {stats.map((stat, index) => {
                 const config = [
                   { color: 'text-emerald-600', bg: 'bg-emerald-50', icon: UserCheck, animation: 'animate-pulse' },
@@ -221,18 +221,19 @@ export default function Clients() {
                 ];
                 const { color, bg, icon: Icon, animation } = config[index];
                 return (
-                  <React.Fragment key={index}>
-                    {index > 0 && <div className="w-px self-stretch bg-border" />}
-                    <div className="flex items-center gap-3 px-5 py-3 flex-1 group cursor-default hover:bg-muted/40 transition-colors">
-                      <div className={`w-9 h-9 rounded-lg ${bg} flex items-center justify-center shrink-0`}>
-                        <Icon className={`h-4.5 w-4.5 ${color} ${animation}`} strokeWidth={2} />
-                      </div>
-                      <div className="flex flex-col">
-                        <span className={`text-xl font-bold leading-none ${color}`}>{stat.value}</span>
-                        <span className="text-[11px] font-medium text-foreground/60 leading-tight mt-0.5 whitespace-nowrap">{stat.label}</span>
-                      </div>
+                  <div
+                    key={index}
+                    className="flex items-center gap-3 px-5 py-3 flex-1 bg-card border border-border shadow-sm cursor-default hover:shadow-md transition-shadow"
+                    style={{ borderRadius: '12px' }}
+                  >
+                    <div className={`w-9 h-9 rounded-lg ${bg} flex items-center justify-center shrink-0`}>
+                      <Icon className={`h-4.5 w-4.5 ${color} ${animation}`} strokeWidth={2} />
                     </div>
-                  </React.Fragment>
+                    <div className="flex flex-col">
+                      <span className={`text-xl font-bold leading-none ${color}`}>{stat.value}</span>
+                      <span className="text-[11px] font-medium text-foreground/60 leading-tight mt-0.5 whitespace-nowrap">{stat.label}</span>
+                    </div>
+                  </div>
                 );
               })}
             </div>
