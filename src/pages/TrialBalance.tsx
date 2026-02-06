@@ -202,7 +202,7 @@ export default function TrialBalance() {
         {/* Action Buttons - Sticky Header with Title (matching Engagement Detail) */}
         <div className="sticky top-0 z-10 bg-card px-4 py-2 flex items-center justify-between border-b border-border/50">
           <div className="flex items-center gap-3">
-            <h1 className="text-sm font-semibold text-foreground truncate">
+            <h1 className="text-lg font-semibold text-foreground truncate">
               Trial Balance
             </h1>
             <span className="text-xs text-muted-foreground">
