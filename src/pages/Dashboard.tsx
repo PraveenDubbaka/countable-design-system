@@ -260,23 +260,23 @@ export default function Dashboard() {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-border">
-                  {engagements.map((engagement, idx) => <tr key={engagement.id} className="hover:bg-muted/50 transition-colors group">
-                      <td className="px-6 py-4">
+                  {engagements.map((engagement, idx) => <tr key={engagement.id} className="hover:bg-muted/50 transition-colors group max-h-[50px]" style={{ maxHeight: '50px' }}>
+                      <td className="px-6 py-2 whitespace-nowrap">
                         <span className="text-sm text-primary font-medium cursor-pointer hover:underline" onClick={() => navigate(`/engagements/${engagement.id}`)}>
                           {engagement.id}
                         </span>
                       </td>
-                      <td className="px-6 py-4 text-sm text-foreground">{engagement.client}</td>
-                      <td className="px-6 py-4 text-sm text-muted-foreground">{engagement.yearEnd}</td>
-                      <td className="px-6 py-4">
+                      <td className="px-6 py-2 text-sm text-foreground whitespace-nowrap truncate max-w-[200px]">{engagement.client}</td>
+                      <td className="px-6 py-2 text-sm text-muted-foreground whitespace-nowrap">{engagement.yearEnd}</td>
+                      <td className="px-6 py-2 whitespace-nowrap">
                         <IntegrationBadge type={engagement.integration} />
                       </td>
-                      <td className="px-6 py-4">
+                      <td className="px-6 py-2 whitespace-nowrap">
                         <Badge variant={engagement.status === "New" ? "new" : "inProgress"}>
                           {engagement.status}
                         </Badge>
                       </td>
-                      <td className="px-6 py-4">
+                      <td className="px-6 py-2 whitespace-nowrap">
                         <div className="flex items-center gap-2">
                           <span className="text-xs font-medium text-muted-foreground px-2 py-1 bg-muted rounded-lg">EL</span>
                           <button className="p-1.5 hover:bg-muted rounded-lg transition-colors group/file">
