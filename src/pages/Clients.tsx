@@ -378,7 +378,7 @@ export default function Clients() {
               <div className="flex-1 overflow-y-auto overflow-x-auto">
                 <table className="w-full">
                   <thead className="sticky top-0 z-10">
-                    <tr className="bg-muted">
+                    <tr className="bg-muted border-b border-border">
                       <th className="text-left px-6 py-4 text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap w-10">
                         <Checkbox />
                       </th>
