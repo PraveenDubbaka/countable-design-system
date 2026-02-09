@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { Bell, User, Sparkles, Moon, Sun, Zap, UserCircle, Building2, Settings, CreditCard, Monitor, Gift, LogOut, Check, Trash2, Search, MoreVertical } from "lucide-react";
+import { useState, useEffect } from "react";
+import { Bell, User, Sparkles, Moon, Sun, Zap, UserCircle, Building2, Settings, CreditCard, Monitor, Gift, LogOut, Check, Trash2, Search, MoreVertical, Type } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
@@ -20,6 +20,30 @@ export function GlobalHeader({ title }: { title?: string }) {
   const [notificationsEnabled, setNotificationsEnabled] = useState(true);
   const [notifSearch, setNotifSearch] = useState("");
   const [notifOpen, setNotifOpen] = useState(false);
+  
+  // Font size accessibility state
+  type FontSize = 'A' | 'AA' | 'AAA';
+  const fontSizes: FontSize[] = ['A', 'AA', 'AAA'];
+  const [fontSize, setFontSize] = useState<FontSize>(() => {
+    if (typeof window !== 'undefined') {
+      return (localStorage.getItem('luka-font-size') as FontSize) || 'A';
+    }
+    return 'A';
+  });
+
+  useEffect(() => {
+    const root = document.documentElement;
+    root.classList.remove('font-size-a', 'font-size-aa', 'font-size-aaa');
+    root.classList.add(`font-size-${fontSize.toLowerCase()}`);
+    localStorage.setItem('luka-font-size', fontSize);
+  }, [fontSize]);
+
+  const cycleFontSize = () => {
+    setFontSize(prev => {
+      const idx = fontSizes.indexOf(prev);
+      return fontSizes[(idx + 1) % fontSizes.length];
+    });
+  };
   
   const [notifications, setNotifications] = useState([
     { id: '1', sender: 'Cpt Group', initials: 'CG', message: 'New engagement created Cpt Group', read: false, time: '2m ago' },
@@ -88,6 +112,32 @@ export function GlobalHeader({ title }: { title?: string }) {
               </div>
             </TooltipTrigger>
             <TooltipContent>Luka AI Credits</TooltipContent>
+          </Tooltip>
+
+          {/* Font size accessibility toggle */}
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <div 
+                className="flex items-center justify-center h-9 px-2 rounded-xl cursor-pointer hover:bg-muted transition-colors gap-0.5"
+                style={{ borderRadius: '12px' }}
+                onClick={cycleFontSize}
+              >
+                {fontSizes.map((size) => (
+                  <span
+                    key={size}
+                    className={`font-semibold transition-all duration-200 ${
+                      fontSize === size 
+                        ? 'text-primary' 
+                        : 'text-muted-foreground/40'
+                    }`}
+                    style={{ fontSize: size === 'A' ? '11px' : size === 'AA' ? '13px' : '15px' }}
+                  >
+                    {size === 'A' ? 'A' : size === 'AA' ? 'A' : 'A'}
+                  </span>
+                ))}
+              </div>
+            </TooltipTrigger>
+            <TooltipContent>Font Size: {fontSize === 'A' ? 'Default' : fontSize === 'AA' ? 'Medium' : 'Large'}</TooltipContent>
           </Tooltip>
 
           {/* Theme toggle */}
