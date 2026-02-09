@@ -8,7 +8,7 @@ import {
   DialogFooter,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { ScrollArea } from "@/components/ui/scroll-area";
+
 import { Checkbox } from "@/components/ui/checkbox";
 import { Badge } from "@/components/ui/badge";
 import { CheckCircle2, X, Download, CheckCheck, Info } from "lucide-react";
@@ -126,7 +126,7 @@ export function ClientResponseDialog({
         </div>
 
         {/* Response list */}
-        <ScrollArea className="flex-1 max-h-[40vh] border rounded-lg">
+        <div className="flex-1 min-h-0 max-h-[40vh] border rounded-lg overflow-y-auto">
           <div className="divide-y divide-border">
             {responses.map((response) => (
               <label
@@ -140,11 +140,11 @@ export function ClientResponseDialog({
                 <Checkbox
                   checked={selectedIds.has(response.questionId)}
                   onCheckedChange={() => toggleOne(response.questionId)}
-                  className="mt-0.5"
+                  className="mt-0.5 shrink-0"
                   disabled={isApplying}
                 />
-                <div className="flex-1 min-w-0 space-y-1 overflow-hidden">
-                  <p className="text-sm font-medium text-foreground break-words whitespace-normal">
+                <div className="flex-1 min-w-0 space-y-1">
+                  <p className="text-sm font-medium text-foreground break-words whitespace-normal word-break-break-word" style={{ overflowWrap: 'anywhere' }}>
                     {response.questionText || response.questionId}
                   </p>
                   <div className="flex items-center gap-2 flex-wrap">
@@ -157,8 +157,8 @@ export function ClientResponseDialog({
                     {response.explanation && (
                       <Tooltip>
                         <TooltipTrigger asChild>
-                          <span className="inline-flex items-center gap-1 text-xs text-muted-foreground cursor-help">
-                            <Info className="h-3 w-3" />
+                          <span className="inline-flex items-center gap-1 text-xs text-muted-foreground cursor-help min-w-0">
+                            <Info className="h-3 w-3 shrink-0" />
                             <span className="truncate max-w-[200px]">
                               {response.explanation}
                             </span>
@@ -177,7 +177,7 @@ export function ClientResponseDialog({
               </label>
             ))}
           </div>
-        </ScrollArea>
+        </div>
 
         <DialogFooter className="flex sm:flex-row gap-2 pt-2">
           <Button
