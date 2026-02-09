@@ -723,10 +723,10 @@ export default function EngagementDetail() {
                     <History className="h-4 w-4 text-amber-600" />
                   </div>
                   <span className="text-sm font-medium text-amber-900 flex-1">Previous responses available for this checklist</span>
-                  <Button size="sm" className="h-8 text-xs bg-amber-500 hover:bg-amber-600 text-white border-0" onClick={applyClipboardResponses}>
+                  <Button size="sm" variant="default" className="h-8 text-xs" onClick={applyClipboardResponses}>
                     Add Previous responses
                   </Button>
-                  <Button size="sm" variant="ghost" className="h-8 text-xs text-amber-700 hover:text-amber-900 hover:bg-amber-100" onClick={() => { setShowClipboardPrompt(false); setClipboardResponses(null); }}>
+                  <Button size="sm" variant="outline" className="h-8 text-xs" onClick={() => { setShowClipboardPrompt(false); setClipboardResponses(null); }}>
                     Dismiss
                   </Button>
                 </div>
