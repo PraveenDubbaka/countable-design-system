@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo, useCallback } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { ChevronRight, ChevronDown, Landmark, FileText, Triangle, FileSpreadsheet, PencilLine, Settings2, Download, FileType, Share2, Save, RefreshCw, Trash2, Building2, Calendar, Check, AlertTriangle, Loader2, History, Upload, FileUp, Bell } from "lucide-react";
+import { ChevronRight, ChevronDown, Landmark, FileText, Triangle, FileSpreadsheet, PencilLine, Settings2, Download, FileType, Share2, Save, RefreshCw, Trash2, Building2, Calendar, Check, AlertTriangle, Loader2, History, Upload, FileUp, Bell, Plus } from "lucide-react";
 import { ChecklistIcon } from "@/components/icons/ChecklistIcon";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -18,6 +18,8 @@ import { ShareWithClientDialog } from "@/components/ShareWithClientDialog";
 import { ClientResponseDialog } from "@/components/ClientResponseDialog";
 import { useClientResponses } from "@/hooks/useClientResponses";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter, DialogClose } from "@/components/ui/dialog";
+import { DeleteChecklistDialog } from "@/components/DeleteChecklistDialog";
+import { AddChecklistSheet } from "@/components/AddChecklistSheet";
 
 // Sample engagement data matching the engagements page
 const engagementsData: Record<string, {
@@ -181,6 +183,10 @@ export default function EngagementDetail() {
   const [pendingClient, setPendingClient] = useState<string | null>(null);
   const [showClientSwitchDialog, setShowClientSwitchDialog] = useState(false);
   const [selectedClientEngagement, setSelectedClientEngagement] = useState<string | null>(null);
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const [showAddChecklistSheet, setShowAddChecklistSheet] = useState(false);
+  const [clipboardResponses, setClipboardResponses] = useState<{ checklistTitle: string; responses: Record<string, { answer: string; explanation?: string }> } | null>(null);
+  const [showClipboardPrompt, setShowClipboardPrompt] = useState(false);
 
   // Client responses hook
   const clientResponses = useClientResponses(checklist);
@@ -407,6 +413,64 @@ export default function EngagementDetail() {
     // No-op in preview mode
   };
 
+  // Delete checklist - save responses to clipboard first
+  const handleDeleteChecklist = () => {
+    if (!checklist) return;
+    // Save current responses to clipboard
+    const responses: Record<string, { answer: string; explanation?: string }> = {};
+    checklist.sections.forEach(s => {
+      const collectAnswers = (questions: Question[]) => {
+        questions.forEach(q => {
+          if (q.answer) {
+            responses[q.id] = { answer: q.answer, explanation: q.explanation };
+          }
+          if (q.subQuestions) collectAnswers(q.subQuestions);
+        });
+      };
+      collectAnswers(s.questions);
+    });
+    const hasResponses = Object.keys(responses).length > 0;
+    if (hasResponses) {
+      setClipboardResponses({ checklistTitle: checklist.title, responses });
+    }
+    setChecklist(null);
+    toast.success('Checklist deleted');
+  };
+
+  // Add checklist from picker
+  const handleAddChecklist = (saved: { id: string; name: string; data?: any }) => {
+    if (saved.data) {
+      setChecklist(saved.data);
+      setShowAddChecklistSheet(false);
+      // Check if clipboard has responses for same checklist title
+      if (clipboardResponses && clipboardResponses.checklistTitle === saved.data.title) {
+        setShowClipboardPrompt(true);
+      }
+    }
+  };
+
+  // Apply clipboard responses
+  const applyClipboardResponses = () => {
+    if (!checklist || !clipboardResponses) return;
+    const applyToQuestions = (questions: Question[]): Question[] =>
+      questions.map(q => {
+        const saved = clipboardResponses.responses[q.id];
+        return {
+          ...q,
+          ...(saved ? { answer: saved.answer, explanation: saved.explanation } : {}),
+          subQuestions: q.subQuestions ? applyToQuestions(q.subQuestions) : q.subQuestions,
+        };
+      });
+    const updated: Checklist = {
+      ...checklist,
+      sections: checklist.sections.map(s => ({ ...s, questions: applyToQuestions(s.questions) })),
+    };
+    setChecklist(updated);
+    setClipboardResponses(null);
+    setShowClipboardPrompt(false);
+    toast.success('Previous responses restored');
+  };
+
   // Handle share button click - show response dialog if has responses, otherwise show share dialog
   const handleShareButtonClick = () => {
     if (clientResponses.hasResponses) {
@@ -475,13 +539,7 @@ export default function EngagementDetail() {
       }
     );
   };
-  if (!checklist) {
-    return <Layout>
-        <div className="flex items-center justify-center h-full">
-          <p className="text-muted-foreground">Loading checklist...</p>
-        </div>
-      </Layout>;
-  }
+  // No early return — empty state shown inline when checklist is null
   return <Layout>
       <div className="flex h-full overflow-hidden">
         {/* Main Content Area */}
@@ -569,127 +627,183 @@ export default function EngagementDetail() {
           </DropdownMenu>
         </div>
 
-          {/* Content Area - Preview Mode Checklist */}
+          {/* Content Area */}
           <div className="flex-1 overflow-auto bg-card">
-          {/* Action Buttons - Sticky Header with Title */}
-          <div className="sticky top-0 z-10 bg-card px-4 py-2 flex items-center justify-between border-b border-border/50">
-            <h1 className="font-semibold text-foreground truncate text-lg">
-              Client acceptance and continuance
-            </h1>
-            <div className="flex items-center gap-2">
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Button variant="default" size="icon" className="h-9 w-9" onClick={handleSave}>
-                    <Save className="h-4 w-4" />
+          {checklist ? (
+            <>
+            {/* Action Buttons - Sticky Header with Title */}
+            <div className="sticky top-0 z-10 bg-card px-4 py-2 flex flex-col border-b border-border/50">
+              {/* Clipboard prompt banner */}
+              {showClipboardPrompt && clipboardResponses && (
+                <div className="flex items-center gap-2 mb-2 px-3 py-2 bg-primary/10 rounded-lg border border-primary/20">
+                  <History className="h-4 w-4 text-primary flex-shrink-0" />
+                  <span className="text-sm text-foreground flex-1">Previous responses available for this checklist</span>
+                  <Button size="sm" variant="default" className="h-7 text-xs" onClick={applyClipboardResponses}>
+                    Add Previous responses
                   </Button>
-                </TooltipTrigger>
-                <TooltipContent>Save</TooltipContent>
-              </Tooltip>
-
-              {/* Export Checklist */}
-              <DropdownMenu>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <DropdownMenuTrigger asChild>
-                      <Button variant="outline" size="icon" className="h-9 w-9 bg-card border-border hover:bg-muted">
-                        <Download className="h-4 w-4" />
+                  <Button size="sm" variant="ghost" className="h-7 text-xs" onClick={() => { setShowClipboardPrompt(false); setClipboardResponses(null); }}>
+                    Dismiss
+                  </Button>
+                </div>
+              )}
+              <div className="flex items-center justify-between">
+                <h1 className="font-semibold text-foreground truncate text-lg">
+                  Client acceptance and continuance
+                </h1>
+                <div className="flex items-center gap-2">
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button variant="default" size="icon" className="h-9 w-9" onClick={handleSave}>
+                        <Save className="h-4 w-4" />
                       </Button>
-                    </DropdownMenuTrigger>
-                  </TooltipTrigger>
-                  <TooltipContent>Export Checklist</TooltipContent>
-                </Tooltip>
-                <DropdownMenuContent align="end" className="bg-card border shadow-lg z-50 w-40">
-                  <DropdownMenuItem className="flex items-center gap-2 cursor-pointer group" onClick={() => toast.info('Exporting as PDF...')}>
-                    <FileText className="h-4 w-4 text-muted-foreground group-hover:text-foreground transition-colors" />
-                    <span>PDF</span>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem className="flex items-center gap-2 cursor-pointer group" onClick={() => toast.info('Exporting as Word...')}>
-                    <FileType className="h-4 w-4 text-muted-foreground group-hover:text-foreground transition-colors" />
-                    <span>Word</span>
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
+                    </TooltipTrigger>
+                    <TooltipContent>Save</TooltipContent>
+                  </Tooltip>
 
-              {/* Share with Client */}
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <div className="relative">
-                    <Button variant="outline" size="icon" className={`h-9 w-9 bg-card border-border hover:bg-muted ${clientResponses.hasResponses ? 'ring-2 ring-primary ring-offset-2' : ''}`} onClick={handleShareButtonClick}>
-                      <Share2 className="h-4 w-4" />
-                    </Button>
-                    {/* Notification badge - outside button to prevent clipping */}
-                    {clientResponses.hasResponses && <span className="absolute -top-1.5 -right-1.5 flex h-5 w-5 pointer-events-none">
-                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
-                        <span className="relative inline-flex rounded-full h-5 w-5 bg-primary items-center justify-center">
-                          <Bell className="h-3 w-3 text-primary-foreground" />
-                        </span>
-                      </span>}
-                  </div>
-                </TooltipTrigger>
-                <TooltipContent>
-                  {clientResponses.hasResponses ? 'Client Responses Received!' : 'Share with Client'}
-                </TooltipContent>
-              </Tooltip>
+                  {/* Export Checklist */}
+                  <DropdownMenu>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <DropdownMenuTrigger asChild>
+                          <Button variant="outline" size="icon" className="h-9 w-9 bg-card border-border hover:bg-muted">
+                            <Download className="h-4 w-4" />
+                          </Button>
+                        </DropdownMenuTrigger>
+                      </TooltipTrigger>
+                      <TooltipContent>Export Checklist</TooltipContent>
+                    </Tooltip>
+                    <DropdownMenuContent align="end" className="bg-card border shadow-lg z-50 w-40">
+                      <DropdownMenuItem className="flex items-center gap-2 cursor-pointer group" onClick={() => toast.info('Exporting as PDF...')}>
+                        <FileText className="h-4 w-4 text-muted-foreground group-hover:text-foreground transition-colors" />
+                        <span>PDF</span>
+                      </DropdownMenuItem>
+                      <DropdownMenuItem className="flex items-center gap-2 cursor-pointer group" onClick={() => toast.info('Exporting as Word...')}>
+                        <FileType className="h-4 w-4 text-muted-foreground group-hover:text-foreground transition-colors" />
+                        <span>Word</span>
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
 
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Button variant="outline" size="icon" className="h-9 w-9 bg-card border-border hover:bg-muted">
-                    <svg className="h-4 w-4" viewBox="0 0 1024 1024" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-                      <path d="M620.544 137.6c103.936 10.432 187.328 72.96 205.12 180.224h-60.16l97.088 144.448 97.152-144.448h-67.008c-17.792-144.448-127.168-238.336-265.344-251.712-19.136-1.536-36.864 14.848-36.864 35.712 1.28 17.92 13.568 34.24 30.016 35.776z m-150.4-73.024H132.416c-19.136 0-34.176 16.384-34.176 37.248v321.728c0 20.864 15.04 37.248 34.176 37.248h337.728c19.136 0 34.176-16.384 34.176-37.248V101.824c0-20.864-15.04-37.248-34.176-37.248z m-32.832 324.736H165.248V136.064h272.128v253.248h-0.064zM404.48 883.84c-116.224-10.432-205.12-87.872-209.216-216h64.256L162.496 523.392l-97.088 144.448h64.256c2.688 165.376 118.912 272.576 268.032 287.488 19.136 1.472 36.928-14.912 36.928-35.776a35.648 35.648 0 0 0-30.144-35.712z m489.6-323.264H556.288c-19.2 0-34.176 16.448-34.176 37.248v323.264c0 20.8 14.976 37.184 34.176 37.184h337.728c19.136 0 34.112-16.384 34.112-37.184V597.824c0.064-20.8-16.32-37.248-34.048-37.248z m-32.896 324.736H589.12V633.536h272.064v251.776z" />
-                    </svg>
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent>Replace</TooltipContent>
-              </Tooltip>
+                  {/* Share with Client */}
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <div className="relative">
+                        <Button variant="outline" size="icon" className={`h-9 w-9 bg-card border-border hover:bg-muted ${clientResponses.hasResponses ? 'ring-2 ring-primary ring-offset-2' : ''}`} onClick={handleShareButtonClick}>
+                          <Share2 className="h-4 w-4" />
+                        </Button>
+                        {clientResponses.hasResponses && <span className="absolute -top-1.5 -right-1.5 flex h-5 w-5 pointer-events-none">
+                            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
+                            <span className="relative inline-flex rounded-full h-5 w-5 bg-primary items-center justify-center">
+                              <Bell className="h-3 w-3 text-primary-foreground" />
+                            </span>
+                          </span>}
+                      </div>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      {clientResponses.hasResponses ? 'Client Responses Received!' : 'Share with Client'}
+                    </TooltipContent>
+                  </Tooltip>
 
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Button variant="outline" size="icon" className="h-9 w-9 bg-card border-border hover:bg-muted text-destructive hover:text-destructive">
-                    <Trash2 className="h-4 w-4" />
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent>Delete</TooltipContent>
-              </Tooltip>
-            </div>
-          </div>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button variant="outline" size="icon" className="h-9 w-9 bg-card border-border hover:bg-muted">
+                        <svg className="h-4 w-4" viewBox="0 0 1024 1024" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                          <path d="M620.544 137.6c103.936 10.432 187.328 72.96 205.12 180.224h-60.16l97.088 144.448 97.152-144.448h-67.008c-17.792-144.448-127.168-238.336-265.344-251.712-19.136-1.536-36.864 14.848-36.864 35.712 1.28 17.92 13.568 34.24 30.016 35.776z m-150.4-73.024H132.416c-19.136 0-34.176 16.384-34.176 37.248v321.728c0 20.864 15.04 37.248 34.176 37.248h337.728c19.136 0 34.176-16.384 34.176-37.248V101.824c0-20.864-15.04-37.248-34.176-37.248z m-32.832 324.736H165.248V136.064h272.128v253.248h-0.064zM404.48 883.84c-116.224-10.432-205.12-87.872-209.216-216h64.256L162.496 523.392l-97.088 144.448h64.256c2.688 165.376 118.912 272.576 268.032 287.488 19.136 1.472 36.928-14.912 36.928-35.776a35.648 35.648 0 0 0-30.144-35.712z m489.6-323.264H556.288c-19.2 0-34.176 16.448-34.176 37.248v323.264c0 20.8 14.976 37.184 34.176 37.184h337.728c19.136 0 34.112-16.384 34.112-37.184V597.824c0.064-20.8-16.32-37.248-34.048-37.248z m-32.896 324.736H589.12V633.536h272.064v251.776z" />
+                        </svg>
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>Replace</TooltipContent>
+                  </Tooltip>
 
-          {/* Scrollable Content */}
-          <div className="p-4">
-            {/* Objective Section */}
-            <div className="mb-6 bg-card rounded-lg overflow-hidden shadow-md border border-border">
-            <button onClick={() => setObjectiveExpanded(!objectiveExpanded)} className="w-full flex items-center gap-2 bg-muted px-4 py-3 text-muted-foreground hover:text-foreground transition-colors border-b border-border">
-              <ChevronDown className={`h-4 w-4 transition-transform ${objectiveExpanded ? 'rotate-180' : ''}`} />
-              <span className="text-sm font-medium">Objective</span>
-            </button>
-            
-            {objectiveExpanded && <div className="bg-card p-4">
-                {checklist.objective ? <p className="text-sm text-foreground whitespace-pre-wrap leading-relaxed">
-                    {checklist.objective}
-                  </p> : <p className="text-sm text-muted-foreground italic">
-                    No objective defined
-                  </p>}
-              </div>}
-          </div>
-
-          {/* Monday Board View in Preview Mode */}
-          {isLoading ? <div className="bg-card rounded-lg shadow-sm p-12 flex flex-col items-center justify-center gap-4">
-              <Loader2 className="h-8 w-8 text-primary animate-spin" />
-              <div className="text-center">
-                <p className="text-sm font-medium text-foreground">Loading engagement checklist...</p>
-                <p className="text-xs text-muted-foreground mt-1">Please wait while we fetch the data</p>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button variant="outline" size="icon" className="h-9 w-9 bg-card border-border hover:bg-muted text-destructive hover:text-destructive" onClick={() => setShowDeleteDialog(true)}>
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>Delete</TooltipContent>
+                  </Tooltip>
+                </div>
               </div>
-            </div> : <div className="bg-card rounded-lg shadow-sm">
-              <MondayBoardView checklist={checklist} onUpdate={handleChecklistUpdate} isPreviewMode={false} isCompactMode={isCompactMode} selectedQuestions={selectedQuestions} onSelectionChange={setSelectedQuestions} isEngagementMode={true} applyingQuestionId={clientResponses.applyingQuestionId} />
-            </div>}
             </div>
+
+            {/* Scrollable Content */}
+            <div className="p-4">
+              {/* Objective Section */}
+              <div className="mb-6 bg-card rounded-lg overflow-hidden shadow-md border border-border">
+                <button onClick={() => setObjectiveExpanded(!objectiveExpanded)} className="w-full flex items-center gap-2 bg-muted px-4 py-3 text-muted-foreground hover:text-foreground transition-colors border-b border-border">
+                  <ChevronDown className={`h-4 w-4 transition-transform ${objectiveExpanded ? 'rotate-180' : ''}`} />
+                  <span className="text-sm font-medium">Objective</span>
+                </button>
+                {objectiveExpanded && <div className="bg-card p-4">
+                    {checklist.objective ? <p className="text-sm text-foreground whitespace-pre-wrap leading-relaxed">
+                        {checklist.objective}
+                      </p> : <p className="text-sm text-muted-foreground italic">
+                        No objective defined
+                      </p>}
+                  </div>}
+              </div>
+
+              {/* Monday Board View in Preview Mode */}
+              {isLoading ? <div className="bg-card rounded-lg shadow-sm p-12 flex flex-col items-center justify-center gap-4">
+                  <Loader2 className="h-8 w-8 text-primary animate-spin" />
+                  <div className="text-center">
+                    <p className="text-sm font-medium text-foreground">Loading engagement checklist...</p>
+                    <p className="text-xs text-muted-foreground mt-1">Please wait while we fetch the data</p>
+                  </div>
+                </div> : <div className="bg-card rounded-lg shadow-sm">
+                  <MondayBoardView checklist={checklist} onUpdate={handleChecklistUpdate} isPreviewMode={false} isCompactMode={isCompactMode} selectedQuestions={selectedQuestions} onSelectionChange={setSelectedQuestions} isEngagementMode={true} applyingQuestionId={clientResponses.applyingQuestionId} />
+                </div>}
+            </div>
+            </>
+          ) : (
+            /* Empty State - No checklist */
+            <>
+              <div className="sticky top-0 z-10 bg-card px-4 py-2 flex items-center justify-between border-b border-border/50">
+                <h1 className="font-semibold text-foreground truncate text-lg">
+                  Client acceptance and continuance
+                </h1>
+                <Button className="h-9 gap-2" onClick={() => setShowAddChecklistSheet(true)}>
+                  <Plus className="h-4 w-4" />
+                  Checklist
+                </Button>
+              </div>
+              <div className="flex-1 flex flex-col items-center justify-center py-32">
+                {/* Shield illustration placeholder */}
+                <div className="w-28 h-28 mb-6 relative">
+                  <svg viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-full">
+                    <circle cx="60" cy="60" r="50" fill="hsl(var(--primary) / 0.08)" />
+                    <path d="M60 25L85 38V58C85 74 74 88 60 93C46 88 35 74 35 58V38L60 25Z" fill="hsl(var(--primary) / 0.15)" stroke="hsl(var(--primary) / 0.3)" strokeWidth="2" />
+                    <circle cx="60" cy="58" r="12" fill="hsl(var(--primary) / 0.25)" />
+                    <path d="M55 58L59 62L66 54" stroke="hsl(var(--primary))" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+                    <circle cx="40" cy="35" r="3" fill="hsl(var(--primary) / 0.2)" />
+                    <circle cx="85" cy="45" r="4" fill="hsl(var(--primary) / 0.15)" />
+                    <circle cx="38" cy="75" r="3" fill="hsl(var(--primary) / 0.2)" />
+                    <circle cx="82" cy="72" r="2.5" fill="hsl(var(--primary) / 0.2)" />
+                  </svg>
+                </div>
+                <h3 className="text-lg font-semibold text-foreground mb-2">No checklist available</h3>
+                <p className="text-sm text-muted-foreground text-center max-w-xs">
+                  Currently there is no checklist available.<br />Please add a checklist
+                </p>
+              </div>
+            </>
+          )}
           </div>
 
           {/* Floating Action Bar for Preview Mode - Inside content area */}
-          <FloatingActionBar checklist={checklist} onUpdate={handleChecklistUpdate} onCollapseSections={handleCollapseSections} onExpandSections={handleExpandSections} onCollapseQuestions={handleCollapseQuestions} onExpandQuestions={handleExpandQuestions} allSectionsCollapsed={allSectionsCollapsed} allQuestionsCollapsed={allQuestionsCollapsed} isCompactMode={isCompactMode} onToggleCompactMode={handleToggleCompactMode} selectedQuestions={selectedQuestions} onBulkDelete={handleBulkDelete} onAddCategory={handleAddCategory} isPreviewMode={true} />
+          {checklist && <FloatingActionBar checklist={checklist} onUpdate={handleChecklistUpdate} onCollapseSections={handleCollapseSections} onExpandSections={handleExpandSections} onCollapseQuestions={handleCollapseQuestions} onExpandQuestions={handleExpandQuestions} allSectionsCollapsed={allSectionsCollapsed} allQuestionsCollapsed={allQuestionsCollapsed} isCompactMode={isCompactMode} onToggleCompactMode={handleToggleCompactMode} selectedQuestions={selectedQuestions} onBulkDelete={handleBulkDelete} onAddCategory={handleAddCategory} isPreviewMode={true} />}
         </div>
 
-        {/* Right Panel - Fixed Position */}
-        <EngagementRightPanel />
+        {/* Right Panel or Add Checklist Sheet */}
+        {showAddChecklistSheet ? (
+          <AddChecklistSheet open={showAddChecklistSheet} onClose={() => setShowAddChecklistSheet(false)} onSelect={handleAddChecklist} />
+        ) : (
+          <EngagementRightPanel />
+        )}
+
+        {/* Delete Checklist Confirmation */}
+        <DeleteChecklistDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog} onConfirm={handleDeleteChecklist} />
 
         {/* Share with Client Dialog */}
         <ShareWithClientDialog open={showShareDialog} onOpenChange={setShowShareDialog} checklistName={checklist?.title} onConfirm={handleShareConfirm} />
