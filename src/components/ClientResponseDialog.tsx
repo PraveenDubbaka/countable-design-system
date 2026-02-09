@@ -94,7 +94,7 @@ export function ClientResponseDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-xl max-h-[85vh] flex flex-col overflow-hidden">
+      <DialogContent className="sm:max-w-xl max-h-[85vh] !grid-rows-none !grid-cols-none flex flex-col" style={{ overflow: 'hidden' }}>
         <DialogHeader className="flex flex-col items-center text-center">
           <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mb-2">
             <CheckCircle2 className="h-6 w-6 text-primary" />
@@ -133,17 +133,21 @@ export function ClientResponseDialog({
         </div>
 
         {/* Response list */}
-        <div className="min-h-0 flex-1 max-h-[45vh] border rounded-lg overflow-y-auto overflow-x-hidden">
-          <div className="divide-y divide-border w-full">
+        <div
+          className="border rounded-lg"
+          style={{ minHeight: 0, maxHeight: '45vh', overflowY: 'auto', overflowX: 'hidden' }}
+        >
+          <div className="divide-y divide-border">
             {responses.map((response) => {
               const displayText = response.questionText
                 ? stripHtml(response.questionText)
                 : response.questionId;
 
               return (
-                <label
+                <div
                   key={response.questionId}
-                  className={`flex items-start gap-3 px-3 py-2.5 cursor-pointer transition-colors w-full ${
+                  onClick={() => toggleOne(response.questionId)}
+                  className={`flex items-start gap-3 px-3 py-2.5 cursor-pointer transition-colors ${
                     selectedIds.has(response.questionId)
                       ? "bg-primary/5"
                       : "hover:bg-muted/50"
@@ -155,14 +159,14 @@ export function ClientResponseDialog({
                     className="mt-0.5 shrink-0"
                     disabled={isApplying}
                   />
-                  <div className="flex-1 min-w-0 space-y-1">
+                  <div style={{ flex: 1, minWidth: 0 }}>
                     <p
-                      className="text-sm font-medium text-foreground break-words whitespace-normal"
-                      style={{ overflowWrap: "anywhere" }}
+                      className="text-sm font-medium text-foreground"
+                      style={{ wordBreak: 'break-word', overflowWrap: 'anywhere', whiteSpace: 'normal' }}
                     >
                       {displayText}
                     </p>
-                    <div className="flex items-center gap-2 flex-wrap">
+                    <div className="flex items-center gap-2 flex-wrap mt-1">
                       <Badge
                         variant="outline"
                         className={`text-xs px-1.5 py-0 shrink-0 ${answerBadgeColor(response.answer)}`}
@@ -172,7 +176,7 @@ export function ClientResponseDialog({
                       {response.explanation && (
                         <Tooltip>
                           <TooltipTrigger asChild>
-                            <span className="inline-flex items-center gap-1 text-xs text-muted-foreground cursor-help min-w-0">
+                            <span className="inline-flex items-center gap-1 text-xs text-muted-foreground cursor-help" style={{ minWidth: 0 }}>
                               <Info className="h-3 w-3 shrink-0" />
                               <span className="truncate max-w-[200px]">
                                 {response.explanation}
@@ -189,7 +193,7 @@ export function ClientResponseDialog({
                       )}
                     </div>
                   </div>
-                </label>
+                </div>
               );
             })}
           </div>
