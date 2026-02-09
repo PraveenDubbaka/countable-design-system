@@ -50,6 +50,60 @@ export interface Checklist {
 
 export type GenerationScope = 'standard' | 'detailed';
 
+export type NumberingFormat = 'number' | 'number-alphabet' | 'alphabet-number';
+
+/** Format a question number based on the selected numbering format */
+export const formatQuestionNumber = (
+  format: NumberingFormat,
+  sectionNumber: number,
+  itemIndex: number,
+  subItemIndex?: number
+): string => {
+  const toUpperAlpha = (num: number): string => {
+    const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    return letters[(num - 1) % 26] || 'A';
+  };
+  const toLowerAlpha = (num: number): string => {
+    const letters = 'abcdefghijklmnopqrstuvwxyz';
+    return letters[(num - 1) % 26] || 'a';
+  };
+
+  switch (format) {
+    case 'number':
+      if (subItemIndex !== undefined) return `${sectionNumber}.${itemIndex + 1}.${subItemIndex + 1}`;
+      return `${sectionNumber}.${itemIndex + 1}`;
+    case 'number-alphabet':
+      if (subItemIndex !== undefined) return `${sectionNumber}.${toUpperAlpha(itemIndex + 1)}.${toLowerAlpha(subItemIndex + 1)}`;
+      return `${sectionNumber}.${toUpperAlpha(itemIndex + 1)}`;
+    case 'alphabet-number':
+      if (subItemIndex !== undefined) return `${toUpperAlpha(sectionNumber)}.${itemIndex + 1}.${toLowerAlpha(subItemIndex + 1)}`;
+      return `${toUpperAlpha(sectionNumber)}.${itemIndex + 1}`;
+    default:
+      if (subItemIndex !== undefined) return `${sectionNumber}.${itemIndex + 1}.${subItemIndex + 1}`;
+      return `${sectionNumber}.${itemIndex + 1}`;
+  }
+};
+
+/** Build a map of question ID → formatted number string from a checklist */
+export const buildQuestionNumberMap = (
+  checklist: Checklist,
+  format: NumberingFormat = 'number'
+): Map<string, string> => {
+  const map = new Map<string, string>();
+  checklist.sections.forEach((section, sectionIdx) => {
+    const sectionNumber = sectionIdx + 1;
+    section.questions.forEach((question, questionIdx) => {
+      map.set(question.id, formatQuestionNumber(format, sectionNumber, questionIdx));
+      if (question.subQuestions) {
+        question.subQuestions.forEach((sub, subIdx) => {
+          map.set(sub.id, formatQuestionNumber(format, sectionNumber, questionIdx, subIdx));
+        });
+      }
+    });
+  });
+  return map;
+};
+
 export interface AIEditOption {
   id: string;
   label: string;
