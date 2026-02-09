@@ -1,4 +1,5 @@
 import { useState, useMemo } from "react";
+import DOMPurify from "dompurify";
 import {
   Dialog,
   DialogContent,
@@ -8,12 +9,18 @@ import {
   DialogFooter,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-
 import { Checkbox } from "@/components/ui/checkbox";
 import { Badge } from "@/components/ui/badge";
 import { CheckCircle2, X, Download, CheckCheck, Info } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { ClientResponse } from "@/hooks/useClientResponses";
+
+/** Strip HTML tags to produce a plain-text preview for the response list */
+const stripHtml = (html: string): string => {
+  const tmp = document.createElement("div");
+  tmp.innerHTML = DOMPurify.sanitize(html);
+  return tmp.textContent || tmp.innerText || html;
+};
 
 interface ClientResponseDialogProps {
   open: boolean;
@@ -126,56 +133,65 @@ export function ClientResponseDialog({
         </div>
 
         {/* Response list */}
-        <div className="flex-1 min-h-0 max-h-[40vh] border rounded-lg overflow-y-auto">
-          <div className="divide-y divide-border">
-            {responses.map((response) => (
-              <label
-                key={response.questionId}
-                className={`flex items-start gap-3 px-3 py-2.5 cursor-pointer transition-colors ${
-                  selectedIds.has(response.questionId)
-                    ? "bg-primary/5"
-                    : "hover:bg-muted/50"
-                }`}
-              >
-                <Checkbox
-                  checked={selectedIds.has(response.questionId)}
-                  onCheckedChange={() => toggleOne(response.questionId)}
-                  className="mt-0.5 shrink-0"
-                  disabled={isApplying}
-                />
-                <div className="flex-1 min-w-0 space-y-1">
-                  <p className="text-sm font-medium text-foreground break-words whitespace-normal word-break-break-word" style={{ overflowWrap: 'anywhere' }}>
-                    {response.questionText || response.questionId}
-                  </p>
-                  <div className="flex items-center gap-2 flex-wrap">
-                    <Badge
-                      variant="outline"
-                      className={`text-xs px-1.5 py-0 ${answerBadgeColor(response.answer)}`}
+        <div className="min-h-0 max-h-[40vh] border rounded-lg overflow-y-auto overflow-x-hidden">
+          <div className="divide-y divide-border w-full">
+            {responses.map((response) => {
+              const displayText = response.questionText
+                ? stripHtml(response.questionText)
+                : response.questionId;
+
+              return (
+                <label
+                  key={response.questionId}
+                  className={`flex items-start gap-3 px-3 py-2.5 cursor-pointer transition-colors w-full ${
+                    selectedIds.has(response.questionId)
+                      ? "bg-primary/5"
+                      : "hover:bg-muted/50"
+                  }`}
+                >
+                  <Checkbox
+                    checked={selectedIds.has(response.questionId)}
+                    onCheckedChange={() => toggleOne(response.questionId)}
+                    className="mt-0.5 shrink-0"
+                    disabled={isApplying}
+                  />
+                  <div className="flex-1 min-w-0 space-y-1 overflow-hidden">
+                    <p
+                      className="text-sm font-medium text-foreground break-words whitespace-normal"
+                      style={{ overflowWrap: "anywhere" }}
                     >
-                      {response.answer}
-                    </Badge>
-                    {response.explanation && (
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <span className="inline-flex items-center gap-1 text-xs text-muted-foreground cursor-help min-w-0">
-                            <Info className="h-3 w-3 shrink-0" />
-                            <span className="truncate max-w-[200px]">
-                              {response.explanation}
+                      {displayText}
+                    </p>
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <Badge
+                        variant="outline"
+                        className={`text-xs px-1.5 py-0 shrink-0 ${answerBadgeColor(response.answer)}`}
+                      >
+                        {response.answer}
+                      </Badge>
+                      {response.explanation && (
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <span className="inline-flex items-center gap-1 text-xs text-muted-foreground cursor-help min-w-0">
+                              <Info className="h-3 w-3 shrink-0" />
+                              <span className="truncate max-w-[200px]">
+                                {response.explanation}
+                              </span>
                             </span>
-                          </span>
-                        </TooltipTrigger>
-                        <TooltipContent
-                          side="top"
-                          className="max-w-xs text-xs"
-                        >
-                          {response.explanation}
-                        </TooltipContent>
-                      </Tooltip>
-                    )}
+                          </TooltipTrigger>
+                          <TooltipContent
+                            side="top"
+                            className="max-w-xs text-xs"
+                          >
+                            {response.explanation}
+                          </TooltipContent>
+                        </Tooltip>
+                      )}
+                    </div>
                   </div>
-                </div>
-              </label>
-            ))}
+                </label>
+              );
+            })}
           </div>
         </div>
 
