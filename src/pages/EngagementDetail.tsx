@@ -633,19 +633,6 @@ export default function EngagementDetail() {
             <>
             {/* Action Buttons - Sticky Header with Title */}
             <div className="sticky top-0 z-10 bg-card px-4 py-2 flex flex-col border-b border-border/50">
-              {/* Clipboard prompt banner */}
-              {showClipboardPrompt && clipboardResponses && (
-                <div className="flex items-center gap-2 mb-2 px-3 py-2 bg-primary/10 rounded-lg border border-primary/20">
-                  <History className="h-4 w-4 text-primary flex-shrink-0" />
-                  <span className="text-sm text-foreground flex-1">Previous responses available for this checklist</span>
-                  <Button size="sm" variant="default" className="h-7 text-xs" onClick={applyClipboardResponses}>
-                    Add Previous responses
-                  </Button>
-                  <Button size="sm" variant="ghost" className="h-7 text-xs" onClick={() => { setShowClipboardPrompt(false); setClipboardResponses(null); }}>
-                    Dismiss
-                  </Button>
-                </div>
-              )}
               <div className="flex items-center justify-between">
                 <h1 className="font-semibold text-foreground truncate text-lg">
                   Client acceptance and continuance
@@ -729,7 +716,21 @@ export default function EngagementDetail() {
 
             {/* Scrollable Content */}
             <div className="p-4">
-              {/* Objective Section */}
+              {/* Clipboard prompt banner - above objective */}
+              {showClipboardPrompt && clipboardResponses && (
+                <div className="flex items-center gap-3 mb-4 px-4 py-3 bg-amber-50 rounded-lg border border-amber-300 shadow-sm">
+                  <div className="w-8 h-8 rounded-full bg-amber-100 flex items-center justify-center flex-shrink-0">
+                    <History className="h-4 w-4 text-amber-600" />
+                  </div>
+                  <span className="text-sm font-medium text-amber-900 flex-1">Previous responses available for this checklist</span>
+                  <Button size="sm" className="h-8 text-xs bg-amber-500 hover:bg-amber-600 text-white border-0" onClick={applyClipboardResponses}>
+                    Add Previous responses
+                  </Button>
+                  <Button size="sm" variant="ghost" className="h-8 text-xs text-amber-700 hover:text-amber-900 hover:bg-amber-100" onClick={() => { setShowClipboardPrompt(false); setClipboardResponses(null); }}>
+                    Dismiss
+                  </Button>
+                </div>
+              )}
               <div className="mb-6 bg-card rounded-lg overflow-hidden shadow-md border border-border">
                 <button onClick={() => setObjectiveExpanded(!objectiveExpanded)} className="w-full flex items-center gap-2 bg-muted px-4 py-3 text-muted-foreground hover:text-foreground transition-colors border-b border-border">
                   <ChevronDown className={`h-4 w-4 transition-transform ${objectiveExpanded ? 'rotate-180' : ''}`} />
