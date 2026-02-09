@@ -143,8 +143,8 @@ export function ClientResponseDialog({
                   className="mt-0.5"
                   disabled={isApplying}
                 />
-                <div className="flex-1 min-w-0 space-y-1">
-                  <p className="text-sm font-medium text-foreground truncate">
+                <div className="flex-1 min-w-0 space-y-1 overflow-hidden">
+                  <p className="text-sm font-medium text-foreground break-words whitespace-normal">
                     {response.questionText || response.questionId}
                   </p>
                   <div className="flex items-center gap-2 flex-wrap">
