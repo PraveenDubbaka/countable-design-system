@@ -138,7 +138,7 @@ export function ClientResponseDialog({
           style={{ minHeight: 0, maxHeight: '45vh', overflowY: 'auto', overflowX: 'hidden' }}
         >
           <div className="divide-y divide-border">
-            {responses.map((response) => {
+            {responses.map((response, index) => {
               const displayText = response.questionText
                 ? stripHtml(response.questionText)
                 : response.questionId;
@@ -159,6 +159,9 @@ export function ClientResponseDialog({
                     className="mt-0.5 shrink-0"
                     disabled={isApplying}
                   />
+                  <span className="text-xs font-semibold text-muted-foreground mt-0.5 shrink-0 w-5 text-right">
+                    {index + 1}.
+                  </span>
                   <div style={{ flex: 1, minWidth: 0 }}>
                     <p
                       className="text-sm font-medium text-foreground"
