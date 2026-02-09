@@ -166,32 +166,22 @@ export function ClientResponseDialog({
                     >
                       {displayText}
                     </p>
-                    <div className="flex items-center gap-2 flex-wrap mt-1">
+                    <div className="flex items-center gap-2 mt-1">
                       <Badge
                         variant="outline"
                         className={`text-xs px-1.5 py-0 shrink-0 ${answerBadgeColor(response.answer)}`}
                       >
                         {response.answer}
                       </Badge>
-                      {response.explanation && (
-                        <Tooltip>
-                          <TooltipTrigger asChild>
-                            <span className="inline-flex items-center gap-1 text-xs text-muted-foreground cursor-help" style={{ minWidth: 0 }}>
-                              <Info className="h-3 w-3 shrink-0" />
-                              <span className="truncate max-w-[200px]">
-                                {response.explanation}
-                              </span>
-                            </span>
-                          </TooltipTrigger>
-                          <TooltipContent
-                            side="top"
-                            className="max-w-xs text-xs"
-                          >
-                            {response.explanation}
-                          </TooltipContent>
-                        </Tooltip>
-                      )}
                     </div>
+                    {response.explanation && (
+                      <p
+                        className="text-xs text-muted-foreground mt-1"
+                        style={{ wordBreak: 'break-word', overflowWrap: 'anywhere', whiteSpace: 'normal' }}
+                      >
+                        {response.explanation}
+                      </p>
+                    )}
                   </div>
                 </div>
               );
