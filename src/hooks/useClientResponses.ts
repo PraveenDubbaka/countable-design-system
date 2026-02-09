@@ -3,6 +3,7 @@ import { Checklist, Question } from '@/types/checklist';
 
 export interface ClientResponse {
   questionId: string;
+  questionText?: string;
   answer: string;
   explanation?: string;
 }
@@ -94,7 +95,7 @@ const generateMockResponses = (checklist: Checklist): ClientResponse[] => {
     }
     
     if (answer) {
-      responses.push({ questionId: question.id, answer, explanation });
+      responses.push({ questionId: question.id, questionText: question.text, answer, explanation });
     }
     
     if (question.subQuestions) {
@@ -177,46 +178,65 @@ export function useClientResponses(checklist: Checklist | null) {
     onUpdateQuestion: (questionId: string, answer: string, explanation?: string) => void,
     onComplete: () => void
   ) => {
-    const responses = state.responses;
-    if (responses.length === 0) return;
+    applyFilteredResponses(
+      state.responses.map(r => r.questionId),
+      onUpdateQuestion,
+      onComplete
+    );
+  }, [state.responses]);
+
+  // Apply only selected responses
+  const applyFilteredResponses = useCallback((
+    questionIds: string[],
+    onUpdateQuestion: (questionId: string, answer: string, explanation?: string) => void,
+    onComplete: () => void
+  ) => {
+    const filtered = state.responses.filter(r => questionIds.includes(r.questionId));
+    if (filtered.length === 0) return;
     
     setIsApplyingResponses(true);
     setCurrentApplyingIndex(0);
     
-    // Use a recursive setTimeout approach for more reliable state updates
     const applyNext = (index: number) => {
-      if (index >= responses.length) {
+      if (index >= filtered.length) {
         setIsApplyingResponses(false);
         setCurrentApplyingIndex(-1);
         setApplyingQuestionId(null);
-        setState(prev => ({
-          ...prev,
-          hasResponses: false,
-          responses: [],
-          answeredQuestions: 0,
-          isShared: false,
-          sharedAt: null
-        }));
+        // Remove accepted responses; if all accepted, reset fully
+        const acceptedIds = new Set(questionIds);
+        const remaining = state.responses.filter(r => !acceptedIds.has(r.questionId));
+        if (remaining.length === 0) {
+          setState(prev => ({
+            ...prev,
+            hasResponses: false,
+            responses: [],
+            answeredQuestions: 0,
+            isShared: false,
+            sharedAt: null
+          }));
+        } else {
+          setState(prev => ({
+            ...prev,
+            responses: remaining,
+            answeredQuestions: remaining.length
+          }));
+        }
         onComplete();
         return;
       }
       
-      const response = responses[index];
+      const response = filtered[index];
       setApplyingQuestionId(response.questionId);
       setCurrentApplyingIndex(index);
       
-      // Apply the answer after a brief delay for visual effect
       setTimeout(() => {
         onUpdateQuestion(response.questionId, response.answer, response.explanation);
-        
-        // Schedule next update
         setTimeout(() => {
           applyNext(index + 1);
         }, 400);
       }, 200);
     };
     
-    // Start the sequence
     applyNext(0);
   }, [state.responses]);
 
@@ -242,6 +262,7 @@ export function useClientResponses(checklist: Checklist | null) {
     applyingQuestionId,
     shareWithClient,
     applyResponses,
+    applyFilteredResponses,
     resetState
   };
 }
