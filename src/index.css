@@ -1367,3 +1367,14 @@
 .monday-board-light-borders [class*="border-b-border"] {
   border-color: hsl(var(--border-lighter));
 }
+
+/* Date input - right-align the native calendar icon */
+input[type="date"]::-webkit-calendar-picker-indicator {
+  margin-left: auto;
+  cursor: pointer;
+  opacity: 0.6;
+}
+
+input[type="date"] {
+  min-width: 0;
+}
