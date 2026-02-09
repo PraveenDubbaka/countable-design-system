@@ -456,11 +456,24 @@ export default function EngagementDetail() {
     });
   }, []);
 
-  // Handle adding client responses to checklist
-  const handleAddResponsesToChecklist = () => {
-    clientResponses.applyResponses((questionId, answer, explanation) => updateQuestionAnswer(questionId, answer, explanation), () => {
-      toast.success("All client responses have been added to the checklist!");
-    });
+  // Handle accepting selected client responses
+  const handleAcceptSelectedResponses = (questionIds: string[]) => {
+    const selectedResponses = clientResponses.responses.filter(r =>
+      questionIds.includes(r.questionId)
+    );
+    if (selectedResponses.length === 0) return;
+
+    clientResponses.applyFilteredResponses(
+      questionIds,
+      (questionId, answer, explanation) => updateQuestionAnswer(questionId, answer, explanation),
+      () => {
+        toast.success(
+          questionIds.length === clientResponses.responses.length
+            ? "All client responses have been accepted!"
+            : `${questionIds.length} response(s) accepted!`
+        );
+      }
+    );
   };
   if (!checklist) {
     return <Layout>
@@ -682,7 +695,7 @@ export default function EngagementDetail() {
         <ShareWithClientDialog open={showShareDialog} onOpenChange={setShowShareDialog} checklistName={checklist?.title} onConfirm={handleShareConfirm} />
 
         {/* Client Response Dialog */}
-        <ClientResponseDialog open={showResponseDialog} onOpenChange={setShowResponseDialog} totalQuestions={clientResponses.totalQuestions} answeredQuestions={clientResponses.answeredQuestions} onAddResponses={handleAddResponsesToChecklist} isApplying={clientResponses.isApplyingResponses} />
+        <ClientResponseDialog open={showResponseDialog} onOpenChange={setShowResponseDialog} totalQuestions={clientResponses.totalQuestions} answeredQuestions={clientResponses.answeredQuestions} responses={clientResponses.responses} onAcceptSelected={handleAcceptSelectedResponses} isApplying={clientResponses.isApplyingResponses} />
 
         {/* Switch Engagement Confirmation Dialog */}
         <Dialog open={showSwitchDialog} onOpenChange={setShowSwitchDialog}>
