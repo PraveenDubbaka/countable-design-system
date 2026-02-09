@@ -5,7 +5,7 @@ import { AddItemAboveIcon, AddItemBelowIcon } from './icons/AddItemIcons';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { Input as SearchInput } from '@/components/ui/input';
-import { Checklist, Question, Section, AnswerType, FormLayout } from '@/types/checklist';
+import { Checklist, Question, Section, AnswerType, FormLayout, NumberingFormat, formatQuestionNumber } from '@/types/checklist';
 import { FormLayoutEditor } from '@/components/FormLayoutEditor';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
@@ -119,56 +119,8 @@ const EXISTING_DOCUMENTS = [{
   name: 'Reference Manual.pdf',
   type: 'pdf'
 }];
+// NumberingFormat and formatQuestionNumber are imported from @/types/checklist
 
-// Numbering format types
-type NumberingFormat = 'number' | 'number-alphabet' | 'alphabet-number';
-
-// Helper function to format question numbers
-const formatQuestionNumber = (
-  format: NumberingFormat,
-  sectionNumber: number,
-  itemIndex: number,
-  subItemIndex?: number
-): string => {
-  const toUpperAlpha = (num: number): string => {
-    const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-    return letters[(num - 1) % 26] || 'A';
-  };
-  
-  const toLowerAlpha = (num: number): string => {
-    const letters = 'abcdefghijklmnopqrstuvwxyz';
-    return letters[(num - 1) % 26] || 'a';
-  };
-
-  switch (format) {
-    // Option 1: 1.1, 1.1.1
-    case 'number':
-      if (subItemIndex !== undefined) {
-        return `${sectionNumber}.${itemIndex + 1}.${subItemIndex + 1}`;
-      }
-      return `${sectionNumber}.${itemIndex + 1}`;
-    
-    // Option 2: 1.A, 1.A.a
-    case 'number-alphabet':
-      if (subItemIndex !== undefined) {
-        return `${sectionNumber}.${toUpperAlpha(itemIndex + 1)}.${toLowerAlpha(subItemIndex + 1)}`;
-      }
-      return `${sectionNumber}.${toUpperAlpha(itemIndex + 1)}`;
-    
-    // Option 3: A.1, A.1.a
-    case 'alphabet-number':
-      if (subItemIndex !== undefined) {
-        return `${toUpperAlpha(sectionNumber)}.${itemIndex + 1}.${toLowerAlpha(subItemIndex + 1)}`;
-      }
-      return `${toUpperAlpha(sectionNumber)}.${itemIndex + 1}`;
-    
-    default:
-      if (subItemIndex !== undefined) {
-        return `${sectionNumber}.${itemIndex + 1}.${subItemIndex + 1}`;
-      }
-      return `${sectionNumber}.${itemIndex + 1}`;
-  }
-};
 
 // Numbering format selector component
 interface NumberingFormatSelectorProps {

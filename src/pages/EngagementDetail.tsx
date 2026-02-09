@@ -695,7 +695,7 @@ export default function EngagementDetail() {
         <ShareWithClientDialog open={showShareDialog} onOpenChange={setShowShareDialog} checklistName={checklist?.title} onConfirm={handleShareConfirm} />
 
         {/* Client Response Dialog */}
-        <ClientResponseDialog open={showResponseDialog} onOpenChange={setShowResponseDialog} totalQuestions={clientResponses.totalQuestions} answeredQuestions={clientResponses.answeredQuestions} responses={clientResponses.responses} onAcceptSelected={handleAcceptSelectedResponses} isApplying={clientResponses.isApplyingResponses} />
+        <ClientResponseDialog open={showResponseDialog} onOpenChange={setShowResponseDialog} totalQuestions={clientResponses.totalQuestions} answeredQuestions={clientResponses.answeredQuestions} responses={clientResponses.responses} onAcceptSelected={handleAcceptSelectedResponses} isApplying={clientResponses.isApplyingResponses} checklist={checklist} />
 
         {/* Switch Engagement Confirmation Dialog */}
         <Dialog open={showSwitchDialog} onOpenChange={setShowSwitchDialog}>

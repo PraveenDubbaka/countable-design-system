@@ -14,6 +14,7 @@ import { Badge } from "@/components/ui/badge";
 import { CheckCircle2, X, Download, CheckCheck, Info } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { ClientResponse } from "@/hooks/useClientResponses";
+import { Checklist, buildQuestionNumberMap } from "@/types/checklist";
 
 /** Strip HTML tags to produce a plain-text preview for the response list */
 const stripHtml = (html: string): string => {
@@ -30,6 +31,7 @@ interface ClientResponseDialogProps {
   responses: ClientResponse[];
   onAcceptSelected: (questionIds: string[]) => void;
   isApplying?: boolean;
+  checklist?: Checklist | null;
 }
 
 export function ClientResponseDialog({
@@ -40,7 +42,12 @@ export function ClientResponseDialog({
   responses,
   onAcceptSelected,
   isApplying = false,
+  checklist,
 }: ClientResponseDialogProps) {
+  const questionNumberMap = useMemo(() => {
+    if (!checklist) return new Map<string, string>();
+    return buildQuestionNumberMap(checklist);
+  }, [checklist]);
   const [selectedIds, setSelectedIds] = useState<Set<string>>(
     () => new Set(responses.map((r) => r.questionId))
   );
@@ -159,8 +166,8 @@ export function ClientResponseDialog({
                     className="mt-0.5 shrink-0"
                     disabled={isApplying}
                   />
-                  <span className="text-xs font-semibold text-muted-foreground mt-0.5 shrink-0 w-5 text-right">
-                    {index + 1}.
+                  <span className="text-xs font-semibold text-muted-foreground mt-0.5 shrink-0 min-w-[2rem] text-right">
+                    {questionNumberMap.get(response.questionId) || `${index + 1}.`}
                   </span>
                   <div style={{ flex: 1, minWidth: 0 }}>
                     <p
