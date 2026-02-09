@@ -166,10 +166,11 @@ export function ClientResponseDialog({
                     >
                       {displayText}
                     </p>
-                    <div className="flex items-center gap-2 mt-1">
+                    <div className="mt-1">
                       <Badge
                         variant="outline"
-                        className={`text-xs px-1.5 py-0 shrink-0 ${answerBadgeColor(response.answer)}`}
+                        className={`text-xs !whitespace-normal !rounded-lg ${answerBadgeColor(response.answer)}`}
+                        style={{ maxWidth: '-webkit-fill-available', padding: '8px' }}
                       >
                         {response.answer}
                       </Badge>
