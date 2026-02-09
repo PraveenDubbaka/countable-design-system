@@ -1367,3 +1367,16 @@
 .monday-board-light-borders [class*="border-b-border"] {
   border-color: hsl(var(--border-lighter));
 }
+
+/* Font size accessibility classes */
+.font-size-a {
+  font-size: 100%;
+}
+
+.font-size-aa {
+  font-size: 110%;
+}
+
+.font-size-aaa {
+  font-size: 120%;
+}
