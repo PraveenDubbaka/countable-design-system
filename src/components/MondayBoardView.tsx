@@ -983,7 +983,7 @@ function SortableSubItemRow({
       </div>
 
       {/* Response column with inline type selector and response field */}
-      <div className="flex-1 min-w-0 px-2 py-2 border-l border-border/50 flex items-stretch" style={{
+      <div className="flex-1 min-w-0 px-2 py-2 border-l border-border/50 flex items-stretch overflow-hidden" style={{
       flexBasis: columnWidths.response
     }}>
         <div className="flex items-center gap-2 w-full min-w-0">
@@ -997,10 +997,10 @@ function SortableSubItemRow({
       </div>
 
       {/* Additional Explanation column - conditionally rendered */}
-      {visibleColumns.explanation && <div className="flex-1 min-w-0 px-2 py-2 border-l border-border/50 flex items-center" style={{
+      {visibleColumns.explanation && <div className="flex-1 min-w-0 px-2 py-2 border-l border-border/50 flex items-center overflow-hidden" style={{
       flexBasis: columnWidths.explanation
     }}>
-          {(subItem as any).showExplanation !== false ? <div className="relative group/exp w-full">
+          {(subItem as any).showExplanation !== false ? <div className="relative group/exp w-full overflow-hidden">
               <AITextarea value={subItem.explanation || ''} onChange={val => onUpdate({
           ...subItem,
           explanation: val
@@ -1371,7 +1371,7 @@ function SortableItemRow({
         </div>
 
         {/* Response column with inline type selector and response field */}
-        <div className="flex-1 min-w-0 px-2 py-2 border-l border-border/50 flex items-stretch" style={{
+        <div className="flex-1 min-w-0 px-2 py-2 border-l border-border/50 flex items-stretch overflow-hidden" style={{
         flexBasis: columnWidths.response
       }}>
           <div className="flex items-center gap-2 w-full min-w-0">
@@ -1385,10 +1385,10 @@ function SortableItemRow({
         </div>
 
         {/* Additional Explanation column - conditionally rendered */}
-        {visibleColumns.explanation && <div className="flex-1 min-w-0 px-2 py-2 border-l border-border/50 flex items-center" style={{
+        {visibleColumns.explanation && <div className="flex-1 min-w-0 px-2 py-2 border-l border-border/50 flex items-center overflow-hidden" style={{
         flexBasis: columnWidths.explanation
       }}>
-            {(item as any).showExplanation !== false ? <div className="relative group/exp w-full">
+            {(item as any).showExplanation !== false ? <div className="relative group/exp w-full overflow-hidden">
                 <AITextarea value={item.explanation || ''} onChange={val => onUpdate({
             ...item,
             explanation: val
