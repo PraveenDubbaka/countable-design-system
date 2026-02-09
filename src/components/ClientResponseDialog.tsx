@@ -94,7 +94,7 @@ export function ClientResponseDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-lg max-h-[85vh] flex flex-col">
+      <DialogContent className="sm:max-w-xl max-h-[85vh] flex flex-col overflow-hidden">
         <DialogHeader className="flex flex-col items-center text-center">
           <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mb-2">
             <CheckCircle2 className="h-6 w-6 text-primary" />
@@ -133,7 +133,7 @@ export function ClientResponseDialog({
         </div>
 
         {/* Response list */}
-        <div className="min-h-0 max-h-[40vh] border rounded-lg overflow-y-auto overflow-x-hidden">
+        <div className="min-h-0 flex-1 max-h-[45vh] border rounded-lg overflow-y-auto overflow-x-hidden">
           <div className="divide-y divide-border w-full">
             {responses.map((response) => {
               const displayText = response.questionText
@@ -155,7 +155,7 @@ export function ClientResponseDialog({
                     className="mt-0.5 shrink-0"
                     disabled={isApplying}
                   />
-                  <div className="flex-1 min-w-0 space-y-1 overflow-hidden">
+                  <div className="flex-1 min-w-0 space-y-1">
                     <p
                       className="text-sm font-medium text-foreground break-words whitespace-normal"
                       style={{ overflowWrap: "anywhere" }}
