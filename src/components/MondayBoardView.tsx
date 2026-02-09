@@ -835,7 +835,7 @@ function SortableSubItemRow({
       case 'none':
         return null;
       case 'date':
-        return <Input type="date" value={subItem.answer || ''} onChange={e => handleAnswerChange(e.target.value)} onClick={e => e.stopPropagation()} className="h-7 text-xs bg-muted border-border text-foreground" />;
+        return <Input type="date" value={subItem.answer || ''} onChange={e => handleAnswerChange(e.target.value)} onClick={e => e.stopPropagation()} className="h-7 text-xs bg-muted border-border text-foreground w-fit" />;
       case 'amount':
         return <div className="relative">
           <span className="absolute left-2 top-1/2 -translate-y-1/2 text-muted-foreground text-xs">$</span>
@@ -1201,7 +1201,7 @@ function SortableItemRow({
       case 'none':
         return null;
       case 'date':
-        return <Input type="date" value={item.answer || ''} onChange={e => handleAnswerChange(e.target.value)} onClick={e => e.stopPropagation()} className="h-8 text-sm bg-muted border-border text-foreground" />;
+        return <Input type="date" value={item.answer || ''} onChange={e => handleAnswerChange(e.target.value)} onClick={e => e.stopPropagation()} className="h-8 text-sm bg-muted border-border text-foreground w-fit" />;
       case 'amount':
         return <div className="relative">
           <span className="absolute left-2 top-1/2 -translate-y-1/2 text-muted-foreground text-sm">$</span>
