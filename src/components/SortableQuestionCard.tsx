@@ -534,7 +534,7 @@ export function SortableQuestionCard({
                 type="date"
                 value={question.answer || ''}
                 onChange={(e) => handleAnswerChange(e.target.value)}
-                className="bg-background pl-10"
+                className="bg-background pl-10 w-fit"
               />
             </div>
           </div>
