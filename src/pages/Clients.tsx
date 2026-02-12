@@ -215,8 +215,8 @@ export default function Clients() {
             <div className="flex items-center gap-3 flex-shrink-0">
               {stats.map((stat, index) => {
                 const config = [
-                  { color: 'text-emerald-600', bg: 'bg-emerald-50', icon: UserCheck, animation: 'animate-pulse' },
-                  { color: 'text-amber-600', bg: 'bg-amber-50', icon: Clock, animation: 'animate-[bounce_2s_ease-in-out_infinite]' },
+                  { color: 'text-primary', bg: 'bg-primary/10', icon: UserCheck, animation: '' },
+                  { color: 'text-primary', bg: 'bg-primary/10', icon: Clock, animation: '' },
                   { color: 'text-primary', bg: 'bg-primary/10', icon: UsersRound, animation: '' },
                 ];
                 const { color, bg, icon: Icon, animation } = config[index];
