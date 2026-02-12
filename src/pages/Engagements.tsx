@@ -69,9 +69,9 @@ export default function Engagements() {
             {stats.map((stat, index) => {
               const config = [
                 { color: 'text-primary', bg: 'bg-primary/10', icon: Briefcase, animation: '' },
-                { color: 'text-amber-600', bg: 'bg-amber-50', icon: Loader, animation: 'animate-[spin_3s_linear_infinite]' },
-                { color: 'text-emerald-600', bg: 'bg-emerald-50', icon: CheckCircle2, animation: '' },
-                { color: 'text-muted-foreground', bg: 'bg-muted', icon: Archive, animation: '' },
+                { color: 'text-primary', bg: 'bg-primary/10', icon: Loader, animation: '' },
+                { color: 'text-primary', bg: 'bg-primary/10', icon: CheckCircle2, animation: '' },
+                { color: 'text-primary', bg: 'bg-primary/10', icon: Archive, animation: '' },
               ];
               const { color, bg, icon: Icon, animation } = config[index];
               return (

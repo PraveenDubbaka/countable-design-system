@@ -227,11 +227,11 @@ export default function Dashboard() {
           <div className="flex items-center gap-3 flex-shrink-0">
             {stats.map((stat, index) => {
               const config = [
-                { color: 'text-primary', bg: 'bg-primary/10', icon: Layers, animation: 'animate-pulse' },
-                { color: 'text-emerald-600', bg: 'bg-emerald-50', icon: Sparkles, animation: 'animate-[spin_3s_linear_infinite]' },
-                { color: 'text-[#074075]', bg: 'bg-[#e1eefa]', icon: Loader, animation: 'animate-[spin_2s_linear_infinite]' },
-                { color: 'text-violet-600', bg: 'bg-violet-50', icon: CheckCircle2, animation: 'animate-[bounce_2s_ease-in-out_infinite]' },
-                { color: 'text-slate-500', bg: 'bg-slate-50', icon: Archive, animation: '' },
+                { color: 'text-primary', bg: 'bg-primary/10', icon: Layers, animation: '' },
+                { color: 'text-primary', bg: 'bg-primary/10', icon: Sparkles, animation: '' },
+                { color: 'text-primary', bg: 'bg-primary/10', icon: Loader, animation: '' },
+                { color: 'text-primary', bg: 'bg-primary/10', icon: CheckCircle2, animation: '' },
+                { color: 'text-primary', bg: 'bg-primary/10', icon: Archive, animation: '' },
               ];
               const { color, bg, icon: Icon, animation } = config[index];
               return (
