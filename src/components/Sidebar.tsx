@@ -696,7 +696,7 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
         <button
           onClick={() => setIsNavExpanded(!isNavExpanded)}
           className="absolute z-50 w-6 h-6 rounded-full bg-white dark:bg-card border border-border shadow-md flex items-center justify-center opacity-0 group-hover/sidebar:opacity-100 transition-opacity duration-200 hover:bg-muted"
-          style={{ top: 50, right: -12, transform: 'translateX(50%)' }}
+          style={{ top: 50, right: 0, transform: 'translateX(50%)' }}
         >
           {isNavExpanded ? <ChevronLeft className="h-3 w-3 text-foreground" /> : <ChevronRight className="h-3 w-3 text-foreground" />}
         </button>
