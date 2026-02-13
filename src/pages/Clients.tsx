@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Search, ChevronDown, Pencil, Trash2, Download, Mail, ClipboardPlus, UserPlus, RefreshCw, Users, UserX, UserCheck, Clock, UsersRound } from "lucide-react";
+import { ExpandableIconButton } from "@/components/ui/expandable-icon-button";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -259,41 +260,21 @@ export default function Clients() {
 
               {/* Actions and Add Client Button */}
               <div className="flex items-center gap-2">
-                <TooltipProvider>
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <Button
-                        variant="outline"
-                        size="icon"
-                        className="h-9 w-9 bg-card border-border hover:bg-muted"
-                      >
-                        <RefreshCw className="h-4 w-4" />
-                      </Button>
-                    </TooltipTrigger>
-                    <TooltipContent>
-                      <p>Refresh</p>
-                    </TooltipContent>
-                  </Tooltip>
-                </TooltipProvider>
+                <ExpandableIconButton
+                  variant="outline"
+                  icon={<RefreshCw className="h-4 w-4" />}
+                  label="Refresh"
+                  className="bg-card border-border hover:bg-muted"
+                />
                 <Popover>
-                  <TooltipProvider>
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <PopoverTrigger asChild>
-                          <Button
-                            variant="outline"
-                            size="icon"
-                            className="h-9 w-9 bg-card border-border hover:bg-muted text-muted-foreground"
-                          >
-                            <UserPlus className="h-4 w-4" />
-                          </Button>
-                        </PopoverTrigger>
-                      </TooltipTrigger>
-                      <TooltipContent>
-                        <p>Assign Partner</p>
-                      </TooltipContent>
-                    </Tooltip>
-                  </TooltipProvider>
+                  <PopoverTrigger asChild>
+                    <ExpandableIconButton
+                      variant="outline"
+                      icon={<UserPlus className="h-4 w-4" />}
+                      label="Assign Partner"
+                      className="bg-card border-border hover:bg-muted text-muted-foreground"
+                    />
+                  </PopoverTrigger>
                   <PopoverContent className="w-72 p-0 bg-card" align="start">
                     <div className="p-3 border-b border-border">
                       <div className="relative">
@@ -338,38 +319,18 @@ export default function Clients() {
                     </ScrollArea>
                   </PopoverContent>
                 </Popover>
-                <TooltipProvider>
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <Button
-                        variant="outline"
-                        size="icon"
-                        className="h-9 w-9 bg-card border-border hover:bg-muted text-muted-foreground"
-                      >
-                        <Mail className="h-4 w-4" />
-                      </Button>
-                    </TooltipTrigger>
-                    <TooltipContent>
-                      <p>Invite All</p>
-                    </TooltipContent>
-                  </Tooltip>
-                </TooltipProvider>
-                <TooltipProvider>
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <Button
-                        variant="outline"
-                        size="icon"
-                        className="h-9 w-9 bg-card border-border hover:bg-muted"
-                      >
-                        <Download className="h-4 w-4" />
-                      </Button>
-                    </TooltipTrigger>
-                    <TooltipContent>
-                      <p>Export</p>
-                    </TooltipContent>
-                  </Tooltip>
-                </TooltipProvider>
+                <ExpandableIconButton
+                  variant="outline"
+                  icon={<Mail className="h-4 w-4" />}
+                  label="Invite All"
+                  className="bg-card border-border hover:bg-muted text-muted-foreground"
+                />
+                <ExpandableIconButton
+                  variant="outline"
+                  icon={<Download className="h-4 w-4" />}
+                  label="Export"
+                  className="bg-card border-border hover:bg-muted"
+                />
                 <div className="relative">
                   <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                   <Input

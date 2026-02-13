@@ -1,6 +1,7 @@
 import { useState, useEffect, useMemo, useCallback } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { ChevronRight, ChevronDown, Landmark, FileText, Triangle, FileSpreadsheet, PencilLine, Settings2, Download, FileType, Share2, Save, RefreshCw, Trash2, Building2, Calendar, Check, AlertTriangle, Loader2, History, Upload, FileUp, Bell, Plus } from "lucide-react";
+import { ExpandableIconButton } from "@/components/ui/expandable-icon-button";
 import { ChecklistIcon } from "@/components/icons/ChecklistIcon";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -638,27 +639,23 @@ export default function EngagementDetail() {
                   Client acceptance and continuance
                 </h1>
                 <div className="flex items-center gap-2">
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <Button variant="default" size="icon" className="h-9 w-9" onClick={handleSave}>
-                        <Save className="h-4 w-4" />
-                      </Button>
-                    </TooltipTrigger>
-                    <TooltipContent>Save</TooltipContent>
-                  </Tooltip>
+                  <ExpandableIconButton
+                    variant="default"
+                    icon={<Save className="h-4 w-4" />}
+                    label="Save"
+                    onClick={handleSave}
+                  />
 
                   {/* Export Checklist */}
                   <DropdownMenu>
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <DropdownMenuTrigger asChild>
-                          <Button variant="outline" size="icon" className="h-9 w-9 bg-card border-border hover:bg-muted">
-                            <Download className="h-4 w-4" />
-                          </Button>
-                        </DropdownMenuTrigger>
-                      </TooltipTrigger>
-                      <TooltipContent>Export Checklist</TooltipContent>
-                    </Tooltip>
+                    <DropdownMenuTrigger asChild>
+                      <ExpandableIconButton
+                        variant="outline"
+                        icon={<Download className="h-4 w-4" />}
+                        label="Export"
+                        className="bg-card border-border hover:bg-muted"
+                      />
+                    </DropdownMenuTrigger>
                     <DropdownMenuContent align="end" className="bg-card border shadow-lg z-50 w-40">
                       <DropdownMenuItem className="flex items-center gap-2 cursor-pointer group" onClick={() => toast.info('Exporting as PDF...')}>
                         <FileText className="h-4 w-4 text-muted-foreground group-hover:text-foreground transition-colors" />
@@ -672,44 +669,38 @@ export default function EngagementDetail() {
                   </DropdownMenu>
 
                   {/* Share with Client */}
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <div className="relative">
-                        <Button variant="outline" size="icon" className={`h-9 w-9 bg-card border-border hover:bg-muted ${clientResponses.hasResponses ? 'ring-2 ring-primary ring-offset-2' : ''}`} onClick={handleShareButtonClick}>
-                          <Share2 className="h-4 w-4" />
-                        </Button>
-                        {clientResponses.hasResponses && <span className="absolute -top-1.5 -right-1.5 flex h-5 w-5 pointer-events-none">
-                            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
-                            <span className="relative inline-flex rounded-full h-5 w-5 bg-primary items-center justify-center">
-                              <Bell className="h-3 w-3 text-primary-foreground" />
-                            </span>
-                          </span>}
-                      </div>
-                    </TooltipTrigger>
-                    <TooltipContent>
-                      {clientResponses.hasResponses ? 'Client Responses Received!' : 'Share with Client'}
-                    </TooltipContent>
-                  </Tooltip>
+                  <div className="relative">
+                    <ExpandableIconButton
+                      variant="outline"
+                      icon={<Share2 className="h-4 w-4" />}
+                      label={clientResponses.hasResponses ? 'Responses!' : 'Share'}
+                      className={`bg-card border-border hover:bg-muted ${clientResponses.hasResponses ? 'ring-2 ring-primary ring-offset-2' : ''}`}
+                      onClick={handleShareButtonClick}
+                    />
+                    {clientResponses.hasResponses && <span className="absolute -top-1.5 -right-1.5 flex h-5 w-5 pointer-events-none">
+                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
+                        <span className="relative inline-flex rounded-full h-5 w-5 bg-primary items-center justify-center">
+                          <Bell className="h-3 w-3 text-primary-foreground" />
+                        </span>
+                      </span>}
+                  </div>
 
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <Button variant="outline" size="icon" className="h-9 w-9 bg-card border-border hover:bg-muted">
-                        <svg className="h-4 w-4" viewBox="0 0 1024 1024" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-                          <path d="M620.544 137.6c103.936 10.432 187.328 72.96 205.12 180.224h-60.16l97.088 144.448 97.152-144.448h-67.008c-17.792-144.448-127.168-238.336-265.344-251.712-19.136-1.536-36.864 14.848-36.864 35.712 1.28 17.92 13.568 34.24 30.016 35.776z m-150.4-73.024H132.416c-19.136 0-34.176 16.384-34.176 37.248v321.728c0 20.864 15.04 37.248 34.176 37.248h337.728c19.136 0 34.176-16.384 34.176-37.248V101.824c0-20.864-15.04-37.248-34.176-37.248z m-32.832 324.736H165.248V136.064h272.128v253.248h-0.064zM404.48 883.84c-116.224-10.432-205.12-87.872-209.216-216h64.256L162.496 523.392l-97.088 144.448h64.256c2.688 165.376 118.912 272.576 268.032 287.488 19.136 1.472 36.928-14.912 36.928-35.776a35.648 35.648 0 0 0-30.144-35.712z m489.6-323.264H556.288c-19.2 0-34.176 16.448-34.176 37.248v323.264c0 20.8 14.976 37.184 34.176 37.184h337.728c19.136 0 34.112-16.384 34.112-37.184V597.824c0.064-20.8-16.32-37.248-34.048-37.248z m-32.896 324.736H589.12V633.536h272.064v251.776z" />
-                        </svg>
-                      </Button>
-                    </TooltipTrigger>
-                    <TooltipContent>Replace</TooltipContent>
-                  </Tooltip>
+                  <ExpandableIconButton
+                    variant="outline"
+                    icon={<svg className="h-4 w-4" viewBox="0 0 1024 1024" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M620.544 137.6c103.936 10.432 187.328 72.96 205.12 180.224h-60.16l97.088 144.448 97.152-144.448h-67.008c-17.792-144.448-127.168-238.336-265.344-251.712-19.136-1.536-36.864 14.848-36.864 35.712 1.28 17.92 13.568 34.24 30.016 35.776z m-150.4-73.024H132.416c-19.136 0-34.176 16.384-34.176 37.248v321.728c0 20.864 15.04 37.248 34.176 37.248h337.728c19.136 0 34.176-16.384 34.176-37.248V101.824c0-20.864-15.04-37.248-34.176-37.248z m-32.832 324.736H165.248V136.064h272.128v253.248h-0.064zM404.48 883.84c-116.224-10.432-205.12-87.872-209.216-216h64.256L162.496 523.392l-97.088 144.448h64.256c2.688 165.376 118.912 272.576 268.032 287.488 19.136 1.472 36.928-14.912 36.928-35.776a35.648 35.648 0 0 0-30.144-35.712z m489.6-323.264H556.288c-19.2 0-34.176 16.448-34.176 37.248v323.264c0 20.8 14.976 37.184 34.176 37.184h337.728c19.136 0 34.112-16.384 34.112-37.184V597.824c0.064-20.8-16.32-37.248-34.048-37.248z m-32.896 324.736H589.12V633.536h272.064v251.776z" />
+                    </svg>}
+                    label="Replace"
+                    className="bg-card border-border hover:bg-muted"
+                  />
 
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <Button variant="outline" size="icon" className="h-9 w-9 bg-card border-border hover:bg-muted text-destructive hover:text-destructive" onClick={() => setShowDeleteDialog(true)}>
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
-                    </TooltipTrigger>
-                    <TooltipContent>Delete</TooltipContent>
-                  </Tooltip>
+                  <ExpandableIconButton
+                    variant="outline"
+                    icon={<Trash2 className="h-4 w-4" />}
+                    label="Delete"
+                    className="bg-card border-border hover:bg-muted text-destructive hover:text-destructive"
+                    onClick={() => setShowDeleteDialog(true)}
+                  />
                 </div>
               </div>
             </div>
