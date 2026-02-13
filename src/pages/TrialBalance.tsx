@@ -4,6 +4,7 @@ import { EngagementRightPanel } from "@/components/EngagementRightPanel";
 import { Layout } from "@/components/Layout";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { ExpandableIconButton } from "@/components/ui/expandable-icon-button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import {
@@ -283,79 +284,25 @@ export default function TrialBalance() {
               </DropdownMenuContent>
             </DropdownMenu>
 
-            {/* Icon-only buttons with tooltips */}
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button variant="outline" size="icon" className="h-9 w-9 bg-card border-border hover:bg-muted">
-                  <FileX2 className="h-4 w-4" />
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent>Unmap</TooltipContent>
-            </Tooltip>
+            {/* Icon-only expandable buttons */}
+            <ExpandableIconButton variant="outline" className="bg-card border-border hover:bg-muted" icon={<FileX2 className="h-4 w-4" />} label="Unmap" />
+            <ExpandableIconButton variant="outline" className="bg-card border-border hover:bg-muted" icon={<Network className="h-4 w-4" />} label="Auto Map" />
+            <ExpandableIconButton variant="outline" className="bg-card border-border hover:bg-muted" icon={<Upload className="h-4 w-4" />} label="Import" />
+            <ExpandableIconButton variant="outline" className="bg-card border-border hover:bg-muted" icon={<Download className="h-4 w-4" />} label="Export" />
+            <ExpandableIconButton variant="outline" className="bg-card border-border hover:bg-muted" icon={<RefreshCw className="h-4 w-4" />} label="Refresh" />
 
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button variant="outline" size="icon" className="h-9 w-9 bg-card border-border hover:bg-muted">
-                  <Network className="h-4 w-4" />
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent>Auto Map</TooltipContent>
-            </Tooltip>
-
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button variant="outline" size="icon" className="h-9 w-9 bg-card border-border hover:bg-muted">
-                  <Upload className="h-4 w-4" />
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent>Import</TooltipContent>
-            </Tooltip>
-
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button variant="outline" size="icon" className="h-9 w-9 bg-card border-border hover:bg-muted">
-                  <Download className="h-4 w-4" />
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent>Export</TooltipContent>
-            </Tooltip>
-
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button variant="outline" size="icon" className="h-9 w-9 bg-card border-border hover:bg-muted">
-                  <RefreshCw className="h-4 w-4" />
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent>Refresh</TooltipContent>
-            </Tooltip>
-
-            {/* $0 Bal. Acc. - dropdown */}
+            {/* Zero Balance Accounts - dropdown */}
             <DropdownMenu>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <DropdownMenuTrigger asChild>
-                    <Button variant="outline" size="sm" className="h-9 text-xs gap-1.5 bg-card border-border hover:bg-muted">
-                      + $0 Bal. Acc.
-                      <ChevronDown className="h-3.5 w-3.5" />
-                    </Button>
-                  </DropdownMenuTrigger>
-                </TooltipTrigger>
-                <TooltipContent>Zero Balance Accounts</TooltipContent>
-              </Tooltip>
+              <DropdownMenuTrigger asChild>
+                <ExpandableIconButton variant="outline" className="bg-card border-border hover:bg-muted" icon={<MoreVertical className="h-4 w-4" />} label="Zero Balance" />
+              </DropdownMenuTrigger>
               <DropdownMenuContent className="bg-card border shadow-lg z-50">
-                <DropdownMenuItem>Show $0 Balance</DropdownMenuItem>
-                <DropdownMenuItem>Hide $0 Balance</DropdownMenuItem>
+                <DropdownMenuItem>Show Zero Balance</DropdownMenuItem>
+                <DropdownMenuItem>Hide Zero Balance</DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
 
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button variant="outline" size="icon" className="h-9 w-9 bg-card border-border hover:bg-muted">
-                  <Search className="h-4 w-4" />
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent>Search</TooltipContent>
-            </Tooltip>
+            <ExpandableIconButton variant="outline" className="bg-card border-border hover:bg-muted" icon={<Search className="h-4 w-4" />} label="Search" />
           </div>
         </div>
 
