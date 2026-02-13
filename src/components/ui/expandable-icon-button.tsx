@@ -20,8 +20,8 @@ const ExpandableIconButton = React.forwardRef<HTMLButtonElement, ExpandableIconB
         className={cn(
           h,
           iconSize,
-          "px-0 group/expand transition-all duration-200 ease-in-out overflow-hidden",
-          `hover:w-auto hover:px-3`,
+          "px-0 group/expand transition-all duration-200 ease-in-out overflow-hidden items-center justify-center",
+          "hover:w-auto hover:px-3 hover:gap-2",
           className,
         )}
         {...props}
