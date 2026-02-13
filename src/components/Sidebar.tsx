@@ -689,7 +689,16 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
   const isOnTemplatesPage = location.pathname !== "/dashboard" && location.pathname !== "/clients" && location.pathname !== "/engagements" && !location.pathname.startsWith("/engagements/");
   const hasSecondaryPanelExpanded = (isOnEngagementDetail || isOnTemplatesPage) && !isTemplatesPanelCollapsed;
   
-  return <div className={`flex h-screen relative ${hasSecondaryPanelExpanded ? "sidebar-panel-expanded" : ""}`} style={{ backgroundColor: 'hsl(var(--sidebar-bg))' }}>
+  return <div className={`flex h-screen relative group/sidebar ${hasSecondaryPanelExpanded ? "sidebar-panel-expanded" : ""}`} style={{ backgroundColor: 'hsl(var(--sidebar-bg))' }}>
+      {/* Floating collapse/expand toggle - visible on sidebar hover */}
+      <button
+        onClick={() => setIsNavExpanded(!isNavExpanded)}
+        className="absolute z-50 w-7 h-7 rounded-full bg-white dark:bg-card border border-border shadow-md flex items-center justify-center opacity-0 group-hover/sidebar:opacity-100 transition-opacity duration-200 hover:bg-muted"
+        style={{ top: 50, right: -14 }}
+      >
+        {isNavExpanded ? <ChevronLeft className="h-3.5 w-3.5 text-foreground" /> : <ChevronRight className="h-3.5 w-3.5 text-foreground" />}
+      </button>
+
       {/* Icon sidebar - dark navy with curved corner, expands on click only */}
       <div className={`sidebar-nav flex flex-col py-4 gap-2 transition-all duration-300 ease-in-out ${isNavExpanded ? "w-56 items-start px-3" : "w-14 items-center"}`}>
         {/* Luka Logo */}
@@ -735,11 +744,8 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
           {!isNavExpanded && <TooltipContent side="right">Support</TooltipContent>}
         </Tooltip>
 
-        {/* Collapse/Expand toggle */}
-        <div className={`sidebar-item cursor-pointer mt-2 ${isNavExpanded ? "w-full justify-start gap-3 px-3" : ""}`} onClick={() => setIsNavExpanded(!isNavExpanded)}>
-          {isNavExpanded ? <ChevronLeft className="h-5 w-5 icon-arrow" /> : <ChevronRight className="h-5 w-5 icon-arrow-right" />}
-          {isNavExpanded && <span className="text-sm font-medium">Collapse</span>}
-        </div>
+
+
       </div>
 
       {/* Engagement Sections panel - shown only on engagement detail pages */}
