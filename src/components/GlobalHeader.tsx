@@ -70,7 +70,7 @@ export function GlobalHeader({ title }: { title?: string }) {
   );
   return (
     <>
-      <header className="h-14 flex items-center justify-between px-6 bg-background border-b border-border">
+      <header className="h-14 flex items-center px-6 bg-background border-b border-border">
         {/* Left side - Page title */}
         <div className="flex-1">
           {title && (
@@ -78,26 +78,29 @@ export function GlobalHeader({ title }: { title?: string }) {
           )}
         </div>
 
-        {/* Right side - Ask Luka, Credits, Theme, Notifications, Profile */}
-        <div className="flex items-center gap-3">
-          {/* Ask Luka AI Search - styled like screenshot */}
-          <div className="flex items-center bg-[hsl(213_50%_25%)] dark:bg-[hsl(213_40%_20%)] rounded-full pl-4 pr-1.5 py-1.5 gap-2 min-w-[320px]">
-            <Zap className="h-4 w-4 text-slate-400 flex-shrink-0" />
+        {/* Center - Ask Luka AI Search */}
+        <div className="flex-1 flex justify-center">
+          <div className="ask-luka-bar flex items-center bg-white dark:bg-card rounded-full pl-3 pr-1 py-1 gap-2 min-w-[300px] border border-[#dcdfe4] dark:border-[hsl(220_15%_30%)] transition-all duration-300">
+            <Zap className="h-3.5 w-3.5 text-muted-foreground flex-shrink-0" />
             <Input 
               type="text"
               placeholder="Type here.."
               value={askLukaQuery}
               onChange={(e) => setAskLukaQuery(e.target.value)}
-              className="border-0 bg-transparent h-7 text-sm text-white placeholder:text-slate-400 focus-visible:ring-0 focus-visible:ring-offset-0 px-0 flex-1"
+              className="border-0 bg-transparent h-6 text-sm text-foreground placeholder:text-muted-foreground/60 focus-visible:ring-0 focus-visible:ring-offset-0 px-0 flex-1"
             />
             <Button 
-              className="h-8 px-4 rounded-full bg-gradient-to-r from-[#1C63A6] to-[#7A31D8] hover:from-[#1a5a96] hover:to-[#6a2bc2] text-white text-sm font-medium gap-1.5 shadow-md"
+              className="h-7 px-3 rounded-full bg-gradient-to-r from-[#1C63A6] to-[#7A31D8] hover:from-[#1a5a96] hover:to-[#6a2bc2] text-white text-xs font-medium gap-1.5 shadow-md"
               onClick={() => setAskLukaOpen(true)}
             >
-              <Sparkles className="h-4 w-4 animate-[spin_3s_linear_infinite]" />
+              <Sparkles className="h-3.5 w-3.5 animate-[spin_3s_linear_infinite]" />
               Ask Luka
             </Button>
           </div>
+        </div>
+
+        {/* Right side - Credits, Theme, Notifications, Profile */}
+        <div className="flex-1 flex items-center justify-end gap-3">
 
           {/* AI Credits */}
           <Tooltip>
