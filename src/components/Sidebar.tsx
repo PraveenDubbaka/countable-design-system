@@ -690,17 +690,16 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
   const hasSecondaryPanelExpanded = (isOnEngagementDetail || isOnTemplatesPage) && !isTemplatesPanelCollapsed;
   
   return <div className={`flex h-screen relative group/sidebar ${hasSecondaryPanelExpanded ? "sidebar-panel-expanded" : ""}`} style={{ backgroundColor: 'hsl(var(--sidebar-bg))' }}>
-      {/* Floating collapse/expand toggle - visible on sidebar hover */}
-      <button
-        onClick={() => setIsNavExpanded(!isNavExpanded)}
-        className="absolute z-50 w-7 h-7 rounded-full bg-white dark:bg-card border border-border shadow-md flex items-center justify-center opacity-0 group-hover/sidebar:opacity-100 transition-opacity duration-200 hover:bg-muted"
-        style={{ top: 50, right: -14 }}
-      >
-        {isNavExpanded ? <ChevronLeft className="h-3.5 w-3.5 text-foreground" /> : <ChevronRight className="h-3.5 w-3.5 text-foreground" />}
-      </button>
-
       {/* Icon sidebar - dark navy with curved corner, expands on click only */}
-      <div className={`sidebar-nav flex flex-col py-4 gap-2 transition-all duration-300 ease-in-out ${isNavExpanded ? "w-56 items-start px-3" : "w-14 items-center"}`}>
+      <div className={`sidebar-nav relative flex flex-col py-4 gap-2 transition-all duration-300 ease-in-out ${isNavExpanded ? "w-56 items-start px-3" : "w-14 items-center"}`}>
+        {/* Floating collapse/expand toggle on nav border */}
+        <button
+          onClick={() => setIsNavExpanded(!isNavExpanded)}
+          className="absolute z-50 w-6 h-6 rounded-full bg-white dark:bg-card border border-border shadow-md flex items-center justify-center opacity-0 group-hover/sidebar:opacity-100 transition-opacity duration-200 hover:bg-muted"
+          style={{ top: 50, right: -12, transform: 'translateX(50%)' }}
+        >
+          {isNavExpanded ? <ChevronLeft className="h-3 w-3 text-foreground" /> : <ChevronRight className="h-3 w-3 text-foreground" />}
+        </button>
         {/* Luka Logo */}
         <div className={`h-10 mb-4 flex items-center ${isNavExpanded ? "px-2" : "justify-center w-10"}`}>
           {isNavExpanded ? <svg width="140" height="19" viewBox="0 0 234 32" fill="none" xmlns="http://www.w3.org/2000/svg">
