@@ -1380,3 +1380,15 @@
 .font-size-aaa {
   font-size: 120%;
 }
+
+.ask-luka-bar:hover {
+  border-color: transparent;
+  background-image: linear-gradient(white, white), linear-gradient(to right, #1C63A6, #7A31D8);
+  background-origin: border-box;
+  background-clip: padding-box, border-box;
+  border: 2px solid transparent;
+}
+
+:is(.dark) .ask-luka-bar:hover {
+  background-image: linear-gradient(hsl(var(--card)), hsl(var(--card))), linear-gradient(to right, #1C63A6, #7A31D8);
+}
