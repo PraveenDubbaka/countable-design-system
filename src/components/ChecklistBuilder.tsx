@@ -38,6 +38,7 @@ import { Checklist, Section, Question } from '@/types/checklist';
 import { SortableSection } from './SortableSection';
 import { FloatingActionBar } from './FloatingActionBar';
 import { Button } from '@/components/ui/button';
+import { ExpandableIconButton } from '@/components/ui/expandable-icon-button';
 import { Input } from '@/components/ui/input';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import {
@@ -443,20 +444,14 @@ export function ChecklistBuilder({ checklist, onUpdate, onSave, initialPreviewMo
               /* Edit mode buttons: Duplicate, Delete, Cancel, Save */
               <TooltipProvider>
                 <AlertDialog>
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <AlertDialogTrigger asChild>
-                        <Button 
-                          variant="outline" 
-                          size="icon" 
-                          className="h-9 w-9 hover:bg-[#1C63A6] hover:text-white hover:border-[#1C63A6] transition-colors"
-                        >
-                          <Copy className="h-4 w-4" />
-                        </Button>
-                      </AlertDialogTrigger>
-                    </TooltipTrigger>
-                    <TooltipContent>Duplicate</TooltipContent>
-                  </Tooltip>
+                  <AlertDialogTrigger asChild>
+                    <ExpandableIconButton 
+                      variant="outline" 
+                      icon={<Copy className="h-4 w-4" />}
+                      label="Duplicate"
+                      className="hover:bg-[#1C63A6] hover:text-white hover:border-[#1C63A6] transition-colors"
+                    />
+                  </AlertDialogTrigger>
                   <AlertDialogContent>
                     <AlertDialogHeader>
                       <AlertDialogTitle>Duplicate Checklist</AlertDialogTitle>
@@ -474,20 +469,14 @@ export function ChecklistBuilder({ checklist, onUpdate, onSave, initialPreviewMo
                 </AlertDialog>
                 
                 <AlertDialog>
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <AlertDialogTrigger asChild>
-                        <Button 
-                          variant="outline" 
-                          size="icon" 
-                          className="h-9 w-9 bg-destructive text-white border-destructive hover:bg-destructive/90 transition-colors"
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </Button>
-                      </AlertDialogTrigger>
-                    </TooltipTrigger>
-                    <TooltipContent>Delete</TooltipContent>
-                  </Tooltip>
+                  <AlertDialogTrigger asChild>
+                    <ExpandableIconButton 
+                      variant="outline" 
+                      icon={<Trash2 className="h-4 w-4" />}
+                      label="Delete"
+                      className="bg-destructive text-white border-destructive hover:bg-destructive/90 transition-colors"
+                    />
+                  </AlertDialogTrigger>
                   <AlertDialogContent>
                     <AlertDialogHeader>
                       <AlertDialogTitle>Delete Checklist</AlertDialogTitle>
@@ -567,35 +556,22 @@ export function ChecklistBuilder({ checklist, onUpdate, onSave, initialPreviewMo
             /* Original logic for non-saved templates */
             <>
               {!isPreviewMode && (
-                <TooltipProvider>
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <Button 
-                        size="icon" 
-                        className="h-9 w-9"
-                        onClick={onSave}
-                      >
-                        <Save className="h-4 w-4" />
-                      </Button>
-                    </TooltipTrigger>
-                    <TooltipContent>Save</TooltipContent>
-                  </Tooltip>
+                <>
+                  <ExpandableIconButton 
+                    icon={<Save className="h-4 w-4" />}
+                    label="Save"
+                    onClick={onSave}
+                  />
                   
                   <AlertDialog>
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <AlertDialogTrigger asChild>
-                          <Button 
-                            variant="outline" 
-                            size="icon" 
-                            className="h-9 w-9 hover:bg-[#1C63A6] hover:text-white hover:border-[#1C63A6] transition-colors"
-                          >
-                            <Copy className="h-4 w-4" />
-                          </Button>
-                        </AlertDialogTrigger>
-                      </TooltipTrigger>
-                      <TooltipContent>Duplicate</TooltipContent>
-                    </Tooltip>
+                    <AlertDialogTrigger asChild>
+                      <ExpandableIconButton 
+                        variant="outline" 
+                        icon={<Copy className="h-4 w-4" />}
+                        label="Duplicate"
+                        className="hover:bg-[#1C63A6] hover:text-white hover:border-[#1C63A6] transition-colors"
+                      />
+                    </AlertDialogTrigger>
                     <AlertDialogContent>
                       <AlertDialogHeader>
                         <AlertDialogTitle>Duplicate Checklist</AlertDialogTitle>
@@ -613,20 +589,14 @@ export function ChecklistBuilder({ checklist, onUpdate, onSave, initialPreviewMo
                   </AlertDialog>
                   
                   <AlertDialog>
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <AlertDialogTrigger asChild>
-                          <Button 
-                            variant="outline" 
-                            size="icon" 
-                            className="h-9 w-9 bg-destructive text-white border-destructive hover:bg-destructive/90 transition-colors"
-                          >
-                            <Trash2 className="h-4 w-4" />
-                          </Button>
-                        </AlertDialogTrigger>
-                      </TooltipTrigger>
-                      <TooltipContent>Delete</TooltipContent>
-                    </Tooltip>
+                    <AlertDialogTrigger asChild>
+                      <ExpandableIconButton 
+                        variant="outline" 
+                        icon={<Trash2 className="h-4 w-4" />}
+                        label="Delete"
+                        className="bg-destructive text-white border-destructive hover:bg-destructive/90 transition-colors"
+                      />
+                    </AlertDialogTrigger>
                     <AlertDialogContent>
                       <AlertDialogHeader>
                         <AlertDialogTitle>Delete Checklist</AlertDialogTitle>
@@ -645,42 +615,27 @@ export function ChecklistBuilder({ checklist, onUpdate, onSave, initialPreviewMo
                       </AlertDialogFooter>
                     </AlertDialogContent>
                   </AlertDialog>
-                </TooltipProvider>
+                </>
               )}
               
-              <TooltipProvider>
               {isGlobalTemplate ? (
                 /* For Global Templates: Show "Add to My Templates" button instead of Edit */
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Button 
-                      variant="default"
-                      size="icon"
-                      className="h-9 w-9"
-                      onClick={() => setShowAddToMyTemplatesDialog(true)}
-                    >
-                      <Plus className="h-4 w-4" />
-                    </Button>
-                  </TooltipTrigger>
-                  <TooltipContent>Add to My Templates</TooltipContent>
-                </Tooltip>
+                <ExpandableIconButton 
+                  variant="default"
+                  icon={<Plus className="h-4 w-4" />}
+                  label="Add to My Templates"
+                  onClick={() => setShowAddToMyTemplatesDialog(true)}
+                />
               ) : (
                 /* For regular templates: Show Edit/Preview toggle */
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Button 
-                      variant="outline" 
-                      size="icon"
-                      className="h-9 w-9 hover:bg-[#1C63A6] hover:text-white hover:border-[#1C63A6] transition-colors"
-                      onClick={() => setIsPreviewMode(!isPreviewMode)}
-                    >
-                      {isPreviewMode ? <Pencil className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                    </Button>
-                  </TooltipTrigger>
-                  <TooltipContent>{isPreviewMode ? 'Edit' : 'Preview'}</TooltipContent>
-                </Tooltip>
+                <ExpandableIconButton 
+                  variant="outline" 
+                  icon={isPreviewMode ? <Pencil className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                  label={isPreviewMode ? 'Edit' : 'Preview'}
+                  className="hover:bg-[#1C63A6] hover:text-white hover:border-[#1C63A6] transition-colors"
+                  onClick={() => setIsPreviewMode(!isPreviewMode)}
+                />
               )}
-              </TooltipProvider>
             </>
           )}
         </div>
