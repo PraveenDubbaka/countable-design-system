@@ -25,7 +25,7 @@ export function EngagementRightPanel({ className }: EngagementRightPanelProps) {
   return (
     <div className={cn("flex h-full", className)}>
       {/* Icon Bar - Always visible */}
-      <div className="w-12 bg-card border-l border-border flex flex-col items-center py-3 gap-1">
+      <div className="w-12 bg-[#f1f1f3] border-l border-border flex flex-col items-center py-3 gap-1">
         {/* Toggle Button */}
         <Button
           variant="ghost"
@@ -63,7 +63,7 @@ export function EngagementRightPanel({ className }: EngagementRightPanelProps) {
       {/* Expanded Content Panel */}
       <div
         className={cn(
-          "bg-card border-l border-border transition-all duration-300 overflow-hidden",
+          "bg-[#f1f1f3] border-l border-border transition-all duration-300 overflow-hidden",
           isExpanded ? "w-72" : "w-0"
         )}
       >
