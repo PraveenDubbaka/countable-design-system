@@ -730,8 +730,8 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
         {/* Spacer */}
         <div className="flex-1" />
 
-        {/* Divider before utilities */}
-        <div className={`w-full h-px bg-sidebar-foreground/20 my-2 ${isNavExpanded ? "" : "mx-auto w-8"}`} />
+
+
 
         {/* Support */}
         <Tooltip>
