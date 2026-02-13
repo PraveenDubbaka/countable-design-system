@@ -756,7 +756,7 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
               "flex flex-col relative z-40 transition-all group/templates",
               isTemplatesPanelCollapsed 
                 ? "overflow-hidden shadow-none bg-transparent" 
-                : "shadow-md bg-muted rounded-tl-2xl rounded-bl-2xl",
+                : "shadow-md bg-[#f1f1f3] rounded-tl-2xl rounded-bl-2xl",
               isResizing && "transition-none"
             )}
           >
