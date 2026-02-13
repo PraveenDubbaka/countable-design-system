@@ -11,7 +11,7 @@ export interface ExpandableIconButtonProps extends Omit<ButtonProps, "size"> {
 const ExpandableIconButton = React.forwardRef<HTMLButtonElement, ExpandableIconButtonProps>(
   ({ icon, label, className, size = "default", ...props }, ref) => {
     const h = size === "sm" ? "h-8" : "h-9";
-    const iconSize = size === "sm" ? "w-8" : "w-9";
+    const minW = size === "sm" ? "min-w-8" : "min-w-9";
     
     return (
       <Button
@@ -19,16 +19,19 @@ const ExpandableIconButton = React.forwardRef<HTMLButtonElement, ExpandableIconB
         size="sm"
         className={cn(
           h,
-          iconSize,
-          "px-0 group/expand transition-all duration-200 ease-in-out overflow-hidden items-center justify-center",
-          "hover:w-auto hover:px-3 hover:gap-2",
+          minW,
+          "!gap-0 px-0 group/expand overflow-hidden items-center justify-center",
+          "transition-[padding,gap] duration-200 ease-in-out",
+          "hover:px-3 hover:!gap-2",
           className,
         )}
         {...props}
       >
-        <span className="shrink-0">{icon}</span>
-        <span className="max-w-0 overflow-hidden opacity-0 group-hover/expand:max-w-[120px] group-hover/expand:opacity-100 transition-all duration-200 ease-in-out whitespace-nowrap text-xs font-medium">
-          {label}
+        <span className="shrink-0 flex items-center justify-center">{icon}</span>
+        <span className="grid grid-cols-[0fr] group-hover/expand:grid-cols-[1fr] transition-[grid-template-columns,opacity] duration-200 ease-in-out overflow-hidden">
+          <span className="overflow-hidden whitespace-nowrap text-xs font-medium opacity-0 group-hover/expand:opacity-100 transition-opacity duration-200 ease-in-out">
+            {label}
+          </span>
         </span>
       </Button>
     );
