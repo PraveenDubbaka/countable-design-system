@@ -14,6 +14,7 @@ import { readJsonFromLocalStorage, removeLocalStorageKey, writeJsonToLocalStorag
 import { cn } from "@/lib/utils";
 import { LetterIcon } from "@/components/icons/LetterIcon";
 import { ChecklistIcon } from "@/components/icons/ChecklistIcon";
+import { SignoffsOverlay } from "@/components/SignoffsOverlay";
 interface Template {
   id: string;
   name: string;
@@ -683,6 +684,7 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
   };
   const [isNavExpanded, setIsNavExpanded] = useState(false);
   const [expandedSections, setExpandedSections] = useState<Set<string>>(new Set(["co"]));
+  const [showSignoffs, setShowSignoffs] = useState(false);
   
   // Determine if a secondary panel is visible and expanded (for dark mode gradient)
   const isOnEngagementDetail = location.pathname.startsWith("/engagements/") && location.pathname !== "/engagements/create";
@@ -763,13 +765,16 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
             <div className={`p-4 pb-2 ${isTemplatesPanelCollapsed ? "hidden" : ""}`}>
               <div className="flex items-center gap-2">
                 <h2 className="font-semibold text-primary text-lg">Engagements</h2>
-                <div className="flex items-center gap-1 text-muted-foreground">
+                <button
+                  onClick={() => setShowSignoffs(true)}
+                  className="flex items-center gap-1 text-muted-foreground hover:text-primary transition-colors cursor-pointer"
+                >
                   <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                     <circle cx="12" cy="12" r="10" />
                     <path d="M9 12l2 2 4-4" />
                   </svg>
                   <span className="text-sm">Signoffs</span>
-                </div>
+                </button>
               </div>
             </div>
 
@@ -1117,6 +1122,13 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
         selectedTemplates={getSelectedTemplateDetails()}
         onSuccess={clearSelection}
         getChecklistData={(templateId) => getGlobalTemplateChecklist(templateId)}
+      />
+
+      {/* Signoffs Overlay */}
+      <SignoffsOverlay
+        open={showSignoffs}
+        onClose={() => setShowSignoffs(false)}
+        anchorLeft={56}
       />
     </div>;
 }
