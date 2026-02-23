@@ -14,6 +14,7 @@ import CreateEngagement from "./pages/CreateEngagement";
 import Clients from "./pages/Clients";
 import TrialBalance from "./pages/TrialBalance";
 import Teams from "./pages/Teams";
+import DesignSystem from "./pages/DesignSystem";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -37,6 +38,7 @@ const App = () => (
             <Route path="/create" element={<CreationDashboard />} />
             <Route path="/builder" element={<Index />} />
             <Route path="/generate" element={<Generate />} />
+            <Route path="/design-system" element={<DesignSystem />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
