@@ -152,6 +152,10 @@ const navItems = [{
   icon: FileIcon,
   label: "Templates",
   route: "/create"
+}, {
+  icon: ({ className }: { className?: string }) => <svg className={className} width="20" height="20" viewBox="0 0 20 20" fill="none"><rect x="2" y="2" width="7" height="7" rx="1.5" stroke="currentColor" strokeWidth="1.5"/><rect x="11" y="2" width="7" height="7" rx="1.5" stroke="currentColor" strokeWidth="1.5"/><rect x="2" y="11" width="7" height="7" rx="1.5" stroke="currentColor" strokeWidth="1.5"/><circle cx="14.5" cy="14.5" r="3.5" stroke="currentColor" strokeWidth="1.5"/></svg>,
+  label: "Design System",
+  route: "/design-system"
 }];
 
 // Luka Logo Component
@@ -689,7 +693,7 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
   
   // Determine if a secondary panel is visible and expanded (for dark mode gradient)
   const isOnEngagementDetail = location.pathname.startsWith("/engagements/") && location.pathname !== "/engagements/create";
-  const isOnTemplatesPage = location.pathname !== "/dashboard" && location.pathname !== "/clients" && location.pathname !== "/engagements" && location.pathname !== "/teams" && !location.pathname.startsWith("/engagements/");
+  const isOnTemplatesPage = location.pathname !== "/dashboard" && location.pathname !== "/clients" && location.pathname !== "/engagements" && location.pathname !== "/teams" && location.pathname !== "/design-system" && !location.pathname.startsWith("/engagements/");
   const hasSecondaryPanelExpanded = (isOnEngagementDetail || isOnTemplatesPage) && !isTemplatesPanelCollapsed;
   
   return <div className={`flex h-screen relative group/sidebar ${hasSecondaryPanelExpanded ? "sidebar-panel-expanded" : ""}`} style={{ backgroundColor: 'hsl(var(--sidebar-bg))' }}>
