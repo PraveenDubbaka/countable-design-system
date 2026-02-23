@@ -138,7 +138,8 @@ const navItems = [{
   route: "/dashboard"
 }, {
   icon: GlassesIcon,
-  label: "Team"
+  label: "Team",
+  route: "/teams"
 }, {
   icon: ChatIcon,
   label: "Clients",
@@ -688,7 +689,7 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
   
   // Determine if a secondary panel is visible and expanded (for dark mode gradient)
   const isOnEngagementDetail = location.pathname.startsWith("/engagements/") && location.pathname !== "/engagements/create";
-  const isOnTemplatesPage = location.pathname !== "/dashboard" && location.pathname !== "/clients" && location.pathname !== "/engagements" && !location.pathname.startsWith("/engagements/");
+  const isOnTemplatesPage = location.pathname !== "/dashboard" && location.pathname !== "/clients" && location.pathname !== "/engagements" && location.pathname !== "/teams" && !location.pathname.startsWith("/engagements/");
   const hasSecondaryPanelExpanded = (isOnEngagementDetail || isOnTemplatesPage) && !isTemplatesPanelCollapsed;
   
   return <div className={`flex h-screen relative group/sidebar ${hasSecondaryPanelExpanded ? "sidebar-panel-expanded" : ""}`} style={{ backgroundColor: 'hsl(var(--sidebar-bg))' }}>
@@ -912,8 +913,8 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
             </div>}
         </>}
 
-      {/* Templates panel - hidden on Dashboard, Clients, Engagements list, and Engagement detail pages */}
-      {location.pathname !== "/dashboard" && location.pathname !== "/clients" && location.pathname !== "/engagements" && !location.pathname.startsWith("/engagements/") && <>
+      {/* Templates panel - hidden on Dashboard, Clients, Teams, Engagements list, and Engagement detail pages */}
+      {location.pathname !== "/dashboard" && location.pathname !== "/clients" && location.pathname !== "/teams" && location.pathname !== "/engagements" && !location.pathname.startsWith("/engagements/") && <>
           <div 
             ref={panelRef}
             style={{ width: isTemplatesPanelCollapsed ? 0 : panelWidth }}
