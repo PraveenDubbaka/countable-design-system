@@ -103,7 +103,26 @@ const initialGlobalTemplates: GlobalTemplate[] = [
     name: "Review",
     type: "folder",
     isExpanded: false,
-    children: []
+    children: [
+      { id: "global-2-1", name: "New engagement acceptance", type: "file" },
+      { id: "global-2-2", name: "Existing engagement continuance", type: "file" },
+      { id: "global-2-3", name: "Understanding the entity - Basics", type: "file" },
+      { id: "global-2-4", name: "Engagement Planning", type: "file" },
+      { id: "global-2-5", name: "Completion", type: "file" },
+      { id: "global-2-6", name: "Subsequent events", type: "file" },
+      { id: "global-2-7", name: "Withdrawal", type: "file" },
+      { id: "global-2-8", name: "Understanding the entity - Systems", type: "file" },
+      { id: "global-2-9", name: "ASPE - General - Disclosure checklist", type: "file" },
+      { id: "global-2-10", name: "ASPE - Income taxes - Disclosure checklist", type: "file" },
+      { id: "global-2-11", name: "ASPE - Leases - Disclosure checklist", type: "file" },
+      { id: "global-2-12", name: "ASPE - Goodwill and intangible assets - Disclosure checklist", type: "file" },
+      { id: "global-2-13", name: "ASPE - Employee future benefits - Disclosure checklist", type: "file" },
+      { id: "global-2-14", name: "ASPE - Supplementary - Disclosure checklist", type: "file" },
+      { id: "global-2-15", name: "ASPE - Agriculture - Disclosure checklist", type: "file" },
+      { id: "global-2-16", name: "Specific Circumstances", type: "file" },
+      { id: "global-2-17", name: "Worksheet - Accounting estimates (including fair values)", type: "file" },
+      { id: "global-2-18", name: "Worksheet - Going concern", type: "file" },
+    ]
   },
   {
     id: "global-3",
