@@ -129,7 +129,9 @@ const initialGlobalTemplates: GlobalTemplate[] = [
     name: "Tax",
     type: "folder",
     isExpanded: false,
-    children: []
+    children: [
+      { id: "global-3-1", name: "Completion", type: "file" },
+    ]
   }
 ];
 
