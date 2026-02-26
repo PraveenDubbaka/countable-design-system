@@ -798,85 +798,196 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
             </div>
 
             <div className={`flex-1 overflow-y-auto p-2 pt-0 ${isTemplatesPanelCollapsed ? "hidden" : ""}`}>
-            {/* Engagement Sections */}
-              {[{
-            id: "co",
-            code: "CO",
-            label: "Client Onboarding",
-            hasPlus: false,
-            children: [
-              { id: "co-ca", code: "CA", label: "Client acceptance and continuance", icon: "checklist" },
-              { id: "co-ind", code: "IND", label: "Independence", icon: "checklist" },
-              { id: "co-kcb", code: "KCB", label: "Knowledge of client business", icon: "checklist" },
-              { id: "co-pl", code: "PL", label: "Planning", icon: "checklist" },
-              { id: "co-el", code: "EL", label: "Engagement Letter", icon: "letter" },
-              { id: "co-mr", code: "MR", label: "Management responsibility and acknowledgem...", icon: "letter" },
-            ]
-          }, {
-            id: "do",
-            code: "DO",
-            label: "Documents",
-            hasPlus: true
-          }, {
-            id: "tb",
-            code: "TB",
-            label: "Trial Balance & Adj. Entri...",
-            hasPlus: false,
-            route: "trial-balance"
-          }, {
-            id: "pr",
-            code: "PR",
-            label: "Procedures",
-            hasPlus: false
-          }, {
-            id: "fs",
-            code: "FS",
-            label: "Financial Statements",
-            hasPlus: true
-          }, {
-            id: "so",
-            code: "SO",
-            label: "Completion & Signoffs",
-            hasPlus: false
-          }].map(section => {
-                const isOpen = expandedSections.has(section.id);
-                const hasChildren = section.children && section.children.length > 0;
-                return <div key={section.id}>
-                  <div className="flex items-center gap-2 py-1.5 px-2 rounded-md cursor-pointer hover:bg-muted transition-colors text-sm"
-                    onClick={() => {
-                      if (section.route) {
-                        const engId = location.pathname.split("/engagements/")[1]?.split("/")[0];
-                        if (engId) navigate(`/engagements/${engId}/${section.route}`);
-                      } else if (hasChildren) {
-                        setExpandedSections(prev => {
-                          const next = new Set(prev);
-                          if (next.has(section.id)) next.delete(section.id);
-                          else next.add(section.id);
-                          return next;
-                        });
-                      }
-                    }}
-                  >
-                    {isOpen ? <ChevronDown className="h-4 w-4 text-muted-foreground flex-shrink-0" /> : <ChevronRight className="h-4 w-4 text-muted-foreground flex-shrink-0" />}
-                    <Folder className="h-4 w-4 text-primary flex-shrink-0" />
-                    <span className="font-semibold text-primary">{section.code}</span>
-                    <span className="truncate flex-1 text-foreground">{section.label}</span>
-                    {section.hasPlus && <Plus className="h-4 w-4 text-muted-foreground hover:text-foreground flex-shrink-0" />}
-                  </div>
-                  {isOpen && hasChildren && (
-                    <div className="ml-4">
-                      {section.children!.map(child => (
-                        <div key={child.id} className="flex items-center gap-2 py-1.5 px-2 rounded-md cursor-pointer hover:bg-muted transition-colors text-sm">
-                          <span className="w-4 flex-shrink-0" />
-                          {child.icon === "letter" ? <LetterIcon className="h-4 w-4 flex-shrink-0" /> : <ChecklistIcon className="h-4 w-4 flex-shrink-0" />}
-                          <span className="font-semibold text-primary">{child.code}</span>
-                          <span className="truncate flex-1 text-foreground">{child.label}</span>
+            {/* Engagement Sections - recursive tree */}
+              {(() => {
+                type SectionNode = {
+                  id: string;
+                  code?: string;
+                  label: string;
+                  icon?: "checklist" | "letter" | "folder" | "doc";
+                  hasPlus?: boolean;
+                  route?: string;
+                  children?: SectionNode[];
+                };
+
+                const engagementTree: SectionNode[] = [
+                  {
+                    id: "co", code: "CO", label: "Client Onboarding", icon: "folder",
+                    children: [
+                      { id: "co-ca", code: "CA", label: "Client acceptance and continuance", icon: "checklist" },
+                      { id: "co-ind", code: "IND", label: "Independence", icon: "checklist" },
+                      { id: "co-kcb", code: "KCB", label: "Knowledge of client business", icon: "checklist" },
+                      { id: "co-pl", code: "PL", label: "Planning", icon: "checklist" },
+                      { id: "co-el", code: "EL", label: "Engagement Letter", icon: "letter" },
+                      { id: "co-mr", code: "MR", label: "Management responsibility and acknowledgem...", icon: "letter" },
+                    ]
+                  },
+                  {
+                    id: "do", code: "DO", label: "Documents", icon: "folder", hasPlus: true,
+                    children: [
+                      { id: "do-sha", code: "SHA", label: "Shareholders Agreements", icon: "folder" },
+                      { id: "do-ren", code: "REN", label: "Rental/Lease Agreements", icon: "folder" },
+                      { id: "do-inc", code: "INC", label: "Incorporation Documents", icon: "folder" },
+                      { id: "do-ban", code: "BAN", label: "Banking Agreements", icon: "folder" },
+                      { id: "do-tb", code: "TB", label: "Trial Balance & Adj. Entries", icon: "folder", route: "trial-balance" },
+                    ]
+                  },
+                  {
+                    id: "pr", code: "PR", label: "Procedures", icon: "folder",
+                    children: [
+                      {
+                        id: "pr-assets", label: "Assets", icon: "folder",
+                        children: [
+                          {
+                            id: "pr-ca", label: "Current assets", icon: "folder",
+                            children: [
+                              { id: "pr-ca-a", code: "A", label: "Cash and cash equivalents", icon: "checklist" },
+                              { id: "pr-ca-b", code: "B", label: "Accounts receivable", icon: "checklist" },
+                              { id: "pr-ca-c", code: "C", label: "Inventories", icon: "checklist" },
+                              { id: "pr-ca-d", code: "D", label: "Short-term investments", icon: "checklist" },
+                              { id: "pr-ca-i", code: "I", label: "Other current assets", icon: "checklist" },
+                            ]
+                          },
+                          {
+                            id: "pr-ppe", label: "Property, plant and equipment", icon: "folder",
+                            children: [
+                              { id: "pr-ppe-h", code: "H", label: "Property, plant and equipment", icon: "checklist" },
+                            ]
+                          },
+                        ]
+                      },
+                      {
+                        id: "pr-liab", label: "Liabilities", icon: "folder",
+                        children: [
+                          {
+                            id: "pr-cl", label: "Current liabilities", icon: "folder",
+                            children: [
+                              { id: "pr-cl-aa", code: "AA", label: "Bank overdraft", icon: "checklist" },
+                              { id: "pr-cl-bb", code: "BB", label: "Accounts payable", icon: "checklist" },
+                              { id: "pr-cl-dd", code: "DD", label: "Short-term debt", icon: "checklist" },
+                              { id: "pr-cl-ee", code: "EE", label: "Deferred income", icon: "checklist" },
+                            ]
+                          },
+                          {
+                            id: "pr-ltl", label: "Long-term liabilities", icon: "folder",
+                            children: [
+                              { id: "pr-ltl-jj", code: "JJ", label: "Other long-term liabilities", icon: "checklist" },
+                            ]
+                          },
+                        ]
+                      },
+                      {
+                        id: "pr-equity", label: "Equity", icon: "folder",
+                        children: [
+                          {
+                            id: "pr-sc", label: "Share capital", icon: "folder",
+                            children: [
+                              { id: "pr-sc-tt", code: "TT", label: "Equity", icon: "checklist" },
+                            ]
+                          },
+                        ]
+                      },
+                      {
+                        id: "pr-rev", label: "Revenue", icon: "folder",
+                        children: [
+                          {
+                            id: "pr-rev-sub", label: "Revenue", icon: "folder",
+                            children: [
+                              { id: "pr-rev-20", code: "20", label: "Revenue", icon: "checklist" },
+                            ]
+                          },
+                        ]
+                      },
+                      {
+                        id: "pr-exp", label: "Expenses", icon: "folder",
+                        children: [
+                          {
+                            id: "pr-opex", label: "Operating expenses", icon: "folder",
+                            children: [
+                              { id: "pr-opex-40", code: "40", label: "Operating expenses", icon: "checklist" },
+                            ]
+                          },
+                        ]
+                      },
+                    ]
+                  },
+                  {
+                    id: "fs", code: "FS", label: "Financial Statements", icon: "folder", hasPlus: true,
+                    children: [
+                      {
+                        id: "fs-docs", code: "FS", label: "Financial Statements Docs", icon: "folder",
+                        children: [
+                          { id: "fs-cover", label: "Cover Page", icon: "doc" },
+                          { id: "fs-toc", label: "Table of Contents", icon: "doc" },
+                          { id: "fs-comp", label: "Compilation report", icon: "doc" },
+                          { id: "fs-bs", label: "Balance Sheet", icon: "doc" },
+                          { id: "fs-is", label: "Statement of Income and Retained Earnings", icon: "doc" },
+                          { id: "fs-cf", label: "Statement of Cash Flows", icon: "doc" },
+                        ]
+                      },
+                    ]
+                  },
+                  {
+                    id: "so", code: "SO", label: "Completion & Signoffs", icon: "folder",
+                    children: [
+                      { id: "so-cm", code: "CM", label: "Completion", icon: "checklist" },
+                      { id: "so-so", code: "SO", label: "Signoffs", icon: "checklist" },
+                    ]
+                  },
+                ];
+
+                const renderIcon = (icon?: string) => {
+                  if (icon === "letter") return <LetterIcon className="h-4 w-4 flex-shrink-0" />;
+                  if (icon === "checklist") return <ChecklistIcon className="h-4 w-4 flex-shrink-0" />;
+                  if (icon === "doc") return <FileText className="h-3.5 w-3.5 text-primary flex-shrink-0" />;
+                  return <Folder className="h-4 w-4 text-primary flex-shrink-0" />;
+                };
+
+                const renderNode = (node: SectionNode, depth: number = 0): React.ReactNode => {
+                  const hasChildren = node.children && node.children.length > 0;
+                  const isOpen = expandedSections.has(node.id);
+                  const isLeaf = !hasChildren;
+
+                  return (
+                    <div key={node.id}>
+                      <div
+                        className="flex items-center gap-1.5 py-1.5 px-2 rounded-md cursor-pointer hover:bg-muted transition-colors text-sm"
+                        style={{ paddingLeft: `${depth * 16 + 8}px` }}
+                        onClick={() => {
+                          if (node.route) {
+                            const engId = location.pathname.split("/engagements/")[1]?.split("/")[0];
+                            if (engId) navigate(`/engagements/${engId}/${node.route}`);
+                          } else if (hasChildren) {
+                            setExpandedSections(prev => {
+                              const next = new Set(prev);
+                              if (next.has(node.id)) next.delete(node.id);
+                              else next.add(node.id);
+                              return next;
+                            });
+                          }
+                        }}
+                      >
+                        {hasChildren ? (
+                          isOpen ? <ChevronDown className="h-3.5 w-3.5 text-muted-foreground flex-shrink-0" /> : <ChevronRight className="h-3.5 w-3.5 text-muted-foreground flex-shrink-0" />
+                        ) : (
+                          <span className="w-3.5 flex-shrink-0" />
+                        )}
+                        {renderIcon(isLeaf ? node.icon : "folder")}
+                        {node.code && <span className="font-semibold text-primary">{node.code}</span>}
+                        <span className="truncate flex-1 text-foreground">{node.label}</span>
+                        {node.hasPlus && <Plus className="h-4 w-4 text-muted-foreground hover:text-foreground flex-shrink-0" />}
+                      </div>
+                      {isOpen && hasChildren && (
+                        <div>
+                          {node.children!.map(child => renderNode(child, depth + 1))}
                         </div>
-                      ))}
+                      )}
                     </div>
-                  )}
-                </div>;
-          })}
+                  );
+                };
+
+                return engagementTree.map(node => renderNode(node, 0));
+              })()}
             </div>
 
             {/* Resize handle */}
