@@ -14,6 +14,7 @@ import { readJsonFromLocalStorage, removeLocalStorageKey, writeJsonToLocalStorag
 import { cn } from "@/lib/utils";
 import { LetterIcon } from "@/components/icons/LetterIcon";
 import { ChecklistIcon } from "@/components/icons/ChecklistIcon";
+import { CompletionIcon } from "@/components/icons/CompletionIcon";
 import { SignoffsOverlay } from "@/components/SignoffsOverlay";
 interface Template {
   id: string;
@@ -825,7 +826,7 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
                   id: string;
                   code?: string;
                   label: string;
-                  icon?: "checklist" | "letter" | "folder" | "doc";
+                  icon?: "checklist" | "letter" | "folder" | "doc" | "completion";
                   hasPlus?: boolean;
                   route?: string;
                   children?: SectionNode[];
@@ -951,8 +952,8 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
                   {
                     id: "so", code: "SO", label: "Completion & Signoffs", icon: "folder",
                     children: [
-                      { id: "so-cm", code: "CM", label: "Completion", icon: "checklist" },
-                      { id: "so-so", code: "SO", label: "Signoffs", icon: "checklist" },
+                      { id: "so-cm", code: "CM", label: "Completion", icon: "completion" },
+                      { id: "so-so", code: "SO", label: "Signoffs", icon: "completion" },
                     ]
                   },
                 ];
@@ -960,6 +961,7 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
                 const renderIcon = (icon?: string) => {
                   if (icon === "letter") return <LetterIcon className="h-4 w-4 flex-shrink-0" />;
                   if (icon === "checklist") return <ChecklistIcon className="h-4 w-4 flex-shrink-0" />;
+                  if (icon === "completion") return <CompletionIcon className="h-4 w-4 flex-shrink-0" />;
                   if (icon === "doc") return <FileText className="h-3.5 w-3.5 text-primary flex-shrink-0" />;
                   return <Folder className="h-4 w-4 text-primary flex-shrink-0" />;
                 };
