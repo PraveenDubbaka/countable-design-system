@@ -15,6 +15,7 @@ import { cn } from "@/lib/utils";
 import { LetterIcon } from "@/components/icons/LetterIcon";
 import { ChecklistIcon } from "@/components/icons/ChecklistIcon";
 import { CompletionIcon } from "@/components/icons/CompletionIcon";
+import { WordDocIcon } from "@/components/icons/WordDocIcon";
 import { SignoffsOverlay } from "@/components/SignoffsOverlay";
 interface Template {
   id: string;
@@ -962,7 +963,7 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
                   if (icon === "letter") return <LetterIcon className="h-4 w-4 flex-shrink-0" />;
                   if (icon === "checklist") return <ChecklistIcon className="h-4 w-4 flex-shrink-0" />;
                   if (icon === "completion") return <CompletionIcon className="h-4 w-4 flex-shrink-0" />;
-                  if (icon === "doc") return <FileText className="h-3.5 w-3.5 text-primary flex-shrink-0" />;
+                  if (icon === "doc") return <WordDocIcon className="h-4 w-4 flex-shrink-0" />;
                   return <Folder className="h-4 w-4 text-primary flex-shrink-0" />;
                 };
 
