@@ -965,7 +965,7 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
                   if (icon === "checklist") return <ChecklistIcon className="h-4 w-4 flex-shrink-0" />;
                   if (icon === "completion") return <CompletionIcon className="h-4 w-4 flex-shrink-0" />;
                   if (icon === "doc") return <WordDocIcon className="h-4 w-4 flex-shrink-0" />;
-                  if (icon === "book") return <BookIcon className="h-3.5 w-3.5 text-muted-foreground flex-shrink-0" />;
+                  if (icon === "book") return <BookIcon className="h-3.5 w-3.5 flex-shrink-0" style={{ color: '#778599' }} />;
                   return <Folder className="h-4 w-4 text-primary flex-shrink-0" />;
                 };
 
