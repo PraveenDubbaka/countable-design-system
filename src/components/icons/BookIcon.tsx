@@ -1,9 +1,9 @@
-interface BookIconProps {
+interface BookIconProps extends React.SVGProps<SVGSVGElement> {
   className?: string;
 }
 
-export const BookIcon = ({ className }: BookIconProps) => (
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" fill="currentColor" className={className}>
+export const BookIcon = ({ className, ...props }: BookIconProps) => (
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" fill="currentColor" className={className} {...props}>
     <path
       fillRule="evenodd"
       clipRule="evenodd"
