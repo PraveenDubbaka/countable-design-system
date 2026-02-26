@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { ChevronDown, ChevronRight, ChevronLeft, Search, Plus, Expand, Trash2, Folder, Headphones, Check, FileText, FileBarChart, StickyNote, Table, Copy, Pencil, FolderInput, MoreVertical, GripVertical, X, Save, Files } from "lucide-react";
+import { ChevronDown, ChevronRight, ChevronLeft, Search, Plus, Expand, Trash2, Folder, Headphones, Check, FileText, FileBarChart, StickyNote, Table, Copy, Pencil, FolderInput, MoreVertical, GripVertical, X, Save, Files, BookOpen } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -827,7 +827,7 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
                   id: string;
                   code?: string;
                   label: string;
-                  icon?: "checklist" | "letter" | "folder" | "doc" | "completion";
+                  icon?: "checklist" | "letter" | "folder" | "doc" | "completion" | "book";
                   hasPlus?: boolean;
                   route?: string;
                   children?: SectionNode[];
@@ -864,17 +864,17 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
                           {
                             id: "pr-ca", label: "Current assets", icon: "folder",
                             children: [
-                              { id: "pr-ca-a", code: "A", label: "Cash and cash equivalents", icon: "checklist" },
-                              { id: "pr-ca-b", code: "B", label: "Accounts receivable", icon: "checklist" },
-                              { id: "pr-ca-c", code: "C", label: "Inventories", icon: "checklist" },
-                              { id: "pr-ca-d", code: "D", label: "Short-term investments", icon: "checklist" },
-                              { id: "pr-ca-i", code: "I", label: "Other current assets", icon: "checklist" },
+                              { id: "pr-ca-a", code: "A", label: "Cash and cash equivalents", icon: "book" },
+                              { id: "pr-ca-b", code: "B", label: "Accounts receivable", icon: "book" },
+                              { id: "pr-ca-c", code: "C", label: "Inventories", icon: "book" },
+                              { id: "pr-ca-d", code: "D", label: "Short-term investments", icon: "book" },
+                              { id: "pr-ca-i", code: "I", label: "Other current assets", icon: "book" },
                             ]
                           },
                           {
                             id: "pr-ppe", label: "Property, plant and equipment", icon: "folder",
                             children: [
-                              { id: "pr-ppe-h", code: "H", label: "Property, plant and equipment", icon: "checklist" },
+                              { id: "pr-ppe-h", code: "H", label: "Property, plant and equipment", icon: "book" },
                             ]
                           },
                         ]
@@ -885,16 +885,16 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
                           {
                             id: "pr-cl", label: "Current liabilities", icon: "folder",
                             children: [
-                              { id: "pr-cl-aa", code: "AA", label: "Bank overdraft", icon: "checklist" },
-                              { id: "pr-cl-bb", code: "BB", label: "Accounts payable", icon: "checklist" },
-                              { id: "pr-cl-dd", code: "DD", label: "Short-term debt", icon: "checklist" },
-                              { id: "pr-cl-ee", code: "EE", label: "Deferred income", icon: "checklist" },
+                              { id: "pr-cl-aa", code: "AA", label: "Bank overdraft", icon: "book" },
+                              { id: "pr-cl-bb", code: "BB", label: "Accounts payable", icon: "book" },
+                              { id: "pr-cl-dd", code: "DD", label: "Short-term debt", icon: "book" },
+                              { id: "pr-cl-ee", code: "EE", label: "Deferred income", icon: "book" },
                             ]
                           },
                           {
                             id: "pr-ltl", label: "Long-term liabilities", icon: "folder",
                             children: [
-                              { id: "pr-ltl-jj", code: "JJ", label: "Other long-term liabilities", icon: "checklist" },
+                              { id: "pr-ltl-jj", code: "JJ", label: "Other long-term liabilities", icon: "book" },
                             ]
                           },
                         ]
@@ -905,7 +905,7 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
                           {
                             id: "pr-sc", label: "Share capital", icon: "folder",
                             children: [
-                              { id: "pr-sc-tt", code: "TT", label: "Equity", icon: "checklist" },
+                              { id: "pr-sc-tt", code: "TT", label: "Equity", icon: "book" },
                             ]
                           },
                         ]
@@ -916,7 +916,7 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
                           {
                             id: "pr-rev-sub", label: "Revenue", icon: "folder",
                             children: [
-                              { id: "pr-rev-20", code: "20", label: "Revenue", icon: "checklist" },
+                              { id: "pr-rev-20", code: "20", label: "Revenue", icon: "book" },
                             ]
                           },
                         ]
@@ -927,7 +927,7 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
                           {
                             id: "pr-opex", label: "Operating expenses", icon: "folder",
                             children: [
-                              { id: "pr-opex-40", code: "40", label: "Operating expenses", icon: "checklist" },
+                              { id: "pr-opex-40", code: "40", label: "Operating expenses", icon: "book" },
                             ]
                           },
                         ]
@@ -964,6 +964,7 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
                   if (icon === "checklist") return <ChecklistIcon className="h-4 w-4 flex-shrink-0" />;
                   if (icon === "completion") return <CompletionIcon className="h-4 w-4 flex-shrink-0" />;
                   if (icon === "doc") return <WordDocIcon className="h-4 w-4 flex-shrink-0" />;
+                  if (icon === "book") return <BookOpen className="h-3.5 w-3.5 text-primary flex-shrink-0" />;
                   return <Folder className="h-4 w-4 text-primary flex-shrink-0" />;
                 };
 
