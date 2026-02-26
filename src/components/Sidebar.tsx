@@ -689,6 +689,7 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
   };
   const [isNavExpanded, setIsNavExpanded] = useState(false);
   const [expandedSections, setExpandedSections] = useState<Set<string>>(new Set(["co"]));
+  const [allSectionsExpanded, setAllSectionsExpanded] = useState(false);
   const [showSignoffs, setShowSignoffs] = useState(false);
   
   // Determine if a secondary panel is visible and expanded (for dark mode gradient)
@@ -789,9 +790,29 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
                   <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground icon-search" />
                   <Input placeholder="Search" className="pl-9 h-9 text-sm" />
                 </div>
-                <Button size="icon" variant="ghost" className="h-9 w-9 bg-primary/10 hover:bg-primary/20">
+                <Button size="icon" variant="ghost" className="h-9 w-9 bg-primary/10 hover:bg-primary/20"
+                  onClick={() => {
+                    // All parent node IDs that have children
+                    const allParentIds = [
+                      "co", "do", "pr", "pr-assets", "pr-ca", "pr-ppe",
+                      "pr-liab", "pr-cl", "pr-ltl", "pr-equity", "pr-sc",
+                      "pr-rev", "pr-rev-sub", "pr-exp", "pr-opex",
+                      "fs", "fs-docs", "so"
+                    ];
+                    if (allSectionsExpanded) {
+                      setExpandedSections(new Set());
+                    } else {
+                      setExpandedSections(new Set(allParentIds));
+                    }
+                    setAllSectionsExpanded(!allSectionsExpanded);
+                  }}
+                >
                   <svg width="17" height="17" viewBox="0 0 17 17" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M9.72214 6.94412L14.5833 2.08301M14.5833 2.08301H10.4166M14.5833 2.08301V6.24967M6.94436 9.7219L2.08325 14.583M2.08325 14.583H6.24992M2.08325 14.583L2.08325 10.4163" stroke="currentColor" className="text-[#074075] dark:text-white" strokeWidth="1.38889" strokeLinecap="round" strokeLinejoin="round" />
+                    {allSectionsExpanded ? (
+                      <path d="M6.94436 9.7219L2.08325 14.583M2.08325 14.583H6.24992M2.08325 14.583V10.4163M9.72214 6.94412L14.5833 2.08301M14.5833 2.08301H10.4166M14.5833 2.08301V6.24967" stroke="currentColor" className="text-[#074075] dark:text-white" strokeWidth="1.38889" strokeLinecap="round" strokeLinejoin="round" />
+                    ) : (
+                      <path d="M9.72214 6.94412L14.5833 2.08301M14.5833 2.08301H10.4166M14.5833 2.08301V6.24967M6.94436 9.7219L2.08325 14.583M2.08325 14.583H6.24992M2.08325 14.583L2.08325 10.4163" stroke="currentColor" className="text-[#074075] dark:text-white" strokeWidth="1.38889" strokeLinecap="round" strokeLinejoin="round" />
+                    )}
                   </svg>
                 </Button>
               </div>
