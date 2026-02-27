@@ -888,7 +888,7 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
                           {
                             id: "pr-ca", label: "Current assets", icon: "folder",
                             children: [
-                              { id: "pr-ca-a", code: "A", label: "Cash and cash equivalents", icon: "book" },
+                              { id: "pr-ca-a", code: "A", label: "Cash and cash equivalents", icon: "book", route: "procedure/pr-ca-a" },
                               { id: "pr-ca-b", code: "B", label: "Accounts receivable", icon: "book" },
                               { id: "pr-ca-c", code: "C", label: "Inventories", icon: "book" },
                               { id: "pr-ca-d", code: "D", label: "Short-term investments", icon: "book" },
