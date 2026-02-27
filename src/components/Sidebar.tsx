@@ -874,8 +874,10 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
                       { id: "do-ren", code: "REN", label: "Rental/Lease Agreements", icon: "folder" },
                       { id: "do-inc", code: "INC", label: "Incorporation Documents", icon: "folder" },
                       { id: "do-ban", code: "BAN", label: "Banking Agreements", icon: "folder" },
-                      { id: "do-tb", code: "TB", label: "Trial Balance & Adj. Entries", icon: "folder", route: "trial-balance" },
                     ]
+                  },
+                  {
+                    id: "tb", code: "TB", label: "Trial Balance & Adj. Entries", icon: "folder", route: "trial-balance"
                   },
                   {
                     id: "pr", code: "PR", label: "Procedures", icon: "folder",
