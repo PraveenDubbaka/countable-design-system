@@ -143,15 +143,15 @@ export function AskLukaOverlay({ open, onOpenChange }: AskLukaOverlayProps) {
 
             {/* Chat Input */}
             <div className="w-full max-w-[700px]">
-              <div className="border border-[#dcdfe4] dark:border-[hsl(220_15%_30%)] rounded-[10px] overflow-hidden bg-background">
+              <div className="border border-[#dcdfe4] dark:border-[hsl(220_15%_30%)] rounded-[10px] overflow-hidden bg-background hover:border-[hsl(210_25%_75%)] dark:hover:border-[hsl(220_15%_40%)] transition-all duration-200 input-double-border">
                 {/* Input field */}
                 <div className="px-4 pt-3 pb-2">
-                  <Input
+                  <input
                     type="text"
                     value={message}
                     onChange={(e) => setMessage(e.target.value)}
                     placeholder="Ask me anything or Select Engagement"
-                    className="border-0 shadow-none focus:ring-0 focus:outline-none h-9 px-0 rounded-none" />
+                    className="w-full bg-transparent h-9 text-foreground placeholder:text-muted-foreground/70 outline-none border-none text-sm" />
                 </div>
 
                 {/* Bottom toolbar */}
