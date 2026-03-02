@@ -33,7 +33,7 @@ export function AskLukaOverlay({ open, onOpenChange }: AskLukaOverlayProps) {
   return (
     <div
       className={cn(
-        "fixed top-0 right-0 bottom-0 left-14 z-50 bg-background",
+        "fixed top-0 right-0 bottom-0 left-14 z-50 bg-background rounded-tl-[1.25rem] rounded-bl-[1.25rem] overflow-hidden",
         "animate-in slide-in-from-top duration-300 ease-out"
       )}>
       
