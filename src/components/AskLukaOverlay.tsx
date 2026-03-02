@@ -144,37 +144,35 @@ export function AskLukaOverlay({ open, onOpenChange }: AskLukaOverlayProps) {
 
             {/* Chat Input */}
             <div className="w-full max-w-[700px]">
-              <div className="border border-border rounded-xl overflow-hidden bg-background">
+              <div className="border border-[#dcdfe4] dark:border-[hsl(220_15%_30%)] rounded-[10px] overflow-hidden bg-background">
                 {/* Input field */}
                 <div className="px-4 pt-3 pb-2">
-                  <input
+                  <Input
                     type="text"
                     value={message}
                     onChange={(e) => setMessage(e.target.value)}
                     placeholder="Ask me anything or Select Engagement"
-                    className="w-full bg-transparent text-sm text-foreground placeholder:text-muted-foreground/60 outline-none" />
-                  
+                    className="border-0 shadow-none focus:ring-0 focus:outline-none h-9 px-0 rounded-none" />
                 </div>
 
                 {/* Bottom toolbar */}
                 <div className="px-3 pb-3 flex items-center justify-between">
                   <div className="flex items-center gap-1">
-                    <Button variant="ghost" size="icon" className="h-8 w-8 rounded-lg border border-border">
+                    <Button variant="outline" size="icon" className="h-9 w-9 rounded-[10px]">
                       <Plus className="h-4 w-4 text-muted-foreground" />
                     </Button>
-                    <Button variant="ghost" size="icon" className="h-8 w-8 rounded-lg border border-border">
+                    <Button variant="outline" size="icon" className="h-9 w-9 rounded-[10px]">
                       <Hash className="h-4 w-4 text-muted-foreground" />
                     </Button>
-                    <Button variant="ghost" size="icon" className="h-8 w-8 rounded-full border-2 border-primary/40 bg-primary/5">
+                    <Button variant="outline" size="icon" className="h-9 w-9 rounded-[10px] border-2 border-primary/40 bg-primary/5">
                       <AtSign className="h-4 w-4 text-primary" />
                     </Button>
                   </div>
 
                   <Button
                     size="icon"
-                    className="h-9 w-9 rounded-full bg-gradient-to-br from-primary to-[#7A31D8] hover:opacity-90">
-                    
-                    <Mic className="h-4 w-4 text-white" />
+                    className="h-9 w-9 rounded-full bg-gradient-to-br from-primary to-[hsl(270_100%_58%)] hover:opacity-90">
+                    <Mic className="h-4 w-4 text-primary-foreground" />
                   </Button>
                 </div>
               </div>
