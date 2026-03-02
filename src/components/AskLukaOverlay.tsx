@@ -74,12 +74,11 @@ export function AskLukaOverlay({ open, onOpenChange }: AskLukaOverlayProps) {
 
           {/* Search */}
           <div className="px-3 pb-3">
-            <div className="relative">
+            <div className="relative flex items-center h-9 rounded-[10px] border border-[#dcdfe4] dark:border-[hsl(220_15%_30%)] bg-white dark:bg-card hover:border-[hsl(210_25%_75%)] dark:hover:border-[hsl(220_15%_40%)] transition-all duration-200 input-double-border">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-              <Input
+              <input
                 placeholder="Search"
-                className="h-9 pl-9 input-double-border text-sm" />
-              
+                className="h-full w-full bg-transparent pl-9 pr-3 text-sm text-foreground placeholder:text-muted-foreground/70 outline-none border-none" />
             </div>
           </div>
 
