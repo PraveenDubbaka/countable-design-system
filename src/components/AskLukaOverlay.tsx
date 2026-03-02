@@ -109,7 +109,7 @@ export function AskLukaOverlay({ open, onOpenChange }: AskLukaOverlayProps) {
 
           {/* Settings at bottom */}
           <div className="px-1 pb-3 pt-2">
-            <button className="w-full flex items-center gap-2.5 px-3 py-2 hover:bg-muted/60 rounded-lg transition-colors bg-primary/10">
+            <button className="w-full flex items-center gap-2.5 px-3 py-2 hover:bg-muted/60 transition-colors bg-primary/10 mx-[12px] rounded-md">
               <Settings className="h-4 w-4 text-primary" />
               <span className="text-sm font-medium text-primary">Settings</span>
             </button>
