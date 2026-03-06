@@ -168,7 +168,7 @@ export function AskLukaOverlay({ open, onOpenChange }: AskLukaOverlayProps) {
         </aside>
 
         {/* Main Content Area */}
-        <main className="flex-1 flex flex-col bg-background">
+        <main className="flex-1 flex flex-col" style={{ background: 'linear-gradient(180deg, hsl(210 60% 97%) 0%, hsl(260 40% 96%) 50%, hsl(300 30% 96%) 100%)' }}>
           {/* Top right controls */}
           <div className="h-12 px-4 flex items-center justify-end gap-1">
             <TooltipProvider delayDuration={200}>
