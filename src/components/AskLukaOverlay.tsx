@@ -1,7 +1,8 @@
 import { useState } from "react";
-import { X, Mic, Plus, Hash, Search, Settings, MessageCircle, Minus, Send, Zap, FolderOpen } from "lucide-react";
+import { X, Mic, Plus, Hash, Search, Settings, MessageCircle, Minus, Send, Zap, FolderOpen, Maximize2, Minimize2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
 
 interface AskLukaOverlayProps {
@@ -45,19 +46,22 @@ export function AskLukaOverlay({ open, onOpenChange }: AskLukaOverlayProps) {
   const [message, setMessage] = useState("");
   const [activeTab, setActiveTab] = useState<"threads" | "workspaces">("threads");
   const [showAllRecent, setShowAllRecent] = useState(false);
+  const [viewMode, setViewMode] = useState<"full" | "half">("full");
 
   if (!open) return null;
 
   return (
     <div
       className={cn(
-        "fixed top-0 right-0 bottom-0 left-14 z-50 bg-background rounded-tl-[1.25rem] rounded-bl-[1.25rem] overflow-hidden",
-        "animate-in slide-in-from-top duration-300 ease-out"
+        "fixed top-0 right-0 bottom-0 z-50 bg-background rounded-tl-[1.25rem] rounded-bl-[1.25rem] overflow-hidden",
+        "animate-in slide-in-from-top duration-300 ease-out",
+        "transition-[left] duration-300 ease-in-out",
+        viewMode === "full" ? "left-14" : "left-[45%]"
       )}>
       
       <div className="flex h-full">
         {/* Left Sidebar */}
-        <aside className="w-[260px] border-r border-border flex flex-col bg-background">
+        <aside className={cn("w-[260px] border-r border-border flex flex-col bg-background transition-all duration-300", viewMode === "half" && "hidden")}>
           {/* Logo + Tabs */}
           <div className="px-4 pt-4 pb-2 flex items-center gap-3">
             <svg xmlns="http://www.w3.org/2000/svg" width="23" height="26" viewBox="0 0 23 26" fill="none">
@@ -172,29 +176,59 @@ export function AskLukaOverlay({ open, onOpenChange }: AskLukaOverlayProps) {
         <main className="flex-1 flex flex-col bg-background">
           {/* Top right controls */}
           <div className="h-12 px-4 flex items-center justify-end gap-1">
-            <Button variant="ghost" size="icon" className="h-8 w-8">
-              <svg className="h-4 w-4 text-muted-foreground" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7" />
-              </svg>
-            </Button>
-            <Button variant="ghost" size="icon" className="h-8 w-8">
-              <svg className="h-4 w-4 text-muted-foreground" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <polyline points="15 3 21 3 21 9" />
-                <polyline points="9 21 3 21 3 15" />
-                <line x1="21" y1="3" x2="14" y2="10" />
-                <line x1="3" y1="21" x2="10" y2="14" />
-              </svg>
-            </Button>
-            <Button variant="ghost" size="icon" className="h-8 w-8">
-              <Minus className="h-4 w-4 text-muted-foreground" />
-            </Button>
-            <Button
-              variant="ghost"
-              size="icon"
-              className="h-8 w-8"
-              onClick={() => onOpenChange(false)}>
-              <X className="h-4 w-4 text-muted-foreground" />
-            </Button>
+            <TooltipProvider delayDuration={200}>
+              {/* Half-screen mode */}
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className={cn("h-8 w-8", viewMode === "half" && "bg-muted")}
+                    onClick={() => setViewMode("half")}>
+                    <svg className="h-4 w-4 text-muted-foreground" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <rect x="2" y="3" width="20" height="18" rx="2" />
+                      <line x1="12" y1="3" x2="12" y2="21" />
+                    </svg>
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent side="bottom"><p>Half Mode</p></TooltipContent>
+              </Tooltip>
+              {/* Full-screen mode */}
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className={cn("h-8 w-8", viewMode === "full" && "bg-muted")}
+                    onClick={() => setViewMode("full")}>
+                    <Maximize2 className="h-4 w-4 text-muted-foreground" />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent side="bottom"><p>Full Mode</p></TooltipContent>
+              </Tooltip>
+              {/* Minimize */}
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button variant="ghost" size="icon" className="h-8 w-8">
+                    <Minus className="h-4 w-4 text-muted-foreground" />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent side="bottom"><p>Minimize</p></TooltipContent>
+              </Tooltip>
+              {/* Close */}
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-8 w-8"
+                    onClick={() => onOpenChange(false)}>
+                    <X className="h-4 w-4 text-muted-foreground" />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent side="bottom"><p>Close</p></TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
           </div>
 
           {/* Center welcome content */}
