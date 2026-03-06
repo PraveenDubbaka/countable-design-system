@@ -176,29 +176,59 @@ export function AskLukaOverlay({ open, onOpenChange }: AskLukaOverlayProps) {
         <main className="flex-1 flex flex-col bg-background">
           {/* Top right controls */}
           <div className="h-12 px-4 flex items-center justify-end gap-1">
-            <Button variant="ghost" size="icon" className="h-8 w-8">
-              <svg className="h-4 w-4 text-muted-foreground" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7" />
-              </svg>
-            </Button>
-            <Button variant="ghost" size="icon" className="h-8 w-8">
-              <svg className="h-4 w-4 text-muted-foreground" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <polyline points="15 3 21 3 21 9" />
-                <polyline points="9 21 3 21 3 15" />
-                <line x1="21" y1="3" x2="14" y2="10" />
-                <line x1="3" y1="21" x2="10" y2="14" />
-              </svg>
-            </Button>
-            <Button variant="ghost" size="icon" className="h-8 w-8">
-              <Minus className="h-4 w-4 text-muted-foreground" />
-            </Button>
-            <Button
-              variant="ghost"
-              size="icon"
-              className="h-8 w-8"
-              onClick={() => onOpenChange(false)}>
-              <X className="h-4 w-4 text-muted-foreground" />
-            </Button>
+            <TooltipProvider delayDuration={200}>
+              {/* Half-screen mode */}
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className={cn("h-8 w-8", viewMode === "half" && "bg-muted")}
+                    onClick={() => setViewMode("half")}>
+                    <svg className="h-4 w-4 text-muted-foreground" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <rect x="2" y="3" width="20" height="18" rx="2" />
+                      <line x1="12" y1="3" x2="12" y2="21" />
+                    </svg>
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent side="bottom"><p>Half Mode</p></TooltipContent>
+              </Tooltip>
+              {/* Full-screen mode */}
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className={cn("h-8 w-8", viewMode === "full" && "bg-muted")}
+                    onClick={() => setViewMode("full")}>
+                    <Maximize2 className="h-4 w-4 text-muted-foreground" />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent side="bottom"><p>Full Mode</p></TooltipContent>
+              </Tooltip>
+              {/* Minimize */}
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button variant="ghost" size="icon" className="h-8 w-8">
+                    <Minus className="h-4 w-4 text-muted-foreground" />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent side="bottom"><p>Minimize</p></TooltipContent>
+              </Tooltip>
+              {/* Close */}
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-8 w-8"
+                    onClick={() => onOpenChange(false)}>
+                    <X className="h-4 w-4 text-muted-foreground" />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent side="bottom"><p>Close</p></TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
           </div>
 
           {/* Center welcome content */}
