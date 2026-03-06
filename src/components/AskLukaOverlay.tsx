@@ -250,7 +250,7 @@ export function AskLukaOverlay({ open, onOpenChange }: AskLukaOverlayProps) {
 
             {/* Chat Input */}
             <div className="w-full max-w-[700px]">
-              <div className="border border-[#dcdfe4] dark:border-[hsl(220_15%_30%)] rounded-[10px] overflow-hidden bg-background hover:border-[hsl(210_25%_75%)] dark:hover:border-[hsl(220_15%_40%)] transition-all duration-200 input-double-border">
+              <div className="border border-[#dcdfe4] dark:border-[hsl(220_15%_30%)] rounded-[10px] overflow-visible bg-background hover:border-[hsl(210_25%_75%)] dark:hover:border-[hsl(220_15%_40%)] transition-all duration-200 luka-gradient-border relative">
                 {/* Input field */}
                 <div className="px-4 pt-3 pb-2">
                   <input
