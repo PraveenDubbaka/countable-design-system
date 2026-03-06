@@ -3,6 +3,7 @@ import { X, Mic, Plus, Hash, Search, Settings, MessageCircle, Minus, Send, Zap, 
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from "@/components/ui/tooltip";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { cn } from "@/lib/utils";
 
 interface AskLukaOverlayProps {
