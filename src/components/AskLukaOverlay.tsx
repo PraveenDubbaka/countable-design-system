@@ -307,6 +307,7 @@ export function AskLukaOverlay({ open, onOpenChange }: AskLukaOverlayProps) {
           </div>
         </main>
       </div>
-    </div>
+      </div>
+    </>
   );
 }
