@@ -45,14 +45,17 @@ export function AskLukaOverlay({ open, onOpenChange }: AskLukaOverlayProps) {
   const [message, setMessage] = useState("");
   const [activeTab, setActiveTab] = useState<"threads" | "workspaces">("threads");
   const [showAllRecent, setShowAllRecent] = useState(false);
+  const [viewMode, setViewMode] = useState<"full" | "half">("full");
 
   if (!open) return null;
 
   return (
     <div
       className={cn(
-        "fixed top-0 right-0 bottom-0 left-14 z-50 bg-background rounded-tl-[1.25rem] rounded-bl-[1.25rem] overflow-hidden",
-        "animate-in slide-in-from-top duration-300 ease-out"
+        "fixed top-0 right-0 bottom-0 z-50 bg-background rounded-tl-[1.25rem] rounded-bl-[1.25rem] overflow-hidden",
+        "animate-in slide-in-from-top duration-300 ease-out",
+        "transition-[left] duration-300 ease-in-out",
+        viewMode === "full" ? "left-14" : "left-[45%]"
       )}>
       
       <div className="flex h-full">
