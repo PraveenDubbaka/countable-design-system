@@ -217,17 +217,27 @@ export function AskLukaOverlay({ open, onOpenChange }: AskLukaOverlayProps) {
                   </Tooltip>
                 </div>
 
-                {/* Threads button */}
-                <div className="flex justify-center py-1">
+                {/* Tab icons: Threads / Workspaces */}
+                <div className="flex flex-col items-center gap-1 py-1">
                   <Tooltip>
                     <TooltipTrigger asChild>
                       <button
-                        onClick={() => setSidebarExpanded(true)}
-                        className="h-10 w-10 rounded-[10px] bg-primary/15 flex items-center justify-center hover:bg-primary/25 transition-colors">
-                        <MessageCircle className="h-5 w-5 text-primary" />
+                        onClick={() => setActiveTab("threads")}
+                        className={cn("h-10 w-10 rounded-[10px] flex items-center justify-center transition-colors", activeTab === "threads" ? "bg-primary/15 hover:bg-primary/25" : "hover:bg-muted/60")}>
+                        <MessageCircle className={cn("h-5 w-5", activeTab === "threads" ? "text-primary" : "text-muted-foreground")} />
                       </button>
                     </TooltipTrigger>
-                    <TooltipContent side="right"><p>Threads<br /><span className="text-muted-foreground text-[10px]">Click to open</span></p></TooltipContent>
+                    <TooltipContent side="right"><p>Threads</p></TooltipContent>
+                  </Tooltip>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <button
+                        onClick={() => setActiveTab("workspaces")}
+                        className={cn("h-10 w-10 rounded-[10px] flex items-center justify-center transition-colors", activeTab === "workspaces" ? "bg-primary/15 hover:bg-primary/25" : "hover:bg-muted/60")}>
+                        <FolderOpen className={cn("h-5 w-5", activeTab === "workspaces" ? "text-primary" : "text-muted-foreground")} />
+                      </button>
+                    </TooltipTrigger>
+                    <TooltipContent side="right"><p>Workspaces</p></TooltipContent>
                   </Tooltip>
                 </div>
 
