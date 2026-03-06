@@ -51,13 +51,22 @@ export function AskLukaOverlay({ open, onOpenChange }: AskLukaOverlayProps) {
   if (!open) return null;
 
   return (
-    <div
-      className={cn(
-        "fixed top-0 right-0 bottom-0 z-50 bg-background rounded-tl-[1.25rem] rounded-bl-[1.25rem] overflow-hidden",
-        "animate-in slide-in-from-top duration-300 ease-out",
-        "transition-[left] duration-300 ease-in-out",
-        viewMode === "full" ? "left-14" : "left-[45%]"
-      )}>
+    <>
+      {/* Backdrop for half mode - allows seeing page behind */}
+      {viewMode === "half" && (
+        <div
+          className="fixed inset-0 z-40"
+          onClick={() => onOpenChange(false)}
+        />
+      )}
+      <div
+        className={cn(
+          "fixed top-0 right-0 bottom-0 z-50 bg-background overflow-hidden",
+          "animate-in slide-in-from-top duration-300 ease-out",
+          viewMode === "full"
+            ? "left-14 rounded-tl-[1.25rem] rounded-bl-[1.25rem]"
+            : "left-[45%] rounded-tl-[1.25rem] rounded-bl-[1.25rem] shadow-[-8px_0_30px_-10px_hsl(var(--primary)/0.15)] border-l border-border"
+        )}>
       
       <div className="flex h-full">
         {/* Left Sidebar */}
@@ -298,6 +307,7 @@ export function AskLukaOverlay({ open, onOpenChange }: AskLukaOverlayProps) {
           </div>
         </main>
       </div>
-    </div>
+      </div>
+    </>
   );
 }
