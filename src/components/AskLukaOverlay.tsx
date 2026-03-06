@@ -3,6 +3,7 @@ import { X, Mic, Plus, Hash, Search, Settings, MessageCircle, Minus, Send, Zap, 
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from "@/components/ui/tooltip";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { cn } from "@/lib/utils";
 
 interface AskLukaOverlayProps {
@@ -72,21 +73,22 @@ export function AskLukaOverlay({ open, onOpenChange }: AskLukaOverlayProps) {
         {/* Left Sidebar */}
         <aside className="w-[260px] border-r border-border flex flex-col bg-background">
           {/* Logo + Tabs */}
-          <div className="px-4 pt-4 pb-2 flex items-center gap-3">
-            <svg xmlns="http://www.w3.org/2000/svg" width="23" height="26" viewBox="0 0 23 26" fill="none">
-              <path d="M14.7852 10.1758H20.5852C21.0627 10.2128 22.4952 10.3791 22.8679 11.1001C23.1474 11.6362 22.8446 12.3663 22.1342 12.9486C17.2775 16.9508 12.4325 20.9622 7.57591 24.9644C7.15663 25.0753 6.88876 25.0753 6.77229 24.9644C6.53936 24.7518 6.86546 24.1418 7.7739 23.1158C11.2679 19.7237 14.7619 16.3408 18.2559 12.9486L8.30964 10.1758H14.7735H14.7852Z" fill="url(#paint0_linear_34_10)" />
-              <path d="M8.1918 14.8718H2.38763C1.90978 14.8348 0.476215 14.6684 0.103256 13.9475C-0.176463 13.4114 0.126566 12.6812 0.837519 12.0989C5.68599 8.08751 10.5461 4.08535 15.3946 0.0831858C15.8142 -0.0277286 16.0822 -0.0277286 16.1988 0.0831858C16.4319 0.295772 16.1055 0.905801 15.1964 1.93176C11.6999 5.32389 8.20346 8.70678 4.70697 12.0989L14.6603 14.8718H8.1918Z" fill="url(#paint1_linear_34_10)" />
-              <defs>
-                <linearGradient id="paint0_linear_34_10" x1="10.544" y1="12.8935" x2="13.5519" y2="22.6018" gradientUnits="userSpaceOnUse">
-                  <stop stopColor="#9747FF" /><stop offset="1" stopColor="#1C63A6" />
-                </linearGradient>
-                <linearGradient id="paint1_linear_34_10" x1="15.4787" y1="-2.01052e-07" x2="9.64532" y2="31.4017" gradientUnits="userSpaceOnUse">
-                  <stop offset="0.165297" stopColor="#9747FF" /><stop offset="0.783358" stopColor="#1C63A6" />
-                </linearGradient>
-              </defs>
-            </svg>
-            <div className="flex flex-col">
-              <svg xmlns="http://www.w3.org/2000/svg" width="60" height="16" viewBox="0 0 80 20" fill="none">
+          <div className="px-4 pt-4 pb-3 flex flex-col gap-3">
+            {/* Logo row: icon + wordmark */}
+            <div className="flex items-center gap-3">
+              <svg xmlns="http://www.w3.org/2000/svg" width="28" height="32" viewBox="0 0 23 26" fill="none">
+                <path d="M14.7852 10.1758H20.5852C21.0627 10.2128 22.4952 10.3791 22.8679 11.1001C23.1474 11.6362 22.8446 12.3663 22.1342 12.9486C17.2775 16.9508 12.4325 20.9622 7.57591 24.9644C7.15663 25.0753 6.88876 25.0753 6.77229 24.9644C6.53936 24.7518 6.86546 24.1418 7.7739 23.1158C11.2679 19.7237 14.7619 16.3408 18.2559 12.9486L8.30964 10.1758H14.7735H14.7852Z" fill="url(#paint0_linear_34_10)" />
+                <path d="M8.1918 14.8718H2.38763C1.90978 14.8348 0.476215 14.6684 0.103256 13.9475C-0.176463 13.4114 0.126566 12.6812 0.837519 12.0989C5.68599 8.08751 10.5461 4.08535 15.3946 0.0831858C15.8142 -0.0277286 16.0822 -0.0277286 16.1988 0.0831858C16.4319 0.295772 16.1055 0.905801 15.1964 1.93176C11.6999 5.32389 8.20346 8.70678 4.70697 12.0989L14.6603 14.8718H8.1918Z" fill="url(#paint1_linear_34_10)" />
+                <defs>
+                  <linearGradient id="paint0_linear_34_10" x1="10.544" y1="12.8935" x2="13.5519" y2="22.6018" gradientUnits="userSpaceOnUse">
+                    <stop stopColor="#9747FF" /><stop offset="1" stopColor="#1C63A6" />
+                  </linearGradient>
+                  <linearGradient id="paint1_linear_34_10" x1="15.4787" y1="-2.01052e-07" x2="9.64532" y2="31.4017" gradientUnits="userSpaceOnUse">
+                    <stop offset="0.165297" stopColor="#9747FF" /><stop offset="0.783358" stopColor="#1C63A6" />
+                  </linearGradient>
+                </defs>
+              </svg>
+              <svg xmlns="http://www.w3.org/2000/svg" width="70" height="18" viewBox="0 0 80 20" fill="none">
                 <path d="M0.601562 0.683594H4.31641V15.7422H14.9688V19H0.601562V0.683594ZM17.8867 0.683594H21.6016V10.7734C21.6016 11.6016 21.7148 12.3398 21.9414 12.9883C22.168 13.6289 22.5039 14.1719 22.9492 14.6172C23.4023 15.0625 23.9609 15.4023 24.625 15.6367C25.2891 15.8633 26.0625 15.9766 26.9453 15.9766C27.8203 15.9766 28.5898 15.8633 29.2539 15.6367C29.9258 15.4023 30.4844 15.0625 30.9297 14.6172C31.3828 14.1719 31.7227 13.6289 31.9492 12.9883C32.1758 12.3398 32.2891 11.6016 32.2891 10.7734V0.683594H36.0039V11.2188C36.0039 12.4219 35.8008 13.5156 35.3945 14.5C34.9883 15.4844 34.3984 16.3281 33.625 17.0312C32.8516 17.7344 31.9023 18.2773 30.7773 18.6602C29.6602 19.043 28.3828 19.2344 26.9453 19.2344C25.5078 19.2344 24.2266 19.043 23.1016 18.6602C21.9844 18.2773 21.0391 17.7344 20.2656 17.0312C19.4922 16.3281 18.9023 15.4844 18.4961 14.5C18.0898 13.5156 17.8867 12.4219 17.8867 11.2188V0.683594ZM40.5391 0.683594H44.2539V10.1641L53.9219 0.683594H58.6797L49.6562 9.42578L58.6797 19H53.7344L46.9844 12.0156L44.2539 14.6523V19H40.5391V0.683594ZM66.7539 0.683594H70.6914L79.5508 19H75.6484L74.1836 15.918H63.4844L62.0664 19H58.1523L66.7539 0.683594ZM72.7188 12.8594L68.7578 4.53906L64.9023 12.8594H72.7188Z" fill="url(#paint0_linear_26_3)" />
                 <defs>
                   <linearGradient id="paint0_linear_26_3" x1="-2" y1="10" x2="80" y2="10" gradientUnits="userSpaceOnUse">
@@ -94,30 +96,14 @@ export function AskLukaOverlay({ open, onOpenChange }: AskLukaOverlayProps) {
                   </linearGradient>
                 </defs>
               </svg>
-              {/* Tabs */}
-              <div className="flex items-center gap-1 mt-1">
-                <button
-                  onClick={() => setActiveTab("threads")}
-                  className={cn(
-                    "text-[11px] font-medium px-2.5 py-0.5 rounded-full transition-colors",
-                    activeTab === "threads"
-                      ? "bg-primary text-primary-foreground"
-                      : "bg-muted text-muted-foreground hover:bg-muted/80"
-                  )}>
-                  Threads
-                </button>
-                <button
-                  onClick={() => setActiveTab("workspaces")}
-                  className={cn(
-                    "text-[11px] font-medium px-2.5 py-0.5 rounded-full transition-colors",
-                    activeTab === "workspaces"
-                      ? "bg-primary text-primary-foreground"
-                      : "bg-muted text-muted-foreground hover:bg-muted/80"
-                  )}>
-                  Workspaces
-                </button>
-              </div>
             </div>
+            {/* Global Tabs */}
+            <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as "threads" | "workspaces")}>
+              <TabsList className="h-8 w-full">
+                <TabsTrigger value="threads" className="flex-1 text-xs">Threads</TabsTrigger>
+                <TabsTrigger value="workspaces" className="flex-1 text-xs">Workspaces</TabsTrigger>
+              </TabsList>
+            </Tabs>
           </div>
 
           {/* Search + New Thread */}
