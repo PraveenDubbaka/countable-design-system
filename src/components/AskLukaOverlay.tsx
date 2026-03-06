@@ -229,14 +229,20 @@ export function AskLukaOverlay({ open, onOpenChange }: AskLukaOverlayProps) {
           {/* Center welcome content */}
           <div className="flex-1 flex flex-col items-center justify-center px-6">
             {/* Luka logo icon - live agent feel */}
-            <div className="mb-6 relative flex items-center justify-center w-16 h-16">
-              {/* Outer pulsing glow */}
-              <div className="absolute inset-0 rounded-full bg-gradient-to-br from-[#9747FF]/20 to-[#1C63A6]/20 animate-pulse" />
-              {/* Spinning gradient border */}
-              <div className="absolute inset-0 rounded-full luka-orbit-border" />
-              {/* Inner circle */}
-              <div className="relative flex items-center justify-center w-14 h-14 rounded-full bg-background z-10">
-                <svg xmlns="http://www.w3.org/2000/svg" width="28" height="32" viewBox="0 0 23 26" fill="none" className="animate-[pulse_3s_ease-in-out_infinite]">
+            <div className="mb-8 relative flex items-center justify-center w-20 h-20">
+              {/* Outermost soft breathing glow */}
+              <div className="absolute -inset-3 rounded-full luka-breathe-glow" />
+              {/* Orbiting particle ring 1 (slow) */}
+              <div className="absolute inset-[-6px] rounded-full luka-orbit-border opacity-40" style={{ animationDuration: '6s' }} />
+              {/* Orbiting particle ring 2 (fast, reverse) */}
+              <div className="absolute inset-[-2px] rounded-full luka-orbit-border luka-orbit-reverse" />
+              {/* Orbiting dot */}
+              <div className="absolute inset-[-4px] luka-dot-orbit">
+                <div className="w-2 h-2 rounded-full bg-[#9747FF] shadow-[0_0_8px_#9747FF,0_0_16px_#9747FF55]" />
+              </div>
+              {/* Inner circle with subtle shimmer */}
+              <div className="relative flex items-center justify-center w-[60px] h-[60px] rounded-full bg-background z-10 shadow-[0_0_20px_rgba(151,71,255,0.08)]">
+                <svg xmlns="http://www.w3.org/2000/svg" width="30" height="34" viewBox="0 0 23 26" fill="none" className="luka-logo-breathe">
                   <path d="M14.7852 10.1758H20.5852C21.0627 10.2128 22.4952 10.3791 22.8679 11.1001C23.1474 11.6362 22.8446 12.3663 22.1342 12.9486C17.2775 16.9508 12.4325 20.9622 7.57591 24.9644C7.15663 25.0753 6.88876 25.0753 6.77229 24.9644C6.53936 24.7518 6.86546 24.1418 7.7739 23.1158C11.2679 19.7237 14.7619 16.3408 18.2559 12.9486L8.30964 10.1758H14.7735H14.7852Z" fill="url(#paint0_luka_welcome)" />
                   <path d="M8.1918 14.8718H2.38763C1.90978 14.8348 0.476215 14.6684 0.103256 13.9475C-0.176463 13.4114 0.126566 12.6812 0.837519 12.0989C5.68599 8.08751 10.5461 4.08535 15.3946 0.0831858C15.8142 -0.0277286 16.0822 -0.0277286 16.1988 0.0831858C16.4319 0.295772 16.1055 0.905801 15.1964 1.93176C11.6999 5.32389 8.20346 8.70678 4.70697 12.0989L14.6603 14.8718H8.1918Z" fill="url(#paint1_luka_welcome)" />
                   <defs>
