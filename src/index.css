@@ -50,18 +50,55 @@
   z-index: 1;
 }
 
-/* Luka live agent orbiting gradient border */
+/* Luka live agent animations */
 @keyframes luka-orbit {
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
 }
 
+@keyframes luka-breathe {
+  0%, 100% { transform: scale(1); filter: brightness(1); }
+  50% { transform: scale(1.06); filter: brightness(1.15); }
+}
+
+@keyframes luka-glow-breathe {
+  0%, 100% { opacity: 0.25; transform: scale(1); }
+  50% { opacity: 0.5; transform: scale(1.15); }
+}
+
+@keyframes luka-dot-spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
 .luka-orbit-border {
-  background: conic-gradient(from 0deg, #9747FF, #1C63A6, #9747FF33, #9747FF);
+  background: conic-gradient(from 0deg, #9747FF, #1C63A6, transparent 40%, #9747FF55, #1C63A6, #9747FF);
   border-radius: 9999px;
   animation: luka-orbit 3s linear infinite;
-  -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 3px), #fff calc(100% - 2.5px));
-  mask: radial-gradient(farthest-side, transparent calc(100% - 3px), #fff calc(100% - 2.5px));
+  -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 2.5px), #fff calc(100% - 2px));
+  mask: radial-gradient(farthest-side, transparent calc(100% - 2.5px), #fff calc(100% - 2px));
+}
+
+.luka-orbit-reverse {
+  animation-direction: reverse;
+  animation-duration: 2.5s !important;
+}
+
+.luka-breathe-glow {
+  background: radial-gradient(circle, #9747FF22 0%, #1C63A622 40%, transparent 70%);
+  border-radius: 9999px;
+  animation: luka-glow-breathe 4s ease-in-out infinite;
+}
+
+.luka-dot-orbit {
+  animation: luka-dot-spin 4s linear infinite;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+}
+
+.luka-logo-breathe {
+  animation: luka-breathe 4s ease-in-out infinite;
 }
 
 
