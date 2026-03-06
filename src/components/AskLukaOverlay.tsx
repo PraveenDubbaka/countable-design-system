@@ -1,7 +1,8 @@
 import { useState } from "react";
-import { X, Mic, Plus, Hash, Search, Settings, MessageCircle, Minus, Send, Zap, FolderOpen } from "lucide-react";
+import { X, Mic, Plus, Hash, Search, Settings, MessageCircle, Minus, Send, Zap, FolderOpen, Maximize2, Minimize2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
 
 interface AskLukaOverlayProps {
