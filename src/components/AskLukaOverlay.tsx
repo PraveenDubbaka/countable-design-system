@@ -70,7 +70,7 @@ export function AskLukaOverlay({ open, onOpenChange }: AskLukaOverlayProps) {
       
       <div className="flex h-full">
         {/* Left Sidebar */}
-        <aside className={cn("w-[260px] border-r border-border flex flex-col bg-background transition-all duration-300", viewMode === "half" && "hidden")}>
+        <aside className="w-[260px] border-r border-border flex flex-col bg-background">
           {/* Logo + Tabs */}
           <div className="px-4 pt-4 pb-2 flex items-center gap-3">
             <svg xmlns="http://www.w3.org/2000/svg" width="23" height="26" viewBox="0 0 23 26" fill="none">
