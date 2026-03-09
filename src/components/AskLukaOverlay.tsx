@@ -218,7 +218,7 @@ export function AskLukaOverlay({ open, onOpenChange }: AskLukaOverlayProps) {
                 </div>
 
                 {/* Tab icons: Threads / Workspaces */}
-                <div className="flex flex-col items-center gap-1 py-1">
+                <div className="flex flex-col items-center gap-1 py-2 mx-2 border-t border-b border-border">
                   <Tooltip>
                     <TooltipTrigger asChild>
                       <button
