@@ -529,14 +529,20 @@ export function AskLukaOverlay({ open, onOpenChange }: AskLukaOverlayProps) {
                               </span>
                             </div>
                           ) : richResponseType === "gross-margin" ? (
-                            <GrossMarginResponse revealStep={revealStep} />
+                            <>
+                              <GrossMarginResponse revealStep={revealStep} />
+                              {revealStep >= 5 && <LukaResponseActions />}
+                            </>
                           ) : (
-                            <div className="text-base text-foreground leading-relaxed whitespace-pre-wrap">
-                              {displayedResponse}
-                              {isStreaming && (
-                                <span className="inline-block w-0.5 h-4 bg-primary/70 ml-0.5 align-middle luka-thinking-text" />
-                              )}
-                            </div>
+                            <>
+                              <div className="text-base text-foreground leading-relaxed whitespace-pre-wrap">
+                                {displayedResponse}
+                                {isStreaming && (
+                                  <span className="inline-block w-0.5 h-4 bg-primary/70 ml-0.5 align-middle luka-thinking-text" />
+                                )}
+                              </div>
+                              {!isStreaming && aiResponse && <LukaResponseActions />}
+                            </>
                           )}
                         </div>
                       </div>
