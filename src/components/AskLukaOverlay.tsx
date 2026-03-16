@@ -602,7 +602,7 @@ export function AskLukaOverlay({ open, onOpenChange }: AskLukaOverlayProps) {
                       </div>
 
                       <div className="flex items-center gap-1">
-                        <Button variant="ghost" size="icon" className="h-9 w-9 rounded-[10px]">
+                        <Button variant="ghost" size="icon" className="h-9 w-9 rounded-[10px]" onClick={() => setVoiceOpen(true)}>
                           <Mic className="h-4 w-4 text-muted-foreground" />
                         </Button>
                         <Button
@@ -620,6 +620,13 @@ export function AskLukaOverlay({ open, onOpenChange }: AskLukaOverlayProps) {
                       </div>
                     </div>
                   </div>
+
+                  {/* Voice Recording Overlay */}
+                  <VoiceRecordingOverlay
+                    open={voiceOpen}
+                    onClose={() => setVoiceOpen(false)}
+                    onComplete={(text) => setMessage((prev) => (prev ? prev + " " + text : text))}
+                  />
                 </div>
               </div>
             </div>
