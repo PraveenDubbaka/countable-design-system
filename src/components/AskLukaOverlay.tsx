@@ -482,17 +482,35 @@ export function AskLukaOverlay({ open, onOpenChange }: AskLukaOverlayProps) {
                       </div>
                     </div>
 
-                    {/* Thinking indicator */}
-                    <LukaThinkingMessage visible={isThinking} />
-
-                    {/* AI response */}
-                    {aiResponse && (
-                      <div className="flex items-start gap-3 animate-fade-in">
-                        <div className="w-9 h-9 rounded-full bg-gradient-to-br from-[hsl(var(--primary))] to-[hsl(265_80%_55%)] flex items-center justify-center shrink-0">
+                    {/* Unified Luka response container — icon stays in place */}
+                    {(isThinking || aiResponse) && (
+                      <div className="flex items-start gap-3">
+                        <div className={cn(
+                          "w-9 h-9 rounded-full bg-gradient-to-br from-[hsl(var(--primary))] to-[hsl(265_80%_55%)] flex items-center justify-center shrink-0",
+                          isThinking && "luka-thinking-spin"
+                        )}>
                           <LukaIcon size={16} />
                         </div>
-                        <div className="flex-1 text-sm text-foreground leading-relaxed pt-1.5">
-                          {aiResponse}
+                        <div className="flex-1 pt-1.5 min-h-[28px]">
+                          {isThinking ? (
+                            <div className="flex items-center gap-2">
+                              <span className="text-sm font-medium text-muted-foreground luka-thinking-text">
+                                Thinking
+                              </span>
+                              <span className="flex gap-0.5">
+                                <span className="w-1 h-1 rounded-full bg-primary/60 luka-dot luka-dot-1" />
+                                <span className="w-1 h-1 rounded-full bg-primary/60 luka-dot luka-dot-2" />
+                                <span className="w-1 h-1 rounded-full bg-primary/60 luka-dot luka-dot-3" />
+                              </span>
+                            </div>
+                          ) : (
+                            <div className="text-sm text-foreground leading-relaxed whitespace-pre-wrap">
+                              {displayedResponse}
+                              {isStreaming && (
+                                <span className="inline-block w-0.5 h-4 bg-primary/70 ml-0.5 align-middle luka-thinking-text" />
+                              )}
+                            </div>
+                          )}
                         </div>
                       </div>
                     )}
