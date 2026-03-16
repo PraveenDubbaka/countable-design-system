@@ -73,6 +73,7 @@ export function AskLukaOverlay({ open, onOpenChange }: AskLukaOverlayProps) {
   const inputRef = useRef<HTMLInputElement>(null);
   const streamRef = useRef<number | null>(null);
   const revealRef = useRef<number | null>(null);
+  const { files: attachedFiles, addFiles, removeFile, clearAll: clearFiles } = useAttachedFiles();
 
   const handleInputChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const val = e.target.value;
