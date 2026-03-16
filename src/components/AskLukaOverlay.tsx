@@ -372,7 +372,7 @@ export function AskLukaOverlay({ open, onOpenChange }: AskLukaOverlayProps) {
                         <Tooltip key={thread.id}>
                           <TooltipTrigger asChild>
                             <button className="h-9 w-10 flex items-center justify-center rounded-lg hover:bg-muted/60 dark:hover:bg-muted/30 transition-colors relative">
-                              <MessageCircle className="h-4 w-4 text-muted-foreground" />
+                              <MessageSquare className="h-4 w-4 text-muted-foreground" />
                               <div className={cn("absolute top-1.5 right-1.5 w-2 h-2 rounded-full border border-background dark:border-card", statusColors[i % statusColors.length])} />
                             </button>
                           </TooltipTrigger>
