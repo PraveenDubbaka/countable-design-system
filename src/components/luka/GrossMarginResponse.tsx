@@ -36,6 +36,23 @@ const quarterlyRows = [
 ];
 const quarterlyTotals = { period: "Total Full Year", cyRev: "7,570.00", cyCos: "3,860.00", cyGm: "3,710.00", cyGmPct: "49.0", py1Gm: "3,200.00", py1GmPct: "-", py2Gm: "2,640.00", py2GmPct: "-" };
 
+/* ── Monthly data ── */
+
+const monthlyRows = [
+  { period: "January", cyRev: "570.00", cyCos: "298.00", cyGm: "272.00", cyGmPct: "47.7", py1Gm: "235.00", py1GmPct: "46.5", py2Gm: "193.00", py2GmPct: "44.4" },
+  { period: "February", cyRev: "580.00", cyCos: "300.00", cyGm: "280.00", cyGmPct: "48.3", py1Gm: "241.00", py1GmPct: "46.8", py2Gm: "196.00", py2GmPct: "44.5" },
+  { period: "March", cyRev: "630.00", cyCos: "322.00", cyGm: "308.00", cyGmPct: "48.9", py1Gm: "264.00", py1GmPct: "47.1", py2Gm: "221.00", py2GmPct: "45.6" },
+  { period: "April", cyRev: "640.00", cyCos: "320.00", cyGm: "320.00", cyGmPct: "50.0", py1Gm: "276.00", py1GmPct: "48.4", py2Gm: "226.00", py2GmPct: "46.1" },
+  { period: "May", cyRev: "660.00", cyCos: "330.00", cyGm: "330.00", cyGmPct: "50.0", py1Gm: "282.00", py1GmPct: "48.6", py2Gm: "232.00", py2GmPct: "46.4" },
+  { period: "June", cyRev: "660.00", cyCos: "330.00", cyGm: "330.00", cyGmPct: "50.0", py1Gm: "282.00", py1GmPct: "48.6", py2Gm: "232.00", py2GmPct: "46.4" },
+  { period: "July", cyRev: "680.00", cyCos: "336.00", cyGm: "344.00", cyGmPct: "50.6", py1Gm: "292.00", py1GmPct: "48.7", py2Gm: "242.00", py2GmPct: "46.5" },
+  { period: "September", cyRev: "680.00", cyCos: "336.00", cyGm: "344.00", cyGmPct: "50.6", py1Gm: "292.00", py1GmPct: "48.7", py2Gm: "242.00", py2GmPct: "46.5" },
+  { period: "October", cyRev: "660.00", cyCos: "328.00", cyGm: "332.00", cyGmPct: "50.3", py1Gm: "286.00", py1GmPct: "48.5", py2Gm: "236.00", py2GmPct: "46.3" },
+  { period: "November", cyRev: "620.00", cyCos: "328.00", cyGm: "292.00", cyGmPct: "47.1", py1Gm: "256.00", py1GmPct: "46.5", py2Gm: "211.00", py2GmPct: "44.4" },
+  { period: "December", cyRev: "590.00", cyCos: "314.00", cyGm: "276.00", cyGmPct: "46.8", py1Gm: "249.00", py1GmPct: "46.5", py2Gm: "205.00", py2GmPct: "44.1" },
+];
+const monthlyTotals = { period: "Total Full Year", cyRev: "7,570.00", cyCos: "3,860.00", cyGm: "3,710.00", cyGmPct: "49.0", py1Gm: "3,200.00", py1GmPct: "-", py2Gm: "2,640.00", py2GmPct: "-" };
+
 const qColsFull = ["Period ↓", "CY Revenue", "CY COS", "CY GM", "CY GM (%)", "PY1 GM", "PY1 GM (%)", "PY2 GM", "PY2 GM (%)"];
 const qColsNoPy2 = ["Period ↓", "CY Revenue", "CY COS", "CY GM", "CY GM (%)", "PY1 GM", "PY1 GM (%)"];
 
@@ -233,7 +250,59 @@ function QuarterlyTable({ visible, showPy2 }: { visible: boolean; showPy2: boole
   );
 }
 
-/* ── Luka Summary ── */
+/* ── Monthly Table section ── */
+function MonthlyTable({ visible, showPy2 }: { visible: boolean; showPy2: boolean }) {
+  if (!visible) return null;
+  const cols = showPy2 ? qColsFull : qColsNoPy2;
+
+  return (
+    <div className="border border-[hsl(210_25%_82%)] rounded-lg overflow-hidden shadow-sm min-w-0">
+      <div className="px-4 py-3 bg-[hsl(210_40%_96%)]">
+        <span className="text-base font-semibold text-foreground">Monthly Breakdown - All Accounts</span>
+      </div>
+      <div className="overflow-x-auto">
+        <table className="w-full text-base">
+          <thead>
+            <tr className="border-b border-[hsl(210_25%_82%)] bg-[hsl(210_40%_96%)]">
+              {cols.map((c) => (
+                <th key={c} className={cn("px-4 py-2.5 font-medium text-[#101D28] whitespace-nowrap", c === "Period ↓" ? "text-left" : "text-right")}>
+                  {c}
+                </th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {monthlyRows.map((r) => (
+              <tr key={r.period} className="border-b border-[hsl(210_25%_82%)]/50 hover:bg-muted/20 transition-colors">
+                <td className="px-4 py-2.5 text-foreground">{r.period}</td>
+                <td className="px-4 py-2.5 text-right text-foreground tabular-nums">{r.cyRev}</td>
+                <td className="px-4 py-2.5 text-right text-foreground tabular-nums">{r.cyCos}</td>
+                <td className="px-4 py-2.5 text-right text-foreground tabular-nums">{r.cyGm}</td>
+                <td className="px-4 py-2.5 text-right text-black tabular-nums">{r.cyGmPct}</td>
+                <td className="px-4 py-2.5 text-right text-foreground tabular-nums">{r.py1Gm}</td>
+                <td className="px-4 py-2.5 text-right text-black tabular-nums">{r.py1GmPct}</td>
+                {showPy2 && <td className="px-4 py-2.5 text-right text-foreground tabular-nums">{r.py2Gm}</td>}
+                {showPy2 && <td className="px-4 py-2.5 text-right text-black tabular-nums">{r.py2GmPct}</td>}
+              </tr>
+            ))}
+            <tr className="bg-muted/30 font-semibold">
+              <td className="px-4 py-2.5 text-black">{monthlyTotals.period}</td>
+              <td className="px-4 py-2.5 text-right text-black tabular-nums">{monthlyTotals.cyRev}</td>
+              <td className="px-4 py-2.5 text-right text-black tabular-nums">{monthlyTotals.cyCos}</td>
+              <td className="px-4 py-2.5 text-right text-black tabular-nums">{monthlyTotals.cyGm}</td>
+              <td className="px-4 py-2.5 text-right text-black tabular-nums">{monthlyTotals.cyGmPct}</td>
+              <td className="px-4 py-2.5 text-right text-black tabular-nums">{monthlyTotals.py1Gm}</td>
+              <td className="px-4 py-2.5 text-right text-black tabular-nums">{monthlyTotals.py1GmPct}</td>
+              {showPy2 && <td className="px-4 py-2.5 text-right text-black tabular-nums">{monthlyTotals.py2Gm}</td>}
+              {showPy2 && <td className="px-4 py-2.5 text-right text-black tabular-nums">{monthlyTotals.py2GmPct}</td>}
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+}
+
 const summaryText = `Gross margin has demonstrated a consistent upward trajectory over the three-year period, improving from 45.5% in PY2 to 47.7% in PY1 and reaching 49.0% in the current year — a cumulative improvement of +350 basis points.`;
 
 const keyDrivers = [
@@ -395,7 +464,7 @@ export function GrossMarginResponse({ revealStep }: GrossMarginResponseProps) {
               )}
             </div>
 
-            {/* Monthly view (placeholder) */}
+            {/* Monthly view */}
             <div
               className={cn(
                 "transition-all duration-400 ease-in-out",
@@ -405,9 +474,7 @@ export function GrossMarginResponse({ revealStep }: GrossMarginResponseProps) {
               )}
             >
               {periodTab === "monthly" && (
-                <div className="border border-[hsl(210_25%_82%)] rounded-lg p-8 text-center text-muted-foreground text-base">
-                  Monthly breakdown coming soon...
-                </div>
+                <MonthlyTable visible={revealStep >= 2} showPy2={showPy2} />
               )}
             </div>
           </div>
