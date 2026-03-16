@@ -64,7 +64,16 @@ function DownloadButton({
   onHover: () => void;
 }) {
   const [open, setOpen] = useState(false);
+  const btnRef = useRef<HTMLButtonElement>(null);
   const ref = useRef<HTMLDivElement>(null);
+  const [dropdownPos, setDropdownPos] = useState<{ top: number; left: number } | null>(null);
+
+  // Position dropdown fixed relative to button
+  useEffect(() => {
+    if (!open || !btnRef.current) return;
+    const rect = btnRef.current.getBoundingClientRect();
+    setDropdownPos({ top: rect.bottom + 6, left: rect.left });
+  }, [open]);
 
   // Close dropdown on outside click
   useEffect(() => {
@@ -79,6 +88,7 @@ function DownloadButton({
   return (
     <div className="relative" ref={ref}>
       <button
+        ref={btnRef}
         onMouseEnter={onHover}
         onClick={() => setOpen(!open)}
         className={cn(
@@ -111,9 +121,12 @@ function DownloadButton({
         </span>
       </button>
 
-      {/* Dropdown */}
-      {open && (
-        <div className="absolute top-full left-0 mt-1.5 z-50 min-w-[140px] rounded-lg border border-border bg-background shadow-elevation-2 py-1 animate-in fade-in slide-in-from-top-1 duration-150">
+      {/* Fixed dropdown — always overlaps the typing space */}
+      {open && dropdownPos && (
+        <div
+          className="fixed z-[100] min-w-[140px] rounded-lg border border-border bg-background shadow-elevation-2 py-1 animate-in fade-in slide-in-from-top-1 duration-150"
+          style={{ top: dropdownPos.top, left: dropdownPos.left }}
+        >
           <button
             onClick={() => { toast.success("Downloading as PDF..."); setOpen(false); }}
             className="w-full flex items-center gap-2.5 px-3 py-2 text-sm text-foreground hover:bg-muted/60 transition-colors"
