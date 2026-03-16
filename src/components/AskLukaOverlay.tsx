@@ -347,7 +347,7 @@ export function AskLukaOverlay({ open, onOpenChange }: AskLukaOverlayProps) {
                           onClick={() => setActiveTab("threads")}
                           className={cn("h-10 w-10 rounded-[10px] flex items-center justify-center transition-colors", activeTab === "threads" ? "bg-primary/15 hover:bg-primary/25" : "hover:bg-muted/60")}
                         >
-                          <MessageCircle className={cn("h-5 w-5", activeTab === "threads" ? "text-primary" : "text-muted-foreground")} />
+                          <MessageSquare className={cn("h-5 w-5", activeTab === "threads" ? "text-primary" : "text-muted-foreground")} />
                         </button>
                       </TooltipTrigger>
                       <TooltipContent side="right"><p>Threads</p></TooltipContent>
