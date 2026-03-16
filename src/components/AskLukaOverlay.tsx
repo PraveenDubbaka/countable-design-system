@@ -501,7 +501,7 @@ export function AskLukaOverlay({ open, onOpenChange }: AskLukaOverlayProps) {
                   <div className="px-6 py-4 space-y-4 min-w-0 max-w-full overflow-hidden">
                     {/* User message */}
                     <div className="flex justify-end">
-                      <div className="max-w-[80%] px-4 py-3 rounded-[12px] bg-primary text-primary-foreground text-sm">
+                      <div className="max-w-[80%] px-4 py-3 rounded-[12px] bg-primary text-primary-foreground text-base">
                         {sentMessage}
                       </div>
                     </div>
