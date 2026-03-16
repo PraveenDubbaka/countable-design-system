@@ -1,6 +1,6 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { cn } from "@/lib/utils";
-import { Zap, ChevronDown, LayoutGrid, BarChart3 } from "lucide-react";
+import { Zap, ChevronDown, LayoutGrid, BarChart3, Check } from "lucide-react";
 import { Switch } from "@/components/ui/switch";
 
 /* ── Static data matching the reference image ── */
@@ -25,10 +25,80 @@ const marginRows = [
 ];
 const marginTotals = { name: "Gross Margin", cy: "3,710.00", cyPct: "49.0", py1: "3,200.00", py1Pct: "47.7", py2: "2,640.00", py2Pct: "45.5", vs: "+15.9" };
 
-const cols = ["Account Name ↓", "CY", "CY (%)", "PY1", "PY1 (%)", "PY2", "PY2 (%)", "CY vs PY1 (%)"];
+type ComparisonView = "cy-py1-py2" | "cy-py1";
+
+const colsFull = ["Account Name ↓", "CY", "CY (%)", "PY1", "PY1 (%)", "PY2", "PY2 (%)", "CY vs PY1 (%)"];
+const colsNoPy2 = ["Account Name ↓", "CY", "CY (%)", "PY1", "PY1 (%)", "CY vs PY1 (%)"];
 
 function LukaIcon({ size = 16 }: { size?: number }) {
   return <Zap className="text-white" size={size} fill="white" strokeWidth={0} />;
+}
+
+/* ── Comparison View Dropdown ── */
+function ComparisonDropdown({
+  value,
+  onChange,
+}: {
+  value: ComparisonView;
+  onChange: (v: ComparisonView) => void;
+}) {
+  const [open, setOpen] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    function handleClick(e: MouseEvent) {
+      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
+    }
+    document.addEventListener("mousedown", handleClick);
+    return () => document.removeEventListener("mousedown", handleClick);
+  }, []);
+
+  const label = value === "cy-py1-py2" ? "CY vs PY1 vs PY2" : "CY vs PY1";
+  const options: { key: ComparisonView; label: string }[] = [
+    { key: "cy-py1-py2", label: "CY vs PY1 vs PY2" },
+    { key: "cy-py1", label: "CY vs PY1" },
+  ];
+
+  return (
+    <div ref={ref} className="relative">
+      <button
+        onClick={() => setOpen(!open)}
+        className={cn(
+          "flex items-center gap-2 h-9 px-3 rounded-[10px] border text-sm transition-all duration-200",
+          "bg-white border-[#dcdfe4] hover:border-[hsl(210_25%_75%)]",
+          "dark:bg-card dark:border-[hsl(220_15%_30%)] dark:hover:border-[hsl(220_15%_40%)]",
+          open && "border-[hsl(var(--primary))] ring-2 ring-[hsl(var(--primary)/0.15)]"
+        )}
+      >
+        <span className="text-xs text-muted-foreground whitespace-nowrap">Select Comparison View*</span>
+        <span className="font-medium text-foreground whitespace-nowrap">{label}</span>
+        <ChevronDown className={cn("h-3.5 w-3.5 text-muted-foreground transition-transform duration-200", open && "rotate-180")} />
+      </button>
+
+      {open && (
+        <div className="absolute right-0 top-[calc(100%+4px)] z-50 min-w-[220px] rounded-[10px] border border-border bg-popover shadow-lg animate-in fade-in zoom-in-95 duration-150">
+          <div className="p-1.5">
+            {options.map((opt) => (
+              <button
+                key={opt.key}
+                onClick={() => { onChange(opt.key); setOpen(false); }}
+                className={cn(
+                  "flex items-center justify-between w-full rounded-lg px-3 py-2.5 text-sm transition-all duration-200",
+                  "hover:bg-primary/[0.08] hover:scale-[1.01]",
+                  value === opt.key && "bg-primary/[0.06] font-medium"
+                )}
+              >
+                <span className="text-foreground">{opt.label}</span>
+                {value === opt.key && (
+                  <Check className="h-4 w-4 shrink-0" style={{ color: "#074075" }} />
+                )}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+  );
 }
 
 /* ── Table section component ── */
@@ -37,15 +107,19 @@ function TableSection({
   rows,
   totals,
   visible,
+  showPy2,
 }: {
   title: string;
   rows: typeof revenueRows;
   totals: typeof revenueTotals & { cyPct?: string; py1Pct?: string; py2Pct?: string };
   visible: boolean;
+  showPy2: boolean;
 }) {
   if (!visible) return null;
+  const cols = showPy2 ? colsFull : colsNoPy2;
+
   return (
-    <div className="border border-[hsl(210_25%_82%)] rounded-lg overflow-hidden shadow-sm animate-in fade-in slide-in-from-bottom-1 duration-300">
+    <div className="border border-[hsl(210_25%_82%)] rounded-lg overflow-hidden shadow-sm animate-in fade-in slide-in-from-bottom-1 duration-300 min-w-0">
       <div className="px-4 py-3 bg-[hsl(210_40%_96%)]">
         <span className="text-sm font-semibold text-foreground">{title}</span>
       </div>
@@ -68,8 +142,8 @@ function TableSection({
                 <td className="px-4 py-2.5 text-right text-muted-foreground tabular-nums">{r.cyPct}</td>
                 <td className="px-4 py-2.5 text-right text-foreground tabular-nums">{r.py1}</td>
                 <td className="px-4 py-2.5 text-right text-muted-foreground tabular-nums">{r.py1Pct}</td>
-                <td className="px-4 py-2.5 text-right text-foreground tabular-nums">{r.py2}</td>
-                <td className="px-4 py-2.5 text-right text-muted-foreground tabular-nums">{r.py2Pct}</td>
+                {showPy2 && <td className="px-4 py-2.5 text-right text-foreground tabular-nums">{r.py2}</td>}
+                {showPy2 && <td className="px-4 py-2.5 text-right text-muted-foreground tabular-nums">{r.py2Pct}</td>}
                 <td className="px-4 py-2.5 text-right text-primary font-medium tabular-nums">{r.vs}</td>
               </tr>
             ))}
@@ -80,8 +154,8 @@ function TableSection({
               <td className="px-4 py-2.5 text-right text-muted-foreground tabular-nums">{totals.cyPct ?? ""}</td>
               <td className="px-4 py-2.5 text-right text-foreground tabular-nums">{totals.py1}</td>
               <td className="px-4 py-2.5 text-right text-muted-foreground tabular-nums">{totals.py1Pct ?? ""}</td>
-              <td className="px-4 py-2.5 text-right text-foreground tabular-nums">{totals.py2}</td>
-              <td className="px-4 py-2.5 text-right text-muted-foreground tabular-nums">{totals.py2Pct ?? ""}</td>
+              {showPy2 && <td className="px-4 py-2.5 text-right text-foreground tabular-nums">{totals.py2}</td>}
+              {showPy2 && <td className="px-4 py-2.5 text-right text-muted-foreground tabular-nums">{totals.py2Pct ?? ""}</td>}
               <td className="px-4 py-2.5 text-right text-primary font-semibold tabular-nums">{totals.vs}</td>
             </tr>
           </tbody>
@@ -118,6 +192,8 @@ export interface GrossMarginResponseProps {
 
 export function GrossMarginResponse({ revealStep }: GrossMarginResponseProps) {
   const [periodTab, setPeriodTab] = useState<"annual" | "quarterly" | "monthly">("annual");
+  const [comparison, setComparison] = useState<ComparisonView>("cy-py1-py2");
+  const showPy2 = comparison === "cy-py1-py2";
 
   return (
     <div className="space-y-4 w-full min-w-0">
@@ -130,29 +206,32 @@ export function GrossMarginResponse({ revealStep }: GrossMarginResponseProps) {
 
       {/* Period tabs + controls */}
       {revealStep >= 1 && (
-        <div className="flex items-center justify-between animate-in fade-in slide-in-from-bottom-1 duration-300">
-          <div className="flex items-center gap-0">
+        <div className="flex items-center justify-between flex-wrap gap-3 animate-in fade-in slide-in-from-bottom-1 duration-300">
+          {/* Tabs – underline style matching uploaded image */}
+          <div className="flex items-center border border-border rounded-[10px] overflow-hidden">
             {(["annual", "quarterly", "monthly"] as const).map((tab) => (
               <button
                 key={tab}
                 onClick={() => setPeriodTab(tab)}
                 className={cn(
-                  "px-4 py-1.5 text-sm font-medium rounded-md transition-colors capitalize",
+                  "px-5 py-2 text-sm font-medium transition-all duration-200 capitalize relative",
+                  "hover:bg-muted/40",
                   periodTab === tab
-                    ? "bg-foreground text-background"
-                    : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
+                    ? "text-foreground font-semibold bg-muted/30"
+                    : "text-muted-foreground"
                 )}
               >
                 {tab}
+                {/* Active underline */}
+                {periodTab === tab && (
+                  <span className="absolute bottom-0 left-2 right-2 h-[2px] bg-foreground rounded-full" />
+                )}
               </button>
             ))}
           </div>
+
           <div className="flex items-center gap-2">
-            <div className="flex items-center gap-2 px-3 py-1.5 rounded-md border border-border text-sm text-foreground">
-              <span className="text-xs text-muted-foreground">Select Comparison View*</span>
-              <span className="font-medium">CY vs PY1 vs PY2</span>
-              <ChevronDown className="h-3.5 w-3.5 text-muted-foreground" />
-            </div>
+            <ComparisonDropdown value={comparison} onChange={setComparison} />
             <div className="flex items-center gap-1 ml-2">
               <button className="p-1.5 rounded hover:bg-muted/50 transition-colors">
                 <LayoutGrid className="h-4 w-4 text-muted-foreground" />
@@ -167,28 +246,13 @@ export function GrossMarginResponse({ revealStep }: GrossMarginResponseProps) {
       )}
 
       {/* Revenue Accounts */}
-      <TableSection
-        title="Revenue Accounts"
-        rows={revenueRows}
-        totals={revenueTotals}
-        visible={revealStep >= 2}
-      />
+      <TableSection title="Revenue Accounts" rows={revenueRows} totals={revenueTotals} visible={revealStep >= 2} showPy2={showPy2} />
 
       {/* Cost of Sales Accounts */}
-      <TableSection
-        title="Cost of Sales Accounts"
-        rows={cosRows}
-        totals={cosTotals}
-        visible={revealStep >= 3}
-      />
+      <TableSection title="Cost of Sales Accounts" rows={cosRows} totals={cosTotals} visible={revealStep >= 3} showPy2={showPy2} />
 
       {/* Gross Margin Summary */}
-      <TableSection
-        title="Gross Margin Summary"
-        rows={marginRows}
-        totals={marginTotals}
-        visible={revealStep >= 4}
-      />
+      <TableSection title="Gross Margin Summary" rows={marginRows} totals={marginTotals} visible={revealStep >= 4} showPy2={showPy2} />
 
       {/* Luka Summary */}
       {revealStep >= 5 && (
