@@ -64,7 +64,7 @@ function ComparisonDropdown({
       <button
         onClick={() => setOpen(!open)}
         className={cn(
-          "relative flex items-center gap-2 h-10 pl-3 pr-2.5 rounded-[10px] border text-sm transition-all duration-200",
+          "relative flex items-center gap-2 h-10 pl-3 pr-2.5 rounded-[10px] border text-base transition-all duration-200",
           "bg-white border-[#dcdfe4] hover:border-[#074075]",
           "dark:bg-card dark:border-[hsl(220_15%_30%)] dark:hover:border-[#074075]",
           open && "border-[#074075] ring-2 ring-[#074075]/15"
