@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { X, Mic, Plus, Hash, Search, Settings, MessageCircle, Minus, Send, Zap, FolderOpen, Maximize2, Minimize2, ChevronLeft, ChevronRight, Clock } from "lucide-react";
+import { X, Mic, Plus, Hash, Search, MessageCircle, Minus, Send, Zap, FolderOpen, Maximize2, Minimize2, ChevronLeft, ChevronRight, Clock, MoreHorizontal } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from "@/components/ui/tooltip";
@@ -185,20 +185,14 @@ export function AskLukaOverlay({ open, onOpenChange }: AskLukaOverlayProps) {
                     ))}
                   </div>
 
-                  <div className="px-3 pb-3">
-                    <button
-                      onClick={() => setShowAllRecent(!showAllRecent)}
-                      className="text-xs font-semibold text-primary hover:underline">
-                      Show More
-                    </button>
-                  </div>
                 </ScrollArea>
 
-                {/* Settings at bottom */}
-                <div className="px-3 pb-3 pt-2">
-                  <button className="w-full flex items-center px-3 py-2 hover:bg-muted/60 transition-colors bg-primary/10 rounded-md gap-0">
-                    <Settings className="h-4 w-4 text-primary" />
-                    <span className="text-sm font-medium text-primary mx-[8px]">Settings</span>
+                {/* Show More sticky button at bottom */}
+                <div className="px-3 pb-3 pt-2 border-t border-border">
+                  <button
+                    onClick={() => setShowAllRecent(!showAllRecent)}
+                    className="w-full flex items-center justify-center px-3 py-2 hover:bg-primary/15 transition-colors bg-primary/10 rounded-md gap-1.5">
+                    <span className="text-sm font-medium text-primary">{showAllRecent ? 'Show Less' : 'Show More'}</span>
                   </button>
                 </div>
               </>
@@ -258,23 +252,17 @@ export function AskLukaOverlay({ open, onOpenChange }: AskLukaOverlayProps) {
                   </div>
                 </ScrollArea>
 
-                {/* Bottom icons */}
-                <div className="flex flex-col items-center gap-1 pb-3 pt-2">
+                {/* Show More sticky button at bottom */}
+                <div className="flex flex-col items-center pb-3 pt-2 border-t border-border mx-2">
                   <Tooltip>
                     <TooltipTrigger asChild>
-                      <button className="h-9 w-10 flex items-center justify-center rounded-lg hover:bg-muted/60 transition-colors">
-                        <Clock className="h-4 w-4 text-muted-foreground" />
+                      <button
+                        onClick={() => setShowAllRecent(!showAllRecent)}
+                        className="h-10 w-10 rounded-[10px] flex items-center justify-center transition-colors bg-primary/10 hover:bg-primary/15">
+                        <MoreHorizontal className="h-5 w-5 text-primary" />
                       </button>
                     </TooltipTrigger>
-                    <TooltipContent side="right"><p>Recent</p></TooltipContent>
-                  </Tooltip>
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <button className="h-9 w-10 flex items-center justify-center rounded-lg hover:bg-muted/60 bg-primary/10 transition-colors">
-                        <Settings className="h-4 w-4 text-primary" />
-                      </button>
-                    </TooltipTrigger>
-                    <TooltipContent side="right"><p>Settings</p></TooltipContent>
+                    <TooltipContent side="right"><p>{showAllRecent ? 'Show Less' : 'Show More'}</p></TooltipContent>
                   </Tooltip>
                 </div>
               </>
