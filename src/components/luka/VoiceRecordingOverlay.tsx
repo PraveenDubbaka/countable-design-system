@@ -128,7 +128,7 @@ export function VoiceRecordingOverlay({ open, onClose, onComplete }: VoiceRecord
   const timerRef = useRef<number>(0);
   const accumulatedRef = useRef("");
 
-  // Clean up on unmount / close
+  // Clean up on close
   useEffect(() => {
     if (!open) {
       cleanup();
@@ -139,6 +139,13 @@ export function VoiceRecordingOverlay({ open, onClose, onComplete }: VoiceRecord
       setAnalyser(null);
     }
   }, [open]);
+
+  // Auto-start recording when overlay opens
+  useEffect(() => {
+    if (open && status === "idle") {
+      handleStartRef.current?.();
+    }
+  }, [open, status]);
 
   const cleanup = useCallback(() => {
     if (timerRef.current) clearInterval(timerRef.current);
