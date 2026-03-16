@@ -64,15 +64,18 @@ function ComparisonDropdown({
       <button
         onClick={() => setOpen(!open)}
         className={cn(
-          "flex items-center gap-2 h-9 px-3 rounded-[10px] border text-sm transition-all duration-200",
-          "bg-white border-[#dcdfe4] hover:border-[hsl(210_25%_75%)]",
+          "relative flex items-center gap-2 h-10 pl-3 pr-2.5 rounded-[10px] border text-sm transition-all duration-200",
+          "bg-white border-[#dcdfe4] hover:border-[hsl(213_60%_45%)]",
           "dark:bg-card dark:border-[hsl(220_15%_30%)] dark:hover:border-[hsl(220_15%_40%)]",
-          open && "border-[hsl(var(--primary))] ring-2 ring-[hsl(var(--primary)/0.15)]"
+          open && "border-[hsl(213_60%_45%)] ring-2 ring-[hsl(213_60%_45%/0.15)]"
         )}
       >
-        <span className="text-xs text-muted-foreground whitespace-nowrap">Select Comparison View*</span>
+        {/* Floating label */}
+        <span className="absolute -top-2.5 left-2.5 px-1 bg-white dark:bg-card text-[11px] text-muted-foreground whitespace-nowrap leading-none">
+          Select Comparison View*
+        </span>
         <span className="font-medium text-foreground whitespace-nowrap">{label}</span>
-        <ChevronDown className={cn("h-3.5 w-3.5 text-muted-foreground transition-transform duration-200", open && "rotate-180")} />
+        <ChevronDown className={cn("h-4 w-4 ml-1 transition-transform duration-200", open ? "rotate-180 text-[hsl(213_60%_45%)]" : "text-[hsl(213_60%_45%)]")} />
       </button>
 
       {open && (
