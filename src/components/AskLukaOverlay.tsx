@@ -462,8 +462,8 @@ export function AskLukaOverlay({ open, onOpenChange }: AskLukaOverlayProps) {
               </ScrollArea>
 
               {/* Chat Input - pinned to bottom */}
-              <div className="px-6 pb-6 pt-2">
-                <div className="w-full max-w-[700px] mx-auto relative">
+              <div className={cn("pb-6 pt-2", viewMode === "full" ? "px-12" : "px-6")}>
+                <div className={cn("w-full mx-auto relative", viewMode === "full" ? "max-w-none" : "max-w-[700px]")}>
                   {/* Prompt Picker */}
                   <PromptPicker
                     open={showPromptPicker}
