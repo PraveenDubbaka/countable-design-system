@@ -1,9 +1,11 @@
-import { useState } from "react";
+import { useState, useRef, useCallback } from "react";
 import { X, Mic, Plus, Search, MessageCircle, Minus, Send, FolderOpen, Maximize2, ChevronLeft, ChevronRight, Clock, PanelLeftClose, MoreHorizontal } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
+import { PromptPicker } from "@/components/luka/PromptPicker";
+import { LukaThinkingMessage } from "@/components/luka/LukaThinkingMessage";
 
 interface AskLukaOverlayProps {
   open: boolean;
@@ -70,6 +72,64 @@ export function AskLukaOverlay({ open, onOpenChange }: AskLukaOverlayProps) {
   const [viewMode, setViewMode] = useState<"full" | "half">("half");
   const [sidebarExpanded, setSidebarExpanded] = useState(false);
   const [sidebarHovered, setSidebarHovered] = useState(false);
+  const [showPromptPicker, setShowPromptPicker] = useState(false);
+  const [hashFilter, setHashFilter] = useState("");
+  const [isThinking, setIsThinking] = useState(false);
+  const [sentMessage, setSentMessage] = useState<string | null>(null);
+  const [aiResponse, setAiResponse] = useState<string | null>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  const handleInputChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    const val = e.target.value;
+    setMessage(val);
+
+    // Check if # is typed — open prompt picker
+    const hashIdx = val.lastIndexOf("#");
+    if (hashIdx !== -1) {
+      setShowPromptPicker(true);
+      setHashFilter(val.slice(hashIdx + 1));
+    } else {
+      setShowPromptPicker(false);
+      setHashFilter("");
+    }
+  }, []);
+
+  const handlePromptSelect = useCallback((promptLabel: string) => {
+    setShowPromptPicker(false);
+    setHashFilter("");
+    setMessage("");
+    setSentMessage(promptLabel);
+    setIsThinking(true);
+    setAiResponse(null);
+
+    // Simulate AI response after delay
+    setTimeout(() => {
+      setIsThinking(false);
+      setAiResponse(`Here's an overview of **${promptLabel}** with key insights and analysis. This is a simulated response demonstrating the thinking animation flow.`);
+    }, 3000);
+  }, []);
+
+  const handleSend = useCallback(() => {
+    if (!message.trim()) return;
+    const msg = message.trim();
+    setMessage("");
+    setShowPromptPicker(false);
+    setSentMessage(msg);
+    setIsThinking(true);
+    setAiResponse(null);
+
+    setTimeout(() => {
+      setIsThinking(false);
+      setAiResponse(`Here's my response to "${msg}". This is a simulated response.`);
+    }, 3000);
+  }, [message]);
+
+  const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
+    if (e.key === "Enter" && !showPromptPicker && message.trim()) {
+      e.preventDefault();
+      handleSend();
+    }
+  }, [showPromptPicker, message, handleSend]);
 
   if (!open) return null;
 
@@ -354,68 +414,129 @@ export function AskLukaOverlay({ open, onOpenChange }: AskLukaOverlayProps) {
               </TooltipProvider>
             </div>
 
-            {/* Center welcome content */}
-            <div className="flex-1 flex flex-col items-center justify-center px-6">
-              {/* Luka logo icon */}
-              <div className="mb-8 relative flex items-center justify-center w-24 h-24">
-                <div className="absolute -inset-4 luka-ambient-glow" />
-                <div className="absolute inset-0 luka-ambient-orb opacity-20" />
-                <div className="relative flex items-center justify-center w-[52px] h-[52px] rounded-full bg-background/90 dark:bg-card/90 backdrop-blur-sm z-10 shadow-[0_0_30px_rgba(151,71,255,0.12)]">
-                  <LukaBoltIcon size={24} />
-                </div>
-              </div>
-
-              <h1 className="text-2xl font-semibold text-foreground mb-8 text-center">
-                How can I help you today?
-              </h1>
-
-              {/* Suggestion chips */}
-              <div className="flex flex-wrap items-center justify-center gap-3 mb-12">
-                {suggestions.map((s) => (
-                  <button
-                    key={s}
-                    className="px-4 py-2 rounded-[10px] border border-border bg-background dark:bg-card text-sm text-foreground hover:bg-muted/60 dark:hover:bg-muted/30 transition-colors"
-                  >
-                    {s}
-                  </button>
-                ))}
-              </div>
-
-              {/* Chat Input */}
-              <div className="w-full max-w-[700px]">
-                <div className="border border-border rounded-[10px] overflow-visible bg-background dark:bg-card hover:border-primary/30 transition-all duration-200 luka-gradient-border relative">
-                  <div className="px-4 pt-3 pb-2">
-                    <input
-                      type="text"
-                      value={message}
-                      onChange={(e) => setMessage(e.target.value)}
-                      placeholder="Type # for prompts or just ask anything..."
-                      className="w-full bg-transparent h-9 text-foreground placeholder:text-muted-foreground/70 outline-none border-none text-sm"
-                    />
-                  </div>
-
-                  {/* Bottom toolbar */}
-                  <div className="px-3 pb-3 flex items-center justify-between">
-                    <div className="flex items-center gap-1">
-                      <Button variant="outline" size="icon" className="h-9 w-9 rounded-[10px]">
-                        <Plus className="h-4 w-4 text-muted-foreground" />
-                      </Button>
-                      <Button variant="outline" size="icon" className="h-9 w-9 rounded-[10px]">
-                        <FolderOpen className="h-4 w-4 text-muted-foreground" />
-                      </Button>
-                      <div className="flex items-center gap-1.5 px-3 h-9 rounded-[10px] border border-border bg-background dark:bg-muted/20 text-sm text-foreground">
-                        <span className="text-amber-500">✨</span>
-                        <span className="text-sm font-medium">Gemini 3 Flash</span>
+            {/* Main content area */}
+            <div className="flex-1 flex flex-col">
+              {/* Messages area or welcome */}
+              <ScrollArea className="flex-1">
+                {!sentMessage ? (
+                  /* Welcome state */
+                  <div className="flex-1 flex flex-col items-center justify-center px-6 min-h-[60vh]">
+                    {/* Luka logo icon */}
+                    <div className="mb-8 relative flex items-center justify-center w-24 h-24">
+                      <div className="absolute -inset-4 luka-ambient-glow" />
+                      <div className="absolute inset-0 luka-ambient-orb opacity-20" />
+                      <div className="relative flex items-center justify-center w-[52px] h-[52px] rounded-full bg-background/90 dark:bg-card/90 backdrop-blur-sm z-10 shadow-[0_0_30px_rgba(151,71,255,0.12)]">
+                        <LukaBoltIcon size={24} />
                       </div>
                     </div>
 
-                    <div className="flex items-center gap-1">
-                      <Button variant="ghost" size="icon" className="h-9 w-9 rounded-[10px]">
-                        <Mic className="h-4 w-4 text-muted-foreground" />
-                      </Button>
-                      <Button size="icon" className="h-9 w-9 rounded-full bg-muted hover:bg-muted/80 text-muted-foreground">
-                        <Send className="h-4 w-4" />
-                      </Button>
+                    <h1 className="text-2xl font-semibold text-foreground mb-8 text-center">
+                      How can I help you today?
+                    </h1>
+
+                    {/* Suggestion chips */}
+                    <div className="flex flex-wrap items-center justify-center gap-3 mb-12">
+                      {suggestions.map((s) => (
+                        <button
+                          key={s}
+                          onClick={() => handlePromptSelect(s.replace("#", ""))}
+                          className="px-4 py-2 rounded-[10px] border border-border bg-background dark:bg-card text-sm text-foreground hover:bg-muted/60 dark:hover:bg-muted/30 transition-colors"
+                        >
+                          {s}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                ) : (
+                  /* Chat messages */
+                  <div className="px-6 py-4 space-y-4">
+                    {/* User message */}
+                    <div className="flex justify-end">
+                      <div className="max-w-[80%] px-4 py-3 rounded-[12px] bg-primary text-primary-foreground text-sm">
+                        {sentMessage}
+                      </div>
+                    </div>
+
+                    {/* Thinking indicator */}
+                    <LukaThinkingMessage visible={isThinking} />
+
+                    {/* AI response */}
+                    {aiResponse && (
+                      <div className="flex items-start gap-3 animate-fade-in">
+                        <div className="w-9 h-9 rounded-full bg-gradient-to-br from-[hsl(var(--primary))] to-[hsl(265_80%_55%)] flex items-center justify-center shrink-0">
+                          <LukaBoltIcon size={16} />
+                        </div>
+                        <div className="flex-1 text-sm text-foreground leading-relaxed pt-1.5">
+                          {aiResponse}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                )}
+              </ScrollArea>
+
+              {/* Chat Input - pinned to bottom */}
+              <div className="px-6 pb-6 pt-2">
+                <div className="w-full max-w-[700px] mx-auto relative">
+                  {/* Prompt Picker */}
+                  <PromptPicker
+                    open={showPromptPicker}
+                    filter={hashFilter}
+                    onSelect={handlePromptSelect}
+                    onClose={() => { setShowPromptPicker(false); setHashFilter(""); }}
+                  />
+
+                  <div className="border border-border rounded-[10px] overflow-visible bg-background dark:bg-card hover:border-primary/30 transition-all duration-200 luka-gradient-border relative">
+                    <div className="px-4 pt-3 pb-2">
+                      {/* Render input with blue # styling */}
+                      <div className="relative">
+                        <input
+                          ref={inputRef}
+                          type="text"
+                          value={message}
+                          onChange={handleInputChange}
+                          onKeyDown={handleKeyDown}
+                          placeholder="Type # for prompts or just ask anything..."
+                          className={cn(
+                            "w-full bg-transparent h-9 placeholder:text-muted-foreground/70 outline-none border-none text-sm",
+                            message.includes("#") ? "text-primary font-medium" : "text-foreground"
+                          )}
+                        />
+                      </div>
+                    </div>
+
+                    {/* Bottom toolbar */}
+                    <div className="px-3 pb-3 flex items-center justify-between">
+                      <div className="flex items-center gap-1">
+                        <Button variant="outline" size="icon" className="h-9 w-9 rounded-[10px]">
+                          <Plus className="h-4 w-4 text-muted-foreground" />
+                        </Button>
+                        <Button variant="outline" size="icon" className="h-9 w-9 rounded-[10px]">
+                          <FolderOpen className="h-4 w-4 text-muted-foreground" />
+                        </Button>
+                        <div className="flex items-center gap-1.5 px-3 h-9 rounded-[10px] border border-border bg-background dark:bg-muted/20 text-sm text-foreground">
+                          <span className="text-amber-500">✨</span>
+                          <span className="text-sm font-medium">Gemini 3 Flash</span>
+                        </div>
+                      </div>
+
+                      <div className="flex items-center gap-1">
+                        <Button variant="ghost" size="icon" className="h-9 w-9 rounded-[10px]">
+                          <Mic className="h-4 w-4 text-muted-foreground" />
+                        </Button>
+                        <Button
+                          size="icon"
+                          className={cn(
+                            "h-9 w-9 rounded-full transition-colors",
+                            message.trim()
+                              ? "bg-primary hover:bg-primary/90 text-primary-foreground"
+                              : "bg-muted hover:bg-muted/80 text-muted-foreground"
+                          )}
+                          onClick={handleSend}
+                        >
+                          <Send className="h-4 w-4" />
+                        </Button>
+                      </div>
                     </div>
                   </div>
                 </div>

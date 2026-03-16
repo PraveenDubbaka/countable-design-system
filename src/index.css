@@ -104,6 +104,39 @@
   animation: luka-breathe 4s ease-in-out infinite;
 }
 
+/* Luka thinking spinner */
+@keyframes luka-think-spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.luka-thinking-spin {
+  animation: luka-think-spin 2s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+
+/* Thinking dots bounce */
+@keyframes luka-dot-bounce {
+  0%, 80%, 100% { transform: translateY(0); opacity: 0.4; }
+  40% { transform: translateY(-4px); opacity: 1; }
+}
+
+.luka-dot {
+  animation: luka-dot-bounce 1.4s ease-in-out infinite;
+}
+.luka-dot-1 { animation-delay: 0s; }
+.luka-dot-2 { animation-delay: 0.2s; }
+.luka-dot-3 { animation-delay: 0.4s; }
+
+/* Thinking text shimmer */
+@keyframes luka-text-shimmer {
+  0%, 100% { opacity: 0.6; }
+  50% { opacity: 1; }
+}
+
+.luka-thinking-text {
+  animation: luka-text-shimmer 2s ease-in-out infinite;
+}
+
 
 .shadow-sm {
   --tw-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.15);
