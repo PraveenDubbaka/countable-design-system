@@ -3,6 +3,10 @@ import { cn } from "@/lib/utils";
 import { Zap, ChevronDown, LayoutGrid, BarChart3, Check } from "lucide-react";
 import { Switch } from "@/components/ui/switch";
 import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from "@/components/ui/tooltip";
+import {
+  BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip,
+  Legend, ResponsiveContainer, LineChart, Line,
+} from "recharts";
 
 /* ── Annual data ── */
 
