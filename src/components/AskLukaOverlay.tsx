@@ -410,7 +410,7 @@ export function AskLukaOverlay({ open, onOpenChange }: AskLukaOverlayProps) {
           </aside>
 
           {/* ===== MAIN CONTENT AREA ===== */}
-          <main className={cn("flex-1 flex flex-col transition-colors duration-500", (isThinking || aiResponse) ? "bg-background" : "bg-gradient-to-b from-[hsl(210_60%_97%)] via-[hsl(260_40%_96%)] to-[hsl(300_30%_96%)] dark:from-[hsl(220_20%_12%)] dark:via-[hsl(260_15%_14%)] dark:to-[hsl(280_10%_13%)]")}>
+          <main className={cn("flex-1 min-w-0 flex flex-col transition-all duration-300 ease-in-out", (isThinking || aiResponse) ? "bg-background" : "bg-gradient-to-b from-[hsl(210_60%_97%)] via-[hsl(260_40%_96%)] to-[hsl(300_30%_96%)] dark:from-[hsl(220_20%_12%)] dark:via-[hsl(260_15%_14%)] dark:to-[hsl(280_10%_13%)]")}>
             {/* Top right controls */}
             <div className="h-12 px-4 flex items-center justify-end gap-1">
               <TooltipProvider delayDuration={200}>
@@ -515,7 +515,7 @@ export function AskLukaOverlay({ open, onOpenChange }: AskLukaOverlayProps) {
                         )}>
                           <LukaIcon size={16} />
                         </div>
-                        <div className="flex-1 pt-1.5 min-h-[28px]">
+                        <div className="flex-1 pt-1.5 min-h-[28px] min-w-0 overflow-x-auto">
                           {isThinking ? (
                             <div className="flex items-center gap-2">
                               <span className="text-sm font-medium text-muted-foreground luka-thinking-text">
