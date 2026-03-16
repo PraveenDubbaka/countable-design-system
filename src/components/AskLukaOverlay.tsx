@@ -63,7 +63,10 @@ export function AskLukaOverlay({ open, onOpenChange }: AskLukaOverlayProps) {
   const [isThinking, setIsThinking] = useState(false);
   const [sentMessage, setSentMessage] = useState<string | null>(null);
   const [aiResponse, setAiResponse] = useState<string | null>(null);
+  const [displayedResponse, setDisplayedResponse] = useState("");
+  const [isStreaming, setIsStreaming] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
+  const streamRef = useRef<number | null>(null);
 
   const handleInputChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const val = e.target.value;
