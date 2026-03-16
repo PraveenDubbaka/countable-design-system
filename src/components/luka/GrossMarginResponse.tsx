@@ -188,7 +188,7 @@ function TableSection({
               <td className="px-4 py-2.5 text-right text-black tabular-nums">{totals.py1Pct ?? ""}</td>
               {showPy2 && <td className="px-4 py-2.5 text-right text-black tabular-nums">{totals.py2}</td>}
               {showPy2 && <td className="px-4 py-2.5 text-right text-black tabular-nums">{totals.py2Pct ?? ""}</td>}
-              <td className="px-4 py-2.5 text-right text-primary font-semibold tabular-nums">{totals.vs}</td>
+              <td className="px-4 py-2.5 text-right text-black font-semibold tabular-nums">{totals.vs}</td>
             </tr>
           </tbody>
         </table>
