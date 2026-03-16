@@ -362,6 +362,195 @@ function LukaSummary({ visible }: { visible: boolean }) {
   );
 }
 
+/* ── Helper: parse number from formatted string ── */
+function parseNum(s: string): number {
+  return parseFloat(s.replace(/,/g, "")) || 0;
+}
+
+/* ── Chart colors ── */
+const CHART_COLORS = {
+  cy: "#2355A4",
+  py1: "#8649F1",
+  py2: "#B89AFA",
+  cyLine: "#2355A4",
+  py1Line: "#8649F1",
+  py2Line: "#B89AFA",
+};
+
+/* ── Annual Chart ── */
+function AnnualChart({ visible, showPy2 }: { visible: boolean; showPy2: boolean }) {
+  if (!visible) return null;
+
+  const revenueData = revenueRows.map((r) => ({
+    name: r.name,
+    CY: parseNum(r.cy),
+    PY1: parseNum(r.py1),
+    ...(showPy2 ? { PY2: parseNum(r.py2) } : {}),
+  }));
+
+  const marginData = [
+    { name: "Revenue", CY: parseNum(revenueTotals.cy), PY1: parseNum(revenueTotals.py1), ...(showPy2 ? { PY2: parseNum(revenueTotals.py2) } : {}) },
+    { name: "Cost of Sales", CY: parseNum(cosTotals.cy), PY1: parseNum(cosTotals.py1), ...(showPy2 ? { PY2: parseNum(cosTotals.py2) } : {}) },
+    { name: "Gross Margin", CY: parseNum(marginTotals.cy), PY1: parseNum(marginTotals.py1), ...(showPy2 ? { PY2: parseNum(marginTotals.py2) } : {}) },
+  ];
+
+  const marginPctData = [
+    { name: "CY", pct: parseFloat(marginTotals.cyPct || "0") },
+    { name: "PY1", pct: parseFloat(marginTotals.py1Pct || "0") },
+    ...(showPy2 ? [{ name: "PY2", pct: parseFloat(marginTotals.py2Pct || "0") }] : []),
+  ];
+
+  return (
+    <div className="space-y-6">
+      {/* Revenue by Account */}
+      <div className="border border-[hsl(210_25%_82%)] rounded-lg overflow-hidden shadow-sm p-4 bg-background">
+        <p className="text-sm font-semibold text-foreground mb-3">Revenue by Account</p>
+        <ResponsiveContainer width="100%" height={220}>
+          <BarChart data={revenueData} barGap={4}>
+            <CartesianGrid strokeDasharray="3 3" stroke="hsl(210 25% 90%)" />
+            <XAxis dataKey="name" tick={{ fontSize: 12 }} />
+            <YAxis tick={{ fontSize: 11 }} />
+            <RechartsTooltip contentStyle={{ borderRadius: 8, fontSize: 13 }} />
+            <Legend wrapperStyle={{ fontSize: 12 }} />
+            <Bar dataKey="CY" fill={CHART_COLORS.cy} radius={[4, 4, 0, 0]} />
+            <Bar dataKey="PY1" fill={CHART_COLORS.py1} radius={[4, 4, 0, 0]} />
+            {showPy2 && <Bar dataKey="PY2" fill={CHART_COLORS.py2} radius={[4, 4, 0, 0]} />}
+          </BarChart>
+        </ResponsiveContainer>
+      </div>
+
+      {/* Margin Comparison */}
+      <div className="border border-[hsl(210_25%_82%)] rounded-lg overflow-hidden shadow-sm p-4 bg-background">
+        <p className="text-sm font-semibold text-foreground mb-3">Gross Margin Summary</p>
+        <ResponsiveContainer width="100%" height={220}>
+          <BarChart data={marginData} barGap={4}>
+            <CartesianGrid strokeDasharray="3 3" stroke="hsl(210 25% 90%)" />
+            <XAxis dataKey="name" tick={{ fontSize: 12 }} />
+            <YAxis tick={{ fontSize: 11 }} />
+            <RechartsTooltip contentStyle={{ borderRadius: 8, fontSize: 13 }} />
+            <Legend wrapperStyle={{ fontSize: 12 }} />
+            <Bar dataKey="CY" fill={CHART_COLORS.cy} radius={[4, 4, 0, 0]} />
+            <Bar dataKey="PY1" fill={CHART_COLORS.py1} radius={[4, 4, 0, 0]} />
+            {showPy2 && <Bar dataKey="PY2" fill={CHART_COLORS.py2} radius={[4, 4, 0, 0]} />}
+          </BarChart>
+        </ResponsiveContainer>
+      </div>
+
+      {/* Margin % Trend */}
+      <div className="border border-[hsl(210_25%_82%)] rounded-lg overflow-hidden shadow-sm p-4 bg-background">
+        <p className="text-sm font-semibold text-foreground mb-3">Gross Margin % Trend</p>
+        <ResponsiveContainer width="100%" height={180}>
+          <BarChart data={marginPctData}>
+            <CartesianGrid strokeDasharray="3 3" stroke="hsl(210 25% 90%)" />
+            <XAxis dataKey="name" tick={{ fontSize: 12 }} />
+            <YAxis domain={[40, 52]} tick={{ fontSize: 11 }} unit="%" />
+            <RechartsTooltip contentStyle={{ borderRadius: 8, fontSize: 13 }} formatter={(v: any) => `${v}%`} />
+            <Bar dataKey="pct" fill={CHART_COLORS.cy} radius={[4, 4, 0, 0]} name="GM %" />
+          </BarChart>
+        </ResponsiveContainer>
+      </div>
+    </div>
+  );
+}
+
+/* ── Quarterly Chart ── */
+function QuarterlyChart({ visible, showPy2 }: { visible: boolean; showPy2: boolean }) {
+  if (!visible) return null;
+
+  const data = quarterlyRows.map((r) => ({
+    name: r.period,
+    "CY GM": parseNum(r.cyGm),
+    "PY1 GM": parseNum(r.py1Gm),
+    ...(showPy2 ? { "PY2 GM": parseNum(r.py2Gm) } : {}),
+    "CY GM%": parseFloat(r.cyGmPct) || 0,
+    "PY1 GM%": parseFloat(r.py1GmPct) || 0,
+  }));
+
+  return (
+    <div className="space-y-6">
+      <div className="border border-[hsl(210_25%_82%)] rounded-lg overflow-hidden shadow-sm p-4 bg-background">
+        <p className="text-sm font-semibold text-foreground mb-3">Quarterly Gross Margin</p>
+        <ResponsiveContainer width="100%" height={240}>
+          <BarChart data={data} barGap={4}>
+            <CartesianGrid strokeDasharray="3 3" stroke="hsl(210 25% 90%)" />
+            <XAxis dataKey="name" tick={{ fontSize: 12 }} />
+            <YAxis tick={{ fontSize: 11 }} />
+            <RechartsTooltip contentStyle={{ borderRadius: 8, fontSize: 13 }} />
+            <Legend wrapperStyle={{ fontSize: 12 }} />
+            <Bar dataKey="CY GM" fill={CHART_COLORS.cy} radius={[4, 4, 0, 0]} />
+            <Bar dataKey="PY1 GM" fill={CHART_COLORS.py1} radius={[4, 4, 0, 0]} />
+            {showPy2 && <Bar dataKey="PY2 GM" fill={CHART_COLORS.py2} radius={[4, 4, 0, 0]} />}
+          </BarChart>
+        </ResponsiveContainer>
+      </div>
+
+      <div className="border border-[hsl(210_25%_82%)] rounded-lg overflow-hidden shadow-sm p-4 bg-background">
+        <p className="text-sm font-semibold text-foreground mb-3">Quarterly GM % Trend</p>
+        <ResponsiveContainer width="100%" height={200}>
+          <LineChart data={data}>
+            <CartesianGrid strokeDasharray="3 3" stroke="hsl(210 25% 90%)" />
+            <XAxis dataKey="name" tick={{ fontSize: 12 }} />
+            <YAxis domain={[44, 52]} tick={{ fontSize: 11 }} unit="%" />
+            <RechartsTooltip contentStyle={{ borderRadius: 8, fontSize: 13 }} formatter={(v: any) => `${v}%`} />
+            <Legend wrapperStyle={{ fontSize: 12 }} />
+            <Line type="monotone" dataKey="CY GM%" stroke={CHART_COLORS.cyLine} strokeWidth={2.5} dot={{ r: 4 }} />
+            <Line type="monotone" dataKey="PY1 GM%" stroke={CHART_COLORS.py1Line} strokeWidth={2.5} dot={{ r: 4 }} />
+          </LineChart>
+        </ResponsiveContainer>
+      </div>
+    </div>
+  );
+}
+
+/* ── Monthly Chart ── */
+function MonthlyChart({ visible, showPy2 }: { visible: boolean; showPy2: boolean }) {
+  if (!visible) return null;
+
+  const data = monthlyRows.map((r) => ({
+    name: r.period.slice(0, 3),
+    "CY GM": parseNum(r.cyGm),
+    "PY1 GM": parseNum(r.py1Gm),
+    ...(showPy2 ? { "PY2 GM": parseNum(r.py2Gm) } : {}),
+    "CY GM%": parseFloat(r.cyGmPct) || 0,
+    "PY1 GM%": parseFloat(r.py1GmPct) || 0,
+  }));
+
+  return (
+    <div className="space-y-6">
+      <div className="border border-[hsl(210_25%_82%)] rounded-lg overflow-hidden shadow-sm p-4 bg-background">
+        <p className="text-sm font-semibold text-foreground mb-3">Monthly Gross Margin</p>
+        <ResponsiveContainer width="100%" height={240}>
+          <BarChart data={data} barGap={2}>
+            <CartesianGrid strokeDasharray="3 3" stroke="hsl(210 25% 90%)" />
+            <XAxis dataKey="name" tick={{ fontSize: 10 }} />
+            <YAxis tick={{ fontSize: 11 }} />
+            <RechartsTooltip contentStyle={{ borderRadius: 8, fontSize: 13 }} />
+            <Legend wrapperStyle={{ fontSize: 12 }} />
+            <Bar dataKey="CY GM" fill={CHART_COLORS.cy} radius={[3, 3, 0, 0]} />
+            <Bar dataKey="PY1 GM" fill={CHART_COLORS.py1} radius={[3, 3, 0, 0]} />
+            {showPy2 && <Bar dataKey="PY2 GM" fill={CHART_COLORS.py2} radius={[3, 3, 0, 0]} />}
+          </BarChart>
+        </ResponsiveContainer>
+      </div>
+
+      <div className="border border-[hsl(210_25%_82%)] rounded-lg overflow-hidden shadow-sm p-4 bg-background">
+        <p className="text-sm font-semibold text-foreground mb-3">Monthly GM % Trend</p>
+        <ResponsiveContainer width="100%" height={200}>
+          <LineChart data={data}>
+            <CartesianGrid strokeDasharray="3 3" stroke="hsl(210 25% 90%)" />
+            <XAxis dataKey="name" tick={{ fontSize: 10 }} />
+            <YAxis domain={[42, 52]} tick={{ fontSize: 11 }} unit="%" />
+            <RechartsTooltip contentStyle={{ borderRadius: 8, fontSize: 13 }} formatter={(v: any) => `${v}%`} />
+            <Legend wrapperStyle={{ fontSize: 12 }} />
+            <Line type="monotone" dataKey="CY GM%" stroke={CHART_COLORS.cyLine} strokeWidth={2.5} dot={{ r: 3 }} />
+            <Line type="monotone" dataKey="PY1 GM%" stroke={CHART_COLORS.py1Line} strokeWidth={2.5} dot={{ r: 3 }} />
+          </LineChart>
+        </ResponsiveContainer>
+      </div>
+    </div>
+  );
+}
+
 /* ── Main component ── */
 
 export interface GrossMarginResponseProps {
@@ -371,7 +560,9 @@ export interface GrossMarginResponseProps {
 export function GrossMarginResponse({ revealStep }: GrossMarginResponseProps) {
   const [periodTab, setPeriodTab] = useState<"annual" | "quarterly" | "monthly">("annual");
   const [comparison, setComparison] = useState<ComparisonView>("cy-py1-py2");
+  const [viewMode, setViewMode] = useState<"table" | "graph">("table");
   const showPy2 = comparison === "cy-py1-py2";
+  const isGraph = viewMode === "graph";
 
   return (
     <div className="space-y-4 w-full min-w-0">
@@ -414,17 +605,27 @@ export function GrossMarginResponse({ revealStep }: GrossMarginResponseProps) {
                 <div className="flex items-center gap-1 ml-2">
                   <Tooltip>
                     <TooltipTrigger asChild>
-                      <button className="p-1.5 rounded hover:bg-muted/50 transition-colors">
-                        <LayoutGrid className="h-4 w-4 text-muted-foreground" />
+                      <button
+                        className={cn("p-1.5 rounded transition-colors", !isGraph ? "bg-muted/60" : "hover:bg-muted/50")}
+                        onClick={() => setViewMode("table")}
+                      >
+                        <LayoutGrid className={cn("h-4 w-4", !isGraph ? "text-foreground" : "text-muted-foreground")} />
                       </button>
                     </TooltipTrigger>
                     <TooltipContent side="bottom"><p>Table View</p></TooltipContent>
                   </Tooltip>
-                  <Switch className="data-[state=checked]:bg-primary" />
+                  <Switch
+                    checked={isGraph}
+                    onCheckedChange={(checked) => setViewMode(checked ? "graph" : "table")}
+                    className="data-[state=checked]:bg-primary"
+                  />
                   <Tooltip>
                     <TooltipTrigger asChild>
-                      <button className="p-1.5 rounded hover:bg-muted/50 transition-colors">
-                        <BarChart3 className="h-4 w-4 text-muted-foreground" />
+                      <button
+                        className={cn("p-1.5 rounded transition-colors", isGraph ? "bg-muted/60" : "hover:bg-muted/50")}
+                        onClick={() => setViewMode("graph")}
+                      >
+                        <BarChart3 className={cn("h-4 w-4", isGraph ? "text-foreground" : "text-muted-foreground")} />
                       </button>
                     </TooltipTrigger>
                     <TooltipContent side="bottom"><p>Graph View</p></TooltipContent>
@@ -446,11 +647,15 @@ export function GrossMarginResponse({ revealStep }: GrossMarginResponseProps) {
               )}
             >
               {periodTab === "annual" && (
-                <div className="space-y-4">
-                  <TableSection title="Revenue Accounts" rows={revenueRows} totals={revenueTotals} visible={revealStep >= 2} showPy2={showPy2} />
-                  <TableSection title="Cost of Sales Accounts" rows={cosRows} totals={cosTotals} visible={revealStep >= 3} showPy2={showPy2} />
-                  <TableSection title="Gross Margin Summary" rows={marginRows} totals={marginTotals} visible={revealStep >= 4} showPy2={showPy2} />
-                </div>
+                isGraph ? (
+                  <AnnualChart visible={revealStep >= 2} showPy2={showPy2} />
+                ) : (
+                  <div className="space-y-4">
+                    <TableSection title="Revenue Accounts" rows={revenueRows} totals={revenueTotals} visible={revealStep >= 2} showPy2={showPy2} />
+                    <TableSection title="Cost of Sales Accounts" rows={cosRows} totals={cosTotals} visible={revealStep >= 3} showPy2={showPy2} />
+                    <TableSection title="Gross Margin Summary" rows={marginRows} totals={marginTotals} visible={revealStep >= 4} showPy2={showPy2} />
+                  </div>
+                )
               )}
             </div>
 
@@ -464,7 +669,11 @@ export function GrossMarginResponse({ revealStep }: GrossMarginResponseProps) {
               )}
             >
               {periodTab === "quarterly" && (
-                <QuarterlyTable visible={revealStep >= 2} showPy2={showPy2} />
+                isGraph ? (
+                  <QuarterlyChart visible={revealStep >= 2} showPy2={showPy2} />
+                ) : (
+                  <QuarterlyTable visible={revealStep >= 2} showPy2={showPy2} />
+                )
               )}
             </div>
 
@@ -478,14 +687,18 @@ export function GrossMarginResponse({ revealStep }: GrossMarginResponseProps) {
               )}
             >
               {periodTab === "monthly" && (
-                <MonthlyTable visible={revealStep >= 2} showPy2={showPy2} />
+                isGraph ? (
+                  <MonthlyChart visible={revealStep >= 2} showPy2={showPy2} />
+                ) : (
+                  <MonthlyTable visible={revealStep >= 2} showPy2={showPy2} />
+                )
               )}
             </div>
           </div>
         </div>
       )}
 
-      {/* Luka Summary – shared across all tabs */}
+      {/* Luka Summary – shared across all tabs and views */}
       <LukaSummary visible={revealStep >= 5} />
     </div>
   );
