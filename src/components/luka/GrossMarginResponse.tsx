@@ -127,7 +127,7 @@ function TableSection({
         <span className="text-sm font-semibold text-foreground">{title}</span>
       </div>
       <div className="overflow-x-auto">
-        <table className="w-full text-sm">
+        <table className="w-full text-base">
           <thead>
             <tr className="border-b border-[hsl(210_25%_82%)] bg-[hsl(210_40%_96%)]">
               {cols.map((c) => (
@@ -202,7 +202,7 @@ export function GrossMarginResponse({ revealStep }: GrossMarginResponseProps) {
     <div className="space-y-4 w-full min-w-0">
       {/* Intro text */}
       {revealStep >= 0 && (
-        <p className="text-sm text-foreground animate-in fade-in duration-300">
+        <p className="text-base text-foreground animate-in fade-in duration-300">
           Showing the Gross Margin Analysis with graphical presentation option:
         </p>
       )}
@@ -267,11 +267,11 @@ export function GrossMarginResponse({ revealStep }: GrossMarginResponseProps) {
             <span className="text-sm font-semibold text-foreground">Luka Summary</span>
           </div>
 
-          <p className="text-sm text-foreground leading-relaxed">{summaryText}</p>
+          <p className="text-base text-foreground leading-relaxed">{summaryText}</p>
 
           <div>
-            <p className="text-sm font-semibold text-foreground mb-2">Key Drivers:</p>
-            <ul className="space-y-2 text-sm text-foreground leading-relaxed list-disc pl-5">
+            <p className="text-base font-semibold text-foreground mb-2">Key Drivers:</p>
+            <ul className="space-y-2 text-base text-foreground leading-relaxed list-disc pl-5">
               {keyDrivers.map((d, i) => (
                 <li key={i}>{d}</li>
               ))}
@@ -279,8 +279,8 @@ export function GrossMarginResponse({ revealStep }: GrossMarginResponseProps) {
           </div>
 
           <div>
-            <p className="text-sm font-semibold text-foreground mb-2">Seasonality:</p>
-            <ul className="space-y-2 text-sm text-foreground leading-relaxed list-disc pl-5">
+            <p className="text-base font-semibold text-foreground mb-2">Seasonality:</p>
+            <ul className="space-y-2 text-base text-foreground leading-relaxed list-disc pl-5">
               {seasonality.map((s, i) => (
                 <li key={i}>{s}</li>
               ))}
@@ -288,8 +288,8 @@ export function GrossMarginResponse({ revealStep }: GrossMarginResponseProps) {
           </div>
 
           <div>
-            <p className="text-sm font-semibold text-foreground mb-2">Outlook:</p>
-            <ul className="space-y-2 text-sm text-foreground leading-relaxed list-disc pl-5">
+            <p className="text-base font-semibold text-foreground mb-2">Outlook:</p>
+            <ul className="space-y-2 text-base text-foreground leading-relaxed list-disc pl-5">
               {outlook.map((o, i) => (
                 <li key={i}>{o}</li>
               ))}
