@@ -177,7 +177,7 @@ function TableSection({
                 <td className="px-4 py-2.5 text-right text-black tabular-nums">{r.py1Pct}</td>
                 {showPy2 && <td className="px-4 py-2.5 text-right text-foreground tabular-nums">{r.py2}</td>}
                 {showPy2 && <td className="px-4 py-2.5 text-right text-black tabular-nums">{r.py2Pct}</td>}
-                <td className="px-4 py-2.5 text-right text-primary font-medium tabular-nums">{r.vs}</td>
+                <td className="px-4 py-2.5 text-right text-foreground tabular-nums">{r.vs}</td>
               </tr>
             ))}
             <tr className="bg-muted/30 font-semibold">
@@ -188,7 +188,7 @@ function TableSection({
               <td className="px-4 py-2.5 text-right text-black tabular-nums">{totals.py1Pct ?? ""}</td>
               {showPy2 && <td className="px-4 py-2.5 text-right text-black tabular-nums">{totals.py2}</td>}
               {showPy2 && <td className="px-4 py-2.5 text-right text-black tabular-nums">{totals.py2Pct ?? ""}</td>}
-              <td className="px-4 py-2.5 text-right text-primary font-semibold tabular-nums">{totals.vs}</td>
+              <td className="px-4 py-2.5 text-right text-black font-semibold tabular-nums">{totals.vs}</td>
             </tr>
           </tbody>
         </table>
