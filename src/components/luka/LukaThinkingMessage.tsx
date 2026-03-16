@@ -12,7 +12,7 @@ export function LukaThinkingMessage({ visible }: LukaThinkingMessageProps) {
     <div className="flex items-start gap-3 px-6 py-4 animate-fade-in">
       {/* Spinning Luka icon */}
       <div className="w-9 h-9 rounded-full bg-gradient-to-br from-[hsl(var(--primary))] to-[hsl(265_80%_55%)] flex items-center justify-center shrink-0 luka-thinking-spin">
-        <LukaBoltIcon size={16} />
+        <Zap className="text-white" size={16} fill="white" strokeWidth={0} />
       </div>
 
       {/* Thinking text with shimmer */}
