@@ -131,7 +131,7 @@ function TableSection({
           <thead>
             <tr className="border-b border-[hsl(210_25%_82%)] bg-[hsl(210_40%_96%)]">
               {cols.map((c) => (
-                <th key={c} className={cn("px-4 py-2.5 font-medium text-muted-foreground whitespace-nowrap", c === "Account Name ↓" ? "text-left" : "text-right")}>
+                <th key={c} className={cn("px-4 py-2.5 font-medium text-[#101D28] whitespace-nowrap", c === "Account Name ↓" ? "text-left" : "text-right")}>
                   {c}
                 </th>
               ))}
