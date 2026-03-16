@@ -65,9 +65,9 @@ function ComparisonDropdown({
         onClick={() => setOpen(!open)}
         className={cn(
           "relative flex items-center gap-2 h-10 pl-3 pr-2.5 rounded-[10px] border text-sm transition-all duration-200",
-          "bg-white border-[#dcdfe4] hover:border-[hsl(213_60%_45%)]",
-          "dark:bg-card dark:border-[hsl(220_15%_30%)] dark:hover:border-[hsl(220_15%_40%)]",
-          open && "border-[hsl(213_60%_45%)] ring-2 ring-[hsl(213_60%_45%/0.15)]"
+          "bg-white border-[#dcdfe4] hover:border-[#074075]",
+          "dark:bg-card dark:border-[hsl(220_15%_30%)] dark:hover:border-[#074075]",
+          open && "border-[#074075] ring-2 ring-[#074075]/15"
         )}
       >
         {/* Floating label */}
