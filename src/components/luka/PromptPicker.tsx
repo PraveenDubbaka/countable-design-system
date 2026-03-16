@@ -12,6 +12,7 @@ const prompts = [
   { id: "trial-balance", label: "Generate Trial Balance" },
   { id: "notes-gen", label: "Notes Generator" },
   { id: "client-health", label: "Run Client Health Check" },
+  { id: "gross-profit", label: "Gross Profit Margin" },
 ];
 
 interface PromptPickerProps {
