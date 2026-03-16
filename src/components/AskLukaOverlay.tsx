@@ -565,6 +565,9 @@ export function AskLukaOverlay({ open, onOpenChange }: AskLukaOverlayProps) {
                   />
 
                   <div className="border border-border rounded-[12px] overflow-visible bg-background dark:bg-card hover:border-primary/30 transition-all duration-200 luka-gradient-border relative">
+                    {/* Attached files bar */}
+                    <AttachedFilesBar files={attachedFiles} onRemove={removeFile} onClearAll={clearFiles} />
+
                     <div className="px-4 pt-3 pb-2">
                       {/* Render input with blue # styling */}
                       <div className="relative">
@@ -586,9 +589,7 @@ export function AskLukaOverlay({ open, onOpenChange }: AskLukaOverlayProps) {
                     {/* Bottom toolbar */}
                     <div className="px-3 pb-3 flex items-center justify-between">
                       <div className="flex items-center gap-1">
-                        <Button variant="outline" size="icon" className="h-9 w-9 rounded-[10px]">
-                          <Plus className="h-4 w-4 text-muted-foreground" />
-                        </Button>
+                        <LukaAttachMenu onFilesAdded={addFiles} />
                         <Button variant="outline" size="icon" className="h-9 w-9 rounded-[10px]">
                           <Inbox className="h-4 w-4 text-muted-foreground" />
                         </Button>
