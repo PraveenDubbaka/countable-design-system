@@ -185,20 +185,14 @@ export function AskLukaOverlay({ open, onOpenChange }: AskLukaOverlayProps) {
                     ))}
                   </div>
 
-                  <div className="px-3 pb-3">
-                    <button
-                      onClick={() => setShowAllRecent(!showAllRecent)}
-                      className="text-xs font-semibold text-primary hover:underline">
-                      Show More
-                    </button>
-                  </div>
                 </ScrollArea>
 
-                {/* Settings at bottom */}
-                <div className="px-3 pb-3 pt-2">
-                  <button className="w-full flex items-center px-3 py-2 hover:bg-muted/60 transition-colors bg-primary/10 rounded-md gap-0">
-                    <Settings className="h-4 w-4 text-primary" />
-                    <span className="text-sm font-medium text-primary mx-[8px]">Settings</span>
+                {/* Show More sticky button at bottom */}
+                <div className="px-3 pb-3 pt-2 border-t border-border">
+                  <button
+                    onClick={() => setShowAllRecent(!showAllRecent)}
+                    className="w-full flex items-center justify-center px-3 py-2 hover:bg-primary/15 transition-colors bg-primary/10 rounded-md gap-1.5">
+                    <span className="text-sm font-medium text-primary">{showAllRecent ? 'Show Less' : 'Show More'}</span>
                   </button>
                 </div>
               </>
