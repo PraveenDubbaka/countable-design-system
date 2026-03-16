@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from "react";
 import { cn } from "@/lib/utils";
 import { Zap, ChevronDown, LayoutGrid, BarChart3, Check } from "lucide-react";
 import { Switch } from "@/components/ui/switch";
+import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from "@/components/ui/tooltip";
 
 /* ── Static data matching the reference image ── */
 
@@ -64,7 +65,7 @@ function ComparisonDropdown({
       <button
         onClick={() => setOpen(!open)}
         className={cn(
-          "relative flex items-center gap-2 h-10 pl-3 pr-2.5 rounded-[10px] border text-sm transition-all duration-200",
+          "relative flex items-center gap-2 h-10 pl-3 pr-2.5 rounded-[10px] border text-base transition-all duration-200",
           "bg-white border-[#dcdfe4] hover:border-[#074075]",
           "dark:bg-card dark:border-[hsl(220_15%_30%)] dark:hover:border-[#074075]",
           open && "border-[#074075] ring-2 ring-[#074075]/15"
@@ -217,7 +218,7 @@ export function GrossMarginResponse({ revealStep }: GrossMarginResponseProps) {
                 key={tab}
                 onClick={() => setPeriodTab(tab)}
                 className={cn(
-                  "px-5 py-2 text-sm font-medium transition-all duration-200 capitalize relative",
+                  "px-5 py-2 text-base font-medium transition-all duration-200 capitalize relative",
                   "hover:bg-muted/40",
                   periodTab === tab
                     ? "text-foreground font-semibold bg-muted/30"
@@ -235,15 +236,27 @@ export function GrossMarginResponse({ revealStep }: GrossMarginResponseProps) {
 
           <div className="flex items-center gap-2">
             <ComparisonDropdown value={comparison} onChange={setComparison} />
-            <div className="flex items-center gap-1 ml-2">
-              <button className="p-1.5 rounded hover:bg-muted/50 transition-colors">
-                <LayoutGrid className="h-4 w-4 text-muted-foreground" />
-              </button>
-              <Switch className="data-[state=checked]:bg-primary" />
-              <button className="p-1.5 rounded hover:bg-muted/50 transition-colors">
-                <BarChart3 className="h-4 w-4 text-muted-foreground" />
-              </button>
-            </div>
+            <TooltipProvider delayDuration={200}>
+              <div className="flex items-center gap-1 ml-2">
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <button className="p-1.5 rounded hover:bg-muted/50 transition-colors">
+                      <LayoutGrid className="h-4 w-4 text-muted-foreground" />
+                    </button>
+                  </TooltipTrigger>
+                  <TooltipContent side="bottom"><p>Table View</p></TooltipContent>
+                </Tooltip>
+                <Switch className="data-[state=checked]:bg-primary" />
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <button className="p-1.5 rounded hover:bg-muted/50 transition-colors">
+                      <BarChart3 className="h-4 w-4 text-muted-foreground" />
+                    </button>
+                  </TooltipTrigger>
+                  <TooltipContent side="bottom"><p>Graph View</p></TooltipContent>
+                </Tooltip>
+              </div>
+            </TooltipProvider>
           </div>
         </div>
       )}
