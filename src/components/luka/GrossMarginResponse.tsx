@@ -75,11 +75,11 @@ function ComparisonDropdown({
           Select Comparison View*
         </span>
         <span className="font-medium text-foreground whitespace-nowrap">{label}</span>
-        <ChevronDown className={cn("h-4 w-4 ml-1 transition-transform duration-200", open ? "rotate-180 text-[hsl(213_60%_45%)]" : "text-[hsl(213_60%_45%)]")} />
+        <ChevronDown className={cn("h-4 w-4 ml-1 transition-transform duration-200 text-[#074075]", open && "rotate-180")} />
       </button>
 
       {open && (
-        <div className="absolute right-0 top-[calc(100%+4px)] z-50 min-w-[220px] rounded-[10px] border border-border bg-popover shadow-lg animate-in fade-in zoom-in-95 duration-150">
+        <div className="absolute right-0 top-[calc(100%+4px)] z-50 min-w-[220px] rounded-[10px] border border-[#074075] bg-popover shadow-lg animate-in fade-in zoom-in-95 duration-150">
           <div className="p-1.5">
             {options.map((opt) => (
               <button
