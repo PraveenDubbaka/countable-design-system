@@ -1,5 +1,5 @@
 import { useState, useRef, useCallback } from "react";
-import { X, Mic, Plus, Search, MessageCircle, Minus, Send, FolderOpen, Maximize2, ChevronLeft, ChevronRight, Clock, PanelLeftClose, MoreHorizontal, Zap } from "lucide-react";
+import { X, Mic, Plus, Search, MessageSquare, Minus, Send, FolderOpen, Maximize2, ChevronLeft, ChevronRight, Clock, PanelLeftClose, MoreHorizontal, Zap, Building2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from "@/components/ui/tooltip";
@@ -249,7 +249,7 @@ export function AskLukaOverlay({ open, onOpenChange }: AskLukaOverlayProps) {
                             : "bg-muted/60 dark:bg-muted/30 text-muted-foreground hover:bg-muted"
                         )}
                       >
-                        <MessageCircle className="h-3.5 w-3.5" />
+                        <MessageSquare className="h-3.5 w-3.5" />
                         Threads
                       </button>
                       <button
@@ -261,7 +261,7 @@ export function AskLukaOverlay({ open, onOpenChange }: AskLukaOverlayProps) {
                             : "bg-muted/60 dark:bg-muted/30 text-muted-foreground hover:bg-muted"
                         )}
                       >
-                        <FolderOpen className="h-3.5 w-3.5" />
+                        <Building2 className="h-3.5 w-3.5" />
                         Workspaces
                       </button>
                     </div>
@@ -347,7 +347,7 @@ export function AskLukaOverlay({ open, onOpenChange }: AskLukaOverlayProps) {
                           onClick={() => setActiveTab("threads")}
                           className={cn("h-10 w-10 rounded-[10px] flex items-center justify-center transition-colors", activeTab === "threads" ? "bg-primary/15 hover:bg-primary/25" : "hover:bg-muted/60")}
                         >
-                          <MessageCircle className={cn("h-5 w-5", activeTab === "threads" ? "text-primary" : "text-muted-foreground")} />
+                          <MessageSquare className={cn("h-5 w-5", activeTab === "threads" ? "text-primary" : "text-muted-foreground")} />
                         </button>
                       </TooltipTrigger>
                       <TooltipContent side="right"><p>Threads</p></TooltipContent>
@@ -358,7 +358,7 @@ export function AskLukaOverlay({ open, onOpenChange }: AskLukaOverlayProps) {
                           onClick={() => setActiveTab("workspaces")}
                           className={cn("h-10 w-10 rounded-[10px] flex items-center justify-center transition-colors", activeTab === "workspaces" ? "bg-primary/15 hover:bg-primary/25" : "hover:bg-muted/60")}
                         >
-                          <FolderOpen className={cn("h-5 w-5", activeTab === "workspaces" ? "text-primary" : "text-muted-foreground")} />
+                          <Building2 className={cn("h-5 w-5", activeTab === "workspaces" ? "text-primary" : "text-muted-foreground")} />
                         </button>
                       </TooltipTrigger>
                       <TooltipContent side="right"><p>Workspaces</p></TooltipContent>
@@ -372,7 +372,7 @@ export function AskLukaOverlay({ open, onOpenChange }: AskLukaOverlayProps) {
                         <Tooltip key={thread.id}>
                           <TooltipTrigger asChild>
                             <button className="h-9 w-10 flex items-center justify-center rounded-lg hover:bg-muted/60 dark:hover:bg-muted/30 transition-colors relative">
-                              <MessageCircle className="h-4 w-4 text-muted-foreground" />
+                              <MessageSquare className="h-4 w-4 text-muted-foreground" />
                               <div className={cn("absolute top-1.5 right-1.5 w-2 h-2 rounded-full border border-background dark:border-card", statusColors[i % statusColors.length])} />
                             </button>
                           </TooltipTrigger>
