@@ -250,7 +250,59 @@ function QuarterlyTable({ visible, showPy2 }: { visible: boolean; showPy2: boole
   );
 }
 
-/* ── Luka Summary ── */
+/* ── Monthly Table section ── */
+function MonthlyTable({ visible, showPy2 }: { visible: boolean; showPy2: boolean }) {
+  if (!visible) return null;
+  const cols = showPy2 ? qColsFull : qColsNoPy2;
+
+  return (
+    <div className="border border-[hsl(210_25%_82%)] rounded-lg overflow-hidden shadow-sm min-w-0">
+      <div className="px-4 py-3 bg-[hsl(210_40%_96%)]">
+        <span className="text-base font-semibold text-foreground">Monthly Breakdown - All Accounts</span>
+      </div>
+      <div className="overflow-x-auto">
+        <table className="w-full text-base">
+          <thead>
+            <tr className="border-b border-[hsl(210_25%_82%)] bg-[hsl(210_40%_96%)]">
+              {cols.map((c) => (
+                <th key={c} className={cn("px-4 py-2.5 font-medium text-[#101D28] whitespace-nowrap", c === "Period ↓" ? "text-left" : "text-right")}>
+                  {c}
+                </th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {monthlyRows.map((r) => (
+              <tr key={r.period} className="border-b border-[hsl(210_25%_82%)]/50 hover:bg-muted/20 transition-colors">
+                <td className="px-4 py-2.5 text-foreground">{r.period}</td>
+                <td className="px-4 py-2.5 text-right text-foreground tabular-nums">{r.cyRev}</td>
+                <td className="px-4 py-2.5 text-right text-foreground tabular-nums">{r.cyCos}</td>
+                <td className="px-4 py-2.5 text-right text-foreground tabular-nums">{r.cyGm}</td>
+                <td className="px-4 py-2.5 text-right text-black tabular-nums">{r.cyGmPct}</td>
+                <td className="px-4 py-2.5 text-right text-foreground tabular-nums">{r.py1Gm}</td>
+                <td className="px-4 py-2.5 text-right text-black tabular-nums">{r.py1GmPct}</td>
+                {showPy2 && <td className="px-4 py-2.5 text-right text-foreground tabular-nums">{r.py2Gm}</td>}
+                {showPy2 && <td className="px-4 py-2.5 text-right text-black tabular-nums">{r.py2GmPct}</td>}
+              </tr>
+            ))}
+            <tr className="bg-muted/30 font-semibold">
+              <td className="px-4 py-2.5 text-black">{monthlyTotals.period}</td>
+              <td className="px-4 py-2.5 text-right text-black tabular-nums">{monthlyTotals.cyRev}</td>
+              <td className="px-4 py-2.5 text-right text-black tabular-nums">{monthlyTotals.cyCos}</td>
+              <td className="px-4 py-2.5 text-right text-black tabular-nums">{monthlyTotals.cyGm}</td>
+              <td className="px-4 py-2.5 text-right text-black tabular-nums">{monthlyTotals.cyGmPct}</td>
+              <td className="px-4 py-2.5 text-right text-black tabular-nums">{monthlyTotals.py1Gm}</td>
+              <td className="px-4 py-2.5 text-right text-black tabular-nums">{monthlyTotals.py1GmPct}</td>
+              {showPy2 && <td className="px-4 py-2.5 text-right text-black tabular-nums">{monthlyTotals.py2Gm}</td>}
+              {showPy2 && <td className="px-4 py-2.5 text-right text-black tabular-nums">{monthlyTotals.py2GmPct}</td>}
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+}
+
 const summaryText = `Gross margin has demonstrated a consistent upward trajectory over the three-year period, improving from 45.5% in PY2 to 47.7% in PY1 and reaching 49.0% in the current year — a cumulative improvement of +350 basis points.`;
 
 const keyDrivers = [
