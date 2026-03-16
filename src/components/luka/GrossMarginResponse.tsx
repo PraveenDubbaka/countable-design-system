@@ -279,8 +279,8 @@ export function GrossMarginResponse({ revealStep }: GrossMarginResponseProps) {
           </div>
 
           <div>
-            <p className="text-sm font-semibold text-foreground mb-2">Seasonality:</p>
-            <ul className="space-y-2 text-sm text-foreground leading-relaxed list-disc pl-5">
+            <p className="text-base font-semibold text-foreground mb-2">Seasonality:</p>
+            <ul className="space-y-2 text-base text-foreground leading-relaxed list-disc pl-5">
               {seasonality.map((s, i) => (
                 <li key={i}>{s}</li>
               ))}
