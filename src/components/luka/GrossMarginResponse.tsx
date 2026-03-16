@@ -45,14 +45,14 @@ function TableSection({
 }) {
   if (!visible) return null;
   return (
-    <div className="border border-border rounded-lg overflow-hidden animate-in fade-in slide-in-from-bottom-1 duration-300">
-      <div className="px-4 py-3 bg-muted/30">
+    <div className="border border-[hsl(210_25%_82%)] rounded-lg overflow-hidden shadow-sm animate-in fade-in slide-in-from-bottom-1 duration-300">
+      <div className="px-4 py-3 bg-[hsl(210_40%_96%)]">
         <span className="text-sm font-semibold text-foreground">{title}</span>
       </div>
       <div className="overflow-x-auto">
         <table className="w-full text-sm">
           <thead>
-            <tr className="border-b border-border bg-muted/20">
+            <tr className="border-b border-[hsl(210_25%_82%)] bg-[hsl(210_40%_96%)]">
               {cols.map((c) => (
                 <th key={c} className={cn("px-4 py-2.5 font-medium text-muted-foreground whitespace-nowrap", c === "Account Name ↓" ? "text-left" : "text-right")}>
                   {c}
