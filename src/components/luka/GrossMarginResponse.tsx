@@ -288,8 +288,8 @@ export function GrossMarginResponse({ revealStep }: GrossMarginResponseProps) {
           </div>
 
           <div>
-            <p className="text-sm font-semibold text-foreground mb-2">Outlook:</p>
-            <ul className="space-y-2 text-sm text-foreground leading-relaxed list-disc pl-5">
+            <p className="text-base font-semibold text-foreground mb-2">Outlook:</p>
+            <ul className="space-y-2 text-base text-foreground leading-relaxed list-disc pl-5">
               {outlook.map((o, i) => (
                 <li key={i}>{o}</li>
               ))}
