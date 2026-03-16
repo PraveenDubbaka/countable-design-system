@@ -200,7 +200,7 @@ export function AskLukaOverlay({ open, onOpenChange }: AskLukaOverlayProps) {
             : "left-[45%] rounded-tl-[1.25rem] rounded-bl-[1.25rem] shadow-[-8px_0_30px_-10px_hsl(var(--primary)/0.15)] border-l border-border"
         )}
       >
-        <div className="flex h-full">
+        <div className="flex h-full min-w-0 w-full">
           {/* ===== LEFT SIDEBAR ===== */}
           <aside
             className={cn(
