@@ -124,7 +124,7 @@ function TableSection({
   return (
     <div className="border border-[hsl(210_25%_82%)] rounded-lg overflow-hidden shadow-sm animate-in fade-in slide-in-from-bottom-1 duration-300 min-w-0">
       <div className="px-4 py-3 bg-[hsl(210_40%_96%)]">
-        <span className="text-sm font-semibold text-foreground">{title}</span>
+        <span className="text-base font-semibold text-foreground">{title}</span>
       </div>
       <div className="overflow-x-auto">
         <table className="w-full text-base">
