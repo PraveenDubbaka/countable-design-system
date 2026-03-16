@@ -170,7 +170,7 @@ export function AskLukaOverlay({ open, onOpenChange }: AskLukaOverlayProps) {
                   <div className="px-4 pt-4 pb-3 flex flex-col gap-3">
                     <div className="flex items-center gap-3">
                       <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[hsl(var(--primary))] to-[hsl(265_80%_55%)] flex items-center justify-center shrink-0">
-                        <LukaBoltIcon size={18} />
+                        <LukaIcon size={18} />
                       </div>
                       <span className="text-lg font-bold text-foreground">Luka</span>
                     </div>
