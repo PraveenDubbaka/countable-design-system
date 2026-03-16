@@ -49,7 +49,7 @@ export function AskLukaOverlay({ open, onOpenChange }: AskLukaOverlayProps) {
   const [message, setMessage] = useState("");
   const [activeTab, setActiveTab] = useState<"threads" | "workspaces">("threads");
   const [showAllRecent, setShowAllRecent] = useState(false);
-  const [viewMode, setViewMode] = useState<"full" | "half">("full");
+  const [viewMode, setViewMode] = useState<"full" | "half">("half");
   const [sidebarExpanded, setSidebarExpanded] = useState(false);
   const [sidebarHovered, setSidebarHovered] = useState(false);
 
