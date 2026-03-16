@@ -410,7 +410,7 @@ export function AskLukaOverlay({ open, onOpenChange }: AskLukaOverlayProps) {
           </aside>
 
           {/* ===== MAIN CONTENT AREA ===== */}
-          <main className={cn("flex-1 min-w-0 flex flex-col transition-all duration-300 ease-in-out", (isThinking || aiResponse) ? "bg-background" : "bg-gradient-to-b from-[hsl(210_60%_97%)] via-[hsl(260_40%_96%)] to-[hsl(300_30%_96%)] dark:from-[hsl(220_20%_12%)] dark:via-[hsl(260_15%_14%)] dark:to-[hsl(280_10%_13%)]")}>
+          <main className={cn("flex-1 min-w-0 flex flex-col overflow-hidden transition-all duration-300 ease-in-out", (isThinking || aiResponse) ? "bg-background" : "bg-gradient-to-b from-[hsl(210_60%_97%)] via-[hsl(260_40%_96%)] to-[hsl(300_30%_96%)] dark:from-[hsl(220_20%_12%)] dark:via-[hsl(260_15%_14%)] dark:to-[hsl(280_10%_13%)]")}>
             {/* Top right controls */}
             <div className="h-12 px-4 flex items-center justify-end gap-1">
               <TooltipProvider delayDuration={200}>
@@ -466,7 +466,7 @@ export function AskLukaOverlay({ open, onOpenChange }: AskLukaOverlayProps) {
             {/* Main content area */}
             <div className="flex-1 flex flex-col min-w-0 min-h-0">
               {/* Messages area or welcome */}
-              <ScrollArea className="flex-1 min-w-0">
+              <div className="flex-1 min-w-0 overflow-y-auto overflow-x-hidden">
                 {!sentMessage ? (
                   /* Welcome state */
                   <div className="flex-1 flex flex-col items-center justify-center px-6 min-h-[60vh]">
@@ -498,7 +498,7 @@ export function AskLukaOverlay({ open, onOpenChange }: AskLukaOverlayProps) {
                   </div>
                 ) : (
                   /* Chat messages */
-                  <div className="px-6 py-4 space-y-4 min-w-0 w-full">
+                  <div className="px-6 py-4 space-y-4 min-w-0 max-w-full overflow-hidden">
                     {/* User message */}
                     <div className="flex justify-end">
                       <div className="max-w-[80%] px-4 py-3 rounded-[12px] bg-primary text-primary-foreground text-sm">
@@ -508,7 +508,7 @@ export function AskLukaOverlay({ open, onOpenChange }: AskLukaOverlayProps) {
 
                     {/* Unified Luka response container — icon stays in place */}
                     {(isThinking || aiResponse) && (
-                      <div className="flex items-start gap-3">
+                      <div className="flex items-start gap-3 min-w-0 max-w-full">
                         <div className={cn(
                           "w-9 h-9 rounded-full bg-gradient-to-br from-[hsl(var(--primary))] to-[hsl(265_80%_55%)] flex items-center justify-center shrink-0",
                           isThinking && "luka-thinking-spin"
@@ -542,7 +542,7 @@ export function AskLukaOverlay({ open, onOpenChange }: AskLukaOverlayProps) {
                     )}
                   </div>
                 )}
-              </ScrollArea>
+              </div>
 
               {/* Chat Input - pinned to bottom */}
               <div className={cn("pb-6 pt-2", viewMode === "full" ? "px-12" : "px-6")}>
