@@ -96,27 +96,47 @@ export function AskLukaOverlay({ open, onOpenChange }: AskLukaOverlayProps) {
     setAiResponse(null);
     setDisplayedResponse("");
     setIsStreaming(false);
+    setRichResponseType(null);
+    setRevealStep(-1);
+    if (streamRef.current) clearTimeout(streamRef.current);
+    if (revealRef.current) clearTimeout(revealRef.current);
 
-    const fullResponse = `Here's an overview of **${promptLabel}** with key insights and analysis.\n\nThis covers the essential metrics, trends, and recommendations based on your current financial data. The analysis includes year-over-year comparisons and highlights areas that may require attention.`;
+    const isGrossMargin = promptLabel.toLowerCase().includes("gross profit margin");
 
-    // Simulate thinking then stream response
+    // Simulate thinking then reveal
     setTimeout(() => {
       setIsThinking(false);
-      setAiResponse(fullResponse);
-      setIsStreaming(true);
-      // Progressive reveal
-      let idx = 0;
-      const stream = () => {
-        if (idx < fullResponse.length) {
-          const chunkSize = Math.floor(Math.random() * 3) + 1;
-          idx = Math.min(idx + chunkSize, fullResponse.length);
-          setDisplayedResponse(fullResponse.slice(0, idx));
-          streamRef.current = window.setTimeout(stream, 15 + Math.random() * 25);
-        } else {
-          setIsStreaming(false);
-        }
-      };
-      stream();
+
+      if (isGrossMargin) {
+        setRichResponseType("gross-margin");
+        setAiResponse("__rich__");
+        // Progressive reveal: 6 steps (0-5), 600ms apart
+        let step = 0;
+        const reveal = () => {
+          setRevealStep(step);
+          step++;
+          if (step <= 5) {
+            revealRef.current = window.setTimeout(reveal, 600);
+          }
+        };
+        reveal();
+      } else {
+        const fullResponse = `Here's an overview of **${promptLabel}** with key insights and analysis.\n\nThis covers the essential metrics, trends, and recommendations based on your current financial data. The analysis includes year-over-year comparisons and highlights areas that may require attention.`;
+        setAiResponse(fullResponse);
+        setIsStreaming(true);
+        let idx = 0;
+        const stream = () => {
+          if (idx < fullResponse.length) {
+            const chunkSize = Math.floor(Math.random() * 3) + 1;
+            idx = Math.min(idx + chunkSize, fullResponse.length);
+            setDisplayedResponse(fullResponse.slice(0, idx));
+            streamRef.current = window.setTimeout(stream, 15 + Math.random() * 25);
+          } else {
+            setIsStreaming(false);
+          }
+        };
+        stream();
+      }
     }, 2500);
   }, []);
 
