@@ -4,7 +4,7 @@ import { Zap, ChevronDown, LayoutGrid, BarChart3, Check } from "lucide-react";
 import { Switch } from "@/components/ui/switch";
 import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from "@/components/ui/tooltip";
 
-/* ── Static data matching the reference image ── */
+/* ── Annual data ── */
 
 const revenueRows = [
   { name: "Product", cy: "4,800.00", cyPct: "63.4", py1: "4,250.00", py1Pct: "63.3", py2: "3,700.00", py2Pct: "63.8", vs: "+12.9" },
@@ -25,6 +25,19 @@ const marginRows = [
   { name: "Cost of Sales", cy: "3,860.00", cyPct: "-", py1: "3,510.00", py1Pct: "-", py2: "3,160.00", py2Pct: "-", vs: "+13.4" },
 ];
 const marginTotals = { name: "Gross Margin", cy: "3,710.00", cyPct: "49.0", py1: "3,200.00", py1Pct: "47.7", py2: "2,640.00", py2Pct: "45.5", vs: "+15.9" };
+
+/* ── Quarterly data ── */
+
+const quarterlyRows = [
+  { period: "Q1", cyRev: "1,780.00", cyCos: "920.00", cyGm: "860.00", cyGmPct: "48.3", py1Gm: "740.00", py1GmPct: "46.8", py2Gm: "610.00", py2GmPct: "44.9" },
+  { period: "Q2", cyRev: "1,960.00", cyCos: "980.00", cyGm: "980.00", cyGmPct: "50.0", py1Gm: "840.00", py1GmPct: "48.6", py2Gm: "690.00", py2GmPct: "46.3" },
+  { period: "Q3", cyRev: "2,020.00", cyCos: "1,000.00", cyGm: "1,020.00", cyGmPct: "50.5", py1Gm: "870.00", py1GmPct: "48.6", py2Gm: "720.00", py2GmPct: "46.5" },
+  { period: "Q4", cyRev: "1,810.00", cyCos: "960.00", cyGm: "850.00", cyGmPct: "47.0", py1Gm: "750.00", py1GmPct: "46.6", py2Gm: "620.00", py2GmPct: "+1044.3.8" },
+];
+const quarterlyTotals = { period: "Total Full Year", cyRev: "7,570.00", cyCos: "3,860.00", cyGm: "3,710.00", cyGmPct: "49.0", py1Gm: "3,200.00", py1GmPct: "-", py2Gm: "2,640.00", py2GmPct: "-" };
+
+const qColsFull = ["Period ↓", "CY Revenue", "CY COS", "CY GM", "CY GM (%)", "PY1 GM", "PY1 GM (%)", "PY2 GM", "PY2 GM (%)"];
+const qColsNoPy2 = ["Period ↓", "CY Revenue", "CY COS", "CY GM", "CY GM (%)", "PY1 GM", "PY1 GM (%)"];
 
 type ComparisonView = "cy-py1-py2" | "cy-py1";
 
@@ -71,7 +84,6 @@ function ComparisonDropdown({
           open && "border-[#074075] ring-2 ring-[#074075]/15"
         )}
       >
-        {/* Floating label */}
         <span className="absolute -top-2.5 left-2.5 px-1 bg-white dark:bg-card text-[11px] text-muted-foreground whitespace-nowrap leading-none">
           Select Comparison View*
         </span>
@@ -105,7 +117,7 @@ function ComparisonDropdown({
   );
 }
 
-/* ── Table section component ── */
+/* ── Annual Table section component ── */
 function TableSection({
   title,
   rows,
@@ -123,7 +135,7 @@ function TableSection({
   const cols = showPy2 ? colsFull : colsNoPy2;
 
   return (
-    <div className="border border-[hsl(210_25%_82%)] rounded-lg overflow-hidden shadow-sm animate-in fade-in slide-in-from-bottom-1 duration-300 min-w-0">
+    <div className="border border-[hsl(210_25%_82%)] rounded-lg overflow-hidden shadow-sm min-w-0">
       <div className="px-4 py-3 bg-[hsl(210_40%_96%)]">
         <span className="text-base font-semibold text-foreground">{title}</span>
       </div>
@@ -151,7 +163,6 @@ function TableSection({
                 <td className="px-4 py-2.5 text-right text-primary font-medium tabular-nums">{r.vs}</td>
               </tr>
             ))}
-            {/* Totals row */}
             <tr className="bg-muted/30 font-semibold">
               <td className="px-4 py-2.5 text-black">{totals.name}</td>
               <td className="px-4 py-2.5 text-right text-black tabular-nums">{totals.cy}</td>
@@ -161,6 +172,59 @@ function TableSection({
               {showPy2 && <td className="px-4 py-2.5 text-right text-black tabular-nums">{totals.py2}</td>}
               {showPy2 && <td className="px-4 py-2.5 text-right text-black tabular-nums">{totals.py2Pct ?? ""}</td>}
               <td className="px-4 py-2.5 text-right text-primary font-semibold tabular-nums">{totals.vs}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+}
+
+/* ── Quarterly Table section ── */
+function QuarterlyTable({ visible, showPy2 }: { visible: boolean; showPy2: boolean }) {
+  if (!visible) return null;
+  const cols = showPy2 ? qColsFull : qColsNoPy2;
+
+  return (
+    <div className="border border-[hsl(210_25%_82%)] rounded-lg overflow-hidden shadow-sm min-w-0">
+      <div className="px-4 py-3 bg-[hsl(210_40%_96%)]">
+        <span className="text-base font-semibold text-foreground">Quarterly Breakdown - All Accounts</span>
+      </div>
+      <div className="overflow-x-auto">
+        <table className="w-full text-base">
+          <thead>
+            <tr className="border-b border-[hsl(210_25%_82%)] bg-[hsl(210_40%_96%)]">
+              {cols.map((c) => (
+                <th key={c} className={cn("px-4 py-2.5 font-medium text-[#101D28] whitespace-nowrap", c === "Period ↓" ? "text-left" : "text-right")}>
+                  {c}
+                </th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {quarterlyRows.map((r) => (
+              <tr key={r.period} className="border-b border-[hsl(210_25%_82%)]/50 hover:bg-muted/20 transition-colors">
+                <td className="px-4 py-2.5 text-foreground">{r.period}</td>
+                <td className="px-4 py-2.5 text-right text-foreground tabular-nums">{r.cyRev}</td>
+                <td className="px-4 py-2.5 text-right text-foreground tabular-nums">{r.cyCos}</td>
+                <td className="px-4 py-2.5 text-right text-foreground tabular-nums">{r.cyGm}</td>
+                <td className="px-4 py-2.5 text-right text-black tabular-nums">{r.cyGmPct}</td>
+                <td className="px-4 py-2.5 text-right text-foreground tabular-nums">{r.py1Gm}</td>
+                <td className="px-4 py-2.5 text-right text-black tabular-nums">{r.py1GmPct}</td>
+                {showPy2 && <td className="px-4 py-2.5 text-right text-foreground tabular-nums">{r.py2Gm}</td>}
+                {showPy2 && <td className="px-4 py-2.5 text-right text-black tabular-nums">{r.py2GmPct}</td>}
+              </tr>
+            ))}
+            <tr className="bg-muted/30 font-semibold">
+              <td className="px-4 py-2.5 text-black">{quarterlyTotals.period}</td>
+              <td className="px-4 py-2.5 text-right text-black tabular-nums">{quarterlyTotals.cyRev}</td>
+              <td className="px-4 py-2.5 text-right text-black tabular-nums">{quarterlyTotals.cyCos}</td>
+              <td className="px-4 py-2.5 text-right text-black tabular-nums">{quarterlyTotals.cyGm}</td>
+              <td className="px-4 py-2.5 text-right text-black tabular-nums">{quarterlyTotals.cyGmPct}</td>
+              <td className="px-4 py-2.5 text-right text-black tabular-nums">{quarterlyTotals.py1Gm}</td>
+              <td className="px-4 py-2.5 text-right text-black tabular-nums">{quarterlyTotals.py1GmPct}</td>
+              {showPy2 && <td className="px-4 py-2.5 text-right text-black tabular-nums">{quarterlyTotals.py2Gm}</td>}
+              {showPy2 && <td className="px-4 py-2.5 text-right text-black tabular-nums">{quarterlyTotals.py2GmPct}</td>}
             </tr>
           </tbody>
         </table>
@@ -187,10 +251,47 @@ const outlook = [
   "The positive margin trend is sustainable if revenue mix continues to favor product sales and operational efficiencies in labour and overhead are maintained. Key risk factors include potential input cost inflation and capacity constraints during peak quarters.",
 ];
 
-/* ── Main component with progressive reveal ── */
+/* ── Luka Summary Component ── */
+function LukaSummary({ visible }: { visible: boolean }) {
+  if (!visible) return null;
+  return (
+    <div className="border border-border rounded-lg bg-muted/20 p-5 space-y-4">
+      <div className="flex items-center gap-2">
+        <div className="w-6 h-6 rounded-full bg-gradient-to-br from-[hsl(var(--primary))] to-[hsl(265_80%_55%)] flex items-center justify-center">
+          <LukaIcon size={12} />
+        </div>
+        <span className="text-base font-semibold text-foreground">Luka Summary</span>
+      </div>
+
+      <p className="text-base text-foreground leading-relaxed">{summaryText}</p>
+
+      <div>
+        <p className="text-base font-semibold text-foreground mb-2">Key Drivers:</p>
+        <ul className="space-y-2 text-base text-foreground leading-relaxed list-disc pl-5">
+          {keyDrivers.map((d, i) => <li key={i}>{d}</li>)}
+        </ul>
+      </div>
+
+      <div>
+        <p className="text-base font-semibold text-foreground mb-2">Seasonality:</p>
+        <ul className="space-y-2 text-base text-foreground leading-relaxed list-disc pl-5">
+          {seasonality.map((s, i) => <li key={i}>{s}</li>)}
+        </ul>
+      </div>
+
+      <div>
+        <p className="text-base font-semibold text-foreground mb-2">Outlook:</p>
+        <ul className="space-y-2 text-base text-foreground leading-relaxed list-disc pl-5">
+          {outlook.map((o, i) => <li key={i}>{o}</li>)}
+        </ul>
+      </div>
+    </div>
+  );
+}
+
+/* ── Main component ── */
 
 export interface GrossMarginResponseProps {
-  /** 0-5 controls how many sections are visible (progressive) */
   revealStep: number;
 }
 
@@ -210,106 +311,111 @@ export function GrossMarginResponse({ revealStep }: GrossMarginResponseProps) {
 
       {/* Period tabs + controls */}
       {revealStep >= 1 && (
-        <div className="flex items-center justify-between flex-wrap gap-3 animate-in fade-in slide-in-from-bottom-1 duration-300">
-          {/* Tabs – underline style matching uploaded image */}
-          <div className="flex items-center border border-border rounded-[10px] overflow-hidden">
-            {(["annual", "quarterly", "monthly"] as const).map((tab) => (
-              <button
-                key={tab}
-                onClick={() => setPeriodTab(tab)}
-                className={cn(
-                  "px-5 py-2 text-base font-medium transition-all duration-200 capitalize relative",
-                  "hover:bg-muted/40",
-                  periodTab === tab
-                    ? "text-foreground font-semibold bg-muted/30"
-                    : "text-muted-foreground"
-                )}
-              >
-                {tab}
-                {/* Active underline */}
-                {periodTab === tab && (
-                  <span className="absolute bottom-0 left-2 right-2 h-[2px] bg-foreground rounded-full" />
-                )}
-              </button>
-            ))}
-          </div>
-
-          <div className="flex items-center gap-2">
-            <ComparisonDropdown value={comparison} onChange={setComparison} />
-            <TooltipProvider delayDuration={200}>
-              <div className="flex items-center gap-1 ml-2">
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <button className="p-1.5 rounded hover:bg-muted/50 transition-colors">
-                      <LayoutGrid className="h-4 w-4 text-muted-foreground" />
-                    </button>
-                  </TooltipTrigger>
-                  <TooltipContent side="bottom"><p>Table View</p></TooltipContent>
-                </Tooltip>
-                <Switch className="data-[state=checked]:bg-primary" />
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <button className="p-1.5 rounded hover:bg-muted/50 transition-colors">
-                      <BarChart3 className="h-4 w-4 text-muted-foreground" />
-                    </button>
-                  </TooltipTrigger>
-                  <TooltipContent side="bottom"><p>Graph View</p></TooltipContent>
-                </Tooltip>
-              </div>
-            </TooltipProvider>
-          </div>
-        </div>
-      )}
-
-      {/* Revenue Accounts */}
-      <TableSection title="Revenue Accounts" rows={revenueRows} totals={revenueTotals} visible={revealStep >= 2} showPy2={showPy2} />
-
-      {/* Cost of Sales Accounts */}
-      <TableSection title="Cost of Sales Accounts" rows={cosRows} totals={cosTotals} visible={revealStep >= 3} showPy2={showPy2} />
-
-      {/* Gross Margin Summary */}
-      <TableSection title="Gross Margin Summary" rows={marginRows} totals={marginTotals} visible={revealStep >= 4} showPy2={showPy2} />
-
-      {/* Luka Summary */}
-      {revealStep >= 5 && (
-        <div className="border border-border rounded-lg bg-muted/20 p-5 space-y-4 animate-in fade-in slide-in-from-bottom-2 duration-500">
-          <div className="flex items-center gap-2">
-            <div className="w-6 h-6 rounded-full bg-gradient-to-br from-[hsl(var(--primary))] to-[hsl(265_80%_55%)] flex items-center justify-center">
-              <LukaIcon size={12} />
+        <div className="space-y-4 animate-in fade-in slide-in-from-bottom-1 duration-300">
+          <div className="flex items-center justify-between flex-wrap gap-3">
+            {/* Tabs */}
+            <div className="flex items-center border border-border rounded-[10px] overflow-hidden">
+              {(["annual", "quarterly", "monthly"] as const).map((tab) => (
+                <button
+                  key={tab}
+                  onClick={() => setPeriodTab(tab)}
+                  className={cn(
+                    "px-5 py-2 text-base font-medium transition-all duration-200 capitalize relative",
+                    "hover:bg-muted/40",
+                    periodTab === tab
+                      ? "text-foreground font-semibold bg-muted/30"
+                      : "text-muted-foreground"
+                  )}
+                >
+                  {tab}
+                  {periodTab === tab && (
+                    <span className="absolute bottom-0 left-2 right-2 h-[2px] bg-foreground rounded-full" />
+                  )}
+                </button>
+              ))}
             </div>
-            <span className="text-base font-semibold text-foreground">Luka Summary</span>
+
+            <div className="flex items-center gap-2">
+              <ComparisonDropdown value={comparison} onChange={setComparison} />
+              <TooltipProvider delayDuration={200}>
+                <div className="flex items-center gap-1 ml-2">
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <button className="p-1.5 rounded hover:bg-muted/50 transition-colors">
+                        <LayoutGrid className="h-4 w-4 text-muted-foreground" />
+                      </button>
+                    </TooltipTrigger>
+                    <TooltipContent side="bottom"><p>Table View</p></TooltipContent>
+                  </Tooltip>
+                  <Switch className="data-[state=checked]:bg-primary" />
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <button className="p-1.5 rounded hover:bg-muted/50 transition-colors">
+                        <BarChart3 className="h-4 w-4 text-muted-foreground" />
+                      </button>
+                    </TooltipTrigger>
+                    <TooltipContent side="bottom"><p>Graph View</p></TooltipContent>
+                  </Tooltip>
+                </div>
+              </TooltipProvider>
+            </div>
           </div>
 
-          <p className="text-base text-foreground leading-relaxed">{summaryText}</p>
+          {/* Tab content with crossfade transition */}
+          <div className="relative">
+            {/* Annual view */}
+            <div
+              className={cn(
+                "transition-all duration-400 ease-in-out",
+                periodTab === "annual"
+                  ? "opacity-100 translate-y-0"
+                  : "opacity-0 translate-y-2 absolute inset-0 pointer-events-none"
+              )}
+            >
+              {periodTab === "annual" && (
+                <div className="space-y-4">
+                  <TableSection title="Revenue Accounts" rows={revenueRows} totals={revenueTotals} visible={revealStep >= 2} showPy2={showPy2} />
+                  <TableSection title="Cost of Sales Accounts" rows={cosRows} totals={cosTotals} visible={revealStep >= 3} showPy2={showPy2} />
+                  <TableSection title="Gross Margin Summary" rows={marginRows} totals={marginTotals} visible={revealStep >= 4} showPy2={showPy2} />
+                </div>
+              )}
+            </div>
 
-          <div>
-            <p className="text-base font-semibold text-foreground mb-2">Key Drivers:</p>
-            <ul className="space-y-2 text-base text-foreground leading-relaxed list-disc pl-5">
-              {keyDrivers.map((d, i) => (
-                <li key={i}>{d}</li>
-              ))}
-            </ul>
-          </div>
+            {/* Quarterly view */}
+            <div
+              className={cn(
+                "transition-all duration-400 ease-in-out",
+                periodTab === "quarterly"
+                  ? "opacity-100 translate-y-0"
+                  : "opacity-0 translate-y-2 absolute inset-0 pointer-events-none"
+              )}
+            >
+              {periodTab === "quarterly" && (
+                <QuarterlyTable visible={revealStep >= 2} showPy2={showPy2} />
+              )}
+            </div>
 
-          <div>
-            <p className="text-base font-semibold text-foreground mb-2">Seasonality:</p>
-            <ul className="space-y-2 text-base text-foreground leading-relaxed list-disc pl-5">
-              {seasonality.map((s, i) => (
-                <li key={i}>{s}</li>
-              ))}
-            </ul>
-          </div>
-
-          <div>
-            <p className="text-base font-semibold text-foreground mb-2">Outlook:</p>
-            <ul className="space-y-2 text-base text-foreground leading-relaxed list-disc pl-5">
-              {outlook.map((o, i) => (
-                <li key={i}>{o}</li>
-              ))}
-            </ul>
+            {/* Monthly view (placeholder) */}
+            <div
+              className={cn(
+                "transition-all duration-400 ease-in-out",
+                periodTab === "monthly"
+                  ? "opacity-100 translate-y-0"
+                  : "opacity-0 translate-y-2 absolute inset-0 pointer-events-none"
+              )}
+            >
+              {periodTab === "monthly" && (
+                <div className="border border-[hsl(210_25%_82%)] rounded-lg p-8 text-center text-muted-foreground text-base">
+                  Monthly breakdown coming soon...
+                </div>
+              )}
+            </div>
           </div>
         </div>
       )}
+
+      {/* Luka Summary – shared across all tabs */}
+      <LukaSummary visible={revealStep >= 5} />
     </div>
   );
 }
