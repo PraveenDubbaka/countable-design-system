@@ -498,7 +498,7 @@ export function AskLukaOverlay({ open, onOpenChange }: AskLukaOverlayProps) {
                   </div>
                 ) : (
                   /* Chat messages */
-                  <div className="px-6 py-4 space-y-4">
+                  <div className="px-6 py-4 space-y-4 min-w-0 w-full">
                     {/* User message */}
                     <div className="flex justify-end">
                       <div className="max-w-[80%] px-4 py-3 rounded-[12px] bg-primary text-primary-foreground text-sm">
