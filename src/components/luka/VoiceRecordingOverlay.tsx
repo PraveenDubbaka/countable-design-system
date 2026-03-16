@@ -127,8 +127,9 @@ export function VoiceRecordingOverlay({ open, onClose, onComplete }: VoiceRecord
   const audioCtxRef = useRef<AudioContext | null>(null);
   const timerRef = useRef<number>(0);
   const accumulatedRef = useRef("");
+  const handleStartRef = useRef<(() => void) | null>(null);
 
-  // Clean up on unmount / close
+  // Clean up on close
   useEffect(() => {
     if (!open) {
       cleanup();
@@ -139,6 +140,13 @@ export function VoiceRecordingOverlay({ open, onClose, onComplete }: VoiceRecord
       setAnalyser(null);
     }
   }, [open]);
+
+  // Auto-start recording when overlay opens
+  useEffect(() => {
+    if (open && status === "idle" && handleStartRef.current) {
+      handleStartRef.current();
+    }
+  }, [open, status]);
 
   const cleanup = useCallback(() => {
     if (timerRef.current) clearInterval(timerRef.current);
@@ -234,6 +242,9 @@ export function VoiceRecordingOverlay({ open, onClose, onComplete }: VoiceRecord
       console.error("Mic access denied:", err);
     }
   }, [initRecognition, startTimer]);
+
+  // Keep ref in sync for auto-start
+  useEffect(() => { handleStartRef.current = handleStart; }, [handleStart]);
 
   const handlePause = useCallback(() => {
     setStatus("paused");
