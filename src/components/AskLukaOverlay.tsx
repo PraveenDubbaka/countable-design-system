@@ -358,7 +358,7 @@ export function AskLukaOverlay({ open, onOpenChange }: AskLukaOverlayProps) {
                           onClick={() => setActiveTab("workspaces")}
                           className={cn("h-10 w-10 rounded-[10px] flex items-center justify-center transition-colors", activeTab === "workspaces" ? "bg-primary/15 hover:bg-primary/25" : "hover:bg-muted/60")}
                         >
-                          <FolderOpen className={cn("h-5 w-5", activeTab === "workspaces" ? "text-primary" : "text-muted-foreground")} />
+                          <Building2 className={cn("h-5 w-5", activeTab === "workspaces" ? "text-primary" : "text-muted-foreground")} />
                         </button>
                       </TooltipTrigger>
                       <TooltipContent side="right"><p>Workspaces</p></TooltipContent>
