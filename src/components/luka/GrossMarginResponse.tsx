@@ -217,7 +217,7 @@ export function GrossMarginResponse({ revealStep }: GrossMarginResponseProps) {
                 key={tab}
                 onClick={() => setPeriodTab(tab)}
                 className={cn(
-                  "px-5 py-2 text-sm font-medium transition-all duration-200 capitalize relative",
+                  "px-5 py-2 text-base font-medium transition-all duration-200 capitalize relative",
                   "hover:bg-muted/40",
                   periodTab === tab
                     ? "text-foreground font-semibold bg-muted/30"
