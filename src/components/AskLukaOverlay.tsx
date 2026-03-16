@@ -90,12 +90,30 @@ export function AskLukaOverlay({ open, onOpenChange }: AskLukaOverlayProps) {
     setSentMessage(promptLabel);
     setIsThinking(true);
     setAiResponse(null);
+    setDisplayedResponse("");
+    setIsStreaming(false);
 
-    // Simulate AI response after delay
+    const fullResponse = `Here's an overview of **${promptLabel}** with key insights and analysis.\n\nThis covers the essential metrics, trends, and recommendations based on your current financial data. The analysis includes year-over-year comparisons and highlights areas that may require attention.`;
+
+    // Simulate thinking then stream response
     setTimeout(() => {
       setIsThinking(false);
-      setAiResponse(`Here's an overview of **${promptLabel}** with key insights and analysis. This is a simulated response demonstrating the thinking animation flow.`);
-    }, 3000);
+      setAiResponse(fullResponse);
+      setIsStreaming(true);
+      // Progressive reveal
+      let idx = 0;
+      const stream = () => {
+        if (idx < fullResponse.length) {
+          const chunkSize = Math.floor(Math.random() * 3) + 1;
+          idx = Math.min(idx + chunkSize, fullResponse.length);
+          setDisplayedResponse(fullResponse.slice(0, idx));
+          streamRef.current = window.setTimeout(stream, 15 + Math.random() * 25);
+        } else {
+          setIsStreaming(false);
+        }
+      };
+      stream();
+    }, 2500);
   }, []);
 
   const handleSend = useCallback(() => {
