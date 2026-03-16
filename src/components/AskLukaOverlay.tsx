@@ -72,6 +72,64 @@ export function AskLukaOverlay({ open, onOpenChange }: AskLukaOverlayProps) {
   const [viewMode, setViewMode] = useState<"full" | "half">("half");
   const [sidebarExpanded, setSidebarExpanded] = useState(false);
   const [sidebarHovered, setSidebarHovered] = useState(false);
+  const [showPromptPicker, setShowPromptPicker] = useState(false);
+  const [hashFilter, setHashFilter] = useState("");
+  const [isThinking, setIsThinking] = useState(false);
+  const [sentMessage, setSentMessage] = useState<string | null>(null);
+  const [aiResponse, setAiResponse] = useState<string | null>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  const handleInputChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    const val = e.target.value;
+    setMessage(val);
+
+    // Check if # is typed — open prompt picker
+    const hashIdx = val.lastIndexOf("#");
+    if (hashIdx !== -1) {
+      setShowPromptPicker(true);
+      setHashFilter(val.slice(hashIdx + 1));
+    } else {
+      setShowPromptPicker(false);
+      setHashFilter("");
+    }
+  }, []);
+
+  const handlePromptSelect = useCallback((promptLabel: string) => {
+    setShowPromptPicker(false);
+    setHashFilter("");
+    setMessage("");
+    setSentMessage(promptLabel);
+    setIsThinking(true);
+    setAiResponse(null);
+
+    // Simulate AI response after delay
+    setTimeout(() => {
+      setIsThinking(false);
+      setAiResponse(`Here's an overview of **${promptLabel}** with key insights and analysis. This is a simulated response demonstrating the thinking animation flow.`);
+    }, 3000);
+  }, []);
+
+  const handleSend = useCallback(() => {
+    if (!message.trim()) return;
+    const msg = message.trim();
+    setMessage("");
+    setShowPromptPicker(false);
+    setSentMessage(msg);
+    setIsThinking(true);
+    setAiResponse(null);
+
+    setTimeout(() => {
+      setIsThinking(false);
+      setAiResponse(`Here's my response to "${msg}". This is a simulated response.`);
+    }, 3000);
+  }, [message]);
+
+  const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
+    if (e.key === "Enter" && !showPromptPicker && message.trim()) {
+      e.preventDefault();
+      handleSend();
+    }
+  }, [showPromptPicker, message, handleSend]);
 
   if (!open) return null;
 
