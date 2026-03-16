@@ -249,7 +249,7 @@ export function AskLukaOverlay({ open, onOpenChange }: AskLukaOverlayProps) {
                             : "bg-muted/60 dark:bg-muted/30 text-muted-foreground hover:bg-muted"
                         )}
                       >
-                        <MessageCircle className="h-3.5 w-3.5" />
+                        <MessageSquare className="h-3.5 w-3.5" />
                         Threads
                       </button>
                       <button
