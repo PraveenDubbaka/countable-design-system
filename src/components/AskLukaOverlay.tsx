@@ -508,7 +508,7 @@ export function AskLukaOverlay({ open, onOpenChange }: AskLukaOverlayProps) {
 
                     {/* Unified Luka response container — icon stays in place */}
                     {(isThinking || aiResponse) && (
-                      <div className="flex items-start gap-3">
+                      <div className="flex items-start gap-3 min-w-0 max-w-full">
                         <div className={cn(
                           "w-9 h-9 rounded-full bg-gradient-to-br from-[hsl(var(--primary))] to-[hsl(265_80%_55%)] flex items-center justify-center shrink-0",
                           isThinking && "luka-thinking-spin"
