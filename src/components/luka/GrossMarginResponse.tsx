@@ -464,7 +464,7 @@ export function GrossMarginResponse({ revealStep }: GrossMarginResponseProps) {
               )}
             </div>
 
-            {/* Monthly view (placeholder) */}
+            {/* Monthly view */}
             <div
               className={cn(
                 "transition-all duration-400 ease-in-out",
@@ -474,9 +474,7 @@ export function GrossMarginResponse({ revealStep }: GrossMarginResponseProps) {
               )}
             >
               {periodTab === "monthly" && (
-                <div className="border border-[hsl(210_25%_82%)] rounded-lg p-8 text-center text-muted-foreground text-base">
-                  Monthly breakdown coming soon...
-                </div>
+                <MonthlyTable visible={revealStep >= 2} showPy2={showPy2} />
               )}
             </div>
           </div>
