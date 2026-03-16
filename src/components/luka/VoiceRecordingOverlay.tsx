@@ -127,6 +127,7 @@ export function VoiceRecordingOverlay({ open, onClose, onComplete }: VoiceRecord
   const audioCtxRef = useRef<AudioContext | null>(null);
   const timerRef = useRef<number>(0);
   const accumulatedRef = useRef("");
+  const handleStartRef = useRef<(() => void) | null>(null);
 
   // Clean up on close
   useEffect(() => {
@@ -142,8 +143,8 @@ export function VoiceRecordingOverlay({ open, onClose, onComplete }: VoiceRecord
 
   // Auto-start recording when overlay opens
   useEffect(() => {
-    if (open && status === "idle") {
-      handleStartRef.current?.();
+    if (open && status === "idle" && handleStartRef.current) {
+      handleStartRef.current();
     }
   }, [open, status]);
 
