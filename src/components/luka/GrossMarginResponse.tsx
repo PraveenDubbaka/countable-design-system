@@ -65,9 +65,9 @@ function ComparisonDropdown({
         onClick={() => setOpen(!open)}
         className={cn(
           "relative flex items-center gap-2 h-10 pl-3 pr-2.5 rounded-[10px] border text-sm transition-all duration-200",
-          "bg-white border-[#dcdfe4] hover:border-[hsl(213_60%_45%)]",
-          "dark:bg-card dark:border-[hsl(220_15%_30%)] dark:hover:border-[hsl(220_15%_40%)]",
-          open && "border-[hsl(213_60%_45%)] ring-2 ring-[hsl(213_60%_45%/0.15)]"
+          "bg-white border-[#dcdfe4] hover:border-[#074075]",
+          "dark:bg-card dark:border-[hsl(220_15%_30%)] dark:hover:border-[#074075]",
+          open && "border-[#074075] ring-2 ring-[#074075]/15"
         )}
       >
         {/* Floating label */}
@@ -75,11 +75,11 @@ function ComparisonDropdown({
           Select Comparison View*
         </span>
         <span className="font-medium text-foreground whitespace-nowrap">{label}</span>
-        <ChevronDown className={cn("h-4 w-4 ml-1 transition-transform duration-200", open ? "rotate-180 text-[hsl(213_60%_45%)]" : "text-[hsl(213_60%_45%)]")} />
+        <ChevronDown className={cn("h-4 w-4 ml-1 transition-transform duration-200 text-[#074075]", open && "rotate-180")} />
       </button>
 
       {open && (
-        <div className="absolute right-0 top-[calc(100%+4px)] z-50 min-w-[220px] rounded-[10px] border border-border bg-popover shadow-lg animate-in fade-in zoom-in-95 duration-150">
+        <div className="absolute right-0 top-[calc(100%+4px)] z-50 min-w-[220px] rounded-[10px] border border-[#074075] bg-popover shadow-lg animate-in fade-in zoom-in-95 duration-150">
           <div className="p-1.5">
             {options.map((opt) => (
               <button
