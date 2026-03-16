@@ -267,11 +267,11 @@ export function GrossMarginResponse({ revealStep }: GrossMarginResponseProps) {
             <span className="text-sm font-semibold text-foreground">Luka Summary</span>
           </div>
 
-          <p className="text-sm text-foreground leading-relaxed">{summaryText}</p>
+          <p className="text-base text-foreground leading-relaxed">{summaryText}</p>
 
           <div>
-            <p className="text-sm font-semibold text-foreground mb-2">Key Drivers:</p>
-            <ul className="space-y-2 text-sm text-foreground leading-relaxed list-disc pl-5">
+            <p className="text-base font-semibold text-foreground mb-2">Key Drivers:</p>
+            <ul className="space-y-2 text-base text-foreground leading-relaxed list-disc pl-5">
               {keyDrivers.map((d, i) => (
                 <li key={i}>{d}</li>
               ))}
