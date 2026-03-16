@@ -596,9 +596,9 @@ export function AskLukaOverlay({ open, onOpenChange }: AskLukaOverlayProps) {
                         <Button
                           size="icon"
                           className={cn(
-                            "h-9 w-9 rounded-full transition-colors",
+                            "h-9 w-9 rounded-full transition-all duration-200",
                             message.trim()
-                              ? "bg-primary hover:bg-primary/90 text-primary-foreground"
+                              ? "bg-gradient-to-br from-[#8649F1] to-[#2355A4] hover:opacity-90 text-white shadow-md"
                               : "bg-muted hover:bg-muted/80 text-muted-foreground"
                           )}
                           onClick={handleSend}
