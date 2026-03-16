@@ -1,5 +1,5 @@
 import { useState, useRef, useCallback } from "react";
-import { X, Mic, Plus, Search, MessageSquare, Minus, Send, FolderOpen, Maximize2, ChevronLeft, ChevronRight, Clock, PanelLeftClose, MoreHorizontal, Zap, Building2 } from "lucide-react";
+import { X, Mic, Plus, Search, MessageSquare, Minus, Send, Inbox, Maximize2, ChevronLeft, ChevronRight, Clock, PanelLeftClose, MoreHorizontal, Zap, Building2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from "@/components/ui/tooltip";
@@ -555,7 +555,7 @@ export function AskLukaOverlay({ open, onOpenChange }: AskLukaOverlayProps) {
                     onClose={() => { setShowPromptPicker(false); setHashFilter(""); }}
                   />
 
-                  <div className="border border-border rounded-[10px] overflow-visible bg-background dark:bg-card hover:border-primary/30 transition-all duration-200 luka-gradient-border relative">
+                  <div className="border border-border rounded-[12px] overflow-visible bg-background dark:bg-card hover:border-primary/30 transition-all duration-200 luka-gradient-border relative">
                     <div className="px-4 pt-3 pb-2">
                       {/* Render input with blue # styling */}
                       <div className="relative">
@@ -581,7 +581,7 @@ export function AskLukaOverlay({ open, onOpenChange }: AskLukaOverlayProps) {
                           <Plus className="h-4 w-4 text-muted-foreground" />
                         </Button>
                         <Button variant="outline" size="icon" className="h-9 w-9 rounded-[10px]">
-                          <FolderOpen className="h-4 w-4 text-muted-foreground" />
+                          <Inbox className="h-4 w-4 text-muted-foreground" />
                         </Button>
                         <div className="flex items-center gap-1.5 px-3 h-9 rounded-[10px] border border-border bg-background dark:bg-muted/20 text-sm text-foreground">
                           <span className="text-amber-500">✨</span>
