@@ -120,7 +120,7 @@ export function GrossMarginResponse({ revealStep }: GrossMarginResponseProps) {
   const [periodTab, setPeriodTab] = useState<"annual" | "quarterly" | "monthly">("annual");
 
   return (
-    <div className="space-y-4 w-full">
+    <div className="space-y-4 w-full min-w-0">
       {/* Intro text */}
       {revealStep >= 0 && (
         <p className="text-sm text-foreground animate-in fade-in duration-300">

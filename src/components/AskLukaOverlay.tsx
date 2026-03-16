@@ -200,7 +200,7 @@ export function AskLukaOverlay({ open, onOpenChange }: AskLukaOverlayProps) {
             : "left-[45%] rounded-tl-[1.25rem] rounded-bl-[1.25rem] shadow-[-8px_0_30px_-10px_hsl(var(--primary)/0.15)] border-l border-border"
         )}
       >
-        <div className="flex h-full">
+        <div className="flex h-full min-w-0 w-full">
           {/* ===== LEFT SIDEBAR ===== */}
           <aside
             className={cn(
@@ -464,9 +464,9 @@ export function AskLukaOverlay({ open, onOpenChange }: AskLukaOverlayProps) {
             </div>
 
             {/* Main content area */}
-            <div className="flex-1 flex flex-col">
+            <div className="flex-1 flex flex-col min-w-0 min-h-0">
               {/* Messages area or welcome */}
-              <ScrollArea className="flex-1">
+              <ScrollArea className="flex-1 min-w-0">
                 {!sentMessage ? (
                   /* Welcome state */
                   <div className="flex-1 flex flex-col items-center justify-center px-6 min-h-[60vh]">
@@ -498,7 +498,7 @@ export function AskLukaOverlay({ open, onOpenChange }: AskLukaOverlayProps) {
                   </div>
                 ) : (
                   /* Chat messages */
-                  <div className="px-6 py-4 space-y-4">
+                  <div className="px-6 py-4 space-y-4 min-w-0 w-full">
                     {/* User message */}
                     <div className="flex justify-end">
                       <div className="max-w-[80%] px-4 py-3 rounded-[12px] bg-primary text-primary-foreground text-sm">
