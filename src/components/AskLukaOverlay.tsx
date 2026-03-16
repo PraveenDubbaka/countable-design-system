@@ -581,7 +581,7 @@ export function AskLukaOverlay({ open, onOpenChange }: AskLukaOverlayProps) {
                           <Plus className="h-4 w-4 text-muted-foreground" />
                         </Button>
                         <Button variant="outline" size="icon" className="h-9 w-9 rounded-[10px]">
-                          <FolderOpen className="h-4 w-4 text-muted-foreground" />
+                          <Inbox className="h-4 w-4 text-muted-foreground" />
                         </Button>
                         <div className="flex items-center gap-1.5 px-3 h-9 rounded-[10px] border border-border bg-background dark:bg-muted/20 text-sm text-foreground">
                           <span className="text-amber-500">✨</span>
