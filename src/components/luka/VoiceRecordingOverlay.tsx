@@ -243,6 +243,9 @@ export function VoiceRecordingOverlay({ open, onClose, onComplete }: VoiceRecord
     }
   }, [initRecognition, startTimer]);
 
+  // Keep ref in sync for auto-start
+  useEffect(() => { handleStartRef.current = handleStart; }, [handleStart]);
+
   const handlePause = useCallback(() => {
     setStatus("paused");
     stopTimer();
