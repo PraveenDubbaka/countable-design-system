@@ -202,7 +202,7 @@ export function GrossMarginResponse({ revealStep }: GrossMarginResponseProps) {
     <div className="space-y-4 w-full min-w-0">
       {/* Intro text */}
       {revealStep >= 0 && (
-        <p className="text-sm text-foreground animate-in fade-in duration-300">
+        <p className="text-base text-foreground animate-in fade-in duration-300">
           Showing the Gross Margin Analysis with graphical presentation option:
         </p>
       )}
