@@ -515,7 +515,7 @@ export function AskLukaOverlay({ open, onOpenChange }: AskLukaOverlayProps) {
                         )}>
                           <LukaIcon size={16} />
                         </div>
-                        <div className="flex-1 pt-1.5 min-h-[28px]">
+                        <div className="flex-1 pt-1.5 min-h-[28px] min-w-0 overflow-x-auto">
                           {isThinking ? (
                             <div className="flex items-center gap-2">
                               <span className="text-sm font-medium text-muted-foreground luka-thinking-text">
