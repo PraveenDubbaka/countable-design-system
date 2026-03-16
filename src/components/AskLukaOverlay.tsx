@@ -124,11 +124,29 @@ export function AskLukaOverlay({ open, onOpenChange }: AskLukaOverlayProps) {
     setSentMessage(msg);
     setIsThinking(true);
     setAiResponse(null);
+    setDisplayedResponse("");
+    setIsStreaming(false);
+    if (streamRef.current) clearTimeout(streamRef.current);
+
+    const fullResponse = `Here's my response to "${msg}". This analysis covers the key aspects and provides actionable insights based on the available data.`;
 
     setTimeout(() => {
       setIsThinking(false);
-      setAiResponse(`Here's my response to "${msg}". This is a simulated response.`);
-    }, 3000);
+      setAiResponse(fullResponse);
+      setIsStreaming(true);
+      let idx = 0;
+      const stream = () => {
+        if (idx < fullResponse.length) {
+          const chunkSize = Math.floor(Math.random() * 3) + 1;
+          idx = Math.min(idx + chunkSize, fullResponse.length);
+          setDisplayedResponse(fullResponse.slice(0, idx));
+          streamRef.current = window.setTimeout(stream, 15 + Math.random() * 25);
+        } else {
+          setIsStreaming(false);
+        }
+      };
+      stream();
+    }, 2500);
   }, [message]);
 
   const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
