@@ -527,6 +527,8 @@ export function AskLukaOverlay({ open, onOpenChange }: AskLukaOverlayProps) {
                                 <span className="w-1 h-1 rounded-full bg-primary/60 luka-dot luka-dot-3" />
                               </span>
                             </div>
+                          ) : richResponseType === "gross-margin" ? (
+                            <GrossMarginResponse revealStep={revealStep} />
                           ) : (
                             <div className="text-sm text-foreground leading-relaxed whitespace-pre-wrap">
                               {displayedResponse}
