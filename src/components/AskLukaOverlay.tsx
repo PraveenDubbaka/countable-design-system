@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { X, Mic, Plus, Hash, Search, Settings, MessageCircle, Minus, Send, Zap, FolderOpen, Maximize2, Minimize2, ChevronLeft, ChevronRight, Clock } from "lucide-react";
+import { X, Mic, Plus, Hash, Search, MessageCircle, Minus, Send, Zap, FolderOpen, Maximize2, Minimize2, ChevronLeft, ChevronRight, Clock, MoreHorizontal } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from "@/components/ui/tooltip";
