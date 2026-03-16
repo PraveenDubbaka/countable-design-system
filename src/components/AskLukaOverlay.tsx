@@ -261,7 +261,7 @@ export function AskLukaOverlay({ open, onOpenChange }: AskLukaOverlayProps) {
                             : "bg-muted/60 dark:bg-muted/30 text-muted-foreground hover:bg-muted"
                         )}
                       >
-                        <FolderOpen className="h-3.5 w-3.5" />
+                        <Building2 className="h-3.5 w-3.5" />
                         Workspaces
                       </button>
                     </div>
