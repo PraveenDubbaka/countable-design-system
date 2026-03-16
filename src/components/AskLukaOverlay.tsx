@@ -414,68 +414,129 @@ export function AskLukaOverlay({ open, onOpenChange }: AskLukaOverlayProps) {
               </TooltipProvider>
             </div>
 
-            {/* Center welcome content */}
-            <div className="flex-1 flex flex-col items-center justify-center px-6">
-              {/* Luka logo icon */}
-              <div className="mb-8 relative flex items-center justify-center w-24 h-24">
-                <div className="absolute -inset-4 luka-ambient-glow" />
-                <div className="absolute inset-0 luka-ambient-orb opacity-20" />
-                <div className="relative flex items-center justify-center w-[52px] h-[52px] rounded-full bg-background/90 dark:bg-card/90 backdrop-blur-sm z-10 shadow-[0_0_30px_rgba(151,71,255,0.12)]">
-                  <LukaBoltIcon size={24} />
-                </div>
-              </div>
-
-              <h1 className="text-2xl font-semibold text-foreground mb-8 text-center">
-                How can I help you today?
-              </h1>
-
-              {/* Suggestion chips */}
-              <div className="flex flex-wrap items-center justify-center gap-3 mb-12">
-                {suggestions.map((s) => (
-                  <button
-                    key={s}
-                    className="px-4 py-2 rounded-[10px] border border-border bg-background dark:bg-card text-sm text-foreground hover:bg-muted/60 dark:hover:bg-muted/30 transition-colors"
-                  >
-                    {s}
-                  </button>
-                ))}
-              </div>
-
-              {/* Chat Input */}
-              <div className="w-full max-w-[700px]">
-                <div className="border border-border rounded-[10px] overflow-visible bg-background dark:bg-card hover:border-primary/30 transition-all duration-200 luka-gradient-border relative">
-                  <div className="px-4 pt-3 pb-2">
-                    <input
-                      type="text"
-                      value={message}
-                      onChange={(e) => setMessage(e.target.value)}
-                      placeholder="Type # for prompts or just ask anything..."
-                      className="w-full bg-transparent h-9 text-foreground placeholder:text-muted-foreground/70 outline-none border-none text-sm"
-                    />
-                  </div>
-
-                  {/* Bottom toolbar */}
-                  <div className="px-3 pb-3 flex items-center justify-between">
-                    <div className="flex items-center gap-1">
-                      <Button variant="outline" size="icon" className="h-9 w-9 rounded-[10px]">
-                        <Plus className="h-4 w-4 text-muted-foreground" />
-                      </Button>
-                      <Button variant="outline" size="icon" className="h-9 w-9 rounded-[10px]">
-                        <FolderOpen className="h-4 w-4 text-muted-foreground" />
-                      </Button>
-                      <div className="flex items-center gap-1.5 px-3 h-9 rounded-[10px] border border-border bg-background dark:bg-muted/20 text-sm text-foreground">
-                        <span className="text-amber-500">✨</span>
-                        <span className="text-sm font-medium">Gemini 3 Flash</span>
+            {/* Main content area */}
+            <div className="flex-1 flex flex-col">
+              {/* Messages area or welcome */}
+              <ScrollArea className="flex-1">
+                {!sentMessage ? (
+                  /* Welcome state */
+                  <div className="flex-1 flex flex-col items-center justify-center px-6 min-h-[60vh]">
+                    {/* Luka logo icon */}
+                    <div className="mb-8 relative flex items-center justify-center w-24 h-24">
+                      <div className="absolute -inset-4 luka-ambient-glow" />
+                      <div className="absolute inset-0 luka-ambient-orb opacity-20" />
+                      <div className="relative flex items-center justify-center w-[52px] h-[52px] rounded-full bg-background/90 dark:bg-card/90 backdrop-blur-sm z-10 shadow-[0_0_30px_rgba(151,71,255,0.12)]">
+                        <LukaBoltIcon size={24} />
                       </div>
                     </div>
 
-                    <div className="flex items-center gap-1">
-                      <Button variant="ghost" size="icon" className="h-9 w-9 rounded-[10px]">
-                        <Mic className="h-4 w-4 text-muted-foreground" />
-                      </Button>
-                      <Button size="icon" className="h-9 w-9 rounded-full bg-muted hover:bg-muted/80 text-muted-foreground">
-                        <Send className="h-4 w-4" />
-                      </Button>
+                    <h1 className="text-2xl font-semibold text-foreground mb-8 text-center">
+                      How can I help you today?
+                    </h1>
+
+                    {/* Suggestion chips */}
+                    <div className="flex flex-wrap items-center justify-center gap-3 mb-12">
+                      {suggestions.map((s) => (
+                        <button
+                          key={s}
+                          onClick={() => handlePromptSelect(s.replace("#", ""))}
+                          className="px-4 py-2 rounded-[10px] border border-border bg-background dark:bg-card text-sm text-foreground hover:bg-muted/60 dark:hover:bg-muted/30 transition-colors"
+                        >
+                          {s}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                ) : (
+                  /* Chat messages */
+                  <div className="px-6 py-4 space-y-4">
+                    {/* User message */}
+                    <div className="flex justify-end">
+                      <div className="max-w-[80%] px-4 py-3 rounded-[12px] bg-primary text-primary-foreground text-sm">
+                        {sentMessage}
+                      </div>
+                    </div>
+
+                    {/* Thinking indicator */}
+                    <LukaThinkingMessage visible={isThinking} />
+
+                    {/* AI response */}
+                    {aiResponse && (
+                      <div className="flex items-start gap-3 animate-fade-in">
+                        <div className="w-9 h-9 rounded-full bg-gradient-to-br from-[hsl(var(--primary))] to-[hsl(265_80%_55%)] flex items-center justify-center shrink-0">
+                          <LukaBoltIcon size={16} />
+                        </div>
+                        <div className="flex-1 text-sm text-foreground leading-relaxed pt-1.5">
+                          {aiResponse}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                )}
+              </ScrollArea>
+
+              {/* Chat Input - pinned to bottom */}
+              <div className="px-6 pb-6 pt-2">
+                <div className="w-full max-w-[700px] mx-auto relative">
+                  {/* Prompt Picker */}
+                  <PromptPicker
+                    open={showPromptPicker}
+                    filter={hashFilter}
+                    onSelect={handlePromptSelect}
+                    onClose={() => { setShowPromptPicker(false); setHashFilter(""); }}
+                  />
+
+                  <div className="border border-border rounded-[10px] overflow-visible bg-background dark:bg-card hover:border-primary/30 transition-all duration-200 luka-gradient-border relative">
+                    <div className="px-4 pt-3 pb-2">
+                      {/* Render input with blue # styling */}
+                      <div className="relative">
+                        <input
+                          ref={inputRef}
+                          type="text"
+                          value={message}
+                          onChange={handleInputChange}
+                          onKeyDown={handleKeyDown}
+                          placeholder="Type # for prompts or just ask anything..."
+                          className={cn(
+                            "w-full bg-transparent h-9 placeholder:text-muted-foreground/70 outline-none border-none text-sm",
+                            message.includes("#") ? "text-primary font-medium" : "text-foreground"
+                          )}
+                        />
+                      </div>
+                    </div>
+
+                    {/* Bottom toolbar */}
+                    <div className="px-3 pb-3 flex items-center justify-between">
+                      <div className="flex items-center gap-1">
+                        <Button variant="outline" size="icon" className="h-9 w-9 rounded-[10px]">
+                          <Plus className="h-4 w-4 text-muted-foreground" />
+                        </Button>
+                        <Button variant="outline" size="icon" className="h-9 w-9 rounded-[10px]">
+                          <FolderOpen className="h-4 w-4 text-muted-foreground" />
+                        </Button>
+                        <div className="flex items-center gap-1.5 px-3 h-9 rounded-[10px] border border-border bg-background dark:bg-muted/20 text-sm text-foreground">
+                          <span className="text-amber-500">✨</span>
+                          <span className="text-sm font-medium">Gemini 3 Flash</span>
+                        </div>
+                      </div>
+
+                      <div className="flex items-center gap-1">
+                        <Button variant="ghost" size="icon" className="h-9 w-9 rounded-[10px]">
+                          <Mic className="h-4 w-4 text-muted-foreground" />
+                        </Button>
+                        <Button
+                          size="icon"
+                          className={cn(
+                            "h-9 w-9 rounded-full transition-colors",
+                            message.trim()
+                              ? "bg-primary hover:bg-primary/90 text-primary-foreground"
+                              : "bg-muted hover:bg-muted/80 text-muted-foreground"
+                          )}
+                          onClick={handleSend}
+                        >
+                          <Send className="h-4 w-4" />
+                        </Button>
+                      </div>
                     </div>
                   </div>
                 </div>
