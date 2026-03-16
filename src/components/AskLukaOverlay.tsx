@@ -555,7 +555,7 @@ export function AskLukaOverlay({ open, onOpenChange }: AskLukaOverlayProps) {
                     onClose={() => { setShowPromptPicker(false); setHashFilter(""); }}
                   />
 
-                  <div className="border border-border rounded-[10px] overflow-visible bg-background dark:bg-card hover:border-primary/30 transition-all duration-200 luka-gradient-border relative">
+                  <div className="border border-border rounded-[12px] overflow-visible bg-background dark:bg-card hover:border-primary/30 transition-all duration-200 luka-gradient-border relative">
                     <div className="px-4 pt-3 pb-2">
                       {/* Render input with blue # styling */}
                       <div className="relative">
