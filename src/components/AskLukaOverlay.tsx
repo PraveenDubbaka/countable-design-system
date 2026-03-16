@@ -6,6 +6,7 @@ import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from "@/comp
 import { cn } from "@/lib/utils";
 import { PromptPicker } from "@/components/luka/PromptPicker";
 import { LukaThinkingMessage } from "@/components/luka/LukaThinkingMessage";
+import { GrossMarginResponse } from "@/components/luka/GrossMarginResponse";
 
 interface AskLukaOverlayProps {
   open: boolean;
