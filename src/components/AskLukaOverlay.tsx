@@ -63,7 +63,10 @@ export function AskLukaOverlay({ open, onOpenChange }: AskLukaOverlayProps) {
   const [isThinking, setIsThinking] = useState(false);
   const [sentMessage, setSentMessage] = useState<string | null>(null);
   const [aiResponse, setAiResponse] = useState<string | null>(null);
+  const [displayedResponse, setDisplayedResponse] = useState("");
+  const [isStreaming, setIsStreaming] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
+  const streamRef = useRef<number | null>(null);
 
   const handleInputChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const val = e.target.value;
@@ -87,12 +90,30 @@ export function AskLukaOverlay({ open, onOpenChange }: AskLukaOverlayProps) {
     setSentMessage(promptLabel);
     setIsThinking(true);
     setAiResponse(null);
+    setDisplayedResponse("");
+    setIsStreaming(false);
 
-    // Simulate AI response after delay
+    const fullResponse = `Here's an overview of **${promptLabel}** with key insights and analysis.\n\nThis covers the essential metrics, trends, and recommendations based on your current financial data. The analysis includes year-over-year comparisons and highlights areas that may require attention.`;
+
+    // Simulate thinking then stream response
     setTimeout(() => {
       setIsThinking(false);
-      setAiResponse(`Here's an overview of **${promptLabel}** with key insights and analysis. This is a simulated response demonstrating the thinking animation flow.`);
-    }, 3000);
+      setAiResponse(fullResponse);
+      setIsStreaming(true);
+      // Progressive reveal
+      let idx = 0;
+      const stream = () => {
+        if (idx < fullResponse.length) {
+          const chunkSize = Math.floor(Math.random() * 3) + 1;
+          idx = Math.min(idx + chunkSize, fullResponse.length);
+          setDisplayedResponse(fullResponse.slice(0, idx));
+          streamRef.current = window.setTimeout(stream, 15 + Math.random() * 25);
+        } else {
+          setIsStreaming(false);
+        }
+      };
+      stream();
+    }, 2500);
   }, []);
 
   const handleSend = useCallback(() => {
@@ -103,11 +124,29 @@ export function AskLukaOverlay({ open, onOpenChange }: AskLukaOverlayProps) {
     setSentMessage(msg);
     setIsThinking(true);
     setAiResponse(null);
+    setDisplayedResponse("");
+    setIsStreaming(false);
+    if (streamRef.current) clearTimeout(streamRef.current);
+
+    const fullResponse = `Here's my response to "${msg}". This analysis covers the key aspects and provides actionable insights based on the available data.`;
 
     setTimeout(() => {
       setIsThinking(false);
-      setAiResponse(`Here's my response to "${msg}". This is a simulated response.`);
-    }, 3000);
+      setAiResponse(fullResponse);
+      setIsStreaming(true);
+      let idx = 0;
+      const stream = () => {
+        if (idx < fullResponse.length) {
+          const chunkSize = Math.floor(Math.random() * 3) + 1;
+          idx = Math.min(idx + chunkSize, fullResponse.length);
+          setDisplayedResponse(fullResponse.slice(0, idx));
+          streamRef.current = window.setTimeout(stream, 15 + Math.random() * 25);
+        } else {
+          setIsStreaming(false);
+        }
+      };
+      stream();
+    }, 2500);
   }, [message]);
 
   const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
@@ -443,17 +482,35 @@ export function AskLukaOverlay({ open, onOpenChange }: AskLukaOverlayProps) {
                       </div>
                     </div>
 
-                    {/* Thinking indicator */}
-                    <LukaThinkingMessage visible={isThinking} />
-
-                    {/* AI response */}
-                    {aiResponse && (
-                      <div className="flex items-start gap-3 animate-fade-in">
-                        <div className="w-9 h-9 rounded-full bg-gradient-to-br from-[hsl(var(--primary))] to-[hsl(265_80%_55%)] flex items-center justify-center shrink-0">
+                    {/* Unified Luka response container — icon stays in place */}
+                    {(isThinking || aiResponse) && (
+                      <div className="flex items-start gap-3">
+                        <div className={cn(
+                          "w-9 h-9 rounded-full bg-gradient-to-br from-[hsl(var(--primary))] to-[hsl(265_80%_55%)] flex items-center justify-center shrink-0",
+                          isThinking && "luka-thinking-spin"
+                        )}>
                           <LukaIcon size={16} />
                         </div>
-                        <div className="flex-1 text-sm text-foreground leading-relaxed pt-1.5">
-                          {aiResponse}
+                        <div className="flex-1 pt-1.5 min-h-[28px]">
+                          {isThinking ? (
+                            <div className="flex items-center gap-2">
+                              <span className="text-sm font-medium text-muted-foreground luka-thinking-text">
+                                Thinking
+                              </span>
+                              <span className="flex gap-0.5">
+                                <span className="w-1 h-1 rounded-full bg-primary/60 luka-dot luka-dot-1" />
+                                <span className="w-1 h-1 rounded-full bg-primary/60 luka-dot luka-dot-2" />
+                                <span className="w-1 h-1 rounded-full bg-primary/60 luka-dot luka-dot-3" />
+                              </span>
+                            </div>
+                          ) : (
+                            <div className="text-sm text-foreground leading-relaxed whitespace-pre-wrap">
+                              {displayedResponse}
+                              {isStreaming && (
+                                <span className="inline-block w-0.5 h-4 bg-primary/70 ml-0.5 align-middle luka-thinking-text" />
+                              )}
+                            </div>
+                          )}
                         </div>
                       </div>
                     )}
