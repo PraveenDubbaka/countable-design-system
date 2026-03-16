@@ -36,6 +36,23 @@ const quarterlyRows = [
 ];
 const quarterlyTotals = { period: "Total Full Year", cyRev: "7,570.00", cyCos: "3,860.00", cyGm: "3,710.00", cyGmPct: "49.0", py1Gm: "3,200.00", py1GmPct: "-", py2Gm: "2,640.00", py2GmPct: "-" };
 
+/* ── Monthly data ── */
+
+const monthlyRows = [
+  { period: "January", cyRev: "570.00", cyCos: "298.00", cyGm: "272.00", cyGmPct: "47.7", py1Gm: "235.00", py1GmPct: "46.5", py2Gm: "193.00", py2GmPct: "44.4" },
+  { period: "February", cyRev: "580.00", cyCos: "300.00", cyGm: "280.00", cyGmPct: "48.3", py1Gm: "241.00", py1GmPct: "46.8", py2Gm: "196.00", py2GmPct: "44.5" },
+  { period: "March", cyRev: "630.00", cyCos: "322.00", cyGm: "308.00", cyGmPct: "48.9", py1Gm: "264.00", py1GmPct: "47.1", py2Gm: "221.00", py2GmPct: "45.6" },
+  { period: "April", cyRev: "640.00", cyCos: "320.00", cyGm: "320.00", cyGmPct: "50.0", py1Gm: "276.00", py1GmPct: "48.4", py2Gm: "226.00", py2GmPct: "46.1" },
+  { period: "May", cyRev: "660.00", cyCos: "330.00", cyGm: "330.00", cyGmPct: "50.0", py1Gm: "282.00", py1GmPct: "48.6", py2Gm: "232.00", py2GmPct: "46.4" },
+  { period: "June", cyRev: "660.00", cyCos: "330.00", cyGm: "330.00", cyGmPct: "50.0", py1Gm: "282.00", py1GmPct: "48.6", py2Gm: "232.00", py2GmPct: "46.4" },
+  { period: "July", cyRev: "680.00", cyCos: "336.00", cyGm: "344.00", cyGmPct: "50.6", py1Gm: "292.00", py1GmPct: "48.7", py2Gm: "242.00", py2GmPct: "46.5" },
+  { period: "September", cyRev: "680.00", cyCos: "336.00", cyGm: "344.00", cyGmPct: "50.6", py1Gm: "292.00", py1GmPct: "48.7", py2Gm: "242.00", py2GmPct: "46.5" },
+  { period: "October", cyRev: "660.00", cyCos: "328.00", cyGm: "332.00", cyGmPct: "50.3", py1Gm: "286.00", py1GmPct: "48.5", py2Gm: "236.00", py2GmPct: "46.3" },
+  { period: "November", cyRev: "620.00", cyCos: "328.00", cyGm: "292.00", cyGmPct: "47.1", py1Gm: "256.00", py1GmPct: "46.5", py2Gm: "211.00", py2GmPct: "44.4" },
+  { period: "December", cyRev: "590.00", cyCos: "314.00", cyGm: "276.00", cyGmPct: "46.8", py1Gm: "249.00", py1GmPct: "46.5", py2Gm: "205.00", py2GmPct: "44.1" },
+];
+const monthlyTotals = { period: "Total Full Year", cyRev: "7,570.00", cyCos: "3,860.00", cyGm: "3,710.00", cyGmPct: "49.0", py1Gm: "3,200.00", py1GmPct: "-", py2Gm: "2,640.00", py2GmPct: "-" };
+
 const qColsFull = ["Period ↓", "CY Revenue", "CY COS", "CY GM", "CY GM (%)", "PY1 GM", "PY1 GM (%)", "PY2 GM", "PY2 GM (%)"];
 const qColsNoPy2 = ["Period ↓", "CY Revenue", "CY COS", "CY GM", "CY GM (%)", "PY1 GM", "PY1 GM (%)"];
 
