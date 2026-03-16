@@ -264,7 +264,7 @@ export function GrossMarginResponse({ revealStep }: GrossMarginResponseProps) {
             <div className="w-6 h-6 rounded-full bg-gradient-to-br from-[hsl(var(--primary))] to-[hsl(265_80%_55%)] flex items-center justify-center">
               <LukaIcon size={12} />
             </div>
-            <span className="text-sm font-semibold text-foreground">Luka Summary</span>
+            <span className="text-base font-semibold text-foreground">Luka Summary</span>
           </div>
 
           <p className="text-base text-foreground leading-relaxed">{summaryText}</p>
