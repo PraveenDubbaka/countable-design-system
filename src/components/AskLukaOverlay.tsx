@@ -542,7 +542,7 @@ export function AskLukaOverlay({ open, onOpenChange }: AskLukaOverlayProps) {
                     )}
                   </div>
                 )}
-              </ScrollArea>
+              </div>
 
               {/* Chat Input - pinned to bottom */}
               <div className={cn("pb-6 pt-2", viewMode === "full" ? "px-12" : "px-6")}>
