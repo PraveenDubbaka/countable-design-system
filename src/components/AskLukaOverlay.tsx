@@ -530,7 +530,7 @@ export function AskLukaOverlay({ open, onOpenChange }: AskLukaOverlayProps) {
                           ) : richResponseType === "gross-margin" ? (
                             <GrossMarginResponse revealStep={revealStep} />
                           ) : (
-                            <div className="text-sm text-foreground leading-relaxed whitespace-pre-wrap">
+                            <div className="text-base text-foreground leading-relaxed whitespace-pre-wrap">
                               {displayedResponse}
                               {isStreaming && (
                                 <span className="inline-block w-0.5 h-4 bg-primary/70 ml-0.5 align-middle luka-thinking-text" />
