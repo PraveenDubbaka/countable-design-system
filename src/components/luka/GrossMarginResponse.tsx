@@ -236,15 +236,27 @@ export function GrossMarginResponse({ revealStep }: GrossMarginResponseProps) {
 
           <div className="flex items-center gap-2">
             <ComparisonDropdown value={comparison} onChange={setComparison} />
-            <div className="flex items-center gap-1 ml-2">
-              <button className="p-1.5 rounded hover:bg-muted/50 transition-colors">
-                <LayoutGrid className="h-4 w-4 text-muted-foreground" />
-              </button>
-              <Switch className="data-[state=checked]:bg-primary" />
-              <button className="p-1.5 rounded hover:bg-muted/50 transition-colors">
-                <BarChart3 className="h-4 w-4 text-muted-foreground" />
-              </button>
-            </div>
+            <TooltipProvider delayDuration={200}>
+              <div className="flex items-center gap-1 ml-2">
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <button className="p-1.5 rounded hover:bg-muted/50 transition-colors">
+                      <LayoutGrid className="h-4 w-4 text-muted-foreground" />
+                    </button>
+                  </TooltipTrigger>
+                  <TooltipContent side="bottom"><p>Table View</p></TooltipContent>
+                </Tooltip>
+                <Switch className="data-[state=checked]:bg-primary" />
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <button className="p-1.5 rounded hover:bg-muted/50 transition-colors">
+                      <BarChart3 className="h-4 w-4 text-muted-foreground" />
+                    </button>
+                  </TooltipTrigger>
+                  <TooltipContent side="bottom"><p>Graph View</p></TooltipContent>
+                </Tooltip>
+              </div>
+            </TooltipProvider>
           </div>
         </div>
       )}
