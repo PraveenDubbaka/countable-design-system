@@ -62,7 +62,7 @@ function TableSection({
           </thead>
           <tbody>
             {rows.map((r) => (
-              <tr key={r.name} className="border-b border-border/50 hover:bg-muted/20 transition-colors">
+              <tr key={r.name} className="border-b border-[hsl(210_25%_82%)]/50 hover:bg-muted/20 transition-colors">
                 <td className="px-4 py-2.5 text-foreground">{r.name}</td>
                 <td className="px-4 py-2.5 text-right text-foreground tabular-nums">{r.cy}</td>
                 <td className="px-4 py-2.5 text-right text-muted-foreground tabular-nums">{r.cyPct}</td>
