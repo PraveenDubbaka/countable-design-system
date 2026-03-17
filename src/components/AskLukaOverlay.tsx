@@ -479,7 +479,7 @@ export function AskLukaOverlay({ open, onOpenChange }: AskLukaOverlayProps) {
                     <div className="mb-8 relative flex items-center justify-center w-24 h-24">
                       <div className="absolute -inset-4 luka-ambient-glow" />
                       <div className="absolute inset-0 luka-ambient-orb opacity-20" />
-                      <div className="relative flex items-center justify-center w-[52px] h-[52px] rounded-full bg-background/90 dark:bg-card/90 backdrop-blur-sm z-10 shadow-[0_0_30px_rgba(151,71,255,0.12)]">
+                      <div className="relative flex items-center justify-center w-[52px] h-[52px] rounded-full bg-gradient-to-br from-[hsl(var(--primary))] to-[hsl(265_80%_55%)] backdrop-blur-sm z-10 shadow-[0_0_30px_rgba(151,71,255,0.12)]">
                         <LukaIcon size={24} />
                       </div>
                     </div>
