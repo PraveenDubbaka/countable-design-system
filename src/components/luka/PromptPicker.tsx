@@ -5,6 +5,7 @@ const prompts = [
   { id: "variance", label: "Variance Analysis" },
   { id: "gl-analysis", label: "General Ledger Analysis" },
   { id: "account-recon", label: "Account Reconciliation" },
+  { id: "account-recon-perform", label: "Perform Account Reconciliation" },
   { id: "bank-recon", label: "Bank Reconciliation" },
   { id: "aged-ar", label: "Aged AR Analysis" },
   { id: "loan-amort", label: "Loan Amortization" },
