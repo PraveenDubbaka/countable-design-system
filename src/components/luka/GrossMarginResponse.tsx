@@ -694,7 +694,7 @@ export function GrossMarginResponse({ revealStep }: GrossMarginResponseProps) {
       )}
 
       {/* Luka Summary – shared across all tabs and views */}
-      <LukaSummary visible={revealStep >= 5} />
+      <LukaSummary visible={revealStep >= 5} periodTab={periodTab} />
     </div>
   );
 }
