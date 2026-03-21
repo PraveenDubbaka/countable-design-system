@@ -310,6 +310,20 @@ const outlook = [
   "The positive margin trend is sustainable if revenue mix continues to favor product sales and operational efficiencies in labour and overhead are maintained. Key risk factors include potential input cost inflation and capacity constraints during peak quarters.",
 ];
 
+/* ── Quarterly-specific summary ── */
+const quarterlySummaryText = `Quarterly gross margin peaked in Q3 2025 at 50.5% ($1,020K) driven by the highest revenue quarter ($2,020K) with controlled cost of sales ($1,000K). Q2 followed closely at 50.0%, while Q4 dipped to 47.0% — the weakest quarter of the year.`;
+
+const quarterlyKeyDrivers = [
+  "Q3 spike to 50.5% was driven by peak seasonal revenue ($2,020K) while cost of sales remained proportionally lower at $1,000K (49.5% of revenue), suggesting better supplier pricing or product mix during summer months.",
+  "Q4 decline to 47.0% reflects seasonal softening — revenue dropped to $1,810K while cost of sales stayed relatively elevated at $960K (53.0% of revenue), likely due to year-end inventory adjustments and lower-margin holiday promotions.",
+  "Q1 to Q3 shows a clear upward trajectory from 48.3% → 50.0% → 50.5%, indicating improving operational leverage as revenue scales through the first three quarters.",
+  "The $170K gap between the best quarter (Q3: $1,020K GM) and weakest quarter (Q4: $850K GM) highlights significant seasonality that should be factored into cash flow planning.",
+];
+
+const quarterlyOutlook = [
+  "The Q4 margin compression is a recurring pattern — management should explore strategies to maintain pricing discipline and control promotional discounting in the final quarter. Shifting some Q4 costs to Q1 or negotiating better year-end supplier terms could help flatten the seasonal margin dip.",
+];
+
 /* ── Luka Summary Component ── */
 function LukaSummary({ visible }: { visible: boolean }) {
   if (!visible) return null;
