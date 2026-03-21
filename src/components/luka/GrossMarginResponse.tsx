@@ -325,8 +325,14 @@ const quarterlyOutlook = [
 ];
 
 /* ── Luka Summary Component ── */
-function LukaSummary({ visible }: { visible: boolean }) {
+function LukaSummary({ visible, periodTab }: { visible: boolean; periodTab: "annual" | "quarterly" | "monthly" }) {
   if (!visible) return null;
+
+  const isQuarterly = periodTab === "quarterly";
+  const activeSummary = isQuarterly ? quarterlySummaryText : summaryText;
+  const activeDrivers = isQuarterly ? quarterlyKeyDrivers : keyDrivers;
+  const activeOutlook = isQuarterly ? quarterlyOutlook : outlook;
+
   return (
     <div className="border border-border rounded-lg bg-muted/20 p-5 space-y-4">
       <div className="flex items-center gap-2">
@@ -336,26 +342,28 @@ function LukaSummary({ visible }: { visible: boolean }) {
         <span className="text-base font-semibold text-foreground">Luka Summary</span>
       </div>
 
-      <p className="text-base text-foreground leading-relaxed">{summaryText}</p>
+      <p className="text-base text-foreground leading-relaxed">{activeSummary}</p>
 
       <div>
         <p className="text-base font-semibold text-foreground mb-2">Key Drivers:</p>
         <ul className="space-y-2 text-base text-foreground leading-relaxed list-disc pl-5">
-          {keyDrivers.map((d, i) => <li key={i}>{d}</li>)}
+          {activeDrivers.map((d, i) => <li key={i}>{d}</li>)}
         </ul>
       </div>
 
-      <div>
-        <p className="text-base font-semibold text-foreground mb-2">Seasonality:</p>
-        <ul className="space-y-2 text-base text-foreground leading-relaxed list-disc pl-5">
-          {seasonality.map((s, i) => <li key={i}>{s}</li>)}
-        </ul>
-      </div>
+      {!isQuarterly && (
+        <div>
+          <p className="text-base font-semibold text-foreground mb-2">Seasonality:</p>
+          <ul className="space-y-2 text-base text-foreground leading-relaxed list-disc pl-5">
+            {seasonality.map((s, i) => <li key={i}>{s}</li>)}
+          </ul>
+        </div>
+      )}
 
       <div>
         <p className="text-base font-semibold text-foreground mb-2">Outlook:</p>
         <ul className="space-y-2 text-base text-foreground leading-relaxed list-disc pl-5">
-          {outlook.map((o, i) => <li key={i}>{o}</li>)}
+          {activeOutlook.map((o, i) => <li key={i}>{o}</li>)}
         </ul>
       </div>
     </div>
