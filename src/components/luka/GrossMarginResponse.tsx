@@ -99,6 +99,7 @@ function TableSection({
                 <td className="px-4 py-2.5 text-foreground">{r.name}</td>
                 <td className="px-4 py-2.5 text-right text-foreground tabular-nums">{r.cy}</td>
                 <td className="px-4 py-2.5 text-right text-foreground tabular-nums">{r.py1}</td>
+                <td className="px-4 py-2.5 text-right text-foreground tabular-nums">{r.py2}</td>
                 <td className="px-4 py-2.5 text-right text-foreground tabular-nums">{r.vs}</td>
               </tr>
             ))}
@@ -106,6 +107,7 @@ function TableSection({
               <td className="px-4 py-2.5 text-black">{totals.name}</td>
               <td className="px-4 py-2.5 text-right text-black tabular-nums">{totals.cy}</td>
               <td className="px-4 py-2.5 text-right text-black tabular-nums">{totals.py1}</td>
+              <td className="px-4 py-2.5 text-right text-black tabular-nums">{totals.py2}</td>
               <td className="px-4 py-2.5 text-right text-black font-semibold tabular-nums">{totals.vs}</td>
             </tr>
           </tbody>
