@@ -610,9 +610,8 @@ export function GrossMarginResponse({ revealStep }: GrossMarginResponseProps) {
                   <AnnualChart visible={revealStep >= 2} />
                 ) : (
                   <div className="space-y-4">
-                    <TableSection title="Revenue Accounts" rows={revenueRows} totals={revenueTotals} visible={revealStep >= 2} />
-                    <TableSection title="Cost of Sales Accounts" rows={cosRows} totals={cosTotals} visible={revealStep >= 3} />
-                    <TableSection title="Gross Margin Summary" rows={marginRows} totals={marginTotals} visible={revealStep >= 4} />
+                    <RevenueCosTable visible={revealStep >= 2} />
+                    <GrossMarginSummaryTable visible={revealStep >= 4} />
                   </div>
                 )
               )}
