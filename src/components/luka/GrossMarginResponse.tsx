@@ -384,7 +384,7 @@ function LukaSummary({ visible, periodTab }: { visible: boolean; periodTab: "ann
         </ul>
       </div>
 
-      {!isQuarterly && (
+      {!isQuarterly && !isMonthly && (
         <div>
           <p className="text-base font-semibold text-foreground mb-2">Seasonality:</p>
           <ul className="space-y-2 text-base text-foreground leading-relaxed list-disc pl-5">
