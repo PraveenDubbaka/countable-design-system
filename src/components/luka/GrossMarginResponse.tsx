@@ -57,7 +57,7 @@ const monthlyTotals = { period: "Total Full Year", cyRev: "7,570.00", cyCos: "3,
 
 const qColsFull = ["Period ↓", "2025 Revenue", "2025 COS", "2025 GM", "2025 GM (%)", "2024 GM", "2024 GM (%)", "2023 GM", "2023 GM (%)"];
 
-const colsFull = ["Account Name ↓", "2025", "2025 (%)", "2024", "2024 (%)", "2023", "2023 (%)", "2025 vs 2024 (%)"];
+const colsFull = ["Account Name ↓", "2025", "2024", "2023", "2025 vs 2024 (%)"];
 
 function LukaIcon({ size = 16 }: { size?: number }) {
   return <Zap className="text-white" size={size} fill="white" strokeWidth={0} />;
