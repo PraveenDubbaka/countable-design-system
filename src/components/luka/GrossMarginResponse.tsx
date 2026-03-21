@@ -342,14 +342,29 @@ const quarterlyOutlook = [
   "The Q4 margin compression is a recurring pattern — management should explore strategies to maintain pricing discipline and control promotional discounting in the final quarter. Shifting some Q4 costs to Q1 or negotiating better year-end supplier terms could help flatten the seasonal margin dip.",
 ];
 
+/* ── Monthly-specific summary ── */
+const monthlySummaryText = `Monthly gross margin peaked at 50.6% in July and September 2025, driven by the highest monthly revenues ($680K each) combined with well-controlled cost of sales ($336K). The weakest month was December at 46.8% ($276K GM), reflecting seasonal slowdown and year-end inventory adjustments. Across all three years, the mid-year months (Apr–Sep) consistently outperform, with 2025 showing the widest gap between peak and trough months.`;
+
+const monthlyKeyDrivers = [
+  "The Jul–Sep spike to 50.4–50.6% GM was driven by peak seasonal demand pushing revenue to $670–680K while COS remained proportionally lower, suggesting better purchasing leverage and higher-margin product mix during summer.",
+  "Nov–Dec margin compression (47.1% → 46.8%) is caused by revenue declining to $620–590K while COS stayed elevated at $328–314K — likely due to holiday discounting, year-end clearance, and fixed overhead spread over lower volumes.",
+  "Jan–Feb is the slowest start each year (47.7–48.3% in 2025), but margins ramp quickly through March (48.9%) into April (50.0%), indicating a reliable seasonal acceleration pattern.",
+  "Year-over-year improvement is visible every single month: 2025 GM% exceeds 2024 by 1.2–1.9pp across all months, and 2024 exceeded 2023 by 2.1–2.4pp, confirming the structural margin expansion trend.",
+];
+
+const monthlyOutlook = [
+  "The consistent mid-year margin peak presents an opportunity to front-load inventory purchases and negotiate supplier contracts in Q1 when costs are lower. Management should also investigate whether Dec–Jan softness can be mitigated through pricing adjustments or promotional timing shifts to protect margins during the seasonal trough.",
+];
+
 /* ── Luka Summary Component ── */
 function LukaSummary({ visible, periodTab }: { visible: boolean; periodTab: "annual" | "quarterly" | "monthly" }) {
   if (!visible) return null;
 
   const isQuarterly = periodTab === "quarterly";
-  const activeSummary = isQuarterly ? quarterlySummaryText : summaryText;
-  const activeDrivers = isQuarterly ? quarterlyKeyDrivers : keyDrivers;
-  const activeOutlook = isQuarterly ? quarterlyOutlook : outlook;
+  const isMonthly = periodTab === "monthly";
+  const activeSummary = isMonthly ? monthlySummaryText : isQuarterly ? quarterlySummaryText : summaryText;
+  const activeDrivers = isMonthly ? monthlyKeyDrivers : isQuarterly ? quarterlyKeyDrivers : keyDrivers;
+  const activeOutlook = isMonthly ? monthlyOutlook : isQuarterly ? quarterlyOutlook : outlook;
 
   return (
     <div className="border border-border rounded-lg bg-muted/20 p-5 space-y-4">
