@@ -174,51 +174,66 @@ function GrossMarginSummaryTable({ visible }: { visible: boolean }) {
   );
 }
 
-/* ── Quarterly Table section ── */
+/* ── Quarterly Table section (inverted: quarters as columns, metrics as rows) ── */
 function QuarterlyTable({ visible }: { visible: boolean }) {
   if (!visible) return null;
+
+  const qCols = ["", "Q1", "Q2", "Q3", "Q4", "Full Year"];
+
+  const metricRows = [
+    {
+      label: "Revenue",
+      values: quarterlyRows.map((r) => r.cyRev),
+      total: quarterlyTotals.cyRev,
+    },
+    {
+      label: "Cost of Sales",
+      values: quarterlyRows.map((r) => r.cyCos),
+      total: quarterlyTotals.cyCos,
+    },
+    {
+      label: "Gross Margin",
+      values: quarterlyRows.map((r) => r.cyGm),
+      total: quarterlyTotals.cyGm,
+      bold: true,
+    },
+    {
+      label: "GM %",
+      values: quarterlyRows.map((r) => `${r.cyGmPct}%`),
+      total: `${quarterlyTotals.cyGmPct}%`,
+      bold: true,
+    },
+  ];
 
   return (
     <div className="border border-[hsl(210_25%_82%)] rounded-lg overflow-hidden shadow-sm min-w-0">
       <div className="px-4 py-3 bg-[hsl(210_40%_96%)]">
-        <span className="text-base font-semibold text-foreground">Quarterly Breakdown - All Accounts</span>
+        <span className="text-base font-semibold text-foreground">Quarterly Breakdown — 2025</span>
       </div>
       <div className="overflow-x-auto">
         <table className="w-full text-base">
           <thead>
             <tr className="border-b border-[hsl(210_25%_82%)] bg-[hsl(210_40%_96%)]">
-              {qColsFull.map((c) => (
-                <th key={c} className={cn("px-4 py-2.5 font-medium text-[#101D28] whitespace-nowrap", c === "Period ↓" ? "text-left" : "text-right")}>
+              {qCols.map((c, i) => (
+                <th key={i} className={cn("px-4 py-2.5 font-medium text-[#101D28] whitespace-nowrap", i === 0 ? "text-left" : "text-right")}>
                   {c}
                 </th>
               ))}
             </tr>
           </thead>
           <tbody>
-            {quarterlyRows.map((r) => (
-              <tr key={r.period} className="border-b border-[hsl(210_25%_82%)]/50 hover:bg-muted/20 transition-colors">
-                <td className="px-4 py-2.5 text-foreground">{r.period}</td>
-                <td className="px-4 py-2.5 text-right text-foreground tabular-nums">{r.cyRev}</td>
-                <td className="px-4 py-2.5 text-right text-foreground tabular-nums">{r.cyCos}</td>
-                <td className="px-4 py-2.5 text-right text-foreground tabular-nums">{r.cyGm}</td>
-                <td className="px-4 py-2.5 text-right text-black tabular-nums">{r.cyGmPct}</td>
-                <td className="px-4 py-2.5 text-right text-foreground tabular-nums">{r.py1Gm}</td>
-                <td className="px-4 py-2.5 text-right text-black tabular-nums">{r.py1GmPct}</td>
-                <td className="px-4 py-2.5 text-right text-foreground tabular-nums">{r.py2Gm}</td>
-                <td className="px-4 py-2.5 text-right text-black tabular-nums">{r.py2GmPct}</td>
+            {metricRows.map((row) => (
+              <tr key={row.label} className={cn(
+                "border-b border-[hsl(210_25%_82%)]/50 hover:bg-muted/20 transition-colors",
+                row.bold && "bg-muted/30 font-semibold"
+              )}>
+                <td className="px-4 py-2.5 text-foreground">{row.label}</td>
+                {row.values.map((v, i) => (
+                  <td key={i} className="px-4 py-2.5 text-right text-foreground tabular-nums">{v}</td>
+                ))}
+                <td className="px-4 py-2.5 text-right text-black font-semibold tabular-nums">{row.total}</td>
               </tr>
             ))}
-            <tr className="bg-muted/30 font-semibold">
-              <td className="px-4 py-2.5 text-black">{quarterlyTotals.period}</td>
-              <td className="px-4 py-2.5 text-right text-black tabular-nums">{quarterlyTotals.cyRev}</td>
-              <td className="px-4 py-2.5 text-right text-black tabular-nums">{quarterlyTotals.cyCos}</td>
-              <td className="px-4 py-2.5 text-right text-black tabular-nums">{quarterlyTotals.cyGm}</td>
-              <td className="px-4 py-2.5 text-right text-black tabular-nums">{quarterlyTotals.cyGmPct}</td>
-              <td className="px-4 py-2.5 text-right text-black tabular-nums">{quarterlyTotals.py1Gm}</td>
-              <td className="px-4 py-2.5 text-right text-black tabular-nums">{quarterlyTotals.py1GmPct}</td>
-              <td className="px-4 py-2.5 text-right text-black tabular-nums">{quarterlyTotals.py2Gm}</td>
-              <td className="px-4 py-2.5 text-right text-black tabular-nums">{quarterlyTotals.py2GmPct}</td>
-            </tr>
           </tbody>
         </table>
       </div>
@@ -295,9 +310,29 @@ const outlook = [
   "The positive margin trend is sustainable if revenue mix continues to favor product sales and operational efficiencies in labour and overhead are maintained. Key risk factors include potential input cost inflation and capacity constraints during peak quarters.",
 ];
 
+/* ── Quarterly-specific summary ── */
+const quarterlySummaryText = `Quarterly gross margin peaked in Q3 2025 at 50.5% ($1,020K) driven by the highest revenue quarter ($2,020K) with controlled cost of sales ($1,000K). Q2 followed closely at 50.0%, while Q4 dipped to 47.0% — the weakest quarter of the year.`;
+
+const quarterlyKeyDrivers = [
+  "Q3 spike to 50.5% was driven by peak seasonal revenue ($2,020K) while cost of sales remained proportionally lower at $1,000K (49.5% of revenue), suggesting better supplier pricing or product mix during summer months.",
+  "Q4 decline to 47.0% reflects seasonal softening — revenue dropped to $1,810K while cost of sales stayed relatively elevated at $960K (53.0% of revenue), likely due to year-end inventory adjustments and lower-margin holiday promotions.",
+  "Q1 to Q3 shows a clear upward trajectory from 48.3% → 50.0% → 50.5%, indicating improving operational leverage as revenue scales through the first three quarters.",
+  "The $170K gap between the best quarter (Q3: $1,020K GM) and weakest quarter (Q4: $850K GM) highlights significant seasonality that should be factored into cash flow planning.",
+];
+
+const quarterlyOutlook = [
+  "The Q4 margin compression is a recurring pattern — management should explore strategies to maintain pricing discipline and control promotional discounting in the final quarter. Shifting some Q4 costs to Q1 or negotiating better year-end supplier terms could help flatten the seasonal margin dip.",
+];
+
 /* ── Luka Summary Component ── */
-function LukaSummary({ visible }: { visible: boolean }) {
+function LukaSummary({ visible, periodTab }: { visible: boolean; periodTab: "annual" | "quarterly" | "monthly" }) {
   if (!visible) return null;
+
+  const isQuarterly = periodTab === "quarterly";
+  const activeSummary = isQuarterly ? quarterlySummaryText : summaryText;
+  const activeDrivers = isQuarterly ? quarterlyKeyDrivers : keyDrivers;
+  const activeOutlook = isQuarterly ? quarterlyOutlook : outlook;
+
   return (
     <div className="border border-border rounded-lg bg-muted/20 p-5 space-y-4">
       <div className="flex items-center gap-2">
@@ -307,26 +342,28 @@ function LukaSummary({ visible }: { visible: boolean }) {
         <span className="text-base font-semibold text-foreground">Luka Summary</span>
       </div>
 
-      <p className="text-base text-foreground leading-relaxed">{summaryText}</p>
+      <p className="text-base text-foreground leading-relaxed">{activeSummary}</p>
 
       <div>
         <p className="text-base font-semibold text-foreground mb-2">Key Drivers:</p>
         <ul className="space-y-2 text-base text-foreground leading-relaxed list-disc pl-5">
-          {keyDrivers.map((d, i) => <li key={i}>{d}</li>)}
+          {activeDrivers.map((d, i) => <li key={i}>{d}</li>)}
         </ul>
       </div>
 
-      <div>
-        <p className="text-base font-semibold text-foreground mb-2">Seasonality:</p>
-        <ul className="space-y-2 text-base text-foreground leading-relaxed list-disc pl-5">
-          {seasonality.map((s, i) => <li key={i}>{s}</li>)}
-        </ul>
-      </div>
+      {!isQuarterly && (
+        <div>
+          <p className="text-base font-semibold text-foreground mb-2">Seasonality:</p>
+          <ul className="space-y-2 text-base text-foreground leading-relaxed list-disc pl-5">
+            {seasonality.map((s, i) => <li key={i}>{s}</li>)}
+          </ul>
+        </div>
+      )}
 
       <div>
         <p className="text-base font-semibold text-foreground mb-2">Outlook:</p>
         <ul className="space-y-2 text-base text-foreground leading-relaxed list-disc pl-5">
-          {outlook.map((o, i) => <li key={i}>{o}</li>)}
+          {activeOutlook.map((o, i) => <li key={i}>{o}</li>)}
         </ul>
       </div>
     </div>
@@ -657,7 +694,7 @@ export function GrossMarginResponse({ revealStep }: GrossMarginResponseProps) {
       )}
 
       {/* Luka Summary – shared across all tabs and views */}
-      <LukaSummary visible={revealStep >= 5} />
+      <LukaSummary visible={revealStep >= 5} periodTab={periodTab} />
     </div>
   );
 }
