@@ -41,19 +41,20 @@ const quarterlyTotals = { period: "Total Full Year", cyRev: "7,570.00", cyCos: "
 /* ── Monthly data ── */
 
 const monthlyRows = [
-  { period: "January", cyRev: "570.00", cyCos: "298.00", cyGm: "272.00", cyGmPct: "47.7", py1Gm: "235.00", py1GmPct: "46.5", py2Gm: "193.00", py2GmPct: "44.4" },
-  { period: "February", cyRev: "580.00", cyCos: "300.00", cyGm: "280.00", cyGmPct: "48.3", py1Gm: "241.00", py1GmPct: "46.8", py2Gm: "196.00", py2GmPct: "44.5" },
-  { period: "March", cyRev: "630.00", cyCos: "322.00", cyGm: "308.00", cyGmPct: "48.9", py1Gm: "264.00", py1GmPct: "47.1", py2Gm: "221.00", py2GmPct: "45.6" },
-  { period: "April", cyRev: "640.00", cyCos: "320.00", cyGm: "320.00", cyGmPct: "50.0", py1Gm: "276.00", py1GmPct: "48.4", py2Gm: "226.00", py2GmPct: "46.1" },
-  { period: "May", cyRev: "660.00", cyCos: "330.00", cyGm: "330.00", cyGmPct: "50.0", py1Gm: "282.00", py1GmPct: "48.6", py2Gm: "232.00", py2GmPct: "46.4" },
-  { period: "June", cyRev: "660.00", cyCos: "330.00", cyGm: "330.00", cyGmPct: "50.0", py1Gm: "282.00", py1GmPct: "48.6", py2Gm: "232.00", py2GmPct: "46.4" },
-  { period: "July", cyRev: "680.00", cyCos: "336.00", cyGm: "344.00", cyGmPct: "50.6", py1Gm: "292.00", py1GmPct: "48.7", py2Gm: "242.00", py2GmPct: "46.5" },
-  { period: "September", cyRev: "680.00", cyCos: "336.00", cyGm: "344.00", cyGmPct: "50.6", py1Gm: "292.00", py1GmPct: "48.7", py2Gm: "242.00", py2GmPct: "46.5" },
-  { period: "October", cyRev: "660.00", cyCos: "328.00", cyGm: "332.00", cyGmPct: "50.3", py1Gm: "286.00", py1GmPct: "48.5", py2Gm: "236.00", py2GmPct: "46.3" },
-  { period: "November", cyRev: "620.00", cyCos: "328.00", cyGm: "292.00", cyGmPct: "47.1", py1Gm: "256.00", py1GmPct: "46.5", py2Gm: "211.00", py2GmPct: "44.4" },
-  { period: "December", cyRev: "590.00", cyCos: "314.00", cyGm: "276.00", cyGmPct: "46.8", py1Gm: "249.00", py1GmPct: "46.5", py2Gm: "205.00", py2GmPct: "44.1" },
+  { period: "Jan", cyRev: "570.00", cyCos: "298.00", cyGm: "272.00", cyGmPct: "47.7", py1Rev: "505.00", py1Cos: "270.00", py1Gm: "235.00", py1GmPct: "46.5", py2Rev: "435.00", py2Cos: "242.00", py2Gm: "193.00", py2GmPct: "44.4" },
+  { period: "Feb", cyRev: "580.00", cyCos: "300.00", cyGm: "280.00", cyGmPct: "48.3", py1Rev: "515.00", py1Cos: "274.00", py1Gm: "241.00", py1GmPct: "46.8", py2Rev: "440.00", py2Cos: "244.00", py2Gm: "196.00", py2GmPct: "44.5" },
+  { period: "Mar", cyRev: "630.00", cyCos: "322.00", cyGm: "308.00", cyGmPct: "48.9", py1Rev: "560.00", py1Cos: "296.00", py1Gm: "264.00", py1GmPct: "47.1", py2Rev: "485.00", py2Cos: "264.00", py2Gm: "221.00", py2GmPct: "45.6" },
+  { period: "Apr", cyRev: "640.00", cyCos: "320.00", cyGm: "320.00", cyGmPct: "50.0", py1Rev: "570.00", py1Cos: "294.00", py1Gm: "276.00", py1GmPct: "48.4", py2Rev: "490.00", py2Cos: "264.00", py2Gm: "226.00", py2GmPct: "46.1" },
+  { period: "May", cyRev: "660.00", cyCos: "330.00", cyGm: "330.00", cyGmPct: "50.0", py1Rev: "580.00", py1Cos: "298.00", py1Gm: "282.00", py1GmPct: "48.6", py2Rev: "500.00", py2Cos: "268.00", py2Gm: "232.00", py2GmPct: "46.4" },
+  { period: "Jun", cyRev: "660.00", cyCos: "330.00", cyGm: "330.00", cyGmPct: "50.0", py1Rev: "580.00", py1Cos: "298.00", py1Gm: "282.00", py1GmPct: "48.6", py2Rev: "500.00", py2Cos: "268.00", py2Gm: "232.00", py2GmPct: "46.4" },
+  { period: "Jul", cyRev: "680.00", cyCos: "336.00", cyGm: "344.00", cyGmPct: "50.6", py1Rev: "600.00", py1Cos: "308.00", py1Gm: "292.00", py1GmPct: "48.7", py2Rev: "520.00", py2Cos: "278.00", py2Gm: "242.00", py2GmPct: "46.5" },
+  { period: "Aug", cyRev: "670.00", cyCos: "332.00", cyGm: "338.00", cyGmPct: "50.4", py1Rev: "595.00", py1Cos: "305.00", py1Gm: "290.00", py1GmPct: "48.7", py2Rev: "515.00", py2Cos: "275.00", py2Gm: "240.00", py2GmPct: "46.6" },
+  { period: "Sep", cyRev: "680.00", cyCos: "336.00", cyGm: "344.00", cyGmPct: "50.6", py1Rev: "600.00", py1Cos: "308.00", py1Gm: "292.00", py1GmPct: "48.7", py2Rev: "520.00", py2Cos: "278.00", py2Gm: "242.00", py2GmPct: "46.5" },
+  { period: "Oct", cyRev: "660.00", cyCos: "328.00", cyGm: "332.00", cyGmPct: "50.3", py1Rev: "590.00", py1Cos: "304.00", py1Gm: "286.00", py1GmPct: "48.5", py2Rev: "510.00", py2Cos: "274.00", py2Gm: "236.00", py2GmPct: "46.3" },
+  { period: "Nov", cyRev: "620.00", cyCos: "328.00", cyGm: "292.00", cyGmPct: "47.1", py1Rev: "550.00", py1Cos: "294.00", py1Gm: "256.00", py1GmPct: "46.5", py2Rev: "475.00", py2Cos: "264.00", py2Gm: "211.00", py2GmPct: "44.4" },
+  { period: "Dec", cyRev: "590.00", cyCos: "314.00", cyGm: "276.00", cyGmPct: "46.8", py1Rev: "535.00", py1Cos: "286.00", py1Gm: "249.00", py1GmPct: "46.5", py2Rev: "465.00", py2Cos: "260.00", py2Gm: "205.00", py2GmPct: "44.1" },
 ];
-const monthlyTotals = { period: "Total Full Year", cyRev: "7,570.00", cyCos: "3,860.00", cyGm: "3,710.00", cyGmPct: "49.0", py1Gm: "3,200.00", py1GmPct: "-", py2Gm: "2,640.00", py2GmPct: "-" };
+const monthlyTotals = { period: "Total", cyRev: "7,570.00", cyCos: "3,860.00", cyGm: "3,710.00", cyGmPct: "49.0", py1Rev: "6,710.00", py1Cos: "3,510.00", py1Gm: "3,200.00", py1GmPct: "47.7", py2Rev: "5,800.00", py2Cos: "3,160.00", py2Gm: "2,640.00", py2GmPct: "45.5" };
 
 const qColsFull = ["Period ↓", "2025 Revenue", "2025 COS", "2025 GM", "2025 GM (%)", "2024 GM", "2024 GM (%)", "2023 GM", "2023 GM (%)"];
 
@@ -241,51 +242,68 @@ function QuarterlyTable({ visible }: { visible: boolean }) {
   );
 }
 
-/* ── Monthly Table section ── */
+/* ── Monthly Table section (inverted: months as columns, metrics as rows) ── */
 function MonthlyTable({ visible }: { visible: boolean }) {
   if (!visible) return null;
+
+  const mCols = ["", ...monthlyRows.map((r) => r.period), "Total"];
+
+  const metricRows2025 = [
+    { label: "Revenue (2025)", values: monthlyRows.map((r) => r.cyRev), total: monthlyTotals.cyRev },
+    { label: "COS (2025)", values: monthlyRows.map((r) => r.cyCos), total: monthlyTotals.cyCos },
+    { label: "GM (2025)", values: monthlyRows.map((r) => r.cyGm), total: monthlyTotals.cyGm, bold: true },
+    { label: "GM % (2025)", values: monthlyRows.map((r) => `${r.cyGmPct}%`), total: `${monthlyTotals.cyGmPct}%`, bold: true },
+  ];
+  const metricRows2024 = [
+    { label: "Revenue (2024)", values: monthlyRows.map((r) => r.py1Rev), total: monthlyTotals.py1Rev },
+    { label: "COS (2024)", values: monthlyRows.map((r) => r.py1Cos), total: monthlyTotals.py1Cos },
+    { label: "GM (2024)", values: monthlyRows.map((r) => r.py1Gm), total: monthlyTotals.py1Gm, bold: true },
+    { label: "GM % (2024)", values: monthlyRows.map((r) => `${r.py1GmPct}%`), total: `${monthlyTotals.py1GmPct}%`, bold: true },
+  ];
+  const metricRows2023 = [
+    { label: "Revenue (2023)", values: monthlyRows.map((r) => r.py2Rev), total: monthlyTotals.py2Rev },
+    { label: "COS (2023)", values: monthlyRows.map((r) => r.py2Cos), total: monthlyTotals.py2Cos },
+    { label: "GM (2023)", values: monthlyRows.map((r) => r.py2Gm), total: monthlyTotals.py2Gm, bold: true },
+    { label: "GM % (2023)", values: monthlyRows.map((r) => `${r.py2GmPct}%`), total: `${monthlyTotals.py2GmPct}%`, bold: true },
+  ];
+
+  const allGroups = [
+    { year: "2025", rows: metricRows2025 },
+    { year: "2024", rows: metricRows2024 },
+    { year: "2023", rows: metricRows2023 },
+  ];
 
   return (
     <div className="border border-[hsl(210_25%_82%)] rounded-lg overflow-hidden shadow-sm min-w-0">
       <div className="px-4 py-3 bg-[hsl(210_40%_96%)]">
-        <span className="text-base font-semibold text-foreground">Monthly Breakdown - All Accounts</span>
+        <span className="text-base font-semibold text-foreground">Monthly Breakdown — All Years</span>
       </div>
       <div className="overflow-x-auto">
         <table className="w-full text-base">
           <thead>
             <tr className="border-b border-[hsl(210_25%_82%)] bg-[hsl(210_40%_96%)]">
-              {qColsFull.map((c) => (
-                <th key={c} className={cn("px-4 py-2.5 font-medium text-[#101D28] whitespace-nowrap", c === "Period ↓" ? "text-left" : "text-right")}>
+              {mCols.map((c, i) => (
+                <th key={i} className={cn("px-3 py-2.5 font-medium text-[#101D28] whitespace-nowrap", i === 0 ? "text-left" : "text-right")}>
                   {c}
                 </th>
               ))}
             </tr>
           </thead>
           <tbody>
-            {monthlyRows.map((r) => (
-              <tr key={r.period} className="border-b border-[hsl(210_25%_82%)]/50 hover:bg-muted/20 transition-colors">
-                <td className="px-4 py-2.5 text-foreground">{r.period}</td>
-                <td className="px-4 py-2.5 text-right text-foreground tabular-nums">{r.cyRev}</td>
-                <td className="px-4 py-2.5 text-right text-foreground tabular-nums">{r.cyCos}</td>
-                <td className="px-4 py-2.5 text-right text-foreground tabular-nums">{r.cyGm}</td>
-                <td className="px-4 py-2.5 text-right text-black tabular-nums">{r.cyGmPct}</td>
-                <td className="px-4 py-2.5 text-right text-foreground tabular-nums">{r.py1Gm}</td>
-                <td className="px-4 py-2.5 text-right text-black tabular-nums">{r.py1GmPct}</td>
-                <td className="px-4 py-2.5 text-right text-foreground tabular-nums">{r.py2Gm}</td>
-                <td className="px-4 py-2.5 text-right text-black tabular-nums">{r.py2GmPct}</td>
-              </tr>
+            {allGroups.map((group) => (
+              group.rows.map((row) => (
+                <tr key={row.label} className={cn(
+                  "border-b border-[hsl(210_25%_82%)]/50 hover:bg-muted/20 transition-colors",
+                  row.bold && "bg-muted/30 font-semibold"
+                )}>
+                  <td className="px-3 py-2.5 text-foreground whitespace-nowrap">{row.label}</td>
+                  {row.values.map((v, i) => (
+                    <td key={i} className="px-3 py-2.5 text-right text-foreground tabular-nums">{v}</td>
+                  ))}
+                  <td className="px-3 py-2.5 text-right text-black font-semibold tabular-nums">{row.total}</td>
+                </tr>
+              ))
             ))}
-            <tr className="bg-muted/30 font-semibold">
-              <td className="px-4 py-2.5 text-black">{monthlyTotals.period}</td>
-              <td className="px-4 py-2.5 text-right text-black tabular-nums">{monthlyTotals.cyRev}</td>
-              <td className="px-4 py-2.5 text-right text-black tabular-nums">{monthlyTotals.cyCos}</td>
-              <td className="px-4 py-2.5 text-right text-black tabular-nums">{monthlyTotals.cyGm}</td>
-              <td className="px-4 py-2.5 text-right text-black tabular-nums">{monthlyTotals.cyGmPct}</td>
-              <td className="px-4 py-2.5 text-right text-black tabular-nums">{monthlyTotals.py1Gm}</td>
-              <td className="px-4 py-2.5 text-right text-black tabular-nums">{monthlyTotals.py1GmPct}</td>
-              <td className="px-4 py-2.5 text-right text-black tabular-nums">{monthlyTotals.py2Gm}</td>
-              <td className="px-4 py-2.5 text-right text-black tabular-nums">{monthlyTotals.py2GmPct}</td>
-            </tr>
           </tbody>
         </table>
       </div>
@@ -324,14 +342,29 @@ const quarterlyOutlook = [
   "The Q4 margin compression is a recurring pattern — management should explore strategies to maintain pricing discipline and control promotional discounting in the final quarter. Shifting some Q4 costs to Q1 or negotiating better year-end supplier terms could help flatten the seasonal margin dip.",
 ];
 
+/* ── Monthly-specific summary ── */
+const monthlySummaryText = `Monthly gross margin peaked at 50.6% in July and September 2025, driven by the highest monthly revenues ($680K each) combined with well-controlled cost of sales ($336K). The weakest month was December at 46.8% ($276K GM), reflecting seasonal slowdown and year-end inventory adjustments. Across all three years, the mid-year months (Apr–Sep) consistently outperform, with 2025 showing the widest gap between peak and trough months.`;
+
+const monthlyKeyDrivers = [
+  "The Jul–Sep spike to 50.4–50.6% GM was driven by peak seasonal demand pushing revenue to $670–680K while COS remained proportionally lower, suggesting better purchasing leverage and higher-margin product mix during summer.",
+  "Nov–Dec margin compression (47.1% → 46.8%) is caused by revenue declining to $620–590K while COS stayed elevated at $328–314K — likely due to holiday discounting, year-end clearance, and fixed overhead spread over lower volumes.",
+  "Jan–Feb is the slowest start each year (47.7–48.3% in 2025), but margins ramp quickly through March (48.9%) into April (50.0%), indicating a reliable seasonal acceleration pattern.",
+  "Year-over-year improvement is visible every single month: 2025 GM% exceeds 2024 by 1.2–1.9pp across all months, and 2024 exceeded 2023 by 2.1–2.4pp, confirming the structural margin expansion trend.",
+];
+
+const monthlyOutlook = [
+  "The consistent mid-year margin peak presents an opportunity to front-load inventory purchases and negotiate supplier contracts in Q1 when costs are lower. Management should also investigate whether Dec–Jan softness can be mitigated through pricing adjustments or promotional timing shifts to protect margins during the seasonal trough.",
+];
+
 /* ── Luka Summary Component ── */
 function LukaSummary({ visible, periodTab }: { visible: boolean; periodTab: "annual" | "quarterly" | "monthly" }) {
   if (!visible) return null;
 
   const isQuarterly = periodTab === "quarterly";
-  const activeSummary = isQuarterly ? quarterlySummaryText : summaryText;
-  const activeDrivers = isQuarterly ? quarterlyKeyDrivers : keyDrivers;
-  const activeOutlook = isQuarterly ? quarterlyOutlook : outlook;
+  const isMonthly = periodTab === "monthly";
+  const activeSummary = isMonthly ? monthlySummaryText : isQuarterly ? quarterlySummaryText : summaryText;
+  const activeDrivers = isMonthly ? monthlyKeyDrivers : isQuarterly ? quarterlyKeyDrivers : keyDrivers;
+  const activeOutlook = isMonthly ? monthlyOutlook : isQuarterly ? quarterlyOutlook : outlook;
 
   return (
     <div className="border border-border rounded-lg bg-muted/20 p-5 space-y-4">
@@ -351,7 +384,7 @@ function LukaSummary({ visible, periodTab }: { visible: boolean; periodTab: "ann
         </ul>
       </div>
 
-      {!isQuarterly && (
+      {!isQuarterly && !isMonthly && (
         <div>
           <p className="text-base font-semibold text-foreground mb-2">Seasonality:</p>
           <ul className="space-y-2 text-base text-foreground leading-relaxed list-disc pl-5">
