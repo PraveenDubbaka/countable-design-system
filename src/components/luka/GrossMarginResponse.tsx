@@ -57,7 +57,7 @@ const monthlyTotals = { period: "Total Full Year", cyRev: "7,570.00", cyCos: "3,
 
 const qColsFull = ["Period ↓", "2025 Revenue", "2025 COS", "2025 GM", "2025 GM (%)", "2024 GM", "2024 GM (%)", "2023 GM", "2023 GM (%)"];
 
-const colsFull = ["Account Name ↓", "2025", "2025 (%)", "2024", "2024 (%)", "2023", "2023 (%)", "2025 vs 2024 (%)"];
+const colsFull = ["Account Name ↓", "2025", "2024", "2023", "2025 vs 2024 (%)"];
 
 function LukaIcon({ size = 16 }: { size?: number }) {
   return <Zap className="text-white" size={size} fill="white" strokeWidth={0} />;
@@ -98,22 +98,16 @@ function TableSection({
               <tr key={r.name} className="border-b border-[hsl(210_25%_82%)]/50 hover:bg-muted/20 transition-colors">
                 <td className="px-4 py-2.5 text-foreground">{r.name}</td>
                 <td className="px-4 py-2.5 text-right text-foreground tabular-nums">{r.cy}</td>
-                <td className="px-4 py-2.5 text-right text-black tabular-nums">{r.cyPct}</td>
                 <td className="px-4 py-2.5 text-right text-foreground tabular-nums">{r.py1}</td>
-                <td className="px-4 py-2.5 text-right text-black tabular-nums">{r.py1Pct}</td>
                 <td className="px-4 py-2.5 text-right text-foreground tabular-nums">{r.py2}</td>
-                <td className="px-4 py-2.5 text-right text-black tabular-nums">{r.py2Pct}</td>
                 <td className="px-4 py-2.5 text-right text-foreground tabular-nums">{r.vs}</td>
               </tr>
             ))}
             <tr className="bg-muted/30 font-semibold">
               <td className="px-4 py-2.5 text-black">{totals.name}</td>
               <td className="px-4 py-2.5 text-right text-black tabular-nums">{totals.cy}</td>
-              <td className="px-4 py-2.5 text-right text-black tabular-nums">{totals.cyPct ?? ""}</td>
               <td className="px-4 py-2.5 text-right text-black tabular-nums">{totals.py1}</td>
-              <td className="px-4 py-2.5 text-right text-black tabular-nums">{totals.py1Pct ?? ""}</td>
               <td className="px-4 py-2.5 text-right text-black tabular-nums">{totals.py2}</td>
-              <td className="px-4 py-2.5 text-right text-black tabular-nums">{totals.py2Pct ?? ""}</td>
               <td className="px-4 py-2.5 text-right text-black font-semibold tabular-nums">{totals.vs}</td>
             </tr>
           </tbody>
