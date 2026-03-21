@@ -1,8 +1,6 @@
-import { useState, useRef, useEffect } from "react";
+import { useState } from "react";
 import { cn } from "@/lib/utils";
-import { Zap, ChevronDown, LayoutGrid, BarChart3, Check } from "lucide-react";
-import { Switch } from "@/components/ui/switch";
-import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from "@/components/ui/tooltip";
+import { Zap, LayoutGrid, BarChart3 } from "lucide-react";
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip,
   Legend, ResponsiveContainer, LineChart, Line,
@@ -36,7 +34,7 @@ const quarterlyRows = [
   { period: "Q1", cyRev: "1,780.00", cyCos: "920.00", cyGm: "860.00", cyGmPct: "48.3", py1Gm: "740.00", py1GmPct: "46.8", py2Gm: "610.00", py2GmPct: "44.9" },
   { period: "Q2", cyRev: "1,960.00", cyCos: "980.00", cyGm: "980.00", cyGmPct: "50.0", py1Gm: "840.00", py1GmPct: "48.6", py2Gm: "690.00", py2GmPct: "46.3" },
   { period: "Q3", cyRev: "2,020.00", cyCos: "1,000.00", cyGm: "1,020.00", cyGmPct: "50.5", py1Gm: "870.00", py1GmPct: "48.6", py2Gm: "720.00", py2GmPct: "46.5" },
-  { period: "Q4", cyRev: "1,810.00", cyCos: "960.00", cyGm: "850.00", cyGmPct: "47.0", py1Gm: "750.00", py1GmPct: "46.6", py2Gm: "620.00", py2GmPct: "+1044.3.8" },
+  { period: "Q4", cyRev: "1,810.00", cyCos: "960.00", cyGm: "850.00", cyGmPct: "47.0", py1Gm: "750.00", py1GmPct: "46.6", py2Gm: "620.00", py2GmPct: "43.8" },
 ];
 const quarterlyTotals = { period: "Total Full Year", cyRev: "7,570.00", cyCos: "3,860.00", cyGm: "3,710.00", cyGmPct: "49.0", py1Gm: "3,200.00", py1GmPct: "-", py2Gm: "2,640.00", py2GmPct: "-" };
 
@@ -57,85 +55,12 @@ const monthlyRows = [
 ];
 const monthlyTotals = { period: "Total Full Year", cyRev: "7,570.00", cyCos: "3,860.00", cyGm: "3,710.00", cyGmPct: "49.0", py1Gm: "3,200.00", py1GmPct: "-", py2Gm: "2,640.00", py2GmPct: "-" };
 
-const qColsFull = ["Period ↓", "CY Revenue", "CY COS", "CY GM", "CY GM (%)", "PY1 GM", "PY1 GM (%)", "PY2 GM", "PY2 GM (%)"];
-const qColsNoPy2 = ["Period ↓", "CY Revenue", "CY COS", "CY GM", "CY GM (%)", "PY1 GM", "PY1 GM (%)"];
+const qColsFull = ["Period ↓", "2025 Revenue", "2025 COS", "2025 GM", "2025 GM (%)", "2024 GM", "2024 GM (%)", "2023 GM", "2023 GM (%)"];
 
-type ComparisonView = "cy-py1-py2" | "cy-py1";
-
-const colsFull = ["Account Name ↓", "CY", "CY (%)", "PY1", "PY1 (%)", "PY2", "PY2 (%)", "CY vs PY1 (%)"];
-const colsNoPy2 = ["Account Name ↓", "CY", "CY (%)", "PY1", "PY1 (%)", "CY vs PY1 (%)"];
+const colsFull = ["Account Name ↓", "2025", "2025 (%)", "2024", "2024 (%)", "2023", "2023 (%)", "2025 vs 2024 (%)"];
 
 function LukaIcon({ size = 16 }: { size?: number }) {
   return <Zap className="text-white" size={size} fill="white" strokeWidth={0} />;
-}
-
-/* ── Comparison View Dropdown ── */
-function ComparisonDropdown({
-  value,
-  onChange,
-}: {
-  value: ComparisonView;
-  onChange: (v: ComparisonView) => void;
-}) {
-  const [open, setOpen] = useState(false);
-  const ref = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    function handleClick(e: MouseEvent) {
-      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
-    }
-    document.addEventListener("mousedown", handleClick);
-    return () => document.removeEventListener("mousedown", handleClick);
-  }, []);
-
-  const label = value === "cy-py1-py2" ? "CY vs PY1 vs PY2" : "CY vs PY1";
-  const options: { key: ComparisonView; label: string }[] = [
-    { key: "cy-py1-py2", label: "CY vs PY1 vs PY2" },
-    { key: "cy-py1", label: "CY vs PY1" },
-  ];
-
-  return (
-    <div ref={ref} className="relative">
-      <button
-        onClick={() => setOpen(!open)}
-        className={cn(
-          "relative flex items-center gap-2 h-10 pl-3 pr-2.5 rounded-[10px] border text-base transition-all duration-200",
-          "bg-white border-[#dcdfe4] hover:border-[#074075]",
-          "dark:bg-card dark:border-[hsl(220_15%_30%)] dark:hover:border-[#074075]",
-          open && "border-[#074075] ring-2 ring-[#074075]/15"
-        )}
-      >
-        <span className="absolute -top-2.5 left-2.5 px-1 bg-white dark:bg-card text-[11px] text-muted-foreground whitespace-nowrap leading-none">
-          Select Comparison View*
-        </span>
-        <span className="font-medium text-foreground whitespace-nowrap">{label}</span>
-        <ChevronDown className={cn("h-4 w-4 ml-1 transition-transform duration-200 text-[#074075]", open && "rotate-180")} />
-      </button>
-
-      {open && (
-        <div className="absolute right-0 top-[calc(100%+4px)] z-50 min-w-[220px] rounded-[10px] border border-[#074075] bg-popover shadow-lg animate-in fade-in zoom-in-95 duration-150">
-          <div className="p-1.5">
-            {options.map((opt) => (
-              <button
-                key={opt.key}
-                onClick={() => { onChange(opt.key); setOpen(false); }}
-                className={cn(
-                  "flex items-center justify-between w-full rounded-lg px-3 py-2.5 text-sm transition-all duration-200",
-                  "hover:bg-primary/[0.08] hover:scale-[1.01]",
-                  value === opt.key && "bg-primary/[0.06] font-medium"
-                )}
-              >
-                <span className="text-foreground">{opt.label}</span>
-                {value === opt.key && (
-                  <Check className="h-4 w-4 shrink-0" style={{ color: "#074075" }} />
-                )}
-              </button>
-            ))}
-          </div>
-        </div>
-      )}
-    </div>
-  );
 }
 
 /* ── Annual Table section component ── */
@@ -144,16 +69,13 @@ function TableSection({
   rows,
   totals,
   visible,
-  showPy2,
 }: {
   title: string;
   rows: typeof revenueRows;
   totals: typeof revenueTotals & { cyPct?: string; py1Pct?: string; py2Pct?: string };
   visible: boolean;
-  showPy2: boolean;
 }) {
   if (!visible) return null;
-  const cols = showPy2 ? colsFull : colsNoPy2;
 
   return (
     <div className="border border-[hsl(210_25%_82%)] rounded-lg overflow-hidden shadow-sm min-w-0">
@@ -164,7 +86,7 @@ function TableSection({
         <table className="w-full text-base">
           <thead>
             <tr className="border-b border-[hsl(210_25%_82%)] bg-[hsl(210_40%_96%)]">
-              {cols.map((c) => (
+              {colsFull.map((c) => (
                 <th key={c} className={cn("px-4 py-2.5 font-medium text-[#101D28] whitespace-nowrap", c === "Account Name ↓" ? "text-left" : "text-right")}>
                   {c}
                 </th>
@@ -179,8 +101,8 @@ function TableSection({
                 <td className="px-4 py-2.5 text-right text-black tabular-nums">{r.cyPct}</td>
                 <td className="px-4 py-2.5 text-right text-foreground tabular-nums">{r.py1}</td>
                 <td className="px-4 py-2.5 text-right text-black tabular-nums">{r.py1Pct}</td>
-                {showPy2 && <td className="px-4 py-2.5 text-right text-foreground tabular-nums">{r.py2}</td>}
-                {showPy2 && <td className="px-4 py-2.5 text-right text-black tabular-nums">{r.py2Pct}</td>}
+                <td className="px-4 py-2.5 text-right text-foreground tabular-nums">{r.py2}</td>
+                <td className="px-4 py-2.5 text-right text-black tabular-nums">{r.py2Pct}</td>
                 <td className="px-4 py-2.5 text-right text-foreground tabular-nums">{r.vs}</td>
               </tr>
             ))}
@@ -190,8 +112,8 @@ function TableSection({
               <td className="px-4 py-2.5 text-right text-black tabular-nums">{totals.cyPct ?? ""}</td>
               <td className="px-4 py-2.5 text-right text-black tabular-nums">{totals.py1}</td>
               <td className="px-4 py-2.5 text-right text-black tabular-nums">{totals.py1Pct ?? ""}</td>
-              {showPy2 && <td className="px-4 py-2.5 text-right text-black tabular-nums">{totals.py2}</td>}
-              {showPy2 && <td className="px-4 py-2.5 text-right text-black tabular-nums">{totals.py2Pct ?? ""}</td>}
+              <td className="px-4 py-2.5 text-right text-black tabular-nums">{totals.py2}</td>
+              <td className="px-4 py-2.5 text-right text-black tabular-nums">{totals.py2Pct ?? ""}</td>
               <td className="px-4 py-2.5 text-right text-black font-semibold tabular-nums">{totals.vs}</td>
             </tr>
           </tbody>
@@ -202,9 +124,8 @@ function TableSection({
 }
 
 /* ── Quarterly Table section ── */
-function QuarterlyTable({ visible, showPy2 }: { visible: boolean; showPy2: boolean }) {
+function QuarterlyTable({ visible }: { visible: boolean }) {
   if (!visible) return null;
-  const cols = showPy2 ? qColsFull : qColsNoPy2;
 
   return (
     <div className="border border-[hsl(210_25%_82%)] rounded-lg overflow-hidden shadow-sm min-w-0">
@@ -215,7 +136,7 @@ function QuarterlyTable({ visible, showPy2 }: { visible: boolean; showPy2: boole
         <table className="w-full text-base">
           <thead>
             <tr className="border-b border-[hsl(210_25%_82%)] bg-[hsl(210_40%_96%)]">
-              {cols.map((c) => (
+              {qColsFull.map((c) => (
                 <th key={c} className={cn("px-4 py-2.5 font-medium text-[#101D28] whitespace-nowrap", c === "Period ↓" ? "text-left" : "text-right")}>
                   {c}
                 </th>
@@ -232,8 +153,8 @@ function QuarterlyTable({ visible, showPy2 }: { visible: boolean; showPy2: boole
                 <td className="px-4 py-2.5 text-right text-black tabular-nums">{r.cyGmPct}</td>
                 <td className="px-4 py-2.5 text-right text-foreground tabular-nums">{r.py1Gm}</td>
                 <td className="px-4 py-2.5 text-right text-black tabular-nums">{r.py1GmPct}</td>
-                {showPy2 && <td className="px-4 py-2.5 text-right text-foreground tabular-nums">{r.py2Gm}</td>}
-                {showPy2 && <td className="px-4 py-2.5 text-right text-black tabular-nums">{r.py2GmPct}</td>}
+                <td className="px-4 py-2.5 text-right text-foreground tabular-nums">{r.py2Gm}</td>
+                <td className="px-4 py-2.5 text-right text-black tabular-nums">{r.py2GmPct}</td>
               </tr>
             ))}
             <tr className="bg-muted/30 font-semibold">
@@ -244,8 +165,8 @@ function QuarterlyTable({ visible, showPy2 }: { visible: boolean; showPy2: boole
               <td className="px-4 py-2.5 text-right text-black tabular-nums">{quarterlyTotals.cyGmPct}</td>
               <td className="px-4 py-2.5 text-right text-black tabular-nums">{quarterlyTotals.py1Gm}</td>
               <td className="px-4 py-2.5 text-right text-black tabular-nums">{quarterlyTotals.py1GmPct}</td>
-              {showPy2 && <td className="px-4 py-2.5 text-right text-black tabular-nums">{quarterlyTotals.py2Gm}</td>}
-              {showPy2 && <td className="px-4 py-2.5 text-right text-black tabular-nums">{quarterlyTotals.py2GmPct}</td>}
+              <td className="px-4 py-2.5 text-right text-black tabular-nums">{quarterlyTotals.py2Gm}</td>
+              <td className="px-4 py-2.5 text-right text-black tabular-nums">{quarterlyTotals.py2GmPct}</td>
             </tr>
           </tbody>
         </table>
@@ -255,9 +176,8 @@ function QuarterlyTable({ visible, showPy2 }: { visible: boolean; showPy2: boole
 }
 
 /* ── Monthly Table section ── */
-function MonthlyTable({ visible, showPy2 }: { visible: boolean; showPy2: boolean }) {
+function MonthlyTable({ visible }: { visible: boolean }) {
   if (!visible) return null;
-  const cols = showPy2 ? qColsFull : qColsNoPy2;
 
   return (
     <div className="border border-[hsl(210_25%_82%)] rounded-lg overflow-hidden shadow-sm min-w-0">
@@ -268,7 +188,7 @@ function MonthlyTable({ visible, showPy2 }: { visible: boolean; showPy2: boolean
         <table className="w-full text-base">
           <thead>
             <tr className="border-b border-[hsl(210_25%_82%)] bg-[hsl(210_40%_96%)]">
-              {cols.map((c) => (
+              {qColsFull.map((c) => (
                 <th key={c} className={cn("px-4 py-2.5 font-medium text-[#101D28] whitespace-nowrap", c === "Period ↓" ? "text-left" : "text-right")}>
                   {c}
                 </th>
@@ -285,8 +205,8 @@ function MonthlyTable({ visible, showPy2 }: { visible: boolean; showPy2: boolean
                 <td className="px-4 py-2.5 text-right text-black tabular-nums">{r.cyGmPct}</td>
                 <td className="px-4 py-2.5 text-right text-foreground tabular-nums">{r.py1Gm}</td>
                 <td className="px-4 py-2.5 text-right text-black tabular-nums">{r.py1GmPct}</td>
-                {showPy2 && <td className="px-4 py-2.5 text-right text-foreground tabular-nums">{r.py2Gm}</td>}
-                {showPy2 && <td className="px-4 py-2.5 text-right text-black tabular-nums">{r.py2GmPct}</td>}
+                <td className="px-4 py-2.5 text-right text-foreground tabular-nums">{r.py2Gm}</td>
+                <td className="px-4 py-2.5 text-right text-black tabular-nums">{r.py2GmPct}</td>
               </tr>
             ))}
             <tr className="bg-muted/30 font-semibold">
@@ -297,8 +217,8 @@ function MonthlyTable({ visible, showPy2 }: { visible: boolean; showPy2: boolean
               <td className="px-4 py-2.5 text-right text-black tabular-nums">{monthlyTotals.cyGmPct}</td>
               <td className="px-4 py-2.5 text-right text-black tabular-nums">{monthlyTotals.py1Gm}</td>
               <td className="px-4 py-2.5 text-right text-black tabular-nums">{monthlyTotals.py1GmPct}</td>
-              {showPy2 && <td className="px-4 py-2.5 text-right text-black tabular-nums">{monthlyTotals.py2Gm}</td>}
-              {showPy2 && <td className="px-4 py-2.5 text-right text-black tabular-nums">{monthlyTotals.py2GmPct}</td>}
+              <td className="px-4 py-2.5 text-right text-black tabular-nums">{monthlyTotals.py2Gm}</td>
+              <td className="px-4 py-2.5 text-right text-black tabular-nums">{monthlyTotals.py2GmPct}</td>
             </tr>
           </tbody>
         </table>
@@ -307,17 +227,17 @@ function MonthlyTable({ visible, showPy2 }: { visible: boolean; showPy2: boolean
   );
 }
 
-const summaryText = `Gross margin has demonstrated a consistent upward trajectory over the three-year period, improving from 45.5% in PY2 to 47.7% in PY1 and reaching 49.0% in the current year — a cumulative improvement of +350 basis points.`;
+const summaryText = `Gross margin has demonstrated a consistent upward trajectory over the three-year period, improving from 45.5% in 2023 to 47.7% in 2024 and reaching 49.0% in 2025 — a cumulative improvement of +350 basis points.`;
 
 const keyDrivers = [
-  "Revenue growth outpaced COGS growth across all three years. CY revenue grew +12.8% vs PY1, while COGS increased only +10.0%, creating favorable margin expansion.",
+  "Revenue growth outpaced COGS growth across all three years. 2025 revenue grew +12.8% vs 2024, while COGS increased only +10.0%, creating favorable margin expansion.",
   "Product revenue remains the dominant contributor at 63.4% of total revenue, growing +12.9% YoY. This high-margin segment continues to drive overall margin improvement.",
-  "Direct labour costs as a percentage of revenue declined from 11.4% (PY2) to 10.3% (CY), suggesting improved operational efficiency and potentially better automation or workforce utilization.",
-  "Manufacturing overhead has remained well-controlled at 5.7% of revenue in CY, down from 6.0% in PY2, indicating effective cost management in production processes.",
+  "Direct labour costs as a percentage of revenue declined from 11.4% (2023) to 10.3% (2025), suggesting improved operational efficiency and potentially better automation or workforce utilization.",
+  "Manufacturing overhead has remained well-controlled at 5.7% of revenue in 2025, down from 6.0% in 2023, indicating effective cost management in production processes.",
 ];
 
 const seasonality = [
-  "Q2 and Q3 consistently deliver the strongest margins (50.0% and 50.5% in CY), while Q4 shows mild seasonal pressure at 47.0%. Monthly trends reveal slight softness in January–February, with peak performance in July–August.",
+  "Q2 and Q3 consistently deliver the strongest margins (50.0% and 50.5% in 2025), while Q4 shows mild seasonal pressure at 47.0%. Monthly trends reveal slight softness in January–February, with peak performance in July–August.",
 ];
 
 const outlook = [
@@ -378,31 +298,30 @@ const CHART_COLORS = {
 };
 
 /* ── Annual Chart ── */
-function AnnualChart({ visible, showPy2 }: { visible: boolean; showPy2: boolean }) {
+function AnnualChart({ visible }: { visible: boolean }) {
   if (!visible) return null;
 
   const revenueData = revenueRows.map((r) => ({
     name: r.name,
-    CY: parseNum(r.cy),
-    PY1: parseNum(r.py1),
-    ...(showPy2 ? { PY2: parseNum(r.py2) } : {}),
+    "2025": parseNum(r.cy),
+    "2024": parseNum(r.py1),
+    "2023": parseNum(r.py2),
   }));
 
   const marginData = [
-    { name: "Revenue", CY: parseNum(revenueTotals.cy), PY1: parseNum(revenueTotals.py1), ...(showPy2 ? { PY2: parseNum(revenueTotals.py2) } : {}) },
-    { name: "Cost of Sales", CY: parseNum(cosTotals.cy), PY1: parseNum(cosTotals.py1), ...(showPy2 ? { PY2: parseNum(cosTotals.py2) } : {}) },
-    { name: "Gross Margin", CY: parseNum(marginTotals.cy), PY1: parseNum(marginTotals.py1), ...(showPy2 ? { PY2: parseNum(marginTotals.py2) } : {}) },
+    { name: "Revenue", "2025": parseNum(revenueTotals.cy), "2024": parseNum(revenueTotals.py1), "2023": parseNum(revenueTotals.py2) },
+    { name: "Cost of Sales", "2025": parseNum(cosTotals.cy), "2024": parseNum(cosTotals.py1), "2023": parseNum(cosTotals.py2) },
+    { name: "Gross Margin", "2025": parseNum(marginTotals.cy), "2024": parseNum(marginTotals.py1), "2023": parseNum(marginTotals.py2) },
   ];
 
   const marginPctData = [
-    { name: "CY", pct: parseFloat(marginTotals.cyPct || "0") },
-    { name: "PY1", pct: parseFloat(marginTotals.py1Pct || "0") },
-    ...(showPy2 ? [{ name: "PY2", pct: parseFloat(marginTotals.py2Pct || "0") }] : []),
+    { name: "2025", pct: parseFloat(marginTotals.cyPct || "0") },
+    { name: "2024", pct: parseFloat(marginTotals.py1Pct || "0") },
+    { name: "2023", pct: parseFloat(marginTotals.py2Pct || "0") },
   ];
 
   return (
     <div className="space-y-6">
-      {/* Revenue by Account */}
       <div className="border border-[hsl(210_25%_82%)] rounded-lg overflow-hidden shadow-sm p-4 bg-background">
         <p className="text-sm font-semibold text-foreground mb-3">Revenue by Account</p>
         <ResponsiveContainer width="100%" height={220}>
@@ -412,14 +331,13 @@ function AnnualChart({ visible, showPy2 }: { visible: boolean; showPy2: boolean 
             <YAxis tick={{ fontSize: 11 }} />
             <RechartsTooltip contentStyle={{ borderRadius: 8, fontSize: 13 }} />
             <Legend wrapperStyle={{ fontSize: 12 }} />
-            <Bar dataKey="CY" fill={CHART_COLORS.cy} radius={[4, 4, 0, 0]} />
-            <Bar dataKey="PY1" fill={CHART_COLORS.py1} radius={[4, 4, 0, 0]} />
-            {showPy2 && <Bar dataKey="PY2" fill={CHART_COLORS.py2} radius={[4, 4, 0, 0]} />}
+            <Bar dataKey="2025" fill={CHART_COLORS.cy} radius={[4, 4, 0, 0]} />
+            <Bar dataKey="2024" fill={CHART_COLORS.py1} radius={[4, 4, 0, 0]} />
+            <Bar dataKey="2023" fill={CHART_COLORS.py2} radius={[4, 4, 0, 0]} />
           </BarChart>
         </ResponsiveContainer>
       </div>
 
-      {/* Margin Comparison */}
       <div className="border border-[hsl(210_25%_82%)] rounded-lg overflow-hidden shadow-sm p-4 bg-background">
         <p className="text-sm font-semibold text-foreground mb-3">Gross Margin Summary</p>
         <ResponsiveContainer width="100%" height={220}>
@@ -429,14 +347,13 @@ function AnnualChart({ visible, showPy2 }: { visible: boolean; showPy2: boolean 
             <YAxis tick={{ fontSize: 11 }} />
             <RechartsTooltip contentStyle={{ borderRadius: 8, fontSize: 13 }} />
             <Legend wrapperStyle={{ fontSize: 12 }} />
-            <Bar dataKey="CY" fill={CHART_COLORS.cy} radius={[4, 4, 0, 0]} />
-            <Bar dataKey="PY1" fill={CHART_COLORS.py1} radius={[4, 4, 0, 0]} />
-            {showPy2 && <Bar dataKey="PY2" fill={CHART_COLORS.py2} radius={[4, 4, 0, 0]} />}
+            <Bar dataKey="2025" fill={CHART_COLORS.cy} radius={[4, 4, 0, 0]} />
+            <Bar dataKey="2024" fill={CHART_COLORS.py1} radius={[4, 4, 0, 0]} />
+            <Bar dataKey="2023" fill={CHART_COLORS.py2} radius={[4, 4, 0, 0]} />
           </BarChart>
         </ResponsiveContainer>
       </div>
 
-      {/* Margin % Trend */}
       <div className="border border-[hsl(210_25%_82%)] rounded-lg overflow-hidden shadow-sm p-4 bg-background">
         <p className="text-sm font-semibold text-foreground mb-3">Gross Margin % Trend</p>
         <ResponsiveContainer width="100%" height={180}>
@@ -454,16 +371,16 @@ function AnnualChart({ visible, showPy2 }: { visible: boolean; showPy2: boolean 
 }
 
 /* ── Quarterly Chart ── */
-function QuarterlyChart({ visible, showPy2 }: { visible: boolean; showPy2: boolean }) {
+function QuarterlyChart({ visible }: { visible: boolean }) {
   if (!visible) return null;
 
   const data = quarterlyRows.map((r) => ({
     name: r.period,
-    "CY GM": parseNum(r.cyGm),
-    "PY1 GM": parseNum(r.py1Gm),
-    ...(showPy2 ? { "PY2 GM": parseNum(r.py2Gm) } : {}),
-    "CY GM%": parseFloat(r.cyGmPct) || 0,
-    "PY1 GM%": parseFloat(r.py1GmPct) || 0,
+    "2025 GM": parseNum(r.cyGm),
+    "2024 GM": parseNum(r.py1Gm),
+    "2023 GM": parseNum(r.py2Gm),
+    "2025 GM%": parseFloat(r.cyGmPct) || 0,
+    "2024 GM%": parseFloat(r.py1GmPct) || 0,
   }));
 
   return (
@@ -477,9 +394,9 @@ function QuarterlyChart({ visible, showPy2 }: { visible: boolean; showPy2: boole
             <YAxis tick={{ fontSize: 11 }} />
             <RechartsTooltip contentStyle={{ borderRadius: 8, fontSize: 13 }} />
             <Legend wrapperStyle={{ fontSize: 12 }} />
-            <Bar dataKey="CY GM" fill={CHART_COLORS.cy} radius={[4, 4, 0, 0]} />
-            <Bar dataKey="PY1 GM" fill={CHART_COLORS.py1} radius={[4, 4, 0, 0]} />
-            {showPy2 && <Bar dataKey="PY2 GM" fill={CHART_COLORS.py2} radius={[4, 4, 0, 0]} />}
+            <Bar dataKey="2025 GM" fill={CHART_COLORS.cy} radius={[4, 4, 0, 0]} />
+            <Bar dataKey="2024 GM" fill={CHART_COLORS.py1} radius={[4, 4, 0, 0]} />
+            <Bar dataKey="2023 GM" fill={CHART_COLORS.py2} radius={[4, 4, 0, 0]} />
           </BarChart>
         </ResponsiveContainer>
       </div>
@@ -493,8 +410,8 @@ function QuarterlyChart({ visible, showPy2 }: { visible: boolean; showPy2: boole
             <YAxis domain={[44, 52]} tick={{ fontSize: 11 }} unit="%" />
             <RechartsTooltip contentStyle={{ borderRadius: 8, fontSize: 13 }} formatter={(v: any) => `${v}%`} />
             <Legend wrapperStyle={{ fontSize: 12 }} />
-            <Line type="monotone" dataKey="CY GM%" stroke={CHART_COLORS.cyLine} strokeWidth={2.5} dot={{ r: 4 }} />
-            <Line type="monotone" dataKey="PY1 GM%" stroke={CHART_COLORS.py1Line} strokeWidth={2.5} dot={{ r: 4 }} />
+            <Line type="monotone" dataKey="2025 GM%" stroke={CHART_COLORS.cyLine} strokeWidth={2.5} dot={{ r: 4 }} />
+            <Line type="monotone" dataKey="2024 GM%" stroke={CHART_COLORS.py1Line} strokeWidth={2.5} dot={{ r: 4 }} />
           </LineChart>
         </ResponsiveContainer>
       </div>
@@ -503,16 +420,16 @@ function QuarterlyChart({ visible, showPy2 }: { visible: boolean; showPy2: boole
 }
 
 /* ── Monthly Chart ── */
-function MonthlyChart({ visible, showPy2 }: { visible: boolean; showPy2: boolean }) {
+function MonthlyChart({ visible }: { visible: boolean }) {
   if (!visible) return null;
 
   const data = monthlyRows.map((r) => ({
     name: r.period.slice(0, 3),
-    "CY GM": parseNum(r.cyGm),
-    "PY1 GM": parseNum(r.py1Gm),
-    ...(showPy2 ? { "PY2 GM": parseNum(r.py2Gm) } : {}),
-    "CY GM%": parseFloat(r.cyGmPct) || 0,
-    "PY1 GM%": parseFloat(r.py1GmPct) || 0,
+    "2025 GM": parseNum(r.cyGm),
+    "2024 GM": parseNum(r.py1Gm),
+    "2023 GM": parseNum(r.py2Gm),
+    "2025 GM%": parseFloat(r.cyGmPct) || 0,
+    "2024 GM%": parseFloat(r.py1GmPct) || 0,
   }));
 
   return (
@@ -526,9 +443,9 @@ function MonthlyChart({ visible, showPy2 }: { visible: boolean; showPy2: boolean
             <YAxis tick={{ fontSize: 11 }} />
             <RechartsTooltip contentStyle={{ borderRadius: 8, fontSize: 13 }} />
             <Legend wrapperStyle={{ fontSize: 12 }} />
-            <Bar dataKey="CY GM" fill={CHART_COLORS.cy} radius={[3, 3, 0, 0]} />
-            <Bar dataKey="PY1 GM" fill={CHART_COLORS.py1} radius={[3, 3, 0, 0]} />
-            {showPy2 && <Bar dataKey="PY2 GM" fill={CHART_COLORS.py2} radius={[3, 3, 0, 0]} />}
+            <Bar dataKey="2025 GM" fill={CHART_COLORS.cy} radius={[3, 3, 0, 0]} />
+            <Bar dataKey="2024 GM" fill={CHART_COLORS.py1} radius={[3, 3, 0, 0]} />
+            <Bar dataKey="2023 GM" fill={CHART_COLORS.py2} radius={[3, 3, 0, 0]} />
           </BarChart>
         </ResponsiveContainer>
       </div>
@@ -542,8 +459,8 @@ function MonthlyChart({ visible, showPy2 }: { visible: boolean; showPy2: boolean
             <YAxis domain={[42, 52]} tick={{ fontSize: 11 }} unit="%" />
             <RechartsTooltip contentStyle={{ borderRadius: 8, fontSize: 13 }} formatter={(v: any) => `${v}%`} />
             <Legend wrapperStyle={{ fontSize: 12 }} />
-            <Line type="monotone" dataKey="CY GM%" stroke={CHART_COLORS.cyLine} strokeWidth={2.5} dot={{ r: 3 }} />
-            <Line type="monotone" dataKey="PY1 GM%" stroke={CHART_COLORS.py1Line} strokeWidth={2.5} dot={{ r: 3 }} />
+            <Line type="monotone" dataKey="2025 GM%" stroke={CHART_COLORS.cyLine} strokeWidth={2.5} dot={{ r: 3 }} />
+            <Line type="monotone" dataKey="2024 GM%" stroke={CHART_COLORS.py1Line} strokeWidth={2.5} dot={{ r: 3 }} />
           </LineChart>
         </ResponsiveContainer>
       </div>
@@ -559,9 +476,7 @@ export interface GrossMarginResponseProps {
 
 export function GrossMarginResponse({ revealStep }: GrossMarginResponseProps) {
   const [periodTab, setPeriodTab] = useState<"annual" | "quarterly" | "monthly">("annual");
-  const [comparison, setComparison] = useState<ComparisonView>("cy-py1-py2");
   const [viewMode, setViewMode] = useState<"table" | "graph">("table");
-  const showPy2 = comparison === "cy-py1-py2";
   const isGraph = viewMode === "graph";
 
   return (
@@ -599,39 +514,32 @@ export function GrossMarginResponse({ revealStep }: GrossMarginResponseProps) {
               ))}
             </div>
 
-            <div className="flex items-center gap-2">
-              <ComparisonDropdown value={comparison} onChange={setComparison} />
-              <TooltipProvider delayDuration={200}>
-                <div className="flex items-center gap-1 ml-2">
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <button
-                        className={cn("p-1.5 rounded transition-colors", !isGraph ? "bg-muted/60" : "hover:bg-muted/50")}
-                        onClick={() => setViewMode("table")}
-                      >
-                        <LayoutGrid className={cn("h-4 w-4", !isGraph ? "text-foreground" : "text-muted-foreground")} />
-                      </button>
-                    </TooltipTrigger>
-                    <TooltipContent side="bottom"><p>Table View</p></TooltipContent>
-                  </Tooltip>
-                  <Switch
-                    checked={isGraph}
-                    onCheckedChange={(checked) => setViewMode(checked ? "graph" : "table")}
-                    className="data-[state=checked]:bg-primary"
-                  />
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <button
-                        className={cn("p-1.5 rounded transition-colors", isGraph ? "bg-muted/60" : "hover:bg-muted/50")}
-                        onClick={() => setViewMode("graph")}
-                      >
-                        <BarChart3 className={cn("h-4 w-4", isGraph ? "text-foreground" : "text-muted-foreground")} />
-                      </button>
-                    </TooltipTrigger>
-                    <TooltipContent side="bottom"><p>Graph View</p></TooltipContent>
-                  </Tooltip>
-                </div>
-              </TooltipProvider>
+            {/* Segmented pill toggle */}
+            <div className="flex items-center gap-1 bg-muted/50 p-1 rounded-full border border-border/50">
+              <button
+                onClick={() => setViewMode("table")}
+                className={cn(
+                  "flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-medium transition-all duration-200",
+                  !isGraph
+                    ? "bg-primary text-primary-foreground shadow-sm"
+                    : "text-muted-foreground hover:text-foreground hover:bg-muted"
+                )}
+              >
+                <LayoutGrid size={14} />
+                Table
+              </button>
+              <button
+                onClick={() => setViewMode("graph")}
+                className={cn(
+                  "flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-medium transition-all duration-200",
+                  isGraph
+                    ? "bg-primary text-primary-foreground shadow-sm"
+                    : "text-muted-foreground hover:text-foreground hover:bg-muted"
+                )}
+              >
+                <BarChart3 size={14} />
+                Graph
+              </button>
             </div>
           </div>
 
@@ -648,12 +556,12 @@ export function GrossMarginResponse({ revealStep }: GrossMarginResponseProps) {
             >
               {periodTab === "annual" && (
                 isGraph ? (
-                  <AnnualChart visible={revealStep >= 2} showPy2={showPy2} />
+                  <AnnualChart visible={revealStep >= 2} />
                 ) : (
                   <div className="space-y-4">
-                    <TableSection title="Revenue Accounts" rows={revenueRows} totals={revenueTotals} visible={revealStep >= 2} showPy2={showPy2} />
-                    <TableSection title="Cost of Sales Accounts" rows={cosRows} totals={cosTotals} visible={revealStep >= 3} showPy2={showPy2} />
-                    <TableSection title="Gross Margin Summary" rows={marginRows} totals={marginTotals} visible={revealStep >= 4} showPy2={showPy2} />
+                    <TableSection title="Revenue Accounts" rows={revenueRows} totals={revenueTotals} visible={revealStep >= 2} />
+                    <TableSection title="Cost of Sales Accounts" rows={cosRows} totals={cosTotals} visible={revealStep >= 3} />
+                    <TableSection title="Gross Margin Summary" rows={marginRows} totals={marginTotals} visible={revealStep >= 4} />
                   </div>
                 )
               )}
@@ -670,9 +578,9 @@ export function GrossMarginResponse({ revealStep }: GrossMarginResponseProps) {
             >
               {periodTab === "quarterly" && (
                 isGraph ? (
-                  <QuarterlyChart visible={revealStep >= 2} showPy2={showPy2} />
+                  <QuarterlyChart visible={revealStep >= 2} />
                 ) : (
-                  <QuarterlyTable visible={revealStep >= 2} showPy2={showPy2} />
+                  <QuarterlyTable visible={revealStep >= 2} />
                 )
               )}
             </div>
@@ -688,9 +596,9 @@ export function GrossMarginResponse({ revealStep }: GrossMarginResponseProps) {
             >
               {periodTab === "monthly" && (
                 isGraph ? (
-                  <MonthlyChart visible={revealStep >= 2} showPy2={showPy2} />
+                  <MonthlyChart visible={revealStep >= 2} />
                 ) : (
-                  <MonthlyTable visible={revealStep >= 2} showPy2={showPy2} />
+                  <MonthlyTable visible={revealStep >= 2} />
                 )
               )}
             </div>
