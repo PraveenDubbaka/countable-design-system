@@ -63,24 +63,81 @@ function LukaIcon({ size = 16 }: { size?: number }) {
   return <Zap className="text-white" size={size} fill="white" strokeWidth={0} />;
 }
 
-/* ── Annual Table section component ── */
-function TableSection({
-  title,
-  rows,
-  totals,
-  visible,
-}: {
-  title: string;
-  rows: typeof revenueRows;
-  totals: typeof revenueTotals & { cyPct?: string; py1Pct?: string; py2Pct?: string };
-  visible: boolean;
-}) {
+/* ── Merged Revenue + Cost of Sales Table ── */
+function RevenueCosTable({ visible }: { visible: boolean }) {
+  if (!visible) return null;
+  const colCount = colsFull.length;
+
+  return (
+    <div className="border border-[hsl(210_25%_82%)] rounded-lg overflow-hidden shadow-sm min-w-0">
+      <div className="overflow-x-auto">
+        <table className="w-full text-base">
+          <thead>
+            <tr className="border-b border-[hsl(210_25%_82%)] bg-[hsl(210_40%_96%)]">
+              {colsFull.map((c) => (
+                <th key={c} className={cn("px-4 py-2.5 font-medium text-[#101D28] whitespace-nowrap", c === "Account Name ↓" ? "text-left" : "text-right")}>
+                  {c}
+                </th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {/* Revenue section */}
+            <tr className="bg-[hsl(210_40%_96%)]">
+              <td colSpan={colCount} className="px-4 py-2.5 text-base font-semibold text-foreground">Revenue</td>
+            </tr>
+            {revenueRows.map((r) => (
+              <tr key={r.name} className="border-b border-[hsl(210_25%_82%)]/50 hover:bg-muted/20 transition-colors">
+                <td className="px-4 py-2.5 text-foreground">{r.name}</td>
+                <td className="px-4 py-2.5 text-right text-foreground tabular-nums">{r.cy}</td>
+                <td className="px-4 py-2.5 text-right text-foreground tabular-nums">{r.py1}</td>
+                <td className="px-4 py-2.5 text-right text-foreground tabular-nums">{r.py2}</td>
+                <td className="px-4 py-2.5 text-right text-foreground tabular-nums">{r.vs}</td>
+              </tr>
+            ))}
+            <tr className="bg-muted/30 font-semibold border-b border-[hsl(210_25%_82%)]">
+              <td className="px-4 py-2.5 text-black">{revenueTotals.name}</td>
+              <td className="px-4 py-2.5 text-right text-black tabular-nums">{revenueTotals.cy}</td>
+              <td className="px-4 py-2.5 text-right text-black tabular-nums">{revenueTotals.py1}</td>
+              <td className="px-4 py-2.5 text-right text-black tabular-nums">{revenueTotals.py2}</td>
+              <td className="px-4 py-2.5 text-right text-black font-semibold tabular-nums">{revenueTotals.vs}</td>
+            </tr>
+
+            {/* Cost of Sales section */}
+            <tr className="bg-[hsl(210_40%_96%)]">
+              <td colSpan={colCount} className="px-4 py-2.5 text-base font-semibold text-foreground">Cost of Sales</td>
+            </tr>
+            {cosRows.map((r) => (
+              <tr key={r.name} className="border-b border-[hsl(210_25%_82%)]/50 hover:bg-muted/20 transition-colors">
+                <td className="px-4 py-2.5 text-foreground">{r.name}</td>
+                <td className="px-4 py-2.5 text-right text-foreground tabular-nums">{r.cy}</td>
+                <td className="px-4 py-2.5 text-right text-foreground tabular-nums">{r.py1}</td>
+                <td className="px-4 py-2.5 text-right text-foreground tabular-nums">{r.py2}</td>
+                <td className="px-4 py-2.5 text-right text-foreground tabular-nums">{r.vs}</td>
+              </tr>
+            ))}
+            <tr className="bg-muted/30 font-semibold">
+              <td className="px-4 py-2.5 text-black">{cosTotals.name}</td>
+              <td className="px-4 py-2.5 text-right text-black tabular-nums">{cosTotals.cy}</td>
+              <td className="px-4 py-2.5 text-right text-black tabular-nums">{cosTotals.py1}</td>
+              <td className="px-4 py-2.5 text-right text-black tabular-nums">{cosTotals.py2}</td>
+              <td className="px-4 py-2.5 text-right text-black font-semibold tabular-nums">{cosTotals.vs}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+}
+
+/* ── Gross Margin Summary Table (standalone) ── */
+function GrossMarginSummaryTable({ visible }: { visible: boolean }) {
   if (!visible) return null;
 
   return (
     <div className="border border-[hsl(210_25%_82%)] rounded-lg overflow-hidden shadow-sm min-w-0">
       <div className="px-4 py-3 bg-[hsl(210_40%_96%)]">
-        <span className="text-base font-semibold text-foreground">{title}</span>
+        <span className="text-base font-semibold text-foreground">Gross Margin Summary</span>
       </div>
       <div className="overflow-x-auto">
         <table className="w-full text-base">
@@ -94,7 +151,7 @@ function TableSection({
             </tr>
           </thead>
           <tbody>
-            {rows.map((r) => (
+            {marginRows.map((r) => (
               <tr key={r.name} className="border-b border-[hsl(210_25%_82%)]/50 hover:bg-muted/20 transition-colors">
                 <td className="px-4 py-2.5 text-foreground">{r.name}</td>
                 <td className="px-4 py-2.5 text-right text-foreground tabular-nums">{r.cy}</td>
@@ -104,11 +161,11 @@ function TableSection({
               </tr>
             ))}
             <tr className="bg-muted/30 font-semibold">
-              <td className="px-4 py-2.5 text-black">{totals.name}</td>
-              <td className="px-4 py-2.5 text-right text-black tabular-nums">{totals.cy}</td>
-              <td className="px-4 py-2.5 text-right text-black tabular-nums">{totals.py1}</td>
-              <td className="px-4 py-2.5 text-right text-black tabular-nums">{totals.py2}</td>
-              <td className="px-4 py-2.5 text-right text-black font-semibold tabular-nums">{totals.vs}</td>
+              <td className="px-4 py-2.5 text-black">{marginTotals.name}</td>
+              <td className="px-4 py-2.5 text-right text-black tabular-nums">{marginTotals.cy}</td>
+              <td className="px-4 py-2.5 text-right text-black tabular-nums">{marginTotals.py1}</td>
+              <td className="px-4 py-2.5 text-right text-black tabular-nums">{marginTotals.py2}</td>
+              <td className="px-4 py-2.5 text-right text-black font-semibold tabular-nums">{marginTotals.vs}</td>
             </tr>
           </tbody>
         </table>
