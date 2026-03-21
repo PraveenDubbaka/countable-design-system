@@ -1,19 +1,43 @@
 
 
-## Fix: Dark Mode Background for Side Panels
+## Plan: Replace CY/PY labels with year numbers, remove comparison dropdown, enhance toggle
 
-**Problem:** The left sidebar (Templates/Engagement Sections panels) and right panel use a hardcoded light gray `bg-[#f1f1f3]` which appears white/light in dark mode.
+### 1. Fix build error
+Change `package.json` `dev` script from `"vite"` to `"npx vite"` (same fix as before — it was reverted).
 
-**Solution:** Add a `dark:` variant to all 4 occurrences of `bg-[#f1f1f3]` so they use the appropriate dark mode background.
+### 2. Replace CY/PY labels with actual years in `GrossMarginResponse.tsx`
 
-### Changes
+**Annual table headers:**
+- `CY` → `2025`, `PY1` → `2024`, `PY2` → `2023`
+- `CY (%)` → `2025 (%)`, `PY1 (%)` → `2024 (%)`, `PY2 (%)` → `2023 (%)`
+- `CY vs PY1 (%)` → `2025 vs 2024 (%)`
 
-**1. `src/components/Sidebar.tsx`** (2 spots)
-- Line 759 (Engagement Sections panel): Change `bg-[#f1f1f3]` to `bg-[#f1f1f3] dark:bg-gradient-to-b dark:from-muted dark:to-card`
-- Line 919 (Templates panel): Same change
+**Quarterly/Monthly table headers:**
+- `CY Revenue` → `2025 Revenue`, `CY COS` → `2025 COS`, `CY GM` → `2025 GM`, `CY GM (%)` → `2025 GM (%)`
+- `PY1 GM` → `2024 GM`, `PY1 GM (%)` → `2024 GM (%)`, `PY2 GM` → `2023 GM`, `PY2 GM (%)` → `2023 GM (%)`
 
-**2. `src/components/EngagementRightPanel.tsx`** (2 spots)
-- Line 28 (Icon bar): Change `bg-[#f1f1f3]` to `bg-[#f1f1f3] dark:bg-muted`
-- Line 66 (Expanded panel): Change `bg-[#f1f1f3]` to `bg-[#f1f1f3] dark:bg-muted`
+**Chart legends** (in AnnualChart, QuarterlyChart, MonthlyChart):
+- All `dataKey` labels: `CY` → `2025`, `PY1` → `2024`, `PY2` → `2023`
+- Chart data keys like `"CY GM"` → `"2025 GM"`, `"PY1 GM"` → `"2024 GM"`, etc.
 
-This follows the existing dark mode pattern documented in the project memory: sidebar panels use a gradient from `hsl(var(--muted))` to `hsl(var(--card))` in dark mode.
+**Summary text:** Replace mentions of "CY", "PY1", "PY2" with "2025", "2024", "2023".
+
+### 3. Remove comparison dropdown entirely
+
+- Delete the `ComparisonDropdown` component and its usage
+- Remove the `comparison` state and `ComparisonView` type
+- Always show all three years (`showPy2` always `true`)
+
+### 4. Enhance the table/graph toggle design
+
+Replace the current Switch + icon buttons with a polished segmented pill toggle:
+- Two segments: icon + "Table" and icon + "Graph" labels
+- Active segment gets `bg-primary text-white` with rounded-full pill shape
+- Container has a subtle `bg-muted` background with rounded-full border
+- Smooth transition animation between states
+- Remove the separate Switch component and tooltip wrappers
+
+### Technical Details
+
+All changes are in a single file: `src/components/luka/GrossMarginResponse.tsx`, plus the one-line fix in `package.json`.
+
