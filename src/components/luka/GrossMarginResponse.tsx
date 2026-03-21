@@ -242,51 +242,68 @@ function QuarterlyTable({ visible }: { visible: boolean }) {
   );
 }
 
-/* ── Monthly Table section ── */
+/* ── Monthly Table section (inverted: months as columns, metrics as rows) ── */
 function MonthlyTable({ visible }: { visible: boolean }) {
   if (!visible) return null;
+
+  const mCols = ["", ...monthlyRows.map((r) => r.period), "Total"];
+
+  const metricRows2025 = [
+    { label: "Revenue (2025)", values: monthlyRows.map((r) => r.cyRev), total: monthlyTotals.cyRev },
+    { label: "COS (2025)", values: monthlyRows.map((r) => r.cyCos), total: monthlyTotals.cyCos },
+    { label: "GM (2025)", values: monthlyRows.map((r) => r.cyGm), total: monthlyTotals.cyGm, bold: true },
+    { label: "GM % (2025)", values: monthlyRows.map((r) => `${r.cyGmPct}%`), total: `${monthlyTotals.cyGmPct}%`, bold: true },
+  ];
+  const metricRows2024 = [
+    { label: "Revenue (2024)", values: monthlyRows.map((r) => r.py1Rev), total: monthlyTotals.py1Rev },
+    { label: "COS (2024)", values: monthlyRows.map((r) => r.py1Cos), total: monthlyTotals.py1Cos },
+    { label: "GM (2024)", values: monthlyRows.map((r) => r.py1Gm), total: monthlyTotals.py1Gm, bold: true },
+    { label: "GM % (2024)", values: monthlyRows.map((r) => `${r.py1GmPct}%`), total: `${monthlyTotals.py1GmPct}%`, bold: true },
+  ];
+  const metricRows2023 = [
+    { label: "Revenue (2023)", values: monthlyRows.map((r) => r.py2Rev), total: monthlyTotals.py2Rev },
+    { label: "COS (2023)", values: monthlyRows.map((r) => r.py2Cos), total: monthlyTotals.py2Cos },
+    { label: "GM (2023)", values: monthlyRows.map((r) => r.py2Gm), total: monthlyTotals.py2Gm, bold: true },
+    { label: "GM % (2023)", values: monthlyRows.map((r) => `${r.py2GmPct}%`), total: `${monthlyTotals.py2GmPct}%`, bold: true },
+  ];
+
+  const allGroups = [
+    { year: "2025", rows: metricRows2025 },
+    { year: "2024", rows: metricRows2024 },
+    { year: "2023", rows: metricRows2023 },
+  ];
 
   return (
     <div className="border border-[hsl(210_25%_82%)] rounded-lg overflow-hidden shadow-sm min-w-0">
       <div className="px-4 py-3 bg-[hsl(210_40%_96%)]">
-        <span className="text-base font-semibold text-foreground">Monthly Breakdown - All Accounts</span>
+        <span className="text-base font-semibold text-foreground">Monthly Breakdown — All Years</span>
       </div>
       <div className="overflow-x-auto">
         <table className="w-full text-base">
           <thead>
             <tr className="border-b border-[hsl(210_25%_82%)] bg-[hsl(210_40%_96%)]">
-              {qColsFull.map((c) => (
-                <th key={c} className={cn("px-4 py-2.5 font-medium text-[#101D28] whitespace-nowrap", c === "Period ↓" ? "text-left" : "text-right")}>
+              {mCols.map((c, i) => (
+                <th key={i} className={cn("px-3 py-2.5 font-medium text-[#101D28] whitespace-nowrap", i === 0 ? "text-left" : "text-right")}>
                   {c}
                 </th>
               ))}
             </tr>
           </thead>
           <tbody>
-            {monthlyRows.map((r) => (
-              <tr key={r.period} className="border-b border-[hsl(210_25%_82%)]/50 hover:bg-muted/20 transition-colors">
-                <td className="px-4 py-2.5 text-foreground">{r.period}</td>
-                <td className="px-4 py-2.5 text-right text-foreground tabular-nums">{r.cyRev}</td>
-                <td className="px-4 py-2.5 text-right text-foreground tabular-nums">{r.cyCos}</td>
-                <td className="px-4 py-2.5 text-right text-foreground tabular-nums">{r.cyGm}</td>
-                <td className="px-4 py-2.5 text-right text-black tabular-nums">{r.cyGmPct}</td>
-                <td className="px-4 py-2.5 text-right text-foreground tabular-nums">{r.py1Gm}</td>
-                <td className="px-4 py-2.5 text-right text-black tabular-nums">{r.py1GmPct}</td>
-                <td className="px-4 py-2.5 text-right text-foreground tabular-nums">{r.py2Gm}</td>
-                <td className="px-4 py-2.5 text-right text-black tabular-nums">{r.py2GmPct}</td>
-              </tr>
+            {allGroups.map((group) => (
+              group.rows.map((row) => (
+                <tr key={row.label} className={cn(
+                  "border-b border-[hsl(210_25%_82%)]/50 hover:bg-muted/20 transition-colors",
+                  row.bold && "bg-muted/30 font-semibold"
+                )}>
+                  <td className="px-3 py-2.5 text-foreground whitespace-nowrap">{row.label}</td>
+                  {row.values.map((v, i) => (
+                    <td key={i} className="px-3 py-2.5 text-right text-foreground tabular-nums">{v}</td>
+                  ))}
+                  <td className="px-3 py-2.5 text-right text-black font-semibold tabular-nums">{row.total}</td>
+                </tr>
+              ))
             ))}
-            <tr className="bg-muted/30 font-semibold">
-              <td className="px-4 py-2.5 text-black">{monthlyTotals.period}</td>
-              <td className="px-4 py-2.5 text-right text-black tabular-nums">{monthlyTotals.cyRev}</td>
-              <td className="px-4 py-2.5 text-right text-black tabular-nums">{monthlyTotals.cyCos}</td>
-              <td className="px-4 py-2.5 text-right text-black tabular-nums">{monthlyTotals.cyGm}</td>
-              <td className="px-4 py-2.5 text-right text-black tabular-nums">{monthlyTotals.cyGmPct}</td>
-              <td className="px-4 py-2.5 text-right text-black tabular-nums">{monthlyTotals.py1Gm}</td>
-              <td className="px-4 py-2.5 text-right text-black tabular-nums">{monthlyTotals.py1GmPct}</td>
-              <td className="px-4 py-2.5 text-right text-black tabular-nums">{monthlyTotals.py2Gm}</td>
-              <td className="px-4 py-2.5 text-right text-black tabular-nums">{monthlyTotals.py2GmPct}</td>
-            </tr>
           </tbody>
         </table>
       </div>
