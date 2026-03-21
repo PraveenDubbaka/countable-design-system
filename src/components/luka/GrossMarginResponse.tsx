@@ -199,6 +199,8 @@ function MonthlyTable({ visible }: { visible: boolean }) {
                 <td className="px-4 py-2.5 text-right text-black tabular-nums">{r.cyGmPct}</td>
                 <td className="px-4 py-2.5 text-right text-foreground tabular-nums">{r.py1Gm}</td>
                 <td className="px-4 py-2.5 text-right text-black tabular-nums">{r.py1GmPct}</td>
+                <td className="px-4 py-2.5 text-right text-foreground tabular-nums">{r.py2Gm}</td>
+                <td className="px-4 py-2.5 text-right text-black tabular-nums">{r.py2GmPct}</td>
               </tr>
             ))}
             <tr className="bg-muted/30 font-semibold">
@@ -209,6 +211,8 @@ function MonthlyTable({ visible }: { visible: boolean }) {
               <td className="px-4 py-2.5 text-right text-black tabular-nums">{monthlyTotals.cyGmPct}</td>
               <td className="px-4 py-2.5 text-right text-black tabular-nums">{monthlyTotals.py1Gm}</td>
               <td className="px-4 py-2.5 text-right text-black tabular-nums">{monthlyTotals.py1GmPct}</td>
+              <td className="px-4 py-2.5 text-right text-black tabular-nums">{monthlyTotals.py2Gm}</td>
+              <td className="px-4 py-2.5 text-right text-black tabular-nums">{monthlyTotals.py2GmPct}</td>
             </tr>
           </tbody>
         </table>
