@@ -55,9 +55,9 @@ const monthlyRows = [
 ];
 const monthlyTotals = { period: "Total Full Year", cyRev: "7,570.00", cyCos: "3,860.00", cyGm: "3,710.00", cyGmPct: "49.0", py1Gm: "3,200.00", py1GmPct: "-", py2Gm: "2,640.00", py2GmPct: "-" };
 
-const qColsFull = ["Period ↓", "2025 Revenue", "2025 COS", "2025 GM", "2025 GM (%)", "2024 GM", "2024 GM (%)", "2023 GM", "2023 GM (%)"];
+const qColsFull = ["Period ↓", "2025 Revenue", "2025 COS", "2025 GM", "2025 GM (%)", "2024 GM", "2024 GM (%)"];
 
-const colsFull = ["Account Name ↓", "2025", "2024", "2023", "2025 vs 2024 (%)"];
+const colsFull = ["Account Name ↓", "2025", "2024", "2025 vs 2024 (%)"];
 
 function LukaIcon({ size = 16 }: { size?: number }) {
   return <Zap className="text-white" size={size} fill="white" strokeWidth={0} />;
@@ -99,7 +99,6 @@ function TableSection({
                 <td className="px-4 py-2.5 text-foreground">{r.name}</td>
                 <td className="px-4 py-2.5 text-right text-foreground tabular-nums">{r.cy}</td>
                 <td className="px-4 py-2.5 text-right text-foreground tabular-nums">{r.py1}</td>
-                <td className="px-4 py-2.5 text-right text-foreground tabular-nums">{r.py2}</td>
                 <td className="px-4 py-2.5 text-right text-foreground tabular-nums">{r.vs}</td>
               </tr>
             ))}
@@ -107,7 +106,6 @@ function TableSection({
               <td className="px-4 py-2.5 text-black">{totals.name}</td>
               <td className="px-4 py-2.5 text-right text-black tabular-nums">{totals.cy}</td>
               <td className="px-4 py-2.5 text-right text-black tabular-nums">{totals.py1}</td>
-              <td className="px-4 py-2.5 text-right text-black tabular-nums">{totals.py2}</td>
               <td className="px-4 py-2.5 text-right text-black font-semibold tabular-nums">{totals.vs}</td>
             </tr>
           </tbody>
@@ -147,8 +145,6 @@ function QuarterlyTable({ visible }: { visible: boolean }) {
                 <td className="px-4 py-2.5 text-right text-black tabular-nums">{r.cyGmPct}</td>
                 <td className="px-4 py-2.5 text-right text-foreground tabular-nums">{r.py1Gm}</td>
                 <td className="px-4 py-2.5 text-right text-black tabular-nums">{r.py1GmPct}</td>
-                <td className="px-4 py-2.5 text-right text-foreground tabular-nums">{r.py2Gm}</td>
-                <td className="px-4 py-2.5 text-right text-black tabular-nums">{r.py2GmPct}</td>
               </tr>
             ))}
             <tr className="bg-muted/30 font-semibold">
@@ -159,8 +155,6 @@ function QuarterlyTable({ visible }: { visible: boolean }) {
               <td className="px-4 py-2.5 text-right text-black tabular-nums">{quarterlyTotals.cyGmPct}</td>
               <td className="px-4 py-2.5 text-right text-black tabular-nums">{quarterlyTotals.py1Gm}</td>
               <td className="px-4 py-2.5 text-right text-black tabular-nums">{quarterlyTotals.py1GmPct}</td>
-              <td className="px-4 py-2.5 text-right text-black tabular-nums">{quarterlyTotals.py2Gm}</td>
-              <td className="px-4 py-2.5 text-right text-black tabular-nums">{quarterlyTotals.py2GmPct}</td>
             </tr>
           </tbody>
         </table>
@@ -199,8 +193,6 @@ function MonthlyTable({ visible }: { visible: boolean }) {
                 <td className="px-4 py-2.5 text-right text-black tabular-nums">{r.cyGmPct}</td>
                 <td className="px-4 py-2.5 text-right text-foreground tabular-nums">{r.py1Gm}</td>
                 <td className="px-4 py-2.5 text-right text-black tabular-nums">{r.py1GmPct}</td>
-                <td className="px-4 py-2.5 text-right text-foreground tabular-nums">{r.py2Gm}</td>
-                <td className="px-4 py-2.5 text-right text-black tabular-nums">{r.py2GmPct}</td>
               </tr>
             ))}
             <tr className="bg-muted/30 font-semibold">
@@ -211,8 +203,6 @@ function MonthlyTable({ visible }: { visible: boolean }) {
               <td className="px-4 py-2.5 text-right text-black tabular-nums">{monthlyTotals.cyGmPct}</td>
               <td className="px-4 py-2.5 text-right text-black tabular-nums">{monthlyTotals.py1Gm}</td>
               <td className="px-4 py-2.5 text-right text-black tabular-nums">{monthlyTotals.py1GmPct}</td>
-              <td className="px-4 py-2.5 text-right text-black tabular-nums">{monthlyTotals.py2Gm}</td>
-              <td className="px-4 py-2.5 text-right text-black tabular-nums">{monthlyTotals.py2GmPct}</td>
             </tr>
           </tbody>
         </table>
