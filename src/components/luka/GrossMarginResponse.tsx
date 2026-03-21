@@ -178,7 +178,7 @@ function GrossMarginSummaryTable({ visible }: { visible: boolean }) {
 function QuarterlyTable({ visible }: { visible: boolean }) {
   if (!visible) return null;
 
-  const qCols = ["", "Q1", "Q2", "Q3", "Q4", "Full Year"];
+  const qCols = ["", "Q1", "Q2", "Q3", "Q4", "Total"];
 
   const metricRows = [
     {
