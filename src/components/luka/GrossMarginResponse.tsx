@@ -174,51 +174,66 @@ function GrossMarginSummaryTable({ visible }: { visible: boolean }) {
   );
 }
 
-/* ── Quarterly Table section ── */
+/* ── Quarterly Table section (inverted: quarters as columns, metrics as rows) ── */
 function QuarterlyTable({ visible }: { visible: boolean }) {
   if (!visible) return null;
+
+  const qCols = ["", "Q1", "Q2", "Q3", "Q4", "Full Year"];
+
+  const metricRows = [
+    {
+      label: "Revenue",
+      values: quarterlyRows.map((r) => r.cyRev),
+      total: quarterlyTotals.cyRev,
+    },
+    {
+      label: "Cost of Sales",
+      values: quarterlyRows.map((r) => r.cyCos),
+      total: quarterlyTotals.cyCos,
+    },
+    {
+      label: "Gross Margin",
+      values: quarterlyRows.map((r) => r.cyGm),
+      total: quarterlyTotals.cyGm,
+      bold: true,
+    },
+    {
+      label: "GM %",
+      values: quarterlyRows.map((r) => `${r.cyGmPct}%`),
+      total: `${quarterlyTotals.cyGmPct}%`,
+      bold: true,
+    },
+  ];
 
   return (
     <div className="border border-[hsl(210_25%_82%)] rounded-lg overflow-hidden shadow-sm min-w-0">
       <div className="px-4 py-3 bg-[hsl(210_40%_96%)]">
-        <span className="text-base font-semibold text-foreground">Quarterly Breakdown - All Accounts</span>
+        <span className="text-base font-semibold text-foreground">Quarterly Breakdown — 2025</span>
       </div>
       <div className="overflow-x-auto">
         <table className="w-full text-base">
           <thead>
             <tr className="border-b border-[hsl(210_25%_82%)] bg-[hsl(210_40%_96%)]">
-              {qColsFull.map((c) => (
-                <th key={c} className={cn("px-4 py-2.5 font-medium text-[#101D28] whitespace-nowrap", c === "Period ↓" ? "text-left" : "text-right")}>
+              {qCols.map((c, i) => (
+                <th key={i} className={cn("px-4 py-2.5 font-medium text-[#101D28] whitespace-nowrap", i === 0 ? "text-left" : "text-right")}>
                   {c}
                 </th>
               ))}
             </tr>
           </thead>
           <tbody>
-            {quarterlyRows.map((r) => (
-              <tr key={r.period} className="border-b border-[hsl(210_25%_82%)]/50 hover:bg-muted/20 transition-colors">
-                <td className="px-4 py-2.5 text-foreground">{r.period}</td>
-                <td className="px-4 py-2.5 text-right text-foreground tabular-nums">{r.cyRev}</td>
-                <td className="px-4 py-2.5 text-right text-foreground tabular-nums">{r.cyCos}</td>
-                <td className="px-4 py-2.5 text-right text-foreground tabular-nums">{r.cyGm}</td>
-                <td className="px-4 py-2.5 text-right text-black tabular-nums">{r.cyGmPct}</td>
-                <td className="px-4 py-2.5 text-right text-foreground tabular-nums">{r.py1Gm}</td>
-                <td className="px-4 py-2.5 text-right text-black tabular-nums">{r.py1GmPct}</td>
-                <td className="px-4 py-2.5 text-right text-foreground tabular-nums">{r.py2Gm}</td>
-                <td className="px-4 py-2.5 text-right text-black tabular-nums">{r.py2GmPct}</td>
+            {metricRows.map((row) => (
+              <tr key={row.label} className={cn(
+                "border-b border-[hsl(210_25%_82%)]/50 hover:bg-muted/20 transition-colors",
+                row.bold && "bg-muted/30 font-semibold"
+              )}>
+                <td className="px-4 py-2.5 text-foreground">{row.label}</td>
+                {row.values.map((v, i) => (
+                  <td key={i} className="px-4 py-2.5 text-right text-foreground tabular-nums">{v}</td>
+                ))}
+                <td className="px-4 py-2.5 text-right text-black font-semibold tabular-nums">{row.total}</td>
               </tr>
             ))}
-            <tr className="bg-muted/30 font-semibold">
-              <td className="px-4 py-2.5 text-black">{quarterlyTotals.period}</td>
-              <td className="px-4 py-2.5 text-right text-black tabular-nums">{quarterlyTotals.cyRev}</td>
-              <td className="px-4 py-2.5 text-right text-black tabular-nums">{quarterlyTotals.cyCos}</td>
-              <td className="px-4 py-2.5 text-right text-black tabular-nums">{quarterlyTotals.cyGm}</td>
-              <td className="px-4 py-2.5 text-right text-black tabular-nums">{quarterlyTotals.cyGmPct}</td>
-              <td className="px-4 py-2.5 text-right text-black tabular-nums">{quarterlyTotals.py1Gm}</td>
-              <td className="px-4 py-2.5 text-right text-black tabular-nums">{quarterlyTotals.py1GmPct}</td>
-              <td className="px-4 py-2.5 text-right text-black tabular-nums">{quarterlyTotals.py2Gm}</td>
-              <td className="px-4 py-2.5 text-right text-black tabular-nums">{quarterlyTotals.py2GmPct}</td>
-            </tr>
           </tbody>
         </table>
       </div>
