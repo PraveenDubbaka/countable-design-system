@@ -55,9 +55,9 @@ const monthlyRows = [
 ];
 const monthlyTotals = { period: "Total Full Year", cyRev: "7,570.00", cyCos: "3,860.00", cyGm: "3,710.00", cyGmPct: "49.0", py1Gm: "3,200.00", py1GmPct: "-", py2Gm: "2,640.00", py2GmPct: "-" };
 
-const qColsFull = ["Period ↓", "2025 Revenue", "2025 COS", "2025 GM", "2025 GM (%)", "2024 GM", "2024 GM (%)"];
+const qColsFull = ["Period ↓", "2025 Revenue", "2025 COS", "2025 GM", "2025 GM (%)", "2024 GM", "2024 GM (%)", "2023 GM", "2023 GM (%)"];
 
-const colsFull = ["Account Name ↓", "2025", "2024", "Change (%)"];
+const colsFull = ["Account Name ↓", "2025", "2024", "2023", "Change (%)"];
 
 function LukaIcon({ size = 16 }: { size?: number }) {
   return <Zap className="text-white" size={size} fill="white" strokeWidth={0} />;
