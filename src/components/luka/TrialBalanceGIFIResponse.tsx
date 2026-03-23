@@ -210,14 +210,14 @@ function CollapsibleSection({
       <button
         onClick={() => hasContent && setExpanded(!expanded)}
         className={cn(
-          "w-full flex items-center gap-2 px-4 py-2.5 text-left transition-colors",
+          "w-full flex items-center gap-2 text-left transition-colors pr-4",
           "hover:bg-muted/40",
           depth === 0 && "bg-[hsl(210_40%_96%)]",
           depth === 1 && "bg-[hsl(210_40%_97%)]",
           depth >= 2 && "bg-[hsl(210_40%_98%)]",
           "border-b border-[hsl(210_25%_82%)]/50"
         )}
-        style={{ paddingLeft: `${16 + depth * 16}px` }}
+        style={{ paddingLeft: `${16 + depth * 16}px`, paddingTop: "10px", paddingBottom: "10px" }}
       >
         {hasContent && (
           <ChevronRight
@@ -233,9 +233,10 @@ function CollapsibleSection({
         )}>
           {section.title}
         </span>
-        {section.gifiRange && (
-          <span className="text-xs text-muted-foreground font-mono">{section.gifiRange}</span>
-        )}
+        <span className="text-xs text-muted-foreground font-mono w-16 shrink-0 text-right">
+          {section.gifiRange || ""}
+        </span>
+        <span className="w-[110px] shrink-0 pl-4" />
       </button>
 
       {/* Expanded content */}
