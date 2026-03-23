@@ -14,6 +14,7 @@ const prompts = [
   { id: "notes-gen", label: "Notes Generator" },
   { id: "client-health", label: "Run Client Health Check" },
   { id: "gross-profit", label: "Gross Profit Margin" },
+  { id: "tb-gifi", label: "Trial Balance by GIFI" },
 ];
 
 interface PromptPickerProps {
