@@ -424,6 +424,13 @@ export function TrialBalanceGIFIResponse({ revealStep }: TrialBalanceGIFIRespons
         <div className="border border-[hsl(210_25%_82%)] rounded-lg overflow-hidden shadow-sm animate-in fade-in slide-in-from-bottom-1 duration-300">
           {/* Column headers */}
           <div className="flex items-center bg-[hsl(210_40%_96%)] px-4 py-2 pr-4 border-b border-[hsl(210_25%_82%)]/50">
+            <button
+              onClick={toggleAll}
+              className="mr-2 p-1 rounded hover:bg-muted/60 transition-colors text-muted-foreground hover:text-foreground"
+              title={allExpanded ? "Collapse all" : "Expand all"}
+            >
+              <ChevronsUpDown className="h-4 w-4" />
+            </button>
             <span className="text-base font-medium text-muted-foreground capitalize tracking-wider flex-1">Account</span>
             <span className="text-base font-medium text-muted-foreground capitalize tracking-wider w-[100px] shrink-0 text-right">GIFI</span>
             <span className="text-base font-medium text-muted-foreground capitalize tracking-wider w-[120px] shrink-0 text-right pl-6">Amount</span>
