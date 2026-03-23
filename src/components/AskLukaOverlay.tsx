@@ -9,6 +9,7 @@ import { cn } from "@/lib/utils";
 import { PromptPicker } from "@/components/luka/PromptPicker";
 import { LukaThinkingMessage } from "@/components/luka/LukaThinkingMessage";
 import { GrossMarginResponse } from "@/components/luka/GrossMarginResponse";
+import { TrialBalanceGIFIResponse } from "@/components/luka/TrialBalanceGIFIResponse";
 import { LukaResponseActions } from "@/components/luka/LukaResponseActions";
 
 interface AskLukaOverlayProps {
@@ -69,7 +70,7 @@ export function AskLukaOverlay({ open, onOpenChange }: AskLukaOverlayProps) {
   const [aiResponse, setAiResponse] = useState<string | null>(null);
   const [displayedResponse, setDisplayedResponse] = useState("");
   const [isStreaming, setIsStreaming] = useState(false);
-  const [richResponseType, setRichResponseType] = useState<"gross-margin" | null>(null);
+  const [richResponseType, setRichResponseType] = useState<"gross-margin" | "tb-gifi" | null>(null);
   const [revealStep, setRevealStep] = useState(-1);
   const inputRef = useRef<HTMLInputElement>(null);
   const streamRef = useRef<number | null>(null);
@@ -107,15 +108,15 @@ export function AskLukaOverlay({ open, onOpenChange }: AskLukaOverlayProps) {
     if (revealRef.current) clearTimeout(revealRef.current);
 
     const isGrossMargin = promptLabel.toLowerCase().includes("gross profit margin");
+    const isTbGifi = promptLabel.toLowerCase().includes("trial balance by gifi");
 
     // Simulate thinking then reveal
     setTimeout(() => {
       setIsThinking(false);
 
-      if (isGrossMargin) {
-        setRichResponseType("gross-margin");
+      if (isGrossMargin || isTbGifi) {
+        setRichResponseType(isGrossMargin ? "gross-margin" : "tb-gifi");
         setAiResponse("__rich__");
-        // Progressive reveal: 6 steps (0-5), 600ms apart
         let step = 0;
         const reveal = () => {
           setRevealStep(step);
@@ -535,6 +536,11 @@ export function AskLukaOverlay({ open, onOpenChange }: AskLukaOverlayProps) {
                           ) : richResponseType === "gross-margin" ? (
                             <>
                               <GrossMarginResponse revealStep={revealStep} />
+                              {revealStep >= 5 && <LukaResponseActions />}
+                            </>
+                          ) : richResponseType === "tb-gifi" ? (
+                            <>
+                              <TrialBalanceGIFIResponse revealStep={revealStep} />
                               {revealStep >= 5 && <LukaResponseActions />}
                             </>
                           ) : (
