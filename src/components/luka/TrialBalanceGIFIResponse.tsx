@@ -318,8 +318,8 @@ function CategoryBlock({
           )}
         />
         <span className="text-base font-semibold text-foreground flex-1 text-left">{title}</span>
-        <span className="text-xs text-muted-foreground font-mono w-16 shrink-0 text-right" />
-        <span className="text-base font-semibold tabular-nums text-foreground w-[110px] shrink-0 text-right pl-4">{totalAmount}</span>
+        <span className="text-base text-muted-foreground font-mono w-[100px] shrink-0 text-right" />
+        <span className="text-base font-semibold tabular-nums text-foreground w-[120px] shrink-0 text-right pl-6">{totalAmount}</span>
       </button>
 
       {expanded && (
