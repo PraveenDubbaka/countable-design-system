@@ -108,6 +108,7 @@ export function AskLukaOverlay({ open, onOpenChange }: AskLukaOverlayProps) {
     if (revealRef.current) clearTimeout(revealRef.current);
 
     const isGrossMargin = promptLabel.toLowerCase().includes("gross profit margin");
+    const isTbGifi = promptLabel.toLowerCase().includes("trial balance by gifi");
 
     // Simulate thinking then reveal
     setTimeout(() => {
