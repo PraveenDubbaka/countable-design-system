@@ -269,16 +269,14 @@ function CollapsibleSection({
           {/* Section total */}
           {section.total && (
             <div
-              className="flex items-center bg-muted/30 border-b border-[hsl(210_25%_82%)]/50 font-semibold"
+              className="flex items-center bg-muted/30 border-b border-[hsl(210_25%_82%)]/50 font-semibold pr-4"
               style={{ paddingLeft: `${32 + depth * 16}px` }}
             >
-              {section.total.gifi && (
-                <span className="text-xs text-muted-foreground font-mono w-12 shrink-0 mr-2 py-2.5">
-                  {section.total.gifi}
-                </span>
-              )}
               <span className="text-sm text-foreground flex-1 py-2.5">{section.total.label}</span>
-              <span className="text-sm tabular-nums px-4 py-2.5 text-right min-w-[100px] text-foreground font-semibold">
+              <span className="text-xs text-muted-foreground font-mono w-16 shrink-0 text-right py-2.5">
+                {section.total.gifi || ""}
+              </span>
+              <span className="text-sm tabular-nums py-2.5 text-right w-[110px] shrink-0 pl-4 text-foreground font-semibold">
                 {section.total.amount}
               </span>
             </div>
