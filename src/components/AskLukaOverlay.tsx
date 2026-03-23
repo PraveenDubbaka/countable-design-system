@@ -9,6 +9,7 @@ import { cn } from "@/lib/utils";
 import { PromptPicker } from "@/components/luka/PromptPicker";
 import { LukaThinkingMessage } from "@/components/luka/LukaThinkingMessage";
 import { GrossMarginResponse } from "@/components/luka/GrossMarginResponse";
+import { TrialBalanceGIFIResponse } from "@/components/luka/TrialBalanceGIFIResponse";
 import { LukaResponseActions } from "@/components/luka/LukaResponseActions";
 
 interface AskLukaOverlayProps {
