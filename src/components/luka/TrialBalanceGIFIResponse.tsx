@@ -331,7 +331,7 @@ function CategoryBlock({
       {expanded && (
         <div className="animate-in fade-in slide-in-from-top-1 duration-200">
           {sections.map((section) => (
-            <CollapsibleSection key={section.id} section={section} depth={0} />
+            <CollapsibleSection key={section.id} section={section} depth={0} allExpanded={allExpanded} />
           ))}
 
           {/* Grand total row */}
