@@ -464,10 +464,10 @@ export function TrialBalanceGIFIResponse({ revealStep }: TrialBalanceGIFIRespons
       {/* Total Liabilities & Equity footer */}
       {revealStep >= 4 && (
         <div className="border border-[hsl(210_25%_82%)] rounded-lg overflow-hidden shadow-sm animate-in fade-in slide-in-from-bottom-1 duration-300">
-          <div className="flex items-center bg-[hsl(210_40%_94%)] px-4 py-3">
-            <span className="text-xs text-muted-foreground font-mono w-12 shrink-0 mr-2">3640</span>
+          <div className="flex items-center bg-[hsl(210_40%_94%)] px-4 py-3 pr-4">
             <span className="text-base font-bold text-foreground flex-1">Total Liabilities and Shareholder Equity</span>
-            <span className="text-base font-bold tabular-nums text-foreground">{grandTotals.totalLiabEquity}</span>
+            <span className="text-xs text-muted-foreground font-mono w-16 shrink-0 text-right">3640</span>
+            <span className="text-base font-bold tabular-nums text-foreground w-[110px] shrink-0 text-right pl-4">{grandTotals.totalLiabEquity}</span>
           </div>
         </div>
       )}
