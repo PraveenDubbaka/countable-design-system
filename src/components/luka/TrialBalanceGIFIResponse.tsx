@@ -415,9 +415,9 @@ export function TrialBalanceGIFIResponse({ revealStep }: TrialBalanceGIFIRespons
               <span className="text-base font-semibold text-foreground flex-1">S100 – Balance Sheet</span>
             </div>
             <div className="flex items-center bg-[hsl(210_40%_96%)] px-4 py-2 border-t border-[hsl(210_25%_82%)]/50 pr-4">
-              <span className="text-xs font-medium text-muted-foreground uppercase tracking-wider flex-1">Account</span>
-              <span className="text-xs font-medium text-muted-foreground uppercase tracking-wider w-16 shrink-0 text-right">GIFI</span>
-              <span className="text-xs font-medium text-muted-foreground uppercase tracking-wider w-[110px] shrink-0 text-right pl-4">Amount</span>
+              <span className="text-base font-medium text-muted-foreground uppercase tracking-wider flex-1">Account</span>
+              <span className="text-base font-medium text-muted-foreground uppercase tracking-wider w-[100px] shrink-0 text-right">GIFI</span>
+              <span className="text-base font-medium text-muted-foreground uppercase tracking-wider w-[120px] shrink-0 text-right pl-6">Amount</span>
             </div>
           </div>
         </div>
