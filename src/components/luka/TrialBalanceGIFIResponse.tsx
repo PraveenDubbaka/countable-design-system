@@ -404,6 +404,12 @@ export interface TrialBalanceGIFIResponseProps {
 }
 
 export function TrialBalanceGIFIResponse({ revealStep }: TrialBalanceGIFIResponseProps) {
+  const [allExpanded, setAllExpanded] = useState<boolean | undefined>(undefined);
+
+  const toggleAll = () => {
+    setAllExpanded(prev => prev === true ? false : true);
+  };
+
   return (
     <div className="space-y-4 w-full min-w-0">
       {/* Intro text */}
