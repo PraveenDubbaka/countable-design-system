@@ -197,11 +197,14 @@ const grandTotals = {
 function CollapsibleSection({
   section,
   depth = 0,
+  allExpanded,
 }: {
   section: GIFISection;
   depth?: number;
+  allExpanded?: boolean;
 }) {
-  const [expanded, setExpanded] = useState(false);
+  const [localExpanded, setLocalExpanded] = useState(false);
+  const expanded = allExpanded !== undefined ? allExpanded : localExpanded;
   const hasContent = (section.lines && section.lines.length > 0) || (section.children && section.children.length > 0);
 
   return (
