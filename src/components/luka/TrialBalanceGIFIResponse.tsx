@@ -407,66 +407,63 @@ export function TrialBalanceGIFIResponse({ revealStep }: TrialBalanceGIFIRespons
         </p>
       )}
 
-      {/* Table header */}
+      {/* Unified table */}
       {revealStep >= 1 && (
-        <div className="animate-in fade-in slide-in-from-bottom-1 duration-300">
-          <div className="border border-[hsl(210_25%_82%)] rounded-lg overflow-hidden shadow-sm mb-4">
-            <div className="flex items-center bg-[hsl(210_40%_96%)] px-4 py-2 pr-4">
-              <span className="text-base font-medium text-muted-foreground uppercase tracking-wider flex-1">Account</span>
-              <span className="text-base font-medium text-muted-foreground uppercase tracking-wider w-[100px] shrink-0 text-right">GIFI</span>
-              <span className="text-base font-medium text-muted-foreground uppercase tracking-wider w-[120px] shrink-0 text-right pl-6">Amount</span>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Assets */}
-      {revealStep >= 2 && (
-        <div className="animate-in fade-in slide-in-from-bottom-1 duration-300">
-          <CategoryBlock
-            title="Assets"
-            sections={assetsData}
-            totalLabel="Total Assets"
-            totalGifi="2599"
-            totalAmount={grandTotals.totalAssets}
-          />
-        </div>
-      )}
-
-      {/* Liabilities */}
-      {revealStep >= 3 && (
-        <div className="animate-in fade-in slide-in-from-bottom-1 duration-300">
-          <CategoryBlock
-            title="Liabilities"
-            sections={liabilitiesData}
-            totalLabel="Total Liabilities"
-            totalGifi="3499"
-            totalAmount={grandTotals.totalLiabilities}
-          />
-        </div>
-      )}
-
-      {/* Shareholder Equity */}
-      {revealStep >= 4 && (
-        <div className="animate-in fade-in slide-in-from-bottom-1 duration-300">
-          <CategoryBlock
-            title="Shareholder Equity"
-            sections={equityData}
-            totalLabel="Total Shareholder Equity"
-            totalGifi="3620"
-            totalAmount={grandTotals.totalEquity}
-          />
-        </div>
-      )}
-
-      {/* Total Liabilities & Equity footer */}
-      {revealStep >= 4 && (
         <div className="border border-[hsl(210_25%_82%)] rounded-lg overflow-hidden shadow-sm animate-in fade-in slide-in-from-bottom-1 duration-300">
-          <div className="flex items-center bg-[hsl(210_40%_94%)] px-4 py-3 pr-4">
-            <span className="text-base font-bold text-foreground flex-1">Total Liabilities and Shareholder Equity</span>
-            <span className="text-base text-muted-foreground font-mono w-[100px] shrink-0 text-right whitespace-nowrap">3640</span>
-            <span className="text-base font-bold tabular-nums text-foreground w-[120px] shrink-0 text-right pl-6">{grandTotals.totalLiabEquity}</span>
+          {/* Column headers */}
+          <div className="flex items-center bg-[hsl(210_40%_96%)] px-4 py-2 pr-4 border-b border-[hsl(210_25%_82%)]/50">
+            <span className="text-base font-medium text-muted-foreground uppercase tracking-wider flex-1">Account</span>
+            <span className="text-base font-medium text-muted-foreground uppercase tracking-wider w-[100px] shrink-0 text-right">GIFI</span>
+            <span className="text-base font-medium text-muted-foreground uppercase tracking-wider w-[120px] shrink-0 text-right pl-6">Amount</span>
           </div>
+
+          {/* Assets */}
+          {revealStep >= 2 && (
+            <div className="animate-in fade-in slide-in-from-bottom-1 duration-300">
+              <CategoryBlock
+                title="Assets"
+                sections={assetsData}
+                totalLabel="Total Assets"
+                totalGifi="2599"
+                totalAmount={grandTotals.totalAssets}
+              />
+            </div>
+          )}
+
+          {/* Liabilities */}
+          {revealStep >= 3 && (
+            <div className="animate-in fade-in slide-in-from-bottom-1 duration-300">
+              <CategoryBlock
+                title="Liabilities"
+                sections={liabilitiesData}
+                totalLabel="Total Liabilities"
+                totalGifi="3499"
+                totalAmount={grandTotals.totalLiabilities}
+              />
+            </div>
+          )}
+
+          {/* Shareholder Equity */}
+          {revealStep >= 4 && (
+            <div className="animate-in fade-in slide-in-from-bottom-1 duration-300">
+              <CategoryBlock
+                title="Shareholder Equity"
+                sections={equityData}
+                totalLabel="Total Shareholder Equity"
+                totalGifi="3620"
+                totalAmount={grandTotals.totalEquity}
+              />
+            </div>
+          )}
+
+          {/* Total Liabilities & Equity footer */}
+          {revealStep >= 4 && (
+            <div className="flex items-center bg-[hsl(210_40%_94%)] px-4 py-3 pr-4 border-t border-[hsl(210_25%_82%)]/50 animate-in fade-in slide-in-from-bottom-1 duration-300">
+              <span className="text-base font-bold text-foreground flex-1">Total Liabilities and Shareholder Equity</span>
+              <span className="text-base text-muted-foreground font-mono w-[100px] shrink-0 text-right whitespace-nowrap">3640</span>
+              <span className="text-base font-bold tabular-nums text-foreground w-[120px] shrink-0 text-right pl-6">{grandTotals.totalLiabEquity}</span>
+            </div>
+          )}
         </div>
       )}
 
