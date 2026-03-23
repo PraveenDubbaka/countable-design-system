@@ -473,6 +473,7 @@ export function TrialBalanceGIFIResponse({ revealStep }: TrialBalanceGIFIRespons
                 totalLabel="Total Shareholder Equity"
                 totalGifi="3620"
                 totalAmount={grandTotals.totalEquity}
+                allExpanded={allExpanded}
               />
             </div>
           )}
