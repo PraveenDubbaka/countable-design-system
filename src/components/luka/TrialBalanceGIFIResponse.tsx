@@ -211,7 +211,7 @@ function CollapsibleSection({
     <div>
       {/* Section header row */}
       <button
-        onClick={() => hasContent && setExpanded(!expanded)}
+        onClick={() => hasContent && setLocalExpanded(!localExpanded)}
         className={cn(
           "w-full flex items-center gap-2 text-left transition-colors pr-4",
           "hover:bg-muted/40",
