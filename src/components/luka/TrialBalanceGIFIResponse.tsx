@@ -228,15 +228,15 @@ function CollapsibleSection({
           />
         )}
         <span className={cn(
-          "text-sm font-semibold text-foreground flex-1",
+          "text-base font-semibold text-foreground flex-1",
           depth >= 2 && "font-medium"
         )}>
           {section.title}
         </span>
-        <span className="text-xs text-muted-foreground font-mono w-16 shrink-0 text-right">
+        <span className="text-base text-muted-foreground font-mono w-[100px] shrink-0 text-right whitespace-nowrap">
           {section.gifiRange || ""}
         </span>
-        <span className="w-[110px] shrink-0 pl-4" />
+        <span className="w-[120px] shrink-0 pl-6" />
       </button>
 
       {/* Expanded content */}
@@ -254,12 +254,12 @@ function CollapsibleSection({
               className="flex items-center border-b border-[hsl(210_25%_82%)]/30 hover:bg-muted/20 transition-colors pr-4"
               style={{ paddingLeft: `${32 + depth * 16 + (line.indent || 0) * 16}px` }}
             >
-              <span className="text-sm text-foreground flex-1 py-2">{line.name}</span>
-              <span className="text-xs text-muted-foreground font-mono w-16 shrink-0 text-right py-2">
+              <span className="text-base text-foreground flex-1 py-2">{line.name}</span>
+              <span className="text-base text-muted-foreground font-mono w-[100px] shrink-0 text-right py-2 whitespace-nowrap">
                 {line.gifi || ""}
               </span>
               <span className={cn(
-                "text-sm tabular-nums py-2 text-right w-[110px] shrink-0 pl-4",
+                "text-base tabular-nums py-2 text-right w-[120px] shrink-0 pl-6",
                 line.amount.startsWith("-") ? "text-destructive" : "text-foreground"
               )}>
                 {line.amount}
@@ -273,11 +273,11 @@ function CollapsibleSection({
               className="flex items-center bg-muted/30 border-b border-[hsl(210_25%_82%)]/50 font-semibold pr-4"
               style={{ paddingLeft: `${32 + depth * 16}px` }}
             >
-              <span className="text-sm text-foreground flex-1 py-2.5">{section.total.label}</span>
-              <span className="text-xs text-muted-foreground font-mono w-16 shrink-0 text-right py-2.5">
+              <span className="text-base text-foreground flex-1 py-2.5">{section.total.label}</span>
+              <span className="text-base text-muted-foreground font-mono w-[100px] shrink-0 text-right py-2.5 whitespace-nowrap">
                 {section.total.gifi || ""}
               </span>
-              <span className="text-sm tabular-nums py-2.5 text-right w-[110px] shrink-0 pl-4 text-foreground font-semibold">
+              <span className="text-base tabular-nums py-2.5 text-right w-[120px] shrink-0 pl-6 text-foreground font-semibold">
                 {section.total.amount}
               </span>
             </div>
@@ -318,8 +318,8 @@ function CategoryBlock({
           )}
         />
         <span className="text-base font-semibold text-foreground flex-1 text-left">{title}</span>
-        <span className="text-xs text-muted-foreground font-mono w-16 shrink-0 text-right" />
-        <span className="text-base font-semibold tabular-nums text-foreground w-[110px] shrink-0 text-right pl-4">{totalAmount}</span>
+        <span className="text-base text-muted-foreground font-mono w-[100px] shrink-0 text-right" />
+        <span className="text-base font-semibold tabular-nums text-foreground w-[120px] shrink-0 text-right pl-6">{totalAmount}</span>
       </button>
 
       {expanded && (
@@ -330,11 +330,11 @@ function CategoryBlock({
 
           {/* Grand total row */}
           <div className="flex items-center bg-muted/40 px-4 py-3 border-t border-[hsl(210_25%_82%)] pr-4">
-            <span className="text-sm font-bold text-foreground flex-1">{totalLabel}</span>
-            <span className="text-xs text-muted-foreground font-mono w-16 shrink-0 text-right">
+            <span className="text-base font-bold text-foreground flex-1">{totalLabel}</span>
+            <span className="text-base text-muted-foreground font-mono w-[100px] shrink-0 text-right whitespace-nowrap">
               {totalGifi || ""}
             </span>
-            <span className="text-sm font-bold tabular-nums text-foreground w-[110px] shrink-0 text-right pl-4">{totalAmount}</span>
+            <span className="text-base font-bold tabular-nums text-foreground w-[120px] shrink-0 text-right pl-6">{totalAmount}</span>
           </div>
         </div>
       )}
@@ -415,9 +415,9 @@ export function TrialBalanceGIFIResponse({ revealStep }: TrialBalanceGIFIRespons
               <span className="text-base font-semibold text-foreground flex-1">S100 – Balance Sheet</span>
             </div>
             <div className="flex items-center bg-[hsl(210_40%_96%)] px-4 py-2 border-t border-[hsl(210_25%_82%)]/50 pr-4">
-              <span className="text-xs font-medium text-muted-foreground uppercase tracking-wider flex-1">Account</span>
-              <span className="text-xs font-medium text-muted-foreground uppercase tracking-wider w-16 shrink-0 text-right">GIFI</span>
-              <span className="text-xs font-medium text-muted-foreground uppercase tracking-wider w-[110px] shrink-0 text-right pl-4">Amount</span>
+              <span className="text-base font-medium text-muted-foreground uppercase tracking-wider flex-1">Account</span>
+              <span className="text-base font-medium text-muted-foreground uppercase tracking-wider w-[100px] shrink-0 text-right">GIFI</span>
+              <span className="text-base font-medium text-muted-foreground uppercase tracking-wider w-[120px] shrink-0 text-right pl-6">Amount</span>
             </div>
           </div>
         </div>
@@ -467,8 +467,8 @@ export function TrialBalanceGIFIResponse({ revealStep }: TrialBalanceGIFIRespons
         <div className="border border-[hsl(210_25%_82%)] rounded-lg overflow-hidden shadow-sm animate-in fade-in slide-in-from-bottom-1 duration-300">
           <div className="flex items-center bg-[hsl(210_40%_94%)] px-4 py-3 pr-4">
             <span className="text-base font-bold text-foreground flex-1">Total Liabilities and Shareholder Equity</span>
-            <span className="text-xs text-muted-foreground font-mono w-16 shrink-0 text-right">3640</span>
-            <span className="text-base font-bold tabular-nums text-foreground w-[110px] shrink-0 text-right pl-4">{grandTotals.totalLiabEquity}</span>
+            <span className="text-base text-muted-foreground font-mono w-[100px] shrink-0 text-right whitespace-nowrap">3640</span>
+            <span className="text-base font-bold tabular-nums text-foreground w-[120px] shrink-0 text-right pl-6">{grandTotals.totalLiabEquity}</span>
           </div>
         </div>
       )}
