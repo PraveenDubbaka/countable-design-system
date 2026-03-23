@@ -254,12 +254,12 @@ function CollapsibleSection({
               className="flex items-center border-b border-[hsl(210_25%_82%)]/30 hover:bg-muted/20 transition-colors pr-4"
               style={{ paddingLeft: `${32 + depth * 16 + (line.indent || 0) * 16}px` }}
             >
-              <span className="text-sm text-foreground flex-1 py-2">{line.name}</span>
-              <span className="text-xs text-muted-foreground font-mono w-16 shrink-0 text-right py-2">
+              <span className="text-base text-foreground flex-1 py-2">{line.name}</span>
+              <span className="text-base text-muted-foreground font-mono w-[100px] shrink-0 text-right py-2 whitespace-nowrap">
                 {line.gifi || ""}
               </span>
               <span className={cn(
-                "text-sm tabular-nums py-2 text-right w-[110px] shrink-0 pl-4",
+                "text-base tabular-nums py-2 text-right w-[120px] shrink-0 pl-6",
                 line.amount.startsWith("-") ? "text-destructive" : "text-foreground"
               )}>
                 {line.amount}
