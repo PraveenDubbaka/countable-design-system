@@ -459,6 +459,7 @@ export function TrialBalanceGIFIResponse({ revealStep }: TrialBalanceGIFIRespons
                 totalLabel="Total Liabilities"
                 totalGifi="3499"
                 totalAmount={grandTotals.totalLiabilities}
+                allExpanded={allExpanded}
               />
             </div>
           )}
