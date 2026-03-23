@@ -113,10 +113,9 @@ export function AskLukaOverlay({ open, onOpenChange }: AskLukaOverlayProps) {
     setTimeout(() => {
       setIsThinking(false);
 
-      if (isGrossMargin) {
-        setRichResponseType("gross-margin");
+      if (isGrossMargin || isTbGifi) {
+        setRichResponseType(isGrossMargin ? "gross-margin" : "tb-gifi");
         setAiResponse("__rich__");
-        // Progressive reveal: 6 steps (0-5), 600ms apart
         let step = 0;
         const reveal = () => {
           setRevealStep(step);
