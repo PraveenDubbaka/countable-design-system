@@ -298,14 +298,17 @@ function CategoryBlock({
   totalLabel,
   totalGifi,
   totalAmount,
+  allExpanded,
 }: {
   title: string;
   sections: GIFISection[];
   totalLabel: string;
   totalGifi?: string;
   totalAmount: string;
+  allExpanded?: boolean;
 }) {
-  const [expanded, setExpanded] = useState(false);
+  const [localExpanded, setLocalExpanded] = useState(false);
+  const expanded = allExpanded !== undefined ? allExpanded : localExpanded;
 
   return (
     <div>
