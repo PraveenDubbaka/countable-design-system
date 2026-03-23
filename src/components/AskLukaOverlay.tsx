@@ -538,6 +538,11 @@ export function AskLukaOverlay({ open, onOpenChange }: AskLukaOverlayProps) {
                               <GrossMarginResponse revealStep={revealStep} />
                               {revealStep >= 5 && <LukaResponseActions />}
                             </>
+                          ) : richResponseType === "tb-gifi" ? (
+                            <>
+                              <TrialBalanceGIFIResponse revealStep={revealStep} />
+                              {revealStep >= 5 && <LukaResponseActions />}
+                            </>
                           ) : (
                             <>
                               <div className="text-base text-foreground leading-relaxed whitespace-pre-wrap">
