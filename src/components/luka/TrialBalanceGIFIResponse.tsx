@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { cn } from "@/lib/utils";
-import { ChevronRight, Zap } from "lucide-react";
+import { ChevronRight, ChevronsUpDown, Zap } from "lucide-react";
 
 /* ── GIFI Data ── */
 
@@ -197,18 +197,21 @@ const grandTotals = {
 function CollapsibleSection({
   section,
   depth = 0,
+  allExpanded,
 }: {
   section: GIFISection;
   depth?: number;
+  allExpanded?: boolean;
 }) {
-  const [expanded, setExpanded] = useState(false);
+  const [localExpanded, setLocalExpanded] = useState(false);
+  const expanded = allExpanded !== undefined ? allExpanded : localExpanded;
   const hasContent = (section.lines && section.lines.length > 0) || (section.children && section.children.length > 0);
 
   return (
     <div>
       {/* Section header row */}
       <button
-        onClick={() => hasContent && setExpanded(!expanded)}
+        onClick={() => hasContent && setLocalExpanded(!localExpanded)}
         className={cn(
           "w-full flex items-center gap-2 text-left transition-colors pr-4",
           "hover:bg-muted/40",
@@ -244,7 +247,7 @@ function CollapsibleSection({
         <div className="animate-in fade-in slide-in-from-top-1 duration-200">
           {/* Child sections */}
           {section.children?.map((child) => (
-            <CollapsibleSection key={child.id} section={child} depth={depth + 1} />
+            <CollapsibleSection key={child.id} section={child} depth={depth + 1} allExpanded={allExpanded} />
           ))}
 
           {/* Line items */}
@@ -295,20 +298,23 @@ function CategoryBlock({
   totalLabel,
   totalGifi,
   totalAmount,
+  allExpanded,
 }: {
   title: string;
   sections: GIFISection[];
   totalLabel: string;
   totalGifi?: string;
   totalAmount: string;
+  allExpanded?: boolean;
 }) {
-  const [expanded, setExpanded] = useState(false);
+  const [localExpanded, setLocalExpanded] = useState(false);
+  const expanded = allExpanded !== undefined ? allExpanded : localExpanded;
 
   return (
     <div>
       {/* Category header */}
       <button
-        onClick={() => setExpanded(!expanded)}
+        onClick={() => setLocalExpanded(!localExpanded)}
         className="w-full flex items-center gap-2 px-4 py-3 bg-[hsl(210_40%_96%)] hover:bg-[hsl(210_40%_94%)] transition-colors border-b border-[hsl(210_25%_82%)]/50"
       >
         <ChevronRight
@@ -325,7 +331,7 @@ function CategoryBlock({
       {expanded && (
         <div className="animate-in fade-in slide-in-from-top-1 duration-200">
           {sections.map((section) => (
-            <CollapsibleSection key={section.id} section={section} depth={0} />
+            <CollapsibleSection key={section.id} section={section} depth={0} allExpanded={allExpanded} />
           ))}
 
           {/* Grand total row */}
@@ -398,6 +404,12 @@ export interface TrialBalanceGIFIResponseProps {
 }
 
 export function TrialBalanceGIFIResponse({ revealStep }: TrialBalanceGIFIResponseProps) {
+  const [allExpanded, setAllExpanded] = useState<boolean | undefined>(undefined);
+
+  const toggleAll = () => {
+    setAllExpanded(prev => prev === true ? false : true);
+  };
+
   return (
     <div className="space-y-4 w-full min-w-0">
       {/* Intro text */}
@@ -412,6 +424,13 @@ export function TrialBalanceGIFIResponse({ revealStep }: TrialBalanceGIFIRespons
         <div className="border border-[hsl(210_25%_82%)] rounded-lg overflow-hidden shadow-sm animate-in fade-in slide-in-from-bottom-1 duration-300">
           {/* Column headers */}
           <div className="flex items-center bg-[hsl(210_40%_96%)] px-4 py-2 pr-4 border-b border-[hsl(210_25%_82%)]/50">
+            <button
+              onClick={toggleAll}
+              className="mr-2 p-1 rounded hover:bg-muted/60 transition-colors text-muted-foreground hover:text-foreground"
+              title={allExpanded ? "Collapse all" : "Expand all"}
+            >
+              <ChevronsUpDown className="h-4 w-4" />
+            </button>
             <span className="text-base font-medium text-muted-foreground capitalize tracking-wider flex-1">Account</span>
             <span className="text-base font-medium text-muted-foreground capitalize tracking-wider w-[100px] shrink-0 text-right">GIFI</span>
             <span className="text-base font-medium text-muted-foreground capitalize tracking-wider w-[120px] shrink-0 text-right pl-6">Amount</span>
@@ -426,6 +445,7 @@ export function TrialBalanceGIFIResponse({ revealStep }: TrialBalanceGIFIRespons
                 totalLabel="Total Assets"
                 totalGifi="2599"
                 totalAmount={grandTotals.totalAssets}
+                allExpanded={allExpanded}
               />
             </div>
           )}
@@ -439,6 +459,7 @@ export function TrialBalanceGIFIResponse({ revealStep }: TrialBalanceGIFIRespons
                 totalLabel="Total Liabilities"
                 totalGifi="3499"
                 totalAmount={grandTotals.totalLiabilities}
+                allExpanded={allExpanded}
               />
             </div>
           )}
@@ -452,6 +473,7 @@ export function TrialBalanceGIFIResponse({ revealStep }: TrialBalanceGIFIRespons
                 totalLabel="Total Shareholder Equity"
                 totalGifi="3620"
                 totalAmount={grandTotals.totalEquity}
+                allExpanded={allExpanded}
               />
             </div>
           )}
