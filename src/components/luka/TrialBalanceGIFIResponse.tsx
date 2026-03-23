@@ -228,7 +228,7 @@ function CollapsibleSection({
           />
         )}
         <span className={cn(
-          "text-sm font-semibold text-foreground flex-1",
+          "text-base font-semibold text-foreground flex-1",
           depth >= 2 && "font-medium"
         )}>
           {section.title}
