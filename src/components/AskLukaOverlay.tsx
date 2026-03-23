@@ -70,7 +70,7 @@ export function AskLukaOverlay({ open, onOpenChange }: AskLukaOverlayProps) {
   const [aiResponse, setAiResponse] = useState<string | null>(null);
   const [displayedResponse, setDisplayedResponse] = useState("");
   const [isStreaming, setIsStreaming] = useState(false);
-  const [richResponseType, setRichResponseType] = useState<"gross-margin" | null>(null);
+  const [richResponseType, setRichResponseType] = useState<"gross-margin" | "tb-gifi" | null>(null);
   const [revealStep, setRevealStep] = useState(-1);
   const inputRef = useRef<HTMLInputElement>(null);
   const streamRef = useRef<number | null>(null);
