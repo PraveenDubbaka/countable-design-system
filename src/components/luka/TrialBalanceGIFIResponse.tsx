@@ -305,11 +305,11 @@ function CategoryBlock({
   const [expanded, setExpanded] = useState(false);
 
   return (
-    <div className="border border-[hsl(210_25%_82%)] rounded-lg overflow-hidden shadow-sm">
+    <div>
       {/* Category header */}
       <button
         onClick={() => setExpanded(!expanded)}
-        className="w-full flex items-center gap-2 px-4 py-3 bg-[hsl(210_40%_96%)] hover:bg-[hsl(210_40%_94%)] transition-colors"
+        className="w-full flex items-center gap-2 px-4 py-3 bg-[hsl(210_40%_96%)] hover:bg-[hsl(210_40%_94%)] transition-colors border-b border-[hsl(210_25%_82%)]/50"
       >
         <ChevronRight
           className={cn(
@@ -329,7 +329,7 @@ function CategoryBlock({
           ))}
 
           {/* Grand total row */}
-          <div className="flex items-center bg-muted/40 px-4 py-3 border-t border-[hsl(210_25%_82%)] pr-4">
+          <div className="flex items-center bg-muted/40 px-4 py-3 border-b border-[hsl(210_25%_82%)]/50 pr-4">
             <span className="text-base font-bold text-foreground flex-1">{totalLabel}</span>
             <span className="text-base text-muted-foreground font-mono w-[100px] shrink-0 text-right whitespace-nowrap">
               {totalGifi || ""}
