@@ -233,10 +233,10 @@ function CollapsibleSection({
         )}>
           {section.title}
         </span>
-        <span className="text-xs text-muted-foreground font-mono w-16 shrink-0 text-right">
+        <span className="text-base text-muted-foreground font-mono w-[100px] shrink-0 text-right whitespace-nowrap">
           {section.gifiRange || ""}
         </span>
-        <span className="w-[110px] shrink-0 pl-4" />
+        <span className="w-[120px] shrink-0 pl-6" />
       </button>
 
       {/* Expanded content */}
