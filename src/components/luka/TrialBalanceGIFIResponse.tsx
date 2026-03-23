@@ -11,6 +11,7 @@ interface GIFILine {
   indent?: number;
 }
 
+
 interface GIFISection {
   id: string;
   title: string;
