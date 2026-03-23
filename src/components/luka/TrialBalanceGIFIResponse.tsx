@@ -16,7 +16,7 @@ interface GIFISection {
   id: string;
   title: string;
   gifiRange?: string;
-  lines: GIFILine[];
+  lines?: GIFILine[];
   total?: { label: string; gifi?: string; amount: string };
   children?: GIFISection[];
 }
