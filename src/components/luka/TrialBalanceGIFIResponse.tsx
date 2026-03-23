@@ -247,7 +247,7 @@ function CollapsibleSection({
         <div className="animate-in fade-in slide-in-from-top-1 duration-200">
           {/* Child sections */}
           {section.children?.map((child) => (
-            <CollapsibleSection key={child.id} section={child} depth={depth + 1} />
+            <CollapsibleSection key={child.id} section={child} depth={depth + 1} allExpanded={allExpanded} />
           ))}
 
           {/* Line items */}
