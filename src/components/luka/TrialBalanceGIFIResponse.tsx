@@ -411,10 +411,7 @@ export function TrialBalanceGIFIResponse({ revealStep }: TrialBalanceGIFIRespons
       {revealStep >= 1 && (
         <div className="animate-in fade-in slide-in-from-bottom-1 duration-300">
           <div className="border border-[hsl(210_25%_82%)] rounded-lg overflow-hidden shadow-sm mb-4">
-            <div className="flex items-center bg-[hsl(210_40%_96%)] px-4 py-3 pr-4">
-              <span className="text-base font-semibold text-foreground flex-1">S100 – Balance Sheet</span>
-            </div>
-            <div className="flex items-center bg-[hsl(210_40%_96%)] px-4 py-2 border-t border-[hsl(210_25%_82%)]/50 pr-4">
+            <div className="flex items-center bg-[hsl(210_40%_96%)] px-4 py-2 pr-4">
               <span className="text-base font-medium text-muted-foreground uppercase tracking-wider flex-1">Account</span>
               <span className="text-base font-medium text-muted-foreground uppercase tracking-wider w-[100px] shrink-0 text-right">GIFI</span>
               <span className="text-base font-medium text-muted-foreground uppercase tracking-wider w-[120px] shrink-0 text-right pl-6">Amount</span>
