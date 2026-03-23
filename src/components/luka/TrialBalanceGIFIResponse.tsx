@@ -250,18 +250,16 @@ function CollapsibleSection({
           {section.lines?.map((line, i) => (
             <div
               key={i}
-              className="flex items-center border-b border-[hsl(210_25%_82%)]/30 hover:bg-muted/20 transition-colors"
+              className="flex items-center border-b border-[hsl(210_25%_82%)]/30 hover:bg-muted/20 transition-colors pr-4"
               style={{ paddingLeft: `${32 + depth * 16 + (line.indent || 0) * 16}px` }}
             >
-              {line.gifi && (
-                <span className="text-xs text-muted-foreground font-mono w-12 shrink-0 mr-2 py-2">
-                  {line.gifi}
-                </span>
-              )}
               <span className="text-sm text-foreground flex-1 py-2">{line.name}</span>
+              <span className="text-xs text-muted-foreground font-mono w-16 shrink-0 text-right py-2">
+                {line.gifi || ""}
+              </span>
               <span className={cn(
-                "text-sm tabular-nums px-4 py-2 text-right min-w-[100px]",
-                line.amount.startsWith("-") ? "text-red-600" : "text-foreground"
+                "text-sm tabular-nums py-2 text-right w-[110px] shrink-0 pl-4",
+                line.amount.startsWith("-") ? "text-destructive" : "text-foreground"
               )}>
                 {line.amount}
               </span>
