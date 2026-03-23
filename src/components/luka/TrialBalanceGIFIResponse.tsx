@@ -314,7 +314,7 @@ function CategoryBlock({
     <div>
       {/* Category header */}
       <button
-        onClick={() => setExpanded(!expanded)}
+        onClick={() => setLocalExpanded(!localExpanded)}
         className="w-full flex items-center gap-2 px-4 py-3 bg-[hsl(210_40%_96%)] hover:bg-[hsl(210_40%_94%)] transition-colors border-b border-[hsl(210_25%_82%)]/50"
       >
         <ChevronRight
