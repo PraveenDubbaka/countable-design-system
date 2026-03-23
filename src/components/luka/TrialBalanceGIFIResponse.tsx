@@ -330,11 +330,11 @@ function CategoryBlock({
 
           {/* Grand total row */}
           <div className="flex items-center bg-muted/40 px-4 py-3 border-t border-[hsl(210_25%_82%)] pr-4">
-            <span className="text-sm font-bold text-foreground flex-1">{totalLabel}</span>
-            <span className="text-xs text-muted-foreground font-mono w-16 shrink-0 text-right">
+            <span className="text-base font-bold text-foreground flex-1">{totalLabel}</span>
+            <span className="text-base text-muted-foreground font-mono w-[100px] shrink-0 text-right whitespace-nowrap">
               {totalGifi || ""}
             </span>
-            <span className="text-sm font-bold tabular-nums text-foreground w-[110px] shrink-0 text-right pl-4">{totalAmount}</span>
+            <span className="text-base font-bold tabular-nums text-foreground w-[120px] shrink-0 text-right pl-6">{totalAmount}</span>
           </div>
         </div>
       )}
