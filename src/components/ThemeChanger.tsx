@@ -548,7 +548,8 @@ const themes: ColorTheme[] = [
       "--countable-blue": "213 80% 27%",
       "--countable-blue-light": "207 65% 48%",
       "--countable-blue-dark": "213 80% 20%",
-      "--sidebar-secondary-bg": "213 25% 92%",
+      "--sidebar-secondary-bg": "213 60% 25%",
+      "--sidebar-secondary-gradient": "linear-gradient(180deg, #10427A 0%, #0A3159 100%)",
     },
   },
 ];
