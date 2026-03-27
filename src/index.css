@@ -998,7 +998,7 @@
   }
   
   .sidebar-nav {
-    background-color: hsl(var(--sidebar-bg));
+    background: var(--sidebar-gradient, hsl(var(--sidebar-bg)));
   }
   
   .bg-sidebar {
