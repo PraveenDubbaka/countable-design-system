@@ -548,7 +548,8 @@ const themes: ColorTheme[] = [
       "--countable-blue": "213 80% 27%",
       "--countable-blue-light": "207 65% 48%",
       "--countable-blue-dark": "213 80% 20%",
-      "--sidebar-secondary-bg": "213 25% 92%",
+      "--sidebar-secondary-bg": "213 60% 25%",
+      "--sidebar-secondary-gradient": "linear-gradient(180deg, #10427A 0%, #0A3159 100%)",
     },
   },
 ];
@@ -564,9 +565,12 @@ function getStoredTheme(): string {
 
 function applyTheme(theme: ColorTheme) {
   const root = document.documentElement;
-  // Clear gradient if the new theme doesn't have one
+  // Clear gradients if the new theme doesn't have them
   if (!theme.variables["--sidebar-gradient"]) {
     root.style.removeProperty("--sidebar-gradient");
+  }
+  if (!theme.variables["--sidebar-secondary-gradient"]) {
+    root.style.removeProperty("--sidebar-secondary-gradient");
   }
   Object.entries(theme.variables).forEach(([key, value]) => {
     root.style.setProperty(key, value);
