@@ -519,8 +519,8 @@ const themes: ColorTheme[] = [
     name: "Deep Gradient",
     preview: ["#10427A", "#0A3159"],
     variables: {
-      "--sidebar-bg": "213 80% 27%",
-      "--sidebar-gradient": "linear-gradient(180deg, #10427A 0%, #0A3159 100%)",
+      "--sidebar-bg": "213 75% 19%",
+      "--sidebar-gradient": "linear-gradient(180deg, #0C2D55 0%, #0C2D55 100%)",
       "--sidebar-muted": "213 70% 34%",
       "--sidebar-accent": "207 71% 38%",
       "--m3-primary": "213 80% 27%",
