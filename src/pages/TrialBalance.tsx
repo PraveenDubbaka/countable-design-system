@@ -358,7 +358,7 @@ export default function TrialBalance() {
                     <td className="px-3 py-2 text-right text-foreground whitespace-nowrap">{row.changePct}</td>
                     <td className="px-3 py-2 text-right text-foreground whitespace-nowrap">{row.py2}</td>
                     <td className="px-3 py-2 text-right whitespace-nowrap">
-                      <span className="text-primary font-medium">{formatNumber(row.mapNo)}</span>
+                      <span className="text-link font-medium">{formatNumber(row.mapNo)}</span>
                     </td>
                     <td className="px-3 py-2 text-center whitespace-nowrap">
                       <span className="text-primary font-medium">{row.ls}</span>
