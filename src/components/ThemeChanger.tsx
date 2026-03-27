@@ -151,6 +151,7 @@ const themes: ColorTheme[] = [
       "--countable-blue": "210 56% 49%",
       "--countable-blue-light": "210 60% 58%",
       "--countable-blue-dark": "210 56% 35%",
+      "--sidebar-secondary-bg": "210 30% 94%",
     },
   },
   {
