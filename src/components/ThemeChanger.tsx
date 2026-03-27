@@ -576,9 +576,9 @@ function applyTheme(theme: ColorTheme) {
 
 function clearTheme() {
   const root = document.documentElement;
-  Object.keys(themes[0].variables).forEach((key) => {
-    root.style.removeProperty(key);
-  });
+  const allKeys = new Set<string>();
+  themes.forEach((t) => Object.keys(t.variables).forEach((k) => allKeys.add(k)));
+  allKeys.forEach((key) => root.style.removeProperty(key));
 }
 
 export function ThemeChanger() {
