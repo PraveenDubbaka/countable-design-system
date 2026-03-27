@@ -253,7 +253,7 @@ export default function CreateEngagement() {
           <div className="flex items-center gap-3 mb-6">
             <button 
               onClick={() => navigate("/engagements")}
-              className="flex items-center gap-1 text-primary hover:underline text-sm font-medium"
+              className="flex items-center gap-1 text-link hover:underline text-sm font-medium"
             >
               <ArrowLeft className="h-4 w-4 icon-arrow" />
               Back

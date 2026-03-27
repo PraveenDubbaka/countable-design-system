@@ -184,7 +184,7 @@ export default function Teams() {
                           <StatusBadge status={member.status} />
                         </td>
                         <td className="px-6 py-2 whitespace-nowrap">
-                          <a href={`mailto:${member.email}`} className="text-sm text-primary hover:underline">
+                          <a href={`mailto:${member.email}`} className="text-sm text-link hover:underline">
                             {member.email}
                           </a>
                         </td>

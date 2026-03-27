@@ -162,7 +162,7 @@ export default function Engagements() {
                       <td className="px-6 py-2 text-sm text-foreground whitespace-nowrap">{engagement.type}</td>
                       <td className="px-6 py-2 text-sm text-muted-foreground whitespace-nowrap">{engagement.yearEnd}</td>
                       <td className="px-6 py-2 whitespace-nowrap">
-                        <span className="text-sm text-primary cursor-pointer hover:underline">
+                        <span className="text-sm text-link cursor-pointer hover:underline">
                           {engagement.team}
                         </span>
                       </td>
