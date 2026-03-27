@@ -369,7 +369,7 @@ export default function TrialBalance() {
                       <span className="text-link font-medium">{row.cfCategory}</span>
                     </td>
                     <td className="px-3 py-2 text-center whitespace-nowrap">
-                      <span className="text-primary font-medium">{row.taxCode}</span>
+                      <span className="text-link font-medium">{row.taxCode}</span>
                     </td>
                     <td className="px-3 py-2 text-right text-foreground whitespace-nowrap">{row.fxRate.toFixed(2)}</td>
                   </tr>
