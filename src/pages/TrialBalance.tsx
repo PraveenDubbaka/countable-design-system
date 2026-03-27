@@ -351,7 +351,7 @@ export default function TrialBalance() {
                     <td className="px-3 py-2 text-foreground whitespace-nowrap">{row.description}</td>
                     <td className="px-3 py-2 text-right text-foreground whitespace-nowrap">{formatNumber(row.original)}</td>
                     <td className="px-3 py-2 text-right whitespace-nowrap">
-                      <span className="text-primary font-medium">{formatNumber(row.adj)}</span>
+                      <span className="text-link font-medium">{formatNumber(row.adj)}</span>
                     </td>
                     <td className="px-3 py-2 text-right text-foreground whitespace-nowrap">{formatNumber(row.final)}</td>
                     <td className="px-3 py-2 text-right text-foreground whitespace-nowrap">{formatNumber(row.py1)}</td>
