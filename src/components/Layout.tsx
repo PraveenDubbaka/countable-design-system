@@ -1,5 +1,6 @@
 import { Sidebar } from '@/components/Sidebar';
 import { GlobalHeader } from '@/components/GlobalHeader';
+import { ThemeChanger } from '@/components/ThemeChanger';
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -29,6 +30,8 @@ export function Layout({ children, title, showActions = false, showBackButton = 
           {children}
         </main>
       </div>
+
+      <ThemeChanger />
     </div>
   );
 }
