@@ -1095,7 +1095,7 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
             ref={panelRef}
             style={{ width: isTemplatesPanelCollapsed ? 0 : panelWidth }}
             className={cn(
-              "flex flex-col relative z-40 transition-all group/templates sidebar-secondary-panel",
+              `flex flex-col relative z-40 transition-all group/templates sidebar-secondary-panel ${hasDarkSecondary ? 'sidebar-dark-theme' : ''}`,
               isTemplatesPanelCollapsed 
                 ? "overflow-hidden shadow-none bg-transparent border-r-0" 
                 : "shadow-md bg-[#f1f1f3] dark:from-muted dark:to-card border-r border-border rounded-tl-2xl rounded-bl-2xl",
