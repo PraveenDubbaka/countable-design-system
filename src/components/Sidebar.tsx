@@ -783,7 +783,7 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
       {location.pathname.startsWith("/engagements/") && location.pathname !== "/engagements/create" && <>
           <div 
             ref={panelRef}
-            style={{ width: isTemplatesPanelCollapsed ? 0 : panelWidth }}
+            style={{ width: isTemplatesPanelCollapsed ? 0 : panelWidth, backgroundColor: isTemplatesPanelCollapsed ? 'transparent' : 'hsl(var(--sidebar-secondary-bg))' }}
             className={cn(
               "flex flex-col relative z-40 transition-all group/templates",
               isTemplatesPanelCollapsed 
