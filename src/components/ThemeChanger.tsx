@@ -43,6 +43,7 @@ const themes: ColorTheme[] = [
       "--countable-blue": "207 71% 38%",
       "--countable-blue-light": "207 65% 48%",
       "--countable-blue-dark": "207 90% 24%",
+      "--sidebar-secondary-bg": "240 3% 94%",
     },
   },
   {
@@ -78,6 +79,7 @@ const themes: ColorTheme[] = [
       "--countable-blue": "207 65% 48%",
       "--countable-blue-light": "207 70% 58%",
       "--countable-blue-dark": "207 71% 38%",
+      "--sidebar-secondary-bg": "210 35% 94%",
     },
   },
   {
@@ -113,6 +115,7 @@ const themes: ColorTheme[] = [
       "--countable-blue": "207 71% 38%",
       "--countable-blue-light": "207 65% 48%",
       "--countable-blue-dark": "207 90% 24%",
+      "--sidebar-secondary-bg": "207 30% 94%",
     },
   },
   {
@@ -148,6 +151,7 @@ const themes: ColorTheme[] = [
       "--countable-blue": "210 56% 49%",
       "--countable-blue-light": "210 60% 58%",
       "--countable-blue-dark": "210 56% 35%",
+      "--sidebar-secondary-bg": "210 30% 94%",
     },
   },
   {
@@ -183,6 +187,7 @@ const themes: ColorTheme[] = [
       "--countable-blue": "263 62% 60%",
       "--countable-blue-light": "263 65% 70%",
       "--countable-blue-dark": "263 60% 40%",
+      "--sidebar-secondary-bg": "263 20% 94%",
     },
   },
   {
@@ -218,6 +223,7 @@ const themes: ColorTheme[] = [
       "--countable-blue": "207 65% 48%",
       "--countable-blue-light": "207 70% 58%",
       "--countable-blue-dark": "207 71% 38%",
+      "--sidebar-secondary-bg": "213 30% 94%",
     },
   },
   {
@@ -253,6 +259,7 @@ const themes: ColorTheme[] = [
       "--countable-blue": "40 66% 47%",
       "--countable-blue-light": "40 70% 58%",
       "--countable-blue-dark": "40 65% 35%",
+      "--sidebar-secondary-bg": "38 25% 94%",
     },
   },
   {
@@ -288,6 +295,7 @@ const themes: ColorTheme[] = [
       "--countable-blue": "270 55% 68%",
       "--countable-blue-light": "270 60% 75%",
       "--countable-blue-dark": "270 50% 50%",
+      "--sidebar-secondary-bg": "270 20% 94%",
     },
   },
 ];
