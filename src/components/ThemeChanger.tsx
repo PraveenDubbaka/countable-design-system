@@ -564,6 +564,10 @@ function getStoredTheme(): string {
 
 function applyTheme(theme: ColorTheme) {
   const root = document.documentElement;
+  // Clear gradient if the new theme doesn't have one
+  if (!theme.variables["--sidebar-gradient"]) {
+    root.style.removeProperty("--sidebar-gradient");
+  }
   Object.entries(theme.variables).forEach(([key, value]) => {
     root.style.setProperty(key, value);
   });
