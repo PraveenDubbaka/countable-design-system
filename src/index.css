@@ -1000,6 +1000,10 @@
   .sidebar-nav {
     background: var(--sidebar-gradient, hsl(var(--sidebar-bg)));
   }
+
+  .sidebar-secondary-panel:not(.bg-transparent) {
+    background: var(--sidebar-secondary-gradient, hsl(var(--sidebar-secondary-bg))) !important;
+  }
   
   .bg-sidebar {
     background-color: hsl(var(--sidebar-bg));
