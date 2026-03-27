@@ -386,7 +386,7 @@ export default function Clients() {
                         </td>
                         <td className="px-6 py-2 text-sm text-foreground whitespace-nowrap"></td>
                         <td className="px-6 py-2 whitespace-nowrap">
-                          <a href="#" className="text-sm text-primary font-medium cursor-pointer hover:underline">
+                          <a href="#" className="text-sm text-link font-medium cursor-pointer hover:underline">
                             {client.entityName}
                           </a>
                         </td>
