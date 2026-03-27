@@ -582,11 +582,11 @@ export function ThemeChanger() {
       </button>
 
       {/* Panel */}
-      <div className="w-[180px] bg-card border border-border border-r-0 rounded-l-xl shadow-elevation-4 py-4 px-3">
+      <div className="w-[180px] bg-card border border-border border-r-0 rounded-l-xl shadow-elevation-4 py-4 px-3 max-h-[80vh] flex flex-col">
         <h3 className="text-label-sm text-muted-foreground uppercase tracking-wider mb-3 px-1">
           Themes
         </h3>
-        <div className="grid grid-cols-2 gap-2">
+        <div className="grid grid-cols-2 gap-2 overflow-y-auto flex-1 pr-1">
           {themes.map((theme) => (
             <button
               key={theme.id}
@@ -599,7 +599,6 @@ export function ThemeChanger() {
               )}
               title={theme.name}
             >
-              {/* Dual swatch showing sidebar + primary */}
               <div className="relative w-9 h-9 rounded-full overflow-hidden shadow-sm border border-border/50">
                 <div
                   className="absolute inset-0 w-1/2 h-full"
