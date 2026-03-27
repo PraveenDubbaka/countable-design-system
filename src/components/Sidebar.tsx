@@ -715,6 +715,18 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
   const [expandedSections, setExpandedSections] = useState<Set<string>>(new Set(["co"]));
   const [allSectionsExpanded, setAllSectionsExpanded] = useState(false);
   const [showSignoffs, setShowSignoffs] = useState(false);
+  const [hasDarkSecondary, setHasDarkSecondary] = useState(false);
+
+  useEffect(() => {
+    const checkGradient = () => {
+      const val = getComputedStyle(document.documentElement).getPropertyValue('--sidebar-secondary-gradient').trim();
+      setHasDarkSecondary(!!val && val !== 'none');
+    };
+    checkGradient();
+    const observer = new MutationObserver(checkGradient);
+    observer.observe(document.documentElement, { attributes: true, attributeFilter: ['style'] });
+    return () => observer.disconnect();
+  }, []);
   
   // Determine if a secondary panel is visible and expanded (for dark mode gradient)
   const isOnEngagementDetail = location.pathname.startsWith("/engagements/") && location.pathname !== "/engagements/create";
@@ -785,7 +797,7 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
             ref={panelRef}
             style={{ width: isTemplatesPanelCollapsed ? 0 : panelWidth }}
             className={cn(
-              "flex flex-col relative z-40 transition-all group/templates sidebar-secondary-panel",
+              `flex flex-col relative z-40 transition-all group/templates sidebar-secondary-panel ${hasDarkSecondary ? 'sidebar-dark-theme' : ''}`,
               isTemplatesPanelCollapsed 
                 ? "overflow-hidden shadow-none bg-transparent" 
                 : "shadow-md rounded-tl-2xl rounded-bl-2xl",
@@ -1083,7 +1095,7 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
             ref={panelRef}
             style={{ width: isTemplatesPanelCollapsed ? 0 : panelWidth }}
             className={cn(
-              "flex flex-col relative z-40 transition-all group/templates sidebar-secondary-panel",
+              `flex flex-col relative z-40 transition-all group/templates sidebar-secondary-panel ${hasDarkSecondary ? 'sidebar-dark-theme' : ''}`,
               isTemplatesPanelCollapsed 
                 ? "overflow-hidden shadow-none bg-transparent border-r-0" 
                 : "shadow-md bg-[#f1f1f3] dark:from-muted dark:to-card border-r border-border rounded-tl-2xl rounded-bl-2xl",

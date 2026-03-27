@@ -1004,6 +1004,46 @@
   .sidebar-secondary-panel:not(.bg-transparent) {
     background: var(--sidebar-secondary-gradient, hsl(var(--sidebar-secondary-bg))) !important;
   }
+
+  .sidebar-secondary-panel.sidebar-dark-theme:not(.bg-transparent) {
+    color: rgba(255, 255, 255, 0.92) !important;
+  }
+
+  .sidebar-secondary-panel.sidebar-dark-theme:not(.bg-transparent) .text-primary,
+  .sidebar-secondary-panel.sidebar-dark-theme:not(.bg-transparent) .text-foreground,
+  .sidebar-secondary-panel.sidebar-dark-theme:not(.bg-transparent) .text-muted-foreground {
+    color: rgba(255, 255, 255, 0.85) !important;
+  }
+
+  .sidebar-secondary-panel.sidebar-dark-theme:not(.bg-transparent) .text-primary {
+    color: rgba(255, 255, 255, 0.95) !important;
+  }
+
+  .sidebar-secondary-panel.sidebar-dark-theme:not(.bg-transparent) .hover\:bg-muted:hover {
+    background-color: rgba(255, 255, 255, 0.1) !important;
+  }
+
+  .sidebar-secondary-panel.sidebar-dark-theme:not(.bg-transparent) input {
+    background-color: rgba(255, 255, 255, 0.1) !important;
+    border-color: rgba(255, 255, 255, 0.2) !important;
+    color: white !important;
+  }
+
+  .sidebar-secondary-panel.sidebar-dark-theme:not(.bg-transparent) input::placeholder {
+    color: rgba(255, 255, 255, 0.5) !important;
+  }
+
+  .sidebar-secondary-panel.sidebar-dark-theme:not(.bg-transparent) .icon-search {
+    color: rgba(255, 255, 255, 0.5) !important;
+  }
+
+  .sidebar-secondary-panel.sidebar-dark-theme:not(.bg-transparent) svg {
+    color: rgba(255, 255, 255, 0.7);
+  }
+
+  .sidebar-secondary-panel.sidebar-dark-theme:not(.bg-transparent) .bg-primary\/10 {
+    background-color: rgba(255, 255, 255, 0.1) !important;
+  }
   
   .bg-sidebar {
     background-color: hsl(var(--sidebar-bg));
