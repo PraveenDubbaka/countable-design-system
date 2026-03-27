@@ -223,6 +223,7 @@ const themes: ColorTheme[] = [
       "--countable-blue": "207 65% 48%",
       "--countable-blue-light": "207 70% 58%",
       "--countable-blue-dark": "207 71% 38%",
+      "--sidebar-secondary-bg": "213 30% 94%",
     },
   },
   {
