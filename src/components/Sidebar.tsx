@@ -715,6 +715,18 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
   const [expandedSections, setExpandedSections] = useState<Set<string>>(new Set(["co"]));
   const [allSectionsExpanded, setAllSectionsExpanded] = useState(false);
   const [showSignoffs, setShowSignoffs] = useState(false);
+  const [hasDarkSecondary, setHasDarkSecondary] = useState(false);
+
+  useEffect(() => {
+    const checkGradient = () => {
+      const val = getComputedStyle(document.documentElement).getPropertyValue('--sidebar-secondary-gradient').trim();
+      setHasDarkSecondary(!!val && val !== 'none');
+    };
+    checkGradient();
+    const observer = new MutationObserver(checkGradient);
+    observer.observe(document.documentElement, { attributes: true, attributeFilter: ['style'] });
+    return () => observer.disconnect();
+  }, []);
   
   // Determine if a secondary panel is visible and expanded (for dark mode gradient)
   const isOnEngagementDetail = location.pathname.startsWith("/engagements/") && location.pathname !== "/engagements/create";
