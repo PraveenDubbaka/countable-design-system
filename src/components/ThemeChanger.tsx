@@ -81,6 +81,9 @@ const themes: ColorTheme[] = [
       "--countable-blue-dark": "207 71% 38%",
       "--sidebar-secondary-bg": "210 35% 94%",
     },
+  },
+  {
+    id: "deep-blue",
     name: "Deep Blue",
     preview: ["#074075", "#1C63A6"],
     variables: {
