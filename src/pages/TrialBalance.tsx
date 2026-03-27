@@ -351,25 +351,25 @@ export default function TrialBalance() {
                     <td className="px-3 py-2 text-foreground whitespace-nowrap">{row.description}</td>
                     <td className="px-3 py-2 text-right text-foreground whitespace-nowrap">{formatNumber(row.original)}</td>
                     <td className="px-3 py-2 text-right whitespace-nowrap">
-                      <span className="text-primary font-medium">{formatNumber(row.adj)}</span>
+                      <span className="text-link font-medium">{formatNumber(row.adj)}</span>
                     </td>
                     <td className="px-3 py-2 text-right text-foreground whitespace-nowrap">{formatNumber(row.final)}</td>
                     <td className="px-3 py-2 text-right text-foreground whitespace-nowrap">{formatNumber(row.py1)}</td>
                     <td className="px-3 py-2 text-right text-foreground whitespace-nowrap">{row.changePct}</td>
                     <td className="px-3 py-2 text-right text-foreground whitespace-nowrap">{row.py2}</td>
                     <td className="px-3 py-2 text-right whitespace-nowrap">
-                      <span className="text-primary font-medium">{formatNumber(row.mapNo)}</span>
+                      <span className="text-link font-medium">{formatNumber(row.mapNo)}</span>
                     </td>
                     <td className="px-3 py-2 text-center whitespace-nowrap">
-                      <span className="text-primary font-medium">{row.ls}</span>
+                      <span className="text-link font-medium">{row.ls}</span>
                     </td>
                     <td className="px-3 py-2 text-foreground whitespace-nowrap">{row.grouping}</td>
                     <td className="px-3 py-2 text-foreground whitespace-nowrap">{row.subGrouping}</td>
                     <td className="px-3 py-2 text-center whitespace-nowrap">
-                      <span className="text-primary font-medium">{row.cfCategory}</span>
+                      <span className="text-link font-medium">{row.cfCategory}</span>
                     </td>
                     <td className="px-3 py-2 text-center whitespace-nowrap">
-                      <span className="text-primary font-medium">{row.taxCode}</span>
+                      <span className="text-link font-medium">{row.taxCode}</span>
                     </td>
                     <td className="px-3 py-2 text-right text-foreground whitespace-nowrap">{row.fxRate.toFixed(2)}</td>
                   </tr>
