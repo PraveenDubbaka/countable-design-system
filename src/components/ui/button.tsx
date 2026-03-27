@@ -47,7 +47,7 @@ const buttonVariants = cva(
           "active:bg-primary/[0.12] active:scale-[0.98]",
         ].join(" "),
         // M3 Link Button
-        link: "text-primary underline-offset-4 hover:underline hover:scale-[1.01]",
+        link: "text-link underline-offset-4 hover:underline hover:scale-[1.01]",
         // M3 Elevated Button with lift effect
         elevated: [
           "bg-surface-container-low text-primary shadow-[0_2px_8px_hsl(213_40%_20%/0.08)]",

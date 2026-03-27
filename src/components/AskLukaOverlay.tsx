@@ -324,7 +324,7 @@ export function AskLukaOverlay({ open, onOpenChange }: AskLukaOverlayProps) {
                   <div className="px-4 py-3 border-t border-border">
                     <button
                       onClick={() => setShowAllRecent(!showAllRecent)}
-                      className="text-sm font-semibold text-primary hover:underline"
+                      className="text-sm font-semibold text-link hover:underline"
                     >
                       {showAllRecent ? "Show Less" : "Show More"}
                     </button>

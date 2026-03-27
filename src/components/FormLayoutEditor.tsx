@@ -407,7 +407,7 @@ export function FormLayoutEditor({ formLayout, onUpdate, isPreviewMode }: FormLa
             ))}
             <button
               onClick={() => handleUpdateElement(index, { options: [...(element.options || []), `Option ${(element.options?.length || 0) + 1}`] })}
-              className="text-xs text-primary hover:underline font-medium"
+              className="text-xs text-link hover:underline font-medium"
             >
               + Add option
             </button>

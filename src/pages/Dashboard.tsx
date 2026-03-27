@@ -281,7 +281,7 @@ export default function Dashboard() {
                 <tbody className="divide-y divide-border">
                   {engagements.map((engagement, idx) => <tr key={engagement.id} className="hover:bg-muted/50 transition-colors group max-h-[50px]" style={{ maxHeight: '50px' }}>
                       <td className="px-6 py-2 whitespace-nowrap">
-                        <span className="text-sm text-primary font-medium cursor-pointer hover:underline" onClick={() => navigate(`/engagements/${engagement.id}`)}>
+                        <span className="text-sm text-link font-medium cursor-pointer hover:underline" onClick={() => navigate(`/engagements/${engagement.id}`)}>
                           {engagement.id}
                         </span>
                       </td>

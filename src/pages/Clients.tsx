@@ -386,7 +386,7 @@ export default function Clients() {
                         </td>
                         <td className="px-6 py-2 text-sm text-foreground whitespace-nowrap"></td>
                         <td className="px-6 py-2 whitespace-nowrap">
-                          <a href="#" className="text-sm text-primary font-medium cursor-pointer hover:underline">
+                          <a href="#" className="text-sm text-link font-medium cursor-pointer hover:underline">
                             {client.entityName}
                           </a>
                         </td>
@@ -398,9 +398,9 @@ export default function Clients() {
                           <IntegrationCell type={client.integration} />
                         </td>
                         <td className="px-6 py-2 text-sm text-foreground whitespace-nowrap">{client.contactName}</td>
-                        <td className="px-6 py-2 text-sm text-primary cursor-pointer hover:underline whitespace-nowrap">{client.email}</td>
+                        <td className="px-6 py-2 text-sm text-link cursor-pointer hover:underline whitespace-nowrap">{client.email}</td>
                         <td className="px-6 py-2 whitespace-nowrap">
-                          <span className="text-sm text-primary cursor-pointer hover:underline">{client.repository}</span>
+                          <span className="text-sm text-link cursor-pointer hover:underline">{client.repository}</span>
                         </td>
                         <td className="px-6 py-2 whitespace-nowrap">
                           <div className="flex items-center gap-1">
