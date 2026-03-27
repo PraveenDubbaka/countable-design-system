@@ -783,12 +783,17 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
       {location.pathname.startsWith("/engagements/") && location.pathname !== "/engagements/create" && <>
           <div 
             ref={panelRef}
-            style={{ width: isTemplatesPanelCollapsed ? 0 : panelWidth, background: isTemplatesPanelCollapsed ? 'transparent' : 'var(--sidebar-secondary-gradient, hsl(var(--sidebar-secondary-bg)))' }}
+            style={{ 
+              width: isTemplatesPanelCollapsed ? 0 : panelWidth, 
+              background: isTemplatesPanelCollapsed 
+                ? 'transparent' 
+                : (getComputedStyle(document.documentElement).getPropertyValue('--sidebar-secondary-gradient').trim() || 'hsl(var(--sidebar-secondary-bg))')
+            }}
             className={cn(
-              "flex flex-col relative z-40 transition-all group/templates",
+              "flex flex-col relative z-40 transition-all group/templates sidebar-secondary-panel",
               isTemplatesPanelCollapsed 
                 ? "overflow-hidden shadow-none bg-transparent" 
-                : "shadow-md dark:bg-gradient-to-b dark:from-muted dark:to-card rounded-tl-2xl rounded-bl-2xl",
+                : "shadow-md rounded-tl-2xl rounded-bl-2xl",
               isResizing && "transition-none"
             )}
           >
