@@ -514,6 +514,43 @@ const themes: ColorTheme[] = [
       "--sidebar-secondary-bg": "270 18% 93%",
     },
   },
+  {
+    id: "gradient-deep-navy",
+    name: "Deep Gradient",
+    preview: ["#10427A", "#0A3159"],
+    variables: {
+      "--sidebar-bg": "213 80% 27%",
+      "--sidebar-gradient": "linear-gradient(180deg, #10427A 0%, #0A3159 100%)",
+      "--sidebar-muted": "213 70% 34%",
+      "--sidebar-accent": "207 71% 38%",
+      "--m3-primary": "213 80% 27%",
+      "--m3-on-primary": "0 0% 100%",
+      "--m3-primary-container": "213 85% 88%",
+      "--m3-on-primary-container": "213 80% 18%",
+      "--m3-secondary": "213 76% 19%",
+      "--m3-on-secondary": "0 0% 100%",
+      "--m3-secondary-container": "213 70% 91%",
+      "--m3-on-secondary-container": "213 76% 14%",
+      "--m3-tertiary": "213 76% 19%",
+      "--m3-on-tertiary": "0 0% 100%",
+      "--m3-tertiary-container": "213 55% 86%",
+      "--m3-on-tertiary-container": "213 70% 12%",
+      "--m3-surface-variant": "210 40% 96%",
+      "--m3-on-surface-variant": "213 50% 15%",
+      "--m3-surface-container-low": "210 50% 98%",
+      "--m3-surface-container": "210 45% 96%",
+      "--m3-surface-container-high": "210 40% 94%",
+      "--m3-surface-container-highest": "210 35% 92%",
+      "--m3-outline": "210 25% 55%",
+      "--m3-outline-variant": "210 30% 82%",
+      "--link": "209 100% 29%",
+      "--countable-navy": "213 76% 19%",
+      "--countable-blue": "213 80% 27%",
+      "--countable-blue-light": "207 65% 48%",
+      "--countable-blue-dark": "213 80% 20%",
+      "--sidebar-secondary-bg": "213 25% 92%",
+    },
+  },
 ];
 
 const THEME_STORAGE_KEY = "luka-color-theme";
@@ -527,6 +564,10 @@ function getStoredTheme(): string {
 
 function applyTheme(theme: ColorTheme) {
   const root = document.documentElement;
+  // Clear gradient if the new theme doesn't have one
+  if (!theme.variables["--sidebar-gradient"]) {
+    root.style.removeProperty("--sidebar-gradient");
+  }
   Object.entries(theme.variables).forEach(([key, value]) => {
     root.style.setProperty(key, value);
   });
@@ -535,9 +576,9 @@ function applyTheme(theme: ColorTheme) {
 
 function clearTheme() {
   const root = document.documentElement;
-  Object.keys(themes[0].variables).forEach((key) => {
-    root.style.removeProperty(key);
-  });
+  const allKeys = new Set<string>();
+  themes.forEach((t) => Object.keys(t.variables).forEach((k) => allKeys.add(k)));
+  allKeys.forEach((key) => root.style.removeProperty(key));
 }
 
 export function ThemeChanger() {
