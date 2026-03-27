@@ -153,7 +153,7 @@ export default function Engagements() {
                       <td className="px-6 py-2 whitespace-nowrap">
                         <span 
                           onClick={() => navigate(`/engagements/${engagement.id}`)}
-                          className="text-sm text-primary font-medium cursor-pointer hover:underline"
+                          className="text-sm text-link font-medium cursor-pointer hover:underline"
                         >
                           {engagement.id}
                         </span>
