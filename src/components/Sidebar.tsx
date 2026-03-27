@@ -721,13 +721,7 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
   const isOnTemplatesPage = location.pathname !== "/dashboard" && location.pathname !== "/clients" && location.pathname !== "/engagements" && location.pathname !== "/teams" && location.pathname !== "/design-system" && !location.pathname.startsWith("/engagements/");
   const hasSecondaryPanelExpanded = (isOnEngagementDetail || isOnTemplatesPage) && !isTemplatesPanelCollapsed;
   
-  const sidebarStyle: React.CSSProperties = {
-    background: getComputedStyle(document.documentElement).getPropertyValue('--sidebar-gradient').trim()
-      ? `var(--sidebar-gradient)`
-      : 'hsl(var(--sidebar-bg))',
-  };
-
-  return <div className={`flex h-screen relative group/sidebar ${hasSecondaryPanelExpanded ? "sidebar-panel-expanded" : ""}`} style={sidebarStyle}>
+  return <div className={`flex h-screen relative group/sidebar ${hasSecondaryPanelExpanded ? "sidebar-panel-expanded" : ""}`} style={{ background: 'var(--sidebar-gradient, hsl(var(--sidebar-bg)))' }}>
       {/* Icon sidebar - dark navy with curved corner, expands on click only */}
       <div className={`sidebar-nav relative flex flex-col py-4 gap-2 transition-all duration-300 ease-in-out ${isNavExpanded ? "w-56 items-start px-3" : "w-14 items-center"}`}>
         {/* Floating collapse/expand toggle on nav border */}
