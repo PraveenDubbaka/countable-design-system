@@ -642,8 +642,14 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
         <div className={`flex items-center gap-2 py-1.5 px-2 rounded-md cursor-pointer hover:bg-muted transition-colors text-sm ${depth > 0 ? "ml-6" : ""}`} onClick={() => template.type === "folder" && toggleFolder(template.id)}>
           <Checkbox className="h-4 w-4 border-border" />
           {template.type === "folder" ? <>
-              {hasChildren ? template.isExpanded ? <ChevronDown className="h-4 w-4 text-muted-foreground flex-shrink-0 icon-chevron-down" /> : <ChevronRight className="h-4 w-4 text-muted-foreground flex-shrink-0 icon-arrow-right" /> : <span className="w-4 flex-shrink-0" />}
-              <Folder className="h-4 w-4 text-primary flex-shrink-0 icon-folder" />
+               <span className="relative flex-shrink-0 w-4 h-4 flex items-center justify-center">
+                 <Folder className="h-4 w-4 text-primary" />
+                 {hasChildren && (
+                   <span className="absolute inset-0 flex items-center justify-center text-[8px] font-bold text-primary">
+                     {template.isExpanded ? '−' : '+'}
+                   </span>
+                 )}
+               </span>
             </> : <>
               <span className="w-4 flex-shrink-0" />
               <ChecklistIcon className="h-4 w-4 flex-shrink-0" />
