@@ -15,8 +15,8 @@ const buttonVariants = cva(
         ].join(" "),
         destructive: [
           "bg-destructive text-destructive-foreground",
-          "hover:bg-destructive/85",
-          "active:bg-destructive/75",
+          "hover:bg-destructive/75",
+          "active:bg-destructive/65",
         ].join(" "),
         outline: [
           "border border-border bg-background text-primary",
