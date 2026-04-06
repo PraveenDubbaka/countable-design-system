@@ -1132,7 +1132,7 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
                   return <span>Select...</span>;
                 })()}
                   </div>
-                  <ChevronDown className="h-4 w-4 text-muted-foreground icon-chevron-down" />
+                  <ChevronDown className={cn("h-4 w-4", hasDarkSecondary ? "text-white/60" : "text-muted-foreground")} />
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="start" className="w-[200px]">
                   {dropdownItems.map(item => <DropdownMenuItem key={item.id} onClick={() => handleDropdownSelect(item.id)} className="flex items-center justify-between cursor-pointer">
