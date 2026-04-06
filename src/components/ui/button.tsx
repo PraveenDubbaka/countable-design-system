@@ -37,8 +37,8 @@ const buttonVariants = cva(
         link: "text-link underline-offset-4 hover:underline",
         elevated: [
           "bg-surface-container-low text-primary shadow-sm",
-          "hover:bg-primary/[0.08]",
-          "active:bg-primary/[0.15]",
+          "hover:bg-primary/[0.14]",
+          "active:bg-primary/[0.22]",
         ].join(" "),
         tonal: [
           "bg-secondary-container text-on-secondary-container",
