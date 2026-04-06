@@ -1147,19 +1147,15 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
             </div>
 
             <div className={`flex mb-2 ${isTemplatesPanelCollapsed ? "hidden" : ""}`} style={{
-          borderBottom: "1px solid #DDE1E9"
-        }}>
-              <button onClick={() => setActiveTab("firm")} className={`flex-1 py-2 px-1 text-sm font-medium transition-all text-center whitespace-nowrap ${activeTab === "firm" ? "text-primary border-b-[3px]" : "text-muted-foreground hover:text-foreground border-b-[3px] border-transparent"}`} style={activeTab === "firm" ? {
-            borderBottomColor: "#0A3159"
-          } : undefined}>
-                My Templates
-              </button>
-              <button onClick={() => setActiveTab("master")} className={`flex-1 py-2 px-1 text-sm font-medium transition-all text-center whitespace-nowrap ${activeTab === "master" ? "text-primary border-b-[3px]" : "text-muted-foreground hover:text-foreground border-b-[3px] border-transparent"}`} style={activeTab === "master" ? {
-            borderBottomColor: "#0A3159"
-          } : undefined}>
-                Global Templates
-              </button>
-            </div>
+           borderBottom: "1px solid rgba(255,255,255,0.15)"
+         }}>
+               <button onClick={() => setActiveTab("firm")} className={`flex-1 py-2 px-1 text-sm font-medium transition-all text-center whitespace-nowrap border-b-[3px] ${activeTab === "firm" ? "text-white border-white" : "text-white/50 hover:text-white/80 border-transparent"}`}>
+                 My Templates
+               </button>
+               <button onClick={() => setActiveTab("master")} className={`flex-1 py-2 px-1 text-sm font-medium transition-all text-center whitespace-nowrap border-b-[3px] ${activeTab === "master" ? "text-white border-white" : "text-white/50 hover:text-white/80 border-transparent"}`}>
+                 Global Templates
+               </button>
+             </div>
 
             <div className={`p-3 pt-1 ${isTemplatesPanelCollapsed ? "hidden" : ""}`}>
               <div className="flex gap-2">
