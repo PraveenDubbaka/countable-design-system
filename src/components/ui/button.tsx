@@ -31,8 +31,8 @@ const buttonVariants = cva(
         ].join(" "),
         ghost: [
           "text-primary",
-          "hover:bg-primary/[0.08]",
-          "active:bg-primary/[0.15]",
+          "hover:bg-primary/[0.14]",
+          "active:bg-primary/[0.22]",
         ].join(" "),
         link: "text-link underline-offset-4 hover:underline",
         elevated: [
