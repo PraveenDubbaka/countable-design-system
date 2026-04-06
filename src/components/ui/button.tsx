@@ -20,8 +20,8 @@ const buttonVariants = cva(
         ].join(" "),
         outline: [
           "border border-border bg-background text-primary",
-          "hover:bg-primary/[0.14] hover:border-primary/40",
-          "active:bg-primary/[0.22]",
+          "hover:bg-primary/[0.14] hover:border-primary",
+          "active:bg-primary/[0.22] active:border-primary",
           "focus-visible:border-primary",
         ].join(" "),
         secondary: [
