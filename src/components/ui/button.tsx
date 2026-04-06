@@ -10,8 +10,8 @@ const buttonVariants = cva(
       variant: {
         default: [
           "bg-primary text-primary-foreground",
-          "hover:bg-primary/85",
-          "active:bg-primary/75",
+          "hover:bg-primary/75",
+          "active:bg-primary/65",
         ].join(" "),
         destructive: [
           "bg-destructive text-destructive-foreground",
