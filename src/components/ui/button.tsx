@@ -26,8 +26,8 @@ const buttonVariants = cva(
         ].join(" "),
         secondary: [
           "bg-muted text-secondary-foreground border border-border",
-          "hover:bg-muted/70",
-          "active:bg-muted/50",
+          "hover:bg-muted/55",
+          "active:bg-muted/40",
         ].join(" "),
         ghost: [
           "text-primary",
