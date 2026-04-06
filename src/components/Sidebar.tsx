@@ -1118,7 +1118,7 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
             <div className={`p-4 ${isTemplatesPanelCollapsed ? "hidden" : ""}`}>
               <h2 className="font-semibold text-lg mb-3 text-primary sidebar-dark-theme:text-white" style={{ color: hasDarkSecondary ? 'white' : undefined }}>Templates</h2>
               <DropdownMenu>
-                <DropdownMenuTrigger className="w-full px-3 py-2 bg-card/80 rounded-lg text-sm flex items-center justify-between focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors shadow-sm border border-border">
+                <DropdownMenuTrigger className={cn("w-full px-3 py-2 rounded-lg text-sm flex items-center justify-between focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors shadow-sm border", hasDarkSecondary ? "bg-white/10 border-white/20 text-white" : "bg-card/80 border-border text-foreground")}>
                   <div className="flex items-center gap-2">
                     {(() => {
                   const selected = dropdownItems.find(item => item.id === selectedDropdown);
