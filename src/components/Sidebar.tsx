@@ -1116,7 +1116,7 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
             )}
           >
             <div className={`p-4 ${isTemplatesPanelCollapsed ? "hidden" : ""}`}>
-              <h2 className="font-semibold text-primary text-lg mb-3">Templates</h2>
+              <h2 className="font-semibold text-lg mb-3 text-primary sidebar-dark-theme:text-white" style={{ color: hasDarkSecondary ? 'white' : undefined }}>Templates</h2>
               <DropdownMenu>
                 <DropdownMenuTrigger className="w-full px-3 py-2 bg-card/80 rounded-lg text-sm flex items-center justify-between focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors shadow-sm border border-border">
                   <div className="flex items-center gap-2">
