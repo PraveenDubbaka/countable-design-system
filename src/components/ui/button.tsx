@@ -4,63 +4,46 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/utils";
 
 const buttonVariants = cva(
-  // Base styles with micro-animations - 10px border radius
-  "inline-flex items-center justify-center gap-2 whitespace-nowrap text-label-lg font-medium ring-offset-background transition-all duration-200 ease-emphasized focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-[18px] [&_svg]:shrink-0 relative overflow-hidden cursor-pointer select-none rounded-[10px]",
+  "inline-flex items-center justify-center gap-2 whitespace-nowrap text-label-lg font-medium ring-offset-background transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-[18px] [&_svg]:shrink-0 cursor-pointer select-none rounded-[10px]",
   {
     variants: {
       variant: {
-        // M3 Filled Button with pop-out effect
         default: [
           "bg-primary text-primary-foreground",
-          // Pop-out hover effect
-          "hover:scale-[1.02] hover:shadow-[0_8px_25px_hsl(213_40%_20%/0.15)]",
-          // Active/pressed state - slightly smaller
-          "active:scale-[0.98] active:shadow-[0_2px_8px_hsl(213_40%_20%/0.1)]",
-          // State layers
-          "before:absolute before:inset-0 before:bg-primary-foreground/0 hover:before:bg-primary-foreground/[0.08] active:before:bg-primary-foreground/[0.12]",
+          "hover:bg-primary/85",
+          "active:bg-primary/75",
         ].join(" "),
-        // M3 Destructive with pop-out
         destructive: [
           "bg-destructive text-destructive-foreground",
-          "hover:scale-[1.02] hover:shadow-[0_8px_25px_hsl(0_50%_30%/0.2)]",
-          "active:scale-[0.98] active:shadow-[0_2px_8px_hsl(0_50%_30%/0.1)]",
-          "before:absolute before:inset-0 before:bg-destructive-foreground/0 hover:before:bg-destructive-foreground/[0.08] active:before:bg-destructive-foreground/[0.12]",
+          "hover:bg-destructive/85",
+          "active:bg-destructive/75",
         ].join(" "),
-        // M3 Outlined Button with pop-out (theme-aware)
         outline: [
           "border border-border bg-background text-primary",
-          "hover:scale-[1.02] hover:border-primary/40 hover:bg-primary/[0.05] hover:shadow-[0_8px_25px_hsl(213_40%_20%/0.1)]",
-          "active:scale-[0.98] active:bg-primary/[0.12]",
+          "hover:bg-primary/[0.08] hover:border-primary/40",
+          "active:bg-primary/[0.15]",
           "focus-visible:border-primary",
         ].join(" "),
-        // M3 Secondary/Tonal with pop-out (theme-aware)
         secondary: [
           "bg-muted text-secondary-foreground border border-border",
-          "hover:scale-[1.02] hover:shadow-[0_8px_25px_hsl(213_40%_20%/0.12)]",
-          "active:scale-[0.98] active:shadow-[0_2px_8px_hsl(213_40%_20%/0.08)]",
-          "before:absolute before:inset-0 before:bg-secondary-foreground/0 hover:before:bg-secondary-foreground/[0.08] active:before:bg-secondary-foreground/[0.12]",
+          "hover:bg-muted/70",
+          "active:bg-muted/50",
         ].join(" "),
-        // M3 Ghost/Text Button with highlight
         ghost: [
           "text-primary",
-          "hover:bg-primary/[0.08] hover:scale-[1.02]",
-          "active:bg-primary/[0.12] active:scale-[0.98]",
+          "hover:bg-primary/[0.08]",
+          "active:bg-primary/[0.15]",
         ].join(" "),
-        // M3 Link Button
-        link: "text-link underline-offset-4 hover:underline hover:scale-[1.01]",
-        // M3 Elevated Button with lift effect
+        link: "text-link underline-offset-4 hover:underline",
         elevated: [
-          "bg-surface-container-low text-primary shadow-[0_2px_8px_hsl(213_40%_20%/0.08)]",
-          "hover:scale-[1.02] hover:-translate-y-0.5 hover:shadow-[0_12px_32px_hsl(213_40%_20%/0.15)]",
-          "active:scale-[0.98] active:translate-y-0 active:shadow-[0_4px_12px_hsl(213_40%_20%/0.1)]",
-          "before:absolute before:inset-0 before:bg-primary/0 hover:before:bg-primary/[0.08] active:before:bg-primary/[0.12]",
+          "bg-surface-container-low text-primary shadow-sm",
+          "hover:bg-primary/[0.08]",
+          "active:bg-primary/[0.15]",
         ].join(" "),
-        // M3 Tonal Icon Button with pop-out
         tonal: [
           "bg-secondary-container text-on-secondary-container",
-          "hover:scale-[1.02] hover:shadow-[0_8px_25px_hsl(213_40%_20%/0.12)]",
-          "active:scale-[0.98] active:shadow-[0_2px_8px_hsl(213_40%_20%/0.08)]",
-          "before:absolute before:inset-0 before:bg-on-secondary-container/0 hover:before:bg-on-secondary-container/[0.08] active:before:bg-on-secondary-container/[0.12]",
+          "hover:bg-secondary-container/80",
+          "active:bg-secondary-container/65",
         ].join(" "),
       },
       size: {
