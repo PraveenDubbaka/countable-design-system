@@ -1163,11 +1163,11 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
                   <Search className={cn("absolute left-2.5 top-1/2 -translate-y-1/2 h-4 w-4", hasDarkSecondary ? "text-white/50" : "text-muted-foreground")} />
                    <Input placeholder="Search" className={cn("pl-8 h-8 text-sm border-0 shadow-sm", hasDarkSecondary ? "bg-white/10 text-white placeholder:text-white/40" : "bg-card/80")} value={searchQuery} onChange={e => setSearchQuery(e.target.value)} />
                 </div>
-                <button className="h-9 w-9 rounded-md flex items-center justify-center bg-primary/10 hover:bg-primary/20 transition-colors">
-                  <svg width="17" height="17" viewBox="0 0 17 17" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M9.72214 6.94412L14.5833 2.08301M14.5833 2.08301H10.4166M14.5833 2.08301V6.24967M6.94436 9.7219L2.08325 14.583M2.08325 14.583H6.24992M2.08325 14.583L2.08325 10.4163" stroke="#074075" strokeWidth="1.38889" strokeLinecap="round" strokeLinejoin="round" />
-                  </svg>
-                </button>
+                <button className={cn("h-9 w-9 rounded-md flex items-center justify-center transition-colors", hasDarkSecondary ? "bg-white/10 hover:bg-white/20" : "bg-primary/10 hover:bg-primary/20")}>
+                   <svg width="17" height="17" viewBox="0 0 17 17" fill="none" xmlns="http://www.w3.org/2000/svg">
+                     <path d="M9.72214 6.94412L14.5833 2.08301M14.5833 2.08301H10.4166M14.5833 2.08301V6.24967M6.94436 9.7219L2.08325 14.583M2.08325 14.583H6.24992M2.08325 14.583L2.08325 10.4163" stroke={hasDarkSecondary ? "white" : "#074075"} strokeWidth="1.38889" strokeLinecap="round" strokeLinejoin="round" />
+                   </svg>
+                 </button>
                 {activeTab === "firm" && (
                   <>
                     <Button size="icon" className="h-9 w-9 bg-primary hover:bg-primary/90 shadow-sm">
