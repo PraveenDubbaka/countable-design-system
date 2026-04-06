@@ -1028,12 +1028,19 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
                           }
                         }}
                       >
-                        {hasChildren ? (
-                          isOpen ? <ChevronDown className="h-3.5 w-3.5 text-muted-foreground flex-shrink-0" /> : <ChevronRight className="h-3.5 w-3.5 text-muted-foreground flex-shrink-0" />
+                        {isLeaf ? (
+                          <>
+                            <span className="w-3.5 flex-shrink-0" />
+                            {renderIcon(node.icon)}
+                          </>
                         ) : (
-                          <span className="w-3.5 flex-shrink-0" />
+                          <span className="relative flex-shrink-0 w-4 h-4 flex items-center justify-center">
+                            <Folder className="h-4 w-4 text-primary" />
+                            <span className="absolute inset-0 flex items-center justify-center text-[8px] font-bold text-primary leading-none" style={{ marginTop: '1px' }}>
+                              {isOpen ? '−' : '+'}
+                            </span>
+                          </span>
                         )}
-                        {renderIcon(isLeaf ? node.icon : "folder")}
                         {node.code && <span className="font-semibold text-primary">{node.code}</span>}
                         <span className="truncate flex-1 text-foreground">{node.label}</span>
                         {node.hasPlus && <Plus className="h-4 w-4 text-muted-foreground hover:text-foreground flex-shrink-0" />}
