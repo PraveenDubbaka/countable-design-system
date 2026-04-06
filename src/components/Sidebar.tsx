@@ -1173,9 +1173,9 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
                     <Button size="icon" className="h-9 w-9 bg-primary hover:bg-primary/90 shadow-sm">
                       <Plus className="h-4 w-4 text-primary-foreground icon-plus" />
                     </Button>
-                    <Button size="icon" variant="secondary" className="h-9 w-9 text-destructive hover:text-destructive hover:bg-card/50">
-                      <Trash2 className="h-4 w-4 icon-trash" />
-                    </Button>
+                    <Button size="icon" variant="secondary" className={cn("h-9 w-9 text-destructive hover:text-destructive", hasDarkSecondary ? "bg-white/10 hover:bg-white/20 border-0" : "hover:bg-card/50")}>
+                       <Trash2 className="h-4 w-4" />
+                     </Button>
                   </>
                 )}
                 {activeTab === "master" && (
