@@ -1116,9 +1116,9 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
             )}
           >
             <div className={`p-4 ${isTemplatesPanelCollapsed ? "hidden" : ""}`}>
-              <h2 className="font-semibold text-primary text-lg mb-3">Templates</h2>
+              <h2 className="font-semibold text-lg mb-3 text-primary sidebar-dark-theme:text-white" style={{ color: hasDarkSecondary ? 'white' : undefined }}>Templates</h2>
               <DropdownMenu>
-                <DropdownMenuTrigger className="w-full px-3 py-2 bg-card/80 rounded-lg text-sm flex items-center justify-between focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors shadow-sm border border-border">
+                <DropdownMenuTrigger className={cn("w-full px-3 py-2 rounded-lg text-sm flex items-center justify-between focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors shadow-sm border", hasDarkSecondary ? "bg-white/10 border-white/20 text-white" : "bg-card/80 border-border text-foreground")}>
                   <div className="flex items-center gap-2">
                     {(() => {
                   const selected = dropdownItems.find(item => item.id === selectedDropdown);
@@ -1132,7 +1132,7 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
                   return <span>Select...</span>;
                 })()}
                   </div>
-                  <ChevronDown className="h-4 w-4 text-muted-foreground icon-chevron-down" />
+                  <ChevronDown className={cn("h-4 w-4", hasDarkSecondary ? "text-white/60" : "text-muted-foreground")} />
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="start" className="w-[200px]">
                   {dropdownItems.map(item => <DropdownMenuItem key={item.id} onClick={() => handleDropdownSelect(item.id)} className="flex items-center justify-between cursor-pointer">
@@ -1147,12 +1147,12 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
             </div>
 
             <div className={`flex mb-2 ${isTemplatesPanelCollapsed ? "hidden" : ""}`} style={{
-           borderBottom: "1px solid rgba(255,255,255,0.15)"
+           borderBottom: hasDarkSecondary ? "1px solid rgba(255,255,255,0.15)" : "1px solid hsl(var(--border))"
          }}>
-               <button onClick={() => setActiveTab("firm")} className={`flex-1 py-2 px-1 text-sm font-medium transition-all text-center whitespace-nowrap border-b-[3px] ${activeTab === "firm" ? "text-white border-white" : "text-white/50 hover:text-white/80 border-transparent"}`}>
+               <button onClick={() => setActiveTab("firm")} className={`flex-1 py-2 px-1 text-sm font-medium transition-all text-center whitespace-nowrap border-b-[3px] ${activeTab === "firm" ? (hasDarkSecondary ? "text-white border-white" : "text-primary border-primary") : (hasDarkSecondary ? "text-white/50 hover:text-white/80" : "text-muted-foreground hover:text-foreground") + " border-transparent"}`}>
                  My Templates
                </button>
-               <button onClick={() => setActiveTab("master")} className={`flex-1 py-2 px-1 text-sm font-medium transition-all text-center whitespace-nowrap border-b-[3px] ${activeTab === "master" ? "text-white border-white" : "text-white/50 hover:text-white/80 border-transparent"}`}>
+               <button onClick={() => setActiveTab("master")} className={`flex-1 py-2 px-1 text-sm font-medium transition-all text-center whitespace-nowrap border-b-[3px] ${activeTab === "master" ? (hasDarkSecondary ? "text-white border-white" : "text-primary border-primary") : (hasDarkSecondary ? "text-white/50 hover:text-white/80" : "text-muted-foreground hover:text-foreground") + " border-transparent"}`}>
                  Global Templates
                </button>
              </div>
@@ -1160,22 +1160,22 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
             <div className={`p-3 pt-1 ${isTemplatesPanelCollapsed ? "hidden" : ""}`}>
               <div className="flex gap-2">
                 <div className="relative flex-1">
-                  <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground icon-search" />
-                  <Input placeholder="Search" className="pl-8 h-8 text-sm bg-card/80 border-0 shadow-sm" value={searchQuery} onChange={e => setSearchQuery(e.target.value)} />
+                  <Search className={cn("absolute left-2.5 top-1/2 -translate-y-1/2 h-4 w-4", hasDarkSecondary ? "text-white/50" : "text-muted-foreground")} />
+                   <Input placeholder="Search" className={cn("pl-8 h-8 text-sm border-0 shadow-sm", hasDarkSecondary ? "bg-white/10 text-white placeholder:text-white/40" : "bg-card/80")} value={searchQuery} onChange={e => setSearchQuery(e.target.value)} />
                 </div>
-                <button className="h-9 w-9 rounded-md flex items-center justify-center bg-primary/10 hover:bg-primary/20 transition-colors">
-                  <svg width="17" height="17" viewBox="0 0 17 17" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M9.72214 6.94412L14.5833 2.08301M14.5833 2.08301H10.4166M14.5833 2.08301V6.24967M6.94436 9.7219L2.08325 14.583M2.08325 14.583H6.24992M2.08325 14.583L2.08325 10.4163" stroke="#074075" strokeWidth="1.38889" strokeLinecap="round" strokeLinejoin="round" />
-                  </svg>
-                </button>
+                <button className={cn("h-9 w-9 rounded-md flex items-center justify-center transition-colors", hasDarkSecondary ? "bg-white/10 hover:bg-white/20" : "bg-primary/10 hover:bg-primary/20")}>
+                   <svg width="17" height="17" viewBox="0 0 17 17" fill="none" xmlns="http://www.w3.org/2000/svg">
+                     <path d="M9.72214 6.94412L14.5833 2.08301M14.5833 2.08301H10.4166M14.5833 2.08301V6.24967M6.94436 9.7219L2.08325 14.583M2.08325 14.583H6.24992M2.08325 14.583L2.08325 10.4163" stroke={hasDarkSecondary ? "white" : "#074075"} strokeWidth="1.38889" strokeLinecap="round" strokeLinejoin="round" />
+                   </svg>
+                 </button>
                 {activeTab === "firm" && (
                   <>
                     <Button size="icon" className="h-9 w-9 bg-primary hover:bg-primary/90 shadow-sm">
                       <Plus className="h-4 w-4 text-primary-foreground icon-plus" />
                     </Button>
-                    <Button size="icon" variant="secondary" className="h-9 w-9 text-destructive hover:text-destructive hover:bg-card/50">
-                      <Trash2 className="h-4 w-4 icon-trash" />
-                    </Button>
+                    <Button size="icon" variant="secondary" className={cn("h-9 w-9 text-destructive hover:text-destructive", hasDarkSecondary ? "bg-white/10 hover:bg-white/20 border-0" : "hover:bg-card/50")}>
+                       <Trash2 className="h-4 w-4" />
+                     </Button>
                   </>
                 )}
                 {activeTab === "master" && (
