@@ -42,8 +42,8 @@ const buttonVariants = cva(
         ].join(" "),
         tonal: [
           "bg-secondary-container text-on-secondary-container",
-          "hover:bg-secondary-container/80",
-          "active:bg-secondary-container/65",
+          "hover:bg-secondary-container/65",
+          "active:bg-secondary-container/50",
         ].join(" "),
       },
       size: {
