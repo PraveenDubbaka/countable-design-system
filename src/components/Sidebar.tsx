@@ -1160,8 +1160,8 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
             <div className={`p-3 pt-1 ${isTemplatesPanelCollapsed ? "hidden" : ""}`}>
               <div className="flex gap-2">
                 <div className="relative flex-1">
-                  <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground icon-search" />
-                  <Input placeholder="Search" className="pl-8 h-8 text-sm bg-card/80 border-0 shadow-sm" value={searchQuery} onChange={e => setSearchQuery(e.target.value)} />
+                  <Search className={cn("absolute left-2.5 top-1/2 -translate-y-1/2 h-4 w-4", hasDarkSecondary ? "text-white/50" : "text-muted-foreground")} />
+                   <Input placeholder="Search" className={cn("pl-8 h-8 text-sm border-0 shadow-sm", hasDarkSecondary ? "bg-white/10 text-white placeholder:text-white/40" : "bg-card/80")} value={searchQuery} onChange={e => setSearchQuery(e.target.value)} />
                 </div>
                 <button className="h-9 w-9 rounded-md flex items-center justify-center bg-primary/10 hover:bg-primary/20 transition-colors">
                   <svg width="17" height="17" viewBox="0 0 17 17" fill="none" xmlns="http://www.w3.org/2000/svg">
