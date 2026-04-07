@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { EngagementRightPanel } from "@/components/EngagementRightPanel";
 import { Layout } from "@/components/Layout";
@@ -139,25 +139,10 @@ const totals = { original: 0.00, adj: 0.00, final: 0.00, py1: 0.00, py2: 0.00 };
 const netIncome = { original: 14.35, adj: 0.00, final: 14.35, py1: 149.22, py2: "(2,150.10)" };
 
 
-// Group trial balance data by grouping
-const groupedData = trialBalanceData.reduce<Record<string, typeof trialBalanceData>>((acc, row) => {
-  const key = row.grouping;
-  if (!acc[key]) acc[key] = [];
-  acc[key].push(row);
-  return acc;
-}, {});
-
-const sectionOrder = Object.keys(groupedData);
-
 export default function TrialBalance() {
   const navigate = useNavigate();
   const { engagementId } = useParams();
   const [dateFilter] = useState("Nov 27 2025");
-  const [collapsedSections, setCollapsedSections] = useState<Record<string, boolean>>({});
-
-  const toggleSection = (section: string) => {
-    setCollapsedSections(prev => ({ ...prev, [section]: !prev[section] }));
-  };
 
   const engagement = engagementId ? engagementsData[engagementId] : null;
   const displayId = engagementId || "Unknown";
@@ -351,70 +336,45 @@ export default function TrialBalance() {
                 </tr>
               </thead>
               <tbody>
-                {sectionOrder.map((sectionName) => {
-                  const rows = groupedData[sectionName];
-                  const isCollapsed = collapsedSections[sectionName];
-                  return (
-                    <React.Fragment key={sectionName}>
-                      {/* Section header row */}
-                      <tr
-                        className="bg-muted/60 border-b border-border cursor-pointer hover:bg-muted/80 transition-colors"
-                        onClick={() => toggleSection(sectionName)}
-                      >
-                        <td className="px-3 py-2 text-center">
-                          {isCollapsed ? (
-                            <ChevronRight className="h-4 w-4 text-muted-foreground" />
-                          ) : (
-                            <ChevronDown className="h-4 w-4 text-muted-foreground" />
-                          )}
-                        </td>
-                        <td colSpan={16} className="px-3 py-2">
-                          <span className="text-xs font-bold text-foreground uppercase tracking-wider">{sectionName}</span>
-                          <span className="ml-2 text-xs text-muted-foreground">({rows.length})</span>
-                        </td>
-                      </tr>
-                      {/* Section rows */}
-                      {!isCollapsed && rows.map((row) => (
-                        <tr
-                          key={row.id}
-                          className="border-b border-border hover:bg-muted/30 transition-colors cursor-pointer"
-                        >
-                          <td className="px-3 py-2 text-center">
-                            <button className="text-muted-foreground hover:text-foreground">
-                              <MoreVertical className="h-3.5 w-3.5" />
-                            </button>
-                          </td>
-                          <td className="px-3 py-2"><Checkbox /></td>
-                          <td className="px-3 py-2 text-foreground whitespace-nowrap">{row.accNo}</td>
-                          <td className="px-3 py-2 text-foreground whitespace-nowrap">{row.description}</td>
-                          <td className="px-3 py-2 text-right text-foreground whitespace-nowrap">{formatNumber(row.original)}</td>
-                          <td className="px-3 py-2 text-right whitespace-nowrap">
-                            <span className="text-link font-medium">{formatNumber(row.adj)}</span>
-                          </td>
-                          <td className="px-3 py-2 text-right text-foreground whitespace-nowrap">{formatNumber(row.final)}</td>
-                          <td className="px-3 py-2 text-right text-foreground whitespace-nowrap">{formatNumber(row.py1)}</td>
-                          <td className="px-3 py-2 text-right text-foreground whitespace-nowrap">{row.changePct}</td>
-                          <td className="px-3 py-2 text-right text-foreground whitespace-nowrap">{row.py2}</td>
-                          <td className="px-3 py-2 text-right whitespace-nowrap">
-                            <span className="text-link font-medium">{formatNumber(row.mapNo)}</span>
-                          </td>
-                          <td className="px-3 py-2 text-center whitespace-nowrap">
-                            <span className="text-link font-medium">{row.ls}</span>
-                          </td>
-                          <td className="px-3 py-2 text-foreground whitespace-nowrap">{row.grouping}</td>
-                          <td className="px-3 py-2 text-foreground whitespace-nowrap">{row.subGrouping}</td>
-                          <td className="px-3 py-2 text-center whitespace-nowrap">
-                            <span className="text-link font-medium">{row.cfCategory}</span>
-                          </td>
-                          <td className="px-3 py-2 text-center whitespace-nowrap">
-                            <span className="text-link font-medium">{row.taxCode}</span>
-                          </td>
-                          <td className="px-3 py-2 text-right text-foreground whitespace-nowrap">{row.fxRate.toFixed(2)}</td>
-                        </tr>
-                      ))}
-                    </React.Fragment>
-                  );
-                })}
+                {trialBalanceData.map((row) => (
+                  <tr
+                    key={row.id}
+                    className="border-b border-border hover:bg-muted/30 transition-colors cursor-pointer"
+                  >
+                    <td className="px-3 py-2 text-center">
+                      <button className="text-muted-foreground hover:text-foreground">
+                        <MoreVertical className="h-3.5 w-3.5" />
+                      </button>
+                    </td>
+                    <td className="px-3 py-2"><Checkbox /></td>
+                    <td className="px-3 py-2 text-foreground whitespace-nowrap">{row.accNo}</td>
+                    <td className="px-3 py-2 text-foreground whitespace-nowrap">{row.description}</td>
+                    <td className="px-3 py-2 text-right text-foreground whitespace-nowrap">{formatNumber(row.original)}</td>
+                    <td className="px-3 py-2 text-right whitespace-nowrap">
+                      <span className="text-link font-medium">{formatNumber(row.adj)}</span>
+                    </td>
+                    <td className="px-3 py-2 text-right text-foreground whitespace-nowrap">{formatNumber(row.final)}</td>
+                    <td className="px-3 py-2 text-right text-foreground whitespace-nowrap">{formatNumber(row.py1)}</td>
+                    <td className="px-3 py-2 text-right text-foreground whitespace-nowrap">{row.changePct}</td>
+                    <td className="px-3 py-2 text-right text-foreground whitespace-nowrap">{row.py2}</td>
+                    <td className="px-3 py-2 text-right whitespace-nowrap">
+                      <span className="text-link font-medium">{formatNumber(row.mapNo)}</span>
+                    </td>
+                    <td className="px-3 py-2 text-center whitespace-nowrap">
+                      <span className="text-link font-medium">{row.ls}</span>
+                    </td>
+                    <td className="px-3 py-2 text-foreground whitespace-nowrap">{row.grouping}</td>
+                    <td className="px-3 py-2 text-foreground whitespace-nowrap">{row.subGrouping}</td>
+                    <td className="px-3 py-2 text-center whitespace-nowrap">
+                      <span className="text-link font-medium">{row.cfCategory}</span>
+                    </td>
+                    <td className="px-3 py-2 text-center whitespace-nowrap">
+                      <span className="text-link font-medium">{row.taxCode}</span>
+                    </td>
+                    <td className="px-3 py-2 text-right text-foreground whitespace-nowrap">{row.fxRate.toFixed(2)}</td>
+                  </tr>
+                ))}
+
               </tbody>
               <tfoot className="sticky bottom-0 z-10">
                 {/* Totals row */}
