@@ -849,7 +849,7 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
                     setAllSectionsExpanded(!allSectionsExpanded);
                   }}
                 >
-                  <svg className="text-white" width="17" height="17" viewBox="0 0 17 17" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <svg className="text-foreground" width="17" height="17" viewBox="0 0 17 17" fill="none" xmlns="http://www.w3.org/2000/svg">
                     {allSectionsExpanded ? (
                       <path d="M6.94436 9.7219L2.08325 14.583M2.08325 14.583H6.24992M2.08325 14.583V10.4163M9.72214 6.94412L14.5833 2.08301M14.5833 2.08301H10.4166M14.5833 2.08301V6.24967" stroke="currentColor" strokeWidth="1.38889" strokeLinecap="round" strokeLinejoin="round" />
                     ) : (
