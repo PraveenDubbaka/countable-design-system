@@ -139,10 +139,25 @@ const totals = { original: 0.00, adj: 0.00, final: 0.00, py1: 0.00, py2: 0.00 };
 const netIncome = { original: 14.35, adj: 0.00, final: 14.35, py1: 149.22, py2: "(2,150.10)" };
 
 
+// Group trial balance data by grouping
+const groupedData = trialBalanceData.reduce<Record<string, typeof trialBalanceData>>((acc, row) => {
+  const key = row.grouping;
+  if (!acc[key]) acc[key] = [];
+  acc[key].push(row);
+  return acc;
+}, {});
+
+const sectionOrder = Object.keys(groupedData);
+
 export default function TrialBalance() {
   const navigate = useNavigate();
   const { engagementId } = useParams();
   const [dateFilter] = useState("Nov 27 2025");
+  const [collapsedSections, setCollapsedSections] = useState<Record<string, boolean>>({});
+
+  const toggleSection = (section: string) => {
+    setCollapsedSections(prev => ({ ...prev, [section]: !prev[section] }));
+  };
 
   const engagement = engagementId ? engagementsData[engagementId] : null;
   const displayId = engagementId || "Unknown";
