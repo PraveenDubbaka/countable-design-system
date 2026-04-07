@@ -608,7 +608,7 @@ export function ThemeChanger() {
   return (
     <div
       className={cn(
-        "fixed right-0 top-1/2 -translate-y-1/2 z-50 flex items-stretch transition-transform duration-300 ease-emphasized",
+        "fixed right-0 bottom-6 z-50 flex items-stretch transition-transform duration-300 ease-emphasized",
         isOpen ? "translate-x-0" : "translate-x-[180px]"
       )}
     >
