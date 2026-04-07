@@ -22,6 +22,7 @@ import { StyledCard } from "@/components/ui/card";
 import {
   ChevronDown,
   ChevronRight,
+  ChevronUp,
   Landmark,
   FileText,
   Triangle,
