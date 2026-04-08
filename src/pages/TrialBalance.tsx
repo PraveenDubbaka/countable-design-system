@@ -302,10 +302,10 @@ export default function TrialBalance() {
                   </DropdownMenu>
 
                   {/* Icon-only expandable buttons */}
-                  <ExpandableIconButton variant="outline" className="bg-card border-primary/40 hover:bg-muted" icon={<FileX2 className="h-4 w-4" />} label="Unmap" />
-                  <ExpandableIconButton variant="outline" className="bg-card border-primary/40 hover:bg-muted" icon={<Network className="h-4 w-4" />} label="Auto Map" />
-                  <ExpandableIconButton variant="outline" className="bg-card border-primary/40 hover:bg-muted" icon={<Upload className="h-4 w-4" />} label="Import" />
-                  <ExpandableIconButton variant="outline" className="bg-card border-primary/40 hover:bg-muted" icon={<Download className="h-4 w-4" />} label="Export" />
+                  <ExpandableIconButton variant="outline" className="bg-card border-[#0A3159] hover:bg-muted" icon={<FileX2 className="h-4 w-4" />} label="Unmap" />
+                  <ExpandableIconButton variant="outline" className="bg-card border-[#0A3159] hover:bg-muted" icon={<Network className="h-4 w-4" />} label="Auto Map" />
+                  <ExpandableIconButton variant="outline" className="bg-card border-[#0A3159] hover:bg-muted" icon={<Upload className="h-4 w-4" />} label="Import" />
+                  <ExpandableIconButton variant="outline" className="bg-card border-[#0A3159] hover:bg-muted" icon={<Download className="h-4 w-4" />} label="Export" />
                   <ExpandableIconButton variant="outline" className="bg-card border-border hover:bg-muted" icon={<RefreshCw className="h-4 w-4" />} label="Refresh" />
 
                   {/* Zero Balance Accounts - dropdown */}
