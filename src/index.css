@@ -487,6 +487,12 @@
     font-size: 0.9375rem; /* 15px base for better readability */
     line-height: 1.6;
   }
+
+  th {
+    font-size: 0.9375rem !important;
+    font-weight: 600 !important;
+    text-transform: none !important;
+  }
   
   /* Enhanced heading hierarchy */
   h1, .h1 {
