@@ -100,6 +100,7 @@ export default function Teams() {
                         ? "bg-primary text-white"
                         : "text-muted-foreground hover:bg-muted"
                     }`}
+                    style={{ fontWeight: 600 }}
                   >
                     {tab.label}
                   </button>
