@@ -37,7 +37,7 @@ const themes: ColorTheme[] = [
       "--m3-surface-container-high": "210 40% 94%",
       "--m3-surface-container-highest": "210 35% 92%",
       "--m3-outline": "210 25% 55%",
-      "--m3-outline-variant": "209 50% 65%",
+      "--m3-outline-variant": "213 75% 19%",
       "--link": "209 71% 38%",
       "--countable-navy": "213 76% 19%",
       "--countable-blue": "207 71% 38%",
