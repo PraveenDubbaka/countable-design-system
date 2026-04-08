@@ -19,10 +19,10 @@ const buttonVariants = cva(
           "active:bg-destructive/65",
         ].join(" "),
         outline: [
-          "border border-[#0A3159] bg-background text-primary",
-          "hover:bg-primary/[0.14] hover:border-primary",
-          "active:bg-primary/[0.22] active:border-primary",
-          "focus-visible:border-primary",
+          "border border-[#0A3159] bg-background text-[#0A3159]",
+          "hover:bg-primary/[0.14] hover:border-[#0A3159]",
+          "active:bg-primary/[0.22] active:border-[#0A3159]",
+          "focus-visible:border-[#0A3159]",
         ].join(" "),
         secondary: [
           "bg-muted text-secondary-foreground border border-secondary-foreground",
