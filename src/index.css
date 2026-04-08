@@ -492,6 +492,7 @@
     font-size: 0.9375rem !important;
     font-weight: 600 !important;
     text-transform: none !important;
+    letter-spacing: 0 !important;
   }
   
   /* Enhanced heading hierarchy */
