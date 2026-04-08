@@ -264,7 +264,7 @@ export default function Clients() {
                   variant="outline"
                   icon={<RefreshCw className="h-4 w-4" />}
                   label="Refresh"
-                  className="bg-card border-border hover:bg-muted"
+                  className="bg-card hover:bg-muted"
                 />
                 <Popover>
                   <PopoverTrigger asChild>
@@ -272,7 +272,7 @@ export default function Clients() {
                       variant="outline"
                       icon={<UserPlus className="h-4 w-4" />}
                       label="Assign Partner"
-                      className="bg-card border-border hover:bg-muted text-muted-foreground"
+                      className="bg-card hover:bg-muted"
                     />
                   </PopoverTrigger>
                   <PopoverContent className="w-72 p-0 bg-card" align="start">
@@ -323,13 +323,13 @@ export default function Clients() {
                   variant="outline"
                   icon={<Mail className="h-4 w-4" />}
                   label="Invite All"
-                  className="bg-card border-border hover:bg-muted text-muted-foreground"
+                  className="bg-card hover:bg-muted"
                 />
                 <ExpandableIconButton
                   variant="outline"
                   icon={<Download className="h-4 w-4" />}
                   label="Export"
-                  className="bg-card border-border hover:bg-muted"
+                  className="bg-card hover:bg-muted"
                 />
                 <div className="relative">
                   <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
