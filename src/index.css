@@ -248,7 +248,7 @@
     --primary: var(--m3-primary);
     --primary-foreground: var(--m3-on-primary);
 
-    --link: 209 100% 29%;
+    --link: 209 72% 38%;
 
     --secondary: var(--m3-secondary-container);
     --secondary-foreground: var(--m3-on-secondary-container);
@@ -407,7 +407,7 @@
     --primary: var(--m3-primary);
     --primary-foreground: var(--m3-on-primary);
 
-    --link: 209 80% 55%;
+    --link: 209 72% 55%;
 
     --secondary: var(--m3-secondary-container);
     --secondary-foreground: var(--m3-on-secondary-container);
