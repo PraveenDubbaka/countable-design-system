@@ -1252,7 +1252,7 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
                 <ChevronRight className="h-3 w-3 text-white icon-arrow-right" />
               </div>
             </div>}
-        </>}
+        </>, portalTarget)}
 
       {/* Rename Dialog */}
       <Dialog open={renameDialogOpen} onOpenChange={setRenameDialogOpen}>
