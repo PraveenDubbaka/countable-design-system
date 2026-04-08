@@ -274,7 +274,7 @@ export default function TrialBalance() {
                   {/* Date Selector - dropdown */}
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
-                      <Button variant="outline" size="sm" className="h-9 text-xs gap-1.5 bg-card border-border hover:bg-muted">
+                      <Button variant="outline" size="sm" className="h-9 text-xs gap-1.5 bg-card hover:bg-muted">
                         {dateFilter}
                         <ChevronDown className="h-3.5 w-3.5" />
                       </Button>
@@ -287,7 +287,7 @@ export default function TrialBalance() {
                   {/* Filter - dropdown */}
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
-                      <Button variant="outline" size="sm" className="h-9 text-xs gap-1.5 bg-card border-border hover:bg-muted">
+                      <Button variant="outline" size="sm" className="h-9 text-xs gap-1.5 bg-card hover:bg-muted">
                         <span className="text-muted-foreground">≡</span> Filter by
                         <ChevronDown className="h-3.5 w-3.5" />
                       </Button>
@@ -306,12 +306,12 @@ export default function TrialBalance() {
                   <ExpandableIconButton variant="outline" className="bg-card hover:bg-muted" icon={<Network className="h-4 w-4" />} label="Auto Map" />
                   <ExpandableIconButton variant="outline" className="bg-card hover:bg-muted" icon={<Upload className="h-4 w-4" />} label="Import" />
                   <ExpandableIconButton variant="outline" className="bg-card hover:bg-muted" icon={<Download className="h-4 w-4" />} label="Export" />
-                  <ExpandableIconButton variant="outline" className="bg-card border-border hover:bg-muted" icon={<RefreshCw className="h-4 w-4" />} label="Refresh" />
+                  <ExpandableIconButton variant="outline" className="bg-card hover:bg-muted" icon={<RefreshCw className="h-4 w-4" />} label="Refresh" />
 
                   {/* Zero Balance Accounts - dropdown */}
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
-                      <ExpandableIconButton variant="outline" className="bg-card border-border hover:bg-muted" icon={<MoreVertical className="h-4 w-4" />} label="Zero Balance" />
+                      <ExpandableIconButton variant="outline" className="bg-card hover:bg-muted" icon={<MoreVertical className="h-4 w-4" />} label="Zero Balance" />
                     </DropdownMenuTrigger>
                     <DropdownMenuContent className="bg-card border shadow-lg z-50">
                       <DropdownMenuItem>Show Zero Balance</DropdownMenuItem>
@@ -319,7 +319,7 @@ export default function TrialBalance() {
                     </DropdownMenuContent>
                   </DropdownMenu>
 
-                  <ExpandableIconButton variant="outline" className="bg-card border-border hover:bg-muted" icon={<Search className="h-4 w-4" />} label="Search" />
+                  <ExpandableIconButton variant="outline" className="bg-card hover:bg-muted" icon={<Search className="h-4 w-4" />} label="Search" />
 
                   {/* Collapse button */}
                   <button
