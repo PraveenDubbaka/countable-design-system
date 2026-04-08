@@ -83,6 +83,14 @@ export function GlobalHeader({ title }: { title?: string }) {
         {/* Right side - Credits, Theme, Notifications, Profile */}
         <div className="flex-1 flex items-center justify-end gap-3">
 
+          {/* Ask Luka Button */}
+          <Button 
+            className="h-8 px-3 rounded-full bg-gradient-to-r from-[#1C63A6] to-[#7A31D8] hover:from-[#1a5a96] hover:to-[#6a2bc2] text-white text-xs font-medium gap-1.5 shadow-md"
+            onClick={() => setAskLukaOpen(true)}
+          >
+            <Sparkles className="h-3.5 w-3.5 animate-[spin_3s_linear_infinite]" />
+            Ask Luka
+          </Button>
 
           {/* Font size accessibility toggle */}
           <Tooltip>
