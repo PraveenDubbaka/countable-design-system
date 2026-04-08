@@ -475,9 +475,13 @@
     @apply border-border;
   }
 
+  * {
+    font-family: Inter, sans-serif !important;
+  }
+
   body {
     @apply bg-background text-foreground antialiased;
-    font-family: 'Inter', system-ui, sans-serif;
+    font-family: Inter, sans-serif !important;
     font-weight: 400;
     letter-spacing: 0.01em;
     font-size: 0.9375rem; /* 15px base for better readability */
