@@ -25,7 +25,7 @@ const themes: ColorTheme[] = [
       "--m3-secondary": "213 75% 27%",
       "--m3-on-secondary": "0 0% 100%",
       "--m3-secondary-container": "222 100% 93%",
-      "--m3-on-secondary-container": "209 71% 38%",
+      "--m3-on-secondary-container": "213 76% 19%",
       "--m3-tertiary": "213 76% 19%",
       "--m3-on-tertiary": "0 0% 100%",
       "--m3-tertiary-container": "213 60% 85%",
