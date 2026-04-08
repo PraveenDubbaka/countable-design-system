@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import userAvatar from "@/assets/user-avatar.png";
 import { Bell, User, Sparkles, Moon, Sun, Zap, UserCircle, Building2, Settings, CreditCard, Monitor, Gift, LogOut, Check, Trash2, Search, MoreVertical, Type } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
