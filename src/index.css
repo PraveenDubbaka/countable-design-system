@@ -160,13 +160,9 @@
   background: linear-gradient(to right, hsl(var(--muted)), hsl(var(--card)));
 }
 
-/* Keep the outer "cockpit" curve consistent: when a secondary left panel is expanded,
-   that panel owns the left rounding, so the main content should not round on the left. */
-.sidebar-panel-expanded + .layout-content .header-wrapper {
-  border-top-left-radius: 0 !important;
-}
-
-.sidebar-panel-expanded + .layout-content .app-main {
+/* When a secondary panel is rendered inside content-wrapper via portal,
+   the content-wrapper's bottom-left radius is still needed at the icon-sidebar junction. */
+.content-wrapper:has(> #sidebar-secondary-portal:not(:empty)) .app-main {
   border-top-left-radius: 0 !important;
   border-bottom-left-radius: 0 !important;
 }
