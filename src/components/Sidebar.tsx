@@ -805,8 +805,8 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
 
       </div>
 
-      {/* Engagement Sections panel - shown only on engagement detail pages */}
-      {location.pathname.startsWith("/engagements/") && location.pathname !== "/engagements/create" && <>
+      {/* Engagement Sections panel - portalled below the global header */}
+      {portalTarget && location.pathname.startsWith("/engagements/") && location.pathname !== "/engagements/create" && createPortal(<>
           <div 
             ref={panelRef}
             style={{ width: isTemplatesPanelCollapsed ? 0 : panelWidth }}
@@ -1108,10 +1108,10 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
                 <ChevronRight className="h-3 w-3 text-white icon-arrow-right" />
               </div>
             </div>}
-        </>}
+        </>, portalTarget)}
 
-      {/* Templates panel - hidden on Dashboard, Clients, Teams, Engagements list, and Engagement detail pages */}
-      {location.pathname !== "/dashboard" && location.pathname !== "/clients" && location.pathname !== "/teams" && location.pathname !== "/engagements" && !location.pathname.startsWith("/engagements/") && <>
+      {/* Templates panel - portalled below the global header */}
+      {portalTarget && location.pathname !== "/dashboard" && location.pathname !== "/clients" && location.pathname !== "/teams" && location.pathname !== "/engagements" && !location.pathname.startsWith("/engagements/") && createPortal(<>
           <div 
             ref={panelRef}
             style={{ width: isTemplatesPanelCollapsed ? 0 : panelWidth }}
