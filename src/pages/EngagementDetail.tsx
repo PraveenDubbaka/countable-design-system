@@ -6,7 +6,7 @@ import { ChecklistIcon } from "@/components/icons/ChecklistIcon";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuSub, DropdownMenuSubTrigger, DropdownMenuSubContent, DropdownMenuSeparator } from "@/components/ui/dropdown-menu";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Layout } from "@/components/Layout";
 import { MondayBoardView } from "@/components/MondayBoardView";
 import { FloatingActionBar } from "@/components/FloatingActionBar";
@@ -610,22 +610,23 @@ export default function EngagementDetail() {
             </Badge>
           </div>
 
-          {/* Right side - Tools dropdown */}
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="outline" size="sm" className="h-8 px-3 text-xs font-medium">
-                <Settings2 className="h-3.5 w-3.5 mr-1.5" />
-                Tools
-                <ChevronDown className="h-3 w-3 ml-1.5" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-48 bg-card border shadow-lg z-50">
-              {headerActions.map(action => <DropdownMenuItem key={action.id} className="flex items-center gap-2 cursor-pointer group">
-                  <action.icon className="h-4 w-4 text-muted-foreground group-hover:text-foreground transition-colors" />
-                  <span>{action.label}</span>
-                </DropdownMenuItem>)}
-            </DropdownMenuContent>
-          </DropdownMenu>
+          {/* Right side - Tool buttons */}
+          <TooltipProvider>
+            <div className="flex items-center gap-1">
+              {headerActions.map(action => (
+                <Tooltip key={action.id}>
+                  <TooltipTrigger asChild>
+                    <Button variant="secondary" size="icon-sm" className="h-8 w-8">
+                      <action.icon className="h-4 w-4" />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent side="bottom">
+                    <p>{action.label}</p>
+                  </TooltipContent>
+                </Tooltip>
+              ))}
+            </div>
+          </TooltipProvider>
         </div>
 
           {/* Content Area */}
