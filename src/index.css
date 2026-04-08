@@ -2,6 +2,11 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Global link text styling */
+.text-link {
+  font-weight: 600;
+}
+
 /* Double border focus effect for form inputs */
 .input-double-border:focus,
 .input-double-border:focus-visible {
