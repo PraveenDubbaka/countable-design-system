@@ -239,94 +239,69 @@ export default function TrialBalance() {
           </div>
         </div>
 
-        {/* Action Buttons - Sticky Header with Title (matching Engagement Detail) */}
-        <div className="relative">
-          {/* Collapsed toggle button */}
-          {!isToolbarExpanded && (
-            <button
-              onClick={() => setIsToolbarExpanded(true)}
-              className="sticky top-0 z-10 w-full flex items-center gap-2 px-4 py-1 bg-muted/40 border-b border-border/50 hover:bg-muted/60 transition-colors cursor-pointer"
-            >
-              <ChevronDown className="h-3.5 w-3.5 text-muted-foreground" />
-              <span className="text-xs text-muted-foreground">Show toolbar</span>
-            </button>
-          )}
-
-          {/* Expandable sub header */}
-          {isToolbarExpanded && (
-            <div className="sticky top-0 z-10 bg-card px-4 py-2 border-b border-border/50">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <h1 className="text-lg font-semibold text-foreground truncate">
-                    Trial Balance
-                  </h1>
-                  <span className="text-xs text-muted-foreground">
-                    Last updated: <span className="font-medium text-foreground">54 min ago</span>
-                  </span>
-                </div>
-                <div className="flex items-center gap-2">
-                  {/* Date Selector - dropdown */}
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <Button variant="outline" size="sm" className="h-9 text-xs gap-1.5 bg-card hover:bg-muted">
-                        {dateFilter}
-                        <ChevronDown className="h-3.5 w-3.5" />
-                      </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent className="bg-card border shadow-lg z-50">
-                      <DropdownMenuItem>Nov 27 2025</DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-
-                  {/* Filter - dropdown */}
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <Button variant="outline" size="sm" className="h-9 text-xs gap-1.5 bg-card hover:bg-muted">
-                        <span className="text-muted-foreground">≡</span> Filter by
-                        <ChevronDown className="h-3.5 w-3.5" />
-                      </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent className="bg-card border shadow-lg z-50">
-                      <DropdownMenuItem>All</DropdownMenuItem>
-                      <DropdownMenuItem>Assets</DropdownMenuItem>
-                      <DropdownMenuItem>Liabilities</DropdownMenuItem>
-                      <DropdownMenuItem>Equity</DropdownMenuItem>
-                      <DropdownMenuItem>Expenses</DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-
-                  {/* Icon-only expandable buttons */}
-                  <ExpandableIconButton variant="outline" className="bg-card hover:bg-muted" icon={<FileX2 className="h-4 w-4" />} label="Unmap" />
-                  <ExpandableIconButton variant="outline" className="bg-card hover:bg-muted" icon={<Network className="h-4 w-4" />} label="Auto Map" />
-                  <ExpandableIconButton variant="outline" className="bg-card hover:bg-muted" icon={<Upload className="h-4 w-4" />} label="Import" />
-                  <ExpandableIconButton variant="outline" className="bg-card hover:bg-muted" icon={<Download className="h-4 w-4" />} label="Export" />
-                  <ExpandableIconButton variant="outline" className="bg-card hover:bg-muted" icon={<RefreshCw className="h-4 w-4" />} label="Refresh" />
-
-                  {/* Zero Balance Accounts - dropdown */}
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <ExpandableIconButton variant="outline" className="bg-card hover:bg-muted" icon={<MoreVertical className="h-4 w-4" />} label="Zero Balance" />
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent className="bg-card border shadow-lg z-50">
-                      <DropdownMenuItem>Show Zero Balance</DropdownMenuItem>
-                      <DropdownMenuItem>Hide Zero Balance</DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-
-                  <ExpandableIconButton variant="outline" className="bg-card hover:bg-muted" icon={<Search className="h-4 w-4" />} label="Search" />
-
-                  {/* Collapse button */}
-                  <button
-                    onClick={() => setIsToolbarExpanded(false)}
-                    className="p-1.5 rounded-md hover:bg-muted transition-colors"
-                    title="Hide toolbar"
-                  >
-                    <ChevronUp className="h-4 w-4 text-muted-foreground" />
-                  </button>
-                </div>
-              </div>
+        {/* Sub header toolbar - always visible */}
+        <div className="sticky top-0 z-10 bg-card px-4 py-2 border-b border-border/50">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <h1 className="text-lg font-semibold text-foreground truncate">
+                Trial Balance
+              </h1>
+              <span className="text-xs text-muted-foreground">
+                Last updated: <span className="font-medium text-foreground">54 min ago</span>
+              </span>
             </div>
-          )}
+            <div className="flex items-center gap-2">
+              {/* Date Selector - dropdown */}
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="outline" size="sm" className="h-9 text-xs gap-1.5 bg-card hover:bg-muted">
+                    {dateFilter}
+                    <ChevronDown className="h-3.5 w-3.5" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent className="bg-card border shadow-lg z-50">
+                  <DropdownMenuItem>Nov 27 2025</DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+
+              {/* Filter - dropdown */}
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="outline" size="sm" className="h-9 text-xs gap-1.5 bg-card hover:bg-muted">
+                    <span className="text-muted-foreground">≡</span> Filter by
+                    <ChevronDown className="h-3.5 w-3.5" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent className="bg-card border shadow-lg z-50">
+                  <DropdownMenuItem>All</DropdownMenuItem>
+                  <DropdownMenuItem>Assets</DropdownMenuItem>
+                  <DropdownMenuItem>Liabilities</DropdownMenuItem>
+                  <DropdownMenuItem>Equity</DropdownMenuItem>
+                  <DropdownMenuItem>Expenses</DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+
+              {/* Icon-only expandable buttons */}
+              <ExpandableIconButton variant="outline" className="bg-card hover:bg-muted" icon={<FileX2 className="h-4 w-4" />} label="Unmap" />
+              <ExpandableIconButton variant="outline" className="bg-card hover:bg-muted" icon={<Network className="h-4 w-4" />} label="Auto Map" />
+              <ExpandableIconButton variant="outline" className="bg-card hover:bg-muted" icon={<Upload className="h-4 w-4" />} label="Import" />
+              <ExpandableIconButton variant="outline" className="bg-card hover:bg-muted" icon={<Download className="h-4 w-4" />} label="Export" />
+              <ExpandableIconButton variant="outline" className="bg-card hover:bg-muted" icon={<RefreshCw className="h-4 w-4" />} label="Refresh" />
+
+              {/* Zero Balance Accounts - dropdown */}
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <ExpandableIconButton variant="outline" className="bg-card hover:bg-muted" icon={<MoreVertical className="h-4 w-4" />} label="Zero Balance" />
+                </DropdownMenuTrigger>
+                <DropdownMenuContent className="bg-card border shadow-lg z-50">
+                  <DropdownMenuItem>Show Zero Balance</DropdownMenuItem>
+                  <DropdownMenuItem>Hide Zero Balance</DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+
+              <ExpandableIconButton variant="outline" className="bg-card hover:bg-muted" icon={<Search className="h-4 w-4" />} label="Search" />
+            </div>
+          </div>
         </div>
 
         {/* Table */}
