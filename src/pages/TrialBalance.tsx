@@ -310,25 +310,25 @@ export default function TrialBalance() {
             <table className="w-full text-sm">
               <thead className="sticky top-0 z-10">
                 <tr className="bg-muted border-b border-border">
-                  <th className="px-7 py-3 w-8"></th>
-                  <th className="px-7 py-3 w-8"><Checkbox /></th>
-                  <th className="text-left px-7 py-3 text-xs font-semibold text-foreground whitespace-nowrap">Acc No.</th>
-                  <th className="text-left px-7 py-3 text-xs font-semibold text-foreground whitespace-nowrap min-w-[180px]">Description</th>
-                  <th className="text-right px-7 py-3 text-xs font-semibold text-foreground whitespace-nowrap">Original</th>
-                  <th className="text-right px-7 py-3 text-xs font-semibold text-foreground whitespace-nowrap">Adj</th>
-                  <th className="text-right px-7 py-3 text-xs font-semibold text-foreground whitespace-nowrap">Final</th>
-                  <th className="text-right px-7 py-3 text-xs font-semibold text-foreground whitespace-nowrap">PY1</th>
-                  <th className="text-right px-7 py-3 text-xs font-semibold text-foreground whitespace-nowrap">
+                  <th className="px-6 py-3 w-8"></th>
+                  <th className="px-6 py-3 w-8"><Checkbox /></th>
+                  <th className="text-left px-6 py-3 text-xs font-semibold text-foreground whitespace-nowrap">Acc No.</th>
+                  <th className="text-left px-6 py-3 text-xs font-semibold text-foreground whitespace-nowrap min-w-[180px]">Description</th>
+                  <th className="text-right px-6 py-3 text-xs font-semibold text-foreground whitespace-nowrap">Original</th>
+                  <th className="text-right px-6 py-3 text-xs font-semibold text-foreground whitespace-nowrap">Adj</th>
+                  <th className="text-right px-6 py-3 text-xs font-semibold text-foreground whitespace-nowrap">Final</th>
+                  <th className="text-right px-6 py-3 text-xs font-semibold text-foreground whitespace-nowrap">PY1</th>
+                  <th className="text-right px-6 py-3 text-xs font-semibold text-foreground whitespace-nowrap">
                     Change (%) <ChevronDown className="inline h-3 w-3" />
                   </th>
-                  <th className="text-right px-7 py-3 text-xs font-semibold text-foreground whitespace-nowrap">PY2</th>
-                  <th className="text-right px-7 py-3 text-xs font-semibold text-foreground whitespace-nowrap">Map No.</th>
-                  <th className="text-center px-7 py-3 text-xs font-semibold text-foreground whitespace-nowrap">LS</th>
-                  <th className="text-left px-7 py-3 text-xs font-semibold text-foreground whitespace-nowrap">Grouping</th>
-                  <th className="text-left px-7 py-3 text-xs font-semibold text-foreground whitespace-nowrap">Sub Grouping</th>
-                  <th className="text-center px-7 py-3 text-xs font-semibold text-foreground whitespace-nowrap">CF Category</th>
-                  <th className="text-center px-7 py-3 text-xs font-semibold text-foreground whitespace-nowrap">Tax Code</th>
-                  <th className="text-right px-7 py-3 text-xs font-semibold text-foreground whitespace-nowrap">
+                  <th className="text-right px-6 py-3 text-xs font-semibold text-foreground whitespace-nowrap">PY2</th>
+                  <th className="text-right px-6 py-3 text-xs font-semibold text-foreground whitespace-nowrap">Map No.</th>
+                  <th className="text-center px-6 py-3 text-xs font-semibold text-foreground whitespace-nowrap">LS</th>
+                  <th className="text-left px-6 py-3 text-xs font-semibold text-foreground whitespace-nowrap">Grouping</th>
+                  <th className="text-left px-6 py-3 text-xs font-semibold text-foreground whitespace-nowrap">Sub Grouping</th>
+                  <th className="text-center px-6 py-3 text-xs font-semibold text-foreground whitespace-nowrap">CF Category</th>
+                  <th className="text-center px-6 py-3 text-xs font-semibold text-foreground whitespace-nowrap">Tax Code</th>
+                  <th className="text-right px-6 py-3 text-xs font-semibold text-foreground whitespace-nowrap">
                     FX Rate <span className="text-muted-foreground">⚙</span>
                   </th>
                 </tr>
@@ -339,37 +339,37 @@ export default function TrialBalance() {
                     key={row.id}
                     className="border-b border-border hover:bg-muted/30 transition-colors cursor-pointer"
                   >
-                    <td className="px-7 py-2 text-center">
+                    <td className="px-6 py-2 text-center">
                       <button className="text-muted-foreground hover:text-foreground">
                         <MoreVertical className="h-3.5 w-3.5" />
                       </button>
                     </td>
-                    <td className="px-7 py-2"><Checkbox /></td>
-                    <td className="px-7 py-2 text-foreground whitespace-nowrap">{row.accNo}</td>
-                    <td className="px-7 py-2 text-foreground whitespace-nowrap">{row.description}</td>
-                    <td className="px-7 py-2 text-right text-foreground whitespace-nowrap">{formatNumber(row.original)}</td>
-                    <td className="px-7 py-2 text-right whitespace-nowrap">
+                    <td className="px-6 py-2"><Checkbox /></td>
+                    <td className="px-6 py-2 text-foreground whitespace-nowrap">{row.accNo}</td>
+                    <td className="px-6 py-2 text-foreground whitespace-nowrap">{row.description}</td>
+                    <td className="px-6 py-2 text-right text-foreground whitespace-nowrap">{formatNumber(row.original)}</td>
+                    <td className="px-6 py-2 text-right whitespace-nowrap">
                       <span className="text-link font-medium">{formatNumber(row.adj)}</span>
                     </td>
-                    <td className="px-7 py-2 text-right text-foreground whitespace-nowrap">{formatNumber(row.final)}</td>
-                    <td className="px-7 py-2 text-right text-foreground whitespace-nowrap">{formatNumber(row.py1)}</td>
-                    <td className="px-7 py-2 text-right text-foreground whitespace-nowrap">{row.changePct}</td>
-                    <td className="px-7 py-2 text-right text-foreground whitespace-nowrap">{row.py2}</td>
-                    <td className="px-7 py-2 text-right whitespace-nowrap">
+                    <td className="px-6 py-2 text-right text-foreground whitespace-nowrap">{formatNumber(row.final)}</td>
+                    <td className="px-6 py-2 text-right text-foreground whitespace-nowrap">{formatNumber(row.py1)}</td>
+                    <td className="px-6 py-2 text-right text-foreground whitespace-nowrap">{row.changePct}</td>
+                    <td className="px-6 py-2 text-right text-foreground whitespace-nowrap">{row.py2}</td>
+                    <td className="px-6 py-2 text-right whitespace-nowrap">
                       <span className="text-link font-medium">{formatNumber(row.mapNo)}</span>
                     </td>
-                    <td className="px-7 py-2 text-center whitespace-nowrap">
+                    <td className="px-6 py-2 text-center whitespace-nowrap">
                       <span className="text-link font-medium">{row.ls}</span>
                     </td>
-                    <td className="px-7 py-2 text-foreground whitespace-nowrap">{row.grouping}</td>
-                    <td className="px-7 py-2 text-foreground whitespace-nowrap">{row.subGrouping}</td>
-                    <td className="px-7 py-2 text-center whitespace-nowrap">
+                    <td className="px-6 py-2 text-foreground whitespace-nowrap">{row.grouping}</td>
+                    <td className="px-6 py-2 text-foreground whitespace-nowrap">{row.subGrouping}</td>
+                    <td className="px-6 py-2 text-center whitespace-nowrap">
                       <span className="text-link font-medium">{row.cfCategory}</span>
                     </td>
-                    <td className="px-7 py-2 text-center whitespace-nowrap">
+                    <td className="px-6 py-2 text-center whitespace-nowrap">
                       <span className="text-link font-medium">{row.taxCode}</span>
                     </td>
-                    <td className="px-7 py-2 text-right text-foreground whitespace-nowrap">{row.fxRate.toFixed(2)}</td>
+                    <td className="px-6 py-2 text-right text-foreground whitespace-nowrap">{row.fxRate.toFixed(2)}</td>
                   </tr>
                 ))}
 
@@ -377,26 +377,26 @@ export default function TrialBalance() {
               <tfoot className="sticky bottom-0 z-10">
                 {/* Totals row */}
                 <tr className="bg-muted border-t border-border">
-                  <td className="px-7 py-2" colSpan={4}></td>
-                  <td className="px-7 py-2 text-right font-semibold text-foreground whitespace-nowrap">{formatNumber(totals.original)}</td>
-                  <td className="px-7 py-2 text-right font-semibold text-foreground whitespace-nowrap">{formatNumber(totals.adj)}</td>
-                  <td className="px-7 py-2 text-right font-semibold text-foreground whitespace-nowrap">{formatNumber(totals.final)}</td>
-                  <td className="px-7 py-2 text-right font-semibold text-foreground whitespace-nowrap">{formatNumber(totals.py1)}</td>
-                  <td className="px-7 py-2"></td>
-                  <td className="px-7 py-2 text-right font-semibold text-foreground whitespace-nowrap">{formatNumber(totals.py2)}</td>
+                  <td className="px-6 py-2" colSpan={4}></td>
+                  <td className="px-6 py-2 text-right font-semibold text-foreground whitespace-nowrap">{formatNumber(totals.original)}</td>
+                  <td className="px-6 py-2 text-right font-semibold text-foreground whitespace-nowrap">{formatNumber(totals.adj)}</td>
+                  <td className="px-6 py-2 text-right font-semibold text-foreground whitespace-nowrap">{formatNumber(totals.final)}</td>
+                  <td className="px-6 py-2 text-right font-semibold text-foreground whitespace-nowrap">{formatNumber(totals.py1)}</td>
+                  <td className="px-6 py-2"></td>
+                  <td className="px-6 py-2 text-right font-semibold text-foreground whitespace-nowrap">{formatNumber(totals.py2)}</td>
                   <td colSpan={7}></td>
                 </tr>
 
                 {/* Net Income row */}
                 <tr className="bg-muted border-t border-border">
-                  <td className="px-7 py-2" colSpan={3}></td>
-                  <td className="px-7 py-2 text-right font-bold text-foreground whitespace-nowrap">Net Income (loss)</td>
-                  <td className="px-7 py-2 text-right font-bold text-foreground whitespace-nowrap">{formatNumber(netIncome.original)}</td>
-                  <td className="px-7 py-2 text-right font-bold text-foreground whitespace-nowrap">{formatNumber(netIncome.adj)}</td>
-                  <td className="px-7 py-2 text-right font-bold text-foreground whitespace-nowrap">{formatNumber(netIncome.final)}</td>
-                  <td className="px-7 py-2 text-right font-bold text-foreground whitespace-nowrap">{formatNumber(netIncome.py1)}</td>
-                  <td className="px-7 py-2"></td>
-                  <td className="px-7 py-2 text-right font-bold text-foreground whitespace-nowrap">{netIncome.py2}</td>
+                  <td className="px-6 py-2" colSpan={3}></td>
+                  <td className="px-6 py-2 text-right font-bold text-foreground whitespace-nowrap">Net Income (loss)</td>
+                  <td className="px-6 py-2 text-right font-bold text-foreground whitespace-nowrap">{formatNumber(netIncome.original)}</td>
+                  <td className="px-6 py-2 text-right font-bold text-foreground whitespace-nowrap">{formatNumber(netIncome.adj)}</td>
+                  <td className="px-6 py-2 text-right font-bold text-foreground whitespace-nowrap">{formatNumber(netIncome.final)}</td>
+                  <td className="px-6 py-2 text-right font-bold text-foreground whitespace-nowrap">{formatNumber(netIncome.py1)}</td>
+                  <td className="px-6 py-2"></td>
+                  <td className="px-6 py-2 text-right font-bold text-foreground whitespace-nowrap">{netIncome.py2}</td>
                   <td colSpan={7}></td>
                 </tr>
               </tfoot>
