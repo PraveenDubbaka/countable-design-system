@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import userAvatar from "@/assets/user-avatar.png";
 import { Bell, User, Sparkles, Moon, Sun, Zap, UserCircle, Building2, Settings, CreditCard, Monitor, Gift, LogOut, Check, Trash2, Search, MoreVertical, Type } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -247,9 +248,7 @@ export function GlobalHeader({ title }: { title?: string }) {
                 className="flex items-center justify-center w-9 h-9 rounded-xl cursor-pointer hover:bg-muted transition-colors"
                 style={{ borderRadius: '12px' }}
               >
-                <div className="w-7 h-7 rounded-full bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center">
-                  <User className="h-4 w-4 text-white" />
-                </div>
+                <img src={userAvatar} alt="User" className="w-7 h-7 rounded-full object-cover" />
               </div>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-56">
