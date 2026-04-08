@@ -112,19 +112,19 @@ export default function Teams() {
                   variant="outline"
                   icon={<UserPlus className="h-4 w-4" />}
                   label="Assign Partner"
-                  className="bg-card border-border hover:bg-muted text-muted-foreground"
+                  className="bg-card hover:bg-muted"
                 />
                 <ExpandableIconButton
                   variant="outline"
                   icon={<Mail className="h-4 w-4" />}
                   label="Invite All"
-                  className="bg-card border-border hover:bg-muted text-muted-foreground"
+                  className="bg-card hover:bg-muted"
                 />
                 <ExpandableIconButton
                   variant="outline"
                   icon={<KeyRound className="h-4 w-4" />}
                   label="Reset 2 FA"
-                  className="bg-card border-border hover:bg-muted text-muted-foreground"
+                  className="bg-card hover:bg-muted"
                 />
                 <div className="relative">
                   <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
