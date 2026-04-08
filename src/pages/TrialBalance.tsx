@@ -310,8 +310,8 @@ export default function TrialBalance() {
             <table className="w-full text-sm">
               <thead className="sticky top-0 z-10">
                 <tr className="bg-muted border-b border-border">
-                  <th className="px-6 py-3 w-8"></th>
-                  <th className="px-6 py-3 w-8"><Checkbox /></th>
+                  <th className="px-2 py-3 w-8"></th>
+                  <th className="px-2 py-3 w-8"><Checkbox /></th>
                   <th className="text-left px-6 py-3 text-xs font-semibold text-foreground whitespace-nowrap">Acc No.</th>
                   <th className="text-left px-6 py-3 text-xs font-semibold text-foreground whitespace-nowrap min-w-[180px]">Description</th>
                   <th className="text-right px-6 py-3 text-xs font-semibold text-foreground whitespace-nowrap">Original</th>
@@ -339,12 +339,12 @@ export default function TrialBalance() {
                     key={row.id}
                     className="border-b border-border hover:bg-muted/30 transition-colors cursor-pointer"
                   >
-                    <td className="px-6 py-2 text-center">
+                    <td className="px-2 py-2 text-center">
                       <button className="text-muted-foreground hover:text-foreground">
                         <MoreVertical className="h-3.5 w-3.5" />
                       </button>
                     </td>
-                    <td className="px-6 py-2"><Checkbox /></td>
+                    <td className="px-2 py-2"><Checkbox /></td>
                     <td className="px-6 py-2 text-foreground whitespace-nowrap">{row.accNo}</td>
                     <td className="px-6 py-2 text-foreground whitespace-nowrap">{row.description}</td>
                     <td className="px-6 py-2 text-right text-foreground whitespace-nowrap">{formatNumber(row.original)}</td>
