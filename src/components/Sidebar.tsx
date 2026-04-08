@@ -734,13 +734,20 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
     observer.observe(document.documentElement, { attributes: true, attributeFilter: ['style'] });
     return () => observer.disconnect();
   }, []);
+
+  // Portal target for secondary panels (rendered below the global header in Layout)
+  const [portalTarget, setPortalTarget] = useState<HTMLElement | null>(null);
+  useEffect(() => {
+    const el = document.getElementById('sidebar-secondary-portal');
+    setPortalTarget(el);
+  }, []);
   
   // Determine if a secondary panel is visible and expanded (for dark mode gradient)
   const isOnEngagementDetail = location.pathname.startsWith("/engagements/") && location.pathname !== "/engagements/create";
   const isOnTemplatesPage = location.pathname !== "/dashboard" && location.pathname !== "/clients" && location.pathname !== "/engagements" && location.pathname !== "/teams" && location.pathname !== "/design-system" && !location.pathname.startsWith("/engagements/");
   const hasSecondaryPanelExpanded = (isOnEngagementDetail || isOnTemplatesPage) && !isTemplatesPanelCollapsed;
   
-  return <div className={`flex h-screen relative group/sidebar ${hasSecondaryPanelExpanded ? "sidebar-panel-expanded" : ""}`} style={{ background: 'var(--sidebar-gradient, hsl(var(--sidebar-bg)))' }}>
+  return <div className={`flex h-screen relative group/sidebar`} style={{ background: 'var(--sidebar-gradient, hsl(var(--sidebar-bg)))' }}>
       {/* Icon sidebar - dark navy with curved corner, expands on click only */}
       <div className={`sidebar-nav relative flex flex-col py-4 gap-2 transition-all duration-300 ease-in-out ${isNavExpanded ? "w-56 items-start px-3" : "w-14 items-center"}`}>
         {/* Floating collapse/expand toggle on nav border */}
