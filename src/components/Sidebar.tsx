@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from "react";
+import { createPortal } from "react-dom";
 import { useNavigate, useLocation } from "react-router-dom";
 import { ChevronDown, ChevronRight, ChevronLeft, Search, Plus, Expand, Trash2, Folder, Headphones, Check, FileText, FileBarChart, StickyNote, Table, Copy, Pencil, FolderInput, MoreVertical, GripVertical, X, Save, Files } from "lucide-react";
 import { Input } from "@/components/ui/input";
@@ -733,13 +734,20 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
     observer.observe(document.documentElement, { attributes: true, attributeFilter: ['style'] });
     return () => observer.disconnect();
   }, []);
+
+  // Portal target for secondary panels (rendered below the global header in Layout)
+  const [portalTarget, setPortalTarget] = useState<HTMLElement | null>(null);
+  useEffect(() => {
+    const el = document.getElementById('sidebar-secondary-portal');
+    setPortalTarget(el);
+  }, []);
   
   // Determine if a secondary panel is visible and expanded (for dark mode gradient)
   const isOnEngagementDetail = location.pathname.startsWith("/engagements/") && location.pathname !== "/engagements/create";
   const isOnTemplatesPage = location.pathname !== "/dashboard" && location.pathname !== "/clients" && location.pathname !== "/engagements" && location.pathname !== "/teams" && location.pathname !== "/design-system" && !location.pathname.startsWith("/engagements/");
   const hasSecondaryPanelExpanded = (isOnEngagementDetail || isOnTemplatesPage) && !isTemplatesPanelCollapsed;
   
-  return <div className={`flex h-screen relative group/sidebar ${hasSecondaryPanelExpanded ? "sidebar-panel-expanded" : ""}`} style={{ background: 'var(--sidebar-gradient, hsl(var(--sidebar-bg)))' }}>
+  return <div className={`flex h-screen relative group/sidebar`} style={{ background: 'var(--sidebar-gradient, hsl(var(--sidebar-bg)))' }}>
       {/* Icon sidebar - dark navy with curved corner, expands on click only */}
       <div className={`sidebar-nav relative flex flex-col py-4 gap-2 transition-all duration-300 ease-in-out ${isNavExpanded ? "w-56 items-start px-3" : "w-14 items-center"}`}>
         {/* Floating collapse/expand toggle on nav border */}
@@ -797,8 +805,8 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
 
       </div>
 
-      {/* Engagement Sections panel - shown only on engagement detail pages */}
-      {location.pathname.startsWith("/engagements/") && location.pathname !== "/engagements/create" && <>
+      {/* Engagement Sections panel - portalled below the global header */}
+      {portalTarget && location.pathname.startsWith("/engagements/") && location.pathname !== "/engagements/create" && createPortal(<>
           <div 
             ref={panelRef}
             style={{ width: isTemplatesPanelCollapsed ? 0 : panelWidth }}
@@ -806,7 +814,7 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
               `flex flex-col relative z-40 transition-all group/templates sidebar-secondary-panel ${hasDarkSecondary ? 'sidebar-dark-theme' : ''}`,
               isTemplatesPanelCollapsed 
                 ? "overflow-hidden shadow-none bg-transparent" 
-                : "shadow-md rounded-tl-2xl rounded-bl-2xl border-r border-[#DDE1E9]",
+                : "shadow-md border-r border-[#DDE1E9]",
               isResizing && "transition-none"
             )}
           >
@@ -1095,15 +1103,15 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
           </div>
 
           {/* Expand handle when collapsed - absolutely positioned */}
-          {isTemplatesPanelCollapsed && <div className="absolute left-[56px] top-1/2 -translate-y-1/2 flex items-center cursor-pointer z-20" onClick={() => setIsTemplatesPanelCollapsed(false)}>
+          {isTemplatesPanelCollapsed && <div className="absolute left-0 top-1/2 -translate-y-1/2 flex items-center cursor-pointer z-20" onClick={() => setIsTemplatesPanelCollapsed(false)}>
               <div className="flex items-center justify-center w-4 h-8 bg-primary border border-primary shadow-sm hover:bg-primary/90 transition-all rounded-full">
                 <ChevronRight className="h-3 w-3 text-white icon-arrow-right" />
               </div>
             </div>}
-        </>}
+        </>, portalTarget)}
 
-      {/* Templates panel - hidden on Dashboard, Clients, Teams, Engagements list, and Engagement detail pages */}
-      {location.pathname !== "/dashboard" && location.pathname !== "/clients" && location.pathname !== "/teams" && location.pathname !== "/engagements" && !location.pathname.startsWith("/engagements/") && <>
+      {/* Templates panel - portalled below the global header */}
+      {portalTarget && location.pathname !== "/dashboard" && location.pathname !== "/clients" && location.pathname !== "/teams" && location.pathname !== "/engagements" && !location.pathname.startsWith("/engagements/") && createPortal(<>
           <div 
             ref={panelRef}
             style={{ width: isTemplatesPanelCollapsed ? 0 : panelWidth }}
@@ -1111,7 +1119,7 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
               `flex flex-col relative z-40 transition-all group/templates sidebar-secondary-panel ${hasDarkSecondary ? 'sidebar-dark-theme' : ''}`,
               isTemplatesPanelCollapsed 
                 ? "overflow-hidden shadow-none bg-transparent border-r-0" 
-                : "shadow-md bg-[#f1f1f3] dark:from-muted dark:to-card border-r border-border rounded-tl-2xl rounded-bl-2xl",
+                : "shadow-md bg-[#f1f1f3] dark:from-muted dark:to-card border-r border-border",
               isResizing && "transition-none"
             )}
           >
@@ -1239,12 +1247,12 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
           </div>
 
           {/* Expand handle when collapsed - absolutely positioned */}
-          {isTemplatesPanelCollapsed && <div className="absolute left-[56px] top-1/2 -translate-y-1/2 flex items-center cursor-pointer z-20" onClick={() => setIsTemplatesPanelCollapsed(false)}>
+          {isTemplatesPanelCollapsed && <div className="absolute left-0 top-1/2 -translate-y-1/2 flex items-center cursor-pointer z-20" onClick={() => setIsTemplatesPanelCollapsed(false)}>
               <div className="flex items-center justify-center w-4 h-8 bg-primary border border-primary shadow-sm hover:bg-primary/90 transition-all rounded-full">
                 <ChevronRight className="h-3 w-3 text-white icon-arrow-right" />
               </div>
             </div>}
-        </>}
+        </>, portalTarget)}
 
       {/* Rename Dialog */}
       <Dialog open={renameDialogOpen} onOpenChange={setRenameDialogOpen}>

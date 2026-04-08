@@ -20,15 +20,18 @@ export function Layout({ children, title, showActions = false, showBackButton = 
       />
       
       <div className="layout-content flex-1 flex flex-col overflow-hidden">
-        {/* Global Header */}
-            <div className="header-wrapper rounded-tl-2xl overflow-hidden bg-background">
-              <GlobalHeader title={title} />
-            </div>
+        {/* Global Header - spans full width from sidebar curve to right end */}
+        <div className="header-wrapper rounded-tl-2xl overflow-hidden bg-background">
+          <GlobalHeader title={title} />
+        </div>
         
-        {/* Main content area */}
-        <main className="app-main flex-1 overflow-auto bg-background text-foreground rounded-bl-2xl">
-          {children}
-        </main>
+        {/* Content area with portal target for secondary panels */}
+        <div className="content-wrapper flex flex-1 overflow-hidden rounded-bl-2xl bg-background">
+          <div id="sidebar-secondary-portal" className="flex shrink-0 h-full" />
+          <main className="app-main flex-1 overflow-auto text-foreground">
+            {children}
+          </main>
+        </div>
       </div>
 
       <ThemeChanger />
