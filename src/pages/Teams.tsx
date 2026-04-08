@@ -95,11 +95,12 @@ export default function Teams() {
                   <button
                     key={tab.id}
                     onClick={() => setActiveTab(tab.id)}
-                    className={`px-4 py-1.5 text-sm font-semibold rounded-md transition-colors ${
+                    className={`px-4 py-1.5 text-sm rounded-md transition-colors ${
                       activeTab === tab.id
                         ? "bg-primary text-white"
                         : "text-muted-foreground hover:bg-muted"
                     }`}
+                    style={{ fontWeight: 600 }}
                   >
                     {tab.label}
                   </button>
