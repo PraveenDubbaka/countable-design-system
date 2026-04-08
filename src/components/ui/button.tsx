@@ -19,7 +19,7 @@ const buttonVariants = cva(
           "active:bg-destructive/65",
         ].join(" "),
         outline: [
-          "border border-border bg-background text-primary",
+          "border border-[#0A3159] bg-background text-primary",
           "hover:bg-primary/[0.14] hover:border-primary",
           "active:bg-primary/[0.22] active:border-primary",
           "focus-visible:border-primary",
