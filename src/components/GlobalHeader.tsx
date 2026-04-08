@@ -79,26 +79,6 @@ export function GlobalHeader({ title }: { title?: string }) {
           )}
         </div>
 
-        {/* Center - Ask Luka AI Search */}
-        <div className="flex-1 flex justify-center">
-          <div className="ask-luka-bar flex items-center bg-white dark:bg-card rounded-full pl-3 pr-1 py-1 gap-2 min-w-[300px] border border-[#dcdfe4] dark:border-[hsl(220_15%_30%)] transition-all duration-300">
-            <Zap className="h-3.5 w-3.5 text-muted-foreground flex-shrink-0" />
-            <Input 
-              type="text"
-              placeholder="Type here.."
-              value={askLukaQuery}
-              onChange={(e) => setAskLukaQuery(e.target.value)}
-              className="border-0 bg-transparent h-6 text-sm text-foreground placeholder:text-muted-foreground/60 focus-visible:ring-0 focus-visible:ring-offset-0 px-0 flex-1"
-            />
-            <Button 
-              className="h-7 px-3 rounded-full bg-gradient-to-r from-[#1C63A6] to-[#7A31D8] hover:from-[#1a5a96] hover:to-[#6a2bc2] text-white text-xs font-medium gap-1.5 shadow-md"
-              onClick={() => setAskLukaOpen(true)}
-            >
-              <Sparkles className="h-3.5 w-3.5 animate-[spin_3s_linear_infinite]" />
-              Ask Luka
-            </Button>
-          </div>
-        </div>
 
         {/* Right side - Credits, Theme, Notifications, Profile */}
         <div className="flex-1 flex items-center justify-end gap-3">
