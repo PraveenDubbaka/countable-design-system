@@ -245,7 +245,7 @@ export default function Dashboard() {
                   </div>
                   <div className="flex flex-col">
                     <span className={`text-xl font-bold leading-none ${color}`}>{stat.value}</span>
-                    <span className="text-[11px] font-medium text-foreground/60 leading-tight mt-0.5 whitespace-nowrap">{stat.label}</span>
+                    <span className="text-[11px] font-medium text-[#000000] leading-tight mt-0.5 whitespace-nowrap">{stat.label}</span>
                   </div>
                 </div>
               );
