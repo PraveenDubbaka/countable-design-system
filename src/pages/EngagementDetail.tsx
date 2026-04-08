@@ -611,22 +611,17 @@ export default function EngagementDetail() {
           </div>
 
           {/* Right side - Tool buttons */}
-          <TooltipProvider>
-            <div className="flex items-center gap-1">
-              {headerActions.map(action => (
-                <Tooltip key={action.id}>
-                  <TooltipTrigger asChild>
-                    <Button variant="secondary" size="icon-sm" className="h-8 w-8">
-                      <action.icon className="h-4 w-4" />
-                    </Button>
-                  </TooltipTrigger>
-                  <TooltipContent side="bottom">
-                    <p>{action.label}</p>
-                  </TooltipContent>
-                </Tooltip>
-              ))}
-            </div>
-          </TooltipProvider>
+          <div className="flex items-center gap-1">
+            {headerActions.map(action => (
+              <ExpandableIconButton
+                key={action.id}
+                variant="secondary"
+                size="sm"
+                icon={<action.icon className="h-4 w-4" />}
+                label={action.label}
+              />
+            ))}
+          </div>
         </div>
 
           {/* Content Area */}
