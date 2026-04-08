@@ -270,7 +270,7 @@ export default function TrialBalance() {
               <ExpandableIconButton variant="outline" className="bg-card hover:bg-muted" icon={<FileX2 className="h-4 w-4" />} label="Unmap" />
               <ExpandableIconButton variant="outline" className="bg-card hover:bg-muted" icon={<Network className="h-4 w-4" />} label="Auto Map" />
               <ExpandableIconButton variant="outline" className="bg-card hover:bg-muted" icon={<Upload className="h-4 w-4" />} label="Import" />
-              <ExpandableIconButton variant="outline" className="bg-card hover:bg-muted" icon={<Download className="h-4 w-4" fill="currentColor" />} label="Export" />
+              <ExpandableIconButton variant="outline" className="bg-card hover:bg-muted" icon={<Download className="h-4 w-4" />} label="Export" />
               <ExpandableIconButton variant="outline" className="bg-card hover:bg-muted" icon={<RefreshCw className="h-4 w-4" />} label="Refresh" />
 
               {/* Zero Balance Accounts - dropdown */}
