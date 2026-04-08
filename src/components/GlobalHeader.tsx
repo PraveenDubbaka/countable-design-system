@@ -102,20 +102,6 @@ export function GlobalHeader({ title }: { title?: string }) {
         {/* Right side - Credits, Theme, Notifications, Profile */}
         <div className="flex-1 flex items-center justify-end gap-3">
 
-          {/* AI Credits */}
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <div 
-                className="flex items-center justify-center w-9 h-9 cursor-pointer rounded-xl hover:bg-muted transition-colors"
-                style={{ borderRadius: '12px' }}
-              >
-                <div className="w-6 h-6 rounded-full bg-gradient-to-br from-[#7A31D8] to-[#1C63A6] flex items-center justify-center">
-                  <span className="text-[10px] font-bold text-white">L</span>
-                </div>
-              </div>
-            </TooltipTrigger>
-            <TooltipContent>Luka AI Credits</TooltipContent>
-          </Tooltip>
 
           {/* Font size accessibility toggle */}
           <Tooltip>
