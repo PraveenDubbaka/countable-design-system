@@ -494,6 +494,11 @@
     text-transform: none !important;
     letter-spacing: 0 !important;
   }
+
+  .text-sm {
+    font-size: 0.9375rem !important;
+    font-weight: 400 !important;
+  }
   
   /* Enhanced heading hierarchy */
   h1, .h1 {
