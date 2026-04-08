@@ -4,7 +4,7 @@
 
 /* Global link text styling */
 .text-link {
-  font-weight: 600;
+  font-weight: 600 !important;
 }
 
 /* Double border focus effect for form inputs */
