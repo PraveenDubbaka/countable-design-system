@@ -174,7 +174,7 @@ export default function TrialBalance() {
             {/* Engagement Selector */}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <button className="group flex items-center gap-1.5 px-2 py-1 rounded-md hover:bg-primary/5 transition-colors">
+                <button className="group flex items-center gap-1.5 px-2 py-1 rounded-md border border-border hover:bg-primary/5 transition-colors">
                   <div className="w-6 h-6 rounded-md bg-gradient-to-br from-secondary to-secondary/50 flex items-center justify-center">
                     <FileText className="h-3.5 w-3.5 text-secondary-foreground" />
                   </div>
