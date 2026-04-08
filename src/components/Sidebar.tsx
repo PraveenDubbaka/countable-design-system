@@ -1103,7 +1103,7 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
           </div>
 
           {/* Expand handle when collapsed - absolutely positioned */}
-          {isTemplatesPanelCollapsed && <div className="absolute left-[56px] top-1/2 -translate-y-1/2 flex items-center cursor-pointer z-20" onClick={() => setIsTemplatesPanelCollapsed(false)}>
+          {isTemplatesPanelCollapsed && <div className="absolute left-0 top-1/2 -translate-y-1/2 flex items-center cursor-pointer z-20" onClick={() => setIsTemplatesPanelCollapsed(false)}>
               <div className="flex items-center justify-center w-4 h-8 bg-primary border border-primary shadow-sm hover:bg-primary/90 transition-all rounded-full">
                 <ChevronRight className="h-3 w-3 text-white icon-arrow-right" />
               </div>
@@ -1119,7 +1119,7 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
               `flex flex-col relative z-40 transition-all group/templates sidebar-secondary-panel ${hasDarkSecondary ? 'sidebar-dark-theme' : ''}`,
               isTemplatesPanelCollapsed 
                 ? "overflow-hidden shadow-none bg-transparent border-r-0" 
-                : "shadow-md bg-[#f1f1f3] dark:from-muted dark:to-card border-r border-border rounded-tl-2xl rounded-bl-2xl",
+                : "shadow-md bg-[#f1f1f3] dark:from-muted dark:to-card border-r border-border",
               isResizing && "transition-none"
             )}
           >
