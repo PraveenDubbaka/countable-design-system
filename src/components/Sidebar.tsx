@@ -567,7 +567,7 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
               <ChecklistIcon className="h-4 w-4 flex-shrink-0" />
               <span className={cn(
                 "truncate flex-1",
-                isSelected ? "font-medium" : ""
+                isSelected ? "font-semibold" : ""
               )}>
                 {template.name}
               </span>
