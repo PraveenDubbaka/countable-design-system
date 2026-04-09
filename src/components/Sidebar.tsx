@@ -1044,7 +1044,7 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
                       >
                         {isLeaf ? (
                           <>
-                            <span className="w-3.5 flex-shrink-0" />
+                            {depth > 0 && <span className="w-3.5 flex-shrink-0" />}
                             {renderIcon(node.icon)}
                           </>
                         ) : (
