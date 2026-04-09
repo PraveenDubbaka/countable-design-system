@@ -255,7 +255,7 @@ export function SignoffsOverlay({ open, onClose, anchorLeft }: SignoffsOverlayPr
                     >
                       {/* Item label */}
                       <div className="flex-1 min-w-0 px-3 py-2.5 pl-7">
-                        <span className="text-xs text-foreground/80 truncate block">{item.label}</span>
+                        <span className="text-xs text-foreground font-medium truncate block">{item.label}</span>
                       </div>
                       {/* Preparer checkboxes */}
                       {preparers.map(p => {
