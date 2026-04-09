@@ -1102,8 +1102,8 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
             </div>
           </div>
 
-          {/* Expand handle when collapsed - absolutely positioned */}
-          {isTemplatesPanelCollapsed && <div className="absolute left-0 top-1/2 -translate-y-1/2 flex items-center cursor-pointer z-20" onClick={() => setIsTemplatesPanelCollapsed(false)}>
+          {/* Expand handle when collapsed - sits flush at end of main menu */}
+          {isTemplatesPanelCollapsed && <div className="flex items-center justify-center h-full cursor-pointer z-20" onClick={() => setIsTemplatesPanelCollapsed(false)}>
               <div className="flex items-center justify-center w-4 h-8 bg-primary border border-primary shadow-sm hover:bg-primary/90 transition-all rounded-full">
                 <ChevronRight className="h-3 w-3 text-white icon-arrow-right" />
               </div>
@@ -1246,8 +1246,8 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
             </div>
           </div>
 
-          {/* Expand handle when collapsed - absolutely positioned */}
-          {isTemplatesPanelCollapsed && <div className="absolute left-0 top-1/2 -translate-y-1/2 flex items-center cursor-pointer z-20" onClick={() => setIsTemplatesPanelCollapsed(false)}>
+          {/* Expand handle when collapsed - sits flush at end of main menu */}
+          {isTemplatesPanelCollapsed && <div className="flex items-center justify-center h-full cursor-pointer z-20" onClick={() => setIsTemplatesPanelCollapsed(false)}>
               <div className="flex items-center justify-center w-4 h-8 bg-primary border border-primary shadow-sm hover:bg-primary/90 transition-all rounded-full">
                 <ChevronRight className="h-3 w-3 text-white icon-arrow-right" />
               </div>
