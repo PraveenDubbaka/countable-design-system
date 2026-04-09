@@ -1102,9 +1102,9 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
             </div>
           </div>
 
-          {/* Expand handle when collapsed - minimal width, half-overlaps content */}
-          {isTemplatesPanelCollapsed && <div className="relative flex items-center justify-center h-full w-2 shrink-0 cursor-pointer z-20" onClick={() => setIsTemplatesPanelCollapsed(false)}>
-              <div className="flex items-center justify-center w-4 h-8 bg-primary border border-primary shadow-sm hover:bg-primary/90 transition-all rounded-full -mr-1">
+          {/* Expand handle when collapsed - fixed beside global nav with no layout gap */}
+          {isTemplatesPanelCollapsed && <div className="fixed top-1/2 -translate-y-1/2 cursor-pointer z-50" style={{ left: isNavExpanded ? 224 : 56 }} onClick={() => setIsTemplatesPanelCollapsed(false)}>
+              <div className="flex items-center justify-center w-4 h-8 bg-primary border border-primary shadow-sm hover:bg-primary/90 transition-all rounded-full">
                 <ChevronRight className="h-3 w-3 text-white icon-arrow-right" />
               </div>
             </div>}
@@ -1246,9 +1246,9 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
             </div>
           </div>
 
-          {/* Expand handle when collapsed - minimal width, half-overlaps content */}
-          {isTemplatesPanelCollapsed && <div className="relative flex items-center justify-center h-full w-2 shrink-0 cursor-pointer z-20" onClick={() => setIsTemplatesPanelCollapsed(false)}>
-              <div className="flex items-center justify-center w-4 h-8 bg-primary border border-primary shadow-sm hover:bg-primary/90 transition-all rounded-full -mr-1">
+          {/* Expand handle when collapsed - fixed beside global nav with no layout gap */}
+          {isTemplatesPanelCollapsed && <div className="fixed top-1/2 -translate-y-1/2 cursor-pointer z-50" style={{ left: isNavExpanded ? 224 : 56 }} onClick={() => setIsTemplatesPanelCollapsed(false)}>
+              <div className="flex items-center justify-center w-4 h-8 bg-primary border border-primary shadow-sm hover:bg-primary/90 transition-all rounded-full">
                 <ChevronRight className="h-3 w-3 text-white icon-arrow-right" />
               </div>
             </div>}
