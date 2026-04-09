@@ -655,7 +655,7 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
               <span className="w-4 flex-shrink-0" />
               <ChecklistIcon className="h-4 w-4 flex-shrink-0" />
             </>}
-          <span className="truncate flex-1 text-foreground">{template.name}</span>
+          <span className="truncate flex-1 text-foreground font-semibold">{template.name}</span>
           {folderChecklists.length > 0 && <span className="text-xs text-muted-foreground">{folderChecklists.length}</span>}
         </div>
         {template.type === "folder" && template.isExpanded && <>
