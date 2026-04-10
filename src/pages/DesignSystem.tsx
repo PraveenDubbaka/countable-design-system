@@ -912,6 +912,7 @@ export default function DesignSystem() {
             </SampleCard>
 
           </div>
+        </div>
 
       </div>
     </Layout>
