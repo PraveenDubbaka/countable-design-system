@@ -197,7 +197,7 @@ const motionDurations = [
 
 /* ─── components ─── */
 function Swatch({ token }: { token: Token }) {
-  const copy = () => { navigator.clipboard.writeText(token.css); toast({ title: "Copied", description: token.css }); };
+  const copy = () => { navigator.clipboard.writeText(token.css); sonnerToast.success("Copied: " + token.css); };
   const isGlow = token.hex === "—";
   return (
     <button onClick={copy} className="group flex items-center gap-3 rounded-md p-2 text-left hover:bg-muted transition-colors w-full">
@@ -294,7 +294,7 @@ export default function DesignSystem() {
     const a = document.createElement("a");
     a.href = url; a.download = "design-system-tokens.json"; a.click();
     URL.revokeObjectURL(url);
-    toast({ title: "Downloaded", description: "design-system-tokens.json" });
+    sonnerToast.success("Downloaded: design-system-tokens.json");
   }, []);
 
   return (
