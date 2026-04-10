@@ -847,7 +847,69 @@ export default function DesignSystem() {
               </div>
             </SampleCard>
 
-          </div>
+            {/* Toast Notifications */}
+            <SampleCard title="Toast Notifications">
+              <div className="space-y-3">
+                <p className="text-body-sm text-muted-foreground">
+                  Notifications use the <code className="text-xs bg-muted px-1.5 py-0.5 rounded font-mono">sonner</code> library. Toasts appear top-right with colored backgrounds per type.
+                </p>
+                <div className="flex flex-wrap gap-2">
+                  <Button
+                    size="sm"
+                    className="gap-1.5 bg-emerald-500 hover:bg-emerald-600 text-white"
+                    onClick={() => sonnerToast.success("Action completed", { description: "Your changes have been saved successfully." })}
+                  >
+                    <CheckCircle2 className="h-3.5 w-3.5" /> Success
+                  </Button>
+                  <Button
+                    size="sm"
+                    className="gap-1.5 bg-red-500 hover:bg-red-600 text-white"
+                    onClick={() => sonnerToast.error("Something went wrong", { description: "Please try again or contact support." })}
+                  >
+                    <AlertCircle className="h-3.5 w-3.5" /> Error
+                  </Button>
+                  <Button
+                    size="sm"
+                    className="gap-1.5 bg-amber-500 hover:bg-amber-600 text-white"
+                    onClick={() => sonnerToast.warning("Heads up!", { description: "This action may have unintended consequences." })}
+                  >
+                    <AlertTriangle className="h-3.5 w-3.5" /> Warning
+                  </Button>
+                  <Button
+                    size="sm"
+                    className="gap-1.5 bg-blue-500 hover:bg-blue-600 text-white"
+                    onClick={() => sonnerToast.info("For your information", { description: "A new update is available." })}
+                  >
+                    <Info className="h-3.5 w-3.5" /> Info
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    className="gap-1.5"
+                    onClick={() => sonnerToast("Neutral toast", { description: "This is a default notification with no type." })}
+                  >
+                    Default
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    className="gap-1.5"
+                    onClick={() => sonnerToast("Action required", {
+                      description: "Do you want to proceed?",
+                      action: { label: "Undo", onClick: () => sonnerToast.success("Undone!") },
+                    })}
+                  >
+                    With Action
+                  </Button>
+                </div>
+                <div className="bg-muted rounded-lg p-3 space-y-1.5 text-label-sm text-muted-foreground">
+                  <p><span className="font-medium text-foreground">Position:</span> top-right</p>
+                  <p><span className="font-medium text-foreground">Style:</span> rounded-2xl · no border · colored bg per type · white text</p>
+                  <p><span className="font-medium text-foreground">Icons:</span> CheckCircle2 · AlertCircle · AlertTriangle · Info (lucide)</p>
+                  <p><span className="font-medium text-foreground">Usage:</span> <code className="font-mono text-xs">import {"{ toast }"} from "sonner";</code></p>
+                </div>
+              </div>
+            </SampleCard>
         </div>
 
       </div>
