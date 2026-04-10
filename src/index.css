@@ -1570,3 +1570,59 @@
 :is(.dark) .ask-luka-bar:hover {
   background-image: linear-gradient(hsl(var(--card)), hsl(var(--card))), linear-gradient(to right, #1C63A6, #7A31D8);
 }
+
+/* ── Toast progress bar animation ── */
+@keyframes toast-progress-shrink {
+  from { transform: scaleX(1); }
+  to { transform: scaleX(0); }
+}
+
+.toast-progress-success::before,
+.toast-progress-error::before,
+.toast-progress-warning::before,
+.toast-progress-info::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  border-radius: 3px 3px 0 0;
+  transform-origin: left;
+  animation: toast-progress-shrink 4s linear forwards;
+}
+
+.toast-progress-success::before {
+  background: linear-gradient(90deg, hsl(152 69% 41%), hsl(152 69% 55%));
+}
+
+.toast-progress-error::before {
+  background: linear-gradient(90deg, hsl(0 72% 51%), hsl(0 72% 63%));
+}
+
+.toast-progress-warning::before {
+  background: linear-gradient(90deg, hsl(38 92% 50%), hsl(38 92% 62%));
+}
+
+.toast-progress-info::before {
+  background: linear-gradient(90deg, hsl(217 91% 60%), hsl(217 91% 72%));
+}
+
+/* Close button styling for sonner */
+[data-sonner-toaster] [data-close-button] {
+  position: absolute !important;
+  top: 12px !important;
+  right: 12px !important;
+  left: unset !important;
+  transform: none !important;
+  border: none !important;
+  background: transparent !important;
+  color: hsl(var(--muted-foreground)) !important;
+  opacity: 0.5;
+  transition: opacity 0.15s ease;
+}
+
+[data-sonner-toaster] [data-close-button]:hover {
+  opacity: 1;
+  background: transparent !important;
+}
