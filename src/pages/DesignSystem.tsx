@@ -13,7 +13,8 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Label } from "@/components/ui/label";
-import { toast } from "@/hooks/use-toast";
+import { toast as sonnerToast } from "sonner";
+import { CheckCircle2, AlertCircle, AlertTriangle, Info } from "lucide-react";
 
 /* ─── data ─── */
 interface Token { css: string; label: string; hsl: string; hex: string; }
