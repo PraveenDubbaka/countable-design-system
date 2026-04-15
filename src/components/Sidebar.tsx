@@ -1022,11 +1022,17 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
                   const hasChildren = node.children && node.children.length > 0;
                   const isOpen = expandedSections.has(node.id);
                   const isLeaf = !hasChildren;
+                  const engId = location.pathname.split("/engagements/")[1]?.split("/")[0];
+                  const currentSubPath = engId ? location.pathname.replace(`/engagements/${engId}/`, '') : '';
+                  const isActive = node.route && currentSubPath === node.route;
 
                   return (
                     <div key={node.id}>
                       <div
-                        className="flex items-center gap-1.5 py-1.5 px-2 rounded-md cursor-pointer hover:bg-muted transition-colors text-sm"
+                        className={cn(
+                          "flex items-center gap-1.5 py-1.5 px-2 rounded-md cursor-pointer hover:bg-muted transition-colors text-sm",
+                          isActive && "bg-primary/10 ring-1 ring-primary/30"
+                        )}
                         style={{ paddingLeft: `${depth * 16 + 8}px` }}
                         onClick={() => {
                           if (node.route) {
