@@ -209,8 +209,16 @@ export default function TrialBalance() {
     <Layout title="Engagements" headerContent={trialBalanceBreadcrumb}>
       <div className="flex h-full overflow-hidden">
         <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
-        {/* Top Header Bar - tool actions only */}
-        <div className="flex items-center justify-end px-4 py-1.5 border-b border-border bg-gradient-to-r from-card via-card to-secondary/20">
+        {/* Top Header Bar - title and tool actions */}
+        <div className="sticky top-0 z-10 flex items-center justify-between px-4 py-1.5 border-b border-border bg-gradient-to-r from-card via-card to-secondary/20">
+          <div className="flex items-center gap-3">
+            <h1 className="text-lg font-semibold text-foreground truncate">
+              Trial Balance
+            </h1>
+            <span className="text-xs text-muted-foreground">
+              Last updated: <span className="font-medium text-foreground">54 min ago</span>
+            </span>
+          </div>
           <div className="flex items-center gap-1">
             {headerActions.map(action => (
               <ExpandableIconButton
@@ -225,16 +233,8 @@ export default function TrialBalance() {
         </div>
 
         {/* Sub header toolbar - always visible */}
-        <div className="sticky top-0 z-10 bg-card px-4 py-2 border-b border-border/50">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <h1 className="text-lg font-semibold text-foreground truncate">
-                Trial Balance
-              </h1>
-              <span className="text-xs text-muted-foreground">
-                Last updated: <span className="font-medium text-foreground">54 min ago</span>
-              </span>
-            </div>
+        <div className="sticky top-[42px] z-10 bg-card px-4 py-2 border-b border-border/50">
+          <div className="flex items-center justify-end">
             <div className="flex items-center gap-2">
               {/* Date Selector - dropdown */}
               <DropdownMenu>
