@@ -13,7 +13,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { SettingsPanel } from "@/components/SettingsPanel";
 import { AskLukaOverlay } from "@/components/AskLukaOverlay";
 
-export function GlobalHeader({ title }: { title?: string }) {
+export function GlobalHeader({ title, headerContent }: { title?: string; headerContent?: React.ReactNode }) {
   const { isDarkMode, toggleTheme } = useThemeContext();
   const [askLukaQuery, setAskLukaQuery] = useState("");
   const [settingsOpen, setSettingsOpen] = useState(false);
@@ -73,10 +73,11 @@ export function GlobalHeader({ title }: { title?: string }) {
     <>
       <header className="h-14 flex items-center px-6 bg-background border-b border-border">
         {/* Left side - Page title */}
-        <div className="flex-1">
+         <div className="flex-1 flex items-center gap-3">
           {title && (
             <h1 className="text-xl font-bold" style={{ color: '#0c2d55' }}>{title}</h1>
           )}
+          {headerContent}
         </div>
 
 

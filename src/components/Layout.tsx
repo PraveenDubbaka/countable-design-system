@@ -5,12 +5,13 @@ import { ThemeChanger } from '@/components/ThemeChanger';
 interface LayoutProps {
   children: React.ReactNode;
   title?: string;
+  headerContent?: React.ReactNode;
   showActions?: boolean;
   showBackButton?: boolean;
   onBack?: () => void;
 }
 
-export function Layout({ children, title, showActions = false, showBackButton = false, onBack }: LayoutProps) {
+export function Layout({ children, title, headerContent, showActions = false, showBackButton = false, onBack }: LayoutProps) {
   return (
     <div className="flex h-screen bg-sidebar-bg">
       <Sidebar 
@@ -22,7 +23,7 @@ export function Layout({ children, title, showActions = false, showBackButton = 
       <div className="layout-content flex-1 flex flex-col overflow-hidden">
         {/* Global Header - spans full width from sidebar curve to right end */}
         <div className="header-wrapper rounded-tl-2xl overflow-hidden bg-background">
-          <GlobalHeader title={title} />
+          <GlobalHeader title={title} headerContent={headerContent} />
         </div>
         
         {/* Content area with portal target for secondary panels */}
