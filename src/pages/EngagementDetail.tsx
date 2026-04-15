@@ -601,18 +601,20 @@ export default function EngagementDetail() {
               <h1 className="font-semibold text-foreground truncate text-lg">
                 Client acceptance and continuance
               </h1>
+              <div className="flex items-center gap-1">
+                {headerActions.map(action => (
+                  <ExpandableIconButton
+                    key={action.id}
+                    variant="secondary"
+                    size="sm"
+                    icon={<action.icon className="h-4 w-4" />}
+                    label={action.label}
+                  />
+                ))}
+              </div>
             </div>
             {/* Action buttons row */}
             <div className="flex items-center justify-end gap-1 px-4 py-1.5 border-t border-border/50">
-              {headerActions.map(action => (
-                <ExpandableIconButton
-                  key={action.id}
-                  variant="secondary"
-                  size="sm"
-                  icon={<action.icon className="h-4 w-4" />}
-                  label={action.label}
-                />
-              ))}
               {checklist && <>
                 <ExpandableIconButton
                   variant="default"
