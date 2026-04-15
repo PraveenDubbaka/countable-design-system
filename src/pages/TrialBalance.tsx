@@ -219,7 +219,7 @@ export default function TrialBalance() {
               Last updated: <span className="font-medium text-foreground">54 min ago</span>
             </span>
           </div>
-          <div className="flex items-center gap-1">
+          <div className="flex items-center gap-2">
             {headerActions.map(action => (
               <ExpandableIconButton
                 key={action.id}
