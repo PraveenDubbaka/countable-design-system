@@ -3,7 +3,7 @@ import { cn } from "@/lib/utils";
 import { Button, type ButtonProps } from "./button";
 import { useIsMobile } from "@/hooks/use-mobile";
 
-const COMPACT_BREAKPOINT = 1280;
+const COMPACT_BREAKPOINT = 1368;
 
 export interface ExpandableIconButtonProps extends Omit<ButtonProps, "size"> {
   icon: React.ReactNode;
