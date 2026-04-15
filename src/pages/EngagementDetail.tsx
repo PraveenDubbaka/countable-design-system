@@ -542,7 +542,7 @@ export default function EngagementDetail() {
   };
   // No early return — empty state shown inline when checklist is null
   const engagementBreadcrumb = (
-    <div className="flex items-center gap-2">
+    <div className="flex items-center gap-2 whitespace-nowrap flex-shrink-0">
       {/* Client Selector */}
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
