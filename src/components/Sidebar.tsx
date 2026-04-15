@@ -1022,8 +1022,10 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
                   const isOpen = expandedSections.has(node.id);
                   const isLeaf = !hasChildren;
                   const engId = location.pathname.split("/engagements/")[1]?.split("/")[0];
-                  const currentSubPath = engId ? location.pathname.replace(`/engagements/${engId}/`, '') : '';
-                  const isActive = node.route && currentSubPath === node.route;
+                  const currentSubPath = engId ? location.pathname.replace(`/engagements/${engId}/`, '').replace(`/engagements/${engId}`, '') : '';
+                  const isActive = node.route 
+                    ? (currentSubPath === node.route || (currentSubPath === '' && node.route === 'checklist/co-ca'))
+                    : false;
 
                   return (
                     <div key={node.id}>
