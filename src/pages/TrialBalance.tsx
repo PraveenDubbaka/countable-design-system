@@ -265,7 +265,9 @@ export default function TrialBalance() {
                   <DropdownMenuItem>Expenses</DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
+            </div>
 
+            <div className="flex items-center gap-2">
               {/* Icon-only expandable buttons */}
               <ExpandableIconButton variant="outline" className="bg-card hover:bg-muted" icon={<FileX2 className="h-4 w-4" />} label="Unmap" />
               <ExpandableIconButton variant="outline" className="bg-card hover:bg-muted" icon={<Network className="h-4 w-4" />} label="Auto Map" />
