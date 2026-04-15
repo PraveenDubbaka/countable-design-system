@@ -595,8 +595,11 @@ export default function EngagementDetail() {
       <div className="flex h-full overflow-hidden">
         {/* Main Content Area */}
         <div className="flex-1 flex flex-col min-w-0 overflow-hidden relative">
-          {/* Top Header Bar with tool actions */}
-        <div className="flex items-center justify-end px-4 py-1.5 border-b border-border bg-gradient-to-r from-card via-card to-secondary/20">
+          {/* Top Header Bar with title and actions */}
+        <div className="sticky top-0 z-10 flex items-center justify-between px-4 py-1.5 border-b border-border bg-gradient-to-r from-card via-card to-secondary/20">
+          <h1 className="font-semibold text-foreground truncate text-lg">
+            Client acceptance and continuance
+          </h1>
           <div className="flex items-center gap-1">
             {headerActions.map(action => (
               <ExpandableIconButton
@@ -607,85 +610,71 @@ export default function EngagementDetail() {
                 label={action.label}
               />
             ))}
-          </div>
-        </div>
-
-          {/* Content Area */}
-          <div className="flex-1 overflow-auto bg-card">
-          {checklist ? (
-            <>
-            {/* Action Buttons - Sticky Header with Title */}
-            <div className="sticky top-0 z-10 bg-card px-4 py-2 flex flex-col border-b border-border/50">
-              <div className="flex items-center justify-between">
-                <h1 className="font-semibold text-foreground truncate text-lg">
-                  Client acceptance and continuance
-                </h1>
-                <div className="flex items-center gap-2">
-                  <ExpandableIconButton
-                    variant="default"
-                    icon={<Save className="h-4 w-4" />}
-                    label="Save"
-                    onClick={handleSave}
-                  />
-
-                  {/* Export Checklist */}
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <ExpandableIconButton
-                        variant="outline"
-                        icon={<Download className="h-4 w-4" />}
-                        label="Export"
-                        className="bg-card hover:bg-muted"
-                      />
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end" className="bg-card border shadow-lg z-50 w-40">
-                      <DropdownMenuItem className="flex items-center gap-2 cursor-pointer group" onClick={() => toast.info('Exporting as PDF...')}>
-                        <FileText className="h-4 w-4 text-muted-foreground group-hover:text-foreground transition-colors" />
-                        <span>PDF</span>
-                      </DropdownMenuItem>
-                      <DropdownMenuItem className="flex items-center gap-2 cursor-pointer group" onClick={() => toast.info('Exporting as Word...')}>
-                        <FileType className="h-4 w-4 text-muted-foreground group-hover:text-foreground transition-colors" />
-                        <span>Word</span>
-                      </DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-
-                  {/* Share with Client */}
-                  <div className="relative">
-                    <ExpandableIconButton
-                      variant="outline"
-                      icon={<Share2 className="h-4 w-4" />}
-                      label={clientResponses.hasResponses ? 'Responses!' : 'Share'}
-                      className={`bg-card hover:bg-muted ${clientResponses.hasResponses ? 'ring-2 ring-primary ring-offset-2' : ''}`}
-                      onClick={handleShareButtonClick}
-                    />
-                    {clientResponses.hasResponses && <span className="absolute -top-1.5 -right-1.5 flex h-5 w-5 pointer-events-none">
-                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
-                        <span className="relative inline-flex rounded-full h-5 w-5 bg-primary items-center justify-center">
-                          <Bell className="h-3 w-3 text-primary-foreground" />
-                        </span>
-                      </span>}
-                  </div>
-
+            {checklist && <>
+              <ExpandableIconButton
+                variant="default"
+                icon={<Save className="h-4 w-4" />}
+                label="Save"
+                size="sm"
+                onClick={handleSave}
+              />
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
                   <ExpandableIconButton
                     variant="outline"
-                    icon={<svg className="h-4 w-4" viewBox="0 0 1024 1024" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-                      <path d="M620.544 137.6c103.936 10.432 187.328 72.96 205.12 180.224h-60.16l97.088 144.448 97.152-144.448h-67.008c-17.792-144.448-127.168-238.336-265.344-251.712-19.136-1.536-36.864 14.848-36.864 35.712 1.28 17.92 13.568 34.24 30.016 35.776z m-150.4-73.024H132.416c-19.136 0-34.176 16.384-34.176 37.248v321.728c0 20.864 15.04 37.248 34.176 37.248h337.728c19.136 0 34.176-16.384 34.176-37.248V101.824c0-20.864-15.04-37.248-34.176-37.248z m-32.832 324.736H165.248V136.064h272.128v253.248h-0.064zM404.48 883.84c-116.224-10.432-205.12-87.872-209.216-216h64.256L162.496 523.392l-97.088 144.448h64.256c2.688 165.376 118.912 272.576 268.032 287.488 19.136 1.472 36.928-14.912 36.928-35.776a35.648 35.648 0 0 0-30.144-35.712z m489.6-323.264H556.288c-19.2 0-34.176 16.448-34.176 37.248v323.264c0 20.8 14.976 37.184 34.176 37.184h337.728c19.136 0 34.112-16.384 34.112-37.184V597.824c0.064-20.8-16.32-37.248-34.048-37.248z m-32.896 324.736H589.12V633.536h272.064v251.776z" />
-                    </svg>}
-                    label="Replace"
+                    size="sm"
+                    icon={<Download className="h-4 w-4" />}
+                    label="Export"
                     className="bg-card hover:bg-muted"
                   />
-
-                  <ExpandableIconButton
-                    variant="outline"
-                    icon={<Trash2 className="h-4 w-4" />}
-                    label="Delete"
-                    className="bg-card hover:bg-muted text-destructive hover:text-destructive"
-                    onClick={() => setShowDeleteDialog(true)}
-                  />
-                </div>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="bg-card border shadow-lg z-50 w-40">
+                  <DropdownMenuItem className="flex items-center gap-2 cursor-pointer group" onClick={() => toast.info('Exporting as PDF...')}>
+                    <FileText className="h-4 w-4 text-muted-foreground group-hover:text-foreground transition-colors" />
+                    <span>PDF</span>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem className="flex items-center gap-2 cursor-pointer group" onClick={() => toast.info('Exporting as Word...')}>
+                    <FileType className="h-4 w-4 text-muted-foreground group-hover:text-foreground transition-colors" />
+                    <span>Word</span>
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+              <div className="relative">
+                <ExpandableIconButton
+                  variant="outline"
+                  size="sm"
+                  icon={<Share2 className="h-4 w-4" />}
+                  label={clientResponses.hasResponses ? 'Responses!' : 'Share'}
+                  className={`bg-card hover:bg-muted ${clientResponses.hasResponses ? 'ring-2 ring-primary ring-offset-2' : ''}`}
+                  onClick={handleShareButtonClick}
+                />
+                {clientResponses.hasResponses && <span className="absolute -top-1.5 -right-1.5 flex h-5 w-5 pointer-events-none">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
+                    <span className="relative inline-flex rounded-full h-5 w-5 bg-primary items-center justify-center">
+                      <Bell className="h-3 w-3 text-primary-foreground" />
+                    </span>
+                  </span>}
               </div>
-            </div>
+              <ExpandableIconButton
+                variant="outline"
+                size="sm"
+                icon={<svg className="h-4 w-4" viewBox="0 0 1024 1024" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M620.544 137.6c103.936 10.432 187.328 72.96 205.12 180.224h-60.16l97.088 144.448 97.152-144.448h-67.008c-17.792-144.448-127.168-238.336-265.344-251.712-19.136-1.536-36.864 14.848-36.864 35.712 1.28 17.92 13.568 34.24 30.016 35.776z m-150.4-73.024H132.416c-19.136 0-34.176 16.384-34.176 37.248v321.728c0 20.864 15.04 37.248 34.176 37.248h337.728c19.136 0 34.176-16.384 34.176-37.248V101.824c0-20.864-15.04-37.248-34.176-37.248z m-32.832 324.736H165.248V136.064h272.128v253.248h-0.064zM404.48 883.84c-116.224-10.432-205.12-87.872-209.216-216h64.256L162.496 523.392l-97.088 144.448h64.256c2.688 165.376 118.912 272.576 268.032 287.488 19.136 1.472 36.928-14.912 36.928-35.776a35.648 35.648 0 0 0-30.144-35.712z m489.6-323.264H556.288c-19.2 0-34.176 16.448-34.176 37.248v323.264c0 20.8 14.976 37.184 34.176 37.184h337.728c19.136 0 34.112-16.384 34.112-37.184V597.824c0.064-20.8-16.32-37.248-34.048-37.248z m-32.896 324.736H589.12V633.536h272.064v251.776z" />
+                </svg>}
+                label="Replace"
+                className="bg-card hover:bg-muted"
+              />
+              <ExpandableIconButton
+                variant="outline"
+                size="sm"
+                icon={<Trash2 className="h-4 w-4" />}
+                label="Delete"
+                className="bg-card hover:bg-muted text-destructive hover:text-destructive"
+                onClick={() => setShowDeleteDialog(true)}
+              />
+            </>}
+          </div>
+        </div>
 
             {/* Scrollable Content */}
             <div className="p-4">
