@@ -884,12 +884,12 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
                   {
                     id: "co", code: "CO", label: "Client Onboarding", icon: "folder",
                     children: [
-                      { id: "co-ca", code: "CA", label: "Client acceptance and continuance", icon: "checklist" },
-                      { id: "co-ind", code: "IND", label: "Independence", icon: "checklist" },
-                      { id: "co-kcb", code: "KCB", label: "Knowledge of client business", icon: "checklist" },
-                      { id: "co-pl", code: "PL", label: "Planning", icon: "checklist" },
-                      { id: "co-el", code: "EL", label: "Engagement Letter", icon: "letter" },
-                      { id: "co-mr", code: "MR", label: "Management responsibility and acknowledgem...", icon: "letter" },
+                      { id: "co-ca", code: "CA", label: "Client acceptance and continuance", icon: "checklist", route: "checklist/co-ca" },
+                      { id: "co-ind", code: "IND", label: "Independence", icon: "checklist", route: "checklist/co-ind" },
+                      { id: "co-kcb", code: "KCB", label: "Knowledge of client business", icon: "checklist", route: "checklist/co-kcb" },
+                      { id: "co-pl", code: "PL", label: "Planning", icon: "checklist", route: "checklist/co-pl" },
+                      { id: "co-el", code: "EL", label: "Engagement Letter", icon: "letter", route: "checklist/co-el" },
+                      { id: "co-mr", code: "MR", label: "Management responsibility and acknowledgem...", icon: "letter", route: "checklist/co-mr" },
                     ]
                   },
                   {
@@ -1022,8 +1022,10 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
                   const isOpen = expandedSections.has(node.id);
                   const isLeaf = !hasChildren;
                   const engId = location.pathname.split("/engagements/")[1]?.split("/")[0];
-                  const currentSubPath = engId ? location.pathname.replace(`/engagements/${engId}/`, '') : '';
-                  const isActive = node.route && currentSubPath === node.route;
+                  const currentSubPath = engId ? location.pathname.replace(`/engagements/${engId}/`, '').replace(`/engagements/${engId}`, '') : '';
+                  const isActive = node.route 
+                    ? (currentSubPath === node.route || (currentSubPath === '' && node.route === 'checklist/co-ca'))
+                    : false;
 
                   return (
                     <div key={node.id}>
@@ -1036,7 +1038,14 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
                         onClick={() => {
                           if (node.route) {
                             const engId = location.pathname.split("/engagements/")[1]?.split("/")[0];
-                            if (engId) navigate(`/engagements/${engId}/${node.route}`);
+                            if (engId) {
+                              // Checklist routes navigate to base engagement page
+                              if (node.route.startsWith('checklist/')) {
+                                navigate(`/engagements/${engId}`);
+                              } else {
+                                navigate(`/engagements/${engId}/${node.route}`);
+                              }
+                            }
                           } else if (hasChildren) {
                             setExpandedSections(prev => {
                               const next = new Set(prev);
