@@ -153,64 +153,64 @@ export default function TrialBalance() {
   const uniqueClients = getUniqueClients();
   const clientEngagements = getEngagementsForClient(clientName);
 
+  const trialBalanceBreadcrumb = (
+    <div className="flex items-center gap-2 whitespace-nowrap flex-shrink-0">
+      {/* Client Name (read-only) */}
+      <div className="flex items-center gap-1.5 px-2 py-1">
+        <div className="w-6 h-6 rounded-md bg-gradient-to-br from-primary/20 to-primary/10 flex items-center justify-center">
+          <Building2 className="h-3.5 w-3.5 text-primary" />
+        </div>
+        <span className="text-sm font-medium text-foreground">{clientName}</span>
+      </div>
+
+      <ChevronRight className="h-3.5 w-3.5 text-muted-foreground" />
+
+      {/* Engagement Selector */}
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <button className="group flex items-center gap-1.5 px-2 py-1 rounded-md border border-border hover:bg-primary/5 transition-colors">
+            <div className="w-6 h-6 rounded-md bg-gradient-to-br from-secondary to-secondary/50 flex items-center justify-center">
+              <FileText className="h-3.5 w-3.5 text-secondary-foreground" />
+            </div>
+            <span className="text-sm font-medium text-foreground group-hover:text-primary transition-colors font-mono">{displayId}</span>
+            <ChevronDown className="h-3 w-3 text-muted-foreground group-hover:text-primary transition-colors" />
+          </button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="start" className="w-72 bg-card border shadow-lg z-50">
+          <div className="px-2 py-1.5 text-xs font-medium text-muted-foreground">Engagements for {clientName}</div>
+          {clientEngagements.map((eng) => (
+            <DropdownMenuItem key={eng.id} onClick={() => navigate(`/engagements/${eng.id}/trial-balance`)} className="flex items-center gap-3 cursor-pointer group py-2">
+              <div className="flex flex-col flex-1 min-w-0">
+                <span className="font-mono text-sm font-medium truncate">{eng.id}</span>
+                <div className="flex items-center gap-2 mt-0.5">
+                  <Calendar className="h-3 w-3 text-muted-foreground group-hover:text-white transition-colors" />
+                  <span className="text-xs text-muted-foreground group-hover:text-white transition-colors">{eng.yearEnd}</span>
+                  <span className="text-xs text-muted-foreground group-hover:text-white transition-colors">•</span>
+                  <span className="text-xs text-muted-foreground group-hover:text-white transition-colors">{eng.type}</span>
+                </div>
+              </div>
+              {eng.id === displayId && <Check className="h-4 w-4 text-primary group-hover:text-primary-foreground flex-shrink-0" />}
+            </DropdownMenuItem>
+          ))}
+        </DropdownMenuContent>
+      </DropdownMenu>
+
+      {/* Status Badge */}
+      <Badge
+        variant={status === 'Completed' || status === 'New' ? 'completed' : status === 'Not Started' ? 'notStarted' : 'inProgress'}
+        className="ml-2 whitespace-nowrap"
+      >
+        {status}
+      </Badge>
+    </div>
+  );
+
   return (
-    <Layout>
+    <Layout title="Engagements" headerContent={trialBalanceBreadcrumb}>
       <div className="flex h-full overflow-hidden">
         <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
-        {/* Top Header Bar - matching Engagement Detail style */}
-        <div className="flex items-center justify-between px-4 py-1.5 border-b border-border bg-gradient-to-r from-card via-card to-secondary/20">
-          {/* Left side - Interactive Breadcrumb */}
-          <div className="flex items-center gap-2">
-            {/* Client Selector */}
-            <div className="flex items-center gap-1.5 px-2 py-1">
-              <div className="w-6 h-6 rounded-md bg-gradient-to-br from-primary/20 to-primary/10 flex items-center justify-center">
-                <Building2 className="h-3.5 w-3.5 text-primary" />
-              </div>
-              <span className="text-sm font-medium text-foreground">{clientName}</span>
-            </div>
-
-            <ChevronRight className="h-3.5 w-3.5 text-muted-foreground" />
-
-            {/* Engagement Selector */}
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <button className="group flex items-center gap-1.5 px-2 py-1 rounded-md border border-muted-foreground/30 hover:bg-primary/5 transition-colors">
-                  <div className="w-6 h-6 rounded-md bg-gradient-to-br from-secondary to-secondary/50 flex items-center justify-center">
-                    <FileText className="h-3.5 w-3.5 text-secondary-foreground" />
-                  </div>
-                  <span className="text-sm font-medium text-foreground group-hover:text-primary transition-colors font-mono">{displayId}</span>
-                  <ChevronDown className="h-3 w-3 text-muted-foreground group-hover:text-primary transition-colors" />
-                </button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="start" className="w-72 bg-card border shadow-lg z-50">
-                <div className="px-2 py-1.5 text-xs font-medium text-muted-foreground">Engagements for {clientName}</div>
-                {clientEngagements.map((eng) => (
-                  <DropdownMenuItem key={eng.id} onClick={() => navigate(`/engagements/${eng.id}/trial-balance`)} className="flex items-center gap-3 cursor-pointer group py-2">
-                    <div className="flex flex-col flex-1 min-w-0">
-                      <span className="font-mono text-sm font-medium truncate">{eng.id}</span>
-                      <div className="flex items-center gap-2 mt-0.5">
-                        <Calendar className="h-3 w-3 text-muted-foreground group-hover:text-white transition-colors" />
-                        <span className="text-xs text-muted-foreground group-hover:text-white transition-colors">{eng.yearEnd}</span>
-                        <span className="text-xs text-muted-foreground group-hover:text-white transition-colors">•</span>
-                        <span className="text-xs text-muted-foreground group-hover:text-white transition-colors">{eng.type}</span>
-                      </div>
-                    </div>
-                    {eng.id === displayId && <Check className="h-4 w-4 text-primary group-hover:text-primary-foreground flex-shrink-0" />}
-                  </DropdownMenuItem>
-                ))}
-              </DropdownMenuContent>
-            </DropdownMenu>
-
-            {/* Status Badge */}
-            <Badge
-              variant={status === 'Completed' || status === 'New' ? 'completed' : status === 'Not Started' ? 'notStarted' : 'inProgress'}
-              className="ml-2 whitespace-nowrap"
-            >
-              {status}
-            </Badge>
-          </div>
-
-          {/* Right side - Tool buttons */}
+        {/* Top Header Bar - tool actions only */}
+        <div className="flex items-center justify-end px-4 py-1.5 border-b border-border bg-gradient-to-r from-card via-card to-secondary/20">
           <div className="flex items-center gap-1">
             {headerActions.map(action => (
               <ExpandableIconButton
