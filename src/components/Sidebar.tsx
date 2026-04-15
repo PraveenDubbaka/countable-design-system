@@ -1030,8 +1030,8 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
                     <div key={node.id}>
                       <div
                         className={cn(
-                          "flex items-center gap-1.5 py-1.5 px-2 rounded-md cursor-pointer hover:bg-muted transition-colors text-sm",
-                          isActive && "bg-primary/10 ring-1 ring-primary/30"
+                          "flex items-center gap-1.5 py-1.5 px-2 rounded-md cursor-pointer hover:bg-primary/20 transition-colors text-sm",
+                          isActive && "bg-primary/25 ring-1 ring-primary/50"
                         )}
                         style={{ paddingLeft: `${depth * 16 + 8}px` }}
                         onClick={() => {
