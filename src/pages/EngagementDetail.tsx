@@ -676,9 +676,11 @@ export default function EngagementDetail() {
           </div>
         </div>
 
-            {/* Scrollable Content */}
+          {/* Content Area */}
+          <div className="flex-1 overflow-auto bg-card">
+          {checklist ? (
             <div className="p-4">
-              {/* Clipboard prompt banner - above objective */}
+              {/* Clipboard prompt banner */}
               {showClipboardPrompt && clipboardResponses && (
                 <div className="flex items-center gap-3 mb-4 px-4 py-3 bg-amber-50 rounded-lg border border-amber-300 shadow-sm">
                   <div className="w-8 h-8 rounded-full bg-amber-100 flex items-center justify-center flex-shrink-0">
@@ -707,7 +709,7 @@ export default function EngagementDetail() {
                   </div>}
               </div>
 
-              {/* Monday Board View in Preview Mode */}
+              {/* Monday Board View */}
               {isLoading ? <div className="bg-card rounded-lg shadow-sm p-12 flex flex-col items-center justify-center gap-4">
                   <Loader2 className="h-8 w-8 text-primary animate-spin" />
                   <div className="text-center">
@@ -718,39 +720,25 @@ export default function EngagementDetail() {
                   <MondayBoardView checklist={checklist} onUpdate={handleChecklistUpdate} isPreviewMode={false} isCompactMode={isCompactMode} selectedQuestions={selectedQuestions} onSelectionChange={setSelectedQuestions} isEngagementMode={true} applyingQuestionId={clientResponses.applyingQuestionId} />
                 </div>}
             </div>
-            </>
           ) : (
-            /* Empty State - No checklist */
-            <>
-              <div className="sticky top-0 z-10 bg-card px-4 py-2 flex items-center justify-between border-b border-border/50">
-                <h1 className="font-semibold text-foreground truncate text-lg">
-                  Client acceptance and continuance
-                </h1>
-                <Button className="h-9 gap-2" onClick={() => setShowAddChecklistSheet(true)}>
-                  <Plus className="h-4 w-4" />
-                  Checklist
-                </Button>
+            <div className="flex-1 flex flex-col items-center justify-center py-32">
+              <div className="w-28 h-28 mb-6 relative">
+                <svg viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-full">
+                  <circle cx="60" cy="60" r="50" fill="hsl(var(--primary) / 0.08)" />
+                  <path d="M60 25L85 38V58C85 74 74 88 60 93C46 88 35 74 35 58V38L60 25Z" fill="hsl(var(--primary) / 0.15)" stroke="hsl(var(--primary) / 0.3)" strokeWidth="2" />
+                  <circle cx="60" cy="58" r="12" fill="hsl(var(--primary) / 0.25)" />
+                  <path d="M55 58L59 62L66 54" stroke="hsl(var(--primary))" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+                  <circle cx="40" cy="35" r="3" fill="hsl(var(--primary) / 0.2)" />
+                  <circle cx="85" cy="45" r="4" fill="hsl(var(--primary) / 0.15)" />
+                  <circle cx="38" cy="75" r="3" fill="hsl(var(--primary) / 0.2)" />
+                  <circle cx="82" cy="72" r="2.5" fill="hsl(var(--primary) / 0.2)" />
+                </svg>
               </div>
-              <div className="flex-1 flex flex-col items-center justify-center py-32">
-                {/* Shield illustration placeholder */}
-                <div className="w-28 h-28 mb-6 relative">
-                  <svg viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-full">
-                    <circle cx="60" cy="60" r="50" fill="hsl(var(--primary) / 0.08)" />
-                    <path d="M60 25L85 38V58C85 74 74 88 60 93C46 88 35 74 35 58V38L60 25Z" fill="hsl(var(--primary) / 0.15)" stroke="hsl(var(--primary) / 0.3)" strokeWidth="2" />
-                    <circle cx="60" cy="58" r="12" fill="hsl(var(--primary) / 0.25)" />
-                    <path d="M55 58L59 62L66 54" stroke="hsl(var(--primary))" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
-                    <circle cx="40" cy="35" r="3" fill="hsl(var(--primary) / 0.2)" />
-                    <circle cx="85" cy="45" r="4" fill="hsl(var(--primary) / 0.15)" />
-                    <circle cx="38" cy="75" r="3" fill="hsl(var(--primary) / 0.2)" />
-                    <circle cx="82" cy="72" r="2.5" fill="hsl(var(--primary) / 0.2)" />
-                  </svg>
-                </div>
-                <h3 className="text-lg font-semibold text-foreground mb-2">No checklist available</h3>
-                <p className="text-sm text-muted-foreground text-center max-w-xs">
-                  Currently there is no checklist available.<br />Please add a checklist
-                </p>
-              </div>
-            </>
+              <h3 className="text-lg font-semibold text-foreground mb-2">No checklist available</h3>
+              <p className="text-sm text-muted-foreground text-center max-w-xs">
+                Currently there is no checklist available.<br />Please add a checklist
+              </p>
+            </div>
           )}
           </div>
 
