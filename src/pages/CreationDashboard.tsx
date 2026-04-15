@@ -284,7 +284,7 @@ export default function CreationDashboard() {
 
   // Import or Template mode view
   if (mode) {
-    return <Layout>
+    return <Layout title="Templates">
         <div className="flex-1 flex flex-col items-center justify-center p-8">
           <div className="max-w-2xl w-full bg-card rounded-xl p-8 shadow-md animate-fade-in border border-border">
             <button onClick={handleBack} className="text-sm text-muted-foreground hover:text-foreground mb-4 flex items-center gap-1">
@@ -482,7 +482,7 @@ export default function CreationDashboard() {
   }
 
   // Main selection view
-  return <Layout>
+  return <Layout title="Templates">
       <div className="flex-1 flex flex-col items-center justify-center p-8">
         <div className="max-w-4xl mx-auto animate-fade-in">
           {/* Header */}
