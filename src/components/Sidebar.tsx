@@ -819,7 +819,7 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
             )}
           >
             <div className={`p-4 pb-2 ${isTemplatesPanelCollapsed ? "hidden" : ""}`}>
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2 justify-end">
                 <button
                   onClick={() => setShowSignoffs(true)}
                   className="flex items-center gap-1 text-muted-foreground hover:text-primary transition-colors cursor-pointer"
