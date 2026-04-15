@@ -234,7 +234,7 @@ export default function TrialBalance() {
 
         {/* Sub header toolbar - always visible */}
         <div className="sticky top-[42px] z-10 bg-card px-4 py-2 border-b border-border/50">
-          <div className="flex items-center justify-end">
+          <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               {/* Date Selector - dropdown */}
               <DropdownMenu>
