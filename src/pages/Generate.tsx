@@ -279,7 +279,7 @@ export default function Generate() {
   };
 
   return (
-    <Layout title="Generate">
+    <Layout title="Templates">
       <div className="min-h-full bg-gradient-to-r from-[#ECD4F6] to-[#CFE1FC]">
         <div className="max-w-4xl mx-auto px-4 py-8">
           {/* Back Button */}

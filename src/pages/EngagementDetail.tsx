@@ -541,7 +541,7 @@ export default function EngagementDetail() {
     );
   };
   // No early return — empty state shown inline when checklist is null
-  return <Layout>
+  return <Layout title="Engagements">
       <div className="flex h-full overflow-hidden">
         {/* Main Content Area */}
         <div className="flex-1 flex flex-col min-w-0 overflow-hidden relative">

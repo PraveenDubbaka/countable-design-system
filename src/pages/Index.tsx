@@ -434,6 +434,7 @@ export default function Index() {
   return (
     <RichTextToolbarProvider>
       <Layout 
+        title="Templates"
         showActions={!!checklist}
         showBackButton={!!checklist}
         onBack={handleBack}
