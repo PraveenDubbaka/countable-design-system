@@ -543,27 +543,13 @@ export default function EngagementDetail() {
   // No early return — empty state shown inline when checklist is null
   const engagementBreadcrumb = (
     <div className="flex items-center gap-2 whitespace-nowrap flex-shrink-0">
-      {/* Client Selector */}
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <button className="group flex items-center gap-1.5 px-2 py-1 rounded-md hover:bg-primary/5 transition-colors">
-            <div className="w-6 h-6 rounded-md bg-gradient-to-br from-primary/20 to-primary/10 flex items-center justify-center">
-              <Building2 className="h-3.5 w-3.5 text-primary" />
-            </div>
-            <span className="text-sm font-medium text-foreground group-hover:text-primary transition-colors">{clientName}</span>
-            <ChevronDown className="h-3 w-3 text-muted-foreground group-hover:text-primary transition-colors" />
-          </button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent align="start" className="w-56 bg-card border shadow-lg z-50">
-          <div className="px-2 py-1.5 text-xs font-medium text-muted-foreground">Select Client</div>
-          <DropdownMenuSeparator />
-          {uniqueClients.map(client => <DropdownMenuItem key={client} onClick={() => handleClientChange(client)} className="flex items-center gap-2 cursor-pointer group">
-              <Building2 className="h-4 w-4 text-muted-foreground group-hover:text-primary-foreground transition-colors" />
-              <span className="flex-1">{client}</span>
-              {client === clientName && <Check className="h-4 w-4 text-primary group-hover:text-primary-foreground" />}
-            </DropdownMenuItem>)}
-        </DropdownMenuContent>
-      </DropdownMenu>
+      {/* Client Name (read-only) */}
+      <div className="flex items-center gap-1.5 px-2 py-1">
+        <div className="w-6 h-6 rounded-md bg-gradient-to-br from-primary/20 to-primary/10 flex items-center justify-center">
+          <Building2 className="h-3.5 w-3.5 text-primary" />
+        </div>
+        <span className="text-sm font-medium text-foreground">{clientName}</span>
+      </div>
 
       <ChevronRight className="h-3.5 w-3.5 text-muted-foreground" />
 
