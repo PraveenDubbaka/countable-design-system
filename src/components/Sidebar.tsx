@@ -884,12 +884,12 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
                   {
                     id: "co", code: "CO", label: "Client Onboarding", icon: "folder",
                     children: [
-                      { id: "co-ca", code: "CA", label: "Client acceptance and continuance", icon: "checklist" },
-                      { id: "co-ind", code: "IND", label: "Independence", icon: "checklist" },
-                      { id: "co-kcb", code: "KCB", label: "Knowledge of client business", icon: "checklist" },
-                      { id: "co-pl", code: "PL", label: "Planning", icon: "checklist" },
-                      { id: "co-el", code: "EL", label: "Engagement Letter", icon: "letter" },
-                      { id: "co-mr", code: "MR", label: "Management responsibility and acknowledgem...", icon: "letter" },
+                      { id: "co-ca", code: "CA", label: "Client acceptance and continuance", icon: "checklist", route: "checklist/co-ca" },
+                      { id: "co-ind", code: "IND", label: "Independence", icon: "checklist", route: "checklist/co-ind" },
+                      { id: "co-kcb", code: "KCB", label: "Knowledge of client business", icon: "checklist", route: "checklist/co-kcb" },
+                      { id: "co-pl", code: "PL", label: "Planning", icon: "checklist", route: "checklist/co-pl" },
+                      { id: "co-el", code: "EL", label: "Engagement Letter", icon: "letter", route: "checklist/co-el" },
+                      { id: "co-mr", code: "MR", label: "Management responsibility and acknowledgem...", icon: "letter", route: "checklist/co-mr" },
                     ]
                   },
                   {
