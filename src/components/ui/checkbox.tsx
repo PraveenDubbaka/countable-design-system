@@ -67,6 +67,7 @@ const Checkbox = React.forwardRef<
           "data-[error=true]:data-[state=checked]:bg-destructive",
           className
         )}
+        style={{ ...(props.style ?? {}), borderColor: "hsl(var(--checkbox-border))" }}
         onMouseDown={handleMouseDown}
         onMouseUp={handleMouseUp}
         onMouseLeave={handleMouseLeave}
