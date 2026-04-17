@@ -722,7 +722,25 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
   const [expandedSections, setExpandedSections] = useState<Set<string>>(new Set(["co"]));
   const [allSectionsExpanded, setAllSectionsExpanded] = useState(false);
   const [showSignoffs, setShowSignoffs] = useState(false);
+  const [signoffsMode, setSignoffsMode] = useState(false);
+  const [signoffChecks, setSignoffChecks] = useState<Record<string, { p1: boolean; p2: boolean }>>({});
   const [hasDarkSecondary, setHasDarkSecondary] = useState(false);
+
+  // All parent IDs in the engagement tree (used to expand all)
+  const allParentIds = [
+    "co", "do", "pr", "pr-assets", "pr-ca", "pr-ppe",
+    "pr-liab", "pr-cl", "pr-ltl", "pr-equity", "pr-sc",
+    "pr-rev", "pr-rev-sub", "pr-exp", "pr-opex",
+    "fs", "fs-docs", "so"
+  ];
+
+  const enterSignoffsMode = () => {
+    setSignoffsMode(true);
+    setExpandedSections(new Set(allParentIds));
+    setAllSectionsExpanded(true);
+  };
+  const exitSignoffsMode = () => setSignoffsMode(false);
+
 
   useEffect(() => {
     const checkGradient = () => {
@@ -809,7 +827,7 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
       {portalTarget && location.pathname.startsWith("/engagements/") && location.pathname !== "/engagements/create" && createPortal(<>
           <div 
             ref={panelRef}
-            style={{ width: isTemplatesPanelCollapsed ? 0 : panelWidth }}
+            style={{ width: isTemplatesPanelCollapsed ? 0 : (signoffsMode ? Math.max(panelWidth, 440) : panelWidth) }}
             className={cn(
               `flex flex-col relative z-40 transition-all group/templates sidebar-secondary-panel ${hasDarkSecondary ? 'sidebar-dark-theme' : ''}`,
               isTemplatesPanelCollapsed 
@@ -821,18 +839,23 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
             {/* Signoffs - vertical edge tab, always visible, overlayed on right border */}
             {!isTemplatesPanelCollapsed && (
               <button
-                onClick={() => setShowSignoffs(true)}
-                aria-label="Open Signoffs"
+                onClick={() => (signoffsMode ? exitSignoffsMode() : enterSignoffsMode())}
+                aria-label={signoffsMode ? "Close Signoffs" : "Open Signoffs"}
                 className="absolute right-0 top-12 translate-x-1/2 z-50 flex items-center justify-center gap-1.5 p-1 bg-primary text-primary-foreground rounded-sm shadow-sm hover:bg-primary/90 transition-colors cursor-pointer"
                 style={{ writingMode: 'vertical-rl' }}
               >
-                <svg className="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <circle cx="12" cy="12" r="10" />
-                  <path d="M9 12l2 2 4-4" />
-                </svg>
+                {signoffsMode ? (
+                  <X className="h-3.5 w-3.5" style={{ writingMode: 'horizontal-tb' }} />
+                ) : (
+                  <svg className="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <circle cx="12" cy="12" r="10" />
+                    <path d="M9 12l2 2 4-4" />
+                  </svg>
+                )}
                 <span className="text-[11px] font-medium tracking-wide">Signoffs</span>
               </button>
             )}
+
 
             <div className={`p-3 ${isTemplatesPanelCollapsed ? "hidden" : ""}`}>
               <div className="flex gap-2">
@@ -867,6 +890,26 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
                 </Button>
               </div>
             </div>
+
+            {/* Signoffs preparer header row */}
+            {signoffsMode && !isTemplatesPanelCollapsed && (
+              <div className="flex items-end justify-end gap-2 px-3 pb-2 border-b border-border">
+                {[
+                  { id: "p1", initials: "CA", label: "Preparer", color: "bg-purple-500" },
+                  { id: "p2", initials: "JD", label: "1st Reviewer", color: "bg-sky-500" },
+                ].map(p => (
+                  <div key={p.id} className="w-9 flex flex-col items-center gap-1">
+                    <div className={cn("h-7 w-7 rounded-full flex items-center justify-center text-[10px] font-semibold text-white", p.color)}>
+                      {p.initials}
+                    </div>
+                    <span className="text-[9px] text-muted-foreground leading-tight whitespace-nowrap">{p.label}</span>
+                    <div className="h-6 w-6 rounded-md border border-border flex items-center justify-center bg-card">
+                      <Check className="h-3 w-3 text-muted-foreground" />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
 
             <div className={`flex-1 overflow-y-auto scrollbar-hide p-2 pt-0 ${isTemplatesPanelCollapsed ? "hidden" : ""}`} style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
             {/* Engagement Sections - recursive tree */}
@@ -1073,7 +1116,26 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
                         {node.code && <span className="font-semibold text-primary">{node.code}</span>}
                         <span className="truncate flex-1 font-semibold" style={{ color: 'hsl(var(--sidebar-tree-foreground, 0 0% 0%))' }}>{node.label}</span>
                         {node.hasPlus && <Plus className="h-4 w-4 text-muted-foreground hover:text-foreground flex-shrink-0" />}
+                        {signoffsMode && (
+                          <div className="flex items-center gap-2 ml-2 flex-shrink-0" onClick={(e) => e.stopPropagation()}>
+                            {(["p1", "p2"] as const).map(pid => (
+                              <div key={pid} className="w-9 flex items-center justify-center">
+                                <Checkbox
+                                  checked={!!signoffChecks[node.id]?.[pid]}
+                                  onCheckedChange={(v) =>
+                                    setSignoffChecks(prev => ({
+                                      ...prev,
+                                      [node.id]: { p1: !!prev[node.id]?.p1, p2: !!prev[node.id]?.p2, [pid]: !!v },
+                                    }))
+                                  }
+                                  className="h-4 w-4 rounded border-border data-[state=checked]:bg-primary data-[state=checked]:border-primary"
+                                />
+                              </div>
+                            ))}
+                          </div>
+                        )}
                       </div>
+
                       {isOpen && hasChildren && (
                         <div>
                           {node.children!.map(child => renderNode(child, depth + 1))}
