@@ -547,8 +547,8 @@ export default function EngagementDetail() {
     <div className="flex items-center gap-2 whitespace-nowrap flex-shrink-0 text-sidebar-foreground">
       {/* Client Name (read-only) */}
       <div className="flex items-center gap-1.5 px-2 py-1">
-        <div className="w-6 h-6 rounded-md bg-gradient-to-br from-primary/20 to-primary/10 flex items-center justify-center">
-          <Building2 className="h-3.5 w-3.5 text-sidebar-bg" />
+        <div className="w-6 h-6 rounded-md bg-sidebar-foreground/12 border border-sidebar-foreground/15 flex items-center justify-center">
+          <Building2 className="h-3.5 w-3.5 text-sidebar-foreground" />
         </div>
         <span className="text-sm font-medium text-sidebar-foreground">{clientName}</span>
       </div>
@@ -559,8 +559,8 @@ export default function EngagementDetail() {
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <button className="group flex items-center gap-1.5 px-2 py-1 rounded-md border border-sidebar-foreground/20 hover:bg-sidebar-foreground/10 transition-colors">
-            <div className="w-6 h-6 rounded-md bg-gradient-to-br from-secondary to-secondary/50 flex items-center justify-center">
-              <FileText className="h-3.5 w-3.5 text-sidebar-bg" />
+            <div className="w-6 h-6 rounded-md bg-sidebar-foreground/12 border border-sidebar-foreground/15 flex items-center justify-center">
+              <FileText className="h-3.5 w-3.5 text-sidebar-foreground" />
             </div>
             <span className="text-sm font-medium text-sidebar-foreground group-hover:text-sidebar-foreground transition-colors font-mono">{displayId}</span>
             <ChevronDown className="h-3 w-3 text-sidebar-foreground/60 group-hover:text-sidebar-foreground transition-colors" />
