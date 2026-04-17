@@ -20,14 +20,14 @@ export function Layout({ children, title, headerContent, showActions = false, sh
         onBack={onBack}
       />
       
-      <div className="layout-content flex-1 flex flex-col overflow-hidden">
-        {/* Global Header - spans full width from sidebar curve to right end */}
-        <div className="header-wrapper rounded-tl-2xl overflow-hidden bg-background">
+      <div className="layout-content flex-1 flex flex-col overflow-hidden bg-sidebar-bg">
+        {/* Global Header - shares sidebar background to blend seamlessly */}
+        <div className="header-wrapper overflow-hidden bg-sidebar-bg">
           <GlobalHeader title={title} headerContent={headerContent} />
         </div>
         
-        {/* Content area with portal target for secondary panels */}
-        <div className="content-wrapper flex flex-1 overflow-hidden rounded-bl-2xl bg-background">
+        {/* Content area curves at top-left and bottom-left to merge with sidebar */}
+        <div className="content-wrapper flex flex-1 overflow-hidden rounded-tl-2xl rounded-bl-2xl bg-background">
           <div id="sidebar-secondary-portal" className="flex shrink-0 h-full" />
           <main className="app-main flex-1 overflow-auto text-foreground">
             {children}
