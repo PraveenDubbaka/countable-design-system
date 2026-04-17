@@ -528,7 +528,7 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
               }
             }}
             onClick={(e) => e.stopPropagation()}
-            className="h-4 w-4 border-border flex-shrink-0"
+            className="h-4 w-4 border-[#6e6e6e] flex-shrink-0"
           />
           
           {template.type === "folder" ? (
