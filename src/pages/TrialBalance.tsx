@@ -47,6 +47,8 @@ import {
   GitMerge,
   AlertTriangle,
   Wrench,
+  EyeOff,
+  Eye,
 } from "lucide-react";
 // Engagement data for breadcrumb
 const engagementsData: Record<string, { id: string; client: string; type: string; yearEnd: string; status: string }> = {
@@ -358,16 +360,14 @@ export default function TrialBalance() {
               <ExpandableIconButton variant="outline" className="bg-card hover:bg-muted" icon={<Download className="h-4 w-4" />} label="Export" />
               
 
-              {/* Zero Balance Accounts - dropdown */}
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <ExpandableIconButton variant="outline" className="bg-card hover:bg-muted" icon={<MoreVertical className="h-4 w-4" />} label="Zero Balance" />
-                </DropdownMenuTrigger>
-                <DropdownMenuContent className="bg-card border shadow-lg z-50">
-                  <DropdownMenuItem>Show Zero Balance</DropdownMenuItem>
-                  <DropdownMenuItem>Hide Zero Balance</DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
+              {/* Hide / Show $0 Accounts toggle */}
+              <ExpandableIconButton
+                variant="outline"
+                className="bg-card hover:bg-muted"
+                icon={hideZeroAcc ? <Eye className="h-4 w-4" /> : <EyeOff className="h-4 w-4" />}
+                label={`${hideZeroAcc ? "Show" : "Hide"} $0 Acc. (${zeroAccCount})`}
+                onClick={() => setHideZeroAcc(v => !v)}
+              />
 
               <ExpandableSearch />
             </div>
