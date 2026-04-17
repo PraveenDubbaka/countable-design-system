@@ -71,11 +71,11 @@ export function GlobalHeader({ title, headerContent }: { title?: string; headerC
   );
   return (
     <>
-      <header className="h-14 flex items-center px-6 bg-sidebar-bg">
+      <header className="h-14 flex items-center px-6 bg-sidebar-bg text-sidebar-foreground">
         {/* Left side - Page title */}
          <div className="flex-1 flex items-center gap-3">
           {title && (
-            <h1 className="text-xl font-bold" style={{ color: '#0c2d55' }}>{title}</h1>
+            <h1 className="text-xl font-bold text-sidebar-foreground">{title}</h1>
           )}
           {headerContent}
         </div>
@@ -97,7 +97,7 @@ export function GlobalHeader({ title, headerContent }: { title?: string; headerC
           <Tooltip>
             <TooltipTrigger asChild>
               <div 
-                className="flex items-center justify-center h-9 px-2 rounded-xl cursor-pointer hover:bg-muted transition-colors gap-0.5"
+                className="flex items-center justify-center h-9 px-2 rounded-xl cursor-pointer hover:bg-white/10 transition-colors gap-0.5"
                 style={{ borderRadius: '12px' }}
                 onClick={cycleFontSize}
               >
@@ -106,8 +106,8 @@ export function GlobalHeader({ title, headerContent }: { title?: string; headerC
                     key={size}
                     className={`font-semibold transition-all duration-200 ${
                       fontSize === size 
-                        ? 'text-primary' 
-                        : 'text-muted-foreground/40'
+                        ? 'text-white' 
+                        : 'text-white/40'
                     }`}
                     style={{ fontSize: size === 'A' ? '11px' : size === 'AA' ? '13px' : '15px' }}
                   >
@@ -123,17 +123,17 @@ export function GlobalHeader({ title, headerContent }: { title?: string; headerC
           <Tooltip>
             <TooltipTrigger asChild>
               <div 
-                className="flex items-center justify-center w-9 h-9 rounded-xl cursor-pointer hover:bg-muted transition-colors"
+                className="flex items-center justify-center w-9 h-9 rounded-xl cursor-pointer hover:bg-white/10 transition-colors"
                 style={{ borderRadius: '12px' }}
                 onClick={toggleTheme}
               >
                 <div className="relative w-5 h-5">
-                  <Sun className={`h-5 w-5 text-amber-400 absolute transition-all duration-500 ${
+                  <Sun className={`h-5 w-5 text-amber-300 absolute transition-all duration-500 ${
                     isDarkMode 
                       ? 'rotate-0 scale-100 opacity-100' 
                       : 'rotate-90 scale-0 opacity-0'
                   }`} />
-                  <Moon className={`h-5 w-5 text-muted-foreground absolute transition-all duration-500 ${
+                  <Moon className={`h-5 w-5 text-white/80 absolute transition-all duration-500 ${
                     isDarkMode 
                       ? '-rotate-90 scale-0 opacity-0' 
                       : 'rotate-0 scale-100 opacity-100'
@@ -148,10 +148,10 @@ export function GlobalHeader({ title, headerContent }: { title?: string; headerC
           <Popover open={notifOpen} onOpenChange={setNotifOpen}>
             <PopoverTrigger asChild>
               <div 
-                className="flex items-center justify-center w-9 h-9 rounded-xl cursor-pointer hover:bg-muted transition-colors relative"
+                className="flex items-center justify-center w-9 h-9 rounded-xl cursor-pointer hover:bg-white/10 transition-colors relative"
                 style={{ borderRadius: '12px' }}
               >
-                <Bell className={`h-5 w-5 text-muted-foreground ${unreadCount > 0 ? 'animate-[swing_1.5s_ease-in-out_infinite]' : ''}`} />
+                <Bell className={`h-5 w-5 text-white/80 ${unreadCount > 0 ? 'animate-[swing_1.5s_ease-in-out_infinite]' : ''}`} />
                 {unreadCount > 0 && (
                   <span className="absolute -top-0.5 -right-0.5 w-4 h-4 rounded-full bg-destructive text-[9px] text-white flex items-center justify-center font-medium">{unreadCount}</span>
                 )}
@@ -234,7 +234,7 @@ export function GlobalHeader({ title, headerContent }: { title?: string; headerC
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <div 
-                className="flex items-center justify-center w-9 h-9 rounded-xl cursor-pointer hover:bg-muted transition-colors"
+                className="flex items-center justify-center w-9 h-9 rounded-xl cursor-pointer hover:bg-white/10 transition-colors"
                 style={{ borderRadius: '12px' }}
               >
                 <img src={userAvatar} alt="User" className="w-7 h-7 rounded-full object-cover" />
