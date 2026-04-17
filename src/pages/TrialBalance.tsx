@@ -46,7 +46,7 @@ import {
   Trash2,
   GitMerge,
   AlertTriangle,
-  Zap,
+  Wrench,
 } from "lucide-react";
 // Engagement data for breadcrumb
 const engagementsData: Record<string, { id: string; client: string; type: string; yearEnd: string; status: string }> = {
@@ -326,7 +326,7 @@ export default function TrialBalance() {
                   <ExpandableIconButton
                     variant="outline"
                     className="bg-card hover:bg-muted"
-                    icon={<Zap className="h-4 w-4" />}
+                    icon={<Wrench className="h-4 w-4" />}
                     label={<span className="inline-flex items-center gap-1">Actions<ChevronDown className="h-3 w-3" /></span>}
                   />
                 </DropdownMenuTrigger>
