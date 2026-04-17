@@ -827,7 +827,7 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
       {portalTarget && location.pathname.startsWith("/engagements/") && location.pathname !== "/engagements/create" && createPortal(<>
           <div 
             ref={panelRef}
-            style={{ width: isTemplatesPanelCollapsed ? 0 : panelWidth }}
+            style={{ width: isTemplatesPanelCollapsed ? 0 : (signoffsMode ? Math.max(panelWidth, 440) : panelWidth) }}
             className={cn(
               `flex flex-col relative z-40 transition-all group/templates sidebar-secondary-panel ${hasDarkSecondary ? 'sidebar-dark-theme' : ''}`,
               isTemplatesPanelCollapsed 
@@ -839,18 +839,23 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
             {/* Signoffs - vertical edge tab, always visible, overlayed on right border */}
             {!isTemplatesPanelCollapsed && (
               <button
-                onClick={() => setShowSignoffs(true)}
-                aria-label="Open Signoffs"
+                onClick={() => (signoffsMode ? exitSignoffsMode() : enterSignoffsMode())}
+                aria-label={signoffsMode ? "Close Signoffs" : "Open Signoffs"}
                 className="absolute right-0 top-12 translate-x-1/2 z-50 flex items-center justify-center gap-1.5 p-1 bg-primary text-primary-foreground rounded-sm shadow-sm hover:bg-primary/90 transition-colors cursor-pointer"
                 style={{ writingMode: 'vertical-rl' }}
               >
-                <svg className="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <circle cx="12" cy="12" r="10" />
-                  <path d="M9 12l2 2 4-4" />
-                </svg>
+                {signoffsMode ? (
+                  <X className="h-3.5 w-3.5" style={{ writingMode: 'horizontal-tb' }} />
+                ) : (
+                  <svg className="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <circle cx="12" cy="12" r="10" />
+                    <path d="M9 12l2 2 4-4" />
+                  </svg>
+                )}
                 <span className="text-[11px] font-medium tracking-wide">Signoffs</span>
               </button>
             )}
+
 
             <div className={`p-3 ${isTemplatesPanelCollapsed ? "hidden" : ""}`}>
               <div className="flex gap-2">
