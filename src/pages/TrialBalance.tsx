@@ -226,7 +226,7 @@ export default function TrialBalance() {
                   <RefreshCw className="h-4 w-4" />
                 </Button>
               </TooltipTrigger>
-              <TooltipContent side="bottom">
+              <TooltipContent side="bottom" sideOffset={8} className="z-[100]">
                 Last updated: <span className="font-medium">54 min ago</span>
               </TooltipContent>
             </Tooltip>
