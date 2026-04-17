@@ -335,12 +335,9 @@ export default function TrialBalance() {
                     <Plus className="h-4 w-4 text-muted-foreground" />
                     <span>Add</span>
                   </DropdownMenuItem>
-                  <DropdownMenuItem className="flex items-center justify-between gap-2 cursor-pointer">
-                    <span className="flex items-center gap-2">
-                      <GitMerge className="h-4 w-4 text-muted-foreground" />
-                      Merge
-                    </span>
-                    <AlertTriangle className="h-4 w-4 text-amber-500" />
+                  <DropdownMenuItem className="flex items-center gap-2 cursor-pointer">
+                    <GitMerge className="h-4 w-4 text-muted-foreground" />
+                    <span>Merge</span>
                   </DropdownMenuItem>
                   <DropdownMenuItem className="flex items-center gap-2 cursor-pointer">
                     <Trash2 className="h-4 w-4 text-muted-foreground" />
