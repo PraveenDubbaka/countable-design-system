@@ -5,6 +5,7 @@ import { Layout } from "@/components/Layout";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { ExpandableIconButton } from "@/components/ui/expandable-icon-button";
+import { ExpandableSearch } from "@/components/ui/expandable-search";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import {
@@ -308,7 +309,7 @@ export default function TrialBalance() {
                 </DropdownMenuContent>
               </DropdownMenu>
 
-              <ExpandableIconButton variant="outline" className="bg-card hover:bg-muted" icon={<Search className="h-4 w-4" />} label="Search" />
+              <ExpandableSearch />
             </div>
           </div>
         </div>
