@@ -157,6 +157,8 @@ export default function TrialBalance() {
   const navigate = useNavigate();
   const { engagementId } = useParams();
   const [dateFilter] = useState("Nov 27 2025");
+  const [hideZeroAcc, setHideZeroAcc] = useState(false);
+  const zeroAccCount = 0;
   const [isToolbarExpanded, setIsToolbarExpanded] = useState(true);
 
   const engagement = engagementId ? engagementsData[engagementId] : null;
