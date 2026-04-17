@@ -818,20 +818,21 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
               isResizing && "transition-none"
             )}
           >
-            <div className={`p-4 pb-2 ${isTemplatesPanelCollapsed ? "hidden" : ""}`}>
-              <div className="flex items-center gap-2 justify-end">
-                <button
-                  onClick={() => setShowSignoffs(true)}
-                  className="flex items-center gap-1 text-muted-foreground hover:text-primary transition-colors cursor-pointer"
-                >
-                  <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <circle cx="12" cy="12" r="10" />
-                    <path d="M9 12l2 2 4-4" />
-                  </svg>
-                  <span className="text-sm">Signoffs</span>
-                </button>
-              </div>
-            </div>
+            {/* Signoffs - vertical edge tab, always visible, overlayed on right border */}
+            {!isTemplatesPanelCollapsed && (
+              <button
+                onClick={() => setShowSignoffs(true)}
+                aria-label="Open Signoffs"
+                className="absolute right-0 top-24 translate-x-1/2 z-50 flex flex-col items-center justify-center gap-1 px-1 py-2 bg-primary text-primary-foreground rounded-md shadow-sm hover:bg-primary/90 transition-colors cursor-pointer"
+                style={{ writingMode: 'vertical-rl' }}
+              >
+                <svg className="h-3.5 w-3.5 rotate-90" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <circle cx="12" cy="12" r="10" />
+                  <path d="M9 12l2 2 4-4" />
+                </svg>
+                <span className="text-[11px] font-medium tracking-wide">Signoffs</span>
+              </button>
+            )}
 
             <div className={`p-3 pt-1 ${isTemplatesPanelCollapsed ? "hidden" : ""}`}>
               <div className="flex gap-2">
