@@ -619,7 +619,7 @@ export default function EngagementDetail() {
                       variant="secondary"
                       size="sm"
                       icon={<Settings2 className="h-4 w-4" />}
-                      label="Tools"
+                      label={<span className="inline-flex items-center gap-1">Tools<ChevronDown className="h-3 w-3" /></span>}
                     />
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end" className="w-48 bg-card border shadow-lg z-50">

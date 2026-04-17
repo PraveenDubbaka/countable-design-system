@@ -7,7 +7,7 @@ const COMPACT_BREAKPOINT = 1368;
 
 export interface ExpandableIconButtonProps extends Omit<ButtonProps, "size"> {
   icon: React.ReactNode;
-  label: string;
+  label: React.ReactNode;
   size?: "default" | "sm";
 }
 
