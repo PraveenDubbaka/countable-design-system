@@ -722,7 +722,25 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
   const [expandedSections, setExpandedSections] = useState<Set<string>>(new Set(["co"]));
   const [allSectionsExpanded, setAllSectionsExpanded] = useState(false);
   const [showSignoffs, setShowSignoffs] = useState(false);
+  const [signoffsMode, setSignoffsMode] = useState(false);
+  const [signoffChecks, setSignoffChecks] = useState<Record<string, { p1: boolean; p2: boolean }>>({});
   const [hasDarkSecondary, setHasDarkSecondary] = useState(false);
+
+  // All parent IDs in the engagement tree (used to expand all)
+  const allParentIds = [
+    "co", "do", "pr", "pr-assets", "pr-ca", "pr-ppe",
+    "pr-liab", "pr-cl", "pr-ltl", "pr-equity", "pr-sc",
+    "pr-rev", "pr-rev-sub", "pr-exp", "pr-opex",
+    "fs", "fs-docs", "so"
+  ];
+
+  const enterSignoffsMode = () => {
+    setSignoffsMode(true);
+    setExpandedSections(new Set(allParentIds));
+    setAllSectionsExpanded(true);
+  };
+  const exitSignoffsMode = () => setSignoffsMode(false);
+
 
   useEffect(() => {
     const checkGradient = () => {
