@@ -823,7 +823,7 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
               <button
                 onClick={() => setShowSignoffs(true)}
                 aria-label="Open Signoffs"
-                className="absolute right-0 top-24 translate-x-1/2 z-50 flex items-center justify-center gap-1.5 p-1 bg-primary text-primary-foreground rounded-sm shadow-sm hover:bg-primary/90 transition-colors cursor-pointer"
+                className="absolute right-0 top-12 translate-x-1/2 z-50 flex items-center justify-center gap-1.5 p-1 bg-primary text-primary-foreground rounded-sm shadow-sm hover:bg-primary/90 transition-colors cursor-pointer"
                 style={{ writingMode: 'vertical-rl' }}
               >
                 <svg className="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
