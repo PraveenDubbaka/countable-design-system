@@ -544,26 +544,26 @@ export default function EngagementDetail() {
   };
   // No early return — empty state shown inline when checklist is null
   const engagementBreadcrumb = (
-    <div className="flex items-center gap-2 whitespace-nowrap flex-shrink-0">
+    <div className="flex items-center gap-2 whitespace-nowrap flex-shrink-0 text-sidebar-foreground">
       {/* Client Name (read-only) */}
       <div className="flex items-center gap-1.5 px-2 py-1">
         <div className="w-6 h-6 rounded-md bg-gradient-to-br from-primary/20 to-primary/10 flex items-center justify-center">
           <Building2 className="h-3.5 w-3.5 text-primary" />
         </div>
-        <span className="text-sm font-medium text-foreground">{clientName}</span>
+        <span className="text-sm font-medium text-sidebar-foreground">{clientName}</span>
       </div>
 
-      <ChevronRight className="h-3.5 w-3.5 text-muted-foreground" />
+      <ChevronRight className="h-3.5 w-3.5 text-sidebar-foreground/60" />
 
       {/* Engagement Selector */}
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <button className="group flex items-center gap-1.5 px-2 py-1 rounded-md border border-border hover:bg-primary/5 transition-colors">
+          <button className="group flex items-center gap-1.5 px-2 py-1 rounded-md border border-sidebar-foreground/20 hover:bg-sidebar-foreground/10 transition-colors">
             <div className="w-6 h-6 rounded-md bg-gradient-to-br from-secondary to-secondary/50 flex items-center justify-center">
               <FileText className="h-3.5 w-3.5 text-secondary-foreground" />
             </div>
-            <span className="text-sm font-medium text-foreground group-hover:text-primary transition-colors font-mono">{displayId}</span>
-            <ChevronDown className="h-3 w-3 text-muted-foreground group-hover:text-primary transition-colors" />
+            <span className="text-sm font-medium text-sidebar-foreground group-hover:text-sidebar-foreground transition-colors font-mono">{displayId}</span>
+            <ChevronDown className="h-3 w-3 text-sidebar-foreground/60 group-hover:text-sidebar-foreground transition-colors" />
           </button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="start" className="w-72 bg-card border shadow-lg z-50">
