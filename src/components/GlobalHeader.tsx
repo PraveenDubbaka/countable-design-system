@@ -71,7 +71,7 @@ export function GlobalHeader({ title, headerContent }: { title?: string; headerC
   );
   return (
     <>
-      <header className="h-14 flex items-center px-6 bg-sidebar-bg text-sidebar-foreground">
+      <header className="flex items-center px-6 bg-sidebar-bg text-sidebar-foreground" style={{ height: '3.4rem' }}>
         {/* Left side - Page title */}
          <div className="flex-1 flex items-center gap-3">
           {title && (
