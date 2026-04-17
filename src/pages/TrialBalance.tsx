@@ -5,6 +5,7 @@ import { Layout } from "@/components/Layout";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { ExpandableIconButton } from "@/components/ui/expandable-icon-button";
+import { ExpandableSearch } from "@/components/ui/expandable-search";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import {
