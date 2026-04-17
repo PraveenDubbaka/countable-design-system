@@ -69,13 +69,17 @@ const TBCheckIcon = ({ className }: { className?: string }) => (
   </svg>
 );
 
-const headerActions = [
-  { id: "bank", label: "Connect Bank", icon: Landmark },
-  { id: "docs", label: "Source Docs", icon: FileText },
+const inlineHeaderActions = [
   { id: "tb", label: "TB Check", icon: TBCheckIcon },
   { id: "adj", label: "Adj. Entries", icon: PencilLine },
   { id: "workbook", label: "Workbook", icon: FileSpreadsheet },
 ];
+
+const toolsMenuActions = [
+  { id: "bank", label: "Connect Bank", icon: Landmark },
+  { id: "docs", label: "Source Docs", icon: FileText },
+];
+
 
 // Sample trial balance data matching screenshot
 const baseTrialBalanceData = [
@@ -243,7 +247,7 @@ export default function TrialBalance() {
             </Tooltip>
           </div>
           <div className="flex items-center gap-2">
-            {headerActions.map(action => (
+            {inlineHeaderActions.map(action => (
               <ExpandableIconButton
                 key={action.id}
                 variant="secondary"
@@ -252,7 +256,26 @@ export default function TrialBalance() {
                 label={action.label}
               />
             ))}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <ExpandableIconButton
+                  variant="secondary"
+                  size="sm"
+                  icon={<Settings2 className="h-4 w-4" />}
+                  label="Tools"
+                />
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-48 bg-card border shadow-lg z-50">
+                {toolsMenuActions.map(action => (
+                  <DropdownMenuItem key={action.id} className="flex items-center gap-2 cursor-pointer group">
+                    <action.icon className="h-4 w-4 text-muted-foreground group-hover:text-foreground transition-colors" />
+                    <span>{action.label}</span>
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
+
         </div>
 
         {/* Sub header toolbar - always visible */}
