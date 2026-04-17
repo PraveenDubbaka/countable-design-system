@@ -841,13 +841,13 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
               <button
                 onClick={() => (signoffsMode ? exitSignoffsMode() : enterSignoffsMode())}
                 aria-label={signoffsMode ? "Close Signoffs" : "Open Signoffs"}
-                className="absolute right-0 top-12 translate-x-1/2 z-50 flex items-center justify-center gap-1.5 p-1 bg-primary text-primary-foreground rounded-sm shadow-sm hover:bg-primary/90 transition-colors cursor-pointer"
+                className="absolute right-0 top-12 translate-x-1/2 z-50 flex items-center justify-center gap-1 px-0.5 py-1 bg-primary text-primary-foreground rounded-sm shadow-sm hover:bg-primary/90 transition-colors cursor-pointer"
                 style={{ writingMode: 'vertical-rl' }}
               >
                 {signoffsMode ? (
-                  <X className="h-3.5 w-3.5" style={{ writingMode: 'horizontal-tb' }} />
+                  <X className="h-3 w-3" style={{ writingMode: 'horizontal-tb' }} />
                 ) : (
-                  <svg className="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <svg className="h-3 w-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                     <circle cx="12" cy="12" r="10" />
                     <path d="M9 12l2 2 4-4" />
                   </svg>
