@@ -256,6 +256,7 @@
 
     --muted: var(--m3-surface-variant);
     --muted-foreground: var(--m3-on-surface-variant);
+    --checkbox-border: 0 0% 43%;
 
     --accent: var(--m3-tertiary);
     --accent-foreground: var(--m3-on-tertiary);
