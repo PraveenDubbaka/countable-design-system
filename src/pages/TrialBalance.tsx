@@ -41,6 +41,11 @@ import {
   Building2,
   Calendar,
   Check,
+  Plus,
+  Trash2,
+  GitMerge,
+  AlertTriangle,
+  Zap,
 } from "lucide-react";
 // Engagement data for breadcrumb
 const engagementsData: Record<string, { id: string; client: string; type: string; yearEnd: string; status: string }> = {
@@ -314,9 +319,43 @@ export default function TrialBalance() {
             </div>
 
             <div className="flex items-center gap-2">
-              {/* Icon-only expandable buttons */}
-              <ExpandableIconButton variant="outline" className="bg-card hover:bg-muted" icon={<FileX2 className="h-4 w-4" />} label="Unmap" />
-              <ExpandableIconButton variant="outline" className="bg-card hover:bg-muted" icon={<Network className="h-4 w-4" />} label="Auto Map" />
+              {/* Actions dropdown - Add / Merge / Delete / Unmap / Auto Map */}
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <ExpandableIconButton
+                    variant="outline"
+                    className="bg-card hover:bg-muted"
+                    icon={<Zap className="h-4 w-4" />}
+                    label={<span className="inline-flex items-center gap-1">Actions<ChevronDown className="h-3 w-3" /></span>}
+                  />
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-44 bg-card border shadow-lg z-50">
+                  <DropdownMenuItem className="flex items-center gap-2 cursor-pointer">
+                    <Plus className="h-4 w-4 text-muted-foreground" />
+                    <span>Add</span>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem className="flex items-center justify-between gap-2 cursor-pointer">
+                    <span className="flex items-center gap-2">
+                      <GitMerge className="h-4 w-4 text-muted-foreground" />
+                      Merge
+                    </span>
+                    <AlertTriangle className="h-4 w-4 text-amber-500" />
+                  </DropdownMenuItem>
+                  <DropdownMenuItem className="flex items-center gap-2 cursor-pointer">
+                    <Trash2 className="h-4 w-4 text-muted-foreground" />
+                    <span>Delete</span>
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem className="flex items-center gap-2 cursor-pointer">
+                    <FileX2 className="h-4 w-4 text-muted-foreground" />
+                    <span>Unmap</span>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem className="flex items-center gap-2 cursor-pointer">
+                    <Network className="h-4 w-4 text-muted-foreground" />
+                    <span>Auto Map</span>
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
               <ExpandableIconButton variant="outline" className="bg-card hover:bg-muted" icon={<Upload className="h-4 w-4" />} label="Import" />
               <ExpandableIconButton variant="outline" className="bg-card hover:bg-muted" icon={<Download className="h-4 w-4" />} label="Export" />
               
