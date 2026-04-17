@@ -19,7 +19,7 @@ const TooltipContent = React.forwardRef<
       sideOffset={sideOffset}
       className={cn(
         // Dark pill with arrow, matching reference screenshot
-        "z-50 overflow-visible rounded-md px-3 py-1.5",
+        "z-50 overflow-visible rounded-lg px-3 py-1.5",
         "bg-[hsl(220_15%_15%)] text-white",
         "shadow-[0_6px_16px_hsl(220_15%_10%/0.25)]",
         "text-sm font-medium leading-snug",
