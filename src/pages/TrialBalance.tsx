@@ -308,7 +308,7 @@ export default function TrialBalance() {
                 </DropdownMenuContent>
               </DropdownMenu>
 
-              <ExpandableIconButton variant="outline" className="bg-card hover:bg-muted" icon={<Search className="h-4 w-4" />} label="Search" />
+              <ExpandableSearch />
             </div>
           </div>
         </div>
