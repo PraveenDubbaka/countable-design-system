@@ -215,8 +215,8 @@ export default function TrialBalance() {
             <h1 className="text-lg font-semibold text-foreground truncate">
               Trial Balance
             </h1>
-            <DropdownMenu>
-              <Tooltip>
+            <Tooltip>
+              <DropdownMenu>
                 <TooltipTrigger asChild>
                   <DropdownMenuTrigger asChild>
                     <Button
@@ -229,17 +229,17 @@ export default function TrialBalance() {
                     </Button>
                   </DropdownMenuTrigger>
                 </TooltipTrigger>
-                <TooltipContent side="bottom" sideOffset={8} className="z-[100]">
-                  Last updated: <span className="font-medium">54 min ago</span>
-                </TooltipContent>
-              </Tooltip>
-              <DropdownMenuContent align="start" className="z-[100]">
-                <DropdownMenuItem>All Years</DropdownMenuItem>
-                <DropdownMenuItem>Current Year</DropdownMenuItem>
-                <DropdownMenuItem>PY 1</DropdownMenuItem>
-                <DropdownMenuItem>PY 2</DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
+                <DropdownMenuContent align="start" className="z-[100]">
+                  <DropdownMenuItem>All Years</DropdownMenuItem>
+                  <DropdownMenuItem>Current Year</DropdownMenuItem>
+                  <DropdownMenuItem>PY 1</DropdownMenuItem>
+                  <DropdownMenuItem>PY 2</DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+              <TooltipContent side="bottom" sideOffset={8} className="z-[110]">
+                Last updated: <span className="font-medium">54 min ago</span>
+              </TooltipContent>
+            </Tooltip>
           </div>
           <div className="flex items-center gap-2">
             {headerActions.map(action => (
