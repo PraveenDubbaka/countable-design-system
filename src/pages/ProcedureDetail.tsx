@@ -3,6 +3,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { Layout } from "@/components/Layout";
 import { EngagementRightPanel } from "@/components/EngagementRightPanel";
 import { Badge } from "@/components/ui/badge";
+import { ExpandableIconButton } from "@/components/ui/expandable-icon-button";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Textarea } from "@/components/ui/textarea";
@@ -189,17 +190,27 @@ export default function ProcedureDetail() {
         {/* Main Content Area */}
         <div className="flex-1 flex flex-col min-w-0 overflow-hidden relative">
           {/* Top Header Bar - tools only */}
-          <div className="flex items-center justify-end px-4 py-1.5 border-b border-border bg-gradient-to-r from-card via-card to-secondary/20">
+          <div className="flex items-center justify-end gap-1 px-4 py-1.5 border-b border-border bg-gradient-to-r from-card via-card to-secondary/20">
+            {inlineHeaderActions.map(action => (
+              <ExpandableIconButton
+                key={action.id}
+                variant="secondary"
+                size="sm"
+                icon={<action.icon className="h-4 w-4" />}
+                label={action.label}
+              />
+            ))}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="outline" size="sm" className="h-8 px-3 text-xs font-medium">
-                  <Settings2 className="h-3.5 w-3.5 mr-1.5" />
-                  Tools
-                  <ChevronDown className="h-3 w-3 ml-1.5" />
-                </Button>
+                <ExpandableIconButton
+                  variant="secondary"
+                  size="sm"
+                  icon={<Settings2 className="h-4 w-4" />}
+                  label="Tools"
+                />
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-48 bg-card border shadow-lg z-50">
-                {headerActions.map(action => (
+                {toolsMenuActions.map(action => (
                   <DropdownMenuItem key={action.id} className="flex items-center gap-2 cursor-pointer group">
                     <action.icon className="h-4 w-4 text-muted-foreground group-hover:text-foreground transition-colors" />
                     <span>{action.label}</span>
@@ -208,6 +219,7 @@ export default function ProcedureDetail() {
               </DropdownMenuContent>
             </DropdownMenu>
           </div>
+
 
           {/* Content Area */}
           <div className="flex-1 overflow-auto bg-card">
