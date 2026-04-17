@@ -58,19 +58,13 @@ const Checkbox = React.forwardRef<
         ref={ref}
         checked={checkedState}
         className={cn(
-          "group peer relative h-[18px] w-[18px] shrink-0 rounded-[2px] border-2 transition-all duration-200 ease-out",
-          // Unchecked state - darker border for better visibility
-          "border-foreground/70 bg-transparent hover:border-foreground",
-          // Checked state
-          "data-[state=checked]:bg-primary data-[state=checked]:border-primary data-[state=checked]:text-on-primary",
-          // Indeterminate state
-          "data-[state=indeterminate]:bg-primary data-[state=indeterminate]:border-primary data-[state=indeterminate]:text-on-primary",
-          // Focus state - uses focus-visible for keyboard navigation
+          "group peer relative h-4 w-4 shrink-0 rounded border-2 transition-all duration-200 ease-out",
+          "border-secondary-foreground bg-transparent",
+          "data-[state=checked]:bg-primary data-[state=checked]:text-on-primary",
+          "data-[state=indeterminate]:bg-primary data-[state=indeterminate]:text-on-primary",
           "focus-visible:outline-none",
-          // Disabled state - 38% opacity per M3 spec
           "disabled:cursor-not-allowed disabled:opacity-[0.38]",
-          // Error state support
-          "data-[error=true]:border-destructive data-[error=true]:data-[state=checked]:bg-destructive data-[error=true]:data-[state=checked]:border-destructive",
+          "data-[error=true]:data-[state=checked]:bg-destructive",
           className
         )}
         onMouseDown={handleMouseDown}
