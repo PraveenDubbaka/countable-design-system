@@ -59,7 +59,7 @@ const Checkbox = React.forwardRef<
         checked={checkedState}
         className={cn(
           "group peer relative h-4 w-4 shrink-0 rounded transition-all duration-200 ease-out",
-          "bg-transparent border-[2.5px] border-solid border-[#6e6e6e]",
+          "bg-transparent border-[2.5px] border-solid border-checkbox",
           "data-[state=checked]:bg-primary data-[state=checked]:text-on-primary",
           "data-[state=indeterminate]:bg-primary data-[state=indeterminate]:text-on-primary",
           "focus-visible:outline-none",
