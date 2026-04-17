@@ -42,6 +42,7 @@ export default {
           DEFAULT: "hsl(var(--border))",
           lighter: "hsl(var(--border-lighter))",
           category: "hsl(var(--border-category))",
+          checkbox: "hsl(var(--checkbox-border))",
         },
         "category-accent": "hsl(var(--category-accent))",
         "category-title": "hsl(var(--category-title))",

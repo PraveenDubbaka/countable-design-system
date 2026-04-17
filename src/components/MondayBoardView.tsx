@@ -880,7 +880,7 @@ function SortableSubItemRow({
       )}
       {/* Checkbox column */}
       <div className="w-10 shrink-0 flex items-center justify-center self-center">
-        <Checkbox checked={isSelected} onCheckedChange={() => setIsSelected(!isSelected)} className="h-4 w-4 border-border bg-background" />
+        <Checkbox checked={isSelected} onCheckedChange={() => setIsSelected(!isSelected)} className="h-4 w-4 bg-background" />
       </div>
 
       {/* Numbering column for sub-item */}
@@ -1252,7 +1252,7 @@ function SortableItemRow({
     } : {}} className={`group flex items-stretch hover:bg-muted/50 transition-all ${isSelected ? 'bg-muted/50' : ''} ${!isEditingName ? 'cursor-grab active:cursor-grabbing' : ''} ${isDragging ? 'opacity-50 ring-2 ring-primary ring-offset-1' : ''} ${isValidDropTarget ? 'bg-primary/5' : ''} ${isApplying ? 'bg-primary/10' : ''}`}>
         {/* Checkbox */}
         <div className="w-10 shrink-0 flex items-center justify-center self-center">
-          <Checkbox checked={isSelected} onCheckedChange={checked => onSelectionChange(checked === true)} className="h-4 w-4 border-border" />
+          <Checkbox checked={isSelected} onCheckedChange={checked => onSelectionChange(checked === true)} className="h-4 w-4" />
         </div>
 
         {/* Expand arrow - Monday.com style: dull on hover, solid when has sub-items */}
@@ -1524,7 +1524,7 @@ function SortableItemRow({
               {!isPreviewMode && hasRealSubItems && (
                 <div className="flex items-center hover:bg-muted transition-colors">
                   <div className="w-10 flex items-center justify-center py-2.5">
-                    <Checkbox disabled className="h-4 w-4 border-border bg-background opacity-30" />
+                    <Checkbox disabled className="h-4 w-4 bg-background opacity-30" />
                   </div>
                   <div className="w-14 shrink-0" /> {/* Numbering column spacer */}
                   <button

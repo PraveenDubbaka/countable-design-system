@@ -528,7 +528,7 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
               }
             }}
             onClick={(e) => e.stopPropagation()}
-            className="h-4 w-4 border-[#6e6e6e] flex-shrink-0"
+            className="h-4 w-4 flex-shrink-0"
           />
           
           {template.type === "folder" ? (
@@ -641,7 +641,7 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
     const hasChildren = template.children && template.children.length > 0 || folderChecklists.length > 0;
     return <div key={template.id}>
         <div className={`flex items-center gap-2 py-1.5 px-2 rounded-md cursor-pointer hover:bg-muted transition-colors text-sm ${depth > 0 ? "ml-6" : ""}`} onClick={() => template.type === "folder" && toggleFolder(template.id)}>
-          <Checkbox className="h-4 w-4 border-[#6e6e6e]" />
+          <Checkbox className="h-4 w-4" />
           {template.type === "folder" ? <>
                <span className="relative flex-shrink-0 w-4 h-4 flex items-center justify-center">
                  <Folder className="h-4 w-4 text-primary" />
@@ -669,7 +669,7 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
             }
           });
         }}>
-                <Checkbox className="h-4 w-4 border-[#6e6e6e]" onClick={e => e.stopPropagation()} />
+                <Checkbox className="h-4 w-4" onClick={e => e.stopPropagation()} />
                 <ChecklistIcon className="h-4 w-4 flex-shrink-0" />
                 <span className="truncate flex-1 text-foreground font-semibold">{checklist.name}</span>
 
