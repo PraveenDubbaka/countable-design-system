@@ -144,15 +144,7 @@ const TBCheckIcon = ({
   </svg>;
 
 // Header action buttons
-const headerActions = [{
-  id: "bank",
-  label: "Connect Bank",
-  icon: Landmark
-}, {
-  id: "docs",
-  label: "Source Docs",
-  icon: FileText
-}, {
+const inlineHeaderActions = [{
   id: "tb",
   label: "TB Check",
   icon: TBCheckIcon
@@ -164,6 +156,16 @@ const headerActions = [{
   id: "workbook",
   label: "Workbook",
   icon: FileSpreadsheet
+}];
+
+const toolsMenuActions = [{
+  id: "bank",
+  label: "Connect Bank",
+  icon: Landmark
+}, {
+  id: "docs",
+  label: "Source Docs",
+  icon: FileText
 }];
 export default function EngagementDetail() {
   const {
@@ -602,7 +604,7 @@ export default function EngagementDetail() {
                 Client acceptance and continuance
               </h1>
               <div className="flex items-center gap-1">
-                {headerActions.map(action => (
+                {inlineHeaderActions.map(action => (
                   <ExpandableIconButton
                     key={action.id}
                     variant="secondary"
@@ -611,6 +613,24 @@ export default function EngagementDetail() {
                     label={action.label}
                   />
                 ))}
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <ExpandableIconButton
+                      variant="secondary"
+                      size="sm"
+                      icon={<Settings2 className="h-4 w-4" />}
+                      label="Tools"
+                    />
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end" className="w-48 bg-card border shadow-lg z-50">
+                    {toolsMenuActions.map(action => (
+                      <DropdownMenuItem key={action.id} className="flex items-center gap-2 cursor-pointer group">
+                        <action.icon className="h-4 w-4 text-muted-foreground group-hover:text-foreground transition-colors" />
+                        <span>{action.label}</span>
+                      </DropdownMenuItem>
+                    ))}
+                  </DropdownMenuContent>
+                </DropdownMenu>
               </div>
             </div>
             {/* Action buttons row */}

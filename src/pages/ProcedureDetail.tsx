@@ -88,13 +88,17 @@ const TBCheckIcon = ({ className }: { className?: string }) => (
   </svg>
 );
 
-const headerActions = [
-  { id: "bank", label: "Connect Bank", icon: Landmark },
-  { id: "docs", label: "Source Docs", icon: FileText },
+const inlineHeaderActions = [
   { id: "tb", label: "TB Check", icon: TBCheckIcon },
   { id: "adj", label: "Adj. Entries", icon: PencilLine },
   { id: "workbook", label: "Workbook", icon: FileSpreadsheet },
 ];
+
+const toolsMenuActions = [
+  { id: "bank", label: "Connect Bank", icon: Landmark },
+  { id: "docs", label: "Source Docs", icon: FileText },
+];
+
 
 const formatNumber = (n: number) => n.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
