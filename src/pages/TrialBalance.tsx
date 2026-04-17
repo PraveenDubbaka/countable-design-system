@@ -240,12 +240,6 @@ export default function TrialBalance() {
                 Last updated: <span className="font-medium">54 min ago</span>
               </TooltipContent>
             </Tooltip>
-                <DropdownMenuItem>All Years</DropdownMenuItem>
-                <DropdownMenuItem>Current Year</DropdownMenuItem>
-                <DropdownMenuItem>PY 1</DropdownMenuItem>
-                <DropdownMenuItem>PY 2</DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
           </div>
           <div className="flex items-center gap-2">
             {headerActions.map(action => (
