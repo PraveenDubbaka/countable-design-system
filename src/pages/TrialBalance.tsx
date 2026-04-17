@@ -211,13 +211,25 @@ export default function TrialBalance() {
         <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
         {/* Top Header Bar - title and tool actions */}
         <div className="sticky top-0 z-10 flex items-center justify-between px-4 py-1.5 border-b border-border bg-gradient-to-r from-card via-card to-secondary/20">
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2">
             <h1 className="text-lg font-semibold text-foreground truncate">
               Trial Balance
             </h1>
-            <span className="text-xs text-muted-foreground">
-              Last updated: <span className="font-medium text-foreground">54 min ago</span>
-            </span>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="icon-sm"
+                  className="border border-transparent hover:border-border hover:bg-transparent text-foreground"
+                  aria-label="Refresh"
+                >
+                  <RefreshCw className="h-4 w-4" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent side="bottom">
+                Last updated: <span className="font-medium">54 min ago</span>
+              </TooltipContent>
+            </Tooltip>
           </div>
           <div className="flex items-center gap-2">
             {headerActions.map(action => (
