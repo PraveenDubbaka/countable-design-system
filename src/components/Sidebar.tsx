@@ -769,7 +769,7 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
       {/* Icon sidebar - dark navy with curved corner, expands on click only */}
       <div className={`sidebar-nav relative flex flex-col py-4 gap-2 transition-all duration-300 ease-in-out ${isNavExpanded ? "w-56 items-start px-3" : "w-14 items-center"}`}>
         {/* Luka Logo / Sidebar toggle */}
-        <div className={`h-10 mb-4 flex items-center ${isNavExpanded ? "px-2 w-full justify-between" : "justify-center w-10"}`}>
+        <div className={`h-10 mb-4 flex items-center ${isNavExpanded ? "px-2 w-full justify-between" : "justify-center w-full cursor-pointer group/logo-expand"}`} onClick={() => !isNavExpanded && setIsNavExpanded(true)} title={!isNavExpanded ? "Expand sidebar" : undefined}>
           {isNavExpanded ? (
             <>
               <svg width="140" height="19" viewBox="0 0 234 32" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -786,7 +786,7 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
               <path d="M234 19.8896V24.931H220.776V6.15991H233.755V11.2013H226.806V13.2929H232.897V17.6371H226.806V19.8896H233.992H234Z" fill="white" />
             </svg>
               <button
-                onClick={() => setIsNavExpanded(false)}
+                onClick={(e) => { e.stopPropagation(); setIsNavExpanded(false); }}
                 aria-label="Collapse sidebar"
                 className="w-7 h-7 rounded-md flex items-center justify-center text-white/80 hover:text-white hover:bg-white/10 transition-colors"
               >
@@ -796,16 +796,12 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
               </button>
             </>
           ) : (
-            <button
-              onClick={() => setIsNavExpanded(true)}
-              aria-label="Expand sidebar"
-              className="relative w-10 h-10 flex items-center justify-center group/logo"
-            >
-              <img src={lukaLogo} alt="Luka" className="w-7 h-7 object-contain transition-opacity duration-200 group-hover/logo:opacity-0" />
-              <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24" width="20" height="20" className="absolute shrink-0 text-white opacity-0 group-hover/logo:opacity-100 transition-opacity duration-200" aria-hidden="true">
+            <div className="relative w-10 h-10 flex items-center justify-center">
+              <img src={lukaLogo} alt="Luka" className="w-7 h-7 object-contain transition-opacity duration-200 group-hover/logo-expand:opacity-0" />
+              <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24" width="20" height="20" className="absolute shrink-0 text-white opacity-0 group-hover/logo-expand:opacity-100 transition-opacity duration-200" aria-hidden="true">
                 <path fill="currentColor" d="M20.25 7c0-.69-.56-1.25-1.25-1.25H9.75v12.5H19c.69 0 1.25-.56 1.25-1.25zM3.75 17c0 .69.56 1.25 1.25 1.25h3.25V5.75H5c-.69 0-1.25.56-1.25 1.25zm18 0A2.75 2.75 0 0 1 19 19.75H5A2.75 2.75 0 0 1 2.25 17V7A2.75 2.75 0 0 1 5 4.25h14A2.75 2.75 0 0 1 21.75 7z"></path>
               </svg>
-            </button>
+            </div>
           )}
         </div>
 
