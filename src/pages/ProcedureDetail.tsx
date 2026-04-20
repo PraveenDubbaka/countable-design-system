@@ -231,6 +231,7 @@ export default function ProcedureDetail() {
                 ))}
               </DropdownMenuContent>
             </DropdownMenu>
+            </div>
           </div>
 
 
