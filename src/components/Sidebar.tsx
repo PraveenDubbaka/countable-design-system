@@ -239,7 +239,7 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
   const [globalTemplates, setGlobalTemplates] = useState<GlobalTemplate[]>(initialGlobalTemplates);
   const [activeTab, setActiveTab] = useState<"firm" | "master">("firm");
   const [searchQuery, setSearchQuery] = useState("");
-  const [isTemplatesPanelCollapsed, setIsTemplatesPanelCollapsed] = useState(false);
+  const { isCollapsed: isTemplatesPanelCollapsed, setIsCollapsed: setIsTemplatesPanelCollapsed } = useSecondaryPanel();
   const [selectedGlobalTemplate, setSelectedGlobalTemplate] = useState<string | null>("global-1-1");
   
   // Multi-select state for Global Templates
