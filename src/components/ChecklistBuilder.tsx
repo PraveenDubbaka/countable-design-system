@@ -414,7 +414,6 @@ export function ChecklistBuilder({ checklist, onUpdate, onSave, initialPreviewMo
     <div className="flex-1 flex flex-col h-full overflow-hidden bg-background">
       {/* Top Toolbar */}
       <div className="border-b bg-card px-6 py-3 flex items-center justify-between">
-        <div className="flex items-center gap-4">
         <div className="flex items-center gap-2">
           <button
             onClick={togglePanel}
