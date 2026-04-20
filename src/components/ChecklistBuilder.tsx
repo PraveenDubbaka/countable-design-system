@@ -59,6 +59,7 @@ import { consolidateSectionsToThree } from '@/lib/consolidateSections';
 
 import { MondayBoardView } from './MondayBoardView';
 import { AddToMyTemplatesDialog } from './AddToMyTemplatesDialog';
+import { useSecondaryPanel } from '@/hooks/useSecondaryPanel';
 
 interface ChecklistBuilderProps {
   checklist: Checklist;
