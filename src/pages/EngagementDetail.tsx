@@ -21,6 +21,7 @@ import { useClientResponses } from "@/hooks/useClientResponses";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter, DialogClose } from "@/components/ui/dialog";
 import { DeleteChecklistDialog } from "@/components/DeleteChecklistDialog";
 import { AddChecklistSheet } from "@/components/AddChecklistSheet";
+import { useSecondaryPanel } from "@/hooks/useSecondaryPanel";
 
 // Sample engagement data matching the engagements page
 const engagementsData: Record<string, {
