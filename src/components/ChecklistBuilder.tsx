@@ -59,6 +59,7 @@ import { consolidateSectionsToThree } from '@/lib/consolidateSections';
 
 import { MondayBoardView } from './MondayBoardView';
 import { AddToMyTemplatesDialog } from './AddToMyTemplatesDialog';
+import { useSecondaryPanel } from '@/hooks/useSecondaryPanel';
 
 interface ChecklistBuilderProps {
   checklist: Checklist;
@@ -71,6 +72,7 @@ interface ChecklistBuilderProps {
 
 export function ChecklistBuilder({ checklist, onUpdate, onSave, initialPreviewMode = false, isGlobalTemplate = false, isSavedTemplate = false }: ChecklistBuilderProps) {
   const [isEditingTitle, setIsEditingTitle] = useState(false);
+  const { isCollapsed: isPanelCollapsed, toggle: togglePanel } = useSecondaryPanel();
   const [showAddMenu, setShowAddMenu] = useState(false);
   const [pendingAddType, setPendingAddType] = useState<'empty' | 'template' | 'form' | null>(null);
   const [showExportMenu, setShowExportMenu] = useState(false);
@@ -412,7 +414,17 @@ export function ChecklistBuilder({ checklist, onUpdate, onSave, initialPreviewMo
     <div className="flex-1 flex flex-col h-full overflow-hidden bg-background">
       {/* Top Toolbar */}
       <div className="border-b bg-card px-6 py-3 flex items-center justify-between">
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-2">
+          <button
+            onClick={togglePanel}
+            aria-label={isPanelCollapsed ? "Expand templates panel" : "Collapse templates panel"}
+            title={isPanelCollapsed ? "Expand templates panel" : "Collapse templates panel"}
+            className="w-7 h-7 rounded-md flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-muted transition-colors flex-shrink-0"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24" width="16" height="16" className="shrink-0" aria-hidden="true">
+              <path fill="currentColor" d="M20.25 7c0-.69-.56-1.25-1.25-1.25H9.75v12.5H19c.69 0 1.25-.56 1.25-1.25zM3.75 17c0 .69.56 1.25 1.25 1.25h3.25V5.75H5c-.69 0-1.25.56-1.25 1.25zm18 0A2.75 2.75 0 0 1 19 19.75H5A2.75 2.75 0 0 1 2.25 17V7A2.75 2.75 0 0 1 5 4.25h14A2.75 2.75 0 0 1 21.75 7z"></path>
+            </svg>
+          </button>
           {isPreviewMode ? (
             <h1 className="text-lg font-semibold px-2 py-1">
               {checklist.title}

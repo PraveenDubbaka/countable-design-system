@@ -19,6 +19,7 @@ import { CompletionIcon } from "@/components/icons/CompletionIcon";
 import { WordDocIcon } from "@/components/icons/WordDocIcon";
 import { BookIcon } from "@/components/icons/BookIcon";
 import { SignoffsOverlay } from "@/components/SignoffsOverlay";
+import { useSecondaryPanel } from "@/hooks/useSecondaryPanel";
 interface Template {
   id: string;
   name: string;
@@ -239,7 +240,7 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
   const [globalTemplates, setGlobalTemplates] = useState<GlobalTemplate[]>(initialGlobalTemplates);
   const [activeTab, setActiveTab] = useState<"firm" | "master">("firm");
   const [searchQuery, setSearchQuery] = useState("");
-  const [isTemplatesPanelCollapsed, setIsTemplatesPanelCollapsed] = useState(false);
+  const { isCollapsed: isTemplatesPanelCollapsed, setIsCollapsed: setIsTemplatesPanelCollapsed } = useSecondaryPanel();
   const [selectedGlobalTemplate, setSelectedGlobalTemplate] = useState<string | null>("global-1-1");
   
   // Multi-select state for Global Templates
