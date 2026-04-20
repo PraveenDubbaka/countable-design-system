@@ -784,7 +784,29 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
               <path d="M198.625 19.384C198.625 23.2225 196.021 24.9387 190.849 24.9387H182.75V6.15991H190.129C195.308 6.15991 197.936 7.6616 197.936 11.2319C197.936 13.1091 197.047 14.3196 195.599 15.0398V15.0934C197.476 15.8443 198.633 17.2157 198.633 19.384H198.625ZM188.78 10.5041V13.3772H189.884C191.14 13.3772 191.814 12.9175 191.814 11.9292C191.814 10.9408 191.14 10.5041 189.884 10.5041H188.78ZM192.534 18.9013C192.534 17.9129 191.837 17.4532 190.604 17.4532H188.78V20.38H190.604C191.837 20.38 192.534 19.8973 192.534 18.9013Z" fill="white" />
               <path d="M216.218 19.4069V24.931H203.185V6.15991H209.222V19.4069H216.225H216.218Z" fill="white" />
               <path d="M234 19.8896V24.931H220.776V6.15991H233.755V11.2013H226.806V13.2929H232.897V17.6371H226.806V19.8896H233.992H234Z" fill="white" />
-            </svg> : <LukaLogo />}
+            </svg>
+              <button
+                onClick={() => setIsNavExpanded(false)}
+                aria-label="Collapse sidebar"
+                className="w-7 h-7 rounded-md flex items-center justify-center text-white/80 hover:text-white hover:bg-white/10 transition-colors"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24" width="16" height="16" className="shrink-0" aria-hidden="true">
+                  <path fill="currentColor" d="M20.25 7c0-.69-.56-1.25-1.25-1.25H9.75v12.5H19c.69 0 1.25-.56 1.25-1.25zM3.75 17c0 .69.56 1.25 1.25 1.25h3.25V5.75H5c-.69 0-1.25.56-1.25 1.25zm18 0A2.75 2.75 0 0 1 19 19.75H5A2.75 2.75 0 0 1 2.25 17V7A2.75 2.75 0 0 1 5 4.25h14A2.75 2.75 0 0 1 21.75 7z"></path>
+                </svg>
+              </button>
+            </>
+          ) : (
+            <button
+              onClick={() => setIsNavExpanded(true)}
+              aria-label="Expand sidebar"
+              className="relative w-10 h-10 flex items-center justify-center group/logo"
+            >
+              <img src={lukaLogo} alt="Luka" className="w-7 h-7 object-contain transition-opacity duration-200 group-hover/logo:opacity-0" />
+              <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24" width="20" height="20" className="absolute shrink-0 text-white opacity-0 group-hover/logo:opacity-100 transition-opacity duration-200" aria-hidden="true">
+                <path fill="currentColor" d="M20.25 7c0-.69-.56-1.25-1.25-1.25H9.75v12.5H19c.69 0 1.25-.56 1.25-1.25zM3.75 17c0 .69.56 1.25 1.25 1.25h3.25V5.75H5c-.69 0-1.25.56-1.25 1.25zm18 0A2.75 2.75 0 0 1 19 19.75H5A2.75 2.75 0 0 1 2.25 17V7A2.75 2.75 0 0 1 5 4.25h14A2.75 2.75 0 0 1 21.75 7z"></path>
+              </svg>
+            </button>
+          )}
         </div>
 
         {/* Nav items */}
