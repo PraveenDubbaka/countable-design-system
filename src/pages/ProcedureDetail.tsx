@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { Layout } from "@/components/Layout";
+import { useSecondaryPanel } from "@/hooks/useSecondaryPanel";
 import { EngagementRightPanel } from "@/components/EngagementRightPanel";
 import { Badge } from "@/components/ui/badge";
 import { ExpandableIconButton } from "@/components/ui/expandable-icon-button";
@@ -106,6 +107,7 @@ const formatNumber = (n: number) => n.toLocaleString("en-US", { minimumFractionD
 export default function ProcedureDetail() {
   const { engagementId, procedureId } = useParams<{ engagementId: string; procedureId: string }>();
   const navigate = useNavigate();
+  const { isCollapsed: isPanelCollapsed, toggle: togglePanel } = useSecondaryPanel();
   const [comment, setComment] = useState("");
 
   const engagement = engagementId ? engagementsData[engagementId] : null;
@@ -190,7 +192,18 @@ export default function ProcedureDetail() {
         {/* Main Content Area */}
         <div className="flex-1 flex flex-col min-w-0 overflow-hidden relative">
           {/* Top Header Bar - tools only */}
-          <div className="flex items-center justify-end gap-1 px-4 py-1.5 border-b border-border bg-gradient-to-r from-card via-card to-secondary/20">
+          <div className="flex items-center justify-between gap-1 px-4 py-1.5 border-b border-border bg-gradient-to-r from-card via-card to-secondary/20">
+            <button
+              onClick={togglePanel}
+              aria-label={isPanelCollapsed ? "Expand sections panel" : "Collapse sections panel"}
+              title={isPanelCollapsed ? "Expand sections panel" : "Collapse sections panel"}
+              className="w-7 h-7 rounded-md flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-muted transition-colors flex-shrink-0"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24" width="16" height="16" className="shrink-0" aria-hidden="true">
+                <path fill="currentColor" d="M20.25 7c0-.69-.56-1.25-1.25-1.25H9.75v12.5H19c.69 0 1.25-.56 1.25-1.25zM3.75 17c0 .69.56 1.25 1.25 1.25h3.25V5.75H5c-.69 0-1.25.56-1.25 1.25zm18 0A2.75 2.75 0 0 1 19 19.75H5A2.75 2.75 0 0 1 2.25 17V7A2.75 2.75 0 0 1 5 4.25h14A2.75 2.75 0 0 1 21.75 7z"></path>
+              </svg>
+            </button>
+            <div className="flex items-center gap-1">
             {inlineHeaderActions.map(action => (
               <ExpandableIconButton
                 key={action.id}
@@ -218,6 +231,7 @@ export default function ProcedureDetail() {
                 ))}
               </DropdownMenuContent>
             </DropdownMenu>
+            </div>
           </div>
 
 
