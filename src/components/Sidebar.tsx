@@ -768,17 +768,11 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
   return <div className={`flex h-screen relative group/sidebar`} style={{ background: 'var(--sidebar-gradient, hsl(var(--sidebar-bg)))' }}>
       {/* Icon sidebar - dark navy with curved corner, expands on click only */}
       <div className={`sidebar-nav relative flex flex-col py-4 gap-2 transition-all duration-300 ease-in-out ${isNavExpanded ? "w-56 items-start px-3" : "w-14 items-center"}`}>
-        {/* Floating collapse/expand toggle on nav border */}
-        <button
-          onClick={() => setIsNavExpanded(!isNavExpanded)}
-          className="absolute z-50 w-6 h-6 rounded-full bg-white dark:bg-card border border-border shadow-md flex items-center justify-center opacity-0 group-hover/sidebar:opacity-100 transition-opacity duration-200 hover:bg-muted"
-          style={{ top: 50, right: 0, transform: 'translateX(50%)' }}
-        >
-          {isNavExpanded ? <ChevronLeft className="h-3 w-3 text-foreground" /> : <ChevronRight className="h-3 w-3 text-foreground" />}
-        </button>
-        {/* Luka Logo */}
-        <div className={`h-10 mb-4 flex items-center ${isNavExpanded ? "px-2" : "justify-center w-10"}`}>
-          {isNavExpanded ? <svg width="140" height="19" viewBox="0 0 234 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+        {/* Luka Logo / Sidebar toggle */}
+        <div className={`h-10 mb-4 flex items-center ${isNavExpanded ? "px-2 w-full justify-between" : "justify-center w-10"}`}>
+          {isNavExpanded ? (
+            <>
+              <svg width="140" height="19" viewBox="0 0 234 32" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path d="M7.53909 28.2869C3.03402 25.659 0 20.7708 0 15.1701C0 6.79591 6.79591 0 15.1778 0C23.5597 0 30.3556 6.79591 30.3556 15.1778C30.3556 17.9743 29.5434 20.4184 28.218 22.6709L24.2645 20.3801C25.1456 18.8477 25.6436 17.0702 25.6436 15.1778C25.6436 9.40088 20.9547 4.71193 15.1778 4.71193C9.40088 4.71193 4.71193 9.40088 4.71193 15.1778C4.71193 19.0086 6.77292 22.3644 9.84525 24.1879L7.53909 28.2946V28.2869Z" fill="white" />
               <path d="M34.3629 2.82739C38.8679 5.45535 41.9019 10.3435 41.9019 15.9442C41.9019 24.3261 35.106 31.122 26.7242 31.122C18.3423 31.122 11.5464 24.3261 11.5464 15.9442C11.5464 13.1477 12.3585 10.7036 13.684 8.45106L17.6374 10.7419C16.7563 12.2742 16.2583 14.0517 16.2583 15.9442C16.2583 21.7211 20.9473 26.41 26.7242 26.41C32.5011 26.41 37.19 21.7211 37.19 15.9442C37.19 12.1133 35.129 8.75753 32.0567 6.93405L34.3629 2.82739Z" fill="white" />
               <path d="M65.7268 17.9589L70.7146 21.2611C68.9677 23.7281 66.0486 25.2835 62.6162 25.2835C56.9848 25.2835 52.7173 21.1002 52.7173 15.5455C52.7173 9.99076 56.9848 5.83813 62.6162 5.83813C66.0486 5.83813 68.9754 7.39346 70.7146 9.83753L65.7268 13.1397C65.0296 12.228 63.9263 11.6917 62.6162 11.6917C60.3866 11.6917 58.7547 13.3006 58.7547 15.5531C58.7547 17.8057 60.3943 19.4146 62.6162 19.4146C63.934 19.4146 65.0296 18.8783 65.7268 17.9666V17.9589Z" fill="white" />
