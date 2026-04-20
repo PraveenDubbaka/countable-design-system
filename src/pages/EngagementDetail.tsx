@@ -175,6 +175,7 @@ export default function EngagementDetail() {
     engagementId: string;
   }>();
   const navigate = useNavigate();
+  const { isCollapsed: isPanelCollapsed, toggle: togglePanel } = useSecondaryPanel();
   const [checklist, setChecklist] = useState<Checklist | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isCompactMode, setIsCompactMode] = useState(false);
