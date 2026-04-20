@@ -72,6 +72,7 @@ interface ChecklistBuilderProps {
 
 export function ChecklistBuilder({ checklist, onUpdate, onSave, initialPreviewMode = false, isGlobalTemplate = false, isSavedTemplate = false }: ChecklistBuilderProps) {
   const [isEditingTitle, setIsEditingTitle] = useState(false);
+  const { isCollapsed: isPanelCollapsed, toggle: togglePanel } = useSecondaryPanel();
   const [showAddMenu, setShowAddMenu] = useState(false);
   const [pendingAddType, setPendingAddType] = useState<'empty' | 'template' | 'form' | null>(null);
   const [showExportMenu, setShowExportMenu] = useState(false);
