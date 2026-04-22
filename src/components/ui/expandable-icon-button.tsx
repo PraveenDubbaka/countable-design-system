@@ -70,7 +70,7 @@ const ExpandableIconButton = React.forwardRef<HTMLButtonElement, ExpandableIconB
         {...props}
       >
         <span className="shrink-0 flex items-center justify-center">{icon}</span>
-        <span className="whitespace-nowrap text-xs font-medium">{label}</span>
+        <span className="whitespace-nowrap text-[0.9375rem] font-semibold leading-[1.3]">{label}</span>
       </Button>
     );
   }
