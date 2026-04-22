@@ -49,7 +49,7 @@ const ExpandableIconButton = React.forwardRef<HTMLButtonElement, ExpandableIconB
         >
           <span className="shrink-0 flex items-center justify-center">{icon}</span>
           <span className="grid grid-cols-[0fr] group-hover/expand:grid-cols-[1fr] transition-[grid-template-columns,opacity] duration-200 ease-in-out overflow-hidden">
-            <span className="overflow-hidden whitespace-nowrap text-xs font-medium opacity-0 group-hover/expand:opacity-100 transition-opacity duration-200 ease-in-out">
+            <span className="overflow-hidden whitespace-nowrap text-[0.9375rem] font-semibold leading-[1.3] opacity-0 group-hover/expand:opacity-100 transition-opacity duration-200 ease-in-out">
               {label}
             </span>
           </span>
