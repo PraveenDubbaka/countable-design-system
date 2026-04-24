@@ -242,31 +242,6 @@ export default function TrialBalance() {
             <h1 className="text-lg font-semibold text-foreground truncate">
               Trial Balance
             </h1>
-            <Tooltip>
-              <DropdownMenu>
-                <TooltipTrigger asChild>
-                  <DropdownMenuTrigger asChild>
-                    <Button
-                      variant="ghost"
-                      size="icon-sm"
-                      className="border border-transparent hover:border-border hover:bg-transparent text-foreground"
-                      aria-label="Refresh"
-                    >
-                      <RefreshCw className="h-4 w-4" />
-                    </Button>
-                  </DropdownMenuTrigger>
-                </TooltipTrigger>
-                <DropdownMenuContent align="start" className="z-[100]">
-                  <DropdownMenuItem>All Years</DropdownMenuItem>
-                  <DropdownMenuItem>Current Year</DropdownMenuItem>
-                  <DropdownMenuItem>PY 1</DropdownMenuItem>
-                  <DropdownMenuItem>PY 2</DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-              <TooltipContent side="bottom" sideOffset={8} className="z-[110]">
-                Last updated: <span className="font-medium">54 min ago</span>
-              </TooltipContent>
-            </Tooltip>
           </div>
           <div className="flex items-center gap-2">
             {inlineHeaderActions.map(action => (
@@ -379,8 +354,23 @@ export default function TrialBalance() {
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
-              
-              
+
+              {/* Refresh button beside Actions */}
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <ExpandableIconButton
+                    variant="outline"
+                    className="bg-card hover:bg-muted"
+                    icon={<RefreshCw className="h-4 w-4" />}
+                    label="Refresh"
+                  />
+                </TooltipTrigger>
+                <TooltipContent side="bottom" sideOffset={8} className="z-[110]">
+                  Last updated: <span className="font-medium">54 min ago</span>
+                </TooltipContent>
+              </Tooltip>
+
+
 
               {/* Hide / Show $0 Accounts toggle */}
               <ExpandableIconButton
