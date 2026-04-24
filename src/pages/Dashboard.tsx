@@ -168,7 +168,7 @@ const IntegrationBadge = ({
     if (type === "xero") {
       return <div className={`${badgeClasses} gap-1.5`}>
           <img src="https://upload.wikimedia.org/wikipedia/en/9/9f/Xero_software_logo.svg" alt="Xero" className="h-5" />
-          <span className="text-xs font-medium text-foreground">Xero</span>
+          <span className="text-xs font-medium text-gray-900">Xero</span>
         </div>;
     }
     if (type === "quickbooks") {
@@ -181,7 +181,7 @@ const IntegrationBadge = ({
           <div className="h-5 w-5 rounded-full bg-black flex items-center justify-center p-1">
             <img src={sageLogo} alt="Sage" className="h-3 w-auto" />
           </div>
-          <span className="text-xs font-medium text-foreground">Sage</span>
+          <span className="text-xs font-medium text-gray-900">Sage</span>
         </div>;
     }
     return null;
