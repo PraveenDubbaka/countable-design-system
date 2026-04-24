@@ -487,7 +487,7 @@ export default function TrialBalance() {
                     key={row.id}
                     className="border-b border-border hover:bg-muted/30 transition-colors cursor-pointer"
                   >
-                    <td className="p-0 w-3 relative">
+                    <td className="p-0 relative" style={{ width: "16px" }}>
                       <div
                         className="absolute inset-0 flex items-center justify-center text-[9px] font-bold text-white tracking-wider overflow-hidden"
                         style={{ backgroundColor: cat.color, writingMode: "vertical-rl", transform: "rotate(180deg)" }}
