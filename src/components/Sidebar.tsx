@@ -919,7 +919,7 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
                 </Button>
                 {/* Signoffs preparer chips - inline beside the Signoffs button when active */}
                 {signoffsMode && (
-                  <div className="flex items-start gap-2">
+                  <div className="flex items-start gap-2 pl-3 border-l border-border/60">
                     {[
                       { id: "p1", initials: "CA", label: "Preparer", color: "bg-purple-500" },
                       { id: "p2", initials: "JD", label: "Reviewer", color: "bg-sky-500" },
@@ -1153,7 +1153,7 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
                         <span className="truncate flex-1 font-semibold" style={{ color: 'hsl(var(--sidebar-tree-foreground, 0 0% 0%))' }}>{node.label}</span>
                         {node.hasPlus && <Plus className="h-4 w-4 text-muted-foreground hover:text-foreground flex-shrink-0" />}
                         {signoffsMode && (
-                          <div className="flex items-center gap-2 ml-4 -mr-2 flex-shrink-0" onClick={(e) => e.stopPropagation()}>
+                          <div className="flex items-center gap-2 ml-4 -mr-2 pl-3 border-l border-border/60 flex-shrink-0 self-stretch" onClick={(e) => e.stopPropagation()}>
                             {(["p1", "p2"] as const).map(pid => (
                               <div key={pid} className="w-9 flex items-center justify-center">
                                 <Checkbox
