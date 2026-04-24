@@ -870,6 +870,9 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
               isResizing && "transition-none"
             )}
           >
+            {signoffsMode && !isTemplatesPanelCollapsed && (
+              <div className="pointer-events-none absolute top-0 bottom-0 w-px bg-border/60 z-10" style={{ right: "104px" }} />
+            )}
             <div className={`p-3 ${isTemplatesPanelCollapsed ? "hidden" : ""}`}>
               <div className="flex gap-2 items-start">
                 <div className="relative flex-1">
@@ -919,7 +922,7 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
                 </Button>
                 {/* Signoffs preparer chips - inline beside the Signoffs button when active */}
                 {signoffsMode && (
-                  <div className="flex items-start gap-2 pl-3 ml-auto border-l border-border/60">
+                  <div className="flex items-start gap-2 pl-3 ml-auto">
                     {[
                       { id: "p1", initials: "CA", label: "Preparer", color: "bg-purple-500" },
                       { id: "p2", initials: "JD", label: "Reviewer", color: "bg-sky-500" },
@@ -948,10 +951,7 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
               </div>
             </div>
 
-            <div className={`flex-1 overflow-y-auto scrollbar-hide p-2 pt-0 relative ${signoffsMode ? "pr-3" : ""} ${isTemplatesPanelCollapsed ? "hidden" : ""}`} style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
-              {signoffsMode && (
-                <div className="pointer-events-none absolute top-0 bottom-0 w-px bg-border/60" style={{ right: "104px" }} />
-              )}
+            <div className={`flex-1 overflow-y-auto scrollbar-hide p-2 pt-0 ${signoffsMode ? "pr-3" : ""} ${isTemplatesPanelCollapsed ? "hidden" : ""}`} style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
             {/* Engagement Sections - recursive tree */}
               {(() => {
                 type SectionNode = {
