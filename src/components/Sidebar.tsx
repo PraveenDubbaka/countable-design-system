@@ -20,6 +20,8 @@ import { CompletionIcon } from "@/components/icons/CompletionIcon";
 import { WordDocIcon } from "@/components/icons/WordDocIcon";
 import { BookIcon } from "@/components/icons/BookIcon";
 import { SignoffsOverlay } from "@/components/SignoffsOverlay";
+import signoffCheckAllIcon from "@/assets/signoff-check-all.png";
+import signoffUncheckAllIcon from "@/assets/signoff-uncheck-all.png";
 import { useSecondaryPanel } from "@/hooks/useSecondaryPanel";
 interface Template {
   id: string;
@@ -724,7 +726,27 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
   const [showSignoffs, setShowSignoffs] = useState(false);
   const [signoffsMode, setSignoffsMode] = useState(false);
   const [signoffChecks, setSignoffChecks] = useState<Record<string, { p1: boolean; p2: boolean }>>({});
+  const allNodeIdsRef = useRef<string[]>([]);
   const [hasDarkSecondary, setHasDarkSecondary] = useState(false);
+
+  const toggleAllSignoffs = (pid: "p1" | "p2") => {
+    const ids = allNodeIdsRef.current;
+    if (ids.length === 0) return;
+    const allChecked = ids.every(id => !!signoffChecks[id]?.[pid]);
+    setSignoffChecks(prev => {
+      const next = { ...prev };
+      ids.forEach(id => {
+        const cur = next[id] ?? { p1: false, p2: false };
+        next[id] = { ...cur, [pid]: !allChecked };
+      });
+      return next;
+    });
+  };
+
+  const isAllSignoffsChecked = (pid: "p1" | "p2") => {
+    const ids = allNodeIdsRef.current;
+    return ids.length > 0 && ids.every(id => !!signoffChecks[id]?.[pid]);
+  };
 
   // All parent IDs in the engagement tree (used to expand all)
   const allParentIds = [
@@ -907,9 +929,18 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
                           {p.initials}
                         </div>
                         <span className="text-[9px] text-muted-foreground leading-tight whitespace-nowrap">{p.label}</span>
-                        <div className="h-6 w-6 rounded-md border border-border flex items-center justify-center bg-card">
-                          <Check className="h-3 w-3 text-muted-foreground" />
-                        </div>
+                        <button
+                          type="button"
+                          onClick={() => toggleAllSignoffs(p.id as "p1" | "p2")}
+                          aria-label={isAllSignoffsChecked(p.id as "p1" | "p2") ? `Uncheck all ${p.label} signoffs` : `Check all ${p.label} signoffs`}
+                          className="h-6 w-6 rounded-md flex items-center justify-center hover:opacity-80 transition-opacity"
+                        >
+                          <img
+                            src={isAllSignoffsChecked(p.id as "p1" | "p2") ? signoffUncheckAllIcon : signoffCheckAllIcon}
+                            alt=""
+                            className="h-6 w-6"
+                          />
+                        </button>
                       </div>
                     ))}
                   </div>
@@ -1149,6 +1180,11 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
                     </div>
                   );
                 };
+
+                // Collect all node IDs for the "select all" signoff toggles
+                const collectIds = (nodes: SectionNode[]): string[] =>
+                  nodes.flatMap(n => [n.id, ...(n.children ? collectIds(n.children) : [])]);
+                allNodeIdsRef.current = collectIds(engagementTree);
 
                 return engagementTree.map(node => renderNode(node, 0));
               })()}
