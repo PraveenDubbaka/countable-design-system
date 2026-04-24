@@ -881,46 +881,41 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
                 </Button>
                 <Button
                   size="sm"
-                  variant={signoffsMode ? "default" : "ghost"}
+                  variant="ghost"
                   onClick={() => (signoffsMode ? exitSignoffsMode() : enterSignoffsMode())}
                   aria-label={signoffsMode ? "Close Signoffs" : "Open Signoffs"}
                   className={cn(
-                    "h-9 px-2 gap-1 text-xs font-medium",
-                    !signoffsMode && "bg-primary/10 hover:bg-primary/20 text-foreground"
+                    "h-9 px-2 gap-1 text-xs font-medium text-foreground",
+                    signoffsMode ? "bg-primary/30 hover:bg-primary/40" : "bg-primary/10 hover:bg-primary/20"
                   )}
                 >
-                  {signoffsMode ? (
-                    <X className="h-3.5 w-3.5" />
-                  ) : (
-                    <svg className="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                      <circle cx="12" cy="12" r="10" />
-                      <path d="M9 12l2 2 4-4" />
-                    </svg>
-                  )}
+                  <svg className="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <circle cx="12" cy="12" r="10" />
+                    <path d="M9 12l2 2 4-4" />
+                  </svg>
                   <span>Signoffs</span>
                 </Button>
               </div>
+              {/* Signoffs preparer header row - sits directly under the search/signoff row, not as a separate band below */}
+              {signoffsMode && (
+                <div className="flex items-end justify-end gap-2 pt-2 border-b border-border pb-2">
+                  {[
+                    { id: "p1", initials: "CA", label: "Preparer", color: "bg-purple-500" },
+                    { id: "p2", initials: "JD", label: "1st Reviewer", color: "bg-sky-500" },
+                  ].map(p => (
+                    <div key={p.id} className="w-9 flex flex-col items-center gap-1">
+                      <div className={cn("h-7 w-7 rounded-full flex items-center justify-center text-[10px] font-semibold text-white", p.color)}>
+                        {p.initials}
+                      </div>
+                      <span className="text-[9px] text-muted-foreground leading-tight whitespace-nowrap">{p.label}</span>
+                      <div className="h-6 w-6 rounded-md border border-border flex items-center justify-center bg-card">
+                        <Check className="h-3 w-3 text-muted-foreground" />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
-
-            {/* Signoffs preparer header row */}
-            {signoffsMode && !isTemplatesPanelCollapsed && (
-              <div className="flex items-end justify-end gap-2 px-3 pb-2 border-b border-border">
-                {[
-                  { id: "p1", initials: "CA", label: "Preparer", color: "bg-purple-500" },
-                  { id: "p2", initials: "JD", label: "1st Reviewer", color: "bg-sky-500" },
-                ].map(p => (
-                  <div key={p.id} className="w-9 flex flex-col items-center gap-1">
-                    <div className={cn("h-7 w-7 rounded-full flex items-center justify-center text-[10px] font-semibold text-white", p.color)}>
-                      {p.initials}
-                    </div>
-                    <span className="text-[9px] text-muted-foreground leading-tight whitespace-nowrap">{p.label}</span>
-                    <div className="h-6 w-6 rounded-md border border-border flex items-center justify-center bg-card">
-                      <Check className="h-3 w-3 text-muted-foreground" />
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
 
             <div className={`flex-1 overflow-y-auto scrollbar-hide p-2 pt-0 ${isTemplatesPanelCollapsed ? "hidden" : ""}`} style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
             {/* Engagement Sections - recursive tree */}
