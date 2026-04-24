@@ -919,7 +919,7 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
                 </Button>
                 {/* Signoffs preparer chips - inline beside the Signoffs button when active */}
                 {signoffsMode && (
-                  <div className="flex items-start gap-2">
+                  <div className="flex items-start gap-2 pl-3 border-l border-border/60">
                     {[
                       { id: "p1", initials: "CA", label: "Preparer", color: "bg-purple-500" },
                       { id: "p2", initials: "JD", label: "Reviewer", color: "bg-sky-500" },
