@@ -809,7 +809,7 @@ export default function EngagementDetail() {
 
         {/* Switch Engagement Confirmation Dialog */}
         <Dialog open={showSwitchDialog} onOpenChange={setShowSwitchDialog}>
-          <DialogContent className="sm:max-w-[400px] bg-white border shadow-xl rounded-2xl p-6">
+          <DialogContent className="sm:max-w-[400px] bg-card border shadow-xl rounded-2xl p-6">
             <DialogClose className="absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-accent data-[state=open]:text-muted-foreground" />
             <div className="flex flex-col items-center text-center gap-4">
               {/* Warning Icon */}
@@ -842,7 +842,7 @@ export default function EngagementDetail() {
 
         {/* Switch Client Confirmation Dialog */}
         <Dialog open={showClientSwitchDialog} onOpenChange={setShowClientSwitchDialog}>
-          <DialogContent className="sm:max-w-[440px] bg-white border shadow-xl rounded-2xl p-6">
+          <DialogContent className="sm:max-w-[440px] bg-card border shadow-xl rounded-2xl p-6">
             <DialogClose className="absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-accent data-[state=open]:text-muted-foreground" />
             <div className="flex flex-col items-center text-center gap-4">
               {/* Warning Icon */}
