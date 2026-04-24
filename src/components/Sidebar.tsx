@@ -2,6 +2,7 @@ import { useState, useEffect, useRef, useCallback } from "react";
 import { createPortal } from "react-dom";
 import { useNavigate, useLocation } from "react-router-dom";
 import { ChevronDown, ChevronRight, ChevronLeft, Search, Plus, Expand, Trash2, Folder, Headphones, Check, FileText, FileBarChart, StickyNote, Table, Copy, Pencil, FolderInput, MoreVertical, GripVertical, X, Save, Files } from "lucide-react";
+import { FolderSolidIcon, FolderPlusIcon, FolderMinusIcon } from "@/components/icons/FolderIcons";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -547,7 +548,7 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
                 ) : (
                   <ChevronRight className="h-4 w-4 text-muted-foreground flex-shrink-0" />
                 )}
-                <Folder className="h-4 w-4 text-primary flex-shrink-0" />
+                <FolderSolidIcon className="h-4 w-4 text-primary flex-shrink-0" />
                 <span className="truncate flex-1 font-semibold">{template.name}</span>
               </div>
             </>
@@ -645,11 +646,12 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
           <Checkbox className="h-4 w-4" />
           {template.type === "folder" ? <>
                <span className="relative flex-shrink-0 w-4 h-4 flex items-center justify-center">
-                 <Folder className="h-4 w-4 text-primary" />
-                 {hasChildren && (
-                   <span className="absolute inset-0 flex items-center justify-center text-[8px] font-bold text-primary">
-                     {template.isExpanded ? '−' : '+'}
-                   </span>
+                 {hasChildren ? (
+                   template.isExpanded
+                     ? <FolderMinusIcon className="h-4 w-4 text-primary" />
+                     : <FolderPlusIcon className="h-4 w-4 text-primary" />
+                 ) : (
+                   <FolderSolidIcon className="h-4 w-4 text-primary" />
                  )}
                </span>
             </> : <>
@@ -1071,7 +1073,7 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
                   if (icon === "completion") return <CompletionIcon className="h-4 w-4 flex-shrink-0" />;
                   if (icon === "doc") return <WordDocIcon className="h-4 w-4 flex-shrink-0" />;
                   if (icon === "book") return <BookIcon className="h-3.5 w-3.5 flex-shrink-0" style={{ color: '#778599' }} />;
-                  return <Folder className="h-4 w-4 text-primary flex-shrink-0" />;
+                  return <FolderSolidIcon className="h-4 w-4 text-primary flex-shrink-0" />;
                 };
 
                 const renderNode = (node: SectionNode, depth: number = 0): React.ReactNode => {
@@ -1120,10 +1122,9 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
                           </>
                         ) : (
                           <span className="relative flex-shrink-0 w-4 h-4 flex items-center justify-center">
-                            <Folder className="h-4 w-4 text-primary" />
-                            <span className="absolute inset-0 flex items-center justify-center text-[8px] font-bold text-primary leading-none" style={{ marginTop: '1px' }}>
-                              {isOpen ? '−' : '+'}
-                            </span>
+                            {isOpen
+                              ? <FolderMinusIcon className="h-4 w-4 text-primary" />
+                              : <FolderPlusIcon className="h-4 w-4 text-primary" />}
                           </span>
                         )}
                         {node.code && <span className="font-semibold text-primary">{node.code}</span>}
