@@ -1,6 +1,14 @@
 import React, { useCallback, useState } from "react";
 import { Layout } from "@/components/Layout";
-import { Copy, Download, Plus, Trash2, Search, Bell, Settings, ChevronRight, Mail, Star } from "lucide-react";
+import {
+  Copy, Download, Plus, Trash2, Search, Bell, Settings, Mail, Star,
+  CheckCircle2, AlertCircle, AlertTriangle, Info, Sparkles, ChevronRight,
+  Home, Folder, FileText, Users, Calendar, BarChart3, Zap, MessageSquare,
+  Eye, Edit, MoreVertical, X, Check, ArrowRight, ArrowLeft, ChevronDown,
+  Filter, RefreshCw, Upload, Save, Send, Paperclip, Mic, Image as ImageIcon,
+  Lock, Unlock, User, UserCircle, Building2, CreditCard, LogOut, Gift,
+  Monitor, Bookmark, Clock, AlertOctagon, HelpCircle, ExternalLink,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input, InputFilled } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -14,9 +22,15 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Label } from "@/components/ui/label";
 import { toast as sonnerToast } from "sonner";
-import { CheckCircle2, AlertCircle, AlertTriangle, Info } from "lucide-react";
+import { BookIcon } from "@/components/icons/BookIcon";
+import { ChecklistIcon } from "@/components/icons/ChecklistIcon";
+import { LetterIcon } from "@/components/icons/LetterIcon";
+import { CompletionIcon } from "@/components/icons/CompletionIcon";
+import { WordDocIcon } from "@/components/icons/WordDocIcon";
+import { AddItemAboveIcon, AddItemBelowIcon } from "@/components/icons/AddItemIcons";
+import { FolderSolidIcon, FolderPlusIcon, FolderMinusIcon } from "@/components/icons/FolderIcons";
 
-/* ─── data ─── */
+/* ─── Token data ─── */
 interface Token { css: string; label: string; hsl: string; hex: string; }
 
 const core: Token[] = [
@@ -62,69 +76,12 @@ const brand: Token[] = [
   { css: "--countable-navy", label: "Countable Navy", hsl: "213 76% 19%", hex: "#0A3159" },
 ];
 
-const m3Palette: Token[] = [
-  { css: "--m3-primary", label: "M3 Primary", hsl: "207 71% 38%", hex: "#1C63A6" },
-  { css: "--m3-on-primary", label: "M3 On Primary", hsl: "0 0% 100%", hex: "#FFFFFF" },
-  { css: "--m3-primary-container", label: "M3 Primary Container", hsl: "207 78% 90%", hex: "#D4ECFC" },
-  { css: "--m3-on-primary-container", label: "M3 On Primary Container", hsl: "207 80% 20%", hex: "#0A3B5C" },
-  { css: "--m3-secondary", label: "M3 Secondary", hsl: "210 25% 40%", hex: "#4D6070" },
-  { css: "--m3-on-secondary", label: "M3 On Secondary", hsl: "0 0% 100%", hex: "#FFFFFF" },
-  { css: "--m3-secondary-container", label: "M3 Secondary Container", hsl: "210 30% 90%", hex: "#DDE4EB" },
-  { css: "--m3-tertiary", label: "M3 Tertiary", hsl: "213 76% 19%", hex: "#0A3159" },
-  { css: "--m3-on-tertiary", label: "M3 On Tertiary", hsl: "0 0% 100%", hex: "#FFFFFF" },
-  { css: "--m3-tertiary-container", label: "M3 Tertiary Container", hsl: "213 60% 85%", hex: "#B5D0EC" },
-  { css: "--m3-error", label: "M3 Error", hsl: "0 75% 42%", hex: "#BB1B1B" },
-  { css: "--m3-error-container", label: "M3 Error Container", hsl: "0 85% 92%", hex: "#FCDADA" },
-];
-
-const surfaces: Token[] = [
-  { css: "--m3-surface", label: "Surface", hsl: "0 0% 100%", hex: "#FFFFFF" },
-  { css: "--m3-surface-variant", label: "Surface Variant", hsl: "210 40% 96%", hex: "#EFF3F8" },
-  { css: "--m3-surface-container-lowest", label: "Container Lowest", hsl: "0 0% 100%", hex: "#FFFFFF" },
-  { css: "--m3-surface-container-low", label: "Container Low", hsl: "210 50% 98%", hex: "#F5F8FC" },
-  { css: "--m3-surface-container", label: "Container", hsl: "210 45% 96%", hex: "#EEF3F9" },
-  { css: "--m3-surface-container-high", label: "Container High", hsl: "210 40% 94%", hex: "#E7ECF2" },
-  { css: "--m3-surface-container-highest", label: "Container Highest", hsl: "210 35% 92%", hex: "#E0E6ED" },
-];
-
-const sidebar: Token[] = [
+const sidebarTokens: Token[] = [
   { css: "--sidebar-bg", label: "Sidebar BG", hsl: "213 76% 19%", hex: "#0A3159" },
   { css: "--sidebar-foreground", label: "Sidebar FG", hsl: "0 0% 100%", hex: "#FFFFFF" },
   { css: "--sidebar-muted", label: "Sidebar Muted", hsl: "213 60% 28%", hex: "#1B4472" },
   { css: "--sidebar-accent", label: "Sidebar Accent", hsl: "207 71% 38%", hex: "#1C63A6" },
-];
-
-const borders: Token[] = [
-  { css: "--border-dark-blue", label: "Border Dark Blue", hsl: "213 60% 30%", hex: "#1E4B7A" },
-  { css: "--border-light", label: "Border Light", hsl: "210 20% 85%", hex: "#D2D8DE" },
-  { css: "--border-subtle", label: "Border Subtle", hsl: "210 15% 75%", hex: "#B5BCC3" },
-  { css: "--border-focus", label: "Border Focus", hsl: "207 71% 45%", hex: "#2272BD" },
-  { css: "--border-lighter", label: "Border Lighter", hsl: "210 20% 90%", hex: "#E0E5EA" },
-  { css: "--border-category", label: "Border Category", hsl: "210 22% 82%", hex: "#C5CDD5" },
-];
-
-const tooltipTokens: Token[] = [
-  { css: "--tooltip-bg", label: "Tooltip BG", hsl: "210 45% 96%", hex: "#EEF3F9" },
-  { css: "--tooltip-foreground", label: "Tooltip FG", hsl: "213 50% 20%", hex: "#1A3350" },
-  { css: "--tooltip-border", label: "Tooltip Border", hsl: "210 35% 85%", hex: "#CDD6DF" },
-];
-
-const dropzone: Token[] = [
-  { css: "--dropzone-bg", label: "Dropzone BG", hsl: "207 78% 98%", hex: "#F5FAFF" },
-  { css: "--dropzone-border", label: "Dropzone Border", hsl: "207 78% 70%", hex: "#6DB8F0" },
-  { css: "--dropzone-hover", label: "Dropzone Hover", hsl: "207 78% 95%", hex: "#E8F4FF" },
-];
-
-const glowGlass: Token[] = [
-  { css: "--glow-primary", label: "Glow Primary", hsl: "207 71% 38% / 0.15", hex: "—" },
-  { css: "--glow-primary-strong", label: "Glow Primary Strong", hsl: "207 71% 38% / 0.25", hex: "—" },
-  { css: "--glow-accent", label: "Glow Accent", hsl: "213 76% 19% / 0.15", hex: "—" },
-];
-
-const hardcoded: Token[] = [
-  { css: "#f1f1f3", label: "Panel Surface", hsl: "240 5% 95%", hex: "#F1F1F3" },
-  { css: "#dcdfe4", label: "Input Border", hsl: "220 12% 87%", hex: "#DCDFE4" },
-  { css: "#101828", label: "Strong Text", hsl: "220 26% 12%", hex: "#101828" },
+  { css: "--sidebar-secondary-bg", label: "Secondary Panel BG", hsl: "0 0% 100%", hex: "#FFFFFF" },
 ];
 
 const radii = [
@@ -148,7 +105,6 @@ const elevations = [
 const typography = [
   { name: "Display Large", size: "60px", weight: "700", tracking: "-0.03em" },
   { name: "Display Medium", size: "48px", weight: "700", tracking: "-0.025em" },
-  { name: "Display Small", size: "40px", weight: "600", tracking: "-0.02em" },
   { name: "Headline Large", size: "34px", weight: "600", tracking: "-0.015em" },
   { name: "Headline Med", size: "30px", weight: "600", tracking: "-0.01em" },
   { name: "Headline Small", size: "26px", weight: "600", tracking: "0" },
@@ -161,24 +117,16 @@ const typography = [
   { name: "Label Large", size: "15px", weight: "500", tracking: "0.02em" },
   { name: "Label Medium", size: "13px", weight: "500", tracking: "0.03em" },
   { name: "Label Small", size: "12px", weight: "500", tracking: "0.04em" },
-  { name: "Financial", size: "14px", weight: "400", tracking: "0" },
 ];
 
 const spacing = [
-  { token: "--spacing-xs", value: "8px (0.5rem)" },
-  { token: "--spacing-sm", value: "12px (0.75rem)" },
-  { token: "--spacing-md", value: "16px (1rem)" },
-  { token: "--spacing-lg", value: "24px (1.5rem)" },
-  { token: "--spacing-xl", value: "32px (2rem)" },
-  { token: "--spacing-2xl", value: "40px (2.5rem)" },
-  { token: "--spacing-3xl", value: "48px (3rem)" },
-];
-
-const stateLayer = [
-  { name: "Hover", token: "--state-hover", value: "0.08 (8%)" },
-  { name: "Focus", token: "--state-focus", value: "0.12 (12%)" },
-  { name: "Pressed", token: "--state-pressed", value: "0.12 (12%)" },
-  { name: "Dragged", token: "--state-dragged", value: "0.16 (16%)" },
+  { token: "--spacing-xs", value: "8px" },
+  { token: "--spacing-sm", value: "12px" },
+  { token: "--spacing-md", value: "16px" },
+  { token: "--spacing-lg", value: "24px" },
+  { token: "--spacing-xl", value: "32px" },
+  { token: "--spacing-2xl", value: "40px" },
+  { token: "--spacing-3xl", value: "48px" },
 ];
 
 const motionEasing = [
@@ -189,22 +137,18 @@ const motionEasing = [
 ];
 
 const motionDurations = [
-  { name: "Short 1–4", value: "50–200ms", usage: "Micro-interactions, ripples" },
-  { name: "Medium 1–4", value: "250–400ms", usage: "Standard transitions, expand/collapse" },
-  { name: "Long 1–4", value: "450–600ms", usage: "Complex transitions, page changes" },
-  { name: "Extra Long 1–4", value: "700–1000ms", usage: "Full-page transitions, onboarding" },
+  { name: "Short 1–4", value: "50–200ms", usage: "Micro-interactions" },
+  { name: "Medium 1–4", value: "250–400ms", usage: "Expand/collapse" },
+  { name: "Long 1–4", value: "450–600ms", usage: "Page changes" },
+  { name: "Extra Long 1–4", value: "700–1000ms", usage: "Onboarding" },
 ];
 
-/* ─── components ─── */
+/* ─── Reusable bits ─── */
 function Swatch({ token }: { token: Token }) {
   const copy = () => { navigator.clipboard.writeText(token.css); sonnerToast.success("Copied: " + token.css); };
-  const isGlow = token.hex === "—";
   return (
     <button onClick={copy} className="group flex items-center gap-3 rounded-md p-2 text-left hover:bg-muted transition-colors w-full">
-      <div
-        className="h-10 w-10 shrink-0 rounded-md border border-border"
-        style={isGlow ? { background: "hsl(var(--background))", boxShadow: `0 0 20px hsl(${token.hsl})` } : { background: `hsl(${token.hsl})` }}
-      />
+      <div className="h-10 w-10 shrink-0 rounded-md border border-border" style={{ background: `hsl(${token.hsl})` }} />
       <div className="min-w-0 flex-1">
         <p className="text-body-sm font-medium truncate">{token.label}</p>
         <p className="text-label-sm text-muted-foreground font-mono">{token.css}</p>
@@ -218,17 +162,29 @@ function Swatch({ token }: { token: Token }) {
   );
 }
 
-function Section({ title, id, children }: { title: string; id?: string; children: React.ReactNode }) {
+function ColorGrid({ tokens }: { tokens: Token[] }) {
+  return <div className="grid grid-cols-1 md:grid-cols-2 gap-0.5 bg-muted rounded-lg p-1">{tokens.map(t => <Swatch key={t.css + t.label} token={t} />)}</div>;
+}
+
+function SpecRow({ label, value }: { label: string; value: React.ReactNode }) {
   return (
-    <section id={id} className="space-y-3 scroll-mt-24">
-      <h3 className="text-title-md text-foreground">{title}</h3>
-      {children}
-    </section>
+    <div className="flex items-start gap-3 py-1.5 border-b border-border/50 last:border-0">
+      <span className="text-label-sm font-medium text-muted-foreground w-32 shrink-0">{label}</span>
+      <span className="text-body-sm flex-1">{value}</span>
+    </div>
   );
 }
 
-function ColorGrid({ tokens }: { tokens: Token[] }) {
-  return <div className="grid grid-cols-1 md:grid-cols-2 gap-0.5 bg-muted rounded-lg p-1">{tokens.map(t => <Swatch key={t.css + t.label} token={t} />)}</div>;
+function Section({ title, description, children }: { title: string; description?: string; children: React.ReactNode }) {
+  return (
+    <section className="space-y-3">
+      <div>
+        <h3 className="text-title-md text-foreground">{title}</h3>
+        {description && <p className="text-body-sm text-muted-foreground mt-1">{description}</p>}
+      </div>
+      {children}
+    </section>
+  );
 }
 
 function SampleCard({ title, children }: { title: string; children: React.ReactNode }) {
@@ -240,28 +196,116 @@ function SampleCard({ title, children }: { title: string; children: React.ReactN
   );
 }
 
-/* ─── table of contents ─── */
-const tocItems = [
-  { id: "semantic-light", label: "Semantic (Light)" },
-  { id: "semantic-dark", label: "Semantic (Dark)" },
-  { id: "brand", label: "Brand" },
-  { id: "m3-palette", label: "M3 Palette" },
-  { id: "surfaces", label: "Surfaces" },
-  { id: "sidebar", label: "Sidebar" },
-  { id: "borders", label: "Borders" },
-  { id: "tooltips", label: "Tooltips" },
-  { id: "dropzone", label: "Dropzone" },
-  { id: "glow-glass", label: "Glow & Glass" },
-  { id: "hardcoded", label: "Hardcoded Values" },
-  { id: "state-layers", label: "State Layers" },
-  { id: "radius", label: "Border Radius" },
-  { id: "elevation", label: "Elevation" },
-  { id: "typography", label: "Typography" },
-  { id: "spacing", label: "Spacing" },
-  { id: "motion", label: "Motion & Easing" },
-  { id: "components", label: "Component Samples" },
+/* ─── Icon catalog ─── */
+type IconEntry = {
+  name: string;
+  category: "Custom" | "Lucide";
+  Component: React.ComponentType<{ className?: string }>;
+  /** Returns SVG markup string for download */
+  toSvg: () => string;
+};
+
+// Helper to render a React icon to a static SVG string
+function renderToSvgString(Comp: React.ComponentType<{ className?: string }>, size = 64): string {
+  // Use a temp container to extract SVG markup
+  const container = document.createElement("div");
+  // We can't easily render React here without ReactDOM; instead, we serialize
+  // by querying the live DOM where the icon is already rendered.
+  // Caller will pass a ref-based approach. This is a fallback default.
+  container.innerHTML = "";
+  return "";
+}
+
+const customIcons: IconEntry[] = [
+  { name: "BookIcon", category: "Custom", Component: BookIcon, toSvg: () => "" },
+  { name: "ChecklistIcon", category: "Custom", Component: ChecklistIcon, toSvg: () => "" },
+  { name: "LetterIcon", category: "Custom", Component: LetterIcon, toSvg: () => "" },
+  { name: "CompletionIcon", category: "Custom", Component: CompletionIcon, toSvg: () => "" },
+  { name: "WordDocIcon", category: "Custom", Component: WordDocIcon, toSvg: () => "" },
+  { name: "AddItemAboveIcon", category: "Custom", Component: AddItemAboveIcon, toSvg: () => "" },
+  { name: "AddItemBelowIcon", category: "Custom", Component: AddItemBelowIcon, toSvg: () => "" },
+  { name: "FolderSolidIcon", category: "Custom", Component: FolderSolidIcon, toSvg: () => "" },
+  { name: "FolderPlusIcon", category: "Custom", Component: FolderPlusIcon, toSvg: () => "" },
+  { name: "FolderMinusIcon", category: "Custom", Component: FolderMinusIcon, toSvg: () => "" },
 ];
 
+const lucideIcons: { name: string; Component: React.ComponentType<any> }[] = [
+  { name: "Home", Component: Home }, { name: "Folder", Component: Folder },
+  { name: "FileText", Component: FileText }, { name: "Users", Component: Users },
+  { name: "Calendar", Component: Calendar }, { name: "BarChart3", Component: BarChart3 },
+  { name: "Zap", Component: Zap }, { name: "MessageSquare", Component: MessageSquare },
+  { name: "Settings", Component: Settings }, { name: "Bell", Component: Bell },
+  { name: "Search", Component: Search }, { name: "Plus", Component: Plus },
+  { name: "Trash2", Component: Trash2 }, { name: "Edit", Component: Edit },
+  { name: "Eye", Component: Eye }, { name: "MoreVertical", Component: MoreVertical },
+  { name: "X", Component: X }, { name: "Check", Component: Check },
+  { name: "ChevronRight", Component: ChevronRight }, { name: "ChevronDown", Component: ChevronDown },
+  { name: "ArrowRight", Component: ArrowRight }, { name: "ArrowLeft", Component: ArrowLeft },
+  { name: "Filter", Component: Filter }, { name: "RefreshCw", Component: RefreshCw },
+  { name: "Upload", Component: Upload }, { name: "Download", Component: Download },
+  { name: "Save", Component: Save }, { name: "Send", Component: Send },
+  { name: "Paperclip", Component: Paperclip }, { name: "Mic", Component: Mic },
+  { name: "Image", Component: ImageIcon }, { name: "Lock", Component: Lock },
+  { name: "Unlock", Component: Unlock }, { name: "User", Component: User },
+  { name: "UserCircle", Component: UserCircle }, { name: "Building2", Component: Building2 },
+  { name: "CreditCard", Component: CreditCard }, { name: "LogOut", Component: LogOut },
+  { name: "Gift", Component: Gift }, { name: "Monitor", Component: Monitor },
+  { name: "Bookmark", Component: Bookmark }, { name: "Clock", Component: Clock },
+  { name: "AlertOctagon", Component: AlertOctagon }, { name: "HelpCircle", Component: HelpCircle },
+  { name: "ExternalLink", Component: ExternalLink }, { name: "Sparkles", Component: Sparkles },
+  { name: "Star", Component: Star }, { name: "Mail", Component: Mail },
+  { name: "Info", Component: Info }, { name: "AlertCircle", Component: AlertCircle },
+  { name: "AlertTriangle", Component: AlertTriangle }, { name: "CheckCircle2", Component: CheckCircle2 },
+];
+
+function IconCard({ name, children, refKey }: { name: string; children: React.ReactNode; refKey: string }) {
+  const ref = React.useRef<HTMLDivElement>(null);
+
+  const download = () => {
+    const svg = ref.current?.querySelector("svg");
+    if (!svg) {
+      sonnerToast.error("Icon not found");
+      return;
+    }
+    const clone = svg.cloneNode(true) as SVGElement;
+    if (!clone.getAttribute("xmlns")) clone.setAttribute("xmlns", "http://www.w3.org/2000/svg");
+    clone.setAttribute("width", "64");
+    clone.setAttribute("height", "64");
+    const serializer = new XMLSerializer();
+    const source = serializer.serializeToString(clone);
+    const blob = new Blob([source], { type: "image/svg+xml;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url; a.download = `${name}.svg`; a.click();
+    URL.revokeObjectURL(url);
+    sonnerToast.success(`Downloaded ${name}.svg`);
+  };
+
+  const copy = () => {
+    navigator.clipboard.writeText(name);
+    sonnerToast.success(`Copied: ${name}`);
+  };
+
+  return (
+    <div className="group relative flex flex-col items-center gap-2 p-4 rounded-lg border border-border bg-card hover:border-primary transition-colors">
+      <div ref={ref} className="h-10 w-10 flex items-center justify-center text-foreground">
+        {children}
+      </div>
+      <button onClick={copy} className="text-label-sm font-mono text-muted-foreground truncate max-w-full hover:text-primary transition-colors">
+        {name}
+      </button>
+      <button
+        onClick={download}
+        className="absolute top-1.5 right-1.5 opacity-0 group-hover:opacity-100 transition-opacity p-1 rounded hover:bg-muted"
+        title={`Download ${name}.svg`}
+      >
+        <Download className="h-3.5 w-3.5 text-primary" />
+      </button>
+    </div>
+  );
+}
+
+/* ─── Page ─── */
 export default function DesignSystem() {
   const [checkboxChecked, setCheckboxChecked] = useState(false);
   const [switchOn, setSwitchOn] = useState(true);
@@ -274,15 +318,7 @@ export default function DesignSystem() {
         dark: Object.fromEntries(darkCore.map(t => [t.css, { hsl: t.hsl, hex: t.hex, label: t.label }])),
       },
       brandColors: Object.fromEntries(brand.map(t => [t.css, { hsl: t.hsl, hex: t.hex, label: t.label }])),
-      m3Palette: Object.fromEntries(m3Palette.map(t => [t.css, { hsl: t.hsl, hex: t.hex, label: t.label }])),
-      surfaces: Object.fromEntries(surfaces.map(t => [t.css, { hsl: t.hsl, hex: t.hex, label: t.label }])),
-      sidebar: Object.fromEntries(sidebar.map(t => [t.css, { hsl: t.hsl, hex: t.hex, label: t.label }])),
-      borders: Object.fromEntries(borders.map(t => [t.css, { hsl: t.hsl, hex: t.hex, label: t.label }])),
-      tooltips: Object.fromEntries(tooltipTokens.map(t => [t.css, { hsl: t.hsl, hex: t.hex, label: t.label }])),
-      dropzone: Object.fromEntries(dropzone.map(t => [t.css, { hsl: t.hsl, hex: t.hex, label: t.label }])),
-      glowGlass: Object.fromEntries(glowGlass.map(t => [t.css, { hsl: t.hsl, label: t.label }])),
-      hardcodedValues: Object.fromEntries(hardcoded.map(t => [t.css, { hsl: t.hsl, hex: t.hex, label: t.label }])),
-      stateLayers: Object.fromEntries(stateLayer.map(s => [s.token, { name: s.name, value: s.value }])),
+      sidebar: Object.fromEntries(sidebarTokens.map(t => [t.css, { hsl: t.hsl, hex: t.hex, label: t.label }])),
       borderRadius: Object.fromEntries(radii.map(r => [r.token, { value: r.value, usage: r.usage }])),
       elevation: Object.fromEntries(elevations.map(e => [e.token, { name: e.name, desc: e.desc }])),
       typography,
@@ -299,621 +335,408 @@ export default function DesignSystem() {
 
   return (
     <Layout>
-      <div className="p-6 space-y-10 max-w-6xl mx-auto">
-        {/* Header */}
+      <div className="p-6 space-y-6 max-w-7xl mx-auto">
+        {/* Page header */}
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-headline-sm text-foreground">Design System</h1>
-            <p className="text-body-sm text-muted-foreground mt-1">Complete token reference, specs &amp; live component samples for developer handoff.</p>
+            <p className="text-body-sm text-muted-foreground mt-1">
+              Complete reference for tokens, components & specs across the Countable platform.
+            </p>
           </div>
           <Button onClick={handleDownload} className="gap-2">
             <Download className="h-4 w-4" /> Download JSON
           </Button>
         </div>
 
-        {/* Table of Contents */}
-        <div className="flex flex-wrap gap-2">
-          {tocItems.map(item => (
-            <a key={item.id} href={`#${item.id}`} className="text-label-sm px-3 py-1.5 rounded-full bg-muted hover:bg-primary/10 text-muted-foreground hover:text-primary transition-colors">
-              {item.label}
-            </a>
-          ))}
-        </div>
+        <Tabs defaultValue="overview" className="w-full">
+          <TabsList className="flex flex-wrap h-auto gap-1 bg-muted p-1">
+            <TabsTrigger value="overview">Overview</TabsTrigger>
+            <TabsTrigger value="header">Header</TabsTrigger>
+            <TabsTrigger value="menu">Global Menu</TabsTrigger>
+            <TabsTrigger value="icons">Icons</TabsTrigger>
+            <TabsTrigger value="colors">Colors</TabsTrigger>
+            <TabsTrigger value="typography">Typography</TabsTrigger>
+            <TabsTrigger value="layout">Layout & Motion</TabsTrigger>
+            <TabsTrigger value="components">Components</TabsTrigger>
+          </TabsList>
 
-        {/* ════════════════════════════════════════════
-            COLOR TOKENS
-        ════════════════════════════════════════════ */}
-
-        <Section title="Semantic Colors — Light Mode" id="semantic-light">
-          <ColorGrid tokens={core} />
-        </Section>
-
-        <Section title="Semantic Colors — Dark Mode" id="semantic-dark">
-          <ColorGrid tokens={darkCore} />
-        </Section>
-
-        <Section title="Brand Colors" id="brand">
-          <ColorGrid tokens={brand} />
-        </Section>
-
-        <Section title="Material 3 Palette" id="m3-palette">
-          <ColorGrid tokens={m3Palette} />
-        </Section>
-
-        <Section title="Surface Containers" id="surfaces">
-          <ColorGrid tokens={surfaces} />
-        </Section>
-
-        <Section title="Sidebar" id="sidebar">
-          <ColorGrid tokens={sidebar} />
-        </Section>
-
-        <Section title="Border Tokens" id="borders">
-          <ColorGrid tokens={borders} />
-        </Section>
-
-        <Section title="Tooltip Tokens" id="tooltips">
-          <ColorGrid tokens={tooltipTokens} />
-        </Section>
-
-        <Section title="Dropzone Tokens" id="dropzone">
-          <ColorGrid tokens={dropzone} />
-        </Section>
-
-        <Section title="Glow & Glass Effects" id="glow-glass">
-          <ColorGrid tokens={glowGlass} />
-          <div className="mt-3 p-4 rounded-xl bg-muted text-body-sm space-y-1">
-            <p><span className="font-mono font-medium">--glass-bg</span> — hsl(var(--m3-surface) / 0.8) + backdrop-blur-xl</p>
-            <p><span className="font-mono font-medium">--glass-border</span> — hsl(var(--m3-outline-variant) / 0.5)</p>
-            <p><span className="font-mono font-medium">--ai-gradient</span> — linear-gradient(135deg, primary → navy)</p>
-            <p><span className="font-mono font-medium">--ai-glow</span> — 0 0 20px hsl(207 71% 38% / 0.3)</p>
-          </div>
-        </Section>
-
-        <Section title="Hardcoded Values" id="hardcoded">
-          <ColorGrid tokens={hardcoded} />
-        </Section>
-
-        {/* ════════════════════════════════════════════
-            STATE LAYERS
-        ════════════════════════════════════════════ */}
-
-        <Section title="M3 State Layer Opacities" id="state-layers">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            {stateLayer.map(s => (
-              <div key={s.token} className="p-4 rounded-xl bg-muted text-center space-y-2">
-                <div className="h-12 w-12 mx-auto rounded-full bg-primary flex items-center justify-center" style={{ opacity: parseFloat(s.value) }}>
-                  <div className="h-8 w-8 rounded-full bg-primary" />
+          {/* ───────── OVERVIEW ───────── */}
+          <TabsContent value="overview" className="space-y-6 mt-6">
+            <Section title="Platform Aesthetic" description="Futuristic glassmorphism with a 1.25rem cockpit base radius. Pure white global background, Inter typography, navy brand identity (#0A3159) and primary blue (#1C63A6).">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="p-5 rounded-xl border border-border bg-card space-y-2">
+                  <h4 className="text-title-sm">Typography</h4>
+                  <p className="text-body-sm text-muted-foreground">Inter, 15px base, weight 400. High-contrast muted text (#101828, never gray).</p>
                 </div>
-                <p className="text-label-md font-medium">{s.name}</p>
-                <p className="text-label-sm text-muted-foreground font-mono">{s.value}</p>
-              </div>
-            ))}
-          </div>
-        </Section>
-
-        {/* ════════════════════════════════════════════
-            LAYOUT SYSTEM
-        ════════════════════════════════════════════ */}
-
-        <Section title="Border Radius" id="radius">
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-            {radii.map(r => (
-              <div key={r.token} className="flex items-center gap-3 p-3 rounded-md bg-muted">
-                <div className="h-10 w-10 border-2 border-primary" style={{ borderRadius: r.value }} />
-                <div>
-                  <p className="text-body-sm font-medium font-mono">{r.token}</p>
-                  <p className="text-label-sm text-muted-foreground">{r.value} — {r.usage}</p>
+                <div className="p-5 rounded-xl border border-border bg-card space-y-2">
+                  <h4 className="text-title-sm">Forms</h4>
+                  <p className="text-body-sm text-muted-foreground">10px radius, h-9, white bg. Focus uses double border (2px primary + 2px offset).</p>
+                </div>
+                <div className="p-5 rounded-xl border border-border bg-card space-y-2">
+                  <h4 className="text-title-sm">Layout</h4>
+                  <p className="text-body-sm text-muted-foreground">100% viewport height. Secondary panels use React Portals under a full-width global header.</p>
                 </div>
               </div>
-            ))}
-          </div>
-        </Section>
+            </Section>
 
-        <Section title="Elevation System" id="elevation">
-          <div className="flex flex-wrap gap-6">
-            {elevations.map(e => (
-              <div key={e.token} className="h-20 w-28 rounded-lg bg-card flex flex-col items-center justify-center" style={{ boxShadow: `var(${e.token})` }}>
-                <p className="text-label-md font-medium">{e.name}</p>
-                <p className="text-label-sm text-muted-foreground">{e.desc}</p>
+            <Section title="What's in this Design System">
+              <ul className="text-body-sm text-muted-foreground space-y-1.5 pl-5 list-disc">
+                <li><strong className="text-foreground">Header</strong> — global header anatomy and dropdown specs.</li>
+                <li><strong className="text-foreground">Global Menu</strong> — sidebar navigation, secondary panels, theming.</li>
+                <li><strong className="text-foreground">Icons</strong> — full library (custom + Lucide) with download per icon.</li>
+                <li><strong className="text-foreground">Colors</strong> — semantic tokens, brand palette, sidebar tokens (light & dark).</li>
+                <li><strong className="text-foreground">Typography</strong> — type scale and usage.</li>
+                <li><strong className="text-foreground">Layout & Motion</strong> — radii, elevation, spacing, easing.</li>
+                <li><strong className="text-foreground">Components</strong> — live samples (buttons, inputs, badges, dialogs, etc.).</li>
+              </ul>
+            </Section>
+          </TabsContent>
+
+          {/* ───────── HEADER ───────── */}
+          <TabsContent value="header" className="space-y-6 mt-6">
+            <Section title="Global Header" description="Full-width persistent header above the sidebar. Hosts page title, Ask Luka CTA, accessibility toggle, notifications, and profile.">
+              {/* Live mini-preview */}
+              <div className="rounded-xl border border-border overflow-hidden">
+                <div className="h-14 px-4 flex items-center justify-between bg-card border-b border-border">
+                  <div className="flex items-center gap-3">
+                    <h2 className="text-[20px] font-bold text-[#0c2d55]">Page Title (H1)</h2>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Button size="sm" className="h-8 px-3 rounded-full bg-gradient-to-r from-[#1C63A6] to-[#7A31D8] hover:opacity-90 text-white text-xs gap-1.5 shadow-md">
+                      <Sparkles className="h-3.5 w-3.5" /> Ask Luka
+                    </Button>
+                    <Button variant="ghost" size="icon" className="h-8 w-8"><span className="text-xs font-semibold">A</span></Button>
+                    <Button variant="ghost" size="icon" className="h-8 w-8"><Bell className="h-4 w-4" /></Button>
+                    <div className="h-8 w-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-xs font-semibold">JD</div>
+                  </div>
+                </div>
               </div>
-            ))}
-          </div>
-        </Section>
 
-        <Section title="Typography Scale" id="typography">
-          <div className="overflow-x-auto rounded-lg border border-border">
-            <table className="w-full text-body-sm">
-              <thead className="bg-muted">
-                <tr>
-                  <th className="text-left p-3 font-medium">Name</th>
-                  <th className="text-left p-3 font-medium">Size</th>
-                  <th className="text-left p-3 font-medium">Weight</th>
-                  <th className="text-left p-3 font-medium">Tracking</th>
-                  <th className="text-left p-3 font-medium">Preview</th>
-                </tr>
-              </thead>
-              <tbody>
-                {typography.map(t => (
-                  <tr key={t.name} className="border-t border-border">
-                    <td className="p-3 font-mono text-label-sm">{t.name}</td>
-                    <td className="p-3">{t.size}</td>
-                    <td className="p-3">{t.weight}</td>
-                    <td className="p-3">{t.tracking}</td>
-                    <td className="p-3"><span style={{ fontSize: t.size, fontWeight: Number(t.weight), letterSpacing: t.tracking }}>Ag</span></td>
-                  </tr>
+              <div className="rounded-xl border border-border bg-card p-5 space-y-1">
+                <SpecRow label="Height" value="56px (h-14)" />
+                <SpecRow label="Position" value="Sticky, full-width above sidebar (React Portal layered)" />
+                <SpecRow label="Background" value={<><span className="font-mono">bg-card</span> · border-b <span className="font-mono">border-border</span></>} />
+                <SpecRow label="H1 Title" value="20px / weight 700 / color #0c2d55 (navy)" />
+                <SpecRow label="Ask Luka" value="Pill CTA, 32px height, gradient #1C63A6 → #7A31D8, animated Sparkles icon" />
+                <SpecRow label="Font Toggle" value="Cycles A → AA → AAA, applies global root class for accessibility" />
+                <SpecRow label="Notifications" value="Bell with swing animation when unread; opens popover with ScrollArea (max-h 360px)" />
+                <SpecRow label="Profile Avatar" value="32×32 circle with initials; opens menu (Profile, Org, Settings, Billing, Display, Logout)" />
+                <SpecRow label="Z-index" value="Above all content; secondary panels portal below header" />
+              </div>
+            </Section>
+          </TabsContent>
+
+          {/* ───────── GLOBAL MENU ───────── */}
+          <TabsContent value="menu" className="space-y-6 mt-6">
+            <Section title="Sidebar / Global Menu" description="Left vertical navigation with primary nav items, expandable Engagements & Templates panels, and a collapsible icon-only mode.">
+              {/* Mini visualization */}
+              <div className="rounded-xl border border-border overflow-hidden flex">
+                <div className="w-16 bg-[#0A3159] text-white flex flex-col items-center py-3 gap-3">
+                  {[Home, Folder, FileText, Users, BarChart3, Settings].map((Ic, i) => (
+                    <div key={i} className={`h-10 w-10 rounded-lg flex items-center justify-center ${i === 1 ? "bg-primary" : "hover:bg-white/10"}`}>
+                      <Ic className="h-4 w-4" />
+                    </div>
+                  ))}
+                </div>
+                <div className="w-56 bg-white border-r border-border p-3 space-y-2">
+                  <p className="text-label-sm font-semibold text-muted-foreground px-2">ENGAGEMENTS</p>
+                  {["COM-CON-Dec312024", "REV-ABC-Mar312025", "TAX-XYZ-Jun302025"].map((e) => (
+                    <div key={e} className="text-body-sm text-foreground px-2 py-1.5 rounded hover:bg-muted truncate">{e}</div>
+                  ))}
+                </div>
+                <div className="flex-1 p-4 bg-muted/30 text-body-sm text-muted-foreground">Main content area</div>
+              </div>
+
+              <div className="rounded-xl border border-border bg-card p-5 space-y-1">
+                <SpecRow label="Primary Sidebar" value="Width 64px collapsed / 220px expanded · BG #0A3159 (navy) · text white" />
+                <SpecRow label="Secondary Panel" value="Width 280px (resizable) · BG --sidebar-secondary-bg · cockpit corners · React Portal" />
+                <SpecRow label="Active item" value="bg-primary (#1C63A6) · white icon & text" />
+                <SpecRow label="Hover" value="bg-white/10 on primary; bg-muted on secondary panel" />
+                <SpecRow label="Tree nodes" value="Custom folder icons (FolderSolid/Plus/Minus) · indented children" />
+                <SpecRow label="Collapse toggle" value="Floating circular button on right edge of sidebar (top: 50px), hover only" />
+                <SpecRow label="Theme contrast" value="Auto-adjusts label color via MutationObserver based on bg luminance" />
+                <SpecRow label="Scrollbars" value="Hidden across all browsers (Webkit, Firefox, IE/Edge)" />
+              </div>
+            </Section>
+
+            <Section title="Sidebar Color Tokens">
+              <ColorGrid tokens={sidebarTokens} />
+            </Section>
+          </TabsContent>
+
+          {/* ───────── ICONS ───────── */}
+          <TabsContent value="icons" className="space-y-6 mt-6">
+            <Section title="Custom Brand Icons" description="Hand-built SVG icons used throughout the platform. Hover to download as .svg.">
+              <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-6 gap-3">
+                {customIcons.map(({ name, Component }) => (
+                  <IconCard key={name} name={name} refKey={name}>
+                    <Component className="h-8 w-8" />
+                  </IconCard>
                 ))}
-              </tbody>
-            </table>
-          </div>
-        </Section>
-
-        <Section title="Spacing Scale" id="spacing">
-          <div className="space-y-2">
-            {spacing.map(s => (
-              <div key={s.token} className="flex items-center gap-4">
-                <span className="w-32 text-label-sm font-mono shrink-0">{s.token}</span>
-                <div className="h-4 bg-primary rounded-xs" style={{ width: s.value.split("(")[0].trim() }} />
-                <span className="text-label-sm text-muted-foreground">{s.value}</span>
               </div>
-            ))}
-          </div>
-        </Section>
-
-        {/* ════════════════════════════════════════════
-            MOTION & EASING
-        ════════════════════════════════════════════ */}
-
-        <Section title="Motion & Easing System" id="motion">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="rounded-xl border border-border p-5 space-y-3">
-              <h4 className="text-title-sm font-medium">Easing Curves</h4>
-              {motionEasing.map(e => (
-                <div key={e.name} className="space-y-0.5">
-                  <p className="text-body-sm font-medium">{e.name}</p>
-                  <p className="text-label-sm text-muted-foreground font-mono">{e.value}</p>
-                  <p className="text-label-sm text-muted-foreground">{e.usage}</p>
-                </div>
-              ))}
-            </div>
-            <div className="rounded-xl border border-border p-5 space-y-3">
-              <h4 className="text-title-sm font-medium">Duration Tokens</h4>
-              {motionDurations.map(d => (
-                <div key={d.name} className="space-y-0.5">
-                  <p className="text-body-sm font-medium">{d.name}</p>
-                  <p className="text-label-sm text-muted-foreground font-mono">{d.value}</p>
-                  <p className="text-label-sm text-muted-foreground">{d.usage}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-          <div className="mt-3 p-4 rounded-xl bg-muted text-body-sm space-y-1">
-            <p className="font-medium">Keyframe Animations</p>
-            <p className="font-mono text-label-sm text-muted-foreground">fade-in · slide-up · scale-in · pop-out · pop-in · pulse-glow · button-press · lift-shadow · glow-pulse · highlight-pulse · swing · m3-ripple · m3-checkmark-in</p>
-          </div>
-        </Section>
-
-        {/* ════════════════════════════════════════════
-            COMPONENT SAMPLES
-        ════════════════════════════════════════════ */}
-
-        <div id="components" className="scroll-mt-24">
-          <h2 className="text-headline-sm text-foreground mb-6">Live Component Samples</h2>
-
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-
-            {/* Buttons */}
-            <SampleCard title="Buttons">
-              <div className="space-y-3">
-                <div className="flex flex-wrap gap-2">
-                  <Button variant="default">Primary</Button>
-                  <Button variant="secondary">Secondary</Button>
-                  <Button variant="outline">Outline</Button>
-                  <Button variant="ghost">Ghost</Button>
-                  <Button variant="destructive">Destructive</Button>
-                </div>
-                <div className="flex flex-wrap gap-2">
-                  <Button variant="elevated">Elevated</Button>
-                  <Button variant="tonal">Tonal</Button>
-                  <Button variant="link">Link</Button>
-                </div>
-                <div className="flex flex-wrap gap-2 items-center">
-                  <Button size="sm">Small</Button>
-                  <Button size="default">Default</Button>
-                  <Button size="lg">Large</Button>
-                  <Button size="icon"><Plus className="h-4 w-4" /></Button>
-                  <Button size="icon-sm" variant="ghost"><Search className="h-4 w-4" /></Button>
-                </div>
-                <div className="flex flex-wrap gap-2">
-                  <Button disabled>Disabled</Button>
-                  <Button variant="default" className="gap-2"><Mail className="h-4 w-4" /> With Icon</Button>
-                </div>
-              </div>
-              <p className="text-label-sm text-muted-foreground mt-2">
-                h-9 (36px) · 10px radius · pop-out hover (scale 1.02) · press (scale 0.98)
+              <p className="text-label-sm text-muted-foreground">
+                Custom icons live in <span className="font-mono">src/components/icons/</span>. Click name to copy, hover the corner to download.
               </p>
-            </SampleCard>
+            </Section>
 
-            {/* Inputs */}
-            <SampleCard title="Inputs">
-              <div className="space-y-3">
-                <div className="space-y-1.5">
-                  <Label className="text-xs">Outlined (Default)</Label>
-                  <Input placeholder="Enter text..." />
+            <Section title="Lucide Icons (in use)" description="Curated subset of Lucide React icons used across the app.">
+              <div className="grid grid-cols-3 sm:grid-cols-5 md:grid-cols-8 gap-3">
+                {lucideIcons.map(({ name, Component }) => (
+                  <IconCard key={name} name={name} refKey={name}>
+                    <Component className="h-6 w-6" />
+                  </IconCard>
+                ))}
+              </div>
+              <p className="text-label-sm text-muted-foreground">
+                Default size: 24px · Stroke 2 · Use <span className="font-mono">currentColor</span> for theming.
+              </p>
+            </Section>
+          </TabsContent>
+
+          {/* ───────── COLORS ───────── */}
+          <TabsContent value="colors" className="space-y-6 mt-6">
+            <Section title="Semantic Colors — Light Mode"><ColorGrid tokens={core} /></Section>
+            <Section title="Semantic Colors — Dark Mode"><ColorGrid tokens={darkCore} /></Section>
+            <Section title="Brand Palette"><ColorGrid tokens={brand} /></Section>
+            <Section title="Sidebar Tokens"><ColorGrid tokens={sidebarTokens} /></Section>
+          </TabsContent>
+
+          {/* ───────── TYPOGRAPHY ───────── */}
+          <TabsContent value="typography" className="space-y-6 mt-6">
+            <Section title="Type Scale" description="Inter font family across all weights. Base body size 15px.">
+              <div className="overflow-x-auto rounded-lg border border-border">
+                <table className="w-full text-body-sm">
+                  <thead className="bg-muted">
+                    <tr>
+                      <th className="text-left p-3 font-medium">Name</th>
+                      <th className="text-left p-3 font-medium">Size</th>
+                      <th className="text-left p-3 font-medium">Weight</th>
+                      <th className="text-left p-3 font-medium">Tracking</th>
+                      <th className="text-left p-3 font-medium">Preview</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {typography.map(t => (
+                      <tr key={t.name} className="border-t border-border">
+                        <td className="p-3 font-mono text-label-sm">{t.name}</td>
+                        <td className="p-3">{t.size}</td>
+                        <td className="p-3">{t.weight}</td>
+                        <td className="p-3">{t.tracking}</td>
+                        <td className="p-3"><span style={{ fontSize: t.size, fontWeight: Number(t.weight), letterSpacing: t.tracking }}>Ag</span></td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </Section>
+          </TabsContent>
+
+          {/* ───────── LAYOUT & MOTION ───────── */}
+          <TabsContent value="layout" className="space-y-6 mt-6">
+            <Section title="Border Radius">
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                {radii.map(r => (
+                  <div key={r.token} className="flex items-center gap-3 p-3 rounded-md bg-muted">
+                    <div className="h-10 w-10 border-2 border-primary" style={{ borderRadius: r.value }} />
+                    <div>
+                      <p className="text-body-sm font-medium font-mono">{r.token}</p>
+                      <p className="text-label-sm text-muted-foreground">{r.value} — {r.usage}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </Section>
+
+            <Section title="Elevation">
+              <div className="flex flex-wrap gap-6">
+                {elevations.map(e => (
+                  <div key={e.token} className="h-20 w-28 rounded-lg bg-card flex flex-col items-center justify-center" style={{ boxShadow: `var(${e.token})` }}>
+                    <p className="text-label-md font-medium">{e.name}</p>
+                    <p className="text-label-sm text-muted-foreground">{e.desc}</p>
+                  </div>
+                ))}
+              </div>
+            </Section>
+
+            <Section title="Spacing Scale">
+              <div className="space-y-2">
+                {spacing.map(s => (
+                  <div key={s.token} className="flex items-center gap-4">
+                    <span className="w-32 text-label-sm font-mono shrink-0">{s.token}</span>
+                    <div className="h-4 bg-primary rounded-xs" style={{ width: s.value }} />
+                    <span className="text-label-sm text-muted-foreground">{s.value}</span>
+                  </div>
+                ))}
+              </div>
+            </Section>
+
+            <Section title="Motion & Easing">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="rounded-xl border border-border p-5 space-y-3">
+                  <h4 className="text-title-sm font-medium">Easing Curves</h4>
+                  {motionEasing.map(e => (
+                    <div key={e.name} className="space-y-0.5">
+                      <p className="text-body-sm font-medium">{e.name}</p>
+                      <p className="text-label-sm text-muted-foreground font-mono">{e.value}</p>
+                      <p className="text-label-sm text-muted-foreground">{e.usage}</p>
+                    </div>
+                  ))}
                 </div>
-                <div className="space-y-1.5">
-                  <Label className="text-xs">Filled Variant</Label>
-                  <InputFilled placeholder="Enter text..." />
-                </div>
-                <div className="space-y-1.5">
-                  <Label className="text-xs">Error State</Label>
-                  <Input error placeholder="Invalid input" />
-                </div>
-                <div className="space-y-1.5">
-                  <Label className="text-xs">Disabled</Label>
-                  <Input disabled placeholder="Disabled" />
+                <div className="rounded-xl border border-border p-5 space-y-3">
+                  <h4 className="text-title-sm font-medium">Durations</h4>
+                  {motionDurations.map(d => (
+                    <div key={d.name} className="space-y-0.5">
+                      <p className="text-body-sm font-medium">{d.name}</p>
+                      <p className="text-label-sm text-muted-foreground font-mono">{d.value}</p>
+                      <p className="text-label-sm text-muted-foreground">{d.usage}</p>
+                    </div>
+                  ))}
                 </div>
               </div>
-              <p className="text-label-sm text-muted-foreground mt-2">
-                h-9 · 10px radius · #dcdfe4 border · double-border focus (2px blue outline + 2px offset)
-              </p>
-            </SampleCard>
+            </Section>
+          </TabsContent>
 
-            {/* Textarea */}
-            <SampleCard title="Textarea">
-              <div className="space-y-3">
-                <div className="space-y-1.5">
-                  <Label className="text-xs">Default</Label>
-                  <Textarea placeholder="Write a description..." />
+          {/* ───────── COMPONENTS ───────── */}
+          <TabsContent value="components" className="space-y-6 mt-6">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <SampleCard title="Buttons">
+                <div className="space-y-3">
+                  <div className="flex flex-wrap gap-2">
+                    <Button variant="default">Primary</Button>
+                    <Button variant="secondary">Secondary</Button>
+                    <Button variant="outline">Outline</Button>
+                    <Button variant="ghost">Ghost</Button>
+                    <Button variant="destructive">Destructive</Button>
+                  </div>
+                  <div className="flex flex-wrap gap-2">
+                    <Button variant="elevated">Elevated</Button>
+                    <Button variant="tonal">Tonal</Button>
+                    <Button variant="link">Link</Button>
+                  </div>
+                  <div className="flex flex-wrap gap-2 items-center">
+                    <Button size="sm">Small</Button>
+                    <Button size="default">Default</Button>
+                    <Button size="lg">Large</Button>
+                    <Button size="icon"><Plus className="h-4 w-4" /></Button>
+                  </div>
                 </div>
-                <div className="space-y-1.5">
-                  <Label className="text-xs">Error</Label>
-                  <Textarea error placeholder="Error state" />
-                </div>
-              </div>
-              <p className="text-label-sm text-muted-foreground mt-2">
-                min-h 140px · same border/focus system as Input
-              </p>
-            </SampleCard>
+                <p className="text-label-sm text-muted-foreground mt-2">h-9 · 10px radius · transition opacity hover</p>
+              </SampleCard>
 
-            {/* Select */}
-            <SampleCard title="Select">
-              <div className="space-y-3">
-                <div className="space-y-1.5">
-                  <Label className="text-xs">Default Select</Label>
+              <SampleCard title="Inputs">
+                <div className="space-y-3">
+                  <div className="space-y-1.5"><Label className="text-xs">Outlined</Label><Input placeholder="Enter text..." /></div>
+                  <div className="space-y-1.5"><Label className="text-xs">Filled</Label><InputFilled placeholder="Enter text..." /></div>
+                  <div className="space-y-1.5"><Label className="text-xs">Error</Label><Input error placeholder="Invalid input" /></div>
+                  <div className="space-y-1.5"><Label className="text-xs">Disabled</Label><Input disabled placeholder="Disabled" /></div>
+                </div>
+                <p className="text-label-sm text-muted-foreground mt-2">h-9 · 10px radius · double-border focus</p>
+              </SampleCard>
+
+              <SampleCard title="Select & Textarea">
+                <div className="space-y-3">
                   <Select>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Choose option..." />
-                    </SelectTrigger>
+                    <SelectTrigger><SelectValue placeholder="Choose option..." /></SelectTrigger>
                     <SelectContent>
                       <SelectItem value="opt1">Option One</SelectItem>
                       <SelectItem value="opt2">Option Two</SelectItem>
-                      <SelectItem value="opt3">Option Three</SelectItem>
                     </SelectContent>
                   </Select>
+                  <Textarea placeholder="Write a description..." />
                 </div>
-                <div className="space-y-1.5">
-                  <Label className="text-xs">Error State</Label>
-                  <Select>
-                    <SelectTrigger error>
-                      <SelectValue placeholder="Required" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="a">Item A</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
-              <p className="text-label-sm text-muted-foreground mt-2">
-                Trigger: h-9 · 10px radius · same focus · Dropdown: 10px radius matching trigger
-              </p>
-            </SampleCard>
+              </SampleCard>
 
-            {/* Badges */}
-            <SampleCard title="Badges">
-              <div className="flex flex-wrap gap-2">
-                <Badge>Default</Badge>
-                <Badge variant="secondary">Secondary</Badge>
-                <Badge variant="outline">Outline</Badge>
-                <Badge variant="destructive">Destructive</Badge>
-              </div>
-              <div className="flex flex-wrap gap-2 mt-3">
-                <Badge variant="new">New</Badge>
-                <Badge variant="completed">Completed</Badge>
-                <Badge variant="accepted">Accepted</Badge>
-                <Badge variant="inProgress">In Progress</Badge>
-                <Badge variant="inviteNow">Invite Now</Badge>
-                <Badge variant="processing">Processing</Badge>
-              </div>
-              <div className="flex flex-wrap gap-2 mt-3">
-                <Badge variant="pending">Pending</Badge>
-                <Badge variant="inviteSent">Invite Sent</Badge>
-                <Badge variant="gathering">Gathering</Badge>
-                <Badge variant="review">Review</Badge>
-                <Badge variant="notStarted">Not Started</Badge>
-                <Badge variant="archived">Archived</Badge>
-              </div>
-              <div className="flex flex-wrap gap-2 mt-3">
-                <Badge variant="recommended">Recommended</Badge>
-                <Badge variant="feature">Feature</Badge>
-                <Badge variant="info">Info</Badge>
-                <Badge variant="warning">Warning</Badge>
-                <Badge variant="success">Success</Badge>
-              </div>
-              <p className="text-label-sm text-muted-foreground mt-2">
-                Pill shape · px-3 py-1 · soft BG + matching border + bold text
-              </p>
-            </SampleCard>
-
-            {/* Checkbox & Switch */}
-            <SampleCard title="Checkbox & Switch">
-              <div className="space-y-4">
-                <div className="flex items-center gap-3">
-                  <Checkbox checked={checkboxChecked} onCheckedChange={(v) => setCheckboxChecked(!!v)} />
-                  <Label className="text-sm">Checkbox {checkboxChecked ? "(Checked)" : "(Unchecked)"}</Label>
+              <SampleCard title="Badges">
+                <div className="flex flex-wrap gap-2">
+                  <Badge>Default</Badge>
+                  <Badge variant="secondary">Secondary</Badge>
+                  <Badge variant="outline">Outline</Badge>
+                  <Badge variant="destructive">Destructive</Badge>
                 </div>
-                <div className="flex items-center gap-3">
-                  <Checkbox checked={true} disabled />
-                  <Label className="text-sm opacity-50">Disabled Checked</Label>
+                <div className="flex flex-wrap gap-2 mt-2">
+                  <Badge variant="new">New</Badge>
+                  <Badge variant="completed">Completed</Badge>
+                  <Badge variant="inProgress">In Progress</Badge>
+                  <Badge variant="pending">Pending</Badge>
+                  <Badge variant="review">Review</Badge>
+                  <Badge variant="success">Success</Badge>
+                  <Badge variant="warning">Warning</Badge>
+                  <Badge variant="info">Info</Badge>
                 </div>
-                <div className="flex items-center gap-3">
-                  <Checkbox indeterminate checked="indeterminate" />
-                  <Label className="text-sm">Indeterminate</Label>
+                <p className="text-label-sm text-muted-foreground mt-2">Pill shape · soft BG + matching border</p>
+              </SampleCard>
+
+              <SampleCard title="Checkbox & Switch">
+                <div className="space-y-3">
+                  <div className="flex items-center gap-3">
+                    <Checkbox checked={checkboxChecked} onCheckedChange={(v) => setCheckboxChecked(!!v)} />
+                    <Label className="text-sm">Checkbox</Label>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <Switch checked={switchOn} onCheckedChange={setSwitchOn} />
+                    <Label className="text-sm">Switch {switchOn ? "On" : "Off"}</Label>
+                  </div>
                 </div>
-                <div className="h-px bg-border" />
-                <div className="flex items-center gap-3">
-                  <Switch checked={switchOn} onCheckedChange={setSwitchOn} />
-                  <Label className="text-sm">Switch {switchOn ? "On" : "Off"}</Label>
+              </SampleCard>
+
+              <SampleCard title="Tooltip & Popover">
+                <div className="flex gap-3">
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger asChild><Button variant="outline" size="icon"><Bell className="h-4 w-4" /></Button></TooltipTrigger>
+                      <TooltipContent>Notifications</TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                  <Popover>
+                    <PopoverTrigger asChild><Button variant="outline">Open Popover</Button></PopoverTrigger>
+                    <PopoverContent className="w-64">
+                      <p className="text-body-sm">Popover content with rich children.</p>
+                    </PopoverContent>
+                  </Popover>
                 </div>
-                <div className="flex items-center gap-3">
-                  <Switch disabled />
-                  <Label className="text-sm opacity-50">Disabled</Label>
-                </div>
-              </div>
-              <p className="text-label-sm text-muted-foreground mt-2">
-                Checkbox: 18px · M3 ripple + checkmark animations · Switch: h-6 w-11
-              </p>
-            </SampleCard>
+              </SampleCard>
 
-            {/* Tabs */}
-            <SampleCard title="Tabs">
-              <Tabs defaultValue="tab1">
-                <TabsList>
-                  <TabsTrigger value="tab1">Overview</TabsTrigger>
-                  <TabsTrigger value="tab2">Details</TabsTrigger>
-                  <TabsTrigger value="tab3">Settings</TabsTrigger>
-                </TabsList>
-                <TabsContent value="tab1" className="p-3 text-body-sm">Overview content goes here.</TabsContent>
-                <TabsContent value="tab2" className="p-3 text-body-sm">Details content goes here.</TabsContent>
-                <TabsContent value="tab3" className="p-3 text-body-sm">Settings content goes here.</TabsContent>
-              </Tabs>
-              <p className="text-label-sm text-muted-foreground mt-2">
-                h-10 · muted BG · active tab: white bg + shadow
-              </p>
-            </SampleCard>
-
-            {/* Tooltip */}
-            <SampleCard title="Tooltip">
-              <div className="flex flex-wrap gap-4">
-                <TooltipProvider>
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <Button variant="outline" size="icon"><Bell className="h-4 w-4" /></Button>
-                    </TooltipTrigger>
-                    <TooltipContent>Notifications</TooltipContent>
-                  </Tooltip>
-                </TooltipProvider>
-                <TooltipProvider>
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <Button variant="outline" size="icon"><Settings className="h-4 w-4" /></Button>
-                    </TooltipTrigger>
-                    <TooltipContent side="right">Settings</TooltipContent>
-                  </Tooltip>
-                </TooltipProvider>
-                <TooltipProvider>
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <Button variant="outline" size="icon"><Star className="h-4 w-4" /></Button>
-                    </TooltipTrigger>
-                    <TooltipContent side="bottom">
-                      <p>Multi-line tooltip</p>
-                      <p className="text-label-sm opacity-70">With secondary text</p>
-                    </TooltipContent>
-                  </Tooltip>
-                </TooltipProvider>
-              </div>
-              <p className="text-label-sm text-muted-foreground mt-2">
-                Blue-tinted bg (hsl 210 45% 96%) · rounded-xl · px-4 py-2.5 · zoom-in-95 animation
-              </p>
-            </SampleCard>
-
-            {/* Popover */}
-            <SampleCard title="Popover">
-              <div className="flex gap-4">
-                <Popover>
-                  <PopoverTrigger asChild>
-                    <Button variant="outline">Open Popover</Button>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-64">
-                    <div className="space-y-3">
-                      <h4 className="text-title-sm font-medium">Popover Title</h4>
-                      <p className="text-body-sm text-muted-foreground">This is a popover with custom content. It supports any React children.</p>
-                      <div className="space-y-1.5">
-                        <Label className="text-xs">Quick Input</Label>
-                        <Input placeholder="Type here..." />
-                      </div>
-                      <Button size="sm" className="w-full">Confirm</Button>
-                    </div>
-                  </PopoverContent>
-                </Popover>
-              </div>
-              <p className="text-label-sm text-muted-foreground mt-2">
-                rounded-xl · 2px dark-blue border · inner light shadow · zoom-in-95 animation
-              </p>
-            </SampleCard>
-
-            {/* Dialog */}
-            <SampleCard title="Dialog (Modal)">
-              <div className="flex gap-4">
+              <SampleCard title="Dialog">
                 <Dialog>
-                  <DialogTrigger asChild>
-                    <Button>Open Dialog</Button>
-                  </DialogTrigger>
+                  <DialogTrigger asChild><Button>Open Dialog</Button></DialogTrigger>
                   <DialogContent>
                     <DialogHeader>
                       <DialogTitle>Sample Dialog</DialogTitle>
-                      <DialogDescription>This is a sample dialog demonstrating the design system modal pattern.</DialogDescription>
-                    </DialogHeader>
-                    <div className="space-y-3 py-2">
-                      <div className="space-y-1.5">
-                        <Label className="text-xs">Name</Label>
-                        <Input placeholder="Enter name..." />
-                      </div>
-                      <div className="space-y-1.5">
-                        <Label className="text-xs">Description</Label>
-                        <Textarea placeholder="Enter description..." />
-                      </div>
-                    </div>
-                    <DialogFooter>
-                      <Button variant="outline">Cancel</Button>
-                      <Button>Save Changes</Button>
-                    </DialogFooter>
-                  </DialogContent>
-                </Dialog>
-                <Dialog>
-                  <DialogTrigger asChild>
-                    <Button variant="destructive">Delete Dialog</Button>
-                  </DialogTrigger>
-                  <DialogContent>
-                    <DialogHeader>
-                      <DialogTitle>Confirm Deletion</DialogTitle>
-                      <DialogDescription>Are you sure you want to delete this item? This action cannot be undone.</DialogDescription>
+                      <DialogDescription>Demonstrates the modal pattern.</DialogDescription>
                     </DialogHeader>
                     <DialogFooter>
                       <Button variant="outline">Cancel</Button>
-                      <Button variant="destructive"><Trash2 className="h-4 w-4" /> Delete</Button>
+                      <Button>Save</Button>
                     </DialogFooter>
                   </DialogContent>
                 </Dialog>
-              </div>
-              <p className="text-label-sm text-muted-foreground mt-2">
-                Overlay: bg-black/80 · Content: rounded-lg · zoom-in/out-95 · slide animations
-              </p>
-            </SampleCard>
+              </SampleCard>
 
-            {/* Form Layout Pattern */}
-            <SampleCard title="Form Pattern (Labels + Fields)">
-              <div className="space-y-3">
-                <div className="space-y-1.5">
-                  <Label className="text-xs font-medium">Client Name</Label>
-                  <Input placeholder="Enter client name..." />
-                </div>
-                <div className="grid grid-cols-2 gap-3">
-                  <div className="space-y-1.5">
-                    <Label className="text-xs font-medium">Email</Label>
-                    <Input type="email" placeholder="email@example.com" />
-                  </div>
-                  <div className="space-y-1.5">
-                    <Label className="text-xs font-medium">Phone</Label>
-                    <Input type="tel" placeholder="+1 (555) 000-0000" />
-                  </div>
-                </div>
-                <div className="space-y-1.5">
-                  <Label className="text-xs font-medium">Notes</Label>
-                  <Textarea placeholder="Additional notes..." />
-                </div>
-                <div className="flex justify-end gap-2 pt-2">
-                  <Button variant="outline">Cancel</Button>
-                  <Button>Save</Button>
-                </div>
-              </div>
-              <p className="text-label-sm text-muted-foreground mt-2">
-                Labels: text-xs medium · above field · external position · consistent gap-1.5
-              </p>
-            </SampleCard>
-
-            {/* Card Elevation Samples */}
-            <SampleCard title="Card & Elevation Samples">
-              <div className="grid grid-cols-3 gap-3">
-                {[1,2,3,4,5].map(level => (
-                  <div key={level} className="rounded-xl bg-card p-4 text-center" style={{ boxShadow: `var(--elevation-${level})` }}>
-                    <p className="text-label-md font-medium">E{level}</p>
-                  </div>
-                ))}
-                <div className="rounded-xl p-4 text-center border border-border bg-card" style={{ backdropFilter: "blur(16px)", background: "var(--glass-bg)" }}>
-                  <p className="text-label-md font-medium">Glass</p>
-                </div>
-              </div>
-            </SampleCard>
-
-            {/* Toast Notifications */}
-            <SampleCard title="Toast Notifications">
-              <div className="space-y-3">
-                <p className="text-body-sm text-muted-foreground">
-                  Notifications use the <code className="text-xs bg-muted px-1.5 py-0.5 rounded font-mono">sonner</code> library. Toasts appear top-right with colored backgrounds per type.
-                </p>
+              <SampleCard title="Toast Notifications">
                 <div className="flex flex-wrap gap-2">
-                  <Button
-                    size="sm"
-                    className="gap-1.5 bg-emerald-500 hover:bg-emerald-600 text-white"
-                    onClick={() => sonnerToast.success("Action completed", { description: "Your changes have been saved successfully." })}
-                  >
+                  <Button size="sm" className="gap-1.5 bg-emerald-500 hover:bg-emerald-600 text-white"
+                    onClick={() => sonnerToast.success("Saved", { description: "Changes saved." })}>
                     <CheckCircle2 className="h-3.5 w-3.5" /> Success
                   </Button>
-                  <Button
-                    size="sm"
-                    className="gap-1.5 bg-red-500 hover:bg-red-600 text-white"
-                    onClick={() => sonnerToast.error("Something went wrong", { description: "Please try again or contact support." })}
-                  >
+                  <Button size="sm" className="gap-1.5 bg-red-500 hover:bg-red-600 text-white"
+                    onClick={() => sonnerToast.error("Error", { description: "Something went wrong." })}>
                     <AlertCircle className="h-3.5 w-3.5" /> Error
                   </Button>
-                  <Button
-                    size="sm"
-                    className="gap-1.5 bg-amber-500 hover:bg-amber-600 text-white"
-                    onClick={() => sonnerToast.warning("Heads up!", { description: "This action may have unintended consequences." })}
-                  >
+                  <Button size="sm" className="gap-1.5 bg-amber-500 hover:bg-amber-600 text-white"
+                    onClick={() => sonnerToast.warning("Warning", { description: "Heads up." })}>
                     <AlertTriangle className="h-3.5 w-3.5" /> Warning
                   </Button>
-                  <Button
-                    size="sm"
-                    className="gap-1.5 bg-blue-500 hover:bg-blue-600 text-white"
-                    onClick={() => sonnerToast.info("For your information", { description: "A new update is available." })}
-                  >
+                  <Button size="sm" className="gap-1.5 bg-blue-500 hover:bg-blue-600 text-white"
+                    onClick={() => sonnerToast.info("Info", { description: "FYI." })}>
                     <Info className="h-3.5 w-3.5" /> Info
                   </Button>
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    className="gap-1.5"
-                    onClick={() => sonnerToast("Neutral toast", { description: "This is a default notification with no type." })}
-                  >
-                    Default
-                  </Button>
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    className="gap-1.5"
-                    onClick={() => sonnerToast("Action required", {
-                      description: "Do you want to proceed?",
-                      action: { label: "Undo", onClick: () => sonnerToast.success("Undone!") },
-                    })}
-                  >
-                    With Action
-                  </Button>
                 </div>
-                <div className="bg-muted rounded-lg p-3 space-y-1.5 text-label-sm text-muted-foreground">
-                  <p><span className="font-medium text-foreground">Position:</span> top-right</p>
-                  <p><span className="font-medium text-foreground">Style:</span> rounded-2xl · no border · colored bg per type · white text</p>
-                  <p><span className="font-medium text-foreground">Icons:</span> CheckCircle2 · AlertCircle · AlertTriangle · Info (lucide)</p>
-                  <p><span className="font-medium text-foreground">Usage:</span> <code className="font-mono text-xs">import {"{ toast }"} from "sonner";</code></p>
-                </div>
-              </div>
-            </SampleCard>
-
-          </div>
-        </div>
-
+                <p className="text-label-sm text-muted-foreground mt-2">Top-right · sonner library</p>
+              </SampleCard>
+            </div>
+          </TabsContent>
+        </Tabs>
       </div>
     </Layout>
   );
