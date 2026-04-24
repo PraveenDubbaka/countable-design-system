@@ -151,7 +151,7 @@ const IntegrationBadge = ({
 }) => {
   const [showPopover, setShowPopover] = React.useState(false);
   if (!type) return null;
-  const badgeClasses = "inline-flex items-center justify-center h-8 w-24 px-1 rounded-lg cursor-pointer hover:opacity-80 transition-opacity bg-card border border-border";
+  const badgeClasses = "inline-flex items-center justify-center h-8 w-24 px-1 rounded-lg cursor-pointer hover:opacity-80 transition-opacity bg-white border border-border";
   const getIntegrationName = () => {
     switch (type) {
       case "xero":
