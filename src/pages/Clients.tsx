@@ -169,7 +169,7 @@ const IntegrationCell = ({ type }: { type: string }) => {
     );
   }
   
-  const badgeClasses = "inline-flex items-center justify-center h-7 w-20 px-1 rounded-lg bg-card border border-border";
+  const badgeClasses = "inline-flex items-center justify-center h-7 w-20 px-1 bg-card border border-border rounded-sm";
   
   if (type === "xero") {
     return (
