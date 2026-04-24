@@ -50,7 +50,20 @@ import {
   Wrench,
   EyeOff,
   Eye,
+  ListFilter,
 } from "lucide-react";
+
+// Filter categories with badge colors and short labels
+const FILTER_CATEGORIES = [
+  { id: "unmapped", label: "Unmapped", short: "UNM", color: "hsl(25 60% 50%)" },
+  { id: "autoMapped", label: "Auto Mapped", short: "AUT", color: "hsl(25 70% 45%)" },
+  { id: "newRow", label: "New row", short: "NEW", color: "hsl(40 60% 45%)" },
+  { id: "addedRow", label: "Added row", short: "ADD", color: "hsl(195 55% 50%)" },
+  { id: "changeRow", label: "Change row", short: "CHG", color: "hsl(140 45% 45%)" },
+  { id: "zeroBal", label: "$0 Bal. Acc.", short: "$0", color: "hsl(0 0% 60%)" },
+] as const;
+
+type FilterId = typeof FILTER_CATEGORIES[number]["id"];
 // Engagement data for breadcrumb
 const engagementsData: Record<string, { id: string; client: string; type: string; yearEnd: string; status: string }> = {
   "COM-CON-Dec312024": { id: "COM-CON-Dec312024", client: "Shipping Line Inc.", type: "Compilation (COM)", yearEnd: "Dec 31, 2024", status: "In Progress" },
@@ -161,7 +174,17 @@ export default function TrialBalance() {
   const [hideZeroAcc, setHideZeroAcc] = useState(false);
   const zeroAccCount = 0;
   const [isToolbarExpanded, setIsToolbarExpanded] = useState(true);
+  const [activeFilters, setActiveFilters] = useState<Set<FilterId>>(new Set(["unmapped"]));
   const { isCollapsed: isPanelCollapsed, toggle: togglePanel } = useSecondaryPanel();
+
+  const toggleFilter = (id: FilterId) => {
+    setActiveFilters(prev => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id); else next.add(id);
+      return next;
+    });
+  };
+  const clearFilters = () => setActiveFilters(new Set());
 
   const engagement = engagementId ? engagementsData[engagementId] : null;
   const displayId = engagementId || "Unknown";
@@ -292,22 +315,6 @@ export default function TrialBalance() {
                 </DropdownMenuContent>
               </DropdownMenu>
 
-              {/* Filter - dropdown */}
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="outline" size="sm" className="h-9 text-xs gap-1.5 bg-card hover:bg-muted">
-                    <span className="text-muted-foreground">≡</span> Filter by
-                    <ChevronDown className="h-3.5 w-3.5" />
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent className="bg-card border shadow-lg z-50">
-                  <DropdownMenuItem>All</DropdownMenuItem>
-                  <DropdownMenuItem>Assets</DropdownMenuItem>
-                  <DropdownMenuItem>Liabilities</DropdownMenuItem>
-                  <DropdownMenuItem>Equity</DropdownMenuItem>
-                  <DropdownMenuItem>Expenses</DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
             </div>
 
             <div className="flex items-center gap-2">
@@ -403,6 +410,50 @@ export default function TrialBalance() {
               <thead className="sticky top-0 z-10">
                 <tr className="bg-muted border-b border-border">
                   <th className="px-2 py-3 w-8"></th>
+                  <th className="px-1 py-3 w-7 align-middle">
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <button
+                          aria-label="Filter rows"
+                          className="inline-flex items-center justify-center w-6 h-6 rounded-md text-muted-foreground hover:text-foreground hover:bg-background/60 transition-colors relative"
+                        >
+                          <ListFilter className="h-3.5 w-3.5" />
+                          {activeFilters.size > 0 && (
+                            <span className="absolute -top-0.5 -right-0.5 w-2 h-2 rounded-full bg-primary" />
+                          )}
+                        </button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="start" className="w-56 bg-card border shadow-lg z-50 p-2">
+                        <div className="flex items-center justify-between px-2 py-1.5">
+                          <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">Filter</span>
+                          <button
+                            onClick={clearFilters}
+                            className="text-xs font-medium text-link hover:underline"
+                          >
+                            Clear All
+                          </button>
+                        </div>
+                        <DropdownMenuSeparator />
+                        {FILTER_CATEGORIES.map(cat => {
+                          const checked = activeFilters.has(cat.id);
+                          return (
+                            <DropdownMenuItem
+                              key={cat.id}
+                              onSelect={(e) => { e.preventDefault(); toggleFilter(cat.id); }}
+                              className="flex items-center gap-2 cursor-pointer group"
+                            >
+                              <Checkbox checked={checked} className="pointer-events-none" />
+                              <span className="flex-1 text-sm">{cat.label}</span>
+                              <span
+                                className="w-2.5 h-2.5 rounded-full flex-shrink-0"
+                                style={{ backgroundColor: cat.color }}
+                              />
+                            </DropdownMenuItem>
+                          );
+                        })}
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  </th>
                   <th className="px-2 py-3 w-8"><Checkbox /></th>
                   <th className="text-left px-6 py-3 text-xs font-semibold text-foreground whitespace-nowrap">Acc No.</th>
                   <th className="text-left px-6 py-3 text-xs font-semibold text-foreground whitespace-nowrap min-w-[180px]">Description</th>
@@ -426,7 +477,12 @@ export default function TrialBalance() {
                 </tr>
               </thead>
               <tbody>
-                {trialBalanceData.map((row) => (
+                {trialBalanceData.map((row, idx) => {
+                  // Demo: assign each row a filter category cyclically so badges are visible
+                  const cat = FILTER_CATEGORIES[idx % FILTER_CATEGORIES.length];
+                  const visible = activeFilters.size === 0 || activeFilters.has(cat.id);
+                  if (!visible) return null;
+                  return (
                   <tr
                     key={row.id}
                     className="border-b border-border hover:bg-muted/30 transition-colors cursor-pointer"
@@ -435,6 +491,15 @@ export default function TrialBalance() {
                       <button className="text-muted-foreground hover:text-foreground">
                         <MoreVertical className="h-3.5 w-3.5" />
                       </button>
+                    </td>
+                    <td className="p-0 align-middle">
+                      <div
+                        className="flex items-center justify-center h-7 w-6 rounded-sm text-[9px] font-bold text-white tracking-wider mx-auto"
+                        style={{ backgroundColor: cat.color, writingMode: "vertical-rl" }}
+                        title={cat.label}
+                      >
+                        {cat.short}
+                      </div>
                     </td>
                     <td className="px-2 py-2"><Checkbox /></td>
                     <td className="px-6 py-2 text-foreground whitespace-nowrap">{row.accNo}</td>
@@ -463,13 +528,14 @@ export default function TrialBalance() {
                     </td>
                     <td className="px-6 py-2 text-right text-foreground whitespace-nowrap">{row.fxRate.toFixed(2)}</td>
                   </tr>
-                ))}
+                  );
+                })}
 
               </tbody>
               <tfoot className="sticky bottom-0 z-10">
                 {/* Totals row */}
                 <tr className="bg-muted border-t border-border">
-                  <td className="px-6 py-2" colSpan={4}></td>
+                  <td className="px-6 py-2" colSpan={5}></td>
                   <td className="px-6 py-2 text-right font-semibold text-foreground whitespace-nowrap">{formatNumber(totals.original)}</td>
                   <td className="px-6 py-2 text-right font-semibold text-foreground whitespace-nowrap">{formatNumber(totals.adj)}</td>
                   <td className="px-6 py-2 text-right font-semibold text-foreground whitespace-nowrap">{formatNumber(totals.final)}</td>
@@ -481,7 +547,7 @@ export default function TrialBalance() {
 
                 {/* Net Income row */}
                 <tr className="bg-muted border-t border-border">
-                  <td className="px-6 py-2" colSpan={3}></td>
+                  <td className="px-6 py-2" colSpan={4}></td>
                   <td className="px-6 py-2 text-right font-bold text-foreground whitespace-nowrap">Net Income (loss)</td>
                   <td className="px-6 py-2 text-right font-bold text-foreground whitespace-nowrap">{formatNumber(netIncome.original)}</td>
                   <td className="px-6 py-2 text-right font-bold text-foreground whitespace-nowrap">{formatNumber(netIncome.adj)}</td>
