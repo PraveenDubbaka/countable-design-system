@@ -414,7 +414,7 @@ export default function TrialBalance() {
                       <DropdownMenuTrigger asChild>
                         <button
                           aria-label="Filter rows"
-                          className="inline-flex items-center justify-center w-4 h-6 rounded-md text-muted-foreground hover:text-foreground hover:bg-background/60 transition-colors relative mx-auto"
+                          className="inline-flex items-center justify-center w-4 h-6 rounded-md text-muted-foreground hover:text-foreground hover:bg-background/60 transition-colors relative ml-2"
                         >
                           <ListFilter className="h-3.5 w-3.5" />
                           {activeFilters.size > 0 && (
