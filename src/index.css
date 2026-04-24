@@ -432,6 +432,7 @@
     --sidebar-foreground: 220 15% 90%;
     --sidebar-muted: 220 25% 20%;
     --sidebar-accent: 207 80% 60%;
+    --sidebar-secondary-bg: 220 25% 14%;
     
     /* Dropzone dark mode */
     --dropzone-bg: 220 25% 15%;
