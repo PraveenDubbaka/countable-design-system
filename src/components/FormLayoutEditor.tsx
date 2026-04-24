@@ -88,7 +88,7 @@ const LabeledInput = ({
           input-double-border w-full h-9 px-3 py-2 text-sm text-foreground rounded-[10px] outline-none transition-all duration-200
           ${disabled 
             ? 'bg-muted border border-transparent text-muted-foreground opacity-60 cursor-not-allowed' 
-            : 'bg-white border border-border hover:border-[hsl(210_25%_75%)]'
+            : 'bg-card border border-border hover:border-[hsl(210_25%_75%)]'
           }
         `}
       />
@@ -130,7 +130,7 @@ const LabeledTextarea = ({
           input-double-border w-full px-3 py-2 text-sm text-foreground rounded-[10px] outline-none transition-all duration-200 resize-none
           ${disabled 
             ? 'bg-muted border border-transparent text-muted-foreground opacity-60 cursor-not-allowed' 
-            : 'bg-white border border-border hover:border-[hsl(210_25%_75%)]'
+            : 'bg-card border border-border hover:border-[hsl(210_25%_75%)]'
           }
         `}
       />
@@ -171,7 +171,7 @@ const LabeledSelect = ({
             input-double-border w-full h-9 px-3 py-2 text-sm text-foreground rounded-[10px] outline-none transition-all duration-200 appearance-none cursor-pointer
             ${disabled 
               ? 'bg-muted border border-transparent text-muted-foreground opacity-60 cursor-not-allowed' 
-              : 'bg-white border border-border hover:border-[hsl(210_25%_75%)]'
+              : 'bg-card border border-border hover:border-[hsl(210_25%_75%)]'
             }
           `}
         >
@@ -208,7 +208,7 @@ const LabeledDatePicker = ({
         <PopoverTrigger asChild>
           <button
             className={cn(
-              "input-double-border w-full h-9 px-3 py-2 text-sm text-left rounded-[10px] outline-none transition-all duration-200 flex items-center justify-between bg-white border border-border hover:border-[hsl(210_25%_75%)]",
+              "input-double-border w-full h-9 px-3 py-2 text-sm text-left rounded-[10px] outline-none transition-all duration-200 flex items-center justify-between bg-card border border-border hover:border-[hsl(210_25%_75%)]",
               !date && "text-muted-foreground"
             )}
           >
@@ -306,7 +306,7 @@ export function FormLayoutEditor({ formLayout, onUpdate, isPreviewMode }: FormLa
     }
 
     return (
-      <div className="h-full min-h-[80px] flex flex-col bg-white rounded-lg p-4 group relative border border-border">
+      <div className="h-full min-h-[80px] flex flex-col bg-card rounded-lg p-4 group relative border border-border">
         {/* Element controls */}
         <div className="absolute top-2 right-2 flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
           <Popover>
@@ -596,7 +596,7 @@ export function FormLayoutEditor({ formLayout, onUpdate, isPreviewMode }: FormLa
             {!isPreviewMode && formLayout.columns > 1 && (
               <button
                 onClick={() => handleRemoveColumn(index)}
-                className="absolute -top-2 -right-2 z-10 p-1 bg-white border border-border rounded-full shadow-sm text-muted-foreground hover:text-destructive hover:border-destructive/50 transition-colors"
+                className="absolute -top-2 -right-2 z-10 p-1 bg-card border border-border rounded-full shadow-sm text-muted-foreground hover:text-destructive hover:border-destructive/50 transition-colors"
                 title="Remove column"
               >
                 <Trash2 className="h-3 w-3" />

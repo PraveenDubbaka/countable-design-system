@@ -350,7 +350,7 @@ export default function Generate() {
                     <button
                       key={index}
                       onClick={() => handlePromptClick(item.text)}
-                      className="flex items-start gap-3 p-4 bg-white rounded-xl border border-border hover:border-primary/50 hover:shadow-md transition-all text-left group"
+                      className="flex items-start gap-3 p-4 bg-card rounded-xl border border-border hover:border-primary/50 hover:shadow-md transition-all text-left group"
                     >
                       <div className={`p-2.5 rounded-lg ${item.iconBg} shrink-0`}>
                         {item.icon}
@@ -368,7 +368,7 @@ export default function Generate() {
                 <Button
                   variant="outline"
                   onClick={handleShuffle}
-                  className="rounded-full px-6 bg-white hover:bg-white/90"
+                  className="rounded-full px-6 bg-card hover:bg-white/90"
                 >
                   <Shuffle className="h-4 w-4 mr-2" />
                   Shuffle
