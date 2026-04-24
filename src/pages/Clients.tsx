@@ -169,13 +169,13 @@ const IntegrationCell = ({ type }: { type: string }) => {
     );
   }
   
-  const badgeClasses = "inline-flex items-center justify-center h-7 w-20 px-1 bg-card border border-border rounded-sm";
+  const badgeClasses = "inline-flex items-center justify-center h-7 w-20 px-1 bg-card dark:bg-[hsl(var(--m3-inverse-surface))] border border-border rounded-sm";
   
   if (type === "xero") {
     return (
       <div className={`${badgeClasses} gap-1`}>
         <img src="https://upload.wikimedia.org/wikipedia/en/9/9f/Xero_software_logo.svg" alt="Xero" className="h-4" />
-        <span className="text-xs font-medium text-foreground">Xero</span>
+        <span className="text-xs font-medium text-foreground dark:text-[hsl(var(--m3-inverse-on-surface))]">Xero</span>
       </div>
     );
   }
