@@ -368,10 +368,18 @@ export default function TrialBalance() {
                     <Network className="h-4 w-4 text-muted-foreground" />
                     <span>Auto Map</span>
                   </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem className="flex items-center gap-2 cursor-pointer">
+                    <Upload className="h-4 w-4 text-muted-foreground" />
+                    <span>Import</span>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem className="flex items-center gap-2 cursor-pointer">
+                    <Download className="h-4 w-4 text-muted-foreground" />
+                    <span>Export</span>
+                  </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
-              <ExpandableIconButton variant="outline" className="bg-card hover:bg-muted" icon={<Upload className="h-4 w-4" />} label="Import" />
-              <ExpandableIconButton variant="outline" className="bg-card hover:bg-muted" icon={<Download className="h-4 w-4" />} label="Export" />
+              
               
 
               {/* Hide / Show $0 Accounts toggle */}
