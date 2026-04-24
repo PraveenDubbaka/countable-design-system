@@ -592,6 +592,12 @@ export default function EngagementDetail() {
       <Badge variant={status === 'Completed' || status === 'New' ? 'completed' : status === 'Not Started' ? 'notStarted' : 'inProgress'} className="ml-2 whitespace-nowrap">
         {status}
       </Badge>
+
+      {/* Xero Integration Badge */}
+      <div className="ml-2 inline-flex items-center justify-center h-7 w-20 px-1 bg-card border border-border rounded-sm gap-1">
+        <img src="https://upload.wikimedia.org/wikipedia/en/9/9f/Xero_software_logo.svg" alt="Xero" className="h-4" />
+        <span className="text-xs font-medium text-foreground">Xero</span>
+      </div>
     </div>
   );
 
