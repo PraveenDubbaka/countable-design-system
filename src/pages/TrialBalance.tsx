@@ -409,13 +409,12 @@ export default function TrialBalance() {
             <table className="w-full text-sm">
               <thead className="sticky top-0 z-10">
                 <tr className="bg-muted border-b border-border">
-                  <th className="px-2 py-3 w-8"></th>
-                  <th className="px-1 py-3 w-7 align-middle">
+                  <th className="px-0 py-3 w-6 align-middle">
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
                         <button
                           aria-label="Filter rows"
-                          className="inline-flex items-center justify-center w-6 h-6 rounded-md text-muted-foreground hover:text-foreground hover:bg-background/60 transition-colors relative"
+                          className="inline-flex items-center justify-center w-6 h-6 rounded-md text-muted-foreground hover:text-foreground hover:bg-background/60 transition-colors relative mx-auto"
                         >
                           <ListFilter className="h-3.5 w-3.5" />
                           {activeFilters.size > 0 && (
@@ -454,6 +453,7 @@ export default function TrialBalance() {
                       </DropdownMenuContent>
                     </DropdownMenu>
                   </th>
+                  <th className="px-2 py-3 w-8"></th>
                   <th className="px-2 py-3 w-8"><Checkbox /></th>
                   <th className="text-left px-6 py-3 text-xs font-semibold text-foreground whitespace-nowrap">Acc No.</th>
                   <th className="text-left px-6 py-3 text-xs font-semibold text-foreground whitespace-nowrap min-w-[180px]">Description</th>
