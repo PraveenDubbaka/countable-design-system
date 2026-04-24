@@ -1122,10 +1122,9 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
                           </>
                         ) : (
                           <span className="relative flex-shrink-0 w-4 h-4 flex items-center justify-center">
-                            <Folder className="h-4 w-4 text-primary" />
-                            <span className="absolute inset-0 flex items-center justify-center text-[8px] font-bold text-primary leading-none" style={{ marginTop: '1px' }}>
-                              {isOpen ? '−' : '+'}
-                            </span>
+                            {isOpen
+                              ? <FolderMinusIcon className="h-4 w-4 text-primary" />
+                              : <FolderPlusIcon className="h-4 w-4 text-primary" />}
                           </span>
                         )}
                         {node.code && <span className="font-semibold text-primary">{node.code}</span>}
