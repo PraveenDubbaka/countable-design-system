@@ -646,11 +646,12 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
           <Checkbox className="h-4 w-4" />
           {template.type === "folder" ? <>
                <span className="relative flex-shrink-0 w-4 h-4 flex items-center justify-center">
-                 <Folder className="h-4 w-4 text-primary" />
-                 {hasChildren && (
-                   <span className="absolute inset-0 flex items-center justify-center text-[8px] font-bold text-primary">
-                     {template.isExpanded ? '−' : '+'}
-                   </span>
+                 {hasChildren ? (
+                   template.isExpanded
+                     ? <FolderMinusIcon className="h-4 w-4 text-primary" />
+                     : <FolderPlusIcon className="h-4 w-4 text-primary" />
+                 ) : (
+                   <FolderSolidIcon className="h-4 w-4 text-primary" />
                  )}
                </span>
             </> : <>
