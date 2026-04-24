@@ -900,7 +900,7 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
                   <div className="flex items-start gap-2">
                     {[
                       { id: "p1", initials: "CA", label: "Preparer", color: "bg-purple-500" },
-                      { id: "p2", initials: "JD", label: "1st Reviewer", color: "bg-sky-500" },
+                      { id: "p2", initials: "JD", label: "Reviewer", color: "bg-sky-500" },
                     ].map(p => (
                       <div key={p.id} className="w-9 flex flex-col items-center gap-1">
                         <div className={cn("h-7 w-7 rounded-full flex items-center justify-center text-[10px] font-semibold text-white", p.color)}>
