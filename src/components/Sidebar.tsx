@@ -849,7 +849,7 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
             )}
           >
             <div className={`p-3 ${isTemplatesPanelCollapsed ? "hidden" : ""}`}>
-              <div className="flex gap-2">
+              <div className="flex gap-2 items-start">
                 <div className="relative flex-1">
                   <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground icon-search" />
                   <Input placeholder="Search" className="pl-9 h-9 text-sm" />
@@ -895,26 +895,26 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
                   </svg>
                   <span>Signoffs</span>
                 </Button>
+                {/* Signoffs preparer chips - inline beside the Signoffs button when active */}
+                {signoffsMode && (
+                  <div className="flex items-start gap-2">
+                    {[
+                      { id: "p1", initials: "CA", label: "Preparer", color: "bg-purple-500" },
+                      { id: "p2", initials: "JD", label: "1st Reviewer", color: "bg-sky-500" },
+                    ].map(p => (
+                      <div key={p.id} className="w-9 flex flex-col items-center gap-1">
+                        <div className={cn("h-7 w-7 rounded-full flex items-center justify-center text-[10px] font-semibold text-white", p.color)}>
+                          {p.initials}
+                        </div>
+                        <span className="text-[9px] text-muted-foreground leading-tight whitespace-nowrap">{p.label}</span>
+                        <div className="h-6 w-6 rounded-md border border-border flex items-center justify-center bg-card">
+                          <Check className="h-3 w-3 text-muted-foreground" />
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
-              {/* Signoffs preparer header row - sits directly under the search/signoff row, not as a separate band below */}
-              {signoffsMode && (
-                <div className="flex items-end justify-end gap-2 pt-2 border-b border-border pb-2">
-                  {[
-                    { id: "p1", initials: "CA", label: "Preparer", color: "bg-purple-500" },
-                    { id: "p2", initials: "JD", label: "1st Reviewer", color: "bg-sky-500" },
-                  ].map(p => (
-                    <div key={p.id} className="w-9 flex flex-col items-center gap-1">
-                      <div className={cn("h-7 w-7 rounded-full flex items-center justify-center text-[10px] font-semibold text-white", p.color)}>
-                        {p.initials}
-                      </div>
-                      <span className="text-[9px] text-muted-foreground leading-tight whitespace-nowrap">{p.label}</span>
-                      <div className="h-6 w-6 rounded-md border border-border flex items-center justify-center bg-card">
-                        <Check className="h-3 w-3 text-muted-foreground" />
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
             </div>
 
             <div className={`flex-1 overflow-y-auto scrollbar-hide p-2 pt-0 ${isTemplatesPanelCollapsed ? "hidden" : ""}`} style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
