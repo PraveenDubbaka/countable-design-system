@@ -725,6 +725,7 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
   const [allSectionsExpanded, setAllSectionsExpanded] = useState(false);
   const [showSignoffs, setShowSignoffs] = useState(false);
   const [signoffsMode, setSignoffsMode] = useState(false);
+  const [isSearchFocused, setIsSearchFocused] = useState(false);
   const [signoffChecks, setSignoffChecks] = useState<Record<string, { p1: boolean; p2: boolean }>>({});
   const allNodeIdsRef = useRef<string[]>([]);
   const [hasDarkSecondary, setHasDarkSecondary] = useState(false);
