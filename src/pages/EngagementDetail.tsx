@@ -546,7 +546,7 @@ export default function EngagementDetail() {
   };
   // No early return — empty state shown inline when checklist is null
   const engagementBreadcrumb = (
-    <div className="flex items-center gap-2 whitespace-nowrap flex-shrink-0 text-sidebar-foreground">
+    <div className="flex items-center gap-1 whitespace-nowrap flex-shrink-0 text-sidebar-foreground">
       {/* Client Name (read-only) */}
       <div className="flex items-center gap-1.5 px-2 py-1">
         <div className="w-6 h-6 rounded-md bg-sidebar-foreground/12 border border-sidebar-foreground/15 flex items-center justify-center">
