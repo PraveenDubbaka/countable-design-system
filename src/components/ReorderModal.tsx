@@ -262,7 +262,7 @@ export function ReorderModal({ isOpen, onClose, checklist, onUpdate }: ReorderMo
                 key={item.id}
                 className={`flex items-center gap-3 py-2 px-3 rounded-lg cursor-pointer transition-colors ${
                   item.type === 'section' 
-                    ? 'bg-[#F5F8FA] border border-[#E8EDF2] shadow-sm hover:shadow-md' 
+                    ? 'bg-muted/40 border border-border shadow-sm hover:shadow-md' 
                     : 'ml-6 hover:bg-muted/50'
                 } ${selectedItems.has(item.id) ? 'ring-2 ring-primary ring-offset-1' : ''}`}
               >

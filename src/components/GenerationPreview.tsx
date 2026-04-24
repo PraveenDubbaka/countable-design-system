@@ -275,7 +275,7 @@ export function GenerationPreview({
             <Textarea
               value={editablePrompt}
               onChange={(e) => setEditablePrompt(e.target.value)}
-              className="w-full min-h-[80px] text-sm bg-white border-border rounded-lg resize-none"
+              className="w-full min-h-[80px] text-sm bg-card border-border rounded-lg resize-none"
               placeholder="Refine your prompt..."
               autoFocus
             />
@@ -312,7 +312,7 @@ export function GenerationPreview({
       </div>
 
       {/* Progressive question display */}
-      <div className="bg-white rounded-xl border border-border overflow-hidden">
+      <div className="bg-card rounded-xl border border-border overflow-hidden">
         <div className="max-h-[400px] overflow-y-auto">
           {Object.entries(groupedQuestions).map(([sectionTitle, questions], sectionIndex) => (
             <div 
