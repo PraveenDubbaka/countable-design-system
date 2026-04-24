@@ -1131,7 +1131,7 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
                       <div
                         className={cn(
                           "flex items-center gap-1.5 py-1.5 px-2 rounded-[8px] cursor-pointer hover:bg-primary/10 transition-colors text-sm",
-                          isActive && "bg-primary/12 ring-1 ring-primary/25"
+                          isActive && "bg-primary/10 ring-1 ring-primary/25"
                         )}
                         style={{ paddingLeft: `${depth * 16 + 8}px` }}
                         onClick={() => {
