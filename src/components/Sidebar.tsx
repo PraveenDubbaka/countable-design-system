@@ -217,7 +217,7 @@ const dropdownItems = [{
   showCreator: true
 }, {
   id: "notes",
-  label: "Notes to Financial Stat...",
+  label: "Notes to Financial Statements",
   icon: StickyNote,
   color: "text-yellow-500",
   showCreator: true
@@ -1261,7 +1261,7 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
                   </div>
                   <ChevronDown className={cn("h-4 w-4", hasDarkSecondary ? "text-white/60" : "text-muted-foreground")} />
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="start" className="w-[200px]">
+                <DropdownMenuContent align="start" className="w-auto min-w-[240px] whitespace-nowrap">
                   {dropdownItems.map(item => <DropdownMenuItem key={item.id} onClick={() => handleDropdownSelect(item.id)} className="flex items-center justify-between cursor-pointer">
                       <div className="flex items-center gap-2">
                         <item.icon className={`h-4 w-4 ${item.color}`} />
