@@ -540,15 +540,12 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
                 onClick={() => toggleGlobalFolder(template.id)}
               >
                 {hasChildren ? (
-                  template.isExpanded ? (
-                    <ChevronDown className="h-4 w-4 text-muted-foreground flex-shrink-0" />
-                  ) : (
-                    <ChevronRight className="h-4 w-4 text-muted-foreground flex-shrink-0" />
-                  )
+                  template.isExpanded
+                    ? <FolderMinusIcon className="h-4 w-4 text-primary flex-shrink-0" />
+                    : <FolderPlusIcon className="h-4 w-4 text-primary flex-shrink-0" />
                 ) : (
-                  <ChevronRight className="h-4 w-4 text-muted-foreground flex-shrink-0" />
+                  <FolderSolidIcon className="h-4 w-4 text-primary flex-shrink-0" />
                 )}
-                <FolderSolidIcon className="h-4 w-4 text-primary flex-shrink-0" />
                 <span className="truncate flex-1 font-semibold">{template.name}</span>
               </div>
             </>
