@@ -487,19 +487,19 @@ export default function TrialBalance() {
                     key={row.id}
                     className="border-b border-border hover:bg-muted/30 transition-colors cursor-pointer"
                   >
-                    <td className="px-2 py-2 text-center">
-                      <button className="text-muted-foreground hover:text-foreground">
-                        <MoreVertical className="h-3.5 w-3.5" />
-                      </button>
-                    </td>
-                    <td className="p-0 align-middle">
+                    <td className="p-0 w-6 align-middle">
                       <div
-                        className="flex items-center justify-center h-7 w-6 rounded-sm text-[9px] font-bold text-white tracking-wider mx-auto"
-                        style={{ backgroundColor: cat.color, writingMode: "vertical-rl" }}
+                        className="flex items-center justify-center w-6 h-full min-h-[28px] text-[9px] font-bold text-white tracking-wider"
+                        style={{ backgroundColor: cat.color, writingMode: "vertical-rl", transform: "rotate(180deg)" }}
                         title={cat.label}
                       >
                         {cat.short}
                       </div>
+                    </td>
+                    <td className="px-2 py-2 text-center">
+                      <button className="text-muted-foreground hover:text-foreground">
+                        <MoreVertical className="h-3.5 w-3.5" />
+                      </button>
                     </td>
                     <td className="px-2 py-2"><Checkbox /></td>
                     <td className="px-6 py-2 text-foreground whitespace-nowrap">{row.accNo}</td>
