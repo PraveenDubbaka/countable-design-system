@@ -870,6 +870,9 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
               isResizing && "transition-none"
             )}
           >
+            {signoffsMode && !isTemplatesPanelCollapsed && (
+              <div className="pointer-events-none absolute top-0 bottom-0 w-px bg-border/60 z-10" style={{ right: "104px" }} />
+            )}
             <div className={`p-3 ${isTemplatesPanelCollapsed ? "hidden" : ""}`}>
               <div className="flex gap-2 items-start">
                 <div className="relative flex-1">
