@@ -354,8 +354,23 @@ export default function TrialBalance() {
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
-              
-              
+
+              {/* Refresh button beside Actions */}
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <ExpandableIconButton
+                    variant="outline"
+                    className="bg-card hover:bg-muted"
+                    icon={<RefreshCw className="h-4 w-4" />}
+                    label="Refresh"
+                  />
+                </TooltipTrigger>
+                <TooltipContent side="bottom" sideOffset={8} className="z-[110]">
+                  Last updated: <span className="font-medium">54 min ago</span>
+                </TooltipContent>
+              </Tooltip>
+
+
 
               {/* Hide / Show $0 Accounts toggle */}
               <ExpandableIconButton
