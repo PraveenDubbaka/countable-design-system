@@ -849,7 +849,7 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
             )}
           >
             <div className={`p-3 ${isTemplatesPanelCollapsed ? "hidden" : ""}`}>
-              <div className="flex gap-2">
+              <div className="flex gap-2 items-start">
                 <div className="relative flex-1">
                   <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground icon-search" />
                   <Input placeholder="Search" className="pl-9 h-9 text-sm" />
@@ -895,283 +895,26 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
                   </svg>
                   <span>Signoffs</span>
                 </Button>
-              </div>
-              {/* Signoffs preparer header row - sits directly under the search/signoff row, not as a separate band below */}
-              {signoffsMode && (
-                <div className="flex items-end justify-end gap-2 pt-2 border-b border-border pb-2">
-                  {[
-                    { id: "p1", initials: "CA", label: "Preparer", color: "bg-purple-500" },
-                    { id: "p2", initials: "JD", label: "1st Reviewer", color: "bg-sky-500" },
-                  ].map(p => (
-                    <div key={p.id} className="w-9 flex flex-col items-center gap-1">
-                      <div className={cn("h-7 w-7 rounded-full flex items-center justify-center text-[10px] font-semibold text-white", p.color)}>
-                        {p.initials}
-                      </div>
-                      <span className="text-[9px] text-muted-foreground leading-tight whitespace-nowrap">{p.label}</span>
-                      <div className="h-6 w-6 rounded-md border border-border flex items-center justify-center bg-card">
-                        <Check className="h-3 w-3 text-muted-foreground" />
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-
-            <div className={`flex-1 overflow-y-auto scrollbar-hide p-2 pt-0 ${isTemplatesPanelCollapsed ? "hidden" : ""}`} style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
-            {/* Engagement Sections - recursive tree */}
-              {(() => {
-                type SectionNode = {
-                  id: string;
-                  code?: string;
-                  label: string;
-                  icon?: "checklist" | "letter" | "folder" | "doc" | "completion" | "book";
-                  hasPlus?: boolean;
-                  route?: string;
-                  children?: SectionNode[];
-                };
-
-                const engagementTree: SectionNode[] = [
-                  {
-                    id: "co", code: "CO", label: "Client Onboarding", icon: "folder",
-                    children: [
-                      { id: "co-ca", code: "CA", label: "Client acceptance and continuance", icon: "checklist", route: "checklist/co-ca" },
-                      { id: "co-ind", code: "IND", label: "Independence", icon: "checklist", route: "checklist/co-ind" },
-                      { id: "co-kcb", code: "KCB", label: "Knowledge of client business", icon: "checklist", route: "checklist/co-kcb" },
-                      { id: "co-pl", code: "PL", label: "Planning", icon: "checklist", route: "checklist/co-pl" },
-                      { id: "co-el", code: "EL", label: "Engagement Letter", icon: "letter", route: "checklist/co-el" },
-                      { id: "co-mr", code: "MR", label: "Management responsibility and acknowledgem...", icon: "letter", route: "checklist/co-mr" },
-                    ]
-                  },
-                  {
-                    id: "do", code: "DO", label: "Documents", icon: "folder", hasPlus: true,
-                    children: [
-                      { id: "do-sha", code: "SHA", label: "Shareholders Agreements", icon: "folder" },
-                      { id: "do-ren", code: "REN", label: "Rental/Lease Agreements", icon: "folder" },
-                      { id: "do-inc", code: "INC", label: "Incorporation Documents", icon: "folder" },
-                      { id: "do-ban", code: "BAN", label: "Banking Agreements", icon: "folder" },
-                    ]
-                  },
-                  {
-                    id: "tb", code: "TB", label: "Trial Balance & Adj. Entries", icon: "folder", route: "trial-balance"
-                  },
-                  {
-                    id: "pr", code: "PR", label: "Procedures", icon: "folder",
-                    children: [
-                      {
-                        id: "pr-assets", label: "Assets", icon: "folder",
-                        children: [
-                          {
-                            id: "pr-ca", label: "Current assets", icon: "folder",
-                            children: [
-                              { id: "pr-ca-a", code: "A", label: "Cash and cash equivalents", icon: "book", route: "procedure/pr-ca-a" },
-                              { id: "pr-ca-b", code: "B", label: "Accounts receivable", icon: "book" },
-                              { id: "pr-ca-c", code: "C", label: "Inventories", icon: "book" },
-                              { id: "pr-ca-d", code: "D", label: "Short-term investments", icon: "book" },
-                              { id: "pr-ca-i", code: "I", label: "Other current assets", icon: "book" },
-                            ]
-                          },
-                          {
-                            id: "pr-ppe", label: "Property, plant and equipment", icon: "folder",
-                            children: [
-                              { id: "pr-ppe-h", code: "H", label: "Property, plant and equipment", icon: "book" },
-                            ]
-                          },
-                        ]
-                      },
-                      {
-                        id: "pr-liab", label: "Liabilities", icon: "folder",
-                        children: [
-                          {
-                            id: "pr-cl", label: "Current liabilities", icon: "folder",
-                            children: [
-                              { id: "pr-cl-aa", code: "AA", label: "Bank overdraft", icon: "book" },
-                              { id: "pr-cl-bb", code: "BB", label: "Accounts payable", icon: "book" },
-                              { id: "pr-cl-dd", code: "DD", label: "Short-term debt", icon: "book" },
-                              { id: "pr-cl-ee", code: "EE", label: "Deferred income", icon: "book" },
-                            ]
-                          },
-                          {
-                            id: "pr-ltl", label: "Long-term liabilities", icon: "folder",
-                            children: [
-                              { id: "pr-ltl-jj", code: "JJ", label: "Other long-term liabilities", icon: "book" },
-                            ]
-                          },
-                        ]
-                      },
-                      {
-                        id: "pr-equity", label: "Equity", icon: "folder",
-                        children: [
-                          {
-                            id: "pr-sc", label: "Share capital", icon: "folder",
-                            children: [
-                              { id: "pr-sc-tt", code: "TT", label: "Equity", icon: "book" },
-                            ]
-                          },
-                        ]
-                      },
-                      {
-                        id: "pr-rev", label: "Revenue", icon: "folder",
-                        children: [
-                          {
-                            id: "pr-rev-sub", label: "Revenue", icon: "folder",
-                            children: [
-                              { id: "pr-rev-20", code: "20", label: "Revenue", icon: "book" },
-                            ]
-                          },
-                        ]
-                      },
-                      {
-                        id: "pr-exp", label: "Expenses", icon: "folder",
-                        children: [
-                          {
-                            id: "pr-opex", label: "Operating expenses", icon: "folder",
-                            children: [
-                              { id: "pr-opex-40", code: "40", label: "Operating expenses", icon: "book" },
-                            ]
-                          },
-                        ]
-                      },
-                    ]
-                  },
-                  {
-                    id: "fs", code: "FS", label: "Financial Statements", icon: "folder", hasPlus: true,
-                    children: [
-                      {
-                        id: "fs-docs", code: "FS", label: "Financial Statements Docs", icon: "folder",
-                        children: [
-                          { id: "fs-cover", label: "Cover Page", icon: "doc" },
-                          { id: "fs-toc", label: "Table of Contents", icon: "doc" },
-                          { id: "fs-comp", label: "Compilation report", icon: "doc" },
-                          { id: "fs-bs", label: "Balance Sheet", icon: "doc" },
-                          { id: "fs-is", label: "Statement of Income and Retained Earnings", icon: "doc" },
-                          { id: "fs-cf", label: "Statement of Cash Flows", icon: "doc" },
-                        ]
-                      },
-                    ]
-                  },
-                  {
-                    id: "so", code: "SO", label: "Completion & Signoffs", icon: "folder",
-                    children: [
-                      { id: "so-cm", code: "CM", label: "Completion", icon: "completion" },
-                      { id: "so-so", code: "SO", label: "Signoffs", icon: "completion" },
-                    ]
-                  },
-                ];
-
-                const renderIcon = (icon?: string) => {
-                  if (icon === "letter") return <LetterIcon className="h-4 w-4 flex-shrink-0" />;
-                  if (icon === "checklist") return <ChecklistIcon className="h-4 w-4 flex-shrink-0" />;
-                  if (icon === "completion") return <CompletionIcon className="h-4 w-4 flex-shrink-0" />;
-                  if (icon === "doc") return <WordDocIcon className="h-4 w-4 flex-shrink-0" />;
-                  if (icon === "book") return <BookIcon className="h-3.5 w-3.5 flex-shrink-0" style={{ color: '#778599' }} />;
-                  return <FolderSolidIcon className="h-4 w-4 text-primary flex-shrink-0" />;
-                };
-
-                const renderNode = (node: SectionNode, depth: number = 0): React.ReactNode => {
-                  const hasChildren = node.children && node.children.length > 0;
-                  const isOpen = expandedSections.has(node.id);
-                  const isLeaf = !hasChildren;
-                  const engId = location.pathname.split("/engagements/")[1]?.split("/")[0];
-                  const currentSubPath = engId ? location.pathname.replace(`/engagements/${engId}/`, '').replace(`/engagements/${engId}`, '') : '';
-                  const isActive = node.route 
-                    ? (currentSubPath === node.route || (currentSubPath === '' && node.route === 'checklist/co-ca'))
-                    : false;
-
-                  return (
-                    <div key={node.id}>
-                      <div
-                        className={cn(
-                          "flex items-center gap-1.5 py-1.5 px-2 rounded-[8px] cursor-pointer hover:bg-primary/20 transition-colors text-sm",
-                          isActive && "bg-primary/25 ring-1 ring-primary/50"
-                        )}
-                        style={{ paddingLeft: `${depth * 16 + 8}px` }}
-                        onClick={() => {
-                          if (node.route) {
-                            const engId = location.pathname.split("/engagements/")[1]?.split("/")[0];
-                            if (engId) {
-                              // Checklist routes navigate to base engagement page
-                              if (node.route.startsWith('checklist/')) {
-                                navigate(`/engagements/${engId}`);
-                              } else {
-                                navigate(`/engagements/${engId}/${node.route}`);
-                              }
-                            }
-                          } else if (hasChildren) {
-                            setExpandedSections(prev => {
-                              const next = new Set(prev);
-                              if (next.has(node.id)) next.delete(node.id);
-                              else next.add(node.id);
-                              return next;
-                            });
-                          }
-                        }}
-                      >
-                        {isLeaf ? (
-                          <>
-                            {depth > 0 && <span className="w-3.5 flex-shrink-0" />}
-                            {renderIcon(node.icon)}
-                          </>
-                        ) : (
-                          <span className="relative flex-shrink-0 w-4 h-4 flex items-center justify-center">
-                            {isOpen
-                              ? <FolderMinusIcon className="h-4 w-4 text-primary" />
-                              : <FolderPlusIcon className="h-4 w-4 text-primary" />}
-                          </span>
-                        )}
-                        {node.code && <span className="font-semibold text-primary">{node.code}</span>}
-                        <span className="truncate flex-1 font-semibold" style={{ color: 'hsl(var(--sidebar-tree-foreground, 0 0% 0%))' }}>{node.label}</span>
-                        {node.hasPlus && <Plus className="h-4 w-4 text-muted-foreground hover:text-foreground flex-shrink-0" />}
-                        {signoffsMode && (
-                          <div className="flex items-center gap-2 ml-2 flex-shrink-0" onClick={(e) => e.stopPropagation()}>
-                            {(["p1", "p2"] as const).map(pid => (
-                              <div key={pid} className="w-9 flex items-center justify-center">
-                                <Checkbox
-                                  checked={!!signoffChecks[node.id]?.[pid]}
-                                  onCheckedChange={(v) =>
-                                    setSignoffChecks(prev => ({
-                                      ...prev,
-                                      [node.id]: { p1: !!prev[node.id]?.p1, p2: !!prev[node.id]?.p2, [pid]: !!v },
-                                    }))
-                                  }
-                                  className="h-4 w-4 rounded border-border data-[state=checked]:bg-primary data-[state=checked]:border-primary"
-                                />
-                              </div>
-                            ))}
-                          </div>
-                        )}
-                      </div>
-
-                      {isOpen && hasChildren && (
-                        <div>
-                          {node.children!.map(child => renderNode(child, depth + 1))}
+                {/* Signoffs preparer chips - inline beside the Signoffs button when active */}
+                {signoffsMode && (
+                  <div className="flex items-start gap-2">
+                    {[
+                      { id: "p1", initials: "CA", label: "Preparer", color: "bg-purple-500" },
+                      { id: "p2", initials: "JD", label: "1st Reviewer", color: "bg-sky-500" },
+                    ].map(p => (
+                      <div key={p.id} className="w-9 flex flex-col items-center gap-1">
+                        <div className={cn("h-7 w-7 rounded-full flex items-center justify-center text-[10px] font-semibold text-white", p.color)}>
+                          {p.initials}
                         </div>
-                      )}
-                    </div>
-                  );
-                };
-
-                return engagementTree.map(node => renderNode(node, 0));
-              })()}
-            </div>
-
-            {/* Resize handle */}
-            {!isTemplatesPanelCollapsed && (
-              <div
-                className={cn(
-                  "absolute right-0 top-0 bottom-0 w-1 cursor-col-resize z-30 transition-all duration-150",
-                  isResizing
-                    ? "bg-primary"
-                    : isResizeHovering
-                    ? "bg-border"
-                    : "bg-transparent hover:bg-border"
+                        <span className="text-[9px] text-muted-foreground leading-tight whitespace-nowrap">{p.label}</span>
+                        <div className="h-6 w-6 rounded-md border border-border flex items-center justify-center bg-card">
+                          <Check className="h-3 w-3 text-muted-foreground" />
+                        </div>
+                      </div>
+                    ))}
+                  </div>
                 )}
-                onMouseDown={startResizing}
-                onMouseEnter={() => setIsResizeHovering(true)}
-                onMouseLeave={() => !isResizing && setIsResizeHovering(false)}
-              >
-                <div className="absolute -left-1 -right-1 top-0 bottom-0" />
               </div>
-            )}
 
           </div>
         </>, portalTarget)}
