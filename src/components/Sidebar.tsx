@@ -20,6 +20,8 @@ import { CompletionIcon } from "@/components/icons/CompletionIcon";
 import { WordDocIcon } from "@/components/icons/WordDocIcon";
 import { BookIcon } from "@/components/icons/BookIcon";
 import { SignoffsOverlay } from "@/components/SignoffsOverlay";
+import signoffCheckAllIcon from "@/assets/signoff-check-all.png";
+import signoffUncheckAllIcon from "@/assets/signoff-uncheck-all.png";
 import { useSecondaryPanel } from "@/hooks/useSecondaryPanel";
 interface Template {
   id: string;
