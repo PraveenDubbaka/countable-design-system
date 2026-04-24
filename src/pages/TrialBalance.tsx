@@ -477,7 +477,12 @@ export default function TrialBalance() {
                 </tr>
               </thead>
               <tbody>
-                {trialBalanceData.map((row) => (
+                {trialBalanceData.map((row, idx) => {
+                  // Demo: assign each row a filter category cyclically so badges are visible
+                  const cat = FILTER_CATEGORIES[idx % FILTER_CATEGORIES.length];
+                  const visible = activeFilters.size === 0 || activeFilters.has(cat.id);
+                  if (!visible) return null;
+                  return (
                   <tr
                     key={row.id}
                     className="border-b border-border hover:bg-muted/30 transition-colors cursor-pointer"
@@ -486,6 +491,15 @@ export default function TrialBalance() {
                       <button className="text-muted-foreground hover:text-foreground">
                         <MoreVertical className="h-3.5 w-3.5" />
                       </button>
+                    </td>
+                    <td className="p-0 align-middle">
+                      <div
+                        className="flex items-center justify-center h-7 w-6 rounded-sm text-[9px] font-bold text-white tracking-wider mx-auto"
+                        style={{ backgroundColor: cat.color, writingMode: "vertical-rl" }}
+                        title={cat.label}
+                      >
+                        {cat.short}
+                      </div>
                     </td>
                     <td className="px-2 py-2"><Checkbox /></td>
                     <td className="px-6 py-2 text-foreground whitespace-nowrap">{row.accNo}</td>
