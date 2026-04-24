@@ -90,7 +90,7 @@ export function GlobalHeader({ title, headerContent }: { title?: string; headerC
             onClick={() => setAskLukaOpen(true)}
           >
             <Sparkles className="h-3.5 w-3.5 animate-[spin_3s_linear_infinite]" />
-            Ask Luka
+            Luka
           </Button>
 
           {/* Font size accessibility toggle */}
