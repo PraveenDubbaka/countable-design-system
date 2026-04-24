@@ -6,12 +6,9 @@ interface IconProps {
 }
 
 /**
- * Solid folder icons matching the reference silhouette:
- *  - Back panel: stepped top with a left "tab" that steps up, flat strip to the right
- *  - Front flap: bold trapezoid/parallelogram tilted to the right
- *    (bottom-right lower than bottom-left), offset right of the back panel
- *  - Clear diagonal negative space between the two pieces on the left
- *  - Plus / minus symbol centered on the front flap, knocked out in white
+ * Folder icons based on the exact Font Awesome solid folder-open silhouette.
+ * The plus / minus variants keep the same base shape and add a centered white
+ * symbol so the style still matches the requested Font Awesome icon.
  */
 function BaseFolder({
   className,
@@ -21,27 +18,23 @@ function BaseFolder({
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      viewBox="0 0 64 64"
+      viewBox="0 0 576 512"
       className={className}
       style={style}
       fill="currentColor"
       aria-hidden="true"
     >
-      {/* Back panel with stepped top (left tab steps up above right strip) */}
-      <path d="M4 18 L4 44 L22 44 L22 22 L58 22 L58 18 L28 18 L24 14 L10 14 L6 18 Z" />
+      <path d="M88.7 223.8L0 375.8V96C0 60.7 28.7 32 64 32H181.5c17 0 33.3 6.7 45.3 18.7l26.5 26.5c12 12 28.3 18.7 45.3 18.7H416c35.3 0 64 28.7 64 64v32H144c-22.8 0-43.8 12.1-55.3 31.8zm27.6 16.1C122.1 230 132.6 224 144 224H544c11.5 0 22 6.1 27.7 16.1s5.7 22.2-.1 32.1l-112 192C453.9 474 443.4 480 432 480H32c-11.5 0-22-6.1-27.7-16.1s-5.7-22.2 .1-32.1l112-192z" />
 
-      {/* Front flap: tilted trapezoid, bottom edge slopes down to the right */}
-      <path d="M12 24 L60 24 L56 52 L8 52 Z" />
-
-      {/* Plus / Minus centered on the front flap */}
       {symbol === 'plus' && (
         <g fill="#ffffff">
-          <rect x="30" y="33" width="8" height="2.4" rx="0.6" />
-          <rect x="32.8" y="30.2" width="2.4" height="8" rx="0.6" />
+          <rect x="334" y="300" width="108" height="36" rx="12" />
+          <rect x="370" y="264" width="36" height="108" rx="12" />
         </g>
       )}
+
       {symbol === 'minus' && (
-        <rect x="30" y="33" width="8" height="2.4" rx="0.6" fill="#ffffff" />
+        <rect x="334" y="300" width="108" height="36" rx="12" fill="#ffffff" />
       )}
     </svg>
   );
