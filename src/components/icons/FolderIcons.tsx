@@ -6,17 +6,20 @@ interface IconProps {
 }
 
 /**
- * Solid navy "open" folder icon matching the reference style:
- *  - Back panel with a left tab.
- *  - Thin diagonal sheet of paper peeking out on the right.
- *  - Angled front flap tilted forward, with a small gap between flap
- *    and back panel for the 3D open effect.
+ * Solid "open" folder icons matching the Shutterstock-style reference:
+ *  - Chunky back panel with a left tab on top
+ *  - A trapezoidal front flap that tilts forward to the right
+ *  - A small gap between the flap and the back panel (rendered as a
+ *    transparent notch) for a 3D open-folder feel
+ *
+ * The plus / minus variants place the symbol on the front flap,
+ * knocked out in white so they read cleanly on the dark navy folder.
  */
 function BaseOpenFolder({
   className,
   style,
   symbol,
-}: IconProps & { symbol?: 'plus' | 'minus' | null }) {
+}: IconProps & { symbol: 'plus' | 'minus' | null }) {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -26,28 +29,33 @@ function BaseOpenFolder({
       fill="currentColor"
       aria-hidden="true"
     >
-      {/* Back panel with left tab */}
-      <path d="M2 6.25C2 5.284 2.784 4.5 3.75 4.5h4.19c.39 0 .766.13 1.07.369l1.62 1.273c.18.14.4.216.624.216H19.5c.966 0 1.75.784 1.75 1.75V10H2V6.25Z" />
-      {/* Thin paper sheet peeking between back panel and front flap */}
-      <path
-        d="M4.5 9.25h14a.5.5 0 0 1 .5.5v1.5H4V9.75a.5.5 0 0 1 .5-.5Z"
-        opacity="0.55"
-      />
-      {/* Front flap - angled trapezoid tilted forward */}
+      {/* Back panel with left tab — the "wall" behind the flap */}
+      <path d="M2 6.4c0-1.05.85-1.9 1.9-1.9h4.35c.42 0 .83.14 1.16.4l1.63 1.27c.17.14.39.21.62.21H20.1c1.05 0 1.9.85 1.9 1.9v2.32H2V6.4Z" />
+
+      {/* Front flap — tilted trapezoid. Wider at top, narrower at bottom,
+          giving the signature "opening outward" look. */}
       <path
         fillRule="evenodd"
         clipRule="evenodd"
-        d="M3.35 10.5h18.06c.6 0 1.03.58.87 1.16l-1.86 6.8A1.75 1.75 0 0 1 18.73 19.8H4.6a1.75 1.75 0 0 1-1.68-1.27L1.44 12.2a1.25 1.25 0 0 1 1.2-1.6h.71Z"
+        d="M3.3 9.5h18.1c.8 0 1.38.76 1.17 1.53l-1.92 7.04A2.1 2.1 0 0 1 18.6 19.6H5.4a2.1 2.1 0 0 1-2.03-1.55L1.13 10.95A1.2 1.2 0 0 1 2.3 9.5h1Z"
       />
-      {/* Plus / Minus symbol cut out of front flap (in white) */}
+
+      {/* Symbol on the front flap, knocked out in white */}
       {symbol === 'plus' && (
         <g fill="#ffffff">
-          <rect x="16.25" y="14" width="3.5" height="1.3" rx="0.4" />
-          <rect x="17.35" y="12.9" width="1.3" height="3.5" rx="0.4" />
+          <rect x="15.6" y="13.6" width="4.2" height="1.5" rx="0.5" />
+          <rect x="17.05" y="12.15" width="1.5" height="4.2" rx="0.5" />
         </g>
       )}
       {symbol === 'minus' && (
-        <rect x="16.25" y="14" width="3.5" height="1.3" rx="0.4" fill="#ffffff" />
+        <rect
+          x="15.6"
+          y="13.6"
+          width="4.2"
+          height="1.5"
+          rx="0.5"
+          fill="#ffffff"
+        />
       )}
     </svg>
   );
