@@ -410,6 +410,50 @@ export default function TrialBalance() {
               <thead className="sticky top-0 z-10">
                 <tr className="bg-muted border-b border-border">
                   <th className="px-2 py-3 w-8"></th>
+                  <th className="px-1 py-3 w-7 align-middle">
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <button
+                          aria-label="Filter rows"
+                          className="inline-flex items-center justify-center w-6 h-6 rounded-md text-muted-foreground hover:text-foreground hover:bg-background/60 transition-colors relative"
+                        >
+                          <ListFilter className="h-3.5 w-3.5" />
+                          {activeFilters.size > 0 && (
+                            <span className="absolute -top-0.5 -right-0.5 w-2 h-2 rounded-full bg-primary" />
+                          )}
+                        </button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="start" className="w-56 bg-card border shadow-lg z-50 p-2">
+                        <div className="flex items-center justify-between px-2 py-1.5">
+                          <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">Filter</span>
+                          <button
+                            onClick={clearFilters}
+                            className="text-xs font-medium text-link hover:underline"
+                          >
+                            Clear All
+                          </button>
+                        </div>
+                        <DropdownMenuSeparator />
+                        {FILTER_CATEGORIES.map(cat => {
+                          const checked = activeFilters.has(cat.id);
+                          return (
+                            <DropdownMenuItem
+                              key={cat.id}
+                              onSelect={(e) => { e.preventDefault(); toggleFilter(cat.id); }}
+                              className="flex items-center gap-2 cursor-pointer group"
+                            >
+                              <Checkbox checked={checked} className="pointer-events-none" />
+                              <span className="flex-1 text-sm">{cat.label}</span>
+                              <span
+                                className="w-2.5 h-2.5 rounded-full flex-shrink-0"
+                                style={{ backgroundColor: cat.color }}
+                              />
+                            </DropdownMenuItem>
+                          );
+                        })}
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  </th>
                   <th className="px-2 py-3 w-8"><Checkbox /></th>
                   <th className="text-left px-6 py-3 text-xs font-semibold text-foreground whitespace-nowrap">Acc No.</th>
                   <th className="text-left px-6 py-3 text-xs font-semibold text-foreground whitespace-nowrap min-w-[180px]">Description</th>
