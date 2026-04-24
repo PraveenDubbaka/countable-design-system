@@ -409,12 +409,12 @@ export default function TrialBalance() {
             <table className="w-full text-sm">
               <thead className="sticky top-0 z-10">
                 <tr className="bg-muted border-b border-border">
-                  <th className="px-0 py-3 align-middle" style={{ width: "16px" }}>
+                  <th className="px-0 py-3 align-middle" style={{ width: "16px", minWidth: "16px", maxWidth: "16px" }}>
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
                         <button
                           aria-label="Filter rows"
-                          className="inline-flex items-center justify-center w-6 h-6 rounded-md text-muted-foreground hover:text-foreground hover:bg-background/60 transition-colors relative mx-auto"
+                          className="inline-flex items-center justify-center w-4 h-6 rounded-md text-muted-foreground hover:text-foreground hover:bg-background/60 transition-colors relative mx-auto"
                         >
                           <ListFilter className="h-3.5 w-3.5" />
                           {activeFilters.size > 0 && (
@@ -487,7 +487,7 @@ export default function TrialBalance() {
                     key={row.id}
                     className="border-b border-border hover:bg-muted/30 transition-colors cursor-pointer"
                   >
-                    <td className="p-0 relative" style={{ width: "16px" }}>
+                    <td className="p-0 relative" style={{ width: "16px", minWidth: "16px", maxWidth: "16px" }}>
                       <div
                         className="absolute inset-0 flex items-center justify-center text-[9px] font-bold text-white tracking-wider overflow-hidden"
                         style={{ backgroundColor: cat.color, writingMode: "vertical-rl", transform: "rotate(180deg)" }}
