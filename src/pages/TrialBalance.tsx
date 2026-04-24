@@ -174,7 +174,17 @@ export default function TrialBalance() {
   const [hideZeroAcc, setHideZeroAcc] = useState(false);
   const zeroAccCount = 0;
   const [isToolbarExpanded, setIsToolbarExpanded] = useState(true);
+  const [activeFilters, setActiveFilters] = useState<Set<FilterId>>(new Set(["unmapped"]));
   const { isCollapsed: isPanelCollapsed, toggle: togglePanel } = useSecondaryPanel();
+
+  const toggleFilter = (id: FilterId) => {
+    setActiveFilters(prev => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id); else next.add(id);
+      return next;
+    });
+  };
+  const clearFilters = () => setActiveFilters(new Set());
 
   const engagement = engagementId ? engagementsData[engagementId] : null;
   const displayId = engagementId || "Unknown";
