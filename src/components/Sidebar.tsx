@@ -724,7 +724,27 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
   const [showSignoffs, setShowSignoffs] = useState(false);
   const [signoffsMode, setSignoffsMode] = useState(false);
   const [signoffChecks, setSignoffChecks] = useState<Record<string, { p1: boolean; p2: boolean }>>({});
+  const allNodeIdsRef = useRef<string[]>([]);
   const [hasDarkSecondary, setHasDarkSecondary] = useState(false);
+
+  const toggleAllSignoffs = (pid: "p1" | "p2") => {
+    const ids = allNodeIdsRef.current;
+    if (ids.length === 0) return;
+    const allChecked = ids.every(id => !!signoffChecks[id]?.[pid]);
+    setSignoffChecks(prev => {
+      const next = { ...prev };
+      ids.forEach(id => {
+        const cur = next[id] ?? { p1: false, p2: false };
+        next[id] = { ...cur, [pid]: !allChecked };
+      });
+      return next;
+    });
+  };
+
+  const isAllSignoffsChecked = (pid: "p1" | "p2") => {
+    const ids = allNodeIdsRef.current;
+    return ids.length > 0 && ids.every(id => !!signoffChecks[id]?.[pid]);
+  };
 
   // All parent IDs in the engagement tree (used to expand all)
   const allParentIds = [
