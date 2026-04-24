@@ -395,34 +395,67 @@ export default function DesignSystem() {
 
           {/* ───────── HEADER ───────── */}
           <TabsContent value="header" className="space-y-6 mt-6">
-            <Section title="Global Header" description="Full-width persistent header above the sidebar. Hosts page title, Ask Luka CTA, accessibility toggle, notifications, and profile.">
-              {/* Live mini-preview */}
+            <Section title="Global Header" description="Full-width persistent header sitting above the sidebar with a navy background. Hosts page title, Luka CTA, font-size accessibility toggle, theme toggle, notifications, and the user avatar.">
+              {/* Live mini-preview matching actual GlobalHeader */}
               <div className="rounded-xl border border-border overflow-hidden">
-                <div className="h-14 px-4 flex items-center justify-between bg-card border-b border-border">
-                  <div className="flex items-center gap-3">
-                    <h2 className="text-[20px] font-bold text-[#0c2d55]">Page Title (H1)</h2>
+                <div
+                  className="flex items-center px-6 bg-[hsl(var(--sidebar-bg))] text-[hsl(var(--sidebar-foreground))]"
+                  style={{ height: "3.4rem" }}
+                >
+                  {/* Left: title */}
+                  <div className="flex-1 flex items-center gap-3">
+                    <h2 className="text-xl font-bold text-[hsl(var(--sidebar-foreground))]">Page Title</h2>
                   </div>
-                  <div className="flex items-center gap-2">
-                    <Button size="sm" className="h-8 px-3 rounded-full bg-gradient-to-r from-[#1C63A6] to-[#7A31D8] hover:opacity-90 text-white text-xs gap-1.5 shadow-md">
-                      <Sparkles className="h-3.5 w-3.5" /> Ask Luka
-                    </Button>
-                    <Button variant="ghost" size="icon" className="h-8 w-8"><span className="text-xs font-semibold">A</span></Button>
-                    <Button variant="ghost" size="icon" className="h-8 w-8"><Bell className="h-4 w-4" /></Button>
-                    <div className="h-8 w-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-xs font-semibold">JD</div>
+
+                  {/* Right cluster */}
+                  <div className="flex-1 flex items-center justify-end gap-3">
+                    {/* Luka pill */}
+                    <button className="h-8 px-3 rounded-full bg-gradient-to-r from-[#1C63A6] to-[#7A31D8] text-white text-xs font-medium gap-1.5 shadow-md inline-flex items-center">
+                      <Sparkles className="h-3.5 w-3.5 animate-[spin_3s_linear_infinite]" />
+                      Luka
+                    </button>
+
+                    {/* Font size A AA AAA */}
+                    <div className="flex items-center justify-center h-9 px-2 rounded-xl gap-0.5" style={{ borderRadius: 12 }}>
+                      <span className="font-semibold text-white" style={{ fontSize: 11 }}>A</span>
+                      <span className="font-semibold text-white/40" style={{ fontSize: 13 }}>A</span>
+                      <span className="font-semibold text-white/40" style={{ fontSize: 15 }}>A</span>
+                    </div>
+
+                    {/* Theme toggle */}
+                    <div className="flex items-center justify-center w-9 h-9 rounded-xl" style={{ borderRadius: 12 }}>
+                      <Sparkles className="h-5 w-5 text-amber-300 hidden" />
+                      {/* Sun/Moon — show moon for light-mode default */}
+                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-5 w-5 text-white/80"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" /></svg>
+                    </div>
+
+                    {/* Bell with badge */}
+                    <div className="flex items-center justify-center w-9 h-9 rounded-xl relative" style={{ borderRadius: 12 }}>
+                      <Bell className="h-5 w-5 text-white/80" />
+                      <span className="absolute -top-0.5 -right-0.5 w-4 h-4 rounded-full bg-destructive text-[9px] text-white flex items-center justify-center font-medium">2</span>
+                    </div>
+
+                    {/* Avatar */}
+                    <div className="flex items-center justify-center w-9 h-9 rounded-xl" style={{ borderRadius: 12 }}>
+                      <div className="w-7 h-7 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-[10px] font-semibold">JD</div>
+                    </div>
                   </div>
                 </div>
               </div>
 
               <div className="rounded-xl border border-border bg-card p-5 space-y-1">
-                <SpecRow label="Height" value="56px (h-14)" />
-                <SpecRow label="Position" value="Sticky, full-width above sidebar (React Portal layered)" />
-                <SpecRow label="Background" value={<><span className="font-mono">bg-card</span> · border-b <span className="font-mono">border-border</span></>} />
-                <SpecRow label="H1 Title" value="20px / weight 700 / color #0c2d55 (navy)" />
-                <SpecRow label="Ask Luka" value="Pill CTA, 32px height, gradient #1C63A6 → #7A31D8, animated Sparkles icon" />
-                <SpecRow label="Font Toggle" value="Cycles A → AA → AAA, applies global root class for accessibility" />
-                <SpecRow label="Notifications" value="Bell with swing animation when unread; opens popover with ScrollArea (max-h 360px)" />
-                <SpecRow label="Profile Avatar" value="32×32 circle with initials; opens menu (Profile, Org, Settings, Billing, Display, Logout)" />
-                <SpecRow label="Z-index" value="Above all content; secondary panels portal below header" />
+                <SpecRow label="Height" value="3.4rem (≈54.4px)" />
+                <SpecRow label="Padding" value="px-6 (24px horizontal)" />
+                <SpecRow label="Background" value={<><span className="font-mono">bg-sidebar-bg</span> (navy #0A3159) · text <span className="font-mono">text-sidebar-foreground</span> (white)</>} />
+                <SpecRow label="Layout" value="Two flex-1 zones — title on left, action cluster on right (gap-3)" />
+                <SpecRow label="H1 Title" value="text-xl (20px) · font-bold · sidebar foreground (white on navy)" />
+                <SpecRow label="Luka CTA" value="32px pill · gradient #1C63A6 → #7A31D8 · animated Sparkles (3s spin) · text 'Luka'" />
+                <SpecRow label="Font Toggle" value="A / AA / AAA cluster (11/13/15px) · active = white, inactive = white/40 · stores in localStorage, applies font-size-{a|aa|aaa} on <html>" />
+                <SpecRow label="Theme Toggle" value="36×36 rounded-xl (12px) · Sun ↔ Moon crossfade with 500ms rotation · hover bg-white/10" />
+                <SpecRow label="Notifications" value="Bell (swing animation when unread) · 16px destructive badge · opens 380px popover with search, mark-all-read, delete-all, list (max-h 360px)" />
+                <SpecRow label="Profile Avatar" value="36×36 hover wrapper · 28×28 round image · dropdown: My Account, Firm Profile, Settings, Billing, Apps, What's New, Log out" />
+                <SpecRow label="Hover state" value={<><span className="font-mono">hover:bg-white/10</span> on all icon buttons</>} />
+                <SpecRow label="Icon button radius" value="12px (rounded-xl)" />
               </div>
             </Section>
           </TabsContent>
