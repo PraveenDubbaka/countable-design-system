@@ -438,7 +438,7 @@ export default function CreateEngagement() {
                     placeholder="Search"
                     value={teamSearch}
                     onChange={(e) => setTeamSearch(e.target.value)}
-                    className="input-double-border pl-9 pr-3 h-9 text-sm bg-white border border-[#dcdfe4] rounded-[10px] outline-none w-44"
+                    className="input-double-border pl-9 pr-3 h-9 text-sm bg-card border border-border rounded-[10px] outline-none w-44 text-foreground placeholder:text-muted-foreground"
                   />
                 </div>
                 <Button variant="outline" className="h-9 px-4 text-sm bg-card hover:bg-muted">
