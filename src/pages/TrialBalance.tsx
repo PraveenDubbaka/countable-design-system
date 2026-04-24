@@ -53,14 +53,14 @@ import {
   ListFilter,
 } from "lucide-react";
 
-// Filter categories with badge colors and short labels
+// Filter categories with badge colors and short labels (matching screenshot)
 const FILTER_CATEGORIES = [
-  { id: "unmapped", label: "Unmapped", short: "UNM", color: "hsl(25 60% 50%)" },
-  { id: "autoMapped", label: "Auto Mapped", short: "AUT", color: "hsl(25 70% 45%)" },
-  { id: "newRow", label: "New row", short: "NEW", color: "hsl(40 60% 45%)" },
-  { id: "addedRow", label: "Added row", short: "ADD", color: "hsl(195 55% 50%)" },
-  { id: "changeRow", label: "Change row", short: "CHG", color: "hsl(140 45% 45%)" },
-  { id: "zeroBal", label: "$0 Bal. Acc.", short: "$0", color: "hsl(0 0% 60%)" },
+  { id: "unmapped", label: "Unmapped", short: "UNM", color: "hsl(22 45% 48%)" },
+  { id: "autoMapped", label: "Auto Mapped", short: "AUT", color: "hsl(28 55% 55%)" },
+  { id: "newRow", label: "New row", short: "NEW", color: "hsl(40 50% 50%)" },
+  { id: "addedRow", label: "Added row", short: "ADD", color: "hsl(195 45% 55%)" },
+  { id: "changeRow", label: "Change row", short: "CHG", color: "hsl(140 35% 50%)" },
+  { id: "zeroBal", label: "$0 Bal. Acc.", short: "$0", color: "hsl(0 0% 70%)" },
 ] as const;
 
 type FilterId = typeof FILTER_CATEGORIES[number]["id"];
@@ -409,13 +409,12 @@ export default function TrialBalance() {
             <table className="w-full text-sm">
               <thead className="sticky top-0 z-10">
                 <tr className="bg-muted border-b border-border">
-                  <th className="px-2 py-3 w-8"></th>
-                  <th className="px-1 py-3 w-7 align-middle">
+                  <th className="px-0 py-3 w-6 align-middle">
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
                         <button
                           aria-label="Filter rows"
-                          className="inline-flex items-center justify-center w-6 h-6 rounded-md text-muted-foreground hover:text-foreground hover:bg-background/60 transition-colors relative"
+                          className="inline-flex items-center justify-center w-6 h-6 rounded-md text-muted-foreground hover:text-foreground hover:bg-background/60 transition-colors relative mx-auto"
                         >
                           <ListFilter className="h-3.5 w-3.5" />
                           {activeFilters.size > 0 && (
@@ -454,6 +453,7 @@ export default function TrialBalance() {
                       </DropdownMenuContent>
                     </DropdownMenu>
                   </th>
+                  <th className="px-2 py-3 w-8"></th>
                   <th className="px-2 py-3 w-8"><Checkbox /></th>
                   <th className="text-left px-6 py-3 text-xs font-semibold text-foreground whitespace-nowrap">Acc No.</th>
                   <th className="text-left px-6 py-3 text-xs font-semibold text-foreground whitespace-nowrap min-w-[180px]">Description</th>
@@ -487,19 +487,19 @@ export default function TrialBalance() {
                     key={row.id}
                     className="border-b border-border hover:bg-muted/30 transition-colors cursor-pointer"
                   >
-                    <td className="px-2 py-2 text-center">
-                      <button className="text-muted-foreground hover:text-foreground">
-                        <MoreVertical className="h-3.5 w-3.5" />
-                      </button>
-                    </td>
-                    <td className="p-0 align-middle">
+                    <td className="p-0 w-6 align-middle">
                       <div
-                        className="flex items-center justify-center h-7 w-6 rounded-sm text-[9px] font-bold text-white tracking-wider mx-auto"
-                        style={{ backgroundColor: cat.color, writingMode: "vertical-rl" }}
+                        className="flex items-center justify-center w-6 h-full min-h-[28px] text-[9px] font-bold text-white tracking-wider"
+                        style={{ backgroundColor: cat.color, writingMode: "vertical-rl", transform: "rotate(180deg)" }}
                         title={cat.label}
                       >
                         {cat.short}
                       </div>
+                    </td>
+                    <td className="px-2 py-2 text-center">
+                      <button className="text-muted-foreground hover:text-foreground">
+                        <MoreVertical className="h-3.5 w-3.5" />
+                      </button>
                     </td>
                     <td className="px-2 py-2"><Checkbox /></td>
                     <td className="px-6 py-2 text-foreground whitespace-nowrap">{row.accNo}</td>
