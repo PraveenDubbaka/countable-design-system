@@ -548,7 +548,7 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
                 ) : (
                   <ChevronRight className="h-4 w-4 text-muted-foreground flex-shrink-0" />
                 )}
-                <Folder className="h-4 w-4 text-primary flex-shrink-0" />
+                <FolderSolidIcon className="h-4 w-4 text-primary flex-shrink-0" />
                 <span className="truncate flex-1 font-semibold">{template.name}</span>
               </div>
             </>
