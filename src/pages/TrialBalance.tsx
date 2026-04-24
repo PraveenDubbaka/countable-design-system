@@ -357,14 +357,24 @@ export default function TrialBalance() {
 
               {/* Refresh button beside Actions */}
               <Tooltip>
-                <TooltipTrigger asChild>
-                  <ExpandableIconButton
-                    variant="outline"
-                    className="bg-card hover:bg-muted"
-                    icon={<RefreshCw className="h-4 w-4" />}
-                    label="Refresh"
-                  />
-                </TooltipTrigger>
+                <DropdownMenu>
+                  <TooltipTrigger asChild>
+                    <DropdownMenuTrigger asChild>
+                      <ExpandableIconButton
+                        variant="outline"
+                        className="bg-card hover:bg-muted"
+                        icon={<RefreshCw className="h-4 w-4" />}
+                        label={<span className="inline-flex items-center gap-1">Refresh<ChevronDown className="h-3 w-3" /></span>}
+                      />
+                    </DropdownMenuTrigger>
+                  </TooltipTrigger>
+                  <DropdownMenuContent align="end" className="z-[100] bg-card border shadow-lg">
+                    <DropdownMenuItem>All Years</DropdownMenuItem>
+                    <DropdownMenuItem>Current Year</DropdownMenuItem>
+                    <DropdownMenuItem>PY 1</DropdownMenuItem>
+                    <DropdownMenuItem>PY 2</DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
                 <TooltipContent side="bottom" sideOffset={8} className="z-[110]">
                   Last updated: <span className="font-medium">54 min ago</span>
                 </TooltipContent>
