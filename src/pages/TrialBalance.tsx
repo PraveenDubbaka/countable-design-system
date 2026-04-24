@@ -409,7 +409,7 @@ export default function TrialBalance() {
             <table className="w-full text-sm">
               <thead className="sticky top-0 z-10">
                 <tr className="bg-muted border-b border-border">
-                  <th className="px-0 py-3 w-6 align-middle">
+                  <th className="px-0 py-3 w-3 align-middle">
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
                         <button
@@ -487,7 +487,7 @@ export default function TrialBalance() {
                     key={row.id}
                     className="border-b border-border hover:bg-muted/30 transition-colors cursor-pointer"
                   >
-                    <td className="p-0 w-6 relative">
+                    <td className="p-0 w-3 relative">
                       <div
                         className="absolute inset-0 flex items-center justify-center text-[9px] font-bold text-white tracking-wider overflow-hidden"
                         style={{ backgroundColor: cat.color, writingMode: "vertical-rl", transform: "rotate(180deg)" }}
