@@ -568,15 +568,15 @@ export default function EngagementDetail() {
             <ChevronDown className="h-3 w-3 text-sidebar-foreground/60 group-hover:text-sidebar-foreground transition-colors" />
           </button>
         </DropdownMenuTrigger>
-        <DropdownMenuContent align="start" className="w-72 bg-card border shadow-lg z-50">
+        <DropdownMenuContent align="start" className="w-auto min-w-[18rem] bg-card border shadow-lg z-50 whitespace-nowrap">
           <div className="px-2 py-1.5 text-xs font-medium text-muted-foreground">
             Engagements for {clientName}
           </div>
           <DropdownMenuSeparator />
-          {clientEngagements.map(eng => <DropdownMenuItem key={eng.id} onClick={() => handleEngagementChange(eng.id)} className="flex items-center gap-3 cursor-pointer group py-2">
+          {clientEngagements.map(eng => <DropdownMenuItem key={eng.id} onClick={() => handleEngagementChange(eng.id)} className="flex items-center gap-3 cursor-pointer group py-2 whitespace-nowrap">
               <div className="flex flex-col flex-1 min-w-0">
-                <span className="font-mono text-sm font-medium truncate">{eng.id}</span>
-                <div className="flex items-center gap-2 mt-0.5">
+                <span className="font-mono text-sm font-medium whitespace-nowrap">{eng.id}</span>
+                <div className="flex items-center gap-2 mt-0.5 whitespace-nowrap">
                   <Calendar className="h-3 w-3 text-muted-foreground group-hover:text-white transition-colors" />
                   <span className="text-xs text-muted-foreground group-hover:text-white transition-colors">{eng.yearEnd}</span>
                   <span className="text-xs text-muted-foreground group-hover:text-white transition-colors">•</span>
