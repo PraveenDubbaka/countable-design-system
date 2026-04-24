@@ -929,9 +929,18 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
                           {p.initials}
                         </div>
                         <span className="text-[9px] text-muted-foreground leading-tight whitespace-nowrap">{p.label}</span>
-                        <div className="h-6 w-6 rounded-md border border-border flex items-center justify-center bg-card">
-                          <Check className="h-3 w-3 text-muted-foreground" />
-                        </div>
+                        <button
+                          type="button"
+                          onClick={() => toggleAllSignoffs(p.id as "p1" | "p2")}
+                          aria-label={isAllSignoffsChecked(p.id as "p1" | "p2") ? `Uncheck all ${p.label} signoffs` : `Check all ${p.label} signoffs`}
+                          className="h-6 w-6 rounded-md flex items-center justify-center hover:opacity-80 transition-opacity"
+                        >
+                          <img
+                            src={isAllSignoffsChecked(p.id as "p1" | "p2") ? signoffUncheckAllIcon : signoffCheckAllIcon}
+                            alt=""
+                            className="h-6 w-6"
+                          />
+                        </button>
                       </div>
                     ))}
                   </div>
