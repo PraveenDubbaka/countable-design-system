@@ -528,7 +528,8 @@ export default function TrialBalance() {
                     </td>
                     <td className="px-6 py-2 text-right text-foreground whitespace-nowrap">{row.fxRate.toFixed(2)}</td>
                   </tr>
-                ))}
+                  );
+                })}
 
               </tbody>
               <tfoot className="sticky bottom-0 z-10">
