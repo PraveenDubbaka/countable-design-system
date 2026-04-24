@@ -547,7 +547,7 @@ export default function TrialBalance() {
 
                 {/* Net Income row */}
                 <tr className="bg-muted border-t border-border">
-                  <td className="px-6 py-2" colSpan={3}></td>
+                  <td className="px-6 py-2" colSpan={4}></td>
                   <td className="px-6 py-2 text-right font-bold text-foreground whitespace-nowrap">Net Income (loss)</td>
                   <td className="px-6 py-2 text-right font-bold text-foreground whitespace-nowrap">{formatNumber(netIncome.original)}</td>
                   <td className="px-6 py-2 text-right font-bold text-foreground whitespace-nowrap">{formatNumber(netIncome.adj)}</td>
