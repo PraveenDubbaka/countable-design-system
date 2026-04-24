@@ -20,9 +20,10 @@ const buttonVariants = cva(
         ].join(" "),
         outline: [
           "border border-[#0A3159] bg-background text-[#0A3159]",
-          "hover:bg-primary/[0.14] hover:border-[#0A3159]",
-          "active:bg-primary/[0.22] active:border-[#0A3159]",
-          "focus-visible:border-[#0A3159]",
+          "dark:border-[hsl(var(--primary))] dark:text-[hsl(var(--primary))]",
+          "hover:bg-primary/[0.14] hover:border-[#0A3159] dark:hover:border-[hsl(var(--primary))]",
+          "active:bg-primary/[0.22] active:border-[#0A3159] dark:active:border-[hsl(var(--primary))]",
+          "focus-visible:border-[#0A3159] dark:focus-visible:border-[hsl(var(--primary))]",
         ].join(" "),
         secondary: [
           "bg-muted text-secondary-foreground border border-secondary-foreground",
