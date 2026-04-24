@@ -1170,6 +1170,11 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
                   );
                 };
 
+                // Collect all node IDs for the "select all" signoff toggles
+                const collectIds = (nodes: SectionNode[]): string[] =>
+                  nodes.flatMap(n => [n.id, ...(n.children ? collectIds(n.children) : [])]);
+                allNodeIdsRef.current = collectIds(engagementTree);
+
                 return engagementTree.map(node => renderNode(node, 0));
               })()}
             </div>
