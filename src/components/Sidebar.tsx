@@ -876,11 +876,16 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
             )}
             <div className={`p-3 ${isTemplatesPanelCollapsed ? "hidden" : ""}`}>
               <div className="flex gap-2 items-start">
-                <div className="relative flex-1">
+                <div className={cn("relative transition-all duration-300 ease-in-out", isSearchFocused ? "flex-1" : "flex-1")}>
                   <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground icon-search" />
-                  <Input placeholder="Search" className="pl-9 h-9 text-sm" />
+                  <Input
+                    placeholder="Search"
+                    className="pl-9 h-9 text-sm"
+                    onFocus={() => setIsSearchFocused(true)}
+                    onBlur={() => setIsSearchFocused(false)}
+                  />
                 </div>
-                <Button size="icon" variant="ghost" className="h-9 w-9 bg-primary/10 hover:bg-primary/20"
+                <Button size="icon" variant="ghost" className="h-9 w-9 shrink-0 bg-primary/10 hover:bg-primary/20"
                   onClick={() => {
                     // All parent node IDs that have children
                     const allParentIds = [
@@ -910,16 +915,25 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
                   variant="ghost"
                   onClick={() => (signoffsMode ? exitSignoffsMode() : enterSignoffsMode())}
                   aria-label={signoffsMode ? "Close Signoffs" : "Open Signoffs"}
+                  title="Signoffs"
                   className={cn(
-                    "h-9 px-2 gap-1 text-xs font-medium text-foreground",
+                    "h-9 shrink-0 gap-1 text-xs font-medium text-foreground transition-all duration-300 ease-in-out overflow-hidden",
+                    isSearchFocused ? "w-9 px-0 justify-center" : "px-2",
                     signoffsMode ? "bg-primary/30 hover:bg-primary/40" : "bg-primary/10 hover:bg-primary/20"
                   )}
                 >
-                  <svg className="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <svg className="h-3.5 w-3.5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                     <circle cx="12" cy="12" r="10" />
                     <path d="M9 12l2 2 4-4" />
                   </svg>
-                  <span>Signoffs</span>
+                  <span
+                    className={cn(
+                      "whitespace-nowrap transition-all duration-300 ease-in-out overflow-hidden",
+                      isSearchFocused ? "max-w-0 opacity-0 ml-0" : "max-w-[80px] opacity-100"
+                    )}
+                  >
+                    Signoffs
+                  </span>
                 </Button>
                 {/* Signoffs preparer chips - inline beside the Signoffs button when active */}
                 {signoffsMode && (
