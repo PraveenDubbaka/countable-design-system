@@ -1063,7 +1063,44 @@
   .sidebar-secondary-panel.sidebar-dark-theme:not(.bg-transparent) .bg-primary\/10 {
     background-color: rgba(255, 255, 255, 0.1) !important;
   }
-  
+
+  /* Dark mode: apply the same light-text treatment to secondary sidebar panels
+     so engagements/templates menus remain legible without relying on the
+     MutationObserver-driven .sidebar-dark-theme class. */
+  .dark .sidebar-secondary-panel:not(.bg-transparent) {
+    color: rgba(255, 255, 255, 0.92) !important;
+  }
+  .dark .sidebar-secondary-panel:not(.bg-transparent) .text-primary,
+  .dark .sidebar-secondary-panel:not(.bg-transparent) .text-foreground,
+  .dark .sidebar-secondary-panel:not(.bg-transparent) .text-muted-foreground {
+    color: rgba(255, 255, 255, 0.85) !important;
+  }
+  .dark .sidebar-secondary-panel:not(.bg-transparent) .text-primary {
+    color: rgba(255, 255, 255, 0.95) !important;
+  }
+  .dark .sidebar-secondary-panel:not(.bg-transparent) .hover\:bg-muted:hover {
+    background-color: rgba(255, 255, 255, 0.1) !important;
+  }
+  .dark .sidebar-secondary-panel:not(.bg-transparent) input {
+    background-color: rgba(255, 255, 255, 0.08) !important;
+    border-color: rgba(255, 255, 255, 0.18) !important;
+    color: white !important;
+  }
+  .dark .sidebar-secondary-panel:not(.bg-transparent) input::placeholder {
+    color: rgba(255, 255, 255, 0.5) !important;
+  }
+  .dark .sidebar-secondary-panel:not(.bg-transparent) svg {
+    color: rgba(255, 255, 255, 0.75);
+  }
+  .dark .sidebar-secondary-panel:not(.bg-transparent) .bg-primary\/10 {
+    background-color: rgba(255, 255, 255, 0.1) !important;
+  }
+  /* Catch hardcoded navy text used in tree items (e.g. text-[#0c2d55]) */
+  .dark .sidebar-secondary-panel:not(.bg-transparent) [class*="text-[#0"],
+  .dark .sidebar-secondary-panel:not(.bg-transparent) [class*="text-[#1"] {
+    color: rgba(255, 255, 255, 0.9) !important;
+  }
+
   .bg-sidebar {
     background-color: hsl(var(--sidebar-bg));
   }
