@@ -194,7 +194,7 @@ export default function TrialBalance() {
   const clientEngagements = getEngagementsForClient(clientName);
 
   const trialBalanceBreadcrumb = (
-    <div className="flex items-center gap-2 whitespace-nowrap flex-shrink-0 text-sidebar-foreground">
+    <div className="flex items-center gap-1 whitespace-nowrap flex-shrink-0 text-sidebar-foreground">
       {/* Client Name (read-only) */}
       <div className="flex items-center gap-1.5 px-2 py-1">
         <div className="w-6 h-6 rounded-md bg-sidebar-foreground/12 border border-sidebar-foreground/15 flex items-center justify-center">
@@ -238,10 +238,16 @@ export default function TrialBalance() {
       {/* Status Badge */}
       <Badge
         variant={status === 'Completed' || status === 'New' ? 'completed' : status === 'Not Started' ? 'notStarted' : 'inProgress'}
-        className="ml-2 whitespace-nowrap"
+        className="ml-1 whitespace-nowrap"
       >
         {status}
       </Badge>
+
+      {/* Xero Integration Badge */}
+      <div className="ml-1 inline-flex items-center justify-center h-7 w-20 px-1 bg-card border border-border rounded-sm gap-1">
+        <img src="https://upload.wikimedia.org/wikipedia/en/9/9f/Xero_software_logo.svg" alt="Xero" className="h-4" />
+        <span className="text-xs font-medium text-foreground">Xero</span>
+      </div>
     </div>
   );
 
