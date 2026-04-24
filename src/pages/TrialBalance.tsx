@@ -409,7 +409,7 @@ export default function TrialBalance() {
             <table className="w-full text-sm">
               <thead className="sticky top-0 z-10">
                 <tr className="bg-muted border-b border-border">
-                  <th className="px-0 py-3 align-middle" style={{ width: "16px" }}>
+                  <th className="px-0 py-3 align-middle" style={{ width: "16px", minWidth: "16px", maxWidth: "16px" }}>
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
                         <button
