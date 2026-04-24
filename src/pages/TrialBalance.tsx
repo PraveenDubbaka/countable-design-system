@@ -535,7 +535,7 @@ export default function TrialBalance() {
               <tfoot className="sticky bottom-0 z-10">
                 {/* Totals row */}
                 <tr className="bg-muted border-t border-border">
-                  <td className="px-6 py-2" colSpan={4}></td>
+                  <td className="px-6 py-2" colSpan={5}></td>
                   <td className="px-6 py-2 text-right font-semibold text-foreground whitespace-nowrap">{formatNumber(totals.original)}</td>
                   <td className="px-6 py-2 text-right font-semibold text-foreground whitespace-nowrap">{formatNumber(totals.adj)}</td>
                   <td className="px-6 py-2 text-right font-semibold text-foreground whitespace-nowrap">{formatNumber(totals.final)}</td>
