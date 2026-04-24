@@ -53,14 +53,14 @@ import {
   ListFilter,
 } from "lucide-react";
 
-// Filter categories with badge colors and short labels
+// Filter categories with badge colors and short labels (matching screenshot)
 const FILTER_CATEGORIES = [
-  { id: "unmapped", label: "Unmapped", short: "UNM", color: "hsl(25 60% 50%)" },
-  { id: "autoMapped", label: "Auto Mapped", short: "AUT", color: "hsl(25 70% 45%)" },
-  { id: "newRow", label: "New row", short: "NEW", color: "hsl(40 60% 45%)" },
-  { id: "addedRow", label: "Added row", short: "ADD", color: "hsl(195 55% 50%)" },
-  { id: "changeRow", label: "Change row", short: "CHG", color: "hsl(140 45% 45%)" },
-  { id: "zeroBal", label: "$0 Bal. Acc.", short: "$0", color: "hsl(0 0% 60%)" },
+  { id: "unmapped", label: "Unmapped", short: "UNM", color: "hsl(22 45% 48%)" },
+  { id: "autoMapped", label: "Auto Mapped", short: "AUT", color: "hsl(28 55% 55%)" },
+  { id: "newRow", label: "New row", short: "NEW", color: "hsl(40 50% 50%)" },
+  { id: "addedRow", label: "Added row", short: "ADD", color: "hsl(195 45% 55%)" },
+  { id: "changeRow", label: "Change row", short: "CHG", color: "hsl(140 35% 50%)" },
+  { id: "zeroBal", label: "$0 Bal. Acc.", short: "$0", color: "hsl(0 0% 70%)" },
 ] as const;
 
 type FilterId = typeof FILTER_CATEGORIES[number]["id"];
