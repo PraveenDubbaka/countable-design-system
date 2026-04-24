@@ -950,7 +950,7 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
 
             <div className={`flex-1 overflow-y-auto scrollbar-hide p-2 pt-0 relative ${signoffsMode ? "pr-3" : ""} ${isTemplatesPanelCollapsed ? "hidden" : ""}`} style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
               {signoffsMode && (
-                <div className="pointer-events-none absolute top-0 bottom-0 w-px bg-border/60" style={{ right: "92px" }} />
+                <div className="pointer-events-none absolute top-0 bottom-0 w-px bg-border/60" style={{ right: "104px" }} />
               )}
             {/* Engagement Sections - recursive tree */}
               {(() => {
