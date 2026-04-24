@@ -315,22 +315,6 @@ export default function TrialBalance() {
                 </DropdownMenuContent>
               </DropdownMenu>
 
-              {/* Filter - dropdown */}
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="outline" size="sm" className="h-9 text-xs gap-1.5 bg-card hover:bg-muted">
-                    <span className="text-muted-foreground">≡</span> Filter by
-                    <ChevronDown className="h-3.5 w-3.5" />
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent className="bg-card border shadow-lg z-50">
-                  <DropdownMenuItem>All</DropdownMenuItem>
-                  <DropdownMenuItem>Assets</DropdownMenuItem>
-                  <DropdownMenuItem>Liabilities</DropdownMenuItem>
-                  <DropdownMenuItem>Equity</DropdownMenuItem>
-                  <DropdownMenuItem>Expenses</DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
             </div>
 
             <div className="flex items-center gap-2">
