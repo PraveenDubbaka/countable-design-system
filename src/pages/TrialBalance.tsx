@@ -50,7 +50,20 @@ import {
   Wrench,
   EyeOff,
   Eye,
+  ListFilter,
 } from "lucide-react";
+
+// Filter categories with badge colors and short labels
+const FILTER_CATEGORIES = [
+  { id: "unmapped", label: "Unmapped", short: "UNM", color: "hsl(25 60% 50%)" },
+  { id: "autoMapped", label: "Auto Mapped", short: "AUT", color: "hsl(25 70% 45%)" },
+  { id: "newRow", label: "New row", short: "NEW", color: "hsl(40 60% 45%)" },
+  { id: "addedRow", label: "Added row", short: "ADD", color: "hsl(195 55% 50%)" },
+  { id: "changeRow", label: "Change row", short: "CHG", color: "hsl(140 45% 45%)" },
+  { id: "zeroBal", label: "$0 Bal. Acc.", short: "$0", color: "hsl(0 0% 60%)" },
+] as const;
+
+type FilterId = typeof FILTER_CATEGORIES[number]["id"];
 // Engagement data for breadcrumb
 const engagementsData: Record<string, { id: string; client: string; type: string; yearEnd: string; status: string }> = {
   "COM-CON-Dec312024": { id: "COM-CON-Dec312024", client: "Shipping Line Inc.", type: "Compilation (COM)", yearEnd: "Dec 31, 2024", status: "In Progress" },
