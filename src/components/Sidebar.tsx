@@ -881,22 +881,18 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
                 </Button>
                 <Button
                   size="sm"
-                  variant={signoffsMode ? "default" : "ghost"}
+                  variant="ghost"
                   onClick={() => (signoffsMode ? exitSignoffsMode() : enterSignoffsMode())}
                   aria-label={signoffsMode ? "Close Signoffs" : "Open Signoffs"}
                   className={cn(
-                    "h-9 px-2 gap-1 text-xs font-medium",
-                    !signoffsMode && "bg-primary/10 hover:bg-primary/20 text-foreground"
+                    "h-9 px-2 gap-1 text-xs font-medium text-foreground",
+                    signoffsMode ? "bg-primary/30 hover:bg-primary/40" : "bg-primary/10 hover:bg-primary/20"
                   )}
                 >
-                  {signoffsMode ? (
-                    <X className="h-3.5 w-3.5" />
-                  ) : (
-                    <svg className="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                      <circle cx="12" cy="12" r="10" />
-                      <path d="M9 12l2 2 4-4" />
-                    </svg>
-                  )}
+                  <svg className="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <circle cx="12" cy="12" r="10" />
+                    <path d="M9 12l2 2 4-4" />
+                  </svg>
                   <span>Signoffs</span>
                 </Button>
               </div>
