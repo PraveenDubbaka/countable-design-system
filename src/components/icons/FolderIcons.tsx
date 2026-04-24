@@ -28,13 +28,13 @@ function BaseFolder({
 
       {symbol === 'plus' && (
         <g fill="#ffffff">
-          <rect x="334" y="300" width="108" height="36" rx="12" />
-          <rect x="370" y="264" width="36" height="108" rx="12" />
+          <rect x="308" y="294" width="160" height="48" rx="14" />
+          <rect x="364" y="238" width="48" height="160" rx="14" />
         </g>
       )}
 
       {symbol === 'minus' && (
-        <rect x="334" y="300" width="108" height="36" rx="12" fill="#ffffff" />
+        <rect x="308" y="294" width="160" height="48" rx="14" fill="#ffffff" />
       )}
     </svg>
   );
