@@ -700,6 +700,28 @@ export default function DesignSystem() {
                 <p className="text-label-sm text-muted-foreground mt-2">Pill shape · soft BG + matching border</p>
               </SampleCard>
 
+              <SampleCard title="Tabs">
+                <Tabs defaultValue="overview" className="w-full">
+                  <TabsList>
+                    <TabsTrigger value="overview">Overview</TabsTrigger>
+                    <TabsTrigger value="details">Details</TabsTrigger>
+                    <TabsTrigger value="activity">Activity</TabsTrigger>
+                  </TabsList>
+                  <TabsContent value="overview" className="text-body-sm text-muted-foreground">
+                    Overview tab content — high-level summary.
+                  </TabsContent>
+                  <TabsContent value="details" className="text-body-sm text-muted-foreground">
+                    Details tab content — granular specifications.
+                  </TabsContent>
+                  <TabsContent value="activity" className="text-body-sm text-muted-foreground">
+                    Activity tab content — recent events and history.
+                  </TabsContent>
+                </Tabs>
+                <p className="text-label-sm text-muted-foreground mt-3">
+                  Radix Tabs · 40px list height · 6px radius · active state uses background + soft shadow · ring-2 focus
+                </p>
+              </SampleCard>
+
               <SampleCard title="Checkbox & Switch">
                 <div className="space-y-3">
                   <div className="flex items-center gap-3">
