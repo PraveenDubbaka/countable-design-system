@@ -718,7 +718,7 @@ export default function DesignSystem() {
                   </TabsContent>
                 </Tabs>
                 <p className="text-label-sm text-muted-foreground mt-3">
-                  Radix Tabs · 40px list height · 6px radius · active state uses background + soft shadow · ring-2 focus
+                  Radix Tabs · 40px list height · 2px radius · active state uses primary background + white text · ring-2 focus
                 </p>
               </SampleCard>
 
