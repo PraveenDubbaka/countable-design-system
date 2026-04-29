@@ -27,6 +27,8 @@ import {
   generateIndependenceChecklist,
   generateKnowledgeOfClientBusinessChecklist,
   generatePlanningChecklist,
+  generateEngagementLetterChecklist,
+  generateManagementResponsibilityChecklist,
 } from "@/lib/globalTemplates";
 
 // Sample engagement data matching the engagements page
