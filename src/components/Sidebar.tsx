@@ -1046,7 +1046,7 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
                       { id: "co-kcb", code: "KCB", label: "Knowledge of client business", icon: "checklist", route: "checklist/co-kcb" },
                       { id: "co-pl", code: "PL", label: "Planning", icon: "checklist", route: "checklist/co-pl" },
                       { id: "co-el", code: "EL", label: "Engagement Letter", icon: "letter", route: "checklist/co-el" },
-                      { id: "co-mr", code: "MR", label: "Management responsibility and acknowledgem...", icon: "letter", route: "checklist/co-mr" },
+                      { id: "co-mr", code: "MR", label: "Management responsibility and acknowledgement", icon: "letter", route: "checklist/co-mr" },
                     ]
                   },
                   {
@@ -1196,12 +1196,7 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
                           if (node.route) {
                             const engId = location.pathname.split("/engagements/")[1]?.split("/")[0];
                             if (engId) {
-                              // Checklist routes navigate to base engagement page
-                              if (node.route.startsWith('checklist/')) {
-                                navigate(`/engagements/${engId}`);
-                              } else {
-                                navigate(`/engagements/${engId}/${node.route}`);
-                              }
+                              navigate(`/engagements/${engId}/${node.route}`);
                             }
                           } else if (hasChildren) {
                             setExpandedSections(prev => {
