@@ -61,6 +61,7 @@ const initialTemplates: Template[] = [{
   id: "5",
   name: "Compilation Checklists",
   type: "folder",
+  isExpanded: true,
   children: []
 }, {
   id: "6",
