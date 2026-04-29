@@ -269,7 +269,7 @@ export default function EngagementDetail() {
     // One-time migration: clear stale sample checklists saved before the
     // global template library was pulled in, so the engagement reflects the
     // new global checklist content.
-    const TEMPLATE_LIBRARY_VERSION = 'v6-global-templates-compilation-seed-2026-04';
+    const TEMPLATE_LIBRARY_VERSION = 'v7-global-templates-compilation-seed-el-mr-2026-04';
     const seenVersion = localStorage.getItem('savedChecklistsLibraryVersion');
     if (seenVersion !== TEMPLATE_LIBRARY_VERSION) {
       try {
@@ -292,13 +292,30 @@ export default function EngagementDetail() {
         seeded.forEach(item => {
           window.dispatchEvent(new CustomEvent('checklistSaved', { detail: item }));
         });
+      } else {
+        // Backfill: if seeded compilation entries are missing (e.g. EL/MR
+        // added in a later release), append them so navigation works.
+        const defaults = buildDefaultCompilationChecklists();
+        const existingIds = new Set(savedChecklists.map((c: any) => c?.id));
+        const missing = defaults.filter(d => !existingIds.has(d.id));
+        if (missing.length > 0) {
+          savedChecklists = [...savedChecklists, ...missing];
+          writeJsonToLocalStorage('savedChecklists', savedChecklists);
+          missing.forEach(item => {
+            window.dispatchEvent(new CustomEvent('checklistSaved', { detail: item }));
+          });
+        }
       }
 
       if (Array.isArray(savedChecklists) && savedChecklists.length > 0) {
-        // Use the first saved checklist's data
-        const firstChecklist = savedChecklists[0];
-        if (firstChecklist?.data) {
-          setChecklist(firstChecklist.data);
+        // Pick the requested checklist via route param, else fall back to first.
+        const targetId = checklistKey ? NAV_KEY_TO_CHECKLIST_ID[checklistKey] : undefined;
+        const requested = targetId
+          ? savedChecklists.find((c: any) => c?.id === targetId)
+          : undefined;
+        const chosen = requested ?? savedChecklists[0];
+        if (chosen?.data) {
+          setChecklist(chosen.data);
           setIsLoading(false);
           return;
         }
@@ -309,8 +326,7 @@ export default function EngagementDetail() {
       setIsLoading(false);
     }, 500);
     return () => clearTimeout(loadTimer);
-    return () => clearTimeout(loadTimer);
-  }, [engagementId]);
+  }, [engagementId, checklistKey]);
 
   // Listen for real-time sync events from templates page (same tab)
   useEffect(() => {
