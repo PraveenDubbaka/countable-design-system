@@ -150,7 +150,7 @@ function SubQuestionTableRow({
           );
 
         case 'yes-no-na':
-          const yesNoNaOptions = subQuestion.options || ['Yes', 'No', 'Not Applicable'];
+          const yesNoNaOptions = subQuestion.options || ['Yes', 'No', 'NA'];
           return (
             <div className="flex flex-wrap gap-3">
               {yesNoNaOptions.map((option) => (
@@ -247,7 +247,7 @@ function SubQuestionTableRow({
         );
 
       case 'yes-no-na':
-        const yesNoNaOptions = subQuestion.options || ['Yes', 'No', 'Not Applicable'];
+        const yesNoNaOptions = subQuestion.options || ['Yes', 'No', 'NA'];
         return (
           <div className="flex flex-wrap gap-3">
             {yesNoNaOptions.map((option) => (

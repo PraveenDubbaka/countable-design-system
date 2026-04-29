@@ -1,4 +1,4 @@
-import { useState, useMemo, useRef, useCallback } from 'react';
+import { useState, useMemo, useRef, useCallback, useEffect } from 'react';
 import { 
   DndContext, 
   closestCenter, 
@@ -28,17 +28,18 @@ import {
   FileText,
   Columns,
   ChevronDown,
+  ChevronRight,
   FileDown,
   Save,
   Pencil,
   Trash2,
-  Copy
+  Copy,
+  Check
 } from 'lucide-react';
 import { Checklist, Section, Question } from '@/types/checklist';
 import { SortableSection } from './SortableSection';
 import { FloatingActionBar } from './FloatingActionBar';
 import { Button } from '@/components/ui/button';
-import { ExpandableIconButton } from '@/components/ui/expandable-icon-button';
 import { Input } from '@/components/ui/input';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import {
@@ -52,14 +53,15 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
+import { Checkbox } from '@/components/ui/checkbox';
 import { toast } from 'sonner';
 import { RichTextToolbar } from './RichTextToolbar';
 import { useRichTextToolbarContext } from '@/contexts/RichTextToolbarContext';
 import { consolidateSectionsToThree } from '@/lib/consolidateSections';
 
-import { MondayBoardView } from './MondayBoardView';
+
+import { DocumentView } from './DocumentView';
 import { AddToMyTemplatesDialog } from './AddToMyTemplatesDialog';
-import { useSecondaryPanel } from '@/hooks/useSecondaryPanel';
 
 interface ChecklistBuilderProps {
   checklist: Checklist;
@@ -72,7 +74,6 @@ interface ChecklistBuilderProps {
 
 export function ChecklistBuilder({ checklist, onUpdate, onSave, initialPreviewMode = false, isGlobalTemplate = false, isSavedTemplate = false }: ChecklistBuilderProps) {
   const [isEditingTitle, setIsEditingTitle] = useState(false);
-  const { isCollapsed: isPanelCollapsed, toggle: togglePanel } = useSecondaryPanel();
   const [showAddMenu, setShowAddMenu] = useState(false);
   const [pendingAddType, setPendingAddType] = useState<'empty' | 'template' | 'form' | null>(null);
   const [showExportMenu, setShowExportMenu] = useState(false);
@@ -80,14 +81,40 @@ export function ChecklistBuilder({ checklist, onUpdate, onSave, initialPreviewMo
   const [isEditingObjective, setIsEditingObjective] = useState(false);
   const [objectiveDraft, setObjectiveDraft] = useState(checklist.objective || '');
   const [activeQuestion, setActiveQuestion] = useState<Question | null>(null);
-  const [isPreviewMode, setIsPreviewMode] = useState(initialPreviewMode || isSavedTemplate);
+  const [isPreviewMode, setIsPreviewMode] = useState(initialPreviewMode && !isSavedTemplate);
   const [isCompactMode, setIsCompactMode] = useState(false);
   const [selectedQuestions, setSelectedQuestions] = useState<Set<string>>(new Set());
   const [showAddToMyTemplatesDialog, setShowAddToMyTemplatesDialog] = useState(false);
   const [isEditMode, setIsEditMode] = useState(false); // For saved templates edit mode
+  const [autoSaveEnabled, setAutoSaveEnabled] = useState(true);
+  const [lastAutoSaveTime, setLastAutoSaveTime] = useState<Date | null>(null);
+  const autoSaveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const isFirstRender = useRef(true);
   
   const objectiveTextareaRef = useRef<HTMLTextAreaElement>(null);
   const { toolbarState, showToolbar, hideToolbar, handleFormatAction, toolbarRef } = useRichTextToolbarContext();
+
+  // Auto-save effect: debounce save when checklist changes in edit mode
+  const isInEditMode = isSavedTemplate ? isEditMode : !isPreviewMode;
+  useEffect(() => {
+    if (isFirstRender.current) {
+      isFirstRender.current = false;
+      return;
+    }
+    if (!autoSaveEnabled || !isInEditMode || !onSave) return;
+
+    if (autoSaveTimerRef.current) clearTimeout(autoSaveTimerRef.current);
+
+    autoSaveTimerRef.current = setTimeout(() => {
+      onSave();
+      setLastAutoSaveTime(new Date());
+    }, 1500);
+
+    return () => {
+      if (autoSaveTimerRef.current) clearTimeout(autoSaveTimerRef.current);
+    };
+  }, [checklist, autoSaveEnabled, isInEditMode, onSave]);
+
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -414,17 +441,7 @@ export function ChecklistBuilder({ checklist, onUpdate, onSave, initialPreviewMo
     <div className="flex-1 flex flex-col h-full overflow-hidden bg-background">
       {/* Top Toolbar */}
       <div className="border-b bg-card px-6 py-3 flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <button
-            onClick={togglePanel}
-            aria-label={isPanelCollapsed ? "Expand templates panel" : "Collapse templates panel"}
-            title={isPanelCollapsed ? "Expand templates panel" : "Collapse templates panel"}
-            className="w-7 h-7 rounded-md flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-muted transition-colors flex-shrink-0"
-          >
-            <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24" width="16" height="16" className="shrink-0" aria-hidden="true">
-              <path fill="currentColor" d="M20.25 7c0-.69-.56-1.25-1.25-1.25H9.75v12.5H19c.69 0 1.25-.56 1.25-1.25zM3.75 17c0 .69.56 1.25 1.25 1.25h3.25V5.75H5c-.69 0-1.25.56-1.25 1.25zm18 0A2.75 2.75 0 0 1 19 19.75H5A2.75 2.75 0 0 1 2.25 17V7A2.75 2.75 0 0 1 5 4.25h14A2.75 2.75 0 0 1 21.75 7z"></path>
-            </svg>
-          </button>
+        <div className="flex items-center gap-4">
           {isPreviewMode ? (
             <h1 className="text-lg font-semibold px-2 py-1">
               {checklist.title}
@@ -455,15 +472,37 @@ export function ChecklistBuilder({ checklist, onUpdate, onSave, initialPreviewMo
             isEditMode ? (
               /* Edit mode buttons: Duplicate, Delete, Cancel, Save */
               <TooltipProvider>
-                <AlertDialog>
-                  <AlertDialogTrigger asChild>
-                    <ExpandableIconButton 
-                      variant="outline" 
-                      icon={<Copy className="h-4 w-4" />}
-                      label="Duplicate"
-                      className="hover:bg-[#1C63A6] hover:text-white hover:border-[#1C63A6] transition-colors"
+                {/* Auto-save toggle & status */}
+                <div className="flex flex-col mr-2">
+                  <label className="flex items-center gap-1.5 text-sm font-medium text-foreground cursor-pointer select-none">
+                    <Checkbox
+                      checked={autoSaveEnabled}
+                      onCheckedChange={(checked) => setAutoSaveEnabled(checked === true)}
+                      className="h-4 w-4"
                     />
-                  </AlertDialogTrigger>
+                    Auto Save
+                  </label>
+                  {autoSaveEnabled && lastAutoSaveTime && (
+                    <span className="text-xs text-muted-foreground ml-6">
+                      Last saved {lastAutoSaveTime.toLocaleDateString([], { month: 'short', day: 'numeric', year: 'numeric' })} {lastAutoSaveTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })}
+                    </span>
+                  )}
+                </div>
+                <AlertDialog>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <AlertDialogTrigger asChild>
+                        <Button 
+                          variant="outline" 
+                          size="icon" 
+                          className="h-9 w-9 hover:bg-[#1C63A6] hover:text-white hover:border-[#1C63A6] transition-colors"
+                        >
+                          <Copy className="h-4 w-4" />
+                        </Button>
+                      </AlertDialogTrigger>
+                    </TooltipTrigger>
+                    <TooltipContent>Duplicate</TooltipContent>
+                  </Tooltip>
                   <AlertDialogContent>
                     <AlertDialogHeader>
                       <AlertDialogTitle>Duplicate Checklist</AlertDialogTitle>
@@ -481,14 +520,20 @@ export function ChecklistBuilder({ checklist, onUpdate, onSave, initialPreviewMo
                 </AlertDialog>
                 
                 <AlertDialog>
-                  <AlertDialogTrigger asChild>
-                    <ExpandableIconButton 
-                      variant="outline" 
-                      icon={<Trash2 className="h-4 w-4" />}
-                      label="Delete"
-                      className="bg-destructive text-white border-destructive hover:bg-destructive/90 transition-colors"
-                    />
-                  </AlertDialogTrigger>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <AlertDialogTrigger asChild>
+                        <Button 
+                          variant="outline" 
+                          size="icon" 
+                          className="h-9 w-9 bg-destructive text-white border-destructive hover:bg-destructive/90 transition-colors"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </AlertDialogTrigger>
+                    </TooltipTrigger>
+                    <TooltipContent>Delete</TooltipContent>
+                  </Tooltip>
                   <AlertDialogContent>
                     <AlertDialogHeader>
                       <AlertDialogTitle>Delete Checklist</AlertDialogTitle>
@@ -508,6 +553,7 @@ export function ChecklistBuilder({ checklist, onUpdate, onSave, initialPreviewMo
                   </AlertDialogContent>
                 </AlertDialog>
                 
+
                 <Tooltip>
                   <TooltipTrigger asChild>
                     <Button 
@@ -516,6 +562,7 @@ export function ChecklistBuilder({ checklist, onUpdate, onSave, initialPreviewMo
                       className="h-9 gap-2"
                       onClick={() => {
                         setIsEditMode(false);
+                        setSelectedQuestions(new Set());
                         setIsPreviewMode(true);
                       }}
                     >
@@ -533,6 +580,7 @@ export function ChecklistBuilder({ checklist, onUpdate, onSave, initialPreviewMo
                       onClick={() => {
                         onSave?.();
                         setIsEditMode(false);
+                        setSelectedQuestions(new Set());
                         setIsPreviewMode(true);
                       }}
                     >
@@ -567,23 +615,57 @@ export function ChecklistBuilder({ checklist, onUpdate, onSave, initialPreviewMo
           ) : (
             /* Original logic for non-saved templates */
             <>
-              {!isPreviewMode && (
-                <>
-                  <ExpandableIconButton 
-                    icon={<Save className="h-4 w-4" />}
-                    label="Save"
-                    onClick={onSave}
-                  />
+              {!isPreviewMode ? (
+                <TooltipProvider>
+                  {/* Auto-save toggle & status */}
+                  <div className="flex flex-col mr-2">
+                    <label className="flex items-center gap-1.5 text-sm font-medium text-foreground cursor-pointer select-none">
+                      <Checkbox
+                        checked={autoSaveEnabled}
+                        onCheckedChange={(checked) => setAutoSaveEnabled(checked === true)}
+                        className="h-4 w-4"
+                      />
+                      Auto Save
+                    </label>
+                    {autoSaveEnabled && lastAutoSaveTime && (
+                      <span className="text-xs text-muted-foreground ml-6">
+                        Last saved {lastAutoSaveTime.toLocaleDateString([], { month: 'short', day: 'numeric', year: 'numeric' })} {lastAutoSaveTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })}
+                      </span>
+                    )}
+                  </div>
+
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button 
+                        size="icon" 
+                        className="h-9 w-9"
+                        onClick={() => {
+                          onSave?.();
+                          setSelectedQuestions(new Set());
+                          setIsPreviewMode(true);
+                        }}
+                      >
+                        <Save className="h-4 w-4" />
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>Save</TooltipContent>
+                  </Tooltip>
                   
                   <AlertDialog>
-                    <AlertDialogTrigger asChild>
-                      <ExpandableIconButton 
-                        variant="outline" 
-                        icon={<Copy className="h-4 w-4" />}
-                        label="Duplicate"
-                        className="hover:bg-[#1C63A6] hover:text-white hover:border-[#1C63A6] transition-colors"
-                      />
-                    </AlertDialogTrigger>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <AlertDialogTrigger asChild>
+                          <Button 
+                            variant="outline" 
+                            size="icon" 
+                            className="h-9 w-9 hover:bg-[#1C63A6] hover:text-white hover:border-[#1C63A6] transition-colors"
+                          >
+                            <Copy className="h-4 w-4" />
+                          </Button>
+                        </AlertDialogTrigger>
+                      </TooltipTrigger>
+                      <TooltipContent>Duplicate</TooltipContent>
+                    </Tooltip>
                     <AlertDialogContent>
                       <AlertDialogHeader>
                         <AlertDialogTitle>Duplicate Checklist</AlertDialogTitle>
@@ -601,14 +683,20 @@ export function ChecklistBuilder({ checklist, onUpdate, onSave, initialPreviewMo
                   </AlertDialog>
                   
                   <AlertDialog>
-                    <AlertDialogTrigger asChild>
-                      <ExpandableIconButton 
-                        variant="outline" 
-                        icon={<Trash2 className="h-4 w-4" />}
-                        label="Delete"
-                        className="bg-destructive text-white border-destructive hover:bg-destructive/90 transition-colors"
-                      />
-                    </AlertDialogTrigger>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <AlertDialogTrigger asChild>
+                          <Button 
+                            variant="outline" 
+                            size="icon" 
+                            className="h-9 w-9 bg-destructive text-white border-destructive hover:bg-destructive/90 transition-colors"
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </AlertDialogTrigger>
+                      </TooltipTrigger>
+                      <TooltipContent>Delete</TooltipContent>
+                    </Tooltip>
                     <AlertDialogContent>
                       <AlertDialogHeader>
                         <AlertDialogTitle>Delete Checklist</AlertDialogTitle>
@@ -627,137 +715,65 @@ export function ChecklistBuilder({ checklist, onUpdate, onSave, initialPreviewMo
                       </AlertDialogFooter>
                     </AlertDialogContent>
                   </AlertDialog>
-                </>
-              )}
-              
-              {isGlobalTemplate ? (
-                /* For Global Templates: Show "Add to My Templates" button instead of Edit */
-                <ExpandableIconButton 
-                  variant="default"
-                  icon={<Plus className="h-4 w-4" />}
-                  label="Add to My Templates"
-                  onClick={() => setShowAddToMyTemplatesDialog(true)}
-                />
+                </TooltipProvider>
               ) : (
-                /* For regular templates: Show Edit/Preview toggle */
-                <ExpandableIconButton 
-                  variant="outline" 
-                  icon={isPreviewMode ? <Pencil className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                  label={isPreviewMode ? 'Edit' : 'Preview'}
-                  className="hover:bg-[#1C63A6] hover:text-white hover:border-[#1C63A6] transition-colors"
-                  onClick={() => setIsPreviewMode(!isPreviewMode)}
-                />
+                <TooltipProvider>
+                  {isGlobalTemplate ? (
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Button 
+                          variant="default"
+                          size="icon"
+                          className="h-9 w-9"
+                          onClick={() => setShowAddToMyTemplatesDialog(true)}
+                        >
+                          <Plus className="h-4 w-4" />
+                        </Button>
+                      </TooltipTrigger>
+                      <TooltipContent>Add to My Templates</TooltipContent>
+                    </Tooltip>
+                  ) : (
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Button 
+                          variant="outline" 
+                          size="icon"
+                          className="h-9 w-9 hover:bg-[#1C63A6] hover:text-white hover:border-[#1C63A6] transition-colors"
+                          onClick={() => setIsPreviewMode(false)}
+                        >
+                          <Pencil className="h-4 w-4" />
+                        </Button>
+                      </TooltipTrigger>
+                      <TooltipContent>Edit</TooltipContent>
+                    </Tooltip>
+                  )}
+                </TooltipProvider>
               )}
             </>
           )}
         </div>
       </div>
 
-      <div className="flex-1 overflow-y-auto px-4 sm:px-6 py-4 sm:py-6 bg-background border-t border-border">
+      <div className="flex-1 overflow-y-auto px-4 sm:px-6 py-4 sm:py-6 bg-white border-t border-border">
         <div className="w-full">
-          {/* Objective accordion */}
-          <div className="mb-6 bg-card rounded-lg overflow-hidden shadow-md border-t border-border">
-            <button 
-              onClick={() => setObjectiveExpanded(!objectiveExpanded)}
-              className="w-full flex items-center gap-2 bg-muted/50 px-4 py-3 text-muted-foreground hover:text-foreground transition-colors border-b border-border"
-            >
-              <ChevronDown className={`h-4 w-4 transition-transform ${objectiveExpanded ? 'rotate-180' : ''}`} />
-              <span className="text-sm font-medium">Objective</span>
-            </button>
-            
-            {objectiveExpanded && (
-              <div className="bg-card p-4">
-                {isEditingObjective && !isPreviewMode ? (
-                  <div className="space-y-3">
-                    <textarea
-                      ref={objectiveTextareaRef}
-                      value={objectiveDraft}
-                      onChange={(e) => setObjectiveDraft(e.target.value)}
-                      onFocus={(e) => showToolbar(e.target)}
-                      onBlur={(e) => {
-                        // Delay hiding to allow toolbar clicks
-                        setTimeout(() => {
-                          if (!e.relatedTarget?.closest('[data-rich-text-toolbar]')) {
-                            // Don't hide if clicking toolbar
-                          }
-                        }, 100);
-                      }}
-                      onSelect={(e) => {
-                        const target = e.target as HTMLTextAreaElement;
-                        if (target.selectionStart !== target.selectionEnd) {
-                          showToolbar(target);
-                        }
-                      }}
-                      className="w-full min-h-[200px] p-3 bg-background border rounded-lg text-sm resize-y focus:outline-none focus:ring-2 focus:ring-primary"
-                      placeholder="Enter the objective for this checklist..."
-                      autoFocus
-                    />
-                    <div className="flex items-center gap-2 justify-end">
-                      <Button 
-                        variant="outline" 
-                        size="sm"
-                        onClick={() => {
-                          setObjectiveDraft(checklist.objective || '');
-                          setIsEditingObjective(false);
-                          hideToolbar();
-                        }}
-                      >
-                        Cancel
-                      </Button>
-                      <Button 
-                        size="sm"
-                        onClick={() => {
-                          onUpdate({ ...checklist, objective: objectiveDraft });
-                          setIsEditingObjective(false);
-                          hideToolbar();
-                        }}
-                      >
-                        Save
-                      </Button>
-                    </div>
-                  </div>
-                ) : (
-                  <div 
-                    onClick={() => !isPreviewMode && setIsEditingObjective(true)}
-                    className={`rounded-lg p-3 -m-3 transition-colors ${!isPreviewMode ? 'cursor-pointer hover:bg-muted/50 group' : ''}`}
-                  >
-                    {checklist.objective ? (
-                      <p className="text-sm text-foreground whitespace-pre-wrap leading-relaxed">
-                        {checklist.objective}
-                      </p>
-                    ) : (
-                      !isPreviewMode && (
-                        <p className="text-sm text-muted-foreground italic">
-                          Click to add objective...
-                        </p>
-                      )
-                    )}
-                    {!isPreviewMode && (
-                      <p className="text-xs text-muted-foreground mt-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                        Click to edit
-                      </p>
-                    )}
-                  </div>
-                )}
-              </div>
-            )}
-          </div>
-
-          {/* Monday-style Board View */}
-          <MondayBoardView
+          {/* Document View for both edit and preview mode */}
+          <DocumentView
+            objectiveExpanded={objectiveExpanded}
+            onToggleObjective={() => setObjectiveExpanded(prev => !prev)}
             checklist={checklist}
             onUpdate={onUpdate}
             isPreviewMode={isPreviewMode}
             isCompactMode={isCompactMode}
-            selectedQuestions={selectedQuestions}
-            onSelectionChange={setSelectedQuestions}
+            selectedQuestions={isPreviewMode ? new Set<string>() : selectedQuestions}
+            onSelectionChange={isPreviewMode ? undefined : setSelectedQuestions}
+            isGlobalTemplate={isGlobalTemplate}
           />
 
         </div>
       </div>
 
-      {/* Floating Action Bar - visible in preview mode for collapse/expand/reorder */}
-      <FloatingActionBar
+      {/* Floating Action Bar - visible in preview mode for collapse/expand/reorder, hidden for global templates */}
+      {!isGlobalTemplate && <FloatingActionBar
         checklist={checklist}
         onUpdate={onUpdate}
         onCollapseSections={handleCollapseSections}
@@ -772,7 +788,7 @@ export function ChecklistBuilder({ checklist, onUpdate, onSave, initialPreviewMo
         onBulkDelete={handleBulkDelete}
         onAddCategory={handleAddCategoryAtPosition}
         isPreviewMode={isPreviewMode}
-      />
+      />}
 
 
       {/* Rich Text Toolbar - Hidden in preview mode */}

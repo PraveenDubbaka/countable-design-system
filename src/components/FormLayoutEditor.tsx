@@ -88,7 +88,7 @@ const LabeledInput = ({
           input-double-border w-full h-9 px-3 py-2 text-sm text-foreground rounded-[10px] outline-none transition-all duration-200
           ${disabled 
             ? 'bg-muted border border-transparent text-muted-foreground opacity-60 cursor-not-allowed' 
-            : 'bg-card border border-border hover:border-[hsl(210_25%_75%)]'
+            : 'bg-white border border-[#dcdfe4] hover:border-[hsl(210_25%_75%)]'
           }
         `}
       />
@@ -130,7 +130,7 @@ const LabeledTextarea = ({
           input-double-border w-full px-3 py-2 text-sm text-foreground rounded-[10px] outline-none transition-all duration-200 resize-none
           ${disabled 
             ? 'bg-muted border border-transparent text-muted-foreground opacity-60 cursor-not-allowed' 
-            : 'bg-card border border-border hover:border-[hsl(210_25%_75%)]'
+            : 'bg-white border border-[#dcdfe4] hover:border-[hsl(210_25%_75%)]'
           }
         `}
       />
@@ -171,7 +171,7 @@ const LabeledSelect = ({
             input-double-border w-full h-9 px-3 py-2 text-sm text-foreground rounded-[10px] outline-none transition-all duration-200 appearance-none cursor-pointer
             ${disabled 
               ? 'bg-muted border border-transparent text-muted-foreground opacity-60 cursor-not-allowed' 
-              : 'bg-card border border-border hover:border-[hsl(210_25%_75%)]'
+              : 'bg-white border border-[#dcdfe4] hover:border-[hsl(210_25%_75%)]'
             }
           `}
         >
@@ -208,7 +208,7 @@ const LabeledDatePicker = ({
         <PopoverTrigger asChild>
           <button
             className={cn(
-              "input-double-border w-full h-9 px-3 py-2 text-sm text-left rounded-[10px] outline-none transition-all duration-200 flex items-center justify-between bg-card border border-border hover:border-[hsl(210_25%_75%)]",
+              "input-double-border w-full h-9 px-3 py-2 text-sm text-left rounded-[10px] outline-none transition-all duration-200 flex items-center justify-between bg-white border border-[#dcdfe4] hover:border-[hsl(210_25%_75%)]",
               !date && "text-muted-foreground"
             )}
           >
@@ -278,7 +278,7 @@ export function FormLayoutEditor({ formLayout, onUpdate, isPreviewMode }: FormLa
 
     if (element.type === 'empty') {
       return (
-        <div className="h-full min-h-[80px] flex items-center justify-center border-2 border-dashed border-border rounded-lg bg-muted/40/50 hover:border-primary/50 hover:bg-primary/5 transition-all">
+        <div className="h-full min-h-[80px] flex items-center justify-center border-2 border-dashed border-[#E8EDF2] rounded-lg bg-[#F5F8FA]/50 hover:border-primary/50 hover:bg-primary/5 transition-all">
           <Popover>
             <PopoverTrigger asChild>
               <button className="flex flex-col items-center gap-2 text-muted-foreground hover:text-primary transition-colors p-4">
@@ -292,7 +292,7 @@ export function FormLayoutEditor({ formLayout, onUpdate, isPreviewMode }: FormLa
                   <button
                     key={opt.type}
                     onClick={() => handleSetElementType(index, opt.type)}
-                    className="flex items-center gap-2 px-3 py-2 text-sm text-foreground hover:bg-muted/40 rounded-md transition-colors"
+                    className="flex items-center gap-2 px-3 py-2 text-sm text-foreground hover:bg-[#F5F8FA] rounded-md transition-colors"
                   >
                     <opt.icon className="h-4 w-4 text-muted-foreground" />
                     {opt.label}
@@ -306,12 +306,12 @@ export function FormLayoutEditor({ formLayout, onUpdate, isPreviewMode }: FormLa
     }
 
     return (
-      <div className="h-full min-h-[80px] flex flex-col bg-card rounded-lg p-4 group relative border border-border">
+      <div className="h-full min-h-[80px] flex flex-col bg-white rounded-lg p-4 group relative border border-[#E8EDF2]">
         {/* Element controls */}
         <div className="absolute top-2 right-2 flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
           <Popover>
             <PopoverTrigger asChild>
-              <button className="p-1.5 text-muted-foreground hover:text-foreground hover:bg-muted/40 rounded transition-colors">
+              <button className="p-1.5 text-muted-foreground hover:text-foreground hover:bg-[#F5F8FA] rounded transition-colors">
                 <ChevronDown className="h-4 w-4" />
               </button>
             </PopoverTrigger>
@@ -322,7 +322,7 @@ export function FormLayoutEditor({ formLayout, onUpdate, isPreviewMode }: FormLa
                     key={opt.type}
                     onClick={() => handleSetElementType(index, opt.type)}
                     className={`flex items-center gap-2 px-3 py-2 text-sm rounded-md transition-colors ${
-                      element.type === opt.type ? 'bg-primary/10 text-primary' : 'text-foreground hover:bg-muted/40'
+                      element.type === opt.type ? 'bg-primary/10 text-primary' : 'text-foreground hover:bg-[#F5F8FA]'
                     }`}
                   >
                     <opt.icon className="h-4 w-4" />
@@ -407,7 +407,7 @@ export function FormLayoutEditor({ formLayout, onUpdate, isPreviewMode }: FormLa
             ))}
             <button
               onClick={() => handleUpdateElement(index, { options: [...(element.options || []), `Option ${(element.options?.length || 0) + 1}`] })}
-              className="text-xs text-link hover:underline font-medium"
+              className="text-xs text-primary hover:underline font-medium"
             >
               + Add option
             </button>
@@ -416,7 +416,7 @@ export function FormLayoutEditor({ formLayout, onUpdate, isPreviewMode }: FormLa
       
       case 'checkbox':
         return (
-          <div className="flex items-center gap-3 p-3 bg-muted/40 rounded-lg">
+          <div className="flex items-center gap-3 p-3 bg-[#F5F8FA] rounded-lg">
             <Checkbox disabled />
             <span className="text-sm text-muted-foreground">Checkbox preview</span>
           </div>
@@ -424,7 +424,7 @@ export function FormLayoutEditor({ formLayout, onUpdate, isPreviewMode }: FormLa
       
       case 'date':
         return (
-          <div className="flex items-center gap-3 p-3 bg-muted/40 rounded-lg">
+          <div className="flex items-center gap-3 p-3 bg-[#F5F8FA] rounded-lg">
             <CalendarIcon className="h-4 w-4 text-muted-foreground" />
             <span className="text-sm text-muted-foreground">Date picker preview</span>
           </div>
@@ -465,7 +465,7 @@ export function FormLayoutEditor({ formLayout, onUpdate, isPreviewMode }: FormLa
                         className={`flex items-center gap-2 px-3 py-2 rounded-lg border transition-all ${
                           isSelected 
                             ? 'border-primary bg-primary/10 text-primary' 
-                            : 'border-border bg-muted/40 text-muted-foreground hover:border-primary/50 hover:text-foreground'
+                            : 'border-[#E8EDF2] bg-[#F5F8FA] text-muted-foreground hover:border-primary/50 hover:text-foreground'
                         }`}
                         title={iconOpt.label}
                       >
@@ -596,7 +596,7 @@ export function FormLayoutEditor({ formLayout, onUpdate, isPreviewMode }: FormLa
             {!isPreviewMode && formLayout.columns > 1 && (
               <button
                 onClick={() => handleRemoveColumn(index)}
-                className="absolute -top-2 -right-2 z-10 p-1 bg-card border border-border rounded-full shadow-sm text-muted-foreground hover:text-destructive hover:border-destructive/50 transition-colors"
+                className="absolute -top-2 -right-2 z-10 p-1 bg-white border border-[#E8EDF2] rounded-full shadow-sm text-muted-foreground hover:text-destructive hover:border-destructive/50 transition-colors"
                 title="Remove column"
               >
                 <Trash2 className="h-3 w-3" />
@@ -610,7 +610,7 @@ export function FormLayoutEditor({ formLayout, onUpdate, isPreviewMode }: FormLa
         {!isPreviewMode && formLayout.columns < 5 && (
           <button
             onClick={handleAddColumn}
-            className="h-full min-h-[80px] flex items-center justify-center border-2 border-dashed border-border rounded-lg text-muted-foreground hover:border-primary/50 hover:text-primary hover:bg-primary/5 transition-all"
+            className="h-full min-h-[80px] flex items-center justify-center border-2 border-dashed border-[#E8EDF2] rounded-lg text-muted-foreground hover:border-primary/50 hover:text-primary hover:bg-primary/5 transition-all"
           >
             <div className="flex flex-col items-center gap-1">
               <Plus className="h-5 w-5" />

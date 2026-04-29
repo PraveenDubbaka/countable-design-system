@@ -8,14 +8,20 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Share2, Monitor, X, Check } from "lucide-react";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Label } from "@/components/ui/label";
+import { Share2, Monitor, Smartphone, X, Check } from "lucide-react";
 import { toast } from "sonner";
+
+type ShareScope = "all" | "selected";
+type ShareMethod = "portal" | "app";
 
 interface ShareWithClientDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   checklistName?: string;
-  onConfirm?: () => void;
+  onConfirm?: (scope: ShareScope, method: ShareMethod) => void;
+  hasSelectedQuestions?: boolean;
 }
 
 export function ShareWithClientDialog({
@@ -23,24 +29,40 @@ export function ShareWithClientDialog({
   onOpenChange,
   checklistName,
   onConfirm,
+  hasSelectedQuestions = false,
 }: ShareWithClientDialogProps) {
   const [clientPortalSelected, setClientPortalSelected] = useState(false);
+  const [clientAppSelected, setClientAppSelected] = useState(false);
+  const [shareScope, setShareScope] = useState<ShareScope>("all");
+
+  const reset = () => {
+    setClientPortalSelected(false);
+    setClientAppSelected(false);
+    setShareScope("all");
+  };
 
   const handleConfirm = () => {
-    if (clientPortalSelected) {
-      onConfirm?.();
-      toast.success(`Checklist shared via Client Portal`);
-    } else {
+    if (!clientPortalSelected && !clientAppSelected) {
       toast.error("Please select a sharing method");
       return;
     }
+    // Client App takes priority when chosen — opens preview flow
+    const method: ShareMethod = clientAppSelected ? "app" : "portal";
+    onConfirm?.(shareScope, method);
+    if (method === "portal") {
+      toast.success(
+        shareScope === "all"
+          ? "All questions shared via Client Portal"
+          : "Selected questions shared via Client Portal"
+      );
+    }
     onOpenChange(false);
-    setClientPortalSelected(false);
+    reset();
   };
 
   const handleCancel = () => {
     onOpenChange(false);
-    setClientPortalSelected(false);
+    reset();
   };
 
   return (
@@ -55,27 +77,96 @@ export function ShareWithClientDialog({
           </DialogTitle>
         </DialogHeader>
 
-        <div className="py-4">
-          <p className="text-sm font-medium text-muted-foreground mb-3">
-            Share Via
-          </p>
-          <div className="space-y-2">
-            <label
-              className={`flex items-center gap-3 p-3 rounded-lg border cursor-pointer transition-colors ${
-                clientPortalSelected
-                  ? "border-primary bg-primary/5"
-                  : "border-border hover:bg-muted/50"
-              }`}
+        <div className="py-4 space-y-4">
+          {/* Share scope */}
+          <div>
+            <p className="text-sm font-medium text-muted-foreground mb-3">
+              What to Share
+            </p>
+            <RadioGroup
+              value={shareScope}
+              onValueChange={(v) => setShareScope(v as ShareScope)}
+              className="space-y-2"
             >
-              <Checkbox
-                checked={clientPortalSelected}
-                onCheckedChange={(checked) =>
-                  setClientPortalSelected(checked === true)
-                }
-              />
-              <Monitor className="h-4 w-4 text-emerald-600" />
-              <span className="text-sm font-medium">Client Portal</span>
-            </label>
+              <label
+                className={`flex items-center gap-3 p-3 rounded-lg border cursor-pointer transition-colors ${
+                  shareScope === "all"
+                    ? "border-primary bg-primary/5"
+                    : "border-border hover:bg-muted/50"
+                }`}
+              >
+                <RadioGroupItem value="all" id="share-all" />
+                <Label htmlFor="share-all" className="text-sm font-medium cursor-pointer">
+                  Share All Questions
+                </Label>
+              </label>
+              <label
+                className={`flex items-center gap-3 p-3 rounded-lg border cursor-pointer transition-colors ${
+                  shareScope === "selected"
+                    ? "border-primary bg-primary/5"
+                    : "border-border hover:bg-muted/50"
+                } ${!hasSelectedQuestions ? "opacity-50 cursor-not-allowed" : ""}`}
+              >
+                <RadioGroupItem value="selected" id="share-selected" disabled={!hasSelectedQuestions} />
+                <Label
+                  htmlFor="share-selected"
+                  className={`text-sm font-medium ${hasSelectedQuestions ? "cursor-pointer" : "cursor-not-allowed"}`}
+                >
+                  Share Selected Questions
+                  {!hasSelectedQuestions && (
+                    <span className="block text-xs text-muted-foreground font-normal mt-0.5">
+                      No questions selected
+                    </span>
+                  )}
+                </Label>
+              </label>
+            </RadioGroup>
+          </div>
+
+          {/* Share method */}
+          <div>
+            <p className="text-sm font-medium text-muted-foreground mb-3">
+              Share Via
+            </p>
+            <div className="space-y-2">
+              <label
+                className={`flex items-center gap-3 p-3 rounded-lg border cursor-pointer transition-colors ${
+                  clientPortalSelected
+                    ? "border-primary bg-primary/5"
+                    : "border-border hover:bg-muted/50"
+                }`}
+              >
+                <Checkbox
+                  checked={clientPortalSelected}
+                  onCheckedChange={(checked) =>
+                    setClientPortalSelected(checked === true)
+                  }
+                />
+                <Monitor className="h-4 w-4 text-emerald-600" />
+                <span className="text-sm font-medium">Client Portal</span>
+              </label>
+              <label
+                className={`flex items-center gap-3 p-3 rounded-lg border cursor-pointer transition-colors ${
+                  clientAppSelected
+                    ? "border-primary bg-primary/5"
+                    : "border-border hover:bg-muted/50"
+                }`}
+              >
+                <Checkbox
+                  checked={clientAppSelected}
+                  onCheckedChange={(checked) =>
+                    setClientAppSelected(checked === true)
+                  }
+                />
+                <Smartphone className="h-4 w-4 text-blue-600" />
+                <div className="flex-1">
+                  <span className="text-sm font-medium block">Client App</span>
+                  <span className="text-xs text-muted-foreground">
+                    Preview how your client will respond on mobile
+                  </span>
+                </div>
+              </label>
+            </div>
           </div>
         </div>
 
@@ -90,7 +181,7 @@ export function ShareWithClientDialog({
           </Button>
           <Button
             onClick={handleConfirm}
-            disabled={!clientPortalSelected}
+            disabled={!clientPortalSelected && !clientAppSelected}
             className="flex-1"
           >
             <Check className="h-4 w-4" />
