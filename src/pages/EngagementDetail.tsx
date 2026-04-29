@@ -166,6 +166,11 @@ const NAV_KEY_TO_CHECKLIST_ID: Record<string, string> = {
   "co-mr": "default-compilation-mr",
 };
 
+const LEGACY_COMPILATION_CHECKLIST_IDS = new Set([
+  "default-compilation-engagement-letter",
+  "default-compilation-mgmt-responsibility",
+]);
+
 export default function EngagementDetail() {
   const {
     engagementId,
@@ -203,6 +208,7 @@ export default function EngagementDetail() {
   // Get unique clients and current client's engagements
   const uniqueClients = useMemo(() => getUniqueClients(), []);
   const clientEngagements = useMemo(() => getEngagementsForClient(clientName), [clientName]);
+  const currentChecklistId = checklistKey ? NAV_KEY_TO_CHECKLIST_ID[checklistKey] : undefined;
 
   // Handle client change - show dialog with engagements
   const handleClientChange = (newClient: string) => {
@@ -269,7 +275,7 @@ export default function EngagementDetail() {
     // One-time migration: clear stale sample checklists saved before the
     // global template library was pulled in, so the engagement reflects the
     // new global checklist content.
-    const TEMPLATE_LIBRARY_VERSION = 'v7-global-templates-compilation-seed-el-mr-2026-04';
+    const TEMPLATE_LIBRARY_VERSION = 'v8-global-templates-letter-content-2026-04';
     const seenVersion = localStorage.getItem('savedChecklistsLibraryVersion');
     if (seenVersion !== TEMPLATE_LIBRARY_VERSION) {
       try {
@@ -293,13 +299,17 @@ export default function EngagementDetail() {
           window.dispatchEvent(new CustomEvent('checklistSaved', { detail: item }));
         });
       } else {
-        // Backfill: if seeded compilation entries are missing (e.g. EL/MR
-        // added in a later release), append them so navigation works.
+        // Backfill: keep seeded compilation entries current (including the
+        // letter-content templates) and remove legacy duplicate EL/MR ids.
         const defaults = buildDefaultCompilationChecklists();
+        const defaultById = new Map(defaults.map(item => [item.id, item]));
         const existingIds = new Set(savedChecklists.map((c: any) => c?.id));
         const missing = defaults.filter(d => !existingIds.has(d.id));
-        if (missing.length > 0) {
-          savedChecklists = [...savedChecklists, ...missing];
+        const refreshed = savedChecklists
+          .filter((c: any) => !LEGACY_COMPILATION_CHECKLIST_IDS.has(c?.id))
+          .map((c: any) => defaultById.get(c?.id) ?? c);
+        if (missing.length > 0 || refreshed.length !== savedChecklists.length || refreshed.some((item: any, idx: number) => item !== savedChecklists[idx])) {
+          savedChecklists = [...refreshed, ...missing];
           writeJsonToLocalStorage('savedChecklists', savedChecklists);
           missing.forEach(item => {
             window.dispatchEvent(new CustomEvent('checklistSaved', { detail: item }));
@@ -360,8 +370,8 @@ export default function EngagementDetail() {
     // In preview mode, we also save changes back to localStorage and dispatch sync
     const savedChecklists = readJsonFromLocalStorage<any[]>('savedChecklists', []);
     if (Array.isArray(savedChecklists) && savedChecklists.length > 0) {
-      const checklistId = savedChecklists[0]?.id;
-      const updated = savedChecklists.map((c: any, index: number) => index === 0 ? {
+      const checklistId = currentChecklistId ?? savedChecklists[0]?.id;
+      const updated = savedChecklists.map((c: any, index: number) => (c?.id === checklistId || (!currentChecklistId && index === 0)) ? {
         ...c,
         data: updatedChecklist
       } : c);
@@ -376,8 +386,8 @@ export default function EngagementDetail() {
     if (checklist) {
       const savedChecklists = readJsonFromLocalStorage<any[]>('savedChecklists', []);
       if (Array.isArray(savedChecklists) && savedChecklists.length > 0) {
-        const checklistId = savedChecklists[0]?.id;
-        const updated = savedChecklists.map((c: any, index: number) => index === 0 ? {
+        const checklistId = currentChecklistId ?? savedChecklists[0]?.id;
+        const updated = savedChecklists.map((c: any, index: number) => (c?.id === checklistId || (!currentChecklistId && index === 0)) ? {
           ...c,
           data: checklist
         } : c);
@@ -662,7 +672,7 @@ export default function EngagementDetail() {
                   </svg>
                 </button>
                 <h1 className="font-semibold text-foreground truncate text-lg">
-                  Client acceptance and continuance
+                  {checklist?.title || 'Client acceptance and continuance'}
                 </h1>
               </div>
               <div className="flex items-center gap-1">
