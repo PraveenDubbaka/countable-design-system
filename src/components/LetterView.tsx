@@ -203,14 +203,14 @@ function FieldChip({
 function FirmLogoSVG() {
   return (
     <div className="flex flex-col items-center">
-      {/* Wildcat silhouette */}
+      {/* Wildcat silhouette — leaping puma */}
       <svg
-        viewBox="0 0 120 60"
-        className="h-14 w-auto"
+        viewBox="0 0 200 90"
+        className="h-16 w-auto"
         fill="#C2764B"
         aria-hidden="true"
       >
-        <path d="M8 44 C 18 22, 36 12, 58 14 C 70 15, 80 22, 90 22 L 100 18 L 96 26 L 104 28 L 96 32 C 92 40, 84 46, 72 48 L 70 54 L 64 50 L 58 56 L 52 50 L 46 56 L 40 50 L 32 54 L 28 48 C 22 48, 14 48, 8 44 Z M 90 22 C 92 19, 96 18, 100 18" />
+        <path d="M10 70 C 25 55, 40 50, 60 52 C 78 54, 92 60, 108 58 C 122 56, 134 50, 146 42 C 152 38, 158 34, 164 30 L 172 22 L 174 30 L 184 26 L 180 36 L 188 40 L 178 44 C 174 52, 168 58, 160 62 L 168 70 L 158 68 L 156 76 L 148 70 C 138 74, 126 76, 114 76 L 116 84 L 108 78 L 100 84 L 94 76 L 86 82 L 80 74 L 70 80 L 64 72 L 52 78 L 48 70 L 36 76 L 32 68 L 20 72 L 14 66 Z M 168 28 C 170 24, 174 22, 178 22 M 172 26 C 172 28, 174 28, 174 26" />
       </svg>
       <h2
         className="mt-3 text-2xl font-extrabold tracking-wide"
