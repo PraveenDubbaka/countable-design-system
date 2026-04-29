@@ -801,18 +801,22 @@ export default function EngagementDetail() {
                     <p className="text-xs text-muted-foreground mt-1">Please wait while we fetch the data</p>
                   </div>
                 </div> : <div className="bg-background">
-                  <DocumentView
-                    checklist={checklist}
-                    onUpdate={handleChecklistUpdate}
-                    isPreviewMode={false}
-                    isCompactMode={isCompactMode}
-                    selectedQuestions={selectedQuestions}
-                    onSelectionChange={setSelectedQuestions}
-                    isEngagementMode={true}
-                    applyingQuestionId={clientResponses.applyingQuestionId}
-                    objectiveExpanded={objectiveExpanded}
-                    onToggleObjective={() => setObjectiveExpanded(prev => !prev)}
-                  />
+                  {(currentChecklistId === "default-compilation-el" || currentChecklistId === "default-compilation-mr") ? (
+                    <LetterView checklist={checklist} onUpdate={handleChecklistUpdate} />
+                  ) : (
+                    <DocumentView
+                      checklist={checklist}
+                      onUpdate={handleChecklistUpdate}
+                      isPreviewMode={false}
+                      isCompactMode={isCompactMode}
+                      selectedQuestions={selectedQuestions}
+                      onSelectionChange={setSelectedQuestions}
+                      isEngagementMode={true}
+                      applyingQuestionId={clientResponses.applyingQuestionId}
+                      objectiveExpanded={objectiveExpanded}
+                      onToggleObjective={() => setObjectiveExpanded(prev => !prev)}
+                    />
+                  )}
                 </div>}
             </div>
           ) : (
