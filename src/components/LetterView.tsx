@@ -203,20 +203,14 @@ function FieldChip({
 function FirmLogoSVG() {
   return (
     <div className="flex flex-col items-center">
-      {/* Wildcat silhouette — leaping cougar */}
-      <svg
-        viewBox="0 0 240 110"
-        className="h-16 w-auto"
-        fill="#C2764B"
-        aria-hidden="true"
-      >
-        {/* Body */}
-        <path d="M20,80 C40,55 70,45 105,50 C130,53 150,65 175,60 C190,57 200,50 210,42 L218,32 L222,42 L232,38 L228,50 L236,54 L224,58 C220,68 210,76 195,80 L210,90 L195,88 L198,98 L188,90 L175,94 L168,86 L155,92 L148,84 L135,90 L128,82 L115,88 L110,80 L92,86 L88,78 L70,84 L66,76 L48,82 L44,74 L28,80 Z" />
-        {/* Tail */}
-        <path d="M16,82 C8,80 2,72 4,62 C8,72 14,76 22,80 Z" />
-        {/* Ear hint */}
-        <path d="M214,38 L220,30 L222,38 Z" fill="#C2764B" />
-      </svg>
+      {/* Decorative crest mark */}
+      <div className="flex items-center justify-center gap-2 mb-2">
+        <span className="block h-px w-10 bg-[#C2764B]" />
+        <svg viewBox="0 0 24 24" className="h-5 w-5" fill="#C2764B" aria-hidden="true">
+          <path d="M12 2 L14 9 L21 9 L15.5 13.5 L17.5 21 L12 16.5 L6.5 21 L8.5 13.5 L3 9 L10 9 Z" />
+        </svg>
+        <span className="block h-px w-10 bg-[#C2764B]" />
+      </div>
       <h2
         className="mt-3 text-2xl font-extrabold tracking-wide"
         style={{ color: "#1B3A6B", letterSpacing: "0.02em" }}
