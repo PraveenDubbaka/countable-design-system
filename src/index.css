@@ -1628,3 +1628,79 @@
   opacity: 1;
   background: transparent !important;
 }
+/* ========================================
+   DOCUMENT VIEW - Checklist section spacing
+   ======================================== */
+.dv-document {
+  position: relative;
+  width: 100%;
+  padding: 2rem 1.5rem;
+}
+
+.dv-section {
+  position: relative;
+  border-radius: 8px;
+  margin-bottom: 40px;
+  transition: background-color 0.25s ease, box-shadow 0.25s ease;
+}
+
+.dv-section:last-child {
+  margin-bottom: 0;
+}
+
+.dv-objective-panel {
+  margin-bottom: 16px;
+}
+
+.dv-edit-mode .dv-section {
+  background: transparent;
+}
+
+.dv-edit-mode .dv-section:hover {
+  background: hsl(var(--background));
+  box-shadow: 0 1px 3px hsl(var(--border) / 0.1);
+}
+
+.dv-section-header { transition: opacity 0.2s ease; }
+.dv-edit-mode .dv-section-header { opacity: 1; transition: opacity 0.25s ease; }
+.dv-edit-mode .dv-section-title { opacity: 1; }
+.dv-accent { opacity: 1; }
+
+.dv-edit-mode .dv-collapse-btn { opacity: 0; transition: opacity 0.2s ease; }
+.dv-edit-mode .dv-section:hover .dv-collapse-btn { opacity: 1; }
+
+.dv-section-meta { opacity: 0; transition: opacity 0.2s ease; }
+.dv-section:hover .dv-section-meta { opacity: 1; }
+
+.dv-section-actions { opacity: 0; transition: opacity 0.2s ease; }
+.dv-section:hover .dv-section-actions { opacity: 1; }
+
+.dv-section-drag { opacity: 0; transition: opacity 0.15s ease; }
+.dv-section:hover .dv-section-drag { opacity: 0.4; }
+.dv-section-drag:hover { opacity: 1 !important; }
+
+.dv-question {
+  position: relative;
+  border-radius: 0;
+  transition: background-color 0.15s ease;
+  padding-top: 0;
+}
+.dv-edit-mode .dv-question:hover { background: hsl(var(--background)); }
+.dv-question-content { transition: padding 0.15s ease; }
+
+.dv-edit-mode .dv-number { opacity: 0.5; transition: opacity 0.2s ease; }
+.dv-edit-mode .dv-question:hover .dv-number { opacity: 1; }
+
+.dv-toolbar-anchor { pointer-events: auto; }
+.dv-question-toolbar { opacity: 0; pointer-events: none; transition: opacity 0.15s ease; }
+.dv-question:hover .dv-question-toolbar,
+.dv-toolbar-anchor:hover .dv-question-toolbar {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.dv-edit-mode .dv-response-type { opacity: 0.25; transition: opacity 0.15s ease; }
+.dv-edit-mode .dv-question:hover .dv-response-type { opacity: 1; }
+
+.dv-add-item { opacity: 0; transition: opacity 0.2s ease; }
+.dv-section:hover .dv-add-item { opacity: 1; }
