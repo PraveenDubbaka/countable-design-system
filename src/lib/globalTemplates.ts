@@ -298,15 +298,26 @@ export const generatePlanningChecklist = (): Checklist => {
 
 // Engagement Letter template data
 export const generateEngagementLetterChecklist = (): Checklist => {
+  const letterLine = (id: string, text: string): Question => ({
+    id,
+    text,
+    answerType: 'none',
+    options: [],
+    required: false,
+    answer: '',
+    showResponse: false,
+    showExplanation: false,
+    showReference: false,
+    inlineColumnWidths: [1],
+  } as Question);
+
   const sections: Section[] = [
     {
       id: 'section-el-addressing',
-      title: 'Addressing & Salutation',
+      title: 'Engagement Letter',
       questions: [
-        { id: 'el-q1', text: '<p><strong>Date</strong></p>', answerType: 'date', options: [], required: false, answer: '' },
-        { id: 'el-q2', text: '<p><strong>Entity Name</strong></p>', answerType: 'answer', options: [], required: true, answer: '' },
-        { id: 'el-q3', text: '<p><strong>Complete address</strong></p>', answerType: 'long-answer', options: [], required: false, answer: '' },
-        { id: 'el-q4', text: '<p><strong>Salutation (e.g., Dear First Name,)</strong></p>', answerType: 'answer', options: [], required: false, answer: '' },
+        letterLine('el-address', '<p><strong>"Date"</strong></p><p><strong>"Entity Name"</strong><br/>"Complete Address"</p><p>Dear "First Name",</p>'),
+        letterLine('el-re', '<p><strong>Re: Compilation Engagement for "Entity Name" for the "Period Ended"</strong></p>'),
       ],
       isExpanded: true,
     },
@@ -314,8 +325,9 @@ export const generateEngagementLetterChecklist = (): Checklist => {
       id: 'section-el-purpose',
       title: 'Purpose of Engagement',
       questions: [
-        { id: 'el-p1', text: '<p>For the <strong>"Period Ended"</strong> reporting period, you have asked us to perform the <strong>"Engagement Type"</strong>. This letter contains the terms of our engagement and the nature and limitations of the services we will provide.</p>', answerType: 'long-answer', options: [], required: false, answer: '' },
-        { id: 'el-p2', text: '<p><strong>The Service to Perform & Our Conclusion</strong></p><p>Describe the service to be performed (e.g., compilation of financial information) and the form of the practitioner\'s communication or report to be issued.</p>', answerType: 'long-answer', options: [], required: false, answer: '' },
+        letterLine('el-purpose-1', '<p>You have requested that we compile the financial information of <strong>"Entity Name"</strong> for the <strong>"Period Ended"</strong>. We are pleased to confirm our acceptance and understanding of this compilation engagement by means of this letter.</p>'),
+        letterLine('el-purpose-2', '<p>The objective of our engagement is to assist management in the preparation and presentation of compiled financial information based on information provided by management.</p>'),
+        letterLine('el-purpose-3', '<p>The compiled financial information is intended to be used by <strong>"Intended Users"</strong> for <strong>"Intended Purpose"</strong>. The compiled financial information may not be suitable for another purpose.</p>'),
       ],
       isExpanded: true,
     },
@@ -323,7 +335,7 @@ export const generateEngagementLetterChecklist = (): Checklist => {
       id: 'section-el-management-responsibilities',
       title: 'Management Responsibilities',
       questions: [
-        { id: 'el-m1', text: '<p>Management acknowledges and understands its responsibility for:</p><p>a. The compiled financial information;<br/>b. Selecting the basis of accounting to be applied in the preparation of the compiled financial information that is appropriate for the intended use;<br/>c. The accuracy and completeness of the information provided to the firm; and<br/>d. Attaching the compilation engagement report when distributing or reproducing the compiled financial information.</p>', answerType: 'long-answer', options: [], required: false, answer: '' },
+        letterLine('el-mgmt-1', '<p>Management acknowledges and understands that it is responsible for:</p><p>a. The compiled financial information;<br/>b. Selecting the basis of accounting to be applied in the preparation of the compiled financial information that is appropriate for the intended use;<br/>c. The accuracy and completeness of the information provided to Firm Name;<br/>d. Providing Firm Name with all information relevant to the compilation engagement and access to persons within the entity from whom Firm Name determines it necessary to obtain information;<br/>e. Judgments needed in the preparation and presentation of the compiled financial information; and<br/>f. Attaching the compilation engagement report when distributing or reproducing the compiled financial information.</p>'),
       ],
       isExpanded: true,
     },
@@ -331,9 +343,10 @@ export const generateEngagementLetterChecklist = (): Checklist => {
       id: 'section-el-our-responsibilities',
       title: 'Our Responsibilities',
       questions: [
-        { id: 'el-or1', text: '<p>The compilation engagement will be performed in accordance with <strong>Canadian Standard on Related Services (CSRS) 4200, Compilation Engagements</strong>.</p>', answerType: 'long-answer', options: [], required: false, answer: '' },
-        { id: 'el-or2', text: '<p>A compilation engagement is substantially less in scope than an audit or a review engagement. We will not perform an audit or a review and, accordingly, no assurance will be expressed.</p>', answerType: 'long-answer', options: [], required: false, answer: '' },
-        { id: 'el-or3', text: '<p>We will compile the financial information based on information provided by management. Our procedures will not include verification or validation of the accuracy or completeness of the information.</p>', answerType: 'long-answer', options: [], required: false, answer: '' },
+        letterLine('el-our-1', '<p>We will perform the compilation engagement in accordance with <strong>Canadian Standard on Related Services (CSRS) 4200, Compilation Engagements</strong>.</p>'),
+        letterLine('el-our-2', '<p>A compilation engagement is substantially less in scope than an audit or a review engagement. We will not perform an audit or review engagement and, accordingly, we will not express an audit opinion or review conclusion, or provide any form of assurance on the compiled financial information.</p>'),
+        letterLine('el-our-3', '<p>We will compile the financial information using accounting expertise based on information provided by management. We are not required to verify the accuracy or completeness of the information provided by management or otherwise gather evidence to express an opinion or conclusion.</p>'),
+        letterLine('el-our-4', '<p>We will issue a compilation engagement report that describes the nature and limitations of the compilation engagement and identifies the basis of accounting applied in the preparation of the compiled financial information.</p>'),
       ],
       isExpanded: true,
     },
@@ -341,8 +354,7 @@ export const generateEngagementLetterChecklist = (): Checklist => {
       id: 'section-el-basis-of-accounting',
       title: 'Basis of Accounting',
       questions: [
-        { id: 'el-ba1', text: '<p>The basis of accounting applied in the preparation of the compiled financial information is the <strong>"Basis of Accounting"</strong> as determined by management.</p>', answerType: 'long-answer', options: [], required: false, answer: '' },
-        { id: 'el-ba2', text: '<p>A description of the basis of accounting applied will be included in a note to the compiled financial information.</p>', answerType: 'long-answer', options: [], required: false, answer: '' },
+        letterLine('el-basis-1', '<p>The basis of accounting to be applied in the preparation of the compiled financial information is <strong>"Basis of Accounting"</strong>, as selected by management and as described in a note to the compiled financial information.</p>'),
       ],
       isExpanded: true,
     },
@@ -350,9 +362,7 @@ export const generateEngagementLetterChecklist = (): Checklist => {
       id: 'section-el-other-services',
       title: 'Other Services (Optional)',
       questions: [
-        { id: 'el-os1', text: '<p><strong>Bookkeeping services</strong> — Describe scope if applicable.</p>', answerType: 'long-answer', options: [], required: false, answer: '' },
-        { id: 'el-os2', text: '<p><strong>Tax services</strong> — Describe corporate tax return preparation, T-slips, GST/HST filings as applicable.</p>', answerType: 'long-answer', options: [], required: false, answer: '' },
-        { id: 'el-os3', text: '<p><strong>Other advisory services</strong> — Describe any additional services to be provided.</p>', answerType: 'long-answer', options: [], required: false, answer: '' },
+        letterLine('el-other-1', '<p>In addition to the compilation engagement, Firm Name may provide the following services, as agreed with management: bookkeeping assistance, preparation of corporate income tax returns, GST/HST filings, T-slips, or other advisory services. These services are separate from the compilation engagement and do not change management\'s responsibilities for the compiled financial information.</p>'),
       ],
       isExpanded: true,
     },
@@ -360,7 +370,7 @@ export const generateEngagementLetterChecklist = (): Checklist => {
       id: 'section-el-fees',
       title: 'Fees and Billing',
       questions: [
-        { id: 'el-f1', text: '<p>Our fees will be billed based on time spent at our standard hourly rates plus out-of-pocket expenses and applicable taxes. Invoices are due upon receipt.</p>', answerType: 'long-answer', options: [], required: false, answer: '' },
+        letterLine('el-fees-1', '<p>Our fees will be billed based on the time required to complete the engagement at our standard billing rates, plus out-of-pocket expenses and applicable taxes. Invoices are due upon receipt unless otherwise agreed.</p>'),
       ],
       isExpanded: true,
     },
@@ -368,7 +378,7 @@ export const generateEngagementLetterChecklist = (): Checklist => {
       id: 'section-el-confidentiality',
       title: 'Confidentiality',
       questions: [
-        { id: 'el-c1', text: '<p>Information acquired in the course of this engagement is subject to confidentiality requirements, in addition to legal and professional obligations.</p>', answerType: 'long-answer', options: [], required: false, answer: '' },
+        letterLine('el-conf-1', '<p>Information acquired in the course of this engagement is subject to confidentiality requirements in accordance with relevant ethical, professional, and legal obligations.</p>'),
       ],
       isExpanded: true,
     },
@@ -376,13 +386,9 @@ export const generateEngagementLetterChecklist = (): Checklist => {
       id: 'section-el-acceptance',
       title: 'Acceptance & Signatures',
       questions: [
-        { id: 'el-a1', text: '<p>If the contents of this letter are in accordance with your understanding, please sign in the space provided below and return a copy to us.</p>', answerType: 'long-answer', options: [], required: false, answer: '' },
-        { id: 'el-a2', text: '<p><strong>Yours truly,</strong><br/>ON BEHALF OF Firm Name</p>', answerType: 'long-answer', options: [], required: false, answer: '' },
-        { id: 'el-a3', text: '<p><strong>Practitioner signature</strong></p>', answerType: 'answer', options: [], required: false, answer: '' },
-        { id: 'el-a4', text: '<p><strong>Date</strong></p>', answerType: 'date', options: [], required: false, answer: '' },
-        { id: 'el-a5', text: '<p>ACKNOWLEDGED AND AGREED ON BEHALF OF THE MANAGEMENT OF Entity Name</p>', answerType: 'long-answer', options: [], required: false, answer: '' },
-        { id: 'el-a6', text: '<p><strong>Client signature</strong></p>', answerType: 'answer', options: [], required: false, answer: '' },
-        { id: 'el-a7', text: '<p><strong>Client signed date</strong></p>', answerType: 'date', options: [], required: false, answer: '' },
+        letterLine('el-accept-1', '<p>If the contents of this letter are in accordance with your understanding of the terms of the engagement, please sign the attached copy of this letter and return it to us.</p>'),
+        letterLine('el-accept-2', '<p>Yours truly,</p><p><strong>ON BEHALF OF Firm Name</strong></p><p>Per: ________________________________<br/>Date: _______________________________</p>'),
+        letterLine('el-accept-3', '<p><strong>ACKNOWLEDGED AND AGREED ON BEHALF OF THE MANAGEMENT OF "Entity Name"</strong></p><p>Per: ________________________________<br/>Title: _______________________________<br/>Date: _______________________________</p>'),
       ],
       isExpanded: true,
     },
