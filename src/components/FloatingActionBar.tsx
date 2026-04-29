@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
 import { 
-  Minimize2, 
+  Minimize2, GripVertical, 
   ArrowUpDown, 
   Layers,
   Trash2,
@@ -9,15 +9,37 @@ import {
   ChevronDown,
   Plus,
   FileText,
-  Columns
+  Columns,
+  Circle,
+  Square,
+  Calendar,
+  AlignLeft,
+  DollarSign,
+  Menu,
+  ToggleLeft,
+  Type
 } from 'lucide-react';
-import { Checklist } from '@/types/checklist';
+import { SmartLayoutIcon } from './icons/SmartLayoutIcon';
+import { Checklist, CellBlockType } from '@/types/checklist';
 import { ReorderModal } from './ReorderModal';
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover';
+
+const SMART_LAYOUT_OPTIONS: {value: CellBlockType; label: string; icon: React.ElementType; bgColor: string; iconColor: string;}[] = [
+  { value: 'yes-no', label: 'Yes / No', icon: Circle, bgColor: 'bg-green-100', iconColor: 'text-green-600' },
+  { value: 'yes-no-na', label: 'Yes / No / NA', icon: Circle, bgColor: 'bg-green-100', iconColor: 'text-green-600' },
+  { value: 'multiple-choice', label: 'Multiple Choice', icon: Square, bgColor: 'bg-amber-100', iconColor: 'text-amber-600' },
+  { value: 'date', label: 'Date', icon: Calendar, bgColor: 'bg-blue-100', iconColor: 'text-blue-600' },
+  { value: 'long-answer', label: 'Answer', icon: AlignLeft, bgColor: 'bg-purple-100', iconColor: 'text-purple-600' },
+  { value: 'amount', label: 'Amount', icon: DollarSign, bgColor: 'bg-yellow-100', iconColor: 'text-yellow-600' },
+  { value: 'dropdown', label: 'Dropdown', icon: Menu, bgColor: 'bg-teal-100', iconColor: 'text-teal-600' },
+  { value: 'toggle', label: 'Switch/Toggle', icon: ToggleLeft, bgColor: 'bg-indigo-100', iconColor: 'text-indigo-600' },
+  { value: 'explanation', label: 'Explanation', icon: FileText, bgColor: 'bg-orange-100', iconColor: 'text-orange-600' },
+  { value: 'text', label: 'Text', icon: Type, bgColor: 'bg-slate-100', iconColor: 'text-slate-600' },
+];
 
 type SnapPosition = 'top' | 'center' | 'bottom';
 
@@ -59,6 +81,7 @@ export function FloatingActionBar({
 }: FloatingActionBarProps) {
   const [showReorderModal, setShowReorderModal] = useState(false);
   const [showAddCategoryPopover, setShowAddCategoryPopover] = useState(false);
+  const [showSmartLayoutPopover, setShowSmartLayoutPopover] = useState(false);
   const [pendingCategoryType, setPendingCategoryType] = useState<'empty' | 'template' | 'form' | 'inquires-form' | null>(null);
   
   // Drag state
@@ -278,6 +301,66 @@ export function FloatingActionBar({
           style={{ borderRadius: '9999px' }}
           title="Drag to reposition • Double-click to cycle positions"
         >
+          {/* Smart Layout - Hidden in preview mode */}
+          {!isPreviewMode && (
+            <Popover 
+              open={showSmartLayoutPopover} 
+              onOpenChange={setShowSmartLayoutPopover}
+            >
+              <PopoverTrigger asChild>
+                <button
+                  onClick={(e) => e.stopPropagation()}
+                  onMouseDown={(e) => e.stopPropagation()}
+                  className="w-9 h-9 flex items-center justify-center rounded-lg hover:bg-muted transition-colors group"
+                  title="Smart Layout – drag or click to add content types"
+                >
+                  <SmartLayoutIcon className="h-4 w-4 text-muted-foreground group-hover:text-foreground" />
+                </button>
+              </PopoverTrigger>
+              <PopoverContent 
+                side="left" 
+                align="center" 
+                className="w-72 p-2 bg-card border shadow-lg z-50"
+              >
+                <div className="flex flex-col gap-1">
+                  <div className="px-3 py-2 border-b border-border mb-1">
+                    <p className="text-sm font-semibold text-foreground">Smart Layout</p>
+                    <p className="text-xs text-muted-foreground">Click to place into a column</p>
+                  </div>
+                  <div className="grid grid-cols-2 gap-1">
+                    {SMART_LAYOUT_OPTIONS.map((opt) => {
+                      const I = opt.icon;
+                      return (
+                        <div
+                          key={opt.value}
+                          draggable
+                          onMouseDown={(e) => e.stopPropagation()}
+                          onTouchStart={(e) => e.stopPropagation()}
+                          onDragStart={(e) => {
+                            e.stopPropagation();
+                            e.dataTransfer.setData('application/smart-layout-type', opt.value);
+                            e.dataTransfer.effectAllowed = 'copy';
+                          }}
+                          onClick={() => {
+                            document.dispatchEvent(new CustomEvent('smart-layout-activate', { detail: { type: opt.value } }));
+                            setShowSmartLayoutPopover(false);
+                          }}
+                          className="flex items-center gap-2 px-2 py-2 rounded-lg text-left text-xs transition-colors hover:bg-muted cursor-grab active:cursor-grabbing group/drag"
+                        >
+                          <GripVertical className="h-3 w-3 shrink-0 text-muted-foreground/40 group-hover/drag:text-muted-foreground transition-colors" />
+                          <div className={`w-6 h-6 shrink-0 rounded flex items-center justify-center ${opt.bgColor}`}>
+                            <I className={`h-3.5 w-3.5 ${opt.iconColor}`} />
+                          </div>
+                          <span className="text-foreground truncate">{opt.label}</span>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              </PopoverContent>
+            </Popover>
+          )}
+
           {/* Collapse/Expand Sections */}
           <button
             onClick={(e) => { e.stopPropagation(); handleToggleSections(); }}

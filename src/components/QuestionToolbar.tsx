@@ -40,7 +40,8 @@ const answerTypeLabels: Record<AnswerType, string> = {
   'follow-up': 'Follow-up Question',
   'dropdown': 'Dropdown',
   'file-upload': 'File Upload',
-  'toggle': 'Switch/Toggle'
+  'toggle': 'Switch/Toggle',
+  'answer': 'Answer'
 };
 
 const answerTypeIcons: Record<AnswerType, React.ReactNode> = {
@@ -55,7 +56,8 @@ const answerTypeIcons: Record<AnswerType, React.ReactNode> = {
   'follow-up': <Plus className="h-3 w-3" />,
   'dropdown': <AlignLeft className="h-3 w-3" />,
   'file-upload': <Paperclip className="h-3 w-3" />,
-  'toggle': <div className="w-3 h-3 rounded-full border-2 border-current" />
+  'toggle': <div className="w-3 h-3 rounded-full border-2 border-current" />,
+  'answer': <AlignLeft className="h-3 w-3" />
 };
 
 export function QuestionToolbar({

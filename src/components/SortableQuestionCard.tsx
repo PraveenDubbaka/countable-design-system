@@ -375,7 +375,7 @@ export function SortableQuestionCard({
     switch (question.answerType) {
       case 'yes-no':
       case 'yes-no-na':
-        const yesNoOptions = question.options || ['Yes', 'No', 'Not Applicable'];
+        const yesNoOptions = question.options || ['Yes', 'No', 'NA'];
         const handleRemoveYesNoOption = (optionToRemove: string) => {
           const newOptions = yesNoOptions.filter(opt => opt !== optionToRemove);
           if (question.answer === optionToRemove) {
@@ -397,7 +397,7 @@ export function SortableQuestionCard({
             onUpdate({ ...question, options: newOptions });
           }
         };
-        const allYesNoOptions = ['Yes', 'No', 'Not Applicable'];
+        const allYesNoOptions = ['Yes', 'No', 'NA'];
         const missingOptions = allYesNoOptions.filter(opt => !yesNoOptions.includes(opt));
         
         return (

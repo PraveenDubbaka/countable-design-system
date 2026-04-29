@@ -17,7 +17,7 @@ interface DeleteChecklistDialogProps {
 export function DeleteChecklistDialog({ open, onOpenChange, onConfirm }: DeleteChecklistDialogProps) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[400px] bg-card border shadow-xl rounded-2xl p-6">
+      <DialogContent className="sm:max-w-[400px] bg-white border shadow-xl rounded-2xl p-6">
         <div className="flex flex-col items-center text-center gap-4">
           {/* Trash Icon */}
           <div className="w-14 h-14 rounded-full bg-destructive/10 flex items-center justify-center">

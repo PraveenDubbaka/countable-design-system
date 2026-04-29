@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
-import { Sparkles, Mic, MicOff, RefreshCw, Minimize2, Wand2, FileText, PenLine, Loader2 } from 'lucide-react';
+import { Sparkles, Mic, MicOff, RefreshCw, Minimize2, Wand2, FileText, PenLine, Loader2, PencilLine } from 'lucide-react';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { useVoiceToText } from '@/hooks/useVoiceToText';
@@ -33,6 +33,7 @@ interface AITextareaProps {
   defaultHeight?: string;
   isCompactMode?: boolean;
   maxLength?: number;
+  onPlaceholderChange?: (newPlaceholder: string) => void;
 }
 
 export function AITextarea({ 
@@ -44,16 +45,25 @@ export function AITextarea({
   minHeight = "100px",
   defaultHeight = "120px",
   isCompactMode = false,
-  maxLength = 500
+  maxLength = 500,
+  onPlaceholderChange
 }: AITextareaProps) {
   const [isAIOpen, setIsAIOpen] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
   const [selectedOption, setSelectedOption] = useState<string | null>(null);
   const [isEditing, setIsEditing] = useState(false);
   const [showToolbar, setShowToolbar] = useState(false);
+  const [isEditingPlaceholder, setIsEditingPlaceholder] = useState(false);
+  const [placeholderDraft, setPlaceholderDraft] = useState(placeholder);
   const editorRef = useRef<HTMLDivElement>(null);
+
+  // Sync placeholderDraft when placeholder prop changes (e.g. after save/reload)
+  useEffect(() => {
+    setPlaceholderDraft(placeholder);
+  }, [placeholder]);
   const containerRef = useRef<HTMLDivElement>(null);
   const toolbarRef = useRef<HTMLDivElement>(null);
+  const placeholderInputRef = useRef<HTMLInputElement>(null);
 
   // Handle click outside to exit edit mode
   useEffect(() => {
@@ -144,8 +154,35 @@ export function AITextarea({
 
   const handleEnterEditMode = (e: React.MouseEvent) => {
     e.stopPropagation();
-    if (!disabled) {
+    if (!disabled && !isEditingPlaceholder) {
       setIsEditing(true);
+    }
+  };
+
+  const handlePlaceholderDoubleClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    e.preventDefault();
+    if (onPlaceholderChange && !disabled && !value) {
+      setPlaceholderDraft(placeholder);
+      setIsEditingPlaceholder(true);
+      setTimeout(() => placeholderInputRef.current?.focus(), 0);
+    }
+  };
+
+  const handlePlaceholderSave = () => {
+    if (onPlaceholderChange && placeholderDraft.trim()) {
+      onPlaceholderChange(placeholderDraft.trim());
+    }
+    setIsEditingPlaceholder(false);
+  };
+
+  const handlePlaceholderKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      handlePlaceholderSave();
+    } else if (e.key === 'Escape') {
+      e.preventDefault();
+      setIsEditingPlaceholder(false);
     }
   };
 
@@ -228,17 +265,52 @@ export function AITextarea({
     return (
       <div 
         ref={containerRef}
-        className={cn("relative w-full h-full", className)}
+        className={cn("relative w-full h-full group/placeholder", className)}
         onClick={handleEnterEditMode}
       >
-        <div
-          className={cn(
-            sharedBoxClasses,
-            "pr-16 cursor-text text-foreground hover:text-foreground",
-            !value && "text-muted-foreground italic"
-          )}
-          dangerouslySetInnerHTML={{ __html: value || placeholder }}
-        />
+        {isEditingPlaceholder ? (
+          <div className={cn(sharedBoxClasses, "pr-16 flex items-center")} onClick={(e) => e.stopPropagation()}>
+            <input
+              ref={placeholderInputRef}
+              type="text"
+              value={placeholderDraft}
+              onChange={(e) => setPlaceholderDraft(e.target.value)}
+              onBlur={handlePlaceholderSave}
+              onKeyDown={handlePlaceholderKeyDown}
+              className="flex-1 bg-transparent text-sm text-muted-foreground italic outline-none border-b border-primary/40 focus:border-primary"
+            />
+          </div>
+        ) : (
+          <div
+            className={cn(
+              sharedBoxClasses,
+              "pr-16 cursor-text text-foreground hover:text-foreground",
+              !value && "text-muted-foreground italic"
+            )}
+          >
+            {value ? (
+              <span dangerouslySetInnerHTML={{ __html: value }} />
+            ) : (
+              <span className="flex items-center gap-1.5">
+                <span onDoubleClick={handlePlaceholderDoubleClick}>{placeholder}</span>
+                {onPlaceholderChange && (
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <button
+                        type="button"
+                        onClick={(e) => { e.stopPropagation(); handlePlaceholderDoubleClick(e); }}
+                        className="opacity-0 group-hover/placeholder:opacity-100 transition-opacity p-0.5 rounded hover:bg-muted"
+                      >
+                        <PencilLine className="h-3 w-3 text-muted-foreground" />
+                      </button>
+                    </TooltipTrigger>
+                    <TooltipContent side="top" className="text-xs">Edit placeholder text</TooltipContent>
+                  </Tooltip>
+                )}
+              </span>
+            )}
+          </div>
+        )}
       </div>
     );
   }
@@ -255,7 +327,7 @@ export function AITextarea({
       )}
 
       {/* Editable Content — same sizing as the read-only view */}
-      <div className="relative">
+      <div className="relative w-full">
         <div
           ref={editorRef}
           contentEditable={!disabled && !isListening}
@@ -263,7 +335,7 @@ export function AITextarea({
           onInput={handleInput}
           onClick={(e) => e.stopPropagation()}
           className={cn(
-            "w-full pr-16 text-sm bg-muted border-2 border-primary text-foreground rounded-md p-1.5 outline-none resize-none box-border",
+            "w-full pr-16 text-sm bg-transparent border-2 border-transparent text-foreground rounded-md p-1.5 outline-none resize-none box-border",
             isCompactMode ? "max-h-[2.5rem] overflow-hidden whitespace-nowrap" : "min-h-[2.5rem] overflow-y-auto",
             isListening && "ring-1 ring-primary",
             disabled && "opacity-60"

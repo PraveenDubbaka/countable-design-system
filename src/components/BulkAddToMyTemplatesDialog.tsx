@@ -117,6 +117,18 @@ export function BulkAddToMyTemplatesDialog({
     // Get existing saved checklists
     const savedChecklists = readJsonFromLocalStorage<SavedChecklist[]>('savedChecklists', []);
 
+    // Check for duplicates in the target folder
+    const existingNames = new Set(
+      savedChecklists
+        .filter(c => c.folderId === targetFolderId)
+        .map(c => c.name.toLowerCase())
+    );
+    const duplicates = selectedTemplates.filter(t => existingNames.has(t.name.toLowerCase()));
+    if (duplicates.length > 0) {
+      toast.error('One or more checklist with same name already exist in the selected folder. Please choose another folder or rename the checklists.');
+      return;
+    }
+
     // Create new saved checklists for each selected template
     const newChecklists: SavedChecklist[] = selectedTemplates.map((template, index) => {
       const checklistData = getChecklistData(template.id);

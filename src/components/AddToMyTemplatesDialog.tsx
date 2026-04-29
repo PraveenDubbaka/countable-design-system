@@ -98,6 +98,16 @@ export function AddToMyTemplatesDialog({
     const selectedFolderData = folders.find(f => f.id === selectedFolder);
     if (!selectedFolderData) return;
 
+    // Check for duplicate name in the same folder
+    const savedChecklists = readJsonFromLocalStorage<SavedChecklist[]>('savedChecklists', []);
+    const duplicate = savedChecklists.find(
+      c => c.folderId === selectedFolder && c.name.toLowerCase() === templateName.trim().toLowerCase()
+    );
+    if (duplicate) {
+      toast.error("A template with this name already exists in the selected folder. Please choose another folder or change the template name.");
+      return;
+    }
+
     // Create new saved checklist
     const newChecklist: SavedChecklist = {
       id: `checklist-${Date.now()}`,
@@ -114,7 +124,6 @@ export function AddToMyTemplatesDialog({
     };
 
     // Save to localStorage
-    const savedChecklists = readJsonFromLocalStorage<SavedChecklist[]>('savedChecklists', []);
     const updated = [...savedChecklists, newChecklist];
     writeJsonToLocalStorage('savedChecklists', updated);
 

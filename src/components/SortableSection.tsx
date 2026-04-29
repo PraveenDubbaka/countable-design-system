@@ -5,11 +5,12 @@ import {
   SortableContext,
   verticalListSortingStrategy,
 } from '@dnd-kit/sortable';
-import { ChevronDown, ChevronUp, MoreVertical, Plus, Trash2, GripVertical } from 'lucide-react';
+import { ChevronDown, ChevronUp, MoreVertical, Plus, Trash2, GripVertical, MessageSquare } from 'lucide-react';
 import { Section, Question } from '@/types/checklist';
 import { SortableQuestionCard } from './SortableQuestionCard';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 
 interface SortableSectionProps {
   section: Section;
@@ -173,6 +174,53 @@ export function SortableSection({
             </span>
           )}
         </button>
+
+        {/* Section Note */}
+        {!isPreviewMode ? (
+          <Popover>
+            <PopoverTrigger asChild>
+              <button
+                className={`flex items-center gap-1 text-xs px-2 py-1 rounded-md transition-colors shrink-0 ${
+                  section.note ? 'text-primary hover:bg-primary/10' : 'text-muted-foreground hover:bg-muted'
+                }`}
+              >
+                <MessageSquare className="h-3.5 w-3.5" />
+                {section.note ? 'Edit note' : 'Add note'}
+              </button>
+            </PopoverTrigger>
+            <PopoverContent className="w-72 p-3" align="start" side="bottom">
+              <div className="space-y-2">
+                <label className="text-xs font-medium text-foreground">Section Note</label>
+                <textarea
+                  className="w-full min-h-[80px] text-sm rounded-md border border-input bg-background px-3 py-2 placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring resize-y"
+                  placeholder="Add a note for this section..."
+                  defaultValue={section.note || ''}
+                  onBlur={(e) => onUpdate({ ...section, note: e.target.value || undefined })}
+                />
+                {section.note && (
+                  <button
+                    className="text-xs text-destructive hover:underline"
+                    onClick={() => onUpdate({ ...section, note: undefined })}
+                  >
+                    Remove note
+                  </button>
+                )}
+              </div>
+            </PopoverContent>
+          </Popover>
+        ) : section.note ? (
+          <Popover>
+            <PopoverTrigger asChild>
+              <button className="flex items-center gap-1 text-xs text-primary hover:underline px-2 py-1 shrink-0 cursor-pointer">
+                <MessageSquare className="h-3.5 w-3.5" />
+                Read note for more info
+              </button>
+            </PopoverTrigger>
+            <PopoverContent className="w-72 p-3" align="start" side="bottom">
+              <p className="text-sm text-foreground whitespace-pre-wrap">{section.note}</p>
+            </PopoverContent>
+          </Popover>
+        ) : null}
 
         {/* Section menu - Hidden in preview mode */}
         {!isPreviewMode && (

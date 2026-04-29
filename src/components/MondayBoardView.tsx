@@ -820,7 +820,7 @@ function SortableSubItemRow({
         })} onOptionsChange={opts => onUpdate({
           ...subItem,
           options: opts
-        })} disabled={isPreviewMode} size="sm" />;
+})} disabled={isPreviewMode || (isEngagementMode && !subItem.isUserAdded)} size="sm" />;
       case 'dropdown':
         const dropdownSubOptions = subItem.options || ['Option 1', 'Option 2'];
         return <DropdownField options={dropdownSubOptions} selectedValue={subItem.answer || ''} onValueChange={value => onUpdate({
@@ -829,7 +829,7 @@ function SortableSubItemRow({
         })} onOptionsChange={opts => onUpdate({
           ...subItem,
           options: opts
-        })} disabled={isPreviewMode} size="sm" />;
+        })} disabled={isPreviewMode || (isEngagementMode && !subItem.isUserAdded)} size="sm" />;
       case 'long-answer':
         return <AITextarea value={subItem.answer || ''} onChange={val => handleAnswerChange(val)} placeholder="Enter your detailed answer..." minHeight="60px" isCompactMode={isCompactMode} />;
       case 'none':
@@ -869,7 +869,7 @@ function SortableSubItemRow({
         return <Input value={subItem.answer || ''} onChange={e => handleAnswerChange(e.target.value)} onClick={e => e.stopPropagation()} placeholder="Enter response..." className="h-7 text-xs bg-muted border-border text-foreground" />;
     }
   };
-  return <div ref={setNodeRef} style={style} {...attributes} {...listeners} className={`group flex items-stretch hover:bg-muted/50 transition-all relative border-b border-border/50 cursor-grab active:cursor-grabbing ${isDragging ? 'opacity-50 ring-2 ring-primary ring-offset-1 z-10' : ''} ${isValidDropTarget ? 'bg-primary/5' : ''} ${isApplying ? 'ring-2 ring-primary ring-inset animate-pulse bg-primary/10' : ''}`}>
+  return <div ref={setNodeRef} style={style} {...attributes} {...listeners} className={`doc-item-row group flex items-stretch hover:bg-muted/50 transition-all relative border-b border-border/50 cursor-grab active:cursor-grabbing ${isDragging ? 'opacity-50 ring-2 ring-primary ring-offset-1 z-10' : ''} ${isValidDropTarget ? 'bg-primary/5' : ''} ${isApplying ? 'ring-2 ring-primary ring-inset animate-pulse bg-primary/10' : ''}`}>
       {/* Drop indicator line */}
       {isValidDropTarget && <div className="absolute -top-[2px] left-0 right-0 h-1 bg-primary rounded-full z-20 shadow-[0_0_8px_rgba(59,130,246,0.5)]" />}
       {/* Loading indicator when applying response */}
@@ -879,19 +879,19 @@ function SortableSubItemRow({
         </div>
       )}
       {/* Checkbox column */}
-      <div className="w-10 shrink-0 flex items-center justify-center self-center">
-        <Checkbox checked={isSelected} onCheckedChange={() => setIsSelected(!isSelected)} className="h-4 w-4 bg-background" />
+      <div className="w-10 shrink-0 flex items-center justify-center self-center doc-checkbox">
+        <Checkbox checked={isSelected} onCheckedChange={() => setIsSelected(!isSelected)} className="h-4 w-4 border-border bg-background" />
       </div>
 
       {/* Numbering column for sub-item */}
-      <div className="w-14 shrink-0 flex items-center justify-center self-center px-1 border-l border-border/50">
+      <div className="w-14 shrink-0 flex items-center justify-center self-center px-1 border-l border-border/50 doc-numbering doc-col-divider">
         <span className="text-xs font-medium text-muted-foreground">
           {formatQuestionNumber(numberingFormat, sectionNumber, itemNumber - 1, index)}
         </span>
       </div>
 
       {/* Sub-item name - width matches header */}
-      <div className="flex-1 min-w-0 px-3 py-2.5 flex items-center gap-2 border-l border-border/50" style={{
+      <div className="flex-1 min-w-0 px-3 py-2.5 flex items-center gap-2 border-l border-border/50 doc-col-divider" style={{
       flexBasis: columnWidths.questions
     }}>
         {isEditingName && !isPreviewMode && (!isEngagementMode || subItem.isUserAdded) ? <RichTextQuestionEditor value={subItem.text} onChange={newValue => {
@@ -935,7 +935,7 @@ function SortableSubItemRow({
       </div>
 
       {/* Response column with inline type selector and response field */}
-      <div className="flex-1 min-w-0 px-2 py-2 border-l border-border/50 flex items-stretch overflow-hidden" style={{
+      <div className="flex-1 min-w-0 px-2 py-2 border-l border-border/50 doc-col-divider flex items-stretch overflow-hidden" style={{
       flexBasis: columnWidths.response
     }}>
         <div className="flex items-center gap-2 w-full min-w-0">
@@ -949,7 +949,7 @@ function SortableSubItemRow({
       </div>
 
       {/* Additional Explanation column - conditionally rendered */}
-      {visibleColumns.explanation && <div className="flex-1 min-w-0 px-2 py-2 border-l border-border/50 flex items-center overflow-hidden" style={{
+      {visibleColumns.explanation && <div className="flex-1 min-w-0 px-2 py-2 border-l border-border/50 doc-col-divider flex items-center overflow-hidden" style={{
       flexBasis: columnWidths.explanation
     }}>
           {(subItem as any).showExplanation !== false ? <div className="relative group/exp w-full overflow-hidden">
@@ -974,7 +974,7 @@ function SortableSubItemRow({
         </div>}
 
       {/* Reference column - conditionally rendered */}
-      {visibleColumns.reference && <div className="flex-1 min-w-0 px-2 py-2 flex items-center border-l border-border/50" style={{
+      {visibleColumns.reference && <div className="flex-1 min-w-0 px-2 py-2 flex items-center border-l border-border/50 doc-col-divider" style={{
       flexBasis: columnWidths.reference
     }}>
           <RefButton reference={(subItem as any).reference} onAttach={doc => onUpdate({
@@ -1186,7 +1186,7 @@ function SortableItemRow({
         })} onOptionsChange={opts => onUpdate({
           ...item,
           options: opts
-        })} disabled={isPreviewMode} size="sm" />;
+})} disabled={isPreviewMode || (isEngagementMode && !item.isUserAdded)} size="sm" />;
       case 'dropdown':
         const dropdownItemOptions = item.options || ['Option 1', 'Option 2'];
         return <DropdownField options={dropdownItemOptions} selectedValue={item.answer || ''} onValueChange={value => onUpdate({
@@ -1195,7 +1195,7 @@ function SortableItemRow({
         })} onOptionsChange={opts => onUpdate({
           ...item,
           options: opts
-        })} disabled={isPreviewMode} size="md" />;
+        })} disabled={isPreviewMode || (isEngagementMode && !item.isUserAdded)} size="md" />;
       case 'long-answer':
         return <AITextarea value={item.answer || ''} onChange={val => handleAnswerChange(val)} placeholder="Enter your detailed answer..." minHeight="60px" isCompactMode={isCompactMode} />;
       case 'none':
@@ -1236,7 +1236,7 @@ function SortableItemRow({
     }
   };
   const subItemIds = item.subQuestions?.map(sq => sq.id) || [];
-  return <div ref={setNodeRef} style={style} className={`relative border-b border-border/50 ${isDragging ? 'z-10' : ''} ${isApplying ? 'ring-2 ring-primary ring-inset animate-pulse' : ''}`}>
+  return <div ref={setNodeRef} style={style} className={`doc-item-row relative border-b border-border/50 ${isDragging ? 'z-10' : ''} ${isApplying ? 'ring-2 ring-primary ring-inset animate-pulse' : ''}`}>
       {/* Drop indicator line - shows above item when hovering */}
       {isValidDropTarget && <div className="absolute -top-[2px] left-0 right-0 h-1 bg-primary rounded-full z-20 shadow-[0_0_8px_rgba(59,130,246,0.5)]" />}
       {/* Loading indicator when applying response */}
@@ -1251,12 +1251,12 @@ function SortableItemRow({
       ...listeners
     } : {}} className={`group flex items-stretch hover:bg-muted/50 transition-all ${isSelected ? 'bg-muted/50' : ''} ${!isEditingName ? 'cursor-grab active:cursor-grabbing' : ''} ${isDragging ? 'opacity-50 ring-2 ring-primary ring-offset-1' : ''} ${isValidDropTarget ? 'bg-primary/5' : ''} ${isApplying ? 'bg-primary/10' : ''}`}>
         {/* Checkbox */}
-        <div className="w-10 shrink-0 flex items-center justify-center self-center">
-          <Checkbox checked={isSelected} onCheckedChange={checked => onSelectionChange(checked === true)} className="h-4 w-4" />
+        <div className="w-10 shrink-0 flex items-center justify-center self-center doc-checkbox">
+          <Checkbox checked={isSelected} onCheckedChange={checked => onSelectionChange(checked === true)} className="h-4 w-4 border-border" />
         </div>
 
         {/* Expand arrow - Monday.com style: dull on hover, solid when has sub-items */}
-        <div className="w-8 shrink-0 flex items-center justify-center self-center">
+        <div className="w-8 shrink-0 flex items-center justify-center self-center doc-drag-handle">
           {hasRealSubItems ? <button onClick={handleChevronClick} className="p-0.5 rounded hover:bg-muted transition-colors" title={isExpanded ? "Collapse sub-items" : "Expand sub-items"}>
               {isExpanded ? <ChevronDown className="h-4 w-4 text-muted-foreground" /> : <ChevronRight className="h-4 w-4 text-muted-foreground" />}
             </button> : !isPreviewMode ? <button onClick={handleChevronClick} className="p-0.5 rounded hover:bg-muted transition-colors opacity-0 group-hover:opacity-100" title="Add sub-item">
@@ -1265,7 +1265,7 @@ function SortableItemRow({
         </div>
 
         {/* Numbering column */}
-        <div className="w-14 shrink-0 flex items-center justify-center self-center px-1 border-l border-border/50">
+        <div className="w-14 shrink-0 flex items-center justify-center self-center px-1 border-l border-border/50 doc-numbering doc-col-divider">
           <span className="text-xs font-medium text-muted-foreground">
             {formatQuestionNumber(numberingFormat, sectionNumber, itemIndex)}
             {item.required && isPreviewMode && <span className="text-red-500 ml-0.5">*</span>}
@@ -1273,7 +1273,7 @@ function SortableItemRow({
         </div>
 
         {/* Item name */}
-        <div className="flex-1 min-w-0 px-3 py-1 flex items-center gap-2 border-l border-border/50" style={{
+        <div className="flex-1 min-w-0 px-3 py-1 flex items-center gap-2 border-l border-border/50 doc-col-divider" style={{
         flexBasis: columnWidths.questions
       }}>
           {isEditingName && !isPreviewMode && (!isEngagementMode || item.isUserAdded) ? <RichTextQuestionEditor value={item.text} onChange={newValue => {
@@ -1323,11 +1323,11 @@ function SortableItemRow({
         </div>
 
         {/* Response column with inline type selector and response field */}
-        <div className="flex-1 min-w-0 px-2 py-2 border-l border-border/50 flex items-stretch overflow-hidden" style={{
+        <div className="flex-1 min-w-0 px-2 py-2 border-l border-border/50 doc-col-divider flex items-stretch overflow-hidden" style={{
         flexBasis: columnWidths.response
       }}>
           <div className="flex items-center gap-2 w-full min-w-0">
-            <ResponseTypeDropdown currentType={item.answerType} onTypeChange={handleAnswerTypeChange} disabled={isPreviewMode || (isEngagementMode && !item.isUserAdded)} />
+            <div className="doc-response-type"><ResponseTypeDropdown currentType={item.answerType} onTypeChange={handleAnswerTypeChange} disabled={isPreviewMode || (isEngagementMode && !item.isUserAdded)} /></div>
             <div className="flex-1 min-w-0">
               <div className="flex flex-wrap gap-1">
                 {renderResponseField()}
@@ -1337,7 +1337,7 @@ function SortableItemRow({
         </div>
 
         {/* Additional Explanation column - conditionally rendered */}
-        {visibleColumns.explanation && <div className="flex-1 min-w-0 px-2 py-2 border-l border-border/50 flex items-center overflow-hidden" style={{
+        {visibleColumns.explanation && <div className="flex-1 min-w-0 px-2 py-2 border-l border-border/50 doc-col-divider flex items-center overflow-hidden" style={{
         flexBasis: columnWidths.explanation
       }}>
             {(item as any).showExplanation !== false ? <div className="relative group/exp w-full overflow-hidden">
@@ -1362,7 +1362,7 @@ function SortableItemRow({
           </div>}
 
         {/* Reference column - conditionally rendered */}
-        {visibleColumns.reference && <div className="flex-1 min-w-0 px-2 py-2 flex items-center border-l border-border/50" style={{
+        {visibleColumns.reference && <div className="flex-1 min-w-0 px-2 py-2 flex items-center border-l border-border/50 doc-col-divider" style={{
         flexBasis: columnWidths.reference
       }}>
             <RefButton reference={(item as any).reference} onAttach={doc => onUpdate({
@@ -1524,7 +1524,7 @@ function SortableItemRow({
               {!isPreviewMode && hasRealSubItems && (
                 <div className="flex items-center hover:bg-muted transition-colors">
                   <div className="w-10 flex items-center justify-center py-2.5">
-                    <Checkbox disabled className="h-4 w-4 bg-background opacity-30" />
+                    <Checkbox disabled className="h-4 w-4 border-border bg-background opacity-30" />
                   </div>
                   <div className="w-14 shrink-0" /> {/* Numbering column spacer */}
                   <button
@@ -1816,12 +1816,12 @@ function SortableGroup({
   // Count total subitems
   const totalSubitems = section.questions.reduce((acc, q) => acc + (q.subQuestions?.length || 0), 0);
   const itemIds = section.questions.map(q => q.id);
-  return <div ref={setNodeRef} style={{ ...style, borderTopWidth: '1px', borderTopStyle: 'solid', borderTopColor: 'hsl(var(--border-category))' }} className={`bg-card rounded-lg overflow-hidden shadow-md relative ${isDragging ? 'ring-2 ring-primary ring-offset-2 z-10' : ''} ${isValidDropTarget ? 'ring-2 ring-primary/50' : ''}`}>
+  return <div ref={setNodeRef} style={{ ...style, borderTopWidth: '1px', borderTopStyle: 'solid', borderTopColor: 'hsl(var(--border-category))' }} className={`doc-section bg-card rounded-lg overflow-hidden shadow-md relative ${isDragging ? 'ring-2 ring-primary ring-offset-2 z-10' : ''} ${isValidDropTarget ? 'ring-2 ring-primary/50' : ''}`}>
       {/* Drop indicator line for groups */}
       {isValidDropTarget && <div className="absolute -top-2 left-0 right-0 h-1 bg-primary rounded-full z-20 shadow-[0_0_8px_rgba(59,130,246,0.5)]" />}
       {/* Group header */}
-      <div {...attributes} {...listeners} className={`flex items-center gap-3 px-4 py-2 bg-muted/50 border-b border-border/50 cursor-grab active:cursor-grabbing ${isDragging ? 'opacity-70' : ''}`}>
-        <div className="w-1 h-6 bg-category-accent rounded-full" />
+      <div {...attributes} {...listeners} className={`doc-section-header flex items-center gap-3 px-4 py-2 bg-muted/50 border-b border-border/50 cursor-grab active:cursor-grabbing ${isDragging ? 'opacity-70' : ''}`}>
+        <div className="w-1 h-6 bg-category-accent rounded-full doc-accent-bar" />
         <button onClick={e => {
         e.stopPropagation();
         onUpdate({
@@ -1846,14 +1846,14 @@ function SortableGroup({
             {cleanTitle(section.title)}
           </h3>}
 
-        <span className="text-xs text-muted-foreground flex items-center gap-1">
+        <span className="text-xs text-muted-foreground flex items-center gap-1 doc-section-actions">
           {section.formLayout ? <>
               <LayoutGrid className="h-3 w-3" />
               {section.formLayout.columns} Column Form
             </> : <>{section.questions.length} Questions{totalSubitems > 0 ? ` / ${totalSubitems} Sub Questions` : ''}</>}
         </span>
 
-        {!isPreviewMode && <DropdownMenu>
+        {!isPreviewMode && <DropdownMenu modal={false}>
             <DropdownMenuTrigger asChild>
               <button onClick={e => e.stopPropagation()} className="p-1 rounded hover:bg-muted transition-colors">
                 <MoreHorizontal className="h-4 w-4 text-muted-foreground" />
@@ -1897,7 +1897,7 @@ function SortableGroup({
       })} isPreviewMode={isPreviewMode} /> : <div ref={tableContainerRef} className="overflow-x-auto sm:overflow-x-visible">
               <div className="min-w-[600px] sm:min-w-0">
                 {/* Column headers */}
-                <div className="flex items-center bg-muted/50 text-xs font-medium text-muted-foreground border-b border-border/50">
+                <div className="doc-column-headers flex items-center bg-muted/50 text-xs font-medium text-muted-foreground border-b border-border/50">
                   <div className="w-10 shrink-0 py-2" />
                   <div className="w-8 shrink-0 py-2" />
                   {/* Numbering column header with format selector */}
@@ -1946,7 +1946,7 @@ function SortableGroup({
                 </SortableContext>
 
                 {/* Add item button */}
-                {!isPreviewMode && <div className="flex items-center">
+                {!isPreviewMode && <div className="flex items-center doc-add-item">
                     <div className="w-10" />
                     <div className="w-8" />
                     <div className="w-14" /> {/* Numbering column spacer */}
@@ -1976,7 +1976,10 @@ export function MondayBoardView({
     text: string;
     selectedCount?: number;
   } | null>(null);
-  const [numberingFormat, setNumberingFormat] = useState<NumberingFormat>('number');
+  const [numberingFormat, setNumberingFormat] = useState<NumberingFormat>(() => {
+    const saved = localStorage.getItem('dv-numbering-format');
+    return (saved as NumberingFormat) || 'number';
+  });
   const handleSelectionChange = (questionId: string, selected: boolean) => {
     if (!onSelectionChange) return;
     const newSelected = new Set(selectedQuestions);
@@ -2290,9 +2293,9 @@ export function MondayBoardView({
   };
   const sectionIds = checklist.sections.map(s => s.id);
   return <DndContext sensors={sensors} collisionDetection={closestCenter} onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
-      <div className="space-y-4 monday-board-light-borders">
+      <div className="space-y-4 monday-board-light-borders document-mode">
         <SortableContext items={sectionIds} strategy={verticalListSortingStrategy}>
-          {checklist.sections.map((section, idx) => <SortableGroup key={section.id} section={section} sectionIndex={idx} onUpdate={s => handleSectionUpdate(idx, s)} onDelete={() => handleSectionDelete(idx)} onAddItem={() => handleAddItem(idx)} onAddCategoryAtPosition={position => handleAddCategoryAtPosition(idx, position)} isPreviewMode={isPreviewMode} isCompactMode={isCompactMode} onItemsReorder={handleItemsReorder} onSubItemsReorder={handleSubItemsReorder} selectedQuestions={selectedQuestions} onSelectionChange={handleSelectionChange} isEngagementMode={isEngagementMode} numberingFormat={numberingFormat} onNumberingFormatChange={setNumberingFormat} applyingQuestionId={applyingQuestionId} />)}
+          {checklist.sections.map((section, idx) => <SortableGroup key={section.id} section={section} sectionIndex={idx} onUpdate={s => handleSectionUpdate(idx, s)} onDelete={() => handleSectionDelete(idx)} onAddItem={() => handleAddItem(idx)} onAddCategoryAtPosition={position => handleAddCategoryAtPosition(idx, position)} isPreviewMode={isPreviewMode} isCompactMode={isCompactMode} onItemsReorder={handleItemsReorder} onSubItemsReorder={handleSubItemsReorder} selectedQuestions={selectedQuestions} onSelectionChange={handleSelectionChange} isEngagementMode={isEngagementMode} numberingFormat={numberingFormat} onNumberingFormatChange={(f) => { setNumberingFormat(f); localStorage.setItem('dv-numbering-format', f); }} applyingQuestionId={applyingQuestionId} />)}
         </SortableContext>
       </div>
       

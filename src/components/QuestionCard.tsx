@@ -146,7 +146,8 @@ export function QuestionCard({
     'follow-up': 'Follow-up Question',
     'dropdown': 'Dropdown',
     'file-upload': 'File Upload',
-    'toggle': 'Switch/Toggle'
+    'toggle': 'Switch/Toggle',
+    'answer': 'Answer'
   };
 
   const renderAnswerField = () => {
@@ -177,7 +178,7 @@ export function QuestionCard({
       case 'yes-no-na':
         return (
           <div className="flex gap-8 mt-3">
-            {['Yes', 'No', 'Not Applicable'].map((option) => (
+            {['Yes', 'No', 'NA'].map((option) => (
               <label key={option} className="flex items-center gap-2.5 cursor-pointer group">
                 <div 
                   className={`w-4 h-4 rounded-full border-2 flex items-center justify-center transition-all ${
@@ -202,8 +203,7 @@ export function QuestionCard({
         return null;
 
       case 'long-answer':
-
-      case 'long-answer':
+      case 'answer':
         return (
           <div className="mt-3 relative">
             <Textarea
