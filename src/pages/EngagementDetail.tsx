@@ -156,11 +156,23 @@ const toolsMenuActions = [{
   label: "Source Docs",
   icon: FileText
 }];
+// Map sidebar nav keys (e.g. "co-ca") to seeded checklist ids.
+const NAV_KEY_TO_CHECKLIST_ID: Record<string, string> = {
+  "co-ca": "default-compilation-cac",
+  "co-ind": "default-compilation-independence",
+  "co-kcb": "default-compilation-kcb",
+  "co-pl": "default-compilation-planning",
+  "co-el": "default-compilation-el",
+  "co-mr": "default-compilation-mr",
+};
+
 export default function EngagementDetail() {
   const {
-    engagementId
+    engagementId,
+    checklistKey,
   } = useParams<{
     engagementId: string;
+    checklistKey?: string;
   }>();
   const navigate = useNavigate();
   const { isCollapsed: isPanelCollapsed, toggle: togglePanel } = useSecondaryPanel();
