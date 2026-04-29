@@ -370,8 +370,8 @@ export default function EngagementDetail() {
     // In preview mode, we also save changes back to localStorage and dispatch sync
     const savedChecklists = readJsonFromLocalStorage<any[]>('savedChecklists', []);
     if (Array.isArray(savedChecklists) && savedChecklists.length > 0) {
-      const checklistId = savedChecklists[0]?.id;
-      const updated = savedChecklists.map((c: any, index: number) => index === 0 ? {
+      const checklistId = currentChecklistId ?? savedChecklists[0]?.id;
+      const updated = savedChecklists.map((c: any, index: number) => (c?.id === checklistId || (!currentChecklistId && index === 0)) ? {
         ...c,
         data: updatedChecklist
       } : c);
@@ -386,8 +386,8 @@ export default function EngagementDetail() {
     if (checklist) {
       const savedChecklists = readJsonFromLocalStorage<any[]>('savedChecklists', []);
       if (Array.isArray(savedChecklists) && savedChecklists.length > 0) {
-        const checklistId = savedChecklists[0]?.id;
-        const updated = savedChecklists.map((c: any, index: number) => index === 0 ? {
+        const checklistId = currentChecklistId ?? savedChecklists[0]?.id;
+        const updated = savedChecklists.map((c: any, index: number) => (c?.id === checklistId || (!currentChecklistId && index === 0)) ? {
           ...c,
           data: checklist
         } : c);
