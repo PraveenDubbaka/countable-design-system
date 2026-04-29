@@ -97,7 +97,7 @@ const initialGlobalTemplates: GlobalTemplate[] = [
     children: [
       { id: "global-1-1", name: "Client Acceptance and Continuance", type: "file" },
       { id: "global-1-2", name: "Independence", type: "file" },
-      { id: "global-1-3", name: "Knowledge of client business", type: "file" },
+      { id: "global-1-3", name: "Knowledge of the Business", type: "file" },
       { id: "global-1-4", name: "Planning", type: "file" },
       { id: "global-1-5", name: "Withdrawal", type: "file" },
       { id: "global-1-6", name: "Completion", type: "file" },
@@ -136,6 +136,29 @@ const initialGlobalTemplates: GlobalTemplate[] = [
     isExpanded: false,
     children: [
       { id: "global-3-1", name: "Completion", type: "file" },
+    ]
+  },
+  {
+    id: "global-4",
+    name: "Audit",
+    type: "folder",
+    isExpanded: false,
+    children: [
+      { id: "global-4-1", name: "Checklist — Audit Completion", type: "file" },
+      { id: "global-4-2", name: "Engagement Partner Checklist — Audit Completion", type: "file" },
+      { id: "global-4-3", name: "Checklist — Auditor's Report", type: "file" },
+      { id: "global-4-4", name: "Checklist — Modified Opinion", type: "file" },
+      { id: "global-4-5", name: "Checklist — Supplementary and Other Information", type: "file" },
+      { id: "global-4-6", name: "Checklist — Management Representations", type: "file" },
+    ]
+  },
+  {
+    id: "global-5",
+    name: "Compilation 2026",
+    type: "folder",
+    isExpanded: false,
+    children: [
+      { id: "global-5-1", name: "Client Acceptance and Continuance", type: "file" },
     ]
   }
 ];

@@ -36,6 +36,7 @@ export interface Section {
   questions: Question[];
   isExpanded: boolean;
   formLayout?: FormLayout;
+  note?: string;
 }
 
 export interface Checklist {
