@@ -108,6 +108,8 @@ const buildDefaultCompilationChecklists = () => {
     { generator: generateIndependenceChecklist, id: "default-compilation-independence" },
     { generator: generateKnowledgeOfClientBusinessChecklist, id: "default-compilation-kcb" },
     { generator: generatePlanningChecklist, id: "default-compilation-planning" },
+    { generator: generateEngagementLetterChecklist, id: "default-compilation-el" },
+    { generator: generateManagementResponsibilityChecklist, id: "default-compilation-mr" },
   ];
   return items.map(({ generator, id }) => {
     const data = generator();
