@@ -208,6 +208,7 @@ export default function EngagementDetail() {
   // Get unique clients and current client's engagements
   const uniqueClients = useMemo(() => getUniqueClients(), []);
   const clientEngagements = useMemo(() => getEngagementsForClient(clientName), [clientName]);
+  const currentChecklistId = checklistKey ? NAV_KEY_TO_CHECKLIST_ID[checklistKey] : undefined;
 
   // Handle client change - show dialog with engagements
   const handleClientChange = (newClient: string) => {
