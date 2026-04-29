@@ -22,7 +22,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, Di
 import { DeleteChecklistDialog } from "@/components/DeleteChecklistDialog";
 import { AddChecklistSheet } from "@/components/AddChecklistSheet";
 import { useSecondaryPanel } from "@/hooks/useSecondaryPanel";
-import { generateClientAcceptanceContinuance2026Checklist } from "@/lib/globalTemplates";
+import { generateClientAcceptanceContinuanceChecklist } from "@/lib/globalTemplates";
 
 // Sample engagement data matching the engagements page
 const engagementsData: Record<string, {
@@ -90,7 +90,7 @@ const getEngagementsForClient = (clientName: string) => {
 };
 
 // Fallback checklist when no saved checklist exists — uses the latest global template library
-const fallbackChecklist: Checklist = generateClientAcceptanceContinuance2026Checklist();
+const fallbackChecklist: Checklist = generateClientAcceptanceContinuanceChecklist();
 
 // Custom TB Check icon component
 const TBCheckIcon = ({
