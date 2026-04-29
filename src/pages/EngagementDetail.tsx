@@ -223,6 +223,18 @@ export default function EngagementDetail() {
     setIsLoading(true);
     setChecklist(null);
 
+    // One-time migration: clear stale sample checklists saved before the
+    // global template library was pulled in, so the engagement reflects the
+    // new global checklist content.
+    const TEMPLATE_LIBRARY_VERSION = 'v2-global-templates-2026-04';
+    const seenVersion = localStorage.getItem('savedChecklistsLibraryVersion');
+    if (seenVersion !== TEMPLATE_LIBRARY_VERSION) {
+      try {
+        localStorage.removeItem('savedChecklists');
+      } catch {}
+      localStorage.setItem('savedChecklistsLibraryVersion', TEMPLATE_LIBRARY_VERSION);
+    }
+
     // Simulate loading delay for better UX feedback
     const loadTimer = setTimeout(() => {
       const savedChecklists = readJsonFromLocalStorage<any[]>('savedChecklists', []);
@@ -236,7 +248,7 @@ export default function EngagementDetail() {
         }
       }
 
-      // Fallback to sample checklist if no saved checklists exist
+      // Fallback to the new global-template-backed checklist
       setChecklist(fallbackChecklist);
       setIsLoading(false);
     }, 500);
