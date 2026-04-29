@@ -17,6 +17,8 @@ import {
   generateIndependenceChecklist,
   generateKnowledgeOfClientBusinessChecklist,
   generatePlanningChecklist,
+  generateEngagementLetterChecklist,
+  generateManagementResponsibilityChecklist,
 } from "@/lib/globalTemplates";
 import { readJsonFromLocalStorage, removeLocalStorageKey, writeJsonToLocalStorage } from "@/lib/safeJson";
 import { cn } from "@/lib/utils";
