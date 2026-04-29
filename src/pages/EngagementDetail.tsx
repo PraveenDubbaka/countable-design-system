@@ -22,6 +22,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, Di
 import { DeleteChecklistDialog } from "@/components/DeleteChecklistDialog";
 import { AddChecklistSheet } from "@/components/AddChecklistSheet";
 import { useSecondaryPanel } from "@/hooks/useSecondaryPanel";
+import { generateClientAcceptanceContinuanceChecklist } from "@/lib/globalTemplates";
 
 // Sample engagement data matching the engagements page
 const engagementsData: Record<string, {
@@ -88,52 +89,8 @@ const getEngagementsForClient = (clientName: string) => {
   return Object.values(engagementsData).filter(e => e.client === clientName);
 };
 
-// Fallback checklist when no saved checklist exists
-const fallbackChecklist: Checklist = {
-  id: "engagement-checklist",
-  title: "Client acceptance and continuance",
-  description: "Engagement quality review checklist",
-  sections: [{
-    id: "section-1",
-    title: "Client acceptance and continuance",
-    isExpanded: true,
-    questions: [{
-      id: "q1",
-      text: "5. Independence",
-      answerType: "yes-no-na",
-      options: ["Yes", "No", "Not Applicable"],
-      required: true,
-      explanation: "",
-      subQuestions: []
-    }, {
-      id: "q2",
-      text: "6. Engagement quality review\nAre there any circumstances that would require this engagement to be subject to an engagement quality review?\nIf so, has a reviewer been appointed?",
-      answerType: "yes-no-na",
-      options: ["Yes", "No", "Not Applicable"],
-      required: true,
-      explanation: "",
-      subQuestions: []
-    }, {
-      id: "q3",
-      text: "7. Anti-money laundering procedures",
-      answerType: "yes-no-na",
-      options: ["Yes", "No", "Not Applicable"],
-      required: true,
-      explanation: "",
-      subQuestions: []
-    }, {
-      id: "q4",
-      text: "8. Engagement letter\nHas an engagement letter been signed by both parties?",
-      answerType: "yes-no-na",
-      options: ["Yes", "No", "Not Applicable"],
-      required: true,
-      explanation: "",
-      subQuestions: []
-    }]
-  }],
-  createdAt: new Date(),
-  updatedAt: new Date()
-};
+// Fallback checklist when no saved checklist exists — uses the new global template library
+const fallbackChecklist: Checklist = generateClientAcceptanceContinuanceChecklist();
 
 // Custom TB Check icon component
 const TBCheckIcon = ({
