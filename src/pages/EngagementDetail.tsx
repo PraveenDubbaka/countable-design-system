@@ -22,6 +22,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, Di
 import { DeleteChecklistDialog } from "@/components/DeleteChecklistDialog";
 import { AddChecklistSheet } from "@/components/AddChecklistSheet";
 import { useSecondaryPanel } from "@/hooks/useSecondaryPanel";
+import { generateClientAcceptanceContinuanceChecklist } from "@/lib/globalTemplates";
 
 // Sample engagement data matching the engagements page
 const engagementsData: Record<string, {
