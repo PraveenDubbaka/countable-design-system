@@ -166,6 +166,11 @@ const NAV_KEY_TO_CHECKLIST_ID: Record<string, string> = {
   "co-mr": "default-compilation-mr",
 };
 
+const LEGACY_COMPILATION_CHECKLIST_IDS = new Set([
+  "default-compilation-engagement-letter",
+  "default-compilation-mgmt-responsibility",
+]);
+
 export default function EngagementDetail() {
   const {
     engagementId,
