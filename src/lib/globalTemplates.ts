@@ -296,175 +296,126 @@ export const generatePlanningChecklist = (): Checklist => {
   };
 };
 
-// Engagement Letter template data
+// Engagement Letter — rendered by LetterView, single HTML blob
 export const generateEngagementLetterChecklist = (): Checklist => {
-  const letterLine = (id: string, text: string): Question => ({
-    id,
-    text,
-    answerType: 'none',
-    options: [],
-    required: false,
-    answer: '',
-    showResponse: false,
-    showExplanation: false,
-    showReference: false,
-    inlineColumnWidths: [1],
-  } as Question);
-
-  const sections: Section[] = [
-    {
-      id: 'section-el-addressing',
-      title: 'Engagement Letter',
-      questions: [
-        letterLine('el-address', '<p><strong>"Date"</strong></p><p><strong>"Entity Name"</strong><br/>"Complete Address"</p><p>Dear "First Name",</p>'),
-        letterLine('el-re', '<p><strong>Re: Compilation Engagement for "Entity Name" for the "Period Ended"</strong></p>'),
-      ],
-      isExpanded: true,
-    },
-    {
-      id: 'section-el-purpose',
-      title: 'Purpose of Engagement',
-      questions: [
-        letterLine('el-purpose-1', '<p>You have requested that we compile the financial information of <strong>"Entity Name"</strong> for the <strong>"Period Ended"</strong>. We are pleased to confirm our acceptance and understanding of this compilation engagement by means of this letter.</p>'),
-        letterLine('el-purpose-2', '<p>The objective of our engagement is to assist management in the preparation and presentation of compiled financial information based on information provided by management.</p>'),
-        letterLine('el-purpose-3', '<p>The compiled financial information is intended to be used by <strong>"Intended Users"</strong> for <strong>"Intended Purpose"</strong>. The compiled financial information may not be suitable for another purpose.</p>'),
-      ],
-      isExpanded: true,
-    },
-    {
-      id: 'section-el-management-responsibilities',
-      title: 'Management Responsibilities',
-      questions: [
-        letterLine('el-mgmt-1', '<p>Management acknowledges and understands that it is responsible for:</p><p>a. The compiled financial information;<br/>b. Selecting the basis of accounting to be applied in the preparation of the compiled financial information that is appropriate for the intended use;<br/>c. The accuracy and completeness of the information provided to Firm Name;<br/>d. Providing Firm Name with all information relevant to the compilation engagement and access to persons within the entity from whom Firm Name determines it necessary to obtain information;<br/>e. Judgments needed in the preparation and presentation of the compiled financial information; and<br/>f. Attaching the compilation engagement report when distributing or reproducing the compiled financial information.</p>'),
-      ],
-      isExpanded: true,
-    },
-    {
-      id: 'section-el-our-responsibilities',
-      title: 'Our Responsibilities',
-      questions: [
-        letterLine('el-our-1', '<p>We will perform the compilation engagement in accordance with <strong>Canadian Standard on Related Services (CSRS) 4200, Compilation Engagements</strong>.</p>'),
-        letterLine('el-our-2', '<p>A compilation engagement is substantially less in scope than an audit or a review engagement. We will not perform an audit or review engagement and, accordingly, we will not express an audit opinion or review conclusion, or provide any form of assurance on the compiled financial information.</p>'),
-        letterLine('el-our-3', '<p>We will compile the financial information using accounting expertise based on information provided by management. We are not required to verify the accuracy or completeness of the information provided by management or otherwise gather evidence to express an opinion or conclusion.</p>'),
-        letterLine('el-our-4', '<p>We will issue a compilation engagement report that describes the nature and limitations of the compilation engagement and identifies the basis of accounting applied in the preparation of the compiled financial information.</p>'),
-      ],
-      isExpanded: true,
-    },
-    {
-      id: 'section-el-basis-of-accounting',
-      title: 'Basis of Accounting',
-      questions: [
-        letterLine('el-basis-1', '<p>The basis of accounting to be applied in the preparation of the compiled financial information is <strong>"Basis of Accounting"</strong>, as selected by management and as described in a note to the compiled financial information.</p>'),
-      ],
-      isExpanded: true,
-    },
-    {
-      id: 'section-el-other-services',
-      title: 'Other Services (Optional)',
-      questions: [
-        letterLine('el-other-1', '<p>In addition to the compilation engagement, Firm Name may provide the following services, as agreed with management: bookkeeping assistance, preparation of corporate income tax returns, GST/HST filings, T-slips, or other advisory services. These services are separate from the compilation engagement and do not change management\'s responsibilities for the compiled financial information.</p>'),
-      ],
-      isExpanded: true,
-    },
-    {
-      id: 'section-el-fees',
-      title: 'Fees and Billing',
-      questions: [
-        letterLine('el-fees-1', '<p>Our fees will be billed based on the time required to complete the engagement at our standard billing rates, plus out-of-pocket expenses and applicable taxes. Invoices are due upon receipt unless otherwise agreed.</p>'),
-      ],
-      isExpanded: true,
-    },
-    {
-      id: 'section-el-confidentiality',
-      title: 'Confidentiality',
-      questions: [
-        letterLine('el-conf-1', '<p>Information acquired in the course of this engagement is subject to confidentiality requirements in accordance with relevant ethical, professional, and legal obligations.</p>'),
-      ],
-      isExpanded: true,
-    },
-    {
-      id: 'section-el-acceptance',
-      title: 'Acceptance & Signatures',
-      questions: [
-        letterLine('el-accept-1', '<p>If the contents of this letter are in accordance with your understanding of the terms of the engagement, please sign the attached copy of this letter and return it to us.</p>'),
-        letterLine('el-accept-2', '<p>Yours truly,</p><p><strong>ON BEHALF OF Firm Name</strong></p><p>Per: ________________________________<br/>Date: _______________________________</p>'),
-        letterLine('el-accept-3', '<p><strong>ACKNOWLEDGED AND AGREED ON BEHALF OF THE MANAGEMENT OF "Entity Name"</strong></p><p>Per: ________________________________<br/>Title: _______________________________<br/>Date: _______________________________</p>'),
-      ],
-      isExpanded: true,
-    },
-  ];
+  const html = `
+    <p class="text-sm text-foreground">${formatTodayLong()}</p>
+    <p class="mt-6 text-sm text-foreground">Entity Name<br/>Complete address</p>
+    <p class="mt-6 text-sm text-foreground">Dear First Name,</p>
+    <p class="mt-4 text-sm text-foreground">
+      You have requested that we compile the financial information of <strong>Entity Name</strong> for the
+      <strong>Period Ended</strong>. We are pleased to confirm our acceptance and understanding of this
+      compilation engagement by means of this letter.
+    </p>
+    <p class="mt-4 text-sm text-foreground">
+      The objective of our engagement is to assist management in the preparation and presentation of compiled
+      financial information based on information provided by management.
+    </p>
+    <p class="mt-4 text-sm text-foreground">
+      The compiled financial information is intended to be used by <strong>Intended Users</strong> for
+      <strong>Intended Purpose</strong>. The compiled financial information may not be suitable for another purpose.
+    </p>
+    <p class="mt-4 text-sm text-foreground">
+      We will perform the compilation engagement in accordance with <strong>Canadian Standard on Related
+      Services (CSRS) 4200, Compilation Engagements</strong>. A compilation engagement is substantially less
+      in scope than an audit or review engagement and we will not provide any form of assurance on the
+      compiled financial information.
+    </p>
+    <p class="mt-4 text-sm text-foreground">
+      If the contents of this letter are in accordance with your understanding of the terms of the engagement,
+      please sign the attached copy of this letter and return it to us.
+    </p>
+    <p class="mt-6 text-sm text-foreground">Yours truly,<br/>ON BEHALF OF Firm Name</p>
+  `;
 
   return {
     id: 'global-template-engagement-letter',
     title: 'Engagement Letter',
     description: 'Compilation engagement letter outlining terms, responsibilities, and acceptance.',
     objective: 'Establish the terms of the engagement.',
-    sections,
+    sections: [
+      {
+        id: 'section-el-letter',
+        title: 'Engagement Letter',
+        isExpanded: true,
+        questions: [
+          {
+            id: 'el-letter-body',
+            text: html,
+            answerType: 'none',
+            options: [],
+            required: false,
+            answer: '',
+          } as Question,
+        ],
+      },
+    ],
     createdAt: new Date(),
     updatedAt: new Date(),
   };
 };
 
+function formatTodayLong(): string {
+  const d = new Date();
+  return d.toLocaleDateString('en-US', { month: 'long', day: '2-digit', year: 'numeric' });
+}
+
 // Management Responsibility and Acknowledgement template data
 export const generateManagementResponsibilityChecklist = (): Checklist => {
-  const letterLine = (id: string, text: string): Question => ({
-    id,
-    text,
-    answerType: 'none',
-    options: [],
-    required: false,
-    answer: '',
-    showResponse: false,
-    showExplanation: false,
-    showReference: false,
-    inlineColumnWidths: [1],
-  } as Question);
-
-  const sections: Section[] = [
-    {
-      id: 'section-mr-addressing',
-      title: 'Management Responsibility and Acknowledgement',
-      questions: [
-        letterLine('mr-address', '<p><strong>"Date"</strong></p><p><strong>"Entity Name"</strong><br/>"Complete Address"</p><p>Dear "First Name",</p>'),
-        letterLine('mr-re', '<p><strong>Re: Management Responsibility and Acknowledgement for the Compilation Engagement for "Entity Name" for the "Period Ended"</strong></p>'),
-      ],
-      isExpanded: true,
-    },
-    {
-      id: 'section-mr-acknowledgement',
-      title: 'Acknowledgement of Responsibility',
-      questions: [
-        letterLine('mr-ack-1', '<p>Further to the engagement letter dated <strong>"Engagement Letter Date"</strong>, management acknowledges that it is responsible for:</p><p>a. The compiled financial information;<br/>b. Selecting the basis of accounting to be applied in the preparation of the compiled financial information that is appropriate for the intended use;<br/>c. The accuracy and completeness of the information provided to Firm Name;<br/>d. Providing Firm Name with all information relevant to the compilation engagement and access to persons within the entity from whom Firm Name determines it necessary to obtain information;<br/>e. Judgments needed in the preparation and presentation of the compiled financial information; and<br/>f. Attaching the compilation engagement report when distributing or reproducing the compiled financial information.</p>'),
-        letterLine('mr-ack-2', '<p>Management confirms that it has provided Firm Name with all information necessary to complete the compilation engagement and that the information provided is complete and accurate to the best of management\'s knowledge.</p>'),
-      ],
-      isExpanded: true,
-    },
-    {
-      id: 'section-mr-closing',
-      title: 'Closing',
-      questions: [
-        letterLine('mr-closing-1', '<p>If there are any questions about the contents of this letter, please raise them with the Engagement Partner. Please sign and return the attached copy of this letter to indicate management\'s acknowledgement of, and agreement with, its responsibilities for the compilation engagement.</p>'),
-        letterLine('mr-closing-2', '<p>Firm Name appreciates the opportunity of continuing to be of service to <strong>"Entity Name"</strong>.</p>'),
-      ],
-      isExpanded: true,
-    },
-    {
-      id: 'section-mr-signatures',
-      title: 'Signatures',
-      questions: [
-        letterLine('mr-sign-1', '<p>Yours truly,</p><p><strong>ON BEHALF OF Firm Name</strong></p><p>Per: ________________________________<br/>Date: _______________________________</p>'),
-        letterLine('mr-sign-2', '<p><strong>ACKNOWLEDGED AND AGREED ON BEHALF OF THE MANAGEMENT OF "Entity Name"</strong></p><p>Per: ________________________________<br/>Title: _______________________________<br/>Date: _______________________________</p>'),
-      ],
-      isExpanded: true,
-    },
-  ];
+  const html = `
+    <p class="text-sm text-foreground">${formatTodayLong()}</p>
+    <p class="mt-6 text-sm text-foreground">Entity Name<br/>Complete address</p>
+    <p class="mt-6 text-sm text-foreground">Dear First Name,</p>
+    <p class="mt-4 text-sm text-foreground">
+      Further to the engagement letter dated
+      <span class="letter-placeholder" data-field="engagement-letter-date">Engagement Letter Date</span>,
+      management acknowledges that it is responsible for:
+    </p>
+    <p class="mt-3 text-sm text-foreground">a. The compiled financial information;</p>
+    <p class="mt-3 text-sm text-foreground">
+      b. Selecting the basis of accounting to be applied in the preparation of the compiled financial
+      information that is appropriate for the intended use;
+    </p>
+    <p class="mt-3 text-sm text-foreground">
+      c. The accuracy and completeness of the information provided to Firm Name; and
+    </p>
+    <p class="mt-3 text-sm text-foreground">
+      d. Attaching the compilation engagement report when distributing or reproducing the compiled
+      financial information.
+    </p>
+    <p class="mt-4 text-sm text-foreground">
+      If there are any questions about the contents of this letter, please raise them with the Engagement
+      Partner. Please sign and return the attached copy of this letter to indicate management's
+      acknowledgement of, and agreement with, its responsibilities for the compilation engagement.
+    </p>
+    <p class="mt-4 text-sm text-foreground">
+      Firm Name appreciates the opportunity of continuing to be of service to Entity Name.
+    </p>
+    <p class="mt-6 text-sm text-foreground">Yours truly,<br/>ON BEHALF OF Firm Name</p>
+  `;
 
   return {
     id: 'global-template-management-responsibility',
-    title: 'Management Responsibility and Acknowledgement',
+    title: 'Management responsibility and acknowledgement',
     description: 'Management acknowledgement of responsibilities for the compilation engagement.',
     objective: 'Document management acknowledgement.',
-    sections,
+    sections: [
+      {
+        id: 'section-mr-letter',
+        title: 'Management responsibility and acknowledgement',
+        isExpanded: true,
+        questions: [
+          {
+            id: 'mr-letter-body',
+            text: html,
+            answerType: 'none',
+            options: [],
+            required: false,
+            answer: '',
+          } as Question,
+        ],
+      },
+    ],
     createdAt: new Date(),
     updatedAt: new Date(),
   };

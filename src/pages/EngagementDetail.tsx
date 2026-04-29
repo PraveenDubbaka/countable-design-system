@@ -9,6 +9,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Layout } from "@/components/Layout";
 import { DocumentView } from "@/components/DocumentView";
+import { LetterView } from "@/components/LetterView";
 import { FloatingActionBar } from "@/components/FloatingActionBar";
 import { EngagementRightPanel } from "@/components/EngagementRightPanel";
 import { Checklist, Question } from "@/types/checklist";
@@ -275,7 +276,7 @@ export default function EngagementDetail() {
     // One-time migration: clear stale sample checklists saved before the
     // global template library was pulled in, so the engagement reflects the
     // new global checklist content.
-    const TEMPLATE_LIBRARY_VERSION = 'v8-global-templates-letter-content-2026-04';
+    const TEMPLATE_LIBRARY_VERSION = 'v9-letter-renderer-el-mr-2026-04';
     const seenVersion = localStorage.getItem('savedChecklistsLibraryVersion');
     if (seenVersion !== TEMPLATE_LIBRARY_VERSION) {
       try {
@@ -800,18 +801,22 @@ export default function EngagementDetail() {
                     <p className="text-xs text-muted-foreground mt-1">Please wait while we fetch the data</p>
                   </div>
                 </div> : <div className="bg-background">
-                  <DocumentView
-                    checklist={checklist}
-                    onUpdate={handleChecklistUpdate}
-                    isPreviewMode={false}
-                    isCompactMode={isCompactMode}
-                    selectedQuestions={selectedQuestions}
-                    onSelectionChange={setSelectedQuestions}
-                    isEngagementMode={true}
-                    applyingQuestionId={clientResponses.applyingQuestionId}
-                    objectiveExpanded={objectiveExpanded}
-                    onToggleObjective={() => setObjectiveExpanded(prev => !prev)}
-                  />
+                  {(currentChecklistId === "default-compilation-el" || currentChecklistId === "default-compilation-mr") ? (
+                    <LetterView checklist={checklist} onUpdate={handleChecklistUpdate} />
+                  ) : (
+                    <DocumentView
+                      checklist={checklist}
+                      onUpdate={handleChecklistUpdate}
+                      isPreviewMode={false}
+                      isCompactMode={isCompactMode}
+                      selectedQuestions={selectedQuestions}
+                      onSelectionChange={setSelectedQuestions}
+                      isEngagementMode={true}
+                      applyingQuestionId={clientResponses.applyingQuestionId}
+                      objectiveExpanded={objectiveExpanded}
+                      onToggleObjective={() => setObjectiveExpanded(prev => !prev)}
+                    />
+                  )}
                 </div>}
             </div>
           ) : (
