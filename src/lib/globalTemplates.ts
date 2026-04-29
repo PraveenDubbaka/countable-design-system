@@ -407,15 +407,26 @@ export const generateEngagementLetterChecklist = (): Checklist => {
 
 // Management Responsibility and Acknowledgement template data
 export const generateManagementResponsibilityChecklist = (): Checklist => {
+  const letterLine = (id: string, text: string): Question => ({
+    id,
+    text,
+    answerType: 'none',
+    options: [],
+    required: false,
+    answer: '',
+    showResponse: false,
+    showExplanation: false,
+    showReference: false,
+    inlineColumnWidths: [1],
+  } as Question);
+
   const sections: Section[] = [
     {
       id: 'section-mr-addressing',
-      title: 'Addressing & Salutation',
+      title: 'Management Responsibility and Acknowledgement',
       questions: [
-        { id: 'mr-q1', text: '<p><strong>Date</strong></p>', answerType: 'date', options: [], required: false, answer: '' },
-        { id: 'mr-q2', text: '<p><strong>Entity Name</strong></p>', answerType: 'answer', options: [], required: true, answer: '' },
-        { id: 'mr-q3', text: '<p><strong>Complete address</strong></p>', answerType: 'long-answer', options: [], required: false, answer: '' },
-        { id: 'mr-q4', text: '<p><strong>Salutation (e.g., Dear First Name,)</strong></p>', answerType: 'answer', options: [], required: false, answer: '' },
+        letterLine('mr-address', '<p><strong>"Date"</strong></p><p><strong>"Entity Name"</strong><br/>"Complete Address"</p><p>Dear "First Name",</p>'),
+        letterLine('mr-re', '<p><strong>Re: Management Responsibility and Acknowledgement for the Compilation Engagement for "Entity Name" for the "Period Ended"</strong></p>'),
       ],
       isExpanded: true,
     },
@@ -423,7 +434,8 @@ export const generateManagementResponsibilityChecklist = (): Checklist => {
       id: 'section-mr-acknowledgement',
       title: 'Acknowledgement of Responsibility',
       questions: [
-        { id: 'mr-a1', text: '<p>Further to the engagement letter dated <strong>"Engagement Letter Date"</strong>, management acknowledges that it is responsible for:</p><p>a. The compiled financial information;<br/>b. Selecting the basis of accounting to be applied in the preparation of the compiled financial information that is appropriate for the intended use;<br/>c. The accuracy and completeness of the information provided to Firm Name; and<br/>d. Attaching the compilation engagement report when distributing or reproducing the compiled financial information.</p>', answerType: 'long-answer', options: [], required: false, answer: '' },
+        letterLine('mr-ack-1', '<p>Further to the engagement letter dated <strong>"Engagement Letter Date"</strong>, management acknowledges that it is responsible for:</p><p>a. The compiled financial information;<br/>b. Selecting the basis of accounting to be applied in the preparation of the compiled financial information that is appropriate for the intended use;<br/>c. The accuracy and completeness of the information provided to Firm Name;<br/>d. Providing Firm Name with all information relevant to the compilation engagement and access to persons within the entity from whom Firm Name determines it necessary to obtain information;<br/>e. Judgments needed in the preparation and presentation of the compiled financial information; and<br/>f. Attaching the compilation engagement report when distributing or reproducing the compiled financial information.</p>'),
+        letterLine('mr-ack-2', '<p>Management confirms that it has provided Firm Name with all information necessary to complete the compilation engagement and that the information provided is complete and accurate to the best of management\'s knowledge.</p>'),
       ],
       isExpanded: true,
     },
@@ -431,8 +443,8 @@ export const generateManagementResponsibilityChecklist = (): Checklist => {
       id: 'section-mr-closing',
       title: 'Closing',
       questions: [
-        { id: 'mr-c1', text: '<p>If there are any questions about the contents of this letter, please raise them with the Engagement Partner. Please sign and return the attached copy of this letter to indicate management\'s acknowledgement of, and agreement with, its responsibilities for the compilation engagement.</p>', answerType: 'long-answer', options: [], required: false, answer: '' },
-        { id: 'mr-c2', text: '<p>Firm Name appreciates the opportunity of continuing to be of service to Entity Name.</p>', answerType: 'long-answer', options: [], required: false, answer: '' },
+        letterLine('mr-closing-1', '<p>If there are any questions about the contents of this letter, please raise them with the Engagement Partner. Please sign and return the attached copy of this letter to indicate management\'s acknowledgement of, and agreement with, its responsibilities for the compilation engagement.</p>'),
+        letterLine('mr-closing-2', '<p>Firm Name appreciates the opportunity of continuing to be of service to <strong>"Entity Name"</strong>.</p>'),
       ],
       isExpanded: true,
     },
@@ -440,12 +452,8 @@ export const generateManagementResponsibilityChecklist = (): Checklist => {
       id: 'section-mr-signatures',
       title: 'Signatures',
       questions: [
-        { id: 'mr-s1', text: '<p><strong>Yours truly,</strong><br/>ON BEHALF OF Firm Name</p>', answerType: 'long-answer', options: [], required: false, answer: '' },
-        { id: 'mr-s2', text: '<p><strong>Practitioner signature</strong></p>', answerType: 'answer', options: [], required: false, answer: '' },
-        { id: 'mr-s3', text: '<p><strong>Date</strong></p>', answerType: 'date', options: [], required: false, answer: '' },
-        { id: 'mr-s4', text: '<p>ACKNOWLEDGED AND AGREED ON BEHALF OF THE MANAGEMENT OF Entity Name</p>', answerType: 'long-answer', options: [], required: false, answer: '' },
-        { id: 'mr-s5', text: '<p><strong>Client signature</strong></p>', answerType: 'answer', options: [], required: false, answer: '' },
-        { id: 'mr-s6', text: '<p><strong>Client signed date</strong></p>', answerType: 'date', options: [], required: false, answer: '' },
+        letterLine('mr-sign-1', '<p>Yours truly,</p><p><strong>ON BEHALF OF Firm Name</strong></p><p>Per: ________________________________<br/>Date: _______________________________</p>'),
+        letterLine('mr-sign-2', '<p><strong>ACKNOWLEDGED AND AGREED ON BEHALF OF THE MANAGEMENT OF "Entity Name"</strong></p><p>Per: ________________________________<br/>Title: _______________________________<br/>Date: _______________________________</p>'),
       ],
       isExpanded: true,
     },
