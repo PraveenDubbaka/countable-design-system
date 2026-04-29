@@ -1936,7 +1936,7 @@ export const generateReviewWithdrawalChecklist = (): Checklist => {
         {
           id: 'q-rw-reasons-1',
           text: '<p>Document the reason for your withdrawal, the actions taken and discussions with management, including any of the following situations:</p>',
-          answerType: 'answer',
+          answerType: 'long-answer',
           options: [],
           required: false,
           answer: '',
@@ -2006,10 +2006,10 @@ export const generateUnderstandingEntitySystemsChecklist = (): Checklist => {
       id: 'section-ues-financial',
       title: 'Part A — Understanding Financial Accounting/Reporting Systems',
       questions: [
-        { id: 'q-ues-fin-1', text: '<p>Identify the individual(s) responsible for the day-to-day accounting, and describe the experience they have.</p>', answerType: 'answer', options: [], required: false, answer: '' },
-        { id: 'q-ues-fin-2', text: '<p>Describe the key financial reports produced on a regular basis (e.g., income statement, balance sheet and budget to actual comparison).</p>', answerType: 'answer', options: [], required: false, answer: '' },
-        { id: 'q-ues-fin-3', text: '<p>Describe the key indicators management uses to measure and assess performance (e.g., sales per square foot and gross margins).</p>', answerType: 'answer', options: [], required: false, answer: '' },
-        { id: 'q-ues-fin-4', text: '<p>Describe the financial reports (if any) that are regularly provided to third parties, such as banks.</p>', answerType: 'answer', options: [], required: false, answer: '' },
+        { id: 'q-ues-fin-1', text: '<p>Identify the individual(s) responsible for the day-to-day accounting, and describe the experience they have.</p>', answerType: 'long-answer', options: [], required: false, answer: '' },
+        { id: 'q-ues-fin-2', text: '<p>Describe the key financial reports produced on a regular basis (e.g., income statement, balance sheet and budget to actual comparison).</p>', answerType: 'long-answer', options: [], required: false, answer: '' },
+        { id: 'q-ues-fin-3', text: '<p>Describe the key indicators management uses to measure and assess performance (e.g., sales per square foot and gross margins).</p>', answerType: 'long-answer', options: [], required: false, answer: '' },
+        { id: 'q-ues-fin-4', text: '<p>Describe the financial reports (if any) that are regularly provided to third parties, such as banks.</p>', answerType: 'long-answer', options: [], required: false, answer: '' },
         {
           id: 'q-ues-fin-5',
           text: '<p>Describe the accounting applications used by the entity.</p>',
@@ -2018,25 +2018,25 @@ export const generateUnderstandingEntitySystemsChecklist = (): Checklist => {
           required: false,
           answer: ''
         },
-        { id: 'q-ues-fin-6', text: '<p>Describe the nature of any external accounting services provided (e.g., bookkeeping).</p>', answerType: 'answer', options: [], required: false, answer: '' },
-        { id: 'q-ues-fin-7', text: '<p>Describe any significant transactions occurring or recognized near the end of the reporting period.</p>', answerType: 'answer', options: [], required: false, answer: '' },
-        { id: 'q-ues-fin-8', text: '<p>Describe any material non-monetary transactions or transactions for no consideration.</p>', answerType: 'answer', options: [], required: false, answer: '' },
-        { id: 'q-ues-fin-9', text: '<p>Describe the results of any government audits (HST, GT or corporate) that occurred during the period.</p>', answerType: 'answer', options: [], required: false, answer: '' },
+        { id: 'q-ues-fin-6', text: '<p>Describe the nature of any external accounting services provided (e.g., bookkeeping).</p>', answerType: 'long-answer', options: [], required: false, answer: '' },
+        { id: 'q-ues-fin-7', text: '<p>Describe any significant transactions occurring or recognized near the end of the reporting period.</p>', answerType: 'long-answer', options: [], required: false, answer: '' },
+        { id: 'q-ues-fin-8', text: '<p>Describe any material non-monetary transactions or transactions for no consideration.</p>', answerType: 'long-answer', options: [], required: false, answer: '' },
+        { id: 'q-ues-fin-9', text: '<p>Describe the results of any government audits (HST, GT or corporate) that occurred during the period.</p>', answerType: 'long-answer', options: [], required: false, answer: '' },
         {
           id: 'q-ues-fin-10',
           text: '<p>Describe significant accounting policies (if any) that are:</p>',
-          answerType: 'answer',
+          answerType: 'long-answer',
           options: [],
           required: false,
           answer: '',
           subQuestions: [
-            { id: 'q-ues-fin-10a', text: '<p>Not usually used in the entity\'s industry.</p>', answerType: 'answer', options: [], required: false, answer: '' },
-            { id: 'q-ues-fin-10b', text: '<p>Not consistently applied.</p>', answerType: 'answer', options: [], required: false, answer: '' },
-            { id: 'q-ues-fin-10c', text: '<p>Considered controversial.</p>', answerType: 'answer', options: [], required: false, answer: '' },
-            { id: 'q-ues-fin-10d', text: '<p>Not appropriate or consistent with the applicable financial reporting framework.</p>', answerType: 'answer', options: [], required: false, answer: '' }
+            { id: 'q-ues-fin-10a', text: '<p>Not usually used in the entity\'s industry.</p>', answerType: 'long-answer', options: [], required: false, answer: '' },
+            { id: 'q-ues-fin-10b', text: '<p>Not consistently applied.</p>', answerType: 'long-answer', options: [], required: false, answer: '' },
+            { id: 'q-ues-fin-10c', text: '<p>Considered controversial.</p>', answerType: 'long-answer', options: [], required: false, answer: '' },
+            { id: 'q-ues-fin-10d', text: '<p>Not appropriate or consistent with the applicable financial reporting framework.</p>', answerType: 'long-answer', options: [], required: false, answer: '' }
           ]
         },
-        { id: 'q-ues-fin-11', text: '<p>Identify any areas in the F/S where material misstatements are likely to arise.</p>', answerType: 'answer', options: [], required: false, answer: '' },
+        { id: 'q-ues-fin-11', text: '<p>Identify any areas in the F/S where material misstatements are likely to arise.</p>', answerType: 'long-answer', options: [], required: false, answer: '' },
         {
           id: 'q-ues-fin-12',
           text: '<p>Indicate (based on inquiries made and understanding obtained) if any of the following apply:</p>',
@@ -2054,7 +2054,7 @@ export const generateUnderstandingEntitySystemsChecklist = (): Checklist => {
             { id: 'q-ues-fin-12g', text: '<p>Lack of consultation with subject matter experts regarding the recording of complex transactions.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' }
           ]
         },
-        { id: 'q-ues-fin-13', text: '<p>Nature of likely misstatements.</p>', answerType: 'answer', options: [], required: false, answer: '' }
+        { id: 'q-ues-fin-13', text: '<p>Nature of likely misstatements.</p>', answerType: 'long-answer', options: [], required: false, answer: '' }
       ],
       isExpanded: true
     },
@@ -2062,29 +2062,29 @@ export const generateUnderstandingEntitySystemsChecklist = (): Checklist => {
       id: 'section-ues-tech',
       title: 'Understanding General Technology',
       questions: [
-        { id: 'q-ues-tech-1', text: '<p>Indicate the individual(s) responsible for managing the IT applications in the entity. If the person responsible is not an employee, describe the contractual arrangement in place.</p>', answerType: 'answer', options: [], required: false, answer: '' },
-        { id: 'q-ues-tech-2', text: '<p>Describe the current technology systems (e.g., hardware, software and data storage, such as server or cloud).</p>', answerType: 'answer', options: [], required: false, answer: '' },
-        { id: 'q-ues-tech-3', text: '<p>Describe the process for authorizing and making changes (if any) to financial applications.</p>', answerType: 'answer', options: [], required: false, answer: '' },
-        { id: 'q-ues-tech-4', text: '<p>Describe the applications used to capture, process, record and report financial information.</p>', answerType: 'answer', options: [], required: false, answer: '' },
+        { id: 'q-ues-tech-1', text: '<p>Indicate the individual(s) responsible for managing the IT applications in the entity. If the person responsible is not an employee, describe the contractual arrangement in place.</p>', answerType: 'long-answer', options: [], required: false, answer: '' },
+        { id: 'q-ues-tech-2', text: '<p>Describe the current technology systems (e.g., hardware, software and data storage, such as server or cloud).</p>', answerType: 'long-answer', options: [], required: false, answer: '' },
+        { id: 'q-ues-tech-3', text: '<p>Describe the process for authorizing and making changes (if any) to financial applications.</p>', answerType: 'long-answer', options: [], required: false, answer: '' },
+        { id: 'q-ues-tech-4', text: '<p>Describe the applications used to capture, process, record and report financial information.</p>', answerType: 'long-answer', options: [], required: false, answer: '' },
         {
           id: 'q-ues-tech-5',
           text: '<p>Describe how the entity restricts access to data and applications to authorized personnel, such as:</p>',
-          answerType: 'answer',
+          answerType: 'long-answer',
           options: [],
           required: false,
           answer: '',
           subQuestions: [
-            { id: 'q-ues-tech-5a', text: '<p>Physical security.</p>', answerType: 'answer', options: [], required: false, answer: '' },
-            { id: 'q-ues-tech-5b', text: '<p>Data stored with third parties.</p>', answerType: 'answer', options: [], required: false, answer: '' },
-            { id: 'q-ues-tech-5c', text: '<p>Data stored on the cloud.</p>', answerType: 'answer', options: [], required: false, answer: '' },
-            { id: 'q-ues-tech-5d', text: '<p>Remote access.</p>', answerType: 'answer', options: [], required: false, answer: '' },
-            { id: 'q-ues-tech-5e', text: '<p>Passwords for applications.</p>', answerType: 'answer', options: [], required: false, answer: '' },
-            { id: 'q-ues-tech-5f', text: '<p>Virus and malware protection.</p>', answerType: 'answer', options: [], required: false, answer: '' },
-            { id: 'q-ues-tech-5g', text: '<p>Data backup and data recovery procedures.</p>', answerType: 'answer', options: [], required: false, answer: '' }
+            { id: 'q-ues-tech-5a', text: '<p>Physical security.</p>', answerType: 'long-answer', options: [], required: false, answer: '' },
+            { id: 'q-ues-tech-5b', text: '<p>Data stored with third parties.</p>', answerType: 'long-answer', options: [], required: false, answer: '' },
+            { id: 'q-ues-tech-5c', text: '<p>Data stored on the cloud.</p>', answerType: 'long-answer', options: [], required: false, answer: '' },
+            { id: 'q-ues-tech-5d', text: '<p>Remote access.</p>', answerType: 'long-answer', options: [], required: false, answer: '' },
+            { id: 'q-ues-tech-5e', text: '<p>Passwords for applications.</p>', answerType: 'long-answer', options: [], required: false, answer: '' },
+            { id: 'q-ues-tech-5f', text: '<p>Virus and malware protection.</p>', answerType: 'long-answer', options: [], required: false, answer: '' },
+            { id: 'q-ues-tech-5g', text: '<p>Data backup and data recovery procedures.</p>', answerType: 'long-answer', options: [], required: false, answer: '' }
           ]
         },
-        { id: 'q-ues-tech-6', text: '<p>Describe any modifications to the technology systems during the period.</p>', answerType: 'answer', options: [], required: false, answer: '' },
-        { id: 'q-ues-tech-7', text: '<p>Identify any areas in the F/S where material misstatements are likely to arise.</p>', answerType: 'answer', options: [], required: false, answer: '' },
+        { id: 'q-ues-tech-6', text: '<p>Describe any modifications to the technology systems during the period.</p>', answerType: 'long-answer', options: [], required: false, answer: '' },
+        { id: 'q-ues-tech-7', text: '<p>Identify any areas in the F/S where material misstatements are likely to arise.</p>', answerType: 'long-answer', options: [], required: false, answer: '' },
         {
           id: 'q-ues-tech-8',
           text: '<p>Indicate (based on inquiries made and understanding obtained) if any of the following apply:</p>',
@@ -2102,7 +2102,7 @@ export const generateUnderstandingEntitySystemsChecklist = (): Checklist => {
             { id: 'q-ues-tech-8g', text: '<p>Data loss due to inadequate backup or other security procedures, such as virus protection.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' }
           ]
         },
-        { id: 'q-ues-tech-9', text: '<p>Nature of likely misstatements.</p>', answerType: 'answer', options: [], required: false, answer: '' }
+        { id: 'q-ues-tech-9', text: '<p>Nature of likely misstatements.</p>', answerType: 'long-answer', options: [], required: false, answer: '' }
       ],
       isExpanded: true
     },
@@ -2123,9 +2123,9 @@ export const generateUnderstandingEntitySystemsChecklist = (): Checklist => {
             { id: 'q-ues-cash-1c', text: '<p>Cheque signing policies.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' }
           ]
         },
-        { id: 'q-ues-cash-2', text: '<p>Describe the procedures for ensuring that cash transactions are recorded in the appropriate period.</p>', answerType: 'answer', options: [], required: false, answer: '' },
-        { id: 'q-ues-cash-3', text: '<p>Describe the entity\'s processes for the preparation and review of monthly bank reconciliations.</p>', answerType: 'answer', options: [], required: false, answer: '' },
-        { id: 'q-ues-cash-4', text: '<p>Identify any areas in the F/S where material misstatements are likely to arise.</p>', answerType: 'answer', options: [], required: false, answer: '' },
+        { id: 'q-ues-cash-2', text: '<p>Describe the procedures for ensuring that cash transactions are recorded in the appropriate period.</p>', answerType: 'long-answer', options: [], required: false, answer: '' },
+        { id: 'q-ues-cash-3', text: '<p>Describe the entity\'s processes for the preparation and review of monthly bank reconciliations.</p>', answerType: 'long-answer', options: [], required: false, answer: '' },
+        { id: 'q-ues-cash-4', text: '<p>Identify any areas in the F/S where material misstatements are likely to arise.</p>', answerType: 'long-answer', options: [], required: false, answer: '' },
         {
           id: 'q-ues-cash-5',
           text: '<p>Indicate (based on inquiries made and understanding obtained) if any of the following apply:</p>',
@@ -2139,7 +2139,7 @@ export const generateUnderstandingEntitySystemsChecklist = (): Checklist => {
             { id: 'q-ues-cash-5c', text: '<p>Weak physical controls over cash balances held.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' }
           ]
         },
-        { id: 'q-ues-cash-6', text: '<p>Nature of likely misstatements.</p>', answerType: 'answer', options: [], required: false, answer: '' }
+        { id: 'q-ues-cash-6', text: '<p>Nature of likely misstatements.</p>', answerType: 'long-answer', options: [], required: false, answer: '' }
       ],
       isExpanded: true
     },
@@ -2155,8 +2155,8 @@ export const generateUnderstandingEntitySystemsChecklist = (): Checklist => {
           required: false,
           answer: ''
         },
-        { id: 'q-ues-rev-2', text: '<p>Name of significant customers.</p>', answerType: 'answer', options: [], required: false, answer: '' },
-        { id: 'q-ues-rev-3', text: '<p>Describe how revenue transactions are initiated (e.g., phone, email or internet).</p>', answerType: 'answer', options: [], required: false, answer: '' },
+        { id: 'q-ues-rev-2', text: '<p>Name of significant customers.</p>', answerType: 'long-answer', options: [], required: false, answer: '' },
+        { id: 'q-ues-rev-3', text: '<p>Describe how revenue transactions are initiated (e.g., phone, email or internet).</p>', answerType: 'long-answer', options: [], required: false, answer: '' },
         {
           id: 'q-ues-rev-4',
           text: '<p>Indicate at what point in the sales process revenue transactions are recorded in the general ledger.</p>',
@@ -2165,8 +2165,8 @@ export const generateUnderstandingEntitySystemsChecklist = (): Checklist => {
           required: false,
           answer: ''
         },
-        { id: 'q-ues-rev-5', text: '<p>Describe any complexities in revenue recognition (e.g., multiple revenue streams, rights of return and contractual terms).</p>', answerType: 'answer', options: [], required: false, answer: '' },
-        { id: 'q-ues-rev-6', text: '<p>Describe how management ensures that all revenue transactions are recorded and included in the correct period (cut-off).</p>', answerType: 'answer', options: [], required: false, answer: '' },
+        { id: 'q-ues-rev-5', text: '<p>Describe any complexities in revenue recognition (e.g., multiple revenue streams, rights of return and contractual terms).</p>', answerType: 'long-answer', options: [], required: false, answer: '' },
+        { id: 'q-ues-rev-6', text: '<p>Describe how management ensures that all revenue transactions are recorded and included in the correct period (cut-off).</p>', answerType: 'long-answer', options: [], required: false, answer: '' },
         {
           id: 'q-ues-rev-7',
           text: '<p>Indicate the entity\'s normal sales terms.</p>',
@@ -2175,9 +2175,9 @@ export const generateUnderstandingEntitySystemsChecklist = (): Checklist => {
           required: false,
           answer: ''
         },
-        { id: 'q-ues-rev-8', text: '<p>Describe any special terms, conditions, discounts, etc., on sales.</p>', answerType: 'answer', options: [], required: false, answer: '' },
-        { id: 'q-ues-rev-9', text: '<p>Describe how proceeds from revenue transactions are collected (cash sales %, credit card sales %, credit sales %).</p>', answerType: 'answer', options: [], required: false, answer: '' },
-        { id: 'q-ues-rev-10', text: '<p>Describe the extent of online sales.</p>', answerType: 'answer', options: [], required: false, answer: '' },
+        { id: 'q-ues-rev-8', text: '<p>Describe any special terms, conditions, discounts, etc., on sales.</p>', answerType: 'long-answer', options: [], required: false, answer: '' },
+        { id: 'q-ues-rev-9', text: '<p>Describe how proceeds from revenue transactions are collected (cash sales %, credit card sales %, credit sales %).</p>', answerType: 'long-answer', options: [], required: false, answer: '' },
+        { id: 'q-ues-rev-10', text: '<p>Describe the extent of online sales.</p>', answerType: 'long-answer', options: [], required: false, answer: '' },
         {
           id: 'q-ues-rev-11',
           text: '<p>Describe the entity\'s procedures for determining the allowance for doubtful accounts.</p>',
@@ -2186,7 +2186,7 @@ export const generateUnderstandingEntitySystemsChecklist = (): Checklist => {
           required: false,
           answer: ''
         },
-        { id: 'q-ues-rev-12', text: '<p>Identify any areas in the F/S where material misstatements are likely to arise.</p>', answerType: 'answer', options: [], required: false, answer: '' },
+        { id: 'q-ues-rev-12', text: '<p>Identify any areas in the F/S where material misstatements are likely to arise.</p>', answerType: 'long-answer', options: [], required: false, answer: '' },
         {
           id: 'q-ues-rev-13',
           text: '<p>Indicate (based on inquiries made and understanding obtained) if any of the following apply:</p>',
@@ -2200,7 +2200,7 @@ export const generateUnderstandingEntitySystemsChecklist = (): Checklist => {
             { id: 'q-ues-rev-13c', text: '<p>Weak controls over cut-off at period end.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' }
           ]
         },
-        { id: 'q-ues-rev-14', text: '<p>Nature of likely misstatements.</p>', answerType: 'answer', options: [], required: false, answer: '' }
+        { id: 'q-ues-rev-14', text: '<p>Nature of likely misstatements.</p>', answerType: 'long-answer', options: [], required: false, answer: '' }
       ],
       isExpanded: true
     },
@@ -2216,10 +2216,10 @@ export const generateUnderstandingEntitySystemsChecklist = (): Checklist => {
           required: false,
           answer: ''
         },
-        { id: 'q-ues-pur-2', text: '<p>Name of significant suppliers.</p>', answerType: 'answer', options: [], required: false, answer: '' },
-        { id: 'q-ues-pur-3', text: '<p>Describe how purchase and disposal transactions are initiated (e.g., purchase orders, online orders, phone calls or emails).</p>', answerType: 'answer', options: [], required: false, answer: '' },
-        { id: 'q-ues-pur-4', text: '<p>Document how purchase and disposal transactions are recorded in the general ledger.</p>', answerType: 'answer', options: [], required: false, answer: '' },
-        { id: 'q-ues-pur-5', text: '<p>Describe how management ensures that all goods and services and disposals are recorded in the proper period.</p>', answerType: 'answer', options: [], required: false, answer: '' },
+        { id: 'q-ues-pur-2', text: '<p>Name of significant suppliers.</p>', answerType: 'long-answer', options: [], required: false, answer: '' },
+        { id: 'q-ues-pur-3', text: '<p>Describe how purchase and disposal transactions are initiated (e.g., purchase orders, online orders, phone calls or emails).</p>', answerType: 'long-answer', options: [], required: false, answer: '' },
+        { id: 'q-ues-pur-4', text: '<p>Document how purchase and disposal transactions are recorded in the general ledger.</p>', answerType: 'long-answer', options: [], required: false, answer: '' },
+        { id: 'q-ues-pur-5', text: '<p>Describe how management ensures that all goods and services and disposals are recorded in the proper period.</p>', answerType: 'long-answer', options: [], required: false, answer: '' },
         {
           id: 'q-ues-pur-6',
           text: '<p>Indicate the entity\'s usual payment terms.</p>',
@@ -2228,8 +2228,8 @@ export const generateUnderstandingEntitySystemsChecklist = (): Checklist => {
           required: false,
           answer: ''
         },
-        { id: 'q-ues-pur-7', text: '<p>Describe any purchases and disposals outside the normal course of business.</p>', answerType: 'answer', options: [], required: false, answer: '' },
-        { id: 'q-ues-pur-8', text: '<p>Identify any areas in the F/S where material misstatements are likely to arise.</p>', answerType: 'answer', options: [], required: false, answer: '' },
+        { id: 'q-ues-pur-7', text: '<p>Describe any purchases and disposals outside the normal course of business.</p>', answerType: 'long-answer', options: [], required: false, answer: '' },
+        { id: 'q-ues-pur-8', text: '<p>Identify any areas in the F/S where material misstatements are likely to arise.</p>', answerType: 'long-answer', options: [], required: false, answer: '' },
         {
           id: 'q-ues-pur-9',
           text: '<p>Indicate (based on inquiries made and understanding obtained) if any of the following apply:</p>',
@@ -2243,7 +2243,7 @@ export const generateUnderstandingEntitySystemsChecklist = (): Checklist => {
             { id: 'q-ues-pur-9c', text: '<p>Personal expenses charged to the business.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' }
           ]
         },
-        { id: 'q-ues-pur-10', text: '<p>Nature of likely misstatements.</p>', answerType: 'answer', options: [], required: false, answer: '' }
+        { id: 'q-ues-pur-10', text: '<p>Nature of likely misstatements.</p>', answerType: 'long-answer', options: [], required: false, answer: '' }
       ],
       isExpanded: true
     },
@@ -2254,20 +2254,20 @@ export const generateUnderstandingEntitySystemsChecklist = (): Checklist => {
         {
           id: 'q-ues-pay-1',
           text: '<p>Identify the entity\'s personnel:</p>',
-          answerType: 'answer',
+          answerType: 'long-answer',
           options: [],
           required: false,
           answer: '',
           subQuestions: [
-            { id: 'q-ues-pay-1a', text: '<p>Management (number).</p>', answerType: 'answer', options: [], required: false, answer: '' },
-            { id: 'q-ues-pay-1b', text: '<p>Supervisors (number).</p>', answerType: 'answer', options: [], required: false, answer: '' },
-            { id: 'q-ues-pay-1c', text: '<p>Office staff (number).</p>', answerType: 'answer', options: [], required: false, answer: '' },
-            { id: 'q-ues-pay-1d', text: '<p>Operations (number).</p>', answerType: 'answer', options: [], required: false, answer: '' }
+            { id: 'q-ues-pay-1a', text: '<p>Management (number).</p>', answerType: 'long-answer', options: [], required: false, answer: '' },
+            { id: 'q-ues-pay-1b', text: '<p>Supervisors (number).</p>', answerType: 'long-answer', options: [], required: false, answer: '' },
+            { id: 'q-ues-pay-1c', text: '<p>Office staff (number).</p>', answerType: 'long-answer', options: [], required: false, answer: '' },
+            { id: 'q-ues-pay-1d', text: '<p>Operations (number).</p>', answerType: 'long-answer', options: [], required: false, answer: '' }
           ]
         },
-        { id: 'q-ues-pay-2', text: '<p>Describe how new hires/terminations are added to/removed from the payroll.</p>', answerType: 'answer', options: [], required: false, answer: '' },
-        { id: 'q-ues-pay-3', text: '<p>Document how payroll transactions are recorded in the general ledger.</p>', answerType: 'answer', options: [], required: false, answer: '' },
-        { id: 'q-ues-pay-4', text: '<p>Describe how rates of pay and payroll deductions are authorized and updated in the payroll system.</p>', answerType: 'answer', options: [], required: false, answer: '' },
+        { id: 'q-ues-pay-2', text: '<p>Describe how new hires/terminations are added to/removed from the payroll.</p>', answerType: 'long-answer', options: [], required: false, answer: '' },
+        { id: 'q-ues-pay-3', text: '<p>Document how payroll transactions are recorded in the general ledger.</p>', answerType: 'long-answer', options: [], required: false, answer: '' },
+        { id: 'q-ues-pay-4', text: '<p>Describe how rates of pay and payroll deductions are authorized and updated in the payroll system.</p>', answerType: 'long-answer', options: [], required: false, answer: '' },
         {
           id: 'q-ues-pay-5',
           text: '<p>Indicate (based on inquiries made and understanding obtained) if any of the following apply:</p>',
@@ -2281,7 +2281,7 @@ export const generateUnderstandingEntitySystemsChecklist = (): Checklist => {
             { id: 'q-ues-pay-5c', text: '<p>Unauthorized personnel (e.g., family members) included on the payroll.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' }
           ]
         },
-        { id: 'q-ues-pay-6', text: '<p>Nature of likely misstatements.</p>', answerType: 'answer', options: [], required: false, answer: '' }
+        { id: 'q-ues-pay-6', text: '<p>Nature of likely misstatements.</p>', answerType: 'long-answer', options: [], required: false, answer: '' }
       ],
       isExpanded: true
     },
@@ -2297,7 +2297,7 @@ export const generateUnderstandingEntitySystemsChecklist = (): Checklist => {
           required: false,
           answer: ''
         },
-        { id: 'q-ues-inv-2', text: '<p>Document whether any inventory is held with third parties or at other locations.</p>', answerType: 'answer', options: [], required: false, answer: '' },
+        { id: 'q-ues-inv-2', text: '<p>Document whether any inventory is held with third parties or at other locations.</p>', answerType: 'long-answer', options: [], required: false, answer: '' },
         { id: 'q-ues-inv-3', text: '<p>Document whether a physical count of the inventory is performed at period end. If so, attach or cross-reference a copy of the count instructions.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
         {
           id: 'q-ues-inv-4',
@@ -2307,7 +2307,7 @@ export const generateUnderstandingEntitySystemsChecklist = (): Checklist => {
           required: false,
           answer: ''
         },
-        { id: 'q-ues-inv-5', text: '<p>Describe how the entity determines the costs for work in process (including raw materials, labour and overhead) and the extent of completion.</p>', answerType: 'answer', options: [], required: false, answer: '' },
+        { id: 'q-ues-inv-5', text: '<p>Describe how the entity determines the costs for work in process (including raw materials, labour and overhead) and the extent of completion.</p>', answerType: 'long-answer', options: [], required: false, answer: '' },
         {
           id: 'q-ues-inv-6',
           text: '<p>Describe the entity\'s policy for the transfer of inventory to cost of sales, and note any inconsistencies with prior periods.</p>',
@@ -2316,9 +2316,9 @@ export const generateUnderstandingEntitySystemsChecklist = (): Checklist => {
           required: false,
           answer: ''
         },
-        { id: 'q-ues-inv-7', text: '<p>Describe how the inventory sub-ledger is updated for goods received/sold.</p>', answerType: 'answer', options: [], required: false, answer: '' },
-        { id: 'q-ues-inv-8', text: '<p>Describe how inventory transactions are recorded in the general ledger.</p>', answerType: 'answer', options: [], required: false, answer: '' },
-        { id: 'q-ues-inv-9', text: '<p>Identify any areas in the F/S where material misstatements are likely to arise.</p>', answerType: 'answer', options: [], required: false, answer: '' },
+        { id: 'q-ues-inv-7', text: '<p>Describe how the inventory sub-ledger is updated for goods received/sold.</p>', answerType: 'long-answer', options: [], required: false, answer: '' },
+        { id: 'q-ues-inv-8', text: '<p>Describe how inventory transactions are recorded in the general ledger.</p>', answerType: 'long-answer', options: [], required: false, answer: '' },
+        { id: 'q-ues-inv-9', text: '<p>Identify any areas in the F/S where material misstatements are likely to arise.</p>', answerType: 'long-answer', options: [], required: false, answer: '' },
         {
           id: 'q-ues-inv-10',
           text: '<p>Indicate (based on inquiries made and understanding obtained) if any of the following apply:</p>',
@@ -2332,7 +2332,7 @@ export const generateUnderstandingEntitySystemsChecklist = (): Checklist => {
             { id: 'q-ues-inv-10c', text: '<p>History of misstatements with regard to inventory balances and the assessment of impairments for slow-moving and obsolete goods.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' }
           ]
         },
-        { id: 'q-ues-inv-11', text: '<p>Nature of likely misstatements.</p>', answerType: 'answer', options: [], required: false, answer: '' }
+        { id: 'q-ues-inv-11', text: '<p>Nature of likely misstatements.</p>', answerType: 'long-answer', options: [], required: false, answer: '' }
       ],
       isExpanded: true
     },
@@ -2343,20 +2343,20 @@ export const generateUnderstandingEntitySystemsChecklist = (): Checklist => {
         {
           id: 'q-ues-est-1',
           text: '<p>Describe any significant accounting estimates, the manner in which they are prepared and the key assumptions used, including (but not limited to):</p>',
-          answerType: 'answer',
+          answerType: 'long-answer',
           options: [],
           required: false,
           answer: '',
           subQuestions: [
-            { id: 'q-ues-est-1a', text: '<p>Inventory obsolescence.</p>', answerType: 'answer', options: [], required: false, answer: '' },
-            { id: 'q-ues-est-1b', text: '<p>Allowance for doubtful accounts.</p>', answerType: 'answer', options: [], required: false, answer: '' },
-            { id: 'q-ues-est-1c', text: '<p>Loan impairments.</p>', answerType: 'answer', options: [], required: false, answer: '' },
-            { id: 'q-ues-est-1d', text: '<p>Fair values.</p>', answerType: 'answer', options: [], required: false, answer: '' },
-            { id: 'q-ues-est-1e', text: '<p>Useful lives of assets.</p>', answerType: 'answer', options: [], required: false, answer: '' },
-            { id: 'q-ues-est-1f', text: '<p>Other estimates.</p>', answerType: 'answer', options: [], required: false, answer: '' }
+            { id: 'q-ues-est-1a', text: '<p>Inventory obsolescence.</p>', answerType: 'long-answer', options: [], required: false, answer: '' },
+            { id: 'q-ues-est-1b', text: '<p>Allowance for doubtful accounts.</p>', answerType: 'long-answer', options: [], required: false, answer: '' },
+            { id: 'q-ues-est-1c', text: '<p>Loan impairments.</p>', answerType: 'long-answer', options: [], required: false, answer: '' },
+            { id: 'q-ues-est-1d', text: '<p>Fair values.</p>', answerType: 'long-answer', options: [], required: false, answer: '' },
+            { id: 'q-ues-est-1e', text: '<p>Useful lives of assets.</p>', answerType: 'long-answer', options: [], required: false, answer: '' },
+            { id: 'q-ues-est-1f', text: '<p>Other estimates.</p>', answerType: 'long-answer', options: [], required: false, answer: '' }
           ]
         },
-        { id: 'q-ues-est-2', text: '<p>Identify any areas in the F/S where material misstatements are likely to arise.</p>', answerType: 'answer', options: [], required: false, answer: '' },
+        { id: 'q-ues-est-2', text: '<p>Identify any areas in the F/S where material misstatements are likely to arise.</p>', answerType: 'long-answer', options: [], required: false, answer: '' },
         {
           id: 'q-ues-est-3',
           text: '<p>Indicate (based on inquiries made and understanding obtained) if any of the following apply:</p>',
@@ -2370,7 +2370,7 @@ export const generateUnderstandingEntitySystemsChecklist = (): Checklist => {
             { id: 'q-ues-est-3c', text: '<p>Significant accounting estimates not prepared in accordance with the applicable financial reporting framework.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' }
           ]
         },
-        { id: 'q-ues-est-4', text: '<p>Nature of likely misstatements.</p>', answerType: 'answer', options: [], required: false, answer: '' }
+        { id: 'q-ues-est-4', text: '<p>Nature of likely misstatements.</p>', answerType: 'long-answer', options: [], required: false, answer: '' }
       ],
       isExpanded: true
     },
@@ -2381,21 +2381,21 @@ export const generateUnderstandingEntitySystemsChecklist = (): Checklist => {
         {
           id: 'q-ues-rel-1',
           text: '<p>Inquire about:</p>',
-          answerType: 'answer',
+          answerType: 'long-answer',
           options: [],
           required: false,
           answer: '',
           subQuestions: [
-            { id: 'q-ues-rel-1a', text: '<p>A list of related parties.</p>', answerType: 'answer', options: [], required: false, answer: '' },
-            { id: 'q-ues-rel-1b', text: '<p>The nature of related-party relationships.</p>', answerType: 'answer', options: [], required: false, answer: '' },
-            { id: 'q-ues-rel-1c', text: '<p>The nature of related-party transactions occurring in the period.</p>', answerType: 'answer', options: [], required: false, answer: '' }
+            { id: 'q-ues-rel-1a', text: '<p>A list of related parties.</p>', answerType: 'long-answer', options: [], required: false, answer: '' },
+            { id: 'q-ues-rel-1b', text: '<p>The nature of related-party relationships.</p>', answerType: 'long-answer', options: [], required: false, answer: '' },
+            { id: 'q-ues-rel-1c', text: '<p>The nature of related-party transactions occurring in the period.</p>', answerType: 'long-answer', options: [], required: false, answer: '' }
           ]
         },
-        { id: 'q-ues-rel-2', text: '<p>Describe how the entity ensures that transactions occurring around period end have been recorded in the correct period.</p>', answerType: 'answer', options: [], required: false, answer: '' },
-        { id: 'q-ues-rel-3', text: '<p>Describe any related-party transactions outside the normal course of business during the reporting period.</p>', answerType: 'answer', options: [], required: false, answer: '' },
-        { id: 'q-ues-rel-4', text: '<p>Describe the effects or possible implications of the entity\'s transactions/relationships with related parties.</p>', answerType: 'answer', options: [], required: false, answer: '' },
-        { id: 'q-ues-rel-5', text: '<p>Describe any indicators of possible payment or amount receivable from related parties.</p>', answerType: 'answer', options: [], required: false, answer: '' },
-        { id: 'q-ues-rel-6', text: '<p>Identify any areas in the F/S where material misstatements are likely to arise.</p>', answerType: 'answer', options: [], required: false, answer: '' },
+        { id: 'q-ues-rel-2', text: '<p>Describe how the entity ensures that transactions occurring around period end have been recorded in the correct period.</p>', answerType: 'long-answer', options: [], required: false, answer: '' },
+        { id: 'q-ues-rel-3', text: '<p>Describe any related-party transactions outside the normal course of business during the reporting period.</p>', answerType: 'long-answer', options: [], required: false, answer: '' },
+        { id: 'q-ues-rel-4', text: '<p>Describe the effects or possible implications of the entity\'s transactions/relationships with related parties.</p>', answerType: 'long-answer', options: [], required: false, answer: '' },
+        { id: 'q-ues-rel-5', text: '<p>Describe any indicators of possible payment or amount receivable from related parties.</p>', answerType: 'long-answer', options: [], required: false, answer: '' },
+        { id: 'q-ues-rel-6', text: '<p>Identify any areas in the F/S where material misstatements are likely to arise.</p>', answerType: 'long-answer', options: [], required: false, answer: '' },
         {
           id: 'q-ues-rel-7',
           text: '<p>Indicate (based on inquiries made and understanding obtained) if any of the following apply:</p>',
@@ -2410,7 +2410,7 @@ export const generateUnderstandingEntitySystemsChecklist = (): Checklist => {
             { id: 'q-ues-rel-7d', text: '<p>Related-party transactions that occurred prior to period end are reversed after the period end.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' }
           ]
         },
-        { id: 'q-ues-rel-8', text: '<p>Nature of likely misstatements.</p>', answerType: 'answer', options: [], required: false, answer: '' }
+        { id: 'q-ues-rel-8', text: '<p>Nature of likely misstatements.</p>', answerType: 'long-answer', options: [], required: false, answer: '' }
       ],
       isExpanded: true
     },
@@ -2418,10 +2418,10 @@ export const generateUnderstandingEntitySystemsChecklist = (): Checklist => {
       id: 'section-ues-journal',
       title: 'Understanding Journal Entries/Adjustments',
       questions: [
-        { id: 'q-ues-jrn-1', text: '<p>Describe how non-recurring journal entries or adjustments are initiated and authorized.</p>', answerType: 'answer', options: [], required: false, answer: '' },
-        { id: 'q-ues-jrn-2', text: '<p>Describe any significant journal entries or adjustments made during the period.</p>', answerType: 'answer', options: [], required: false, answer: '' },
-        { id: 'q-ues-jrn-3', text: '<p>Describe any matters that required adjustments in the F/S of prior periods.</p>', answerType: 'answer', options: [], required: false, answer: '' },
-        { id: 'q-ues-jrn-4', text: '<p>Identify any areas in the F/S where material misstatements are likely to arise.</p>', answerType: 'answer', options: [], required: false, answer: '' },
+        { id: 'q-ues-jrn-1', text: '<p>Describe how non-recurring journal entries or adjustments are initiated and authorized.</p>', answerType: 'long-answer', options: [], required: false, answer: '' },
+        { id: 'q-ues-jrn-2', text: '<p>Describe any significant journal entries or adjustments made during the period.</p>', answerType: 'long-answer', options: [], required: false, answer: '' },
+        { id: 'q-ues-jrn-3', text: '<p>Describe any matters that required adjustments in the F/S of prior periods.</p>', answerType: 'long-answer', options: [], required: false, answer: '' },
+        { id: 'q-ues-jrn-4', text: '<p>Identify any areas in the F/S where material misstatements are likely to arise.</p>', answerType: 'long-answer', options: [], required: false, answer: '' },
         {
           id: 'q-ues-jrn-5',
           text: '<p>Indicate (based on inquiries made and understanding obtained) if any of the following apply:</p>',
@@ -2435,7 +2435,7 @@ export const generateUnderstandingEntitySystemsChecklist = (): Checklist => {
             { id: 'q-ues-jrn-5c', text: '<p>Prior period uncorrected misstatements remain uncorrected in the current period.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' }
           ]
         },
-        { id: 'q-ues-jrn-6', text: '<p>Nature of likely misstatements.</p>', answerType: 'answer', options: [], required: false, answer: '' }
+        { id: 'q-ues-jrn-6', text: '<p>Nature of likely misstatements.</p>', answerType: 'long-answer', options: [], required: false, answer: '' }
       ],
       isExpanded: true
     },
@@ -2443,7 +2443,7 @@ export const generateUnderstandingEntitySystemsChecklist = (): Checklist => {
       id: 'section-ues-going-concern',
       title: 'Understanding Going-Concern Uncertainties',
       questions: [
-        { id: 'q-ues-gc-1', text: '<p>Inquire whether management has made an assessment of its ability to continue as a going concern. If so, document the assessment period used by management.</p>', answerType: 'answer', options: [], required: false, answer: '' },
+        { id: 'q-ues-gc-1', text: '<p>Inquire whether management has made an assessment of its ability to continue as a going concern. If so, document the assessment period used by management.</p>', answerType: 'long-answer', options: [], required: false, answer: '' },
         {
           id: 'q-ues-gc-2',
           text: '<p>Inquire about any other events or uncertainties that could cause doubt about the entity\'s ability to continue as a going concern. Consider:</p>',
@@ -2457,7 +2457,7 @@ export const generateUnderstandingEntitySystemsChecklist = (): Checklist => {
             { id: 'q-ues-gc-2c', text: '<p>Regulatory or legal challenges.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' }
           ]
         },
-        { id: 'q-ues-gc-3', text: '<p>Identify any areas in the F/S where material misstatements are likely to arise.</p>', answerType: 'answer', options: [], required: false, answer: '' },
+        { id: 'q-ues-gc-3', text: '<p>Identify any areas in the F/S where material misstatements are likely to arise.</p>', answerType: 'long-answer', options: [], required: false, answer: '' },
         {
           id: 'q-ues-gc-4',
           text: '<p>Indicate (based on inquiries made and understanding obtained) if any of the following apply:</p>',
@@ -2471,7 +2471,7 @@ export const generateUnderstandingEntitySystemsChecklist = (): Checklist => {
             { id: 'q-ues-gc-4c', text: '<p>Unremitted payroll deductions/government remittances.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' }
           ]
         },
-        { id: 'q-ues-gc-5', text: '<p>Nature of likely misstatements.</p>', answerType: 'answer', options: [], required: false, answer: '' }
+        { id: 'q-ues-gc-5', text: '<p>Nature of likely misstatements.</p>', answerType: 'long-answer', options: [], required: false, answer: '' }
       ],
       isExpanded: true
     }
