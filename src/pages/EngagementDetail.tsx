@@ -226,7 +226,7 @@ export default function EngagementDetail() {
     // One-time migration: clear stale sample checklists saved before the
     // global template library was pulled in, so the engagement reflects the
     // new global checklist content.
-    const TEMPLATE_LIBRARY_VERSION = 'v2-global-templates-2026-04';
+    const TEMPLATE_LIBRARY_VERSION = 'v3-global-templates-2026-04';
     const seenVersion = localStorage.getItem('savedChecklistsLibraryVersion');
     if (seenVersion !== TEMPLATE_LIBRARY_VERSION) {
       try {
@@ -709,29 +709,26 @@ export default function EngagementDetail() {
                   </Button>
                 </div>
               )}
-              <div className="mb-6 bg-card rounded-lg overflow-hidden shadow-md border border-border">
-                <button onClick={() => setObjectiveExpanded(!objectiveExpanded)} className="w-full flex items-center gap-2 bg-muted px-4 py-3 text-muted-foreground hover:text-foreground transition-colors border-b border-border">
-                  <ChevronDown className={`h-4 w-4 transition-transform ${objectiveExpanded ? 'rotate-180' : ''}`} />
-                  <span className="text-sm font-medium">Objective</span>
-                </button>
-                {objectiveExpanded && <div className="bg-card p-4">
-                    {checklist.objective ? <p className="text-sm text-foreground whitespace-pre-wrap leading-relaxed">
-                        {checklist.objective}
-                      </p> : <p className="text-sm text-muted-foreground italic">
-                        No objective defined
-                      </p>}
-                  </div>}
-              </div>
-
-              {/* Monday Board View */}
+              {/* Latest global checklist document view */}
               {isLoading ? <div className="bg-card rounded-lg shadow-sm p-12 flex flex-col items-center justify-center gap-4">
                   <Loader2 className="h-8 w-8 text-primary animate-spin" />
                   <div className="text-center">
                     <p className="text-sm font-medium text-foreground">Loading engagement checklist...</p>
                     <p className="text-xs text-muted-foreground mt-1">Please wait while we fetch the data</p>
                   </div>
-                </div> : <div className="bg-card rounded-lg shadow-sm">
-                  <MondayBoardView checklist={checklist} onUpdate={handleChecklistUpdate} isPreviewMode={false} isCompactMode={isCompactMode} selectedQuestions={selectedQuestions} onSelectionChange={setSelectedQuestions} isEngagementMode={true} applyingQuestionId={clientResponses.applyingQuestionId} />
+                </div> : <div className="bg-background">
+                  <DocumentView
+                    checklist={checklist}
+                    onUpdate={handleChecklistUpdate}
+                    isPreviewMode={false}
+                    isCompactMode={isCompactMode}
+                    selectedQuestions={selectedQuestions}
+                    onSelectionChange={setSelectedQuestions}
+                    isEngagementMode={true}
+                    applyingQuestionId={clientResponses.applyingQuestionId}
+                    objectiveExpanded={objectiveExpanded}
+                    onToggleObjective={() => setObjectiveExpanded(prev => !prev)}
+                  />
                 </div>}
             </div>
           ) : (
