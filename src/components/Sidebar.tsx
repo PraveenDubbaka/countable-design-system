@@ -386,6 +386,8 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
         { id: "default-compilation-independence", generator: generateIndependenceChecklist },
         { id: "default-compilation-kcb", generator: generateKnowledgeOfClientBusinessChecklist },
         { id: "default-compilation-planning", generator: generatePlanningChecklist },
+        { id: "default-compilation-engagement-letter", generator: generateEngagementLetterChecklist },
+        { id: "default-compilation-mgmt-responsibility", generator: generateManagementResponsibilityChecklist },
       ];
       const seeded: SavedChecklist[] = items.map(({ id, generator }) => {
         const data = generator();
