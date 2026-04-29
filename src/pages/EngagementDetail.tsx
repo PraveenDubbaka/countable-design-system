@@ -253,7 +253,7 @@ export default function EngagementDetail() {
     // One-time migration: clear stale sample checklists saved before the
     // global template library was pulled in, so the engagement reflects the
     // new global checklist content.
-    const TEMPLATE_LIBRARY_VERSION = 'v4-global-templates-compilation-2026-04';
+    const TEMPLATE_LIBRARY_VERSION = 'v5-global-templates-compilation-seed-2026-04';
     const seenVersion = localStorage.getItem('savedChecklistsLibraryVersion');
     if (seenVersion !== TEMPLATE_LIBRARY_VERSION) {
       try {
@@ -264,7 +264,20 @@ export default function EngagementDetail() {
 
     // Simulate loading delay for better UX feedback
     const loadTimer = setTimeout(() => {
-      const savedChecklists = readJsonFromLocalStorage<any[]>('savedChecklists', []);
+      let savedChecklists = readJsonFromLocalStorage<any[]>('savedChecklists', []);
+
+      // Seed the engagement with the Compilation folder defaults the first
+      // time we load (or after a migration cleared the list).
+      if (!Array.isArray(savedChecklists) || savedChecklists.length === 0) {
+        const seeded = buildDefaultCompilationChecklists();
+        writeJsonToLocalStorage('savedChecklists', seeded);
+        savedChecklists = seeded;
+        // Notify the sidebar so it picks up the seeded checklists immediately.
+        seeded.forEach(item => {
+          window.dispatchEvent(new CustomEvent('checklistSaved', { detail: item }));
+        });
+      }
+
       if (Array.isArray(savedChecklists) && savedChecklists.length > 0) {
         // Use the first saved checklist's data
         const firstChecklist = savedChecklists[0];
@@ -279,6 +292,7 @@ export default function EngagementDetail() {
       setChecklist(fallbackChecklist);
       setIsLoading(false);
     }, 500);
+    return () => clearTimeout(loadTimer);
     return () => clearTimeout(loadTimer);
   }, [engagementId]);
 
