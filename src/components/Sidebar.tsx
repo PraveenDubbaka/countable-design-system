@@ -11,7 +11,13 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import lukaLogo from "@/assets/luka-logo.png";
 import { BulkAddToMyTemplatesDialog } from "@/components/BulkAddToMyTemplatesDialog";
-import { getGlobalTemplateChecklist } from "@/lib/globalTemplates";
+import {
+  getGlobalTemplateChecklist,
+  generateClientAcceptanceContinuanceChecklist,
+  generateIndependenceChecklist,
+  generateKnowledgeOfClientBusinessChecklist,
+  generatePlanningChecklist,
+} from "@/lib/globalTemplates";
 import { readJsonFromLocalStorage, removeLocalStorageKey, writeJsonToLocalStorage } from "@/lib/safeJson";
 import { cn } from "@/lib/utils";
 import { LetterIcon } from "@/components/icons/LetterIcon";
@@ -372,19 +378,43 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
 
   // Load saved checklists on mount and listen for new saves
   useEffect(() => {
+    const seedDefaultCompilationChecklists = (): SavedChecklist[] => {
+      const items: { id: string; generator: () => any }[] = [
+        { id: "default-compilation-cac", generator: generateClientAcceptanceContinuanceChecklist },
+        { id: "default-compilation-independence", generator: generateIndependenceChecklist },
+        { id: "default-compilation-kcb", generator: generateKnowledgeOfClientBusinessChecklist },
+        { id: "default-compilation-planning", generator: generatePlanningChecklist },
+      ];
+      const seeded: SavedChecklist[] = items.map(({ id, generator }) => {
+        const data = generator();
+        return {
+          id,
+          name: data.title,
+          folderId: "5",
+          folderName: "Compilation Checklists",
+          data,
+        };
+      });
+      writeJsonToLocalStorage("savedChecklists", seeded);
+      return seeded;
+    };
+
     const loadSavedChecklists = () => {
       const parsed = readJsonFromLocalStorage<unknown>("savedChecklists", []);
-      if (Array.isArray(parsed)) {
+      if (Array.isArray(parsed) && parsed.length > 0) {
         setSavedChecklists(parsed as SavedChecklist[]);
+      } else if (Array.isArray(parsed)) {
+        // Empty list — seed Compilation defaults so the user sees them on first load.
+        setSavedChecklists(seedDefaultCompilationChecklists());
       } else {
         // Reset corrupted legacy value so it can't crash future loads.
         removeLocalStorageKey("savedChecklists");
-        setSavedChecklists([]);
+        setSavedChecklists(seedDefaultCompilationChecklists());
       }
     };
     loadSavedChecklists();
     const handleChecklistSaved = (event: CustomEvent<SavedChecklist>) => {
-      setSavedChecklists(prev => [...prev, event.detail]);
+      setSavedChecklists(prev => prev.some(c => c.id === event.detail.id) ? prev : [...prev, event.detail]);
     };
     window.addEventListener("checklistSaved", handleChecklistSaved as EventListener);
     return () => {
