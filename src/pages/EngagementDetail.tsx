@@ -672,7 +672,7 @@ export default function EngagementDetail() {
                   </svg>
                 </button>
                 <h1 className="font-semibold text-foreground truncate text-lg">
-                  Client acceptance and continuance
+                  {checklist?.title || 'Client acceptance and continuance'}
                 </h1>
               </div>
               <div className="flex items-center gap-1">
