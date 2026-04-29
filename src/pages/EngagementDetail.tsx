@@ -97,6 +97,28 @@ const getEngagementsForClient = (clientName: string) => {
 // Fallback checklist when no saved checklist exists — uses the latest global template library
 const fallbackChecklist: Checklist = generateClientAcceptanceContinuanceChecklist();
 
+// Default Compilation-folder checklists seeded into the engagement on first load
+const COMPILATION_FOLDER_ID = "5";
+const COMPILATION_FOLDER_NAME = "Compilation Checklists";
+const buildDefaultCompilationChecklists = () => {
+  const items = [
+    { generator: generateClientAcceptanceContinuanceChecklist, id: "default-compilation-cac" },
+    { generator: generateIndependenceChecklist, id: "default-compilation-independence" },
+    { generator: generateKnowledgeOfClientBusinessChecklist, id: "default-compilation-kcb" },
+    { generator: generatePlanningChecklist, id: "default-compilation-planning" },
+  ];
+  return items.map(({ generator, id }) => {
+    const data = generator();
+    return {
+      id,
+      name: data.title,
+      folderId: COMPILATION_FOLDER_ID,
+      folderName: COMPILATION_FOLDER_NAME,
+      data,
+    };
+  });
+};
+
 // Custom TB Check icon component
 const TBCheckIcon = ({
   className
