@@ -1196,12 +1196,7 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
                           if (node.route) {
                             const engId = location.pathname.split("/engagements/")[1]?.split("/")[0];
                             if (engId) {
-                              // Checklist routes navigate to base engagement page
-                              if (node.route.startsWith('checklist/')) {
-                                navigate(`/engagements/${engId}`);
-                              } else {
-                                navigate(`/engagements/${engId}/${node.route}`);
-                              }
+                              navigate(`/engagements/${engId}/${node.route}`);
                             }
                           } else if (hasChildren) {
                             setExpandedSections(prev => {
