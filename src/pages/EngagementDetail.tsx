@@ -22,7 +22,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, Di
 import { DeleteChecklistDialog } from "@/components/DeleteChecklistDialog";
 import { AddChecklistSheet } from "@/components/AddChecklistSheet";
 import { useSecondaryPanel } from "@/hooks/useSecondaryPanel";
-import { generateClientAcceptanceContinuance2026Checklist } from "@/lib/globalTemplates";
+import { generateClientAcceptanceContinuanceChecklist } from "@/lib/globalTemplates";
 
 // Sample engagement data matching the engagements page
 const engagementsData: Record<string, {
@@ -90,7 +90,7 @@ const getEngagementsForClient = (clientName: string) => {
 };
 
 // Fallback checklist when no saved checklist exists — uses the latest global template library
-const fallbackChecklist: Checklist = generateClientAcceptanceContinuance2026Checklist();
+const fallbackChecklist: Checklist = generateClientAcceptanceContinuanceChecklist();
 
 // Custom TB Check icon component
 const TBCheckIcon = ({
@@ -226,7 +226,7 @@ export default function EngagementDetail() {
     // One-time migration: clear stale sample checklists saved before the
     // global template library was pulled in, so the engagement reflects the
     // new global checklist content.
-    const TEMPLATE_LIBRARY_VERSION = 'v3-global-templates-2026-04';
+    const TEMPLATE_LIBRARY_VERSION = 'v4-global-templates-compilation-2026-04';
     const seenVersion = localStorage.getItem('savedChecklistsLibraryVersion');
     if (seenVersion !== TEMPLATE_LIBRARY_VERSION) {
       try {
