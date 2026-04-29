@@ -8,7 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuSub, DropdownMenuSubTrigger, DropdownMenuSubContent, DropdownMenuSeparator } from "@/components/ui/dropdown-menu";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Layout } from "@/components/Layout";
-import { MondayBoardView } from "@/components/MondayBoardView";
+import { DocumentView } from "@/components/DocumentView";
 import { FloatingActionBar } from "@/components/FloatingActionBar";
 import { EngagementRightPanel } from "@/components/EngagementRightPanel";
 import { Checklist, Question } from "@/types/checklist";
@@ -22,7 +22,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, Di
 import { DeleteChecklistDialog } from "@/components/DeleteChecklistDialog";
 import { AddChecklistSheet } from "@/components/AddChecklistSheet";
 import { useSecondaryPanel } from "@/hooks/useSecondaryPanel";
-import { generateClientAcceptanceContinuanceChecklist } from "@/lib/globalTemplates";
+import { generateClientAcceptanceContinuance2026Checklist } from "@/lib/globalTemplates";
 
 // Sample engagement data matching the engagements page
 const engagementsData: Record<string, {
@@ -89,8 +89,8 @@ const getEngagementsForClient = (clientName: string) => {
   return Object.values(engagementsData).filter(e => e.client === clientName);
 };
 
-// Fallback checklist when no saved checklist exists — uses the new global template library
-const fallbackChecklist: Checklist = generateClientAcceptanceContinuanceChecklist();
+// Fallback checklist when no saved checklist exists — uses the latest global template library
+const fallbackChecklist: Checklist = generateClientAcceptanceContinuance2026Checklist();
 
 // Custom TB Check icon component
 const TBCheckIcon = ({
