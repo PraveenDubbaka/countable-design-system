@@ -455,6 +455,9 @@ export const generateManagementResponsibilityChecklist = (): Checklist => {
     updatedAt: new Date(),
   };
 };
+
+// Withdrawal template data
+export const generateWithdrawalChecklist = (): Checklist => {
   const sections: Section[] = [
     {
       id: 'section-withdrawal',
