@@ -54,13 +54,11 @@ function SectionBlock({ section }: { section: TemplateSection }) {
           <table className="w-full border-collapse table-fixed">
             <colgroup>
               <col style={{ width: '40%' }} />
-              <col style={{ width: '10%' }} />
-              <col style={{ width: '50%' }} />
+              <col style={{ width: '60%' }} />
             </colgroup>
             <thead>
               <tr className="border-t border-border">
                 <th className="px-6 py-2.5 text-sm font-semibold text-foreground bg-muted/30 border-b border-border text-left">Section</th>
-                <th className="px-6 py-2.5 text-sm font-semibold text-foreground bg-muted/30 border-b border-border text-left">Category</th>
                 <th className="px-6 py-2.5 text-sm font-semibold text-foreground bg-muted/30 border-b border-border text-left">Mapped template</th>
               </tr>
             </thead>
