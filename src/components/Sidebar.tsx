@@ -708,9 +708,6 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
               <FolderPlusIcon className="h-4 w-4 text-primary flex-shrink-0" />
             )}
             <span className="flex-1 text-left truncate font-semibold">{item.label}</span>
-            {item.isNew && (
-              <span className="bg-[#1a3d6f] text-white text-[10px] font-semibold px-1.5 py-0.5 rounded-full ml-1">NEW</span>
-            )}
           </button>
           {isExpanded && item.children?.map((child) => renderEngTemplateTreeNode(child, depth + 1))}
         </div>
