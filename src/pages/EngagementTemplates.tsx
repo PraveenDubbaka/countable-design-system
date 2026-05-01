@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useSearchParams } from "react-router-dom";
-import { ChevronDown, Plus } from "lucide-react";
+import { ChevronDown, Plus, LayoutGrid, FileText, ClipboardList } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { Layout } from "@/components/Layout";
@@ -8,15 +8,31 @@ import {
   allTemplateViews,
   categoryConfig,
   type TemplateSection,
+  type CategoryType,
 } from "@/lib/engagementTemplatesData";
+import { ChecklistIcon } from "@/components/icons/ChecklistIcon";
+import { LetterIcon } from "@/components/icons/LetterIcon";
+import { FolderSolidIcon } from "@/components/icons/FolderIcons";
+import { SmartLayoutIcon } from "@/components/icons/SmartLayoutIcon";
+
+const categoryIcons: Record<CategoryType, React.ReactNode> = {
+  checklist: <ChecklistIcon className="w-3.5 h-3.5 [&_path]:stroke-current" />,
+  worksheet: <SmartLayoutIcon className="w-3.5 h-3.5" />,
+  letter: <LetterIcon className="w-3.5 h-3.5 [&_path]:stroke-current" />,
+  folder: <FolderSolidIcon className="w-3.5 h-3.5" />,
+  module: <LayoutGrid className="w-3.5 h-3.5" />,
+  "financial-statement": <FileText className="w-3.5 h-3.5" />,
+  report: <ClipboardList className="w-3.5 h-3.5" />,
+};
 
 // ── Category Badge ──
 function CategoryBadge({ category }: { category: string }) {
   const cfg = categoryConfig[category as keyof typeof categoryConfig];
   if (!cfg) return null;
+  const icon = categoryIcons[category as CategoryType];
   return (
     <span className={cn("inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-semibold border-[1.5px] whitespace-nowrap", cfg.className)}>
-      {cfg.icon} {cfg.label}
+      {icon} {cfg.label}
     </span>
   );
 }
