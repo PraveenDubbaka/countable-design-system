@@ -695,7 +695,7 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
             ) : (
               <FolderPlusIcon className="h-4 w-4 text-primary flex-shrink-0" />
             )}
-            <span className="flex-1 text-left truncate font-semibold">{item.label}</span>
+            <span className="flex-1 text-left truncate">{item.label}</span>
           </button>
           {isExpanded && item.children?.map((child) => renderEngTemplateTreeNode(child, depth + 1))}
         </div>
@@ -709,8 +709,8 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
         className={cn(
           "flex items-center gap-1.5 w-full py-1.5 px-3.5 text-sm hover:bg-primary/10 cursor-pointer select-none rounded-[8px]",
           engTemplateSelectedId === item.id
-            ? (hasDarkSecondary ? "bg-white/15 text-white font-semibold" : "bg-primary/10 text-primary font-semibold")
-            : (hasDarkSecondary ? "text-white/80 font-semibold" : "text-foreground font-semibold")
+            ? (hasDarkSecondary ? "bg-white/15 text-white" : "bg-primary/10 text-primary")
+            : (hasDarkSecondary ? "text-white/80" : "text-foreground")
         )}
         style={{ paddingLeft: `${depth * 18 + 14 + 18}px` }}
         onClick={() => selectEngTemplate(item.id)}
