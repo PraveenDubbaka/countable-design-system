@@ -154,12 +154,27 @@ const initialGlobalTemplates: GlobalTemplate[] = [
     type: "folder",
     isExpanded: false,
     children: [
-      { id: "global-4-1", name: "Checklist — Audit Completion", type: "file" },
-      { id: "global-4-2", name: "Engagement Partner Checklist — Audit Completion", type: "file" },
-      { id: "global-4-3", name: "Checklist — Auditor's Report", type: "file" },
-      { id: "global-4-4", name: "Checklist — Modified Opinion", type: "file" },
-      { id: "global-4-5", name: "Checklist — Supplementary and Other Information", type: "file" },
-      { id: "global-4-6", name: "Checklist — Management Representations", type: "file" },
+      {
+        id: "global-4-ca",
+        name: "Canada",
+        type: "folder",
+        isExpanded: false,
+        children: [
+          { id: "global-4-1", name: "Checklist — Audit Completion", type: "file" },
+          { id: "global-4-2", name: "Engagement Partner Checklist — Audit Completion", type: "file" },
+          { id: "global-4-3", name: "Checklist — Auditor's Report", type: "file" },
+          { id: "global-4-4", name: "Checklist — Modified Opinion", type: "file" },
+          { id: "global-4-5", name: "Checklist — Supplementary and Other Information", type: "file" },
+          { id: "global-4-6", name: "Checklist — Management Representations", type: "file" },
+        ]
+      },
+      {
+        id: "global-4-us",
+        name: "United States",
+        type: "folder",
+        isExpanded: false,
+        children: []
+      },
     ]
   },
   {
