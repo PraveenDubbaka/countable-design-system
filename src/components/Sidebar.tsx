@@ -683,7 +683,7 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
         <div key={item.id}>
           <button
             className={cn(
-              "flex items-center gap-1.5 w-full py-2 px-3.5 text-[13px] hover:bg-primary/10 cursor-pointer select-none rounded-[8px]",
+              "flex items-center gap-1.5 w-full py-2 px-3.5 text-sm hover:bg-primary/10 cursor-pointer select-none rounded-[8px]",
               item.isNew && "font-medium",
               hasDarkSecondary ? "text-white" : "text-foreground"
             )}
