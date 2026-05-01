@@ -210,6 +210,10 @@ const navItems = [{
   label: "Engagements",
   route: "/engagements"
 }, {
+  icon: ({ className }: { className?: string }) => <svg className={className} width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M3 3h14v2H3V3zm0 4h10v2H3V7zm0 4h14v2H3v-2zm0 4h10v2H3v-2z" fill="currentColor" opacity=".85"/></svg>,
+  label: "Eng. Templates",
+  route: "/engagement-templates"
+}, {
   icon: FileIcon,
   label: "Templates",
   route: "/create"

@@ -16,6 +16,7 @@ import TrialBalance from "./pages/TrialBalance";
 import ProcedureDetail from "./pages/ProcedureDetail";
 import Teams from "./pages/Teams";
 import DesignSystem from "./pages/DesignSystem";
+import EngagementTemplates from "./pages/EngagementTemplates";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -41,6 +42,7 @@ const App = () => (
             <Route path="/create" element={<CreationDashboard />} />
             <Route path="/builder" element={<Index />} />
             <Route path="/generate" element={<Generate />} />
+            <Route path="/engagement-templates" element={<EngagementTemplates />} />
             <Route path="/design-system" element={<DesignSystem />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
