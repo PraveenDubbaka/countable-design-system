@@ -1481,7 +1481,7 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
                   </div>
                 </div>
 
-                <div className={`flex-1 overflow-y-auto p-2 pt-0 ${isTemplatesPanelCollapsed ? "hidden" : ""}`}>
+                <div className={`flex-1 overflow-y-auto p-3 pt-1 space-y-0 ${isTemplatesPanelCollapsed ? "hidden" : ""}`}>
                   {templateTree.map((item) => renderEngTemplateTreeNode(item, 0))}
                 </div>
               </>
