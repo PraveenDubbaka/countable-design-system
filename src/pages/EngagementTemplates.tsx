@@ -15,7 +15,7 @@ function CategoryBadge({ category }: { category: string }) {
   const cfg = categoryConfig[category as keyof typeof categoryConfig];
   if (!cfg) return null;
   return (
-    <span className={cn("inline-flex items-center gap-1.5 px-2.5 py-1 rounded-[7px] text-xs font-medium border whitespace-nowrap", cfg.className)}>
+    <span className={cn("inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-semibold border-[1.5px] whitespace-nowrap", cfg.className)}>
       {cfg.icon} {cfg.label}
     </span>
   );
