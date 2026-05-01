@@ -32,7 +32,7 @@ export interface TreeItem {
   label: string;
   type: "folder" | "file";
   children?: TreeItem[];
-  countryHeader?: string; // e.g. "🇨🇦 Canada" or "🇺🇸 United States"
+  
   isNew?: boolean;
 }
 
