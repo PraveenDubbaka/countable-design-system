@@ -16,6 +16,7 @@ import TrialBalance from "./pages/TrialBalance";
 import ProcedureDetail from "./pages/ProcedureDetail";
 import Teams from "./pages/Teams";
 import DesignSystem from "./pages/DesignSystem";
+import EngagementTemplates from "./pages/EngagementTemplates";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
