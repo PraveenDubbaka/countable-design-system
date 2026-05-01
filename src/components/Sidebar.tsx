@@ -692,16 +692,50 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
   const renderEngTemplateTreeNode = (item: TreeItem, depth: number): React.ReactNode => {
     const isExpanded = engTemplateExpandedFolders.has(item.id);
 
+    // Top-level folders get a card wrapper
+    if (item.type === "folder" && depth === 0) {
+      return (
+        <div key={item.id} className={cn(
+          "rounded-[10px] overflow-hidden mb-2",
+          hasDarkSecondary ? "border border-white/15" : "border border-border"
+        )}>
+          <button
+            className={cn(
+              "flex items-center justify-between w-full px-4 py-3 cursor-pointer select-none transition-colors",
+              hasDarkSecondary ? "hover:bg-white/5 text-white" : "hover:bg-muted/30 text-foreground"
+            )}
+            onClick={() => toggleEngTemplateFolder(item.id)}
+          >
+            <span className="text-[14px] font-bold truncate">{item.label}</span>
+            <ChevronDown className={cn(
+              "h-4 w-4 flex-shrink-0 transition-transform",
+              hasDarkSecondary ? "text-white/50" : "text-muted-foreground",
+              !isExpanded && "-rotate-90"
+            )} />
+          </button>
+          {isExpanded && item.children && (
+            <div className={cn(
+              hasDarkSecondary ? "border-t border-white/15" : "border-t border-border"
+            )}>
+              {item.children.map((child) => renderEngTemplateTreeNode(child, depth + 1))}
+            </div>
+          )}
+        </div>
+      );
+    }
 
+    // Nested folders (depth > 0)
     if (item.type === "folder") {
       return (
         <div key={item.id}>
           <button
             className={cn(
-              "flex items-center gap-1.5 w-full py-1.5 px-3.5 text-sm hover:bg-primary/10 cursor-pointer select-none rounded-[8px] font-semibold",
-              hasDarkSecondary ? "text-white" : "text-black dark:text-white"
+              "flex items-center gap-1.5 w-full py-2.5 px-4 text-sm cursor-pointer select-none font-semibold transition-colors",
+              hasDarkSecondary
+                ? "hover:bg-white/5 text-white border-b border-white/10"
+                : "hover:bg-muted/30 text-foreground border-b border-border/40"
             )}
-            style={{ paddingLeft: `${depth * 18 + 14}px` }}
+            style={{ paddingLeft: `${depth * 16 + 16}px` }}
             onClick={() => toggleEngTemplateFolder(item.id)}
           >
             {isExpanded ? (
@@ -721,12 +755,15 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
       <button
         key={item.id}
         className={cn(
-          "flex items-center gap-1.5 w-full py-1.5 px-3.5 text-sm hover:bg-primary/10 cursor-pointer select-none rounded-[8px] font-medium",
+          "flex items-center gap-2 w-full py-2.5 px-4 text-sm cursor-pointer select-none font-medium transition-colors",
+          hasDarkSecondary
+            ? "border-b border-white/10 last:border-b-0"
+            : "border-b border-border/40 last:border-b-0",
           engTemplateSelectedId === item.id
-            ? (hasDarkSecondary ? "bg-white/15 text-white" : "bg-primary/10 text-primary ring-1 ring-primary/25")
-            : (hasDarkSecondary ? "text-white/80" : "text-black dark:text-white")
+            ? (hasDarkSecondary ? "bg-white/10 text-white" : "bg-primary/5 text-primary")
+            : (hasDarkSecondary ? "text-white/80 hover:bg-white/5" : "text-foreground hover:bg-muted/20")
         )}
-        style={{ paddingLeft: `${depth * 18 + 14 + 18}px` }}
+        style={{ paddingLeft: `${depth * 16 + 16}px` }}
         onClick={() => selectEngTemplate(item.id)}
       >
         <svg className="w-4 h-4 flex-shrink-0" viewBox="0 0 20 16" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -1444,7 +1481,7 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
                   </div>
                 </div>
 
-                <div className={`flex-1 overflow-y-auto p-2 pt-0 ${isTemplatesPanelCollapsed ? "hidden" : ""}`}>
+                <div className={`flex-1 overflow-y-auto p-3 pt-1 space-y-0 ${isTemplatesPanelCollapsed ? "hidden" : ""}`}>
                   {templateTree.map((item) => renderEngTemplateTreeNode(item, 0))}
                 </div>
               </>
