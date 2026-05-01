@@ -1,7 +1,8 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { createPortal } from "react-dom";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate, useLocation, useSearchParams } from "react-router-dom";
 import { ChevronDown, ChevronRight, ChevronLeft, Search, Plus, Expand, Trash2, Folder, Headphones, Check, FileText, FileBarChart, StickyNote, Table, Copy, Pencil, FolderInput, MoreVertical, GripVertical, X, Save, Files } from "lucide-react";
+import { templateTree, type TreeItem } from "@/lib/engagementTemplatesData";
 import { FolderSolidIcon, FolderPlusIcon, FolderMinusIcon } from "@/components/icons/FolderIcons";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -275,12 +276,33 @@ interface SidebarProps {
 export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
   const navigate = useNavigate();
   const location = useLocation();
+  const [searchParams, setSearchParams] = useSearchParams();
   const [templates, setTemplates] = useState<Template[]>(initialTemplates);
   const [globalTemplates, setGlobalTemplates] = useState<GlobalTemplate[]>(initialGlobalTemplates);
   const [activeTab, setActiveTab] = useState<"firm" | "master">("firm");
   const [searchQuery, setSearchQuery] = useState("");
   const { isCollapsed: isTemplatesPanelCollapsed, setIsCollapsed: setIsTemplatesPanelCollapsed } = useSecondaryPanel();
   const [selectedGlobalTemplate, setSelectedGlobalTemplate] = useState<string | null>("global-1-1");
+
+  // Engagement Templates tree state
+  const [engTemplateExpandedFolders, setEngTemplateExpandedFolders] = useState<Set<string>>(
+    () => new Set(["review", "audit"])
+  );
+  const engTemplateSelectedId = searchParams.get("template") || "rev2400";
+  const [engTemplateSearchQuery, setEngTemplateSearchQuery] = useState("");
+
+  const toggleEngTemplateFolder = useCallback((id: string) => {
+    setEngTemplateExpandedFolders((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  }, []);
+
+  const selectEngTemplate = useCallback((id: string) => {
+    setSearchParams({ template: id }, { replace: true });
+  }, [setSearchParams]);
   
   // Multi-select state for Global Templates
   const [selectedTemplates, setSelectedTemplates] = useState<Set<string>>(new Set());
@@ -647,6 +669,69 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
           </div>
         )}
       </div>
+    );
+  };
+
+  // ── Engagement Template Tree Node (for sidebar) ──
+  const renderEngTemplateTreeNode = (item: TreeItem, depth: number): React.ReactNode => {
+    const isExpanded = engTemplateExpandedFolders.has(item.id);
+
+    // Country header items render as small labels
+    if (item.countryHeader) {
+      return (
+        <div
+          key={item.id}
+          className={cn("px-3.5 py-1 text-[10px] font-semibold uppercase tracking-wider", hasDarkSecondary ? "text-white/50" : "text-muted-foreground")}
+          style={{ paddingLeft: `${(depth + 1) * 18 + 8}px` }}
+        >
+          {item.countryHeader}
+        </div>
+      );
+    }
+
+    if (item.type === "folder") {
+      return (
+        <div key={item.id}>
+          <button
+            className={cn(
+              "flex items-center gap-1.5 w-full py-2 px-3.5 text-[13px] hover:bg-primary/10 cursor-pointer select-none rounded-[8px]",
+              item.isNew && "font-medium",
+              hasDarkSecondary ? "text-white" : "text-foreground"
+            )}
+            style={{ paddingLeft: `${depth * 18 + 14}px` }}
+            onClick={() => toggleEngTemplateFolder(item.id)}
+          >
+            {isExpanded ? (
+              <FolderMinusIcon className="h-4 w-4 text-primary flex-shrink-0" />
+            ) : (
+              <FolderPlusIcon className="h-4 w-4 text-primary flex-shrink-0" />
+            )}
+            <span className="flex-1 text-left truncate font-semibold">{item.label}</span>
+            {item.isNew && (
+              <span className="bg-[#1a3d6f] text-white text-[10px] font-semibold px-1.5 py-0.5 rounded-full ml-1">NEW</span>
+            )}
+          </button>
+          {isExpanded && item.children?.map((child) => renderEngTemplateTreeNode(child, depth + 1))}
+        </div>
+      );
+    }
+
+    // File leaf
+    return (
+      <button
+        key={item.id}
+        className={cn(
+          "flex items-center gap-1.5 w-full py-1.5 px-3.5 text-[13px] hover:bg-primary/10 cursor-pointer select-none rounded-[8px]",
+          engTemplateSelectedId === item.id
+            ? (hasDarkSecondary ? "bg-white/15 text-white font-medium" : "bg-primary/10 text-primary font-medium")
+            : (hasDarkSecondary ? "text-white/80" : "text-foreground")
+        )}
+        style={{ paddingLeft: `${depth * 18 + 14 + 18}px` }}
+        onClick={() => selectEngTemplate(item.id)}
+      >
+        <span className="text-[15px] flex-shrink-0">🖨</span>
+        <span className="flex-1 text-left truncate">{item.label}</span>
+      </button>
     );
   };
 
@@ -1334,67 +1419,98 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
               </DropdownMenu>
             </div>
 
-            <div className={`flex mb-2 ${isTemplatesPanelCollapsed ? "hidden" : ""}`} style={{
-           borderBottom: hasDarkSecondary ? "1px solid rgba(255,255,255,0.15)" : "1px solid hsl(var(--border))"
-         }}>
-               <button onClick={() => setActiveTab("firm")} className={`flex-1 py-2 px-1 text-sm font-medium transition-all text-center whitespace-nowrap border-b-[3px] ${activeTab === "firm" ? (hasDarkSecondary ? "text-white border-white" : "text-primary border-primary") : (hasDarkSecondary ? "text-white/50 hover:text-white/80" : "text-muted-foreground hover:text-foreground") + " border-transparent"}`}>
-                 My Templates
-               </button>
-               <button onClick={() => setActiveTab("master")} className={`flex-1 py-2 px-1 text-sm font-medium transition-all text-center whitespace-nowrap border-b-[3px] ${activeTab === "master" ? (hasDarkSecondary ? "text-white border-white" : "text-primary border-primary") : (hasDarkSecondary ? "text-white/50 hover:text-white/80" : "text-muted-foreground hover:text-foreground") + " border-transparent"}`}>
-                 Global Templates
-               </button>
-             </div>
-
-            <div className={`p-3 pt-1 ${isTemplatesPanelCollapsed ? "hidden" : ""}`}>
-              <div className="flex gap-2">
-                <div className="relative flex-1">
-                  <Search className={cn("absolute left-2.5 top-1/2 -translate-y-1/2 h-4 w-4", hasDarkSecondary ? "text-white/50" : "text-muted-foreground")} />
-                   <Input placeholder="Search" className={cn("pl-8 h-8 text-sm border-0 shadow-sm", hasDarkSecondary ? "bg-white/10 text-white placeholder:text-white/40" : "bg-card/80")} value={searchQuery} onChange={e => setSearchQuery(e.target.value)} />
+            {/* Engagement Templates tree view */}
+            {selectedDropdown === "engagements" ? (
+              <>
+                <div className={`flex mb-2 ${isTemplatesPanelCollapsed ? "hidden" : ""}`} style={{
+                  borderBottom: hasDarkSecondary ? "1px solid rgba(255,255,255,0.15)" : "1px solid hsl(var(--border))"
+                }}>
+                  <button className={`flex-1 py-2 px-1 text-sm font-medium transition-all text-center whitespace-nowrap border-b-[3px] ${hasDarkSecondary ? "text-white/50 hover:text-white/80" : "text-muted-foreground hover:text-foreground"} border-transparent`}>
+                    My Templates
+                  </button>
+                  <button className={`flex-1 py-2 px-1 text-sm font-medium transition-all text-center whitespace-nowrap border-b-[3px] ${hasDarkSecondary ? "text-white border-white" : "text-primary border-primary"}`}>
+                    Global Templates
+                  </button>
                 </div>
-                <button className={cn("h-9 w-9 rounded-md flex items-center justify-center transition-colors", hasDarkSecondary ? "bg-white/10 hover:bg-white/20" : "bg-primary/10 hover:bg-primary/20")}>
-                   <svg width="17" height="17" viewBox="0 0 17 17" fill="none" xmlns="http://www.w3.org/2000/svg">
-                     <path d="M9.72214 6.94412L14.5833 2.08301M14.5833 2.08301H10.4166M14.5833 2.08301V6.24967M6.94436 9.7219L2.08325 14.583M2.08325 14.583H6.24992M2.08325 14.583L2.08325 10.4163" stroke={hasDarkSecondary ? "white" : "#074075"} strokeWidth="1.38889" strokeLinecap="round" strokeLinejoin="round" />
-                   </svg>
-                 </button>
-                {activeTab === "firm" && (
-                  <>
-                    <Button size="icon" className="h-9 w-9 bg-primary hover:bg-primary/90 shadow-sm">
-                      <Plus className="h-4 w-4 text-primary-foreground icon-plus" />
-                    </Button>
-                    <Button size="icon" variant="secondary" className={cn("h-9 w-9 text-destructive hover:text-destructive", hasDarkSecondary ? "bg-white/10 hover:bg-white/20 border-0" : "hover:bg-card/50")}>
-                       <Trash2 className="h-4 w-4" />
-                     </Button>
-                  </>
-                )}
-                {activeTab === "master" && (
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <Button 
-                        size="icon" 
-                        className="h-9 w-9 bg-primary hover:bg-primary/90 shadow-sm"
-                        disabled={selectedTemplates.size === 0}
-                        onClick={() => setBulkAddDialogOpen(true)}
-                      >
-                        <Files className="h-4 w-4 text-primary-foreground" />
-                      </Button>
-                    </TooltipTrigger>
-                    <TooltipContent>
-                      {selectedTemplates.size > 0 
-                        ? `Add ${selectedTemplates.size} selected to My Templates` 
-                        : "Select templates to add"}
-                    </TooltipContent>
-                  </Tooltip>
-                )}
-              </div>
-            </div>
 
-            <div className={`flex-1 overflow-y-auto p-2 pt-0 ${isTemplatesPanelCollapsed ? "hidden" : ""}`}>
-              {activeTab === "firm" ? (
-                templates.map(template => renderTemplate(template))
-              ) : (
-                globalTemplates.map(template => renderGlobalTemplate(template))
-              )}
-            </div>
+                <div className={`p-3 pt-1 ${isTemplatesPanelCollapsed ? "hidden" : ""}`}>
+                  <div className="flex gap-2">
+                    <div className="relative flex-1">
+                      <Search className={cn("absolute left-2.5 top-1/2 -translate-y-1/2 h-4 w-4", hasDarkSecondary ? "text-white/50" : "text-muted-foreground")} />
+                      <Input placeholder="Search" className={cn("pl-8 h-8 text-sm border-0 shadow-sm", hasDarkSecondary ? "bg-white/10 text-white placeholder:text-white/40" : "bg-card/80")} value={engTemplateSearchQuery} onChange={e => setEngTemplateSearchQuery(e.target.value)} />
+                    </div>
+                  </div>
+                </div>
+
+                <div className={`flex-1 overflow-y-auto p-2 pt-0 ${isTemplatesPanelCollapsed ? "hidden" : ""}`}>
+                  {templateTree.map((item) => renderEngTemplateTreeNode(item, 0))}
+                </div>
+              </>
+            ) : (
+              <>
+                <div className={`flex mb-2 ${isTemplatesPanelCollapsed ? "hidden" : ""}`} style={{
+               borderBottom: hasDarkSecondary ? "1px solid rgba(255,255,255,0.15)" : "1px solid hsl(var(--border))"
+             }}>
+                   <button onClick={() => setActiveTab("firm")} className={`flex-1 py-2 px-1 text-sm font-medium transition-all text-center whitespace-nowrap border-b-[3px] ${activeTab === "firm" ? (hasDarkSecondary ? "text-white border-white" : "text-primary border-primary") : (hasDarkSecondary ? "text-white/50 hover:text-white/80" : "text-muted-foreground hover:text-foreground") + " border-transparent"}`}>
+                     My Templates
+                   </button>
+                   <button onClick={() => setActiveTab("master")} className={`flex-1 py-2 px-1 text-sm font-medium transition-all text-center whitespace-nowrap border-b-[3px] ${activeTab === "master" ? (hasDarkSecondary ? "text-white border-white" : "text-primary border-primary") : (hasDarkSecondary ? "text-white/50 hover:text-white/80" : "text-muted-foreground hover:text-foreground") + " border-transparent"}`}>
+                     Global Templates
+                   </button>
+                 </div>
+
+                <div className={`p-3 pt-1 ${isTemplatesPanelCollapsed ? "hidden" : ""}`}>
+                  <div className="flex gap-2">
+                    <div className="relative flex-1">
+                      <Search className={cn("absolute left-2.5 top-1/2 -translate-y-1/2 h-4 w-4", hasDarkSecondary ? "text-white/50" : "text-muted-foreground")} />
+                       <Input placeholder="Search" className={cn("pl-8 h-8 text-sm border-0 shadow-sm", hasDarkSecondary ? "bg-white/10 text-white placeholder:text-white/40" : "bg-card/80")} value={searchQuery} onChange={e => setSearchQuery(e.target.value)} />
+                    </div>
+                    <button className={cn("h-9 w-9 rounded-md flex items-center justify-center transition-colors", hasDarkSecondary ? "bg-white/10 hover:bg-white/20" : "bg-primary/10 hover:bg-primary/20")}>
+                       <svg width="17" height="17" viewBox="0 0 17 17" fill="none" xmlns="http://www.w3.org/2000/svg">
+                         <path d="M9.72214 6.94412L14.5833 2.08301M14.5833 2.08301H10.4166M14.5833 2.08301V6.24967M6.94436 9.7219L2.08325 14.583M2.08325 14.583H6.24992M2.08325 14.583L2.08325 10.4163" stroke={hasDarkSecondary ? "white" : "#074075"} strokeWidth="1.38889" strokeLinecap="round" strokeLinejoin="round" />
+                       </svg>
+                     </button>
+                    {activeTab === "firm" && (
+                      <>
+                        <Button size="icon" className="h-9 w-9 bg-primary hover:bg-primary/90 shadow-sm">
+                          <Plus className="h-4 w-4 text-primary-foreground icon-plus" />
+                        </Button>
+                        <Button size="icon" variant="secondary" className={cn("h-9 w-9 text-destructive hover:text-destructive", hasDarkSecondary ? "bg-white/10 hover:bg-white/20 border-0" : "hover:bg-card/50")}>
+                           <Trash2 className="h-4 w-4" />
+                         </Button>
+                      </>
+                    )}
+                    {activeTab === "master" && (
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Button 
+                            size="icon" 
+                            className="h-9 w-9 bg-primary hover:bg-primary/90 shadow-sm"
+                            disabled={selectedTemplates.size === 0}
+                            onClick={() => setBulkAddDialogOpen(true)}
+                          >
+                            <Files className="h-4 w-4 text-primary-foreground" />
+                          </Button>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          {selectedTemplates.size > 0 
+                            ? `Add ${selectedTemplates.size} selected to My Templates` 
+                            : "Select templates to add"}
+                        </TooltipContent>
+                      </Tooltip>
+                    )}
+                  </div>
+                </div>
+
+                <div className={`flex-1 overflow-y-auto p-2 pt-0 ${isTemplatesPanelCollapsed ? "hidden" : ""}`}>
+                  {activeTab === "firm" ? (
+                    templates.map(template => renderTemplate(template))
+                  ) : (
+                    globalTemplates.map(template => renderGlobalTemplate(template))
+                  )}
+                </div>
+              </>
+            )}
 
             {/* Resize handle */}
             {!isTemplatesPanelCollapsed && (
