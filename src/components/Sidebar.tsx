@@ -446,8 +446,12 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
           contentType: itemId
         }
       });
+    } else if (itemId === "engagements") {
+      // Stay on engagement templates if already there, otherwise navigate
+      if (location.pathname !== "/engagement-templates") {
+        navigate("/engagement-templates");
+      }
     } else {
-      // For non-creator items like Engagements, navigate to home with empty state
       navigate("/", {
         state: {
           clearContent: true
