@@ -683,7 +683,7 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
         <div key={item.id}>
           <button
             className={cn(
-              "flex items-center gap-1.5 w-full py-2 px-3.5 text-[13px] hover:bg-primary/10 cursor-pointer select-none rounded-[8px]",
+              "flex items-center gap-1.5 w-full py-2 px-3.5 text-sm hover:bg-primary/10 cursor-pointer select-none rounded-[8px]",
               item.isNew && "font-medium",
               hasDarkSecondary ? "text-white" : "text-foreground"
             )}
@@ -707,10 +707,10 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
       <button
         key={item.id}
         className={cn(
-          "flex items-center gap-1.5 w-full py-1.5 px-3.5 text-[13px] hover:bg-primary/10 cursor-pointer select-none rounded-[8px]",
+          "flex items-center gap-1.5 w-full py-1.5 px-3.5 text-sm hover:bg-primary/10 cursor-pointer select-none rounded-[8px]",
           engTemplateSelectedId === item.id
-            ? (hasDarkSecondary ? "bg-white/15 text-white font-medium" : "bg-primary/10 text-primary font-medium")
-            : (hasDarkSecondary ? "text-white/80" : "text-foreground")
+            ? (hasDarkSecondary ? "bg-white/15 text-white font-semibold" : "bg-primary/10 text-primary font-semibold")
+            : (hasDarkSecondary ? "text-white/80 font-semibold" : "text-foreground font-semibold")
         )}
         style={{ paddingLeft: `${depth * 18 + 14 + 18}px` }}
         onClick={() => selectEngTemplate(item.id)}
