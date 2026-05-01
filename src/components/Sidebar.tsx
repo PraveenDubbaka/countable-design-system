@@ -672,6 +672,69 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
     );
   };
 
+  // ── Engagement Template Tree Node (for sidebar) ──
+  const renderEngTemplateTreeNode = (item: TreeItem, depth: number): React.ReactNode => {
+    const isExpanded = engTemplateExpandedFolders.has(item.id);
+
+    // Country header items render as small labels
+    if (item.countryHeader) {
+      return (
+        <div
+          key={item.id}
+          className={cn("px-3.5 py-1 text-[10px] font-semibold uppercase tracking-wider", hasDarkSecondary ? "text-white/50" : "text-muted-foreground")}
+          style={{ paddingLeft: `${(depth + 1) * 18 + 8}px` }}
+        >
+          {item.countryHeader}
+        </div>
+      );
+    }
+
+    if (item.type === "folder") {
+      return (
+        <div key={item.id}>
+          <button
+            className={cn(
+              "flex items-center gap-1.5 w-full py-2 px-3.5 text-[13px] hover:bg-primary/10 cursor-pointer select-none rounded-[8px]",
+              item.isNew && "font-medium",
+              hasDarkSecondary ? "text-white" : "text-foreground"
+            )}
+            style={{ paddingLeft: `${depth * 18 + 14}px` }}
+            onClick={() => toggleEngTemplateFolder(item.id)}
+          >
+            {isExpanded ? (
+              <FolderMinusIcon className="h-4 w-4 text-primary flex-shrink-0" />
+            ) : (
+              <FolderPlusIcon className="h-4 w-4 text-primary flex-shrink-0" />
+            )}
+            <span className="flex-1 text-left truncate font-semibold">{item.label}</span>
+            {item.isNew && (
+              <span className="bg-[#1a3d6f] text-white text-[10px] font-semibold px-1.5 py-0.5 rounded-full ml-1">NEW</span>
+            )}
+          </button>
+          {isExpanded && item.children?.map((child) => renderEngTemplateTreeNode(child, depth + 1))}
+        </div>
+      );
+    }
+
+    // File leaf
+    return (
+      <button
+        key={item.id}
+        className={cn(
+          "flex items-center gap-1.5 w-full py-1.5 px-3.5 text-[13px] hover:bg-primary/10 cursor-pointer select-none rounded-[8px]",
+          engTemplateSelectedId === item.id
+            ? (hasDarkSecondary ? "bg-white/15 text-white font-medium" : "bg-primary/10 text-primary font-medium")
+            : (hasDarkSecondary ? "text-white/80" : "text-foreground")
+        )}
+        style={{ paddingLeft: `${depth * 18 + 14 + 18}px` }}
+        onClick={() => selectEngTemplate(item.id)}
+      >
+        <span className="text-[15px] flex-shrink-0">🖨</span>
+        <span className="flex-1 text-left truncate">{item.label}</span>
+      </button>
+    );
+  };
+
   // Checklist actions
   const handleDuplicate = (checklist: SavedChecklist) => {
     const newChecklist: SavedChecklist = {
