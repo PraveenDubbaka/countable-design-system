@@ -25,30 +25,30 @@ function CategoryBadge({ category }: { category: string }) {
 function SectionBlock({ section }: { section: TemplateSection }) {
   const [open, setOpen] = useState(true);
   return (
-    <div className="border-b border-border">
+    <div className="border border-border rounded-xl overflow-hidden">
       <button
-        className="flex items-center justify-between w-full px-7 py-3.5 hover:bg-muted/30 cursor-pointer select-none"
+        className="flex items-center justify-between w-full px-6 py-3.5 hover:bg-muted/30 cursor-pointer select-none"
         onClick={() => setOpen(!open)}
       >
         <span className="text-[15px] font-bold text-foreground">{section.name}</span>
-        <ChevronDown className={cn("h-4 w-4 text-muted-foreground transition-transform", !open && "-rotate-90")} />
+        <ChevronDown className={cn("h-4 w-4 text-muted-foreground transition-transform", open ? "rotate-0" : "-rotate-90")} />
       </button>
       {open && (
         <div className="overflow-hidden">
           <table className="w-full border-collapse">
             <thead>
-              <tr>
-                <th className="px-7 py-2.5 text-xs font-semibold text-muted-foreground uppercase tracking-wider bg-muted/40 border-b border-border text-left">Section</th>
-                <th className="px-7 py-2.5 text-xs font-semibold text-muted-foreground uppercase tracking-wider bg-muted/40 border-b border-border text-left">Category</th>
-                <th className="px-7 py-2.5 text-xs font-semibold text-muted-foreground uppercase tracking-wider bg-muted/40 border-b border-border text-left">Mapped template</th>
+              <tr className="border-t border-border">
+                <th className="px-6 py-2.5 text-sm font-semibold text-foreground bg-muted/30 border-b border-border text-left">Section</th>
+                <th className="px-6 py-2.5 text-sm font-semibold text-foreground bg-muted/30 border-b border-border text-left">Category</th>
+                <th className="px-6 py-2.5 text-sm font-semibold text-foreground bg-muted/30 border-b border-border text-left">Mapped template</th>
               </tr>
             </thead>
             <tbody>
               {section.rows.map((row, i) => (
                 <tr key={i} className="hover:bg-muted/20">
-                  <td className="px-7 py-3 border-b border-border/40 text-[13.5px] text-foreground">{row.section}</td>
-                  <td className="px-7 py-3 border-b border-border/40"><CategoryBadge category={row.category} /></td>
-                  <td className="px-7 py-3 border-b border-border/40 text-[13.5px] text-muted-foreground">{row.mappedTemplate}</td>
+                  <td className="px-6 py-3.5 border-b border-border/40 text-sm text-foreground">{row.section}</td>
+                  <td className="px-6 py-3.5 border-b border-border/40"><CategoryBadge category={row.category} /></td>
+                  <td className="px-6 py-3.5 border-b border-border/40 text-sm text-foreground">{row.mappedTemplate}</td>
                 </tr>
               ))}
             </tbody>
