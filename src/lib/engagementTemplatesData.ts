@@ -68,7 +68,7 @@ export const templateTree: TreeItem[] = [
     id: "audit",
     label: "Audit",
     type: "folder",
-    isNew: true,
+    
     children: [
       { id: "audit-ca", label: "Canada", type: "folder", children: [
         { id: "audit5100", label: "CAS / ASPE (5100)", type: "file" },
