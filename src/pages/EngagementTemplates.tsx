@@ -3,7 +3,7 @@ import { ChevronRight, ChevronDown, Search, Plus, FolderOpen, Folder } from "luc
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import Layout from "@/components/Layout";
+import { Layout } from "@/components/Layout";
 import {
   templateTree,
   allTemplateViews,
