@@ -32,7 +32,7 @@ export interface TreeItem {
   label: string;
   type: "folder" | "file";
   children?: TreeItem[];
-  countryHeader?: string; // e.g. "🇨🇦 Canada" or "🇺🇸 United States"
+  
   isNew?: boolean;
 }
 
@@ -68,14 +68,16 @@ export const templateTree: TreeItem[] = [
     id: "audit",
     label: "Audit",
     type: "folder",
-    isNew: true,
+    
     children: [
-      { id: "audit-ca-header", label: "🇨🇦 Canada", type: "folder", countryHeader: "🇨🇦 CANADA" },
-      { id: "audit5100", label: "CAS / ASPE (5100)", type: "file" },
-      { id: "audit5101", label: "CAS / NFP – ASNPO (5101)", type: "file" },
-      { id: "audit-us-header", label: "🇺🇸 United States", type: "folder", countryHeader: "🇺🇸 UNITED STATES" },
-      { id: "audit6100", label: "GAAS / US GAAP (6100)", type: "file" },
-      { id: "audit6200", label: "PCAOB / SOX Public (6200)", type: "file" },
+      { id: "audit-ca", label: "Canada", type: "folder", children: [
+        { id: "audit5100", label: "CAS / ASPE (5100)", type: "file" },
+        { id: "audit5101", label: "CAS / NFP – ASNPO (5101)", type: "file" },
+      ]},
+      { id: "audit-us", label: "United States", type: "folder", children: [
+        { id: "audit6100", label: "GAAS / US GAAP (6100)", type: "file" },
+        { id: "audit6200", label: "PCAOB / SOX Public (6200)", type: "file" },
+      ]},
     ],
   },
   {

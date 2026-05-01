@@ -677,18 +677,6 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
   const renderEngTemplateTreeNode = (item: TreeItem, depth: number): React.ReactNode => {
     const isExpanded = engTemplateExpandedFolders.has(item.id);
 
-    // Country header items render as small labels
-    if (item.countryHeader) {
-      return (
-        <div
-          key={item.id}
-          className={cn("px-3.5 py-1 text-[10px] font-semibold uppercase tracking-wider", hasDarkSecondary ? "text-white/50" : "text-muted-foreground")}
-          style={{ paddingLeft: `${(depth + 1) * 18 + 8}px` }}
-        >
-          {item.countryHeader}
-        </div>
-      );
-    }
 
     if (item.type === "folder") {
       return (
