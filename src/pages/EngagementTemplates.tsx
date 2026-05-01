@@ -113,7 +113,7 @@ export default function EngagementTemplates() {
               {activeView.standardsBanner && <StandardsBanner banner={activeView.standardsBanner} />}
 
               {/* Sections */}
-              <div className="flex-1 overflow-y-auto">
+              <div className="flex-1 overflow-y-auto p-6 space-y-5">
                 {activeView.sections.map((section, i) => (
                   <SectionBlock key={i} section={section} />
                 ))}
