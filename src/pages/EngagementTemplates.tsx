@@ -66,7 +66,6 @@ function SectionBlock({ section }: { section: TemplateSection }) {
               {section.rows.map((row, i) => (
                 <tr key={i} className="hover:bg-muted/20">
                   <td className="px-6 py-3.5 border-b border-border/40 text-sm text-foreground">{row.section}</td>
-                  <td className="px-6 py-3.5 border-b border-border/40"><CategoryBadge category={row.category} /></td>
                   <td className="px-6 py-3.5 border-b border-border/40 text-sm text-foreground">{row.mappedTemplate}</td>
                 </tr>
               ))}
