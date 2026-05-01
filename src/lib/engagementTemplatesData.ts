@@ -37,13 +37,13 @@ export interface TreeItem {
 }
 
 export const categoryConfig: Record<CategoryType, { icon: string; label: string; className: string }> = {
-  checklist: { icon: "☐", label: "Checklists", className: "bg-[#fff0eb] text-[#c4500a] border-[#fdd0b8]" },
-  worksheet: { icon: "⊞", label: "Worksheets", className: "bg-[#eef0fb] text-[#4553c4] border-[#c8cdf5]" },
-  letter: { icon: "✉", label: "Letters", className: "bg-[#f3eefb] text-[#7c3aed] border-[#d8c8f5]" },
-  folder: { icon: "📁", label: "Folders", className: "bg-[#f1f5f9] text-[#475569] border-[#cbd5e0]" },
-  module: { icon: "⚡", label: "Modules", className: "bg-[#fffbeb] text-[#b45309] border-[#fde68a]" },
-  "financial-statement": { icon: "📑", label: "Financial Statements", className: "bg-[#eff6ff] text-[#1d4ed8] border-[#bfdbfe]" },
-  report: { icon: "📋", label: "Reports", className: "bg-[#fdf2f8] text-[#9d174d] border-[#f5d0e8]" },
+  checklist: { icon: "☐", label: "Checklists", className: "bg-[#fef3ee] text-[#c4500a] border-[#e8843a]" },
+  worksheet: { icon: "⊞", label: "Worksheets", className: "bg-[#eef1fb] text-[#4553c4] border-[#7b8ad4]" },
+  letter: { icon: "✉", label: "Letters", className: "bg-[#eef1fb] text-[#4553c4] border-[#7b8ad4]" },
+  folder: { icon: "📁", label: "Folders", className: "bg-[#f3f4f6] text-[#475569] border-[#9ca3af]" },
+  module: { icon: "⊞", label: "Modules", className: "bg-[#fef9eb] text-[#b45309] border-[#e8a830]" },
+  "financial-statement": { icon: "📄", label: "Financial Statements", className: "bg-[#eff6ff] text-[#2563eb] border-[#60a5fa]" },
+  report: { icon: "📋", label: "Reports", className: "bg-[#fdf2f8] text-[#be185d] border-[#ec4899]" },
 };
 
 // ── Tree structure ──
