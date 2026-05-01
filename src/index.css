@@ -494,8 +494,8 @@
   }
 
   .text-sm {
-    font-size: 0.9375rem !important;
-    font-weight: 400;
+    font-size: 1rem !important;
+    font-weight: 500;
   }
   
   /* Enhanced heading hierarchy */
