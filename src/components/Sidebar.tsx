@@ -276,12 +276,33 @@ interface SidebarProps {
 export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
   const navigate = useNavigate();
   const location = useLocation();
+  const [searchParams, setSearchParams] = useSearchParams();
   const [templates, setTemplates] = useState<Template[]>(initialTemplates);
   const [globalTemplates, setGlobalTemplates] = useState<GlobalTemplate[]>(initialGlobalTemplates);
   const [activeTab, setActiveTab] = useState<"firm" | "master">("firm");
   const [searchQuery, setSearchQuery] = useState("");
   const { isCollapsed: isTemplatesPanelCollapsed, setIsCollapsed: setIsTemplatesPanelCollapsed } = useSecondaryPanel();
   const [selectedGlobalTemplate, setSelectedGlobalTemplate] = useState<string | null>("global-1-1");
+
+  // Engagement Templates tree state
+  const [engTemplateExpandedFolders, setEngTemplateExpandedFolders] = useState<Set<string>>(
+    () => new Set(["review", "audit"])
+  );
+  const engTemplateSelectedId = searchParams.get("template") || "rev2400";
+  const [engTemplateSearchQuery, setEngTemplateSearchQuery] = useState("");
+
+  const toggleEngTemplateFolder = useCallback((id: string) => {
+    setEngTemplateExpandedFolders((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  }, []);
+
+  const selectEngTemplate = useCallback((id: string) => {
+    setSearchParams({ template: id }, { replace: true });
+  }, [setSearchParams]);
   
   // Multi-select state for Global Templates
   const [selectedTemplates, setSelectedTemplates] = useState<Set<string>>(new Set());
