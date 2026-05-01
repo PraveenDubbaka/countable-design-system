@@ -683,9 +683,8 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
         <div key={item.id}>
           <button
             className={cn(
-              "flex items-center gap-1.5 w-full py-2 px-3.5 text-sm hover:bg-primary/10 cursor-pointer select-none rounded-[8px]",
-              item.isNew && "font-medium",
-              hasDarkSecondary ? "text-white" : "text-foreground"
+              "flex items-center gap-1.5 w-full py-1.5 px-3.5 text-sm hover:bg-primary/10 cursor-pointer select-none rounded-[8px] font-semibold",
+              hasDarkSecondary ? "text-white" : "text-black dark:text-white"
             )}
             style={{ paddingLeft: `${depth * 18 + 14}px` }}
             onClick={() => toggleEngTemplateFolder(item.id)}
