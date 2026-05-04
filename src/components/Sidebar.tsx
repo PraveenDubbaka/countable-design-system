@@ -28,6 +28,7 @@ import { ChecklistIcon } from "@/components/icons/ChecklistIcon";
 import { CompletionIcon } from "@/components/icons/CompletionIcon";
 import { WordDocIcon } from "@/components/icons/WordDocIcon";
 import { BookIcon } from "@/components/icons/BookIcon";
+import { WorksheetIcon } from "@/components/icons/WorksheetIcon";
 import { SignoffsOverlay } from "@/components/SignoffsOverlay";
 import signoffCheckAllIcon from "@/assets/signoff-check-all.png";
 import signoffUncheckAllIcon from "@/assets/signoff-uncheck-all.png";
@@ -1331,8 +1332,8 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
                   {
                     id: "aud-tb", code: "TB", label: "Trial Balance & Adjusting Entries", icon: "folder",
                     children: [
-                      { id: "aud-tb-tb", code: "TB", label: "Trial Balance & Adjusting Entries", icon: "doc", route: "trial-balance" },
-                      { id: "aud-tb-aje", code: "AJE", label: "Audit Adjustments & Reclassifications", icon: "checklist" },
+                      { id: "aud-tb-tb", code: "TB", label: "Trial Balance & Adjusting Entries", icon: "worksheet", route: "trial-balance" },
+                      { id: "aud-tb-aje", code: "AJE", label: "Audit Adjustments & Reclassifications", icon: "worksheet" },
                     ]
                   },
                   {
@@ -1456,7 +1457,7 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
                     ]
                   },
                   {
-                    id: "tb", code: "TB", label: "Trial Balance & Adj. Entries", icon: "folder", route: "trial-balance"
+                    id: "tb", code: "TB", label: "Trial Balance & Adj. Entries", icon: "worksheet", route: "trial-balance"
                   },
                   {
                     id: "pr", code: "PR", label: "Procedures", icon: "folder",
@@ -1567,6 +1568,7 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
                   if (icon === "checklist") return <ChecklistIcon className="h-4 w-4 flex-shrink-0" />;
                   if (icon === "completion") return <CompletionIcon className="h-4 w-4 flex-shrink-0" />;
                   if (icon === "doc") return <WordDocIcon className="h-4 w-4 flex-shrink-0" />;
+                  if (icon === "worksheet") return <WorksheetIcon className="h-4 w-4 flex-shrink-0" />;
                   if (icon === "book") return <BookIcon className="h-3.5 w-3.5 flex-shrink-0" style={{ color: '#778599' }} />;
                   return <FolderSolidIcon className="h-4 w-4 text-primary flex-shrink-0" />;
                 };
