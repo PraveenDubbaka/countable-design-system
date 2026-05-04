@@ -1,4 +1,6 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
 import { Search, ChevronDown, Pencil, Trash2, Download, Mail, ClipboardPlus, UserPlus, RefreshCw, Users, UserX, UserCheck, Clock, UsersRound } from "lucide-react";
 import { ExpandableIconButton } from "@/components/ui/expandable-icon-button";
 import { Input } from "@/components/ui/input";
@@ -192,10 +194,34 @@ const IntegrationCell = ({ type }: { type: string }) => {
 };
 
 export default function Clients() {
+  const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState("");
   const [partnerSearch, setPartnerSearch] = useState("");
   const [activeTab, setActiveTab] = useState("my-clients");
   const [selectedClient, setSelectedClient] = useState<string | null>(null);
+  const [clientList, setClientList] = useState(clients);
+
+  const filteredClients = clientList.filter(c =>
+    c.entityName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    c.id.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    c.email.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  const handleCreateEngagement = (clientId: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    navigate("/engagements/create");
+  };
+
+  const handleDeleteClient = (clientId: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    setClientList(prev => prev.filter(c => c.id !== clientId));
+    toast.success(`Client ${clientId} deleted`);
+  };
+
+  const handleEditClient = (clientId: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    toast.info(`Edit client ${clientId}`);
+  };
 
   const tabs = [
     { id: "my-clients", label: "My Clients" },
@@ -372,7 +398,7 @@ export default function Clients() {
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-border">
-                    {clients.map((client) => (
+                    {filteredClients.map((client) => (
                       <tr 
                         key={client.id} 
                         className={`hover:bg-muted/50 transition-colors group cursor-pointer max-h-[50px] ${
@@ -384,7 +410,7 @@ export default function Clients() {
                         <td className="px-6 py-2 whitespace-nowrap">
                           <Checkbox checked={selectedClient === client.id} />
                         </td>
-                        <td className="px-6 py-2 text-sm text-foreground whitespace-nowrap"></td>
+                        <td className="px-6 py-2 text-sm text-foreground whitespace-nowrap">{client.id}</td>
                         <td className="px-6 py-2 whitespace-nowrap">
                           <a href="#" className="text-sm text-link font-medium cursor-pointer hover:underline">
                             {client.entityName}
@@ -422,14 +448,26 @@ export default function Clients() {
                         <td className="px-6 py-2 text-sm text-primary font-medium text-center whitespace-nowrap">{client.engagements}</td>
                         <td className="px-6 py-2 whitespace-nowrap">
                           <div className="flex items-center gap-2">
-                            <button className="p-1.5 hover:bg-muted rounded-lg transition-colors" title="Create Engagement">
+                            <button
+                              className="p-1.5 hover:bg-muted rounded-lg transition-colors"
+                              title="Create Engagement"
+                              onClick={(e) => handleCreateEngagement(client.id, e)}
+                            >
                               <ClipboardPlus className="h-4 w-4 text-primary" />
                             </button>
-                            <button className="p-1.5 hover:bg-muted rounded-lg transition-colors" title="Edit Client">
+                            <button
+                              className="p-1.5 hover:bg-muted rounded-lg transition-colors"
+                              title="Edit Client"
+                              onClick={(e) => handleEditClient(client.id, e)}
+                            >
                               <Pencil className="h-4 w-4 text-primary" />
                             </button>
-                            <button className="p-1.5 hover:bg-muted rounded-lg transition-colors" title="Delete Client">
-                              <Trash2 className="h-4 w-4 text-primary" />
+                            <button
+                              className="p-1.5 hover:bg-muted rounded-lg transition-colors"
+                              title="Delete Client"
+                              onClick={(e) => handleDeleteClient(client.id, e)}
+                            >
+                              <Trash2 className="h-4 w-4 text-destructive" />
                             </button>
                           </div>
                         </td>

@@ -24,6 +24,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { MyEngagementTemplate, templateViewToMyTemplate, TemplateView } from '@/lib/engagementTemplatesData';
 
 interface Template {
   id: string;
@@ -44,6 +45,8 @@ interface BulkAddToMyTemplatesDialogProps {
   selectedTemplates: SelectedTemplate[];
   onSuccess?: () => void;
   getChecklistData: (templateId: string) => any;
+  variant?: "checklist" | "engagement";
+  getTemplateViewData?: (templateId: string) => TemplateView | null;
 }
 
 const initialFolders: Template[] = [
@@ -63,6 +66,8 @@ export function BulkAddToMyTemplatesDialog({
   selectedTemplates,
   onSuccess,
   getChecklistData,
+  variant = "checklist",
+  getTemplateViewData,
 }: BulkAddToMyTemplatesDialogProps) {
   const [folderOption, setFolderOption] = useState<'existing' | 'new'>('existing');
   const [selectedFolder, setSelectedFolder] = useState<string>('');
@@ -95,16 +100,9 @@ export function BulkAddToMyTemplatesDialog({
 
     if (folderOption === 'new') {
       if (!newFolderName.trim()) return;
-      
-      // Create new folder
       targetFolderId = `folder-${Date.now()}`;
       targetFolderName = newFolderName.trim();
-      targetFolder = {
-        id: targetFolderId,
-        name: targetFolderName,
-        type: 'folder',
-        children: [],
-      };
+      targetFolder = { id: targetFolderId, name: targetFolderName, type: 'folder', children: [] };
       setFolders(prev => [...prev, targetFolder!]);
     } else {
       if (!selectedFolder) return;
@@ -114,14 +112,57 @@ export function BulkAddToMyTemplatesDialog({
       targetFolderName = targetFolder.name;
     }
 
-    // Get existing saved checklists
-    const savedChecklists = readJsonFromLocalStorage<SavedChecklist[]>('savedChecklists', []);
+    if (variant === "engagement") {
+      // Save as MyEngagementTemplate
+      const existing = readJsonFromLocalStorage<MyEngagementTemplate[]>('myEngagementTemplates', []);
+      const existingNames = new Set(
+        existing.filter(t => t.folderId === targetFolderId).map(t => t.name.toLowerCase())
+      );
+      const duplicates = selectedTemplates.filter(t => {
+        const view = getTemplateViewData?.(t.id);
+        const name = view?.title || t.name;
+        return existingNames.has(name.toLowerCase());
+      });
+      if (duplicates.length > 0) {
+        toast.error('One or more engagement template with the same name already exists in the selected folder.');
+        return;
+      }
 
-    // Check for duplicates in the target folder
+      const newTemplates: MyEngagementTemplate[] = selectedTemplates.map((template, index) => {
+        const view = getTemplateViewData?.(template.id);
+        if (view) {
+          return templateViewToMyTemplate(view, targetFolderId, targetFolderName, `my-eng-${Date.now()}-${index}`);
+        }
+        // Fallback: empty template
+        return {
+          id: `my-eng-${Date.now()}-${index}`,
+          name: template.name,
+          folderId: targetFolderId,
+          folderName: targetFolderName,
+          sections: [],
+          sourceTemplateId: template.id,
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+        };
+      });
+
+      writeJsonToLocalStorage('myEngagementTemplates', [...existing, ...newTemplates]);
+
+      newTemplates.forEach(t => {
+        window.dispatchEvent(new CustomEvent('engagementTemplateSaved', { detail: t }));
+      });
+
+      onOpenChange(false);
+      const count = newTemplates.length;
+      toast.success(`Engagement template${count > 1 ? 's' : ''} copied successfully`);
+      onSuccess?.();
+      return;
+    }
+
+    // Checklist variant (original logic)
+    const savedChecklists = readJsonFromLocalStorage<SavedChecklist[]>('savedChecklists', []);
     const existingNames = new Set(
-      savedChecklists
-        .filter(c => c.folderId === targetFolderId)
-        .map(c => c.name.toLowerCase())
+      savedChecklists.filter(c => c.folderId === targetFolderId).map(c => c.name.toLowerCase())
     );
     const duplicates = selectedTemplates.filter(t => existingNames.has(t.name.toLowerCase()));
     if (duplicates.length > 0) {
@@ -129,7 +170,6 @@ export function BulkAddToMyTemplatesDialog({
       return;
     }
 
-    // Create new saved checklists for each selected template
     const newChecklists: SavedChecklist[] = selectedTemplates.map((template, index) => {
       const checklistData = getChecklistData(template.id);
       return {
@@ -147,17 +187,12 @@ export function BulkAddToMyTemplatesDialog({
       };
     });
 
-    // Save to localStorage
     const updated = [...savedChecklists, ...newChecklists];
     writeJsonToLocalStorage('savedChecklists', updated);
-
-    // Dispatch events for sidebar to pick up
     newChecklists.forEach(checklist => {
-      const event = new CustomEvent('checklistSaved', { detail: checklist });
-      window.dispatchEvent(event);
+      window.dispatchEvent(new CustomEvent('checklistSaved', { detail: checklist }));
     });
 
-    // Close the dialog and show success toast
     onOpenChange(false);
     const count = selectedTemplates.length;
     toast.success(`${count} ${count === 1 ? 'checklist' : 'checklists'} successfully added to My Templates`);
@@ -179,7 +214,9 @@ export function BulkAddToMyTemplatesDialog({
           <div className="flex flex-col space-y-1.5">
           <DialogTitle className="text-xl">Select a location</DialogTitle>
             <DialogDescription>
-              Select where you want to add {selectedTemplates.length === 1 ? 'this checklist' : `these ${selectedTemplates.length} checklists`}
+              {variant === "engagement"
+                ? `Select where you want to add ${selectedTemplates.length === 1 ? 'this engagement template' : `these ${selectedTemplates.length} engagement templates`}`
+                : `Select where you want to add ${selectedTemplates.length === 1 ? 'this checklist' : `these ${selectedTemplates.length} checklists`}`}
             </DialogDescription>
           </div>
         </DialogHeader>

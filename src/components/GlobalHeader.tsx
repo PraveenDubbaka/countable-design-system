@@ -111,7 +111,7 @@ export function GlobalHeader({ title, headerContent }: { title?: string; headerC
                     }`}
                     style={{ fontSize: size === 'A' ? '11px' : size === 'AA' ? '13px' : '15px' }}
                   >
-                    {size === 'A' ? 'A' : size === 'AA' ? 'A' : 'A'}
+                    {size}
                   </span>
                 ))}
               </div>

@@ -1,9 +1,11 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
 import { Search, ChevronDown, Pencil, Trash2, Download, Briefcase, Loader, CheckCircle2, Archive } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Layout } from "@/components/Layout";
 import { StyledCard } from "@/components/ui/card";
 
@@ -17,6 +19,7 @@ const stats = [
 
 // Sample engagements data matching the screenshot
 const engagements = [
+  { id: "AUD-SL-Mar312024", client: "Shipping Line Inc.", type: "Audit (AUD)", yearEnd: "Mar 31, 2024", team: "View Assignees", status: "In Progress", statusVariant: "inProgress" as const, hasRF: false, dateCreated: "Jan 21, 2026 10:00 AM" },
   { id: "COM-CON-Dec312024", client: "Shipping Line Inc.", type: "Compilation (COM)", yearEnd: "Dec 31, 2024", team: "View Assignees", status: "In Progress", statusVariant: "inProgress" as const, hasRF: false, dateCreated: "Jan 21, 2026 09:00 AM" },
   { id: "COM-PSP-Dec312023", client: "Source 40", type: "Compilation (COM)", yearEnd: "Dec 31, 2023", team: "View Assignees", status: "In Progress", statusVariant: "inProgress" as const, hasRF: false, dateCreated: "Dec 30, 2025 06:26 AM" },
   { id: "COM-QB-Dec312025", client: "qb 40.1", type: "Compilation (COM)", yearEnd: "Dec 31, 2025", team: "View Assignees", status: "In Progress", statusVariant: "inProgress" as const, hasRF: true, dateCreated: "Jan 16, 2026 01:15 PM" },
@@ -55,10 +58,34 @@ const StatusBadge = ({ status, hasRF }: { status: string; hasRF: boolean }) => {
   );
 };
 
+const filterPeriodOptions = [
+  "Last 6 Month Engagements",
+  "Last 3 Month Engagements",
+  "Last 12 Month Engagements",
+  "All Engagements",
+];
+
 export default function Engagements() {
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState("");
   const [filterPeriod, setFilterPeriod] = useState("Last 6 Month Engagements");
+  const [engagementList, setEngagementList] = useState(engagements);
+
+  const filteredEngagements = engagementList.filter(e =>
+    e.id.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    e.client.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  const handleDelete = (id: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    setEngagementList(prev => prev.filter(eng => eng.id !== id));
+    toast.success(`Engagement ${id} deleted`);
+  };
+
+  const handleEdit = (id: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    navigate(`/engagements/${id}`);
+  };
 
   return (
     <Layout title="Engagements">
@@ -94,13 +121,28 @@ export default function Engagements() {
 
           {/* Filter, Search, Export and Create Row - Enhanced spacing */}
           <div className="flex items-center justify-between">
-            <Button
-              variant="outline"
-              className="h-9 px-4 text-sm font-medium bg-card border-border hover:bg-muted"
-            >
-              {filterPeriod}
-              <ChevronDown className="ml-2 h-4 w-4 icon-chevron-down" />
-            </Button>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  variant="outline"
+                  className="h-9 px-4 text-sm font-medium bg-card border-border hover:bg-muted"
+                >
+                  {filterPeriod}
+                  <ChevronDown className="ml-2 h-4 w-4 icon-chevron-down" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="start">
+                {filterPeriodOptions.map((option) => (
+                  <DropdownMenuItem
+                    key={option}
+                    onClick={() => setFilterPeriod(option)}
+                    className={filterPeriod === option ? "font-medium text-primary" : ""}
+                  >
+                    {option}
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
             <div className="flex items-center gap-2">
               <div className="relative">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground icon-search" />
@@ -144,7 +186,7 @@ export default function Engagements() {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-border">
-                  {engagements.map((engagement) => (
+                  {filteredEngagements.map((engagement) => (
                     <tr 
                       key={engagement.id} 
                       className="hover:bg-muted/50 transition-colors group max-h-[50px]"
@@ -172,10 +214,16 @@ export default function Engagements() {
                       <td className="px-6 py-2 text-sm text-muted-foreground whitespace-nowrap">{engagement.dateCreated}</td>
                       <td className="px-6 py-2 whitespace-nowrap">
                         <div className="flex items-center gap-2">
-                          <button className="p-1.5 hover:bg-muted rounded-lg transition-colors group/edit">
+                          <button
+                            className="p-1.5 hover:bg-muted rounded-lg transition-colors group/edit"
+                            onClick={(e) => handleEdit(engagement.id, e)}
+                          >
                             <Pencil className="h-4 w-4 text-primary group-hover/edit:icon-edit" />
                           </button>
-                          <button className="p-1.5 hover:bg-muted rounded-lg transition-colors group/trash">
+                          <button
+                            className="p-1.5 hover:bg-muted rounded-lg transition-colors group/trash"
+                            onClick={(e) => handleDelete(engagement.id, e)}
+                          >
                             <Trash2 className="h-4 w-4 text-primary group-hover/trash:icon-trash" />
                           </button>
                         </div>

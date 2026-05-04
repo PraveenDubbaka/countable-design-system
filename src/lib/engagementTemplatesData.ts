@@ -32,8 +32,69 @@ export interface TreeItem {
   label: string;
   type: "folder" | "file";
   children?: TreeItem[];
-  
   isNew?: boolean;
+}
+
+export interface EditableTemplateRow {
+  id: string;
+  section: string;
+  category: CategoryType;
+  mappedTemplate: string;
+  isPending?: boolean; // newly added, not yet named
+}
+
+export interface EditableTemplateSection {
+  id: string;
+  name: string;
+  rows: EditableTemplateRow[];
+}
+
+export interface MyEngagementTemplate {
+  id: string;
+  name: string;
+  folderId: string;
+  folderName: string;
+  sections: EditableTemplateSection[];
+  subtitle?: string;
+  standardsBanner?: {
+    label: string;
+    standards: string;
+    badge: string;
+    color: "blue" | "green" | "red";
+  };
+  sourceTemplateId?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export function templateViewToMyTemplate(
+  view: TemplateView,
+  folderId: string,
+  folderName: string,
+  id?: string
+): MyEngagementTemplate {
+  const now = new Date().toISOString();
+  return {
+    id: id || `my-eng-${Date.now()}`,
+    name: view.title,
+    folderId,
+    folderName,
+    sections: view.sections.map((s, si) => ({
+      id: `sec-${si}-${Date.now()}`,
+      name: s.name,
+      rows: s.rows.map((r, ri) => ({
+        id: `row-${si}-${ri}-${Date.now()}-${Math.random().toString(36).slice(2)}`,
+        section: r.section,
+        category: r.category,
+        mappedTemplate: r.mappedTemplate,
+      })),
+    })),
+    subtitle: view.subtitle,
+    standardsBanner: view.standardsBanner,
+    sourceTemplateId: view.id,
+    createdAt: now,
+    updatedAt: now,
+  };
 }
 
 export const categoryConfig: Record<CategoryType, { icon: string; label: string; className: string }> = {
@@ -90,6 +151,73 @@ export const templateTree: TreeItem[] = [
     ],
   },
 ];
+
+// ── Compilation Section 4200 ──
+const comp4200: TemplateView = {
+  id: "comp4200",
+  title: "Compilation Section 4200",
+  subtitle: "CSRS 4200 — Compilation Engagement",
+  standardsBanner: {
+    label: "Standard:",
+    standards: "CSRS 4200 – Compilation Engagements",
+    badge: "CPA Canada",
+    color: "blue",
+  },
+  sections: [
+    {
+      name: "Client Onboarding",
+      rows: [
+        { section: "New engagement acceptance", category: "checklist", mappedTemplate: "New engagement acceptance Section 4200" },
+        { section: "Existing engagement continuance", category: "checklist", mappedTemplate: "Existing engagement continuance Section 4200" },
+        { section: "Engagement Letter", category: "letter", mappedTemplate: "Compilation engagement letter Section 4200" },
+        { section: "Independence", category: "checklist", mappedTemplate: "Independence Section 4200" },
+      ],
+    },
+    {
+      name: "Planning",
+      rows: [
+        { section: "Knowledge of the Business", category: "checklist", mappedTemplate: "Knowledge of the business Section 4200" },
+        { section: "Understanding the entity - Basics", category: "checklist", mappedTemplate: "Understanding the entity basics Section 4200" },
+        { section: "Engagement Planning", category: "checklist", mappedTemplate: "Engagement Planning Section 4200" },
+        { section: "Withdrawal", category: "checklist", mappedTemplate: "Withdrawal Section 4200" },
+      ],
+    },
+    {
+      name: "Documents",
+      rows: [
+        { section: "Shareholders Agreements", category: "folder", mappedTemplate: "No Selection required" },
+        { section: "Rental/Lease Agreements", category: "folder", mappedTemplate: "No Selection required" },
+        { section: "Incorporation Documents", category: "folder", mappedTemplate: "No Selection required" },
+        { section: "Banking Agreements", category: "folder", mappedTemplate: "No Selection required" },
+      ],
+    },
+    {
+      name: "Trial Balance & Adjusting entries",
+      rows: [
+        { section: "Trial Balance & Adjusting entries", category: "module", mappedTemplate: "Automated" },
+      ],
+    },
+    {
+      name: "Financial Statements",
+      rows: [
+        { section: "Financial Statement Docs", category: "financial-statement", mappedTemplate: "Compilation template" },
+        { section: "Cover Page", category: "financial-statement", mappedTemplate: "Compilation template" },
+        { section: "Table of Contents", category: "financial-statement", mappedTemplate: "Compilation template" },
+        { section: "Compilation Report", category: "report", mappedTemplate: "Compilation Report Section 4200" },
+        { section: "Balance Sheet", category: "financial-statement", mappedTemplate: "Compilation template" },
+        { section: "Statement of Income (Loss) and Retained Earnings (Deficit)", category: "financial-statement", mappedTemplate: "Compilation template" },
+        { section: "Notes to Financial Statements", category: "financial-statement", mappedTemplate: "Compilation template" },
+      ],
+    },
+    {
+      name: "Completion & Signoffs",
+      rows: [
+        { section: "Completion Checklist", category: "checklist", mappedTemplate: "Completion Section 4200" },
+        { section: "Partner/Manager Review", category: "checklist", mappedTemplate: "Review sign-off Section 4200" },
+      ],
+    },
+  ],
+};
 
 // ── Review 2400 ──
 const review2400: TemplateView = {
@@ -664,6 +792,7 @@ const audit6200: TemplateView = {
 };
 
 export const allTemplateViews: Record<string, TemplateView> = {
+  comp4200,
   rev2400: review2400,
   audit5100,
   audit5101,

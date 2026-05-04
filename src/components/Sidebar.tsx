@@ -2,7 +2,7 @@ import { useState, useEffect, useRef, useCallback } from "react";
 import { createPortal } from "react-dom";
 import { useNavigate, useLocation, useSearchParams } from "react-router-dom";
 import { ChevronDown, ChevronRight, ChevronLeft, Search, Plus, Expand, Trash2, Folder, Headphones, Check, FileText, FileBarChart, StickyNote, Table, Copy, Pencil, FolderInput, MoreVertical, GripVertical, X, Save, Files } from "lucide-react";
-import { templateTree, type TreeItem } from "@/lib/engagementTemplatesData";
+import { templateTree, allTemplateViews, type TreeItem } from "@/lib/engagementTemplatesData";
 import { FolderSolidIcon, FolderPlusIcon, FolderMinusIcon } from "@/components/icons/FolderIcons";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -166,6 +166,14 @@ const initialGlobalTemplates: GlobalTemplate[] = [
           { id: "global-4-4", name: "Checklist — Modified Opinion", type: "file" },
           { id: "global-4-5", name: "Checklist — Supplementary and Other Information", type: "file" },
           { id: "global-4-6", name: "Checklist — Management Representations", type: "file" },
+          { id: "global-4-7", name: "Worksheet — Withdrawal", type: "file" },
+          { id: "global-4-8", name: "Worksheet — Notes on Significant Audit Decisions", type: "file" },
+          { id: "global-4-9", name: "Worksheet — Key Audit Matters", type: "file" },
+          { id: "global-4-10", name: "Worksheet — Audit Findings and Matters for Discussion", type: "file" },
+          { id: "global-4-11", name: "Summary of Identified Misstatements", type: "file" },
+          { id: "global-4-12", name: "Worksheet — Matters to be Communicated to Management and TCWG", type: "file" },
+          { id: "global-4-13", name: "Worksheet — Matters for Future Consideration", type: "file" },
+          { id: "global-4-14", name: "Worksheet — Documenting Consultation", type: "file" },
         ]
       },
       {
@@ -173,7 +181,63 @@ const initialGlobalTemplates: GlobalTemplate[] = [
         name: "United States",
         type: "folder",
         isExpanded: false,
-        children: []
+        children: [
+          {
+            id: "global-4-us-1",
+            name: "Pre-Engagement",
+            type: "folder",
+            isExpanded: false,
+            children: [
+              { id: "global-4-us-1-1", name: "Assessing Acceptability of Financial Reporting Framework", type: "file" },
+              { id: "global-4-us-1-2", name: "Audit Team Competency Matrix", type: "file" },
+              { id: "global-4-us-1-3", name: "Auditor's Declaration — Code of Ethics", type: "file" },
+              { id: "global-4-us-1-4", name: "Declaration of Conflict of Interest", type: "file" },
+              { id: "global-4-us-1-5", name: "Declaration of NO Conflict of Interest", type: "file" },
+              { id: "global-4-us-1-6", name: "Assessment of Ethical Threats and Safeguards", type: "file" },
+              { id: "global-4-us-1-7", name: "Audit Engagement Letter", type: "file" },
+            ]
+          },
+          {
+            id: "global-4-us-2",
+            name: "Audit Planning",
+            type: "folder",
+            isExpanded: false,
+            children: [
+              { id: "global-4-us-2-1", name: "Understanding the Entity and Its Environment", type: "file" },
+              { id: "global-4-us-2-2", name: "Determining Materiality", type: "file" },
+              { id: "global-4-us-2-3", name: "Overall Audit Strategy and Audit Plan", type: "file" },
+              { id: "global-4-us-2-4", name: "Direct Assistance — Internal Auditors Agreement", type: "file" },
+            ]
+          },
+          {
+            id: "global-4-us-3",
+            name: "Completion & Review",
+            type: "folder",
+            isExpanded: false,
+            children: [
+              { id: "global-4-us-3-1", name: "Evaluating Misstatements", type: "file" },
+              { id: "global-4-us-3-2", name: "Analytical Procedures — End of Audit", type: "file" },
+              { id: "global-4-us-3-3", name: "Management Representation Letter", type: "file" },
+            ]
+          },
+          {
+            id: "global-4-us-4",
+            name: "Reporting",
+            type: "folder",
+            isExpanded: false,
+            children: [
+              { id: "global-4-us-4-1", name: "Auditor's Report — Fair Presentation Framework", type: "file" },
+              { id: "global-4-us-4-2", name: "Auditor's Report — Compliance Framework", type: "file" },
+              { id: "global-4-us-4-3", name: "Qualified Opinion — Material Misstatement (Fair Presentation)", type: "file" },
+              { id: "global-4-us-4-4", name: "Qualified Opinion — Material Misstatement (Compliance)", type: "file" },
+              { id: "global-4-us-4-5", name: "Qualified Opinion — Insufficient Evidence", type: "file" },
+              { id: "global-4-us-4-6", name: "Adverse Opinion", type: "file" },
+              { id: "global-4-us-4-7", name: "Disclaimer of Opinion", type: "file" },
+              { id: "global-4-us-4-8", name: "Auditor's Report with Key Audit Matters and Emphasis of Matter", type: "file" },
+              { id: "global-4-us-4-9", name: "Qualified Opinion with Emphasis of Matter", type: "file" },
+            ]
+          },
+        ]
       },
     ]
   },
@@ -225,10 +289,6 @@ const navItems = [{
   icon: ({ className }: { className?: string }) => <svg className={className} width="20" height="16" viewBox="0 0 20 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2.08317 8.00016H4.90148C5.47248 8.00016 5.99448 8.32277 6.24984 8.8335C6.5052 9.34422 7.02719 9.66683 7.5982 9.66683H12.4015C12.9725 9.66683 13.4945 9.34422 13.7498 8.8335C14.0052 8.32277 14.5272 8.00016 15.0982 8.00016H17.9165M7.47197 1.3335H12.5277C13.4251 1.3335 13.8738 1.3335 14.2699 1.47013C14.6202 1.59096 14.9393 1.78816 15.204 2.04745C15.5034 2.34066 15.7041 2.742 16.1054 3.54464L17.9109 7.15558C18.0684 7.47057 18.1471 7.62806 18.2027 7.79312C18.252 7.9397 18.2876 8.09055 18.309 8.24372C18.3332 8.41618 18.3332 8.59227 18.3332 8.94443V10.6668C18.3332 12.067 18.3332 12.767 18.0607 13.3018C17.821 13.7722 17.4386 14.1547 16.9681 14.3943C16.4334 14.6668 15.7333 14.6668 14.3332 14.6668H5.6665C4.26637 14.6668 3.56631 14.6668 3.03153 14.3943C2.56112 14.1547 2.17867 13.7722 1.93899 13.3018C1.6665 12.767 1.6665 12.067 1.6665 10.6668V8.94443C1.6665 8.59227 1.6665 8.41618 1.69065 8.24372C1.71209 8.09055 1.7477 7.9397 1.79702 7.79312C1.85255 7.62806 1.9313 7.47057 2.0888 7.15558L3.89426 3.54464C4.29559 2.74199 4.49626 2.34066 4.79562 2.04745C5.06036 1.78816 5.37943 1.59096 5.72974 1.47013C6.12588 1.3335 6.57458 1.3335 7.47197 1.3335Z" stroke="#5599D8" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>,
   label: "Engagements",
   route: "/engagements"
-}, {
-  icon: ({ className }: { className?: string }) => <svg className={className} width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M3 3h14v2H3V3zm0 4h10v2H3V7zm0 4h14v2H3v-2zm0 4h10v2H3v-2z" fill="currentColor" opacity=".85"/></svg>,
-  label: "Eng. Templates",
-  route: "/engagement-templates"
 }, {
   icon: FileIcon,
   label: "Templates",
@@ -324,6 +384,66 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
   const [selectedTemplates, setSelectedTemplates] = useState<Set<string>>(new Set());
   const [selectedFolder, setSelectedFolder] = useState<string | null>(null);
   const [bulkAddDialogOpen, setBulkAddDialogOpen] = useState(false);
+
+  // Multi-select state for Engagement Templates tree
+  const [selectedEngTemplates, setSelectedEngTemplates] = useState<Set<string>>(new Set());
+  const [engBulkAddDialogOpen, setEngBulkAddDialogOpen] = useState(false);
+  const [engActiveTab, setEngActiveTab] = useState<"my" | "global">("global");
+  const [myEngagementTemplates, setMyEngagementTemplates] = useState<import("@/lib/engagementTemplatesData").MyEngagementTemplate[]>(() =>
+    readJsonFromLocalStorage("myEngagementTemplates", [])
+  );
+  const [engMyFolderExpanded, setEngMyFolderExpanded] = useState<Set<string>>(new Set());
+
+  const handleEngTemplateCheckbox = (id: string, checked: boolean) => {
+    setSelectedEngTemplates(prev => {
+      const next = new Set(prev);
+      checked ? next.add(id) : next.delete(id);
+      return next;
+    });
+  };
+
+  const getAllEngFileIds = (items: TreeItem[]): string[] =>
+    items.flatMap(item =>
+      item.type === "folder" ? getAllEngFileIds(item.children ?? []) : [item.id]
+    );
+
+  const getAllEngFolderIds = (items: TreeItem[]): string[] =>
+    items.flatMap(item =>
+      item.type === "folder"
+        ? [item.id, ...getAllEngFolderIds(item.children ?? [])]
+        : []
+    );
+
+  const allEngFolderIds = getAllEngFolderIds(templateTree);
+  const allEngExpanded = allEngFolderIds.every(id => engTemplateExpandedFolders.has(id));
+
+  const handleEngExpandCollapseAll = () => {
+    if (allEngExpanded) {
+      setEngTemplateExpandedFolders(new Set());
+    } else {
+      setEngTemplateExpandedFolders(new Set(allEngFolderIds));
+    }
+  };
+
+  const handleEngFolderCheckbox = (item: TreeItem, checked: boolean) => {
+    const childIds = getAllEngFileIds(item.children ?? []);
+    setSelectedEngTemplates(prev => {
+      const next = new Set(prev);
+      childIds.forEach(id => checked ? next.add(id) : next.delete(id));
+      return next;
+    });
+  };
+
+  const isEngFolderChecked = (item: TreeItem): boolean => {
+    const ids = getAllEngFileIds(item.children ?? []);
+    return ids.length > 0 && ids.every(id => selectedEngTemplates.has(id));
+  };
+
+  const isEngFolderIndeterminate = (item: TreeItem): boolean => {
+    const ids = getAllEngFileIds(item.children ?? []);
+    const count = ids.filter(id => selectedEngTemplates.has(id)).length;
+    return count > 0 && count < ids.length;
+  };
 
   // Resizable panel state
   const [panelWidth, setPanelWidth] = useState(() => {
@@ -463,8 +583,17 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
       setSavedChecklists(prev => prev.some(c => c.id === event.detail.id) ? prev : [...prev, event.detail]);
     };
     window.addEventListener("checklistSaved", handleChecklistSaved as EventListener);
+
+    const handleEngTemplateSaved = () => {
+      const updated = readJsonFromLocalStorage<import("@/lib/engagementTemplatesData").MyEngagementTemplate[]>("myEngagementTemplates", []);
+      setMyEngagementTemplates(updated);
+      setEngActiveTab("my");
+    };
+    window.addEventListener("engagementTemplateSaved", handleEngTemplateSaved);
+
     return () => {
       window.removeEventListener("checklistSaved", handleChecklistSaved as EventListener);
+      window.removeEventListener("engagementTemplateSaved", handleEngTemplateSaved);
     };
   }, []);
 
@@ -485,7 +614,6 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
         }
       });
     } else if (itemId === "engagements") {
-      // Stay on engagement templates if already there, otherwise navigate
       if (location.pathname !== "/engagement-templates") {
         navigate("/engagement-templates");
       }
@@ -504,12 +632,16 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
     } : t));
   };
 
-  // Toggle global template folder
+  // Toggle global template folder (supports nested folders)
   const toggleGlobalFolder = (id: string) => {
-    setGlobalTemplates(prev => prev.map(t => t.id === id ? {
-      ...t,
-      isExpanded: !t.isExpanded
-    } : t));
+    const toggle = (items: GlobalTemplate[]): GlobalTemplate[] =>
+      items.map(t => t.id === id
+        ? { ...t, isExpanded: !t.isExpanded }
+        : t.children
+          ? { ...t, children: toggle(t.children) }
+          : t
+      );
+    setGlobalTemplates(prev => toggle(prev));
   };
 
   // Get all child template IDs from a folder
@@ -616,13 +748,13 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
     
     return (
       <div key={template.id}>
-        <div 
+        <div
           className={cn(
             "flex items-center gap-2 py-1.5 px-2 rounded-md cursor-pointer transition-colors text-sm",
-            depth > 0 ? "ml-5" : "",
             isSelected && template.type === "file" ? "bg-primary/10 text-primary" : "hover:bg-muted",
             folderDisabled && "opacity-50"
           )}
+          style={{ paddingLeft: `${depth * 16 + 8}px` }}
         >
           {/* Checkbox */}
           <Checkbox
@@ -692,48 +824,71 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
   const renderEngTemplateTreeNode = (item: TreeItem, depth: number): React.ReactNode => {
     const isExpanded = engTemplateExpandedFolders.has(item.id);
 
-
     if (item.type === "folder") {
+      const folderChecked = isEngFolderChecked(item);
+      const folderIndeterminate = isEngFolderIndeterminate(item);
       return (
         <div key={item.id}>
-          <button
+          <div
             className={cn(
-              "flex items-center gap-1.5 w-full py-1.5 px-3.5 text-sm hover:bg-primary/10 cursor-pointer select-none rounded-[8px] font-semibold",
+              "flex items-center gap-2 w-full py-1.5 px-2 text-sm hover:bg-primary/10 cursor-pointer select-none rounded-[8px]",
               hasDarkSecondary ? "text-white" : "text-black dark:text-white"
             )}
-            style={{ paddingLeft: `${depth * 18 + 14}px` }}
-            onClick={() => toggleEngTemplateFolder(item.id)}
+            style={{ paddingLeft: `${depth * 18 + 8}px` }}
           >
-            {isExpanded ? (
-              <FolderMinusIcon className="h-4 w-4 text-primary flex-shrink-0" />
-            ) : (
-              <FolderPlusIcon className="h-4 w-4 text-primary flex-shrink-0" />
-            )}
-            <span className="flex-1 text-left truncate">{item.label}</span>
-          </button>
+            <Checkbox
+              checked={folderIndeterminate ? "indeterminate" : folderChecked}
+              onCheckedChange={(checked) => handleEngFolderCheckbox(item, !!checked)}
+              onClick={(e) => e.stopPropagation()}
+              className="h-4 w-4 flex-shrink-0"
+            />
+            <div
+              className="flex items-center gap-1.5 flex-1 min-w-0 font-semibold"
+              onClick={() => toggleEngTemplateFolder(item.id)}
+            >
+              {isExpanded ? (
+                <FolderMinusIcon className="h-4 w-4 text-primary flex-shrink-0" />
+              ) : (
+                <FolderPlusIcon className="h-4 w-4 text-primary flex-shrink-0" />
+              )}
+              <span className="flex-1 text-left truncate">{item.label}</span>
+            </div>
+          </div>
           {isExpanded && item.children?.map((child) => renderEngTemplateTreeNode(child, depth + 1))}
         </div>
       );
     }
 
     // File leaf
+    const isSelected = engTemplateSelectedId === item.id;
+    const isChecked = selectedEngTemplates.has(item.id);
     return (
-      <button
+      <div
         key={item.id}
         className={cn(
-          "flex items-center gap-1.5 w-full py-1.5 px-3.5 text-sm hover:bg-primary/10 cursor-pointer select-none rounded-[8px] font-medium",
-          engTemplateSelectedId === item.id
+          "flex items-center gap-2 w-full py-1.5 px-2 text-sm hover:bg-primary/10 cursor-pointer select-none rounded-[8px] font-medium",
+          isSelected
             ? (hasDarkSecondary ? "bg-white/15 text-white" : "bg-primary/10 text-primary ring-1 ring-primary/25")
             : (hasDarkSecondary ? "text-white/80" : "text-black dark:text-white")
         )}
-        style={{ paddingLeft: `${depth * 18 + 14 + 18}px` }}
-        onClick={() => selectEngTemplate(item.id)}
+        style={{ paddingLeft: `${depth * 18 + 8}px` }}
       >
-        <svg className="w-4 h-4 flex-shrink-0" viewBox="0 0 20 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M2.08317 8.00016H4.90148C5.47248 8.00016 5.99448 8.32277 6.24984 8.8335C6.5052 9.34422 7.02719 9.66683 7.5982 9.66683H12.4015C12.9725 9.66683 13.4945 9.34422 13.7498 8.8335C14.0052 8.32277 14.5272 8.00016 15.0982 8.00016H17.9165M7.47197 1.3335H12.5277C13.4251 1.3335 13.8738 1.3335 14.2699 1.47013C14.6202 1.59096 14.9393 1.78816 15.204 2.04745C15.5034 2.34066 15.7041 2.742 16.1054 3.54464L17.9109 7.15558C18.0684 7.47057 18.1471 7.62806 18.2027 7.79312C18.252 7.9397 18.2876 8.09055 18.309 8.24372C18.3332 8.41618 18.3332 8.59227 18.3332 8.94443V10.6668C18.3332 12.067 18.3332 12.767 18.0607 13.3018C17.821 13.7722 17.4386 14.1547 16.9681 14.3943C16.4334 14.6668 15.7333 14.6668 14.3332 14.6668H5.6665C4.26637 14.6668 3.56631 14.6668 3.03153 14.3943C2.56112 14.1547 2.17867 13.7722 1.93899 13.3018C1.6665 12.767 1.6665 12.067 1.6665 10.6668V8.94443C1.6665 8.59227 1.6665 8.41618 1.69065 8.24372C1.71209 8.09055 1.7477 7.9397 1.79702 7.79312C1.85255 7.62806 1.9313 7.47057 2.0888 7.15558L3.89426 3.54464C4.29559 2.74199 4.49626 2.34066 4.79562 2.04745C5.06036 1.78816 5.37943 1.59096 5.72974 1.47013C6.12588 1.3335 6.57458 1.3335 7.47197 1.3335Z" stroke="#5599D8" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-        </svg>
-        <span className="flex-1 text-left truncate">{item.label}</span>
-      </button>
+        <Checkbox
+          checked={isChecked}
+          onCheckedChange={(checked) => handleEngTemplateCheckbox(item.id, !!checked)}
+          onClick={(e) => e.stopPropagation()}
+          className="h-4 w-4 flex-shrink-0"
+        />
+        <div
+          className="flex items-center gap-1.5 flex-1 min-w-0"
+          onClick={() => selectEngTemplate(item.id)}
+        >
+          <svg className="w-4 h-4 flex-shrink-0" viewBox="0 0 20 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M2.08317 8.00016H4.90148C5.47248 8.00016 5.99448 8.32277 6.24984 8.8335C6.5052 9.34422 7.02719 9.66683 7.5982 9.66683H12.4015C12.9725 9.66683 13.4945 9.34422 13.7498 8.8335C14.0052 8.32277 14.5272 8.00016 15.0982 8.00016H17.9165M7.47197 1.3335H12.5277C13.4251 1.3335 13.8738 1.3335 14.2699 1.47013C14.6202 1.59096 14.9393 1.78816 15.204 2.04745C15.5034 2.34066 15.7041 2.742 16.1054 3.54464L17.9109 7.15558C18.0684 7.47057 18.1471 7.62806 18.2027 7.79312C18.252 7.9397 18.2876 8.09055 18.309 8.24372C18.3332 8.41618 18.3332 8.59227 18.3332 8.94443V10.6668C18.3332 12.067 18.3332 12.767 18.0607 13.3018C17.821 13.7722 17.4386 14.1547 16.9681 14.3943C16.4334 14.6668 15.7333 14.6668 14.3332 14.6668H5.6665C4.26637 14.6668 3.56631 14.6668 3.03153 14.3943C2.56112 14.1547 2.17867 13.7722 1.93899 13.3018C1.6665 12.767 1.6665 12.067 1.6665 10.6668V8.94443C1.6665 8.59227 1.6665 8.41618 1.69065 8.24372C1.71209 8.09055 1.7477 7.9397 1.79702 7.79312C1.85255 7.62806 1.9313 7.47057 2.0888 7.15558L3.89426 3.54464C4.29559 2.74199 4.49626 2.34066 4.79562 2.04745C5.06036 1.78816 5.37943 1.59096 5.72974 1.47013C6.12588 1.3335 6.57458 1.3335 7.47197 1.3335Z" stroke="#5599D8" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+          </svg>
+          <span className="flex-1 text-left truncate">{item.label}</span>
+        </div>
+      </div>
     );
   };
 
@@ -1132,6 +1287,153 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
                   children?: SectionNode[];
                 };
 
+                const engId = location.pathname.split("/engagements/")[1]?.split("/")[0];
+                const isAuditEngagement = engId?.startsWith("AUD-");
+
+                const auditEngagementTree: SectionNode[] = [
+                  {
+                    id: "aud-co", code: "CO", label: "Client Onboarding", icon: "folder",
+                    children: [
+                      { id: "aud-new-accept", code: "NA", label: "New engagement acceptance", icon: "checklist", route: "checklist/aud-new-accept" },
+                      { id: "aud-exist-cont", code: "EC", label: "Existing engagement continuance", icon: "checklist", route: "checklist/aud-exist-cont" },
+                      { id: "aud-ind", code: "IND", label: "Independence & Ethical Requirements", icon: "checklist", route: "checklist/aud-ind" },
+                      { id: "aud-el", code: "EL", label: "Engagement Letter", icon: "letter", route: "checklist/aud-el" },
+                      { id: "aud-aml", code: "AML", label: "Anti-Money Laundering (AML) Compliance", icon: "checklist", route: "checklist/aud-aml" },
+                    ]
+                  },
+                  {
+                    id: "aud-pl-sec", code: "PL", label: "Planning", icon: "folder",
+                    children: [
+                      { id: "aud-ueb", code: "UEB", label: "Understanding the entity — Basics", icon: "checklist", route: "checklist/aud-ueb" },
+                      { id: "aud-ues", code: "UES", label: "Understanding the entity — Systems & Controls", icon: "checklist", route: "checklist/aud-ues" },
+                      { id: "aud-uei", code: "UEI", label: "Understanding the entity — Industry & Environment", icon: "checklist", route: "checklist/aud-uei" },
+                      { id: "aud-mat", code: "MAT", label: "Materiality", icon: "checklist", route: "checklist/aud-mat" },
+                      { id: "aud-scope", code: "SC", label: "Engagement Scope", icon: "checklist" },
+                      { id: "aud-pap", code: "PAP", label: "Preliminary Analytical Procedures", icon: "checklist" },
+                      { id: "aud-asm", code: "ASM", label: "Audit Strategy Memorandum", icon: "checklist" },
+                      { id: "aud-plan", code: "EP", label: "Engagement Planning", icon: "checklist", route: "checklist/aud-plan" },
+                      { id: "aud-stb", code: "STB", label: "Staffing & Time Budget", icon: "checklist" },
+                      { id: "aud-tcwg-pl", code: "TCWG", label: "Communication with Those Charged with Governance", icon: "letter", route: "checklist/aud-tcwg-pl" },
+                    ]
+                  },
+                  {
+                    id: "aud-do", code: "DO", label: "Documents", icon: "folder", hasPlus: true,
+                    children: [
+                      { id: "aud-do-sha", code: "SHA", label: "Shareholders Agreements", icon: "folder" },
+                      { id: "aud-do-ren", code: "REN", label: "Rental/Lease Agreements", icon: "folder" },
+                      { id: "aud-do-inc", code: "INC", label: "Incorporation Documents", icon: "folder" },
+                      { id: "aud-do-ban", code: "BAN", label: "Banking Agreements", icon: "folder" },
+                      { id: "aud-do-cma", code: "CMA", label: "Contracts & Material Agreements", icon: "folder" },
+                      { id: "aud-do-cmb", code: "CMB", label: "Corporate Minute Book", icon: "folder" },
+                      { id: "aud-do-rcf", code: "RCF", label: "Regulatory & Compliance Filings", icon: "folder" },
+                    ]
+                  },
+                  {
+                    id: "aud-tb", code: "TB", label: "Trial Balance & Adjusting Entries", icon: "folder",
+                    children: [
+                      { id: "aud-tb-tb", code: "TB", label: "Trial Balance & Adjusting Entries", icon: "doc", route: "trial-balance" },
+                      { id: "aud-tb-aje", code: "AJE", label: "Audit Adjustments & Reclassifications", icon: "checklist" },
+                    ]
+                  },
+                  {
+                    id: "aud-ra-sec", code: "RA", label: "Risk Assessment (CAS)", icon: "folder",
+                    children: [
+                      { id: "aud-ra-rap", code: "RAP", label: "Risk Assessment Procedures", icon: "checklist", route: "checklist/aud-ra-rap" },
+                      { id: "aud-ra-ic", code: "IC", label: "Understanding Internal Controls", icon: "checklist", route: "checklist/aud-ra-ic" },
+                      { id: "aud-ra-itgc", code: "ITGC", label: "IT General Controls (ITGC)", icon: "checklist" },
+                      { id: "aud-ra-fraud", code: "FRA", label: "Fraud Risk Assessment (CAS 240)", icon: "checklist", route: "checklist/aud-ra-fraud" },
+                      { id: "aud-ra-srr", code: "SRR", label: "Significant Risks Register", icon: "checklist", route: "checklist/aud-ra-srr" },
+                      { id: "aud-ra-rmm", code: "RMM", label: "Risk of Material Misstatement (RMM)", icon: "checklist", route: "checklist/aud-ra-rmm" },
+                      { id: "aud-ra-scot-rev", code: "S1", label: "SCOT — Revenue Cycle", icon: "checklist", route: "checklist/aud-ra-scot-rev" },
+                      { id: "aud-ra-scot-exp", code: "S2", label: "SCOT — Expenditure Cycle", icon: "checklist", route: "checklist/aud-ra-scot-exp" },
+                      { id: "aud-ra-scot-pay", code: "S3", label: "SCOT — Payroll Cycle", icon: "checklist", route: "checklist/aud-ra-scot-pay" },
+                      { id: "aud-ra-gc", code: "GC", label: "Going Concern (Initial Assessment)", icon: "checklist", route: "checklist/aud-ra-gc" },
+                    ]
+                  },
+                  {
+                    id: "aud-rp-sec", code: "RP", label: "Response to Assessed Risks (800)", icon: "folder",
+                    children: [
+                      { id: "aud-rp-oar", code: "OAR", label: "Overall Audit Response", icon: "checklist", route: "checklist/aud-rp-oar" },
+                      { id: "aud-rp-toc", code: "TOC", label: "Test of Controls", icon: "checklist" },
+                      { id: "aud-rp-sap", code: "SAP", label: "Substantive Analytical Procedures", icon: "checklist" },
+                      { id: "aud-rp-tod-rev", code: "TR", label: "Test of Details — Revenue", icon: "checklist" },
+                      { id: "aud-rp-tod-exp", code: "TE", label: "Test of Details — Expenses", icon: "checklist" },
+                      { id: "aud-rp-aps", code: "APS", label: "Audit Procedures Summary", icon: "checklist" },
+                    ]
+                  },
+                  {
+                    id: "aud-wp-a", code: "WP", label: "Working Papers — Assets (A–J)", icon: "folder",
+                    children: [
+                      { id: "aud-wp-a-a", code: "A", label: "Cash & Bank Reconciliation", icon: "book" },
+                      { id: "aud-wp-a-b", code: "B", label: "Accounts Receivable & Confirmations", icon: "book" },
+                      { id: "aud-wp-a-c", code: "C", label: "Inventory & Observation", icon: "book" },
+                      { id: "aud-wp-a-d", code: "D", label: "Prepaid Expenses", icon: "book" },
+                      { id: "aud-wp-a-e", code: "E", label: "Other Current Assets", icon: "book" },
+                      { id: "aud-wp-a-f", code: "F", label: "Long-Term Assets / PP&E Roll-forward", icon: "book" },
+                      { id: "aud-wp-a-g", code: "G", label: "Intangibles & Goodwill", icon: "book" },
+                      { id: "aud-wp-a-h", code: "H", label: "Investments", icon: "book" },
+                    ]
+                  },
+                  {
+                    id: "aud-wp-l", code: "WP", label: "Working Papers — Liabilities & Equity (AA–GG)", icon: "folder",
+                    children: [
+                      { id: "aud-wp-l-aa", code: "AA", label: "Accounts Payable & Accrued Liabilities", icon: "book" },
+                      { id: "aud-wp-l-bb", code: "BB", label: "Long-Term Debt & Covenant Compliance", icon: "book" },
+                      { id: "aud-wp-l-cc", code: "CC", label: "Deferred Revenue", icon: "book" },
+                      { id: "aud-wp-l-dd", code: "DD", label: "Income Taxes & Deferred Tax", icon: "book" },
+                      { id: "aud-wp-l-ee", code: "EE", label: "Other Liabilities & Provisions", icon: "book" },
+                      { id: "aud-wp-l-ff", code: "FF", label: "Share Capital & Equity Roll-forward", icon: "book" },
+                      { id: "aud-wp-l-gg", code: "GG", label: "Related Party Transactions", icon: "book" },
+                    ]
+                  },
+                  {
+                    id: "aud-wp-i", code: "WP", label: "Working Papers — Income Statement (700–760)", icon: "folder",
+                    children: [
+                      { id: "aud-wp-i-700", code: "700", label: "Revenue Testing", icon: "book" },
+                      { id: "aud-wp-i-710", code: "710", label: "Cost of Sales / COGS", icon: "book" },
+                      { id: "aud-wp-i-720", code: "720", label: "Payroll & Benefits", icon: "book" },
+                      { id: "aud-wp-i-730", code: "730", label: "Operating Expenses", icon: "book" },
+                      { id: "aud-wp-i-740", code: "740", label: "Depreciation & Amortization", icon: "book" },
+                      { id: "aud-wp-i-750", code: "750", label: "Interest & Finance Costs", icon: "book" },
+                      { id: "aud-wp-i-760", code: "760", label: "Other Income & Gains", icon: "book" },
+                    ]
+                  },
+                  {
+                    id: "aud-fs", code: "FS", label: "Financial Statements", icon: "folder", hasPlus: true,
+                    children: [
+                      {
+                        id: "aud-fs-docs", label: "Financial Statement Docs", icon: "folder",
+                        children: [
+                          { id: "aud-fs-cover", label: "Cover Page", icon: "doc" },
+                          { id: "aud-fs-toc", label: "Table of Contents", icon: "doc" },
+                          { id: "aud-fs-iar", label: "Independent Auditor's Report", icon: "checklist", route: "checklist/aud-ar" },
+                          { id: "aud-fs-bs", label: "Balance Sheet", icon: "doc" },
+                          { id: "aud-fs-is", label: "Statement of Income (Loss) and Retained Earnings (Deficit)", icon: "doc" },
+                          { id: "aud-fs-cf", label: "Statement of Cash Flows", icon: "doc" },
+                          { id: "aud-fs-eq", label: "Statement of Changes in Equity", icon: "doc" },
+                          { id: "aud-fs-notes", label: "Notes to Financial Statements", icon: "doc" },
+                        ]
+                      },
+                    ]
+                  },
+                  {
+                    id: "aud-so", code: "SO", label: "Completion & Signoffs (200)", icon: "folder",
+                    children: [
+                      { id: "aud-so-aim", code: "AIM", label: "Accumulation of Identified Misstatements", icon: "checklist", route: "checklist/aud-so-aim" },
+                      { id: "aud-so-far", code: "FAR", label: "Final Analytical Review", icon: "checklist", route: "checklist/aud-so-far" },
+                      { id: "aud-subseq", code: "SE", label: "Subsequent Events", icon: "checklist", route: "checklist/aud-subseq" },
+                      { id: "aud-wgc-final", code: "GC", label: "Going Concern (Final Assessment)", icon: "checklist", route: "checklist/aud-wgc-final" },
+                      { id: "aud-mr", code: "MR", label: "Management Representation Letter", icon: "checklist", route: "checklist/aud-mr" },
+                      { id: "aud-tcwg-fin", code: "TCWG", label: "Communication with Those Charged with Governance", icon: "letter", route: "checklist/aud-tcwg-fin" },
+                      { id: "aud-comp", code: "CM", label: "Completion Checklist", icon: "completion", route: "checklist/aud-comp" },
+                      { id: "aud-ep", code: "QCR", label: "Quality Control Review", icon: "completion", route: "checklist/aud-ep" },
+                      { id: "aud-so-sign", code: "SO", label: "Signoffs", icon: "completion" },
+                      { id: "aud-so-fr", code: "FR", label: "Final Review", icon: "completion" },
+                      { id: "aud-so-alf", code: "ALF", label: "Archive & Lock File", icon: "completion" },
+                    ]
+                  },
+                ];
+
                 const engagementTree: SectionNode[] = [
                   {
                     id: "co", code: "CO", label: "Client Onboarding", icon: "folder",
@@ -1273,10 +1575,10 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
                   const hasChildren = node.children && node.children.length > 0;
                   const isOpen = expandedSections.has(node.id);
                   const isLeaf = !hasChildren;
-                  const engId = location.pathname.split("/engagements/")[1]?.split("/")[0];
                   const currentSubPath = engId ? location.pathname.replace(`/engagements/${engId}/`, '').replace(`/engagements/${engId}`, '') : '';
-                  const isActive = node.route 
-                    ? (currentSubPath === node.route || (currentSubPath === '' && node.route === 'checklist/co-ca'))
+                  const defaultRoute = isAuditEngagement ? 'checklist/aud-new-accept' : 'checklist/co-ca';
+                  const isActive = node.route
+                    ? (currentSubPath === node.route || (currentSubPath === '' && node.route === defaultRoute))
                     : false;
 
                   return (
@@ -1289,7 +1591,6 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
                         style={{ paddingLeft: `${depth * 16 + 8}px` }}
                         onClick={() => {
                           if (node.route) {
-                            const engId = location.pathname.split("/engagements/")[1]?.split("/")[0];
                             if (engId) {
                               navigate(`/engagements/${engId}/${node.route}`);
                             }
@@ -1350,9 +1651,10 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
                 // Collect all node IDs for the "select all" signoff toggles
                 const collectIds = (nodes: SectionNode[]): string[] =>
                   nodes.flatMap(n => [n.id, ...(n.children ? collectIds(n.children) : [])]);
-                allNodeIdsRef.current = collectIds(engagementTree);
+                const activeTree = isAuditEngagement ? auditEngagementTree : engagementTree;
+                allNodeIdsRef.current = collectIds(activeTree);
 
-                return engagementTree.map(node => renderNode(node, 0));
+                return activeTree.map(node => renderNode(node, 0));
               })()}
             </div>
 
@@ -1427,28 +1729,121 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
                 <div className={`flex mb-2 ${isTemplatesPanelCollapsed ? "hidden" : ""}`} style={{
                   borderBottom: hasDarkSecondary ? "1px solid rgba(255,255,255,0.15)" : "1px solid hsl(var(--border))"
                 }}>
-                  <button className={`flex-1 py-2 px-1 text-sm font-medium transition-all text-center whitespace-nowrap border-b-[3px] ${hasDarkSecondary ? "text-white/50 hover:text-white/80" : "text-muted-foreground hover:text-foreground"} border-transparent`}>
+                  <button onClick={() => setEngActiveTab("my")} className={`flex-1 py-2 px-1 text-sm font-medium transition-all text-center whitespace-nowrap border-b-[3px] ${engActiveTab === "my" ? (hasDarkSecondary ? "text-white border-white" : "text-primary border-primary") : (hasDarkSecondary ? "text-white/50 hover:text-white/80" : "text-muted-foreground hover:text-foreground") + " border-transparent"}`}>
                     My Templates
                   </button>
-                  <button className={`flex-1 py-2 px-1 text-sm font-medium transition-all text-center whitespace-nowrap border-b-[3px] ${hasDarkSecondary ? "text-white border-white" : "text-primary border-primary"}`}>
+                  <button onClick={() => setEngActiveTab("global")} className={`flex-1 py-2 px-1 text-sm font-medium transition-all text-center whitespace-nowrap border-b-[3px] ${engActiveTab === "global" ? (hasDarkSecondary ? "text-white border-white" : "text-primary border-primary") : (hasDarkSecondary ? "text-white/50 hover:text-white/80" : "text-muted-foreground hover:text-foreground") + " border-transparent"}`}>
                     Global Templates
                   </button>
                 </div>
 
-                <div className={`p-3 pt-1 ${isTemplatesPanelCollapsed ? "hidden" : ""}`}>
-                  <div className="flex gap-2">
-                    <div className="relative flex-1">
-                      <Search className={cn("absolute left-2.5 top-1/2 -translate-y-1/2 h-4 w-4", hasDarkSecondary ? "text-white/50" : "text-muted-foreground")} />
-                      <Input placeholder="Search" className={cn("pl-8 h-8 text-sm border-0 shadow-sm", hasDarkSecondary ? "bg-white/10 text-white placeholder:text-white/40" : "bg-card/80")} value={engTemplateSearchQuery} onChange={e => setEngTemplateSearchQuery(e.target.value)} />
+                {engActiveTab === "global" ? (
+                  <>
+                    <div className={`p-3 pt-1 ${isTemplatesPanelCollapsed ? "hidden" : ""}`}>
+                      <div className="flex gap-2">
+                        <div className="relative flex-1">
+                          <Search className={cn("absolute left-2.5 top-1/2 -translate-y-1/2 h-4 w-4", hasDarkSecondary ? "text-white/50" : "text-muted-foreground")} />
+                          <Input placeholder="Search" className={cn("pl-8 h-8 text-sm border-0 shadow-sm", hasDarkSecondary ? "bg-white/10 text-white placeholder:text-white/40" : "bg-card/80")} value={engTemplateSearchQuery} onChange={e => setEngTemplateSearchQuery(e.target.value)} />
+                        </div>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <button
+                              className={cn("h-8 w-8 rounded-md flex items-center justify-center transition-colors flex-shrink-0", hasDarkSecondary ? "bg-white/10 hover:bg-white/20" : "bg-primary/10 hover:bg-primary/20")}
+                              onClick={handleEngExpandCollapseAll}
+                            >
+                              {allEngExpanded ? (
+                                <svg width="15" height="15" viewBox="0 0 17 17" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                  <path d="M9.72214 6.94412L14.5833 2.08301M14.5833 2.08301H10.4166M14.5833 2.08301V6.24967M6.94436 9.7219L2.08325 14.583M2.08325 14.583H6.24992M2.08325 14.583L2.08325 10.4163" stroke={hasDarkSecondary ? "white" : "#074075"} strokeWidth="1.38889" strokeLinecap="round" strokeLinejoin="round" />
+                                </svg>
+                              ) : (
+                                <svg width="15" height="15" viewBox="0 0 17 17" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                  <path d="M2.08325 6.94412L2.08325 2.08301M2.08325 2.08301L6.24992 2.08301M2.08325 2.08301L6.94436 6.94412M14.5833 9.7219L14.5833 14.583M14.5833 14.583L10.4166 14.583M14.5833 14.583L9.72214 9.7219" stroke={hasDarkSecondary ? "white" : "#074075"} strokeWidth="1.38889" strokeLinecap="round" strokeLinejoin="round" />
+                                </svg>
+                              )}
+                            </button>
+                          </TooltipTrigger>
+                          <TooltipContent>{allEngExpanded ? "Collapse All" : "Expand All"}</TooltipContent>
+                        </Tooltip>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <Button
+                              size="icon"
+                              className="h-8 w-8 bg-primary hover:bg-primary/90 shadow-sm flex-shrink-0"
+                              disabled={selectedEngTemplates.size === 0}
+                              onClick={() => setEngBulkAddDialogOpen(true)}
+                            >
+                              <Files className="h-4 w-4 text-primary-foreground" />
+                            </Button>
+                          </TooltipTrigger>
+                          <TooltipContent>
+                            {selectedEngTemplates.size > 0
+                              ? `Add ${selectedEngTemplates.size} selected to My Templates`
+                              : "Select templates to add"}
+                          </TooltipContent>
+                        </Tooltip>
+                      </div>
                     </div>
+                    <div className={`flex-1 overflow-y-auto p-2 pt-0 ${isTemplatesPanelCollapsed ? "hidden" : ""}`}>
+                      {templateTree.map((item) => renderEngTemplateTreeNode(item, 0))}
+                    </div>
+                  </>
+                ) : (
+                  /* My Templates tab for engagements */
+                  <div className={`flex-1 overflow-y-auto p-2 ${isTemplatesPanelCollapsed ? "hidden" : ""}`}>
+                    {myEngagementTemplates.length === 0 ? (
+                      <div className="flex flex-col items-center justify-center h-32 gap-2 text-center px-4">
+                        <p className={cn("text-sm font-medium", hasDarkSecondary ? "text-white/70" : "text-muted-foreground")}>No templates yet</p>
+                        <p className={cn("text-xs", hasDarkSecondary ? "text-white/40" : "text-muted-foreground/70")}>Copy from Global Templates to get started</p>
+                      </div>
+                    ) : (() => {
+                      // Group by folder
+                      const folders: Record<string, { id: string; name: string; templates: typeof myEngagementTemplates }> = {};
+                      myEngagementTemplates.forEach(t => {
+                        if (!folders[t.folderId]) folders[t.folderId] = { id: t.folderId, name: t.folderName, templates: [] };
+                        folders[t.folderId].templates.push(t);
+                      });
+                      return Object.values(folders).map(folder => (
+                        <div key={folder.id}>
+                          <div
+                            className={cn("flex items-center gap-2 py-1.5 px-2 rounded-md cursor-pointer hover:bg-muted/50 text-sm font-semibold select-none", hasDarkSecondary ? "text-white" : "text-foreground")}
+                            onClick={() => setEngMyFolderExpanded(prev => {
+                              const next = new Set(prev);
+                              next.has(folder.id) ? next.delete(folder.id) : next.add(folder.id);
+                              return next;
+                            })}
+                          >
+                            {engMyFolderExpanded.has(folder.id)
+                              ? <FolderMinusIcon className="h-4 w-4 text-primary flex-shrink-0" />
+                              : <FolderPlusIcon className="h-4 w-4 text-primary flex-shrink-0" />}
+                            <span className="truncate flex-1">{folder.name}</span>
+                            <span className={cn("text-xs", hasDarkSecondary ? "text-white/40" : "text-muted-foreground")}>{folder.templates.length}</span>
+                          </div>
+                          {engMyFolderExpanded.has(folder.id) && folder.templates.map(t => {
+                            const isActive = searchParams.get("myTemplate") === t.id;
+                            return (
+                              <div
+                                key={t.id}
+                                className={cn(
+                                  "flex items-center gap-2 py-1.5 pl-7 pr-2 rounded-md cursor-pointer text-sm ml-1 font-medium select-none",
+                                  isActive ? "bg-primary/10 text-primary" : (hasDarkSecondary ? "text-white/80 hover:bg-white/10" : "text-foreground hover:bg-muted/50")
+                                )}
+                                onClick={() => {
+                                  navigate("/engagement-templates");
+                                  setSearchParams({ myTemplate: t.id });
+                                }}
+                              >
+                                <svg className="w-4 h-4 flex-shrink-0" viewBox="0 0 20 16" fill="none"><path d="M2.08317 8.00016H4.90148C5.47248 8.00016 5.99448 8.32277 6.24984 8.8335C6.5052 9.34422 7.02719 9.66683 7.5982 9.66683H12.4015C12.9725 9.66683 13.4945 9.34422 13.7498 8.8335C14.0052 8.32277 14.5272 8.00016 15.0982 8.00016H17.9165M7.47197 1.3335H12.5277C13.4251 1.3335 13.8738 1.3335 14.2699 1.47013C14.6202 1.59096 14.9393 1.78816 15.204 2.04745C15.5034 2.34066 15.7041 2.742 16.1054 3.54464L17.9109 7.15558C18.0684 7.47057 18.1471 7.62806 18.2027 7.79312C18.252 7.9397 18.2876 8.09055 18.309 8.24372C18.3332 8.41618 18.3332 8.59227 18.3332 8.94443V10.6668C18.3332 12.067 18.3332 12.767 18.0607 13.3018C17.821 13.7722 17.4386 14.1547 16.9681 14.3943C16.4334 14.6668 15.7333 14.6668 14.3332 14.6668H5.6665C4.26637 14.6668 3.56631 14.6668 3.03153 14.3943C2.56112 14.1547 2.17867 13.7722 1.93899 13.3018C1.6665 12.767 1.6665 12.067 1.6665 10.6668V8.94443C1.6665 8.59227 1.6665 8.41618 1.69065 8.24372C1.71209 8.09055 1.7477 7.9397 1.79702 7.79312C1.85255 7.62806 1.9313 7.47057 2.0888 7.15558L3.89426 3.54464C4.29559 2.74199 4.49626 2.34066 4.79562 2.04745C5.06036 1.78816 5.37943 1.59096 5.72974 1.47013C6.12588 1.3335 6.57458 1.3335 7.47197 1.3335Z" stroke="#5599D8" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                                <span className="truncate flex-1">{t.name}</span>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      ));
+                    })()}
                   </div>
-                </div>
-
-                <div className={`flex-1 overflow-y-auto p-2 pt-0 ${isTemplatesPanelCollapsed ? "hidden" : ""}`}>
-                  {templateTree.map((item) => renderEngTemplateTreeNode(item, 0))}
-                </div>
+                )}
               </>
-            ) : (
+            ) : selectedDropdown === "checklists" ? (
               <>
                 <div className={`flex mb-2 ${isTemplatesPanelCollapsed ? "hidden" : ""}`} style={{
                borderBottom: hasDarkSecondary ? "1px solid rgba(255,255,255,0.15)" : "1px solid hsl(var(--border))"
@@ -1485,8 +1880,8 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
                     {activeTab === "master" && (
                       <Tooltip>
                         <TooltipTrigger asChild>
-                          <Button 
-                            size="icon" 
+                          <Button
+                            size="icon"
                             className="h-9 w-9 bg-primary hover:bg-primary/90 shadow-sm"
                             disabled={selectedTemplates.size === 0}
                             onClick={() => setBulkAddDialogOpen(true)}
@@ -1495,8 +1890,8 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
                           </Button>
                         </TooltipTrigger>
                         <TooltipContent>
-                          {selectedTemplates.size > 0 
-                            ? `Add ${selectedTemplates.size} selected to My Templates` 
+                          {selectedTemplates.size > 0
+                            ? `Add ${selectedTemplates.size} selected to My Templates`
                             : "Select templates to add"}
                         </TooltipContent>
                       </Tooltip>
@@ -1512,6 +1907,36 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
                   )}
                 </div>
               </>
+            ) : (
+              /* Empty state for Letters, Reports, Notes, Worksheets */
+              <div className={`flex-1 flex flex-col items-center justify-center gap-3 px-4 py-8 text-center ${isTemplatesPanelCollapsed ? "hidden" : ""}`}>
+                {(() => {
+                  const item = dropdownItems.find(i => i.id === selectedDropdown);
+                  if (!item) return null;
+                  const Icon = item.icon;
+                  return <>
+                    <div className={cn("w-12 h-12 rounded-xl flex items-center justify-center", hasDarkSecondary ? "bg-white/10" : "bg-muted")}>
+                      <Icon className={`h-6 w-6 ${item.color}`} />
+                    </div>
+                    <div>
+                      <p className={cn("text-sm font-medium", hasDarkSecondary ? "text-white" : "text-foreground")}>
+                        No {item.label} yet
+                      </p>
+                      <p className={cn("text-xs mt-1", hasDarkSecondary ? "text-white/50" : "text-muted-foreground")}>
+                        Templates you create will appear here
+                      </p>
+                    </div>
+                    <Button
+                      size="sm"
+                      className="mt-1 h-8 px-3 text-xs bg-primary hover:bg-primary/90 text-white"
+                      onClick={() => navigate("/create", { state: { contentType: selectedDropdown } })}
+                    >
+                      <Plus className="h-3.5 w-3.5 mr-1" />
+                      Create {item.label.replace("Notes to Financial Statements", "Notes")}
+                    </Button>
+                  </>;
+                })()}
+              </div>
             )}
 
             {/* Resize handle */}
@@ -1598,6 +2023,19 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
         selectedTemplates={getSelectedTemplateDetails()}
         onSuccess={clearSelection}
         getChecklistData={(templateId) => getGlobalTemplateChecklist(templateId)}
+      />
+
+      <BulkAddToMyTemplatesDialog
+        open={engBulkAddDialogOpen}
+        onOpenChange={setEngBulkAddDialogOpen}
+        selectedTemplates={Array.from(selectedEngTemplates).map(id => ({
+          id,
+          name: allTemplateViews[id]?.title || id,
+        }))}
+        onSuccess={() => setSelectedEngTemplates(new Set())}
+        getChecklistData={(templateId) => getGlobalTemplateChecklist(templateId)}
+        variant="engagement"
+        getTemplateViewData={(templateId) => allTemplateViews[templateId] || null}
       />
 
       {/* Signoffs Overlay */}

@@ -30,6 +30,20 @@ import {
   generatePlanningChecklist,
   generateEngagementLetterChecklist,
   generateManagementResponsibilityChecklist,
+  generateNewEngagementAcceptanceChecklist,
+  generateExistingEngagementContinuanceChecklist,
+  generateUnderstandingEntityBasicsChecklist,
+  generateUnderstandingEntitySystemsChecklist,
+  generateEngagementPlanningChecklist,
+  generateSubsequentEventsChecklist,
+  generateWorksheetGoingConcernChecklist,
+  generateReviewCompletionChecklist,
+  generateSpecificCircumstancesChecklist,
+  generateWorksheetAccountingEstimatesChecklist,
+  generateAuditCompletionChecklist,
+  generateEngagementPartnerAuditCompletionChecklist,
+  generateAuditorsReportChecklist,
+  generateManagementRepresentationsChecklist,
 } from "@/lib/globalTemplates";
 
 // Sample engagement data matching the engagements page
@@ -124,6 +138,58 @@ const buildDefaultCompilationChecklists = () => {
   });
 };
 
+const AUDIT_FOLDER_ID = "6";
+const AUDIT_FOLDER_NAME = "Audit Checklists";
+const buildDefaultAuditChecklists = () => {
+  const items = [
+    // Client Onboarding
+    { generator: generateNewEngagementAcceptanceChecklist, id: "default-audit-new-accept" },
+    { generator: generateExistingEngagementContinuanceChecklist, id: "default-audit-exist-cont" },
+    { generator: generateIndependenceChecklist, id: "default-audit-ind" },
+    { generator: generateEngagementLetterChecklist, id: "default-audit-el" },
+    { generator: generateClientAcceptanceContinuanceChecklist, id: "default-audit-aml" },
+    // Planning
+    { generator: generateUnderstandingEntityBasicsChecklist, id: "default-audit-ueb" },
+    { generator: generateUnderstandingEntitySystemsChecklist, id: "default-audit-ues" },
+    { generator: generateKnowledgeOfClientBusinessChecklist, id: "default-audit-uei" },
+    { generator: generateEngagementPlanningChecklist, id: "default-audit-plan" },
+    { generator: generatePlanningChecklist, id: "default-audit-mat" },
+    { generator: generateManagementResponsibilityChecklist, id: "default-audit-tcwg-pl" },
+    // Risk Assessment
+    { generator: generateReviewCompletionChecklist, id: "default-audit-ra-rap" },
+    { generator: generateUnderstandingEntitySystemsChecklist, id: "default-audit-ra-ic" },
+    { generator: generateSpecificCircumstancesChecklist, id: "default-audit-ra-fraud" },
+    { generator: generateWorksheetAccountingEstimatesChecklist, id: "default-audit-ra-srr" },
+    { generator: generateWorksheetAccountingEstimatesChecklist, id: "default-audit-ra-rmm" },
+    { generator: generateSpecificCircumstancesChecklist, id: "default-audit-ra-scot-rev" },
+    { generator: generateSpecificCircumstancesChecklist, id: "default-audit-ra-scot-exp" },
+    { generator: generateSpecificCircumstancesChecklist, id: "default-audit-ra-scot-pay" },
+    { generator: generateWorksheetGoingConcernChecklist, id: "default-audit-ra-gc" },
+    { generator: generateReviewCompletionChecklist, id: "default-audit-rp-oar" },
+    // Financial Statements
+    { generator: generateAuditorsReportChecklist, id: "default-audit-ar" },
+    // Completion & Signoffs
+    { generator: generateReviewCompletionChecklist, id: "default-audit-so-aim" },
+    { generator: generateReviewCompletionChecklist, id: "default-audit-so-far" },
+    { generator: generateSubsequentEventsChecklist, id: "default-audit-subseq" },
+    { generator: generateWorksheetGoingConcernChecklist, id: "default-audit-wgc-final" },
+    { generator: generateManagementRepresentationsChecklist, id: "default-audit-mr" },
+    { generator: generateManagementResponsibilityChecklist, id: "default-audit-tcwg-fin" },
+    { generator: generateAuditCompletionChecklist, id: "default-audit-comp" },
+    { generator: generateEngagementPartnerAuditCompletionChecklist, id: "default-audit-ep" },
+  ];
+  return items.map(({ generator, id }) => {
+    const data = generator();
+    return {
+      id,
+      name: data.title,
+      folderId: AUDIT_FOLDER_ID,
+      folderName: AUDIT_FOLDER_NAME,
+      data,
+    };
+  });
+};
+
 // Custom TB Check icon component
 const TBCheckIcon = ({
   className
@@ -159,12 +225,48 @@ const toolsMenuActions = [{
 }];
 // Map sidebar nav keys (e.g. "co-ca") to seeded checklist ids.
 const NAV_KEY_TO_CHECKLIST_ID: Record<string, string> = {
+  // Compilation
   "co-ca": "default-compilation-cac",
   "co-ind": "default-compilation-independence",
   "co-kcb": "default-compilation-kcb",
   "co-pl": "default-compilation-planning",
   "co-el": "default-compilation-el",
   "co-mr": "default-compilation-mr",
+  // Audit — Client Onboarding
+  "aud-new-accept": "default-audit-new-accept",
+  "aud-exist-cont": "default-audit-exist-cont",
+  "aud-ind": "default-audit-ind",
+  "aud-el": "default-audit-el",
+  "aud-aml": "default-audit-aml",
+  // Audit — Planning
+  "aud-ueb": "default-audit-ueb",
+  "aud-ues": "default-audit-ues",
+  "aud-uei": "default-audit-uei",
+  "aud-plan": "default-audit-plan",
+  "aud-mat": "default-audit-mat",
+  "aud-tcwg-pl": "default-audit-tcwg-pl",
+  // Audit — Risk Assessment
+  "aud-ra-rap": "default-audit-ra-rap",
+  "aud-ra-ic": "default-audit-ra-ic",
+  "aud-ra-fraud": "default-audit-ra-fraud",
+  "aud-ra-srr": "default-audit-ra-srr",
+  "aud-ra-rmm": "default-audit-ra-rmm",
+  "aud-ra-scot-rev": "default-audit-ra-scot-rev",
+  "aud-ra-scot-exp": "default-audit-ra-scot-exp",
+  "aud-ra-scot-pay": "default-audit-ra-scot-pay",
+  "aud-ra-gc": "default-audit-ra-gc",
+  "aud-rp-oar": "default-audit-rp-oar",
+  // Audit — Financial Statements
+  "aud-ar": "default-audit-ar",
+  // Audit — Completion & Signoffs
+  "aud-so-aim": "default-audit-so-aim",
+  "aud-so-far": "default-audit-so-far",
+  "aud-subseq": "default-audit-subseq",
+  "aud-wgc-final": "default-audit-wgc-final",
+  "aud-mr": "default-audit-mr",
+  "aud-tcwg-fin": "default-audit-tcwg-fin",
+  "aud-comp": "default-audit-comp",
+  "aud-ep": "default-audit-ep",
 };
 
 const LEGACY_COMPILATION_CHECKLIST_IDS = new Set([
@@ -292,7 +394,7 @@ export default function EngagementDetail() {
       // Seed the engagement with the Compilation folder defaults the first
       // time we load (or after a migration cleared the list).
       if (!Array.isArray(savedChecklists) || savedChecklists.length === 0) {
-        const seeded = buildDefaultCompilationChecklists();
+        const seeded = [...buildDefaultCompilationChecklists(), ...buildDefaultAuditChecklists()];
         writeJsonToLocalStorage('savedChecklists', seeded);
         savedChecklists = seeded;
         // Notify the sidebar so it picks up the seeded checklists immediately.
@@ -300,9 +402,8 @@ export default function EngagementDetail() {
           window.dispatchEvent(new CustomEvent('checklistSaved', { detail: item }));
         });
       } else {
-        // Backfill: keep seeded compilation entries current (including the
-        // letter-content templates) and remove legacy duplicate EL/MR ids.
-        const defaults = buildDefaultCompilationChecklists();
+        // Backfill: keep seeded compilation + audit entries current and remove legacy duplicate EL/MR ids.
+        const defaults = [...buildDefaultCompilationChecklists(), ...buildDefaultAuditChecklists()];
         const defaultById = new Map(defaults.map(item => [item.id, item]));
         const existingIds = new Set(savedChecklists.map((c: any) => c?.id));
         const missing = defaults.filter(d => !existingIds.has(d.id));
@@ -801,7 +902,7 @@ export default function EngagementDetail() {
                     <p className="text-xs text-muted-foreground mt-1">Please wait while we fetch the data</p>
                   </div>
                 </div> : <div className="bg-background">
-                  {(currentChecklistId === "default-compilation-el" || currentChecklistId === "default-compilation-mr") ? (
+                  {(currentChecklistId === "default-compilation-el" || currentChecklistId === "default-compilation-mr" || currentChecklistId === "default-audit-el" || currentChecklistId === "default-audit-tcwg-pl" || currentChecklistId === "default-audit-tcwg-fin") ? (
                     <LetterView checklist={checklist} onUpdate={handleChecklistUpdate} />
                   ) : (
                     <DocumentView
