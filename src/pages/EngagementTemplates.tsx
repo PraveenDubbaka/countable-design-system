@@ -658,17 +658,13 @@ export default function EngagementTemplates() {
               <div className="flex items-center justify-between px-7 pt-4 pb-3.5 border-b border-border flex-shrink-0">
                 <div>
                   <h1 className="text-xl font-bold text-[#1a3d6f]">{activeView.title}</h1>
-                  {activeView.subtitle && (
-                    <p className="text-xs text-muted-foreground mt-0.5">{activeView.subtitle}</p>
-                  )}
                 </div>
                 <Button size="sm" className="bg-[#1a3d6f] hover:bg-[#0f2d56] text-white text-[13px] font-semibold">
                   <Plus className="h-4 w-4 mr-1" /> My Templates
                 </Button>
               </div>
 
-              {/* Standards banner */}
-              {activeView.standardsBanner && <StandardsBanner banner={activeView.standardsBanner} />}
+
 
               {/* Sections */}
               <div className="flex-1 overflow-y-auto p-6 space-y-5">
