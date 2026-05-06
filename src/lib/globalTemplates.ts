@@ -5000,6 +5000,748 @@ This checklist covers:
   };
 };
 
+// ─────────────────────────────────────────────────────────────────────────────
+// AUDIT-SPECIFIC GENERATORS (CAS / CSQM)
+// ─────────────────────────────────────────────────────────────────────────────
+
+// Audit Independence Checklist — CAS 220 / CSQM 1
+export const generateAuditIndependenceChecklist = (): Checklist => {
+  const q = (id: string, text: string, sub?: Question[]): Question => ({
+    id, text, answerType: 'yes-no-na' as const, options: ['Yes', 'No', 'NA'],
+    required: false, answer: '', ...(sub ? { subQuestions: sub } : {})
+  });
+  const la = (id: string, text: string): Question => ({
+    id, text, answerType: 'long-answer' as const, options: [], required: false, answer: ''
+  });
+
+  const sections: Section[] = [
+    {
+      id: 'aud-ind-s1',
+      title: '1. CSQM 1 Firm-Level Independence Policies',
+      questions: [
+        q('aud-ind-1a', '<p>Has the firm\'s independence compliance system been reviewed to confirm that accepting this engagement does not contravene any firm-level independence policies under CSQM 1?</p>'),
+        q('aud-ind-1b', '<p>Has a conflict-of-interest check been performed using the firm\'s client database (including all related entities, subsidiaries, and affiliated parties)?</p>'),
+        q('aud-ind-1c', '<p>Are there any independence issues identified from other assurance or non-assurance services provided by the firm to this client or a related party?</p>'),
+        la('aud-ind-1-exp', '<p><strong>Additional Explanation</strong></p>'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'aud-ind-s2',
+      title: '2. Network Firm Independence',
+      questions: [
+        q('aud-ind-2a', '<p>Is the firm part of a network as defined in the CPA Canada Code of Professional Conduct?</p>'),
+        q('aud-ind-2b', '<p>If yes, have independence requirements been extended to all network firms for this engagement?</p>'),
+        q('aud-ind-2c', '<p>Have inquiries been made of all network offices to identify any threats to independence with respect to this client?</p>'),
+        la('aud-ind-2-exp', '<p><strong>Additional Explanation</strong></p>'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'aud-ind-s3',
+      title: '3. Financial Interests in the Client',
+      note: 'CPA Canada Code of Professional Conduct — Rule 204.4',
+      questions: [
+        q('aud-ind-3a', '<p>Do any members of the engagement team (or their immediate family members) hold direct financial interests in the client?</p>'),
+        q('aud-ind-3b', '<p>Do any members of the engagement team (or their immediate family members) hold indirect financial interests (through mutual funds, investment funds, or pension funds) in the client that are material to their net worth?</p>'),
+        q('aud-ind-3c', '<p>Does the firm hold any financial interest in the client?</p>'),
+        q('aud-ind-3d', '<p>Have all identified financial interest threats been evaluated and appropriate safeguards applied (or the individual removed from the engagement team)?</p>'),
+        la('aud-ind-3-exp', '<p><strong>Additional Explanation — describe interests identified and safeguards applied</strong></p>'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'aud-ind-s4',
+      title: '4. Employment and Business Relationships',
+      questions: [
+        q('aud-ind-4a', '<p>Has any member of the engagement team recently been employed by the client in a key management position (within the past two years)?</p>'),
+        q('aud-ind-4b', '<p>Is there any employment negotiation or actual employment offer from the client to a member of the engagement team currently underway?</p>'),
+        q('aud-ind-4c', '<p>Are there any close business relationships between members of the engagement team (or their immediate family) and the client or its management?</p>'),
+        q('aud-ind-4d', '<p>Do any engagement team members serve on the board of directors or in any governance capacity of the client?</p>'),
+        la('aud-ind-4-exp', '<p><strong>Additional Explanation</strong></p>'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'aud-ind-s5',
+      title: '5. Family and Personal Relationships',
+      questions: [
+        q('aud-ind-5a', '<p>Does any member of the engagement team have an immediate family member who is a director, officer, or employee of the client in a position to exert significant influence over the financial statements?</p>'),
+        q('aud-ind-5b', '<p>Does any member of the engagement team have a close personal relationship with a member of client management or TCWG that could create a familiarity or intimidation threat?</p>'),
+        la('aud-ind-5-exp', '<p><strong>Additional Explanation</strong></p>'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'aud-ind-s6',
+      title: '6. Non-Assurance Services (Self-Review Threat)',
+      note: 'CAS 220.16 — The engagement partner shall remain alert throughout the audit for evidence of non-compliance with relevant ethical requirements.',
+      questions: [
+        q('aud-ind-6a', '<p>Does the firm provide bookkeeping, accounting, or financial statement preparation services to the client?</p>'),
+        q('aud-ind-6b', '<p>Does the firm provide internal audit services to the client?</p>'),
+        q('aud-ind-6c', '<p>Does the firm provide valuation services, appraisals, or fairness opinions that are material to the financial statements?</p>'),
+        q('aud-ind-6d', '<p>Does the firm provide IT systems design or implementation services for systems that generate information forming part of the financial statements?</p>'),
+        q('aud-ind-6e', '<p>Does the firm provide legal services, HR or payroll services, or corporate finance advisory services that could create a management participation or advocacy threat?</p>'),
+        q('aud-ind-6f', '<p>For all non-assurance services identified above: have safeguards been applied that reduce the self-review threat to an acceptable level (e.g., separate teams, independent review)?</p>'),
+        la('aud-ind-6-exp', '<p><strong>Describe non-assurance services provided and safeguards applied</strong></p>'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'aud-ind-s7',
+      title: '7. Fees, Gifts, and Hospitality',
+      questions: [
+        q('aud-ind-7a', '<p>Are audit fees overdue from prior periods? If yes, has this been evaluated as a self-interest threat?</p>'),
+        q('aud-ind-7b', '<p>Do fees from this client (or client group) exceed 15% of total firm revenues? If yes, have appropriate safeguards (e.g., pre-issuance review by external party) been applied?</p>'),
+        q('aud-ind-7c', '<p>Are any fee arrangements contingent on the outcome of the engagement or a transaction (e.g., success fees)?</p>'),
+        q('aud-ind-7d', '<p>Have any gifts or hospitality been received from the client that are more than clearly insignificant in value?</p>'),
+        la('aud-ind-7-exp', '<p><strong>Additional Explanation</strong></p>'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'aud-ind-s8',
+      title: '8. Long Association (Familiarity Threat)',
+      note: 'CAS 220 / CSQM 1 — Particularly relevant for listed entities and public interest entities.',
+      questions: [
+        q('aud-ind-8a', '<p>Has the engagement partner been involved with this client for 7 or more consecutive years?</p>'),
+        q('aud-ind-8b', '<p>Has the key audit partner rotation requirement been met (where applicable under CSQM 1 or regulatory requirements)?</p>'),
+        q('aud-ind-8c', '<p>Has the Senior Manager on the file been involved for an extended period (5+ years) without rotation?</p>'),
+        q('aud-ind-8d', '<p>Have any safeguards been applied to address familiarity threat arising from long association (e.g., independent partner review, EQC review)?</p>'),
+        la('aud-ind-8-exp', '<p><strong>Additional Explanation</strong></p>'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'aud-ind-s9',
+      title: '9. Independence Declarations — Engagement Team',
+      questions: [
+        q('aud-ind-9a', '<p>Has each member of the engagement team completed and signed the firm\'s annual independence declaration for the current year?</p>'),
+        q('aud-ind-9b', '<p>Has each member of the engagement team confirmed independence with respect to this specific client (client-specific independence confirmation)?</p>'),
+        q('aud-ind-9c', '<p>Has the Engagement Quality Control Reviewer (EQCR), if applicable, confirmed independence with respect to this client?</p>'),
+        la('aud-ind-9-exp', '<p><strong>List all engagement team members and their confirmation dates</strong></p>'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'aud-ind-s10',
+      title: '10. Conclusion',
+      questions: [
+        q('aud-ind-conc1', '<p>Based on the assessment above, I am satisfied that the firm and all members of the engagement team are independent of the client and that no independence threats exist that have not been adequately addressed by safeguards.</p>'),
+        q('aud-ind-conc2', '<p>Any identified independence matters have been communicated to the appropriate level within the firm (e.g., Risk Management Partner, Ethics Partner) and have been resolved satisfactorily.</p>'),
+        { id: 'aud-ind-ep', text: '<p><strong>Engagement Partner</strong></p>', answerType: 'long-answer' as const, options: [], required: true, answer: '' },
+        { id: 'aud-ind-ep-date', text: '<p><strong>Date</strong></p>', answerType: 'date' as const, options: [], required: true, answer: '' },
+        { id: 'aud-ind-prepared', text: '<p><strong>Prepared by</strong></p>', answerType: 'long-answer' as const, options: [], required: false, answer: '' },
+        { id: 'aud-ind-prepdate', text: '<p><strong>Date</strong></p>', answerType: 'date' as const, options: [], required: false, answer: '' },
+        { id: 'aud-ind-reviewed', text: '<p><strong>Reviewed by (EQCR)</strong></p>', answerType: 'long-answer' as const, options: [], required: false, answer: '' },
+        { id: 'aud-ind-revdate', text: '<p><strong>Date</strong></p>', answerType: 'date' as const, options: [], required: false, answer: '' },
+      ],
+      isExpanded: true
+    },
+  ];
+
+  return {
+    id: 'global-template-audit-independence',
+    title: 'Independence & Ethical Requirements (Audit)',
+    description: 'Independence checklist for audit engagements — CAS 220, CSQM 1, CPA Canada Code of Professional Conduct.',
+    objective: `Objective: To identify, evaluate, and document any threats to independence and confirm that all members of the engagement team are independent of the client.
+
+This checklist addresses:
+• CSQM 1 firm-level independence policies
+• Network firm independence
+• Financial interests in the client
+• Employment and business relationships
+• Family and personal relationships
+• Non-assurance services (self-review threat)
+• Fees, gifts, and hospitality
+• Long association / familiarity threat
+• Engagement team independence declarations`,
+    sections,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  };
+};
+
+// AML Compliance Checklist — PCMLTFA / FINTRAC (Canada)
+export const generateAMLComplianceChecklist = (): Checklist => {
+  const q = (id: string, text: string, sub?: Question[]): Question => ({
+    id, text, answerType: 'yes-no-na' as const, options: ['Yes', 'No', 'NA'],
+    required: false, answer: '', ...(sub ? { subQuestions: sub } : {})
+  });
+  const la = (id: string, text: string): Question => ({
+    id, text, answerType: 'long-answer' as const, options: [], required: false, answer: ''
+  });
+
+  const sections: Section[] = [
+    {
+      id: 'aud-aml-s1',
+      title: '1. Applicability Determination',
+      note: 'Public accountants in Canada are reporting entities under PCMLTFA when providing specific services.',
+      questions: [
+        q('aud-aml-1a', '<p>Is the firm a reporting entity under the Proceeds of Crime (Money Laundering) and Terrorist Financing Act (PCMLTFA) for this engagement?</p>'),
+        q('aud-aml-1b', '<p>Is the client a federally or provincially regulated financial institution, or otherwise exempt from FINTRAC reporting obligations?</p>'),
+        la('aud-aml-1-exp', '<p><strong>Additional Explanation</strong></p>'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'aud-aml-s2',
+      title: '2. Client Identification and Verification (PCMLTFA s. 9.1)',
+      questions: [
+        q('aud-aml-2a', '<p>Has the client\'s legal name been verified using acceptable identification documents or a reliable independent source?</p>'),
+        q('aud-aml-2b', '<p>If the client is a corporation: has a certificate of corporate status (or equivalent) been obtained and reviewed to confirm legal existence, registered name, and address?</p>'),
+        q('aud-aml-2c', '<p>If the client is a trust, partnership, or other entity: has the applicable governing document (trust deed, partnership agreement) been reviewed?</p>'),
+        q('aud-aml-2d', '<p>Has the identity of the individual(s) authorizing the engagement on behalf of the client been verified?</p>'),
+        la('aud-aml-2-exp', '<p><strong>Describe identification documents obtained and verification method used</strong></p>'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'aud-aml-s3',
+      title: '3. Beneficial Ownership Identification (PCMLTFA Reg. 11.1)',
+      questions: [
+        q('aud-aml-3a', '<p>Have all individuals who own or control, directly or indirectly, 25% or more of the client entity been identified?</p>'),
+        q('aud-aml-3b', '<p>Have the identities of all beneficial owners been verified using reliable and independent sources?</p>'),
+        q('aud-aml-3c', '<p>Where ownership is through a chain of entities, has the chain been traced to identify the ultimate beneficial owner(s)?</p>'),
+        q('aud-aml-3d', '<p>Has the information regarding beneficial ownership been documented in the working papers?</p>'),
+        la('aud-aml-3-exp', '<p><strong>List beneficial owners (≥25%) and verification method</strong></p>'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'aud-aml-s4',
+      title: '4. Politically Exposed Persons (PEP) and Heads of International Organizations (HIO)',
+      note: 'PCMLTFA Regulations — accountants must make reasonable measures to determine PEP/HIO status.',
+      questions: [
+        q('aud-aml-4a', '<p>Have reasonable measures been taken to determine whether the client, beneficial owner(s), or controlling party is a Politically Exposed Domestic Person (PEDP)?</p>'),
+        q('aud-aml-4b', '<p>Have reasonable measures been taken to determine whether the client is a Politically Exposed Foreign Person (PEFP) or Head of an International Organization (HIO)?</p>'),
+        q('aud-aml-4c', '<p>If a PEP or HIO has been identified: has senior management approval been obtained and enhanced due diligence applied?</p>'),
+        la('aud-aml-4-exp', '<p><strong>Document PEP/HIO screening results and source used</strong></p>'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'aud-aml-s5',
+      title: '5. Sanctions Screening',
+      questions: [
+        q('aud-aml-5a', '<p>Has the client and its beneficial owner(s) been screened against the OSFI Consolidated Canadian Autonomous Sanctions List?</p>'),
+        q('aud-aml-5b', '<p>Has the client and its beneficial owner(s) been screened against the United Nations Security Council (UNSC) consolidated sanctions list?</p>'),
+        q('aud-aml-5c', '<p>Are there any matches to sanctions lists? If yes, has the engagement been declined and the matter escalated to the firm\'s Risk Management Partner?</p>'),
+        la('aud-aml-5-exp', '<p><strong>Document screening method, date performed, and results</strong></p>'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'aud-aml-s6',
+      title: '6. Risk Assessment (FINTRAC Risk-Based Approach)',
+      questions: [
+        q('aud-aml-6a', '<p>Has a risk assessment been completed for this client, considering: industry/sector risk, geographic risk, client risk factors, and the nature of transactions?</p>'),
+        q('aud-aml-6b', '<p>Is the source of the client\'s funds/revenue consistent with the stated business purpose?</p>'),
+        q('aud-aml-6c', '<p>Is the client operating in a high-risk jurisdiction (as identified by FATF or FINTRAC guidance)?</p>'),
+        la('aud-aml-6-rating', '<p><strong>Overall ML/TF risk rating: Low / Medium / High</strong></p>'),
+        la('aud-aml-6-rationale', '<p><strong>Rationale for risk rating</strong></p>'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'aud-aml-s7',
+      title: '7. Enhanced Due Diligence (High-Risk Clients)',
+      note: 'Required for PEPs, HIOs, clients in high-risk jurisdictions, and clients assessed as high risk.',
+      questions: [
+        q('aud-aml-7a', '<p>Has Enhanced Due Diligence (EDD) been applied where required?</p>'),
+        q('aud-aml-7b', '<p>For EDD: Has additional information been obtained regarding the source of funds/wealth and nature of business activities?</p>'),
+        q('aud-aml-7c', '<p>For EDD: Has senior management approval been documented for accepting or continuing the engagement?</p>'),
+        la('aud-aml-7-exp', '<p><strong>Describe EDD measures applied</strong></p>'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'aud-aml-s8',
+      title: '8. Record-Keeping and STR Obligations',
+      questions: [
+        q('aud-aml-8a', '<p>Have all client identification and verification records been retained in the file (minimum 5-year retention under PCMLTFA s. 6)?</p>'),
+        q('aud-aml-8b', '<p>Have any transactions been identified that give rise to reasonable grounds to suspect money laundering or terrorist financing?</p>'),
+        q('aud-aml-8c', '<p>If yes: has a Suspicious Transaction Report (STR) been filed with FINTRAC and escalated to the firm\'s Compliance Officer?</p>'),
+        la('aud-aml-8-exp', '<p><strong>Document any STR considerations or filings</strong></p>'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'aud-aml-s9',
+      title: '9. Conclusion',
+      questions: [
+        q('aud-aml-conc1', '<p>All required AML/ATF procedures under PCMLTFA and FINTRAC guidance have been performed and documented for this engagement.</p>'),
+        q('aud-aml-conc2', '<p>No suspicious transactions or unresolved high-risk indicators have been identified that would preclude acceptance or continuance of this engagement.</p>'),
+        { id: 'aud-aml-ep', text: '<p><strong>Engagement Partner / CAMLO</strong></p>', answerType: 'long-answer' as const, options: [], required: true, answer: '' },
+        { id: 'aud-aml-epdate', text: '<p><strong>Date</strong></p>', answerType: 'date' as const, options: [], required: true, answer: '' },
+        { id: 'aud-aml-prepared', text: '<p><strong>Prepared by</strong></p>', answerType: 'long-answer' as const, options: [], required: false, answer: '' },
+        { id: 'aud-aml-prepdate', text: '<p><strong>Date</strong></p>', answerType: 'date' as const, options: [], required: false, answer: '' },
+      ],
+      isExpanded: true
+    },
+  ];
+
+  return {
+    id: 'global-template-audit-aml',
+    title: 'Anti-Money Laundering (AML) Compliance',
+    description: 'AML/ATF compliance checklist for audit engagements — PCMLTFA, FINTRAC, and CPA Canada AML guidance.',
+    objective: `Objective: To fulfill the firm's obligations as a reporting entity under the Proceeds of Crime (Money Laundering) and Terrorist Financing Act (PCMLTFA).
+
+This checklist addresses:
+• Client identification and verification (PCMLTFA s. 9.1)
+• Beneficial ownership determination
+• PEP/HIO screening
+• Sanctions screening (OSFI / UNSC)
+• Risk assessment (FINTRAC risk-based approach)
+• Enhanced Due Diligence (EDD) for high-risk clients
+• Record-keeping (minimum 5-year retention)
+• Suspicious Transaction Reporting (STR) obligations`,
+    sections,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  };
+};
+
+// Audit Materiality Worksheet — CAS 320 / CAS 450
+export const generateAuditMaterialityChecklist = (): Checklist => {
+  const q = (id: string, text: string): Question => ({
+    id, text, answerType: 'yes-no-na' as const, options: ['Yes', 'No', 'NA'],
+    required: false, answer: ''
+  });
+  const la = (id: string, text: string): Question => ({
+    id, text, answerType: 'long-answer' as const, options: [], required: false, answer: ''
+  });
+
+  const sections: Section[] = [
+    {
+      id: 'aud-mat-s1',
+      title: '1. Benchmark Selection and Justification (CAS 320.A3–A6)',
+      note: 'Select the benchmark most appropriate to the financial statements taken as a whole, considering the nature and circumstances of the entity and the primary users of the financial statements.',
+      questions: [
+        la('aud-mat-1-primary', '<p><strong>Primary benchmark selected</strong> (e.g., profit before tax, total revenues, total assets, total expenses, net assets)</p>'),
+        la('aud-mat-1-justification', '<p><strong>Justification for selected benchmark</strong> — explain why this benchmark is appropriate for the primary users of the financial statements:</p>'),
+        q('aud-mat-1a', '<p>Is the benchmark consistently applied from the prior year? If not, has the change been documented and approved?</p>'),
+        q('aud-mat-1b', '<p>Is profit/income volatile or subject to unusual one-time items? If yes, has an adjusted or normalized figure been used?</p>'),
+        la('aud-mat-1-adj', '<p><strong>Describe any adjustments made to normalize the benchmark (e.g., excluding one-time items, averaging)</strong></p>'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'aud-mat-s2',
+      title: '2. Overall Materiality (CAS 320.10)',
+      questions: [
+        la('aud-mat-2-benchmark-value', '<p><strong>Benchmark figure — $ amount</strong></p>'),
+        la('aud-mat-2-percentage', '<p><strong>Percentage applied to benchmark</strong> (e.g., 5% of PBT, 0.5%–1% of revenues, 1%–2% of total assets)</p>'),
+        la('aud-mat-2-overall', '<p><strong>Overall materiality — calculated amount ($)</strong></p>'),
+        q('aud-mat-2a', '<p>Is overall materiality consistent with the prior year? If not, has the change been documented and the impact on audit scope assessed?</p>'),
+        la('aud-mat-2-prior', '<p><strong>Prior year overall materiality ($) — for reference</strong></p>'),
+        la('aud-mat-2-rationale', '<p><strong>Additional rationale for overall materiality determination</strong></p>'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'aud-mat-s3',
+      title: '3. Performance Materiality (CAS 320.11)',
+      note: 'Performance materiality reduces the risk that the aggregate of uncorrected and undetected misstatements exceeds overall materiality. Typically set at 50–75% of overall materiality.',
+      questions: [
+        la('aud-mat-3-percentage', '<p><strong>Performance materiality percentage applied to overall materiality (e.g., 75%)</strong></p>'),
+        la('aud-mat-3-amount', '<p><strong>Performance materiality — calculated amount ($)</strong></p>'),
+        la('aud-mat-3-rationale', '<p><strong>Rationale for the percentage selected</strong> — consider prior year uncorrected misstatements, audit risk assessment, and complexity of the entity:</p>'),
+        q('aud-mat-3a', '<p>Were there significant uncorrected misstatements in the prior year that support a lower performance materiality?</p>'),
+        q('aud-mat-3b', '<p>Are there higher inherent risk areas (e.g., complex transactions, estimates) that support a lower performance materiality?</p>'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'aud-mat-s4',
+      title: '4. Clearly Trivial Threshold (CAS 450.A2)',
+      note: 'Misstatements below the clearly trivial threshold are not accumulated. Typically set at 3–5% of overall materiality.',
+      questions: [
+        la('aud-mat-4-percentage', '<p><strong>Clearly trivial percentage applied to overall materiality (e.g., 5%)</strong></p>'),
+        la('aud-mat-4-amount', '<p><strong>Clearly trivial threshold — calculated amount ($)</strong></p>'),
+        la('aud-mat-4-rationale', '<p><strong>Rationale for clearly trivial threshold</strong></p>'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'aud-mat-s5',
+      title: '5. Specific Materiality for Sensitive Areas (CAS 320.A13)',
+      note: 'Specific materiality may be set for particular classes of transactions, account balances, or disclosures where misstatements of lesser amounts could reasonably be expected to influence user decisions.',
+      questions: [
+        q('aud-mat-5a', '<p>Are there account balances, transactions, or disclosures for which a lower specific materiality is appropriate (e.g., related party transactions, regulatory thresholds, executive compensation)?</p>'),
+        la('aud-mat-5-areas', '<p><strong>Identify specific materiality areas and amounts:</strong></p><p>Area 1: _______________ Amount: $_______________</p><p>Area 2: _______________ Amount: $_______________</p><p>Area 3: _______________ Amount: $_______________</p>'),
+        la('aud-mat-5-rationale', '<p><strong>Rationale for specific materiality determinations</strong></p>'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'aud-mat-s6',
+      title: '6. Materiality Summary',
+      questions: [
+        la('aud-mat-6-summary', '<p><strong>Complete the materiality summary:</strong></p><p>Benchmark selected: _______________</p><p>Benchmark amount: $_______________</p><p>Overall Materiality: $_______________</p><p>Performance Materiality: $_______________ (___% of OM)</p><p>Clearly Trivial Threshold: $_______________ (___% of OM)</p>'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'aud-mat-s7',
+      title: '7. Revision of Materiality During the Audit (CAS 320.12–14)',
+      questions: [
+        q('aud-mat-7a', '<p>Has materiality been revised during the audit due to new information or significant changes in circumstances?</p>'),
+        q('aud-mat-7b', '<p>If revised downward: has the impact on the nature, timing, and extent of audit procedures been reassessed?</p>'),
+        la('aud-mat-7-detail', '<p><strong>If revised: document the reason for revision, new amounts, and impact on audit procedures</strong></p>'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'aud-mat-s8',
+      title: '8. Sign-Off',
+      questions: [
+        q('aud-mat-conc1', '<p>I am satisfied that the materiality amounts determined above are appropriate for this engagement based on the entity\'s financial profile, risk assessment, and the needs of the primary users.</p>'),
+        { id: 'aud-mat-ep', text: '<p><strong>Engagement Partner</strong></p>', answerType: 'long-answer' as const, options: [], required: true, answer: '' },
+        { id: 'aud-mat-epdate', text: '<p><strong>Date</strong></p>', answerType: 'date' as const, options: [], required: true, answer: '' },
+        { id: 'aud-mat-prepared', text: '<p><strong>Prepared by</strong></p>', answerType: 'long-answer' as const, options: [], required: false, answer: '' },
+        { id: 'aud-mat-prepdate', text: '<p><strong>Date</strong></p>', answerType: 'date' as const, options: [], required: false, answer: '' },
+        { id: 'aud-mat-reviewed', text: '<p><strong>Reviewed by</strong></p>', answerType: 'long-answer' as const, options: [], required: false, answer: '' },
+        { id: 'aud-mat-revdate', text: '<p><strong>Date</strong></p>', answerType: 'date' as const, options: [], required: false, answer: '' },
+      ],
+      isExpanded: true
+    },
+  ];
+
+  return {
+    id: 'global-template-audit-materiality',
+    title: 'Materiality (CAS 320)',
+    description: 'Materiality determination worksheet for audit engagements — CAS 320 and CAS 450.',
+    objective: `Objective: To establish overall materiality, performance materiality, and the clearly trivial threshold for the audit, and to document the rationale for each determination.
+
+This worksheet addresses:
+• Benchmark selection and justification (CAS 320.A3–A6)
+• Overall materiality (CAS 320.10)
+• Performance materiality (CAS 320.11)
+• Clearly trivial threshold (CAS 450.A2)
+• Specific materiality for sensitive areas (CAS 320.A13)
+• Revision of materiality during the audit (CAS 320.12–14)`,
+    sections,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  };
+};
+
+// Audit Engagement Letter — CAS 210 (Letter format — rendered by LetterView)
+export const generateAuditEngagementLetterChecklist = (): Checklist => {
+  const la = (id: string, text: string): Question => ({
+    id, text, answerType: 'long-answer' as const, options: [], required: false, answer: ''
+  });
+  const q = (id: string, text: string): Question => ({
+    id, text, answerType: 'yes-no-na' as const, options: ['Yes', 'No', 'NA'], required: false, answer: ''
+  });
+
+  const sections: Section[] = [
+    {
+      id: 'aud-el-header',
+      title: 'Letter Header',
+      questions: [
+        la('aud-el-date', '<p><strong>Date of Letter</strong></p>'),
+        la('aud-el-addressee', '<p><strong>Addressed To</strong> (name and title of management representative or TCWG)</p>'),
+        la('aud-el-entity', '<p><strong>Entity Name</strong></p>'),
+        la('aud-el-address', '<p><strong>Entity Address</strong></p>'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'aud-el-s1',
+      title: '1. Objective and Scope of the Audit (CAS 210.10(a))',
+      questions: [
+        la('aud-el-1-period', '<p><strong>Audit period:</strong> Financial statements for the year ended _______________</p>'),
+        la('aud-el-1-framework', '<p><strong>Applicable financial reporting framework</strong> (e.g., ASPE, IFRS, Public Sector Accounting Standards)</p>'),
+        la('aud-el-1-scope', '<p><strong>Scope of the audit:</strong></p><p>We will audit the financial statements of [Entity Name] which comprise the statement of financial position as at [Year End], and the statements of income, retained earnings, and cash flows for the year then ended, and notes to the financial statements. Our audit will be conducted in accordance with Canadian Auditing Standards (CAS).</p>'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'aud-el-s2',
+      title: '2. Auditor\'s Responsibilities (CAS 210.10(b))',
+      questions: [
+        la('aud-el-2-resp', '<p><strong>Auditor\'s responsibilities:</strong></p><p>Our responsibility is to express an opinion on these financial statements based on our audit. We will conduct our audit in accordance with Canadian Auditing Standards (CAS). Those standards require that we comply with ethical requirements and plan and perform the audit to obtain reasonable assurance about whether the financial statements are free from material misstatement, whether due to fraud or error.</p><p>An audit involves performing procedures to obtain audit evidence about the amounts and disclosures in the financial statements. The procedures selected depend on our judgment, including the assessment of the risks of material misstatement, whether due to fraud or error. We also evaluate the appropriateness of accounting policies used, the reasonableness of accounting estimates made by management, and the overall presentation of the financial statements.</p>'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'aud-el-s3',
+      title: '3. Management\'s Responsibilities (CAS 210.10(c))',
+      questions: [
+        la('aud-el-3-mgmt', '<p><strong>Management\'s responsibilities:</strong></p><p>Our audit will be conducted on the basis that management acknowledges and understands that it has the responsibility:</p><p>(a) For the preparation and fair presentation of the financial statements in accordance with [applicable framework];</p><p>(b) For such internal control as management determines is necessary to enable the preparation of financial statements that are free from material misstatement, whether due to fraud or error; and</p><p>(c) To provide us with: (i) access to all information relevant to the preparation of the financial statements; (ii) additional information we may request; and (iii) unrestricted access to persons from whom we determine it necessary to obtain audit evidence.</p>'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'aud-el-s4',
+      title: '4. Inherent Limitations of the Audit',
+      questions: [
+        la('aud-el-4-limit', '<p><strong>Inherent limitations statement:</strong></p><p>Because of the inherent limitations of an audit, together with the inherent limitations of internal control, there is an unavoidable risk that some material misstatements may not be detected, even though the audit is properly planned and performed in accordance with CAS.</p>'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'aud-el-s5',
+      title: '5. Form of the Auditor\'s Report',
+      questions: [
+        la('aud-el-5-report', '<p><strong>Expected form of the auditor\'s report:</strong></p><p>In circumstances where we are able to express an unmodified opinion, our report will be in the standard form for an audit of financial statements prepared in accordance with [applicable framework]. We draw your attention to the fact that our opinion is not a guarantee; it provides reasonable but not absolute assurance.</p>'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'aud-el-s6',
+      title: '6. Fees and Billing Arrangements',
+      questions: [
+        la('aud-el-6-fees', '<p><strong>Fee arrangement:</strong></p><p>Our fees for the audit services will be based on [time spent at our standard hourly rates / a fixed fee of $___________]. We will provide an estimate before commencing work and will advise you promptly if we believe the estimate will be exceeded. Out-of-pocket expenses will be billed separately.</p>'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'aud-el-s7',
+      title: '7. Other Services and Matters',
+      questions: [
+        q('aud-el-7a', '<p>Is this engagement subject to an Engagement Quality Control Review (EQCR)?</p>'),
+        la('aud-el-7-other', '<p><strong>Other services / other matters to address</strong> (e.g., tax returns, use of specialists, component auditors, predecessor auditor, restriction on use of the report):</p>'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'aud-el-closing',
+      title: '8. Signatures and Agreement',
+      questions: [
+        la('aud-el-close', '<p><strong>Closing paragraph:</strong></p><p>Please sign and return the attached copy of this letter to indicate your acknowledgement of, and agreement with, the arrangements for our audit of the financial statements including our respective responsibilities.</p>'),
+        la('aud-el-firm', '<p><strong>Firm name and engagement partner signature</strong></p>'),
+        la('aud-el-firmdate', '<p><strong>Date</strong></p>'),
+        la('aud-el-mgmt', '<p><strong>Acknowledged and agreed on behalf of [Entity Name]</strong></p><p>Name: _______________ Title: _______________</p>'),
+        la('aud-el-mgmtdate', '<p><strong>Date acknowledged by management</strong></p>'),
+      ],
+      isExpanded: true
+    },
+  ];
+
+  return {
+    id: 'global-template-audit-engagement-letter',
+    title: 'Engagement Letter — Audit',
+    description: 'Audit engagement letter — CAS 210 (Agreeing the Terms of Audit Engagements).',
+    objective: `Objective: To establish the terms of the audit engagement in writing, documenting the objective and scope, the auditor's and management's responsibilities, and the form of the auditor's report.
+
+Reference: CAS 210 — Agreeing the Terms of Audit Engagements.`,
+    sections,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  };
+};
+
+// TCWG Planning Communication — CAS 260 (Letter format — rendered by LetterView)
+export const generateTCWGPlanningCommunicationChecklist = (): Checklist => {
+  const la = (id: string, text: string): Question => ({
+    id, text, answerType: 'long-answer' as const, options: [], required: false, answer: ''
+  });
+  const q = (id: string, text: string): Question => ({
+    id, text, answerType: 'yes-no-na' as const, options: ['Yes', 'No', 'NA'], required: false, answer: ''
+  });
+
+  const sections: Section[] = [
+    {
+      id: 'aud-tcwg-pl-header',
+      title: 'Letter Header',
+      questions: [
+        la('tcwg-pl-date', '<p><strong>Date of Communication</strong></p>'),
+        la('tcwg-pl-addressee', '<p><strong>Addressed To</strong> (Those Charged with Governance — Board of Directors / Audit Committee)</p>'),
+        la('tcwg-pl-entity', '<p><strong>Entity Name</strong></p>'),
+        la('tcwg-pl-period', '<p><strong>Audit period — financial statements for the year ended:</strong></p>'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'aud-tcwg-pl-s1',
+      title: '1. Purpose of Communication (CAS 260.14)',
+      questions: [
+        la('tcwg-pl-1-purpose', '<p><strong>Purpose statement:</strong></p><p>CAS 260 requires us to communicate with those charged with governance our overall audit approach and strategy before the audit begins. This letter fulfills that requirement and is intended to provide transparency about our planned audit scope, timing, and focus areas.</p>'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'aud-tcwg-pl-s2',
+      title: '2. Our Responsibilities as Auditors',
+      questions: [
+        la('tcwg-pl-2-resp', '<p><strong>Our responsibilities:</strong></p><p>Our objective is to obtain reasonable assurance about whether the financial statements are free from material misstatement, whether due to fraud or error, and to issue an auditor\'s report that includes our opinion. Reasonable assurance is a high level of assurance, but is not a guarantee that an audit conducted in accordance with CASs will always detect a material misstatement when it exists. Our audit opinion is not a guarantee of the accuracy or completeness of the financial statements.</p>'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'aud-tcwg-pl-s3',
+      title: '3. Overall Audit Approach and Engagement Team',
+      questions: [
+        la('tcwg-pl-3-approach', '<p><strong>Audit approach:</strong></p><p>Our audit approach is [risk-based / substantive / combined]. We will obtain an understanding of the entity and its environment, identify and assess risks of material misstatement, and design and perform audit procedures responsive to those risks.</p>'),
+        la('tcwg-pl-3-team', '<p><strong>Engagement team:</strong></p><p>Engagement Partner: _______________</p><p>Senior Manager / Manager: _______________</p><p>Staff: _______________</p><p>EQCR (if applicable): _______________</p>'),
+        la('tcwg-pl-3-timeline', '<p><strong>Planned timeline:</strong></p><p>Interim procedures: _______________</p><p>Year-end fieldwork: _______________</p><p>Expected report issuance: _______________</p>'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'aud-tcwg-pl-s4',
+      title: '4. Significant Audit Focus Areas',
+      questions: [
+        la('tcwg-pl-4-focus', '<p><strong>Key areas of audit focus identified during planning:</strong></p><p>1. _______________</p><p>2. _______________</p><p>3. _______________</p><p>4. _______________</p>'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'aud-tcwg-pl-s5',
+      title: '5. Materiality',
+      questions: [
+        la('tcwg-pl-5-mat', '<p><strong>Materiality for planning purposes:</strong></p><p>Overall materiality: $_______________</p><p>Performance materiality: $_______________</p><p>Clearly trivial threshold: $_______________</p><p>Benchmark: _______________</p>'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'aud-tcwg-pl-s6',
+      title: '6. Fraud Risk Inquiries (CAS 240.20)',
+      questions: [
+        la('tcwg-pl-6-fraud', '<p><strong>CAS 240 requires us to inquire of TCWG regarding:</strong></p><p>(a) Your assessment of the risk that the financial statements may be materially misstated due to fraud;</p><p>(b) Your knowledge of any actual, suspected, or alleged fraud affecting the entity;</p><p>(c) The procedures management performs to prevent and detect fraud.</p>'),
+        q('tcwg-pl-6-fraud-q', '<p>Are you aware of any fraud or suspected fraud that we should know about?</p>'),
+        la('tcwg-pl-6-fraud-exp', '<p><strong>TCWG response regarding fraud risk</strong></p>'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'aud-tcwg-pl-s7',
+      title: '7. Going Concern and Independence',
+      questions: [
+        q('tcwg-pl-7-gc', '<p>Are you aware of any events or conditions that may cast significant doubt on the entity\'s ability to continue as a going concern?</p>'),
+        la('tcwg-pl-7-gc-exp', '<p><strong>TCWG response regarding going concern</strong></p>'),
+        la('tcwg-pl-8-ind', '<p><strong>Independence confirmation:</strong></p><p>We confirm that we are independent of the entity in accordance with the CPA Canada Code of Professional Conduct. We are not aware of any relationships or interests that may reasonably be thought to bear on our independence.</p>'),
+        la('tcwg-pl-8-ind-matters', '<p><strong>Independence matters to disclose to TCWG (if any)</strong></p>'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'aud-tcwg-pl-closing',
+      title: '8. Closing',
+      questions: [
+        la('tcwg-pl-closing', '<p>We welcome the opportunity to discuss our audit approach and focus areas. Please contact [Engagement Partner] at [phone/email] if you require further information prior to the commencement of our audit.</p>'),
+        la('tcwg-pl-firm', '<p><strong>Firm name and engagement partner signature</strong></p>'),
+        la('tcwg-pl-firmdate', '<p><strong>Date</strong></p>'),
+      ],
+      isExpanded: true
+    },
+  ];
+
+  return {
+    id: 'global-template-audit-tcwg-planning',
+    title: 'Communication with Those Charged with Governance — Planning',
+    description: 'Pre-audit communication with those charged with governance — CAS 260.',
+    objective: `Objective: To communicate with TCWG the planned scope, timing, and significant matters before the audit commences.
+
+Reference: CAS 260 — Communication with Those Charged with Governance.`,
+    sections,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  };
+};
+
+// TCWG Final Communication — CAS 260 (Letter format — rendered by LetterView)
+export const generateTCWGFinalCommunicationChecklist = (): Checklist => {
+  const la = (id: string, text: string): Question => ({
+    id, text, answerType: 'long-answer' as const, options: [], required: false, answer: ''
+  });
+  const q = (id: string, text: string): Question => ({
+    id, text, answerType: 'yes-no-na' as const, options: ['Yes', 'No', 'NA'], required: false, answer: ''
+  });
+
+  const sections: Section[] = [
+    {
+      id: 'aud-tcwg-fin-header',
+      title: 'Letter Header',
+      questions: [
+        la('tcwg-fin-date', '<p><strong>Date of Communication</strong></p>'),
+        la('tcwg-fin-addressee', '<p><strong>Addressed To</strong> (Those Charged with Governance)</p>'),
+        la('tcwg-fin-entity', '<p><strong>Entity Name</strong></p>'),
+        la('tcwg-fin-period', '<p><strong>Audit period:</strong></p>'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'aud-tcwg-fin-s1',
+      title: '1. Audit Opinion',
+      questions: [
+        la('tcwg-fin-1-opinion', '<p><strong>Audit opinion issued:</strong></p><p>We have issued an [unmodified / qualified / adverse / disclaimer of] opinion on the financial statements of [Entity Name] for the year ended [date].</p>'),
+        q('tcwg-fin-1-modified', '<p>If modified: has the nature and reason for the modification been communicated to TCWG?</p>'),
+        la('tcwg-fin-1-kem', '<p><strong>Key audit matters (if applicable):</strong></p>'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'aud-tcwg-fin-s2',
+      title: '2. Significant Accounting Policies and Estimates (CAS 260.14(b))',
+      questions: [
+        la('tcwg-fin-2-policies', '<p><strong>Significant accounting policies applied:</strong></p><p>1. _______________</p><p>2. _______________</p><p>3. _______________</p>'),
+        q('tcwg-fin-2-policies-q', '<p>Are all significant accounting policies appropriate and consistently applied?</p>'),
+        la('tcwg-fin-2-estimates', '<p><strong>Significant accounting estimates requiring significant judgment:</strong></p><p>1. _______________</p><p>2. _______________</p>'),
+        la('tcwg-fin-2-changes', '<p><strong>Changes in accounting policies or estimates during the year (if any):</strong></p>'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'aud-tcwg-fin-s3',
+      title: '3. Significant Audit Findings (CAS 260.14(c))',
+      questions: [
+        la('tcwg-fin-3-findings', '<p><strong>Significant audit findings and observations:</strong></p><p>1. _______________</p><p>2. _______________</p><p>3. _______________</p>'),
+        la('tcwg-fin-3-uncorrected', '<p><strong>Uncorrected misstatements (management has determined these are immaterial):</strong></p>'),
+        la('tcwg-fin-3-corrected', '<p><strong>Corrected misstatements that were individually significant:</strong></p>'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'aud-tcwg-fin-s4',
+      title: '4. Internal Control and Fraud (CAS 265 / CAS 240)',
+      questions: [
+        q('tcwg-fin-4-deficiencies', '<p>Were any significant deficiencies or material weaknesses in internal control identified during the audit?</p>'),
+        la('tcwg-fin-4-ic-detail', '<p><strong>Description of significant deficiencies / material weaknesses and management\'s response:</strong></p>'),
+        q('tcwg-fin-4-fraud', '<p>Were any indicators of fraud identified during the audit requiring communication to TCWG?</p>'),
+        la('tcwg-fin-4-fraud-detail', '<p><strong>Fraud matters to communicate (if any)</strong></p>'),
+        q('tcwg-fin-4-gc', '<p>Were any going concern events or conditions identified during the audit?</p>'),
+        la('tcwg-fin-4-gc-detail', '<p><strong>Going concern matters (if any)</strong></p>'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'aud-tcwg-fin-s5',
+      title: '5. Independence Confirmation (CAS 260.14(e))',
+      questions: [
+        la('tcwg-fin-5-ind', '<p><strong>Independence confirmation:</strong></p><p>We confirm that as of the date of this communication, we are independent of the entity in accordance with ethical requirements relevant to our audit in Canada.</p>'),
+        la('tcwg-fin-5-ind-matters', '<p><strong>Independence matters identified during the audit (if any):</strong></p>'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'aud-tcwg-fin-closing',
+      title: '6. Closing',
+      questions: [
+        la('tcwg-fin-closing', '<p>We thank you for your cooperation during the audit. Please contact [Engagement Partner] at [phone/email] with any questions or comments.</p>'),
+        la('tcwg-fin-firm', '<p><strong>Firm name and engagement partner signature</strong></p>'),
+        la('tcwg-fin-firmdate', '<p><strong>Date</strong></p>'),
+      ],
+      isExpanded: true
+    },
+  ];
+
+  return {
+    id: 'global-template-audit-tcwg-final',
+    title: 'Communication with Those Charged with Governance — Completion',
+    description: 'Post-audit communication with those charged with governance — CAS 260.',
+    objective: `Objective: To communicate with TCWG the results of the audit, significant findings, and other matters arising from the audit.
+
+Reference: CAS 260 — Communication with Those Charged with Governance.`,
+    sections,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  };
+};
+
 export const getGlobalTemplateChecklist = (templateId: string): Checklist | null => {
   switch (templateId) {
     case 'client-acceptance':

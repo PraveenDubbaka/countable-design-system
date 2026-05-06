@@ -44,6 +44,12 @@ import {
   generateEngagementPartnerAuditCompletionChecklist,
   generateAuditorsReportChecklist,
   generateManagementRepresentationsChecklist,
+  generateAuditIndependenceChecklist,
+  generateAMLComplianceChecklist,
+  generateAuditMaterialityChecklist,
+  generateAuditEngagementLetterChecklist,
+  generateTCWGPlanningCommunicationChecklist,
+  generateTCWGFinalCommunicationChecklist,
 } from "@/lib/globalTemplates";
 
 // Sample engagement data matching the engagements page
@@ -145,16 +151,16 @@ const buildDefaultAuditChecklists = () => {
     // Client Onboarding
     { generator: generateNewEngagementAcceptanceChecklist, id: "default-audit-new-accept" },
     { generator: generateExistingEngagementContinuanceChecklist, id: "default-audit-exist-cont" },
-    { generator: generateIndependenceChecklist, id: "default-audit-ind" },
-    { generator: generateEngagementLetterChecklist, id: "default-audit-el" },
-    { generator: generateClientAcceptanceContinuanceChecklist, id: "default-audit-aml" },
+    { generator: generateAuditIndependenceChecklist, id: "default-audit-ind" },
+    { generator: generateAuditEngagementLetterChecklist, id: "default-audit-el" },
+    { generator: generateAMLComplianceChecklist, id: "default-audit-aml" },
     // Planning
     { generator: generateUnderstandingEntityBasicsChecklist, id: "default-audit-ueb" },
     { generator: generateUnderstandingEntitySystemsChecklist, id: "default-audit-ues" },
     { generator: generateKnowledgeOfClientBusinessChecklist, id: "default-audit-uei" },
     { generator: generateEngagementPlanningChecklist, id: "default-audit-plan" },
-    { generator: generatePlanningChecklist, id: "default-audit-mat" },
-    { generator: generateManagementResponsibilityChecklist, id: "default-audit-tcwg-pl" },
+    { generator: generateAuditMaterialityChecklist, id: "default-audit-mat" },
+    { generator: generateTCWGPlanningCommunicationChecklist, id: "default-audit-tcwg-pl" },
     // Risk Assessment
     { generator: generateReviewCompletionChecklist, id: "default-audit-ra-rap" },
     { generator: generateUnderstandingEntitySystemsChecklist, id: "default-audit-ra-ic" },
@@ -174,7 +180,7 @@ const buildDefaultAuditChecklists = () => {
     { generator: generateSubsequentEventsChecklist, id: "default-audit-subseq" },
     { generator: generateWorksheetGoingConcernChecklist, id: "default-audit-wgc-final" },
     { generator: generateManagementRepresentationsChecklist, id: "default-audit-mr" },
-    { generator: generateManagementResponsibilityChecklist, id: "default-audit-tcwg-fin" },
+    { generator: generateTCWGFinalCommunicationChecklist, id: "default-audit-tcwg-fin" },
     { generator: generateAuditCompletionChecklist, id: "default-audit-comp" },
     { generator: generateEngagementPartnerAuditCompletionChecklist, id: "default-audit-ep" },
   ];
@@ -378,7 +384,7 @@ export default function EngagementDetail() {
     // One-time migration: clear stale sample checklists saved before the
     // global template library was pulled in, so the engagement reflects the
     // new global checklist content.
-    const TEMPLATE_LIBRARY_VERSION = 'v9-letter-renderer-el-mr-2026-04';
+    const TEMPLATE_LIBRARY_VERSION = 'v10-audit-specific-generators-2026-05';
     const seenVersion = localStorage.getItem('savedChecklistsLibraryVersion');
     if (seenVersion !== TEMPLATE_LIBRARY_VERSION) {
       try {
