@@ -17,6 +17,7 @@ import ProcedureDetail from "./pages/ProcedureDetail";
 import Teams from "./pages/Teams";
 import DesignSystem from "./pages/DesignSystem";
 import EngagementTemplates from "./pages/EngagementTemplates";
+import AuditDependencyRegister from "./pages/AuditDependencyRegister";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -39,6 +40,7 @@ const App = () => (
             <Route path="/engagements/create" element={<CreateEngagement />} />
             <Route path="/engagements/:engagementId/trial-balance" element={<TrialBalance />} />
             <Route path="/engagements/:engagementId/procedure/:procedureId" element={<ProcedureDetail />} />
+            <Route path="/engagements/:engagementId/dependency-register" element={<AuditDependencyRegister />} />
             <Route path="/create" element={<CreationDashboard />} />
             <Route path="/builder" element={<Index />} />
             <Route path="/generate" element={<Generate />} />
