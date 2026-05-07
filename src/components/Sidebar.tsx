@@ -634,6 +634,9 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
     }
   }, [savedChecklists]);
   const handleDropdownSelect = (itemId: string) => {
+    // Write synchronously BEFORE any navigation so that if the Sidebar
+    // remounts on the new page it reads the correct value from localStorage.
+    localStorage.setItem("selectedDropdown", itemId);
     setSelectedDropdown(itemId);
     if (itemId === "engagements") {
       if (location.pathname !== "/engagement-templates") {
