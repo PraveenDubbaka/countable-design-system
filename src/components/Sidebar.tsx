@@ -136,8 +136,6 @@ const initialGlobalTemplates: GlobalTemplate[] = [
       { id: "global-2-14", name: "ASPE - Supplementary - Disclosure checklist", type: "file" },
       { id: "global-2-15", name: "ASPE - Agriculture - Disclosure checklist", type: "file" },
       { id: "global-2-16", name: "Specific Circumstances", type: "file" },
-      { id: "global-2-17", name: "Worksheet - Accounting estimates (including fair values)", type: "file" },
-      { id: "global-2-18", name: "Worksheet - Going concern", type: "file" },
     ]
   },
   {
@@ -167,14 +165,6 @@ const initialGlobalTemplates: GlobalTemplate[] = [
           { id: "global-4-4", name: "Checklist — Modified Opinion", type: "file" },
           { id: "global-4-5", name: "Checklist — Supplementary and Other Information", type: "file" },
           { id: "global-4-6", name: "Checklist — Management Representations", type: "file" },
-          { id: "global-4-7", name: "Worksheet — Withdrawal", type: "file" },
-          { id: "global-4-8", name: "Worksheet — Notes on Significant Audit Decisions", type: "file" },
-          { id: "global-4-9", name: "Worksheet — Key Audit Matters", type: "file" },
-          { id: "global-4-10", name: "Worksheet — Audit Findings and Matters for Discussion", type: "file" },
-          { id: "global-4-11", name: "Summary of Identified Misstatements", type: "file" },
-          { id: "global-4-12", name: "Worksheet — Matters to be Communicated to Management and TCWG", type: "file" },
-          { id: "global-4-13", name: "Worksheet — Matters for Future Consideration", type: "file" },
-          { id: "global-4-14", name: "Worksheet — Documenting Consultation", type: "file" },
         ]
       },
       {
@@ -251,6 +241,44 @@ const initialGlobalTemplates: GlobalTemplate[] = [
       { id: "global-5-1", name: "Client Acceptance and Continuance", type: "file" },
     ]
   }
+];
+
+// Global Worksheets data structure — shown when "Worksheets" is selected in the dropdown
+const initialGlobalWorksheets: GlobalTemplate[] = [
+  {
+    id: "gws-review",
+    name: "Review",
+    type: "folder",
+    isExpanded: true,
+    children: [
+      { id: "global-2-17", name: "Worksheet — Accounting Estimates (including Fair Values)", type: "file" },
+      { id: "global-2-18", name: "Worksheet — Going Concern", type: "file" },
+    ]
+  },
+  {
+    id: "gws-audit",
+    name: "Audit",
+    type: "folder",
+    isExpanded: true,
+    children: [
+      {
+        id: "gws-audit-ca",
+        name: "Canada",
+        type: "folder",
+        isExpanded: true,
+        children: [
+          { id: "global-4-7",  name: "Worksheet — Withdrawal", type: "file" },
+          { id: "global-4-8",  name: "Worksheet — Notes on Significant Audit Decisions", type: "file" },
+          { id: "global-4-9",  name: "Worksheet — Key Audit Matters", type: "file" },
+          { id: "global-4-10", name: "Worksheet — Audit Findings and Matters for Discussion", type: "file" },
+          { id: "global-4-11", name: "Summary of Identified Misstatements", type: "file" },
+          { id: "global-4-12", name: "Worksheet — Matters to be Communicated to Management and TCWG", type: "file" },
+          { id: "global-4-13", name: "Worksheet — Matters for Future Consideration", type: "file" },
+          { id: "global-4-14", name: "Worksheet — Documenting Consultation", type: "file" },
+        ]
+      },
+    ]
+  },
 ];
 
 // Icon components matching the screenshot
@@ -356,6 +384,7 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
   const [searchParams, setSearchParams] = useSearchParams();
   const [templates, setTemplates] = useState<Template[]>(initialTemplates);
   const [globalTemplates, setGlobalTemplates] = useState<GlobalTemplate[]>(initialGlobalTemplates);
+  const [globalWorksheets, setGlobalWorksheets] = useState<GlobalTemplate[]>(initialGlobalWorksheets);
   const [activeTab, setActiveTab] = useState<"firm" | "master">("firm");
   const [searchQuery, setSearchQuery] = useState("");
   const { isCollapsed: isTemplatesPanelCollapsed, setIsCollapsed: setIsTemplatesPanelCollapsed } = useSecondaryPanel();
@@ -645,6 +674,18 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
     setGlobalTemplates(prev => toggle(prev));
   };
 
+  // Toggle global worksheet folder (mirrors toggleGlobalFolder but for worksheets state)
+  const toggleGlobalWorksheet = (id: string) => {
+    const toggle = (items: GlobalTemplate[]): GlobalTemplate[] =>
+      items.map(t => t.id === id
+        ? { ...t, isExpanded: !t.isExpanded }
+        : t.children
+          ? { ...t, children: toggle(t.children) }
+          : t
+      );
+    setGlobalWorksheets(prev => toggle(prev));
+  };
+
   // Get all child template IDs from a folder
   const getChildTemplateIds = (folder: GlobalTemplate): string[] => {
     if (!folder.children) return [];
@@ -739,13 +780,17 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
     });
   };
 
-  // Render global template item with checkbox
-  const renderGlobalTemplate = (template: GlobalTemplate, depth = 0) => {
+  // Render global template item with checkbox.
+  // onToggle overrides the default toggleGlobalFolder — pass toggleGlobalWorksheet for the worksheets panel.
+  const renderGlobalTemplate = (template: GlobalTemplate, depth = 0, onToggle?: (id: string) => void) => {
     const hasChildren = template.children && template.children.length > 0;
     const isSelected = selectedGlobalTemplate === template.id;
     const isTemplateChecked = selectedTemplates.has(template.id);
     const isFolderChecked = template.type === "folder" && isFolderSelected(template);
     const folderDisabled = template.type === "folder" && isFolderDisabled(template.id);
+    const isWorksheetItem = template.type === "file" && (
+      template.name.startsWith("Worksheet") || template.name.startsWith("Summary of Identified")
+    );
     
     return (
       <div key={template.id}>
@@ -774,9 +819,9 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
           
           {template.type === "folder" ? (
             <>
-              <div 
+              <div
                 className="flex items-center gap-1 flex-1 min-w-0"
-                onClick={() => toggleGlobalFolder(template.id)}
+                onClick={() => (onToggle ?? toggleGlobalFolder)(template.id)}
               >
                 {hasChildren ? (
                   template.isExpanded
@@ -802,7 +847,9 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
                 });
               }}
             >
-              <ChecklistIcon className="h-4 w-4 flex-shrink-0" />
+              {isWorksheetItem
+                ? <WorksheetIcon className="h-4 w-4 flex-shrink-0" />
+                : <ChecklistIcon className="h-4 w-4 flex-shrink-0" />}
               <span className={cn(
                 "truncate flex-1",
                 isSelected ? "font-semibold" : ""
@@ -814,7 +861,7 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
         </div>
         {template.type === "folder" && template.isExpanded && template.children && (
           <div>
-            {template.children.map(child => renderGlobalTemplate(child, depth + 1))}
+            {template.children.map(child => renderGlobalTemplate(child, depth + 1, onToggle))}
           </div>
         )}
       </div>
@@ -1915,8 +1962,51 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
                   )}
                 </div>
               </>
+            ) : selectedDropdown === "worksheets" ? (
+              <>
+                <div className={`flex mb-2 ${isTemplatesPanelCollapsed ? "hidden" : ""}`} style={{
+                  borderBottom: hasDarkSecondary ? "1px solid rgba(255,255,255,0.15)" : "1px solid hsl(var(--border))"
+                }}>
+                  <button onClick={() => setActiveTab("firm")} className={`flex-1 py-2 px-1 text-sm font-medium transition-all text-center whitespace-nowrap border-b-[3px] ${activeTab === "firm" ? (hasDarkSecondary ? "text-white border-white" : "text-primary border-primary") : (hasDarkSecondary ? "text-white/50 hover:text-white/80" : "text-muted-foreground hover:text-foreground") + " border-transparent"}`}>
+                    My Templates
+                  </button>
+                  <button onClick={() => setActiveTab("master")} className={`flex-1 py-2 px-1 text-sm font-medium transition-all text-center whitespace-nowrap border-b-[3px] ${activeTab === "master" ? (hasDarkSecondary ? "text-white border-white" : "text-primary border-primary") : (hasDarkSecondary ? "text-white/50 hover:text-white/80" : "text-muted-foreground hover:text-foreground") + " border-transparent"}`}>
+                    Global Templates
+                  </button>
+                </div>
+
+                <div className={`p-3 pt-1 ${isTemplatesPanelCollapsed ? "hidden" : ""}`}>
+                  <div className="flex gap-2">
+                    <div className="relative flex-1">
+                      <Search className={cn("absolute left-2.5 top-1/2 -translate-y-1/2 h-4 w-4", hasDarkSecondary ? "text-white/50" : "text-muted-foreground")} />
+                      <Input placeholder="Search" className={cn("pl-8 h-8 text-sm border-0 shadow-sm", hasDarkSecondary ? "bg-white/10 text-white placeholder:text-white/40" : "bg-card/80")} value={searchQuery} onChange={e => setSearchQuery(e.target.value)} />
+                    </div>
+                    {activeTab === "firm" && (
+                      <>
+                        <Button size="icon" className="h-9 w-9 bg-primary hover:bg-primary/90 shadow-sm">
+                          <Plus className="h-4 w-4 text-primary-foreground icon-plus" />
+                        </Button>
+                        <Button size="icon" variant="secondary" className={cn("h-9 w-9 text-destructive hover:text-destructive", hasDarkSecondary ? "bg-white/10 hover:bg-white/20 border-0" : "hover:bg-card/50")}>
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </>
+                    )}
+                  </div>
+                </div>
+
+                <div className={`flex-1 overflow-y-auto p-2 pt-0 ${isTemplatesPanelCollapsed ? "hidden" : ""}`}>
+                  {activeTab === "firm" ? (
+                    <div className="flex flex-col items-center justify-center h-32 gap-2 text-center px-4">
+                      <p className={cn("text-sm font-medium", hasDarkSecondary ? "text-white/70" : "text-muted-foreground")}>No worksheets yet</p>
+                      <p className={cn("text-xs", hasDarkSecondary ? "text-white/40" : "text-muted-foreground/70")}>Copy from Global Templates to get started</p>
+                    </div>
+                  ) : (
+                    globalWorksheets.map(t => renderGlobalTemplate(t, 0, toggleGlobalWorksheet))
+                  )}
+                </div>
+              </>
             ) : (
-              /* Empty state for Letters, Reports, Notes, Worksheets */
+              /* Empty state for Letters, Reports, Notes */
               <div className={`flex-1 flex flex-col items-center justify-center gap-3 px-4 py-8 text-center ${isTemplatesPanelCollapsed ? "hidden" : ""}`}>
                 {(() => {
                   const item = dropdownItems.find(i => i.id === selectedDropdown);
