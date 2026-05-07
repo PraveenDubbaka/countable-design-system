@@ -392,9 +392,9 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
 
   // Engagement Templates tree state
   const [engTemplateExpandedFolders, setEngTemplateExpandedFolders] = useState<Set<string>>(
-    () => new Set(["review", "audit"])
+    () => new Set(["compilation", "review", "audit"])
   );
-  const engTemplateSelectedId = searchParams.get("template") || "rev2400";
+  const engTemplateSelectedId = searchParams.get("template") || "comp4200";
   const [engTemplateSearchQuery, setEngTemplateSearchQuery] = useState("");
 
   const toggleEngTemplateFolder = useCallback((id: string) => {
@@ -639,9 +639,17 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
     localStorage.setItem("selectedDropdown", itemId);
     setSelectedDropdown(itemId);
     if (itemId === "engagements") {
+      // Navigate to engagement templates and auto-select the first template
+      // (comp4200) so the content area immediately shows something useful.
+      const firstTemplate = "comp4200";
       if (location.pathname !== "/engagement-templates") {
-        navigate("/engagement-templates");
+        navigate(`/engagement-templates?template=${firstTemplate}`);
+      } else {
+        // Already on the page — just update the search param to select first item.
+        setSearchParams({ template: firstTemplate }, { replace: true });
       }
+      // Expand the compilation folder so the selected item is visible in the tree.
+      setEngTemplateExpandedFolders(prev => new Set([...prev, "compilation"]));
     }
     // All other options (checklists, worksheets, letters, reports, notes)
     // just update the dropdown state — the sidebar panel reacts automatically.

@@ -608,7 +608,7 @@ function MyTemplateEditor({
 export default function EngagementTemplates() {
   const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
-  const selectedId = searchParams.get("template") || "rev2400";
+  const selectedId = searchParams.get("template") || "comp4200";
   const myTemplateId = searchParams.get("myTemplate");
 
   const activeView = allTemplateViews[selectedId];
