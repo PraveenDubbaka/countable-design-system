@@ -635,25 +635,13 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
   }, [savedChecklists]);
   const handleDropdownSelect = (itemId: string) => {
     setSelectedDropdown(itemId);
-    const item = dropdownItems.find(i => i.id === itemId);
-    if (item?.showCreator) {
-      // Navigate to creation dashboard first, not directly to generate
-      navigate("/create", {
-        state: {
-          contentType: itemId
-        }
-      });
-    } else if (itemId === "engagements") {
+    if (itemId === "engagements") {
       if (location.pathname !== "/engagement-templates") {
         navigate("/engagement-templates");
       }
-    } else {
-      navigate("/", {
-        state: {
-          clearContent: true
-        }
-      });
     }
+    // All other options (checklists, worksheets, letters, reports, notes)
+    // just update the dropdown state — the sidebar panel reacts automatically.
   };
   const toggleFolder = (id: string) => {
     setTemplates(prev => prev.map(t => t.id === id ? {
