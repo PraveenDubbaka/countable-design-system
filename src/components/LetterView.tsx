@@ -102,15 +102,19 @@ export function LetterView({ checklist, onUpdate, variant = "letter" }: LetterVi
 
       {/* Letter / Report sheet */}
       <div className="max-w-3xl mx-auto bg-card border border-border rounded-2xl shadow-sm relative overflow-hidden">
-        {/* Header / firm logo — letters only */}
-        {!isReport && (
+        {/* Header — firm logo for letters, placeholder for reports */}
+        {isReport ? (
+          <div className="px-12 py-10 flex items-center justify-center border-b border-border/60 min-h-[100px]">
+            <span className="text-sm text-muted-foreground/50 select-none">Header goes here</span>
+          </div>
+        ) : (
           <div className="pt-12 pb-6 flex flex-col items-center">
             <FirmLogoSVG />
           </div>
         )}
 
         {/* Body */}
-        <div className={`px-12 pb-16 letter-body ${isReport ? "pt-10" : ""}`}>
+        <div className="px-12 pb-16 letter-body pt-10">
           {isEditing ? (
             <div
               ref={editorRef}
@@ -169,17 +173,23 @@ export function LetterView({ checklist, onUpdate, variant = "letter" }: LetterVi
           )}
         </div>
 
-        {/* Decorative received stamp — letters only */}
-        {!isReport && !isEditing && (
-          <img
-            src={receivedStamp}
-            alt=""
-            aria-hidden="true"
-            width={160}
-            height={80}
-            loading="lazy"
-            className="absolute bottom-6 right-6 h-16 w-auto opacity-90 pointer-events-none select-none"
-          />
+        {/* Footer — placeholder for reports, stamp for letters */}
+        {isReport ? (
+          <div className="px-12 py-6 flex items-center justify-center border-t border-border/60 min-h-[60px]">
+            <span className="text-sm text-muted-foreground/50 select-none">Footer goes here</span>
+          </div>
+        ) : (
+          !isEditing && (
+            <img
+              src={receivedStamp}
+              alt=""
+              aria-hidden="true"
+              width={160}
+              height={80}
+              loading="lazy"
+              className="absolute bottom-6 right-6 h-16 w-auto opacity-90 pointer-events-none select-none"
+            />
+          )
         )}
       </div>
     </div>
