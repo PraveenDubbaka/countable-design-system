@@ -440,7 +440,7 @@ const dropdownItems = [{
   id: "reports",
   label: "Reports",
   icon: FileBarChart,
-  color: "text-green-500",
+  color: "text-[#be185d]",
   showCreator: true
 }, {
   id: "notes",
