@@ -297,6 +297,74 @@ const initialGlobalWorksheets: GlobalTemplate[] = [
   },
 ];
 
+// Global Reports data structure — shown when "Reports" is selected in the dropdown
+const initialGlobalReports: GlobalTemplate[] = [
+  {
+    id: "grpt-compilation",
+    name: "Compilation",
+    type: "folder",
+    isExpanded: true,
+    children: [
+      { id: "grpt-1-1", name: "Engagement Report", type: "file" },
+    ]
+  },
+  {
+    id: "grpt-review",
+    name: "Review",
+    type: "folder",
+    isExpanded: true,
+    children: [
+      { id: "grpt-2-1", name: "Unqualified Report (ASPE)", type: "file" },
+      { id: "grpt-2-2", name: "Modified Report (ASPE)", type: "file" },
+      { id: "grpt-2-3", name: "Unqualified Report (ASNPO)", type: "file" },
+      { id: "grpt-2-4", name: "Modified Report (ASNPO)", type: "file" },
+      { id: "grpt-2-5", name: "Special purpose unqualified report", type: "file" },
+      { id: "grpt-2-6", name: "Special purpose modified report", type: "file" },
+    ]
+  },
+  {
+    id: "grpt-audit",
+    name: "Audit",
+    type: "folder",
+    isExpanded: true,
+    children: [
+      {
+        id: "grpt-audit-ca",
+        name: "Canada",
+        type: "folder",
+        isExpanded: true,
+        children: [
+          { id: "grpt-ca-1", name: "Unqualified Auditor's Report (ASPE)", type: "file" },
+          { id: "grpt-ca-2", name: "Unqualified Auditor's Report (ASNPO)", type: "file" },
+          { id: "grpt-ca-3", name: "Qualified Opinion — Material Misstatement", type: "file" },
+          { id: "grpt-ca-4", name: "Qualified Opinion — Insufficient Evidence", type: "file" },
+          { id: "grpt-ca-5", name: "Adverse Opinion", type: "file" },
+          { id: "grpt-ca-6", name: "Disclaimer of Opinion", type: "file" },
+          { id: "grpt-ca-7", name: "Auditor's Report — Emphasis of Matter", type: "file" },
+          { id: "grpt-ca-8", name: "Auditor's Report — Other Matter Paragraph", type: "file" },
+        ]
+      },
+      {
+        id: "grpt-audit-us",
+        name: "United States",
+        type: "folder",
+        isExpanded: true,
+        children: [
+          { id: "grpt-us-1", name: "Auditor's Report — Fair Presentation Framework (AU-C 700)", type: "file" },
+          { id: "grpt-us-2", name: "Auditor's Report — Compliance Framework (AU-C 800)", type: "file" },
+          { id: "grpt-us-3", name: "Qualified Opinion — Material Misstatement (Fair Presentation)", type: "file" },
+          { id: "grpt-us-4", name: "Qualified Opinion — Material Misstatement (Compliance)", type: "file" },
+          { id: "grpt-us-5", name: "Qualified Opinion — Insufficient Evidence", type: "file" },
+          { id: "grpt-us-6", name: "Adverse Opinion", type: "file" },
+          { id: "grpt-us-7", name: "Disclaimer of Opinion", type: "file" },
+          { id: "grpt-us-8", name: "Auditor's Report with Key Audit Matters and Emphasis of Matter", type: "file" },
+          { id: "grpt-us-9", name: "Qualified Opinion with Emphasis of Matter", type: "file" },
+        ]
+      },
+    ]
+  },
+];
+
 // Icon components matching the screenshot
 const AnalyticsIcon = () => <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
     {/* Bar chart icon */}
@@ -401,6 +469,7 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
   const [templates, setTemplates] = useState<Template[]>(initialTemplates);
   const [globalTemplates, setGlobalTemplates] = useState<GlobalTemplate[]>(initialGlobalTemplates);
   const [globalWorksheets, setGlobalWorksheets] = useState<GlobalTemplate[]>(initialGlobalWorksheets);
+  const [globalReports, setGlobalReports] = useState<GlobalTemplate[]>(initialGlobalReports);
   const [activeTab, setActiveTab] = useState<"firm" | "master">("firm");
   const [searchQuery, setSearchQuery] = useState("");
   const { isCollapsed: isTemplatesPanelCollapsed, setIsCollapsed: setIsTemplatesPanelCollapsed } = useSecondaryPanel();
@@ -713,6 +782,18 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
           : t
       );
     setGlobalTemplates(prev => toggle(prev));
+  };
+
+  // Toggle global report folder
+  const toggleGlobalReport = (id: string) => {
+    const toggle = (items: GlobalTemplate[]): GlobalTemplate[] =>
+      items.map(t => t.id === id
+        ? { ...t, isExpanded: !t.isExpanded }
+        : t.children
+          ? { ...t, children: toggle(t.children) }
+          : t
+      );
+    setGlobalReports(prev => toggle(prev));
   };
 
   // Toggle global worksheet folder (mirrors toggleGlobalFolder but for worksheets state)
@@ -2047,8 +2128,32 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
                   )}
                 </div>
               </>
+            ) : selectedDropdown === "reports" ? (
+              <>
+                {/* My / Global tabs */}
+                <div className={`flex mb-2 ${isTemplatesPanelCollapsed ? "hidden" : ""}`} style={{
+                  borderBottom: hasDarkSecondary ? "1px solid rgba(255,255,255,0.15)" : "1px solid hsl(var(--border))"
+                }}>
+                  <button onClick={() => setActiveTab("firm")} className={`flex-1 py-2 px-1 text-sm font-medium transition-all text-center whitespace-nowrap border-b-[3px] ${activeTab === "firm" ? (hasDarkSecondary ? "text-white border-white" : "text-primary border-primary") : (hasDarkSecondary ? "text-white/50 hover:text-white/80" : "text-muted-foreground hover:text-foreground") + " border-transparent"}`}>
+                    My Templates
+                  </button>
+                  <button onClick={() => setActiveTab("master")} className={`flex-1 py-2 px-1 text-sm font-medium transition-all text-center whitespace-nowrap border-b-[3px] ${activeTab === "master" ? (hasDarkSecondary ? "text-white border-white" : "text-primary border-primary") : (hasDarkSecondary ? "text-white/50 hover:text-white/80" : "text-muted-foreground hover:text-foreground") + " border-transparent"}`}>
+                    Global Templates
+                  </button>
+                </div>
+                <div className={`flex-1 overflow-y-auto p-2 pt-0 ${isTemplatesPanelCollapsed ? "hidden" : ""}`}>
+                  {activeTab === "firm" ? (
+                    <div className="flex flex-col items-center justify-center h-32 gap-2 text-center px-4">
+                      <p className={cn("text-sm font-medium", hasDarkSecondary ? "text-white/70" : "text-muted-foreground")}>No reports yet</p>
+                      <p className={cn("text-xs", hasDarkSecondary ? "text-white/40" : "text-muted-foreground/70")}>Copy from Global Templates to get started</p>
+                    </div>
+                  ) : (
+                    globalReports.map(t => renderGlobalTemplate(t, 0, toggleGlobalReport))
+                  )}
+                </div>
+              </>
             ) : (
-              /* Empty state for Letters, Reports, Notes */
+              /* Empty state for Letters, Notes */
               <div className={`flex-1 flex flex-col items-center justify-center gap-3 px-4 py-8 text-center ${isTemplatesPanelCollapsed ? "hidden" : ""}`}>
                 {(() => {
                   const item = dropdownItems.find(i => i.id === selectedDropdown);
