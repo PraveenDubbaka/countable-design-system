@@ -11,6 +11,7 @@ import { toast } from 'sonner';
 import { readJsonFromLocalStorage, writeJsonToLocalStorage } from '@/lib/safeJson';
 import { dispatchChecklistSync } from '@/lib/checklistSync';
 import { getGlobalTemplateChecklist } from '@/lib/globalTemplates';
+import { LetterView } from '@/components/LetterView';
 
 const generateClientMeetingChecklist = (prompt: string): Checklist => {
   const sections: Section[] = [
@@ -315,6 +316,7 @@ export default function Index() {
   const [currentChecklistId, setCurrentChecklistId] = useState<string | null>(null);
   const [isGlobalTemplatePreview, setIsGlobalTemplatePreview] = useState(false);
   const [isSavedTemplate, setIsSavedTemplate] = useState(false);
+  const [isReportTemplate, setIsReportTemplate] = useState(false);
 
   const handleGenerate = async (prompt: string, scope: GenerationScope, savedChecklistId?: string, checklistName?: string) => {
     setIsGenerating(true);
@@ -355,6 +357,7 @@ export default function Index() {
       setCurrentChecklistId(null);
       setIsGlobalTemplatePreview(false);
       setIsSavedTemplate(false);
+      setIsReportTemplate(false);
       return;
     }
 
@@ -362,10 +365,12 @@ export default function Index() {
     if (globalTemplateId) {
       const templateChecklist = getGlobalTemplateChecklist(globalTemplateId);
       if (templateChecklist) {
+        const isReport = globalTemplateId.startsWith('grpt-');
         setChecklist(templateChecklist);
         setCurrentChecklistId(null);
         setIsGlobalTemplatePreview(true);
         setIsSavedTemplate(false);
+        setIsReportTemplate(isReport);
         return;
       }
     }
@@ -373,6 +378,7 @@ export default function Index() {
     // Reset global template preview flag for other cases
     if (!globalTemplateId) {
       setIsGlobalTemplatePreview(false);
+      setIsReportTemplate(false);
     }
 
     // Load saved checklist by ID (user clicked on existing checklist)
@@ -453,9 +459,14 @@ export default function Index() {
               <p className="text-sm text-muted-foreground mt-1">AI is analyzing your requirements</p>
             </div>
           </div>
+        ) : checklist && isReportTemplate ? (
+          <LetterView
+            checklist={checklist}
+            onUpdate={handleChecklistUpdate}
+          />
         ) : checklist ? (
-          <ChecklistBuilder 
-            checklist={checklist} 
+          <ChecklistBuilder
+            checklist={checklist}
             onUpdate={handleChecklistUpdate}
             onSave={handleDirectSave}
             initialPreviewMode={isGlobalTemplatePreview || isSavedTemplate}

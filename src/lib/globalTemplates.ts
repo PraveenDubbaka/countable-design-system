@@ -5742,6 +5742,873 @@ Reference: CAS 260 — Communication with Those Charged with Governance.`,
   };
 };
 
+// ─── Report template helpers ──────────────────────────────────────────────────
+
+function makeReportChecklist(id: string, title: string, description: string, html: string): Checklist {
+  return {
+    id,
+    title,
+    description,
+    objective: '',
+    sections: [
+      {
+        id: `${id}-section`,
+        title,
+        isExpanded: true,
+        questions: [
+          {
+            id: `${id}-body`,
+            text: html,
+            answerType: 'none',
+            options: [],
+            required: false,
+            answer: '',
+          } as Question,
+        ],
+      },
+    ],
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  };
+}
+
+// ── Compilation ───────────────────────────────────────────────────────────────
+
+export const generateCompilationEngagementReport = (): Checklist =>
+  makeReportChecklist('grpt-1-1', 'Compilation Engagement Report', 'CSRS 4200 Compilation Engagement Report', `
+    <p class="text-sm text-foreground font-semibold text-center mt-2">COMPILATION ENGAGEMENT REPORT</p>
+    <p class="text-sm text-foreground mt-6">To the Management of [Entity Name]:</p>
+    <p class="text-sm text-foreground mt-4">
+      We have compiled the accompanying financial information of <strong>[Entity Name]</strong> for the period ended
+      <strong>[Period End Date]</strong>, which comprises the balance sheet as at [Period End Date] and the statement of
+      income and retained earnings for the period then ended, and a summary of significant accounting policies and other
+      explanatory information.
+    </p>
+    <p class="text-sm text-foreground mt-4 font-semibold">Management's Responsibility</p>
+    <p class="text-sm text-foreground mt-2">
+      Management is responsible for the preparation of this financial information in accordance with
+      <strong>[Applicable Financial Reporting Framework]</strong>, and for such internal control as management determines
+      is necessary to enable the preparation of financial information that is free from material misstatement, whether
+      due to fraud or error.
+    </p>
+    <p class="text-sm text-foreground mt-4 font-semibold">Practitioner's Responsibility</p>
+    <p class="text-sm text-foreground mt-2">
+      Our responsibility is to compile this financial information based on information provided by management. We
+      conducted our compilation engagement in accordance with <strong>Canadian Standard on Related Services (CSRS) 4200,
+      Compilation Engagements</strong>.
+    </p>
+    <p class="text-sm text-foreground mt-4">
+      A compilation engagement is substantially less in scope than an audit or review engagement conducted in accordance
+      with Canadian Auditing Standards or Canadian Standards on Review Engagements, and consequently does not enable us
+      to obtain assurance that we would become aware of all significant matters that might be identified in such
+      engagements. Accordingly, we do not express an audit opinion or a review conclusion on this financial information.
+    </p>
+    <p class="text-sm text-foreground mt-4">
+      The financial information and the notes thereto are not intended to, nor do they, provide disclosure necessary for
+      a fair presentation in accordance with [Applicable Financial Reporting Framework].
+    </p>
+    <p class="text-sm text-foreground mt-6">[Firm Name]</p>
+    <p class="text-sm text-foreground">[City, Province]</p>
+    <p class="text-sm text-foreground">${formatTodayLong()}</p>
+  `);
+
+// ── Review ─────────────────────────────────────────────────────────────────────
+
+export const generateReviewUnqualifiedASPE = (): Checklist =>
+  makeReportChecklist('grpt-2-1', 'Review — Unqualified Report (ASPE)', 'CSRE 2400 Unqualified Review Conclusion — ASPE', `
+    <p class="text-sm text-foreground font-semibold text-center mt-2">INDEPENDENT PRACTITIONER'S REVIEW ENGAGEMENT REPORT</p>
+    <p class="text-sm text-foreground mt-6">To the Shareholders (or Board of Directors) of [Entity Name]:</p>
+    <p class="text-sm text-foreground mt-4 font-semibold">Conclusion</p>
+    <p class="text-sm text-foreground mt-2">
+      Based on our review, nothing has come to our attention that causes us to believe that the accompanying financial
+      statements of <strong>[Entity Name]</strong> for the year ended <strong>[Year End Date]</strong> are not prepared,
+      in all material respects, in accordance with <strong>Accounting Standards for Private Enterprises (ASPE)</strong>.
+    </p>
+    <p class="text-sm text-foreground mt-4 font-semibold">Basis for Conclusion</p>
+    <p class="text-sm text-foreground mt-2">
+      We conducted our review in accordance with <strong>Canadian Standard on Review Engagements (CSRE) 2400,
+      Engagements to Review Historical Financial Statements</strong>. Our responsibilities under that standard are
+      further described in the Practitioner's Responsibilities section of our report.
+    </p>
+    <p class="text-sm text-foreground mt-2">
+      We are independent of the entity in accordance with the ethical requirements that are relevant to our review of the
+      financial statements in Canada, and we have fulfilled our other ethical responsibilities in accordance with these
+      requirements.
+    </p>
+    <p class="text-sm text-foreground mt-2">
+      We believe that the evidence we have obtained is sufficient and appropriate to provide a basis for our conclusion.
+    </p>
+    <p class="text-sm text-foreground mt-4 font-semibold">Management's Responsibility for the Financial Statements</p>
+    <p class="text-sm text-foreground mt-2">
+      Management is responsible for the preparation and fair presentation of these financial statements in accordance
+      with ASPE, and for such internal control as management determines is necessary to enable the preparation of
+      financial statements that are free from material misstatement, whether due to fraud or error.
+    </p>
+    <p class="text-sm text-foreground mt-4 font-semibold">Practitioner's Responsibilities for the Review of the Financial Statements</p>
+    <p class="text-sm text-foreground mt-2">
+      Our responsibility is to express a conclusion on the accompanying financial statements based on our review. CSRE
+      2400 requires us to conclude whether anything has come to our attention that causes us to believe that the
+      financial statements are not prepared, in all material respects, in accordance with ASPE.
+    </p>
+    <p class="text-sm text-foreground mt-2">
+      A review engagement is substantially less in scope than an audit conducted in accordance with Canadian Auditing
+      Standards. Consequently, it does not enable us to obtain assurance that we would become aware of all significant
+      matters that might be identified in an audit. Accordingly, we do not express an audit opinion.
+    </p>
+    <p class="text-sm text-foreground mt-6">[Firm Name]</p>
+    <p class="text-sm text-foreground">Licensed Public Accountants</p>
+    <p class="text-sm text-foreground">[City, Province]</p>
+    <p class="text-sm text-foreground">${formatTodayLong()}</p>
+  `);
+
+export const generateReviewModifiedASPE = (): Checklist =>
+  makeReportChecklist('grpt-2-2', 'Review — Modified Report (ASPE)', 'CSRE 2400 Modified Review Conclusion — ASPE', `
+    <p class="text-sm text-foreground font-semibold text-center mt-2">INDEPENDENT PRACTITIONER'S REVIEW ENGAGEMENT REPORT</p>
+    <p class="text-sm text-foreground mt-6">To the Shareholders (or Board of Directors) of [Entity Name]:</p>
+    <p class="text-sm text-foreground mt-4 font-semibold">Basis for Modified Conclusion</p>
+    <p class="text-sm text-foreground mt-2">
+      [Describe the matter(s) giving rise to the modification. For example: The financial statements do not include a
+      provision for income taxes in respect of [matter], which is not in accordance with ASPE. Had provision been made,
+      net income would have been decreased by $[X], and the related income taxes payable would have been increased by
+      $[X].]
+    </p>
+    <p class="text-sm text-foreground mt-4 font-semibold">Modified Conclusion</p>
+    <p class="text-sm text-foreground mt-2">
+      Based on our review, except for the matter described in the Basis for Modified Conclusion paragraph, nothing has
+      come to our attention that causes us to believe that the accompanying financial statements of
+      <strong>[Entity Name]</strong> for the year ended <strong>[Year End Date]</strong> are not prepared, in all
+      material respects, in accordance with <strong>Accounting Standards for Private Enterprises (ASPE)</strong>.
+    </p>
+    <p class="text-sm text-foreground mt-4 font-semibold">Management's Responsibility for the Financial Statements</p>
+    <p class="text-sm text-foreground mt-2">
+      Management is responsible for the preparation and fair presentation of these financial statements in accordance with ASPE.
+    </p>
+    <p class="text-sm text-foreground mt-4 font-semibold">Practitioner's Responsibilities</p>
+    <p class="text-sm text-foreground mt-2">
+      Our responsibility is to express a conclusion on the accompanying financial statements based on our review
+      conducted in accordance with <strong>CSRE 2400</strong>. A review engagement is substantially less in scope than
+      an audit and does not enable us to express an audit opinion.
+    </p>
+    <p class="text-sm text-foreground mt-6">[Firm Name]</p>
+    <p class="text-sm text-foreground">Licensed Public Accountants</p>
+    <p class="text-sm text-foreground">[City, Province]</p>
+    <p class="text-sm text-foreground">${formatTodayLong()}</p>
+  `);
+
+export const generateReviewUnqualifiedASNPO = (): Checklist =>
+  makeReportChecklist('grpt-2-3', 'Review — Unqualified Report (ASNPO)', 'CSRE 2400 Unqualified Review Conclusion — ASNPO', `
+    <p class="text-sm text-foreground font-semibold text-center mt-2">INDEPENDENT PRACTITIONER'S REVIEW ENGAGEMENT REPORT</p>
+    <p class="text-sm text-foreground mt-6">To the Members (or Board of Directors) of [Entity Name]:</p>
+    <p class="text-sm text-foreground mt-4 font-semibold">Conclusion</p>
+    <p class="text-sm text-foreground mt-2">
+      Based on our review, nothing has come to our attention that causes us to believe that the accompanying financial
+      statements of <strong>[Entity Name]</strong> for the year ended <strong>[Year End Date]</strong> are not prepared,
+      in all material respects, in accordance with <strong>Accounting Standards for Not-for-Profit Organizations
+      (ASNPO)</strong>.
+    </p>
+    <p class="text-sm text-foreground mt-4 font-semibold">Basis for Conclusion</p>
+    <p class="text-sm text-foreground mt-2">
+      We conducted our review in accordance with <strong>CSRE 2400, Engagements to Review Historical Financial
+      Statements</strong>. We are independent of the entity in accordance with applicable ethical requirements and have
+      fulfilled our other ethical responsibilities. We believe that the evidence obtained is sufficient and appropriate
+      to provide a basis for our conclusion.
+    </p>
+    <p class="text-sm text-foreground mt-4 font-semibold">Management's Responsibility</p>
+    <p class="text-sm text-foreground mt-2">
+      Management is responsible for the preparation and fair presentation of these financial statements in accordance
+      with ASNPO, and for such internal control as management determines is necessary.
+    </p>
+    <p class="text-sm text-foreground mt-4 font-semibold">Practitioner's Responsibilities</p>
+    <p class="text-sm text-foreground mt-2">
+      A review engagement is substantially less in scope than an audit. Accordingly, we do not express an audit opinion.
+    </p>
+    <p class="text-sm text-foreground mt-6">[Firm Name]</p>
+    <p class="text-sm text-foreground">Licensed Public Accountants</p>
+    <p class="text-sm text-foreground">[City, Province]</p>
+    <p class="text-sm text-foreground">${formatTodayLong()}</p>
+  `);
+
+export const generateReviewModifiedASNPO = (): Checklist =>
+  makeReportChecklist('grpt-2-4', 'Review — Modified Report (ASNPO)', 'CSRE 2400 Modified Review Conclusion — ASNPO', `
+    <p class="text-sm text-foreground font-semibold text-center mt-2">INDEPENDENT PRACTITIONER'S REVIEW ENGAGEMENT REPORT</p>
+    <p class="text-sm text-foreground mt-6">To the Members (or Board of Directors) of [Entity Name]:</p>
+    <p class="text-sm text-foreground mt-4 font-semibold">Basis for Modified Conclusion</p>
+    <p class="text-sm text-foreground mt-2">
+      [Describe the matter(s) giving rise to the modification.]
+    </p>
+    <p class="text-sm text-foreground mt-4 font-semibold">Modified Conclusion</p>
+    <p class="text-sm text-foreground mt-2">
+      Based on our review, except for the matter described above, nothing has come to our attention that causes us to
+      believe that the accompanying financial statements of <strong>[Entity Name]</strong> for the year ended
+      <strong>[Year End Date]</strong> are not prepared, in all material respects, in accordance with
+      <strong>ASNPO</strong>.
+    </p>
+    <p class="text-sm text-foreground mt-4 font-semibold">Management's Responsibility</p>
+    <p class="text-sm text-foreground mt-2">
+      Management is responsible for the preparation and fair presentation of these financial statements in accordance with ASNPO.
+    </p>
+    <p class="text-sm text-foreground mt-4 font-semibold">Practitioner's Responsibilities</p>
+    <p class="text-sm text-foreground mt-2">
+      Our review was conducted in accordance with <strong>CSRE 2400</strong>. A review engagement is substantially less
+      in scope than an audit. Accordingly, we do not express an audit opinion.
+    </p>
+    <p class="text-sm text-foreground mt-6">[Firm Name]</p>
+    <p class="text-sm text-foreground">Licensed Public Accountants</p>
+    <p class="text-sm text-foreground">[City, Province]</p>
+    <p class="text-sm text-foreground">${formatTodayLong()}</p>
+  `);
+
+export const generateReviewSpecialPurposeUnqualified = (): Checklist =>
+  makeReportChecklist('grpt-2-5', 'Review — Special Purpose Unqualified Report', 'CSRE 2400 Special Purpose Unqualified Review Conclusion', `
+    <p class="text-sm text-foreground font-semibold text-center mt-2">INDEPENDENT PRACTITIONER'S REVIEW ENGAGEMENT REPORT</p>
+    <p class="text-sm text-foreground mt-4 text-center italic">Special Purpose Financial Statements</p>
+    <p class="text-sm text-foreground mt-6">To [Intended Users] of [Entity Name]:</p>
+    <p class="text-sm text-foreground mt-4 font-semibold">Conclusion</p>
+    <p class="text-sm text-foreground mt-2">
+      Based on our review, nothing has come to our attention that causes us to believe that the accompanying special
+      purpose financial statements of <strong>[Entity Name]</strong> for the year ended <strong>[Year End Date]</strong>
+      are not prepared, in all material respects, in accordance with <strong>[Special Purpose Framework]</strong>.
+    </p>
+    <p class="text-sm text-foreground mt-4 font-semibold">Emphasis of Matter — Basis of Accounting</p>
+    <p class="text-sm text-foreground mt-2">
+      Without modifying our conclusion, we draw attention to Note [X] to the financial statements, which describes the
+      basis of accounting. The financial statements are prepared to comply with [special purpose framework] and, as a
+      result, the financial statements may not be suitable for another purpose.
+    </p>
+    <p class="text-sm text-foreground mt-4 font-semibold">Management's Responsibility</p>
+    <p class="text-sm text-foreground mt-2">
+      Management is responsible for the preparation of these special purpose financial statements in accordance with
+      [Special Purpose Framework].
+    </p>
+    <p class="text-sm text-foreground mt-4 font-semibold">Practitioner's Responsibilities</p>
+    <p class="text-sm text-foreground mt-2">
+      Our review was conducted in accordance with <strong>CSRE 2400</strong>. A review engagement is substantially less
+      in scope than an audit. Accordingly, we do not express an audit opinion.
+    </p>
+    <p class="text-sm text-foreground mt-6">[Firm Name]</p>
+    <p class="text-sm text-foreground">Licensed Public Accountants</p>
+    <p class="text-sm text-foreground">[City, Province]</p>
+    <p class="text-sm text-foreground">${formatTodayLong()}</p>
+  `);
+
+export const generateReviewSpecialPurposeModified = (): Checklist =>
+  makeReportChecklist('grpt-2-6', 'Review — Special Purpose Modified Report', 'CSRE 2400 Special Purpose Modified Review Conclusion', `
+    <p class="text-sm text-foreground font-semibold text-center mt-2">INDEPENDENT PRACTITIONER'S REVIEW ENGAGEMENT REPORT</p>
+    <p class="text-sm text-foreground mt-4 text-center italic">Special Purpose Financial Statements</p>
+    <p class="text-sm text-foreground mt-6">To [Intended Users] of [Entity Name]:</p>
+    <p class="text-sm text-foreground mt-4 font-semibold">Basis for Modified Conclusion</p>
+    <p class="text-sm text-foreground mt-2">
+      [Describe the matter(s) giving rise to the modification.]
+    </p>
+    <p class="text-sm text-foreground mt-4 font-semibold">Modified Conclusion</p>
+    <p class="text-sm text-foreground mt-2">
+      Based on our review, except for the matter described above, nothing has come to our attention that causes us to
+      believe that the accompanying special purpose financial statements of <strong>[Entity Name]</strong> for the year
+      ended <strong>[Year End Date]</strong> are not prepared, in all material respects, in accordance with
+      <strong>[Special Purpose Framework]</strong>.
+    </p>
+    <p class="text-sm text-foreground mt-4 font-semibold">Emphasis of Matter — Basis of Accounting</p>
+    <p class="text-sm text-foreground mt-2">
+      Without modifying our conclusion, we draw attention to Note [X] to the financial statements, which describes the
+      basis of accounting. The financial statements are prepared to comply with [special purpose framework] and, as a
+      result, the financial statements may not be suitable for another purpose.
+    </p>
+    <p class="text-sm text-foreground mt-4 font-semibold">Management's Responsibility</p>
+    <p class="text-sm text-foreground mt-2">
+      Management is responsible for the preparation of these special purpose financial statements in accordance with [Special Purpose Framework].
+    </p>
+    <p class="text-sm text-foreground mt-4 font-semibold">Practitioner's Responsibilities</p>
+    <p class="text-sm text-foreground mt-2">
+      Our review was conducted in accordance with <strong>CSRE 2400</strong>. A review engagement is substantially less
+      in scope than an audit. Accordingly, we do not express an audit opinion.
+    </p>
+    <p class="text-sm text-foreground mt-6">[Firm Name]</p>
+    <p class="text-sm text-foreground">Licensed Public Accountants</p>
+    <p class="text-sm text-foreground">[City, Province]</p>
+    <p class="text-sm text-foreground">${formatTodayLong()}</p>
+  `);
+
+// ── Audit — Canada ─────────────────────────────────────────────────────────────
+
+export const generateAuditUnqualifiedASPE = (): Checklist =>
+  makeReportChecklist('grpt-ca-1', "Unqualified Auditor's Report (ASPE)", "CAS Unqualified Auditor's Report — ASPE", `
+    <p class="text-sm text-foreground font-semibold text-center mt-2">INDEPENDENT AUDITOR'S REPORT</p>
+    <p class="text-sm text-foreground mt-6">To the Shareholders of [Entity Name]:</p>
+    <p class="text-sm text-foreground mt-4 font-semibold">Opinion</p>
+    <p class="text-sm text-foreground mt-2">
+      We have audited the financial statements of <strong>[Entity Name]</strong> (the Entity), which comprise the
+      balance sheet as at <strong>[Year End Date]</strong>, and the statements of income and retained earnings and cash
+      flows for the year then ended, and notes to the financial statements, including a summary of significant
+      accounting policies.
+    </p>
+    <p class="text-sm text-foreground mt-2">
+      In our opinion, the accompanying financial statements present fairly, in all material respects, the financial
+      position of the Entity as at [Year End Date], and its financial performance and its cash flows for the year then
+      ended in accordance with <strong>Accounting Standards for Private Enterprises (ASPE)</strong>.
+    </p>
+    <p class="text-sm text-foreground mt-4 font-semibold">Basis for Opinion</p>
+    <p class="text-sm text-foreground mt-2">
+      We conducted our audit in accordance with <strong>Canadian Auditing Standards (CAS)</strong>. Our
+      responsibilities under those standards are further described in the Auditor's Responsibilities for the Audit of
+      the Financial Statements section of our report. We are independent of the Entity in accordance with the ethical
+      requirements that are relevant to our audit of the financial statements in Canada, and we have fulfilled our
+      other ethical responsibilities in accordance with these requirements. We believe that the audit evidence we have
+      obtained is sufficient and appropriate to provide a basis for our opinion.
+    </p>
+    <p class="text-sm text-foreground mt-4 font-semibold">Responsibilities of Management and Those Charged with Governance for the Financial Statements</p>
+    <p class="text-sm text-foreground mt-2">
+      Management is responsible for the preparation and fair presentation of the financial statements in accordance
+      with ASPE, and for such internal control as management determines is necessary to enable the preparation of
+      financial statements that are free from material misstatement, whether due to fraud or error.
+    </p>
+    <p class="text-sm text-foreground mt-4 font-semibold">Auditor's Responsibilities for the Audit of the Financial Statements</p>
+    <p class="text-sm text-foreground mt-2">
+      Our objectives are to obtain reasonable assurance about whether the financial statements as a whole are free from
+      material misstatement, whether due to fraud or error, and to issue an auditor's report that includes our opinion.
+      Reasonable assurance is a high level of assurance, but is not a guarantee that an audit conducted in accordance
+      with CAS will always detect a material misstatement when it exists.
+    </p>
+    <p class="text-sm text-foreground mt-6">[Firm Name]</p>
+    <p class="text-sm text-foreground">Licensed Public Accountants</p>
+    <p class="text-sm text-foreground">[City, Province]</p>
+    <p class="text-sm text-foreground">${formatTodayLong()}</p>
+  `);
+
+export const generateAuditUnqualifiedASNPO = (): Checklist =>
+  makeReportChecklist('grpt-ca-2', "Unqualified Auditor's Report (ASNPO)", "CAS Unqualified Auditor's Report — ASNPO", `
+    <p class="text-sm text-foreground font-semibold text-center mt-2">INDEPENDENT AUDITOR'S REPORT</p>
+    <p class="text-sm text-foreground mt-6">To the Members (or Board of Directors) of [Entity Name]:</p>
+    <p class="text-sm text-foreground mt-4 font-semibold">Opinion</p>
+    <p class="text-sm text-foreground mt-2">
+      We have audited the financial statements of <strong>[Entity Name]</strong> (the Organization), which comprise
+      the statement of financial position as at <strong>[Year End Date]</strong>, and the statements of operations,
+      changes in net assets and cash flows for the year then ended, and notes to the financial statements, including a
+      summary of significant accounting policies.
+    </p>
+    <p class="text-sm text-foreground mt-2">
+      In our opinion, the accompanying financial statements present fairly, in all material respects, the financial
+      position of the Organization as at [Year End Date], and its results of operations and its cash flows for the year
+      then ended in accordance with <strong>Accounting Standards for Not-for-Profit Organizations (ASNPO)</strong>.
+    </p>
+    <p class="text-sm text-foreground mt-4 font-semibold">Basis for Opinion</p>
+    <p class="text-sm text-foreground mt-2">
+      We conducted our audit in accordance with <strong>Canadian Auditing Standards (CAS)</strong>. We are independent
+      of the Organization in accordance with the ethical requirements that are relevant to our audit in Canada, and we
+      have fulfilled our other ethical responsibilities. We believe that the audit evidence we have obtained is
+      sufficient and appropriate to provide a basis for our opinion.
+    </p>
+    <p class="text-sm text-foreground mt-4 font-semibold">Responsibilities of Management and Those Charged with Governance</p>
+    <p class="text-sm text-foreground mt-2">
+      Management is responsible for the preparation and fair presentation of the financial statements in accordance with
+      ASNPO, and for such internal control as management determines is necessary.
+    </p>
+    <p class="text-sm text-foreground mt-4 font-semibold">Auditor's Responsibilities</p>
+    <p class="text-sm text-foreground mt-2">
+      Our objectives are to obtain reasonable assurance that the financial statements are free from material
+      misstatement and to issue an auditor's report including our opinion.
+    </p>
+    <p class="text-sm text-foreground mt-6">[Firm Name]</p>
+    <p class="text-sm text-foreground">Licensed Public Accountants</p>
+    <p class="text-sm text-foreground">[City, Province]</p>
+    <p class="text-sm text-foreground">${formatTodayLong()}</p>
+  `);
+
+export const generateAuditQualifiedMaterialMisstatement = (): Checklist =>
+  makeReportChecklist('grpt-ca-3', 'Qualified Opinion — Material Misstatement', "CAS Qualified Auditor's Report — Material Misstatement", `
+    <p class="text-sm text-foreground font-semibold text-center mt-2">INDEPENDENT AUDITOR'S REPORT</p>
+    <p class="text-sm text-foreground mt-6">To the Shareholders of [Entity Name]:</p>
+    <p class="text-sm text-foreground mt-4 font-semibold">Basis for Qualified Opinion</p>
+    <p class="text-sm text-foreground mt-2">
+      [Describe the matter(s) giving rise to the qualification. For example: The Entity has not recognized a provision
+      for [matter] amounting to approximately $[X]. In our opinion, a provision should have been made in accordance with
+      ASPE Section [X]. Had the provision been recognized, net income for the year would have decreased by $[X], the
+      provision balance would have increased by $[X], and retained earnings would have decreased by $[X].]
+    </p>
+    <p class="text-sm text-foreground mt-4 font-semibold">Qualified Opinion</p>
+    <p class="text-sm text-foreground mt-2">
+      In our opinion, except for the effects of the matter described in the Basis for Qualified Opinion paragraph, the
+      accompanying financial statements present fairly, in all material respects, the financial position of
+      <strong>[Entity Name]</strong> as at <strong>[Year End Date]</strong>, and its financial performance and cash
+      flows for the year then ended in accordance with <strong>ASPE</strong>.
+    </p>
+    <p class="text-sm text-foreground mt-4 font-semibold">Basis for Opinion</p>
+    <p class="text-sm text-foreground mt-2">
+      We conducted our audit in accordance with <strong>Canadian Auditing Standards (CAS)</strong>. We are independent
+      of the Entity and have fulfilled our ethical responsibilities. We believe the audit evidence obtained is sufficient
+      and appropriate to provide a basis for our qualified opinion.
+    </p>
+    <p class="text-sm text-foreground mt-4 font-semibold">Responsibilities of Management</p>
+    <p class="text-sm text-foreground mt-2">
+      Management is responsible for the preparation and fair presentation of the financial statements in accordance with ASPE.
+    </p>
+    <p class="text-sm text-foreground mt-6">[Firm Name]</p>
+    <p class="text-sm text-foreground">Licensed Public Accountants</p>
+    <p class="text-sm text-foreground">[City, Province]</p>
+    <p class="text-sm text-foreground">${formatTodayLong()}</p>
+  `);
+
+export const generateAuditQualifiedInsufficientEvidence = (): Checklist =>
+  makeReportChecklist('grpt-ca-4', 'Qualified Opinion — Insufficient Evidence', "CAS Qualified Auditor's Report — Scope Limitation", `
+    <p class="text-sm text-foreground font-semibold text-center mt-2">INDEPENDENT AUDITOR'S REPORT</p>
+    <p class="text-sm text-foreground mt-6">To the Shareholders of [Entity Name]:</p>
+    <p class="text-sm text-foreground mt-4 font-semibold">Basis for Qualified Opinion</p>
+    <p class="text-sm text-foreground mt-2">
+      [Describe the scope limitation. For example: The Entity's accounting records for [specific area] were not
+      available to us. Consequently, we were unable to determine whether any adjustments were necessary in respect of
+      recorded or unrecorded [items], which could affect the financial statements as at [Year End Date].]
+    </p>
+    <p class="text-sm text-foreground mt-4 font-semibold">Qualified Opinion</p>
+    <p class="text-sm text-foreground mt-2">
+      In our opinion, except for the possible effects of the matter described in the Basis for Qualified Opinion
+      paragraph, the accompanying financial statements present fairly, in all material respects, the financial position
+      of <strong>[Entity Name]</strong> as at <strong>[Year End Date]</strong>, and its financial performance and cash
+      flows for the year then ended in accordance with <strong>ASPE</strong>.
+    </p>
+    <p class="text-sm text-foreground mt-4 font-semibold">Basis for Opinion</p>
+    <p class="text-sm text-foreground mt-2">
+      Except as described in the Basis for Qualified Opinion paragraph, we conducted our audit in accordance with
+      <strong>Canadian Auditing Standards (CAS)</strong>. We are independent and have fulfilled our ethical
+      responsibilities. We believe the audit evidence obtained is sufficient and appropriate to provide a basis for our
+      qualified opinion.
+    </p>
+    <p class="text-sm text-foreground mt-6">[Firm Name]</p>
+    <p class="text-sm text-foreground">Licensed Public Accountants</p>
+    <p class="text-sm text-foreground">[City, Province]</p>
+    <p class="text-sm text-foreground">${formatTodayLong()}</p>
+  `);
+
+export const generateAuditAdverseOpinion = (): Checklist =>
+  makeReportChecklist('grpt-ca-5', 'Adverse Opinion', "CAS Adverse Opinion Auditor's Report", `
+    <p class="text-sm text-foreground font-semibold text-center mt-2">INDEPENDENT AUDITOR'S REPORT</p>
+    <p class="text-sm text-foreground mt-6">To the Shareholders of [Entity Name]:</p>
+    <p class="text-sm text-foreground mt-4 font-semibold">Basis for Adverse Opinion</p>
+    <p class="text-sm text-foreground mt-2">
+      [Describe the matter(s) giving rise to the adverse opinion. For example: As described in Note [X], the Entity
+      has not consolidated subsidiary [Subsidiary Name] because management believes consolidation is not required. In
+      our opinion, the subsidiary should be consolidated in accordance with ASPE Section 1590. The effects of this
+      departure from ASPE on the financial statements have not been determined. If the subsidiary were consolidated,
+      many elements of the financial statements would be materially affected.]
+    </p>
+    <p class="text-sm text-foreground mt-4 font-semibold">Adverse Opinion</p>
+    <p class="text-sm text-foreground mt-2">
+      In our opinion, because of the significance of the matter discussed in the Basis for Adverse Opinion paragraph,
+      the accompanying financial statements <strong>do not</strong> present fairly, in all material respects, the
+      financial position of <strong>[Entity Name]</strong> as at <strong>[Year End Date]</strong>, and its financial
+      performance and cash flows for the year then ended in accordance with <strong>ASPE</strong>.
+    </p>
+    <p class="text-sm text-foreground mt-4 font-semibold">Basis for Opinion</p>
+    <p class="text-sm text-foreground mt-2">
+      We conducted our audit in accordance with <strong>Canadian Auditing Standards (CAS)</strong>. We are independent
+      of the Entity and have fulfilled our ethical responsibilities.
+    </p>
+    <p class="text-sm text-foreground mt-6">[Firm Name]</p>
+    <p class="text-sm text-foreground">Licensed Public Accountants</p>
+    <p class="text-sm text-foreground">[City, Province]</p>
+    <p class="text-sm text-foreground">${formatTodayLong()}</p>
+  `);
+
+export const generateAuditDisclaimerOfOpinion = (): Checklist =>
+  makeReportChecklist('grpt-ca-6', 'Disclaimer of Opinion', "CAS Disclaimer of Opinion Auditor's Report", `
+    <p class="text-sm text-foreground font-semibold text-center mt-2">INDEPENDENT AUDITOR'S REPORT</p>
+    <p class="text-sm text-foreground mt-6">To the Shareholders of [Entity Name]:</p>
+    <p class="text-sm text-foreground mt-4 font-semibold">Basis for Disclaimer of Opinion</p>
+    <p class="text-sm text-foreground mt-2">
+      [Describe the scope limitation(s). For example: We were not able to obtain sufficient appropriate audit evidence
+      about [specific matters] because of [describe circumstances]. Consequently, we were unable to determine whether
+      any adjustments to the financial statements were necessary.]
+    </p>
+    <p class="text-sm text-foreground mt-4 font-semibold">Disclaimer of Opinion</p>
+    <p class="text-sm text-foreground mt-2">
+      Because of the significance of the matter described in the Basis for Disclaimer of Opinion paragraph, we have
+      not been able to obtain sufficient appropriate audit evidence to provide a basis for an audit opinion. Accordingly,
+      <strong>we do not express an opinion on the financial statements</strong> of <strong>[Entity Name]</strong>.
+    </p>
+    <p class="text-sm text-foreground mt-4 font-semibold">Responsibilities of Management</p>
+    <p class="text-sm text-foreground mt-2">
+      Management is responsible for the preparation and fair presentation of the financial statements in accordance with ASPE.
+    </p>
+    <p class="text-sm text-foreground mt-4 font-semibold">Auditor's Responsibilities</p>
+    <p class="text-sm text-foreground mt-2">
+      We conducted our engagement in accordance with <strong>Canadian Auditing Standards (CAS)</strong>. We are
+      independent of the Entity and have fulfilled our ethical responsibilities. However, because of the matter
+      described above, we were not able to obtain sufficient audit evidence to provide a basis for an opinion.
+    </p>
+    <p class="text-sm text-foreground mt-6">[Firm Name]</p>
+    <p class="text-sm text-foreground">Licensed Public Accountants</p>
+    <p class="text-sm text-foreground">[City, Province]</p>
+    <p class="text-sm text-foreground">${formatTodayLong()}</p>
+  `);
+
+export const generateAuditEmphasisOfMatter = (): Checklist =>
+  makeReportChecklist('grpt-ca-7', "Auditor's Report — Emphasis of Matter", "CAS Auditor's Report with Emphasis of Matter Paragraph", `
+    <p class="text-sm text-foreground font-semibold text-center mt-2">INDEPENDENT AUDITOR'S REPORT</p>
+    <p class="text-sm text-foreground mt-6">To the Shareholders of [Entity Name]:</p>
+    <p class="text-sm text-foreground mt-4 font-semibold">Opinion</p>
+    <p class="text-sm text-foreground mt-2">
+      In our opinion, the accompanying financial statements present fairly, in all material respects, the financial
+      position of <strong>[Entity Name]</strong> as at <strong>[Year End Date]</strong>, and its financial performance
+      and cash flows for the year then ended in accordance with <strong>ASPE</strong>.
+    </p>
+    <p class="text-sm text-foreground mt-4 font-semibold">Basis for Opinion</p>
+    <p class="text-sm text-foreground mt-2">
+      We conducted our audit in accordance with <strong>Canadian Auditing Standards (CAS)</strong>. We are independent
+      of the Entity and have fulfilled our ethical responsibilities. We believe the audit evidence obtained is sufficient
+      and appropriate to provide a basis for our opinion.
+    </p>
+    <p class="text-sm text-foreground mt-4 font-semibold">Emphasis of Matter</p>
+    <p class="text-sm text-foreground mt-2">
+      Without modifying our opinion, we draw attention to Note [X] in the financial statements, which describes
+      [describe the matter giving rise to the emphasis of matter paragraph, e.g., significant uncertainty about the
+      Entity's ability to continue as a going concern, or the restatement of prior year amounts]. Our opinion is not
+      modified in respect of this matter.
+    </p>
+    <p class="text-sm text-foreground mt-4 font-semibold">Responsibilities of Management</p>
+    <p class="text-sm text-foreground mt-2">
+      Management is responsible for the preparation and fair presentation of the financial statements in accordance with ASPE.
+    </p>
+    <p class="text-sm text-foreground mt-6">[Firm Name]</p>
+    <p class="text-sm text-foreground">Licensed Public Accountants</p>
+    <p class="text-sm text-foreground">[City, Province]</p>
+    <p class="text-sm text-foreground">${formatTodayLong()}</p>
+  `);
+
+export const generateAuditOtherMatterParagraph = (): Checklist =>
+  makeReportChecklist('grpt-ca-8', "Auditor's Report — Other Matter Paragraph", "CAS Auditor's Report with Other Matter Paragraph", `
+    <p class="text-sm text-foreground font-semibold text-center mt-2">INDEPENDENT AUDITOR'S REPORT</p>
+    <p class="text-sm text-foreground mt-6">To the Shareholders of [Entity Name]:</p>
+    <p class="text-sm text-foreground mt-4 font-semibold">Opinion</p>
+    <p class="text-sm text-foreground mt-2">
+      In our opinion, the accompanying financial statements present fairly, in all material respects, the financial
+      position of <strong>[Entity Name]</strong> as at <strong>[Year End Date]</strong>, and its financial performance
+      and cash flows for the year then ended in accordance with <strong>ASPE</strong>.
+    </p>
+    <p class="text-sm text-foreground mt-4 font-semibold">Basis for Opinion</p>
+    <p class="text-sm text-foreground mt-2">
+      We conducted our audit in accordance with <strong>Canadian Auditing Standards (CAS)</strong>. We are independent
+      of the Entity and have fulfilled our ethical responsibilities. We believe the audit evidence obtained is sufficient
+      and appropriate to provide a basis for our opinion.
+    </p>
+    <p class="text-sm text-foreground mt-4 font-semibold">Other Matter</p>
+    <p class="text-sm text-foreground mt-2">
+      [Describe the other matter. For example: The financial statements for the year ended [Prior Year End Date] were
+      audited by another auditor who expressed an unmodified opinion on those statements on [Date of Prior Report].
+      OR: This report is intended solely for the information and use of [specify users] and is not intended to be and
+      should not be used by anyone other than these specified parties.]
+    </p>
+    <p class="text-sm text-foreground mt-4 font-semibold">Responsibilities of Management</p>
+    <p class="text-sm text-foreground mt-2">
+      Management is responsible for the preparation and fair presentation of the financial statements in accordance with ASPE.
+    </p>
+    <p class="text-sm text-foreground mt-6">[Firm Name]</p>
+    <p class="text-sm text-foreground">Licensed Public Accountants</p>
+    <p class="text-sm text-foreground">[City, Province]</p>
+    <p class="text-sm text-foreground">${formatTodayLong()}</p>
+  `);
+
+// ── Audit — United States ──────────────────────────────────────────────────────
+
+export const generateUSAuditFairPresentation = (): Checklist =>
+  makeReportChecklist('grpt-us-1', "Auditor's Report — Fair Presentation Framework (AU-C 700)", 'GAAS Unqualified Opinion — Fair Presentation Framework', `
+    <p class="text-sm text-foreground font-semibold text-center mt-2">INDEPENDENT AUDITOR'S REPORT</p>
+    <p class="text-sm text-foreground mt-6">To the Board of Directors and Shareholders of [Entity Name]:</p>
+    <p class="text-sm text-foreground mt-4 font-semibold">Opinion</p>
+    <p class="text-sm text-foreground mt-2">
+      We have audited the financial statements of <strong>[Entity Name]</strong>, which comprise the balance sheets as
+      of <strong>[Year End Date]</strong>, and the related statements of income, changes in stockholders' equity, and
+      cash flows for the year then ended, and the related notes to the financial statements.
+    </p>
+    <p class="text-sm text-foreground mt-2">
+      In our opinion, the accompanying financial statements present fairly, in all material respects, the financial
+      position of [Entity Name] as of [Year End Date], and the results of its operations and its cash flows for the
+      year then ended in accordance with <strong>accounting principles generally accepted in the United States of
+      America (US GAAP)</strong>.
+    </p>
+    <p class="text-sm text-foreground mt-4 font-semibold">Basis for Opinion</p>
+    <p class="text-sm text-foreground mt-2">
+      We conducted our audit in accordance with <strong>auditing standards generally accepted in the United States of
+      America (GAAS)</strong>. Our responsibilities under those standards are further described in the Auditor's
+      Responsibilities section. We are required to be independent of [Entity Name] and to meet our other ethical
+      responsibilities in accordance with the relevant ethical requirements relating to our audit. We believe that the
+      audit evidence we have obtained is sufficient and appropriate to provide a basis for our audit opinion.
+    </p>
+    <p class="text-sm text-foreground mt-4 font-semibold">Responsibilities of Management for the Financial Statements</p>
+    <p class="text-sm text-foreground mt-2">
+      Management is responsible for the preparation and fair presentation of the financial statements in accordance
+      with US GAAP, and for the design, implementation, and maintenance of internal control relevant to the preparation
+      and fair presentation of financial statements that are free from material misstatement, whether due to fraud or error.
+    </p>
+    <p class="text-sm text-foreground mt-4 font-semibold">Auditor's Responsibilities for the Audit of the Financial Statements</p>
+    <p class="text-sm text-foreground mt-2">
+      Our objectives are to obtain reasonable assurance about whether the financial statements as a whole are free from
+      material misstatement and to issue an auditor's report that includes our opinion. Reasonable assurance is a high
+      level of assurance but is not absolute assurance and therefore is not a guarantee that an audit conducted in
+      accordance with GAAS will always detect a material misstatement when it exists.
+    </p>
+    <p class="text-sm text-foreground mt-6">[Firm Name]</p>
+    <p class="text-sm text-foreground">Certified Public Accountants</p>
+    <p class="text-sm text-foreground">[City, State]</p>
+    <p class="text-sm text-foreground">${formatTodayLong()}</p>
+  `);
+
+export const generateUSAuditComplianceFramework = (): Checklist =>
+  makeReportChecklist('grpt-us-2', "Auditor's Report — Compliance Framework (AU-C 800)", 'GAAS Unqualified Opinion — Compliance (Special Purpose) Framework', `
+    <p class="text-sm text-foreground font-semibold text-center mt-2">INDEPENDENT AUDITOR'S REPORT</p>
+    <p class="text-sm text-foreground mt-4 text-center italic">Special Purpose Financial Statements</p>
+    <p class="text-sm text-foreground mt-6">To the Board of Directors of [Entity Name]:</p>
+    <p class="text-sm text-foreground mt-4 font-semibold">Opinion</p>
+    <p class="text-sm text-foreground mt-2">
+      We have audited the special purpose financial statements of <strong>[Entity Name]</strong>, which comprise the
+      balance sheet as of <strong>[Year End Date]</strong>, and the related statements of income and cash flows for the
+      year then ended, prepared in accordance with <strong>[Special Purpose Framework, e.g., cash basis of accounting,
+      tax-basis, regulatory basis]</strong>.
+    </p>
+    <p class="text-sm text-foreground mt-2">
+      In our opinion, the accompanying financial statements are prepared, in all material respects, in accordance with
+      <strong>[Special Purpose Framework]</strong>.
+    </p>
+    <p class="text-sm text-foreground mt-4 font-semibold">Emphasis of Matter — Basis of Accounting</p>
+    <p class="text-sm text-foreground mt-2">
+      We draw attention to Note [X] to the financial statements, which describes the basis of accounting. The financial
+      statements are prepared on the [describe basis], which is a basis of accounting other than accounting principles
+      generally accepted in the United States of America, to [describe the purpose]. As a result, the financial
+      statements may not be suitable for another purpose. Our opinion is not modified with respect to this matter.
+    </p>
+    <p class="text-sm text-foreground mt-4 font-semibold">Basis for Opinion</p>
+    <p class="text-sm text-foreground mt-2">
+      We conducted our audit in accordance with <strong>GAAS</strong>. We are independent of the Entity and have met
+      our other ethical responsibilities. We believe the audit evidence obtained is sufficient and appropriate.
+    </p>
+    <p class="text-sm text-foreground mt-6">[Firm Name]</p>
+    <p class="text-sm text-foreground">Certified Public Accountants</p>
+    <p class="text-sm text-foreground">[City, State]</p>
+    <p class="text-sm text-foreground">${formatTodayLong()}</p>
+  `);
+
+export const generateUSQualifiedMaterialFair = (): Checklist =>
+  makeReportChecklist('grpt-us-3', 'Qualified Opinion — Material Misstatement (Fair Presentation)', 'GAAS Qualified Opinion — Material Misstatement, Fair Presentation Framework', `
+    <p class="text-sm text-foreground font-semibold text-center mt-2">INDEPENDENT AUDITOR'S REPORT</p>
+    <p class="text-sm text-foreground mt-6">To the Board of Directors and Shareholders of [Entity Name]:</p>
+    <p class="text-sm text-foreground mt-4 font-semibold">Basis for Qualified Opinion</p>
+    <p class="text-sm text-foreground mt-2">
+      [Describe the matter giving rise to the qualification. For example: The Entity carries its investments in
+      [securities] at cost, which constitutes a departure from US GAAP. Under US GAAP, these investments are required
+      to be measured at fair value. The effects of this departure on the financial statements as of [Year End Date]
+      have not been determined.]
+    </p>
+    <p class="text-sm text-foreground mt-4 font-semibold">Qualified Opinion</p>
+    <p class="text-sm text-foreground mt-2">
+      In our opinion, except for the effects of the matter described in the Basis for Qualified Opinion paragraph, the
+      accompanying financial statements present fairly, in all material respects, the financial position of
+      <strong>[Entity Name]</strong> as of <strong>[Year End Date]</strong>, and the results of its operations and its
+      cash flows for the year then ended in accordance with <strong>US GAAP</strong>.
+    </p>
+    <p class="text-sm text-foreground mt-4 font-semibold">Basis for Opinion</p>
+    <p class="text-sm text-foreground mt-2">
+      We conducted our audit in accordance with <strong>GAAS</strong>. We are independent of the Entity and have met
+      our other ethical responsibilities. We believe the audit evidence obtained is sufficient and appropriate to
+      provide a basis for our qualified opinion.
+    </p>
+    <p class="text-sm text-foreground mt-6">[Firm Name]</p>
+    <p class="text-sm text-foreground">Certified Public Accountants</p>
+    <p class="text-sm text-foreground">[City, State]</p>
+    <p class="text-sm text-foreground">${formatTodayLong()}</p>
+  `);
+
+export const generateUSQualifiedMaterialCompliance = (): Checklist =>
+  makeReportChecklist('grpt-us-4', 'Qualified Opinion — Material Misstatement (Compliance)', 'GAAS Qualified Opinion — Material Misstatement, Compliance Framework', `
+    <p class="text-sm text-foreground font-semibold text-center mt-2">INDEPENDENT AUDITOR'S REPORT</p>
+    <p class="text-sm text-foreground mt-4 text-center italic">Special Purpose Financial Statements</p>
+    <p class="text-sm text-foreground mt-6">To the Board of Directors of [Entity Name]:</p>
+    <p class="text-sm text-foreground mt-4 font-semibold">Basis for Qualified Opinion</p>
+    <p class="text-sm text-foreground mt-2">
+      [Describe the matter giving rise to the qualification in the context of the compliance framework.]
+    </p>
+    <p class="text-sm text-foreground mt-4 font-semibold">Qualified Opinion</p>
+    <p class="text-sm text-foreground mt-2">
+      In our opinion, except for the effects of the matter described in the Basis for Qualified Opinion paragraph, the
+      accompanying financial statements are prepared, in all material respects, in accordance with
+      <strong>[Special Purpose Compliance Framework]</strong>.
+    </p>
+    <p class="text-sm text-foreground mt-4 font-semibold">Emphasis of Matter — Basis of Accounting</p>
+    <p class="text-sm text-foreground mt-2">
+      We draw attention to Note [X] to the financial statements describing the basis of accounting. The financial
+      statements may not be suitable for another purpose. Our opinion is not modified with respect to this matter.
+    </p>
+    <p class="text-sm text-foreground mt-4 font-semibold">Basis for Opinion</p>
+    <p class="text-sm text-foreground mt-2">
+      We conducted our audit in accordance with <strong>GAAS</strong>. We are independent and have met our ethical
+      responsibilities. We believe the audit evidence obtained is sufficient and appropriate.
+    </p>
+    <p class="text-sm text-foreground mt-6">[Firm Name]</p>
+    <p class="text-sm text-foreground">Certified Public Accountants</p>
+    <p class="text-sm text-foreground">[City, State]</p>
+    <p class="text-sm text-foreground">${formatTodayLong()}</p>
+  `);
+
+export const generateUSQualifiedInsufficientEvidence = (): Checklist =>
+  makeReportChecklist('grpt-us-5', 'Qualified Opinion — Insufficient Evidence', 'GAAS Qualified Opinion — Scope Limitation', `
+    <p class="text-sm text-foreground font-semibold text-center mt-2">INDEPENDENT AUDITOR'S REPORT</p>
+    <p class="text-sm text-foreground mt-6">To the Board of Directors and Shareholders of [Entity Name]:</p>
+    <p class="text-sm text-foreground mt-4 font-semibold">Basis for Qualified Opinion</p>
+    <p class="text-sm text-foreground mt-2">
+      [Describe the scope limitation. For example: The Entity's records relating to [specific area] were not made
+      available to us. As a result, we were unable to perform procedures that we considered necessary, and we were
+      unable to determine whether adjustments to [the affected financial statement line items] were necessary.]
+    </p>
+    <p class="text-sm text-foreground mt-4 font-semibold">Qualified Opinion</p>
+    <p class="text-sm text-foreground mt-2">
+      In our opinion, except for the possible effects of the matter described in the Basis for Qualified Opinion
+      paragraph, the accompanying financial statements present fairly, in all material respects, the financial position
+      of <strong>[Entity Name]</strong> as of <strong>[Year End Date]</strong>, and the results of its operations and
+      cash flows for the year then ended in accordance with <strong>US GAAP</strong>.
+    </p>
+    <p class="text-sm text-foreground mt-4 font-semibold">Basis for Opinion</p>
+    <p class="text-sm text-foreground mt-2">
+      Except as described above, we conducted our audit in accordance with <strong>GAAS</strong>. We are independent of
+      the Entity and have met our ethical responsibilities. We believe the audit evidence obtained is sufficient and
+      appropriate to provide a basis for our qualified opinion.
+    </p>
+    <p class="text-sm text-foreground mt-6">[Firm Name]</p>
+    <p class="text-sm text-foreground">Certified Public Accountants</p>
+    <p class="text-sm text-foreground">[City, State]</p>
+    <p class="text-sm text-foreground">${formatTodayLong()}</p>
+  `);
+
+export const generateUSAdverseOpinion = (): Checklist =>
+  makeReportChecklist('grpt-us-6', 'Adverse Opinion', "GAAS Adverse Opinion Auditor's Report", `
+    <p class="text-sm text-foreground font-semibold text-center mt-2">INDEPENDENT AUDITOR'S REPORT</p>
+    <p class="text-sm text-foreground mt-6">To the Board of Directors and Shareholders of [Entity Name]:</p>
+    <p class="text-sm text-foreground mt-4 font-semibold">Basis for Adverse Opinion</p>
+    <p class="text-sm text-foreground mt-2">
+      [Describe the matter(s) giving rise to the adverse opinion. For example: The Entity has not consolidated its
+      subsidiaries as required by US GAAP. If these subsidiaries were consolidated, the effects on assets, liabilities,
+      revenues, and expenses would be pervasive and material to the financial statements. Management has determined not
+      to consolidate these subsidiaries on the basis that [explain management's rationale].]
+    </p>
+    <p class="text-sm text-foreground mt-4 font-semibold">Adverse Opinion</p>
+    <p class="text-sm text-foreground mt-2">
+      In our opinion, because of the significance of the matter described in the Basis for Adverse Opinion paragraph,
+      the accompanying financial statements <strong>do not</strong> present fairly the financial position of
+      <strong>[Entity Name]</strong> as of <strong>[Year End Date]</strong>, or the results of its operations and its
+      cash flows for the year then ended, in accordance with <strong>US GAAP</strong>.
+    </p>
+    <p class="text-sm text-foreground mt-4 font-semibold">Basis for Opinion</p>
+    <p class="text-sm text-foreground mt-2">
+      We conducted our audit in accordance with <strong>GAAS</strong>. We are independent of the Entity and have met
+      our ethical responsibilities.
+    </p>
+    <p class="text-sm text-foreground mt-6">[Firm Name]</p>
+    <p class="text-sm text-foreground">Certified Public Accountants</p>
+    <p class="text-sm text-foreground">[City, State]</p>
+    <p class="text-sm text-foreground">${formatTodayLong()}</p>
+  `);
+
+export const generateUSDisclaimerOfOpinion = (): Checklist =>
+  makeReportChecklist('grpt-us-7', 'Disclaimer of Opinion', "GAAS Disclaimer of Opinion Auditor's Report", `
+    <p class="text-sm text-foreground font-semibold text-center mt-2">INDEPENDENT AUDITOR'S REPORT</p>
+    <p class="text-sm text-foreground mt-6">To the Board of Directors and Shareholders of [Entity Name]:</p>
+    <p class="text-sm text-foreground mt-4 font-semibold">Basis for Disclaimer of Opinion</p>
+    <p class="text-sm text-foreground mt-2">
+      [Describe the matter(s) causing the disclaimer. For example: We were engaged to audit the accompanying financial
+      statements, but we were not able to obtain sufficient appropriate evidence about [specific matters] because
+      [describe circumstances]. Consequently, we were unable to determine the effects on the financial statements.]
+    </p>
+    <p class="text-sm text-foreground mt-4 font-semibold">Disclaimer of Opinion</p>
+    <p class="text-sm text-foreground mt-2">
+      Because of the significance of the matter described in the Basis for Disclaimer of Opinion paragraph, we have
+      not been able to obtain sufficient appropriate evidence to provide a basis for an audit opinion. Accordingly,
+      <strong>we do not express an opinion</strong> on the accompanying financial statements of
+      <strong>[Entity Name]</strong>.
+    </p>
+    <p class="text-sm text-foreground mt-4 font-semibold">Responsibilities of Management</p>
+    <p class="text-sm text-foreground mt-2">
+      Management is responsible for the preparation and fair presentation of the financial statements in accordance with US GAAP.
+    </p>
+    <p class="text-sm text-foreground mt-4 font-semibold">Auditor's Responsibilities</p>
+    <p class="text-sm text-foreground mt-2">
+      We were engaged to conduct our audit in accordance with <strong>GAAS</strong>. We are required to be independent
+      of the Entity and to meet our other ethical responsibilities. However, because of the matter described above, we
+      were not able to obtain sufficient appropriate evidence to provide a basis for an audit opinion.
+    </p>
+    <p class="text-sm text-foreground mt-6">[Firm Name]</p>
+    <p class="text-sm text-foreground">Certified Public Accountants</p>
+    <p class="text-sm text-foreground">[City, State]</p>
+    <p class="text-sm text-foreground">${formatTodayLong()}</p>
+  `);
+
+export const generateUSKeyAuditMatters = (): Checklist =>
+  makeReportChecklist('grpt-us-8', "Auditor's Report with Key Audit Matters and Emphasis of Matter", "GAAS Auditor's Report — Key Audit Matters + Emphasis of Matter", `
+    <p class="text-sm text-foreground font-semibold text-center mt-2">INDEPENDENT AUDITOR'S REPORT</p>
+    <p class="text-sm text-foreground mt-6">To the Board of Directors and Shareholders of [Entity Name]:</p>
+    <p class="text-sm text-foreground mt-4 font-semibold">Opinion</p>
+    <p class="text-sm text-foreground mt-2">
+      In our opinion, the accompanying financial statements present fairly, in all material respects, the financial
+      position of <strong>[Entity Name]</strong> as of <strong>[Year End Date]</strong>, and the results of its
+      operations and cash flows for the year then ended in accordance with <strong>US GAAP</strong>.
+    </p>
+    <p class="text-sm text-foreground mt-4 font-semibold">Basis for Opinion</p>
+    <p class="text-sm text-foreground mt-2">
+      We conducted our audit in accordance with <strong>GAAS</strong>. We are independent of the Entity and have met
+      our other ethical responsibilities. We believe the audit evidence obtained is sufficient and appropriate.
+    </p>
+    <p class="text-sm text-foreground mt-4 font-semibold">Critical Audit Matter</p>
+    <p class="text-sm text-foreground mt-2">
+      The critical audit matter communicated below is a matter arising from the current period audit of the financial
+      statements that was communicated or required to be communicated to the audit committee and that: (1) relates to
+      accounts or disclosures that are material to the financial statements and (2) involved our especially challenging,
+      subjective, or complex judgment.
+    </p>
+    <p class="text-sm text-foreground mt-2 italic">[Name of Critical Audit Matter]</p>
+    <p class="text-sm text-foreground mt-2">
+      [Describe the critical audit matter, including: a description of the principal considerations that led us to
+      determine this was a critical audit matter; how the critical audit matter was addressed in the audit; and a
+      reference to the relevant financial statement accounts or disclosures.]
+    </p>
+    <p class="text-sm text-foreground mt-4 font-semibold">Emphasis of Matter</p>
+    <p class="text-sm text-foreground mt-2">
+      As discussed in Note [X] to the financial statements, [describe the matter requiring emphasis, e.g., the Entity
+      adopted ASC [Topic] during the current year / there is a significant uncertainty regarding the Entity's ability
+      to continue as a going concern]. Our opinion is not modified with respect to this matter.
+    </p>
+    <p class="text-sm text-foreground mt-6">[Firm Name]</p>
+    <p class="text-sm text-foreground">Certified Public Accountants</p>
+    <p class="text-sm text-foreground">[City, State]</p>
+    <p class="text-sm text-foreground">${formatTodayLong()}</p>
+  `);
+
+export const generateUSQualifiedWithEmphasis = (): Checklist =>
+  makeReportChecklist('grpt-us-9', 'Qualified Opinion with Emphasis of Matter', "GAAS Qualified Auditor's Report with Emphasis of Matter", `
+    <p class="text-sm text-foreground font-semibold text-center mt-2">INDEPENDENT AUDITOR'S REPORT</p>
+    <p class="text-sm text-foreground mt-6">To the Board of Directors and Shareholders of [Entity Name]:</p>
+    <p class="text-sm text-foreground mt-4 font-semibold">Basis for Qualified Opinion</p>
+    <p class="text-sm text-foreground mt-2">
+      [Describe the matter giving rise to the qualification.]
+    </p>
+    <p class="text-sm text-foreground mt-4 font-semibold">Qualified Opinion</p>
+    <p class="text-sm text-foreground mt-2">
+      In our opinion, except for the effects of the matter described in the Basis for Qualified Opinion paragraph, the
+      accompanying financial statements present fairly, in all material respects, the financial position of
+      <strong>[Entity Name]</strong> as of <strong>[Year End Date]</strong>, and the results of its operations and cash
+      flows for the year then ended in accordance with <strong>US GAAP</strong>.
+    </p>
+    <p class="text-sm text-foreground mt-4 font-semibold">Emphasis of Matter</p>
+    <p class="text-sm text-foreground mt-2">
+      Without further modifying our opinion, we draw attention to Note [X] in the financial statements, which describes
+      [describe the matter requiring emphasis, e.g., a restatement of comparative information / a significant
+      uncertainty]. Our opinion is not modified with respect to this matter.
+    </p>
+    <p class="text-sm text-foreground mt-4 font-semibold">Basis for Opinion</p>
+    <p class="text-sm text-foreground mt-2">
+      We conducted our audit in accordance with <strong>GAAS</strong>. We are independent of the Entity and have met
+      our other ethical responsibilities. We believe the audit evidence obtained is sufficient and appropriate to
+      provide a basis for our qualified opinion.
+    </p>
+    <p class="text-sm text-foreground mt-6">[Firm Name]</p>
+    <p class="text-sm text-foreground">Certified Public Accountants</p>
+    <p class="text-sm text-foreground">[City, State]</p>
+    <p class="text-sm text-foreground">${formatTodayLong()}</p>
+  `);
+
 export const getGlobalTemplateChecklist = (templateId: string): Checklist | null => {
   switch (templateId) {
     case 'client-acceptance':
@@ -5872,6 +6739,31 @@ export const getGlobalTemplateChecklist = (templateId: string): Checklist | null
     case 'global-template-client-acceptance-2026':
     case 'global-5-1':
       return generateClientAcceptanceContinuance2026Checklist();
+    // ── Global Reports ──────────────────────────────────────────────────────
+    case 'grpt-1-1': return generateCompilationEngagementReport();
+    case 'grpt-2-1': return generateReviewUnqualifiedASPE();
+    case 'grpt-2-2': return generateReviewModifiedASPE();
+    case 'grpt-2-3': return generateReviewUnqualifiedASNPO();
+    case 'grpt-2-4': return generateReviewModifiedASNPO();
+    case 'grpt-2-5': return generateReviewSpecialPurposeUnqualified();
+    case 'grpt-2-6': return generateReviewSpecialPurposeModified();
+    case 'grpt-ca-1': return generateAuditUnqualifiedASPE();
+    case 'grpt-ca-2': return generateAuditUnqualifiedASNPO();
+    case 'grpt-ca-3': return generateAuditQualifiedMaterialMisstatement();
+    case 'grpt-ca-4': return generateAuditQualifiedInsufficientEvidence();
+    case 'grpt-ca-5': return generateAuditAdverseOpinion();
+    case 'grpt-ca-6': return generateAuditDisclaimerOfOpinion();
+    case 'grpt-ca-7': return generateAuditEmphasisOfMatter();
+    case 'grpt-ca-8': return generateAuditOtherMatterParagraph();
+    case 'grpt-us-1': return generateUSAuditFairPresentation();
+    case 'grpt-us-2': return generateUSAuditComplianceFramework();
+    case 'grpt-us-3': return generateUSQualifiedMaterialFair();
+    case 'grpt-us-4': return generateUSQualifiedMaterialCompliance();
+    case 'grpt-us-5': return generateUSQualifiedInsufficientEvidence();
+    case 'grpt-us-6': return generateUSAdverseOpinion();
+    case 'grpt-us-7': return generateUSDisclaimerOfOpinion();
+    case 'grpt-us-8': return generateUSKeyAuditMatters();
+    case 'grpt-us-9': return generateUSQualifiedWithEmphasis();
     default:
       return null;
   }
