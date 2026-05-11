@@ -287,7 +287,7 @@ const initialGlobalWorksheets: GlobalTemplate[] = [
           { id: "global-us-4-2", name: "Worksheet — Notes on Significant Audit Decisions", type: "file" },
           { id: "global-us-4-3", name: "Worksheet — Key Audit Matters (AU-C 701)", type: "file" },
           { id: "global-us-4-4", name: "Worksheet — Audit Findings and Matters for Discussion", type: "file" },
-          { id: "global-us-4-5", name: "Accumulation of Identified Misstatements (AIM)", type: "file" },
+          { id: "global-us-4-5", name: "Worksheet — Accumulation of Identified Misstatements (AIM)", type: "file" },
           { id: "global-us-4-6", name: "Worksheet — Matters to be Communicated to Those Charged with Governance (AU-C 260)", type: "file" },
           { id: "global-us-4-7", name: "Worksheet — Matters for Future Consideration", type: "file" },
           { id: "global-us-4-8", name: "Worksheet — Documenting Consultation", type: "file" },
