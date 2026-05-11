@@ -444,6 +444,32 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
         : []
     );
 
+  // Returns the IDs of all ancestor folders for a given file ID
+  const findAncestorFolderIds = (items: TreeItem[], targetId: string, ancestors: string[] = []): string[] | null => {
+    for (const item of items) {
+      if (item.id === targetId) return ancestors;
+      if (item.type === "folder" && item.children) {
+        const result = findAncestorFolderIds(item.children, targetId, [...ancestors, item.id]);
+        if (result !== null) return result;
+      }
+    }
+    return null;
+  };
+
+  // Auto-expand ancestor folders whenever the selected template changes
+  useEffect(() => {
+    if (!engTemplateSelectedId) return;
+    const ancestors = findAncestorFolderIds(templateTree, engTemplateSelectedId);
+    if (ancestors && ancestors.length > 0) {
+      setEngTemplateExpandedFolders(prev => {
+        const next = new Set(prev);
+        ancestors.forEach(id => next.add(id));
+        return next;
+      });
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [engTemplateSelectedId]);
+
   const allEngFolderIds = getAllEngFolderIds(templateTree);
   const allEngExpanded = allEngFolderIds.every(id => engTemplateExpandedFolders.has(id));
 
@@ -1389,7 +1415,7 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
                     ]
                   },
                   {
-                    id: "aud-ra-sec", code: "RA", label: "Risk Assessment (CAS)", icon: "folder",
+                    id: "aud-ra-sec", code: "RA", label: "Risk Assessment (500)", icon: "folder",
                     children: [
                       { id: "aud-ra-rap", code: "RAP", label: "Risk Assessment Procedures", icon: "checklist", route: "checklist/aud-ra-rap" },
                       { id: "aud-ra-ic", code: "IC", label: "Understanding Internal Controls", icon: "checklist", route: "checklist/aud-ra-ic" },
@@ -1404,7 +1430,7 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
                     ]
                   },
                   {
-                    id: "aud-rp-sec", code: "RP", label: "Response to Assessed Risks (800)", icon: "folder",
+                    id: "aud-rp-sec", code: "RP", label: "Response to Assessed Risks (600)", icon: "folder",
                     children: [
                       { id: "aud-rp-oar", code: "OAR", label: "Overall Audit Response", icon: "checklist", route: "checklist/aud-rp-oar" },
                       { id: "aud-rp-toc", code: "TOC", label: "Test of Controls", icon: "checklist" },
@@ -1415,7 +1441,7 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
                     ]
                   },
                   {
-                    id: "aud-wp-a", code: "WP", label: "Working Papers — Assets (A–J)", icon: "folder",
+                    id: "aud-wp-a", code: "WP", label: "Working Papers — Assets (A–Z)", icon: "folder",
                     children: [
                       { id: "aud-wp-a-a", code: "A", label: "Cash & Bank Reconciliation", icon: "book" },
                       { id: "aud-wp-a-b", code: "B", label: "Accounts Receivable & Confirmations", icon: "book" },
@@ -1428,7 +1454,7 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
                     ]
                   },
                   {
-                    id: "aud-wp-l", code: "WP", label: "Working Papers — Liabilities & Equity (AA–GG)", icon: "folder",
+                    id: "aud-wp-l", code: "WP", label: "Working Papers — Liabilities & Equity (AA–ZZ)", icon: "folder",
                     children: [
                       { id: "aud-wp-l-aa", code: "AA", label: "Accounts Payable & Accrued Liabilities", icon: "book" },
                       { id: "aud-wp-l-bb", code: "BB", label: "Long-Term Debt & Covenant Compliance", icon: "book" },
@@ -1470,7 +1496,7 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
                     ]
                   },
                   {
-                    id: "aud-so", code: "SO", label: "Completion & Signoffs (200)", icon: "folder",
+                    id: "aud-so", code: "SO", label: "Completion & Signoffs (300)", icon: "folder",
                     children: [
                       { id: "aud-so-aim", code: "AIM", label: "Accumulation of Identified Misstatements", icon: "checklist", route: "checklist/aud-so-aim" },
                       { id: "aud-so-far", code: "FAR", label: "Final Analytical Review", icon: "checklist", route: "checklist/aud-so-far" },
@@ -1479,6 +1505,7 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
                       { id: "aud-mr", code: "MR", label: "Management Representation Letter", icon: "checklist", route: "checklist/aud-mr" },
                       { id: "aud-tcwg-fin", code: "TCWG", label: "Communication with Those Charged with Governance", icon: "letter", route: "checklist/aud-tcwg-fin" },
                       { id: "aud-comp", code: "CM", label: "Completion Checklist", icon: "completion", route: "checklist/aud-comp" },
+                      { id: "aud-disc", code: "DC", label: "Disclosure Checklist", icon: "checklist", route: "checklist/aud-disc" },
                       { id: "aud-ep", code: "QCR", label: "Quality Control Review", icon: "completion", route: "checklist/aud-ep" },
                       { id: "aud-so-sign", code: "SO", label: "Signoffs", icon: "completion" },
                       { id: "aud-so-fr", code: "FR", label: "Final Review", icon: "completion" },
