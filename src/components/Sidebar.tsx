@@ -439,7 +439,7 @@ const dropdownItems = [{
 }, {
   id: "reports",
   label: "Reports",
-  icon: FileBarChart,
+  icon: ReportIcon,
   color: "text-[#be185d]",
   showCreator: true
 }, {
@@ -972,7 +972,7 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
               }}
             >
               {isReportItem
-                ? <ReportIcon className="h-4 w-4 flex-shrink-0" />
+                ? <ReportIcon className="h-4 w-4 flex-shrink-0 text-[#be185d]" />
                 : isWorksheetItem
                   ? <WorksheetIcon className="h-4 w-4 flex-shrink-0" />
                   : <ChecklistIcon className="h-4 w-4 flex-shrink-0" />}
