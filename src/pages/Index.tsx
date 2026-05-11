@@ -467,7 +467,7 @@ export default function Index() {
           <LetterView
             checklist={checklist}
             onUpdate={handleChecklistUpdate}
-            variant={currentGlobalTemplateId?.startsWith('grpt-') ? "report" : "letter"}
+            variant="report"
           />
         ) : checklist ? (
           <ChecklistBuilder
