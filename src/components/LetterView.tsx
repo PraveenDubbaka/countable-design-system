@@ -1,7 +1,9 @@
 import { useEffect, useRef, useState } from "react";
 import { Checklist } from "@/types/checklist";
 import { Button } from "@/components/ui/button";
-import { Pencil, Eye, Check, X } from "lucide-react";
+import { Pencil, Eye, Check, X, Plus } from "lucide-react";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { AddToMyTemplatesDialog } from "@/components/AddToMyTemplatesDialog";
 import signatureImg from "@/assets/letter-signature.png";
 import receivedStamp from "@/assets/letter-received-stamp.png";
 
@@ -23,6 +25,7 @@ interface LetterViewProps {
  */
 export function LetterView({ checklist, onUpdate, variant = "letter" }: LetterViewProps) {
   const isReport = variant === "report";
+  const [showAddDialog, setShowAddDialog] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const editorRef = useRef<HTMLDivElement | null>(null);
 
@@ -58,52 +61,59 @@ export function LetterView({ checklist, onUpdate, variant = "letter" }: LetterVi
   };
 
   return (
-    <div className="px-6 py-6">
-      {/* Content area title */}
-      <div className="max-w-3xl mx-auto mb-4">
-        <h1 className="text-2xl font-bold text-foreground">{checklist.title}</h1>
+    <div className="flex-1 flex flex-col h-full overflow-hidden bg-background">
+      {/* Top toolbar — matches ChecklistBuilder */}
+      <div className="border-b bg-card px-6 py-3 flex items-center justify-between">
+        <h1 className="text-lg font-semibold px-2 py-1">{checklist.title}</h1>
+
+        <div className="flex items-center gap-2">
+          {isEditing ? (
+            <>
+              <Button size="sm" variant="outline" className="h-9 gap-1.5" onClick={handleCancel}>
+                <X className="h-4 w-4" />
+                Cancel
+              </Button>
+              <Button size="sm" className="h-9 gap-1.5" onClick={handleSave}>
+                <Check className="h-4 w-4" />
+                Save changes
+              </Button>
+            </>
+          ) : (
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    className="h-9 w-9 hover:bg-[#1C63A6] hover:text-white hover:border-[#1C63A6] transition-colors"
+                    onClick={() => setIsEditing(true)}
+                  >
+                    <Pencil className="h-4 w-4" />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>Edit</TooltipContent>
+              </Tooltip>
+
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    variant="default"
+                    size="icon"
+                    className="h-9 w-9"
+                    onClick={() => setShowAddDialog(true)}
+                  >
+                    <Plus className="h-4 w-4" />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>Add to My Templates</TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          )}
+        </div>
       </div>
 
-      {/* Mode toggle */}
-      <div className="max-w-3xl mx-auto mb-3 flex items-center justify-end gap-2">
-        {isEditing ? (
-          <>
-            <Button
-              size="sm"
-              variant="outline"
-              className="h-8 gap-1.5"
-              onClick={handleCancel}
-            >
-              <X className="h-3.5 w-3.5" />
-              Cancel
-            </Button>
-            <Button
-              size="sm"
-              className="h-8 gap-1.5"
-              onClick={handleSave}
-            >
-              <Check className="h-3.5 w-3.5" />
-              Save changes
-            </Button>
-          </>
-        ) : (
-          <>
-            <Button
-              size="sm"
-              variant="outline"
-              className="h-8 gap-1.5"
-              onClick={() => setIsEditing(true)}
-            >
-              <Pencil className="h-3.5 w-3.5" />
-              Edit
-            </Button>
-            <Button size="sm" variant="outline" className="h-8 gap-1.5">
-              <Eye className="h-3.5 w-3.5" />
-              Preview
-            </Button>
-          </>
-        )}
-      </div>
+      {/* Scrollable body */}
+      <div className="flex-1 overflow-y-auto px-6 py-6 bg-white border-t border-border">
 
       {/* Letter / Report sheet */}
       <div className="max-w-3xl mx-auto bg-card border border-border rounded-2xl shadow-sm relative overflow-hidden">
@@ -197,6 +207,15 @@ export function LetterView({ checklist, onUpdate, variant = "letter" }: LetterVi
           )
         )}
       </div>
+      </div>
+
+      {/* Add to My Templates dialog */}
+      <AddToMyTemplatesDialog
+        open={showAddDialog}
+        onOpenChange={setShowAddDialog}
+        checklist={checklist}
+        checklistName={checklist.title}
+      />
     </div>
   );
 }
