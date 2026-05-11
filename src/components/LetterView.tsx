@@ -8,6 +8,9 @@ import receivedStamp from "@/assets/letter-received-stamp.png";
 interface LetterViewProps {
   checklist: Checklist;
   onUpdate: (updated: Checklist) => void;
+  /** "letter" (default) shows firm letterhead + signature block.
+   *  "report" shows a clean document with no header/footer/stamp. */
+  variant?: "letter" | "report";
 }
 
 /**
@@ -18,7 +21,8 @@ interface LetterViewProps {
  * (existing schema, no migration needed).  Edit mode toggles a
  * contentEditable surface; Save persists the new HTML back to the checklist.
  */
-export function LetterView({ checklist, onUpdate }: LetterViewProps) {
+export function LetterView({ checklist, onUpdate, variant = "letter" }: LetterViewProps) {
+  const isReport = variant === "report";
   const [isEditing, setIsEditing] = useState(false);
   const editorRef = useRef<HTMLDivElement | null>(null);
 
@@ -96,15 +100,17 @@ export function LetterView({ checklist, onUpdate }: LetterViewProps) {
         )}
       </div>
 
-      {/* Letter sheet */}
+      {/* Letter / Report sheet */}
       <div className="max-w-3xl mx-auto bg-card border border-border rounded-2xl shadow-sm relative overflow-hidden">
-        {/* Header / firm logo */}
-        <div className="pt-12 pb-6 flex flex-col items-center">
-          <FirmLogoSVG />
-        </div>
+        {/* Header / firm logo — letters only */}
+        {!isReport && (
+          <div className="pt-12 pb-6 flex flex-col items-center">
+            <FirmLogoSVG />
+          </div>
+        )}
 
-        {/* Letter body */}
-        <div className="px-12 pb-16 letter-body">
+        {/* Body */}
+        <div className={`px-12 pb-16 letter-body ${isReport ? "pt-10" : ""}`}>
           {isEditing ? (
             <div
               ref={editorRef}
@@ -113,13 +119,11 @@ export function LetterView({ checklist, onUpdate }: LetterViewProps) {
               className="outline-none focus:ring-2 focus:ring-primary/40 rounded-md p-2 min-h-[200px]"
             />
           ) : (
-            <div
-              dangerouslySetInnerHTML={{ __html: letterHtml }}
-            />
+            <div dangerouslySetInnerHTML={{ __html: letterHtml }} />
           )}
 
-          {/* Signature block (rendered outside editable area) */}
-          {!isEditing && (
+          {/* Signature block — letters only */}
+          {!isReport && !isEditing && (
             <div className="mt-6">
               <img
                 src={signatureImg}
@@ -165,8 +169,8 @@ export function LetterView({ checklist, onUpdate }: LetterViewProps) {
           )}
         </div>
 
-        {/* Decorative received stamp */}
-        {!isEditing && (
+        {/* Decorative received stamp — letters only */}
+        {!isReport && !isEditing && (
           <img
             src={receivedStamp}
             alt=""

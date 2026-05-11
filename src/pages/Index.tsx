@@ -463,6 +463,7 @@ export default function Index() {
           <LetterView
             checklist={checklist}
             onUpdate={handleChecklistUpdate}
+            variant="report"
           />
         ) : checklist ? (
           <ChecklistBuilder
