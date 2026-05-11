@@ -59,6 +59,11 @@ export function LetterView({ checklist, onUpdate, variant = "letter" }: LetterVi
 
   return (
     <div className="px-6 py-6">
+      {/* Content area title */}
+      <div className="max-w-3xl mx-auto mb-4">
+        <h1 className="text-2xl font-bold text-foreground">{checklist.title}</h1>
+      </div>
+
       {/* Mode toggle */}
       <div className="max-w-3xl mx-auto mb-3 flex items-center justify-end gap-2">
         {isEditing ? (
