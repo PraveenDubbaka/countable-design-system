@@ -29,6 +29,7 @@ import { CompletionIcon } from "@/components/icons/CompletionIcon";
 import { WordDocIcon } from "@/components/icons/WordDocIcon";
 import { BookIcon } from "@/components/icons/BookIcon";
 import { WorksheetIcon } from "@/components/icons/WorksheetIcon";
+import { ReportIcon } from "@/components/icons/ReportIcon";
 import { SignoffsOverlay } from "@/components/SignoffsOverlay";
 import signoffCheckAllIcon from "@/assets/signoff-check-all.png";
 import signoffUncheckAllIcon from "@/assets/signoff-uncheck-all.png";
@@ -913,6 +914,7 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
     const isWorksheetItem = template.type === "file" && (
       template.name.startsWith("Worksheet") || template.name.startsWith("Summary of Identified")
     );
+    const isReportItem = template.type === "file" && template.id.startsWith("grpt-");
     
     return (
       <div key={template.id}>
@@ -969,9 +971,11 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
                 });
               }}
             >
-              {isWorksheetItem
-                ? <WorksheetIcon className="h-4 w-4 flex-shrink-0" />
-                : <ChecklistIcon className="h-4 w-4 flex-shrink-0" />}
+              {isReportItem
+                ? <ReportIcon className="h-4 w-4 flex-shrink-0" />
+                : isWorksheetItem
+                  ? <WorksheetIcon className="h-4 w-4 flex-shrink-0" />
+                  : <ChecklistIcon className="h-4 w-4 flex-shrink-0" />}
               <span className={cn(
                 "truncate flex-1",
                 isSelected ? "font-semibold" : ""
