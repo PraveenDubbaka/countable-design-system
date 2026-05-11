@@ -298,6 +298,53 @@ const initialGlobalWorksheets: GlobalTemplate[] = [
   },
 ];
 
+// Global Letters data structure — shown when "Letters" is selected in the dropdown
+const initialGlobalLetters: GlobalTemplate[] = [
+  { id: "glt-compilation", name: "Compilation", type: "folder", isExpanded: true, children: [
+    { id: "glt-1-1", name: "Engagement Letter — Compilation (Corp)", type: "file" },
+    { id: "glt-1-2", name: "Management Responsibility & Acknowledgement CSRS 4200 (Corp)", type: "file" },
+  ]},
+  { id: "glt-review", name: "Review", type: "folder", isExpanded: true, children: [
+    { id: "glt-2-1", name: "Engagement Letter Review — Master (Corp)", type: "file" },
+    { id: "glt-2-2", name: "Management Representation Letter Review (Corp)", type: "file" },
+    { id: "glt-2-3", name: "Review Findings Letter (Corp)", type: "file" },
+    { id: "glt-2-4", name: "Letter to a Predecessor (Corp)", type: "file" },
+    { id: "glt-2-5", name: "Letter to a Successor (Corp)", type: "file" },
+    { id: "glt-2-6", name: "Request for Management Assistance (Corp)", type: "file" },
+  ]},
+  { id: "glt-tax", name: "Tax", type: "folder", isExpanded: false, children: [
+    { id: "glt-3-1", name: "Tax Engagement Letter", type: "file" },
+  ]},
+  { id: "glt-additional", name: "Additional Letters", type: "folder", isExpanded: false, children: [
+    { id: "glt-4-1", name: "Closing Cover Letter", type: "file" },
+    { id: "glt-4-2", name: "Letter to Lawyer (Long Form)", type: "file" },
+    { id: "glt-4-3", name: "Letter to Lawyer (Short Form)", type: "file" },
+    { id: "glt-4-4", name: "Letter to Predecessor Accountant", type: "file" },
+    { id: "glt-4-5", name: "Letter to Successor Accountant", type: "file" },
+  ]},
+  { id: "glt-audit", name: "Audit", type: "folder", isExpanded: true, children: [
+    { id: "glt-audit-ca", name: "Canada", type: "folder", isExpanded: true, children: [
+      { id: "glt-ca-1", name: "Audit Engagement Letter (CAS/ASPE)", type: "file" },
+      { id: "glt-ca-2", name: "Audit Engagement Letter (CAS/ASNPO)", type: "file" },
+      { id: "glt-ca-3", name: "Management Representation Letter (CAS 580)", type: "file" },
+      { id: "glt-ca-4", name: "Communication with Those Charged with Governance — Planning (CAS 260)", type: "file" },
+      { id: "glt-ca-5", name: "Communication with Those Charged with Governance — Final (CAS 260)", type: "file" },
+      { id: "glt-ca-6", name: "Inquiry to Legal Counsel (Lawyer's Letter)", type: "file" },
+      { id: "glt-ca-7", name: "Communication to Predecessor Auditor", type: "file" },
+      { id: "glt-ca-8", name: "Letter to Management — Significant Deficiencies (CAS 265)", type: "file" },
+    ]},
+    { id: "glt-audit-us", name: "United States", type: "folder", isExpanded: true, children: [
+      { id: "glt-us-1", name: "Audit Engagement Letter (GAAS/US GAAP)", type: "file" },
+      { id: "glt-us-2", name: "Management Representation Letter (AU-C 580)", type: "file" },
+      { id: "glt-us-3", name: "Communication with Those Charged with Governance — Planning (AU-C 260)", type: "file" },
+      { id: "glt-us-4", name: "Communication with Those Charged with Governance — Final (AU-C 260)", type: "file" },
+      { id: "glt-us-5", name: "Inquiry to Legal Counsel", type: "file" },
+      { id: "glt-us-6", name: "Letter to Management — Significant Deficiencies (AU-C 265)", type: "file" },
+      { id: "glt-us-7", name: "Communication to Predecessor Auditor (AU-C 210)", type: "file" },
+    ]},
+  ]},
+];
+
 // Global Reports data structure — shown when "Reports" is selected in the dropdown
 const initialGlobalReports: GlobalTemplate[] = [
   {
@@ -471,6 +518,7 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
   const [globalTemplates, setGlobalTemplates] = useState<GlobalTemplate[]>(initialGlobalTemplates);
   const [globalWorksheets, setGlobalWorksheets] = useState<GlobalTemplate[]>(initialGlobalWorksheets);
   const [globalReports, setGlobalReports] = useState<GlobalTemplate[]>(initialGlobalReports);
+  const [globalLetters, setGlobalLetters] = useState<GlobalTemplate[]>(initialGlobalLetters);
   const [activeTab, setActiveTab] = useState<"firm" | "master">("firm");
   const [searchQuery, setSearchQuery] = useState("");
   const { isCollapsed: isTemplatesPanelCollapsed, setIsCollapsed: setIsTemplatesPanelCollapsed } = useSecondaryPanel();
@@ -809,6 +857,18 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
     setGlobalWorksheets(prev => toggle(prev));
   };
 
+  // Toggle global letter folder
+  const toggleGlobalLetter = (id: string) => {
+    const toggle = (items: GlobalTemplate[]): GlobalTemplate[] =>
+      items.map(t => t.id === id
+        ? { ...t, isExpanded: !t.isExpanded }
+        : t.children
+          ? { ...t, children: toggle(t.children) }
+          : t
+      );
+    setGlobalLetters(prev => toggle(prev));
+  };
+
   // Get all child template IDs from a folder
   const getChildTemplateIds = (folder: GlobalTemplate): string[] => {
     if (!folder.children) return [];
@@ -915,6 +975,7 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
       template.name.startsWith("Worksheet") || template.name.startsWith("Summary of Identified")
     );
     const isReportItem = template.type === "file" && template.id.startsWith("grpt-");
+    const isLetterItem = template.type === "file" && template.id.startsWith("glt-");
     
     return (
       <div key={template.id}>
@@ -973,9 +1034,11 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
             >
               {isReportItem
                 ? <ReportIcon className="h-4 w-4 flex-shrink-0 text-[#be185d]" />
-                : isWorksheetItem
-                  ? <WorksheetIcon className="h-4 w-4 flex-shrink-0" />
-                  : <ChecklistIcon className="h-4 w-4 flex-shrink-0" />}
+                : isLetterItem
+                  ? <LetterIcon className="h-4 w-4 flex-shrink-0 text-purple-500" />
+                  : isWorksheetItem
+                    ? <WorksheetIcon className="h-4 w-4 flex-shrink-0" />
+                    : <ChecklistIcon className="h-4 w-4 flex-shrink-0" />}
               <span className={cn(
                 "truncate flex-1",
                 isSelected ? "font-semibold" : ""
@@ -2156,8 +2219,32 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
                   )}
                 </div>
               </>
+            ) : selectedDropdown === "letters" ? (
+              <>
+                {/* My / Global tabs */}
+                <div className={`flex mb-2 ${isTemplatesPanelCollapsed ? "hidden" : ""}`} style={{
+                  borderBottom: hasDarkSecondary ? "1px solid rgba(255,255,255,0.15)" : "1px solid hsl(var(--border))"
+                }}>
+                  <button onClick={() => setActiveTab("firm")} className={`flex-1 py-2 px-1 text-sm font-medium transition-all text-center whitespace-nowrap border-b-[3px] ${activeTab === "firm" ? (hasDarkSecondary ? "text-white border-white" : "text-primary border-primary") : (hasDarkSecondary ? "text-white/50 hover:text-white/80" : "text-muted-foreground hover:text-foreground") + " border-transparent"}`}>
+                    My Templates
+                  </button>
+                  <button onClick={() => setActiveTab("master")} className={`flex-1 py-2 px-1 text-sm font-medium transition-all text-center whitespace-nowrap border-b-[3px] ${activeTab === "master" ? (hasDarkSecondary ? "text-white border-white" : "text-primary border-primary") : (hasDarkSecondary ? "text-white/50 hover:text-white/80" : "text-muted-foreground hover:text-foreground") + " border-transparent"}`}>
+                    Global Templates
+                  </button>
+                </div>
+                <div className={`flex-1 overflow-y-auto p-2 pt-0 ${isTemplatesPanelCollapsed ? "hidden" : ""}`}>
+                  {activeTab === "firm" ? (
+                    <div className="flex flex-col items-center justify-center h-32 gap-2 text-center px-4">
+                      <p className={cn("text-sm font-medium", hasDarkSecondary ? "text-white/70" : "text-muted-foreground")}>No letters yet</p>
+                      <p className={cn("text-xs", hasDarkSecondary ? "text-white/40" : "text-muted-foreground/70")}>Copy from Global Templates to get started</p>
+                    </div>
+                  ) : (
+                    globalLetters.map(t => renderGlobalTemplate(t, 0, toggleGlobalLetter))
+                  )}
+                </div>
+              </>
             ) : (
-              /* Empty state for Letters, Notes */
+              /* Empty state for Notes */
               <div className={`flex-1 flex flex-col items-center justify-center gap-3 px-4 py-8 text-center ${isTemplatesPanelCollapsed ? "hidden" : ""}`}>
                 {(() => {
                   const item = dropdownItems.find(i => i.id === selectedDropdown);

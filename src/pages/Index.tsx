@@ -317,6 +317,7 @@ export default function Index() {
   const [isGlobalTemplatePreview, setIsGlobalTemplatePreview] = useState(false);
   const [isSavedTemplate, setIsSavedTemplate] = useState(false);
   const [isReportTemplate, setIsReportTemplate] = useState(false);
+  const [currentGlobalTemplateId, setCurrentGlobalTemplateId] = useState<string | null>(null);
 
   const handleGenerate = async (prompt: string, scope: GenerationScope, savedChecklistId?: string, checklistName?: string) => {
     setIsGenerating(true);
@@ -355,6 +356,7 @@ export default function Index() {
     if (clearContent) {
       setChecklist(null);
       setCurrentChecklistId(null);
+      setCurrentGlobalTemplateId(null);
       setIsGlobalTemplatePreview(false);
       setIsSavedTemplate(false);
       setIsReportTemplate(false);
@@ -365,12 +367,13 @@ export default function Index() {
     if (globalTemplateId) {
       const templateChecklist = getGlobalTemplateChecklist(globalTemplateId);
       if (templateChecklist) {
-        const isReport = globalTemplateId.startsWith('grpt-');
+        const isLetter = globalTemplateId.startsWith('grpt-') || globalTemplateId.startsWith('glt-');
         setChecklist(templateChecklist);
         setCurrentChecklistId(null);
+        setCurrentGlobalTemplateId(globalTemplateId);
         setIsGlobalTemplatePreview(true);
         setIsSavedTemplate(false);
-        setIsReportTemplate(isReport);
+        setIsReportTemplate(isLetter);
         return;
       }
     }
@@ -379,6 +382,7 @@ export default function Index() {
     if (!globalTemplateId) {
       setIsGlobalTemplatePreview(false);
       setIsReportTemplate(false);
+      setCurrentGlobalTemplateId(null);
     }
 
     // Load saved checklist by ID (user clicked on existing checklist)
@@ -463,7 +467,7 @@ export default function Index() {
           <LetterView
             checklist={checklist}
             onUpdate={handleChecklistUpdate}
-            variant="report"
+            variant={currentGlobalTemplateId?.startsWith('grpt-') ? "report" : "letter"}
           />
         ) : checklist ? (
           <ChecklistBuilder

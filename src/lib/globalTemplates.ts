@@ -6614,6 +6614,1043 @@ export const generateUSQualifiedWithEmphasis = (): Checklist =>
     <p class="text-sm text-foreground">${chip('Date of Report')}</p>
   `);
 
+// ─── Letter template helpers ──────────────────────────────────────────────────
+
+function makeLetterChecklist(id: string, title: string, description: string, html: string): Checklist {
+  return {
+    id,
+    title,
+    description,
+    objective: '',
+    sections: [
+      {
+        id: `${id}-section`,
+        title,
+        isExpanded: true,
+        questions: [
+          {
+            id: `${id}-body`,
+            text: html,
+            answerType: 'none',
+            options: [],
+            required: false,
+            answer: '',
+          } as Question,
+        ],
+      },
+    ],
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  };
+}
+
+// ── Review Letters ─────────────────────────────────────────────────────────────
+
+export const generateReviewEngagementLetterMaster = (): Checklist =>
+  makeLetterChecklist('glt-2-1', 'Engagement Letter Review — Master (Corp)', 'CSRE 2400 Review Engagement Letter — Master Corporate', `
+    <p class="text-sm text-foreground">${chip('Date')}</p>
+    <p class="mt-6 text-sm text-foreground">${chip('Contact Name')}<br/>${chip('Entity Name')}<br/>${chip('Address')}</p>
+    <p class="mt-6 text-sm text-foreground">Dear ${chip('Contact Name')},</p>
+    <p class="mt-4 text-sm text-foreground">
+      We are pleased to confirm our acceptance of the engagement to review the financial statements of
+      <strong>${chip('Entity Name')}</strong> for the year ended <strong>${chip('Year End Date')}</strong>.
+    </p>
+    <p class="mt-4 text-sm text-foreground font-semibold">Objective and Scope</p>
+    <p class="mt-2 text-sm text-foreground">
+      The objective of our review engagement is to enable us to express a conclusion on whether anything has
+      come to our attention that causes us to believe that the financial statements are not prepared, in all
+      material respects, in accordance with <strong>${chip('Applicable Financial Reporting Framework')}</strong>. Our
+      review will be conducted in accordance with <strong>Canadian Standard on Review Engagements (CSRE) 2400,
+      Engagements to Review Historical Financial Statements</strong>.
+    </p>
+    <p class="mt-4 text-sm text-foreground">
+      A review engagement is substantially less in scope than an audit conducted in accordance with Canadian
+      Auditing Standards and, consequently, does not enable us to obtain assurance that we would become aware
+      of all significant matters that might be identified in an audit.
+    </p>
+    <p class="mt-4 text-sm text-foreground font-semibold">Management's Responsibilities</p>
+    <p class="mt-2 text-sm text-foreground">
+      Management is responsible for the preparation and fair presentation of these financial statements in
+      accordance with ${chip('Applicable Financial Reporting Framework')}, and for such internal control as
+      management determines is necessary to enable the preparation of financial statements that are free from
+      material misstatement, whether due to fraud or error.
+    </p>
+    <p class="mt-4 text-sm text-foreground font-semibold">Our Fees</p>
+    <p class="mt-2 text-sm text-foreground">
+      Our fees for this engagement will be ${chip('Fee Amount or Basis')}.
+    </p>
+    <p class="mt-4 text-sm text-foreground">
+      If the contents of this letter are in accordance with your understanding of the terms of this engagement,
+      please sign the enclosed copy and return it to us.
+    </p>
+    <p class="mt-6 text-sm text-foreground">Yours truly,</p>
+    <p class="mt-4 text-sm text-foreground">${chip('Firm Name')}</p>
+    <p class="mt-1 text-sm text-foreground">${chip('City, Province')}</p>
+  `);
+
+export const generateReviewManagementRepresentationLetter = (): Checklist =>
+  makeLetterChecklist('glt-2-2', 'Management Representation Letter Review (Corp)', 'CSRE 2400 Management Representation Letter — Corporate Review', `
+    <p class="text-sm text-foreground">${chip('Date')}</p>
+    <p class="mt-6 text-sm text-foreground">${chip('Firm Name')}<br/>${chip('Firm Address')}</p>
+    <p class="mt-6 text-sm text-foreground">Dear ${chip('Engagement Partner')},</p>
+    <p class="mt-4 text-sm text-foreground">
+      This representation letter is provided in connection with your review of the financial statements of
+      <strong>${chip('Entity Name')}</strong> for the year ended <strong>${chip('Year End Date')}</strong> for the purpose of
+      expressing a conclusion on whether anything has come to your attention that causes you to believe that
+      the financial statements are not prepared, in all material respects, in accordance with
+      <strong>${chip('Applicable Financial Reporting Framework')}</strong>.
+    </p>
+    <p class="mt-4 text-sm text-foreground">
+      We confirm that, to the best of our knowledge and belief, having made such inquiries as we considered
+      necessary for the purpose of appropriately informing ourselves:
+    </p>
+    <p class="mt-4 text-sm text-foreground font-semibold">Financial Statements</p>
+    <p class="mt-2 text-sm text-foreground">
+      1. We have fulfilled our responsibilities, as set out in the terms of the review engagement letter dated
+      ${chip('Engagement Letter Date')}, for the preparation and fair presentation of the financial statements
+      in accordance with ${chip('Applicable Financial Reporting Framework')}.
+    </p>
+    <p class="mt-2 text-sm text-foreground">
+      2. We acknowledge our responsibility for the design, implementation, and maintenance of internal control
+      relevant to the preparation of financial statements that are free from material misstatement, whether
+      due to fraud or error.
+    </p>
+    <p class="mt-2 text-sm text-foreground">
+      3. Significant assumptions used by us in making accounting estimates, including those measured at fair
+      value, are reasonable.
+    </p>
+    <p class="mt-2 text-sm text-foreground">
+      4. We have disclosed to you all known actual or possible litigation and claims whose effects should be
+      considered when preparing the financial statements.
+    </p>
+    <p class="mt-6 text-sm text-foreground">Yours truly,</p>
+    <p class="mt-4 text-sm text-foreground">${chip('Authorized Signatory')}<br/>${chip('Title')}<br/>${chip('Entity Name')}</p>
+  `);
+
+export const generateReviewFindingsLetter = (): Checklist =>
+  makeLetterChecklist('glt-2-3', 'Review Findings Letter (Corp)', 'CSRE 2400 Review Findings Communication — Corporate', `
+    <p class="text-sm text-foreground">${chip('Date')}</p>
+    <p class="mt-6 text-sm text-foreground">${chip('Contact Name')}<br/>${chip('Entity Name')}<br/>${chip('Address')}</p>
+    <p class="mt-6 text-sm text-foreground">Dear ${chip('Contact Name')},</p>
+    <p class="mt-4 text-sm text-foreground">
+      We have completed our review of the financial statements of <strong>${chip('Entity Name')}</strong> for the year ended
+      <strong>${chip('Year End Date')}</strong> in accordance with <strong>CSRE 2400</strong>.
+    </p>
+    <p class="mt-4 text-sm text-foreground font-semibold">Review Findings</p>
+    <p class="mt-2 text-sm text-foreground">
+      During the course of our review, the following matters came to our attention:
+    </p>
+    <p class="mt-3 text-sm text-foreground">${chip('Finding 1 Description')}</p>
+    <p class="mt-3 text-sm text-foreground">${chip('Finding 2 Description')}</p>
+    <p class="mt-4 text-sm text-foreground">
+      These findings do not modify our review conclusion. We bring these matters to management's attention
+      for information purposes and recommend that appropriate corrective actions be considered.
+    </p>
+    <p class="mt-4 text-sm text-foreground">
+      We would be pleased to discuss these findings at your convenience.
+    </p>
+    <p class="mt-6 text-sm text-foreground">Yours truly,</p>
+    <p class="mt-4 text-sm text-foreground">${chip('Firm Name')}</p>
+    <p class="mt-1 text-sm text-foreground">${chip('City, Province')}</p>
+  `);
+
+export const generateLetterToPredecessor = (): Checklist =>
+  makeLetterChecklist('glt-2-4', 'Letter to a Predecessor (Corp)', 'Communication to Predecessor Practitioner', `
+    <p class="text-sm text-foreground">${chip('Date')}</p>
+    <p class="mt-6 text-sm text-foreground">${chip('Predecessor Firm Name')}<br/>${chip('Predecessor Firm Address')}</p>
+    <p class="mt-6 text-sm text-foreground">Dear ${chip('Predecessor Engagement Partner')},</p>
+    <p class="mt-4 text-sm text-foreground">
+      We have been advised by <strong>${chip('Entity Name')}</strong> that they intend to appoint us as their practitioner
+      for the year ended <strong>${chip('Year End Date')}</strong>. Before accepting this appointment, professional
+      standards require us to communicate with the predecessor practitioner.
+    </p>
+    <p class="mt-4 text-sm text-foreground">
+      We would appreciate your response to the following inquiries:
+    </p>
+    <p class="mt-3 text-sm text-foreground">
+      1. Are there any professional reasons why we should not accept this engagement?
+    </p>
+    <p class="mt-3 text-sm text-foreground">
+      2. Are there any matters of which we should be aware that have a bearing on the integrity of management?
+    </p>
+    <p class="mt-3 text-sm text-foreground">
+      3. Are there any fees outstanding from prior engagements?
+    </p>
+    <p class="mt-3 text-sm text-foreground">
+      4. Are there any matters that are currently in dispute or unresolved?
+    </p>
+    <p class="mt-4 text-sm text-foreground">
+      Please indicate your response by completing and returning the enclosed copy of this letter at your
+      earliest convenience.
+    </p>
+    <p class="mt-6 text-sm text-foreground">Yours truly,</p>
+    <p class="mt-4 text-sm text-foreground">${chip('Firm Name')}</p>
+    <p class="mt-1 text-sm text-foreground">${chip('City, Province')}</p>
+  `);
+
+export const generateLetterToSuccessor = (): Checklist =>
+  makeLetterChecklist('glt-2-5', 'Letter to a Successor (Corp)', 'Response to Successor Practitioner Inquiry', `
+    <p class="text-sm text-foreground">${chip('Date')}</p>
+    <p class="mt-6 text-sm text-foreground">${chip('Successor Firm Name')}<br/>${chip('Successor Firm Address')}</p>
+    <p class="mt-6 text-sm text-foreground">Dear ${chip('Successor Engagement Partner')},</p>
+    <p class="mt-4 text-sm text-foreground">
+      Thank you for your letter dated ${chip('Inquiry Date')} regarding your proposed appointment as practitioner
+      for <strong>${chip('Entity Name')}</strong>.
+    </p>
+    <p class="mt-4 text-sm text-foreground">
+      In response to your inquiries, we advise as follows:
+    </p>
+    <p class="mt-3 text-sm text-foreground">
+      1. We are not aware of any professional reasons why you should not accept this engagement.
+    </p>
+    <p class="mt-3 text-sm text-foreground">
+      2. We are not aware of any matters bearing on the integrity of management that you should know about.
+    </p>
+    <p class="mt-3 text-sm text-foreground">
+      3. There are ${chip('no / outstanding')} fees from prior engagements.
+    </p>
+    <p class="mt-3 text-sm text-foreground">
+      4. There are ${chip('no / the following')} matters currently in dispute or unresolved: ${chip('Details or N/A')}.
+    </p>
+    <p class="mt-4 text-sm text-foreground">
+      Please note that this response is provided solely for your information in connection with the above
+      engagement and should not be used for any other purpose.
+    </p>
+    <p class="mt-6 text-sm text-foreground">Yours truly,</p>
+    <p class="mt-4 text-sm text-foreground">${chip('Firm Name')}</p>
+    <p class="mt-1 text-sm text-foreground">${chip('City, Province')}</p>
+  `);
+
+export const generateRequestForManagementAssistance = (): Checklist =>
+  makeLetterChecklist('glt-2-6', 'Request for Management Assistance (Corp)', 'Request for Management Assistance in Review Engagement', `
+    <p class="text-sm text-foreground">${chip('Date')}</p>
+    <p class="mt-6 text-sm text-foreground">${chip('Contact Name')}<br/>${chip('Entity Name')}</p>
+    <p class="mt-6 text-sm text-foreground">Dear ${chip('Contact Name')},</p>
+    <p class="mt-4 text-sm text-foreground">
+      In connection with our review of the financial statements of <strong>${chip('Entity Name')}</strong> for the year ended
+      <strong>${chip('Year End Date')}</strong>, we require management's assistance in providing the following information
+      and documentation:
+    </p>
+    <p class="mt-3 text-sm text-foreground">1. ${chip('Document / Information Request 1')}</p>
+    <p class="mt-3 text-sm text-foreground">2. ${chip('Document / Information Request 2')}</p>
+    <p class="mt-3 text-sm text-foreground">3. ${chip('Document / Information Request 3')}</p>
+    <p class="mt-4 text-sm text-foreground">
+      We would appreciate receiving the above information by <strong>${chip('Deadline Date')}</strong>. If you have any
+      questions or require clarification, please do not hesitate to contact us.
+    </p>
+    <p class="mt-6 text-sm text-foreground">Yours truly,</p>
+    <p class="mt-4 text-sm text-foreground">${chip('Firm Name')}</p>
+  `);
+
+// ── Tax Letters ────────────────────────────────────────────────────────────────
+
+export const generateTaxEngagementLetter = (): Checklist =>
+  makeLetterChecklist('glt-3-1', 'Tax Engagement Letter', 'Tax Engagement Letter — Corporate', `
+    <p class="text-sm text-foreground">${chip('Date')}</p>
+    <p class="mt-6 text-sm text-foreground">${chip('Contact Name')}<br/>${chip('Entity Name')}<br/>${chip('Address')}</p>
+    <p class="mt-6 text-sm text-foreground">Dear ${chip('Contact Name')},</p>
+    <p class="mt-4 text-sm text-foreground">
+      We are pleased to confirm our engagement to provide tax services to <strong>${chip('Entity Name')}</strong> for the
+      taxation year ended <strong>${chip('Taxation Year End')}</strong>.
+    </p>
+    <p class="mt-4 text-sm text-foreground font-semibold">Scope of Services</p>
+    <p class="mt-2 text-sm text-foreground">
+      The services to be provided include:
+    </p>
+    <p class="mt-2 text-sm text-foreground">• Preparation of the corporate income tax return (T2) for the year ended ${chip('Taxation Year End')};</p>
+    <p class="mt-2 text-sm text-foreground">• ${chip('Additional Tax Services, if any')}.</p>
+    <p class="mt-4 text-sm text-foreground font-semibold">Management's Responsibilities</p>
+    <p class="mt-2 text-sm text-foreground">
+      Management is responsible for providing us with complete and accurate information, maintaining adequate
+      records, making all management decisions, and ensuring compliance with all applicable tax legislation.
+    </p>
+    <p class="mt-4 text-sm text-foreground font-semibold">Our Fees</p>
+    <p class="mt-2 text-sm text-foreground">
+      Our fees for these services will be ${chip('Fee Amount or Basis')}.
+    </p>
+    <p class="mt-4 text-sm text-foreground">
+      If the contents of this letter are in accordance with your understanding, please sign and return the
+      enclosed copy to confirm your acceptance.
+    </p>
+    <p class="mt-6 text-sm text-foreground">Yours truly,</p>
+    <p class="mt-4 text-sm text-foreground">${chip('Firm Name')}</p>
+    <p class="mt-1 text-sm text-foreground">${chip('City, Province')}</p>
+  `);
+
+// ── Additional Letters ─────────────────────────────────────────────────────────
+
+export const generateClosingCoverLetter = (): Checklist =>
+  makeLetterChecklist('glt-4-1', 'Closing Cover Letter', 'Closing Cover Letter — transmitting financial statements', `
+    <p class="text-sm text-foreground">${chip('Date')}</p>
+    <p class="mt-6 text-sm text-foreground">${chip('Contact Name')}<br/>${chip('Entity Name')}<br/>${chip('Address')}</p>
+    <p class="mt-6 text-sm text-foreground">Dear ${chip('Contact Name')},</p>
+    <p class="mt-4 text-sm text-foreground">
+      Please find enclosed the financial statements of <strong>${chip('Entity Name')}</strong> for the year ended
+      <strong>${chip('Year End Date')}</strong>, together with our ${chip('Compilation Report / Review Report / Auditor\'s Report')}.
+    </p>
+    <p class="mt-4 text-sm text-foreground">
+      We draw your attention to the following matters:
+    </p>
+    <p class="mt-3 text-sm text-foreground">${chip('Key Matter 1 — or delete if none')}</p>
+    <p class="mt-3 text-sm text-foreground">${chip('Key Matter 2 — or delete if none')}</p>
+    <p class="mt-4 text-sm text-foreground">
+      If you have any questions regarding the enclosed financial statements, please do not hesitate to
+      contact us at your convenience.
+    </p>
+    <p class="mt-6 text-sm text-foreground">Yours truly,</p>
+    <p class="mt-4 text-sm text-foreground">${chip('Firm Name')}</p>
+    <p class="mt-1 text-sm text-foreground">${chip('City, Province')}</p>
+  `);
+
+export const generateLetterToLawyerLongForm = (): Checklist =>
+  makeLetterChecklist('glt-4-2', 'Letter to Lawyer (Long Form)', 'Inquiry to Legal Counsel — Long Form', `
+    <p class="text-sm text-foreground">${chip('Date')}</p>
+    <p class="mt-6 text-sm text-foreground">${chip('Lawyer Name')}<br/>${chip('Law Firm Name')}<br/>${chip('Law Firm Address')}</p>
+    <p class="mt-6 text-sm text-foreground">Dear ${chip('Lawyer Name')},</p>
+    <p class="mt-4 text-sm text-foreground">
+      We are engaged to ${chip('audit / review / compile')} the financial statements of
+      <strong>${chip('Entity Name')}</strong> as at <strong>${chip('Year End Date')}</strong>. In connection with this
+      engagement, management has authorized us to make this inquiry of you.
+    </p>
+    <p class="mt-4 text-sm text-foreground font-semibold">Scope of Inquiry</p>
+    <p class="mt-2 text-sm text-foreground">
+      Please provide us with information regarding all litigation, claims, and assessments to which the entity
+      is a party as at ${chip('Year End Date')}, and through the date of your response, that you are aware of.
+      For each matter, please indicate:
+    </p>
+    <p class="mt-2 text-sm text-foreground">a. A description of the nature of the matter;</p>
+    <p class="mt-2 text-sm text-foreground">b. The current status of the matter;</p>
+    <p class="mt-2 text-sm text-foreground">c. Your assessment of the likelihood of an unfavourable outcome (probable, possible, or remote);</p>
+    <p class="mt-2 text-sm text-foreground">d. An estimate of the potential amount of loss, or range of loss, if the outcome is expected to be unfavourable.</p>
+    <p class="mt-4 text-sm text-foreground">
+      Please also advise if there are any matters, other than those identified above, that in your opinion
+      should be disclosed in the financial statements.
+    </p>
+    <p class="mt-4 text-sm text-foreground">
+      We would appreciate your response by <strong>${chip('Response Deadline')}</strong>.
+    </p>
+    <p class="mt-6 text-sm text-foreground">Yours truly,</p>
+    <p class="mt-4 text-sm text-foreground">${chip('Firm Name')}</p>
+  `);
+
+export const generateLetterToLawyerShortForm = (): Checklist =>
+  makeLetterChecklist('glt-4-3', 'Letter to Lawyer (Short Form)', 'Inquiry to Legal Counsel — Short Form', `
+    <p class="text-sm text-foreground">${chip('Date')}</p>
+    <p class="mt-6 text-sm text-foreground">${chip('Lawyer Name')}<br/>${chip('Law Firm Name')}<br/>${chip('Law Firm Address')}</p>
+    <p class="mt-6 text-sm text-foreground">Dear ${chip('Lawyer Name')},</p>
+    <p class="mt-4 text-sm text-foreground">
+      We are engaged to ${chip('audit / review / compile')} the financial statements of
+      <strong>${chip('Entity Name')}</strong> as at <strong>${chip('Year End Date')}</strong>.
+    </p>
+    <p class="mt-4 text-sm text-foreground">
+      Please confirm whether, as at ${chip('Year End Date')} and through the date of your response, you are
+      aware of any litigation, claims, or assessments involving the entity, other than those already reflected
+      in the financial statements or disclosed to us by management.
+    </p>
+    <p class="mt-4 text-sm text-foreground">
+      If there are no such matters, please sign and return the enclosed copy of this letter. If there are
+      matters, please provide the details described below.
+    </p>
+    <p class="mt-4 text-sm text-foreground">
+      We would appreciate your response by <strong>${chip('Response Deadline')}</strong>.
+    </p>
+    <p class="mt-6 text-sm text-foreground">Yours truly,</p>
+    <p class="mt-4 text-sm text-foreground">${chip('Firm Name')}</p>
+  `);
+
+export const generateLetterToPredecessorAccountant = (): Checklist =>
+  makeLetterChecklist('glt-4-4', 'Letter to Predecessor Accountant', 'Communication to Predecessor Accountant', `
+    <p class="text-sm text-foreground">${chip('Date')}</p>
+    <p class="mt-6 text-sm text-foreground">${chip('Predecessor Firm Name')}<br/>${chip('Predecessor Firm Address')}</p>
+    <p class="mt-6 text-sm text-foreground">Dear ${chip('Predecessor Engagement Partner')},</p>
+    <p class="mt-4 text-sm text-foreground">
+      We have been engaged to perform ${chip('compilation / review / audit')} services for
+      <strong>${chip('Entity Name')}</strong> for the year ended <strong>${chip('Year End Date')}</strong>. Prior to
+      accepting this engagement, we wish to communicate with you as the predecessor practitioner.
+    </p>
+    <p class="mt-4 text-sm text-foreground">
+      With the authorization of management, we request your response to the following:
+    </p>
+    <p class="mt-3 text-sm text-foreground">
+      1. Are there any professional reasons, in your view, that would preclude us from accepting this engagement?
+    </p>
+    <p class="mt-3 text-sm text-foreground">
+      2. Are there any matters relating to the integrity of management or significant disagreements that we
+      should be aware of?
+    </p>
+    <p class="mt-3 text-sm text-foreground">
+      3. Were there any unresolved accounting, auditing, or reporting matters at the end of your engagement?
+    </p>
+    <p class="mt-4 text-sm text-foreground">
+      We would appreciate your prompt response.
+    </p>
+    <p class="mt-6 text-sm text-foreground">Yours truly,</p>
+    <p class="mt-4 text-sm text-foreground">${chip('Firm Name')}</p>
+    <p class="mt-1 text-sm text-foreground">${chip('City, Province')}</p>
+  `);
+
+export const generateLetterToSuccessorAccountant = (): Checklist =>
+  makeLetterChecklist('glt-4-5', 'Letter to Successor Accountant', 'Response to Successor Accountant Inquiry', `
+    <p class="text-sm text-foreground">${chip('Date')}</p>
+    <p class="mt-6 text-sm text-foreground">${chip('Successor Firm Name')}<br/>${chip('Successor Firm Address')}</p>
+    <p class="mt-6 text-sm text-foreground">Dear ${chip('Successor Engagement Partner')},</p>
+    <p class="mt-4 text-sm text-foreground">
+      We acknowledge receipt of your letter dated ${chip('Inquiry Date')} regarding the proposed engagement
+      for <strong>${chip('Entity Name')}</strong>.
+    </p>
+    <p class="mt-4 text-sm text-foreground">
+      In response to your inquiries, we confirm as follows:
+    </p>
+    <p class="mt-3 text-sm text-foreground">
+      1. We are not aware of any professional reasons that would preclude your acceptance of this engagement.
+    </p>
+    <p class="mt-3 text-sm text-foreground">
+      2. We are not aware of matters relating to management's integrity that you should know about.
+    </p>
+    <p class="mt-3 text-sm text-foreground">
+      3. ${chip('There were no unresolved matters / The following matters were unresolved:')} ${chip('Details or N/A')}.
+    </p>
+    <p class="mt-4 text-sm text-foreground">
+      This response is provided solely for your information and should not be relied upon for any other purpose.
+    </p>
+    <p class="mt-6 text-sm text-foreground">Yours truly,</p>
+    <p class="mt-4 text-sm text-foreground">${chip('Firm Name')}</p>
+    <p class="mt-1 text-sm text-foreground">${chip('City, Province')}</p>
+  `);
+
+// ── Audit Letters — Canada ─────────────────────────────────────────────────────
+
+export const generateAuditEngagementLetterCASASPE = (): Checklist =>
+  makeLetterChecklist('glt-ca-1', 'Audit Engagement Letter (CAS/ASPE)', 'CAS Audit Engagement Letter — ASPE Framework', `
+    <p class="text-sm text-foreground">${chip('Date')}</p>
+    <p class="mt-6 text-sm text-foreground">${chip('Contact Name')}<br/>${chip('Entity Name')}<br/>${chip('Address')}</p>
+    <p class="mt-6 text-sm text-foreground">Dear ${chip('Contact Name')},</p>
+    <p class="mt-4 text-sm text-foreground">
+      We are pleased to confirm our acceptance of the engagement to audit the financial statements of
+      <strong>${chip('Entity Name')}</strong> for the year ended <strong>${chip('Year End Date')}</strong>.
+    </p>
+    <p class="mt-4 text-sm text-foreground font-semibold">Objective and Scope of the Audit</p>
+    <p class="mt-2 text-sm text-foreground">
+      The objective of our audit is to obtain reasonable assurance about whether the financial statements as a
+      whole are free from material misstatement, whether due to fraud or error, and to issue an auditor's
+      report that includes our opinion. Our audit will be conducted in accordance with <strong>Canadian Auditing
+      Standards (CAS)</strong>. Those standards require that we comply with ethical requirements and plan and perform
+      the audit to obtain reasonable assurance.
+    </p>
+    <p class="mt-4 text-sm text-foreground">
+      The financial statements will be prepared in accordance with <strong>Accounting Standards for Private
+      Enterprises (ASPE)</strong>.
+    </p>
+    <p class="mt-4 text-sm text-foreground font-semibold">Management's Responsibilities</p>
+    <p class="mt-2 text-sm text-foreground">
+      Management is responsible for the preparation and fair presentation of the financial statements in
+      accordance with ASPE, and for such internal control as management determines is necessary to enable the
+      preparation of financial statements that are free from material misstatement, whether due to fraud or error.
+    </p>
+    <p class="mt-2 text-sm text-foreground">
+      Management is also responsible for providing us with:
+    </p>
+    <p class="mt-2 text-sm text-foreground">a. Access to all information of which management is aware that is relevant to the preparation of the financial statements;</p>
+    <p class="mt-2 text-sm text-foreground">b. Additional information that we may request for the purpose of the audit; and</p>
+    <p class="mt-2 text-sm text-foreground">c. Unrestricted access to persons within the entity from whom we determine it necessary to obtain audit evidence.</p>
+    <p class="mt-4 text-sm text-foreground font-semibold">Auditor's Responsibilities</p>
+    <p class="mt-2 text-sm text-foreground">
+      Our responsibilities are to obtain reasonable assurance about whether the financial statements as a whole
+      are free from material misstatement, whether due to fraud or error. Because of the inherent limitations of
+      an audit, there is an unavoidable risk that some material misstatements may not be detected, even though
+      the audit is properly planned and performed in accordance with CAS.
+    </p>
+    <p class="mt-4 text-sm text-foreground font-semibold">Other Relevant Information</p>
+    <p class="mt-2 text-sm text-foreground">
+      Our fees will be based on ${chip('Fee Basis')}. We will provide you with an estimate of our fees prior
+      to completing the engagement.
+    </p>
+    <p class="mt-4 text-sm text-foreground">
+      Please sign and return the attached copy of this letter to confirm your agreement with the terms of
+      our engagement.
+    </p>
+    <p class="mt-6 text-sm text-foreground">Yours truly,</p>
+    <p class="mt-4 text-sm text-foreground">${chip('Firm Name')}</p>
+    <p class="mt-1 text-sm text-foreground">${chip('City, Province')}</p>
+  `);
+
+export const generateAuditEngagementLetterCASASNPO = (): Checklist =>
+  makeLetterChecklist('glt-ca-2', 'Audit Engagement Letter (CAS/ASNPO)', 'CAS Audit Engagement Letter — ASNPO Framework', `
+    <p class="text-sm text-foreground">${chip('Date')}</p>
+    <p class="mt-6 text-sm text-foreground">${chip('Contact Name')}<br/>${chip('Entity Name')}<br/>${chip('Address')}</p>
+    <p class="mt-6 text-sm text-foreground">Dear ${chip('Contact Name')},</p>
+    <p class="mt-4 text-sm text-foreground">
+      We are pleased to confirm our acceptance of the engagement to audit the financial statements of
+      <strong>${chip('Entity Name')}</strong> for the year ended <strong>${chip('Year End Date')}</strong>.
+    </p>
+    <p class="mt-4 text-sm text-foreground font-semibold">Objective and Scope of the Audit</p>
+    <p class="mt-2 text-sm text-foreground">
+      Our audit will be conducted in accordance with <strong>Canadian Auditing Standards (CAS)</strong>. The objective
+      of our audit is to obtain reasonable assurance about whether the financial statements are free from
+      material misstatement and to issue an auditor's report.
+    </p>
+    <p class="mt-4 text-sm text-foreground">
+      The financial statements will be prepared in accordance with <strong>Accounting Standards for Not-for-Profit
+      Organizations (ASNPO)</strong>.
+    </p>
+    <p class="mt-4 text-sm text-foreground font-semibold">Governance's and Management's Responsibilities</p>
+    <p class="mt-2 text-sm text-foreground">
+      Those charged with governance and management are responsible for the preparation and fair presentation
+      of the financial statements in accordance with ASNPO, and for such internal control as they determine
+      is necessary to enable the preparation of financial statements that are free from material misstatement,
+      whether due to fraud or error.
+    </p>
+    <p class="mt-4 text-sm text-foreground font-semibold">Auditor's Responsibilities</p>
+    <p class="mt-2 text-sm text-foreground">
+      Our responsibilities are to obtain reasonable assurance about whether the financial statements as a whole
+      are free from material misstatement, whether due to fraud or error, and to issue an auditor's report.
+    </p>
+    <p class="mt-4 text-sm text-foreground font-semibold">Fees</p>
+    <p class="mt-2 text-sm text-foreground">
+      Our fees will be based on ${chip('Fee Basis')}.
+    </p>
+    <p class="mt-4 text-sm text-foreground">
+      Please sign and return the enclosed copy to confirm your agreement.
+    </p>
+    <p class="mt-6 text-sm text-foreground">Yours truly,</p>
+    <p class="mt-4 text-sm text-foreground">${chip('Firm Name')}</p>
+    <p class="mt-1 text-sm text-foreground">${chip('City, Province')}</p>
+  `);
+
+export const generateManagementRepLetterCAS580 = (): Checklist =>
+  makeLetterChecklist('glt-ca-3', 'Management Representation Letter (CAS 580)', 'CAS 580 Management Representation Letter', `
+    <p class="text-sm text-foreground">${chip('Date')}</p>
+    <p class="mt-6 text-sm text-foreground">${chip('Firm Name')}<br/>${chip('Firm Address')}</p>
+    <p class="mt-6 text-sm text-foreground">Dear ${chip('Engagement Partner')},</p>
+    <p class="mt-4 text-sm text-foreground">
+      This representation letter is provided in connection with your audit of the financial statements of
+      <strong>${chip('Entity Name')}</strong> for the year ended <strong>${chip('Year End Date')}</strong>, for the purpose of
+      expressing an opinion on whether the financial statements are presented fairly, in all material respects,
+      in accordance with <strong>${chip('Applicable Financial Reporting Framework')}</strong>.
+    </p>
+    <p class="mt-4 text-sm text-foreground">
+      We confirm that, to the best of our knowledge and belief:
+    </p>
+    <p class="mt-4 text-sm text-foreground font-semibold">Financial Statements</p>
+    <p class="mt-2 text-sm text-foreground">
+      1. We have fulfilled our responsibilities, as set out in the terms of the audit engagement letter, for the
+      preparation and fair presentation of the financial statements in accordance with
+      ${chip('Applicable Financial Reporting Framework')}.
+    </p>
+    <p class="mt-2 text-sm text-foreground">
+      2. Significant assumptions used by us in making accounting estimates are reasonable.
+    </p>
+    <p class="mt-2 text-sm text-foreground">
+      3. Related party relationships and transactions have been appropriately accounted for and disclosed.
+    </p>
+    <p class="mt-2 text-sm text-foreground">
+      4. All events subsequent to the date of the financial statements and for which accounting standards require
+      adjustment or disclosure have been adjusted or disclosed.
+    </p>
+    <p class="mt-4 text-sm text-foreground font-semibold">Information Provided</p>
+    <p class="mt-2 text-sm text-foreground">
+      5. We have provided you with all information relevant to the preparation of the financial statements, access
+      to all information of which we are aware that is relevant to the preparation of the financial statements,
+      and unrestricted access to all persons within the entity.
+    </p>
+    <p class="mt-2 text-sm text-foreground">
+      6. All transactions have been recorded in the accounting records and are reflected in the financial statements.
+    </p>
+    <p class="mt-4 text-sm text-foreground font-semibold">Fraud</p>
+    <p class="mt-2 text-sm text-foreground">
+      7. We have disclosed to you: (a) the results of our assessment of the risk that the financial statements may
+      be materially misstated as a result of fraud; (b) our knowledge of fraud or suspected fraud involving
+      management, employees with significant roles in internal control, or others where the fraud could have a
+      material effect on the financial statements; and (c) our knowledge of any allegations of fraud or suspected
+      fraud affecting the entity's financial statements.
+    </p>
+    <p class="mt-4 text-sm text-foreground font-semibold">Litigation and Claims</p>
+    <p class="mt-2 text-sm text-foreground">
+      8. We have disclosed to you all known actual or possible litigation and claims whose effects should be
+      considered when preparing the financial statements, and we have appropriately accounted for and disclosed
+      such matters in accordance with ${chip('Applicable Financial Reporting Framework')}.
+    </p>
+    <p class="mt-6 text-sm text-foreground">
+      <strong>${chip('Authorized Signatory (CEO/CFO)')}</strong><br/>
+      ${chip('Title')}<br/>
+      ${chip('Entity Name')}<br/>
+      ${chip('Date')}
+    </p>
+  `);
+
+export const generateCommunicationTCWGPlanning = (): Checklist =>
+  makeLetterChecklist('glt-ca-4', 'Communication with Those Charged with Governance — Planning (CAS 260)', 'CAS 260 Planning Communication to Those Charged with Governance', `
+    <p class="text-sm text-foreground font-semibold text-center mt-2">COMMUNICATION WITH THOSE CHARGED WITH GOVERNANCE — PLANNING</p>
+    <p class="mt-4 text-sm text-foreground">
+      To the Board of Directors (or Audit Committee) of <strong>${chip('Entity Name')}</strong>:
+    </p>
+    <p class="mt-4 text-sm text-foreground">
+      In accordance with <strong>Canadian Auditing Standard (CAS) 260</strong>, we are providing you with an
+      overview of the planned scope and timing of our audit for the year ended <strong>${chip('Year End Date')}</strong>.
+    </p>
+    <p class="mt-4 text-sm text-foreground font-semibold">Overview of the Planned Audit Scope</p>
+    <p class="mt-2 text-sm text-foreground">
+      Our audit will be conducted in accordance with Canadian Auditing Standards. We have planned our audit
+      based on our preliminary assessment of the entity's control environment and risk of material misstatement.
+    </p>
+    <p class="mt-4 text-sm text-foreground font-semibold">Significant Risks Identified</p>
+    <p class="mt-2 text-sm text-foreground">
+      Based on our preliminary risk assessment, we have identified the following significant risks that require
+      special audit consideration:
+    </p>
+    <p class="mt-2 text-sm text-foreground">• ${chip('Significant Risk 1')}</p>
+    <p class="mt-2 text-sm text-foreground">• ${chip('Significant Risk 2')}</p>
+    <p class="mt-4 text-sm text-foreground font-semibold">Materiality</p>
+    <p class="mt-2 text-sm text-foreground">
+      We have determined overall materiality for the financial statements as a whole to be
+      <strong>${chip('Materiality Amount')}</strong>. Performance materiality has been set at
+      <strong>${chip('Performance Materiality Amount')}</strong>.
+    </p>
+    <p class="mt-4 text-sm text-foreground font-semibold">Audit Timeline</p>
+    <p class="mt-2 text-sm text-foreground">
+      Fieldwork is planned to commence on <strong>${chip('Fieldwork Start Date')}</strong> and we anticipate
+      completing the audit by <strong>${chip('Expected Completion Date')}</strong>.
+    </p>
+    <p class="mt-4 text-sm text-foreground font-semibold">Engagement Team</p>
+    <p class="mt-2 text-sm text-foreground">
+      The engagement partner is <strong>${chip('Engagement Partner')}</strong>. The engagement manager is
+      <strong>${chip('Engagement Manager')}</strong>.
+    </p>
+    <p class="mt-6 text-sm text-foreground">Respectfully submitted,</p>
+    <p class="mt-4 text-sm text-foreground">${chip('Firm Name')}</p>
+    <p class="mt-1 text-sm text-foreground">${chip('City, Province')}</p>
+    <p class="mt-1 text-sm text-foreground">${chip('Date')}</p>
+  `);
+
+export const generateCommunicationTCWGFinal = (): Checklist =>
+  makeLetterChecklist('glt-ca-5', 'Communication with Those Charged with Governance — Final (CAS 260)', 'CAS 260 Final Communication to Those Charged with Governance', `
+    <p class="text-sm text-foreground font-semibold text-center mt-2">COMMUNICATION WITH THOSE CHARGED WITH GOVERNANCE — FINAL</p>
+    <p class="mt-4 text-sm text-foreground">
+      To the Board of Directors (or Audit Committee) of <strong>${chip('Entity Name')}</strong>:
+    </p>
+    <p class="mt-4 text-sm text-foreground">
+      In accordance with <strong>Canadian Auditing Standard (CAS) 260</strong>, we are providing you with
+      the results of our audit of the financial statements for the year ended <strong>${chip('Year End Date')}</strong>.
+    </p>
+    <p class="mt-4 text-sm text-foreground font-semibold">Our Responsibilities</p>
+    <p class="mt-2 text-sm text-foreground">
+      Our responsibility was to plan and perform an audit designed to obtain reasonable assurance about
+      whether the financial statements are free from material misstatement and to issue an auditor's report.
+    </p>
+    <p class="mt-4 text-sm text-foreground font-semibold">Significant Findings from the Audit</p>
+    <p class="mt-2 text-sm text-foreground">
+      We are required to communicate the following significant findings arising from the audit:
+    </p>
+    <p class="mt-2 text-sm text-foreground">
+      <strong>Significant accounting policies:</strong> ${chip('Summary of significant accounting policies or "No changes from prior year"')}
+    </p>
+    <p class="mt-2 text-sm text-foreground">
+      <strong>Significant accounting estimates:</strong> ${chip('Key estimates subject to significant judgment')}
+    </p>
+    <p class="mt-2 text-sm text-foreground">
+      <strong>Significant difficulties encountered:</strong> ${chip('None / Describe difficulties')}
+    </p>
+    <p class="mt-2 text-sm text-foreground">
+      <strong>Significant matters discussed with management:</strong> ${chip('Describe or "None"')}
+    </p>
+    <p class="mt-4 text-sm text-foreground font-semibold">Uncorrected Misstatements</p>
+    <p class="mt-2 text-sm text-foreground">
+      ${chip('There were no uncorrected misstatements / The following uncorrected misstatements are noted:')}
+    </p>
+    <p class="mt-4 text-sm text-foreground font-semibold">Independence</p>
+    <p class="mt-2 text-sm text-foreground">
+      We confirm that we are independent with respect to <strong>${chip('Entity Name')}</strong> within the meaning of
+      the relevant rules and related interpretations prescribed by the relevant professional bodies in Canada.
+    </p>
+    <p class="mt-6 text-sm text-foreground">Respectfully submitted,</p>
+    <p class="mt-4 text-sm text-foreground">${chip('Firm Name')}</p>
+    <p class="mt-1 text-sm text-foreground">${chip('City, Province')}</p>
+    <p class="mt-1 text-sm text-foreground">${chip('Date')}</p>
+  `);
+
+export const generateInquiryToLegalCounselCA = (): Checklist =>
+  makeLetterChecklist('glt-ca-6', "Inquiry to Legal Counsel (Lawyer's Letter)", "CAS — Inquiry to Legal Counsel (Lawyer's Letter)", `
+    <p class="text-sm text-foreground">${chip('Date')}</p>
+    <p class="mt-6 text-sm text-foreground">${chip('Lawyer Name')}<br/>${chip('Law Firm Name')}<br/>${chip('Law Firm Address')}</p>
+    <p class="mt-6 text-sm text-foreground">Dear ${chip('Lawyer Name')},</p>
+    <p class="mt-4 text-sm text-foreground">
+      We are the auditors of <strong>${chip('Entity Name')}</strong> and are currently conducting an audit of the financial
+      statements as at <strong>${chip('Year End Date')}</strong>. Management has authorized us to make this inquiry.
+    </p>
+    <p class="mt-4 text-sm text-foreground">
+      In connection with the preparation of the financial statements, we request that you provide us with the
+      following information:
+    </p>
+    <p class="mt-4 text-sm text-foreground font-semibold">1. Litigation, Claims, and Assessments</p>
+    <p class="mt-2 text-sm text-foreground">
+      Please provide a list of all litigation, claims, and assessments as at ${chip('Year End Date')} to which
+      the entity is a party, to which your attention has been directed in the course of providing legal
+      services during the period from ${chip('Period Start Date')} to ${chip('Year End Date')}. For each such
+      matter, please provide:
+    </p>
+    <p class="mt-2 text-sm text-foreground">a. A description of the nature of the matter and the issues involved;</p>
+    <p class="mt-2 text-sm text-foreground">b. The current status;</p>
+    <p class="mt-2 text-sm text-foreground">c. Your assessment of the likely outcome and, if estimable, the amount of potential loss or range of loss;</p>
+    <p class="mt-2 text-sm text-foreground">d. The extent to which a loss, if any, would be covered by insurance.</p>
+    <p class="mt-4 text-sm text-foreground font-semibold">2. Unasserted Claims</p>
+    <p class="mt-2 text-sm text-foreground">
+      Please advise us of any unasserted claims or assessments you consider to be probable of assertion that,
+      if asserted, would have at least a reasonable possibility of an unfavourable outcome.
+    </p>
+    <p class="mt-4 text-sm text-foreground font-semibold">3. Completeness Confirmation</p>
+    <p class="mt-2 text-sm text-foreground">
+      Please confirm that the list of matters provided is complete, or advise us accordingly.
+    </p>
+    <p class="mt-4 text-sm text-foreground">
+      We would appreciate your response by <strong>${chip('Response Deadline')}</strong>.
+    </p>
+    <p class="mt-6 text-sm text-foreground">Yours truly,</p>
+    <p class="mt-4 text-sm text-foreground">${chip('Firm Name')}</p>
+    <p class="mt-1 text-sm text-foreground">${chip('City, Province')}</p>
+  `);
+
+export const generateCommunicationToPredecessorAuditorCA = (): Checklist =>
+  makeLetterChecklist('glt-ca-7', 'Communication to Predecessor Auditor', 'CAS — Communication to Predecessor Auditor', `
+    <p class="text-sm text-foreground">${chip('Date')}</p>
+    <p class="mt-6 text-sm text-foreground">${chip('Predecessor Firm Name')}<br/>${chip('Predecessor Firm Address')}</p>
+    <p class="mt-6 text-sm text-foreground">Dear ${chip('Predecessor Engagement Partner')},</p>
+    <p class="mt-4 text-sm text-foreground">
+      We have been engaged to audit the financial statements of <strong>${chip('Entity Name')}</strong> for the year ended
+      <strong>${chip('Year End Date')}</strong>. In accordance with <strong>CAS 510, Initial Audit Engagements — Opening
+      Balances</strong>, we are required to communicate with the predecessor auditor.
+    </p>
+    <p class="mt-4 text-sm text-foreground">
+      Management has authorized us to communicate with you. We request your assistance with the following:
+    </p>
+    <p class="mt-3 text-sm text-foreground">
+      1. Please advise us if you are aware of any professional reasons why we should not accept this appointment.
+    </p>
+    <p class="mt-3 text-sm text-foreground">
+      2. Please advise us of any matters bearing on the integrity of management.
+    </p>
+    <p class="mt-3 text-sm text-foreground">
+      3. Please advise us of any significant disagreements with management regarding accounting principles,
+      the application of auditing standards, or similarly significant matters.
+    </p>
+    <p class="mt-3 text-sm text-foreground">
+      4. Please advise whether you would permit us to review your audit working papers for the prior year.
+    </p>
+    <p class="mt-4 text-sm text-foreground">
+      We would appreciate your prompt response.
+    </p>
+    <p class="mt-6 text-sm text-foreground">Yours truly,</p>
+    <p class="mt-4 text-sm text-foreground">${chip('Firm Name')}</p>
+    <p class="mt-1 text-sm text-foreground">${chip('City, Province')}</p>
+  `);
+
+export const generateLetterToManagementSignificantDeficienciesCA = (): Checklist =>
+  makeLetterChecklist('glt-ca-8', 'Letter to Management — Significant Deficiencies (CAS 265)', 'CAS 265 Communication of Significant Deficiencies to Management', `
+    <p class="text-sm text-foreground font-semibold text-center mt-2">COMMUNICATION OF SIGNIFICANT DEFICIENCIES IN INTERNAL CONTROL</p>
+    <p class="mt-4 text-sm text-foreground">
+      To the Management of <strong>${chip('Entity Name')}</strong>:
+    </p>
+    <p class="mt-4 text-sm text-foreground">
+      In planning and performing our audit of the financial statements of <strong>${chip('Entity Name')}</strong> for the
+      year ended <strong>${chip('Year End Date')}</strong> in accordance with <strong>Canadian Auditing Standards</strong>, we
+      considered the entity's internal control over financial reporting as a basis for designing our audit
+      procedures for the purpose of expressing our opinion on the financial statements, but not for the purpose
+      of expressing an opinion on the effectiveness of internal control.
+    </p>
+    <p class="mt-4 text-sm text-foreground">
+      In connection with our audit, we have identified the following significant deficiencies in internal
+      control that we are required to communicate to management and, where applicable, to those charged with
+      governance in accordance with <strong>CAS 265, Communicating Deficiencies in Internal Control</strong>.
+    </p>
+    <p class="mt-4 text-sm text-foreground font-semibold">Significant Deficiencies</p>
+    <p class="mt-2 text-sm text-foreground font-semibold">Deficiency 1: ${chip('Deficiency Title')}</p>
+    <p class="mt-1 text-sm text-foreground"><em>Observation:</em> ${chip('Describe the deficiency observed')}</p>
+    <p class="mt-1 text-sm text-foreground"><em>Risk:</em> ${chip('Describe the risk posed by this deficiency')}</p>
+    <p class="mt-1 text-sm text-foreground"><em>Recommendation:</em> ${chip('Describe recommended corrective action')}</p>
+    <p class="mt-4 text-sm text-foreground">
+      This communication is intended solely for the information and use of management and those charged with
+      governance of <strong>${chip('Entity Name')}</strong> and is not intended to be and should not be used by anyone
+      other than these specified parties.
+    </p>
+    <p class="mt-6 text-sm text-foreground">Yours truly,</p>
+    <p class="mt-4 text-sm text-foreground">${chip('Firm Name')}</p>
+    <p class="mt-1 text-sm text-foreground">${chip('City, Province')}</p>
+    <p class="mt-1 text-sm text-foreground">${chip('Date')}</p>
+  `);
+
+// ── Audit Letters — United States ──────────────────────────────────────────────
+
+export const generateAuditEngagementLetterGAASUSGAAP = (): Checklist =>
+  makeLetterChecklist('glt-us-1', 'Audit Engagement Letter (GAAS/US GAAP)', 'GAAS Audit Engagement Letter — US GAAP Framework', `
+    <p class="text-sm text-foreground">${chip('Date')}</p>
+    <p class="mt-6 text-sm text-foreground">${chip('Contact Name')}<br/>${chip('Entity Name')}<br/>${chip('Address')}</p>
+    <p class="mt-6 text-sm text-foreground">Dear ${chip('Contact Name')},</p>
+    <p class="mt-4 text-sm text-foreground">
+      We are pleased to confirm our acceptance of the engagement to audit the financial statements of
+      <strong>${chip('Entity Name')}</strong> as of and for the year ended <strong>${chip('Year End Date')}</strong>.
+    </p>
+    <p class="mt-4 text-sm text-foreground font-semibold">Objective and Scope of the Audit</p>
+    <p class="mt-2 text-sm text-foreground">
+      Our audit will be conducted in accordance with <strong>auditing standards generally accepted in the United
+      States of America (GAAS)</strong>, as established by the Auditing Standards Board of the American Institute of
+      Certified Public Accountants. Our objective is to obtain reasonable assurance about whether the financial
+      statements are free from material misstatement and to express an opinion.
+    </p>
+    <p class="mt-4 text-sm text-foreground">
+      The financial statements are to be prepared in accordance with <strong>accounting principles generally accepted
+      in the United States of America (US GAAP)</strong>.
+    </p>
+    <p class="mt-4 text-sm text-foreground font-semibold">Management's Responsibilities</p>
+    <p class="mt-2 text-sm text-foreground">
+      Management is responsible for (1) the preparation and fair presentation of these financial statements in
+      accordance with US GAAP; (2) the design, implementation, and maintenance of internal control relevant to
+      the preparation of financial statements that are free from material misstatement, whether due to fraud or
+      error; and (3) providing us with all information and access necessary to perform our audit.
+    </p>
+    <p class="mt-4 text-sm text-foreground font-semibold">Auditor's Responsibilities</p>
+    <p class="mt-2 text-sm text-foreground">
+      Our responsibility is to express an opinion on the financial statements based on our audit conducted in
+      accordance with GAAS. GAAS requires that we plan and perform the audit to obtain reasonable assurance
+      about whether the financial statements are free from material misstatement.
+    </p>
+    <p class="mt-4 text-sm text-foreground font-semibold">Fees</p>
+    <p class="mt-2 text-sm text-foreground">
+      Our fees will be based on ${chip('Fee Basis')}.
+    </p>
+    <p class="mt-4 text-sm text-foreground">
+      Please sign and return the enclosed copy of this letter to confirm your agreement with the terms
+      described herein.
+    </p>
+    <p class="mt-6 text-sm text-foreground">Very truly yours,</p>
+    <p class="mt-4 text-sm text-foreground">${chip('Firm Name')}</p>
+    <p class="mt-1 text-sm text-foreground">${chip('City, State')}</p>
+  `);
+
+export const generateManagementRepLetterAUC580 = (): Checklist =>
+  makeLetterChecklist('glt-us-2', 'Management Representation Letter (AU-C 580)', 'AU-C 580 Written Representations Letter', `
+    <p class="text-sm text-foreground">${chip('Date')}</p>
+    <p class="mt-6 text-sm text-foreground">${chip('Firm Name')}<br/>${chip('Firm Address')}</p>
+    <p class="mt-6 text-sm text-foreground">Dear ${chip('Engagement Partner')},</p>
+    <p class="mt-4 text-sm text-foreground">
+      This representation letter is provided in connection with your audit of the financial statements of
+      <strong>${chip('Entity Name')}</strong> as of and for the year ended <strong>${chip('Year End Date')}</strong>, for the
+      purpose of expressing an opinion on whether the financial statements are presented fairly, in all material
+      respects, in accordance with <strong>accounting principles generally accepted in the United States of America
+      (US GAAP)</strong>.
+    </p>
+    <p class="mt-4 text-sm text-foreground">
+      We confirm that, to the best of our knowledge and belief, having made such inquiries as we considered
+      necessary for the purpose of appropriately informing ourselves:
+    </p>
+    <p class="mt-4 text-sm text-foreground font-semibold">Financial Statements</p>
+    <p class="mt-2 text-sm text-foreground">
+      1. We have fulfilled our responsibilities, as set out in the terms of the audit engagement letter, for
+      the preparation and fair presentation of the financial statements in conformity with US GAAP.
+    </p>
+    <p class="mt-2 text-sm text-foreground">
+      2. We acknowledge our responsibility for the design, implementation, and maintenance of internal controls
+      relevant to the preparation of financial statements that are free from material misstatement, whether
+      due to fraud or error.
+    </p>
+    <p class="mt-2 text-sm text-foreground">
+      3. We believe the effects of any uncorrected misstatements are immaterial, both individually and in the
+      aggregate, to the financial statements as a whole. A schedule of uncorrected misstatements is attached.
+    </p>
+    <p class="mt-4 text-sm text-foreground font-semibold">Fraud</p>
+    <p class="mt-2 text-sm text-foreground">
+      4. We have disclosed to you the results of our assessment of the risk that the financial statements may be
+      materially misstated as a result of fraud.
+    </p>
+    <p class="mt-2 text-sm text-foreground">
+      5. We have no knowledge of any fraud or suspected fraud affecting the entity involving management,
+      employees with significant roles in internal control, or others where the fraud could have a material
+      effect on the financial statements.
+    </p>
+    <p class="mt-4 text-sm text-foreground font-semibold">Litigation and Claims</p>
+    <p class="mt-2 text-sm text-foreground">
+      6. We have disclosed to you all known actual or possible litigation and claims whose effects should be
+      considered when preparing the financial statements, and have appropriately accounted for and disclosed
+      such matters.
+    </p>
+    <p class="mt-6 text-sm text-foreground">
+      <strong>${chip('Authorized Signatory (CEO/CFO)')}</strong><br/>
+      ${chip('Title')}<br/>
+      ${chip('Entity Name')}<br/>
+      ${chip('Date')}
+    </p>
+  `);
+
+export const generateCommunicationTCWGPlanningUS = (): Checklist =>
+  makeLetterChecklist('glt-us-3', 'Communication with Those Charged with Governance — Planning (AU-C 260)', 'AU-C 260 Planning Communication to Those Charged with Governance', `
+    <p class="text-sm text-foreground font-semibold text-center mt-2">COMMUNICATION WITH THOSE CHARGED WITH GOVERNANCE — PLANNING</p>
+    <p class="mt-4 text-sm text-foreground">
+      To the Board of Directors (or Audit Committee) of <strong>${chip('Entity Name')}</strong>:
+    </p>
+    <p class="mt-4 text-sm text-foreground">
+      In accordance with <strong>AU-C Section 260</strong>, we are providing an overview of the planned scope and
+      timing of our audit of the financial statements for the year ended <strong>${chip('Year End Date')}</strong>.
+    </p>
+    <p class="mt-4 text-sm text-foreground font-semibold">Overview of the Planned Audit Scope</p>
+    <p class="mt-2 text-sm text-foreground">
+      Our audit will be conducted in accordance with auditing standards generally accepted in the United States
+      of America. We have planned our audit based on our risk assessment of the entity.
+    </p>
+    <p class="mt-4 text-sm text-foreground font-semibold">Significant Risks</p>
+    <p class="mt-2 text-sm text-foreground">
+      We have identified the following risks of material misstatement requiring special audit consideration:
+    </p>
+    <p class="mt-2 text-sm text-foreground">• ${chip('Significant Risk 1')}</p>
+    <p class="mt-2 text-sm text-foreground">• ${chip('Significant Risk 2')}</p>
+    <p class="mt-4 text-sm text-foreground font-semibold">Materiality</p>
+    <p class="mt-2 text-sm text-foreground">
+      Overall materiality: <strong>${chip('Materiality Amount')}</strong>. Performance materiality:
+      <strong>${chip('Performance Materiality Amount')}</strong>.
+    </p>
+    <p class="mt-4 text-sm text-foreground font-semibold">Timeline</p>
+    <p class="mt-2 text-sm text-foreground">
+      Fieldwork is scheduled to begin <strong>${chip('Fieldwork Start Date')}</strong> with completion expected by
+      <strong>${chip('Expected Completion Date')}</strong>.
+    </p>
+    <p class="mt-6 text-sm text-foreground">Respectfully submitted,</p>
+    <p class="mt-4 text-sm text-foreground">${chip('Firm Name')}</p>
+    <p class="mt-1 text-sm text-foreground">${chip('City, State')}</p>
+    <p class="mt-1 text-sm text-foreground">${chip('Date')}</p>
+  `);
+
+export const generateCommunicationTCWGFinalUS = (): Checklist =>
+  makeLetterChecklist('glt-us-4', 'Communication with Those Charged with Governance — Final (AU-C 260)', 'AU-C 260 Final Communication to Those Charged with Governance', `
+    <p class="text-sm text-foreground font-semibold text-center mt-2">COMMUNICATION WITH THOSE CHARGED WITH GOVERNANCE — FINAL</p>
+    <p class="mt-4 text-sm text-foreground">
+      To the Board of Directors (or Audit Committee) of <strong>${chip('Entity Name')}</strong>:
+    </p>
+    <p class="mt-4 text-sm text-foreground">
+      In accordance with <strong>AU-C Section 260</strong>, we are providing the following communication regarding
+      the results of our audit of the financial statements for the year ended <strong>${chip('Year End Date')}</strong>.
+    </p>
+    <p class="mt-4 text-sm text-foreground font-semibold">Significant Findings</p>
+    <p class="mt-2 text-sm text-foreground">
+      <strong>Significant accounting policies:</strong> ${chip('Summary or "No changes noted"')}
+    </p>
+    <p class="mt-2 text-sm text-foreground">
+      <strong>Significant accounting estimates:</strong> ${chip('Key judgments or areas of estimation uncertainty')}
+    </p>
+    <p class="mt-2 text-sm text-foreground">
+      <strong>Significant difficulties:</strong> ${chip('None / Describe')}
+    </p>
+    <p class="mt-2 text-sm text-foreground">
+      <strong>Uncorrected misstatements:</strong> ${chip('None / See Schedule A')}
+    </p>
+    <p class="mt-4 text-sm text-foreground font-semibold">Independence</p>
+    <p class="mt-2 text-sm text-foreground">
+      We confirm that we are independent with respect to <strong>${chip('Entity Name')}</strong> in accordance with
+      relevant ethical requirements regarding independence.
+    </p>
+    <p class="mt-6 text-sm text-foreground">Respectfully submitted,</p>
+    <p class="mt-4 text-sm text-foreground">${chip('Firm Name')}</p>
+    <p class="mt-1 text-sm text-foreground">${chip('City, State')}</p>
+    <p class="mt-1 text-sm text-foreground">${chip('Date')}</p>
+  `);
+
+export const generateInquiryToLegalCounselUS = (): Checklist =>
+  makeLetterChecklist('glt-us-5', 'Inquiry to Legal Counsel', 'GAAS — Inquiry to Legal Counsel', `
+    <p class="text-sm text-foreground">${chip('Date')}</p>
+    <p class="mt-6 text-sm text-foreground">${chip('Attorney Name')}<br/>${chip('Law Firm Name')}<br/>${chip('Law Firm Address')}</p>
+    <p class="mt-6 text-sm text-foreground">Dear ${chip('Attorney Name')},</p>
+    <p class="mt-4 text-sm text-foreground">
+      We are auditors for <strong>${chip('Entity Name')}</strong> and are engaged in an audit of the financial statements
+      as of <strong>${chip('Year End Date')}</strong>. Management has authorized this inquiry.
+    </p>
+    <p class="mt-4 text-sm text-foreground">
+      In connection with the preparation of financial statements in conformity with US GAAP, management has
+      described the following loss contingencies as of <strong>${chip('Year End Date')}</strong>. Please furnish us with
+      the information requested below concerning each of these loss contingencies.
+    </p>
+    <p class="mt-4 text-sm text-foreground font-semibold">Pending or Threatened Litigation and Claims</p>
+    <p class="mt-2 text-sm text-foreground">
+      Management's description: ${chip('List of matters or "See attached management schedule"')}
+    </p>
+    <p class="mt-4 text-sm text-foreground">
+      For each matter, please advise us:
+    </p>
+    <p class="mt-2 text-sm text-foreground">a. A description and the current status;</p>
+    <p class="mt-2 text-sm text-foreground">b. The likelihood of an unfavourable outcome (probable, reasonably possible, or remote);</p>
+    <p class="mt-2 text-sm text-foreground">c. An estimate of the amount or range of potential loss;</p>
+    <p class="mt-2 text-sm text-foreground">d. Whether the list represents a complete list of such matters, or whether there are matters known to you that should be added.</p>
+    <p class="mt-4 text-sm text-foreground">
+      Please respond by <strong>${chip('Response Deadline')}</strong>.
+    </p>
+    <p class="mt-6 text-sm text-foreground">Very truly yours,</p>
+    <p class="mt-4 text-sm text-foreground">${chip('Firm Name')}</p>
+    <p class="mt-1 text-sm text-foreground">${chip('City, State')}</p>
+  `);
+
+export const generateLetterToManagementSignificantDeficienciesUS = (): Checklist =>
+  makeLetterChecklist('glt-us-6', 'Letter to Management — Significant Deficiencies (AU-C 265)', 'AU-C 265 Communication of Significant Deficiencies to Management', `
+    <p class="text-sm text-foreground font-semibold text-center mt-2">COMMUNICATION OF SIGNIFICANT DEFICIENCIES AND MATERIAL WEAKNESSES IN INTERNAL CONTROL</p>
+    <p class="mt-4 text-sm text-foreground">
+      To Management of <strong>${chip('Entity Name')}</strong>:
+    </p>
+    <p class="mt-4 text-sm text-foreground">
+      In planning and performing our audit of the financial statements of <strong>${chip('Entity Name')}</strong> as of
+      and for the year ended <strong>${chip('Year End Date')}</strong> in accordance with auditing standards generally
+      accepted in the United States of America, we considered the entity's internal control over financial
+      reporting (ICFR) as a basis for designing our audit procedures.
+    </p>
+    <p class="mt-4 text-sm text-foreground">
+      In connection with our audit, we noted the following matter(s) involving the entity's internal control
+      that we consider to be a significant deficiency as defined under <strong>AU-C Section 265</strong>.
+    </p>
+    <p class="mt-4 text-sm text-foreground font-semibold">Significant Deficiency: ${chip('Deficiency Title')}</p>
+    <p class="mt-2 text-sm text-foreground"><em>Condition:</em> ${chip('Describe the condition observed')}</p>
+    <p class="mt-2 text-sm text-foreground"><em>Criteria:</em> ${chip('Relevant control standard or policy')}</p>
+    <p class="mt-2 text-sm text-foreground"><em>Cause:</em> ${chip('Root cause of the deficiency')}</p>
+    <p class="mt-2 text-sm text-foreground"><em>Effect:</em> ${chip('Potential effect on financial reporting')}</p>
+    <p class="mt-2 text-sm text-foreground"><em>Recommendation:</em> ${chip('Suggested corrective action')}</p>
+    <p class="mt-4 text-sm text-foreground">
+      This communication is intended solely for the information and use of management and those charged with
+      governance of <strong>${chip('Entity Name')}</strong> and is not intended to be and should not be used by anyone
+      other than these specified parties.
+    </p>
+    <p class="mt-6 text-sm text-foreground">Very truly yours,</p>
+    <p class="mt-4 text-sm text-foreground">${chip('Firm Name')}</p>
+    <p class="mt-1 text-sm text-foreground">${chip('City, State')}</p>
+    <p class="mt-1 text-sm text-foreground">${chip('Date')}</p>
+  `);
+
+export const generateCommunicationToPredecessorAuditorUS = (): Checklist =>
+  makeLetterChecklist('glt-us-7', 'Communication to Predecessor Auditor (AU-C 210)', 'AU-C 210 — Communication to Predecessor Auditor', `
+    <p class="text-sm text-foreground">${chip('Date')}</p>
+    <p class="mt-6 text-sm text-foreground">${chip('Predecessor Firm Name')}<br/>${chip('Predecessor Firm Address')}</p>
+    <p class="mt-6 text-sm text-foreground">Dear ${chip('Predecessor Engagement Partner')},</p>
+    <p class="mt-4 text-sm text-foreground">
+      We have been engaged to audit the financial statements of <strong>${chip('Entity Name')}</strong> as of and for the
+      year ended <strong>${chip('Year End Date')}</strong>. In accordance with <strong>AU-C Section 210</strong>, we are
+      required to communicate with the predecessor auditor prior to accepting this engagement.
+    </p>
+    <p class="mt-4 text-sm text-foreground">
+      With the permission of management, we respectfully request your responses to the following:
+    </p>
+    <p class="mt-3 text-sm text-foreground">
+      1. Are there any matters that you believe we should consider before accepting this engagement?
+    </p>
+    <p class="mt-3 text-sm text-foreground">
+      2. Were there any significant disagreements with management concerning accounting principles, the scope of
+      the audit, or other significant matters?
+    </p>
+    <p class="mt-3 text-sm text-foreground">
+      3. Were there any fraud risk factors or instances of fraud identified during your engagement?
+    </p>
+    <p class="mt-3 text-sm text-foreground">
+      4. Would you permit us to review your working papers for the prior year, specifically relating to opening
+      balances and significant accounting matters?
+    </p>
+    <p class="mt-4 text-sm text-foreground">
+      We appreciate your cooperation and look forward to your response.
+    </p>
+    <p class="mt-6 text-sm text-foreground">Very truly yours,</p>
+    <p class="mt-4 text-sm text-foreground">${chip('Firm Name')}</p>
+    <p class="mt-1 text-sm text-foreground">${chip('City, State')}</p>
+  `);
+
 export const getGlobalTemplateChecklist = (templateId: string): Checklist | null => {
   switch (templateId) {
     case 'client-acceptance':
@@ -6769,6 +7806,36 @@ export const getGlobalTemplateChecklist = (templateId: string): Checklist | null
     case 'grpt-us-7': return generateUSDisclaimerOfOpinion();
     case 'grpt-us-8': return generateUSKeyAuditMatters();
     case 'grpt-us-9': return generateUSQualifiedWithEmphasis();
+    // ── Global Letters ──────────────────────────────────────────────────────
+    case 'glt-1-1': return generateEngagementLetterChecklist();
+    case 'glt-1-2': return generateManagementResponsibilityChecklist();
+    case 'glt-2-1': return generateReviewEngagementLetterMaster();
+    case 'glt-2-2': return generateReviewManagementRepresentationLetter();
+    case 'glt-2-3': return generateReviewFindingsLetter();
+    case 'glt-2-4': return generateLetterToPredecessor();
+    case 'glt-2-5': return generateLetterToSuccessor();
+    case 'glt-2-6': return generateRequestForManagementAssistance();
+    case 'glt-3-1': return generateTaxEngagementLetter();
+    case 'glt-4-1': return generateClosingCoverLetter();
+    case 'glt-4-2': return generateLetterToLawyerLongForm();
+    case 'glt-4-3': return generateLetterToLawyerShortForm();
+    case 'glt-4-4': return generateLetterToPredecessorAccountant();
+    case 'glt-4-5': return generateLetterToSuccessorAccountant();
+    case 'glt-ca-1': return generateAuditEngagementLetterCASASPE();
+    case 'glt-ca-2': return generateAuditEngagementLetterCASASNPO();
+    case 'glt-ca-3': return generateManagementRepLetterCAS580();
+    case 'glt-ca-4': return generateCommunicationTCWGPlanning();
+    case 'glt-ca-5': return generateCommunicationTCWGFinal();
+    case 'glt-ca-6': return generateInquiryToLegalCounselCA();
+    case 'glt-ca-7': return generateCommunicationToPredecessorAuditorCA();
+    case 'glt-ca-8': return generateLetterToManagementSignificantDeficienciesCA();
+    case 'glt-us-1': return generateAuditEngagementLetterGAASUSGAAP();
+    case 'glt-us-2': return generateManagementRepLetterAUC580();
+    case 'glt-us-3': return generateCommunicationTCWGPlanningUS();
+    case 'glt-us-4': return generateCommunicationTCWGFinalUS();
+    case 'glt-us-5': return generateInquiryToLegalCounselUS();
+    case 'glt-us-6': return generateLetterToManagementSignificantDeficienciesUS();
+    case 'glt-us-7': return generateCommunicationToPredecessorAuditorUS();
     default:
       return null;
   }
