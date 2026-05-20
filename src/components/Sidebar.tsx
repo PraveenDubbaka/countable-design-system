@@ -160,12 +160,12 @@ const initialGlobalTemplates: GlobalTemplate[] = [
         type: "folder",
         isExpanded: false,
         children: [
-          { id: "global-4-1", name: "Checklist — Audit Completion", type: "file" },
-          { id: "global-4-2", name: "Engagement Partner Checklist — Audit Completion", type: "file" },
-          { id: "global-4-3", name: "Checklist — Auditor's Report", type: "file" },
-          { id: "global-4-4", name: "Checklist — Modified Opinion", type: "file" },
-          { id: "global-4-5", name: "Checklist — Supplementary and Other Information", type: "file" },
-          { id: "global-4-6", name: "Checklist — Management Representations", type: "file" },
+          { id: "global-4-1", name: "Audit Completion", type: "file" },
+          { id: "global-4-2", name: "Engagement Partner — Audit Completion", type: "file" },
+          { id: "global-4-3", name: "Auditor's Report", type: "file" },
+          { id: "global-4-4", name: "Modified Opinion", type: "file" },
+          { id: "global-4-5", name: "Supplementary and Other Information", type: "file" },
+          { id: "global-4-6", name: "Management Representations", type: "file" },
         ]
       },
       {
@@ -252,8 +252,8 @@ const initialGlobalWorksheets: GlobalTemplate[] = [
     type: "folder",
     isExpanded: true,
     children: [
-      { id: "global-2-17", name: "Worksheet — Accounting Estimates (including Fair Values)", type: "file" },
-      { id: "global-2-18", name: "Worksheet — Going Concern", type: "file" },
+      { id: "global-2-17", name: "Accounting Estimates (including Fair Values)", type: "file" },
+      { id: "global-2-18", name: "Going Concern", type: "file" },
     ]
   },
   {
@@ -268,14 +268,14 @@ const initialGlobalWorksheets: GlobalTemplate[] = [
         type: "folder",
         isExpanded: true,
         children: [
-          { id: "global-4-7",  name: "Worksheet — Withdrawal", type: "file" },
-          { id: "global-4-8",  name: "Worksheet — Notes on Significant Audit Decisions", type: "file" },
-          { id: "global-4-9",  name: "Worksheet — Key Audit Matters", type: "file" },
-          { id: "global-4-10", name: "Worksheet — Audit Findings and Matters for Discussion", type: "file" },
+          { id: "global-4-7",  name: "Withdrawal", type: "file" },
+          { id: "global-4-8",  name: "Notes on Significant Audit Decisions", type: "file" },
+          { id: "global-4-9",  name: "Key Audit Matters", type: "file" },
+          { id: "global-4-10", name: "Audit Findings and Matters for Discussion", type: "file" },
           { id: "global-4-11", name: "Summary of Identified Misstatements", type: "file" },
-          { id: "global-4-12", name: "Worksheet — Matters to be Communicated to Management and TCWG", type: "file" },
-          { id: "global-4-13", name: "Worksheet — Matters for Future Consideration", type: "file" },
-          { id: "global-4-14", name: "Worksheet — Documenting Consultation", type: "file" },
+          { id: "global-4-12", name: "Matters Communicated to Management and TCWG", type: "file" },
+          { id: "global-4-13", name: "Matters for Future Consideration", type: "file" },
+          { id: "global-4-14", name: "Documenting Consultation", type: "file" },
         ]
       },
       {
@@ -284,14 +284,14 @@ const initialGlobalWorksheets: GlobalTemplate[] = [
         type: "folder",
         isExpanded: true,
         children: [
-          { id: "global-us-4-1", name: "Worksheet — Withdrawal", type: "file" },
-          { id: "global-us-4-2", name: "Worksheet — Notes on Significant Audit Decisions", type: "file" },
-          { id: "global-us-4-3", name: "Worksheet — Key Audit Matters (AU-C 701)", type: "file" },
-          { id: "global-us-4-4", name: "Worksheet — Audit Findings and Matters for Discussion", type: "file" },
-          { id: "global-us-4-5", name: "Worksheet — Accumulation of Identified Misstatements (AIM)", type: "file" },
-          { id: "global-us-4-6", name: "Worksheet — Matters to be Communicated to Those Charged with Governance (AU-C 260)", type: "file" },
-          { id: "global-us-4-7", name: "Worksheet — Matters for Future Consideration", type: "file" },
-          { id: "global-us-4-8", name: "Worksheet — Documenting Consultation", type: "file" },
+          { id: "global-us-4-1", name: "Withdrawal", type: "file" },
+          { id: "global-us-4-2", name: "Notes on Significant Audit Decisions", type: "file" },
+          { id: "global-us-4-3", name: "Key Audit Matters (AU-C 701)", type: "file" },
+          { id: "global-us-4-4", name: "Audit Findings and Matters for Discussion", type: "file" },
+          { id: "global-us-4-5", name: "Accumulation of Identified Misstatements (AIM)", type: "file" },
+          { id: "global-us-4-6", name: "Matters Communicated to Those Charged with Governance (AU-C 260)", type: "file" },
+          { id: "global-us-4-7", name: "Matters for Future Consideration", type: "file" },
+          { id: "global-us-4-8", name: "Documenting Consultation", type: "file" },
         ]
       },
     ]
@@ -971,9 +971,12 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
     const isTemplateChecked = selectedTemplates.has(template.id);
     const isFolderChecked = template.type === "folder" && isFolderSelected(template);
     const folderDisabled = template.type === "folder" && isFolderDisabled(template.id);
-    const isWorksheetItem = template.type === "file" && (
-      template.name.startsWith("Worksheet") || template.name.startsWith("Summary of Identified")
-    );
+    const WORKSHEET_IDS = new Set([
+      "global-4-7","global-4-8","global-4-9","global-4-10","global-4-11","global-4-12","global-4-13","global-4-14",
+      "global-us-4-1","global-us-4-2","global-us-4-3","global-us-4-4","global-us-4-5","global-us-4-6","global-us-4-7","global-us-4-8",
+      "global-2-17","global-2-18",
+    ]);
+    const isWorksheetItem = template.type === "file" && WORKSHEET_IDS.has(template.id);
     const isReportItem = template.type === "file" && template.id.startsWith("grpt-");
     const isLetterItem = template.type === "file" && template.id.startsWith("glt-");
     

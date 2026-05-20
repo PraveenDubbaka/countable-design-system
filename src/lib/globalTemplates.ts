@@ -4135,7 +4135,7 @@ export const generateAuditCompletionChecklist = (): Checklist => {
 
   return {
     id: 'global-template-audit-completion',
-    title: 'Checklist — Audit Completion',
+    title: 'Audit Completion',
     description: 'A comprehensive checklist to determine if the CAS requirements have been fulfilled before issuing the auditor\'s report.',
     objective: `To determine if the CAS requirements have been fulfilled before issuing the auditor's report.
 
@@ -4273,7 +4273,7 @@ export const generateEngagementPartnerAuditCompletionChecklist = (): Checklist =
 
   return {
     id: 'global-template-engagement-partner-audit-completion',
-    title: 'Engagement Partner Checklist — Audit Completion',
+    title: 'Engagement Partner — Audit Completion',
     description: 'To ensure the engagement partner and engagement team\'s responsibilities related to quality management at the engagement level are fulfilled and documented.',
     objective: `To ensure the engagement partner and engagement team's responsibilities related to quality management at the engagement level are fulfilled and documented (CAS 220.41).
 
@@ -4494,7 +4494,7 @@ export const generateAuditorsReportChecklist = (): Checklist => {
 
   return {
     id: 'global-template-auditors-report',
-    title: 'Checklist — Auditor\'s Report',
+    title: 'Auditor\'s Report',
     description: 'Checklist to ensure the auditor\'s report addresses all CAS requirements.',
     objective: 'To form an opinion on the financial statements based on an evaluation of the conclusions drawn from the audit evidence obtained, and to check that the content of the auditor\'s report appropriately reflects that opinion.',
     sections,
@@ -4602,7 +4602,7 @@ export const generateModifiedOpinionChecklist = (): Checklist => {
 
   return {
     id: 'global-template-modified-opinion',
-    title: 'Checklist — Modified Opinion',
+    title: 'Modified Opinion',
     description: 'Checklist to ensure the opinion is appropriately modified in the auditor\'s report.',
     objective: 'To check that the opinion is appropriately modified in the auditor\'s report when: (a) The auditor has concluded that, based on the audit evidence obtained, the financial statements as a whole are not free from material misstatement; or (b) The auditor is unable to obtain sufficient appropriate audit evidence to conclude that the financial statements as a whole are free from material misstatement.',
     sections,
@@ -4674,7 +4674,7 @@ export const generateSupplementaryInfoChecklist = (): Checklist => {
 
   return {
     id: 'global-template-supplementary-info',
-    title: 'Checklist — Supplementary and Other Information',
+    title: 'Supplementary and Other Information',
     description: 'Checklist for documenting audit procedures related to supplementary information presented with the audited financial statements and other information included in an entity\'s annual report.',
     objective: 'To document the audit procedures required in relation to supplementary information presented with the audited financial statements (CAS 700.53–54) and other information included in an entity\'s annual report (CAS 720.25(a)).',
     sections,
@@ -4790,7 +4790,7 @@ export const generateManagementRepresentationsChecklist = (): Checklist => {
 
   return {
     id: 'global-template-management-representations',
-    title: 'Checklist — Management Representations',
+    title: 'Management Representations',
     description: 'Checklist to check that the CAS requirements related to management representations have been fulfilled prior to issuing the auditor\'s report.',
     objective: 'To check that the CAS requirements related to management representations have been fulfilled prior to issuing the auditor\'s report.',
     sections,
@@ -7699,7 +7699,7 @@ export const generateAuditWorksheetWithdrawalCA = (): Checklist => {
   ];
   return {
     id: 'audit-worksheet-withdrawal-ca',
-    title: 'Audit Worksheet – Withdrawal (Canada)',
+    title: 'Withdrawal (Canada)',
     objective: 'To document situations where withdrawal from an audit engagement is the appropriate conclusion. WARNING: Withdrawal from an audit engagement is not always possible. Prior to withdrawal: 1. Refer to your provincial Code of Professional Conduct / Code of Ethics to ensure that withdrawal is permitted. 2. Consider obtaining advice from your lawyer and insurance company.',
     sections,
     createdAt: new Date(),
@@ -7736,7 +7736,7 @@ export const generateAuditWorksheetSignificantDecisionsCA = (): Checklist => {
   ];
   return {
     id: 'audit-worksheet-significant-decisions-ca',
-    title: 'Audit Worksheet – Notes on Significant Audit Decisions (Canada)',
+    title: 'Notes on Significant Audit Decisions (Canada)',
     objective: 'To document the nature of and basis for significant audit decisions made during the engagement, including the basis for professional judgments. (CAS 230)',
     sections,
     createdAt: new Date(),
@@ -7773,7 +7773,7 @@ export const generateAuditWorksheetKeyAuditMattersCA = (): Checklist => {
   ];
   return {
     id: 'audit-worksheet-key-audit-matters-ca',
-    title: 'Audit Worksheet – Key Audit Matters (Canada – CAS 701)',
+    title: 'Key Audit Matters (Canada – CAS 701)',
     objective: "To document key audit matters that the auditor decides (or is required) to communicate in the auditor's report in accordance with CAS 701. Key audit matters are selected from matters communicated to those charged with governance. Remember to communicate each key audit matter selected for inclusion in the audit report with those charged with governance.",
     sections,
     createdAt: new Date(),
@@ -7811,7 +7811,7 @@ export const generateAuditWorksheetFindingsCA = (): Checklist => {
   ];
   return {
     id: 'audit-worksheet-findings-ca',
-    title: 'Audit Worksheet – Audit Findings and Matters for Discussion (Canada)',
+    title: 'Audit Findings and Matters for Discussion (Canada)',
     objective: 'To record audit findings (matters identified during the audit as a result of performing audit procedures) and how they were resolved. (Refer to Vol. 1, Ch. 35, Two-Way Communication, and Vol. 2, Ch. 18, Step 8 — Perform Planned Procedures, for further guidance.)',
     sections,
     createdAt: new Date(),
@@ -7870,7 +7870,7 @@ export const generateAuditWorksheetSummaryMisstatementsCA = (): Checklist => {
   ];
   return {
     id: 'audit-worksheet-summary-misstatements-ca',
-    title: 'Audit Worksheet – Summary of Identified Misstatements (Canada)',
+    title: 'Summary of Identified Misstatements (Canada)',
     objective: 'To accumulate identified misstatements and evaluate their effect on the audit and the financial statements. (CAS 450)',
     sections,
     createdAt: new Date(),
@@ -7907,7 +7907,7 @@ export const generateAuditWorksheetMattersCommunicatedCA = (): Checklist => {
   ];
   return {
     id: 'audit-worksheet-matters-communicated-ca',
-    title: 'Audit Worksheet – Matters Communicated to Management and TCWG (Canada)',
+    title: 'Matters Communicated to Management and TCWG (Canada)',
     objective: 'To document significant matters arising from the audit that are to be communicated to management and those charged with governance in accordance with CAS 260 and CAS 265.',
     sections,
     createdAt: new Date(),
@@ -7938,7 +7938,7 @@ export const generateAuditWorksheetFutureConsiderationCA = (): Checklist => {
   ];
   return {
     id: 'audit-worksheet-future-consideration-ca',
-    title: 'Audit Worksheet – Matters for Future Consideration (Canada)',
+    title: 'Matters for Future Consideration (Canada)',
     objective: 'To document matters arising from the current period audit that require consideration in planning and conducting future audit engagements.',
     sections,
     createdAt: new Date(),
@@ -7969,7 +7969,7 @@ export const generateAuditWorksheetDocumentingConsultationCA = (): Checklist => 
   ];
   return {
     id: 'audit-worksheet-documenting-consultation-ca',
-    title: 'Audit Worksheet – Documenting Consultation (Canada)',
+    title: 'Documenting Consultation (Canada)',
     objective: 'To document the nature of significant consultations undertaken during the audit engagement and the conclusions reached. (CAS 220, CAS 230)',
     sections,
     createdAt: new Date(),
@@ -8032,7 +8032,7 @@ export const generateAuditWorksheetWithdrawalUS = (): Checklist => {
   ];
   return {
     id: 'audit-worksheet-withdrawal-us',
-    title: 'Audit Worksheet – Withdrawal (United States)',
+    title: 'Withdrawal (United States)',
     objective: 'To document situations where withdrawal from an audit engagement is the appropriate conclusion. WARNING: Withdrawal from an audit engagement is not always possible. Prior to withdrawal: 1. Refer to your applicable Code of Professional Conduct (AICPA ET) to ensure that withdrawal is permitted. 2. Consider obtaining advice from your lawyer and insurance company.',
     sections,
     createdAt: new Date(),
@@ -8069,7 +8069,7 @@ export const generateAuditWorksheetSignificantDecisionsUS = (): Checklist => {
   ];
   return {
     id: 'audit-worksheet-significant-decisions-us',
-    title: 'Audit Worksheet – Notes on Significant Audit Decisions (United States)',
+    title: 'Notes on Significant Audit Decisions (United States)',
     objective: 'To document the nature of and basis for significant audit decisions made during the engagement. (AU-C 230)',
     sections,
     createdAt: new Date(),
@@ -8106,7 +8106,7 @@ export const generateAuditWorksheetKeyAuditMattersUS = (): Checklist => {
   ];
   return {
     id: 'audit-worksheet-key-audit-matters-us',
-    title: 'Audit Worksheet – Key Audit Matters (United States – AU-C 701)',
+    title: 'Key Audit Matters (United States – AU-C 701)',
     objective: "To document key audit matters that the auditor decides (or is required) to communicate in the auditor's report in accordance with AU-C 701. Key audit matters are selected from matters communicated to those charged with governance. Remember to communicate each key audit matter selected for inclusion in the audit report with those charged with governance.",
     sections,
     createdAt: new Date(),
@@ -8144,7 +8144,7 @@ export const generateAuditWorksheetFindingsUS = (): Checklist => {
   ];
   return {
     id: 'audit-worksheet-findings-us',
-    title: 'Audit Worksheet – Audit Findings and Matters for Discussion (United States)',
+    title: 'Audit Findings and Matters for Discussion (United States)',
     objective: 'To record audit findings (matters identified during the audit as a result of performing audit procedures) and how they were resolved. (Refer to AU-C 260 and AU-C 265 for further guidance.)',
     sections,
     createdAt: new Date(),
@@ -8204,7 +8204,7 @@ export const generateAuditWorksheetAIMUS = (): Checklist => {
   ];
   return {
     id: 'audit-worksheet-aim-us',
-    title: 'Audit Worksheet – Accumulation of Identified Misstatements (United States)',
+    title: 'Accumulation of Identified Misstatements (United States)',
     objective: `This worksheet accumulates and evaluates all misstatements identified during the audit in accordance with AU-C 450.\n• Documentation of proposed adjustments (description, amount, account affected)\n• Qualitative and quantitative assessment of misstatements (AU-C 450)\n• Management's response to proposed adjustments\n• Effect of uncorrected misstatements on the audit opinion (AU-C 700)`,
     sections,
     createdAt: new Date(),
@@ -8234,7 +8234,7 @@ export const generateAuditWorksheetMattersCommunicatedUS = (): Checklist => {
   ];
   return {
     id: 'audit-worksheet-matters-communicated-us',
-    title: 'Audit Worksheet – Matters Communicated to Management and TCWG (United States)',
+    title: 'Matters Communicated to Management and TCWG (United States)',
     objective: 'To document significant matters arising from the audit that are to be communicated to management and those charged with governance in accordance with AU-C 260 and AU-C 265.',
     sections,
     createdAt: new Date(),
@@ -8265,7 +8265,7 @@ export const generateAuditWorksheetFutureConsiderationUS = (): Checklist => {
   ];
   return {
     id: 'audit-worksheet-future-consideration-us',
-    title: 'Audit Worksheet – Matters for Future Consideration (United States)',
+    title: 'Matters for Future Consideration (United States)',
     objective: 'To document matters arising from the current period audit that require consideration in planning and conducting future audit engagements.',
     sections,
     createdAt: new Date(),
@@ -8296,7 +8296,7 @@ export const generateAuditWorksheetDocumentingConsultationUS = (): Checklist => 
   ];
   return {
     id: 'audit-worksheet-documenting-consultation-us',
-    title: 'Audit Worksheet – Documenting Consultation (United States)',
+    title: 'Documenting Consultation (United States)',
     objective: 'To document the nature of significant consultations undertaken during the audit engagement and the conclusions reached. (AU-C 220, AU-C 230)',
     sections,
     createdAt: new Date(),
