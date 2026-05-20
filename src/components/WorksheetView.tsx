@@ -21,7 +21,7 @@ export function WorksheetView({ checklist, onUpdate }: WorksheetViewProps) {
   const updateQuestion = (
     sectionId: string,
     questionId: string,
-    field: "answer" | "explanation" | "reference",
+    field: "text" | "answer" | "explanation" | "reference",
     value: string
   ) => {
     const updated = {
@@ -45,7 +45,7 @@ export function WorksheetView({ checklist, onUpdate }: WorksheetViewProps) {
     sectionId: string,
     parentId: string,
     subId: string,
-    field: "answer" | "explanation" | "reference",
+    field: "text" | "answer" | "explanation" | "reference",
     value: string
   ) => {
     const updated = {
@@ -87,6 +87,14 @@ export function WorksheetView({ checklist, onUpdate }: WorksheetViewProps) {
   // Build a flat row counter across all sections
   let rowCounter = 0;
 
+  // Column config from checklist (with defaults)
+  const cfg = checklist.worksheetConfig ?? {};
+  const col3Label = cfg.col3Label ?? 'Description';
+  const col3Editable = cfg.col3Editable ?? false;
+  const col4Label = cfg.col4Label ?? 'Procedure successfully completed';
+  const col4Options = cfg.col4Options ?? ['Yes', 'No', 'N/A'];
+  const col5Label = cfg.col5Label ?? 'Responses and any difficulties encountered';
+
   return (
     <TooltipProvider>
       <div className="flex flex-col h-full">
@@ -126,13 +134,11 @@ export function WorksheetView({ checklist, onUpdate }: WorksheetViewProps) {
               <tr className="bg-muted/40 border-b border-border text-xs font-medium text-muted-foreground">
                 <th className="w-10 px-2 py-2 text-center" style={{ minWidth: 40 }}></th>
                 <th className="w-14 px-2 py-2 text-center" style={{ minWidth: 56 }}></th>
-                <th className="px-3 py-2 text-left">Description</th>
+                <th className="px-3 py-2 text-left">{col3Label}</th>
                 <th className="px-3 py-2 text-left" style={{ width: 180, minWidth: 180 }}>
-                  Procedure successfully completed
+                  {col4Label}
                 </th>
-                <th className="px-3 py-2 text-left">
-                  Responses and any difficulties encountered
-                </th>
+                <th className="px-3 py-2 text-left">{col5Label}</th>
                 <th className="px-3 py-2 text-left" style={{ width: 80, minWidth: 80 }}>
                   w/p ref
                 </th>
@@ -175,14 +181,25 @@ export function WorksheetView({ checklist, onUpdate }: WorksheetViewProps) {
                           <td className="px-2 py-3 text-center align-top text-sm text-muted-foreground font-mono">
                             {currentRow}
                           </td>
-                          {/* Description */}
+                          {/* Description / col3 */}
                           <td className="px-3 py-3 align-top">
-                            <div
-                              className="text-sm text-foreground prose prose-sm max-w-none"
-                              dangerouslySetInnerHTML={{ __html: question.text }}
-                            />
+                            {col3Editable ? (
+                              <Textarea
+                                placeholder="Enter description…"
+                                className="min-h-[60px] text-sm resize-none"
+                                value={question.text.replace(/<[^>]*>/g, '')}
+                                onChange={(e) =>
+                                  updateQuestion(section.id, question.id, "text", e.target.value)
+                                }
+                              />
+                            ) : (
+                              <div
+                                className="text-sm text-foreground prose prose-sm max-w-none"
+                                dangerouslySetInnerHTML={{ __html: question.text }}
+                              />
+                            )}
                           </td>
-                          {/* Procedure successfully completed */}
+                          {/* col4 — PSC / Status */}
                           <td className="px-3 py-3 align-top" style={{ width: 180 }}>
                             <Select
                               value={question.answer ?? ""}
@@ -194,9 +211,9 @@ export function WorksheetView({ checklist, onUpdate }: WorksheetViewProps) {
                                 <SelectValue placeholder="Select" />
                               </SelectTrigger>
                               <SelectContent>
-                                <SelectItem value="Yes">Yes</SelectItem>
-                                <SelectItem value="No">No</SelectItem>
-                                <SelectItem value="N/A">N/A</SelectItem>
+                                {col4Options.map((opt) => (
+                                  <SelectItem key={opt} value={opt}>{opt}</SelectItem>
+                                ))}
                               </SelectContent>
                             </Select>
                           </td>
@@ -241,14 +258,25 @@ export function WorksheetView({ checklist, onUpdate }: WorksheetViewProps) {
                             <td className="px-2 py-3 text-center align-top text-sm text-muted-foreground font-mono">
                               {String.fromCharCode(97 + subIdx)}
                             </td>
-                            {/* Description (indented) */}
+                            {/* Description (indented) / col3 sub */}
                             <td className="px-3 py-3 align-top pl-8">
-                              <div
-                                className="text-sm text-foreground prose prose-sm max-w-none"
-                                dangerouslySetInnerHTML={{ __html: sub.text }}
-                              />
+                              {col3Editable ? (
+                                <Textarea
+                                  placeholder="Enter description…"
+                                  className="min-h-[60px] text-sm resize-none"
+                                  value={sub.text.replace(/<[^>]*>/g, '')}
+                                  onChange={(e) =>
+                                    updateSubQuestion(section.id, question.id, sub.id, "text", e.target.value)
+                                  }
+                                />
+                              ) : (
+                                <div
+                                  className="text-sm text-foreground prose prose-sm max-w-none"
+                                  dangerouslySetInnerHTML={{ __html: sub.text }}
+                                />
+                              )}
                             </td>
-                            {/* Procedure successfully completed */}
+                            {/* col4 — PSC / Status (sub-question) */}
                             <td className="px-3 py-3 align-top" style={{ width: 180 }}>
                               <Select
                                 value={sub.answer ?? ""}
@@ -266,9 +294,9 @@ export function WorksheetView({ checklist, onUpdate }: WorksheetViewProps) {
                                   <SelectValue placeholder="Select" />
                                 </SelectTrigger>
                                 <SelectContent>
-                                  <SelectItem value="Yes">Yes</SelectItem>
-                                  <SelectItem value="No">No</SelectItem>
-                                  <SelectItem value="N/A">N/A</SelectItem>
+                                  {col4Options.map((opt) => (
+                                    <SelectItem key={opt} value={opt}>{opt}</SelectItem>
+                                  ))}
                                 </SelectContent>
                               </Select>
                             </td>

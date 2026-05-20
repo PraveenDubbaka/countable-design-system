@@ -59,6 +59,15 @@ export interface Section {
   note?: string;
 }
 
+/** Optional column-header / select-option overrides for WorksheetView */
+export interface WorksheetColumnConfig {
+  col3Label?: string;       // "Description" column header
+  col3Editable?: boolean;   // When true, col3 renders as a Textarea the user can type into
+  col4Label?: string;       // PSC / Status column header
+  col4Options?: string[];   // Options for the status Select dropdown
+  col5Label?: string;       // Responses / Notes column header
+}
+
 export interface Checklist {
   id: string;
   title: string;
@@ -67,6 +76,8 @@ export interface Checklist {
   sections: Section[];
   createdAt: Date;
   updatedAt: Date;
+  /** If present, WorksheetView uses these column labels / options */
+  worksheetConfig?: WorksheetColumnConfig;
 }
 
 export type GenerationScope = 'standard' | 'detailed';
