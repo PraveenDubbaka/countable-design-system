@@ -7651,6 +7651,951 @@ export const generateCommunicationToPredecessorAuditorUS = (): Checklist =>
     <p class="mt-1 text-sm text-foreground">${chip('City, State')}</p>
   `);
 
+// ── Audit Worksheet – Withdrawal (Canada) ────────────────────────────────────
+export const generateAuditWorksheetWithdrawalCA = (): Checklist => {
+  const sections: Section[] = [
+    {
+      id: 'section-wdca-circumstances',
+      title: 'Circumstances Leading to Withdrawal',
+      questions: [
+        { id: 'q-wdca-circ-1', text: '<p>Has the client failed or refused to provide information necessary to complete the audit?</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
+        { id: 'q-wdca-circ-2', text: '<p>Is there a significant disagreement with management regarding accounting policies, financial statement presentation, or the scope of the audit?</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
+        { id: 'q-wdca-circ-3', text: '<p>Has a significant independence threat arisen that cannot be mitigated by safeguards?</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
+        { id: 'q-wdca-circ-4', text: '<p>Has there been evidence or suspicion of fraud or illegal acts by management or those charged with governance that management refuses to address?</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
+        { id: 'q-wdca-circ-5', text: '<p>Are there other circumstances making it impossible or inappropriate to continue the engagement? Describe:</p>', answerType: 'long-answer', options: [], required: false, answer: '' },
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'section-wdca-communication',
+      title: 'Communication Requirements',
+      questions: [
+        { id: 'q-wdca-comm-1', text: '<p>Has the decision to withdraw been communicated to those charged with governance in writing?</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
+        { id: 'q-wdca-comm-2', text: '<p>Has notification been provided to the predecessor/successor auditor as required by CAS 510?</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
+        { id: 'q-wdca-comm-3', text: '<p>Are there regulatory or statutory reporting obligations arising from the withdrawal (e.g., reporting to a regulator or professional body)? If yes, describe actions taken:</p>', answerType: 'long-answer', options: [], required: false, answer: '' },
+        { id: 'q-wdca-comm-4', text: '<p>Has the client been informed of any responsibilities that remain with them following withdrawal (e.g., filing deadlines)?</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'section-wdca-documentation',
+      title: 'Documentation',
+      questions: [
+        { id: 'q-wdca-doc-1', text: '<p>Are all significant matters leading to withdrawal documented in the working papers?</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
+        { id: 'q-wdca-doc-2', text: '<p>Are any discussions held with management, legal counsel, or regulators regarding the withdrawal documented?</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
+        { id: 'q-wdca-doc-3', text: '<p>Has a copy of the withdrawal letter been retained in the engagement file?</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
+        { id: 'q-wdca-doc-4', text: '<p>Provide a narrative summary of the withdrawal circumstances and professional judgments made:</p>', answerType: 'long-answer', options: [], required: false, answer: '' },
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'section-wdca-conclusion',
+      title: 'Conclusion',
+      questions: [
+        { id: 'q-wdca-concl-1', text: '<p>Has the engagement partner reviewed and approved the decision to withdraw from this engagement?</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
+        { id: 'q-wdca-concl-2', text: '<p>Has legal counsel been consulted where appropriate regarding withdrawal obligations and liabilities?</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
+        { id: 'q-wdca-concl-3', text: '<p>Based on the above, the withdrawal is appropriate and all required communications and documentation have been completed. Provide overall conclusion and any additional comments:</p>', answerType: 'long-answer', options: [], required: false, answer: '' },
+      ],
+      isExpanded: true
+    }
+  ];
+  return {
+    id: 'audit-worksheet-withdrawal-ca',
+    title: 'Audit Worksheet – Withdrawal (Canada)',
+    objective: `This worksheet documents the circumstances, communications, and documentation related to withdrawal from an audit engagement in accordance with CAS requirements.\n• Circumstances Leading to Withdrawal\n• Communication Requirements (CAS 210, 265, 510)\n• Documentation of withdrawal decision\n• Conclusion and partner approval`,
+    sections,
+    createdAt: new Date(),
+    updatedAt: new Date()
+  };
+};
+
+// ── Audit Worksheet – Notes on Significant Audit Decisions (Canada) ──────────
+export const generateAuditWorksheetSignificantDecisionsCA = (): Checklist => {
+  const sections: Section[] = [
+    {
+      id: 'section-sdca-judgments',
+      title: 'Significant Judgments and Decisions Made',
+      questions: [
+        { id: 'q-sdca-j-1', text: '<p>Were there significant judgments related to accounting estimates (including fair value measurements) that required documentation under CAS 540?</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
+        { id: 'q-sdca-j-2', text: '<p>Were there decisions related to going concern assessment under CAS 570?</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
+        { id: 'q-sdca-j-3', text: '<p>Were there any significant or unusual transactions that required special consideration under CAS 315 or CAS 330?</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
+        { id: 'q-sdca-j-4', text: '<p>Were there departures from the applicable financial reporting framework? If yes, describe the nature and disposition:</p>', answerType: 'long-answer', options: [], required: false, answer: '' },
+        { id: 'q-sdca-j-5', text: '<p>Were there decisions made regarding modification of the auditor\'s report (CAS 705/706)?</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'section-sdca-consultations',
+      title: 'Consultations and Conclusions',
+      questions: [
+        { id: 'q-sdca-c-1', text: '<p>Were consultations with external specialists (e.g., valuators, legal counsel, actuaries) undertaken? Document nature and conclusions reached:</p>', answerType: 'long-answer', options: [], required: false, answer: '' },
+        { id: 'q-sdca-c-2', text: '<p>Were internal firm consultations (e.g., technical partner, ethics committee) required?</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
+        { id: 'q-sdca-c-3', text: '<p>Were there differences of opinion within the engagement team or with consultants? If yes, describe resolution:</p>', answerType: 'long-answer', options: [], required: false, answer: '' },
+        { id: 'q-sdca-c-4', text: '<p>Were all consultations documented in the working papers with the conclusions reached?</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'section-sdca-review',
+      title: 'Review and Approval',
+      questions: [
+        { id: 'q-sdca-r-1', text: '<p>Has the engagement partner reviewed all significant decisions documented in this worksheet?</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
+        { id: 'q-sdca-r-2', text: '<p>Has the engagement quality control reviewer (EQCR) reviewed significant matters where required?</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
+        { id: 'q-sdca-r-3', text: '<p>Are all decisions consistent with professional standards (CAS) and firm policies?</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'section-sdca-conclusion',
+      title: 'Conclusion',
+      questions: [
+        { id: 'q-sdca-concl-1', text: '<p>All significant audit decisions and judgments have been documented and reviewed. Provide overall conclusion and any remaining matters:</p>', answerType: 'long-answer', options: [], required: false, answer: '' },
+      ],
+      isExpanded: true
+    }
+  ];
+  return {
+    id: 'audit-worksheet-significant-decisions-ca',
+    title: 'Audit Worksheet – Notes on Significant Audit Decisions (Canada)',
+    objective: `This worksheet documents significant judgments, decisions, and consultations made during the audit engagement in accordance with CAS 230.\n• Significant accounting estimate judgments\n• Going concern and reporting decisions\n• Consultations with specialists and firm personnel\n• Engagement partner and EQCR review`,
+    sections,
+    createdAt: new Date(),
+    updatedAt: new Date()
+  };
+};
+
+// ── Audit Worksheet – Key Audit Matters (Canada – CAS 701) ───────────────────
+export const generateAuditWorksheetKeyAuditMattersCA = (): Checklist => {
+  const sections: Section[] = [
+    {
+      id: 'section-kamca-identification',
+      title: 'Identification of Key Audit Matters',
+      questions: [
+        { id: 'q-kamca-id-1', text: '<p>Have areas of significant management judgment, including accounting estimates with high estimation uncertainty, been identified (CAS 701.9)?</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
+        { id: 'q-kamca-id-2', text: '<p>Have significant risks identified in accordance with CAS 315 been considered as potential key audit matters?</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
+        { id: 'q-kamca-id-3', text: '<p>Have the effects of significant events or transactions during the period been assessed?</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
+        { id: 'q-kamca-id-4', text: '<p>List all matters that have been considered as candidates for key audit matters:</p>', answerType: 'long-answer', options: [], required: false, answer: '' },
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'section-kamca-determination',
+      title: 'Determination of Key Audit Matters',
+      questions: [
+        { id: 'q-kamca-det-1', text: '<p>For each identified matter, has the relationship to materiality been assessed?</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
+        { id: 'q-kamca-det-2', text: '<p>Has the degree of subjectivity in the auditor\'s judgment been considered?</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
+        { id: 'q-kamca-det-3', text: '<p>Have the nature and extent of audit procedures performed to address each matter been documented?</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
+        { id: 'q-kamca-det-4', text: '<p>For matters not communicated as KAMs, document the rationale for their exclusion:</p>', answerType: 'long-answer', options: [], required: false, answer: '' },
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'section-kamca-communication',
+      title: "Communication in the Auditor's Report",
+      questions: [
+        { id: 'q-kamca-comm-1', text: '<p>Does the auditor\'s report include a Key Audit Matters section in accordance with CAS 701?</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
+        { id: 'q-kamca-comm-2', text: '<p>For each KAM communicated, does the report describe why it was considered a KAM and how it was addressed in the audit?</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
+        { id: 'q-kamca-comm-3', text: '<p>Has management and those charged with governance been informed of KAMs prior to issuance of the report (CAS 260)?</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
+        { id: 'q-kamca-comm-4', text: '<p>Describe each key audit matter and its treatment in the auditor\'s report:</p>', answerType: 'long-answer', options: [], required: false, answer: '' },
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'section-kamca-conclusion',
+      title: 'Conclusion',
+      questions: [
+        { id: 'q-kamca-concl-1', text: '<p>Has the engagement partner confirmed that all required KAMs have been identified and appropriately communicated?</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
+        { id: 'q-kamca-concl-2', text: '<p>Provide overall conclusion on KAM identification and reporting under CAS 701:</p>', answerType: 'long-answer', options: [], required: false, answer: '' },
+      ],
+      isExpanded: true
+    }
+  ];
+  return {
+    id: 'audit-worksheet-key-audit-matters-ca',
+    title: 'Audit Worksheet – Key Audit Matters (Canada – CAS 701)',
+    objective: `This worksheet documents the identification, determination, and communication of key audit matters in the auditor's report in accordance with CAS 701.\n• Identification of areas of significant management judgment and significant risks\n• Determination of which matters are key audit matters\n• Communication requirements in the auditor's report\n• Relationship to materiality and audit procedures performed`,
+    sections,
+    createdAt: new Date(),
+    updatedAt: new Date()
+  };
+};
+
+// ── Audit Worksheet – Audit Findings and Matters for Discussion (Canada) ─────
+export const generateAuditWorksheetFindingsCA = (): Checklist => {
+  const sections: Section[] = [
+    {
+      id: 'section-findca-findings',
+      title: 'Findings Identified During the Audit',
+      questions: [
+        { id: 'q-findca-f-1', text: '<p>Were uncorrected misstatements identified during the audit?</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
+        { id: 'q-findca-f-2', text: '<p>Were significant deficiencies or material weaknesses in internal control identified (CAS 265)?</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
+        { id: 'q-findca-f-3', text: '<p>Were fraud risk factors or instances of actual fraud identified during the audit (CAS 240)?</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
+        { id: 'q-findca-f-4', text: '<p>Were indicators of going concern issues identified?</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
+        { id: 'q-findca-f-5', text: '<p>Were there limitations on the scope of the audit?</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
+        { id: 'q-findca-f-6', text: '<p>Describe all significant findings identified:</p>', answerType: 'long-answer', options: [], required: false, answer: '' },
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'section-findca-mgmt',
+      title: 'Matters for Discussion with Management',
+      questions: [
+        { id: 'q-findca-m-1', text: '<p>Have proposed adjustments and reclassifications been communicated to management?</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
+        { id: 'q-findca-m-2', text: '<p>Has management\'s response to each finding been obtained and documented?</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
+        { id: 'q-findca-m-3', text: '<p>Document management\'s response to findings and proposed adjustments:</p>', answerType: 'long-answer', options: [], required: false, answer: '' },
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'section-findca-tcwg',
+      title: 'Matters for Discussion with TCWG (CAS 260)',
+      questions: [
+        { id: 'q-findca-t-1', text: '<p>Have significant findings from the audit been communicated to those charged with governance (CAS 260)?</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
+        { id: 'q-findca-t-2', text: '<p>Have significant deficiencies in internal control been communicated in writing (CAS 265)?</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
+        { id: 'q-findca-t-3', text: '<p>Have matters regarding independence been communicated to TCWG where required (CAS 260.17)?</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
+        { id: 'q-findca-t-4', text: '<p>Document the key matters communicated to TCWG and their responses:</p>', answerType: 'long-answer', options: [], required: false, answer: '' },
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'section-findca-adjustments',
+      title: 'Proposed Adjustments and Reclassifications',
+      questions: [
+        { id: 'q-findca-a-1', text: '<p>Have all proposed adjustments been listed in the summary of misstatements (global-4-11)?</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
+        { id: 'q-findca-a-2', text: '<p>Are all proposed reclassifications documented with supporting rationale?</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
+        { id: 'q-findca-a-3', text: '<p>Have corrected and uncorrected misstatements been assessed for their effect on the audit opinion?</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'section-findca-conclusion',
+      title: 'Conclusion',
+      questions: [
+        { id: 'q-findca-concl-1', text: '<p>Provide an overall conclusion on the findings identified and their disposition (corrected, uncorrected, communicated):</p>', answerType: 'long-answer', options: [], required: false, answer: '' },
+      ],
+      isExpanded: true
+    }
+  ];
+  return {
+    id: 'audit-worksheet-findings-ca',
+    title: 'Audit Worksheet – Audit Findings and Matters for Discussion (Canada)',
+    objective: `This worksheet documents audit findings and matters requiring communication with management and those charged with governance (TCWG) in accordance with CAS 260 and CAS 265.\n• Findings identified during the audit (misstatements, control deficiencies, fraud)\n• Communication with management\n• Communication with TCWG (CAS 260)\n• Proposed adjustments and reclassifications`,
+    sections,
+    createdAt: new Date(),
+    updatedAt: new Date()
+  };
+};
+
+// ── Audit Worksheet – Summary of Identified Misstatements (Canada) ────────────
+export const generateAuditWorksheetSummaryMisstatementsCA = (): Checklist => {
+  const sections: Section[] = [
+    {
+      id: 'section-smca-proposed',
+      title: 'Proposed Adjustments',
+      questions: [
+        { id: 'q-smca-pa-1', text: '<p>Description of misstatement #1 (nature, account affected, financial statement line):</p>', answerType: 'long-answer', options: [], required: false, answer: '' },
+        { id: 'q-smca-pa-2', text: '<p>Quantitative amount of misstatement #1 (debit/credit):</p>', answerType: 'long-answer', options: [], required: false, answer: '' },
+        { id: 'q-smca-pa-3', text: '<p>Is misstatement #1 above the planning or performance materiality threshold?</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
+        { id: 'q-smca-pa-4', text: '<p>Has management agreed to correct misstatement #1?</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
+        { id: 'q-smca-pa-5', text: '<p>Description of misstatement #2 (nature, account affected, financial statement line):</p>', answerType: 'long-answer', options: [], required: false, answer: '' },
+        { id: 'q-smca-pa-6', text: '<p>Quantitative amount of misstatement #2 (debit/credit):</p>', answerType: 'long-answer', options: [], required: false, answer: '' },
+        { id: 'q-smca-pa-7', text: '<p>Is misstatement #2 above the planning or performance materiality threshold?</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
+        { id: 'q-smca-pa-8', text: '<p>Has management agreed to correct misstatement #2?</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
+        { id: 'q-smca-pa-9', text: '<p>List any additional proposed adjustments with descriptions, amounts, and management responses:</p>', answerType: 'long-answer', options: [], required: false, answer: '' },
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'section-smca-evaluation',
+      title: 'Evaluation of Misstatements',
+      questions: [
+        { id: 'q-smca-ev-1', text: '<p>Have all uncorrected misstatements been aggregated to assess whether, individually or in combination, they are material?</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
+        { id: 'q-smca-ev-2', text: '<p>Has the qualitative impact of each uncorrected misstatement been assessed (e.g., effect on key ratios, compliance with debt covenants, or management compensation)?</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
+        { id: 'q-smca-ev-3', text: '<p>Have uncorrected misstatements been communicated to management and TCWG in accordance with CAS 450?</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
+        { id: 'q-smca-ev-4', text: '<p>Has management been requested to correct all identified misstatements?</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
+        { id: 'q-smca-ev-5', text: '<p>If management refuses to correct misstatements, document their rationale and the auditor\'s assessment:</p>', answerType: 'long-answer', options: [], required: false, answer: '' },
+        { id: 'q-smca-ev-6', text: '<p>Document the total uncorrected misstatements and their relationship to materiality:</p>', answerType: 'long-answer', options: [], required: false, answer: '' },
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'section-smca-conclusion',
+      title: 'Conclusion',
+      questions: [
+        { id: 'q-smca-concl-1', text: '<p>Are the remaining uncorrected misstatements, individually and in the aggregate, immaterial to the financial statements?</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
+        { id: 'q-smca-concl-2', text: '<p>Does the accumulation of misstatements affect the audit opinion?</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
+        { id: 'q-smca-concl-3', text: '<p>Provide overall conclusion on identified misstatements and the effect on the audit opinion:</p>', answerType: 'long-answer', options: [], required: false, answer: '' },
+      ],
+      isExpanded: true
+    }
+  ];
+  return {
+    id: 'audit-worksheet-summary-misstatements-ca',
+    title: 'Audit Worksheet – Summary of Identified Misstatements (Canada)',
+    objective: `This worksheet accumulates and evaluates all misstatements identified during the audit in accordance with CAS 450.\n• Documentation of proposed adjustments (description, amount, account affected)\n• Qualitative and quantitative assessment of misstatements\n• Management's response to proposed adjustments\n• Effect of uncorrected misstatements on the audit opinion`,
+    sections,
+    createdAt: new Date(),
+    updatedAt: new Date()
+  };
+};
+
+// ── Audit Worksheet – Matters Communicated to Management and TCWG (Canada) ───
+export const generateAuditWorksheetMattersCommunicatedCA = (): Checklist => {
+  const sections: Section[] = [
+    {
+      id: 'section-commca-mgmt',
+      title: 'Matters to Communicate to Management',
+      questions: [
+        { id: 'q-commca-m-1', text: '<p>Has the overall audit strategy and planned approach been communicated to management?</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
+        { id: 'q-commca-m-2', text: '<p>Have significant difficulties encountered during the audit been communicated (e.g., unavailability of expected information, unreasonable delays)?</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
+        { id: 'q-commca-m-3', text: '<p>Have all proposed adjustments and reclassifications been communicated to management?</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
+        { id: 'q-commca-m-4', text: '<p>Have management representation matters been communicated and documented (CAS 580)?</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'section-commca-tcwg',
+      title: 'Matters to Communicate to TCWG (CAS 260)',
+      questions: [
+        { id: 'q-commca-t-1', text: '<p>Have the auditor\'s responsibilities and the planned scope and timing of the audit been communicated to TCWG (CAS 260.15)?</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
+        { id: 'q-commca-t-2', text: '<p>Have significant findings from the audit been communicated, including significant qualitative aspects of accounting practices (CAS 260.16)?</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
+        { id: 'q-commca-t-3', text: '<p>Has the auditor\'s independence been confirmed in writing to TCWG (CAS 260.17)?</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
+        { id: 'q-commca-t-4', text: '<p>Have uncorrected misstatements and their effect been communicated to TCWG (CAS 450)?</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
+        { id: 'q-commca-t-5', text: '<p>Document matters communicated to TCWG and their responses:</p>', answerType: 'long-answer', options: [], required: false, answer: '' },
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'section-commca-deficiencies',
+      title: 'Significant Deficiencies in Internal Control (CAS 265)',
+      questions: [
+        { id: 'q-commca-d-1', text: '<p>Were significant deficiencies in internal control identified during the audit?</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
+        { id: 'q-commca-d-2', text: '<p>Have significant deficiencies been communicated in writing to TCWG in a timely manner (CAS 265.9)?</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
+        { id: 'q-commca-d-3', text: '<p>Have control deficiencies also been communicated to management as appropriate (CAS 265.10)?</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
+        { id: 'q-commca-d-4', text: '<p>Describe significant deficiencies identified and communicated:</p>', answerType: 'long-answer', options: [], required: false, answer: '' },
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'section-commca-timing',
+      title: 'Communication Timing and Method',
+      questions: [
+        { id: 'q-commca-ti-1', text: '<p>Were all required communications made on a timely basis as required by the applicable CAS?</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
+        { id: 'q-commca-ti-2', text: '<p>Were communications made in writing where required (CAS 260, 265)?</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
+        { id: 'q-commca-ti-3', text: '<p>Are copies of all written communications retained in the engagement file?</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'section-commca-conclusion',
+      title: 'Conclusion',
+      questions: [
+        { id: 'q-commca-concl-1', text: '<p>All required communications to management and TCWG have been made in accordance with CAS 260 and CAS 265. Provide overall conclusion:</p>', answerType: 'long-answer', options: [], required: false, answer: '' },
+      ],
+      isExpanded: true
+    }
+  ];
+  return {
+    id: 'audit-worksheet-matters-communicated-ca',
+    title: 'Audit Worksheet – Matters Communicated to Management and TCWG (Canada)',
+    objective: `This worksheet documents communications to management and those charged with governance in accordance with CAS 260 and CAS 265.\n• Matters communicated to management (strategy, findings, adjustments)\n• Matters communicated to TCWG (CAS 260)\n• Significant deficiencies in internal control (CAS 265)\n• Communication timing and method`,
+    sections,
+    createdAt: new Date(),
+    updatedAt: new Date()
+  };
+};
+
+// ── Audit Worksheet – Matters for Future Consideration (Canada) ───────────────
+export const generateAuditWorksheetFutureConsiderationCA = (): Checklist => {
+  const sections: Section[] = [
+    {
+      id: 'section-fcca-carryforward',
+      title: 'Carryforward Points from Current Engagement',
+      questions: [
+        { id: 'q-fcca-cf-1', text: '<p>Are there recurring audit issues or findings that should be followed up in the next engagement?</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
+        { id: 'q-fcca-cf-2', text: '<p>Are there unresolved matters from the current engagement that require follow-up?</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
+        { id: 'q-fcca-cf-3', text: '<p>Are there items from prior year that were identified as matters for future consideration that have now been addressed? Describe:</p>', answerType: 'long-answer', options: [], required: false, answer: '' },
+        { id: 'q-fcca-cf-4', text: '<p>List all carryforward points and required actions for next year:</p>', answerType: 'long-answer', options: [], required: false, answer: '' },
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'section-fcca-nextyear',
+      title: "Matters Relevant to Next Year's Audit",
+      questions: [
+        { id: 'q-fcca-ny-1', text: '<p>Are there anticipated changes in the entity\'s business, structure, or operations that will affect next year\'s audit?</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
+        { id: 'q-fcca-ny-2', text: '<p>Are there changes in key personnel (management, TCWG) that should be noted for next year?</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
+        { id: 'q-fcca-ny-3', text: '<p>Are there updated risk assessment considerations based on the current year\'s findings?</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
+        { id: 'q-fcca-ny-4', text: '<p>Describe significant matters relevant to planning and risk assessment for the next engagement:</p>', answerType: 'long-answer', options: [], required: false, answer: '' },
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'section-fcca-standards',
+      title: 'Changes in Accounting Standards and Regulations',
+      questions: [
+        { id: 'q-fcca-st-1', text: '<p>Are there new accounting standards (CAS, ASPE, ASNI, IFRS) effective for the next reporting period?</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
+        { id: 'q-fcca-st-2', text: '<p>Are there new auditing standards (CAS) or other professional standards effective for the next audit period?</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
+        { id: 'q-fcca-st-3', text: '<p>Are there regulatory or legislative changes affecting the entity\'s industry or reporting obligations?</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
+        { id: 'q-fcca-st-4', text: '<p>Describe standards or regulatory changes and their anticipated impact on the next audit:</p>', answerType: 'long-answer', options: [], required: false, answer: '' },
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'section-fcca-conclusion',
+      title: 'Conclusion',
+      questions: [
+        { id: 'q-fcca-concl-1', text: '<p>All matters for future consideration have been documented and will be communicated to the engagement team prior to the next audit. Provide overall summary:</p>', answerType: 'long-answer', options: [], required: false, answer: '' },
+      ],
+      isExpanded: true
+    }
+  ];
+  return {
+    id: 'audit-worksheet-future-consideration-ca',
+    title: 'Audit Worksheet – Matters for Future Consideration (Canada)',
+    objective: `This worksheet documents matters to be considered in planning and executing future audit engagements.\n• Carryforward points and unresolved matters from current engagement\n• Matters relevant to next year's audit planning and risk assessment\n• Changes in accounting standards and regulations (CAS, ASPE, IFRS)\n• Updated risk considerations based on current year findings`,
+    sections,
+    createdAt: new Date(),
+    updatedAt: new Date()
+  };
+};
+
+// ── Audit Worksheet – Documenting Consultation (Canada) ──────────────────────
+export const generateAuditWorksheetDocumentingConsultationCA = (): Checklist => {
+  const sections: Section[] = [
+    {
+      id: 'section-dcca-nature',
+      title: 'Nature of the Consultation',
+      questions: [
+        { id: 'q-dcca-n-1', text: '<p>Is this consultation related to an accounting issue (e.g., recognition, measurement, presentation, disclosure)?</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
+        { id: 'q-dcca-n-2', text: '<p>Is this consultation related to an auditing or professional standards issue?</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
+        { id: 'q-dcca-n-3', text: '<p>Is this consultation related to an ethical or independence matter (CPA Canada Code of Professional Conduct)?</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
+        { id: 'q-dcca-n-4', text: '<p>Describe the nature and background of the matter requiring consultation:</p>', answerType: 'long-answer', options: [], required: false, answer: '' },
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'section-dcca-subject',
+      title: 'Subject Matter of Consultation',
+      questions: [
+        { id: 'q-dcca-s-1', text: '<p>Who was consulted? (e.g., firm technical partner, National Office, CPA Canada, external specialist, regulator)</p>', answerType: 'long-answer', options: [], required: false, answer: '' },
+        { id: 'q-dcca-s-2', text: '<p>Were relevant facts and applicable standards provided to the consultant prior to or during the consultation?</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
+        { id: 'q-dcca-s-3', text: '<p>Were alternative accounting or auditing treatments considered? Describe alternatives and the basis for each:</p>', answerType: 'long-answer', options: [], required: false, answer: '' },
+        { id: 'q-dcca-s-4', text: '<p>What was the date of the consultation?</p>', answerType: 'long-answer', options: [], required: false, answer: '' },
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'section-dcca-conclusions',
+      title: 'Conclusions Reached',
+      questions: [
+        { id: 'q-dcca-c-1', text: '<p>Describe the conclusion reached as a result of the consultation:</p>', answerType: 'long-answer', options: [], required: false, answer: '' },
+        { id: 'q-dcca-c-2', text: '<p>Was the conclusion agreed upon by the engagement partner and the consultant?</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
+        { id: 'q-dcca-c-3', text: '<p>If there was a difference of opinion, describe how it was resolved:</p>', answerType: 'long-answer', options: [], required: false, answer: '' },
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'section-dcca-documentation',
+      title: 'Documentation',
+      questions: [
+        { id: 'q-dcca-d-1', text: '<p>Is the consultation and its conclusion documented in the working papers (CAS 230)?</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
+        { id: 'q-dcca-d-2', text: '<p>Does the documentation include the issue, alternatives considered, the conclusion, and the basis for the conclusion?</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
+        { id: 'q-dcca-d-3', text: '<p>Has the impact of the consultation on the engagement been assessed and reflected in the working papers?</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'section-dcca-conclusion',
+      title: 'Conclusion',
+      questions: [
+        { id: 'q-dcca-concl-1', text: '<p>The consultation has been appropriately documented and the conclusion has been implemented in the engagement. Provide overall conclusion:</p>', answerType: 'long-answer', options: [], required: false, answer: '' },
+      ],
+      isExpanded: true
+    }
+  ];
+  return {
+    id: 'audit-worksheet-documenting-consultation-ca',
+    title: 'Audit Worksheet – Documenting Consultation (Canada)',
+    objective: `This worksheet documents the nature, subject matter, and conclusions of consultations undertaken during the audit engagement in accordance with CAS 220 and CAS 230.\n• Nature of the consultation (accounting, auditing, ethics)\n• Parties consulted and alternatives considered\n• Conclusions reached and agreement between parties\n• Documentation requirements`,
+    sections,
+    createdAt: new Date(),
+    updatedAt: new Date()
+  };
+};
+
+// ── Audit Worksheet – Withdrawal (United States) ─────────────────────────────
+export const generateAuditWorksheetWithdrawalUS = (): Checklist => {
+  const sections: Section[] = [
+    {
+      id: 'section-wdus-circumstances',
+      title: 'Circumstances Leading to Withdrawal',
+      questions: [
+        { id: 'q-wdus-circ-1', text: '<p>Has the client failed or refused to provide information necessary to complete the audit under AU-C 580 or AU-C 501?</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
+        { id: 'q-wdus-circ-2', text: '<p>Is there a significant disagreement with management regarding accounting policies, financial statement presentation, or scope of the audit under AU-C 705?</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
+        { id: 'q-wdus-circ-3', text: '<p>Has a significant independence threat arisen that cannot be mitigated under AICPA ET Section 1.200?</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
+        { id: 'q-wdus-circ-4', text: '<p>Has evidence or suspicion of fraud under AU-C 240 arisen that management refuses to address?</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
+        { id: 'q-wdus-circ-5', text: '<p>Are there other circumstances making it impossible or inappropriate to continue? Describe:</p>', answerType: 'long-answer', options: [], required: false, answer: '' },
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'section-wdus-communication',
+      title: 'Communication Requirements',
+      questions: [
+        { id: 'q-wdus-comm-1', text: '<p>Has the decision to withdraw been communicated to those charged with governance in writing?</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
+        { id: 'q-wdus-comm-2', text: '<p>Has notification been provided to the predecessor/successor auditor as required by AU-C 210.A27 and AU-C 510?</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
+        { id: 'q-wdus-comm-3', text: '<p>Are there regulatory or SEC/PCAOB reporting obligations arising from the withdrawal? If yes, describe actions taken:</p>', answerType: 'long-answer', options: [], required: false, answer: '' },
+        { id: 'q-wdus-comm-4', text: '<p>Has legal counsel been consulted regarding withdrawal obligations and liabilities?</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'section-wdus-documentation',
+      title: 'Documentation',
+      questions: [
+        { id: 'q-wdus-doc-1', text: '<p>Are all significant matters leading to withdrawal documented in the working papers (AU-C 230)?</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
+        { id: 'q-wdus-doc-2', text: '<p>Are discussions with management, legal counsel, or regulators documented?</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
+        { id: 'q-wdus-doc-3', text: '<p>Has a copy of the withdrawal letter been retained in the engagement file?</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
+        { id: 'q-wdus-doc-4', text: '<p>Provide a narrative summary of the withdrawal circumstances and professional judgments made:</p>', answerType: 'long-answer', options: [], required: false, answer: '' },
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'section-wdus-conclusion',
+      title: 'Conclusion',
+      questions: [
+        { id: 'q-wdus-concl-1', text: '<p>Has the engagement partner reviewed and approved the decision to withdraw?</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
+        { id: 'q-wdus-concl-2', text: '<p>Based on the above, the withdrawal is appropriate and all required communications and documentation have been completed. Provide overall conclusion:</p>', answerType: 'long-answer', options: [], required: false, answer: '' },
+      ],
+      isExpanded: true
+    }
+  ];
+  return {
+    id: 'audit-worksheet-withdrawal-us',
+    title: 'Audit Worksheet – Withdrawal (United States)',
+    objective: `This worksheet documents the circumstances, communications, and documentation related to withdrawal from an audit engagement in accordance with GAAS (AU-C) requirements.\n• Circumstances leading to withdrawal (AU-C 240, 580, 705)\n• Communication requirements (AU-C 210, 260, 510)\n• Documentation of withdrawal decision (AU-C 230)\n• Conclusion and partner approval`,
+    sections,
+    createdAt: new Date(),
+    updatedAt: new Date()
+  };
+};
+
+// ── Audit Worksheet – Notes on Significant Audit Decisions (United States) ───
+export const generateAuditWorksheetSignificantDecisionsUS = (): Checklist => {
+  const sections: Section[] = [
+    {
+      id: 'section-sdus-judgments',
+      title: 'Significant Judgments and Decisions Made',
+      questions: [
+        { id: 'q-sdus-j-1', text: '<p>Were there significant judgments related to accounting estimates (including fair value measurements) under AU-C 540?</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
+        { id: 'q-sdus-j-2', text: '<p>Were there decisions related to going concern assessment under AU-C 570?</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
+        { id: 'q-sdus-j-3', text: '<p>Were there significant or unusual transactions requiring special consideration under AU-C 315 or AU-C 330?</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
+        { id: 'q-sdus-j-4', text: '<p>Were there departures from GAAP or the applicable financial reporting framework? Describe nature and disposition:</p>', answerType: 'long-answer', options: [], required: false, answer: '' },
+        { id: 'q-sdus-j-5', text: '<p>Were there decisions regarding modification of the auditor\'s report (AU-C 705/706)?</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'section-sdus-consultations',
+      title: 'Consultations and Conclusions',
+      questions: [
+        { id: 'q-sdus-c-1', text: '<p>Were consultations with external specialists (e.g., valuators, legal counsel, actuaries) undertaken? Document nature and conclusions:</p>', answerType: 'long-answer', options: [], required: false, answer: '' },
+        { id: 'q-sdus-c-2', text: '<p>Were internal firm consultations (e.g., technical partner, national office, ethics committee) required?</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
+        { id: 'q-sdus-c-3', text: '<p>Were there differences of opinion within the engagement team or with consultants? Describe resolution:</p>', answerType: 'long-answer', options: [], required: false, answer: '' },
+        { id: 'q-sdus-c-4', text: '<p>Were all consultations documented in the working papers with conclusions (AU-C 230)?</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'section-sdus-review',
+      title: 'Review and Approval',
+      questions: [
+        { id: 'q-sdus-r-1', text: '<p>Has the engagement partner reviewed all significant decisions documented in this worksheet?</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
+        { id: 'q-sdus-r-2', text: '<p>Has the engagement quality control reviewer (EQCR) reviewed significant matters where required?</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
+        { id: 'q-sdus-r-3', text: '<p>Are all decisions consistent with GAAS (AU-C standards) and firm quality control policies (SQCS No. 8)?</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'section-sdus-conclusion',
+      title: 'Conclusion',
+      questions: [
+        { id: 'q-sdus-concl-1', text: '<p>All significant audit decisions and judgments have been documented and reviewed. Provide overall conclusion and any remaining matters:</p>', answerType: 'long-answer', options: [], required: false, answer: '' },
+      ],
+      isExpanded: true
+    }
+  ];
+  return {
+    id: 'audit-worksheet-significant-decisions-us',
+    title: 'Audit Worksheet – Notes on Significant Audit Decisions (United States)',
+    objective: `This worksheet documents significant judgments, decisions, and consultations made during the audit engagement in accordance with AU-C 230.\n• Significant accounting estimate judgments (AU-C 540)\n• Going concern and reporting decisions (AU-C 570, 705)\n• Consultations with specialists and firm personnel\n• Engagement partner and EQCR review`,
+    sections,
+    createdAt: new Date(),
+    updatedAt: new Date()
+  };
+};
+
+// ── Audit Worksheet – Key Audit Matters (United States – AU-C 701) ────────────
+export const generateAuditWorksheetKeyAuditMattersUS = (): Checklist => {
+  const sections: Section[] = [
+    {
+      id: 'section-kamus-identification',
+      title: 'Identification of Key Audit Matters',
+      questions: [
+        { id: 'q-kamus-id-1', text: '<p>Have areas of significant management judgment, including accounting estimates with high estimation uncertainty, been identified (AU-C 701.9)?</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
+        { id: 'q-kamus-id-2', text: '<p>Have significant risks identified in accordance with AU-C 315 been considered as potential key audit matters?</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
+        { id: 'q-kamus-id-3', text: '<p>Have the effects of significant events or transactions during the period been assessed?</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
+        { id: 'q-kamus-id-4', text: '<p>List all matters considered as candidates for key audit matters under AU-C 701:</p>', answerType: 'long-answer', options: [], required: false, answer: '' },
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'section-kamus-determination',
+      title: 'Determination of Key Audit Matters',
+      questions: [
+        { id: 'q-kamus-det-1', text: '<p>For each identified matter, has the relationship to materiality been assessed (AU-C 701.10)?</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
+        { id: 'q-kamus-det-2', text: '<p>Has the degree of subjectivity in the auditor\'s judgment been considered?</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
+        { id: 'q-kamus-det-3', text: '<p>Have the nature and extent of audit procedures performed to address each matter been documented (AU-C 701.11)?</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
+        { id: 'q-kamus-det-4', text: '<p>For matters not communicated as KAMs, document the rationale for their exclusion:</p>', answerType: 'long-answer', options: [], required: false, answer: '' },
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'section-kamus-communication',
+      title: "Communication in the Auditor's Report",
+      questions: [
+        { id: 'q-kamus-comm-1', text: '<p>Does the auditor\'s report include a Key Audit Matters section in accordance with AU-C 701?</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
+        { id: 'q-kamus-comm-2', text: '<p>For each KAM communicated, does the report describe why it was considered a KAM and how it was addressed in the audit (AU-C 701.12)?</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
+        { id: 'q-kamus-comm-3', text: '<p>Has management and TCWG been informed of KAMs prior to issuance of the report (AU-C 260)?</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
+        { id: 'q-kamus-comm-4', text: '<p>Describe each key audit matter and its treatment in the auditor\'s report:</p>', answerType: 'long-answer', options: [], required: false, answer: '' },
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'section-kamus-conclusion',
+      title: 'Conclusion',
+      questions: [
+        { id: 'q-kamus-concl-1', text: '<p>Has the engagement partner confirmed all required KAMs have been identified and appropriately communicated under AU-C 701?</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
+        { id: 'q-kamus-concl-2', text: '<p>Provide overall conclusion on KAM identification and reporting under AU-C 701:</p>', answerType: 'long-answer', options: [], required: false, answer: '' },
+      ],
+      isExpanded: true
+    }
+  ];
+  return {
+    id: 'audit-worksheet-key-audit-matters-us',
+    title: 'Audit Worksheet – Key Audit Matters (United States – AU-C 701)',
+    objective: `This worksheet documents the identification, determination, and communication of key audit matters in the auditor's report in accordance with AU-C 701.\n• Identification of areas of significant management judgment and significant risks\n• Determination of which matters are key audit matters (AU-C 701.9–.11)\n• Communication requirements in the auditor's report (AU-C 701.12)\n• Relationship to materiality and audit procedures performed`,
+    sections,
+    createdAt: new Date(),
+    updatedAt: new Date()
+  };
+};
+
+// ── Audit Worksheet – Audit Findings and Matters for Discussion (United States)
+export const generateAuditWorksheetFindingsUS = (): Checklist => {
+  const sections: Section[] = [
+    {
+      id: 'section-findus-findings',
+      title: 'Findings Identified During the Audit',
+      questions: [
+        { id: 'q-findus-f-1', text: '<p>Were uncorrected misstatements identified during the audit?</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
+        { id: 'q-findus-f-2', text: '<p>Were significant deficiencies or material weaknesses in internal control identified (AU-C 265)?</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
+        { id: 'q-findus-f-3', text: '<p>Were fraud risk factors or instances of actual fraud identified during the audit (AU-C 240)?</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
+        { id: 'q-findus-f-4', text: '<p>Were indicators of going concern issues identified (AU-C 570)?</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
+        { id: 'q-findus-f-5', text: '<p>Were there limitations on the scope of the audit?</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
+        { id: 'q-findus-f-6', text: '<p>Describe all significant findings identified:</p>', answerType: 'long-answer', options: [], required: false, answer: '' },
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'section-findus-mgmt',
+      title: 'Matters for Discussion with Management',
+      questions: [
+        { id: 'q-findus-m-1', text: '<p>Have proposed adjustments and reclassifications been communicated to management?</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
+        { id: 'q-findus-m-2', text: '<p>Has management\'s response to each finding been obtained and documented?</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
+        { id: 'q-findus-m-3', text: '<p>Document management\'s response to findings and proposed adjustments:</p>', answerType: 'long-answer', options: [], required: false, answer: '' },
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'section-findus-tcwg',
+      title: 'Matters for Discussion with TCWG (AU-C 260)',
+      questions: [
+        { id: 'q-findus-t-1', text: '<p>Have significant findings from the audit been communicated to TCWG (AU-C 260)?</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
+        { id: 'q-findus-t-2', text: '<p>Have significant deficiencies and material weaknesses been communicated in writing to TCWG (AU-C 265.11)?</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
+        { id: 'q-findus-t-3', text: '<p>Have matters regarding independence been communicated to TCWG where required (AU-C 260.17)?</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
+        { id: 'q-findus-t-4', text: '<p>Document key matters communicated to TCWG and their responses:</p>', answerType: 'long-answer', options: [], required: false, answer: '' },
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'section-findus-adjustments',
+      title: 'Proposed Adjustments and Reclassifications',
+      questions: [
+        { id: 'q-findus-a-1', text: '<p>Have all proposed adjustments been listed in the Accumulation of Identified Misstatements worksheet (global-us-4-5)?</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
+        { id: 'q-findus-a-2', text: '<p>Are all proposed reclassifications documented with supporting rationale?</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
+        { id: 'q-findus-a-3', text: '<p>Have corrected and uncorrected misstatements been assessed for their effect on the audit opinion under AU-C 450 and AU-C 700?</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'section-findus-conclusion',
+      title: 'Conclusion',
+      questions: [
+        { id: 'q-findus-concl-1', text: '<p>Provide an overall conclusion on findings identified and their disposition (corrected, uncorrected, communicated):</p>', answerType: 'long-answer', options: [], required: false, answer: '' },
+      ],
+      isExpanded: true
+    }
+  ];
+  return {
+    id: 'audit-worksheet-findings-us',
+    title: 'Audit Worksheet – Audit Findings and Matters for Discussion (United States)',
+    objective: `This worksheet documents audit findings and matters requiring communication with management and TCWG in accordance with AU-C 260 and AU-C 265.\n• Findings identified during the audit (misstatements, control deficiencies, fraud)\n• Communication with management\n• Communication with TCWG (AU-C 260)\n• Proposed adjustments and reclassifications`,
+    sections,
+    createdAt: new Date(),
+    updatedAt: new Date()
+  };
+};
+
+// ── Audit Worksheet – Accumulation of Identified Misstatements (United States)
+export const generateAuditWorksheetAIMUS = (): Checklist => {
+  const sections: Section[] = [
+    {
+      id: 'section-aimus-proposed',
+      title: 'Proposed Adjustments',
+      questions: [
+        { id: 'q-aimus-pa-1', text: '<p>Description of misstatement #1 (nature, account affected, financial statement line affected):</p>', answerType: 'long-answer', options: [], required: false, answer: '' },
+        { id: 'q-aimus-pa-2', text: '<p>Quantitative amount of misstatement #1 (debit/credit):</p>', answerType: 'long-answer', options: [], required: false, answer: '' },
+        { id: 'q-aimus-pa-3', text: '<p>Is misstatement #1 above the planning or performance materiality threshold?</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
+        { id: 'q-aimus-pa-4', text: '<p>Has management agreed to correct misstatement #1?</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
+        { id: 'q-aimus-pa-5', text: '<p>Description of misstatement #2 (nature, account affected, financial statement line affected):</p>', answerType: 'long-answer', options: [], required: false, answer: '' },
+        { id: 'q-aimus-pa-6', text: '<p>Quantitative amount of misstatement #2 (debit/credit):</p>', answerType: 'long-answer', options: [], required: false, answer: '' },
+        { id: 'q-aimus-pa-7', text: '<p>Is misstatement #2 above the planning or performance materiality threshold?</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
+        { id: 'q-aimus-pa-8', text: '<p>Has management agreed to correct misstatement #2?</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
+        { id: 'q-aimus-pa-9', text: '<p>List any additional proposed adjustments with descriptions, amounts, and management responses:</p>', answerType: 'long-answer', options: [], required: false, answer: '' },
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'section-aimus-evaluation',
+      title: 'Evaluation of Misstatements',
+      questions: [
+        { id: 'q-aimus-ev-1', text: '<p>Have all uncorrected misstatements been accumulated to assess whether, individually or in combination, they are material (AU-C 450.10)?</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
+        { id: 'q-aimus-ev-2', text: '<p>Has the qualitative impact of each uncorrected misstatement been assessed (e.g., effect on key ratios, compliance with debt covenants, management compensation, AU-C 450.A18)?</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
+        { id: 'q-aimus-ev-3', text: '<p>Have uncorrected misstatements been communicated to management and TCWG in accordance with AU-C 450.12 and AU-C 260?</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
+        { id: 'q-aimus-ev-4', text: '<p>Has management been requested to correct all identified misstatements?</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
+        { id: 'q-aimus-ev-5', text: '<p>If management refuses to correct misstatements, document their rationale and the auditor\'s assessment (AU-C 450.13):</p>', answerType: 'long-answer', options: [], required: false, answer: '' },
+        { id: 'q-aimus-ev-6', text: '<p>Document total uncorrected misstatements and their relationship to materiality:</p>', answerType: 'long-answer', options: [], required: false, answer: '' },
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'section-aimus-conclusion',
+      title: 'Conclusion',
+      questions: [
+        { id: 'q-aimus-concl-1', text: '<p>Are the remaining uncorrected misstatements, individually and in aggregate, immaterial to the financial statements?</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
+        { id: 'q-aimus-concl-2', text: '<p>Does the accumulation of misstatements affect the audit opinion (AU-C 700)?</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
+        { id: 'q-aimus-concl-3', text: '<p>Provide overall conclusion on identified misstatements and the effect on the audit opinion:</p>', answerType: 'long-answer', options: [], required: false, answer: '' },
+      ],
+      isExpanded: true
+    }
+  ];
+  return {
+    id: 'audit-worksheet-aim-us',
+    title: 'Audit Worksheet – Accumulation of Identified Misstatements (United States)',
+    objective: `This worksheet accumulates and evaluates all misstatements identified during the audit in accordance with AU-C 450.\n• Documentation of proposed adjustments (description, amount, account affected)\n• Qualitative and quantitative assessment of misstatements (AU-C 450)\n• Management's response to proposed adjustments\n• Effect of uncorrected misstatements on the audit opinion (AU-C 700)`,
+    sections,
+    createdAt: new Date(),
+    updatedAt: new Date()
+  };
+};
+
+// ── Audit Worksheet – Matters Communicated to Management and TCWG (United States)
+export const generateAuditWorksheetMattersCommunicatedUS = (): Checklist => {
+  const sections: Section[] = [
+    {
+      id: 'section-commus-mgmt',
+      title: 'Matters to Communicate to Management',
+      questions: [
+        { id: 'q-commus-m-1', text: '<p>Has the overall audit strategy and planned approach been communicated to management?</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
+        { id: 'q-commus-m-2', text: '<p>Have significant difficulties encountered during the audit been communicated (e.g., unavailability of expected information, unreasonable delays)?</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
+        { id: 'q-commus-m-3', text: '<p>Have all proposed adjustments and reclassifications been communicated to management?</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
+        { id: 'q-commus-m-4', text: '<p>Have management representation matters been communicated and documented (AU-C 580)?</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'section-commus-tcwg',
+      title: 'Matters to Communicate to TCWG (AU-C 260)',
+      questions: [
+        { id: 'q-commus-t-1', text: '<p>Have the auditor\'s responsibilities and the planned scope and timing of the audit been communicated to TCWG (AU-C 260.12)?</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
+        { id: 'q-commus-t-2', text: '<p>Have significant findings from the audit been communicated, including significant qualitative aspects of accounting practices (AU-C 260.13)?</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
+        { id: 'q-commus-t-3', text: '<p>Has the auditor\'s independence been confirmed in writing to TCWG (AU-C 260.17)?</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
+        { id: 'q-commus-t-4', text: '<p>Have uncorrected misstatements and their effect been communicated to TCWG (AU-C 450.12)?</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
+        { id: 'q-commus-t-5', text: '<p>Document matters communicated to TCWG and their responses:</p>', answerType: 'long-answer', options: [], required: false, answer: '' },
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'section-commus-deficiencies',
+      title: 'Significant Deficiencies in Internal Control (AU-C 265)',
+      questions: [
+        { id: 'q-commus-d-1', text: '<p>Were significant deficiencies or material weaknesses in internal control identified during the audit?</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
+        { id: 'q-commus-d-2', text: '<p>Have significant deficiencies and material weaknesses been communicated in writing to TCWG in a timely manner (AU-C 265.11)?</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
+        { id: 'q-commus-d-3', text: '<p>Have control deficiencies also been communicated to management as appropriate (AU-C 265.12)?</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
+        { id: 'q-commus-d-4', text: '<p>Describe significant deficiencies and material weaknesses identified and communicated:</p>', answerType: 'long-answer', options: [], required: false, answer: '' },
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'section-commus-timing',
+      title: 'Communication Timing and Method',
+      questions: [
+        { id: 'q-commus-ti-1', text: '<p>Were all required communications made on a timely basis as required by GAAS (AU-C 260, 265)?</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
+        { id: 'q-commus-ti-2', text: '<p>Were communications made in writing where required?</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
+        { id: 'q-commus-ti-3', text: '<p>Are copies of all written communications retained in the engagement file?</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'section-commus-conclusion',
+      title: 'Conclusion',
+      questions: [
+        { id: 'q-commus-concl-1', text: '<p>All required communications to management and TCWG have been made in accordance with AU-C 260 and AU-C 265. Provide overall conclusion:</p>', answerType: 'long-answer', options: [], required: false, answer: '' },
+      ],
+      isExpanded: true
+    }
+  ];
+  return {
+    id: 'audit-worksheet-matters-communicated-us',
+    title: 'Audit Worksheet – Matters Communicated to Management and TCWG (United States)',
+    objective: `This worksheet documents communications to management and TCWG in accordance with AU-C 260 and AU-C 265.\n• Matters communicated to management (strategy, findings, adjustments)\n• Matters communicated to TCWG (AU-C 260)\n• Significant deficiencies and material weaknesses (AU-C 265)\n• Communication timing and method`,
+    sections,
+    createdAt: new Date(),
+    updatedAt: new Date()
+  };
+};
+
+// ── Audit Worksheet – Matters for Future Consideration (United States) ────────
+export const generateAuditWorksheetFutureConsiderationUS = (): Checklist => {
+  const sections: Section[] = [
+    {
+      id: 'section-fcus-carryforward',
+      title: 'Carryforward Points from Current Engagement',
+      questions: [
+        { id: 'q-fcus-cf-1', text: '<p>Are there recurring audit issues or findings that should be followed up in the next engagement?</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
+        { id: 'q-fcus-cf-2', text: '<p>Are there unresolved matters from the current engagement requiring follow-up?</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
+        { id: 'q-fcus-cf-3', text: '<p>Are there items from prior year identified as matters for future consideration that have now been addressed? Describe:</p>', answerType: 'long-answer', options: [], required: false, answer: '' },
+        { id: 'q-fcus-cf-4', text: '<p>List all carryforward points and required actions for next year:</p>', answerType: 'long-answer', options: [], required: false, answer: '' },
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'section-fcus-nextyear',
+      title: "Matters Relevant to Next Year's Audit",
+      questions: [
+        { id: 'q-fcus-ny-1', text: '<p>Are there anticipated changes in the entity\'s business, structure, or operations that will affect next year\'s audit?</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
+        { id: 'q-fcus-ny-2', text: '<p>Are there changes in key personnel (management, TCWG) that should be noted for next year?</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
+        { id: 'q-fcus-ny-3', text: '<p>Are there updated risk assessment considerations based on the current year\'s findings?</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
+        { id: 'q-fcus-ny-4', text: '<p>Describe significant matters relevant to planning and risk assessment for the next engagement:</p>', answerType: 'long-answer', options: [], required: false, answer: '' },
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'section-fcus-standards',
+      title: 'Changes in Accounting Standards and Regulations',
+      questions: [
+        { id: 'q-fcus-st-1', text: '<p>Are there new FASB accounting standards (ASUs) effective for the next reporting period?</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
+        { id: 'q-fcus-st-2', text: '<p>Are there new GAAS (AU-C) or other professional standards effective for the next audit period?</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
+        { id: 'q-fcus-st-3', text: '<p>Are there regulatory or legislative changes (e.g., SEC, IRS, state regulations) affecting the entity\'s reporting obligations?</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
+        { id: 'q-fcus-st-4', text: '<p>Describe standards or regulatory changes and their anticipated impact on the next audit:</p>', answerType: 'long-answer', options: [], required: false, answer: '' },
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'section-fcus-conclusion',
+      title: 'Conclusion',
+      questions: [
+        { id: 'q-fcus-concl-1', text: '<p>All matters for future consideration have been documented and will be communicated to the engagement team prior to the next audit. Provide overall summary:</p>', answerType: 'long-answer', options: [], required: false, answer: '' },
+      ],
+      isExpanded: true
+    }
+  ];
+  return {
+    id: 'audit-worksheet-future-consideration-us',
+    title: 'Audit Worksheet – Matters for Future Consideration (United States)',
+    objective: `This worksheet documents matters to be considered in planning and executing future audit engagements.\n• Carryforward points and unresolved matters from current engagement\n• Matters relevant to next year's audit planning and risk assessment\n• Changes in accounting standards and regulations (FASB ASUs, GAAS)\n• Updated risk considerations based on current year findings`,
+    sections,
+    createdAt: new Date(),
+    updatedAt: new Date()
+  };
+};
+
+// ── Audit Worksheet – Documenting Consultation (United States) ────────────────
+export const generateAuditWorksheetDocumentingConsultationUS = (): Checklist => {
+  const sections: Section[] = [
+    {
+      id: 'section-dcus-nature',
+      title: 'Nature of the Consultation',
+      questions: [
+        { id: 'q-dcus-n-1', text: '<p>Is this consultation related to an accounting issue under U.S. GAAP (e.g., recognition, measurement, presentation, disclosure)?</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
+        { id: 'q-dcus-n-2', text: '<p>Is this consultation related to a GAAS (AU-C) auditing or professional standards issue?</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
+        { id: 'q-dcus-n-3', text: '<p>Is this consultation related to an ethical or independence matter (AICPA Code of Professional Conduct / ET)?</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
+        { id: 'q-dcus-n-4', text: '<p>Describe the nature and background of the matter requiring consultation:</p>', answerType: 'long-answer', options: [], required: false, answer: '' },
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'section-dcus-subject',
+      title: 'Subject Matter of Consultation',
+      questions: [
+        { id: 'q-dcus-s-1', text: '<p>Who was consulted? (e.g., firm technical partner, national office, AICPA, SEC staff, external specialist, regulator)</p>', answerType: 'long-answer', options: [], required: false, answer: '' },
+        { id: 'q-dcus-s-2', text: '<p>Were relevant facts and applicable standards provided to the consultant prior to or during the consultation?</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
+        { id: 'q-dcus-s-3', text: '<p>Were alternative accounting or auditing treatments considered? Describe alternatives and the basis for each:</p>', answerType: 'long-answer', options: [], required: false, answer: '' },
+        { id: 'q-dcus-s-4', text: '<p>What was the date of the consultation?</p>', answerType: 'long-answer', options: [], required: false, answer: '' },
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'section-dcus-conclusions',
+      title: 'Conclusions Reached',
+      questions: [
+        { id: 'q-dcus-c-1', text: '<p>Describe the conclusion reached as a result of the consultation:</p>', answerType: 'long-answer', options: [], required: false, answer: '' },
+        { id: 'q-dcus-c-2', text: '<p>Was the conclusion agreed upon by the engagement partner and the consultant?</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
+        { id: 'q-dcus-c-3', text: '<p>If there was a difference of opinion, describe how it was resolved in accordance with firm quality control policies (SQCS No. 8):</p>', answerType: 'long-answer', options: [], required: false, answer: '' },
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'section-dcus-documentation',
+      title: 'Documentation',
+      questions: [
+        { id: 'q-dcus-d-1', text: '<p>Is the consultation and its conclusion documented in the working papers (AU-C 230)?</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
+        { id: 'q-dcus-d-2', text: '<p>Does the documentation include the issue, alternatives considered, the conclusion, and the basis for the conclusion?</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
+        { id: 'q-dcus-d-3', text: '<p>Has the impact of the consultation on the engagement been assessed and reflected in the working papers?</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'section-dcus-conclusion',
+      title: 'Conclusion',
+      questions: [
+        { id: 'q-dcus-concl-1', text: '<p>The consultation has been appropriately documented and the conclusion has been implemented in the engagement. Provide overall conclusion:</p>', answerType: 'long-answer', options: [], required: false, answer: '' },
+      ],
+      isExpanded: true
+    }
+  ];
+  return {
+    id: 'audit-worksheet-documenting-consultation-us',
+    title: 'Audit Worksheet – Documenting Consultation (United States)',
+    objective: `This worksheet documents the nature, subject matter, and conclusions of consultations undertaken during the audit engagement in accordance with AU-C 220 and AU-C 230.\n• Nature of the consultation (accounting, auditing, ethics under AICPA ET)\n• Parties consulted and alternatives considered\n• Conclusions reached and agreement between parties\n• Documentation requirements (AU-C 230)`,
+    sections,
+    createdAt: new Date(),
+    updatedAt: new Date()
+  };
+};
+
 export const getGlobalTemplateChecklist = (templateId: string): Checklist | null => {
   switch (templateId) {
     case 'client-acceptance':
@@ -7777,6 +8722,38 @@ export const getGlobalTemplateChecklist = (templateId: string): Checklist | null
     case 'global-template-management-representations':
     case 'global-4-6':
       return generateManagementRepresentationsChecklist();
+    case 'global-4-7':
+      return generateAuditWorksheetWithdrawalCA();
+    case 'global-4-8':
+      return generateAuditWorksheetSignificantDecisionsCA();
+    case 'global-4-9':
+      return generateAuditWorksheetKeyAuditMattersCA();
+    case 'global-4-10':
+      return generateAuditWorksheetFindingsCA();
+    case 'global-4-11':
+      return generateAuditWorksheetSummaryMisstatementsCA();
+    case 'global-4-12':
+      return generateAuditWorksheetMattersCommunicatedCA();
+    case 'global-4-13':
+      return generateAuditWorksheetFutureConsiderationCA();
+    case 'global-4-14':
+      return generateAuditWorksheetDocumentingConsultationCA();
+    case 'global-us-4-1':
+      return generateAuditWorksheetWithdrawalUS();
+    case 'global-us-4-2':
+      return generateAuditWorksheetSignificantDecisionsUS();
+    case 'global-us-4-3':
+      return generateAuditWorksheetKeyAuditMattersUS();
+    case 'global-us-4-4':
+      return generateAuditWorksheetFindingsUS();
+    case 'global-us-4-5':
+      return generateAuditWorksheetAIMUS();
+    case 'global-us-4-6':
+      return generateAuditWorksheetMattersCommunicatedUS();
+    case 'global-us-4-7':
+      return generateAuditWorksheetFutureConsiderationUS();
+    case 'global-us-4-8':
+      return generateAuditWorksheetDocumentingConsultationUS();
     case 'client-acceptance-2026':
     case 'global-template-client-acceptance-2026':
     case 'global-5-1':
