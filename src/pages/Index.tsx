@@ -12,6 +12,10 @@ import { readJsonFromLocalStorage, writeJsonToLocalStorage } from '@/lib/safeJso
 import { dispatchChecklistSync } from '@/lib/checklistSync';
 import { getGlobalTemplateChecklist } from '@/lib/globalTemplates';
 import { LetterView } from '@/components/LetterView';
+import { WorksheetView } from '@/components/WorksheetView';
+
+const WORKSHEET_ID_PREFIXES = ['global-4-7', 'global-4-8', 'global-4-9', 'global-4-10', 'global-4-11', 'global-4-12', 'global-4-13', 'global-4-14', 'global-us-4-', 'worksheet-going-concern', 'worksheet-accounting-estimates'];
+const isWorksheetTemplateId = (id: string) => WORKSHEET_ID_PREFIXES.some(p => id.startsWith(p));
 
 const generateClientMeetingChecklist = (prompt: string): Checklist => {
   const sections: Section[] = [
@@ -317,6 +321,7 @@ export default function Index() {
   const [isGlobalTemplatePreview, setIsGlobalTemplatePreview] = useState(false);
   const [isSavedTemplate, setIsSavedTemplate] = useState(false);
   const [isReportTemplate, setIsReportTemplate] = useState(false);
+  const [isWorksheetTemplate, setIsWorksheetTemplate] = useState(false);
   const [currentGlobalTemplateId, setCurrentGlobalTemplateId] = useState<string | null>(null);
 
   const handleGenerate = async (prompt: string, scope: GenerationScope, savedChecklistId?: string, checklistName?: string) => {
@@ -360,6 +365,7 @@ export default function Index() {
       setIsGlobalTemplatePreview(false);
       setIsSavedTemplate(false);
       setIsReportTemplate(false);
+      setIsWorksheetTemplate(false);
       return;
     }
 
@@ -368,12 +374,14 @@ export default function Index() {
       const templateChecklist = getGlobalTemplateChecklist(globalTemplateId);
       if (templateChecklist) {
         const isLetter = globalTemplateId.startsWith('grpt-') || globalTemplateId.startsWith('glt-');
+        const isWS = isWorksheetTemplateId(globalTemplateId);
         setChecklist(templateChecklist);
         setCurrentChecklistId(null);
         setCurrentGlobalTemplateId(globalTemplateId);
         setIsGlobalTemplatePreview(true);
         setIsSavedTemplate(false);
-        setIsReportTemplate(isLetter);
+        setIsWorksheetTemplate(isWS);
+        setIsReportTemplate(isWS ? false : isLetter);
         return;
       }
     }
@@ -382,6 +390,7 @@ export default function Index() {
     if (!globalTemplateId) {
       setIsGlobalTemplatePreview(false);
       setIsReportTemplate(false);
+      setIsWorksheetTemplate(false);
       setCurrentGlobalTemplateId(null);
     }
 
@@ -463,6 +472,8 @@ export default function Index() {
               <p className="text-sm text-muted-foreground mt-1">AI is analyzing your requirements</p>
             </div>
           </div>
+        ) : checklist && isWorksheetTemplate ? (
+          <WorksheetView checklist={checklist} onUpdate={handleChecklistUpdate} />
         ) : checklist && isReportTemplate ? (
           <LetterView
             checklist={checklist}
