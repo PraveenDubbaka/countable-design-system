@@ -13,7 +13,13 @@ interface LayoutProps {
 
 export function Layout({ children, title, headerContent, showActions = false, showBackButton = false, onBack }: LayoutProps) {
   return (
-    <div className="flex h-screen" style={{ background: 'linear-gradient(150deg, #071d3e 0%, #0d2d5e 45%, #1351a0 100%)' }}>
+    <div className="flex h-screen" style={{ background: `
+      radial-gradient(ellipse 260px 400px at 2% 95%,   rgba(120,86,200,0.65) 0%, transparent 100%),
+      radial-gradient(ellipse 260px 400px at 26% 76%,  rgba(120,86,200,0.55) 0%, transparent 100%),
+      radial-gradient(ellipse 440px 620px at 74% 38%,  rgba(120,86,200,0.50) 0%, transparent 100%),
+      radial-gradient(ellipse 680px 380px at 96%  7%,  rgba(120,86,200,0.65) 0%, transparent 100%),
+      #0C2D55
+    `.replace(/\n\s*/g, ' ') }}>
       <Sidebar
         pageTitle={title}
         showBackButton={showBackButton}
