@@ -1336,7 +1336,7 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
   const isOnTemplatesPage = location.pathname !== "/dashboard" && location.pathname !== "/clients" && location.pathname !== "/engagements" && location.pathname !== "/teams" && location.pathname !== "/design-system" && !location.pathname.startsWith("/engagements/");
   const hasSecondaryPanelExpanded = (isOnEngagementDetail || isOnTemplatesPage) && !isTemplatesPanelCollapsed;
   
-  return <div className={`flex h-screen relative group/sidebar`} style={{ background: 'var(--sidebar-gradient, hsl(var(--sidebar-bg)))' }}>
+  return <div className={`flex h-screen relative group/sidebar`} style={{ background: 'transparent' }}>
       {/* Icon sidebar - dark navy with curved corner, expands on click only */}
       <div className={`sidebar-nav relative flex flex-col py-4 gap-2 transition-all duration-300 ease-in-out ${isNavExpanded ? "w-56 items-start px-3" : "w-14 items-center group/sidebar-collapsed"}`}>
         {/* Luka Logo / Sidebar toggle */}

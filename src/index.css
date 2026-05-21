@@ -1020,7 +1020,7 @@
   }
   
   .sidebar-nav {
-    background: var(--sidebar-gradient, hsl(var(--sidebar-bg)));
+    background: transparent;
   }
 
   .sidebar-secondary-panel:not(.bg-transparent) {
