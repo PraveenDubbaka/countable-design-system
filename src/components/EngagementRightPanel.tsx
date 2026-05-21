@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { ChevronLeft, ChevronRight, Send, Clock, MessageSquare, FolderOpen, Search, Plus, CalendarClock } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -21,9 +22,15 @@ const menuItems = [
 export function EngagementRightPanel({ className }: EngagementRightPanelProps) {
   const [isExpanded, setIsExpanded] = useState(false);
   const [activeItem, setActiveItem] = useState('folders');
+  const [portalTarget, setPortalTarget] = useState<HTMLElement | null>(null);
 
-  return (
-    <div className={cn("flex ml-1 mb-1 mr-1 rounded-xl overflow-hidden bg-white dark:bg-card border border-border/50 shadow-md self-stretch", className)}>
+  useEffect(() => {
+    const el = document.getElementById('right-panel-portal');
+    if (el) setPortalTarget(el);
+  }, []);
+
+  const panel = (
+    <div className={cn("flex mr-1 mb-1 rounded-xl overflow-hidden bg-white dark:bg-card border border-border/50 shadow-md h-full", className)}>
       {/* Icon Bar - Always visible */}
       <div className="w-12 flex flex-col items-center py-3 gap-1">
         {/* Toggle Button */}
@@ -179,4 +186,7 @@ export function EngagementRightPanel({ className }: EngagementRightPanelProps) {
       </div>
     </div>
   );
+
+  if (!portalTarget) return null;
+  return createPortal(panel, portalTarget);
 }

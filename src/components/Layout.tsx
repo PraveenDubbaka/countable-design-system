@@ -38,6 +38,7 @@ export function Layout({ children, title, headerContent, showActions = false, sh
           <main className="app-main flex-1 overflow-auto text-foreground rounded-xl bg-background shadow-[0_4px_24px_rgba(0,0,0,0.35)] mb-1 mr-1">
             {children}
           </main>
+          <div id="right-panel-portal" className="flex shrink-0 h-full" />
         </div>
       </div>
     </div>
