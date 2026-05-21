@@ -32,12 +32,12 @@ export function EngagementRightPanel({ className }: EngagementRightPanelProps) {
   const panel = (
     <div className={cn("flex mr-1 mb-1 rounded-xl overflow-hidden bg-white dark:bg-card border border-border/50 shadow-md h-full", className)}>
       {/* Icon Bar - Always visible */}
-      <div className="w-12 flex flex-col items-center py-3 gap-1.5">
+      <div className="w-12 flex flex-col items-center py-3 gap-1">
         {/* Toggle Button */}
         <Button
           variant="ghost"
           size="icon"
-          className="h-9 w-9 mb-1 bg-muted/70 hover:bg-muted rounded-xl"
+          className="h-9 w-9 mb-2 hover:bg-muted"
           onClick={() => setIsExpanded(!isExpanded)}
         >
           {isExpanded ? (
@@ -54,10 +54,8 @@ export function EngagementRightPanel({ className }: EngagementRightPanelProps) {
             variant="ghost"
             size="icon"
             className={cn(
-              "h-9 w-9 rounded-xl",
-              activeItem === item.id
-                ? "bg-muted shadow-sm"
-                : "bg-muted/70 hover:bg-muted"
+              "h-9 w-9 hover:bg-muted",
+              activeItem === item.id && "bg-muted text-primary"
             )}
             onClick={() => {
               setActiveItem(item.id);
