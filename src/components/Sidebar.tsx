@@ -1413,9 +1413,9 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
             style={{ width: isTemplatesPanelCollapsed ? 0 : (signoffsMode ? Math.max(panelWidth, 440) : panelWidth) }}
             className={cn(
               `flex flex-col relative z-40 transition-all group/templates sidebar-secondary-panel ${hasDarkSecondary ? 'sidebar-dark-theme' : ''}`,
-              isTemplatesPanelCollapsed 
-                ? "overflow-hidden shadow-none bg-transparent" 
-                : "shadow-md border-r border-[#DDE1E9] dark:border-border",
+              isTemplatesPanelCollapsed
+                ? "overflow-hidden shadow-none bg-transparent"
+                : "shadow-md bg-white dark:bg-card border border-border/50 rounded-xl my-2 ml-1 mr-1",
               isResizing && "transition-none"
             )}
           >
@@ -1935,9 +1935,9 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
             style={{ width: isTemplatesPanelCollapsed ? 0 : panelWidth }}
             className={cn(
               `flex flex-col relative z-40 transition-all group/templates sidebar-secondary-panel ${hasDarkSecondary ? 'sidebar-dark-theme' : ''}`,
-              isTemplatesPanelCollapsed 
-                ? "overflow-hidden shadow-none bg-transparent border-r-0" 
-                : "shadow-md bg-[#f1f1f3] dark:from-muted dark:to-card border-r border-border",
+              isTemplatesPanelCollapsed
+                ? "overflow-hidden shadow-none bg-transparent"
+                : "shadow-md bg-white dark:bg-card border border-border/50 rounded-xl my-2 ml-1 mr-1",
               isResizing && "transition-none"
             )}
           >

@@ -160,11 +160,14 @@
   background: linear-gradient(to right, hsl(var(--muted)), hsl(var(--card)));
 }
 
-/* When a secondary panel is rendered inside content-wrapper via portal,
-   the content-wrapper's bottom-left radius is still needed at the icon-sidebar junction. */
+/* app-main card: when secondary panel is present add a small left gap */
 .content-wrapper:has(> #sidebar-secondary-portal:not(:empty)) .app-main {
-  border-top-left-radius: 0 !important;
-  border-bottom-left-radius: 0 !important;
+  margin-left: 0;
+}
+
+/* app-main card: no secondary panel — extend left margin to 4px from nav */
+.content-wrapper:has(> #sidebar-secondary-portal:empty) .app-main {
+  margin-left: 0.25rem;
 }
 
 /* Inter Font */
