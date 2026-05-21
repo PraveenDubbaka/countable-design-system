@@ -1019,7 +1019,7 @@
   }
 
   .sidebar-secondary-panel:not(.bg-transparent) {
-    background: var(--sidebar-secondary-gradient, hsl(var(--sidebar-secondary-bg))) !important;
+    background: #ffffff !important;
   }
 
   .sidebar-secondary-panel.sidebar-dark-theme:not(.bg-transparent) {
