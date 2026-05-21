@@ -1415,7 +1415,7 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
               `flex flex-col relative z-40 transition-all group/templates sidebar-secondary-panel ${hasDarkSecondary ? 'sidebar-dark-theme' : ''}`,
               isTemplatesPanelCollapsed
                 ? "overflow-hidden shadow-none bg-transparent"
-                : "shadow-md bg-white dark:bg-card border border-border/50 rounded-xl mb-2 ml-1 mr-1",
+                : "shadow-md bg-white dark:bg-card border border-border/50 rounded-xl mb-2 mr-1",
               isResizing && "transition-none"
             )}
           >
@@ -1937,7 +1937,7 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
               `flex flex-col relative z-40 transition-all group/templates sidebar-secondary-panel ${hasDarkSecondary ? 'sidebar-dark-theme' : ''}`,
               isTemplatesPanelCollapsed
                 ? "overflow-hidden shadow-none bg-transparent"
-                : "shadow-md bg-white dark:bg-card border border-border/50 rounded-xl mb-2 ml-1 mr-1",
+                : "shadow-md bg-white dark:bg-card border border-border/50 rounded-xl mb-2 mr-1",
               isResizing && "transition-none"
             )}
           >
