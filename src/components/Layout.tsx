@@ -29,7 +29,7 @@ export function Layout({ children, title, headerContent, showActions = false, sh
         {/* Content area: transparent flex row — each card floats on gradient */}
         <div className="content-wrapper flex flex-1 overflow-hidden">
           <div id="sidebar-secondary-portal" className="flex shrink-0 h-full" />
-          <main className="app-main flex-1 overflow-auto text-foreground rounded-xl bg-background shadow-[0_4px_24px_rgba(0,0,0,0.35)] my-2 mr-2">
+          <main className="app-main flex-1 overflow-auto text-foreground rounded-xl bg-background shadow-[0_4px_24px_rgba(0,0,0,0.35)] mb-2 mr-2">
             {children}
           </main>
         </div>
