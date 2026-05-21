@@ -23,9 +23,9 @@ export function EngagementRightPanel({ className }: EngagementRightPanelProps) {
   const [activeItem, setActiveItem] = useState('folders');
 
   return (
-    <div className={cn("flex h-full", className)}>
+    <div className={cn("flex ml-1 mb-1 mr-1 rounded-xl overflow-hidden bg-white dark:bg-card border border-border/50 shadow-md self-stretch", className)}>
       {/* Icon Bar - Always visible */}
-      <div className="w-12 bg-[#f1f1f3] dark:bg-muted border-l border-border flex flex-col items-center py-3 gap-1">
+      <div className="w-12 flex flex-col items-center py-3 gap-1">
         {/* Toggle Button */}
         <Button
           variant="ghost"
@@ -63,7 +63,7 @@ export function EngagementRightPanel({ className }: EngagementRightPanelProps) {
       {/* Expanded Content Panel */}
       <div
         className={cn(
-          "bg-[#f1f1f3] dark:bg-muted border-l border-border transition-all duration-300 overflow-hidden",
+          "border-l border-border/50 transition-all duration-300 overflow-hidden",
           isExpanded ? "w-72" : "w-0"
         )}
       >
