@@ -70,14 +70,14 @@ export function EngagementRightPanel({ className }: EngagementRightPanelProps) {
       {/* Expanded Content Panel */}
       <div
         className={cn(
-          "border-l border-border/50 transition-all duration-300 overflow-hidden",
+          "transition-all duration-300 overflow-hidden",
           isExpanded ? "w-72" : "w-0"
         )}
       >
         {isExpanded && (
           <div className="w-72 h-full flex flex-col">
             {/* Header */}
-            <div className="flex items-center gap-2 px-4 py-3 border-b border-border/60">
+            <div className="flex items-center gap-2 px-4 py-3">
               <h3 className="font-semibold text-sm text-foreground flex-1">Engagement Folders</h3>
               <Button variant="ghost" size="icon" className="h-7 w-7 shrink-0">
                 <Search className="h-3.5 w-3.5 text-muted-foreground" />
