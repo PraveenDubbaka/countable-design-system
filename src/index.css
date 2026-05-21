@@ -160,14 +160,9 @@
   background: linear-gradient(to right, hsl(var(--muted)), hsl(var(--card)));
 }
 
-/* app-main card: when secondary panel is present add a small left gap */
-.content-wrapper:has(> #sidebar-secondary-portal:not(:empty)) .app-main {
+/* app-main card: always flush on the left — gap comes from secondary panel's mr-1 when present */
+.app-main {
   margin-left: 0;
-}
-
-/* app-main card: no secondary panel — extend left margin to 4px from nav */
-.content-wrapper:has(> #sidebar-secondary-portal:empty) .app-main {
-  margin-left: 0.25rem;
 }
 
 /* Inter Font */
