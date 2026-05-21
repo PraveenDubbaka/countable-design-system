@@ -1338,7 +1338,7 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
   
   return <div className={`flex h-screen relative group/sidebar`} style={{ background: 'transparent' }}>
       {/* Icon sidebar - dark navy with curved corner, expands on click only */}
-      <div className={`sidebar-nav relative flex flex-col py-4 gap-2 transition-all duration-300 ease-in-out ${isNavExpanded ? "w-56 items-start px-3" : "w-14 items-center group/sidebar-collapsed"}`}>
+      <div className={`sidebar-nav bg-transparent relative flex flex-col py-4 gap-2 transition-all duration-300 ease-in-out ${isNavExpanded ? "w-56 items-start px-3" : "w-14 items-center group/sidebar-collapsed"}`}>
         {/* Luka Logo / Sidebar toggle */}
         <div className={`h-10 mb-4 flex items-center ${isNavExpanded ? "px-2 w-full justify-between" : "justify-center w-full cursor-pointer"}`} onClick={() => !isNavExpanded && setIsNavExpanded(true)} title={!isNavExpanded ? "Expand sidebar" : undefined}>
           {isNavExpanded ? (

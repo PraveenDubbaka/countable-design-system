@@ -1020,7 +1020,7 @@
   }
   
   .sidebar-nav {
-    background: transparent;
+    background: transparent !important;
   }
 
   .sidebar-secondary-panel:not(.bg-transparent) {
