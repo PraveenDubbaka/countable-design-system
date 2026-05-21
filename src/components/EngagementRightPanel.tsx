@@ -32,7 +32,7 @@ export function EngagementRightPanel({ className }: EngagementRightPanelProps) {
   const panel = (
     <div className={cn("flex mr-1 mb-1 rounded-xl overflow-hidden bg-white dark:bg-card border border-border/50 shadow-md h-full", className)}>
       {/* Icon Bar - Always visible */}
-      <div className="w-12 flex flex-col items-center py-3 gap-1">
+      <div className="w-12 flex flex-col items-center py-3 gap-1 m-1 rounded-lg" style={{ backgroundColor: '#F5F8FF' }}>
         {/* Toggle Button */}
         <Button
           variant="ghost"
