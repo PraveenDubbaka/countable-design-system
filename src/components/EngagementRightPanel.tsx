@@ -77,28 +77,25 @@ export function EngagementRightPanel({ className }: EngagementRightPanelProps) {
         {isExpanded && (
           <div className="w-72 h-full flex flex-col">
             {/* Header */}
-            <div className="flex items-center justify-between px-4 py-3 border-b border-border">
-              <h3 className="font-semibold text-sm text-foreground">Engagement Folders</h3>
-              <Button variant="ghost" size="icon" className="h-7 w-7">
-                <Search className="h-4 w-4 text-muted-foreground" />
+            <div className="flex items-center gap-2 px-4 py-3 border-b border-border/60">
+              <h3 className="font-semibold text-sm text-foreground flex-1">Engagement Folders</h3>
+              <Button variant="ghost" size="icon" className="h-7 w-7 shrink-0">
+                <Search className="h-3.5 w-3.5 text-muted-foreground" />
+              </Button>
+              <Button variant="outline" size="icon" className="h-7 w-7 shrink-0 border-border">
+                <Plus className="h-3.5 w-3.5 text-foreground" />
               </Button>
             </div>
 
             {/* Content */}
-            <div className="flex-1 overflow-y-auto p-4 space-y-4">
-              {/* New Request Button */}
-              <Button variant="outline" className="w-full justify-center gap-2 h-9 text-xs">
-                <Plus className="h-3.5 w-3.5" />
-                New Request
-              </Button>
-
+            <div className="flex-1 overflow-y-auto p-4 space-y-3">
               {/* Folder Selection */}
               <div className="space-y-1.5">
                 <label className="text-xs font-medium text-foreground">
-                  Choose Engagement Folder<span className="text-destructive">*</span>
+                  Choose Engagement Folder <span className="text-destructive">*</span>
                 </label>
                 <Select defaultValue="client-onboarding">
-                  <SelectTrigger className="h-9 text-sm">
+                  <SelectTrigger className="h-9 text-sm w-full">
                     <SelectValue placeholder="Select folder" />
                   </SelectTrigger>
                   <SelectContent>
@@ -112,10 +109,10 @@ export function EngagementRightPanel({ className }: EngagementRightPanelProps) {
               {/* Section Selection */}
               <div className="space-y-1.5">
                 <label className="text-xs font-medium text-foreground">
-                  Choose Engagement Folder<span className="text-destructive">*</span>
+                  Choose Engagement Section <span className="text-destructive">*</span>
                 </label>
                 <Select defaultValue="new-section">
-                  <SelectTrigger className="h-9 text-sm">
+                  <SelectTrigger className="h-9 text-sm w-full">
                     <SelectValue placeholder="Select section" />
                   </SelectTrigger>
                   <SelectContent>
@@ -126,21 +123,23 @@ export function EngagementRightPanel({ className }: EngagementRightPanelProps) {
                 </Select>
               </div>
 
-              {/* Schedule Button */}
-              <Button variant="outline" className="w-full justify-center gap-2 h-9 text-xs">
+              {/* Schedule Button — solid dark navy */}
+              <Button
+                className="w-full justify-center gap-2 h-10 text-xs font-medium bg-[#0C2D55] hover:bg-[#0a2447] text-white border-0"
+              >
                 <CalendarClock className="h-3.5 w-3.5" />
                 Schedule Document Request
               </Button>
 
               {/* Tabs */}
               <Tabs defaultValue="all" className="w-full">
-                <TabsList className="w-full h-9 p-0.5 bg-muted/50 overflow-hidden">
-                  <TabsTrigger value="all" className="flex-1 text-[10px] h-full px-1 min-w-0 truncate">All Requests</TabsTrigger>
-                  <TabsTrigger value="available" className="flex-1 text-[10px] h-full px-1 min-w-0 truncate">Available</TabsTrigger>
+                <TabsList className="w-full h-8 p-0.5 bg-muted/60 rounded-lg">
+                  <TabsTrigger value="all" className="flex-1 text-[11px] h-full px-1 min-w-0 truncate rounded-md">All Requests</TabsTrigger>
+                  <TabsTrigger value="available" className="flex-1 text-[11px] h-full px-1 min-w-0 truncate rounded-md">Available</TabsTrigger>
                   <TooltipProvider>
                     <Tooltip>
                       <TooltipTrigger asChild>
-                        <TabsTrigger value="backlog" className="flex-1 text-[10px] h-full px-1 min-w-0 truncate">Batch</TabsTrigger>
+                        <TabsTrigger value="backlog" className="flex-1 text-[11px] h-full px-1 min-w-0 truncate rounded-md">Batch</TabsTrigger>
                       </TooltipTrigger>
                       <TooltipContent side="bottom">
                         <p>Batch Requests</p>
