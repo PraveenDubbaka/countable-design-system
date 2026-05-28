@@ -1582,7 +1582,7 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
                     ]
                   },
                   {
-                    id: "aud-ra-sec", code: "RA", label: "Risk Assessment (500)", icon: "folder",
+                    id: "aud-ra-sec", code: "RA", label: "Risk Assessment", icon: "folder",
                     children: [
                       { id: "aud-ra-rap", code: "RAP", label: "Risk Assessment Procedures", icon: "checklist", route: "checklist/aud-ra-rap" },
                       { id: "aud-ra-ic", code: "IC", label: "Understanding Internal Controls", icon: "checklist", route: "checklist/aud-ra-ic" },
@@ -1597,7 +1597,7 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
                     ]
                   },
                   {
-                    id: "aud-rp-sec", code: "RP", label: "Response to Assessed Risks (600)", icon: "folder",
+                    id: "aud-rp-sec", code: "RP", label: "Response to Assessed Risks", icon: "folder",
                     children: [
                       { id: "aud-rp-oar", code: "OAR", label: "Overall Audit Response", icon: "checklist", route: "checklist/aud-rp-oar" },
                       { id: "aud-rp-toc", code: "TOC", label: "Test of Controls", icon: "checklist" },
