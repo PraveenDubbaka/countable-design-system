@@ -1678,7 +1678,7 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
                     ]
                   },
                   {
-                    id: "aud-so", code: "SO", label: "Completion & Signoffs (300)", icon: "folder",
+                    id: "aud-so", code: "SO", label: "Completion & Signoffs", icon: "folder",
                     children: [
                       { id: "aud-so-aim", code: "AIM", label: "Accumulation of Identified Misstatements", icon: "checklist", route: "checklist/aud-so-aim" },
                       { id: "aud-so-far", code: "FAR", label: "Final Analytical Review", icon: "checklist", route: "checklist/aud-so-far" },
