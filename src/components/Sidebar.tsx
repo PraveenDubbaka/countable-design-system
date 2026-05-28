@@ -1575,7 +1575,7 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
                     ]
                   },
                   {
-                    id: "aud-tb", code: "TB", label: "Trial Balance & Adjusting Entries", icon: "worksheet", route: "trial-balance"
+                    id: "aud-tb", code: "TB", label: "Trial Balance & Adjusting Entries", icon: "folder", route: "trial-balance"
                   },
                   {
                     id: "aud-ra-sec", code: "RA", label: "Risk Assessment", icon: "folder",
