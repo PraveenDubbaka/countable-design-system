@@ -1578,7 +1578,6 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
                     id: "aud-tb", code: "TB", label: "Trial Balance & Adjusting Entries", icon: "folder",
                     children: [
                       { id: "aud-tb-tb", code: "TB", label: "Trial Balance & Adjusting Entries", icon: "worksheet", route: "trial-balance" },
-                      { id: "aud-tb-aje", code: "AJE", label: "Audit Adjustments & Reclassifications", icon: "worksheet" },
                     ]
                   },
                   {
