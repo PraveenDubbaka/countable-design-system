@@ -1029,7 +1029,7 @@ export const generateNewEngagementAcceptanceChecklist = (): Checklist => {
 
   return {
     id: 'global-template-new-engagement-acceptance',
-    title: 'New engagement acceptance',
+    title: 'New Engagement Acceptance',
     description: 'Document the considerations and conclusions reached in deciding whether to accept a new review engagement.',
     objective: `This form covers:
 • Quality assurance manual
@@ -1328,7 +1328,7 @@ export const generateExistingEngagementContinuanceChecklist = (): Checklist => {
 
   return {
     id: 'global-template-existing-engagement-continuance',
-    title: 'Existing engagement continuance',
+    title: 'Existing Engagement Continuance',
     description: 'Document the considerations and conclusions reached in deciding whether to continue an existing review engagement.',
     objective: `This form covers:
 • Quality assurance manual
@@ -1466,7 +1466,7 @@ export const generateUnderstandingEntityBasicsChecklist = (): Checklist => {
 
   return {
     id: 'global-template-understanding-entity-basics',
-    title: 'Understanding the entity - Basics',
+    title: 'Understanding the Entity — Basics',
     description: 'Document the understanding of the entity\'s general information, governance, and operations for a review engagement.',
     objective: `This form covers:
 • General information
@@ -2604,7 +2604,7 @@ export const generateUnderstandingEntitySystemsChecklist = (): Checklist => {
 
   return {
     id: 'understanding-entity-systems',
-    title: 'Understanding the Entity - Systems',
+    title: 'Understanding the Entity — Systems & Controls',
     objective: `This form covers:
 • Part A — Understanding Financial Accounting/Reporting Systems
 • Understanding General Technology
@@ -4135,7 +4135,7 @@ export const generateAuditCompletionChecklist = (): Checklist => {
 
   return {
     id: 'global-template-audit-completion',
-    title: 'Audit Completion',
+    title: 'Audit Completion Checklist',
     description: 'A comprehensive checklist to determine if the CAS requirements have been fulfilled before issuing the auditor\'s report.',
     objective: `To determine if the CAS requirements have been fulfilled before issuing the auditor's report.
 
@@ -4273,7 +4273,7 @@ export const generateEngagementPartnerAuditCompletionChecklist = (): Checklist =
 
   return {
     id: 'global-template-engagement-partner-audit-completion',
-    title: 'Engagement Partner — Audit Completion',
+    title: 'Quality Control Review (EP)',
     description: 'To ensure the engagement partner and engagement team\'s responsibilities related to quality management at the engagement level are fulfilled and documented.',
     objective: `To ensure the engagement partner and engagement team's responsibilities related to quality management at the engagement level are fulfilled and documented (CAS 220.41).
 
@@ -4494,7 +4494,7 @@ export const generateAuditorsReportChecklist = (): Checklist => {
 
   return {
     id: 'global-template-auditors-report',
-    title: 'Auditor\'s Report',
+    title: 'Independent Auditor\'s Report',
     description: 'Checklist to ensure the auditor\'s report addresses all CAS requirements.',
     objective: 'To form an opinion on the financial statements based on an evaluation of the conclusions drawn from the audit evidence obtained, and to check that the content of the auditor\'s report appropriately reflects that opinion.',
     sections,
@@ -4790,7 +4790,7 @@ export const generateManagementRepresentationsChecklist = (): Checklist => {
 
   return {
     id: 'global-template-management-representations',
-    title: 'Management Representations',
+    title: 'Management Representation Letter',
     description: 'Checklist to check that the CAS requirements related to management representations have been fulfilled prior to issuing the auditor\'s report.',
     objective: 'To check that the CAS requirements related to management representations have been fulfilled prior to issuing the auditor\'s report.',
     sections,
@@ -5142,7 +5142,7 @@ export const generateAuditIndependenceChecklist = (): Checklist => {
 
   return {
     id: 'global-template-audit-independence',
-    title: 'Independence & Ethical Requirements (Audit)',
+    title: 'Independence & Ethical Requirements',
     description: 'Independence checklist for audit engagements — CAS 220, CSQM 1, CPA Canada Code of Professional Conduct.',
     objective: `Objective: To identify, evaluate, and document any threats to independence and confirm that all members of the engagement team are independent of the client.
 
@@ -5410,7 +5410,7 @@ export const generateAuditMaterialityChecklist = (): Checklist => {
 
   return {
     id: 'global-template-audit-materiality',
-    title: 'Materiality (CAS 320)',
+    title: 'Materiality',
     description: 'Materiality determination worksheet for audit engagements — CAS 320 and CAS 450.',
     objective: `Objective: To establish overall materiality, performance materiality, and the clearly trivial threshold for the audit, and to document the rationale for each determination.
 
@@ -5523,7 +5523,7 @@ export const generateAuditEngagementLetterChecklist = (): Checklist => {
 
   return {
     id: 'global-template-audit-engagement-letter',
-    title: 'Engagement Letter — Audit',
+    title: 'Engagement Letter',
     description: 'Audit engagement letter — CAS 210 (Agreeing the Terms of Audit Engagements).',
     objective: `Objective: To establish the terms of the audit engagement in writing, documenting the objective and scope, the auditor's and management's responsibilities, and the form of the auditor's report.
 
@@ -5632,7 +5632,7 @@ export const generateTCWGPlanningCommunicationChecklist = (): Checklist => {
 
   return {
     id: 'global-template-audit-tcwg-planning',
-    title: 'Communication with Those Charged with Governance — Planning',
+    title: 'TCWG Communication — Planning',
     description: 'Pre-audit communication with those charged with governance — CAS 260.',
     objective: `Objective: To communicate with TCWG the planned scope, timing, and significant matters before the audit commences.
 
@@ -5731,7 +5731,7 @@ export const generateTCWGFinalCommunicationChecklist = (): Checklist => {
 
   return {
     id: 'global-template-audit-tcwg-final',
-    title: 'Communication with Those Charged with Governance — Completion',
+    title: 'TCWG Communication — Completion',
     description: 'Post-audit communication with those charged with governance — CAS 260.',
     objective: `Objective: To communicate with TCWG the results of the audit, significant findings, and other matters arising from the audit.
 
@@ -10089,5 +10089,179 @@ export const generateFinalAnalyticalReviewChecklist = (): Checklist => {
     sections,
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
+  };
+};
+
+// Going Concern — Initial Assessment (Risk Assessment phase, CAS 570)
+export const generateGoingConcernInitialAssessmentChecklist = (): Checklist => {
+  const q = (id: string, text: string, sub?: Question[]): Question => ({
+    id, text, answerType: 'yes-no-na' as const, options: ['Yes', 'No', 'NA'],
+    required: false, answer: '', ...(sub ? { subQuestions: sub } : {})
+  });
+  const la = (id: string, text: string): Question => ({
+    id, text, answerType: 'long-answer' as const, options: [], required: false, answer: ''
+  });
+
+  const sections: Section[] = [
+    {
+      id: 'gc-init-s1',
+      title: '1. Identification of Adverse Events and Conditions',
+      questions: [
+        q('gc-init-1a', '<p><strong>Financial indicators:</strong></p>', [
+          q('gc-init-1a-i', '<p>Net liability or net current liability position.</p>'),
+          q('gc-init-1a-ii', '<p>Fixed-term borrowings approaching maturity without realistic prospects of renewal or repayment, or excessive reliance on short-term borrowings to finance long-term assets.</p>'),
+          q('gc-init-1a-iii', '<p>Indications of withdrawal of financial support by creditors.</p>'),
+          q('gc-init-1a-iv', '<p>Negative operating cash flows indicated by historical or prospective financial statements.</p>'),
+          q('gc-init-1a-v', '<p>Adverse key financial ratios.</p>'),
+          q('gc-init-1a-vi', '<p>Substantial operating losses or significant deterioration in the value of assets used to generate cash flows.</p>'),
+          q('gc-init-1a-vii', '<p>Arrears or discontinuance of dividends.</p>'),
+          q('gc-init-1a-viii', '<p>Inability to pay creditors on due dates.</p>'),
+          q('gc-init-1a-ix', '<p>Inability to comply with the terms of loan agreements.</p>'),
+          q('gc-init-1a-x', '<p>Change from credit to cash-on-delivery transactions with suppliers.</p>'),
+          q('gc-init-1a-xi', '<p>Inability to obtain financing for essential new product development or other essential investments.</p>'),
+        ]),
+        q('gc-init-1b', '<p><strong>Operating indicators:</strong></p>', [
+          q('gc-init-1b-i', '<p>Management intentions to liquidate the entity or to cease operations.</p>'),
+          q('gc-init-1b-ii', '<p>Loss of key management without replacement.</p>'),
+          q('gc-init-1b-iii', '<p>Loss of a major market, key customer(s), franchise, license, or principal supplier(s).</p>'),
+          q('gc-init-1b-iv', '<p>Labour difficulties.</p>'),
+          q('gc-init-1b-v', '<p>Shortages of important supplies.</p>'),
+          q('gc-init-1b-vi', '<p>Emergence of a highly successful competitor.</p>'),
+        ]),
+        q('gc-init-1c', '<p><strong>Other indicators:</strong></p>', [
+          q('gc-init-1c-i', '<p>Non-compliance with capital or other statutory requirements.</p>'),
+          q('gc-init-1c-ii', '<p>Pending legal or regulatory proceedings against the entity that may, if successful, result in claims that the entity is unlikely to be able to satisfy.</p>'),
+          q('gc-init-1c-iii', '<p>Changes in law or regulation or government policy expected to adversely affect the entity.</p>'),
+          q('gc-init-1c-iv', '<p>Uninsured or underinsured catastrophes when they occur.</p>'),
+        ]),
+        la('gc-init-1-notes', '<p><strong>Notes — describe any adverse events or conditions identified above:</strong></p>'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'gc-init-s2',
+      title: '2. Inquiry of Management',
+      questions: [
+        q('gc-init-2a', '<p>Have you inquired of management whether they are aware of events or conditions beyond the period of management\'s assessment that may cast significant doubt on the entity\'s ability to continue as a going concern? (CAS 570.17)</p>'),
+        q('gc-init-2b', '<p>Has management performed a going concern assessment for the current period? If so, obtain and review it.</p>'),
+        q('gc-init-2c', '<p>Does management\'s assessment cover a period of at least 12 months from the expected date of the auditor\'s report? (CAS 570.13)</p>'),
+        la('gc-init-2-notes', '<p><strong>Notes — summarize management\'s assessment and conclusions:</strong></p>'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'gc-init-s3',
+      title: '3. Preliminary Conclusion',
+      questions: [
+        q('gc-init-3a', '<p>Based on the above, does significant doubt exist about the entity\'s ability to continue as a going concern?</p>'),
+        q('gc-init-3b', '<p>If significant doubt exists, have additional audit procedures been planned to evaluate management\'s response (to be performed and documented in the Going Concern — Final Assessment form)?</p>'),
+        la('gc-init-3-notes', '<p><strong>Preliminary conclusion and planned additional procedures:</strong></p>'),
+      ],
+      isExpanded: true
+    },
+  ];
+
+  return {
+    id: 'global-template-gc-initial',
+    title: 'Going Concern — Initial Assessment',
+    description: 'Documents the initial assessment of going concern indicators identified during the risk assessment phase of the audit, per CAS 570.',
+    objective: `CAS 570 requires the auditor to obtain sufficient appropriate audit evidence about whether management has appropriately applied the going concern basis of accounting. This checklist documents the initial identification of events and conditions that may cast significant doubt on the entity's ability to continue as a going concern, identified during the risk assessment phase.`,
+    sections,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  };
+};
+
+// Going Concern — Final Assessment (Completion phase, CAS 570)
+export const generateGoingConcernFinalAssessmentChecklist = (): Checklist => {
+  const q = (id: string, text: string, sub?: Question[]): Question => ({
+    id, text, answerType: 'yes-no-na' as const, options: ['Yes', 'No', 'NA'],
+    required: false, answer: '', ...(sub ? { subQuestions: sub } : {})
+  });
+  const la = (id: string, text: string): Question => ({
+    id, text, answerType: 'long-answer' as const, options: [], required: false, answer: ''
+  });
+
+  const sections: Section[] = [
+    {
+      id: 'gc-final-s1',
+      title: '1. Summary of Events and Conditions Identified',
+      questions: [
+        q('gc-final-1a', '<p>Have all adverse events and conditions identified during the audit (including those in the initial going concern assessment) been summarized and considered in this final assessment?</p>'),
+        la('gc-final-1-notes', '<p><strong>Summarize all adverse events and conditions identified during the audit:</strong></p>'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'gc-final-s2',
+      title: '2. Evaluation of Management\'s Plans',
+      questions: [
+        q('gc-final-2a', '<p>Has management prepared a detailed action plan? Obtain and document a copy.</p>'),
+        q('gc-final-2b', '<p><strong>Management plans to dispose of assets:</strong></p>', [
+          q('gc-final-2b-i', '<p>Are there restrictions on the entity\'s ability to sell the assets?</p>'),
+          q('gc-final-2b-ii', '<p>Has the effect of planned disposal on remaining operations been assessed?</p>'),
+          q('gc-final-2b-iii', '<p>Are cash flow reports or forecasts available and reviewed?</p>'),
+        ]),
+        q('gc-final-2c', '<p><strong>Management plans to borrow money or restructure debt:</strong></p>', [
+          q('gc-final-2c-i', '<p>Has the availability of debt financing and capacity to borrow been assessed?</p>'),
+          q('gc-final-2c-ii', '<p>Does the entity have sufficient collateral to obtain new financing?</p>'),
+          q('gc-final-2c-iii', '<p>Has the impact of new financing on operations and cash flows been assessed?</p>'),
+        ]),
+        q('gc-final-2d', '<p><strong>Management plans to reduce or delay expenditures:</strong></p>', [
+          q('gc-final-2d-i', '<p>Has the feasibility of proposed cost reductions been reviewed?</p>'),
+          q('gc-final-2d-ii', '<p>Has the impact of cost reductions on ongoing operations been assessed?</p>'),
+        ]),
+        q('gc-final-2e', '<p><strong>Management plans to obtain additional capital contributions:</strong></p>', [
+          q('gc-final-2e-i', '<p>Has the likelihood of obtaining new financing within required time frames been reviewed?</p>'),
+          q('gc-final-2e-ii', '<p>Has the effect on existing shareholders been assessed?</p>'),
+        ]),
+        q('gc-final-2f', '<p>Where management has prepared a cash flow or earnings forecast, has it been evaluated for consistency with other known information about the entity and for reasonableness of assumptions?</p>'),
+        la('gc-final-2-notes', '<p><strong>Notes — evaluation of management\'s plans:</strong></p>'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'gc-final-s3',
+      title: '3. Additional Audit Procedures',
+      questions: [
+        q('gc-final-3a', '<p>Has sufficient appropriate audit evidence been obtained to evaluate management\'s going concern assessment and their plans to mitigate identified risks? (CAS 570.16–19)</p>'),
+        q('gc-final-3b', '<p>Have any subsequent events that are relevant to the going concern assessment been considered? (CAS 570.24)</p>'),
+        la('gc-final-3-notes', '<p><strong>Notes — additional procedures performed and evidence obtained:</strong></p>'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'gc-final-s4',
+      title: '4. Final Conclusion',
+      questions: [
+        q('gc-final-4a', '<p>Based on all audit procedures performed, is the going concern basis of accounting appropriate?</p>'),
+        q('gc-final-4b', '<p>If significant doubt exists but the going concern basis is appropriate, is adequate disclosure made in the financial statements about the material uncertainty?</p>'),
+        q('gc-final-4c', '<p>If the going concern basis is inappropriate, has the auditor\'s report been modified accordingly?</p>'),
+        q('gc-final-4d', '<p>Have written representations been obtained from management regarding their plans and the feasibility of those plans? (CAS 580)</p>'),
+        q('gc-final-4e', '<p>Have TCWG been informed of going concern matters as required by CAS 260?</p>'),
+        la('gc-final-4-notes', '<p><strong>Final conclusion on going concern:</strong></p>'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'gc-final-s5',
+      title: '5. Financial Statement Presentation and Disclosure',
+      questions: [
+        q('gc-final-5a', '<p>Do the financial statements adequately disclose going concern issues, including the nature of the events/conditions and management\'s plans to address them?</p>'),
+        q('gc-final-5b', '<p>If a material uncertainty exists, does the auditor\'s report include an appropriate "Material Uncertainty Related to Going Concern" paragraph?</p>'),
+        la('gc-final-5-notes', '<p><strong>Notes on disclosure adequacy:</strong></p>'),
+      ],
+      isExpanded: true
+    },
+  ];
+
+  return {
+    id: 'global-template-gc-final',
+    title: 'Going Concern — Final Assessment',
+    description: 'Documents the final going concern assessment performed at the completion stage of the audit, including evaluation of management\'s plans and the auditor\'s final conclusion, per CAS 570.',
+    objective: `CAS 570 requires the auditor to conclude on the appropriateness of management's use of the going concern basis of accounting. This checklist documents the final evaluation of management's plans to address identified going concern risks, the auditor's final conclusion, and the adequacy of financial statement disclosure.`,
+    sections,
+    createdAt: new Date(),
+    updatedAt: new Date(),
   };
 };

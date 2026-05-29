@@ -72,6 +72,8 @@ import {
   generateTestOfDetailsRevenueChecklist,
   generateTestOfDetailsExpensesChecklist,
   generateAuditProceduresSummaryChecklist,
+  generateGoingConcernInitialAssessmentChecklist,
+  generateGoingConcernFinalAssessmentChecklist,
 } from "@/lib/globalTemplates";
 
 // Sample engagement data matching the engagements page
@@ -197,7 +199,7 @@ const buildDefaultAuditChecklists = () => {
     { generator: generateSCOTRevenueCycleChecklist, id: "default-audit-ra-scot-rev" },
     { generator: generateSCOTExpenditureCycleChecklist, id: "default-audit-ra-scot-exp" },
     { generator: generateSCOTPayrollCycleChecklist, id: "default-audit-ra-scot-pay" },
-    { generator: generateWorksheetGoingConcernChecklist, id: "default-audit-ra-gc" },
+    { generator: generateGoingConcernInitialAssessmentChecklist, id: "default-audit-ra-gc" },
     { generator: generateOverallAuditResponseChecklist, id: "default-audit-rp-oar" },
     { generator: generateTestOfControlsChecklist, id: "default-audit-rp-toc" },
     { generator: generateSubstantiveAnalyticalProceduresChecklist, id: "default-audit-rp-sap" },
@@ -210,7 +212,7 @@ const buildDefaultAuditChecklists = () => {
     { generator: generateAccumulationOfMisstatementsChecklist, id: "default-audit-so-aim" },
     { generator: generateFinalAnalyticalReviewChecklist, id: "default-audit-so-far" },
     { generator: generateSubsequentEventsChecklist, id: "default-audit-subseq" },
-    { generator: generateWorksheetGoingConcernChecklist, id: "default-audit-wgc-final" },
+    { generator: generateGoingConcernFinalAssessmentChecklist, id: "default-audit-wgc-final" },
     { generator: generateManagementRepresentationsChecklist, id: "default-audit-mr" },
     { generator: generateTCWGFinalCommunicationChecklist, id: "default-audit-tcwg-fin" },
     { generator: generateAuditCompletionChecklist, id: "default-audit-comp" },
