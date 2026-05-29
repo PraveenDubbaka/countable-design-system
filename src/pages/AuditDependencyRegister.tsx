@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Layout } from "@/components/Layout";
 import { Badge } from "@/components/ui/badge";
@@ -7,7 +7,7 @@ import { LetterIcon } from "@/components/icons/LetterIcon";
 import { WorksheetIcon } from "@/components/icons/WorksheetIcon";
 import { CompletionIcon } from "@/components/icons/CompletionIcon";
 import { cn } from "@/lib/utils";
-import { ChevronRight, Link2, AlertCircle, CheckCircle2, Circle, Clock, X, ExternalLink, FolderOpen } from "lucide-react";
+import { ChevronRight, Link2, AlertCircle, CheckCircle2, Circle, Clock, X, ExternalLink, FolderOpen, Maximize2, Minimize2, GripVertical } from "lucide-react";
 
 const DRIVE_FOLDER_ID = "0ANU645mbF0czUk9PVA";
 const DRIVE_FOLDER_URL = `https://drive.google.com/drive/folders/${DRIVE_FOLDER_ID}`;
@@ -470,9 +470,61 @@ export default function AuditDependencyRegister() {
   const { engagementId } = useParams<{ engagementId: string }>();
   const navigate = useNavigate();
   const [drivePanel, setDrivePanel] = useState<{ open: boolean; standard: string }>({ open: false, standard: "" });
+  const [panelWidth, setPanelWidth] = useState(360);
+  const [panelPos, setPanelPos] = useState<{ x: number; y: number } | null>(null);
+  const [isFullscreen, setIsFullscreen] = useState(false);
+  const dragState = useRef<{ startX: number; startY: number; startPanelX: number; startPanelY: number } | null>(null);
+  const resizeState = useRef<{ startX: number; startWidth: number } | null>(null);
+  const panelRef = useRef<HTMLDivElement>(null);
 
-  const openDrivePanel = (standard: string) => setDrivePanel({ open: true, standard });
-  const closeDrivePanel = () => setDrivePanel({ open: false, standard: "" });
+  const openDrivePanel = (standard: string) => {
+    setDrivePanel({ open: true, standard });
+    setPanelPos(null);
+    setPanelWidth(360);
+    setIsFullscreen(false);
+  };
+  const closeDrivePanel = () => {
+    setDrivePanel({ open: false, standard: "" });
+    setIsFullscreen(false);
+  };
+
+  // Drag handlers
+  const onDragStart = useCallback((e: React.MouseEvent) => {
+    if (isFullscreen) return;
+    const panel = panelRef.current;
+    if (!panel) return;
+    const rect = panel.getBoundingClientRect();
+    dragState.current = { startX: e.clientX, startY: e.clientY, startPanelX: rect.left, startPanelY: rect.top };
+    e.preventDefault();
+  }, [isFullscreen]);
+
+  useEffect(() => {
+    const onMouseMove = (e: MouseEvent) => {
+      if (dragState.current) {
+        const dx = e.clientX - dragState.current.startX;
+        const dy = e.clientY - dragState.current.startY;
+        setPanelPos({ x: dragState.current.startPanelX + dx, y: dragState.current.startPanelY + dy });
+      }
+      if (resizeState.current) {
+        const dx = resizeState.current.startX - e.clientX;
+        const newW = Math.max(280, Math.min(window.innerWidth - 100, resizeState.current.startWidth + dx));
+        setPanelWidth(newW);
+      }
+    };
+    const onMouseUp = () => {
+      dragState.current = null;
+      resizeState.current = null;
+    };
+    window.addEventListener('mousemove', onMouseMove);
+    window.addEventListener('mouseup', onMouseUp);
+    return () => { window.removeEventListener('mousemove', onMouseMove); window.removeEventListener('mouseup', onMouseUp); };
+  }, []);
+
+  const onResizeStart = useCallback((e: React.MouseEvent) => {
+    resizeState.current = { startX: e.clientX, startWidth: panelWidth };
+    e.preventDefault();
+    e.stopPropagation();
+  }, [panelWidth]);
 
   // Build a code → navKey map for navigation
   const codeToNavKey = Object.fromEntries(REGISTER.map(r => [r.code, r.navKey]));
@@ -673,21 +725,49 @@ export default function AuditDependencyRegister() {
       {/* Google Drive slide-over panel */}
       {drivePanel.open && (
         <>
-          {/* Backdrop */}
-          <div
-            className="fixed inset-0 z-40"
-            onClick={closeDrivePanel}
-          />
           {/* Panel */}
-          <div className="fixed top-0 right-0 h-full w-[360px] bg-white dark:bg-card border-l border-border shadow-2xl z-50 flex flex-col">
-            {/* Header */}
-            <div className="flex items-center gap-3 px-4 py-3 border-b border-border bg-muted/30">
+          <div
+            ref={panelRef}
+            className="bg-white dark:bg-card border border-border shadow-2xl z-50 flex flex-col rounded-xl overflow-hidden"
+            style={isFullscreen
+              ? { position: 'fixed', inset: 8 }
+              : panelPos
+                ? { position: 'fixed', left: panelPos.x, top: panelPos.y, width: panelWidth, height: '80vh', maxHeight: 'calc(100vh - 16px)' }
+                : { position: 'fixed', top: 0, right: 0, height: '100%', width: panelWidth }
+            }
+          >
+            {/* Resize handle (left edge) */}
+            {!isFullscreen && (
+              <div
+                onMouseDown={onResizeStart}
+                className="absolute left-0 top-0 h-full w-1.5 cursor-ew-resize hover:bg-primary/30 transition-colors z-10"
+              />
+            )}
+
+            {/* Header — drag zone */}
+            <div
+              onMouseDown={onDragStart}
+              className={cn(
+                "flex items-center gap-2 px-4 py-3 border-b border-border bg-muted/30 select-none",
+                !isFullscreen && "cursor-grab active:cursor-grabbing"
+              )}
+            >
+              <GripVertical className="h-4 w-4 text-muted-foreground/40 flex-shrink-0" />
               <FolderOpen className="h-4 w-4 text-primary flex-shrink-0" />
               <div className="flex-1 min-w-0">
                 <p className="text-sm font-semibold text-foreground">Audit Standards</p>
                 <p className="text-xs text-muted-foreground font-mono">{drivePanel.standard}</p>
               </div>
               <button
+                onMouseDown={e => e.stopPropagation()}
+                onClick={() => setIsFullscreen(f => !f)}
+                className="h-7 w-7 flex items-center justify-center rounded-md hover:bg-muted transition-colors"
+                title={isFullscreen ? "Restore" : "Fullscreen"}
+              >
+                {isFullscreen ? <Minimize2 className="h-3.5 w-3.5 text-muted-foreground" /> : <Maximize2 className="h-3.5 w-3.5 text-muted-foreground" />}
+              </button>
+              <button
+                onMouseDown={e => e.stopPropagation()}
                 onClick={closeDrivePanel}
                 className="h-7 w-7 flex items-center justify-center rounded-md hover:bg-muted transition-colors"
               >
@@ -697,11 +777,9 @@ export default function AuditDependencyRegister() {
 
             {/* Body */}
             <div className="flex-1 flex flex-col items-center justify-center gap-6 p-8 text-center">
-              {/* Drive icon */}
               <div className="w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center">
                 <FolderOpen className="h-8 w-8 text-primary" />
               </div>
-
               <div>
                 <p className="text-base font-semibold text-foreground mb-1">Standard Reference</p>
                 <p className="text-2xl font-bold text-primary font-mono mb-3">{drivePanel.standard}</p>
@@ -709,7 +787,6 @@ export default function AuditDependencyRegister() {
                   Access the source documents for this standard in your Google Drive audit folder.
                 </p>
               </div>
-
               <a
                 href={DRIVE_FOLDER_URL}
                 target="_blank"
@@ -719,7 +796,6 @@ export default function AuditDependencyRegister() {
                 <ExternalLink className="h-4 w-4" />
                 Open in Google Drive
               </a>
-
               <p className="text-xs text-muted-foreground">Opens in a new tab</p>
             </div>
           </div>
