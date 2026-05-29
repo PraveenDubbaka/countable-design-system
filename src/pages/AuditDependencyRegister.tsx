@@ -13,38 +13,38 @@ const DRIVE_FOLDER_URL = `https://drive.google.com/drive/folders/0ANU645mbF0czUk
 
 // Maps each standard label → local PDF filename in /public/standards/
 const STANDARD_PDF: Record<string, string> = {
-  "CAS 210":            "CAS-210.html",
-  "CAS 220 / CSQM 1":  "CAS-220.html",
-  "CAS 240":            "CAS-240.html",
-  "CAS 260":            "CAS-260.html",
-  "CAS 300":            "CAS-300.html",
-  "CAS 315":            "CAS-315.html",
-  "CAS 320":            "CAS-320.html",
-  "CAS 330":            "CAS-330.html",
-  "CAS 450":            "CAS-450.html",
-  "CAS 520":            "CAS-520.html",
-  "CAS 560":            "CAS-560.html",
-  "CAS 570":            "CAS-570.html",
-  "CAS 580":            "CAS-580.html",
-  "CAS 700":            "CAS-700.html",
-  "CSQM 1":             "CSQM-1.html",
-  "PCMLTFA / FINTRAC":  "PCMLTFA-FINTRAC.html",
-  "AU-C 210":           "AUC-210.html",
-  "AU-C 220 / SQMS 1":  "AUC-220.html",
-  "AU-C 240":           "AUC-240.html",
-  "AU-C 260":           "AUC-260.html",
-  "AU-C 300":           "AUC-300.html",
-  "AU-C 315":           "AUC-315.html",
-  "AU-C 320":           "AUC-320.html",
-  "AU-C 330":           "AUC-330.html",
-  "AU-C 450":           "AUC-450.html",
-  "AU-C 520":           "AUC-520.html",
-  "AU-C 560":           "AUC-560.html",
-  "AU-C 570":           "AUC-570.html",
-  "AU-C 580":           "AUC-580.html",
-  "AU-C 700":           "AUC-700.html",
-  "SQMS 1":             "SQMS-1.html",
-  "BSA / FinCEN":       "BSA-FinCEN.html",
+  "CAS 210":            "CAS-210.pdf",
+  "CAS 220 / CSQM 1":  "CAS-220.pdf",
+  "CAS 240":            "CAS-240.pdf",
+  "CAS 260":            "CAS-260.pdf",
+  "CAS 300":            "CAS-300.pdf",
+  "CAS 315":            "CAS-315.pdf",
+  "CAS 320":            "CAS-320.pdf",
+  "CAS 330":            "CAS-330.pdf",
+  "CAS 450":            "CAS-450.pdf",
+  "CAS 520":            "CAS-520.pdf",
+  "CAS 560":            "CAS-560.pdf",
+  "CAS 570":            "CAS-570.pdf",
+  "CAS 580":            "CAS-580.pdf",
+  "CAS 700":            "CAS-700.pdf",
+  "CSQM 1":             "CSQM-1.pdf",
+  "PCMLTFA / FINTRAC":  "PCMLTFA-FINTRAC.pdf",
+  "AU-C 210":           "AUC-210.pdf",
+  "AU-C 220 / SQMS 1":  "AUC-220.pdf",
+  "AU-C 240":           "AUC-240.pdf",
+  "AU-C 260":           "AUC-260.pdf",
+  "AU-C 300":           "AUC-300.pdf",
+  "AU-C 315":           "AUC-315.pdf",
+  "AU-C 320":           "AUC-320.pdf",
+  "AU-C 330":           "AUC-330.pdf",
+  "AU-C 450":           "AUC-450.pdf",
+  "AU-C 520":           "AUC-520.pdf",
+  "AU-C 560":           "AUC-560.pdf",
+  "AU-C 570":           "AUC-570.pdf",
+  "AU-C 580":           "AUC-580.pdf",
+  "AU-C 700":           "AUC-700.pdf",
+  "SQMS 1":             "SQMS-1.pdf",
+  "BSA / FinCEN":       "BSA-FinCEN.pdf",
 };
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -521,7 +521,7 @@ export default function AuditDependencyRegister() {
   const navigate = useNavigate();
   const [drivePanel, setDrivePanel] = useState<{ open: boolean; standard: string }>({ open: false, standard: "" });
   const [pdfStatus, setPdfStatus] = useState<"checking" | "found" | "missing">("checking");
-  const [panelWidth, setPanelWidth] = useState(360);
+  const [panelWidth, setPanelWidth] = useState(520);
   const [panelPos, setPanelPos] = useState<{ x: number; y: number } | null>(null);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const dragState = useRef<{ startX: number; startY: number; startPanelX: number; startPanelY: number } | null>(null);
@@ -542,8 +542,8 @@ export default function AuditDependencyRegister() {
       .then(r => {
         // Our reference files are HTML; the SPA fallback also returns HTML but at a different path.
         // A 200 + content-length > 500 bytes means the actual file was found (not a tiny redirect).
-        const cl = parseInt(r.headers.get("content-length") || "0", 10);
-        setPdfStatus(r.ok && cl > 500 ? "found" : "missing");
+        const ct = r.headers.get("content-type") || "";
+        setPdfStatus(r.ok && ct.includes("pdf") ? "found" : "missing");
       })
       .catch(() => setPdfStatus("missing"));
   };
@@ -806,13 +806,8 @@ export default function AuditDependencyRegister() {
           {/* Panel */}
           <div
             ref={panelRef}
-            className="bg-white dark:bg-card border border-border shadow-2xl z-50 flex flex-col rounded-xl overflow-hidden"
-            style={isFullscreen
-              ? { position: 'fixed', inset: 8 }
-              : panelPos
-                ? { position: 'fixed', left: panelPos.x, top: panelPos.y, width: panelWidth, height: '80vh', maxHeight: 'calc(100vh - 16px)' }
-                : { position: 'fixed', top: 0, right: 0, height: '100%', width: panelWidth }
-            }
+            className="bg-white dark:bg-card border border-border shadow-2xl flex flex-col rounded-xl overflow-hidden"
+            style={{ ...(isFullscreen ? { position: 'fixed' as const, inset: 8, zIndex: 9999 } : panelPos ? { position: 'fixed' as const, left: panelPos.x, top: panelPos.y, width: panelWidth, height: '90vh', zIndex: 9999 } : { position: 'fixed' as const, top: 0, right: 0, height: '100%', width: panelWidth, zIndex: 9999 }) }}
           >
             {/* Resize handle (left edge) */}
             {!isFullscreen && (
