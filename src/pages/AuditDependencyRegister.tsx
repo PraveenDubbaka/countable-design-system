@@ -9,9 +9,43 @@ import { CompletionIcon } from "@/components/icons/CompletionIcon";
 import { cn } from "@/lib/utils";
 import { ChevronRight, Link2, AlertCircle, CheckCircle2, Circle, Clock, X, ExternalLink, FolderOpen, Maximize2, Minimize2, GripVertical } from "lucide-react";
 
-const DRIVE_FOLDER_ID = "0ANU645mbF0czUk9PVA";
-const DRIVE_FOLDER_URL = `https://drive.google.com/drive/folders/${DRIVE_FOLDER_ID}`;
-const DRIVE_EMBED_URL = `https://drive.google.com/embeddedfolderview?id=${DRIVE_FOLDER_ID}#list`;
+const DRIVE_FOLDER_URL = `https://drive.google.com/drive/folders/0ANU645mbF0czUk9PVA`;
+
+// Maps each standard label → local PDF filename in /public/standards/
+const STANDARD_PDF: Record<string, string> = {
+  "CAS 210":            "CAS-210.pdf",
+  "CAS 220 / CSQM 1":  "CAS-220.pdf",
+  "CAS 240":            "CAS-240.pdf",
+  "CAS 260":            "CAS-260.pdf",
+  "CAS 300":            "CAS-300.pdf",
+  "CAS 315":            "CAS-315.pdf",
+  "CAS 320":            "CAS-320.pdf",
+  "CAS 330":            "CAS-330.pdf",
+  "CAS 450":            "CAS-450.pdf",
+  "CAS 520":            "CAS-520.pdf",
+  "CAS 560":            "CAS-560.pdf",
+  "CAS 570":            "CAS-570.pdf",
+  "CAS 580":            "CAS-580.pdf",
+  "CAS 700":            "CAS-700.pdf",
+  "CSQM 1":             "CSQM-1.pdf",
+  "PCMLTFA / FINTRAC":  "PCMLTFA-FINTRAC.pdf",
+  "AU-C 210":           "AUC-210.pdf",
+  "AU-C 220 / SQMS 1":  "AUC-220.pdf",
+  "AU-C 240":           "AUC-240.pdf",
+  "AU-C 260":           "AUC-260.pdf",
+  "AU-C 300":           "AUC-300.pdf",
+  "AU-C 315":           "AUC-315.pdf",
+  "AU-C 320":           "AUC-320.pdf",
+  "AU-C 330":           "AUC-330.pdf",
+  "AU-C 450":           "AUC-450.pdf",
+  "AU-C 520":           "AUC-520.pdf",
+  "AU-C 560":           "AUC-560.pdf",
+  "AU-C 570":           "AUC-570.pdf",
+  "AU-C 580":           "AUC-580.pdf",
+  "AU-C 700":           "AUC-700.pdf",
+  "SQMS 1":             "SQMS-1.pdf",
+  "BSA / FinCEN":       "BSA-FinCEN.pdf",
+};
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -470,6 +504,7 @@ export default function AuditDependencyRegister() {
   const { engagementId } = useParams<{ engagementId: string }>();
   const navigate = useNavigate();
   const [drivePanel, setDrivePanel] = useState<{ open: boolean; standard: string }>({ open: false, standard: "" });
+  const [pdfStatus, setPdfStatus] = useState<"checking" | "found" | "missing">("checking");
   const [panelWidth, setPanelWidth] = useState(360);
   const [panelPos, setPanelPos] = useState<{ x: number; y: number } | null>(null);
   const [isFullscreen, setIsFullscreen] = useState(false);
@@ -482,6 +517,17 @@ export default function AuditDependencyRegister() {
     setPanelPos(null);
     setPanelWidth(360);
     setIsFullscreen(false);
+    // Check if the PDF file actually exists
+    const filename = STANDARD_PDF[standard];
+    if (!filename) { setPdfStatus("missing"); return; }
+    setPdfStatus("checking");
+    const url = `${import.meta.env.BASE_URL}standards/${filename}`;
+    fetch(url, { method: "HEAD" })
+      .then(r => {
+        const ct = r.headers.get("content-type") || "";
+        setPdfStatus(ct.includes("pdf") ? "found" : "missing");
+      })
+      .catch(() => setPdfStatus("missing"));
   };
   const closeDrivePanel = () => {
     setDrivePanel({ open: false, standard: "" });
@@ -775,29 +821,49 @@ export default function AuditDependencyRegister() {
               </button>
             </div>
 
-            {/* Body */}
-            <div className="flex-1 flex flex-col items-center justify-center gap-6 p-8 text-center">
-              <div className="w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center">
-                <FolderOpen className="h-8 w-8 text-primary" />
+            {/* Body — PDF viewer or placeholder */}
+            {pdfStatus === "checking" && (
+              <div className="flex-1 flex items-center justify-center">
+                <div className="text-sm text-muted-foreground animate-pulse">Loading…</div>
               </div>
-              <div>
-                <p className="text-base font-semibold text-foreground mb-1">Standard Reference</p>
-                <p className="text-2xl font-bold text-primary font-mono mb-3">{drivePanel.standard}</p>
-                <p className="text-sm text-muted-foreground leading-relaxed">
-                  Click below to open your Google Drive audit folder and find the source documents for this standard.
-                </p>
+            )}
+
+            {pdfStatus === "found" && (
+              <div className="flex-1 relative overflow-hidden bg-muted/20">
+                <iframe
+                  key={drivePanel.standard}
+                  src={`${import.meta.env.BASE_URL}standards/${STANDARD_PDF[drivePanel.standard]}`}
+                  className="absolute inset-0 w-full h-full border-0"
+                  title={drivePanel.standard}
+                />
               </div>
-              <a
-                href={DRIVE_FOLDER_URL}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-primary text-white text-sm font-medium hover:bg-primary/90 transition-colors shadow-sm"
-              >
-                <ExternalLink className="h-4 w-4" />
-                Open in Google Drive
-              </a>
-              <p className="text-xs text-muted-foreground">Google Drive cannot be embedded — opens in a new tab</p>
-            </div>
+            )}
+
+            {pdfStatus === "missing" && (
+              <div className="flex-1 flex flex-col items-center justify-center gap-5 p-8 text-center">
+                <div className="w-16 h-16 rounded-2xl bg-amber-50 border border-amber-200 flex items-center justify-center">
+                  <FolderOpen className="h-8 w-8 text-amber-500" />
+                </div>
+                <div>
+                  <p className="text-base font-semibold text-foreground mb-1">{drivePanel.standard}</p>
+                  <p className="text-sm text-muted-foreground mb-2">No PDF uploaded yet.</p>
+                  {STANDARD_PDF[drivePanel.standard] && (
+                    <p className="text-xs text-muted-foreground font-mono bg-muted px-2 py-1 rounded inline-block">
+                      Add file: public/standards/{STANDARD_PDF[drivePanel.standard]}
+                    </p>
+                  )}
+                </div>
+                <a
+                  href={DRIVE_FOLDER_URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-primary text-white text-sm font-medium hover:bg-primary/90 transition-colors shadow-sm"
+                >
+                  <ExternalLink className="h-3.5 w-3.5" />
+                  Open Google Drive folder
+                </a>
+              </div>
+            )}
           </div>
         </>
       )}
