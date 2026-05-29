@@ -8532,3 +8532,1034 @@ export const getGlobalTemplateChecklist = (templateId: string): Checklist | null
       return null;
   }
 };
+
+// ── CAS Audit Checklist Templates ──────────────────────────────────────────
+
+export const generateEngagementScopeChecklist = (): Checklist => {
+  const q = (id: string, text: string, subQuestions?: Question[]): Question => ({
+    id, text, answerType: 'yes-no-na' as const, options: ['Yes', 'No', 'NA'],
+    required: false, answer: '', ...(subQuestions ? { subQuestions } : {})
+  });
+
+  const sections: Section[] = [
+    {
+      id: 'section-scope-1',
+      title: '1. Scope Definition',
+      questions: [
+        q('scope-q1a', '<p>Has the legal name and nature of the entity been confirmed and documented (incorporated company, partnership, NPO, etc.)?</p>'),
+        q('scope-q1b', '<p>Has the financial reporting period been confirmed with management (fiscal year-end, comparative period)?</p>'),
+        q('scope-q1c', '<p>Has the applicable financial reporting framework been identified and agreed with management (ASPE, IFRS, ASNPO, etc.)?</p>'),
+        q('scope-q1d', '<p>Is the audit objective clearly defined — expression of an opinion on whether the financial statements present fairly in all material respects in accordance with the identified framework?</p>'),
+        q('scope-q1e', '<p>Have the components of the entity included in scope been identified (subsidiaries, divisions, branches, joint arrangements)?</p>'),
+        q('scope-q1f', '<p>Have any component auditors been identified, and has the group engagement team obtained sufficient understanding of their work?</p>'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'section-scope-2',
+      title: '2. Exclusions & Limitations',
+      questions: [
+        q('scope-q2a', '<p>Have any scope restrictions been identified and documented in the engagement letter?</p>'),
+        q('scope-q2b', '<p>Has management agreed in writing to the scope of the engagement and any limitations thereon?</p>'),
+        q('scope-q2c', '<p>Have the implications of any scope restrictions on the form of the auditor\'s report been considered (potential qualification or disclaimer)?</p>'),
+        q('scope-q2d', '<p>Are there any regulatory, contractual or legal constraints on the audit scope that need to be reflected in the engagement terms?</p>'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'section-scope-3',
+      title: '3. Reporting Requirements',
+      questions: [
+        q('scope-q3a', '<p>Has the form and content of the auditor\'s report been discussed and agreed with management/TCWG (CAS 700 standard report, other reporting requirements)?</p>'),
+        q('scope-q3b', '<p>Are there any special-purpose reporting requirements (regulatory filings, lender requirements, grant reporting) that will affect the form of the report?</p>'),
+        q('scope-q3c', '<p>Have the reporting deadlines been agreed with management and built into the engagement timeline?</p>'),
+        q('scope-q3d', '<p>If the entity has reporting obligations under securities legislation or other regulations, have the specific requirements of those obligations been considered?</p>'),
+        q('scope-q3e', '<p>Has the need for any supplementary information (e.g., schedule of expenditures of federal awards, other required supplementary information) been identified?</p>'),
+      ],
+      isExpanded: true
+    },
+  ];
+
+  return {
+    id: 'global-template-engagement-scope',
+    title: 'Engagement Scope',
+    description: 'Documents the defined scope of the audit engagement including entity coverage, reporting period, applicable framework, and agreed reporting requirements.',
+    objective: `Under CAS 300 and CAS 315, the auditor must clearly define the scope of the audit engagement prior to commencing fieldwork. This checklist ensures that the entity, reporting period, applicable framework, and any scope restrictions are agreed with management and documented in the engagement file.`,
+    sections,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  };
+};
+
+export const generatePreliminaryAnalyticalProceduresChecklist = (): Checklist => {
+  const q = (id: string, text: string, subQuestions?: Question[]): Question => ({
+    id, text, answerType: 'yes-no-na' as const, options: ['Yes', 'No', 'NA'],
+    required: false, answer: '', ...(subQuestions ? { subQuestions } : {})
+  });
+
+  const sections: Section[] = [
+    {
+      id: 'section-pap-1',
+      title: '1. Revenue & Income Analysis',
+      questions: [
+        q('pap-q1a', '<p>Has total revenue for the current period been compared to the prior period and budget? Document the percentage change and explanations for variances exceeding 10%.</p>'),
+        q('pap-q1b', '<p>Have revenue streams been disaggregated by product/service line or geography to identify unusual concentration or shifts?</p>'),
+        q('pap-q1c', '<p>Has other income (interest income, gain on disposal, government subsidies) been compared to prior year and assessed for unusual items?</p>'),
+        q('pap-q1d', '<p>For entities with seasonal revenue patterns, has performance been assessed against expected seasonal trends?</p>'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'section-pap-2',
+      title: '2. Balance Sheet Ratios',
+      questions: [
+        q('pap-q2a', '<p>Has the current ratio (current assets / current liabilities) been calculated and compared to prior year? Is the trend consistent with expectations?</p>'),
+        q('pap-q2b', '<p>Has the debt-to-equity ratio been calculated and compared to prior year? Are changes consistent with known financing activity?</p>'),
+        q('pap-q2c', '<p>Has the change in working capital been analyzed and explained (cash, receivables, inventory, payables movements)?</p>'),
+        q('pap-q2d', '<p>Have significant balance sheet changes (>15% or material dollar amounts) been identified and explanations obtained from management?</p>'),
+        q('pap-q2e', '<p>Has the accounts receivable days outstanding (DSO) been calculated and compared to prior year and industry norms?</p>'),
+        q('pap-q2f', '<p>Has inventory turnover been calculated and compared to prior year? Are changes consistent with business operations?</p>'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'section-pap-3',
+      title: '3. Profitability Trends',
+      questions: [
+        q('pap-q3a', '<p>Has the gross margin percentage been calculated for the current and prior period? Are changes consistent with management\'s explanation of business conditions?</p>'),
+        q('pap-q3b', '<p>Has the operating margin (EBIT / revenue) been calculated and compared to prior year? Are expense trends consistent with revenue trends?</p>'),
+        q('pap-q3c', '<p>Have significant changes in specific expense categories (e.g., payroll, cost of goods sold, professional fees) been investigated and explained?</p>'),
+        q('pap-q3d', '<p>Is the EBITDA trend consistent with management\'s narrative about business performance?</p>'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'section-pap-4',
+      title: '4. Unusual Fluctuations',
+      questions: [
+        q('pap-q4a', '<p>Have all fluctuations exceeding the preliminary materiality threshold been identified and explanations documented?</p>'),
+        q('pap-q4b', '<p>Have any balances that are unexpectedly zero or nil been investigated (e.g., no interest expense despite known debt)?</p>'),
+        q('pap-q4c', '<p>Have any new account balances that did not exist in the prior period been identified and assessed for risk?</p>'),
+        q('pap-q4d', '<p>Based on the preliminary analytical procedures, have areas requiring increased audit attention been identified and incorporated into the audit plan?</p>'),
+        q('pap-q4e', '<p>Have the preliminary analytics been discussed with the engagement team and key findings documented in the risk assessment?</p>'),
+      ],
+      isExpanded: true
+    },
+  ];
+
+  return {
+    id: 'global-template-preliminary-analytical-procedures',
+    title: 'Preliminary Analytical Procedures',
+    description: 'Documents analytical procedures performed during the planning phase to develop expectations and identify unusual fluctuations requiring audit attention.',
+    objective: `CAS 315 and CAS 520 require the auditor to perform analytical procedures as risk assessment procedures during planning. These procedures help the auditor develop an understanding of the entity's financial results and identify areas of significant audit risk where the actual results deviate materially from expectations.`,
+    sections,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  };
+};
+
+export const generateAuditStrategyMemorandumChecklist = (): Checklist => {
+  const q = (id: string, text: string, subQuestions?: Question[]): Question => ({
+    id, text, answerType: 'yes-no-na' as const, options: ['Yes', 'No', 'NA'],
+    required: false, answer: '', ...(subQuestions ? { subQuestions } : {})
+  });
+
+  const sections: Section[] = [
+    {
+      id: 'section-asm-1',
+      title: '1. Engagement Characteristics',
+      questions: [
+        q('asm-q1a', '<p>Has the entity type been documented (public, private, NPO, government) along with the applicable financial reporting framework?</p>'),
+        q('asm-q1b', '<p>Have the reporting deadlines (draft financial statements, board approval, filing deadline) been confirmed and documented?</p>'),
+        q('asm-q1c', '<p>Has the prior year audit file been reviewed to identify carry-forward issues, prior year adjustments, and significant accounting estimates?</p>'),
+        q('asm-q1d', '<p>Have changes in the entity\'s business, operations or environment since the prior period been assessed for their impact on the audit?</p>'),
+        q('asm-q1e', '<p>Have new accounting standards effective for the current period been identified and assessed for their impact on the financial statements?</p>'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'section-asm-2',
+      title: '2. Audit Approach',
+      questions: [
+        q('asm-q2a', '<p>Has the overall audit approach been determined — primarily substantive, or combined (reliance on controls + substantive procedures)?</p>'),
+        q('asm-q2b', '<p>Have the key audit areas (significant accounts and disclosures, significant risks) been identified and the planned audit approach for each documented?</p>'),
+        q('asm-q2c', '<p>Has the extent to which IT-assisted audit techniques (CAATs, data analytics) will be used been determined?</p>'),
+        q('asm-q2d', '<p>Has the use of work of internal auditors, management\'s experts or component auditors been assessed and the planned approach documented?</p>'),
+        q('asm-q2e', '<p>Has materiality (overall, performance materiality, and clearly trivial threshold) been set and documented in the strategy memorandum?</p>'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'section-asm-3',
+      title: '3. Staffing & Resource Allocation',
+      questions: [
+        q('asm-q3a', '<p>Has the engagement partner been identified and their responsibility for the overall engagement quality confirmed?</p>'),
+        q('asm-q3b', '<p>Has the engagement manager been assigned and their responsibility for day-to-day supervision confirmed?</p>'),
+        q('asm-q3c', '<p>Has the engagement team (seniors, staff) been assigned with appropriate competence and experience for the engagement?</p>'),
+        q('asm-q3d', '<p>Has the need for specialists (e.g., IT, valuation, actuarial) been identified and arrangements made?</p>'),
+        q('asm-q3e', '<p>Has an engagement quality reviewer been assigned if required under the firm\'s quality management policies?</p>'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'section-asm-4',
+      title: '4. Communication Plan',
+      questions: [
+        q('asm-q4a', '<p>Have the planned communications with those charged with governance (TCWG) been identified — planning communication, matters during the audit, final communication?</p>'),
+        q('asm-q4b', '<p>Have the dates for interim fieldwork and final fieldwork been confirmed with management and the engagement team?</p>'),
+        q('asm-q4c', '<p>Has the approach for communicating significant audit findings and significant difficulties encountered during the audit been established?</p>'),
+        q('asm-q4d', '<p>Where the entity has related parties or component entities, has the communication approach with component auditors been established?</p>'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'section-asm-5',
+      title: '5. Significant Risks Identified at Planning Stage',
+      questions: [
+        q('asm-q5a', '<p>Have significant risks identified during planning (CAS 315) been documented in the strategy memorandum and linked to planned audit responses?</p>'),
+        q('asm-q5b', '<p>Has the presumed fraud risk related to revenue recognition been addressed, or has the rebuttal of this presumption been documented with supporting rationale?</p>'),
+        q('asm-q5c', '<p>Has the risk of management override of controls been identified as a significant risk and planned responses documented?</p>'),
+        q('asm-q5d', '<p>Have any other entity-specific or industry-specific significant risks been identified and incorporated into the audit strategy?</p>'),
+        q('asm-q5e', '<p>Has the audit strategy memorandum been reviewed and approved by the engagement partner prior to commencement of fieldwork?</p>'),
+      ],
+      isExpanded: true
+    },
+  ];
+
+  return {
+    id: 'global-template-audit-strategy-memorandum',
+    title: 'Audit Strategy Memorandum',
+    description: 'Documents the overall audit strategy including engagement characteristics, audit approach, staffing, communication plan, and significant risks identified at the planning stage.',
+    objective: `CAS 300 requires the auditor to establish an overall audit strategy that sets the scope, timing, and direction of the audit. This checklist ensures the audit strategy memorandum addresses all required elements and has been approved by the engagement partner before fieldwork commences.`,
+    sections,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  };
+};
+
+export const generateStaffingTimeBudgetChecklist = (): Checklist => {
+  const q = (id: string, text: string, subQuestions?: Question[]): Question => ({
+    id, text, answerType: 'yes-no-na' as const, options: ['Yes', 'No', 'NA'],
+    required: false, answer: '', ...(subQuestions ? { subQuestions } : {})
+  });
+
+  const sections: Section[] = [
+    {
+      id: 'section-stb-1',
+      title: '1. Engagement Team',
+      questions: [
+        q('stb-q1a', '<p>Has the engagement partner been identified and their availability confirmed for the planned fieldwork and reporting dates?</p>'),
+        q('stb-q1b', '<p>Has the engagement manager been assigned? Do they have sufficient experience with this type of entity and industry?</p>'),
+        q('stb-q1c', '<p>Has a senior auditor been assigned with responsibility for day-to-day file management and supervision of staff?</p>'),
+        q('stb-q1d', '<p>Have staff auditors been assigned with appropriate skills for the planned procedures (e.g., IT skills for data analytics, language skills for foreign entities)?</p>'),
+        q('stb-q1e', '<p>Has the engagement quality control reviewer (EQCR) been identified and their availability confirmed for the planned completion date?</p>'),
+        q('stb-q1f', '<p>Have required specialists (e.g., IT auditors, valuation specialists, actuaries) been identified and engaged?</p>'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'section-stb-2',
+      title: '2. Time Budget by Phase',
+      questions: [
+        q('stb-q2a', '<p>Has a budget been prepared for the planning phase (risk assessment procedures, materiality determination, audit strategy and plan)?</p>'),
+        q('stb-q2b', '<p>Has a budget been prepared for the fieldwork phase by major area (revenue, expenses, balance sheet sections)?</p>'),
+        q('stb-q2c', '<p>Has a budget been prepared for the completion phase (subsequent events, going concern, management representations, final review)?</p>'),
+        q('stb-q2d', '<p>Has the total budgeted time been compared to the prior year actual time? Are significant variances explained by changes in scope, risk or complexity?</p>'),
+        q('stb-q2e', '<p>Has the budget been reviewed and approved by the engagement partner or manager?</p>'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'section-stb-3',
+      title: '3. Key Dates',
+      questions: [
+        q('stb-q3a', '<p>Has the planning start date been confirmed and communicated to the engagement team?</p>'),
+        q('stb-q3b', '<p>Have the interim fieldwork dates (if applicable) been confirmed with the client and communicated to the team?</p>'),
+        q('stb-q3c', '<p>Have the year-end / final fieldwork dates been confirmed with the client (access to books, management availability)?</p>'),
+        q('stb-q3d', '<p>Has the target date for delivery of the draft management letter / findings been communicated to management?</p>'),
+        q('stb-q3e', '<p>Has the date for delivery of the final signed auditor\'s report been agreed with management and TCWG?</p>'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'section-stb-4',
+      title: '4. Budget vs Actual Tracking',
+      questions: [
+        q('stb-q4a', '<p>Has a mechanism been established to track actual time against the budget by team member and audit area?</p>'),
+        q('stb-q4b', '<p>Have budget overruns been identified and discussed with the engagement manager/partner during the engagement?</p>'),
+        q('stb-q4c', '<p>Has the final actual time been compared to budget at the completion of the engagement and variances documented?</p>'),
+        q('stb-q4d', '<p>Have lessons learned regarding time budget accuracy been documented for use in future engagements?</p>'),
+      ],
+      isExpanded: true
+    },
+  ];
+
+  return {
+    id: 'global-template-staffing-time-budget',
+    title: 'Staffing & Time Budget',
+    description: 'Documents the engagement team composition, time budget by phase, key engagement dates, and budget versus actual tracking.',
+    objective: `CAS 300 and CAS 220 require the engagement partner to ensure that the engagement team collectively has the competence and capabilities to perform the audit and that adequate resources are assigned. This checklist documents the staffing plan, time budget, and key dates for the engagement.`,
+    sections,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  };
+};
+
+export const generateRiskAssessmentProceduresChecklist = (): Checklist => {
+  const q = (id: string, text: string, subQuestions?: Question[]): Question => ({
+    id, text, answerType: 'yes-no-na' as const, options: ['Yes', 'No', 'NA'],
+    required: false, answer: '', ...(subQuestions ? { subQuestions } : {})
+  });
+
+  const sections: Section[] = [
+    {
+      id: 'section-rap-1',
+      title: '1. Inquiry of Management',
+      questions: [
+        q('rap-q1a', '<p>Have inquiries been made of management regarding the entity\'s business model, revenue sources, major customers and suppliers?</p>'),
+        q('rap-q1b', '<p>Have inquiries been made regarding significant changes in the industry, regulatory environment or competitive landscape?</p>'),
+        q('rap-q1c', '<p>Have inquiries been made regarding related party relationships and transactions?</p>'),
+        q('rap-q1d', '<p>Have inquiries been made regarding the entity\'s use of estimates and judgments in the financial statements?</p>'),
+        q('rap-q1e', '<p>Have inquiries been made of others within the entity (e.g., internal audit, legal, operations) beyond management to obtain a broader understanding?</p>'),
+        q('rap-q1f', '<p>Have inquiries been made regarding any known or suspected fraud or irregularities?</p>'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'section-rap-2',
+      title: '2. Analytical Procedures',
+      questions: [
+        q('rap-q2a', '<p>Have preliminary analytical procedures been performed by comparing current period financial data to prior period?</p>'),
+        q('rap-q2b', '<p>Have financial ratios been calculated and compared to prior period and industry benchmarks?</p>'),
+        q('rap-q2c', '<p>Have unexpected relationships in the financial data been identified for further investigation?</p>'),
+        q('rap-q2d', '<p>Have the results of preliminary analytical procedures been used to identify accounts and transactions at higher risk of material misstatement?</p>'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'section-rap-3',
+      title: '3. Observation & Inspection',
+      questions: [
+        q('rap-q3a', '<p>Has a tour of the entity\'s premises been performed to gain an understanding of operations, physical controls, and business activities?</p>'),
+        q('rap-q3b', '<p>Have key documents been reviewed (organization charts, board minutes, strategic plans, budgets, prior year financial statements)?</p>'),
+        q('rap-q3c', '<p>Have significant contracts and agreements (loan agreements, major customer contracts, lease agreements) been reviewed?</p>'),
+        q('rap-q3d', '<p>Has the entity\'s chart of accounts and accounting policies been reviewed for changes from the prior period?</p>'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'section-rap-4',
+      title: '4. Information from Acceptance/Continuance',
+      questions: [
+        q('rap-q4a', '<p>Have findings from the engagement acceptance or continuance process been incorporated into the risk assessment?</p>'),
+        q('rap-q4b', '<p>For new engagements, has information obtained from the predecessor auditor been reviewed and relevant findings incorporated?</p>'),
+        q('rap-q4c', '<p>Have prior year audit findings, misstatements, and significant difficulties been reviewed and their implications for the current period assessed?</p>'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'section-rap-5',
+      title: '5. Other Procedures',
+      questions: [
+        q('rap-q5a', '<p>Have board and committee minutes been reviewed for the period to identify significant decisions, commitments, or events?</p>'),
+        q('rap-q5b', '<p>Have regulatory filings and correspondence been reviewed for compliance issues or enforcement actions?</p>'),
+        q('rap-q5c', '<p>Have publicly available information sources (news, industry reports, regulatory databases) been reviewed for information about the entity?</p>'),
+        q('rap-q5d', '<p>Has the engagement team discussion (brainstorming) regarding fraud risks and significant risks been completed and documented?</p>'),
+        q('rap-q5e', '<p>Have the results of all risk assessment procedures been aggregated and used to identify and assess risks of material misstatement at the financial statement and assertion levels?</p>'),
+      ],
+      isExpanded: true
+    },
+  ];
+
+  return {
+    id: 'global-template-risk-assessment-procedures',
+    title: 'Risk Assessment Procedures',
+    description: 'Documents the risk assessment procedures performed to obtain an understanding of the entity and its environment, including internal control.',
+    objective: `CAS 315 requires the auditor to perform risk assessment procedures to provide a basis for the identification and assessment of risks of material misstatement at the financial statement and assertion levels. This checklist documents all risk assessment procedures performed, including inquiry, analytical procedures, observation and inspection.`,
+    sections,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  };
+};
+
+export const generateITGeneralControlsChecklist = (): Checklist => {
+  const q = (id: string, text: string, subQuestions?: Question[]): Question => ({
+    id, text, answerType: 'yes-no-na' as const, options: ['Yes', 'No', 'NA'],
+    required: false, answer: '', ...(subQuestions ? { subQuestions } : {})
+  });
+
+  const sections: Section[] = [
+    {
+      id: 'section-itgc-1',
+      title: '1. Access Controls',
+      questions: [
+        q('itgc-q1a', '<p>Has the entity\'s user access management process been documented (how access is provisioned, modified, and revoked for joiners, movers, and leavers)?</p>'),
+        q('itgc-q1b', '<p>Has the entity performed a periodic user access review to verify that access rights are appropriate and that terminated employees have been removed?</p>'),
+        q('itgc-q1c', '<p>Is privileged access (administrator, super-user) restricted to authorized IT personnel and subject to enhanced monitoring?</p>'),
+        q('itgc-q1d', '<p>Do password policies enforce minimum complexity, length, expiry, and account lockout after failed attempts?</p>'),
+        q('itgc-q1e', '<p>Is multi-factor authentication (MFA) required for remote access and privileged accounts?</p>'),
+        q('itgc-q1f', '<p>Are generic and shared user accounts prohibited or, if unavoidable, subject to compensating controls?</p>'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'section-itgc-2',
+      title: '2. Change Management',
+      questions: [
+        q('itgc-q2a', '<p>Is there a formal change management process for software and system changes (development, testing, approval, implementation)?</p>'),
+        q('itgc-q2b', '<p>Are all changes to production systems subject to documented testing and user acceptance testing (UAT) before deployment?</p>'),
+        q('itgc-q2c', '<p>Is authorization for production changes documented and segregated from development (developers cannot deploy directly to production)?</p>'),
+        q('itgc-q2d', '<p>Is a change log or audit trail maintained for all production changes, and is it reviewed periodically?</p>'),
+        q('itgc-q2e', '<p>Is there a process for emergency changes that maintains appropriate documentation and after-the-fact approval?</p>'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'section-itgc-3',
+      title: '3. IT Operations',
+      questions: [
+        q('itgc-q3a', '<p>Is there a documented backup and recovery policy covering frequency of backups, retention periods, and off-site or cloud storage?</p>'),
+        q('itgc-q3b', '<p>Are backups tested periodically to confirm that data can be restored successfully?</p>'),
+        q('itgc-q3c', '<p>Are scheduled jobs and batch processes monitored, with failures promptly investigated and resolved?</p>'),
+        q('itgc-q3d', '<p>Is there an incident management process for IT outages and security incidents, with documentation and root cause analysis?</p>'),
+        q('itgc-q3e', '<p>Is there a disaster recovery / business continuity plan that has been tested?</p>'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'section-itgc-4',
+      title: '4. IT Risk Assessment',
+      questions: [
+        q('itgc-q4a', '<p>Have the key IT systems that directly support financial reporting (ERP, accounting system, payroll system) been identified?</p>'),
+        q('itgc-q4b', '<p>Have data integrity risks (completeness and accuracy of data transferred between systems, interfaces, spreadsheets) been assessed?</p>'),
+        q('itgc-q4c', '<p>Have cybersecurity risks (ransomware, data breaches, phishing) and the entity\'s controls to mitigate them been assessed?</p>'),
+        q('itgc-q4d', '<p>Has the entity\'s use of cloud services and third-party service providers (SaaS, outsourced IT) been considered, including review of SOC 1 / SOC 2 reports where available?</p>'),
+        q('itgc-q4e', '<p>Based on the ITGC assessment, has the overall IT control environment been assessed as effective, and has the conclusion been incorporated into the risk assessment?</p>'),
+      ],
+      isExpanded: true
+    },
+  ];
+
+  return {
+    id: 'global-template-it-general-controls',
+    title: 'IT General Controls (ITGC)',
+    description: 'Documents the assessment of IT general controls including access controls, change management, IT operations, and IT risk assessment.',
+    objective: `CAS 315 requires the auditor to obtain an understanding of the entity\'s IT environment and IT general controls as part of the risk assessment. This checklist documents the assessment of ITGCs that affect the reliability of information produced by the entity\'s IT systems used in the financial reporting process.`,
+    sections,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  };
+};
+
+export const generateFraudRiskAssessmentChecklist = (): Checklist => {
+  const q = (id: string, text: string, subQuestions?: Question[]): Question => ({
+    id, text, answerType: 'yes-no-na' as const, options: ['Yes', 'No', 'NA'],
+    required: false, answer: '', ...(subQuestions ? { subQuestions } : {})
+  });
+
+  const sections: Section[] = [
+    {
+      id: 'section-fra-1',
+      title: '1. Fraud Risk Factors',
+      questions: [
+        q('fra-q1a', '<p>Have incentive/pressure fraud risk factors been assessed (e.g., financial pressure on management or the entity, compensation tied to financial results, significant personal guarantees)?</p>'),
+        q('fra-q1b', '<p>Have opportunity fraud risk factors been assessed (e.g., weak controls, significant related party transactions, complex transactions, management override of controls)?</p>'),
+        q('fra-q1c', '<p>Have rationalization/attitude fraud risk factors been assessed (e.g., poor ethical culture, management history of misrepresentations, aggressive application of accounting policies)?</p>'),
+        q('fra-q1d', '<p>Have the fraud risk factors been considered in aggregate and in combination to assess the overall fraud risk for the engagement?</p>'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'section-fra-2',
+      title: '2. Inquiries of Management',
+      questions: [
+        q('fra-q2a', '<p>Has management been asked whether they are aware of any actual, suspected or alleged fraud within the entity?</p>'),
+        q('fra-q2b', '<p>Has management been asked to describe their own fraud risk assessment process and the results of that assessment?</p>'),
+        q('fra-q2c', '<p>Has management been asked about the programs and controls they have in place to prevent and detect fraud (e.g., whistleblower hotline, internal audit, anti-fraud policies)?</p>'),
+        q('fra-q2d', '<p>Have inquiries been made of the internal audit function (if applicable) regarding any fraud-related findings or concerns?</p>'),
+        q('fra-q2e', '<p>Have inquiries been made of TCWG regarding their oversight of management\'s fraud risk assessment and their knowledge of any fraud or allegations of fraud?</p>'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'section-fra-3',
+      title: '3. Presumed Fraud Risks',
+      questions: [
+        q('fra-q3a', '<p>Has the presumed fraud risk related to revenue recognition been considered? If the presumption has been rebutted, is the rationale documented with sufficient specificity?</p>'),
+        q('fra-q3b', '<p>Has the risk of management override of controls been identified as a significant risk in all audits (this risk cannot be rebutted)?</p>'),
+        q('fra-q3c', '<p>Have journal entries and other adjustments been identified as an area requiring specific audit procedures given the management override risk?</p>'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'section-fra-4',
+      title: '4. Significant Fraud Risk Factors Identified',
+      questions: [
+        q('fra-q4a', '<p>Have all fraud risks identified during the assessment been documented, including the type of risk (fraudulent financial reporting vs. misappropriation of assets) and the assertion affected?</p>'),
+        q('fra-q4b', '<p>Has each identified fraud risk been evaluated to determine whether it constitutes a significant risk requiring specific audit responses?</p>'),
+        q('fra-q4c', '<p>Has the engagement team brainstorming discussion specifically addressed fraud risks, and have the results been documented?</p>'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'section-fra-5',
+      title: '5. Planned Responses to Identified Fraud Risks',
+      questions: [
+        q('fra-q5a', '<p>Have overall responses to the assessed fraud risks been planned (e.g., assigning experienced staff, increasing unpredictability of procedures, heightened professional skepticism)?</p>'),
+        q('fra-q5b', '<p>Have specific substantive procedures been planned for each significant fraud risk identified?</p>'),
+        q('fra-q5c', '<p>Have journal entry testing procedures been planned to address the risk of management override (selection criteria for testing documented)?</p>'),
+        q('fra-q5d', '<p>Have procedures been planned to review significant accounting estimates for management bias?</p>'),
+        q('fra-q5e', '<p>Have procedures been planned to test unusual or significant transactions identified during the engagement?</p>'),
+      ],
+      isExpanded: true
+    },
+  ];
+
+  return {
+    id: 'global-template-fraud-risk-assessment',
+    title: 'Fraud Risk Assessment',
+    description: 'Documents the fraud risk assessment performed in accordance with CAS 240, including identification of fraud risk factors, inquiries of management, presumed risks, and planned responses.',
+    objective: `CAS 240 requires the auditor to identify and assess risks of material misstatement due to fraud and to design and implement appropriate responses to those risks. This checklist documents the fraud risk assessment process including consideration of the fraud triangle, management inquiries, the two presumed fraud risks, and planned audit responses.`,
+    sections,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  };
+};
+
+export const generateSignificantRisksRegisterChecklist = (): Checklist => {
+  const q = (id: string, text: string, subQuestions?: Question[]): Question => ({
+    id, text, answerType: 'yes-no-na' as const, options: ['Yes', 'No', 'NA'],
+    required: false, answer: '', ...(subQuestions ? { subQuestions } : {})
+  });
+
+  const sections: Section[] = [
+    {
+      id: 'section-srr-1',
+      title: '1. Identification of Significant Risks',
+      questions: [
+        q('srr-q1a', '<p>Have all significant risks been identified and documented with a description of the risk and the specific assertion(s) affected (existence, completeness, accuracy, valuation, cutoff, classification, presentation)?</p>'),
+        q('srr-q1b', '<p>Has the account balance, class of transactions or disclosure affected by each significant risk been identified?</p>'),
+        q('srr-q1c', '<p>Have the sources of each significant risk been documented (industry factors, entity-specific factors, nature of the account, complexity of accounting)?</p>'),
+        q('srr-q1d', '<p>Has the significant risk register been reviewed by the engagement manager and partner to confirm completeness?</p>'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'section-srr-2',
+      title: '2. Inherent Risk Assessment',
+      questions: [
+        q('srr-q2a', '<p>For each significant risk, has the likelihood of material misstatement been assessed (high/medium/low) considering the susceptibility of the account to error or manipulation?</p>'),
+        q('srr-q2b', '<p>For each significant risk, has the magnitude of potential misstatement been assessed in relation to overall and performance materiality?</p>'),
+        q('srr-q2c', '<p>Has the inherent risk level (combination of likelihood and magnitude) been determined for each significant risk?</p>'),
+        q('srr-q2d', '<p>Have risks involving significant judgment, estimation uncertainty, or complex transactions been specifically identified as having higher inherent risk?</p>'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'section-srr-3',
+      title: '3. Control Environment Assessment',
+      questions: [
+        q('srr-q3a', '<p>Have the relevant controls that address each significant risk been identified?</p>'),
+        q('srr-q3b', '<p>Has the design adequacy of the relevant controls been assessed — are the controls capable of preventing or detecting material misstatement if operating effectively?</p>'),
+        q('srr-q3c', '<p>Has the implementation of the relevant controls been confirmed (evidence that controls exist and are in use)?</p>'),
+        q('srr-q3d', '<p>For significant risks where control reliance is planned, has the operating effectiveness of controls been planned for testing?</p>'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'section-srr-4',
+      title: '4. Audit Response',
+      questions: [
+        q('srr-q4a', '<p>For each significant risk, have the nature of planned audit procedures been documented (inspection, confirmation, recalculation, substantive analytical procedures, etc.)?</p>'),
+        q('srr-q4b', '<p>For each significant risk, has the timing of planned procedures been determined (interim vs. year-end)?</p>'),
+        q('srr-q4c', '<p>For each significant risk, has the extent of planned procedures been determined (sample sizes, coverage ratios)?</p>'),
+        q('srr-q4d', '<p>For significant risks, has CAS 330 been considered regarding the requirement for substantive procedures regardless of the assessed level of control risk?</p>'),
+        q('srr-q4e', '<p>Have the planned responses to each significant risk been linked to specific working paper references in the audit plan?</p>'),
+      ],
+      isExpanded: true
+    },
+  ];
+
+  return {
+    id: 'global-template-significant-risks-register',
+    title: 'Significant Risks Register',
+    description: 'Documents the identification, assessment, and planned audit responses for each significant risk identified during the risk assessment.',
+    objective: `CAS 315 requires the auditor to identify and assess risks of material misstatement that, in the auditor\'s judgment, require special audit consideration. This register documents each significant risk, the inherent risk assessment, the relevant controls, and the planned audit responses.`,
+    sections,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  };
+};
+
+export const generateRMMChecklist = (): Checklist => {
+  const q = (id: string, text: string, subQuestions?: Question[]): Question => ({
+    id, text, answerType: 'yes-no-na' as const, options: ['Yes', 'No', 'NA'],
+    required: false, answer: '', ...(subQuestions ? { subQuestions } : {})
+  });
+
+  const sections: Section[] = [
+    {
+      id: 'section-rmm-1',
+      title: '1. Financial Statement Level RMM',
+      questions: [
+        q('rmm-q1a', '<p>Has the overall RMM at the financial statement level been assessed, considering the control environment and any pervasive risks that affect many assertions across the financial statements?</p>'),
+        q('rmm-q1b', '<p>Have pervasive risks (risks that are not confined to a single account or assertion) been identified and documented?</p>'),
+        q('rmm-q1c', '<p>Has the integrity and ethical values of management been considered in the overall RMM assessment?</p>'),
+        q('rmm-q1d', '<p>Have any going concern risks or management bias in accounting estimates been incorporated into the financial statement level RMM assessment?</p>'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'section-rmm-2',
+      title: '2. Assertion Level RMM by Account',
+      questions: [
+        q('rmm-q2a', '<p>For each significant account and class of transactions, have RMMs been assessed at the assertion level (existence/occurrence, completeness, accuracy/valuation, cutoff, classification)?</p>'),
+        q('rmm-q2b', '<p>Has the RMM for revenue (including revenue recognition) been assessed at each relevant assertion level?</p>'),
+        q('rmm-q2c', '<p>Has the RMM for accounts requiring significant estimates (e.g., allowance for doubtful accounts, inventory obsolescence, asset impairment) been assessed as higher due to estimation uncertainty?</p>'),
+        q('rmm-q2d', '<p>Has the RMM for accounts susceptible to misappropriation (e.g., cash, payroll) been assessed?</p>'),
+        q('rmm-q2e', '<p>Has the RMM assessment been documented in a manner that clearly links each risk to the relevant assertion, account and planned audit procedures?</p>'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'section-rmm-3',
+      title: '3. Control Risk Assessment',
+      questions: [
+        q('rmm-q3a', '<p>Has the control risk been assessed for each significant account based on the understanding of the design and implementation of relevant controls?</p>'),
+        q('rmm-q3b', '<p>Where it is planned to rely on controls to reduce the extent of substantive testing, have tests of controls been planned to assess operating effectiveness?</p>'),
+        q('rmm-q3c', '<p>Where control risk has been assessed as high (or where it is not efficient to rely on controls), has the audit plan been adjusted to increase substantive testing?</p>'),
+        q('rmm-q3d', '<p>Has the impact of IT controls on the overall control risk assessment been considered?</p>'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'section-rmm-4',
+      title: '4. Residual Risk',
+      questions: [
+        q('rmm-q4a', '<p>Based on the assessed RMM (inherent risk × control risk), has the required detection risk been determined for each significant account and assertion?</p>'),
+        q('rmm-q4b', '<p>Has the nature, timing, and extent of substantive procedures been designed to achieve the required detection risk?</p>'),
+        q('rmm-q4c', '<p>For accounts with high assessed RMM, have more extensive, persuasive or unpredictable substantive procedures been planned?</p>'),
+        q('rmm-q4d', '<p>Has the RMM assessment and the resulting audit plan been reviewed and approved by the engagement manager and partner?</p>'),
+      ],
+      isExpanded: true
+    },
+  ];
+
+  return {
+    id: 'global-template-rmm',
+    title: 'Risk of Material Misstatement (RMM)',
+    description: 'Documents the assessment of the risk of material misstatement at both the financial statement level and the assertion level for significant accounts and disclosures.',
+    objective: `CAS 315 requires the auditor to identify and assess the risks of material misstatement at the financial statement level and at the assertion level for classes of transactions, account balances, and disclosures. This checklist documents the RMM assessment, control risk evaluation, and the detection risk requirements that drive the design of substantive audit procedures.`,
+    sections,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  };
+};
+
+export const generateOverallAuditResponseChecklist = (): Checklist => {
+  const q = (id: string, text: string, subQuestions?: Question[]): Question => ({
+    id, text, answerType: 'yes-no-na' as const, options: ['Yes', 'No', 'NA'],
+    required: false, answer: '', ...(subQuestions ? { subQuestions } : {})
+  });
+
+  const sections: Section[] = [
+    {
+      id: 'section-oar-1',
+      title: '1. Overall Responses to Pervasive Risks',
+      questions: [
+        q('oar-q1a', '<p>Have overall responses to financial statement level risks been documented, addressing the need for heightened professional skepticism throughout the engagement?</p>'),
+        q('oar-q1b', '<p>Have more experienced or specialized staff been assigned to areas of higher risk?</p>'),
+        q('oar-q1c', '<p>Has increased supervision of team members been planned for high-risk areas?</p>'),
+        q('oar-q1d', '<p>Has the use of specialists been considered and arranged for areas requiring specialized knowledge?</p>'),
+        q('oar-q1e', '<p>Has the need for increased emphasis on professional skepticism been communicated to all engagement team members in the planning meeting?</p>'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'section-oar-2',
+      title: '2. Unpredictability of Audit Procedures',
+      questions: [
+        q('oar-q2a', '<p>Have measures been incorporated to introduce unpredictability in the selection of audit procedures (different from those expected or used in prior years)?</p>'),
+        q('oar-q2b', '<p>Has the timing of some procedures been varied (e.g., performing inventory observation at an unannounced date, confirming accounts at a date other than year-end)?</p>'),
+        q('oar-q2c', '<p>Have some procedures been performed at locations not previously visited or selected on an unexpected basis?</p>'),
+        q('oar-q2d', '<p>Have the elements of unpredictability been documented in the audit plan with the rationale for how they address the risk of management override?</p>'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'section-oar-3',
+      title: '3. Response to Significant Risks',
+      questions: [
+        q('oar-q3a', '<p>For each significant risk identified in the risk assessment, has a specific audit response been documented (nature, timing, and extent of procedures)?</p>'),
+        q('oar-q3b', '<p>For significant risks involving significant estimates, have procedures been planned to test the reasonableness of the estimate, including the data and assumptions used?</p>'),
+        q('oar-q3c', '<p>For significant risks involving complex transactions, have procedures been planned to obtain sufficient understanding of the terms and accounting treatment?</p>'),
+        q('oar-q3d', '<p>Have substantive procedures been planned for all significant risks, regardless of the assessed level of control risk (as required by CAS 330)?</p>'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'section-oar-4',
+      title: '4. Response to Management Override Risk',
+      questions: [
+        q('oar-q4a', '<p>Has journal entry testing been planned to address the risk of management override, including the criteria for selecting journal entries for testing?</p>'),
+        q('oar-q4b', '<p>Have procedures been planned to review accounting estimates for possible management bias?</p>'),
+        q('oar-q4c', '<p>Have procedures been planned to evaluate the business rationale for unusual or significant transactions identified during the engagement?</p>'),
+        q('oar-q4d', '<p>Have year-end and post year-end journal entries been specifically included in the scope of journal entry testing?</p>'),
+        q('oar-q4e', '<p>Has the overall audit response been reviewed and approved by the engagement partner prior to commencement of fieldwork?</p>'),
+      ],
+      isExpanded: true
+    },
+  ];
+
+  return {
+    id: 'global-template-overall-audit-response',
+    title: 'Overall Audit Response',
+    description: 'Documents the overall audit responses to assessed risks of material misstatement, including responses to pervasive risks, unpredictability measures, responses to significant risks, and procedures to address management override.',
+    objective: `CAS 330 requires the auditor to design and implement overall responses to address the assessed risks of material misstatement at the financial statement level, and to design and perform further audit procedures whose nature, timing, and extent are responsive to the assessed risks at the assertion level. This checklist documents the planned overall audit responses.`,
+    sections,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  };
+};
+
+export const generateTestOfControlsChecklist = (): Checklist => {
+  const q = (id: string, text: string, subQuestions?: Question[]): Question => ({
+    id, text, answerType: 'yes-no-na' as const, options: ['Yes', 'No', 'NA'],
+    required: false, answer: '', ...(subQuestions ? { subQuestions } : {})
+  });
+
+  const sections: Section[] = [
+    {
+      id: 'section-toc-1',
+      title: '1. Controls Selected for Testing',
+      questions: [
+        q('toc-q1a', '<p>Have the controls selected for testing been documented with a clear description of each control, the control objective, and the assertion(s) addressed?</p>'),
+        q('toc-q1b', '<p>Has the frequency of each control been documented (daily, weekly, monthly, annually) as this determines the appropriate sample size?</p>'),
+        q('toc-q1c', '<p>Has the sampling approach been determined for each control (e.g., random selection, haphazard selection) and the sample size calculated using an appropriate methodology?</p>'),
+        q('toc-q1d', '<p>For IT application controls, has the evidence of the control\'s operation been identified (e.g., system logs, exception reports)?</p>'),
+        q('toc-q1e', '<p>For manual controls, has the evidence of the control\'s operation been identified (e.g., signatures, approvals, reconciliations)?</p>'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'section-toc-2',
+      title: '2. Test Performance',
+      questions: [
+        q('toc-q2a', '<p>Has the design effectiveness of each selected control been tested (is the control capable of preventing or detecting material misstatement)?</p>'),
+        q('toc-q2b', '<p>Has the implementation of each selected control been tested (evidence that the control exists and has been put into operation)?</p>'),
+        q('toc-q2c', '<p>Has the operating effectiveness of each selected control been tested by examining evidence that the control operated consistently throughout the period?</p>'),
+        q('toc-q2d', '<p>Where reliance on controls from an interim period is planned to cover the full period, have additional procedures been planned to cover the period between interim and year-end?</p>'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'section-toc-3',
+      title: '3. Results & Deviations',
+      questions: [
+        q('toc-q3a', '<p>Have all deviations from the prescribed control been identified, investigated, and documented?</p>'),
+        q('toc-q3b', '<p>Has the deviation rate been calculated and compared to the tolerable rate of deviation?</p>'),
+        q('toc-q3c', '<p>Where the deviation rate exceeds the tolerable rate, has the impact on the planned reliance on controls been assessed?</p>'),
+        q('toc-q3d', '<p>Have the deviations been evaluated to determine whether they are indicative of fraud or error beyond the control testing scope?</p>'),
+        q('toc-q3e', '<p>Have deviations been communicated to management and TCWG where required (significant deficiencies or material weaknesses)?</p>'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'section-toc-4',
+      title: '4. Conclusion on Control Reliance',
+      questions: [
+        q('toc-q4a', '<p>Has a conclusion been reached for each control tested regarding whether it was operating effectively throughout the period?</p>'),
+        q('toc-q4b', '<p>Has the impact of control testing results on the nature, timing, and extent of planned substantive procedures been assessed and documented?</p>'),
+        q('toc-q4c', '<p>Where controls have been assessed as not operating effectively, has the audit plan been updated to increase substantive testing?</p>'),
+        q('toc-q4d', '<p>Has the overall conclusion on control reliance been reviewed and approved by the engagement manager/partner?</p>'),
+      ],
+      isExpanded: true
+    },
+  ];
+
+  return {
+    id: 'global-template-test-of-controls',
+    title: 'Test of Controls',
+    description: 'Documents the tests of controls performed, including controls selected, test approach, results, deviations, and conclusions on control reliance.',
+    objective: `CAS 330 requires the auditor, when the audit approach relies on the operating effectiveness of controls, to test those controls. This checklist documents the test of controls work performed, including the evaluation of deviations and the impact on the planned substantive procedures.`,
+    sections,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  };
+};
+
+export const generateSubstantiveAnalyticalProceduresChecklist = (): Checklist => {
+  const q = (id: string, text: string, subQuestions?: Question[]): Question => ({
+    id, text, answerType: 'yes-no-na' as const, options: ['Yes', 'No', 'NA'],
+    required: false, answer: '', ...(subQuestions ? { subQuestions } : {})
+  });
+
+  const sections: Section[] = [
+    {
+      id: 'section-sap-1',
+      title: '1. Objective & Assertion',
+      questions: [
+        q('sap-q1a', '<p>Has the objective of each substantive analytical procedure been documented — which account balance or class of transactions is being tested?</p>'),
+        q('sap-q1b', '<p>Has the specific assertion(s) being addressed by each procedure been identified (completeness, existence, accuracy, valuation, cutoff)?</p>'),
+        q('sap-q1c', '<p>Has the suitability of using substantive analytical procedures for the identified assertion been assessed, considering the availability of reliable data and the predictability of the relationship?</p>'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'section-sap-2',
+      title: '2. Expectation Development',
+      questions: [
+        q('sap-q2a', '<p>Has an independent expectation been developed for the account balance or transaction class being tested?</p>'),
+        q('sap-q2b', '<p>Has the basis for the expectation been documented (prior year balance, budget, regression analysis, industry data, related accounts)?</p>'),
+        q('sap-q2c', '<p>Is the data used to develop the expectation reliable — has its source and accuracy been considered?</p>'),
+        q('sap-q2d', '<p>Is the expectation sufficiently precise to detect a misstatement that, individually or in aggregate, could be material?</p>'),
+        q('sap-q2e', '<p>Has the expectation been developed independently of the recorded amount (i.e., not derived from the recorded amount itself)?</p>'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'section-sap-3',
+      title: '3. Acceptable Threshold',
+      questions: [
+        q('sap-q3a', '<p>Has the acceptable amount of unexplained difference (threshold) been established, having regard to performance materiality?</p>'),
+        q('sap-q3b', '<p>Is the threshold sufficiently small that if the difference between actual and expected does not exceed it, the auditor can conclude with the desired level of assurance?</p>'),
+        q('sap-q3c', '<p>Has the relationship between the threshold and performance materiality been documented?</p>'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'section-sap-4',
+      title: '4. Results & Explanation',
+      questions: [
+        q('sap-q4a', '<p>Has the actual recorded amount been compared to the developed expectation and the unexplained difference calculated?</p>'),
+        q('sap-q4b', '<p>Where the unexplained difference exceeds the threshold, have explanations been sought from management?</p>'),
+        q('sap-q4c', '<p>Have management\'s explanations been corroborated with audit evidence?</p>'),
+        q('sap-q4d', '<p>Where management\'s explanations are not satisfactory or cannot be corroborated, have additional or alternative substantive procedures been performed?</p>'),
+        q('sap-q4e', '<p>Has a conclusion been documented stating whether the substantive analytical procedure provides sufficient appropriate evidence for the relevant assertion?</p>'),
+      ],
+      isExpanded: true
+    },
+  ];
+
+  return {
+    id: 'global-template-substantive-analytical-procedures',
+    title: 'Substantive Analytical Procedures',
+    description: 'Documents the substantive analytical procedures performed, including expectation development, acceptable threshold, comparison of actual to expected, and investigation of differences.',
+    objective: `CAS 330 and CAS 520 require that when substantive analytical procedures are used as the primary source of evidence for an assertion, they must be sufficiently precise to provide the required level of assurance. This checklist documents the design and results of substantive analytical procedures performed.`,
+    sections,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  };
+};
+
+export const generateTestOfDetailsRevenueChecklist = (): Checklist => {
+  const q = (id: string, text: string, subQuestions?: Question[]): Question => ({
+    id, text, answerType: 'yes-no-na' as const, options: ['Yes', 'No', 'NA'],
+    required: false, answer: '', ...(subQuestions ? { subQuestions } : {})
+  });
+
+  const sections: Section[] = [
+    {
+      id: 'section-rev-1',
+      title: '1. Revenue Recognition Policy',
+      questions: [
+        q('rev-q1a', '<p>Has the entity\'s revenue recognition policy been obtained and reviewed for compliance with the applicable framework (IFRS 15, ASPE Section 3400)?</p>'),
+        q('rev-q1b', '<p>Have the entity\'s performance obligations been identified and assessed to confirm that revenue is recognized when (or as) each obligation is satisfied?</p>'),
+        q('rev-q1c', '<p>For long-term contracts or arrangements, has the method for measuring progress toward completion been assessed for reasonableness?</p>'),
+        q('rev-q1d', '<p>Have variable consideration, contract modifications, or significant financing components been identified and assessed for appropriate accounting treatment?</p>'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'section-rev-2',
+      title: '2. Completeness Testing',
+      questions: [
+        q('rev-q2a', '<p>Have procedures been performed to confirm that all revenue earned during the period has been recorded (e.g., tracing from shipping/delivery records or service completion documentation to invoices to the GL)?</p>'),
+        q('rev-q2b', '<p>Has the completeness of the revenue population been tested (e.g., sequence test of invoice numbers, reconciliation of total invoices to GL)?</p>'),
+        q('rev-q2c', '<p>Has unearned revenue (deferred revenue) been reviewed for transactions that should have been recognized in the current period?</p>'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'section-rev-3',
+      title: '3. Cutoff Testing',
+      questions: [
+        q('rev-q3a', '<p>Have the last 15 invoices issued before year-end been tested for proper period (was revenue recognized in the correct period)?</p>'),
+        q('rev-q3b', '<p>Have the first 15 invoices issued after year-end been tested to confirm that revenue has not been prematurely recognized?</p>'),
+        q('rev-q3c', '<p>Has the billing cut-off been reconciled to the shipping/service completion cut-off to confirm alignment with the revenue recognition policy?</p>'),
+        q('rev-q3d', '<p>For entities with significant year-end transactions, have any unusually large transactions immediately before or after year-end been investigated?</p>'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'section-rev-4',
+      title: '4. Existence/Occurrence',
+      questions: [
+        q('rev-q4a', '<p>Has a sample of recorded revenue transactions been selected and agreed to underlying support (invoices, contracts, delivery/acceptance documentation)?</p>'),
+        q('rev-q4b', '<p>Have the sampled transactions been tested to confirm that goods were delivered or services rendered to the customer?</p>'),
+        q('rev-q4c', '<p>Have any large, unusual or non-routine revenue transactions been specifically tested for existence and proper accounting?</p>'),
+        q('rev-q4d', '<p>Have credit notes issued after year-end been reviewed to identify potential reversal of improperly recognized revenue?</p>'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'section-rev-5',
+      title: '5. Related Party Revenue',
+      questions: [
+        q('rev-q5a', '<p>Have related party revenue transactions been identified and listed?</p>'),
+        q('rev-q5b', '<p>Has the pricing of related party revenue transactions been assessed for arm\'s length terms?</p>'),
+        q('rev-q5c', '<p>Have related party revenue transactions been confirmed as appropriately disclosed in the financial statements?</p>'),
+      ],
+      isExpanded: true
+    },
+  ];
+
+  return {
+    id: 'global-template-test-of-details-revenue',
+    title: 'Test of Details — Revenue',
+    description: 'Documents the tests of details performed on revenue, including revenue recognition policy review, completeness testing, cutoff testing, existence/occurrence testing, and related party revenue.',
+    objective: `CAS 330 and CAS 240 require the auditor to design and perform substantive tests of details for revenue, which represents a high-risk area in most audits. This checklist documents the test of details procedures for revenue, addressing the key assertions of completeness, existence/occurrence, accuracy/valuation, and cutoff.`,
+    sections,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  };
+};
+
+export const generateTestOfDetailsExpensesChecklist = (): Checklist => {
+  const q = (id: string, text: string, subQuestions?: Question[]): Question => ({
+    id, text, answerType: 'yes-no-na' as const, options: ['Yes', 'No', 'NA'],
+    required: false, answer: '', ...(subQuestions ? { subQuestions } : {})
+  });
+
+  const sections: Section[] = [
+    {
+      id: 'section-exp-1',
+      title: '1. Completeness (Search for Unrecorded Liabilities)',
+      questions: [
+        q('exp-q1a', '<p>Have disbursements made after the reporting date (typically 30-45 days post year-end) been reviewed to identify liabilities that should have been recorded at year-end?</p>'),
+        q('exp-q1b', '<p>Have unpaid vendor invoices received after year-end for services/goods received before year-end been identified and tested for proper accrual?</p>'),
+        q('exp-q1c', '<p>Have accounts payable confirmations or vendor statements been obtained and reconciled to the general ledger?</p>'),
+        q('exp-q1d', '<p>Have recurring accruals (e.g., payroll accruals, utilities, professional fees) been assessed for completeness by comparing to prior year and current period activity?</p>'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'section-exp-2',
+      title: '2. Cutoff Testing',
+      questions: [
+        q('exp-q2a', '<p>Have the last 15 vendor invoices recorded before year-end been tested to confirm that the related expense is attributable to the current period?</p>'),
+        q('exp-q2b', '<p>Have the first 15 vendor invoices recorded after year-end been reviewed to identify any that should have been accrued at year-end?</p>'),
+        q('exp-q2c', '<p>Have prepaid expenses at year-end been tested to confirm that the deferred portion is properly excluded from current period expense?</p>'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'section-exp-3',
+      title: '3. Classification',
+      questions: [
+        q('exp-q3a', '<p>Have significant expenditures been reviewed to confirm proper classification between capital expenditures (assets) and operating expenses?</p>'),
+        q('exp-q3b', '<p>Have repairs and maintenance expenses been reviewed for items that should be capitalized under the entity\'s capitalization policy?</p>'),
+        q('exp-q3c', '<p>Have expenses been assessed for proper classification within the income statement (e.g., cost of goods sold vs. operating expenses)?</p>'),
+        q('exp-q3d', '<p>Have expenses with disclosure requirements (e.g., related party transactions, compensation of key management personnel) been identified and confirmed as properly disclosed?</p>'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'section-exp-4',
+      title: '4. Authorization',
+      questions: [
+        q('exp-q4a', '<p>Have the sampled expense transactions been tested to confirm that they were approved in accordance with the entity\'s authorization policy?</p>'),
+        q('exp-q4b', '<p>Have any transactions that appear to circumvent normal authorization processes been identified and investigated?</p>'),
+        q('exp-q4c', '<p>Have expenses relating to personal, non-business items been considered in the testing?</p>'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'section-exp-5',
+      title: '5. Related Party Expenses',
+      questions: [
+        q('exp-q5a', '<p>Have related party expense transactions been identified and listed?</p>'),
+        q('exp-q5b', '<p>Has the pricing of related party expense transactions been assessed for arm\'s length terms?</p>'),
+        q('exp-q5c', '<p>Have related party expense transactions been confirmed as appropriately disclosed in the financial statements?</p>'),
+        q('exp-q5d', '<p>Have management fees, consulting fees, or other charges from related parties been tested for reasonableness and supported by underlying agreements?</p>'),
+      ],
+      isExpanded: true
+    },
+  ];
+
+  return {
+    id: 'global-template-test-of-details-expenses',
+    title: 'Test of Details — Expenses',
+    description: 'Documents the tests of details performed on expenses, including search for unrecorded liabilities, cutoff testing, classification, authorization, and related party expenses.',
+    objective: `CAS 330 requires the auditor to design and perform substantive tests of details for expenses, addressing key assertions including completeness (search for unrecorded liabilities), cutoff, classification, and authorization. This checklist documents the test of details procedures for the expenses area.`,
+    sections,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  };
+};
+
+export const generateAuditProceduresSummaryChecklist = (): Checklist => {
+  const q = (id: string, text: string, subQuestions?: Question[]): Question => ({
+    id, text, answerType: 'yes-no-na' as const, options: ['Yes', 'No', 'NA'],
+    required: false, answer: '', ...(subQuestions ? { subQuestions } : {})
+  });
+
+  const sections: Section[] = [
+    {
+      id: 'section-aps-1',
+      title: '1. Summary of Procedures Performed',
+      questions: [
+        q('aps-q1a', '<p>Has a summary of all significant audit procedures performed been prepared, organized by account or assertion, with a reference to the supporting working paper?</p>'),
+        q('aps-q1b', '<p>Has the procedure type been identified for each area (test of controls, substantive analytical procedures, test of details, dual-purpose test)?</p>'),
+        q('aps-q1c', '<p>Has the timing of each significant procedure been documented (interim or year-end)?</p>'),
+        q('aps-q1d', '<p>Has the conclusion reached for each area been documented at the assertion level?</p>'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'section-aps-2',
+      title: '2. Misstatements Identified',
+      questions: [
+        q('aps-q2a', '<p>Have all factual misstatements (misstatements about which there is no doubt) been identified and documented?</p>'),
+        q('aps-q2b', '<p>Have all judgmental misstatements (differences arising from judgments concerning accounting estimates or the application of accounting policies) been documented?</p>'),
+        q('aps-q2c', '<p>Have projected misstatements (the auditor\'s best estimate of misstatements in populations from which samples were drawn) been calculated and documented?</p>'),
+        q('aps-q2d', '<p>Has the aggregate of all identified misstatements (factual + judgmental + projected) been compared to performance materiality?</p>'),
+        q('aps-q2e', '<p>Have the identified misstatements been communicated to management and has management\'s response been documented?</p>'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'section-aps-3',
+      title: '3. Outstanding Items',
+      questions: [
+        q('aps-q3a', '<p>Have all outstanding items requiring follow-up or response from management been listed and tracked?</p>'),
+        q('aps-q3b', '<p>Have any items that remain unresolved as of the completion of fieldwork been escalated to the engagement manager/partner?</p>'),
+        q('aps-q3c', '<p>Have any areas where the auditor was unable to obtain sufficient appropriate evidence been documented, and has the impact on the audit opinion been assessed?</p>'),
+        q('aps-q3d', '<p>Have all management representation letter items been identified and agreed with the draft representation letter?</p>'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'section-aps-4',
+      title: '4. Overall Conclusion',
+      questions: [
+        q('aps-q4a', '<p>Has the engagement manager/partner concluded that sufficient appropriate audit evidence has been obtained to support the audit opinion?</p>'),
+        q('aps-q4b', '<p>Has the audit file been reviewed by the engagement manager to confirm that all required procedures have been performed and documented?</p>'),
+        q('aps-q4c', '<p>Has the engagement partner performed the final review of the audit file and concurred with the proposed audit opinion?</p>'),
+        q('aps-q4d', '<p>Where an EQCR is required, has the quality reviewer completed their review and documented their concurrence with the significant judgments and proposed opinion?</p>'),
+        q('aps-q4e', '<p>Has the subsequent events review been completed and any events requiring adjustment or disclosure addressed?</p>'),
+      ],
+      isExpanded: true
+    },
+  ];
+
+  return {
+    id: 'global-template-audit-procedures-summary',
+    title: 'Audit Procedures Summary',
+    description: 'Summarizes all significant audit procedures performed, misstatements identified, outstanding items, and the overall conclusion on whether sufficient appropriate evidence has been obtained.',
+    objective: `CAS 330 and CAS 450 require the auditor to evaluate whether the audit evidence obtained is sufficient and appropriate to reduce audit risk to an acceptably low level. This summary checklist confirms that all planned procedures have been performed, identifies all misstatements, and documents the engagement team\'s conclusion on the audit.`,
+    sections,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  };
+};

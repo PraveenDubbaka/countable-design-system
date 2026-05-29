@@ -1554,11 +1554,11 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
                       { id: "aud-ues", code: "UES", label: "Understanding the entity — Systems & Controls", icon: "checklist", route: "checklist/aud-ues" },
                       { id: "aud-uei", code: "UEI", label: "Understanding the entity — Industry & Environment", icon: "checklist", route: "checklist/aud-uei" },
                       { id: "aud-mat", code: "MAT", label: "Materiality", icon: "checklist", route: "checklist/aud-mat" },
-                      { id: "aud-scope", code: "SC", label: "Engagement Scope", icon: "checklist" },
-                      { id: "aud-pap", code: "PAP", label: "Preliminary Analytical Procedures", icon: "checklist" },
-                      { id: "aud-asm", code: "ASM", label: "Audit Strategy Memorandum", icon: "checklist" },
+                      { id: "aud-scope", code: "SC", label: "Engagement Scope", icon: "checklist", route: "checklist/aud-scope" },
+                      { id: "aud-pap", code: "PAP", label: "Preliminary Analytical Procedures", icon: "checklist", route: "checklist/aud-pap" },
+                      { id: "aud-asm", code: "ASM", label: "Audit Strategy Memorandum", icon: "checklist", route: "checklist/aud-asm" },
                       { id: "aud-plan", code: "EP", label: "Engagement Planning", icon: "checklist", route: "checklist/aud-plan" },
-                      { id: "aud-stb", code: "STB", label: "Staffing & Time Budget", icon: "checklist" },
+                      { id: "aud-stb", code: "STB", label: "Staffing & Time Budget", icon: "checklist", route: "checklist/aud-stb" },
                       { id: "aud-tcwg-pl", code: "TCWG", label: "Communication with Those Charged with Governance", icon: "letter", route: "checklist/aud-tcwg-pl" },
                     ]
                   },
@@ -1582,7 +1582,7 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
                     children: [
                       { id: "aud-ra-rap", code: "RAP", label: "Risk Assessment Procedures", icon: "checklist", route: "checklist/aud-ra-rap" },
                       { id: "aud-ra-ic", code: "IC", label: "Understanding Internal Controls", icon: "checklist", route: "checklist/aud-ra-ic" },
-                      { id: "aud-ra-itgc", code: "ITGC", label: "IT General Controls (ITGC)", icon: "checklist" },
+                      { id: "aud-ra-itgc", code: "ITGC", label: "IT General Controls (ITGC)", icon: "checklist", route: "checklist/aud-ra-itgc" },
                       { id: "aud-ra-fraud", code: "FRA", label: "Fraud Risk Assessment (CAS 240)", icon: "checklist", route: "checklist/aud-ra-fraud" },
                       { id: "aud-ra-srr", code: "SRR", label: "Significant Risks Register", icon: "checklist", route: "checklist/aud-ra-srr" },
                       { id: "aud-ra-rmm", code: "RMM", label: "Risk of Material Misstatement (RMM)", icon: "checklist", route: "checklist/aud-ra-rmm" },
@@ -1596,11 +1596,11 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
                     id: "aud-rp-sec", code: "RP", label: "Response to Assessed Risks", icon: "folder",
                     children: [
                       { id: "aud-rp-oar", code: "OAR", label: "Overall Audit Response", icon: "checklist", route: "checklist/aud-rp-oar" },
-                      { id: "aud-rp-toc", code: "TOC", label: "Test of Controls", icon: "checklist" },
-                      { id: "aud-rp-sap", code: "SAP", label: "Substantive Analytical Procedures", icon: "checklist" },
-                      { id: "aud-rp-tod-rev", code: "TR", label: "Test of Details — Revenue", icon: "checklist" },
-                      { id: "aud-rp-tod-exp", code: "TE", label: "Test of Details — Expenses", icon: "checklist" },
-                      { id: "aud-rp-aps", code: "APS", label: "Audit Procedures Summary", icon: "checklist" },
+                      { id: "aud-rp-toc", code: "TOC", label: "Test of Controls", icon: "checklist", route: "checklist/aud-rp-toc" },
+                      { id: "aud-rp-sap", code: "SAP", label: "Substantive Analytical Procedures", icon: "checklist", route: "checklist/aud-rp-sap" },
+                      { id: "aud-rp-tod-rev", code: "TR", label: "Test of Details — Revenue", icon: "checklist", route: "checklist/aud-rp-tod-rev" },
+                      { id: "aud-rp-tod-exp", code: "TE", label: "Test of Details — Expenses", icon: "checklist", route: "checklist/aud-rp-tod-exp" },
+                      { id: "aud-rp-aps", code: "APS", label: "Audit Procedures Summary", icon: "checklist", route: "checklist/aud-rp-aps" },
                     ]
                   },
                   {
