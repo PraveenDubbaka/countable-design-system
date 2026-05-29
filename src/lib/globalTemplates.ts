@@ -9563,3 +9563,83 @@ export const generateAuditProceduresSummaryChecklist = (): Checklist => {
     updatedAt: new Date().toISOString(),
   };
 };
+
+export const generateUnderstandingEntityIndustryEnvironmentChecklist = (): Checklist => {
+  const q = (id: string, text: string, subQuestions?: Question[]): Question => ({
+    id, text, answerType: 'yes-no-na' as const, options: ['Yes', 'No', 'NA'],
+    required: false, answer: '', ...(subQuestions ? { subQuestions } : {})
+  });
+
+  const sections: Section[] = [
+    {
+      id: 'section-uei-1',
+      title: '1. Industry Conditions & External Environment',
+      questions: [
+        q('uei-q1a', '<p>Has the auditor obtained an understanding of the significant industry trends, competitive conditions, and cyclical or seasonal factors affecting the entity?</p>'),
+        q('uei-q1b', '<p>Are there significant technological changes in the industry that could affect the entity\'s products, services, or processes?</p>'),
+        q('uei-q1c', '<p>Has the auditor considered the impact of supply chain disruptions, commodity price changes, or other macroeconomic factors on the entity?</p>'),
+        q('uei-q1d', '<p>Are there significant changes in customer demand, market share, or competitive dynamics that could affect the entity\'s financial performance?</p>'),
+        q('uei-q1e', '<p>Has the auditor considered the entity\'s position within its industry (e.g., market leader, niche player, declining market)?</p>'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'section-uei-2',
+      title: '2. Regulatory & Legal Framework',
+      questions: [
+        q('uei-q2a', '<p>Has the auditor obtained an understanding of the regulatory framework applicable to the entity and the industry (e.g., environmental regulations, industry-specific regulations, licensing requirements)?</p>'),
+        q('uei-q2b', '<p>Are there any significant regulatory changes pending or recently enacted that could affect the entity\'s operations, financial reporting, or compliance obligations?</p>'),
+        q('uei-q2c', '<p>Has the auditor reviewed significant contracts, agreements, or litigation that could have a material impact on the financial statements?</p>'),
+        q('uei-q2d', '<p>Are there any significant tax law changes (federal, provincial/state, or international) that could affect the entity\'s tax positions or disclosures?</p>'),
+        q('uei-q2e', '<p>Has management identified and documented its compliance with applicable laws and regulations material to the financial statements?</p>'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'section-uei-3',
+      title: '3. Entity\'s Business Model, Strategy & Objectives',
+      questions: [
+        q('uei-q3a', '<p>Has the auditor obtained an understanding of the entity\'s key products and services, principal markets, and major customers and suppliers?</p>'),
+        q('uei-q3b', '<p>Are there significant changes in the entity\'s business model, strategy, or key relationships compared to the prior year?</p>'),
+        q('uei-q3c', '<p>Has the auditor considered the entity\'s key performance indicators (KPIs) and how management monitors performance against its objectives?</p>'),
+        q('uei-q3d', '<p>Are there significant business risks arising from the entity\'s strategic objectives (e.g., expansion, new product lines, geographic diversification)?</p>'),
+        q('uei-q3e', '<p>Has the auditor considered the entity\'s reliance on key individuals, intellectual property, or proprietary technology?</p>'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'section-uei-4',
+      title: '4. Accounting Policies & Financial Reporting Framework',
+      questions: [
+        q('uei-q4a', '<p>Has the auditor obtained an understanding of the entity\'s significant accounting policies and whether they are appropriate and consistent with the applicable financial reporting framework (e.g., ASPE, IFRS)?</p>'),
+        q('uei-q4b', '<p>Are there any significant changes in accounting policies or estimates from the prior year? If so, are the reasons for the changes appropriate?</p>'),
+        q('uei-q4c', '<p>Has the auditor considered the entity\'s use of significant accounting estimates and whether the estimation process is reasonable and consistent?</p>'),
+        q('uei-q4d', '<p>Are there complex transactions or areas requiring significant management judgment (e.g., revenue recognition, asset impairment, business combinations)?</p>'),
+        q('uei-q4e', '<p>Has the auditor considered industry-specific accounting requirements and whether the entity is applying them appropriately?</p>'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'section-uei-5',
+      title: '5. Measurement & Review of Financial Performance',
+      questions: [
+        q('uei-q5a', '<p>Has the auditor reviewed and understood the entity\'s budgeting process and how actual results are compared to budget/forecast?</p>'),
+        q('uei-q5b', '<p>Are there financial performance measures or covenants (e.g., banking covenants, regulatory capital requirements) that management is under pressure to meet?</p>'),
+        q('uei-q5c', '<p>Has the auditor considered whether management\'s performance targets or compensation arrangements create incentives for earnings management or fraudulent financial reporting?</p>'),
+        q('uei-q5d', '<p>Has the auditor performed preliminary analytical procedures to identify unusual fluctuations in financial data compared to industry benchmarks or prior periods?</p>'),
+        q('uei-q5e', '<p>Based on the understanding obtained, has the auditor identified any significant risks arising from the entity\'s industry and environment that require specific audit attention?</p>'),
+      ],
+      isExpanded: true
+    },
+  ];
+
+  return {
+    id: 'global-template-uei',
+    title: 'Understanding the Entity — Industry & Environment',
+    description: 'Documents the auditor\'s understanding of the entity\'s industry conditions, regulatory framework, business model, accounting policies, and financial performance measurement, as required by CAS 315.',
+    objective: `CAS 315 requires the auditor to obtain an understanding of the entity and its environment sufficient to identify and assess the risks of material misstatement. This checklist covers the external factors — industry conditions, regulatory environment, and the entity\'s strategic position — that influence the nature of the entity and the risks it faces. This understanding informs the auditor\'s risk assessment and the design of further audit procedures.`,
+    sections,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  };
+};

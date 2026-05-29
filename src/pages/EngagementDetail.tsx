@@ -27,6 +27,7 @@ import {
   generateClientAcceptanceContinuanceChecklist,
   generateIndependenceChecklist,
   generateKnowledgeOfClientBusinessChecklist,
+  generateUnderstandingEntityIndustryEnvironmentChecklist,
   generatePlanningChecklist,
   generateEngagementLetterChecklist,
   generateManagementResponsibilityChecklist,
@@ -172,7 +173,7 @@ const buildDefaultAuditChecklists = () => {
     // Planning
     { generator: generateUnderstandingEntityBasicsChecklist, id: "default-audit-ueb" },
     { generator: generateUnderstandingEntitySystemsChecklist, id: "default-audit-ues" },
-    { generator: generateKnowledgeOfClientBusinessChecklist, id: "default-audit-uei" },
+    { generator: generateUnderstandingEntityIndustryEnvironmentChecklist, id: "default-audit-uei" },
     { generator: generateEngagementPlanningChecklist, id: "default-audit-plan" },
     { generator: generateAuditMaterialityChecklist, id: "default-audit-mat" },
     { generator: generateTCWGPlanningCommunicationChecklist, id: "default-audit-tcwg-pl" },
