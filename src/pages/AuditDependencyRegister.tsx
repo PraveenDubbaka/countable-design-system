@@ -775,27 +775,28 @@ export default function AuditDependencyRegister() {
               </button>
             </div>
 
-            {/* Iframe viewer */}
-            <div className="flex-1 relative overflow-hidden">
-              <iframe
-                key={drivePanel.standard}
-                src={DRIVE_EMBED_URL}
-                className="absolute inset-0 w-full h-full border-0"
-                title={`Google Drive — ${drivePanel.standard}`}
-                sandbox="allow-same-origin allow-scripts allow-popups allow-forms allow-top-navigation"
-              />
-              {/* Fallback open button — sits at bottom, doesn't block iframe */}
-              <div className="absolute bottom-3 right-3 z-10">
-                <a
-                  href={DRIVE_FOLDER_URL}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-primary/90 text-white text-xs font-medium hover:bg-primary transition-colors shadow-md"
-                >
-                  <ExternalLink className="h-3.5 w-3.5" />
-                  Open in Drive
-                </a>
+            {/* Body */}
+            <div className="flex-1 flex flex-col items-center justify-center gap-6 p-8 text-center">
+              <div className="w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center">
+                <FolderOpen className="h-8 w-8 text-primary" />
               </div>
+              <div>
+                <p className="text-base font-semibold text-foreground mb-1">Standard Reference</p>
+                <p className="text-2xl font-bold text-primary font-mono mb-3">{drivePanel.standard}</p>
+                <p className="text-sm text-muted-foreground leading-relaxed">
+                  Click below to open your Google Drive audit folder and find the source documents for this standard.
+                </p>
+              </div>
+              <a
+                href={DRIVE_FOLDER_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-primary text-white text-sm font-medium hover:bg-primary/90 transition-colors shadow-sm"
+              >
+                <ExternalLink className="h-4 w-4" />
+                Open in Google Drive
+              </a>
+              <p className="text-xs text-muted-foreground">Google Drive cannot be embedded — opens in a new tab</p>
             </div>
           </div>
         </>
