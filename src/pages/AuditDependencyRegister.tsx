@@ -29,6 +29,7 @@ interface DependencyItem {
   type: DocType;
   phase: Phase;
   cas?: string;
+  us?: string;
   prerequisites: string[]; // codes
   enablesKey?: string; // what nav key this routes to
   criticalPath: boolean;
@@ -45,6 +46,7 @@ const REGISTER: DependencyItem[] = [
     type: "checklist",
     phase: "Client Onboarding",
     cas: "CAS 210",
+    us: "AU-C 210",
     prerequisites: [],
     criticalPath: true,
   },
@@ -55,6 +57,7 @@ const REGISTER: DependencyItem[] = [
     type: "checklist",
     phase: "Client Onboarding",
     cas: "CAS 210",
+    us: "AU-C 210",
     prerequisites: [],
     criticalPath: true,
   },
@@ -65,6 +68,7 @@ const REGISTER: DependencyItem[] = [
     type: "checklist",
     phase: "Client Onboarding",
     cas: "CAS 220 / CSQM 1",
+    us: "AU-C 220 / SQMS 1",
     prerequisites: ["CO-NA", "CO-EC"],
     criticalPath: true,
   },
@@ -75,6 +79,7 @@ const REGISTER: DependencyItem[] = [
     type: "checklist",
     phase: "Client Onboarding",
     cas: "PCMLTFA / FINTRAC",
+    us: "BSA / FinCEN",
     prerequisites: ["CO-NA", "CO-EC"],
     criticalPath: false,
   },
@@ -85,6 +90,7 @@ const REGISTER: DependencyItem[] = [
     type: "letter",
     phase: "Client Onboarding",
     cas: "CAS 210",
+    us: "AU-C 210",
     prerequisites: ["CO-IND", "CO-AML"],
     criticalPath: true,
   },
@@ -97,6 +103,7 @@ const REGISTER: DependencyItem[] = [
     type: "checklist",
     phase: "Planning",
     cas: "CAS 315",
+    us: "AU-C 315",
     prerequisites: ["CO-EL"],
     criticalPath: true,
   },
@@ -107,6 +114,7 @@ const REGISTER: DependencyItem[] = [
     type: "checklist",
     phase: "Planning",
     cas: "CAS 315",
+    us: "AU-C 315",
     prerequisites: ["PL-UEB"],
     criticalPath: true,
   },
@@ -117,6 +125,7 @@ const REGISTER: DependencyItem[] = [
     type: "checklist",
     phase: "Planning",
     cas: "CAS 315",
+    us: "AU-C 315",
     prerequisites: ["PL-UEB"],
     criticalPath: false,
   },
@@ -127,6 +136,7 @@ const REGISTER: DependencyItem[] = [
     type: "worksheet",
     phase: "Planning",
     cas: "CAS 320",
+    us: "AU-C 320",
     prerequisites: ["PL-UEB", "PL-UEI"],
     criticalPath: true,
   },
@@ -137,6 +147,7 @@ const REGISTER: DependencyItem[] = [
     type: "checklist",
     phase: "Planning",
     cas: "CAS 300",
+    us: "AU-C 300",
     prerequisites: ["PL-MAT", "PL-UES"],
     criticalPath: true,
   },
@@ -147,6 +158,7 @@ const REGISTER: DependencyItem[] = [
     type: "letter",
     phase: "Planning",
     cas: "CAS 260",
+    us: "AU-C 260",
     prerequisites: ["PL-MAT", "PL-EP"],
     criticalPath: false,
   },
@@ -159,6 +171,7 @@ const REGISTER: DependencyItem[] = [
     type: "checklist",
     phase: "Risk Assessment",
     cas: "CAS 315",
+    us: "AU-C 315",
     prerequisites: ["PL-EP", "PL-MAT"],
     criticalPath: true,
   },
@@ -169,6 +182,7 @@ const REGISTER: DependencyItem[] = [
     type: "checklist",
     phase: "Risk Assessment",
     cas: "CAS 315",
+    us: "AU-C 315",
     prerequisites: ["RA-RAP", "PL-UES"],
     criticalPath: true,
   },
@@ -179,6 +193,7 @@ const REGISTER: DependencyItem[] = [
     type: "checklist",
     phase: "Risk Assessment",
     cas: "CAS 240",
+    us: "AU-C 240",
     prerequisites: ["RA-RAP"],
     criticalPath: true,
   },
@@ -189,6 +204,7 @@ const REGISTER: DependencyItem[] = [
     type: "checklist",
     phase: "Risk Assessment",
     cas: "CAS 315",
+    us: "AU-C 315",
     prerequisites: ["RA-RAP", "RA-FRA", "RA-IC"],
     criticalPath: true,
   },
@@ -199,6 +215,7 @@ const REGISTER: DependencyItem[] = [
     type: "checklist",
     phase: "Risk Assessment",
     cas: "CAS 315",
+    us: "AU-C 315",
     prerequisites: ["RA-SRR", "RA-IC"],
     criticalPath: true,
   },
@@ -209,6 +226,7 @@ const REGISTER: DependencyItem[] = [
     type: "checklist",
     phase: "Risk Assessment",
     cas: "CAS 315",
+    us: "AU-C 315",
     prerequisites: ["RA-IC", "RA-SRR"],
     criticalPath: false,
   },
@@ -219,6 +237,7 @@ const REGISTER: DependencyItem[] = [
     type: "checklist",
     phase: "Risk Assessment",
     cas: "CAS 315",
+    us: "AU-C 315",
     prerequisites: ["RA-IC", "RA-SRR"],
     criticalPath: false,
   },
@@ -229,6 +248,7 @@ const REGISTER: DependencyItem[] = [
     type: "checklist",
     phase: "Risk Assessment",
     cas: "CAS 315",
+    us: "AU-C 315",
     prerequisites: ["RA-IC", "RA-SRR"],
     criticalPath: false,
   },
@@ -239,6 +259,7 @@ const REGISTER: DependencyItem[] = [
     type: "checklist",
     phase: "Risk Assessment",
     cas: "CAS 570",
+    us: "AU-C 570",
     prerequisites: ["RA-RAP", "PL-UEB"],
     criticalPath: false,
   },
@@ -251,6 +272,7 @@ const REGISTER: DependencyItem[] = [
     type: "checklist",
     phase: "Response to Risks",
     cas: "CAS 330",
+    us: "AU-C 330",
     prerequisites: ["RA-RMM", "RA-SRR"],
     criticalPath: true,
   },
@@ -263,6 +285,7 @@ const REGISTER: DependencyItem[] = [
     type: "checklist",
     phase: "Financial Statements",
     cas: "CAS 700",
+    us: "AU-C 700",
     prerequisites: ["SO-COMP"],
     criticalPath: true,
   },
@@ -275,6 +298,7 @@ const REGISTER: DependencyItem[] = [
     type: "checklist",
     phase: "Completion & Signoffs",
     cas: "CAS 450",
+    us: "AU-C 450",
     prerequisites: ["RP-OAR"],
     criticalPath: true,
   },
@@ -285,6 +309,7 @@ const REGISTER: DependencyItem[] = [
     type: "checklist",
     phase: "Completion & Signoffs",
     cas: "CAS 520",
+    us: "AU-C 520",
     prerequisites: ["SO-AIM"],
     criticalPath: true,
   },
@@ -295,6 +320,7 @@ const REGISTER: DependencyItem[] = [
     type: "checklist",
     phase: "Completion & Signoffs",
     cas: "CAS 560",
+    us: "AU-C 560",
     prerequisites: ["SO-FAR"],
     criticalPath: true,
   },
@@ -305,6 +331,7 @@ const REGISTER: DependencyItem[] = [
     type: "checklist",
     phase: "Completion & Signoffs",
     cas: "CAS 570",
+    us: "AU-C 570",
     prerequisites: ["SO-FAR", "SO-SE"],
     criticalPath: false,
   },
@@ -315,6 +342,7 @@ const REGISTER: DependencyItem[] = [
     type: "checklist",
     phase: "Completion & Signoffs",
     cas: "CAS 580",
+    us: "AU-C 580",
     prerequisites: ["SO-FAR", "SO-GCF"],
     criticalPath: true,
   },
@@ -325,6 +353,7 @@ const REGISTER: DependencyItem[] = [
     type: "letter",
     phase: "Completion & Signoffs",
     cas: "CAS 260",
+    us: "AU-C 260",
     prerequisites: ["SO-MRL", "SO-AIM"],
     criticalPath: false,
   },
@@ -335,6 +364,7 @@ const REGISTER: DependencyItem[] = [
     type: "completion",
     phase: "Completion & Signoffs",
     cas: "CAS 220",
+    us: "AU-C 220 / SQMS 1",
     prerequisites: ["SO-FAR", "SO-SE", "SO-GCF", "SO-MRL", "SO-TCWG"],
     criticalPath: true,
   },
@@ -345,6 +375,7 @@ const REGISTER: DependencyItem[] = [
     type: "completion",
     phase: "Completion & Signoffs",
     cas: "CSQM 1",
+    us: "SQMS 1",
     prerequisites: ["SO-COMP"],
     criticalPath: true,
   },
@@ -525,7 +556,8 @@ export default function AuditDependencyRegister() {
                         <th className="text-left px-4 py-2.5 text-xs font-semibold text-muted-foreground uppercase tracking-wide w-24">Code</th>
                         <th className="text-left px-4 py-2.5 text-xs font-semibold text-muted-foreground uppercase tracking-wide">Document</th>
                         <th className="text-left px-4 py-2.5 text-xs font-semibold text-muted-foreground uppercase tracking-wide w-36">Type</th>
-                        <th className="text-left px-4 py-2.5 text-xs font-semibold text-muted-foreground uppercase tracking-wide w-36">Standard</th>
+                        <th className="text-left px-4 py-2.5 text-xs font-semibold text-muted-foreground uppercase tracking-wide w-36">CA Standard</th>
+                        <th className="text-left px-4 py-2.5 text-xs font-semibold text-muted-foreground uppercase tracking-wide w-36">US Standard</th>
                         <th className="text-left px-4 py-2.5 text-xs font-semibold text-muted-foreground uppercase tracking-wide">Prerequisites</th>
                         <th className="text-left px-4 py-2.5 text-xs font-semibold text-muted-foreground uppercase tracking-wide w-36">Flag</th>
                       </tr>
@@ -564,10 +596,19 @@ export default function AuditDependencyRegister() {
                             <TypeBadge type={item.type} />
                           </td>
 
-                          {/* Standard */}
+                          {/* CA Standard */}
                           <td className="px-4 py-3">
                             {item.cas ? (
                               <span className="text-xs text-muted-foreground font-mono">{item.cas}</span>
+                            ) : (
+                              <span className="text-xs text-muted-foreground">—</span>
+                            )}
+                          </td>
+
+                          {/* US Standard */}
+                          <td className="px-4 py-3">
+                            {item.us ? (
+                              <span className="text-xs text-muted-foreground font-mono">{item.us}</span>
                             ) : (
                               <span className="text-xs text-muted-foreground">—</span>
                             )}
