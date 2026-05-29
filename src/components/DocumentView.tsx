@@ -2169,7 +2169,7 @@ function DocumentSectionBlock({
 
               {/* Add item — ghost button with popover */}
               {!isPreviewMode &&
-          <div className="flex justify-center my-[14px] border-t border-border/40 pt-[14px]">
+          <div className="flex justify-center mb-[14px] border-t border-border/40 pt-[14px]">
                   <Popover>
                     <PopoverTrigger asChild>
                       <button
