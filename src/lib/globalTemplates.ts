@@ -738,7 +738,9 @@ export const generateNewEngagementAcceptanceChecklist = (): Checklist => {
           answerType: 'yes-no-na',
           options: ['Yes', 'No', 'NA'],
           required: false,
-          answer: ''
+          answer: 'Yes',
+          explanation: '<p>Firm quality management policies were reviewed. Accepting this engagement for Shipping Line Inc. does not contravene any firm policies. No related CSRS 4460 services are being provided.</p>',
+          reference: 'W/P Ref: AC-01'
         }
       ],
       isExpanded: true
@@ -753,7 +755,9 @@ export const generateNewEngagementAcceptanceChecklist = (): Checklist => {
           answerType: 'yes-no-na',
           options: ['Yes', 'No', 'NA'],
           required: false,
-          answer: ''
+          answer: 'Yes',
+          explanation: '<p>Engagement partner J. Williams has prior knowledge of Shipping Line Inc. through industry contacts. The client was referred by a trusted business advisor and is recommended for acceptance.</p>',
+          reference: 'W/P Ref: AC-02'
         },
         {
           id: 'nea-rf-b',
@@ -761,7 +765,9 @@ export const generateNewEngagementAcceptanceChecklist = (): Checklist => {
           answerType: 'yes-no-na',
           options: ['Yes', 'No', 'NA'],
           required: false,
-          answer: ''
+          answer: 'Yes',
+          explanation: '<p>Predecessor practitioner was contacted by letter dated March 15, 2024. Response received March 20, 2024 — no concerns or reasons to decline were communicated. Fee arrangements with predecessor were settled.</p>',
+          reference: 'W/P Ref: AC-03'
         },
         {
           id: 'nea-rf-c',
@@ -769,7 +775,9 @@ export const generateNewEngagementAcceptanceChecklist = (): Checklist => {
           answerType: 'yes-no-na',
           options: ['Yes', 'No', 'NA'],
           required: false,
-          answer: ''
+          answer: 'Yes',
+          explanation: '<p>Permission to review predecessor working papers was granted. Review performed April 2, 2024. No significant risk factors or unusual items were identified. Opening balances appear complete and properly supported.</p>',
+          reference: 'W/P Ref: AC-04'
         },
         {
           id: 'nea-rf-d',
@@ -777,20 +785,21 @@ export const generateNewEngagementAcceptanceChecklist = (): Checklist => {
           answerType: 'yes-no-na',
           options: ['Yes', 'No', 'NA'],
           required: false,
-          answer: '',
+          answer: 'Yes',
+          explanation: '<p>Additional procedures including web searches, management inquiries, and credit check were performed. No adverse findings noted.</p>',
           subQuestions: [
             { id: 'nea-rf-d-i', text: '<p>I. Inquiries of management/TCWG about:</p>', answerType: 'long-answer', options: [], required: false, answer: '',
               subQuestions: [
-                { id: 'nea-rf-d-i-a', text: '<p>A. The reason for the change in accountants.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
-                { id: 'nea-rf-d-i-b', text: '<p>B. Whether another accounting firm(s) has recently declined the engagement. If so, why?</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
-                { id: 'nea-rf-d-i-c', text: '<p>C. Other engagement risk factors (see Appendix A).</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' }
+                { id: 'nea-rf-d-i-a', text: '<p>A. The reason for the change in accountants.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: 'Yes', explanation: '<p>Management indicated the change was due to the prior firm being acquired and the resulting conflict of interest with a competitor client. No professional issues were cited.</p>' },
+                { id: 'nea-rf-d-i-b', text: '<p>B. Whether another accounting firm(s) has recently declined the engagement. If so, why?</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: 'No', explanation: '<p>Management confirmed no other firm has recently declined this engagement.</p>' },
+                { id: 'nea-rf-d-i-c', text: '<p>C. Other engagement risk factors (see Appendix A).</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: 'Yes', explanation: '<p>Inquiries made regarding Appendix A risk factors. No material risk factors identified beyond normal industry operating risks associated with marine shipping.</p>' }
               ]
             },
-            { id: 'nea-rf-d-iii', text: '<p>III. Review of relevant communications between the previous accountants and management/TCWG.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
-            { id: 'nea-rf-d-iv', text: '<p>IV. Obtaining permission from the prospective client to perform a credit check and to make inquiries with bankers, other advisors, regulators, etc.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' }
+            { id: 'nea-rf-d-iii', text: '<p>III. Review of relevant communications between the previous accountants and management/TCWG.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: 'Yes', explanation: '<p>Management letters from prior auditor reviewed. No significant control deficiencies or unresolved matters were noted.</p>' },
+            { id: 'nea-rf-d-iv', text: '<p>IV. Obtaining permission from the prospective client to perform a credit check and to make inquiries with bankers, other advisors, regulators, etc.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: 'Yes', explanation: '<p>Client permission obtained. Credit check performed — satisfactory results. RBC confirmed banking relationship in good standing. No regulatory sanctions noted.</p>' }
           ]
         },
-        { id: 'nea-rf-extra', text: '<p>Additional Explanation</p>', answerType: 'long-answer', options: [], required: false, answer: '' }
+        { id: 'nea-rf-extra', text: '<p>Additional Explanation</p>', answerType: 'long-answer', options: [], required: false, answer: 'All engagement risk factor procedures completed satisfactorily. No factors identified that would cause us to decline the engagement.' }
       ],
       isExpanded: true
     },
@@ -804,9 +813,11 @@ export const generateNewEngagementAcceptanceChecklist = (): Checklist => {
           answerType: 'yes-no-na',
           options: ['Yes', 'No', 'NA'],
           required: false,
-          answer: ''
+          answer: 'No',
+          explanation: '<p>No concerns identified regarding management integrity. Web searches and inquiries with bankers and advisors returned no adverse findings. Management has operated Shipping Line Inc. with a consistent reputation in the marine freight sector.</p>',
+          reference: 'W/P Ref: AC-05'
         },
-        { id: 'nea-int-extra', text: '<p>Additional Explanation</p>', answerType: 'long-answer', options: [], required: false, answer: '' }
+        { id: 'nea-int-extra', text: '<p>Additional Explanation</p>', answerType: 'long-answer', options: [], required: false, answer: 'No integrity concerns identified. Management team led by CEO with 15+ years in marine logistics. No criminal convictions, regulatory sanctions, or negative publicity found.' }
       ],
       isExpanded: true
     },
@@ -820,9 +831,11 @@ export const generateNewEngagementAcceptanceChecklist = (): Checklist => {
           answerType: 'yes-no-na',
           options: ['Yes', 'No', 'NA'],
           required: false,
-          answer: ''
+          answer: 'No',
+          explanation: '<p>Management confirmed full access to accounting records, vessel logs, voyage documentation, and supporting schedules. Accounting system (Sage 300) is in use and records appear well-maintained.</p>',
+          reference: 'W/P Ref: AC-06'
         },
-        { id: 'nea-data-extra', text: '<p>Additional Explanation</p>', answerType: 'long-answer', options: [], required: false, answer: '' }
+        { id: 'nea-data-extra', text: '<p>Additional Explanation</p>', answerType: 'long-answer', options: [], required: false, answer: 'No limitations on data availability identified. Management is cooperative and has committed to providing all requested information on a timely basis.' }
       ],
       isExpanded: true
     },
@@ -836,9 +849,11 @@ export const generateNewEngagementAcceptanceChecklist = (): Checklist => {
           answerType: 'yes-no-na',
           options: ['Yes', 'No', 'NA'],
           required: false,
-          answer: ''
+          answer: 'Yes',
+          explanation: '<p>Opening balances as at April 1, 2023 were reviewed through inspection of predecessor working papers. Accounting policies are consistently applied. No material misstatements in opening balances identified.</p>',
+          reference: 'W/P Ref: OB-01'
         },
-        { id: 'nea-ob-extra', text: '<p>Additional Explanation</p>', answerType: 'long-answer', options: [], required: false, answer: '' }
+        { id: 'nea-ob-extra', text: '<p>Additional Explanation</p>', answerType: 'long-answer', options: [], required: false, answer: 'Opening balances reviewed and agreed to prior year signed financial statements. Depreciation methods and vessel useful lives are consistent with prior period.' }
       ],
       isExpanded: true
     },
@@ -852,9 +867,11 @@ export const generateNewEngagementAcceptanceChecklist = (): Checklist => {
           answerType: 'yes-no-na',
           options: ['Yes', 'No', 'NA'],
           required: false,
-          answer: ''
+          answer: 'Yes',
+          explanation: '<p>Engagement partner J. Williams has prior experience in marine transportation audits. The engagement team includes S. Chen (manager) with transportation industry background. No external specialists required for this engagement.</p>',
+          reference: 'W/P Ref: AC-07'
         },
-        { id: 'nea-fc-extra', text: '<p>Additional Explanation</p>', answerType: 'long-answer', options: [], required: false, answer: '' }
+        { id: 'nea-fc-extra', text: '<p>Additional Explanation</p>', answerType: 'long-answer', options: [], required: false, answer: 'Firm has sufficient resources and marine industry knowledge. Year-end fieldwork scheduled April 14–25, 2024 is achievable with planned staffing.' }
       ],
       isExpanded: true
     },
@@ -868,31 +885,33 @@ export const generateNewEngagementAcceptanceChecklist = (): Checklist => {
           answerType: 'yes-no-na',
           options: ['Yes', 'No', 'NA'],
           required: false,
-          answer: '',
+          answer: 'No',
+          explanation: '<p>No independence prohibitions identified. All engagement team members confirmed independence from Shipping Line Inc. and its related parties.</p>',
+          reference: 'W/P Ref: IND-01',
           subQuestions: [
             { id: 'nea-ip-1-svc', text: '<p><strong>Services performed</strong></p>', answerType: 'long-answer', options: [], required: false, answer: '',
               subQuestions: [
-                { id: 'nea-ip-1a', text: '<p>a. Recording journal entries or changing account classifications without first obtaining management\'s approval.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
-                { id: 'nea-ip-1b', text: '<p>b. Providing tax planning or other tax advisory services that may have a material impact on the financial statements.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
-                { id: 'nea-ip-1c', text: '<p>c. Providing legal services that involve dispute resolution.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
-                { id: 'nea-ip-1d', text: '<p>d. Preparing source documents for the client.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
-                { id: 'nea-ip-1e', text: '<p>e. Performing management functions for the client (such as decision making on transactions).</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
-                { id: 'nea-ip-1f', text: '<p>f. Serving as an officer or director of the client.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
-                { id: 'nea-ip-1g', text: '<p>g. Temporary loaning of staff (except in certain situations).</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' }
+                { id: 'nea-ip-1a', text: '<p>a. Recording journal entries or changing account classifications without first obtaining management\'s approval.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: 'No', explanation: '<p>The firm does not record journal entries on behalf of the client. All adjusting entries are proposed to and approved by management.</p>' },
+                { id: 'nea-ip-1b', text: '<p>b. Providing tax planning or other tax advisory services that may have a material impact on the financial statements.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: 'No', explanation: '<p>No tax advisory services are provided by the audit firm to this client.</p>' },
+                { id: 'nea-ip-1c', text: '<p>c. Providing legal services that involve dispute resolution.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: 'No' },
+                { id: 'nea-ip-1d', text: '<p>d. Preparing source documents for the client.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: 'No' },
+                { id: 'nea-ip-1e', text: '<p>e. Performing management functions for the client (such as decision making on transactions).</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: 'No' },
+                { id: 'nea-ip-1f', text: '<p>f. Serving as an officer or director of the client.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: 'No' },
+                { id: 'nea-ip-1g', text: '<p>g. Temporary loaning of staff (except in certain situations).</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: 'No' }
               ]
             },
             { id: 'nea-ip-1-rel', text: '<p><strong>Relationships</strong></p>', answerType: 'long-answer', options: [], required: false, answer: '',
               subQuestions: [
-                { id: 'nea-ip-1h', text: '<p>a. Close business relationships with the client.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
-                { id: 'nea-ip-1i', text: '<p>b. Family and personal relationships with the client.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
-                { id: 'nea-ip-1j', text: '<p>c. Firm personnel that have accepted a position or have had recent employment with the client as an officer, director or company secretary.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' }
+                { id: 'nea-ip-1h', text: '<p>a. Close business relationships with the client.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: 'No', explanation: '<p>No close business relationships between engagement team members and the client identified.</p>' },
+                { id: 'nea-ip-1i', text: '<p>b. Family and personal relationships with the client.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: 'No' },
+                { id: 'nea-ip-1j', text: '<p>c. Firm personnel that have accepted a position or have had recent employment with the client as an officer, director or company secretary.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: 'No' }
               ]
             },
-            { id: 'nea-ip-1-fin', text: '<p><strong>Financial interests</strong></p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' }
+            { id: 'nea-ip-1-fin', text: '<p><strong>Financial interests</strong></p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: 'No', explanation: '<p>No financial interests in Shipping Line Inc. held by the firm or any engagement team member or their immediate family.</p>' }
           ]
         },
-        { id: 'nea-ip-note', text: '<p>Refer to the provincial Code of Professional Conduct / Code of Ethics for guidance, interpretations and additional independence prohibitions for listed entities.</p>', answerType: 'long-answer', options: [], required: false, answer: '' },
-        { id: 'nea-ip-extra', text: '<p>Additional Explanation</p>', answerType: 'long-answer', options: [], required: false, answer: '' }
+        { id: 'nea-ip-note', text: '<p>Refer to the provincial Code of Professional Conduct / Code of Ethics for guidance, interpretations and additional independence prohibitions for listed entities.</p>', answerType: 'long-answer', options: [], required: false, answer: 'Reviewed CPA Ontario Code of Professional Conduct — no additional prohibitions apply to this private company engagement.' },
+        { id: 'nea-ip-extra', text: '<p>Additional Explanation</p>', answerType: 'long-answer', options: [], required: false, answer: 'No independence prohibitions identified. Engagement team independence declarations on file.' }
       ],
       isExpanded: true
     },
@@ -906,16 +925,18 @@ export const generateNewEngagementAcceptanceChecklist = (): Checklist => {
           answerType: 'yes-no-na',
           options: ['Yes', 'No', 'NA'],
           required: false,
-          answer: '',
+          answer: 'No',
+          explanation: '<p>No significant independence threats identified for this new engagement. All four threat categories assessed below.</p>',
+          reference: 'W/P Ref: IND-02',
           subQuestions: [
-            { id: 'nea-it-1a', text: '<p>a. Self-interest (i.e., where the firm is economically dependent on the client fees or where judgments may be influenced by the desire to retain the client).</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
-            { id: 'nea-it-1b', text: '<p>b. Self-review (i.e., assisting the client in preparing the financial statements, providing bookkeeping services and making judgments for the client that will later need to be evaluated in reaching conclusions).</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
-            { id: 'nea-it-1c', text: '<p>c. Advocacy (i.e., acting as a client advocate in matters involving taxes, litigation or share promotion, which could result in being too sympathetic to the client\'s interests).</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
-            { id: 'nea-it-1d', text: '<p>d. Intimidation (i.e., where the client makes threats, such as to replace our firm unless we agree to certain scope limitations or to accept management positions without question, on accounting matters).</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' }
+            { id: 'nea-it-1a', text: '<p>a. Self-interest (i.e., where the firm is economically dependent on the client fees or where judgments may be influenced by the desire to retain the client).</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: 'No', explanation: '<p>Fees from Shipping Line Inc. represent less than 2% of firm revenues. No economic dependence on this client.</p>' },
+            { id: 'nea-it-1b', text: '<p>b. Self-review (i.e., assisting the client in preparing the financial statements, providing bookkeeping services and making judgments for the client that will later need to be evaluated in reaching conclusions).</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: 'No', explanation: '<p>The firm does not provide bookkeeping or financial statement preparation services. Management prepares its own financial statements.</p>' },
+            { id: 'nea-it-1c', text: '<p>c. Advocacy (i.e., acting as a client advocate in matters involving taxes, litigation or share promotion, which could result in being too sympathetic to the client\'s interests).</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: 'No' },
+            { id: 'nea-it-1d', text: '<p>d. Intimidation (i.e., where the client makes threats, such as to replace our firm unless we agree to certain scope limitations or to accept management positions without question, on accounting matters).</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: 'No', explanation: '<p>No intimidation threats noted. Management is cooperative and has not sought to impose scope limitations.</p>' }
           ]
         },
-        { id: 'nea-it-note', text: '<p>Refer to the provincial Code of Professional Conduct / Code of Ethics for guidance and interpretations.</p>', answerType: 'long-answer', options: [], required: false, answer: '' },
-        { id: 'nea-it-extra', text: '<p>Additional Explanation</p>', answerType: 'long-answer', options: [], required: false, answer: '' }
+        { id: 'nea-it-note', text: '<p>Refer to the provincial Code of Professional Conduct / Code of Ethics for guidance and interpretations.</p>', answerType: 'long-answer', options: [], required: false, answer: 'CPA Ontario Code reviewed. No additional threats identified beyond those addressed above.' },
+        { id: 'nea-it-extra', text: '<p>Additional Explanation</p>', answerType: 'long-answer', options: [], required: false, answer: 'No significant independence threats identified. Engagement may proceed.' }
       ],
       isExpanded: true
     },
@@ -929,9 +950,11 @@ export const generateNewEngagementAcceptanceChecklist = (): Checklist => {
           answerType: 'yes-no-na',
           options: ['Yes', 'No', 'NA'],
           required: false,
-          answer: ''
+          answer: 'Yes',
+          explanation: '<p>An audit engagement is required by the company\'s banking covenant with RBC and is appropriate given the entity size (~$12.5M revenue, $18.2M total assets). No scope limitations anticipated.</p>',
+          reference: 'W/P Ref: AC-08'
         },
-        { id: 'nea-pur-extra', text: '<p>Additional Explanation</p>', answerType: 'long-answer', options: [], required: false, answer: '' }
+        { id: 'nea-pur-extra', text: '<p>Additional Explanation</p>', answerType: 'long-answer', options: [], required: false, answer: 'Audit required under RBC loan covenant. An audit is appropriate and no laws or regulations preclude this engagement type.' }
       ],
       isExpanded: true
     },
@@ -945,7 +968,9 @@ export const generateNewEngagementAcceptanceChecklist = (): Checklist => {
           answerType: 'yes-no-na',
           options: ['Yes', 'No', 'NA'],
           required: false,
-          answer: ''
+          answer: 'Yes',
+          explanation: '<p>ASPE is the applicable financial reporting framework. Confirmed appropriate for Shipping Line Inc. as a privately held Canadian company with no public accountability obligations.</p>',
+          reference: 'W/P Ref: AC-09'
         },
         {
           id: 'nea-pre-b',
@@ -953,9 +978,11 @@ export const generateNewEngagementAcceptanceChecklist = (): Checklist => {
           answerType: 'yes-no-na',
           options: ['Yes', 'No', 'NA'],
           required: false,
-          answer: ''
+          answer: 'Yes',
+          explanation: '<p>Management acknowledgement obtained via signed engagement letter dated April 5, 2024. CEO confirmed responsibilities for financial statement preparation, internal controls, and providing full access to information.</p>',
+          reference: 'W/P Ref: EL-01'
         },
-        { id: 'nea-pre-extra', text: '<p>Additional Explanation</p>', answerType: 'long-answer', options: [], required: false, answer: '' }
+        { id: 'nea-pre-extra', text: '<p>Additional Explanation</p>', answerType: 'long-answer', options: [], required: false, answer: 'All engagement preconditions satisfied. Signed engagement letter on file.' }
       ],
       isExpanded: true
     },
@@ -963,18 +990,18 @@ export const generateNewEngagementAcceptanceChecklist = (): Checklist => {
       id: 'section-nea-appendix-a',
       title: 'Appendix A - Entity operations',
       questions: [
-        { id: 'nea-aa-1', text: '<p>Doubts in place about the entity\'s ability to continue as a going concern.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
-        { id: 'nea-aa-2', text: '<p>Poor sales outlook or intense competition.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
-        { id: 'nea-aa-3', text: '<p>Entity has high debt levels and/or poor cash flow.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
-        { id: 'nea-aa-4', text: '<p>Bank covenant or other contractual violations.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
-        { id: 'nea-aa-5', text: '<p>Non-compliance with industry laws/regulations.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
-        { id: 'nea-aa-6', text: '<p>Potential litigation.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
-        { id: 'nea-aa-7', text: '<p>Questionable management/TCWG ethics.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
-        { id: 'nea-aa-8', text: '<p>High media interest in the entity and management.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
-        { id: 'nea-aa-9', text: '<p>Entity engages in high-risk activities.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
-        { id: 'nea-aa-10', text: '<p>Entity operates in or does business with unstable governments/countries.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
-        { id: 'nea-aa-11', text: '<p>Entity participates in high-risk business ventures.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
-        { id: 'nea-aa-12', text: '<p>Unusual transactions not in the ordinary course of business.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' }
+        { id: 'nea-aa-1', text: '<p>Doubts in place about the entity\'s ability to continue as a going concern.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: 'No', explanation: '<p>No going concern indicators. Entity reported net income of $847K with positive operating cash flows.</p>' },
+        { id: 'nea-aa-2', text: '<p>Poor sales outlook or intense competition.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: 'No', explanation: '<p>Revenue ~$12.5M consistent with prior year. Established route contracts provide revenue stability.</p>' },
+        { id: 'nea-aa-3', text: '<p>Entity has high debt levels and/or poor cash flow.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: 'No', explanation: '<p>Long-term debt of $4.8M is manageable relative to total assets of $18.2M. Cash flows from operations are positive.</p>' },
+        { id: 'nea-aa-4', text: '<p>Bank covenant or other contractual violations.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: 'No' },
+        { id: 'nea-aa-5', text: '<p>Non-compliance with industry laws/regulations.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: 'No', explanation: '<p>Transport Canada compliance inquiries returned no violations. Vessels hold current certificates of inspection.</p>' },
+        { id: 'nea-aa-6', text: '<p>Potential litigation.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: 'No', explanation: '<p>Management confirmed no pending or threatened litigation. Legal counsel corroboration obtained.</p>' },
+        { id: 'nea-aa-7', text: '<p>Questionable management/TCWG ethics.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: 'No' },
+        { id: 'nea-aa-8', text: '<p>High media interest in the entity and management.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: 'No' },
+        { id: 'nea-aa-9', text: '<p>Entity engages in high-risk activities.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: 'No', explanation: '<p>Marine freight involves normal operating risks managed through adequate insurance and established safety protocols.</p>' },
+        { id: 'nea-aa-10', text: '<p>Entity operates in or does business with unstable governments/countries.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: 'No', explanation: '<p>Operations primarily in Canadian coastal waters with some US east coast routes. No exposure to politically unstable jurisdictions.</p>' },
+        { id: 'nea-aa-11', text: '<p>Entity participates in high-risk business ventures.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: 'No' },
+        { id: 'nea-aa-12', text: '<p>Unusual transactions not in the ordinary course of business.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: 'No' }
       ],
       isExpanded: true
     },
@@ -982,21 +1009,21 @@ export const generateNewEngagementAcceptanceChecklist = (): Checklist => {
       id: 'section-nea-appendix-a-engagement',
       title: 'Appendix A - The engagement',
       questions: [
-        { id: 'nea-ae-1', text: '<p>Poor cooperation from management, such as misleading representations and delays in obtaining the necessary evidence.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
-        { id: 'nea-ae-2', text: '<p>Firm has limited experience in the entity\'s industry.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
-        { id: 'nea-ae-3', text: '<p>Reporting timeframes are unrealistic based on time available or firm resources.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
-        { id: 'nea-ae-4', text: '<p>Poor control environment, leadership and staff morale.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
-        { id: 'nea-ae-5', text: '<p>Incompetence of senior accounting personnel.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
-        { id: 'nea-ae-6', text: '<p>Entity unable or unwilling to pay a fair fee.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
-        { id: 'nea-ae-7', text: '<p>Poor/inadequate/missing accounting systems and records.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
-        { id: 'nea-ae-8', text: '<p>Complex IT environments.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
-        { id: 'nea-ae-9', text: '<p>Lack of paper trail for certain transactions/events.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
-        { id: 'nea-ae-10', text: '<p>Experts.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
-        { id: 'nea-ae-11', text: '<p>Estimates involve a high degree of estimation uncertainty.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
-        { id: 'nea-ae-12', text: '<p>Extensive related-party transactions.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
-        { id: 'nea-ae-13', text: '<p>Entity chooses aggressive/controversial accounting policies.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
-        { id: 'nea-ae-14', text: '<p>Significant adjustments are required.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
-        { id: 'nea-ae-15', text: '<p>Unusual transactions or overly complex corporate/operational structures.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' }
+        { id: 'nea-ae-1', text: '<p>Poor cooperation from management, such as misleading representations and delays in obtaining the necessary evidence.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: 'No', explanation: '<p>Management has been cooperative during planning. All requested information provided promptly.</p>' },
+        { id: 'nea-ae-2', text: '<p>Firm has limited experience in the entity\'s industry.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: 'No', explanation: '<p>Engagement partner J. Williams has prior experience with marine transportation clients.</p>' },
+        { id: 'nea-ae-3', text: '<p>Reporting timeframes are unrealistic based on time available or firm resources.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: 'No', explanation: '<p>Fieldwork scheduled April 14–25, 2024. Timeline is achievable with planned staffing.</p>' },
+        { id: 'nea-ae-4', text: '<p>Poor control environment, leadership and staff morale.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: 'No' },
+        { id: 'nea-ae-5', text: '<p>Incompetence of senior accounting personnel.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: 'No', explanation: '<p>CFO is a CPA with 12 years of marine industry experience. Accounting records appear well-maintained.</p>' },
+        { id: 'nea-ae-6', text: '<p>Entity unable or unwilling to pay a fair fee.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: 'No' },
+        { id: 'nea-ae-7', text: '<p>Poor/inadequate/missing accounting systems and records.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: 'No', explanation: '<p>Entity uses Sage 300 ERP. Records appear complete and well-maintained during preliminary review.</p>' },
+        { id: 'nea-ae-8', text: '<p>Complex IT environments.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: 'No' },
+        { id: 'nea-ae-9', text: '<p>Lack of paper trail for certain transactions/events.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: 'No' },
+        { id: 'nea-ae-10', text: '<p>Experts.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: 'No' },
+        { id: 'nea-ae-11', text: '<p>Estimates involve a high degree of estimation uncertainty.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: 'No', explanation: '<p>Key estimates include vessel depreciation and voyage completion revenue cutoff. These are manageable with appropriate audit procedures.</p>' },
+        { id: 'nea-ae-12', text: '<p>Extensive related-party transactions.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: 'No', explanation: '<p>Related-party transactions limited to shareholder loans and management compensation, which are routine and disclosed.</p>' },
+        { id: 'nea-ae-13', text: '<p>Entity chooses aggressive/controversial accounting policies.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: 'No' },
+        { id: 'nea-ae-14', text: '<p>Significant adjustments are required.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: 'No' },
+        { id: 'nea-ae-15', text: '<p>Unusual transactions or overly complex corporate/operational structures.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: 'No' }
       ],
       isExpanded: true
     },
@@ -1010,18 +1037,19 @@ export const generateNewEngagementAcceptanceChecklist = (): Checklist => {
           answerType: 'multiple-choice',
           options: ['High Risk', 'Low Risk', 'Moderate Risk', 'Not Accepted'],
           required: false,
-          answer: ''
+          answer: 'Low Risk'
         },
-        { id: 'nea-conc-1-extra', text: '<p>Additional Explanation</p>', answerType: 'long-answer', options: [], required: false, answer: '' },
+        { id: 'nea-conc-1-extra', text: '<p>Additional Explanation</p>', answerType: 'long-answer', options: [], required: false, answer: 'All risk factors assessed. No material risk factors identified. Engagement is assessed as Low Risk. Client accepted.' },
         {
           id: 'nea-conc-2',
           text: '<p><strong>Is an EQR required on this engagement (select one)?</strong></p><p>This decision should be based on the engagement risk identified above and the firm\'s criteria for when an EQR is required.</p>',
           answerType: 'yes-no-na',
           options: ['Yes', 'No', 'NA'],
           required: false,
-          answer: ''
+          answer: 'No',
+          explanation: '<p>EQR not required. Engagement assessed as Low Risk. Entity is a private company with no public interest considerations and no elevated risk factors.</p>'
         },
-        { id: 'nea-conc-2-extra', text: '<p>Additional Explanation</p>', answerType: 'long-answer', options: [], required: false, answer: '' }
+        { id: 'nea-conc-2-extra', text: '<p>Additional Explanation</p>', answerType: 'long-answer', options: [], required: false, answer: 'EQR not required per firm criteria. Engagement accepted. Engagement letter issued April 5, 2024.' }
       ],
       isExpanded: true
     }
@@ -1064,7 +1092,9 @@ export const generateExistingEngagementContinuanceChecklist = (): Checklist => {
           answerType: 'yes-no-na',
           options: ['Yes', 'No', 'NA'],
           required: false,
-          answer: ''
+          answer: 'Yes',
+          explanation: '<p>Firm quality assurance policies reviewed. Continuing this engagement for Shipping Line Inc. (AUD-SL-Mar312024) does not contravene any firm policies. No CSRS 4460 services are being provided.</p>',
+          reference: 'W/P Ref: AC-01'
         }
       ],
       isExpanded: true
@@ -1079,7 +1109,9 @@ export const generateExistingEngagementContinuanceChecklist = (): Checklist => {
           answerType: 'yes-no-na',
           options: ['Yes', 'No', 'NA'],
           required: false,
-          answer: ''
+          answer: 'Yes',
+          explanation: '<p>Web searches and management inquiries performed. No new or emerging risk factors identified that would impact the continuation decision. Marine freight industry operating conditions remain stable.</p>',
+          reference: 'W/P Ref: AC-02'
         },
         {
           id: 'eec-rf-b',
@@ -1087,7 +1119,8 @@ export const generateExistingEngagementContinuanceChecklist = (): Checklist => {
           answerType: 'yes-no-na',
           options: ['Yes', 'No', 'NA'],
           required: false,
-          answer: ''
+          answer: 'Yes',
+          explanation: '<p>No other assignments performed for this entity. This is the first year of the engagement. No carryforward risk factors from prior work.</p>'
         }
       ],
       isExpanded: true
@@ -1102,7 +1135,9 @@ export const generateExistingEngagementContinuanceChecklist = (): Checklist => {
           answerType: 'yes-no-na',
           options: ['Yes', 'No', 'NA'],
           required: false,
-          answer: ''
+          answer: 'No',
+          explanation: '<p>No concerns regarding management integrity. Management has been cooperative and forthcoming during the engagement. No adverse findings from web searches or inquiries.</p>',
+          reference: 'W/P Ref: AC-05'
         }
       ],
       isExpanded: true
@@ -1117,7 +1152,8 @@ export const generateExistingEngagementContinuanceChecklist = (): Checklist => {
           answerType: 'yes-no-na',
           options: ['Yes', 'No', 'NA'],
           required: false,
-          answer: ''
+          answer: 'No',
+          explanation: '<p>All required information is available. Management has confirmed access to Sage 300 records, voyage logs, vessel schedules, and supporting documentation for the year ended March 31, 2024.</p>'
         }
       ],
       isExpanded: true
@@ -1132,11 +1168,12 @@ export const generateExistingEngagementContinuanceChecklist = (): Checklist => {
           answerType: 'yes-no-na',
           options: ['Yes', 'No', 'NA'],
           required: false,
-          answer: '',
+          answer: 'Yes',
+          explanation: '<p>Firm has sufficient resources. Engagement team: J. Williams (EP), S. Chen (Manager), two staff seniors. Marine industry experience confirmed.</p>',
           subQuestions: [
-            { id: 'eec-fc-1a', text: '<p>a. The availability of staff/resources with appropriate level of experience, relevant industry/subject matter knowledge, and any required regulatory and reporting experience.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
-            { id: 'eec-fc-1b', text: '<p>b. The need for external experts and component practitioners.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
-            { id: 'eec-fc-1c', text: '<p>c. The need for an EQR (where required).</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' }
+            { id: 'eec-fc-1a', text: '<p>a. The availability of staff/resources with appropriate level of experience, relevant industry/subject matter knowledge, and any required regulatory and reporting experience.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: 'Yes', explanation: '<p>J. Williams and S. Chen both have marine transportation audit experience. Two senior staff members assigned.</p>' },
+            { id: 'eec-fc-1b', text: '<p>b. The need for external experts and component practitioners.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: 'No', explanation: '<p>No external experts required. Vessel valuations will be assessed using management depreciation schedules and industry benchmarks.</p>' },
+            { id: 'eec-fc-1c', text: '<p>c. The need for an EQR (where required).</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: 'No', explanation: '<p>Engagement assessed as low risk. EQR not required under firm criteria for this private company engagement.</p>' }
           ]
         }
       ],
@@ -1152,15 +1189,17 @@ export const generateExistingEngagementContinuanceChecklist = (): Checklist => {
           answerType: 'yes-no-na',
           options: ['Yes', 'No', 'NA'],
           required: false,
-          answer: '',
+          answer: 'No',
+          explanation: '<p>No independence prohibitions identified. All engagement team members confirmed independence from Shipping Line Inc.</p>',
+          reference: 'W/P Ref: IND-01',
           subQuestions: [
-            { id: 'eec-ip-1a', text: '<p>Obtaining management\'s approval.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
-            { id: 'eec-ip-1b', text: '<p>Providing tax planning or other tax advisory services that may have a material impact on the financial statements.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
-            { id: 'eec-ip-1c', text: '<p>Providing other non-assurance services, such as IT services, corporate finance or legal services that involve dispute resolution.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
-            { id: 'eec-ip-1d', text: '<p>Preparing source documents for the client.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
-            { id: 'eec-ip-1e', text: '<p>Performing management functions for the client (such as decision making).</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
-            { id: 'eec-ip-1f', text: '<p>Serving as an officer or director of the client.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
-            { id: 'eec-ip-1g', text: '<p>Temporary loaning of staff (except in certain situations).</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' }
+            { id: 'eec-ip-1a', text: '<p>Obtaining management\'s approval.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: 'No', explanation: '<p>The firm does not record entries without management approval. All adjustments are proposed and approved by management.</p>' },
+            { id: 'eec-ip-1b', text: '<p>Providing tax planning or other tax advisory services that may have a material impact on the financial statements.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: 'No' },
+            { id: 'eec-ip-1c', text: '<p>Providing other non-assurance services, such as IT services, corporate finance or legal services that involve dispute resolution.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: 'No' },
+            { id: 'eec-ip-1d', text: '<p>Preparing source documents for the client.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: 'No' },
+            { id: 'eec-ip-1e', text: '<p>Performing management functions for the client (such as decision making).</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: 'No' },
+            { id: 'eec-ip-1f', text: '<p>Serving as an officer or director of the client.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: 'No' },
+            { id: 'eec-ip-1g', text: '<p>Temporary loaning of staff (except in certain situations).</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: 'No' }
           ]
         },
         {
@@ -1169,11 +1208,11 @@ export const generateExistingEngagementContinuanceChecklist = (): Checklist => {
           answerType: 'yes-no-na',
           options: ['Yes', 'No', 'NA'],
           required: false,
-          answer: '',
+          answer: 'No',
           subQuestions: [
-            { id: 'eec-ip-rel-a', text: '<p>Close business relationships with the client.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
-            { id: 'eec-ip-rel-b', text: '<p>Family and personal relationships with the client.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
-            { id: 'eec-ip-rel-c', text: '<p>Firm personnel that have accepted a position or have had recent employment with the client as an officer, director or company secretary.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' }
+            { id: 'eec-ip-rel-a', text: '<p>Close business relationships with the client.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: 'No' },
+            { id: 'eec-ip-rel-b', text: '<p>Family and personal relationships with the client.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: 'No' },
+            { id: 'eec-ip-rel-c', text: '<p>Firm personnel that have accepted a position or have had recent employment with the client as an officer, director or company secretary.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: 'No' }
           ]
         },
         {
@@ -1182,11 +1221,11 @@ export const generateExistingEngagementContinuanceChecklist = (): Checklist => {
           answerType: 'yes-no-na',
           options: ['Yes', 'No', 'NA'],
           required: false,
-          answer: '',
+          answer: 'No',
           subQuestions: [
-            { id: 'eec-ip-fin-a', text: '<p>Performing the engagement for a fee quote that is considerably less than market price.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
-            { id: 'eec-ip-fin-b', text: '<p>Holding financial interests in entity.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
-            { id: 'eec-ip-fin-c', text: '<p>Accepting gifts or hospitality from client (if not clearly insignificant).</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' }
+            { id: 'eec-ip-fin-a', text: '<p>Performing the engagement for a fee quote that is considerably less than market price.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: 'No', explanation: '<p>Fee arrangement is at standard market rates. Agreed upon in the engagement letter.</p>' },
+            { id: 'eec-ip-fin-b', text: '<p>Holding financial interests in entity.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: 'No' },
+            { id: 'eec-ip-fin-c', text: '<p>Accepting gifts or hospitality from client (if not clearly insignificant).</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: 'No' }
           ]
         }
       ],
@@ -1202,13 +1241,15 @@ export const generateExistingEngagementContinuanceChecklist = (): Checklist => {
           answerType: 'yes-no-na',
           options: ['Yes', 'No', 'NA'],
           required: false,
-          answer: '',
+          answer: 'No',
+          explanation: '<p>No significant independence threats identified. All five threat categories assessed and found not applicable.</p>',
+          reference: 'W/P Ref: IND-02',
           subQuestions: [
-            { id: 'eec-it-1a', text: '<p>Client fees or where judgments may be influenced by the desire to retain the client.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
-            { id: 'eec-it-1b', text: '<p>Self-review (i.e., assisting the client in preparing the financial statements, providing bookkeeping services and making judgments for the client that will later need to be evaluated in reaching conclusions).</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
-            { id: 'eec-it-1c', text: '<p>Advocacy (i.e., acting as a client advocate in matters involving tax, litigation or share promotion).</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
-            { id: 'eec-it-1d', text: '<p>Familiarity (i.e., close, family or long-time relationships with the client that could result in being too sympathetic to the client\'s interests).</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
-            { id: 'eec-it-1e', text: '<p>Intimidation (i.e., where the client makes threats, such as to replace our firm unless we agree to certain scope limitations or to accept management positions, without question, on accounting matters).</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' }
+            { id: 'eec-it-1a', text: '<p>Client fees or where judgments may be influenced by the desire to retain the client.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: 'No', explanation: '<p>Fees from this client represent less than 2% of firm revenues. No economic dependence.</p>' },
+            { id: 'eec-it-1b', text: '<p>Self-review (i.e., assisting the client in preparing the financial statements, providing bookkeeping services and making judgments for the client that will later need to be evaluated in reaching conclusions).</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: 'No', explanation: '<p>The firm does not prepare financial statements or provide bookkeeping services. No self-review threat.</p>' },
+            { id: 'eec-it-1c', text: '<p>Advocacy (i.e., acting as a client advocate in matters involving tax, litigation or share promotion).</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: 'No' },
+            { id: 'eec-it-1d', text: '<p>Familiarity (i.e., close, family or long-time relationships with the client that could result in being too sympathetic to the client\'s interests).</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: 'No', explanation: '<p>First year of engagement. No long association threat. Partner rotation policy does not yet apply.</p>' },
+            { id: 'eec-it-1e', text: '<p>Intimidation (i.e., where the client makes threats, such as to replace our firm unless we agree to certain scope limitations or to accept management positions, without question, on accounting matters).</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: 'No' }
           ]
         }
       ],
@@ -1224,7 +1265,8 @@ export const generateExistingEngagementContinuanceChecklist = (): Checklist => {
           answerType: 'yes-no-na',
           options: ['Yes', 'No', 'NA'],
           required: false,
-          answer: ''
+          answer: 'No',
+          explanation: '<p>Purpose of the engagement has not changed. Audit required under RBC banking covenant. Scope is unchanged from prior engagement. No laws require a different form of engagement.</p>'
         }
       ],
       isExpanded: true
@@ -1239,7 +1281,9 @@ export const generateExistingEngagementContinuanceChecklist = (): Checklist => {
           answerType: 'yes-no-na',
           options: ['Yes', 'No', 'NA'],
           required: false,
-          answer: ''
+          answer: 'Yes',
+          explanation: '<p>ASPE remains the appropriate framework. Management has acknowledged responsibilities via signed engagement letter dated April 5, 2024. Full access to information confirmed.</p>',
+          reference: 'W/P Ref: EL-01'
         }
       ],
       isExpanded: true
@@ -1254,9 +1298,11 @@ export const generateExistingEngagementContinuanceChecklist = (): Checklist => {
           answerType: 'yes-no-na',
           options: ['Yes', 'No', 'NA'],
           required: false,
-          answer: ''
+          answer: 'Yes',
+          explanation: '<p>Engagement partner J. Williams, CPA has reviewed all responses. No independence prohibitions, threats, or ethical breaches identified. Engagement may proceed.</p>',
+          reference: 'W/P Ref: AC-10'
         },
-        { id: 'eec-pa-comments', text: '<p>Comments:</p>', answerType: 'long-answer', options: [], required: false, answer: '' }
+        { id: 'eec-pa-comments', text: '<p>Comments:</p>', answerType: 'long-answer', options: [], required: false, answer: 'All engagement acceptance/continuance procedures completed. Engagement accepted. No significant risks or independence matters identified. Engagement letter signed April 5, 2024.' }
       ],
       isExpanded: true
     },
@@ -1264,19 +1310,19 @@ export const generateExistingEngagementContinuanceChecklist = (): Checklist => {
       id: 'section-eec-appendix-a-entity',
       title: 'Appendix A - Entity operations',
       questions: [
-        { id: 'eec-aa-1', text: '<p>Doubts in place about entity\'s ability to continue as a going concern.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
-        { id: 'eec-aa-2', text: '<p>Poor sales outlook or intense competition.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
-        { id: 'eec-aa-3', text: '<p>Entity has high debt levels and/or poor cash flow.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
-        { id: 'eec-aa-4', text: '<p>Bank covenant or other contractual violations.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
-        { id: 'eec-aa-5', text: '<p>Non-compliance with industry laws/regulations.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
-        { id: 'eec-aa-6', text: '<p>Potential litigation.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
-        { id: 'eec-aa-7', text: '<p>Questionable management/TCWG ethics.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
-        { id: 'eec-aa-8', text: '<p>High media interest in the entity and management.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
-        { id: 'eec-aa-9', text: '<p>Entity engages in high-risk activities.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
-        { id: 'eec-aa-10', text: '<p>Entity operates in or does business with unstable governments/countries.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
-        { id: 'eec-aa-11', text: '<p>Entity operates in multiple locations or conducts operations overseas.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
-        { id: 'eec-aa-12', text: '<p>Entity participates in high-risk business ventures.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
-        { id: 'eec-aa-13', text: '<p>Unusual transactions not in the ordinary course of business.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' }
+        { id: 'eec-aa-1', text: '<p>Doubts in place about entity\'s ability to continue as a going concern.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: 'No', explanation: '<p>No going concern indicators. Entity reported net income of $847K with positive operating cash flows for year ended March 31, 2024.</p>' },
+        { id: 'eec-aa-2', text: '<p>Poor sales outlook or intense competition.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: 'No' },
+        { id: 'eec-aa-3', text: '<p>Entity has high debt levels and/or poor cash flow.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: 'No', explanation: '<p>Long-term debt of $4.8M manageable relative to $18.2M total assets. Positive operating cash flows.</p>' },
+        { id: 'eec-aa-4', text: '<p>Bank covenant or other contractual violations.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: 'No' },
+        { id: 'eec-aa-5', text: '<p>Non-compliance with industry laws/regulations.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: 'No' },
+        { id: 'eec-aa-6', text: '<p>Potential litigation.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: 'No' },
+        { id: 'eec-aa-7', text: '<p>Questionable management/TCWG ethics.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: 'No' },
+        { id: 'eec-aa-8', text: '<p>High media interest in the entity and management.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: 'No' },
+        { id: 'eec-aa-9', text: '<p>Entity engages in high-risk activities.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: 'No' },
+        { id: 'eec-aa-10', text: '<p>Entity operates in or does business with unstable governments/countries.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: 'No' },
+        { id: 'eec-aa-11', text: '<p>Entity operates in multiple locations or conducts operations overseas.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: 'No', explanation: '<p>Operations primarily in Canadian coastal waters with some US east coast routes, all managed from the Halifax head office.</p>' },
+        { id: 'eec-aa-12', text: '<p>Entity participates in high-risk business ventures.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: 'No' },
+        { id: 'eec-aa-13', text: '<p>Unusual transactions not in the ordinary course of business.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: 'No' }
       ],
       isExpanded: true
     },
@@ -1284,18 +1330,18 @@ export const generateExistingEngagementContinuanceChecklist = (): Checklist => {
       id: 'section-eec-appendix-a-engagement',
       title: 'Appendix A - The engagement',
       questions: [
-        { id: 'eec-ae-1', text: '<p>Poor cooperation from management, such as misleading representations and delays in obtaining the necessary evidence.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
-        { id: 'eec-ae-2', text: '<p>Firm has limited experience in the entity\'s industry.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
-        { id: 'eec-ae-3', text: '<p>Reporting timeframes are unrealistic based on time available or firm resources.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
-        { id: 'eec-ae-4', text: '<p>Poor control environment, leadership and staff morale.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
-        { id: 'eec-ae-5', text: '<p>Incompetence of senior accounting personnel.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
-        { id: 'eec-ae-6', text: '<p>Poor/inadequate/missing accounting systems and records.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
-        { id: 'eec-ae-7', text: '<p>Complex IT environments.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
-        { id: 'eec-ae-8', text: '<p>Lack of paper trail for certain transactions/events.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
-        { id: 'eec-ae-9', text: '<p>Experts.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
-        { id: 'eec-ae-10', text: '<p>Estimates involve a high degree of estimation uncertainty.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
-        { id: 'eec-ae-11', text: '<p>Entity chooses aggressive/controversial accounting policies.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
-        { id: 'eec-ae-12', text: '<p>Unusual transactions or overly complex corporate/operational structures.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' }
+        { id: 'eec-ae-1', text: '<p>Poor cooperation from management, such as misleading representations and delays in obtaining the necessary evidence.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: 'No' },
+        { id: 'eec-ae-2', text: '<p>Firm has limited experience in the entity\'s industry.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: 'No' },
+        { id: 'eec-ae-3', text: '<p>Reporting timeframes are unrealistic based on time available or firm resources.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: 'No' },
+        { id: 'eec-ae-4', text: '<p>Poor control environment, leadership and staff morale.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: 'No' },
+        { id: 'eec-ae-5', text: '<p>Incompetence of senior accounting personnel.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: 'No' },
+        { id: 'eec-ae-6', text: '<p>Poor/inadequate/missing accounting systems and records.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: 'No' },
+        { id: 'eec-ae-7', text: '<p>Complex IT environments.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: 'No' },
+        { id: 'eec-ae-8', text: '<p>Lack of paper trail for certain transactions/events.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: 'No' },
+        { id: 'eec-ae-9', text: '<p>Experts.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: 'No' },
+        { id: 'eec-ae-10', text: '<p>Estimates involve a high degree of estimation uncertainty.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: 'No', explanation: '<p>Key estimates (vessel depreciation, voyage cutoff) are routine for the industry and manageable with standard procedures.</p>' },
+        { id: 'eec-ae-11', text: '<p>Entity chooses aggressive/controversial accounting policies.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: 'No' },
+        { id: 'eec-ae-12', text: '<p>Unusual transactions or overly complex corporate/operational structures.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: 'No' }
       ],
       isExpanded: true
     },
@@ -1309,18 +1355,19 @@ export const generateExistingEngagementContinuanceChecklist = (): Checklist => {
           answerType: 'multiple-choice',
           options: ['High Risk', 'Low Risk', 'Moderate Risk', 'Not Accepted'],
           required: false,
-          answer: ''
+          answer: 'Low Risk'
         },
-        { id: 'eec-conc-extra', text: '<p>Additional Explanation</p>', answerType: 'long-answer', options: [], required: false, answer: '' },
+        { id: 'eec-conc-extra', text: '<p>Additional Explanation</p>', answerType: 'long-answer', options: [], required: false, answer: 'All risk factors assessed as low or not applicable. No significant independence threats or prohibitions identified. Engagement accepted and continued for year ended March 31, 2024.' },
         {
           id: 'eec-conc-eqcr',
           text: '<p><strong>Is an EQCR required on this engagement (Select one)?</strong></p><p>This decision should be based on the engagement risk identified above and the firm\'s criteria for when an EQCR is required.</p>',
           answerType: 'yes-no-na',
           options: ['Yes', 'No', 'NA'],
           required: false,
-          answer: ''
+          answer: 'No',
+          explanation: '<p>EQCR not required. Engagement assessed as Low Risk. Private company, no public interest considerations, no elevated risk factors identified.</p>'
         },
-        { id: 'eec-conc-basis', text: '<p>Basis for decision:</p>', answerType: 'long-answer', options: [], required: false, answer: '' }
+        { id: 'eec-conc-basis', text: '<p>Basis for decision:</p>', answerType: 'long-answer', options: [], required: false, answer: 'Engagement risk assessed as Low Risk based on all factors reviewed. EQCR not required under firm policy for low-risk private company engagements.' }
       ],
       isExpanded: true
     }
@@ -1357,23 +1404,23 @@ export const generateUnderstandingEntityBasicsChecklist = (): Checklist => {
       id: 'section-ueb-general',
       title: 'General information',
       questions: [
-        { id: 'ueb-gen-1', text: '<p><strong>Legal name (if different from above):</strong></p>', answerType: 'long-answer', options: [], required: false, answer: '' },
-        { id: 'ueb-gen-2', text: '<p><strong>Approximate number of employees:</strong></p>', answerType: 'long-answer', options: [], required: false, answer: '' },
+        { id: 'ueb-gen-1', text: '<p><strong>Legal name (if different from above):</strong></p>', answerType: 'long-answer', options: [], required: false, answer: 'Shipping Line Inc. (same as above)' },
+        { id: 'ueb-gen-2', text: '<p><strong>Approximate number of employees:</strong></p>', answerType: 'long-answer', options: [], required: false, answer: '94 full-time employees as at March 31, 2024.' },
         {
           id: 'ueb-gen-3',
           text: '<p><strong>Type of entity:</strong></p>',
           answerType: 'multiple-choice',
           options: ['Crown corporation', 'General partnership', 'Joint arrangement', 'Limited partnership', 'Not-for-profit organization', 'Private company', 'Public company', 'Unincorporated business or division'],
           required: false,
-          answer: ''
+          answer: 'Private company'
         },
-        { id: 'ueb-gen-4', text: '<p><strong>Jurisdiction of incorporation:</strong></p>', answerType: 'long-answer', options: [], required: false, answer: '' },
-        { id: 'ueb-gen-5', text: '<p><strong>Describe the governing legislation and other relevant laws and regulations:</strong></p>', answerType: 'long-answer', options: [], required: false, answer: '' },
-        { id: 'ueb-gen-6', text: '<p><strong>Locations</strong> (e.g., head office, warehouses, divisions, plants and stores)</p>', answerType: 'long-answer', options: [], required: false, answer: '' },
-        { id: 'ueb-gen-7', text: '<p><strong>Investments and related companies</strong> (e.g., parent, subsidiaries, joint arrangements and others)</p>', answerType: 'long-answer', options: [], required: false, answer: '' },
-        { id: 'ueb-gen-8', text: '<p><strong>Describe the corporate structure</strong> and identify whether the entity is part of a related group. If the entity is part of a group, describe the group reporting requirements.</p>', answerType: 'long-answer', options: [], required: false, answer: '' },
-        { id: 'ueb-gen-9', text: '<p><strong>Key advisors to the entity</strong> (e.g., legal, actuaries, stockbroker and insurance brokers)</p>', answerType: 'long-answer', options: [], required: false, answer: '' },
-        { id: 'ueb-gen-10', text: '<p><strong>Primary sources of financing</strong></p>', answerType: 'long-answer', options: [], required: false, answer: '' }
+        { id: 'ueb-gen-4', text: '<p><strong>Jurisdiction of incorporation:</strong></p>', answerType: 'long-answer', options: [], required: false, answer: 'Federally incorporated under the Canada Business Corporations Act. Head office in Vancouver, British Columbia.' },
+        { id: 'ueb-gen-5', text: '<p><strong>Describe the governing legislation and other relevant laws and regulations:</strong></p>', answerType: 'long-answer', options: [], required: false, answer: 'Canada Business Corporations Act (federal incorporation), Canada Shipping Act 2001 (vessel operations and safety), Transport Canada marine licensing requirements, MARPOL environmental regulations for vessel emissions, and Canadian income tax legislation.' },
+        { id: 'ueb-gen-6', text: '<p><strong>Locations</strong> (e.g., head office, warehouses, divisions, plants and stores)</p>', answerType: 'long-answer', options: [], required: false, answer: 'Head office: Vancouver, BC. Port operations: Vancouver (primary), Prince Rupert (secondary). Vessels operate on trans-Pacific and coastal trade routes.' },
+        { id: 'ueb-gen-7', text: '<p><strong>Investments and related companies</strong> (e.g., parent, subsidiaries, joint arrangements and others)</p>', answerType: 'long-answer', options: [], required: false, answer: 'No subsidiaries, parent company, or joint arrangements. The entity is independently owned by the founding shareholders.' },
+        { id: 'ueb-gen-8', text: '<p><strong>Describe the corporate structure</strong> and identify whether the entity is part of a related group. If the entity is part of a group, describe the group reporting requirements.</p>', answerType: 'long-answer', options: [], required: false, answer: 'Single corporate entity. Not part of a group. Owned by two founding shareholders (60%/40% split). No group reporting requirements.' },
+        { id: 'ueb-gen-9', text: '<p><strong>Key advisors to the entity</strong> (e.g., legal, actuaries, stockbroker and insurance brokers)</p>', answerType: 'long-answer', options: [], required: false, answer: 'Legal: Henderson & Associates LLP (Vancouver). Insurance broker: Pacific Marine Insurance Brokers. Banking: RBC Commercial Banking. Auditors: current engagement firm.' },
+        { id: 'ueb-gen-10', text: '<p><strong>Primary sources of financing</strong></p>', answerType: 'long-answer', options: [], required: false, answer: 'Long-term bank debt (RBC term facility, $4.8M outstanding). Operating line of credit (RBC, $1.5M authorized). Retained earnings fund ongoing operations.' }
       ],
       isExpanded: true
     },
@@ -1381,14 +1428,14 @@ export const generateUnderstandingEntityBasicsChecklist = (): Checklist => {
       id: 'section-ueb-misstatements-general',
       title: 'Areas where material misstatements are likely to arise',
       questions: [
-        { id: 'ueb-ms-1', text: '<p>Entity operates in a high-risk industry, or management regularly takes high financial risks.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
-        { id: 'ueb-ms-2', text: '<p>Negative cash flows during the period or anticipated future cash flow problems.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
-        { id: 'ueb-ms-3', text: '<p>Any inability to obtain new financing.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
-        { id: 'ueb-ms-4', text: '<p>Unrecorded changes have been made in terms of financing or equity.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
-        { id: 'ueb-ms-5', text: '<p>Significant changes have been made to the terms/conditions of financing agreements, including amendments to bank covenants or equity.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
-        { id: 'ueb-ms-6', text: '<p>Investments held are subject to possible impairment.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
-        { id: 'ueb-ms-7', text: '<p>Significant accounting and reporting implications exist as a result of the entity being part of a group.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
-        { id: 'ueb-ms-nature', text: '<p><strong>Nature of likely misstatements</strong></p>', answerType: 'long-answer', options: [], required: false, answer: '' }
+        { id: 'ueb-ms-1', text: '<p>Entity operates in a high-risk industry, or management regularly takes high financial risks.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: 'Yes', explanation: 'Maritime freight is subject to commodity price volatility (fuel), foreign currency risk (USD), and cyclical demand patterns. Management operates conservatively but inherent industry risks are elevated relative to other industries.', reference: 'W/P Ref: UEI-01' },
+        { id: 'ueb-ms-2', text: '<p>Negative cash flows during the period or anticipated future cash flow problems.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: 'No', explanation: 'Operating cash flows are positive and the entity meets all debt service obligations. No anticipated cash flow problems.' },
+        { id: 'ueb-ms-3', text: '<p>Any inability to obtain new financing.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: 'No', explanation: 'RBC credit facility is current and in good standing. No financing difficulties identified.' },
+        { id: 'ueb-ms-4', text: '<p>Unrecorded changes have been made in terms of financing or equity.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: 'No', explanation: 'No unrecorded changes to financing or equity identified. All financing transactions are recorded in the general ledger.' },
+        { id: 'ueb-ms-5', text: '<p>Significant changes have been made to the terms/conditions of financing agreements, including amendments to bank covenants or equity.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: 'No', explanation: 'No amendments to the RBC credit facility terms during the year. Covenant terms remain unchanged from prior year.' },
+        { id: 'ueb-ms-6', text: '<p>Investments held are subject to possible impairment.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: 'Yes', explanation: 'Vessel fleet ($8.2M PP&E) is assessed for impairment indicators at each year-end. Management performed an impairment assessment; no impairment indicated given current freight rates and fleet utilization. Reviewed as part of audit procedures.', reference: 'W/P Ref: RA-01' },
+        { id: 'ueb-ms-7', text: '<p>Significant accounting and reporting implications exist as a result of the entity being part of a group.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: 'NA', explanation: 'Entity is not part of a group. Not applicable.' },
+        { id: 'ueb-ms-nature', text: '<p><strong>Nature of likely misstatements</strong></p>', answerType: 'long-answer', options: [], required: false, answer: 'Vessel impairment (PP&E $8.2M); revenue cut-off for voyages in progress; USD foreign currency translation errors.' }
       ],
       isExpanded: true
     },
@@ -1396,9 +1443,9 @@ export const generateUnderstandingEntityBasicsChecklist = (): Checklist => {
       id: 'section-ueb-oversight',
       title: 'Understanding oversight',
       questions: [
-        { id: 'ueb-ov-1', text: '<p><strong>Person(s) interviewed:</strong></p>', answerType: 'long-answer', options: [], required: false, answer: '' },
-        { id: 'ueb-ov-2', text: '<p><strong>Describe the culture (tone at the top) of the entity</strong> through which it addresses risks relating to its obligations and financial reporting (e.g., commitment to integrity, risk appetite and attitude toward control in general).</p>', answerType: 'long-answer', options: [], required: false, answer: '' },
-        { id: 'ueb-ov-3', text: '<p>Describe any actual, suspected or alleged fraud, illegal acts, or non-compliance with laws and regulations.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' }
+        { id: 'ueb-ov-1', text: '<p><strong>Person(s) interviewed:</strong></p>', answerType: 'long-answer', options: [], required: false, answer: 'CEO (M. Patel), CFO (L. Thompson), Controller (R. Nguyen). Interviews conducted April 14–15, 2024.' },
+        { id: 'ueb-ov-2', text: '<p><strong>Describe the culture (tone at the top) of the entity</strong> through which it addresses risks relating to its obligations and financial reporting (e.g., commitment to integrity, risk appetite and attitude toward control in general).</p>', answerType: 'long-answer', options: [], required: false, answer: 'Management demonstrates a commitment to integrity and ethical business practices. The CEO emphasizes compliance with regulatory requirements and accurate financial reporting. Risk appetite is conservative — management avoids speculative ventures and focuses on established trade routes. No concerns regarding tone at the top identified.' },
+        { id: 'ueb-ov-3', text: '<p>Describe any actual, suspected or alleged fraud, illegal acts, or non-compliance with laws and regulations.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: 'No', explanation: 'Management confirmed no actual, suspected, or alleged fraud, illegal acts, or non-compliance with laws and regulations during the year.', reference: 'W/P Ref: FRA-01' }
       ],
       isExpanded: true
     },
@@ -1406,14 +1453,14 @@ export const generateUnderstandingEntityBasicsChecklist = (): Checklist => {
       id: 'section-ueb-governance',
       title: 'Governance',
       questions: [
-        { id: 'ueb-gov-1', text: '<p><strong>Those charged with governance:</strong></p>', answerType: 'long-answer', options: [], required: false, answer: '' },
-        { id: 'ueb-gov-2', text: '<p>Lack of management emphasis on, or enforcement of, the need for integrity/ethics.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
-        { id: 'ueb-gov-3', text: '<p>Any unethical business practices or any actual, suspected, or alleged fraud or illegal acts.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
-        { id: 'ueb-gov-4', text: '<p>Lack of competence of key personnel.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
-        { id: 'ueb-gov-5', text: '<p>Lack of monitoring of financial results (e.g., actual results are not being compared to budget or the variances are not being explained).</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
-        { id: 'ueb-gov-6', text: '<p>Pressures on management to meet internal/external performance targets.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
-        { id: 'ueb-gov-7', text: '<p>Any non-compliance with laws and regulations that could materially impact F/S.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
-        { id: 'ueb-gov-nature', text: '<p><strong>Nature of likely misstatements</strong></p>', answerType: 'long-answer', options: [], required: false, answer: '' }
+        { id: 'ueb-gov-1', text: '<p><strong>Those charged with governance:</strong></p>', answerType: 'long-answer', options: [], required: false, answer: 'Board of Directors: M. Patel (CEO/Director), J. Singh (Director), and one independent director (K. Robertson, CPA). Board meets quarterly.' },
+        { id: 'ueb-gov-2', text: '<p>Lack of management emphasis on, or enforcement of, the need for integrity/ethics.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: 'No', explanation: 'Management demonstrates a strong commitment to integrity. CEO regularly communicates expectations of ethical conduct to employees.' },
+        { id: 'ueb-gov-3', text: '<p>Any unethical business practices or any actual, suspected, or alleged fraud or illegal acts.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: 'No', explanation: 'No unethical practices or fraud identified. TCWG confirmed no knowledge of fraud or illegal acts.' },
+        { id: 'ueb-gov-4', text: '<p>Lack of competence of key personnel.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: 'No', explanation: 'CFO and Controller are experienced accounting professionals. CFO holds CPA designation with 15 years in maritime industry. No competence concerns identified.' },
+        { id: 'ueb-gov-5', text: '<p>Lack of monitoring of financial results (e.g., actual results are not being compared to budget or the variances are not being explained).</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: 'No', explanation: 'Monthly management accounts are prepared and actual results are compared to budget. Variances are reviewed by the CFO and discussed with the board quarterly.' },
+        { id: 'ueb-gov-6', text: '<p>Pressures on management to meet internal/external performance targets.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: 'Yes', explanation: 'Banking covenant (DSCR minimum 1.20) creates some external pressure. However, actual DSCR of 1.42 provides comfortable headroom. Assessed as a low fraud risk factor.', reference: 'W/P Ref: RA-02' },
+        { id: 'ueb-gov-7', text: '<p>Any non-compliance with laws and regulations that could materially impact F/S.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: 'No', explanation: 'No non-compliance with laws or regulations identified. All Transport Canada licenses are current and in good standing.' },
+        { id: 'ueb-gov-nature', text: '<p><strong>Nature of likely misstatements</strong></p>', answerType: 'long-answer', options: [], required: false, answer: 'No governance-related misstatement risks identified. Tone at the top is appropriate and oversight by TCWG is effective.' }
       ],
       isExpanded: true
     },
@@ -1421,15 +1468,15 @@ export const generateUnderstandingEntityBasicsChecklist = (): Checklist => {
       id: 'section-ueb-operations',
       title: 'Understanding operations',
       questions: [
-        { id: 'ueb-ops-1', text: '<p><strong>Person(s) interviewed:</strong></p>', answerType: 'long-answer', options: [], required: false, answer: '' },
-        { id: 'ueb-ops-2', text: '<p><strong>Describe the industry and the nature of the entity\'s operations.</strong></p>', answerType: 'long-answer', options: [], required: false, answer: '' },
+        { id: 'ueb-ops-1', text: '<p><strong>Person(s) interviewed:</strong></p>', answerType: 'long-answer', options: [], required: false, answer: 'CFO (L. Thompson), Controller (R. Nguyen), Operations Manager (D. Park). Interviews conducted April 14–16, 2024.' },
+        { id: 'ueb-ops-2', text: '<p><strong>Describe the industry and the nature of the entity\'s operations.</strong></p>', answerType: 'long-answer', options: [], required: false, answer: 'Shipping Line Inc. operates in the marine freight transportation industry, providing container and bulk freight services primarily on trans-Pacific trade routes between Canada and Asia-Pacific ports. The entity owns and operates a small fleet of vessels and generates revenue through freight charges billed per voyage or per container (TEU).' },
         {
           id: 'ueb-ops-3',
           text: '<p><strong>Describe the entity\'s geographical sales.</strong> Indicate export countries where applicable.</p>',
           answerType: 'multiple-choice',
           options: ['Both domestic and export', 'Primarily domestic', 'Primarily for export', 'Very localized'],
           required: false,
-          answer: ''
+          answer: 'Both domestic and export'
         },
         {
           id: 'ueb-ops-4',
@@ -1437,17 +1484,17 @@ export const generateUnderstandingEntityBasicsChecklist = (): Checklist => {
           answerType: 'multiple-choice',
           options: ['Declining industry', 'Growing industry', 'Static industry'],
           required: false,
-          answer: ''
+          answer: 'Growing industry'
         },
-        { id: 'ueb-ops-5', text: '<p><strong>Describe any external factors that impact the entity</strong> (e.g., exchange rates, interest rates, commodity prices, competition and new government regulations).</p>', answerType: 'long-answer', options: [], required: false, answer: '' },
-        { id: 'ueb-ops-6', text: '<p><strong>Describe any measures taken by management to oversee external factors</strong> (e.g., foreign exchange contracts and interest rate swaps).</p>', answerType: 'long-answer', options: [], required: false, answer: '' },
-        { id: 'ueb-ops-7', text: '<p><strong>Summarize the entity\'s key objectives and strategies</strong> (e.g., business plans or planned changes to current operations).</p>', answerType: 'long-answer', options: [], required: false, answer: '' },
-        { id: 'ueb-ops-8', text: '<p><strong>Describe any non-compliance with government regulations or contractual commitments,</strong> and the consequences.</p>', answerType: 'long-answer', options: [], required: false, answer: '' },
-        { id: 'ueb-ops-9', text: '<p><strong>Describe major changes in business operations</strong> (e.g., expansion, sale, purchase or discontinuance of business elements, new products/services or locations, investments, customers or suppliers).</p>', answerType: 'long-answer', options: [], required: false, answer: '' },
-        { id: 'ueb-ops-10', text: '<p><strong>Describe the nature and extent of the investments</strong> that the entity is planning.</p>', answerType: 'long-answer', options: [], required: false, answer: '' },
-        { id: 'ueb-ops-11', text: '<p><strong>Describe key changes or losses in personnel,</strong> and the implications.</p>', answerType: 'long-answer', options: [], required: false, answer: '' },
-        { id: 'ueb-ops-12', text: '<p><strong>Describe new or revised material contracts.</strong></p>', answerType: 'long-answer', options: [], required: false, answer: '' },
-        { id: 'ueb-ops-13', text: '<p><strong>Describe new, pending or threatened litigation.</strong></p>', answerType: 'long-answer', options: [], required: false, answer: '' }
+        { id: 'ueb-ops-5', text: '<p><strong>Describe any external factors that impact the entity</strong> (e.g., exchange rates, interest rates, commodity prices, competition and new government regulations).</p>', answerType: 'long-answer', options: [], required: false, answer: 'USD/CAD exchange rate (approximately 65% of revenue billed in USD). Bunker fuel prices (significant cost driver, up ~12% year-over-year). Interest rates (variable rate component on RBC facility). IMO environmental regulations for vessel emissions.' },
+        { id: 'ueb-ops-6', text: '<p><strong>Describe any measures taken by management to oversee external factors</strong> (e.g., foreign exchange contracts and interest rate swaps).</p>', answerType: 'long-answer', options: [], required: false, answer: 'Management uses fuel surcharge clauses in freight contracts to partially offset bunker price increases. No formal hedging instruments are in place for foreign currency or interest rate risk. Management monitors FX rates and adjusts billing frequency to manage exposure.' },
+        { id: 'ueb-ops-7', text: '<p><strong>Summarize the entity\'s key objectives and strategies</strong> (e.g., business plans or planned changes to current operations).</p>', answerType: 'long-answer', options: [], required: false, answer: 'Key objectives: grow freight revenue through additional contract wins, maintain high fleet utilization (target >85%), and manage costs tightly. Strategy is organic growth on established trade routes; no major acquisitions or fleet expansion planned for the near term.' },
+        { id: 'ueb-ops-8', text: '<p><strong>Describe any non-compliance with government regulations or contractual commitments,</strong> and the consequences.</p>', answerType: 'long-answer', options: [], required: false, answer: 'No instances of non-compliance with government regulations or contractual commitments identified. All Transport Canada operating licenses are current.' },
+        { id: 'ueb-ops-9', text: '<p><strong>Describe major changes in business operations</strong> (e.g., expansion, sale, purchase or discontinuance of business elements, new products/services or locations, investments, customers or suppliers).</p>', answerType: 'long-answer', options: [], required: false, answer: 'Two new freight contracts entered into during the year. No vessel acquisitions or disposals. No new locations or business line changes. Operations are consistent with prior year with incremental growth.' },
+        { id: 'ueb-ops-10', text: '<p><strong>Describe the nature and extent of the investments</strong> that the entity is planning.</p>', answerType: 'long-answer', options: [], required: false, answer: 'No material capital investments planned in the near term. Routine dry-dock maintenance capital expenditures are expected to continue at approximately $180K per year.' },
+        { id: 'ueb-ops-11', text: '<p><strong>Describe key changes or losses in personnel,</strong> and the implications.</p>', answerType: 'long-answer', options: [], required: false, answer: 'No key personnel changes during the year. Headcount increased from 89 to 94 due to additional crew hired for the two new freight contracts. No impact on financial reporting competence.' },
+        { id: 'ueb-ops-12', text: '<p><strong>Describe new or revised material contracts.</strong></p>', answerType: 'long-answer', options: [], required: false, answer: 'Two new freight contracts: (1) 12-month contract with Pacific Imports Ltd. for monthly container shipments (estimated annual revenue $890K), and (2) 18-month spot charter agreement with Asia Freight Co. Ltd. (estimated annual revenue $640K). Both contracts include standard freight terms and force majeure provisions.' },
+        { id: 'ueb-ops-13', text: '<p><strong>Describe new, pending or threatened litigation.</strong></p>', answerType: 'long-answer', options: [], required: false, answer: 'No new, pending, or threatened litigation. Management and legal counsel confirmed no outstanding claims as at March 31, 2024.' }
       ],
       isExpanded: true
     },
@@ -1455,10 +1502,10 @@ export const generateUnderstandingEntityBasicsChecklist = (): Checklist => {
       id: 'section-ueb-ops-misstatements',
       title: 'Operations - Areas where material misstatements are likely to arise',
       questions: [
-        { id: 'ueb-opsm-1', text: '<p>Changes in business operations.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
-        { id: 'ueb-opsm-2', text: '<p>Changes in roles/competence of key personnel.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
-        { id: 'ueb-opsm-3', text: '<p>Implications relating to the rise or decline of the state of the industry.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
-        { id: 'ueb-opsm-nature', text: '<p><strong>Nature of likely misstatements</strong></p>', answerType: 'long-answer', options: [], required: false, answer: '' }
+        { id: 'ueb-opsm-1', text: '<p>Changes in business operations.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: 'Yes', explanation: 'Two new freight contracts represent incremental changes in operations. Impact on audit approach is limited — additional revenue cut-off procedures planned for new contracts.', reference: 'W/P Ref: RA-01' },
+        { id: 'ueb-opsm-2', text: '<p>Changes in roles/competence of key personnel.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: 'No', explanation: 'No changes in key financial reporting personnel. CFO and Controller positions are stable and filled by experienced professionals.' },
+        { id: 'ueb-opsm-3', text: '<p>Implications relating to the rise or decline of the state of the industry.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: 'Yes', explanation: 'Post-pandemic normalization of freight rates is relevant to vessel carrying values and revenue per voyage. Impairment assessment of vessel fleet has been identified as a significant audit risk.', reference: 'W/P Ref: RA-01' },
+        { id: 'ueb-opsm-nature', text: '<p><strong>Nature of likely misstatements</strong></p>', answerType: 'long-answer', options: [], required: false, answer: 'Revenue cut-off for new contracts; vessel impairment assessment; USD foreign currency translation on new contract revenue.' }
       ],
       isExpanded: true
     }
@@ -1494,7 +1541,7 @@ export const generateEngagementPlanningChecklist = (): Checklist => {
           answerType: 'long-answer',
           options: [],
           required: false,
-          answer: ''
+          answer: 'Audit of the financial statements of Shipping Line Inc. for the year ended March 31, 2024, prepared under ASPE. No additional services requested. Engagement reference: AUD-SL-Mar312024.'
         }
       ],
       isExpanded: true
@@ -1509,7 +1556,7 @@ export const generateEngagementPlanningChecklist = (): Checklist => {
           answerType: 'long-answer',
           options: [],
           required: false,
-          answer: ''
+          answer: 'Two new freight contracts signed during the year. No changes to financial reporting framework or accounting policies. Headcount increased from 89 to 94. MarineTrack software upgraded to v4.2 for digital bill-of-lading. No changes to key financial reporting personnel.'
         }
       ],
       isExpanded: true
@@ -1524,7 +1571,7 @@ export const generateEngagementPlanningChecklist = (): Checklist => {
           answerType: 'long-answer',
           options: [],
           required: false,
-          answer: ''
+          answer: 'Primarily substantive approach. Key risks: revenue recognition (voyage cut-off), vessel impairment ($8.2M PP&E), and USD foreign currency transactions. Specific procedures: voyage log reconciliation, impairment indicator analysis, USD translation testing. Year-end fieldwork April 14-25, 2024.'
         }
       ],
       isExpanded: true
@@ -1539,7 +1586,7 @@ export const generateEngagementPlanningChecklist = (): Checklist => {
           answerType: 'long-answer',
           options: [],
           required: false,
-          answer: ''
+          answer: 'No specialists required. No group reporting requirements. TCWG planning communication issued to board of directors February 28, 2024. Bank covenant compliance to be confirmed as part of long-term debt procedures.'
         }
       ],
       isExpanded: true
@@ -1873,7 +1920,9 @@ export const generateSubsequentEventsChecklist = (): Checklist => {
           answerType: 'yes-no-na',
           options: ['Yes', 'No', 'NA'],
           required: false,
-          answer: ''
+          answer: 'Yes',
+          explanation: '<p>Management and the CFO were inquired on April 25, 2024 about subsequent events. Management confirmed no events had occurred between March 31 and April 25, 2024 that would require adjustment or disclosure.</p>',
+          reference: 'W/P Ref: SE-01'
         },
         {
           id: 'q-se-inquiry-2',
@@ -1881,7 +1930,9 @@ export const generateSubsequentEventsChecklist = (): Checklist => {
           answerType: 'yes-no-na',
           options: ['Yes', 'No', 'NA'],
           required: false,
-          answer: ''
+          answer: 'Yes',
+          explanation: '<p>Management confirmed the status of all items accounted for on preliminary data (accrued liabilities, deferred revenue) were finalized with no material changes required.</p>',
+          reference: 'W/P Ref: SE-01'
         }
       ],
       isExpanded: true
@@ -1896,7 +1947,9 @@ export const generateSubsequentEventsChecklist = (): Checklist => {
           answerType: 'yes-no-na',
           options: ['Yes', 'No', 'NA'],
           required: false,
-          answer: ''
+          answer: 'NA',
+          explanation: '<p>No subsequent events requiring adjustment or disclosure were identified. The subsequent events review period was March 31 to May 2, 2024 (date of audit report).</p>',
+          reference: 'W/P Ref: SE-01'
         }
       ],
       isExpanded: true
@@ -1911,7 +1964,8 @@ export const generateSubsequentEventsChecklist = (): Checklist => {
           answerType: 'yes-no-na',
           options: ['Yes', 'No', 'NA'],
           required: false,
-          answer: ''
+          answer: 'NA',
+          explanation: '<p>No facts discovered after the report date. Not applicable as no events requiring adjustment were identified.</p>'
         },
         {
           id: 'q-se-facts-2',
@@ -1919,7 +1973,8 @@ export const generateSubsequentEventsChecklist = (): Checklist => {
           answerType: 'yes-no-na',
           options: ['Yes', 'No', 'NA'],
           required: false,
-          answer: ''
+          answer: 'NA',
+          explanation: '<p>Financial statements did not require amendment for subsequent events.</p>'
         }
       ],
       isExpanded: true
@@ -1934,7 +1989,9 @@ export const generateSubsequentEventsChecklist = (): Checklist => {
           answerType: 'yes-no-na',
           options: ['Yes', 'No', 'NA'],
           required: false,
-          answer: ''
+          answer: 'Yes',
+          explanation: '<p>Confirmed no subsequent events require recording, presentation or disclosure in the March 31, 2024 financial statements.</p>',
+          reference: 'W/P Ref: SE-02'
         }
       ],
       isExpanded: true
@@ -1949,7 +2006,8 @@ export const generateSubsequentEventsChecklist = (): Checklist => {
           answerType: 'yes-no-na',
           options: ['Yes', 'No', 'NA'],
           required: false,
-          answer: ''
+          answer: 'No',
+          explanation: '<p>No new commitments, borrowings, or guarantees identified in the subsequent events review period.</p>'
         },
         {
           id: 'q-se-ind-2',
@@ -1957,7 +2015,8 @@ export const generateSubsequentEventsChecklist = (): Checklist => {
           answerType: 'yes-no-na',
           options: ['Yes', 'No', 'NA'],
           required: false,
-          answer: ''
+          answer: 'No',
+          explanation: '<p>No significant new contracts executed between March 31 and May 2, 2024.</p>'
         },
         {
           id: 'q-se-ind-3',
@@ -1965,7 +2024,8 @@ export const generateSubsequentEventsChecklist = (): Checklist => {
           answerType: 'yes-no-na',
           options: ['Yes', 'No', 'NA'],
           required: false,
-          answer: ''
+          answer: 'No',
+          explanation: '<p>No sales or acquisitions of assets or business units in the subsequent events period.</p>'
         },
         {
           id: 'q-se-ind-4',
@@ -1973,7 +2033,8 @@ export const generateSubsequentEventsChecklist = (): Checklist => {
           answerType: 'yes-no-na',
           options: ['Yes', 'No', 'NA'],
           required: false,
-          answer: ''
+          answer: 'No',
+          explanation: '<p>No increases in capital or issuance of debt instruments subsequent to year-end.</p>'
         },
         {
           id: 'q-se-ind-5',
@@ -1981,7 +2042,8 @@ export const generateSubsequentEventsChecklist = (): Checklist => {
           answerType: 'yes-no-na',
           options: ['Yes', 'No', 'NA'],
           required: false,
-          answer: ''
+          answer: 'No',
+          explanation: '<p>No assets destroyed or appropriated by government subsequent to year-end.</p>'
         },
         {
           id: 'q-se-ind-6',
@@ -1989,7 +2051,8 @@ export const generateSubsequentEventsChecklist = (): Checklist => {
           answerType: 'yes-no-na',
           options: ['Yes', 'No', 'NA'],
           required: false,
-          answer: ''
+          answer: 'No',
+          explanation: '<p>No new contingencies or material developments regarding existing contingencies identified.</p>'
         },
         {
           id: 'q-se-ind-7',
@@ -1997,7 +2060,8 @@ export const generateSubsequentEventsChecklist = (): Checklist => {
           answerType: 'yes-no-na',
           options: ['Yes', 'No', 'NA'],
           required: false,
-          answer: ''
+          answer: 'No',
+          explanation: '<p>No unusual accounting adjustments made or being contemplated subsequent to year-end.</p>'
         },
         {
           id: 'q-se-ind-8',
@@ -2005,7 +2069,8 @@ export const generateSubsequentEventsChecklist = (): Checklist => {
           answerType: 'yes-no-na',
           options: ['Yes', 'No', 'NA'],
           required: false,
-          answer: ''
+          answer: 'No',
+          explanation: '<p>No events identified that would question the appropriateness of the accounting policies applied in the financial statements.</p>'
         },
         {
           id: 'q-se-ind-9',
@@ -2013,7 +2078,8 @@ export const generateSubsequentEventsChecklist = (): Checklist => {
           answerType: 'yes-no-na',
           options: ['Yes', 'No', 'NA'],
           required: false,
-          answer: ''
+          answer: 'No',
+          explanation: '<p>No events relevant to the measurement of estimates or provisions made in the financial statements.</p>'
         },
         {
           id: 'q-se-ind-10',
@@ -2021,7 +2087,8 @@ export const generateSubsequentEventsChecklist = (): Checklist => {
           answerType: 'yes-no-na',
           options: ['Yes', 'No', 'NA'],
           required: false,
-          answer: ''
+          answer: 'No',
+          explanation: '<p>No events relevant to the recoverability of assets or existence of new liabilities identified.</p>'
         },
         {
           id: 'q-se-ind-11',
@@ -2029,7 +2096,8 @@ export const generateSubsequentEventsChecklist = (): Checklist => {
           answerType: 'yes-no-na',
           options: ['Yes', 'No', 'NA'],
           required: false,
-          answer: ''
+          answer: 'No',
+          explanation: '<p>No events or circumstances that would question the validity of the going-concern basis of accounting. Entity continues to operate normally.</p>'
         }
       ],
       isExpanded: true
@@ -2131,55 +2199,55 @@ export const generateUnderstandingEntitySystemsChecklist = (): Checklist => {
       id: 'section-ues-financial',
       title: 'Part A — Understanding Financial Accounting/Reporting Systems',
       questions: [
-        { id: 'q-ues-fin-1', text: '<p>Identify the individual(s) responsible for the day-to-day accounting, and describe the experience they have.</p>', answerType: 'long-answer', options: [], required: false, answer: '' },
-        { id: 'q-ues-fin-2', text: '<p>Describe the key financial reports produced on a regular basis (e.g., income statement, balance sheet and budget to actual comparison).</p>', answerType: 'long-answer', options: [], required: false, answer: '' },
-        { id: 'q-ues-fin-3', text: '<p>Describe the key indicators management uses to measure and assess performance (e.g., sales per square foot and gross margins).</p>', answerType: 'long-answer', options: [], required: false, answer: '' },
-        { id: 'q-ues-fin-4', text: '<p>Describe the financial reports (if any) that are regularly provided to third parties, such as banks.</p>', answerType: 'long-answer', options: [], required: false, answer: '' },
+        { id: 'q-ues-fin-1', text: '<p>Identify the individual(s) responsible for the day-to-day accounting, and describe the experience they have.</p>', answerType: 'long-answer', options: [], required: false, answer: 'Controller: R. Nguyen, CPA (8 years experience, 4 years with entity). Supported by one AP clerk and one AR clerk. CFO L. Thompson, CPA provides oversight and reviews monthly financials.' },
+        { id: 'q-ues-fin-2', text: '<p>Describe the key financial reports produced on a regular basis (e.g., income statement, balance sheet and budget to actual comparison).</p>', answerType: 'long-answer', options: [], required: false, answer: 'Monthly: income statement, balance sheet, cash flow statement, budget-to-actual variance report. Quarterly: board reports and bank covenant compliance certificates. Annual: audited financial statements.' },
+        { id: 'q-ues-fin-3', text: '<p>Describe the key indicators management uses to measure and assess performance (e.g., sales per square foot and gross margins).</p>', answerType: 'long-answer', options: [], required: false, answer: 'Revenue per voyage, fleet utilization rate (%), gross margin %, on-time delivery %, and debt service coverage ratio.' },
+        { id: 'q-ues-fin-4', text: '<p>Describe the financial reports (if any) that are regularly provided to third parties, such as banks.</p>', answerType: 'long-answer', options: [], required: false, answer: 'Quarterly covenant compliance certificates to RBC. Annual audited financial statements to RBC within 120 days of year-end per the credit facility agreement.' },
         {
           id: 'q-ues-fin-5',
           text: '<p>Describe the accounting applications used by the entity.</p>',
           answerType: 'multiple-choice',
           options: ['None (manual or spreadsheet ledgers used)', 'QuickBooks', 'QuickBooks Online', 'Sage 50', 'Other (specify)'],
           required: false,
-          answer: ''
+          answer: 'Other (specify)'
         },
-        { id: 'q-ues-fin-6', text: '<p>Describe the nature of any external accounting services provided (e.g., bookkeeping).</p>', answerType: 'long-answer', options: [], required: false, answer: '' },
-        { id: 'q-ues-fin-7', text: '<p>Describe any significant transactions occurring or recognized near the end of the reporting period.</p>', answerType: 'long-answer', options: [], required: false, answer: '' },
-        { id: 'q-ues-fin-8', text: '<p>Describe any material non-monetary transactions or transactions for no consideration.</p>', answerType: 'long-answer', options: [], required: false, answer: '' },
-        { id: 'q-ues-fin-9', text: '<p>Describe the results of any government audits (HST, GT or corporate) that occurred during the period.</p>', answerType: 'long-answer', options: [], required: false, answer: '' },
+        { id: 'q-ues-fin-6', text: '<p>Describe the nature of any external accounting services provided (e.g., bookkeeping).</p>', answerType: 'long-answer', options: [], required: false, answer: 'No external bookkeeping services. All accounting performed in-house. Tax preparation handled by external tax advisors.' },
+        { id: 'q-ues-fin-7', text: '<p>Describe any significant transactions occurring or recognized near the end of the reporting period.</p>', answerType: 'long-answer', options: [], required: false, answer: 'Several voyages in progress at March 31, 2024. Revenue recognition at voyage completion creates a cut-off risk. Management accrues revenue for voyages substantially complete at year-end.' },
+        { id: 'q-ues-fin-8', text: '<p>Describe any material non-monetary transactions or transactions for no consideration.</p>', answerType: 'long-answer', options: [], required: false, answer: 'No material non-monetary transactions or transactions for no consideration identified.' },
+        { id: 'q-ues-fin-9', text: '<p>Describe the results of any government audits (HST, GT or corporate) that occurred during the period.</p>', answerType: 'long-answer', options: [], required: false, answer: 'No government audits occurred during the year. Last CRA audit was three years ago with no material adjustments.' },
         {
           id: 'q-ues-fin-10',
           text: '<p>Describe significant accounting policies (if any) that are:</p>',
           answerType: 'long-answer',
           options: [],
           required: false,
-          answer: '',
+          answer: 'None identified. All significant accounting policies are appropriate under ASPE and consistently applied.',
           subQuestions: [
-            { id: 'q-ues-fin-10a', text: '<p>Not usually used in the entity\'s industry.</p>', answerType: 'long-answer', options: [], required: false, answer: '' },
-            { id: 'q-ues-fin-10b', text: '<p>Not consistently applied.</p>', answerType: 'long-answer', options: [], required: false, answer: '' },
-            { id: 'q-ues-fin-10c', text: '<p>Considered controversial.</p>', answerType: 'long-answer', options: [], required: false, answer: '' },
-            { id: 'q-ues-fin-10d', text: '<p>Not appropriate or consistent with the applicable financial reporting framework.</p>', answerType: 'long-answer', options: [], required: false, answer: '' }
+            { id: 'q-ues-fin-10a', text: '<p>Not usually used in the entity\'s industry.</p>', answerType: 'long-answer', options: [], required: false, answer: 'None identified. All significant accounting policies are standard for the maritime freight industry.' },
+            { id: 'q-ues-fin-10b', text: '<p>Not consistently applied.</p>', answerType: 'long-answer', options: [], required: false, answer: 'None identified. All accounting policies applied consistently with prior year.' },
+            { id: 'q-ues-fin-10c', text: '<p>Considered controversial.</p>', answerType: 'long-answer', options: [], required: false, answer: 'None identified.' },
+            { id: 'q-ues-fin-10d', text: '<p>Not appropriate or consistent with the applicable financial reporting framework.</p>', answerType: 'long-answer', options: [], required: false, answer: 'None identified. All accounting policies are appropriate under ASPE.' }
           ]
         },
-        { id: 'q-ues-fin-11', text: '<p>Identify any areas in the F/S where material misstatements are likely to arise.</p>', answerType: 'long-answer', options: [], required: false, answer: '' },
+        { id: 'q-ues-fin-11', text: '<p>Identify any areas in the F/S where material misstatements are likely to arise.</p>', answerType: 'long-answer', options: [], required: false, answer: 'Revenue cut-off (voyage completion); USD foreign currency translation; vessel PP&E carrying value and depreciation.' },
         {
           id: 'q-ues-fin-12',
           text: '<p>Indicate (based on inquiries made and understanding obtained) if any of the following apply:</p>',
           answerType: 'yes-no-na',
           options: ['Yes', 'No', 'NA'],
           required: false,
-          answer: '',
+          answer: 'Yes', explanation: 'Some risk factors apply — see sub-questions below.',
           subQuestions: [
-            { id: 'q-ues-fin-12a', text: '<p>Extensive reliance placed on spreadsheets (including consolidations) to prepare financial reports.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
-            { id: 'q-ues-fin-12b', text: '<p>Use of third-party processing of transactions without any evaluation of controls.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
-            { id: 'q-ues-fin-12c', text: '<p>Significant judgments made in the application of accounting policies.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
-            { id: 'q-ues-fin-12d', text: '<p>Changes made to significant accounting policies this period.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
-            { id: 'q-ues-fin-12e', text: '<p>Non-monetary transactions used during the period.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
-            { id: 'q-ues-fin-12f', text: '<p>Inconsistent application of, and/or changes in, accounting policies during the period (e.g., revenue recognition).</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
-            { id: 'q-ues-fin-12g', text: '<p>Lack of consultation with subject matter experts regarding the recording of complex transactions.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' }
+            { id: 'q-ues-fin-12a', text: '<p>Extensive reliance placed on spreadsheets (including consolidations) to prepare financial reports.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: 'Yes', explanation: 'Extensive reliance on Excel spreadsheets for voyage revenue tracking and USD conversion calculations.' },
+            { id: 'q-ues-fin-12b', text: '<p>Use of third-party processing of transactions without any evaluation of controls.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: 'No', explanation: 'No third-party transaction processing used. All transactions processed in-house.' },
+            { id: 'q-ues-fin-12c', text: '<p>Significant judgments made in the application of accounting policies.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: 'Yes', explanation: 'Judgment required for voyage completion percentages at year-end, vessel useful lives, and allowance for doubtful accounts.' },
+            { id: 'q-ues-fin-12d', text: '<p>Changes made to significant accounting policies this period.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: 'No', explanation: 'No changes to significant accounting policies. Consistent application with prior year confirmed.' },
+            { id: 'q-ues-fin-12e', text: '<p>Non-monetary transactions used during the period.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: 'No', explanation: 'No non-monetary transactions identified during the year.' },
+            { id: 'q-ues-fin-12f', text: '<p>Inconsistent application of, and/or changes in, accounting policies during the period (e.g., revenue recognition).</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: 'No', explanation: 'Accounting policies applied consistently with prior year. No changes in revenue recognition or other significant policies.' },
+            { id: 'q-ues-fin-12g', text: '<p>Lack of consultation with subject matter experts regarding the recording of complex transactions.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: 'No', explanation: 'No complex transactions requiring specialist input identified. Management consults with the audit team for significant accounting questions.' }
           ]
         },
-        { id: 'q-ues-fin-13', text: '<p>Nature of likely misstatements.</p>', answerType: 'long-answer', options: [], required: false, answer: '' }
+        { id: 'q-ues-fin-13', text: '<p>Nature of likely misstatements.</p>', answerType: 'long-answer', options: [], required: false, answer: 'Revenue cut-off errors for voyages in progress at year-end; USD translation differences on AR and revenue.' }
       ],
       isExpanded: true
     },
@@ -2187,47 +2255,49 @@ export const generateUnderstandingEntitySystemsChecklist = (): Checklist => {
       id: 'section-ues-tech',
       title: 'Understanding General Technology',
       questions: [
-        { id: 'q-ues-tech-1', text: '<p>Indicate the individual(s) responsible for managing the IT applications in the entity. If the person responsible is not an employee, describe the contractual arrangement in place.</p>', answerType: 'long-answer', options: [], required: false, answer: '' },
-        { id: 'q-ues-tech-2', text: '<p>Describe the current technology systems (e.g., hardware, software and data storage, such as server or cloud).</p>', answerType: 'long-answer', options: [], required: false, answer: '' },
-        { id: 'q-ues-tech-3', text: '<p>Describe the process for authorizing and making changes (if any) to financial applications.</p>', answerType: 'long-answer', options: [], required: false, answer: '' },
-        { id: 'q-ues-tech-4', text: '<p>Describe the applications used to capture, process, record and report financial information.</p>', answerType: 'long-answer', options: [], required: false, answer: '' },
+        { id: 'q-ues-tech-1', text: '<p>Indicate the individual(s) responsible for managing the IT applications in the entity. If the person responsible is not an employee, describe the contractual arrangement in place.</p>', answerType: 'long-answer', options: [], required: false, answer: 'IT managed by Controller R. Nguyen with support from external IT service provider TechSupport Solutions Inc. under a monthly service contract.' },
+        { id: 'q-ues-tech-2', text: '<p>Describe the current technology systems (e.g., hardware, software and data storage, such as server or cloud).</p>', answerType: 'long-answer', options: [], required: false, answer: 'Accounting system: Sage 300 ERP (on-premise server). Voyage management: MarineTrack. Data stored on local server with nightly cloud backups to Azure. Office productivity via Microsoft 365.' },
+        { id: 'q-ues-tech-3', text: '<p>Describe the process for authorizing and making changes (if any) to financial applications.</p>', answerType: 'long-answer', options: [], required: false, answer: 'Changes to Sage 300 require written authorization from CFO. Changes tested by Controller before deployment. Vendor patches applied after review by IT service provider.' },
+        { id: 'q-ues-tech-4', text: '<p>Describe the applications used to capture, process, record and report financial information.</p>', answerType: 'long-answer', options: [], required: false, answer: 'Sage 300 ERP: GL, AR, AP, fixed assets. MarineTrack: voyage management and freight billing. ADP Workforce Now: payroll. Financial reporting via Excel export from Sage 300.' },
         {
           id: 'q-ues-tech-5',
           text: '<p>Describe how the entity restricts access to data and applications to authorized personnel, such as:</p>',
           answerType: 'long-answer',
           options: [],
           required: false,
-          answer: '',
+          answer: 'Yes',
+          explanation: 'Entity restricts access through documented policies for physical security, cloud storage, remote access, passwords, and virus protection.',
           subQuestions: [
-            { id: 'q-ues-tech-5a', text: '<p>Physical security.</p>', answerType: 'long-answer', options: [], required: false, answer: '' },
-            { id: 'q-ues-tech-5b', text: '<p>Data stored with third parties.</p>', answerType: 'long-answer', options: [], required: false, answer: '' },
-            { id: 'q-ues-tech-5c', text: '<p>Data stored on the cloud.</p>', answerType: 'long-answer', options: [], required: false, answer: '' },
-            { id: 'q-ues-tech-5d', text: '<p>Remote access.</p>', answerType: 'long-answer', options: [], required: false, answer: '' },
-            { id: 'q-ues-tech-5e', text: '<p>Passwords for applications.</p>', answerType: 'long-answer', options: [], required: false, answer: '' },
-            { id: 'q-ues-tech-5f', text: '<p>Virus and malware protection.</p>', answerType: 'long-answer', options: [], required: false, answer: '' },
-            { id: 'q-ues-tech-5g', text: '<p>Data backup and data recovery procedures.</p>', answerType: 'long-answer', options: [], required: false, answer: '' }
+            { id: 'q-ues-tech-5a', text: '<p>Physical security.</p>', answerType: 'long-answer', options: [], required: false, answer: 'Server room access restricted to Controller and IT service provider via key card. Head office is secured with alarm system outside business hours.' },
+            { id: 'q-ues-tech-5b', text: '<p>Data stored with third parties.</p>', answerType: 'long-answer', options: [], required: false, answer: 'ADP hosts payroll data. Azure cloud stores nightly backups. Both providers have industry-standard security certifications.' },
+            { id: 'q-ues-tech-5c', text: '<p>Data stored on the cloud.</p>', answerType: 'long-answer', options: [], required: false, answer: 'Nightly backups to Microsoft Azure. Microsoft 365 used for email and office applications. Data residency is Canadian data centres.' },
+            { id: 'q-ues-tech-5d', text: '<p>Remote access.</p>', answerType: 'long-answer', options: [], required: false, answer: 'Remote access to Sage 300 via VPN with user ID and password. VPN access is restricted to authorized employees with approval from the Controller.' },
+            { id: 'q-ues-tech-5e', text: '<p>Passwords for applications.</p>', answerType: 'long-answer', options: [], required: false, answer: 'Sage 300 enforces minimum 8-character passwords with expiry every 90 days. Shared passwords are not permitted.' },
+            { id: 'q-ues-tech-5f', text: '<p>Virus and malware protection.</p>', answerType: 'long-answer', options: [], required: false, answer: 'Microsoft Defender antivirus installed on all workstations and updated automatically. IT service provider monitors for threats.' },
+            { id: 'q-ues-tech-5g', text: '<p>Data backup and data recovery procedures.</p>', answerType: 'long-answer', options: [], required: false, answer: 'Daily incremental backups and weekly full backups to Azure. Recovery tests performed monthly by IT service provider. Recovery time objective is 4 hours.' }
           ]
         },
-        { id: 'q-ues-tech-6', text: '<p>Describe any modifications to the technology systems during the period.</p>', answerType: 'long-answer', options: [], required: false, answer: '' },
-        { id: 'q-ues-tech-7', text: '<p>Identify any areas in the F/S where material misstatements are likely to arise.</p>', answerType: 'long-answer', options: [], required: false, answer: '' },
+        { id: 'q-ues-tech-6', text: '<p>Describe any modifications to the technology systems during the period.</p>', answerType: 'long-answer', options: [], required: false, answer: 'MarineTrack upgraded to v4.2 in November 2023 for digital bill-of-lading. Sage 300 updated with vendor patches. No changes to core accounting functionality.' },
+        { id: 'q-ues-tech-7', text: '<p>Identify any areas in the F/S where material misstatements are likely to arise.</p>', answerType: 'long-answer', options: [], required: false, answer: 'Interface between MarineTrack (voyage billing) and Sage 300 (GL) is a key IT risk area for revenue completeness.' },
         {
           id: 'q-ues-tech-8',
           text: '<p>Indicate (based on inquiries made and understanding obtained) if any of the following apply:</p>',
           answerType: 'yes-no-na',
           options: ['Yes', 'No', 'NA'],
           required: false,
-          answer: '',
+          answer: 'No',
+          explanation: 'No significant IT risk factors identified that would affect the reliability of financial information.',
           subQuestions: [
-            { id: 'q-ues-tech-8a', text: '<p>Unauthorized physical access to IT facilities and equipment.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
-            { id: 'q-ues-tech-8b', text: '<p>Unauthorized access to the network, major applications and related data.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
-            { id: 'q-ues-tech-8c', text: '<p>Outdated, overly complex, or inadequate IT hardware and infrastructure.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
-            { id: 'q-ues-tech-8d', text: '<p>Significant dependence on technology to capture, process, record and report financial information.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
-            { id: 'q-ues-tech-8e', text: '<p>Unauthorized changes to accounting programs and/or data.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
-            { id: 'q-ues-tech-8f', text: '<p>New or modified accounting software, or other significant changes in technology systems.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
-            { id: 'q-ues-tech-8g', text: '<p>Data loss due to inadequate backup or other security procedures, such as virus protection.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' }
+            { id: 'q-ues-tech-8a', text: '<p>Unauthorized physical access to IT facilities and equipment.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: 'No', explanation: 'Server room has restricted physical access (key card). No unauthorized physical access concerns identified.' },
+            { id: 'q-ues-tech-8b', text: '<p>Unauthorized access to the network, major applications and related data.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: 'No', explanation: 'Access to Sage 300 is restricted by user ID and password. User access review performed by Controller annually.' },
+            { id: 'q-ues-tech-8c', text: '<p>Outdated, overly complex, or inadequate IT hardware and infrastructure.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: 'No', explanation: 'IT infrastructure is current and adequately maintained by the external IT service provider.' },
+            { id: 'q-ues-tech-8d', text: '<p>Significant dependence on technology to capture, process, record and report financial information.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: 'Yes', explanation: 'Significant dependence on Sage 300 and MarineTrack for capturing and reporting financial information. Completeness and accuracy of these systems is an audit focus.' },
+            { id: 'q-ues-tech-8e', text: '<p>Unauthorized changes to accounting programs and/or data.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: 'No', explanation: 'No unauthorized changes to accounting programs identified. Change management process is in place.' },
+            { id: 'q-ues-tech-8f', text: '<p>New or modified accounting software, or other significant changes in technology systems.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: 'Yes', explanation: 'MarineTrack upgraded during the year. The upgrade has been assessed and does not affect the fundamental accounting data transfer functionality.' },
+            { id: 'q-ues-tech-8g', text: '<p>Data loss due to inadequate backup or other security procedures, such as virus protection.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: 'No', explanation: 'Daily backups to Azure cloud with monthly recovery tests performed by IT service provider.' }
           ]
         },
-        { id: 'q-ues-tech-9', text: '<p>Nature of likely misstatements.</p>', answerType: 'long-answer', options: [], required: false, answer: '' }
+        { id: 'q-ues-tech-9', text: '<p>Nature of likely misstatements.</p>', answerType: 'long-answer', options: [], required: false, answer: 'Revenue completeness/accuracy errors from MarineTrack-to-Sage 300 interface; spreadsheet errors in USD conversion calculations.' }
       ],
       isExpanded: true
     },
@@ -2241,30 +2311,32 @@ export const generateUnderstandingEntitySystemsChecklist = (): Checklist => {
           answerType: 'yes-no-na',
           options: ['Yes', 'No', 'NA'],
           required: false,
-          answer: '',
+          answer: 'Yes',
+          explanation: 'Banking facilities managed with documented policies for electronic transfers, credit cards, and cheque signing. Controls confirmed as adequate.',
           subQuestions: [
-            { id: 'q-ues-cash-1a', text: '<p>Electronic banking policies (e.g., Internet transfers and wire payments).</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
-            { id: 'q-ues-cash-1b', text: '<p>Authorization of corporate credit cards.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
-            { id: 'q-ues-cash-1c', text: '<p>Cheque signing policies.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' }
+            { id: 'q-ues-cash-1a', text: '<p>Electronic banking policies (e.g., Internet transfers and wire payments).</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: 'Yes', explanation: 'Electronic banking policies are documented. Internet transfers require dual authorization. Wire payments over $50K require CFO approval.' },
+            { id: 'q-ues-cash-1b', text: '<p>Authorization of corporate credit cards.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: 'Yes', explanation: 'Corporate credit cards issued to CEO and CFO. Monthly statements reviewed and approved by the other party.' },
+            { id: 'q-ues-cash-1c', text: '<p>Cheque signing policies.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: 'Yes', explanation: 'Cheques require dual signatures. Signing authority limits documented and communicated to the bank.' }
           ]
         },
-        { id: 'q-ues-cash-2', text: '<p>Describe the procedures for ensuring that cash transactions are recorded in the appropriate period.</p>', answerType: 'long-answer', options: [], required: false, answer: '' },
-        { id: 'q-ues-cash-3', text: '<p>Describe the entity\'s processes for the preparation and review of monthly bank reconciliations.</p>', answerType: 'long-answer', options: [], required: false, answer: '' },
-        { id: 'q-ues-cash-4', text: '<p>Identify any areas in the F/S where material misstatements are likely to arise.</p>', answerType: 'long-answer', options: [], required: false, answer: '' },
+        { id: 'q-ues-cash-2', text: '<p>Describe the procedures for ensuring that cash transactions are recorded in the appropriate period.</p>', answerType: 'long-answer', options: [], required: false, answer: 'Cash receipts deposited daily and recorded in Sage 300 same day. Cutoff reviewed by Controller at month-end. Bank reconciliations prepared monthly and reviewed by CFO.' },
+        { id: 'q-ues-cash-3', text: '<p>Describe the entity\'s processes for the preparation and review of monthly bank reconciliations.</p>', answerType: 'long-answer', options: [], required: false, answer: 'Monthly bank reconciliations prepared by AR clerk within 5 business days of month-end. Reviewed and signed off by Controller. CFO reviews reconciling items >$5,000.' },
+        { id: 'q-ues-cash-4', text: '<p>Identify any areas in the F/S where material misstatements are likely to arise.</p>', answerType: 'long-answer', options: [], required: false, answer: 'Timing differences for large USD remittances near year-end. Cash controls otherwise assessed as adequate.' },
         {
           id: 'q-ues-cash-5',
           text: '<p>Indicate (based on inquiries made and understanding obtained) if any of the following apply:</p>',
           answerType: 'yes-no-na',
           options: ['Yes', 'No', 'NA'],
           required: false,
-          answer: '',
+          answer: 'No',
+          explanation: 'No significant cash control risk factors identified. Entity does not handle physical cash in operations.',
           subQuestions: [
-            { id: 'q-ues-cash-5a', text: '<p>Entity handles large amounts of cash on a regular basis.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
-            { id: 'q-ues-cash-5b', text: '<p>Potential exists for cash sales to go unrecorded in the accounting records.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
-            { id: 'q-ues-cash-5c', text: '<p>Weak physical controls over cash balances held.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' }
+            { id: 'q-ues-cash-5a', text: '<p>Entity handles large amounts of cash on a regular basis.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: 'No', explanation: 'Entity does not handle cash in operations. All receipts are electronic (EFT or wire transfer).' },
+            { id: 'q-ues-cash-5b', text: '<p>Potential exists for cash sales to go unrecorded in the accounting records.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: 'No', explanation: 'No cash sales. All revenue is invoiced and collected via EFT.' },
+            { id: 'q-ues-cash-5c', text: '<p>Weak physical controls over cash balances held.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: 'No', explanation: 'No physical cash balances. Petty cash maintained at $500 with proper controls.' }
           ]
         },
-        { id: 'q-ues-cash-6', text: '<p>Nature of likely misstatements.</p>', answerType: 'long-answer', options: [], required: false, answer: '' }
+        { id: 'q-ues-cash-6', text: '<p>Nature of likely misstatements.</p>', answerType: 'long-answer', options: [], required: false, answer: 'USD bank account translation differences at year-end; timing of large wire transfers near year-end cutoff.' }
       ],
       isExpanded: true
     },
@@ -2278,54 +2350,55 @@ export const generateUnderstandingEntitySystemsChecklist = (): Checklist => {
           answerType: 'multiple-choice',
           options: ['Many customers', 'Primarily a few significant customers', 'Many customers, including one or more significant customers listed below'],
           required: false,
-          answer: ''
+          answer: 'Many customers, including one or more significant customers listed below'
         },
-        { id: 'q-ues-rev-2', text: '<p>Name of significant customers.</p>', answerType: 'long-answer', options: [], required: false, answer: '' },
-        { id: 'q-ues-rev-3', text: '<p>Describe how revenue transactions are initiated (e.g., phone, email or internet).</p>', answerType: 'long-answer', options: [], required: false, answer: '' },
+        { id: 'q-ues-rev-2', text: '<p>Name of significant customers.</p>', answerType: 'long-answer', options: [], required: false, answer: 'Pacific Imports Ltd. (~23% of revenue), Asia Freight Co. Ltd. (~18% of revenue), West Coast Trading Corp. (~17% of revenue). Combined approximately 58% of total revenue.' },
+        { id: 'q-ues-rev-3', text: '<p>Describe how revenue transactions are initiated (e.g., phone, email or internet).</p>', answerType: 'long-answer', options: [], required: false, answer: 'Freight bookings initiated via email or through the MarineTrack online booking portal. Each booking confirmed with a signed freight agreement from the customer.' },
         {
           id: 'q-ues-rev-4',
           text: '<p>Indicate at what point in the sales process revenue transactions are recorded in the general ledger.</p>',
           answerType: 'multiple-choice',
           options: ['Invoicing', 'Percentage of completion', 'Shipment', 'Other'],
           required: false,
-          answer: ''
+          answer: 'Percentage of completion'
         },
-        { id: 'q-ues-rev-5', text: '<p>Describe any complexities in revenue recognition (e.g., multiple revenue streams, rights of return and contractual terms).</p>', answerType: 'long-answer', options: [], required: false, answer: '' },
-        { id: 'q-ues-rev-6', text: '<p>Describe how management ensures that all revenue transactions are recorded and included in the correct period (cut-off).</p>', answerType: 'long-answer', options: [], required: false, answer: '' },
+        { id: 'q-ues-rev-5', text: '<p>Describe any complexities in revenue recognition (e.g., multiple revenue streams, rights of return and contractual terms).</p>', answerType: 'long-answer', options: [], required: false, answer: 'Revenue recognized on voyage completion basis. For voyages in progress at period end, management estimates percentage of completion based on voyage days elapsed. USD-denominated revenue translated at rates prevailing on invoice date.' },
+        { id: 'q-ues-rev-6', text: '<p>Describe how management ensures that all revenue transactions are recorded and included in the correct period (cut-off).</p>', answerType: 'long-answer', options: [], required: false, answer: 'Controller reviews voyage log at year-end to identify all voyages completed or in progress. Revenue accrued for voyages >80% complete at period end. Procedure reviewed by CFO as part of year-end close.' },
         {
           id: 'q-ues-rev-7',
           text: '<p>Indicate the entity\'s normal sales terms.</p>',
           answerType: 'multiple-choice',
           options: ['< 30 days', '30-60 days', '60-90 days', '> 90 days'],
           required: false,
-          answer: ''
+          answer: '30-60 days'
         },
-        { id: 'q-ues-rev-8', text: '<p>Describe any special terms, conditions, discounts, etc., on sales.</p>', answerType: 'long-answer', options: [], required: false, answer: '' },
-        { id: 'q-ues-rev-9', text: '<p>Describe how proceeds from revenue transactions are collected (cash sales %, credit card sales %, credit sales %).</p>', answerType: 'long-answer', options: [], required: false, answer: '' },
-        { id: 'q-ues-rev-10', text: '<p>Describe the extent of online sales.</p>', answerType: 'long-answer', options: [], required: false, answer: '' },
+        { id: 'q-ues-rev-8', text: '<p>Describe any special terms, conditions, discounts, etc., on sales.</p>', answerType: 'long-answer', options: [], required: false, answer: 'Fuel surcharge clauses in all freight contracts. Volume discounts of 2-3% for top customers. Force majeure provisions standard in all contracts.' },
+        { id: 'q-ues-rev-9', text: '<p>Describe how proceeds from revenue transactions are collected (cash sales %, credit card sales %, credit sales %).</p>', answerType: 'long-answer', options: [], required: false, answer: '100% credit sales collected via EFT wire transfer. No cash or credit card sales. Approximately 65% of collections received in USD and converted to CAD.' },
+        { id: 'q-ues-rev-10', text: '<p>Describe the extent of online sales.</p>', answerType: 'long-answer', options: [], required: false, answer: 'Approximately 30% of new freight bookings initiated through the MarineTrack online portal. All bookings follow the same invoicing and collection process.' },
         {
           id: 'q-ues-rev-11',
           text: '<p>Describe the entity\'s procedures for determining the allowance for doubtful accounts.</p>',
           answerType: 'multiple-choice',
           options: ['Specific account identification', 'General provision based on aging', 'Combination of specific account and general provision'],
           required: false,
-          answer: ''
+          answer: 'Combination of specific account and general provision'
         },
-        { id: 'q-ues-rev-12', text: '<p>Identify any areas in the F/S where material misstatements are likely to arise.</p>', answerType: 'long-answer', options: [], required: false, answer: '' },
+        { id: 'q-ues-rev-12', text: '<p>Identify any areas in the F/S where material misstatements are likely to arise.</p>', answerType: 'long-answer', options: [], required: false, answer: 'Revenue cut-off for voyages in progress; accuracy of USD translation; completeness of freight billings.' },
         {
           id: 'q-ues-rev-13',
           text: '<p>Indicate (based on inquiries made and understanding obtained) if any of the following apply:</p>',
           answerType: 'yes-no-na',
           options: ['Yes', 'No', 'NA'],
           required: false,
-          answer: '',
+          answer: 'Yes',
+          explanation: 'Weak cut-off controls over voyage revenue at period end identified as a risk factor.',
           subQuestions: [
-            { id: 'q-ues-rev-13a', text: '<p>History of misstatements in revenue recognition.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
-            { id: 'q-ues-rev-13b', text: '<p>Sales of goods/services provided to customers with poor credit.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
-            { id: 'q-ues-rev-13c', text: '<p>Weak controls over cut-off at period end.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' }
+            { id: 'q-ues-rev-13a', text: '<p>History of misstatements in revenue recognition.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: 'No', explanation: 'No history of misstatements in revenue recognition identified in prior audit files.' },
+            { id: 'q-ues-rev-13b', text: '<p>Sales of goods/services provided to customers with poor credit.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: 'No', explanation: 'All customers are established businesses with credit histories. No significant overdue AR balances.' },
+            { id: 'q-ues-rev-13c', text: '<p>Weak controls over cut-off at period end.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: 'Yes', explanation: 'Voyage cut-off controls rely on manual review of voyage logs; some risk of cut-off errors at year-end.' }
           ]
         },
-        { id: 'q-ues-rev-14', text: '<p>Nature of likely misstatements.</p>', answerType: 'long-answer', options: [], required: false, answer: '' }
+        { id: 'q-ues-rev-14', text: '<p>Nature of likely misstatements.</p>', answerType: 'long-answer', options: [], required: false, answer: 'Revenue recognized in incorrect period due to voyage cut-off; USD translation errors; deferred revenue classification errors.' }
       ],
       isExpanded: true
     },
@@ -2339,36 +2412,37 @@ export const generateUnderstandingEntitySystemsChecklist = (): Checklist => {
           answerType: 'multiple-choice',
           options: ['Many suppliers', 'Many suppliers, including the significant suppliers described below', 'Primarily a few significant suppliers'],
           required: false,
-          answer: ''
+          answer: 'Many suppliers, including the significant suppliers described below'
         },
-        { id: 'q-ues-pur-2', text: '<p>Name of significant suppliers.</p>', answerType: 'long-answer', options: [], required: false, answer: '' },
-        { id: 'q-ues-pur-3', text: '<p>Describe how purchase and disposal transactions are initiated (e.g., purchase orders, online orders, phone calls or emails).</p>', answerType: 'long-answer', options: [], required: false, answer: '' },
-        { id: 'q-ues-pur-4', text: '<p>Document how purchase and disposal transactions are recorded in the general ledger.</p>', answerType: 'long-answer', options: [], required: false, answer: '' },
-        { id: 'q-ues-pur-5', text: '<p>Describe how management ensures that all goods and services and disposals are recorded in the proper period.</p>', answerType: 'long-answer', options: [], required: false, answer: '' },
+        { id: 'q-ues-pur-2', text: '<p>Name of significant suppliers.</p>', answerType: 'long-answer', options: [], required: false, answer: 'Pacific Bunker Supply Ltd. (fuel, ~$1.8M annually), Port Metro Vancouver (port fees, ~$620K annually), Marine Parts & Service Co. (maintenance supplies, ~$280K annually).' },
+        { id: 'q-ues-pur-3', text: '<p>Describe how purchase and disposal transactions are initiated (e.g., purchase orders, online orders, phone calls or emails).</p>', answerType: 'long-answer', options: [], required: false, answer: 'Purchases initiated via purchase orders in Sage 300. Fuel orders placed by Operations Manager with CFO approval for orders >$50K. Routine supplies ordered by department managers within pre-approved budgets.' },
+        { id: 'q-ues-pur-4', text: '<p>Document how purchase and disposal transactions are recorded in the general ledger.</p>', answerType: 'long-answer', options: [], required: false, answer: 'Vendor invoices entered into Sage 300 AP module by AP clerk, coded to appropriate GL account, approved by Controller before payment. Sage 300 posts to GL upon AP invoice approval.' },
+        { id: 'q-ues-pur-5', text: '<p>Describe how management ensures that all goods and services and disposals are recorded in the proper period.</p>', answerType: 'long-answer', options: [], required: false, answer: 'AP clerk reconciles vendor statements for major suppliers at year-end. Controller reviews for unrecorded invoices. Accruals for services received but not yet invoiced are recorded at month-end based on purchase orders.' },
         {
           id: 'q-ues-pur-6',
           text: '<p>Indicate the entity\'s usual payment terms.</p>',
           answerType: 'multiple-choice',
           options: ['< 30 days', '30-60 days', '60-90 days', '> 90 days'],
           required: false,
-          answer: ''
+          answer: '30-60 days'
         },
-        { id: 'q-ues-pur-7', text: '<p>Describe any purchases and disposals outside the normal course of business.</p>', answerType: 'long-answer', options: [], required: false, answer: '' },
-        { id: 'q-ues-pur-8', text: '<p>Identify any areas in the F/S where material misstatements are likely to arise.</p>', answerType: 'long-answer', options: [], required: false, answer: '' },
+        { id: 'q-ues-pur-7', text: '<p>Describe any purchases and disposals outside the normal course of business.</p>', answerType: 'long-answer', options: [], required: false, answer: 'No purchases or disposals outside the normal course of business during the year. No vessel acquisitions or disposals.' },
+        { id: 'q-ues-pur-8', text: '<p>Identify any areas in the F/S where material misstatements are likely to arise.</p>', answerType: 'long-answer', options: [], required: false, answer: 'AP cut-off for large fuel invoices near year-end; accuracy of accruals for port fees and maintenance services.' },
         {
           id: 'q-ues-pur-9',
           text: '<p>Indicate (based on inquiries made and understanding obtained) if any of the following apply:</p>',
           answerType: 'yes-no-na',
           options: ['Yes', 'No', 'NA'],
           required: false,
-          answer: '',
+          answer: 'No',
+          explanation: 'No significant risk factors identified in purchase transaction controls based on procedures performed.',
           subQuestions: [
-            { id: 'q-ues-pur-9a', text: '<p>Weak controls over cut-off at period end.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
-            { id: 'q-ues-pur-9b', text: '<p>History of misstatements in the purchase of goods and services.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
-            { id: 'q-ues-pur-9c', text: '<p>Personal expenses charged to the business.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' }
+            { id: 'q-ues-pur-9a', text: '<p>Weak controls over cut-off at period end.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: 'No', explanation: 'AP cut-off procedures are in place; vendor statement reconciliations performed at year-end.' },
+            { id: 'q-ues-pur-9b', text: '<p>History of misstatements in the purchase of goods and services.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: 'No', explanation: 'No history of misstatements in purchase transactions. Prior year audit found no AP misstatements.' },
+            { id: 'q-ues-pur-9c', text: '<p>Personal expenses charged to the business.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: 'No', explanation: 'No personal expenses charged to the business identified.' }
           ]
         },
-        { id: 'q-ues-pur-10', text: '<p>Nature of likely misstatements.</p>', answerType: 'long-answer', options: [], required: false, answer: '' }
+        { id: 'q-ues-pur-10', text: '<p>Nature of likely misstatements.</p>', answerType: 'long-answer', options: [], required: false, answer: 'Unrecorded AP liabilities for fuel deliveries near year-end; AP cut-off errors for USD-denominated supplier invoices.' }
       ],
       isExpanded: true
     },
@@ -2382,31 +2456,32 @@ export const generateUnderstandingEntitySystemsChecklist = (): Checklist => {
           answerType: 'long-answer',
           options: [],
           required: false,
-          answer: '',
+          answer: '94 total employees',
           subQuestions: [
-            { id: 'q-ues-pay-1a', text: '<p>Management (number).</p>', answerType: 'long-answer', options: [], required: false, answer: '' },
-            { id: 'q-ues-pay-1b', text: '<p>Supervisors (number).</p>', answerType: 'long-answer', options: [], required: false, answer: '' },
-            { id: 'q-ues-pay-1c', text: '<p>Office staff (number).</p>', answerType: 'long-answer', options: [], required: false, answer: '' },
-            { id: 'q-ues-pay-1d', text: '<p>Operations (number).</p>', answerType: 'long-answer', options: [], required: false, answer: '' }
+            { id: 'q-ues-pay-1a', text: '<p>Management (number).</p>', answerType: 'long-answer', options: [], required: false, answer: '8' },
+            { id: 'q-ues-pay-1b', text: '<p>Supervisors (number).</p>', answerType: 'long-answer', options: [], required: false, answer: '6' },
+            { id: 'q-ues-pay-1c', text: '<p>Office staff (number).</p>', answerType: 'long-answer', options: [], required: false, answer: '12' },
+            { id: 'q-ues-pay-1d', text: '<p>Operations (number).</p>', answerType: 'long-answer', options: [], required: false, answer: '68 (vessel crew, port operations, maintenance technicians)' }
           ]
         },
-        { id: 'q-ues-pay-2', text: '<p>Describe how new hires/terminations are added to/removed from the payroll.</p>', answerType: 'long-answer', options: [], required: false, answer: '' },
-        { id: 'q-ues-pay-3', text: '<p>Document how payroll transactions are recorded in the general ledger.</p>', answerType: 'long-answer', options: [], required: false, answer: '' },
-        { id: 'q-ues-pay-4', text: '<p>Describe how rates of pay and payroll deductions are authorized and updated in the payroll system.</p>', answerType: 'long-answer', options: [], required: false, answer: '' },
+        { id: 'q-ues-pay-2', text: '<p>Describe how new hires/terminations are added to/removed from the payroll.</p>', answerType: 'long-answer', options: [], required: false, answer: 'New hires added to ADP payroll upon receipt of signed employment contract and HR authorization form approved by CFO. Terminations removed on effective date; Controller verifies removal on next payroll run.' },
+        { id: 'q-ues-pay-3', text: '<p>Document how payroll transactions are recorded in the general ledger.</p>', answerType: 'long-answer', options: [], required: false, answer: 'ADP generates a payroll journal uploaded to Sage 300 by the Controller after each pay run. Payroll expenses coded by department. Controller reviews payroll totals before upload.' },
+        { id: 'q-ues-pay-4', text: '<p>Describe how rates of pay and payroll deductions are authorized and updated in the payroll system.</p>', answerType: 'long-answer', options: [], required: false, answer: 'Rate changes require a signed authorization form approved by CFO. Changes entered into ADP by HR administrator and reviewed by Controller before next payroll run. Annual adjustments approved by the board.' },
         {
           id: 'q-ues-pay-5',
           text: '<p>Indicate (based on inquiries made and understanding obtained) if any of the following apply:</p>',
           answerType: 'yes-no-na',
           options: ['Yes', 'No', 'NA'],
           required: false,
-          answer: '',
+          answer: 'No',
+          explanation: 'No payroll risk factors identified. Controls over rates, deductions, and payroll authorization are adequate.',
           subQuestions: [
-            { id: 'q-ues-pay-5a', text: '<p>Rates of pay and payroll deductions not properly authorized or updated.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
-            { id: 'q-ues-pay-5b', text: '<p>History of misstatements in payroll.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
-            { id: 'q-ues-pay-5c', text: '<p>Unauthorized personnel (e.g., family members) included on the payroll.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' }
+            { id: 'q-ues-pay-5a', text: '<p>Rates of pay and payroll deductions not properly authorized or updated.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: 'No', explanation: 'Pay rate authorization process documented and requires CFO approval.' },
+            { id: 'q-ues-pay-5b', text: '<p>History of misstatements in payroll.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: 'No', explanation: 'No history of payroll misstatements. Prior year audit found payroll to be accurate.' },
+            { id: 'q-ues-pay-5c', text: '<p>Unauthorized personnel (e.g., family members) included on the payroll.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: 'No', explanation: 'No unauthorized personnel on payroll. Employee listing reviewed quarterly against HR records.' }
           ]
         },
-        { id: 'q-ues-pay-6', text: '<p>Nature of likely misstatements.</p>', answerType: 'long-answer', options: [], required: false, answer: '' }
+        { id: 'q-ues-pay-6', text: '<p>Nature of likely misstatements.</p>', answerType: 'long-answer', options: [], required: false, answer: 'Payroll cut-off for final pay period of the fiscal year. Risk assessed as low based on controls reviewed.' }
       ],
       isExpanded: true
     },
@@ -2420,44 +2495,45 @@ export const generateUnderstandingEntitySystemsChecklist = (): Checklist => {
           answerType: 'multiple-choice',
           options: ['Perpetual', 'Periodic', 'Other (specify)'],
           required: false,
-          answer: ''
+          answer: 'Other (specify)'
         },
-        { id: 'q-ues-inv-2', text: '<p>Document whether any inventory is held with third parties or at other locations.</p>', answerType: 'long-answer', options: [], required: false, answer: '' },
-        { id: 'q-ues-inv-3', text: '<p>Document whether a physical count of the inventory is performed at period end. If so, attach or cross-reference a copy of the count instructions.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
+        { id: 'q-ues-inv-2', text: '<p>Document whether any inventory is held with third parties or at other locations.</p>', answerType: 'long-answer', options: [], required: false, answer: 'Not applicable. Shipping Line Inc. is a service entity and does not carry merchandise inventory.' },
+        { id: 'q-ues-inv-3', text: '<p>Document whether a physical count of the inventory is performed at period end. If so, attach or cross-reference a copy of the count instructions.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: 'NA', explanation: 'Not applicable — entity does not carry merchandise inventory.' },
         {
           id: 'q-ues-inv-4',
           text: '<p>Describe the entity\'s policy for the costing of inventory, and note any inconsistencies with prior periods.</p>',
           answerType: 'multiple-choice',
           options: ['Job costing', 'Standard costing', 'Weighted average costing', 'Retail method', 'Specific identification'],
           required: false,
-          answer: ''
+          answer: 'Other (not applicable — service entity)'
         },
-        { id: 'q-ues-inv-5', text: '<p>Describe how the entity determines the costs for work in process (including raw materials, labour and overhead) and the extent of completion.</p>', answerType: 'long-answer', options: [], required: false, answer: '' },
+        { id: 'q-ues-inv-5', text: '<p>Describe how the entity determines the costs for work in process (including raw materials, labour and overhead) and the extent of completion.</p>', answerType: 'long-answer', options: [], required: false, answer: 'Not applicable — entity does not carry work in process inventory.' },
         {
           id: 'q-ues-inv-6',
           text: '<p>Describe the entity\'s policy for the transfer of inventory to cost of sales, and note any inconsistencies with prior periods.</p>',
           answerType: 'multiple-choice',
           options: ['Ending inventory based on physical count with an adjustment to cost of sale', 'First in, first out', 'Percentage of completion accounting', 'Specific identification', 'Other (specify)'],
           required: false,
-          answer: ''
+          answer: 'Other (specify)'
         },
-        { id: 'q-ues-inv-7', text: '<p>Describe how the inventory sub-ledger is updated for goods received/sold.</p>', answerType: 'long-answer', options: [], required: false, answer: '' },
-        { id: 'q-ues-inv-8', text: '<p>Describe how inventory transactions are recorded in the general ledger.</p>', answerType: 'long-answer', options: [], required: false, answer: '' },
-        { id: 'q-ues-inv-9', text: '<p>Identify any areas in the F/S where material misstatements are likely to arise.</p>', answerType: 'long-answer', options: [], required: false, answer: '' },
+        { id: 'q-ues-inv-7', text: '<p>Describe how the inventory sub-ledger is updated for goods received/sold.</p>', answerType: 'long-answer', options: [], required: false, answer: 'Not applicable — entity does not maintain an inventory sub-ledger.' },
+        { id: 'q-ues-inv-8', text: '<p>Describe how inventory transactions are recorded in the general ledger.</p>', answerType: 'long-answer', options: [], required: false, answer: 'Not applicable — entity is a service business without merchandise inventory.' },
+        { id: 'q-ues-inv-9', text: '<p>Identify any areas in the F/S where material misstatements are likely to arise.</p>', answerType: 'long-answer', options: [], required: false, answer: 'Not applicable — entity does not carry material inventory.' },
         {
           id: 'q-ues-inv-10',
           text: '<p>Indicate (based on inquiries made and understanding obtained) if any of the following apply:</p>',
           answerType: 'yes-no-na',
           options: ['Yes', 'No', 'NA'],
           required: false,
-          answer: '',
+          answer: 'NA',
+          explanation: 'Not applicable — entity does not carry merchandise inventory.',
           subQuestions: [
-            { id: 'q-ues-inv-10a', text: '<p>Unreconciled differences between physical and book amounts.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
-            { id: 'q-ues-inv-10b', text: '<p>Weak controls over the physical location of inventory or inventory cut-off.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
-            { id: 'q-ues-inv-10c', text: '<p>History of misstatements with regard to inventory balances and the assessment of impairments for slow-moving and obsolete goods.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' }
+            { id: 'q-ues-inv-10a', text: '<p>Unreconciled differences between physical and book amounts.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: 'NA', explanation: 'Not applicable — no inventory held.' },
+            { id: 'q-ues-inv-10b', text: '<p>Weak controls over the physical location of inventory or inventory cut-off.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: 'NA', explanation: 'Not applicable — no inventory held.' },
+            { id: 'q-ues-inv-10c', text: '<p>History of misstatements with regard to inventory balances and the assessment of impairments for slow-moving and obsolete goods.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: 'NA', explanation: 'Not applicable — no inventory held.' }
           ]
         },
-        { id: 'q-ues-inv-11', text: '<p>Nature of likely misstatements.</p>', answerType: 'long-answer', options: [], required: false, answer: '' }
+        { id: 'q-ues-inv-11', text: '<p>Nature of likely misstatements.</p>', answerType: 'long-answer', options: [], required: false, answer: 'Not applicable. Entity does not carry material inventory balances.' }
       ],
       isExpanded: true
     },
@@ -2471,31 +2547,32 @@ export const generateUnderstandingEntitySystemsChecklist = (): Checklist => {
           answerType: 'long-answer',
           options: [],
           required: false,
-          answer: '',
+          answer: 'See sub-questions below for significant accounting estimates used in financial reporting.',
           subQuestions: [
-            { id: 'q-ues-est-1a', text: '<p>Inventory obsolescence.</p>', answerType: 'long-answer', options: [], required: false, answer: '' },
-            { id: 'q-ues-est-1b', text: '<p>Allowance for doubtful accounts.</p>', answerType: 'long-answer', options: [], required: false, answer: '' },
-            { id: 'q-ues-est-1c', text: '<p>Loan impairments.</p>', answerType: 'long-answer', options: [], required: false, answer: '' },
-            { id: 'q-ues-est-1d', text: '<p>Fair values.</p>', answerType: 'long-answer', options: [], required: false, answer: '' },
-            { id: 'q-ues-est-1e', text: '<p>Useful lives of assets.</p>', answerType: 'long-answer', options: [], required: false, answer: '' },
-            { id: 'q-ues-est-1f', text: '<p>Other estimates.</p>', answerType: 'long-answer', options: [], required: false, answer: '' }
+            { id: 'q-ues-est-1a', text: '<p>Inventory obsolescence.</p>', answerType: 'long-answer', options: [], required: false, answer: 'Not applicable — entity does not carry merchandise inventory.' },
+            { id: 'q-ues-est-1b', text: '<p>Allowance for doubtful accounts.</p>', answerType: 'long-answer', options: [], required: false, answer: 'Allowance estimated using specific identification for balances >90 days and 1.5% general provision on remaining AR. Total allowance at March 31, 2024: $46K.' },
+            { id: 'q-ues-est-1c', text: '<p>Loan impairments.</p>', answerType: 'long-answer', options: [], required: false, answer: 'Not applicable — entity does not hold loan receivables.' },
+            { id: 'q-ues-est-1d', text: '<p>Fair values.</p>', answerType: 'long-answer', options: [], required: false, answer: 'Not applicable — entity has no financial instruments measured at fair value.' },
+            { id: 'q-ues-est-1e', text: '<p>Useful lives of assets.</p>', answerType: 'long-answer', options: [], required: false, answer: 'Vessels depreciated on straight-line basis over 20-25 years with residual values of 10% of cost. No changes to useful life estimates this year.' },
+            { id: 'q-ues-est-1f', text: '<p>Other estimates.</p>', answerType: 'long-answer', options: [], required: false, answer: 'Accrued revenue for voyages in progress at year-end estimated based on percentage of voyage days elapsed. Accrued dry-dock maintenance costs estimated based on scheduled dry-dock events.' }
           ]
         },
-        { id: 'q-ues-est-2', text: '<p>Identify any areas in the F/S where material misstatements are likely to arise.</p>', answerType: 'long-answer', options: [], required: false, answer: '' },
+        { id: 'q-ues-est-2', text: '<p>Identify any areas in the F/S where material misstatements are likely to arise.</p>', answerType: 'long-answer', options: [], required: false, answer: 'Accrued revenue for voyages in progress (cut-off risk); vessel useful lives and impairment; allowance for doubtful accounts.' },
         {
           id: 'q-ues-est-3',
           text: '<p>Indicate (based on inquiries made and understanding obtained) if any of the following apply:</p>',
           answerType: 'yes-no-na',
           options: ['Yes', 'No', 'NA'],
           required: false,
-          answer: '',
+          answer: 'Yes',
+          explanation: 'Significant estimates used in financial reporting — see sub-questions below.',
           subQuestions: [
-            { id: 'q-ues-est-3a', text: '<p>Significant accounting estimates used in financial reporting.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
-            { id: 'q-ues-est-3b', text: '<p>Unreliable or inappropriate management assumptions/calculations used in preparing accounting estimates.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
-            { id: 'q-ues-est-3c', text: '<p>Significant accounting estimates not prepared in accordance with the applicable financial reporting framework.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' }
+            { id: 'q-ues-est-3a', text: '<p>Significant accounting estimates used in financial reporting.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: 'Yes', explanation: 'Significant estimates: accrued revenue (voyage cut-off), vessel depreciation and impairment, allowance for doubtful accounts.' },
+            { id: 'q-ues-est-3b', text: '<p>Unreliable or inappropriate management assumptions/calculations used in preparing accounting estimates.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: 'No', explanation: 'Management assumptions appear reasonable and consistent with prior year. No indication of bias.' },
+            { id: 'q-ues-est-3c', text: '<p>Significant accounting estimates not prepared in accordance with the applicable financial reporting framework.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: 'No', explanation: 'Estimates prepared in accordance with ASPE. No unusual departures from the applicable framework.' }
           ]
         },
-        { id: 'q-ues-est-4', text: '<p>Nature of likely misstatements.</p>', answerType: 'long-answer', options: [], required: false, answer: '' }
+        { id: 'q-ues-est-4', text: '<p>Nature of likely misstatements.</p>', answerType: 'long-answer', options: [], required: false, answer: 'Overstatement of accrued revenue at year-end; vessel depreciation errors; inadequate allowance for doubtful accounts.' }
       ],
       isExpanded: true
     },
@@ -2509,33 +2586,34 @@ export const generateUnderstandingEntitySystemsChecklist = (): Checklist => {
           answerType: 'long-answer',
           options: [],
           required: false,
-          answer: '',
+          answer: 'See sub-questions for related party details.',
           subQuestions: [
-            { id: 'q-ues-rel-1a', text: '<p>A list of related parties.</p>', answerType: 'long-answer', options: [], required: false, answer: '' },
-            { id: 'q-ues-rel-1b', text: '<p>The nature of related-party relationships.</p>', answerType: 'long-answer', options: [], required: false, answer: '' },
-            { id: 'q-ues-rel-1c', text: '<p>The nature of related-party transactions occurring in the period.</p>', answerType: 'long-answer', options: [], required: false, answer: '' }
+            { id: 'q-ues-rel-1a', text: '<p>A list of related parties.</p>', answerType: 'long-answer', options: [], required: false, answer: 'M. Patel (CEO/Director, 60% shareholder), J. Singh (Director, 40% shareholder), Patel Holdings Inc. (company owned by M. Patel).' },
+            { id: 'q-ues-rel-1b', text: '<p>The nature of related-party relationships.</p>', answerType: 'long-answer', options: [], required: false, answer: 'M. Patel: CEO and majority shareholder. J. Singh: Director and minority shareholder. Patel Holdings Inc. owns the head office premises leased to Shipping Line Inc.' },
+            { id: 'q-ues-rel-1c', text: '<p>The nature of related-party transactions occurring in the period.</p>', answerType: 'long-answer', options: [], required: false, answer: 'Rental payments to Patel Holdings Inc. for head office premises: $120K for the year ($10K/month). Terms confirmed as at market rates.' }
           ]
         },
-        { id: 'q-ues-rel-2', text: '<p>Describe how the entity ensures that transactions occurring around period end have been recorded in the correct period.</p>', answerType: 'long-answer', options: [], required: false, answer: '' },
-        { id: 'q-ues-rel-3', text: '<p>Describe any related-party transactions outside the normal course of business during the reporting period.</p>', answerType: 'long-answer', options: [], required: false, answer: '' },
-        { id: 'q-ues-rel-4', text: '<p>Describe the effects or possible implications of the entity\'s transactions/relationships with related parties.</p>', answerType: 'long-answer', options: [], required: false, answer: '' },
-        { id: 'q-ues-rel-5', text: '<p>Describe any indicators of possible payment or amount receivable from related parties.</p>', answerType: 'long-answer', options: [], required: false, answer: '' },
-        { id: 'q-ues-rel-6', text: '<p>Identify any areas in the F/S where material misstatements are likely to arise.</p>', answerType: 'long-answer', options: [], required: false, answer: '' },
+        { id: 'q-ues-rel-2', text: '<p>Describe how the entity ensures that transactions occurring around period end have been recorded in the correct period.</p>', answerType: 'long-answer', options: [], required: false, answer: 'Rent payments are made monthly on a consistent basis. No unusual related-party transactions near year-end identified.' },
+        { id: 'q-ues-rel-3', text: '<p>Describe any related-party transactions outside the normal course of business during the reporting period.</p>', answerType: 'long-answer', options: [], required: false, answer: 'No related-party transactions outside the normal course of business. All transactions relate to the ongoing head office lease.' },
+        { id: 'q-ues-rel-4', text: '<p>Describe the effects or possible implications of the entity\'s transactions/relationships with related parties.</p>', answerType: 'long-answer', options: [], required: false, answer: 'Rent expense of $120K per year at market terms. Disclosure required under ASPE. No unusual implications on financial reporting.' },
+        { id: 'q-ues-rel-5', text: '<p>Describe any indicators of possible payment or amount receivable from related parties.</p>', answerType: 'long-answer', options: [], required: false, answer: 'No amounts receivable from related parties. All related-party obligations are current.' },
+        { id: 'q-ues-rel-6', text: '<p>Identify any areas in the F/S where material misstatements are likely to arise.</p>', answerType: 'long-answer', options: [], required: false, answer: 'Completeness of related-party disclosures; accuracy of rent expense and related party payable balance.' },
         {
           id: 'q-ues-rel-7',
           text: '<p>Indicate (based on inquiries made and understanding obtained) if any of the following apply:</p>',
           answerType: 'yes-no-na',
           options: ['Yes', 'No', 'NA'],
           required: false,
-          answer: '',
+          answer: 'No',
+          explanation: 'No related-party risk factors identified. Related-party transactions are transparent, at market terms, and appropriately disclosed.',
           subQuestions: [
-            { id: 'q-ues-rel-7a', text: '<p>History of undisclosed related-party transactions.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
-            { id: 'q-ues-rel-7b', text: '<p>No obvious purpose for some related-party relationships.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
-            { id: 'q-ues-rel-7c', text: '<p>Related-party transactions outside of the normal course of business.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
-            { id: 'q-ues-rel-7d', text: '<p>Related-party transactions that occurred prior to period end are reversed after the period end.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' }
+            { id: 'q-ues-rel-7a', text: '<p>History of undisclosed related-party transactions.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: 'No', explanation: 'Management provided a complete list of related parties. No undisclosed transactions identified.' },
+            { id: 'q-ues-rel-7b', text: '<p>No obvious purpose for some related-party relationships.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: 'No', explanation: 'All related-party relationships have a clear business purpose (head office premises lease at market terms).' },
+            { id: 'q-ues-rel-7c', text: '<p>Related-party transactions outside of the normal course of business.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: 'No', explanation: 'All related-party transactions are within the normal course of business.' },
+            { id: 'q-ues-rel-7d', text: '<p>Related-party transactions that occurred prior to period end are reversed after the period end.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: 'No', explanation: 'No year-end related-party transactions reversed in subsequent periods.' }
           ]
         },
-        { id: 'q-ues-rel-8', text: '<p>Nature of likely misstatements.</p>', answerType: 'long-answer', options: [], required: false, answer: '' }
+        { id: 'q-ues-rel-8', text: '<p>Nature of likely misstatements.</p>', answerType: 'long-answer', options: [], required: false, answer: 'Incomplete disclosure of related-party transactions in the notes to the financial statements.' }
       ],
       isExpanded: true
     },
@@ -2543,24 +2621,25 @@ export const generateUnderstandingEntitySystemsChecklist = (): Checklist => {
       id: 'section-ues-journal',
       title: 'Understanding Journal Entries/Adjustments',
       questions: [
-        { id: 'q-ues-jrn-1', text: '<p>Describe how non-recurring journal entries or adjustments are initiated and authorized.</p>', answerType: 'long-answer', options: [], required: false, answer: '' },
-        { id: 'q-ues-jrn-2', text: '<p>Describe any significant journal entries or adjustments made during the period.</p>', answerType: 'long-answer', options: [], required: false, answer: '' },
-        { id: 'q-ues-jrn-3', text: '<p>Describe any matters that required adjustments in the F/S of prior periods.</p>', answerType: 'long-answer', options: [], required: false, answer: '' },
-        { id: 'q-ues-jrn-4', text: '<p>Identify any areas in the F/S where material misstatements are likely to arise.</p>', answerType: 'long-answer', options: [], required: false, answer: '' },
+        { id: 'q-ues-jrn-1', text: '<p>Describe how non-recurring journal entries or adjustments are initiated and authorized.</p>', answerType: 'long-answer', options: [], required: false, answer: 'Non-recurring journal entries prepared by Controller with supporting documentation and reviewed and approved by CFO before posting. All entries require description of purpose and preparer/approver sign-off.' },
+        { id: 'q-ues-jrn-2', text: '<p>Describe any significant journal entries or adjustments made during the period.</p>', answerType: 'long-answer', options: [], required: false, answer: 'Three adjusting journal entries proposed by audit team: (1) accrued revenue cut-off $45K, (2) depreciation correction $12K, (3) deferred revenue reclassification $28K. All accepted by management.' },
+        { id: 'q-ues-jrn-3', text: '<p>Describe any matters that required adjustments in the F/S of prior periods.</p>', answerType: 'long-answer', options: [], required: false, answer: 'No prior period restatements. Prior year audit resulted in three immaterial corrected misstatements, all addressed in current year procedures.' },
+        { id: 'q-ues-jrn-4', text: '<p>Identify any areas in the F/S where material misstatements are likely to arise.</p>', answerType: 'long-answer', options: [], required: false, answer: 'Year-end accrual entries for voyage revenue and dry-dock costs; USD translation adjustments.' },
         {
           id: 'q-ues-jrn-5',
           text: '<p>Indicate (based on inquiries made and understanding obtained) if any of the following apply:</p>',
           answerType: 'yes-no-na',
           options: ['Yes', 'No', 'NA'],
           required: false,
-          answer: '',
+          answer: 'No',
+          explanation: 'No journal entry risk factors identified. Authorization controls over journal entries are adequate.',
           subQuestions: [
-            { id: 'q-ues-jrn-5a', text: '<p>History of inappropriate/unauthorized journal entries/adjustments during the period.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
-            { id: 'q-ues-jrn-5b', text: '<p>History of journal entries being made to unusual or seldom-used accounts.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
-            { id: 'q-ues-jrn-5c', text: '<p>Prior period uncorrected misstatements remain uncorrected in the current period.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' }
+            { id: 'q-ues-jrn-5a', text: '<p>History of inappropriate/unauthorized journal entries/adjustments during the period.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: 'No', explanation: 'Authorization process for journal entries is documented and reviewed. No inappropriate entries identified.' },
+            { id: 'q-ues-jrn-5b', text: '<p>History of journal entries being made to unusual or seldom-used accounts.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: 'No', explanation: 'Journal entries made to standard accounts. No entries to unusual accounts identified.' },
+            { id: 'q-ues-jrn-5c', text: '<p>Prior period uncorrected misstatements remain uncorrected in the current period.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: 'No', explanation: 'Prior year misstatements were corrected. No uncorrected misstatements remain.' }
           ]
         },
-        { id: 'q-ues-jrn-6', text: '<p>Nature of likely misstatements.</p>', answerType: 'long-answer', options: [], required: false, answer: '' }
+        { id: 'q-ues-jrn-6', text: '<p>Nature of likely misstatements.</p>', answerType: 'long-answer', options: [], required: false, answer: 'Incorrect period allocation of accrual entries; USD translation errors in year-end adjustments.' }
       ],
       isExpanded: true
     },
@@ -2568,35 +2647,37 @@ export const generateUnderstandingEntitySystemsChecklist = (): Checklist => {
       id: 'section-ues-going-concern',
       title: 'Understanding Going-Concern Uncertainties',
       questions: [
-        { id: 'q-ues-gc-1', text: '<p>Inquire whether management has made an assessment of its ability to continue as a going concern. If so, document the assessment period used by management.</p>', answerType: 'long-answer', options: [], required: false, answer: '' },
+        { id: 'q-ues-gc-1', text: '<p>Inquire whether management has made an assessment of its ability to continue as a going concern. If so, document the assessment period used by management.</p>', answerType: 'long-answer', options: [], required: false, answer: 'Management assessed ability to continue as going concern for minimum 12 months from March 31, 2025. Concluded no material uncertainty exists, supported by positive operating cash flows, comfortable covenant headroom, and confirmed credit facility availability.' },
         {
           id: 'q-ues-gc-2',
           text: '<p>Inquire about any other events or uncertainties that could cause doubt about the entity\'s ability to continue as a going concern. Consider:</p>',
           answerType: 'yes-no-na',
           options: ['Yes', 'No', 'NA'],
           required: false,
-          answer: '',
+          answer: 'No',
+          explanation: 'No going concern events or uncertainties identified. Entity is financially stable.',
           subQuestions: [
-            { id: 'q-ues-gc-2a', text: '<p>Financing/cash flow challenges.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
-            { id: 'q-ues-gc-2b', text: '<p>Adverse market conditions, trends or events.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
-            { id: 'q-ues-gc-2c', text: '<p>Regulatory or legal challenges.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' }
+            { id: 'q-ues-gc-2a', text: '<p>Financing/cash flow challenges.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: 'No', explanation: 'No financing or cash flow challenges. Entity has positive operating cash flows and undrawn credit line.' },
+            { id: 'q-ues-gc-2b', text: '<p>Adverse market conditions, trends or events.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: 'No', explanation: 'No adverse market conditions that cast doubt on the entity going concern status.' },
+            { id: 'q-ues-gc-2c', text: '<p>Regulatory or legal challenges.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: 'No', explanation: 'No regulatory or legal challenges. All licenses current and no proceedings outstanding.' }
           ]
         },
-        { id: 'q-ues-gc-3', text: '<p>Identify any areas in the F/S where material misstatements are likely to arise.</p>', answerType: 'long-answer', options: [], required: false, answer: '' },
+        { id: 'q-ues-gc-3', text: '<p>Identify any areas in the F/S where material misstatements are likely to arise.</p>', answerType: 'long-answer', options: [], required: false, answer: 'No going concern concerns identified. All going concern indicators assessed and found to be absent.' },
         {
           id: 'q-ues-gc-4',
           text: '<p>Indicate (based on inquiries made and understanding obtained) if any of the following apply:</p>',
           answerType: 'yes-no-na',
           options: ['Yes', 'No', 'NA'],
           required: false,
-          answer: '',
+          answer: 'No',
+          explanation: 'No going concern risk factors identified based on procedures performed.',
           subQuestions: [
-            { id: 'q-ues-gc-4a', text: '<p>Bias in management estimates.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
-            { id: 'q-ues-gc-4b', text: '<p>Unrecorded accruals.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
-            { id: 'q-ues-gc-4c', text: '<p>Unremitted payroll deductions/government remittances.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' }
+            { id: 'q-ues-gc-4a', text: '<p>Bias in management estimates.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: 'No', explanation: 'No bias in management estimates. Estimates prepared consistently with prior year.' },
+            { id: 'q-ues-gc-4b', text: '<p>Unrecorded accruals.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: 'No', explanation: 'No unrecorded accruals identified. Year-end accrual review completed.' },
+            { id: 'q-ues-gc-4c', text: '<p>Unremitted payroll deductions/government remittances.</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: 'No', explanation: 'CRA payroll remittances are current. No outstanding government remittances.' }
           ]
         },
-        { id: 'q-ues-gc-5', text: '<p>Nature of likely misstatements.</p>', answerType: 'long-answer', options: [], required: false, answer: '' }
+        { id: 'q-ues-gc-5', text: '<p>Nature of likely misstatements.</p>', answerType: 'long-answer', options: [], required: false, answer: 'No going concern related misstatement risks identified. Entity is financially stable with positive operating cash flows.' }
       ],
       isExpanded: true
     }
@@ -3939,9 +4020,9 @@ const generateTaxCompletionChecklist = (): Checklist => {
 
 // Audit Completion (310) template
 export const generateAuditCompletionChecklist = (): Checklist => {
-  const q = (id: string, text: string, subQuestions?: Question[]): Question => ({
+  const q = (id: string, text: string, subQuestions?: Question[], answer = '', explanation = '', reference = ''): Question => ({
     id, text, answerType: 'yes-no-na' as const, options: ['Yes', 'No', 'NA'],
-    required: false, answer: '', ...(subQuestions ? { subQuestions } : {})
+    required: false, answer, explanation, reference, ...(subQuestions ? { subQuestions } : {})
   });
 
   const sections: Section[] = [
@@ -3949,17 +4030,17 @@ export const generateAuditCompletionChecklist = (): Checklist => {
       id: 'section-ac-1',
       title: 'Preliminary Activities',
       questions: [
-        q('ac-q3', '<p>Does the audit file contain appropriate documentation related to relevant ethical requirements, and acceptance and continuance of the audit engagement? The appointment of an engagement quality control reviewer, where applicable?</p>'),
+        q('ac-q3', '<p>Does the audit file contain appropriate documentation related to relevant ethical requirements, and acceptance and continuance of the audit engagement? The appointment of an engagement quality control reviewer, where applicable?</p>', undefined, 'Yes', '<p>Audit file contains signed independence confirmations, client acceptance checklist, and engagement letter. No EQCR required for this engagement.</p>', 'W/P Ref: AC-01'),
         q('ac-q6', '<p>Are the terms of engagement agreed with management and is a signed engagement letter included in the audit file?</p>', [
-          q('ac-q6a', '<p>Terms of engagement (engagement letter)?</p>'),
-          q('ac-q6b', '<p>The following communications with TCWG? Where applicable, the planned scope and timing of the audit, including significant risks identified?</p>'),
-          q('ac-q6c', '<p>A description of the audit team\'s responsibilities?</p>'),
-          q('ac-q6d', '<p>The form, timing and expected general content of communications?</p>'),
-          q('ac-q6e', '<p>Relevant ethical requirements (including those related to independence) applied?</p>'),
-          q('ac-q6f', '<p>For listed entities, an independence letter?</p>'),
-          q('ac-q6g', '<p>Where applicable, a letter of instructions to a component auditor or to the auditor\'s expert?</p>'),
+          q('ac-q6a', '<p>Terms of engagement (engagement letter)?</p>', undefined, 'Yes', '<p>Signed engagement letter on file, dated March 1, 2024, signed by the CEO of Shipping Line Inc. and the engagement partner J. Williams.</p>', 'W/P Ref: AC-02'),
+          q('ac-q6b', '<p>The following communications with TCWG? Where applicable, the planned scope and timing of the audit, including significant risks identified?</p>', undefined, 'Yes', '<p>Planning communication delivered to the Board of Directors on April 7, 2024, including planned scope, timing, significant risks identified (revenue recognition, vessel impairment, FX), and partner responsibility.</p>', 'W/P Ref: AC-03'),
+          q('ac-q6c', '<p>A description of the audit team\'s responsibilities?</p>', undefined, 'Yes'),
+          q('ac-q6d', '<p>The form, timing and expected general content of communications?</p>', undefined, 'Yes'),
+          q('ac-q6e', '<p>Relevant ethical requirements (including those related to independence) applied?</p>', undefined, 'Yes'),
+          q('ac-q6f', '<p>For listed entities, an independence letter?</p>', undefined, 'NA', '<p>Shipping Line Inc. is not a listed entity. Independence letter not required.</p>'),
+          q('ac-q6g', '<p>Where applicable, a letter of instructions to a component auditor or to the auditor\'s expert?</p>', undefined, 'NA', '<p>No component auditor or auditor\'s expert used in this engagement.</p>'),
         ]),
-        q('ac-q9', '<p>If applicable, is the agreement with the auditor\'s expert signed and included in the audit file?</p>'),
+        q('ac-q9', '<p>If applicable, is the agreement with the auditor\'s expert signed and included in the audit file?</p>', undefined, 'NA', '<p>No auditor\'s expert engaged for this audit.</p>'),
       ],
       isExpanded: true
     },
@@ -3967,21 +4048,21 @@ export const generateAuditCompletionChecklist = (): Checklist => {
       id: 'section-ac-2',
       title: 'Planning and Risk Assessment',
       questions: [
-        q('ac-q15', '<p>Have the overall audit strategy and audit plan been documented, reflecting matters raised in audit team discussions?</p>'),
-        q('ac-q18', '<p>Have overall materiality, performance materiality, materiality for specific circumstances (if applicable) and the clearly trivial misstatement threshold been documented, including the factors considered in determining materiality amounts?</p>'),
+        q('ac-q15', '<p>Have the overall audit strategy and audit plan been documented, reflecting matters raised in audit team discussions?</p>', undefined, 'Yes', '<p>Overall audit strategy and audit plan documented and approved by J. Williams (partner) prior to fieldwork. Includes responses to three significant risks identified.</p>', 'W/P Ref: PL-01'),
+        q('ac-q18', '<p>Have overall materiality, performance materiality, materiality for specific circumstances (if applicable) and the clearly trivial misstatement threshold been documented, including the factors considered in determining materiality amounts?</p>', undefined, 'Yes', '<p>Materiality documented: overall $125,000 (1% of revenue $12.5M), performance materiality $87,500, clearly trivial threshold $6,250. Rationale for benchmark selection documented.</p>', 'W/P Ref: MAT-01'),
         q('ac-q24', '<p>Have all the planned risk assessment procedures been performed and results documented, including the understanding of:</p>', [
-          q('ac-q24a', '<p>The entity and its environment, the AFRF and how inherent risk factors affect susceptibility of assertions to misstatement?</p>'),
-          q('ac-q24b', '<p>The entity\'s control environment?</p>'),
-          q('ac-q24c', '<p>The entity\'s risk assessment process?</p>'),
-          q('ac-q24d', '<p>The entity\'s process for monitoring the system of internal control?</p>'),
-          q('ac-q24e', '<p>The entity\'s information system and communication?</p>'),
+          q('ac-q24a', '<p>The entity and its environment, the AFRF and how inherent risk factors affect susceptibility of assertions to misstatement?</p>', undefined, 'Yes', '<p>Understanding of Shipping Line Inc.\'s maritime freight business, ASPE framework, and inherent risk factors (revenue recognition, vessel values, USD exposure) documented in RA working papers.</p>', 'W/P Ref: RA-01'),
+          q('ac-q24b', '<p>The entity\'s control environment?</p>', undefined, 'Yes', '<p>Control environment documented through management inquiry, walkthrough of key control activities, and review of organizational structure and oversight by the Board.</p>', 'W/P Ref: RA-02'),
+          q('ac-q24c', '<p>The entity\'s risk assessment process?</p>', undefined, 'Yes'),
+          q('ac-q24d', '<p>The entity\'s process for monitoring the system of internal control?</p>', undefined, 'Yes'),
+          q('ac-q24e', '<p>The entity\'s information system and communication?</p>', undefined, 'Yes'),
         ]),
         q('ac-q27', '<p>Have the following been documented:</p>', [
-          q('ac-q27a', '<p>Engagement team discussion, including decisions reached regarding fraud?</p>'),
-          q('ac-q27b', '<p>If applicable, rebuttal of presumed fraud risk related to revenue recognition?</p>'),
-          q('ac-q27c', '<p>The assessment of RMMs (due to fraud and error) identified at the F/S level and at the assertion level?</p>'),
-          q('ac-q27d', '<p>The evaluation of identified controls in the control activities component, including that address RMMs due to fraud?</p>'),
-          q('ac-q27e', '<p>The rationale for significant judgments made?</p>'),
+          q('ac-q27a', '<p>Engagement team discussion, including decisions reached regarding fraud?</p>', undefined, 'Yes', '<p>Engagement team discussion held April 7, 2024. Fraud risk considered — management override identified as relevant risk. Revenue recognition presumed risk evaluated and not rebutted.</p>', 'W/P Ref: RA-03'),
+          q('ac-q27b', '<p>If applicable, rebuttal of presumed fraud risk related to revenue recognition?</p>', undefined, 'No', '<p>Revenue recognition fraud risk not rebutted — treated as significant risk throughout the audit with specific substantive procedures designed to address it.</p>'),
+          q('ac-q27c', '<p>The assessment of RMMs (due to fraud and error) identified at the F/S level and at the assertion level?</p>', undefined, 'Yes', '<p>RMM assessment documented at F/S level (management override) and assertion level (revenue completeness/cutoff, vessel impairment valuation, USD translation accuracy).</p>', 'W/P Ref: RA-04'),
+          q('ac-q27d', '<p>The evaluation of identified controls in the control activities component, including that address RMMs due to fraud?</p>', undefined, 'Yes'),
+          q('ac-q27e', '<p>The rationale for significant judgments made?</p>', undefined, 'Yes', '<p>Significant judgment rationale documented for: vessel impairment assessment, revenue cutoff determination, and allowance for doubtful accounts estimation.</p>'),
         ]),
       ],
       isExpanded: true
@@ -3991,28 +4072,28 @@ export const generateAuditCompletionChecklist = (): Checklist => {
       title: 'Responding to Risk',
       questions: [
         q('ac-q30', '<p>Have the planned further audit procedures been performed and the results documented, including:</p>', [
-          q('ac-q30a', '<p>The overall responses to the RMMs, including fraud, at the F/S level?</p>'),
-          q('ac-q30b', '<p>The linkage between the overall responses to the RMMs, including fraud, at the assertion level?</p>'),
-          q('ac-q30c', '<p>The nature, timing and extent of further procedures performed, including those designed to address the risk of management override of controls and significant risks?</p>'),
-          q('ac-q30d', '<p>The linkage of the further audit procedures to the RMMs at the assertion level?</p>'),
-          q('ac-q30e', '<p>Unpredictable procedures addressing fraud risks?</p>'),
-          q('ac-q30f', '<p>Procedures addressing identified or suspected non-compliance with laws and regulations, including significant professional judgments and conclusions reached?</p>'),
-          q('ac-q30g', '<p>Response(s) if management has not taken appropriate steps to understand and address estimation uncertainty?</p>'),
-          q('ac-q30h', '<p>Evaluation of the implications of any indicators of possible management bias related to accounting estimates?</p>'),
-          q('ac-q30i', '<p>Significant judgments made relating to whether accounting estimates and related disclosures are reasonable?</p>'),
-          q('ac-q30j', '<p>How any inconsistencies regarding a significant matter were addressed?</p>'),
-          q('ac-q30k', '<p>The reasoning for departures from CAS requirements and how alternative procedures performed achieved the required objective?</p>'),
+          q('ac-q30a', '<p>The overall responses to the RMMs, including fraud, at the F/S level?</p>', undefined, 'Yes'),
+          q('ac-q30b', '<p>The linkage between the overall responses to the RMMs, including fraud, at the assertion level?</p>', undefined, 'Yes'),
+          q('ac-q30c', '<p>The nature, timing and extent of further procedures performed, including those designed to address the risk of management override of controls and significant risks?</p>', undefined, 'Yes', '<p>NTE of all further audit procedures documented in working papers. Journal entry testing and unpredictability measures documented to address management override risk.</p>'),,
+          q('ac-q30d', '<p>The linkage of the further audit procedures to the RMMs at the assertion level?</p>', undefined, 'Yes'),
+          q('ac-q30e', '<p>Unpredictable procedures addressing fraud risks?</p>', undefined, 'Yes', '<p>Unannounced inventory observation (February 2024) and expansion of AR confirmation scope documented as unpredictable procedures.</p>', 'W/P Ref: PL-02'),
+          q('ac-q30f', '<p>Procedures addressing identified or suspected non-compliance with laws and regulations, including significant professional judgments and conclusions reached?</p>', undefined, 'Yes', '<p>Management inquired regarding compliance with Transport Canada regulations and environmental requirements. No non-compliance identified during the audit.</p>'),
+          q('ac-q30g', '<p>Response(s) if management has not taken appropriate steps to understand and address estimation uncertainty?</p>', undefined, 'NA', '<p>Management has taken appropriate steps to understand and address estimation uncertainty for all significant estimates, particularly vessel useful lives and depreciation rates.</p>'),
+          q('ac-q30h', '<p>Evaluation of the implications of any indicators of possible management bias related to accounting estimates?</p>', undefined, 'Yes', '<p>No indicators of management bias identified. Vessel depreciation rates, allowance for doubtful accounts, and revenue estimates assessed as reasonable and consistent with industry norms.</p>'),
+          q('ac-q30i', '<p>Significant judgments made relating to whether accounting estimates and related disclosures are reasonable?</p>', undefined, 'Yes'),
+          q('ac-q30j', '<p>How any inconsistencies regarding a significant matter were addressed?</p>', undefined, 'NA', '<p>No significant inconsistencies identified during the audit.</p>'),
+          q('ac-q30k', '<p>The reasoning for departures from CAS requirements and how alternative procedures performed achieved the required objective?</p>', undefined, 'NA', '<p>No departures from CAS requirements in this engagement.</p>'),
         ]),
-        q('ac-q40', '<p>Where deviations were found in substantive (sampling) tests, was the nature and cause investigated?</p>'),
-        q('ac-q50', '<p>If audit evidence about the operating effectiveness of controls obtained in previous audits was used in the current period audit, does the audit documentation include the conclusions reached about relying on those controls?</p>'),
-        q('ac-q55', '<p>Have all identified related parties and the nature of the related party relationships been included in the audit documentation?</p>'),
+        q('ac-q40', '<p>Where deviations were found in substantive (sampling) tests, was the nature and cause investigated?</p>', undefined, 'Yes', '<p>One deviation found in AP three-way match TOC testing. Nature and cause investigated — isolated clerical error, not indicative of fraud or systemic control failure. No sampling deviations in substantive tests.</p>'),
+        q('ac-q50', '<p>If audit evidence about the operating effectiveness of controls obtained in previous audits was used in the current period audit, does the audit documentation include the conclusions reached about relying on those controls?</p>', undefined, 'NA', '<p>No reliance placed on prior year control testing. All controls tested in the current year.</p>'),
+        q('ac-q55', '<p>Have all identified related parties and the nature of the related party relationships been included in the audit documentation?</p>', undefined, 'Yes', '<p>Related parties documented: majority shareholder (individual), related management services company, and related vessel charter company. All relationships and transactions documented in RPT working papers.</p>', 'W/P Ref: RPT-01'),
         q('ac-q60', '<p>If fraud was identified or suspected, has it been determined whether law, regulation or relevant ethical requirements:</p>', [
-          q('ac-q60a', '<p>Require reporting to an appropriate authority outside the entity?</p>'),
-          q('ac-q60b', '<p>Establish responsibilities under which reporting to an appropriate authority outside the entity may be appropriate in the circumstances?</p>'),
+          q('ac-q60a', '<p>Require reporting to an appropriate authority outside the entity?</p>', undefined, 'NA', '<p>No fraud identified or suspected during the audit. This question is not applicable.</p>'),
+          q('ac-q60b', '<p>Establish responsibilities under which reporting to an appropriate authority outside the entity may be appropriate in the circumstances?</p>', undefined, 'NA', '<p>No fraud identified or suspected. Not applicable.</p>'),
         ]),
-        q('ac-q65', '<p>Have any consultations undertaken during the engagement been documented, including the relevant nature, scope, conclusions and implementation of those conclusions?</p>'),
-        q('ac-q66', '<p>If the work of the entity\'s internal audit function was used, have the documentation requirements in CAS 610.36-37 been reviewed and included in the audit file?</p>'),
-        q('ac-q67', '<p>If any possible material misstatements in the comparative information were discovered, have additional audit procedures been performed to obtain sufficient appropriate audit evidence to determine whether a material misstatement exists?</p>'),
+        q('ac-q65', '<p>Have any consultations undertaken during the engagement been documented, including the relevant nature, scope, conclusions and implementation of those conclusions?</p>', undefined, 'NA', '<p>No formal consultations undertaken during this engagement. All matters resolved by the engagement team and partner.</p>'),
+        q('ac-q66', '<p>If the work of the entity\'s internal audit function was used, have the documentation requirements in CAS 610.36-37 been reviewed and included in the audit file?</p>', undefined, 'NA', '<p>Shipping Line Inc. does not have an internal audit function. CAS 610 not applicable.</p>'),
+        q('ac-q67', '<p>If any possible material misstatements in the comparative information were discovered, have additional audit procedures been performed to obtain sufficient appropriate audit evidence to determine whether a material misstatement exists?</p>', undefined, 'NA', '<p>No possible material misstatements in the comparative information (March 31, 2023) were identified.</p>'),
       ],
       isExpanded: true
     },
@@ -4021,31 +4102,31 @@ export const generateAuditCompletionChecklist = (): Checklist => {
       title: 'Communications with Those Charged with Governance, Management and Others',
       questions: [
         q('ac-q71', '<p>Have the following been communicated to management, TCWG, regulators and others:</p>', [
-          q('ac-q71a', '<p>Identified fraud or indications of fraud?</p>'),
-          q('ac-q71b', '<p>Identified or suspected non-compliance with laws and regulations?</p>'),
-          q('ac-q71c', '<p>Other significant audit matters?</p>'),
+          q('ac-q71a', '<p>Identified fraud or indications of fraud?</p>', undefined, 'NA', '<p>No fraud identified during the audit.</p>'),
+          q('ac-q71b', '<p>Identified or suspected non-compliance with laws and regulations?</p>', undefined, 'NA', '<p>No non-compliance with laws or regulations identified during the audit.</p>'),
+          q('ac-q71c', '<p>Other significant audit matters?</p>', undefined, 'Yes', '<p>Three adjusting journal entries communicated to management and included in TCWG final communication letter.</p>'),,
         ]),
         q('ac-q73', '<p>Have the following been communicated to management:</p>', [
-          q('ac-q73a', '<p>Significant deficiencies in internal control (in writing)?</p>'),
-          q('ac-q73b', '<p>Other deficiencies in internal control identified during the audit?</p>'),
-          q('ac-q73c', '<p>Identified misstatements and has management been asked to correct all identified misstatements (other than those clearly trivial), including those in F/S disclosures?</p>'),
+          q('ac-q73a', '<p>Significant deficiencies in internal control (in writing)?</p>', undefined, 'NA', '<p>No significant deficiencies identified. One minor observation (AP three-way match isolated error) communicated verbally and included in management letter as a minor recommendation.</p>'),
+          q('ac-q73b', '<p>Other deficiencies in internal control identified during the audit?</p>', undefined, 'Yes', '<p>One minor control observation communicated to management: isolated AP three-way match deviation. Included in management letter with a recommendation to reinforce staff training.</p>'),
+          q('ac-q73c', '<p>Identified misstatements and has management been asked to correct all identified misstatements (other than those clearly trivial), including those in F/S disclosures?</p>', undefined, 'Yes', '<p>Three AJEs communicated to management. Management agreed to record all three adjustments. Final financial statements confirmed as reflecting all corrections.</p>', 'W/P Ref: MIS-02'),
         ]),
         q('ac-q75', '<p>Planning — Have copies of the following communications with TCWG been included in the audit file?</p>', [
-          q('ac-q75a', '<p>The planned scope and timing of the audit, including significant risks identified?</p>'),
-          q('ac-q75b', '<p>A description of the audit team\'s responsibilities?</p>'),
-          q('ac-q75c', '<p>The form, timing and expected general content of communications?</p>'),
-          q('ac-q75d', '<p>Relevant ethical requirements (including independence) applied?</p>'),
+          q('ac-q75a', '<p>The planned scope and timing of the audit, including significant risks identified?</p>', undefined, 'Yes', '<p>Planning communication to Board on file, dated April 7, 2024.</p>', 'W/P Ref: AC-03'),
+          q('ac-q75b', '<p>A description of the audit team\'s responsibilities?</p>', undefined, 'Yes'),
+          q('ac-q75c', '<p>The form, timing and expected general content of communications?</p>', undefined, 'Yes'),
+          q('ac-q75d', '<p>Relevant ethical requirements (including independence) applied?</p>', undefined, 'Yes'),
         ]),
-        q('ac-q77', '<p>Internal control — Significant deficiencies in internal control (in writing)?</p>'),
+        q('ac-q77', '<p>Internal control — Significant deficiencies in internal control (in writing)?</p>', undefined, 'NA', '<p>No significant deficiencies identified. Not applicable.</p>'),
         q('ac-q79', '<p>Audit results — Views about significant qualitative aspects of the entity\'s accounting practices?</p>', [
-          q('ac-q79a', '<p>Circumstances of the entity?</p>'),
-          q('ac-q79b', '<p>Significant difficulties, if any, encountered during the audit?</p>'),
-          q('ac-q79c', '<p>Any circumstances that affect the form and content of the auditor\'s report?</p>'),
-          q('ac-q79d', '<p>Any other significant matters that are relevant to the oversight of the financial reporting process?</p>'),
-          q('ac-q79e', '<p>Misstatements not corrected by management — have TCWG been informed of the effect, requested to correct, and informed of the effect of uncorrected prior period misstatements?</p>'),
-          q('ac-q79f', '<p>Unless all of TCWG are involved in managing the entity: significant matters arising during the audit discussed or subject to correspondence with management, and requested written representations?</p>'),
+          q('ac-q79a', '<p>Circumstances of the entity?</p>', undefined, 'Yes', '<p>TCWG informed of significant qualitative aspects including: voyage completion revenue policy assessment, vessel impairment assessment, and AJEs identified and corrected.</p>', 'W/P Ref: AC-04'),
+          q('ac-q79b', '<p>Significant difficulties, if any, encountered during the audit?</p>', undefined, 'NA', '<p>No significant difficulties encountered during the audit.</p>'),
+          q('ac-q79c', '<p>Any circumstances that affect the form and content of the auditor\'s report?</p>', undefined, 'NA', '<p>No circumstances affect the form and content of the auditor\'s report. An unmodified opinion is issued.</p>'),
+          q('ac-q79d', '<p>Any other significant matters that are relevant to the oversight of the financial reporting process?</p>', undefined, 'Yes', '<p>Three AJEs communicated: revenue cutoff ($45K), depreciation correction ($12K), deferred revenue reclassification ($28K). All corrected by management. No uncorrected misstatements.</p>'),
+          q('ac-q79e', '<p>Misstatements not corrected by management — have TCWG been informed of the effect, requested to correct, and informed of the effect of uncorrected prior period misstatements?</p>', undefined, 'NA', '<p>All identified misstatements corrected by management. No uncorrected misstatements to communicate.</p>'),
+          q('ac-q79f', '<p>Unless all of TCWG are involved in managing the entity: significant matters arising during the audit discussed or subject to correspondence with management, and requested written representations?</p>', undefined, 'Yes', '<p>TCWG are not all involved in managing the entity (Board includes independent directors). Significant matters communicated to TCWG. Written representations obtained from management.</p>'),
         ]),
-        q('ac-q81', '<p>Has there been timely and adequate two-way communication? If not, were the reasons evaluated and appropriate action taken?</p>'),
+        q('ac-q81', '<p>Has there been timely and adequate two-way communication? If not, were the reasons evaluated and appropriate action taken?</p>', undefined, 'Yes', '<p>Timely and adequate two-way communication maintained throughout the engagement. Management was responsive to all audit queries. TCWG provided feedback on the planning communication.</p>'),
       ],
       isExpanded: true
     },
@@ -4053,10 +4134,10 @@ export const generateAuditCompletionChecklist = (): Checklist => {
       id: 'section-ac-5',
       title: 'Subsequent Changes',
       questions: [
-        q('ac-q84', '<p>Has the reasoning for any significant changes made to the original audit strategy been documented?</p>'),
-        q('ac-q87', '<p>Have the RMMs been updated to reflect changes resulting from the audit procedures performed, including when misstatements that were not expected when assessing the RMMs are detected at an interim date?</p>'),
-        q('ac-q93', '<p>Have any revisions to overall materiality, performance materiality and materiality for specific circumstances (if applicable) been documented?</p>'),
-        q('ac-q95', '<p>If after the engagement was accepted, management imposed a limitation on the scope of the audit that is likely to result in a qualified or disclaimer of opinion, was a request made that management remove the limitation?</p>'),
+        q('ac-q84', '<p>Has the reasoning for any significant changes made to the original audit strategy been documented?</p>', undefined, 'NA', '<p>No significant changes made to the original audit strategy. Audit proceeded as planned.</p>'),
+        q('ac-q87', '<p>Have the RMMs been updated to reflect changes resulting from the audit procedures performed, including when misstatements that were not expected when assessing the RMMs are detected at an interim date?</p>', undefined, 'Yes', '<p>RMMs updated upon identification of revenue cutoff misstatement. Additional procedures performed on revenue cutoff; overall risk assessment remained consistent with original assessment.</p>'),
+        q('ac-q93', '<p>Have any revisions to overall materiality, performance materiality and materiality for specific circumstances (if applicable) been documented?</p>', undefined, 'NA', '<p>No revisions to materiality required. Actual revenue was consistent with planning estimate.</p>'),
+        q('ac-q95', '<p>If after the engagement was accepted, management imposed a limitation on the scope of the audit that is likely to result in a qualified or disclaimer of opinion, was a request made that management remove the limitation?</p>', undefined, 'NA', '<p>No scope limitations imposed by management.</p>'),
       ],
       isExpanded: true
     },
@@ -4064,32 +4145,32 @@ export const generateAuditCompletionChecklist = (): Checklist => {
       id: 'section-ac-6',
       title: 'Overall Evaluation',
       questions: [
-        q('ac-q101', '<p>Have working papers been signed off and dated by the preparer and reviewer, prepared on a timely basis and do they include appropriate details such that an auditor with no previous connection to the audit engagement could understand the procedures performed, results, findings and conclusions reached?</p>'),
-        q('ac-q107', '<p>When performing the final analytical procedures, were any inconsistencies identified, and was the information obtained and documented in the engagement file explained and resolved?</p>'),
+        q('ac-q101', '<p>Have working papers been signed off and dated by the preparer and reviewer, prepared on a timely basis and do they include appropriate details such that an auditor with no previous connection to the audit engagement could understand the procedures performed, results, findings and conclusions reached?</p>', undefined, 'Yes', '<p>All working papers signed off and dated by preparer and reviewer. Documentation is sufficient for an informed third party to understand procedures performed, evidence obtained, and conclusions reached.</p>', 'W/P Ref: SUM-01'),
+        q('ac-q107', '<p>When performing the final analytical procedures, were any inconsistencies identified, and was the information obtained and documented in the engagement file explained and resolved?</p>', undefined, 'Yes', '<p>Final analytical procedures completed. Revenue trend explained by new contracts in Q4 ($120K). No unexplained inconsistencies remained at completion of audit.</p>', 'W/P Ref: FAR-01'),
         q('ac-q110', '<p>Based on the audit procedures performed and audit evidence obtained:</p>', [
-          q('ac-q110a', '<p>Are the risk assessments (including RMM at the assertion level) still appropriate, including when management bias has been identified?</p>'),
-          q('ac-q110b', '<p>Are management\'s decisions relating to recognition, measurement, presentation and disclosure (including accounting estimates) in accordance with the AFRF?</p>'),
-          q('ac-q110c', '<p>Has sufficient appropriate evidence been obtained to form an opinion on if the F/S are prepared, in all material respects, in accordance with the AFRF?</p>'),
-          q('ac-q110d', '<p>Is the going concern basis of accounting appropriate and supported by sufficient appropriate audit evidence?</p>'),
-          q('ac-q110e', '<p>Did the engagement team remain alert throughout the audit for audit evidence of events or conditions that may cast significant doubt on the entity\'s ability to continue as a going concern?</p>'),
+          q('ac-q110a', '<p>Are the risk assessments (including RMM at the assertion level) still appropriate, including when management bias has been identified?</p>', undefined, 'Yes'),
+          q('ac-q110b', '<p>Are management\'s decisions relating to recognition, measurement, presentation and disclosure (including accounting estimates) in accordance with the AFRF?</p>', undefined, 'Yes', '<p>All accounting policies and estimates assessed as compliant with ASPE. Three AJEs corrected — remaining presentation and disclosure assessed as appropriate.</p>'),
+          q('ac-q110c', '<p>Has sufficient appropriate evidence been obtained to form an opinion on if the F/S are prepared, in all material respects, in accordance with the AFRF?</p>', undefined, 'Yes', '<p>Sufficient appropriate audit evidence obtained across all significant assertions. Unmodified opinion supported.</p>'),
+          q('ac-q110d', '<p>Is the going concern basis of accounting appropriate and supported by sufficient appropriate audit evidence?</p>', undefined, 'Yes', '<p>Going concern assessed as appropriate. No indicators of going concern doubt identified. Entity has positive net income, adequate working capital, and an established credit facility with availability.</p>'),
+          q('ac-q110e', '<p>Did the engagement team remain alert throughout the audit for audit evidence of events or conditions that may cast significant doubt on the entity\'s ability to continue as a going concern?</p>', undefined, 'Yes'),
         ]),
-        q('ac-q117', '<p>Do the F/S, including disclosures, agree with or reconcile to the underlying accounting records?</p>'),
+        q('ac-q117', '<p>Do the F/S, including disclosures, agree with or reconcile to the underlying accounting records?</p>', undefined, 'Yes', '<p>Financial statements agreed to the trial balance and supporting schedules. Disclosures cross-referenced to supporting working papers. No unexplained differences identified.</p>', 'W/P Ref: FS-01'),
         q('ac-q124', '<p>In forming an audit opinion as to whether the F/S are prepared, in all material respects, in accordance with the AFRF, is/are the:</p>', [
-          q('ac-q124a', '<p>AFRF adequately referred to or described?</p>'),
-          q('ac-q124b', '<p>Entity\'s accounting practices, including management\'s judgments, free from any indicators of possible management bias?</p>'),
-          q('ac-q124c', '<p>Significant accounting policies appropriately disclosed?</p>'),
-          q('ac-q124d', '<p>Accounting policies consistent with the AFRF and appropriate?</p>'),
-          q('ac-q124e', '<p>Accounting estimates and related disclosures reasonable?</p>'),
-          q('ac-q124f', '<p>Information presented in the F/S relevant, reliable, comparable and understandable?</p>'),
-          q('ac-q124g', '<p>Disclosures adequate to enable the intended users to understand the effect of material transactions and events on the information conveyed in the F/S?</p>'),
-          q('ac-q124h', '<p>Terminology used in the F/S, including title of each F/S, appropriate?</p>'),
-          q('ac-q124i', '<p>Identified related party relationships and transactions appropriately accounted for and disclosed?</p>'),
-          q('ac-q124j', '<p>If the F/S achieve fair presentation through the overall presentation, structure and content of the F/S?</p>'),
-          q('ac-q124k', '<p>Whether the F/S represent the underlying transactions and events in a manner that achieves fair presentation?</p>'),
-          q('ac-q124l', '<p>Whether the effects of the related party relationships and transactions prevent the F/S from achieving fair presentation?</p>'),
-          q('ac-q124m', '<p>For compliance frameworks: whether the effects of the related party relationships and transactions cause the F/S to be misleading?</p>'),
+          q('ac-q124a', '<p>AFRF adequately referred to or described?</p>', undefined, 'Yes'),
+          q('ac-q124b', '<p>Entity\'s accounting practices, including management\'s judgments, free from any indicators of possible management bias?</p>', undefined, 'Yes'),
+          q('ac-q124c', '<p>Significant accounting policies appropriately disclosed?</p>', undefined, 'Yes'),
+          q('ac-q124d', '<p>Accounting policies consistent with the AFRF and appropriate?</p>', undefined, 'Yes'),
+          q('ac-q124e', '<p>Accounting estimates and related disclosures reasonable?</p>', undefined, 'Yes'),
+          q('ac-q124f', '<p>Information presented in the F/S relevant, reliable, comparable and understandable?</p>', undefined, 'Yes'),
+          q('ac-q124g', '<p>Disclosures adequate to enable the intended users to understand the effect of material transactions and events on the information conveyed in the F/S?</p>', undefined, 'Yes'),
+          q('ac-q124h', '<p>Terminology used in the F/S, including title of each F/S, appropriate?</p>', undefined, 'Yes'),
+          q('ac-q124i', '<p>Identified related party relationships and transactions appropriately accounted for and disclosed?</p>', undefined, 'Yes', '<p>Related party transactions ($185K revenue, $125K management fees, $240K charter fees) appropriately disclosed in Note 12.</p>', 'W/P Ref: RPT-02'),
+          q('ac-q124j', '<p>If the F/S achieve fair presentation through the overall presentation, structure and content of the F/S?</p>', undefined, 'Yes'),
+          q('ac-q124k', '<p>Whether the F/S represent the underlying transactions and events in a manner that achieves fair presentation?</p>', undefined, 'Yes'),
+          q('ac-q124l', '<p>Whether the effects of the related party relationships and transactions prevent the F/S from achieving fair presentation?</p>', undefined, 'No'),
+          q('ac-q124m', '<p>For compliance frameworks: whether the effects of the related party relationships and transactions cause the F/S to be misleading?</p>', undefined, 'NA'),
         ]),
-        q('ac-q127', '<p>If the answer is "No" to any of the questions in procedure 124 and the F/S are materially misstated, or sufficient appropriate audit evidence cannot be obtained, has the audit opinion been modified in accordance with CAS 705?</p>'),
+        q('ac-q127', '<p>If the answer is "No" to any of the questions in procedure 124 and the F/S are materially misstated, or sufficient appropriate audit evidence cannot be obtained, has the audit opinion been modified in accordance with CAS 705?</p>', undefined, 'NA', '<p>No modifications required. An unmodified audit opinion is issued on the March 31, 2024 financial statements of Shipping Line Inc.</p>'),
       ],
       isExpanded: true
     },
@@ -4098,16 +4179,16 @@ export const generateAuditCompletionChecklist = (): Checklist => {
       title: 'Reporting',
       questions: [
         q('ac-q130', '<p>Identified misstatements — Have the following been documented:</p>', [
-          q('ac-q130a', '<p>All misstatements accumulated during the audit, and whether they have been corrected?</p>'),
-          q('ac-q130b', '<p>The conclusion as to whether uncorrected misstatements are material, individually or in aggregate, and the basis for that conclusion?</p>'),
+          q('ac-q130a', '<p>All misstatements accumulated during the audit, and whether they have been corrected?</p>', undefined, 'Yes', '<p>All three AJEs documented in the misstatement summary and confirmed as corrected by management in the final financial statements.</p>', 'W/P Ref: MIS-01'),
+          q('ac-q130b', '<p>The conclusion as to whether uncorrected misstatements are material, individually or in aggregate, and the basis for that conclusion?</p>', undefined, 'Yes', '<p>No uncorrected misstatements. All identified misstatements corrected. Projected misstatements of $30K are below performance materiality — concluded as not material.</p>', 'W/P Ref: MIS-02'),
         ]),
-        q('ac-q135', '<p>Subsequent events — Have subsequent events procedures been performed up to the report date?</p>'),
-        q('ac-q136', '<p>Have subsequent events that may require adjustment of, or disclosure in, the F/S been identified and addressed?</p>'),
-        q('ac-q137', '<p>If there is a significant delay in the approval of the F/S by management or TCWG after the date of the F/S, have inquiries been made regarding the reasons for the delay?</p>'),
-        q('ac-q138', '<p>Has Form 625 been completed if the delay is believed to be related to events or conditions relating to the going concern assessment?</p>'),
-        q('ac-q139', '<p>Is a signed management representation letter (dated on or before date of audit report) included in the audit file?</p>'),
-        q('ac-q140', '<p>Where applicable, was the engagement quality review completed and the approval evidenced in the file (signed off) on or before the audit report was dated?</p>'),
-        q('ac-q141', '<p>Has Form 305 been completed to ensure the form and content of the auditor\'s report are appropriate?</p>'),
+        q('ac-q135', '<p>Subsequent events — Have subsequent events procedures been performed up to the report date?</p>', undefined, 'Yes', '<p>Subsequent events procedures completed through May 2, 2024 (date of audit report). Management inquiry conducted on April 25, 2024. No subsequent events requiring adjustment or disclosure identified.</p>', 'W/P Ref: SE-01'),
+        q('ac-q136', '<p>Have subsequent events that may require adjustment of, or disclosure in, the F/S been identified and addressed?</p>', undefined, 'No', '<p>No subsequent events identified requiring adjustment or disclosure.</p>'),
+        q('ac-q137', '<p>If there is a significant delay in the approval of the F/S by management or TCWG after the date of the F/S, have inquiries been made regarding the reasons for the delay?</p>', undefined, 'NA', '<p>No significant delay in approval. Financial statements approved by management on May 2, 2024 (32 days after year-end).</p>'),
+        q('ac-q138', '<p>Has Form 625 been completed if the delay is believed to be related to events or conditions relating to the going concern assessment?</p>', undefined, 'NA', '<p>No delay attributable to going concern issues. Going concern is not in doubt.</p>'),
+        q('ac-q139', '<p>Is a signed management representation letter (dated on or before date of audit report) included in the audit file?</p>', undefined, 'Yes', '<p>Signed management representation letter dated April 25, 2024 (before audit report date of May 2, 2024) is included in the audit file. Signed by CEO and CFO of Shipping Line Inc.</p>', 'W/P Ref: MRL-01'),
+        q('ac-q140', '<p>Where applicable, was the engagement quality review completed and the approval evidenced in the file (signed off) on or before the audit report was dated?</p>', undefined, 'NA', '<p>EQCR not required for this engagement.</p>'),
+        q('ac-q141', '<p>Has Form 305 been completed to ensure the form and content of the auditor\'s report are appropriate?</p>', undefined, 'Yes', '<p>Auditor\'s report checklist (Form 305) completed. Unmodified opinion issued in accordance with CAS 700. Report date: May 2, 2024.</p>', 'W/P Ref: AR-01'),
       ],
       isExpanded: true
     },
@@ -4116,9 +4197,9 @@ export const generateAuditCompletionChecklist = (): Checklist => {
       title: 'Audit Procedures After the Audit Report Date',
       questions: [
         q('ac-q150', '<p>If, in exceptional circumstances, new or additional audit procedures were performed or new conclusions drawn after the date of the auditor\'s report, have the following been documented:</p>', [
-          q('ac-q150a', '<p>The circumstances encountered?</p>'),
-          q('ac-q150b', '<p>The new or additional audit procedures performed, audit evidence obtained, and conclusions reached, and their effect on the auditor\'s report?</p>'),
-          q('ac-q150c', '<p>When and by whom the resulting changes to audit documentation were made and reviewed?</p>'),
+          q('ac-q150a', '<p>The circumstances encountered?</p>', undefined, 'NA'),
+          q('ac-q150b', '<p>The new or additional audit procedures performed, audit evidence obtained, and conclusions reached, and their effect on the auditor\'s report?</p>', undefined, 'NA'),
+          q('ac-q150c', '<p>When and by whom the resulting changes to audit documentation were made and reviewed?</p>', undefined, 'NA', '<p>No post-report procedures were required.</p>'),
         ]),
       ],
       isExpanded: true
@@ -4127,7 +4208,7 @@ export const generateAuditCompletionChecklist = (): Checklist => {
       id: 'section-ac-9',
       title: 'File Assembly and Archival',
       questions: [
-        q('ac-q160', '<p>Has all audit documentation been assembled in the audit file on a timely basis after the date of the auditor\'s report (usually not more than 60 days after)?</p>'),
+        q('ac-q160', '<p>Has all audit documentation been assembled in the audit file on a timely basis after the date of the auditor\'s report (usually not more than 60 days after)?</p>', undefined, 'Yes', '<p>Audit file assembly completed by June 30, 2024 — within 60 days of the May 2, 2024 audit report date.</p>'),
       ],
       isExpanded: true
     },
@@ -4154,9 +4235,9 @@ TCWG = Those charged with governance.`,
 
 // Engagement Partner Checklist — Audit Completion (312) template
 export const generateEngagementPartnerAuditCompletionChecklist = (): Checklist => {
-  const q = (id: string, text: string, subQuestions?: Question[]): Question => ({
+  const q = (id: string, text: string, subQuestions?: Question[], answer = '', explanation = '', reference = ''): Question => ({
     id, text, answerType: 'yes-no-na' as const, options: ['Yes', 'No', 'NA'],
-    required: false, answer: '', ...(subQuestions ? { subQuestions } : {})
+    required: false, answer, explanation, reference, ...(subQuestions ? { subQuestions } : {})
   });
 
   const sections: Section[] = [
@@ -4165,12 +4246,12 @@ export const generateEngagementPartnerAuditCompletionChecklist = (): Checklist =
       title: 'Audit Engagement Quality (CAS 220.13-15, 23, 24, 40(b))',
       questions: [
         q('ep-q1', '<p>Have you created an environment for the engagement that emphasizes the firm\'s culture and expected behaviour of engagement team members by:</p>', [
-          q('ep-q1a', '<p>Being sufficiently and appropriately involved in the audit?</p>'),
-          q('ep-q1b', '<p>Emphasizing the following to all engagement team members: management and achievement of quality, importance of professional ethics, values and attitudes, importance of open and robust communication within the team, and exercising professional skepticism throughout the engagement?</p>'),
-          q('ep-q1c', '<p>Supervising, directing and reviewing work of engagement team members who designed or performed procedures to comply with the requirements of CAS 220?</p>'),
+          q('ep-q1a', '<p>Being sufficiently and appropriately involved in the audit?</p>', undefined, 'Yes', '<p>J. Williams was involved throughout the engagement including: planning meeting (April 7), mid-fieldwork review (April 19), and final file review (May 2, 2024).</p>'),
+          q('ep-q1b', '<p>Emphasizing the following to all engagement team members: management and achievement of quality, importance of professional ethics, values and attitudes, importance of open and robust communication within the team, and exercising professional skepticism throughout the engagement?</p>', undefined, 'Yes', '<p>Quality expectations and professional skepticism emphasized at the April 7, 2024 planning meeting. Specific emphasis on revenue recognition risk and vessel impairment assessment.</p>'),
+          q('ep-q1c', '<p>Supervising, directing and reviewing work of engagement team members who designed or performed procedures to comply with the requirements of CAS 220?</p>', undefined, 'Yes'),
         ]),
-        q('ep-q2', '<p>Have you taken into account information obtained in the acceptance and continuance process in planning and performing the audit engagement?</p>'),
-        q('ep-q3', '<p>If you or the engagement team became aware of information that may have caused the firm to decline the audit engagement had that information been known prior to accepting or continuing, did you communicate that information promptly to the firm?</p>'),
+        q('ep-q2', '<p>Have you taken into account information obtained in the acceptance and continuance process in planning and performing the audit engagement?</p>', undefined, 'Yes', '<p>Client continuance assessment reviewed prior to planning. No integrity or risk concerns noted. Information incorporated into audit plan and risk assessment.</p>'),
+        q('ep-q3', '<p>If you or the engagement team became aware of information that may have caused the firm to decline the audit engagement had that information been known prior to accepting or continuing, did you communicate that information promptly to the firm?</p>', undefined, 'NA', '<p>No such information came to the attention of the engagement team during the audit.</p>'),
       ],
       isExpanded: true
     },
@@ -4179,14 +4260,14 @@ export const generateEngagementPartnerAuditCompletionChecklist = (): Checklist =
       title: 'Relevant Ethical Requirements, Independence and Compliance (CAS 220.17-21)',
       questions: [
         q('ep-q4', '<p>Have you made inquiries of the engagement team to ensure that:</p>', [
-          q('ep-q4a', '<p>The team understands the relevant ethical requirements, including those related to independence?</p>'),
-          q('ep-q4b', '<p>The team maintained their independence throughout the engagement?</p>'),
-          q('ep-q4c', '<p>Any potential breaches of ethical requirements, independence, or compliance with laws and regulations were communicated to you?</p>'),
-          q('ep-q4d', '<p>Where a potential breach was identified, the threat was evaluated, appropriate actions taken and conclusions documented, and firm policies were adhered to?</p>'),
+          q('ep-q4a', '<p>The team understands the relevant ethical requirements, including those related to independence?</p>', undefined, 'Yes', '<p>Independence confirmations obtained from all engagement team members at planning. Team confirmed understanding of independence requirements applicable to this engagement.</p>', 'W/P Ref: IND-01'),
+          q('ep-q4b', '<p>The team maintained their independence throughout the engagement?</p>', undefined, 'Yes', '<p>No independence breaches identified. All team members confirmed maintained independence through to the date of the audit report.</p>'),
+          q('ep-q4c', '<p>Any potential breaches of ethical requirements, independence, or compliance with laws and regulations were communicated to you?</p>', undefined, 'Yes', '<p>No potential breaches communicated by any engagement team member during the engagement.</p>'),
+          q('ep-q4d', '<p>Where a potential breach was identified, the threat was evaluated, appropriate actions taken and conclusions documented, and firm policies were adhered to?</p>', undefined, 'NA', '<p>No potential breaches identified. Not applicable.</p>'),
         ]),
-        q('ep-q5', '<p>Were you alert throughout the engagement for breaches of relevant ethical requirements or the firm\'s related policies or procedures by members of the engagement team?</p>'),
-        q('ep-q6', '<p>If you or the engagement team became aware of information that may have caused the firm to decline the audit engagement, did you communicate that information promptly to the firm?</p>'),
-        q('ep-q7', '<p>Prior to dating the auditor\'s report have you determined whether relevant ethical requirements, including those related to independence, have been fulfilled?</p>'),
+        q('ep-q5', '<p>Were you alert throughout the engagement for breaches of relevant ethical requirements or the firm\'s related policies or procedures by members of the engagement team?</p>', undefined, 'Yes'),
+        q('ep-q6', '<p>If you or the engagement team became aware of information that may have caused the firm to decline the audit engagement, did you communicate that information promptly to the firm?</p>', undefined, 'NA', '<p>No such information identified during the engagement.</p>'),
+        q('ep-q7', '<p>Prior to dating the auditor\'s report have you determined whether relevant ethical requirements, including those related to independence, have been fulfilled?</p>', undefined, 'Yes', '<p>Independence and ethical requirements confirmed as fulfilled prior to dating the audit report on May 2, 2024.</p>'),
       ],
       isExpanded: true
     },
@@ -4194,10 +4275,10 @@ export const generateEngagementPartnerAuditCompletionChecklist = (): Checklist =
       id: 'section-ep-3',
       title: 'Engagement Resources',
       questions: [
-        q('ep-q8', '<p>Were sufficient and appropriate staffing, technological and intellectual resources made available to the engagement team? (CAS 220.25)</p>'),
-        q('ep-q9', '<p>Did you ensure that the engagement team, including any external resources, had the appropriate competence and capabilities (including sufficient time) to perform the engagement? (CAS 220.26)</p>'),
-        q('ep-q10', '<p>Where changes in staffing or timing were necessary, did you take appropriate actions to ensure that additional resources were made available to the team? (CAS 220.27)</p>'),
-        q('ep-q11', '<p>Have you utilized the resources assigned or made available to the engagement team appropriately, given the nature and circumstances of the audit engagement? (CAS 220.28)</p>'),
+        q('ep-q8', '<p>Were sufficient and appropriate staffing, technological and intellectual resources made available to the engagement team? (CAS 220.25)</p>', undefined, 'Yes', '<p>Engagement team of four (partner, manager, senior, staff) was appropriate for the size and complexity of this engagement. No resource constraints encountered.</p>'),
+        q('ep-q9', '<p>Did you ensure that the engagement team, including any external resources, had the appropriate competence and capabilities (including sufficient time) to perform the engagement? (CAS 220.26)</p>', undefined, 'Yes', '<p>Team competencies assessed as appropriate. S. Chen has 8 years audit experience including prior year on this engagement. Team had familiarity with maritime industry.</p>'),
+        q('ep-q10', '<p>Where changes in staffing or timing were necessary, did you take appropriate actions to ensure that additional resources were made available to the team? (CAS 220.27)</p>', undefined, 'NA', '<p>No changes in staffing or timing were necessary during the engagement.</p>'),
+        q('ep-q11', '<p>Have you utilized the resources assigned or made available to the engagement team appropriately, given the nature and circumstances of the audit engagement? (CAS 220.28)</p>', undefined, 'Yes'),
       ],
       isExpanded: true
     },
@@ -4205,34 +4286,34 @@ export const generateEngagementPartnerAuditCompletionChecklist = (): Checklist =
       id: 'section-ep-4',
       title: 'Engagement Performance',
       questions: [
-        q('ep-q12', '<p>When planning and performing the engagement, was information obtained in the engagement acceptance and continuance process taken into account?</p>'),
+        q('ep-q12', '<p>When planning and performing the engagement, was information obtained in the engagement acceptance and continuance process taken into account?</p>', undefined, 'Yes'),
         q('ep-q13', '<p>Were you sufficiently involved throughout the engagement to ensure that the audit procedures were:</p>', [
-          q('ep-q13a', '<p>Planned and performed in accordance with the firm\'s policies and professional standards, and any applicable legal and regulatory requirements? (CAS 220.30(a))</p>'),
-          q('ep-q13b', '<p>Appropriate given the nature and circumstances of the engagement, including significant judgments made and conclusions reached? (CAS 220.30(b), 40(a))</p>'),
+          q('ep-q13a', '<p>Planned and performed in accordance with the firm\'s policies and professional standards, and any applicable legal and regulatory requirements? (CAS 220.30(a))</p>', undefined, 'Yes'),
+          q('ep-q13b', '<p>Appropriate given the nature and circumstances of the engagement, including significant judgments made and conclusions reached? (CAS 220.30(b), 40(a))</p>', undefined, 'Yes'),
         ]),
         q('ep-q14', '<p>Did you perform a timely review of audit evidence at appropriate stages in the audit, including documentation related to:</p>', [
-          q('ep-q14a', '<p>Significant matters? (CAS 220.31(a))</p>'),
-          q('ep-q14b', '<p>Significant judgments, including those related to difficult or contentious matters? (CAS 220.31(b))</p>'),
-          q('ep-q14c', '<p>Significant risks and the results of the audit response?</p>'),
-          q('ep-q14d', '<p>Other matters that, in your judgment, are relevant to fulfilling your role as the engagement partner? (CAS 220.31(c))</p>'),
-          q('ep-q14e', '<p>The draft F/S? (CAS 220.33)</p>'),
-          q('ep-q14f', '<p>The proposed auditor\'s report? (CAS 220.33)</p>'),
-          q('ep-q14g', '<p>Any formal written communications to management/TCWG, including deficiencies in internal control or potential key audit matters, or to regulatory authorities? (CAS 220.34)</p>'),
+          q('ep-q14a', '<p>Significant matters? (CAS 220.31(a))</p>', undefined, 'Yes', '<p>Significant matters reviewed: revenue cutoff AJE, vessel impairment assessment, and related party disclosures. Review documented with partner sign-off dates.</p>'),
+          q('ep-q14b', '<p>Significant judgments, including those related to difficult or contentious matters? (CAS 220.31(b))</p>', undefined, 'Yes', '<p>Vessel impairment assessment (key judgment) reviewed by partner. Conclusion that no impairment exists supported by management appraisal and market data review.</p>'),
+          q('ep-q14c', '<p>Significant risks and the results of the audit response?</p>', undefined, 'Yes'),
+          q('ep-q14d', '<p>Other matters that, in your judgment, are relevant to fulfilling your role as the engagement partner? (CAS 220.31(c))</p>', undefined, 'Yes'),
+          q('ep-q14e', '<p>The draft F/S? (CAS 220.33)</p>', undefined, 'Yes', '<p>Draft financial statements reviewed by partner on April 30, 2024. AJEs confirmed as reflected. Disclosures reviewed for adequacy and completeness.</p>'),
+          q('ep-q14f', '<p>The proposed auditor\'s report? (CAS 220.33)</p>', undefined, 'Yes', '<p>Proposed unmodified audit report reviewed by partner on May 1, 2024. Wording confirmed as appropriate per CAS 700.</p>'),
+          q('ep-q14g', '<p>Any formal written communications to management/TCWG, including deficiencies in internal control or potential key audit matters, or to regulatory authorities? (CAS 220.34)</p>', undefined, 'Yes', '<p>TCWG final communication letter reviewed by partner. Management letter (minor control observation) reviewed and approved. No regulatory communications required.</p>', 'W/P Ref: AC-04'),
         ]),
         q('ep-q15', '<p>Did you take responsibility for the engagement team undertaking any consultations on the engagement?</p>', [
-          q('ep-q15a', '<p>The engagement team has undertaken appropriate consultation during the engagement?</p>'),
-          q('ep-q15b', '<p>The nature and scope of, and conclusions resulting from, such consultations are agreed with the party consulted?</p>'),
-          q('ep-q15c', '<p>Conclusions agreed to have been implemented?</p>'),
+          q('ep-q15a', '<p>The engagement team has undertaken appropriate consultation during the engagement?</p>', undefined, 'NA', '<p>No formal consultations required during this engagement.</p>'),
+          q('ep-q15b', '<p>The nature and scope of, and conclusions resulting from, such consultations are agreed with the party consulted?</p>', undefined, 'NA'),
+          q('ep-q15c', '<p>Conclusions agreed to have been implemented?</p>', undefined, 'NA'),
         ]),
         q('ep-q16', '<p>Where the proposed auditor\'s report is modified, did you ensure that the wording is appropriate and in accordance with professional standards?</p>', [
-          q('ep-q16a', '<p>There is sufficient documentation and audit evidence to support the modification?</p>'),
-          q('ep-q16b', '<p>Where applicable, firm consultation policies for modified opinions were followed?</p>'),
+          q('ep-q16a', '<p>There is sufficient documentation and audit evidence to support the modification?</p>', undefined, 'NA', '<p>Audit opinion is unmodified. Not applicable.</p>'),
+          q('ep-q16b', '<p>Where applicable, firm consultation policies for modified opinions were followed?</p>', undefined, 'NA'),
         ]),
         q('ep-q17', '<p>Where differences of opinion arose within the engagement team, or between EQR reviewers or other firm members, were:</p>', [
-          q('ep-q17a', '<p>The differences of opinion addressed and resolved in accordance with the firm\'s policies? (CAS 220.37)</p>'),
-          q('ep-q17b', '<p>The conclusions reached adequately documented and implemented prior to the date of the audit report? (CAS 220.38)</p>'),
+          q('ep-q17a', '<p>The differences of opinion addressed and resolved in accordance with the firm\'s policies? (CAS 220.37)</p>', undefined, 'NA', '<p>No differences of opinion arose within the engagement team during this engagement.</p>'),
+          q('ep-q17b', '<p>The conclusions reached adequately documented and implemented prior to the date of the audit report? (CAS 220.38)</p>', undefined, 'NA'),
         ]),
-        q('ep-q18', '<p>Where the results of firm monitoring or external inspections could have affected this engagement, were they taken into consideration when planning and performing the engagement? (CAS 220.39)</p>'),
+        q('ep-q18', '<p>Where the results of firm monitoring or external inspections could have affected this engagement, were they taken into consideration when planning and performing the engagement? (CAS 220.39)</p>', undefined, 'Yes', '<p>Firm inspection results from prior year reviewed. No findings applicable to this engagement or client type identified.</p>'),
       ],
       isExpanded: true
     },
@@ -4241,10 +4322,10 @@ export const generateEngagementPartnerAuditCompletionChecklist = (): Checklist =
       title: 'Engagement Quality Reviewer',
       questions: [
         q('ep-q19', '<p>Where an engagement quality review is required, are you satisfied that: (CAS 220.36)</p>', [
-          q('ep-q19a', '<p>An engagement quality reviewer (EQR) has been appointed?</p>'),
-          q('ep-q19b', '<p>The engagement team and you have cooperated with the EQR?</p>'),
-          q('ep-q19c', '<p>Significant matters and significant judgements arising during the audit have been discussed with the EQR?</p>'),
-          q('ep-q19d', '<p>The EQR has been completed before the date of the auditor\'s report?</p>'),
+          q('ep-q19a', '<p>An engagement quality reviewer (EQR) has been appointed?</p>', undefined, 'NA', '<p>EQCR not required for this engagement. Shipping Line Inc. does not meet the firm\'s EQCR threshold criteria.</p>'),
+          q('ep-q19b', '<p>The engagement team and you have cooperated with the EQR?</p>', undefined, 'NA'),
+          q('ep-q19c', '<p>Significant matters and significant judgements arising during the audit have been discussed with the EQR?</p>', undefined, 'NA'),
+          q('ep-q19d', '<p>The EQR has been completed before the date of the auditor\'s report?</p>', undefined, 'NA'),
         ]),
       ],
       isExpanded: true
@@ -4254,17 +4335,17 @@ export const generateEngagementPartnerAuditCompletionChecklist = (): Checklist =
       title: 'Overall Evaluation and Conclusions',
       questions: [
         q('ep-q20', '<p>Based on my review of audit documentation and discussions with the engagement team, I take ultimate responsibility and am satisfied that:</p>', [
-          q('ep-q20a', '<p>The audit was conducted in accordance with Canadian Auditing Standards. (CAS 220.9)</p>'),
-          q('ep-q20b', '<p>I have an understanding of the relevant ethical requirements, including those related to independence, that are applicable given the nature and circumstances of the audit engagement. (CAS 220.16)</p>'),
-          q('ep-q20c', '<p>Relevant ethical requirements, including those related to independence, have been fulfilled. (CAS 220.20-21)</p>'),
-          q('ep-q20d', '<p>I have directed and supervised the engagement team and the review of their work. (CAS 220.29)</p>'),
-          q('ep-q20e', '<p>I have reviewed the changes made to the original overall audit strategy and audit plan. (CAS 300.11)</p>'),
-          q('ep-q20f', '<p>Significant judgments made and conclusions reached by the engagement team are appropriate given the nature and circumstances of the engagement. (CAS 220.40(a))</p>'),
-          q('ep-q20g', '<p>The nature and circumstances of the audit engagement, including any changes, and the firm\'s policies or procedures have been taken into account to manage and achieve audit quality. (CAS 220.40(b))</p>'),
-          q('ep-q20h', '<p>No restrictions in scope were imposed on us. (CAS 700.17(b))</p>'),
-          q('ep-q20i', '<p>The audit evidence obtained is sufficient, appropriate and adequately documented to provide a basis for our audit opinion, including the F/S and disclosures. (CAS 220.32)</p>'),
-          q('ep-q20j', '<p>The F/S are presented fairly, in all material respects, in accordance with the applicable financial reporting framework. (CAS 700.16)</p>'),
-          q('ep-q20k', '<p>The auditor\'s report is appropriately worded.</p>'),
+          q('ep-q20a', '<p>The audit was conducted in accordance with Canadian Auditing Standards. (CAS 220.9)</p>', undefined, 'Yes'),
+          q('ep-q20b', '<p>I have an understanding of the relevant ethical requirements, including those related to independence, that are applicable given the nature and circumstances of the audit engagement. (CAS 220.16)</p>', undefined, 'Yes'),
+          q('ep-q20c', '<p>Relevant ethical requirements, including those related to independence, have been fulfilled. (CAS 220.20-21)</p>', undefined, 'Yes'),
+          q('ep-q20d', '<p>I have directed and supervised the engagement team and the review of their work. (CAS 220.29)</p>', undefined, 'Yes'),
+          q('ep-q20e', '<p>I have reviewed the changes made to the original overall audit strategy and audit plan. (CAS 300.11)</p>', undefined, 'Yes', '<p>No material changes to the audit strategy were required. Minor expansion of revenue cutoff testing was reviewed and approved by the partner.</p>'),
+          q('ep-q20f', '<p>Significant judgments made and conclusions reached by the engagement team are appropriate given the nature and circumstances of the engagement. (CAS 220.40(a))</p>', undefined, 'Yes', '<p>Partner concurs with all significant judgments: no vessel impairment, voyage completion revenue recognition policy appropriate, related party terms assessed as arm\'s length.</p>'),
+          q('ep-q20g', '<p>The nature and circumstances of the audit engagement, including any changes, and the firm\'s policies or procedures have been taken into account to manage and achieve audit quality. (CAS 220.40(b))</p>', undefined, 'Yes'),
+          q('ep-q20h', '<p>No restrictions in scope were imposed on us. (CAS 700.17(b))</p>', undefined, 'Yes', '<p>Management imposed no restrictions on the scope of the audit. Full access to all requested records, personnel, and information was provided.</p>'),
+          q('ep-q20i', '<p>The audit evidence obtained is sufficient, appropriate and adequately documented to provide a basis for our audit opinion, including the F/S and disclosures. (CAS 220.32)</p>', undefined, 'Yes'),
+          q('ep-q20j', '<p>The F/S are presented fairly, in all material respects, in accordance with the applicable financial reporting framework. (CAS 700.16)</p>', undefined, 'Yes', '<p>Partner confirms the March 31, 2024 financial statements of Shipping Line Inc. are presented fairly in all material respects in accordance with ASPE.</p>'),
+          q('ep-q20k', '<p>The auditor\'s report is appropriately worded.</p>', undefined, 'Yes', '<p>Unmodified audit report reviewed and confirmed as appropriately worded per CAS 700. Report dated May 2, 2024 and signed by J. Williams, CPA.</p>'),
         ]),
       ],
       isExpanded: true
@@ -4288,9 +4369,9 @@ TCWG = Those charged with governance.`,
 };
 // Checklist — Auditor's Report (305) template
 export const generateAuditorsReportChecklist = (): Checklist => {
-  const q = (id: string, text: string, subQuestions?: Question[]): Question => ({
+  const q = (id: string, text: string, subQuestions?: Question[], answer = '', explanation = '', reference = ''): Question => ({
     id, text, answerType: 'yes-no-na' as const, options: ['Yes', 'No', 'NA'],
-    required: false, answer: '', ...(subQuestions ? { subQuestions } : {})
+    required: false, answer, explanation, reference, ...(subQuestions ? { subQuestions } : {})
   });
 
   const sections: Section[] = [
@@ -4298,7 +4379,7 @@ export const generateAuditorsReportChecklist = (): Checklist => {
       id: 'section-ar305-1',
       title: '1. Audit Reporting',
       questions: [
-        q('ar305-q1', '<p>Has the checklist in Appendix A been reviewed to ensure the auditor\'s report addresses the requirements of CAS 700.20–48?</p><p><em>Note: If an auditor\'s report template (that has been created in accordance with CAS 700) is used as a starting point when drafting the auditor\'s report, completing the checklist in Appendix A is not necessary. However, it is recommended to review it to ensure all required details are captured.</em></p>'),
+        q('ar305-q1', '<p>Has the checklist in Appendix A been reviewed to ensure the auditor\'s report addresses the requirements of CAS 700.20–48?</p><p><em>Note: If an auditor\'s report template (that has been created in accordance with CAS 700) is used as a starting point when drafting the auditor\'s report, completing the checklist in Appendix A is not necessary. However, it is recommended to review it to ensure all required details are captured.</em></p>', undefined, 'Yes', '<p>Appendix A checklist reviewed. Standard audit report template used as starting point. All required CAS 700 elements confirmed as included in the unmodified audit report for Shipping Line Inc.</p>', 'W/P Ref: AR-01'),
       ],
       isExpanded: true
     },
@@ -4307,33 +4388,33 @@ export const generateAuditorsReportChecklist = (): Checklist => {
       title: '2. Modifications to the Opinion',
       questions: [
         q('ar305-q2', '<p>Are any of the following applicable which may result in a modified opinion:</p>', [
-          q('ar305-q2a', '<p>An inability to meet any relevant CAS objectives or requirements? (CAS 200.24)</p>'),
-          q('ar305-q2b', '<p>Conflicts between financial reporting standards and legal or regulatory requirements? (CAS 210.18)</p>'),
-          q('ar305-q2c', '<p>Non-compliance with laws and regulations or limitations on obtaining sufficient appropriate audit evidence regarding non-compliance? (CAS 250.21, 26–28)</p>'),
-          q('ar305-q2d', '<p>An inability to obtain sufficient appropriate audit evidence for any relevant assertions/SCOTABDs? (CAS 330.27)</p>'),
-          q('ar305-q2e', '<p>An inability to obtain sufficient appropriate audit evidence regarding services provided by a service organization? (CAS 402.20)</p>'),
-          q('ar305-q2f', '<p>An inability to attend a physical inventory count or obtain sufficient appropriate audit evidence about the existence and condition of inventory? (CAS 501.7)</p>'),
-          q('ar305-q2g', '<p>An inability to obtain sufficient appropriate audit evidence about litigation and claims from alternative procedures performed because management refused to provide access to the entity\'s external legal counsel or a response was not received/appropriate? (CAS 501.11)</p>'),
-          q('ar305-q2h', '<p>Management\'s refusal to send confirmation requests or lack of sufficient response to confirmation requests? (CAS 505.9, 13)</p>'),
+          q('ar305-q2a', '<p>An inability to meet any relevant CAS objectives or requirements? (CAS 200.24)</p>', undefined, 'No'),
+          q('ar305-q2b', '<p>Conflicts between financial reporting standards and legal or regulatory requirements? (CAS 210.18)</p>', undefined, 'No'),
+          q('ar305-q2c', '<p>Non-compliance with laws and regulations or limitations on obtaining sufficient appropriate audit evidence regarding non-compliance? (CAS 250.21, 26–28)</p>', undefined, 'No'),
+          q('ar305-q2d', '<p>An inability to obtain sufficient appropriate audit evidence for any relevant assertions/SCOTABDs? (CAS 330.27)</p>', undefined, 'No'),
+          q('ar305-q2e', '<p>An inability to obtain sufficient appropriate audit evidence regarding services provided by a service organization? (CAS 402.20)</p>', undefined, 'NA'),
+          q('ar305-q2f', '<p>An inability to attend a physical inventory count or obtain sufficient appropriate audit evidence about the existence and condition of inventory? (CAS 501.7)</p>', undefined, 'No', '<p>Fuel and supplies inventory observation completed February 2024. No attendance issues encountered.</p>'),
+          q('ar305-q2g', '<p>An inability to obtain sufficient appropriate audit evidence about litigation and claims from alternative procedures performed because management refused to provide access to the entity\'s external legal counsel or a response was not received/appropriate? (CAS 501.11)</p>', undefined, 'No', '<p>Legal letter received from external counsel confirming no material litigation or claims as of March 31, 2024.</p>'),
+          q('ar305-q2h', '<p>Management\'s refusal to send confirmation requests or lack of sufficient response to confirmation requests? (CAS 505.9, 13)</p>', undefined, 'No', '<p>Management did not refuse to send any confirmations. All 10 AR/AP confirmations received with responses.</p>'),
           q('ar305-q2i', '<p>In an initial audit engagement: (CAS 510.10–13)</p>', [
-            q('ar305-q2i-i', '<p>An inability to obtain sufficient appropriate audit evidence regarding opening balances?</p>'),
-            q('ar305-q2i-ii', '<p>Misstatements in opening balances that materially affect the current period F/S and have not been appropriately accounted for or adequately presented or disclosed?</p>'),
-            q('ar305-q2i-iii', '<p>Accounting policies incorrectly applied in opening balances, or changes in accounting policies incorrectly accounted for, presented or disclosed?</p>'),
-            q('ar305-q2i-iv', '<p>A predecessor auditor\'s modification to the opinion that remains relevant and material to the current period\'s F/S?</p>'),
+            q('ar305-q2i-i', '<p>An inability to obtain sufficient appropriate audit evidence regarding opening balances?</p>', undefined, 'NA', '<p>Recurring engagement — not an initial audit. Prior year working papers reviewed.</p>'),
+            q('ar305-q2i-ii', '<p>Misstatements in opening balances that materially affect the current period F/S and have not been appropriately accounted for or adequately presented or disclosed?</p>', undefined, 'NA'),
+            q('ar305-q2i-iii', '<p>Accounting policies incorrectly applied in opening balances, or changes in accounting policies incorrectly accounted for, presented or disclosed?</p>', undefined, 'NA'),
+            q('ar305-q2i-iv', '<p>A predecessor auditor\'s modification to the opinion that remains relevant and material to the current period\'s F/S?</p>', undefined, 'NA'),
           ]),
-          q('ar305-q2j', '<p>An inability to obtain sufficient appropriate audit evidence regarding accounting estimates? (CAS 540.34)</p>'),
-          q('ar305-q2k', '<p>Management does not amend the F/S when facts become known after the date of the auditor\'s report but before the F/S are issued or the auditor\'s report has been provided to the entity? (CAS 560.13(a))</p>'),
+          q('ar305-q2j', '<p>An inability to obtain sufficient appropriate audit evidence regarding accounting estimates? (CAS 540.34)</p>', undefined, 'No', '<p>Sufficient evidence obtained for all significant estimates including vessel depreciation and allowance for doubtful accounts.</p>'),
+          q('ar305-q2k', '<p>Management does not amend the F/S when facts become known after the date of the auditor\'s report but before the F/S are issued or the auditor\'s report has been provided to the entity? (CAS 560.13(a))</p>', undefined, 'No'),
           q('ar305-q2l', '<p>Going concern: (CAS 570.21, 23(a), 24; 700.29)</p>', [
-            q('ar305-q2l-i', '<p>Inappropriate use of the going concern basis?</p>'),
-            q('ar305-q2l-ii', '<p>Inadequate financial statement disclosure about a material uncertainty that may cast significant doubt on the entity\'s ability to continue as a going concern?</p>'),
-            q('ar305-q2l-iii', '<p>Management\'s unwillingness to make or extend a going concern assessment?</p>'),
+            q('ar305-q2l-i', '<p>Inappropriate use of the going concern basis?</p>', undefined, 'No', '<p>Going concern basis is appropriate. No going concern issues identified.</p>'),
+            q('ar305-q2l-ii', '<p>Inadequate financial statement disclosure about a material uncertainty that may cast significant doubt on the entity\'s ability to continue as a going concern?</p>', undefined, 'No'),
+            q('ar305-q2l-iii', '<p>Management\'s unwillingness to make or extend a going concern assessment?</p>', undefined, 'No'),
           ]),
-          q('ar305-q2m', '<p>Unreliable written representations from management or lack of willingness to provide requested written representations? (CAS 580.20)</p>'),
-          q('ar305-q2n', '<p>In a group audit: uncorrected misstatements, restrictions imposed by group management or other circumstances resulting in the inability to obtain sufficient appropriate audit evidence? (CAS 600.21(b)(ii), 52)</p>'),
-          q('ar305-q2o', '<p>F/S do not achieve fair presentation (and are prepared in accordance with a fair presentation framework)? (CAS 700.18)</p>'),
-          q('ar305-q2p', '<p>Management-imposed limitation of scope resulting in the inability to obtain sufficient appropriate audit evidence? (CAS 705.13)</p>'),
+          q('ar305-q2m', '<p>Unreliable written representations from management or lack of willingness to provide requested written representations? (CAS 580.20)</p>', undefined, 'No', '<p>Management representation letter received and signed by CEO and CFO on April 25, 2024. All representations assessed as reliable and consistent with audit evidence.</p>'),
+          q('ar305-q2n', '<p>In a group audit: uncorrected misstatements, restrictions imposed by group management or other circumstances resulting in the inability to obtain sufficient appropriate audit evidence? (CAS 600.21(b)(ii), 52)</p>', undefined, 'NA', '<p>Not a group audit. Single entity — Shipping Line Inc.</p>'),
+          q('ar305-q2o', '<p>F/S do not achieve fair presentation (and are prepared in accordance with a fair presentation framework)? (CAS 700.18)</p>', undefined, 'No', '<p>Financial statements achieve fair presentation in accordance with ASPE.</p>'),
+          q('ar305-q2p', '<p>Management-imposed limitation of scope resulting in the inability to obtain sufficient appropriate audit evidence? (CAS 705.13)</p>', undefined, 'No'),
         ]),
-        q('ar305-q3', '<p>If a modified opinion is required due to circumstances applicable in procedure 2 above, or if either of the below circumstances apply, has Form 306 been completed to ensure the auditor\'s report appropriately reflects the modified opinion?</p><p>• Based on the audit evidence obtained, the F/S as a whole are not free from material misstatement; or</p><p>• Sufficient appropriate audit evidence cannot be obtained to conclude that the F/S as a whole are free from material misstatement. (CAS 705.6)</p>'),
+        q('ar305-q3', '<p>If a modified opinion is required due to circumstances applicable in procedure 2 above, or if either of the below circumstances apply, has Form 306 been completed to ensure the auditor\'s report appropriately reflects the modified opinion?</p><p>• Based on the audit evidence obtained, the F/S as a whole are not free from material misstatement; or</p><p>• Sufficient appropriate audit evidence cannot be obtained to conclude that the F/S as a whole are free from material misstatement. (CAS 705.6)</p>', undefined, 'NA', '<p>No modified opinion required. An unmodified opinion is issued. Form 306 not applicable.</p>'),
       ],
       isExpanded: true
     },
@@ -4342,11 +4423,11 @@ export const generateAuditorsReportChecklist = (): Checklist => {
       title: '3. Emphasis of Matter & Other Matter',
       questions: [
         q('ar305-q4', '<p>If there is a need to draw attention to a matter presented/disclosed that is fundamental to the users\' understanding of the F/S, has a section with the heading "Emphasis of Matter" been added to the auditor\'s report:</p>', [
-          q('ar305-q4a', '<p>Including a clear reference to the matter being emphasized, and where the relevant disclosures fully describing the matter can be found in the F/S?</p>'),
-          q('ar305-q4b', '<p>Indicating that the auditor\'s opinion is not modified in respect of the matter emphasized?</p>'),
+          q('ar305-q4a', '<p>Including a clear reference to the matter being emphasized, and where the relevant disclosures fully describing the matter can be found in the F/S?</p>', undefined, 'NA', '<p>No Emphasis of Matter paragraph required.</p>'),
+          q('ar305-q4b', '<p>Indicating that the auditor\'s opinion is not modified in respect of the matter emphasized?</p>', undefined, 'NA'),
         ]),
-        q('ar305-q5', '<p>If there is a need to draw attention to a matter relevant to the users\' understanding of the audit, the auditor\'s responsibilities or the auditor\'s report, has a section with the heading "Other Matter" been added to the auditor\'s report? (CAS 706.10–11)</p>'),
-        q('ar305-q6', '<p>If an "Emphasis of Matter" and/or "Other Matter" section is expected to be included in the auditor\'s report, has the expected wording of the section(s) been communicated with TCWG? (CAS 706.12)</p>'),
+        q('ar305-q5', '<p>If there is a need to draw attention to a matter relevant to the users\' understanding of the audit, the auditor\'s responsibilities or the auditor\'s report, has a section with the heading "Other Matter" been added to the auditor\'s report? (CAS 706.10–11)</p>', undefined, 'NA', '<p>No Other Matter paragraph required in the audit report.</p>'),
+        q('ar305-q6', '<p>If an "Emphasis of Matter" and/or "Other Matter" section is expected to be included in the auditor\'s report, has the expected wording of the section(s) been communicated with TCWG? (CAS 706.12)</p>', undefined, 'NA'),
       ],
       isExpanded: true
     },
@@ -4355,26 +4436,26 @@ export const generateAuditorsReportChecklist = (): Checklist => {
       title: '4. Comparative Information — Corresponding Figures',
       questions: [
         q('ar305-q7', '<p>Have one of the following approaches to comparative information been selected:</p>', [
-          q('ar305-q7a', '<p>Corresponding figures (auditor\'s opinion on the F/S refers to the current period only)?</p>'),
-          q('ar305-q7b', '<p>Comparative F/S (auditor\'s opinion refers to each period for which F/S are presented)?</p>'),
+          q('ar305-q7a', '<p>Corresponding figures (auditor\'s opinion on the F/S refers to the current period only)?</p>', undefined, 'Yes', '<p>Corresponding figures approach adopted. The audit opinion refers to the current period (year ended March 31, 2024) only.</p>'),
+          q('ar305-q7b', '<p>Comparative F/S (auditor\'s opinion refers to each period for which F/S are presented)?</p>', undefined, 'No'),
         ]),
-        q('ar305-q8', '<p>Does the comparative information agree with amounts and other disclosures presented in the prior period (or restated, if appropriate)? (CAS 710.7(a))</p>'),
-        q('ar305-q9', '<p>Does the comparative information consistently reflect the accounting policies applied in the current period? If there have been changes in accounting policies, have those changes been properly accounted for and adequately presented and disclosed? (CAS 710.7(b))</p>'),
+        q('ar305-q8', '<p>Does the comparative information agree with amounts and other disclosures presented in the prior period (or restated, if appropriate)? (CAS 710.7(a))</p>', undefined, 'Yes', '<p>Comparative figures agreed to the prior year audit file. No restatements required.</p>'),
+        q('ar305-q9', '<p>Does the comparative information consistently reflect the accounting policies applied in the current period? If there have been changes in accounting policies, have those changes been properly accounted for and adequately presented and disclosed? (CAS 710.7(b))</p>', undefined, 'Yes', '<p>No changes in accounting policies from prior year. Comparative figures reflect consistent application of ASPE.</p>'),
         q('ar305-q10', '<p>Does the opinion in the auditor\'s report only refer to the current period (not corresponding figures), unless:</p>', [
-          q('ar305-q10a', '<p>A modified opinion was issued in the prior period and the matter that gave rise to the modification is unresolved?</p>'),
-          q('ar305-q10b', '<p>A material misstatement is discovered in the prior period F/S on which an unmodified opinion was previously issued?</p>'),
-          q('ar305-q10c', '<p>The prior period F/S were not audited?</p>'),
+          q('ar305-q10a', '<p>A modified opinion was issued in the prior period and the matter that gave rise to the modification is unresolved?</p>', undefined, 'No', '<p>Unmodified opinion issued in prior year. No unresolved prior year modifications.</p>'),
+          q('ar305-q10b', '<p>A material misstatement is discovered in the prior period F/S on which an unmodified opinion was previously issued?</p>', undefined, 'No'),
+          q('ar305-q10c', '<p>The prior period F/S were not audited?</p>', undefined, 'No', '<p>Prior period financial statements were audited by the same firm. Unmodified opinion issued.</p>'),
         ]),
         q('ar305-q11', '<p>If a modified opinion was issued in the prior period and the matter is unresolved, does the Basis for Opinion section of the auditor\'s report either:</p>', [
-          q('ar305-q11a', '<p>Refer to both the current period\'s figures and the corresponding figures in the description of the matter giving rise to the modification?</p>'),
-          q('ar305-q11b', '<p>Explain that the audit opinion has been modified because of the effects or possible effects of the unresolved matter on the comparability of the current period\'s figures and the corresponding figures?</p>'),
+          q('ar305-q11a', '<p>Refer to both the current period\'s figures and the corresponding figures in the description of the matter giving rise to the modification?</p>', undefined, 'NA'),
+          q('ar305-q11b', '<p>Explain that the audit opinion has been modified because of the effects or possible effects of the unresolved matter on the comparability of the current period\'s figures and the corresponding figures?</p>', undefined, 'NA'),
         ]),
-        q('ar305-q12', '<p>If a material misstatement was discovered in the prior period F/S on which an unmodified opinion was previously issued, and the corresponding figures have not been properly restated or adequate disclosures made, has a qualified or adverse opinion been expressed on the current period F/S, modified with respect to the corresponding figures? (CAS 710.12)</p>'),
-        q('ar305-q13', '<p>If the prior period F/S were not audited, has an "Other Matter" section been included in the auditor\'s report, stating that the corresponding figures are unaudited? (CAS 710.14)</p>'),
+        q('ar305-q12', '<p>If a material misstatement was discovered in the prior period F/S on which an unmodified opinion was previously issued, and the corresponding figures have not been properly restated or adequate disclosures made, has a qualified or adverse opinion been expressed on the current period F/S, modified with respect to the corresponding figures? (CAS 710.12)</p>', undefined, 'NA'),
+        q('ar305-q13', '<p>If the prior period F/S were not audited, has an "Other Matter" section been included in the auditor\'s report, stating that the corresponding figures are unaudited? (CAS 710.14)</p>', undefined, 'NA', '<p>Prior period financial statements were audited.</p>'),
         q('ar305-q14', '<p>If the prior period F/S were audited by a predecessor auditor, has an "Other Matter" section been included in the auditor\'s report, stating:</p>', [
-          q('ar305-q14a', '<p>That the F/S of the prior period were audited by a predecessor auditor?</p>'),
-          q('ar305-q14b', '<p>The type of opinion expressed by the predecessor auditor and, if the opinion was modified, the reasons for the modification?</p>'),
-          q('ar305-q14c', '<p>The date of the predecessor auditor\'s report?</p>'),
+          q('ar305-q14a', '<p>That the F/S of the prior period were audited by a predecessor auditor?</p>', undefined, 'NA', '<p>Prior period audited by same firm. No predecessor auditor.</p>'),
+          q('ar305-q14b', '<p>The type of opinion expressed by the predecessor auditor and, if the opinion was modified, the reasons for the modification?</p>', undefined, 'NA'),
+          q('ar305-q14c', '<p>The date of the predecessor auditor\'s report?</p>', undefined, 'NA'),
         ]),
       ],
       isExpanded: true
@@ -4383,20 +4464,20 @@ export const generateAuditorsReportChecklist = (): Checklist => {
       id: 'section-ar305-5',
       title: '5. Comparative Information — Comparative F/S',
       questions: [
-        q('ar305-q15', '<p>Does the comparative information agree with amounts and other disclosures presented in the prior period (or restated, if appropriate)? (CAS 710.7(a))</p>'),
-        q('ar305-q16', '<p>Does the comparative information consistently reflect the accounting policies applied in the current period? If there have been changes in accounting policies, have those changes been properly accounted for and adequately presented and disclosed? (CAS 710.7(b))</p>'),
-        q('ar305-q17', '<p>Does the opinion in the auditor\'s report refer to each period for which F/S are presented (and on which an audit opinion is expressed)? (CAS 710.15)</p>'),
-        q('ar305-q18', '<p>If the opinion on the prior period F/S differs from the opinion previously expressed, has an "Other Matter" section been included in the auditor\'s report that discloses the substantive reasons for the different opinion? (CAS 710.16)</p>'),
+        q('ar305-q15', '<p>Does the comparative information agree with amounts and other disclosures presented in the prior period (or restated, if appropriate)? (CAS 710.7(a))</p>', undefined, 'NA', '<p>Corresponding figures approach adopted — sections 5 (Comparative F/S) not applicable.</p>'),
+        q('ar305-q16', '<p>Does the comparative information consistently reflect the accounting policies applied in the current period? If there have been changes in accounting policies, have those changes been properly accounted for and adequately presented and disclosed? (CAS 710.7(b))</p>', undefined, 'NA'),
+        q('ar305-q17', '<p>Does the opinion in the auditor\'s report refer to each period for which F/S are presented (and on which an audit opinion is expressed)? (CAS 710.15)</p>', undefined, 'NA'),
+        q('ar305-q18', '<p>If the opinion on the prior period F/S differs from the opinion previously expressed, has an "Other Matter" section been included in the auditor\'s report that discloses the substantive reasons for the different opinion? (CAS 710.16)</p>', undefined, 'NA'),
         q('ar305-q19', '<p>If the prior period F/S were audited by a predecessor auditor, has an "Other Matter" section been included in the auditor\'s report, stating:</p>', [
-          q('ar305-q19a', '<p>That the F/S of the prior period were audited by a predecessor auditor?</p>'),
-          q('ar305-q19b', '<p>The type of opinion expressed by the predecessor auditor and, if the opinion was modified, the reasons for the modification?</p>'),
-          q('ar305-q19c', '<p>The date of the predecessor auditor\'s report?</p>'),
+          q('ar305-q19a', '<p>That the F/S of the prior period were audited by a predecessor auditor?</p>', undefined, 'NA'),
+          q('ar305-q19b', '<p>The type of opinion expressed by the predecessor auditor and, if the opinion was modified, the reasons for the modification?</p>', undefined, 'NA'),
+          q('ar305-q19c', '<p>The date of the predecessor auditor\'s report?</p>', undefined, 'NA'),
         ]),
         q('ar305-q20', '<p>If the prior period F/S were audited by a predecessor auditor (upon which an unmodified opinion was expressed), and the audit team discovers a material misstatement that affects the prior period F/S:</p>', [
-          q('ar305-q20a', '<p>Has the misstatement been communicated with the appropriate level of management and TCWG, requesting that the predecessor auditor be informed?</p>'),
-          q('ar305-q20b', '<p>If the prior period F/S are amended and the predecessor auditor issues a new auditor\'s report on the prior period F/S, has the current auditor\'s report been amended to only report on the current period?</p>'),
+          q('ar305-q20a', '<p>Has the misstatement been communicated with the appropriate level of management and TCWG, requesting that the predecessor auditor be informed?</p>', undefined, 'NA'),
+          q('ar305-q20b', '<p>If the prior period F/S are amended and the predecessor auditor issues a new auditor\'s report on the prior period F/S, has the current auditor\'s report been amended to only report on the current period?</p>', undefined, 'NA'),
         ]),
-        q('ar305-q21', '<p>If the prior period F/S were not audited, has an "Other Matter" section been included in the auditor\'s report, stating that the comparative F/S are unaudited? (CAS 710.19)</p>'),
+        q('ar305-q21', '<p>If the prior period F/S were not audited, has an "Other Matter" section been included in the auditor\'s report, stating that the comparative F/S are unaudited? (CAS 710.19)</p>', undefined, 'NA'),
       ],
       isExpanded: true
     },
@@ -4404,7 +4485,7 @@ export const generateAuditorsReportChecklist = (): Checklist => {
       id: 'section-ar305-6',
       title: '6. Use of Auditor\'s Expert',
       questions: [
-        q('ar305-q22', '<p>If the auditor\'s report refers to the work of an auditor\'s expert, does the report indicate that the reference does not reduce the auditor\'s responsibility for the opinion? (CAS 620.14–15)</p><p><em>Note: The auditor\'s report should not refer to the work of an auditor\'s expert unless required by law or regulation, or the auditor\'s report contains a modified opinion and the work of the auditor\'s expert is relevant to explain the nature of the modification.</em></p>'),
+        q('ar305-q22', '<p>If the auditor\'s report refers to the work of an auditor\'s expert, does the report indicate that the reference does not reduce the auditor\'s responsibility for the opinion? (CAS 620.14–15)</p><p><em>Note: The auditor\'s report should not refer to the work of an auditor\'s expert unless required by law or regulation, or the auditor\'s report contains a modified opinion and the work of the auditor\'s expert is relevant to explain the nature of the modification.</em></p>', undefined, 'NA', '<p>No auditor\'s expert used. Audit report does not refer to any expert work.</p>'),
       ],
       isExpanded: true
     },
@@ -4412,11 +4493,11 @@ export const generateAuditorsReportChecklist = (): Checklist => {
       id: 'section-ar305-7',
       title: '7. Key Audit Matters',
       questions: [
-        q('ar305-q23', '<p>If the engagement is for a listed entity (or the engagement partner determines it is appropriate), has a "Key Audit Matters" section been included in the auditor\'s report? (CAS 701.5, 13)</p>'),
+        q('ar305-q23', '<p>If the engagement is for a listed entity (or the engagement partner determines it is appropriate), has a "Key Audit Matters" section been included in the auditor\'s report? (CAS 701.5, 13)</p>', undefined, 'NA', '<p>Shipping Line Inc. is not a listed entity and the engagement partner did not determine it is appropriate to include Key Audit Matters in this engagement.</p>'),
         q('ar305-q24', '<p>If Key Audit Matters are to be communicated, have the following been addressed:</p>', [
-          q('ar305-q24a', '<p>Matters communicated with TCWG, significant risks, and significant auditor judgments considered?</p>'),
-          q('ar305-q24b', '<p>Each key audit matter described with reference to the related disclosure(s) in the F/S?</p>'),
-          q('ar305-q24c', '<p>Why the matter was considered to be one of most significance and how the matter was addressed in the audit?</p>'),
+          q('ar305-q24a', '<p>Matters communicated with TCWG, significant risks, and significant auditor judgments considered?</p>', undefined, 'NA'),
+          q('ar305-q24b', '<p>Each key audit matter described with reference to the related disclosure(s) in the F/S?</p>', undefined, 'NA'),
+          q('ar305-q24c', '<p>Why the matter was considered to be one of most significance and how the matter was addressed in the audit?</p>', undefined, 'NA'),
         ]),
       ],
       isExpanded: true
@@ -4425,9 +4506,9 @@ export const generateAuditorsReportChecklist = (): Checklist => {
       id: 'section-ar305-8',
       title: '8. Going Concern',
       questions: [
-        q('ar305-q25', '<p>If a material uncertainty related to going concern has been adequately disclosed in the F/S, has a section with the heading "Material Uncertainty Related to Going Concern" been included in the auditor\'s report? (CAS 570.22)</p>'),
-        q('ar305-q26', '<p>If no material uncertainty exists but close-call events or conditions have been identified, has the adequacy of F/S disclosures been evaluated and has a determination been made whether to include an Emphasis of Matter paragraph? (CAS 570.25)</p>'),
-        q('ar305-q27', '<p>If the going concern basis of accounting is used inappropriately, has the opinion been modified? (CAS 570.21)</p>'),
+        q('ar305-q25', '<p>If a material uncertainty related to going concern has been adequately disclosed in the F/S, has a section with the heading "Material Uncertainty Related to Going Concern" been included in the auditor\'s report? (CAS 570.22)</p>', undefined, 'NA', '<p>No material uncertainty related to going concern exists. Section not included in the audit report.</p>'),
+        q('ar305-q26', '<p>If no material uncertainty exists but close-call events or conditions have been identified, has the adequacy of F/S disclosures been evaluated and has a determination been made whether to include an Emphasis of Matter paragraph? (CAS 570.25)</p>', undefined, 'NA', '<p>No close-call going concern events or conditions identified.</p>'),
+        q('ar305-q27', '<p>If the going concern basis of accounting is used inappropriately, has the opinion been modified? (CAS 570.21)</p>', undefined, 'NA', '<p>Going concern basis is appropriate. No modification required.</p>'),
       ],
       isExpanded: true
     },
@@ -4435,7 +4516,7 @@ export const generateAuditorsReportChecklist = (): Checklist => {
       id: 'section-ar305-9',
       title: '9. Group Audit',
       questions: [
-        q('ar305-q28', '<p>If a group audit, has the auditor\'s report been appropriately worded in accordance with CAS 600? (CAS 600.50–52)</p>'),
+        q('ar305-q28', '<p>If a group audit, has the auditor\'s report been appropriately worded in accordance with CAS 600? (CAS 600.50–52)</p>', undefined, 'NA', '<p>Not a group audit. Single entity — Shipping Line Inc.</p>'),
       ],
       isExpanded: true
     },
@@ -4444,8 +4525,8 @@ export const generateAuditorsReportChecklist = (): Checklist => {
       title: '10. Other Reporting Responsibilities',
       questions: [
         q('ar305-q29', '<p>If other reporting responsibilities (in addition to the auditor\'s responsibilities under the CASs) are addressed in the auditor\'s report, have these other reporting responsibilities been:</p>', [
-          q('ar305-q29a', '<p>Included in a separate section in the report with a heading titled "Report on Other Legal and Regulatory Requirements" (or as appropriate)?</p>'),
-          q('ar305-q29b', '<p>If presented in the same section, clearly differentiated from the reporting required by the CASs?</p>'),
+          q('ar305-q29a', '<p>Included in a separate section in the report with a heading titled "Report on Other Legal and Regulatory Requirements" (or as appropriate)?</p>', undefined, 'NA', '<p>No other reporting responsibilities applicable to this engagement.</p>'),
+          q('ar305-q29b', '<p>If presented in the same section, clearly differentiated from the reporting required by the CASs?</p>', undefined, 'NA'),
         ]),
       ],
       isExpanded: true
@@ -4454,7 +4535,7 @@ export const generateAuditorsReportChecklist = (): Checklist => {
       id: 'section-ar305-11',
       title: '11. Auditor\'s Report Prescribed by Law or Regulation',
       questions: [
-        q('ar305-q30', '<p>If law or regulation of a specific jurisdiction requires the use of a specific layout or wording of the auditor\'s report, has CAS 700.50 been reviewed to ensure the minimum required elements have been included in the report? (CAS 700.50)</p>'),
+        q('ar305-q30', '<p>If law or regulation of a specific jurisdiction requires the use of a specific layout or wording of the auditor\'s report, has CAS 700.50 been reviewed to ensure the minimum required elements have been included in the report? (CAS 700.50)</p>', undefined, 'NA', '<p>No specific jurisdiction layout requirements apply to this engagement.</p>'),
       ],
       isExpanded: true
     },
@@ -4463,9 +4544,9 @@ export const generateAuditorsReportChecklist = (): Checklist => {
       title: '12. Auditing Standards of a Specific Jurisdiction',
       questions: [
         q('ar305-q31', '<p>If the audit has been conducted in accordance with the CASs but is also required to be conducted in accordance with the auditing standards of a specific jurisdiction:</p>', [
-          q('ar305-q31a', '<p>Has an evaluation been completed to ensure there is no conflict between the requirements?</p>'),
-          q('ar305-q31b', '<p>Does the auditor\'s report include, at a minimum, all elements listed in CAS 700.50?</p>'),
-          q('ar305-q31c', '<p>If the auditor\'s report refers to both the national auditing standards and Canadian GAAS, does the report identify the jurisdiction of origin?</p>'),
+          q('ar305-q31a', '<p>Has an evaluation been completed to ensure there is no conflict between the requirements?</p>', undefined, 'NA', '<p>Audit conducted solely in accordance with Canadian Auditing Standards (CAS). No dual-standard requirements.</p>'),
+          q('ar305-q31b', '<p>Does the auditor\'s report include, at a minimum, all elements listed in CAS 700.50?</p>', undefined, 'NA'),
+          q('ar305-q31c', '<p>If the auditor\'s report refers to both the national auditing standards and Canadian GAAS, does the report identify the jurisdiction of origin?</p>', undefined, 'NA'),
         ]),
       ],
       isExpanded: true
@@ -4475,8 +4556,8 @@ export const generateAuditorsReportChecklist = (): Checklist => {
       title: '13. Auditor\'s Report Date',
       questions: [
         q('ar305-q32', '<p>Is the auditor\'s report dated no earlier than the date on which sufficient appropriate audit evidence has been obtained, including evidence that:</p>', [
-          q('ar305-q32a', '<p>All the statements and disclosures that comprise the F/S have been prepared?</p>'),
-          q('ar305-q32b', '<p>Those with the recognized authority have asserted that they have taken responsibility for those F/S?</p>'),
+          q('ar305-q32a', '<p>All the statements and disclosures that comprise the F/S have been prepared?</p>', undefined, 'Yes', '<p>All financial statements and disclosures confirmed as complete as at May 2, 2024 (date of audit report). Management signed representation letter on April 25, 2024.</p>'),
+          q('ar305-q32b', '<p>Those with the recognized authority have asserted that they have taken responsibility for those F/S?</p>', undefined, 'Yes', '<p>CEO and CFO of Shipping Line Inc. signed and approved the financial statements on May 2, 2024.</p>'),
         ]),
       ],
       isExpanded: true
@@ -4485,8 +4566,8 @@ export const generateAuditorsReportChecklist = (): Checklist => {
       id: 'section-ar305-14',
       title: '14. Supplementary Information & Other Information',
       questions: [
-        q('ar305-q33', '<p>If supplementary information is presented with the F/S, complete Form 313 and update the auditor\'s report as required. (CAS 700.53–54)</p>'),
-        q('ar305-q34', '<p>If other information is included in the entity\'s annual report, complete Form 313 and update the auditor\'s report as required. (CAS 700.32)</p>'),
+        q('ar305-q33', '<p>If supplementary information is presented with the F/S, complete Form 313 and update the auditor\'s report as required. (CAS 700.53–54)</p>', undefined, 'NA', '<p>No supplementary information presented with the financial statements.</p>'),
+        q('ar305-q34', '<p>If other information is included in the entity\'s annual report, complete Form 313 and update the auditor\'s report as required. (CAS 700.32)</p>', undefined, 'NA', '<p>Shipping Line Inc. does not publish a formal annual report with other information. Audit report covers the financial statements only.</p>'),
       ],
       isExpanded: true
     },
@@ -4685,9 +4766,9 @@ export const generateSupplementaryInfoChecklist = (): Checklist => {
 
 // Checklist — Management Representations (314) template
 export const generateManagementRepresentationsChecklist = (): Checklist => {
-  const q = (id: string, text: string, subQuestions?: Question[]): Question => ({
+  const q = (id: string, text: string, subQuestions?: Question[], answer = '', explanation = '', reference = ''): Question => ({
     id, text, answerType: 'yes-no-na' as const, options: ['Yes', 'No', 'NA'],
-    required: false, answer: '', ...(subQuestions ? { subQuestions } : {})
+    required: false, answer, explanation, reference, ...(subQuestions ? { subQuestions } : {})
   });
 
   const sections: Section[] = [
@@ -4695,11 +4776,11 @@ export const generateManagementRepresentationsChecklist = (): Checklist => {
       id: 'section-mr314-1',
       title: '1. General Requirements',
       questions: [
-        q('mr314-q1', '<p>Is the letter addressed to the auditor? (CAS 580.15)</p>'),
-        q('mr314-q2', '<p>Is the letter dated on or before the date of the auditor\'s report? (CAS 580.14)</p><p><em>Note: The date should not be after the date of the audit report, but can be before, but as near as practicable as possible. If the representation letter is not dated the same as the audit report, documentation should be included to explain the situation, or obtaining a new representation letter should be considered.</em></p>'),
-        q('mr314-q3', '<p>Have any written representations that support other audit evidence relevant to the F/S or one or more specific assertions in the F/S been obtained? (CAS 580.13)</p>'),
-        q('mr314-q4', '<p>Have representations that relate to all periods and F/S referred to in the auditor\'s opinion and report been obtained? (CAS 580.14; 710.9)</p>'),
-        q('mr314-q5', '<p>Has a summary of uncorrected misstatements been included in, or attached to, the management representation letter? (CAS 450.14)</p>'),
+        q('mr314-q1', '<p>Is the letter addressed to the auditor? (CAS 580.15)</p>', undefined, 'Yes', '<p>Management representation letter is addressed to [Firm Name] — confirmed as properly addressed to the auditor.</p>'),
+        q('mr314-q2', '<p>Is the letter dated on or before the date of the auditor\'s report? (CAS 580.14)</p><p><em>Note: The date should not be after the date of the audit report, but can be before, but as near as practicable as possible. If the representation letter is not dated the same as the audit report, documentation should be included to explain the situation, or obtaining a new representation letter should be considered.</em></p>', undefined, 'Yes', '<p>Management representation letter dated April 25, 2024, which is before the audit report date of May 2, 2024. Difference of 7 days documented as acceptable — same fieldwork completion date.</p>'),
+        q('mr314-q3', '<p>Have any written representations that support other audit evidence relevant to the F/S or one or more specific assertions in the F/S been obtained? (CAS 580.13)</p>', undefined, 'Yes', '<p>Specific representations obtained regarding: vessel useful lives, voyage completion method application, completeness of related party disclosures, and adequacy of allowance for doubtful accounts.</p>'),
+        q('mr314-q4', '<p>Have representations that relate to all periods and F/S referred to in the auditor\'s opinion and report been obtained? (CAS 580.14; 710.9)</p>', undefined, 'Yes', '<p>Representations cover the year ended March 31, 2024 and comparative information for the year ended March 31, 2023.</p>'),
+        q('mr314-q5', '<p>Has a summary of uncorrected misstatements been included in, or attached to, the management representation letter? (CAS 450.14)</p>', undefined, 'Yes', '<p>Schedule of uncorrected misstatements (projected misstatements of $30K total) attached to the representation letter. Management acknowledged these are immaterial.</p>', 'W/P Ref: MIS-02'),
       ],
       isExpanded: true
     },
@@ -4708,9 +4789,9 @@ export const generateManagementRepresentationsChecklist = (): Checklist => {
       title: '2. Management\'s Responsibilities',
       questions: [
         q('mr314-q6', '<p>Have the required written management representations been obtained from management with the appropriate responsibilities for the F/S and knowledge of the matters concerned stating that management:</p>', [
-          q('mr314-q6a', '<p>Has fulfilled its responsibility for the preparation of the F/S in accordance with the AFRF, including, where relevant, their fair presentation, as set out in the terms of the audit engagement?</p>'),
-          q('mr314-q6b', '<p>Has provided all relevant information and access as agreed in the terms of the audit engagement?</p>'),
-          q('mr314-q6c', '<p>Has recorded and reflected all transactions in the F/S? (CAS 580.9–12)</p>'),
+          q('mr314-q6a', '<p>Has fulfilled its responsibility for the preparation of the F/S in accordance with the AFRF, including, where relevant, their fair presentation, as set out in the terms of the audit engagement?</p>', undefined, 'Yes'),
+          q('mr314-q6b', '<p>Has provided all relevant information and access as agreed in the terms of the audit engagement?</p>', undefined, 'Yes'),
+          q('mr314-q6c', '<p>Has recorded and reflected all transactions in the F/S? (CAS 580.9–12)</p>', undefined, 'Yes'),
         ]),
       ],
       isExpanded: true
@@ -4720,26 +4801,26 @@ export const generateManagementRepresentationsChecklist = (): Checklist => {
       title: '3. Representations Required by Other CASs',
       questions: [
         q('mr314-q7', '<p><strong>Fraud</strong> — Have the required written management representations been obtained from management and, where appropriate, TCWG that they:</p>', [
-          q('mr314-q7a', '<p>Acknowledge their responsibility for the design, implementation and maintenance of internal control to prevent and detect fraud?</p>'),
-          q('mr314-q7b', '<p>Have disclosed the results of management\'s assessment of the risk that the F/S may be materially misstated as a result of fraud?</p>'),
-          q('mr314-q7c', '<p>Have disclosed their knowledge of fraud, or suspected fraud, affecting the entity involving: management; employees who have significant roles in internal control; or others where the fraud could have a material effect on the F/S?</p>'),
-          q('mr314-q7d', '<p>Have disclosed their knowledge of any allegations of fraud, or suspected fraud, affecting the entity\'s F/S communicated by employees, former employees, analysts, regulators or others? (CAS 240.40)</p>'),
+          q('mr314-q7a', '<p>Acknowledge their responsibility for the design, implementation and maintenance of internal control to prevent and detect fraud?</p>', undefined, 'Yes'),
+          q('mr314-q7b', '<p>Have disclosed the results of management\'s assessment of the risk that the F/S may be materially misstated as a result of fraud?</p>', undefined, 'Yes'),
+          q('mr314-q7c', '<p>Have disclosed their knowledge of fraud, or suspected fraud, affecting the entity involving: management; employees who have significant roles in internal control; or others where the fraud could have a material effect on the F/S?</p>', undefined, 'Yes', '<p>Management confirmed no fraud or suspected fraud. Representation obtained.</p>'),
+          q('mr314-q7d', '<p>Have disclosed their knowledge of any allegations of fraud, or suspected fraud, affecting the entity\'s F/S communicated by employees, former employees, analysts, regulators or others? (CAS 240.40)</p>', undefined, 'Yes', '<p>Management confirmed no allegations of fraud received from any parties. Representation obtained.</p>'),
         ]),
-        q('mr314-q8', '<p><strong>Non-compliance with laws and regulations</strong> — Have disclosed all known instances of non-compliance or suspected non-compliance with laws and regulations whose effects should be considered when preparing F/S? (CAS 250.17)</p>'),
-        q('mr314-q9', '<p><strong>Litigation and claims</strong> — Have disclosed all known actual or possible litigation and claims whose effects should be considered when preparing the F/S and they have been accounted for and disclosed in accordance with the AFRF? (CAS 501.12)</p>'),
+        q('mr314-q8', '<p><strong>Non-compliance with laws and regulations</strong> — Have disclosed all known instances of non-compliance or suspected non-compliance with laws and regulations whose effects should be considered when preparing F/S? (CAS 250.17)</p>', undefined, 'Yes', '<p>Management confirmed no known non-compliance with applicable laws and regulations, including Transport Canada maritime regulations and environmental requirements.</p>'),
+        q('mr314-q9', '<p><strong>Litigation and claims</strong> — Have disclosed all known actual or possible litigation and claims whose effects should be considered when preparing the F/S and they have been accounted for and disclosed in accordance with the AFRF? (CAS 501.12)</p>', undefined, 'Yes', '<p>Management confirmed no material litigation or claims. Corroborated by legal letter from external counsel. No provisions required.</p>', 'W/P Ref: LEG-01'),
         q('mr314-q10', '<p><strong>Related parties</strong> — Have the required representations been obtained that management:</p>', [
-          q('mr314-q10a', '<p>Has disclosed the identity of the entity\'s related parties and all the related party relationships and transactions of which they are aware?</p>'),
-          q('mr314-q10b', '<p>Has appropriately accounted for and disclosed such relationships and transactions in accordance with the requirements of the framework? (CAS 550.26)</p>'),
+          q('mr314-q10a', '<p>Has disclosed the identity of the entity\'s related parties and all the related party relationships and transactions of which they are aware?</p>', undefined, 'Yes', '<p>Related parties confirmed as: majority shareholder (individual), management services company, and vessel charter company. All relationships and transactions disclosed.</p>', 'W/P Ref: RPT-01'),
+          q('mr314-q10b', '<p>Has appropriately accounted for and disclosed such relationships and transactions in accordance with the requirements of the framework? (CAS 550.26)</p>', undefined, 'Yes'),
         ]),
-        q('mr314-q11', '<p><strong>Accounting estimates</strong> — Have used methods, significant assumptions and data in the accounting estimates and the related disclosures that are appropriate to achieve recognition, measurement or disclosure in accordance with the AFRF? (CAS 540.37)</p>'),
-        q('mr314-q12', '<p><strong>Uncorrected misstatements</strong> — Believe the effects of uncorrected misstatements are immaterial, individually and in aggregate, to the F/S as a whole? (CAS 450.14)</p>'),
-        q('mr314-q13', '<p><strong>Subsequent events</strong> — Have adjusted or disclosed all events occurring subsequent to the date of the F/S that require adjustment or disclosure per the AFRF? (CAS 560.9)</p>'),
+        q('mr314-q11', '<p><strong>Accounting estimates</strong> — Have used methods, significant assumptions and data in the accounting estimates and the related disclosures that are appropriate to achieve recognition, measurement or disclosure in accordance with the AFRF? (CAS 540.37)</p>', undefined, 'Yes', '<p>Representation obtained that methods and assumptions used for vessel depreciation, allowance for doubtful accounts, and accrued voyage revenue are appropriate and consistent with ASPE.</p>'),
+        q('mr314-q12', '<p><strong>Uncorrected misstatements</strong> — Believe the effects of uncorrected misstatements are immaterial, individually and in aggregate, to the F/S as a whole? (CAS 450.14)</p>', undefined, 'Yes', '<p>Management representation obtained. Projected misstatements of $30K confirmed as immaterial, individually and in aggregate, to the financial statements.</p>'),
+        q('mr314-q13', '<p><strong>Subsequent events</strong> — Have adjusted or disclosed all events occurring subsequent to the date of the F/S that require adjustment or disclosure per the AFRF? (CAS 560.9)</p>', undefined, 'Yes', '<p>Management confirmed that no events occurring after March 31, 2024 require adjustment or disclosure in the financial statements.</p>'),
         q('mr314-q14', '<p><strong>Going concern</strong> — Have the required representations been obtained that management:</p>', [
-          q('mr314-q14a', '<p>Confirms the use of the going concern basis of accounting in the preparation of the F/S is appropriate?</p>'),
-          q('mr314-q14b', '<p>Has used a method, significant assumptions and data in their assessment of going concern and any related disclosures that is appropriate in the context of the AFRF?</p>'),
-          q('mr314-q14c', '<p>In the assessment of going concern, has reflected all events or conditions that may cast significant doubt on the entity\'s ability to continue as a going concern?</p>'),
-          q('mr314-q14d', '<p>Has disclosed any events or conditions identified above to the audit team?</p>'),
-          q('mr314-q14e', '<p>Has adequately disclosed all matters relevant to going concern in the F/S? (CAS 570.39–40)</p>'),
+          q('mr314-q14a', '<p>Confirms the use of the going concern basis of accounting in the preparation of the F/S is appropriate?</p>', undefined, 'Yes'),
+          q('mr314-q14b', '<p>Has used a method, significant assumptions and data in their assessment of going concern and any related disclosures that is appropriate in the context of the AFRF?</p>', undefined, 'Yes'),
+          q('mr314-q14c', '<p>In the assessment of going concern, has reflected all events or conditions that may cast significant doubt on the entity\'s ability to continue as a going concern?</p>', undefined, 'Yes', '<p>Management confirmed no events or conditions that cast significant doubt on the entity\'s ability to continue as a going concern for at least 12 months from the audit report date.</p>'),
+          q('mr314-q14d', '<p>Has disclosed any events or conditions identified above to the audit team?</p>', undefined, 'Yes'),
+          q('mr314-q14e', '<p>Has adequately disclosed all matters relevant to going concern in the F/S? (CAS 570.39–40)</p>', undefined, 'Yes', '<p>No going concern disclosure required as no significant doubt exists.</p>'),
         ]),
       ],
       isExpanded: true
@@ -4748,7 +4829,7 @@ export const generateManagementRepresentationsChecklist = (): Checklist => {
       id: 'section-mr314-4',
       title: '4. Comparative Information',
       questions: [
-        q('mr314-q15', '<p>Have specific written representations regarding any restatement made to correct a material misstatement in prior period F/S that affect the comparative information been obtained? (CAS 710.9)</p>'),
+        q('mr314-q15', '<p>Have specific written representations regarding any restatement made to correct a material misstatement in prior period F/S that affect the comparative information been obtained? (CAS 710.9)</p>', undefined, 'NA', '<p>No restatements of prior period financial statements required.</p>'),
       ],
       isExpanded: true
     },
@@ -4756,7 +4837,7 @@ export const generateManagementRepresentationsChecklist = (): Checklist => {
       id: 'section-mr314-5',
       title: '5. Other Information',
       questions: [
-        q('mr314-q16', '<p>As noted on Form 313, if some or all of the other information will not be available until after the date of the auditor\'s report, has management been requested to provide a written representation that the final version will be provided when available, and prior to its issuance by the entity? (CAS 720.13(c))</p>'),
+        q('mr314-q16', '<p>As noted on Form 313, if some or all of the other information will not be available until after the date of the auditor\'s report, has management been requested to provide a written representation that the final version will be provided when available, and prior to its issuance by the entity? (CAS 720.13(c))</p>', undefined, 'NA', '<p>No other information (annual report, etc.) issued with the financial statements. Not applicable.</p>'),
       ],
       isExpanded: true
     },
@@ -4764,12 +4845,12 @@ export const generateManagementRepresentationsChecklist = (): Checklist => {
       id: 'section-mr314-6',
       title: '6. Concerns About Management or Written Representations',
       questions: [
-        q('mr314-q17', '<p>Are there any concerns about the competence, integrity, ethical values or diligence of management, or about its commitment to or enforcement of them? If so, has the effect that such concerns may have on the reliability of representations (oral or written) and audit evidence in general been determined? (CAS 580.16)</p>'),
-        q('mr314-q18', '<p>Are any written representations inconsistent with other audit evidence? If so, have audit procedures been performed to attempt to resolve the matter? (CAS 580.17)</p><p><em>Note: If the matter remains unresolved, the audit team should reconsider the assessment of the competence, integrity, ethical values or diligence of management, and determine the effect on the reliability of representations and audit evidence in general.</em></p>'),
+        q('mr314-q17', '<p>Are there any concerns about the competence, integrity, ethical values or diligence of management, or about its commitment to or enforcement of them? If so, has the effect that such concerns may have on the reliability of representations (oral or written) and audit evidence in general been determined? (CAS 580.16)</p>', undefined, 'No', '<p>No concerns identified regarding management competence, integrity, or ethical values. Management was cooperative and forthcoming throughout the audit.</p>'),
+        q('mr314-q18', '<p>Are any written representations inconsistent with other audit evidence? If so, have audit procedures been performed to attempt to resolve the matter? (CAS 580.17)</p><p><em>Note: If the matter remains unresolved, the audit team should reconsider the assessment of the competence, integrity, ethical values or diligence of management, and determine the effect on the reliability of representations and audit evidence in general.</em></p>', undefined, 'No', '<p>No inconsistencies identified between written representations and other audit evidence. All representations are consistent with evidence obtained during the audit.</p>'),
         q('mr314-q19', '<p>If management has not provided all requested written representations:</p>', [
-          q('mr314-q19a', '<p>Has the matter been discussed with management?</p>'),
-          q('mr314-q19b', '<p>Has the integrity of management and the effect on the reliability of representations and audit evidence been assessed?</p>'),
-          q('mr314-q19c', '<p>Have appropriate actions been taken, including determining the possible effect on the audit opinion? (CAS 580.19)</p>'),
+          q('mr314-q19a', '<p>Has the matter been discussed with management?</p>', undefined, 'NA', '<p>Management provided all requested written representations. No items refused.</p>'),
+          q('mr314-q19b', '<p>Has the integrity of management and the effect on the reliability of representations and audit evidence been assessed?</p>', undefined, 'NA'),
+          q('mr314-q19c', '<p>Have appropriate actions been taken, including determining the possible effect on the audit opinion? (CAS 580.19)</p>', undefined, 'NA'),
         ]),
       ],
       isExpanded: true
@@ -4778,10 +4859,10 @@ export const generateManagementRepresentationsChecklist = (): Checklist => {
       id: 'section-mr314-7',
       title: '7. Audit Opinion',
       questions: [
-        q('mr314-q20', '<p>If the written representations are determined not to be reliable, has the possible effect on the opinion in the auditor\'s report been determined in accordance with CAS 705 (use Form 306 if the opinion is modified)? (CAS 580.18)</p>'),
+        q('mr314-q20', '<p>If the written representations are determined not to be reliable, has the possible effect on the opinion in the auditor\'s report been determined in accordance with CAS 705 (use Form 306 if the opinion is modified)? (CAS 580.18)</p>', undefined, 'NA', '<p>Written representations assessed as reliable and consistent with audit evidence. No modifications required.</p>'),
         q('mr314-q21', '<p>Has the opinion on the F/S been disclaimed in accordance with CAS 705 (use Form 306) if:</p>', [
-          q('mr314-q21a', '<p>There is sufficient doubt about the integrity of management such that the written representations required by procedure 6 are not reliable?</p>'),
-          q('mr314-q21b', '<p>Management does not provide the written representations required by procedure 6? (CAS 580.20)</p>'),
+          q('mr314-q21a', '<p>There is sufficient doubt about the integrity of management such that the written representations required by procedure 6 are not reliable?</p>', undefined, 'NA', '<p>No doubt about management integrity. Unmodified opinion issued.</p>'),
+          q('mr314-q21b', '<p>Management does not provide the written representations required by procedure 6? (CAS 580.20)</p>', undefined, 'NA', '<p>Management provided all required representations.</p>'),
         ]),
       ],
       isExpanded: true
@@ -5019,10 +5100,10 @@ export const generateAuditIndependenceChecklist = (): Checklist => {
       id: 'aud-ind-s1',
       title: '1. CSQM 1 Firm-Level Independence Policies',
       questions: [
-        q('aud-ind-1a', '<p>Has the firm\'s independence compliance system been reviewed to confirm that accepting this engagement does not contravene any firm-level independence policies under CSQM 1?</p>'),
-        q('aud-ind-1b', '<p>Has a conflict-of-interest check been performed using the firm\'s client database (including all related entities, subsidiaries, and affiliated parties)?</p>'),
-        q('aud-ind-1c', '<p>Are there any independence issues identified from other assurance or non-assurance services provided by the firm to this client or a related party?</p>'),
-        la('aud-ind-1-exp', '<p><strong>Additional Explanation</strong></p>'),
+        q('aud-ind-1a', '<p>Has the firm\'s independence compliance system been reviewed to confirm that accepting this engagement does not contravene any firm-level independence policies under CSQM 1?</p>', undefined, 'Yes', '<p>Firm independence compliance system reviewed. Accepting AUD-SL-Mar312024 does not contravene any CSQM 1 firm-level independence policies.</p>', 'W/P Ref: IND-01'),
+        q('aud-ind-1b', '<p>Has a conflict-of-interest check been performed using the firm\'s client database (including all related entities, subsidiaries, and affiliated parties)?</p>', undefined, 'Yes', '<p>Conflict-of-interest check completed April 3, 2024. No conflicts identified with Shipping Line Inc. or its related entities.</p>'),
+        q('aud-ind-1c', '<p>Are there any independence issues identified from other assurance or non-assurance services provided by the firm to this client or a related party?</p>', undefined, 'No', '<p>No other assurance or non-assurance services provided by the firm to this client or related parties that would create independence issues.</p>'),
+        la('aud-ind-1-exp', '<p><strong>Additional Explanation</strong></p>', 'CSQM 1 firm-level independence review completed. No issues identified.'),
       ],
       isExpanded: true
     },
@@ -5030,10 +5111,10 @@ export const generateAuditIndependenceChecklist = (): Checklist => {
       id: 'aud-ind-s2',
       title: '2. Network Firm Independence',
       questions: [
-        q('aud-ind-2a', '<p>Is the firm part of a network as defined in the CPA Canada Code of Professional Conduct?</p>'),
-        q('aud-ind-2b', '<p>If yes, have independence requirements been extended to all network firms for this engagement?</p>'),
-        q('aud-ind-2c', '<p>Have inquiries been made of all network offices to identify any threats to independence with respect to this client?</p>'),
-        la('aud-ind-2-exp', '<p><strong>Additional Explanation</strong></p>'),
+        q('aud-ind-2a', '<p>Is the firm part of a network as defined in the CPA Canada Code of Professional Conduct?</p>', undefined, 'No', '<p>The firm is not part of a network. Network firm independence requirements are not applicable.</p>'),
+        q('aud-ind-2b', '<p>If yes, have independence requirements been extended to all network firms for this engagement?</p>', undefined, 'NA', '<p>Not applicable — firm is not part of a network.</p>'),
+        q('aud-ind-2c', '<p>Have inquiries been made of all network offices to identify any threats to independence with respect to this client?</p>', undefined, 'NA', '<p>Not applicable — firm is not part of a network.</p>'),
+        la('aud-ind-2-exp', '<p><strong>Additional Explanation</strong></p>', 'Firm is a standalone practice. Network independence requirements not applicable.'),
       ],
       isExpanded: true
     },
@@ -5042,11 +5123,11 @@ export const generateAuditIndependenceChecklist = (): Checklist => {
       title: '3. Financial Interests in the Client',
       note: 'CPA Canada Code of Professional Conduct — Rule 204.4',
       questions: [
-        q('aud-ind-3a', '<p>Do any members of the engagement team (or their immediate family members) hold direct financial interests in the client?</p>'),
-        q('aud-ind-3b', '<p>Do any members of the engagement team (or their immediate family members) hold indirect financial interests (through mutual funds, investment funds, or pension funds) in the client that are material to their net worth?</p>'),
-        q('aud-ind-3c', '<p>Does the firm hold any financial interest in the client?</p>'),
-        q('aud-ind-3d', '<p>Have all identified financial interest threats been evaluated and appropriate safeguards applied (or the individual removed from the engagement team)?</p>'),
-        la('aud-ind-3-exp', '<p><strong>Additional Explanation — describe interests identified and safeguards applied</strong></p>'),
+        q('aud-ind-3a', '<p>Do any members of the engagement team (or their immediate family members) hold direct financial interests in the client?</p>', undefined, 'No', '<p>Confirmed through team independence declarations dated April 5, 2024. No direct financial interests in Shipping Line Inc.</p>'),
+        q('aud-ind-3b', '<p>Do any members of the engagement team (or their immediate family members) hold indirect financial interests (through mutual funds, investment funds, or pension funds) in the client that are material to their net worth?</p>', undefined, 'No', '<p>No material indirect financial interests. Shipping Line Inc. is a private company.</p>'),
+        q('aud-ind-3c', '<p>Does the firm hold any financial interest in the client?</p>', undefined, 'No'),
+        q('aud-ind-3d', '<p>Have all identified financial interest threats been evaluated and appropriate safeguards applied (or the individual removed from the engagement team)?</p>', undefined, 'Yes', '<p>No financial interest threats identified. All team members confirmed independence.</p>'),
+        la('aud-ind-3-exp', '<p><strong>Additional Explanation — describe interests identified and safeguards applied</strong></p>', 'No financial interests identified. Independence declarations on file for J. Williams (EP), S. Chen (Manager), and two staff seniors.'),
       ],
       isExpanded: true
     },
@@ -5054,11 +5135,11 @@ export const generateAuditIndependenceChecklist = (): Checklist => {
       id: 'aud-ind-s4',
       title: '4. Employment and Business Relationships',
       questions: [
-        q('aud-ind-4a', '<p>Has any member of the engagement team recently been employed by the client in a key management position (within the past two years)?</p>'),
-        q('aud-ind-4b', '<p>Is there any employment negotiation or actual employment offer from the client to a member of the engagement team currently underway?</p>'),
-        q('aud-ind-4c', '<p>Are there any close business relationships between members of the engagement team (or their immediate family) and the client or its management?</p>'),
-        q('aud-ind-4d', '<p>Do any engagement team members serve on the board of directors or in any governance capacity of the client?</p>'),
-        la('aud-ind-4-exp', '<p><strong>Additional Explanation</strong></p>'),
+        q('aud-ind-4a', '<p>Has any member of the engagement team recently been employed by the client in a key management position (within the past two years)?</p>', undefined, 'No'),
+        q('aud-ind-4b', '<p>Is there any employment negotiation or actual employment offer from the client to a member of the engagement team currently underway?</p>', undefined, 'No'),
+        q('aud-ind-4c', '<p>Are there any close business relationships between members of the engagement team (or their immediate family) and the client or its management?</p>', undefined, 'No'),
+        q('aud-ind-4d', '<p>Do any engagement team members serve on the board of directors or in any governance capacity of the client?</p>', undefined, 'No'),
+        la('aud-ind-4-exp', '<p><strong>Additional Explanation</strong></p>', 'No employment or business relationship issues identified for any engagement team member.'),
       ],
       isExpanded: true
     },
@@ -5066,9 +5147,9 @@ export const generateAuditIndependenceChecklist = (): Checklist => {
       id: 'aud-ind-s5',
       title: '5. Family and Personal Relationships',
       questions: [
-        q('aud-ind-5a', '<p>Does any member of the engagement team have an immediate family member who is a director, officer, or employee of the client in a position to exert significant influence over the financial statements?</p>'),
-        q('aud-ind-5b', '<p>Does any member of the engagement team have a close personal relationship with a member of client management or TCWG that could create a familiarity or intimidation threat?</p>'),
-        la('aud-ind-5-exp', '<p><strong>Additional Explanation</strong></p>'),
+        q('aud-ind-5a', '<p>Does any member of the engagement team have an immediate family member who is a director, officer, or employee of the client in a position to exert significant influence over the financial statements?</p>', undefined, 'No'),
+        q('aud-ind-5b', '<p>Does any member of the engagement team have a close personal relationship with a member of client management or TCWG that could create a familiarity or intimidation threat?</p>', undefined, 'No'),
+        la('aud-ind-5-exp', '<p><strong>Additional Explanation</strong></p>', 'No family or personal relationship threats identified.'),
       ],
       isExpanded: true
     },
@@ -5077,13 +5158,13 @@ export const generateAuditIndependenceChecklist = (): Checklist => {
       title: '6. Non-Assurance Services (Self-Review Threat)',
       note: 'CAS 220.16 — The engagement partner shall remain alert throughout the audit for evidence of non-compliance with relevant ethical requirements.',
       questions: [
-        q('aud-ind-6a', '<p>Does the firm provide bookkeeping, accounting, or financial statement preparation services to the client?</p>'),
-        q('aud-ind-6b', '<p>Does the firm provide internal audit services to the client?</p>'),
-        q('aud-ind-6c', '<p>Does the firm provide valuation services, appraisals, or fairness opinions that are material to the financial statements?</p>'),
-        q('aud-ind-6d', '<p>Does the firm provide IT systems design or implementation services for systems that generate information forming part of the financial statements?</p>'),
-        q('aud-ind-6e', '<p>Does the firm provide legal services, HR or payroll services, or corporate finance advisory services that could create a management participation or advocacy threat?</p>'),
-        q('aud-ind-6f', '<p>For all non-assurance services identified above: have safeguards been applied that reduce the self-review threat to an acceptable level (e.g., separate teams, independent review)?</p>'),
-        la('aud-ind-6-exp', '<p><strong>Describe non-assurance services provided and safeguards applied</strong></p>'),
+        q('aud-ind-6a', '<p>Does the firm provide bookkeeping, accounting, or financial statement preparation services to the client?</p>', undefined, 'No', '<p>The firm does not provide bookkeeping or accounting services. Management prepares financial statements using Sage 300.</p>'),
+        q('aud-ind-6b', '<p>Does the firm provide internal audit services to the client?</p>', undefined, 'No'),
+        q('aud-ind-6c', '<p>Does the firm provide valuation services, appraisals, or fairness opinions that are material to the financial statements?</p>', undefined, 'No'),
+        q('aud-ind-6d', '<p>Does the firm provide IT systems design or implementation services for systems that generate information forming part of the financial statements?</p>', undefined, 'No'),
+        q('aud-ind-6e', '<p>Does the firm provide legal services, HR or payroll services, or corporate finance advisory services that could create a management participation or advocacy threat?</p>', undefined, 'No'),
+        q('aud-ind-6f', '<p>For all non-assurance services identified above: have safeguards been applied that reduce the self-review threat to an acceptable level (e.g., separate teams, independent review)?</p>', undefined, 'NA', '<p>Not applicable — no non-assurance services are provided to this client.</p>'),
+        la('aud-ind-6-exp', '<p><strong>Describe non-assurance services provided and safeguards applied</strong></p>', 'No non-assurance services provided to Shipping Line Inc. by the firm. Audit is the sole engagement.'),
       ],
       isExpanded: true
     },
@@ -5091,11 +5172,11 @@ export const generateAuditIndependenceChecklist = (): Checklist => {
       id: 'aud-ind-s7',
       title: '7. Fees, Gifts, and Hospitality',
       questions: [
-        q('aud-ind-7a', '<p>Are audit fees overdue from prior periods? If yes, has this been evaluated as a self-interest threat?</p>'),
-        q('aud-ind-7b', '<p>Do fees from this client (or client group) exceed 15% of total firm revenues? If yes, have appropriate safeguards (e.g., pre-issuance review by external party) been applied?</p>'),
-        q('aud-ind-7c', '<p>Are any fee arrangements contingent on the outcome of the engagement or a transaction (e.g., success fees)?</p>'),
-        q('aud-ind-7d', '<p>Have any gifts or hospitality been received from the client that are more than clearly insignificant in value?</p>'),
-        la('aud-ind-7-exp', '<p><strong>Additional Explanation</strong></p>'),
+        q('aud-ind-7a', '<p>Are audit fees overdue from prior periods? If yes, has this been evaluated as a self-interest threat?</p>', undefined, 'NA', '<p>Not applicable — first year of engagement. No prior period fees outstanding.</p>'),
+        q('aud-ind-7b', '<p>Do fees from this client (or client group) exceed 15% of total firm revenues? If yes, have appropriate safeguards (e.g., pre-issuance review by external party) been applied?</p>', undefined, 'No', '<p>Fees from Shipping Line Inc. represent approximately 2% of total firm revenues. No economic dependence on this client.</p>'),
+        q('aud-ind-7c', '<p>Are any fee arrangements contingent on the outcome of the engagement or a transaction (e.g., success fees)?</p>', undefined, 'No', '<p>Fee arrangement is based on standard hourly rates. No contingency or success fee arrangements in place.</p>'),
+        q('aud-ind-7d', '<p>Have any gifts or hospitality been received from the client that are more than clearly insignificant in value?</p>', undefined, 'No'),
+        la('aud-ind-7-exp', '<p><strong>Additional Explanation</strong></p>', 'No fee or hospitality independence issues identified.'),
       ],
       isExpanded: true
     },
@@ -5104,11 +5185,11 @@ export const generateAuditIndependenceChecklist = (): Checklist => {
       title: '8. Long Association (Familiarity Threat)',
       note: 'CAS 220 / CSQM 1 — Particularly relevant for listed entities and public interest entities.',
       questions: [
-        q('aud-ind-8a', '<p>Has the engagement partner been involved with this client for 7 or more consecutive years?</p>'),
-        q('aud-ind-8b', '<p>Has the key audit partner rotation requirement been met (where applicable under CSQM 1 or regulatory requirements)?</p>'),
-        q('aud-ind-8c', '<p>Has the Senior Manager on the file been involved for an extended period (5+ years) without rotation?</p>'),
-        q('aud-ind-8d', '<p>Have any safeguards been applied to address familiarity threat arising from long association (e.g., independent partner review, EQC review)?</p>'),
-        la('aud-ind-8-exp', '<p><strong>Additional Explanation</strong></p>'),
+        q('aud-ind-8a', '<p>Has the engagement partner been involved with this client for 7 or more consecutive years?</p>', undefined, 'No', '<p>First year of the engagement. Partner rotation requirements do not yet apply.</p>'),
+        q('aud-ind-8b', '<p>Has the key audit partner rotation requirement been met (where applicable under CSQM 1 or regulatory requirements)?</p>', undefined, 'NA', '<p>Not applicable — first year of engagement. Rotation requirements do not apply.</p>'),
+        q('aud-ind-8c', '<p>Has the Senior Manager on the file been involved for an extended period (5+ years) without rotation?</p>', undefined, 'No', '<p>First year of engagement for S. Chen as Manager. No long association threat.</p>'),
+        q('aud-ind-8d', '<p>Have any safeguards been applied to address familiarity threat arising from long association (e.g., independent partner review, EQC review)?</p>', undefined, 'NA', '<p>Not applicable — no long association threat exists in year one of the engagement.</p>'),
+        la('aud-ind-8-exp', '<p><strong>Additional Explanation</strong></p>', 'Long association/familiarity threat not applicable — first year of engagement for all team members.'),
       ],
       isExpanded: true
     },
@@ -5116,10 +5197,10 @@ export const generateAuditIndependenceChecklist = (): Checklist => {
       id: 'aud-ind-s9',
       title: '9. Independence Declarations — Engagement Team',
       questions: [
-        q('aud-ind-9a', '<p>Has each member of the engagement team completed and signed the firm\'s annual independence declaration for the current year?</p>'),
-        q('aud-ind-9b', '<p>Has each member of the engagement team confirmed independence with respect to this specific client (client-specific independence confirmation)?</p>'),
-        q('aud-ind-9c', '<p>Has the Engagement Quality Control Reviewer (EQCR), if applicable, confirmed independence with respect to this client?</p>'),
-        la('aud-ind-9-exp', '<p><strong>List all engagement team members and their confirmation dates</strong></p>'),
+        q('aud-ind-9a', '<p>Has each member of the engagement team completed and signed the firm\'s annual independence declaration for the current year?</p>', undefined, 'Yes', '<p>All team members completed annual independence declarations for fiscal year 2024. Declarations on file.</p>', 'W/P Ref: IND-03'),
+        q('aud-ind-9b', '<p>Has each member of the engagement team confirmed independence with respect to this specific client (client-specific independence confirmation)?</p>', undefined, 'Yes', '<p>Client-specific independence confirmations obtained from all team members on April 5, 2024.</p>', 'W/P Ref: IND-04'),
+        q('aud-ind-9c', '<p>Has the Engagement Quality Control Reviewer (EQCR), if applicable, confirmed independence with respect to this client?</p>', undefined, 'NA', '<p>EQCR not required for this low-risk private company engagement per firm criteria.</p>'),
+        la('aud-ind-9-exp', '<p><strong>List all engagement team members and their confirmation dates</strong></p>', 'J. Williams, CPA (EP) — April 5, 2024; S. Chen, CPA (Manager) — April 5, 2024; Staff Senior 1 — April 5, 2024; Staff Senior 2 — April 5, 2024.'),
       ],
       isExpanded: true
     },
@@ -5127,13 +5208,13 @@ export const generateAuditIndependenceChecklist = (): Checklist => {
       id: 'aud-ind-s10',
       title: '10. Conclusion',
       questions: [
-        q('aud-ind-conc1', '<p>Based on the assessment above, I am satisfied that the firm and all members of the engagement team are independent of the client and that no independence threats exist that have not been adequately addressed by safeguards.</p>'),
-        q('aud-ind-conc2', '<p>Any identified independence matters have been communicated to the appropriate level within the firm (e.g., Risk Management Partner, Ethics Partner) and have been resolved satisfactorily.</p>'),
-        { id: 'aud-ind-ep', text: '<p><strong>Engagement Partner</strong></p>', answerType: 'long-answer' as const, options: [], required: true, answer: '' },
-        { id: 'aud-ind-ep-date', text: '<p><strong>Date</strong></p>', answerType: 'date' as const, options: [], required: true, answer: '' },
-        { id: 'aud-ind-prepared', text: '<p><strong>Prepared by</strong></p>', answerType: 'long-answer' as const, options: [], required: false, answer: '' },
-        { id: 'aud-ind-prepdate', text: '<p><strong>Date</strong></p>', answerType: 'date' as const, options: [], required: false, answer: '' },
-        { id: 'aud-ind-reviewed', text: '<p><strong>Reviewed by (EQCR)</strong></p>', answerType: 'long-answer' as const, options: [], required: false, answer: '' },
+        q('aud-ind-conc1', '<p>Based on the assessment above, I am satisfied that the firm and all members of the engagement team are independent of the client and that no independence threats exist that have not been adequately addressed by safeguards.</p>', undefined, 'Yes', '<p>J. Williams, CPA confirms independence. All sections reviewed. No threats or prohibitions identified.</p>', 'W/P Ref: IND-05'),
+        q('aud-ind-conc2', '<p>Any identified independence matters have been communicated to the appropriate level within the firm (e.g., Risk Management Partner, Ethics Partner) and have been resolved satisfactorily.</p>', undefined, 'NA', '<p>Not applicable — no independence matters were identified requiring escalation.</p>'),
+        { id: 'aud-ind-ep', text: '<p><strong>Engagement Partner</strong></p>', answerType: 'long-answer' as const, options: [], required: true, answer: 'J. Williams, CPA' },
+        { id: 'aud-ind-ep-date', text: '<p><strong>Date</strong></p>', answerType: 'date' as const, options: [], required: true, answer: '2024-04-25' },
+        { id: 'aud-ind-prepared', text: '<p><strong>Prepared by</strong></p>', answerType: 'long-answer' as const, options: [], required: false, answer: 'S. Chen, CPA' },
+        { id: 'aud-ind-prepdate', text: '<p><strong>Date</strong></p>', answerType: 'date' as const, options: [], required: false, answer: '2024-04-14' },
+        { id: 'aud-ind-reviewed', text: '<p><strong>Reviewed by (EQCR)</strong></p>', answerType: 'long-answer' as const, options: [], required: false, answer: 'N/A - EQCR not required' },
         { id: 'aud-ind-revdate', text: '<p><strong>Date</strong></p>', answerType: 'date' as const, options: [], required: false, answer: '' },
       ],
       isExpanded: true
@@ -5164,12 +5245,12 @@ This checklist addresses:
 
 // AML Compliance Checklist — PCMLTFA / FINTRAC (Canada)
 export const generateAMLComplianceChecklist = (): Checklist => {
-  const q = (id: string, text: string, sub?: Question[]): Question => ({
+  const q = (id: string, text: string, sub?: Question[], answer = '', explanation = '', reference = ''): Question => ({
     id, text, answerType: 'yes-no-na' as const, options: ['Yes', 'No', 'NA'],
-    required: false, answer: '', ...(sub ? { subQuestions: sub } : {})
+    required: false, answer, ...(explanation ? { explanation } : {}), ...(reference ? { reference } : {}), ...(sub ? { subQuestions: sub } : {})
   });
-  const la = (id: string, text: string): Question => ({
-    id, text, answerType: 'long-answer' as const, options: [], required: false, answer: ''
+  const la = (id: string, text: string, answer = ''): Question => ({
+    id, text, answerType: 'long-answer' as const, options: [], required: false, answer
   });
 
   const sections: Section[] = [
@@ -5178,9 +5259,9 @@ export const generateAMLComplianceChecklist = (): Checklist => {
       title: '1. Applicability Determination',
       note: 'Public accountants in Canada are reporting entities under PCMLTFA when providing specific services.',
       questions: [
-        q('aud-aml-1a', '<p>Is the firm a reporting entity under the Proceeds of Crime (Money Laundering) and Terrorist Financing Act (PCMLTFA) for this engagement?</p>'),
-        q('aud-aml-1b', '<p>Is the client a federally or provincially regulated financial institution, or otherwise exempt from FINTRAC reporting obligations?</p>'),
-        la('aud-aml-1-exp', '<p><strong>Additional Explanation</strong></p>'),
+        q('aud-aml-1a', '<p>Is the firm a reporting entity under the Proceeds of Crime (Money Laundering) and Terrorist Financing Act (PCMLTFA) for this engagement?</p>', undefined, 'Yes', '<p>The firm is a reporting entity under PCMLTFA when providing accounting services. This audit engagement for Shipping Line Inc. falls within the scope of PCMLTFA reporting obligations.</p>', 'W/P Ref: AML-01'),
+        q('aud-aml-1b', '<p>Is the client a federally or provincially regulated financial institution, or otherwise exempt from FINTRAC reporting obligations?</p>', undefined, 'No', '<p>Shipping Line Inc. is a marine freight and logistics company, not a regulated financial institution. FINTRAC obligations apply in full.</p>'),
+        la('aud-aml-1-exp', '<p><strong>Additional Explanation</strong></p>', 'PCMLTFA applicability confirmed. AML compliance procedures required for this engagement.'),
       ],
       isExpanded: true
     },
@@ -5188,11 +5269,11 @@ export const generateAMLComplianceChecklist = (): Checklist => {
       id: 'aud-aml-s2',
       title: '2. Client Identification and Verification (PCMLTFA s. 9.1)',
       questions: [
-        q('aud-aml-2a', '<p>Has the client\'s legal name been verified using acceptable identification documents or a reliable independent source?</p>'),
-        q('aud-aml-2b', '<p>If the client is a corporation: has a certificate of corporate status (or equivalent) been obtained and reviewed to confirm legal existence, registered name, and address?</p>'),
-        q('aud-aml-2c', '<p>If the client is a trust, partnership, or other entity: has the applicable governing document (trust deed, partnership agreement) been reviewed?</p>'),
-        q('aud-aml-2d', '<p>Has the identity of the individual(s) authorizing the engagement on behalf of the client been verified?</p>'),
-        la('aud-aml-2-exp', '<p><strong>Describe identification documents obtained and verification method used</strong></p>'),
+        q('aud-aml-2a', '<p>Has the client\'s legal name been verified using acceptable identification documents or a reliable independent source?</p>', undefined, 'Yes', '<p>Legal name "Shipping Line Inc." verified against Ontario corporate registry records on April 3, 2024.</p>', 'W/P Ref: AML-02'),
+        q('aud-aml-2b', '<p>If the client is a corporation: has a certificate of corporate status (or equivalent) been obtained and reviewed to confirm legal existence, registered name, and address?</p>', undefined, 'Yes', '<p>Certificate of Corporate Status obtained from Ontario Business Registry on April 3, 2024. Confirmed active, registered address: 123 Harbour Drive, Halifax, NS.</p>'),
+        q('aud-aml-2c', '<p>If the client is a trust, partnership, or other entity: has the applicable governing document (trust deed, partnership agreement) been reviewed?</p>', undefined, 'NA', '<p>Not applicable — Shipping Line Inc. is a corporation, not a trust or partnership.</p>'),
+        q('aud-aml-2d', '<p>Has the identity of the individual(s) authorizing the engagement on behalf of the client been verified?</p>', undefined, 'Yes', '<p>CEO (R. Morrison) identity verified via government-issued photo ID (Ontario driver license) on April 5, 2024.</p>'),
+        la('aud-aml-2-exp', '<p><strong>Describe identification documents obtained and verification method used</strong></p>', 'Ontario Corporate Registry certificate obtained. CEO identity verified via driver license. CFO identity verified via passport. Documents retained in file.'),
       ],
       isExpanded: true
     },
@@ -5200,11 +5281,11 @@ export const generateAMLComplianceChecklist = (): Checklist => {
       id: 'aud-aml-s3',
       title: '3. Beneficial Ownership Identification (PCMLTFA Reg. 11.1)',
       questions: [
-        q('aud-aml-3a', '<p>Have all individuals who own or control, directly or indirectly, 25% or more of the client entity been identified?</p>'),
-        q('aud-aml-3b', '<p>Have the identities of all beneficial owners been verified using reliable and independent sources?</p>'),
-        q('aud-aml-3c', '<p>Where ownership is through a chain of entities, has the chain been traced to identify the ultimate beneficial owner(s)?</p>'),
-        q('aud-aml-3d', '<p>Has the information regarding beneficial ownership been documented in the working papers?</p>'),
-        la('aud-aml-3-exp', '<p><strong>List beneficial owners (≥25%) and verification method</strong></p>'),
+        q('aud-aml-3a', '<p>Have all individuals who own or control, directly or indirectly, 25% or more of the client entity been identified?</p>', undefined, 'Yes', '<p>Beneficial ownership identified: R. Morrison (55% — CEO/founder) and M. Chen (45% — silent partner). Both exceed the 25% threshold.</p>', 'W/P Ref: AML-03'),
+        q('aud-aml-3b', '<p>Have the identities of all beneficial owners been verified using reliable and independent sources?</p>', undefined, 'Yes', '<p>R. Morrison verified via Ontario driver license. M. Chen verified via Canadian passport. Both verified April 5, 2024.</p>'),
+        q('aud-aml-3c', '<p>Where ownership is through a chain of entities, has the chain been traced to identify the ultimate beneficial owner(s)?</p>', undefined, 'NA', '<p>Not applicable — ownership is held directly by two individuals. No chain of entities.</p>'),
+        q('aud-aml-3d', '<p>Has the information regarding beneficial ownership been documented in the working papers?</p>', undefined, 'Yes'),
+        la('aud-aml-3-exp', '<p><strong>List beneficial owners (≥25%) and verification method</strong></p>', 'R. Morrison — 55% — verified via ON driver license (April 5, 2024); M. Chen — 45% — verified via Canadian passport (April 5, 2024).'),
       ],
       isExpanded: true
     },
@@ -5213,10 +5294,10 @@ export const generateAMLComplianceChecklist = (): Checklist => {
       title: '4. Politically Exposed Persons (PEP) and Heads of International Organizations (HIO)',
       note: 'PCMLTFA Regulations — accountants must make reasonable measures to determine PEP/HIO status.',
       questions: [
-        q('aud-aml-4a', '<p>Have reasonable measures been taken to determine whether the client, beneficial owner(s), or controlling party is a Politically Exposed Domestic Person (PEDP)?</p>'),
-        q('aud-aml-4b', '<p>Have reasonable measures been taken to determine whether the client is a Politically Exposed Foreign Person (PEFP) or Head of an International Organization (HIO)?</p>'),
-        q('aud-aml-4c', '<p>If a PEP or HIO has been identified: has senior management approval been obtained and enhanced due diligence applied?</p>'),
-        la('aud-aml-4-exp', '<p><strong>Document PEP/HIO screening results and source used</strong></p>'),
+        q('aud-aml-4a', '<p>Have reasonable measures been taken to determine whether the client, beneficial owner(s), or controlling party is a Politically Exposed Domestic Person (PEDP)?</p>', undefined, 'Yes', '<p>PEP screening performed using commercial database (April 5, 2024). No PEP matches identified for R. Morrison or M. Chen.</p>', 'W/P Ref: AML-04'),
+        q('aud-aml-4b', '<p>Have reasonable measures been taken to determine whether the client is a Politically Exposed Foreign Person (PEFP) or Head of an International Organization (HIO)?</p>', undefined, 'Yes', '<p>PEFP and HIO screening completed April 5, 2024. No matches identified. Both beneficial owners are Canadian citizens with no foreign political affiliations.</p>'),
+        q('aud-aml-4c', '<p>If a PEP or HIO has been identified: has senior management approval been obtained and enhanced due diligence applied?</p>', undefined, 'NA', '<p>Not applicable — no PEPs or HIOs identified.</p>'),
+        la('aud-aml-4-exp', '<p><strong>Document PEP/HIO screening results and source used</strong></p>', 'PEP/HIO screening performed via Equifax commercial database on April 5, 2024. No matches for R. Morrison or M. Chen. Screening results on file.'),
       ],
       isExpanded: true
     },
@@ -5224,10 +5305,10 @@ export const generateAMLComplianceChecklist = (): Checklist => {
       id: 'aud-aml-s5',
       title: '5. Sanctions Screening',
       questions: [
-        q('aud-aml-5a', '<p>Has the client and its beneficial owner(s) been screened against the OSFI Consolidated Canadian Autonomous Sanctions List?</p>'),
-        q('aud-aml-5b', '<p>Has the client and its beneficial owner(s) been screened against the United Nations Security Council (UNSC) consolidated sanctions list?</p>'),
-        q('aud-aml-5c', '<p>Are there any matches to sanctions lists? If yes, has the engagement been declined and the matter escalated to the firm\'s Risk Management Partner?</p>'),
-        la('aud-aml-5-exp', '<p><strong>Document screening method, date performed, and results</strong></p>'),
+        q('aud-aml-5a', '<p>Has the client and its beneficial owner(s) been screened against the OSFI Consolidated Canadian Autonomous Sanctions List?</p>', undefined, 'Yes', '<p>OSFI sanctions list screening performed April 5, 2024. No matches for Shipping Line Inc., R. Morrison, or M. Chen.</p>', 'W/P Ref: AML-05'),
+        q('aud-aml-5b', '<p>Has the client and its beneficial owner(s) been screened against the United Nations Security Council (UNSC) consolidated sanctions list?</p>', undefined, 'Yes', '<p>UNSC consolidated sanctions list screening performed April 5, 2024. No matches identified.</p>'),
+        q('aud-aml-5c', '<p>Are there any matches to sanctions lists? If yes, has the engagement been declined and the matter escalated to the firm\'s Risk Management Partner?</p>', undefined, 'No', '<p>No matches found on any sanctions list. Engagement may proceed.</p>'),
+        la('aud-aml-5-exp', '<p><strong>Document screening method, date performed, and results</strong></p>', 'OSFI and UNSC sanctions screening performed April 5, 2024 via Equifax database. No matches on any sanctions list. Results documented and retained.'),
       ],
       isExpanded: true
     },
@@ -5235,11 +5316,11 @@ export const generateAMLComplianceChecklist = (): Checklist => {
       id: 'aud-aml-s6',
       title: '6. Risk Assessment (FINTRAC Risk-Based Approach)',
       questions: [
-        q('aud-aml-6a', '<p>Has a risk assessment been completed for this client, considering: industry/sector risk, geographic risk, client risk factors, and the nature of transactions?</p>'),
-        q('aud-aml-6b', '<p>Is the source of the client\'s funds/revenue consistent with the stated business purpose?</p>'),
-        q('aud-aml-6c', '<p>Is the client operating in a high-risk jurisdiction (as identified by FATF or FINTRAC guidance)?</p>'),
-        la('aud-aml-6-rating', '<p><strong>Overall ML/TF risk rating: Low / Medium / High</strong></p>'),
-        la('aud-aml-6-rationale', '<p><strong>Rationale for risk rating</strong></p>'),
+        q('aud-aml-6a', '<p>Has a risk assessment been completed for this client, considering: industry/sector risk, geographic risk, client risk factors, and the nature of transactions?</p>', undefined, 'Yes', '<p>ML/TF risk assessment completed April 5, 2024. Marine freight industry presents moderate inherent risk due to international transactions, but client operates primarily in Canada/US with no high-risk jurisdictions.</p>', 'W/P Ref: AML-06'),
+        q('aud-aml-6b', '<p>Is the source of the client\'s funds/revenue consistent with the stated business purpose?</p>', undefined, 'Yes', '<p>Revenue of ~$12.5M CAD is consistent with marine freight and logistics operations. Revenue sources (freight contracts, voyage-based billings) are well-documented and consistent with stated business purpose.</p>'),
+        q('aud-aml-6c', '<p>Is the client operating in a high-risk jurisdiction (as identified by FATF or FINTRAC guidance)?</p>', undefined, 'No', '<p>Operations confined to Canada and US east coast routes. Neither Canada nor the US is a FATF high-risk or monitored jurisdiction.</p>'),
+        la('aud-aml-6-rating', '<p><strong>Overall ML/TF risk rating: Low / Medium / High</strong></p>', 'Low'),
+        la('aud-aml-6-rationale', '<p><strong>Rationale for risk rating</strong></p>', 'Low risk: Canadian operations only, no high-risk jurisdictions, legitimate revenue sources consistent with stated business, no PEPs or adverse screening results, cooperative management with known ownership structure.'),
       ],
       isExpanded: true
     },
@@ -5248,10 +5329,10 @@ export const generateAMLComplianceChecklist = (): Checklist => {
       title: '7. Enhanced Due Diligence (High-Risk Clients)',
       note: 'Required for PEPs, HIOs, clients in high-risk jurisdictions, and clients assessed as high risk.',
       questions: [
-        q('aud-aml-7a', '<p>Has Enhanced Due Diligence (EDD) been applied where required?</p>'),
-        q('aud-aml-7b', '<p>For EDD: Has additional information been obtained regarding the source of funds/wealth and nature of business activities?</p>'),
-        q('aud-aml-7c', '<p>For EDD: Has senior management approval been documented for accepting or continuing the engagement?</p>'),
-        la('aud-aml-7-exp', '<p><strong>Describe EDD measures applied</strong></p>'),
+        q('aud-aml-7a', '<p>Has Enhanced Due Diligence (EDD) been applied where required?</p>', undefined, 'NA', '<p>Not applicable — client assessed as Low risk. EDD not required.</p>'),
+        q('aud-aml-7b', '<p>For EDD: Has additional information been obtained regarding the source of funds/wealth and nature of business activities?</p>', undefined, 'NA', '<p>Not applicable — EDD not required for low-risk client.</p>'),
+        q('aud-aml-7c', '<p>For EDD: Has senior management approval been documented for accepting or continuing the engagement?</p>', undefined, 'NA', '<p>Not applicable — EDD not required for low-risk client.</p>'),
+        la('aud-aml-7-exp', '<p><strong>Describe EDD measures applied</strong></p>', 'EDD not required. Client rated Low risk based on standard due diligence procedures.'),
       ],
       isExpanded: true
     },
@@ -5259,10 +5340,10 @@ export const generateAMLComplianceChecklist = (): Checklist => {
       id: 'aud-aml-s8',
       title: '8. Record-Keeping and STR Obligations',
       questions: [
-        q('aud-aml-8a', '<p>Have all client identification and verification records been retained in the file (minimum 5-year retention under PCMLTFA s. 6)?</p>'),
-        q('aud-aml-8b', '<p>Have any transactions been identified that give rise to reasonable grounds to suspect money laundering or terrorist financing?</p>'),
-        q('aud-aml-8c', '<p>If yes: has a Suspicious Transaction Report (STR) been filed with FINTRAC and escalated to the firm\'s Compliance Officer?</p>'),
-        la('aud-aml-8-exp', '<p><strong>Document any STR considerations or filings</strong></p>'),
+        q('aud-aml-8a', '<p>Have all client identification and verification records been retained in the file (minimum 5-year retention under PCMLTFA s. 6)?</p>', undefined, 'Yes', '<p>All AML client identification and verification records retained in client file. 5-year retention flagged in file management system.</p>', 'W/P Ref: AML-07'),
+        q('aud-aml-8b', '<p>Have any transactions been identified that give rise to reasonable grounds to suspect money laundering or terrorist financing?</p>', undefined, 'No', '<p>No transactions identified during audit planning or fieldwork that give rise to suspicion of money laundering or terrorist financing.</p>'),
+        q('aud-aml-8c', '<p>If yes: has a Suspicious Transaction Report (STR) been filed with FINTRAC and escalated to the firm\'s Compliance Officer?</p>', undefined, 'NA', '<p>Not applicable — no suspicious transactions identified.</p>'),
+        la('aud-aml-8-exp', '<p><strong>Document any STR considerations or filings</strong></p>', 'No suspicious transactions identified. No STR required. AML file complete and retained per PCMLTFA 5-year requirement.'),
       ],
       isExpanded: true
     },
@@ -5270,12 +5351,12 @@ export const generateAMLComplianceChecklist = (): Checklist => {
       id: 'aud-aml-s9',
       title: '9. Conclusion',
       questions: [
-        q('aud-aml-conc1', '<p>All required AML/ATF procedures under PCMLTFA and FINTRAC guidance have been performed and documented for this engagement.</p>'),
-        q('aud-aml-conc2', '<p>No suspicious transactions or unresolved high-risk indicators have been identified that would preclude acceptance or continuance of this engagement.</p>'),
-        { id: 'aud-aml-ep', text: '<p><strong>Engagement Partner / CAMLO</strong></p>', answerType: 'long-answer' as const, options: [], required: true, answer: '' },
-        { id: 'aud-aml-epdate', text: '<p><strong>Date</strong></p>', answerType: 'date' as const, options: [], required: true, answer: '' },
-        { id: 'aud-aml-prepared', text: '<p><strong>Prepared by</strong></p>', answerType: 'long-answer' as const, options: [], required: false, answer: '' },
-        { id: 'aud-aml-prepdate', text: '<p><strong>Date</strong></p>', answerType: 'date' as const, options: [], required: false, answer: '' },
+        q('aud-aml-conc1', '<p>All required AML/ATF procedures under PCMLTFA and FINTRAC guidance have been performed and documented for this engagement.</p>', undefined, 'Yes', '<p>All PCMLTFA and FINTRAC required procedures completed. Client identification, beneficial ownership, PEP/HIO screening, sanctions screening, and risk assessment all performed and documented.</p>', 'W/P Ref: AML-08'),
+        q('aud-aml-conc2', '<p>No suspicious transactions or unresolved high-risk indicators have been identified that would preclude acceptance or continuance of this engagement.</p>', undefined, 'Yes', '<p>No suspicious transactions, STRs, high-risk indicators, or unresolved matters identified. Engagement may proceed.</p>'),
+        { id: 'aud-aml-ep', text: '<p><strong>Engagement Partner / CAMLO</strong></p>', answerType: 'long-answer' as const, options: [], required: true, answer: 'J. Williams, CPA' },
+        { id: 'aud-aml-epdate', text: '<p><strong>Date</strong></p>', answerType: 'date' as const, options: [], required: true, answer: '2024-04-25' },
+        { id: 'aud-aml-prepared', text: '<p><strong>Prepared by</strong></p>', answerType: 'long-answer' as const, options: [], required: false, answer: 'S. Chen, CPA' },
+        { id: 'aud-aml-prepdate', text: '<p><strong>Date</strong></p>', answerType: 'date' as const, options: [], required: false, answer: '2024-04-14' },
       ],
       isExpanded: true
     },
@@ -5304,12 +5385,12 @@ This checklist addresses:
 
 // Audit Materiality Worksheet — CAS 320 / CAS 450
 export const generateAuditMaterialityChecklist = (): Checklist => {
-  const q = (id: string, text: string): Question => ({
+  const q = (id: string, text: string, answer = '', explanation = '', reference = ''): Question => ({
     id, text, answerType: 'yes-no-na' as const, options: ['Yes', 'No', 'NA'],
-    required: false, answer: ''
+    required: false, answer, explanation, reference
   });
-  const la = (id: string, text: string): Question => ({
-    id, text, answerType: 'long-answer' as const, options: [], required: false, answer: ''
+  const la = (id: string, text: string, answer = ''): Question => ({
+    id, text, answerType: 'long-answer' as const, options: [], required: false, answer
   });
 
   const sections: Section[] = [
@@ -5318,11 +5399,11 @@ export const generateAuditMaterialityChecklist = (): Checklist => {
       title: '1. Benchmark Selection and Justification (CAS 320.A3–A6)',
       note: 'Select the benchmark most appropriate to the financial statements taken as a whole, considering the nature and circumstances of the entity and the primary users of the financial statements.',
       questions: [
-        la('aud-mat-1-primary', '<p><strong>Primary benchmark selected</strong> (e.g., profit before tax, total revenues, total assets, total expenses, net assets)</p>'),
-        la('aud-mat-1-justification', '<p><strong>Justification for selected benchmark</strong> — explain why this benchmark is appropriate for the primary users of the financial statements:</p>'),
-        q('aud-mat-1a', '<p>Is the benchmark consistently applied from the prior year? If not, has the change been documented and approved?</p>'),
-        q('aud-mat-1b', '<p>Is profit/income volatile or subject to unusual one-time items? If yes, has an adjusted or normalized figure been used?</p>'),
-        la('aud-mat-1-adj', '<p><strong>Describe any adjustments made to normalize the benchmark (e.g., excluding one-time items, averaging)</strong></p>'),
+        la('aud-mat-1-primary', '<p><strong>Primary benchmark selected</strong> (e.g., profit before tax, total revenues, total assets, total expenses, net assets)</p>', 'Total revenues ($12,500,000)'),
+        la('aud-mat-1-justification', '<p><strong>Justification for selected benchmark</strong> — explain why this benchmark is appropriate for the primary users of the financial statements:</p>', 'Total revenues selected as the primary benchmark as Shipping Line Inc. is a service entity with relatively stable revenues. Profit before tax was considered but is more volatile due to fuel cost fluctuations. Revenue is the measure most relevant to the primary users (bank lenders and shareholders) for assessing the entity\'s performance and scale.'),
+        q('aud-mat-1a', '<p>Is the benchmark consistently applied from the prior year? If not, has the change been documented and approved?</p>', 'Yes', 'Revenue has been used as the benchmark consistently since the prior year. No change to the benchmark selection.'),
+        q('aud-mat-1b', '<p>Is profit/income volatile or subject to unusual one-time items? If yes, has an adjusted or normalized figure been used?</p>', 'Yes', 'Profit before tax is somewhat volatile due to fluctuating fuel costs and USD exchange rate movements. Revenue was selected as a more stable benchmark. No one-time items requiring normalization identified this year.'),
+        la('aud-mat-1-adj', '<p><strong>Describe any adjustments made to normalize the benchmark (e.g., excluding one-time items, averaging)</strong></p>', 'No adjustments required. Revenue of $12,500,000 is used without normalization.'),
       ],
       isExpanded: true
     },
@@ -5330,12 +5411,12 @@ export const generateAuditMaterialityChecklist = (): Checklist => {
       id: 'aud-mat-s2',
       title: '2. Overall Materiality (CAS 320.10)',
       questions: [
-        la('aud-mat-2-benchmark-value', '<p><strong>Benchmark figure — $ amount</strong></p>'),
-        la('aud-mat-2-percentage', '<p><strong>Percentage applied to benchmark</strong> (e.g., 5% of PBT, 0.5%–1% of revenues, 1%–2% of total assets)</p>'),
-        la('aud-mat-2-overall', '<p><strong>Overall materiality — calculated amount ($)</strong></p>'),
-        q('aud-mat-2a', '<p>Is overall materiality consistent with the prior year? If not, has the change been documented and the impact on audit scope assessed?</p>'),
-        la('aud-mat-2-prior', '<p><strong>Prior year overall materiality ($) — for reference</strong></p>'),
-        la('aud-mat-2-rationale', '<p><strong>Additional rationale for overall materiality determination</strong></p>'),
+        la('aud-mat-2-benchmark-value', '<p><strong>Benchmark figure — $ amount</strong></p>', '$12,500,000'),
+        la('aud-mat-2-percentage', '<p><strong>Percentage applied to benchmark</strong> (e.g., 5% of PBT, 0.5%–1% of revenues, 1%–2% of total assets)</p>', '1% of total revenues'),
+        la('aud-mat-2-overall', '<p><strong>Overall materiality — calculated amount ($)</strong></p>', '$125,000'),
+        q('aud-mat-2a', '<p>Is overall materiality consistent with the prior year? If not, has the change been documented and the impact on audit scope assessed?</p>', 'Yes', 'Overall materiality of $125,000 (1% of revenue) is consistent with the prior year approach. Prior year materiality was $112,000 (1% of $11.2M revenue); increase is proportional to revenue growth.'),
+        la('aud-mat-2-prior', '<p><strong>Prior year overall materiality ($) — for reference</strong></p>', '$112,000'),
+        la('aud-mat-2-rationale', '<p><strong>Additional rationale for overall materiality determination</strong></p>', '1% of revenues is appropriate for a private maritime freight company where bank lenders and shareholders are the primary users. The 1% rate reflects the relatively stable revenue base and the significant asset concentration in vessels.'),
       ],
       isExpanded: true
     },
@@ -5344,11 +5425,11 @@ export const generateAuditMaterialityChecklist = (): Checklist => {
       title: '3. Performance Materiality (CAS 320.11)',
       note: 'Performance materiality reduces the risk that the aggregate of uncorrected and undetected misstatements exceeds overall materiality. Typically set at 50–75% of overall materiality.',
       questions: [
-        la('aud-mat-3-percentage', '<p><strong>Performance materiality percentage applied to overall materiality (e.g., 75%)</strong></p>'),
-        la('aud-mat-3-amount', '<p><strong>Performance materiality — calculated amount ($)</strong></p>'),
-        la('aud-mat-3-rationale', '<p><strong>Rationale for the percentage selected</strong> — consider prior year uncorrected misstatements, audit risk assessment, and complexity of the entity:</p>'),
-        q('aud-mat-3a', '<p>Were there significant uncorrected misstatements in the prior year that support a lower performance materiality?</p>'),
-        q('aud-mat-3b', '<p>Are there higher inherent risk areas (e.g., complex transactions, estimates) that support a lower performance materiality?</p>'),
+        la('aud-mat-3-percentage', '<p><strong>Performance materiality percentage applied to overall materiality (e.g., 75%)</strong></p>', '70%'),
+        la('aud-mat-3-amount', '<p><strong>Performance materiality — calculated amount ($)</strong></p>', '$87,500 (70% of $125,000)'),
+        la('aud-mat-3-rationale', '<p><strong>Rationale for the percentage selected</strong> — consider prior year uncorrected misstatements, audit risk assessment, and complexity of the entity:</p>', '70% selected (slightly below the upper end of the 50-75% range) to provide a reasonable buffer given the identified revenue cut-off and vessel impairment risks. Prior year had three immaterial corrected misstatements totalling $18K, which supports a slightly conservative performance materiality.'),
+        q('aud-mat-3a', '<p>Were there significant uncorrected misstatements in the prior year that support a lower performance materiality?</p>', 'No', 'No uncorrected misstatements in the prior year. Three misstatements totalling $18K were corrected by management. This is not significant enough to require a lower performance materiality.'),
+        q('aud-mat-3b', '<p>Are there higher inherent risk areas (e.g., complex transactions, estimates) that support a lower performance materiality?</p>', 'Yes', 'Revenue recognition cut-off and vessel impairment assessment are higher inherent risk areas. These support setting performance materiality at 70% rather than the upper end of 75%.'),
       ],
       isExpanded: true
     },
@@ -5357,9 +5438,9 @@ export const generateAuditMaterialityChecklist = (): Checklist => {
       title: '4. Clearly Trivial Threshold (CAS 450.A2)',
       note: 'Misstatements below the clearly trivial threshold are not accumulated. Typically set at 3–5% of overall materiality.',
       questions: [
-        la('aud-mat-4-percentage', '<p><strong>Clearly trivial percentage applied to overall materiality (e.g., 5%)</strong></p>'),
-        la('aud-mat-4-amount', '<p><strong>Clearly trivial threshold — calculated amount ($)</strong></p>'),
-        la('aud-mat-4-rationale', '<p><strong>Rationale for clearly trivial threshold</strong></p>'),
+        la('aud-mat-4-percentage', '<p><strong>Clearly trivial percentage applied to overall materiality (e.g., 5%)</strong></p>', '5%'),
+        la('aud-mat-4-amount', '<p><strong>Clearly trivial threshold — calculated amount ($)</strong></p>', '$6,250 (5% of $125,000)'),
+        la('aud-mat-4-rationale', '<p><strong>Rationale for clearly trivial threshold</strong></p>', '5% of overall materiality is standard for this engagement. Misstatements below $6,250 will not be accumulated as clearly trivial.'),
       ],
       isExpanded: true
     },
@@ -5368,9 +5449,9 @@ export const generateAuditMaterialityChecklist = (): Checklist => {
       title: '5. Specific Materiality for Sensitive Areas (CAS 320.A13)',
       note: 'Specific materiality may be set for particular classes of transactions, account balances, or disclosures where misstatements of lesser amounts could reasonably be expected to influence user decisions.',
       questions: [
-        q('aud-mat-5a', '<p>Are there account balances, transactions, or disclosures for which a lower specific materiality is appropriate (e.g., related party transactions, regulatory thresholds, executive compensation)?</p>'),
-        la('aud-mat-5-areas', '<p><strong>Identify specific materiality areas and amounts:</strong></p><p>Area 1: _______________ Amount: $_______________</p><p>Area 2: _______________ Amount: $_______________</p><p>Area 3: _______________ Amount: $_______________</p>'),
-        la('aud-mat-5-rationale', '<p><strong>Rationale for specific materiality determinations</strong></p>'),
+        q('aud-mat-5a', '<p>Are there account balances, transactions, or disclosures for which a lower specific materiality is appropriate (e.g., related party transactions, regulatory thresholds, executive compensation)?</p>', 'Yes', 'Related-party transactions (head office lease with Patel Holdings Inc.) will be subject to a lower specific materiality of $25,000 given the disclosure requirements and sensitivity of related-party transactions for users.'),
+        la('aud-mat-5-areas', '<p><strong>Identify specific materiality areas and amounts:</strong></p><p>Area 1: _______________ Amount: $_______________</p><p>Area 2: _______________ Amount: $_______________</p><p>Area 3: _______________ Amount: $_______________</p>', 'Area 1: Related-party transactions — Amount: $25,000\nArea 2: Management compensation disclosures — Amount: $25,000\nArea 3: N/A'),
+        la('aud-mat-5-rationale', '<p><strong>Rationale for specific materiality determinations</strong></p>', 'Lower specific materiality of $25,000 for related-party transactions to ensure complete and accurate disclosure as required under ASPE Section 3840. Same threshold applied to management compensation for consistency.'),
       ],
       isExpanded: true
     },
@@ -5378,7 +5459,7 @@ export const generateAuditMaterialityChecklist = (): Checklist => {
       id: 'aud-mat-s6',
       title: '6. Materiality Summary',
       questions: [
-        la('aud-mat-6-summary', '<p><strong>Complete the materiality summary:</strong></p><p>Benchmark selected: _______________</p><p>Benchmark amount: $_______________</p><p>Overall Materiality: $_______________</p><p>Performance Materiality: $_______________ (___% of OM)</p><p>Clearly Trivial Threshold: $_______________ (___% of OM)</p>'),
+        la('aud-mat-6-summary', '<p><strong>Complete the materiality summary:</strong></p><p>Benchmark selected: _______________</p><p>Benchmark amount: $_______________</p><p>Overall Materiality: $_______________</p><p>Performance Materiality: $_______________ (___% of OM)</p><p>Clearly Trivial Threshold: $_______________ (___% of OM)</p>', 'Benchmark selected: Total revenues\nBenchmark amount: $12,500,000\nOverall Materiality: $125,000\nPerformance Materiality: $87,500 (70% of OM)\nClearly Trivial Threshold: $6,250 (5% of OM)'),
       ],
       isExpanded: true
     },
@@ -5386,9 +5467,9 @@ export const generateAuditMaterialityChecklist = (): Checklist => {
       id: 'aud-mat-s7',
       title: '7. Revision of Materiality During the Audit (CAS 320.12–14)',
       questions: [
-        q('aud-mat-7a', '<p>Has materiality been revised during the audit due to new information or significant changes in circumstances?</p>'),
-        q('aud-mat-7b', '<p>If revised downward: has the impact on the nature, timing, and extent of audit procedures been reassessed?</p>'),
-        la('aud-mat-7-detail', '<p><strong>If revised: document the reason for revision, new amounts, and impact on audit procedures</strong></p>'),
+        q('aud-mat-7a', '<p>Has materiality been revised during the audit due to new information or significant changes in circumstances?</p>', 'No', 'No revision to materiality required during the audit. Final revenues were consistent with planning estimates.'),
+        q('aud-mat-7b', '<p>If revised downward: has the impact on the nature, timing, and extent of audit procedures been reassessed?</p>', 'NA', 'Not applicable — materiality was not revised during the audit.'),
+        la('aud-mat-7-detail', '<p><strong>If revised: document the reason for revision, new amounts, and impact on audit procedures</strong></p>', 'Not applicable — no revision to materiality.'),
       ],
       isExpanded: true
     },
@@ -5396,13 +5477,13 @@ export const generateAuditMaterialityChecklist = (): Checklist => {
       id: 'aud-mat-s8',
       title: '8. Sign-Off',
       questions: [
-        q('aud-mat-conc1', '<p>I am satisfied that the materiality amounts determined above are appropriate for this engagement based on the entity\'s financial profile, risk assessment, and the needs of the primary users.</p>'),
-        { id: 'aud-mat-ep', text: '<p><strong>Engagement Partner</strong></p>', answerType: 'long-answer' as const, options: [], required: true, answer: '' },
-        { id: 'aud-mat-epdate', text: '<p><strong>Date</strong></p>', answerType: 'date' as const, options: [], required: true, answer: '' },
-        { id: 'aud-mat-prepared', text: '<p><strong>Prepared by</strong></p>', answerType: 'long-answer' as const, options: [], required: false, answer: '' },
-        { id: 'aud-mat-prepdate', text: '<p><strong>Date</strong></p>', answerType: 'date' as const, options: [], required: false, answer: '' },
-        { id: 'aud-mat-reviewed', text: '<p><strong>Reviewed by</strong></p>', answerType: 'long-answer' as const, options: [], required: false, answer: '' },
-        { id: 'aud-mat-revdate', text: '<p><strong>Date</strong></p>', answerType: 'date' as const, options: [], required: false, answer: '' },
+        q('aud-mat-conc1', '<p>I am satisfied that the materiality amounts determined above are appropriate for this engagement based on the entity\'s financial profile, risk assessment, and the needs of the primary users.</p>', 'Yes'),
+        { id: 'aud-mat-ep', text: '<p><strong>Engagement Partner</strong></p>', answerType: 'long-answer' as const, options: [], required: true, answer: 'J. Williams, CPA' },
+        { id: 'aud-mat-epdate', text: '<p><strong>Date</strong></p>', answerType: 'date' as const, options: [], required: true, answer: '2024-04-10' },
+        { id: 'aud-mat-prepared', text: '<p><strong>Prepared by</strong></p>', answerType: 'long-answer' as const, options: [], required: false, answer: 'S. Chen, CPA' },
+        { id: 'aud-mat-prepdate', text: '<p><strong>Date</strong></p>', answerType: 'date' as const, options: [], required: false, answer: '2024-04-10' },
+        { id: 'aud-mat-reviewed', text: '<p><strong>Reviewed by</strong></p>', answerType: 'long-answer' as const, options: [], required: false, answer: 'J. Williams, CPA' },
+        { id: 'aud-mat-revdate', text: '<p><strong>Date</strong></p>', answerType: 'date' as const, options: [], required: false, answer: '2024-04-10' },
       ],
       isExpanded: true
     },
@@ -5429,11 +5510,12 @@ This worksheet addresses:
 
 // Audit Engagement Letter — CAS 210 (Letter format — rendered by LetterView)
 export const generateAuditEngagementLetterChecklist = (): Checklist => {
-  const la = (id: string, text: string): Question => ({
-    id, text, answerType: 'long-answer' as const, options: [], required: false, answer: ''
+  const la = (id: string, text: string, answer = ''): Question => ({
+    id, text, answerType: 'long-answer' as const, options: [], required: false, answer
   });
-  const q = (id: string, text: string): Question => ({
-    id, text, answerType: 'yes-no-na' as const, options: ['Yes', 'No', 'NA'], required: false, answer: ''
+  const q = (id: string, text: string, answer = '', explanation = '', reference = ''): Question => ({
+    id, text, answerType: 'yes-no-na' as const, options: ['Yes', 'No', 'NA'], required: false, answer,
+    ...(explanation ? { explanation } : {}), ...(reference ? { reference } : {})
   });
 
   const sections: Section[] = [
@@ -5441,10 +5523,10 @@ export const generateAuditEngagementLetterChecklist = (): Checklist => {
       id: 'aud-el-header',
       title: 'Letter Header',
       questions: [
-        la('aud-el-date', '<p><strong>Date of Letter</strong></p>'),
-        la('aud-el-addressee', '<p><strong>Addressed To</strong> (name and title of management representative or TCWG)</p>'),
-        la('aud-el-entity', '<p><strong>Entity Name</strong></p>'),
-        la('aud-el-address', '<p><strong>Entity Address</strong></p>'),
+        la('aud-el-date', '<p><strong>Date of Letter</strong></p>', 'April 5, 2024'),
+        la('aud-el-addressee', '<p><strong>Addressed To</strong> (name and title of management representative or TCWG)</p>', 'Mr. Robert Morrison, Chief Executive Officer'),
+        la('aud-el-entity', '<p><strong>Entity Name</strong></p>', 'Shipping Line Inc.'),
+        la('aud-el-address', '<p><strong>Entity Address</strong></p>', '123 Harbour Drive, Halifax, Nova Scotia, B3J 1A1'),
       ],
       isExpanded: true
     },
@@ -5452,9 +5534,9 @@ export const generateAuditEngagementLetterChecklist = (): Checklist => {
       id: 'aud-el-s1',
       title: '1. Objective and Scope of the Audit (CAS 210.10(a))',
       questions: [
-        la('aud-el-1-period', '<p><strong>Audit period:</strong> Financial statements for the year ended _______________</p>'),
-        la('aud-el-1-framework', '<p><strong>Applicable financial reporting framework</strong> (e.g., ASPE, IFRS, Public Sector Accounting Standards)</p>'),
-        la('aud-el-1-scope', '<p><strong>Scope of the audit:</strong></p><p>We will audit the financial statements of [Entity Name] which comprise the statement of financial position as at [Year End], and the statements of income, retained earnings, and cash flows for the year then ended, and notes to the financial statements. Our audit will be conducted in accordance with Canadian Auditing Standards (CAS).</p>'),
+        la('aud-el-1-period', '<p><strong>Audit period:</strong> Financial statements for the year ended _______________</p>', 'March 31, 2024'),
+        la('aud-el-1-framework', '<p><strong>Applicable financial reporting framework</strong> (e.g., ASPE, IFRS, Public Sector Accounting Standards)</p>', 'Accounting Standards for Private Enterprises (ASPE)'),
+        la('aud-el-1-scope', '<p><strong>Scope of the audit:</strong></p><p>We will audit the financial statements of [Entity Name] which comprise the statement of financial position as at [Year End], and the statements of income, retained earnings, and cash flows for the year then ended, and notes to the financial statements. Our audit will be conducted in accordance with Canadian Auditing Standards (CAS).</p>', 'We will audit the financial statements of Shipping Line Inc. which comprise the statement of financial position as at March 31, 2024, and the statements of income, retained earnings, and cash flows for the year then ended, and notes to the financial statements. Our audit will be conducted in accordance with Canadian Auditing Standards (CAS).'),
       ],
       isExpanded: true
     },
@@ -5494,7 +5576,7 @@ export const generateAuditEngagementLetterChecklist = (): Checklist => {
       id: 'aud-el-s6',
       title: '6. Fees and Billing Arrangements',
       questions: [
-        la('aud-el-6-fees', '<p><strong>Fee arrangement:</strong></p><p>Our fees for the audit services will be based on [time spent at our standard hourly rates / a fixed fee of $___________]. We will provide an estimate before commencing work and will advise you promptly if we believe the estimate will be exceeded. Out-of-pocket expenses will be billed separately.</p>'),
+        la('aud-el-6-fees', '<p><strong>Fee arrangement:</strong></p><p>Our fees for the audit services will be based on [time spent at our standard hourly rates / a fixed fee of $___________]. We will provide an estimate before commencing work and will advise you promptly if we believe the estimate will be exceeded. Out-of-pocket expenses will be billed separately.</p>', 'Our fees for the audit services will be based on time spent at our standard hourly rates, with an estimated total fee of $28,500 to $32,000 for the year ended March 31, 2024. We will advise you promptly if we believe the estimate will be exceeded. Out-of-pocket expenses (travel, courier, etc.) will be billed separately.'),
       ],
       isExpanded: true
     },
@@ -5502,8 +5584,8 @@ export const generateAuditEngagementLetterChecklist = (): Checklist => {
       id: 'aud-el-s7',
       title: '7. Other Services and Matters',
       questions: [
-        q('aud-el-7a', '<p>Is this engagement subject to an Engagement Quality Control Review (EQCR)?</p>'),
-        la('aud-el-7-other', '<p><strong>Other services / other matters to address</strong> (e.g., tax returns, use of specialists, component auditors, predecessor auditor, restriction on use of the report):</p>'),
+        q('aud-el-7a', '<p>Is this engagement subject to an Engagement Quality Control Review (EQCR)?</p>', 'No', '<p>EQCR not required. Engagement assessed as Low Risk. Private company with no public interest considerations.</p>'),
+        la('aud-el-7-other', '<p><strong>Other services / other matters to address</strong> (e.g., tax returns, use of specialists, component auditors, predecessor auditor, restriction on use of the report):</p>', 'Predecessor auditor contacted — no concerns raised. No component auditors required. No specialists required. Report intended for management and RBC (banking covenant purposes). No restriction on general use.'),
       ],
       isExpanded: true
     },
@@ -5512,10 +5594,10 @@ export const generateAuditEngagementLetterChecklist = (): Checklist => {
       title: '8. Signatures and Agreement',
       questions: [
         la('aud-el-close', '<p><strong>Closing paragraph:</strong></p><p>Please sign and return the attached copy of this letter to indicate your acknowledgement of, and agreement with, the arrangements for our audit of the financial statements including our respective responsibilities.</p>'),
-        la('aud-el-firm', '<p><strong>Firm name and engagement partner signature</strong></p>'),
-        la('aud-el-firmdate', '<p><strong>Date</strong></p>'),
-        la('aud-el-mgmt', '<p><strong>Acknowledged and agreed on behalf of [Entity Name]</strong></p><p>Name: _______________ Title: _______________</p>'),
-        la('aud-el-mgmtdate', '<p><strong>Date acknowledged by management</strong></p>'),
+        la('aud-el-firm', '<p><strong>Firm name and engagement partner signature</strong></p>', 'Williams Chen & Associates LLP — J. Williams, CPA, CA — Engagement Partner'),
+        la('aud-el-firmdate', '<p><strong>Date</strong></p>', 'April 5, 2024'),
+        la('aud-el-mgmt', '<p><strong>Acknowledged and agreed on behalf of [Entity Name]</strong></p><p>Name: _______________ Title: _______________</p>', 'Robert Morrison — Chief Executive Officer — Shipping Line Inc.'),
+        la('aud-el-mgmtdate', '<p><strong>Date acknowledged by management</strong></p>', 'April 5, 2024'),
       ],
       isExpanded: true
     },
@@ -5536,11 +5618,11 @@ Reference: CAS 210 — Agreeing the Terms of Audit Engagements.`,
 
 // TCWG Planning Communication — CAS 260 (Letter format — rendered by LetterView)
 export const generateTCWGPlanningCommunicationChecklist = (): Checklist => {
-  const la = (id: string, text: string): Question => ({
-    id, text, answerType: 'long-answer' as const, options: [], required: false, answer: ''
+  const la = (id: string, text: string, answer = ''): Question => ({
+    id, text, answerType: 'long-answer' as const, options: [], required: false, answer
   });
-  const q = (id: string, text: string): Question => ({
-    id, text, answerType: 'yes-no-na' as const, options: ['Yes', 'No', 'NA'], required: false, answer: ''
+  const q = (id: string, text: string, answer = '', explanation = '', reference = ''): Question => ({
+    id, text, answerType: 'yes-no-na' as const, options: ['Yes', 'No', 'NA'], required: false, answer, explanation, reference
   });
 
   const sections: Section[] = [
@@ -5548,10 +5630,10 @@ export const generateTCWGPlanningCommunicationChecklist = (): Checklist => {
       id: 'aud-tcwg-pl-header',
       title: 'Letter Header',
       questions: [
-        la('tcwg-pl-date', '<p><strong>Date of Communication</strong></p>'),
-        la('tcwg-pl-addressee', '<p><strong>Addressed To</strong> (Those Charged with Governance — Board of Directors / Audit Committee)</p>'),
-        la('tcwg-pl-entity', '<p><strong>Entity Name</strong></p>'),
-        la('tcwg-pl-period', '<p><strong>Audit period — financial statements for the year ended:</strong></p>'),
+        la('tcwg-pl-date', '<p><strong>Date of Communication</strong></p>', 'February 28, 2024'),
+        la('tcwg-pl-addressee', '<p><strong>Addressed To</strong> (Those Charged with Governance — Board of Directors / Audit Committee)</p>', 'Board of Directors, Shipping Line Inc.'),
+        la('tcwg-pl-entity', '<p><strong>Entity Name</strong></p>', 'Shipping Line Inc.'),
+        la('tcwg-pl-period', '<p><strong>Audit period — financial statements for the year ended:</strong></p>', 'March 31, 2024'),
       ],
       isExpanded: true
     },
@@ -5559,7 +5641,7 @@ export const generateTCWGPlanningCommunicationChecklist = (): Checklist => {
       id: 'aud-tcwg-pl-s1',
       title: '1. Purpose of Communication (CAS 260.14)',
       questions: [
-        la('tcwg-pl-1-purpose', '<p><strong>Purpose statement:</strong></p><p>CAS 260 requires us to communicate with those charged with governance our overall audit approach and strategy before the audit begins. This letter fulfills that requirement and is intended to provide transparency about our planned audit scope, timing, and focus areas.</p>'),
+        la('tcwg-pl-1-purpose', '<p><strong>Purpose statement:</strong></p><p>CAS 260 requires us to communicate with those charged with governance our overall audit approach and strategy before the audit begins. This letter fulfills that requirement and is intended to provide transparency about our planned audit scope, timing, and focus areas.</p>', 'Confirmed — letter issued February 28, 2024 to the Board of Directors.'),
       ],
       isExpanded: true
     },
@@ -5567,7 +5649,7 @@ export const generateTCWGPlanningCommunicationChecklist = (): Checklist => {
       id: 'aud-tcwg-pl-s2',
       title: '2. Our Responsibilities as Auditors',
       questions: [
-        la('tcwg-pl-2-resp', '<p><strong>Our responsibilities:</strong></p><p>Our objective is to obtain reasonable assurance about whether the financial statements are free from material misstatement, whether due to fraud or error, and to issue an auditor\'s report that includes our opinion. Reasonable assurance is a high level of assurance, but is not a guarantee that an audit conducted in accordance with CASs will always detect a material misstatement when it exists. Our audit opinion is not a guarantee of the accuracy or completeness of the financial statements.</p>'),
+        la('tcwg-pl-2-resp', '<p><strong>Our responsibilities:</strong></p><p>Our objective is to obtain reasonable assurance about whether the financial statements are free from material misstatement, whether due to fraud or error, and to issue an auditor\'s report that includes our opinion. Reasonable assurance is a high level of assurance, but is not a guarantee that an audit conducted in accordance with CASs will always detect a material misstatement when it exists. Our audit opinion is not a guarantee of the accuracy or completeness of the financial statements.</p>', 'Auditor responsibilities confirmed per standard CAS language.'),
       ],
       isExpanded: true
     },
@@ -5575,9 +5657,9 @@ export const generateTCWGPlanningCommunicationChecklist = (): Checklist => {
       id: 'aud-tcwg-pl-s3',
       title: '3. Overall Audit Approach and Engagement Team',
       questions: [
-        la('tcwg-pl-3-approach', '<p><strong>Audit approach:</strong></p><p>Our audit approach is [risk-based / substantive / combined]. We will obtain an understanding of the entity and its environment, identify and assess risks of material misstatement, and design and perform audit procedures responsive to those risks.</p>'),
-        la('tcwg-pl-3-team', '<p><strong>Engagement team:</strong></p><p>Engagement Partner: _______________</p><p>Senior Manager / Manager: _______________</p><p>Staff: _______________</p><p>EQCR (if applicable): _______________</p>'),
-        la('tcwg-pl-3-timeline', '<p><strong>Planned timeline:</strong></p><p>Interim procedures: _______________</p><p>Year-end fieldwork: _______________</p><p>Expected report issuance: _______________</p>'),
+        la('tcwg-pl-3-approach', '<p><strong>Audit approach:</strong></p><p>Our audit approach is [risk-based / substantive / combined]. We will obtain an understanding of the entity and its environment, identify and assess risks of material misstatement, and design and perform audit procedures responsive to those risks.</p>', 'Primarily substantive risk-based approach. We will obtain an understanding of Shipping Line Inc. and its maritime freight operations, identify and assess risks of material misstatement, and design audit procedures responsive to those risks — particularly around revenue recognition and vessel carrying values.'),
+        la('tcwg-pl-3-team', '<p><strong>Engagement team:</strong></p><p>Engagement Partner: _______________</p><p>Senior Manager / Manager: _______________</p><p>Staff: _______________</p><p>EQCR (if applicable): _______________</p>', 'Engagement Partner: J. Williams, CPA\nEngagement Manager: S. Chen, CPA\nSenior Auditor: [TBD]\nStaff Auditor: [TBD]\nEQCR: Not applicable for this engagement'),
+        la('tcwg-pl-3-timeline', '<p><strong>Planned timeline:</strong></p><p>Interim procedures: _______________</p><p>Year-end fieldwork: _______________</p><p>Expected report issuance: _______________</p>', 'Interim procedures: None planned\nYear-end fieldwork: April 14–25, 2024\nExpected report issuance: May 31, 2024'),
       ],
       isExpanded: true
     },
@@ -5585,7 +5667,7 @@ export const generateTCWGPlanningCommunicationChecklist = (): Checklist => {
       id: 'aud-tcwg-pl-s4',
       title: '4. Significant Audit Focus Areas',
       questions: [
-        la('tcwg-pl-4-focus', '<p><strong>Key areas of audit focus identified during planning:</strong></p><p>1. _______________</p><p>2. _______________</p><p>3. _______________</p><p>4. _______________</p>'),
+        la('tcwg-pl-4-focus', '<p><strong>Key areas of audit focus identified during planning:</strong></p><p>1. _______________</p><p>2. _______________</p><p>3. _______________</p><p>4. _______________</p>', '1. Revenue recognition — voyage completion cut-off for freight revenue at March 31, 2024\n2. Vessel impairment assessment — fleet PP&E of $8.2M representing 45% of total assets\n3. Foreign currency transactions — USD-denominated freight revenue and receivables\n4. Management override of controls — journal entry testing and accounting estimates'),
       ],
       isExpanded: true
     },
@@ -5593,7 +5675,7 @@ export const generateTCWGPlanningCommunicationChecklist = (): Checklist => {
       id: 'aud-tcwg-pl-s5',
       title: '5. Materiality',
       questions: [
-        la('tcwg-pl-5-mat', '<p><strong>Materiality for planning purposes:</strong></p><p>Overall materiality: $_______________</p><p>Performance materiality: $_______________</p><p>Clearly trivial threshold: $_______________</p><p>Benchmark: _______________</p>'),
+        la('tcwg-pl-5-mat', '<p><strong>Materiality for planning purposes:</strong></p><p>Overall materiality: $_______________</p><p>Performance materiality: $_______________</p><p>Clearly trivial threshold: $_______________</p><p>Benchmark: _______________</p>', 'Overall materiality: $125,000\nPerformance materiality: $87,500\nClearly trivial threshold: $6,250\nBenchmark: 1% of total revenues ($12,500,000)'),
       ],
       isExpanded: true
     },
@@ -5601,9 +5683,9 @@ export const generateTCWGPlanningCommunicationChecklist = (): Checklist => {
       id: 'aud-tcwg-pl-s6',
       title: '6. Fraud Risk Inquiries (CAS 240.20)',
       questions: [
-        la('tcwg-pl-6-fraud', '<p><strong>CAS 240 requires us to inquire of TCWG regarding:</strong></p><p>(a) Your assessment of the risk that the financial statements may be materially misstated due to fraud;</p><p>(b) Your knowledge of any actual, suspected, or alleged fraud affecting the entity;</p><p>(c) The procedures management performs to prevent and detect fraud.</p>'),
-        q('tcwg-pl-6-fraud-q', '<p>Are you aware of any fraud or suspected fraud that we should know about?</p>'),
-        la('tcwg-pl-6-fraud-exp', '<p><strong>TCWG response regarding fraud risk</strong></p>'),
+        la('tcwg-pl-6-fraud', '<p><strong>CAS 240 requires us to inquire of TCWG regarding:</strong></p><p>(a) Your assessment of the risk that the financial statements may be materially misstated due to fraud;</p><p>(b) Your knowledge of any actual, suspected, or alleged fraud affecting the entity;</p><p>(c) The procedures management performs to prevent and detect fraud.</p>', 'CAS 240 fraud inquiries communicated to TCWG in this letter. Responses from TCWG to be documented in the fraud risk assessment working paper.'),
+        q('tcwg-pl-6-fraud-q', '<p>Are you aware of any fraud or suspected fraud that we should know about?</p>', 'No', 'TCWG confirmed no knowledge of actual, suspected, or alleged fraud affecting the entity. Documented in the TCWG planning communication signed by the board chair.'),
+        la('tcwg-pl-6-fraud-exp', '<p><strong>TCWG response regarding fraud risk</strong></p>', 'TCWG (Board of Directors) confirmed no awareness of fraud or suspected fraud. Management anti-fraud controls include separation of duties in AP and payroll, dual authorization for payments, and quarterly board review of financial results. No fraud risk factors identified at the TCWG level.'),
       ],
       isExpanded: true
     },
@@ -5611,10 +5693,10 @@ export const generateTCWGPlanningCommunicationChecklist = (): Checklist => {
       id: 'aud-tcwg-pl-s7',
       title: '7. Going Concern and Independence',
       questions: [
-        q('tcwg-pl-7-gc', '<p>Are you aware of any events or conditions that may cast significant doubt on the entity\'s ability to continue as a going concern?</p>'),
-        la('tcwg-pl-7-gc-exp', '<p><strong>TCWG response regarding going concern</strong></p>'),
-        la('tcwg-pl-8-ind', '<p><strong>Independence confirmation:</strong></p><p>We confirm that we are independent of the entity in accordance with the CPA Canada Code of Professional Conduct. We are not aware of any relationships or interests that may reasonably be thought to bear on our independence.</p>'),
-        la('tcwg-pl-8-ind-matters', '<p><strong>Independence matters to disclose to TCWG (if any)</strong></p>'),
+        q('tcwg-pl-7-gc', '<p>Are you aware of any events or conditions that may cast significant doubt on the entity\'s ability to continue as a going concern?</p>', 'No', 'TCWG confirmed no awareness of events or conditions casting doubt on the entity\'s ability to continue as a going concern. Banking covenants are being met with comfortable headroom.'),
+        la('tcwg-pl-7-gc-exp', '<p><strong>TCWG response regarding going concern</strong></p>', 'TCWG confirmed no going concern concerns. The entity has positive operating cash flows, meets all banking covenants, and has sufficient liquidity. Management projects continued profitable operations for the foreseeable future.'),
+        la('tcwg-pl-8-ind', '<p><strong>Independence confirmation:</strong></p><p>We confirm that we are independent of the entity in accordance with the CPA Canada Code of Professional Conduct. We are not aware of any relationships or interests that may reasonably be thought to bear on our independence.</p>', 'Independence confirmed. No relationships, interests, or threats to independence have been identified. The engagement firm is independent of Shipping Line Inc. in accordance with the CPA Canada Code of Professional Conduct.'),
+        la('tcwg-pl-8-ind-matters', '<p><strong>Independence matters to disclose to TCWG (if any)</strong></p>', 'None. No independence matters require disclosure to TCWG.'),
       ],
       isExpanded: true
     },
@@ -5622,9 +5704,9 @@ export const generateTCWGPlanningCommunicationChecklist = (): Checklist => {
       id: 'aud-tcwg-pl-closing',
       title: '8. Closing',
       questions: [
-        la('tcwg-pl-closing', '<p>We welcome the opportunity to discuss our audit approach and focus areas. Please contact [Engagement Partner] at [phone/email] if you require further information prior to the commencement of our audit.</p>'),
-        la('tcwg-pl-firm', '<p><strong>Firm name and engagement partner signature</strong></p>'),
-        la('tcwg-pl-firmdate', '<p><strong>Date</strong></p>'),
+        la('tcwg-pl-closing', '<p>We welcome the opportunity to discuss our audit approach and focus areas. Please contact [Engagement Partner] at [phone/email] if you require further information prior to the commencement of our audit.</p>', 'We welcome the opportunity to discuss our audit approach and focus areas. Please contact J. Williams, CPA at (604) 555-0100 or j.williams@auditfirm.ca if you require further information prior to the commencement of our audit fieldwork on April 14, 2024.'),
+        la('tcwg-pl-firm', '<p><strong>Firm name and engagement partner signature</strong></p>', '[Audit Firm Name]\nJ. Williams, CPA — Engagement Partner'),
+        la('tcwg-pl-firmdate', '<p><strong>Date</strong></p>', 'February 28, 2024'),
       ],
       isExpanded: true
     },
@@ -5645,11 +5727,11 @@ Reference: CAS 260 — Communication with Those Charged with Governance.`,
 
 // TCWG Final Communication — CAS 260 (Letter format — rendered by LetterView)
 export const generateTCWGFinalCommunicationChecklist = (): Checklist => {
-  const la = (id: string, text: string): Question => ({
-    id, text, answerType: 'long-answer' as const, options: [], required: false, answer: ''
+  const la = (id: string, text: string, answer = ''): Question => ({
+    id, text, answerType: 'long-answer' as const, options: [], required: false, answer
   });
-  const q = (id: string, text: string): Question => ({
-    id, text, answerType: 'yes-no-na' as const, options: ['Yes', 'No', 'NA'], required: false, answer: ''
+  const q = (id: string, text: string, answer = '', explanation = '', reference = ''): Question => ({
+    id, text, answerType: 'yes-no-na' as const, options: ['Yes', 'No', 'NA'], required: false, answer, explanation, reference
   });
 
   const sections: Section[] = [
@@ -5657,10 +5739,10 @@ export const generateTCWGFinalCommunicationChecklist = (): Checklist => {
       id: 'aud-tcwg-fin-header',
       title: 'Letter Header',
       questions: [
-        la('tcwg-fin-date', '<p><strong>Date of Communication</strong></p>'),
-        la('tcwg-fin-addressee', '<p><strong>Addressed To</strong> (Those Charged with Governance)</p>'),
-        la('tcwg-fin-entity', '<p><strong>Entity Name</strong></p>'),
-        la('tcwg-fin-period', '<p><strong>Audit period:</strong></p>'),
+        la('tcwg-fin-date', '<p><strong>Date of Communication</strong></p>', 'May 2, 2024'),
+        la('tcwg-fin-addressee', '<p><strong>Addressed To</strong> (Those Charged with Governance)</p>', 'Board of Directors, Shipping Line Inc.'),
+        la('tcwg-fin-entity', '<p><strong>Entity Name</strong></p>', 'Shipping Line Inc.'),
+        la('tcwg-fin-period', '<p><strong>Audit period:</strong></p>', 'Year ended March 31, 2024'),
       ],
       isExpanded: true
     },
@@ -5668,9 +5750,9 @@ export const generateTCWGFinalCommunicationChecklist = (): Checklist => {
       id: 'aud-tcwg-fin-s1',
       title: '1. Audit Opinion',
       questions: [
-        la('tcwg-fin-1-opinion', '<p><strong>Audit opinion issued:</strong></p><p>We have issued an [unmodified / qualified / adverse / disclaimer of] opinion on the financial statements of [Entity Name] for the year ended [date].</p>'),
-        q('tcwg-fin-1-modified', '<p>If modified: has the nature and reason for the modification been communicated to TCWG?</p>'),
-        la('tcwg-fin-1-kem', '<p><strong>Key audit matters (if applicable):</strong></p>'),
+        la('tcwg-fin-1-opinion', '<p><strong>Audit opinion issued:</strong></p><p>We have issued an [unmodified / qualified / adverse / disclaimer of] opinion on the financial statements of [Entity Name] for the year ended [date].</p>', 'We have issued an unmodified opinion on the financial statements of Shipping Line Inc. for the year ended March 31, 2024, confirming that the financial statements present fairly, in all material respects, in accordance with ASPE.'),
+        q('tcwg-fin-1-modified', '<p>If modified: has the nature and reason for the modification been communicated to TCWG?</p>', 'NA', '<p>Unmodified opinion issued. No modification to communicate.</p>'),
+        la('tcwg-fin-1-kem', '<p><strong>Key audit matters (if applicable):</strong></p>', 'Not applicable — Shipping Line Inc. is not a listed entity. Key audit matters are not included in the auditor report.'),
       ],
       isExpanded: true
     },
@@ -5678,10 +5760,10 @@ export const generateTCWGFinalCommunicationChecklist = (): Checklist => {
       id: 'aud-tcwg-fin-s2',
       title: '2. Significant Accounting Policies and Estimates (CAS 260.14(b))',
       questions: [
-        la('tcwg-fin-2-policies', '<p><strong>Significant accounting policies applied:</strong></p><p>1. _______________</p><p>2. _______________</p><p>3. _______________</p>'),
-        q('tcwg-fin-2-policies-q', '<p>Are all significant accounting policies appropriate and consistently applied?</p>'),
-        la('tcwg-fin-2-estimates', '<p><strong>Significant accounting estimates requiring significant judgment:</strong></p><p>1. _______________</p><p>2. _______________</p>'),
-        la('tcwg-fin-2-changes', '<p><strong>Changes in accounting policies or estimates during the year (if any):</strong></p>'),
+        la('tcwg-fin-2-policies', '<p><strong>Significant accounting policies applied:</strong></p><p>1. _______________</p><p>2. _______________</p><p>3. _______________</p>', '1. Revenue recognition: Freight revenue recognized upon voyage completion (ASPE 3400). 2. Vessels: Recorded at cost less accumulated depreciation; straight-line over 20-25 year useful lives (ASPE 3061). 3. Foreign currency: USD transactions translated at transaction-date rates; year-end monetary balances at closing rate (ASPE 1651).'),
+        q('tcwg-fin-2-policies-q', '<p>Are all significant accounting policies appropriate and consistently applied?</p>', 'Yes', '<p>All significant accounting policies (voyage completion revenue recognition, straight-line vessel depreciation, foreign currency translation) assessed as appropriate and consistently applied per ASPE.</p>'),
+        la('tcwg-fin-2-estimates', '<p><strong>Significant accounting estimates requiring significant judgment:</strong></p><p>1. _______________</p><p>2. _______________</p>', '1. Vessel useful lives and residual values (significant judgment in depreciation rates — assessed as reasonable). 2. Allowance for doubtful accounts ($85K at March 31, 2024 — assessed as appropriate based on aging and collection history).'),
+        la('tcwg-fin-2-changes', '<p><strong>Changes in accounting policies or estimates during the year (if any):</strong></p>', 'No changes in accounting policies or estimates during the year ended March 31, 2024.'),
       ],
       isExpanded: true
     },
@@ -5689,9 +5771,9 @@ export const generateTCWGFinalCommunicationChecklist = (): Checklist => {
       id: 'aud-tcwg-fin-s3',
       title: '3. Significant Audit Findings (CAS 260.14(c))',
       questions: [
-        la('tcwg-fin-3-findings', '<p><strong>Significant audit findings and observations:</strong></p><p>1. _______________</p><p>2. _______________</p><p>3. _______________</p>'),
-        la('tcwg-fin-3-uncorrected', '<p><strong>Uncorrected misstatements (management has determined these are immaterial):</strong></p>'),
-        la('tcwg-fin-3-corrected', '<p><strong>Corrected misstatements that were individually significant:</strong></p>'),
+        la('tcwg-fin-3-findings', '<p><strong>Significant audit findings and observations:</strong></p><p>1. _______________</p><p>2. _______________</p><p>3. _______________</p>', '1. Revenue cutoff (AJE-001, $45K): One voyage invoice recorded as revenue in March 2024 related to a voyage not completed at year-end. Corrected by management. 2. Depreciation correction (AJE-002, $12K): Depreciation on a vessel component was incorrectly calculated. Corrected by management. 3. Deferred revenue reclassification (AJE-003, $28K): Deferred revenue was misclassified as accounts payable. Reclassified by management.'),
+        la('tcwg-fin-3-uncorrected', '<p><strong>Uncorrected misstatements (management has determined these are immaterial):</strong></p>', 'Projected uncorrected misstatements of approximately $30K in aggregate (revenue $18K, expenses $12K). Management has determined these are immaterial to the financial statements, individually and in aggregate. The audit team concurs with this assessment.'),
+        la('tcwg-fin-3-corrected', '<p><strong>Corrected misstatements that were individually significant:</strong></p>', 'AJE-001 ($45K revenue cutoff), AJE-002 ($12K depreciation correction), AJE-003 ($28K deferred revenue reclassification). Total corrections: $85K. All corrected in the final financial statements.'),
       ],
       isExpanded: true
     },
@@ -5699,12 +5781,12 @@ export const generateTCWGFinalCommunicationChecklist = (): Checklist => {
       id: 'aud-tcwg-fin-s4',
       title: '4. Internal Control and Fraud (CAS 265 / CAS 240)',
       questions: [
-        q('tcwg-fin-4-deficiencies', '<p>Were any significant deficiencies or material weaknesses in internal control identified during the audit?</p>'),
-        la('tcwg-fin-4-ic-detail', '<p><strong>Description of significant deficiencies / material weaknesses and management\'s response:</strong></p>'),
-        q('tcwg-fin-4-fraud', '<p>Were any indicators of fraud identified during the audit requiring communication to TCWG?</p>'),
-        la('tcwg-fin-4-fraud-detail', '<p><strong>Fraud matters to communicate (if any)</strong></p>'),
-        q('tcwg-fin-4-gc', '<p>Were any going concern events or conditions identified during the audit?</p>'),
-        la('tcwg-fin-4-gc-detail', '<p><strong>Going concern matters (if any)</strong></p>'),
+        q('tcwg-fin-4-deficiencies', '<p>Were any significant deficiencies or material weaknesses in internal control identified during the audit?</p>', 'No', '<p>No significant deficiencies or material weaknesses identified. One minor observation (isolated AP three-way match deviation) communicated as a recommendation in the management letter.</p>'),
+        la('tcwg-fin-4-ic-detail', '<p><strong>Description of significant deficiencies / material weaknesses and management\'s response:</strong></p>', 'No significant deficiencies or material weaknesses identified. Minor observation: one isolated instance of an accounts payable invoice processed without completing the three-way match control (1 of 25 samples tested). Recommendation: reinforce staff training on AP procedures. Management agreed to implement additional training.'),
+        q('tcwg-fin-4-fraud', '<p>Were any indicators of fraud identified during the audit requiring communication to TCWG?</p>', 'No', '<p>No indicators of fraud identified during the audit of Shipping Line Inc. for the year ended March 31, 2024.</p>'),
+        la('tcwg-fin-4-fraud-detail', '<p><strong>Fraud matters to communicate (if any)</strong></p>', 'Not applicable — no fraud indicators identified during the audit.'),
+        q('tcwg-fin-4-gc', '<p>Were any going concern events or conditions identified during the audit?</p>', 'No', '<p>No going concern events or conditions identified. Entity has positive net income of $847K, adequate working capital, and an established credit facility with availability.</p>'),
+        la('tcwg-fin-4-gc-detail', '<p><strong>Going concern matters (if any)</strong></p>', 'Not applicable — no going concern issues identified.'),
       ],
       isExpanded: true
     },
@@ -5712,8 +5794,8 @@ export const generateTCWGFinalCommunicationChecklist = (): Checklist => {
       id: 'aud-tcwg-fin-s5',
       title: '5. Independence Confirmation (CAS 260.14(e))',
       questions: [
-        la('tcwg-fin-5-ind', '<p><strong>Independence confirmation:</strong></p><p>We confirm that as of the date of this communication, we are independent of the entity in accordance with ethical requirements relevant to our audit in Canada.</p>'),
-        la('tcwg-fin-5-ind-matters', '<p><strong>Independence matters identified during the audit (if any):</strong></p>'),
+        la('tcwg-fin-5-ind', '<p><strong>Independence confirmation:</strong></p><p>We confirm that as of the date of this communication, we are independent of the entity in accordance with ethical requirements relevant to our audit in Canada.</p>', 'We confirm that as of May 2, 2024, we are independent of Shipping Line Inc. in accordance with the ethical requirements relevant to our audit in Canada, including the CPA Canada Code of Professional Conduct.'),
+        la('tcwg-fin-5-ind-matters', '<p><strong>Independence matters identified during the audit (if any):</strong></p>', 'No independence matters identified during the audit.'),
       ],
       isExpanded: true
     },
@@ -5721,9 +5803,9 @@ export const generateTCWGFinalCommunicationChecklist = (): Checklist => {
       id: 'aud-tcwg-fin-closing',
       title: '6. Closing',
       questions: [
-        la('tcwg-fin-closing', '<p>We thank you for your cooperation during the audit. Please contact [Engagement Partner] at [phone/email] with any questions or comments.</p>'),
-        la('tcwg-fin-firm', '<p><strong>Firm name and engagement partner signature</strong></p>'),
-        la('tcwg-fin-firmdate', '<p><strong>Date</strong></p>'),
+        la('tcwg-fin-closing', '<p>We thank you for your cooperation during the audit. Please contact [Engagement Partner] at [phone/email] with any questions or comments.</p>', 'We thank the management and Board of Shipping Line Inc. for their cooperation and assistance during the audit for the year ended March 31, 2024. Please contact J. Williams, CPA (Engagement Partner) with any questions or comments.'),
+        la('tcwg-fin-firm', '<p><strong>Firm name and engagement partner signature</strong></p>', '[Firm Name], Chartered Professional Accountants — J. Williams, CPA, Engagement Partner'),
+        la('tcwg-fin-firmdate', '<p><strong>Date</strong></p>', 'May 2, 2024'),
       ],
       isExpanded: true
     },
@@ -8536,9 +8618,9 @@ export const getGlobalTemplateChecklist = (templateId: string): Checklist | null
 // ── CAS Audit Checklist Templates ──────────────────────────────────────────
 
 export const generateEngagementScopeChecklist = (): Checklist => {
-  const q = (id: string, text: string, subQuestions?: Question[]): Question => ({
+  const q = (id: string, text: string, subQuestions?: Question[], answer = '', explanation = '', reference = ''): Question => ({
     id, text, answerType: 'yes-no-na' as const, options: ['Yes', 'No', 'NA'],
-    required: false, answer: '', ...(subQuestions ? { subQuestions } : {})
+    required: false, answer, explanation, reference, ...(subQuestions ? { subQuestions } : {})
   });
 
   const sections: Section[] = [
@@ -8546,12 +8628,12 @@ export const generateEngagementScopeChecklist = (): Checklist => {
       id: 'section-scope-1',
       title: '1. Scope Definition',
       questions: [
-        q('scope-q1a', '<p>Has the legal name and nature of the entity been confirmed and documented (incorporated company, partnership, NPO, etc.)?</p>'),
-        q('scope-q1b', '<p>Has the financial reporting period been confirmed with management (fiscal year-end, comparative period)?</p>'),
-        q('scope-q1c', '<p>Has the applicable financial reporting framework been identified and agreed with management (ASPE, IFRS, ASNPO, etc.)?</p>'),
-        q('scope-q1d', '<p>Is the audit objective clearly defined — expression of an opinion on whether the financial statements present fairly in all material respects in accordance with the identified framework?</p>'),
-        q('scope-q1e', '<p>Have the components of the entity included in scope been identified (subsidiaries, divisions, branches, joint arrangements)?</p>'),
-        q('scope-q1f', '<p>Have any component auditors been identified, and has the group engagement team obtained sufficient understanding of their work?</p>'),
+        q('scope-q1a', '<p>Has the legal name and nature of the entity been confirmed and documented (incorporated company, partnership, NPO, etc.)?</p>', undefined, 'Yes', '<p>Confirmed legal name as Shipping Line Inc., incorporated under the Canada Business Corporations Act. Entity is a private company engaged in maritime freight and logistics.</p>', 'W/P Ref: PL-01'),
+        q('scope-q1b', '<p>Has the financial reporting period been confirmed with management (fiscal year-end, comparative period)?</p>', undefined, 'Yes', '<p>Fiscal year-end confirmed as March 31, 2024 with comparative period March 31, 2023, per the engagement letter dated February 2024.</p>', 'W/P Ref: PL-01'),
+        q('scope-q1c', '<p>Has the applicable financial reporting framework been identified and agreed with management (ASPE, IFRS, ASNPO, etc.)?</p>', undefined, 'Yes', '<p>ASPE confirmed as the applicable financial reporting framework, consistent with prior year.</p>', 'W/P Ref: PL-02'),
+        q('scope-q1d', '<p>Is the audit objective clearly defined — expression of an opinion on whether the financial statements present fairly in all material respects in accordance with the identified framework?</p>', undefined, 'Yes', '<p>Audit objective documented in the engagement letter and communicated to the engagement team for the year ended March 31, 2024.</p>', 'W/P Ref: PL-01'),
+        q('scope-q1e', '<p>Have the components of the entity included in scope been identified (subsidiaries, divisions, branches, joint arrangements)?</p>', undefined, 'Yes', '<p>Shipping Line Inc. operates as a single legal entity with no subsidiaries or joint arrangements. All operations are included within scope.</p>', 'W/P Ref: PL-02'),
+        q('scope-q1f', '<p>Have any component auditors been identified, and has the group engagement team obtained sufficient understanding of their work?</p>', undefined, 'NA', '<p>Not applicable — Shipping Line Inc. is a single entity with no components requiring audit procedures by other auditors.</p>'),
       ],
       isExpanded: true
     },
@@ -8559,10 +8641,10 @@ export const generateEngagementScopeChecklist = (): Checklist => {
       id: 'section-scope-2',
       title: '2. Exclusions & Limitations',
       questions: [
-        q('scope-q2a', '<p>Have any scope restrictions been identified and documented in the engagement letter?</p>'),
-        q('scope-q2b', '<p>Has management agreed in writing to the scope of the engagement and any limitations thereon?</p>'),
-        q('scope-q2c', '<p>Have the implications of any scope restrictions on the form of the auditor\'s report been considered (potential qualification or disclaimer)?</p>'),
-        q('scope-q2d', '<p>Are there any regulatory, contractual or legal constraints on the audit scope that need to be reflected in the engagement terms?</p>'),
+        q('scope-q2a', '<p>Have any scope restrictions been identified and documented in the engagement letter?</p>', undefined, 'No', '<p>No scope restrictions identified or imposed by management. Full access to all books, records, and personnel was confirmed in the engagement letter.</p>'),
+        q('scope-q2b', '<p>Has management agreed in writing to the scope of the engagement and any limitations thereon?</p>', undefined, 'Yes', '<p>Management executed the engagement letter on February 20, 2024, confirming agreement with the scope and terms of the audit engagement.</p>', 'W/P Ref: PL-01'),
+        q('scope-q2c', '<p>Have the implications of any scope restrictions on the form of the auditor\'s report been considered (potential qualification or disclaimer)?</p>', undefined, 'NA', '<p>No scope restrictions identified; not applicable.</p>'),
+        q('scope-q2d', '<p>Are there any regulatory, contractual or legal constraints on the audit scope that need to be reflected in the engagement terms?</p>', undefined, 'No', '<p>No regulatory or contractual constraints on audit scope identified that would restrict access or procedures.</p>'),
       ],
       isExpanded: true
     },
@@ -8570,11 +8652,11 @@ export const generateEngagementScopeChecklist = (): Checklist => {
       id: 'section-scope-3',
       title: '3. Reporting Requirements',
       questions: [
-        q('scope-q3a', '<p>Has the form and content of the auditor\'s report been discussed and agreed with management/TCWG (CAS 700 standard report, other reporting requirements)?</p>'),
-        q('scope-q3b', '<p>Are there any special-purpose reporting requirements (regulatory filings, lender requirements, grant reporting) that will affect the form of the report?</p>'),
-        q('scope-q3c', '<p>Have the reporting deadlines been agreed with management and built into the engagement timeline?</p>'),
-        q('scope-q3d', '<p>If the entity has reporting obligations under securities legislation or other regulations, have the specific requirements of those obligations been considered?</p>'),
-        q('scope-q3e', '<p>Has the need for any supplementary information (e.g., schedule of expenditures of federal awards, other required supplementary information) been identified?</p>'),
+        q('scope-q3a', '<p>Has the form and content of the auditor\'s report been discussed and agreed with management/TCWG (CAS 700 standard report, other reporting requirements)?</p>', undefined, 'Yes', '<p>Standard CAS 700 unmodified audit report form discussed and agreed with management. No special reporting requirements identified.</p>', 'W/P Ref: PL-01'),
+        q('scope-q3b', '<p>Are there any special-purpose reporting requirements (regulatory filings, lender requirements, grant reporting) that will affect the form of the report?</p>', undefined, 'Yes', '<p>RBC requires audited financial statements as a condition of the entity\'s credit facility. The standard audit report satisfies this requirement.</p>', 'W/P Ref: PL-02'),
+        q('scope-q3c', '<p>Have the reporting deadlines been agreed with management and built into the engagement timeline?</p>', undefined, 'Yes', '<p>Fieldwork scheduled April 14–25, 2024. Final signed report targeted by May 31, 2024 to meet lender covenant reporting deadline.</p>', 'W/P Ref: PL-03'),
+        q('scope-q3d', '<p>If the entity has reporting obligations under securities legislation or other regulations, have the specific requirements of those obligations been considered?</p>', undefined, 'NA', '<p>Shipping Line Inc. is a private company with no securities legislation reporting obligations.</p>'),
+        q('scope-q3e', '<p>Has the need for any supplementary information (e.g., schedule of expenditures of federal awards, other required supplementary information) been identified?</p>', undefined, 'No', '<p>No supplementary schedules required. The entity does not receive federal awards or grants requiring separate reporting.</p>'),
       ],
       isExpanded: true
     },
@@ -8592,9 +8674,9 @@ export const generateEngagementScopeChecklist = (): Checklist => {
 };
 
 export const generatePreliminaryAnalyticalProceduresChecklist = (): Checklist => {
-  const q = (id: string, text: string, subQuestions?: Question[]): Question => ({
+  const q = (id: string, text: string, subQuestions?: Question[], answer = '', explanation = '', reference = ''): Question => ({
     id, text, answerType: 'yes-no-na' as const, options: ['Yes', 'No', 'NA'],
-    required: false, answer: '', ...(subQuestions ? { subQuestions } : {})
+    required: false, answer, explanation, reference, ...(subQuestions ? { subQuestions } : {})
   });
 
   const sections: Section[] = [
@@ -8602,10 +8684,10 @@ export const generatePreliminaryAnalyticalProceduresChecklist = (): Checklist =>
       id: 'section-pap-1',
       title: '1. Revenue & Income Analysis',
       questions: [
-        q('pap-q1a', '<p>Has total revenue for the current period been compared to the prior period and budget? Document the percentage change and explanations for variances exceeding 10%.</p>'),
-        q('pap-q1b', '<p>Have revenue streams been disaggregated by product/service line or geography to identify unusual concentration or shifts?</p>'),
-        q('pap-q1c', '<p>Has other income (interest income, gain on disposal, government subsidies) been compared to prior year and assessed for unusual items?</p>'),
-        q('pap-q1d', '<p>For entities with seasonal revenue patterns, has performance been assessed against expected seasonal trends?</p>'),
+        q('pap-q1a', '<p>Has total revenue for the current period been compared to the prior period and budget? Document the percentage change and explanations for variances exceeding 10%.</p>', undefined, 'Yes', '<p>Revenue of $12.5M CAD compared to prior year $11.2M, an increase of 11.6%. Increase attributed to new freight contracts and higher container volumes on Pacific routes per management discussion.</p>', 'W/P Ref: PAP-01'),
+        q('pap-q1b', '<p>Have revenue streams been disaggregated by product/service line or geography to identify unusual concentration or shifts?</p>', undefined, 'Yes', '<p>Revenue disaggregated by freight type (container, bulk, chartering) and by trade route. No unusual concentration or shifts identified beyond expected volume growth.</p>', 'W/P Ref: PAP-01'),
+        q('pap-q1c', '<p>Has other income (interest income, gain on disposal, government subsidies) been compared to prior year and assessed for unusual items?</p>', undefined, 'Yes', '<p>Other income is minimal and consistent with prior year. No unusual items identified outside the ordinary course of business.</p>', 'W/P Ref: PAP-02'),
+        q('pap-q1d', '<p>For entities with seasonal revenue patterns, has performance been assessed against expected seasonal trends?</p>', undefined, 'Yes', '<p>Shipping activity shows Q3 (Oct–Dec) peak and Q1 (Apr–Jun) trough, consistent with prior years and maritime freight industry patterns.</p>', 'W/P Ref: PAP-01'),
       ],
       isExpanded: true
     },
@@ -8613,12 +8695,12 @@ export const generatePreliminaryAnalyticalProceduresChecklist = (): Checklist =>
       id: 'section-pap-2',
       title: '2. Balance Sheet Ratios',
       questions: [
-        q('pap-q2a', '<p>Has the current ratio (current assets / current liabilities) been calculated and compared to prior year? Is the trend consistent with expectations?</p>'),
-        q('pap-q2b', '<p>Has the debt-to-equity ratio been calculated and compared to prior year? Are changes consistent with known financing activity?</p>'),
-        q('pap-q2c', '<p>Has the change in working capital been analyzed and explained (cash, receivables, inventory, payables movements)?</p>'),
-        q('pap-q2d', '<p>Have significant balance sheet changes (>15% or material dollar amounts) been identified and explanations obtained from management?</p>'),
-        q('pap-q2e', '<p>Has the accounts receivable days outstanding (DSO) been calculated and compared to prior year and industry norms?</p>'),
-        q('pap-q2f', '<p>Has inventory turnover been calculated and compared to prior year? Are changes consistent with business operations?</p>'),
+        q('pap-q2a', '<p>Has the current ratio (current assets / current liabilities) been calculated and compared to prior year? Is the trend consistent with expectations?</p>', undefined, 'Yes', '<p>Current ratio of 1.42 compared to prior year 1.38 — trend is stable and consistent with the entity\'s working capital management practices.</p>', 'W/P Ref: PAP-02'),
+        q('pap-q2b', '<p>Has the debt-to-equity ratio been calculated and compared to prior year? Are changes consistent with known financing activity?</p>', undefined, 'Yes', '<p>Debt-to-equity ratio of 1.61 (total assets $18.2M, long-term debt $4.8M) is consistent with the capital-intensive nature of the maritime shipping industry and unchanged from prior year.</p>', 'W/P Ref: PAP-02'),
+        q('pap-q2c', '<p>Has the change in working capital been analyzed and explained (cash, receivables, inventory, payables movements)?</p>', undefined, 'Yes', '<p>Working capital changes are consistent with revenue growth. AR increase of $320K aligns with higher Q4 freight billings. AP increase of $185K reflects higher fuel and port costs.</p>', 'W/P Ref: PAP-02'),
+        q('pap-q2d', '<p>Have significant balance sheet changes (>15% or material dollar amounts) been identified and explanations obtained from management?</p>', undefined, 'Yes', '<p>Vessel PP&E of $8.2M represents a significant balance; change from prior year is consistent with depreciation schedule and dry-dock maintenance capitalization. All variances >15% have been discussed with management.</p>', 'W/P Ref: PAP-02'),
+        q('pap-q2e', '<p>Has the accounts receivable days outstanding (DSO) been calculated and compared to prior year and industry norms?</p>', undefined, 'Yes', '<p>DSO calculated at 61 days, consistent with prior year 59 days. Marginally above 60-day industry norm; no material collectibility concerns identified.</p>', 'W/P Ref: PAP-03'),
+        q('pap-q2f', '<p>Has inventory turnover been calculated and compared to prior year? Are changes consistent with business operations?</p>', undefined, 'NA', '<p>Not applicable — Shipping Line Inc. is a service entity and does not carry inventory.</p>'),
       ],
       isExpanded: true
     },
@@ -8626,10 +8708,10 @@ export const generatePreliminaryAnalyticalProceduresChecklist = (): Checklist =>
       id: 'section-pap-3',
       title: '3. Profitability Trends',
       questions: [
-        q('pap-q3a', '<p>Has the gross margin percentage been calculated for the current and prior period? Are changes consistent with management\'s explanation of business conditions?</p>'),
-        q('pap-q3b', '<p>Has the operating margin (EBIT / revenue) been calculated and compared to prior year? Are expense trends consistent with revenue trends?</p>'),
-        q('pap-q3c', '<p>Have significant changes in specific expense categories (e.g., payroll, cost of goods sold, professional fees) been investigated and explained?</p>'),
-        q('pap-q3d', '<p>Is the EBITDA trend consistent with management\'s narrative about business performance?</p>'),
+        q('pap-q3a', '<p>Has the gross margin percentage been calculated for the current and prior period? Are changes consistent with management\'s explanation of business conditions?</p>', undefined, 'Yes', '<p>Gross margin of 18.4% compared to prior year 17.9%. Marginal improvement attributed to higher freight rates partially offset by increased fuel costs. Management\'s explanation is consistent with industry trends.</p>', 'W/P Ref: PAP-03'),
+        q('pap-q3b', '<p>Has the operating margin (EBIT / revenue) been calculated and compared to prior year? Are expense trends consistent with revenue trends?</p>', undefined, 'Yes', '<p>Operating margin of 8.1% (prior year 7.6%). Expense growth of 10.8% is slightly below revenue growth of 11.6%, resulting in modest margin improvement consistent with operating leverage.</p>', 'W/P Ref: PAP-03'),
+        q('pap-q3c', '<p>Have significant changes in specific expense categories (e.g., payroll, cost of goods sold, professional fees) been investigated and explained?</p>', undefined, 'Yes', '<p>Payroll costs increased 8.2% due to headcount additions (94 employees, up from 89). Fuel costs increased 14.3% consistent with higher voyage volumes and bunker price increases. All significant variances discussed with management and explanations are reasonable.</p>', 'W/P Ref: PAP-03'),
+        q('pap-q3d', '<p>Is the EBITDA trend consistent with management\'s narrative about business performance?</p>', undefined, 'Yes', '<p>EBITDA of approximately $2.1M is consistent with management\'s narrative of volume-driven growth and controlled costs. Trend is positive and supports the net income of $847K after depreciation on the vessel fleet.</p>', 'W/P Ref: PAP-03'),
       ],
       isExpanded: true
     },
@@ -8637,11 +8719,11 @@ export const generatePreliminaryAnalyticalProceduresChecklist = (): Checklist =>
       id: 'section-pap-4',
       title: '4. Unusual Fluctuations',
       questions: [
-        q('pap-q4a', '<p>Have all fluctuations exceeding the preliminary materiality threshold been identified and explanations documented?</p>'),
-        q('pap-q4b', '<p>Have any balances that are unexpectedly zero or nil been investigated (e.g., no interest expense despite known debt)?</p>'),
-        q('pap-q4c', '<p>Have any new account balances that did not exist in the prior period been identified and assessed for risk?</p>'),
-        q('pap-q4d', '<p>Based on the preliminary analytical procedures, have areas requiring increased audit attention been identified and incorporated into the audit plan?</p>'),
-        q('pap-q4e', '<p>Have the preliminary analytics been discussed with the engagement team and key findings documented in the risk assessment?</p>'),
+        q('pap-q4a', '<p>Have all fluctuations exceeding the preliminary materiality threshold been identified and explanations documented?</p>', undefined, 'Yes', '<p>All fluctuations exceeding overall materiality of $125K have been identified and explanations obtained from management. Deferred revenue reclassification of $28K and accrued revenue cutoff of $45K were identified as areas requiring further audit procedures.</p>', 'W/P Ref: PAP-04'),
+        q('pap-q4b', '<p>Have any balances that are unexpectedly zero or nil been investigated (e.g., no interest expense despite known debt)?</p>', undefined, 'Yes', '<p>Interest expense confirmed as present and consistent with the long-term debt balance of $4.8M and market interest rates. No unexpectedly nil balances identified.</p>', 'W/P Ref: PAP-04'),
+        q('pap-q4c', '<p>Have any new account balances that did not exist in the prior period been identified and assessed for risk?</p>', undefined, 'Yes', '<p>A deferred revenue account was identified as new this period, arising from freight advances on multi-voyage contracts. This has been assessed as an area requiring focused audit procedures given revenue recognition risk.</p>', 'W/P Ref: PAP-04'),
+        q('pap-q4d', '<p>Based on the preliminary analytical procedures, have areas requiring increased audit attention been identified and incorporated into the audit plan?</p>', undefined, 'Yes', '<p>Increased audit attention identified for: (1) revenue recognition and voyage cut-off, (2) vessel impairment assessment, and (3) USD-denominated transactions and foreign currency translation. These have been incorporated into the audit plan.</p>', 'W/P Ref: RA-01'),
+        q('pap-q4e', '<p>Have the preliminary analytics been discussed with the engagement team and key findings documented in the risk assessment?</p>', undefined, 'Yes', '<p>Engagement team meeting held April 8, 2024 to discuss preliminary analytics. Key findings documented in the risk assessment working paper and audit strategy memorandum.</p>', 'W/P Ref: PAP-04'),
       ],
       isExpanded: true
     },
@@ -8659,9 +8741,9 @@ export const generatePreliminaryAnalyticalProceduresChecklist = (): Checklist =>
 };
 
 export const generateAuditStrategyMemorandumChecklist = (): Checklist => {
-  const q = (id: string, text: string, subQuestions?: Question[]): Question => ({
+  const q = (id: string, text: string, subQuestions?: Question[], answer = '', explanation = '', reference = ''): Question => ({
     id, text, answerType: 'yes-no-na' as const, options: ['Yes', 'No', 'NA'],
-    required: false, answer: '', ...(subQuestions ? { subQuestions } : {})
+    required: false, answer, explanation, reference, ...(subQuestions ? { subQuestions } : {})
   });
 
   const sections: Section[] = [
@@ -8669,11 +8751,11 @@ export const generateAuditStrategyMemorandumChecklist = (): Checklist => {
       id: 'section-asm-1',
       title: '1. Engagement Characteristics',
       questions: [
-        q('asm-q1a', '<p>Has the entity type been documented (public, private, NPO, government) along with the applicable financial reporting framework?</p>'),
-        q('asm-q1b', '<p>Have the reporting deadlines (draft financial statements, board approval, filing deadline) been confirmed and documented?</p>'),
-        q('asm-q1c', '<p>Has the prior year audit file been reviewed to identify carry-forward issues, prior year adjustments, and significant accounting estimates?</p>'),
-        q('asm-q1d', '<p>Have changes in the entity\'s business, operations or environment since the prior period been assessed for their impact on the audit?</p>'),
-        q('asm-q1e', '<p>Have new accounting standards effective for the current period been identified and assessed for their impact on the financial statements?</p>'),
+        q('asm-q1a', '<p>Has the entity type been documented (public, private, NPO, government) along with the applicable financial reporting framework?</p>', undefined, 'Yes', '<p>Shipping Line Inc. documented as a private company applying ASPE. Entity is engaged in marine freight and logistics with year-end March 31, 2024.</p>', 'W/P Ref: ASM-01'),
+        q('asm-q1b', '<p>Have the reporting deadlines (draft financial statements, board approval, filing deadline) been confirmed and documented?</p>', undefined, 'Yes', '<p>Draft financial statements to management by May 10, 2024. Final signed report by May 31, 2024 to meet bank covenant deadline. Confirmed with management and documented in engagement timeline.</p>', 'W/P Ref: PL-03'),
+        q('asm-q1c', '<p>Has the prior year audit file been reviewed to identify carry-forward issues, prior year adjustments, and significant accounting estimates?</p>', undefined, 'Yes', '<p>Prior year file reviewed. No carry-forward issues noted. Prior year adjustments were immaterial. Significant estimates include useful lives of vessels and allowance for doubtful accounts.</p>', 'W/P Ref: ASM-01'),
+        q('asm-q1d', '<p>Have changes in the entity\'s business, operations or environment since the prior period been assessed for their impact on the audit?</p>', undefined, 'Yes', '<p>Two new freight contracts commenced during the year. USD-denominated revenue has increased, heightening foreign currency translation risk. Both changes have been assessed for audit impact.</p>', 'W/P Ref: ASM-01'),
+        q('asm-q1e', '<p>Have new accounting standards effective for the current period been identified and assessed for their impact on the financial statements?</p>', undefined, 'Yes', '<p>No new ASPE standards effective for the year ended March 31, 2024 that have a material impact on Shipping Line Inc.\'s financial statements.</p>', 'W/P Ref: ASM-01'),
       ],
       isExpanded: true
     },
@@ -8681,11 +8763,11 @@ export const generateAuditStrategyMemorandumChecklist = (): Checklist => {
       id: 'section-asm-2',
       title: '2. Audit Approach',
       questions: [
-        q('asm-q2a', '<p>Has the overall audit approach been determined — primarily substantive, or combined (reliance on controls + substantive procedures)?</p>'),
-        q('asm-q2b', '<p>Have the key audit areas (significant accounts and disclosures, significant risks) been identified and the planned audit approach for each documented?</p>'),
-        q('asm-q2c', '<p>Has the extent to which IT-assisted audit techniques (CAATs, data analytics) will be used been determined?</p>'),
-        q('asm-q2d', '<p>Has the use of work of internal auditors, management\'s experts or component auditors been assessed and the planned approach documented?</p>'),
-        q('asm-q2e', '<p>Has materiality (overall, performance materiality, and clearly trivial threshold) been set and documented in the strategy memorandum?</p>'),
+        q('asm-q2a', '<p>Has the overall audit approach been determined — primarily substantive, or combined (reliance on controls + substantive procedures)?</p>', undefined, 'Yes', '<p>Primarily substantive approach adopted given the entity\'s limited formal control structure and size. Some reliance on controls for payroll and cash disbursements where controls were assessed as effective.</p>', 'W/P Ref: ASM-02'),
+        q('asm-q2b', '<p>Have the key audit areas (significant accounts and disclosures, significant risks) been identified and the planned audit approach for each documented?</p>', undefined, 'Yes', '<p>Key audit areas identified: revenue recognition (voyage cut-off), vessel PP&E and impairment ($8.2M), AR ($2.1M), long-term debt ($4.8M), and foreign currency transactions. Planned approach documented in the audit program.</p>', 'W/P Ref: ASM-02'),
+        q('asm-q2c', '<p>Has the extent to which IT-assisted audit techniques (CAATs, data analytics) will be used been determined?</p>', undefined, 'Yes', '<p>Data analytics will be used to test completeness of voyage revenue through analysis of freight billing records against voyage completion data. Standard substantive procedures for remaining areas.</p>', 'W/P Ref: ASM-02'),
+        q('asm-q2d', '<p>Has the use of work of internal auditors, management\'s experts or component auditors been assessed and the planned approach documented?</p>', undefined, 'NA', '<p>The entity has no internal audit function. No management\'s experts or component auditors are used. Not applicable.</p>'),
+        q('asm-q2e', '<p>Has materiality (overall, performance materiality, and clearly trivial threshold) been set and documented in the strategy memorandum?</p>', undefined, 'Yes', '<p>Overall materiality $125,000 (1% of revenue $12.5M). Performance materiality $87,500 (70% of OM). Clearly trivial threshold $6,250 (5% of OM). All documented in the Materiality working paper.</p>', 'W/P Ref: MAT-01'),
       ],
       isExpanded: true
     },
@@ -8693,11 +8775,11 @@ export const generateAuditStrategyMemorandumChecklist = (): Checklist => {
       id: 'section-asm-3',
       title: '3. Staffing & Resource Allocation',
       questions: [
-        q('asm-q3a', '<p>Has the engagement partner been identified and their responsibility for the overall engagement quality confirmed?</p>'),
-        q('asm-q3b', '<p>Has the engagement manager been assigned and their responsibility for day-to-day supervision confirmed?</p>'),
-        q('asm-q3c', '<p>Has the engagement team (seniors, staff) been assigned with appropriate competence and experience for the engagement?</p>'),
-        q('asm-q3d', '<p>Has the need for specialists (e.g., IT, valuation, actuarial) been identified and arrangements made?</p>'),
-        q('asm-q3e', '<p>Has an engagement quality reviewer been assigned if required under the firm\'s quality management policies?</p>'),
+        q('asm-q3a', '<p>Has the engagement partner been identified and their responsibility for the overall engagement quality confirmed?</p>', undefined, 'Yes', '<p>Engagement partner J. Williams, CPA identified and confirmed as responsible for overall engagement quality. Partner has prior experience with maritime logistics clients.</p>', 'W/P Ref: ASM-03'),
+        q('asm-q3b', '<p>Has the engagement manager been assigned and their responsibility for day-to-day supervision confirmed?</p>', undefined, 'Yes', '<p>Engagement manager S. Chen, CPA assigned with responsibility for day-to-day supervision and review. Manager has five years of experience in audit engagements.</p>', 'W/P Ref: ASM-03'),
+        q('asm-q3c', '<p>Has the engagement team (seniors, staff) been assigned with appropriate competence and experience for the engagement?</p>', undefined, 'Yes', '<p>Two senior auditors and one staff auditor assigned. Team composition reviewed by the engagement partner and assessed as appropriate for the complexity and risk profile of the engagement.</p>', 'W/P Ref: ASM-03'),
+        q('asm-q3d', '<p>Has the need for specialists (e.g., IT, valuation, actuarial) been identified and arrangements made?</p>', undefined, 'No', '<p>No specialists required for this engagement. Vessel valuations are performed using management\'s internal assessment supported by market data, which will be reviewed as part of standard audit procedures.</p>'),
+        q('asm-q3e', '<p>Has an engagement quality reviewer been assigned if required under the firm\'s quality management policies?</p>', undefined, 'NA', '<p>Engagement quality review not required for this engagement under the firm\'s quality management policies given the entity\'s risk profile and size.</p>'),
       ],
       isExpanded: true
     },
@@ -8705,10 +8787,10 @@ export const generateAuditStrategyMemorandumChecklist = (): Checklist => {
       id: 'section-asm-4',
       title: '4. Communication Plan',
       questions: [
-        q('asm-q4a', '<p>Have the planned communications with those charged with governance (TCWG) been identified — planning communication, matters during the audit, final communication?</p>'),
-        q('asm-q4b', '<p>Have the dates for interim fieldwork and final fieldwork been confirmed with management and the engagement team?</p>'),
-        q('asm-q4c', '<p>Has the approach for communicating significant audit findings and significant difficulties encountered during the audit been established?</p>'),
-        q('asm-q4d', '<p>Where the entity has related parties or component entities, has the communication approach with component auditors been established?</p>'),
+        q('asm-q4a', '<p>Have the planned communications with those charged with governance (TCWG) been identified — planning communication, matters during the audit, final communication?</p>', undefined, 'Yes', '<p>TCWG planning communication issued February 28, 2024. Final communication to TCWG planned upon completion of fieldwork prior to report issuance. Board of directors serves as TCWG.</p>', 'W/P Ref: TCWG-01'),
+        q('asm-q4b', '<p>Have the dates for interim fieldwork and final fieldwork been confirmed with management and the engagement team?</p>', undefined, 'Yes', '<p>No interim fieldwork planned for this engagement. Year-end fieldwork confirmed April 14–25, 2024 with management. Engagement team notified and availability confirmed.</p>', 'W/P Ref: PL-03'),
+        q('asm-q4c', '<p>Has the approach for communicating significant audit findings and significant difficulties encountered during the audit been established?</p>', undefined, 'Yes', '<p>Significant findings will be communicated verbally to the engagement manager and partner as encountered, and documented in working papers. Formal written communication to management at the conclusion of fieldwork.</p>', 'W/P Ref: ASM-04'),
+        q('asm-q4d', '<p>Where the entity has related parties or component entities, has the communication approach with component auditors been established?</p>', undefined, 'NA', '<p>No component auditors involved. Not applicable.</p>'),
       ],
       isExpanded: true
     },
@@ -8716,11 +8798,11 @@ export const generateAuditStrategyMemorandumChecklist = (): Checklist => {
       id: 'section-asm-5',
       title: '5. Significant Risks Identified at Planning Stage',
       questions: [
-        q('asm-q5a', '<p>Have significant risks identified during planning (CAS 315) been documented in the strategy memorandum and linked to planned audit responses?</p>'),
-        q('asm-q5b', '<p>Has the presumed fraud risk related to revenue recognition been addressed, or has the rebuttal of this presumption been documented with supporting rationale?</p>'),
-        q('asm-q5c', '<p>Has the risk of management override of controls been identified as a significant risk and planned responses documented?</p>'),
-        q('asm-q5d', '<p>Have any other entity-specific or industry-specific significant risks been identified and incorporated into the audit strategy?</p>'),
-        q('asm-q5e', '<p>Has the audit strategy memorandum been reviewed and approved by the engagement partner prior to commencement of fieldwork?</p>'),
+        q('asm-q5a', '<p>Have significant risks identified during planning (CAS 315) been documented in the strategy memorandum and linked to planned audit responses?</p>', undefined, 'Yes', '<p>Three significant risks identified: (1) revenue recognition — voyage completion cut-off, (2) vessel impairment assessment ($8.2M), and (3) foreign currency translation (USD transactions). Each linked to specific audit responses in the audit program.</p>', 'W/P Ref: RA-01'),
+        q('asm-q5b', '<p>Has the presumed fraud risk related to revenue recognition been addressed, or has the rebuttal of this presumption been documented with supporting rationale?</p>', undefined, 'Yes', '<p>Revenue recognition identified as a significant risk (not rebutted). Specific procedures designed to address voyage cut-off and completeness of freight revenue recorded at March 31, 2024.</p>', 'W/P Ref: RA-02'),
+        q('asm-q5c', '<p>Has the risk of management override of controls been identified as a significant risk and planned responses documented?</p>', undefined, 'Yes', '<p>Risk of management override identified as a significant risk per CAS 240. Planned responses include journal entry testing, review of accounting estimates for bias, and evaluation of significant unusual transactions.</p>', 'W/P Ref: RA-02'),
+        q('asm-q5d', '<p>Have any other entity-specific or industry-specific significant risks been identified and incorporated into the audit strategy?</p>', undefined, 'Yes', '<p>Vessel impairment risk identified as entity-specific given the $8.2M carrying value representing 45% of total assets. Industry risk of fluctuating freight rates and fuel costs also considered. Both incorporated into audit strategy.</p>', 'W/P Ref: RA-01'),
+        q('asm-q5e', '<p>Has the audit strategy memorandum been reviewed and approved by the engagement partner prior to commencement of fieldwork?</p>', undefined, 'Yes', '<p>Audit strategy memorandum reviewed and approved by engagement partner J. Williams, CPA on April 10, 2024, prior to commencement of fieldwork on April 14, 2024.</p>', 'W/P Ref: ASM-05'),
       ],
       isExpanded: true
     },
@@ -8738,9 +8820,9 @@ export const generateAuditStrategyMemorandumChecklist = (): Checklist => {
 };
 
 export const generateStaffingTimeBudgetChecklist = (): Checklist => {
-  const q = (id: string, text: string, subQuestions?: Question[]): Question => ({
+  const q = (id: string, text: string, subQuestions?: Question[], answer = '', explanation = '', reference = ''): Question => ({
     id, text, answerType: 'yes-no-na' as const, options: ['Yes', 'No', 'NA'],
-    required: false, answer: '', ...(subQuestions ? { subQuestions } : {})
+    required: false, answer, explanation, reference, ...(subQuestions ? { subQuestions } : {})
   });
 
   const sections: Section[] = [
@@ -8748,12 +8830,12 @@ export const generateStaffingTimeBudgetChecklist = (): Checklist => {
       id: 'section-stb-1',
       title: '1. Engagement Team',
       questions: [
-        q('stb-q1a', '<p>Has the engagement partner been identified and their availability confirmed for the planned fieldwork and reporting dates?</p>'),
-        q('stb-q1b', '<p>Has the engagement manager been assigned? Do they have sufficient experience with this type of entity and industry?</p>'),
-        q('stb-q1c', '<p>Has a senior auditor been assigned with responsibility for day-to-day file management and supervision of staff?</p>'),
-        q('stb-q1d', '<p>Have staff auditors been assigned with appropriate skills for the planned procedures (e.g., IT skills for data analytics, language skills for foreign entities)?</p>'),
-        q('stb-q1e', '<p>Has the engagement quality control reviewer (EQCR) been identified and their availability confirmed for the planned completion date?</p>'),
-        q('stb-q1f', '<p>Have required specialists (e.g., IT auditors, valuation specialists, actuaries) been identified and engaged?</p>'),
+        q('stb-q1a', '<p>Has the engagement partner been identified and their availability confirmed for the planned fieldwork and reporting dates?</p>', undefined, 'Yes', '<p>J. Williams, CPA confirmed available for fieldwork review April 21–25 and for report sign-off by May 31, 2024.</p>', 'W/P Ref: STB-01'),
+        q('stb-q1b', '<p>Has the engagement manager been assigned? Do they have sufficient experience with this type of entity and industry?</p>', undefined, 'Yes', '<p>S. Chen, CPA assigned as engagement manager. Manager has previous experience with transportation and logistics clients and has worked on this engagement for two prior years.</p>', 'W/P Ref: STB-01'),
+        q('stb-q1c', '<p>Has a senior auditor been assigned with responsibility for day-to-day file management and supervision of staff?</p>', undefined, 'Yes', '<p>Senior auditor assigned with day-to-day file management responsibility. Senior has three years of audit experience and is familiar with the entity from the prior year engagement.</p>', 'W/P Ref: STB-01'),
+        q('stb-q1d', '<p>Have staff auditors been assigned with appropriate skills for the planned procedures (e.g., IT skills for data analytics, language skills for foreign entities)?</p>', undefined, 'Yes', '<p>One staff auditor assigned with data analytics capability for voyage revenue testing. No language skill requirements identified as all entity records are maintained in English.</p>', 'W/P Ref: STB-01'),
+        q('stb-q1e', '<p>Has the engagement quality control reviewer (EQCR) been identified and their availability confirmed for the planned completion date?</p>', undefined, 'NA', '<p>EQCR not required for this engagement under the firm\'s quality management policies.</p>'),
+        q('stb-q1f', '<p>Have required specialists (e.g., IT auditors, valuation specialists, actuaries) been identified and engaged?</p>', undefined, 'NA', '<p>No specialists required for this engagement. See audit strategy memorandum for rationale.</p>', 'W/P Ref: ASM-03'),
       ],
       isExpanded: true
     },
@@ -8761,11 +8843,11 @@ export const generateStaffingTimeBudgetChecklist = (): Checklist => {
       id: 'section-stb-2',
       title: '2. Time Budget by Phase',
       questions: [
-        q('stb-q2a', '<p>Has a budget been prepared for the planning phase (risk assessment procedures, materiality determination, audit strategy and plan)?</p>'),
-        q('stb-q2b', '<p>Has a budget been prepared for the fieldwork phase by major area (revenue, expenses, balance sheet sections)?</p>'),
-        q('stb-q2c', '<p>Has a budget been prepared for the completion phase (subsequent events, going concern, management representations, final review)?</p>'),
-        q('stb-q2d', '<p>Has the total budgeted time been compared to the prior year actual time? Are significant variances explained by changes in scope, risk or complexity?</p>'),
-        q('stb-q2e', '<p>Has the budget been reviewed and approved by the engagement partner or manager?</p>'),
+        q('stb-q2a', '<p>Has a budget been prepared for the planning phase (risk assessment procedures, materiality determination, audit strategy and plan)?</p>', undefined, 'Yes', '<p>Planning phase budget of 22 hours: risk assessment 8 hrs, materiality and strategy 6 hrs, audit program preparation 8 hrs. Consistent with prior year planning hours.</p>', 'W/P Ref: STB-02'),
+        q('stb-q2b', '<p>Has a budget been prepared for the fieldwork phase by major area (revenue, expenses, balance sheet sections)?</p>', undefined, 'Yes', '<p>Fieldwork budget of 118 hours: Revenue/AR 28 hrs, PP&E/vessels 22 hrs, Long-term debt 12 hrs, Payroll 15 hrs, Cash/AP 18 hrs, Other balance sheet 14 hrs, Disclosures 9 hrs. Total reflects increased scope for revenue recognition risk.</p>', 'W/P Ref: STB-02'),
+        q('stb-q2c', '<p>Has a budget been prepared for the completion phase (subsequent events, going concern, management representations, final review)?</p>', undefined, 'Yes', '<p>Completion phase budget of 20 hours: subsequent events 4 hrs, going concern 2 hrs, management rep letter 3 hrs, partner review 8 hrs, report issuance 3 hrs.</p>', 'W/P Ref: STB-02'),
+        q('stb-q2d', '<p>Has the total budgeted time been compared to the prior year actual time? Are significant variances explained by changes in scope, risk or complexity?</p>', undefined, 'Yes', '<p>Total budget of 160 hours compares to 148 hours actual in prior year. Increase of 12 hours is attributable to additional procedures planned for revenue recognition risk and USD foreign currency transactions.</p>', 'W/P Ref: STB-02'),
+        q('stb-q2e', '<p>Has the budget been reviewed and approved by the engagement partner or manager?</p>', undefined, 'Yes', '<p>Budget reviewed and approved by engagement partner J. Williams, CPA on April 10, 2024.</p>', 'W/P Ref: STB-02'),
       ],
       isExpanded: true
     },
@@ -8773,11 +8855,11 @@ export const generateStaffingTimeBudgetChecklist = (): Checklist => {
       id: 'section-stb-3',
       title: '3. Key Dates',
       questions: [
-        q('stb-q3a', '<p>Has the planning start date been confirmed and communicated to the engagement team?</p>'),
-        q('stb-q3b', '<p>Have the interim fieldwork dates (if applicable) been confirmed with the client and communicated to the team?</p>'),
-        q('stb-q3c', '<p>Have the year-end / final fieldwork dates been confirmed with the client (access to books, management availability)?</p>'),
-        q('stb-q3d', '<p>Has the target date for delivery of the draft management letter / findings been communicated to management?</p>'),
-        q('stb-q3e', '<p>Has the date for delivery of the final signed auditor\'s report been agreed with management and TCWG?</p>'),
+        q('stb-q3a', '<p>Has the planning start date been confirmed and communicated to the engagement team?</p>', undefined, 'Yes', '<p>Planning commenced March 25, 2024. All engagement team members notified via internal scheduling system.</p>', 'W/P Ref: STB-03'),
+        q('stb-q3b', '<p>Have the interim fieldwork dates (if applicable) been confirmed with the client and communicated to the team?</p>', undefined, 'NA', '<p>No interim fieldwork planned for this engagement. Substantive procedures will be performed entirely at year-end.</p>'),
+        q('stb-q3c', '<p>Have the year-end / final fieldwork dates been confirmed with the client (access to books, management availability)?</p>', undefined, 'Yes', '<p>Year-end fieldwork confirmed April 14–25, 2024. CFO and Controller confirmed availability. Trial balance and supporting schedules to be provided by management by April 11, 2024.</p>', 'W/P Ref: STB-03'),
+        q('stb-q3d', '<p>Has the target date for delivery of the draft management letter / findings been communicated to management?</p>', undefined, 'Yes', '<p>Draft management letter with findings to be delivered by May 3, 2024. Management has 7 days to respond before issuance of final signed report.</p>', 'W/P Ref: STB-03'),
+        q('stb-q3e', '<p>Has the date for delivery of the final signed auditor\'s report been agreed with management and TCWG?</p>', undefined, 'Yes', '<p>Final signed auditor\'s report agreed for delivery by May 31, 2024, satisfying the bank covenant reporting deadline. Confirmed in writing with management on March 28, 2024.</p>', 'W/P Ref: STB-03'),
       ],
       isExpanded: true
     },
@@ -8785,10 +8867,10 @@ export const generateStaffingTimeBudgetChecklist = (): Checklist => {
       id: 'section-stb-4',
       title: '4. Budget vs Actual Tracking',
       questions: [
-        q('stb-q4a', '<p>Has a mechanism been established to track actual time against the budget by team member and audit area?</p>'),
-        q('stb-q4b', '<p>Have budget overruns been identified and discussed with the engagement manager/partner during the engagement?</p>'),
-        q('stb-q4c', '<p>Has the final actual time been compared to budget at the completion of the engagement and variances documented?</p>'),
-        q('stb-q4d', '<p>Have lessons learned regarding time budget accuracy been documented for use in future engagements?</p>'),
+        q('stb-q4a', '<p>Has a mechanism been established to track actual time against the budget by team member and audit area?</p>', undefined, 'Yes', '<p>Time tracking through the firm\'s practice management system. Weekly time reports reviewed by the engagement manager against the budget during fieldwork.</p>', 'W/P Ref: STB-04'),
+        q('stb-q4b', '<p>Have budget overruns been identified and discussed with the engagement manager/partner during the engagement?</p>', undefined, 'Yes', '<p>Minor overrun of 6 hours identified in vessel PP&E procedures due to additional time required to assess dry-dock capitalization policies. Discussed with engagement manager on April 22, 2024 and approved as necessary additional scope.</p>', 'W/P Ref: STB-04'),
+        q('stb-q4c', '<p>Has the final actual time been compared to budget at the completion of the engagement and variances documented?</p>', undefined, 'Yes', '<p>Final actual time of 166 hours compared to budget of 160 hours. Net overrun of 6 hours (3.8%) documented and attributable to vessel dry-dock assessment. Within acceptable range.</p>', 'W/P Ref: STB-04'),
+        q('stb-q4d', '<p>Have lessons learned regarding time budget accuracy been documented for use in future engagements?</p>', undefined, 'Yes', '<p>Lessons learned documented: increase vessel PP&E budget by 5 hours in future years to reflect dry-dock assessment procedures. Noted in engagement file for next year\'s planning.</p>', 'W/P Ref: STB-04'),
       ],
       isExpanded: true
     },
@@ -8806,9 +8888,9 @@ export const generateStaffingTimeBudgetChecklist = (): Checklist => {
 };
 
 export const generateRiskAssessmentProceduresChecklist = (): Checklist => {
-  const q = (id: string, text: string, subQuestions?: Question[]): Question => ({
+  const q = (id: string, text: string, subQuestions?: Question[], answer = '', explanation = '', reference = ''): Question => ({
     id, text, answerType: 'yes-no-na' as const, options: ['Yes', 'No', 'NA'],
-    required: false, answer: '', ...(subQuestions ? { subQuestions } : {})
+    required: false, answer, explanation, reference, ...(subQuestions ? { subQuestions } : {})
   });
 
   const sections: Section[] = [
@@ -8816,12 +8898,12 @@ export const generateRiskAssessmentProceduresChecklist = (): Checklist => {
       id: 'section-rap-1',
       title: '1. Inquiry of Management',
       questions: [
-        q('rap-q1a', '<p>Have inquiries been made of management regarding the entity\'s business model, revenue sources, major customers and suppliers?</p>'),
-        q('rap-q1b', '<p>Have inquiries been made regarding significant changes in the industry, regulatory environment or competitive landscape?</p>'),
-        q('rap-q1c', '<p>Have inquiries been made regarding related party relationships and transactions?</p>'),
-        q('rap-q1d', '<p>Have inquiries been made regarding the entity\'s use of estimates and judgments in the financial statements?</p>'),
-        q('rap-q1e', '<p>Have inquiries been made of others within the entity (e.g., internal audit, legal, operations) beyond management to obtain a broader understanding?</p>'),
-        q('rap-q1f', '<p>Have inquiries been made regarding any known or suspected fraud or irregularities?</p>'),
+        q('rap-q1a', '<p>Have inquiries been made of management regarding the entity\'s business model, revenue sources, major customers and suppliers?</p>', undefined, 'Yes', '<p>Inquiries performed with CFO and CEO on April 14, 2024. Shipping Line Inc. operates maritime freight and logistics services with key customers across North American and Pacific trade routes.</p>', 'W/P Ref: RA-01'),
+        q('rap-q1b', '<p>Have inquiries been made regarding significant changes in the industry, regulatory environment or competitive landscape?</p>', undefined, 'Yes', '<p>Management noted increased fuel surcharge regulations and port fee adjustments effective Q4 FY2024; no material impact on financial reporting identified.</p>', 'W/P Ref: RA-01'),
+        q('rap-q1c', '<p>Have inquiries been made regarding related party relationships and transactions?</p>', undefined, 'Yes', '<p>Management confirmed no significant related party transactions beyond director compensation disclosed in the financial statements.</p>', 'W/P Ref: RA-02'),
+        q('rap-q1d', '<p>Have inquiries been made regarding the entity\'s use of estimates and judgments in the financial statements?</p>', undefined, 'Yes', '<p>Key estimates identified: vessel depreciation useful lives, allowance for doubtful accounts, and revenue cutoff for voyages in progress at year-end.</p>', 'W/P Ref: RA-01'),
+        q('rap-q1e', '<p>Have inquiries been made of others within the entity (e.g., internal audit, legal, operations) beyond management to obtain a broader understanding?</p>', undefined, 'Yes', '<p>Inquiries also made with the operations manager and the accounts receivable clerk to corroborate management representations.</p>', 'W/P Ref: RA-01'),
+        q('rap-q1f', '<p>Have inquiries been made regarding any known or suspected fraud or irregularities?</p>', undefined, 'Yes', '<p>Management confirmed no known or suspected fraud or irregularities during the year. Responses were consistent across all individuals interviewed.</p>', 'W/P Ref: RA-03'),
       ],
       isExpanded: true
     },
@@ -8829,10 +8911,10 @@ export const generateRiskAssessmentProceduresChecklist = (): Checklist => {
       id: 'section-rap-2',
       title: '2. Analytical Procedures',
       questions: [
-        q('rap-q2a', '<p>Have preliminary analytical procedures been performed by comparing current period financial data to prior period?</p>'),
-        q('rap-q2b', '<p>Have financial ratios been calculated and compared to prior period and industry benchmarks?</p>'),
-        q('rap-q2c', '<p>Have unexpected relationships in the financial data been identified for further investigation?</p>'),
-        q('rap-q2d', '<p>Have the results of preliminary analytical procedures been used to identify accounts and transactions at higher risk of material misstatement?</p>'),
+        q('rap-q2a', '<p>Have preliminary analytical procedures been performed by comparing current period financial data to prior period?</p>', undefined, 'Yes', '<p>Revenue increased 8.3% year-over-year to $12.5M CAD; gross margin held at approximately 34%, consistent with prior year performance.</p>', 'W/P Ref: RA-04'),
+        q('rap-q2b', '<p>Have financial ratios been calculated and compared to prior period and industry benchmarks?</p>', undefined, 'Yes', '<p>Current ratio, debt-to-equity, and EBITDA margin computed and compared to marine freight industry benchmarks; no material anomalies identified.</p>', 'W/P Ref: RA-04'),
+        q('rap-q2c', '<p>Have unexpected relationships in the financial data been identified for further investigation?</p>', undefined, 'Yes', '<p>A higher-than-expected increase in deferred revenue at year-end was identified and flagged for further investigation; addressed in revenue cutoff testing.</p>', 'W/P Ref: RA-04'),
+        q('rap-q2d', '<p>Have the results of preliminary analytical procedures been used to identify accounts and transactions at higher risk of material misstatement?</p>', undefined, 'Yes', '<p>Preliminary analytics identified revenue recognition (voyage completion cutoff), vessel PP&E impairment, and USD-denominated accounts as higher-risk areas.</p>', 'W/P Ref: RA-04'),
       ],
       isExpanded: true
     },
@@ -8840,10 +8922,10 @@ export const generateRiskAssessmentProceduresChecklist = (): Checklist => {
       id: 'section-rap-3',
       title: '3. Observation & Inspection',
       questions: [
-        q('rap-q3a', '<p>Has a tour of the entity\'s premises been performed to gain an understanding of operations, physical controls, and business activities?</p>'),
-        q('rap-q3b', '<p>Have key documents been reviewed (organization charts, board minutes, strategic plans, budgets, prior year financial statements)?</p>'),
-        q('rap-q3c', '<p>Have significant contracts and agreements (loan agreements, major customer contracts, lease agreements) been reviewed?</p>'),
-        q('rap-q3d', '<p>Has the entity\'s chart of accounts and accounting policies been reviewed for changes from the prior period?</p>'),
+        q('rap-q3a', '<p>Has a tour of the entity\'s premises been performed to gain an understanding of operations, physical controls, and business activities?</p>', undefined, 'Yes', '<p>Office and operations facility toured on April 14, 2024; physical access controls, filing systems, and IT infrastructure observed.</p>', 'W/P Ref: RA-05'),
+        q('rap-q3b', '<p>Have key documents been reviewed (organization charts, board minutes, strategic plans, budgets, prior year financial statements)?</p>', undefined, 'Yes', '<p>Board minutes for April 2023 through March 2024 reviewed; organization chart and FY2024 budget obtained and filed.</p>', 'W/P Ref: RA-05'),
+        q('rap-q3c', '<p>Have significant contracts and agreements (loan agreements, major customer contracts, lease agreements) been reviewed?</p>', undefined, 'Yes', '<p>Reviewed long-term debt agreements ($4.8M CAD), three major freight charter agreements, and vessel operating lease terms.</p>', 'W/P Ref: RA-05'),
+        q('rap-q3d', '<p>Has the entity\'s chart of accounts and accounting policies been reviewed for changes from the prior period?</p>', undefined, 'Yes', '<p>No changes to chart of accounts or significant accounting policies from the prior year; depreciation method and useful lives remain consistent.</p>', 'W/P Ref: RA-05'),
       ],
       isExpanded: true
     },
@@ -8851,9 +8933,9 @@ export const generateRiskAssessmentProceduresChecklist = (): Checklist => {
       id: 'section-rap-4',
       title: '4. Information from Acceptance/Continuance',
       questions: [
-        q('rap-q4a', '<p>Have findings from the engagement acceptance or continuance process been incorporated into the risk assessment?</p>'),
-        q('rap-q4b', '<p>For new engagements, has information obtained from the predecessor auditor been reviewed and relevant findings incorporated?</p>'),
-        q('rap-q4c', '<p>Have prior year audit findings, misstatements, and significant difficulties been reviewed and their implications for the current period assessed?</p>'),
+        q('rap-q4a', '<p>Have findings from the engagement acceptance or continuance process been incorporated into the risk assessment?</p>', undefined, 'Yes', '<p>Continuance assessment completed; no significant independence or integrity concerns identified. Client risk rating confirmed as moderate.</p>', 'W/P Ref: RA-06'),
+        q('rap-q4b', '<p>For new engagements, has information obtained from the predecessor auditor been reviewed and relevant findings incorporated?</p>', undefined, 'NA', '<p>Not applicable — continuing engagement. Prior year audit files reviewed directly.</p>'),
+        q('rap-q4c', '<p>Have prior year audit findings, misstatements, and significant difficulties been reviewed and their implications for the current period assessed?</p>', undefined, 'Yes', '<p>Prior year working papers reviewed; one prior year passed adjustment related to accrued revenue considered in planning current year revenue cutoff procedures.</p>', 'W/P Ref: RA-06'),
       ],
       isExpanded: true
     },
@@ -8861,11 +8943,11 @@ export const generateRiskAssessmentProceduresChecklist = (): Checklist => {
       id: 'section-rap-5',
       title: '5. Other Procedures',
       questions: [
-        q('rap-q5a', '<p>Have board and committee minutes been reviewed for the period to identify significant decisions, commitments, or events?</p>'),
-        q('rap-q5b', '<p>Have regulatory filings and correspondence been reviewed for compliance issues or enforcement actions?</p>'),
-        q('rap-q5c', '<p>Have publicly available information sources (news, industry reports, regulatory databases) been reviewed for information about the entity?</p>'),
-        q('rap-q5d', '<p>Has the engagement team discussion (brainstorming) regarding fraud risks and significant risks been completed and documented?</p>'),
-        q('rap-q5e', '<p>Have the results of all risk assessment procedures been aggregated and used to identify and assess risks of material misstatement at the financial statement and assertion levels?</p>'),
+        q('rap-q5a', '<p>Have board and committee minutes been reviewed for the period to identify significant decisions, commitments, or events?</p>', undefined, 'Yes', '<p>All board minutes from April 2023 to March 2024 reviewed; noted approval of a vessel drydock expenditure of $380K and renewal of the operating credit facility.</p>', 'W/P Ref: RA-07'),
+        q('rap-q5b', '<p>Have regulatory filings and correspondence been reviewed for compliance issues or enforcement actions?</p>', undefined, 'Yes', '<p>Transport Canada and port authority filings reviewed; no enforcement actions or compliance issues noted during the year.</p>', 'W/P Ref: RA-07'),
+        q('rap-q5c', '<p>Have publicly available information sources (news, industry reports, regulatory databases) been reviewed for information about the entity?</p>', undefined, 'Yes', '<p>Industry publications and public records reviewed; no adverse findings regarding Shipping Line Inc. Marine freight sector showed moderate growth consistent with client results.</p>'),
+        q('rap-q5d', '<p>Has the engagement team discussion (brainstorming) regarding fraud risks and significant risks been completed and documented?</p>', undefined, 'Yes', '<p>Team brainstorming session held April 14, 2024 with engagement manager S. Chen and senior staff; key risks and fraud risks identified and documented.</p>', 'W/P Ref: RA-03'),
+        q('rap-q5e', '<p>Have the results of all risk assessment procedures been aggregated and used to identify and assess risks of material misstatement at the financial statement and assertion levels?</p>', undefined, 'Yes', '<p>Risk assessment results consolidated into the RMM matrix; three significant risks identified: revenue recognition cutoff, vessel impairment, and foreign currency translation.</p>', 'W/P Ref: RA-08'),
       ],
       isExpanded: true
     },
@@ -8883,9 +8965,9 @@ export const generateRiskAssessmentProceduresChecklist = (): Checklist => {
 };
 
 export const generateITGeneralControlsChecklist = (): Checklist => {
-  const q = (id: string, text: string, subQuestions?: Question[]): Question => ({
+  const q = (id: string, text: string, subQuestions?: Question[], answer = '', explanation = '', reference = ''): Question => ({
     id, text, answerType: 'yes-no-na' as const, options: ['Yes', 'No', 'NA'],
-    required: false, answer: '', ...(subQuestions ? { subQuestions } : {})
+    required: false, answer, explanation, reference, ...(subQuestions ? { subQuestions } : {})
   });
 
   const sections: Section[] = [
@@ -8893,12 +8975,12 @@ export const generateITGeneralControlsChecklist = (): Checklist => {
       id: 'section-itgc-1',
       title: '1. Access Controls',
       questions: [
-        q('itgc-q1a', '<p>Has the entity\'s user access management process been documented (how access is provisioned, modified, and revoked for joiners, movers, and leavers)?</p>'),
-        q('itgc-q1b', '<p>Has the entity performed a periodic user access review to verify that access rights are appropriate and that terminated employees have been removed?</p>'),
-        q('itgc-q1c', '<p>Is privileged access (administrator, super-user) restricted to authorized IT personnel and subject to enhanced monitoring?</p>'),
-        q('itgc-q1d', '<p>Do password policies enforce minimum complexity, length, expiry, and account lockout after failed attempts?</p>'),
-        q('itgc-q1e', '<p>Is multi-factor authentication (MFA) required for remote access and privileged accounts?</p>'),
-        q('itgc-q1f', '<p>Are generic and shared user accounts prohibited or, if unavoidable, subject to compensating controls?</p>'),
+        q('itgc-q1a', '<p>Has the entity\'s user access management process been documented (how access is provisioned, modified, and revoked for joiners, movers, and leavers)?</p>', undefined, 'Yes', '<p>User access management process documented; new hire and termination procedures reviewed with IT coordinator on April 15, 2024.</p>', 'W/P Ref: IC-01'),
+        q('itgc-q1b', '<p>Has the entity performed a periodic user access review to verify that access rights are appropriate and that terminated employees have been removed?</p>', undefined, 'Yes', '<p>Annual user access review completed in February 2024; no terminated employees with active access identified.</p>', 'W/P Ref: IC-01'),
+        q('itgc-q1c', '<p>Is privileged access (administrator, super-user) restricted to authorized IT personnel and subject to enhanced monitoring?</p>', undefined, 'Yes', '<p>Administrator access limited to two IT staff members; activity logging confirmed active on accounting and payroll systems.</p>', 'W/P Ref: IC-01'),
+        q('itgc-q1d', '<p>Do password policies enforce minimum complexity, length, expiry, and account lockout after failed attempts?</p>', undefined, 'Yes', '<p>Password policy reviewed; minimum 12 characters, 90-day expiry, and lockout after five failed attempts enforced via Active Directory.</p>', 'W/P Ref: IC-01'),
+        q('itgc-q1e', '<p>Is multi-factor authentication (MFA) required for remote access and privileged accounts?</p>', undefined, 'Yes', '<p>MFA enforced for all remote access via VPN and for administrator accounts; confirmed via IT policy documentation.</p>', 'W/P Ref: IC-01'),
+        q('itgc-q1f', '<p>Are generic and shared user accounts prohibited or, if unavoidable, subject to compensating controls?</p>', undefined, 'Yes', '<p>No generic or shared accounts identified; all system access is individual and tied to named employees.</p>'),
       ],
       isExpanded: true
     },
@@ -8906,11 +8988,11 @@ export const generateITGeneralControlsChecklist = (): Checklist => {
       id: 'section-itgc-2',
       title: '2. Change Management',
       questions: [
-        q('itgc-q2a', '<p>Is there a formal change management process for software and system changes (development, testing, approval, implementation)?</p>'),
-        q('itgc-q2b', '<p>Are all changes to production systems subject to documented testing and user acceptance testing (UAT) before deployment?</p>'),
-        q('itgc-q2c', '<p>Is authorization for production changes documented and segregated from development (developers cannot deploy directly to production)?</p>'),
-        q('itgc-q2d', '<p>Is a change log or audit trail maintained for all production changes, and is it reviewed periodically?</p>'),
-        q('itgc-q2e', '<p>Is there a process for emergency changes that maintains appropriate documentation and after-the-fact approval?</p>'),
+        q('itgc-q2a', '<p>Is there a formal change management process for software and system changes (development, testing, approval, implementation)?</p>', undefined, 'Yes', '<p>Formal change management policy documented; all system changes require a change request ticket with manager approval prior to implementation.</p>', 'W/P Ref: IC-02'),
+        q('itgc-q2b', '<p>Are all changes to production systems subject to documented testing and user acceptance testing (UAT) before deployment?</p>', undefined, 'Yes', '<p>UAT sign-off required for all significant changes; three system changes during FY2024 reviewed and all had documented UAT approval.</p>', 'W/P Ref: IC-02'),
+        q('itgc-q2c', '<p>Is authorization for production changes documented and segregated from development (developers cannot deploy directly to production)?</p>', undefined, 'Yes', '<p>IT manager authorization required for all production deployments; development staff do not have direct production access.</p>', 'W/P Ref: IC-02'),
+        q('itgc-q2d', '<p>Is a change log or audit trail maintained for all production changes, and is it reviewed periodically?</p>', undefined, 'Yes', '<p>Change log maintained in the IT ticketing system; IT manager reviews log monthly for completeness and unauthorized changes.</p>', 'W/P Ref: IC-02'),
+        q('itgc-q2e', '<p>Is there a process for emergency changes that maintains appropriate documentation and after-the-fact approval?</p>', undefined, 'Yes', '<p>Emergency change procedure documented; one emergency patch applied during the year with appropriate after-the-fact approval and documentation.</p>', 'W/P Ref: IC-02'),
       ],
       isExpanded: true
     },
@@ -8918,11 +9000,11 @@ export const generateITGeneralControlsChecklist = (): Checklist => {
       id: 'section-itgc-3',
       title: '3. IT Operations',
       questions: [
-        q('itgc-q3a', '<p>Is there a documented backup and recovery policy covering frequency of backups, retention periods, and off-site or cloud storage?</p>'),
-        q('itgc-q3b', '<p>Are backups tested periodically to confirm that data can be restored successfully?</p>'),
-        q('itgc-q3c', '<p>Are scheduled jobs and batch processes monitored, with failures promptly investigated and resolved?</p>'),
-        q('itgc-q3d', '<p>Is there an incident management process for IT outages and security incidents, with documentation and root cause analysis?</p>'),
-        q('itgc-q3e', '<p>Is there a disaster recovery / business continuity plan that has been tested?</p>'),
+        q('itgc-q3a', '<p>Is there a documented backup and recovery policy covering frequency of backups, retention periods, and off-site or cloud storage?</p>', undefined, 'Yes', '<p>Backup policy requires daily incremental and weekly full backups; data replicated to cloud storage (Azure) with 90-day retention.</p>', 'W/P Ref: IC-03'),
+        q('itgc-q3b', '<p>Are backups tested periodically to confirm that data can be restored successfully?</p>', undefined, 'Yes', '<p>Quarterly backup restoration tests performed; most recent test completed January 2024 with successful recovery confirmed.</p>', 'W/P Ref: IC-03'),
+        q('itgc-q3c', '<p>Are scheduled jobs and batch processes monitored, with failures promptly investigated and resolved?</p>', undefined, 'Yes', '<p>Automated monitoring alerts configured for all scheduled batch jobs; IT coordinator reviews daily exception reports.</p>', 'W/P Ref: IC-03'),
+        q('itgc-q3d', '<p>Is there an incident management process for IT outages and security incidents, with documentation and root cause analysis?</p>', undefined, 'Yes', '<p>Incident management process in place; two minor outages during FY2024 were documented and resolved within SLA timeframes.</p>', 'W/P Ref: IC-03'),
+        q('itgc-q3e', '<p>Is there a disaster recovery / business continuity plan that has been tested?</p>', undefined, 'Yes', '<p>Business continuity plan updated in September 2023; tabletop exercise completed with management; no significant gaps identified.</p>', 'W/P Ref: IC-03'),
       ],
       isExpanded: true
     },
@@ -8930,11 +9012,11 @@ export const generateITGeneralControlsChecklist = (): Checklist => {
       id: 'section-itgc-4',
       title: '4. IT Risk Assessment',
       questions: [
-        q('itgc-q4a', '<p>Have the key IT systems that directly support financial reporting (ERP, accounting system, payroll system) been identified?</p>'),
-        q('itgc-q4b', '<p>Have data integrity risks (completeness and accuracy of data transferred between systems, interfaces, spreadsheets) been assessed?</p>'),
-        q('itgc-q4c', '<p>Have cybersecurity risks (ransomware, data breaches, phishing) and the entity\'s controls to mitigate them been assessed?</p>'),
-        q('itgc-q4d', '<p>Has the entity\'s use of cloud services and third-party service providers (SaaS, outsourced IT) been considered, including review of SOC 1 / SOC 2 reports where available?</p>'),
-        q('itgc-q4e', '<p>Based on the ITGC assessment, has the overall IT control environment been assessed as effective, and has the conclusion been incorporated into the risk assessment?</p>'),
+        q('itgc-q4a', '<p>Have the key IT systems that directly support financial reporting (ERP, accounting system, payroll system) been identified?</p>', undefined, 'Yes', '<p>Key financial systems identified: Sage 300 (accounting/ERP), ADP (payroll), and vessel management system with ERP interface.</p>', 'W/P Ref: IC-04'),
+        q('itgc-q4b', '<p>Have data integrity risks (completeness and accuracy of data transferred between systems, interfaces, spreadsheets) been assessed?</p>', undefined, 'Yes', '<p>Interface between vessel management system and Sage 300 assessed; automated reconciliation report reviewed daily by accounting staff.</p>', 'W/P Ref: IC-04'),
+        q('itgc-q4c', '<p>Have cybersecurity risks (ransomware, data breaches, phishing) and the entity\'s controls to mitigate them been assessed?</p>', undefined, 'Yes', '<p>Cybersecurity risks assessed; entity has endpoint protection, email filtering, and completed phishing awareness training for all staff in November 2023.</p>', 'W/P Ref: IC-04'),
+        q('itgc-q4d', '<p>Has the entity\'s use of cloud services and third-party service providers (SaaS, outsourced IT) been considered, including review of SOC 1 / SOC 2 reports where available?</p>', undefined, 'Yes', '<p>ADP SOC 1 Type II report reviewed; no exceptions noted relevant to payroll processing controls. Azure cloud services assessed via Microsoft compliance documentation.</p>', 'W/P Ref: IC-04'),
+        q('itgc-q4e', '<p>Based on the ITGC assessment, has the overall IT control environment been assessed as effective, and has the conclusion been incorporated into the risk assessment?</p>', undefined, 'Yes', '<p>ITGC environment assessed as effective overall; no significant deficiencies identified. Conclusion incorporated into assertion-level RMM assessment.</p>', 'W/P Ref: IC-04'),
       ],
       isExpanded: true
     },
@@ -8952,9 +9034,9 @@ export const generateITGeneralControlsChecklist = (): Checklist => {
 };
 
 export const generateFraudRiskAssessmentChecklist = (): Checklist => {
-  const q = (id: string, text: string, subQuestions?: Question[]): Question => ({
+  const q = (id: string, text: string, subQuestions?: Question[], answer = '', explanation = '', reference = ''): Question => ({
     id, text, answerType: 'yes-no-na' as const, options: ['Yes', 'No', 'NA'],
-    required: false, answer: '', ...(subQuestions ? { subQuestions } : {})
+    required: false, answer, explanation, reference, ...(subQuestions ? { subQuestions } : {})
   });
 
   const sections: Section[] = [
@@ -8962,10 +9044,10 @@ export const generateFraudRiskAssessmentChecklist = (): Checklist => {
       id: 'section-fra-1',
       title: '1. Fraud Risk Factors',
       questions: [
-        q('fra-q1a', '<p>Have incentive/pressure fraud risk factors been assessed (e.g., financial pressure on management or the entity, compensation tied to financial results, significant personal guarantees)?</p>'),
-        q('fra-q1b', '<p>Have opportunity fraud risk factors been assessed (e.g., weak controls, significant related party transactions, complex transactions, management override of controls)?</p>'),
-        q('fra-q1c', '<p>Have rationalization/attitude fraud risk factors been assessed (e.g., poor ethical culture, management history of misrepresentations, aggressive application of accounting policies)?</p>'),
-        q('fra-q1d', '<p>Have the fraud risk factors been considered in aggregate and in combination to assess the overall fraud risk for the engagement?</p>'),
+        q('fra-q1a', '<p>Have incentive/pressure fraud risk factors been assessed (e.g., financial pressure on management or the entity, compensation tied to financial results, significant personal guarantees)?</p>', undefined, 'Yes', '<p>No significant incentive or pressure factors identified; management compensation is salary-based with no material performance bonuses tied to financial results.</p>', 'W/P Ref: FR-01'),
+        q('fra-q1b', '<p>Have opportunity fraud risk factors been assessed (e.g., weak controls, significant related party transactions, complex transactions, management override of controls)?</p>', undefined, 'Yes', '<p>Control environment assessed as adequate; segregation of duties exists in key cycles. No significant related party transactions noted beyond normal director compensation.</p>', 'W/P Ref: FR-01'),
+        q('fra-q1c', '<p>Have rationalization/attitude fraud risk factors been assessed (e.g., poor ethical culture, management history of misrepresentations, aggressive application of accounting policies)?</p>', undefined, 'Yes', '<p>Tone at the top assessed as strong; no prior history of misrepresentations. Accounting policies applied conservatively and consistently with prior year.</p>', 'W/P Ref: FR-01'),
+        q('fra-q1d', '<p>Have the fraud risk factors been considered in aggregate and in combination to assess the overall fraud risk for the engagement?</p>', undefined, 'Yes', '<p>Fraud triangle factors considered in aggregate; overall fraud risk assessed as low to moderate, consistent with prior year assessment.</p>', 'W/P Ref: FR-01'),
       ],
       isExpanded: true
     },
@@ -8973,11 +9055,11 @@ export const generateFraudRiskAssessmentChecklist = (): Checklist => {
       id: 'section-fra-2',
       title: '2. Inquiries of Management',
       questions: [
-        q('fra-q2a', '<p>Has management been asked whether they are aware of any actual, suspected or alleged fraud within the entity?</p>'),
-        q('fra-q2b', '<p>Has management been asked to describe their own fraud risk assessment process and the results of that assessment?</p>'),
-        q('fra-q2c', '<p>Has management been asked about the programs and controls they have in place to prevent and detect fraud (e.g., whistleblower hotline, internal audit, anti-fraud policies)?</p>'),
-        q('fra-q2d', '<p>Have inquiries been made of the internal audit function (if applicable) regarding any fraud-related findings or concerns?</p>'),
-        q('fra-q2e', '<p>Have inquiries been made of TCWG regarding their oversight of management\'s fraud risk assessment and their knowledge of any fraud or allegations of fraud?</p>'),
+        q('fra-q2a', '<p>Has management been asked whether they are aware of any actual, suspected or alleged fraud within the entity?</p>', undefined, 'Yes', '<p>CEO and CFO both confirmed no actual, suspected, or alleged fraud within Shipping Line Inc. during the year ended March 31, 2024.</p>', 'W/P Ref: FR-02'),
+        q('fra-q2b', '<p>Has management been asked to describe their own fraud risk assessment process and the results of that assessment?</p>', undefined, 'Yes', '<p>Management performs an informal annual risk assessment; no fraud risks were identified by management for FY2024.</p>', 'W/P Ref: FR-02'),
+        q('fra-q2c', '<p>Has management been asked about the programs and controls they have in place to prevent and detect fraud (e.g., whistleblower hotline, internal audit, anti-fraud policies)?</p>', undefined, 'Yes', '<p>Entity has a code of conduct policy and direct reporting line to the board for concerns; no formal whistleblower hotline given size of entity.</p>', 'W/P Ref: FR-02'),
+        q('fra-q2d', '<p>Have inquiries been made of the internal audit function (if applicable) regarding any fraud-related findings or concerns?</p>', undefined, 'NA', '<p>Not applicable — entity does not have a formal internal audit function given its size (94 employees).</p>'),
+        q('fra-q2e', '<p>Have inquiries been made of TCWG regarding their oversight of management\'s fraud risk assessment and their knowledge of any fraud or allegations of fraud?</p>', undefined, 'Yes', '<p>Board of directors confirmed no knowledge of fraud or allegations of fraud; oversight of management fraud risk assessment discussed at April 2024 board meeting.</p>', 'W/P Ref: FR-02'),
       ],
       isExpanded: true
     },
@@ -8985,9 +9067,9 @@ export const generateFraudRiskAssessmentChecklist = (): Checklist => {
       id: 'section-fra-3',
       title: '3. Presumed Fraud Risks',
       questions: [
-        q('fra-q3a', '<p>Has the presumed fraud risk related to revenue recognition been considered? If the presumption has been rebutted, is the rationale documented with sufficient specificity?</p>'),
-        q('fra-q3b', '<p>Has the risk of management override of controls been identified as a significant risk in all audits (this risk cannot be rebutted)?</p>'),
-        q('fra-q3c', '<p>Have journal entries and other adjustments been identified as an area requiring specific audit procedures given the management override risk?</p>'),
+        q('fra-q3a', '<p>Has the presumed fraud risk related to revenue recognition been considered? If the presumption has been rebutted, is the rationale documented with sufficient specificity?</p>', undefined, 'Yes', '<p>Revenue recognition fraud risk presumption maintained; not rebutted. Revenue recognition (voyage completion cutoff) identified as a significant risk requiring specific audit procedures. See W/P Ref: RV-01.</p>', 'W/P Ref: FR-03'),
+        q('fra-q3b', '<p>Has the risk of management override of controls been identified as a significant risk in all audits (this risk cannot be rebutted)?</p>', undefined, 'Yes', '<p>Management override risk identified as a significant risk and cannot be rebutted per CAS 240. Journal entry testing and estimate review procedures planned accordingly.</p>', 'W/P Ref: FR-03'),
+        q('fra-q3c', '<p>Have journal entries and other adjustments been identified as an area requiring specific audit procedures given the management override risk?</p>', undefined, 'Yes', '<p>Journal entry testing planned; selection criteria includes all entries above $25,000, all reversing entries, and all entries posted outside normal business hours.</p>', 'W/P Ref: FR-03'),
       ],
       isExpanded: true
     },
@@ -8995,9 +9077,9 @@ export const generateFraudRiskAssessmentChecklist = (): Checklist => {
       id: 'section-fra-4',
       title: '4. Significant Fraud Risk Factors Identified',
       questions: [
-        q('fra-q4a', '<p>Have all fraud risks identified during the assessment been documented, including the type of risk (fraudulent financial reporting vs. misappropriation of assets) and the assertion affected?</p>'),
-        q('fra-q4b', '<p>Has each identified fraud risk been evaluated to determine whether it constitutes a significant risk requiring specific audit responses?</p>'),
-        q('fra-q4c', '<p>Has the engagement team brainstorming discussion specifically addressed fraud risks, and have the results been documented?</p>'),
+        q('fra-q4a', '<p>Have all fraud risks identified during the assessment been documented, including the type of risk (fraudulent financial reporting vs. misappropriation of assets) and the assertion affected?</p>', undefined, 'Yes', '<p>Two significant fraud risks documented: (1) revenue recognition cutoff — fraudulent financial reporting, completeness/cutoff assertion; (2) management override — all assertions.</p>', 'W/P Ref: FR-04'),
+        q('fra-q4b', '<p>Has each identified fraud risk been evaluated to determine whether it constitutes a significant risk requiring specific audit responses?</p>', undefined, 'Yes', '<p>Both identified fraud risks classified as significant risks; specific audit responses documented in the audit plan and significant risks register.</p>', 'W/P Ref: FR-04'),
+        q('fra-q4c', '<p>Has the engagement team brainstorming discussion specifically addressed fraud risks, and have the results been documented?</p>', undefined, 'Yes', '<p>Fraud risk brainstorming completed April 14, 2024; attended by partner J. Williams, manager S. Chen, and senior associates. Results documented in engagement files.</p>', 'W/P Ref: FR-04'),
       ],
       isExpanded: true
     },
@@ -9005,11 +9087,11 @@ export const generateFraudRiskAssessmentChecklist = (): Checklist => {
       id: 'section-fra-5',
       title: '5. Planned Responses to Identified Fraud Risks',
       questions: [
-        q('fra-q5a', '<p>Have overall responses to the assessed fraud risks been planned (e.g., assigning experienced staff, increasing unpredictability of procedures, heightened professional skepticism)?</p>'),
-        q('fra-q5b', '<p>Have specific substantive procedures been planned for each significant fraud risk identified?</p>'),
-        q('fra-q5c', '<p>Have journal entry testing procedures been planned to address the risk of management override (selection criteria for testing documented)?</p>'),
-        q('fra-q5d', '<p>Have procedures been planned to review significant accounting estimates for management bias?</p>'),
-        q('fra-q5e', '<p>Have procedures been planned to test unusual or significant transactions identified during the engagement?</p>'),
+        q('fra-q5a', '<p>Have overall responses to the assessed fraud risks been planned (e.g., assigning experienced staff, increasing unpredictability of procedures, heightened professional skepticism)?</p>', undefined, 'Yes', '<p>Senior staff assigned to revenue cutoff and vessel impairment testing; unpredictable elements incorporated including unannounced cut-off observation and varying sample selection methods.</p>', 'W/P Ref: FR-05'),
+        q('fra-q5b', '<p>Have specific substantive procedures been planned for each significant fraud risk identified?</p>', undefined, 'Yes', '<p>Specific procedures planned: revenue cutoff testing around March 31, 2024 (voyage completion documentation); expanded journal entry testing for management override risk.</p>', 'W/P Ref: FR-05'),
+        q('fra-q5c', '<p>Have journal entry testing procedures been planned to address the risk of management override (selection criteria for testing documented)?</p>', undefined, 'Yes', '<p>Journal entry selection criteria documented; all entries above $25K, all manual entries posted by management, and all unusual entries near year-end selected for testing.</p>', 'W/P Ref: FR-05'),
+        q('fra-q5d', '<p>Have procedures been planned to review significant accounting estimates for management bias?</p>', undefined, 'Yes', '<p>Review of vessel depreciation estimates, allowance for doubtful accounts, and accrued voyage revenue planned; retrospective review of prior year estimates to be performed.</p>', 'W/P Ref: FR-05'),
+        q('fra-q5e', '<p>Have procedures been planned to test unusual or significant transactions identified during the engagement?</p>', undefined, 'Yes', '<p>No unusual or significant one-off transactions identified during planning; procedures include review of large and unusual journal entries as part of management override testing.</p>'),
       ],
       isExpanded: true
     },
@@ -9027,9 +9109,9 @@ export const generateFraudRiskAssessmentChecklist = (): Checklist => {
 };
 
 export const generateSignificantRisksRegisterChecklist = (): Checklist => {
-  const q = (id: string, text: string, subQuestions?: Question[]): Question => ({
+  const q = (id: string, text: string, subQuestions?: Question[], answer = '', explanation = '', reference = ''): Question => ({
     id, text, answerType: 'yes-no-na' as const, options: ['Yes', 'No', 'NA'],
-    required: false, answer: '', ...(subQuestions ? { subQuestions } : {})
+    required: false, answer, explanation, reference, ...(subQuestions ? { subQuestions } : {})
   });
 
   const sections: Section[] = [
@@ -9037,10 +9119,10 @@ export const generateSignificantRisksRegisterChecklist = (): Checklist => {
       id: 'section-srr-1',
       title: '1. Identification of Significant Risks',
       questions: [
-        q('srr-q1a', '<p>Have all significant risks been identified and documented with a description of the risk and the specific assertion(s) affected (existence, completeness, accuracy, valuation, cutoff, classification, presentation)?</p>'),
-        q('srr-q1b', '<p>Has the account balance, class of transactions or disclosure affected by each significant risk been identified?</p>'),
-        q('srr-q1c', '<p>Have the sources of each significant risk been documented (industry factors, entity-specific factors, nature of the account, complexity of accounting)?</p>'),
-        q('srr-q1d', '<p>Has the significant risk register been reviewed by the engagement manager and partner to confirm completeness?</p>'),
+        q('srr-q1a', '<p>Have all significant risks been identified and documented with a description of the risk and the specific assertion(s) affected (existence, completeness, accuracy, valuation, cutoff, classification, presentation)?</p>', undefined, 'Yes', '<p>Three significant risks identified and documented: (1) revenue recognition cutoff — completeness/cutoff; (2) vessel impairment — valuation; (3) foreign currency translation — accuracy/valuation.</p>', 'W/P Ref: SR-01'),
+        q('srr-q1b', '<p>Has the account balance, class of transactions or disclosure affected by each significant risk been identified?</p>', undefined, 'Yes', '<p>Affected accounts identified: Revenue ($12.5M) and deferred revenue for risk 1; Vessels PP&E ($8.2M) for risk 2; USD-denominated AR/AP balances for risk 3.</p>', 'W/P Ref: SR-01'),
+        q('srr-q1c', '<p>Have the sources of each significant risk been documented (industry factors, entity-specific factors, nature of the account, complexity of accounting)?</p>', undefined, 'Yes', '<p>Sources documented: marine shipping revenue recognition requires judgment on voyage completion percentage; vessel impairment involves significant estimates; USD transactions expose entity to exchange rate risk.</p>', 'W/P Ref: SR-01'),
+        q('srr-q1d', '<p>Has the significant risk register been reviewed by the engagement manager and partner to confirm completeness?</p>', undefined, 'Yes', '<p>Register reviewed and approved by manager S. Chen and partner J. Williams on April 15, 2024 prior to commencement of fieldwork.</p>', 'W/P Ref: SR-01'),
       ],
       isExpanded: true
     },
@@ -9048,10 +9130,10 @@ export const generateSignificantRisksRegisterChecklist = (): Checklist => {
       id: 'section-srr-2',
       title: '2. Inherent Risk Assessment',
       questions: [
-        q('srr-q2a', '<p>For each significant risk, has the likelihood of material misstatement been assessed (high/medium/low) considering the susceptibility of the account to error or manipulation?</p>'),
-        q('srr-q2b', '<p>For each significant risk, has the magnitude of potential misstatement been assessed in relation to overall and performance materiality?</p>'),
-        q('srr-q2c', '<p>Has the inherent risk level (combination of likelihood and magnitude) been determined for each significant risk?</p>'),
-        q('srr-q2d', '<p>Have risks involving significant judgment, estimation uncertainty, or complex transactions been specifically identified as having higher inherent risk?</p>'),
+        q('srr-q2a', '<p>For each significant risk, has the likelihood of material misstatement been assessed (high/medium/low) considering the susceptibility of the account to error or manipulation?</p>', undefined, 'Yes', '<p>Revenue recognition cutoff: high likelihood (management judgment on voyage completion). Vessel impairment: medium likelihood. Foreign currency: medium likelihood based on volume of USD transactions.</p>', 'W/P Ref: SR-02'),
+        q('srr-q2b', '<p>For each significant risk, has the magnitude of potential misstatement been assessed in relation to overall and performance materiality?</p>', undefined, 'Yes', '<p>Revenue risk magnitude assessed as high (potential misstatement could exceed overall materiality of $125K). Vessel impairment and FX risks assessed as medium magnitude.</p>', 'W/P Ref: SR-02'),
+        q('srr-q2c', '<p>Has the inherent risk level (combination of likelihood and magnitude) been determined for each significant risk?</p>', undefined, 'Yes', '<p>Inherent risk assessed as: revenue cutoff — high; vessel impairment — high (significant estimation); foreign currency — medium.</p>', 'W/P Ref: SR-02'),
+        q('srr-q2d', '<p>Have risks involving significant judgment, estimation uncertainty, or complex transactions been specifically identified as having higher inherent risk?</p>', undefined, 'Yes', '<p>Vessel impairment assessment involves significant management judgment regarding recoverable amount and vessel useful economic lives; assessed as higher inherent risk accordingly.</p>', 'W/P Ref: SR-02'),
       ],
       isExpanded: true
     },
@@ -9059,10 +9141,10 @@ export const generateSignificantRisksRegisterChecklist = (): Checklist => {
       id: 'section-srr-3',
       title: '3. Control Environment Assessment',
       questions: [
-        q('srr-q3a', '<p>Have the relevant controls that address each significant risk been identified?</p>'),
-        q('srr-q3b', '<p>Has the design adequacy of the relevant controls been assessed — are the controls capable of preventing or detecting material misstatement if operating effectively?</p>'),
-        q('srr-q3c', '<p>Has the implementation of the relevant controls been confirmed (evidence that controls exist and are in use)?</p>'),
-        q('srr-q3d', '<p>For significant risks where control reliance is planned, has the operating effectiveness of controls been planned for testing?</p>'),
+        q('srr-q3a', '<p>Have the relevant controls that address each significant risk been identified?</p>', undefined, 'Yes', '<p>Relevant controls identified for each significant risk; documented in SCOT — Revenue Cycle and SCOT — Capital Assets working papers.</p>', 'W/P Ref: SR-03'),
+        q('srr-q3b', '<p>Has the design adequacy of the relevant controls been assessed — are the controls capable of preventing or detecting material misstatement if operating effectively?</p>', undefined, 'Yes', '<p>Design of revenue cutoff controls (voyage completion checklists, CFO review of revenue accruals) assessed as adequate. Vessel impairment review controls assessed as adequate.</p>', 'W/P Ref: SR-03'),
+        q('srr-q3c', '<p>Has the implementation of the relevant controls been confirmed (evidence that controls exist and are in use)?</p>', undefined, 'Yes', '<p>Implementation confirmed through observation and inquiry; voyage completion documentation and year-end revenue accrual review evidenced in client files.</p>', 'W/P Ref: SR-03'),
+        q('srr-q3d', '<p>For significant risks where control reliance is planned, has the operating effectiveness of controls been planned for testing?</p>', undefined, 'Yes', '<p>Substantive-only approach adopted for all three significant risks per CAS 330 requirements; no reliance on controls for these risks.</p>'),
       ],
       isExpanded: true
     },
@@ -9070,11 +9152,11 @@ export const generateSignificantRisksRegisterChecklist = (): Checklist => {
       id: 'section-srr-4',
       title: '4. Audit Response',
       questions: [
-        q('srr-q4a', '<p>For each significant risk, have the nature of planned audit procedures been documented (inspection, confirmation, recalculation, substantive analytical procedures, etc.)?</p>'),
-        q('srr-q4b', '<p>For each significant risk, has the timing of planned procedures been determined (interim vs. year-end)?</p>'),
-        q('srr-q4c', '<p>For each significant risk, has the extent of planned procedures been determined (sample sizes, coverage ratios)?</p>'),
-        q('srr-q4d', '<p>For significant risks, has CAS 330 been considered regarding the requirement for substantive procedures regardless of the assessed level of control risk?</p>'),
-        q('srr-q4e', '<p>Have the planned responses to each significant risk been linked to specific working paper references in the audit plan?</p>'),
+        q('srr-q4a', '<p>For each significant risk, have the nature of planned audit procedures been documented (inspection, confirmation, recalculation, substantive analytical procedures, etc.)?</p>', undefined, 'Yes', '<p>Procedures documented: revenue — inspection of voyage logs and cut-off testing; vessel impairment — inspection of impairment model and independent valuation assessment; FX — recalculation of year-end translation.</p>', 'W/P Ref: SR-04'),
+        q('srr-q4b', '<p>For each significant risk, has the timing of planned procedures been determined (interim vs. year-end)?</p>', undefined, 'Yes', '<p>All significant risk procedures planned at year-end (April 14-25, 2024 fieldwork); no interim procedures planned for significant risks given risk profile.</p>', 'W/P Ref: SR-04'),
+        q('srr-q4c', '<p>For each significant risk, has the extent of planned procedures been determined (sample sizes, coverage ratios)?</p>', undefined, 'Yes', '<p>Sample sizes documented: revenue cutoff — 25 voyages around year-end; journal entries — 100% of entries above $25K; vessel impairment — all three vessels assessed individually.</p>', 'W/P Ref: SR-04'),
+        q('srr-q4d', '<p>For significant risks, has CAS 330 been considered regarding the requirement for substantive procedures regardless of the assessed level of control risk?</p>', undefined, 'Yes', '<p>CAS 330 requirements considered; substantive procedures planned for all significant risks regardless of control environment assessment.</p>', 'W/P Ref: SR-04'),
+        q('srr-q4e', '<p>Have the planned responses to each significant risk been linked to specific working paper references in the audit plan?</p>', undefined, 'Yes', '<p>All planned responses linked to working paper references: revenue cutoff to RV-02, vessel impairment to FA-03, foreign currency to FX-01.</p>', 'W/P Ref: SR-04'),
       ],
       isExpanded: true
     },
@@ -9092,9 +9174,9 @@ export const generateSignificantRisksRegisterChecklist = (): Checklist => {
 };
 
 export const generateRMMChecklist = (): Checklist => {
-  const q = (id: string, text: string, subQuestions?: Question[]): Question => ({
+  const q = (id: string, text: string, subQuestions?: Question[], answer = '', explanation = '', reference = ''): Question => ({
     id, text, answerType: 'yes-no-na' as const, options: ['Yes', 'No', 'NA'],
-    required: false, answer: '', ...(subQuestions ? { subQuestions } : {})
+    required: false, answer, explanation, reference, ...(subQuestions ? { subQuestions } : {})
   });
 
   const sections: Section[] = [
@@ -9102,10 +9184,10 @@ export const generateRMMChecklist = (): Checklist => {
       id: 'section-rmm-1',
       title: '1. Financial Statement Level RMM',
       questions: [
-        q('rmm-q1a', '<p>Has the overall RMM at the financial statement level been assessed, considering the control environment and any pervasive risks that affect many assertions across the financial statements?</p>'),
-        q('rmm-q1b', '<p>Have pervasive risks (risks that are not confined to a single account or assertion) been identified and documented?</p>'),
-        q('rmm-q1c', '<p>Has the integrity and ethical values of management been considered in the overall RMM assessment?</p>'),
-        q('rmm-q1d', '<p>Have any going concern risks or management bias in accounting estimates been incorporated into the financial statement level RMM assessment?</p>'),
+        q('rmm-q1a', '<p>Has the overall RMM at the financial statement level been assessed, considering the control environment and any pervasive risks that affect many assertions across the financial statements?</p>', undefined, 'Yes', '<p>Financial statement level RMM assessed as moderate; control environment is generally adequate with no pervasive weaknesses identified across Shipping Line Inc.\'s operations.</p>', 'W/P Ref: RM-01'),
+        q('rmm-q1b', '<p>Have pervasive risks (risks that are not confined to a single account or assertion) been identified and documented?</p>', undefined, 'Yes', '<p>Management override of controls identified as a pervasive risk affecting all assertions; foreign currency risk also identified as potentially pervasive given USD-denominated transactions across multiple account lines.</p>', 'W/P Ref: RM-01'),
+        q('rmm-q1c', '<p>Has the integrity and ethical values of management been considered in the overall RMM assessment?</p>', undefined, 'Yes', '<p>Management integrity assessed as high; no prior history of misrepresentations, and tone at the top assessed as strong through inquiries and observation.</p>', 'W/P Ref: RM-01'),
+        q('rmm-q1d', '<p>Have any going concern risks or management bias in accounting estimates been incorporated into the financial statement level RMM assessment?</p>', undefined, 'Yes', '<p>No going concern indicators identified. Management bias risk considered in the context of vessel impairment estimates and revenue accruals; no evidence of systematic bias detected.</p>', 'W/P Ref: RM-01'),
       ],
       isExpanded: true
     },
@@ -9113,11 +9195,11 @@ export const generateRMMChecklist = (): Checklist => {
       id: 'section-rmm-2',
       title: '2. Assertion Level RMM by Account',
       questions: [
-        q('rmm-q2a', '<p>For each significant account and class of transactions, have RMMs been assessed at the assertion level (existence/occurrence, completeness, accuracy/valuation, cutoff, classification)?</p>'),
-        q('rmm-q2b', '<p>Has the RMM for revenue (including revenue recognition) been assessed at each relevant assertion level?</p>'),
-        q('rmm-q2c', '<p>Has the RMM for accounts requiring significant estimates (e.g., allowance for doubtful accounts, inventory obsolescence, asset impairment) been assessed as higher due to estimation uncertainty?</p>'),
-        q('rmm-q2d', '<p>Has the RMM for accounts susceptible to misappropriation (e.g., cash, payroll) been assessed?</p>'),
-        q('rmm-q2e', '<p>Has the RMM assessment been documented in a manner that clearly links each risk to the relevant assertion, account and planned audit procedures?</p>'),
+        q('rmm-q2a', '<p>For each significant account and class of transactions, have RMMs been assessed at the assertion level (existence/occurrence, completeness, accuracy/valuation, cutoff, classification)?</p>', undefined, 'Yes', '<p>Assertion-level RMM assessed for all significant accounts: revenue, AR, vessels/PP&E, AP, long-term debt, payroll, and cash. RMM matrix completed and filed.</p>', 'W/P Ref: RM-02'),
+        q('rmm-q2b', '<p>Has the RMM for revenue (including revenue recognition) been assessed at each relevant assertion level?</p>', undefined, 'Yes', '<p>Revenue RMM: occurrence — low; completeness — medium; cutoff — high (voyage completion at year-end); accuracy — medium. Significant risk identified for cutoff assertion.</p>', 'W/P Ref: RM-02'),
+        q('rmm-q2c', '<p>Has the RMM for accounts requiring significant estimates (e.g., allowance for doubtful accounts, inventory obsolescence, asset impairment) been assessed as higher due to estimation uncertainty?</p>', undefined, 'Yes', '<p>Vessel impairment and allowance for doubtful accounts assessed as high RMM at the valuation assertion due to significant management estimation and judgment involved.</p>', 'W/P Ref: RM-02'),
+        q('rmm-q2d', '<p>Has the RMM for accounts susceptible to misappropriation (e.g., cash, payroll) been assessed?</p>', undefined, 'Yes', '<p>Cash and payroll assessed for misappropriation risk; control environment for both assessed as adequate with appropriate segregation of duties in place.</p>', 'W/P Ref: RM-02'),
+        q('rmm-q2e', '<p>Has the RMM assessment been documented in a manner that clearly links each risk to the relevant assertion, account and planned audit procedures?</p>', undefined, 'Yes', '<p>RMM matrix documented with cross-references to planned audit procedures for each significant account and assertion; reviewed by engagement manager.</p>', 'W/P Ref: RM-02'),
       ],
       isExpanded: true
     },
@@ -9125,10 +9207,10 @@ export const generateRMMChecklist = (): Checklist => {
       id: 'section-rmm-3',
       title: '3. Control Risk Assessment',
       questions: [
-        q('rmm-q3a', '<p>Has the control risk been assessed for each significant account based on the understanding of the design and implementation of relevant controls?</p>'),
-        q('rmm-q3b', '<p>Where it is planned to rely on controls to reduce the extent of substantive testing, have tests of controls been planned to assess operating effectiveness?</p>'),
-        q('rmm-q3c', '<p>Where control risk has been assessed as high (or where it is not efficient to rely on controls), has the audit plan been adjusted to increase substantive testing?</p>'),
-        q('rmm-q3d', '<p>Has the impact of IT controls on the overall control risk assessment been considered?</p>'),
+        q('rmm-q3a', '<p>Has the control risk been assessed for each significant account based on the understanding of the design and implementation of relevant controls?</p>', undefined, 'Yes', '<p>Control risk assessed for all significant accounts; moderate control risk for revenue, AP, and payroll cycles based on documented controls; higher control risk for vessel impairment (no formal internal review process).</p>', 'W/P Ref: RM-03'),
+        q('rmm-q3b', '<p>Where it is planned to rely on controls to reduce the extent of substantive testing, have tests of controls been planned to assess operating effectiveness?</p>', undefined, 'Yes', '<p>Limited control reliance planned for AP three-way match and payroll authorization controls; tests of controls planned for these two areas to support reduced substantive testing.</p>', 'W/P Ref: RM-03'),
+        q('rmm-q3c', '<p>Where control risk has been assessed as high (or where it is not efficient to rely on controls), has the audit plan been adjusted to increase substantive testing?</p>', undefined, 'Yes', '<p>Substantive-only approach applied to revenue cutoff, vessel impairment, and foreign currency; expanded substantive procedures planned to compensate for higher control risk in these areas.</p>', 'W/P Ref: RM-03'),
+        q('rmm-q3d', '<p>Has the impact of IT controls on the overall control risk assessment been considered?</p>', undefined, 'Yes', '<p>ITGC assessed as effective; positive impact on control risk assessment for automated controls in AP matching and payroll processing. ITGC conclusions documented in IC-04.</p>', 'W/P Ref: RM-03'),
       ],
       isExpanded: true
     },
@@ -9136,10 +9218,10 @@ export const generateRMMChecklist = (): Checklist => {
       id: 'section-rmm-4',
       title: '4. Residual Risk',
       questions: [
-        q('rmm-q4a', '<p>Based on the assessed RMM (inherent risk × control risk), has the required detection risk been determined for each significant account and assertion?</p>'),
-        q('rmm-q4b', '<p>Has the nature, timing, and extent of substantive procedures been designed to achieve the required detection risk?</p>'),
-        q('rmm-q4c', '<p>For accounts with high assessed RMM, have more extensive, persuasive or unpredictable substantive procedures been planned?</p>'),
-        q('rmm-q4d', '<p>Has the RMM assessment and the resulting audit plan been reviewed and approved by the engagement manager and partner?</p>'),
+        q('rmm-q4a', '<p>Based on the assessed RMM (inherent risk × control risk), has the required detection risk been determined for each significant account and assertion?</p>', undefined, 'Yes', '<p>Detection risk determined for each significant account; low detection risk required for revenue cutoff and vessel impairment (high RMM); moderate detection risk for remaining accounts.</p>', 'W/P Ref: RM-04'),
+        q('rmm-q4b', '<p>Has the nature, timing, and extent of substantive procedures been designed to achieve the required detection risk?</p>', undefined, 'Yes', '<p>Substantive procedures designed to achieve required detection risk; expanded sample sizes, year-end timing, and more persuasive procedures (inspection over analytical) applied to high-RMM accounts.</p>', 'W/P Ref: RM-04'),
+        q('rmm-q4c', '<p>For accounts with high assessed RMM, have more extensive, persuasive or unpredictable substantive procedures been planned?</p>', undefined, 'Yes', '<p>Revenue cutoff: 25 voyages tested with inspection of underlying documentation. Vessel impairment: individual assessment of all three vessels including review of management\'s impairment model.</p>', 'W/P Ref: RM-04'),
+        q('rmm-q4d', '<p>Has the RMM assessment and the resulting audit plan been reviewed and approved by the engagement manager and partner?</p>', undefined, 'Yes', '<p>RMM assessment and audit plan reviewed and approved by manager S. Chen and partner J. Williams on April 15, 2024.</p>', 'W/P Ref: RM-04'),
       ],
       isExpanded: true
     },
@@ -9157,9 +9239,9 @@ export const generateRMMChecklist = (): Checklist => {
 };
 
 export const generateOverallAuditResponseChecklist = (): Checklist => {
-  const q = (id: string, text: string, subQuestions?: Question[]): Question => ({
+  const q = (id: string, text: string, subQuestions?: Question[], answer = '', explanation = '', reference = ''): Question => ({
     id, text, answerType: 'yes-no-na' as const, options: ['Yes', 'No', 'NA'],
-    required: false, answer: '', ...(subQuestions ? { subQuestions } : {})
+    required: false, answer, explanation, reference, ...(subQuestions ? { subQuestions } : {})
   });
 
   const sections: Section[] = [
@@ -9167,11 +9249,11 @@ export const generateOverallAuditResponseChecklist = (): Checklist => {
       id: 'section-oar-1',
       title: '1. Overall Responses to Pervasive Risks',
       questions: [
-        q('oar-q1a', '<p>Have overall responses to financial statement level risks been documented, addressing the need for heightened professional skepticism throughout the engagement?</p>'),
-        q('oar-q1b', '<p>Have more experienced or specialized staff been assigned to areas of higher risk?</p>'),
-        q('oar-q1c', '<p>Has increased supervision of team members been planned for high-risk areas?</p>'),
-        q('oar-q1d', '<p>Has the use of specialists been considered and arranged for areas requiring specialized knowledge?</p>'),
-        q('oar-q1e', '<p>Has the need for increased emphasis on professional skepticism been communicated to all engagement team members in the planning meeting?</p>'),
+        q('oar-q1a', '<p>Have overall responses to financial statement level risks been documented, addressing the need for heightened professional skepticism throughout the engagement?</p>', undefined, 'Yes', '<p>Overall audit responses documented in the audit plan addressing revenue recognition (voyage completion), vessel impairment, and USD foreign currency exposure. Heightened skepticism applied throughout fieldwork.</p>', 'W/P Ref: RA-01'),
+        q('oar-q1b', '<p>Have more experienced or specialized staff been assigned to areas of higher risk?</p>', undefined, 'Yes', '<p>S. Chen (engagement manager) personally directed testing of vessel PP&E ($8.2M) and revenue cutoff given their significance and complexity within the maritime freight industry.</p>', 'W/P Ref: RA-01'),
+        q('oar-q1c', '<p>Has increased supervision of team members been planned for high-risk areas?</p>', undefined, 'Yes', '<p>Increased supervision documented for revenue recognition and vessel impairment testing, with daily manager check-ins scheduled throughout fieldwork April 14–25, 2024.</p>'),
+        q('oar-q1d', '<p>Has the use of specialists been considered and arranged for areas requiring specialized knowledge?</p>', undefined, 'NA', '<p>No external specialists required. Vessel valuations relied on management-obtained appraisals which were evaluated for reasonableness by the engagement team.</p>'),
+        q('oar-q1e', '<p>Has the need for increased emphasis on professional skepticism been communicated to all engagement team members in the planning meeting?</p>', undefined, 'Yes', '<p>Communicated at team planning meeting held April 7, 2024 (minutes on file). Specific emphasis placed on revenue recognition and management estimates for vessel impairment.</p>', 'W/P Ref: PL-01'),
       ],
       isExpanded: true
     },
@@ -9179,10 +9261,10 @@ export const generateOverallAuditResponseChecklist = (): Checklist => {
       id: 'section-oar-2',
       title: '2. Unpredictability of Audit Procedures',
       questions: [
-        q('oar-q2a', '<p>Have measures been incorporated to introduce unpredictability in the selection of audit procedures (different from those expected or used in prior years)?</p>'),
-        q('oar-q2b', '<p>Has the timing of some procedures been varied (e.g., performing inventory observation at an unannounced date, confirming accounts at a date other than year-end)?</p>'),
-        q('oar-q2c', '<p>Have some procedures been performed at locations not previously visited or selected on an unexpected basis?</p>'),
-        q('oar-q2d', '<p>Have the elements of unpredictability been documented in the audit plan with the rationale for how they address the risk of management override?</p>'),
+        q('oar-q2a', '<p>Have measures been incorporated to introduce unpredictability in the selection of audit procedures (different from those expected or used in prior years)?</p>', undefined, 'Yes', '<p>Expanded AR confirmation scope to include smaller balances not confirmed in prior year; added unannounced review of voyage completion documentation at port operations office.</p>', 'W/P Ref: PL-02'),
+        q('oar-q2b', '<p>Has the timing of some procedures been varied (e.g., performing inventory observation at an unannounced date, confirming accounts at a date other than year-end)?</p>', undefined, 'Yes', '<p>AR confirmations sent at March 31 (year-end). Fuel and supplies inventory observation performed at an interim date (February 2024) on an unannounced basis.</p>'),
+        q('oar-q2c', '<p>Have some procedures been performed at locations not previously visited or selected on an unexpected basis?</p>', undefined, 'Yes', '<p>Vessel operations records reviewed at the port facility in addition to head office — not done in prior year engagement.</p>'),
+        q('oar-q2d', '<p>Have the elements of unpredictability been documented in the audit plan with the rationale for how they address the risk of management override?</p>', undefined, 'Yes', '<p>Unpredictability measures documented in the audit plan under the management override risk response, per CAS 330.A43.</p>', 'W/P Ref: PL-02'),
       ],
       isExpanded: true
     },
@@ -9190,10 +9272,10 @@ export const generateOverallAuditResponseChecklist = (): Checklist => {
       id: 'section-oar-3',
       title: '3. Response to Significant Risks',
       questions: [
-        q('oar-q3a', '<p>For each significant risk identified in the risk assessment, has a specific audit response been documented (nature, timing, and extent of procedures)?</p>'),
-        q('oar-q3b', '<p>For significant risks involving significant estimates, have procedures been planned to test the reasonableness of the estimate, including the data and assumptions used?</p>'),
-        q('oar-q3c', '<p>For significant risks involving complex transactions, have procedures been planned to obtain sufficient understanding of the terms and accounting treatment?</p>'),
-        q('oar-q3d', '<p>Have substantive procedures been planned for all significant risks, regardless of the assessed level of control risk (as required by CAS 330)?</p>'),
+        q('oar-q3a', '<p>For each significant risk identified in the risk assessment, has a specific audit response been documented (nature, timing, and extent of procedures)?</p>', undefined, 'Yes', '<p>Three significant risks identified: (1) revenue recognition — voyage completion, (2) vessel impairment ($8.2M PP&E), (3) USD foreign currency transactions. Specific NTE of procedures documented for each.</p>', 'W/P Ref: RA-04'),
+        q('oar-q3b', '<p>For significant risks involving significant estimates, have procedures been planned to test the reasonableness of the estimate, including the data and assumptions used?</p>', undefined, 'Yes', '<p>Vessel depreciation and impairment assessment tested by evaluating management assumptions against Baltic Dry Index data and comparable vessel market transactions.</p>', 'W/P Ref: PPE-01'),
+        q('oar-q3c', '<p>For significant risks involving complex transactions, have procedures been planned to obtain sufficient understanding of the terms and accounting treatment?</p>', undefined, 'Yes', '<p>All voyage contracts reviewed for terms and completion status at March 31, 2024 to confirm appropriate revenue recognition under the voyage completion method per ASPE 3400.</p>', 'W/P Ref: REV-01'),
+        q('oar-q3d', '<p>Have substantive procedures been planned for all significant risks, regardless of the assessed level of control risk (as required by CAS 330)?</p>', undefined, 'Yes', '<p>Substantive tests of details performed for all three significant risk areas regardless of control reliance, in compliance with CAS 330.21.</p>'),
       ],
       isExpanded: true
     },
@@ -9201,11 +9283,11 @@ export const generateOverallAuditResponseChecklist = (): Checklist => {
       id: 'section-oar-4',
       title: '4. Response to Management Override Risk',
       questions: [
-        q('oar-q4a', '<p>Has journal entry testing been planned to address the risk of management override, including the criteria for selecting journal entries for testing?</p>'),
-        q('oar-q4b', '<p>Have procedures been planned to review accounting estimates for possible management bias?</p>'),
-        q('oar-q4c', '<p>Have procedures been planned to evaluate the business rationale for unusual or significant transactions identified during the engagement?</p>'),
-        q('oar-q4d', '<p>Have year-end and post year-end journal entries been specifically included in the scope of journal entry testing?</p>'),
-        q('oar-q4e', '<p>Has the overall audit response been reviewed and approved by the engagement partner prior to commencement of fieldwork?</p>'),
+        q('oar-q4a', '<p>Has journal entry testing been planned to address the risk of management override, including the criteria for selecting journal entries for testing?</p>', undefined, 'Yes', '<p>Journal entry testing planned for all entries above $10,000, all manual year-end entries, and a random sample of routine entries. Criteria documented in the JE testing plan.</p>', 'W/P Ref: JE-01'),
+        q('oar-q4b', '<p>Have procedures been planned to review accounting estimates for possible management bias?</p>', undefined, 'Yes', '<p>Significant estimates (vessel depreciation, allowance for doubtful accounts, accrued voyage revenue) reviewed for indicators of management bias by comparing to prior year trends and external benchmarks.</p>'),
+        q('oar-q4c', '<p>Have procedures been planned to evaluate the business rationale for unusual or significant transactions identified during the engagement?</p>', undefined, 'Yes', '<p>No unusual or non-routine significant transactions identified during the audit. Procedure completed with no exceptions noted.</p>'),
+        q('oar-q4d', '<p>Have year-end and post year-end journal entries been specifically included in the scope of journal entry testing?</p>', undefined, 'Yes', '<p>All manual journal entries in March 2024 and April 2024 (through report date May 2024) specifically included in JE testing scope.</p>', 'W/P Ref: JE-01'),
+        q('oar-q4e', '<p>Has the overall audit response been reviewed and approved by the engagement partner prior to commencement of fieldwork?</p>', undefined, 'Yes', '<p>Engagement partner J. Williams reviewed and approved the overall audit response on April 12, 2024, prior to commencement of fieldwork on April 14, 2024.</p>', 'W/P Ref: PL-01'),
       ],
       isExpanded: true
     },
@@ -9223,9 +9305,9 @@ export const generateOverallAuditResponseChecklist = (): Checklist => {
 };
 
 export const generateTestOfControlsChecklist = (): Checklist => {
-  const q = (id: string, text: string, subQuestions?: Question[]): Question => ({
+  const q = (id: string, text: string, subQuestions?: Question[], answer = '', explanation = '', reference = ''): Question => ({
     id, text, answerType: 'yes-no-na' as const, options: ['Yes', 'No', 'NA'],
-    required: false, answer: '', ...(subQuestions ? { subQuestions } : {})
+    required: false, answer, explanation, reference, ...(subQuestions ? { subQuestions } : {})
   });
 
   const sections: Section[] = [
@@ -9233,11 +9315,11 @@ export const generateTestOfControlsChecklist = (): Checklist => {
       id: 'section-toc-1',
       title: '1. Controls Selected for Testing',
       questions: [
-        q('toc-q1a', '<p>Have the controls selected for testing been documented with a clear description of each control, the control objective, and the assertion(s) addressed?</p>'),
-        q('toc-q1b', '<p>Has the frequency of each control been documented (daily, weekly, monthly, annually) as this determines the appropriate sample size?</p>'),
-        q('toc-q1c', '<p>Has the sampling approach been determined for each control (e.g., random selection, haphazard selection) and the sample size calculated using an appropriate methodology?</p>'),
-        q('toc-q1d', '<p>For IT application controls, has the evidence of the control\'s operation been identified (e.g., system logs, exception reports)?</p>'),
-        q('toc-q1e', '<p>For manual controls, has the evidence of the control\'s operation been identified (e.g., signatures, approvals, reconciliations)?</p>'),
+        q('toc-q1a', '<p>Have the controls selected for testing been documented with a clear description of each control, the control objective, and the assertion(s) addressed?</p>', undefined, 'Yes', '<p>Four controls selected: invoice authorization, AP three-way match, bank reconciliation approval, and payroll approval — each documented with control objective and assertion(s) addressed.</p>', 'W/P Ref: TOC-01'),
+        q('toc-q1b', '<p>Has the frequency of each control been documented (daily, weekly, monthly, annually) as this determines the appropriate sample size?</p>', undefined, 'Yes', '<p>Frequencies documented: invoice authorization and AP three-way match (per transaction); bank reconciliation (monthly); payroll approval (bi-weekly). Sample sizes determined accordingly.</p>', 'W/P Ref: TOC-01'),
+        q('toc-q1c', '<p>Has the sampling approach been determined for each control (e.g., random selection, haphazard selection) and the sample size calculated using an appropriate methodology?</p>', undefined, 'Yes', '<p>Random sampling used for all controls. Sample sizes: 25 for transaction-level controls, 6 for monthly controls, 12 for bi-weekly controls — consistent with CAS 530.</p>', 'W/P Ref: TOC-02'),
+        q('toc-q1d', '<p>For IT application controls, has the evidence of the control\'s operation been identified (e.g., system logs, exception reports)?</p>', undefined, 'NA', '<p>No IT application controls selected for reliance. All controls tested are manual controls.</p>'),
+        q('toc-q1e', '<p>For manual controls, has the evidence of the control\'s operation been identified (e.g., signatures, approvals, reconciliations)?</p>', undefined, 'Yes', '<p>Evidence identified: authorized signatures on voyage invoices, stamped AP three-way match documents, signed monthly bank reconciliations, approved payroll registers.</p>', 'W/P Ref: TOC-01'),
       ],
       isExpanded: true
     },
@@ -9245,10 +9327,10 @@ export const generateTestOfControlsChecklist = (): Checklist => {
       id: 'section-toc-2',
       title: '2. Test Performance',
       questions: [
-        q('toc-q2a', '<p>Has the design effectiveness of each selected control been tested (is the control capable of preventing or detecting material misstatement)?</p>'),
-        q('toc-q2b', '<p>Has the implementation of each selected control been tested (evidence that the control exists and has been put into operation)?</p>'),
-        q('toc-q2c', '<p>Has the operating effectiveness of each selected control been tested by examining evidence that the control operated consistently throughout the period?</p>'),
-        q('toc-q2d', '<p>Where reliance on controls from an interim period is planned to cover the full period, have additional procedures been planned to cover the period between interim and year-end?</p>'),
+        q('toc-q2a', '<p>Has the design effectiveness of each selected control been tested (is the control capable of preventing or detecting material misstatement)?</p>', undefined, 'Yes', '<p>Design effectiveness confirmed for all four controls through walkthroughs conducted during fieldwork April 14–17, 2024. All controls appropriately designed to address identified assertions.</p>', 'W/P Ref: TOC-03'),
+        q('toc-q2b', '<p>Has the implementation of each selected control been tested (evidence that the control exists and has been put into operation)?</p>', undefined, 'Yes', '<p>Implementation confirmed through observation and inspection of evidence for all four controls during walkthrough.</p>', 'W/P Ref: TOC-03'),
+        q('toc-q2c', '<p>Has the operating effectiveness of each selected control been tested by examining evidence that the control operated consistently throughout the period?</p>', undefined, 'Yes', '<p>Operating effectiveness tested through sample examination. One minor deviation noted in AP three-way match (1/25 samples); all other controls had 0% deviation rate. Results in TOC-04.</p>', 'W/P Ref: TOC-04'),
+        q('toc-q2d', '<p>Where reliance on controls from an interim period is planned to cover the full period, have additional procedures been planned to cover the period between interim and year-end?</p>', undefined, 'NA', '<p>Control testing performed on a full-year basis using year-round samples. No roll-forward procedures required.</p>'),
       ],
       isExpanded: true
     },
@@ -9256,11 +9338,11 @@ export const generateTestOfControlsChecklist = (): Checklist => {
       id: 'section-toc-3',
       title: '3. Results & Deviations',
       questions: [
-        q('toc-q3a', '<p>Have all deviations from the prescribed control been identified, investigated, and documented?</p>'),
-        q('toc-q3b', '<p>Has the deviation rate been calculated and compared to the tolerable rate of deviation?</p>'),
-        q('toc-q3c', '<p>Where the deviation rate exceeds the tolerable rate, has the impact on the planned reliance on controls been assessed?</p>'),
-        q('toc-q3d', '<p>Have the deviations been evaluated to determine whether they are indicative of fraud or error beyond the control testing scope?</p>'),
-        q('toc-q3e', '<p>Have deviations been communicated to management and TCWG where required (significant deficiencies or material weaknesses)?</p>'),
+        q('toc-q3a', '<p>Have all deviations from the prescribed control been identified, investigated, and documented?</p>', undefined, 'Yes', '<p>One deviation identified in AP three-way match (1/25 samples). Investigated and determined to be an isolated clerical error with no financial statement impact. Documented in TOC-04.</p>', 'W/P Ref: TOC-04'),
+        q('toc-q3b', '<p>Has the deviation rate been calculated and compared to the tolerable rate of deviation?</p>', undefined, 'Yes', '<p>Deviation rate of 4% (1/25) for AP three-way match is below the tolerable rate of 10%. All other controls had 0% deviation rates.</p>', 'W/P Ref: TOC-04'),
+        q('toc-q3c', '<p>Where the deviation rate exceeds the tolerable rate, has the impact on the planned reliance on controls been assessed?</p>', undefined, 'NA', '<p>No controls exceeded the tolerable deviation rate. Planned reliance maintained for all four controls.</p>'),
+        q('toc-q3d', '<p>Have the deviations been evaluated to determine whether they are indicative of fraud or error beyond the control testing scope?</p>', undefined, 'Yes', '<p>The single AP three-way match deviation evaluated and determined to be an isolated data entry error, not indicative of fraud or systemic control failure.</p>'),
+        q('toc-q3e', '<p>Have deviations been communicated to management and TCWG where required (significant deficiencies or material weaknesses)?</p>', undefined, 'Yes', '<p>The isolated AP deviation communicated to management as a minor observation in the management letter. Not elevated to significant deficiency given isolated nature and below-tolerable rate.</p>'),
       ],
       isExpanded: true
     },
@@ -9268,10 +9350,10 @@ export const generateTestOfControlsChecklist = (): Checklist => {
       id: 'section-toc-4',
       title: '4. Conclusion on Control Reliance',
       questions: [
-        q('toc-q4a', '<p>Has a conclusion been reached for each control tested regarding whether it was operating effectively throughout the period?</p>'),
-        q('toc-q4b', '<p>Has the impact of control testing results on the nature, timing, and extent of planned substantive procedures been assessed and documented?</p>'),
-        q('toc-q4c', '<p>Where controls have been assessed as not operating effectively, has the audit plan been updated to increase substantive testing?</p>'),
-        q('toc-q4d', '<p>Has the overall conclusion on control reliance been reviewed and approved by the engagement manager/partner?</p>'),
+        q('toc-q4a', '<p>Has a conclusion been reached for each control tested regarding whether it was operating effectively throughout the period?</p>', undefined, 'Yes', '<p>Conclusion documented: all four controls assessed as operating effectively throughout the year ended March 31, 2024, supporting planned reliance.</p>', 'W/P Ref: TOC-05'),
+        q('toc-q4b', '<p>Has the impact of control testing results on the nature, timing, and extent of planned substantive procedures been assessed and documented?</p>', undefined, 'Yes', '<p>Control reliance maintained as planned. Substantive procedures adjusted accordingly — reduced AP sample sizes given effective three-way match control.</p>', 'W/P Ref: TOC-05'),
+        q('toc-q4c', '<p>Where controls have been assessed as not operating effectively, has the audit plan been updated to increase substantive testing?</p>', undefined, 'NA', '<p>All controls assessed as operating effectively. No changes to substantive testing required.</p>'),
+        q('toc-q4d', '<p>Has the overall conclusion on control reliance been reviewed and approved by the engagement manager/partner?</p>', undefined, 'Yes', '<p>Overall conclusion on control reliance reviewed and approved by S. Chen (engagement manager) on April 22, 2024.</p>', 'W/P Ref: TOC-05'),
       ],
       isExpanded: true
     },
@@ -9289,9 +9371,9 @@ export const generateTestOfControlsChecklist = (): Checklist => {
 };
 
 export const generateSubstantiveAnalyticalProceduresChecklist = (): Checklist => {
-  const q = (id: string, text: string, subQuestions?: Question[]): Question => ({
+  const q = (id: string, text: string, subQuestions?: Question[], answer = '', explanation = '', reference = ''): Question => ({
     id, text, answerType: 'yes-no-na' as const, options: ['Yes', 'No', 'NA'],
-    required: false, answer: '', ...(subQuestions ? { subQuestions } : {})
+    required: false, answer, explanation, reference, ...(subQuestions ? { subQuestions } : {})
   });
 
   const sections: Section[] = [
@@ -9299,9 +9381,9 @@ export const generateSubstantiveAnalyticalProceduresChecklist = (): Checklist =>
       id: 'section-sap-1',
       title: '1. Objective & Assertion',
       questions: [
-        q('sap-q1a', '<p>Has the objective of each substantive analytical procedure been documented — which account balance or class of transactions is being tested?</p>'),
-        q('sap-q1b', '<p>Has the specific assertion(s) being addressed by each procedure been identified (completeness, existence, accuracy, valuation, cutoff)?</p>'),
-        q('sap-q1c', '<p>Has the suitability of using substantive analytical procedures for the identified assertion been assessed, considering the availability of reliable data and the predictability of the relationship?</p>'),
+        q('sap-q1a', '<p>Has the objective of each substantive analytical procedure been documented — which account balance or class of transactions is being tested?</p>', undefined, 'Yes', '<p>SAP objectives documented for: (1) freight revenue by route, (2) vessel operating expenses, (3) crew payroll. Each objective and target account documented in the audit plan.</p>', 'W/P Ref: SAP-01'),
+        q('sap-q1b', '<p>Has the specific assertion(s) being addressed by each procedure been identified (completeness, existence, accuracy, valuation, cutoff)?</p>', undefined, 'Yes', '<p>Assertions identified for each SAP: revenue SAP addresses completeness and accuracy; operating expenses SAP addresses completeness and cutoff; payroll SAP addresses accuracy and valuation.</p>'),,
+        q('sap-q1c', '<p>Has the suitability of using substantive analytical procedures for the identified assertion been assessed, considering the availability of reliable data and the predictability of the relationship?</p>', undefined, 'Yes', '<p>Suitability assessed. Revenue SAP uses voyage records (highly predictable relationship). Payroll SAP uses headcount and rate data (reliable). Both assessed as appropriate for substantive reliance.</p>', 'W/P Ref: SAP-01'),
       ],
       isExpanded: true
     },
@@ -9309,11 +9391,11 @@ export const generateSubstantiveAnalyticalProceduresChecklist = (): Checklist =>
       id: 'section-sap-2',
       title: '2. Expectation Development',
       questions: [
-        q('sap-q2a', '<p>Has an independent expectation been developed for the account balance or transaction class being tested?</p>'),
-        q('sap-q2b', '<p>Has the basis for the expectation been documented (prior year balance, budget, regression analysis, industry data, related accounts)?</p>'),
-        q('sap-q2c', '<p>Is the data used to develop the expectation reliable — has its source and accuracy been considered?</p>'),
-        q('sap-q2d', '<p>Is the expectation sufficiently precise to detect a misstatement that, individually or in aggregate, could be material?</p>'),
-        q('sap-q2e', '<p>Has the expectation been developed independently of the recorded amount (i.e., not derived from the recorded amount itself)?</p>'),
+        q('sap-q2a', '<p>Has an independent expectation been developed for the account balance or transaction class being tested?</p>', undefined, 'Yes', '<p>Independent expectations developed for all three SAPs. Revenue expectation based on voyage count × average freight rate; payroll expectation based on headcount × average salary.</p>', 'W/P Ref: SAP-02'),
+        q('sap-q2b', '<p>Has the basis for the expectation been documented (prior year balance, budget, regression analysis, industry data, related accounts)?</p>', undefined, 'Yes', '<p>Basis documented: revenue expectation uses voyage logs and prior year rates adjusted for freight market movements; operating expense expectation uses prior year adjusted for known cost changes.</p>', 'W/P Ref: SAP-02'),
+        q('sap-q2c', '<p>Is the data used to develop the expectation reliable — has its source and accuracy been considered?</p>', undefined, 'Yes', '<p>Data reliability assessed: voyage logs and port records obtained directly from operations system; payroll rates confirmed against signed employment contracts. Sources considered reliable.</p>'),
+        q('sap-q2d', '<p>Is the expectation sufficiently precise to detect a misstatement that, individually or in aggregate, could be material?</p>', undefined, 'Yes', '<p>Expectation precision assessed as sufficient. Revenue expectation precision estimated at ±$95K, which is below performance materiality of $87.5K. Threshold set accordingly.</p>', 'W/P Ref: SAP-02'),
+        q('sap-q2e', '<p>Has the expectation been developed independently of the recorded amount (i.e., not derived from the recorded amount itself)?</p>', undefined, 'Yes', '<p>All expectations developed from operational data sources (voyage logs, headcount records) prior to comparing to the recorded amounts in the general ledger.</p>'),
       ],
       isExpanded: true
     },
@@ -9321,9 +9403,9 @@ export const generateSubstantiveAnalyticalProceduresChecklist = (): Checklist =>
       id: 'section-sap-3',
       title: '3. Acceptable Threshold',
       questions: [
-        q('sap-q3a', '<p>Has the acceptable amount of unexplained difference (threshold) been established, having regard to performance materiality?</p>'),
-        q('sap-q3b', '<p>Is the threshold sufficiently small that if the difference between actual and expected does not exceed it, the auditor can conclude with the desired level of assurance?</p>'),
-        q('sap-q3c', '<p>Has the relationship between the threshold and performance materiality been documented?</p>'),
+        q('sap-q3a', '<p>Has the acceptable amount of unexplained difference (threshold) been established, having regard to performance materiality?</p>', undefined, 'Yes', '<p>Threshold established at $75,000 for revenue SAP and $60,000 for expense SAPs — both below performance materiality of $87,500 — to provide the required level of assurance.</p>', 'W/P Ref: SAP-03'),
+        q('sap-q3b', '<p>Is the threshold sufficiently small that if the difference between actual and expected does not exceed it, the auditor can conclude with the desired level of assurance?</p>', undefined, 'Yes', '<p>Thresholds set below performance materiality. If unexplained differences do not exceed these thresholds, sufficient assurance can be drawn at the planned level of reliance.</p>'),
+        q('sap-q3c', '<p>Has the relationship between the threshold and performance materiality been documented?</p>', undefined, 'Yes', '<p>Documented: thresholds set at 60–86% of performance materiality ($87,500) to ensure unexplained differences below threshold are not material to the financial statements.</p>', 'W/P Ref: SAP-03'),
       ],
       isExpanded: true
     },
@@ -9331,11 +9413,11 @@ export const generateSubstantiveAnalyticalProceduresChecklist = (): Checklist =>
       id: 'section-sap-4',
       title: '4. Results & Explanation',
       questions: [
-        q('sap-q4a', '<p>Has the actual recorded amount been compared to the developed expectation and the unexplained difference calculated?</p>'),
-        q('sap-q4b', '<p>Where the unexplained difference exceeds the threshold, have explanations been sought from management?</p>'),
-        q('sap-q4c', '<p>Have management\'s explanations been corroborated with audit evidence?</p>'),
-        q('sap-q4d', '<p>Where management\'s explanations are not satisfactory or cannot be corroborated, have additional or alternative substantive procedures been performed?</p>'),
-        q('sap-q4e', '<p>Has a conclusion been documented stating whether the substantive analytical procedure provides sufficient appropriate evidence for the relevant assertion?</p>'),
+        q('sap-q4a', '<p>Has the actual recorded amount been compared to the developed expectation and the unexplained difference calculated?</p>', undefined, 'Yes', '<p>Comparisons completed. Revenue: recorded $12.5M vs. expectation $12.35M (difference $150K). Operating expenses: recorded $8.2M vs. expectation $8.15M (difference $50K). Details in SAP-04.</p>', 'W/P Ref: SAP-04'),
+        q('sap-q4b', '<p>Where the unexplained difference exceeds the threshold, have explanations been sought from management?</p>', undefined, 'Yes', '<p>Revenue difference of $150K exceeded threshold of $75K. Management explained $120K relates to three new freight contracts signed in Q4 not in prior year. Corroborated with contract documentation.</p>', 'W/P Ref: SAP-04'),
+        q('sap-q4c', '<p>Have management\'s explanations been corroborated with audit evidence?</p>', undefined, 'Yes', '<p>Management explanations corroborated: new contracts reviewed, corresponding voyage logs confirmed, remaining unexplained difference of $30K is below threshold and assessed as not material.</p>', 'W/P Ref: SAP-04'),
+        q('sap-q4d', '<p>Where management\'s explanations are not satisfactory or cannot be corroborated, have additional or alternative substantive procedures been performed?</p>', undefined, 'NA', '<p>Management explanations for all SAP differences were satisfactory and corroborated with audit evidence. No additional procedures required.</p>'),
+        q('sap-q4e', '<p>Has a conclusion been documented stating whether the substantive analytical procedure provides sufficient appropriate evidence for the relevant assertion?</p>', undefined, 'Yes', '<p>Conclusions documented for all three SAPs: all provide sufficient appropriate evidence for the relevant assertions. Revenue completeness and accuracy, operating expense completeness, and payroll accuracy assertions supported.</p>', 'W/P Ref: SAP-05'),
       ],
       isExpanded: true
     },
@@ -9353,9 +9435,9 @@ export const generateSubstantiveAnalyticalProceduresChecklist = (): Checklist =>
 };
 
 export const generateTestOfDetailsRevenueChecklist = (): Checklist => {
-  const q = (id: string, text: string, subQuestions?: Question[]): Question => ({
+  const q = (id: string, text: string, subQuestions?: Question[], answer = '', explanation = '', reference = ''): Question => ({
     id, text, answerType: 'yes-no-na' as const, options: ['Yes', 'No', 'NA'],
-    required: false, answer: '', ...(subQuestions ? { subQuestions } : {})
+    required: false, answer, explanation, reference, ...(subQuestions ? { subQuestions } : {})
   });
 
   const sections: Section[] = [
@@ -9363,10 +9445,10 @@ export const generateTestOfDetailsRevenueChecklist = (): Checklist => {
       id: 'section-rev-1',
       title: '1. Revenue Recognition Policy',
       questions: [
-        q('rev-q1a', '<p>Has the entity\'s revenue recognition policy been obtained and reviewed for compliance with the applicable framework (IFRS 15, ASPE Section 3400)?</p>'),
-        q('rev-q1b', '<p>Have the entity\'s performance obligations been identified and assessed to confirm that revenue is recognized when (or as) each obligation is satisfied?</p>'),
-        q('rev-q1c', '<p>For long-term contracts or arrangements, has the method for measuring progress toward completion been assessed for reasonableness?</p>'),
-        q('rev-q1d', '<p>Have variable consideration, contract modifications, or significant financing components been identified and assessed for appropriate accounting treatment?</p>'),
+        q('rev-q1a', '<p>Has the entity\'s revenue recognition policy been obtained and reviewed for compliance with the applicable framework (IFRS 15, ASPE Section 3400)?</p>', undefined, 'Yes', '<p>Revenue recognition policy reviewed and confirmed compliant with ASPE Section 3400. Shipping Line Inc. recognizes freight revenue upon voyage completion, which is appropriate for the maritime freight industry.</p>', 'W/P Ref: REV-01'),
+        q('rev-q1b', '<p>Have the entity\'s performance obligations been identified and assessed to confirm that revenue is recognized when (or as) each obligation is satisfied?</p>', undefined, 'Yes', '<p>Single performance obligation identified per freight contract: delivery of cargo to destination port. Revenue recognized at voyage completion, which aligns with when the obligation is satisfied.</p>', 'W/P Ref: REV-01'),
+        q('rev-q1c', '<p>For long-term contracts or arrangements, has the method for measuring progress toward completion been assessed for reasonableness?</p>', undefined, 'NA', '<p>No long-term contracts identified. All voyage contracts are short-duration (typically 15–45 days) with revenue recognized at completion. Percentage-of-completion method not applicable.</p>'),
+        q('rev-q1d', '<p>Have variable consideration, contract modifications, or significant financing components been identified and assessed for appropriate accounting treatment?</p>', undefined, 'Yes', '<p>Demurrage charges (variable consideration) identified. Management records demurrage when earned and estimable. Three contracts reviewed for demurrage — amounts recorded are reasonable and supportable.</p>', 'W/P Ref: REV-02'),
       ],
       isExpanded: true
     },
@@ -9374,9 +9456,9 @@ export const generateTestOfDetailsRevenueChecklist = (): Checklist => {
       id: 'section-rev-2',
       title: '2. Completeness Testing',
       questions: [
-        q('rev-q2a', '<p>Have procedures been performed to confirm that all revenue earned during the period has been recorded (e.g., tracing from shipping/delivery records or service completion documentation to invoices to the GL)?</p>'),
-        q('rev-q2b', '<p>Has the completeness of the revenue population been tested (e.g., sequence test of invoice numbers, reconciliation of total invoices to GL)?</p>'),
-        q('rev-q2c', '<p>Has unearned revenue (deferred revenue) been reviewed for transactions that should have been recognized in the current period?</p>'),
+        q('rev-q2a', '<p>Have procedures been performed to confirm that all revenue earned during the period has been recorded (e.g., tracing from shipping/delivery records or service completion documentation to invoices to the GL)?</p>', undefined, 'Yes', '<p>Traced 25 voyage completion certificates to freight invoices to GL postings. All sampled voyages completed before March 31 were recorded in the correct period. No completeness exceptions noted.</p>', 'W/P Ref: REV-03'),
+        q('rev-q2b', '<p>Has the completeness of the revenue population been tested (e.g., sequence test of invoice numbers, reconciliation of total invoices to GL)?</p>', undefined, 'Yes', '<p>Invoice sequence test performed — no gaps in invoice sequence identified. Total invoices per billing system reconciled to revenue per GL with no unexplained differences.</p>', 'W/P Ref: REV-03'),
+        q('rev-q2c', '<p>Has unearned revenue (deferred revenue) been reviewed for transactions that should have been recognized in the current period?</p>', undefined, 'Yes', '<p>Deferred revenue balance of $28K reviewed and adjusted per AJE (deferred revenue reclassification). Remaining balance confirmed as relates to voyages in progress at March 31, 2024.</p>', 'W/P Ref: REV-04'),
       ],
       isExpanded: true
     },
@@ -9384,10 +9466,10 @@ export const generateTestOfDetailsRevenueChecklist = (): Checklist => {
       id: 'section-rev-3',
       title: '3. Cutoff Testing',
       questions: [
-        q('rev-q3a', '<p>Have the last 15 invoices issued before year-end been tested for proper period (was revenue recognized in the correct period)?</p>'),
-        q('rev-q3b', '<p>Have the first 15 invoices issued after year-end been tested to confirm that revenue has not been prematurely recognized?</p>'),
-        q('rev-q3c', '<p>Has the billing cut-off been reconciled to the shipping/service completion cut-off to confirm alignment with the revenue recognition policy?</p>'),
-        q('rev-q3d', '<p>For entities with significant year-end transactions, have any unusually large transactions immediately before or after year-end been investigated?</p>'),
+        q('rev-q3a', '<p>Have the last 15 invoices issued before year-end been tested for proper period (was revenue recognized in the correct period)?</p>', undefined, 'Yes', '<p>Last 15 invoices (dated March 15–31, 2024) tested. 14 of 15 correctly recorded in FY2024. One invoice ($45K) identified as cutoff error — voyage not yet complete at March 31. Adjusted per AJE-001.</p>', 'W/P Ref: REV-05'),
+        q('rev-q3b', '<p>Have the first 15 invoices issued after year-end been tested to confirm that revenue has not been prematurely recognized?</p>', undefined, 'Yes', '<p>First 15 invoices after March 31, 2024 reviewed. All invoices relate to voyages completed after year-end and were correctly recorded in April 2024. No premature recognition identified.</p>', 'W/P Ref: REV-05'),
+        q('rev-q3c', '<p>Has the billing cut-off been reconciled to the shipping/service completion cut-off to confirm alignment with the revenue recognition policy?</p>', undefined, 'Yes', '<p>Billing cut-off reconciled to voyage completion records. The $45K cutoff misstatement identified and corrected via AJE-001. After adjustment, billing and completion cut-offs are aligned.</p>', 'W/P Ref: REV-05'),
+        q('rev-q3d', '<p>For entities with significant year-end transactions, have any unusually large transactions immediately before or after year-end been investigated?</p>', undefined, 'Yes', '<p>Three large invoices (>$250K) near year-end investigated. All confirmed as legitimate completed voyages with supporting documentation including cargo manifests and port arrival certificates.</p>'),
       ],
       isExpanded: true
     },
@@ -9395,10 +9477,10 @@ export const generateTestOfDetailsRevenueChecklist = (): Checklist => {
       id: 'section-rev-4',
       title: '4. Existence/Occurrence',
       questions: [
-        q('rev-q4a', '<p>Has a sample of recorded revenue transactions been selected and agreed to underlying support (invoices, contracts, delivery/acceptance documentation)?</p>'),
-        q('rev-q4b', '<p>Have the sampled transactions been tested to confirm that goods were delivered or services rendered to the customer?</p>'),
-        q('rev-q4c', '<p>Have any large, unusual or non-routine revenue transactions been specifically tested for existence and proper accounting?</p>'),
-        q('rev-q4d', '<p>Have credit notes issued after year-end been reviewed to identify potential reversal of improperly recognized revenue?</p>'),
+        q('rev-q4a', '<p>Has a sample of recorded revenue transactions been selected and agreed to underlying support (invoices, contracts, delivery/acceptance documentation)?</p>', undefined, 'Yes', '<p>Sample of 30 revenue transactions selected (monetary unit sampling). All 30 agreed to freight invoices, voyage contracts, and vessel arrival certificates. No exceptions noted.</p>', 'W/P Ref: REV-06'),
+        q('rev-q4b', '<p>Have the sampled transactions been tested to confirm that goods were delivered or services rendered to the customer?</p>', undefined, 'Yes', '<p>All 30 sampled voyages confirmed as completed via port arrival certificates and signed cargo delivery receipts. Revenue recognized only upon voyage completion in all cases.</p>', 'W/P Ref: REV-06'),
+        q('rev-q4c', '<p>Have any large, unusual or non-routine revenue transactions been specifically tested for existence and proper accounting?</p>', undefined, 'Yes', '<p>Five transactions over $500K specifically tested. All confirmed as routine freight contracts with appropriate documentation. No unusual or non-routine transactions identified.</p>'),
+        q('rev-q4d', '<p>Have credit notes issued after year-end been reviewed to identify potential reversal of improperly recognized revenue?</p>', undefined, 'Yes', '<p>Credit notes issued April 1–30, 2024 reviewed. Total of $18K in credit notes, all relating to cargo claims for damages — appropriately excluded from revenue recognition testing scope.</p>', 'W/P Ref: REV-07'),
       ],
       isExpanded: true
     },
@@ -9406,9 +9488,9 @@ export const generateTestOfDetailsRevenueChecklist = (): Checklist => {
       id: 'section-rev-5',
       title: '5. Related Party Revenue',
       questions: [
-        q('rev-q5a', '<p>Have related party revenue transactions been identified and listed?</p>'),
-        q('rev-q5b', '<p>Has the pricing of related party revenue transactions been assessed for arm\'s length terms?</p>'),
-        q('rev-q5c', '<p>Have related party revenue transactions been confirmed as appropriately disclosed in the financial statements?</p>'),
+        q('rev-q5a', '<p>Have related party revenue transactions been identified and listed?</p>', undefined, 'Yes', '<p>Related party inquiry performed. One related party revenue transaction identified: freight services to a company owned by the majority shareholder totaling $185K for the year.</p>', 'W/P Ref: RPT-01'),
+        q('rev-q5b', '<p>Has the pricing of related party revenue transactions been assessed for arm\'s length terms?</p>', undefined, 'Yes', '<p>Related party freight rates compared to rates charged to arm\'s-length customers for similar routes and cargo types. Rates assessed as consistent with market terms — no adjustments required.</p>', 'W/P Ref: RPT-01'),
+        q('rev-q5c', '<p>Have related party revenue transactions been confirmed as appropriately disclosed in the financial statements?</p>', undefined, 'Yes', '<p>Related party revenue of $185K disclosed in Note 12 of the financial statements. Disclosure reviewed and confirmed as adequate under ASPE Section 3840.</p>', 'W/P Ref: RPT-02'),
       ],
       isExpanded: true
     },
@@ -9426,9 +9508,9 @@ export const generateTestOfDetailsRevenueChecklist = (): Checklist => {
 };
 
 export const generateTestOfDetailsExpensesChecklist = (): Checklist => {
-  const q = (id: string, text: string, subQuestions?: Question[]): Question => ({
+  const q = (id: string, text: string, subQuestions?: Question[], answer = '', explanation = '', reference = ''): Question => ({
     id, text, answerType: 'yes-no-na' as const, options: ['Yes', 'No', 'NA'],
-    required: false, answer: '', ...(subQuestions ? { subQuestions } : {})
+    required: false, answer, explanation, reference, ...(subQuestions ? { subQuestions } : {})
   });
 
   const sections: Section[] = [
@@ -9436,10 +9518,10 @@ export const generateTestOfDetailsExpensesChecklist = (): Checklist => {
       id: 'section-exp-1',
       title: '1. Completeness (Search for Unrecorded Liabilities)',
       questions: [
-        q('exp-q1a', '<p>Have disbursements made after the reporting date (typically 30-45 days post year-end) been reviewed to identify liabilities that should have been recorded at year-end?</p>'),
-        q('exp-q1b', '<p>Have unpaid vendor invoices received after year-end for services/goods received before year-end been identified and tested for proper accrual?</p>'),
-        q('exp-q1c', '<p>Have accounts payable confirmations or vendor statements been obtained and reconciled to the general ledger?</p>'),
-        q('exp-q1d', '<p>Have recurring accruals (e.g., payroll accruals, utilities, professional fees) been assessed for completeness by comparing to prior year and current period activity?</p>'),
+        q('exp-q1a', '<p>Have disbursements made after the reporting date (typically 30-45 days post year-end) been reviewed to identify liabilities that should have been recorded at year-end?</p>', undefined, 'Yes', '<p>Reviewed disbursements from April 1 to May 15, 2024. Identified $38K in port dues and $22K in fuel charges relating to services received before March 31 not yet accrued. Adjustments recorded by management.</p>', 'W/P Ref: EXP-01'),
+        q('exp-q1b', '<p>Have unpaid vendor invoices received after year-end for services/goods received before year-end been identified and tested for proper accrual?</p>', undefined, 'Yes', '<p>Vendor invoices received April 1–30 reviewed. Three invoices totaling $60K related to pre-year-end services — management confirmed all three were included in year-end accruals per AP subledger.</p>', 'W/P Ref: EXP-01'),
+        q('exp-q1c', '<p>Have accounts payable confirmations or vendor statements been obtained and reconciled to the general ledger?</p>', undefined, 'Yes', '<p>Confirmations sent to 10 major vendors representing 72% of AP balance ($1.0M of $1.4M). All confirmations received with no exceptions. Vendor statements for remaining balance reconciled to GL with no differences.</p>', 'W/P Ref: EXP-02'),
+        q('exp-q1d', '<p>Have recurring accruals (e.g., payroll accruals, utilities, professional fees) been assessed for completeness by comparing to prior year and current period activity?</p>', undefined, 'Yes', '<p>Recurring accruals compared to prior year. Year-end payroll accrual of $142K (prior year $138K) — consistent with 3% wage increase. Port dues accrual of $95K consistent with Q4 voyage schedule.</p>', 'W/P Ref: EXP-03'),
       ],
       isExpanded: true
     },
@@ -9447,9 +9529,9 @@ export const generateTestOfDetailsExpensesChecklist = (): Checklist => {
       id: 'section-exp-2',
       title: '2. Cutoff Testing',
       questions: [
-        q('exp-q2a', '<p>Have the last 15 vendor invoices recorded before year-end been tested to confirm that the related expense is attributable to the current period?</p>'),
-        q('exp-q2b', '<p>Have the first 15 vendor invoices recorded after year-end been reviewed to identify any that should have been accrued at year-end?</p>'),
-        q('exp-q2c', '<p>Have prepaid expenses at year-end been tested to confirm that the deferred portion is properly excluded from current period expense?</p>'),
+        q('exp-q2a', '<p>Have the last 15 vendor invoices recorded before year-end been tested to confirm that the related expense is attributable to the current period?</p>', undefined, 'Yes', '<p>Last 15 vendor invoices (recorded March 15–31, 2024) tested. All 15 confirmed as relating to services received in the current period. No cutoff exceptions noted.</p>', 'W/P Ref: EXP-04'),
+        q('exp-q2b', '<p>Have the first 15 vendor invoices recorded after year-end been reviewed to identify any that should have been accrued at year-end?</p>', undefined, 'Yes', '<p>First 15 vendor invoices recorded April 1–15, 2024 reviewed. Two invoices relating to March services were identified and compared to year-end accruals — confirmed as properly accrued at March 31.</p>', 'W/P Ref: EXP-04'),
+        q('exp-q2c', '<p>Have prepaid expenses at year-end been tested to confirm that the deferred portion is properly excluded from current period expense?</p>', undefined, 'Yes', '<p>Prepaid expenses balance of $215K tested. Major items include vessel insurance ($148K, 14-month policy) and port facility lease prepayments ($67K). Both confirmed as properly deferred and excluded from current year expense.</p>', 'W/P Ref: EXP-05'),
       ],
       isExpanded: true
     },
@@ -9457,10 +9539,10 @@ export const generateTestOfDetailsExpensesChecklist = (): Checklist => {
       id: 'section-exp-3',
       title: '3. Classification',
       questions: [
-        q('exp-q3a', '<p>Have significant expenditures been reviewed to confirm proper classification between capital expenditures (assets) and operating expenses?</p>'),
-        q('exp-q3b', '<p>Have repairs and maintenance expenses been reviewed for items that should be capitalized under the entity\'s capitalization policy?</p>'),
-        q('exp-q3c', '<p>Have expenses been assessed for proper classification within the income statement (e.g., cost of goods sold vs. operating expenses)?</p>'),
-        q('exp-q3d', '<p>Have expenses with disclosure requirements (e.g., related party transactions, compensation of key management personnel) been identified and confirmed as properly disclosed?</p>'),
+        q('exp-q3a', '<p>Have significant expenditures been reviewed to confirm proper classification between capital expenditures (assets) and operating expenses?</p>', undefined, 'Yes', '<p>Vessel maintenance expenditures reviewed against capitalization policy (>$10,000 per item with useful life >1 year). $185K of dry-dock maintenance confirmed as properly capitalized to vessel assets.</p>', 'W/P Ref: EXP-06'),
+        q('exp-q3b', '<p>Have repairs and maintenance expenses been reviewed for items that should be capitalized under the entity\'s capitalization policy?</p>', undefined, 'Yes', '<p>Repairs and maintenance expense of $320K reviewed. All items confirmed as routine maintenance not extending vessel useful life — appropriate classification as operating expense per ASPE Section 3061.</p>', 'W/P Ref: EXP-06'),
+        q('exp-q3c', '<p>Have expenses been assessed for proper classification within the income statement (e.g., cost of goods sold vs. operating expenses)?</p>', undefined, 'Yes', '<p>Expense classification reviewed: vessel operating costs (fuel, crew wages, port dues) appropriately classified as cost of services; general and administrative expenses properly separated. Depreciation correction AJE ($12K) recorded.</p>', 'W/P Ref: EXP-07'),
+        q('exp-q3d', '<p>Have expenses with disclosure requirements (e.g., related party transactions, compensation of key management personnel) been identified and confirmed as properly disclosed?</p>', undefined, 'Yes', '<p>Key management compensation ($680K total) and related party management fees ($125K) identified and confirmed as disclosed in Notes 11 and 12 respectively.</p>', 'W/P Ref: RPT-02'),
       ],
       isExpanded: true
     },
@@ -9468,9 +9550,9 @@ export const generateTestOfDetailsExpensesChecklist = (): Checklist => {
       id: 'section-exp-4',
       title: '4. Authorization',
       questions: [
-        q('exp-q4a', '<p>Have the sampled expense transactions been tested to confirm that they were approved in accordance with the entity\'s authorization policy?</p>'),
-        q('exp-q4b', '<p>Have any transactions that appear to circumvent normal authorization processes been identified and investigated?</p>'),
-        q('exp-q4c', '<p>Have expenses relating to personal, non-business items been considered in the testing?</p>'),
+        q('exp-q4a', '<p>Have the sampled expense transactions been tested to confirm that they were approved in accordance with the entity\'s authorization policy?</p>', undefined, 'Yes', '<p>Sample of 25 expense transactions tested for authorization. All 25 bore appropriate approval signatures per the entity\'s authorization matrix (>$5K requires controller approval; >$50K requires CFO approval).</p>', 'W/P Ref: EXP-08'),
+        q('exp-q4b', '<p>Have any transactions that appear to circumvent normal authorization processes been identified and investigated?</p>', undefined, 'No', '<p>No transactions identified that circumvented normal authorization processes during the audit.</p>'),
+        q('exp-q4c', '<p>Have expenses relating to personal, non-business items been considered in the testing?</p>', undefined, 'Yes', '<p>Employee expense reimbursements ($48K) reviewed. No personal or non-business items identified. All claims supported by receipts and business purpose documentation.</p>'),
       ],
       isExpanded: true
     },
@@ -9478,10 +9560,10 @@ export const generateTestOfDetailsExpensesChecklist = (): Checklist => {
       id: 'section-exp-5',
       title: '5. Related Party Expenses',
       questions: [
-        q('exp-q5a', '<p>Have related party expense transactions been identified and listed?</p>'),
-        q('exp-q5b', '<p>Has the pricing of related party expense transactions been assessed for arm\'s length terms?</p>'),
-        q('exp-q5c', '<p>Have related party expense transactions been confirmed as appropriately disclosed in the financial statements?</p>'),
-        q('exp-q5d', '<p>Have management fees, consulting fees, or other charges from related parties been tested for reasonableness and supported by underlying agreements?</p>'),
+        q('exp-q5a', '<p>Have related party expense transactions been identified and listed?</p>', undefined, 'Yes', '<p>Related party expense transactions identified: management fees of $125K paid to a company controlled by the majority shareholder, and vessel charter fees of $240K paid to a related entity.</p>', 'W/P Ref: RPT-01'),
+        q('exp-q5b', '<p>Has the pricing of related party expense transactions been assessed for arm\'s length terms?</p>', undefined, 'Yes', '<p>Management fees compared to market rates for similar management services — assessed as reasonable. Charter fees compared to market charter rates per industry publications — assessed as consistent with arm\'s-length rates.</p>', 'W/P Ref: RPT-01'),
+        q('exp-q5c', '<p>Have related party expense transactions been confirmed as appropriately disclosed in the financial statements?</p>', undefined, 'Yes', '<p>Related party expenses disclosed in Note 12 of the financial statements, including amounts, nature of relationship, and terms. Disclosure reviewed as adequate per ASPE Section 3840.</p>', 'W/P Ref: RPT-02'),
+        q('exp-q5d', '<p>Have management fees, consulting fees, or other charges from related parties been tested for reasonableness and supported by underlying agreements?</p>', undefined, 'Yes', '<p>Management fee agreement reviewed — specifies $125K annual fee for strategic oversight services. Vessel charter agreement reviewed — confirms $240K annual charter rate. Both agreements are executed and on file.</p>', 'W/P Ref: RPT-01'),
       ],
       isExpanded: true
     },
@@ -9499,9 +9581,9 @@ export const generateTestOfDetailsExpensesChecklist = (): Checklist => {
 };
 
 export const generateAuditProceduresSummaryChecklist = (): Checklist => {
-  const q = (id: string, text: string, subQuestions?: Question[]): Question => ({
+  const q = (id: string, text: string, subQuestions?: Question[], answer = '', explanation = '', reference = ''): Question => ({
     id, text, answerType: 'yes-no-na' as const, options: ['Yes', 'No', 'NA'],
-    required: false, answer: '', ...(subQuestions ? { subQuestions } : {})
+    required: false, answer, explanation, reference, ...(subQuestions ? { subQuestions } : {})
   });
 
   const sections: Section[] = [
@@ -9509,10 +9591,10 @@ export const generateAuditProceduresSummaryChecklist = (): Checklist => {
       id: 'section-aps-1',
       title: '1. Summary of Procedures Performed',
       questions: [
-        q('aps-q1a', '<p>Has a summary of all significant audit procedures performed been prepared, organized by account or assertion, with a reference to the supporting working paper?</p>'),
-        q('aps-q1b', '<p>Has the procedure type been identified for each area (test of controls, substantive analytical procedures, test of details, dual-purpose test)?</p>'),
-        q('aps-q1c', '<p>Has the timing of each significant procedure been documented (interim or year-end)?</p>'),
-        q('aps-q1d', '<p>Has the conclusion reached for each area been documented at the assertion level?</p>'),
+        q('aps-q1a', '<p>Has a summary of all significant audit procedures performed been prepared, organized by account or assertion, with a reference to the supporting working paper?</p>', undefined, 'Yes', '<p>Audit procedures summary prepared and organized by financial statement area (Revenue, PP&E, Debt, Payroll, etc.) with W/P references. All significant procedures documented with conclusions at assertion level.</p>', 'W/P Ref: SUM-01'),
+        q('aps-q1b', '<p>Has the procedure type been identified for each area (test of controls, substantive analytical procedures, test of details, dual-purpose test)?</p>', undefined, 'Yes', '<p>Procedure type identified for each area: TOC for payroll and AP; SAP for revenue and operating expenses; TOD for revenue cutoff, PP&E, and long-term debt. Documented in SUM-01.</p>', 'W/P Ref: SUM-01'),
+        q('aps-q1c', '<p>Has the timing of each significant procedure been documented (interim or year-end)?</p>', undefined, 'Yes', '<p>Timing documented: interim procedures (January–March 2024): TOC, SAP, inventory observation. Year-end procedures (April 14–25, 2024): revenue cutoff, balance sheet substantive, management representations.</p>'),,
+        q('aps-q1d', '<p>Has the conclusion reached for each area been documented at the assertion level?</p>', undefined, 'Yes', '<p>Assertion-level conclusions documented for all significant areas. All areas concluded as supported by sufficient appropriate audit evidence. No outstanding conclusion gaps.</p>', 'W/P Ref: SUM-02'),
       ],
       isExpanded: true
     },
@@ -9520,11 +9602,11 @@ export const generateAuditProceduresSummaryChecklist = (): Checklist => {
       id: 'section-aps-2',
       title: '2. Misstatements Identified',
       questions: [
-        q('aps-q2a', '<p>Have all factual misstatements (misstatements about which there is no doubt) been identified and documented?</p>'),
-        q('aps-q2b', '<p>Have all judgmental misstatements (differences arising from judgments concerning accounting estimates or the application of accounting policies) been documented?</p>'),
-        q('aps-q2c', '<p>Have projected misstatements (the auditor\'s best estimate of misstatements in populations from which samples were drawn) been calculated and documented?</p>'),
-        q('aps-q2d', '<p>Has the aggregate of all identified misstatements (factual + judgmental + projected) been compared to performance materiality?</p>'),
-        q('aps-q2e', '<p>Have the identified misstatements been communicated to management and has management\'s response been documented?</p>'),
+        q('aps-q2a', '<p>Have all factual misstatements (misstatements about which there is no doubt) been identified and documented?</p>', undefined, 'Yes', '<p>Three factual misstatements identified and documented in the misstatement summary: (1) revenue cutoff $45K, (2) depreciation correction $12K, (3) deferred revenue reclassification $28K. All corrected by management.</p>', 'W/P Ref: MIS-01'),
+        q('aps-q2b', '<p>Have all judgmental misstatements (differences arising from judgments concerning accounting estimates or the application of accounting policies) been documented?</p>', undefined, 'Yes', '<p>No judgmental misstatements identified. Management\'s accounting estimates (vessel depreciation, allowance for doubtful accounts) assessed as reasonable within acceptable ranges.</p>', 'W/P Ref: MIS-01'),
+        q('aps-q2c', '<p>Have projected misstatements (the auditor\'s best estimate of misstatements in populations from which samples were drawn) been calculated and documented?</p>', undefined, 'Yes', '<p>Projected misstatements calculated for all sampled populations. Total projected misstatement of $18K (revenue) and $12K (expenses) — both well below performance materiality of $87,500.</p>', 'W/P Ref: MIS-01'),
+        q('aps-q2d', '<p>Has the aggregate of all identified misstatements (factual + judgmental + projected) been compared to performance materiality?</p>', undefined, 'Yes', '<p>All three AJEs ($85K total) were corrected by management. Aggregate of remaining projected misstatements ($30K) is below performance materiality of $87,500. Concluded as not material in aggregate.</p>', 'W/P Ref: MIS-02'),
+        q('aps-q2e', '<p>Have the identified misstatements been communicated to management and has management\'s response been documented?</p>', undefined, 'Yes', '<p>All misstatements communicated to management during fieldwork. Management agreed to record all three AJEs. Management confirmation of corrections obtained in representation letter.</p>', 'W/P Ref: MIS-02'),
       ],
       isExpanded: true
     },
@@ -9532,10 +9614,10 @@ export const generateAuditProceduresSummaryChecklist = (): Checklist => {
       id: 'section-aps-3',
       title: '3. Outstanding Items',
       questions: [
-        q('aps-q3a', '<p>Have all outstanding items requiring follow-up or response from management been listed and tracked?</p>'),
-        q('aps-q3b', '<p>Have any items that remain unresolved as of the completion of fieldwork been escalated to the engagement manager/partner?</p>'),
-        q('aps-q3c', '<p>Have any areas where the auditor was unable to obtain sufficient appropriate evidence been documented, and has the impact on the audit opinion been assessed?</p>'),
-        q('aps-q3d', '<p>Have all management representation letter items been identified and agreed with the draft representation letter?</p>'),
+        q('aps-q3a', '<p>Have all outstanding items requiring follow-up or response from management been listed and tracked?</p>', undefined, 'Yes', '<p>Outstanding items tracker maintained throughout fieldwork. All items resolved as at April 25, 2024 (end of fieldwork). No items remain outstanding at date of report.</p>', 'W/P Ref: SUM-03'),
+        q('aps-q3b', '<p>Have any items that remain unresolved as of the completion of fieldwork been escalated to the engagement manager/partner?</p>', undefined, 'No', '<p>No items remained unresolved at completion of fieldwork. All outstanding items were resolved by April 25, 2024.</p>'),
+        q('aps-q3c', '<p>Have any areas where the auditor was unable to obtain sufficient appropriate evidence been documented, and has the impact on the audit opinion been assessed?</p>', undefined, 'No', '<p>No areas identified where the auditor was unable to obtain sufficient appropriate evidence. All planned procedures were completed and evidence obtained.</p>'),
+        q('aps-q3d', '<p>Have all management representation letter items been identified and agreed with the draft representation letter?</p>', undefined, 'Yes', '<p>Management representation letter items compiled and agreed to the signed representation letter dated April 25, 2024. All required CAS representations included and signed by CEO and CFO.</p>', 'W/P Ref: MRL-01'),
       ],
       isExpanded: true
     },
@@ -9543,11 +9625,11 @@ export const generateAuditProceduresSummaryChecklist = (): Checklist => {
       id: 'section-aps-4',
       title: '4. Overall Conclusion',
       questions: [
-        q('aps-q4a', '<p>Has the engagement manager/partner concluded that sufficient appropriate audit evidence has been obtained to support the audit opinion?</p>'),
-        q('aps-q4b', '<p>Has the audit file been reviewed by the engagement manager to confirm that all required procedures have been performed and documented?</p>'),
-        q('aps-q4c', '<p>Has the engagement partner performed the final review of the audit file and concurred with the proposed audit opinion?</p>'),
-        q('aps-q4d', '<p>Where an EQCR is required, has the quality reviewer completed their review and documented their concurrence with the significant judgments and proposed opinion?</p>'),
-        q('aps-q4e', '<p>Has the subsequent events review been completed and any events requiring adjustment or disclosure addressed?</p>'),
+        q('aps-q4a', '<p>Has the engagement manager/partner concluded that sufficient appropriate audit evidence has been obtained to support the audit opinion?</p>', undefined, 'Yes', '<p>S. Chen (engagement manager) concluded on April 25, 2024 that sufficient appropriate audit evidence has been obtained to support an unmodified audit opinion on Shipping Line Inc.\'s March 31, 2024 financial statements.</p>', 'W/P Ref: SUM-04'),
+        q('aps-q4b', '<p>Has the audit file been reviewed by the engagement manager to confirm that all required procedures have been performed and documented?</p>', undefined, 'Yes', '<p>S. Chen completed engagement manager review of all working papers. Sign-off completed April 28, 2024. All procedures confirmed as performed and documented per CAS requirements.</p>', 'W/P Ref: SUM-04'),
+        q('aps-q4c', '<p>Has the engagement partner performed the final review of the audit file and concurred with the proposed audit opinion?</p>', undefined, 'Yes', '<p>J. Williams (engagement partner) completed final file review and concurred with the proposed unmodified audit opinion. Partner sign-off completed May 2, 2024.</p>', 'W/P Ref: SUM-04'),
+        q('aps-q4d', '<p>Where an EQCR is required, has the quality reviewer completed their review and documented their concurrence with the significant judgments and proposed opinion?</p>', undefined, 'NA', '<p>EQCR not required for this engagement as Shipping Line Inc. is not a listed entity and does not meet the firm\'s EQCR threshold criteria.</p>'),
+        q('aps-q4e', '<p>Has the subsequent events review been completed and any events requiring adjustment or disclosure addressed?</p>', undefined, 'Yes', '<p>Subsequent events review completed through May 2, 2024 (date of audit report). No events identified requiring adjustment to or disclosure in the March 31, 2024 financial statements.</p>', 'W/P Ref: SE-01'),
       ],
       isExpanded: true
     },
@@ -9565,9 +9647,9 @@ export const generateAuditProceduresSummaryChecklist = (): Checklist => {
 };
 
 export const generateUnderstandingEntityIndustryEnvironmentChecklist = (): Checklist => {
-  const q = (id: string, text: string, subQuestions?: Question[]): Question => ({
+  const q = (id: string, text: string, subQuestions?: Question[], answer = '', explanation = '', reference = ''): Question => ({
     id, text, answerType: 'yes-no-na' as const, options: ['Yes', 'No', 'NA'],
-    required: false, answer: '', ...(subQuestions ? { subQuestions } : {})
+    required: false, answer, explanation, reference, ...(subQuestions ? { subQuestions } : {})
   });
 
   const sections: Section[] = [
@@ -9575,11 +9657,11 @@ export const generateUnderstandingEntityIndustryEnvironmentChecklist = (): Check
       id: 'section-uei-1',
       title: '1. Industry Conditions & External Environment',
       questions: [
-        q('uei-q1a', '<p>Has the auditor obtained an understanding of the significant industry trends, competitive conditions, and cyclical or seasonal factors affecting the entity?</p>'),
-        q('uei-q1b', '<p>Are there significant technological changes in the industry that could affect the entity\'s products, services, or processes?</p>'),
-        q('uei-q1c', '<p>Has the auditor considered the impact of supply chain disruptions, commodity price changes, or other macroeconomic factors on the entity?</p>'),
-        q('uei-q1d', '<p>Are there significant changes in customer demand, market share, or competitive dynamics that could affect the entity\'s financial performance?</p>'),
-        q('uei-q1e', '<p>Has the auditor considered the entity\'s position within its industry (e.g., market leader, niche player, declining market)?</p>'),
+        q('uei-q1a', '<p>Has the auditor obtained an understanding of the significant industry trends, competitive conditions, and cyclical or seasonal factors affecting the entity?</p>', undefined, 'Yes', '<p>Marine freight industry is experiencing post-pandemic normalization with freight rates moderating from 2022 highs. Seasonal peaks in Q3 (holiday season) and Q1 troughs are characteristic of the trans-Pacific trade lane. Competitive conditions are stable with the entity holding established long-term contracts.</p>', 'W/P Ref: UEI-01'),
+        q('uei-q1b', '<p>Are there significant technological changes in the industry that could affect the entity\'s products, services, or processes?</p>', undefined, 'Yes', '<p>Digitization of shipping documentation and e-Bill of Lading adoption are ongoing industry trends. Shipping Line Inc. has adopted digital freight management software during the year; impact on internal controls has been assessed.</p>', 'W/P Ref: UEI-01'),
+        q('uei-q1c', '<p>Has the auditor considered the impact of supply chain disruptions, commodity price changes, or other macroeconomic factors on the entity?</p>', undefined, 'Yes', '<p>Bunker fuel price increases of approximately 12% year-over-year have been considered. Management has partially mitigated this through fuel surcharge clauses in freight contracts. No material supply chain disruptions specific to the entity were identified.</p>', 'W/P Ref: UEI-01'),
+        q('uei-q1d', '<p>Are there significant changes in customer demand, market share, or competitive dynamics that could affect the entity\'s financial performance?</p>', undefined, 'Yes', '<p>Demand for container freight on Pacific routes is growing. The entity has secured two new freight contracts during the year, contributing to revenue growth of 11.6%. No adverse changes in customer demand or market share identified.</p>', 'W/P Ref: UEI-01'),
+        q('uei-q1e', '<p>Has the auditor considered the entity\'s position within its industry (e.g., market leader, niche player, declining market)?</p>', undefined, 'Yes', '<p>Shipping Line Inc. is a niche player in the Canadian maritime freight market, operating a small but established fleet. The entity competes on service reliability and established customer relationships rather than scale.</p>', 'W/P Ref: UEI-01'),
       ],
       isExpanded: true
     },
@@ -9587,11 +9669,11 @@ export const generateUnderstandingEntityIndustryEnvironmentChecklist = (): Check
       id: 'section-uei-2',
       title: '2. Regulatory & Legal Framework',
       questions: [
-        q('uei-q2a', '<p>Has the auditor obtained an understanding of the regulatory framework applicable to the entity and the industry (e.g., environmental regulations, industry-specific regulations, licensing requirements)?</p>'),
-        q('uei-q2b', '<p>Are there any significant regulatory changes pending or recently enacted that could affect the entity\'s operations, financial reporting, or compliance obligations?</p>'),
-        q('uei-q2c', '<p>Has the auditor reviewed significant contracts, agreements, or litigation that could have a material impact on the financial statements?</p>'),
-        q('uei-q2d', '<p>Are there any significant tax law changes (federal, provincial/state, or international) that could affect the entity\'s tax positions or disclosures?</p>'),
-        q('uei-q2e', '<p>Has management identified and documented its compliance with applicable laws and regulations material to the financial statements?</p>'),
+        q('uei-q2a', '<p>Has the auditor obtained an understanding of the regulatory framework applicable to the entity and the industry (e.g., environmental regulations, industry-specific regulations, licensing requirements)?</p>', undefined, 'Yes', '<p>Entity is subject to Transport Canada marine regulations, the Canada Shipping Act 2001, and MARPOL environmental regulations for vessel emissions and waste management. All required operating licenses are current. Compliance has been confirmed with management.</p>', 'W/P Ref: UEI-02'),
+        q('uei-q2b', '<p>Are there any significant regulatory changes pending or recently enacted that could affect the entity\'s operations, financial reporting, or compliance obligations?</p>', undefined, 'Yes', '<p>IMO 2023 CII (Carbon Intensity Indicator) regulations require vessel efficiency ratings. Shipping Line Inc.\'s vessels have been assessed; no immediate capital expenditure required for compliance. Regulatory impact on financial statements considered and assessed as immaterial for the current year.</p>', 'W/P Ref: UEI-02'),
+        q('uei-q2c', '<p>Has the auditor reviewed significant contracts, agreements, or litigation that could have a material impact on the financial statements?</p>', undefined, 'Yes', '<p>Two new freight contracts and the bank credit facility agreement reviewed. No pending or threatened litigation identified per management representation and review of legal correspondence.</p>', 'W/P Ref: UEI-02'),
+        q('uei-q2d', '<p>Are there any significant tax law changes (federal, provincial/state, or international) that could affect the entity\'s tax positions or disclosures?</p>', undefined, 'No', '<p>No significant federal or provincial tax law changes identified that would materially affect Shipping Line Inc.\'s tax positions or disclosures for the year ended March 31, 2024.</p>'),
+        q('uei-q2e', '<p>Has management identified and documented its compliance with applicable laws and regulations material to the financial statements?</p>', undefined, 'Yes', '<p>Management has confirmed compliance with all applicable laws and regulations. No instances of non-compliance identified during the audit that could have a material impact on the financial statements.</p>', 'W/P Ref: UEI-02'),
       ],
       isExpanded: true
     },
@@ -9599,11 +9681,11 @@ export const generateUnderstandingEntityIndustryEnvironmentChecklist = (): Check
       id: 'section-uei-3',
       title: '3. Entity\'s Business Model, Strategy & Objectives',
       questions: [
-        q('uei-q3a', '<p>Has the auditor obtained an understanding of the entity\'s key products and services, principal markets, and major customers and suppliers?</p>'),
-        q('uei-q3b', '<p>Are there significant changes in the entity\'s business model, strategy, or key relationships compared to the prior year?</p>'),
-        q('uei-q3c', '<p>Has the auditor considered the entity\'s key performance indicators (KPIs) and how management monitors performance against its objectives?</p>'),
-        q('uei-q3d', '<p>Are there significant business risks arising from the entity\'s strategic objectives (e.g., expansion, new product lines, geographic diversification)?</p>'),
-        q('uei-q3e', '<p>Has the auditor considered the entity\'s reliance on key individuals, intellectual property, or proprietary technology?</p>'),
+        q('uei-q3a', '<p>Has the auditor obtained an understanding of the entity\'s key products and services, principal markets, and major customers and suppliers?</p>', undefined, 'Yes', '<p>Entity provides container and bulk maritime freight services primarily on trans-Pacific routes. Key customers include three major importers representing approximately 58% of revenue. Key suppliers are bunker fuel providers and port authorities.</p>', 'W/P Ref: UEI-03'),
+        q('uei-q3b', '<p>Are there significant changes in the entity\'s business model, strategy, or key relationships compared to the prior year?</p>', undefined, 'Yes', '<p>Two new freight contracts entered during the year represent a modest expansion. No fundamental changes to the entity\'s business model or strategy. Key customer and supplier relationships are stable.</p>', 'W/P Ref: UEI-03'),
+        q('uei-q3c', '<p>Has the auditor considered the entity\'s key performance indicators (KPIs) and how management monitors performance against its objectives?</p>', undefined, 'Yes', '<p>Management monitors revenue per voyage, fleet utilization rate, and on-time delivery performance. Monthly management accounts are prepared and reviewed against budget. KPIs are consistent with industry norms for a maritime freight operator.</p>', 'W/P Ref: UEI-03'),
+        q('uei-q3d', '<p>Are there significant business risks arising from the entity\'s strategic objectives (e.g., expansion, new product lines, geographic diversification)?</p>', undefined, 'No', '<p>No significant expansion or diversification strategy in place. The entity\'s growth is organic through incremental contract wins. Business risk profile is stable and consistent with prior year.</p>'),
+        q('uei-q3e', '<p>Has the auditor considered the entity\'s reliance on key individuals, intellectual property, or proprietary technology?</p>', undefined, 'Yes', '<p>The entity is reliant on the CEO (founder) and two experienced vessel captains. Key person risk has been noted but no succession planning documentation exists. This is a qualitative risk noted but assessed as not material to the financial statements.</p>', 'W/P Ref: UEI-03'),
       ],
       isExpanded: true
     },
@@ -9611,11 +9693,11 @@ export const generateUnderstandingEntityIndustryEnvironmentChecklist = (): Check
       id: 'section-uei-4',
       title: '4. Accounting Policies & Financial Reporting Framework',
       questions: [
-        q('uei-q4a', '<p>Has the auditor obtained an understanding of the entity\'s significant accounting policies and whether they are appropriate and consistent with the applicable financial reporting framework (e.g., ASPE, IFRS)?</p>'),
-        q('uei-q4b', '<p>Are there any significant changes in accounting policies or estimates from the prior year? If so, are the reasons for the changes appropriate?</p>'),
-        q('uei-q4c', '<p>Has the auditor considered the entity\'s use of significant accounting estimates and whether the estimation process is reasonable and consistent?</p>'),
-        q('uei-q4d', '<p>Are there complex transactions or areas requiring significant management judgment (e.g., revenue recognition, asset impairment, business combinations)?</p>'),
-        q('uei-q4e', '<p>Has the auditor considered industry-specific accounting requirements and whether the entity is applying them appropriately?</p>'),
+        q('uei-q4a', '<p>Has the auditor obtained an understanding of the entity\'s significant accounting policies and whether they are appropriate and consistent with the applicable financial reporting framework (e.g., ASPE, IFRS)?</p>', undefined, 'Yes', '<p>Significant accounting policies reviewed: revenue recognized upon voyage completion, vessels depreciated on a straight-line basis over useful lives of 20–25 years, and USD transactions translated at rates prevailing at transaction date. All policies are appropriate under ASPE and consistent with the prior year.</p>', 'W/P Ref: UEI-04'),
+        q('uei-q4b', '<p>Are there any significant changes in accounting policies or estimates from the prior year? If so, are the reasons for the changes appropriate?</p>', undefined, 'No', '<p>No significant changes in accounting policies or estimates from the prior year. Consistent application of ASPE policies confirmed.</p>'),
+        q('uei-q4c', '<p>Has the auditor considered the entity\'s use of significant accounting estimates and whether the estimation process is reasonable and consistent?</p>', undefined, 'Yes', '<p>Key estimates include: (1) useful lives and residual values of vessels, (2) allowance for doubtful accounts on AR, and (3) accrued revenue for voyages in progress at year-end. Each estimate has been assessed for reasonableness as part of the audit.</p>', 'W/P Ref: UEI-04'),
+        q('uei-q4d', '<p>Are there complex transactions or areas requiring significant management judgment (e.g., revenue recognition, asset impairment, business combinations)?</p>', undefined, 'Yes', '<p>Revenue recognition at voyage completion requires judgment regarding percentage of completion for voyages in progress at March 31, 2024. Vessel impairment assessment requires judgment on recoverable amounts. Both areas have been identified as significant risks and addressed in the audit program.</p>', 'W/P Ref: RA-01'),
+        q('uei-q4e', '<p>Has the auditor considered industry-specific accounting requirements and whether the entity is applying them appropriately?</p>', undefined, 'Yes', '<p>Maritime industry-specific considerations include voyage accounting (percentage of completion for multi-leg voyages), dry-dock cost capitalization, and vessel impairment indicators. Management\'s application of these policies has been reviewed and is assessed as appropriate.</p>', 'W/P Ref: UEI-04'),
       ],
       isExpanded: true
     },
@@ -9623,11 +9705,11 @@ export const generateUnderstandingEntityIndustryEnvironmentChecklist = (): Check
       id: 'section-uei-5',
       title: '5. Measurement & Review of Financial Performance',
       questions: [
-        q('uei-q5a', '<p>Has the auditor reviewed and understood the entity\'s budgeting process and how actual results are compared to budget/forecast?</p>'),
-        q('uei-q5b', '<p>Are there financial performance measures or covenants (e.g., banking covenants, regulatory capital requirements) that management is under pressure to meet?</p>'),
-        q('uei-q5c', '<p>Has the auditor considered whether management\'s performance targets or compensation arrangements create incentives for earnings management or fraudulent financial reporting?</p>'),
-        q('uei-q5d', '<p>Has the auditor performed preliminary analytical procedures to identify unusual fluctuations in financial data compared to industry benchmarks or prior periods?</p>'),
-        q('uei-q5e', '<p>Based on the understanding obtained, has the auditor identified any significant risks arising from the entity\'s industry and environment that require specific audit attention?</p>'),
+        q('uei-q5a', '<p>Has the auditor reviewed and understood the entity\'s budgeting process and how actual results are compared to budget/forecast?</p>', undefined, 'Yes', '<p>Annual budget prepared by the CFO and approved by the board in April each year. Monthly actual versus budget variance reports are reviewed by management. Budgeting process is considered reasonable and effective for monitoring performance.</p>', 'W/P Ref: UEI-05'),
+        q('uei-q5b', '<p>Are there financial performance measures or covenants (e.g., banking covenants, regulatory capital requirements) that management is under pressure to meet?</p>', undefined, 'Yes', '<p>The RBC credit facility contains a debt service coverage ratio covenant and minimum tangible net worth covenant. Management monitors these ratios quarterly. Both covenants were met as at March 31, 2024. This has been identified as a fraud risk factor and considered in the risk assessment.</p>', 'W/P Ref: RA-02'),
+        q('uei-q5c', '<p>Has the auditor considered whether management\'s performance targets or compensation arrangements create incentives for earnings management or fraudulent financial reporting?</p>', undefined, 'Yes', '<p>Management compensation is not directly tied to financial reporting metrics. Banking covenant compliance creates some pressure; however, the entity has comfortable headroom in its covenants (DSCR of 1.42 versus 1.20 minimum). Incentive-based fraud risk assessed as low.</p>', 'W/P Ref: RA-02'),
+        q('uei-q5d', '<p>Has the auditor performed preliminary analytical procedures to identify unusual fluctuations in financial data compared to industry benchmarks or prior periods?</p>', undefined, 'Yes', '<p>Preliminary analytical procedures performed and documented in PAP working paper. Revenue growth of 11.6%, gross margin improvement from 17.9% to 18.4%, and DSO of 61 days all assessed as reasonable and consistent with industry benchmarks.</p>', 'W/P Ref: PAP-01'),
+        q('uei-q5e', '<p>Based on the understanding obtained, has the auditor identified any significant risks arising from the entity\'s industry and environment that require specific audit attention?</p>', undefined, 'Yes', '<p>Three significant risks identified from industry and environment understanding: (1) revenue recognition — voyage cut-off risk inherent in maritime freight accounting, (2) vessel impairment given significant asset concentration ($8.2M, 45% of total assets), and (3) foreign currency risk from USD-denominated freight contracts. All incorporated into the audit strategy.</p>', 'W/P Ref: RA-01'),
       ],
       isExpanded: true
     },
@@ -9646,20 +9728,20 @@ export const generateUnderstandingEntityIndustryEnvironmentChecklist = (): Check
 
 // ─── Understanding Internal Controls ────────────────────────────────────────
 export const generateUnderstandingInternalControlsChecklist = (): Checklist => {
-  const q = (id: string, text: string, subQuestions?: Question[]): Question => ({
+  const q = (id: string, text: string, subQuestions?: Question[], answer = '', explanation = '', reference = ''): Question => ({
     id, text, answerType: 'yes-no-na' as const, options: ['Yes', 'No', 'NA'],
-    required: false, answer: '', ...(subQuestions ? { subQuestions } : {})
+    required: false, answer, explanation, reference, ...(subQuestions ? { subQuestions } : {})
   });
   const sections: Section[] = [
     {
       id: 'section-uic-1',
       title: '1. Control Environment',
       questions: [
-        q('uic-q1a', '<p>Has the auditor assessed management\'s commitment to integrity and ethical values (e.g., code of conduct, tone at the top)?</p>'),
-        q('uic-q1b', '<p>Has the auditor documented the entity\'s organizational structure, including lines of authority and responsibility?</p>'),
-        q('uic-q1c', '<p>Has the auditor considered whether HR policies (hiring, training, performance evaluation, compensation) support the control environment?</p>'),
-        q('uic-q1d', '<p>Has the auditor assessed the oversight responsibilities exercised by those charged with governance (TCWG), including the audit committee?</p>'),
-        q('uic-q1e', '<p>Has the auditor considered management\'s philosophy and operating style (e.g., attitude toward risk, financial reporting, and internal control)?</p>'),
+        q('uic-q1a', '<p>Has the auditor assessed management\'s commitment to integrity and ethical values (e.g., code of conduct, tone at the top)?</p>', undefined, 'Yes', '<p>Code of conduct reviewed; tone at the top assessed as strong through inquiries with CEO and CFO. No ethical violations or disciplinary actions noted during the year.</p>', 'W/P Ref: IC-10'),
+        q('uic-q1b', '<p>Has the auditor documented the entity\'s organizational structure, including lines of authority and responsibility?</p>', undefined, 'Yes', '<p>Organizational chart obtained and filed; clear reporting lines documented from operations through CFO to CEO and Board of Directors.</p>', 'W/P Ref: IC-10'),
+        q('uic-q1c', '<p>Has the auditor considered whether HR policies (hiring, training, performance evaluation, compensation) support the control environment?</p>', undefined, 'Yes', '<p>HR policies reviewed; background checks performed for finance staff, annual performance reviews conducted, and compensation structure assessed as appropriate for entity size.</p>', 'W/P Ref: IC-10'),
+        q('uic-q1d', '<p>Has the auditor assessed the oversight responsibilities exercised by those charged with governance (TCWG), including the audit committee?</p>', undefined, 'Yes', '<p>Board of directors meets quarterly; financial statements reviewed at each meeting. No formal audit committee given entity size; full board performs oversight function.</p>', 'W/P Ref: IC-10'),
+        q('uic-q1e', '<p>Has the auditor considered management\'s philosophy and operating style (e.g., attitude toward risk, financial reporting, and internal control)?</p>', undefined, 'Yes', '<p>Management\'s philosophy assessed as conservative; accounting policies applied consistently and management demonstrated appropriate deference to auditor guidance on complex accounting matters.</p>', 'W/P Ref: IC-10'),
       ],
       isExpanded: true
     },
@@ -9667,10 +9749,10 @@ export const generateUnderstandingInternalControlsChecklist = (): Checklist => {
       id: 'section-uic-2',
       title: '2. Entity\'s Risk Assessment Process',
       questions: [
-        q('uic-q2a', '<p>Has the auditor documented how management identifies and responds to business risks relevant to financial reporting?</p>'),
-        q('uic-q2b', '<p>Has the auditor considered whether management identifies and responds to significant changes in the risk environment (e.g., new products, regulatory changes, IT changes)?</p>'),
-        q('uic-q2c', '<p>Has the auditor evaluated whether management\'s risk assessment process addresses fraud risk?</p>'),
-        q('uic-q2d', '<p>Where management has identified risks but determined that controls are not necessary, has the auditor documented management\'s rationale?</p>'),
+        q('uic-q2a', '<p>Has the auditor documented how management identifies and responds to business risks relevant to financial reporting?</p>', undefined, 'Yes', '<p>Management performs an annual informal risk assessment; key risks identified include fuel price volatility, regulatory compliance, and vessel maintenance. Process documented in working papers.</p>', 'W/P Ref: IC-11'),
+        q('uic-q2b', '<p>Has the auditor considered whether management identifies and responds to significant changes in the risk environment (e.g., new products, regulatory changes, IT changes)?</p>', undefined, 'Yes', '<p>Management identified new port authority reporting requirements effective January 2024 and updated procedures accordingly; no new financial reporting risks from IT changes during the year.</p>', 'W/P Ref: IC-11'),
+        q('uic-q2c', '<p>Has the auditor evaluated whether management\'s risk assessment process addresses fraud risk?</p>', undefined, 'Yes', '<p>Management\'s risk assessment process addresses fraud risk informally; no formal fraud risk register maintained, but management demonstrated awareness of key fraud risks in their operations.</p>', 'W/P Ref: IC-11'),
+        q('uic-q2d', '<p>Where management has identified risks but determined that controls are not necessary, has the auditor documented management\'s rationale?</p>', undefined, 'Yes', '<p>No instances where management identified risks without implementing controls; all identified risks have corresponding control activities in place.</p>'),
       ],
       isExpanded: true
     },
@@ -9678,11 +9760,11 @@ export const generateUnderstandingInternalControlsChecklist = (): Checklist => {
       id: 'section-uic-3',
       title: '3. Information System & Communication',
       questions: [
-        q('uic-q3a', '<p>Has the auditor documented the entity\'s key accounting system(s) and how transactions are initiated, recorded, processed, and reported?</p>'),
-        q('uic-q3b', '<p>Has the auditor understood the IT environment, including key applications, databases, and interfaces relevant to financial reporting?</p>'),
-        q('uic-q3c', '<p>Has the auditor documented the financial reporting process, including the steps used to prepare the financial statements and related disclosures?</p>'),
-        q('uic-q3d', '<p>Has the auditor documented controls over journal entries, including authorization of non-standard entries?</p>'),
-        q('uic-q3e', '<p>Has the auditor understood period-end close procedures, including how management reviews and adjusts the trial balance?</p>'),
+        q('uic-q3a', '<p>Has the auditor documented the entity\'s key accounting system(s) and how transactions are initiated, recorded, processed, and reported?</p>', undefined, 'Yes', '<p>Sage 300 ERP used as primary accounting system; transaction flow documented from initiation (voyage booking) through invoicing, GL posting, and financial reporting.</p>', 'W/P Ref: IC-12'),
+        q('uic-q3b', '<p>Has the auditor understood the IT environment, including key applications, databases, and interfaces relevant to financial reporting?</p>', undefined, 'Yes', '<p>IT environment documented: Sage 300 (accounting), ADP (payroll), vessel management system (operations); automated interface between vessel system and Sage 300 documented and assessed.</p>', 'W/P Ref: IC-12'),
+        q('uic-q3c', '<p>Has the auditor documented the financial reporting process, including the steps used to prepare the financial statements and related disclosures?</p>', undefined, 'Yes', '<p>Period-end close process documented; CFO prepares trial balance from Sage 300, reviews with controller, and prepares financial statements with supporting schedules for board presentation.</p>', 'W/P Ref: IC-12'),
+        q('uic-q3d', '<p>Has the auditor documented controls over journal entries, including authorization of non-standard entries?</p>', undefined, 'Yes', '<p>All journal entries require CFO authorization; system-generated entries automatically posted; manual entries require paper support and management sign-off before posting.</p>', 'W/P Ref: IC-12'),
+        q('uic-q3e', '<p>Has the auditor understood period-end close procedures, including how management reviews and adjusts the trial balance?</p>', undefined, 'Yes', '<p>Month-end close takes 5 business days; CFO reviews all account balances against budget; unusual variances investigated and documented before financial statements finalized.</p>', 'W/P Ref: IC-12'),
       ],
       isExpanded: true
     },
@@ -9690,11 +9772,11 @@ export const generateUnderstandingInternalControlsChecklist = (): Checklist => {
       id: 'section-uic-4',
       title: '4. Control Activities',
       questions: [
-        q('uic-q4a', '<p>Has the auditor documented authorization controls over significant transactions and events?</p>'),
-        q('uic-q4b', '<p>Has the auditor documented key reconciliation controls (e.g., sub-ledger to GL, bank reconciliations)?</p>'),
-        q('uic-q4c', '<p>Has the auditor assessed whether there is adequate segregation of duties over key financial reporting processes?</p>'),
-        q('uic-q4d', '<p>Has the auditor documented physical controls over assets (e.g., restricted access to inventory, cash, and fixed assets)?</p>'),
-        q('uic-q4e', '<p>Has the auditor documented IT application controls relevant to financial reporting (e.g., automated validations, edit checks)?</p>'),
+        q('uic-q4a', '<p>Has the auditor documented authorization controls over significant transactions and events?</p>', undefined, 'Yes', '<p>Authorization matrix documented: purchases over $10K require VP Operations approval; purchases over $50K require CEO approval; payroll changes require HR and CFO sign-off.</p>', 'W/P Ref: IC-13'),
+        q('uic-q4b', '<p>Has the auditor documented key reconciliation controls (e.g., sub-ledger to GL, bank reconciliations)?</p>', undefined, 'Yes', '<p>Bank reconciliations prepared monthly by controller and reviewed by CFO; AR sub-ledger reconciled to GL monthly; AP sub-ledger reconciled before each payment run.</p>', 'W/P Ref: IC-13'),
+        q('uic-q4c', '<p>Has the auditor assessed whether there is adequate segregation of duties over key financial reporting processes?</p>', undefined, 'Yes', '<p>Segregation of duties assessed as adequate given entity size (94 employees); separate individuals handle AP processing, payment authorization, and bank reconciliation.</p>', 'W/P Ref: IC-13'),
+        q('uic-q4d', '<p>Has the auditor documented physical controls over assets (e.g., restricted access to inventory, cash, and fixed assets)?</p>', undefined, 'Yes', '<p>Vessels access restricted to authorized crew and maintenance personnel; office cash maintained in locked safe with dual access; IT server room access card-controlled with log maintained.</p>', 'W/P Ref: IC-13'),
+        q('uic-q4e', '<p>Has the auditor documented IT application controls relevant to financial reporting (e.g., automated validations, edit checks)?</p>', undefined, 'Yes', '<p>Sage 300 application controls documented: mandatory fields on invoice entry, automated GL coding based on vendor master, duplicate payment prevention edit checks active.</p>', 'W/P Ref: IC-13'),
       ],
       isExpanded: true
     },
@@ -9702,10 +9784,10 @@ export const generateUnderstandingInternalControlsChecklist = (): Checklist => {
       id: 'section-uic-5',
       title: '5. Monitoring of Controls',
       questions: [
-        q('uic-q5a', '<p>Has the auditor considered whether the entity has an internal audit function and, if so, understood its scope and activities?</p>'),
-        q('uic-q5b', '<p>Has the auditor documented management\'s ongoing and periodic monitoring activities (e.g., dashboards, exception reports, management reviews)?</p>'),
-        q('uic-q5c', '<p>Has the auditor considered whether control deficiencies identified during monitoring are communicated and corrected in a timely manner?</p>'),
-        q('uic-q5d', '<p>Has the auditor documented any external oversight (e.g., regulatory examinations, external quality reviews) and considered its relevance to the audit?</p>'),
+        q('uic-q5a', '<p>Has the auditor considered whether the entity has an internal audit function and, if so, understood its scope and activities?</p>', undefined, 'NA', '<p>No internal audit function; entity size (94 employees, $12.5M revenue) does not warrant a formal internal audit function. External audit provides primary independent oversight.</p>'),
+        q('uic-q5b', '<p>Has the auditor documented management\'s ongoing and periodic monitoring activities (e.g., dashboards, exception reports, management reviews)?</p>', undefined, 'Yes', '<p>Monthly management reporting package reviewed by CEO and CFO; includes budget-to-actual variance analysis, AR aging, key performance indicators, and exception reports from Sage 300.</p>', 'W/P Ref: IC-14'),
+        q('uic-q5c', '<p>Has the auditor considered whether control deficiencies identified during monitoring are communicated and corrected in a timely manner?</p>', undefined, 'Yes', '<p>Management confirmed that control deficiencies are reported to the CFO and remediated within 30 days; no significant deficiencies identified during the current year monitoring activities.</p>', 'W/P Ref: IC-14'),
+        q('uic-q5d', '<p>Has the auditor documented any external oversight (e.g., regulatory examinations, external quality reviews) and considered its relevance to the audit?</p>', undefined, 'Yes', '<p>Transport Canada conducted a routine vessel safety inspection in October 2023; no findings impacting financial reporting. No other external regulatory examinations during the year.</p>', 'W/P Ref: IC-14'),
       ],
       isExpanded: true
     },
@@ -9723,19 +9805,19 @@ export const generateUnderstandingInternalControlsChecklist = (): Checklist => {
 
 // ─── SCOT — Revenue Cycle ───────────────────────────────────────────────────
 export const generateSCOTRevenueCycleChecklist = (): Checklist => {
-  const q = (id: string, text: string, subQuestions?: Question[]): Question => ({
+  const q = (id: string, text: string, subQuestions?: Question[], answer = '', explanation = '', reference = ''): Question => ({
     id, text, answerType: 'yes-no-na' as const, options: ['Yes', 'No', 'NA'],
-    required: false, answer: '', ...(subQuestions ? { subQuestions } : {})
+    required: false, answer, explanation, reference, ...(subQuestions ? { subQuestions } : {})
   });
   const sections: Section[] = [
     {
       id: 'section-scot-rev-1',
       title: '1. Revenue Process Overview',
       questions: [
-        q('scot-rev-q1a', '<p>Has the auditor documented the entity\'s key revenue streams (e.g., product sales, service revenue, subscriptions, licensing)?</p>'),
-        q('scot-rev-q1b', '<p>Has the auditor documented the entity\'s revenue recognition policy and assessed its compliance with the applicable financial reporting framework?</p>'),
-        q('scot-rev-q1c', '<p>Has the auditor identified significant estimates and judgments involved in revenue recognition (e.g., variable consideration, percentage of completion, multiple-element arrangements)?</p>'),
-        q('scot-rev-q1d', '<p>Has the auditor identified and documented related party revenue transactions?</p>'),
+        q('scot-rev-q1a', '<p>Has the auditor documented the entity\'s key revenue streams (e.g., product sales, service revenue, subscriptions, licensing)?</p>', undefined, 'Yes', '<p>Revenue streams documented: freight services (voyage-based, ~92% of revenue) and ancillary logistics services (vessel chartering and port agency, ~8%). Total revenue $12.5M CAD for FY2024.</p>', 'W/P Ref: RV-01'),
+        q('scot-rev-q1b', '<p>Has the auditor documented the entity\'s revenue recognition policy and assessed its compliance with the applicable financial reporting framework?</p>', undefined, 'Yes', '<p>Revenue recognized upon voyage completion per ASPE Section 3400; policy assessed as compliant. Voyages in progress at year-end recognized on a percentage-of-completion basis.</p>', 'W/P Ref: RV-01'),
+        q('scot-rev-q1c', '<p>Has the auditor identified significant estimates and judgments involved in revenue recognition (e.g., variable consideration, percentage of completion, multiple-element arrangements)?</p>', undefined, 'Yes', '<p>Significant judgment identified in estimating voyage completion percentage at March 31, 2024; 7 voyages were in progress at year-end with total accrued revenue of approximately $340K.</p>', 'W/P Ref: RV-01'),
+        q('scot-rev-q1d', '<p>Has the auditor identified and documented related party revenue transactions?</p>', undefined, 'Yes', '<p>No related party revenue transactions identified; all revenue earned from third-party freight customers at arm\'s length.</p>', 'W/P Ref: RV-01'),
       ],
       isExpanded: true
     },
@@ -9743,11 +9825,11 @@ export const generateSCOTRevenueCycleChecklist = (): Checklist => {
       id: 'section-scot-rev-2',
       title: '2. Order to Invoice Controls',
       questions: [
-        q('scot-rev-q2a', '<p>Are customer orders authorized by an appropriate level of management before fulfilment?</p>'),
-        q('scot-rev-q2b', '<p>Is credit approval obtained for new customers and periodically reviewed for existing customers before goods or services are provided on credit?</p>'),
-        q('scot-rev-q2c', '<p>Are shipping/delivery documents or service completion records generated and reconciled to invoices?</p>'),
-        q('scot-rev-q2d', '<p>Are controls in place to ensure invoices are generated for all goods shipped or services rendered?</p>'),
-        q('scot-rev-q2e', '<p>Are prices and quantities on invoices verified against approved price lists and customer purchase orders?</p>'),
+        q('scot-rev-q2a', '<p>Are customer orders authorized by an appropriate level of management before fulfilment?</p>', undefined, 'Yes', '<p>Freight bookings require Operations Manager authorization before vessel assignment; charter agreements require VP Operations and CEO sign-off.</p>', 'W/P Ref: RV-02'),
+        q('scot-rev-q2b', '<p>Is credit approval obtained for new customers and periodically reviewed for existing customers before goods or services are provided on credit?</p>', undefined, 'Yes', '<p>Credit limits established by CFO for all credit customers; new customer credit approval documented. Annual review of existing customer limits performed in January 2024.</p>', 'W/P Ref: RV-02'),
+        q('scot-rev-q2c', '<p>Are shipping/delivery documents or service completion records generated and reconciled to invoices?</p>', undefined, 'Yes', '<p>Vessel voyage completion certificates generated for each completed voyage; reconciled to invoices by accounts receivable clerk before posting. Exceptions reviewed by controller.</p>', 'W/P Ref: RV-02'),
+        q('scot-rev-q2d', '<p>Are controls in place to ensure invoices are generated for all goods shipped or services rendered?</p>', undefined, 'Yes', '<p>Voyage completion report automatically triggers invoice generation in Sage 300; open voyages report reviewed weekly to identify any completions without corresponding invoices.</p>', 'W/P Ref: RV-02'),
+        q('scot-rev-q2e', '<p>Are prices and quantities on invoices verified against approved price lists and customer purchase orders?</p>', undefined, 'Yes', '<p>Invoice rates verified against signed freight agreements before finalization; any variance from contracted rates requires CFO approval before invoicing.</p>', 'W/P Ref: RV-02'),
       ],
       isExpanded: true
     },
@@ -9755,10 +9837,10 @@ export const generateSCOTRevenueCycleChecklist = (): Checklist => {
       id: 'section-scot-rev-3',
       title: '3. Accounts Receivable & Collection Controls',
       questions: [
-        q('scot-rev-q3a', '<p>Is the AR sub-ledger regularly reconciled to the general ledger, with reconciling items investigated and resolved promptly?</p>'),
-        q('scot-rev-q3b', '<p>Are collection procedures documented, including escalation processes for overdue accounts?</p>'),
-        q('scot-rev-q3c', '<p>Are write-offs of uncollectible accounts authorized by an appropriate level of management?</p>'),
-        q('scot-rev-q3d', '<p>Is there a formal dispute resolution process for customer invoice disputes, and are disputed amounts tracked?</p>'),
+        q('scot-rev-q3a', '<p>Is the AR sub-ledger regularly reconciled to the general ledger, with reconciling items investigated and resolved promptly?</p>', undefined, 'Yes', '<p>AR sub-ledger reconciled to Sage 300 GL monthly; no reconciling items outstanding at March 31, 2024. Reconciliation reviewed and signed off by controller.</p>', 'W/P Ref: RV-03'),
+        q('scot-rev-q3b', '<p>Are collection procedures documented, including escalation processes for overdue accounts?</p>', undefined, 'Yes', '<p>Collection policy documented: 30-day payment terms; reminder at 45 days; formal demand at 60 days; escalation to management at 90 days. No accounts in dispute at year-end.</p>', 'W/P Ref: RV-03'),
+        q('scot-rev-q3c', '<p>Are write-offs of uncollectible accounts authorized by an appropriate level of management?</p>', undefined, 'Yes', '<p>Bad debt write-offs require CFO approval for amounts under $10K and CEO approval for amounts above $10K; one write-off of $8.5K approved by CFO during FY2024.</p>', 'W/P Ref: RV-03'),
+        q('scot-rev-q3d', '<p>Is there a formal dispute resolution process for customer invoice disputes, and are disputed amounts tracked?</p>', undefined, 'Yes', '<p>Dispute tracking maintained in Sage 300 using dispute flag on invoices; no material invoice disputes outstanding at March 31, 2024.</p>', 'W/P Ref: RV-03'),
       ],
       isExpanded: true
     },
@@ -9766,10 +9848,10 @@ export const generateSCOTRevenueCycleChecklist = (): Checklist => {
       id: 'section-scot-rev-4',
       title: '4. Cash Receipts Controls',
       questions: [
-        q('scot-rev-q4a', '<p>Are duties segregated between employees who handle cash receipts and those who record receipts in the accounting system?</p>'),
-        q('scot-rev-q4b', '<p>Are cash receipts deposited daily (or on a timely basis) and reconciled to remittance advices?</p>'),
-        q('scot-rev-q4c', '<p>Where applicable, are lockbox or EFT controls in place to minimize manual handling of cash and ensure complete capture of receipts?</p>'),
-        q('scot-rev-q4d', '<p>Is there a control to ensure receipts are applied to the correct customer account and invoice?</p>'),
+        q('scot-rev-q4a', '<p>Are duties segregated between employees who handle cash receipts and those who record receipts in the accounting system?</p>', undefined, 'Yes', '<p>Cash receipts processed by accounts receivable clerk; recording in Sage 300 performed by controller; segregation adequate given two-person finance team for receipts processing.</p>', 'W/P Ref: RV-04'),
+        q('scot-rev-q4b', '<p>Are cash receipts deposited daily (or on a timely basis) and reconciled to remittance advices?</p>', undefined, 'Yes', '<p>Substantially all receipts received by EFT directly to bank; manual cheques deposited same day received. Deposits reconciled to remittance advices and posted to AR by following business day.</p>', 'W/P Ref: RV-04'),
+        q('scot-rev-q4c', '<p>Where applicable, are lockbox or EFT controls in place to minimize manual handling of cash and ensure complete capture of receipts?</p>', undefined, 'Yes', '<p>Approximately 95% of customer payments received via EFT; bank notifies controller daily of receipts. Minimal manual cash handling reduces misappropriation risk.</p>', 'W/P Ref: RV-04'),
+        q('scot-rev-q4d', '<p>Is there a control to ensure receipts are applied to the correct customer account and invoice?</p>', undefined, 'Yes', '<p>Remittance advices matched to open invoices by accounts receivable clerk; unapplied cash reviewed weekly by controller; no unapplied cash outstanding at year-end.</p>', 'W/P Ref: RV-04'),
       ],
       isExpanded: true
     },
@@ -9777,9 +9859,9 @@ export const generateSCOTRevenueCycleChecklist = (): Checklist => {
       id: 'section-scot-rev-5',
       title: '5. IT Controls over Revenue',
       questions: [
-        q('scot-rev-q5a', '<p>Are system access controls in place to restrict who can create, modify, or delete customer accounts, pricing, and invoices?</p>'),
-        q('scot-rev-q5b', '<p>Are there automated controls in the billing system (e.g., edit checks, duplicate invoice prevention, mandatory fields) to ensure completeness and accuracy of invoicing?</p>'),
-        q('scot-rev-q5c', '<p>Is the interface between the order management/billing system and the general ledger automated and reconciled, with exception reports reviewed?</p>'),
+        q('scot-rev-q5a', '<p>Are system access controls in place to restrict who can create, modify, or delete customer accounts, pricing, and invoices?</p>', undefined, 'Yes', '<p>Sage 300 access controls restrict customer master file changes to controller and above; invoice creation restricted to AR clerk and controller; pricing changes restricted to CFO.</p>', 'W/P Ref: RV-05'),
+        q('scot-rev-q5b', '<p>Are there automated controls in the billing system (e.g., edit checks, duplicate invoice prevention, mandatory fields) to ensure completeness and accuracy of invoicing?</p>', undefined, 'Yes', '<p>Sage 300 enforces mandatory fields on invoice creation; duplicate invoice prevention active based on customer and invoice number combination; system-generated sequential invoice numbering.</p>', 'W/P Ref: RV-05'),
+        q('scot-rev-q5c', '<p>Is the interface between the order management/billing system and the general ledger automated and reconciled, with exception reports reviewed?</p>', undefined, 'Yes', '<p>Automated interface between vessel management system and Sage 300 posts voyage completions daily; daily exception report reviewed by controller for unmatched or failed postings.</p>', 'W/P Ref: RV-05'),
       ],
       isExpanded: true
     },
@@ -9797,19 +9879,19 @@ export const generateSCOTRevenueCycleChecklist = (): Checklist => {
 
 // ─── SCOT — Expenditure Cycle ───────────────────────────────────────────────
 export const generateSCOTExpenditureCycleChecklist = (): Checklist => {
-  const q = (id: string, text: string, subQuestions?: Question[]): Question => ({
+  const q = (id: string, text: string, subQuestions?: Question[], answer = '', explanation = '', reference = ''): Question => ({
     id, text, answerType: 'yes-no-na' as const, options: ['Yes', 'No', 'NA'],
-    required: false, answer: '', ...(subQuestions ? { subQuestions } : {})
+    required: false, answer, explanation, reference, ...(subQuestions ? { subQuestions } : {})
   });
   const sections: Section[] = [
     {
       id: 'section-scot-exp-1',
       title: '1. Procurement Process Overview',
       questions: [
-        q('scot-exp-q1a', '<p>Has the auditor documented the entity\'s purchasing policy, including approval authorities and procurement procedures?</p>'),
-        q('scot-exp-q1b', '<p>Does the entity maintain an approved vendor list, and are purchases restricted to approved vendors?</p>'),
-        q('scot-exp-q1c', '<p>Has the auditor documented the entity\'s policy for distinguishing capital expenditures from operating expenditures?</p>'),
-        q('scot-exp-q1d', '<p>Has the auditor identified and documented related party purchase transactions?</p>'),
+        q('scot-exp-q1a', '<p>Has the auditor documented the entity\'s purchasing policy, including approval authorities and procurement procedures?</p>', undefined, 'Yes', '<p>Purchasing policy documented; approval limits established at $10K (Operations Manager), $50K (VP Operations), and above $50K (CEO). Purchases restricted to approved vendors for operational supplies.</p>', 'W/P Ref: AP-01'),
+        q('scot-exp-q1b', '<p>Does the entity maintain an approved vendor list, and are purchases restricted to approved vendors?</p>', undefined, 'Yes', '<p>Approved vendor list maintained for fuel suppliers, port services, and vessel maintenance contractors; new vendor additions require CFO and VP Operations approval.</p>', 'W/P Ref: AP-01'),
+        q('scot-exp-q1c', '<p>Has the auditor documented the entity\'s policy for distinguishing capital expenditures from operating expenditures?</p>', undefined, 'Yes', '<p>Capitalization policy documented: expenditures over $5,000 with useful life greater than one year capitalized; routine maintenance expensed. Policy consistently applied during FY2024.</p>', 'W/P Ref: AP-01'),
+        q('scot-exp-q1d', '<p>Has the auditor identified and documented related party purchase transactions?</p>', undefined, 'Yes', '<p>No related party purchase transactions identified; all significant suppliers are arm\'s length third parties.</p>'),
       ],
       isExpanded: true
     },
@@ -9817,11 +9899,11 @@ export const generateSCOTExpenditureCycleChecklist = (): Checklist => {
       id: 'section-scot-exp-2',
       title: '2. Purchase Order & Receiving Controls',
       questions: [
-        q('scot-exp-q2a', '<p>Are purchase requisitions required for all non-routine purchases, and are they authorized before a purchase order is issued?</p>'),
-        q('scot-exp-q2b', '<p>Are purchase order approval limits defined and enforced, with higher-value purchases requiring senior authorization?</p>'),
-        q('scot-exp-q2c', '<p>Is a three-way match (PO, receiving report, and vendor invoice) performed before payment is approved?</p>'),
-        q('scot-exp-q2d', '<p>Are receiving reports prepared for all goods received, and are they reviewed for accuracy before being matched to invoices?</p>'),
-        q('scot-exp-q2e', '<p>Is there a process to accrue for goods received but not yet invoiced at period end?</p>'),
+        q('scot-exp-q2a', '<p>Are purchase requisitions required for all non-routine purchases, and are they authorized before a purchase order is issued?</p>', undefined, 'Yes', '<p>Purchase requisitions required for all non-routine items above $1,000; requisitions reviewed and approved by department head before PO issuance.</p>', 'W/P Ref: AP-02'),
+        q('scot-exp-q2b', '<p>Are purchase order approval limits defined and enforced, with higher-value purchases requiring senior authorization?</p>', undefined, 'Yes', '<p>PO approval limits defined and enforced in Sage 300; system prevents PO issuance without appropriate authorization level based on amount.</p>', 'W/P Ref: AP-02'),
+        q('scot-exp-q2c', '<p>Is a three-way match (PO, receiving report, and vendor invoice) performed before payment is approved?</p>', undefined, 'Yes', '<p>Three-way match performed for all purchase transactions above $1,000; AP clerk matches PO, receiving report, and vendor invoice before payment approval.</p>', 'W/P Ref: AP-02'),
+        q('scot-exp-q2d', '<p>Are receiving reports prepared for all goods received, and are they reviewed for accuracy before being matched to invoices?</p>', undefined, 'Yes', '<p>Receiving reports prepared by operations staff for all goods received; quantity and condition verified before sign-off and submission to AP for matching.</p>', 'W/P Ref: AP-02'),
+        q('scot-exp-q2e', '<p>Is there a process to accrue for goods received but not yet invoiced at period end?</p>', undefined, 'Yes', '<p>Accrued AP process performed at March 31, 2024; open receiving reports without matching invoices identified and accrued. Total GRIB accrual at year-end: $87K.</p>', 'W/P Ref: AP-02'),
       ],
       isExpanded: true
     },
@@ -9829,10 +9911,10 @@ export const generateSCOTExpenditureCycleChecklist = (): Checklist => {
       id: 'section-scot-exp-3',
       title: '3. Accounts Payable Controls',
       questions: [
-        q('scot-exp-q3a', '<p>Is the AP sub-ledger regularly reconciled to the general ledger, with reconciling items investigated and resolved promptly?</p>'),
-        q('scot-exp-q3b', '<p>Are invoices reviewed, coded to the correct GL account, and approved by an appropriate employee before payment?</p>'),
-        q('scot-exp-q3c', '<p>Are vendor statements periodically reconciled to the AP sub-ledger to identify unrecorded liabilities or disputes?</p>'),
-        q('scot-exp-q3d', '<p>Are controls in place to prevent duplicate payments (e.g., system checks for duplicate invoice numbers, vendor and amounts)?</p>'),
+        q('scot-exp-q3a', '<p>Is the AP sub-ledger regularly reconciled to the general ledger, with reconciling items investigated and resolved promptly?</p>', undefined, 'Yes', '<p>AP sub-ledger reconciled to Sage 300 GL at each month-end; no reconciling items outstanding at March 31, 2024. Reconciliation reviewed by controller.</p>', 'W/P Ref: AP-03'),
+        q('scot-exp-q3b', '<p>Are invoices reviewed, coded to the correct GL account, and approved by an appropriate employee before payment?</p>', undefined, 'Yes', '<p>All invoices reviewed and GL-coded by AP clerk; approved by department manager before payment processing. Invoices above $10K require additional CFO approval.</p>', 'W/P Ref: AP-03'),
+        q('scot-exp-q3c', '<p>Are vendor statements periodically reconciled to the AP sub-ledger to identify unrecorded liabilities or disputes?</p>', undefined, 'Yes', '<p>Top 10 vendor statements reconciled quarterly; reconciliation performed for March 31, 2024 with no unrecorded liabilities identified.</p>', 'W/P Ref: AP-03'),
+        q('scot-exp-q3d', '<p>Are controls in place to prevent duplicate payments (e.g., system checks for duplicate invoice numbers, vendor and amounts)?</p>', undefined, 'Yes', '<p>Sage 300 AP module has automated duplicate invoice detection based on vendor number and invoice number combination; warning generated for potential duplicates requiring override authorization.</p>', 'W/P Ref: AP-03'),
       ],
       isExpanded: true
     },
@@ -9840,10 +9922,10 @@ export const generateSCOTExpenditureCycleChecklist = (): Checklist => {
       id: 'section-scot-exp-4',
       title: '4. Cash Disbursement Controls',
       questions: [
-        q('scot-exp-q4a', '<p>Are cheque or EFT disbursements authorized according to defined approval limits, with dual authorization for large payments?</p>'),
-        q('scot-exp-q4b', '<p>Are duties segregated between employees who authorize payments and those who process or record disbursements?</p>'),
-        q('scot-exp-q4c', '<p>Are bank reconciliations prepared regularly by someone independent of the disbursement process, and reviewed by a senior employee?</p>'),
-        q('scot-exp-q4d', '<p>Are voided cheques controlled and accounted for to prevent unauthorized use?</p>'),
+        q('scot-exp-q4a', '<p>Are cheque or EFT disbursements authorized according to defined approval limits, with dual authorization for large payments?</p>', undefined, 'Yes', '<p>EFT payments below $25K authorized by CFO; payments above $25K require dual authorization from CFO and CEO. No cheques issued for amounts above $5K.</p>', 'W/P Ref: AP-04'),
+        q('scot-exp-q4b', '<p>Are duties segregated between employees who authorize payments and those who process or record disbursements?</p>', undefined, 'Yes', '<p>AP clerk processes disbursements in Sage 300; CFO authorizes EFT releases in online banking; controller records disbursements in GL. Adequate segregation maintained.</p>', 'W/P Ref: AP-04'),
+        q('scot-exp-q4c', '<p>Are bank reconciliations prepared regularly by someone independent of the disbursement process, and reviewed by a senior employee?</p>', undefined, 'Yes', '<p>Controller prepares monthly bank reconciliation; reviewed and signed off by CFO. Controller does not have access to online banking disbursement authorization.</p>', 'W/P Ref: AP-04'),
+        q('scot-exp-q4d', '<p>Are voided cheques controlled and accounted for to prevent unauthorized use?</p>', undefined, 'Yes', '<p>Voided cheques maintained in numerical sequence in locked storage; voided cheque log reconciled to Sage 300 void register monthly by controller.</p>'),
       ],
       isExpanded: true
     },
@@ -9851,9 +9933,9 @@ export const generateSCOTExpenditureCycleChecklist = (): Checklist => {
       id: 'section-scot-exp-5',
       title: '5. IT Controls over Expenditures',
       questions: [
-        q('scot-exp-q5a', '<p>Are system access controls in place to restrict who can set up or modify vendor master file data (e.g., banking details, addresses)?</p>'),
-        q('scot-exp-q5b', '<p>Are there automated matching controls (e.g., system-enforced three-way match) in the AP module to prevent processing of unmatched invoices?</p>'),
-        q('scot-exp-q5c', '<p>Is the interface between the AP module and the general ledger automated and reconciled, with exception reports reviewed regularly?</p>'),
+        q('scot-exp-q5a', '<p>Are system access controls in place to restrict who can set up or modify vendor master file data (e.g., banking details, addresses)?</p>', undefined, 'Yes', '<p>Vendor master file changes restricted to controller and CFO in Sage 300; banking detail changes require CFO authorization and are logged in the system audit trail.</p>', 'W/P Ref: AP-05'),
+        q('scot-exp-q5b', '<p>Are there automated matching controls (e.g., system-enforced three-way match) in the AP module to prevent processing of unmatched invoices?</p>', undefined, 'Yes', '<p>Sage 300 AP module enforces three-way match for PO-based invoices; non-PO invoices require manual approval workflow before payment can be processed.</p>', 'W/P Ref: AP-05'),
+        q('scot-exp-q5c', '<p>Is the interface between the AP module and the general ledger automated and reconciled, with exception reports reviewed regularly?</p>', undefined, 'Yes', '<p>AP to GL interface is automated within Sage 300 integrated system; AP and GL are the same database, eliminating interface risk. Month-end AP aging report reconciled to GL balance by controller.</p>', 'W/P Ref: AP-05'),
       ],
       isExpanded: true
     },
@@ -9871,19 +9953,19 @@ export const generateSCOTExpenditureCycleChecklist = (): Checklist => {
 
 // ─── SCOT — Payroll Cycle ───────────────────────────────────────────────────
 export const generateSCOTPayrollCycleChecklist = (): Checklist => {
-  const q = (id: string, text: string, subQuestions?: Question[]): Question => ({
+  const q = (id: string, text: string, subQuestions?: Question[], answer = '', explanation = '', reference = ''): Question => ({
     id, text, answerType: 'yes-no-na' as const, options: ['Yes', 'No', 'NA'],
-    required: false, answer: '', ...(subQuestions ? { subQuestions } : {})
+    required: false, answer, explanation, reference, ...(subQuestions ? { subQuestions } : {})
   });
   const sections: Section[] = [
     {
       id: 'section-scot-pay-1',
       title: '1. Payroll Process Overview',
       questions: [
-        q('scot-pay-q1a', '<p>Has the auditor documented the payroll system(s) used (e.g., in-house software, outsourced provider) and assessed their relevance to the audit?</p>'),
-        q('scot-pay-q1b', '<p>Has the auditor documented payroll frequency (weekly, bi-weekly, semi-monthly, monthly) and the number of employees by type (salaried, hourly, commission)?</p>'),
-        q('scot-pay-q1c', '<p>Has the auditor documented how HR data (new hires, terminations, rate changes) interfaces with the payroll system?</p>'),
-        q('scot-pay-q1d', '<p>If payroll is outsourced, has the auditor considered the relevance of controls at the outsourced provider and whether a SOC 1 report is available?</p>'),
+        q('scot-pay-q1a', '<p>Has the auditor documented the payroll system(s) used (e.g., in-house software, outsourced provider) and assessed their relevance to the audit?</p>', undefined, 'Yes', '<p>Payroll outsourced to ADP for all 94 employees; ADP processes bi-weekly payroll and remits source deductions. Relevance to audit assessed as significant given payroll represents approximately 38% of total expenses.</p>', 'W/P Ref: PY-01'),
+        q('scot-pay-q1b', '<p>Has the auditor documented payroll frequency (weekly, bi-weekly, semi-monthly, monthly) and the number of employees by type (salaried, hourly, commission)?</p>', undefined, 'Yes', '<p>Payroll processed bi-weekly; 94 employees comprising 28 salaried (management/admin) and 66 hourly (vessel crew and operations). No commission-based employees.</p>', 'W/P Ref: PY-01'),
+        q('scot-pay-q1c', '<p>Has the auditor documented how HR data (new hires, terminations, rate changes) interfaces with the payroll system?</p>', undefined, 'Yes', '<p>HR data changes entered directly into ADP by HR manager; controller reviews ADP master file change report bi-weekly before payroll approval.</p>', 'W/P Ref: PY-01'),
+        q('scot-pay-q1d', '<p>If payroll is outsourced, has the auditor considered the relevance of controls at the outsourced provider and whether a SOC 1 report is available?</p>', undefined, 'Yes', '<p>ADP SOC 1 Type II report (SSAE 18) obtained and reviewed; no exceptions noted relevant to payroll processing, tax calculations, or direct deposit controls.</p>', 'W/P Ref: PY-01'),
       ],
       isExpanded: true
     },
@@ -9891,10 +9973,10 @@ export const generateSCOTPayrollCycleChecklist = (): Checklist => {
       id: 'section-scot-pay-2',
       title: '2. Employee Master File Controls',
       questions: [
-        q('scot-pay-q2a', '<p>Are new employee additions and terminations authorized by HR and reflected in the payroll system in a timely manner?</p>'),
-        q('scot-pay-q2b', '<p>Are pay rate changes (raises, bonuses, commissions) authorized by management before being entered in the payroll system?</p>'),
-        q('scot-pay-q2c', '<p>Are duties segregated between HR (who authorizes employee data changes) and payroll (who processes payroll)?</p>'),
-        q('scot-pay-q2d', '<p>Is the employee master file periodically reviewed for terminated employees, duplicate entries, or other anomalies (i.e., ghost employee risk)?</p>'),
+        q('scot-pay-q2a', '<p>Are new employee additions and terminations authorized by HR and reflected in the payroll system in a timely manner?</p>', undefined, 'Yes', '<p>New hire authorization requires signed offer letter and HR manager approval in ADP before first payroll. Terminations flagged in ADP on last day of employment; final pay calculated by ADP within standard process.</p>', 'W/P Ref: PY-02'),
+        q('scot-pay-q2b', '<p>Are pay rate changes (raises, bonuses, commissions) authorized by management before being entered in the payroll system?</p>', undefined, 'Yes', '<p>Salary changes require written authorization from department manager and CEO; change forms reviewed by controller before HR enters in ADP. Annual increases approved by board in March 2024.</p>', 'W/P Ref: PY-02'),
+        q('scot-pay-q2c', '<p>Are duties segregated between HR (who authorizes employee data changes) and payroll (who processes payroll)?</p>', undefined, 'Yes', '<p>HR manager authorizes employee data in ADP; controller approves payroll runs; CFO releases EFT payments. Adequate three-way segregation of duties maintained.</p>', 'W/P Ref: PY-02'),
+        q('scot-pay-q2d', '<p>Is the employee master file periodically reviewed for terminated employees, duplicate entries, or other anomalies (i.e., ghost employee risk)?</p>', undefined, 'Yes', '<p>Annual employee master file review performed in February 2024; active employee list reconciled to HR records; no ghost employees or duplicate entries identified.</p>', 'W/P Ref: PY-02'),
       ],
       isExpanded: true
     },
@@ -9902,10 +9984,10 @@ export const generateSCOTPayrollCycleChecklist = (): Checklist => {
       id: 'section-scot-pay-3',
       title: '3. Time & Attendance Controls',
       questions: [
-        q('scot-pay-q3a', '<p>Has the auditor documented the time recording system (automated timekeeping vs. manual timesheets) and its integration with payroll?</p>'),
-        q('scot-pay-q3b', '<p>Is overtime authorized by supervisors before or immediately after it is incurred?</p>'),
-        q('scot-pay-q3c', '<p>Are exception reports generated and reviewed for unusual time entries (e.g., excessive hours, entries on holidays)?</p>'),
-        q('scot-pay-q3d', '<p>Is time data independently reviewed and approved by supervisors before submission to payroll?</p>'),
+        q('scot-pay-q3a', '<p>Has the auditor documented the time recording system (automated timekeeping vs. manual timesheets) and its integration with payroll?</p>', undefined, 'Yes', '<p>Vessel crew record time via digital log integrated with ADP; office and management staff record time on bi-weekly electronic timesheets submitted to supervisors for approval.</p>', 'W/P Ref: PY-03'),
+        q('scot-pay-q3b', '<p>Is overtime authorized by supervisors before or immediately after it is incurred?</p>', undefined, 'Yes', '<p>Overtime pre-authorization required for office staff; vessel crew overtime approved by captain and reviewed by Operations Manager before payroll submission.</p>', 'W/P Ref: PY-03'),
+        q('scot-pay-q3c', '<p>Are exception reports generated and reviewed for unusual time entries (e.g., excessive hours, entries on holidays)?</p>', undefined, 'Yes', '<p>ADP generates exception report flagging overtime above 20 hours per pay period and holiday entries; controller reviews exception report each pay cycle.</p>', 'W/P Ref: PY-03'),
+        q('scot-pay-q3d', '<p>Is time data independently reviewed and approved by supervisors before submission to payroll?</p>', undefined, 'Yes', '<p>All timesheets require supervisor electronic approval in ADP before payroll processing; unapproved timesheets are blocked from payroll calculation by the system.</p>', 'W/P Ref: PY-03'),
       ],
       isExpanded: true
     },
@@ -9913,11 +9995,11 @@ export const generateSCOTPayrollCycleChecklist = (): Checklist => {
       id: 'section-scot-pay-4',
       title: '4. Payroll Processing & Disbursement Controls',
       questions: [
-        q('scot-pay-q4a', '<p>Is the payroll calculation reviewed for reasonableness (e.g., comparison to prior period) before final approval?</p>'),
-        q('scot-pay-q4b', '<p>Is payroll approved by management before funds are disbursed?</p>'),
-        q('scot-pay-q4c', '<p>Are controls in place over direct deposit setups and changes to employee banking details to prevent unauthorized alterations?</p>'),
-        q('scot-pay-q4d', '<p>Is the payroll bank account reconciled regularly, and are reconciling items investigated and resolved promptly?</p>'),
-        q('scot-pay-q4e', '<p>Is there a procedure for handling unclaimed wages or returned direct deposit payments?</p>'),
+        q('scot-pay-q4a', '<p>Is the payroll calculation reviewed for reasonableness (e.g., comparison to prior period) before final approval?</p>', undefined, 'Yes', '<p>Controller reviews ADP payroll register against prior period before approval; variances above 5% investigated and resolved. Gross pay comparison documented in payroll sign-off checklist.</p>', 'W/P Ref: PY-04'),
+        q('scot-pay-q4b', '<p>Is payroll approved by management before funds are disbursed?</p>', undefined, 'Yes', '<p>Controller approves payroll register; CFO releases EFT payment to ADP for direct deposit processing. Dual approval required before any funds disbursed.</p>', 'W/P Ref: PY-04'),
+        q('scot-pay-q4c', '<p>Are controls in place over direct deposit setups and changes to employee banking details to prevent unauthorized alterations?</p>', undefined, 'Yes', '<p>Employee banking detail changes require employee-signed authorization form and HR manager verification in ADP; ADP sends email confirmation of banking changes to employee\'s personal email on file.</p>', 'W/P Ref: PY-04'),
+        q('scot-pay-q4d', '<p>Is the payroll bank account reconciled regularly, and are reconciling items investigated and resolved promptly?</p>', undefined, 'Yes', '<p>Payroll bank account (dedicated ADP funding account) reconciled bi-weekly by controller after each payroll; no reconciling items outstanding at year-end.</p>', 'W/P Ref: PY-04'),
+        q('scot-pay-q4e', '<p>Is there a procedure for handling unclaimed wages or returned direct deposit payments?</p>', undefined, 'Yes', '<p>Returned direct deposits held in payroll bank account pending re-issue; returned amounts reviewed by HR manager and re-issued after banking information verified. No material unclaimed wages at year-end.</p>'),
       ],
       isExpanded: true
     },
@@ -9925,9 +10007,9 @@ export const generateSCOTPayrollCycleChecklist = (): Checklist => {
       id: 'section-scot-pay-5',
       title: '5. Payroll Tax & Statutory Compliance',
       questions: [
-        q('scot-pay-q5a', '<p>Are source deduction calculations (CPP, EI, and income tax) reviewed for accuracy, and are calculations reconciled to payroll records?</p>'),
-        q('scot-pay-q5b', '<p>Are source deductions and employer contributions remitted to the CRA on a timely basis to avoid penalties and interest?</p>'),
-        q('scot-pay-q5c', '<p>Are year-end T4/T4A slips prepared and reconciled to payroll records and the general ledger before filing?</p>'),
+        q('scot-pay-q5a', '<p>Are source deduction calculations (CPP, EI, and income tax) reviewed for accuracy, and are calculations reconciled to payroll records?</p>', undefined, 'Yes', '<p>ADP calculates CPP, EI, and income tax deductions; controller reconciles ADP tax summary to CRA remittance amounts quarterly. No discrepancies noted for FY2024.</p>', 'W/P Ref: PY-05'),
+        q('scot-pay-q5b', '<p>Are source deductions and employer contributions remitted to the CRA on a timely basis to avoid penalties and interest?</p>', undefined, 'Yes', '<p>ADP remits source deductions electronically to CRA on the 15th of each month; no late remittances or penalties incurred during FY2024. Remittance confirmations filed.</p>', 'W/P Ref: PY-05'),
+        q('scot-pay-q5c', '<p>Are year-end T4/T4A slips prepared and reconciled to payroll records and the general ledger before filing?</p>', undefined, 'Yes', '<p>T4 slips prepared by ADP and reconciled by controller to payroll GL account and CRA remittances before February 28, 2024 filing deadline. No material discrepancies identified.</p>', 'W/P Ref: PY-05'),
       ],
       isExpanded: true
     },
@@ -9945,19 +10027,19 @@ export const generateSCOTPayrollCycleChecklist = (): Checklist => {
 
 // ─── Accumulation of Identified Misstatements ───────────────────────────────
 export const generateAccumulationOfMisstatementsChecklist = (): Checklist => {
-  const q = (id: string, text: string, subQuestions?: Question[]): Question => ({
+  const q = (id: string, text: string, subQuestions?: Question[], answer = '', explanation = '', reference = ''): Question => ({
     id, text, answerType: 'yes-no-na' as const, options: ['Yes', 'No', 'NA'],
-    required: false, answer: '', ...(subQuestions ? { subQuestions } : {})
+    required: false, answer, explanation, reference, ...(subQuestions ? { subQuestions } : {})
   });
   const sections: Section[] = [
     {
       id: 'section-aim-1',
       title: '1. Factual Misstatements',
       questions: [
-        q('aim-q1a', '<p>Have all factual misstatements (i.e., misstatements about which there is no doubt, such as arithmetic errors or posting errors) been identified and documented?</p>'),
-        q('aim-q1b', '<p>Has management been informed of factual misstatements and given an opportunity to correct them?</p>'),
-        q('aim-q1c', '<p>Have agreed corrections from management been reflected in the financial statements or working papers?</p>'),
-        q('aim-q1d', '<p>Have uncorrected factual misstatements been documented separately for evaluation against materiality?</p>'),
+        q('aim-q1a', '<p>Have all factual misstatements (i.e., misstatements about which there is no doubt, such as arithmetic errors or posting errors) been identified and documented?</p>', undefined, 'Yes', '<p>Three factual misstatements identified: (1) revenue cutoff AJE-001 $45K, (2) depreciation correction AJE-002 $12K, (3) deferred revenue reclassification AJE-003 $28K. All documented in the misstatement summary.</p>', 'W/P Ref: MIS-01'),
+        q('aim-q1b', '<p>Has management been informed of factual misstatements and given an opportunity to correct them?</p>', undefined, 'Yes', '<p>All three AJEs communicated to management during fieldwork (April 14–25, 2024). Management was given the opportunity and agreed to record all corrections in the final financial statements.</p>'),
+        q('aim-q1c', '<p>Have agreed corrections from management been reflected in the financial statements or working papers?</p>', undefined, 'Yes', '<p>All three corrections confirmed as recorded in the final financial statements. Working papers updated to reflect corrected balances.</p>', 'W/P Ref: MIS-01'),
+        q('aim-q1d', '<p>Have uncorrected factual misstatements been documented separately for evaluation against materiality?</p>', undefined, 'NA', '<p>All factual misstatements were corrected by management. No uncorrected factual misstatements remain.</p>'),
       ],
       isExpanded: true
     },
@@ -9965,10 +10047,10 @@ export const generateAccumulationOfMisstatementsChecklist = (): Checklist => {
       id: 'section-aim-2',
       title: '2. Judgmental Misstatements',
       questions: [
-        q('aim-q2a', '<p>Have judgmental misstatements arising from differences in management\'s accounting estimates or policies been identified and documented?</p>'),
-        q('aim-q2b', '<p>Has the auditor formed an independent best estimate (or range) for significant accounting estimates to compare with management\'s estimates?</p>'),
-        q('aim-q2c', '<p>Has the reasonableness of management\'s estimates been assessed, including the assumptions and methods used?</p>'),
-        q('aim-q2d', '<p>Where a range is used to evaluate an estimate, has the auditor ensured management\'s point estimate falls within a reasonable range?</p>'),
+        q('aim-q2a', '<p>Have judgmental misstatements arising from differences in management\'s accounting estimates or policies been identified and documented?</p>', undefined, 'Yes', '<p>No judgmental misstatements identified. Audit team formed independent point estimates for vessel depreciation and allowance for doubtful accounts — both within a reasonable range of management\'s estimates.</p>', 'W/P Ref: MIS-01'),
+        q('aim-q2b', '<p>Has the auditor formed an independent best estimate (or range) for significant accounting estimates to compare with management\'s estimates?</p>', undefined, 'Yes', '<p>Independent estimate developed for vessel depreciation (25-year life vs management 22-year — difference immaterial) and allowance for doubtful accounts ($82K vs management $85K — within acceptable range).</p>', 'W/P Ref: MIS-02'),
+        q('aim-q2c', '<p>Has the reasonableness of management\'s estimates been assessed, including the assumptions and methods used?</p>', undefined, 'Yes', '<p>Management estimates assessed as reasonable. Vessel useful lives corroborated with industry data and appraisal. Allowance for doubtful accounts methodology (90-day aging threshold) assessed as consistent with historical collection patterns.</p>'),
+        q('aim-q2d', '<p>Where a range is used to evaluate an estimate, has the auditor ensured management\'s point estimate falls within a reasonable range?</p>', undefined, 'Yes', '<p>Management\'s point estimate for allowance for doubtful accounts ($85K) falls within the auditor\'s reasonable range of $75K–$100K. No adjustment required.</p>'),
       ],
       isExpanded: true
     },
@@ -9976,10 +10058,10 @@ export const generateAccumulationOfMisstatementsChecklist = (): Checklist => {
       id: 'section-aim-3',
       title: '3. Projected Misstatements',
       questions: [
-        q('aim-q3a', '<p>Have misstatements identified in audit samples been projected to the full population using an appropriate projection method?</p>'),
-        q('aim-q3b', '<p>Has the basis for projection (e.g., proportional, mean per unit) been documented and applied consistently?</p>'),
-        q('aim-q3c', '<p>Has sampling risk been considered when evaluating whether projected misstatements are material?</p>'),
-        q('aim-q3d', '<p>Have projected misstatements been included in the accumulation schedule for comparison against performance materiality?</p>'),
+        q('aim-q3a', '<p>Have misstatements identified in audit samples been projected to the full population using an appropriate projection method?</p>', undefined, 'Yes', '<p>Proportional projection method applied to revenue and expense samples. Projected misstatements: revenue $18K, operating expenses $12K. Total projected $30K.</p>', 'W/P Ref: MIS-03'),
+        q('aim-q3b', '<p>Has the basis for projection (e.g., proportional, mean per unit) been documented and applied consistently?</p>', undefined, 'Yes', '<p>Proportional projection basis documented and applied consistently to all sampled populations. Projection calculations documented in MIS-03.</p>'),
+        q('aim-q3c', '<p>Has sampling risk been considered when evaluating whether projected misstatements are material?</p>', undefined, 'Yes', '<p>Sampling risk considered. Projected misstatements of $30K are well below performance materiality of $87,500 even after considering upward bias due to sampling risk.</p>'),
+        q('aim-q3d', '<p>Have projected misstatements been included in the accumulation schedule for comparison against performance materiality?</p>', undefined, 'Yes', '<p>Projected misstatements included in the misstatement accumulation schedule. Total uncorrected (projected only) = $30K vs. performance materiality $87,500.</p>', 'W/P Ref: MIS-03'),
       ],
       isExpanded: true
     },
@@ -9987,11 +10069,11 @@ export const generateAccumulationOfMisstatementsChecklist = (): Checklist => {
       id: 'section-aim-4',
       title: '4. Evaluation of Uncorrected Misstatements',
       questions: [
-        q('aim-q4a', '<p>Has the aggregate of uncorrected misstatements (factual, judgmental, and projected) been compared to performance materiality?</p>'),
-        q('aim-q4b', '<p>Have qualitative factors been considered in evaluating the significance of uncorrected misstatements (e.g., misstatements that affect compliance with covenants, trends, or key ratios)?</p>'),
-        q('aim-q4c', '<p>Has the impact of prior period uncorrected misstatements been considered using the appropriate method (iron curtain or rollover)?</p>'),
-        q('aim-q4d', '<p>Has the auditor concluded whether uncorrected misstatements, individually or in aggregate, are material to the financial statements?</p>'),
-        q('aim-q4e', '<p>If aggregate uncorrected misstatements approach performance materiality, has the auditor considered whether additional procedures are needed?</p>'),
+        q('aim-q4a', '<p>Has the aggregate of uncorrected misstatements (factual, judgmental, and projected) been compared to performance materiality?</p>', undefined, 'Yes', '<p>Aggregate: factual uncorrected $0 (all corrected), judgmental $0 (estimates within range), projected $30K. Total $30K < performance materiality $87,500. Concluded as not material.</p>', 'W/P Ref: MIS-04'),
+        q('aim-q4b', '<p>Have qualitative factors been considered in evaluating the significance of uncorrected misstatements (e.g., misstatements that affect compliance with covenants, trends, or key ratios)?</p>', undefined, 'Yes', '<p>Qualitative factors assessed. Projected misstatements of $30K do not affect any key ratios, debt covenants, or other sensitive metrics. No qualitative factors elevate significance beyond quantitative assessment.</p>'),
+        q('aim-q4c', '<p>Has the impact of prior period uncorrected misstatements been considered using the appropriate method (iron curtain or rollover)?</p>', undefined, 'Yes', '<p>No uncorrected misstatements from prior year carried forward. Iron curtain and rollover methods produce same result ($0 prior year impact).</p>'),
+        q('aim-q4d', '<p>Has the auditor concluded whether uncorrected misstatements, individually or in aggregate, are material to the financial statements?</p>', undefined, 'Yes', '<p>Concluded that uncorrected projected misstatements of $30K are not material to the March 31, 2024 financial statements, individually or in aggregate. Opinion is unmodified.</p>', 'W/P Ref: MIS-04'),
+        q('aim-q4e', '<p>If aggregate uncorrected misstatements approach performance materiality, has the auditor considered whether additional procedures are needed?</p>', undefined, 'NA', '<p>Aggregate uncorrected misstatements of $30K represent 34% of performance materiality — do not approach the threshold. No additional procedures required.</p>'),
       ],
       isExpanded: true
     },
@@ -9999,9 +10081,9 @@ export const generateAccumulationOfMisstatementsChecklist = (): Checklist => {
       id: 'section-aim-5',
       title: '5. Communication to Management & TCWG',
       questions: [
-        q('aim-q5a', '<p>Have all identified misstatements (corrected and uncorrected) been communicated to management on a timely basis?</p>'),
-        q('aim-q5b', '<p>Has management\'s response to each uncorrected misstatement been documented, including the reasons management has given for not correcting?</p>'),
-        q('aim-q5c', '<p>Has written representation been obtained from management acknowledging that uncorrected misstatements are not material (individually or in aggregate) to the financial statements?</p>'),
+        q('aim-q5a', '<p>Have all identified misstatements (corrected and uncorrected) been communicated to management on a timely basis?</p>', undefined, 'Yes', '<p>All three AJEs communicated to management during fieldwork. Projected misstatements communicated at conclusion of fieldwork on April 25, 2024. Timely communication maintained throughout the audit.</p>'),
+        q('aim-q5b', '<p>Has management\'s response to each uncorrected misstatement been documented, including the reasons management has given for not correcting?</p>', undefined, 'Yes', '<p>Management advised that projected misstatements of $30K are not cost-effective to specifically identify and correct, and are immaterial. Response documented in MIS-04.</p>', 'W/P Ref: MIS-04'),
+        q('aim-q5c', '<p>Has written representation been obtained from management acknowledging that uncorrected misstatements are not material (individually or in aggregate) to the financial statements?</p>', undefined, 'Yes', '<p>Written representation obtained in the management representation letter, paragraph 8, confirming that uncorrected misstatements are immaterial individually and in aggregate. Signed April 25, 2024.</p>', 'W/P Ref: MRL-01'),
       ],
       isExpanded: true
     },
@@ -10019,19 +10101,19 @@ export const generateAccumulationOfMisstatementsChecklist = (): Checklist => {
 
 // ─── Final Analytical Review ────────────────────────────────────────────────
 export const generateFinalAnalyticalReviewChecklist = (): Checklist => {
-  const q = (id: string, text: string, subQuestions?: Question[]): Question => ({
+  const q = (id: string, text: string, subQuestions?: Question[], answer = '', explanation = '', reference = ''): Question => ({
     id, text, answerType: 'yes-no-na' as const, options: ['Yes', 'No', 'NA'],
-    required: false, answer: '', ...(subQuestions ? { subQuestions } : {})
+    required: false, answer, explanation, reference, ...(subQuestions ? { subQuestions } : {})
   });
   const sections: Section[] = [
     {
       id: 'section-far-1',
       title: '1. Overall Financial Statement Review',
       questions: [
-        q('far-q1a', '<p>Has the auditor compared the current year financial statements to the prior year financial statements and identified unusual or unexpected changes?</p>'),
-        q('far-q1b', '<p>Have all unusual or unexpected relationships identified in the overall review been investigated and explained to the auditor\'s satisfaction?</p>'),
-        q('far-q1c', '<p>Are the overall financial statements consistent with the auditor\'s knowledge of the entity and its environment?</p>'),
-        q('far-q1d', '<p>Have significant changes from interim financial statements to year-end been identified and explained?</p>'),
+        q('far-q1a', '<p>Has the auditor compared the current year financial statements to the prior year financial statements and identified unusual or unexpected changes?</p>', undefined, 'Yes', '<p>Current year financial statements compared to prior year. Key changes identified: revenue increase of $840K (7.2%), gross margin improvement of 0.8%, long-term debt reduction of $450K. All changes investigated.</p>', 'W/P Ref: FAR-01'),
+        q('far-q1b', '<p>Have all unusual or unexpected relationships identified in the overall review been investigated and explained to the auditor\'s satisfaction?</p>', undefined, 'Yes', '<p>Revenue increase explained by three new freight contracts in Q4 2024 ($120K) and general freight rate improvement in Atlantic Canada routes ($720K). Explanations corroborated with contract documentation and rate schedules.</p>', 'W/P Ref: FAR-02'),
+        q('far-q1c', '<p>Are the overall financial statements consistent with the auditor\'s knowledge of the entity and its environment?</p>', undefined, 'Yes', '<p>Financial statements are consistent with the auditor\'s understanding of Shipping Line Inc.\'s operations, the maritime freight industry conditions for fiscal 2024, and the entity\'s growth trajectory.</p>'),
+        q('far-q1d', '<p>Have significant changes from interim financial statements to year-end been identified and explained?</p>', undefined, 'Yes', '<p>Q3 to year-end changes identified: Revenue increased $2.1M in Q4 (seasonal freight peak). Three revenue AJEs recorded at year-end. All changes explained and consistent with operations.</p>'),
       ],
       isExpanded: true
     },
@@ -10039,11 +10121,11 @@ export const generateFinalAnalyticalReviewChecklist = (): Checklist => {
       id: 'section-far-2',
       title: '2. Income Statement Analytics',
       questions: [
-        q('far-q2a', '<p>Has the auditor analyzed revenue trends and obtained explanations for significant fluctuations compared to prior year and budget?</p>'),
-        q('far-q2b', '<p>Has the gross margin percentage been compared to prior year and budget, with significant variances investigated?</p>'),
-        q('far-q2c', '<p>Have significant expense fluctuations (e.g., unusual increases or decreases in operating expenses) been investigated and explained?</p>'),
-        q('far-q2d', '<p>Are interest and financing costs consistent with the entity\'s debt level and applicable interest rates?</p>'),
-        q('far-q2e', '<p>Is the income tax provision (current and deferred) consistent with the pre-tax income and applicable tax rates?</p>'),
+        q('far-q2a', '<p>Has the auditor analyzed revenue trends and obtained explanations for significant fluctuations compared to prior year and budget?</p>', undefined, 'Yes', '<p>Revenue of $12.5M (prior year $11.66M, budget $12.2M). $300K favorable to budget explained by stronger Q4 freight rates. Revenue trend consistent with maritime industry recovery in fiscal 2024.</p>', 'W/P Ref: FAR-03'),
+        q('far-q2b', '<p>Has the gross margin percentage been compared to prior year and budget, with significant variances investigated?</p>', undefined, 'Yes', '<p>Gross margin of 32.1% (prior year 31.3%, budget 31.5%). Improvement of 0.8pp from prior year explained by higher freight rates partially offset by increased fuel costs. Margin improvement assessed as reasonable.</p>', 'W/P Ref: FAR-03'),
+        q('far-q2c', '<p>Have significant expense fluctuations (e.g., unusual increases or decreases in operating expenses) been investigated and explained?</p>', undefined, 'Yes', '<p>Fuel expenses increased $320K (18%) consistent with higher voyage activity and moderate fuel price increases. Crew costs increased $190K (8%) consistent with wage increases and higher voyage count. No unusual expense fluctuations.</p>'),
+        q('far-q2d', '<p>Are interest and financing costs consistent with the entity\'s debt level and applicable interest rates?</p>', undefined, 'Yes', '<p>Interest expense of $248K consistent with average long-term debt balance of $5.05M at an average rate of approximately 4.9%. Recalculated and agreed to loan agreements.</p>', 'W/P Ref: FAR-04'),
+        q('far-q2e', '<p>Is the income tax provision (current and deferred) consistent with the pre-tax income and applicable tax rates?</p>', undefined, 'Yes', '<p>Income tax provision of $412K consistent with pre-tax income of $1.26M at effective rate of 32.7% (combined federal/provincial rate for maritime freight company). Reviewed and agreed.</p>'),
       ],
       isExpanded: true
     },
@@ -10051,11 +10133,11 @@ export const generateFinalAnalyticalReviewChecklist = (): Checklist => {
       id: 'section-far-3',
       title: '3. Balance Sheet Analytics',
       questions: [
-        q('far-q3a', '<p>Are changes in working capital (accounts receivable, inventory, accounts payable) reasonable given the entity\'s operating activity?</p>'),
-        q('far-q3b', '<p>Have significant changes in asset balances (capital additions, disposals, impairments) been investigated and explained?</p>'),
-        q('far-q3c', '<p>Are debt levels and terms consistent with loan agreements and debt covenants reviewed during the audit?</p>'),
-        q('far-q3d', '<p>Do changes in equity accounts (net income, distributions, share issuances) reconcile with the statement of changes in equity?</p>'),
-        q('far-q3e', '<p>Have related party balances been identified, appropriately disclosed, and are the amounts consistent with documented transactions?</p>'),
+        q('far-q3a', '<p>Are changes in working capital (accounts receivable, inventory, accounts payable) reasonable given the entity\'s operating activity?</p>', undefined, 'Yes', '<p>AR increase of $185K consistent with revenue growth. DSO of 61 days (prior year 59 days) — reasonable for maritime freight. AP increase of $95K consistent with increased operating activity. Working capital changes assessed as reasonable.</p>', 'W/P Ref: FAR-05'),
+        q('far-q3b', '<p>Have significant changes in asset balances (capital additions, disposals, impairments) been investigated and explained?</p>', undefined, 'Yes', '<p>Capital additions of $650K: $465K dry-dock improvements (two vessels), $185K capitalized. Net decrease in vessel net book value of $820K due to depreciation of $1.47M offset by additions of $650K. No impairments identified.</p>', 'W/P Ref: FAR-05'),
+        q('far-q3c', '<p>Are debt levels and terms consistent with loan agreements and debt covenants reviewed during the audit?</p>', undefined, 'Yes', '<p>Long-term debt of $4.8M consistent with opening balance of $5.25M less $450K repayments. Terms agree to loan agreements reviewed. Debt covenants (debt service coverage, working capital ratio) confirmed as met at March 31, 2024.</p>', 'W/P Ref: FAR-05'),
+        q('far-q3d', '<p>Do changes in equity accounts (net income, distributions, share issuances) reconcile with the statement of changes in equity?</p>', undefined, 'Yes', '<p>Equity roll-forward confirmed: opening $4.82M + net income $847K - dividends $250K = closing $5.42M. Agreed to statement of changes in equity. No unexplained changes.</p>'),
+        q('far-q3e', '<p>Have related party balances been identified, appropriately disclosed, and are the amounts consistent with documented transactions?</p>', undefined, 'Yes', '<p>Related party balances (management fee payable $15K, charter payable $35K) confirmed as consistent with documented transactions and appropriately disclosed in Note 12.</p>', 'W/P Ref: RPT-02'),
       ],
       isExpanded: true
     },
@@ -10063,10 +10145,10 @@ export const generateFinalAnalyticalReviewChecklist = (): Checklist => {
       id: 'section-far-4',
       title: '4. Ratio Analysis',
       questions: [
-        q('far-q4a', '<p>Are the current ratio and quick ratio reasonable and consistent with prior periods and industry norms?</p>'),
-        q('far-q4b', '<p>Is the debt-to-equity ratio within any applicable covenant limits and consistent with the entity\'s financing strategy?</p>'),
-        q('far-q4c', '<p>Are days sales outstanding (DSO) and inventory turnover consistent with industry norms and prior periods?</p>'),
-        q('far-q4d', '<p>Are return on assets and return on equity consistent with prior periods and the entity\'s performance expectations?</p>'),
+        q('far-q4a', '<p>Are the current ratio and quick ratio reasonable and consistent with prior periods and industry norms?</p>', undefined, 'Yes', '<p>Current ratio of 1.85 (prior year 1.72) and quick ratio of 1.48 (prior year 1.38) — both above 1.0 and consistent with positive trend. Adequate liquidity for maritime freight operations.</p>', 'W/P Ref: FAR-06'),
+        q('far-q4b', '<p>Is the debt-to-equity ratio within any applicable covenant limits and consistent with the entity\'s financing strategy?</p>', undefined, 'Yes', '<p>Debt-to-equity ratio of 0.89:1 (prior year 1.09:1). Covenant maximum is 2.0:1 — significantly within limit. Reduction reflects strong earnings and debt repayments during fiscal 2024.</p>'),
+        q('far-q4c', '<p>Are days sales outstanding (DSO) and inventory turnover consistent with industry norms and prior periods?</p>', undefined, 'Yes', '<p>DSO of 61 days is consistent with prior year (59 days) and industry norms for maritime freight (typically 45–75 days). Fuel and supplies inventory turnover consistent with voyage frequency.</p>'),
+        q('far-q4d', '<p>Are return on assets and return on equity consistent with prior periods and the entity\'s performance expectations?</p>', undefined, 'Yes', '<p>ROA of 4.7% (prior year 3.9%) and ROE of 16.6% (prior year 14.2%) — both improved from prior year reflecting stronger freight rates and operating leverage. Consistent with performance expectations.</p>'),
       ],
       isExpanded: true
     },
@@ -10074,9 +10156,9 @@ export const generateFinalAnalyticalReviewChecklist = (): Checklist => {
       id: 'section-far-5',
       title: '5. Overall Conclusion',
       questions: [
-        q('far-q5a', '<p>Have all significant fluctuations and unexpected relationships identified during final analytical procedures been investigated and adequately explained?</p>'),
-        q('far-q5b', '<p>Have the final analytical procedures identified any new risks of material misstatement not previously identified, and if so, have additional procedures been performed?</p>'),
-        q('far-q5c', '<p>Overall, are the financial statements consistent with the auditor\'s understanding of the entity and its environment, and do they present fairly in all material respects?</p>'),
+        q('far-q5a', '<p>Have all significant fluctuations and unexpected relationships identified during final analytical procedures been investigated and adequately explained?</p>', undefined, 'Yes', '<p>All significant fluctuations investigated and explained. Revenue increase (new contracts + rate improvement), margin improvement (rate vs. cost mix), debt reduction (scheduled repayments) — all corroborated with evidence.</p>', 'W/P Ref: FAR-07'),
+        q('far-q5b', '<p>Have the final analytical procedures identified any new risks of material misstatement not previously identified, and if so, have additional procedures been performed?</p>', undefined, 'No', '<p>No new risks of material misstatement identified during final analytical procedures. All fluctuations explained without requiring additional procedures.</p>'),
+        q('far-q5c', '<p>Overall, are the financial statements consistent with the auditor\'s understanding of the entity and its environment, and do they present fairly in all material respects?</p>', undefined, 'Yes', '<p>Final analytical review confirms the financial statements are consistent with the auditor\'s understanding of Shipping Line Inc., its maritime freight operations, and the economic environment for fiscal 2024. Unmodified opinion supported.</p>', 'W/P Ref: FAR-07'),
       ],
       isExpanded: true
     },
@@ -10094,12 +10176,12 @@ export const generateFinalAnalyticalReviewChecklist = (): Checklist => {
 
 // Going Concern — Initial Assessment (Risk Assessment phase, CAS 570)
 export const generateGoingConcernInitialAssessmentChecklist = (): Checklist => {
-  const q = (id: string, text: string, sub?: Question[]): Question => ({
+  const q = (id: string, text: string, sub?: Question[], answer = '', explanation = '', reference = ''): Question => ({
     id, text, answerType: 'yes-no-na' as const, options: ['Yes', 'No', 'NA'],
-    required: false, answer: '', ...(sub ? { subQuestions: sub } : {})
+    required: false, answer, explanation, reference, ...(sub ? { subQuestions: sub } : {})
   });
-  const la = (id: string, text: string): Question => ({
-    id, text, answerType: 'long-answer' as const, options: [], required: false, answer: ''
+  const la = (id: string, text: string, answer = ''): Question => ({
+    id, text, answerType: 'long-answer' as const, options: [], required: false, answer
   });
 
   const sections: Section[] = [
@@ -10108,33 +10190,33 @@ export const generateGoingConcernInitialAssessmentChecklist = (): Checklist => {
       title: '1. Identification of Adverse Events and Conditions',
       questions: [
         q('gc-init-1a', '<p><strong>Financial indicators:</strong></p>', [
-          q('gc-init-1a-i', '<p>Net liability or net current liability position.</p>'),
-          q('gc-init-1a-ii', '<p>Fixed-term borrowings approaching maturity without realistic prospects of renewal or repayment, or excessive reliance on short-term borrowings to finance long-term assets.</p>'),
-          q('gc-init-1a-iii', '<p>Indications of withdrawal of financial support by creditors.</p>'),
-          q('gc-init-1a-iv', '<p>Negative operating cash flows indicated by historical or prospective financial statements.</p>'),
-          q('gc-init-1a-v', '<p>Adverse key financial ratios.</p>'),
-          q('gc-init-1a-vi', '<p>Substantial operating losses or significant deterioration in the value of assets used to generate cash flows.</p>'),
-          q('gc-init-1a-vii', '<p>Arrears or discontinuance of dividends.</p>'),
-          q('gc-init-1a-viii', '<p>Inability to pay creditors on due dates.</p>'),
-          q('gc-init-1a-ix', '<p>Inability to comply with the terms of loan agreements.</p>'),
-          q('gc-init-1a-x', '<p>Change from credit to cash-on-delivery transactions with suppliers.</p>'),
-          q('gc-init-1a-xi', '<p>Inability to obtain financing for essential new product development or other essential investments.</p>'),
+          q('gc-init-1a-i', '<p>Net liability or net current liability position.</p>', undefined, 'No', '<p>Shipping Line Inc. has a positive net asset position; total assets of $18.2M exceed total liabilities of $7.1M. Current assets of $3.4M exceed current liabilities of $2.1M.</p>'),
+          q('gc-init-1a-ii', '<p>Fixed-term borrowings approaching maturity without realistic prospects of renewal or repayment, or excessive reliance on short-term borrowings to finance long-term assets.</p>', undefined, 'No', '<p>Long-term debt of $4.8M matures in 2027; management has confirmed the credit facility is in good standing and renewal discussions are not yet required.</p>'),
+          q('gc-init-1a-iii', '<p>Indications of withdrawal of financial support by creditors.</p>', undefined, 'No'),
+          q('gc-init-1a-iv', '<p>Negative operating cash flows indicated by historical or prospective financial statements.</p>', undefined, 'No', '<p>Operating cash flows were positive at approximately $1.4M for FY2024; FY2025 budget projects continued positive operating cash flows.</p>'),
+          q('gc-init-1a-v', '<p>Adverse key financial ratios.</p>', undefined, 'No', '<p>Key ratios assessed: current ratio 1.6x, debt-to-equity 0.64x, interest coverage 4.2x — all within acceptable ranges for the marine shipping industry.</p>'),
+          q('gc-init-1a-vi', '<p>Substantial operating losses or significant deterioration in the value of assets used to generate cash flows.</p>', undefined, 'No', '<p>Net income of $847K recorded for FY2024; no vessel impairment indicators identified during the risk assessment phase.</p>'),
+          q('gc-init-1a-vii', '<p>Arrears or discontinuance of dividends.</p>', undefined, 'NA', '<p>Not applicable — entity does not pay dividends; retained earnings reinvested in vessel operations.</p>'),
+          q('gc-init-1a-viii', '<p>Inability to pay creditors on due dates.</p>', undefined, 'No', '<p>AP aging reviewed; no past-due amounts identified and suppliers confirmed payment on normal terms during management inquiries.</p>'),
+          q('gc-init-1a-ix', '<p>Inability to comply with the terms of loan agreements.</p>', undefined, 'No', '<p>Debt covenants reviewed; entity is in compliance with all loan agreement terms. DSCR of 2.1x exceeds minimum covenant of 1.25x.</p>'),
+          q('gc-init-1a-x', '<p>Change from credit to cash-on-delivery transactions with suppliers.</p>', undefined, 'No'),
+          q('gc-init-1a-xi', '<p>Inability to obtain financing for essential new product development or other essential investments.</p>', undefined, 'No', '<p>Operating credit facility renewed in November 2023 at existing terms; management has no immediate capital financing requirements beyond existing facilities.</p>'),
         ]),
         q('gc-init-1b', '<p><strong>Operating indicators:</strong></p>', [
-          q('gc-init-1b-i', '<p>Management intentions to liquidate the entity or to cease operations.</p>'),
-          q('gc-init-1b-ii', '<p>Loss of key management without replacement.</p>'),
-          q('gc-init-1b-iii', '<p>Loss of a major market, key customer(s), franchise, license, or principal supplier(s).</p>'),
-          q('gc-init-1b-iv', '<p>Labour difficulties.</p>'),
-          q('gc-init-1b-v', '<p>Shortages of important supplies.</p>'),
-          q('gc-init-1b-vi', '<p>Emergence of a highly successful competitor.</p>'),
+          q('gc-init-1b-i', '<p>Management intentions to liquidate the entity or to cease operations.</p>', undefined, 'No', '<p>No indications of management intentions to liquidate or cease operations; FY2025 budget prepared and approved by board in March 2024.</p>'),
+          q('gc-init-1b-ii', '<p>Loss of key management without replacement.</p>', undefined, 'No', '<p>Senior management team stable; CEO and CFO both in position for more than five years with no planned departures.</p>'),
+          q('gc-init-1b-iii', '<p>Loss of a major market, key customer(s), franchise, license, or principal supplier(s).</p>', undefined, 'No', '<p>Three major freight customers account for approximately 68% of revenue; all contracts renewed for FY2025. No customer losses identified during planning.</p>'),
+          q('gc-init-1b-iv', '<p>Labour difficulties.</p>', undefined, 'No', '<p>No labour disputes or union actions during the year; collective agreement renewed in January 2024 for a three-year term.</p>'),
+          q('gc-init-1b-v', '<p>Shortages of important supplies.</p>', undefined, 'No', '<p>Fuel supply contracts in place with two major suppliers; no supply shortages or disruptions noted during the year.</p>'),
+          q('gc-init-1b-vi', '<p>Emergence of a highly successful competitor.</p>', undefined, 'No', '<p>Competitive landscape reviewed; no new competitors identified as posing a material threat to Shipping Line Inc.\'s market position in its operating routes.</p>'),
         ]),
         q('gc-init-1c', '<p><strong>Other indicators:</strong></p>', [
-          q('gc-init-1c-i', '<p>Non-compliance with capital or other statutory requirements.</p>'),
-          q('gc-init-1c-ii', '<p>Pending legal or regulatory proceedings against the entity that may, if successful, result in claims that the entity is unlikely to be able to satisfy.</p>'),
-          q('gc-init-1c-iii', '<p>Changes in law or regulation or government policy expected to adversely affect the entity.</p>'),
-          q('gc-init-1c-iv', '<p>Uninsured or underinsured catastrophes when they occur.</p>'),
+          q('gc-init-1c-i', '<p>Non-compliance with capital or other statutory requirements.</p>', undefined, 'No', '<p>Transport Canada vessel safety certificates current; no statutory compliance issues identified during the year.</p>'),
+          q('gc-init-1c-ii', '<p>Pending legal or regulatory proceedings against the entity that may, if successful, result in claims that the entity is unlikely to be able to satisfy.</p>', undefined, 'No', '<p>Management and legal counsel confirmed no pending legal proceedings against the entity as of April 2024.</p>'),
+          q('gc-init-1c-iii', '<p>Changes in law or regulation or government policy expected to adversely affect the entity.</p>', undefined, 'No', '<p>New port authority reporting requirements noted but do not have a material financial impact. No other adverse regulatory changes anticipated.</p>'),
+          q('gc-init-1c-iv', '<p>Uninsured or underinsured catastrophes when they occur.</p>', undefined, 'No', '<p>Insurance coverage reviewed; all three vessels fully insured for hull and machinery, protection and indemnity. Coverage assessed as adequate relative to asset values.</p>'),
         ]),
-        la('gc-init-1-notes', '<p><strong>Notes — describe any adverse events or conditions identified above:</strong></p>'),
+        la('gc-init-1-notes', '<p><strong>Notes — describe any adverse events or conditions identified above:</strong></p>', 'No adverse events or conditions were identified during the going concern initial assessment for Shipping Line Inc. (year-end March 31, 2024). The entity is financially sound with positive operating cash flows, adequate liquidity, and compliance with all debt covenants. No indicators of going concern issues were identified from financial, operating, or other perspectives.'),
       ],
       isExpanded: true
     },
@@ -10142,10 +10224,10 @@ export const generateGoingConcernInitialAssessmentChecklist = (): Checklist => {
       id: 'gc-init-s2',
       title: '2. Inquiry of Management',
       questions: [
-        q('gc-init-2a', '<p>Have you inquired of management whether they are aware of events or conditions beyond the period of management\'s assessment that may cast significant doubt on the entity\'s ability to continue as a going concern? (CAS 570.17)</p>'),
-        q('gc-init-2b', '<p>Has management performed a going concern assessment for the current period? If so, obtain and review it.</p>'),
-        q('gc-init-2c', '<p>Does management\'s assessment cover a period of at least 12 months from the expected date of the auditor\'s report? (CAS 570.13)</p>'),
-        la('gc-init-2-notes', '<p><strong>Notes — summarize management\'s assessment and conclusions:</strong></p>'),
+        q('gc-init-2a', '<p>Have you inquired of management whether they are aware of events or conditions beyond the period of management\'s assessment that may cast significant doubt on the entity\'s ability to continue as a going concern? (CAS 570.17)</p>', undefined, 'Yes', '<p>CFO and CEO both confirmed no awareness of events or conditions that may cast significant doubt on the entity\'s ability to continue as a going concern for at least 12 months from the date of the auditor\'s report.</p>', 'W/P Ref: GC-01'),
+        q('gc-init-2b', '<p>Has management performed a going concern assessment for the current period? If so, obtain and review it.</p>', undefined, 'Yes', '<p>Management prepared a going concern assessment letter confirming the going concern basis is appropriate for at least 12 months from the auditor\'s report date; reviewed and filed at GC-02.</p>', 'W/P Ref: GC-02'),
+        q('gc-init-2c', '<p>Does management\'s assessment cover a period of at least 12 months from the expected date of the auditor\'s report? (CAS 570.13)</p>', undefined, 'Yes', '<p>Management\'s assessment covers the period to June 30, 2025 (14 months from the expected auditor\'s report date of April 30, 2024), satisfying the CAS 570.13 requirement.</p>', 'W/P Ref: GC-02'),
+        la('gc-init-2-notes', '<p><strong>Notes — summarize management\'s assessment and conclusions:</strong></p>', 'Management\'s going concern assessment concluded that Shipping Line Inc. will continue as a going concern for at least 12 months from the auditor\'s report date. The assessment noted: (1) positive operating cash flows of $1.4M in FY2024; (2) an approved FY2025 budget projecting continued profitability; (3) the operating credit facility renewed until November 2026; and (4) full compliance with all debt covenants. The auditor concurs with management\'s assessment.'),
       ],
       isExpanded: true
     },
@@ -10153,9 +10235,9 @@ export const generateGoingConcernInitialAssessmentChecklist = (): Checklist => {
       id: 'gc-init-s3',
       title: '3. Preliminary Conclusion',
       questions: [
-        q('gc-init-3a', '<p>Based on the above, does significant doubt exist about the entity\'s ability to continue as a going concern?</p>'),
-        q('gc-init-3b', '<p>If significant doubt exists, have additional audit procedures been planned to evaluate management\'s response (to be performed and documented in the Going Concern — Final Assessment form)?</p>'),
-        la('gc-init-3-notes', '<p><strong>Preliminary conclusion and planned additional procedures:</strong></p>'),
+        q('gc-init-3a', '<p>Based on the above, does significant doubt exist about the entity\'s ability to continue as a going concern?</p>', undefined, 'No', '<p>No significant doubt exists. All financial, operating, and other indicators reviewed are positive; no adverse events or conditions were identified during the initial assessment.</p>', 'W/P Ref: GC-03'),
+        q('gc-init-3b', '<p>If significant doubt exists, have additional audit procedures been planned to evaluate management\'s response (to be performed and documented in the Going Concern — Final Assessment form)?</p>', undefined, 'NA', '<p>Not applicable — no significant doubt identified; additional going concern procedures are not required beyond standard completion procedures.</p>'),
+        la('gc-init-3-notes', '<p><strong>Preliminary conclusion and planned additional procedures:</strong></p>', 'Preliminary conclusion: Going concern basis of accounting is appropriate for Shipping Line Inc. for the year ended March 31, 2024. No significant doubt indicators identified. No additional going concern procedures required beyond the standard confirmation of no subsequent events affecting this conclusion at the completion stage.'),
       ],
       isExpanded: true
     },
@@ -10174,12 +10256,12 @@ export const generateGoingConcernInitialAssessmentChecklist = (): Checklist => {
 
 // Going Concern — Final Assessment (Completion phase, CAS 570)
 export const generateGoingConcernFinalAssessmentChecklist = (): Checklist => {
-  const q = (id: string, text: string, sub?: Question[]): Question => ({
+  const q = (id: string, text: string, sub?: Question[], answer = '', explanation = '', reference = ''): Question => ({
     id, text, answerType: 'yes-no-na' as const, options: ['Yes', 'No', 'NA'],
-    required: false, answer: '', ...(sub ? { subQuestions: sub } : {})
+    required: false, answer, explanation, reference, ...(sub ? { subQuestions: sub } : {})
   });
-  const la = (id: string, text: string): Question => ({
-    id, text, answerType: 'long-answer' as const, options: [], required: false, answer: ''
+  const la = (id: string, text: string, answer = ''): Question => ({
+    id, text, answerType: 'long-answer' as const, options: [], required: false, answer
   });
 
   const sections: Section[] = [
@@ -10187,8 +10269,8 @@ export const generateGoingConcernFinalAssessmentChecklist = (): Checklist => {
       id: 'gc-final-s1',
       title: '1. Summary of Events and Conditions Identified',
       questions: [
-        q('gc-final-1a', '<p>Have all adverse events and conditions identified during the audit (including those in the initial going concern assessment) been summarized and considered in this final assessment?</p>'),
-        la('gc-final-1-notes', '<p><strong>Summarize all adverse events and conditions identified during the audit:</strong></p>'),
+        q('gc-final-1a', '<p>Have all adverse events and conditions identified during the audit (including those in the initial going concern assessment) been summarized and considered in this final assessment?</p>', undefined, 'Yes', '<p>No adverse events or conditions were identified during the initial or final going concern assessment for Shipping Line Inc. The entity has positive net income ($847K), adequate working capital (current ratio 1.85:1), and no signs of financial distress.</p>', 'W/P Ref: GC-01'),
+        la('gc-final-1-notes', '<p><strong>Summarize all adverse events and conditions identified during the audit:</strong></p>', 'No adverse events or conditions were identified during the audit of Shipping Line Inc. for the year ended March 31, 2024. The entity is financially stable with positive net income, adequate working capital, no covenant breaches, and no indicators of financial distress.'),
       ],
       isExpanded: true
     },
@@ -10196,27 +10278,27 @@ export const generateGoingConcernFinalAssessmentChecklist = (): Checklist => {
       id: 'gc-final-s2',
       title: '2. Evaluation of Management\'s Plans',
       questions: [
-        q('gc-final-2a', '<p>Has management prepared a detailed action plan? Obtain and document a copy.</p>'),
+        q('gc-final-2a', '<p>Has management prepared a detailed action plan? Obtain and document a copy.</p>', undefined, 'NA', '<p>No adverse going concern events identified. Management action plan not required.</p>'),
         q('gc-final-2b', '<p><strong>Management plans to dispose of assets:</strong></p>', [
-          q('gc-final-2b-i', '<p>Are there restrictions on the entity\'s ability to sell the assets?</p>'),
-          q('gc-final-2b-ii', '<p>Has the effect of planned disposal on remaining operations been assessed?</p>'),
-          q('gc-final-2b-iii', '<p>Are cash flow reports or forecasts available and reviewed?</p>'),
+          q('gc-final-2b-i', '<p>Are there restrictions on the entity\'s ability to sell the assets?</p>', undefined, 'NA'),
+          q('gc-final-2b-ii', '<p>Has the effect of planned disposal on remaining operations been assessed?</p>', undefined, 'NA'),
+          q('gc-final-2b-iii', '<p>Are cash flow reports or forecasts available and reviewed?</p>', undefined, 'NA'),
         ]),
         q('gc-final-2c', '<p><strong>Management plans to borrow money or restructure debt:</strong></p>', [
-          q('gc-final-2c-i', '<p>Has the availability of debt financing and capacity to borrow been assessed?</p>'),
-          q('gc-final-2c-ii', '<p>Does the entity have sufficient collateral to obtain new financing?</p>'),
-          q('gc-final-2c-iii', '<p>Has the impact of new financing on operations and cash flows been assessed?</p>'),
+          q('gc-final-2c-i', '<p>Has the availability of debt financing and capacity to borrow been assessed?</p>', undefined, 'NA'),
+          q('gc-final-2c-ii', '<p>Does the entity have sufficient collateral to obtain new financing?</p>', undefined, 'NA'),
+          q('gc-final-2c-iii', '<p>Has the impact of new financing on operations and cash flows been assessed?</p>', undefined, 'NA'),
         ]),
         q('gc-final-2d', '<p><strong>Management plans to reduce or delay expenditures:</strong></p>', [
-          q('gc-final-2d-i', '<p>Has the feasibility of proposed cost reductions been reviewed?</p>'),
-          q('gc-final-2d-ii', '<p>Has the impact of cost reductions on ongoing operations been assessed?</p>'),
+          q('gc-final-2d-i', '<p>Has the feasibility of proposed cost reductions been reviewed?</p>', undefined, 'NA'),
+          q('gc-final-2d-ii', '<p>Has the impact of cost reductions on ongoing operations been assessed?</p>', undefined, 'NA'),
         ]),
         q('gc-final-2e', '<p><strong>Management plans to obtain additional capital contributions:</strong></p>', [
-          q('gc-final-2e-i', '<p>Has the likelihood of obtaining new financing within required time frames been reviewed?</p>'),
-          q('gc-final-2e-ii', '<p>Has the effect on existing shareholders been assessed?</p>'),
+          q('gc-final-2e-i', '<p>Has the likelihood of obtaining new financing within required time frames been reviewed?</p>', undefined, 'NA'),
+          q('gc-final-2e-ii', '<p>Has the effect on existing shareholders been assessed?</p>', undefined, 'NA'),
         ]),
-        q('gc-final-2f', '<p>Where management has prepared a cash flow or earnings forecast, has it been evaluated for consistency with other known information about the entity and for reasonableness of assumptions?</p>'),
-        la('gc-final-2-notes', '<p><strong>Notes — evaluation of management\'s plans:</strong></p>'),
+        q('gc-final-2f', '<p>Where management has prepared a cash flow or earnings forecast, has it been evaluated for consistency with other known information about the entity and for reasonableness of assumptions?</p>', undefined, 'NA', '<p>Management did not prepare a specific going concern forecast as no adverse conditions were identified. Regular management budgets reviewed during the audit are consistent with continued profitability.</p>'),
+        la('gc-final-2-notes', '<p><strong>Notes — evaluation of management\'s plans:</strong></p>', 'No management mitigation plans required as no going concern risks were identified. Management is executing its standard business plan for fiscal 2025 including two new vessel charter contracts and continued scheduled debt repayments.'),
       ],
       isExpanded: true
     },
@@ -10224,9 +10306,9 @@ export const generateGoingConcernFinalAssessmentChecklist = (): Checklist => {
       id: 'gc-final-s3',
       title: '3. Additional Audit Procedures',
       questions: [
-        q('gc-final-3a', '<p>Has sufficient appropriate audit evidence been obtained to evaluate management\'s going concern assessment and their plans to mitigate identified risks? (CAS 570.16–19)</p>'),
-        q('gc-final-3b', '<p>Have any subsequent events that are relevant to the going concern assessment been considered? (CAS 570.24)</p>'),
-        la('gc-final-3-notes', '<p><strong>Notes — additional procedures performed and evidence obtained:</strong></p>'),
+        q('gc-final-3a', '<p>Has sufficient appropriate audit evidence been obtained to evaluate management\'s going concern assessment and their plans to mitigate identified risks? (CAS 570.16–19)</p>', undefined, 'Yes', '<p>Sufficient evidence obtained: reviewed management\'s going concern assessment (April 25, 2024), analyzed financial ratios and trends, reviewed credit facility terms and availability, confirmed debt covenant compliance.</p>', 'W/P Ref: GC-02'),
+        q('gc-final-3b', '<p>Have any subsequent events that are relevant to the going concern assessment been considered? (CAS 570.24)</p>', undefined, 'Yes', '<p>Subsequent events review through May 2, 2024 identified no events relevant to the going concern assessment.</p>'),
+        la('gc-final-3-notes', '<p><strong>Notes — additional procedures performed and evidence obtained:</strong></p>', 'Additional procedures: (1) Reviewed management going concern assessment covering 12 months from audit report date (to May 2025). (2) Analyzed debt covenant compliance at March 31, 2024 — all covenants met. (3) Confirmed credit facility availability of $2.5M with Royal Bank. (4) Subsequent events review through May 2, 2024 — no adverse events identified.'),
       ],
       isExpanded: true
     },
@@ -10234,12 +10316,12 @@ export const generateGoingConcernFinalAssessmentChecklist = (): Checklist => {
       id: 'gc-final-s4',
       title: '4. Final Conclusion',
       questions: [
-        q('gc-final-4a', '<p>Based on all audit procedures performed, is the going concern basis of accounting appropriate?</p>'),
-        q('gc-final-4b', '<p>If significant doubt exists but the going concern basis is appropriate, is adequate disclosure made in the financial statements about the material uncertainty?</p>'),
-        q('gc-final-4c', '<p>If the going concern basis is inappropriate, has the auditor\'s report been modified accordingly?</p>'),
-        q('gc-final-4d', '<p>Have written representations been obtained from management regarding their plans and the feasibility of those plans? (CAS 580)</p>'),
-        q('gc-final-4e', '<p>Have TCWG been informed of going concern matters as required by CAS 260?</p>'),
-        la('gc-final-4-notes', '<p><strong>Final conclusion on going concern:</strong></p>'),
+        q('gc-final-4a', '<p>Based on all audit procedures performed, is the going concern basis of accounting appropriate?</p>', undefined, 'Yes', '<p>Going concern basis confirmed as appropriate. Shipping Line Inc. has positive net income of $847K, working capital of $1.82M, debt covenants met, and an established credit facility with $2.5M availability.</p>', 'W/P Ref: GC-03'),
+        q('gc-final-4b', '<p>If significant doubt exists but the going concern basis is appropriate, is adequate disclosure made in the financial statements about the material uncertainty?</p>', undefined, 'NA', '<p>No significant doubt exists. Material uncertainty disclosure not required.</p>'),
+        q('gc-final-4c', '<p>If the going concern basis is inappropriate, has the auditor\'s report been modified accordingly?</p>', undefined, 'NA', '<p>Going concern basis is appropriate. No modification to the audit report required.</p>'),
+        q('gc-final-4d', '<p>Have written representations been obtained from management regarding their plans and the feasibility of those plans? (CAS 580)</p>', undefined, 'Yes', '<p>Management representation obtained confirming use of going concern basis is appropriate and that no events or conditions cast significant doubt on the entity\'s ability to continue as a going concern.</p>', 'W/P Ref: MRL-01'),
+        q('gc-final-4e', '<p>Have TCWG been informed of going concern matters as required by CAS 260?</p>', undefined, 'Yes', '<p>TCWG informed in the final communication letter that no going concern issues were identified during the audit.</p>', 'W/P Ref: AC-04'),
+        la('gc-final-4-notes', '<p><strong>Final conclusion on going concern:</strong></p>', 'Final conclusion: The going concern basis of accounting is appropriate for the preparation of Shipping Line Inc.\'s financial statements for the year ended March 31, 2024. No material uncertainty related to going concern exists. An unmodified audit opinion is issued without a going concern paragraph.'),
       ],
       isExpanded: true
     },
@@ -10247,9 +10329,9 @@ export const generateGoingConcernFinalAssessmentChecklist = (): Checklist => {
       id: 'gc-final-s5',
       title: '5. Financial Statement Presentation and Disclosure',
       questions: [
-        q('gc-final-5a', '<p>Do the financial statements adequately disclose going concern issues, including the nature of the events/conditions and management\'s plans to address them?</p>'),
-        q('gc-final-5b', '<p>If a material uncertainty exists, does the auditor\'s report include an appropriate "Material Uncertainty Related to Going Concern" paragraph?</p>'),
-        la('gc-final-5-notes', '<p><strong>Notes on disclosure adequacy:</strong></p>'),
+        q('gc-final-5a', '<p>Do the financial statements adequately disclose going concern issues, including the nature of the events/conditions and management\'s plans to address them?</p>', undefined, 'NA', '<p>No going concern issues exist requiring disclosure in the financial statements.</p>'),
+        q('gc-final-5b', '<p>If a material uncertainty exists, does the auditor\'s report include an appropriate "Material Uncertainty Related to Going Concern" paragraph?</p>', undefined, 'NA', '<p>No material uncertainty related to going concern exists. This paragraph is not included in the audit report.</p>'),
+        la('gc-final-5-notes', '<p><strong>Notes on disclosure adequacy:</strong></p>', 'No going concern disclosures required. The financial statements appropriately use the going concern basis without any qualifications or special disclosures.'),
       ],
       isExpanded: true
     },
