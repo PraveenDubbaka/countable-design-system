@@ -69,9 +69,25 @@ interface DependencyItem {
   phase: Phase;
   cas?: string;
   us?: string;
+  casUrl?: string;   // Direct Google Drive link for CA standard doc
+  usUrl?: string;    // Direct Google Drive link for US standard doc
   prerequisites: string[]; // codes
   enablesKey?: string; // what nav key this routes to
   criticalPath: boolean;
+}
+
+// Google Drive SVG icon
+function GoogleDriveIcon({ className }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 87.3 78" xmlns="http://www.w3.org/2000/svg">
+      <path d="m6.6 66.85 3.85 6.65c.8 1.4 1.95 2.5 3.3 3.3l13.75-23.8h-27.5c0 1.55.4 3.1 1.2 4.5z" fill="#0066da"/>
+      <path d="m43.65 25-13.75-23.8c-1.35.8-2.5 1.9-3.3 3.3l-25.4 44a9.06 9.06 0 0 0 -1.2 4.5h27.5z" fill="#00ac47"/>
+      <path d="m73.55 76.8c1.35-.8 2.5-1.9 3.3-3.3l1.6-2.75 7.65-13.25c.8-1.4 1.2-2.95 1.2-4.5h-27.502l5.852 11.5z" fill="#ea4335"/>
+      <path d="m43.65 25 13.75-23.8c-1.35-.8-2.9-1.2-4.5-1.2h-18.5c-1.6 0-3.15.45-4.5 1.2z" fill="#00832d"/>
+      <path d="m59.8 53h-32.3l-13.75 23.8c1.35.8 2.9 1.2 4.5 1.2h50.8c1.6 0 3.15-.45 4.5-1.2z" fill="#2684fc"/>
+      <path d="m73.4 26.5-12.7-22c-.8-1.4-1.95-2.5-3.3-3.3l-13.75 23.8 16.15 28h27.45c0-1.55-.4-3.1-1.2-4.5z" fill="#ffba00"/>
+    </svg>
+  );
 }
 
 // ─── Dependency Register Data ─────────────────────────────────────────────────
@@ -708,13 +724,20 @@ export default function AuditDependencyRegister() {
                           {/* CA Standard */}
                           <td className="px-4 py-3">
                             {item.cas ? (
-                              <button
-                                onClick={() => openDrivePanel(item.cas!)}
-                                className="inline-flex items-center gap-1.5 group"
-                              >
-                                <span className="text-xs text-muted-foreground font-mono group-hover:text-primary transition-colors">{item.cas}</span>
-                                <FolderOpen className="h-3 w-3 text-muted-foreground/50 group-hover:text-primary transition-colors flex-shrink-0" />
-                              </button>
+                              <div className="flex items-center gap-1.5">
+                                <button onClick={() => openDrivePanel(item.cas!)} className="text-xs text-muted-foreground font-mono hover:text-primary transition-colors">
+                                  {item.cas}
+                                </button>
+                                <a
+                                  href={item.casUrl || DRIVE_FOLDER_URL}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  title={item.casUrl ? `Open ${item.cas} in Google Drive` : "Open Drive folder"}
+                                  className="flex-shrink-0 opacity-50 hover:opacity-100 transition-opacity"
+                                >
+                                  <GoogleDriveIcon className="h-3.5 w-3.5" />
+                                </a>
+                              </div>
                             ) : (
                               <span className="text-xs text-muted-foreground">—</span>
                             )}
@@ -723,13 +746,20 @@ export default function AuditDependencyRegister() {
                           {/* US Standard */}
                           <td className="px-4 py-3">
                             {item.us ? (
-                              <button
-                                onClick={() => openDrivePanel(item.us!)}
-                                className="inline-flex items-center gap-1.5 group"
-                              >
-                                <span className="text-xs text-muted-foreground font-mono group-hover:text-primary transition-colors">{item.us}</span>
-                                <FolderOpen className="h-3 w-3 text-muted-foreground/50 group-hover:text-primary transition-colors flex-shrink-0" />
-                              </button>
+                              <div className="flex items-center gap-1.5">
+                                <button onClick={() => openDrivePanel(item.us!)} className="text-xs text-muted-foreground font-mono hover:text-primary transition-colors">
+                                  {item.us}
+                                </button>
+                                <a
+                                  href={item.usUrl || DRIVE_FOLDER_URL}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  title={item.usUrl ? `Open ${item.us} in Google Drive` : "Open Drive folder"}
+                                  className="flex-shrink-0 opacity-50 hover:opacity-100 transition-opacity"
+                                >
+                                  <GoogleDriveIcon className="h-3.5 w-3.5" />
+                                </a>
+                              </div>
                             ) : (
                               <span className="text-xs text-muted-foreground">—</span>
                             )}
