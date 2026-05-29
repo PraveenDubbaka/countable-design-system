@@ -1424,13 +1424,12 @@ function QuestionInlineColumns({
             </div>
             <div className="flex items-center min-w-0 overflow-visible px-2 relative group/exp"
               style={{ flex: `0 0 ${widths[widthIdx] * 100}%` }}>
-              <div className="w-full overflow-hidden">
+              <div className="w-full">
                 <AITextarea
                   value={question.explanation || ''}
                   onChange={(val) => onUpdate({ ...question, explanation: val })}
                   placeholder="Explanation"
-                  minHeight="40px"
-                  isCompactMode />
+                  minHeight="40px" />
               </div>
               {canEdit &&
                 <button
