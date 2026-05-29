@@ -9643,3 +9643,451 @@ export const generateUnderstandingEntityIndustryEnvironmentChecklist = (): Check
     updatedAt: new Date().toISOString(),
   };
 };
+
+// ─── Understanding Internal Controls ────────────────────────────────────────
+export const generateUnderstandingInternalControlsChecklist = (): Checklist => {
+  const q = (id: string, text: string, subQuestions?: Question[]): Question => ({
+    id, text, answerType: 'yes-no-na' as const, options: ['Yes', 'No', 'NA'],
+    required: false, answer: '', ...(subQuestions ? { subQuestions } : {})
+  });
+  const sections: Section[] = [
+    {
+      id: 'section-uic-1',
+      title: '1. Control Environment',
+      questions: [
+        q('uic-q1a', '<p>Has the auditor assessed management\'s commitment to integrity and ethical values (e.g., code of conduct, tone at the top)?</p>'),
+        q('uic-q1b', '<p>Has the auditor documented the entity\'s organizational structure, including lines of authority and responsibility?</p>'),
+        q('uic-q1c', '<p>Has the auditor considered whether HR policies (hiring, training, performance evaluation, compensation) support the control environment?</p>'),
+        q('uic-q1d', '<p>Has the auditor assessed the oversight responsibilities exercised by those charged with governance (TCWG), including the audit committee?</p>'),
+        q('uic-q1e', '<p>Has the auditor considered management\'s philosophy and operating style (e.g., attitude toward risk, financial reporting, and internal control)?</p>'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'section-uic-2',
+      title: '2. Entity\'s Risk Assessment Process',
+      questions: [
+        q('uic-q2a', '<p>Has the auditor documented how management identifies and responds to business risks relevant to financial reporting?</p>'),
+        q('uic-q2b', '<p>Has the auditor considered whether management identifies and responds to significant changes in the risk environment (e.g., new products, regulatory changes, IT changes)?</p>'),
+        q('uic-q2c', '<p>Has the auditor evaluated whether management\'s risk assessment process addresses fraud risk?</p>'),
+        q('uic-q2d', '<p>Where management has identified risks but determined that controls are not necessary, has the auditor documented management\'s rationale?</p>'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'section-uic-3',
+      title: '3. Information System & Communication',
+      questions: [
+        q('uic-q3a', '<p>Has the auditor documented the entity\'s key accounting system(s) and how transactions are initiated, recorded, processed, and reported?</p>'),
+        q('uic-q3b', '<p>Has the auditor understood the IT environment, including key applications, databases, and interfaces relevant to financial reporting?</p>'),
+        q('uic-q3c', '<p>Has the auditor documented the financial reporting process, including the steps used to prepare the financial statements and related disclosures?</p>'),
+        q('uic-q3d', '<p>Has the auditor documented controls over journal entries, including authorization of non-standard entries?</p>'),
+        q('uic-q3e', '<p>Has the auditor understood period-end close procedures, including how management reviews and adjusts the trial balance?</p>'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'section-uic-4',
+      title: '4. Control Activities',
+      questions: [
+        q('uic-q4a', '<p>Has the auditor documented authorization controls over significant transactions and events?</p>'),
+        q('uic-q4b', '<p>Has the auditor documented key reconciliation controls (e.g., sub-ledger to GL, bank reconciliations)?</p>'),
+        q('uic-q4c', '<p>Has the auditor assessed whether there is adequate segregation of duties over key financial reporting processes?</p>'),
+        q('uic-q4d', '<p>Has the auditor documented physical controls over assets (e.g., restricted access to inventory, cash, and fixed assets)?</p>'),
+        q('uic-q4e', '<p>Has the auditor documented IT application controls relevant to financial reporting (e.g., automated validations, edit checks)?</p>'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'section-uic-5',
+      title: '5. Monitoring of Controls',
+      questions: [
+        q('uic-q5a', '<p>Has the auditor considered whether the entity has an internal audit function and, if so, understood its scope and activities?</p>'),
+        q('uic-q5b', '<p>Has the auditor documented management\'s ongoing and periodic monitoring activities (e.g., dashboards, exception reports, management reviews)?</p>'),
+        q('uic-q5c', '<p>Has the auditor considered whether control deficiencies identified during monitoring are communicated and corrected in a timely manner?</p>'),
+        q('uic-q5d', '<p>Has the auditor documented any external oversight (e.g., regulatory examinations, external quality reviews) and considered its relevance to the audit?</p>'),
+      ],
+      isExpanded: true
+    },
+  ];
+  return {
+    id: 'global-template-uic',
+    title: 'Understanding Internal Controls',
+    description: 'Documents the auditor\'s understanding of the five components of internal control relevant to the audit, per CAS 315.',
+    objective: `CAS 315 requires the auditor to obtain an understanding of internal control relevant to the audit. This checklist covers the five components of internal control — Control Environment, Risk Assessment Process, Information System & Communication, Control Activities, and Monitoring — and documents the nature, extent, and results of the auditor's understanding procedures. This understanding informs decisions about the nature, timing, and extent of further audit procedures.`,
+    sections,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  };
+};
+
+// ─── SCOT — Revenue Cycle ───────────────────────────────────────────────────
+export const generateSCOTRevenueCycleChecklist = (): Checklist => {
+  const q = (id: string, text: string, subQuestions?: Question[]): Question => ({
+    id, text, answerType: 'yes-no-na' as const, options: ['Yes', 'No', 'NA'],
+    required: false, answer: '', ...(subQuestions ? { subQuestions } : {})
+  });
+  const sections: Section[] = [
+    {
+      id: 'section-scot-rev-1',
+      title: '1. Revenue Process Overview',
+      questions: [
+        q('scot-rev-q1a', '<p>Has the auditor documented the entity\'s key revenue streams (e.g., product sales, service revenue, subscriptions, licensing)?</p>'),
+        q('scot-rev-q1b', '<p>Has the auditor documented the entity\'s revenue recognition policy and assessed its compliance with the applicable financial reporting framework?</p>'),
+        q('scot-rev-q1c', '<p>Has the auditor identified significant estimates and judgments involved in revenue recognition (e.g., variable consideration, percentage of completion, multiple-element arrangements)?</p>'),
+        q('scot-rev-q1d', '<p>Has the auditor identified and documented related party revenue transactions?</p>'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'section-scot-rev-2',
+      title: '2. Order to Invoice Controls',
+      questions: [
+        q('scot-rev-q2a', '<p>Are customer orders authorized by an appropriate level of management before fulfilment?</p>'),
+        q('scot-rev-q2b', '<p>Is credit approval obtained for new customers and periodically reviewed for existing customers before goods or services are provided on credit?</p>'),
+        q('scot-rev-q2c', '<p>Are shipping/delivery documents or service completion records generated and reconciled to invoices?</p>'),
+        q('scot-rev-q2d', '<p>Are controls in place to ensure invoices are generated for all goods shipped or services rendered?</p>'),
+        q('scot-rev-q2e', '<p>Are prices and quantities on invoices verified against approved price lists and customer purchase orders?</p>'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'section-scot-rev-3',
+      title: '3. Accounts Receivable & Collection Controls',
+      questions: [
+        q('scot-rev-q3a', '<p>Is the AR sub-ledger regularly reconciled to the general ledger, with reconciling items investigated and resolved promptly?</p>'),
+        q('scot-rev-q3b', '<p>Are collection procedures documented, including escalation processes for overdue accounts?</p>'),
+        q('scot-rev-q3c', '<p>Are write-offs of uncollectible accounts authorized by an appropriate level of management?</p>'),
+        q('scot-rev-q3d', '<p>Is there a formal dispute resolution process for customer invoice disputes, and are disputed amounts tracked?</p>'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'section-scot-rev-4',
+      title: '4. Cash Receipts Controls',
+      questions: [
+        q('scot-rev-q4a', '<p>Are duties segregated between employees who handle cash receipts and those who record receipts in the accounting system?</p>'),
+        q('scot-rev-q4b', '<p>Are cash receipts deposited daily (or on a timely basis) and reconciled to remittance advices?</p>'),
+        q('scot-rev-q4c', '<p>Where applicable, are lockbox or EFT controls in place to minimize manual handling of cash and ensure complete capture of receipts?</p>'),
+        q('scot-rev-q4d', '<p>Is there a control to ensure receipts are applied to the correct customer account and invoice?</p>'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'section-scot-rev-5',
+      title: '5. IT Controls over Revenue',
+      questions: [
+        q('scot-rev-q5a', '<p>Are system access controls in place to restrict who can create, modify, or delete customer accounts, pricing, and invoices?</p>'),
+        q('scot-rev-q5b', '<p>Are there automated controls in the billing system (e.g., edit checks, duplicate invoice prevention, mandatory fields) to ensure completeness and accuracy of invoicing?</p>'),
+        q('scot-rev-q5c', '<p>Is the interface between the order management/billing system and the general ledger automated and reconciled, with exception reports reviewed?</p>'),
+      ],
+      isExpanded: true
+    },
+  ];
+  return {
+    id: 'global-template-scot-rev',
+    title: 'SCOT — Revenue Cycle',
+    description: 'System and Control Overview Template for the Revenue Cycle, documenting controls over revenue recognition, accounts receivable, and cash receipts.',
+    objective: `CAS 315 requires the auditor to obtain an understanding of the entity's significant transaction cycles and the controls over those cycles. This SCOT documents the auditor's understanding of the Revenue Cycle — from customer order through cash receipt — including the key controls over completeness, accuracy, and cut-off of revenue and accounts receivable. This understanding informs risk assessment and the design of further audit procedures.`,
+    sections,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  };
+};
+
+// ─── SCOT — Expenditure Cycle ───────────────────────────────────────────────
+export const generateSCOTExpenditureCycleChecklist = (): Checklist => {
+  const q = (id: string, text: string, subQuestions?: Question[]): Question => ({
+    id, text, answerType: 'yes-no-na' as const, options: ['Yes', 'No', 'NA'],
+    required: false, answer: '', ...(subQuestions ? { subQuestions } : {})
+  });
+  const sections: Section[] = [
+    {
+      id: 'section-scot-exp-1',
+      title: '1. Procurement Process Overview',
+      questions: [
+        q('scot-exp-q1a', '<p>Has the auditor documented the entity\'s purchasing policy, including approval authorities and procurement procedures?</p>'),
+        q('scot-exp-q1b', '<p>Does the entity maintain an approved vendor list, and are purchases restricted to approved vendors?</p>'),
+        q('scot-exp-q1c', '<p>Has the auditor documented the entity\'s policy for distinguishing capital expenditures from operating expenditures?</p>'),
+        q('scot-exp-q1d', '<p>Has the auditor identified and documented related party purchase transactions?</p>'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'section-scot-exp-2',
+      title: '2. Purchase Order & Receiving Controls',
+      questions: [
+        q('scot-exp-q2a', '<p>Are purchase requisitions required for all non-routine purchases, and are they authorized before a purchase order is issued?</p>'),
+        q('scot-exp-q2b', '<p>Are purchase order approval limits defined and enforced, with higher-value purchases requiring senior authorization?</p>'),
+        q('scot-exp-q2c', '<p>Is a three-way match (PO, receiving report, and vendor invoice) performed before payment is approved?</p>'),
+        q('scot-exp-q2d', '<p>Are receiving reports prepared for all goods received, and are they reviewed for accuracy before being matched to invoices?</p>'),
+        q('scot-exp-q2e', '<p>Is there a process to accrue for goods received but not yet invoiced at period end?</p>'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'section-scot-exp-3',
+      title: '3. Accounts Payable Controls',
+      questions: [
+        q('scot-exp-q3a', '<p>Is the AP sub-ledger regularly reconciled to the general ledger, with reconciling items investigated and resolved promptly?</p>'),
+        q('scot-exp-q3b', '<p>Are invoices reviewed, coded to the correct GL account, and approved by an appropriate employee before payment?</p>'),
+        q('scot-exp-q3c', '<p>Are vendor statements periodically reconciled to the AP sub-ledger to identify unrecorded liabilities or disputes?</p>'),
+        q('scot-exp-q3d', '<p>Are controls in place to prevent duplicate payments (e.g., system checks for duplicate invoice numbers, vendor and amounts)?</p>'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'section-scot-exp-4',
+      title: '4. Cash Disbursement Controls',
+      questions: [
+        q('scot-exp-q4a', '<p>Are cheque or EFT disbursements authorized according to defined approval limits, with dual authorization for large payments?</p>'),
+        q('scot-exp-q4b', '<p>Are duties segregated between employees who authorize payments and those who process or record disbursements?</p>'),
+        q('scot-exp-q4c', '<p>Are bank reconciliations prepared regularly by someone independent of the disbursement process, and reviewed by a senior employee?</p>'),
+        q('scot-exp-q4d', '<p>Are voided cheques controlled and accounted for to prevent unauthorized use?</p>'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'section-scot-exp-5',
+      title: '5. IT Controls over Expenditures',
+      questions: [
+        q('scot-exp-q5a', '<p>Are system access controls in place to restrict who can set up or modify vendor master file data (e.g., banking details, addresses)?</p>'),
+        q('scot-exp-q5b', '<p>Are there automated matching controls (e.g., system-enforced three-way match) in the AP module to prevent processing of unmatched invoices?</p>'),
+        q('scot-exp-q5c', '<p>Is the interface between the AP module and the general ledger automated and reconciled, with exception reports reviewed regularly?</p>'),
+      ],
+      isExpanded: true
+    },
+  ];
+  return {
+    id: 'global-template-scot-exp',
+    title: 'SCOT — Expenditure Cycle',
+    description: 'System and Control Overview Template for the Expenditure Cycle, documenting controls over purchasing, accounts payable, and cash disbursements.',
+    objective: `CAS 315 requires the auditor to obtain an understanding of the entity's significant transaction cycles and the controls over those cycles. This SCOT documents the auditor's understanding of the Expenditure Cycle — from purchase requisition through cash disbursement — including the key controls over completeness, accuracy, and cut-off of expenses and accounts payable. This understanding informs risk assessment and the design of further audit procedures.`,
+    sections,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  };
+};
+
+// ─── SCOT — Payroll Cycle ───────────────────────────────────────────────────
+export const generateSCOTPayrollCycleChecklist = (): Checklist => {
+  const q = (id: string, text: string, subQuestions?: Question[]): Question => ({
+    id, text, answerType: 'yes-no-na' as const, options: ['Yes', 'No', 'NA'],
+    required: false, answer: '', ...(subQuestions ? { subQuestions } : {})
+  });
+  const sections: Section[] = [
+    {
+      id: 'section-scot-pay-1',
+      title: '1. Payroll Process Overview',
+      questions: [
+        q('scot-pay-q1a', '<p>Has the auditor documented the payroll system(s) used (e.g., in-house software, outsourced provider) and assessed their relevance to the audit?</p>'),
+        q('scot-pay-q1b', '<p>Has the auditor documented payroll frequency (weekly, bi-weekly, semi-monthly, monthly) and the number of employees by type (salaried, hourly, commission)?</p>'),
+        q('scot-pay-q1c', '<p>Has the auditor documented how HR data (new hires, terminations, rate changes) interfaces with the payroll system?</p>'),
+        q('scot-pay-q1d', '<p>If payroll is outsourced, has the auditor considered the relevance of controls at the outsourced provider and whether a SOC 1 report is available?</p>'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'section-scot-pay-2',
+      title: '2. Employee Master File Controls',
+      questions: [
+        q('scot-pay-q2a', '<p>Are new employee additions and terminations authorized by HR and reflected in the payroll system in a timely manner?</p>'),
+        q('scot-pay-q2b', '<p>Are pay rate changes (raises, bonuses, commissions) authorized by management before being entered in the payroll system?</p>'),
+        q('scot-pay-q2c', '<p>Are duties segregated between HR (who authorizes employee data changes) and payroll (who processes payroll)?</p>'),
+        q('scot-pay-q2d', '<p>Is the employee master file periodically reviewed for terminated employees, duplicate entries, or other anomalies (i.e., ghost employee risk)?</p>'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'section-scot-pay-3',
+      title: '3. Time & Attendance Controls',
+      questions: [
+        q('scot-pay-q3a', '<p>Has the auditor documented the time recording system (automated timekeeping vs. manual timesheets) and its integration with payroll?</p>'),
+        q('scot-pay-q3b', '<p>Is overtime authorized by supervisors before or immediately after it is incurred?</p>'),
+        q('scot-pay-q3c', '<p>Are exception reports generated and reviewed for unusual time entries (e.g., excessive hours, entries on holidays)?</p>'),
+        q('scot-pay-q3d', '<p>Is time data independently reviewed and approved by supervisors before submission to payroll?</p>'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'section-scot-pay-4',
+      title: '4. Payroll Processing & Disbursement Controls',
+      questions: [
+        q('scot-pay-q4a', '<p>Is the payroll calculation reviewed for reasonableness (e.g., comparison to prior period) before final approval?</p>'),
+        q('scot-pay-q4b', '<p>Is payroll approved by management before funds are disbursed?</p>'),
+        q('scot-pay-q4c', '<p>Are controls in place over direct deposit setups and changes to employee banking details to prevent unauthorized alterations?</p>'),
+        q('scot-pay-q4d', '<p>Is the payroll bank account reconciled regularly, and are reconciling items investigated and resolved promptly?</p>'),
+        q('scot-pay-q4e', '<p>Is there a procedure for handling unclaimed wages or returned direct deposit payments?</p>'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'section-scot-pay-5',
+      title: '5. Payroll Tax & Statutory Compliance',
+      questions: [
+        q('scot-pay-q5a', '<p>Are source deduction calculations (CPP, EI, and income tax) reviewed for accuracy, and are calculations reconciled to payroll records?</p>'),
+        q('scot-pay-q5b', '<p>Are source deductions and employer contributions remitted to the CRA on a timely basis to avoid penalties and interest?</p>'),
+        q('scot-pay-q5c', '<p>Are year-end T4/T4A slips prepared and reconciled to payroll records and the general ledger before filing?</p>'),
+      ],
+      isExpanded: true
+    },
+  ];
+  return {
+    id: 'global-template-scot-pay',
+    title: 'SCOT — Payroll Cycle',
+    description: 'System and Control Overview Template for the Payroll Cycle, documenting controls over payroll processing, authorization, and disbursement.',
+    objective: `CAS 315 requires the auditor to obtain an understanding of the entity's significant transaction cycles and the controls over those cycles. This SCOT documents the auditor's understanding of the Payroll Cycle — from employee master file maintenance through payroll tax compliance — including the key controls over completeness, accuracy, and authorization of payroll. This understanding informs risk assessment and the design of further audit procedures.`,
+    sections,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  };
+};
+
+// ─── Accumulation of Identified Misstatements ───────────────────────────────
+export const generateAccumulationOfMisstatementsChecklist = (): Checklist => {
+  const q = (id: string, text: string, subQuestions?: Question[]): Question => ({
+    id, text, answerType: 'yes-no-na' as const, options: ['Yes', 'No', 'NA'],
+    required: false, answer: '', ...(subQuestions ? { subQuestions } : {})
+  });
+  const sections: Section[] = [
+    {
+      id: 'section-aim-1',
+      title: '1. Factual Misstatements',
+      questions: [
+        q('aim-q1a', '<p>Have all factual misstatements (i.e., misstatements about which there is no doubt, such as arithmetic errors or posting errors) been identified and documented?</p>'),
+        q('aim-q1b', '<p>Has management been informed of factual misstatements and given an opportunity to correct them?</p>'),
+        q('aim-q1c', '<p>Have agreed corrections from management been reflected in the financial statements or working papers?</p>'),
+        q('aim-q1d', '<p>Have uncorrected factual misstatements been documented separately for evaluation against materiality?</p>'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'section-aim-2',
+      title: '2. Judgmental Misstatements',
+      questions: [
+        q('aim-q2a', '<p>Have judgmental misstatements arising from differences in management\'s accounting estimates or policies been identified and documented?</p>'),
+        q('aim-q2b', '<p>Has the auditor formed an independent best estimate (or range) for significant accounting estimates to compare with management\'s estimates?</p>'),
+        q('aim-q2c', '<p>Has the reasonableness of management\'s estimates been assessed, including the assumptions and methods used?</p>'),
+        q('aim-q2d', '<p>Where a range is used to evaluate an estimate, has the auditor ensured management\'s point estimate falls within a reasonable range?</p>'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'section-aim-3',
+      title: '3. Projected Misstatements',
+      questions: [
+        q('aim-q3a', '<p>Have misstatements identified in audit samples been projected to the full population using an appropriate projection method?</p>'),
+        q('aim-q3b', '<p>Has the basis for projection (e.g., proportional, mean per unit) been documented and applied consistently?</p>'),
+        q('aim-q3c', '<p>Has sampling risk been considered when evaluating whether projected misstatements are material?</p>'),
+        q('aim-q3d', '<p>Have projected misstatements been included in the accumulation schedule for comparison against performance materiality?</p>'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'section-aim-4',
+      title: '4. Evaluation of Uncorrected Misstatements',
+      questions: [
+        q('aim-q4a', '<p>Has the aggregate of uncorrected misstatements (factual, judgmental, and projected) been compared to performance materiality?</p>'),
+        q('aim-q4b', '<p>Have qualitative factors been considered in evaluating the significance of uncorrected misstatements (e.g., misstatements that affect compliance with covenants, trends, or key ratios)?</p>'),
+        q('aim-q4c', '<p>Has the impact of prior period uncorrected misstatements been considered using the appropriate method (iron curtain or rollover)?</p>'),
+        q('aim-q4d', '<p>Has the auditor concluded whether uncorrected misstatements, individually or in aggregate, are material to the financial statements?</p>'),
+        q('aim-q4e', '<p>If aggregate uncorrected misstatements approach performance materiality, has the auditor considered whether additional procedures are needed?</p>'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'section-aim-5',
+      title: '5. Communication to Management & TCWG',
+      questions: [
+        q('aim-q5a', '<p>Have all identified misstatements (corrected and uncorrected) been communicated to management on a timely basis?</p>'),
+        q('aim-q5b', '<p>Has management\'s response to each uncorrected misstatement been documented, including the reasons management has given for not correcting?</p>'),
+        q('aim-q5c', '<p>Has written representation been obtained from management acknowledging that uncorrected misstatements are not material (individually or in aggregate) to the financial statements?</p>'),
+      ],
+      isExpanded: true
+    },
+  ];
+  return {
+    id: 'global-template-aim',
+    title: 'Accumulation of Identified Misstatements',
+    description: 'Documents the accumulation, evaluation, and communication of all misstatements identified during the audit, per CAS 450.',
+    objective: `CAS 450 requires the auditor to accumulate all misstatements identified during the audit (other than those that are clearly trivial), evaluate their effect, and communicate them to management and TCWG. This checklist documents the three types of misstatements — factual, judgmental, and projected — and the auditor's evaluation of whether uncorrected misstatements are material to the financial statements, individually or in aggregate.`,
+    sections,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  };
+};
+
+// ─── Final Analytical Review ────────────────────────────────────────────────
+export const generateFinalAnalyticalReviewChecklist = (): Checklist => {
+  const q = (id: string, text: string, subQuestions?: Question[]): Question => ({
+    id, text, answerType: 'yes-no-na' as const, options: ['Yes', 'No', 'NA'],
+    required: false, answer: '', ...(subQuestions ? { subQuestions } : {})
+  });
+  const sections: Section[] = [
+    {
+      id: 'section-far-1',
+      title: '1. Overall Financial Statement Review',
+      questions: [
+        q('far-q1a', '<p>Has the auditor compared the current year financial statements to the prior year financial statements and identified unusual or unexpected changes?</p>'),
+        q('far-q1b', '<p>Have all unusual or unexpected relationships identified in the overall review been investigated and explained to the auditor\'s satisfaction?</p>'),
+        q('far-q1c', '<p>Are the overall financial statements consistent with the auditor\'s knowledge of the entity and its environment?</p>'),
+        q('far-q1d', '<p>Have significant changes from interim financial statements to year-end been identified and explained?</p>'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'section-far-2',
+      title: '2. Income Statement Analytics',
+      questions: [
+        q('far-q2a', '<p>Has the auditor analyzed revenue trends and obtained explanations for significant fluctuations compared to prior year and budget?</p>'),
+        q('far-q2b', '<p>Has the gross margin percentage been compared to prior year and budget, with significant variances investigated?</p>'),
+        q('far-q2c', '<p>Have significant expense fluctuations (e.g., unusual increases or decreases in operating expenses) been investigated and explained?</p>'),
+        q('far-q2d', '<p>Are interest and financing costs consistent with the entity\'s debt level and applicable interest rates?</p>'),
+        q('far-q2e', '<p>Is the income tax provision (current and deferred) consistent with the pre-tax income and applicable tax rates?</p>'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'section-far-3',
+      title: '3. Balance Sheet Analytics',
+      questions: [
+        q('far-q3a', '<p>Are changes in working capital (accounts receivable, inventory, accounts payable) reasonable given the entity\'s operating activity?</p>'),
+        q('far-q3b', '<p>Have significant changes in asset balances (capital additions, disposals, impairments) been investigated and explained?</p>'),
+        q('far-q3c', '<p>Are debt levels and terms consistent with loan agreements and debt covenants reviewed during the audit?</p>'),
+        q('far-q3d', '<p>Do changes in equity accounts (net income, distributions, share issuances) reconcile with the statement of changes in equity?</p>'),
+        q('far-q3e', '<p>Have related party balances been identified, appropriately disclosed, and are the amounts consistent with documented transactions?</p>'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'section-far-4',
+      title: '4. Ratio Analysis',
+      questions: [
+        q('far-q4a', '<p>Are the current ratio and quick ratio reasonable and consistent with prior periods and industry norms?</p>'),
+        q('far-q4b', '<p>Is the debt-to-equity ratio within any applicable covenant limits and consistent with the entity\'s financing strategy?</p>'),
+        q('far-q4c', '<p>Are days sales outstanding (DSO) and inventory turnover consistent with industry norms and prior periods?</p>'),
+        q('far-q4d', '<p>Are return on assets and return on equity consistent with prior periods and the entity\'s performance expectations?</p>'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'section-far-5',
+      title: '5. Overall Conclusion',
+      questions: [
+        q('far-q5a', '<p>Have all significant fluctuations and unexpected relationships identified during final analytical procedures been investigated and adequately explained?</p>'),
+        q('far-q5b', '<p>Have the final analytical procedures identified any new risks of material misstatement not previously identified, and if so, have additional procedures been performed?</p>'),
+        q('far-q5c', '<p>Overall, are the financial statements consistent with the auditor\'s understanding of the entity and its environment, and do they present fairly in all material respects?</p>'),
+      ],
+      isExpanded: true
+    },
+  ];
+  return {
+    id: 'global-template-far',
+    title: 'Final Analytical Review',
+    description: 'Documents the analytical procedures performed near the end of the audit to form an overall conclusion on whether the financial statements are consistent with the auditor\'s understanding of the entity, per CAS 520.',
+    objective: `CAS 520 requires the auditor to design and perform analytical procedures near the end of the audit to assist in forming an overall conclusion about whether the financial statements are consistent with the auditor's understanding of the entity. This checklist documents the final analytical procedures performed, the explanations obtained for significant fluctuations, and the auditor's overall conclusion on the financial statements.`,
+    sections,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  };
+};
