@@ -74,6 +74,11 @@ import {
   generateAuditProceduresSummaryChecklist,
   generateGoingConcernInitialAssessmentChecklist,
   generateGoingConcernFinalAssessmentChecklist,
+  generateAuditEngagementLetterGAASUSGAAP,
+  generateManagementRepLetterAUC580,
+  generateCommunicationTCWGPlanningUS,
+  generateCommunicationTCWGFinalUS,
+  generateUSAuditFairPresentation,
 } from "@/lib/globalTemplates";
 
 // Sample engagement data matching the engagements page
@@ -126,7 +131,14 @@ const engagementsData: Record<string, {
     type: "Compilation (COM)",
     yearEnd: "Jun 30, 2024",
     status: "In Progress"
-  }
+  },
+  "AUD-US-Dec312024": {
+    id: "AUD-US-Dec312024",
+    client: "Harbor Freight Logistics LLC",
+    type: "Audit (GAAS/US)",
+    yearEnd: "Dec 31, 2024",
+    status: "In Progress"
+  },
 };
 
 // Get unique clients from engagements
@@ -230,6 +242,69 @@ const buildDefaultAuditChecklists = () => {
   });
 };
 
+const US_AUDIT_FOLDER_ID = "7";
+const US_AUDIT_FOLDER_NAME = "US Audit Checklists";
+const buildDefaultUSAuditChecklists = () => {
+  const items = [
+    // Client Onboarding
+    { generator: generateNewEngagementAcceptanceChecklist, id: "default-us-audit-new-accept" },
+    { generator: generateExistingEngagementContinuanceChecklist, id: "default-us-audit-exist-cont" },
+    { generator: generateAuditIndependenceChecklist, id: "default-us-audit-ind" },
+    { generator: generateAuditEngagementLetterGAASUSGAAP, id: "default-us-audit-el" },
+    { generator: generateAMLComplianceChecklist, id: "default-us-audit-aml" },
+    // Planning
+    { generator: generateUnderstandingEntityBasicsChecklist, id: "default-us-audit-ueb" },
+    { generator: generateUnderstandingEntitySystemsChecklist, id: "default-us-audit-ues" },
+    { generator: generateUnderstandingEntityIndustryEnvironmentChecklist, id: "default-us-audit-uei" },
+    { generator: generateEngagementPlanningChecklist, id: "default-us-audit-plan" },
+    { generator: generateAuditMaterialityChecklist, id: "default-us-audit-mat" },
+    { generator: generateCommunicationTCWGPlanningUS, id: "default-us-audit-tcwg-pl" },
+    { generator: generateEngagementScopeChecklist, id: "default-us-audit-scope" },
+    { generator: generatePreliminaryAnalyticalProceduresChecklist, id: "default-us-audit-pap" },
+    { generator: generateAuditStrategyMemorandumChecklist, id: "default-us-audit-asm" },
+    { generator: generateStaffingTimeBudgetChecklist, id: "default-us-audit-stb" },
+    // Risk Assessment
+    { generator: generateRiskAssessmentProceduresChecklist, id: "default-us-audit-ra-rap" },
+    { generator: generateUnderstandingInternalControlsChecklist, id: "default-us-audit-ra-ic" },
+    { generator: generateITGeneralControlsChecklist, id: "default-us-audit-ra-itgc" },
+    { generator: generateFraudRiskAssessmentChecklist, id: "default-us-audit-ra-fraud" },
+    { generator: generateSignificantRisksRegisterChecklist, id: "default-us-audit-ra-srr" },
+    { generator: generateRMMChecklist, id: "default-us-audit-ra-rmm" },
+    { generator: generateSCOTRevenueCycleChecklist, id: "default-us-audit-ra-scot-rev" },
+    { generator: generateSCOTExpenditureCycleChecklist, id: "default-us-audit-ra-scot-exp" },
+    { generator: generateSCOTPayrollCycleChecklist, id: "default-us-audit-ra-scot-pay" },
+    { generator: generateGoingConcernInitialAssessmentChecklist, id: "default-us-audit-ra-gc" },
+    // Response to Assessed Risks
+    { generator: generateOverallAuditResponseChecklist, id: "default-us-audit-rp-oar" },
+    { generator: generateTestOfControlsChecklist, id: "default-us-audit-rp-toc" },
+    { generator: generateSubstantiveAnalyticalProceduresChecklist, id: "default-us-audit-rp-sap" },
+    { generator: generateTestOfDetailsRevenueChecklist, id: "default-us-audit-rp-tod-rev" },
+    { generator: generateTestOfDetailsExpensesChecklist, id: "default-us-audit-rp-tod-exp" },
+    { generator: generateAuditProceduresSummaryChecklist, id: "default-us-audit-rp-aps" },
+    // Financial Statements
+    { generator: generateUSAuditFairPresentation, id: "default-us-audit-ar" },
+    // Completion & Signoffs
+    { generator: generateAccumulationOfMisstatementsChecklist, id: "default-us-audit-so-aim" },
+    { generator: generateFinalAnalyticalReviewChecklist, id: "default-us-audit-so-far" },
+    { generator: generateSubsequentEventsChecklist, id: "default-us-audit-subseq" },
+    { generator: generateGoingConcernFinalAssessmentChecklist, id: "default-us-audit-wgc-final" },
+    { generator: generateManagementRepLetterAUC580, id: "default-us-audit-mr" },
+    { generator: generateCommunicationTCWGFinalUS, id: "default-us-audit-tcwg-fin" },
+    { generator: generateAuditCompletionChecklist, id: "default-us-audit-comp" },
+    { generator: generateEngagementPartnerAuditCompletionChecklist, id: "default-us-audit-ep" },
+  ];
+  return items.map(({ generator, id }) => {
+    const data = generator();
+    return {
+      id,
+      name: data.title,
+      folderId: US_AUDIT_FOLDER_ID,
+      folderName: US_AUDIT_FOLDER_NAME,
+      data,
+    };
+  });
+};
+
 // Custom TB Check icon component
 const TBCheckIcon = ({
   className
@@ -317,6 +392,52 @@ const NAV_KEY_TO_CHECKLIST_ID: Record<string, string> = {
   "aud-tcwg-fin": "default-audit-tcwg-fin",
   "aud-comp": "default-audit-comp",
   "aud-ep": "default-audit-ep",
+  // US Audit (GAAS) — Client Onboarding
+  "aud-us-new-accept": "default-us-audit-new-accept",
+  "aud-us-exist-cont": "default-us-audit-exist-cont",
+  "aud-us-ind": "default-us-audit-ind",
+  "aud-us-el": "default-us-audit-el",
+  "aud-us-aml": "default-us-audit-aml",
+  // US Audit — Planning
+  "aud-us-ueb": "default-us-audit-ueb",
+  "aud-us-ues": "default-us-audit-ues",
+  "aud-us-uei": "default-us-audit-uei",
+  "aud-us-plan": "default-us-audit-plan",
+  "aud-us-mat": "default-us-audit-mat",
+  "aud-us-tcwg-pl": "default-us-audit-tcwg-pl",
+  "aud-us-scope": "default-us-audit-scope",
+  "aud-us-pap": "default-us-audit-pap",
+  "aud-us-asm": "default-us-audit-asm",
+  "aud-us-stb": "default-us-audit-stb",
+  // US Audit — Risk Assessment
+  "aud-us-ra-rap": "default-us-audit-ra-rap",
+  "aud-us-ra-ic": "default-us-audit-ra-ic",
+  "aud-us-ra-itgc": "default-us-audit-ra-itgc",
+  "aud-us-ra-fraud": "default-us-audit-ra-fraud",
+  "aud-us-ra-srr": "default-us-audit-ra-srr",
+  "aud-us-ra-rmm": "default-us-audit-ra-rmm",
+  "aud-us-ra-scot-rev": "default-us-audit-ra-scot-rev",
+  "aud-us-ra-scot-exp": "default-us-audit-ra-scot-exp",
+  "aud-us-ra-scot-pay": "default-us-audit-ra-scot-pay",
+  "aud-us-ra-gc": "default-us-audit-ra-gc",
+  // US Audit — Response to Assessed Risks
+  "aud-us-rp-oar": "default-us-audit-rp-oar",
+  "aud-us-rp-toc": "default-us-audit-rp-toc",
+  "aud-us-rp-sap": "default-us-audit-rp-sap",
+  "aud-us-rp-tod-rev": "default-us-audit-rp-tod-rev",
+  "aud-us-rp-tod-exp": "default-us-audit-rp-tod-exp",
+  "aud-us-rp-aps": "default-us-audit-rp-aps",
+  // US Audit — Financial Statements
+  "aud-us-ar": "default-us-audit-ar",
+  // US Audit — Completion & Signoffs
+  "aud-us-so-aim": "default-us-audit-so-aim",
+  "aud-us-so-far": "default-us-audit-so-far",
+  "aud-us-subseq": "default-us-audit-subseq",
+  "aud-us-wgc-final": "default-us-audit-wgc-final",
+  "aud-us-mr": "default-us-audit-mr",
+  "aud-us-tcwg-fin": "default-us-audit-tcwg-fin",
+  "aud-us-comp": "default-us-audit-comp",
+  "aud-us-ep": "default-us-audit-ep",
 };
 
 const LEGACY_COMPILATION_CHECKLIST_IDS = new Set([
@@ -444,7 +565,7 @@ export default function EngagementDetail() {
       // Seed the engagement with the Compilation folder defaults the first
       // time we load (or after a migration cleared the list).
       if (!Array.isArray(savedChecklists) || savedChecklists.length === 0) {
-        const seeded = [...buildDefaultCompilationChecklists(), ...buildDefaultAuditChecklists()];
+        const seeded = [...buildDefaultCompilationChecklists(), ...buildDefaultAuditChecklists(), ...buildDefaultUSAuditChecklists()];
         writeJsonToLocalStorage('savedChecklists', seeded);
         savedChecklists = seeded;
         // Notify the sidebar so it picks up the seeded checklists immediately.
@@ -453,7 +574,7 @@ export default function EngagementDetail() {
         });
       } else {
         // Backfill: keep seeded compilation + audit entries current and remove legacy duplicate EL/MR ids.
-        const defaults = [...buildDefaultCompilationChecklists(), ...buildDefaultAuditChecklists()];
+        const defaults = [...buildDefaultCompilationChecklists(), ...buildDefaultAuditChecklists(), ...buildDefaultUSAuditChecklists()];
         const defaultById = new Map(defaults.map(item => [item.id, item]));
         const existingIds = new Set(savedChecklists.map((c: any) => c?.id));
         const missing = defaults.filter(d => !existingIds.has(d.id));
@@ -952,7 +1073,7 @@ export default function EngagementDetail() {
                     <p className="text-xs text-muted-foreground mt-1">Please wait while we fetch the data</p>
                   </div>
                 </div> : <div className="bg-background">
-                  {(currentChecklistId === "default-compilation-el" || currentChecklistId === "default-compilation-mr" || currentChecklistId === "default-audit-el" || currentChecklistId === "default-audit-tcwg-pl" || currentChecklistId === "default-audit-tcwg-fin") ? (
+                  {(currentChecklistId === "default-compilation-el" || currentChecklistId === "default-compilation-mr" || currentChecklistId === "default-audit-el" || currentChecklistId === "default-audit-tcwg-pl" || currentChecklistId === "default-audit-tcwg-fin" || currentChecklistId === "default-us-audit-el" || currentChecklistId === "default-us-audit-tcwg-pl" || currentChecklistId === "default-us-audit-tcwg-fin" || currentChecklistId === "default-us-audit-mr") ? (
                     <LetterView checklist={checklist} onUpdate={handleChecklistUpdate} />
                   ) : (
                     <DocumentView

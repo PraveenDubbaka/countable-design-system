@@ -1528,7 +1528,170 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
                 };
 
                 const engId = location.pathname.split("/engagements/")[1]?.split("/")[0];
+                const isUSAuditEngagement = engId === "AUD-US-Dec312024" || (engId?.startsWith("AUD-") && engId?.includes("-US-"));
                 const isAuditEngagement = engId?.startsWith("AUD-");
+
+                const usAuditEngagementTree: SectionNode[] = [
+                  {
+                    id: "aud-us-dep-reg",
+                    label: "Dependency Register",
+                    icon: "checklist",
+                    route: "dependency-register",
+                  },
+                  {
+                    id: "aud-us-co", code: "CO", label: "Client Onboarding", icon: "folder",
+                    children: [
+                      { id: "aud-us-new-accept", code: "NA", label: "New engagement acceptance", icon: "checklist", route: "checklist/aud-us-new-accept" },
+                      { id: "aud-us-exist-cont", code: "EC", label: "Existing engagement continuance", icon: "checklist", route: "checklist/aud-us-exist-cont" },
+                      { id: "aud-us-ind", code: "IND", label: "Independence & Ethical Requirements", icon: "checklist", route: "checklist/aud-us-ind" },
+                      { id: "aud-us-el", code: "EL", label: "Engagement Letter", icon: "letter", route: "checklist/aud-us-el" },
+                      { id: "aud-us-aml", code: "AML", label: "Anti-Money Laundering (BSA/FinCEN) Compliance", icon: "checklist", route: "checklist/aud-us-aml" },
+                    ]
+                  },
+                  {
+                    id: "aud-us-pl-sec", code: "PL", label: "Planning", icon: "folder",
+                    children: [
+                      { id: "aud-us-ueb", code: "UEB", label: "Understanding the entity — Basics", icon: "checklist", route: "checklist/aud-us-ueb" },
+                      { id: "aud-us-ues", code: "UES", label: "Understanding the entity — Systems & Controls", icon: "checklist", route: "checklist/aud-us-ues" },
+                      { id: "aud-us-uei", code: "UEI", label: "Understanding the entity — Industry & Environment", icon: "checklist", route: "checklist/aud-us-uei" },
+                      { id: "aud-us-mat", code: "MAT", label: "Materiality", icon: "checklist", route: "checklist/aud-us-mat" },
+                      { id: "aud-us-scope", code: "SC", label: "Engagement Scope", icon: "checklist", route: "checklist/aud-us-scope" },
+                      { id: "aud-us-pap", code: "PAP", label: "Preliminary Analytical Procedures", icon: "checklist", route: "checklist/aud-us-pap" },
+                      { id: "aud-us-asm", code: "ASM", label: "Audit Strategy Memorandum", icon: "checklist", route: "checklist/aud-us-asm" },
+                      { id: "aud-us-plan", code: "EP", label: "Engagement Planning", icon: "checklist", route: "checklist/aud-us-plan" },
+                      { id: "aud-us-stb", code: "STB", label: "Staffing & Time Budget", icon: "checklist", route: "checklist/aud-us-stb" },
+                      { id: "aud-us-tcwg-pl", code: "TCWG", label: "Communication with Those Charged with Governance (AU-C 260)", icon: "letter", route: "checklist/aud-us-tcwg-pl" },
+                    ]
+                  },
+                  {
+                    id: "aud-us-do", code: "DO", label: "Documents", icon: "folder", hasPlus: true,
+                    children: [
+                      { id: "aud-us-do-sha", code: "SHA", label: "Shareholders Agreements", icon: "folder" },
+                      { id: "aud-us-do-ren", code: "REN", label: "Rental/Lease Agreements", icon: "folder" },
+                      { id: "aud-us-do-inc", code: "INC", label: "Incorporation Documents", icon: "folder" },
+                      { id: "aud-us-do-ban", code: "BAN", label: "Banking Agreements", icon: "folder" },
+                      { id: "aud-us-do-cma", code: "CMA", label: "Contracts & Material Agreements", icon: "folder" },
+                      { id: "aud-us-do-cmb", code: "CMB", label: "Corporate Minute Book", icon: "folder" },
+                      { id: "aud-us-do-rcf", code: "RCF", label: "Regulatory & Compliance Filings", icon: "folder" },
+                    ]
+                  },
+                  {
+                    id: "aud-us-tb", code: "TB", label: "Trial Balance & Adjusting Entries", icon: "folder", route: "trial-balance"
+                  },
+                  {
+                    id: "aud-us-ra-sec", code: "RA", label: "Risk Assessment", icon: "folder",
+                    children: [
+                      { id: "aud-us-ra-rap", code: "RAP", label: "Risk Assessment Procedures", icon: "checklist", route: "checklist/aud-us-ra-rap" },
+                      { id: "aud-us-ra-ic", code: "IC", label: "Understanding Internal Controls", icon: "checklist", route: "checklist/aud-us-ra-ic" },
+                      { id: "aud-us-ra-itgc", code: "ITGC", label: "IT General Controls (ITGC)", icon: "checklist", route: "checklist/aud-us-ra-itgc" },
+                      { id: "aud-us-ra-fraud", code: "FRA", label: "Fraud Risk Assessment (AU-C 240)", icon: "checklist", route: "checklist/aud-us-ra-fraud" },
+                      { id: "aud-us-ra-srr", code: "SRR", label: "Significant Risks Register", icon: "checklist", route: "checklist/aud-us-ra-srr" },
+                      { id: "aud-us-ra-rmm", code: "RMM", label: "Risk of Material Misstatement (RMM)", icon: "checklist", route: "checklist/aud-us-ra-rmm" },
+                      { id: "aud-us-ra-scot-rev", code: "S1", label: "SCOT — Revenue Cycle", icon: "checklist", route: "checklist/aud-us-ra-scot-rev" },
+                      { id: "aud-us-ra-scot-exp", code: "S2", label: "SCOT — Expenditure Cycle", icon: "checklist", route: "checklist/aud-us-ra-scot-exp" },
+                      { id: "aud-us-ra-scot-pay", code: "S3", label: "SCOT — Payroll Cycle", icon: "checklist", route: "checklist/aud-us-ra-scot-pay" },
+                      { id: "aud-us-ra-gc", code: "GC", label: "Going Concern (Initial Assessment)", icon: "checklist", route: "checklist/aud-us-ra-gc" },
+                    ]
+                  },
+                  {
+                    id: "aud-us-rp-sec", code: "RP", label: "Response to Assessed Risks", icon: "folder",
+                    children: [
+                      { id: "aud-us-rp-oar", code: "OAR", label: "Overall Audit Response", icon: "checklist", route: "checklist/aud-us-rp-oar" },
+                      { id: "aud-us-rp-toc", code: "TOC", label: "Test of Controls", icon: "checklist", route: "checklist/aud-us-rp-toc" },
+                      { id: "aud-us-rp-sap", code: "SAP", label: "Substantive Analytical Procedures", icon: "checklist", route: "checklist/aud-us-rp-sap" },
+                      { id: "aud-us-rp-tod-rev", code: "TR", label: "Test of Details — Revenue", icon: "checklist", route: "checklist/aud-us-rp-tod-rev" },
+                      { id: "aud-us-rp-tod-exp", code: "TE", label: "Test of Details — Expenses", icon: "checklist", route: "checklist/aud-us-rp-tod-exp" },
+                      { id: "aud-us-rp-aps", code: "APS", label: "Audit Procedures Summary", icon: "checklist", route: "checklist/aud-us-rp-aps" },
+                    ]
+                  },
+                  {
+                    id: "aud-us-pr", code: "PR", label: "Procedures", icon: "folder",
+                    children: [
+                      {
+                        id: "aud-us-pr-assets", label: "Assets", icon: "folder",
+                        children: [
+                          { id: "aud-us-wp-a-a", code: "A", label: "Cash & Bank Reconciliation", icon: "book" },
+                          { id: "aud-us-wp-a-b", code: "B", label: "Accounts Receivable & Confirmations", icon: "book" },
+                          { id: "aud-us-wp-a-c", code: "C", label: "Inventory & Observation", icon: "book" },
+                          { id: "aud-us-wp-a-d", code: "D", label: "Prepaid Expenses", icon: "book" },
+                          { id: "aud-us-wp-a-e", code: "E", label: "Other Current Assets", icon: "book" },
+                          { id: "aud-us-wp-a-f", code: "F", label: "Long-Term Assets / PP&E Roll-forward", icon: "book" },
+                          { id: "aud-us-wp-a-g", code: "G", label: "Intangibles & Goodwill", icon: "book" },
+                          { id: "aud-us-wp-a-h", code: "H", label: "Investments", icon: "book" },
+                        ]
+                      },
+                      {
+                        id: "aud-us-pr-liab", label: "Liabilities", icon: "folder",
+                        children: [
+                          { id: "aud-us-wp-l-aa", code: "AA", label: "Accounts Payable & Accrued Liabilities", icon: "book" },
+                          { id: "aud-us-wp-l-bb", code: "BB", label: "Long-Term Debt & Covenant Compliance", icon: "book" },
+                          { id: "aud-us-wp-l-cc", code: "CC", label: "Deferred Revenue", icon: "book" },
+                          { id: "aud-us-wp-l-dd", code: "DD", label: "Income Taxes & Deferred Tax", icon: "book" },
+                          { id: "aud-us-wp-l-ee", code: "EE", label: "Other Liabilities & Provisions", icon: "book" },
+                        ]
+                      },
+                      {
+                        id: "aud-us-pr-equity", label: "Equity", icon: "folder",
+                        children: [
+                          { id: "aud-us-wp-l-ff", code: "FF", label: "Share Capital & Equity Roll-forward", icon: "book" },
+                          { id: "aud-us-wp-l-gg", code: "GG", label: "Related Party Transactions", icon: "book" },
+                        ]
+                      },
+                      {
+                        id: "aud-us-pr-rev", label: "Revenue", icon: "folder",
+                        children: [
+                          { id: "aud-us-wp-i-700", code: "700", label: "Revenue Testing", icon: "book" },
+                        ]
+                      },
+                      {
+                        id: "aud-us-pr-exp", label: "Expenses", icon: "folder",
+                        children: [
+                          { id: "aud-us-wp-i-710", code: "710", label: "Cost of Sales / COGS", icon: "book" },
+                          { id: "aud-us-wp-i-720", code: "720", label: "Payroll & Benefits", icon: "book" },
+                          { id: "aud-us-wp-i-730", code: "730", label: "Operating Expenses", icon: "book" },
+                          { id: "aud-us-wp-i-740", code: "740", label: "Depreciation & Amortization", icon: "book" },
+                          { id: "aud-us-wp-i-750", code: "750", label: "Interest & Finance Costs", icon: "book" },
+                          { id: "aud-us-wp-i-760", code: "760", label: "Other Income & Gains", icon: "book" },
+                        ]
+                      },
+                    ]
+                  },
+                  {
+                    id: "aud-us-fs", code: "FS", label: "Financial Statements", icon: "folder", hasPlus: true,
+                    children: [
+                      {
+                        id: "aud-us-fs-docs", label: "Financial Statement Docs", icon: "folder",
+                        children: [
+                          { id: "aud-us-fs-cover", label: "Cover Page", icon: "doc" },
+                          { id: "aud-us-fs-toc", label: "Table of Contents", icon: "doc" },
+                          { id: "aud-us-fs-iar", label: "Independent Auditor's Report (AU-C 700)", icon: "checklist", route: "checklist/aud-us-ar" },
+                          { id: "aud-us-fs-bs", label: "Balance Sheet", icon: "doc" },
+                          { id: "aud-us-fs-is", label: "Statement of Income (Loss) and Retained Earnings (Deficit)", icon: "doc" },
+                          { id: "aud-us-fs-cf", label: "Statement of Cash Flows", icon: "doc" },
+                          { id: "aud-us-fs-eq", label: "Statement of Changes in Equity", icon: "doc" },
+                          { id: "aud-us-fs-notes", label: "Notes to Financial Statements", icon: "doc" },
+                        ]
+                      },
+                    ]
+                  },
+                  {
+                    id: "aud-us-so", code: "SO", label: "Completion & Signoffs", icon: "folder",
+                    children: [
+                      { id: "aud-us-so-aim", code: "AIM", label: "Accumulation of Identified Misstatements", icon: "checklist", route: "checklist/aud-us-so-aim" },
+                      { id: "aud-us-so-far", code: "FAR", label: "Final Analytical Review", icon: "checklist", route: "checklist/aud-us-so-far" },
+                      { id: "aud-us-subseq", code: "SE", label: "Subsequent Events", icon: "checklist", route: "checklist/aud-us-subseq" },
+                      { id: "aud-us-wgc-final", code: "GC", label: "Going Concern (Final Assessment)", icon: "checklist", route: "checklist/aud-us-wgc-final" },
+                      { id: "aud-us-mr", code: "MR", label: "Management Representation Letter (AU-C 580)", icon: "letter", route: "checklist/aud-us-mr" },
+                      { id: "aud-us-tcwg-fin", code: "TCWG", label: "Communication with Those Charged with Governance (AU-C 260)", icon: "letter", route: "checklist/aud-us-tcwg-fin" },
+                      { id: "aud-us-comp", code: "CM", label: "Completion Checklist", icon: "completion", route: "checklist/aud-us-comp" },
+                      { id: "aud-us-disc", code: "DC", label: "Disclosure Checklist", icon: "checklist" },
+                      { id: "aud-us-ep", code: "QCR", label: "Quality Control Review", icon: "completion", route: "checklist/aud-us-ep" },
+                      { id: "aud-us-so-sign", code: "SO", label: "Signoffs", icon: "completion" },
+                      { id: "aud-us-so-fr", code: "FR", label: "Final Review", icon: "completion" },
+                      { id: "aud-us-so-alf", code: "ALF", label: "Archive & Lock File", icon: "completion" },
+                    ]
+                  },
+                ];
 
                 const auditEngagementTree: SectionNode[] = [
                   {
@@ -1835,7 +1998,7 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
                   const isOpen = expandedSections.has(node.id);
                   const isLeaf = !hasChildren;
                   const currentSubPath = engId ? location.pathname.replace(`/engagements/${engId}/`, '').replace(`/engagements/${engId}`, '') : '';
-                  const defaultRoute = isAuditEngagement ? 'checklist/aud-new-accept' : 'checklist/co-ca';
+                  const defaultRoute = isUSAuditEngagement ? 'checklist/aud-us-new-accept' : isAuditEngagement ? 'checklist/aud-new-accept' : 'checklist/co-ca';
                   const isActive = node.route
                     ? (currentSubPath === node.route || (currentSubPath === '' && node.route === defaultRoute))
                     : false;
@@ -1910,7 +2073,7 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
                 // Collect all node IDs for the "select all" signoff toggles
                 const collectIds = (nodes: SectionNode[]): string[] =>
                   nodes.flatMap(n => [n.id, ...(n.children ? collectIds(n.children) : [])]);
-                const activeTree = isAuditEngagement ? auditEngagementTree : engagementTree;
+                const activeTree = isUSAuditEngagement ? usAuditEngagementTree : isAuditEngagement ? auditEngagementTree : engagementTree;
                 allNodeIdsRef.current = collectIds(activeTree);
 
                 return activeTree.map(node => renderNode(node, 0));
