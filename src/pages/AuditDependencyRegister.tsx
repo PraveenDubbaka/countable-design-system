@@ -675,27 +675,18 @@ export default function AuditDependencyRegister() {
         <>
           {/* Backdrop */}
           <div
-            className="fixed inset-0 bg-black/20 z-40"
+            className="fixed inset-0 z-40"
             onClick={closeDrivePanel}
           />
           {/* Panel */}
-          <div className="fixed top-0 right-0 h-full w-[520px] bg-white dark:bg-card border-l border-border shadow-2xl z-50 flex flex-col">
+          <div className="fixed top-0 right-0 h-full w-[360px] bg-white dark:bg-card border-l border-border shadow-2xl z-50 flex flex-col">
             {/* Header */}
             <div className="flex items-center gap-3 px-4 py-3 border-b border-border bg-muted/30">
               <FolderOpen className="h-4 w-4 text-primary flex-shrink-0" />
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-semibold text-foreground truncate">Audit Standards — Drive</p>
-                <p className="text-xs text-muted-foreground font-mono truncate">{drivePanel.standard}</p>
+                <p className="text-sm font-semibold text-foreground">Audit Standards</p>
+                <p className="text-xs text-muted-foreground font-mono">{drivePanel.standard}</p>
               </div>
-              <a
-                href={DRIVE_FOLDER_URL}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center gap-1 text-xs text-primary hover:underline px-2 py-1 rounded hover:bg-primary/10 transition-colors"
-              >
-                <ExternalLink className="h-3.5 w-3.5" />
-                Open in Drive
-              </a>
               <button
                 onClick={closeDrivePanel}
                 className="h-7 w-7 flex items-center justify-center rounded-md hover:bg-muted transition-colors"
@@ -704,14 +695,32 @@ export default function AuditDependencyRegister() {
               </button>
             </div>
 
-            {/* iframe */}
-            <div className="flex-1 overflow-hidden">
-              <iframe
-                src={DRIVE_EMBED_URL}
-                className="w-full h-full border-0"
-                title={`Google Drive — ${drivePanel.standard}`}
-                allow="autoplay"
-              />
+            {/* Body */}
+            <div className="flex-1 flex flex-col items-center justify-center gap-6 p-8 text-center">
+              {/* Drive icon */}
+              <div className="w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center">
+                <FolderOpen className="h-8 w-8 text-primary" />
+              </div>
+
+              <div>
+                <p className="text-base font-semibold text-foreground mb-1">Standard Reference</p>
+                <p className="text-2xl font-bold text-primary font-mono mb-3">{drivePanel.standard}</p>
+                <p className="text-sm text-muted-foreground leading-relaxed">
+                  Access the source documents for this standard in your Google Drive audit folder.
+                </p>
+              </div>
+
+              <a
+                href={DRIVE_FOLDER_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-primary text-white text-sm font-medium hover:bg-primary/90 transition-colors shadow-sm"
+              >
+                <ExternalLink className="h-4 w-4" />
+                Open in Google Drive
+              </a>
+
+              <p className="text-xs text-muted-foreground">Opens in a new tab</p>
             </div>
           </div>
         </>
