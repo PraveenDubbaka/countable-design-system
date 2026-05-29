@@ -725,15 +725,27 @@ export default function AuditDependencyRegister() {
                           <td className="px-4 py-3">
                             {item.cas ? (
                               <div className="flex items-center gap-1.5">
-                                <button onClick={() => openDrivePanel(item.cas!)} className="text-xs text-muted-foreground font-mono hover:text-primary transition-colors">
-                                  {item.cas}
-                                </button>
+                                {/* PDF link — opens downloaded doc in new tab */}
+                                {STANDARD_PDF[item.cas] ? (
+                                  <a
+                                    href={`${import.meta.env.BASE_URL}standards/${STANDARD_PDF[item.cas]}`}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="text-xs font-mono text-primary hover:underline font-medium"
+                                    title={`Open ${item.cas} PDF`}
+                                  >
+                                    {item.cas}
+                                  </a>
+                                ) : (
+                                  <span className="text-xs text-muted-foreground font-mono">{item.cas}</span>
+                                )}
+                                {/* Drive icon */}
                                 <a
                                   href={item.casUrl || DRIVE_FOLDER_URL}
                                   target="_blank"
                                   rel="noopener noreferrer"
-                                  title={item.casUrl ? `Open ${item.cas} in Google Drive` : "Open Drive folder"}
-                                  className="flex-shrink-0 opacity-50 hover:opacity-100 transition-opacity"
+                                  title="Open in Google Drive"
+                                  className="flex-shrink-0 opacity-40 hover:opacity-100 transition-opacity"
                                 >
                                   <GoogleDriveIcon className="h-3.5 w-3.5" />
                                 </a>
@@ -747,15 +759,27 @@ export default function AuditDependencyRegister() {
                           <td className="px-4 py-3">
                             {item.us ? (
                               <div className="flex items-center gap-1.5">
-                                <button onClick={() => openDrivePanel(item.us!)} className="text-xs text-muted-foreground font-mono hover:text-primary transition-colors">
-                                  {item.us}
-                                </button>
+                                {/* PDF link — opens downloaded doc in new tab */}
+                                {STANDARD_PDF[item.us] ? (
+                                  <a
+                                    href={`${import.meta.env.BASE_URL}standards/${STANDARD_PDF[item.us]}`}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="text-xs font-mono text-primary hover:underline font-medium"
+                                    title={`Open ${item.us} PDF`}
+                                  >
+                                    {item.us}
+                                  </a>
+                                ) : (
+                                  <span className="text-xs text-muted-foreground font-mono">{item.us}</span>
+                                )}
+                                {/* Drive icon */}
                                 <a
                                   href={item.usUrl || DRIVE_FOLDER_URL}
                                   target="_blank"
                                   rel="noopener noreferrer"
-                                  title={item.usUrl ? `Open ${item.us} in Google Drive` : "Open Drive folder"}
-                                  className="flex-shrink-0 opacity-50 hover:opacity-100 transition-opacity"
+                                  title="Open in Google Drive"
+                                  className="flex-shrink-0 opacity-40 hover:opacity-100 transition-opacity"
                                 >
                                   <GoogleDriveIcon className="h-3.5 w-3.5" />
                                 </a>
