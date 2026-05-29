@@ -10347,3 +10347,2177 @@ export const generateGoingConcernFinalAssessmentChecklist = (): Checklist => {
     updatedAt: new Date(),
   };
 };
+
+// ── US GAAS AU-C Audit Checklist Templates (Harbor Freight Logistics LLC) ───
+
+export const generateUSNewEngagementAcceptanceChecklist = (): Checklist => {
+  const q = (id: string, text: string, subQuestions?: Question[], answer = '', explanation = '', reference = ''): Question => ({
+    id, text, answerType: 'yes-no-na' as const, options: ['Yes', 'No', 'NA'],
+    required: false, answer, explanation, reference,
+    ...(subQuestions ? { subQuestions } : {})
+  });
+  const sections: Section[] = [
+    {
+      id: 'us-nea-s1',
+      title: '1. Quality Management (SQMS 1)',
+      questions: [
+        q('us-nea-1a', '<p>Has the firm\'s quality management system under SQMS 1 been reviewed for applicability to this engagement?</p>', undefined, 'Yes', '<p>SQMS 1 policies reviewed and confirmed applicable. Firm quality management system is operational and this engagement falls within standard scope.</p>', 'W/P Ref: QM-01'),
+        q('us-nea-1b', '<p>Have SQMS 1 acceptance criteria been applied, including assessment of engagement risk, resources, and competencies?</p>', undefined, 'Yes', '<p>Engagement risk assessed as moderate. Freight logistics industry experience confirmed on the engagement team.</p>', 'W/P Ref: QM-01'),
+        q('us-nea-1c', '<p>Has the engagement partner (M. Thompson, CPA) confirmed that firm policies permit acceptance of this engagement?</p>', undefined, 'Yes', '<p>M. Thompson confirmed acceptance authorization per SQMS 1 partner sign-off requirements.</p>', 'W/P Ref: QM-02'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'us-nea-s2',
+      title: '2. Client Integrity',
+      questions: [
+        q('us-nea-2a', '<p>Has a background check on the principal owners and management of Harbor Freight Logistics LLC been performed?</p>', undefined, 'Yes', '<p>Background checks performed on all principals. No adverse findings noted. Delaware LLC formation documents reviewed.</p>', 'W/P Ref: CI-01'),
+        q('us-nea-2b', '<p>Have internet/Google searches been conducted on the entity and its principals?</p>', undefined, 'Yes', '<p>Internet searches conducted. No adverse news articles, litigation records, or reputational concerns identified for Harbor Freight Logistics LLC or its principals.</p>', 'W/P Ref: CI-01'),
+        q('us-nea-2c', '<p>Have inquiries been made of predecessor auditors (if applicable) per AU-C 210.13?</p>', undefined, 'Yes', '<p>Communication with predecessor auditor completed. No disagreements on accounting principles, audit scope, or fees reported. Clean handoff noted.</p>', 'W/P Ref: CI-02'),
+        q('us-nea-2d', '<p>Have any known legal proceedings, regulatory investigations, or sanctions involving the entity or management been identified?</p>', undefined, 'No', '<p>No legal proceedings, regulatory investigations, or sanctions identified for Harbor Freight Logistics LLC, its members, or key management personnel.</p>', 'W/P Ref: CI-01'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'us-nea-s3',
+      title: '3. Independence Assessment (AU-C 220; AICPA Code)',
+      questions: [
+        q('us-nea-3a', '<p>Has an independence assessment been completed for all engagement team members and the firm per the AICPA Code of Professional Conduct?</p>', undefined, 'Yes', '<p>Independence confirmed for all team members: M. Thompson (partner), L. Garcia (manager), and all seniors and staff. No independence threats identified.</p>', 'W/P Ref: IND-01'),
+        q('us-nea-3b', '<p>Have all financial interests in Harbor Freight Logistics LLC been reviewed and confirmed as non-existent for engagement team members?</p>', undefined, 'Yes', '<p>Confirmation forms obtained from all engagement team members. No direct or material indirect financial interests in Harbor Freight Logistics LLC.</p>', 'W/P Ref: IND-01'),
+        q('us-nea-3c', '<p>Have any non-audit services provided to the entity been assessed for threats to independence per AICPA Code ET 1.295?</p>', undefined, 'Yes', '<p>No non-audit services identified that would impair independence. Tax compliance services are separately engaged and evaluated — no management functions assumed.</p>', 'W/P Ref: IND-02'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'us-nea-s4',
+      title: '4. Engagement Risk Factors',
+      questions: [
+        q('us-nea-4a', '<p>Have engagement-specific risk factors been assessed, including industry risk (freight logistics), financial reporting complexity (ASC 606, ASC 842), and entity size ($18.4M revenue)?</p>', undefined, 'Yes', '<p>Risk factors documented: revenue recognition under ASC 606 (freight delivery timing), right-of-use assets under ASC 842 (new this year), and goodwill impairment under ASC 350. Risk assessed as moderate-high for these areas.</p>', 'W/P Ref: RA-01'),
+        q('us-nea-4b', '<p>Have the results of the risk assessment been documented and communicated to the engagement team?</p>', undefined, 'Yes', '<p>Engagement risk documented in strategy memo. Communicated to full team at planning meeting January 20, 2025.</p>', 'W/P Ref: ST-01'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'us-nea-s5',
+      title: '5. Regulatory Compliance',
+      questions: [
+        q('us-nea-5a', '<p>Has the entity\'s compliance with applicable federal and state regulations (DOT/FMCSA, Delaware LLC Act, multi-state business registrations) been considered?</p>', undefined, 'Yes', '<p>DOT/FMCSA operating authority confirmed current. Delaware LLC in good standing. Multi-state registrations reviewed for states where the entity operates.</p>', 'W/P Ref: RC-01'),
+        q('us-nea-5b', '<p>Are there any known regulatory compliance issues that would affect the decision to accept this engagement?</p>', undefined, 'No', '<p>No material regulatory compliance issues identified that would preclude acceptance of the engagement.</p>', 'W/P Ref: RC-01'),
+      ],
+      isExpanded: true
+    },
+  ];
+  return {
+    id: 'global-template-us-new-engagement-acceptance',
+    title: 'New Engagement Acceptance',
+    description: 'US GAAS checklist for new engagement acceptance for Harbor Freight Logistics LLC, covering SQMS 1 quality management, client integrity, independence, and regulatory considerations.',
+    objective: 'AU-C 210 and 220 require the auditor to establish that preconditions for an audit are present and that there are no factors that would preclude acceptance. SQMS 1 imposes firm-level quality management requirements for all new engagements.',
+    sections,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  };
+};
+
+export const generateUSExistingEngagementContinuanceChecklist = (): Checklist => {
+  const q = (id: string, text: string, subQuestions?: Question[], answer = '', explanation = '', reference = ''): Question => ({
+    id, text, answerType: 'yes-no-na' as const, options: ['Yes', 'No', 'NA'],
+    required: false, answer, explanation, reference,
+    ...(subQuestions ? { subQuestions } : {})
+  });
+  const sections: Section[] = [
+    {
+      id: 'us-eec-s1',
+      title: '1. Continuance Assessment',
+      questions: [
+        q('us-eec-1a', '<p>Has a continuance assessment been performed for Harbor Freight Logistics LLC per SQMS 1 and AU-C 220?</p>', undefined, 'NA', '<p>This is the first year of the audit engagement for Harbor Freight Logistics LLC (AUD-US-Dec312024). Continuance procedures not applicable; new engagement acceptance checklist applies.</p>'),
+        q('us-eec-1b', '<p>Have any adverse changes in client integrity, business risk, or ethical requirements been identified since the prior year?</p>', undefined, 'NA', '<p>First year engagement. No prior year data available for comparison.</p>'),
+        q('us-eec-1c', '<p>Has the engagement team confirmed that no new circumstances have arisen that would require withdrawal from the engagement?</p>', undefined, 'Yes', '<p>No circumstances identified requiring withdrawal. Engagement proceeds as planned.</p>'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'us-eec-s2',
+      title: '2. Fees and Billing',
+      questions: [
+        q('us-eec-2a', '<p>Have prior year fees been collected in full (if applicable)?</p>', undefined, 'NA', '<p>First year engagement. No prior year fees to collect.</p>'),
+        q('us-eec-2b', '<p>Are there any outstanding billing disputes or fee disagreements with the client?</p>', undefined, 'NA', '<p>First year engagement. No prior billing history.</p>'),
+        q('us-eec-2c', '<p>Has the current year fee arrangement been agreed and documented in the engagement letter?</p>', undefined, 'Yes', '<p>Current year fee arrangement documented in the engagement letter executed by Harbor Freight Logistics LLC management.</p>', 'W/P Ref: EL-01'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'us-eec-s3',
+      title: '3. Changes in Management/Ownership',
+      questions: [
+        q('us-eec-3a', '<p>Have any changes in key management personnel or LLC membership since initial acceptance been identified and assessed?</p>', undefined, 'NA', '<p>First year engagement. No prior year changes to assess. Current management structure documented in understanding of entity workpapers.</p>'),
+        q('us-eec-3b', '<p>Have any changes in ownership (LLC member transfers, new members) been identified and assessed for AML/KYC implications?</p>', undefined, 'NA', '<p>First year engagement. Current ownership structure confirmed in CIP documentation.</p>'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'us-eec-s4',
+      title: '4. Independence Reconfirmation',
+      questions: [
+        q('us-eec-4a', '<p>Has independence been reconfirmed for all engagement team members for the current engagement period?</p>', undefined, 'Yes', '<p>Independence reconfirmed for M. Thompson, L. Garcia, and all team members. Annual independence confirmation process completed.</p>', 'W/P Ref: IND-01'),
+        q('us-eec-4b', '<p>Have any new relationships, financial interests, or non-audit services arisen since acceptance that could impair independence?</p>', undefined, 'No', '<p>No new independence threats identified since engagement acceptance.</p>'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'us-eec-s5',
+      title: '5. Engagement Risk Update',
+      questions: [
+        q('us-eec-5a', '<p>Has the engagement risk assessment been updated for any new information received since acceptance?</p>', undefined, 'Yes', '<p>No material changes to risk profile since initial acceptance. Key risks remain: revenue recognition (ASC 606), ROU assets (ASC 842), goodwill impairment (ASC 350).</p>', 'W/P Ref: RA-01'),
+      ],
+      isExpanded: true
+    },
+  ];
+  return {
+    id: 'global-template-us-existing-engagement-continuance',
+    title: 'Existing Engagement Continuance',
+    description: 'US GAAS checklist for existing engagement continuance per AU-C 210 and SQMS 1. Note: AUD-US-Dec312024 is a first-year engagement; most prior-year items are N/A.',
+    objective: 'AU-C 210 and SQMS 1 require the auditor to reassess the acceptability of continuing an audit engagement each year. This checklist documents the continuance decision for Harbor Freight Logistics LLC.',
+    sections,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  };
+};
+
+export const generateUSAuditIndependenceChecklist = (): Checklist => {
+  const q = (id: string, text: string, subQuestions?: Question[], answer = '', explanation = '', reference = ''): Question => ({
+    id, text, answerType: 'yes-no-na' as const, options: ['Yes', 'No', 'NA'],
+    required: false, answer, explanation, reference,
+    ...(subQuestions ? { subQuestions } : {})
+  });
+  const sections: Section[] = [
+    {
+      id: 'us-ind-s1',
+      title: '1. Independence Threats and Safeguards',
+      questions: [
+        q('us-ind-1a', '<p>Have all five categories of independence threats been evaluated for the engagement team: self-interest, self-review, advocacy, familiarity, and intimidation (AICPA Code ET 1.210)?</p>', undefined, 'Yes', '<p>All five threat categories evaluated for M. Thompson, L. Garcia, and all engagement team members. No threats identified above acceptable levels.</p>', 'W/P Ref: IND-01'),
+        q('us-ind-1b', '<p>Have safeguards been identified and applied where threats exist?</p>', undefined, 'Yes', '<p>No significant threats identified requiring specific safeguards beyond standard firm quality management controls.</p>', 'W/P Ref: IND-01'),
+        q('us-ind-1c', '<p>Has the independence assessment been documented in the engagement file per SQMS 1?</p>', undefined, 'Yes', '<p>Independence assessment documented and signed by all engagement team members. Filed in independence section of engagement file.</p>', 'W/P Ref: IND-01'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'us-ind-s2',
+      title: '2. Financial Interests',
+      questions: [
+        q('us-ind-2a', '<p>Have all direct financial interests in Harbor Freight Logistics LLC been confirmed as non-existent for all engagement team members (AICPA Code ET 1.240)?</p>', undefined, 'Yes', '<p>No direct financial interests in Harbor Freight Logistics LLC held by any engagement team member or their immediate family members.</p>', 'W/P Ref: IND-02'),
+        q('us-ind-2b', '<p>Have material indirect financial interests been assessed (e.g., through investment funds, retirement accounts)?</p>', undefined, 'Yes', '<p>Material indirect financial interests reviewed. Harbor Freight Logistics LLC is a private entity; no publicly traded securities. No indirect interests identified.</p>', 'W/P Ref: IND-02'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'us-ind-s3',
+      title: '3. Non-Audit Services',
+      questions: [
+        q('us-ind-3a', '<p>Have all non-audit services provided or proposed to Harbor Freight Logistics LLC been identified and assessed for independence implications (AICPA Code ET 1.295)?</p>', undefined, 'Yes', '<p>Tax compliance services provided separately. Assessed under AICPA Code ET 1.295 — tax return preparation for LLC does not impair audit independence when management makes all decisions and reviews all positions.</p>', 'W/P Ref: IND-03'),
+        q('us-ind-3b', '<p>Have bookkeeping or financial statement preparation services been assessed? (These are prohibited if they would result in self-review.)</p>', undefined, 'No', '<p>No bookkeeping or financial statement preparation services provided. Harbor Freight Logistics LLC maintains its own books and prepares draft financial statements internally.</p>'),
+        q('us-ind-3c', '<p>Have management functions been assumed in any non-audit service engagement? (Prohibited per AICPA Code.)</p>', undefined, 'No', '<p>No management functions assumed. All non-audit services are advisory only, with management making all decisions.</p>'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'us-ind-s4',
+      title: '4. Family and Personal Relationships',
+      questions: [
+        q('us-ind-4a', '<p>Have family relationships between engagement team members and Harbor Freight Logistics LLC personnel been assessed?</p>', undefined, 'Yes', '<p>No family relationships between engagement team members and Harbor Freight Logistics LLC management, employees, or members identified.</p>', 'W/P Ref: IND-04'),
+        q('us-ind-4b', '<p>Are there any close personal or business relationships between engagement team members and the client that could impair independence?</p>', undefined, 'No', '<p>No close personal or business relationships identified that would impair independence.</p>'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'us-ind-s5',
+      title: '5. Long Association',
+      questions: [
+        q('us-ind-5a', '<p>Has partner rotation been considered where applicable (noting AICPA Code requirements for partner rotation apply primarily to SEC issuers; not required for private companies)?</p>', undefined, 'NA', '<p>Harbor Freight Logistics LLC is a private Delaware LLC, not an SEC issuer. AICPA Code mandatory partner rotation rules do not apply. This is the first year of engagement.</p>'),
+        q('us-ind-5b', '<p>Has the familiarity threat from long association been assessed even where rotation is not required?</p>', undefined, 'NA', '<p>First year engagement. Long association threat not applicable.</p>'),
+      ],
+      isExpanded: true
+    },
+  ];
+  return {
+    id: 'global-template-us-audit-independence',
+    title: 'Independence & Ethical Requirements',
+    description: 'US GAAS independence and ethical requirements checklist for Harbor Freight Logistics LLC per AU-C 220 and the AICPA Code of Professional Conduct.',
+    objective: 'AU-C 220 requires the engagement partner to be satisfied that independence requirements have been met throughout the engagement. The AICPA Code of Professional Conduct establishes the framework for evaluating independence threats and safeguards.',
+    sections,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  };
+};
+
+export const generateUSAMLComplianceChecklist = (): Checklist => {
+  const q = (id: string, text: string, subQuestions?: Question[], answer = '', explanation = '', reference = ''): Question => ({
+    id, text, answerType: 'yes-no-na' as const, options: ['Yes', 'No', 'NA'],
+    required: false, answer, explanation, reference,
+    ...(subQuestions ? { subQuestions } : {})
+  });
+  const sections: Section[] = [
+    {
+      id: 'us-aml-s1',
+      title: '1. Client Identification Program (CIP/KYC)',
+      questions: [
+        q('us-aml-1a', '<p>Has a Customer Identification Program (CIP) been completed for Harbor Freight Logistics LLC in accordance with BSA/FinCEN requirements and the USA PATRIOT Act (31 CFR 1020.220)?</p>', undefined, 'Yes', '<p>CIP completed. Delaware LLC formation documents, EIN confirmation, and principal identification documents obtained and verified.</p>', 'W/P Ref: AML-01'),
+        q('us-aml-1b', '<p>Has the entity\'s legal name, principal place of business, EIN, and date of formation been verified through independent sources?</p>', undefined, 'Yes', '<p>Verified through Delaware Division of Corporations search and IRS EIN confirmation letter. Entity in good standing.</p>', 'W/P Ref: AML-01'),
+        q('us-aml-1c', '<p>Have identification documents been obtained and verified for all individuals appearing on behalf of Harbor Freight Logistics LLC?</p>', undefined, 'Yes', '<p>Government-issued photo ID obtained and verified for all signing authorities and principals meeting with the engagement team.</p>', 'W/P Ref: AML-01'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'us-aml-s2',
+      title: '2. Beneficial Ownership (FinCEN Rule)',
+      questions: [
+        q('us-aml-2a', '<p>Has beneficial ownership been verified for all individuals owning 25% or more of Harbor Freight Logistics LLC per FinCEN Customer Due Diligence rules (31 CFR 1010.230)?</p>', undefined, 'Yes', '<p>Beneficial ownership certified. All members holding 25% or greater LLC interest identified, with government-issued ID and address verified.</p>', 'W/P Ref: AML-02'),
+        q('us-aml-2b', '<p>Has the controlling person (individual with significant responsibility to control, manage, or direct the LLC) been identified?</p>', undefined, 'Yes', '<p>Managing member identified as the controlling person and included in beneficial ownership certification.</p>', 'W/P Ref: AML-02'),
+        q('us-aml-2c', '<p>Have any changes in beneficial ownership since entity formation been documented?</p>', undefined, 'No', '<p>No changes in LLC membership or ownership structure identified. Operating agreement reviewed and current ownership confirmed.</p>'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'us-aml-s3',
+      title: '3. Suspicious Activity Review',
+      questions: [
+        q('us-aml-3a', '<p>Have transactions been reviewed for indicators of money laundering, structuring, or other suspicious activity per FinCEN guidance?</p>', undefined, 'Yes', '<p>Transaction review performed. All revenue streams consistent with freight logistics and warehousing business model. No structuring or unusual cash transactions identified.</p>', 'W/P Ref: AML-03'),
+        q('us-aml-3b', '<p>Are there any transactions with sanctioned countries, entities, or individuals (OFAC list)?</p>', undefined, 'No', '<p>OFAC screening performed on major customers and vendors. No matches identified on OFAC Specially Designated Nationals list.</p>', 'W/P Ref: AML-03'),
+        q('us-aml-3c', '<p>Are there unexplained large cash transactions inconsistent with the entity\'s business model?</p>', undefined, 'No', '<p>Harbor Freight Logistics LLC operates primarily through EFT and check. No significant cash transactions identified. All large payments reviewed and consistent with documented contracts.</p>'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'us-aml-s4',
+      title: '4. High-Risk Indicators',
+      questions: [
+        q('us-aml-4a', '<p>Does the entity operate in high-risk jurisdictions or industries identified by FATF as elevated AML risk?</p>', undefined, 'No', '<p>Harbor Freight Logistics LLC operates domestically within the United States. No operations in FATF high-risk or non-cooperative jurisdictions.</p>'),
+        q('us-aml-4b', '<p>Are there any politically exposed persons (PEPs) associated with the entity as owners, officers, or related parties?</p>', undefined, 'No', '<p>No PEPs identified among LLC members, management, or related parties.</p>', 'W/P Ref: AML-04'),
+        q('us-aml-4c', '<p>Does the entity have complex ownership structures, offshore entities, or nominee arrangements that increase AML risk?</p>', undefined, 'No', '<p>Simple LLC structure with domestic US members only. No offshore entities, trusts, or nominee arrangements identified.</p>'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'us-aml-s5',
+      title: '5. AML Program Assessment',
+      questions: [
+        q('us-aml-5a', '<p>Does Harbor Freight Logistics LLC have an AML/BSA compliance program appropriate for its size and risk profile (if subject to BSA as a money services business or similar)?</p>', undefined, 'NA', '<p>Harbor Freight Logistics LLC is a freight logistics company, not a financial institution or money services business. BSA AML program requirements do not directly apply to the entity.</p>'),
+        q('us-aml-5b', '<p>Overall AML/KYC conclusion: Is the auditor satisfied that client identification and AML considerations have been addressed?</p>', undefined, 'Yes', '<p>CIP complete, beneficial ownership verified, OFAC screening clear, no suspicious activity indicators. AML procedures satisfactorily completed for Harbor Freight Logistics LLC.</p>', 'W/P Ref: AML-01'),
+      ],
+      isExpanded: true
+    },
+  ];
+  return {
+    id: 'global-template-us-aml-compliance',
+    title: 'Anti-Money Laundering (AML) Compliance',
+    description: 'AML and KYC compliance checklist for Harbor Freight Logistics LLC per BSA/FinCEN, USA PATRIOT Act, and FATF guidance.',
+    objective: 'BSA and FinCEN Customer Due Diligence rules require financial service providers and auditors to verify client identity, beneficial ownership, and screen for money laundering risks. This checklist documents AML/KYC procedures performed for Harbor Freight Logistics LLC.',
+    sections,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  };
+};
+
+export const generateUSUnderstandingEntityBasicsChecklist = (): Checklist => {
+  const q = (id: string, text: string, subQuestions?: Question[], answer = '', explanation = '', reference = ''): Question => ({
+    id, text, answerType: 'yes-no-na' as const, options: ['Yes', 'No', 'NA'],
+    required: false, answer, explanation, reference,
+    ...(subQuestions ? { subQuestions } : {})
+  });
+  const sections: Section[] = [
+    {
+      id: 'us-ueb-s1',
+      title: '1. Entity Structure',
+      questions: [
+        q('us-ueb-1a', '<p>Has the legal structure of Harbor Freight Logistics LLC been documented (Delaware LLC, member structure, operating agreement)?</p>', undefined, 'Yes', '<p>Delaware LLC formed and in good standing. Operating agreement reviewed. Multi-member LLC with managing member structure. No subsidiaries or joint ventures identified.</p>', 'W/P Ref: UEB-01'),
+        q('us-ueb-1b', '<p>Have all subsidiaries, affiliates, and related entities been identified?</p>', undefined, 'Yes', '<p>No subsidiaries or consolidated entities. Harbor Freight Logistics LLC is a standalone legal entity.</p>', 'W/P Ref: UEB-01'),
+        q('us-ueb-1c', '<p>Has the entity\'s principal place of business and all operating locations been documented?</p>', undefined, 'Yes', '<p>Principal office and warehouse facility documented. Multi-state operations confirmed in 12 states per payroll records.</p>', 'W/P Ref: UEB-02'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'us-ueb-s2',
+      title: '2. Financial Reporting Framework',
+      questions: [
+        q('us-ueb-2a', '<p>Has it been confirmed that the applicable financial reporting framework is US GAAP (FASB ASC) and not IFRS or other frameworks?</p>', undefined, 'Yes', '<p>US GAAP confirmed as the applicable framework per engagement letter and management representation. FASB ASC is the authoritative source for accounting standards.</p>', 'W/P Ref: UEB-03'),
+        q('us-ueb-2b', '<p>Are there any framework compliance issues, including departures from US GAAP that have been identified?</p>', undefined, 'No', '<p>No material departures from US GAAP identified during planning. Financial statements are prepared on a full accrual basis in accordance with FASB ASC.</p>'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'us-ueb-s3',
+      title: '3. Governance',
+      questions: [
+        q('us-ueb-3a', '<p>Has the governance structure been documented (Board of Managers, managing member, officers)?</p>', undefined, 'Yes', '<p>Board of Managers (TCWG) structure documented per operating agreement. Managing member serves as CEO. Controller is chief financial officer equivalent.</p>', 'W/P Ref: UEB-04'),
+        q('us-ueb-3b', '<p>Have minutes of Board of Managers meetings been reviewed for the audit period?</p>', undefined, 'Yes', '<p>Board minutes for fiscal year 2024 reviewed. Key decisions noted: approval of credit facility, lease agreements, and capital expenditure budget.</p>', 'W/P Ref: UEB-04'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'us-ueb-s4',
+      title: '4. Related Parties (ASC 850)',
+      questions: [
+        q('us-ueb-4a', '<p>Have all related parties been identified in accordance with ASC 850, including LLC members, their families, and entities controlled by members?</p>', undefined, 'Yes', '<p>Related party schedule obtained from management. Three related party entities identified: member-owned trucking company, member-owned real estate holding company (landlord for one warehouse), and LLC member personal loans.</p>', 'W/P Ref: RP-01'),
+        q('us-ueb-4b', '<p>Have related party transactions been identified, assessed for arm\'s-length nature, and confirmed that ASC 850 disclosures are adequate?</p>', undefined, 'Yes', '<p>Related party transactions include: warehouse lease from member-controlled entity ($215K annually) and fuel purchase arrangement with member-owned trucking company. Both assessed for arm\'s-length pricing. ASC 850 disclosures included in financial statements.</p>', 'W/P Ref: RP-01'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'us-ueb-s5',
+      title: '5. Significant Contracts',
+      questions: [
+        q('us-ueb-5a', '<p>Have significant customer contracts and freight service agreements been reviewed and summarized?</p>', undefined, 'Yes', '<p>Top 10 customer contracts reviewed representing 72% of revenue. All are standard freight service agreements with delivery-based billing consistent with ASC 606 performance obligations.</p>', 'W/P Ref: UEB-05'),
+        q('us-ueb-5b', '<p>Have significant vendor contracts, leases, and financing agreements been reviewed and summarized?</p>', undefined, 'Yes', '<p>Key contracts reviewed: equipment leases (5 tractors and 12 trailers under ASC 842), warehouse lease (operating lease under ASC 842), credit facility ($5M revolving), and term loan ($2.8M).</p>', 'W/P Ref: UEB-06'),
+      ],
+      isExpanded: true
+    },
+  ];
+  return {
+    id: 'global-template-us-understanding-entity-basics',
+    title: 'Understanding the Entity — Basics',
+    description: 'US GAAS checklist documenting the auditor\'s understanding of Harbor Freight Logistics LLC\'s structure, framework, governance, related parties, and contracts per AU-C 315.',
+    objective: 'AU-C 315 requires the auditor to obtain an understanding of the entity and its environment sufficient to identify and assess risks of material misstatement. This checklist documents the basic entity understanding for Harbor Freight Logistics LLC.',
+    sections,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  };
+};
+
+export const generateUSUnderstandingEntitySystemsChecklist = (): Checklist => {
+  const q = (id: string, text: string, subQuestions?: Question[], answer = '', explanation = '', reference = ''): Question => ({
+    id, text, answerType: 'yes-no-na' as const, options: ['Yes', 'No', 'NA'],
+    required: false, answer, explanation, reference,
+    ...(subQuestions ? { subQuestions } : {})
+  });
+  const sections: Section[] = [
+    {
+      id: 'us-ues-s1',
+      title: '1. Accounting System',
+      questions: [
+        q('us-ues-1a', '<p>Has the primary accounting software been identified and documented (vendor, version, hosting model)?</p>', undefined, 'Yes', '<p>QuickBooks Enterprise Desktop (v24.0) identified as primary accounting system. Hosted on-premise at principal office. Chart of accounts reviewed and documented.</p>', 'W/P Ref: UES-01'),
+        q('us-ues-1b', '<p>Are there any subsidiary or ancillary systems that feed into the GL (billing system, fleet management, payroll)?</p>', undefined, 'Yes', '<p>ADP Workforce Now for payroll (journal entry posted to QB monthly). Custom freight billing system (LoadMaster Pro) generates invoices exported to QB. Fleet management system (Fleetio) for vehicle maintenance costs — manual journal entry.</p>', 'W/P Ref: UES-01'),
+        q('us-ues-1c', '<p>Has the period-end close process and timeline been documented?</p>', undefined, 'Yes', '<p>Month-end close completed by 15th of following month. Year-end close completed by January 31 with audit adjustments posted by February 14.</p>', 'W/P Ref: UES-02'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'us-ues-s2',
+      title: '2. IT Environment',
+      questions: [
+        q('us-ues-2a', '<p>Has the IT environment been documented (cloud vs. on-premise, network architecture, data storage)?</p>', undefined, 'Yes', '<p>Hybrid environment: QuickBooks on-premise, ADP cloud-based, LoadMaster Pro SaaS. Data backed up nightly to cloud storage. IT environment documentation obtained.</p>', 'W/P Ref: UES-03'),
+        q('us-ues-2b', '<p>Have any significant IT changes during the audit period been identified (system migrations, new modules, significant customizations)?</p>', undefined, 'No', '<p>No significant IT system changes during fiscal year 2024. LoadMaster Pro billing system was fully implemented in fiscal year 2023 and is now stable.</p>'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'us-ues-s3',
+      title: '3. Period-End Close Process',
+      questions: [
+        q('us-ues-3a', '<p>Has the year-end close process been documented, including who performs the close, what reconciliations are required, and who reviews?</p>', undefined, 'Yes', '<p>Year-end close process documented: Controller performs close, CFO-equivalent reviews all account reconciliations, managing member approves final draft financial statements.</p>', 'W/P Ref: UES-02'),
+        q('us-ues-3b', '<p>Are there documented procedures for recording accruals, prepayments, and other period-end adjustments?</p>', undefined, 'Yes', '<p>Written close procedures exist for standard accruals (payroll, insurance, fuel) and lease accounting entries under ASC 842.</p>', 'W/P Ref: UES-02'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'us-ues-s4',
+      title: '4. Chart of Accounts Structure',
+      questions: [
+        q('us-ues-4a', '<p>Has the chart of accounts been reviewed and documented, including major account categories and numbering structure?</p>', undefined, 'Yes', '<p>Chart of accounts reviewed. 5-digit account numbering. Assets 10000-19999, Liabilities 20000-29999, Equity 30000-39999, Revenue 40000-49999, COGS/Expenses 50000-89999.</p>', 'W/P Ref: UES-04'),
+        q('us-ues-4b', '<p>Are there separate accounts for ROU assets and lease liabilities as required by ASC 842?</p>', undefined, 'Yes', '<p>Dedicated accounts for ROU assets (ASC 842), accumulated amortization, operating lease liabilities (current and non-current), and finance lease liabilities confirmed in chart of accounts.</p>', 'W/P Ref: UES-04'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'us-ues-s5',
+      title: '5. Segregation of Duties Assessment',
+      questions: [
+        q('us-ues-5a', '<p>Has segregation of duties been assessed for key financial processes (revenue, AP, payroll, GL access)?</p>', undefined, 'Yes', '<p>Adequate segregation of duties for entity size (147 employees): separate AR and AP functions, controller has no cash disbursement authority, payroll processed by ADP with HR authorization. Some overlap in small office acceptable given compensating controls.</p>', 'W/P Ref: UES-05'),
+        q('us-ues-5b', '<p>Have any significant segregation of duties deficiencies been identified and documented as control deficiencies?</p>', undefined, 'No', '<p>No significant segregation of duties deficiencies identified that rise to the level of material weakness or significant deficiency requiring communication under AU-C 265.</p>'),
+      ],
+      isExpanded: true
+    },
+  ];
+  return {
+    id: 'global-template-us-understanding-entity-systems',
+    title: 'Understanding the Entity — Systems & Controls',
+    description: 'US GAAS checklist documenting understanding of Harbor Freight Logistics LLC\'s accounting system, IT environment, period-end close process, and segregation of duties per AU-C 315.',
+    objective: 'AU-C 315 requires the auditor to understand the entity\'s information system and control activities relevant to financial reporting. This checklist documents the systems and controls understanding for Harbor Freight Logistics LLC.',
+    sections,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  };
+};
+
+export const generateUSUnderstandingEntityIndustryChecklist = (): Checklist => {
+  const q = (id: string, text: string, subQuestions?: Question[], answer = '', explanation = '', reference = ''): Question => ({
+    id, text, answerType: 'yes-no-na' as const, options: ['Yes', 'No', 'NA'],
+    required: false, answer, explanation, reference,
+    ...(subQuestions ? { subQuestions } : {})
+  });
+  const sections: Section[] = [
+    {
+      id: 'us-uei-s1',
+      title: '1. Industry Conditions',
+      questions: [
+        q('us-uei-1a', '<p>Have current freight logistics industry conditions been documented, including market trends, competitive dynamics, and macroeconomic factors affecting Harbor Freight Logistics LLC?</p>', undefined, 'Yes', '<p>Industry analysis completed: US freight industry experienced normalization after COVID surge. Key factors: fuel cost volatility (diesel prices), driver shortage (industry-wide), increased competition from asset-light 3PL providers. Harbor Freight Logistics LLC operating in regional trucking and warehousing niche.</p>', 'W/P Ref: UEI-01'),
+        q('us-uei-1b', '<p>Have fuel cost impacts on operating margins been assessed and compared to prior year?</p>', undefined, 'Yes', '<p>Fuel as % of revenue: 18.4% (2024) vs 19.1% (2023). Slight improvement due to fuel surcharge pass-through clauses in major contracts. Fuel hedge program in place for 40% of expected consumption.</p>', 'W/P Ref: UEI-01'),
+        q('us-uei-1c', '<p>Has the impact of driver shortages and labor cost pressures on the entity\'s operations been assessed?</p>', undefined, 'Yes', '<p>Driver vacancy rate at 8% (industry average 12%). Above-market driver compensation and retention bonuses partially offset cost pressures. Labor cost as % of revenue increased from 31.2% to 33.1%.</p>', 'W/P Ref: UEI-01'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'us-uei-s2',
+      title: '2. Regulatory Framework',
+      questions: [
+        q('us-uei-2a', '<p>Has compliance with DOT/FMCSA regulations (operating authority, driver hours-of-service, vehicle inspections, drug testing) been assessed?</p>', undefined, 'Yes', '<p>DOT operating authority current (MC#). FMCSA safety rating "Satisfactory." Driver qualification files reviewed — all current. Drug testing program administered by third party.</p>', 'W/P Ref: UEI-02'),
+        q('us-uei-2b', '<p>Have state-specific regulations affecting multi-state operations been considered (state weight limits, permits, fuel taxes - IFTA)?</p>', undefined, 'Yes', '<p>IFTA fuel tax compliance confirmed. All 12 states with operations have valid fuel tax accounts. No material IFTA audit adjustments in past 3 years.</p>', 'W/P Ref: UEI-02'),
+        q('us-uei-2c', '<p>Has OSHA workplace safety compliance been considered as it relates to the entity\'s warehouse operations?</p>', undefined, 'Yes', '<p>OSHA compliance reviewed for warehouse operations. No material citations in fiscal 2024. Workers\' compensation claims consistent with industry rates.</p>'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'us-uei-s3',
+      title: '3. Business Model & Strategy',
+      questions: [
+        q('us-uei-3a', '<p>Has the entity\'s business model been documented (freight services types, customer mix, geographic reach, warehousing vs. transport revenue split)?</p>', undefined, 'Yes', '<p>Revenue mix: freight transport 71%, warehousing/distribution 21%, freight brokerage 8%. Top customer represents 22% of revenue. Regional focus in southeast and mid-Atlantic US.</p>', 'W/P Ref: UEI-03'),
+        q('us-uei-3b', '<p>Has the entity\'s strategic plan and any significant business changes in the audit year been documented?</p>', undefined, 'Yes', '<p>Strategic plan reviewed: expanding warehousing capacity (goodwill from prior acquisition relates to warehouse network), adding refrigerated transport capability. No acquisitions in fiscal 2024.</p>', 'W/P Ref: UEI-03'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'us-uei-s4',
+      title: '4. US GAAP Accounting Policies',
+      questions: [
+        q('us-uei-4a', '<p>Have the entity\'s significant accounting policies been documented and assessed for compliance with US GAAP (ASC 606 revenue, ASC 842 leases, ASC 350 goodwill, ASC 740 income taxes)?</p>', undefined, 'Yes', '<p>Accounting policies documented: ASC 606 - revenue recognized upon delivery completion (point-in-time, single performance obligation per freight shipment). ASC 842 - all leases capitalized, operating vs finance distinction applied. ASC 350 - goodwill tested annually for impairment using qualitative assessment followed by quantitative if needed. ASC 740 - pass-through LLC, no entity-level income tax.</p>', 'W/P Ref: UEI-04'),
+        q('us-uei-4b', '<p>Are there any accounting policy changes from prior year that require retrospective application or disclosure?</p>', undefined, 'No', '<p>ASC 842 adopted in prior year (fiscal 2023). No new accounting standard adoptions in fiscal 2024. No voluntary accounting policy changes identified.</p>'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'us-uei-s5',
+      title: '5. Financial Performance Measurement',
+      questions: [
+        q('us-uei-5a', '<p>Have key financial performance metrics relevant to the freight logistics industry been documented and assessed (revenue per mile, load factor, operating ratio)?</p>', undefined, 'Yes', '<p>Key metrics documented: operating ratio 91.4% (industry benchmark 90-92% for regional carriers), revenue per mile $2.84 (consistent with prior year $2.79). Performance metrics support going concern assessment.</p>', 'W/P Ref: UEI-05'),
+        q('us-uei-5b', '<p>Have covenant compliance metrics for the entity\'s credit facility been reviewed?</p>', undefined, 'Yes', '<p>Credit facility covenants reviewed: minimum DSCR 1.25x (actual 1.38x), maximum debt/EBITDA 3.0x (actual 2.4x). All covenants in compliance at December 31, 2024.</p>', 'W/P Ref: UEI-05'),
+      ],
+      isExpanded: true
+    },
+  ];
+  return {
+    id: 'global-template-us-understanding-entity-industry',
+    title: 'Understanding the Entity — Industry & Environment',
+    description: 'US GAAS checklist documenting understanding of Harbor Freight Logistics LLC\'s industry conditions, regulatory framework, business model, and key accounting policies per AU-C 315.',
+    objective: 'AU-C 315 requires the auditor to understand the entity\'s industry, regulatory environment, and relevant factors affecting the financial statements. This checklist documents the industry and environment understanding for Harbor Freight Logistics LLC.',
+    sections,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  };
+};
+
+export const generateUSEngagementPlanningChecklist = (): Checklist => {
+  const q = (id: string, text: string, subQuestions?: Question[], answer = '', explanation = '', reference = ''): Question => ({
+    id, text, answerType: 'yes-no-na' as const, options: ['Yes', 'No', 'NA'],
+    required: false, answer, explanation, reference,
+    ...(subQuestions ? { subQuestions } : {})
+  });
+  const sections: Section[] = [
+    {
+      id: 'us-ep-s1',
+      title: '1. Overall Audit Strategy',
+      questions: [
+        q('us-ep-1a', '<p>Has the overall audit strategy been documented per AU-C 300, including scope, timing, and direction of the audit?</p>', undefined, 'Yes', '<p>Overall audit strategy documented in strategy memorandum. Risk-based approach with emphasis on revenue recognition (ASC 606), ROU assets (ASC 842), and goodwill impairment (ASC 350). Strategy approved by M. Thompson.</p>', 'W/P Ref: ST-01'),
+        q('us-ep-1b', '<p>Has the audit plan been developed consistent with the overall strategy, identifying the nature, timing, and extent of planned risk assessment and further audit procedures?</p>', undefined, 'Yes', '<p>Detailed audit plan prepared by L. Garcia and reviewed by M. Thompson. Plan includes specific procedures for each significant account and risk area.</p>', 'W/P Ref: PL-01'),
+        q('us-ep-1c', '<p>Has the planning been updated for new information obtained during the audit?</p>', undefined, 'Yes', '<p>Planning updated January 21, 2025 after initial management meetings to reflect ASC 842 implementation details and goodwill impairment assessment methodology.</p>', 'W/P Ref: PL-02'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'us-ep-s2',
+      title: '2. Risk Assessment Approach',
+      questions: [
+        q('us-ep-2a', '<p>Has the risk assessment approach been determined (combined approach with controls reliance vs. primarily substantive)?</p>', undefined, 'Yes', '<p>Primarily substantive approach selected given entity size and cost-benefit of controls testing. Limited controls reliance for payroll cycle (ADP processing) where testing is efficient.</p>', 'W/P Ref: ST-01'),
+        q('us-ep-2b', '<p>Has the engagement team brainstorming session on fraud risks been scheduled and conducted per AU-C 240.15?</p>', undefined, 'Yes', '<p>Fraud brainstorming session conducted January 20, 2025 with full engagement team. Revenue recognition and management override identified as primary fraud risk areas. Minutes documented.</p>', 'W/P Ref: FRA-01'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'us-ep-s3',
+      title: '3. Technology Use',
+      questions: [
+        q('us-ep-3a', '<p>Has the use of data analytics tools (ACL, IDEA, Excel analytics, or other) been incorporated into the audit plan?</p>', undefined, 'Yes', '<p>Data analytics planned for: complete revenue population testing (LoadMaster Pro export), journal entry population testing (QuickBooks export), and accounts receivable aging analysis.</p>', 'W/P Ref: DA-01'),
+        q('us-ep-3b', '<p>Has the use of audit software and electronic workpapers been confirmed?</p>', undefined, 'Yes', '<p>Electronic workpapers in firm\'s audit platform. Client data requests sent via secure portal. All documentation maintained electronically.</p>'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'us-ep-s4',
+      title: '4. Coordination with Specialists',
+      questions: [
+        q('us-ep-4a', '<p>Has the need for an auditor\'s specialist (valuation, IT, actuarial) been assessed per AU-C 620?</p>', undefined, 'Yes', '<p>Goodwill impairment testing requires assessment of management\'s specialist (valuation firm) report. AU-C 620 considerations documented. No separate auditor specialist engaged — auditor to evaluate management\'s specialist work.</p>', 'W/P Ref: SP-01'),
+        q('us-ep-4b', '<p>If the entity used a valuation specialist for goodwill impairment testing, has a plan been developed to evaluate the specialist\'s work?</p>', undefined, 'Yes', '<p>Plan developed to evaluate qualifications of management\'s valuation specialist and assess assumptions, data, and conclusions in the goodwill impairment analysis.</p>', 'W/P Ref: SP-01'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'us-ep-s5',
+      title: '5. Timeline and Staffing Milestones',
+      questions: [
+        q('us-ep-5a', '<p>Has the fieldwork timeline been agreed and documented (start date January 20, 2025; end date February 7, 2025)?</p>', undefined, 'Yes', '<p>Fieldwork dates confirmed: January 20 – February 7, 2025. Client data request list sent December 20, 2024. Interim procedures completed December 2024.</p>', 'W/P Ref: PL-03'),
+        q('us-ep-5b', '<p>Has the draft report delivery date been communicated to management?</p>', undefined, 'Yes', '<p>Draft audit report delivery targeted February 28, 2025. Final signed report targeted March 15, 2025 per management\'s lender reporting requirements.</p>', 'W/P Ref: PL-03'),
+      ],
+      isExpanded: true
+    },
+  ];
+  return {
+    id: 'global-template-us-engagement-planning',
+    title: 'Engagement Planning',
+    description: 'US GAAS engagement planning checklist for Harbor Freight Logistics LLC per AU-C 300, documenting overall strategy, audit plan, technology use, and timeline.',
+    objective: 'AU-C 300 requires the auditor to plan the audit engagement to reduce audit risk to an acceptably low level. This checklist documents planning activities for the AUD-US-Dec312024 engagement.',
+    sections,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  };
+};
+
+export const generateUSAuditMaterialityChecklist = (): Checklist => {
+  const q = (id: string, text: string, subQuestions?: Question[], answer = '', explanation = '', reference = ''): Question => ({
+    id, text, answerType: 'yes-no-na' as const, options: ['Yes', 'No', 'NA'],
+    required: false, answer, explanation, reference,
+    ...(subQuestions ? { subQuestions } : {})
+  });
+  const sections: Section[] = [
+    {
+      id: 'us-mat-s1',
+      title: '1. Benchmark Selection',
+      questions: [
+        q('us-mat-1a', '<p>Has the materiality benchmark been selected and the rationale documented? (Total revenues of $18.4M USD selected as the benchmark for Harbor Freight Logistics LLC.)</p>', undefined, 'Yes', '<p>Total revenues ($18,400,000 USD) selected as the materiality benchmark. Revenues are the most relevant metric for a freight logistics company — stable and directly reflect the entity\'s core operations. Net income is volatile due to fuel cost fluctuations and not representative of the entity\'s scale.</p>', 'W/P Ref: MAT-01'),
+        q('us-mat-1b', '<p>Is the selected benchmark appropriate given the nature of the entity (service company, LLC structure, revenue-driven business model)?</p>', undefined, 'Yes', '<p>Revenue benchmark confirmed as appropriate. Harbor Freight Logistics LLC is a service company (no inventory) with a stable revenue base. Primary users of the financial statements (lenders, members) focus on revenue performance.</p>'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'us-mat-s2',
+      title: '2. Overall Materiality',
+      questions: [
+        q('us-mat-2a', '<p>Has overall materiality been calculated and documented? ($184,000 = 1% of total revenues of $18.4M USD)</p>', undefined, 'Yes', '<p>Overall materiality: $184,000 (1% of $18,400,000). The 1% of revenues guideline is appropriate for a private logistics company. Percentage is within the typical 0.5%–2% range for revenue-based benchmarks.</p>', 'W/P Ref: MAT-01'),
+        q('us-mat-2b', '<p>Has the materiality determination been reviewed and approved by the engagement partner?</p>', undefined, 'Yes', '<p>Overall materiality of $184,000 reviewed and approved by M. Thompson, engagement partner, on January 15, 2025.</p>', 'W/P Ref: MAT-01'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'us-mat-s3',
+      title: '3. Performance Materiality',
+      questions: [
+        q('us-mat-3a', '<p>Has performance materiality been calculated and documented? ($128,800 = 70% of overall materiality of $184,000)</p>', undefined, 'Yes', '<p>Performance materiality: $128,800 (70% of $184,000). 70% selected based on: first-year engagement (higher risk), three identified significant risk areas (revenue ASC 606, goodwill ASC 350, ROU assets ASC 842), and moderate overall engagement risk assessment.</p>', 'W/P Ref: MAT-01'),
+        q('us-mat-3b', '<p>Has the performance materiality percentage been justified based on engagement risk, expected misstatements, and first-year considerations?</p>', undefined, 'Yes', '<p>70% performance materiality is appropriate given first-year engagement risk and the presence of three significant risk areas. Lower percentage used to reduce the risk that aggregate uncorrected misstatements exceed overall materiality.</p>', 'W/P Ref: MAT-01'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'us-mat-s4',
+      title: '4. Specific Materiality',
+      questions: [
+        q('us-mat-4a', '<p>Has specific materiality been considered for any areas where users may be particularly sensitive (related party transactions, going concern, regulatory compliance)?</p>', undefined, 'Yes', '<p>Lower specific materiality applied to: (1) related party transactions per ASC 850 — $50,000 given sensitivity; (2) potential going concern disclosures — any indicators evaluated regardless of amount.</p>', 'W/P Ref: MAT-02'),
+        q('us-mat-4b', '<p>Has the need for specific materiality for members\' equity transactions (capital contributions, distributions) been considered?</p>', undefined, 'Yes', '<p>Member distribution and capital account transactions reviewed in full given LLC structure and member sensitivity. No separate lower materiality threshold required as amounts are clearly disclosed in equity section.</p>'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'us-mat-s5',
+      title: '5. Clearly Trivial Threshold',
+      questions: [
+        q('us-mat-5a', '<p>Has the clearly trivial threshold been established? ($9,200 = 5% of overall materiality of $184,000)</p>', undefined, 'Yes', '<p>Clearly trivial threshold: $9,200 (5% of $184,000). Misstatements below this amount will not be accumulated in the schedule of misstatements unless there are qualitative factors that make accumulation appropriate.</p>', 'W/P Ref: MAT-01'),
+        q('us-mat-5b', '<p>Has the materiality framework been communicated to all engagement team members?</p>', undefined, 'Yes', '<p>Materiality levels communicated at team planning meeting January 20, 2025: overall $184,000, performance $128,800, clearly trivial $9,200. All team members confirmed understanding.</p>', 'W/P Ref: MAT-01'),
+      ],
+      isExpanded: true
+    },
+  ];
+  return {
+    id: 'global-template-us-audit-materiality',
+    title: 'Materiality',
+    description: 'US GAAS materiality determination for Harbor Freight Logistics LLC per AU-C 320. Overall materiality $184,000 (1% of revenues $18.4M), performance materiality $128,800 (70%), clearly trivial $9,200.',
+    objective: 'AU-C 320 requires the auditor to determine materiality for the financial statements as a whole and performance materiality to reduce the risk that aggregate misstatements exceed overall materiality. This checklist documents the materiality determination for AUD-US-Dec312024.',
+    sections,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  };
+};
+
+export const generateUSEngagementScopeChecklist = (): Checklist => {
+  const q = (id: string, text: string, subQuestions?: Question[], answer = '', explanation = '', reference = ''): Question => ({
+    id, text, answerType: 'yes-no-na' as const, options: ['Yes', 'No', 'NA'],
+    required: false, answer, explanation, reference,
+    ...(subQuestions ? { subQuestions } : {})
+  });
+  const sections: Section[] = [
+    {
+      id: 'us-esc-s1',
+      title: '1. Scope Definition',
+      questions: [
+        q('us-esc-1a', '<p>Has the audit scope been defined as a full-scope audit of the consolidated financial statements of Harbor Freight Logistics LLC for the year ended December 31, 2024 under US GAAP?</p>', undefined, 'Yes', '<p>Full-scope audit of Harbor Freight Logistics LLC financial statements for the year ended December 31, 2024. Comparative period December 31, 2023 reviewed for consistency but not separately audited (first year).</p>', 'W/P Ref: SC-01'),
+        q('us-esc-1b', '<p>Has the applicable reporting framework been confirmed as US GAAP (FASB ASC) and the audit standards as US GAAS (AU-C sections, AICPA ASB)?</p>', undefined, 'Yes', '<p>US GAAP framework and US GAAS audit standards confirmed per engagement letter. PCAOB standards do not apply (private company, not SEC issuer).</p>', 'W/P Ref: EL-01'),
+        q('us-esc-1c', '<p>Are there any scope limitations or restrictions imposed by management?</p>', undefined, 'No', '<p>No scope restrictions. Full access to all books, records, personnel, and third parties confirmed per engagement letter.</p>'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'us-esc-s2',
+      title: '2. Reporting Requirements',
+      questions: [
+        q('us-esc-2a', '<p>Has the required form of the auditor\'s report been confirmed (AU-C 700 standard report for non-issuer private company)?</p>', undefined, 'Yes', '<p>AU-C 700 standard form of report applies. PCAOB PCAOB AS 3101 not applicable. Critical audit matters under AU-C 701 not required for private non-issuer companies.</p>', 'W/P Ref: SC-01'),
+        q('us-esc-2b', '<p>Are there any special reporting requirements from lenders, regulators, or other third parties?</p>', undefined, 'Yes', '<p>Credit facility lender requires audited financial statements within 120 days of fiscal year-end (by April 30, 2025). No additional lender-specific report requirements beyond standard audited statements.</p>', 'W/P Ref: SC-02'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'us-esc-s3',
+      title: '3. Multi-State Operations Scope',
+      questions: [
+        q('us-esc-3a', '<p>Have multi-state operational considerations been addressed in the audit scope (12 states, payroll tax, state income/franchise tax for non-LLC pass-throughs)?</p>', undefined, 'Yes', '<p>Multi-state operations reviewed. LLC is pass-through entity — no federal or state income tax at entity level. State franchise/privilege taxes confirmed in applicable states. Multi-state payroll tax compliance in scope.</p>', 'W/P Ref: SC-03'),
+        q('us-esc-3b', '<p>Is the scope limited to the financial statements of Harbor Freight Logistics LLC as a single reporting entity (no group audit considerations)?</p>', undefined, 'Yes', '<p>Single entity scope confirmed. No subsidiaries or other components requiring group audit procedures per AU-C 600. All operations are part of the single LLC entity.</p>'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'us-esc-s4',
+      title: '4. Component Considerations',
+      questions: [
+        q('us-esc-4a', '<p>Has it been confirmed that no component auditors are involved in this engagement?</p>', undefined, 'Yes', '<p>No component auditors. Harbor Freight Logistics LLC is a single legal entity with no subsidiaries. All audit procedures performed by the engagement team.</p>'),
+      ],
+      isExpanded: true
+    },
+  ];
+  return {
+    id: 'global-template-us-engagement-scope',
+    title: 'Engagement Scope',
+    description: 'US GAAS engagement scope documentation for Harbor Freight Logistics LLC (AUD-US-Dec312024) per AU-C 300 and AU-C 315.',
+    objective: 'AU-C 300 and 315 require the auditor to define the scope of the audit engagement including entity coverage, reporting period, applicable framework, and reporting requirements. This checklist documents the scope for AUD-US-Dec312024.',
+    sections,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  };
+};
+
+export const generateUSPreliminaryAnalyticalProceduresChecklist = (): Checklist => {
+  const q = (id: string, text: string, subQuestions?: Question[], answer = '', explanation = '', reference = ''): Question => ({
+    id, text, answerType: 'yes-no-na' as const, options: ['Yes', 'No', 'NA'],
+    required: false, answer, explanation, reference,
+    ...(subQuestions ? { subQuestions } : {})
+  });
+  const sections: Section[] = [
+    {
+      id: 'us-pap-s1',
+      title: '1. Revenue Analysis (ASC 606)',
+      questions: [
+        q('us-pap-1a', '<p>Has total revenue been compared to the prior year, identifying significant changes and obtaining explanations?</p>', undefined, 'Yes', '<p>Revenue increased 8.2% from $17.0M (2023) to $18.4M (2024). Increase explained by: new major contract (Southeast Distribution Center, $1.1M annual), rate increases on existing contracts (avg 3.2%), and expanded warehousing capacity.</p>', 'W/P Ref: PAP-01'),
+        q('us-pap-1b', '<p>Has revenue been analyzed by service type (freight transport 71%, warehousing 21%, brokerage 8%) for consistency with expectations?</p>', undefined, 'Yes', '<p>Revenue mix stable year-over-year. Brokerage revenue increased from 6% to 8% of total due to expansion of third-party carrier network. No unexpected shifts in service type mix.</p>', 'W/P Ref: PAP-01'),
+        q('us-pap-1c', '<p>Have monthly revenue patterns been reviewed for unusual fluctuations that could indicate revenue recognition errors under ASC 606?</p>', undefined, 'Yes', '<p>Monthly revenue reviewed. Seasonal pattern consistent with logistics industry (higher Q4 freight volumes). December 2024 revenue of $1.82M within expected seasonal range. No unusual spikes at period-end.</p>', 'W/P Ref: PAP-02'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'us-pap-s2',
+      title: '2. Operating Cost Trends',
+      questions: [
+        q('us-pap-2a', '<p>Have operating expenses been compared to prior year, with explanations obtained for variances exceeding performance materiality?</p>', undefined, 'Yes', '<p>Operating expenses increased 9.1% consistent with revenue growth and labor cost increases. Fuel: $3.38M (18.4% of revenue), Labor: $6.09M (33.1% of revenue), Depreciation/amortization increased $280K due to new ROU assets under ASC 842.</p>', 'W/P Ref: PAP-03'),
+        q('us-pap-2b', '<p>Has depreciation and amortization been compared to the prior year with explanations for ASC 842 ROU asset additions?</p>', undefined, 'Yes', '<p>D&A increased from $412K to $692K. $280K increase attributable to new ROU asset amortization (5 tractor leases capitalized Jan 2024 at present value $2.8M, straight-line amortization over 4-year lease term).</p>', 'W/P Ref: PAP-03'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'us-pap-s3',
+      title: '3. Balance Sheet Changes (ASC 842)',
+      questions: [
+        q('us-pap-3a', '<p>Have significant balance sheet changes been identified and explained, including new ASC 842 ROU assets?</p>', undefined, 'Yes', '<p>ROU assets of $2.8M and corresponding lease liabilities of $2.74M are the most significant new balance sheet items in 2024. All attributable to five tractor leases recognized as finance leases under ASC 842. Management has provided lease detail schedules.</p>', 'W/P Ref: PAP-04'),
+        q('us-pap-3b', '<p>Has goodwill been compared to prior year and any impairment indicators identified?</p>', undefined, 'Yes', '<p>Goodwill balance $1.42M unchanged from prior year (no additions or impairment). Annual impairment test performed by management using qualitative assessment — no triggering events identified. Quantitative testing performed by third-party valuation firm.</p>', 'W/P Ref: PAP-04'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'us-pap-s4',
+      title: '4. Working Capital Ratios',
+      questions: [
+        q('us-pap-4a', '<p>Have working capital ratios been calculated and assessed for reasonableness (current ratio, quick ratio, DSO)?</p>', undefined, 'Yes', '<p>Current ratio 1.8x (2024) vs 2.1x (2023) — decrease due to current portion of new finance lease liabilities. Quick ratio 1.6x. DSO 31 days (2024) vs 28 days (2023) — slight increase attributable to one large customer on 45-day terms. All within acceptable ranges.</p>', 'W/P Ref: PAP-05'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'us-pap-s5',
+      title: '5. Unusual Fluctuations',
+      questions: [
+        q('us-pap-5a', '<p>Have any unusual or unexpected fluctuations been identified that require additional investigation?</p>', undefined, 'Yes', '<p>Three items flagged for follow-up: (1) deferred revenue increase of $44K — revenue cutoff testing planned; (2) accrued expenses decrease $68K vs expectation — search for unrecorded liabilities planned; (3) brokerage revenue increase to 8% — specific ASC 606 contract terms to be reviewed. All addressed in substantive testing plan.</p>', 'W/P Ref: PAP-06'),
+        q('us-pap-5b', '<p>Has the overall financial picture been assessed as consistent with the auditor\'s understanding of the entity and its industry?</p>', undefined, 'Yes', '<p>Revenue growth of 8.2%, operating ratio of 91.4%, and EBITDA margin of 8.6% are consistent with regional trucking and warehousing industry benchmarks and management\'s strategic plan. No unexpected anomalies requiring changes to audit strategy.</p>', 'W/P Ref: PAP-06'),
+      ],
+      isExpanded: true
+    },
+  ];
+  return {
+    id: 'global-template-us-preliminary-analytical-procedures',
+    title: 'Preliminary Analytical Procedures',
+    description: 'US GAAS preliminary analytical procedures for Harbor Freight Logistics LLC per AU-C 315 and AU-C 520. Revenue up 8.2%, new ASC 842 ROU assets of $2.8M.',
+    objective: 'AU-C 315 and AU-C 520 require the auditor to apply analytical procedures as risk assessment procedures to obtain an understanding of the entity and identify unusual items. This checklist documents preliminary analytics for AUD-US-Dec312024.',
+    sections,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  };
+};
+
+export const generateUSAuditStrategyMemorandumChecklist = (): Checklist => {
+  const q = (id: string, text: string, subQuestions?: Question[], answer = '', explanation = '', reference = ''): Question => ({
+    id, text, answerType: 'yes-no-na' as const, options: ['Yes', 'No', 'NA'],
+    required: false, answer, explanation, reference,
+    ...(subQuestions ? { subQuestions } : {})
+  });
+  const sections: Section[] = [
+    {
+      id: 'us-asm-s1',
+      title: '1. Engagement Characteristics',
+      questions: [
+        q('us-asm-1a', '<p>Have the key engagement characteristics been documented: private LLC, US GAAP, US GAAS (not PCAOB), Dec 31 2024 year-end, first year of engagement?</p>', undefined, 'Yes', '<p>Engagement characteristics: Harbor Freight Logistics LLC, Delaware LLC, US GAAP (FASB ASC), US GAAS (AU-C sections, AICPA ASB), December 31, 2024 year-end, AUD-US-Dec312024, first-year engagement. Partner: M. Thompson, CPA; Manager: L. Garcia, CPA.</p>', 'W/P Ref: ST-01'),
+        q('us-asm-1b', '<p>Has it been confirmed that PCAOB standards do not apply (private company, not registered with PCAOB, not SEC issuer)?</p>', undefined, 'Yes', '<p>PCAOB standards confirmed as not applicable. Harbor Freight Logistics LLC is a private company with no public reporting obligations. Audit conducted under AICPA AU-C sections only.</p>'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'us-asm-s2',
+      title: '2. Audit Approach',
+      questions: [
+        q('us-asm-2a', '<p>Has the audit approach been determined as risk-based and primarily substantive, with limited controls reliance for payroll?</p>', undefined, 'Yes', '<p>Risk-based, primarily substantive approach selected. Controls reliance limited to ADP payroll processing controls (cost-effective to test given large employee count in 12 states). All other cycles: direct substantive testing.</p>', 'W/P Ref: ST-01'),
+        q('us-asm-2b', '<p>Has the use of data analytics for complete-population testing of revenue and journal entries been incorporated into the approach?</p>', undefined, 'Yes', '<p>Data analytics integral to approach: complete revenue population from LoadMaster Pro (all 4,280 freight invoices), complete JE population from QuickBooks (all journal entries for fraud risk testing per AU-C 240.32).</p>', 'W/P Ref: ST-01'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'us-asm-s3',
+      title: '3. Key Audit Areas',
+      questions: [
+        q('us-asm-3a', '<p>Have the three key audit areas been identified and documented: revenue recognition (ASC 606), right-of-use assets (ASC 842), and goodwill impairment (ASC 350)?</p>', undefined, 'Yes', '<p>Three key audit areas confirmed. Revenue: $18.4M, ASC 606 five-step model, delivery-based recognition — completeness/cutoff testing priority. ROU assets: $2.8M new this year, ASC 842 finance lease classification — valuation and completeness. Goodwill: $1.42M, ASC 350 annual impairment test — evaluate management specialist work.</p>', 'W/P Ref: ST-02'),
+        q('us-asm-3b', '<p>Has the strategy for income taxes been documented? (LLC is pass-through entity — no federal/state income tax at entity level; ASC 740 considerations limited.)</p>', undefined, 'Yes', '<p>LLC pass-through tax status documented. No ASC 740 current or deferred tax provisions required. Tax footnote disclosure adequacy reviewed. Multi-state payroll tax compliance reviewed as separate matter.</p>', 'W/P Ref: ST-02'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'us-asm-s4',
+      title: '4. Communication Plan',
+      questions: [
+        q('us-asm-4a', '<p>Has the communication plan with Those Charged With Governance (TCWG = Board of Managers) been documented per AU-C 260?</p>', undefined, 'Yes', '<p>Communication plan: (1) Planning communication to Board of Managers prior to fieldwork (January 2025); (2) Significant findings communication during fieldwork; (3) Final communication at completion (February 2025) covering audit results, AJEs, and required communications per AU-C 260 and AU-C 265.</p>', 'W/P Ref: ST-03'),
+        q('us-asm-4b', '<p>Has management\'s role in the audit been communicated, including their responsibility for the financial statements and internal controls?</p>', undefined, 'Yes', '<p>Management responsibilities documented in engagement letter and communicated directly. Management acknowledged responsibility for GAAP compliance and internal control over financial reporting.</p>', 'W/P Ref: EL-01'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'us-asm-s5',
+      title: '5. Significant Risks at Planning',
+      questions: [
+        q('us-asm-5a', '<p>Have significant risks identified at planning been documented in the strategy memorandum?</p>', undefined, 'Yes', '<p>Three significant risks at planning: (1) Revenue recognition — ASC 606 cutoff and completeness (presumed per AU-C 240.26); (2) Goodwill impairment — significant management estimate, single reporting unit, logistics market conditions; (3) Management override of controls — presumed fraud risk (AU-C 240.27).</p>', 'W/P Ref: ST-04'),
+        q('us-asm-5b', '<p>Has the strategy memorandum been reviewed and approved by engagement partner M. Thompson?</p>', undefined, 'Yes', '<p>Strategy memorandum reviewed and approved by M. Thompson, engagement partner, on January 17, 2025, prior to fieldwork commencement.</p>', 'W/P Ref: ST-01'),
+      ],
+      isExpanded: true
+    },
+  ];
+  return {
+    id: 'global-template-us-audit-strategy-memorandum',
+    title: 'Audit Strategy Memorandum',
+    description: 'US GAAS audit strategy memorandum for Harbor Freight Logistics LLC (AUD-US-Dec312024) per AU-C 300, documenting approach, key areas, and communication plan.',
+    objective: 'AU-C 300 requires the auditor to establish an overall audit strategy that sets the scope, timing, and direction of the audit. This checklist documents the strategy memorandum for Harbor Freight Logistics LLC, approved by M. Thompson.',
+    sections,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  };
+};
+
+export const generateUSStaffingTimeBudgetChecklist = (): Checklist => {
+  const q = (id: string, text: string, subQuestions?: Question[], answer = '', explanation = '', reference = ''): Question => ({
+    id, text, answerType: 'yes-no-na' as const, options: ['Yes', 'No', 'NA'],
+    required: false, answer, explanation, reference,
+    ...(subQuestions ? { subQuestions } : {})
+  });
+  const sections: Section[] = [
+    {
+      id: 'us-stb-s1',
+      title: '1. Engagement Team',
+      questions: [
+        q('us-stb-1a', '<p>Has the full engagement team been identified and their roles documented?</p>', undefined, 'Yes', '<p>Engagement team: M. Thompson, CPA (engagement partner — final review and sign-off), L. Garcia, CPA (manager — day-to-day supervision, complex areas), Senior 1 (revenue and AR cycle), Senior 2 (expenses, payroll, ASC 842), Staff 1 (accounts payable, cash), Staff 2 (fixed assets, other). IT specialist available for ITGC if needed.</p>', 'W/P Ref: STB-01'),
+        q('us-stb-1b', '<p>Have team member qualifications been assessed for appropriateness to the engagement, including freight logistics and ASC 842 experience?</p>', undefined, 'Yes', '<p>Team qualifications confirmed: L. Garcia has three prior freight logistics audits. Senior 1 completed ASC 842 CPE training Q3 2024. No competency gaps identified.</p>', 'W/P Ref: STB-01'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'us-stb-s2',
+      title: '2. Time Budget by Phase',
+      questions: [
+        q('us-stb-2a', '<p>Has the time budget been developed by phase: planning (40 hrs), fieldwork (280 hrs), completion (80 hrs), totaling 400 hours?</p>', undefined, 'Yes', '<p>Time budget: Planning 40 hrs (strategy, risk assessment, team coordination), Fieldwork 280 hrs (Jan 20–Feb 7: revenue 70, expenses 50, payroll 40, ASC 842 40, goodwill 30, completion procedures 50), Completion 80 hrs (AJEs, report drafting, partner/manager review, TCWG communication). Total: 400 hours.</p>', 'W/P Ref: STB-02'),
+        q('us-stb-2b', '<p>Has the time budget been allocated to high-risk areas consistent with the audit strategy (higher hours for revenue, ASC 842, and goodwill)?</p>', undefined, 'Yes', '<p>Budget allocation reflects risk: revenue testing 70 hrs (25% of fieldwork), ASC 842 40 hrs (14%), goodwill 30 hrs (11%). Lower-risk areas (cash, fixed assets) allocated fewer hours. Allocation approved by M. Thompson.</p>', 'W/P Ref: STB-02'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'us-stb-s3',
+      title: '3. Key Dates',
+      questions: [
+        q('us-stb-3a', '<p>Have all key engagement dates been documented: fieldwork start January 20, 2025; fieldwork end February 7, 2025; draft report February 28, 2025?</p>', undefined, 'Yes', '<p>Key dates confirmed and communicated to client: Fieldwork on-site: January 20–February 7, 2025; Draft report to management: February 28, 2025; Management response deadline: March 7, 2025; Final signed report target: March 15, 2025.</p>', 'W/P Ref: STB-03'),
+        q('us-stb-3b', '<p>Has the client data request list been issued sufficiently in advance of fieldwork?</p>', undefined, 'Yes', '<p>Client data request list issued December 20, 2024. Client provided preliminary trial balance January 10, 2025. Data request 90% complete at fieldwork commencement January 20, 2025.</p>', 'W/P Ref: STB-03'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'us-stb-s4',
+      title: '4. Budget Monitoring',
+      questions: [
+        q('us-stb-4a', '<p>Is there a process in place to monitor actual hours vs. budget and escalate overruns to the engagement partner?</p>', undefined, 'Yes', '<p>Weekly budget monitoring by L. Garcia with reporting to M. Thompson. Variance threshold: 15% overrun on any phase triggers partner review and potential scope adjustment discussion.</p>', 'W/P Ref: STB-04'),
+      ],
+      isExpanded: true
+    },
+  ];
+  return {
+    id: 'global-template-us-staffing-time-budget',
+    title: 'Staffing & Time Budget',
+    description: 'US GAAS staffing and time budget documentation for Harbor Freight Logistics LLC (AUD-US-Dec312024) per AU-C 300 and AU-C 220.',
+    objective: 'AU-C 300 requires the auditor to plan staffing needs, including the appropriate direction, supervision, and review of work. This checklist documents the engagement team, time budget, and key dates for AUD-US-Dec312024.',
+    sections,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  };
+};
+
+export const generateUSRiskAssessmentProceduresChecklist = (): Checklist => {
+  const q = (id: string, text: string, subQuestions?: Question[], answer = '', explanation = '', reference = ''): Question => ({
+    id, text, answerType: 'yes-no-na' as const, options: ['Yes', 'No', 'NA'],
+    required: false, answer, explanation, reference,
+    ...(subQuestions ? { subQuestions } : {})
+  });
+  const sections: Section[] = [
+    {
+      id: 'us-rap-s1',
+      title: '1. Inquiry of Management',
+      questions: [
+        q('us-rap-1a', '<p>Have inquiries of management been performed per AU-C 315.13, covering the entity\'s business model, significant transactions, and accounting policies (including ASC 606 revenue recognition policies)?</p>', undefined, 'Yes', '<p>Management inquiries performed January 20–21, 2025. Participants: Controller, Managing Member, Operations Manager. Topics covered: revenue recognition under ASC 606, lease accounting under ASC 842, goodwill impairment assessment, related party transactions, and subsequent events through January 21, 2025.</p>', 'W/P Ref: RAP-01'),
+        q('us-rap-1b', '<p>Have inquiries addressed the entity\'s risk assessment process, including identification of risks of material misstatement?</p>', undefined, 'Yes', '<p>Management described their internal risk assessment process: quarterly financial review by managing member, annual strategic planning process, and controller-level account reconciliation reviews.</p>', 'W/P Ref: RAP-01'),
+        q('us-rap-1c', '<p>Have inquiries been made about fraud risks, including incentives/pressures, opportunities, and attitudes/rationalizations (per AU-C 240)?</p>', undefined, 'Yes', '<p>Fraud inquiries performed per AU-C 240.17–19. Management reported no known instances of fraud or suspected fraud. Bonus arrangements and owner distribution pressures discussed. Management acknowledged internal control limitations.</p>', 'W/P Ref: RAP-01'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'us-rap-s2',
+      title: '2. Analytical Procedures',
+      questions: [
+        q('us-rap-2a', '<p>Have preliminary analytical procedures been performed as risk assessment procedures per AU-C 315 and AU-C 520?</p>', undefined, 'Yes', '<p>Preliminary analytics completed January 15–17, 2025. Revenue up 8.2%, operating costs consistent with revenue growth, new ASC 842 assets explain balance sheet increase. Results documented in preliminary analytical procedures workpaper.</p>', 'W/P Ref: PAP-01'),
+        q('us-rap-2b', '<p>Have the analytical procedures resulted in identification of any significant unexpected relationships?</p>', undefined, 'Yes', '<p>Three items identified: deferred revenue increase ($44K), accrued expenses below expectation ($68K), brokerage revenue mix shift. All addressed in substantive testing plan.</p>', 'W/P Ref: PAP-06'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'us-rap-s3',
+      title: '3. Observation & Inspection',
+      questions: [
+        q('us-rap-3a', '<p>Has a facility tour been conducted to observe operations and inspect physical assets (warehouse, truck fleet, loading docks)?</p>', undefined, 'Yes', '<p>Facility tour conducted January 20, 2025. Observed: principal warehouse facility, truck/trailer fleet (counted 47 of 48 tractors and trailers on premises), loading dock operations, and dispatch office. Observations consistent with management descriptions.</p>', 'W/P Ref: RAP-02'),
+        q('us-rap-3b', '<p>Has inspection of key documents been performed (board minutes, material contracts, loan agreements)?</p>', undefined, 'Yes', '<p>Documents inspected: Board minutes (all 4 quarterly meetings 2024), credit facility agreement, lease agreements (12 vehicle leases and 3 warehouse leases), goodwill impairment report from valuation specialist.</p>', 'W/P Ref: RAP-03'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'us-rap-s4',
+      title: '4. Information from Client Acceptance',
+      questions: [
+        q('us-rap-4a', '<p>Has information obtained during the client acceptance process been considered in identifying and assessing risks of material misstatement?</p>', undefined, 'Yes', '<p>Acceptance information reviewed: first-year engagement risk, freight logistics industry risk, multi-state operations complexity, and new ASC 842 implementation risk. All incorporated into risk assessment.</p>', 'W/P Ref: RAP-04'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'us-rap-s5',
+      title: '5. Other Procedures',
+      questions: [
+        q('us-rap-5a', '<p>Have other risk assessment procedures been performed: review of prior period financial statements (if available), management reports, and industry data?</p>', undefined, 'Yes', '<p>Prior period review: 2023 financial statements (predecessor audit file reviewed with permission). Industry benchmarks obtained from American Trucking Associations (ATA) and FTR Transportation Intelligence. Management monthly reports for January–December 2024 reviewed.</p>', 'W/P Ref: RAP-05'),
+      ],
+      isExpanded: true
+    },
+  ];
+  return {
+    id: 'global-template-us-risk-assessment-procedures',
+    title: 'Risk Assessment Procedures',
+    description: 'US GAAS risk assessment procedures for Harbor Freight Logistics LLC per AU-C 315, documenting inquiries, analytics, observation, and inspection performed January 20-21, 2025.',
+    objective: 'AU-C 315 requires the auditor to perform risk assessment procedures to obtain an understanding of the entity and its environment. This checklist documents procedures performed for Harbor Freight Logistics LLC.',
+    sections,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  };
+};
+
+export const generateUSUnderstandingInternalControlsChecklist = (): Checklist => {
+  const q = (id: string, text: string, subQuestions?: Question[], answer = '', explanation = '', reference = ''): Question => ({
+    id, text, answerType: 'yes-no-na' as const, options: ['Yes', 'No', 'NA'],
+    required: false, answer, explanation, reference,
+    ...(subQuestions ? { subQuestions } : {})
+  });
+  const sections: Section[] = [
+    {
+      id: 'us-ic-s1',
+      title: '1. Control Environment (COSO)',
+      questions: [
+        q('us-ic-1a', '<p>Has the control environment been assessed per COSO 2013, including tone at top, integrity and ethical values, and organizational structure?</p>', undefined, 'Yes', '<p>Control environment assessed: Managing member demonstrates commitment to ethical operations (DOT compliance culture, anti-kickback policy for vendor relationships). Organizational chart obtained. Code of conduct communicated to all employees annually. Board of Managers meets quarterly.</p>', 'W/P Ref: IC-01'),
+        q('us-ic-1b', '<p>Has management\'s commitment to competence and HR policies been assessed (hiring, training, performance management)?</p>', undefined, 'Yes', '<p>Competence commitment: Controller is CPA with 12 years logistics experience. HR policies reviewed — background checks for all employees, annual performance reviews, driver licensing verification program.</p>', 'W/P Ref: IC-01'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'us-ic-s2',
+      title: '2. Entity\'s Risk Assessment Process (COSO)',
+      questions: [
+        q('us-ic-2a', '<p>Has management\'s risk identification and assessment process been documented per COSO?</p>', undefined, 'Yes', '<p>Management risk assessment process: Annual strategic planning includes risk identification by managing member and controller. Key risks identified by management: fuel price volatility, customer concentration (top customer 22%), driver shortage. No formal enterprise risk management framework — appropriate for entity size.</p>', 'W/P Ref: IC-02'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'us-ic-s3',
+      title: '3. Control Activities',
+      questions: [
+        q('us-ic-3a', '<p>Have authorization controls been assessed for significant transaction classes (revenue, disbursements, capital expenditures)?</p>', undefined, 'Yes', '<p>Authorization controls documented: Capital expenditures >$25K require managing member approval; purchases >$5K require controller pre-approval; revenue contracts require managing member signature. Authorization matrix obtained and reviewed.</p>', 'W/P Ref: IC-03'),
+        q('us-ic-3b', '<p>Are reconciliations performed for key accounts (bank accounts, AR sub-ledger, AP sub-ledger, payroll)?</p>', undefined, 'Yes', '<p>Monthly reconciliations confirmed: bank accounts (3 accounts reconciled by controller, reviewed by managing member), AR sub-ledger to GL, AP sub-ledger to GL, payroll expense to ADP reports.</p>', 'W/P Ref: IC-03'),
+        q('us-ic-3c', '<p>Are physical controls over assets adequate (truck fleet, warehouse inventory of supplies and customer goods)?</p>', undefined, 'Yes', '<p>Physical controls: GPS tracking on all fleet vehicles, electronic gate access at warehouse, cycle counts of warehouse supplies quarterly, customer freight handled under warehouse receipt system.</p>', 'W/P Ref: IC-04'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'us-ic-s4',
+      title: '4. Information & Communication (COSO)',
+      questions: [
+        q('us-ic-4a', '<p>Has the financial reporting process been documented, including how information flows from operational systems to the general ledger?</p>', undefined, 'Yes', '<p>Information flow documented: LoadMaster Pro (freight billing) → QB (weekly automated import), ADP (payroll) → QB (monthly JE by controller), Fleetio (fleet) → QB (monthly manual JE). All GL entries reviewed by controller before period close.</p>', 'W/P Ref: IC-05'),
+        q('us-ic-4b', '<p>Are there adequate communication channels for employees to report financial reporting concerns?</p>', undefined, 'Yes', '<p>Direct reporting to controller or managing member. No anonymous hotline (appropriate for small-medium entity). Management representation confirms no significant concerns raised by employees.</p>'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'us-ic-s5',
+      title: '5. Monitoring Activities (COSO)',
+      questions: [
+        q('us-ic-5a', '<p>Has management\'s ongoing monitoring of the internal control system been assessed (management reviews, exception reports, variance analysis)?</p>', undefined, 'Yes', '<p>Monitoring activities: Monthly financial review package prepared by controller and reviewed by managing member. Accounts receivable aging reviewed weekly. Fuel expense variance report reviewed monthly. No internal audit function — appropriate for entity size.</p>', 'W/P Ref: IC-06'),
+        q('us-ic-5b', '<p>Has the Board of Managers\' oversight of financial reporting and internal controls been assessed?</p>', undefined, 'Yes', '<p>Board of Managers oversees financial reporting: quarterly financial statements presented at board meetings, year-end audited statements approved by full Board of Managers. No audit committee (not required for private LLC).</p>', 'W/P Ref: IC-06'),
+        q('us-ic-5c', '<p>Are there any material weaknesses or significant deficiencies in internal control that need to be communicated to TCWG per AU-C 265?</p>', undefined, 'No', '<p>No material weaknesses or significant deficiencies identified during understanding of internal controls. Some control limitations noted (no formal internal audit, limited segregation in small office) are appropriate for entity size and do not rise to reportable level.</p>'),
+      ],
+      isExpanded: true
+    },
+  ];
+  return {
+    id: 'global-template-us-understanding-internal-controls',
+    title: 'Understanding Internal Controls',
+    description: 'US GAAS understanding of internal controls for Harbor Freight Logistics LLC per AU-C 315 and COSO 2013 framework. No material weaknesses identified.',
+    objective: 'AU-C 315 requires the auditor to obtain an understanding of the five components of internal control per the COSO 2013 framework sufficient to identify and assess risks of material misstatement. This checklist documents the internal controls understanding for Harbor Freight Logistics LLC.',
+    sections,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  };
+};
+
+export const generateUSITGeneralControlsChecklist = (): Checklist => {
+  const q = (id: string, text: string, subQuestions?: Question[], answer = '', explanation = '', reference = ''): Question => ({
+    id, text, answerType: 'yes-no-na' as const, options: ['Yes', 'No', 'NA'],
+    required: false, answer, explanation, reference,
+    ...(subQuestions ? { subQuestions } : {})
+  });
+  const sections: Section[] = [
+    {
+      id: 'us-itgc-s1',
+      title: '1. Access Controls',
+      questions: [
+        q('us-itgc-1a', '<p>Have user access controls for QuickBooks Enterprise (primary accounting system) been assessed, including user provisioning and privileged access?</p>', undefined, 'Yes', '<p>QuickBooks access reviewed: 8 users total. Admin access limited to controller and IT coordinator. Payroll module access limited to HR and controller. User list compared to active employee list — no terminated employees with active access.</p>', 'W/P Ref: ITGC-01'),
+        q('us-itgc-1b', '<p>Is multi-factor authentication (MFA) enabled for remote access and cloud-based systems (ADP, LoadMaster Pro)?</p>', undefined, 'Yes', '<p>MFA confirmed for ADP Workforce Now (SSO with MFA), LoadMaster Pro (authenticator app). QuickBooks is on-premise — network-level access controls with VPN for remote access.</p>', 'W/P Ref: ITGC-01'),
+        q('us-itgc-1c', '<p>Are access privileges reviewed periodically and promptly revoked when employees terminate?</p>', undefined, 'Yes', '<p>Access review policy: HR notifies IT within 24 hours of termination; access revoked same day. Sample of 3 terminations in 2024 tested — all access revoked timely.</p>', 'W/P Ref: ITGC-01'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'us-itgc-s2',
+      title: '2. Change Management',
+      questions: [
+        q('us-itgc-2a', '<p>Is there a change management process for significant IT system changes?</p>', undefined, 'Yes', '<p>Change management process: significant changes to QuickBooks chart of accounts and LoadMaster Pro billing rules require controller approval. Change log maintained. No significant system changes in 2024.</p>', 'W/P Ref: ITGC-02'),
+        q('us-itgc-2b', '<p>Are software updates and patches applied in a controlled manner?</p>', undefined, 'Yes', '<p>QuickBooks updates applied by IT coordinator after controller review. ADP and LoadMaster Pro updates applied by vendors — change notifications reviewed by controller.</p>', 'W/P Ref: ITGC-02'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'us-itgc-s3',
+      title: '3. IT Operations',
+      questions: [
+        q('us-itgc-3a', '<p>Are data backup and recovery procedures adequate for the accounting system?</p>', undefined, 'Yes', '<p>QuickBooks backup: automated nightly backup to cloud storage (Azure). Backup restoration tested annually. Recovery time objective: 4 hours. No data loss incidents in 2024.</p>', 'W/P Ref: ITGC-03'),
+        q('us-itgc-3b', '<p>Is there a business continuity plan for critical IT systems?</p>', undefined, 'Yes', '<p>Business continuity plan exists for critical systems. Disaster recovery plan includes cloud backup, vendor support SLAs, and manual processing fallback for billing.</p>', 'W/P Ref: ITGC-03'),
+        q('us-itgc-3c', '<p>Are security patches and antivirus updates applied timely?</p>', undefined, 'Yes', '<p>Managed endpoint security solution deployed. Automated patch management for Windows servers and workstations. Antivirus definitions updated daily.</p>'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'us-itgc-s4',
+      title: '4. Cybersecurity Assessment',
+      questions: [
+        q('us-itgc-4a', '<p>Has a SOC 2 Type II report (or equivalent) been obtained and reviewed for key SaaS providers (ADP, LoadMaster Pro)?</p>', undefined, 'Yes', '<p>SOC 2 Type II reports reviewed: ADP Workforce Now (SOC 2 Type II, covers payroll processing and data security, no exceptions noted), LoadMaster Pro (SOC 2 Type II, covers billing system, user access, and change management, no exceptions). Reports within last 12 months.</p>', 'W/P Ref: ITGC-04'),
+        q('us-itgc-4b', '<p>Have any cybersecurity incidents or data breaches occurred during the audit period?</p>', undefined, 'No', '<p>No cybersecurity incidents or data breaches reported by management or identified in our procedures. No ransomware attacks or unauthorized access events in 2024.</p>'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'us-itgc-s5',
+      title: '5. Data Integrity',
+      questions: [
+        q('us-itgc-5a', '<p>Have data integrity controls been assessed for key interfaces between systems (LoadMaster Pro to QuickBooks revenue import, ADP to QuickBooks payroll journal entry)?</p>', undefined, 'Yes', '<p>Interface controls reviewed: LoadMaster Pro to QuickBooks weekly import reconciled by controller to ensure completeness and accuracy. ADP payroll JE reconciled to ADP payroll register monthly before posting. Interface error logs reviewed — no unresolved errors in 2024.</p>', 'W/P Ref: ITGC-05'),
+      ],
+      isExpanded: true
+    },
+  ];
+  return {
+    id: 'global-template-us-it-general-controls',
+    title: 'IT General Controls (ITGC)',
+    description: 'US GAAS ITGC assessment for Harbor Freight Logistics LLC per AU-C 315 and COBIT framework. SOC 2 Type II reports reviewed for ADP and LoadMaster Pro.',
+    objective: 'AU-C 315 requires the auditor to obtain an understanding of the IT environment and general controls over IT systems relevant to financial reporting. This checklist documents ITGC assessment for Harbor Freight Logistics LLC.',
+    sections,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  };
+};
+
+export const generateUSFraudRiskAssessmentChecklist = (): Checklist => {
+  const q = (id: string, text: string, subQuestions?: Question[], answer = '', explanation = '', reference = ''): Question => ({
+    id, text, answerType: 'yes-no-na' as const, options: ['Yes', 'No', 'NA'],
+    required: false, answer, explanation, reference,
+    ...(subQuestions ? { subQuestions } : {})
+  });
+  const sections: Section[] = [
+    {
+      id: 'us-fra-s1',
+      title: '1. Fraud Risk Factors',
+      questions: [
+        q('us-fra-1a', '<p>Have fraud risk factors related to incentive/pressure been assessed (e.g., pressure to meet lender covenant thresholds, managing member distributions, performance bonuses)?</p>', undefined, 'No', '<p>Incentive/pressure assessment: Credit facility DSCR covenant (1.25x minimum) provides some pressure but current ratio (1.38x) provides comfortable headroom. Managing member distributions are discretionary per operating agreement — no guaranteed distribution pressure. Driver bonus program is fixed-formula (no manipulation incentive). No material pressure-related fraud risk factors identified.</p>', 'W/P Ref: FRA-01'),
+        q('us-fra-1b', '<p>Have fraud risk factors related to opportunity been assessed (e.g., control gaps, override potential, large volume of cash transactions)?</p>', undefined, 'No', '<p>Opportunity assessment: No significant cash transactions (EFT and check only). Controller has appropriate authority with managing member review. Main opportunity factor: small management team and limited segregation — mitigated by managing member involvement in significant transactions. No unusual opportunity risk factors identified.</p>', 'W/P Ref: FRA-01'),
+        q('us-fra-1c', '<p>Have fraud risk factors related to rationalization/attitude been assessed (e.g., management attitude toward controls, prior financial reporting issues)?</p>', undefined, 'No', '<p>No adverse rationalization indicators. Management cooperative and transparent during audit procedures. No prior restatements or audit qualifications noted in predecessor auditor communication. Tone at top assessed as positive.</p>', 'W/P Ref: FRA-01'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'us-fra-s2',
+      title: '2. Engagement Team Discussion',
+      questions: [
+        q('us-fra-2a', '<p>Has the engagement team brainstorming session on fraud risks been conducted per AU-C 240.15?</p>', undefined, 'Yes', '<p>Fraud brainstorming session conducted January 20, 2025 with full team (M. Thompson, L. Garcia, Senior 1, Senior 2). Topics discussed: revenue cutoff manipulation (ASC 606), fictitious billing, payroll fraud (ghost employees in 12 states), misappropriation of fuel card charges, management override of controls. Minutes prepared and filed.</p>', 'W/P Ref: FRA-02'),
+        q('us-fra-2b', '<p>Have team members been instructed to maintain professional skepticism throughout the engagement?</p>', undefined, 'Yes', '<p>Professional skepticism requirement communicated at team meeting and documented in supervision notes. Team instructed to challenge management explanations and corroborate with independent evidence.</p>'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'us-fra-s3',
+      title: '3. Presumed Fraud Risks',
+      questions: [
+        q('us-fra-3a', '<p>Has the presumed fraud risk related to revenue recognition been assessed per AU-C 240.26? (Presumption that revenue recognition represents a fraud risk; document rebuttal if rebuttable.)</p>', undefined, 'Yes', '<p>Revenue recognition fraud risk not rebutted. ASC 606 point-in-time recognition for freight delivery creates legitimate cutoff risk. Specific procedures designed: complete population testing of freight invoices using data analytics, cutoff testing of last 20 invoices before/after December 31, 2024.</p>', 'W/P Ref: FRA-03'),
+        q('us-fra-3b', '<p>Has the presumed fraud risk related to management override of controls been addressed per AU-C 240.27?</p>', undefined, 'Yes', '<p>Management override risk addressed per AU-C 240.27-32: (1) complete journal entry population tested for unusual/late entries; (2) accounting estimates reviewed for management bias (goodwill impairment, lease discount rates); (3) significant unusual transactions reviewed for business purpose.</p>', 'W/P Ref: FRA-03'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'us-fra-s4',
+      title: '4. Significant Fraud Risk Factors Identified',
+      questions: [
+        q('us-fra-4a', '<p>Have any significant fraud risk factors been identified that require specific audit responses beyond standard procedures?</p>', undefined, 'No', '<p>No significant fraud risk factors identified that require responses beyond: (1) presumed revenue recognition risk (standard data analytics and cutoff testing), (2) management override risk (standard JE testing and estimates review). No entity-specific fraud risk factors elevate risk above normal level.</p>', 'W/P Ref: FRA-04'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'us-fra-s5',
+      title: '5. Journal Entry Testing',
+      questions: [
+        q('us-fra-5a', '<p>Has the journal entry testing plan been documented per AU-C 240.32, including selection criteria for unusual or late journal entries?</p>', undefined, 'Yes', '<p>JE testing plan: Complete QuickBooks JE population extracted (approximately 2,400 entries). Data analytics applied to identify: (1) entries posted after period-end, (2) entries by non-standard users, (3) round-dollar entries >$50K, (4) entries to unusual account combinations (debit expense/credit revenue). All flagged entries traced to support documentation.</p>', 'W/P Ref: FRA-05'),
+        q('us-fra-5b', '<p>Have JE testing results been documented and any unusual entries followed up?</p>', undefined, 'Yes', '<p>JE testing complete. 14 entries flagged by analytics criteria. All 14 investigated: 12 had adequate business justification and supporting documentation; 2 were year-end AJEs proposed by auditor and properly authorized by controller. No fraud indicators identified.</p>', 'W/P Ref: FRA-05'),
+      ],
+      isExpanded: true
+    },
+  ];
+  return {
+    id: 'global-template-us-fraud-risk-assessment',
+    title: 'Fraud Risk Assessment',
+    description: 'US GAAS fraud risk assessment for Harbor Freight Logistics LLC per AU-C 240. Revenue recognition (presumed) and management override (presumed) addressed. No significant fraud risk factors identified.',
+    objective: 'AU-C 240 requires the auditor to identify and assess risks of material misstatement due to fraud and design responses to those risks. This checklist documents the fraud risk assessment for Harbor Freight Logistics LLC.',
+    sections,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  };
+};
+
+export const generateUSSignificantRisksRegisterChecklist = (): Checklist => {
+  const q = (id: string, text: string, subQuestions?: Question[], answer = '', explanation = '', reference = ''): Question => ({
+    id, text, answerType: 'yes-no-na' as const, options: ['Yes', 'No', 'NA'],
+    required: false, answer, explanation, reference,
+    ...(subQuestions ? { subQuestions } : {})
+  });
+  const sections: Section[] = [
+    {
+      id: 'us-srr-s1',
+      title: '1. Identification of Significant Risks',
+      questions: [
+        q('us-srr-1a', '<p>Has the significant risk related to revenue recognition (ASC 606) been identified and documented?</p>', undefined, 'Yes', '<p>Significant Risk 1: Revenue recognition (ASC 606). Risk: Revenue cutoff errors at December 31, 2024 given point-in-time recognition upon freight delivery completion. Affected assertions: completeness, cutoff, occurrence. Presumed fraud risk per AU-C 240.26 not rebutted. Substantive response required per AU-C 330.</p>', 'W/P Ref: SRR-01'),
+        q('us-srr-1b', '<p>Has the significant risk related to goodwill impairment (ASC 350) been identified and documented?</p>', undefined, 'Yes', '<p>Significant Risk 2: Goodwill impairment assessment (ASC 350). Risk: Goodwill balance $1.42M subject to annual impairment testing. Significant management estimate requiring judgment (discount rate, projected cash flows). Affected assertions: valuation, existence. Third-party valuation specialist engaged by management — auditor must evaluate specialist work per AU-C 620.</p>', 'W/P Ref: SRR-02'),
+        q('us-srr-1c', '<p>Has the significant risk related to management override of controls been identified and documented?</p>', undefined, 'Yes', '<p>Significant Risk 3: Management override of controls. Presumed risk per AU-C 240.27. Addressed through: complete JE testing, review of accounting estimates for management bias, and investigation of significant unusual transactions. No entity-specific override factors identified beyond presumption.</p>', 'W/P Ref: SRR-03'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'us-srr-s2',
+      title: '2. Inherent Risk Assessment',
+      questions: [
+        q('us-srr-2a', '<p>Has the inherent risk for each significant risk been assessed on a likelihood and magnitude basis?</p>', undefined, 'Yes', '<p>Inherent risk assessments: Revenue (ASC 606) — High likelihood (volume of transactions), Moderate magnitude (individual errors likely below materiality but aggregate risk); Goodwill (ASC 350) — Low-Moderate likelihood, High magnitude ($1.42M balance vs $184K materiality); Management override — Moderate likelihood (consistent with all audits), High magnitude (unrestricted if effective).</p>', 'W/P Ref: SRR-04'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'us-srr-s3',
+      title: '3. Control Environment Assessment for Significant Risks',
+      questions: [
+        q('us-srr-3a', '<p>Have controls relevant to each significant risk been identified and assessed?</p>', undefined, 'Yes', '<p>Controls identified: Revenue — monthly LoadMaster Pro to GL reconciliation, managing member review of large invoices >$25K, controller cutoff review at month-end. Goodwill — annual engagement of valuation specialist, managing member review of impairment report. Management override — managing member review of all journal entries >$10K, board review of quarterly financial statements.</p>', 'W/P Ref: SRR-04'),
+        q('us-srr-3b', '<p>For significant risks, have substantive procedures been planned regardless of controls assessment per AU-C 330.21?</p>', undefined, 'Yes', '<p>Per AU-C 330.21, substantive procedures designed for all significant risks regardless of internal control assessment. Controls not relied upon for significant risk areas — direct substantive testing planned.</p>'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'us-srr-s4',
+      title: '4. Audit Response',
+      questions: [
+        q('us-srr-4a', '<p>Have specific substantive procedures been planned for each significant risk?</p>', undefined, 'Yes', '<p>Planned responses: (1) Revenue ASC 606 — complete population revenue analytics + cutoff testing of last 20/first 20 invoices + sample of 25 invoices traced to delivery confirmation; (2) Goodwill ASC 350 — evaluate valuation specialist qualifications and work, test reasonableness of key assumptions (discount rate, growth rate); (3) Management override — complete JE testing, estimates review for management bias.</p>', 'W/P Ref: SRR-05'),
+      ],
+      isExpanded: true
+    },
+  ];
+  return {
+    id: 'global-template-us-significant-risks-register',
+    title: 'Significant Risks Register',
+    description: 'US GAAS significant risks register for Harbor Freight Logistics LLC per AU-C 315. Three significant risks: revenue recognition (ASC 606), goodwill impairment (ASC 350), management override.',
+    objective: 'AU-C 315 requires the auditor to identify and assess significant risks requiring special audit consideration. This checklist documents the significant risks register for Harbor Freight Logistics LLC.',
+    sections,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  };
+};
+
+export const generateUSRMMChecklist = (): Checklist => {
+  const q = (id: string, text: string, subQuestions?: Question[], answer = '', explanation = '', reference = ''): Question => ({
+    id, text, answerType: 'yes-no-na' as const, options: ['Yes', 'No', 'NA'],
+    required: false, answer, explanation, reference,
+    ...(subQuestions ? { subQuestions } : {})
+  });
+  const sections: Section[] = [
+    {
+      id: 'us-rmm-s1',
+      title: '1. Financial Statement Level RMM',
+      questions: [
+        q('us-rmm-1a', '<p>Has the overall RMM at the financial statement level been assessed, considering control environment and management override risk?</p>', undefined, 'Yes', '<p>Financial statement level RMM: Moderate. Factors increasing risk: first-year engagement, limited segregation of duties, three significant risk areas. Factors reducing risk: experienced management team, strong DOT compliance culture, functional internal controls. Overall RMM — Moderate.</p>', 'W/P Ref: RMM-01'),
+        q('us-rmm-1b', '<p>Has the pervasive effect of any financial statement level risks been considered in designing the overall audit response?</p>', undefined, 'Yes', '<p>Overall audit response addresses moderate FS-level RMM: enhanced professional skepticism, unpredictability in procedures, partner involvement in significant risk areas, and appropriate supervision of team.</p>'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'us-rmm-s2',
+      title: '2. Assertion Level RMM by Account',
+      questions: [
+        q('us-rmm-2a', '<p>Has RMM been assessed at the assertion level for revenue (ASC 606) — completeness and cutoff assertions?</p>', undefined, 'Yes', '<p>Revenue RMM: Completeness — Moderate (risk that freight services delivered not billed timely). Cutoff — High (point-in-time recognition creates period-end cutoff risk). Occurrence — Low (billing system linked to delivery confirmation system, automated controls). Valuation — Low (fixed-rate contracts, no variable consideration complexity).</p>', 'W/P Ref: RMM-02'),
+        q('us-rmm-2b', '<p>Has RMM been assessed at the assertion level for ROU assets (ASC 842) — valuation and completeness assertions?</p>', undefined, 'Yes', '<p>ROU assets RMM: Valuation — High (significant estimate: incremental borrowing rate selection per ASC 842.20-2, $2.8M balance, reasonable range of rates produces material difference). Completeness — Moderate (risk that operating leases not capitalized or finance/operating misclassification). All 12 vehicle and 3 warehouse leases individually tested.</p>', 'W/P Ref: RMM-02'),
+        q('us-rmm-2c', '<p>Has RMM been assessed at the assertion level for goodwill (ASC 350) — impairment (valuation) assertion?</p>', undefined, 'Yes', '<p>Goodwill RMM: Valuation (impairment) — High. $1.42M goodwill from 2019 warehouse network acquisition. Annual impairment test required. Single reporting unit. Management used third-party DCF analysis. Key assumptions (discount rate 11%, revenue growth 5%) require auditor evaluation. High RMM given estimate complexity and magnitude relative to materiality ($184K).</p>', 'W/P Ref: RMM-03'),
+        q('us-rmm-2d', '<p>Has RMM been assessed for income taxes (ASC 740) — completeness of liabilities?</p>', undefined, 'Yes', '<p>Income taxes RMM: Low. Harbor Freight Logistics LLC is a pass-through LLC — no federal or state income tax at entity level. ASC 740 income tax provisions not required. State franchise/privilege taxes reviewed as operating expenses. RMM assessed as low.</p>', 'W/P Ref: RMM-04'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'us-rmm-s3',
+      title: '3. Control Risk Assessment',
+      questions: [
+        q('us-rmm-3a', '<p>Has control risk been assessed for each significant account and assertion, and the assessment documented?</p>', undefined, 'Yes', '<p>Control risk assessments: Revenue/AR — Moderate (controls exist but not tested for reliance in primarily substantive approach). Payroll — Low (ADP processing controls tested and found effective). AP/Expenses — Moderate (3-way match controls functional, limited testing). Cash — Low (bank reconciliation controls strong, monthly reconciliation reviewed by managing member).</p>', 'W/P Ref: RMM-05'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'us-rmm-s4',
+      title: '4. Residual Risk & Detection Risk Required',
+      questions: [
+        q('us-rmm-4a', '<p>Has detection risk required been determined for each significant assertion based on assessed RMM?</p>', undefined, 'Yes', '<p>Detection risk required: Revenue cutoff (High RMM) — Low detection risk required (extensive substantive procedures). Goodwill impairment (High RMM) — Low detection risk required (evaluate specialist work, test key assumptions). ROU assets valuation (High RMM) — Low detection risk required (recalculate present value, test IBR selection). Management override (Significant risk) — Low detection risk required (complete JE testing).</p>', 'W/P Ref: RMM-06'),
+      ],
+      isExpanded: true
+    },
+  ];
+  return {
+    id: 'global-template-us-rmm',
+    title: 'Risk of Material Misstatement (RMM)',
+    description: 'US GAAS RMM assessment for Harbor Freight Logistics LLC per AU-C 315. High RMM identified for revenue cutoff (ASC 606), ROU asset valuation (ASC 842), and goodwill impairment (ASC 350).',
+    objective: 'AU-C 315 requires the auditor to assess risks of material misstatement at the financial statement level and at the assertion level for classes of transactions, account balances, and disclosures. This checklist documents the RMM assessment for Harbor Freight Logistics LLC.',
+    sections,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  };
+};
+
+export const generateUSSCOTRevenueCycleChecklist = (): Checklist => {
+  const q = (id: string, text: string, subQuestions?: Question[], answer = '', explanation = '', reference = ''): Question => ({
+    id, text, answerType: 'yes-no-na' as const, options: ['Yes', 'No', 'NA'],
+    required: false, answer, explanation, reference,
+    ...(subQuestions ? { subQuestions } : {})
+  });
+  const sections: Section[] = [
+    {
+      id: 'us-scot-rev-s1',
+      title: '1. Revenue Process Overview (ASC 606)',
+      questions: [
+        q('us-scot-rev-1a', '<p>Has the ASC 606 five-step model been documented for Harbor Freight Logistics LLC\'s revenue streams: (1) identify contract, (2) identify performance obligations, (3) determine transaction price, (4) allocate transaction price, (5) recognize revenue?</p>', undefined, 'Yes', '<p>ASC 606 five-step documentation: (1) Contracts — individual freight service orders or master service agreements with customers; (2) Performance obligations — single PO per shipment (delivery completion); (3) Transaction price — fixed per freight manifest, fuel surcharge billed separately; (4) Allocation — single PO, no allocation required; (5) Recognition — point-in-time upon proof of delivery. Policy documented and consistent with ASC 606.25 single PO guidance.</p>', 'W/P Ref: SCOT-REV-01'),
+        q('us-scot-rev-1b', '<p>Has it been confirmed that no variable consideration (volume discounts, performance penalties) or contract modifications exist that complicate recognition under ASC 606?</p>', undefined, 'Yes', '<p>Variable consideration review: volume discount arrangements in 3 major contracts reviewed. Step rebate structure analyzed under ASC 606.52 constraint test — discounts reliably estimable based on historical data. No contract modifications identified requiring ASC 606.18 analysis.</p>', 'W/P Ref: SCOT-REV-01'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'us-scot-rev-s2',
+      title: '2. Order-to-Invoice Controls',
+      questions: [
+        q('us-scot-rev-2a', '<p>Are customer contracts and freight orders authorized at appropriate levels?</p>', undefined, 'Yes', '<p>Authorization controls: customer contracts >$50K annually require managing member signature; individual freight orders are dispatched through LoadMaster Pro with customer pre-authorization. Dispatch manager approves non-standard orders. Authorization matrix documented.</p>', 'W/P Ref: SCOT-REV-02'),
+        q('us-scot-rev-2b', '<p>Is there a documented link from freight manifest (proof of delivery) to invoice generation in LoadMaster Pro?</p>', undefined, 'Yes', '<p>Freight manifest to invoice linkage documented: driver enters POD (proof of delivery) in LoadMaster Pro mobile app → system auto-generates invoice → invoice exported to QuickBooks weekly. Manual intervention only for disputed deliveries. POD required before invoice generation (system control).</p>', 'W/P Ref: SCOT-REV-02'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'us-scot-rev-s3',
+      title: '3. Accounts Receivable Controls',
+      questions: [
+        q('us-scot-rev-3a', '<p>Is an AR sub-ledger maintained and reconciled to the GL monthly?</p>', undefined, 'Yes', '<p>AR sub-ledger in QuickBooks reconciled to GL monthly by controller. Reconciliation reviewed by managing member. Reconciliation for December 31, 2024 reviewed by audit team — no reconciling items.</p>', 'W/P Ref: SCOT-REV-03'),
+        q('us-scot-rev-3b', '<p>Is an accounts receivable aging report reviewed by management, and are collection follow-up procedures documented?</p>', undefined, 'Yes', '<p>AR aging reviewed weekly by controller. Accounts >60 days past due escalated to managing member. Collection procedures: automated reminder at 30 days, controller phone call at 45 days, managing member involvement at 60 days, third-party collections at 90 days.</p>', 'W/P Ref: SCOT-REV-03'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'us-scot-rev-s4',
+      title: '4. Cash Receipts Controls',
+      questions: [
+        q('us-scot-rev-4a', '<p>Are cash receipts (EFT, check) applied to customer accounts timely and reconciled?</p>', undefined, 'Yes', '<p>Cash receipts: 89% of customers pay by EFT (auto-applied by bank and imported to QB daily), 11% by check (deposited same day, manually applied to AR). Deposits reconciled to bank statement daily by office administrator. Controller reviews weekly.</p>', 'W/P Ref: SCOT-REV-04'),
+        q('us-scot-rev-4b', '<p>Is there segregation between cash receipts handling and AR recording?</p>', undefined, 'Yes', '<p>Adequate segregation: office administrator handles bank deposits (no GL access), controller applies payments to AR in QuickBooks (no physical cash handling). Managing member reviews monthly bank reconciliation.</p>'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'us-scot-rev-s5',
+      title: '5. IT Controls over Revenue',
+      questions: [
+        q('us-scot-rev-5a', '<p>Has LoadMaster Pro billing system access been reviewed for appropriateness?</p>', undefined, 'Yes', '<p>LoadMaster Pro access reviewed: 8 dispatchers (create/edit freight orders), 3 billing users (generate invoices), 2 managers (approval authority), 1 admin (system configuration). No terminated employees with active access. SOC 2 Type II report covers access controls.</p>', 'W/P Ref: SCOT-REV-05'),
+      ],
+      isExpanded: true
+    },
+  ];
+  return {
+    id: 'global-template-us-scot-revenue-cycle',
+    title: 'SCOT — Revenue Cycle',
+    description: 'US GAAS systems and controls documentation for the revenue cycle of Harbor Freight Logistics LLC per AU-C 315 and ASC 606.',
+    objective: 'AU-C 315 requires documentation of the understanding of the entity\'s significant transaction cycles. This checklist documents the revenue cycle systems, controls, and ASC 606 accounting policies for Harbor Freight Logistics LLC.',
+    sections,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  };
+};
+
+export const generateUSSCOTExpenditureCycleChecklist = (): Checklist => {
+  const q = (id: string, text: string, subQuestions?: Question[], answer = '', explanation = '', reference = ''): Question => ({
+    id, text, answerType: 'yes-no-na' as const, options: ['Yes', 'No', 'NA'],
+    required: false, answer, explanation, reference,
+    ...(subQuestions ? { subQuestions } : {})
+  });
+  const sections: Section[] = [
+    {
+      id: 'us-scot-exp-s1',
+      title: '1. Procurement Overview',
+      questions: [
+        q('us-scot-exp-1a', '<p>Have procurement policies been documented, including purchase authorization levels and approved vendor list?</p>', undefined, 'Yes', '<p>Procurement policy: purchases $0-$999 per manager approval (fuel cards, supplies), $1K-$5K controller pre-approval, >$5K managing member approval. Approved vendor list maintained by controller. Top expenditures: fuel (reviewed monthly), driver wages (ADP), vehicle maintenance (approved fleet shops), warehouse rent (related party lease).</p>', 'W/P Ref: SCOT-EXP-01'),
+        q('us-scot-exp-1b', '<p>Has the distinction between capital expenditures (ASC 360), operating lease costs (ASC 842), and operating expenses been documented?</p>', undefined, 'Yes', '<p>Capitalization policy: assets >$2,500 and useful life >1 year capitalized. ASC 842 lease policy: all leases capitalized on balance sheet (both operating and finance). Capital vs operating classification checklist completed for all new asset acquisitions in 2024.</p>', 'W/P Ref: SCOT-EXP-01'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'us-scot-exp-s2',
+      title: '2. PO and Receiving Controls',
+      questions: [
+        q('us-scot-exp-2a', '<p>Is a three-way match process (PO, receiving documentation, vendor invoice) performed for significant purchases?</p>', undefined, 'Yes', '<p>Three-way match documented for fuel purchases (fuel card statements), vehicle parts (shop repair orders), and supplies. Warehouse receiving dock logs maintained for all inbound deliveries. Controller performs 3-way match review before approving vendor invoices for payment.</p>', 'W/P Ref: SCOT-EXP-02'),
+        q('us-scot-exp-2b', '<p>Is there a process for accruing uninvoiced receipts at period-end?</p>', undefined, 'Yes', '<p>Uninvoiced receipts accrual: controller reviews open POs and receiving log at month-end. Standard accruals for fuel (estimate based on fuel card data through month-end) and maintenance (open work orders). Accrual process documented in close procedures.</p>', 'W/P Ref: SCOT-EXP-02'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'us-scot-exp-s3',
+      title: '3. Accounts Payable Controls',
+      questions: [
+        q('us-scot-exp-3a', '<p>Is an AP sub-ledger maintained and reconciled to the GL monthly?</p>', undefined, 'Yes', '<p>AP sub-ledger in QuickBooks reconciled to GL monthly by controller. Vendor statement reconciliations performed for top 10 vendors quarterly. No significant reconciling items at December 31, 2024.</p>', 'W/P Ref: SCOT-EXP-03'),
+        q('us-scot-exp-3b', '<p>Are duplicate payment controls in place?</p>', undefined, 'Yes', '<p>QuickBooks duplicate vendor/invoice number detection enabled. Controller reviews AP aging for duplicate entries before payment run. No duplicate payments identified in 2024 sample testing.</p>'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'us-scot-exp-s4',
+      title: '4. Cash Disbursement Controls',
+      questions: [
+        q('us-scot-exp-4a', '<p>Are EFT and check disbursements authorized at appropriate levels and reconciled to the bank?</p>', undefined, 'Yes', '<p>Disbursement controls: EFT payments >$10K require managing member authorization in online banking. Checks require two signatures (controller + managing member) for amounts >$5K. Bank account reconciled monthly by controller, reviewed by managing member. No unauthorized disbursements identified.</p>', 'W/P Ref: SCOT-EXP-04'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'us-scot-exp-s5',
+      title: '5. IT Controls over Expenditures',
+      questions: [
+        q('us-scot-exp-5a', '<p>Have IT controls over the AP and disbursement processes in QuickBooks been assessed?</p>', undefined, 'Yes', '<p>QuickBooks AP access: AP entry access limited to controller and AP clerk (2 users). Check printing access restricted to controller. Managing member reviews online banking independently. No significant ITGC exceptions for AP module.</p>', 'W/P Ref: SCOT-EXP-05'),
+      ],
+      isExpanded: true
+    },
+  ];
+  return {
+    id: 'global-template-us-scot-expenditure-cycle',
+    title: 'SCOT — Expenditure Cycle',
+    description: 'US GAAS systems and controls documentation for the expenditure cycle of Harbor Freight Logistics LLC per AU-C 315, including ASC 842 lease classification.',
+    objective: 'AU-C 315 requires documentation of significant transaction cycles. This checklist documents the expenditure cycle systems, controls, and accounting policies for Harbor Freight Logistics LLC.',
+    sections,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  };
+};
+
+export const generateUSSCOTPayrollCycleChecklist = (): Checklist => {
+  const q = (id: string, text: string, subQuestions?: Question[], answer = '', explanation = '', reference = ''): Question => ({
+    id, text, answerType: 'yes-no-na' as const, options: ['Yes', 'No', 'NA'],
+    required: false, answer, explanation, reference,
+    ...(subQuestions ? { subQuestions } : {})
+  });
+  const sections: Section[] = [
+    {
+      id: 'us-scot-pay-s1',
+      title: '1. Payroll Overview',
+      questions: [
+        q('us-scot-pay-1a', '<p>Has the payroll overview been documented: ADP Workforce Now provider, biweekly payroll, 147 employees in 12 states?</p>', undefined, 'Yes', '<p>Payroll overview documented: ADP Workforce Now processes biweekly payroll. 147 employees: 98 drivers (CDL Class A), 28 warehouse workers, 21 administrative/management. Operations in 12 states — ADP handles multi-state tax withholding and reporting. Annual payroll approximately $6.09M.</p>', 'W/P Ref: SCOT-PAY-01'),
+        q('us-scot-pay-1b', '<p>Have all employee classifications been reviewed (employees vs. independent contractors) for proper treatment under IRS guidelines?</p>', undefined, 'Yes', '<p>Employee classification review: all 147 workers classified as employees. No independent contractors used for driving services (consistent with DOT owner-operator rules). 1099 review performed — 12 1099s issued to independent mechanics, all properly classified.</p>', 'W/P Ref: SCOT-PAY-01'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'us-scot-pay-s2',
+      title: '2. Employee Master File Controls',
+      questions: [
+        q('us-scot-pay-2a', '<p>Is there segregation between HR (authorizes employee adds/changes) and payroll processing (records in ADP)?</p>', undefined, 'Yes', '<p>Segregation documented: HR manager authorizes new hires, terminations, and pay rate changes on HR action forms. Controller enters approved changes into ADP. HR manager has no ADP processing access. Payroll manager reviews ADP audit trail monthly for unauthorized changes.</p>', 'W/P Ref: SCOT-PAY-02'),
+        q('us-scot-pay-2b', '<p>Is the employee master file reviewed periodically for ghost employees or unauthorized changes?</p>', undefined, 'Yes', '<p>Master file review: HR manager reviews ADP employee list quarterly vs. HR records. Active employee list compared to payroll register. Managing member reviews complete payroll register biweekly before ADP payment authorization.</p>', 'W/P Ref: SCOT-PAY-02'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'us-scot-pay-s3',
+      title: '3. Time & Attendance',
+      questions: [
+        q('us-scot-pay-3a', '<p>Is electronic time tracking used for drivers, including exception reporting for HOS (hours of service) compliance?</p>', undefined, 'Yes', '<p>Electronic logging devices (ELDs) required for all CDL drivers per FMCSA mandate. ELD data feeds into ADP time import. Warehouse workers use biometric time clocks. Supervisor approval required for all overtime. ELD data also used for DOT HOS compliance monitoring.</p>', 'W/P Ref: SCOT-PAY-03'),
+        q('us-scot-pay-3b', '<p>Is overtime properly authorized and consistent with FLSA requirements?</p>', undefined, 'Yes', '<p>FLSA compliance reviewed: non-exempt employees (drivers, warehouse) paid OT at 1.5x for hours >40/week. Exempt employees (management, supervisors) reviewed for proper FLSA exempt status. Drivers subject to Motor Carrier Act exemption from OT — properly applied.</p>', 'W/P Ref: SCOT-PAY-03'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'us-scot-pay-s4',
+      title: '4. Payroll Processing & Disbursement',
+      questions: [
+        q('us-scot-pay-4a', '<p>Has the ADP payroll processing review been documented, including who reviews and approves each payroll run before submission?</p>', undefined, 'Yes', '<p>ADP processing review: controller reviews ADP pre-processing register for unusual changes or amounts. Managing member approves payroll run in ADP (dual authorization for ACH direct deposit). ADP automatically handles federal and state tax withholding, FICA, and garnishments.</p>', 'W/P Ref: SCOT-PAY-04'),
+        q('us-scot-pay-4b', '<p>Is the payroll bank account reconciled monthly, separate from the operating account?</p>', undefined, 'Yes', '<p>Dedicated payroll bank account (separate from operating). Funded each payroll run by transfer from operating account equal to net payroll. Reconciled monthly by controller. Zero balance after each payroll run — consistent with imprest payroll account control.</p>', 'W/P Ref: SCOT-PAY-04'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'us-scot-pay-s5',
+      title: '5. Payroll Tax & Compliance',
+      questions: [
+        q('us-scot-pay-5a', '<p>Has multi-state payroll tax compliance been assessed for all 12 states with employees?</p>', undefined, 'Yes', '<p>Multi-state compliance: ADP handles withholding and remittance for all 12 states. State registrations confirmed current. Nexus analysis reviewed — all states with >30 employees have employer registration. W-2 preparation by ADP confirmed for all employees. No state payroll tax audits or notices outstanding.</p>', 'W/P Ref: SCOT-PAY-05'),
+        q('us-scot-pay-5b', '<p>Have FICA (federal), FUTA, and SUTA withholding and remittance been reviewed?</p>', undefined, 'Yes', '<p>FICA/FUTA/SUTA review: ADP 941 filings reconciled to payroll register annually. FUTA deposits timely per ADP records. State unemployment tax accounts current in all 12 states. No payroll tax penalties or underpayment assessments in 2024.</p>', 'W/P Ref: SCOT-PAY-05'),
+      ],
+      isExpanded: true
+    },
+  ];
+  return {
+    id: 'global-template-us-scot-payroll-cycle',
+    title: 'SCOT — Payroll Cycle',
+    description: 'US GAAS systems and controls documentation for the payroll cycle of Harbor Freight Logistics LLC per AU-C 315. ADP Workforce Now processes payroll for 147 employees in 12 states.',
+    objective: 'AU-C 315 requires documentation of significant transaction cycles. This checklist documents the payroll cycle systems, controls, and compliance for Harbor Freight Logistics LLC.',
+    sections,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  };
+};
+
+export const generateUSGoingConcernInitialAssessmentChecklist = (): Checklist => {
+  const q = (id: string, text: string, subQuestions?: Question[], answer = '', explanation = '', reference = ''): Question => ({
+    id, text, answerType: 'yes-no-na' as const, options: ['Yes', 'No', 'NA'],
+    required: false, answer, explanation, reference,
+    ...(subQuestions ? { subQuestions } : {})
+  });
+  const sections: Section[] = [
+    {
+      id: 'us-gc-init-s1',
+      title: '1. Identification of Conditions and Events',
+      questions: [
+        q('us-gc-init-1a', '<p>Have financial indicators of going concern doubt been assessed: net losses, working capital deficit, negative cash flows, debt covenant violations, inability to pay obligations as due?</p>', undefined, 'No', '<p>Financial indicators reviewed. No adverse financial indicators: Net income positive $1.58M (2024). Working capital positive $3.2M (current ratio 1.8x). Operating cash flows positive $2.1M. All debt covenants met (DSCR 1.38x vs 1.25x minimum, debt/EBITDA 2.4x vs 3.0x maximum). No going concern financial indicators identified.</p>', 'W/P Ref: GC-INIT-01'),
+        q('us-gc-init-1b', '<p>Have operating indicators of going concern doubt been assessed: loss of key customer, labor disputes, loss of key suppliers, pending litigation?</p>', undefined, 'No', '<p>Operating indicators reviewed. No adverse operating indicators: no key customer losses (top customer contract renewed through 2026), no labor disputes (driver retention above industry average), no significant supplier issues, no material pending litigation per legal confirmation.</p>', 'W/P Ref: GC-INIT-01'),
+        q('us-gc-init-1c', '<p>Have other indicators been assessed: changes in legislation, management departures, loss of key franchise/operating licenses?</p>', undefined, 'No', '<p>Other indicators reviewed: DOT operating authority current, no management departures, no adverse regulatory changes affecting business model. No other going concern indicators identified.</p>', 'W/P Ref: GC-INIT-01'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'us-gc-init-s2',
+      title: '2. Management\'s Assessment of Going Concern',
+      questions: [
+        q('us-gc-init-2a', '<p>Has management prepared a going concern assessment covering the 12-month period from the expected date of the auditor\'s report (through approximately February 7, 2026) per AU-C 570?</p>', undefined, 'Yes', '<p>Management going concern assessment obtained and reviewed. Covers 12 months from report date (February 7, 2025 to February 7, 2026). Assessment concludes entity will continue as a going concern based on positive financial performance, credit facility availability, and contracted revenue backlog.</p>', 'W/P Ref: GC-INIT-02'),
+        q('us-gc-init-2b', '<p>Is management\'s assessment reasonable and supported by appropriate assumptions and evidence?</p>', undefined, 'Yes', '<p>Assessment supported by: FY2025 revenue projections of $19.8M (7.6% growth), existing contracted revenue backlog of $8.4M, available credit facility of $5M (fully available at January 2025 assessment date), and positive historical cash flow generation.</p>', 'W/P Ref: GC-INIT-02'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'us-gc-init-s3',
+      title: '3. Management\'s Plans to Mitigate',
+      questions: [
+        q('us-gc-init-3a', '<p>Has management identified any plans to address potential going concern issues (refinancing, asset sales, cost reductions, additional capital)?</p>', undefined, 'NA', '<p>No going concern indicators identified. Management mitigation plans not required. Entity has secured new $5M revolving credit facility effective January 2025 which enhances liquidity beyond fiscal year 2024 levels.</p>'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'us-gc-init-s4',
+      title: '4. Auditor\'s Conclusion on Substantial Doubt',
+      questions: [
+        q('us-gc-init-4a', '<p>Based on the initial assessment, does the auditor have substantial doubt about the entity\'s ability to continue as a going concern for the 12-month look-forward period (AU-C 570 "substantial doubt" standard)?</p>', undefined, 'No', '<p>No substantial doubt exists. All financial and operating indicators are positive. Management assessment is reasonable and supported. No conditions or events individually or in the aggregate raise substantial doubt about Harbor Freight Logistics LLC\'s ability to continue as a going concern.</p>', 'W/P Ref: GC-INIT-03'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'us-gc-init-s5',
+      title: '5. Communication Requirements',
+      questions: [
+        q('us-gc-init-5a', '<p>Has the going concern conclusion been communicated to TCWG (Board of Managers) as required by AU-C 260?</p>', undefined, 'Yes', '<p>Going concern conclusion communicated to Board of Managers in planning communication: no going concern indicators identified, no substantial doubt. Final going concern conclusion will be confirmed in final TCWG communication at engagement completion.</p>', 'W/P Ref: TCWG-PL'),
+      ],
+      isExpanded: true
+    },
+  ];
+  return {
+    id: 'global-template-us-going-concern-initial',
+    title: 'Going Concern — Initial Assessment',
+    description: 'US GAAS initial going concern assessment for Harbor Freight Logistics LLC per AU-C 570 (substantial doubt standard). No substantial doubt identified.',
+    objective: 'AU-C 570 requires the auditor to evaluate whether substantial doubt exists about the entity\'s ability to continue as a going concern for a period of 12 months after the financial statement date. This checklist documents the initial going concern assessment using the AU-C 570 "substantial doubt" standard (not CAS "material uncertainty").',
+    sections,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  };
+};
+
+export const generateUSOverallAuditResponseChecklist = (): Checklist => {
+  const q = (id: string, text: string, subQuestions?: Question[], answer = '', explanation = '', reference = ''): Question => ({
+    id, text, answerType: 'yes-no-na' as const, options: ['Yes', 'No', 'NA'],
+    required: false, answer, explanation, reference,
+    ...(subQuestions ? { subQuestions } : {})
+  });
+  const sections: Section[] = [
+    {
+      id: 'us-oar-s1',
+      title: '1. Responses to Pervasive Risks',
+      questions: [
+        q('us-oar-1a', '<p>Has professional skepticism been emphasized to the engagement team given the moderate overall RMM and first-year engagement?</p>', undefined, 'Yes', '<p>Professional skepticism requirement communicated at team meetings January 20 and January 28, 2025. Team instructed to critically assess management explanations, seek independent corroboration, and not rely solely on management representations without supporting evidence.</p>', 'W/P Ref: OAR-01'),
+        q('us-oar-1b', '<p>Has appropriate staffing been confirmed, with experienced team members assigned to high-risk areas (L. Garcia to revenue and goodwill, experienced senior to ASC 842)?</p>', undefined, 'Yes', '<p>Staffing confirmed per audit strategy: L. Garcia (CPA, manager) leads revenue and goodwill testing. Senior 2 (ASC 842 CPE trained) leads lease accounting testing. M. Thompson reviews all significant risk areas. Staffing consistent with RMM assessments.</p>', 'W/P Ref: OAR-01'),
+        q('us-oar-1c', '<p>Has supervision of team members been planned, including regular check-ins and review protocols?</p>', undefined, 'Yes', '<p>Supervision plan: daily L. Garcia briefings with team during fieldwork (January 20–February 7). M. Thompson on-site January 20–21 and available by phone. L. Garcia reviews all workpapers before submission to M. Thompson for partner review.</p>'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'us-oar-s2',
+      title: '2. Unpredictability of Procedures',
+      questions: [
+        q('us-oar-2a', '<p>Have elements of unpredictability been incorporated into the audit procedures per AU-C 330.17?</p>', undefined, 'Yes', '<p>Unpredictability elements: (1) Expanded cutoff testing window (last 30 invoices vs standard 20); (2) Unannounced fuel card transaction test (sample selected after fieldwork start); (3) Accounts selected for confirmation not communicated in advance; (4) Vendor master file tested for ghost vendors — not part of standard prior procedures.</p>', 'W/P Ref: OAR-02'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'us-oar-s3',
+      title: '3. Response to Significant Risks',
+      questions: [
+        q('us-oar-3a', '<p>Have specific responses been designed for the revenue recognition significant risk (ASC 606 cutoff)?</p>', undefined, 'Yes', '<p>Revenue significant risk response: (1) Complete population analytics of all freight invoices — LoadMaster Pro export; (2) Cutoff testing — last 30 invoices before December 31 and first 20 invoices after January 1, 2025 traced to delivery confirmation; (3) Sample of 25 invoices traced to customer contracts and POD; (4) Deferred revenue completeness testing.</p>', 'W/P Ref: OAR-03'),
+        q('us-oar-3b', '<p>Have specific responses been designed for the goodwill impairment significant risk (ASC 350)?</p>', undefined, 'Yes', '<p>Goodwill significant risk response: (1) Evaluate management\'s valuation specialist qualifications per AU-C 620; (2) Assess reasonableness of DCF model assumptions (11% discount rate, 5% growth); (3) Compare discount rate to market comparables; (4) Sensitize model for changes in key assumptions; (5) Assess consistency of projections with audited financial results.</p>', 'W/P Ref: OAR-03'),
+        q('us-oar-3c', '<p>Have specific responses been designed for the ROU assets significant risk (ASC 842 valuation)?</p>', undefined, 'Yes', '<p>ROU assets significant risk response: (1) Test all 15 leases for proper finance vs operating classification per ASC 842; (2) Recalculate present value of each lease using management\'s IBR; (3) Evaluate reasonableness of IBR selection (compare to market borrowing rates); (4) Test amortization calculations for ROU assets; (5) Confirm completeness of lease population against contracts register.</p>', 'W/P Ref: OAR-03'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'us-oar-s4',
+      title: '4. Response to Management Override Risk',
+      questions: [
+        q('us-oar-4a', '<p>Have audit procedures been designed to respond to the presumed management override significant risk per AU-C 240.32?</p>', undefined, 'Yes', '<p>Management override response per AU-C 240.32: (1) Complete JE population testing using data analytics to identify unusual/late/non-standard entries; (2) Review accounting estimates for evidence of management bias; (3) Investigate significant unusual transactions outside normal course of business; (4) Evaluate business purpose of significant year-end journal entries.</p>', 'W/P Ref: OAR-04'),
+      ],
+      isExpanded: true
+    },
+  ];
+  return {
+    id: 'global-template-us-overall-audit-response',
+    title: 'Overall Audit Response',
+    description: 'US GAAS overall audit response for Harbor Freight Logistics LLC per AU-C 330, documenting responses to pervasive risks, significant risks (revenue ASC 606, goodwill ASC 350, ROU assets ASC 842), and management override.',
+    objective: 'AU-C 330 requires the auditor to design and implement overall responses to address assessed risks of material misstatement at the financial statement level. This checklist documents overall responses for Harbor Freight Logistics LLC.',
+    sections,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  };
+};
+
+export const generateUSTestOfControlsChecklist = (): Checklist => {
+  const q = (id: string, text: string, subQuestions?: Question[], answer = '', explanation = '', reference = ''): Question => ({
+    id, text, answerType: 'yes-no-na' as const, options: ['Yes', 'No', 'NA'],
+    required: false, answer, explanation, reference,
+    ...(subQuestions ? { subQuestions } : {})
+  });
+  const sections: Section[] = [
+    {
+      id: 'us-toc-s1',
+      title: '1. Controls Selected for Testing',
+      questions: [
+        q('us-toc-1a', '<p>Have controls been selected for testing based on the audit strategy (primarily substantive with limited payroll controls reliance)?</p>', undefined, 'Yes', '<p>Controls selected for testing: (1) ADP payroll processing controls (testing for reliance — large employee count in 12 states makes substantive testing inefficient); (2) Bank reconciliation controls (monthly reconciliation review by managing member — test for enhanced reliance on cash). All other cycles: no controls reliance, direct substantive testing.</p>', 'W/P Ref: TOC-01'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'us-toc-s2',
+      title: '2. Test of Design and Implementation',
+      questions: [
+        q('us-toc-2a', '<p>Have walkthroughs been performed to confirm design and implementation of selected controls?</p>', undefined, 'Yes', '<p>Walkthroughs performed: (1) ADP payroll control walkthrough — traced one payroll cycle from HR authorization to ADP processing to GL posting; (2) Bank reconciliation walkthrough — observed December 2024 reconciliation preparation and managing member review. Both controls confirmed as designed and implemented.</p>', 'W/P Ref: TOC-02'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'us-toc-s3',
+      title: '3. Test of Operating Effectiveness',
+      questions: [
+        q('us-toc-3a', '<p>Have operating effectiveness tests been performed using appropriate sample sizes per AICPA audit sampling guidance?</p>', undefined, 'Yes', '<p>Payroll controls test: sample of 25 payroll changes (using attribute sampling, tolerable rate 5%, expected deviation 0%) tested against HR authorization forms — 0 deviations. Bank reconciliation test: 6 months tested (July–December 2024) for managing member review evidence — all 6 confirmed with sign-off.</p>', 'W/P Ref: TOC-03'),
+        q('us-toc-3b', '<p>Have test results been documented with the number of items tested, deviations found, and deviation rate?</p>', undefined, 'Yes', '<p>Test results documented: Payroll controls — 25 tested, 0 deviations (0% deviation rate vs 5% tolerable rate). Bank reconciliation controls — 6 tested, 0 exceptions. Controls operating effectively — reliance confirmed for payroll and cash.</p>', 'W/P Ref: TOC-03'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'us-toc-s4',
+      title: '4. Results and Deviations',
+      questions: [
+        q('us-toc-4a', '<p>Were any deviations or exceptions identified during controls testing?</p>', undefined, 'No', '<p>No deviations identified in payroll controls testing (0 of 25). No exceptions in bank reconciliation controls testing (0 of 6). Controls operating effectively throughout the period.</p>'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'us-toc-s5',
+      title: '5. Conclusion on Control Reliance',
+      questions: [
+        q('us-toc-5a', '<p>Has the conclusion on control reliance been documented, with any adjustments to the planned substantive testing approach?</p>', undefined, 'Yes', '<p>Control reliance conclusion: (1) Payroll — controls effective, reliance confirmed, reduced substantive payroll testing (analytical procedures + limited sample); (2) Cash — bank reconciliation controls effective, reliance confirmed, reduced confirmations needed. All other areas remain primarily substantive as planned.</p>', 'W/P Ref: TOC-04'),
+      ],
+      isExpanded: true
+    },
+  ];
+  return {
+    id: 'global-template-us-test-of-controls',
+    title: 'Test of Controls',
+    description: 'US GAAS test of controls for Harbor Freight Logistics LLC per AU-C 330. Controls tested for payroll (ADP) and cash (bank reconciliation). No deviations found.',
+    objective: 'AU-C 330 requires the auditor to design and perform tests of controls when reliance on operating effectiveness is intended, or when substantive procedures alone cannot provide sufficient appropriate evidence. This checklist documents controls testing for Harbor Freight Logistics LLC.',
+    sections,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  };
+};
+
+export const generateUSSubstantiveAnalyticalProceduresChecklist = (): Checklist => {
+  const q = (id: string, text: string, subQuestions?: Question[], answer = '', explanation = '', reference = ''): Question => ({
+    id, text, answerType: 'yes-no-na' as const, options: ['Yes', 'No', 'NA'],
+    required: false, answer, explanation, reference,
+    ...(subQuestions ? { subQuestions } : {})
+  });
+  const sections: Section[] = [
+    {
+      id: 'us-sap-s1',
+      title: '1. Objective and Assertion',
+      questions: [
+        q('us-sap-1a', '<p>Have the objective and specific assertions addressed by substantive analytical procedures been documented?</p>', undefined, 'Yes', '<p>Objective: Substantive analytics applied to operating expenses to test completeness and accuracy of expense recognition. Assertions: Completeness (all expenses recorded), Accuracy (amounts correct), and Cutoff (expenses in correct period). Revenue addressed separately through test of details given high RMM for cutoff.</p>', 'W/P Ref: SAP-01'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'us-sap-s2',
+      title: '2. Expectation Development',
+      questions: [
+        q('us-sap-2a', '<p>Has an independent expectation been developed for the account balance being tested?</p>', undefined, 'Yes', '<p>Expectations developed: (1) Fuel expense expected: 18.5% of revenue based on Q1-Q3 2024 actual rates and fuel price data = $3.4M expected vs $3.38M actual — within threshold; (2) Labor cost expected: headcount × average rate adjusted for merit increases = $6.1M expected vs $6.09M actual — within threshold; (3) Insurance expected: prior year premium × renewal quote increase = $384K expected vs $391K actual — within threshold.</p>', 'W/P Ref: SAP-02'),
+        q('us-sap-2b', '<p>Is the expectation precise enough to detect a misstatement that, individually or in the aggregate, could be material?</p>', undefined, 'Yes', '<p>Expectation precision: threshold set at $128,800 (performance materiality). All analytical expectations have precision ranges narrower than performance materiality. Expectation development documented with source data.</p>', 'W/P Ref: SAP-02'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'us-sap-s3',
+      title: '3. Acceptable Threshold',
+      questions: [
+        q('us-sap-3a', '<p>Has the acceptable threshold been established at $128,800 (performance materiality) or lower for high-risk accounts?</p>', undefined, 'Yes', '<p>Threshold: $128,800 for all operating expense SAPs. Threshold not reduced below performance materiality for any expense category (no higher-risk expense accounts beyond those addressed by test of details). Documented and approved by L. Garcia.</p>', 'W/P Ref: SAP-03'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'us-sap-s4',
+      title: '4. Results and Explanation',
+      questions: [
+        q('us-sap-4a', '<p>Have all analytical results been documented and variances exceeding the threshold investigated?</p>', undefined, 'Yes', '<p>All operating expense analytics within $128,800 threshold. D&A variance: actual $692K vs expected $414K = $278K overage exceeding threshold. Investigated: fully explained by new ASC 842 ROU asset amortization (finance leases, 5 tractors capitalized January 2024 at $2.8M, 4-year straight-line = $700K/year, partial year $280K). Explanation accepted with supporting lease calculations.</p>', 'W/P Ref: SAP-04'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'us-sap-s5',
+      title: '5. Documentation of Corroborating Evidence',
+      questions: [
+        q('us-sap-5a', '<p>Has corroborating evidence been obtained for all explained variances?</p>', undefined, 'Yes', '<p>Corroborating evidence obtained for D&A variance: lease schedules for all 5 capitalized finance leases, ROU asset calculation workpaper, ASC 842 amortization schedule reconciling to GL. All corroboration documented in SAP workpaper.</p>', 'W/P Ref: SAP-05'),
+      ],
+      isExpanded: true
+    },
+  ];
+  return {
+    id: 'global-template-us-substantive-analytical-procedures',
+    title: 'Substantive Analytical Procedures',
+    description: 'US GAAS substantive analytical procedures for Harbor Freight Logistics LLC per AU-C 330 and AU-C 520. All operating expense analytics within performance materiality threshold ($128,800).',
+    objective: 'AU-C 520 requires that when substantive analytical procedures are used, the auditor develop an expectation precise enough to detect a material misstatement. This checklist documents substantive analytics for Harbor Freight Logistics LLC.',
+    sections,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  };
+};
+
+export const generateUSTestOfDetailsRevenueChecklist = (): Checklist => {
+  const q = (id: string, text: string, subQuestions?: Question[], answer = '', explanation = '', reference = ''): Question => ({
+    id, text, answerType: 'yes-no-na' as const, options: ['Yes', 'No', 'NA'],
+    required: false, answer, explanation, reference,
+    ...(subQuestions ? { subQuestions } : {})
+  });
+  const sections: Section[] = [
+    {
+      id: 'us-tod-rev-s1',
+      title: '1. ASC 606 Revenue Recognition Policy',
+      questions: [
+        q('us-tod-rev-1a', '<p>Has the entity\'s ASC 606 revenue recognition policy been tested for compliance with the five-step model?</p>', undefined, 'Yes', '<p>ASC 606 policy tested: sample of 25 invoices traced through five-step model — all passed. Performance obligation (delivery completion) clearly defined in customer contracts. Point-in-time recognition consistently applied. No instances of premature recognition identified in sample.</p>', 'W/P Ref: TOD-REV-01'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'us-tod-rev-s2',
+      title: '2. Completeness Testing',
+      questions: [
+        q('us-tod-rev-2a', '<p>Has completeness of revenue been tested by tracing from freight manifests/delivery confirmations to invoices and the GL?</p>', undefined, 'Yes', '<p>Completeness test: complete population of LoadMaster Pro delivery records (4,280 total) reconciled to invoiced amounts — all deliveries invoiced within 5 business days. No uninvoiced deliveries identified. Revenue completeness confirmed.</p>', 'W/P Ref: TOD-REV-02'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'us-tod-rev-s3',
+      title: '3. Cutoff Testing',
+      questions: [
+        q('us-tod-rev-3a', '<p>Has revenue cutoff been tested at December 31, 2024, examining the last invoices before and first invoices after year-end?</p>', undefined, 'Yes', '<p>Cutoff testing: last 30 invoices before December 31 and first 20 invoices after January 1, 2025. Each traced to LoadMaster Pro proof of delivery timestamp. Results: 3 invoices totaling $68,000 were invoiced in December 2024 but delivery confirmed in January 2025 (posted to wrong period). Revenue cutoff misstatement identified — AJE proposed.</p>', 'W/P Ref: TOD-REV-03'),
+        q('us-tod-rev-3b', '<p>Was the revenue cutoff misstatement of $68K evaluated and corrected by management?</p>', undefined, 'Yes', '<p>Management accepted AJE #1 (revenue cutoff): Dr. Revenue $68,000 / Cr. Deferred Revenue $68,000. Corrected in December 31, 2024 financial statements. Cumulative misstatements now within performance materiality ($128,800). Misstatement added to AIM schedule.</p>', 'W/P Ref: AIM-01'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'us-tod-rev-s4',
+      title: '4. Existence/Occurrence Testing',
+      questions: [
+        q('us-tod-rev-4a', '<p>Have a sample of revenue transactions been traced to supporting documentation (customer contracts, freight manifests, proof of delivery)?</p>', undefined, 'Yes', '<p>Occurrence test: sample of 25 invoices (MUS sampling, $128,800 sampling interval) traced to: customer contract/service order, LoadMaster Pro freight manifest, driver POD signature/electronic delivery confirmation. All 25 items confirmed. No fictitious revenue transactions.</p>', 'W/P Ref: TOD-REV-04'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'us-tod-rev-s5',
+      title: '5. Related Party Revenue',
+      questions: [
+        q('us-tod-rev-5a', '<p>Have related party revenue transactions been reviewed for ASC 850 disclosure adequacy?</p>', undefined, 'Yes', '<p>Related party revenue review: no revenue transactions with related parties identified. All customer relationships arm\'s-length per management representation. Related party schedule confirmed revenue does not include any transactions with LLC members or member-controlled entities.</p>', 'W/P Ref: TOD-REV-05'),
+      ],
+      isExpanded: true
+    },
+  ];
+  return {
+    id: 'global-template-us-test-of-details-revenue',
+    title: 'Test of Details — Revenue',
+    description: 'US GAAS test of details for revenue of Harbor Freight Logistics LLC per AU-C 330 and ASC 606. Revenue cutoff misstatement of $68K identified and corrected (AJE #1).',
+    objective: 'AU-C 330 requires the auditor to design and perform substantive procedures for all significant risks. This checklist documents revenue test of details for Harbor Freight Logistics LLC, including ASC 606 policy testing, completeness, cutoff, and occurrence procedures.',
+    sections,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  };
+};
+
+export const generateUSTestOfDetailsExpensesChecklist = (): Checklist => {
+  const q = (id: string, text: string, subQuestions?: Question[], answer = '', explanation = '', reference = ''): Question => ({
+    id, text, answerType: 'yes-no-na' as const, options: ['Yes', 'No', 'NA'],
+    required: false, answer, explanation, reference,
+    ...(subQuestions ? { subQuestions } : {})
+  });
+  const sections: Section[] = [
+    {
+      id: 'us-tod-exp-s1',
+      title: '1. Search for Unrecorded Liabilities',
+      questions: [
+        q('us-tod-exp-1a', '<p>Has a search for unrecorded liabilities been performed by reviewing post year-end disbursements through February 28, 2025 (report date)?</p>', undefined, 'Yes', '<p>SURL performed: all disbursements from January 1 through February 28, 2025 reviewed ($50K+ traced to source; $10K+ sample). Identified 4 invoices for services rendered in December 2024 not accrued: fleet maintenance $12K, insurance premium $8K, temp labor $7K, utilities $2K = total $29K. Evaluated against materiality — $29K below clearly trivial $9,200 individually but aggregate $29K reviewed. Management accepted accruals for all four items as period-end adjustments. Included in AJE analysis.</p>', 'W/P Ref: TOD-EXP-01'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'us-tod-exp-s2',
+      title: '2. Cutoff Testing',
+      questions: [
+        q('us-tod-exp-2a', '<p>Has expense cutoff been tested to confirm expenses are recorded in the correct fiscal period?</p>', undefined, 'Yes', '<p>Expense cutoff: sample of last 20 vendor invoices recorded before December 31 and first 20 recorded after January 1 reviewed. All items tested in correct period. SURL procedures above addressed accrual completeness. No material cutoff errors beyond items identified in SURL.</p>', 'W/P Ref: TOD-EXP-02'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'us-tod-exp-s3',
+      title: '3. Operating vs Capital Classification (ASC 842)',
+      questions: [
+        q('us-tod-exp-3a', '<p>Has the operating vs. finance lease classification been tested for all significant leases under ASC 842?</p>', undefined, 'Yes', '<p>ASC 842 classification testing: all 15 leases reviewed (12 vehicle, 3 warehouse). Finance lease criteria per ASC 842-20-25-1 applied to each. Identified: warehouse lease #2 (one of 3 warehouse leases) misclassified as finance lease; should be operating lease under ASC 842 (no ownership transfer, no purchase option, no specialized asset). AJE #2 proposed: reclassify from finance lease ROU asset/liability to operating lease ROU asset/liability, impact $31K on amortization vs rent expense classification. Management accepted.</p>', 'W/P Ref: TOD-EXP-03'),
+        q('us-tod-exp-3b', '<p>Was the lease classification AJE of $31K evaluated and corrected by management?</p>', undefined, 'Yes', '<p>AJE #2 accepted by management: reclassification from finance to operating lease. Income statement impact: decrease interest expense $22K, decrease depreciation expense $31K, increase rent/lease expense $53K = net $0 income impact. Balance sheet classification corrected. Added to AIM schedule.</p>', 'W/P Ref: AIM-01'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'us-tod-exp-s4',
+      title: '4. Authorization and Approval Controls',
+      questions: [
+        q('us-tod-exp-4a', '<p>Has a sample of expense transactions been tested for proper authorization and approval per the entity\'s authorization policy?</p>', undefined, 'Yes', '<p>Authorization test: sample of 30 expense transactions tested against authorization matrix. All items had required approvals (within tolerance — 2 items with approval after payment for routine supplies under $500, not material control exception). No unauthorized expenses identified.</p>', 'W/P Ref: TOD-EXP-04'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'us-tod-exp-s5',
+      title: '5. Related Party Expenses (ASC 850)',
+      questions: [
+        q('us-tod-exp-5a', '<p>Have related party expenses been reviewed for arm\'s-length nature and ASC 850 disclosure adequacy?</p>', undefined, 'Yes', '<p>Related party expense review: warehouse lease from member-controlled entity ($215K) — market rent confirmed by comparable lease comparison (within 5% of market). Fuel purchases from member-owned trucking company ($87K) — confirmed at market rack price. Both transactions adequately disclosed in ASC 850 related party note. No below-market or above-market pricing identified.</p>', 'W/P Ref: TOD-EXP-05'),
+      ],
+      isExpanded: true
+    },
+  ];
+  return {
+    id: 'global-template-us-test-of-details-expenses',
+    title: 'Test of Details — Expenses',
+    description: 'US GAAS test of details for expenses of Harbor Freight Logistics LLC per AU-C 330. ASC 842 lease classification AJE #2 ($31K reclassification) identified and corrected.',
+    objective: 'AU-C 330 requires substantive procedures for expenses including search for unrecorded liabilities, cutoff testing, and operating/capital classification. This checklist documents expense test of details for Harbor Freight Logistics LLC including ASC 842 lease classification.',
+    sections,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  };
+};
+
+export const generateUSIndependentAuditorsReportChecklist = (): Checklist => {
+  const q = (id: string, text: string, subQuestions?: Question[], answer = '', explanation = '', reference = ''): Question => ({
+    id, text, answerType: 'yes-no-na' as const, options: ['Yes', 'No', 'NA'],
+    required: false, answer, explanation, reference,
+    ...(subQuestions ? { subQuestions } : {})
+  });
+  const sections: Section[] = [
+    {
+      id: 'us-iar-s1',
+      title: '1. Report Components (AU-C 700)',
+      questions: [
+        q('us-iar-1a', '<p>Has the auditor\'s report been drafted in accordance with AU-C 700 (AICPA format for non-issuers), including all required elements?</p>', undefined, 'Yes', '<p>AU-C 700 report drafted. Required elements confirmed: title ("Independent Auditor\'s Report"), addressee (Board of Managers of Harbor Freight Logistics LLC), opinion paragraph, basis for opinion, management\'s responsibility paragraph, auditor\'s responsibility paragraph, signature, auditor\'s city and state, and report date (February 7, 2025).</p>', 'W/P Ref: REP-01'),
+        q('us-iar-1b', '<p>Has it been confirmed that PCAOB report format (AS 3101) is NOT applicable? (Harbor Freight Logistics LLC is a private non-issuer company.)</p>', undefined, 'Yes', '<p>PCAOB format confirmed as not applicable. Harbor Freight Logistics LLC is a private Delaware LLC — not an SEC registrant, not listed on any exchange, and not subject to PCAOB oversight. Report formatted per AICPA AU-C 700 only.</p>'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'us-iar-s2',
+      title: '2. Opinion Formulation',
+      questions: [
+        q('us-iar-2a', '<p>Has the opinion been formulated as an unmodified (unqualified) opinion that the financial statements present fairly, in all material respects, in accordance with US GAAP?</p>', undefined, 'Yes', '<p>Unmodified opinion issued. Financial statements present fairly, in all material respects, the financial position of Harbor Freight Logistics LLC as of December 31, 2024 and the results of its operations and its cash flows for the year then ended in conformity with accounting principles generally accepted in the United States of America.</p>', 'W/P Ref: REP-01'),
+        q('us-iar-2b', '<p>Has the basis for the unmodified opinion been confirmed: sufficient appropriate evidence obtained, no material misstatements identified (all AJEs corrected), and no scope limitations?</p>', undefined, 'Yes', '<p>Basis for unmodified opinion: sufficient appropriate audit evidence obtained; all identified misstatements ($68K revenue cutoff, $31K lease reclassification, $44K deferred revenue) corrected by management; no scope limitations; management representations obtained; going concern not applicable.</p>', 'W/P Ref: REP-02'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'us-iar-s3',
+      title: '3. Critical Audit Matters',
+      questions: [
+        q('us-iar-3a', '<p>Have critical audit matters (AU-C 701) been assessed? (Note: AU-C 701 communication of CAMs is not required for non-issuer private company audits.)</p>', undefined, 'NA', '<p>AU-C 701 CAM communication is not required for audits of non-issuer private companies. Harbor Freight Logistics LLC is a private entity — no CAM requirement. Optional inclusion discussed with M. Thompson and declined — not included in report per firm policy for private company reports.</p>'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'us-iar-s4',
+      title: '4. Going Concern Paragraph',
+      questions: [
+        q('us-iar-4a', '<p>Is a going concern explanatory paragraph required in the auditor\'s report?</p>', undefined, 'NA', '<p>Going concern paragraph not required. No substantial doubt about Harbor Freight Logistics LLC\'s ability to continue as a going concern exists per the final going concern assessment. No AU-C 570 going concern paragraph included in the report.</p>'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'us-iar-s5',
+      title: '5. Supplementary Information',
+      questions: [
+        q('us-iar-5a', '<p>Is there any supplementary information included with the financial statements that requires reference in the auditor\'s report?</p>', undefined, 'No', '<p>No supplementary information schedules included. Financial statements consist of balance sheet, income statement, statement of changes in members\' equity, statement of cash flows, and notes only. No federal awards schedule or other supplementary schedules required.</p>'),
+        q('us-iar-5b', '<p>Has the report been signed by the engagement partner (M. Thompson, CPA) and dated as of February 7, 2025 (fieldwork completion date)?</p>', undefined, 'Yes', '<p>Report signed by M. Thompson, CPA, on February 7, 2025 — the date on which sufficient appropriate audit evidence had been obtained and all completion procedures had been performed.</p>', 'W/P Ref: REP-03'),
+      ],
+      isExpanded: true
+    },
+  ];
+  return {
+    id: 'global-template-us-independent-auditors-report',
+    title: 'Independent Auditor\'s Report',
+    description: 'US GAAS auditor\'s report checklist for Harbor Freight Logistics LLC per AU-C 700 (AICPA, non-issuer). Unmodified opinion issued. No CAMs, no going concern paragraph.',
+    objective: 'AU-C 700 requires the auditor to form an opinion on the financial statements and express that opinion in a written auditor\'s report. This checklist documents the report formulation for Harbor Freight Logistics LLC (private non-issuer, AICPA AU-C format only, not PCAOB).',
+    sections,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  };
+};
+
+export const generateUSAccumulationOfMisstatementsChecklist = (): Checklist => {
+  const q = (id: string, text: string, subQuestions?: Question[], answer = '', explanation = '', reference = ''): Question => ({
+    id, text, answerType: 'yes-no-na' as const, options: ['Yes', 'No', 'NA'],
+    required: false, answer, explanation, reference,
+    ...(subQuestions ? { subQuestions } : {})
+  });
+  const sections: Section[] = [
+    {
+      id: 'us-aim-s1',
+      title: '1. Factual Misstatements',
+      questions: [
+        q('us-aim-1a', '<p>Have all factual misstatements been identified and documented in the Accumulation of Identified Misstatements (AIM) schedule?</p>', undefined, 'Yes', '<p>Three factual misstatements identified and documented in AIM schedule: (1) AJE #1 — Revenue cutoff: Dr. Revenue $68,000 / Cr. Deferred Revenue $68,000 (invoices in December 2024 for deliveries completed January 2025); (2) AJE #2 — Lease reclassification: Dr. Operating ROU Asset / Cr. Finance ROU Asset $31,000 (warehouse lease #2 misclassified — reclassification, no income impact); (3) AJE #3 — Deferred revenue reclassification: Dr. Revenue / Cr. Deferred Revenue $44,000 (advance billings improperly recognized). All three corrected by management.</p>', 'W/P Ref: AIM-01'),
+        q('us-aim-1b', '<p>Were all three AJEs accepted and recorded by management?</p>', undefined, 'Yes', '<p>Management accepted and posted all three AJEs on February 5, 2025. Final trial balance received February 6, 2025 reflects all corrections. Corrected financial statements reviewed — all three items properly recorded.</p>', 'W/P Ref: AIM-02'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'us-aim-s2',
+      title: '2. Judgmental Misstatements',
+      questions: [
+        q('us-aim-2a', '<p>Have any judgmental misstatements (management estimates differing from auditor\'s best estimate) been identified?</p>', undefined, 'No', '<p>No material judgmental misstatements identified. Key estimates reviewed: goodwill impairment analysis (auditor\'s evaluation of specialist work — management\'s DCF within reasonable range), IBR for ASC 842 (management\'s rate within acceptable range of comparable borrowing rates), allowance for doubtful accounts (management\'s estimate consistent with historical write-off rates).</p>'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'us-aim-s3',
+      title: '3. Projected Misstatements',
+      questions: [
+        q('us-aim-3a', '<p>Have projected misstatements from sampling been calculated and included in the AIM schedule?</p>', undefined, 'Yes', '<p>Projected misstatements from sampling: Revenue occurrence sample (25 items, MUS) — 0 errors found, projected misstatement $0. AP completeness sample — no extrapolatable errors identified (SURL items individually identified and corrected). Total projected misstatements: $0. No additional amounts added to AIM schedule from sampling results.</p>', 'W/P Ref: AIM-03'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'us-aim-s4',
+      title: '4. Evaluation of Aggregate',
+      questions: [
+        q('us-aim-4a', '<p>Has the aggregate of corrected misstatements been evaluated against performance materiality ($128,800)?</p>', undefined, 'Yes', '<p>Aggregate evaluation: All three AJEs corrected. Remaining uncorrected misstatements: $0. Aggregate residual misstatement (uncorrected) is $0, well below clearly trivial threshold ($9,200) and performance materiality ($128,800). No uncorrected misstatements remain. Unmodified opinion supported.</p>', 'W/P Ref: AIM-04'),
+        q('us-aim-4b', '<p>Has the evaluation considered both quantitative and qualitative factors for the misstatements identified?</p>', undefined, 'Yes', '<p>Qualitative evaluation: Revenue cutoff ($68K) and deferred revenue ($44K) involved intentional timing decisions per management — management denied any intentional error; evaluated as unintentional systems/process issues. No patterns suggesting earnings management or intentional bias identified. Qualitative factors do not change conclusion.</p>', 'W/P Ref: AIM-04'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'us-aim-s5',
+      title: '5. Communication to Management and Board of Managers',
+      questions: [
+        q('us-aim-5a', '<p>Have all identified misstatements been communicated to management per AU-C 450?</p>', undefined, 'Yes', '<p>All three AJEs communicated to management (Controller and Managing Member) on February 3, 2025. Management reviewed and accepted all three. Formal communication documented in management letter dated February 7, 2025.</p>', 'W/P Ref: AIM-05'),
+        q('us-aim-5b', '<p>Have misstatements been communicated to TCWG (Board of Managers) per AU-C 260?</p>', undefined, 'Yes', '<p>All three AJEs communicated to Board of Managers in final TCWG communication letter. Board confirmed acceptance of all corrections. No uncorrected misstatements requiring Board attention remain.</p>', 'W/P Ref: TCWG-FIN'),
+      ],
+      isExpanded: true
+    },
+  ];
+  return {
+    id: 'global-template-us-accumulation-of-misstatements',
+    title: 'Accumulation of Identified Misstatements',
+    description: 'US GAAS AIM schedule for Harbor Freight Logistics LLC per AU-C 450. Three AJEs identified: revenue cutoff $68K, lease reclassification $31K, deferred revenue $44K — all corrected by management.',
+    objective: 'AU-C 450 requires the auditor to accumulate misstatements identified during the audit and evaluate whether uncorrected misstatements are material to the financial statements. This checklist documents the AIM schedule and evaluation for Harbor Freight Logistics LLC.',
+    sections,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  };
+};
+
+export const generateUSFinalAnalyticalReviewChecklist = (): Checklist => {
+  const q = (id: string, text: string, subQuestions?: Question[], answer = '', explanation = '', reference = ''): Question => ({
+    id, text, answerType: 'yes-no-na' as const, options: ['Yes', 'No', 'NA'],
+    required: false, answer, explanation, reference,
+    ...(subQuestions ? { subQuestions } : {})
+  });
+  const sections: Section[] = [
+    {
+      id: 'us-far-s1',
+      title: '1. Overall Financial Statement Review',
+      questions: [
+        q('us-far-s1-1a', '<p>Do the final financial statements present fairly in accordance with US GAAP and are they consistent with the auditor\'s understanding of Harbor Freight Logistics LLC?</p>', undefined, 'Yes', '<p>Final financial statements (post-AJE) reviewed. All three AJEs properly reflected. Statements consistent with US GAAP presentation requirements (ASC 205 general principles). Balance sheet, income statement, statement of members\' equity, and cash flow statement reviewed in total — consistent with auditor\'s understanding of entity.</p>', 'W/P Ref: FAR-01'),
+        q('us-far-s1-1b', '<p>Have the notes to the financial statements been reviewed for completeness and adequacy under US GAAP?</p>', undefined, 'Yes', '<p>Notes reviewed: ASC 842 lease disclosures (operating and finance lease schedules, IBR, maturity analysis), ASC 350 goodwill disclosure (impairment test approach, no impairment), ASC 850 related party disclosures, debt agreements and covenant compliance, and subsequent events through February 7, 2025. All required disclosures confirmed.</p>', 'W/P Ref: FAR-01'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'us-far-s2',
+      title: '2. Income Statement Analytics',
+      questions: [
+        q('us-far-s2-1a', '<p>Has the final income statement been analytically reviewed for consistency with prior year and the auditor\'s expectations?</p>', undefined, 'Yes', '<p>Income statement final analytics: Revenue $18.4M (up 8.2% — consistent with new contracts and rate increases), Gross margin 34.1% (stable vs 34.8% prior year — slight decrease due to driver wage increases), EBITDA margin 8.6% (consistent with regional trucking benchmarks 7-10%), Interest expense $142K (consistent with debt levels), Net income $1.58M (9% margin — positive result). All fluctuations explained.</p>', 'W/P Ref: FAR-02'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'us-far-s3',
+      title: '3. Balance Sheet Analytics',
+      questions: [
+        q('us-far-s3-1a', '<p>Has the final balance sheet been analytically reviewed, including explanation of new ASC 842 ROU assets ($2.8M) and goodwill ($1.42M)?</p>', undefined, 'Yes', '<p>Balance sheet analytics: Total assets $12.8M (increase $2.9M from $9.9M — fully explained by ASC 842 ROU assets $2.8M and growth in AR/cash). ROU assets $2.8M (net of $280K amortization — consistent with lease schedules). Goodwill $1.42M (no change — no impairment). Working capital positive $3.2M. Debt $3.9M (term loan $2.8M + revolving $1.1M). All balances explained.</p>', 'W/P Ref: FAR-03'),
+        q('us-far-s3-1b', '<p>Has working capital been confirmed as positive at $3.2M, supporting the going concern conclusion?</p>', undefined, 'Yes', '<p>Working capital confirmed: current assets $7.8M (AR $4.2M, cash $2.9M, prepaid $0.7M) less current liabilities $4.6M (AP $1.8M, current portion of debt $1.4M, current lease liabilities $0.8M, other accruals $0.6M) = $3.2M positive working capital. Going concern conclusion supported.</p>', 'W/P Ref: FAR-03'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'us-far-s4',
+      title: '4. Ratio Analysis',
+      questions: [
+        q('us-far-s4-1a', '<p>Have key financial ratios been calculated and assessed for reasonableness?</p>', undefined, 'Yes', '<p>Key ratios: Current ratio 1.8x (within lender covenant), Debt/EBITDA 2.4x (below 3.0x covenant max), DSCR 1.38x (above 1.25x covenant min), DSO 31 days (normal for logistics billing), Operating ratio 91.4% (within industry benchmark 90-92%). All ratios within expected ranges. No anomalies identified.</p>', 'W/P Ref: FAR-04'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'us-far-s5',
+      title: '5. Overall Conclusion',
+      questions: [
+        q('us-far-s5-1a', '<p>Has the final analytical review conclusion been documented and any new RMMs identified from the final analytics?</p>', undefined, 'Yes', '<p>Final analytics conclusion: No new risks of material misstatement identified from final analytical review. All significant fluctuations explained and corroborated. Financial statements consistent with auditor\'s understanding of entity, industry, and the three corrected AJEs. Final analytical review supports issuance of unmodified opinion.</p>', 'W/P Ref: FAR-05'),
+      ],
+      isExpanded: true
+    },
+  ];
+  return {
+    id: 'global-template-us-final-analytical-review',
+    title: 'Final Analytical Review',
+    description: 'US GAAS final analytical review for Harbor Freight Logistics LLC per AU-C 520. All financial statement fluctuations explained. Revenue up 8.2%, gross margin 34.1%, working capital positive $3.2M.',
+    objective: 'AU-C 520 requires the auditor to perform analytical procedures near the end of the audit to assist in forming an overall conclusion on the financial statements. This checklist documents the final analytical review for Harbor Freight Logistics LLC.',
+    sections,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  };
+};
+
+export const generateUSSubsequentEventsChecklist = (): Checklist => {
+  const q = (id: string, text: string, subQuestions?: Question[], answer = '', explanation = '', reference = ''): Question => ({
+    id, text, answerType: 'yes-no-na' as const, options: ['Yes', 'No', 'NA'],
+    required: false, answer, explanation, reference,
+    ...(subQuestions ? { subQuestions } : {})
+  });
+  const sections: Section[] = [
+    {
+      id: 'us-se-s1',
+      title: '1. Type I Events (Recognized — Adjusting)',
+      questions: [
+        q('us-se-1a', '<p>Have recognized subsequent events (Type I — adjusting events providing evidence of conditions existing at December 31, 2024) been reviewed through the report date of February 7, 2025?</p>', undefined, 'Yes', '<p>Type I events review completed through February 7, 2025. Procedures: reviewed post year-end disbursements (SURL procedures), inquired of management on January 20 and February 5, 2025, reviewed legal counsel confirmation responses, reviewed board minutes for January and early February 2025. No material Type I adjusting events identified beyond the three AJEs already reflected in the financial statements.</p>', 'W/P Ref: SE-01'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'us-se-s2',
+      title: '2. Type II Events (Non-Adjusting — Disclosed)',
+      questions: [
+        q('us-se-2a', '<p>Have non-adjusting subsequent events (Type II — events occurring after December 31, 2024 requiring disclosure) been reviewed through the report date of February 7, 2025?</p>', undefined, 'Yes', '<p>Type II events review completed through February 7, 2025. Inquiries of management, review of January 2025 board minutes, review of significant contracts executed after year-end, and review of press releases/material communications. One potentially disclosable event identified: new $5M credit facility effective January 2025 (replaces prior facility). Evaluated as favorable event — management to assess ASC 855 disclosure requirement. Management concluded disclosure is warranted in subsequent events footnote.</p>', 'W/P Ref: SE-02'),
+        q('us-se-2b', '<p>Is the new $5M credit facility (January 2025) properly disclosed as a subsequent event in the financial statement notes?</p>', undefined, 'Yes', '<p>Subsequent events note reviewed: new credit facility disclosure included — entity entered into new $5M revolving credit facility effective January 15, 2025, replacing prior $3M facility, with improved pricing and extended maturity. Disclosure adequate under ASC 855.</p>', 'W/P Ref: SE-02'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'us-se-s3',
+      title: '3. Procedures Performed',
+      questions: [
+        q('us-se-3a', '<p>Have all required subsequent events procedures been performed: inquiry of management, review of board minutes, review of material contracts?</p>', undefined, 'Yes', '<p>Procedures performed: (1) Management inquiry (January 20 and February 5, 2025) — no additional subsequent events beyond new credit facility; (2) Board minutes reviewed (January 28, 2025 board meeting — minutes obtained and reviewed); (3) Material contracts reviewed — no new significant contracts executed after December 31, 2024 other than credit facility; (4) Legal confirmation reviewed — no material litigation commenced after year-end.</p>', 'W/P Ref: SE-03'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'us-se-s4',
+      title: '4. Management Representation',
+      questions: [
+        q('us-se-4a', '<p>Has management\'s representation on subsequent events (through the report date of February 7, 2025) been obtained per AU-C 580?</p>', undefined, 'Yes', '<p>Management representation letter dated February 7, 2025 includes specific representations on subsequent events: management has disclosed all subsequent events through February 7, 2025 that require recognition or disclosure in the financial statements. New credit facility properly disclosed.</p>', 'W/P Ref: MRL-01'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'us-se-s5',
+      title: '5. Dual Dating',
+      questions: [
+        q('us-se-5a', '<p>Is dual dating required for any Type II events identified after the report date?</p>', undefined, 'NA', '<p>Dual dating not required. All subsequent events procedures completed before the report date of February 7, 2025. No events identified after February 7, 2025 that would require dual dating of the auditor\'s report.</p>'),
+      ],
+      isExpanded: true
+    },
+  ];
+  return {
+    id: 'global-template-us-subsequent-events',
+    title: 'Subsequent Events',
+    description: 'US GAAS subsequent events checklist for Harbor Freight Logistics LLC per AU-C 560. New $5M credit facility (January 2025) disclosed as Type II event. No adjusting subsequent events.',
+    objective: 'AU-C 560 requires the auditor to perform procedures to identify subsequent events that require adjustment or disclosure in the financial statements. This checklist documents subsequent events procedures through the report date of February 7, 2025 for Harbor Freight Logistics LLC.',
+    sections,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  };
+};
+
+export const generateUSGoingConcernFinalAssessmentChecklist = (): Checklist => {
+  const q = (id: string, text: string, subQuestions?: Question[], answer = '', explanation = '', reference = ''): Question => ({
+    id, text, answerType: 'yes-no-na' as const, options: ['Yes', 'No', 'NA'],
+    required: false, answer, explanation, reference,
+    ...(subQuestions ? { subQuestions } : {})
+  });
+  const sections: Section[] = [
+    {
+      id: 'us-gc-fin-s1',
+      title: '1. Update of Initial Assessment',
+      questions: [
+        q('us-gc-fin-1a', '<p>Has the initial going concern assessment been updated for all audit evidence obtained and conditions as of the report date of February 7, 2025?</p>', undefined, 'Yes', '<p>Initial assessment updated with all audit evidence obtained. No new adverse conditions or events identified during fieldwork. Financial results ($1.58M net income, positive cash flow) confirmed. All debt covenants met at December 31, 2024 and through February 7, 2025. No indicators of substantial doubt.</p>', 'W/P Ref: GC-FIN-01'),
+        q('us-gc-fin-1b', '<p>Are there any conditions or events identified during the audit that individually or in the aggregate raise substantial doubt about the entity\'s ability to continue as a going concern for 12 months from the report date (through February 7, 2026)?</p>', undefined, 'No', '<p>No conditions or events identified during the audit that raise substantial doubt. Harbor Freight Logistics LLC has strong financial position, positive working capital ($3.2M), covenant compliance (all covenants met with headroom), and new $5M credit facility effective January 2025.</p>'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'us-gc-fin-s2',
+      title: '2. Evaluation of Management\'s Mitigating Plans',
+      questions: [
+        q('us-gc-fin-2a', '<p>Have management\'s plans to address going concern risks been evaluated?</p>', undefined, 'NA', '<p>No going concern risks identified requiring management mitigation plans. New $5M revolving credit facility (January 2025) proactively enhances liquidity. No mitigating plans required.</p>'),
+        q('us-gc-fin-2b', '<p>Does the new $5M credit facility (January 2025) further support the going concern conclusion?</p>', undefined, 'Yes', '<p>New credit facility confirms lender confidence in Harbor Freight Logistics LLC\'s going concern. $5M availability ($1.1M drawn at closing) provides substantial liquidity buffer. Facility maturity: January 2028. Covenant terms consistent with or more favorable than prior facility.</p>', 'W/P Ref: GC-FIN-02'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'us-gc-fin-s3',
+      title: '3. Conclusion on Substantial Doubt',
+      questions: [
+        q('us-gc-fin-3a', '<p>Is the auditor\'s final conclusion that no substantial doubt exists about Harbor Freight Logistics LLC\'s ability to continue as a going concern?</p>', undefined, 'Yes', '<p>Final conclusion: No substantial doubt exists. This conclusion is based on: (1) positive net income $1.58M and positive operating cash flows $2.1M in 2024; (2) positive working capital $3.2M; (3) all debt covenants met with significant headroom; (4) contracted revenue backlog $8.4M; (5) new $5M credit facility effective January 2025; (6) no adverse operating events or litigation. The AU-C 570 "substantial doubt" threshold is not met.</p>', 'W/P Ref: GC-FIN-03'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'us-gc-fin-s4',
+      title: '4. Adequacy of Disclosures',
+      questions: [
+        q('us-gc-fin-4a', '<p>Is a going concern disclosure in the financial statements required?</p>', undefined, 'No', '<p>No going concern disclosure required. No substantial doubt identified. Financial statements do not include any going concern language. Auditor\'s report does not include a going concern explanatory paragraph.</p>'),
+        q('us-gc-fin-4b', '<p>Has management confirmed the appropriateness of using the going concern basis of accounting in the management representation letter?</p>', undefined, 'Yes', '<p>Management representation letter (February 7, 2025) includes representation that management has used the going concern basis of accounting in preparing the financial statements and that no conditions or events raise substantial doubt about the entity\'s ability to continue as a going concern.</p>', 'W/P Ref: MRL-01'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'us-gc-fin-s5',
+      title: '5. Communication to TCWG',
+      questions: [
+        q('us-gc-fin-5a', '<p>Has the final going concern conclusion been communicated to TCWG (Board of Managers) per AU-C 570 and AU-C 260?</p>', undefined, 'Yes', '<p>Going concern conclusion communicated to Board of Managers in final TCWG communication letter (February 7, 2025): no substantial doubt about going concern identified. Board confirmed understanding. No concerns raised by Board members regarding going concern matters.</p>', 'W/P Ref: TCWG-FIN'),
+      ],
+      isExpanded: true
+    },
+  ];
+  return {
+    id: 'global-template-us-going-concern-final',
+    title: 'Going Concern — Final Assessment',
+    description: 'US GAAS final going concern assessment for Harbor Freight Logistics LLC per AU-C 570. No substantial doubt. New $5M credit facility (January 2025) further supports conclusion.',
+    objective: 'AU-C 570 requires the auditor to conclude whether substantial doubt exists about the entity\'s ability to continue as a going concern for 12 months from the report date. This checklist documents the final going concern assessment using the AU-C 570 "substantial doubt" standard (not CAS "material uncertainty") for Harbor Freight Logistics LLC.',
+    sections,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  };
+};
+
+export const generateUSAuditCompletionChecklist = (): Checklist => {
+  const q = (id: string, text: string, subQuestions?: Question[], answer = '', explanation = '', reference = ''): Question => ({
+    id, text, answerType: 'yes-no-na' as const, options: ['Yes', 'No', 'NA'],
+    required: false, answer, explanation, reference,
+    ...(subQuestions ? { subQuestions } : {})
+  });
+  const sections: Section[] = [
+    {
+      id: 'us-comp-s1',
+      title: '1. Evidence Sufficiency',
+      questions: [
+        q('us-comp-1a', '<p>Has sufficient appropriate audit evidence been obtained to support the audit opinion per AU-C 330 and AU-C 500?</p>', undefined, 'Yes', '<p>Evidence sufficiency confirmed: all significant accounts have been tested with substantive procedures appropriate for assessed RMM levels. Revenue ($18.4M) — complete population analytics + cutoff testing + sample. ROU assets ($2.8M) — all 15 leases individually tested. Goodwill ($1.42M) — specialist work evaluated. Payroll and cash — controls reliance + substantive analytics. Evidence is sufficient and appropriate for an unmodified opinion.</p>', 'W/P Ref: COMP-01'),
+        q('us-comp-1b', '<p>Have all open items from the manager\'s review been resolved prior to the partner review?</p>', undefined, 'Yes', '<p>L. Garcia manager review completed February 5, 2025. 6 review notes issued — all resolved by February 6, 2025. All workpapers have manager sign-off. No outstanding review notes at partner review.</p>', 'W/P Ref: COMP-01'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'us-comp-s2',
+      title: '2. Misstatements Evaluation',
+      questions: [
+        q('us-comp-2a', '<p>Have all AJEs been processed and the final financial statements reviewed post-adjustment?</p>', undefined, 'Yes', '<p>All three AJEs accepted and posted by management on February 5, 2025. Final trial balance received February 6, 2025 — all AJEs reflected. Final financial statements and notes reviewed post-adjustment by L. Garcia. No further misstatements identified.</p>', 'W/P Ref: COMP-02'),
+        q('us-comp-2b', '<p>Are uncorrected misstatements (if any) below performance materiality ($128,800) and clearly trivial threshold ($9,200)?</p>', undefined, 'Yes', '<p>No uncorrected misstatements. All three identified misstatements corrected by management. AIM schedule shows $0 uncorrected balance. Unmodified opinion conclusion supported.</p>', 'W/P Ref: AIM-04'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'us-comp-s3',
+      title: '3. US GAAP Presentation Review',
+      questions: [
+        q('us-comp-3a', '<p>Has the overall presentation and disclosure of the financial statements been reviewed for compliance with US GAAP (ASC general principles, ASC 205, required disclosures)?</p>', undefined, 'Yes', '<p>US GAAP presentation review: balance sheet classified (current/non-current), income statement by nature/function consistently applied, statement of cash flows (indirect method), ASC 842 lease disclosure schedules, ASC 350 goodwill note, ASC 850 related party note, ASC 855 subsequent events note, ASC 825 fair value disclosures. All required disclosures confirmed present and adequate.</p>', 'W/P Ref: COMP-03'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'us-comp-s4',
+      title: '4. Required Communications',
+      questions: [
+        q('us-comp-4a', '<p>Have all required communications to TCWG (Board of Managers) per AU-C 260 been completed?</p>', undefined, 'Yes', '<p>AU-C 260 communications completed: planning communication (January 17, 2025), significant findings during fieldwork (February 3, 2025 for AJEs), final communication letter (February 7, 2025) covering auditor independence, significant accounting policies, significant audit adjustments, disagreements with management (none), and going concern conclusion (no substantial doubt).</p>', 'W/P Ref: COMP-04'),
+        q('us-comp-4b', '<p>Have any significant deficiencies or material weaknesses been communicated per AU-C 265?</p>', undefined, 'NA', '<p>No significant deficiencies or material weaknesses identified. AU-C 265 communication not required. Minor control observations (limited segregation in small office) communicated informally to management as improvement suggestions — not at AU-C 265 reportable level.</p>'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'us-comp-s5',
+      title: '5. File Review',
+      questions: [
+        q('us-comp-5a', '<p>Has the engagement file review been completed by manager (L. Garcia) and partner (M. Thompson)?</p>', undefined, 'Yes', '<p>File review completed: L. Garcia manager review complete (February 5–6, 2025). M. Thompson partner review complete (February 7, 2025). All workpapers have appropriate sign-off. Engagement file assembly in progress — to be finalized within 60 days of report date per firm policy.</p>', 'W/P Ref: COMP-05'),
+      ],
+      isExpanded: true
+    },
+  ];
+  return {
+    id: 'global-template-us-audit-completion',
+    title: 'Audit Completion Checklist',
+    description: 'US GAAS audit completion checklist for Harbor Freight Logistics LLC per AU-C 220 and SQMS 1. All AJEs processed, required communications completed, file review complete as of February 7, 2025.',
+    objective: 'AU-C 220 and SQMS 1 require the engagement partner to conclude that sufficient appropriate audit evidence has been obtained and that the engagement has been conducted in accordance with applicable standards. This checklist documents completion procedures for AUD-US-Dec312024.',
+    sections,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  };
+};
+
+export const generateUSQualityControlReviewChecklist = (): Checklist => {
+  const q = (id: string, text: string, subQuestions?: Question[], answer = '', explanation = '', reference = ''): Question => ({
+    id, text, answerType: 'yes-no-na' as const, options: ['Yes', 'No', 'NA'],
+    required: false, answer, explanation, reference,
+    ...(subQuestions ? { subQuestions } : {})
+  });
+  const sections: Section[] = [
+    {
+      id: 'us-qcr-s1',
+      title: '1. SQMS 1 Compliance',
+      questions: [
+        q('us-qcr-1a', '<p>Has the engagement been conducted in accordance with the firm\'s quality management system under SQMS 1 (AICPA)?</p>', undefined, 'Yes', '<p>SQMS 1 compliance confirmed: engagement accepted per firm acceptance policies, independence requirements met, competent team assigned, appropriate supervision and review conducted, conclusions documented and supported. Engagement quality management requirements of SQMS 1 satisfied.</p>', 'W/P Ref: QCR-01'),
+        q('us-qcr-1b', '<p>Have all SQMS 1 documentation requirements been met (acceptance, independence, key decisions, consultation)?</p>', undefined, 'Yes', '<p>SQMS 1 documentation complete: acceptance checklist signed, independence confirmations obtained from all team members, significant judgments and decisions documented, consultations documented (one consultation on goodwill impairment methodology), engagement file organized per firm policy.</p>', 'W/P Ref: QCR-01'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'us-qcr-s2',
+      title: '2. Partner Involvement (M. Thompson)',
+      questions: [
+        q('us-qcr-2a', '<p>Has M. Thompson (engagement partner) been sufficiently involved in significant areas of the engagement per AU-C 220 and SQMS 1?</p>', undefined, 'Yes', '<p>M. Thompson involvement documented: on-site January 20–21 (initial risk assessment), reviewed significant risk areas (revenue, goodwill, ASC 842), reviewed all workpapers per SQMS 1 partner review requirements, participated in AJE discussions with management, signed final AU-C 260 communication to Board of Managers, and signed the auditor\'s report February 7, 2025.</p>', 'W/P Ref: QCR-02'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'us-qcr-s3',
+      title: '3. Significant Judgments Review',
+      questions: [
+        q('us-qcr-3a', '<p>Have the significant judgments made during the engagement been reviewed by M. Thompson?</p>', undefined, 'Yes', '<p>Significant judgments reviewed by M. Thompson: (1) Revenue recognition — cutoff misstatement evaluation and AJE acceptability ($68K); (2) Goodwill impairment — evaluation of management specialist DCF model, conclusion that no impairment exists; (3) ASC 842 lease classification — finance vs operating reclassification ($31K AJE); (4) Going concern conclusion — no substantial doubt under AU-C 570; (5) Materiality determination — $184K overall, $128,800 performance. All judgments concurred with by M. Thompson.</p>', 'W/P Ref: QCR-03'),
+        q('us-qcr-3b', '<p>Has professional skepticism been maintained throughout the engagement and documented in the file?</p>', undefined, 'Yes', '<p>Professional skepticism documented: revenue recognition judgments challenged and cutoff error identified through independent analytics (not accepted from management explanation). Goodwill impairment challenged with sensitivity analysis on discount rate. Management representations corroborated with independent evidence throughout engagement.</p>', 'W/P Ref: QCR-03'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'us-qcr-s4',
+      title: '4. Concurrence with Opinion',
+      questions: [
+        q('us-qcr-4a', '<p>Is an engagement quality review (EQR) required under SQMS 1 for this engagement?</p>', undefined, 'NA', '<p>EQR assessment: Harbor Freight Logistics LLC is a private company of moderate size ($18.4M revenue) — not a listed entity and not otherwise subject to mandatory EQR under the firm\'s SQMS 1 quality management criteria. EQR is not required for this engagement per firm policy thresholds.</p>'),
+        q('us-qcr-4b', '<p>Has M. Thompson confirmed concurrence with the audit opinion (unmodified) prior to report release?</p>', undefined, 'Yes', '<p>M. Thompson confirmed concurrence with unmodified opinion on February 7, 2025 after completing partner review of all significant areas. Report signed and released February 7, 2025.</p>', 'W/P Ref: QCR-04'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'us-qcr-s5',
+      title: '5. Engagement File Completeness',
+      questions: [
+        q('us-qcr-5a', '<p>Is the engagement file complete with all required documentation and proper sign-offs?</p>', undefined, 'Yes', '<p>Engagement file completeness: all workpapers have preparer and reviewer initials and dates. Significant judgments documented. AIM schedule complete. Management representation letter on file. Auditor\'s report on file. AU-C 260 TCWG communication letters on file. File assembly to be completed within 60 days of report date (by April 7, 2025) per firm SQMS 1 policy.</p>', 'W/P Ref: QCR-05'),
+      ],
+      isExpanded: true
+    },
+  ];
+  return {
+    id: 'global-template-us-quality-control-review',
+    title: 'Quality Control Review (EP)',
+    description: 'US GAAS engagement partner quality control review for Harbor Freight Logistics LLC per AU-C 220 and SQMS 1 (AICPA). M. Thompson completed final partner review February 7, 2025.',
+    objective: 'AU-C 220 and SQMS 1 require the engagement partner to take responsibility for the overall quality of the audit engagement. This checklist documents the engagement partner quality control review for AUD-US-Dec312024.',
+    sections,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  };
+};
