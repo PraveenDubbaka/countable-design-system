@@ -12521,3 +12521,187 @@ export const generateUSQualityControlReviewChecklist = (): Checklist => {
     updatedAt: new Date().toISOString(),
   };
 };
+
+// ── US Journal Entry Testing Log (AU-C 240) ────────────────────────────────────
+export const generateUSJournalEntryTestingLog = (): Checklist => {
+  const q = (id: string, text: string, subQuestions?: Question[], answer = '', explanation = '', reference = ''): Question => ({
+    id, text, answerType: 'yes-no-na' as const, options: ['Yes', 'No', 'NA'],
+    required: false, answer, explanation, reference,
+    ...(subQuestions ? { subQuestions } : {})
+  });
+  const sections: Section[] = [
+    {
+      id: 'us-je-s1',
+      title: '1. Population and Risk Assessment',
+      questions: [
+        q('us-je-1a', '<p>Has the complete journal entry population been extracted from the accounting system (QuickBooks Pro)?</p>', undefined, 'Yes', '<p>Complete JE population extracted from QuickBooks Pro for fiscal year January 1 – December 31, 2024. Total of approximately 2,400 journal entries identified in the population. Population exported to Excel for data analytics. Completeness confirmed by reconciling total JE postings to general ledger trial balance totals.</p>', 'W/P Ref: JE-01'),
+        q('us-je-1b', '<p>Have fraud risk factors related to journal entries been identified and documented (AU-C 240.32)?</p>', undefined, 'Yes', '<p>Fraud risk factors assessed per AU-C 240.32: (1) Management override of controls — presumed significant risk; (2) Harbor Freight is a two-member LLC with managing member Marcus Holloway having broad access to QBO; (3) No segregation of duties between authorization and posting. JE testing scope set as complete population analytics per AU-C 240.32(b).</p>', 'W/P Ref: JE-01'),
+        q('us-je-1c', '<p>Has the completeness of the journal entry population been tested?</p>', undefined, 'Yes', '<p>Completeness check: total debits per JE population reconciled to total activity per general ledger. Immaterial reconciling difference of $0 confirmed — population is complete. All entries have a unique QBO journal entry number in sequential order.</p>', 'W/P Ref: JE-02'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'us-je-s2',
+      title: '2. Data Analytics — Selection Criteria',
+      questions: [
+        q('us-je-2a', '<p>Have journal entries posted after period-end (December 31, 2024) been identified and investigated?</p>', undefined, 'Yes', '<p>Post period-end entries: 18 journal entries identified with posting dates January 1 – January 15, 2025 but with transaction dates in 2024. All 18 entries reviewed — 16 are standard year-end accruals and reversals; 2 are AJEs proposed by auditor (revenue cutoff $68K and ASC 842 lease $31K). No unusual post-period entries noted.</p>', 'W/P Ref: JE-03'),
+        q('us-je-2b', '<p>Have journal entries posted by unusual or unexpected users been identified?</p>', undefined, 'Yes', '<p>User-based analytics: QBO access log reviewed — entries posted by Marcus Holloway (managing member), Elena Vasquez (controller), and automated QBO system entries. Two entries by "Admin" user investigated — both are QuickBooks system-generated payroll liability entries. No unauthorized user postings identified.</p>', 'W/P Ref: JE-03'),
+        q('us-je-2c', '<p>Have round-dollar journal entries above a specified threshold been identified and examined?</p>', undefined, 'Yes', '<p>Round-dollar analysis: 47 journal entries with round-dollar amounts ≥ $10,000 identified. All 47 reviewed: 41 are payroll transfers and scheduled loan payments (expected to be round-dollar); 4 are management fee allocations between members; 2 are depreciation entries. All had adequate business justification and supporting documentation on file.</p>', 'W/P Ref: JE-04'),
+        q('us-je-2d', '<p>Have journal entries to unusual account combinations (e.g., debit expense / credit revenue) been identified?</p>', undefined, 'Yes', '<p>Unusual account combinations: 8 entries flagged with non-standard debit/credit account pairings. All 8 investigated: 5 are reclassification entries between expense accounts with controller explanation and approval email on file; 3 are elimination entries for intercompany balance between Harbor Freight and Holloway Family Trust (related party). All adequately explained.</p>', 'W/P Ref: JE-05'),
+        q('us-je-2e', '<p>Have journal entries recorded during periods outside of normal business hours (weekends/holidays) been assessed?</p>', undefined, 'Yes', '<p>Off-hours entries: 12 journal entries posted on weekends or outside 8am–6pm EST. All 12 reviewed — 10 are automated QuickBooks payroll and bill payment entries; 2 are manual entries by Elena Vasquez on Sunday evenings (explained as end-of-month close work). No fraud indicators identified.</p>', 'W/P Ref: JE-06'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'us-je-s3',
+      title: '3. Results and Testing',
+      questions: [
+        q('us-je-3a', '<p>Have all flagged journal entries been traced to supporting documentation?</p>', undefined, 'Yes', '<p>Flagged entries follow-up: total of 14 entries flagged by combined analytics criteria (post period-end, unusual users, round-dollar unusual combinations, off-hours — excluding standard recurring entries). All 14 traced to supporting documentation: bank statements, invoices, payroll registers, or management authorization emails. All 14 satisfactorily cleared. No unexplained entries remain.</p>', 'W/P Ref: JE-07'),
+        q('us-je-3b', '<p>Have any journal entries been identified that indicate possible management bias or fraud?</p>', undefined, 'No', '<p>Management bias/fraud: no journal entries identified that appear designed to manipulate earnings or conceal fraud. Revenue entries are supported by delivery confirmations from LoadMaster Pro system. Expense entries are supported by vendor invoices. No journal entries were made to reverse or offset the auditor-proposed AJEs without authorization.</p>', 'W/P Ref: JE-07'),
+        q('us-je-3c', '<p>Have results of journal entry testing been communicated to those charged with governance where required (AU-C 260)?</p>', undefined, 'Yes', '<p>Communication: JE testing results (no fraud indicators, 2 auditor AJEs identified through JE analytics) communicated to M. Holloway (managing member) and Harbor Freight Board of Managers in AU-C 260 final communication letter dated February 7, 2025. No management override instances were identified.</p>', 'W/P Ref: JE-08'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'us-je-s4',
+      title: '4. Conclusion',
+      questions: [
+        q('us-je-4a', '<p>Based on journal entry testing, is there any indication of material misstatement due to fraud (AU-C 240)?</p>', undefined, 'No', '<p>Overall JE testing conclusion: No material misstatement due to fraud or management override identified. Complete population analytics applied per AU-C 240.32 requirements. All flagged entries cleared with adequate support. JE testing supports the conclusion that management override of controls risk is present but no actual instances were identified. Engagement partner M. Thompson concurs with this conclusion.</p>', 'W/P Ref: JE-09'),
+      ],
+      isExpanded: true
+    },
+  ];
+  return {
+    id: 'global-template-us-journal-entry-testing-log',
+    title: 'Journal Entry Testing Log (AU-C 240)',
+    description: 'US GAAS journal entry testing log for Harbor Freight Logistics LLC per AU-C 240. Complete population analytics applied to address management override of controls (presumed significant risk) for fiscal year ended December 31, 2024.',
+    objective: 'AU-C 240.32 requires the auditor to design and perform journal entry testing to address the risk of management override of controls. This log documents the selection criteria, analytics performed, entries investigated, and overall conclusion.',
+    sections,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  };
+};
+
+// ── US Related Party Transactions Worksheet (ASC 850 / AU-C 550) ──────────────
+export const generateUSRelatedPartyTransactionsWorksheet = (): Checklist => {
+  const q = (id: string, text: string, subQuestions?: Question[], answer = '', explanation = '', reference = ''): Question => ({
+    id, text, answerType: 'yes-no-na' as const, options: ['Yes', 'No', 'NA'],
+    required: false, answer, explanation, reference,
+    ...(subQuestions ? { subQuestions } : {})
+  });
+  const sections: Section[] = [
+    {
+      id: 'us-rpt-s1',
+      title: '1. Identification of Related Parties',
+      questions: [
+        q('us-rpt-1a', '<p>Have all related parties been identified per ASC 850-10-20 and AU-C 550?</p>', undefined, 'Yes', '<p>Related parties identified for Harbor Freight Logistics LLC (fiscal year December 31, 2024): (1) Marcus Holloway — managing member (60% interest); (2) Diana Holloway — non-managing member (40% interest); (3) Holloway Family Trust — entity controlled by Marcus Holloway, holds investment in real estate leased to Harbor Freight; (4) Westgate Properties LLC — entity 100% owned by Marcus Holloway, provides equipment maintenance services. Management confirmed completeness of related party list in representation letter (AU-C 580).</p>', 'W/P Ref: RPT-01'),
+        q('us-rpt-1b', '<p>Has the entity\'s policy for identifying and disclosing related party transactions been documented?</p>', undefined, 'Yes', '<p>Entity policy: Harbor Freight does not have a formal written related party policy. Management verbally confirms all related party transactions to controller Elena Vasquez who records them separately in QuickBooks. All RPTs require managing member authorization per operating agreement. Absence of written policy noted as a significant deficiency communicated in AU-C 265 letter.</p>', 'W/P Ref: RPT-01'),
+        q('us-rpt-1c', '<p>Have inquiries been made of management regarding related parties not previously identified (AU-C 550.14)?</p>', undefined, 'Yes', '<p>Management inquiry: formal inquiry of M. Holloway and E. Vasquez performed January 22, 2025. No additional related parties identified beyond those listed. Inquiry documented on file. Management confirmed no transactions with related parties outside of those disclosed in the financial statements.</p>', 'W/P Ref: RPT-02'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'us-rpt-s2',
+      title: '2. Transactions Identified and Tested',
+      questions: [
+        q('us-rpt-2a', '<p>Have related party transactions been identified, summarized, and quantified?</p>', undefined, 'Yes', '<p>RPT summary for fiscal 2024: (1) Warehouse lease — Holloway Family Trust: $240,000 (12 monthly payments of $20,000), represents 100% of rent expense; (2) Equipment maintenance — Westgate Properties LLC: $84,500 (invoiced quarterly), represents approximately 14% of repairs &amp; maintenance expense; (3) Member draws — Marcus Holloway: $380,000; Diana Holloway: $253,333 (per operating agreement 60/40 split); (4) Member loans — no new loans in 2024; existing $125,000 loan to M. Holloway at 4.5% interest outstanding. Total RPT activity approximately $1.08M.</p>', 'W/P Ref: RPT-03'),
+        q('us-rpt-2b', '<p>Have the terms and conditions of related party transactions been examined and compared to arm\'s-length equivalents?</p>', undefined, 'Yes', '<p>Arm\'s-length assessment: (1) Warehouse lease $20K/month — comparable to market: three comparable warehouse leases in the Savannah, GA industrial market corroborate rate within 8% of market. Lease terms reviewed — no unusual clauses; (2) Equipment maintenance $84.5K — reviewed three independent vendor quotes; Westgate rates within 12% of market; (3) Member draws — per operating agreement ratios, no arm\'s-length comparison required; (4) Member loan — 4.5% below current prime (8.5%) — difference immaterial, $5,625 below-market interest. No RPT terms identified that appear designed to manipulate financial results.</p>', 'W/P Ref: RPT-04'),
+        q('us-rpt-2c', '<p>Have authorizations for related party transactions been examined (board minutes, operating agreement, or written approval)?</p>', undefined, 'Yes', '<p>Authorization review: warehouse lease — signed lease agreement on file, authorized by both members per 2021 operating agreement amendment; equipment maintenance — verbal authorization per managing member, invoices reviewed and approved by controller; member draws — authorized per operating agreement distribution provisions; member loan — promissory note on file, signed by both members. All RPTs have adequate authorization documentation.</p>', 'W/P Ref: RPT-05'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'us-rpt-s3',
+      title: '3. Disclosure Adequacy',
+      questions: [
+        q('us-rpt-3a', '<p>Have related party transactions been properly disclosed in the financial statements per ASC 850-10-50?</p>', undefined, 'Yes', '<p>ASC 850 disclosure checklist: Note 9 — Related Party Transactions in draft financial statements includes: (1) description of the relationship; (2) description of the transaction including amounts for current and prior year; (3) amounts due to/from related parties at year-end; (4) statement that transactions are conducted in the normal course of business. All required ASC 850-10-50 disclosures confirmed present. Disclosure reviewed by M. Thompson.</p>', 'W/P Ref: RPT-06'),
+        q('us-rpt-3b', '<p>Are there any related party transactions that lack economic substance (i.e., side agreements, circular transactions, or transactions solely to affect financial statement presentation)?</p>', undefined, 'No', '<p>Economic substance: no side agreements identified. Warehouse lease supported by executed lease agreement and confirmed occupancy. Equipment maintenance supported by service records and work orders from Westgate. No circular transactions identified. All RPTs have clear economic substance and business rationale.</p>', 'W/P Ref: RPT-07'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'us-rpt-s4',
+      title: '4. Conclusion',
+      questions: [
+        q('us-rpt-4a', '<p>Based on procedures performed, have related party transactions been properly identified, authorized at arm\'s-length or disclosed, and included in the financial statements in accordance with ASC 850 (AU-C 550)?</p>', undefined, 'Yes', '<p>RPT overall conclusion: all related party transactions identified, tested, and confirmed to be authorized. Terms are at or near arm\'s-length. ASC 850-10-50 disclosures are complete and adequate. No undisclosed related party transactions identified. No RPTs appear designed to manipulate financial results. No modifications to the audit opinion are required as a result of related party testing. Engagement partner M. Thompson concurs.</p>', 'W/P Ref: RPT-08'),
+      ],
+      isExpanded: true
+    },
+  ];
+  return {
+    id: 'global-template-us-related-party-transactions',
+    title: 'Related Party Transactions Worksheet (ASC 850 / AU-C 550)',
+    description: 'US GAAS related party transactions worksheet for Harbor Freight Logistics LLC. Covers identification, testing, arm\'s-length assessment, and ASC 850 disclosure adequacy for fiscal year ended December 31, 2024.',
+    objective: 'AU-C 550 requires the auditor to understand the entity\'s related party relationships and transactions, assess the risk of material misstatement, and design appropriate audit procedures. ASC 850-10-50 governs disclosure requirements under US GAAP.',
+    sections,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  };
+};
+
+// ── US Goodwill Impairment Assessment Worksheet (ASC 350 / AU-C 540) ──────────
+export const generateUSGoodwillImpairmentAssessment = (): Checklist => {
+  const q = (id: string, text: string, subQuestions?: Question[], answer = '', explanation = '', reference = ''): Question => ({
+    id, text, answerType: 'yes-no-na' as const, options: ['Yes', 'No', 'NA'],
+    required: false, answer, explanation, reference,
+    ...(subQuestions ? { subQuestions } : {})
+  });
+  const sections: Section[] = [
+    {
+      id: 'us-gwi-s1',
+      title: '1. Goodwill Background and Reporting Unit',
+      questions: [
+        q('us-gwi-1a', '<p>Has the goodwill balance, its origin, and applicable reporting unit been documented?</p>', undefined, 'Yes', '<p>Goodwill background: Harbor Freight Logistics LLC carries goodwill of $1,420,000 arising from the 2019 acquisition of Coastal Carriers Southeast (a regional freight network). Single reporting unit: Harbor Freight Logistics LLC as a whole (per management\'s reporting unit determination). Goodwill balance unchanged from prior year ($1,420,000 at December 31, 2023 and 2024) — no additions, disposals, or impairment recorded. Goodwill represents approximately 7.7% of total assets.</p>', 'W/P Ref: GWI-01'),
+        q('us-gwi-1b', '<p>Has management\'s determination that the entity has a single reporting unit been evaluated for appropriateness per ASC 350-20-35?</p>', undefined, 'Yes', '<p>Reporting unit assessment: Harbor Freight operates as a single integrated freight logistics business with one operating segment. No separate economic characteristics, management, or performance measurement systems exist for distinct business components. Single reporting unit determination is consistent with prior year and appears appropriate given the nature of operations. No triggering events suggesting reassessment required.</p>', 'W/P Ref: GWI-01'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'us-gwi-s2',
+      title: '2. Triggering Event Assessment',
+      questions: [
+        q('us-gwi-2a', '<p>Have triggering events requiring an interim impairment test been evaluated per ASC 350-20-35-3C?</p>', undefined, 'Yes', '<p>Triggering event review for fiscal 2024: (1) Macroeconomic — interest rates elevated but Harbor Freight\'s revenue grew 8.3% YOY; (2) Industry — freight market softening in Q4 2024 but Harbor Freight maintained margins; (3) Entity-specific — no significant customer losses (top 3 customers retained); (4) Sustained stock price decline — not applicable (private LLC); (5) Reporting unit — no deterioration in EBITDA margins (14.2% vs 13.8% prior year). Conclusion: no interim triggering events identified. Annual impairment test at December 31, 2024 sufficient.</p>', 'W/P Ref: GWI-02'),
+        q('us-gwi-2b', '<p>Has management performed the required annual impairment test as of the annual test date?</p>', undefined, 'Yes', '<p>Annual test: management engaged third-party valuation specialist (Summit Valuation Group LLC) to perform annual goodwill impairment test as of December 31, 2024. Summit Valuation Group delivered impairment analysis report dated January 31, 2025 concluding no impairment exists. Report available in engagement file.</p>', 'W/P Ref: GWI-03'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'us-gwi-s3',
+      title: '3. Evaluation of Management\'s Specialist (AU-C 620)',
+      questions: [
+        q('us-gwi-3a', '<p>Has the competence, capabilities, and objectivity of management\'s valuation specialist been evaluated per AU-C 620.09?</p>', undefined, 'Yes', '<p>Specialist evaluation — Summit Valuation Group LLC: (1) Competence: ASA-accredited valuators, 15+ years specializing in logistics and transportation sector valuations, prior engagement experience with similar freight companies; (2) Capabilities: DCF model appropriate for single-unit private company; (3) Objectivity: no ownership or financial interest in Harbor Freight; no family relationships with management; fee is fixed (not contingent on outcome). Auditor concludes Summit Valuation Group\'s work is appropriate to use as audit evidence.</p>', 'W/P Ref: GWI-04'),
+        q('us-gwi-3b', '<p>Has the scope and methodology of the specialist\'s work been evaluated for appropriateness?</p>', undefined, 'Yes', '<p>Methodology review: Summit used a discounted cash flow (DCF) approach for the income method. Fair value of reporting unit determined at $8.2M significantly exceeding the carrying value of approximately $2.5M (net assets $1.08M + goodwill $1.42M). DCF model uses 5-year explicit forecast period plus terminal value. Method is consistent with ASC 350-20-35 and industry practice for private freight companies.</p>', 'W/P Ref: GWI-05'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'us-gwi-s4',
+      title: '4. Key Assumptions Testing',
+      questions: [
+        q('us-gwi-4a', '<p>Has the reasonableness of the discount rate used in the DCF model been evaluated?</p>', undefined, 'Yes', '<p>Discount rate: Summit applied a weighted average cost of capital (WACC) of 11.0%. Auditor assessment: market-derived beta for comparable small-cap freight companies ranges 0.85–1.15; size premium for micro-cap entities consistent with Duff &amp; Phelps data; industry-specific risk premium reasonable. Independent WACC calculation by audit team yields range of 10.2%–12.4% — Summit\'s 11.0% falls within acceptable range. Sensitivity: at 13% discount rate, fair value still exceeds carrying value by $4.1M — goodwill is not impaired even under stressed assumptions.</p>', 'W/P Ref: GWI-06'),
+        q('us-gwi-4b', '<p>Has the reasonableness of the revenue growth assumptions been evaluated?</p>', undefined, 'Yes', '<p>Revenue growth: Summit projected 5.0% year 1, stepping down to 3.0% by year 5 (terminal). Auditor assessment: Harbor Freight achieved 8.3% growth in 2024 — management\'s 5% assumption is conservative. Freight industry consensus 2025 growth forecast 3%–6% (per industry reports). Management\'s assumptions supported by existing customer contracts for approximately 70% of 2025 revenue. Assumptions appear reasonable and not overly optimistic.</p>', 'W/P Ref: GWI-07'),
+        q('us-gwi-4c', '<p>Have EBITDA margin assumptions been evaluated for consistency with historical performance?</p>', undefined, 'Yes', '<p>Margin assumptions: Summit projected EBITDA margins of 14.0%–14.5% over the forecast period. Historical EBITDA margins: 2022: 12.8%, 2023: 13.8%, 2024: 14.2%. Projected margins are consistent with recent trend and represent modest improvement. No significant cost structure changes anticipated. Margin assumptions appear reasonable.</p>', 'W/P Ref: GWI-08'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'us-gwi-s5',
+      title: '5. Impairment Conclusion',
+      questions: [
+        q('us-gwi-5a', '<p>Does the fair value of the reporting unit exceed its carrying value, indicating no impairment exists per ASC 350-20-35-4?</p>', undefined, 'Yes', '<p>Impairment test result: fair value of reporting unit = $8.2M; carrying value of reporting unit = $2.5M (net identifiable assets $1.08M + goodwill $1.42M). Headroom = $5.7M — significantly exceeds goodwill balance of $1.42M. No goodwill impairment exists at December 31, 2024. Conclusion supported by both management\'s specialist report and auditor\'s independent evaluation of key assumptions.</p>', 'W/P Ref: GWI-09'),
+        q('us-gwi-5b', '<p>Is the goodwill impairment disclosure in the financial statements adequate per ASC 350-20-50?</p>', undefined, 'Yes', '<p>ASC 350-20-50 disclosures: Note 6 — Goodwill and Intangible Assets in draft financial statements includes: (1) gross carrying amount $1,420,000; (2) description of reporting unit and annual test methodology; (3) statement that annual impairment test resulted in no impairment; (4) description of significant assumptions (DCF, WACC 11%, growth rates). Required disclosures confirmed complete. Reviewed by M. Thompson.</p>', 'W/P Ref: GWI-10'),
+        q('us-gwi-5c', '<p>Overall conclusion: is the goodwill balance of $1,420,000 fairly stated in the December 31, 2024 financial statements?</p>', undefined, 'Yes', '<p>Overall goodwill conclusion: goodwill balance of $1,420,000 is fairly stated. No impairment exists. Annual test performed by qualified specialist. Key assumptions (discount rate 11%, revenue growth 5%, EBITDA margins 14%–14.5%) evaluated and found reasonable. Headroom of $5.7M provides significant buffer. No modifications to audit opinion required as a result of goodwill impairment testing. Engagement partner M. Thompson concurs — February 7, 2025.</p>', 'W/P Ref: GWI-11'),
+      ],
+      isExpanded: true
+    },
+  ];
+  return {
+    id: 'global-template-us-goodwill-impairment-assessment',
+    title: 'Goodwill Impairment Assessment Worksheet (ASC 350)',
+    description: 'US GAAS goodwill impairment assessment worksheet for Harbor Freight Logistics LLC. Covers goodwill background, triggering event assessment, evaluation of management\'s specialist per AU-C 620, key assumptions testing, and impairment conclusion for fiscal year ended December 31, 2024.',
+    objective: 'ASC 350-20-35 requires annual testing of goodwill for impairment. AU-C 540 requires the auditor to evaluate management\'s accounting estimates, and AU-C 620 governs the use of a management\'s specialist. This worksheet documents procedures performed on the goodwill impairment analysis for Harbor Freight Logistics LLC.',
+    sections,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  };
+};

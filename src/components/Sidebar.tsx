@@ -1546,6 +1546,8 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
                       { id: "aud-us-ind", code: "IND", label: "Independence & Ethical Requirements", icon: "checklist", route: "checklist/aud-us-ind" },
                       { id: "aud-us-el", code: "EL", label: "Engagement Letter", icon: "letter", route: "checklist/aud-us-el" },
                       { id: "aud-us-aml", code: "AML", label: "Anti-Money Laundering (BSA/FinCEN) Compliance", icon: "checklist", route: "checklist/aud-us-aml" },
+                      { id: "aud-us-predecessor", code: "PA", label: "Communication to Predecessor Auditor (AU-C 210)", icon: "letter", route: "checklist/aud-us-predecessor" },
+                      { id: "aud-us-legal-inquiry", code: "LC", label: "Inquiry to Legal Counsel (AU-C 501)", icon: "letter", route: "checklist/aud-us-legal-inquiry" },
                     ]
                   },
                   {
@@ -1591,6 +1593,7 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
                       { id: "aud-us-ra-scot-exp", code: "S2", label: "SCOT — Expenditure Cycle", icon: "checklist", route: "checklist/aud-us-ra-scot-exp" },
                       { id: "aud-us-ra-scot-pay", code: "S3", label: "SCOT — Payroll Cycle", icon: "checklist", route: "checklist/aud-us-ra-scot-pay" },
                       { id: "aud-us-ra-gc", code: "GC", label: "Going Concern (Initial Assessment)", icon: "checklist", route: "checklist/aud-us-ra-gc" },
+                      { id: "aud-us-ra-je", code: "JE", label: "Journal Entry Testing Log (AU-C 240)", icon: "checklist", route: "checklist/aud-us-ra-je" },
                     ]
                   },
                   {
@@ -1601,6 +1604,8 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
                       { id: "aud-us-rp-sap", code: "SAP", label: "Substantive Analytical Procedures", icon: "checklist", route: "checklist/aud-us-rp-sap" },
                       { id: "aud-us-rp-tod-rev", code: "TR", label: "Test of Details — Revenue", icon: "checklist", route: "checklist/aud-us-rp-tod-rev" },
                       { id: "aud-us-rp-tod-exp", code: "TE", label: "Test of Details — Expenses", icon: "checklist", route: "checklist/aud-us-rp-tod-exp" },
+                      { id: "aud-us-rp-rpt", code: "RPT", label: "Related Party Transactions (ASC 850 / AU-C 550)", icon: "checklist", route: "checklist/aud-us-rp-rpt" },
+                      { id: "aud-us-rp-gwi", code: "GWI", label: "Goodwill Impairment Assessment (ASC 350)", icon: "checklist", route: "checklist/aud-us-rp-gwi" },
                       { id: "aud-us-rp-aps", code: "APS", label: "Audit Procedures Summary", icon: "checklist", route: "checklist/aud-us-rp-aps" },
                     ]
                   },
@@ -1681,11 +1686,19 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
                       { id: "aud-us-so-far", code: "FAR", label: "Final Analytical Review", icon: "checklist", route: "checklist/aud-us-so-far" },
                       { id: "aud-us-subseq", code: "SE", label: "Subsequent Events", icon: "checklist", route: "checklist/aud-us-subseq" },
                       { id: "aud-us-wgc-final", code: "GC", label: "Going Concern (Final Assessment)", icon: "checklist", route: "checklist/aud-us-wgc-final" },
+                      { id: "aud-us-so-sd", code: "SD", label: "Notes on Significant Audit Decisions (AU-C 230)", icon: "checklist", route: "checklist/aud-us-so-sd" },
+                      { id: "aud-us-so-kam", code: "KAM", label: "Key Audit Matters Worksheet (AU-C 701)", icon: "checklist", route: "checklist/aud-us-so-kam" },
+                      { id: "aud-us-so-find", code: "FND", label: "Audit Findings and Matters for Discussion", icon: "checklist", route: "checklist/aud-us-so-find" },
+                      { id: "aud-us-so-mc", code: "MC", label: "Matters Communicated to Management and TCWG", icon: "checklist", route: "checklist/aud-us-so-mc" },
+                      { id: "aud-us-so-fc", code: "FC", label: "Matters for Future Consideration", icon: "checklist", route: "checklist/aud-us-so-fc" },
+                      { id: "aud-us-so-dc", code: "CON", label: "Documenting Consultation", icon: "checklist", route: "checklist/aud-us-so-dc" },
                       { id: "aud-us-mr", code: "MR", label: "Management Representation Letter (AU-C 580)", icon: "letter", route: "checklist/aud-us-mr" },
+                      { id: "aud-us-sig-def", code: "IC", label: "Internal Control Deficiencies Communication (AU-C 265)", icon: "letter", route: "checklist/aud-us-sig-def" },
                       { id: "aud-us-tcwg-fin", code: "TCWG", label: "Communication with Those Charged with Governance (AU-C 260)", icon: "letter", route: "checklist/aud-us-tcwg-fin" },
                       { id: "aud-us-comp", code: "CM", label: "Completion Checklist", icon: "completion", route: "checklist/aud-us-comp" },
                       { id: "aud-us-disc", code: "DC", label: "Disclosure Checklist", icon: "checklist" },
                       { id: "aud-us-ep", code: "QCR", label: "Quality Control Review", icon: "completion", route: "checklist/aud-us-ep" },
+                      { id: "aud-us-so-wd", code: "WD", label: "Withdrawal Worksheet (AU-C 705)", icon: "checklist", route: "checklist/aud-us-so-wd" },
                       { id: "aud-us-so-sign", code: "SO", label: "Signoffs", icon: "completion" },
                       { id: "aud-us-so-fr", code: "FR", label: "Final Review", icon: "completion" },
                       { id: "aud-us-so-alf", code: "ALF", label: "Archive & Lock File", icon: "completion" },

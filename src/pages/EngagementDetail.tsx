@@ -114,6 +114,19 @@ import {
   generateUSGoingConcernFinalAssessmentChecklist,
   generateUSAuditCompletionChecklist,
   generateUSQualityControlReviewChecklist,
+  generateInquiryToLegalCounselUS,
+  generateCommunicationToPredecessorAuditorUS,
+  generateLetterToManagementSignificantDeficienciesUS,
+  generateAuditWorksheetSignificantDecisionsUS,
+  generateAuditWorksheetKeyAuditMattersUS,
+  generateAuditWorksheetFindingsUS,
+  generateAuditWorksheetMattersCommunicatedUS,
+  generateAuditWorksheetFutureConsiderationUS,
+  generateAuditWorksheetDocumentingConsultationUS,
+  generateAuditWorksheetWithdrawalUS,
+  generateUSJournalEntryTestingLog,
+  generateUSRelatedPartyTransactionsWorksheet,
+  generateUSGoodwillImpairmentAssessment,
 } from "@/lib/globalTemplates";
 
 // Sample engagement data matching the engagements page
@@ -324,6 +337,24 @@ const buildDefaultUSAuditChecklists = () => {
     { generator: generateCommunicationTCWGFinalUS, id: "default-us-audit-tcwg-fin" },
     { generator: generateUSAuditCompletionChecklist, id: "default-us-audit-comp" },
     { generator: generateUSQualityControlReviewChecklist, id: "default-us-audit-ep" },
+    // Letters (exist in globalTemplates but were not seeded)
+    { generator: generateInquiryToLegalCounselUS, id: "default-us-audit-legal-inquiry" },
+    { generator: generateCommunicationToPredecessorAuditorUS, id: "default-us-audit-predecessor" },
+    { generator: generateLetterToManagementSignificantDeficienciesUS, id: "default-us-audit-sig-def" },
+    // Completion worksheets (exist in globalTemplates but were not seeded)
+    { generator: generateAuditWorksheetSignificantDecisionsUS, id: "default-us-audit-so-sd" },
+    { generator: generateAuditWorksheetKeyAuditMattersUS, id: "default-us-audit-so-kam" },
+    { generator: generateAuditWorksheetFindingsUS, id: "default-us-audit-so-find" },
+    { generator: generateAuditWorksheetMattersCommunicatedUS, id: "default-us-audit-so-mc" },
+    { generator: generateAuditWorksheetFutureConsiderationUS, id: "default-us-audit-so-fc" },
+    { generator: generateAuditWorksheetDocumentingConsultationUS, id: "default-us-audit-so-dc" },
+    { generator: generateAuditWorksheetWithdrawalUS, id: "default-us-audit-so-wd" },
+    // Response to Assessed Risks — Procedures Summary (CA equivalent was used; now US-specific)
+    { generator: generateAuditProceduresSummaryChecklist, id: "default-us-audit-rp-aps" },
+    // New US-specific worksheets
+    { generator: generateUSJournalEntryTestingLog, id: "default-us-audit-ra-je" },
+    { generator: generateUSRelatedPartyTransactionsWorksheet, id: "default-us-audit-rp-rpt" },
+    { generator: generateUSGoodwillImpairmentAssessment, id: "default-us-audit-rp-gwi" },
   ];
   return items.map(({ generator, id }) => {
     const data = generator();
@@ -470,6 +501,24 @@ const NAV_KEY_TO_CHECKLIST_ID: Record<string, string> = {
   "aud-us-tcwg-fin": "default-us-audit-tcwg-fin",
   "aud-us-comp": "default-us-audit-comp",
   "aud-us-ep": "default-us-audit-ep",
+  // US Audit — Letters wired up
+  "aud-us-legal-inquiry": "default-us-audit-legal-inquiry",
+  "aud-us-predecessor": "default-us-audit-predecessor",
+  "aud-us-sig-def": "default-us-audit-sig-def",
+  // US Audit — Completion worksheets wired up
+  "aud-us-so-sd": "default-us-audit-so-sd",
+  "aud-us-so-kam": "default-us-audit-so-kam",
+  "aud-us-so-find": "default-us-audit-so-find",
+  "aud-us-so-mc": "default-us-audit-so-mc",
+  "aud-us-so-fc": "default-us-audit-so-fc",
+  "aud-us-so-dc": "default-us-audit-so-dc",
+  "aud-us-so-wd": "default-us-audit-so-wd",
+  // US Audit — Response procedures
+  "aud-us-rp-aps": "default-us-audit-rp-aps",
+  // US Audit — New worksheets
+  "aud-us-ra-je": "default-us-audit-ra-je",
+  "aud-us-rp-rpt": "default-us-audit-rp-rpt",
+  "aud-us-rp-gwi": "default-us-audit-rp-gwi",
 };
 
 const LEGACY_COMPILATION_CHECKLIST_IDS = new Set([
