@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Layout } from "@/components/Layout";
 import { Badge } from "@/components/ui/badge";
@@ -6,7 +7,11 @@ import { LetterIcon } from "@/components/icons/LetterIcon";
 import { WorksheetIcon } from "@/components/icons/WorksheetIcon";
 import { CompletionIcon } from "@/components/icons/CompletionIcon";
 import { cn } from "@/lib/utils";
-import { ChevronRight, Link2, AlertCircle, CheckCircle2, Circle, Clock } from "lucide-react";
+import { ChevronRight, Link2, AlertCircle, CheckCircle2, Circle, Clock, X, ExternalLink, FolderOpen } from "lucide-react";
+
+const DRIVE_FOLDER_ID = "0ANU645mbF0czUk9PVA";
+const DRIVE_FOLDER_URL = `https://drive.google.com/drive/folders/${DRIVE_FOLDER_ID}`;
+const DRIVE_EMBED_URL = `https://drive.google.com/embeddedfolderview?id=${DRIVE_FOLDER_ID}#list`;
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -464,6 +469,10 @@ function CriticalBadge() {
 export default function AuditDependencyRegister() {
   const { engagementId } = useParams<{ engagementId: string }>();
   const navigate = useNavigate();
+  const [drivePanel, setDrivePanel] = useState<{ open: boolean; standard: string }>({ open: false, standard: "" });
+
+  const openDrivePanel = (standard: string) => setDrivePanel({ open: true, standard });
+  const closeDrivePanel = () => setDrivePanel({ open: false, standard: "" });
 
   // Build a code → navKey map for navigation
   const codeToNavKey = Object.fromEntries(REGISTER.map(r => [r.code, r.navKey]));
@@ -599,7 +608,13 @@ export default function AuditDependencyRegister() {
                           {/* CA Standard */}
                           <td className="px-4 py-3">
                             {item.cas ? (
-                              <span className="text-xs text-muted-foreground font-mono">{item.cas}</span>
+                              <button
+                                onClick={() => openDrivePanel(item.cas!)}
+                                className="inline-flex items-center gap-1.5 group"
+                              >
+                                <span className="text-xs text-muted-foreground font-mono group-hover:text-primary transition-colors">{item.cas}</span>
+                                <FolderOpen className="h-3 w-3 text-muted-foreground/50 group-hover:text-primary transition-colors flex-shrink-0" />
+                              </button>
                             ) : (
                               <span className="text-xs text-muted-foreground">—</span>
                             )}
@@ -608,7 +623,13 @@ export default function AuditDependencyRegister() {
                           {/* US Standard */}
                           <td className="px-4 py-3">
                             {item.us ? (
-                              <span className="text-xs text-muted-foreground font-mono">{item.us}</span>
+                              <button
+                                onClick={() => openDrivePanel(item.us!)}
+                                className="inline-flex items-center gap-1.5 group"
+                              >
+                                <span className="text-xs text-muted-foreground font-mono group-hover:text-primary transition-colors">{item.us}</span>
+                                <FolderOpen className="h-3 w-3 text-muted-foreground/50 group-hover:text-primary transition-colors flex-shrink-0" />
+                              </button>
                             ) : (
                               <span className="text-xs text-muted-foreground">—</span>
                             )}
@@ -648,6 +669,53 @@ export default function AuditDependencyRegister() {
           ))}
         </div>
       </div>
+
+      {/* Google Drive slide-over panel */}
+      {drivePanel.open && (
+        <>
+          {/* Backdrop */}
+          <div
+            className="fixed inset-0 bg-black/20 z-40"
+            onClick={closeDrivePanel}
+          />
+          {/* Panel */}
+          <div className="fixed top-0 right-0 h-full w-[520px] bg-white dark:bg-card border-l border-border shadow-2xl z-50 flex flex-col">
+            {/* Header */}
+            <div className="flex items-center gap-3 px-4 py-3 border-b border-border bg-muted/30">
+              <FolderOpen className="h-4 w-4 text-primary flex-shrink-0" />
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-semibold text-foreground truncate">Audit Standards — Drive</p>
+                <p className="text-xs text-muted-foreground font-mono truncate">{drivePanel.standard}</p>
+              </div>
+              <a
+                href={DRIVE_FOLDER_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-1 text-xs text-primary hover:underline px-2 py-1 rounded hover:bg-primary/10 transition-colors"
+              >
+                <ExternalLink className="h-3.5 w-3.5" />
+                Open in Drive
+              </a>
+              <button
+                onClick={closeDrivePanel}
+                className="h-7 w-7 flex items-center justify-center rounded-md hover:bg-muted transition-colors"
+              >
+                <X className="h-4 w-4 text-muted-foreground" />
+              </button>
+            </div>
+
+            {/* iframe */}
+            <div className="flex-1 overflow-hidden">
+              <iframe
+                src={DRIVE_EMBED_URL}
+                className="w-full h-full border-0"
+                title={`Google Drive — ${drivePanel.standard}`}
+                allow="autoplay"
+              />
+            </div>
+          </div>
+        </>
+      )}
     </Layout>
   );
 }
