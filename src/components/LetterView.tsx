@@ -63,9 +63,7 @@ export function LetterView({ checklist, onUpdate, variant = "letter" }: LetterVi
   return (
     <div className="flex-1 flex flex-col h-full overflow-hidden bg-background">
       {/* Top toolbar — matches ChecklistBuilder */}
-      <div className="border-b bg-card px-6 py-3 flex items-center justify-between">
-        <h1 className="text-lg font-semibold px-2 py-1">{checklist.title}</h1>
-
+      <div className="border-b bg-card px-6 py-3 flex items-center justify-end">
         <div className="flex items-center gap-2">
           {isEditing ? (
             <>
