@@ -76,7 +76,7 @@ export function LetterView({ checklist, onUpdate, variant = "letter", isEditing:
     <div className="flex-1 flex flex-col h-full overflow-hidden bg-background">
 
       {/* Scrollable body */}
-      <div className="flex-1 overflow-y-auto px-6 py-6 bg-white border-t border-border">
+      <div className="flex-1 overflow-y-auto px-6 py-6 bg-white">
 
       {/* Letter / Report sheet */}
       <div className="max-w-3xl mx-auto bg-card border border-border rounded-2xl shadow-sm relative overflow-hidden">
