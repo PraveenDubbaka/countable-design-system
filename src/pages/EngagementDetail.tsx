@@ -1154,7 +1154,7 @@ export default function EngagementDetail() {
                     <p className="text-xs text-muted-foreground mt-1">Please wait while we fetch the data</p>
                   </div>
                 </div> : <div className="bg-background">
-                  {(currentChecklistId === "default-compilation-el" || currentChecklistId === "default-compilation-mr" || currentChecklistId === "default-audit-el" || currentChecklistId === "default-audit-tcwg-pl" || currentChecklistId === "default-audit-tcwg-fin" || currentChecklistId === "default-us-audit-el" || currentChecklistId === "default-us-audit-tcwg-pl" || currentChecklistId === "default-us-audit-tcwg-fin" || currentChecklistId === "default-us-audit-mr") ? (
+                  {(checklist?.sections?.length > 0 && checklist.sections[0]?.questions?.length > 0 && checklist.sections[0].questions[0]?.answerType === 'none' && !checklist.objective) ? (
                     <LetterView checklist={checklist} onUpdate={handleChecklistUpdate} />
                   ) : (
                     <DocumentView
