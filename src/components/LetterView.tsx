@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Checklist } from "@/types/checklist";
 import { Button } from "@/components/ui/button";
 import { Pencil, Eye, Check, X, Plus } from "lucide-react";
@@ -13,6 +13,13 @@ interface LetterViewProps {
   /** "letter" (default) shows firm letterhead + signature block.
    *  "report" shows a clean document with no header/footer/stamp. */
   variant?: "letter" | "report";
+  /** Lift editing state up so parent can render Edit/Save/Cancel in its own toolbar */
+  isEditing?: boolean;
+  onEditStart?: () => void;
+  onSaveEdits?: () => void;
+  onCancelEdits?: () => void;
+  /** Parent passes a ref — LetterView stores its save handler here so parent can call it */
+  saveRef?: React.MutableRefObject<(() => void) | null>;
 }
 
 /**
@@ -23,10 +30,12 @@ interface LetterViewProps {
  * (existing schema, no migration needed).  Edit mode toggles a
  * contentEditable surface; Save persists the new HTML back to the checklist.
  */
-export function LetterView({ checklist, onUpdate, variant = "letter" }: LetterViewProps) {
+export function LetterView({ checklist, onUpdate, variant = "letter", isEditing: isEditingProp, onEditStart, onSaveEdits, onCancelEdits, saveRef }: LetterViewProps) {
   const isReport = variant === "report";
   const [showAddDialog, setShowAddDialog] = useState(false);
-  const [isEditing, setIsEditing] = useState(false);
+  const [isEditingLocal, setIsEditingLocal] = useState(false);
+  // Use lifted state if provided, otherwise use local state
+  const isEditing = isEditingProp !== undefined ? isEditingProp : isEditingLocal;
   const editorRef = useRef<HTMLDivElement | null>(null);
 
   const letterHtml =
@@ -53,49 +62,18 @@ export function LetterView({ checklist, onUpdate, variant = "letter" }: LetterVi
         : s
     );
     onUpdate({ ...checklist, sections, updatedAt: new Date() });
-    setIsEditing(false);
+    if (onSaveEdits) onSaveEdits(); else setIsEditingLocal(false);
   };
 
   const handleCancel = () => {
-    setIsEditing(false);
+    if (onCancelEdits) onCancelEdits(); else setIsEditingLocal(false);
   };
+
+  // Expose save handler via ref so parent can call it
+  if (saveRef) saveRef.current = handleSave;
 
   return (
     <div className="flex-1 flex flex-col h-full overflow-hidden bg-background">
-      {/* Top toolbar — matches ChecklistBuilder */}
-      <div className="border-b bg-card px-6 py-3 flex items-center justify-end">
-        <div className="flex items-center gap-2">
-          {isEditing ? (
-            <>
-              <Button size="sm" variant="outline" className="h-9 gap-1.5" onClick={handleCancel}>
-                <X className="h-4 w-4" />
-                Cancel
-              </Button>
-              <Button size="sm" className="h-9 gap-1.5" onClick={handleSave}>
-                <Check className="h-4 w-4" />
-                Save changes
-              </Button>
-            </>
-          ) : (
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Button
-                    variant="outline"
-                    size="icon"
-                    className="h-9 w-9 hover:bg-[#1C63A6] hover:text-white hover:border-[#1C63A6] transition-colors"
-                    onClick={() => setIsEditing(true)}
-                  >
-                    <Pencil className="h-4 w-4" />
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent>Edit</TooltipContent>
-              </Tooltip>
-
-            </TooltipProvider>
-          )}
-        </div>
-      </div>
 
       {/* Scrollable body */}
       <div className="flex-1 overflow-y-auto px-6 py-6 bg-white border-t border-border">

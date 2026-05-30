@@ -1,6 +1,6 @@
-import { useState, useEffect, useMemo, useCallback } from "react";
+import { useState, useEffect, useMemo, useCallback, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { ChevronRight, ChevronDown, Landmark, FileText, Triangle, FileSpreadsheet, PencilLine, Settings2, Download, FileType, Share2, Save, RefreshCw, Trash2, Building2, Calendar, Check, AlertTriangle, Loader2, History, Upload, FileUp, Bell, Plus } from "lucide-react";
+import { ChevronRight, ChevronDown, Landmark, FileText, Triangle, FileSpreadsheet, PencilLine, Pencil, Settings2, Download, FileType, Share2, Save, RefreshCw, Trash2, Building2, Calendar, Check, AlertTriangle, Loader2, History, Upload, FileUp, Bell, Plus, X } from "lucide-react";
 import { ExpandableIconButton } from "@/components/ui/expandable-icon-button";
 import { ChecklistIcon } from "@/components/icons/ChecklistIcon";
 import { Button } from "@/components/ui/button";
@@ -541,6 +541,8 @@ export default function EngagementDetail() {
   const [isCompactMode, setIsCompactMode] = useState(false);
   const [selectedQuestions, setSelectedQuestions] = useState<Set<string>>(new Set());
   const [objectiveExpanded, setObjectiveExpanded] = useState(false);
+  const [isLetterEditing, setIsLetterEditing] = useState(false);
+  const letterSaveRef = useRef<(() => void) | null>(null);
   const [showShareDialog, setShowShareDialog] = useState(false);
   const [showResponseDialog, setShowResponseDialog] = useState(false);
   const [pendingEngagementId, setPendingEngagementId] = useState<string | null>(null);
@@ -1062,15 +1064,22 @@ export default function EngagementDetail() {
             {/* Action buttons row */}
             <div className="flex items-center justify-end gap-1 px-4 py-1.5 border-t border-border/50">
               {checklist && <>
-                {!(checklist?.sections?.length > 0 && checklist.sections[0]?.questions?.length > 0 && checklist.sections[0].questions[0]?.answerType === 'none' && !checklist.objective) && (
-                <ExpandableIconButton
-                  variant="default"
-                  icon={<Save className="h-4 w-4" />}
-                  label="Save"
-                  size="sm"
-                  onClick={handleSave}
-                />
-                )}
+                {(() => {
+                  const isLetter = checklist?.sections?.length > 0 && checklist.sections[0]?.questions?.length > 0 && checklist.sections[0].questions[0]?.answerType === 'none' && !checklist.objective;
+                  if (isLetter) {
+                    return isLetterEditing ? (
+                      <>
+                        <ExpandableIconButton variant="outline" icon={<X className="h-4 w-4" />} label="Cancel" size="sm" onClick={() => setIsLetterEditing(false)} className="bg-card hover:bg-muted" />
+                        <ExpandableIconButton variant="default" icon={<Check className="h-4 w-4" />} label="Save" size="sm" onClick={() => { letterSaveRef.current?.(); setIsLetterEditing(false); }} />
+                      </>
+                    ) : (
+                      <ExpandableIconButton variant="outline" icon={<Pencil className="h-4 w-4" />} label="Edit" size="sm" onClick={() => setIsLetterEditing(true)} className="bg-card hover:bg-muted" />
+                    );
+                  }
+                  return (
+                    <ExpandableIconButton variant="default" icon={<Save className="h-4 w-4" />} label="Save" size="sm" onClick={handleSave} />
+                  );
+                })()}
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                     <ExpandableIconButton
@@ -1157,7 +1166,15 @@ export default function EngagementDetail() {
                   </div>
                 </div> : <div className="bg-background">
                   {(checklist?.sections?.length > 0 && checklist.sections[0]?.questions?.length > 0 && checklist.sections[0].questions[0]?.answerType === 'none' && !checklist.objective) ? (
-                    <LetterView checklist={checklist} onUpdate={handleChecklistUpdate} />
+                    <LetterView
+                      checklist={checklist}
+                      onUpdate={handleChecklistUpdate}
+                      isEditing={isLetterEditing}
+                      onEditStart={() => setIsLetterEditing(true)}
+                      onSaveEdits={() => setIsLetterEditing(false)}
+                      onCancelEdits={() => setIsLetterEditing(false)}
+                      saveRef={letterSaveRef}
+                    />
                   ) : (
                     <DocumentView
                       checklist={checklist}
