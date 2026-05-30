@@ -31,6 +31,20 @@ const stats = [{
 
 // Sample engagements data
 const engagements = [{
+  id: "AUD-US-Dec312024",
+  client: "Harbor Freight Logistics LLC",
+  yearEnd: "Dec 31, 2024",
+  integration: null,
+  status: "In Progress",
+  statusVariant: "default" as const
+}, {
+  id: "AUD-SL-Mar312024",
+  client: "Shipping Line Inc.",
+  yearEnd: "Mar 31, 2024",
+  integration: null,
+  status: "In Progress",
+  statusVariant: "default" as const
+}, {
   id: "COM-CON-Dec312024",
   client: "Shipping Line Inc.",
   yearEnd: "Dec 31, 2024",
