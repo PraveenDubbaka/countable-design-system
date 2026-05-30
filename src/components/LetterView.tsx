@@ -92,19 +92,6 @@ export function LetterView({ checklist, onUpdate, variant = "letter" }: LetterVi
                 <TooltipContent>Edit</TooltipContent>
               </Tooltip>
 
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Button
-                    variant="default"
-                    size="icon"
-                    className="h-9 w-9"
-                    onClick={() => setShowAddDialog(true)}
-                  >
-                    <Plus className="h-4 w-4" />
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent>Add to My Templates</TooltipContent>
-              </Tooltip>
             </TooltipProvider>
           )}
         </div>

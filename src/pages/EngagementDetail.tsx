@@ -1062,6 +1062,7 @@ export default function EngagementDetail() {
             {/* Action buttons row */}
             <div className="flex items-center justify-end gap-1 px-4 py-1.5 border-t border-border/50">
               {checklist && <>
+                {!(checklist?.sections?.length > 0 && checklist.sections[0]?.questions?.length > 0 && checklist.sections[0].questions[0]?.answerType === 'none' && !checklist.objective) && (
                 <ExpandableIconButton
                   variant="default"
                   icon={<Save className="h-4 w-4" />}
@@ -1069,6 +1070,7 @@ export default function EngagementDetail() {
                   size="sm"
                   onClick={handleSave}
                 />
+                )}
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                     <ExpandableIconButton
