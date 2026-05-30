@@ -10,6 +10,8 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/comp
 import { Layout } from "@/components/Layout";
 import { DocumentView } from "@/components/DocumentView";
 import { LetterView } from "@/components/LetterView";
+import { AuditMaterialityWorksheet } from "@/components/AuditMaterialityWorksheet";
+import { AuditScopeWorksheet } from "@/components/AuditScopeWorksheet";
 import { FloatingActionBar } from "@/components/FloatingActionBar";
 import { EngagementRightPanel } from "@/components/EngagementRightPanel";
 import { Checklist, Question } from "@/types/checklist";
@@ -1140,7 +1142,12 @@ export default function EngagementDetail() {
 
           {/* Content Area */}
           <div className="flex-1 overflow-auto bg-card">
-          {checklist ? (
+          {/* ── Interactive worksheets — rendered directly without checklist state ── */}
+          {(checklistKey === 'aud-mat' || checklistKey === 'aud-us-mat') ? (
+            <AuditMaterialityWorksheet isUS={checklistKey === 'aud-us-mat'} />
+          ) : (checklistKey === 'aud-scope' || checklistKey === 'aud-us-scope') ? (
+            <AuditScopeWorksheet isUS={checklistKey === 'aud-us-scope'} />
+          ) : checklist ? (
             <div className="p-4">
               {/* Clipboard prompt banner */}
               {showClipboardPrompt && clipboardResponses && (
