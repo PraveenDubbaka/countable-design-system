@@ -289,48 +289,36 @@ export function AuditMaterialityWorksheet({ isUS = false }: AuditMaterialityWork
 
           {/* ── Preliminary Materiality ── */}
           <div className="bg-card text-card-foreground border border-border shadow-[0_2px_8px_hsl(213_40%_20%/0.06)] rounded-md overflow-hidden">
-            <div className="px-6 py-3.5 bg-card border-b border-border flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <span className="text-sm font-semibold text-foreground">Preliminary Materiality</span>
-                <span title="Set the period dates and populate the table below to calculate overall materiality.">
-                  <Info className="h-3.5 w-3.5 text-muted-foreground cursor-help" />
-                </span>
-              </div>
-              <div className="flex items-center gap-2">
-                <div className="relative flex items-center">
-                  <Input
-                    type="date"
-                    value={periodStart}
-                    onChange={(e) => setPeriodStart(e.target.value)}
-                    className="h-8 text-sm pr-8 w-36"
-                    placeholder="Start date"
-                  />
-                  <Calendar className="h-3.5 w-3.5 text-muted-foreground absolute right-2 pointer-events-none" />
-                </div>
-                <div className="relative flex items-center">
-                  <Input
-                    type="date"
-                    value={periodEnd}
-                    onChange={(e) => setPeriodEnd(e.target.value)}
-                    className="h-8 text-sm pr-8 w-36"
-                    placeholder="End date"
-                  />
-                  <Calendar className="h-3.5 w-3.5 text-muted-foreground absolute right-2 pointer-events-none" />
-                </div>
-                <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
-                  <Link className="h-3.5 w-3.5 text-muted-foreground" />
-                </Button>
-                <div className="flex-1" />
-                <Button
-                  variant="outline"
-                  size="sm"
-                  disabled
-                  className="h-8 text-sm opacity-50 cursor-not-allowed"
-                >
-                  <RefreshCw className="h-3.5 w-3.5 mr-1.5" />
-                  Refresh
-                </Button>
-              </div>
+            <div className="px-6 py-3.5 bg-card border-b border-border flex items-center gap-3">
+              <span className="text-sm font-semibold text-foreground">Preliminary Materiality</span>
+              <span title="Set the period dates and populate the table below to calculate overall materiality.">
+                <Info className="h-3.5 w-3.5 text-muted-foreground cursor-help" />
+              </span>
+              <Input
+                type="date"
+                value={periodStart}
+                onChange={(e) => setPeriodStart(e.target.value)}
+                className="h-8 text-sm w-36"
+              />
+              <Input
+                type="date"
+                value={periodEnd}
+                onChange={(e) => setPeriodEnd(e.target.value)}
+                className="h-8 text-sm w-36"
+              />
+              <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+                <Link className="h-3.5 w-3.5 text-muted-foreground" />
+              </Button>
+              <div className="flex-1" />
+              <Button
+                variant="outline"
+                size="sm"
+                disabled
+                className="h-8 text-sm opacity-50 cursor-not-allowed"
+              >
+                <RefreshCw className="h-3.5 w-3.5 mr-1.5" />
+                Refresh
+              </Button>
             </div>
             <div className="px-6 py-5">
               {/* Main table */}
