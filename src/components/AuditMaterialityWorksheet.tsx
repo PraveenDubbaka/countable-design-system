@@ -9,7 +9,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Info, RefreshCw, Trash2, Plus, Calendar, Link } from "lucide-react";
+import { Info, RefreshCw, Trash2, Plus, Calendar, Scissors } from "lucide-react";
 import { AddToMyTemplatesDialog } from "@/components/AddToMyTemplatesDialog";
 import { toast } from "sonner";
 
@@ -309,8 +309,8 @@ export function AuditMaterialityWorksheet({ isUS = false }: AuditMaterialityWork
                 onChange={(e) => setPeriodEnd(e.target.value)}
                 className="h-8 text-sm w-36"
               />
-              <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
-                <Link className="h-3.5 w-3.5 text-muted-foreground" />
+              <Button variant="outline" size="sm" className="h-8 w-8 p-0 bg-muted/40 border-border">
+                <Scissors className="h-3.5 w-3.5 text-muted-foreground" />
               </Button>
               <div className="flex-1" />
               <Button
