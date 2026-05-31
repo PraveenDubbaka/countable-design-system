@@ -9,7 +9,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Info, RefreshCw, Trash2, Plus, Calendar } from "lucide-react";
+import { Info, RefreshCw, Trash2, Plus, Calendar, Link } from "lucide-react";
 import { AddToMyTemplatesDialog } from "@/components/AddToMyTemplatesDialog";
 import { toast } from "sonner";
 
@@ -75,6 +75,14 @@ const BASIS_OPTIONS = [
   "Net assets",
 ];
 
+const ENTITY_TYPE_OPTIONS = ["Profit Oriented", "Non-Profit", "Government", "Other"];
+
+const formatDisplay = (v: string) => {
+  const n = parseFloat(v);
+  if (isNaN(n)) return v;
+  return n.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+};
+
 // ── Sub-components ─────────────────────────────────────────────────────────────
 
 function TdInput({
@@ -139,20 +147,21 @@ export function AuditMaterialityWorksheet({ isUS = false }: AuditMaterialityWork
   const [showAddDialog, setShowAddDialog] = useState(false);
   const [concluded, setConcluded] = useState(false);
 
-  const [periodStart, setPeriodStart] = useState("");
-  const [periodEnd, setPeriodEnd] = useState("");
+  const [periodStart, setPeriodStart] = useState(isUS ? "2024-01-01" : "2024-04-01");
+  const [periodEnd, setPeriodEnd] = useState(isUS ? "2024-12-31" : "2025-03-31");
 
   // Preliminary Materiality table rows
+  const mockPeriodAmount = isUS ? "18400000" : "12500000";
   const [entityRows, setEntityRows] = useState<EntityRow[]>([
     {
       id: uid(),
-      entityName: "",
-      basis: "",
-      periodAmount: "",
-      extrapolatedPeriod: "",
+      entityName: "Profit Oriented",
+      basis: "Gross revenues",
+      periodAmount: mockPeriodAmount,
+      extrapolatedPeriod: mockPeriodAmount,
       benchmarkPct: "1.00",
-      materialityCY: "",
-      materialityPY: "",
+      materialityCY: calcMatCY(mockPeriodAmount, "1.00"),
+      materialityPY: "0",
     },
   ]);
 
@@ -243,6 +252,16 @@ export function AuditMaterialityWorksheet({ isUS = false }: AuditMaterialityWork
   const standardRef = isUS ? "AU-C 320" : "CAS 320";
   const title = isUS ? "Materiality — AU-C 320" : "Materiality — CAS 320";
 
+  const periodLabel = periodStart && periodEnd
+    ? (() => {
+        const fmt = (d: string) => {
+          const dt = new Date(d + 'T00:00:00');
+          return dt.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }).replace(/ /g, '');
+        };
+        return `${fmt(periodStart)}-${fmt(periodEnd)}($)`;
+      })()
+    : "Period ($)";
+
   return (
     <div className="flex flex-col h-full">
       {/* Toolbar */}
@@ -270,21 +289,20 @@ export function AuditMaterialityWorksheet({ isUS = false }: AuditMaterialityWork
 
           {/* ── Preliminary Materiality ── */}
           <div className="bg-card text-card-foreground border border-border shadow-[0_2px_8px_hsl(213_40%_20%/0.06)] rounded-md overflow-hidden">
-            <div className="px-6 py-3.5 bg-card border-b border-border flex items-center gap-3">
-              <span className="text-sm font-semibold text-foreground">Preliminary Materiality</span>
-              <span title="Set the period dates and populate the table below to calculate overall materiality.">
-                <Info className="h-3.5 w-3.5 text-muted-foreground cursor-help" />
-              </span>
-            </div>
-            <div className="px-6 py-5">
-              {/* Date row */}
-              <div className="flex items-center gap-3 mb-4">
+            <div className="px-6 py-3.5 bg-card border-b border-border flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <span className="text-sm font-semibold text-foreground">Preliminary Materiality</span>
+                <span title="Set the period dates and populate the table below to calculate overall materiality.">
+                  <Info className="h-3.5 w-3.5 text-muted-foreground cursor-help" />
+                </span>
+              </div>
+              <div className="flex items-center gap-2">
                 <div className="relative flex items-center">
                   <Input
                     type="date"
                     value={periodStart}
                     onChange={(e) => setPeriodStart(e.target.value)}
-                    className="h-8 text-sm pr-8 w-40"
+                    className="h-8 text-sm pr-8 w-36"
                     placeholder="Start date"
                   />
                   <Calendar className="h-3.5 w-3.5 text-muted-foreground absolute right-2 pointer-events-none" />
@@ -294,11 +312,15 @@ export function AuditMaterialityWorksheet({ isUS = false }: AuditMaterialityWork
                     type="date"
                     value={periodEnd}
                     onChange={(e) => setPeriodEnd(e.target.value)}
-                    className="h-8 text-sm pr-8 w-40"
+                    className="h-8 text-sm pr-8 w-36"
                     placeholder="End date"
                   />
                   <Calendar className="h-3.5 w-3.5 text-muted-foreground absolute right-2 pointer-events-none" />
                 </div>
+                <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+                  <Link className="h-3.5 w-3.5 text-muted-foreground" />
+                </Button>
+                <div className="flex-1" />
                 <Button
                   variant="outline"
                   size="sm"
@@ -309,7 +331,8 @@ export function AuditMaterialityWorksheet({ isUS = false }: AuditMaterialityWork
                   Refresh
                 </Button>
               </div>
-
+            </div>
+            <div className="px-6 py-5">
               {/* Main table */}
               <div className="overflow-x-auto">
                 <table className="w-full">
@@ -318,7 +341,7 @@ export function AuditMaterialityWorksheet({ isUS = false }: AuditMaterialityWork
                       <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider">Entity Name</th>
                       <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider">Basis for calculations</th>
                       <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap">
-                        {periodEnd ? new Date(periodEnd).getFullYear() : "Period"} ($)
+                        {periodLabel}
                       </th>
                       <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap">Extrapolated period ($)</th>
                       <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap">Benchmark applied (%)</th>
@@ -330,11 +353,12 @@ export function AuditMaterialityWorksheet({ isUS = false }: AuditMaterialityWork
                   <tbody className="divide-y divide-border">
                     {entityRows.map((row) => (
                       <tr key={row.id} className="hover:bg-muted/50 transition-colors">
-                        <td className="px-4 py-2.5 align-top">
-                          <TdInput
+                        <td className="px-4 py-2.5 align-top min-w-[160px]">
+                          <TdSelect
                             value={row.entityName}
                             onChange={(v) => updateEntityRow(row.id, "entityName", v)}
-                            placeholder="Entity name"
+                            options={ENTITY_TYPE_OPTIONS.map((e) => ({ value: e, label: e }))}
+                            placeholder="Select type…"
                           />
                         </td>
                         <td className="px-4 py-2.5 align-top min-w-[160px]">
@@ -371,7 +395,7 @@ export function AuditMaterialityWorksheet({ isUS = false }: AuditMaterialityWork
                         </td>
                         <td className="px-4 py-2.5 align-top w-44">
                           <TdInput
-                            value={row.materialityCY}
+                            value={formatDisplay(row.materialityCY)}
                             readOnly
                             className="tabular-nums"
                           />
@@ -419,41 +443,30 @@ export function AuditMaterialityWorksheet({ isUS = false }: AuditMaterialityWork
                 Add Row
               </button>
             </div>
-          </div>
-
-          {/* ── Clearly Trivial Misstatements ── */}
-          <div className="bg-card text-card-foreground border border-border shadow-[0_2px_8px_hsl(213_40%_20%/0.06)] rounded-md overflow-hidden">
-            <div className="px-6 py-3.5 bg-card border-b border-border flex items-center gap-3">
-              <span className="text-sm font-semibold text-foreground">Clearly Trivial Misstatements</span>
-            </div>
-            <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead className="sticky top-0 z-10">
-                  <tr className="bg-muted border-b border-border">
-                    <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider w-40">Item</th>
-                    <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider">Value</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-border">
-                  <tr className="hover:bg-muted/50 transition-colors">
-                    <td className="px-4 py-2.5 align-top text-sm text-muted-foreground">Threshold (%)</td>
-                    <td className="px-4 py-2.5 align-top w-36">
-                      <TdInput
-                        value={ctThresholdPct}
-                        onChange={(v) => setCtThresholdPct(v.replace(/[^0-9.]/g, ""))}
-                        placeholder="5.00"
-                        className="tabular-nums w-28"
-                      />
-                    </td>
-                  </tr>
-                  <tr className="hover:bg-muted/50 transition-colors">
-                    <td className="px-4 py-2.5 align-top text-sm text-muted-foreground">Amount ($)</td>
-                    <td className="px-4 py-2.5 align-top text-sm font-semibold tabular-nums text-foreground">
-                      {ctAmount ? ctAmount : "—"}
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
+            {/* Clearly Trivial Misstatements footer — inside the same card */}
+            <div className="border-t border-border px-4 py-3">
+              <div className="flex items-center">
+                <span className="text-sm text-foreground flex-1">Clearly trivial misstatements</span>
+                <div className="flex items-center gap-8 mr-8">
+                  <div className="flex flex-col items-center gap-1">
+                    <span className="text-xs text-muted-foreground">Threshold (%)</span>
+                    <TdInput
+                      value={ctThresholdPct}
+                      onChange={(v) => setCtThresholdPct(v.replace(/[^0-9.]/g, ""))}
+                      placeholder="5.00"
+                      className="w-24 tabular-nums"
+                    />
+                  </div>
+                  <div className="flex flex-col items-center gap-1">
+                    <span className="text-xs text-muted-foreground">Amount ($)</span>
+                    <TdInput
+                      value={ctAmount ? formatDisplay(ctAmount) : ""}
+                      readOnly
+                      className="w-32 tabular-nums"
+                    />
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
 
