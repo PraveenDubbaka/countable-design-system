@@ -422,15 +422,6 @@ export function AuditMaterialityWorksheet({ isUS = false }: AuditMaterialityWork
                 </table>
               </div>
             </div>
-            <div className="px-6 py-3 border-t border-border">
-              <button
-                onClick={addEntityRow}
-                className="flex items-center gap-1.5 text-sm font-medium text-primary hover:text-primary/80 transition-colors"
-              >
-                <Plus className="h-4 w-4" />
-                Add Row
-              </button>
-            </div>
             {/* Clearly Trivial Misstatements footer — inside the same card */}
             <div className="border-t border-border px-4 py-3">
               <div className="flex items-center">
