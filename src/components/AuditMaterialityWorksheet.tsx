@@ -335,7 +335,6 @@ export function AuditMaterialityWorksheet({ isUS = false }: AuditMaterialityWork
                       <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap">Benchmark applied (%)</th>
                       <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap">Materiality CY ($)</th>
                       <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap">Materiality PY ($)</th>
-                      <th className="w-8" />
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-border">
@@ -395,15 +394,6 @@ export function AuditMaterialityWorksheet({ isUS = false }: AuditMaterialityWork
                             placeholder="e.g. 112000"
                             className="tabular-nums"
                           />
-                        </td>
-                        <td className="px-2 py-1 text-center">
-                          <button
-                            onClick={() => removeEntityRow(row.id)}
-                            className="text-muted-foreground hover:text-destructive transition-colors"
-                            disabled={entityRows.length === 1}
-                          >
-                            <Trash2 className="h-3.5 w-3.5" />
-                          </button>
                         </td>
                       </tr>
                     ))}
