@@ -272,7 +272,7 @@ export function AuditMaterialityWorksheet({ isUS = false }: AuditMaterialityWork
 
       {/* Body */}
       <div className="flex-1 overflow-y-auto bg-muted/30">
-        <div className="p-6 max-w-6xl mx-auto space-y-4">
+        <div className="p-6 space-y-4">
 
           {/* ── Preliminary Materiality ── */}
           <div className="bg-card text-card-foreground border border-border shadow-[0_2px_8px_hsl(213_40%_20%/0.06)] rounded-md overflow-hidden">
