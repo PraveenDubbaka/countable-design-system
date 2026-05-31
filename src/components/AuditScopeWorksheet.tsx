@@ -90,22 +90,6 @@ const DEFAULT_THRESHOLD_ROWS: ThresholdRow[] = [
 
 // ── Sub-components ─────────────────────────────────────────────────────────────
 
-function SectionHeader({ title, tooltip, action }: { title: string; tooltip?: string; action?: React.ReactNode }) {
-  return (
-    <div className="flex items-center justify-between mt-6 mb-3">
-      <div className="flex items-center gap-1.5">
-        <span className="text-sm font-semibold text-foreground">{title}</span>
-        {tooltip && (
-          <span title={tooltip}>
-            <Info className="h-3.5 w-3.5 text-muted-foreground cursor-help" />
-          </span>
-        )}
-      </div>
-      {action}
-    </div>
-  );
-}
-
 function TdInput({
   value,
   onChange,
@@ -236,6 +220,9 @@ export function AuditScopeWorksheet({
     );
   }, []);
 
+  // suppress unused prop warning
+  void propPM;
+
   const title = isUS ? "Engagement Scope — US GAAS" : "Engagement Scope — CAS";
   const standardRef = isUS ? "AU-C 300 / AU-C 315" : "CAS 300 / CAS 315";
 
@@ -253,6 +240,7 @@ export function AuditScopeWorksheet({
       {/* Objective bar */}
       <div className="px-6 py-2.5 border-b border-border bg-primary/[0.03] flex items-start gap-2 shrink-0">
         <Info className="h-3.5 w-3.5 text-primary mt-0.5 shrink-0" />
+        <span className="text-xs font-semibold text-primary whitespace-nowrap">Objective:</span>
         <p className="text-xs text-muted-foreground flex-1 leading-relaxed">
           Define and document the scope of the audit engagement: entity coverage, reporting period,
           applicable framework, financial statement areas in scope, significant risks, and agreed
@@ -261,416 +249,430 @@ export function AuditScopeWorksheet({
       </div>
 
       {/* Body */}
-      <div className="flex-1 overflow-y-auto bg-muted/20">
-        <div className="p-6 max-w-7xl mx-auto space-y-2">
+      <div className="flex-1 overflow-y-auto bg-muted/30">
+        <div className="p-6 max-w-7xl mx-auto space-y-4">
 
           {/* ── Materiality Carry-Forward ── */}
-          <SectionHeader title="Materiality Carry-Forward" />
-
-          <div className="flex flex-col sm:flex-row gap-4">
-            {/* Left side: carry-forward values */}
-            <div className="flex flex-col gap-3 sm:w-64">
-              <div>
-                <label className="block text-xs font-medium text-muted-foreground mb-1">Materiality ($)</label>
-                <Input
-                  value={materialityAmt}
-                  onChange={(e) => setMaterialityAmt(e.target.value.replace(/[^0-9.]/g, ""))}
-                  className="h-9 text-sm bg-muted/40 tabular-nums"
-                  readOnly
-                />
-              </div>
-              <div>
-                <label className="block text-xs font-medium text-muted-foreground mb-1">Clearly trivial misstatement ($)</label>
-                <Input
-                  value={clearlyTrivialAmt}
-                  onChange={(e) => setClearlyTrivialAmt(e.target.value.replace(/[^0-9.]/g, ""))}
-                  className="h-9 text-sm bg-muted/40 tabular-nums"
-                  readOnly
-                />
-              </div>
+          <div className="bg-card text-card-foreground border border-border shadow-[0_2px_8px_hsl(213_40%_20%/0.06)] rounded-md overflow-hidden">
+            <div className="px-6 py-3.5 bg-card border-b border-border flex items-center gap-3">
+              <span className="text-sm font-semibold text-foreground">Materiality Carry-Forward</span>
             </div>
+            <div className="px-6 py-5">
+              <div className="flex flex-col sm:flex-row gap-4">
+                {/* Left side: carry-forward values */}
+                <div className="flex flex-col gap-3 sm:w-64">
+                  <div>
+                    <label className="block text-xs font-medium text-muted-foreground mb-1">Materiality ($)</label>
+                    <Input
+                      value={materialityAmt}
+                      onChange={(e) => setMaterialityAmt(e.target.value.replace(/[^0-9.]/g, ""))}
+                      className="h-9 text-sm bg-muted/40 tabular-nums"
+                      readOnly
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-medium text-muted-foreground mb-1">Clearly trivial misstatement ($)</label>
+                    <Input
+                      value={clearlyTrivialAmt}
+                      onChange={(e) => setClearlyTrivialAmt(e.target.value.replace(/[^0-9.]/g, ""))}
+                      className="h-9 text-sm bg-muted/40 tabular-nums"
+                      readOnly
+                    />
+                  </div>
+                </div>
 
-            {/* Right side: threshold table */}
-            <div className="flex-1 border border-border rounded-lg overflow-hidden">
-              <table className="w-full text-sm">
-                <thead>
-                  <tr className="bg-muted/30 border-b border-border">
-                    <th className="px-3 py-2 text-left text-xs font-semibold text-muted-foreground w-1/3">Area</th>
-                    <th className="px-3 py-2 text-left text-xs font-semibold text-muted-foreground w-28">Threshold (%)</th>
-                    <th className="px-3 py-2 text-left text-xs font-semibold text-muted-foreground">Materiality ($)</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-border">
-                  {thresholdRows.map((row, idx) => (
-                    <tr key={idx} className="hover:bg-muted/10 transition-colors">
-                      <td className="px-3 py-1.5 text-sm text-foreground">{row.label}</td>
-                      <td className="px-1 py-1">
-                        <Input
-                          value={row.pct}
-                          onChange={(e) => {
-                            const v = e.target.value.replace(/[^0-9.]/g, "");
-                            setThresholdRows((prev) =>
-                              prev.map((r, i) => (i === idx ? { ...r, pct: v } : r))
-                            );
-                          }}
-                          className="h-7 text-sm border-0 border-b border-border rounded-none bg-transparent px-2 w-20 tabular-nums"
-                        />
-                      </td>
-                      <td className="px-3 py-1.5 text-sm tabular-nums font-medium text-foreground">
-                        {calcThresholdAmt(materialityAmt, row.pct)}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+                {/* Right side: threshold table */}
+                <div className="flex-1 border border-border rounded-lg overflow-hidden">
+                  <table className="w-full text-sm">
+                    <thead>
+                      <tr className="bg-muted/30 border-b border-border">
+                        <th className="px-3 py-2 text-left text-xs font-semibold text-muted-foreground w-1/3">Area</th>
+                        <th className="px-3 py-2 text-left text-xs font-semibold text-muted-foreground w-28">Threshold (%)</th>
+                        <th className="px-3 py-2 text-left text-xs font-semibold text-muted-foreground">Materiality ($)</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-border">
+                      {thresholdRows.map((row, idx) => (
+                        <tr key={idx} className="hover:bg-muted/10 transition-colors">
+                          <td className="px-3 py-1.5 text-sm text-foreground">{row.label}</td>
+                          <td className="px-1 py-1">
+                            <Input
+                              value={row.pct}
+                              onChange={(e) => {
+                                const v = e.target.value.replace(/[^0-9.]/g, "");
+                                setThresholdRows((prev) =>
+                                  prev.map((r, i) => (i === idx ? { ...r, pct: v } : r))
+                                );
+                              }}
+                              className="h-7 text-sm border-0 border-b border-border rounded-none bg-transparent px-2 w-20 tabular-nums"
+                            />
+                          </td>
+                          <td className="px-3 py-1.5 text-sm tabular-nums font-medium text-foreground">
+                            {calcThresholdAmt(materialityAmt, row.pct)}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
             </div>
           </div>
 
           {/* ── Specific FSAs ── */}
-          <SectionHeader
-            title="Specific FSA's"
-            action={
-              <Button variant="outline" size="sm" className="h-7 text-xs gap-1">
+          <div className="bg-card text-card-foreground border border-border shadow-[0_2px_8px_hsl(213_40%_20%/0.06)] rounded-md overflow-hidden">
+            <div className="px-6 py-3.5 bg-card border-b border-border flex items-center gap-3">
+              <span className="text-sm font-semibold text-foreground">Specific FSA's</span>
+              <Button variant="outline" size="sm" className="h-7 text-xs gap-1 ml-auto">
                 <RefreshCw className="h-3 w-3" />
                 Refresh
               </Button>
-            }
-          />
+            </div>
+            <div className="px-6 py-5">
+              <div className="overflow-x-auto">
+                <table className="w-full text-sm" style={{ minWidth: 900 }}>
+                  <thead>
+                    <tr className="bg-muted/30 border-b border-border">
+                      <th className="px-3 py-2.5 text-left text-xs font-semibold text-muted-foreground w-10">LS</th>
+                      <th className="px-3 py-2.5 text-left text-xs font-semibold text-muted-foreground w-44">Description</th>
+                      <th className="px-3 py-2.5 text-left text-xs font-semibold text-muted-foreground w-28 whitespace-nowrap">
+                        {isUS ? "Current Period ($)" : "Dec31–Dec30 ($)"}
+                      </th>
+                      <th className="px-3 py-2.5 text-left text-xs font-semibold text-muted-foreground w-24">Materiality</th>
+                      <th className="px-3 py-2.5 text-left text-xs font-semibold text-muted-foreground w-36 whitespace-nowrap">Material misstatement likely</th>
+                      <th className="px-3 py-2.5 text-left text-xs font-semibold text-muted-foreground">Describe Potential Effect</th>
+                      <th className="px-3 py-2.5 text-left text-xs font-semibold text-muted-foreground w-36">Significant Planned Procedures</th>
+                      <th className="w-8" />
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-border">
+                    {fsaRows.map((row) => (
+                      <tr key={row.id} className="hover:bg-muted/10 transition-colors align-top">
+                        <td className="px-1 py-1">
+                          <TdInput
+                            value={row.ls}
+                            onChange={(v) => updateFSARow(row.id, "ls", v)}
+                            className="w-12 font-mono"
+                          />
+                        </td>
+                        <td className="px-1 py-1">
+                          <TdInput
+                            value={row.description}
+                            onChange={(v) => updateFSARow(row.id, "description", v)}
+                            placeholder="Description"
+                          />
+                        </td>
+                        <td className="px-1 py-1">
+                          <TdInput
+                            value={row.periodAmount}
+                            onChange={(v) => updateFSARow(row.id, "periodAmount", v.replace(/[^0-9.]/g, ""))}
+                            placeholder="0"
+                            className="tabular-nums"
+                          />
+                        </td>
+                        <td className="px-1 py-1">
+                          <TdSelect
+                            value={row.materiality}
+                            onChange={(v) => updateFSARow(row.id, "materiality", v)}
+                            options={[
+                              { value: "Yes", label: "Yes" },
+                              { value: "No", label: "No" },
+                            ]}
+                            placeholder="—"
+                          />
+                        </td>
+                        <td className="px-1 py-1">
+                          <TdSelect
+                            value={row.misstatementLikely}
+                            onChange={(v) => updateFSARow(row.id, "misstatementLikely", v)}
+                            options={[
+                              { value: "Yes", label: "Yes" },
+                              { value: "No", label: "No" },
+                              { value: "Maybe", label: "Maybe" },
+                            ]}
+                            placeholder="Select…"
+                          />
+                        </td>
+                        <td className="px-1 py-1">
+                          <TdTextarea
+                            value={row.potentialEffect}
+                            onChange={(v) => updateFSARow(row.id, "potentialEffect", v)}
+                            placeholder="Description"
+                          />
+                        </td>
+                        <td className="px-1 py-1">
+                          <button
+                            onClick={() => toast.info("Map Procedures — link your audit procedures here")}
+                            className="text-xs text-primary underline underline-offset-2 hover:text-primary/80 transition-colors px-1"
+                          >
+                            Map Procedures
+                          </button>
+                        </td>
+                        <td className="px-2 py-2 text-center">
+                          <button
+                            onClick={() => setFsaRows((prev) => prev.filter((r) => r.id !== row.id))}
+                            className="text-muted-foreground hover:text-destructive transition-colors"
+                          >
+                            <Trash2 className="h-3.5 w-3.5" />
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+              <div className="flex justify-start mt-3">
+                <button
+                  onClick={() =>
+                    setFsaRows((prev) => [
+                      ...prev,
+                      {
+                        id: uid(),
+                        ls: "",
+                        description: "",
+                        periodAmount: "",
+                        materiality: "",
+                        misstatementLikely: "",
+                        potentialEffect: "",
+                        procedures: "",
+                      },
+                    ])
+                  }
+                  className="bg-primary text-white rounded-md px-3 py-1.5 text-sm font-medium flex items-center gap-1.5 hover:bg-primary/90 transition-colors"
+                >
+                  <Plus className="h-4 w-4" />
+                  Add Row
+                </button>
+              </div>
+            </div>
+          </div>
 
-          <div className="border border-border rounded-lg overflow-hidden">
-            <div className="overflow-x-auto">
-              <table className="w-full text-sm" style={{ minWidth: 900 }}>
+          {/* ── Pervasive Material Misstatements ── */}
+          <div className="bg-card text-card-foreground border border-border shadow-[0_2px_8px_hsl(213_40%_20%/0.06)] rounded-md overflow-hidden">
+            <div className="px-6 py-3.5 bg-card border-b border-border flex items-center gap-3">
+              <span className="text-sm font-semibold text-foreground">Pervasive Material Misstatements</span>
+              <span title="Identify any misstatements that could have a pervasive effect across multiple financial statement areas.">
+                <Info className="h-3.5 w-3.5 text-muted-foreground cursor-help" />
+              </span>
+            </div>
+            <div className="px-6 py-5">
+              <table className="w-full text-sm">
                 <thead>
                   <tr className="bg-muted/30 border-b border-border">
-                    <th className="px-3 py-2.5 text-left text-xs font-semibold text-muted-foreground w-10">LS</th>
-                    <th className="px-3 py-2.5 text-left text-xs font-semibold text-muted-foreground w-44">Description</th>
-                    <th className="px-3 py-2.5 text-left text-xs font-semibold text-muted-foreground w-28 whitespace-nowrap">
-                      {isUS ? "Current Period ($)" : "Dec31–Dec30 ($)"}
-                    </th>
-                    <th className="px-3 py-2.5 text-left text-xs font-semibold text-muted-foreground w-24">Materiality</th>
-                    <th className="px-3 py-2.5 text-left text-xs font-semibold text-muted-foreground w-36 whitespace-nowrap">Material misstatement likely</th>
-                    <th className="px-3 py-2.5 text-left text-xs font-semibold text-muted-foreground">Describe Potential Effect</th>
-                    <th className="px-3 py-2.5 text-left text-xs font-semibold text-muted-foreground w-36">Significant Planned Procedures</th>
-                    <th className="w-8" />
+                    <th className="px-3 py-2.5 text-left text-xs font-semibold text-muted-foreground">Describe potential misstatements</th>
+                    <th className="px-3 py-2.5 text-left text-xs font-semibold text-muted-foreground">Describe the overall response planned</th>
+                    <th className="px-3 py-2.5 text-left text-xs font-semibold text-muted-foreground w-28">W/P reference</th>
+                    <th className="px-3 py-2.5 text-left text-xs font-semibold text-muted-foreground w-20">Actions</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-border">
-                  {fsaRows.map((row) => (
+                  {pervasiveRows.map((row) => (
                     <tr key={row.id} className="hover:bg-muted/10 transition-colors align-top">
                       <td className="px-1 py-1">
-                        <TdInput
-                          value={row.ls}
-                          onChange={(v) => updateFSARow(row.id, "ls", v)}
-                          className="w-12 font-mono"
-                        />
-                      </td>
-                      <td className="px-1 py-1">
-                        <TdInput
-                          value={row.description}
-                          onChange={(v) => updateFSARow(row.id, "description", v)}
-                          placeholder="Description"
-                        />
-                      </td>
-                      <td className="px-1 py-1">
-                        <TdInput
-                          value={row.periodAmount}
-                          onChange={(v) => updateFSARow(row.id, "periodAmount", v.replace(/[^0-9.]/g, ""))}
-                          placeholder="0"
-                          className="tabular-nums"
-                        />
-                      </td>
-                      <td className="px-1 py-1">
-                        <TdSelect
-                          value={row.materiality}
-                          onChange={(v) => updateFSARow(row.id, "materiality", v)}
-                          options={[
-                            { value: "Yes", label: "Yes" },
-                            { value: "No", label: "No" },
-                          ]}
-                          placeholder="—"
-                        />
-                      </td>
-                      <td className="px-1 py-1">
-                        <TdSelect
-                          value={row.misstatementLikely}
-                          onChange={(v) => updateFSARow(row.id, "misstatementLikely", v)}
-                          options={[
-                            { value: "Yes", label: "Yes" },
-                            { value: "No", label: "No" },
-                            { value: "Maybe", label: "Maybe" },
-                          ]}
-                          placeholder="Select…"
+                        <TdTextarea
+                          value={row.misstatement}
+                          onChange={(v) =>
+                            setPervasiveRows((prev) =>
+                              prev.map((x) => (x.id === row.id ? { ...x, misstatement: v } : x))
+                            )
+                          }
+                          placeholder="Describe potential misstatements"
                         />
                       </td>
                       <td className="px-1 py-1">
                         <TdTextarea
-                          value={row.potentialEffect}
-                          onChange={(v) => updateFSARow(row.id, "potentialEffect", v)}
-                          placeholder="Description"
+                          value={row.response}
+                          onChange={(v) =>
+                            setPervasiveRows((prev) =>
+                              prev.map((x) => (x.id === row.id ? { ...x, response: v } : x))
+                            )
+                          }
+                          placeholder="Describe Response"
                         />
                       </td>
                       <td className="px-1 py-1">
-                        <button
-                          onClick={() => toast.info("Map Procedures — link your audit procedures here")}
-                          className="text-xs text-primary underline underline-offset-2 hover:text-primary/80 transition-colors px-1"
-                        >
-                          Map Procedures
-                        </button>
+                        <TdInput
+                          value={row.wpRef}
+                          onChange={(v) =>
+                            setPervasiveRows((prev) =>
+                              prev.map((x) => (x.id === row.id ? { ...x, wpRef: v } : x))
+                            )
+                          }
+                          placeholder="-"
+                        />
                       </td>
                       <td className="px-2 py-2 text-center">
-                        <button
-                          onClick={() => setFsaRows((prev) => prev.filter((r) => r.id !== row.id))}
-                          className="text-muted-foreground hover:text-destructive transition-colors"
-                        >
-                          <Trash2 className="h-3.5 w-3.5" />
-                        </button>
+                        <div className="flex items-center gap-1.5 justify-center">
+                          <button
+                            className="text-muted-foreground hover:text-primary transition-colors"
+                            title="View document"
+                          >
+                            <FileText className="h-3.5 w-3.5" />
+                          </button>
+                          <button
+                            onClick={() =>
+                              setPervasiveRows((prev) => prev.filter((x) => x.id !== row.id))
+                            }
+                            className="text-muted-foreground hover:text-destructive transition-colors"
+                            disabled={pervasiveRows.length === 1}
+                          >
+                            <Trash2 className="h-3.5 w-3.5" />
+                          </button>
+                        </div>
                       </td>
                     </tr>
                   ))}
                 </tbody>
               </table>
+              <div className="flex justify-start mt-3">
+                <button
+                  onClick={() =>
+                    setPervasiveRows((prev) => [
+                      ...prev,
+                      { id: uid(), misstatement: "", response: "", wpRef: "" },
+                    ])
+                  }
+                  className="bg-primary text-white rounded-md px-3 py-1.5 text-sm font-medium flex items-center gap-1.5 hover:bg-primary/90 transition-colors"
+                >
+                  <Plus className="h-4 w-4" />
+                  Add Row
+                </button>
+              </div>
             </div>
           </div>
 
-          <div className="flex justify-start mt-2">
-            <button
-              onClick={() =>
-                setFsaRows((prev) => [
-                  ...prev,
-                  {
-                    id: uid(),
-                    ls: "",
-                    description: "",
-                    periodAmount: "",
-                    materiality: "",
-                    misstatementLikely: "",
-                    potentialEffect: "",
-                    procedures: "",
-                  },
-                ])
-              }
-              className="bg-primary text-white rounded-md px-3 py-1.5 text-sm font-medium flex items-center gap-1.5 hover:bg-primary/90 transition-colors"
-            >
-              <Plus className="h-4 w-4" />
-              Add Row
-            </button>
-          </div>
-
-          {/* ── Pervasive Material Misstatements ── */}
-          <SectionHeader
-            title="Pervasive material misstatements that are likely to arise (i.e., impact multiple FSAs)"
-            tooltip="Identify any misstatements that could have a pervasive effect across multiple financial statement areas."
-          />
-
-          <div className="border border-border rounded-lg overflow-hidden">
-            <table className="w-full text-sm">
-              <thead>
-                <tr className="bg-muted/30 border-b border-border">
-                  <th className="px-3 py-2.5 text-left text-xs font-semibold text-muted-foreground">Describe potential misstatements</th>
-                  <th className="px-3 py-2.5 text-left text-xs font-semibold text-muted-foreground">Describe the overall response planned</th>
-                  <th className="px-3 py-2.5 text-left text-xs font-semibold text-muted-foreground w-28">W/P reference</th>
-                  <th className="px-3 py-2.5 text-left text-xs font-semibold text-muted-foreground w-20">Actions</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-border">
-                {pervasiveRows.map((row) => (
-                  <tr key={row.id} className="hover:bg-muted/10 transition-colors align-top">
-                    <td className="px-1 py-1">
-                      <TdTextarea
-                        value={row.misstatement}
-                        onChange={(v) =>
-                          setPervasiveRows((prev) =>
-                            prev.map((x) => (x.id === row.id ? { ...x, misstatement: v } : x))
-                          )
-                        }
-                        placeholder="Describe potential misstatements"
-                      />
-                    </td>
-                    <td className="px-1 py-1">
-                      <TdTextarea
-                        value={row.response}
-                        onChange={(v) =>
-                          setPervasiveRows((prev) =>
-                            prev.map((x) => (x.id === row.id ? { ...x, response: v } : x))
-                          )
-                        }
-                        placeholder="Describe Response"
-                      />
-                    </td>
-                    <td className="px-1 py-1">
-                      <TdInput
-                        value={row.wpRef}
-                        onChange={(v) =>
-                          setPervasiveRows((prev) =>
-                            prev.map((x) => (x.id === row.id ? { ...x, wpRef: v } : x))
-                          )
-                        }
-                        placeholder="-"
-                      />
-                    </td>
-                    <td className="px-2 py-2 text-center">
-                      <div className="flex items-center gap-1.5 justify-center">
-                        <button
-                          className="text-muted-foreground hover:text-primary transition-colors"
-                          title="View document"
-                        >
-                          <FileText className="h-3.5 w-3.5" />
-                        </button>
-                        <button
-                          onClick={() =>
-                            setPervasiveRows((prev) => prev.filter((x) => x.id !== row.id))
-                          }
-                          className="text-muted-foreground hover:text-destructive transition-colors"
-                          disabled={pervasiveRows.length === 1}
-                        >
-                          <Trash2 className="h-3.5 w-3.5" />
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-
-          <div className="flex justify-start mt-2">
-            <button
-              onClick={() =>
-                setPervasiveRows((prev) => [
-                  ...prev,
-                  { id: uid(), misstatement: "", response: "", wpRef: "" },
-                ])
-              }
-              className="bg-primary text-white rounded-md px-3 py-1.5 text-sm font-medium flex items-center gap-1.5 hover:bg-primary/90 transition-colors"
-            >
-              <Plus className="h-4 w-4" />
-              Add Row
-            </button>
-          </div>
-
           {/* ── Financial Statement Disclosures ── */}
-          <SectionHeader
-            title="Financial statement disclosures"
-            tooltip="Identify significant disclosures and document planned audit procedures."
-          />
-
-          <div className="border border-border rounded-lg overflow-hidden">
-            <table className="w-full text-sm">
-              <thead>
-                <tr className="bg-muted/30 border-b border-border">
-                  <th className="px-3 py-2.5 text-left text-xs font-semibold text-muted-foreground">Describe potential misstatements</th>
-                  <th className="px-3 py-2.5 text-left text-xs font-semibold text-muted-foreground">Describe the planned procedures</th>
-                  <th className="px-3 py-2.5 text-left text-xs font-semibold text-muted-foreground w-28">W/P reference</th>
-                  <th className="px-3 py-2.5 text-left text-xs font-semibold text-muted-foreground w-20">Actions</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-border">
-                {disclosureRows.map((row) => (
-                  <tr key={row.id} className="hover:bg-muted/10 transition-colors align-top">
-                    <td className="px-1 py-1">
-                      <TdTextarea
-                        value={row.misstatement}
-                        onChange={(v) =>
-                          setDisclosureRows((prev) =>
-                            prev.map((x) => (x.id === row.id ? { ...x, misstatement: v } : x))
-                          )
-                        }
-                        placeholder="Describe potential misstatements"
-                      />
-                    </td>
-                    <td className="px-1 py-1">
-                      <TdTextarea
-                        value={row.procedures}
-                        onChange={(v) =>
-                          setDisclosureRows((prev) =>
-                            prev.map((x) => (x.id === row.id ? { ...x, procedures: v } : x))
-                          )
-                        }
-                        placeholder="Describe planned procedures"
-                      />
-                    </td>
-                    <td className="px-1 py-1">
-                      <TdInput
-                        value={row.wpRef}
-                        onChange={(v) =>
-                          setDisclosureRows((prev) =>
-                            prev.map((x) => (x.id === row.id ? { ...x, wpRef: v } : x))
-                          )
-                        }
-                        placeholder="-"
-                      />
-                    </td>
-                    <td className="px-2 py-2 text-center">
-                      <div className="flex items-center gap-1.5 justify-center">
-                        <button
-                          className="text-muted-foreground hover:text-primary transition-colors"
-                          title="View document"
-                        >
-                          <FileText className="h-3.5 w-3.5" />
-                        </button>
-                        <button
-                          onClick={() =>
-                            setDisclosureRows((prev) => prev.filter((x) => x.id !== row.id))
-                          }
-                          className="text-muted-foreground hover:text-destructive transition-colors"
-                          disabled={disclosureRows.length === 1}
-                        >
-                          <Trash2 className="h-3.5 w-3.5" />
-                        </button>
-                      </div>
-                    </td>
+          <div className="bg-card text-card-foreground border border-border shadow-[0_2px_8px_hsl(213_40%_20%/0.06)] rounded-md overflow-hidden">
+            <div className="px-6 py-3.5 bg-card border-b border-border flex items-center gap-3">
+              <span className="text-sm font-semibold text-foreground">Financial Statement Disclosures</span>
+              <span title="Identify significant disclosures and document planned audit procedures.">
+                <Info className="h-3.5 w-3.5 text-muted-foreground cursor-help" />
+              </span>
+            </div>
+            <div className="px-6 py-5">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="bg-muted/30 border-b border-border">
+                    <th className="px-3 py-2.5 text-left text-xs font-semibold text-muted-foreground">Describe potential misstatements</th>
+                    <th className="px-3 py-2.5 text-left text-xs font-semibold text-muted-foreground">Describe the planned procedures</th>
+                    <th className="px-3 py-2.5 text-left text-xs font-semibold text-muted-foreground w-28">W/P reference</th>
+                    <th className="px-3 py-2.5 text-left text-xs font-semibold text-muted-foreground w-20">Actions</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-
-          <div className="flex justify-start mt-2">
-            <button
-              onClick={() =>
-                setDisclosureRows((prev) => [
-                  ...prev,
-                  { id: uid(), misstatement: "", procedures: "", wpRef: "" },
-                ])
-              }
-              className="bg-primary text-white rounded-md px-3 py-1.5 text-sm font-medium flex items-center gap-1.5 hover:bg-primary/90 transition-colors"
-            >
-              <Plus className="h-4 w-4" />
-              Add Row
-            </button>
+                </thead>
+                <tbody className="divide-y divide-border">
+                  {disclosureRows.map((row) => (
+                    <tr key={row.id} className="hover:bg-muted/10 transition-colors align-top">
+                      <td className="px-1 py-1">
+                        <TdTextarea
+                          value={row.misstatement}
+                          onChange={(v) =>
+                            setDisclosureRows((prev) =>
+                              prev.map((x) => (x.id === row.id ? { ...x, misstatement: v } : x))
+                            )
+                          }
+                          placeholder="Describe potential misstatements"
+                        />
+                      </td>
+                      <td className="px-1 py-1">
+                        <TdTextarea
+                          value={row.procedures}
+                          onChange={(v) =>
+                            setDisclosureRows((prev) =>
+                              prev.map((x) => (x.id === row.id ? { ...x, procedures: v } : x))
+                            )
+                          }
+                          placeholder="Describe planned procedures"
+                        />
+                      </td>
+                      <td className="px-1 py-1">
+                        <TdInput
+                          value={row.wpRef}
+                          onChange={(v) =>
+                            setDisclosureRows((prev) =>
+                              prev.map((x) => (x.id === row.id ? { ...x, wpRef: v } : x))
+                            )
+                          }
+                          placeholder="-"
+                        />
+                      </td>
+                      <td className="px-2 py-2 text-center">
+                        <div className="flex items-center gap-1.5 justify-center">
+                          <button
+                            className="text-muted-foreground hover:text-primary transition-colors"
+                            title="View document"
+                          >
+                            <FileText className="h-3.5 w-3.5" />
+                          </button>
+                          <button
+                            onClick={() =>
+                              setDisclosureRows((prev) => prev.filter((x) => x.id !== row.id))
+                            }
+                            className="text-muted-foreground hover:text-destructive transition-colors"
+                            disabled={disclosureRows.length === 1}
+                          >
+                            <Trash2 className="h-3.5 w-3.5" />
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+              <div className="flex justify-start mt-3">
+                <button
+                  onClick={() =>
+                    setDisclosureRows((prev) => [
+                      ...prev,
+                      { id: uid(), misstatement: "", procedures: "", wpRef: "" },
+                    ])
+                  }
+                  className="bg-primary text-white rounded-md px-3 py-1.5 text-sm font-medium flex items-center gap-1.5 hover:bg-primary/90 transition-colors"
+                >
+                  <Plus className="h-4 w-4" />
+                  Add Row
+                </button>
+              </div>
+            </div>
           </div>
 
           {/* ── Additional Comments ── */}
-          <div className="mt-6">
-            <p className="text-sm font-semibold text-foreground mb-2">Additional comments</p>
-            <Textarea
-              value={additionalComments}
-              onChange={(e) => setAdditionalComments(e.target.value)}
-              placeholder="Comments"
-              className="min-h-[80px] text-sm resize-none bg-background"
-            />
+          <div className="bg-card text-card-foreground border border-border shadow-[0_2px_8px_hsl(213_40%_20%/0.06)] rounded-md overflow-hidden">
+            <div className="px-6 py-3.5 bg-card border-b border-border flex items-center gap-3">
+              <span className="text-sm font-semibold text-foreground">Additional Comments</span>
+            </div>
+            <div className="px-6 py-5">
+              <Textarea
+                value={additionalComments}
+                onChange={(e) => setAdditionalComments(e.target.value)}
+                placeholder="Comments"
+                className="min-h-[80px] text-sm resize-none bg-background"
+              />
+            </div>
           </div>
 
           {/* ── Conclusion ── */}
-          <div className="mt-4">
-            <p className="text-sm font-semibold text-foreground mb-2">Conclusion</p>
-            <Textarea
-              value={conclusion}
-              onChange={(e) => setConclusion(e.target.value)}
-              className="min-h-[72px] text-sm resize-none bg-background"
-            />
-          </div>
-
-          <div className="flex justify-end mt-4 pb-6">
-            <Button
-              onClick={() => {
-                setConcluded(true);
-                toast.success("Engagement scope worksheet concluded");
-              }}
-              disabled={concluded}
-            >
-              {concluded ? "Worksheet concluded" : "Conclude worksheet"}
-            </Button>
+          <div className="bg-card border border-border shadow-[0_2px_8px_hsl(213_40%_20%/0.06)] rounded-md overflow-hidden">
+            <div className="px-6 py-3.5 bg-card border-b border-border">
+              <span className="text-sm font-semibold text-foreground">Conclusion</span>
+            </div>
+            <div className="px-6 py-5">
+              <Textarea
+                value={conclusion}
+                onChange={(e) => setConclusion(e.target.value)}
+                className="min-h-[72px] text-sm resize-none bg-background"
+              />
+              <div className="flex justify-end mt-4">
+                <Button
+                  onClick={() => {
+                    setConcluded(true);
+                    toast.success("Engagement scope worksheet concluded");
+                  }}
+                  disabled={concluded}
+                >
+                  {concluded ? "Worksheet concluded" : "Conclude worksheet"}
+                </Button>
+              </div>
+            </div>
           </div>
 
         </div>
