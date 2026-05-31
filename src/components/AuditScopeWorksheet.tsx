@@ -115,7 +115,7 @@ function TdInput({
       value={value}
       onChange={(e) => onChange?.(e.target.value)}
       placeholder={placeholder}
-      className={`h-8 text-sm border-0 border-b border-border rounded-none focus:ring-1 focus:ring-primary/30 bg-transparent px-2 ${className}`}
+      className={`h-8 text-sm ${className}`}
     />
   );
 }
@@ -156,7 +156,7 @@ function TdSelect({
 }) {
   return (
     <Select value={value} onValueChange={onChange}>
-      <SelectTrigger className={`h-8 text-sm border-0 border-b border-border rounded-none focus:ring-1 focus:ring-primary/30 bg-transparent ${className}`}>
+      <SelectTrigger className={`h-8 text-sm ${className}`}>
         <SelectValue placeholder={placeholder} />
       </SelectTrigger>
       <SelectContent>
@@ -305,7 +305,7 @@ export function AuditScopeWorksheet({
                                   prev.map((r, i) => (i === idx ? { ...r, pct: v } : r))
                                 );
                               }}
-                              className="h-7 text-sm border-0 border-b border-border rounded-none bg-transparent px-2 w-20 tabular-nums"
+                              className="h-7 text-sm w-20 tabular-nums"
                             />
                           </td>
                           <td className="px-4 py-2.5 align-top text-sm tabular-nums font-medium text-foreground">

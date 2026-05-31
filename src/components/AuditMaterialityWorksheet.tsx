@@ -105,7 +105,7 @@ function TdInput({
       value={value}
       onChange={(e) => onChange?.(e.target.value)}
       placeholder={placeholder}
-      className={`h-8 text-sm border-0 border-b border-border rounded-none focus:ring-1 focus:ring-primary/30 bg-transparent px-2 ${className}`}
+      className={`h-8 text-sm ${className}`}
     />
   );
 }
@@ -123,7 +123,7 @@ function TdSelect({
 }) {
   return (
     <Select value={value} onValueChange={onChange}>
-      <SelectTrigger className="h-8 text-sm border-0 border-b border-border rounded-none focus:ring-1 focus:ring-primary/30 bg-transparent">
+      <SelectTrigger className="h-8 text-sm">
         <SelectValue placeholder={placeholder} />
       </SelectTrigger>
       <SelectContent>
