@@ -92,16 +92,10 @@ function TdInput({
   readOnly?: boolean;
   className?: string;
 }) {
-  
-    
-      <div className={`h-8 px-2 flex items-center text-sm bg-muted/40 text-foreground font-medium tabular-nums ${className}`}>
-        {value ? value : <span className="text-muted-foreground font-normal">—</span>}
-      </div>
-    );
-  }
-  
+  return (
     <Input
       type={type}
+      readOnly={readOnly}
       value={value}
       onChange={(e) => onChange?.(e.target.value)}
       placeholder={placeholder}
@@ -121,7 +115,7 @@ function TdSelect({
   options: { value: string; label: string }[];
   placeholder?: string;
 }) {
-  
+  return (
     <Select value={value} onValueChange={onChange}>
       <SelectTrigger className="h-8 text-sm">
         <SelectValue placeholder={placeholder} />
@@ -249,7 +243,7 @@ export function AuditMaterialityWorksheet({ isUS = false }: AuditMaterialityWork
   const standardRef = isUS ? "AU-C 320" : "CAS 320";
   const title = isUS ? "Materiality — AU-C 320" : "Materiality — CAS 320";
 
-  
+  return (
     <div className="flex flex-col h-full">
       {/* Toolbar */}
       <div className="border-b bg-card px-6 py-3 flex items-center justify-between shrink-0">
