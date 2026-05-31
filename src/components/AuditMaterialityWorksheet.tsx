@@ -301,13 +301,13 @@ export function AuditMaterialityWorksheet({ isUS = false }: AuditMaterialityWork
                 type="date"
                 value={periodStart}
                 onChange={(e) => setPeriodStart(e.target.value)}
-                className="h-8 text-sm w-36"
+                className="h-8 text-sm w-44 pr-2"
               />
               <Input
                 type="date"
                 value={periodEnd}
                 onChange={(e) => setPeriodEnd(e.target.value)}
-                className="h-8 text-sm w-36"
+                className="h-8 text-sm w-44 pr-2"
               />
               <Button variant="outline" size="sm" className="h-8 w-8 p-0 bg-muted/40 border-border">
                 <svg width="14" height="14" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
