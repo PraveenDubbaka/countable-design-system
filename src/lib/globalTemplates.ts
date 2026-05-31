@@ -5087,12 +5087,12 @@ This checklist covers:
 
 // Audit Independence Checklist — CAS 220 / CSQM 1
 export const generateAuditIndependenceChecklist = (): Checklist => {
-  const q = (id: string, text: string, sub?: Question[]): Question => ({
+  const q = (id: string, text: string, sub?: Question[], answer = '', explanation = '', reference = ''): Question => ({
     id, text, answerType: 'yes-no-na' as const, options: ['Yes', 'No', 'NA'],
-    required: false, answer: '', ...(sub ? { subQuestions: sub } : {})
+    required: false, answer, explanation, reference, ...(sub ? { subQuestions: sub } : {})
   });
-  const la = (id: string, text: string): Question => ({
-    id, text, answerType: 'long-answer' as const, options: [], required: false, answer: ''
+  const la = (id: string, text: string, answer = ''): Question => ({
+    id, text, answerType: 'long-answer' as const, options: [], required: false, answer
   });
 
   const sections: Section[] = [
