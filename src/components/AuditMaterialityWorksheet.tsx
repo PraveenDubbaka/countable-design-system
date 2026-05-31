@@ -229,7 +229,10 @@ export function AuditMaterialityWorksheet({ isUS = false }: AuditMaterialityWork
     setEntityRows((prev) => prev.filter((r) => r.id !== id));
   };
 
-  // Total materiality CY (sum of all rows)
+  // Totals for all numeric columns
+  const totalPeriod = sumColumn(entityRows, "periodAmount");
+  const totalExtrapolated = sumColumn(entityRows, "extrapolatedPeriod");
+  const totalBenchmark = sumColumn(entityRows, "benchmarkPct");
   const totalMatCY = sumColumn(entityRows, "materialityCY");
   const totalMatPY = sumColumn(entityRows, "materialityPY");
 
@@ -328,13 +331,13 @@ export function AuditMaterialityWorksheet({ isUS = false }: AuditMaterialityWork
                     <tr className="bg-muted border-b border-border">
                       <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider">Entity Name</th>
                       <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider">Basis for calculations</th>
-                      <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap">
+                      <th className="px-4 py-3 text-right text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap">
                         {periodLabel}
                       </th>
-                      <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap">Extrapolated period ($)</th>
-                      <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap">Benchmark applied (%)</th>
-                      <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap">Materiality CY ($)</th>
-                      <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap">Materiality PY ($)</th>
+                      <th className="px-4 py-3 text-right text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap">Extrapolated period ($)</th>
+                      <th className="px-4 py-3 text-right text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap">Benchmark applied (%)</th>
+                      <th className="px-4 py-3 text-right text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap">Materiality CY ($)</th>
+                      <th className="px-4 py-3 text-right text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap">Materiality PY ($)</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-border">
@@ -356,57 +359,55 @@ export function AuditMaterialityWorksheet({ isUS = false }: AuditMaterialityWork
                             placeholder="Select basis…"
                           />
                         </td>
-                        <td className="px-4 py-2.5 align-top">
+                        <td className="px-4 py-2.5 align-top text-right">
                           <TdInput
                             value={row.periodAmount}
                             onChange={(v) => updateEntityRow(row.id, "periodAmount", v.replace(/[^0-9.]/g, ""))}
                             placeholder="e.g. 12500000"
-                            className="tabular-nums"
+                            className="tabular-nums text-right"
                           />
                         </td>
-                        <td className="px-4 py-2.5 align-top">
+                        <td className="px-4 py-2.5 align-top text-right">
                           <TdInput
                             value={row.extrapolatedPeriod}
                             onChange={(v) => updateEntityRow(row.id, "extrapolatedPeriod", v.replace(/[^0-9.]/g, ""))}
                             placeholder="e.g. 12500000"
-                            className="tabular-nums"
+                            className="tabular-nums text-right"
                           />
                         </td>
-                        <td className="px-4 py-2.5 align-top w-28">
+                        <td className="px-4 py-2.5 align-top w-28 text-right">
                           <TdInput
                             value={row.benchmarkPct}
                             onChange={(v) => updateEntityRow(row.id, "benchmarkPct", v.replace(/[^0-9.]/g, ""))}
                             placeholder="1.00"
-                            className="tabular-nums"
+                            className="tabular-nums text-right"
                           />
                         </td>
-                        <td className="px-4 py-2.5 align-top w-44">
+                        <td className="px-4 py-2.5 align-top w-44 text-right">
                           <TdInput
                             value={formatDisplay(row.materialityCY)}
                             readOnly
-                            className="tabular-nums"
+                            className="tabular-nums text-right"
                           />
                         </td>
-                        <td className="px-4 py-2.5 align-top w-40">
+                        <td className="px-4 py-2.5 align-top w-40 text-right">
                           <TdInput
                             value={row.materialityPY}
                             onChange={(v) => updateEntityRow(row.id, "materialityPY", v.replace(/[^0-9.]/g, ""))}
-                            placeholder="e.g. 112000"
-                            className="tabular-nums"
+                            placeholder="e.g. 0.00"
+                            className="tabular-nums text-right"
                           />
                         </td>
                       </tr>
                     ))}
                     {/* Total row */}
                     <tr className="bg-muted/30 border-t border-border font-semibold">
-                      <td className="px-3 py-2 text-xs text-muted-foreground" colSpan={5}>Total</td>
-                      <td className="px-3 py-2 text-sm tabular-nums text-foreground">
-                        {totalMatCY ? totalMatCY : "—"}
-                      </td>
-                      <td className="px-3 py-2 text-sm tabular-nums text-foreground">
-                        {totalMatPY ? totalMatPY : "—"}
-                      </td>
-                      <td />
+                      <td className="px-4 py-2 text-xs font-semibold text-foreground" colSpan={2}>Total</td>
+                      <td className="px-4 py-2 text-sm tabular-nums text-foreground text-right">{totalPeriod || "—"}</td>
+                      <td className="px-4 py-2 text-sm tabular-nums text-foreground text-right">{totalExtrapolated || "—"}</td>
+                      <td className="px-4 py-2 text-sm tabular-nums text-foreground text-right">{totalBenchmark || "—"}</td>
+                      <td className="px-4 py-2 text-sm tabular-nums text-foreground text-right">{totalMatCY || "—"}</td>
+                      <td className="px-4 py-2 text-sm tabular-nums text-foreground text-right">{totalMatPY || "—"}</td>
                     </tr>
                   </tbody>
                 </table>
