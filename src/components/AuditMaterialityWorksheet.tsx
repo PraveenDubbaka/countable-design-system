@@ -9,7 +9,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Info, RefreshCw, Trash2, Plus, Calendar, Scissors } from "lucide-react";
+import { Info, RefreshCw, Trash2, Plus, Calendar } from "lucide-react";
 import { AddToMyTemplatesDialog } from "@/components/AddToMyTemplatesDialog";
 import { toast } from "sonner";
 
@@ -310,7 +310,9 @@ export function AuditMaterialityWorksheet({ isUS = false }: AuditMaterialityWork
                 className="h-8 text-sm w-36"
               />
               <Button variant="outline" size="sm" className="h-8 w-8 p-0 bg-muted/40 border-border">
-                <Scissors className="h-3.5 w-3.5 text-muted-foreground" />
+                <svg width="14" height="14" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M14 11.5C12.6193 11.5 11.5 12.6193 11.5 14C11.5 15.3807 12.6193 16.5 14 16.5C15.3807 16.5 16.5 15.3807 16.5 14C16.5 12.6193 15.3807 11.5 14 11.5ZM14 11.5V5.66667C14 5.22464 13.8244 4.80072 13.5118 4.48816C13.1993 4.17559 12.7754 4 12.3333 4H9.83333M4 6.5C5.38071 6.5 6.5 5.38071 6.5 4C6.5 2.61929 5.38071 1.5 4 1.5C2.61929 1.5 1.5 2.61929 1.5 4C1.5 5.38071 2.61929 6.5 4 6.5ZM4 6.5V16.5" stroke="#A7B2C2" strokeWidth="1.66667" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
               </Button>
               <div className="flex-1" />
               <Button
