@@ -283,19 +283,20 @@ export function AuditScopeWorksheet({
 
                 {/* Right side: threshold table */}
                 <div className="flex-1 border border-border rounded-lg overflow-hidden">
-                  <table className="w-full text-sm">
-                    <thead>
-                      <tr className="bg-muted/30 border-b border-border">
-                        <th className="px-3 py-2 text-left text-xs font-semibold text-muted-foreground w-1/3">Area</th>
-                        <th className="px-3 py-2 text-left text-xs font-semibold text-muted-foreground w-28">Threshold (%)</th>
-                        <th className="px-3 py-2 text-left text-xs font-semibold text-muted-foreground">Materiality ($)</th>
+                  <div className="overflow-x-auto">
+                  <table className="w-full">
+                    <thead className="sticky top-0 z-10">
+                      <tr className="bg-muted border-b border-border">
+                        <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider w-1/3">Area</th>
+                        <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider w-28">Threshold (%)</th>
+                        <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider">Materiality ($)</th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-border">
                       {thresholdRows.map((row, idx) => (
-                        <tr key={idx} className="hover:bg-muted/10 transition-colors">
-                          <td className="px-3 py-1.5 text-sm text-foreground">{row.label}</td>
-                          <td className="px-1 py-1">
+                        <tr key={idx} className="hover:bg-muted/50 transition-colors">
+                          <td className="px-4 py-2.5 align-top text-sm text-foreground">{row.label}</td>
+                          <td className="px-4 py-2.5 align-top">
                             <Input
                               value={row.pct}
                               onChange={(e) => {
@@ -307,13 +308,14 @@ export function AuditScopeWorksheet({
                               className="h-7 text-sm border-0 border-b border-border rounded-none bg-transparent px-2 w-20 tabular-nums"
                             />
                           </td>
-                          <td className="px-3 py-1.5 text-sm tabular-nums font-medium text-foreground">
+                          <td className="px-4 py-2.5 align-top text-sm tabular-nums font-medium text-foreground">
                             {calcThresholdAmt(materialityAmt, row.pct)}
                           </td>
                         </tr>
                       ))}
                     </tbody>
                   </table>
+                  </div>
                 </div>
               </div>
             </div>
@@ -328,41 +330,40 @@ export function AuditScopeWorksheet({
                 Refresh
               </Button>
             </div>
-            <div className="px-6 py-5">
-              <div className="overflow-x-auto">
-                <table className="w-full text-sm" style={{ minWidth: 900 }}>
-                  <thead>
-                    <tr className="bg-muted/30 border-b border-border">
-                      <th className="px-3 py-2.5 text-left text-xs font-semibold text-muted-foreground w-10">LS</th>
-                      <th className="px-3 py-2.5 text-left text-xs font-semibold text-muted-foreground w-44">Description</th>
-                      <th className="px-3 py-2.5 text-left text-xs font-semibold text-muted-foreground w-28 whitespace-nowrap">
+            <div className="overflow-x-auto">
+                <table className="w-full" style={{ minWidth: 900 }}>
+                  <thead className="sticky top-0 z-10">
+                    <tr className="bg-muted border-b border-border">
+                      <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider w-10">LS</th>
+                      <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider w-44">Description</th>
+                      <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider w-28 whitespace-nowrap">
                         {isUS ? "Current Period ($)" : "Dec31–Dec30 ($)"}
                       </th>
-                      <th className="px-3 py-2.5 text-left text-xs font-semibold text-muted-foreground w-24">Materiality</th>
-                      <th className="px-3 py-2.5 text-left text-xs font-semibold text-muted-foreground w-36 whitespace-nowrap">Material misstatement likely</th>
-                      <th className="px-3 py-2.5 text-left text-xs font-semibold text-muted-foreground">Describe Potential Effect</th>
-                      <th className="px-3 py-2.5 text-left text-xs font-semibold text-muted-foreground w-36">Significant Planned Procedures</th>
+                      <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider w-24">Materiality</th>
+                      <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider w-36 whitespace-nowrap">Material misstatement likely</th>
+                      <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider">Describe Potential Effect</th>
+                      <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider w-36">Significant Planned Procedures</th>
                       <th className="w-8" />
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-border">
                     {fsaRows.map((row) => (
-                      <tr key={row.id} className="hover:bg-muted/10 transition-colors align-top">
-                        <td className="px-1 py-1">
+                      <tr key={row.id} className="hover:bg-muted/50 transition-colors align-top">
+                        <td className="px-4 py-2.5 align-top">
                           <TdInput
                             value={row.ls}
                             onChange={(v) => updateFSARow(row.id, "ls", v)}
                             className="w-12 font-mono"
                           />
                         </td>
-                        <td className="px-1 py-1">
+                        <td className="px-4 py-2.5 align-top">
                           <TdInput
                             value={row.description}
                             onChange={(v) => updateFSARow(row.id, "description", v)}
                             placeholder="Description"
                           />
                         </td>
-                        <td className="px-1 py-1">
+                        <td className="px-4 py-2.5 align-top">
                           <TdInput
                             value={row.periodAmount}
                             onChange={(v) => updateFSARow(row.id, "periodAmount", v.replace(/[^0-9.]/g, ""))}
@@ -370,7 +371,7 @@ export function AuditScopeWorksheet({
                             className="tabular-nums"
                           />
                         </td>
-                        <td className="px-1 py-1">
+                        <td className="px-4 py-2.5 align-top">
                           <TdSelect
                             value={row.materiality}
                             onChange={(v) => updateFSARow(row.id, "materiality", v)}
@@ -381,7 +382,7 @@ export function AuditScopeWorksheet({
                             placeholder="—"
                           />
                         </td>
-                        <td className="px-1 py-1">
+                        <td className="px-4 py-2.5 align-top">
                           <TdSelect
                             value={row.misstatementLikely}
                             onChange={(v) => updateFSARow(row.id, "misstatementLikely", v)}
@@ -393,14 +394,14 @@ export function AuditScopeWorksheet({
                             placeholder="Select…"
                           />
                         </td>
-                        <td className="px-1 py-1">
+                        <td className="px-4 py-2.5 align-top">
                           <TdTextarea
                             value={row.potentialEffect}
                             onChange={(v) => updateFSARow(row.id, "potentialEffect", v)}
                             placeholder="Description"
                           />
                         </td>
-                        <td className="px-1 py-1">
+                        <td className="px-4 py-2.5 align-top">
                           <button
                             onClick={() => toast.info("Map Procedures — link your audit procedures here")}
                             className="text-xs text-primary underline underline-offset-2 hover:text-primary/80 transition-colors px-1"
@@ -420,30 +421,29 @@ export function AuditScopeWorksheet({
                     ))}
                   </tbody>
                 </table>
-              </div>
-              <div className="flex justify-start mt-3">
-                <button
-                  onClick={() =>
-                    setFsaRows((prev) => [
-                      ...prev,
-                      {
-                        id: uid(),
-                        ls: "",
-                        description: "",
-                        periodAmount: "",
-                        materiality: "",
-                        misstatementLikely: "",
-                        potentialEffect: "",
-                        procedures: "",
-                      },
-                    ])
-                  }
-                  className="bg-primary text-white rounded-md px-3 py-1.5 text-sm font-medium flex items-center gap-1.5 hover:bg-primary/90 transition-colors"
-                >
-                  <Plus className="h-4 w-4" />
-                  Add Row
-                </button>
-              </div>
+            </div>
+            <div className="px-6 py-3 border-t border-border">
+              <button
+                onClick={() =>
+                  setFsaRows((prev) => [
+                    ...prev,
+                    {
+                      id: uid(),
+                      ls: "",
+                      description: "",
+                      periodAmount: "",
+                      materiality: "",
+                      misstatementLikely: "",
+                      potentialEffect: "",
+                      procedures: "",
+                    },
+                  ])
+                }
+                className="flex items-center gap-1.5 text-sm font-medium text-primary hover:text-primary/80 transition-colors"
+              >
+                <Plus className="h-4 w-4" />
+                Add Row
+              </button>
             </div>
           </div>
 
@@ -455,20 +455,20 @@ export function AuditScopeWorksheet({
                 <Info className="h-3.5 w-3.5 text-muted-foreground cursor-help" />
               </span>
             </div>
-            <div className="px-6 py-5">
-              <table className="w-full text-sm">
-                <thead>
-                  <tr className="bg-muted/30 border-b border-border">
-                    <th className="px-3 py-2.5 text-left text-xs font-semibold text-muted-foreground">Describe potential misstatements</th>
-                    <th className="px-3 py-2.5 text-left text-xs font-semibold text-muted-foreground">Describe the overall response planned</th>
-                    <th className="px-3 py-2.5 text-left text-xs font-semibold text-muted-foreground w-28">W/P reference</th>
-                    <th className="px-3 py-2.5 text-left text-xs font-semibold text-muted-foreground w-20">Actions</th>
+            <div className="overflow-x-auto">
+              <table className="w-full">
+                <thead className="sticky top-0 z-10">
+                  <tr className="bg-muted border-b border-border">
+                    <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider">Describe potential misstatements</th>
+                    <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider">Describe the overall response planned</th>
+                    <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider w-28">W/P reference</th>
+                    <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider w-20">Actions</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-border">
                   {pervasiveRows.map((row) => (
-                    <tr key={row.id} className="hover:bg-muted/10 transition-colors align-top">
-                      <td className="px-1 py-1">
+                    <tr key={row.id} className="hover:bg-muted/50 transition-colors">
+                      <td className="px-4 py-2.5 align-top">
                         <TdTextarea
                           value={row.misstatement}
                           onChange={(v) =>
@@ -479,7 +479,7 @@ export function AuditScopeWorksheet({
                           placeholder="Describe potential misstatements"
                         />
                       </td>
-                      <td className="px-1 py-1">
+                      <td className="px-4 py-2.5 align-top">
                         <TdTextarea
                           value={row.response}
                           onChange={(v) =>
@@ -490,7 +490,7 @@ export function AuditScopeWorksheet({
                           placeholder="Describe Response"
                         />
                       </td>
-                      <td className="px-1 py-1">
+                      <td className="px-4 py-2.5 align-top">
                         <TdInput
                           value={row.wpRef}
                           onChange={(v) =>
@@ -501,7 +501,7 @@ export function AuditScopeWorksheet({
                           placeholder="-"
                         />
                       </td>
-                      <td className="px-2 py-2 text-center">
+                      <td className="px-4 py-2.5 align-top text-center">
                         <div className="flex items-center gap-1.5 justify-center">
                           <button
                             className="text-muted-foreground hover:text-primary transition-colors"
@@ -524,20 +524,20 @@ export function AuditScopeWorksheet({
                   ))}
                 </tbody>
               </table>
-              <div className="flex justify-start mt-3">
-                <button
-                  onClick={() =>
-                    setPervasiveRows((prev) => [
-                      ...prev,
-                      { id: uid(), misstatement: "", response: "", wpRef: "" },
-                    ])
-                  }
-                  className="bg-primary text-white rounded-md px-3 py-1.5 text-sm font-medium flex items-center gap-1.5 hover:bg-primary/90 transition-colors"
-                >
-                  <Plus className="h-4 w-4" />
-                  Add Row
-                </button>
-              </div>
+            </div>
+            <div className="px-6 py-3 border-t border-border">
+              <button
+                onClick={() =>
+                  setPervasiveRows((prev) => [
+                    ...prev,
+                    { id: uid(), misstatement: "", response: "", wpRef: "" },
+                  ])
+                }
+                className="flex items-center gap-1.5 text-sm font-medium text-primary hover:text-primary/80 transition-colors"
+              >
+                <Plus className="h-4 w-4" />
+                Add Row
+              </button>
             </div>
           </div>
 
@@ -549,20 +549,20 @@ export function AuditScopeWorksheet({
                 <Info className="h-3.5 w-3.5 text-muted-foreground cursor-help" />
               </span>
             </div>
-            <div className="px-6 py-5">
-              <table className="w-full text-sm">
-                <thead>
-                  <tr className="bg-muted/30 border-b border-border">
-                    <th className="px-3 py-2.5 text-left text-xs font-semibold text-muted-foreground">Describe potential misstatements</th>
-                    <th className="px-3 py-2.5 text-left text-xs font-semibold text-muted-foreground">Describe the planned procedures</th>
-                    <th className="px-3 py-2.5 text-left text-xs font-semibold text-muted-foreground w-28">W/P reference</th>
-                    <th className="px-3 py-2.5 text-left text-xs font-semibold text-muted-foreground w-20">Actions</th>
+            <div className="overflow-x-auto">
+              <table className="w-full">
+                <thead className="sticky top-0 z-10">
+                  <tr className="bg-muted border-b border-border">
+                    <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider">Describe potential misstatements</th>
+                    <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider">Describe the planned procedures</th>
+                    <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider w-28">W/P reference</th>
+                    <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider w-20">Actions</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-border">
                   {disclosureRows.map((row) => (
-                    <tr key={row.id} className="hover:bg-muted/10 transition-colors align-top">
-                      <td className="px-1 py-1">
+                    <tr key={row.id} className="hover:bg-muted/50 transition-colors">
+                      <td className="px-4 py-2.5 align-top">
                         <TdTextarea
                           value={row.misstatement}
                           onChange={(v) =>
@@ -573,7 +573,7 @@ export function AuditScopeWorksheet({
                           placeholder="Describe potential misstatements"
                         />
                       </td>
-                      <td className="px-1 py-1">
+                      <td className="px-4 py-2.5 align-top">
                         <TdTextarea
                           value={row.procedures}
                           onChange={(v) =>
@@ -584,7 +584,7 @@ export function AuditScopeWorksheet({
                           placeholder="Describe planned procedures"
                         />
                       </td>
-                      <td className="px-1 py-1">
+                      <td className="px-4 py-2.5 align-top">
                         <TdInput
                           value={row.wpRef}
                           onChange={(v) =>
@@ -595,7 +595,7 @@ export function AuditScopeWorksheet({
                           placeholder="-"
                         />
                       </td>
-                      <td className="px-2 py-2 text-center">
+                      <td className="px-4 py-2.5 align-top text-center">
                         <div className="flex items-center gap-1.5 justify-center">
                           <button
                             className="text-muted-foreground hover:text-primary transition-colors"
@@ -618,20 +618,20 @@ export function AuditScopeWorksheet({
                   ))}
                 </tbody>
               </table>
-              <div className="flex justify-start mt-3">
-                <button
-                  onClick={() =>
-                    setDisclosureRows((prev) => [
-                      ...prev,
-                      { id: uid(), misstatement: "", procedures: "", wpRef: "" },
-                    ])
-                  }
-                  className="bg-primary text-white rounded-md px-3 py-1.5 text-sm font-medium flex items-center gap-1.5 hover:bg-primary/90 transition-colors"
-                >
-                  <Plus className="h-4 w-4" />
-                  Add Row
-                </button>
-              </div>
+            </div>
+            <div className="px-6 py-3 border-t border-border">
+              <button
+                onClick={() =>
+                  setDisclosureRows((prev) => [
+                    ...prev,
+                    { id: uid(), misstatement: "", procedures: "", wpRef: "" },
+                  ])
+                }
+                className="flex items-center gap-1.5 text-sm font-medium text-primary hover:text-primary/80 transition-colors"
+              >
+                <Plus className="h-4 w-4" />
+                Add Row
+              </button>
             </div>
           </div>
 

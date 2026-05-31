@@ -318,32 +318,32 @@ export function AuditMaterialityWorksheet({ isUS = false }: AuditMaterialityWork
 
               {/* Main table */}
               <div className="overflow-x-auto">
-                <table className="w-full text-sm">
-                  <thead>
-                    <tr className="bg-muted/30 border-b border-border">
-                      <th className="px-3 py-2.5 text-left text-xs font-semibold text-muted-foreground">Entity Name</th>
-                      <th className="px-3 py-2.5 text-left text-xs font-semibold text-muted-foreground">Basis for calculations</th>
-                      <th className="px-3 py-2.5 text-left text-xs font-semibold text-muted-foreground whitespace-nowrap">
+                <table className="w-full">
+                  <thead className="sticky top-0 z-10">
+                    <tr className="bg-muted border-b border-border">
+                      <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider">Entity Name</th>
+                      <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider">Basis for calculations</th>
+                      <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap">
                         {periodEnd ? new Date(periodEnd).getFullYear() : "Period"} ($)
                       </th>
-                      <th className="px-3 py-2.5 text-left text-xs font-semibold text-muted-foreground whitespace-nowrap">Extrapolated period ($)</th>
-                      <th className="px-3 py-2.5 text-left text-xs font-semibold text-muted-foreground whitespace-nowrap">Benchmark applied (%)</th>
-                      <th className="px-3 py-2.5 text-left text-xs font-semibold text-muted-foreground whitespace-nowrap">Materiality CY ($) — CALCULATED</th>
-                      <th className="px-3 py-2.5 text-left text-xs font-semibold text-muted-foreground whitespace-nowrap">Materiality PY ($) — for reference</th>
+                      <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap">Extrapolated period ($)</th>
+                      <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap">Benchmark applied (%)</th>
+                      <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap">Materiality CY ($) — CALCULATED</th>
+                      <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap">Materiality PY ($) — for reference</th>
                       <th className="w-8" />
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-border">
                     {entityRows.map((row) => (
-                      <tr key={row.id} className="hover:bg-muted/10 transition-colors">
-                        <td className="px-1 py-1">
+                      <tr key={row.id} className="hover:bg-muted/50 transition-colors">
+                        <td className="px-4 py-2.5 align-top">
                           <TdInput
                             value={row.entityName}
                             onChange={(v) => updateEntityRow(row.id, "entityName", v)}
                             placeholder="Entity name"
                           />
                         </td>
-                        <td className="px-1 py-1 min-w-[160px]">
+                        <td className="px-4 py-2.5 align-top min-w-[160px]">
                           <TdSelect
                             value={row.basis}
                             onChange={(v) => updateEntityRow(row.id, "basis", v)}
@@ -351,7 +351,7 @@ export function AuditMaterialityWorksheet({ isUS = false }: AuditMaterialityWork
                             placeholder="Select basis…"
                           />
                         </td>
-                        <td className="px-1 py-1">
+                        <td className="px-4 py-2.5 align-top">
                           <TdInput
                             value={row.periodAmount}
                             onChange={(v) => updateEntityRow(row.id, "periodAmount", v.replace(/[^0-9.]/g, ""))}
@@ -359,7 +359,7 @@ export function AuditMaterialityWorksheet({ isUS = false }: AuditMaterialityWork
                             className="tabular-nums"
                           />
                         </td>
-                        <td className="px-1 py-1">
+                        <td className="px-4 py-2.5 align-top">
                           <TdInput
                             value={row.extrapolatedPeriod}
                             onChange={(v) => updateEntityRow(row.id, "extrapolatedPeriod", v.replace(/[^0-9.]/g, ""))}
@@ -367,7 +367,7 @@ export function AuditMaterialityWorksheet({ isUS = false }: AuditMaterialityWork
                             className="tabular-nums"
                           />
                         </td>
-                        <td className="px-1 py-1 w-28">
+                        <td className="px-4 py-2.5 align-top w-28">
                           <TdInput
                             value={row.benchmarkPct}
                             onChange={(v) => updateEntityRow(row.id, "benchmarkPct", v.replace(/[^0-9.]/g, ""))}
@@ -375,14 +375,14 @@ export function AuditMaterialityWorksheet({ isUS = false }: AuditMaterialityWork
                             className="tabular-nums"
                           />
                         </td>
-                        <td className="px-1 py-1 w-44">
+                        <td className="px-4 py-2.5 align-top w-44">
                           <TdInput
                             value={row.materialityCY}
                             readOnly
                             className="tabular-nums"
                           />
                         </td>
-                        <td className="px-1 py-1 w-40">
+                        <td className="px-4 py-2.5 align-top w-40">
                           <TdInput
                             value={row.materialityPY}
                             onChange={(v) => updateEntityRow(row.id, "materialityPY", v.replace(/[^0-9.]/g, ""))}
@@ -415,16 +415,15 @@ export function AuditMaterialityWorksheet({ isUS = false }: AuditMaterialityWork
                   </tbody>
                 </table>
               </div>
-
-              <div className="flex justify-start mt-3">
-                <button
-                  onClick={addEntityRow}
-                  className="bg-primary text-white rounded-md px-3 py-1.5 text-sm font-medium flex items-center gap-1.5 hover:bg-primary/90 transition-colors"
-                >
-                  <Plus className="h-4 w-4" />
-                  Add Row
-                </button>
-              </div>
+            </div>
+            <div className="px-6 py-3 border-t border-border">
+              <button
+                onClick={addEntityRow}
+                className="flex items-center gap-1.5 text-sm font-medium text-primary hover:text-primary/80 transition-colors"
+              >
+                <Plus className="h-4 w-4" />
+                Add Row
+              </button>
             </div>
           </div>
 
@@ -433,12 +432,18 @@ export function AuditMaterialityWorksheet({ isUS = false }: AuditMaterialityWork
             <div className="px-6 py-3.5 bg-card border-b border-border flex items-center gap-3">
               <span className="text-sm font-semibold text-foreground">Clearly Trivial Misstatements</span>
             </div>
-            <div className="px-6 py-5">
-              <table className="w-full text-sm">
-                <tbody>
-                  <tr className="hover:bg-muted/10 transition-colors">
-                    <td className="py-2 text-sm text-muted-foreground w-40">Threshold (%)</td>
-                    <td className="py-1 w-36">
+            <div className="overflow-x-auto">
+              <table className="w-full">
+                <thead className="sticky top-0 z-10">
+                  <tr className="bg-muted border-b border-border">
+                    <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider w-40">Item</th>
+                    <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider">Value</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-border">
+                  <tr className="hover:bg-muted/50 transition-colors">
+                    <td className="px-4 py-2.5 align-top text-sm text-muted-foreground">Threshold (%)</td>
+                    <td className="px-4 py-2.5 align-top w-36">
                       <TdInput
                         value={ctThresholdPct}
                         onChange={(v) => setCtThresholdPct(v.replace(/[^0-9.]/g, ""))}
@@ -447,9 +452,9 @@ export function AuditMaterialityWorksheet({ isUS = false }: AuditMaterialityWork
                       />
                     </td>
                   </tr>
-                  <tr className="hover:bg-muted/10 transition-colors border-t border-border">
-                    <td className="py-2 text-sm text-muted-foreground">Amount ($)</td>
-                    <td className="py-2 text-sm font-semibold tabular-nums text-foreground">
+                  <tr className="hover:bg-muted/50 transition-colors">
+                    <td className="px-4 py-2.5 align-top text-sm text-muted-foreground">Amount ($)</td>
+                    <td className="px-4 py-2.5 align-top text-sm font-semibold tabular-nums text-foreground">
                       {ctAmount ? ctAmount : "—"}
                     </td>
                   </tr>
@@ -510,19 +515,19 @@ export function AuditMaterialityWorksheet({ isUS = false }: AuditMaterialityWork
                 <Info className="h-3.5 w-3.5 text-muted-foreground cursor-help" />
               </span>
             </div>
-            <div className="px-6 py-5">
-              <table className="w-full text-sm">
-                <thead>
-                  <tr className="bg-muted/30 border-b border-border">
-                    <th className="px-3 py-2.5 text-left text-xs font-semibold text-muted-foreground w-1/3">Users</th>
-                    <th className="px-3 py-2.5 text-left text-xs font-semibold text-muted-foreground">Factors affecting users decision making</th>
-                    <th className="px-3 py-2.5 text-left text-xs font-semibold text-muted-foreground w-16">Action</th>
+            <div className="overflow-x-auto">
+              <table className="w-full">
+                <thead className="sticky top-0 z-10">
+                  <tr className="bg-muted border-b border-border">
+                    <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider w-1/3">Users</th>
+                    <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider">Factors affecting users decision making</th>
+                    <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider w-16">Action</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-border">
                   {intendedUsers.map((u) => (
-                    <tr key={u.id} className="hover:bg-muted/10 transition-colors">
-                      <td className="px-1 py-1">
+                    <tr key={u.id} className="hover:bg-muted/50 transition-colors">
+                      <td className="px-4 py-2.5 align-top">
                         <TdInput
                           value={u.user}
                           onChange={(v) =>
@@ -533,7 +538,7 @@ export function AuditMaterialityWorksheet({ isUS = false }: AuditMaterialityWork
                           placeholder="Define user"
                         />
                       </td>
-                      <td className="px-1 py-1">
+                      <td className="px-4 py-2.5 align-top">
                         <TdInput
                           value={u.factors}
                           onChange={(v) =>
@@ -544,7 +549,7 @@ export function AuditMaterialityWorksheet({ isUS = false }: AuditMaterialityWork
                           placeholder="Describe factors"
                         />
                       </td>
-                      <td className="px-3 py-1 text-center">
+                      <td className="px-4 py-2.5 align-top text-center">
                         <button
                           onClick={() =>
                             setIntendedUsers((prev) => prev.filter((x) => x.id !== u.id))
@@ -559,17 +564,17 @@ export function AuditMaterialityWorksheet({ isUS = false }: AuditMaterialityWork
                   ))}
                 </tbody>
               </table>
-              <div className="flex justify-start mt-3">
-                <button
-                  onClick={() =>
-                    setIntendedUsers((prev) => [...prev, { id: uid(), user: "", factors: "" }])
-                  }
-                  className="bg-primary text-white rounded-md px-3 py-1.5 text-sm font-medium flex items-center gap-1.5 hover:bg-primary/90 transition-colors"
-                >
-                  <Plus className="h-4 w-4" />
-                  Add Row
-                </button>
-              </div>
+            </div>
+            <div className="px-6 py-3 border-t border-border">
+              <button
+                onClick={() =>
+                  setIntendedUsers((prev) => [...prev, { id: uid(), user: "", factors: "" }])
+                }
+                className="flex items-center gap-1.5 text-sm font-medium text-primary hover:text-primary/80 transition-colors"
+              >
+                <Plus className="h-4 w-4" />
+                Add Row
+              </button>
             </div>
           </div>
 
@@ -581,19 +586,19 @@ export function AuditMaterialityWorksheet({ isUS = false }: AuditMaterialityWork
                 <Info className="h-3.5 w-3.5 text-muted-foreground cursor-help" />
               </span>
             </div>
-            <div className="px-6 py-5">
-              <table className="w-full text-sm">
-                <thead>
-                  <tr className="bg-muted/30 border-b border-border">
-                    <th className="px-3 py-2.5 text-left text-xs font-semibold text-muted-foreground w-1/2">Nature</th>
-                    <th className="px-3 py-2.5 text-left text-xs font-semibold text-muted-foreground">Impact</th>
-                    <th className="px-3 py-2.5 text-left text-xs font-semibold text-muted-foreground w-16">Action</th>
+            <div className="overflow-x-auto">
+              <table className="w-full">
+                <thead className="sticky top-0 z-10">
+                  <tr className="bg-muted border-b border-border">
+                    <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider w-1/2">Nature</th>
+                    <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider">Impact</th>
+                    <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider w-16">Action</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-border">
                   {qualitative.map((item) => (
-                    <tr key={item.id} className="hover:bg-muted/10 transition-colors">
-                      <td className="px-1 py-1">
+                    <tr key={item.id} className="hover:bg-muted/50 transition-colors">
+                      <td className="px-4 py-2.5 align-top">
                         <TdInput
                           value={item.nature}
                           onChange={(v) =>
@@ -604,7 +609,7 @@ export function AuditMaterialityWorksheet({ isUS = false }: AuditMaterialityWork
                           placeholder="Describe Nature"
                         />
                       </td>
-                      <td className="px-1 py-1">
+                      <td className="px-4 py-2.5 align-top">
                         <TdInput
                           value={item.impact}
                           onChange={(v) =>
@@ -615,7 +620,7 @@ export function AuditMaterialityWorksheet({ isUS = false }: AuditMaterialityWork
                           placeholder="Describe impact"
                         />
                       </td>
-                      <td className="px-3 py-1 text-center">
+                      <td className="px-4 py-2.5 align-top text-center">
                         <button
                           onClick={() =>
                             setQualitative((prev) => prev.filter((x) => x.id !== item.id))
@@ -630,17 +635,17 @@ export function AuditMaterialityWorksheet({ isUS = false }: AuditMaterialityWork
                   ))}
                 </tbody>
               </table>
-              <div className="flex justify-start mt-3">
-                <button
-                  onClick={() =>
-                    setQualitative((prev) => [...prev, { id: uid(), nature: "", impact: "" }])
-                  }
-                  className="bg-primary text-white rounded-md px-3 py-1.5 text-sm font-medium flex items-center gap-1.5 hover:bg-primary/90 transition-colors"
-                >
-                  <Plus className="h-4 w-4" />
-                  Add Row
-                </button>
-              </div>
+            </div>
+            <div className="px-6 py-3 border-t border-border">
+              <button
+                onClick={() =>
+                  setQualitative((prev) => [...prev, { id: uid(), nature: "", impact: "" }])
+                }
+                className="flex items-center gap-1.5 text-sm font-medium text-primary hover:text-primary/80 transition-colors"
+              >
+                <Plus className="h-4 w-4" />
+                Add Row
+              </button>
             </div>
           </div>
 
