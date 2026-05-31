@@ -328,7 +328,7 @@ export function AuditMaterialityWorksheet({ isUS = false }: AuditMaterialityWork
                       </th>
                       <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap">Extrapolated period ($)</th>
                       <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap">Benchmark applied (%)</th>
-                      <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap">Materiality CY ($) — CALCULATED</th>
+                      <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap">Materiality CY ($)</th>
                       <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap">Materiality PY ($) — for reference</th>
                       <th className="w-8" />
                     </tr>
