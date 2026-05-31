@@ -103,15 +103,9 @@ function TdInput({
   readOnly?: boolean;
   className?: string;
 }) {
-  if (readOnly) {
-    return (
-      <div className={`h-8 px-2 flex items-center text-sm bg-muted/40 text-foreground font-medium tabular-nums ${className}`}>
-        {value ? value : <span className="text-muted-foreground font-normal">—</span>}
-      </div>
-    );
-  }
   return (
     <Input
+      readOnly={readOnly}
       value={value}
       onChange={(e) => onChange?.(e.target.value)}
       placeholder={placeholder}
@@ -136,7 +130,7 @@ function TdTextarea({
       value={value}
       onChange={(e) => onChange(e.target.value)}
       placeholder={placeholder}
-      className={`min-h-[56px] text-sm resize-none border-0 shadow-none p-1 focus-visible:ring-0 bg-transparent ${className}`}
+      className={`min-h-[56px] text-sm resize-none ${className}`}
     />
   );
 }
