@@ -12,6 +12,7 @@ import { DocumentView } from "@/components/DocumentView";
 import { LetterView } from "@/components/LetterView";
 import { AuditMaterialityWorksheet } from "@/components/AuditMaterialityWorksheet";
 import { AuditScopeWorksheet } from "@/components/AuditScopeWorksheet";
+import { AuditPAPWorksheet } from "@/components/AuditPAPWorksheet";
 import { FloatingActionBar } from "@/components/FloatingActionBar";
 import { EngagementRightPanel } from "@/components/EngagementRightPanel";
 import { Checklist, Question } from "@/types/checklist";
@@ -1147,6 +1148,8 @@ export default function EngagementDetail() {
             <AuditMaterialityWorksheet isUS={checklistKey === 'aud-us-mat'} />
           ) : (checklistKey === 'aud-scope' || checklistKey === 'aud-us-scope') ? (
             <AuditScopeWorksheet isUS={checklistKey === 'aud-us-scope'} />
+          ) : (checklistKey === 'aud-pap' || checklistKey === 'aud-us-pap') ? (
+            <AuditPAPWorksheet isUS={checklistKey === 'aud-us-pap'} />
           ) : checklist ? (
             <div className="p-4">
               {/* Clipboard prompt banner */}
