@@ -326,14 +326,6 @@ export function AuditPAPWorksheet({ isUS = false }: AuditPAPWorksheetProps) {
 
   return (
     <div className="flex flex-col h-full">
-      {/* Toolbar */}
-      <div className="border-b bg-card px-6 py-3 flex items-center justify-between shrink-0">
-        <h1 className="text-lg font-semibold text-foreground">{title}</h1>
-        <Button variant="outline" size="sm" onClick={() => setShowAddDialog(true)}>
-          <Plus className="h-4 w-4 mr-1" />
-          Add to My Templates
-        </Button>
-      </div>
 
       {/* Objective bar */}
       <div className="px-6 py-2.5 border-b border-border bg-primary/[0.03] flex items-start gap-2 shrink-0">
