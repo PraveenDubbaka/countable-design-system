@@ -157,11 +157,11 @@ const netIncome = { original: 847000, adj: 0.00, final: 847000, py1: 740000, py2
 export default function TrialBalance() {
   const navigate = useNavigate();
   const { engagementId } = useParams();
-  const [dateFilter] = useState("Dec 31 2025");
+  const [dateFilter] = useState("Dec 31 2024");
   const [hideZeroAcc, setHideZeroAcc] = useState(false);
   const zeroAccCount = 0;
   const [isToolbarExpanded, setIsToolbarExpanded] = useState(true);
-  const [activeFilters, setActiveFilters] = useState<Set<FilterId>>(new Set(["unmapped"]));
+  const [activeFilters, setActiveFilters] = useState<Set<FilterId>>(new Set());
   const { isCollapsed: isPanelCollapsed, toggle: togglePanel } = useSecondaryPanel();
 
   const toggleFilter = (id: FilterId) => {
