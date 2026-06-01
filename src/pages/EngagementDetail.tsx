@@ -25,6 +25,7 @@ import { useClientResponses } from "@/hooks/useClientResponses";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter, DialogClose } from "@/components/ui/dialog";
 import { DeleteChecklistDialog } from "@/components/DeleteChecklistDialog";
 import { AddChecklistSheet } from "@/components/AddChecklistSheet";
+import { AuditASMImportBanner } from "@/components/AuditASMImportBanner";
 import { useSecondaryPanel } from "@/hooks/useSecondaryPanel";
 import {
   generateClientAcceptanceContinuanceChecklist,
@@ -1152,6 +1153,14 @@ export default function EngagementDetail() {
             <AuditPAPWorksheet isUS={checklistKey === 'aud-us-pap'} />
           ) : checklist ? (
             <div className="p-4">
+              {/* ASM import banner */}
+              {(checklistKey === 'aud-asm' || checklistKey === 'aud-us-asm') && checklist && (
+                <AuditASMImportBanner
+                  checklist={checklist}
+                  onUpdate={handleChecklistUpdate}
+                  isUS={checklistKey === 'aud-us-asm'}
+                />
+              )}
               {/* Clipboard prompt banner */}
               {showClipboardPrompt && clipboardResponses && (
                 <div className="flex items-center gap-3 mb-4 px-4 py-3 bg-amber-50 rounded-lg border border-amber-300 shadow-sm">

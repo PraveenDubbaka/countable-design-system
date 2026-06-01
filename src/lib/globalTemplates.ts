@@ -8749,60 +8749,81 @@ export const generateAuditStrategyMemorandumChecklist = (): Checklist => {
   const sections: Section[] = [
     {
       id: 'section-asm-1',
-      title: '1. Engagement Characteristics',
+      title: '1. Reporting requirements',
       questions: [
-        q('asm-q1a', '<p>Has the entity type been documented (public, private, NPO, government) along with the applicable financial reporting framework?</p>', undefined, 'Yes', '<p>Shipping Line Inc. documented as a private company applying ASPE. Entity is engaged in marine freight and logistics with year-end March 31, 2024.</p>', 'W/P Ref: ASM-01'),
-        q('asm-q1b', '<p>Have the reporting deadlines (draft financial statements, board approval, filing deadline) been confirmed and documented?</p>', undefined, 'Yes', '<p>Draft financial statements to management by May 10, 2024. Final signed report by May 31, 2024 to meet bank covenant deadline. Confirmed with management and documented in engagement timeline.</p>', 'W/P Ref: PL-03'),
-        q('asm-q1c', '<p>Has the prior year audit file been reviewed to identify carry-forward issues, prior year adjustments, and significant accounting estimates?</p>', undefined, 'Yes', '<p>Prior year file reviewed. No carry-forward issues noted. Prior year adjustments were immaterial. Significant estimates include useful lives of vessels and allowance for doubtful accounts.</p>', 'W/P Ref: ASM-01'),
-        q('asm-q1d', '<p>Have changes in the entity\'s business, operations or environment since the prior period been assessed for their impact on the audit?</p>', undefined, 'Yes', '<p>Two new freight contracts commenced during the year. USD-denominated revenue has increased, heightening foreign currency translation risk. Both changes have been assessed for audit impact.</p>', 'W/P Ref: ASM-01'),
-        q('asm-q1e', '<p>Have new accounting standards effective for the current period been identified and assessed for their impact on the financial statements?</p>', undefined, 'Yes', '<p>No new ASPE standards effective for the year ended March 31, 2024 that have a material impact on Shipping Line Inc.\'s financial statements.</p>', 'W/P Ref: ASM-01'),
+        q('asm-q1-1', '<p>The applicable financial reporting framework (such as Canadian Accounting Standards for Private Enterprises (ASPE)).</p>', undefined, 'Yes', 'ASPE — Canadian Accounting Standards for Private Enterprises. Entity is a private corporation engaged in marine freight and logistics.'),
+        q('asm-q1-2', '<p>Industry-specific or specialized requirements.</p>', undefined, 'Yes', 'Marine industry: vessel ownership regulations, Transport Canada licensing, HAZ MAT shipping requirements, customs/border regulations.'),
       ],
       isExpanded: true
     },
     {
       id: 'section-asm-2',
-      title: '2. Audit Approach',
+      title: '2. Timing',
       questions: [
-        q('asm-q2a', '<p>Has the overall audit approach been determined — primarily substantive, or combined (reliance on controls + substantive procedures)?</p>', undefined, 'Yes', '<p>Primarily substantive approach adopted given the entity\'s limited formal control structure and size. Some reliance on controls for payroll and cash disbursements where controls were assessed as effective.</p>', 'W/P Ref: ASM-02'),
-        q('asm-q2b', '<p>Have the key audit areas (significant accounts and disclosures, significant risks) been identified and the planned audit approach for each documented?</p>', undefined, 'Yes', '<p>Key audit areas identified: revenue recognition (voyage cut-off), vessel PP&E and impairment ($8.2M), AR ($2.1M), long-term debt ($4.8M), and foreign currency transactions. Planned approach documented in the audit program.</p>', 'W/P Ref: ASM-02'),
-        q('asm-q2c', '<p>Has the extent to which IT-assisted audit techniques (CAATs, data analytics) will be used been determined?</p>', undefined, 'Yes', '<p>Data analytics will be used to test completeness of voyage revenue through analysis of freight billing records against voyage completion data. Standard substantive procedures for remaining areas.</p>', 'W/P Ref: ASM-02'),
-        q('asm-q2d', '<p>Has the use of work of internal auditors, management\'s experts or component auditors been assessed and the planned approach documented?</p>', undefined, 'NA', '<p>The entity has no internal audit function. No management\'s experts or component auditors are used. Not applicable.</p>'),
-        q('asm-q2e', '<p>Has materiality (overall, performance materiality, and clearly trivial threshold) been set and documented in the strategy memorandum?</p>', undefined, 'Yes', '<p>Overall materiality $125,000 (1% of revenue $12.5M). Performance materiality $87,500 (70% of OM). Clearly trivial threshold $6,250 (5% of OM). All documented in the Materiality working paper.</p>', 'W/P Ref: MAT-01'),
+        q('asm-q2-1', '<p>Entity\'s reporting deadlines (if any).</p>', undefined, 'Yes', 'Draft financial statements to management by May 10, 2024. Signed report by May 31, 2024 (bank covenant deadline).'),
+        q('asm-q2-2', '<p>Team planning discussions. <span class="text-muted-foreground text-xs">(CAS 300.7-8)</span></p>', undefined, 'Yes', 'Planning meeting held April 14, 2024. Attendees: J. Williams (Partner), S. Chen (Manager), A. Kumar (Senior), T. Nguyen (Staff), R. Patel (CFO — Shipping Line Inc.), M. Singh (Controller — Shipping Line Inc.).'),
+        q('asm-q2-3', '<p>Planned fieldwork start/end.</p>', undefined, 'Yes', 'Fieldwork: April 14–25, 2024. Interim fieldwork: N/A (year-end only engagement).'),
+        q('asm-q2-4', '<p>File reviews (including EQCR).</p>', undefined, 'Yes', 'Manager review: ongoing during fieldwork. Partner review: May 1, 2024. EQCR: May 5, 2024 (if required).'),
+        q('asm-q2-5', '<p>Meetings with management and TCWG.</p>', undefined, 'Yes', 'Planning meeting with management: April 14, 2024. TCWG communication at completion: May 15, 2024.'),
+        q('asm-q2-6', '<p>Other (specify).</p>', undefined, 'NA', ''),
       ],
       isExpanded: true
     },
     {
       id: 'section-asm-3',
-      title: '3. Staffing & Resource Allocation',
+      title: '3. Factors to consider in the audit',
+      note: 'Identify key areas to be addressed in the audit:',
       questions: [
-        q('asm-q3a', '<p>Has the engagement partner been identified and their responsibility for the overall engagement quality confirmed?</p>', undefined, 'Yes', '<p>Engagement partner J. Williams, CPA identified and confirmed as responsible for overall engagement quality. Partner has prior experience with maritime logistics clients.</p>', 'W/P Ref: ASM-03'),
-        q('asm-q3b', '<p>Has the engagement manager been assigned and their responsibility for day-to-day supervision confirmed?</p>', undefined, 'Yes', '<p>Engagement manager S. Chen, CPA assigned with responsibility for day-to-day supervision and review. Manager has five years of experience in audit engagements.</p>', 'W/P Ref: ASM-03'),
-        q('asm-q3c', '<p>Has the engagement team (seniors, staff) been assigned with appropriate competence and experience for the engagement?</p>', undefined, 'Yes', '<p>Two senior auditors and one staff auditor assigned. Team composition reviewed by the engagement partner and assessed as appropriate for the complexity and risk profile of the engagement.</p>', 'W/P Ref: ASM-03'),
-        q('asm-q3d', '<p>Has the need for specialists (e.g., IT, valuation, actuarial) been identified and arrangements made?</p>', undefined, 'No', '<p>No specialists required for this engagement. Vessel valuations are performed using management\'s internal assessment supported by market data, which will be reviewed as part of standard audit procedures.</p>'),
-        q('asm-q3e', '<p>Has an engagement quality reviewer been assigned if required under the firm\'s quality management policies?</p>', undefined, 'NA', '<p>Engagement quality review not required for this engagement under the firm\'s quality management policies given the entity\'s risk profile and size.</p>'),
+        q('asm-q3-1', '<p>Material financial statement areas and disclosures (Form 590).</p>', undefined, 'Yes', 'Material FS areas: Vessels & PP&E ($8.2M), Long-term debt ($4.8M), Revenue ($12.5M), Accounts receivable ($2.1M), Inventory ($750K). See Form 590.'),
+        q('asm-q3-2', '<p>Major operational or control changes during the period.</p>', undefined, 'Yes', 'Two new freight contracts commenced Q3 2024. USD revenue exposure increased (~35% of revenue). New crew management software implemented Q2 2024.'),
+        q('asm-q3-3', '<p>Impact of changes in accounting standards.</p>', undefined, 'Yes', 'No new ASPE standards effective for year ended March 31, 2024 with material impact. ASPE s.3462 — Employee Future Benefits: no defined benefit plans.'),
+        q('asm-q3-4', '<p>Matters raised (such as problem areas) from past experience.</p>', undefined, 'Yes', 'First-year engagement with Shipping Line Inc. No predecessor findings received. Prior year tax return reviewed — no unusual adjustments.'),
+        q('asm-q3-5', '<p>Significant risks and going-concern uncertainties.</p>', undefined, 'Yes', 'Significant risks: Revenue recognition (voyage completion method), vessel impairment ($8.2M book value), USD foreign exchange exposure. Going concern: no indicators identified. See Form 540.'),
+        q('asm-q3-6', '<p>Use of auditor experts.</p>', undefined, 'NA', 'No auditor\'s experts required for this engagement.'),
+        q('asm-q3-7', '<p>Use of service organization reports.</p>', undefined, 'NA', 'No service organization reports applicable.'),
+        q('asm-q3-8', '<p>Use of component auditors.</p>', undefined, 'NA', 'Single entity — no component auditors.'),
+        q('asm-q3-9', '<p>Coordination of work with a group auditor.</p>', undefined, 'NA', 'Not applicable — Shipping Line Inc. is not part of a group.'),
+        q('asm-q3-10', '<p>Need for stand-alone audited financial statements of subsidiaries.</p>', undefined, 'NA', 'Not applicable.'),
+        q('asm-q3-11', '<p>Key audit matters (where applicable).</p>', undefined, 'NA', 'Not applicable — ASPE engagement; key audit matters reporting not required.'),
       ],
       isExpanded: true
     },
     {
       id: 'section-asm-4',
-      title: '4. Communication Plan',
+      title: '4. Audit team',
+      note: 'Identify the audit team members assigned and their roles.\n\nEnsure the assignment of appropriately experienced team members to areas where there may be higher risks of material misstatement.',
       questions: [
-        q('asm-q4a', '<p>Have the planned communications with those charged with governance (TCWG) been identified — planning communication, matters during the audit, final communication?</p>', undefined, 'Yes', '<p>TCWG planning communication issued February 28, 2024. Final communication to TCWG planned upon completion of fieldwork prior to report issuance. Board of directors serves as TCWG.</p>', 'W/P Ref: TCWG-01'),
-        q('asm-q4b', '<p>Have the dates for interim fieldwork and final fieldwork been confirmed with management and the engagement team?</p>', undefined, 'Yes', '<p>No interim fieldwork planned for this engagement. Year-end fieldwork confirmed April 14–25, 2024 with management. Engagement team notified and availability confirmed.</p>', 'W/P Ref: PL-03'),
-        q('asm-q4c', '<p>Has the approach for communicating significant audit findings and significant difficulties encountered during the audit been established?</p>', undefined, 'Yes', '<p>Significant findings will be communicated verbally to the engagement manager and partner as encountered, and documented in working papers. Formal written communication to management at the conclusion of fieldwork.</p>', 'W/P Ref: ASM-04'),
-        q('asm-q4d', '<p>Where the entity has related parties or component entities, has the communication approach with component auditors been established?</p>', undefined, 'NA', '<p>No component auditors involved. Not applicable.</p>'),
+        q('asm-q4-1', '<p>Partner</p>', undefined, 'Yes', 'J. Williams, CPA — Engagement Partner. 18 years experience in maritime and transportation sector audits. Responsible for overall engagement quality and significant judgments.'),
+        q('asm-q4-2', '<p>Manager</p>', undefined, 'Yes', 'S. Chen, CPA — Engagement Manager. 9 years experience. Responsible for fieldwork coordination, revenue, AR, completion procedures.'),
+        q('asm-q4-3', '<p>Senior</p>', undefined, 'Yes', 'A. Kumar — Senior Associate. 4 years experience. Responsible for PP&E, debt, inventory, foreign currency.'),
+        q('asm-q4-4', '<p>Assistant</p>', undefined, 'Yes', 'T. Nguyen — Staff Associate. 1 year experience. Responsible for payroll, AP, expenses, cash.'),
+        q('asm-q4-5', '<p>Assistant 1</p>', undefined, 'NA', ''),
+        q('asm-q4-6', '<p>Expert</p>', undefined, 'NA', ''),
+        q('asm-q4-7', '<p>EQCR</p>', undefined, 'NA', 'EQCR not required for this engagement — private company, no listed entity.'),
       ],
       isExpanded: true
     },
     {
       id: 'section-asm-5',
-      title: '5. Significant Risks Identified at Planning Stage',
+      title: '5. Budget',
       questions: [
-        q('asm-q5a', '<p>Have significant risks identified during planning (CAS 315) been documented in the strategy memorandum and linked to planned audit responses?</p>', undefined, 'Yes', '<p>Three significant risks identified: (1) revenue recognition — voyage completion cut-off, (2) vessel impairment assessment ($8.2M), and (3) foreign currency translation (USD transactions). Each linked to specific audit responses in the audit program.</p>', 'W/P Ref: RA-01'),
-        q('asm-q5b', '<p>Has the presumed fraud risk related to revenue recognition been addressed, or has the rebuttal of this presumption been documented with supporting rationale?</p>', undefined, 'Yes', '<p>Revenue recognition identified as a significant risk (not rebutted). Specific procedures designed to address voyage cut-off and completeness of freight revenue recorded at March 31, 2024.</p>', 'W/P Ref: RA-02'),
-        q('asm-q5c', '<p>Has the risk of management override of controls been identified as a significant risk and planned responses documented?</p>', undefined, 'Yes', '<p>Risk of management override identified as a significant risk per CAS 240. Planned responses include journal entry testing, review of accounting estimates for bias, and evaluation of significant unusual transactions.</p>', 'W/P Ref: RA-02'),
-        q('asm-q5d', '<p>Have any other entity-specific or industry-specific significant risks been identified and incorporated into the audit strategy?</p>', undefined, 'Yes', '<p>Vessel impairment risk identified as entity-specific given the $8.2M carrying value representing 45% of total assets. Industry risk of fluctuating freight rates and fuel costs also considered. Both incorporated into audit strategy.</p>', 'W/P Ref: RA-01'),
-        q('asm-q5e', '<p>Has the audit strategy memorandum been reviewed and approved by the engagement partner prior to commencement of fieldwork?</p>', undefined, 'Yes', '<p>Audit strategy memorandum reviewed and approved by engagement partner J. Williams, CPA on April 10, 2024, prior to commencement of fieldwork on April 14, 2024.</p>', 'W/P Ref: ASM-05'),
+        q('asm-q5-1', '<p>Establish the budgeted audit fee and labour hours (Form 450).</p>', undefined, 'Yes', 'Budgeted fee: $28,500. Estimated hours: 185. See Form 450 for detailed time budget by team member and audit area.'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'section-asm-6',
+      title: '6. Audit strategy',
+      questions: [
+        q('asm-q6-1', '<p>Provide a cross-reference to documents that outline the planned scope and timing of the audit, such as the communication with management and to TCWG (CAS 260.15). For an example of a written planning letter, refer to Sample Letter AL3.1.</p>', undefined, 'Yes', 'Audit plan: Forms 500-590. TCWG communication: planned for May 15, 2024 via letter AL3.1. Management planning letter sent April 16, 2024.'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'section-asm-7',
+      title: '7. Subsequent Changes in Strategy',
+      questions: [
+        q('asm-q7-1', '<p>Outline any significant changes made to the original audit strategy for this period as a result of performing further procedures or obtaining new information.</p>', undefined, 'NA', 'No subsequent changes to the original audit strategy as of file sign-off date.'),
       ],
       isExpanded: true
     },
@@ -8811,8 +8832,8 @@ export const generateAuditStrategyMemorandumChecklist = (): Checklist => {
   return {
     id: 'global-template-overall-audit-strategy',
     title: 'Overall Audit Strategy',
-    description: 'Documents the overall audit strategy including engagement characteristics, audit approach, staffing, communication plan, and significant risks identified at the planning stage.',
-    objective: `CAS 300 requires the auditor to establish an overall audit strategy that sets the scope, timing, and direction of the audit. This checklist ensures the audit strategy memorandum addresses all required elements and has been approved by the engagement partner before fieldwork commences.`,
+    description: 'Documents the overall audit strategy including scope, timing and direction of the audit as a guide for the development of the audit plan.',
+    objective: 'To document the scope, timing and direction of the audit as a guide for the development of the audit plan. (CAS 300.7-8)',
     sections,
     createdAt: new Date(),
     updatedAt: new Date(),
@@ -11070,46 +11091,81 @@ export const generateUSAuditStrategyMemorandumChecklist = (): Checklist => {
   const sections: Section[] = [
     {
       id: 'us-asm-s1',
-      title: '1. Engagement Characteristics',
+      title: '1. Reporting requirements',
       questions: [
-        q('us-asm-1a', '<p>Have the key engagement characteristics been documented: private LLC, US GAAP, US GAAS (not PCAOB), Dec 31 2024 year-end, first year of engagement?</p>', undefined, 'Yes', '<p>Engagement characteristics: Harbor Freight Logistics LLC, Delaware LLC, US GAAP (FASB ASC), US GAAS (AU-C sections, AICPA ASB), December 31, 2024 year-end, AUD-US-Dec312024, first-year engagement. Partner: M. Thompson, CPA; Manager: L. Garcia, CPA.</p>', 'W/P Ref: ST-01'),
-        q('us-asm-1b', '<p>Has it been confirmed that PCAOB standards do not apply (private company, not registered with PCAOB, not SEC issuer)?</p>', undefined, 'Yes', '<p>PCAOB standards confirmed as not applicable. Harbor Freight Logistics LLC is a private company with no public reporting obligations. Audit conducted under AICPA AU-C sections only.</p>'),
+        q('us-asm-q1-1', '<p>The applicable financial reporting framework (such as US GAAP).</p>', undefined, 'Yes', 'US GAAP — FASB Accounting Standards Codification. Harbor Freight Logistics LLC is a Delaware LLC engaged in freight and logistics.'),
+        q('us-asm-q1-2', '<p>Industry-specific or specialized requirements.</p>', undefined, 'Yes', 'Freight and logistics industry: DOT carrier regulations, multi-state operations in 12 states, ADP payroll compliance, LoadMaster Pro billing system integration.'),
       ],
       isExpanded: true
     },
     {
       id: 'us-asm-s2',
-      title: '2. Audit Approach',
+      title: '2. Timing',
       questions: [
-        q('us-asm-2a', '<p>Has the audit approach been determined as risk-based and primarily substantive, with limited controls reliance for payroll?</p>', undefined, 'Yes', '<p>Risk-based, primarily substantive approach selected. Controls reliance limited to ADP payroll processing controls (cost-effective to test given large employee count in 12 states). All other cycles: direct substantive testing.</p>', 'W/P Ref: ST-01'),
-        q('us-asm-2b', '<p>Has the use of data analytics for complete-population testing of revenue and journal entries been incorporated into the approach?</p>', undefined, 'Yes', '<p>Data analytics integral to approach: complete revenue population from LoadMaster Pro (all 4,280 freight invoices), complete JE population from QuickBooks (all journal entries for fraud risk testing per AU-C 240.32).</p>', 'W/P Ref: ST-01'),
+        q('us-asm-q2-1', '<p>Entity\'s reporting deadlines (if any).</p>', undefined, 'Yes', 'Draft financial statements to management by February 28, 2025. Signed report by March 15, 2025 (bank covenant deadline).'),
+        q('us-asm-q2-2', '<p>Team planning discussions. <span class="text-muted-foreground text-xs">(AU-C 300)</span></p>', undefined, 'Yes', 'Planning meeting held January 15, 2025. Attendees: M. Thompson (Partner), L. Garcia (Manager), Senior 1 (Revenue/AR), Senior 2 (Expenses/ASC 842), J. Reyes (CFO — Harbor Freight Logistics LLC), K. Park (Controller — Harbor Freight Logistics LLC).'),
+        q('us-asm-q2-3', '<p>Planned fieldwork start/end.</p>', undefined, 'Yes', 'Fieldwork: January 20 – February 7, 2025. Interim fieldwork: N/A (year-end only engagement).'),
+        q('us-asm-q2-4', '<p>File reviews (including EQCR).</p>', undefined, 'Yes', 'Manager review: ongoing during fieldwork. Partner review: February 14, 2025. EQCR: February 20, 2025 (if required).'),
+        q('us-asm-q2-5', '<p>Meetings with management and TCWG.</p>', undefined, 'Yes', 'Planning meeting with management: January 15, 2025. Board of Managers (TCWG) communication at completion: February 28, 2025.'),
+        q('us-asm-q2-6', '<p>Other (specify).</p>', undefined, 'NA', ''),
       ],
       isExpanded: true
     },
     {
       id: 'us-asm-s3',
-      title: '3. Key Audit Areas',
+      title: '3. Factors to consider in the audit',
+      note: 'Identify key areas to be addressed in the audit:',
       questions: [
-        q('us-asm-3a', '<p>Have the three key audit areas been identified and documented: revenue recognition (ASC 606), right-of-use assets (ASC 842), and goodwill impairment (ASC 350)?</p>', undefined, 'Yes', '<p>Three key audit areas confirmed. Revenue: $18.4M, ASC 606 five-step model, delivery-based recognition — completeness/cutoff testing priority. ROU assets: $2.8M new this year, ASC 842 finance lease classification — valuation and completeness. Goodwill: $1.42M, ASC 350 annual impairment test — evaluate management specialist work.</p>', 'W/P Ref: ST-02'),
-        q('us-asm-3b', '<p>Has the strategy for income taxes been documented? (LLC is pass-through entity — no federal/state income tax at entity level; ASC 740 considerations limited.)</p>', undefined, 'Yes', '<p>LLC pass-through tax status documented. No ASC 740 current or deferred tax provisions required. Tax footnote disclosure adequacy reviewed. Multi-state payroll tax compliance reviewed as separate matter.</p>', 'W/P Ref: ST-02'),
+        q('us-asm-q3-1', '<p>Material financial statement areas and disclosures (Form 590).</p>', undefined, 'Yes', 'Material FS areas: Revenue ($18.4M), Right-of-use assets ($2.8M), Goodwill ($1.42M), Accounts receivable ($3.1M), Long-term debt ($5.6M). See Form 590.'),
+        q('us-asm-q3-2', '<p>Major operational or control changes during the period.</p>', undefined, 'Yes', 'ASC 842 adopted for new finance leases Q1 2024. LoadMaster Pro billing system upgraded Q2 2024. Expansion to 3 additional states (10 to 12 states) Q3 2024.'),
+        q('us-asm-q3-3', '<p>Impact of changes in accounting standards.</p>', undefined, 'Yes', 'ASC 842 (Leases) — new right-of-use assets recognized this year. No other new FASB ASC standards effective for year ended December 31, 2024 with material impact.'),
+        q('us-asm-q3-4', '<p>Matters raised (such as problem areas) from past experience.</p>', undefined, 'Yes', 'First-year engagement with Harbor Freight Logistics LLC. No predecessor findings received. Prior year financial statements reviewed — no unusual items noted.'),
+        q('us-asm-q3-5', '<p>Significant risks and going-concern uncertainties.</p>', undefined, 'Yes', 'Significant risks: Revenue recognition (ASC 606 cutoff and completeness), goodwill impairment (ASC 350 — single reporting unit), management override of controls (AU-C 240). Going concern: no indicators identified.'),
+        q('us-asm-q3-6', '<p>Use of auditor experts.</p>', undefined, 'NA', 'No auditor\'s experts required for this engagement.'),
+        q('us-asm-q3-7', '<p>Use of service organization reports.</p>', undefined, 'Yes', 'ADP payroll processing — SOC 1 Type II report reviewed for payroll controls reliance.'),
+        q('us-asm-q3-8', '<p>Use of component auditors.</p>', undefined, 'NA', 'Single entity — no component auditors.'),
+        q('us-asm-q3-9', '<p>Coordination of work with a group auditor.</p>', undefined, 'NA', 'Not applicable — Harbor Freight Logistics LLC is not part of a consolidated group.'),
+        q('us-asm-q3-10', '<p>Need for stand-alone audited financial statements of subsidiaries.</p>', undefined, 'NA', 'Not applicable.'),
+        q('us-asm-q3-11', '<p>Key audit matters (where applicable).</p>', undefined, 'NA', 'Not applicable — private company US GAAS engagement; key audit matters reporting not required.'),
       ],
       isExpanded: true
     },
     {
       id: 'us-asm-s4',
-      title: '4. Communication Plan',
+      title: '4. Audit team',
+      note: 'Identify the audit team members assigned and their roles.\n\nEnsure the assignment of appropriately experienced team members to areas where there may be higher risks of material misstatement.',
       questions: [
-        q('us-asm-4a', '<p>Has the communication plan with Those Charged With Governance (TCWG = Board of Managers) been documented per AU-C 260?</p>', undefined, 'Yes', '<p>Communication plan: (1) Planning communication to Board of Managers prior to fieldwork (January 2025); (2) Significant findings communication during fieldwork; (3) Final communication at completion (February 2025) covering audit results, AJEs, and required communications per AU-C 260 and AU-C 265.</p>', 'W/P Ref: ST-03'),
-        q('us-asm-4b', '<p>Has management\'s role in the audit been communicated, including their responsibility for the financial statements and internal controls?</p>', undefined, 'Yes', '<p>Management responsibilities documented in engagement letter and communicated directly. Management acknowledged responsibility for GAAP compliance and internal control over financial reporting.</p>', 'W/P Ref: EL-01'),
+        q('us-asm-q4-1', '<p>Partner</p>', undefined, 'Yes', 'M. Thompson, CPA — Engagement Partner. 20 years experience in freight and logistics sector audits. Responsible for overall engagement quality and significant judgments.'),
+        q('us-asm-q4-2', '<p>Manager</p>', undefined, 'Yes', 'L. Garcia, CPA — Engagement Manager. 10 years experience. 3 prior freight logistics audits. Responsible for fieldwork coordination, revenue, AR, ASC 842, completion procedures.'),
+        q('us-asm-q4-3', '<p>Senior</p>', undefined, 'Yes', 'Senior 1 — Revenue and AR cycle. Senior 2 — Expenses, payroll, ASC 842. Both have 3+ years experience.'),
+        q('us-asm-q4-4', '<p>Assistant</p>', undefined, 'Yes', 'Staff 1 — Accounts payable and cash. Staff 2 — Fixed assets and other areas.'),
+        q('us-asm-q4-5', '<p>Assistant 1</p>', undefined, 'NA', ''),
+        q('us-asm-q4-6', '<p>Expert</p>', undefined, 'NA', ''),
+        q('us-asm-q4-7', '<p>EQCR</p>', undefined, 'NA', 'EQCR not required for this engagement — private company, no listed entity.'),
       ],
       isExpanded: true
     },
     {
       id: 'us-asm-s5',
-      title: '5. Significant Risks at Planning',
+      title: '5. Budget',
       questions: [
-        q('us-asm-5a', '<p>Have significant risks identified at planning been documented in the strategy memorandum?</p>', undefined, 'Yes', '<p>Three significant risks at planning: (1) Revenue recognition — ASC 606 cutoff and completeness (presumed per AU-C 240.26); (2) Goodwill impairment — significant management estimate, single reporting unit, logistics market conditions; (3) Management override of controls — presumed fraud risk (AU-C 240.27).</p>', 'W/P Ref: ST-04'),
-        q('us-asm-5b', '<p>Has the strategy memorandum been reviewed and approved by engagement partner M. Thompson?</p>', undefined, 'Yes', '<p>Strategy memorandum reviewed and approved by M. Thompson, engagement partner, on January 17, 2025, prior to fieldwork commencement.</p>', 'W/P Ref: ST-01'),
+        q('us-asm-q5-1', '<p>Establish the budgeted audit fee and labour hours (Form 450).</p>', undefined, 'Yes', 'Budgeted fee: $42,000. Estimated hours: 400. Planning 40 hrs, Fieldwork 280 hrs, Completion 80 hrs. See Form 450 for detailed time budget by team member and audit area.'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'us-asm-s6',
+      title: '6. Audit strategy',
+      questions: [
+        q('us-asm-q6-1', '<p>Provide a cross-reference to documents that outline the planned scope and timing of the audit, such as the communication with management and to TCWG (AU-C 260.15). For an example of a written planning letter, refer to Sample Letter AL3.1.</p>', undefined, 'Yes', 'Audit plan: Forms 500-590. Board of Managers (TCWG) communication: planned for February 28, 2025. Management planning letter sent January 17, 2025.'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'us-asm-s7',
+      title: '7. Subsequent Changes in Strategy',
+      questions: [
+        q('us-asm-q7-1', '<p>Outline any significant changes made to the original audit strategy for this period as a result of performing further procedures or obtaining new information.</p>', undefined, 'NA', 'No subsequent changes to the original audit strategy as of file sign-off date.'),
       ],
       isExpanded: true
     },
@@ -11117,8 +11173,8 @@ export const generateUSAuditStrategyMemorandumChecklist = (): Checklist => {
   return {
     id: 'global-template-us-overall-audit-strategy',
     title: 'Overall Audit Strategy',
-    description: 'US GAAS audit strategy memorandum for Harbor Freight Logistics LLC (AUD-US-Dec312024) per AU-C 300, documenting approach, key areas, and communication plan.',
-    objective: 'AU-C 300 requires the auditor to establish an overall audit strategy that sets the scope, timing, and direction of the audit. This checklist documents the strategy memorandum for Harbor Freight Logistics LLC, approved by M. Thompson.',
+    description: 'Documents the overall audit strategy including scope, timing and direction of the audit as a guide for the development of the audit plan.',
+    objective: 'To document the scope, timing and direction of the audit as a guide for the development of the audit plan. (AU-C 300)',
     sections,
     createdAt: new Date(),
     updatedAt: new Date(),
