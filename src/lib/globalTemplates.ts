@@ -8809,8 +8809,8 @@ export const generateAuditStrategyMemorandumChecklist = (): Checklist => {
   ];
 
   return {
-    id: 'global-template-audit-strategy-memorandum',
-    title: 'Audit Strategy Memorandum',
+    id: 'global-template-overall-audit-strategy',
+    title: 'Overall Audit Strategy',
     description: 'Documents the overall audit strategy including engagement characteristics, audit approach, staffing, communication plan, and significant risks identified at the planning stage.',
     objective: `CAS 300 requires the auditor to establish an overall audit strategy that sets the scope, timing, and direction of the audit. This checklist ensures the audit strategy memorandum addresses all required elements and has been approved by the engagement partner before fieldwork commences.`,
     sections,
@@ -11115,8 +11115,8 @@ export const generateUSAuditStrategyMemorandumChecklist = (): Checklist => {
     },
   ];
   return {
-    id: 'global-template-us-audit-strategy-memorandum',
-    title: 'Audit Strategy Memorandum',
+    id: 'global-template-us-overall-audit-strategy',
+    title: 'Overall Audit Strategy',
     description: 'US GAAS audit strategy memorandum for Harbor Freight Logistics LLC (AUD-US-Dec312024) per AU-C 300, documenting approach, key areas, and communication plan.',
     objective: 'AU-C 300 requires the auditor to establish an overall audit strategy that sets the scope, timing, and direction of the audit. This checklist documents the strategy memorandum for Harbor Freight Logistics LLC, approved by M. Thompson.',
     sections,
