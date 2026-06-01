@@ -182,6 +182,43 @@ export function AuditMaterialityWorksheet({ isUS = false }: AuditMaterialityWork
     { id: uid(), nature: "", impact: "" },
   ]);
 
+  // Section B — Qualitative disclosures
+  const [qualDisclosures, setQualDisclosures] = useState(
+    isUS
+      ? "ASC 842 first-year lease adoption — nature and extent of leases, ROU asset measurement, discount rate policy, and transition adjustments require complete disclosure. Goodwill impairment testing methodology and assumptions also require qualitative disclosure per ASC 350."
+      : "Vessel impairment indicators (CAS 36) — nature of impairment assessment and key assumptions (charter rate forecasts, useful lives) require qualitative disclosure. Foreign currency risk management policy disclosure under ASPE s.3856."
+  );
+
+  // Section C adjusted — Performance materiality for specific F/S areas
+  interface AdjPMRow { id: string; area: string; amount: string; reasoning: string; pyAmount: string; }
+  const initAdjPM: AdjPMRow[] = isUS ? [
+    { id: uid(), area: "Revenue (ASC 606 — contract estimates)", amount: "92000", reasoning: "Higher risk of misstatement due to percentage-of-completion estimates. PM set at 50% of overall.", pyAmount: "" },
+    { id: uid(), area: "ROU Assets & Lease Liabilities (ASC 842)", amount: "64000", reasoning: "First-year adoption — increased inherent risk. PM set at 35% of overall.", pyAmount: "" },
+  ] : [
+    { id: uid(), area: "Vessel PP&E (CAS 36 impairment)", amount: "62000", reasoning: "Significant judgment in impairment assessment. PM set at 50% of performance materiality.", pyAmount: "" },
+  ];
+  const [adjPMRows, setAdjPMRows] = useState<AdjPMRow[]>(initAdjPM);
+
+  // Section D — Materiality for specific circumstances
+  interface SpecMatRow { id: string; description: string; amount: string; reasoning: string; wpRef: string; pyAmount: string; }
+  const initSpecMat: SpecMatRow[] = isUS ? [
+    { id: uid(), description: "Related party transactions (ASC 850) — Board member loans and management compensation", amount: "10000", reasoning: "Users (lenders) particularly sensitive to RPTs. Lower materiality applied to ensure completeness of disclosure.", wpRef: "WP-RPT-01", pyAmount: "" },
+    { id: uid(), description: "Going concern disclosures — elevated D/E ratio (2.71x) and covenant compliance", amount: "0", reasoning: "Qualitative — any indication of substantial doubt requires disclosure regardless of dollar amount.", wpRef: "WP-GC-01", pyAmount: "" },
+  ] : [
+    { id: uid(), description: "Related party transactions — shareholder loans and management fees", amount: "5000", reasoning: "Bank covenant requires disclosure of all RPTs. Lower threshold applied for completeness.", wpRef: "WP-RPT-01", pyAmount: "" },
+  ];
+  const [specMatRows, setSpecMatRows] = useState<SpecMatRow[]>(initSpecMat);
+
+  // Section E — Performance materiality for specific circumstances
+  const [specPMAmount, setSpecPMAmount] = useState(isUS ? "7000" : "3500");
+  const [specPMReasoning, setSpecPMReasoning] = useState(
+    isUS
+      ? "Performance materiality for RPTs set at 70% of specific materiality ($10,000 × 70% = $7,000). Ensures detection of individually insignificant RPTs that aggregate to material amounts."
+      : "Performance materiality for RPTs set at 70% of specific materiality ($5,000 × 70% = $3,500)."
+  );
+  const [specPMPY, setSpecPMPY] = useState("");
+  const [specPMWPRef, setSpecPMWPRef] = useState("WP-RPT-PM");
+
   // Additional comments & conclusion
   const [additionalComments, setAdditionalComments] = useState("");
   const [conclusion, setConclusion] = useState(
@@ -617,6 +654,118 @@ export function AuditMaterialityWorksheet({ isUS = false }: AuditMaterialityWork
                 <Plus className="h-4 w-4" />
                 Add Row
               </button>
+            </div>
+          </div>
+
+          {/* ── Section B: Possible misstatements in qualitative disclosures ── */}
+          <div className="bg-card text-card-foreground border border-border shadow-[0_2px_8px_hsl(213_40%_20%/0.06)] rounded-md overflow-hidden">
+            <div className="px-6 py-3.5 bg-card border-b border-border flex items-center gap-3">
+              <span className="text-sm font-semibold text-foreground">B. Possible Misstatements in Qualitative Disclosures</span>
+              <span title="Identify any possible misstatements in qualitative F/S disclosures that could be material to intended users. Consider significant transactions, applicable framework, and nature of entity."><Info className="h-3.5 w-3.5 text-muted-foreground cursor-help" /></span>
+            </div>
+            <div className="px-6 py-5">
+              <p className="text-xs text-muted-foreground mb-2">Describe the nature of any qualitative disclosures that could be material to F/S users. ({isUS ? "AU-C 320 / ASC disclosures" : "CAS 320.A8"})</p>
+              <Textarea value={qualDisclosures} onChange={(e) => setQualDisclosures(e.target.value)} className="min-h-[80px] text-sm resize-none" placeholder="Describe qualitative disclosures that could be material…" />
+            </div>
+          </div>
+
+          {/* ── Section C Adjusted: Performance materiality for specific F/S areas ── */}
+          <div className="bg-card text-card-foreground border border-border shadow-[0_2px_8px_hsl(213_40%_20%/0.06)] rounded-md overflow-hidden">
+            <div className="px-6 py-3.5 bg-card border-b border-border flex items-center gap-3">
+              <span className="text-sm font-semibold text-foreground">C. Adjusted Performance Materiality Levels</span>
+              <span title="Set adjusted performance materiality for specific F/S areas with higher risk. Set at an amount lower than overall performance materiality."><Info className="h-3.5 w-3.5 text-muted-foreground cursor-help" /></span>
+            </div>
+            <div className="overflow-x-auto">
+              <table className="w-full">
+                <thead className="sticky top-0 z-10">
+                  <tr className="bg-muted border-b border-border">
+                    <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider">F/S Area or Disclosure</th>
+                    <th className="px-4 py-3 text-right text-xs font-semibold text-foreground uppercase tracking-wider w-32">Amount ($)</th>
+                    <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider">Reasoning</th>
+                    <th className="px-4 py-3 text-right text-xs font-semibold text-foreground uppercase tracking-wider w-28">PY Amount ($)</th>
+                    <th className="px-4 py-3 w-10" />
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-border">
+                  {adjPMRows.map((row) => (
+                    <tr key={row.id} className="hover:bg-muted/50 transition-colors">
+                      <td className="px-4 py-2.5 align-top"><TdInput value={row.area} onChange={(v) => setAdjPMRows(p => p.map(r => r.id === row.id ? {...r, area: v} : r))} placeholder="F/S area or disclosure" /></td>
+                      <td className="px-4 py-2.5 align-top"><TdInput value={row.amount} onChange={(v) => setAdjPMRows(p => p.map(r => r.id === row.id ? {...r, amount: v.replace(/[^0-9.]/g,"")} : r))} placeholder="0" className="text-right tabular-nums" /></td>
+                      <td className="px-4 py-2.5 align-top"><TdInput value={row.reasoning} onChange={(v) => setAdjPMRows(p => p.map(r => r.id === row.id ? {...r, reasoning: v} : r))} placeholder="Reasoning…" /></td>
+                      <td className="px-4 py-2.5 align-top"><TdInput value={row.pyAmount} onChange={(v) => setAdjPMRows(p => p.map(r => r.id === row.id ? {...r, pyAmount: v.replace(/[^0-9.]/g,"")} : r))} placeholder="—" className="text-right tabular-nums" /></td>
+                      <td className="px-2 py-2.5 align-top text-center"><button onClick={() => setAdjPMRows(p => p.filter(r => r.id !== row.id))} className="text-muted-foreground hover:text-destructive transition-colors" disabled={adjPMRows.length === 1}><Trash2 className="h-3.5 w-3.5" /></button></td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+            <div className="px-6 py-3 border-t border-border">
+              <button onClick={() => setAdjPMRows(p => [...p, {id: uid(), area:"", amount:"", reasoning:"", pyAmount:""}])} className="flex items-center gap-1.5 text-sm font-medium text-primary hover:text-primary/80 transition-colors"><Plus className="h-4 w-4" />Add Row</button>
+            </div>
+          </div>
+
+          {/* ── Section D: Materiality for specific circumstances ── */}
+          <div className="bg-card text-card-foreground border border-border shadow-[0_2px_8px_hsl(213_40%_20%/0.06)] rounded-md overflow-hidden">
+            <div className="px-6 py-3.5 bg-card border-b border-border flex items-center gap-3">
+              <span className="text-sm font-semibold text-foreground">D. Materiality for Specific Circumstances</span>
+              <span title="Set lower materiality for specific classes of transactions, balances or disclosures where users are particularly sensitive. (CAS 320.10 and .A11-A12)"><Info className="h-3.5 w-3.5 text-muted-foreground cursor-help" /></span>
+            </div>
+            <div className="overflow-x-auto">
+              <table className="w-full">
+                <thead className="sticky top-0 z-10">
+                  <tr className="bg-muted border-b border-border">
+                    <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider">Description / User Expectation</th>
+                    <th className="px-4 py-3 text-right text-xs font-semibold text-foreground uppercase tracking-wider w-28">Amount ($)</th>
+                    <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider">Reasoning</th>
+                    <th className="px-4 py-3 text-center text-xs font-semibold text-foreground uppercase tracking-wider w-24">W/P Ref.</th>
+                    <th className="px-4 py-3 text-right text-xs font-semibold text-foreground uppercase tracking-wider w-24">PY ($)</th>
+                    <th className="px-4 py-3 w-10" />
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-border">
+                  {specMatRows.map((row) => (
+                    <tr key={row.id} className="hover:bg-muted/50 transition-colors">
+                      <td className="px-4 py-2.5 align-top"><TdInput value={row.description} onChange={(v) => setSpecMatRows(p => p.map(r => r.id === row.id ? {...r, description: v} : r))} placeholder="Describe specific circumstances…" /></td>
+                      <td className="px-4 py-2.5 align-top"><TdInput value={row.amount} onChange={(v) => setSpecMatRows(p => p.map(r => r.id === row.id ? {...r, amount: v.replace(/[^0-9.]/g,"")} : r))} placeholder="0" className="text-right tabular-nums" /></td>
+                      <td className="px-4 py-2.5 align-top"><TdInput value={row.reasoning} onChange={(v) => setSpecMatRows(p => p.map(r => r.id === row.id ? {...r, reasoning: v} : r))} placeholder="Reasoning…" /></td>
+                      <td className="px-4 py-2.5 align-top"><TdInput value={row.wpRef} onChange={(v) => setSpecMatRows(p => p.map(r => r.id === row.id ? {...r, wpRef: v} : r))} placeholder="—" className="text-center" /></td>
+                      <td className="px-4 py-2.5 align-top"><TdInput value={row.pyAmount} onChange={(v) => setSpecMatRows(p => p.map(r => r.id === row.id ? {...r, pyAmount: v.replace(/[^0-9.]/g,"")} : r))} placeholder="—" className="text-right tabular-nums" /></td>
+                      <td className="px-2 py-2.5 align-top text-center"><button onClick={() => setSpecMatRows(p => p.filter(r => r.id !== row.id))} className="text-muted-foreground hover:text-destructive transition-colors" disabled={specMatRows.length === 1}><Trash2 className="h-3.5 w-3.5" /></button></td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+            <div className="px-6 py-3 border-t border-border">
+              <button onClick={() => setSpecMatRows(p => [...p, {id: uid(), description:"", amount:"", reasoning:"", wpRef:"", pyAmount:""}])} className="flex items-center gap-1.5 text-sm font-medium text-primary hover:text-primary/80 transition-colors"><Plus className="h-4 w-4" />Add Row</button>
+            </div>
+          </div>
+
+          {/* ── Section E: Performance materiality for specific circumstances ── */}
+          <div className="bg-card text-card-foreground border border-border shadow-[0_2px_8px_hsl(213_40%_20%/0.06)] rounded-md overflow-hidden">
+            <div className="px-6 py-3.5 bg-card border-b border-border flex items-center gap-3">
+              <span className="text-sm font-semibold text-foreground">E. Performance Materiality for Specific Circumstances</span>
+              <span title="Performance materiality applied to the specific circumstances identified in Step D. (CAS 320.10-11 and .A13)"><Info className="h-3.5 w-3.5 text-muted-foreground cursor-help" /></span>
+            </div>
+            <div className="overflow-x-auto">
+              <table className="w-full">
+                <thead className="sticky top-0 z-10">
+                  <tr className="bg-muted border-b border-border">
+                    <th className="px-4 py-3 text-right text-xs font-semibold text-foreground uppercase tracking-wider w-32">Amount ($)</th>
+                    <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider">Reasoning</th>
+                    <th className="px-4 py-3 text-center text-xs font-semibold text-foreground uppercase tracking-wider w-24">W/P Ref.</th>
+                    <th className="px-4 py-3 text-right text-xs font-semibold text-foreground uppercase tracking-wider w-28">PY Amount ($)</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-border">
+                  <tr className="hover:bg-muted/50 transition-colors">
+                    <td className="px-4 py-2.5 align-top"><TdInput value={specPMAmount} onChange={setSpecPMAmount} placeholder="0" className="text-right tabular-nums" /></td>
+                    <td className="px-4 py-2.5 align-top"><TdInput value={specPMReasoning} onChange={setSpecPMReasoning} placeholder="Reasoning…" /></td>
+                    <td className="px-4 py-2.5 align-top"><TdInput value={specPMWPRef} onChange={setSpecPMWPRef} placeholder="—" className="text-center" /></td>
+                    <td className="px-4 py-2.5 align-top"><TdInput value={specPMPY} onChange={setSpecPMPY} placeholder="—" className="text-right tabular-nums" /></td>
+                  </tr>
+                </tbody>
+              </table>
             </div>
           </div>
 
