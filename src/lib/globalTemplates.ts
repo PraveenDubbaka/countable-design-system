@@ -5087,12 +5087,12 @@ This checklist covers:
 
 // Audit Independence Checklist — CAS 220 / CSQM 1
 export const generateAuditIndependenceChecklist = (): Checklist => {
-  const q = (id: string, text: string, sub?: Question[]): Question => ({
+  const q = (id: string, text: string, sub?: Question[], answer = '', explanation = '', reference = ''): Question => ({
     id, text, answerType: 'yes-no-na' as const, options: ['Yes', 'No', 'NA'],
-    required: false, answer: '', ...(sub ? { subQuestions: sub } : {})
+    required: false, answer, explanation, reference, ...(sub ? { subQuestions: sub } : {})
   });
-  const la = (id: string, text: string): Question => ({
-    id, text, answerType: 'long-answer' as const, options: [], required: false, answer: ''
+  const la = (id: string, text: string, answer = ''): Question => ({
+    id, text, answerType: 'long-answer' as const, options: [], required: false, answer
   });
 
   const sections: Section[] = [
@@ -8668,8 +8668,8 @@ export const generateEngagementScopeChecklist = (): Checklist => {
     description: 'Documents the defined scope of the audit engagement including entity coverage, reporting period, applicable framework, and agreed reporting requirements.',
     objective: `Under CAS 300 and CAS 315, the auditor must clearly define the scope of the audit engagement prior to commencing fieldwork. This checklist ensures that the entity, reporting period, applicable framework, and any scope restrictions are agreed with management and documented in the engagement file.`,
     sections,
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
+    createdAt: new Date(),
+    updatedAt: new Date(),
   };
 };
 
@@ -8735,8 +8735,8 @@ export const generatePreliminaryAnalyticalProceduresChecklist = (): Checklist =>
     description: 'Documents analytical procedures performed during the planning phase to develop expectations and identify unusual fluctuations requiring audit attention.',
     objective: `CAS 315 and CAS 520 require the auditor to perform analytical procedures as risk assessment procedures during planning. These procedures help the auditor develop an understanding of the entity's financial results and identify areas of significant audit risk where the actual results deviate materially from expectations.`,
     sections,
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
+    createdAt: new Date(),
+    updatedAt: new Date(),
   };
 };
 
@@ -8814,8 +8814,8 @@ export const generateAuditStrategyMemorandumChecklist = (): Checklist => {
     description: 'Documents the overall audit strategy including engagement characteristics, audit approach, staffing, communication plan, and significant risks identified at the planning stage.',
     objective: `CAS 300 requires the auditor to establish an overall audit strategy that sets the scope, timing, and direction of the audit. This checklist ensures the audit strategy memorandum addresses all required elements and has been approved by the engagement partner before fieldwork commences.`,
     sections,
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
+    createdAt: new Date(),
+    updatedAt: new Date(),
   };
 };
 
@@ -8882,8 +8882,8 @@ export const generateStaffingTimeBudgetChecklist = (): Checklist => {
     description: 'Documents the engagement team composition, time budget by phase, key engagement dates, and budget versus actual tracking.',
     objective: `CAS 300 and CAS 220 require the engagement partner to ensure that the engagement team collectively has the competence and capabilities to perform the audit and that adequate resources are assigned. This checklist documents the staffing plan, time budget, and key dates for the engagement.`,
     sections,
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
+    createdAt: new Date(),
+    updatedAt: new Date(),
   };
 };
 
@@ -8959,8 +8959,8 @@ export const generateRiskAssessmentProceduresChecklist = (): Checklist => {
     description: 'Documents the risk assessment procedures performed to obtain an understanding of the entity and its environment, including internal control.',
     objective: `CAS 315 requires the auditor to perform risk assessment procedures to provide a basis for the identification and assessment of risks of material misstatement at the financial statement and assertion levels. This checklist documents all risk assessment procedures performed, including inquiry, analytical procedures, observation and inspection.`,
     sections,
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
+    createdAt: new Date(),
+    updatedAt: new Date(),
   };
 };
 
@@ -9028,8 +9028,8 @@ export const generateITGeneralControlsChecklist = (): Checklist => {
     description: 'Documents the assessment of IT general controls including access controls, change management, IT operations, and IT risk assessment.',
     objective: `CAS 315 requires the auditor to obtain an understanding of the entity\'s IT environment and IT general controls as part of the risk assessment. This checklist documents the assessment of ITGCs that affect the reliability of information produced by the entity\'s IT systems used in the financial reporting process.`,
     sections,
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
+    createdAt: new Date(),
+    updatedAt: new Date(),
   };
 };
 
@@ -9103,8 +9103,8 @@ export const generateFraudRiskAssessmentChecklist = (): Checklist => {
     description: 'Documents the fraud risk assessment performed in accordance with CAS 240, including identification of fraud risk factors, inquiries of management, presumed risks, and planned responses.',
     objective: `CAS 240 requires the auditor to identify and assess risks of material misstatement due to fraud and to design and implement appropriate responses to those risks. This checklist documents the fraud risk assessment process including consideration of the fraud triangle, management inquiries, the two presumed fraud risks, and planned audit responses.`,
     sections,
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
+    createdAt: new Date(),
+    updatedAt: new Date(),
   };
 };
 
@@ -9168,8 +9168,8 @@ export const generateSignificantRisksRegisterChecklist = (): Checklist => {
     description: 'Documents the identification, assessment, and planned audit responses for each significant risk identified during the risk assessment.',
     objective: `CAS 315 requires the auditor to identify and assess risks of material misstatement that, in the auditor\'s judgment, require special audit consideration. This register documents each significant risk, the inherent risk assessment, the relevant controls, and the planned audit responses.`,
     sections,
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
+    createdAt: new Date(),
+    updatedAt: new Date(),
   };
 };
 
@@ -9233,8 +9233,8 @@ export const generateRMMChecklist = (): Checklist => {
     description: 'Documents the assessment of the risk of material misstatement at both the financial statement level and the assertion level for significant accounts and disclosures.',
     objective: `CAS 315 requires the auditor to identify and assess the risks of material misstatement at the financial statement level and at the assertion level for classes of transactions, account balances, and disclosures. This checklist documents the RMM assessment, control risk evaluation, and the detection risk requirements that drive the design of substantive audit procedures.`,
     sections,
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
+    createdAt: new Date(),
+    updatedAt: new Date(),
   };
 };
 
@@ -9299,8 +9299,8 @@ export const generateOverallAuditResponseChecklist = (): Checklist => {
     description: 'Documents the overall audit responses to assessed risks of material misstatement, including responses to pervasive risks, unpredictability measures, responses to significant risks, and procedures to address management override.',
     objective: `CAS 330 requires the auditor to design and implement overall responses to address the assessed risks of material misstatement at the financial statement level, and to design and perform further audit procedures whose nature, timing, and extent are responsive to the assessed risks at the assertion level. This checklist documents the planned overall audit responses.`,
     sections,
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
+    createdAt: new Date(),
+    updatedAt: new Date(),
   };
 };
 
@@ -9365,8 +9365,8 @@ export const generateTestOfControlsChecklist = (): Checklist => {
     description: 'Documents the tests of controls performed, including controls selected, test approach, results, deviations, and conclusions on control reliance.',
     objective: `CAS 330 requires the auditor, when the audit approach relies on the operating effectiveness of controls, to test those controls. This checklist documents the test of controls work performed, including the evaluation of deviations and the impact on the planned substantive procedures.`,
     sections,
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
+    createdAt: new Date(),
+    updatedAt: new Date(),
   };
 };
 
@@ -9429,8 +9429,8 @@ export const generateSubstantiveAnalyticalProceduresChecklist = (): Checklist =>
     description: 'Documents the substantive analytical procedures performed, including expectation development, acceptable threshold, comparison of actual to expected, and investigation of differences.',
     objective: `CAS 330 and CAS 520 require that when substantive analytical procedures are used as the primary source of evidence for an assertion, they must be sufficiently precise to provide the required level of assurance. This checklist documents the design and results of substantive analytical procedures performed.`,
     sections,
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
+    createdAt: new Date(),
+    updatedAt: new Date(),
   };
 };
 
@@ -9502,8 +9502,8 @@ export const generateTestOfDetailsRevenueChecklist = (): Checklist => {
     description: 'Documents the tests of details performed on revenue, including revenue recognition policy review, completeness testing, cutoff testing, existence/occurrence testing, and related party revenue.',
     objective: `CAS 330 and CAS 240 require the auditor to design and perform substantive tests of details for revenue, which represents a high-risk area in most audits. This checklist documents the test of details procedures for revenue, addressing the key assertions of completeness, existence/occurrence, accuracy/valuation, and cutoff.`,
     sections,
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
+    createdAt: new Date(),
+    updatedAt: new Date(),
   };
 };
 
@@ -9575,8 +9575,8 @@ export const generateTestOfDetailsExpensesChecklist = (): Checklist => {
     description: 'Documents the tests of details performed on expenses, including search for unrecorded liabilities, cutoff testing, classification, authorization, and related party expenses.',
     objective: `CAS 330 requires the auditor to design and perform substantive tests of details for expenses, addressing key assertions including completeness (search for unrecorded liabilities), cutoff, classification, and authorization. This checklist documents the test of details procedures for the expenses area.`,
     sections,
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
+    createdAt: new Date(),
+    updatedAt: new Date(),
   };
 };
 
@@ -9641,8 +9641,8 @@ export const generateAuditProceduresSummaryChecklist = (): Checklist => {
     description: 'Summarizes all significant audit procedures performed, misstatements identified, outstanding items, and the overall conclusion on whether sufficient appropriate evidence has been obtained.',
     objective: `CAS 330 and CAS 450 require the auditor to evaluate whether the audit evidence obtained is sufficient and appropriate to reduce audit risk to an acceptably low level. This summary checklist confirms that all planned procedures have been performed, identifies all misstatements, and documents the engagement team\'s conclusion on the audit.`,
     sections,
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
+    createdAt: new Date(),
+    updatedAt: new Date(),
   };
 };
 
@@ -9721,8 +9721,8 @@ export const generateUnderstandingEntityIndustryEnvironmentChecklist = (): Check
     description: 'Documents the auditor\'s understanding of the entity\'s industry conditions, regulatory framework, business model, accounting policies, and financial performance measurement, as required by CAS 315.',
     objective: `CAS 315 requires the auditor to obtain an understanding of the entity and its environment sufficient to identify and assess the risks of material misstatement. This checklist covers the external factors — industry conditions, regulatory environment, and the entity\'s strategic position — that influence the nature of the entity and the risks it faces. This understanding informs the auditor\'s risk assessment and the design of further audit procedures.`,
     sections,
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
+    createdAt: new Date(),
+    updatedAt: new Date(),
   };
 };
 
@@ -9798,8 +9798,8 @@ export const generateUnderstandingInternalControlsChecklist = (): Checklist => {
     description: 'Documents the auditor\'s understanding of the five components of internal control relevant to the audit, per CAS 315.',
     objective: `CAS 315 requires the auditor to obtain an understanding of internal control relevant to the audit. This checklist covers the five components of internal control — Control Environment, Risk Assessment Process, Information System & Communication, Control Activities, and Monitoring — and documents the nature, extent, and results of the auditor's understanding procedures. This understanding informs decisions about the nature, timing, and extent of further audit procedures.`,
     sections,
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
+    createdAt: new Date(),
+    updatedAt: new Date(),
   };
 };
 
@@ -9872,8 +9872,8 @@ export const generateSCOTRevenueCycleChecklist = (): Checklist => {
     description: 'System and Control Overview Template for the Revenue Cycle, documenting controls over revenue recognition, accounts receivable, and cash receipts.',
     objective: `CAS 315 requires the auditor to obtain an understanding of the entity's significant transaction cycles and the controls over those cycles. This SCOT documents the auditor's understanding of the Revenue Cycle — from customer order through cash receipt — including the key controls over completeness, accuracy, and cut-off of revenue and accounts receivable. This understanding informs risk assessment and the design of further audit procedures.`,
     sections,
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
+    createdAt: new Date(),
+    updatedAt: new Date(),
   };
 };
 
@@ -9946,8 +9946,8 @@ export const generateSCOTExpenditureCycleChecklist = (): Checklist => {
     description: 'System and Control Overview Template for the Expenditure Cycle, documenting controls over purchasing, accounts payable, and cash disbursements.',
     objective: `CAS 315 requires the auditor to obtain an understanding of the entity's significant transaction cycles and the controls over those cycles. This SCOT documents the auditor's understanding of the Expenditure Cycle — from purchase requisition through cash disbursement — including the key controls over completeness, accuracy, and cut-off of expenses and accounts payable. This understanding informs risk assessment and the design of further audit procedures.`,
     sections,
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
+    createdAt: new Date(),
+    updatedAt: new Date(),
   };
 };
 
@@ -10020,8 +10020,8 @@ export const generateSCOTPayrollCycleChecklist = (): Checklist => {
     description: 'System and Control Overview Template for the Payroll Cycle, documenting controls over payroll processing, authorization, and disbursement.',
     objective: `CAS 315 requires the auditor to obtain an understanding of the entity's significant transaction cycles and the controls over those cycles. This SCOT documents the auditor's understanding of the Payroll Cycle — from employee master file maintenance through payroll tax compliance — including the key controls over completeness, accuracy, and authorization of payroll. This understanding informs risk assessment and the design of further audit procedures.`,
     sections,
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
+    createdAt: new Date(),
+    updatedAt: new Date(),
   };
 };
 
@@ -10094,8 +10094,8 @@ export const generateAccumulationOfMisstatementsChecklist = (): Checklist => {
     description: 'Documents the accumulation, evaluation, and communication of all misstatements identified during the audit, per CAS 450.',
     objective: `CAS 450 requires the auditor to accumulate all misstatements identified during the audit (other than those that are clearly trivial), evaluate their effect, and communicate them to management and TCWG. This checklist documents the three types of misstatements — factual, judgmental, and projected — and the auditor's evaluation of whether uncorrected misstatements are material to the financial statements, individually or in aggregate.`,
     sections,
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
+    createdAt: new Date(),
+    updatedAt: new Date(),
   };
 };
 
@@ -10169,8 +10169,8 @@ export const generateFinalAnalyticalReviewChecklist = (): Checklist => {
     description: 'Documents the analytical procedures performed near the end of the audit to form an overall conclusion on whether the financial statements are consistent with the auditor\'s understanding of the entity, per CAS 520.',
     objective: `CAS 520 requires the auditor to design and perform analytical procedures near the end of the audit to assist in forming an overall conclusion about whether the financial statements are consistent with the auditor's understanding of the entity. This checklist documents the final analytical procedures performed, the explanations obtained for significant fluctuations, and the auditor's overall conclusion on the financial statements.`,
     sections,
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
+    createdAt: new Date(),
+    updatedAt: new Date(),
   };
 };
 
@@ -10413,8 +10413,8 @@ export const generateUSNewEngagementAcceptanceChecklist = (): Checklist => {
     description: 'US GAAS checklist for new engagement acceptance for Harbor Freight Logistics LLC, covering SQMS 1 quality management, client integrity, independence, and regulatory considerations.',
     objective: 'AU-C 210 and 220 require the auditor to establish that preconditions for an audit are present and that there are no factors that would preclude acceptance. SQMS 1 imposes firm-level quality management requirements for all new engagements.',
     sections,
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
+    createdAt: new Date(),
+    updatedAt: new Date(),
   };
 };
 
@@ -10478,8 +10478,8 @@ export const generateUSExistingEngagementContinuanceChecklist = (): Checklist =>
     description: 'US GAAS checklist for existing engagement continuance per AU-C 210 and SQMS 1. Note: AUD-US-Dec312024 is a first-year engagement; most prior-year items are N/A.',
     objective: 'AU-C 210 and SQMS 1 require the auditor to reassess the acceptability of continuing an audit engagement each year. This checklist documents the continuance decision for Harbor Freight Logistics LLC.',
     sections,
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
+    createdAt: new Date(),
+    updatedAt: new Date(),
   };
 };
 
@@ -10544,8 +10544,8 @@ export const generateUSAuditIndependenceChecklist = (): Checklist => {
     description: 'US GAAS independence and ethical requirements checklist for Harbor Freight Logistics LLC per AU-C 220 and the AICPA Code of Professional Conduct.',
     objective: 'AU-C 220 requires the engagement partner to be satisfied that independence requirements have been met throughout the engagement. The AICPA Code of Professional Conduct establishes the framework for evaluating independence threats and safeguards.',
     sections,
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
+    createdAt: new Date(),
+    updatedAt: new Date(),
   };
 };
 
@@ -10612,8 +10612,8 @@ export const generateUSAMLComplianceChecklist = (): Checklist => {
     description: 'AML and KYC compliance checklist for Harbor Freight Logistics LLC per BSA/FinCEN, USA PATRIOT Act, and FATF guidance.',
     objective: 'BSA and FinCEN Customer Due Diligence rules require financial service providers and auditors to verify client identity, beneficial ownership, and screen for money laundering risks. This checklist documents AML/KYC procedures performed for Harbor Freight Logistics LLC.',
     sections,
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
+    createdAt: new Date(),
+    updatedAt: new Date(),
   };
 };
 
@@ -10677,8 +10677,8 @@ export const generateUSUnderstandingEntityBasicsChecklist = (): Checklist => {
     description: 'US GAAS checklist documenting the auditor\'s understanding of Harbor Freight Logistics LLC\'s structure, framework, governance, related parties, and contracts per AU-C 315.',
     objective: 'AU-C 315 requires the auditor to obtain an understanding of the entity and its environment sufficient to identify and assess risks of material misstatement. This checklist documents the basic entity understanding for Harbor Freight Logistics LLC.',
     sections,
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
+    createdAt: new Date(),
+    updatedAt: new Date(),
   };
 };
 
@@ -10742,8 +10742,8 @@ export const generateUSUnderstandingEntitySystemsChecklist = (): Checklist => {
     description: 'US GAAS checklist documenting understanding of Harbor Freight Logistics LLC\'s accounting system, IT environment, period-end close process, and segregation of duties per AU-C 315.',
     objective: 'AU-C 315 requires the auditor to understand the entity\'s information system and control activities relevant to financial reporting. This checklist documents the systems and controls understanding for Harbor Freight Logistics LLC.',
     sections,
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
+    createdAt: new Date(),
+    updatedAt: new Date(),
   };
 };
 
@@ -10808,8 +10808,8 @@ export const generateUSUnderstandingEntityIndustryChecklist = (): Checklist => {
     description: 'US GAAS checklist documenting understanding of Harbor Freight Logistics LLC\'s industry conditions, regulatory framework, business model, and key accounting policies per AU-C 315.',
     objective: 'AU-C 315 requires the auditor to understand the entity\'s industry, regulatory environment, and relevant factors affecting the financial statements. This checklist documents the industry and environment understanding for Harbor Freight Logistics LLC.',
     sections,
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
+    createdAt: new Date(),
+    updatedAt: new Date(),
   };
 };
 
@@ -10873,8 +10873,8 @@ export const generateUSEngagementPlanningChecklist = (): Checklist => {
     description: 'US GAAS engagement planning checklist for Harbor Freight Logistics LLC per AU-C 300, documenting overall strategy, audit plan, technology use, and timeline.',
     objective: 'AU-C 300 requires the auditor to plan the audit engagement to reduce audit risk to an acceptably low level. This checklist documents planning activities for the AUD-US-Dec312024 engagement.',
     sections,
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
+    createdAt: new Date(),
+    updatedAt: new Date(),
   };
 };
 
@@ -10937,8 +10937,8 @@ export const generateUSAuditMaterialityChecklist = (): Checklist => {
     description: 'US GAAS materiality determination for Harbor Freight Logistics LLC per AU-C 320. Overall materiality $184,000 (1% of revenues $18.4M), performance materiality $128,800 (70%), clearly trivial $9,200.',
     objective: 'AU-C 320 requires the auditor to determine materiality for the financial statements as a whole and performance materiality to reduce the risk that aggregate misstatements exceed overall materiality. This checklist documents the materiality determination for AUD-US-Dec312024.',
     sections,
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
+    createdAt: new Date(),
+    updatedAt: new Date(),
   };
 };
 
@@ -10992,8 +10992,8 @@ export const generateUSEngagementScopeChecklist = (): Checklist => {
     description: 'US GAAS engagement scope documentation for Harbor Freight Logistics LLC (AUD-US-Dec312024) per AU-C 300 and AU-C 315.',
     objective: 'AU-C 300 and 315 require the auditor to define the scope of the audit engagement including entity coverage, reporting period, applicable framework, and reporting requirements. This checklist documents the scope for AUD-US-Dec312024.',
     sections,
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
+    createdAt: new Date(),
+    updatedAt: new Date(),
   };
 };
 
@@ -11056,8 +11056,8 @@ export const generateUSPreliminaryAnalyticalProceduresChecklist = (): Checklist 
     description: 'US GAAS preliminary analytical procedures for Harbor Freight Logistics LLC per AU-C 315 and AU-C 520. Revenue up 8.2%, new ASC 842 ROU assets of $2.8M.',
     objective: 'AU-C 315 and AU-C 520 require the auditor to apply analytical procedures as risk assessment procedures to obtain an understanding of the entity and identify unusual items. This checklist documents preliminary analytics for AUD-US-Dec312024.',
     sections,
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
+    createdAt: new Date(),
+    updatedAt: new Date(),
   };
 };
 
@@ -11120,8 +11120,8 @@ export const generateUSAuditStrategyMemorandumChecklist = (): Checklist => {
     description: 'US GAAS audit strategy memorandum for Harbor Freight Logistics LLC (AUD-US-Dec312024) per AU-C 300, documenting approach, key areas, and communication plan.',
     objective: 'AU-C 300 requires the auditor to establish an overall audit strategy that sets the scope, timing, and direction of the audit. This checklist documents the strategy memorandum for Harbor Freight Logistics LLC, approved by M. Thompson.',
     sections,
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
+    createdAt: new Date(),
+    updatedAt: new Date(),
   };
 };
 
@@ -11174,8 +11174,8 @@ export const generateUSStaffingTimeBudgetChecklist = (): Checklist => {
     description: 'US GAAS staffing and time budget documentation for Harbor Freight Logistics LLC (AUD-US-Dec312024) per AU-C 300 and AU-C 220.',
     objective: 'AU-C 300 requires the auditor to plan staffing needs, including the appropriate direction, supervision, and review of work. This checklist documents the engagement team, time budget, and key dates for AUD-US-Dec312024.',
     sections,
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
+    createdAt: new Date(),
+    updatedAt: new Date(),
   };
 };
 
@@ -11237,8 +11237,8 @@ export const generateUSRiskAssessmentProceduresChecklist = (): Checklist => {
     description: 'US GAAS risk assessment procedures for Harbor Freight Logistics LLC per AU-C 315, documenting inquiries, analytics, observation, and inspection performed January 20-21, 2025.',
     objective: 'AU-C 315 requires the auditor to perform risk assessment procedures to obtain an understanding of the entity and its environment. This checklist documents procedures performed for Harbor Freight Logistics LLC.',
     sections,
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
+    createdAt: new Date(),
+    updatedAt: new Date(),
   };
 };
 
@@ -11302,8 +11302,8 @@ export const generateUSUnderstandingInternalControlsChecklist = (): Checklist =>
     description: 'US GAAS understanding of internal controls for Harbor Freight Logistics LLC per AU-C 315 and COSO 2013 framework. No material weaknesses identified.',
     objective: 'AU-C 315 requires the auditor to obtain an understanding of the five components of internal control per the COSO 2013 framework sufficient to identify and assess risks of material misstatement. This checklist documents the internal controls understanding for Harbor Freight Logistics LLC.',
     sections,
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
+    createdAt: new Date(),
+    updatedAt: new Date(),
   };
 };
 
@@ -11367,8 +11367,8 @@ export const generateUSITGeneralControlsChecklist = (): Checklist => {
     description: 'US GAAS ITGC assessment for Harbor Freight Logistics LLC per AU-C 315 and COBIT framework. SOC 2 Type II reports reviewed for ADP and LoadMaster Pro.',
     objective: 'AU-C 315 requires the auditor to obtain an understanding of the IT environment and general controls over IT systems relevant to financial reporting. This checklist documents ITGC assessment for Harbor Freight Logistics LLC.',
     sections,
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
+    createdAt: new Date(),
+    updatedAt: new Date(),
   };
 };
 
@@ -11431,8 +11431,8 @@ export const generateUSFraudRiskAssessmentChecklist = (): Checklist => {
     description: 'US GAAS fraud risk assessment for Harbor Freight Logistics LLC per AU-C 240. Revenue recognition (presumed) and management override (presumed) addressed. No significant fraud risk factors identified.',
     objective: 'AU-C 240 requires the auditor to identify and assess risks of material misstatement due to fraud and design responses to those risks. This checklist documents the fraud risk assessment for Harbor Freight Logistics LLC.',
     sections,
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
+    createdAt: new Date(),
+    updatedAt: new Date(),
   };
 };
 
@@ -11485,8 +11485,8 @@ export const generateUSSignificantRisksRegisterChecklist = (): Checklist => {
     description: 'US GAAS significant risks register for Harbor Freight Logistics LLC per AU-C 315. Three significant risks: revenue recognition (ASC 606), goodwill impairment (ASC 350), management override.',
     objective: 'AU-C 315 requires the auditor to identify and assess significant risks requiring special audit consideration. This checklist documents the significant risks register for Harbor Freight Logistics LLC.',
     sections,
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
+    createdAt: new Date(),
+    updatedAt: new Date(),
   };
 };
 
@@ -11540,8 +11540,8 @@ export const generateUSRMMChecklist = (): Checklist => {
     description: 'US GAAS RMM assessment for Harbor Freight Logistics LLC per AU-C 315. High RMM identified for revenue cutoff (ASC 606), ROU asset valuation (ASC 842), and goodwill impairment (ASC 350).',
     objective: 'AU-C 315 requires the auditor to assess risks of material misstatement at the financial statement level and at the assertion level for classes of transactions, account balances, and disclosures. This checklist documents the RMM assessment for Harbor Freight Logistics LLC.',
     sections,
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
+    createdAt: new Date(),
+    updatedAt: new Date(),
   };
 };
 
@@ -11603,8 +11603,8 @@ export const generateUSSCOTRevenueCycleChecklist = (): Checklist => {
     description: 'US GAAS systems and controls documentation for the revenue cycle of Harbor Freight Logistics LLC per AU-C 315 and ASC 606.',
     objective: 'AU-C 315 requires documentation of the understanding of the entity\'s significant transaction cycles. This checklist documents the revenue cycle systems, controls, and ASC 606 accounting policies for Harbor Freight Logistics LLC.',
     sections,
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
+    createdAt: new Date(),
+    updatedAt: new Date(),
   };
 };
 
@@ -11665,8 +11665,8 @@ export const generateUSSCOTExpenditureCycleChecklist = (): Checklist => {
     description: 'US GAAS systems and controls documentation for the expenditure cycle of Harbor Freight Logistics LLC per AU-C 315, including ASC 842 lease classification.',
     objective: 'AU-C 315 requires documentation of significant transaction cycles. This checklist documents the expenditure cycle systems, controls, and accounting policies for Harbor Freight Logistics LLC.',
     sections,
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
+    createdAt: new Date(),
+    updatedAt: new Date(),
   };
 };
 
@@ -11729,8 +11729,8 @@ export const generateUSSCOTPayrollCycleChecklist = (): Checklist => {
     description: 'US GAAS systems and controls documentation for the payroll cycle of Harbor Freight Logistics LLC per AU-C 315. ADP Workforce Now processes payroll for 147 employees in 12 states.',
     objective: 'AU-C 315 requires documentation of significant transaction cycles. This checklist documents the payroll cycle systems, controls, and compliance for Harbor Freight Logistics LLC.',
     sections,
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
+    createdAt: new Date(),
+    updatedAt: new Date(),
   };
 };
 
@@ -11791,8 +11791,8 @@ export const generateUSGoingConcernInitialAssessmentChecklist = (): Checklist =>
     description: 'US GAAS initial going concern assessment for Harbor Freight Logistics LLC per AU-C 570 (substantial doubt standard). No substantial doubt identified.',
     objective: 'AU-C 570 requires the auditor to evaluate whether substantial doubt exists about the entity\'s ability to continue as a going concern for a period of 12 months after the financial statement date. This checklist documents the initial going concern assessment using the AU-C 570 "substantial doubt" standard (not CAS "material uncertainty").',
     sections,
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
+    createdAt: new Date(),
+    updatedAt: new Date(),
   };
 };
 
@@ -11846,8 +11846,8 @@ export const generateUSOverallAuditResponseChecklist = (): Checklist => {
     description: 'US GAAS overall audit response for Harbor Freight Logistics LLC per AU-C 330, documenting responses to pervasive risks, significant risks (revenue ASC 606, goodwill ASC 350, ROU assets ASC 842), and management override.',
     objective: 'AU-C 330 requires the auditor to design and implement overall responses to address assessed risks of material misstatement at the financial statement level. This checklist documents overall responses for Harbor Freight Logistics LLC.',
     sections,
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
+    createdAt: new Date(),
+    updatedAt: new Date(),
   };
 };
 
@@ -11906,8 +11906,8 @@ export const generateUSTestOfControlsChecklist = (): Checklist => {
     description: 'US GAAS test of controls for Harbor Freight Logistics LLC per AU-C 330. Controls tested for payroll (ADP) and cash (bank reconciliation). No deviations found.',
     objective: 'AU-C 330 requires the auditor to design and perform tests of controls when reliance on operating effectiveness is intended, or when substantive procedures alone cannot provide sufficient appropriate evidence. This checklist documents controls testing for Harbor Freight Logistics LLC.',
     sections,
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
+    createdAt: new Date(),
+    updatedAt: new Date(),
   };
 };
 
@@ -11966,8 +11966,8 @@ export const generateUSSubstantiveAnalyticalProceduresChecklist = (): Checklist 
     description: 'US GAAS substantive analytical procedures for Harbor Freight Logistics LLC per AU-C 330 and AU-C 520. All operating expense analytics within performance materiality threshold ($128,800).',
     objective: 'AU-C 520 requires that when substantive analytical procedures are used, the auditor develop an expectation precise enough to detect a material misstatement. This checklist documents substantive analytics for Harbor Freight Logistics LLC.',
     sections,
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
+    createdAt: new Date(),
+    updatedAt: new Date(),
   };
 };
 
@@ -12026,8 +12026,8 @@ export const generateUSTestOfDetailsRevenueChecklist = (): Checklist => {
     description: 'US GAAS test of details for revenue of Harbor Freight Logistics LLC per AU-C 330 and ASC 606. Revenue cutoff misstatement of $68K identified and corrected (AJE #1).',
     objective: 'AU-C 330 requires the auditor to design and perform substantive procedures for all significant risks. This checklist documents revenue test of details for Harbor Freight Logistics LLC, including ASC 606 policy testing, completeness, cutoff, and occurrence procedures.',
     sections,
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
+    createdAt: new Date(),
+    updatedAt: new Date(),
   };
 };
 
@@ -12086,8 +12086,8 @@ export const generateUSTestOfDetailsExpensesChecklist = (): Checklist => {
     description: 'US GAAS test of details for expenses of Harbor Freight Logistics LLC per AU-C 330. ASC 842 lease classification AJE #2 ($31K reclassification) identified and corrected.',
     objective: 'AU-C 330 requires substantive procedures for expenses including search for unrecorded liabilities, cutoff testing, and operating/capital classification. This checklist documents expense test of details for Harbor Freight Logistics LLC including ASC 842 lease classification.',
     sections,
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
+    createdAt: new Date(),
+    updatedAt: new Date(),
   };
 };
 
@@ -12148,8 +12148,8 @@ export const generateUSIndependentAuditorsReportChecklist = (): Checklist => {
     description: 'US GAAS auditor\'s report checklist for Harbor Freight Logistics LLC per AU-C 700 (AICPA, non-issuer). Unmodified opinion issued. No CAMs, no going concern paragraph.',
     objective: 'AU-C 700 requires the auditor to form an opinion on the financial statements and express that opinion in a written auditor\'s report. This checklist documents the report formulation for Harbor Freight Logistics LLC (private non-issuer, AICPA AU-C format only, not PCAOB).',
     sections,
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
+    createdAt: new Date(),
+    updatedAt: new Date(),
   };
 };
 
@@ -12210,8 +12210,8 @@ export const generateUSAccumulationOfMisstatementsChecklist = (): Checklist => {
     description: 'US GAAS AIM schedule for Harbor Freight Logistics LLC per AU-C 450. Three AJEs identified: revenue cutoff $68K, lease reclassification $31K, deferred revenue $44K — all corrected by management.',
     objective: 'AU-C 450 requires the auditor to accumulate misstatements identified during the audit and evaluate whether uncorrected misstatements are material to the financial statements. This checklist documents the AIM schedule and evaluation for Harbor Freight Logistics LLC.',
     sections,
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
+    createdAt: new Date(),
+    updatedAt: new Date(),
   };
 };
 
@@ -12271,8 +12271,8 @@ export const generateUSFinalAnalyticalReviewChecklist = (): Checklist => {
     description: 'US GAAS final analytical review for Harbor Freight Logistics LLC per AU-C 520. All financial statement fluctuations explained. Revenue up 8.2%, gross margin 34.1%, working capital positive $3.2M.',
     objective: 'AU-C 520 requires the auditor to perform analytical procedures near the end of the audit to assist in forming an overall conclusion on the financial statements. This checklist documents the final analytical review for Harbor Freight Logistics LLC.',
     sections,
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
+    createdAt: new Date(),
+    updatedAt: new Date(),
   };
 };
 
@@ -12331,8 +12331,8 @@ export const generateUSSubsequentEventsChecklist = (): Checklist => {
     description: 'US GAAS subsequent events checklist for Harbor Freight Logistics LLC per AU-C 560. New $5M credit facility (January 2025) disclosed as Type II event. No adjusting subsequent events.',
     objective: 'AU-C 560 requires the auditor to perform procedures to identify subsequent events that require adjustment or disclosure in the financial statements. This checklist documents subsequent events procedures through the report date of February 7, 2025 for Harbor Freight Logistics LLC.',
     sections,
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
+    createdAt: new Date(),
+    updatedAt: new Date(),
   };
 };
 
@@ -12393,8 +12393,8 @@ export const generateUSGoingConcernFinalAssessmentChecklist = (): Checklist => {
     description: 'US GAAS final going concern assessment for Harbor Freight Logistics LLC per AU-C 570. No substantial doubt. New $5M credit facility (January 2025) further supports conclusion.',
     objective: 'AU-C 570 requires the auditor to conclude whether substantial doubt exists about the entity\'s ability to continue as a going concern for 12 months from the report date. This checklist documents the final going concern assessment using the AU-C 570 "substantial doubt" standard (not CAS "material uncertainty") for Harbor Freight Logistics LLC.',
     sections,
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
+    createdAt: new Date(),
+    updatedAt: new Date(),
   };
 };
 
@@ -12455,8 +12455,8 @@ export const generateUSAuditCompletionChecklist = (): Checklist => {
     description: 'US GAAS audit completion checklist for Harbor Freight Logistics LLC per AU-C 220 and SQMS 1. All AJEs processed, required communications completed, file review complete as of February 7, 2025.',
     objective: 'AU-C 220 and SQMS 1 require the engagement partner to conclude that sufficient appropriate audit evidence has been obtained and that the engagement has been conducted in accordance with applicable standards. This checklist documents completion procedures for AUD-US-Dec312024.',
     sections,
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
+    createdAt: new Date(),
+    updatedAt: new Date(),
   };
 };
 
@@ -12517,8 +12517,8 @@ export const generateUSQualityControlReviewChecklist = (): Checklist => {
     description: 'US GAAS engagement partner quality control review for Harbor Freight Logistics LLC per AU-C 220 and SQMS 1 (AICPA). M. Thompson completed final partner review February 7, 2025.',
     objective: 'AU-C 220 and SQMS 1 require the engagement partner to take responsibility for the overall quality of the audit engagement. This checklist documents the engagement partner quality control review for AUD-US-Dec312024.',
     sections,
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
+    createdAt: new Date(),
+    updatedAt: new Date(),
   };
 };
 
@@ -12577,8 +12577,8 @@ export const generateUSJournalEntryTestingLog = (): Checklist => {
     description: 'US GAAS journal entry testing log for Harbor Freight Logistics LLC per AU-C 240. Complete population analytics applied to address management override of controls (presumed significant risk) for fiscal year ended December 31, 2024.',
     objective: 'AU-C 240.32 requires the auditor to design and perform journal entry testing to address the risk of management override of controls. This log documents the selection criteria, analytics performed, entries investigated, and overall conclusion.',
     sections,
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
+    createdAt: new Date(),
+    updatedAt: new Date(),
   };
 };
 
@@ -12634,8 +12634,8 @@ export const generateUSRelatedPartyTransactionsWorksheet = (): Checklist => {
     description: 'US GAAS related party transactions worksheet for Harbor Freight Logistics LLC. Covers identification, testing, arm\'s-length assessment, and ASC 850 disclosure adequacy for fiscal year ended December 31, 2024.',
     objective: 'AU-C 550 requires the auditor to understand the entity\'s related party relationships and transactions, assess the risk of material misstatement, and design appropriate audit procedures. ASC 850-10-50 governs disclosure requirements under US GAAP.',
     sections,
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
+    createdAt: new Date(),
+    updatedAt: new Date(),
   };
 };
 
@@ -12701,7 +12701,7 @@ export const generateUSGoodwillImpairmentAssessment = (): Checklist => {
     description: 'US GAAS goodwill impairment assessment worksheet for Harbor Freight Logistics LLC. Covers goodwill background, triggering event assessment, evaluation of management\'s specialist per AU-C 620, key assumptions testing, and impairment conclusion for fiscal year ended December 31, 2024.',
     objective: 'ASC 350-20-35 requires annual testing of goodwill for impairment. AU-C 540 requires the auditor to evaluate management\'s accounting estimates, and AU-C 620 governs the use of a management\'s specialist. This worksheet documents procedures performed on the goodwill impairment analysis for Harbor Freight Logistics LLC.',
     sections,
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
+    createdAt: new Date(),
+    updatedAt: new Date(),
   };
 };

@@ -1521,7 +1521,7 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
                   id: string;
                   code?: string;
                   label: string;
-                  icon?: "checklist" | "letter" | "folder" | "doc" | "completion" | "book";
+                  icon?: "checklist" | "letter" | "folder" | "doc" | "completion" | "book" | "worksheet";
                   hasPlus?: boolean;
                   route?: string;
                   children?: SectionNode[];
