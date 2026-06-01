@@ -26,6 +26,13 @@ interface EntityRow {
   materialityPY: string;
 }
 
+interface SpecialCircumstanceRow {
+  id: string;
+  description: string;
+  threshold: string; // calculated or overridden
+  basis: string;
+}
+
 interface IntendedUser {
   id: string;
   user: string;
@@ -172,6 +179,11 @@ export function AuditMaterialityWorksheet({ isUS = false }: AuditMaterialityWork
   const [pmPct, setPmPct] = useState("70");
   const [pmRationale, setPmRationale] = useState("");
 
+  // Special Circumstances
+  const [specialRows, setSpecialRows] = useState<SpecialCircumstanceRow[]>([
+    { id: uid(), description: "Financial Statement Disclosures", threshold: "", basis: "50% of overall materiality" },
+  ]);
+
   // Intended Users
   const [intendedUsers, setIntendedUsers] = useState<IntendedUser[]>([
     { id: uid(), user: "", factors: "" },
@@ -252,6 +264,15 @@ export function AuditMaterialityWorksheet({ isUS = false }: AuditMaterialityWork
     return formatNum(m * p / 100);
   })();
 
+  // Special Circumstances: auto-calculate Financial Statement Disclosures as 50% of overall materiality
+  const specialRowsWithCalc = specialRows.map((row) => {
+    if (row.basis === "50% of overall materiality") {
+      const m = parseFloat(totalMatCY.replace(/[^0-9.]/g, ""));
+      return { ...row, threshold: isNaN(m) ? "" : formatNum(m * 0.5) };
+    }
+    return row;
+  });
+
   const standardRef = isUS ? "AU-C 320" : "CAS 320";
   const title = isUS ? "Materiality — AU-C 320" : "Materiality — CAS 320";
 
@@ -301,13 +322,13 @@ export function AuditMaterialityWorksheet({ isUS = false }: AuditMaterialityWork
                 type="date"
                 value={periodStart}
                 onChange={(e) => setPeriodStart(e.target.value)}
-                className="h-8 text-sm w-36"
+                className="h-8 text-sm w-40"
               />
               <Input
                 type="date"
                 value={periodEnd}
                 onChange={(e) => setPeriodEnd(e.target.value)}
-                className="h-8 text-sm w-36"
+                className="h-8 text-sm w-40"
               />
               <Button variant="outline" size="sm" className="h-8 w-8 p-0 bg-muted/40 border-border">
                 <svg width="14" height="14" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -462,6 +483,7 @@ export function AuditMaterialityWorksheet({ isUS = false }: AuditMaterialityWork
                         placeholder="70"
                         className="tabular-nums w-28"
                       />
+                      <p className="text-xs text-muted-foreground mt-1">Typically 60–75% of overall materiality</p>
                     </td>
                   </tr>
                   <tr className="hover:bg-muted/10 transition-colors">
@@ -483,6 +505,94 @@ export function AuditMaterialityWorksheet({ isUS = false }: AuditMaterialityWork
                   </tr>
                 </tbody>
               </table>
+            </div>
+          </div>
+
+          {/* ── Materiality for Special Circumstances ── */}
+          <div className="bg-card text-card-foreground border border-border shadow-[0_2px_8px_hsl(213_40%_20%/0.06)] rounded-md overflow-hidden">
+            <div className="px-6 py-3.5 bg-card border-b border-border flex items-center gap-3">
+              <span className="text-sm font-semibold text-foreground">Materiality for Special Circumstances</span>
+              <span title="Apply specific materiality to particular classes of transactions, account balances or disclosures">
+                <Info className="h-3.5 w-3.5 text-muted-foreground cursor-help" />
+              </span>
+            </div>
+            <div className="overflow-x-auto">
+              <table className="w-full">
+                <thead className="sticky top-0 z-10">
+                  <tr className="bg-muted border-b border-border">
+                    <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider">Description</th>
+                    <th className="px-4 py-3 text-right text-xs font-semibold text-foreground uppercase tracking-wider w-40">Threshold ($)</th>
+                    <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider w-56">Basis</th>
+                    <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider w-16">Actions</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-border">
+                  {specialRowsWithCalc.map((row) => (
+                    <tr key={row.id} className="hover:bg-muted/50 transition-colors">
+                      <td className="px-4 py-2.5 align-top">
+                        <TdInput
+                          value={row.description}
+                          onChange={(v) =>
+                            setSpecialRows((prev) =>
+                              prev.map((x) => (x.id === row.id ? { ...x, description: v } : x))
+                            )
+                          }
+                          placeholder="Description"
+                        />
+                      </td>
+                      <td className="px-4 py-2.5 align-top text-right">
+                        <TdInput
+                          value={row.threshold ? row.threshold : ""}
+                          readOnly={row.basis === "50% of overall materiality"}
+                          onChange={(v) =>
+                            setSpecialRows((prev) =>
+                              prev.map((x) => (x.id === row.id ? { ...x, threshold: v.replace(/[^0-9.]/g, "") } : x))
+                            )
+                          }
+                          placeholder="0.00"
+                          className="tabular-nums text-right"
+                        />
+                      </td>
+                      <td className="px-4 py-2.5 align-top">
+                        <TdInput
+                          value={row.basis}
+                          onChange={(v) =>
+                            setSpecialRows((prev) =>
+                              prev.map((x) => (x.id === row.id ? { ...x, basis: v } : x))
+                            )
+                          }
+                          placeholder="Basis"
+                        />
+                      </td>
+                      <td className="px-4 py-2.5 align-top text-center">
+                        <button
+                          onClick={() =>
+                            setSpecialRows((prev) => prev.filter((x) => x.id !== row.id))
+                          }
+                          className="text-muted-foreground hover:text-destructive transition-colors"
+                          disabled={specialRows.length === 1}
+                        >
+                          <Trash2 className="h-3.5 w-3.5" />
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+            <div className="px-6 py-3 border-t border-border">
+              <button
+                onClick={() =>
+                  setSpecialRows((prev) => [
+                    ...prev,
+                    { id: uid(), description: "", threshold: "", basis: "" },
+                  ])
+                }
+                className="flex items-center gap-1.5 text-sm font-medium text-primary hover:text-primary/80 transition-colors"
+              >
+                <Plus className="h-4 w-4" />
+                Add Row
+              </button>
             </div>
           </div>
 
@@ -657,8 +767,16 @@ export function AuditMaterialityWorksheet({ isUS = false }: AuditMaterialityWork
               <div className="flex justify-end mt-4">
                 <Button
                   onClick={() => {
+                    const storageKey = `audit-materiality-data-${isUS ? 'us' : 'ca'}`;
+                    const dataToSave = {
+                      overallMateriality: totalMatCY,
+                      performanceMateriality: pmAmount,
+                      clearlyTrivial: ctAmount,
+                      periodLabel,
+                    };
+                    localStorage.setItem(storageKey, JSON.stringify(dataToSave));
                     setConcluded(true);
-                    toast.success("Materiality worksheet concluded");
+                    toast.success("Materiality saved. Engagement Scope has been updated.");
                   }}
                   disabled={concluded}
                 >

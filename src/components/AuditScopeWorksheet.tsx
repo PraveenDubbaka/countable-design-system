@@ -1,4 +1,4 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -184,6 +184,28 @@ export function AuditScopeWorksheet({
   const [materialityAmt, setMaterialityAmt] = useState(propOM ?? "15778.36");
   const [clearlyTrivialAmt, setClearlyTrivialAmt] = useState(propCT ?? "788.92");
 
+  const loadFromMateriality = useCallback(() => {
+    const storageKey = `audit-materiality-data-${isUS ? 'us' : 'ca'}`;
+    const saved = localStorage.getItem(storageKey);
+    if (saved) {
+      try {
+        const data = JSON.parse(saved);
+        if (data.overallMateriality) setMaterialityAmt(data.overallMateriality.replace(/,/g, ""));
+        if (data.clearlyTrivial) setClearlyTrivialAmt(data.clearlyTrivial.replace(/,/g, ""));
+        toast.success("Materiality values refreshed from worksheet.");
+      } catch {
+        toast.error("Could not parse saved materiality data.");
+      }
+    } else {
+      toast("No saved materiality data found. Complete the Materiality worksheet first.");
+    }
+  }, [isUS]);
+
+  useEffect(() => {
+    loadFromMateriality();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   // Threshold rows
   const [thresholdRows, setThresholdRows] = useState<ThresholdRow[]>(DEFAULT_THRESHOLD_ROWS);
 
@@ -250,6 +272,12 @@ export function AuditScopeWorksheet({
           <div className="bg-card text-card-foreground border border-border shadow-[0_2px_8px_hsl(213_40%_20%/0.06)] rounded-md overflow-hidden">
             <div className="px-6 py-3.5 bg-card border-b border-border flex items-center gap-3">
               <span className="text-sm font-semibold text-foreground">Materiality Carry-Forward</span>
+              <button
+                onClick={loadFromMateriality}
+                className="text-xs text-primary hover:underline ml-auto"
+              >
+                ↻ Refresh from Materiality
+              </button>
             </div>
             <div className="px-6 py-5">
               <div className="flex flex-col sm:flex-row gap-4">
