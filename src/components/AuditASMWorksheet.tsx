@@ -2,147 +2,168 @@ import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Info, Sparkles, X } from "lucide-react";
+import { Sparkles, X } from "lucide-react";
 import { toast } from "sonner";
 
 // ── Types ──────────────────────────────────────────────────────────────────────
 
-interface AttendeeRow {
-  name: string;
-  role: string;
-  organization: string;
-  experience: string;
-}
-
-interface TeamRow {
-  name: string;
-  role: string;
-  responsibilities: string;
-  areaAssigned: string;
-}
-
-interface KeyChangeRow {
-  area: string;
-  changeDescription: string;
-  auditImpact: string;
-  riskLevel: string;
-}
-
-interface PARRow {
-  item: string;
-  observation: string;
-  thresholdExceeded: string;
-  followUpRequired: string;
-}
-
-interface RiskRow {
-  riskArea: string;
-  discussionPoints: string;
-  preliminaryAssessment: string;
-  plannedResponse: string;
-}
-
-interface ProcedureRow {
-  area: string;
-  approach: string;
-  timing: string;
-  assignedTo: string;
+interface RowState {
   wpRef: string;
+  response: string;
+  initials: string;
+  date: string;
 }
 
-interface ActionRow {
-  num: number;
-  actionItem: string;
-  owner: string;
-  dueDate: string;
-  status: string;
+interface TeamRowState extends RowState {
+  name: string;
 }
 
-// ── Main Component ─────────────────────────────────────────────────────────────
+function emptyRow(): RowState {
+  return { wpRef: "", response: "", initials: "", date: "" };
+}
 
-interface AuditASMWorksheetProps {
+function teamRow(name: string, response: string): TeamRowState {
+  return { wpRef: "", response, initials: "", date: "", name };
+}
+
+// ── US mock data ───────────────────────────────────────────────────────────────
+
+const US_DATA = {
+  entity: "Harbor Freight Logistics LLC",
+  period: "December 31, 2024",
+  s1: [
+    { wpRef: "", response: "US GAAP — Financial Accounting Standards Board (FASB) Accounting Standards Codification (ASC)", initials: "", date: "" },
+    { wpRef: "", response: "Freight logistics and warehousing — DOT/FMCSA regulations, multi-state operations", initials: "", date: "" },
+  ],
+  s2: [
+    { wpRef: "", response: "Draft FS to management by February 28, 2025. Final report by March 15, 2025.", initials: "", date: "" },
+    { wpRef: "", response: "Planning meeting held January 20, 2025. Attendees: M. Thompson (Partner), L. Garcia (Manager), K. Patel (Senior), J. Chen (Staff), R. Morrison (CFO), S. Williams (Controller).", initials: "", date: "" },
+    { wpRef: "", response: "January 20 – February 7, 2025", initials: "", date: "" },
+    { wpRef: "", response: "Manager review: ongoing. Partner review: February 10, 2025. EQCR: February 12, 2025.", initials: "", date: "" },
+    { wpRef: "", response: "Interim: January 22, 2025. Completion: February 14, 2025.", initials: "", date: "" },
+    { wpRef: "", response: "", initials: "", date: "" },
+  ],
+  s3: [
+    { wpRef: "", response: "Revenue $18.4M, ROU Assets $2.8M (new — ASC 842), Goodwill $1.42M, Long-term Debt $4.32M, Accounts Receivable $2.1M. See Form 590.", initials: "", date: "" },
+    { wpRef: "", response: "ASC 842 lease adoption (first year), new $5M credit facility, new Controller (S. Williams, July 2024), new AP ERP module.", initials: "", date: "" },
+    { wpRef: "", response: "ASC 842 Leases — first-year adoption effective January 1, 2024. Three operating leases capitalized.", initials: "", date: "" },
+    { wpRef: "", response: "First-year engagement. No predecessor findings received.", initials: "", date: "" },
+    { wpRef: "", response: "Revenue recognition (ASC 606) — significant risk. Management override — presumed risk. Goodwill impairment (ASC 350) — elevated. See Form 540.", initials: "", date: "" },
+    { wpRef: "", response: "Valuation specialist for goodwill impairment assessment — Summit Valuation Group.", initials: "", date: "" },
+    { wpRef: "", response: "ADP Workforce Now (payroll) — SOC 1 Type II report obtained.", initials: "", date: "" },
+    { wpRef: "", response: "N/A — single entity", initials: "", date: "" },
+    { wpRef: "", response: "N/A", initials: "", date: "" },
+    { wpRef: "", response: "N/A", initials: "", date: "" },
+    { wpRef: "", response: "N/A — private company audit (AICPA non-issuer). CAMs not required.", initials: "", date: "" },
+  ],
+  s4team: [
+    teamRow("M. Thompson, CPA", "18 years experience"),
+    teamRow("L. Garcia, CPA", "9 years experience"),
+    teamRow("K. Patel", "4 years experience"),
+    teamRow("J. Chen", "1 year experience"),
+    teamRow("", ""),
+    teamRow("Summit Valuation Group", "Goodwill impairment"),
+    teamRow("D. Anderson, CPA", "independent reviewer"),
+  ],
+  s5: { wpRef: "", response: "Budgeted fee: $42,500. Estimated hours: 280. See Form 450 for detailed time budget.", initials: "", date: "" },
+  s6: { wpRef: "", response: "Audit plan documented in Forms 500-590. TCWG planning communication: Letter AL3.1 sent January 22, 2025.", initials: "", date: "" },
+  subseq: { wpRef: "", response: "", initials: "", date: "" },
+  preparedBy: "L. Garcia",
+  preparedDate: "January 21, 2025",
+  reviewedBy: "M. Thompson",
+  reviewedDate: "January 22, 2025",
+};
+
+const CA_DATA = {
+  entity: "Shipping Line Inc.",
+  period: "March 31, 2024",
+  s1: [
+    { wpRef: "", response: "Canadian Accounting Standards for Private Enterprises (ASPE) — CPA Canada Handbook Part II", initials: "", date: "" },
+    { wpRef: "", response: "Marine freight and shipping — Transport Canada regulations, cross-border customs compliance", initials: "", date: "" },
+  ],
+  s2: [
+    { wpRef: "", response: "Draft FS to management by May 31, 2024. Final report by June 14, 2024.", initials: "", date: "" },
+    { wpRef: "", response: "Planning meeting held April 8, 2024. Attendees: J. Patel (Partner), A. Nguyen (Manager), T. Brown (Senior), D. Kim (Staff), P. Singh (CFO), C. Okafor (Controller).", initials: "", date: "" },
+    { wpRef: "", response: "April 8 – May 10, 2024", initials: "", date: "" },
+    { wpRef: "", response: "Manager review: ongoing. Partner review: May 15, 2024. EQCR: May 17, 2024.", initials: "", date: "" },
+    { wpRef: "", response: "Interim: April 10, 2024. Completion: May 20, 2024.", initials: "", date: "" },
+    { wpRef: "", response: "", initials: "", date: "" },
+  ],
+  s3: [
+    { wpRef: "", response: "Revenue $12.6M, PP&E $4.2M, Long-term Debt $3.1M, Accounts Receivable $1.8M. See Form 590.", initials: "", date: "" },
+    { wpRef: "", response: "New vessel charter agreement ($2.1M), refinanced credit facility, fleet expansion (2 vessels added).", initials: "", date: "" },
+    { wpRef: "", response: "No new ASPE standards effective for this period. Review ASPE 3065 for new lease terms.", initials: "", date: "" },
+    { wpRef: "", response: "Prior year: minor AR cut-off adjustment ($42K). Management has addressed through improved invoicing process.", initials: "", date: "" },
+    { wpRef: "", response: "Revenue recognition (ASPE 3400) — significant risk. Management override — presumed risk (CAS 240). Going concern — monitor leverage. See Form 540.", initials: "", date: "" },
+    { wpRef: "", response: "N/A", initials: "", date: "" },
+    { wpRef: "", response: "N/A", initials: "", date: "" },
+    { wpRef: "", response: "N/A — single entity", initials: "", date: "" },
+    { wpRef: "", response: "N/A", initials: "", date: "" },
+    { wpRef: "", response: "N/A", initials: "", date: "" },
+    { wpRef: "", response: "N/A — private company audit, ASPE. Not applicable.", initials: "", date: "" },
+  ],
+  s4team: [
+    teamRow("J. Patel, CPA", "15 years experience"),
+    teamRow("A. Nguyen, CPA", "7 years experience"),
+    teamRow("T. Brown", "3 years experience"),
+    teamRow("D. Kim", "1 year experience"),
+    teamRow("", ""),
+    teamRow("", ""),
+    teamRow("S. Lavoie, CPA (independent reviewer)", ""),
+  ],
+  s5: { wpRef: "", response: "Budgeted fee: $31,000. Estimated hours: 195. See Form 450 for detailed time budget.", initials: "", date: "" },
+  s6: { wpRef: "", response: "Audit plan documented in Forms 500-590. TCWG planning communication: Letter AL3.1 sent April 9, 2024.", initials: "", date: "" },
+  subseq: { wpRef: "", response: "", initials: "", date: "" },
+  preparedBy: "A. Nguyen",
+  preparedDate: "April 9, 2024",
+  reviewedBy: "J. Patel",
+  reviewedDate: "April 10, 2024",
+};
+
+// ── Main component ─────────────────────────────────────────────────────────────
+
+export interface AuditASMWorksheetProps {
   isUS?: boolean;
 }
 
 export function AuditASMWorksheet({ isUS = false }: AuditASMWorksheetProps) {
-  const clientName = isUS ? "Harbor Freight Logistics LLC" : "Shipping Line Inc.";
-  const engagementId = isUS ? "AUD-US-Dec312024" : "AUD-SL-Mar312024";
+  const seed = isUS ? US_DATA : CA_DATA;
+  const standardRef = isUS ? "(AU-C 300)" : "(CAS 300.7-8)";
 
-  // ── Form state ───────────────────────────────────────────────────────────────
-  const [meetingDate, setMeetingDate] = useState("January 20, 2025");
-  const [location, setLocation] = useState("Conference Room A / Teams");
-  const [imported, setImported] = useState(false);
-  const [importStep, setImportStep] = useState(0); // 0=closed,1=calendar,2=ai,3=preview,4=review
-  const [concluded, setConcluded] = useState(false);
-  const [conclusion, setConclusion] = useState(
-    isUS
-      ? "Based on our planning discussion, I am satisfied that the overall audit strategy adequately addresses the scope, timing, and direction of the audit in accordance with AU-C 300."
-      : "Based on our planning discussion, I am satisfied that the overall audit strategy adequately addresses the scope, timing, and direction of the audit in accordance with CAS 300."
-  );
+  // ── Header fields ────────────────────────────────────────────────────────────
+  const [entity, setEntity] = useState(seed.entity);
+  const [period, setPeriod] = useState(seed.period);
 
-  const attendees: AttendeeRow[] = [
-    { name: "M. Thompson", role: "Engagement Partner", organization: "Williams & Associates CPA", experience: "18 years" },
-    { name: "L. Garcia", role: "Engagement Manager", organization: "Williams & Associates CPA", experience: "9 years" },
-    { name: "K. Patel", role: "Senior Associate", organization: "Williams & Associates CPA", experience: "4 years" },
-    { name: "J. Chen", role: "Staff Associate", organization: "Williams & Associates CPA", experience: "1 year" },
-    { name: "R. Morrison", role: "Chief Financial Officer", organization: clientName, experience: "Client" },
-    { name: "S. Williams", role: "Controller", organization: clientName, experience: "Client" },
-  ];
+  // ── Section 1 ────────────────────────────────────────────────────────────────
+  const [s1, setS1] = useState<RowState[]>(seed.s1.map((r) => ({ ...r })));
 
-  const teamRows: TeamRow[] = [
-    { name: "M. Thompson", role: "Engagement Partner", responsibilities: "Overall engagement quality, significant risks, final review", areaAssigned: "All areas" },
-    { name: "L. Garcia", role: "Engagement Manager", responsibilities: "Fieldwork coordination, revenue & AR, going concern, report", areaAssigned: "Revenue, AR, Completion" },
-    { name: "K. Patel", role: "Senior Associate", responsibilities: "Balance sheet, PP&E, debt, ASC 842 leases, goodwill", areaAssigned: "Assets, Liabilities" },
-    { name: "J. Chen", role: "Staff Associate", responsibilities: "Payroll, expenses, AP, journal entry testing", areaAssigned: "Payroll, Expenses" },
-  ];
+  // ── Section 2 ────────────────────────────────────────────────────────────────
+  const [s2, setS2] = useState<RowState[]>(seed.s2.map((r) => ({ ...r })));
 
-  const keyChanges: KeyChangeRow[] = [
-    { area: "ASC 842 Leases", changeDescription: "First-year adoption — 3 operating leases capitalized ($2.8M ROU assets)", auditImpact: "New accounting area requiring specialized procedures", riskLevel: "High" },
-    { area: "Credit Facility", changeDescription: "New $5M revolving credit facility drawn to $4.32M at year-end", auditImpact: "Increased leverage, covenant monitoring required", riskLevel: "Medium" },
-    { area: "Revenue Growth", changeDescription: "Revenue increased 8.2% ($1.4M) — new customer contracts", auditImpact: "Revenue recognition risk; cut-off testing expanded", riskLevel: "Medium" },
-    { area: "IT Systems", changeDescription: "New ERP module for accounts payable", auditImpact: "Change management testing required for AP controls", riskLevel: "Medium" },
-    { area: "Personnel Changes", changeDescription: "New Controller (S. Williams) joined July 2024", auditImpact: "Assess transition risk; expanded walkthrough procedures", riskLevel: "Low" },
-  ];
+  // ── Section 3 ────────────────────────────────────────────────────────────────
+  const [s3, setS3] = useState<RowState[]>(seed.s3.map((r) => ({ ...r })));
 
-  const parRows: PARRow[] = [
-    { item: "Revenue", observation: "+8.2% ($1.4M) — consistent with new contracts", thresholdExceeded: "No", followUpRequired: "Document understanding" },
-    { item: "Gross Margin", observation: "34.0% vs 33.0% prior year — marginal improvement", thresholdExceeded: "No", followUpRequired: "Understand cost drivers" },
-    { item: "Depreciation", observation: "+50% due to ASC 842 ROU asset depreciation", thresholdExceeded: "Yes", followUpRequired: "Verify ASC 842 calculations" },
-    { item: "Debt-to-Equity", observation: "2.71x vs 1.00x prior year — covenant risk", thresholdExceeded: "Yes", followUpRequired: "Review covenant terms" },
-    { item: "Cash", observation: "+$260K — positive working capital trend", thresholdExceeded: "No", followUpRequired: "Trace to bank confirmations" },
-  ];
+  // ── Section 4 (audit team) ───────────────────────────────────────────────────
+  const [s4, setS4] = useState<TeamRowState[]>(seed.s4team.map((r) => ({ ...r })));
 
-  const riskRows: RiskRow[] = [
-    { riskArea: "Revenue Recognition (ASC 606)", discussionPoints: "Management uses percentage-of-completion for some contracts — judgment involved", preliminaryAssessment: "Significant Risk — High", plannedResponse: "Detailed cut-off testing, review contract terms, test estimates" },
-    { riskArea: "Management Override of Controls", discussionPoints: "New CFO, significant transactions in H2", preliminaryAssessment: "Presumed Risk (AU-C 240)", plannedResponse: "Journal entry testing, review unusual entries >$50K" },
-    { riskArea: "Goodwill Impairment (ASC 350)", discussionPoints: "No impairment recorded despite sector headwinds", preliminaryAssessment: "Medium Risk", plannedResponse: "Obtain DCF model, challenge key assumptions, consider specialist" },
-    { riskArea: "ASC 842 Lease Capitalization", discussionPoints: "Complex calculation, first-year adoption", preliminaryAssessment: "High Risk", plannedResponse: "Reperform calculations, review lease agreements" },
-    { riskArea: "Going Concern", discussionPoints: "Elevated leverage but adequate liquidity", preliminaryAssessment: "Low Risk", plannedResponse: "Monitor through completion, review bank covenants" },
-  ];
+  // ── Section 5 ────────────────────────────────────────────────────────────────
+  const [s5, setS5] = useState<RowState>({ ...seed.s5 });
 
-  const procedureRows: ProcedureRow[] = [
-    { area: "Revenue", approach: "Test of details + analytical", timing: "Week 1–2 fieldwork", assignedTo: "L. Garcia", wpRef: "WP-Rev-01" },
-    { area: "Accounts Receivable", approach: "Confirmations + subsequent receipts", timing: "Week 1", assignedTo: "L. Garcia", wpRef: "WP-AR-01" },
-    { area: "PP&E", approach: "Test additions + disposals + depreciation", timing: "Week 2", assignedTo: "K. Patel", wpRef: "WP-PPE-01" },
-    { area: "ASC 842 Leases", approach: "Reperform ROU asset & liability calcs", timing: "Week 2", assignedTo: "K. Patel", wpRef: "WP-Lease-01" },
-    { area: "Goodwill", approach: "Impairment assessment review", timing: "Week 3", assignedTo: "K. Patel", wpRef: "WP-GW-01" },
-    { area: "Debt & Covenants", approach: "Confirmation + agreement review", timing: "Week 1", assignedTo: "K. Patel", wpRef: "WP-Debt-01" },
-    { area: "Payroll", approach: "Test of controls + analytical", timing: "Week 2–3", assignedTo: "J. Chen", wpRef: "WP-Pay-01" },
-    { area: "AP / Expenses", approach: "Search for unrecorded liabilities", timing: "Week 3", assignedTo: "J. Chen", wpRef: "WP-AP-01" },
-    { area: "Journal Entries", approach: isUS ? "AU-C 240 journal entry testing" : "CAS 240 journal entry testing", timing: "Week 1", assignedTo: "L. Garcia", wpRef: "WP-JE-01" },
-    { area: "Going Concern", approach: "Final assessment at completion", timing: "Week 4", assignedTo: "M. Thompson", wpRef: "WP-GC-01" },
-  ];
+  // ── Section 6 ────────────────────────────────────────────────────────────────
+  const [s6, setS6] = useState<RowState>({ ...seed.s6 });
 
-  const actionRows: ActionRow[] = [
-    { num: 1, actionItem: "Obtain signed engagement letter", owner: "L. Garcia", dueDate: "Jan 15, 2025", status: "✅ Complete" },
-    { num: 2, actionItem: "Send bank confirmation requests", owner: "L. Garcia", dueDate: "Jan 21, 2025", status: "✅ Complete" },
-    { num: 3, actionItem: "Request AR aging schedule from S. Williams", owner: "K. Patel", dueDate: "Jan 21, 2025", status: "🔄 In Progress" },
-    { num: 4, actionItem: "Obtain lease agreements for ASC 842 review", owner: "K. Patel", dueDate: "Jan 22, 2025", status: "🔄 In Progress" },
-    { num: 5, actionItem: "Request goodwill impairment DCF model", owner: "K. Patel", dueDate: "Jan 24, 2025", status: "⏳ Pending" },
-    { num: 6, actionItem: "Review IT change management for AP module", owner: "J. Chen", dueDate: "Jan 22, 2025", status: "⏳ Pending" },
-  ];
+  // ── Subsequent changes ───────────────────────────────────────────────────────
+  const [subseq, setSubseq] = useState<RowState>({ ...seed.subseq });
+
+  // ── Footer ───────────────────────────────────────────────────────────────────
+  const [preparedBy, setPreparedBy] = useState(seed.preparedBy);
+  const [preparedDate, setPreparedDate] = useState(seed.preparedDate);
+  const [reviewedBy, setReviewedBy] = useState(seed.reviewedBy);
+  const [reviewedDate, setReviewedDate] = useState(seed.reviewedDate);
 
   // ── Import flow ───────────────────────────────────────────────────────────────
+  const [imported, setImported] = useState(false);
+  const [importStep, setImportStep] = useState(0); // 0=closed,1=calendar,2=ai,3=preview,4=review
 
   const handleOpenImport = () => setImportStep(1);
 
@@ -160,352 +181,397 @@ export function AuditASMWorksheet({ isUS = false }: AuditASMWorksheetProps) {
   const handleConfirmImport = () => {
     setImportStep(0);
     setImported(true);
-    toast.success("Meeting notes imported successfully. All sections have been populated.");
+    // Auto-fill team planning discussion row (s2[1]) and Section 4 team rows
+    const teamPlanningText = isUS
+      ? "Planning meeting held January 20, 2025. Attendees: M. Thompson (Partner), L. Garcia (Manager), K. Patel (Senior), J. Chen (Staff), R. Morrison (CFO), S. Williams (Controller)."
+      : "Planning meeting held April 8, 2024. Attendees: J. Patel (Partner), A. Nguyen (Manager), T. Brown (Senior), D. Kim (Staff), P. Singh (CFO), C. Okafor (Controller).";
+    setS2((prev) => {
+      const next = [...prev];
+      next[1] = { ...next[1], response: teamPlanningText };
+      return next;
+    });
+    // Fill Section 4 team rows from seed (already loaded, just ensure they're populated)
+    setS4(seed.s4team.map((r) => ({ ...r })));
+    toast.success("Meeting notes imported. Team planning discussion and audit team sections populated.");
   };
 
   const handleCloseModal = () => setImportStep(0);
 
   // ── Helpers ───────────────────────────────────────────────────────────────────
 
-  const riskBadgeClass = (level: string) => {
-    if (level === "High") return "bg-red-100 text-red-700 border border-red-200";
-    if (level === "Medium") return "bg-amber-100 text-amber-700 border border-amber-200";
-    return "bg-green-100 text-green-700 border border-green-200";
-  };
+  function updateRow(
+    setter: React.Dispatch<React.SetStateAction<RowState[]>>,
+    idx: number,
+    field: keyof RowState,
+    value: string
+  ) {
+    setter((prev) => {
+      const next = [...prev];
+      next[idx] = { ...next[idx], [field]: value };
+      return next;
+    });
+  }
 
-  const standardRef = isUS ? "AU-C 300" : "CAS 300";
+  function updateTeamRow(idx: number, field: keyof TeamRowState, value: string) {
+    setS4((prev) => {
+      const next = [...prev];
+      next[idx] = { ...next[idx], [field]: value };
+      return next;
+    });
+  }
+
+  function updateSingle(
+    setter: React.Dispatch<React.SetStateAction<RowState>>,
+    field: keyof RowState,
+    value: string
+  ) {
+    setter((prev) => ({ ...prev, [field]: value }));
+  }
+
+  // ── Row render helpers ────────────────────────────────────────────────────────
+
+  function DataRow({
+    num,
+    description,
+    row,
+    onChange,
+    extra,
+  }: {
+    num: string;
+    description: React.ReactNode;
+    row: RowState;
+    onChange: (field: keyof RowState, value: string) => void;
+    extra?: React.ReactNode;
+  }) {
+    return (
+      <tr className="hover:bg-muted/50 transition-colors">
+        <td className="px-3 py-2.5 text-xs text-muted-foreground font-mono align-top whitespace-nowrap">{num}</td>
+        <td className="px-4 py-2.5 text-sm text-foreground align-top">{description}</td>
+        <td className="px-3 py-2 align-top">
+          <Input
+            className="h-7 text-xs w-16 text-center"
+            value={row.wpRef}
+            onChange={(e) => onChange("wpRef", e.target.value)}
+            placeholder="—"
+          />
+        </td>
+        <td className="px-3 py-2 align-top">
+          <div className="relative">
+            <Textarea
+              className="min-h-[56px] text-sm resize-none"
+              value={row.response}
+              onChange={(e) => onChange("response", e.target.value)}
+            />
+            {extra && <div className="mt-1.5">{extra}</div>}
+          </div>
+        </td>
+        <td className="px-3 py-2 align-top">
+          <div className="flex flex-col gap-1">
+            <Input
+              className="h-6 text-xs"
+              placeholder="Initials"
+              value={row.initials}
+              onChange={(e) => onChange("initials", e.target.value)}
+            />
+            <Input
+              className="h-6 text-xs"
+              type="date"
+              value={row.date}
+              onChange={(e) => onChange("date", e.target.value)}
+            />
+          </div>
+        </td>
+      </tr>
+    );
+  }
+
+  function SectionHeader({ label }: { label: string }) {
+    return (
+      <tr className="bg-muted/60">
+        <td className="px-3 py-2.5 text-sm font-bold text-foreground" colSpan={5}>
+          {label}
+        </td>
+      </tr>
+    );
+  }
+
+  function SubNote({ text }: { text: string }) {
+    return (
+      <tr className="bg-muted/20">
+        <td className="px-3 py-1" />
+        <td className="px-4 py-1.5 text-xs text-muted-foreground italic" colSpan={4}>
+          {text}
+        </td>
+      </tr>
+    );
+  }
+
+  const s2Labels = [
+    "Entity's reporting deadlines (if any).",
+    "Team planning discussions.",
+    "Planned fieldwork start/end.",
+    "File reviews (including EQCR).",
+    "Meetings with management and TCWG.",
+    "Other (specify).",
+  ];
+
+  const s3Labels = [
+    "Material financial statement areas and disclosures (Form 590).",
+    "Major operational or control changes during the period.",
+    "Impact of changes in accounting standards.",
+    "Matters raised (such as problem areas) from past experience.",
+    "Significant risks and going-concern uncertainties.",
+    "Use of auditor experts.",
+    "Use of service organization reports.",
+    "Use of component auditors.",
+    "Coordination of work with a group auditor.",
+    "Need for stand-alone audited financial statements of subsidiaries.",
+    "Key audit matters (where applicable).",
+  ];
+
+  const s4Roles = ["Partner", "Manager", "Senior", "Assistant", "Assistant 1", "Expert", "EQCR"];
 
   return (
     <div className="flex flex-col h-full">
 
-      {/* ── Sticky Objective Bar ── */}
-      <div className="px-6 py-2.5 border-b border-border bg-primary/[0.03] flex items-start gap-2 shrink-0">
-        <Info className="h-3.5 w-3.5 text-primary mt-0.5 shrink-0" />
-        <span className="text-xs font-semibold text-primary whitespace-nowrap">{standardRef} — Overall Audit Strategy</span>
-        <span className="text-xs text-muted-foreground mx-1">|</span>
-        <span className="text-xs font-semibold text-primary whitespace-nowrap">Objective:</span>
-        <p className="text-xs text-muted-foreground flex-1 leading-relaxed">
-          Document the overall audit strategy that sets the scope, timing and direction of the audit and guides the development of the audit plan.
-        </p>
-      </div>
-
       {/* ── Body ── */}
       <div className="flex-1 overflow-y-auto bg-muted/30">
-        <div className="p-6 space-y-4">
+        <div className="p-6">
 
-          {/* ── Card 1: Meeting Information ── */}
+          {/* ── Main card ── */}
           <div className="bg-card text-card-foreground border border-border shadow-[0_2px_8px_hsl(213_40%_20%/0.06)] rounded-md overflow-hidden">
-            <div className="px-6 py-3.5 bg-card border-b border-border flex items-center gap-3">
-              <span className="text-sm font-semibold text-foreground">Team Planning Discussion</span>
-              <span title="Record the details of the planning meeting, attendees, and discussion outcomes.">
-                <Info className="h-3.5 w-3.5 text-muted-foreground cursor-help" />
-              </span>
-              <div className="flex-1" />
-              {imported ? (
-                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-green-100 text-green-700 border border-green-200">
-                  ✅ Imported from meeting notes — January 20, 2025
-                </span>
-              ) : (
-                <button
-                  onClick={handleOpenImport}
-                  className="h-8 px-3 rounded-full bg-gradient-to-r from-[#1C63A6] to-[#7A31D8] hover:from-[#1a5a96] hover:to-[#6a2bc2] text-white text-xs font-medium gap-1.5 flex items-center shadow-md"
-                >
-                  <Sparkles className="h-3.5 w-3.5 animate-[spin_3s_linear_infinite]" />
-                  Import Meeting Notes
-                </button>
-              )}
-            </div>
-            <div className="px-6 py-5 space-y-5">
-              {/* 2-col grid */}
-              <div className="grid grid-cols-2 gap-4">
-                <div className="flex flex-col gap-1">
-                  <label className="text-xs font-medium text-muted-foreground">Meeting Date</label>
+
+            {/* ── Card header ── */}
+            <div className="px-6 py-4 border-b border-border bg-card">
+              <div className="grid grid-cols-2 gap-x-8 gap-y-3 mb-3">
+                <div className="flex items-center gap-3">
+                  <span className="text-xs font-semibold text-muted-foreground w-24 shrink-0">Entity:</span>
                   <Input
-                    value={meetingDate}
-                    onChange={(e) => setMeetingDate(e.target.value)}
-                    className="h-8 text-sm"
+                    className="h-8 text-sm flex-1"
+                    value={entity}
+                    onChange={(e) => setEntity(e.target.value)}
                   />
                 </div>
-                <div className="flex flex-col gap-1">
-                  <label className="text-xs font-medium text-muted-foreground">Location</label>
+                <div className="flex items-center gap-3">
+                  <span className="text-xs font-semibold text-muted-foreground w-24 shrink-0">Period ended:</span>
                   <Input
-                    value={location}
-                    onChange={(e) => setLocation(e.target.value)}
-                    className="h-8 text-sm"
+                    className="h-8 text-sm flex-1"
+                    value={period}
+                    onChange={(e) => setPeriod(e.target.value)}
                   />
                 </div>
-                <div className="flex flex-col gap-1">
-                  <label className="text-xs font-medium text-muted-foreground">Client</label>
-                  <div className="h-8 flex items-center px-3 rounded-md border border-border bg-muted/30 text-sm text-foreground">
-                    {clientName}
-                  </div>
-                </div>
-                <div className="flex flex-col gap-1">
-                  <label className="text-xs font-medium text-muted-foreground">Engagement</label>
-                  <div className="h-8 flex items-center px-3 rounded-md border border-border bg-muted/30 text-sm font-mono text-foreground">
-                    {engagementId}
-                  </div>
+                <div className="col-span-2 flex items-start gap-3">
+                  <span className="text-xs font-semibold text-muted-foreground w-24 shrink-0 pt-0.5">Objective:</span>
+                  <p className="text-xs text-muted-foreground leading-relaxed flex-1">
+                    To document the scope, timing and direction of the audit as a guide for the development of the audit plan.
+                  </p>
+                  <span className="text-xs text-muted-foreground whitespace-nowrap shrink-0">Reference: {standardRef}</span>
                 </div>
               </div>
-
-              {/* Attendees table */}
-              <div>
-                <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2">Attendees</p>
-                <div className="overflow-x-auto rounded-md border border-border">
-                  <table className="w-full text-sm">
-                    <thead>
-                      <tr className="bg-muted border-b border-border">
-                        <th className="px-4 py-2.5 text-left text-xs font-semibold text-foreground uppercase tracking-wider">Name</th>
-                        <th className="px-4 py-2.5 text-left text-xs font-semibold text-foreground uppercase tracking-wider">Role</th>
-                        <th className="px-4 py-2.5 text-left text-xs font-semibold text-foreground uppercase tracking-wider">Organization</th>
-                        <th className="px-4 py-2.5 text-left text-xs font-semibold text-foreground uppercase tracking-wider">Experience</th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-border">
-                      {attendees.map((a, i) => (
-                        <tr key={i} className="hover:bg-muted/40 transition-colors">
-                          <td className="px-4 py-2.5 text-sm font-medium text-foreground">{a.name}</td>
-                          <td className="px-4 py-2.5 text-sm text-muted-foreground">{a.role}</td>
-                          <td className="px-4 py-2.5 text-sm text-muted-foreground">{a.organization}</td>
-                          <td className="px-4 py-2.5 text-sm text-muted-foreground">{a.experience}</td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
+              <div className="mt-2 px-3 py-1.5 bg-muted/50 rounded text-xs text-muted-foreground">
+                <span className="font-semibold">Legend:</span> EQCR = Engagement quality control review. TCWG = Those charged with governance.
               </div>
             </div>
-          </div>
 
-          {/* ── Card 2: Team Responsibilities ── */}
-          <div className="bg-card text-card-foreground border border-border shadow-[0_2px_8px_hsl(213_40%_20%/0.06)] rounded-md overflow-hidden">
-            <div className="px-6 py-3.5 bg-card border-b border-border flex items-center gap-3">
-              <span className="text-sm font-semibold text-foreground">Team Responsibilities</span>
-              <span title="Document the responsibilities assigned to each team member for this engagement.">
-                <Info className="h-3.5 w-3.5 text-muted-foreground cursor-help" />
-              </span>
-            </div>
+            {/* ── Main table ── */}
             <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead>
+              <table className="w-full text-sm">
+                <thead className="sticky top-0 z-10">
                   <tr className="bg-muted border-b border-border">
-                    <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider">Name</th>
-                    <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider">Role</th>
-                    <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider">Responsibilities</th>
-                    <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider">Area Assigned</th>
+                    <th className="w-12 px-3 py-2.5 text-left text-xs font-semibold text-foreground uppercase">#</th>
+                    <th className="px-4 py-2.5 text-left text-xs font-semibold text-foreground uppercase">Description</th>
+                    <th className="w-20 px-3 py-2.5 text-center text-xs font-semibold text-foreground uppercase">W/P Ref.</th>
+                    <th className="w-80 px-3 py-2.5 text-left text-xs font-semibold text-foreground uppercase">Responses and Comments</th>
+                    <th className="w-32 px-3 py-2.5 text-center text-xs font-semibold text-foreground uppercase">Initials / Date</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-border">
-                  {teamRows.map((r, i) => (
-                    <tr key={i} className="hover:bg-muted/40 transition-colors">
-                      <td className="px-4 py-2.5 text-sm font-medium text-foreground whitespace-nowrap">{r.name}</td>
-                      <td className="px-4 py-2.5 text-sm text-muted-foreground whitespace-nowrap">{r.role}</td>
-                      <td className="px-4 py-2.5 text-sm text-muted-foreground">{r.responsibilities}</td>
-                      <td className="px-4 py-2.5 text-sm text-muted-foreground whitespace-nowrap">{r.areaAssigned}</td>
-                    </tr>
+
+                  {/* ── Section 1 ── */}
+                  <SectionHeader label="1. Reporting requirements" />
+                  <DataRow
+                    num="1.1"
+                    description="The applicable financial reporting framework (such as Canadian Accounting Standards for Private Enterprises (ASPE))."
+                    row={s1[0]}
+                    onChange={(f, v) => updateRow(setS1, 0, f, v)}
+                  />
+                  <DataRow
+                    num="1.2"
+                    description="Industry-specific or specialized requirements."
+                    row={s1[1]}
+                    onChange={(f, v) => updateRow(setS1, 1, f, v)}
+                  />
+
+                  {/* ── Section 2 ── */}
+                  <SectionHeader label="2. Timing" />
+                  {s2Labels.map((label, i) => (
+                    <DataRow
+                      key={i}
+                      num={`2.${i + 1}`}
+                      description={label}
+                      row={s2[i]}
+                      onChange={(f, v) => updateRow(setS2, i, f, v)}
+                      extra={
+                        i === 1 ? (
+                          imported ? (
+                            <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-green-100 text-green-700 border border-green-200">
+                              ✅ Imported
+                            </span>
+                          ) : (
+                            <button
+                              onClick={handleOpenImport}
+                              className="h-7 px-2.5 rounded-full bg-gradient-to-r from-[#1C63A6] to-[#7A31D8] hover:from-[#1a5a96] hover:to-[#6a2bc2] text-white text-xs font-medium gap-1.5 flex items-center shadow-sm"
+                            >
+                              <Sparkles className="h-3 w-3 animate-[spin_3s_linear_infinite]" />
+                              Import Meeting Notes
+                            </button>
+                          )
+                        ) : undefined
+                      }
+                    />
                   ))}
-                </tbody>
-              </table>
-            </div>
-          </div>
 
-          {/* ── Card 3: Key Changes from Prior Year ── */}
-          <div className="bg-card text-card-foreground border border-border shadow-[0_2px_8px_hsl(213_40%_20%/0.06)] rounded-md overflow-hidden">
-            <div className="px-6 py-3.5 bg-card border-b border-border flex items-center gap-3">
-              <span className="text-sm font-semibold text-foreground">Key Changes from Prior Year</span>
-              <span title="Document significant changes from the prior year and their expected audit impact.">
-                <Info className="h-3.5 w-3.5 text-muted-foreground cursor-help" />
-              </span>
-            </div>
-            <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead>
-                  <tr className="bg-muted border-b border-border">
-                    <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider">Area</th>
-                    <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider">Change Description</th>
-                    <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider">Audit Impact</th>
-                    <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider">Risk Level</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-border">
-                  {keyChanges.map((r, i) => (
-                    <tr key={i} className="hover:bg-muted/40 transition-colors">
-                      <td className="px-4 py-2.5 text-sm font-medium text-foreground whitespace-nowrap">{r.area}</td>
-                      <td className="px-4 py-2.5 text-sm text-muted-foreground">{r.changeDescription}</td>
-                      <td className="px-4 py-2.5 text-sm text-muted-foreground">{r.auditImpact}</td>
-                      <td className="px-4 py-2.5">
-                        <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${riskBadgeClass(r.riskLevel)}`}>
-                          {r.riskLevel}
-                        </span>
+                  {/* ── Section 3 ── */}
+                  <SectionHeader label="3. Factors to consider in the audit" />
+                  <SubNote text="Identify key areas to be addressed in the audit:" />
+                  {s3Labels.map((label, i) => (
+                    <DataRow
+                      key={i}
+                      num={`3.${i + 1}`}
+                      description={label}
+                      row={s3[i]}
+                      onChange={(f, v) => updateRow(setS3, i, f, v)}
+                    />
+                  ))}
+
+                  {/* ── Section 4 ── */}
+                  <SectionHeader label="4. Audit team" />
+                  <SubNote text="Identify the audit team members assigned and their roles. Ensure the assignment of appropriately experienced team members to areas where there may be higher risks of material misstatement." />
+                  {s4Roles.map((role, i) => (
+                    <tr key={i} className="hover:bg-muted/50 transition-colors">
+                      <td className="px-3 py-2.5 text-xs text-muted-foreground font-mono align-top whitespace-nowrap">{`4.${i + 1}`}</td>
+                      <td className="px-4 py-2.5 text-sm text-foreground align-top font-medium">{role}</td>
+                      <td className="px-3 py-2 align-top">
+                        <Input
+                          className="h-7 text-xs w-16 text-center"
+                          value={s4[i].wpRef}
+                          onChange={(e) => updateTeamRow(i, "wpRef", e.target.value)}
+                          placeholder="—"
+                        />
+                      </td>
+                      <td className="px-3 py-2 align-top">
+                        <div className="flex flex-col gap-1">
+                          <Input
+                            className="h-7 text-xs"
+                            placeholder="Name"
+                            value={s4[i].name}
+                            onChange={(e) => updateTeamRow(i, "name", e.target.value)}
+                          />
+                          <Input
+                            className="h-7 text-xs"
+                            placeholder="Experience / notes"
+                            value={s4[i].response}
+                            onChange={(e) => updateTeamRow(i, "response", e.target.value)}
+                          />
+                        </div>
+                      </td>
+                      <td className="px-3 py-2 align-top">
+                        <div className="flex flex-col gap-1">
+                          <Input
+                            className="h-6 text-xs"
+                            placeholder="Initials"
+                            value={s4[i].initials}
+                            onChange={(e) => updateTeamRow(i, "initials", e.target.value)}
+                          />
+                          <Input
+                            className="h-6 text-xs"
+                            type="date"
+                            value={s4[i].date}
+                            onChange={(e) => updateTeamRow(i, "date", e.target.value)}
+                          />
+                        </div>
                       </td>
                     </tr>
                   ))}
-                </tbody>
-              </table>
-            </div>
-          </div>
 
-          {/* ── Card 4: Preliminary Analytical Review Points ── */}
-          <div className="bg-card text-card-foreground border border-border shadow-[0_2px_8px_hsl(213_40%_20%/0.06)] rounded-md overflow-hidden">
-            <div className="px-6 py-3.5 bg-card border-b border-border flex items-center gap-3">
-              <span className="text-sm font-semibold text-foreground">Preliminary Analytical Review Points</span>
-              <span title="Summarize the key observations from preliminary analytical procedures and identify areas requiring follow-up.">
-                <Info className="h-3.5 w-3.5 text-muted-foreground cursor-help" />
-              </span>
-            </div>
-            <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead>
-                  <tr className="bg-muted border-b border-border">
-                    <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider">Item</th>
-                    <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider">Observation</th>
-                    <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider">Threshold Exceeded</th>
-                    <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider">Follow-up Required</th>
+                  {/* ── Section 5 ── */}
+                  <SectionHeader label="5. Budget" />
+                  <DataRow
+                    num="5.1"
+                    description="Establish the budgeted audit fee and labour hours (Form 450)."
+                    row={s5}
+                    onChange={(f, v) => updateSingle(setS5, f, v)}
+                  />
+
+                  {/* ── Section 6 ── */}
+                  <SectionHeader label="6. Audit strategy" />
+                  <DataRow
+                    num="6.1"
+                    description={
+                      <>
+                        Provide a cross-reference to documents that outline the planned scope and timing of the audit, such as the communication with management and to TCWG (CAS 260.15). For an example of a written planning letter, refer to Sample Letter AL3.1.
+                      </>
+                    }
+                    row={s6}
+                    onChange={(f, v) => updateSingle(setS6, f, v)}
+                  />
+
+                  {/* ── Subsequent changes ── */}
+                  <tr className="bg-muted">
+                    <td className="px-3 py-3 text-sm font-bold text-foreground uppercase tracking-wide" colSpan={5}>
+                      Subsequent Changes in Strategy
+                    </td>
                   </tr>
-                </thead>
-                <tbody className="divide-y divide-border">
-                  {parRows.map((r, i) => (
-                    <tr key={i} className="hover:bg-muted/40 transition-colors">
-                      <td className="px-4 py-2.5 text-sm font-medium text-foreground whitespace-nowrap">{r.item}</td>
-                      <td className="px-4 py-2.5 text-sm text-muted-foreground">{r.observation}</td>
-                      <td className="px-4 py-2.5">
-                        <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${r.thresholdExceeded === "Yes" ? "bg-amber-100 text-amber-700 border border-amber-200" : "bg-muted text-muted-foreground border border-border"}`}>
-                          {r.thresholdExceeded}
-                        </span>
-                      </td>
-                      <td className="px-4 py-2.5 text-sm text-muted-foreground">{r.followUpRequired}</td>
-                    </tr>
-                  ))}
+                  <DataRow
+                    num=""
+                    description="Outline any significant changes made to the original audit strategy for this period as a result of performing further procedures or obtaining new information."
+                    row={subseq}
+                    onChange={(f, v) => updateSingle(setSubseq, f, v)}
+                  />
+
                 </tbody>
               </table>
             </div>
-          </div>
 
-          {/* ── Card 5: Risk Assessment Discussion ── */}
-          <div className="bg-card text-card-foreground border border-border shadow-[0_2px_8px_hsl(213_40%_20%/0.06)] rounded-md overflow-hidden">
-            <div className="px-6 py-3.5 bg-card border-b border-border flex items-center gap-3">
-              <span className="text-sm font-semibold text-foreground">Risk Assessment Discussion</span>
-              <span title="Document the preliminary risk assessment and planned audit responses identified during the planning meeting.">
-                <Info className="h-3.5 w-3.5 text-muted-foreground cursor-help" />
-              </span>
-            </div>
-            <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead>
-                  <tr className="bg-muted border-b border-border">
-                    <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider">Risk Area</th>
-                    <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider">Discussion Points</th>
-                    <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider">Preliminary Assessment</th>
-                    <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider">Planned Response</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-border">
-                  {riskRows.map((r, i) => (
-                    <tr key={i} className="hover:bg-muted/40 transition-colors">
-                      <td className="px-4 py-2.5 text-sm font-medium text-foreground">{r.riskArea}</td>
-                      <td className="px-4 py-2.5 text-sm text-muted-foreground">{r.discussionPoints}</td>
-                      <td className="px-4 py-2.5 text-sm text-muted-foreground">{r.preliminaryAssessment}</td>
-                      <td className="px-4 py-2.5 text-sm text-muted-foreground">{r.plannedResponse}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </div>
-
-          {/* ── Card 6: Planned Procedures Summary ── */}
-          <div className="bg-card text-card-foreground border border-border shadow-[0_2px_8px_hsl(213_40%_20%/0.06)] rounded-md overflow-hidden">
-            <div className="px-6 py-3.5 bg-card border-b border-border flex items-center gap-3">
-              <span className="text-sm font-semibold text-foreground">Planned Procedures Summary</span>
-              <span title="Summarize the planned audit procedures by area, including timing and team assignment.">
-                <Info className="h-3.5 w-3.5 text-muted-foreground cursor-help" />
-              </span>
-            </div>
-            <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead>
-                  <tr className="bg-muted border-b border-border">
-                    <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider">Area</th>
-                    <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider">Approach</th>
-                    <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider">Timing</th>
-                    <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider">Assigned To</th>
-                    <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider">W/P Ref</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-border">
-                  {procedureRows.map((r, i) => (
-                    <tr key={i} className="hover:bg-muted/40 transition-colors">
-                      <td className="px-4 py-2.5 text-sm font-medium text-foreground whitespace-nowrap">{r.area}</td>
-                      <td className="px-4 py-2.5 text-sm text-muted-foreground">{r.approach}</td>
-                      <td className="px-4 py-2.5 text-sm text-muted-foreground whitespace-nowrap">{r.timing}</td>
-                      <td className="px-4 py-2.5 text-sm text-muted-foreground whitespace-nowrap">{r.assignedTo}</td>
-                      <td className="px-4 py-2.5 text-sm font-mono text-muted-foreground">{r.wpRef}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </div>
-
-          {/* ── Card 7: Action Items ── */}
-          <div className="bg-card text-card-foreground border border-border shadow-[0_2px_8px_hsl(213_40%_20%/0.06)] rounded-md overflow-hidden">
-            <div className="px-6 py-3.5 bg-card border-b border-border flex items-center gap-3">
-              <span className="text-sm font-semibold text-foreground">Action Items</span>
-              <span title="Track outstanding action items arising from the planning meeting.">
-                <Info className="h-3.5 w-3.5 text-muted-foreground cursor-help" />
-              </span>
-            </div>
-            <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead>
-                  <tr className="bg-muted border-b border-border">
-                    <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider w-10">#</th>
-                    <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider">Action Item</th>
-                    <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider">Owner</th>
-                    <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider">Due Date</th>
-                    <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider">Status</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-border">
-                  {actionRows.map((r) => (
-                    <tr key={r.num} className="hover:bg-muted/40 transition-colors">
-                      <td className="px-4 py-2.5 text-sm text-muted-foreground">{r.num}</td>
-                      <td className="px-4 py-2.5 text-sm text-foreground">{r.actionItem}</td>
-                      <td className="px-4 py-2.5 text-sm text-muted-foreground whitespace-nowrap">{r.owner}</td>
-                      <td className="px-4 py-2.5 text-sm text-muted-foreground whitespace-nowrap">{r.dueDate}</td>
-                      <td className="px-4 py-2.5 text-sm text-muted-foreground whitespace-nowrap">{r.status}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </div>
-
-          {/* ── Card 8: Conclusion ── */}
-          <div className="bg-card border border-border shadow-[0_2px_8px_hsl(213_40%_20%/0.06)] rounded-md overflow-hidden">
-            <div className="px-6 py-3.5 bg-card border-b border-border">
-              <span className="text-sm font-semibold text-foreground">Conclusion</span>
-            </div>
-            <div className="px-6 py-5">
-              <Textarea
-                value={conclusion}
-                onChange={(e) => setConclusion(e.target.value)}
-                className="min-h-[72px] text-sm resize-none bg-background"
-              />
-              <div className="flex justify-end mt-4">
-                <Button
-                  onClick={() => {
-                    setConcluded(true);
-                    toast.success("Audit strategy memorandum concluded.");
-                  }}
-                  disabled={concluded}
-                >
-                  {concluded ? "Worksheet concluded" : "Conclude worksheet"}
-                </Button>
+            {/* ── Card footer ── */}
+            <div className="px-6 py-4 border-t border-border bg-muted/20">
+              <div className="grid grid-cols-2 gap-6">
+                <div className="flex items-center gap-3">
+                  <span className="text-xs font-semibold text-muted-foreground whitespace-nowrap">Prepared by:</span>
+                  <Input
+                    className="h-8 text-sm flex-1"
+                    value={preparedBy}
+                    onChange={(e) => setPreparedBy(e.target.value)}
+                  />
+                  <span className="text-xs font-semibold text-muted-foreground whitespace-nowrap">Date:</span>
+                  <Input
+                    className="h-8 text-sm w-36"
+                    value={preparedDate}
+                    onChange={(e) => setPreparedDate(e.target.value)}
+                  />
+                </div>
+                <div className="flex items-center gap-3">
+                  <span className="text-xs font-semibold text-muted-foreground whitespace-nowrap">Reviewed by:</span>
+                  <Input
+                    className="h-8 text-sm flex-1"
+                    value={reviewedBy}
+                    onChange={(e) => setReviewedBy(e.target.value)}
+                  />
+                  <span className="text-xs font-semibold text-muted-foreground whitespace-nowrap">Date:</span>
+                  <Input
+                    className="h-8 text-sm w-36"
+                    value={reviewedDate}
+                    onChange={(e) => setReviewedDate(e.target.value)}
+                  />
+                </div>
+              </div>
+              <div className="flex justify-between mt-3">
+                <span className="text-xs text-muted-foreground">Overall audit strategy — 430</span>
+                <span className="text-xs text-muted-foreground">©2022 CPA Canada PEG</span>
               </div>
             </div>
-          </div>
 
+          </div>
         </div>
       </div>
 
@@ -516,10 +582,7 @@ export function AuditASMWorksheet({ isUS = false }: AuditASMWorksheetProps) {
 
             {/* Step 1: Calendar Connection */}
             {importStep === 1 && (
-              <div
-                className="p-8 flex flex-col items-center gap-5 text-center"
-                style={{ animation: "fadeInUp 0.25s ease" }}
-              >
+              <div className="p-8 flex flex-col items-center gap-5 text-center" style={{ animation: "fadeInUp 0.25s ease" }}>
                 <div className="text-4xl">🗓️</div>
                 <p className="text-base font-semibold text-foreground">Connecting to Google Calendar...</p>
                 <div className="flex items-center justify-center">
@@ -528,20 +591,17 @@ export function AuditASMWorksheet({ isUS = false }: AuditASMWorksheetProps) {
                     <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
                   </svg>
                 </div>
-                <p className="text-sm text-muted-foreground">Retrieving meetings for {engagementId}...</p>
+                <p className="text-sm text-muted-foreground">Retrieving planning meetings for {entity}...</p>
               </div>
             )}
 
             {/* Step 2: AI Analysis */}
             {importStep === 2 && (
-              <div
-                className="p-8 flex flex-col items-center gap-5 text-center"
-                style={{ animation: "fadeInUp 0.25s ease" }}
-              >
+              <div className="p-8 flex flex-col items-center gap-5 text-center" style={{ animation: "fadeInUp 0.25s ease" }}>
                 <div className="text-4xl">✨</div>
                 <p className="text-base font-semibold text-foreground">Luka AI is analyzing your meeting notes...</p>
                 <ProgressBar />
-                <p className="text-sm text-muted-foreground">Reading transcript... Extracting attendees... Identifying key points...</p>
+                <p className="text-sm text-muted-foreground">Reading transcript... Extracting attendees... Mapping team roles...</p>
               </div>
             )}
 
@@ -557,17 +617,15 @@ export function AuditASMWorksheet({ isUS = false }: AuditASMWorksheetProps) {
                 <div className="px-6 py-5 space-y-4">
                   <div className="rounded-lg border border-border bg-muted/30 p-4 space-y-1">
                     <p className="text-sm font-medium text-foreground">📅 Meeting found</p>
-                    <p className="text-sm text-muted-foreground">"Audit Planning Discussion — {clientName}"</p>
-                    <p className="text-xs text-muted-foreground">Jan 20, 2025, 2:00 PM</p>
+                    <p className="text-sm text-muted-foreground">"Audit Planning Discussion — {entity}"</p>
+                    <p className="text-xs text-muted-foreground">{isUS ? "Jan 20, 2025, 2:00 PM" : "Apr 8, 2024, 10:00 AM"}</p>
                   </div>
                   <div className="space-y-2">
                     {[
-                      "6 Attendees identified",
-                      "Team responsibilities mapped",
-                      "5 Key changes documented",
-                      "5 Risk areas identified",
-                      "10 Planned procedures listed",
-                      "6 Action items captured",
+                      isUS ? "6 Attendees identified" : "6 Attendees identified",
+                      "Team planning discussion text extracted",
+                      "Section 4 audit team roles populated",
+                      isUS ? "4 firm members + 2 client representatives" : "4 firm members + 2 client representatives",
                     ].map((item) => (
                       <div key={item} className="flex items-center gap-2.5 px-3 py-2 rounded-md bg-green-50 border border-green-200">
                         <span className="text-green-600">✅</span>
@@ -593,35 +651,16 @@ export function AuditASMWorksheet({ isUS = false }: AuditASMWorksheetProps) {
                   </button>
                 </div>
                 <div className="px-6 py-5 max-h-80 overflow-y-auto space-y-3">
-                  <ReviewSection title="Meeting Information">
-                    <ReviewField label="Date" value="January 20, 2025" />
-                    <ReviewField label="Location" value="Conference Room A / Teams" />
-                    <ReviewField label="Attendees" value="6 participants (4 firm, 2 client)" />
+                  <ReviewSection title="Team Planning Discussion (§2.2)">
+                    <ReviewField label="Meeting date" value={isUS ? "January 20, 2025" : "April 8, 2024"} />
+                    <ReviewField label="Attendees" value={isUS ? "M. Thompson, L. Garcia, K. Patel, J. Chen, R. Morrison, S. Williams" : "J. Patel, A. Nguyen, T. Brown, D. Kim, P. Singh, C. Okafor"} />
                   </ReviewSection>
-                  <ReviewSection title="Team Responsibilities">
-                    <ReviewField label="Partner" value="M. Thompson — All areas" />
-                    <ReviewField label="Manager" value="L. Garcia — Revenue, AR, Completion" />
-                    <ReviewField label="Senior" value="K. Patel — Assets, Liabilities" />
-                    <ReviewField label="Staff" value="J. Chen — Payroll, Expenses" />
-                  </ReviewSection>
-                  <ReviewSection title="Key Changes">
-                    <ReviewField label="High risk" value="ASC 842 first-year adoption ($2.8M ROU)" />
-                    <ReviewField label="Medium risk" value="New $5M credit facility, Revenue +8.2%, ERP module" />
-                    <ReviewField label="Low risk" value="New Controller joined July 2024" />
-                  </ReviewSection>
-                  <ReviewSection title="Risk Assessment">
-                    <ReviewField label="Significant" value="Revenue recognition (ASC 606)" />
-                    <ReviewField label="Presumed" value="Management override (AU-C 240)" />
-                    <ReviewField label="High" value="ASC 842 lease capitalization" />
-                  </ReviewSection>
-                  <ReviewSection title="Planned Procedures">
-                    <ReviewField label="Areas" value="10 audit areas planned (Week 1–4)" />
-                    <ReviewField label="W/P Refs" value="WP-Rev-01 through WP-GC-01" />
-                  </ReviewSection>
-                  <ReviewSection title="Action Items">
-                    <ReviewField label="Complete" value="2 items (engagement letter, bank confirmations)" />
-                    <ReviewField label="In Progress" value="2 items (AR aging, lease agreements)" />
-                    <ReviewField label="Pending" value="2 items (DCF model, IT change management)" />
+                  <ReviewSection title="Audit Team (§4)">
+                    <ReviewField label="Partner" value={isUS ? "M. Thompson, CPA — 18 years" : "J. Patel, CPA — 15 years"} />
+                    <ReviewField label="Manager" value={isUS ? "L. Garcia, CPA — 9 years" : "A. Nguyen, CPA — 7 years"} />
+                    <ReviewField label="Senior" value={isUS ? "K. Patel — 4 years" : "T. Brown — 3 years"} />
+                    <ReviewField label="Assistant" value={isUS ? "J. Chen — 1 year" : "D. Kim — 1 year"} />
+                    <ReviewField label="EQCR" value={isUS ? "D. Anderson, CPA (independent)" : "S. Lavoie, CPA (independent)"} />
                   </ReviewSection>
                 </div>
                 <div className="px-6 pb-6 flex gap-3 justify-end border-t border-border pt-4">
@@ -644,10 +683,6 @@ export function AuditASMWorksheet({ isUS = false }: AuditASMWorksheetProps) {
         @keyframes fadeInUp {
           from { opacity: 0; transform: translateY(8px); }
           to { opacity: 1; transform: translateY(0); }
-        }
-        @keyframes progressFill {
-          from { width: 0%; }
-          to { width: 100%; }
         }
       `}</style>
     </div>
@@ -686,7 +721,7 @@ function ReviewSection({ title, children }: { title: string; children: React.Rea
 function ReviewField({ label, value }: { label: string; value: string }) {
   return (
     <div className="flex items-start gap-2 text-sm">
-      <span className="text-muted-foreground shrink-0 w-24">{label}:</span>
+      <span className="text-muted-foreground shrink-0 w-28">{label}:</span>
       <span className="text-foreground">{value}</span>
     </div>
   );
