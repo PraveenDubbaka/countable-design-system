@@ -66,12 +66,11 @@ const FILTER_CATEGORIES = [
 type FilterId = typeof FILTER_CATEGORIES[number]["id"];
 // Engagement data for breadcrumb
 const engagementsData: Record<string, { id: string; client: string; type: string; yearEnd: string; status: string }> = {
-  "COM-CON-Dec312024": { id: "COM-CON-Dec312024", client: "Shipping Line Inc.", type: "Compilation (COM)", yearEnd: "Dec 31, 2024", status: "In Progress" },
-  "COM-PSP-Dec312023": { id: "COM-PSP-Dec312023", client: "Source 40", type: "Compilation (COM)", yearEnd: "Dec 31, 2023", status: "In Progress" },
-  "COM-QB-Dec312025": { id: "COM-QB-Dec312025", client: "qb 40.1", type: "Compilation (COM)", yearEnd: "Dec 31, 2025", status: "In Progress" },
+  "AUD-US-Dec312024": { id: "AUD-US-Dec312024", client: "Harbor Freight Logistics LLC", type: "Audit (AUD)", yearEnd: "Dec 31, 2024", status: "In Progress" },
   "AUD-SL-Mar312024": { id: "AUD-SL-Mar312024", client: "Shipping Line Inc.", type: "Audit (AUD)", yearEnd: "Mar 31, 2024", status: "In Progress" },
-  "REV-SL-Jun302024": { id: "REV-SL-Jun302024", client: "Shipping Line Inc.", type: "Review (REV)", yearEnd: "Jun 30, 2024", status: "In Progress" },
-  "COM-S40-Jun302024": { id: "COM-S40-Jun302024", client: "Source 40", type: "Compilation (COM)", yearEnd: "Jun 30, 2024", status: "In Progress" },
+  "AUD-HFL-Dec312025": { id: "AUD-HFL-Dec312025", client: "Harbor Freight Logistics LLC", type: "Audit (AUD)", yearEnd: "Dec 31, 2025", status: "In Progress" },
+  "REV-HFL-Dec312024": { id: "REV-HFL-Dec312024", client: "Harbor Freight Logistics LLC", type: "Review (REV)", yearEnd: "Dec 31, 2024", status: "In Progress" },
+  "COM-HFL-Dec312023": { id: "COM-HFL-Dec312023", client: "Harbor Freight Logistics LLC", type: "Compilation (COM)", yearEnd: "Dec 31, 2023", status: "In Progress" },
 };
 
 const getUniqueClients = () => {
@@ -103,25 +102,44 @@ const toolsMenuActions = [
 ];
 
 
-// Sample trial balance data matching screenshot
+// Harbor Freight Logistics LLC — Trial Balance (USD) — Dec 31, 2025
 const baseTrialBalanceData = [
-  { id: "1", accNo: "1.112", description: "Asset AIM renamed", original: 145.00, adj: 0.00, final: 145.00, py1: 0.00, changePct: "0.00%", py2: "(110.10)", mapNo: 1480.00, ls: "I", grouping: "Assets", subGrouping: "Current assets", cfCategory: "CFO", taxCode: 1480, fxRate: 1.00 },
-  { id: "2", accNo: "2.1", description: "Assets-AIM2 2.1", original: 1260.10, adj: 0.00, final: 1260.10, py1: 1260.00, changePct: "0.01%", py2: "100.00", mapNo: 2960.00, ls: "BB", grouping: "Liabilities", subGrouping: "Current liabilities", cfCategory: "CFO", taxCode: 2960, fxRate: 1.00 },
-  { id: "3", accNo: "2.12", description: "Add locally 40 test 2", original: "(10.10)", adj: 0.00, final: "(10.10)", py1: "(10.10)", changePct: "0.00%", py2: "0.00", mapNo: 1480.00, ls: "I", grouping: "Assets", subGrouping: "Current assets", cfCategory: "CFO", taxCode: 1480, fxRate: 1.00 },
-  { id: "4", accNo: "002.2", description: "Liabilities-A2IM edited", original: 56.00, adj: 0.00, final: 56.00, py1: "(50.00)", changePct: "(212.00)%", py2: "120.10", mapNo: 2960.00, ls: "BB", grouping: "Liabilities", subGrouping: "Current liabilities", cfCategory: "CFO", taxCode: 2960, fxRate: 1.00 },
-  { id: "5", accNo: "3.5", description: "Equity-AIM", original: 105.00, adj: 0.00, final: 105.00, py1: 115.00, changePct: "(8.70)%", py2: "0.00", mapNo: 7006.00, ls: "TT", grouping: "Equity", subGrouping: "Other compreh...", cfCategory: "NA", taxCode: 7006, fxRate: 1.00 },
-  { id: "6", accNo: "3.606", description: "3.60 puat 38 test", original: 651.40, adj: 0.00, final: 651.40, py1: 650.40, changePct: "0.15%", py2: "251.20", mapNo: 1480.00, ls: "I", grouping: "Assets", subGrouping: "Current assets", cfCategory: "CFO", taxCode: 1480, fxRate: 1.00 },
-  { id: "7", accNo: "005", description: "Costofsales-AIM", original: 0.00, adj: 0.00, final: 0.00, py1: "(11.00)", changePct: "(100.00)%", py2: "0.00", mapNo: 9270.00, ls: "40", grouping: "Expenses", subGrouping: "Operating expe...", cfCategory: "Excl", taxCode: 9270, fxRate: 1.00 },
-  { id: "8", accNo: "007.1", description: "MSD-WK renamed", original: 8.00, adj: 0.00, final: 8.00, py1: "(151.00)", changePct: "(105.30)%", py2: "(0.20)", mapNo: 9270.00, ls: "40", grouping: "Expenses", subGrouping: "Operating expe...", cfCategory: "Excl", taxCode: 9270, fxRate: 1.00 },
-  { id: "9", accNo: "8.1010", description: "test ga uat v8.1", original: 10.00, adj: 0.00, final: 10.00, py1: 10.00, changePct: "0.00%", py2: "10.00", mapNo: 1480.00, ls: "I", grouping: "Assets", subGrouping: "Current assets", cfCategory: "CFO", taxCode: 1480, fxRate: 1.00 },
+  // Assets — debit balances (positive)
+  { id: "1",  accNo: "1010", description: "Cash & Bank",                       original: 1240000,   adj: 0, final: 1240000,   py1: 1085000,  changePct: "14.29%",   py2: "975,000.00",   mapNo: 1010, ls: "BB", grouping: "Assets",      subGrouping: "Current assets",     cfCategory: "CFO", taxCode: 1010, fxRate: 1.00 },
+  { id: "2",  accNo: "1100", description: "Accounts Receivable",               original: 2100000,   adj: 0, final: 2100000,   py1: 1920000,  changePct: "9.38%",    py2: "1,750,000.00", mapNo: 1100, ls: "BB", grouping: "Assets",      subGrouping: "Current assets",     cfCategory: "CFO", taxCode: 1100, fxRate: 1.00 },
+  { id: "3",  accNo: "1105", description: "Allowance for Doubtful Accounts",   original: -42000,    adj: 0, final: -42000,    py1: -38000,   changePct: "10.53%",   py2: "(32,000.00)",  mapNo: 1105, ls: "BB", grouping: "Assets",      subGrouping: "Current assets",     cfCategory: "CFO", taxCode: 1105, fxRate: 1.00 },
+  { id: "4",  accNo: "1200", description: "Inventory",                         original: 340000,    adj: 0, final: 340000,    py1: 298000,   changePct: "14.09%",   py2: "265,000.00",   mapNo: 1200, ls: "BB", grouping: "Assets",      subGrouping: "Current assets",     cfCategory: "CFO", taxCode: 1200, fxRate: 1.00 },
+  { id: "5",  accNo: "1300", description: "Prepaid Expenses",                  original: 185000,    adj: 0, final: 185000,    py1: 162000,   changePct: "14.20%",   py2: "148,000.00",   mapNo: 1300, ls: "BB", grouping: "Assets",      subGrouping: "Current assets",     cfCategory: "CFO", taxCode: 1300, fxRate: 1.00 },
+  { id: "6",  accNo: "1510", description: "Right-of-Use Assets (ASC 842)",     original: 2800000,   adj: 0, final: 2800000,   py1: 3080000,  changePct: "(9.09)%",  py2: "3,360,000.00", mapNo: 1510, ls: "BB", grouping: "Assets",      subGrouping: "Non-current assets", cfCategory: "NA",  taxCode: 1510, fxRate: 1.00 },
+  { id: "7",  accNo: "1600", description: "Property Plant & Equipment",        original: 6420000,   adj: 0, final: 6420000,   py1: 5940000,  changePct: "8.08%",    py2: "5,500,000.00", mapNo: 1600, ls: "BB", grouping: "Assets",      subGrouping: "Fixed assets",       cfCategory: "CFI", taxCode: 1600, fxRate: 1.00 },
+  { id: "8",  accNo: "1605", description: "Accumulated Depreciation",          original: -1600000,  adj: 0, final: -1600000,  py1: -1120000, changePct: "42.86%",   py2: "(840,000.00)", mapNo: 1605, ls: "BB", grouping: "Assets",      subGrouping: "Fixed assets",       cfCategory: "CFI", taxCode: 1605, fxRate: 1.00 },
+  { id: "9",  accNo: "1700", description: "Goodwill",                          original: 1420000,   adj: 0, final: 1420000,   py1: 1420000,  changePct: "0.00%",    py2: "1,420,000.00", mapNo: 1700, ls: "BB", grouping: "Assets",      subGrouping: "Non-current assets", cfCategory: "NA",  taxCode: 1700, fxRate: 1.00 },
+  { id: "10", accNo: "1900", description: "Other Assets",                      original: 237000,    adj: 0, final: 237000,    py1: 214000,   changePct: "10.75%",   py2: "198,000.00",   mapNo: 1900, ls: "BB", grouping: "Assets",      subGrouping: "Non-current assets", cfCategory: "NA",  taxCode: 1900, fxRate: 1.00 },
+  // Liabilities — credit balances (negative)
+  { id: "11", accNo: "2010", description: "Accounts Payable",                  original: -1400000,  adj: 0, final: -1400000,  py1: -1260000, changePct: "11.11%",   py2: "(1,140,000.00)", mapNo: 2010, ls: "BB", grouping: "Liabilities", subGrouping: "Current liabilities",     cfCategory: "CFO", taxCode: 2010, fxRate: 1.00 },
+  { id: "12", accNo: "2100", description: "Accrued Liabilities",               original: -620000,   adj: 0, final: -620000,   py1: -574000,  changePct: "8.01%",    py2: "(530,000.00)", mapNo: 2100, ls: "BB", grouping: "Liabilities", subGrouping: "Current liabilities",     cfCategory: "CFO", taxCode: 2100, fxRate: 1.00 },
+  { id: "13", accNo: "2200", description: "Deferred Revenue",                  original: -284000,   adj: 0, final: -284000,   py1: -252000,  changePct: "12.70%",   py2: "(220,000.00)", mapNo: 2200, ls: "BB", grouping: "Liabilities", subGrouping: "Current liabilities",     cfCategory: "CFO", taxCode: 2200, fxRate: 1.00 },
+  { id: "14", accNo: "2310", description: "Current Portion LT Debt",           original: -480000,   adj: 0, final: -480000,   py1: -480000,  changePct: "0.00%",    py2: "(480,000.00)", mapNo: 2310, ls: "BB", grouping: "Liabilities", subGrouping: "Current liabilities",     cfCategory: "CFF", taxCode: 2310, fxRate: 1.00 },
+  { id: "15", accNo: "2320", description: "Lease Liability - Current",         original: -380000,   adj: 0, final: -380000,   py1: -360000,  changePct: "5.56%",    py2: "(340,000.00)", mapNo: 2320, ls: "BB", grouping: "Liabilities", subGrouping: "Current liabilities",     cfCategory: "CFF", taxCode: 2320, fxRate: 1.00 },
+  { id: "16", accNo: "2500", description: "Long-term Debt",                    original: -4320000,  adj: 0, final: -4320000,  py1: -4800000, changePct: "(10.00)%", py2: "(5,280,000.00)", mapNo: 2500, ls: "BB", grouping: "Liabilities", subGrouping: "Long-term liabilities",   cfCategory: "CFF", taxCode: 2500, fxRate: 1.00 },
+  { id: "17", accNo: "2510", description: "Lease Liability - Non-Current",     original: -2370000,  adj: 0, final: -2370000,  py1: -2640000, changePct: "(10.23)%", py2: "(2,910,000.00)", mapNo: 2510, ls: "BB", grouping: "Liabilities", subGrouping: "Long-term liabilities",   cfCategory: "CFF", taxCode: 2510, fxRate: 1.00 },
+  { id: "18", accNo: "2900", description: "Other Long-term Liabilities",       original: -116000,   adj: 0, final: -116000,   py1: -104000,  changePct: "11.54%",   py2: "(95,000.00)",  mapNo: 2900, ls: "BB", grouping: "Liabilities", subGrouping: "Long-term liabilities",   cfCategory: "NA",  taxCode: 2900, fxRate: 1.00 },
+  // Equity — credit balances (negative)
+  { id: "19", accNo: "3100", description: "Common Stock",                      original: -500000,   adj: 0, final: -500000,   py1: -500000,  changePct: "0.00%",    py2: "(500,000.00)", mapNo: 3100, ls: "BB", grouping: "Equity",      subGrouping: "Share capital",      cfCategory: "NA",  taxCode: 3100, fxRate: 1.00 },
+  { id: "20", accNo: "3200", description: "Retained Earnings (opening)",       original: -2683000,  adj: 0, final: -2683000,  py1: -1943000, changePct: "38.08%",   py2: "(1,354,000.00)", mapNo: 3200, ls: "RE", grouping: "Equity",  subGrouping: "Retained earnings",  cfCategory: "NA",  taxCode: 3200, fxRate: 1.00 },
+  // Revenue — credit balances (negative)
+  { id: "21", accNo: "4000", description: "Service Revenue",                   original: -18400000, adj: 0, final: -18400000, py1: -16820000, changePct: "9.39%",   py2: "(15,440,000.00)", mapNo: 4000, ls: "I", grouping: "Revenue",  subGrouping: "Operating revenue",  cfCategory: "CFO", taxCode: 4000, fxRate: 1.00 },
+  { id: "22", accNo: "4900", description: "Other Income",                      original: -47000,    adj: 0, final: -47000,    py1: -38000,   changePct: "23.68%",   py2: "(31,000.00)",  mapNo: 4900, ls: "I", grouping: "Revenue",   subGrouping: "Other income",       cfCategory: "CFO", taxCode: 4900, fxRate: 1.00 },
+  // Expenses — debit balances (positive)
+  { id: "23", accNo: "5000", description: "Cost of Services",                  original: 12144000,  adj: 0, final: 12144000,  py1: 11116000, changePct: "9.25%",    py2: "10,208,000.00", mapNo: 5000, ls: "I", grouping: "Expenses", subGrouping: "Operating expe...",  cfCategory: "CFO", taxCode: 5000, fxRate: 1.00 },
+  { id: "24", accNo: "6100", description: "Salaries & Benefits",               original: 2160000,   adj: 0, final: 2160000,   py1: 2040000,  changePct: "5.88%",    py2: "1,920,000.00", mapNo: 6100, ls: "I", grouping: "Expenses",  subGrouping: "Operating expe...",  cfCategory: "CFO", taxCode: 6100, fxRate: 1.00 },
+  { id: "25", accNo: "6200", description: "Fuel & Vehicle",                    original: 980000,    adj: 0, final: 980000,    py1: 876000,   changePct: "11.87%",   py2: "798,000.00",   mapNo: 6200, ls: "I", grouping: "Expenses",  subGrouping: "Operating expe...",  cfCategory: "CFO", taxCode: 6200, fxRate: 1.00 },
+  { id: "26", accNo: "6300", description: "Rent & Occupancy",                  original: 440000,    adj: 0, final: 440000,    py1: 420000,   changePct: "4.76%",    py2: "400,000.00",   mapNo: 6300, ls: "I", grouping: "Expenses",  subGrouping: "Admin expenses",     cfCategory: "CFO", taxCode: 6300, fxRate: 1.00 },
+  { id: "27", accNo: "6400", description: "Depreciation & Amortization",       original: 480000,    adj: 0, final: 480000,    py1: 440000,   changePct: "9.09%",    py2: "400,000.00",   mapNo: 6400, ls: "I", grouping: "Expenses",  subGrouping: "Admin expenses",     cfCategory: "Excl", taxCode: 6400, fxRate: 1.00 },
+  { id: "28", accNo: "6500", description: "Interest Expense",                  original: 384000,    adj: 0, final: 384000,    py1: 412000,   changePct: "(6.80)%",  py2: "440,000.00",   mapNo: 6500, ls: "I", grouping: "Expenses",  subGrouping: "Finance costs",      cfCategory: "CFF", taxCode: 6500, fxRate: 1.00 },
+  { id: "29", accNo: "6900", description: "Other Operating Expenses",          original: 856000,    adj: 0, final: 856000,    py1: 794000,   changePct: "7.81%",    py2: "728,000.00",   mapNo: 6900, ls: "I", grouping: "Expenses",  subGrouping: "Operating expe...",  cfCategory: "CFO", taxCode: 6900, fxRate: 1.00 },
+  { id: "30", accNo: "7000", description: "Income Tax Expense",                original: 249000,    adj: 0, final: 249000,    py1: 213000,   changePct: "16.90%",   py2: "183,000.00",   mapNo: 7000, ls: "I", grouping: "Expenses",  subGrouping: "Finance costs",      cfCategory: "CFO", taxCode: 7000, fxRate: 1.00 },
 ];
-
-// Generate 100 additional rows
-const descriptions = ["Accounts Receivable", "Prepaid Insurance", "Office Equipment", "Accumulated Depreciation", "Notes Payable", "Unearned Revenue", "Common Stock", "Retained Earnings", "Service Revenue", "Salary Expense", "Rent Expense", "Utilities Expense", "Insurance Expense", "Depreciation Expense", "Supplies Expense", "Interest Expense", "Interest Income", "Dividend Income", "Gain on Sale", "Loss on Disposal", "Inventory", "Cost of Goods Sold", "Sales Returns", "Purchase Discounts", "Freight In", "Bad Debt Expense", "Allowance for Doubtful", "Bonds Payable", "Premium on Bonds", "Treasury Stock", "Cash Equivalents", "Short-term Investments", "Long-term Investments", "Goodwill", "Patents", "Copyright", "Trademark", "Franchise Rights", "Leasehold Improvements", "Land", "Building", "Machinery", "Vehicles", "Furniture & Fixtures", "Computer Equipment", "Software Licenses", "Mortgage Payable", "Lease Liability", "Deferred Tax Asset", "Deferred Tax Liability"];
-const groupings = ["Assets", "Liabilities", "Equity", "Revenue", "Expenses"];
-const subGroupings: Record<string, string[]> = { Assets: ["Current assets", "Non-current assets", "Fixed assets"], Liabilities: ["Current liabilities", "Long-term liabilities"], Equity: ["Share capital", "Retained earnings", "Other compreh..."], Revenue: ["Operating revenue", "Other income"], Expenses: ["Operating expe...", "Admin expenses", "Finance costs"] };
-const lsCodes = ["I", "BB", "TT", "40", "IS", "RE"];
-const cfCategories = ["CFO", "CFI", "CFF", "Excl", "NA"];
 
 const formatNumber = (val: number | string) => {
   if (typeof val === "string") return val;
@@ -130,47 +148,16 @@ const formatNumber = (val: number | string) => {
   return val.toFixed(2);
 };
 
-const generatedRows = Array.from({ length: 100 }, (_, i) => {
-  const idx = i + 10;
-  const grp = groupings[i % groupings.length];
-  const subGrps = subGroupings[grp];
-  const orig = parseFloat((Math.random() * 5000 - 1000).toFixed(2));
-  const adjVal = parseFloat((Math.random() * 100 - 50).toFixed(2));
-  const finalVal = parseFloat((orig + adjVal).toFixed(2));
-  const py1Val = parseFloat((orig + (Math.random() * 200 - 100)).toFixed(2));
-  const changePct = py1Val !== 0 ? `${(((finalVal - py1Val) / Math.abs(py1Val)) * 100).toFixed(2)}%` : "0.00%";
-  const py2Val = parseFloat((Math.random() * 3000 - 500).toFixed(2));
-  const mapNo = [1480, 2960, 7006, 9270, 4100, 5200, 6300][i % 7];
-  return {
-    id: String(idx),
-    accNo: `${idx}.${String(i % 100).padStart(2, "0")}`,
-    description: descriptions[i % descriptions.length],
-    original: orig,
-    adj: adjVal,
-    final: finalVal,
-    py1: py1Val,
-    changePct,
-    py2: formatNumber(py2Val),
-    mapNo,
-    ls: lsCodes[i % lsCodes.length],
-    grouping: grp,
-    subGrouping: subGrps[i % subGrps.length],
-    cfCategory: cfCategories[i % cfCategories.length],
-    taxCode: mapNo,
-    fxRate: 1.00,
-  };
-});
-
-const trialBalanceData = [...baseTrialBalanceData, ...generatedRows];
+const trialBalanceData = [...baseTrialBalanceData];
 
 const totals = { original: 0.00, adj: 0.00, final: 0.00, py1: 0.00, py2: 0.00 };
-const netIncome = { original: 14.35, adj: 0.00, final: 14.35, py1: 149.22, py2: "(2,150.10)" };
+const netIncome = { original: 847000, adj: 0.00, final: 847000, py1: 740000, py2: "589,000.00" };
 
 
 export default function TrialBalance() {
   const navigate = useNavigate();
   const { engagementId } = useParams();
-  const [dateFilter] = useState("Nov 27 2025");
+  const [dateFilter] = useState("Dec 31 2025");
   const [hideZeroAcc, setHideZeroAcc] = useState(false);
   const zeroAccCount = 0;
   const [isToolbarExpanded, setIsToolbarExpanded] = useState(true);
@@ -317,7 +304,7 @@ export default function TrialBalance() {
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent className="bg-card border shadow-lg z-50">
-                  <DropdownMenuItem>Nov 27 2025</DropdownMenuItem>
+                  <DropdownMenuItem>Dec 31 2025</DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
 
