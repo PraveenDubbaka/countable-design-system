@@ -63,9 +63,9 @@ export const ExpandableSearch = React.forwardRef<HTMLInputElement, ExpandableSea
         {!expanded ? (
           <Button
             type="button"
-            variant="outline"
+            variant="secondary"
             size="sm"
-            className="h-9 min-w-9 px-0 bg-card hover:bg-muted"
+            className="h-9 min-w-9 px-0"
             onClick={() => setExpanded(true)}
             aria-label="Open search"
           >
