@@ -9,9 +9,10 @@ const buttonVariants = cva(
     variants: {
       variant: {
         default: [
-          "bg-primary text-primary-foreground",
-          "hover:bg-primary/75",
-          "active:bg-primary/65",
+          "bg-[#0C2D55] text-white border border-transparent",
+          "hover:bg-[#244266]",
+          "active:bg-[#081F3B]",
+          "focus-visible:bg-[#0C2D55] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A3A3A3]/50 focus-visible:ring-offset-2 focus-visible:ring-offset-background",
         ].join(" "),
         destructive: [
           "bg-destructive text-destructive-foreground",
