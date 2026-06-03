@@ -1071,11 +1071,11 @@ export default function EngagementDetail() {
                   if (isLetter) {
                     return isLetterEditing ? (
                       <>
-                        <ExpandableIconButton variant="outline" icon={<X className="h-4 w-4" />} label="Cancel" size="sm" onClick={() => setIsLetterEditing(false)} className="bg-card hover:bg-muted" />
+                        <ExpandableIconButton variant="secondary" icon={<X className="h-4 w-4" />} label="Cancel" size="sm" onClick={() => setIsLetterEditing(false)} />
                         <ExpandableIconButton variant="default" icon={<Check className="h-4 w-4" />} label="Save" size="sm" onClick={() => { letterSaveRef.current?.(); setIsLetterEditing(false); }} />
                       </>
                     ) : (
-                      <ExpandableIconButton variant="outline" icon={<Pencil className="h-4 w-4" />} label="Edit" size="sm" onClick={() => setIsLetterEditing(true)} className="bg-card hover:bg-muted" />
+                      <ExpandableIconButton variant="secondary" icon={<Pencil className="h-4 w-4" />} label="Edit" size="sm" onClick={() => setIsLetterEditing(true)} />
                     );
                   }
                   return (
@@ -1085,11 +1085,10 @@ export default function EngagementDetail() {
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                     <ExpandableIconButton
-                      variant="outline"
+                      variant="secondary"
                       size="sm"
                       icon={<Download className="h-4 w-4" />}
                       label="Export"
-                      className="bg-card hover:bg-muted"
                     />
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end" className="bg-card border shadow-lg z-50 w-40">
@@ -1105,11 +1104,11 @@ export default function EngagementDetail() {
                 </DropdownMenu>
                 <div className="relative">
                   <ExpandableIconButton
-                    variant="outline"
+                    variant="secondary"
                     size="sm"
                     icon={<Share2 className="h-4 w-4" />}
                     label={clientResponses.hasResponses ? 'Responses!' : 'Share'}
-                    className={`bg-card hover:bg-muted ${clientResponses.hasResponses ? 'ring-2 ring-primary ring-offset-2' : ''}`}
+                    className={clientResponses.hasResponses ? 'ring-2 ring-primary ring-offset-2' : undefined}
                     onClick={handleShareButtonClick}
                   />
                   {clientResponses.hasResponses && <span className="absolute -top-1.5 -right-1.5 flex h-5 w-5 pointer-events-none">
@@ -1120,20 +1119,19 @@ export default function EngagementDetail() {
                     </span>}
                 </div>
                 <ExpandableIconButton
-                  variant="outline"
+                  variant="secondary"
                   size="sm"
                   icon={<svg className="h-4 w-4" viewBox="0 0 1024 1024" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
                     <path d="M620.544 137.6c103.936 10.432 187.328 72.96 205.12 180.224h-60.16l97.088 144.448 97.152-144.448h-67.008c-17.792-144.448-127.168-238.336-265.344-251.712-19.136-1.536-36.864 14.848-36.864 35.712 1.28 17.92 13.568 34.24 30.016 35.776z m-150.4-73.024H132.416c-19.136 0-34.176 16.384-34.176 37.248v321.728c0 20.864 15.04 37.248 34.176 37.248h337.728c19.136 0 34.176-16.384 34.176-37.248V101.824c0-20.864-15.04-37.248-34.176-37.248z m-32.832 324.736H165.248V136.064h272.128v253.248h-0.064zM404.48 883.84c-116.224-10.432-205.12-87.872-209.216-216h64.256L162.496 523.392l-97.088 144.448h64.256c2.688 165.376 118.912 272.576 268.032 287.488 19.136 1.472 36.928-14.912 36.928-35.776a35.648 35.648 0 0 0-30.144-35.712z m489.6-323.264H556.288c-19.2 0-34.176 16.448-34.176 37.248v323.264c0 20.8 14.976 37.184 34.176 37.184h337.728c19.136 0 34.112-16.384 34.112-37.184V597.824c0.064-20.8-16.32-37.248-34.048-37.248z m-32.896 324.736H589.12V633.536h272.064v251.776z" />
                   </svg>}
                   label="Replace"
-                  className="bg-card hover:bg-muted"
                 />
                 <ExpandableIconButton
-                  variant="outline"
+                  variant="secondary"
                   size="sm"
                   icon={<Trash2 className="h-4 w-4" />}
                   label="Delete"
-                  className="bg-card hover:bg-muted text-destructive hover:text-destructive"
+                  className="text-destructive hover:text-destructive focus-visible:text-destructive"
                   onClick={() => setShowDeleteDialog(true)}
                 />
               </>}
