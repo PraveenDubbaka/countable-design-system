@@ -26,10 +26,13 @@ const buttonVariants = cva(
           "focus-visible:border-[#0A3159] dark:focus-visible:border-[hsl(var(--primary))]",
         ].join(" "),
         secondary: [
-          "bg-[#F5F7FA] text-[#0A3159] border border-[#D5DCE4]",
-          "hover:bg-[#E9EEF4] hover:border-[#C2CCD8]",
-          "active:bg-[#DDE5EE] active:border-[#B3BFCD]",
-          "focus-visible:bg-[#F5F7FA] focus-visible:border-[#0A3159] focus-visible:ring-2 focus-visible:ring-[#0A3159]/30 focus-visible:ring-offset-0",
+          "bg-secondary-button text-secondary-button-foreground border border-secondary-button-border",
+          "hover:bg-secondary-button-hover hover:border-secondary-button-border-hover",
+          "active:bg-secondary-button-active active:border-secondary-button-border-active",
+          "data-[state=open]:bg-secondary-button-active data-[state=open]:border-secondary-button-border-active",
+          "data-[state=on]:bg-secondary-button-active data-[state=on]:border-secondary-button-border-active",
+          "aria-selected:bg-secondary-button-active aria-selected:border-secondary-button-border-active",
+          "focus-visible:bg-secondary-button focus-visible:border-secondary-button-foreground focus-visible:ring-2 focus-visible:ring-secondary-button-foreground/30 focus-visible:ring-offset-0",
         ].join(" "),
         ghost: [
           "text-primary",

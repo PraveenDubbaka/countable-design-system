@@ -110,22 +110,19 @@ export default function Teams() {
               {/* Actions */}
               <div className="flex items-center gap-2">
                 <ExpandableIconButton
-                  variant="outline"
+                  variant="secondary"
                   icon={<UserPlus className="h-4 w-4" />}
                   label="Assign Partner"
-                  className="bg-card hover:bg-muted"
                 />
                 <ExpandableIconButton
-                  variant="outline"
+                  variant="secondary"
                   icon={<Mail className="h-4 w-4" />}
                   label="Invite All"
-                  className="bg-card hover:bg-muted"
                 />
                 <ExpandableIconButton
-                  variant="outline"
+                  variant="secondary"
                   icon={<KeyRound className="h-4 w-4" />}
                   label="Reset 2 FA"
-                  className="bg-card hover:bg-muted"
                 />
                 <div className="relative">
                   <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />

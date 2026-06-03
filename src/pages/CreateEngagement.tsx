@@ -441,7 +441,7 @@ export default function CreateEngagement() {
                     className="input-double-border pl-9 pr-3 h-9 text-sm bg-card border border-border rounded-[10px] outline-none w-44 text-foreground placeholder:text-muted-foreground"
                   />
                 </div>
-                <Button variant="outline" className="h-9 px-4 text-sm bg-card hover:bg-muted">
+                <Button variant="secondary" className="h-9 px-4 text-sm">
                   <Trash2 className="h-4 w-4 mr-2 icon-trash" />
                   Delete
                 </Button>
