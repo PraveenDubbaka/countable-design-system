@@ -58,6 +58,15 @@ export default {
         secondary: {
           DEFAULT: "hsl(var(--secondary))",
           foreground: "hsl(var(--secondary-foreground))",
+          button: {
+            DEFAULT: "hsl(var(--secondary-button-bg))",
+            hover: "hsl(var(--secondary-button-bg-hover))",
+            active: "hsl(var(--secondary-button-bg-active))",
+            foreground: "hsl(var(--secondary-button-foreground))",
+            border: "hsl(var(--secondary-button-border))",
+            "border-hover": "hsl(var(--secondary-button-border-hover))",
+            "border-active": "hsl(var(--secondary-button-border-active))",
+          },
         },
         destructive: {
           DEFAULT: "hsl(var(--destructive))",
