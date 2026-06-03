@@ -1,279 +1,360 @@
+# Acceptance Criteria — Global Design System (Countable)
 
-# QA Test Notes — Design System Update (Global Buttons + Tokens)
-
-**Scope:** Verify global updates to Primary buttons, Secondary buttons (incl. dropdown/toggle/selected states), ExpandableIconButton, ExpandableSearch, and token mapping in `index.css` / `tailwind.config.ts`. Coverage spans all pages and all interactive states.
-
-**Build under test:** Preview — https://id-preview--be946e2d-5cf9-45df-af36-3b166973e674.lovable.app
-**Published:** https://countable-design-system.lovable.app
-**Browsers:** Chrome (latest), Safari (latest), Firefox (latest), Edge (latest)
-**Viewports:** 1920×1080, 1440×900, 1374×861, 1280×800, 1024×768, 768×1024, 390×844
-**Themes:** Navy Core (light) — Dark mode where applicable (Sidebar, secondary panels)
+**Scope:** Authoritative, copy-paste-ready acceptance criteria for every layout, section, header, left navigation, and shared component in the app. All criteria are global — they must hold on every page, every viewport, every theme unless explicitly noted. Token references map to `src/index.css` and `tailwind.config.ts`.
 
 ---
 
-## Acceptance Criteria (must hold globally)
+## 1. GLOBAL APP SHELL / LAYOUT
 
-- **Primary button**
-  - Default: bg `#0C2D55`, white text, transparent border, radius `10px`, height `h-9` (36px), font-weight 600, 15px.
-  - Hover: bg `#244266`.
-  - Active/Pressed: bg `#081F3B`.
-  - Focus-visible (keyboard Tab): bg `#0C2D55` + 2px ring `#A3A3A3 @ 50%` with 2px offset against background.
-  - Disabled: 50% opacity, pointer-events none.
-- **Secondary button**
-  - Default: bg `--secondary-button-bg`, text `--secondary-button-foreground` (navy), border `--secondary-button-border`.
-  - Hover: bg + border use `*-hover` tokens.
-  - Active / `data-[state=open]` / `data-[state=on]` / `aria-selected`: bg + border use `*-active` tokens (the "selected" navy fill).
-  - Focus-visible: 2px navy ring at 30% opacity, no offset; border = `--secondary-button-foreground`.
-  - Radius `10px`, font 15px/600.
-- **Icons** inside buttons: 18px, inherit text color, no shift on hover.
-- **Transitions:** color/bg/border 200ms; no scale, no lift, no drop shadow (per global "flat" rule).
-- **Dark mode (Sidebar / secondary panels):** secondary buttons retain light-gray bg + navy text (token parity).
+**Component:** `src/components/Layout.tsx`
+
+- App container fills 100% of the viewport height (`h-screen`) and 100% width; no body scroll — only inner `<main>` scrolls.
+- Background renders the Navy Core radial-gradient stack on `#0C2D55`; gradient is fixed (does not scroll with content).
+- Three-column flex shell: Sidebar (left) → Content wrapper (center, `flex-1`) → Right panel portal (right). Portals: `#sidebar-secondary-portal` and `#right-panel-portal` must render even when empty (zero width, full height).
+- `<main>` card uses `bg-background`, `rounded-xl`, `shadow-[0_4px_24px_rgba(0,0,0,0.35)]`, with `mb-1 mr-1` gutter so the gradient frames the card on bottom and right.
+- Header wrapper sits above the content row, full-width, transparent (gradient shows through).
+- Content overflow: only the inner `<main>` is scrollable (`overflow-auto`); the shell itself is `overflow-hidden`.
+- Z-order: portals < main content < header < sidebar overlays < dialogs < toasts.
+- No horizontal scrollbar at any supported viewport (≥1024px desktop; ≥360px mobile).
 
 ---
 
-## Test Cases
+## 2. GLOBAL HEADER
 
-### TC-DS-001 — Primary Button: Default rendering
-**Pages:** Dashboard, Clients, Engagements, CreateEngagement, EngagementDetail, ProcedureDetail, TrialBalance, Teams, DesignSystem, EngagementTemplates, AuditDependencyRegister.
-**Steps:** Load each page; locate every primary CTA (Save, Create, Continue, Confirm, Apply, Add, Sign-off, etc.).
-**Expected:** bg `#0C2D55`, white text, border transparent, radius 10px, h-9, font 15px/600.
-**Notes:** Capture screenshot per page.
+**Component:** `src/components/GlobalHeader.tsx`
 
-### TC-DS-002 — Primary Button: Hover
-**Steps:** Hover each primary button with mouse.
-**Expected:** bg transitions to `#244266` in ≤200ms; no scale/lift/shadow; cursor pointer; text remains white.
-
-### TC-DS-003 — Primary Button: Active/Pressed
-**Steps:** Mouse-down (hold) on each primary button.
-**Expected:** bg becomes `#081F3B` while held; releases back to default/hover.
-
-### TC-DS-004 — Primary Button: Keyboard focus
-**Steps:** Tab through page; land on each primary button.
-**Expected:** Visible focus ring `#A3A3A3 @ 50%`, 2px, offset 2px; bg unchanged from default; ring disappears on blur. Enter and Space trigger click.
-
-### TC-DS-005 — Primary Button: Disabled
-**Steps:** Trigger disabled state (e.g., Save with no changes; submit with invalid form).
-**Expected:** Opacity 50%; no hover/active changes; pointer-events none; not reachable via keyboard activation.
-
-### TC-DS-006 — Primary Button: Icon + label alignment
-**Steps:** Inspect primary buttons containing icons (e.g., "+ Add", "Save").
-**Expected:** Icon 18px, vertically centered, 8px gap to label, no overflow on min content.
-
-### TC-DS-007 — Primary Button: Size variants
-**Steps:** Verify `sm` (h-8), `default` (h-9), `lg` (h-11), `icon` (9×9), `icon-sm` (7×7), `icon-lg` (11×11) where used.
-**Expected:** Heights and paddings match spec; radius 10px consistent.
-
-### TC-DS-008 — Primary Button: Dark mode
-**Pages:** Sidebar, any dark secondary panels.
-**Expected:** Same navy default; hover/active/focus identical to light theme.
+- Spans full width of the content area, height 56px, transparent background (Navy Core gradient visible behind).
+- Left slot: page title rendered as **single H1**, Inter 18px / weight 600, color `--header-foreground` (white in Navy Core), no truncation up to header width — then ellipsis.
+- Optional back button: secondary variant, `icon-sm`, sits 8px left of title, only when `showBackButton` is true.
+- Right slot (fixed order): Accessibility toggle → Notifications → Settings → Ask Luka.
+  - Accessibility, Notifications, Settings: secondary `icon` buttons, 36×36, transparent border on header (background blends with gradient but tokens stay secondary).
+  - Notifications: dot indicator when unread; swing animation on new notification (≤600ms, ease-out, single cycle, respects reduced-motion).
+  - Ask Luka: **primary** button, label "Ask Luka", icon left, navy fill, white text — must match Primary button criteria in §11.
+- Header never wraps to a second row. On <1280px, hide Accessibility label (icon only); below 1024px, collapse Settings into overflow menu.
+- Header is always visible — does not hide on scroll. No drop shadow (relies on main card's shadow for separation).
 
 ---
 
-### TC-DS-010 — Secondary Button: Default rendering
-**Locations:** Toolbar actions (Share, Replace, Delete, Export, Import), Cancel buttons in dialogs, dropdown triggers (Select, DropdownMenu trigger), filter chips, ViewModeToggle, segmented toggles, ExpandableIconButton, ExpandableSearch collapsed state.
-**Expected:** Light gray bg from `--secondary-button-bg`, navy text, navy border, 10px radius, h-9.
+## 3. LEFT NAVIGATION (SIDEBAR)
 
-### TC-DS-011 — Secondary Button: Hover
-**Expected:** bg → `--secondary-button-bg-hover`, border → `--secondary-button-border-hover`; transition 200ms; no scale/shadow.
+**Component:** `src/components/Sidebar.tsx`
 
-### TC-DS-012 — Secondary Button: Pressed (active)
-**Steps:** Mouse-down hold.
-**Expected:** bg → `--secondary-button-bg-active`, border → `--secondary-button-border-active`.
+### Structure
+- Fixed left column, full viewport height, dark theme always (navy/black surface), independent of route theme.
+- Width: `expanded = 240px`, `collapsed = 64px`. State persists in `localStorage`.
+- Sections, top → bottom: Logo → Primary nav tree → Spacer → Secondary nav (Templates, Design System) → User block.
+- No visible scrollbar (scroll allowed but hidden globally per memory rule).
 
-### TC-DS-013 — Secondary Button: Selected / Open state (DROPDOWN TRIGGERS)
-**Steps:** Click a Select / DropdownMenu / Popover trigger to open it.
-**Expected:** While open (`data-[state=open]`), trigger uses the *-active token set (navy-filled "selected" look). Closes back to default on dismiss.
-**Critical:** This was the previously-reported defect — verify on every dropdown across all pages.
+### Logo
+- Luka mark: white Zap icon on gradient orb, animated orb pulse (infinite, respects reduced-motion).
+- Click on logo → routes to `/`.
 
-### TC-DS-014 — Secondary Button: Toggle ON state
-**Locations:** ViewModeToggle, RichTextToolbar formatting toggles, any Toggle / ToggleGroup item.
-**Expected:** `data-[state=on]` applies *-active tokens. Toggling off returns to default.
+### Nav items
+- Inter 15px / weight 500; icon 18px left of label with 12px gap.
+- Default: text `--sidebar-foreground`, icon inherits.
+- Hover: background `--sidebar-accent` (subtle navy lift, no scale, no shadow).
+- Active route (NavLink `isActive`): background `--sidebar-accent-active`, text/icon `--sidebar-accent-foreground`, left 3px navy indicator bar.
+- Focus-visible: 2px ring `--sidebar-ring`, no offset.
+- Collapsed state: icon-only, centered in 64px column, tooltip on hover (right side, 8px gap).
 
-### TC-DS-015 — Secondary Button: aria-selected items
-**Steps:** Tabs, segmented controls, list items with `aria-selected="true"`.
-**Expected:** Active token set applied.
+### Folder / tree items
+- Custom folder icons (open/closed) from `FolderIcons.tsx`; chevron right on collapsed, chevron down on expanded.
+- Leaf items indented 24px from parent.
+- Expanded group containing active route stays open by default.
 
-### TC-DS-016 — Secondary Button: Keyboard focus
-**Expected:** 2px navy ring @ 30% opacity, border becomes navy foreground; no offset; ring removed on blur.
+### Sidebar collapse toggle
+- Circular button, 24×24, sits on right edge of sidebar at vertical center of viewport, visible only on hover over the sidebar edge (200ms fade).
+- Click toggles expand/collapse with 200ms width transition.
+- Does not overlap nav items at any width.
 
-### TC-DS-017 — Secondary Button: Disabled
-**Expected:** 50% opacity; no state changes.
-
-### TC-DS-018 — Secondary Button: Dark mode parity
-**Pages:** Sidebar, dark secondary panels (Engagement right panel, Ask Luka overlay if dark).
-**Expected:** Same light-gray/navy aesthetic per memory rule — NOT inverted.
-
-### TC-DS-019 — ExpandableIconButton: Wide viewport (≥1368px)
-**Steps:** Resize to 1440px; inspect Share/Replace/Delete in toolbar.
-**Expected:** Icon + label visible, secondary variant tokens applied, h-9, 12px horizontal padding, 8px gap.
-
-### TC-DS-020 — ExpandableIconButton: Compact viewport (<1368px)
-**Steps:** Resize to 1280px.
-**Expected:** Icon-only (min-w-9, no padding, no gap). On hover: smoothly expands to show label (padding 12px, gap 8px, 200ms ease-in-out). Tokens remain secondary.
-
-### TC-DS-021 — ExpandableIconButton: Active state when popover open
-**Steps:** Trigger an expandable icon button that opens a popover/menu.
-**Expected:** `data-[state=open]` applies active token bg+border.
-
-### TC-DS-022 — ExpandableSearch: Collapsed
-**Expected:** 36×36 secondary button with search icon, default tokens.
-
-### TC-DS-023 — ExpandableSearch: Expand
-**Steps:** Click search icon.
-**Expected:** Smoothly expands to 256px, focuses input, shows double-border focus style (2px blue, 2px offset).
-
-### TC-DS-024 — ExpandableSearch: Collapse
-**Steps:** Press Esc / click X / click outside with empty input.
-**Expected:** Collapses back to icon button; value cleared.
-
-### TC-DS-025 — ExpandableSearch: Typing + Enter
-**Expected:** Value updates; Enter fires onSearch; X button clears and collapses.
+### Secondary panel (when a nav item opens one)
+- Renders inside `#sidebar-secondary-portal` (right of sidebar, left of main).
+- Width: resizable 280–480px, persisted to localStorage.
+- Background: light surface (light mode) or dark surface (dark mode) per `--secondary-panel-bg`.
+- Rounded right side only (`cockpit` 1.25rem radius outer, square against sidebar).
+- Drag handle: 4px wide, centered vertically, cursor `col-resize`, hover shows accent.
 
 ---
 
-### TC-DS-030 — Token integrity (CSS variables)
-**Steps:** DevTools → inspect `:root` for `--secondary-button-bg`, `-hover`, `-active`, `-foreground`, `-border`, `-border-hover`, `-border-active`. Repeat for `.dark`.
-**Expected:** All tokens defined as HSL triplets, no missing/undefined values.
+## 4. SECONDARY PANELS (RIGHT PANEL)
 
-### TC-DS-031 — Tailwind config exposure
-**Steps:** Use Inspect → confirm classes `bg-secondary-button`, `bg-secondary-button-hover`, `bg-secondary-button-active`, `text-secondary-button-foreground`, `border-secondary-button-border(-hover|-active)` resolve to expected HSL.
-**Expected:** No `undefined` Tailwind classes; build emits valid CSS.
+**Components:** `EngagementRightPanel.tsx`, `ClientRightPanel.tsx`
 
-### TC-DS-032 — No legacy overrides remain
-**Steps:** Grep visually for any secondary button rendering with `bg-card`, `bg-white/10`, `hover:bg-muted`, `variant="outline"` where it should be `secondary`.
-**Expected:** None on Sidebar, EngagementDetail, TrialBalance, Teams, Clients, CreateEngagement.
-
----
-
-### TC-DS-040 — Page sweep: Dashboard
-Primary: hero CTAs, status card actions. Secondary: filter chips, status card menu triggers, ExpandableSearch.
-**Expected:** All buttons match spec across states.
-
-### TC-DS-041 — Page sweep: Clients
-Primary: "Add Client", row primary actions. Secondary: column header sort triggers, partner-assignment dropdown trigger, row action icon buttons.
-**Critical:** Partner-assignment dropdown selected/open state (TC-DS-013).
-
-### TC-DS-042 — Page sweep: Engagements
-Primary: "Create Engagement". Secondary: status filters, view toggle, row action buttons.
-
-### TC-DS-043 — Page sweep: CreateEngagement
-Primary: "Continue", "Create". Secondary: "Cancel", template selectors, step navigation toggles.
-
-### TC-DS-044 — Page sweep: EngagementDetail
-Primary: Save / Sign-off / Share. Secondary: Toolbar (Share, Replace, Delete via ExpandableIconButton), ViewModeToggle, MondayBoard category triggers, RichText toolbar toggles, FloatingActionBar buttons.
-**Critical:** RichText toolbar toggles ON state (TC-DS-014); FAB section creation dropdown trigger (TC-DS-013).
-
-### TC-DS-045 — Page sweep: ProcedureDetail
-Primary: Save / Apply. Secondary: row action icon buttons, accounts table header toggles.
-
-### TC-DS-046 — Page sweep: TrialBalance
-Primary: Import / Apply. Secondary: ExpandableSearch, column filters, GIFI hierarchy expand toggles.
-
-### TC-DS-047 — Page sweep: Teams
-Primary: "Invite". Secondary: status card expand buttons, row actions.
-
-### TC-DS-048 — Page sweep: DesignSystem
-**Steps:** Open token playground; verify every button variant rendered matches spec across states.
-**Expected:** Primary + Secondary swatches/exemplars all updated; no stale tokens.
-
-### TC-DS-049 — Page sweep: EngagementTemplates
-Primary: "Save as Template", "Add to My Templates". Secondary: category folder triggers, multi-select checkbox toolbar.
-
-### TC-DS-050 — Page sweep: Sidebar
-Secondary: collapse toggle, settings, notifications, Ask Luka.
-**Expected:** Dark-theme contrast preserved per MutationObserver theme rule; selected nav items apply active tokens.
-
-### TC-DS-051 — Page sweep: Global Header
-Primary: "Ask Luka". Secondary: accessibility toggle, notifications button (with swing animation intact), settings button.
-
-### TC-DS-052 — Page sweep: Settings Panel (Sheet)
-Primary: "Save". Secondary: "Cancel", radio-card triggers (Luka Autopilot UI), sheet close button.
-
-### TC-DS-053 — Page sweep: Ask Luka Overlay
-Primary: Send. Secondary: prompt chips, attach menu trigger, voice button, mode toggle (half/full).
-**Expected:** Selected mode uses active tokens.
-
-### TC-DS-054 — Page sweep: Dialogs
-**Dialogs:** ShareWithClientDialog, DeleteChecklistDialog, AddToMyTemplatesDialog, BulkAddToMyTemplatesDialog, SaveDialog, UnsavedChangesDialog, ClientResponseDialog, ReorderModal, EditOptionsPopover, AlertDialog confirmations.
-**Expected:** Primary confirm = navy; Cancel = secondary; destructive uses destructive variant (unchanged).
-
-### TC-DS-055 — Page sweep: AddChecklistSheet, FormLayoutEditor, GenerationPreview
-**Expected:** All CTAs follow spec.
+- Render inside `#right-panel-portal`, sit at right edge of content area.
+- Width: 360px default, resizable 320–560px, persisted.
+- Full content-area height, with 4px bottom gutter (`pb-1`) matching main card.
+- Background `--secondary-panel-bg`; rounded left side only (`cockpit` 1.25rem); border `--secondary-panel-border` on the left edge only.
+- Internal scroll, hidden scrollbar.
+- Close button: secondary `icon-sm`, top-right, 8px inset.
+- Expand handle: fixed centered on inner left edge, 24×48, no gap to panel.
 
 ---
 
-### TC-DS-060 — Accessibility: Color contrast
-**Steps:** Run axe / WCAG contrast checker on primary (white on `#0C2D55`) and secondary (navy on light gray).
-**Expected:** ≥ 4.5:1 for text; ≥ 3:1 for focus ring against adjacent surfaces.
+## 5. PAGE CONTENT AREA (`<main>`)
 
-### TC-DS-061 — Accessibility: Font scaling A/AA/AAA
-**Steps:** Toggle accessibility font size; verify buttons don't clip/overflow.
-**Expected:** Heights expand gracefully; labels remain readable.
-
-### TC-DS-062 — Accessibility: Keyboard-only navigation
-**Steps:** Tab through entire page; activate each control via Space/Enter.
-**Expected:** Visible focus ring on every button (primary and secondary); no traps.
-
-### TC-DS-063 — Accessibility: Reduced motion
-**Steps:** OS-level prefers-reduced-motion ON.
-**Expected:** Color transitions still apply (≤200ms acceptable); no large motion regression.
-
-### TC-DS-064 — Accessibility: Screen reader labels
-**Expected:** Icon-only buttons (ExpandableIconButton compact, ExpandableSearch collapsed) expose accessible name via aria-label.
+- Padding: top 24px, sides 24px, bottom 24px (overridden by full-bleed pages like Trial Balance).
+- Default content width: full main width; opt-in `max-w-[1280px] mx-auto` for forms/settings.
+- Section spacing: 24px vertical rhythm between top-level blocks; 16px between sub-blocks; 8px between label/control pairs.
+- Page title (when not in global header): H1 navy `#0C2D55`, Inter 24px / weight 700, 0 margin-top, 16px margin-bottom.
+- Sub-section headings: H2 18px / 600, navy; H3 16px / 600.
+- Body text: Inter 15px / 400, color `#101828` (never gray per memory rule).
+- Helper text: 13px / 400, color `#101828` at 70% opacity max — never `text-gray-*`.
 
 ---
 
-### TC-DS-070 — Regression: No hover scale/lift/shadow
-**Steps:** Hover every card/button on every page.
-**Expected:** Per memory rule — zero scale, vertical lift, or drop shadow appears.
+## 6. TABLES
 
-### TC-DS-071 — Regression: Border radius 10px on all buttons
-**Expected:** No 4px/6px/12px outliers.
+**Components:** `ChecklistTableView.tsx`, Trial Balance table, Clients table, Teams table.
 
-### TC-DS-072 — Regression: Destructive variant unchanged
-**Expected:** Destructive still uses `--destructive` tokens with red bg.
-
-### TC-DS-073 — Regression: Outline / Ghost / Link / Tonal / Elevated variants
-**Expected:** Render correctly with their own tokens; no bleed from secondary update.
-
-### TC-DS-074 — Regression: Sonner toasts, notification popover, FAB
-**Expected:** Inner buttons follow new spec; layouts unchanged.
-
-### TC-DS-075 — Regression: Forms (Input, Select, Textarea, Calendar, DatePicker)
-**Expected:** Form chrome unchanged; Select/Calendar trigger as secondary button shows active state when open.
-
-### TC-DS-076 — Cross-browser parity
-**Steps:** Execute TC-DS-001 through TC-DS-024 in Chrome, Safari, Firefox, Edge.
-**Expected:** Identical pixel/state behavior; no Safari/Firefox focus-ring anomalies.
-
-### TC-DS-077 — Responsive parity
-**Steps:** Execute TC-DS-019/020 at all listed viewports.
-**Expected:** ExpandableIconButton compact threshold at <1368px; no overflow on mobile.
-
-### TC-DS-078 — Preview vs Published parity
-**Steps:** Spot-check 5 pages on both preview and published URLs.
-**Expected:** Identical rendering; no stale CSS.
+- Borderless layout — only horizontal row dividers `--table-row-border` (1px).
+- Header row: sticky to top of scroll container, background `--table-header-bg`, text navy 13px / 600 uppercase tracking-wide.
+- Row height: 44px standard; 56px with avatar; never grows on edit (per row-stability rule).
+- Cell padding: 12px horizontal, 8px vertical; first/last cell get 16px outer padding.
+- Text truncation: single line with ellipsis by default; tooltip on hover when truncated.
+- Row hover: background `--table-row-hover`; no scale, no shadow.
+- Selected row: background `--table-row-selected`, 2px left navy bar.
+- Sort headers: secondary-button-styled inline triggers with chevron; `aria-sort` reflected.
+- Empty state: centered illustration + heading + secondary CTA, 64px vertical padding.
+- Action column: sticky right, transparent background, icon buttons only (secondary `icon-sm`).
 
 ---
 
-## Defect Reporting Template (per finding)
-- **Page / Component:**
-- **State (default/hover/active/focus/open/on/disabled):**
-- **Viewport / Browser / Theme:**
-- **Expected (token / hex):**
-- **Actual (token / hex):**
-- **Screenshot:**
-- **Steps to reproduce:**
-- **Severity (Blocker/Major/Minor):**
+## 7. FORMS
+
+**Components:** `Input`, `Textarea`, `Select`, `Calendar`, `DatePicker`, `RadioGroup`, `Checkbox`, `Switch`.
+
+### Inputs & textareas
+- Height 36px (`h-9`); textarea min-height 80px, auto-grow optional.
+- Background white, border `--input-border` 1px, radius 10px.
+- Text 15px / 400 navy; placeholder `#101828` at 50%.
+- Focus: **double border** — inner 2px `--input-focus` (#1C63A6 blue), outer 2px transparent offset ring (per memory rule).
+- Disabled: 50% opacity, no border change.
+- Error: border `--destructive`, error text below 13px destructive.
+
+### Select / DatePicker triggers
+- Render as **secondary buttons** — must satisfy §12 (incl. `data-[state=open]` active token swap).
+- Chevron icon 16px right, rotates 180° on open (200ms).
+
+### Date input
+- Width `fit-content` per memory rule (does not stretch to container).
+- Calendar popover: light surface, rounded 12px, 16px padding, selected day = primary navy fill.
+
+### Radio cards (Settings/Luka Autopilot)
+- Card 100% width, 12px padding, radius 10px, border `--card-border`.
+- Selected: 2px border `--primary`, background `--primary/8`, no shadow.
+- Hover (unselected): border darkens; no lift.
+
+### Switch
+- 36×20, track `--muted` off / `--primary` on, thumb 16px white with subtle border.
+
+### Labels
+- 13px / 600 navy, 4px above control. Required marker `*` in `--destructive`.
+
+### Form layout
+- Fields stack vertically on mobile; 2-column grid ≥768px when grouped; 24px gap.
+- Inline help text 13px below field.
 
 ---
 
-## Sign-off Checklist
-- [ ] All Primary states verified on every page
-- [ ] All Secondary states verified, incl. dropdown open + toggle on + aria-selected
-- [ ] ExpandableIconButton + ExpandableSearch verified at both viewport tiers
-- [ ] Tokens present in light + dark
-- [ ] No legacy overrides remain
-- [ ] Accessibility (contrast, focus, keyboard, SR) passes
-- [ ] Cross-browser + responsive parity confirmed
-- [ ] Preview matches Published
+## 8. DIALOGS / SHEETS / POPOVERS
+
+### Dialog
+- Centered, max-width 480px (default) / 640px (medium) / 800px (large).
+- Background `--dialog-bg`, radius 16px, shadow `--shadow-dialog`, 24px padding.
+- Overlay: `rgba(12,45,85,0.6)`, blur 4px.
+- Header: title 18px / 600, optional description 14px / 400 muted.
+- Footer: actions right-aligned, 8px gap; primary on right, secondary on left.
+- Close button: secondary `icon-sm`, top-right 16px inset.
+- Escape closes; clicking overlay closes (unless `disableOutsideClose`).
+- Focus trapped inside; focus returns to trigger on close.
+- Destructive confirmations (delete, duplicate) use AlertDialog with destructive variant on the confirm action.
+
+### Sheet (Settings panel, Add Checklist)
+- Slides from right, width 900px (Settings) / 720px (default), full height.
+- Same header/footer rules as Dialog.
+- Dual-pane layout where applicable (Settings) — left nav 240px, right content scrolls.
+
+### Popover / DropdownMenu
+- Background `--popover-bg`, border `--popover-border`, radius 10px, shadow `--shadow-popover`, 4px padding.
+- Items: h-9, 12px horizontal padding, 15px/400, hover `--accent`, selected (checkmark) `--accent-active`.
+- Min-width matches trigger; max-width 320px.
+
+---
+
+## 9. CARDS
+
+- Background `--card`, border `--card-border` 1px, radius 12px, padding 16px.
+- **No hover scale, no vertical lift, no drop shadow** (per global memory rule).
+- Header (optional): title 16px / 600 navy, action slot right.
+- Footer: 12px top padding, separator `--card-border` above when present.
+- Status / summary cards (Dashboard, Teams): same rules, animations explicitly disabled.
+
+---
+
+## 10. BADGES / PILLS
+
+- Height 22px, radius 999px (pill), padding 8px horizontal, 12px / 600.
+- Variants map to semantic tokens: `info`, `success`, `warning`, `destructive`, `neutral`.
+- Text wraps allowed for long labels (no single-line forcing per memory rule).
+- No border by default; subtle background `--badge-{variant}-bg` + text `--badge-{variant}-fg`.
+
+---
+
+## 11. PRIMARY BUTTON
+
+**Component:** `src/components/ui/button.tsx` variant `default`.
+
+- Background `#0C2D55`, text white, border transparent, radius 10px.
+- Sizes: `sm` h-8 / px-3, `default` h-9 / px-4, `lg` h-11 / px-6; icon variants 9×9 / 7×7 / 11×11.
+- Font: Inter 15px / 600, line-height 1.3, no letter-spacing.
+- Icon: 18px, inherits white, 8px gap from label.
+- **Hover:** background `#244266`, 200ms color transition; no scale, no lift, no shadow.
+- **Active/pressed:** background `#081F3B`.
+- **Focus-visible (keyboard):** background unchanged, ring 2px `#A3A3A3` at 50%, offset 2px against `--background`.
+- **Disabled:** opacity 50%, pointer-events none, no state changes.
+- Loading state (when used): spinner replaces icon, label stays, button disabled.
+
+---
+
+## 12. SECONDARY BUTTON (CRITICAL — global)
+
+**Component:** `src/components/ui/button.tsx` variant `secondary`.
+
+- Background `--secondary-button-bg` (light gray), text `--secondary-button-foreground` (navy), border `--secondary-button-border` (navy) 1px, radius 10px, h-9.
+- Font / icon / sizes identical to Primary.
+- **Hover:** background `--secondary-button-bg-hover`, border `--secondary-button-border-hover`; 200ms transition.
+- **Active/pressed:** background `--secondary-button-bg-active`, border `--secondary-button-border-active`.
+- **Selected / open state (must apply to every dropdown, select, popover, toggle trigger):**
+  - `data-[state=open]` → active token set.
+  - `data-[state=on]` → active token set.
+  - `aria-selected="true"` → active token set.
+- **Focus-visible:** ring 2px `--secondary-button-foreground` at 30%, no offset; border becomes `--secondary-button-foreground`.
+- **Disabled:** 50% opacity, no state changes.
+- **Dark mode (Sidebar / dark panels):** retains light-gray bg + navy text — NOT inverted (per memory rule).
+
+---
+
+## 13. OTHER BUTTON VARIANTS
+
+- **Outline:** 1px border `#0A3159`, transparent bg, navy text; hover bg `primary/14`, active `primary/22`. Dark mode swaps border to `--primary`.
+- **Ghost:** transparent bg, navy text; hover `primary/14`, active `primary/22`. Used inside dense toolbars.
+- **Link:** color `#1C63A6`, no background, underline on hover only.
+- **Tonal:** `--secondary-container` bg, `--on-secondary-container` text. For low-emphasis tertiary actions only.
+- **Elevated:** `--surface-container-low` bg, subtle shadow; navy text.
+- **Destructive:** `--destructive` bg, white text, hover 75% opacity, active 65%. Reserved for delete/remove confirmations.
+- All variants share Primary's radius, sizing scale, focus-ring offset behavior, disabled rule, and the "no scale/lift/shadow on hover" rule.
+
+---
+
+## 14. EXPANDABLE ICON BUTTON
+
+**Component:** `src/components/ui/expandable-icon-button.tsx`
+
+- ≥1368px viewport: renders as full secondary button — icon + label, h-9, 12px horizontal padding, 8px gap.
+- <1368px viewport: collapses to icon-only, 36×36 (`min-w-9`), no padding/gap.
+  - Hover smoothly expands to show label: padding 12px, gap 8px, 200ms ease-in-out grid-cols transition.
+- `data-[state=open]` swaps to active secondary tokens regardless of viewport.
+- Accessible name always present via `aria-label` (even when label visible).
+
+---
+
+## 15. EXPANDABLE SEARCH
+
+**Component:** `src/components/ui/expandable-search.tsx`
+
+- Collapsed: 36×36 secondary icon button with search glyph.
+- Click → expands to 256px wide input, auto-focuses, retains double-border focus style (§7).
+- Esc / X / outside-click with empty value → collapses, clears value.
+- Enter → fires `onSearch(value)`; X always clears and collapses.
+- Transition: width + opacity 200ms ease-in-out.
+
+---
+
+## 16. TOGGLES / TOGGLE GROUPS / VIEW MODE TOGGLE
+
+- Each toggle item is a secondary button with `data-[state=on]` semantics.
+- Toggle group: items share a row, no gap between (segmented look); first item radius-left 10px, last radius-right 10px, middle 0.
+- Single border around the group, dividers between items 1px navy at 20%.
+- Selected item: active secondary tokens; others: default.
+
+---
+
+## 17. TOOLBARS (Engagement, RichText, FAB)
+
+- Inline flex row, 8px gap, 8px padding, background `--toolbar-bg`, border `--toolbar-border` 1px, radius 12px.
+- All buttons inside use secondary or expandable-icon-button variants.
+- RichText toolbar: floating, anchored to selection; respects viewport bounds (flips above/below); 200ms fade-in.
+- Floating Action Bar: draggable, snaps to bottom-left / bottom-center / bottom-right zones; position persisted; never overlaps sticky table headers (per memory rule).
+
+---
+
+## 18. NOTIFICATIONS (Sonner toasts + header popover)
+
+- Toast: custom card aesthetic, white bg, navy border 1px, radius 12px, 16px padding, shadow `--shadow-toast`.
+- Shrinking progress bar 2px at bottom indicating remaining time.
+- Max 3 stacked, newest on top, 8px gap.
+- Action button inside toast: secondary `sm`.
+- Header notification popover: list of items, each row 56px, hover `--accent`, action on click.
+
+---
+
+## 19. ASK LUKA OVERLAY
+
+- Two modes: half-screen (right 50%) and full-screen; smooth transition 240ms.
+- Background: light surface, rounded-left 16px (half-screen), full radius 0 (full-screen).
+- Sidebar inside overlay is collapsible; collapsed = icon strip.
+- Prompt chips: secondary `sm` buttons, wrap to next row at gap 8px.
+- Send button: primary, icon-right.
+- Voice button: secondary `icon`, mic icon; recording overlay covers input row with waveform.
+- Z-index above all page content, below dialogs.
+
+---
+
+## 20. ACCESSIBILITY (Global)
+
+- Contrast: text on background ≥ 4.5:1; large text & icons ≥ 3:1; focus ring vs adjacent surface ≥ 3:1.
+- Every interactive element has a visible focus indicator (per variant rules above).
+- Every icon-only control has `aria-label`.
+- Keyboard: full tab order matches visual order; Esc closes overlays; Enter/Space activate buttons; arrow keys navigate menus/toggle groups.
+- Reduced motion: all decorative animations (orb pulse, swing, sparkle spin) disable; functional transitions (color, opacity, width) cap at 200ms.
+- Font scaling toggle A / AA / AAA applies a root class; all components must scale without clipping or overflow.
+- ARIA roles correct on dialogs (`role="dialog"`, `aria-modal`), menus (`role="menu"`), tabs (`role="tablist"`), live regions for toasts (`role="status"`).
+
+---
+
+## 21. RESPONSIVE BEHAVIOR
+
+- Breakpoints: `sm 640`, `md 768`, `lg 1024`, `xl 1280`, `2xl 1536`; compact icon-button threshold 1368.
+- ≥1280px: full sidebar + right panel; header shows all labels.
+- 1024–1280px: sidebar collapsible default-expanded; right panel default-collapsed.
+- <1024px: sidebar becomes offcanvas drawer; right panel hidden, accessible via header button.
+- <768px: header collapses action labels; dialogs become full-screen sheets; tables horizontal-scroll within their container (page does not scroll horizontally).
+
+---
+
+## 22. THEMING
+
+- Single theme: **Navy Core**. No theme switcher (per memory rule).
+- All colors defined as HSL triplets in `:root` and `.dark` blocks of `src/index.css`.
+- Components must reference semantic tokens — never raw Tailwind color classes (`text-white`, `bg-black`, etc.) except for Primary's explicit brand hex.
+- Dark mode applies only to: Sidebar, secondary side panels. Page content remains light.
+
+---
+
+## 23. MOTION
+
+- Default transition: 200ms ease-out for color / background / border / opacity / width / transform-rotate.
+- Forbidden globally: hover scale, hover translate, hover drop-shadow on cards and buttons (per memory rule).
+- Allowed signature motion: Luka logo orb pulse, notification swing (single cycle), sparkle icon infinite spin, RichText toolbar fade, sidebar width transition.
+
+---
+
+## 24. DEFINITION OF DONE (per page / per component)
+
+A page or component passes acceptance when:
+1. All states (default, hover, active, focus-visible, disabled, open, on, selected, error, loading, empty) match the criteria above.
+2. Tokens are sourced from `index.css` / `tailwind.config.ts` — no inline hex except documented brand exceptions.
+3. Keyboard, screen-reader, and reduced-motion paths are verified.
+4. Layout holds at 1920 / 1440 / 1374 / 1280 / 1024 / 768 / 390 widths without horizontal scroll on the page shell.
+5. Light/dark surfaces (where applicable) render correctly without color inversion regressions.
+6. No console errors, no React key warnings, no a11y violations from axe at level AA.
