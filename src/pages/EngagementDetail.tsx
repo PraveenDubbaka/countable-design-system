@@ -517,8 +517,6 @@ const NAV_KEY_TO_CHECKLIST_ID: Record<string, string> = {
   "aud-us-so-fc": "default-us-audit-so-fc",
   "aud-us-so-dc": "default-us-audit-so-dc",
   "aud-us-so-wd": "default-us-audit-so-wd",
-  // US Audit — Response procedures
-  "aud-us-rp-aps": "default-us-audit-rp-aps",
   // US Audit — New worksheets
   "aud-us-ra-je": "default-us-audit-ra-je",
   "aud-us-rp-rpt": "default-us-audit-rp-rpt",
