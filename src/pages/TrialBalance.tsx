@@ -298,7 +298,7 @@ export default function TrialBalance() {
               {/* Date Selector - dropdown */}
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="outline" size="sm" className="h-9 text-xs gap-1.5 bg-card hover:bg-muted">
+                  <Button variant="secondary" size="sm" className="h-9 text-xs gap-1.5">
                     {dateFilter}
                     <ChevronDown className="h-3.5 w-3.5" />
                   </Button>
@@ -315,8 +315,7 @@ export default function TrialBalance() {
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <ExpandableIconButton
-                    variant="outline"
-                    className="bg-card hover:bg-muted"
+                    variant="secondary"
                     icon={<Wrench className="h-4 w-4" />}
                     label={<span className="inline-flex items-center gap-1">Actions<ChevronDown className="h-3 w-3" /></span>}
                   />
@@ -361,8 +360,7 @@ export default function TrialBalance() {
                   <TooltipTrigger asChild>
                     <DropdownMenuTrigger asChild>
                       <ExpandableIconButton
-                        variant="outline"
-                        className="bg-card hover:bg-muted"
+                        variant="secondary"
                         icon={<RefreshCw className="h-4 w-4" />}
                         label={<span className="inline-flex items-center gap-1">Refresh<ChevronDown className="h-3 w-3" /></span>}
                       />
@@ -384,8 +382,7 @@ export default function TrialBalance() {
 
               {/* Hide / Show $0 Accounts toggle */}
               <ExpandableIconButton
-                variant="outline"
-                className="bg-card hover:bg-muted"
+                variant="secondary"
                 icon={hideZeroAcc ? <Eye className="h-4 w-4" /> : <EyeOff className="h-4 w-4" />}
                 label={`${hideZeroAcc ? "Show" : "Hide"} $0 Acc. (${zeroAccCount})`}
                 onClick={() => setHideZeroAcc(v => !v)}
