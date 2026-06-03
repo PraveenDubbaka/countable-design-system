@@ -26,7 +26,7 @@ function useIsCompact() {
 }
 
 const ExpandableIconButton = React.forwardRef<HTMLButtonElement, ExpandableIconButtonProps>(
-  ({ icon, label, className, size = "default", ...props }, ref) => {
+  ({ icon, label, className, size = "default", variant = "secondary", ...props }, ref) => {
     const isCompact = useIsCompact();
     const h = size === "sm" ? "h-8" : "h-9";
     const minW = size === "sm" ? "min-w-8" : "min-w-9";
@@ -36,6 +36,7 @@ const ExpandableIconButton = React.forwardRef<HTMLButtonElement, ExpandableIconB
       return (
         <Button
           ref={ref}
+          variant={variant}
           size="sm"
           className={cn(
             h,
@@ -61,6 +62,7 @@ const ExpandableIconButton = React.forwardRef<HTMLButtonElement, ExpandableIconB
     return (
       <Button
         ref={ref}
+        variant={variant}
         size="sm"
         className={cn(
           h,
