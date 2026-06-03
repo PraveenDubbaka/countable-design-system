@@ -36,6 +36,7 @@ const ExpandableIconButton = React.forwardRef<HTMLButtonElement, ExpandableIconB
       return (
         <Button
           ref={ref}
+          variant={variant}
           size="sm"
           className={cn(
             h,
