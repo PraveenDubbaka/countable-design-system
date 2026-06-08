@@ -234,7 +234,7 @@ export default function Dashboard() {
   return <Layout title="Dashboard">
       <div className="flex-1 p-8 overflow-auto bg-background h-full">
 
-      <div className="flex gap-8 h-full">
+      <div className="flex gap-6 h-full">
         {/* Main Content */}
         <div className="flex-1 flex flex-col gap-6 min-h-0">
           {/* Stats Bar - Creative compact display with micro-animated icons */}
