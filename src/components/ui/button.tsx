@@ -9,10 +9,10 @@ const buttonVariants = cva(
     variants: {
       variant: {
         default: [
-          "bg-primary text-white border border-transparent",
-          "hover:bg-primary/90",
-          "active:bg-primary/80",
-          "focus-visible:bg-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A3A3A3]/50 focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+          "bg-[#0C2D55] text-white border border-transparent",
+          "hover:bg-[#244266]",
+          "active:bg-[#081F3B]",
+          "focus-visible:bg-[#0C2D55] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A3A3A3]/50 focus-visible:ring-offset-2 focus-visible:ring-offset-background",
         ].join(" "),
         destructive: [
           "bg-destructive text-destructive-foreground",
@@ -20,19 +20,20 @@ const buttonVariants = cva(
           "active:bg-destructive/65",
         ].join(" "),
         outline: [
-          "border border-border bg-card text-foreground",
-          "hover:bg-muted",
-          "active:bg-muted",
-          "focus-visible:border-border focus-visible:ring-2 focus-visible:ring-ring/30 focus-visible:ring-offset-0",
+          "border border-[#0A3159] bg-background text-[#0A3159]",
+          "dark:border-[hsl(var(--primary))] dark:text-[hsl(var(--primary))]",
+          "hover:bg-primary/[0.14] hover:border-[#0A3159] dark:hover:border-[hsl(var(--primary))]",
+          "active:bg-primary/[0.22] active:border-[#0A3159] dark:active:border-[hsl(var(--primary))]",
+          "focus-visible:border-[#0A3159] dark:focus-visible:border-[hsl(var(--primary))]",
         ].join(" "),
         secondary: [
-          "border border-border bg-card text-foreground",
-          "hover:bg-muted",
-          "active:bg-muted",
-          "data-[state=open]:bg-muted",
-          "data-[state=on]:bg-muted",
-          "aria-selected:bg-muted",
-          "focus-visible:border-border focus-visible:ring-2 focus-visible:ring-ring/30 focus-visible:ring-offset-0",
+          "bg-secondary-button text-secondary-button-foreground border border-secondary-button-border",
+          "hover:bg-secondary-button-hover hover:border-secondary-button-border-hover",
+          "active:bg-secondary-button-active active:border-secondary-button-border-active",
+          "data-[state=open]:bg-secondary-button-active data-[state=open]:border-secondary-button-border-active",
+          "data-[state=on]:bg-secondary-button-active data-[state=on]:border-secondary-button-border-active",
+          "aria-selected:bg-secondary-button-active aria-selected:border-secondary-button-border-active",
+          "focus-visible:bg-secondary-button focus-visible:border-secondary-button-foreground focus-visible:ring-2 focus-visible:ring-secondary-button-foreground/30 focus-visible:ring-offset-0",
         ].join(" "),
         ghost: [
           "text-primary",
