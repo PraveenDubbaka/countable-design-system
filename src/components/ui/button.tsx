@@ -20,11 +20,11 @@ const buttonVariants = cva(
           "active:bg-destructive/65",
         ].join(" "),
         outline: [
-          "border border-[#0A3159] bg-background text-[#0A3159]",
+          "border border-[#0C2D55] bg-background text-[#0C2D55]",
           "dark:border-[hsl(var(--primary))] dark:text-[hsl(var(--primary))]",
-          "hover:bg-primary/[0.14] hover:border-[#0A3159] dark:hover:border-[hsl(var(--primary))]",
-          "active:bg-primary/[0.22] active:border-[#0A3159] dark:active:border-[hsl(var(--primary))]",
-          "focus-visible:border-[#0A3159] dark:focus-visible:border-[hsl(var(--primary))]",
+          "hover:bg-primary/[0.14] hover:border-[#0C2D55] dark:hover:border-[hsl(var(--primary))]",
+          "active:bg-primary/[0.22] active:border-[#0C2D55] dark:active:border-[hsl(var(--primary))]",
+          "focus-visible:border-[#0C2D55] dark:focus-visible:border-[hsl(var(--primary))]",
         ].join(" "),
         secondary: [
           "bg-secondary-button text-secondary-button-foreground border border-secondary-button-border",
