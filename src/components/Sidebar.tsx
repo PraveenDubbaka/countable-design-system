@@ -1890,7 +1890,7 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
                     ]
                   },
                   {
-                    id: "tb", code: "TB", label: "Trial Balance & Adj. Entries", icon: "worksheet", route: "trial-balance"
+                    id: "tb", code: "TB", label: "Trial Balance & Adj. Entries", icon: "folder", route: "trial-balance"
                   },
                   {
                     id: "pr", code: "PR", label: "Procedures", icon: "folder",
