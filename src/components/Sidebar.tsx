@@ -1536,7 +1536,7 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
                     id: "aud-us-co", code: "CO", label: "Client Onboarding", icon: "folder",
                     children: [
                       { id: "aud-us-form-408", code: "IAE", label: "Initial Audit Engagements", icon: "checklist", route: "checklist/aud-us-form-408" },
-                      { id: "aud-us-form-410", code: "AC", label: "Acceptance / Continuance", icon: "checklist", route: "checklist/aud-us-form-410" },
+                      { id: "aud-us-form-410", code: "AC", label: "New or Existing Engagement — Acceptance/Continuance", icon: "checklist", route: "checklist/aud-us-form-410" },
                       { id: "aud-us-el", code: "EL", label: "Engagement Letter", icon: "letter", route: "checklist/aud-us-el" },
                     ]
                   },
@@ -1699,7 +1699,7 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
                     id: "aud-co", code: "CO", label: "Client Onboarding", icon: "folder",
                     children: [
                       { id: "aud-form-408", code: "IAE", label: "Initial Audit Engagements", icon: "checklist", route: "checklist/aud-form-408" },
-                      { id: "aud-form-410", code: "AC", label: "Acceptance / Continuance", icon: "checklist", route: "checklist/aud-form-410" },
+                      { id: "aud-form-410", code: "AC", label: "New or Existing Engagement — Acceptance/Continuance", icon: "checklist", route: "checklist/aud-form-410" },
                       { id: "aud-el", code: "EL", label: "Engagement Letter", icon: "letter", route: "checklist/aud-el" },
                     ]
                   },

@@ -13419,7 +13419,7 @@ export const generateForm410AcceptanceContinuance = (): Checklist => {
 
   return {
     id: 'global-template-form-410-acceptance-continuance',
-    title: 'Form 410 — New or Existing Engagement — Acceptance/Continuance',
+    title: 'New or Existing Engagement — Acceptance/Continuance',
     description: 'CPA Canada PEG Form 410 — New or Existing Engagement Acceptance/Continuance for Shipping Line Inc. year ended March 31, 2024. Covers quality assurance, risk factors, management integrity, firm competencies, independence, and engagement preconditions.',
     objective: 'To assess whether the firm should accept or continue this audit engagement, having regard to quality management policies, engagement risk factors, management integrity, firm competencies, and independence requirements (CAS 210, CAS 220, CSQM 1).',
     sections,
@@ -13809,7 +13809,7 @@ export const generateUSForm410AcceptanceContinuance = (): Checklist => {
 
   return {
     id: 'global-template-us-form-410-acceptance-continuance',
-    title: 'Form 410 — New or Existing Engagement — Acceptance/Continuance (US GAAS)',
+    title: 'New or Existing Engagement — Acceptance/Continuance',
     description: 'US GAAS Form 410 — New or Existing Engagement Acceptance/Continuance for Harbor Freight Logistics LLC year ended December 31, 2024. Covers quality management (SQMS 1), engagement risk factors, management integrity, firm competencies, independence (AICPA Code / ET), and engagement preconditions (AU-C 210).',
     objective: 'To assess whether the firm should accept or continue this audit engagement, having regard to quality management policies, engagement risk factors, management integrity, firm competencies, and independence requirements (AU-C 210, AU-C 220, SQMS 1).',
     sections,
