@@ -12781,14 +12781,6 @@ export const generateForm408InitialAuditEngagements = (): Checklist => {
 
   const sections: Section[] = [
     {
-      id: 'f408-note',
-      title: 'Note',
-      questions: [
-        la('f408-note-content', '<p><strong>Objective:</strong> To gather information to assist with the decision of whether to accept a new audit client and to obtain sufficient appropriate audit evidence as to whether opening balances contain misstatements and that appropriate accounting policies (reflected in the opening balances) have been consistently applied, appropriately accounted for and adequately presented/disclosed (refer to CAS 510).</p><p><strong>Note:</strong> This form should be completed at the commencement of the engagement to allow time for any issues identified to be resolved. Also note that after completing parts A and B, Form 410 should be completed to reach a decision as to whether the client will be accepted. If so, complete Part C – Procedures on opening balances.</p><p><em>PSC = Procedure successfully completed. TCWG = Those charged with governance. F/S = Financial statements.</em></p>', ''),
-      ],
-      isExpanded: true,
-    },
-    {
       id: 'f408-pA',
       title: 'PART A – PRE-ACCEPTANCE CONSIDERATIONS',
       questions: [
@@ -12858,6 +12850,7 @@ export const generateForm408InitialAuditEngagements = (): Checklist => {
     title: 'Form 408 — Initial Audit Engagements',
     description: 'CPA Canada PEG Form 408 — Initial Audit Engagements. Pre-acceptance considerations, predecessor auditor procedures, and opening balances procedures for Shipping Line Inc. year ended March 31, 2024.',
     objective: 'To gather information to assist with the decision of whether to accept a new audit client and to obtain sufficient appropriate audit evidence as to whether opening balances contain misstatements and that appropriate accounting policies have been consistently applied, appropriately accounted for and adequately presented/disclosed (CAS 510).',
+    note: '<strong>Note:</strong> This form should be completed at the commencement of the engagement to allow time for any issues identified to be resolved. Also note that after completing parts A and B, Form 410 should be completed to reach a decision as to whether the client will be accepted. If so, complete Part C – Procedures on opening balances.<br/><br/><em>PSC = Procedure successfully completed. &nbsp;TCWG = Those charged with governance. &nbsp;F/S = Financial statements.</em>',
     sections,
     createdAt: new Date(),
     updatedAt: new Date(),
@@ -13089,14 +13082,6 @@ export const generateUSForm408InitialAuditEngagements = (): Checklist => {
 
   const sections: Section[] = [
     {
-      id: 'us-f408-note',
-      title: 'Note',
-      questions: [
-        la('us-f408-note-content', '<p><strong>Objective:</strong> To gather information to assist with the decision of whether to accept a new audit client and to obtain sufficient appropriate audit evidence as to whether opening balances contain misstatements and that appropriate accounting policies (reflected in the opening balances) have been consistently applied, appropriately accounted for and adequately presented/disclosed (refer to AU-C 510).</p><p><strong>Note:</strong> This form should be completed at the commencement of the engagement to allow time for any issues identified to be resolved. Also note that after completing parts A and B, Form 410 should be completed to reach a decision as to whether the client will be accepted. If so, complete Part C – Procedures on opening balances.</p><p><em>PSC = Procedure successfully completed. TCWG = Those charged with governance. F/S = Financial statements.</em></p>', ''),
-      ],
-      isExpanded: true,
-    },
-    {
       id: 'us-f408-pA',
       title: 'PART A – PRE-ACCEPTANCE CONSIDERATIONS',
       questions: [
@@ -13167,6 +13152,7 @@ export const generateUSForm408InitialAuditEngagements = (): Checklist => {
     title: 'Form 408 — Initial Audit Engagements (US GAAS)',
     description: 'US GAAS Form 408 — Initial Audit Engagements. Pre-acceptance considerations, predecessor auditor procedures (AU-C 210), and opening balances procedures for Harbor Freight Logistics LLC year ended December 31, 2024.',
     objective: 'To gather information to assist with the decision of whether to accept a new audit client and to obtain sufficient appropriate audit evidence as to whether opening balances contain misstatements and that appropriate accounting policies have been consistently applied, appropriately accounted for and adequately presented/disclosed (AU-C 510).',
+    note: '<strong>Note:</strong> This form should be completed at the commencement of the engagement to allow time for any issues identified to be resolved. Also note that after completing parts A and B, Form 410 should be completed to reach a decision as to whether the client will be accepted. If so, complete Part C – Procedures on opening balances.<br/><br/><em>PSC = Procedure successfully completed. &nbsp;TCWG = Those charged with governance. &nbsp;F/S = Financial statements.</em>',
     sections,
     createdAt: new Date(),
     updatedAt: new Date(),

@@ -2300,6 +2300,7 @@ export function DocumentView({
   });
   const [activeId, setActiveId] = useState<string | null>(null);
   const [activeData, setActiveData] = useState<{type: string;text: string;} | null>(null);
+  const [noteExpanded, setNoteExpanded] = useState(true);
 
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 8 } }),
@@ -2464,6 +2465,29 @@ export function DocumentView({
                   isPreviewMode={isPreviewMode}
                   isGlobalTemplate={isGlobalTemplate}
                   onUpdate={(text) => onUpdate({ ...checklist, objective: text })}
+                />
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Note panel */}
+        {checklist.note && (
+          <div className="dv-section dv-objective-panel rounded-[8px] border-[0.5px] overflow-hidden" style={{ borderColor: '#E2E5EB' }}>
+            <button
+              type="button"
+              className="w-full flex items-center gap-2 pl-[38px] pr-4 text-left text-sm font-semibold transition-colors"
+              style={{ height: '48px', minHeight: '48px' }}
+              onClick={() => setNoteExpanded(v => !v)}
+            >
+              {noteExpanded ? <ChevronDown className="h-4 w-4 text-muted-foreground" /> : <ChevronRight className="h-4 w-4 text-muted-foreground" />}
+              Note
+            </button>
+            {noteExpanded && (
+              <div className="px-[38px] py-3 border-t" style={{ borderColor: '#E2E5EB' }}>
+                <div
+                  className="text-sm text-muted-foreground leading-relaxed p-1.5 rounded-md"
+                  dangerouslySetInnerHTML={{ __html: checklist.note }}
                 />
               </div>
             )}

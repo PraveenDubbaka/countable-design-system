@@ -73,6 +73,7 @@ export interface Checklist {
   title: string;
   description?: string;
   objective?: string;
+  note?: string;
   sections: Section[];
   createdAt: Date;
   updatedAt: Date;
