@@ -12778,6 +12778,11 @@ export const generateForm408InitialAuditEngagements = (): Checklist => {
   const la = (id: string, text: string, answer = ''): Question => ({
     id, text, answerType: 'long-answer' as const, options: [], required: false, answer
   });
+  const h = (id: string, text: string, sub?: Question[]): Question => ({
+    id, text, answerType: 'none' as const, options: [], required: false, answer: '',
+    showResponse: false as any, showExplanation: false as any, showReference: false as any,
+    ...(sub ? { subQuestions: sub } : {})
+  });
 
   const sections: Section[] = [
     {
@@ -12789,7 +12794,11 @@ export const generateForm408InitialAuditEngagements = (): Checklist => {
         q('f408-pA-3', '<p>Obtain permission from the prospective client to perform a credit check and to make inquiries with bankers, other advisors, regulators, etc.</p>', undefined, 'Yes', '<p>Client permission obtained via signed consent form dated March 28, 2024. Credit check performed — satisfactory results. RBC confirmed banking relationship in good standing. No regulatory sanctions noted.</p>', 'AC-04'),
         q('f408-pA-4', '<p>Describe the reason for the change in auditors, and review relevant communications between the previous accountants and management/TCWG.</p>', undefined, 'Yes', '<p>Management indicated the change was due to the prior firm being acquired and the resulting conflict of interest with a competitor client. No professional issues were cited. Management letters from prior auditor reviewed — no significant control deficiencies or unresolved matters noted.</p>', 'AC-05'),
         q('f408-pA-5', '<p>Inquire whether another accounting firm(s) has recently declined the engagement. If so, why?</p>', undefined, 'No', '<p>Management confirmed no other firm has recently declined this engagement.</p>', 'AC-06'),
-        q('f408-pA-6', '<p>If an audit was not performed in the prior period, consider the impact on the current year engagement. Consider:<br/>• Misstatements that could materially affect the current period\'s F/S.<br/>• Inability to obtain sufficient evidence over opening balances (such as attendance at inventory counts).<br/>• Inconsistent application of accounting policies in the current period\'s F/S.</p>', undefined, 'Yes', '<p>An audit was performed in the prior period by the predecessor firm. Opening balances as at April 1, 2023 were reviewed through inspection of predecessor working papers. Accounting policies are consistently applied. No material misstatements in opening balances identified.</p>', 'OB-01'),
+        q('f408-pA-6', '<p>If an audit was not performed in the prior period, consider the impact on the current year engagement.</p>', [
+          q('f408-pA-6a', '<p>Misstatements that could materially affect the current period\'s F/S.</p>', undefined, 'Yes'),
+          q('f408-pA-6b', '<p>Inability to obtain sufficient evidence over opening balances (such as attendance at inventory counts).</p>', undefined, 'Yes'),
+          q('f408-pA-6c', '<p>Inconsistent application of accounting policies in the current period\'s F/S.</p>', undefined, 'Yes'),
+        ], 'Yes', '<p>An audit was performed in the prior period by the predecessor firm. Opening balances as at April 1, 2023 were reviewed through inspection of predecessor working papers. Accounting policies are consistently applied. No material misstatements in opening balances identified.</p>', 'OB-01'),
       ],
       isExpanded: true,
     },
@@ -12797,8 +12806,15 @@ export const generateForm408InitialAuditEngagements = (): Checklist => {
       id: 'f408-pB',
       title: 'PART B – PREDECESSOR AUDITOR/PRACTITIONER CONSIDERATIONS',
       questions: [
-        q('f408-pB-1', '<p>Inquire about the predecessor auditor/practitioner. Identify:<br/>• Name and address of the predecessor firm and the engagement partner.<br/>• Number of years the entity has been audited or reviewed.<br/>• Whether the previous report has been modified or the F/S restated in any of the last five years. If yes, provide details.</p>', undefined, 'Yes', '<p>Predecessor firm: Smith & Partners LLP, 100 King Street West, Halifax NS. Engagement partner: D. Thompson, CPA. Entity audited for 4 years. No modifications to audit reports or restatements in the last five years.</p>', 'AC-07'),
-        q('f408-pB-2', '<p>Communicate with the predecessor auditor/practitioner. Perform the following:<br/>• Inquire about any reasons the engagement should not be accepted. If no response is received, explain what alternative procedures were performed.<br/>• Request to review the predecessor\'s working papers. If not permitted, explain why, and document the impact on accepting the engagement. Refer to the provincial Code of Professional Conduct / Code of Ethics for guidance.</p>', undefined, 'Yes', '<p>Predecessor practitioner was contacted by letter dated March 15, 2024. Response received March 20, 2024 — no concerns or reasons to decline were communicated. Permission to review predecessor working papers was granted. Review performed April 2, 2024. No significant risk factors or unusual items were identified.</p>', 'AC-08'),
+        q('f408-pB-1', '<p>Inquire about the predecessor auditor/practitioner.</p>', [
+          q('f408-pB-1a', '<p>Name and address of the predecessor firm and the engagement partner.</p>', undefined, 'Yes', '<p>Smith &amp; Partners LLP, 100 King Street West, Halifax NS. Engagement partner: D. Thompson, CPA.</p>'),
+          q('f408-pB-1b', '<p>Number of years the entity has been audited or reviewed.</p>', undefined, 'Yes', '<p>Entity audited for 4 years.</p>'),
+          q('f408-pB-1c', '<p>Whether the previous report has been modified or the F/S restated in any of the last five years. If yes, provide details.</p>', undefined, 'No', '<p>No modifications to audit reports or restatements in the last five years.</p>'),
+        ], 'Yes', '<p>Predecessor firm: Smith &amp; Partners LLP, Halifax NS. Engagement partner: D. Thompson, CPA. Entity audited for 4 years. No modifications or restatements.</p>', 'AC-07'),
+        q('f408-pB-2', '<p>Communicate with the predecessor auditor/practitioner.</p>', [
+          q('f408-pB-2a', '<p>Inquire about any reasons the engagement should not be accepted. If no response is received, explain what alternative procedures were performed.</p>', undefined, 'Yes', '<p>Predecessor practitioner contacted by letter dated March 15, 2024. Response received March 20, 2024 — no concerns or reasons to decline were communicated.</p>'),
+          q('f408-pB-2b', '<p>Request to review the predecessor\'s working papers. If not permitted, explain why, and document the impact on accepting the engagement. Refer to the provincial Code of Professional Conduct / Code of Ethics for guidance.</p>', undefined, 'Yes', '<p>Permission to review predecessor working papers granted. Review performed April 2, 2024. No significant risk factors or unusual items identified.</p>'),
+        ], 'Yes', '<p>Predecessor practitioner contacted March 15, 2024. Response received March 20, 2024 — no concerns. Working papers reviewed April 2, 2024.</p>', 'AC-08'),
         q('f408-pB-3', '<p>Assess whether the reason for the change in auditors/practitioners is appropriate.</p>', undefined, 'Yes', '<p>The reason for the change (predecessor firm acquisition creating conflict of interest) is appropriate and professional. No concerns regarding the circumstances of the auditor change.</p>', 'AC-09'),
       ],
       isExpanded: true,
@@ -12813,9 +12829,44 @@ export const generateForm408InitialAuditEngagements = (): Checklist => {
       id: 'f408-pC-basic',
       title: 'BASIC INFORMATION',
       questions: [
-        q('f408-pC-bi-1', '<p><strong>Previous auditor\'s/practitioner\'s working papers</strong><br/>Where possible, review the previous auditor\'s or practitioner\'s working papers and make notes of relevant information, such as:<br/>• Composition of opening balances, including F/S disclosures.<br/>• Application of accounting policies.<br/>• Uncorrected misstatements.<br/>• Significant audit findings.<br/>• Business and fraud risk factors.<br/>• The control environment.<br/>• Key control activities.<br/>• Impact of general IT controls.<br/>• Preparation of estimates.<br/>• Related-party transactions.<br/>• Going-concern events/conditions.<br/>• Difficulties encountered in the audit.<br/>• Disagreements with management/TCWG.<br/>• Need for special audit procedures.<br/>• Need for consultation or use of experts.<br/>If working papers were not reviewed, explain the reason for this and how sufficient audit evidence relating to the opening balances was obtained.</p>', undefined, 'Yes', '<p>Predecessor working papers reviewed April 2, 2024. Opening balances at April 1, 2023 were agreed to prior year signed financial statements. Depreciation methods and vessel useful lives consistent with prior period. No uncorrected misstatements. No going concern, fraud risk factors, or significant audit difficulties noted.</p>', 'OB-01'),
+        q('f408-pC-bi-1', '<p><strong>Previous auditor\'s/practitioner\'s working papers</strong><br/>Where possible, review the previous auditor\'s or practitioner\'s working papers.</p>', [
+          q('f408-pC-bi-1a', '<p>Composition of opening balances, including F/S disclosures.</p>', undefined, 'Yes'),
+          q('f408-pC-bi-1b', '<p>Application of accounting policies.</p>', undefined, 'Yes'),
+          q('f408-pC-bi-1c', '<p>Uncorrected misstatements.</p>', undefined, 'Yes'),
+          q('f408-pC-bi-1d', '<p>Significant audit findings.</p>', undefined, 'Yes'),
+          q('f408-pC-bi-1e', '<p>Business and fraud risk factors.</p>', undefined, 'Yes'),
+          q('f408-pC-bi-1f', '<p>The control environment.</p>', undefined, 'Yes'),
+          q('f408-pC-bi-1g', '<p>Key control activities.</p>', undefined, 'Yes'),
+          q('f408-pC-bi-1h', '<p>Impact of general IT controls.</p>', undefined, 'Yes'),
+          q('f408-pC-bi-1i', '<p>Preparation of estimates.</p>', undefined, 'Yes'),
+          q('f408-pC-bi-1j', '<p>Related-party transactions.</p>', undefined, 'Yes'),
+          q('f408-pC-bi-1k', '<p>Going-concern events/conditions.</p>', undefined, 'Yes'),
+          q('f408-pC-bi-1l', '<p>Difficulties encountered in the audit.</p>', undefined, 'Yes'),
+          q('f408-pC-bi-1m', '<p>Disagreements with management/TCWG.</p>', undefined, 'Yes'),
+          q('f408-pC-bi-1n', '<p>Need for special audit procedures.</p>', undefined, 'Yes'),
+          q('f408-pC-bi-1o', '<p>Need for consultation or use of experts.</p>', undefined, 'Yes'),
+          la('f408-pC-bi-1-note', '<p>If working papers were not reviewed, explain the reason for this and how sufficient audit evidence relating to the opening balances was obtained.</p>'),
+        ], 'Yes', '<p>Predecessor working papers reviewed April 2, 2024. Opening balances at April 1, 2023 were agreed to prior year signed financial statements. Depreciation methods and vessel useful lives consistent with prior period. No uncorrected misstatements. No going concern, fraud risk factors, or significant audit difficulties noted.</p>', 'OB-01'),
         q('f408-pC-bi-2', '<p><strong>Previous auditor/practitioner communications</strong><br/>Review copies of communications (between the previous auditor/practitioner and management, board of directors and/or audit committee) on audit planning and audit findings, such as misstatements, control deficiencies and fraud (as applicable).</p>', undefined, 'Yes', '<p>Management letters from predecessor reviewed. No significant control deficiencies, fraud matters, or unresolved audit findings from prior year engagement.</p>', 'OB-02'),
-        q('f408-pC-bi-3', '<p><strong>Documents to assist in understanding the entity</strong><br/>Consider obtaining copies of the following:<br/>• Business plans and management reports.<br/>• Corporate by-laws, letters patent or certificate of incorporation, partnership agreement, etc.<br/>• Prior periods\' financial statements, annual reports and prospectuses.<br/>• Minutes of meetings of shareholders, board of directors, audit committee and others.<br/>• Reports to management/audit committee on matters such as internal controls and IT.<br/>• Income tax returns.<br/>• Sales tax and other taxes assessments/reassessments.<br/>• Communications with regulators.<br/>• Borrowing agreements and trust indentures.<br/>• Material contracts and lease agreements.<br/>• Chart of accounts.<br/>• Organization charts and job descriptions.<br/>• Risk registers (similar to Form 520).<br/>• Internal control documentation.<br/>• Policies and procedures.<br/>• Board governance documents.<br/>• Other materials, such as press clippings, details of litigation, etc.</p>', undefined, 'Yes', '<p>Obtained: Certificate of incorporation, prior year financial statements (3 years), board minutes, RBC loan agreement, vessel charter agreements, chart of accounts, organization chart, income tax returns. Management confirmed all requested documents have been provided.</p>', 'OB-03'),
+        h('f408-pC-bi-3', '<p><strong>Documents to assist in understanding the entity</strong><br/>Consider obtaining copies of the following:</p>', [
+          q('f408-pC-bi-3a', '<p>Business plans and management reports.</p>', undefined, 'Yes'),
+          q('f408-pC-bi-3b', '<p>Corporate by-laws, letters patent or certificate of incorporation, partnership agreement, etc.</p>', undefined, 'Yes'),
+          q('f408-pC-bi-3c', '<p>Prior periods\' financial statements, annual reports and prospectuses.</p>', undefined, 'Yes'),
+          q('f408-pC-bi-3d', '<p>Minutes of meetings of shareholders, board of directors, audit committee and others.</p>', undefined, 'Yes'),
+          q('f408-pC-bi-3e', '<p>Reports to management/audit committee on matters such as internal controls and IT.</p>', undefined, 'Yes'),
+          q('f408-pC-bi-3f', '<p>Income tax returns.</p>', undefined, 'Yes'),
+          q('f408-pC-bi-3g', '<p>Sales tax and other taxes assessments/reassessments.</p>', undefined, 'Yes'),
+          q('f408-pC-bi-3h', '<p>Communications with regulators.</p>', undefined, 'Yes'),
+          q('f408-pC-bi-3i', '<p>Borrowing agreements and trust indentures.</p>', undefined, 'Yes'),
+          q('f408-pC-bi-3j', '<p>Material contracts and lease agreements.</p>', undefined, 'Yes'),
+          q('f408-pC-bi-3k', '<p>Chart of accounts.</p>', undefined, 'Yes'),
+          q('f408-pC-bi-3l', '<p>Organization charts and job descriptions.</p>', undefined, 'Yes'),
+          q('f408-pC-bi-3m', '<p>Risk registers (similar to Form 520).</p>', undefined, 'Yes'),
+          q('f408-pC-bi-3n', '<p>Internal control documentation.</p>', undefined, 'Yes'),
+          q('f408-pC-bi-3o', '<p>Policies and procedures.</p>', undefined, 'Yes'),
+          q('f408-pC-bi-3p', '<p>Board governance documents.</p>', undefined, 'Yes'),
+          q('f408-pC-bi-3q', '<p>Other materials, such as press clippings, details of litigation, etc.</p>', undefined, 'Yes'),
+        ]),
       ],
       isExpanded: true,
     },
@@ -12823,11 +12874,32 @@ export const generateForm408InitialAuditEngagements = (): Checklist => {
       id: 'f408-pC-ob',
       title: 'OPENING BALANCES',
       questions: [
-        q('f408-pC-ob-1', '<p><strong>Extent of misstatements in opening balances</strong><br/>Obtain audit evidence regarding whether the opening balances and disclosures contain misstatements that materially affect the current period\'s F/S. This includes:<br/>• Reading the most recent F/S and the predecessor auditor\'s report thereon.<br/>• Reviewing the predecessor\'s working papers (see Step 2 above).<br/>• Determining whether the prior period\'s closing balances have been correctly brought forward to the current period or, when appropriate, have been restated.<br/>• Determining whether opening balances reflect the application of appropriate accounting policies.<br/>• Evaluating whether audit or review procedures performed in the current period provide relevant evidence.<br/>• Performing specific audit or review procedures where necessary.</p>', undefined, 'Yes', '<p>Prior year financial statements read. Predecessor\'s unmodified audit report reviewed. Opening balances agreed to prior year closing balances — all brought forward correctly. ASPE accounting policies consistently applied. No specific additional procedures required.</p>', 'OB-04'),
-        q('f408-pC-ob-2', '<p><strong>Misstatements identified</strong><br/>Where material misstatements in opening balances have been identified:<br/>• Perform additional audit or review procedures to determine the effect on the current period\'s F/S.<br/>• Communicate the misstatements with the appropriate level of management and TCWG.<br/>• Ensure the effect of the misstatements is appropriately accounted and adequately presented/disclosed. If not, express a qualified opinion or an adverse opinion, as appropriate.</p>', undefined, 'No', '<p>No material misstatements in opening balances identified. Additional procedures and communication with TCWG not required.</p>', 'OB-05'),
-        q('f408-pC-ob-3', '<p><strong>Consistency of accounting policies</strong><br/>Obtain evidence about whether:<br/>• Accounting policies used in the opening balances have been consistently applied in the current period\'s F/S.<br/>• Changes in the accounting policies have been appropriately accounted for and adequately presented and disclosed in accordance with the applicable financial reporting framework.</p>', undefined, 'Yes', '<p>ASPE accounting policies (vessel depreciation, revenue recognition, lease accounting) consistently applied. No accounting policy changes in the current period.</p>', 'OB-06'),
-        q('f408-pC-ob-4', '<p><strong>Predecessor auditor\'s report is modified</strong><br/>• Describe the matter giving rise to the modification.<br/>• Evaluate the effect in assessing the risks of material misstatement in the current period\'s F/S.<br/>• If the modification remains relevant and material to the current period\'s F/S, modify the audit opinion on the current period\'s F/S.</p>', undefined, 'No', '<p>Predecessor auditor\'s report was unmodified. No modifications to consider.</p>', 'OB-07'),
-        q('f408-pC-ob-5', '<p><strong>Inability to obtain necessary information</strong><br/>• Explain why it was not possible to obtain sufficient appropriate evidence or plausibility regarding the opening balances.<br/>• Express qualified opinion or disclaim an opinion on the F/S, as appropriate.</p>', undefined, 'No', '<p>No inability to obtain necessary information. All required evidence regarding opening balances was obtained from the predecessor working papers and current year audit procedures.</p>', 'OB-08'),
+        q('f408-pC-ob-1', '<p><strong>Extent of misstatements in opening balances</strong><br/>Obtain audit evidence regarding whether the opening balances and disclosures contain misstatements that materially affect the current period\'s F/S.</p>', [
+          q('f408-pC-ob-1a', '<p>Reading the most recent F/S and the predecessor auditor\'s report thereon.</p>', undefined, 'Yes'),
+          q('f408-pC-ob-1b', '<p>Reviewing the predecessor\'s working papers.</p>', undefined, 'Yes'),
+          q('f408-pC-ob-1c', '<p>Determining whether the prior period\'s closing balances have been correctly brought forward.</p>', undefined, 'Yes'),
+          q('f408-pC-ob-1d', '<p>Determining whether opening balances reflect the application of appropriate accounting policies.</p>', undefined, 'Yes'),
+          q('f408-pC-ob-1e', '<p>Evaluating whether audit or review procedures performed in the current period provide relevant evidence.</p>', undefined, 'Yes'),
+          q('f408-pC-ob-1f', '<p>Performing specific audit or review procedures where necessary.</p>', undefined, 'Yes'),
+        ], 'Yes', '<p>Prior year financial statements read. Predecessor\'s unmodified audit report reviewed. Opening balances agreed to prior year closing balances — all brought forward correctly. ASPE accounting policies consistently applied. No specific additional procedures required.</p>', 'OB-04'),
+        h('f408-pC-ob-2', '<p><strong>Misstatements identified</strong><br/>Where material misstatements in opening balances have been identified:</p>', [
+          q('f408-pC-ob-2a', '<p>Perform additional audit or review procedures to determine the effect on the current period\'s F/S.</p>', undefined, 'No'),
+          q('f408-pC-ob-2b', '<p>Communicate the misstatements with the appropriate level of management and TCWG.</p>', undefined, 'No'),
+          q('f408-pC-ob-2c', '<p>Ensure the effect of the misstatements is appropriately accounted and adequately presented/disclosed. If not, express a qualified opinion or an adverse opinion, as appropriate.</p>', undefined, 'No'),
+        ]),
+        q('f408-pC-ob-3', '<p><strong>Consistency of accounting policies</strong><br/>Obtain evidence about whether:</p>', [
+          q('f408-pC-ob-3a', '<p>Accounting policies used in the opening balances have been consistently applied in the current period\'s F/S.</p>', undefined, 'Yes'),
+          q('f408-pC-ob-3b', '<p>Changes in the accounting policies have been appropriately accounted for and adequately presented and disclosed.</p>', undefined, 'Yes'),
+        ], 'Yes', '<p>ASPE accounting policies (vessel depreciation, revenue recognition, lease accounting) consistently applied. No accounting policy changes in the current period.</p>', 'OB-06'),
+        q('f408-pC-ob-4', '<p><strong>Predecessor auditor\'s report is modified</strong></p>', [
+          q('f408-pC-ob-4a', '<p>Describe the matter giving rise to the modification.</p>', undefined, 'No'),
+          q('f408-pC-ob-4b', '<p>Evaluate the effect in assessing the risks of material misstatement in the current period\'s F/S.</p>', undefined, 'No'),
+          q('f408-pC-ob-4c', '<p>If the modification remains relevant and material to the current period\'s F/S, modify the audit opinion on the current period\'s F/S.</p>', undefined, 'No'),
+        ], 'No', '<p>Predecessor auditor\'s report was unmodified. No modifications to consider.</p>', 'OB-07'),
+        h('f408-pC-ob-5', '<p><strong>Inability to obtain necessary information</strong></p>', [
+          q('f408-pC-ob-5a', '<p>Explain why it was not possible to obtain sufficient appropriate evidence or plausibility regarding the opening balances.</p>', undefined, 'No'),
+          q('f408-pC-ob-5b', '<p>Express qualified opinion or disclaim an opinion on the F/S, as appropriate.</p>', undefined, 'No'),
+        ]),
       ],
       isExpanded: true,
     },
@@ -12869,6 +12941,11 @@ export const generateForm410AcceptanceContinuance = (): Checklist => {
   const la = (id: string, text: string, answer = ''): Question => ({
     id, text, answerType: 'long-answer' as const, options: [], required: false, answer
   });
+  const h = (id: string, text: string, sub?: Question[]): Question => ({
+    id, text, answerType: 'none' as const, options: [], required: false, answer: '',
+    showResponse: false as any, showExplanation: false as any, showReference: false as any,
+    ...(sub ? { subQuestions: sub } : {})
+  });
 
   const sections: Section[] = [
     {
@@ -12905,7 +12982,13 @@ export const generateForm410AcceptanceContinuance = (): Checklist => {
       id: 'f410-integrity',
       title: '3. Management\'s Integrity',
       questions: [
-        q('f410-int-1', '<p>Based on previous contact (if any) with key entity personnel and the results of procedures performed in Step 2 above, determine whether any concern has been identified that might cause us to doubt or distrust the management representations/assertions that we will be requesting and relying upon if the engagement is accepted. Consider:<br/>• Observed disregard for telling the truth;<br/>• Criminal convictions and regulatory sanctions;<br/>• History or suspicions of unethical actions, illegal acts or management override controls;<br/>• Negative publicity;<br/>• Close association with people/companies with reputations for questionable ethics.</p>', undefined, 'No', '<p>No concerns identified regarding management integrity. Web searches and inquiries with bankers and advisors returned no adverse findings. Management has operated Shipping Line Inc. with a consistent reputation in the marine freight sector.</p>', 'AC-05'),
+        q('f410-int-1', '<p>Based on previous contact (if any) with key entity personnel and the results of procedures performed in Step 2 above, determine whether any concern has been identified that might cause us to doubt or distrust the management representations/assertions that we will be requesting and relying upon if the engagement is accepted.</p>', [
+          q('f410-int-1a', '<p>Observed disregard for telling the truth.</p>', undefined, 'No'),
+          q('f410-int-1b', '<p>Criminal convictions and regulatory sanctions.</p>', undefined, 'No'),
+          q('f410-int-1c', '<p>History or suspicions of unethical actions, illegal acts or management override controls.</p>', undefined, 'No'),
+          q('f410-int-1d', '<p>Negative publicity.</p>', undefined, 'No'),
+          q('f410-int-1e', '<p>Close association with people/companies with reputations for questionable ethics.</p>', undefined, 'No'),
+        ], 'No', '<p>No concerns identified regarding management integrity. Web searches and inquiries with bankers and advisors returned no adverse findings. Management has operated Shipping Line Inc. with a consistent reputation in the marine freight sector.</p>', 'AC-05'),
         la('f410-int-exp', '<p><strong>Additional Explanation</strong></p>', 'No integrity concerns identified. Management team led by CEO with 15+ years in marine logistics. No criminal convictions, regulatory sanctions, or negative publicity found.'),
       ],
       isExpanded: true,
@@ -12974,7 +13057,11 @@ export const generateForm410AcceptanceContinuance = (): Checklist => {
       id: 'f410-purpose',
       title: '8. Purpose of the Engagement',
       questions: [
-        q('f410-pur-1', '<p>What is the entity\'s intention for having this engagement? Ensure:<br/>A. There is a rational purpose for the engagement.<br/>B. The type of engagement would be appropriate in the circumstances.<br/>C. Consider:<br/>• Any significant scope limitations expected.<br/>• Any intent to inappropriately associate the firm\'s name with the financial statements.<br/>• Any laws or regulations that require an audit rather than a review.</p>', undefined, 'Yes', '<p>An audit engagement is required by the company\'s banking covenant with RBC and is appropriate given the entity size (~$12.5M revenue, $18.2M total assets). No scope limitations anticipated. No laws or regulations preclude this engagement type.</p>', 'AC-08'),
+        q('f410-pur-1', '<p>What is the entity\'s intention for having this engagement?</p>', [
+          q('f410-pur-1a', '<p>A. There is a rational purpose for the engagement.</p>', undefined, 'Yes'),
+          q('f410-pur-1b', '<p>B. The type of engagement would be appropriate in the circumstances.</p>', undefined, 'Yes'),
+          q('f410-pur-1c', '<p>C. Consider: scope limitations, inappropriately associate firm name, laws requiring audit.</p>', undefined, 'Yes'),
+        ], 'Yes', '<p>An audit engagement is required by the company\'s banking covenant with RBC and is appropriate given the entity size (~$12.5M revenue, $18.2M total assets). No scope limitations anticipated. No laws or regulations preclude this engagement type.</p>', 'AC-08'),
         la('f410-pur-exp', '<p><strong>Additional Explanation</strong></p>', 'Audit required under RBC loan covenant. An audit is appropriate and no laws or regulations preclude this engagement type.'),
       ],
       isExpanded: true,
@@ -13079,6 +13166,11 @@ export const generateUSForm408InitialAuditEngagements = (): Checklist => {
   const la = (id: string, text: string, answer = ''): Question => ({
     id, text, answerType: 'long-answer' as const, options: [], required: false, answer
   });
+  const h = (id: string, text: string, sub?: Question[]): Question => ({
+    id, text, answerType: 'none' as const, options: [], required: false, answer: '',
+    showResponse: false as any, showExplanation: false as any, showReference: false as any,
+    ...(sub ? { subQuestions: sub } : {})
+  });
 
   const sections: Section[] = [
     {
@@ -13090,7 +13182,11 @@ export const generateUSForm408InitialAuditEngagements = (): Checklist => {
         q('us-f408-pA-3', '<p>Obtain permission from the prospective client to perform a credit check and to make inquiries with bankers, other advisors, regulators, etc.</p>', undefined, 'Yes', '<p>Client permission obtained via signed consent form dated January 8, 2025. Credit check performed — satisfactory results. First National Bank confirmed banking relationship in good standing. No regulatory sanctions noted.</p>', 'AC-04'),
         q('us-f408-pA-4', '<p>Describe the reason for the change in auditors, and review relevant communications between the previous accountants and management/TCWG.</p>', undefined, 'Yes', '<p>Management indicated the change was due to the prior firm\'s inability to serve the company\'s growth trajectory. No professional issues were cited. Management letters from prior auditor reviewed — no significant control deficiencies or unresolved matters noted.</p>', 'AC-05'),
         q('us-f408-pA-5', '<p>Inquire whether another accounting firm(s) has recently declined the engagement. If so, why?</p>', undefined, 'No', '<p>Management confirmed no other firm has recently declined this engagement.</p>', 'AC-06'),
-        q('us-f408-pA-6', '<p>If an audit was not performed in the prior period, consider the impact on the current year engagement. Consider:<br/>• Misstatements that could materially affect the current period\'s F/S.<br/>• Inability to obtain sufficient evidence over opening balances (such as attendance at inventory counts).<br/>• Inconsistent application of accounting policies in the current period\'s F/S.</p>', undefined, 'Yes', '<p>An audit was performed in the prior period by the predecessor firm. Opening balances as at January 1, 2024 were reviewed through inspection of predecessor working papers. US GAAP / ASC accounting policies consistently applied. No material misstatements in opening balances identified.</p>', 'OB-01'),
+        q('us-f408-pA-6', '<p>If an audit was not performed in the prior period, consider the impact on the current year engagement.</p>', [
+          q('us-f408-pA-6a', '<p>Misstatements that could materially affect the current period\'s F/S.</p>', undefined, 'Yes'),
+          q('us-f408-pA-6b', '<p>Inability to obtain sufficient evidence over opening balances (such as attendance at inventory counts).</p>', undefined, 'Yes'),
+          q('us-f408-pA-6c', '<p>Inconsistent application of accounting policies in the current period\'s F/S.</p>', undefined, 'Yes'),
+        ], 'Yes', '<p>An audit was performed in the prior period by the predecessor firm. Opening balances as at January 1, 2024 were reviewed through inspection of predecessor working papers. US GAAP / ASC accounting policies consistently applied. No material misstatements in opening balances identified.</p>', 'OB-01'),
       ],
       isExpanded: true,
     },
@@ -13099,8 +13195,15 @@ export const generateUSForm408InitialAuditEngagements = (): Checklist => {
       title: 'PART B – PREDECESSOR AUDITOR/PRACTITIONER CONSIDERATIONS',
       note: '<p>Refer to AU-C 210 — Terms of Engagement for predecessor auditor communication requirements.</p>',
       questions: [
-        q('us-f408-pB-1', '<p>Inquire about the predecessor auditor/practitioner. Identify:<br/>• Name and address of the predecessor firm and the engagement partner.<br/>• Number of years the entity has been audited or reviewed.<br/>• Whether the previous report has been modified or the F/S restated in any of the last five years. If yes, provide details.</p>', undefined, 'Yes', '<p>Predecessor firm: Johnson & Walsh LLP, 200 South Michigan Ave, Chicago IL. Engagement partner: R. Johnson, CPA. Entity audited for 3 years. No modifications to audit reports or restatements in the last five years.</p>', 'AC-07'),
-        q('us-f408-pB-2', '<p>Communicate with the predecessor auditor/practitioner. Perform the following:<br/>• Inquire about any reasons the engagement should not be accepted. If no response is received, explain what alternative procedures were performed.<br/>• Request to review the predecessor\'s working papers. If not permitted, explain why, and document the impact on accepting the engagement. Refer to the AICPA Code of Professional Conduct / ET for guidance.</p>', undefined, 'Yes', '<p>Predecessor practitioner was contacted per AU-C 210 by letter dated January 10, 2025. Response received January 15, 2025 — no concerns or reasons to decline were communicated. Permission to review predecessor working papers was granted. Review performed January 20, 2025. No significant risk factors or unusual items were identified.</p>', 'AC-08'),
+        q('us-f408-pB-1', '<p>Inquire about the predecessor auditor/practitioner.</p>', [
+          q('us-f408-pB-1a', '<p>Name and address of the predecessor firm and the engagement partner.</p>', undefined, 'Yes', '<p>Johnson &amp; Walsh LLP, 200 South Michigan Ave, Chicago IL. Engagement partner: R. Johnson, CPA.</p>'),
+          q('us-f408-pB-1b', '<p>Number of years the entity has been audited or reviewed.</p>', undefined, 'Yes', '<p>Entity audited for 3 years.</p>'),
+          q('us-f408-pB-1c', '<p>Whether the previous report has been modified or the F/S restated in any of the last five years. If yes, provide details.</p>', undefined, 'No', '<p>No modifications to audit reports or restatements in the last five years.</p>'),
+        ], 'Yes', '<p>Predecessor firm: Johnson &amp; Walsh LLP, Chicago IL. Engagement partner: R. Johnson, CPA. Entity audited for 3 years. No modifications or restatements.</p>', 'AC-07'),
+        q('us-f408-pB-2', '<p>Communicate with the predecessor auditor/practitioner.</p>', [
+          q('us-f408-pB-2a', '<p>Inquire about any reasons the engagement should not be accepted. If no response is received, explain what alternative procedures were performed.</p>', undefined, 'Yes', '<p>Predecessor practitioner contacted per AU-C 210 by letter dated January 10, 2025. Response received January 15, 2025 — no concerns or reasons to decline were communicated.</p>'),
+          q('us-f408-pB-2b', '<p>Request to review the predecessor\'s working papers. If not permitted, explain why, and document the impact on accepting the engagement. Refer to the AICPA Code of Professional Conduct / ET for guidance.</p>', undefined, 'Yes', '<p>Permission to review predecessor working papers granted. Review performed January 20, 2025. No significant risk factors or unusual items identified.</p>'),
+        ], 'Yes', '<p>Predecessor practitioner contacted January 10, 2025. Response received January 15, 2025 — no concerns. Working papers reviewed January 20, 2025.</p>', 'AC-08'),
         q('us-f408-pB-3', '<p>Assess whether the reason for the change in auditors/practitioners is appropriate.</p>', undefined, 'Yes', '<p>The reason for the change (prior firm unable to serve growth trajectory) is appropriate. No concerns regarding the circumstances of the auditor change.</p>', 'AC-09'),
       ],
       isExpanded: true,
@@ -13115,9 +13218,44 @@ export const generateUSForm408InitialAuditEngagements = (): Checklist => {
       id: 'us-f408-pC-basic',
       title: 'BASIC INFORMATION',
       questions: [
-        q('us-f408-pC-bi-1', '<p><strong>Previous auditor\'s/practitioner\'s working papers</strong><br/>Where possible, review the previous auditor\'s or practitioner\'s working papers and make notes of relevant information, such as:<br/>• Composition of opening balances, including F/S disclosures.<br/>• Application of accounting policies.<br/>• Uncorrected misstatements.<br/>• Significant audit findings.<br/>• Business and fraud risk factors.<br/>• The control environment.<br/>• Key control activities.<br/>• Impact of general IT controls.<br/>• Preparation of estimates.<br/>• Related-party transactions.<br/>• Going-concern events/conditions.<br/>• Difficulties encountered in the audit.<br/>• Disagreements with management/TCWG.<br/>• Need for special audit procedures.<br/>• Need for consultation or use of experts.<br/>If working papers were not reviewed, explain the reason for this and how sufficient audit evidence relating to the opening balances was obtained.</p>', undefined, 'Yes', '<p>Predecessor working papers reviewed January 20, 2025. Opening balances at January 1, 2024 agreed to prior year signed financial statements. US GAAP depreciation, revenue recognition (ASC 606), and lease accounting (ASC 842 — first year adoption) policies reviewed. No uncorrected misstatements. No going concern, fraud risk factors, or significant audit difficulties noted. First-year ASC 842 adoption was the only material accounting change.</p>', 'OB-01'),
+        q('us-f408-pC-bi-1', '<p><strong>Previous auditor\'s/practitioner\'s working papers</strong><br/>Where possible, review the previous auditor\'s or practitioner\'s working papers.</p>', [
+          q('us-f408-pC-bi-1a', '<p>Composition of opening balances, including F/S disclosures.</p>', undefined, 'Yes'),
+          q('us-f408-pC-bi-1b', '<p>Application of accounting policies.</p>', undefined, 'Yes'),
+          q('us-f408-pC-bi-1c', '<p>Uncorrected misstatements.</p>', undefined, 'Yes'),
+          q('us-f408-pC-bi-1d', '<p>Significant audit findings.</p>', undefined, 'Yes'),
+          q('us-f408-pC-bi-1e', '<p>Business and fraud risk factors.</p>', undefined, 'Yes'),
+          q('us-f408-pC-bi-1f', '<p>The control environment.</p>', undefined, 'Yes'),
+          q('us-f408-pC-bi-1g', '<p>Key control activities.</p>', undefined, 'Yes'),
+          q('us-f408-pC-bi-1h', '<p>Impact of general IT controls.</p>', undefined, 'Yes'),
+          q('us-f408-pC-bi-1i', '<p>Preparation of estimates.</p>', undefined, 'Yes'),
+          q('us-f408-pC-bi-1j', '<p>Related-party transactions.</p>', undefined, 'Yes'),
+          q('us-f408-pC-bi-1k', '<p>Going-concern events/conditions.</p>', undefined, 'Yes'),
+          q('us-f408-pC-bi-1l', '<p>Difficulties encountered in the audit.</p>', undefined, 'Yes'),
+          q('us-f408-pC-bi-1m', '<p>Disagreements with management/TCWG.</p>', undefined, 'Yes'),
+          q('us-f408-pC-bi-1n', '<p>Need for special audit procedures.</p>', undefined, 'Yes'),
+          q('us-f408-pC-bi-1o', '<p>Need for consultation or use of experts.</p>', undefined, 'Yes'),
+          la('us-f408-pC-bi-1-note', '<p>If working papers were not reviewed, explain the reason for this and how sufficient audit evidence relating to the opening balances was obtained.</p>'),
+        ], 'Yes', '<p>Predecessor working papers reviewed January 20, 2025. Opening balances at January 1, 2024 agreed to prior year signed financial statements. US GAAP depreciation, revenue recognition (ASC 606), and lease accounting (ASC 842 — first year adoption) policies reviewed. No uncorrected misstatements. No going concern, fraud risk factors, or significant audit difficulties noted. First-year ASC 842 adoption was the only material accounting change.</p>', 'OB-01'),
         q('us-f408-pC-bi-2', '<p><strong>Previous auditor/practitioner communications</strong><br/>Review copies of communications (between the previous auditor/practitioner and management, board of directors and/or audit committee) on audit planning and audit findings, such as misstatements, control deficiencies and fraud (as applicable).</p>', undefined, 'Yes', '<p>Management letters from predecessor reviewed. No significant control deficiencies, fraud matters, or unresolved audit findings from prior year engagement. ASC 842 first-year adoption disclosures were noted as an area of focus in prior year communications.</p>', 'OB-02'),
-        q('us-f408-pC-bi-3', '<p><strong>Documents to assist in understanding the entity</strong><br/>Consider obtaining copies of the following:<br/>• Business plans and management reports.<br/>• Corporate by-laws, letters patent or certificate of incorporation, partnership agreement, etc.<br/>• Prior periods\' financial statements, annual reports and prospectuses.<br/>• Minutes of meetings of shareholders, board of directors, audit committee and others.<br/>• Reports to management/audit committee on matters such as internal controls and IT.<br/>• Income tax returns.<br/>• Sales tax and other taxes assessments/reassessments.<br/>• Communications with regulators.<br/>• Borrowing agreements and trust indentures.<br/>• Material contracts and lease agreements.<br/>• Chart of accounts.<br/>• Organization charts and job descriptions.<br/>• Risk registers (similar to Form 520).<br/>• Internal control documentation.<br/>• Policies and procedures.<br/>• Board governance documents.<br/>• Other materials, such as press clippings, details of litigation, etc.</p>', undefined, 'Yes', '<p>Obtained: LLC operating agreement, prior year financial statements (3 years), board minutes, loan facility agreement, freight carrier contracts, chart of accounts, organization chart, federal income tax returns (Form 1120), state tax filings, ASC 842 lease schedule. Management confirmed all requested documents have been provided.</p>', 'OB-03'),
+        h('us-f408-pC-bi-3', '<p><strong>Documents to assist in understanding the entity</strong><br/>Consider obtaining copies of the following:</p>', [
+          q('us-f408-pC-bi-3a', '<p>Business plans and management reports.</p>', undefined, 'Yes'),
+          q('us-f408-pC-bi-3b', '<p>Corporate by-laws, letters patent or certificate of incorporation, partnership agreement, etc.</p>', undefined, 'Yes'),
+          q('us-f408-pC-bi-3c', '<p>Prior periods\' financial statements, annual reports and prospectuses.</p>', undefined, 'Yes'),
+          q('us-f408-pC-bi-3d', '<p>Minutes of meetings of shareholders, board of directors, audit committee and others.</p>', undefined, 'Yes'),
+          q('us-f408-pC-bi-3e', '<p>Reports to management/audit committee on matters such as internal controls and IT.</p>', undefined, 'Yes'),
+          q('us-f408-pC-bi-3f', '<p>Income tax returns.</p>', undefined, 'Yes'),
+          q('us-f408-pC-bi-3g', '<p>Sales tax and other taxes assessments/reassessments.</p>', undefined, 'Yes'),
+          q('us-f408-pC-bi-3h', '<p>Communications with regulators.</p>', undefined, 'Yes'),
+          q('us-f408-pC-bi-3i', '<p>Borrowing agreements and trust indentures.</p>', undefined, 'Yes'),
+          q('us-f408-pC-bi-3j', '<p>Material contracts and lease agreements.</p>', undefined, 'Yes'),
+          q('us-f408-pC-bi-3k', '<p>Chart of accounts.</p>', undefined, 'Yes'),
+          q('us-f408-pC-bi-3l', '<p>Organization charts and job descriptions.</p>', undefined, 'Yes'),
+          q('us-f408-pC-bi-3m', '<p>Risk registers (similar to Form 520).</p>', undefined, 'Yes'),
+          q('us-f408-pC-bi-3n', '<p>Internal control documentation.</p>', undefined, 'Yes'),
+          q('us-f408-pC-bi-3o', '<p>Policies and procedures.</p>', undefined, 'Yes'),
+          q('us-f408-pC-bi-3p', '<p>Board governance documents.</p>', undefined, 'Yes'),
+          q('us-f408-pC-bi-3q', '<p>Other materials, such as press clippings, details of litigation, etc.</p>', undefined, 'Yes'),
+        ]),
       ],
       isExpanded: true,
     },
@@ -13125,11 +13263,32 @@ export const generateUSForm408InitialAuditEngagements = (): Checklist => {
       id: 'us-f408-pC-ob',
       title: 'OPENING BALANCES',
       questions: [
-        q('us-f408-pC-ob-1', '<p><strong>Extent of misstatements in opening balances</strong><br/>Obtain audit evidence regarding whether the opening balances and disclosures contain misstatements that materially affect the current period\'s F/S. This includes:<br/>• Reading the most recent F/S and the predecessor auditor\'s report thereon.<br/>• Reviewing the predecessor\'s working papers.<br/>• Determining whether the prior period\'s closing balances have been correctly brought forward to the current period or, when appropriate, have been restated.<br/>• Determining whether opening balances reflect the application of appropriate accounting policies.<br/>• Evaluating whether audit procedures performed in the current period provide relevant evidence.<br/>• Performing specific audit procedures where necessary.</p>', undefined, 'Yes', '<p>Prior year financial statements read. Predecessor\'s unmodified audit report reviewed. Opening balances at January 1, 2024 agreed to prior year closing balances — all brought forward correctly. US GAAP accounting policies consistently applied. ASC 842 ROU assets and lease liabilities correctly reflected in opening balances (first-year adoption as of January 1, 2024).</p>', 'OB-04'),
-        q('us-f408-pC-ob-2', '<p><strong>Misstatements identified</strong><br/>Where material misstatements in opening balances have been identified:<br/>• Perform additional audit procedures to determine the effect on the current period\'s F/S.<br/>• Communicate the misstatements with the appropriate level of management and TCWG.<br/>• Ensure the effect of the misstatements is appropriately accounted and adequately presented/disclosed. If not, express a qualified opinion or an adverse opinion, as appropriate.</p>', undefined, 'No', '<p>No material misstatements in opening balances identified. Additional procedures and communication with TCWG not required.</p>', 'OB-05'),
-        q('us-f408-pC-ob-3', '<p><strong>Consistency of accounting policies</strong><br/>Obtain evidence about whether:<br/>• Accounting policies used in the opening balances have been consistently applied in the current period\'s F/S.<br/>• Changes in the accounting policies have been appropriately accounted for and adequately presented and disclosed in accordance with the applicable financial reporting framework.</p>', undefined, 'Yes', '<p>US GAAP accounting policies consistently applied. ASC 842 first-year adoption was the only policy change — properly disclosed in the notes. Revenue recognition under ASC 606 consistent with prior period.</p>', 'OB-06'),
-        q('us-f408-pC-ob-4', '<p><strong>Predecessor auditor\'s report is modified</strong><br/>• Describe the matter giving rise to the modification.<br/>• Evaluate the effect in assessing the risks of material misstatement in the current period\'s F/S.<br/>• If the modification remains relevant and material to the current period\'s F/S, modify the audit opinion on the current period\'s F/S.</p>', undefined, 'No', '<p>Predecessor auditor\'s report was unmodified. No modifications to consider.</p>', 'OB-07'),
-        q('us-f408-pC-ob-5', '<p><strong>Inability to obtain necessary information</strong><br/>• Explain why it was not possible to obtain sufficient appropriate evidence or plausibility regarding the opening balances.<br/>• Express qualified opinion or disclaim an opinion on the F/S, as appropriate.</p>', undefined, 'No', '<p>No inability to obtain necessary information. All required evidence regarding opening balances was obtained from the predecessor working papers and current year audit procedures.</p>', 'OB-08'),
+        q('us-f408-pC-ob-1', '<p><strong>Extent of misstatements in opening balances</strong><br/>Obtain audit evidence regarding whether the opening balances and disclosures contain misstatements that materially affect the current period\'s F/S.</p>', [
+          q('us-f408-pC-ob-1a', '<p>Reading the most recent F/S and the predecessor auditor\'s report thereon.</p>', undefined, 'Yes'),
+          q('us-f408-pC-ob-1b', '<p>Reviewing the predecessor\'s working papers.</p>', undefined, 'Yes'),
+          q('us-f408-pC-ob-1c', '<p>Determining whether the prior period\'s closing balances have been correctly brought forward.</p>', undefined, 'Yes'),
+          q('us-f408-pC-ob-1d', '<p>Determining whether opening balances reflect the application of appropriate accounting policies.</p>', undefined, 'Yes'),
+          q('us-f408-pC-ob-1e', '<p>Evaluating whether audit procedures performed in the current period provide relevant evidence.</p>', undefined, 'Yes'),
+          q('us-f408-pC-ob-1f', '<p>Performing specific audit procedures where necessary.</p>', undefined, 'Yes'),
+        ], 'Yes', '<p>Prior year financial statements read. Predecessor\'s unmodified audit report reviewed. Opening balances at January 1, 2024 agreed to prior year closing balances — all brought forward correctly. US GAAP accounting policies consistently applied. ASC 842 ROU assets and lease liabilities correctly reflected in opening balances (first-year adoption as of January 1, 2024).</p>', 'OB-04'),
+        h('us-f408-pC-ob-2', '<p><strong>Misstatements identified</strong><br/>Where material misstatements in opening balances have been identified:</p>', [
+          q('us-f408-pC-ob-2a', '<p>Perform additional audit procedures to determine the effect on the current period\'s F/S.</p>', undefined, 'No'),
+          q('us-f408-pC-ob-2b', '<p>Communicate the misstatements with the appropriate level of management and TCWG.</p>', undefined, 'No'),
+          q('us-f408-pC-ob-2c', '<p>Ensure the effect of the misstatements is appropriately accounted and adequately presented/disclosed. If not, express a qualified opinion or an adverse opinion, as appropriate.</p>', undefined, 'No'),
+        ]),
+        q('us-f408-pC-ob-3', '<p><strong>Consistency of accounting policies</strong><br/>Obtain evidence about whether:</p>', [
+          q('us-f408-pC-ob-3a', '<p>Accounting policies used in the opening balances have been consistently applied in the current period\'s F/S.</p>', undefined, 'Yes'),
+          q('us-f408-pC-ob-3b', '<p>Changes in the accounting policies have been appropriately accounted for and adequately presented and disclosed.</p>', undefined, 'Yes'),
+        ], 'Yes', '<p>US GAAP accounting policies consistently applied. ASC 842 first-year adoption was the only policy change — properly disclosed in the notes. Revenue recognition under ASC 606 consistent with prior period.</p>', 'OB-06'),
+        q('us-f408-pC-ob-4', '<p><strong>Predecessor auditor\'s report is modified</strong></p>', [
+          q('us-f408-pC-ob-4a', '<p>Describe the matter giving rise to the modification.</p>', undefined, 'No'),
+          q('us-f408-pC-ob-4b', '<p>Evaluate the effect in assessing the risks of material misstatement in the current period\'s F/S.</p>', undefined, 'No'),
+          q('us-f408-pC-ob-4c', '<p>If the modification remains relevant and material to the current period\'s F/S, modify the audit opinion on the current period\'s F/S.</p>', undefined, 'No'),
+        ], 'No', '<p>Predecessor auditor\'s report was unmodified. No modifications to consider.</p>', 'OB-07'),
+        h('us-f408-pC-ob-5', '<p><strong>Inability to obtain necessary information</strong></p>', [
+          q('us-f408-pC-ob-5a', '<p>Explain why it was not possible to obtain sufficient appropriate evidence or plausibility regarding the opening balances.</p>', undefined, 'No'),
+          q('us-f408-pC-ob-5b', '<p>Express qualified opinion or disclaim an opinion on the F/S, as appropriate.</p>', undefined, 'No'),
+        ]),
       ],
       isExpanded: true,
     },
@@ -13171,6 +13330,11 @@ export const generateUSForm410AcceptanceContinuance = (): Checklist => {
   const la = (id: string, text: string, answer = ''): Question => ({
     id, text, answerType: 'long-answer' as const, options: [], required: false, answer
   });
+  const h = (id: string, text: string, sub?: Question[]): Question => ({
+    id, text, answerType: 'none' as const, options: [], required: false, answer: '',
+    showResponse: false as any, showExplanation: false as any, showReference: false as any,
+    ...(sub ? { subQuestions: sub } : {})
+  });
 
   const sections: Section[] = [
     {
@@ -13207,7 +13371,13 @@ export const generateUSForm410AcceptanceContinuance = (): Checklist => {
       id: 'us-f410-integrity',
       title: '3. Management\'s Integrity',
       questions: [
-        q('us-f410-int-1', '<p>Based on previous contact (if any) with key entity personnel and the results of procedures performed in Step 2 above, determine whether any concern has been identified that might cause us to doubt or distrust the management representations/assertions that we will be requesting and relying upon if the engagement is accepted. Consider:<br/>• Observed disregard for telling the truth;<br/>• Criminal convictions and regulatory sanctions;<br/>• History or suspicions of unethical actions, illegal acts or management override controls;<br/>• Negative publicity;<br/>• Close association with people/companies with reputations for questionable ethics.</p>', undefined, 'No', '<p>No concerns identified regarding management integrity. Web searches and inquiries with bankers and advisors returned no adverse findings. CEO Robert Morrison has operated Harbor Freight Logistics LLC with a consistent reputation in the freight logistics sector.</p>', 'AC-05'),
+        q('us-f410-int-1', '<p>Based on previous contact (if any) with key entity personnel and the results of procedures performed in Step 2 above, determine whether any concern has been identified that might cause us to doubt or distrust the management representations/assertions that we will be requesting and relying upon if the engagement is accepted.</p>', [
+          q('us-f410-int-1a', '<p>Observed disregard for telling the truth.</p>', undefined, 'No'),
+          q('us-f410-int-1b', '<p>Criminal convictions and regulatory sanctions.</p>', undefined, 'No'),
+          q('us-f410-int-1c', '<p>History or suspicions of unethical actions, illegal acts or management override controls.</p>', undefined, 'No'),
+          q('us-f410-int-1d', '<p>Negative publicity.</p>', undefined, 'No'),
+          q('us-f410-int-1e', '<p>Close association with people/companies with reputations for questionable ethics.</p>', undefined, 'No'),
+        ], 'No', '<p>No concerns identified regarding management integrity. Web searches and inquiries with bankers and advisors returned no adverse findings. CEO Robert Morrison has operated Harbor Freight Logistics LLC with a consistent reputation in the freight logistics sector.</p>', 'AC-05'),
         la('us-f410-int-exp', '<p><strong>Additional Explanation</strong></p>', 'No integrity concerns identified. Management team led by CEO Robert Morrison with 18+ years in logistics. No criminal convictions, regulatory sanctions, or negative publicity found.'),
       ],
       isExpanded: true,
@@ -13277,7 +13447,11 @@ export const generateUSForm410AcceptanceContinuance = (): Checklist => {
       id: 'us-f410-purpose',
       title: '8. Purpose of the Engagement',
       questions: [
-        q('us-f410-pur-1', '<p>What is the entity\'s intention for having this engagement? Ensure:<br/>A. There is a rational purpose for the engagement.<br/>B. The type of engagement would be appropriate in the circumstances.<br/>C. Consider:<br/>• Any significant scope limitations expected.<br/>• Any intent to inappropriately associate the firm\'s name with the financial statements.<br/>• Any laws or regulations that require an audit rather than a review.</p>', undefined, 'Yes', '<p>An audit engagement is required by the company\'s revolving credit facility covenant with First National Bank and is appropriate given the entity size (~$18.4M revenue, ~$14.2M total assets). No scope limitations anticipated.</p>', 'AC-08'),
+        q('us-f410-pur-1', '<p>What is the entity\'s intention for having this engagement?</p>', [
+          q('us-f410-pur-1a', '<p>A. There is a rational purpose for the engagement.</p>', undefined, 'Yes'),
+          q('us-f410-pur-1b', '<p>B. The type of engagement would be appropriate in the circumstances.</p>', undefined, 'Yes'),
+          q('us-f410-pur-1c', '<p>C. Consider: scope limitations, inappropriately associate firm name, laws requiring audit.</p>', undefined, 'Yes'),
+        ], 'Yes', '<p>An audit engagement is required by the company\'s revolving credit facility covenant with First National Bank and is appropriate given the entity size (~$18.4M revenue, ~$14.2M total assets). No scope limitations anticipated.</p>', 'AC-08'),
         la('us-f410-pur-exp', '<p><strong>Additional Explanation</strong></p>', 'Audit required under First National Bank credit facility covenant. An audit is appropriate and no laws or regulations preclude this engagement type.'),
       ],
       isExpanded: true,
