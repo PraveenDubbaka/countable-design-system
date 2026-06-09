@@ -219,7 +219,7 @@ export default function Engagements() {
                             className="p-1.5 hover:bg-muted rounded-lg transition-colors group/edit"
                             onClick={(e) => handleEdit(engagement.id, e)}
                           >
-                            <Pencil className="h-4 w-4 text-primary group-hover/edit:icon-edit" />
+                            <Pencil className="h-4 w-4 text-link group-hover/edit:icon-edit" />
                           </button>
                           <button
                             className="p-1.5 hover:bg-destructive/10 rounded-lg transition-colors group/trash"
