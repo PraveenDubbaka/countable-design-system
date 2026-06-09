@@ -222,7 +222,7 @@ export default function Engagements() {
                             <Pencil className="h-4 w-4 text-primary group-hover/edit:icon-edit" />
                           </button>
                           <button
-                            className="p-1.5 hover:bg-muted rounded-lg transition-colors group/trash"
+                            className="p-1.5 hover:bg-destructive/10 rounded-lg transition-colors group/trash"
                             onClick={(e) => handleDelete(engagement.id, e)}
                           >
                             <Trash2 className="h-4 w-4 text-destructive group-hover/trash:icon-trash" />
