@@ -1,5 +1,10 @@
-import React, { useState } from 'react';
-import { Plus, X } from 'lucide-react';
+import { useState } from 'react';
+import { Info, Trash2, Plus } from 'lucide-react';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import {
+  Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
+} from '@/components/ui/select';
 
 interface AuditMgmtRequestsWorksheetProps {
   isUS?: boolean;
@@ -23,7 +28,7 @@ const todayStr = () => {
 
 const makeRow = (id: string, overrides: Partial<RequestRow> = {}): RequestRow => ({
   id, description: '', com: '', personResponsible: '', requestDate: todayStr(),
-  followUpDate: '', dateReceived: '', wpRef: '', ...overrides
+  followUpDate: '', dateReceived: '', wpRef: '', ...overrides,
 });
 
 const MOCK_CA: RequestRow[] = [
@@ -40,8 +45,10 @@ const MOCK_US: RequestRow[] = [
 
 export function AuditMgmtRequestsWorksheet({ isUS = false }: AuditMgmtRequestsWorksheetProps) {
   const [rows, setRows] = useState<RequestRow[]>(isUS ? MOCK_US : MOCK_CA);
-  const [preparedBy, setPreparedBy] = useState(isUS ? 'Senior 1' : 'A. Kumar');
-  const [preparedDate, setPreparedDate] = useState(isUS ? '2025-01-06' : '2024-04-08');
+  const [preparedBy, setPreparedBy] = useState('');
+  const [preparedDate, setPreparedDate] = useState('');
+  const [reviewedBy, setReviewedBy] = useState('');
+  const [reviewedDate, setReviewedDate] = useState('');
 
   const update = (id: string, field: keyof RequestRow, value: string) =>
     setRows(prev => prev.map(r => r.id !== id ? r : { ...r, [field]: value }));
@@ -56,96 +63,136 @@ export function AuditMgmtRequestsWorksheet({ isUS = false }: AuditMgmtRequestsWo
     return <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-amber-100 text-amber-700 whitespace-nowrap">Outstanding</span>;
   };
 
-  const thCls = "px-2 py-2 text-xs font-semibold text-muted-foreground text-left border-b border-border whitespace-nowrap";
-  const tdCls = "px-2 py-1 border-b border-border/50 align-top";
-  const inp = "w-full bg-transparent text-xs px-1 py-0.5 focus:outline-none focus:ring-1 focus:ring-primary/30 rounded min-w-0";
+  const standard = isUS ? 'AU-C 300' : 'CAS 300';
 
   return (
-    <div className="p-4 space-y-6">
-      {/* Header */}
-      <div className="bg-card rounded-lg border border-border p-4">
-        <h2 className="text-base font-semibold">Worksheet — Information / Analysis Requested from Management (Form 440)</h2>
-        <p className="text-xs text-muted-foreground mt-1">Objective: To document requests made to management for preparing analysis or obtaining documents that will assist in the audit.</p>
-        <p className="text-xs text-muted-foreground mt-0.5"><strong>Com:</strong> V = Verbal &nbsp;|&nbsp; L = Letter &nbsp;|&nbsp; Em = Email</p>
+    <div className="flex flex-col h-full">
+
+      {/* Objective bar */}
+      <div className="px-6 py-2.5 border-b border-border bg-primary/[0.03] flex items-start gap-2 shrink-0">
+        <Info className="h-3.5 w-3.5 text-primary mt-0.5 shrink-0" />
+        <span className="text-xs font-semibold text-primary whitespace-nowrap">Objective:</span>
+        <p className="text-xs text-muted-foreground flex-1 leading-relaxed">
+          Document requests made to management for preparing analysis or obtaining documents that will assist in the audit. ({standard})
+          &nbsp;<span className="font-medium">Com:</span> V = Verbal &nbsp;|&nbsp; L = Letter &nbsp;|&nbsp; Em = Email
+        </p>
       </div>
 
-      {/* Table */}
-      <div className="bg-card rounded-lg border border-border overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="w-full text-xs">
-            <thead className="bg-muted/20">
-              <tr>
-                <th className={thCls} style={{ minWidth: 220 }}>Description of assistance requested</th>
-                <th className={thCls} style={{ width: 60 }}>Com</th>
-                <th className={thCls} style={{ minWidth: 140 }}>Person responsible</th>
-                <th className={thCls} style={{ width: 110 }}>Request date</th>
-                <th className={thCls} style={{ width: 110 }}>Follow-up date</th>
-                <th className={thCls} style={{ width: 110 }}>Date received</th>
-                <th className={thCls} style={{ width: 80 }}>W/P ref.</th>
-                <th className={thCls} style={{ width: 100 }}>Status</th>
-                <th className="px-2 py-2 border-b border-border" style={{ width: 32 }} />
-              </tr>
-            </thead>
-            <tbody>
-              {rows.map(row => (
-                <tr key={row.id} className="hover:bg-muted/10">
-                  <td className={tdCls}>
-                    <textarea className={inp + " resize-none"} rows={2} value={row.description} onChange={e => update(row.id, 'description', e.target.value)} placeholder="Describe request..." />
-                  </td>
-                  <td className={tdCls}>
-                    <select className={inp} value={row.com} onChange={e => update(row.id, 'com', e.target.value)}>
-                      <option value="">—</option>
-                      <option value="V">V</option>
-                      <option value="L">L</option>
-                      <option value="Em">Em</option>
-                    </select>
-                  </td>
-                  <td className={tdCls}>
-                    <input className={inp} value={row.personResponsible} onChange={e => update(row.id, 'personResponsible', e.target.value)} />
-                  </td>
-                  <td className={tdCls}>
-                    <input type="date" className={inp} value={row.requestDate} onChange={e => update(row.id, 'requestDate', e.target.value)} />
-                  </td>
-                  <td className={tdCls}>
-                    <input type="date" className={inp} value={row.followUpDate} onChange={e => update(row.id, 'followUpDate', e.target.value)} />
-                  </td>
-                  <td className={tdCls}>
-                    <input type="date" className={inp} value={row.dateReceived} onChange={e => update(row.id, 'dateReceived', e.target.value)} />
-                  </td>
-                  <td className={tdCls}>
-                    <input className={inp} value={row.wpRef} onChange={e => update(row.id, 'wpRef', e.target.value)} placeholder="—" />
-                  </td>
-                  <td className={tdCls + " pt-2"}>
-                    <StatusBadge row={row} />
-                  </td>
-                  <td className={tdCls + " text-center"}>
-                    <button onClick={() => removeRow(row.id)} className="text-muted-foreground hover:text-destructive p-1">
-                      <X className="h-3 w-3" />
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-        <div className="p-3 border-t border-border/50">
-          <button onClick={addRow} className="flex items-center gap-1.5 text-xs text-primary hover:bg-primary/5 px-3 py-1.5 rounded">
-            <Plus className="h-3.5 w-3.5" /> Add request
-          </button>
-        </div>
-      </div>
+      {/* Body */}
+      <div className="flex-1 overflow-y-auto bg-muted/30">
+        <div className="p-6 space-y-4">
 
-      {/* Sign-off */}
-      <div className="bg-card rounded-lg border border-border p-4">
-        <div className="grid grid-cols-2 gap-4">
-          <div className="flex flex-col gap-1">
-            <label className="text-xs text-muted-foreground">Prepared by</label>
-            <input className="border border-border rounded px-2 py-1 text-sm" value={preparedBy} onChange={e => setPreparedBy(e.target.value)} />
+          {/* Requests table */}
+          <div className="bg-card text-card-foreground border border-border shadow-[0_2px_8px_hsl(213_40%_20%/0.06)] rounded-md overflow-hidden">
+            <div className="px-6 py-3.5 bg-card border-b border-border flex items-center gap-3">
+              <span className="text-sm font-semibold text-foreground">Information &amp; Analysis Requested from Management</span>
+              <span title="Track all requests made to management — documents, schedules, analyses — and monitor receipt status.">
+                <Info className="h-3.5 w-3.5 text-muted-foreground cursor-help" />
+              </span>
+            </div>
+            <div className="overflow-x-auto">
+              <table className="w-full">
+                <thead className="sticky top-0 z-10">
+                  <tr className="bg-muted border-b border-border">
+                    <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider" style={{ minWidth: 220 }}>Description of assistance requested</th>
+                    <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider" style={{ width: 80 }}>Com</th>
+                    <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider" style={{ minWidth: 150 }}>Person responsible</th>
+                    <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap" style={{ width: 130 }}>Request date</th>
+                    <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap" style={{ width: 130 }}>Follow-up date</th>
+                    <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap" style={{ width: 130 }}>Date received</th>
+                    <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider" style={{ width: 90 }}>W/P ref.</th>
+                    <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider" style={{ width: 110 }}>Status</th>
+                    <th className="px-4 py-3" style={{ width: 40 }} />
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-border">
+                  {rows.map(row => (
+                    <tr key={row.id} className="hover:bg-muted/50 transition-colors">
+                      <td className="px-4 py-2.5 align-top">
+                        <Textarea
+                          className="min-h-[56px] text-sm resize-none"
+                          value={row.description}
+                          onChange={e => update(row.id, 'description', e.target.value)}
+                          placeholder="Describe request…"
+                        />
+                      </td>
+                      <td className="px-4 py-2.5 align-top">
+                        <Select
+                          value={row.com}
+                          onValueChange={v => update(row.id, 'com', v)}
+                        >
+                          <SelectTrigger className="h-8 text-sm">
+                            <SelectValue placeholder="—" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="V">V</SelectItem>
+                            <SelectItem value="L">L</SelectItem>
+                            <SelectItem value="Em">Em</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </td>
+                      <td className="px-4 py-2.5 align-top">
+                        <Input className="h-8 text-sm" value={row.personResponsible} onChange={e => update(row.id, 'personResponsible', e.target.value)} placeholder="Name" />
+                      </td>
+                      <td className="px-4 py-2.5 align-top">
+                        <Input type="date" className="h-8 text-sm" value={row.requestDate} onChange={e => update(row.id, 'requestDate', e.target.value)} />
+                      </td>
+                      <td className="px-4 py-2.5 align-top">
+                        <Input type="date" className="h-8 text-sm" value={row.followUpDate} onChange={e => update(row.id, 'followUpDate', e.target.value)} />
+                      </td>
+                      <td className="px-4 py-2.5 align-top">
+                        <Input type="date" className="h-8 text-sm" value={row.dateReceived} onChange={e => update(row.id, 'dateReceived', e.target.value)} />
+                      </td>
+                      <td className="px-4 py-2.5 align-top">
+                        <Input className="h-8 text-sm" value={row.wpRef} onChange={e => update(row.id, 'wpRef', e.target.value)} placeholder="—" />
+                      </td>
+                      <td className="px-4 py-2.5 align-top pt-3">
+                        <StatusBadge row={row} />
+                      </td>
+                      <td className="px-2 py-2.5 align-top text-center">
+                        <button onClick={() => removeRow(row.id)} className="text-muted-foreground hover:text-destructive transition-colors">
+                          <Trash2 className="h-3.5 w-3.5" />
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+            <div className="px-6 py-3 border-t border-border">
+              <button onClick={addRow} className="flex items-center gap-1.5 text-sm font-medium text-primary hover:text-primary/80 transition-colors">
+                <Plus className="h-4 w-4" />Add Request
+              </button>
+            </div>
           </div>
-          <div className="flex flex-col gap-1">
-            <label className="text-xs text-muted-foreground">Date</label>
-            <input type="date" className="border border-border rounded px-2 py-1 text-sm" value={preparedDate} onChange={e => setPreparedDate(e.target.value)} />
+
+          {/* Sign-off */}
+          <div className="bg-card text-card-foreground border border-border shadow-[0_2px_8px_hsl(213_40%_20%/0.06)] rounded-md overflow-hidden">
+            <div className="px-6 py-3.5 bg-card border-b border-border">
+              <span className="text-sm font-semibold text-foreground">Sign-off</span>
+            </div>
+            <div className="px-6 py-5">
+              <div className="grid grid-cols-2 gap-x-8 gap-y-4">
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-xs font-medium text-muted-foreground">Prepared by</label>
+                  <Input value={preparedBy} onChange={e => setPreparedBy(e.target.value)} placeholder="Name" className="h-8 text-sm" />
+                </div>
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-xs font-medium text-muted-foreground">Date</label>
+                  <Input type="date" value={preparedDate} onChange={e => setPreparedDate(e.target.value)} className="h-8 text-sm" />
+                </div>
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-xs font-medium text-muted-foreground">Reviewed by</label>
+                  <Input value={reviewedBy} onChange={e => setReviewedBy(e.target.value)} placeholder="Name" className="h-8 text-sm" />
+                </div>
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-xs font-medium text-muted-foreground">Date</label>
+                  <Input type="date" value={reviewedDate} onChange={e => setReviewedDate(e.target.value)} className="h-8 text-sm" />
+                </div>
+              </div>
+            </div>
           </div>
+
         </div>
       </div>
     </div>

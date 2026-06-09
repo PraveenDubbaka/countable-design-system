@@ -1,4 +1,6 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
+import { Info, Plus } from 'lucide-react';
+import { Input } from '@/components/ui/input';
 
 interface AuditTimeBudgetWorksheetProps {
   isUS?: boolean;
@@ -16,7 +18,7 @@ interface BudgetRow {
 }
 
 const makeRow = (id: string, label: string, overrides: Partial<BudgetRow> = {}): BudgetRow => ({
-  id, label, priorHrs: '', priorDollar: '', budgetHrs: '', budgetDollar: '', actualHrs: '', actualDollar: '', ...overrides
+  id, label, priorHrs: '', priorDollar: '', budgetHrs: '', budgetDollar: '', actualHrs: '', actualDollar: '', ...overrides,
 });
 
 const CA_SECTIONS = [
@@ -77,14 +79,16 @@ const CA_SECTIONS = [
       makeRow('t6', 'EQCR / EQR'),
       makeRow('t7', 'Other'),
     ]
-  }
+  },
 ];
 
-// For US, same rows but EQCR → EQR
 const US_SECTIONS = CA_SECTIONS.map(s => ({
   ...s,
-  rows: s.rows.map(r => ({ ...r, label: r.label.replace('EQCR', 'EQR') }))
+  rows: s.rows.map(r => ({ ...r, label: r.label.replace('EQCR', 'EQR') })),
 }));
+
+const NUMERIC_FIELDS: (keyof BudgetRow)[] = ['priorHrs', 'priorDollar', 'budgetHrs', 'budgetDollar', 'actualHrs', 'actualDollar'];
+const COL_HEADERS = ['Prior Hrs', 'Prior $', 'Budget Hrs', 'Budget $', 'Actual Hrs', 'Actual $'];
 
 const sumField = (rows: BudgetRow[], field: keyof BudgetRow) => {
   const total = rows.reduce((acc, row) => {
@@ -97,10 +101,12 @@ const sumField = (rows: BudgetRow[], field: keyof BudgetRow) => {
 export function AuditTimeBudgetWorksheet({ isUS = false }: AuditTimeBudgetWorksheetProps) {
   const initialSections = (isUS ? US_SECTIONS : CA_SECTIONS).map(s => ({
     ...s,
-    rows: s.rows.map(r => ({ ...r }))
+    rows: s.rows.map(r => ({ ...r })),
   }));
   const [sections, setSections] = useState(initialSections);
-  const [chargeOutRate, setChargeOutRate] = useState('');
+  const [priorRate, setPriorRate] = useState('');
+  const [budgetRate, setBudgetRate] = useState('');
+  const [actualRate, setActualRate] = useState('');
   const [preparedBy, setPreparedBy] = useState('');
   const [preparedDate, setPreparedDate] = useState('');
   const [reviewedBy, setReviewedBy] = useState('');
@@ -109,130 +115,152 @@ export function AuditTimeBudgetWorksheet({ isUS = false }: AuditTimeBudgetWorksh
   const updateCell = (sectionIdx: number, rowIdx: number, field: keyof BudgetRow, value: string) => {
     setSections(prev => prev.map((s, si) => si !== sectionIdx ? s : {
       ...s,
-      rows: s.rows.map((r, ri) => ri !== rowIdx ? r : { ...r, [field]: value })
+      rows: s.rows.map((r, ri) => ri !== rowIdx ? r : { ...r, [field]: value }),
     }));
   };
 
   const allRows = sections.flatMap(s => s.rows);
   const grandTotal = (field: keyof BudgetRow) => sumField(allRows, field);
 
-  const inputCls = "w-full bg-transparent text-right text-xs px-1 py-0.5 focus:outline-none focus:ring-1 focus:ring-primary/30 rounded";
-  const thCls = "px-2 py-2 text-xs font-semibold text-muted-foreground text-right border-b border-border";
-  const tdCls = "px-1 py-0.5 border-b border-border/50";
-  const totalCls = "px-2 py-1 text-xs font-semibold text-right border-t-2 border-primary/20";
-
   const standard = isUS ? 'AU-C 300' : 'CAS 300';
 
   return (
-    <div className="p-4 space-y-6">
-      {/* Header */}
-      <div className="bg-card rounded-lg border border-border p-4 space-y-2">
-        <h2 className="text-base font-semibold">Worksheet — Time Budget (Form 450)</h2>
-        <p className="text-xs text-muted-foreground">Objective: To compare estimated time and costs to the prior period and actual to complete the audit. ({standard})</p>
+    <div className="flex flex-col h-full">
+
+      {/* Objective bar */}
+      <div className="px-6 py-2.5 border-b border-border bg-primary/[0.03] flex items-start gap-2 shrink-0">
+        <Info className="h-3.5 w-3.5 text-primary mt-0.5 shrink-0" />
+        <span className="text-xs font-semibold text-primary whitespace-nowrap">Objective:</span>
+        <p className="text-xs text-muted-foreground flex-1 leading-relaxed">
+          Compare estimated time and costs to the prior period and track actuals to complete the audit. ({standard})
+        </p>
       </div>
 
-      {/* Average charge-out rate */}
-      <div className="bg-card rounded-lg border border-border p-4">
-        <div className="flex items-center gap-4">
-          <span className="text-sm font-medium w-48">Average charge-out rate</span>
-          <div className="flex gap-6">
-            {['Prior', 'Budget', 'Actual'].map(col => (
-              <div key={col} className="flex flex-col items-center gap-1">
-                <span className="text-xs text-muted-foreground">{col}</span>
-                <input
-                  className="w-24 border border-border rounded px-2 py-1 text-xs text-right"
-                  placeholder="0.00"
-                  value={chargeOutRate}
-                  onChange={e => setChargeOutRate(e.target.value)}
-                />
+      {/* Body */}
+      <div className="flex-1 overflow-y-auto bg-muted/30">
+        <div className="p-6 space-y-4">
+
+          {/* Average charge-out rate */}
+          <div className="bg-card text-card-foreground border border-border shadow-[0_2px_8px_hsl(213_40%_20%/0.06)] rounded-md overflow-hidden">
+            <div className="px-6 py-3.5 bg-card border-b border-border flex items-center gap-3">
+              <span className="text-sm font-semibold text-foreground">Average Charge-Out Rate</span>
+              <span title="Enter the average charge-out rate ($/hr) for Prior, Budget, and Actual columns.">
+                <Info className="h-3.5 w-3.5 text-muted-foreground cursor-help" />
+              </span>
+            </div>
+            <div className="px-6 py-5">
+              <div className="flex items-center gap-8">
+                {[
+                  ['Prior', priorRate, setPriorRate],
+                  ['Budget', budgetRate, setBudgetRate],
+                  ['Actual', actualRate, setActualRate],
+                ].map(([label, value, setter]) => (
+                  <div key={label as string} className="flex flex-col gap-1.5">
+                    <label className="text-xs font-medium text-muted-foreground">{label as string} ($/hr)</label>
+                    <Input
+                      className="h-8 text-sm w-28 tabular-nums text-right"
+                      placeholder="0.00"
+                      value={value as string}
+                      onChange={e => (setter as (v: string) => void)(e.target.value)}
+                    />
+                  </div>
+                ))}
               </div>
-            ))}
+            </div>
           </div>
-        </div>
-      </div>
 
-      {/* Sections */}
-      {sections.map((section, si) => (
-        <div key={section.id} className="bg-card rounded-lg border border-border overflow-hidden">
-          <div className="px-4 py-2 bg-muted/30 border-b border-border">
-            <span className="text-sm font-semibold">{section.title}</span>
-          </div>
-          <div className="overflow-x-auto">
-            <table className="w-full text-xs">
-              <thead>
-                <tr className="bg-muted/20">
-                  <th className="px-4 py-2 text-xs font-semibold text-left border-b border-border">Description</th>
-                  <th className={thCls}>Prior Hrs</th>
-                  <th className={thCls}>Prior $</th>
-                  <th className={thCls}>Budget Hrs</th>
-                  <th className={thCls}>Budget $</th>
-                  <th className={thCls}>Actual Hrs</th>
-                  <th className={thCls}>Actual $</th>
-                </tr>
-              </thead>
-              <tbody>
-                {section.rows.map((row, ri) => (
-                  <tr key={row.id} className="hover:bg-muted/10">
-                    <td className="px-4 py-1 text-sm border-b border-border/50">{row.label}</td>
-                    {(['priorHrs', 'priorDollar', 'budgetHrs', 'budgetDollar', 'actualHrs', 'actualDollar'] as (keyof BudgetRow)[]).map(field => (
-                      <td key={field} className={tdCls}>
-                        <input
-                          className={inputCls}
-                          placeholder="—"
-                          value={row[field] as string}
-                          onChange={e => updateCell(si, ri, field, e.target.value)}
-                        />
+          {/* Budget sections */}
+          {sections.map((section, si) => (
+            <div key={section.id} className="bg-card text-card-foreground border border-border shadow-[0_2px_8px_hsl(213_40%_20%/0.06)] rounded-md overflow-hidden">
+              <div className="px-6 py-3.5 bg-card border-b border-border flex items-center gap-3">
+                <span className="text-sm font-semibold text-foreground">{section.title}</span>
+              </div>
+              <div className="overflow-x-auto">
+                <table className="w-full">
+                  <thead className="sticky top-0 z-10">
+                    <tr className="bg-muted border-b border-border">
+                      <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider">Description</th>
+                      {COL_HEADERS.map(h => (
+                        <th key={h} className="px-4 py-3 text-right text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap">{h}</th>
+                      ))}
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-border">
+                    {section.rows.map((row, ri) => (
+                      <tr key={row.id} className="hover:bg-muted/50 transition-colors">
+                        <td className="px-4 py-2.5 align-top text-sm text-foreground">{row.label}</td>
+                        {NUMERIC_FIELDS.map(field => (
+                          <td key={field} className="px-4 py-2.5 align-top w-24">
+                            <Input
+                              className="h-8 text-sm tabular-nums text-right"
+                              placeholder="—"
+                              value={row[field] as string}
+                              onChange={e => updateCell(si, ri, field, e.target.value)}
+                            />
+                          </td>
+                        ))}
+                      </tr>
+                    ))}
+                    {/* Subtotal row */}
+                    <tr className="bg-muted/30 border-t border-border font-semibold">
+                      <td className="px-4 py-2 text-xs font-semibold text-foreground">Subtotal</td>
+                      {NUMERIC_FIELDS.map(field => (
+                        <td key={field} className="px-4 py-2 text-sm tabular-nums text-foreground text-right">
+                          {sumField(section.rows, field) || '—'}
+                        </td>
+                      ))}
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          ))}
+
+          {/* Grand Total */}
+          <div className="bg-card text-card-foreground border border-border shadow-[0_2px_8px_hsl(213_40%_20%/0.06)] rounded-md overflow-hidden">
+            <div className="overflow-x-auto">
+              <table className="w-full">
+                <tbody>
+                  <tr className="bg-primary/5 border-b border-border">
+                    <td className="px-4 py-3 text-sm font-bold text-foreground">Grand Total</td>
+                    {NUMERIC_FIELDS.map(field => (
+                      <td key={field} className="px-4 py-3 text-sm font-bold tabular-nums text-foreground text-right w-24">
+                        {grandTotal(field) || '—'}
                       </td>
                     ))}
                   </tr>
-                ))}
-                {/* Section total */}
-                <tr className="bg-muted/20">
-                  <td className="px-4 py-1 text-xs font-semibold border-t border-border">Subtotal</td>
-                  {(['priorHrs', 'priorDollar', 'budgetHrs', 'budgetDollar', 'actualHrs', 'actualDollar'] as (keyof BudgetRow)[]).map(field => (
-                    <td key={field} className={totalCls}>{sumField(section.rows, field) || '—'}</td>
-                  ))}
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-      ))}
-
-      {/* Grand Total */}
-      <div className="bg-card rounded-lg border border-primary/20 overflow-hidden">
-        <table className="w-full text-xs">
-          <tbody>
-            <tr className="bg-primary/5">
-              <td className="px-4 py-2 text-sm font-bold">Total</td>
-              {(['priorHrs', 'priorDollar', 'budgetHrs', 'budgetDollar', 'actualHrs', 'actualDollar'] as (keyof BudgetRow)[]).map(field => (
-                <td key={field} className="px-2 py-2 text-sm font-bold text-right border-l border-border/50">
-                  {grandTotal(field) || '—'}
-                </td>
-              ))}
-            </tr>
-          </tbody>
-        </table>
-      </div>
-
-      {/* Sign-off */}
-      <div className="bg-card rounded-lg border border-border p-4">
-        <div className="grid grid-cols-2 gap-4">
-          {([
-            ['Prepared by', preparedBy, setPreparedBy],
-            ['Date', preparedDate, setPreparedDate],
-            ['Reviewed by', reviewedBy, setReviewedBy],
-            ['Date', reviewedDate, setReviewedDate],
-          ] as [string, string, React.Dispatch<React.SetStateAction<string>>][]).map(([label, value, setter]) => (
-            <div key={label} className="flex flex-col gap-1">
-              <label className="text-xs text-muted-foreground">{label}</label>
-              <input
-                className="border border-border rounded px-2 py-1 text-sm"
-                value={value}
-                onChange={e => setter(e.target.value)}
-              />
+                </tbody>
+              </table>
             </div>
-          ))}
+          </div>
+
+          {/* Sign-off */}
+          <div className="bg-card text-card-foreground border border-border shadow-[0_2px_8px_hsl(213_40%_20%/0.06)] rounded-md overflow-hidden">
+            <div className="px-6 py-3.5 bg-card border-b border-border">
+              <span className="text-sm font-semibold text-foreground">Sign-off</span>
+            </div>
+            <div className="px-6 py-5">
+              <div className="grid grid-cols-2 gap-x-8 gap-y-4">
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-xs font-medium text-muted-foreground">Prepared by</label>
+                  <Input value={preparedBy} onChange={e => setPreparedBy(e.target.value)} placeholder="Name" className="h-8 text-sm" />
+                </div>
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-xs font-medium text-muted-foreground">Date</label>
+                  <Input type="date" value={preparedDate} onChange={e => setPreparedDate(e.target.value)} className="h-8 text-sm" />
+                </div>
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-xs font-medium text-muted-foreground">Reviewed by</label>
+                  <Input value={reviewedBy} onChange={e => setReviewedBy(e.target.value)} placeholder="Name" className="h-8 text-sm" />
+                </div>
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-xs font-medium text-muted-foreground">Date</label>
+                  <Input type="date" value={reviewedDate} onChange={e => setReviewedDate(e.target.value)} className="h-8 text-sm" />
+                </div>
+              </div>
+            </div>
+          </div>
+
         </div>
       </div>
     </div>
