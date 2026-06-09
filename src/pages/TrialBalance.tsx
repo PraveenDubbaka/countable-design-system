@@ -329,8 +329,8 @@ export default function TrialBalance() {
                     <GitMerge className="h-4 w-4 text-muted-foreground" />
                     <span>Merge</span>
                   </DropdownMenuItem>
-                  <DropdownMenuItem className="flex items-center gap-2 cursor-pointer">
-                    <Trash2 className="h-4 w-4 text-muted-foreground" />
+                  <DropdownMenuItem className="flex items-center gap-2 cursor-pointer text-destructive focus:text-destructive">
+                    <Trash2 className="h-4 w-4 text-destructive" />
                     <span>Delete</span>
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />
