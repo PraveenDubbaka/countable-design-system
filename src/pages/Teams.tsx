@@ -213,8 +213,8 @@ export default function Teams() {
                                 <Pencil className="h-4 w-4 text-primary" />
                               </button>
                             )}
-                            <button className="p-1.5 hover:bg-muted rounded-lg transition-colors">
-                              <Trash2 className="h-4 w-4 text-primary" />
+                            <button className="p-1.5 hover:bg-destructive/10 rounded-lg transition-colors">
+                              <Trash2 className="h-4 w-4 text-destructive" />
                             </button>
                           </div>
                         </td>

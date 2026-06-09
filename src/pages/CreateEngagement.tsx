@@ -176,8 +176,8 @@ const TeamMemberRow = ({
         <button onClick={onEdit} className="p-1.5 hover:bg-muted rounded transition-colors group/edit">
           <Pencil className="h-4 w-4 text-muted-foreground group-hover/edit:icon-edit" />
         </button>
-        <button onClick={onDelete} className="p-1.5 hover:bg-muted rounded transition-colors group/trash">
-          <Trash2 className="h-4 w-4 text-muted-foreground group-hover/trash:icon-trash" />
+        <button onClick={onDelete} className="p-1.5 hover:bg-destructive/10 rounded transition-colors group/trash">
+          <Trash2 className="h-4 w-4 text-destructive group-hover/trash:icon-trash" />
         </button>
       </div>
     </td>
