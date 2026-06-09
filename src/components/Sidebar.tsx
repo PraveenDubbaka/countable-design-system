@@ -1543,15 +1543,11 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
                   {
                     id: "aud-us-pl-sec", code: "PL", label: "Planning", icon: "folder",
                     children: [
-                      { id: "aud-us-ueb", code: "UEB", label: "Understanding the entity — Basics", icon: "checklist", route: "checklist/aud-us-ueb" },
-                      { id: "aud-us-ues", code: "UES", label: "Understanding the entity — Systems & Controls", icon: "checklist", route: "checklist/aud-us-ues" },
-                      { id: "aud-us-uei", code: "UEI", label: "Understanding the entity — Industry & Environment", icon: "checklist", route: "checklist/aud-us-uei" },
                       { id: "aud-us-mat", code: "MAT", label: "Materiality", icon: "worksheet", route: "checklist/aud-us-mat" },
                       { id: "aud-us-scope", code: "SC", label: "Engagement Scope", icon: "worksheet", route: "checklist/aud-us-scope" },
                       { id: "aud-us-pap", code: "PAP", label: "Preliminary Analytical Procedures", icon: "worksheet", route: "checklist/aud-us-pap" },
                       { id: "aud-us-asm", code: "ASM", label: "Overall Audit Strategy", icon: "checklist", route: "checklist/aud-us-asm" },
                       { id: "aud-us-plan", code: "EP", label: "Engagement Planning", icon: "checklist", route: "checklist/aud-us-plan" },
-                      { id: "aud-us-stb", code: "STB", label: "Staffing & Time Budget", icon: "checklist", route: "checklist/aud-us-stb" },
                       { id: "aud-us-tcwg-pl", code: "TCWG", label: "Communication with Those Charged with Governance (AU-C 260)", icon: "letter", route: "checklist/aud-us-tcwg-pl" },
                     ]
                   },
@@ -1708,15 +1704,11 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
                   {
                     id: "aud-pl-sec", code: "PL", label: "Planning", icon: "folder",
                     children: [
-                      { id: "aud-ueb", code: "UEB", label: "Understanding the entity — Basics", icon: "checklist", route: "checklist/aud-ueb" },
-                      { id: "aud-ues", code: "UES", label: "Understanding the entity — Systems & Controls", icon: "checklist", route: "checklist/aud-ues" },
-                      { id: "aud-uei", code: "UEI", label: "Understanding the entity — Industry & Environment", icon: "checklist", route: "checklist/aud-uei" },
                       { id: "aud-mat", code: "MAT", label: "Materiality", icon: "worksheet", route: "checklist/aud-mat" },
                       { id: "aud-scope", code: "SC", label: "Engagement Scope", icon: "worksheet", route: "checklist/aud-scope" },
                       { id: "aud-pap", code: "PAP", label: "Preliminary Analytical Procedures", icon: "worksheet", route: "checklist/aud-pap" },
                       { id: "aud-asm", code: "ASM", label: "Overall Audit Strategy", icon: "checklist", route: "checklist/aud-asm" },
                       { id: "aud-plan", code: "EP", label: "Engagement Planning", icon: "checklist", route: "checklist/aud-plan" },
-                      { id: "aud-stb", code: "STB", label: "Staffing & Time Budget", icon: "checklist", route: "checklist/aud-stb" },
                       { id: "aud-tcwg-pl", code: "TCWG", label: "Communication with Those Charged with Governance", icon: "letter", route: "checklist/aud-tcwg-pl" },
                     ]
                   },
