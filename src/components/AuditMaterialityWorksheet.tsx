@@ -221,12 +221,6 @@ export function AuditMaterialityWorksheet({ isUS = false }: AuditMaterialityWork
   const [specPMPY, setSpecPMPY] = useState("");
   const [specPMWPRef, setSpecPMWPRef] = useState("WP-RPT-PM");
 
-  // Sign-off
-  const [preparedBy, setPreparedBy] = useState("");
-  const [preparedDate, setPreparedDate] = useState("");
-  const [reviewedBy, setReviewedBy] = useState("");
-  const [reviewedDate, setReviewedDate] = useState("");
-
   // Additional comments & conclusion
   const [additionalComments, setAdditionalComments] = useState("");
   const [conclusion, setConclusion] = useState(
@@ -824,45 +818,20 @@ export function AuditMaterialityWorksheet({ isUS = false }: AuditMaterialityWork
                 onChange={(e) => setConclusion(e.target.value)}
                 className="min-h-[72px] text-sm resize-none bg-background"
               />
-              <div className="flex justify-end mt-4">
-                <Button
-                  onClick={() => {
-                    setConcluded(true);
-                    toast.success("Materiality worksheet concluded");
-                  }}
-                  disabled={concluded}
-                >
-                  {concluded ? "Worksheet concluded" : "Conclude worksheet"}
-                </Button>
-              </div>
             </div>
           </div>
 
-          {/* ── Sign-off ── */}
-          <div className="bg-card border border-border shadow-[0_2px_8px_hsl(213_40%_20%/0.06)] rounded-md overflow-hidden">
-            <div className="px-6 py-3.5 bg-card border-b border-border">
-              <span className="text-sm font-semibold text-foreground">Sign-off</span>
-            </div>
-            <div className="px-6 py-5">
-              <div className="grid grid-cols-2 gap-x-8 gap-y-4">
-                <div className="flex flex-col gap-1.5">
-                  <label className="text-xs font-medium text-muted-foreground">Prepared by</label>
-                  <Input value={preparedBy} onChange={(e) => setPreparedBy(e.target.value)} placeholder="Name" className="h-8 text-sm" />
-                </div>
-                <div className="flex flex-col gap-1.5">
-                  <label className="text-xs font-medium text-muted-foreground">Date</label>
-                  <Input type="date" value={preparedDate} onChange={(e) => setPreparedDate(e.target.value)} className="h-8 text-sm" />
-                </div>
-                <div className="flex flex-col gap-1.5">
-                  <label className="text-xs font-medium text-muted-foreground">Reviewed by</label>
-                  <Input value={reviewedBy} onChange={(e) => setReviewedBy(e.target.value)} placeholder="Name" className="h-8 text-sm" />
-                </div>
-                <div className="flex flex-col gap-1.5">
-                  <label className="text-xs font-medium text-muted-foreground">Date</label>
-                  <Input type="date" value={reviewedDate} onChange={(e) => setReviewedDate(e.target.value)} className="h-8 text-sm" />
-                </div>
-              </div>
-            </div>
+          {/* Conclude button — bottom right */}
+          <div className="flex justify-end">
+            <Button
+              onClick={() => {
+                setConcluded(true);
+                toast.success("Materiality worksheet concluded");
+              }}
+              disabled={concluded}
+            >
+              {concluded ? "Worksheet concluded" : "Conclude worksheet"}
+            </Button>
           </div>
 
         </div>

@@ -1,6 +1,9 @@
 import { useState } from 'react';
 import { Info, Plus } from 'lucide-react';
 import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import { Button } from '@/components/ui/button';
+import { toast } from 'sonner';
 
 interface AuditTimeBudgetWorksheetProps {
   isUS?: boolean;
@@ -107,10 +110,8 @@ export function AuditTimeBudgetWorksheet({ isUS = false }: AuditTimeBudgetWorksh
   const [priorRate, setPriorRate] = useState('');
   const [budgetRate, setBudgetRate] = useState('');
   const [actualRate, setActualRate] = useState('');
-  const [preparedBy, setPreparedBy] = useState('');
-  const [preparedDate, setPreparedDate] = useState('');
-  const [reviewedBy, setReviewedBy] = useState('');
-  const [reviewedDate, setReviewedDate] = useState('');
+  const [conclusion, setConclusion] = useState('');
+  const [concluded, setConcluded] = useState(false);
 
   const updateCell = (sectionIdx: number, rowIdx: number, field: keyof BudgetRow, value: string) => {
     setSections(prev => prev.map((s, si) => si !== sectionIdx ? s : {
@@ -234,31 +235,29 @@ export function AuditTimeBudgetWorksheet({ isUS = false }: AuditTimeBudgetWorksh
             </div>
           </div>
 
-          {/* Sign-off */}
+          {/* Conclusion */}
           <div className="bg-card text-card-foreground border border-border shadow-[0_2px_8px_hsl(213_40%_20%/0.06)] rounded-md overflow-hidden">
             <div className="px-6 py-3.5 bg-card border-b border-border">
-              <span className="text-sm font-semibold text-foreground">Sign-off</span>
+              <span className="text-sm font-semibold text-foreground">Conclusion</span>
             </div>
             <div className="px-6 py-5">
-              <div className="grid grid-cols-2 gap-x-8 gap-y-4">
-                <div className="flex flex-col gap-1.5">
-                  <label className="text-xs font-medium text-muted-foreground">Prepared by</label>
-                  <Input value={preparedBy} onChange={e => setPreparedBy(e.target.value)} placeholder="Name" className="h-8 text-sm" />
-                </div>
-                <div className="flex flex-col gap-1.5">
-                  <label className="text-xs font-medium text-muted-foreground">Date</label>
-                  <Input type="date" value={preparedDate} onChange={e => setPreparedDate(e.target.value)} className="h-8 text-sm" />
-                </div>
-                <div className="flex flex-col gap-1.5">
-                  <label className="text-xs font-medium text-muted-foreground">Reviewed by</label>
-                  <Input value={reviewedBy} onChange={e => setReviewedBy(e.target.value)} placeholder="Name" className="h-8 text-sm" />
-                </div>
-                <div className="flex flex-col gap-1.5">
-                  <label className="text-xs font-medium text-muted-foreground">Date</label>
-                  <Input type="date" value={reviewedDate} onChange={e => setReviewedDate(e.target.value)} className="h-8 text-sm" />
-                </div>
-              </div>
+              <Textarea
+                value={conclusion}
+                onChange={e => setConclusion(e.target.value)}
+                placeholder="Document any conclusions or variances noted in the time budget…"
+                className="min-h-[72px] text-sm resize-none bg-background"
+              />
             </div>
+          </div>
+
+          {/* Conclude button — bottom right */}
+          <div className="flex justify-end">
+            <Button
+              onClick={() => { setConcluded(true); toast.success('Time budget worksheet concluded'); }}
+              disabled={concluded}
+            >
+              {concluded ? 'Worksheet concluded' : 'Conclude worksheet'}
+            </Button>
           </div>
 
         </div>
