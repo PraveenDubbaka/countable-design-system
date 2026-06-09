@@ -206,11 +206,11 @@ export default function Teams() {
                           <div className="flex items-center gap-2">
                             {member.status === "Invite Now" ? (
                               <button className="p-1.5 hover:bg-muted rounded-lg transition-colors">
-                                <Mail className="h-4 w-4 text-primary" />
+                                <Mail className="h-4 w-4 text-link" />
                               </button>
                             ) : (
                               <button className="p-1.5 hover:bg-muted rounded-lg transition-colors">
-                                <Pencil className="h-4 w-4 text-primary" />
+                                <Pencil className="h-4 w-4 text-link" />
                               </button>
                             )}
                             <button className="p-1.5 hover:bg-destructive/10 rounded-lg transition-colors">
