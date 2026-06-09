@@ -24,6 +24,7 @@ interface EntityRow {
   benchmarkPct: string;
   materialityCY: string; // calculated
   materialityPY: string;
+  comments: string;
 }
 
 interface IntendedUser {
@@ -162,6 +163,7 @@ export function AuditMaterialityWorksheet({ isUS = false }: AuditMaterialityWork
       benchmarkPct: "1.00",
       materialityCY: calcMatCY(mockPeriodAmount, "1.00"),
       materialityPY: "0",
+      comments: "",
     },
   ]);
 
@@ -218,6 +220,12 @@ export function AuditMaterialityWorksheet({ isUS = false }: AuditMaterialityWork
   );
   const [specPMPY, setSpecPMPY] = useState("");
   const [specPMWPRef, setSpecPMWPRef] = useState("WP-RPT-PM");
+
+  // Sign-off
+  const [preparedBy, setPreparedBy] = useState("");
+  const [preparedDate, setPreparedDate] = useState("");
+  const [reviewedBy, setReviewedBy] = useState("");
+  const [reviewedDate, setReviewedDate] = useState("");
 
   // Additional comments & conclusion
   const [additionalComments, setAdditionalComments] = useState("");
@@ -369,6 +377,7 @@ export function AuditMaterialityWorksheet({ isUS = false }: AuditMaterialityWork
                       <th className="px-4 py-3 text-right text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap">Benchmark applied (%)</th>
                       <th className="px-4 py-3 text-right text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap">Materiality CY ($)</th>
                       <th className="px-4 py-3 text-right text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap">Materiality PY ($)</th>
+                      <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider">Comments</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-border">
@@ -429,6 +438,13 @@ export function AuditMaterialityWorksheet({ isUS = false }: AuditMaterialityWork
                             className="tabular-nums text-right"
                           />
                         </td>
+                        <td className="px-4 py-2.5 align-top min-w-[180px]">
+                          <TdInput
+                            value={row.comments}
+                            onChange={(v) => updateEntityRow(row.id, "comments", v)}
+                            placeholder="Comments…"
+                          />
+                        </td>
                       </tr>
                     ))}
                     {/* Total row */}
@@ -439,6 +455,7 @@ export function AuditMaterialityWorksheet({ isUS = false }: AuditMaterialityWork
                       <td className="px-4 py-2 text-sm tabular-nums text-foreground text-right">{totalBenchmark || "—"}</td>
                       <td className="px-4 py-2 text-sm tabular-nums text-foreground text-right">{totalMatCY || "—"}</td>
                       <td className="px-4 py-2 text-sm tabular-nums text-foreground text-right">{totalMatPY || "—"}</td>
+                      <td className="px-4 py-2" />
                     </tr>
                   </tbody>
                 </table>
@@ -447,7 +464,7 @@ export function AuditMaterialityWorksheet({ isUS = false }: AuditMaterialityWork
             {/* Clearly Trivial Misstatements footer — inside the same card */}
             <div className="border-t border-border px-4 py-3">
               <div className="flex items-center">
-                <span className="text-sm text-foreground flex-1">Clearly trivial misstatements</span>
+                <span className="text-sm text-foreground flex-1">Clearly trivial misstatements <span className="text-xs text-muted-foreground font-normal">({isUS ? "AU-C 450.A2" : "CAS 450.A2"})</span></span>
                 <div className="flex items-center gap-8 mr-8">
                   <div className="flex flex-col items-center gap-1">
                     <span className="text-xs text-muted-foreground">Threshold (%)</span>
@@ -468,6 +485,11 @@ export function AuditMaterialityWorksheet({ isUS = false }: AuditMaterialityWork
                   </div>
                 </div>
               </div>
+            </div>
+            {/* Opening balances note */}
+            <div className="border-t border-border px-4 py-3 flex items-start gap-2 bg-muted/20">
+              <Info className="h-3.5 w-3.5 text-muted-foreground mt-0.5 flex-shrink-0" />
+              <p className="text-xs text-muted-foreground">If overall materiality is lower than in previous audits, consider whether misstatements may exist in the opening balances.</p>
             </div>
           </div>
 
@@ -699,8 +721,14 @@ export function AuditMaterialityWorksheet({ isUS = false }: AuditMaterialityWork
                 </tbody>
               </table>
             </div>
-            <div className="px-6 py-3 border-t border-border">
+            <div className="px-6 py-3 border-t border-border flex items-center justify-between gap-4">
               <button onClick={() => setAdjPMRows(p => [...p, {id: uid(), area:"", amount:"", reasoning:"", pyAmount:""}])} className="flex items-center gap-1.5 text-sm font-medium text-primary hover:text-primary/80 transition-colors"><Plus className="h-4 w-4" />Add Row</button>
+              {adjPMRows.length > 2 && (
+                <p className="flex items-start gap-1.5 text-xs text-muted-foreground">
+                  <Info className="h-3.5 w-3.5 flex-shrink-0 mt-0.5" />
+                  If there are more than two F/S areas or disclosures requiring an adjusted performance materiality level, provide details on a supplementary work paper that cross-references to this form.
+                </p>
+              )}
             </div>
           </div>
 
@@ -786,8 +814,9 @@ export function AuditMaterialityWorksheet({ isUS = false }: AuditMaterialityWork
 
           {/* ── Conclusion ── */}
           <div className="bg-card border border-border shadow-[0_2px_8px_hsl(213_40%_20%/0.06)] rounded-md overflow-hidden">
-            <div className="px-6 py-3.5 bg-card border-b border-border">
+            <div className="px-6 py-3.5 bg-card border-b border-border flex items-center gap-2">
               <span className="text-sm font-semibold text-foreground">Conclusion</span>
+              <span className="text-xs text-muted-foreground">— Document any changes in the materiality assessments and the final materiality on Form 335.</span>
             </div>
             <div className="px-6 py-5">
               <Textarea
@@ -805,6 +834,33 @@ export function AuditMaterialityWorksheet({ isUS = false }: AuditMaterialityWork
                 >
                   {concluded ? "Worksheet concluded" : "Conclude worksheet"}
                 </Button>
+              </div>
+            </div>
+          </div>
+
+          {/* ── Sign-off ── */}
+          <div className="bg-card border border-border shadow-[0_2px_8px_hsl(213_40%_20%/0.06)] rounded-md overflow-hidden">
+            <div className="px-6 py-3.5 bg-card border-b border-border">
+              <span className="text-sm font-semibold text-foreground">Sign-off</span>
+            </div>
+            <div className="px-6 py-5">
+              <div className="grid grid-cols-2 gap-x-8 gap-y-4">
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-xs font-medium text-muted-foreground">Prepared by</label>
+                  <Input value={preparedBy} onChange={(e) => setPreparedBy(e.target.value)} placeholder="Name" className="h-8 text-sm" />
+                </div>
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-xs font-medium text-muted-foreground">Date</label>
+                  <Input type="date" value={preparedDate} onChange={(e) => setPreparedDate(e.target.value)} className="h-8 text-sm" />
+                </div>
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-xs font-medium text-muted-foreground">Reviewed by</label>
+                  <Input value={reviewedBy} onChange={(e) => setReviewedBy(e.target.value)} placeholder="Name" className="h-8 text-sm" />
+                </div>
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-xs font-medium text-muted-foreground">Date</label>
+                  <Input type="date" value={reviewedDate} onChange={(e) => setReviewedDate(e.target.value)} className="h-8 text-sm" />
+                </div>
               </div>
             </div>
           </div>
