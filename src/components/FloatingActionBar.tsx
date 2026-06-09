@@ -470,11 +470,11 @@ export function FloatingActionBar({
               className={`w-9 h-9 flex items-center justify-center rounded-lg transition-colors group ${
                 selectedQuestions.size === 0 
                   ? 'opacity-40 cursor-not-allowed' 
-                  : 'hover:bg-red-50 hover:text-red-500'
+                  : 'hover:bg-destructive/10 text-destructive'
               }`}
               title={selectedQuestions.size === 0 ? "Select questions to delete" : `Delete ${selectedQuestions.size} selected`}
             >
-              <Trash2 className={`h-4 w-4 ${selectedQuestions.size === 0 ? 'text-muted-foreground' : 'text-muted-foreground group-hover:text-red-500'}`} />
+              <Trash2 className={`h-4 w-4 ${selectedQuestions.size === 0 ? 'text-muted-foreground' : 'text-destructive'}`} />
             </button>
           )}
         </div>
