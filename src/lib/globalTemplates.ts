@@ -12781,19 +12781,11 @@ export const generateForm408InitialAuditEngagements = (): Checklist => {
 
   const sections: Section[] = [
     {
-      id: 'f408-header',
-      title: 'Engagement Information',
+      id: 'f408-note',
+      title: 'Note',
       questions: [
-        la('f408-entity', '<p><strong>Entity</strong></p>', 'Shipping Line Inc.'),
-        la('f408-period', '<p><strong>Period ended</strong></p>', 'March 31, 2024'),
+        la('f408-note-content', '<p><strong>Objective:</strong> To gather information to assist with the decision of whether to accept a new audit client and to obtain sufficient appropriate audit evidence as to whether opening balances contain misstatements and that appropriate accounting policies (reflected in the opening balances) have been consistently applied, appropriately accounted for and adequately presented/disclosed (refer to CAS 510).</p><p><strong>Note:</strong> This form should be completed at the commencement of the engagement to allow time for any issues identified to be resolved. Also note that after completing parts A and B, Form 410 should be completed to reach a decision as to whether the client will be accepted. If so, complete Part C – Procedures on opening balances.</p><p><em>PSC = Procedure successfully completed. TCWG = Those charged with governance. F/S = Financial statements.</em></p>', ''),
       ],
-      isExpanded: true,
-    },
-    {
-      id: 'f408-obj',
-      title: 'Objective',
-      note: '<p><strong>Objective:</strong> To gather information to assist with the decision of whether to accept a new audit client and to obtain sufficient appropriate audit evidence as to whether opening balances contain misstatements and that appropriate accounting policies (reflected in the opening balances) have been consistently applied, appropriately accounted for and adequately presented/disclosed (refer to CAS 510).</p><p><strong>Note:</strong> This form should be completed at the commencement of the engagement to allow time for any issues identified to be resolved. Also note that after completing parts A and B, Form 410 should be completed to reach a decision as to whether the client will be accepted. If so, complete Part C – Procedures on opening balances.</p><p><em>PSC = Procedure successfully completed. TCWG = Those charged with governance. F/S = Financial statements.</em></p>',
-      questions: [],
       isExpanded: true,
     },
     {
@@ -12886,15 +12878,6 @@ export const generateForm410AcceptanceContinuance = (): Checklist => {
   });
 
   const sections: Section[] = [
-    {
-      id: 'f410-header',
-      title: 'Engagement Information',
-      questions: [
-        la('f410-entity', '<p><strong>Entity</strong></p>', 'Shipping Line Inc.'),
-        la('f410-period', '<p><strong>Period ended</strong></p>', 'March 31, 2024'),
-      ],
-      isExpanded: true,
-    },
     {
       id: 'f410-qam',
       title: '1. Quality Assurance Manual',
@@ -13106,19 +13089,11 @@ export const generateUSForm408InitialAuditEngagements = (): Checklist => {
 
   const sections: Section[] = [
     {
-      id: 'us-f408-header',
-      title: 'Engagement Information',
+      id: 'us-f408-note',
+      title: 'Note',
       questions: [
-        la('us-f408-entity', '<p><strong>Entity</strong></p>', 'Harbor Freight Logistics LLC'),
-        la('us-f408-period', '<p><strong>Period ended</strong></p>', 'December 31, 2024'),
+        la('us-f408-note-content', '<p><strong>Objective:</strong> To gather information to assist with the decision of whether to accept a new audit client and to obtain sufficient appropriate audit evidence as to whether opening balances contain misstatements and that appropriate accounting policies (reflected in the opening balances) have been consistently applied, appropriately accounted for and adequately presented/disclosed (refer to AU-C 510).</p><p><strong>Note:</strong> This form should be completed at the commencement of the engagement to allow time for any issues identified to be resolved. Also note that after completing parts A and B, Form 410 should be completed to reach a decision as to whether the client will be accepted. If so, complete Part C – Procedures on opening balances.</p><p><em>PSC = Procedure successfully completed. TCWG = Those charged with governance. F/S = Financial statements.</em></p>', ''),
       ],
-      isExpanded: true,
-    },
-    {
-      id: 'us-f408-obj',
-      title: 'Objective',
-      note: '<p><strong>Objective:</strong> To gather information to assist with the decision of whether to accept a new audit client and to obtain sufficient appropriate audit evidence as to whether opening balances contain misstatements and that appropriate accounting policies (reflected in the opening balances) have been consistently applied, appropriately accounted for and adequately presented/disclosed (refer to AU-C 510).</p><p><strong>Note:</strong> This form should be completed at the commencement of the engagement to allow time for any issues identified to be resolved. Also note that after completing parts A and B, Form 410 should be completed to reach a decision as to whether the client will be accepted. If so, complete Part C – Procedures on opening balances.</p><p><em>PSC = Procedure successfully completed. TCWG = Those charged with governance. F/S = Financial statements.</em></p>',
-      questions: [],
       isExpanded: true,
     },
     {
@@ -13212,15 +13187,6 @@ export const generateUSForm410AcceptanceContinuance = (): Checklist => {
   });
 
   const sections: Section[] = [
-    {
-      id: 'us-f410-header',
-      title: 'Engagement Information',
-      questions: [
-        la('us-f410-entity', '<p><strong>Entity</strong></p>', 'Harbor Freight Logistics LLC'),
-        la('us-f410-period', '<p><strong>Period ended</strong></p>', 'December 31, 2024'),
-      ],
-      isExpanded: true,
-    },
     {
       id: 'us-f410-qam',
       title: '1. Quality Management System',
