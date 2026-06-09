@@ -1550,7 +1550,6 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
                       { id: "aud-us-iar", code: "IAR", label: "Information & Analysis Requested", icon: "worksheet", route: "checklist/aud-us-iar" },
                       { id: "aud-us-tb", code: "TB", label: "Time Budget", icon: "worksheet", route: "checklist/aud-us-tb" },
                       { id: "aud-us-db", code: "DB", label: "Detailed Budget", icon: "worksheet", route: "checklist/aud-us-db" },
-                      { id: "aud-us-tcwg-pl", code: "TCWG", label: "Communication with Those Charged with Governance (AU-C 260)", icon: "letter", route: "checklist/aud-us-tcwg-pl" },
                     ]
                   },
                   {
@@ -1713,7 +1712,6 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
                       { id: "aud-iar", code: "IAR", label: "Information & Analysis Requested", icon: "worksheet", route: "checklist/aud-iar" },
                       { id: "aud-tb", code: "TB", label: "Time Budget", icon: "worksheet", route: "checklist/aud-tb" },
                       { id: "aud-db", code: "DB", label: "Detailed Budget", icon: "worksheet", route: "checklist/aud-db" },
-                      { id: "aud-tcwg-pl", code: "TCWG", label: "Communication with Those Charged with Governance", icon: "letter", route: "checklist/aud-tcwg-pl" },
                     ]
                   },
                   {
