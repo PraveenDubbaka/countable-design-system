@@ -1533,12 +1533,6 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
 
                 const usAuditEngagementTree: SectionNode[] = [
                   {
-                    id: "aud-us-dep-reg",
-                    label: "Dependency Register",
-                    icon: "checklist",
-                    route: "dependency-register",
-                  },
-                  {
                     id: "aud-us-co", code: "CO", label: "Client Onboarding", icon: "folder",
                     children: [
                       { id: "aud-us-new-accept", code: "NA", label: "New engagement acceptance", icon: "checklist", route: "checklist/aud-us-new-accept" },
@@ -1707,12 +1701,6 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
                 ];
 
                 const auditEngagementTree: SectionNode[] = [
-                  {
-                    id: "aud-dep-reg",
-                    label: "Dependency Register",
-                    icon: "checklist",
-                    route: "dependency-register",
-                  },
                   {
                     id: "aud-co", code: "CO", label: "Client Onboarding", icon: "folder",
                     children: [
