@@ -225,7 +225,7 @@ export default function Engagements() {
                             className="p-1.5 hover:bg-muted rounded-lg transition-colors group/trash"
                             onClick={(e) => handleDelete(engagement.id, e)}
                           >
-                            <Trash2 className="h-4 w-4 text-primary group-hover/trash:icon-trash" />
+                            <Trash2 className="h-4 w-4 text-destructive group-hover/trash:icon-trash" />
                           </button>
                         </div>
                       </td>
