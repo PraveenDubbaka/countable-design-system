@@ -12765,3 +12765,655 @@ export const generateUSGoodwillImpairmentAssessment = (): Checklist => {
     updatedAt: new Date(),
   };
 };
+
+// ─────────────────────────────────────────────────────────────────────────────
+// FORM 408 — INITIAL AUDIT ENGAGEMENTS (CPA Canada PEG)
+// ─────────────────────────────────────────────────────────────────────────────
+
+export const generateForm408InitialAuditEngagements = (): Checklist => {
+  const q = (id: string, text: string, sub?: Question[], answer = '', explanation = '', reference = ''): Question => ({
+    id, text, answerType: 'yes-no-na' as const, options: ['Yes', 'No', 'NA'],
+    required: false, answer, explanation, reference, ...(sub ? { subQuestions: sub } : {})
+  });
+  const la = (id: string, text: string, answer = ''): Question => ({
+    id, text, answerType: 'long-answer' as const, options: [], required: false, answer
+  });
+
+  const sections: Section[] = [
+    {
+      id: 'f408-header',
+      title: 'Engagement Information',
+      questions: [
+        la('f408-entity', '<p><strong>Entity</strong></p>', 'Shipping Line Inc.'),
+        la('f408-period', '<p><strong>Period ended</strong></p>', 'March 31, 2024'),
+      ],
+      isExpanded: true,
+    },
+    {
+      id: 'f408-obj',
+      title: 'Objective',
+      note: '<p><strong>Objective:</strong> To gather information to assist with the decision of whether to accept a new audit client and to obtain sufficient appropriate audit evidence as to whether opening balances contain misstatements and that appropriate accounting policies (reflected in the opening balances) have been consistently applied, appropriately accounted for and adequately presented/disclosed (refer to CAS 510).</p><p><strong>Note:</strong> This form should be completed at the commencement of the engagement to allow time for any issues identified to be resolved. Also note that after completing parts A and B, Form 410 should be completed to reach a decision as to whether the client will be accepted. If so, complete Part C – Procedures on opening balances.</p><p><em>PSC = Procedure successfully completed. TCWG = Those charged with governance. F/S = Financial statements.</em></p>',
+      questions: [],
+      isExpanded: true,
+    },
+    {
+      id: 'f408-pA',
+      title: 'PART A – PRE-ACCEPTANCE CONSIDERATIONS',
+      questions: [
+        q('f408-pA-1', '<p>Identify who in the firm has knowledge about, or contacts with, the prospective client and whether they recommend that this entity be accepted as a client.</p>', undefined, 'Yes', '<p>Engagement partner J. Williams has prior knowledge of Shipping Line Inc. through industry contacts. The client was referred by a trusted business advisor and is recommended for acceptance.</p>', 'AC-02'),
+        q('f408-pA-2', '<p>Perform an Internet news/social media search for relevant information about the entity and its key personnel.</p>', undefined, 'Yes', '<p>Internet search and social media review performed April 1, 2024. No adverse news, regulatory actions, or negative publicity identified for Shipping Line Inc. or its key management team.</p>', 'AC-03'),
+        q('f408-pA-3', '<p>Obtain permission from the prospective client to perform a credit check and to make inquiries with bankers, other advisors, regulators, etc.</p>', undefined, 'Yes', '<p>Client permission obtained via signed consent form dated March 28, 2024. Credit check performed — satisfactory results. RBC confirmed banking relationship in good standing. No regulatory sanctions noted.</p>', 'AC-04'),
+        q('f408-pA-4', '<p>Describe the reason for the change in auditors, and review relevant communications between the previous accountants and management/TCWG.</p>', undefined, 'Yes', '<p>Management indicated the change was due to the prior firm being acquired and the resulting conflict of interest with a competitor client. No professional issues were cited. Management letters from prior auditor reviewed — no significant control deficiencies or unresolved matters noted.</p>', 'AC-05'),
+        q('f408-pA-5', '<p>Inquire whether another accounting firm(s) has recently declined the engagement. If so, why?</p>', undefined, 'No', '<p>Management confirmed no other firm has recently declined this engagement.</p>', 'AC-06'),
+        q('f408-pA-6', '<p>If an audit was not performed in the prior period, consider the impact on the current year engagement. Consider:<br/>• Misstatements that could materially affect the current period\'s F/S.<br/>• Inability to obtain sufficient evidence over opening balances (such as attendance at inventory counts).<br/>• Inconsistent application of accounting policies in the current period\'s F/S.</p>', undefined, 'Yes', '<p>An audit was performed in the prior period by the predecessor firm. Opening balances as at April 1, 2023 were reviewed through inspection of predecessor working papers. Accounting policies are consistently applied. No material misstatements in opening balances identified.</p>', 'OB-01'),
+      ],
+      isExpanded: true,
+    },
+    {
+      id: 'f408-pB',
+      title: 'PART B – PREDECESSOR AUDITOR/PRACTITIONER CONSIDERATIONS',
+      questions: [
+        q('f408-pB-1', '<p>Inquire about the predecessor auditor/practitioner. Identify:<br/>• Name and address of the predecessor firm and the engagement partner.<br/>• Number of years the entity has been audited or reviewed.<br/>• Whether the previous report has been modified or the F/S restated in any of the last five years. If yes, provide details.</p>', undefined, 'Yes', '<p>Predecessor firm: Smith & Partners LLP, 100 King Street West, Halifax NS. Engagement partner: D. Thompson, CPA. Entity audited for 4 years. No modifications to audit reports or restatements in the last five years.</p>', 'AC-07'),
+        q('f408-pB-2', '<p>Communicate with the predecessor auditor/practitioner. Perform the following:<br/>• Inquire about any reasons the engagement should not be accepted. If no response is received, explain what alternative procedures were performed.<br/>• Request to review the predecessor\'s working papers. If not permitted, explain why, and document the impact on accepting the engagement. Refer to the provincial Code of Professional Conduct / Code of Ethics for guidance.</p>', undefined, 'Yes', '<p>Predecessor practitioner was contacted by letter dated March 15, 2024. Response received March 20, 2024 — no concerns or reasons to decline were communicated. Permission to review predecessor working papers was granted. Review performed April 2, 2024. No significant risk factors or unusual items were identified.</p>', 'AC-08'),
+        q('f408-pB-3', '<p>Assess whether the reason for the change in auditors/practitioners is appropriate.</p>', undefined, 'Yes', '<p>The reason for the change (predecessor firm acquisition creating conflict of interest) is appropriate and professional. No concerns regarding the circumstances of the auditor change.</p>', 'AC-09'),
+      ],
+      isExpanded: true,
+    },
+    {
+      id: 'f408-pC',
+      title: 'PART C – PROCEDURES ON OPENING BALANCES',
+      questions: [],
+      isExpanded: true,
+    },
+    {
+      id: 'f408-pC-basic',
+      title: 'BASIC INFORMATION',
+      questions: [
+        q('f408-pC-bi-1', '<p><strong>Previous auditor\'s/practitioner\'s working papers</strong><br/>Where possible, review the previous auditor\'s or practitioner\'s working papers and make notes of relevant information, such as:<br/>• Composition of opening balances, including F/S disclosures.<br/>• Application of accounting policies.<br/>• Uncorrected misstatements.<br/>• Significant audit findings.<br/>• Business and fraud risk factors.<br/>• The control environment.<br/>• Key control activities.<br/>• Impact of general IT controls.<br/>• Preparation of estimates.<br/>• Related-party transactions.<br/>• Going-concern events/conditions.<br/>• Difficulties encountered in the audit.<br/>• Disagreements with management/TCWG.<br/>• Need for special audit procedures.<br/>• Need for consultation or use of experts.<br/>If working papers were not reviewed, explain the reason for this and how sufficient audit evidence relating to the opening balances was obtained.</p>', undefined, 'Yes', '<p>Predecessor working papers reviewed April 2, 2024. Opening balances at April 1, 2023 were agreed to prior year signed financial statements. Depreciation methods and vessel useful lives consistent with prior period. No uncorrected misstatements. No going concern, fraud risk factors, or significant audit difficulties noted.</p>', 'OB-01'),
+        q('f408-pC-bi-2', '<p><strong>Previous auditor/practitioner communications</strong><br/>Review copies of communications (between the previous auditor/practitioner and management, board of directors and/or audit committee) on audit planning and audit findings, such as misstatements, control deficiencies and fraud (as applicable).</p>', undefined, 'Yes', '<p>Management letters from predecessor reviewed. No significant control deficiencies, fraud matters, or unresolved audit findings from prior year engagement.</p>', 'OB-02'),
+        q('f408-pC-bi-3', '<p><strong>Documents to assist in understanding the entity</strong><br/>Consider obtaining copies of the following:<br/>• Business plans and management reports.<br/>• Corporate by-laws, letters patent or certificate of incorporation, partnership agreement, etc.<br/>• Prior periods\' financial statements, annual reports and prospectuses.<br/>• Minutes of meetings of shareholders, board of directors, audit committee and others.<br/>• Reports to management/audit committee on matters such as internal controls and IT.<br/>• Income tax returns.<br/>• Sales tax and other taxes assessments/reassessments.<br/>• Communications with regulators.<br/>• Borrowing agreements and trust indentures.<br/>• Material contracts and lease agreements.<br/>• Chart of accounts.<br/>• Organization charts and job descriptions.<br/>• Risk registers (similar to Form 520).<br/>• Internal control documentation.<br/>• Policies and procedures.<br/>• Board governance documents.<br/>• Other materials, such as press clippings, details of litigation, etc.</p>', undefined, 'Yes', '<p>Obtained: Certificate of incorporation, prior year financial statements (3 years), board minutes, RBC loan agreement, vessel charter agreements, chart of accounts, organization chart, income tax returns. Management confirmed all requested documents have been provided.</p>', 'OB-03'),
+      ],
+      isExpanded: true,
+    },
+    {
+      id: 'f408-pC-ob',
+      title: 'OPENING BALANCES',
+      questions: [
+        q('f408-pC-ob-1', '<p><strong>Extent of misstatements in opening balances</strong><br/>Obtain audit evidence regarding whether the opening balances and disclosures contain misstatements that materially affect the current period\'s F/S. This includes:<br/>• Reading the most recent F/S and the predecessor auditor\'s report thereon.<br/>• Reviewing the predecessor\'s working papers (see Step 2 above).<br/>• Determining whether the prior period\'s closing balances have been correctly brought forward to the current period or, when appropriate, have been restated.<br/>• Determining whether opening balances reflect the application of appropriate accounting policies.<br/>• Evaluating whether audit or review procedures performed in the current period provide relevant evidence.<br/>• Performing specific audit or review procedures where necessary.</p>', undefined, 'Yes', '<p>Prior year financial statements read. Predecessor\'s unmodified audit report reviewed. Opening balances agreed to prior year closing balances — all brought forward correctly. ASPE accounting policies consistently applied. No specific additional procedures required.</p>', 'OB-04'),
+        q('f408-pC-ob-2', '<p><strong>Misstatements identified</strong><br/>Where material misstatements in opening balances have been identified:<br/>• Perform additional audit or review procedures to determine the effect on the current period\'s F/S.<br/>• Communicate the misstatements with the appropriate level of management and TCWG.<br/>• Ensure the effect of the misstatements is appropriately accounted and adequately presented/disclosed. If not, express a qualified opinion or an adverse opinion, as appropriate.</p>', undefined, 'No', '<p>No material misstatements in opening balances identified. Additional procedures and communication with TCWG not required.</p>', 'OB-05'),
+        q('f408-pC-ob-3', '<p><strong>Consistency of accounting policies</strong><br/>Obtain evidence about whether:<br/>• Accounting policies used in the opening balances have been consistently applied in the current period\'s F/S.<br/>• Changes in the accounting policies have been appropriately accounted for and adequately presented and disclosed in accordance with the applicable financial reporting framework.</p>', undefined, 'Yes', '<p>ASPE accounting policies (vessel depreciation, revenue recognition, lease accounting) consistently applied. No accounting policy changes in the current period.</p>', 'OB-06'),
+        q('f408-pC-ob-4', '<p><strong>Predecessor auditor\'s report is modified</strong><br/>• Describe the matter giving rise to the modification.<br/>• Evaluate the effect in assessing the risks of material misstatement in the current period\'s F/S.<br/>• If the modification remains relevant and material to the current period\'s F/S, modify the audit opinion on the current period\'s F/S.</p>', undefined, 'No', '<p>Predecessor auditor\'s report was unmodified. No modifications to consider.</p>', 'OB-07'),
+        q('f408-pC-ob-5', '<p><strong>Inability to obtain necessary information</strong><br/>• Explain why it was not possible to obtain sufficient appropriate evidence or plausibility regarding the opening balances.<br/>• Express qualified opinion or disclaim an opinion on the F/S, as appropriate.</p>', undefined, 'No', '<p>No inability to obtain necessary information. All required evidence regarding opening balances was obtained from the predecessor working papers and current year audit procedures.</p>', 'OB-08'),
+      ],
+      isExpanded: true,
+    },
+    {
+      id: 'f408-conc',
+      title: 'Conclusion',
+      note: '<p>We have obtained sufficient appropriate audit evidence regarding whether:<br/>1. To accept the new audit client or new engagement (see Form 410).<br/>2. Opening balances contain misstatements that materially affect the current period\'s F/S.<br/>3. Appropriate accounting policies were reflected in the opening balances and consistently applied in the current period\'s F/S. Where accounting policy changes have occurred, they have been appropriately accounted for and adequately presented/disclosed in accordance with the applicable financial reporting framework.</p>',
+      questions: [
+        la('f408-conc-pb', '<p><strong>Prepared by</strong></p>', 'S. Chen, CPA'),
+        la('f408-conc-pb-date', '<p><strong>Date</strong></p>', 'April 5, 2024'),
+        la('f408-conc-rb', '<p><strong>Reviewed by</strong></p>', 'J. Williams, CPA'),
+        la('f408-conc-rb-date', '<p><strong>Date</strong></p>', 'April 8, 2024'),
+      ],
+      isExpanded: true,
+    },
+  ];
+
+  return {
+    id: 'global-template-form-408-initial-audit',
+    title: 'Form 408 — Initial Audit Engagements',
+    description: 'CPA Canada PEG Form 408 — Initial Audit Engagements. Pre-acceptance considerations, predecessor auditor procedures, and opening balances procedures for Shipping Line Inc. year ended March 31, 2024.',
+    objective: 'To gather information to assist with the decision of whether to accept a new audit client and to obtain sufficient appropriate audit evidence as to whether opening balances contain misstatements and that appropriate accounting policies have been consistently applied, appropriately accounted for and adequately presented/disclosed (CAS 510).',
+    sections,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  };
+};
+
+// ─────────────────────────────────────────────────────────────────────────────
+// FORM 410 — NEW OR EXISTING ENGAGEMENT — ACCEPTANCE/CONTINUANCE (CPA Canada PEG)
+// ─────────────────────────────────────────────────────────────────────────────
+
+export const generateForm410AcceptanceContinuance = (): Checklist => {
+  const q = (id: string, text: string, sub?: Question[], answer = '', explanation = '', reference = ''): Question => ({
+    id, text, answerType: 'yes-no-na' as const, options: ['Yes', 'No', 'NA'],
+    required: false, answer, explanation, reference, ...(sub ? { subQuestions: sub } : {})
+  });
+  const la = (id: string, text: string, answer = ''): Question => ({
+    id, text, answerType: 'long-answer' as const, options: [], required: false, answer
+  });
+
+  const sections: Section[] = [
+    {
+      id: 'f410-header',
+      title: 'Engagement Information',
+      questions: [
+        la('f410-entity', '<p><strong>Entity</strong></p>', 'Shipping Line Inc.'),
+        la('f410-period', '<p><strong>Period ended</strong></p>', 'March 31, 2024'),
+      ],
+      isExpanded: true,
+    },
+    {
+      id: 'f410-qam',
+      title: '1. Quality Assurance Manual',
+      questions: [
+        q('f410-qam-1', '<p>Determine whether accepting this engagement would contravene any of the firm\'s quality management policies. Also consider related services provided, such as those addressed by CSRS 4460 (Reports on Supplementary Matters Arising from an Audit or Review Engagement) and other advisory and tax planning services.</p>', undefined, 'Yes', '<p>Firm quality management policies reviewed. Accepting this engagement for Shipping Line Inc. does not contravene any firm policies. No related CSRS 4460 services are being provided.</p>', 'AC-01'),
+      ],
+      isExpanded: true,
+    },
+    {
+      id: 'f410-risk',
+      title: '2. Engagement Risk Factors',
+      questions: [
+        q('f410-rf-a', '<p>a. Indicate who in the firm has knowledge about, or contacts with, the prospective client and whether they recommend that this entity be accepted as a new client.</p>', undefined, 'Yes', '<p>Engagement partner J. Williams has prior knowledge of Shipping Line Inc. through industry contacts. The client was referred by a trusted business advisor and is recommended for acceptance.</p>', 'AC-02'),
+        q('f410-rf-b', '<p>b. Contact the predecessor practitioner to inquire about any reasons the engagement should not be accepted. If no response is received, explain what alternative procedures were performed.</p>', undefined, 'Yes', '<p>Predecessor practitioner was contacted by letter dated March 15, 2024. Response received March 20, 2024 — no concerns or reasons to decline were communicated. Fee arrangements with predecessor were settled.</p>', 'AC-03'),
+        q('f410-rf-c', '<p>c. Request a review of the predecessor\'s working papers. If not permitted, explain why and consider the potential engagement risk factors. If permitted, perform a review and describe any risk factors identified.</p>', undefined, 'Yes', '<p>Permission to review predecessor working papers was granted. Review performed April 2, 2024. No significant risk factors or unusual items were identified. Opening balances appear complete and properly supported.</p>', 'AC-04'),
+        q('f410-rf-d', '<p>d. Indicate what other procedures were performed (including results and conclusions) to identify engagement risk factors that would cause us to decline the engagement. Consider procedures such as:</p>',
+          [
+            q('f410-rf-d-i', '<p>i. Inquiries of management/TCWG about:</p>',
+              [
+                q('f410-rf-d-i-a', '<p>A. The reason for the change in accountants.</p>', undefined, 'Yes', '<p>Management indicated the change was due to the prior firm being acquired and the resulting conflict of interest with a competitor client. No professional issues were cited.</p>'),
+                q('f410-rf-d-i-b', '<p>B. Whether another accounting firm(s) has recently declined the engagement. If so, why?</p>', undefined, 'No', '<p>Management confirmed no other firm has recently declined this engagement.</p>'),
+                q('f410-rf-d-i-c', '<p>C. Other engagement risk factors (see Appendix A).</p>', undefined, 'Yes', '<p>Inquiries made regarding Appendix A risk factors. No material risk factors identified beyond normal industry operating risks associated with marine shipping.</p>'),
+              ]
+            ),
+            q('f410-rf-d-iii', '<p>iii. Review of relevant communications between the previous accountants and management/TCWG.</p>', undefined, 'Yes', '<p>Management letters from prior auditor reviewed. No significant control deficiencies or unresolved matters were noted.</p>'),
+            q('f410-rf-d-iv', '<p>iv. Obtaining permission from the prospective client to perform a credit check and to make inquiries with bankers, other advisors, regulators, etc.</p>', undefined, 'Yes', '<p>Client permission obtained. Credit check performed — satisfactory results. RBC confirmed banking relationship in good standing. No regulatory sanctions noted.</p>'),
+          ], 'Yes', '<p>All risk factor procedures completed satisfactorily. No factors identified that would cause us to decline the engagement.</p>', 'AC-05'),
+      ],
+      isExpanded: true,
+    },
+    {
+      id: 'f410-integrity',
+      title: '3. Management\'s Integrity',
+      questions: [
+        q('f410-int-1', '<p>Based on previous contact (if any) with key entity personnel and the results of procedures performed in Step 2 above, determine whether any concern has been identified that might cause us to doubt or distrust the management representations/assertions that we will be requesting and relying upon if the engagement is accepted. Consider:<br/>• Observed disregard for telling the truth;<br/>• Criminal convictions and regulatory sanctions;<br/>• History or suspicions of unethical actions, illegal acts or management override controls;<br/>• Negative publicity;<br/>• Close association with people/companies with reputations for questionable ethics.</p>', undefined, 'No', '<p>No concerns identified regarding management integrity. Web searches and inquiries with bankers and advisors returned no adverse findings. Management has operated Shipping Line Inc. with a consistent reputation in the marine freight sector.</p>', 'AC-05'),
+        la('f410-int-exp', '<p><strong>Additional Explanation</strong></p>', 'No integrity concerns identified. Management team led by CEO with 15+ years in marine logistics. No criminal convictions, regulatory sanctions, or negative publicity found.'),
+      ],
+      isExpanded: true,
+    },
+    {
+      id: 'f410-data',
+      title: '4. Unavailable or Unreliable Data',
+      questions: [
+        q('f410-data-1', '<p>Based on preliminary understanding, is there any indication that the information needed to perform the engagement will be unavailable or unreliable?</p>', undefined, 'No', '<p>Management confirmed full access to accounting records, vessel logs, voyage documentation, and supporting schedules. Accounting system (Sage 300) is in use and records appear well-maintained.</p>', 'AC-06'),
+        la('f410-data-exp', '<p><strong>Additional Explanation</strong></p>', 'No limitations on data availability identified. Management is cooperative and has committed to providing all requested information on a timely basis.'),
+      ],
+      isExpanded: true,
+    },
+    {
+      id: 'f410-competencies',
+      title: '5. Firm Competencies',
+      questions: [
+        q('f410-fc-1', '<p>Assess whether the firm has the necessary skills/resources to perform the engagement on a timely basis. Address the following:</p>',
+          [
+            q('f410-fc-1a', '<p>a. The availability of staff/resources with the appropriate level of experience, relevant industry/subject matter knowledge, and any required regulatory and reporting experience.</p>', undefined, 'Yes', '<p>Engagement partner J. Williams has prior experience in marine transportation audits. The engagement team includes S. Chen (manager) with transportation industry background. Two senior staff members assigned.</p>'),
+            q('f410-fc-1b', '<p>b. The availability of specialists (where required).</p>', undefined, 'No', '<p>No external specialists required for this engagement. Vessel valuations will be assessed using management depreciation schedules and industry benchmarks.</p>'),
+          ], 'Yes', '<p>Firm has sufficient resources and marine industry knowledge. Year-end fieldwork scheduled April 14–25, 2024 is achievable with planned staffing.</p>', 'AC-07'),
+        la('f410-fc-exp', '<p><strong>Additional Explanation</strong></p>', 'Firm has sufficient resources and marine industry knowledge. Year-end fieldwork scheduled April 14–25, 2024 is achievable with planned staffing.'),
+      ],
+      isExpanded: true,
+    },
+    {
+      id: 'f410-ind-prohibit',
+      title: '6. Independence Prohibitions',
+      questions: [
+        q('f410-ip-1', '<p>Identify and describe any potential independence prohibitions that could occur and provide reasons why they do or do not preclude the firm or particular staff members from performing the engagement. Address each of the prohibitions listed below:</p>', undefined, 'No', '<p>No independence prohibitions identified. All engagement team members confirmed independence from Shipping Line Inc. and its related parties.</p>', 'IND-01'),
+        la('f410-ip-services-hdr', '<p><strong>Services performed</strong></p>', ''),
+        q('f410-ip-1a', '<p>a. Recording journal entries or changing account classifications without first obtaining management\'s approval.</p>', undefined, 'No', '<p>The firm does not record journal entries on behalf of the client. All adjusting entries are proposed to and approved by management.</p>'),
+        q('f410-ip-1b', '<p>b. Providing tax planning or other tax advisory services that may have a material impact on the financial statements.</p>', undefined, 'No', '<p>No tax advisory services are provided by the audit firm to this client.</p>'),
+        q('f410-ip-1c', '<p>c. Providing legal services that involve dispute resolution.</p>', undefined, 'No'),
+        q('f410-ip-1d', '<p>d. Preparing source documents for the client.</p>', undefined, 'No'),
+        q('f410-ip-1e', '<p>e. Performing management functions for the client (such as decision making on transactions).</p>', undefined, 'No'),
+        q('f410-ip-1f', '<p>f. Serving as an officer or director of the client.</p>', undefined, 'No'),
+        q('f410-ip-1g', '<p>g. Temporary loaning of staff (except in certain situations).</p>', undefined, 'No'),
+        la('f410-ip-rel-hdr', '<p><strong>Relationships</strong></p>', ''),
+        q('f410-ip-rel-a', '<p>a. Close business relationships with the client.</p>', undefined, 'No', '<p>No close business relationships between engagement team members and the client identified.</p>'),
+        q('f410-ip-rel-b', '<p>b. Family and personal relationships with the client.</p>', undefined, 'No'),
+        q('f410-ip-rel-c', '<p>c. Firm personnel that have accepted a position or have had recent employment with the client as an officer, director or company secretary.</p>', undefined, 'No'),
+        la('f410-ip-fin-hdr', '<p><strong>Financial interests</strong></p>', ''),
+        q('f410-ip-fin', '<p>Holding financial interests in entity, performing the engagement for a fee considerably less than market price, or accepting gifts or hospitality from client.</p>', undefined, 'No', '<p>No financial interests in Shipping Line Inc. held by the firm or any engagement team member or their immediate family. Fee arrangement is at standard market rates.</p>'),
+        la('f410-ip-note', '<p><em>Refer to the provincial Code of Professional Conduct / Code of Ethics for guidance, interpretations and additional independence prohibitions for listed entities.</em></p>', 'Reviewed CPA Ontario Code of Professional Conduct — no additional prohibitions apply to this private company engagement.'),
+        la('f410-ip-exp', '<p><strong>Additional Explanation</strong></p>', 'No independence prohibitions identified. Engagement team independence declarations on file.'),
+      ],
+      isExpanded: true,
+    },
+    {
+      id: 'f410-ind-threats',
+      title: '7. Independence Threats',
+      questions: [
+        q('f410-it-1', '<p>Identify and describe any significant threats to independence and the safeguards (if any) to reduce each threat to an acceptable level. Address each of the following threats in relation to the firm and any member of the engagement team:</p>', undefined, 'No', '<p>No significant independence threats identified for this new engagement. All threat categories assessed below.</p>', 'IND-02'),
+        q('f410-it-1a', '<p>a. Self-interest (i.e., where the firm is economically dependent on the client fees or where judgments may be influenced by the desire to retain the client).</p>', undefined, 'No', '<p>Fees from Shipping Line Inc. represent less than 2% of firm revenues. No economic dependence on this client.</p>'),
+        q('f410-it-1b', '<p>b. Self-review (i.e., assisting the client in preparing the financial statements, providing bookkeeping services and making judgments for the client that will later need to be evaluated in reaching conclusions).</p>', undefined, 'No', '<p>The firm does not provide bookkeeping or financial statement preparation services. Management prepares its own financial statements.</p>'),
+        q('f410-it-1c', '<p>c. Advocacy (i.e., acting as a client advocate in matters involving taxes, litigation or share promotion, which could result in being too sympathetic to the client\'s interests).</p>', undefined, 'No'),
+        q('f410-it-1d', '<p>d. Intimidation (i.e., where the client makes threats, such as to replace our firm unless we agree to certain scope limitations or to accept management positions without question, on accounting matters).</p>', undefined, 'No', '<p>No intimidation threats noted. Management is cooperative and has not sought to impose scope limitations.</p>'),
+        la('f410-it-note', '<p><em>Refer to the provincial Code of Professional Conduct / Code of Ethics for guidance and interpretations.</em></p>', 'CPA Ontario Code reviewed. No additional threats identified beyond those addressed above.'),
+        la('f410-it-exp', '<p><strong>Additional Explanation</strong></p>', 'No significant independence threats identified. Engagement may proceed.'),
+      ],
+      isExpanded: true,
+    },
+    {
+      id: 'f410-purpose',
+      title: '8. Purpose of the Engagement',
+      questions: [
+        q('f410-pur-1', '<p>What is the entity\'s intention for having this engagement? Ensure:<br/>A. There is a rational purpose for the engagement.<br/>B. The type of engagement would be appropriate in the circumstances.<br/>C. Consider:<br/>• Any significant scope limitations expected.<br/>• Any intent to inappropriately associate the firm\'s name with the financial statements.<br/>• Any laws or regulations that require an audit rather than a review.</p>', undefined, 'Yes', '<p>An audit engagement is required by the company\'s banking covenant with RBC and is appropriate given the entity size (~$12.5M revenue, $18.2M total assets). No scope limitations anticipated. No laws or regulations preclude this engagement type.</p>', 'AC-08'),
+        la('f410-pur-exp', '<p><strong>Additional Explanation</strong></p>', 'Audit required under RBC loan covenant. An audit is appropriate and no laws or regulations preclude this engagement type.'),
+      ],
+      isExpanded: true,
+    },
+    {
+      id: 'f410-precond',
+      title: '9. Engagement Preconditions',
+      questions: [
+        q('f410-pre-a', '<p>a. Determine whether the financial reporting framework to be applied in the preparation of the financial statements is appropriate.</p>', undefined, 'Yes', '<p>ASPE is the applicable financial reporting framework. Confirmed appropriate for Shipping Line Inc. as a privately held Canadian company with no public accountability obligations.</p>', 'AC-09'),
+        q('f410-pre-b', '<p>b. Ensure that management has acknowledged its understanding and responsibility for:<br/>• The preparation of financial statements in accordance with the applicable financial reporting framework.<br/>• Such internal controls as management determines necessary to enable the preparation of financial statements that are free from material misstatement (whether due to fraud or error).<br/>• Providing the practitioners with access to all information.</p>', undefined, 'Yes', '<p>Management acknowledgement obtained via signed engagement letter dated April 5, 2024. CEO confirmed responsibilities for financial statement preparation, internal controls, and providing full access to information.</p>', 'EL-01'),
+        la('f410-pre-exp', '<p><strong>Additional Explanation</strong></p>', 'All engagement preconditions satisfied. Signed engagement letter on file.'),
+      ],
+      isExpanded: true,
+    },
+    {
+      id: 'f410-partner',
+      title: '10. Partner/Practitioner Assessment',
+      questions: [
+        q('f410-pa-1', '<p>I have read the responses to the questions above and declare that I am not aware of any other independence prohibitions, unmitigated independence threats, breaches of other ethical requirements or risk factors that would prevent the firm or any member of the engagement team from performing this assignment.</p>', undefined, 'Yes', '<p>Engagement partner J. Williams, CPA has reviewed all responses. No independence prohibitions, threats, or ethical breaches identified. Engagement may proceed.</p>', 'AC-10'),
+        la('f410-pa-comments', '<p><strong>Comments:</strong></p>', 'All engagement acceptance procedures completed. Engagement accepted. No significant risks or independence matters identified. Engagement letter signed April 5, 2024.'),
+      ],
+      isExpanded: true,
+    },
+    {
+      id: 'f410-appA-entity',
+      title: 'Appendix A – Entity Operations',
+      questions: [
+        q('f410-aa-1', '<p>Doubts in place about the entity\'s ability to continue as a going concern.</p>', undefined, 'No', '<p>No going concern indicators. Entity reported net income of $847K with positive operating cash flows.</p>'),
+        q('f410-aa-2', '<p>Poor sales outlook or intense competition.</p>', undefined, 'No', '<p>Revenue ~$12.5M consistent with prior year. Established route contracts provide revenue stability.</p>'),
+        q('f410-aa-3', '<p>Entity has high debt levels and/or poor cash flow.</p>', undefined, 'No', '<p>Long-term debt of $4.8M is manageable relative to total assets of $18.2M. Cash flows from operations are positive.</p>'),
+        q('f410-aa-4', '<p>Bank covenant or other contractual violations.</p>', undefined, 'No'),
+        q('f410-aa-5', '<p>Non-compliance with industry laws/regulations.</p>', undefined, 'No', '<p>Transport Canada compliance inquiries returned no violations. Vessels hold current certificates of inspection.</p>'),
+        q('f410-aa-6', '<p>Potential litigation.</p>', undefined, 'No', '<p>Management confirmed no pending or threatened litigation. Legal counsel corroboration obtained.</p>'),
+        q('f410-aa-7', '<p>Questionable management/TCWG ethics.</p>', undefined, 'No'),
+        q('f410-aa-8', '<p>High media interest in the entity and management.</p>', undefined, 'No'),
+        q('f410-aa-9', '<p>Entity engages in high-risk activities.</p>', undefined, 'No', '<p>Marine freight involves normal operating risks managed through adequate insurance and established safety protocols.</p>'),
+        q('f410-aa-10', '<p>Entity operates in or does business with unstable governments/countries.</p>', undefined, 'No', '<p>Operations primarily in Canadian coastal waters with some US east coast routes. No exposure to politically unstable jurisdictions.</p>'),
+        q('f410-aa-11', '<p>Entity participates in high-risk business ventures.</p>', undefined, 'No'),
+        q('f410-aa-12', '<p>Unusual transactions not in the ordinary course of business.</p>', undefined, 'No'),
+      ],
+      isExpanded: true,
+    },
+    {
+      id: 'f410-appA-engage',
+      title: 'Appendix A – The Engagement',
+      questions: [
+        q('f410-ae-1', '<p>Poor cooperation from management, such as misleading representations and delays in obtaining the necessary evidence.</p>', undefined, 'No', '<p>Management has been cooperative during planning. All requested information provided promptly.</p>'),
+        q('f410-ae-2', '<p>Firm has limited experience in the entity\'s industry.</p>', undefined, 'No', '<p>Engagement partner J. Williams has prior experience with marine transportation clients.</p>'),
+        q('f410-ae-3', '<p>Reporting timeframes are unrealistic based on time available or firm resources.</p>', undefined, 'No', '<p>Fieldwork scheduled April 14–25, 2024. Timeline is achievable with planned staffing.</p>'),
+        q('f410-ae-4', '<p>Poor control environment, leadership and staff morale.</p>', undefined, 'No'),
+        q('f410-ae-5', '<p>Incompetence of senior accounting personnel.</p>', undefined, 'No', '<p>CFO is a CPA with 12 years of marine industry experience. Accounting records appear well-maintained.</p>'),
+        q('f410-ae-6', '<p>Entity unable or unwilling to pay a fair fee.</p>', undefined, 'No'),
+        q('f410-ae-7', '<p>Poor/inadequate/missing accounting systems and records.</p>', undefined, 'No', '<p>Entity uses Sage 300 ERP. Records appear complete and well-maintained during preliminary review.</p>'),
+        q('f410-ae-8', '<p>Complex IT environments.</p>', undefined, 'No'),
+        q('f410-ae-9', '<p>Lack of paper trail for certain transactions/events.</p>', undefined, 'No'),
+        q('f410-ae-10', '<p>Experts.</p>', undefined, 'No'),
+        q('f410-ae-11', '<p>Estimates involve a high degree of estimation uncertainty.</p>', undefined, 'No', '<p>Key estimates include vessel depreciation and voyage completion revenue cutoff. These are manageable with appropriate audit procedures.</p>'),
+        q('f410-ae-12', '<p>Extensive related-party transactions.</p>', undefined, 'No', '<p>Related-party transactions limited to shareholder loans and management compensation, which are routine and disclosed.</p>'),
+        q('f410-ae-13', '<p>Entity chooses aggressive/controversial accounting policies.</p>', undefined, 'No'),
+        q('f410-ae-14', '<p>Significant adjustments are required.</p>', undefined, 'No'),
+        q('f410-ae-15', '<p>Unusual transactions or overly complex corporate/operational structures.</p>', undefined, 'No'),
+      ],
+      isExpanded: true,
+    },
+    {
+      id: 'f410-conc',
+      title: 'Conclusion',
+      questions: [
+        la('f410-conc-risk', '<p><strong>Based on the information and risk factors identified above, this engagement is assessed as follows (check one):</strong></p>', 'Low Risk'),
+        la('f410-conc-exp', '<p><strong>Additional Explanation</strong></p>', 'All risk factors assessed. No material risk factors identified. Engagement is assessed as Low Risk. Client accepted.'),
+        la('f410-conc-eqr', '<p><strong>Is an EQR required on this engagement (select one)?</strong><br/><em>This decision should be based on the engagement risk identified above and the firm\'s criteria for when an EQR is required.</em></p>', 'No — Engagement assessed as Low Risk. Entity is a private company with no public interest considerations and no elevated risk factors.'),
+        la('f410-conc-basis', '<p><strong>Basis for decision:</strong></p>', 'Engagement risk assessed as Low Risk based on all factors reviewed. EQR not required under firm policy for low-risk private company engagements. Engagement letter issued April 5, 2024.'),
+        la('f410-conc-pb', '<p><strong>Prepared by</strong></p>', 'S. Chen, CPA'),
+        la('f410-conc-pb-date', '<p><strong>Date</strong></p>', 'April 5, 2024'),
+        la('f410-conc-rb', '<p><strong>Reviewed by</strong></p>', 'J. Williams, CPA'),
+        la('f410-conc-rb-date', '<p><strong>Date</strong></p>', 'April 8, 2024'),
+      ],
+      isExpanded: true,
+    },
+  ];
+
+  return {
+    id: 'global-template-form-410-acceptance-continuance',
+    title: 'Form 410 — New or Existing Engagement — Acceptance/Continuance',
+    description: 'CPA Canada PEG Form 410 — New or Existing Engagement Acceptance/Continuance for Shipping Line Inc. year ended March 31, 2024. Covers quality assurance, risk factors, management integrity, firm competencies, independence, and engagement preconditions.',
+    objective: 'To assess whether the firm should accept or continue this audit engagement, having regard to quality management policies, engagement risk factors, management integrity, firm competencies, and independence requirements (CAS 210, CAS 220, CSQM 1).',
+    sections,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  };
+};
+
+// ─────────────────────────────────────────────────────────────────────────────
+// FORM 408 (US) — INITIAL AUDIT ENGAGEMENTS (AU-C / GAAS)
+// ─────────────────────────────────────────────────────────────────────────────
+
+export const generateUSForm408InitialAuditEngagements = (): Checklist => {
+  const q = (id: string, text: string, sub?: Question[], answer = '', explanation = '', reference = ''): Question => ({
+    id, text, answerType: 'yes-no-na' as const, options: ['Yes', 'No', 'NA'],
+    required: false, answer, explanation, reference, ...(sub ? { subQuestions: sub } : {})
+  });
+  const la = (id: string, text: string, answer = ''): Question => ({
+    id, text, answerType: 'long-answer' as const, options: [], required: false, answer
+  });
+
+  const sections: Section[] = [
+    {
+      id: 'us-f408-header',
+      title: 'Engagement Information',
+      questions: [
+        la('us-f408-entity', '<p><strong>Entity</strong></p>', 'Harbor Freight Logistics LLC'),
+        la('us-f408-period', '<p><strong>Period ended</strong></p>', 'December 31, 2024'),
+      ],
+      isExpanded: true,
+    },
+    {
+      id: 'us-f408-obj',
+      title: 'Objective',
+      note: '<p><strong>Objective:</strong> To gather information to assist with the decision of whether to accept a new audit client and to obtain sufficient appropriate audit evidence as to whether opening balances contain misstatements and that appropriate accounting policies (reflected in the opening balances) have been consistently applied, appropriately accounted for and adequately presented/disclosed (refer to AU-C 510).</p><p><strong>Note:</strong> This form should be completed at the commencement of the engagement to allow time for any issues identified to be resolved. Also note that after completing parts A and B, Form 410 should be completed to reach a decision as to whether the client will be accepted. If so, complete Part C – Procedures on opening balances.</p><p><em>PSC = Procedure successfully completed. TCWG = Those charged with governance. F/S = Financial statements.</em></p>',
+      questions: [],
+      isExpanded: true,
+    },
+    {
+      id: 'us-f408-pA',
+      title: 'PART A – PRE-ACCEPTANCE CONSIDERATIONS',
+      questions: [
+        q('us-f408-pA-1', '<p>Identify who in the firm has knowledge about, or contacts with, the prospective client and whether they recommend that this entity be accepted as a client.</p>', undefined, 'Yes', '<p>Engagement partner M. Rodriguez has prior knowledge of Harbor Freight Logistics LLC through logistics industry contacts. The client was referred by a trusted legal advisor and is recommended for acceptance.</p>', 'AC-02'),
+        q('us-f408-pA-2', '<p>Perform an Internet news/social media search for relevant information about the entity and its key personnel.</p>', undefined, 'Yes', '<p>Internet search and social media review performed January 6, 2025. No adverse news, regulatory actions, or negative publicity identified for Harbor Freight Logistics LLC or its key management team.</p>', 'AC-03'),
+        q('us-f408-pA-3', '<p>Obtain permission from the prospective client to perform a credit check and to make inquiries with bankers, other advisors, regulators, etc.</p>', undefined, 'Yes', '<p>Client permission obtained via signed consent form dated January 8, 2025. Credit check performed — satisfactory results. First National Bank confirmed banking relationship in good standing. No regulatory sanctions noted.</p>', 'AC-04'),
+        q('us-f408-pA-4', '<p>Describe the reason for the change in auditors, and review relevant communications between the previous accountants and management/TCWG.</p>', undefined, 'Yes', '<p>Management indicated the change was due to the prior firm\'s inability to serve the company\'s growth trajectory. No professional issues were cited. Management letters from prior auditor reviewed — no significant control deficiencies or unresolved matters noted.</p>', 'AC-05'),
+        q('us-f408-pA-5', '<p>Inquire whether another accounting firm(s) has recently declined the engagement. If so, why?</p>', undefined, 'No', '<p>Management confirmed no other firm has recently declined this engagement.</p>', 'AC-06'),
+        q('us-f408-pA-6', '<p>If an audit was not performed in the prior period, consider the impact on the current year engagement. Consider:<br/>• Misstatements that could materially affect the current period\'s F/S.<br/>• Inability to obtain sufficient evidence over opening balances (such as attendance at inventory counts).<br/>• Inconsistent application of accounting policies in the current period\'s F/S.</p>', undefined, 'Yes', '<p>An audit was performed in the prior period by the predecessor firm. Opening balances as at January 1, 2024 were reviewed through inspection of predecessor working papers. US GAAP / ASC accounting policies consistently applied. No material misstatements in opening balances identified.</p>', 'OB-01'),
+      ],
+      isExpanded: true,
+    },
+    {
+      id: 'us-f408-pB',
+      title: 'PART B – PREDECESSOR AUDITOR/PRACTITIONER CONSIDERATIONS',
+      note: '<p>Refer to AU-C 210 — Terms of Engagement for predecessor auditor communication requirements.</p>',
+      questions: [
+        q('us-f408-pB-1', '<p>Inquire about the predecessor auditor/practitioner. Identify:<br/>• Name and address of the predecessor firm and the engagement partner.<br/>• Number of years the entity has been audited or reviewed.<br/>• Whether the previous report has been modified or the F/S restated in any of the last five years. If yes, provide details.</p>', undefined, 'Yes', '<p>Predecessor firm: Johnson & Walsh LLP, 200 South Michigan Ave, Chicago IL. Engagement partner: R. Johnson, CPA. Entity audited for 3 years. No modifications to audit reports or restatements in the last five years.</p>', 'AC-07'),
+        q('us-f408-pB-2', '<p>Communicate with the predecessor auditor/practitioner. Perform the following:<br/>• Inquire about any reasons the engagement should not be accepted. If no response is received, explain what alternative procedures were performed.<br/>• Request to review the predecessor\'s working papers. If not permitted, explain why, and document the impact on accepting the engagement. Refer to the AICPA Code of Professional Conduct / ET for guidance.</p>', undefined, 'Yes', '<p>Predecessor practitioner was contacted per AU-C 210 by letter dated January 10, 2025. Response received January 15, 2025 — no concerns or reasons to decline were communicated. Permission to review predecessor working papers was granted. Review performed January 20, 2025. No significant risk factors or unusual items were identified.</p>', 'AC-08'),
+        q('us-f408-pB-3', '<p>Assess whether the reason for the change in auditors/practitioners is appropriate.</p>', undefined, 'Yes', '<p>The reason for the change (prior firm unable to serve growth trajectory) is appropriate. No concerns regarding the circumstances of the auditor change.</p>', 'AC-09'),
+      ],
+      isExpanded: true,
+    },
+    {
+      id: 'us-f408-pC',
+      title: 'PART C – PROCEDURES ON OPENING BALANCES',
+      questions: [],
+      isExpanded: true,
+    },
+    {
+      id: 'us-f408-pC-basic',
+      title: 'BASIC INFORMATION',
+      questions: [
+        q('us-f408-pC-bi-1', '<p><strong>Previous auditor\'s/practitioner\'s working papers</strong><br/>Where possible, review the previous auditor\'s or practitioner\'s working papers and make notes of relevant information, such as:<br/>• Composition of opening balances, including F/S disclosures.<br/>• Application of accounting policies.<br/>• Uncorrected misstatements.<br/>• Significant audit findings.<br/>• Business and fraud risk factors.<br/>• The control environment.<br/>• Key control activities.<br/>• Impact of general IT controls.<br/>• Preparation of estimates.<br/>• Related-party transactions.<br/>• Going-concern events/conditions.<br/>• Difficulties encountered in the audit.<br/>• Disagreements with management/TCWG.<br/>• Need for special audit procedures.<br/>• Need for consultation or use of experts.<br/>If working papers were not reviewed, explain the reason for this and how sufficient audit evidence relating to the opening balances was obtained.</p>', undefined, 'Yes', '<p>Predecessor working papers reviewed January 20, 2025. Opening balances at January 1, 2024 agreed to prior year signed financial statements. US GAAP depreciation, revenue recognition (ASC 606), and lease accounting (ASC 842 — first year adoption) policies reviewed. No uncorrected misstatements. No going concern, fraud risk factors, or significant audit difficulties noted. First-year ASC 842 adoption was the only material accounting change.</p>', 'OB-01'),
+        q('us-f408-pC-bi-2', '<p><strong>Previous auditor/practitioner communications</strong><br/>Review copies of communications (between the previous auditor/practitioner and management, board of directors and/or audit committee) on audit planning and audit findings, such as misstatements, control deficiencies and fraud (as applicable).</p>', undefined, 'Yes', '<p>Management letters from predecessor reviewed. No significant control deficiencies, fraud matters, or unresolved audit findings from prior year engagement. ASC 842 first-year adoption disclosures were noted as an area of focus in prior year communications.</p>', 'OB-02'),
+        q('us-f408-pC-bi-3', '<p><strong>Documents to assist in understanding the entity</strong><br/>Consider obtaining copies of the following:<br/>• Business plans and management reports.<br/>• Corporate by-laws, letters patent or certificate of incorporation, partnership agreement, etc.<br/>• Prior periods\' financial statements, annual reports and prospectuses.<br/>• Minutes of meetings of shareholders, board of directors, audit committee and others.<br/>• Reports to management/audit committee on matters such as internal controls and IT.<br/>• Income tax returns.<br/>• Sales tax and other taxes assessments/reassessments.<br/>• Communications with regulators.<br/>• Borrowing agreements and trust indentures.<br/>• Material contracts and lease agreements.<br/>• Chart of accounts.<br/>• Organization charts and job descriptions.<br/>• Risk registers (similar to Form 520).<br/>• Internal control documentation.<br/>• Policies and procedures.<br/>• Board governance documents.<br/>• Other materials, such as press clippings, details of litigation, etc.</p>', undefined, 'Yes', '<p>Obtained: LLC operating agreement, prior year financial statements (3 years), board minutes, loan facility agreement, freight carrier contracts, chart of accounts, organization chart, federal income tax returns (Form 1120), state tax filings, ASC 842 lease schedule. Management confirmed all requested documents have been provided.</p>', 'OB-03'),
+      ],
+      isExpanded: true,
+    },
+    {
+      id: 'us-f408-pC-ob',
+      title: 'OPENING BALANCES',
+      questions: [
+        q('us-f408-pC-ob-1', '<p><strong>Extent of misstatements in opening balances</strong><br/>Obtain audit evidence regarding whether the opening balances and disclosures contain misstatements that materially affect the current period\'s F/S. This includes:<br/>• Reading the most recent F/S and the predecessor auditor\'s report thereon.<br/>• Reviewing the predecessor\'s working papers.<br/>• Determining whether the prior period\'s closing balances have been correctly brought forward to the current period or, when appropriate, have been restated.<br/>• Determining whether opening balances reflect the application of appropriate accounting policies.<br/>• Evaluating whether audit procedures performed in the current period provide relevant evidence.<br/>• Performing specific audit procedures where necessary.</p>', undefined, 'Yes', '<p>Prior year financial statements read. Predecessor\'s unmodified audit report reviewed. Opening balances at January 1, 2024 agreed to prior year closing balances — all brought forward correctly. US GAAP accounting policies consistently applied. ASC 842 ROU assets and lease liabilities correctly reflected in opening balances (first-year adoption as of January 1, 2024).</p>', 'OB-04'),
+        q('us-f408-pC-ob-2', '<p><strong>Misstatements identified</strong><br/>Where material misstatements in opening balances have been identified:<br/>• Perform additional audit procedures to determine the effect on the current period\'s F/S.<br/>• Communicate the misstatements with the appropriate level of management and TCWG.<br/>• Ensure the effect of the misstatements is appropriately accounted and adequately presented/disclosed. If not, express a qualified opinion or an adverse opinion, as appropriate.</p>', undefined, 'No', '<p>No material misstatements in opening balances identified. Additional procedures and communication with TCWG not required.</p>', 'OB-05'),
+        q('us-f408-pC-ob-3', '<p><strong>Consistency of accounting policies</strong><br/>Obtain evidence about whether:<br/>• Accounting policies used in the opening balances have been consistently applied in the current period\'s F/S.<br/>• Changes in the accounting policies have been appropriately accounted for and adequately presented and disclosed in accordance with the applicable financial reporting framework.</p>', undefined, 'Yes', '<p>US GAAP accounting policies consistently applied. ASC 842 first-year adoption was the only policy change — properly disclosed in the notes. Revenue recognition under ASC 606 consistent with prior period.</p>', 'OB-06'),
+        q('us-f408-pC-ob-4', '<p><strong>Predecessor auditor\'s report is modified</strong><br/>• Describe the matter giving rise to the modification.<br/>• Evaluate the effect in assessing the risks of material misstatement in the current period\'s F/S.<br/>• If the modification remains relevant and material to the current period\'s F/S, modify the audit opinion on the current period\'s F/S.</p>', undefined, 'No', '<p>Predecessor auditor\'s report was unmodified. No modifications to consider.</p>', 'OB-07'),
+        q('us-f408-pC-ob-5', '<p><strong>Inability to obtain necessary information</strong><br/>• Explain why it was not possible to obtain sufficient appropriate evidence or plausibility regarding the opening balances.<br/>• Express qualified opinion or disclaim an opinion on the F/S, as appropriate.</p>', undefined, 'No', '<p>No inability to obtain necessary information. All required evidence regarding opening balances was obtained from the predecessor working papers and current year audit procedures.</p>', 'OB-08'),
+      ],
+      isExpanded: true,
+    },
+    {
+      id: 'us-f408-conc',
+      title: 'Conclusion',
+      note: '<p>We have obtained sufficient appropriate audit evidence regarding whether:<br/>1. To accept the new audit client or new engagement (see Form 410).<br/>2. Opening balances contain misstatements that materially affect the current period\'s F/S.<br/>3. Appropriate accounting policies were reflected in the opening balances and consistently applied in the current period\'s F/S. Where accounting policy changes have occurred, they have been appropriately accounted for and adequately presented/disclosed in accordance with the applicable financial reporting framework.</p>',
+      questions: [
+        la('us-f408-conc-pb', '<p><strong>Prepared by</strong></p>', 'K. Patel, CPA'),
+        la('us-f408-conc-pb-date', '<p><strong>Date</strong></p>', 'January 14, 2025'),
+        la('us-f408-conc-rb', '<p><strong>Reviewed by</strong></p>', 'M. Rodriguez, CPA'),
+        la('us-f408-conc-rb-date', '<p><strong>Date</strong></p>', 'January 16, 2025'),
+      ],
+      isExpanded: true,
+    },
+  ];
+
+  return {
+    id: 'global-template-us-form-408-initial-audit',
+    title: 'Form 408 — Initial Audit Engagements (US GAAS)',
+    description: 'US GAAS Form 408 — Initial Audit Engagements. Pre-acceptance considerations, predecessor auditor procedures (AU-C 210), and opening balances procedures for Harbor Freight Logistics LLC year ended December 31, 2024.',
+    objective: 'To gather information to assist with the decision of whether to accept a new audit client and to obtain sufficient appropriate audit evidence as to whether opening balances contain misstatements and that appropriate accounting policies have been consistently applied, appropriately accounted for and adequately presented/disclosed (AU-C 510).',
+    sections,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  };
+};
+
+// ─────────────────────────────────────────────────────────────────────────────
+// FORM 410 (US) — NEW OR EXISTING ENGAGEMENT — ACCEPTANCE/CONTINUANCE (AU-C / GAAS)
+// ─────────────────────────────────────────────────────────────────────────────
+
+export const generateUSForm410AcceptanceContinuance = (): Checklist => {
+  const q = (id: string, text: string, sub?: Question[], answer = '', explanation = '', reference = ''): Question => ({
+    id, text, answerType: 'yes-no-na' as const, options: ['Yes', 'No', 'NA'],
+    required: false, answer, explanation, reference, ...(sub ? { subQuestions: sub } : {})
+  });
+  const la = (id: string, text: string, answer = ''): Question => ({
+    id, text, answerType: 'long-answer' as const, options: [], required: false, answer
+  });
+
+  const sections: Section[] = [
+    {
+      id: 'us-f410-header',
+      title: 'Engagement Information',
+      questions: [
+        la('us-f410-entity', '<p><strong>Entity</strong></p>', 'Harbor Freight Logistics LLC'),
+        la('us-f410-period', '<p><strong>Period ended</strong></p>', 'December 31, 2024'),
+      ],
+      isExpanded: true,
+    },
+    {
+      id: 'us-f410-qam',
+      title: '1. Quality Management System',
+      questions: [
+        q('us-f410-qam-1', '<p>Determine whether accepting this engagement would contravene any of the firm\'s quality management policies. Also consider related services provided, such as those addressed by AT-C 725 (Supplementary Information in Relation to the Financial Statements as a Whole) and other advisory and tax planning services.</p>', undefined, 'Yes', '<p>Firm quality management policies reviewed per SQMS 1. Accepting this engagement for Harbor Freight Logistics LLC does not contravene any firm policies. No AT-C 725 services are being provided.</p>', 'AC-01'),
+      ],
+      isExpanded: true,
+    },
+    {
+      id: 'us-f410-risk',
+      title: '2. Engagement Risk Factors',
+      questions: [
+        q('us-f410-rf-a', '<p>a. Indicate who in the firm has knowledge about, or contacts with, the prospective client and whether they recommend that this entity be accepted as a new client.</p>', undefined, 'Yes', '<p>Engagement partner M. Rodriguez has prior knowledge of Harbor Freight Logistics LLC through logistics industry contacts. The client was referred by a trusted legal advisor and is recommended for acceptance.</p>', 'AC-02'),
+        q('us-f410-rf-b', '<p>b. Contact the predecessor practitioner (per AU-C 210) to inquire about any reasons the engagement should not be accepted. If no response is received, explain what alternative procedures were performed.</p>', undefined, 'Yes', '<p>Predecessor practitioner was contacted per AU-C 210 by letter dated January 10, 2025. Response received January 15, 2025 — no concerns or reasons to decline were communicated.</p>', 'AC-03'),
+        q('us-f410-rf-c', '<p>c. Request a review of the predecessor\'s working papers. If not permitted, explain why and consider the potential engagement risk factors. If permitted, perform a review and describe any risk factors identified.</p>', undefined, 'Yes', '<p>Permission to review predecessor working papers was granted. Review performed January 20, 2025. No significant risk factors or unusual items were identified. ASC 842 first-year adoption documentation was thorough and well-supported.</p>', 'AC-04'),
+        q('us-f410-rf-d', '<p>d. Indicate what other procedures were performed (including results and conclusions) to identify engagement risk factors that would cause us to decline the engagement. Consider procedures such as:</p>',
+          [
+            q('us-f410-rf-d-i', '<p>i. Inquiries of management/TCWG about:</p>',
+              [
+                q('us-f410-rf-d-i-a', '<p>A. The reason for the change in accountants.</p>', undefined, 'Yes', '<p>Management indicated the change was due to the prior firm\'s inability to serve the company\'s growth trajectory. No professional issues were cited.</p>'),
+                q('us-f410-rf-d-i-b', '<p>B. Whether another accounting firm(s) has recently declined the engagement. If so, why?</p>', undefined, 'No', '<p>Management confirmed no other firm has recently declined this engagement.</p>'),
+                q('us-f410-rf-d-i-c', '<p>C. Other engagement risk factors (see Appendix A).</p>', undefined, 'Yes', '<p>Inquiries made regarding Appendix A risk factors. No material risk factors identified beyond normal industry operating risks associated with freight logistics and first-year ASC 842 adoption.</p>'),
+              ]
+            ),
+            q('us-f410-rf-d-iii', '<p>iii. Review of relevant communications between the previous accountants and management/TCWG.</p>', undefined, 'Yes', '<p>Management letters from prior auditor reviewed. No significant control deficiencies or unresolved matters were noted beyond ASC 842 first-year adoption disclosures.</p>'),
+            q('us-f410-rf-d-iv', '<p>iv. Obtaining permission from the prospective client to perform a credit check and to make inquiries with bankers, other advisors, regulators, etc.</p>', undefined, 'Yes', '<p>Client permission obtained. Credit check performed — satisfactory results. First National Bank confirmed banking relationship in good standing. No DOT or regulatory sanctions noted.</p>'),
+          ], 'Yes', '<p>All risk factor procedures completed satisfactorily. No factors identified that would cause us to decline the engagement.</p>', 'AC-05'),
+      ],
+      isExpanded: true,
+    },
+    {
+      id: 'us-f410-integrity',
+      title: '3. Management\'s Integrity',
+      questions: [
+        q('us-f410-int-1', '<p>Based on previous contact (if any) with key entity personnel and the results of procedures performed in Step 2 above, determine whether any concern has been identified that might cause us to doubt or distrust the management representations/assertions that we will be requesting and relying upon if the engagement is accepted. Consider:<br/>• Observed disregard for telling the truth;<br/>• Criminal convictions and regulatory sanctions;<br/>• History or suspicions of unethical actions, illegal acts or management override controls;<br/>• Negative publicity;<br/>• Close association with people/companies with reputations for questionable ethics.</p>', undefined, 'No', '<p>No concerns identified regarding management integrity. Web searches and inquiries with bankers and advisors returned no adverse findings. CEO Robert Morrison has operated Harbor Freight Logistics LLC with a consistent reputation in the freight logistics sector.</p>', 'AC-05'),
+        la('us-f410-int-exp', '<p><strong>Additional Explanation</strong></p>', 'No integrity concerns identified. Management team led by CEO Robert Morrison with 18+ years in logistics. No criminal convictions, regulatory sanctions, or negative publicity found.'),
+      ],
+      isExpanded: true,
+    },
+    {
+      id: 'us-f410-data',
+      title: '4. Unavailable or Unreliable Data',
+      questions: [
+        q('us-f410-data-1', '<p>Based on preliminary understanding, is there any indication that the information needed to perform the engagement will be unavailable or unreliable?</p>', undefined, 'No', '<p>Management confirmed full access to accounting records, freight manifests, carrier contracts, and supporting schedules. Accounting system (QuickBooks Enterprise) is in use and records appear well-maintained.</p>', 'AC-06'),
+        la('us-f410-data-exp', '<p><strong>Additional Explanation</strong></p>', 'No limitations on data availability identified. Management is cooperative and has committed to providing all requested information on a timely basis.'),
+      ],
+      isExpanded: true,
+    },
+    {
+      id: 'us-f410-competencies',
+      title: '5. Firm Competencies',
+      questions: [
+        q('us-f410-fc-1', '<p>Assess whether the firm has the necessary skills/resources to perform the engagement on a timely basis. Address the following:</p>',
+          [
+            q('us-f410-fc-1a', '<p>a. The availability of staff/resources with the appropriate level of experience, relevant industry/subject matter knowledge, and any required regulatory and reporting experience.</p>', undefined, 'Yes', '<p>Engagement partner M. Rodriguez has prior experience in logistics and transportation audits. The engagement team includes K. Patel (manager) with US GAAP experience including ASC 842. Two senior staff members assigned.</p>'),
+            q('us-f410-fc-1b', '<p>b. The availability of specialists (where required).</p>', undefined, 'No', '<p>No external specialists required. ASC 842 ROU asset valuation will be assessed using management\'s lease schedule. No valuation specialists required.</p>'),
+          ], 'Yes', '<p>Firm has sufficient resources and logistics industry knowledge. Year-end fieldwork scheduled February 3–14, 2025 is achievable with planned staffing.</p>', 'AC-07'),
+        la('us-f410-fc-exp', '<p><strong>Additional Explanation</strong></p>', 'Firm has sufficient resources. Year-end fieldwork scheduled February 3–14, 2025 is achievable with planned staffing.'),
+      ],
+      isExpanded: true,
+    },
+    {
+      id: 'us-f410-ind-prohibit',
+      title: '6. Independence Prohibitions',
+      note: '<p>Refer to AICPA Code of Professional Conduct / ET for guidance, interpretations and additional independence prohibitions for SEC registrants.</p>',
+      questions: [
+        q('us-f410-ip-1', '<p>Identify and describe any potential independence prohibitions that could occur and provide reasons why they do or do not preclude the firm or particular staff members from performing the engagement. Address each of the prohibitions listed below:</p>', undefined, 'No', '<p>No independence prohibitions identified. All engagement team members confirmed independence from Harbor Freight Logistics LLC and its related parties.</p>', 'IND-01'),
+        la('us-f410-ip-services-hdr', '<p><strong>Services performed</strong></p>', ''),
+        q('us-f410-ip-1a', '<p>a. Recording journal entries or changing account classifications without first obtaining management\'s approval.</p>', undefined, 'No', '<p>The firm does not record journal entries on behalf of the client. All adjusting entries are proposed to and approved by management.</p>'),
+        q('us-f410-ip-1b', '<p>b. Providing tax planning or other tax advisory services that may have a material impact on the financial statements.</p>', undefined, 'No', '<p>No tax advisory services are provided by the audit firm to this client.</p>'),
+        q('us-f410-ip-1c', '<p>c. Providing legal services that involve dispute resolution.</p>', undefined, 'No'),
+        q('us-f410-ip-1d', '<p>d. Preparing source documents for the client.</p>', undefined, 'No'),
+        q('us-f410-ip-1e', '<p>e. Performing management functions for the client (such as decision making on transactions).</p>', undefined, 'No'),
+        q('us-f410-ip-1f', '<p>f. Serving as an officer or director of the client.</p>', undefined, 'No'),
+        q('us-f410-ip-1g', '<p>g. Temporary loaning of staff (except in certain situations).</p>', undefined, 'No'),
+        la('us-f410-ip-rel-hdr', '<p><strong>Relationships</strong></p>', ''),
+        q('us-f410-ip-rel-a', '<p>a. Close business relationships with the client.</p>', undefined, 'No', '<p>No close business relationships between engagement team members and the client identified.</p>'),
+        q('us-f410-ip-rel-b', '<p>b. Family and personal relationships with the client.</p>', undefined, 'No'),
+        q('us-f410-ip-rel-c', '<p>c. Firm personnel that have accepted a position or have had recent employment with the client as an officer, director or company secretary.</p>', undefined, 'No'),
+        la('us-f410-ip-fin-hdr', '<p><strong>Financial interests</strong></p>', ''),
+        q('us-f410-ip-fin', '<p>Holding financial interests in entity, performing the engagement for a fee considerably less than market price, or accepting gifts or hospitality from client.</p>', undefined, 'No', '<p>No financial interests in Harbor Freight Logistics LLC held by the firm or any engagement team member or their immediate family. Fee arrangement is at standard market rates ($42,500 per engagement letter).</p>'),
+        la('us-f410-ip-note', '<p><em>Refer to the AICPA Code of Professional Conduct / ET for guidance, interpretations and additional independence prohibitions for listed entities.</em></p>', 'Reviewed AICPA Code of Professional Conduct — no additional prohibitions apply to this non-public entity engagement.'),
+        la('us-f410-ip-exp', '<p><strong>Additional Explanation</strong></p>', 'No independence prohibitions identified. Engagement team independence declarations on file.'),
+      ],
+      isExpanded: true,
+    },
+    {
+      id: 'us-f410-ind-threats',
+      title: '7. Independence Threats',
+      questions: [
+        q('us-f410-it-1', '<p>Identify and describe any significant threats to independence and the safeguards (if any) to reduce each threat to an acceptable level. Address each of the following threats in relation to the firm and any member of the engagement team:</p>', undefined, 'No', '<p>No significant independence threats identified for this new engagement. All threat categories assessed below.</p>', 'IND-02'),
+        q('us-f410-it-1a', '<p>a. Self-interest (i.e., where the firm is economically dependent on the client fees or where judgments may be influenced by the desire to retain the client).</p>', undefined, 'No', '<p>Fees from Harbor Freight Logistics LLC represent less than 3% of firm revenues. No economic dependence on this client.</p>'),
+        q('us-f410-it-1b', '<p>b. Self-review (i.e., assisting the client in preparing the financial statements, providing bookkeeping services and making judgments for the client that will later need to be evaluated in reaching conclusions).</p>', undefined, 'No', '<p>The firm does not provide bookkeeping or financial statement preparation services. Management prepares its own financial statements.</p>'),
+        q('us-f410-it-1c', '<p>c. Advocacy (i.e., acting as a client advocate in matters involving taxes, litigation or share promotion, which could result in being too sympathetic to the client\'s interests).</p>', undefined, 'No'),
+        q('us-f410-it-1d', '<p>d. Intimidation (i.e., where the client makes threats, such as to replace our firm unless we agree to certain scope limitations or to accept management positions without question, on accounting matters).</p>', undefined, 'No', '<p>No intimidation threats noted. Management is cooperative and has not sought to impose scope limitations.</p>'),
+        la('us-f410-it-note', '<p><em>Refer to the AICPA Code of Professional Conduct / ET for guidance and interpretations.</em></p>', 'AICPA Code reviewed. No additional threats identified beyond those addressed above.'),
+        la('us-f410-it-exp', '<p><strong>Additional Explanation</strong></p>', 'No significant independence threats identified. Engagement may proceed.'),
+      ],
+      isExpanded: true,
+    },
+    {
+      id: 'us-f410-purpose',
+      title: '8. Purpose of the Engagement',
+      questions: [
+        q('us-f410-pur-1', '<p>What is the entity\'s intention for having this engagement? Ensure:<br/>A. There is a rational purpose for the engagement.<br/>B. The type of engagement would be appropriate in the circumstances.<br/>C. Consider:<br/>• Any significant scope limitations expected.<br/>• Any intent to inappropriately associate the firm\'s name with the financial statements.<br/>• Any laws or regulations that require an audit rather than a review.</p>', undefined, 'Yes', '<p>An audit engagement is required by the company\'s revolving credit facility covenant with First National Bank and is appropriate given the entity size (~$18.4M revenue, ~$14.2M total assets). No scope limitations anticipated.</p>', 'AC-08'),
+        la('us-f410-pur-exp', '<p><strong>Additional Explanation</strong></p>', 'Audit required under First National Bank credit facility covenant. An audit is appropriate and no laws or regulations preclude this engagement type.'),
+      ],
+      isExpanded: true,
+    },
+    {
+      id: 'us-f410-precond',
+      title: '9. Engagement Preconditions',
+      questions: [
+        q('us-f410-pre-a', '<p>a. Determine whether the financial reporting framework to be applied in the preparation of the financial statements is appropriate.</p>', undefined, 'Yes', '<p>US GAAP (ASC) is the applicable financial reporting framework. Confirmed appropriate for Harbor Freight Logistics LLC as a privately held US company. First National Bank requires US GAAP audited financial statements per the credit agreement.</p>', 'AC-09'),
+        q('us-f410-pre-b', '<p>b. Ensure that management has acknowledged its understanding and responsibility for:<br/>• The preparation of financial statements in accordance with the applicable financial reporting framework.<br/>• Such internal controls as management determines necessary to enable the preparation of financial statements that are free from material misstatement (whether due to fraud or error).<br/>• Providing the practitioners with access to all information.</p>', undefined, 'Yes', '<p>Management acknowledgement obtained via signed engagement letter dated January 14, 2025. CEO Robert Morrison confirmed responsibilities for financial statement preparation, internal controls, and providing full access to information.</p>', 'EL-01'),
+        la('us-f410-pre-exp', '<p><strong>Additional Explanation</strong></p>', 'All engagement preconditions satisfied. Signed engagement letter on file.'),
+      ],
+      isExpanded: true,
+    },
+    {
+      id: 'us-f410-partner',
+      title: '10. Partner/Practitioner Assessment',
+      questions: [
+        q('us-f410-pa-1', '<p>I have read the responses to the questions above and declare that I am not aware of any other independence prohibitions, unmitigated independence threats, breaches of other ethical requirements or risk factors that would prevent the firm or any member of the engagement team from performing this assignment.</p>', undefined, 'Yes', '<p>Engagement partner M. Rodriguez, CPA has reviewed all responses. No independence prohibitions, threats, or ethical breaches identified. Engagement may proceed.</p>', 'AC-10'),
+        la('us-f410-pa-comments', '<p><strong>Comments:</strong></p>', 'All engagement acceptance procedures completed. Engagement accepted. No significant risks or independence matters identified. Engagement letter signed January 14, 2025.'),
+      ],
+      isExpanded: true,
+    },
+    {
+      id: 'us-f410-appA-entity',
+      title: 'Appendix A – Entity Operations',
+      questions: [
+        q('us-f410-aa-1', '<p>Doubts in place about the entity\'s ability to continue as a going concern.</p>', undefined, 'No', '<p>No going concern indicators. Entity reported net income of $1.2M with positive operating cash flows for year ended December 31, 2024.</p>'),
+        q('us-f410-aa-2', '<p>Poor sales outlook or intense competition.</p>', undefined, 'No', '<p>Revenue ~$18.4M with growth trajectory. Established freight carrier contracts provide revenue stability.</p>'),
+        q('us-f410-aa-3', '<p>Entity has high debt levels and/or poor cash flow.</p>', undefined, 'No', '<p>Revolving credit facility of $3M drawn $1.8M. Debt manageable relative to total assets. Positive operating cash flows.</p>'),
+        q('us-f410-aa-4', '<p>Bank covenant or other contractual violations.</p>', undefined, 'No'),
+        q('us-f410-aa-5', '<p>Non-compliance with industry laws/regulations.</p>', undefined, 'No', '<p>DOT compliance review returned no violations. All required carrier licenses and permits current.</p>'),
+        q('us-f410-aa-6', '<p>Potential litigation.</p>', undefined, 'No', '<p>Management confirmed no pending or threatened litigation. Legal counsel corroboration obtained.</p>'),
+        q('us-f410-aa-7', '<p>Questionable management/TCWG ethics.</p>', undefined, 'No'),
+        q('us-f410-aa-8', '<p>High media interest in the entity and management.</p>', undefined, 'No'),
+        q('us-f410-aa-9', '<p>Entity engages in high-risk activities.</p>', undefined, 'No', '<p>Freight logistics involves normal operating risks managed through adequate insurance and established safety protocols.</p>'),
+        q('us-f410-aa-10', '<p>Entity operates in or does business with unstable governments/countries.</p>', undefined, 'No', '<p>Operations primarily within the continental US. No exposure to politically unstable jurisdictions.</p>'),
+        q('us-f410-aa-11', '<p>Entity participates in high-risk business ventures.</p>', undefined, 'No'),
+        q('us-f410-aa-12', '<p>Unusual transactions not in the ordinary course of business.</p>', undefined, 'No'),
+      ],
+      isExpanded: true,
+    },
+    {
+      id: 'us-f410-appA-engage',
+      title: 'Appendix A – The Engagement',
+      questions: [
+        q('us-f410-ae-1', '<p>Poor cooperation from management, such as misleading representations and delays in obtaining the necessary evidence.</p>', undefined, 'No', '<p>Management has been cooperative during planning. All requested information provided promptly.</p>'),
+        q('us-f410-ae-2', '<p>Firm has limited experience in the entity\'s industry.</p>', undefined, 'No', '<p>Engagement partner M. Rodriguez has prior experience with logistics and transportation clients.</p>'),
+        q('us-f410-ae-3', '<p>Reporting timeframes are unrealistic based on time available or firm resources.</p>', undefined, 'No', '<p>Fieldwork scheduled February 3–14, 2025. Timeline is achievable with planned staffing.</p>'),
+        q('us-f410-ae-4', '<p>Poor control environment, leadership and staff morale.</p>', undefined, 'No'),
+        q('us-f410-ae-5', '<p>Incompetence of senior accounting personnel.</p>', undefined, 'No', '<p>CFO is a CPA with 10 years of logistics industry experience. Accounting records appear well-maintained.</p>'),
+        q('us-f410-ae-6', '<p>Entity unable or unwilling to pay a fair fee.</p>', undefined, 'No'),
+        q('us-f410-ae-7', '<p>Poor/inadequate/missing accounting systems and records.</p>', undefined, 'No', '<p>Entity uses QuickBooks Enterprise. Records appear complete and well-maintained during preliminary review.</p>'),
+        q('us-f410-ae-8', '<p>Complex IT environments.</p>', undefined, 'No'),
+        q('us-f410-ae-9', '<p>Lack of paper trail for certain transactions/events.</p>', undefined, 'No'),
+        q('us-f410-ae-10', '<p>Experts.</p>', undefined, 'No'),
+        q('us-f410-ae-11', '<p>Estimates involve a high degree of estimation uncertainty.</p>', undefined, 'No', '<p>Key estimates include ASC 842 lease term determinations and goodwill impairment (ASC 350). These are manageable with appropriate audit procedures per AU-C 540.</p>'),
+        q('us-f410-ae-12', '<p>Extensive related-party transactions.</p>', undefined, 'No', '<p>Related-party transactions limited to member distributions and management compensation, which are routine and disclosed per ASC 850.</p>'),
+        q('us-f410-ae-13', '<p>Entity chooses aggressive/controversial accounting policies.</p>', undefined, 'No'),
+        q('us-f410-ae-14', '<p>Significant adjustments are required.</p>', undefined, 'No'),
+        q('us-f410-ae-15', '<p>Unusual transactions or overly complex corporate/operational structures.</p>', undefined, 'No'),
+      ],
+      isExpanded: true,
+    },
+    {
+      id: 'us-f410-conc',
+      title: 'Conclusion',
+      questions: [
+        la('us-f410-conc-risk', '<p><strong>Based on the information and risk factors identified above, this engagement is assessed as follows (check one):</strong></p>', 'Low Risk'),
+        la('us-f410-conc-exp', '<p><strong>Additional Explanation</strong></p>', 'All risk factors assessed. No material risk factors identified. Engagement is assessed as Low Risk. Client accepted.'),
+        la('us-f410-conc-eqr', '<p><strong>Is an EQR required on this engagement (select one)?</strong><br/><em>This decision should be based on the engagement risk identified above and the firm\'s criteria for when an EQR is required.</em></p>', 'No — Engagement assessed as Low Risk. Entity is a non-public company with no SEC reporting obligations and no elevated risk factors.'),
+        la('us-f410-conc-basis', '<p><strong>Basis for decision:</strong></p>', 'Engagement risk assessed as Low Risk based on all factors reviewed. EQR not required under firm policy for low-risk non-public engagements. Engagement letter signed January 14, 2025.'),
+        la('us-f410-conc-pb', '<p><strong>Prepared by</strong></p>', 'K. Patel, CPA'),
+        la('us-f410-conc-pb-date', '<p><strong>Date</strong></p>', 'January 14, 2025'),
+        la('us-f410-conc-rb', '<p><strong>Reviewed by</strong></p>', 'M. Rodriguez, CPA'),
+        la('us-f410-conc-rb-date', '<p><strong>Date</strong></p>', 'January 16, 2025'),
+      ],
+      isExpanded: true,
+    },
+  ];
+
+  return {
+    id: 'global-template-us-form-410-acceptance-continuance',
+    title: 'Form 410 — New or Existing Engagement — Acceptance/Continuance (US GAAS)',
+    description: 'US GAAS Form 410 — New or Existing Engagement Acceptance/Continuance for Harbor Freight Logistics LLC year ended December 31, 2024. Covers quality management (SQMS 1), engagement risk factors, management integrity, firm competencies, independence (AICPA Code / ET), and engagement preconditions (AU-C 210).',
+    objective: 'To assess whether the firm should accept or continue this audit engagement, having regard to quality management policies, engagement risk factors, management integrity, firm competencies, and independence requirements (AU-C 210, AU-C 220, SQMS 1).',
+    sections,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  };
+};

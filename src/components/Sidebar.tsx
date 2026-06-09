@@ -1535,13 +1535,9 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
                   {
                     id: "aud-us-co", code: "CO", label: "Client Onboarding", icon: "folder",
                     children: [
-                      { id: "aud-us-new-accept", code: "NA", label: "New engagement acceptance", icon: "checklist", route: "checklist/aud-us-new-accept" },
-                      { id: "aud-us-exist-cont", code: "EC", label: "Existing engagement continuance", icon: "checklist", route: "checklist/aud-us-exist-cont" },
-                      { id: "aud-us-ind", code: "IND", label: "Independence & Ethical Requirements", icon: "checklist", route: "checklist/aud-us-ind" },
+                      { id: "aud-us-form-408", code: "408", label: "Initial Audit Engagements", icon: "checklist", route: "checklist/aud-us-form-408" },
+                      { id: "aud-us-form-410", code: "410", label: "Acceptance / Continuance", icon: "checklist", route: "checklist/aud-us-form-410" },
                       { id: "aud-us-el", code: "EL", label: "Engagement Letter", icon: "letter", route: "checklist/aud-us-el" },
-                      { id: "aud-us-aml", code: "AML", label: "Anti-Money Laundering (BSA/FinCEN) Compliance", icon: "checklist", route: "checklist/aud-us-aml" },
-                      { id: "aud-us-predecessor", code: "PA", label: "Communication to Predecessor Auditor (AU-C 210)", icon: "letter", route: "checklist/aud-us-predecessor" },
-                      { id: "aud-us-legal-inquiry", code: "LC", label: "Inquiry to Legal Counsel (AU-C 501)", icon: "letter", route: "checklist/aud-us-legal-inquiry" },
                     ]
                   },
                   {
@@ -1704,11 +1700,9 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
                   {
                     id: "aud-co", code: "CO", label: "Client Onboarding", icon: "folder",
                     children: [
-                      { id: "aud-new-accept", code: "NA", label: "New engagement acceptance", icon: "checklist", route: "checklist/aud-new-accept" },
-                      { id: "aud-exist-cont", code: "EC", label: "Existing engagement continuance", icon: "checklist", route: "checklist/aud-exist-cont" },
-                      { id: "aud-ind", code: "IND", label: "Independence & Ethical Requirements", icon: "checklist", route: "checklist/aud-ind" },
+                      { id: "aud-form-408", code: "408", label: "Initial Audit Engagements", icon: "checklist", route: "checklist/aud-form-408" },
+                      { id: "aud-form-410", code: "410", label: "Acceptance / Continuance", icon: "checklist", route: "checklist/aud-form-410" },
                       { id: "aud-el", code: "EL", label: "Engagement Letter", icon: "letter", route: "checklist/aud-el" },
-                      { id: "aud-aml", code: "AML", label: "Anti-Money Laundering (AML) Compliance", icon: "checklist", route: "checklist/aud-aml" },
                     ]
                   },
                   {

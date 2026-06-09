@@ -37,6 +37,8 @@ import {
   generateManagementResponsibilityChecklist,
   generateNewEngagementAcceptanceChecklist,
   generateExistingEngagementContinuanceChecklist,
+  generateForm408InitialAuditEngagements,
+  generateForm410AcceptanceContinuance,
   generateUnderstandingEntityBasicsChecklist,
   generateUnderstandingEntitySystemsChecklist,
   generateEngagementPlanningChecklist,
@@ -87,6 +89,8 @@ import {
   generateUSExistingEngagementContinuanceChecklist,
   generateUSAuditIndependenceChecklist,
   generateUSAMLComplianceChecklist,
+  generateUSForm408InitialAuditEngagements,
+  generateUSForm410AcceptanceContinuance,
   generateUSUnderstandingEntityBasicsChecklist,
   generateUSUnderstandingEntitySystemsChecklist,
   generateUSUnderstandingEntityIndustryChecklist,
@@ -237,6 +241,8 @@ const AUDIT_FOLDER_NAME = "Audit Checklists";
 const buildDefaultAuditChecklists = () => {
   const items = [
     // Client Onboarding
+    { generator: generateForm408InitialAuditEngagements, id: "default-audit-form-408" },
+    { generator: generateForm410AcceptanceContinuance, id: "default-audit-form-410" },
     { generator: generateNewEngagementAcceptanceChecklist, id: "default-audit-new-accept" },
     { generator: generateExistingEngagementContinuanceChecklist, id: "default-audit-exist-cont" },
     { generator: generateAuditIndependenceChecklist, id: "default-audit-ind" },
@@ -299,6 +305,8 @@ const US_AUDIT_FOLDER_NAME = "US Audit Checklists";
 const buildDefaultUSAuditChecklists = () => {
   const items = [
     // Client Onboarding & Planning
+    { generator: generateUSForm408InitialAuditEngagements, id: "default-us-audit-form-408" },
+    { generator: generateUSForm410AcceptanceContinuance, id: "default-us-audit-form-410" },
     { generator: generateUSNewEngagementAcceptanceChecklist, id: "default-us-audit-new-accept" },
     { generator: generateUSExistingEngagementContinuanceChecklist, id: "default-us-audit-exist-cont" },
     { generator: generateUSAuditIndependenceChecklist, id: "default-us-audit-ind" },
@@ -415,11 +423,9 @@ const NAV_KEY_TO_CHECKLIST_ID: Record<string, string> = {
   "co-el": "default-compilation-el",
   "co-mr": "default-compilation-mr",
   // Audit — Client Onboarding
-  "aud-new-accept": "default-audit-new-accept",
-  "aud-exist-cont": "default-audit-exist-cont",
-  "aud-ind": "default-audit-ind",
+  "aud-form-408": "default-audit-form-408",
+  "aud-form-410": "default-audit-form-410",
   "aud-el": "default-audit-el",
-  "aud-aml": "default-audit-aml",
   // Audit — Planning
   "aud-ueb": "default-audit-ueb",
   "aud-ues": "default-audit-ues",
@@ -460,11 +466,9 @@ const NAV_KEY_TO_CHECKLIST_ID: Record<string, string> = {
   "aud-comp": "default-audit-comp",
   "aud-ep": "default-audit-ep",
   // US Audit (GAAS) — Client Onboarding
-  "aud-us-new-accept": "default-us-audit-new-accept",
-  "aud-us-exist-cont": "default-us-audit-exist-cont",
-  "aud-us-ind": "default-us-audit-ind",
+  "aud-us-form-408": "default-us-audit-form-408",
+  "aud-us-form-410": "default-us-audit-form-410",
   "aud-us-el": "default-us-audit-el",
-  "aud-us-aml": "default-us-audit-aml",
   // US Audit — Planning
   "aud-us-ueb": "default-us-audit-ueb",
   "aud-us-ues": "default-us-audit-ues",
@@ -506,8 +510,6 @@ const NAV_KEY_TO_CHECKLIST_ID: Record<string, string> = {
   "aud-us-comp": "default-us-audit-comp",
   "aud-us-ep": "default-us-audit-ep",
   // US Audit — Letters wired up
-  "aud-us-legal-inquiry": "default-us-audit-legal-inquiry",
-  "aud-us-predecessor": "default-us-audit-predecessor",
   "aud-us-sig-def": "default-us-audit-sig-def",
   // US Audit — Completion worksheets wired up
   "aud-us-so-sd": "default-us-audit-so-sd",
