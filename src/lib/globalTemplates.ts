@@ -1530,78 +1530,191 @@ export const generateUnderstandingEntityBasicsChecklist = (): Checklist => {
 
 // Engagement Planning template data (Review folder)
 export const generateEngagementPlanningChecklist = (): Checklist => {
+  const la = (id: string, text: string, answer = ''): Question => ({
+    id, text, answerType: 'long-answer' as const, options: [], required: false, answer
+  });
+  const h = (id: string, text: string, sub?: Question[]): Question => ({
+    id, text, answerType: 'none' as const, options: [], required: false, answer: '',
+    showResponse: false as any, showExplanation: false as any, showReference: false as any,
+    ...(sub ? { subQuestions: sub } : {})
+  });
+
   const sections: Section[] = [
     {
-      id: 'section-ep-scope',
-      title: 'Scope of assignment',
+      id: 'tpd-s1',
+      title: '1. Meeting Details',
       questions: [
-        {
-          id: 'ep-scope-1',
-          text: '<p><strong>Scope of assignment</strong> (any additional work requested, such as CSRS 4460, tax filings and other specified procedures)</p>',
-          answerType: 'long-answer',
-          options: [],
-          required: false,
-          answer: 'Audit of the financial statements of Shipping Line Inc. for the year ended March 31, 2024, prepared under ASPE. No additional services requested. Engagement reference: AUD-SL-Mar312024.'
-        }
+        la('tpd-s1-date', '<p>Date/time of discussion</p>', 'April 14, 2024 at 9:00 AM'),
+        la('tpd-s1-attendees', '<p>Attendees</p>', 'J. Williams (Partner), S. Chen (Manager), A. Kumar (Senior), T. Nguyen (Staff), R. Patel (CFO — Shipping Line Inc.), M. Singh (Controller — Shipping Line Inc.)'),
       ],
       isExpanded: true
     },
     {
-      id: 'section-ep-changes',
-      title: 'Changes from previous periods',
+      id: 'tpd-pA',
+      title: 'PART A — Agenda: Initial Audit Planning',
       questions: [
-        {
-          id: 'ep-changes-1',
-          text: '<p><strong>Changes from previous periods</strong> (nature of business, personnel, financial reporting, significant developments, etc.)</p>',
-          answerType: 'long-answer',
-          options: [],
-          required: false,
-          answer: 'Two new freight contracts signed during the year. No changes to financial reporting framework or accounting policies. Headcount increased from 89 to 94. MarineTrack software upgraded to v4.2 for digital bill-of-lading. No changes to key financial reporting personnel.'
-        }
+        h('tpd-pA-1', '<p><strong>1. Team responsibilities</strong><br/>The engagement partner is to remind team members about:</p>', [
+          la('tpd-pA-1a', '<p>Their responsibility to contribute to audit quality.</p>'),
+          la('tpd-pA-1b', '<p>The importance of professional ethics, values and attitudes.</p>'),
+          la('tpd-pA-1c', '<p>The importance of timely and robust communications within the team, including: potential/actual independence breaches; possible management bias; other conditions/events that impact the audit.</p>'),
+          la('tpd-pA-1-doc', '<p>Document matters arising and decisions reached:</p>', 'Partner reminded team of independence obligations and professional skepticism requirements. No independence issues identified for Shipping Line Inc. Team confirmed understanding of ethical requirements and communication protocols for the engagement.'),
+        ]),
+        h('tpd-pA-2', '<p><strong>2. Team introductions and orientation</strong></p>', [
+          la('tpd-pA-2a', '<p>Introduce the audit team members and their roles in the audit.</p>', 'J. Williams (Partner — overall engagement quality), S. Chen (Manager — fieldwork coordination, revenue, AR), A. Kumar (Senior — PP&E, debt, inventory, FX), T. Nguyen (Staff — payroll, AP, expenses, cash).'),
+          la('tpd-pA-2b', '<p>Discuss the nature of the entity, users of the F/S, applicable financial reporting framework, operations, materiality, key personnel and areas to watch.</p>', 'Shipping Line Inc. — marine freight and logistics operator. F/S prepared under ASPE. Primary users: RBC (lender, bank covenant compliance), shareholders. Period ended March 31, 2024. Overall materiality: $125K (1% of revenues $12.5M). Key personnel: R. Patel (CFO), M. Singh (Controller). Areas to watch: revenue recognition, vessel impairment, USD FX.'),
+          la('tpd-pA-2c', '<p>Discuss the timing and scope of the engagement.</p>', 'Full-scope audit of year ended March 31, 2024. Fieldwork: June 3–14, 2024. File review: June 17, 2024. Management meeting: June 18, 2024. Signed report target: June 30, 2024 (bank covenant deadline).'),
+          la('tpd-pA-2d', '<p>Outline significant events occurring in the current period.</p>', 'Two new USD freight contracts commenced Q3 FY2024 (~35% of revenue now USD-denominated). New crew management software system implemented Q2 FY2024. New port call agreements with 3 eastern ports effective February 2024.'),
+          la('tpd-pA-2-doc', '<p>Document matters arising and decisions reached:</p>', 'Team orientation completed. All members familiar with engagement scope and timing. Materiality communicated. USD foreign currency exposure flagged as a key risk area requiring additional attention during planning.'),
+        ]),
+        h('tpd-pA-3', '<p><strong>3. Past experience</strong><br/>Discuss risks/issues/events that were noted in previous engagements, such as:</p>', [
+          la('tpd-pA-3a', '<p>Nature and extent of identified misstatements and significant adjusting journal entries.</p>', 'Significant adjusting journal entry for accrued freight costs (underaccrual of ~$185K) identified in the prior year audit. Management accepted the adjustment. Root cause: voyage completion cutoff timing.'),
+          la('tpd-pA-3b', '<p>Significant risks, including any key audit matters.</p>', 'Revenue recognition (voyage completion method) identified as a significant risk in prior year. Going concern disclosures included in prior year notes due to covenant breach (subsequently cured). Revenue cut-off testing was a significant risk area.'),
+          la('tpd-pA-3c', '<p>Significant estimates relating to financial reporting, including disclosures.</p>', 'Vessel dry-dock capitalization policy and useful life estimates required significant judgment. Vessel book value $8.2M — impairment indicators assessed annually.'),
+          la('tpd-pA-3d', '<p>Communications with management and TCWG.</p>', 'Planning letter issued to management and board of directors prior to commencement of fieldwork. Management representation letter obtained at completion. No material weaknesses communicated in prior year.'),
+          la('tpd-pA-3e', '<p>Known or alleged instances of fraud occurring.</p>', 'No known or alleged fraud instances in prior year. Management confirmed no fraud awareness during planning inquiries.'),
+          la('tpd-pA-3f', '<p>Matters that caused concern or delays in performing procedures or resolving audit issues.</p>', 'Prior year: delays in obtaining vessel dry-dock records from third-party marine surveyor. Team to request records early in current engagement. Also: AR confirmations for two overseas customers required extended follow-up.'),
+          la('tpd-pA-3-doc', '<p>Document matters arising and decisions reached:</p>', 'Prior year AJE for accrued freight costs to be addressed with enhanced cut-off testing procedures. Revenue cut-off carried forward as significant risk. Early request for vessel records and AR confirmation package planned for week 1 of fieldwork.'),
+        ]),
+        h('tpd-pA-4', '<p><strong>4. Key changes</strong><br/>Discuss key changes that have occurred since the previous audit and their audit implications. Consider changes in:</p>', [
+          la('tpd-pA-4a', '<p>The industry, economy, legislation and competition.</p>', 'Continued port congestion and elevated freight rates in Pacific shipping lanes. CAD/USD exchange rate volatility — average rate moved from 1.31 to 1.37 during FY2024. No significant new maritime legislation affecting operations.'),
+          la('tpd-pA-4b', '<p>Operations and business plans.</p>', 'Two new USD freight contracts commenced Q3 FY2024 — approximately 35% of revenue now USD-denominated. New port call agreements with eastern Canadian ports effective February 2024.'),
+          la('tpd-pA-4c', '<p>Financing (new financing agreements, refinancing, etc.)</p>', 'Existing RBC credit facility renewed October 2023 — DSCR covenant ratio reset to 1.25x. No new financing. Long-term debt balance $4.8M at year end.'),
+          la('tpd-pA-4d', '<p>Business acquisitions or amalgamations.</p>', 'No acquisitions or amalgamations during the period.'),
+          la('tpd-pA-4e', '<p>Personnel, organization and governance.</p>', 'Headcount increased from 89 to 94. No changes to CFO or Controller. Board composition unchanged.'),
+          la('tpd-pA-4f', '<p>Internal control and accounting systems.</p>', 'New crew management software system implemented Q2 FY2024 (replacing legacy spreadsheet tracking). MarineTrack billing system unchanged. No changes to accounting policies.'),
+          la('tpd-pA-4g', '<p>New accounting standards and changes to accounting policies.</p>', 'No new ASPE standards effective for year ended March 31, 2024 with material impact. Accounting policies consistent with prior year.'),
+          la('tpd-pA-4-doc', '<p>Document matters arising and decisions reached:</p>', 'USD revenue exposure (~35%) flagged as new significant risk — USD translation testing and FX gain/loss procedures to be added to audit plan. New crew management software: assess design and implementation of controls over crew cost recording. DSCR covenant compliance to be confirmed.'),
+        ]),
+        h('tpd-pA-5', '<p><strong>5. Preliminary analytical review</strong><br/>Review the results of the preliminary analytical review (Form 501) and discuss:</p>', [
+          la('tpd-pA-5a', '<p>How actual results aligned or differed with expectations based on the economic and industry trends, changes to operations, etc.</p>', 'Revenue of $12.5M is up 8% from prior year ($11.6M) — consistent with new contracts and rate increases. Gross margin declined slightly from 38% to 35% — consistent with increased fuel costs. USD FX gain of $142K recognized — consistent with USD contract exposure and CAD/USD rate movements.'),
+          la('tpd-pA-5b', '<p>Whether any variances or balances require further analysis, investigation or could be indicative of possible RMMs (note on Form 520).</p>', 'Accrued liabilities decreased $180K year-over-year despite revenue growth — flagged for investigation (possible underaccrual consistent with prior year finding). Accounts receivable DSO increased from 38 to 47 days — collection follow-up and bad debt assessment required. Noted on Form 520.'),
+          la('tpd-pA-5-doc', '<p>Document matters arising and decisions reached:</p>', 'Accrued liabilities variance and AR DSO increase both carried to Form 520 as potential RMMs. Voyage cut-off and accrued freight cost procedures to be expanded. Preliminary analytics completed by S. Chen and reviewed by J. Williams on April 12, 2024.'),
+        ]),
+        h('tpd-pA-6', '<p><strong>6. Identifying potential risks of material misstatement</strong><br/>Discuss where RMMs could be identified, including the susceptibility of the entity\'s F/S to material misstatement (fraud or error). Consider the following:</p>', [
+          la('tpd-pA-6a', '<p>Material account balances and transactions.</p>', 'Material areas: Revenue $12.5M, Vessels & PP&E $8.2M, Long-term debt $4.8M, AR $2.1M, Inventory $750K. All exceed performance materiality of $87.5K.'),
+          la('tpd-pA-6b', '<p>Complex areas in the applicable financial reporting framework, including classification and disclosures.</p>', 'ASPE s.3061 — PP&E: vessel dry-dock capitalization and useful life. ASPE s.1651 — Foreign currency: USD contract translation. ASPE s.3840 — Related party disclosures: related party charter agreement with sibling entity (flagged for confirmation).'),
+          la('tpd-pA-6c', '<p>Extent and nature of related-party relationships and transactions.</p>', 'Charter agreement with sibling company (common shareholder) — vessel lease payments of approximately $420K per year. Related party terms to be confirmed as at arm\'s length or disclosed.'),
+          la('tpd-pA-6d', '<p>The application of key accounting policies, including revenue recognition and the rebuttable assumption that revenue recognition is a significant risk.</p>', 'Revenue recognized on voyage completion method (ASPE s.3400). Revenue recognition is a significant risk — rebuttable presumption applies. Voyage cut-off at March 31, 2024 requires testing. Significant risk carried to Form 520.'),
+          la('tpd-pA-6e', '<p>Nature of estimates, including the level of complexity, change and estimation uncertainty.</p>', 'Key estimates: (1) vessel useful lives and residual values; (2) dry-dock cost capitalization vs. expense; (3) accrued voyage costs at period end; (4) bad debt provision ($38K).'),
+          la('tpd-pA-6f', '<p>Significant deficiencies in internal control.</p>', 'No significant deficiencies communicated in prior year. New crew management software — control design and implementation to be assessed in current year. No IT general controls assessment planned.'),
+          la('tpd-pA-6g', '<p>Significant risks (Form 520) and, if applicable, any key audit matters.</p>', 'Two significant risks identified: (1) Revenue recognition — voyage cut-off (ASPE s.3400); (2) Vessel impairment — management estimate ($8.2M book value). Both carried to Form 520. ASPE engagement — key audit matters not applicable.'),
+          la('tpd-pA-6h', '<p>Financing arrangements and covenants.</p>', 'RBC credit facility — DSCR covenant 1.25x minimum. Management representation of covenant compliance required. Covenant calculation to be recalculated and agreed to loan agreement.'),
+          la('tpd-pA-6i', '<p>Management incentive plans.</p>', 'No management bonus or profit-sharing plans. Shareholder dividends — no formal plan; distributions by board resolution. No incentive-based misstatement motivation identified.'),
+          la('tpd-pA-6j', '<p>Operating losses and negative business trends.</p>', 'No operating losses. Revenue growth 8%. Net income positive. No negative business trends identified.'),
+          la('tpd-pA-6k', '<p>Going-concern events or conditions.</p>', 'Prior year going concern disclosures removed — covenant breach cured. No current year going concern indicators identified based on preliminary analytics.'),
+          la('tpd-pA-6l', '<p>Significant litigation.</p>', 'No known litigation. Management inquiry planned at fieldwork commencement to confirm.'),
+          la('tpd-pA-6-doc', '<p>Document matters arising and decisions reached:</p>', 'Two significant risks carried to Form 520: revenue recognition and vessel impairment. Related party charter agreement to be confirmed. USD translation procedures to be included in audit plan. Accrued liabilities underaccrual risk from prior year carried forward as a heightened risk area.'),
+        ]),
+        h('tpd-pA-7', '<p><strong>7. Risk assessment procedures</strong><br/>Discuss what RAPs will be performed and who will perform them. Consider:</p>', [
+          la('tpd-pA-7a', '<p>Nature and extent of information to be provided by the entity.</p>', 'Client to provide: signed trial balance, aged AR, aged AP, fixed asset continuity schedule, debt continuity, vessel dry-dock records, crew management system export, USD contract schedule, bank confirmations package. PBC list issued to R. Patel and M. Singh on April 15, 2024.'),
+          la('tpd-pA-7b', '<p>Expected reliance on internal controls, which could have an impact on what business processes and information systems will need an assessment of design and implementation.</p>', 'Primarily substantive approach — limited controls reliance. Assessment of design and implementation for: (1) crew management software (revenue-related payroll costs); (2) MarineTrack billing and voyage completion recording. No tests of controls planned beyond DI assessment.'),
+          la('tpd-pA-7c', '<p>Whether the organization outsources key processes for which a service auditor\'s report should be obtained.</p>', 'No significant outsourced processes. Payroll processed internally through ADP — no SOC 1 report required. Bank confirmations to be obtained directly from RBC.'),
+          la('tpd-pA-7d', '<p>If the organization relies on automated or semi-automated controls for which an evaluation of IT general controls would be required.</p>', 'MarineTrack system generates voyage revenue postings — semi-automated. IT general controls assessment not planned given primarily substantive approach and manual override capability available. Auditor to verify completeness of voyage data extract independently.'),
+          la('tpd-pA-7-doc', '<p>Document matters arising and decisions reached:</p>', 'PBC list issued April 15, 2024. DI assessment of crew management software to be performed by A. Kumar in week 1 of fieldwork. Voyage data extract from MarineTrack to be obtained directly and reconciled to revenue ledger. Primarily substantive approach confirmed.'),
+        ]),
       ],
       isExpanded: true
     },
     {
-      id: 'section-ep-strategy',
-      title: 'Engagement strategy',
+      id: 'tpd-pB',
+      title: 'PART B — Agenda: Risk Response Planning',
       questions: [
-        {
-          id: 'ep-strategy-1',
-          text: '<p><strong>Engagement strategy</strong> (comments on overall approach, specific inquiries/procedures, areas to consider, etc.)</p>',
-          answerType: 'long-answer',
-          options: [],
-          required: false,
-          answer: 'Primarily substantive approach. Key risks: revenue recognition (voyage cut-off), vessel impairment ($8.2M PP&E), and USD foreign currency transactions. Specific procedures: voyage log reconciliation, impairment indicator analysis, USD translation testing. Year-end fieldwork April 14-25, 2024.'
-        }
+        h('tpd-pB-8', '<p><strong>8. Assessed risks</strong><br/>Review the assessed risks identified as a result of performing RAPs (Form 520) and discuss:</p>', [
+          la('tpd-pB-8a', '<p>Whether all identified risks of material misstatement have been carried forward onto the risk register (Form 520).</p>', 'Risk register (Form 520) reviewed. Two significant risks carried: revenue recognition and vessel impairment. USD FX translation carried as elevated risk. Accrued liabilities underaccrual carried as elevated risk. All RMMs confirmed on register.'),
+          la('tpd-pB-8b', '<p>The assessment of risk at the F/S level, and their impact on assertion level risks (if any).</p>', 'F/S level: management bias in estimates (vessel useful life, accrued freight). No pervasive F/S-level misstatement risk identified. Impact: increased substantive procedures in estimates and accruals.'),
+          la('tpd-pB-8c', '<p>The assessment of risk at the assertion level and conclusions on planned control reliance.</p>', 'Revenue — completeness and cut-off: significant risk, no control reliance. Vessels — valuation: significant risk, no control reliance. Accrued liabilities — completeness: elevated risk, no control reliance. All other areas: moderate risk, substantive approach.'),
+          la('tpd-pB-8d', '<p>Any significant risks identified and their potential impact on the audit response.</p>', 'Revenue cut-off: voyage completion documentation testing for all voyages in transit at March 31, 2024 (estimated 8-12 voyages). Vessel impairment: assess impairment indicators, review management impairment analysis.'),
+          la('tpd-pB-8e', '<p>Any unexpected results, missing information, or evidence of management override or bias.</p>', 'No evidence of management override or bias identified at planning stage. Preliminary analytics variances (accrued liabilities, DSO) explained by business factors. No red flags identified.'),
+          la('tpd-pB-8-doc', '<p>Document matters arising and decisions reached:</p>', 'Risk register finalized on Form 520. Audit responses designed for each significant and elevated risk. No changes to planned approach.'),
+        ]),
+        h('tpd-pB-9', '<p><strong>9. Fraud risks and scenarios</strong></p>', [
+          la('tpd-pB-9a', '<p>Review Form 506 (or equivalent).</p>', 'Form 506 reviewed. Fraud risk assessment completed. Revenue recognition identified as fraud risk (rebuttable presumption — ASPE). Management override of internal controls: universal significant risk.'),
+          la('tpd-pB-9b', '<p>Discuss how fraud might occur in the entity, notwithstanding past experience of the honesty and integrity of management and TCWG.</p>', 'Potential fraud scenarios discussed: (1) premature revenue recognition by accelerating voyage completion dates; (2) misclassification of dry-dock costs to inflate asset values; (3) understating accrued freight costs to improve net income. No specific concerns about management integrity — scenarios discussed for completeness.'),
+          la('tpd-pB-9c', '<p>Identify any pressures, attitudes or rationalizations that exist among senior management/accounting personnel that could lead to fraud. Refer to Appendix 1 of CAS 240.</p>', 'No significant pressure indicators identified. DSCR covenant recently reset — minor pressure to maintain profitability ratios. No management bonus or profit-sharing arrangements. Refer to Form 506 and CAS 240 Appendix 1 fraud risk factors.'),
+          la('tpd-pB-9-doc', '<p>Document matters arising and decisions reached:</p>', 'Fraud discussion completed April 14, 2024. Unpredictable procedures planned: (1) unannounced AR confirmation dispatch; (2) journal entry population testing for unusual entries. Revenue recognition fraud risk addressed with expanded cut-off procedures.'),
+        ]),
+        h('tpd-pB-10', '<p><strong>10. Design an appropriate audit response</strong><br/>Design F/S-level and assertion-level responses. Review and discuss:</p>', [
+          la('tpd-pB-10a', '<p>Specific procedures to address significant risks assessed on Form 520.</p>', 'Revenue cut-off: test all voyages in transit at March 31 — obtain voyage completion logs, compare to revenue posting dates, recalculate revenue recognition. Vessel impairment: review management\'s indicator assessment, compare book value to appraisal, assess dry-dock remaining life.'),
+          la('tpd-pB-10b', '<p>Planned tests of controls.</p>', 'No formal tests of controls planned. Design and implementation assessment only for: (1) crew management software; (2) MarineTrack voyage billing.'),
+          la('tpd-pB-10c', '<p>Planned tests of details.</p>', 'Revenue: voyage log substantive testing, cut-off sample. AR: confirmation package (40 items, >$5K threshold). PP&E: additions/disposals, dry-dock amortization recalculation. Debt: confirmation, covenant recalculation. Payroll: gross-to-net recalculation sample. FX: USD transaction translation recalculation sample.'),
+          la('tpd-pB-10d', '<p>Unpredictable procedures (required for fraud risks).</p>', 'Unpredictable procedure 1: unannounced AR confirmation dispatch on day 1 of fieldwork. Unpredictable procedure 2: full journal entry population testing using MariTrack GL export for unusual entries.'),
+          la('tpd-pB-10e', '<p>Substantive analytical procedures: consider the source of data and its reliability.</p>', 'Analytical procedures: (1) revenue by voyage type — compare monthly trends; (2) gross margin by service line — compare to prior year and expectation; (3) payroll by department — compare headcount-adjusted to prior year. Source: management-prepared trial balance and MarineTrack export — reliability assessed as moderate; analytical conclusions corroborated by tests of detail.'),
+          la('tpd-pB-10f', '<p>SCOTABDs and procedures for which confirmations will be obtained.</p>', 'Confirmations planned: (1) AR — 40 positive confirmations; (2) RBC bank account and credit facility (balance, covenants, collateral); (3) legal counsel — contingencies and litigation. No SCOTABDs identified.'),
+          la('tpd-pB-10-doc', '<p>Document matters arising and decisions reached:</p>', 'Audit responses finalized and documented in Form 520 and individual audit programs. Confirmation package to be prepared by T. Nguyen by May 28, 2024 for dispatch on June 3 (day 1 of fieldwork).'),
+        ]),
+        h('tpd-pB-11', '<p><strong>11. Audit plans and overall audit strategy</strong><br/>Finalize the audit plans, and update the overall audit strategy (Form 430). Address:</p>', [
+          la('tpd-pB-11a', '<p>Extent (if any) of pre-period-end work.</p>', 'No interim procedures planned. All procedures to be performed at year-end (June 3–14, 2024).'),
+          la('tpd-pB-11b', '<p>Audit timing and management/TCWG communications, including the communication of the overall audit plan.</p>', 'Planning letter communicated to management (R. Patel) on April 16, 2024. Board/TCWG communication planned for June 18, 2024 (post-fieldwork, pre-sign-off). Signed report target: June 30, 2024.'),
+          la('tpd-pB-11c', '<p>Where applicable, coordination with experts, service auditors and group component auditors.</p>', 'No experts, service auditors or component auditors required.'),
+          la('tpd-pB-11d', '<p>Schedules and analysis to be completed by the client.</p>', 'PBC list issued April 15, 2024. Key items: trial balance by May 27, vessel continuity and dry-dock records by May 30, crew system export by June 1, bank confirmation package by May 28.'),
+          la('tpd-pB-11e', '<p>Audit team roles, scheduling and timing of file reviews.</p>', 'A. Kumar (Senior) on-site June 3–14. T. Nguyen (Staff) on-site June 3–10. S. Chen (Manager) reviews June 10 and June 14. J. Williams (Partner) review June 17. File complete June 30.'),
+          la('tpd-pB-11-doc', '<p>Document matters arising and decisions reached:</p>', 'Overall audit strategy (Form 430) updated April 14, 2024. Audit plan finalized. PBC list distributed. Engagement timeline confirmed with management.'),
+        ]),
+        h('tpd-pB-12', '<p><strong>12. Team reminders</strong><br/>Remind team members about the need for:</p>', [
+          la('tpd-pB-12a', '<p>Exercising professional skepticism at all times.</p>'),
+          la('tpd-pB-12b', '<p>Maintaining independence and ethics.</p>'),
+          la('tpd-pB-12c', '<p>Ongoing communication among the engagement team, especially where misstatements are found, tests fail or the client is not providing information on a timely basis.</p>'),
+          la('tpd-pB-12d', '<p>Updating the overall audit strategy (Form 430) for changes to proposed plans.</p>'),
+          la('tpd-pB-12e', '<p>Remaining alert throughout the audit for indicators of fraud, related parties, going-concern uncertainties or new information. (Note: Notify the engagement partner immediately about new information obtained that, if known earlier, may have caused the firm to decline the audit engagement.)</p>'),
+          la('tpd-pB-12-doc', '<p>Document matters arising and decisions reached:</p>', 'Reminders issued to all team members. Team confirmed understanding. A. Kumar to notify S. Chen immediately if vessel dry-dock records are not received by May 30 per PBC list.'),
+        ]),
+        h('tpd-pB-13', '<p><strong>13. Other matters (specify)</strong></p>', [
+          la('tpd-pB-13-doc', '<p>Document matters arising and decisions reached:</p>', ''),
+        ]),
       ],
       isExpanded: true
     },
     {
-      id: 'section-ep-other',
-      title: 'Other considerations',
+      id: 'tpd-s4',
+      title: '4. Action Steps',
       questions: [
-        {
-          id: 'ep-other-1',
-          text: '<p><strong>Other considerations</strong> (need for subject matter experts, group requirements, etc.)</p>',
-          answerType: 'long-answer',
-          options: [],
-          required: false,
-          answer: 'No specialists required. No group reporting requirements. TCWG planning communication issued to board of directors February 28, 2024. Bank covenant compliance to be confirmed as part of long-term debt procedures.'
-        }
+        h('tpd-s4-1', '<p>Action step 1:</p>', [
+          la('tpd-s4-1-person', '<p>Person responsible:</p>', 'T. Nguyen'),
+          la('tpd-s4-1-deadline', '<p>Deadline:</p>', 'May 28, 2024'),
+          la('tpd-s4-1-actual', '<p>Actual completion:</p>', ''),
+        ]),
+        h('tpd-s4-2', '<p>Action step 2:</p>', [
+          la('tpd-s4-2-person', '<p>Person responsible:</p>', 'A. Kumar'),
+          la('tpd-s4-2-deadline', '<p>Deadline:</p>', 'May 30, 2024'),
+          la('tpd-s4-2-actual', '<p>Actual completion:</p>', ''),
+        ]),
+        h('tpd-s4-3', '<p>Action step 3:</p>', [
+          la('tpd-s4-3-person', '<p>Person responsible:</p>', 'S. Chen'),
+          la('tpd-s4-3-deadline', '<p>Deadline:</p>', 'June 1, 2024'),
+          la('tpd-s4-3-actual', '<p>Actual completion:</p>', ''),
+        ]),
+        h('tpd-s4-4', '<p>Action step 4:</p>', [
+          la('tpd-s4-4-person', '<p>Person responsible:</p>', ''),
+          la('tpd-s4-4-deadline', '<p>Deadline:</p>', ''),
+          la('tpd-s4-4-actual', '<p>Actual completion:</p>', ''),
+        ]),
+        h('tpd-s4-5', '<p>Action step 5:</p>', [
+          la('tpd-s4-5-person', '<p>Person responsible:</p>', ''),
+          la('tpd-s4-5-deadline', '<p>Deadline:</p>', ''),
+          la('tpd-s4-5-actual', '<p>Actual completion:</p>', ''),
+        ]),
       ],
       isExpanded: true
-    }
+    },
+    {
+      id: 'tpd-s5',
+      title: '5. Sign-off',
+      questions: [
+        la('tpd-s5-prep', '<p>Prepared by</p>', 'J. Williams, CPA'),
+        la('tpd-s5-prep-date', '<p>Date</p>', 'April 15, 2024'),
+        la('tpd-s5-rev', '<p>Reviewed by</p>', ''),
+        la('tpd-s5-rev-date', '<p>Date</p>', ''),
+      ],
+      isExpanded: true
+    },
   ];
 
   return {
     id: 'global-template-engagement-planning',
-    title: 'Engagement Planning',
-    description: 'Document the engagement planning for a review engagement.',
-    objective: `This form covers:
-• Scope of assignment
-• Changes from previous periods
-• Engagement strategy
-• Other considerations`,
+    title: 'Team Planning Discussions',
+    description: 'Documents the team planning discussions for the audit engagement per CAS 300.5.',
+    objective: '<p>To ensure appropriate communication among the engagement team resulting in a well-planned audit (CAS 300.5).</p>',
+    note: '<ul><li>Ensure involvement of the engagement partner and key team members (plus the engagement quality reviewer, if applicable).</li><li>This form is divided into two parts. Part A would typically take place at the commencement of the audit. Part B would start by reviewing the assessed risks and developing appropriate audit responses. In some cases, the two discussions could be combined.</li></ul><p><em>F/S = Financial statements. TCWG = Those charged with governance. RMMs = Risks of material misstatement. RAPs = Risk assessment procedures.</em></p>',
     sections,
     createdAt: new Date(),
     updatedAt: new Date()
@@ -8745,89 +8858,106 @@ export const generatePreliminaryAnalyticalProceduresChecklist = (): Checklist =>
 };
 
 export const generateAuditStrategyMemorandumChecklist = (): Checklist => {
-  const q = (id: string, text: string, subQuestions?: Question[], answer = '', explanation = '', reference = ''): Question => ({
-    id, text, answerType: 'yes-no-na' as const, options: ['Yes', 'No', 'NA'],
-    required: false, answer, explanation, reference, ...(subQuestions ? { subQuestions } : {})
+  const la = (id: string, text: string, answer = ''): Question => ({
+    id, text, answerType: 'long-answer' as const, options: [], required: false, answer
+  });
+  const h = (id: string, text: string, sub?: Question[]): Question => ({
+    id, text, answerType: 'none' as const, options: [], required: false, answer: '',
+    showResponse: false as any, showExplanation: false as any, showReference: false as any,
+    ...(sub ? { subQuestions: sub } : {})
   });
 
   const sections: Section[] = [
     {
-      id: 'section-asm-1',
-      title: '1. Reporting requirements',
+      id: 'asm-s1',
+      title: '1. Reporting Requirements',
       questions: [
-        q('asm-q1-1', '<p>The applicable financial reporting framework (such as Canadian Accounting Standards for Private Enterprises (ASPE)).</p>', undefined, 'Yes', 'ASPE — Canadian Accounting Standards for Private Enterprises. Entity is a private corporation engaged in marine freight and logistics.'),
-        q('asm-q1-2', '<p>Industry-specific or specialized requirements.</p>', undefined, 'Yes', 'Marine industry: vessel ownership regulations, Transport Canada licensing, HAZ MAT shipping requirements, customs/border regulations.'),
+        la('asm-s1-1', '<p>The applicable financial reporting framework (such as Canadian Accounting Standards for Private Enterprises (ASPE)).</p>', 'ASPE — Canadian Accounting Standards for Private Enterprises. Entity is a private corporation engaged in marine freight and logistics.'),
+        la('asm-s1-2', '<p>Industry-specific or specialized requirements.</p>', 'Marine industry: vessel ownership regulations, Transport Canada licensing, HAZ MAT shipping requirements, customs/border regulations.'),
       ],
       isExpanded: true
     },
     {
-      id: 'section-asm-2',
+      id: 'asm-s2',
       title: '2. Timing',
       questions: [
-        q('asm-q2-1', '<p>Entity\'s reporting deadlines (if any).</p>', undefined, 'Yes', 'Draft financial statements to management by May 10, 2024. Signed report by May 31, 2024 (bank covenant deadline).'),
-        q('asm-q2-2', '<p>Team planning discussions. <span class="text-muted-foreground text-xs">(CAS 300.7-8)</span></p>', undefined, 'Yes', 'Planning meeting held April 14, 2024. Attendees: J. Williams (Partner), S. Chen (Manager), A. Kumar (Senior), T. Nguyen (Staff), R. Patel (CFO — Shipping Line Inc.), M. Singh (Controller — Shipping Line Inc.).'),
-        q('asm-q2-3', '<p>Planned fieldwork start/end.</p>', undefined, 'Yes', 'Fieldwork: April 14–25, 2024. Interim fieldwork: N/A (year-end only engagement).'),
-        q('asm-q2-4', '<p>File reviews (including EQCR).</p>', undefined, 'Yes', 'Manager review: ongoing during fieldwork. Partner review: May 1, 2024. EQCR: May 5, 2024 (if required).'),
-        q('asm-q2-5', '<p>Meetings with management and TCWG.</p>', undefined, 'Yes', 'Planning meeting with management: April 14, 2024. TCWG communication at completion: May 15, 2024.'),
-        q('asm-q2-6', '<p>Other (specify).</p>', undefined, 'NA', ''),
+        la('asm-s2-1', '<p>Entity\'s reporting deadlines (if any).</p>', 'Draft financial statements to management by June 17, 2024. Signed report by June 30, 2024 (bank covenant deadline).'),
+        la('asm-s2-2', '<p>Team planning discussions.</p>', 'Planning meeting held April 14, 2024. Attendees: J. Williams (Partner), S. Chen (Manager), A. Kumar (Senior), T. Nguyen (Staff), R. Patel (CFO — Shipping Line Inc.), M. Singh (Controller — Shipping Line Inc.).'),
+        la('asm-s2-3', '<p>Planned fieldwork start/end.</p>', 'Fieldwork: June 3–14, 2024. Interim fieldwork: N/A (year-end only engagement).'),
+        la('asm-s2-4', '<p>File reviews (including EQCR).</p>', 'Manager review: ongoing during fieldwork. Partner review: June 17, 2024. EQCR: not required for this engagement.'),
+        la('asm-s2-5', '<p>Meetings with management and TCWG.</p>', 'Planning meeting with management: April 14, 2024. TCWG communication at completion: June 18, 2024.'),
+        la('asm-s2-6', '<p>Other (specify).</p>', ''),
       ],
       isExpanded: true
     },
     {
-      id: 'section-asm-3',
-      title: '3. Factors to consider in the audit',
-      note: 'Identify key areas to be addressed in the audit:',
+      id: 'asm-s3',
+      title: '3. Factors to Consider in the Audit',
       questions: [
-        q('asm-q3-1', '<p>Material financial statement areas and disclosures (Form 590).</p>', undefined, 'Yes', 'Material FS areas: Vessels & PP&E ($8.2M), Long-term debt ($4.8M), Revenue ($12.5M), Accounts receivable ($2.1M), Inventory ($750K). See Form 590.'),
-        q('asm-q3-2', '<p>Major operational or control changes during the period.</p>', undefined, 'Yes', 'Two new freight contracts commenced Q3 2024. USD revenue exposure increased (~35% of revenue). New crew management software implemented Q2 2024.'),
-        q('asm-q3-3', '<p>Impact of changes in accounting standards.</p>', undefined, 'Yes', 'No new ASPE standards effective for year ended March 31, 2024 with material impact. ASPE s.3462 — Employee Future Benefits: no defined benefit plans.'),
-        q('asm-q3-4', '<p>Matters raised (such as problem areas) from past experience.</p>', undefined, 'Yes', 'First-year engagement with Shipping Line Inc. No predecessor findings received. Prior year tax return reviewed — no unusual adjustments.'),
-        q('asm-q3-5', '<p>Significant risks and going-concern uncertainties.</p>', undefined, 'Yes', 'Significant risks: Revenue recognition (voyage completion method), vessel impairment ($8.2M book value), USD foreign exchange exposure. Going concern: no indicators identified. See Form 540.'),
-        q('asm-q3-6', '<p>Use of auditor experts.</p>', undefined, 'NA', 'No auditor\'s experts required for this engagement.'),
-        q('asm-q3-7', '<p>Use of service organization reports.</p>', undefined, 'NA', 'No service organization reports applicable.'),
-        q('asm-q3-8', '<p>Use of component auditors.</p>', undefined, 'NA', 'Single entity — no component auditors.'),
-        q('asm-q3-9', '<p>Coordination of work with a group auditor.</p>', undefined, 'NA', 'Not applicable — Shipping Line Inc. is not part of a group.'),
-        q('asm-q3-10', '<p>Need for stand-alone audited financial statements of subsidiaries.</p>', undefined, 'NA', 'Not applicable.'),
-        q('asm-q3-11', '<p>Key audit matters (where applicable).</p>', undefined, 'NA', 'Not applicable — ASPE engagement; key audit matters reporting not required.'),
+        h('asm-s3-h', '<p>Identify key areas to be addressed in the audit:</p>', [
+          la('asm-s3-1', '<p>Material financial statement areas and disclosures (Form 590).</p>', 'Material FS areas: Vessels & PP&E ($8.2M), Long-term debt ($4.8M), Revenue ($12.5M), Accounts receivable ($2.1M), Inventory ($750K). Key disclosures: related party charter agreement, USD FX risk. See Form 590.'),
+          la('asm-s3-2', '<p>Major operational or control changes during the period.</p>', 'Two new USD freight contracts commenced Q3 FY2024 (~35% of revenue USD-denominated). New crew management software system implemented Q2 FY2024. New port call agreements with 3 eastern ports effective February 2024.'),
+          la('asm-s3-3', '<p>Impact of changes in accounting standards.</p>', 'No new ASPE standards effective for year ended March 31, 2024 with material impact. Accounting policies consistent with prior year.'),
+          la('asm-s3-4', '<p>Matters raised (such as problem areas) from past experience.</p>', 'Prior year significant AJE for accrued freight costs (~$185K underaccrual). Prior year going concern disclosures (covenant breach subsequently cured). Revenue cut-off identified as significant risk in prior year.'),
+          la('asm-s3-5', '<p>Significant risks and going-concern uncertainties.</p>', 'Significant risks: (1) Revenue recognition — voyage completion method cut-off (ASPE s.3400); (2) Vessel impairment ($8.2M book value). USD FX translation elevated risk. Going concern: no indicators identified. See Form 520.'),
+          la('asm-s3-6', '<p>Use of auditor experts.</p>', 'No auditor\'s experts required for this engagement.'),
+          la('asm-s3-7', '<p>Use of service organization reports.</p>', 'No service organization reports applicable.'),
+          la('asm-s3-8', '<p>Use of component auditors.</p>', 'Single entity — no component auditors.'),
+          la('asm-s3-9', '<p>Coordination of work with a group auditor.</p>', 'Not applicable — Shipping Line Inc. is not part of a group.'),
+          la('asm-s3-10', '<p>Need for stand-alone audited financial statements of subsidiaries.</p>', 'Not applicable.'),
+          la('asm-s3-11', '<p>Key audit matters (where applicable).</p>', 'Not applicable — ASPE engagement; key audit matters reporting not required.'),
+        ]),
       ],
       isExpanded: true
     },
     {
-      id: 'section-asm-4',
-      title: '4. Audit team',
-      note: 'Identify the audit team members assigned and their roles.\n\nEnsure the assignment of appropriately experienced team members to areas where there may be higher risks of material misstatement.',
+      id: 'asm-s4',
+      title: '4. Audit Team',
       questions: [
-        q('asm-q4-1', '<p>Partner</p>', undefined, 'Yes', 'J. Williams, CPA — Engagement Partner. 18 years experience in maritime and transportation sector audits. Responsible for overall engagement quality and significant judgments.'),
-        q('asm-q4-2', '<p>Manager</p>', undefined, 'Yes', 'S. Chen, CPA — Engagement Manager. 9 years experience. Responsible for fieldwork coordination, revenue, AR, completion procedures.'),
-        q('asm-q4-3', '<p>Senior</p>', undefined, 'Yes', 'A. Kumar — Senior Associate. 4 years experience. Responsible for PP&E, debt, inventory, foreign currency.'),
-        q('asm-q4-4', '<p>Assistant</p>', undefined, 'Yes', 'T. Nguyen — Staff Associate. 1 year experience. Responsible for payroll, AP, expenses, cash.'),
-        q('asm-q4-5', '<p>Assistant 1</p>', undefined, 'NA', ''),
-        q('asm-q4-6', '<p>Expert</p>', undefined, 'NA', ''),
-        q('asm-q4-7', '<p>EQCR</p>', undefined, 'NA', 'EQCR not required for this engagement — private company, no listed entity.'),
+        h('asm-s4-h', '<p>Identify the audit team members assigned and their roles. Ensure the assignment of appropriately experienced team members to areas where there may be higher risks of material misstatement.</p>', [
+          la('asm-s4-1', '<p>Partner</p>', 'J. Williams, CPA — Engagement Partner. 18 years experience in maritime and transportation sector audits. Responsible for overall engagement quality and significant judgments.'),
+          la('asm-s4-2', '<p>Manager</p>', 'S. Chen, CPA — Engagement Manager. 9 years experience. Responsible for fieldwork coordination, revenue, AR, completion procedures.'),
+          la('asm-s4-3', '<p>Senior</p>', 'A. Kumar — Senior Associate. 4 years experience. Responsible for PP&E, debt, inventory, foreign currency.'),
+          la('asm-s4-4', '<p>Assistant</p>', 'T. Nguyen — Staff Associate. 1 year experience. Responsible for payroll, AP, expenses, cash.'),
+          la('asm-s4-5', '<p>Assistant 1</p>', ''),
+          la('asm-s4-6', '<p>Expert</p>', ''),
+          la('asm-s4-7', '<p>EQCR</p>', 'EQCR not required for this engagement — private company, no listed entity.'),
+        ]),
       ],
       isExpanded: true
     },
     {
-      id: 'section-asm-5',
+      id: 'asm-s5',
       title: '5. Budget',
       questions: [
-        q('asm-q5-1', '<p>Establish the budgeted audit fee and labour hours (Form 450).</p>', undefined, 'Yes', 'Budgeted fee: $28,500. Estimated hours: 185. See Form 450 for detailed time budget by team member and audit area.'),
+        la('asm-s5-1', '<p>Establish the budgeted audit fee and labour hours (Form 450).</p>', 'Budgeted fee: $28,500. Estimated hours: 185. See Form 450 for detailed time budget by team member and audit area.'),
       ],
       isExpanded: true
     },
     {
-      id: 'section-asm-6',
-      title: '6. Audit strategy',
+      id: 'asm-s6',
+      title: '6. Audit Strategy',
       questions: [
-        q('asm-q6-1', '<p>Provide a cross-reference to documents that outline the planned scope and timing of the audit, such as the communication with management and to TCWG (CAS 260.15). For an example of a written planning letter, refer to Sample Letter AL3.1.</p>', undefined, 'Yes', 'Audit plan: Forms 500-590. TCWG communication: planned for May 15, 2024 via letter AL3.1. Management planning letter sent April 16, 2024.'),
+        la('asm-s6-1', '<p>Provide a cross-reference to documents that outline the planned scope and timing of the audit, such as the communication with management and to TCWG (CAS 260.15). For an example of a written planning letter, refer to Sample Letter AL3.1.</p>', 'Audit plan: Forms 500-590. TCWG communication: planned for June 18, 2024 via letter AL3.1. Management planning letter sent April 16, 2024.'),
       ],
       isExpanded: true
     },
     {
-      id: 'section-asm-7',
+      id: 'asm-s7',
       title: '7. Subsequent Changes in Strategy',
       questions: [
-        q('asm-q7-1', '<p>Outline any significant changes made to the original audit strategy for this period as a result of performing further procedures or obtaining new information.</p>', undefined, 'NA', 'No subsequent changes to the original audit strategy as of file sign-off date.'),
+        la('asm-s7-1', '<p>Outline any significant changes made to the original audit strategy for this period as a result of performing further procedures or obtaining new information.</p>', 'No subsequent changes to the original audit strategy as of file sign-off date.'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'asm-s8',
+      title: '8. Sign-off',
+      questions: [
+        la('asm-s8-prep', '<p>Prepared by</p>', 'J. Williams, CPA'),
+        la('asm-s8-prep-date', '<p>Date</p>', 'April 15, 2024'),
+        la('asm-s8-rev', '<p>Reviewed by</p>', ''),
+        la('asm-s8-rev-date', '<p>Date</p>', ''),
       ],
       isExpanded: true
     },
@@ -8837,7 +8967,7 @@ export const generateAuditStrategyMemorandumChecklist = (): Checklist => {
     id: 'global-template-overall-audit-strategy',
     title: 'Overall Audit Strategy',
     description: 'Documents the overall audit strategy including scope, timing and direction of the audit as a guide for the development of the audit plan.',
-    objective: 'To document the scope, timing and direction of the audit as a guide for the development of the audit plan. (CAS 300.7-8)',
+    objective: '<p>To document the scope, timing and direction of the audit as a guide for the development of the audit plan.</p>',
     sections,
     createdAt: new Date(),
     updatedAt: new Date(),
@@ -10839,64 +10969,191 @@ export const generateUSUnderstandingEntityIndustryChecklist = (): Checklist => {
 };
 
 export const generateUSEngagementPlanningChecklist = (): Checklist => {
-  const q = (id: string, text: string, subQuestions?: Question[], answer = '', explanation = '', reference = ''): Question => ({
-    id, text, answerType: 'yes-no-na' as const, options: ['Yes', 'No', 'NA'],
-    required: false, answer, explanation, reference,
-    ...(subQuestions ? { subQuestions } : {})
+  const la = (id: string, text: string, answer = ''): Question => ({
+    id, text, answerType: 'long-answer' as const, options: [], required: false, answer
   });
+  const h = (id: string, text: string, sub?: Question[]): Question => ({
+    id, text, answerType: 'none' as const, options: [], required: false, answer: '',
+    showResponse: false as any, showExplanation: false as any, showReference: false as any,
+    ...(sub ? { subQuestions: sub } : {})
+  });
+
   const sections: Section[] = [
     {
-      id: 'us-ep-s1',
-      title: '1. Overall Audit Strategy',
+      id: 'us-tpd-s1',
+      title: '1. Meeting Details',
       questions: [
-        q('us-ep-1a', '<p>Has the overall audit strategy been documented per AU-C 300, including scope, timing, and direction of the audit?</p>', undefined, 'Yes', '<p>Overall audit strategy documented in strategy memorandum. Risk-based approach with emphasis on revenue recognition (ASC 606), ROU assets (ASC 842), and goodwill impairment (ASC 350). Strategy approved by M. Thompson.</p>', 'W/P Ref: ST-01'),
-        q('us-ep-1b', '<p>Has the audit plan been developed consistent with the overall strategy, identifying the nature, timing, and extent of planned risk assessment and further audit procedures?</p>', undefined, 'Yes', '<p>Detailed audit plan prepared by L. Garcia and reviewed by M. Thompson. Plan includes specific procedures for each significant account and risk area.</p>', 'W/P Ref: PL-01'),
-        q('us-ep-1c', '<p>Has the planning been updated for new information obtained during the audit?</p>', undefined, 'Yes', '<p>Planning updated January 21, 2025 after initial management meetings to reflect ASC 842 implementation details and goodwill impairment assessment methodology.</p>', 'W/P Ref: PL-02'),
+        la('us-tpd-s1-date', '<p>Date/time of discussion</p>', 'January 15, 2025 at 10:00 AM'),
+        la('us-tpd-s1-attendees', '<p>Attendees</p>', 'M. Thompson (Partner), L. Garcia (Manager), Senior 1 (Revenue/AR), Senior 2 (Expenses/ASC 842), J. Reyes (CFO — Harbor Freight Logistics LLC), K. Park (Controller — Harbor Freight Logistics LLC)'),
       ],
       isExpanded: true
     },
     {
-      id: 'us-ep-s2',
-      title: '2. Risk Assessment Approach',
+      id: 'us-tpd-pA',
+      title: 'PART A — Agenda: Initial Audit Planning',
       questions: [
-        q('us-ep-2a', '<p>Has the risk assessment approach been determined (combined approach with controls reliance vs. primarily substantive)?</p>', undefined, 'Yes', '<p>Primarily substantive approach selected given entity size and cost-benefit of controls testing. Limited controls reliance for payroll cycle (ADP processing) where testing is efficient.</p>', 'W/P Ref: ST-01'),
-        q('us-ep-2b', '<p>Has the engagement team brainstorming session on fraud risks been scheduled and conducted per AU-C 240.15?</p>', undefined, 'Yes', '<p>Fraud brainstorming session conducted January 20, 2025 with full engagement team. Revenue recognition and management override identified as primary fraud risk areas. Minutes documented.</p>', 'W/P Ref: FRA-01'),
+        h('us-tpd-pA-1', '<p><strong>1. Team responsibilities</strong><br/>The engagement partner is to remind team members about:</p>', [
+          la('us-tpd-pA-1a', '<p>Their responsibility to contribute to audit quality.</p>'),
+          la('us-tpd-pA-1b', '<p>The importance of professional ethics, values and attitudes.</p>'),
+          la('us-tpd-pA-1c', '<p>The importance of timely and robust communications within the team, including: potential/actual independence breaches; possible management bias; other conditions/events that impact the audit.</p>'),
+          la('us-tpd-pA-1-doc', '<p>Document matters arising and decisions reached:</p>', 'Partner reminded team of independence obligations and professional skepticism requirements. No independence issues identified for Harbor Freight Logistics LLC. Team confirmed understanding of ethical requirements and communication protocols.'),
+        ]),
+        h('us-tpd-pA-2', '<p><strong>2. Team introductions and orientation</strong></p>', [
+          la('us-tpd-pA-2a', '<p>Introduce the audit team members and their roles in the audit.</p>', 'M. Thompson (Partner — overall engagement quality), L. Garcia (Manager — fieldwork coordination, revenue, AR, ASC 842), Senior 1 (Revenue/AR cycle), Senior 2 (Expenses, payroll, ASC 842), Staff 1 (AP/cash), Staff 2 (Fixed assets/other).'),
+          la('us-tpd-pA-2b', '<p>Discuss the nature of the entity, users of the F/S, applicable financial reporting framework, operations, materiality, key personnel and areas to watch.</p>', 'Harbor Freight Logistics LLC — freight and logistics operator, Delaware LLC. F/S prepared under US GAAP (FASB ASC). Primary users: credit facility lender (reporting within 120 days of year-end), members. Period ended December 31, 2024. Overall materiality: $184,000 (1% of revenues $18.4M). Key personnel: J. Reyes (CFO), K. Park (Controller). Areas to watch: ASC 606 revenue cut-off, ASC 842 ROU assets, goodwill impairment ASC 350.'),
+          la('us-tpd-pA-2c', '<p>Discuss the timing and scope of the engagement.</p>', 'Full-scope audit of year ended December 31, 2024. Fieldwork: January 20 – February 7, 2025. File review: February 14, 2025. EQR: February 20, 2025 (if required). Signed report target: March 15, 2025 (lender covenant deadline April 30, 2025).'),
+          la('us-tpd-pA-2d', '<p>Outline significant events occurring in the current period.</p>', 'ASC 842 adopted for new finance leases (5 tractor leases, ROU assets $2.8M) Q1 2024. New major contract (Southeast Distribution Center, ~$1.1M annual) commenced Q3 2024. Expansion to 3 additional states (10 to 12 states) Q3 2024. LoadMaster Pro billing system upgraded Q2 2024.'),
+          la('us-tpd-pA-2-doc', '<p>Document matters arising and decisions reached:</p>', 'Team orientation completed. All members familiar with engagement scope and timing. Materiality communicated. ASC 842 first-year adoption flagged as the most significant new area requiring specialized procedures.'),
+        ]),
+        h('us-tpd-pA-3', '<p><strong>3. Past experience</strong><br/>Discuss risks/issues/events that were noted in previous engagements, such as:</p>', [
+          la('us-tpd-pA-3a', '<p>Nature and extent of identified misstatements and significant adjusting journal entries.</p>', 'First-year engagement — no predecessor findings received. Prior year financial statements reviewed. No unusual items or adjusting entries noted.'),
+          la('us-tpd-pA-3b', '<p>Significant risks, including any key audit matters.</p>', 'Revenue recognition identified as a significant risk (rebuttable presumption under AU-C 240). Goodwill impairment ($1.42M) — management\'s annual qualitative/quantitative assessment. Revenue cut-off testing to be planned as a key procedure area.'),
+          la('us-tpd-pA-3c', '<p>Significant estimates relating to financial reporting, including disclosures.</p>', 'Key estimates: (1) goodwill impairment assessment (management\'s specialist engaged); (2) useful lives of transportation equipment; (3) allowance for doubtful accounts; (4) ASC 842 discount rates for ROU asset present value calculation.'),
+          la('us-tpd-pA-3d', '<p>Communications with management and TCWG.</p>', 'First-year engagement. Planning letter issued to management (J. Reyes) and Board of Managers (TCWG) January 17, 2025. Board communication planned at completion February 28, 2025.'),
+          la('us-tpd-pA-3e', '<p>Known or alleged instances of fraud occurring.</p>', 'No known or alleged fraud instances. Management confirmed no fraud awareness during planning inquiries.'),
+          la('us-tpd-pA-3f', '<p>Matters that caused concern or delays in performing procedures or resolving audit issues.</p>', 'First-year engagement — no prior experience. Risk: first-year opening balance procedures (AU-C 510) require additional time. Goodwill valuation report from management\'s specialist to be requested early.'),
+          la('us-tpd-pA-3-doc', '<p>Document matters arising and decisions reached:</p>', 'Opening balance procedures (AU-C 510) to be performed in week 1 of fieldwork. Goodwill valuation report to be requested from management by January 10, 2025. Revenue cut-off identified as primary procedural focus.'),
+        ]),
+        h('us-tpd-pA-4', '<p><strong>4. Key changes</strong><br/>Discuss key changes that have occurred since the previous audit and their audit implications. Consider changes in:</p>', [
+          la('us-tpd-pA-4a', '<p>The industry, economy, legislation and competition.</p>', 'Freight volumes stabilized post-pandemic. Fuel cost increases moderated Q3-Q4 2024. No significant new DOT regulations. Multi-state operations expanded to 12 states — state franchise tax compliance in expanded states.'),
+          la('us-tpd-pA-4b', '<p>Operations and business plans.</p>', 'New major contract (Southeast Distribution Center, ~$1.1M annual revenue) commenced Q3 2024. Revenue growth 8.2% year-over-year. Brokerage revenue mix increased from 6% to 8%. Operations expanded to 12 states (from 10).'),
+          la('us-tpd-pA-4c', '<p>Financing (new financing agreements, refinancing, etc.)</p>', 'Credit facility maintained. Finance lease obligations recognized Q1 2024 under ASC 842 (5 tractor leases, PV $2.74M, current/non-current split required). No new external debt financing.'),
+          la('us-tpd-pA-4d', '<p>Business acquisitions or amalgamations.</p>', 'No acquisitions or amalgamations during the period.'),
+          la('us-tpd-pA-4e', '<p>Personnel, organization and governance.</p>', 'No changes to CFO or Controller. Board of Managers composition unchanged. Headcount increase consistent with expanded operations.'),
+          la('us-tpd-pA-4f', '<p>Internal control and accounting systems.</p>', 'LoadMaster Pro billing system upgraded Q2 2024 — assess design and implementation of revenue recording controls. ADP payroll unchanged. No changes to accounting policies except ASC 842 adoption.'),
+          la('us-tpd-pA-4g', '<p>New accounting standards and changes to accounting policies.</p>', 'ASC 842 (Leases) first adopted in 2024 — new ROU assets ($2.8M) and finance lease liabilities ($2.74M) recognized. No other new FASB ASC standards effective for year ended December 31, 2024 with material impact.'),
+          la('us-tpd-pA-4-doc', '<p>Document matters arising and decisions reached:</p>', 'ASC 842 adoption is the most significant accounting change — specific procedures planned for ROU asset valuation, discount rate assessment, and lease classification. LoadMaster Pro upgrade: DI assessment to be performed by Senior 1. Revenue growth from new contract: revenue recognition procedures to include new contract terms review.'),
+        ]),
+        h('us-tpd-pA-5', '<p><strong>5. Preliminary analytical review</strong><br/>Review the results of the preliminary analytical review (Form 501) and discuss:</p>', [
+          la('us-tpd-pA-5a', '<p>How actual results aligned or differed with expectations based on the economic and industry trends, changes to operations, etc.</p>', 'Revenue of $18.4M up 8.2% from $17.0M — consistent with new contract and rate increases. Operating ratio 91.4%. EBITDA margin 8.6% — consistent with regional trucking/warehousing benchmarks. D&A increase of $280K attributable to ASC 842 ROU asset amortization.'),
+          la('us-tpd-pA-5b', '<p>Whether any variances or balances require further analysis, investigation or could be indicative of possible RMMs (note on Form 520).</p>', 'Three items flagged: (1) deferred revenue increase of $44K — revenue cutoff testing planned; (2) accrued expenses decrease $68K vs. expectation — search for unrecorded liabilities planned; (3) brokerage revenue increase to 8% — ASC 606 contract terms review required. All noted on Form 520.'),
+          la('us-tpd-pA-5-doc', '<p>Document matters arising and decisions reached:</p>', 'Deferred revenue variance and accrued expenses variance carried to Form 520. Cutoff testing scope expanded to include brokerage revenue. Preliminary analytics completed by L. Garcia and reviewed by M. Thompson on January 13, 2025.'),
+        ]),
+        h('us-tpd-pA-6', '<p><strong>6. Identifying potential risks of material misstatement</strong><br/>Discuss where RMMs could be identified, including the susceptibility of the entity\'s F/S to material misstatement (fraud or error). Consider the following:</p>', [
+          la('us-tpd-pA-6a', '<p>Material account balances and transactions.</p>', 'Material areas: Revenue $18.4M, ROU assets $2.8M, Finance lease liabilities $2.74M, AR $3.1M, Long-term debt $5.6M, Goodwill $1.42M. All exceed performance materiality of $128,800.'),
+          la('us-tpd-pA-6b', '<p>Complex areas in the applicable financial reporting framework, including classification and disclosures.</p>', 'ASC 842 — ROU asset recognition and measurement, finance vs. operating lease classification, discount rate. ASC 606 — revenue recognition for brokerage arrangements (principal vs. agent). ASC 350 — goodwill impairment (quantitative test required given first-year engagement).'),
+          la('us-tpd-pA-6c', '<p>Extent and nature of related-party relationships and transactions.</p>', 'LLC member transactions — distributions and capital accounts. No other significant related party transactions identified in preliminary inquiries. Related party disclosures (ASC 850) to be confirmed.'),
+          la('us-tpd-pA-6d', '<p>The application of key accounting policies, including revenue recognition and the rebuttable assumption that revenue recognition is a significant risk.</p>', 'Revenue recognized per ASC 606 — point in time for freight delivery completion. Revenue recognition is a significant risk — rebuttable presumption applies. Cut-off at December 31, 2024 requires testing. Brokerage: principal vs. agent assessment required for new third-party carrier arrangements. Significant risk carried to Form 520.'),
+          la('us-tpd-pA-6e', '<p>Nature of estimates, including the level of complexity, change and estimation uncertainty.</p>', 'Key estimates: (1) goodwill impairment — management specialist engaged, significant estimation uncertainty; (2) ASC 842 discount rates (IBR used — 4.8%); (3) allowance for doubtful accounts ($92K); (4) accrued liabilities at period end.'),
+          la('us-tpd-pA-6f', '<p>Significant deficiencies in internal control.</p>', 'No significant deficiencies communicated in prior year (first-year engagement — no prior auditor). LoadMaster Pro upgrade: DI assessment planned. ADP payroll: SOC 1 Type II report to be reviewed.'),
+          la('us-tpd-pA-6g', '<p>Significant risks (Form 520) and, if applicable, any key audit matters.</p>', 'Two significant risks: (1) Revenue recognition — ASC 606 cut-off and principal/agent determination; (2) Goodwill impairment — management specialist assessment (ASC 350). Both carried to Form 520. Private company US GAAS — key audit matters not applicable.'),
+          la('us-tpd-pA-6h', '<p>Financing arrangements and covenants.</p>', 'Credit facility — lender covenant: audited F/S within 120 days of year-end (by April 30, 2025). Debt-service coverage ratio covenant. Covenant calculation to be recalculated and agreed to loan agreement.'),
+          la('us-tpd-pA-6i', '<p>Management incentive plans.</p>', 'No management bonus plans. Member distributions by resolution. No incentive-based misstatement motivation identified.'),
+          la('us-tpd-pA-6j', '<p>Operating losses and negative business trends.</p>', 'No operating losses. Revenue growth 8.2%. Operating ratio stable. No negative business trends identified.'),
+          la('us-tpd-pA-6k', '<p>Going-concern events or conditions.</p>', 'No going concern indicators identified. Current ratio 1.8x. Positive operating cash flow. Revenue growth trajectory positive. No events or conditions identified under AU-C 570.'),
+          la('us-tpd-pA-6l', '<p>Significant litigation.</p>', 'No known litigation. Management inquiry planned at fieldwork commencement to confirm.'),
+          la('us-tpd-pA-6-doc', '<p>Document matters arising and decisions reached:</p>', 'Two significant risks carried to Form 520. ASC 842 first-year adoption added as elevated risk. Brokerage principal/agent analysis to be included in revenue procedures. Goodwill valuation specialist report evaluation procedures planned.'),
+        ]),
+        h('us-tpd-pA-7', '<p><strong>7. Risk assessment procedures</strong><br/>Discuss what RAPs will be performed and who will perform them. Consider:</p>', [
+          la('us-tpd-pA-7a', '<p>Nature and extent of information to be provided by the entity.</p>', 'Client to provide: signed trial balance, aged AR, fixed asset continuity, goodwill valuation report, lease schedules (ASC 842), LoadMaster Pro revenue export, ADP payroll summary, bank confirmation package. PBC list issued to J. Reyes and K. Park on January 17, 2025.'),
+          la('us-tpd-pA-7b', '<p>Expected reliance on internal controls, which could have an impact on what business processes and information systems will need an assessment of design and implementation.</p>', 'Primarily substantive approach. Limited controls reliance for ADP payroll (SOC 1 Type II report review). DI assessment for: (1) LoadMaster Pro revenue recording; (2) ASC 842 lease tracking system. No formal tests of controls planned beyond DI assessment.'),
+          la('us-tpd-pA-7c', '<p>Whether the organization outsources key processes for which a service auditor\'s report should be obtained.</p>', 'ADP payroll processing — SOC 1 Type II report to be reviewed for payroll controls. No other outsourced processes with control reliance implications.'),
+          la('us-tpd-pA-7d', '<p>If the organization relies on automated or semi-automated controls for which an evaluation of IT general controls would be required.</p>', 'LoadMaster Pro generates revenue postings semi-automatically. IT general controls assessment not planned — primarily substantive approach. Revenue data extract to be independently obtained and reconciled to revenue ledger.'),
+          la('us-tpd-pA-7-doc', '<p>Document matters arising and decisions reached:</p>', 'PBC list issued January 17, 2025. ADP SOC 1 report to be reviewed by Senior 2 in week 1. LoadMaster Pro DI assessment by Senior 1 in week 1. Revenue extract to be obtained directly from client IT administrator.'),
+        ]),
       ],
       isExpanded: true
     },
     {
-      id: 'us-ep-s3',
-      title: '3. Technology Use',
+      id: 'us-tpd-pB',
+      title: 'PART B — Agenda: Risk Response Planning',
       questions: [
-        q('us-ep-3a', '<p>Has the use of data analytics tools (ACL, IDEA, Excel analytics, or other) been incorporated into the audit plan?</p>', undefined, 'Yes', '<p>Data analytics planned for: complete revenue population testing (LoadMaster Pro export), journal entry population testing (QuickBooks export), and accounts receivable aging analysis.</p>', 'W/P Ref: DA-01'),
-        q('us-ep-3b', '<p>Has the use of audit software and electronic workpapers been confirmed?</p>', undefined, 'Yes', '<p>Electronic workpapers in firm\'s audit platform. Client data requests sent via secure portal. All documentation maintained electronically.</p>'),
+        h('us-tpd-pB-8', '<p><strong>8. Assessed risks</strong><br/>Review the assessed risks identified as a result of performing RAPs (Form 520) and discuss:</p>', [
+          la('us-tpd-pB-8a', '<p>Whether all identified risks of material misstatement have been carried forward onto the risk register (Form 520).</p>', 'Risk register (Form 520) reviewed. Two significant risks: revenue recognition (ASC 606) and goodwill impairment (ASC 350). ASC 842 first-year adoption and accrued liabilities completeness carried as elevated risks. All RMMs confirmed on register.'),
+          la('us-tpd-pB-8b', '<p>The assessment of risk at the F/S level, and their impact on assertion level risks (if any).</p>', 'F/S level: management bias in estimates (goodwill valuation, ASC 842 discount rates). No pervasive F/S-level misstatement risk identified. Impact: expanded procedures for all estimates and judgmental areas.'),
+          la('us-tpd-pB-8c', '<p>The assessment of risk at the assertion level and conclusions on planned control reliance.</p>', 'Revenue — completeness and cut-off: significant risk, no control reliance. Goodwill — valuation: significant risk, evaluation of management\'s specialist. ASC 842 — accuracy and completeness: elevated risk, no control reliance. All other: moderate risk, substantive approach.'),
+          la('us-tpd-pB-8d', '<p>Any significant risks identified and their potential impact on the audit response.</p>', 'Revenue cut-off: test shipments in transit at December 31, 2024 — obtain delivery confirmations, compare to revenue posting dates. Goodwill: evaluate management\'s specialist qualifications, assumptions, and conclusions per AU-C 620.'),
+          la('us-tpd-pB-8e', '<p>Any unexpected results, missing information, or evidence of management override or bias.</p>', 'No evidence of management override or bias at planning stage. Accrued expenses variance explained by timing. No red flags identified.'),
+          la('us-tpd-pB-8-doc', '<p>Document matters arising and decisions reached:</p>', 'Risk register finalized on Form 520. Audit responses designed. No changes to planned approach.'),
+        ]),
+        h('us-tpd-pB-9', '<p><strong>9. Fraud risks and scenarios</strong></p>', [
+          la('us-tpd-pB-9a', '<p>Review AU-C 240 form (or equivalent).</p>', 'Fraud risk assessment completed per AU-C 240. Revenue recognition identified as fraud risk (rebuttable presumption). Management override of internal controls: universal significant risk.'),
+          la('us-tpd-pB-9b', '<p>Discuss how fraud might occur in the entity, notwithstanding past experience of the honesty and integrity of management and TCWG.</p>', 'Potential fraud scenarios: (1) premature revenue recognition by recording freight deliveries before completion; (2) brokerage revenue overstatement by recording gross vs. net for agent arrangements; (3) ASC 842 discount rate manipulation to reduce liability recognition. Discussed for completeness — no specific management integrity concerns.'),
+          la('us-tpd-pB-9c', '<p>Identify any pressures, attitudes or rationalizations that exist among senior management/accounting personnel that could lead to fraud. Refer to Appendix 1 of AU-C 240.</p>', 'Moderate lender covenant pressure (audited F/S deadline). No management compensation tied to financial results. No significant incentive-based fraud risk factors identified. Refer to AU-C 240 Appendix 1 fraud risk factors.'),
+          la('us-tpd-pB-9-doc', '<p>Document matters arising and decisions reached:</p>', 'Fraud discussion completed January 15, 2025. Unpredictable procedures planned: (1) unannounced AR confirmation dispatch; (2) journal entry population testing. Revenue recognition fraud risk addressed with expanded cut-off and principal/agent procedures.'),
+        ]),
+        h('us-tpd-pB-10', '<p><strong>10. Design an appropriate audit response</strong><br/>Design F/S-level and assertion-level responses. Review and discuss:</p>', [
+          la('us-tpd-pB-10a', '<p>Specific procedures to address significant risks assessed on Form 520.</p>', 'Revenue cut-off: test shipments in transit December 31 — obtain delivery confirmations, compare to revenue posting. Principal/agent: review new brokerage contract terms against ASC 606 indicators. Goodwill: evaluate management specialist qualifications, assess assumptions and key inputs, independently verify market data used in DCF.'),
+          la('us-tpd-pB-10b', '<p>Planned tests of controls.</p>', 'No formal tests of controls planned. DI assessment for LoadMaster Pro and ADP. SOC 1 Type II review for ADP payroll.'),
+          la('us-tpd-pB-10c', '<p>Planned tests of details.</p>', 'Revenue: cut-off testing for shipments in transit, brokerage contract review. AR: positive confirmation package (40 items, >$10K threshold). ASC 842: recalculate ROU asset and lease liability for each lease, verify discount rate. Goodwill: evaluate specialist\'s report. Debt: confirmation from lender, covenant recalculation. Payroll: gross-to-net recalculation sample (10 employees).'),
+          la('us-tpd-pB-10d', '<p>Unpredictable procedures (required for fraud risks).</p>', 'Unpredictable procedure 1: unannounced AR confirmation dispatch on day 1 of fieldwork. Unpredictable procedure 2: full journal entry population testing using LoadMaster Pro GL export for unusual or large entries.'),
+          la('us-tpd-pB-10e', '<p>Substantive analytical procedures: consider the source of data and its reliability.</p>', 'Analytical procedures: (1) revenue by service type — compare monthly trends and mix; (2) operating cost ratios — compare to prior year and industry; (3) payroll headcount-adjusted comparison. Source: management-prepared trial balance and LoadMaster Pro export — reliability moderate; analytical conclusions corroborated by tests of detail.'),
+          la('us-tpd-pB-10f', '<p>SCOTABDs and procedures for which confirmations will be obtained.</p>', 'Confirmations: (1) AR — 40 positive confirmations; (2) credit facility (balance, covenants, collateral); (3) legal counsel — contingencies and litigation. No SCOTABDs identified.'),
+          la('us-tpd-pB-10-doc', '<p>Document matters arising and decisions reached:</p>', 'Audit responses finalized on Form 520 and individual audit programs. Confirmation package to be prepared by Staff 1 by January 17, 2025 for dispatch on January 20 (day 1 of fieldwork).'),
+        ]),
+        h('us-tpd-pB-11', '<p><strong>11. Audit plans and overall audit strategy</strong><br/>Finalize the audit plans, and update the overall audit strategy (Form 430). Address:</p>', [
+          la('us-tpd-pB-11a', '<p>Extent (if any) of pre-period-end work.</p>', 'No interim procedures planned. All procedures to be performed at year-end (January 20 – February 7, 2025).'),
+          la('us-tpd-pB-11b', '<p>Audit timing and management/TCWG communications, including the communication of the overall audit plan.</p>', 'Planning letter communicated to management (J. Reyes) January 17, 2025. Board of Managers (TCWG) communication planned for February 28, 2025. Signed report target March 15, 2025.'),
+          la('us-tpd-pB-11c', '<p>Where applicable, coordination with experts, service auditors and group component auditors.</p>', 'Management\'s goodwill valuation specialist (Horizon Valuation Group) — report to be received by January 15, 2025. ADP: SOC 1 Type II report to be obtained. No group component auditors.'),
+          la('us-tpd-pB-11d', '<p>Schedules and analysis to be completed by the client.</p>', 'PBC list issued January 17, 2025. Key items: trial balance and goodwill valuation report by January 17, lease schedules and LoadMaster Pro extract by January 20, bank confirmation package by January 17.'),
+          la('us-tpd-pB-11e', '<p>Audit team roles, scheduling and timing of file reviews.</p>', 'Senior 1 and Senior 2 on-site January 20 – February 7. Staff 1 and Staff 2 on-site January 20 – February 3. L. Garcia (Manager) reviews January 31 and February 7. M. Thompson (Partner) review February 14. EQR February 20 (if required).'),
+          la('us-tpd-pB-11-doc', '<p>Document matters arising and decisions reached:</p>', 'Overall audit strategy updated January 15, 2025. Audit plan finalized. PBC list distributed. Engagement timeline confirmed with management.'),
+        ]),
+        h('us-tpd-pB-12', '<p><strong>12. Team reminders</strong><br/>Remind team members about the need for:</p>', [
+          la('us-tpd-pB-12a', '<p>Exercising professional skepticism at all times.</p>'),
+          la('us-tpd-pB-12b', '<p>Maintaining independence and ethics.</p>'),
+          la('us-tpd-pB-12c', '<p>Ongoing communication among the engagement team, especially where misstatements are found, tests fail or the client is not providing information on a timely basis.</p>'),
+          la('us-tpd-pB-12d', '<p>Updating the overall audit strategy (Form 430) for changes to proposed plans.</p>'),
+          la('us-tpd-pB-12e', '<p>Remaining alert throughout the audit for indicators of fraud, related parties, going-concern uncertainties or new information. (Note: Notify the engagement partner immediately about new information obtained that, if known earlier, may have caused the firm to decline the audit engagement.)</p>'),
+          la('us-tpd-pB-12-doc', '<p>Document matters arising and decisions reached:</p>', 'Reminders issued to all team members. Senior 1 to notify L. Garcia immediately if goodwill valuation report or LoadMaster Pro extract are not received by January 17 per PBC list.'),
+        ]),
+        h('us-tpd-pB-13', '<p><strong>13. Other matters (specify)</strong></p>', [
+          la('us-tpd-pB-13-doc', '<p>Document matters arising and decisions reached:</p>', ''),
+        ]),
       ],
       isExpanded: true
     },
     {
-      id: 'us-ep-s4',
-      title: '4. Coordination with Specialists',
+      id: 'us-tpd-s4',
+      title: '4. Action Steps',
       questions: [
-        q('us-ep-4a', '<p>Has the need for an auditor\'s specialist (valuation, IT, actuarial) been assessed per AU-C 620?</p>', undefined, 'Yes', '<p>Goodwill impairment testing requires assessment of management\'s specialist (valuation firm) report. AU-C 620 considerations documented. No separate auditor specialist engaged — auditor to evaluate management\'s specialist work.</p>', 'W/P Ref: SP-01'),
-        q('us-ep-4b', '<p>If the entity used a valuation specialist for goodwill impairment testing, has a plan been developed to evaluate the specialist\'s work?</p>', undefined, 'Yes', '<p>Plan developed to evaluate qualifications of management\'s valuation specialist and assess assumptions, data, and conclusions in the goodwill impairment analysis.</p>', 'W/P Ref: SP-01'),
+        h('us-tpd-s4-1', '<p>Action step 1:</p>', [
+          la('us-tpd-s4-1-person', '<p>Person responsible:</p>', 'Staff 1'),
+          la('us-tpd-s4-1-deadline', '<p>Deadline:</p>', 'January 17, 2025'),
+          la('us-tpd-s4-1-actual', '<p>Actual completion:</p>', ''),
+        ]),
+        h('us-tpd-s4-2', '<p>Action step 2:</p>', [
+          la('us-tpd-s4-2-person', '<p>Person responsible:</p>', 'Senior 1'),
+          la('us-tpd-s4-2-deadline', '<p>Deadline:</p>', 'January 20, 2025'),
+          la('us-tpd-s4-2-actual', '<p>Actual completion:</p>', ''),
+        ]),
+        h('us-tpd-s4-3', '<p>Action step 3:</p>', [
+          la('us-tpd-s4-3-person', '<p>Person responsible:</p>', 'L. Garcia'),
+          la('us-tpd-s4-3-deadline', '<p>Deadline:</p>', 'January 17, 2025'),
+          la('us-tpd-s4-3-actual', '<p>Actual completion:</p>', ''),
+        ]),
+        h('us-tpd-s4-4', '<p>Action step 4:</p>', [
+          la('us-tpd-s4-4-person', '<p>Person responsible:</p>', ''),
+          la('us-tpd-s4-4-deadline', '<p>Deadline:</p>', ''),
+          la('us-tpd-s4-4-actual', '<p>Actual completion:</p>', ''),
+        ]),
+        h('us-tpd-s4-5', '<p>Action step 5:</p>', [
+          la('us-tpd-s4-5-person', '<p>Person responsible:</p>', ''),
+          la('us-tpd-s4-5-deadline', '<p>Deadline:</p>', ''),
+          la('us-tpd-s4-5-actual', '<p>Actual completion:</p>', ''),
+        ]),
       ],
       isExpanded: true
     },
     {
-      id: 'us-ep-s5',
-      title: '5. Timeline and Staffing Milestones',
+      id: 'us-tpd-s5',
+      title: '5. Sign-off',
       questions: [
-        q('us-ep-5a', '<p>Has the fieldwork timeline been agreed and documented (start date January 20, 2025; end date February 7, 2025)?</p>', undefined, 'Yes', '<p>Fieldwork dates confirmed: January 20 – February 7, 2025. Client data request list sent December 20, 2024. Interim procedures completed December 2024.</p>', 'W/P Ref: PL-03'),
-        q('us-ep-5b', '<p>Has the draft report delivery date been communicated to management?</p>', undefined, 'Yes', '<p>Draft audit report delivery targeted February 28, 2025. Final signed report targeted March 15, 2025 per management\'s lender reporting requirements.</p>', 'W/P Ref: PL-03'),
+        la('us-tpd-s5-prep', '<p>Prepared by</p>', 'M. Thompson, CPA'),
+        la('us-tpd-s5-prep-date', '<p>Date</p>', 'January 15, 2025'),
+        la('us-tpd-s5-rev', '<p>Reviewed by</p>', ''),
+        la('us-tpd-s5-rev-date', '<p>Date</p>', ''),
       ],
       isExpanded: true
     },
   ];
+
   return {
     id: 'global-template-us-engagement-planning',
-    title: 'Engagement Planning',
-    description: 'US GAAS engagement planning checklist for Harbor Freight Logistics LLC per AU-C 300, documenting overall strategy, audit plan, technology use, and timeline.',
-    objective: 'AU-C 300 requires the auditor to plan the audit engagement to reduce audit risk to an acceptably low level. This checklist documents planning activities for the AUD-US-Dec312024 engagement.',
+    title: 'Team Planning Discussions',
+    description: 'Documents the team planning discussions for the audit engagement per AU-C 300.05.',
+    objective: '<p>To ensure appropriate communication among the engagement team resulting in a well-planned audit (AU-C 300.05).</p>',
+    note: '<ul><li>Ensure involvement of the engagement partner and key team members (plus the engagement quality reviewer, if applicable).</li><li>This form is divided into two parts. Part A would typically take place at the commencement of the audit. Part B would start by reviewing the assessed risks and developing appropriate audit responses. In some cases, the two discussions could be combined.</li></ul><p><em>F/S = Financial statements. TCWG = Those charged with governance. RMMs = Risks of material misstatement. RAPs = Risk assessment procedures.</em></p>',
     sections,
     createdAt: new Date(),
     updatedAt: new Date(),
@@ -11087,18 +11344,22 @@ export const generateUSPreliminaryAnalyticalProceduresChecklist = (): Checklist 
 };
 
 export const generateUSAuditStrategyMemorandumChecklist = (): Checklist => {
-  const q = (id: string, text: string, subQuestions?: Question[], answer = '', explanation = '', reference = ''): Question => ({
-    id, text, answerType: 'yes-no-na' as const, options: ['Yes', 'No', 'NA'],
-    required: false, answer, explanation, reference,
-    ...(subQuestions ? { subQuestions } : {})
+  const la = (id: string, text: string, answer = ''): Question => ({
+    id, text, answerType: 'long-answer' as const, options: [], required: false, answer
   });
+  const h = (id: string, text: string, sub?: Question[]): Question => ({
+    id, text, answerType: 'none' as const, options: [], required: false, answer: '',
+    showResponse: false as any, showExplanation: false as any, showReference: false as any,
+    ...(sub ? { subQuestions: sub } : {})
+  });
+
   const sections: Section[] = [
     {
       id: 'us-asm-s1',
-      title: '1. Reporting requirements',
+      title: '1. Reporting Requirements',
       questions: [
-        q('us-asm-q1-1', '<p>The applicable financial reporting framework (such as US GAAP).</p>', undefined, 'Yes', 'US GAAP — FASB Accounting Standards Codification. Harbor Freight Logistics LLC is a Delaware LLC engaged in freight and logistics.'),
-        q('us-asm-q1-2', '<p>Industry-specific or specialized requirements.</p>', undefined, 'Yes', 'Freight and logistics industry: DOT carrier regulations, multi-state operations in 12 states, ADP payroll compliance, LoadMaster Pro billing system integration.'),
+        la('us-asm-s1-1', '<p>The applicable financial reporting framework (such as US GAAP).</p>', 'US GAAP — FASB Accounting Standards Codification. Harbor Freight Logistics LLC is a Delaware LLC engaged in freight and logistics.'),
+        la('us-asm-s1-2', '<p>Industry-specific or specialized requirements.</p>', 'Freight and logistics industry: DOT carrier regulations, multi-state operations in 12 states, ADP payroll compliance, LoadMaster Pro billing system integration.'),
       ],
       isExpanded: true
     },
@@ -11106,46 +11367,48 @@ export const generateUSAuditStrategyMemorandumChecklist = (): Checklist => {
       id: 'us-asm-s2',
       title: '2. Timing',
       questions: [
-        q('us-asm-q2-1', '<p>Entity\'s reporting deadlines (if any).</p>', undefined, 'Yes', 'Draft financial statements to management by February 28, 2025. Signed report by March 15, 2025 (bank covenant deadline).'),
-        q('us-asm-q2-2', '<p>Team planning discussions. <span class="text-muted-foreground text-xs">(AU-C 300)</span></p>', undefined, 'Yes', 'Planning meeting held January 15, 2025. Attendees: M. Thompson (Partner), L. Garcia (Manager), Senior 1 (Revenue/AR), Senior 2 (Expenses/ASC 842), J. Reyes (CFO — Harbor Freight Logistics LLC), K. Park (Controller — Harbor Freight Logistics LLC).'),
-        q('us-asm-q2-3', '<p>Planned fieldwork start/end.</p>', undefined, 'Yes', 'Fieldwork: January 20 – February 7, 2025. Interim fieldwork: N/A (year-end only engagement).'),
-        q('us-asm-q2-4', '<p>File reviews (including EQCR).</p>', undefined, 'Yes', 'Manager review: ongoing during fieldwork. Partner review: February 14, 2025. EQCR: February 20, 2025 (if required).'),
-        q('us-asm-q2-5', '<p>Meetings with management and TCWG.</p>', undefined, 'Yes', 'Planning meeting with management: January 15, 2025. Board of Managers (TCWG) communication at completion: February 28, 2025.'),
-        q('us-asm-q2-6', '<p>Other (specify).</p>', undefined, 'NA', ''),
+        la('us-asm-s2-1', '<p>Entity\'s reporting deadlines (if any).</p>', 'Draft financial statements to management by February 28, 2025. Signed report by March 15, 2025 (lender covenant deadline April 30, 2025).'),
+        la('us-asm-s2-2', '<p>Team planning discussions.</p>', 'Planning meeting held January 15, 2025. Attendees: M. Thompson (Partner), L. Garcia (Manager), Senior 1 (Revenue/AR), Senior 2 (Expenses/ASC 842), J. Reyes (CFO — Harbor Freight Logistics LLC), K. Park (Controller — Harbor Freight Logistics LLC).'),
+        la('us-asm-s2-3', '<p>Planned fieldwork start/end.</p>', 'Fieldwork: January 20 – February 7, 2025. Interim fieldwork: N/A (year-end only engagement).'),
+        la('us-asm-s2-4', '<p>File reviews (including EQR).</p>', 'Manager review: ongoing during fieldwork. Partner review: February 14, 2025. EQR: February 20, 2025 (if required).'),
+        la('us-asm-s2-5', '<p>Meetings with management and TCWG.</p>', 'Planning meeting with management: January 15, 2025. Board of Managers (TCWG) communication at completion: February 28, 2025.'),
+        la('us-asm-s2-6', '<p>Other (specify).</p>', ''),
       ],
       isExpanded: true
     },
     {
       id: 'us-asm-s3',
-      title: '3. Factors to consider in the audit',
-      note: 'Identify key areas to be addressed in the audit:',
+      title: '3. Factors to Consider in the Audit',
       questions: [
-        q('us-asm-q3-1', '<p>Material financial statement areas and disclosures (Form 590).</p>', undefined, 'Yes', 'Material FS areas: Revenue ($18.4M), Right-of-use assets ($2.8M), Goodwill ($1.42M), Accounts receivable ($3.1M), Long-term debt ($5.6M). See Form 590.'),
-        q('us-asm-q3-2', '<p>Major operational or control changes during the period.</p>', undefined, 'Yes', 'ASC 842 adopted for new finance leases Q1 2024. LoadMaster Pro billing system upgraded Q2 2024. Expansion to 3 additional states (10 to 12 states) Q3 2024.'),
-        q('us-asm-q3-3', '<p>Impact of changes in accounting standards.</p>', undefined, 'Yes', 'ASC 842 (Leases) — new right-of-use assets recognized this year. No other new FASB ASC standards effective for year ended December 31, 2024 with material impact.'),
-        q('us-asm-q3-4', '<p>Matters raised (such as problem areas) from past experience.</p>', undefined, 'Yes', 'First-year engagement with Harbor Freight Logistics LLC. No predecessor findings received. Prior year financial statements reviewed — no unusual items noted.'),
-        q('us-asm-q3-5', '<p>Significant risks and going-concern uncertainties.</p>', undefined, 'Yes', 'Significant risks: Revenue recognition (ASC 606 cutoff and completeness), goodwill impairment (ASC 350 — single reporting unit), management override of controls (AU-C 240). Going concern: no indicators identified.'),
-        q('us-asm-q3-6', '<p>Use of auditor experts.</p>', undefined, 'NA', 'No auditor\'s experts required for this engagement.'),
-        q('us-asm-q3-7', '<p>Use of service organization reports.</p>', undefined, 'Yes', 'ADP payroll processing — SOC 1 Type II report reviewed for payroll controls reliance.'),
-        q('us-asm-q3-8', '<p>Use of component auditors.</p>', undefined, 'NA', 'Single entity — no component auditors.'),
-        q('us-asm-q3-9', '<p>Coordination of work with a group auditor.</p>', undefined, 'NA', 'Not applicable — Harbor Freight Logistics LLC is not part of a consolidated group.'),
-        q('us-asm-q3-10', '<p>Need for stand-alone audited financial statements of subsidiaries.</p>', undefined, 'NA', 'Not applicable.'),
-        q('us-asm-q3-11', '<p>Key audit matters (where applicable).</p>', undefined, 'NA', 'Not applicable — private company US GAAS engagement; key audit matters reporting not required.'),
+        h('us-asm-s3-h', '<p>Identify key areas to be addressed in the audit:</p>', [
+          la('us-asm-s3-1', '<p>Material financial statement areas and disclosures (Form 590).</p>', 'Material FS areas: Revenue ($18.4M), Right-of-use assets ($2.8M), Finance lease liabilities ($2.74M), Accounts receivable ($3.1M), Long-term debt ($5.6M), Goodwill ($1.42M). Key disclosures: ASC 842 lease disclosures, ASC 350 goodwill. See Form 590.'),
+          la('us-asm-s3-2', '<p>Major operational or control changes during the period.</p>', 'ASC 842 adopted for new finance leases Q1 2024. LoadMaster Pro billing system upgraded Q2 2024. Expansion to 3 additional states (10 to 12 states) Q3 2024.'),
+          la('us-asm-s3-3', '<p>Impact of changes in accounting standards.</p>', 'ASC 842 (Leases) — new right-of-use assets and finance lease liabilities recognized for the first time this year. No other new FASB ASC standards effective for year ended December 31, 2024 with material impact.'),
+          la('us-asm-s3-4', '<p>Matters raised (such as problem areas) from past experience.</p>', 'First-year engagement with Harbor Freight Logistics LLC. No predecessor findings received. Prior year financial statements reviewed — no unusual items noted. Opening balance procedures required per AU-C 510.'),
+          la('us-asm-s3-5', '<p>Significant risks and going-concern uncertainties.</p>', 'Significant risks: (1) Revenue recognition — ASC 606 cut-off and principal/agent determination; (2) Goodwill impairment — management specialist assessment (ASC 350). ASC 842 first-year adoption elevated risk. Going concern: no indicators identified. See Form 520.'),
+          la('us-asm-s3-6', '<p>Use of auditor experts.</p>', 'No auditor\'s experts required. Management\'s valuation specialist (goodwill impairment) to be evaluated per AU-C 620.'),
+          la('us-asm-s3-7', '<p>Use of service organization reports.</p>', 'ADP payroll processing — SOC 1 Type II report to be reviewed for payroll controls reliance.'),
+          la('us-asm-s3-8', '<p>Use of component auditors.</p>', 'Single entity — no component auditors.'),
+          la('us-asm-s3-9', '<p>Coordination of work with a group auditor.</p>', 'Not applicable — Harbor Freight Logistics LLC is not part of a consolidated group.'),
+          la('us-asm-s3-10', '<p>Need for stand-alone audited financial statements of subsidiaries.</p>', 'Not applicable.'),
+          la('us-asm-s3-11', '<p>Key audit matters (where applicable).</p>', 'Not applicable — private company US GAAS engagement; key audit matters reporting not required.'),
+        ]),
       ],
       isExpanded: true
     },
     {
       id: 'us-asm-s4',
-      title: '4. Audit team',
-      note: 'Identify the audit team members assigned and their roles.\n\nEnsure the assignment of appropriately experienced team members to areas where there may be higher risks of material misstatement.',
+      title: '4. Audit Team',
       questions: [
-        q('us-asm-q4-1', '<p>Partner</p>', undefined, 'Yes', 'M. Thompson, CPA — Engagement Partner. 20 years experience in freight and logistics sector audits. Responsible for overall engagement quality and significant judgments.'),
-        q('us-asm-q4-2', '<p>Manager</p>', undefined, 'Yes', 'L. Garcia, CPA — Engagement Manager. 10 years experience. 3 prior freight logistics audits. Responsible for fieldwork coordination, revenue, AR, ASC 842, completion procedures.'),
-        q('us-asm-q4-3', '<p>Senior</p>', undefined, 'Yes', 'Senior 1 — Revenue and AR cycle. Senior 2 — Expenses, payroll, ASC 842. Both have 3+ years experience.'),
-        q('us-asm-q4-4', '<p>Assistant</p>', undefined, 'Yes', 'Staff 1 — Accounts payable and cash. Staff 2 — Fixed assets and other areas.'),
-        q('us-asm-q4-5', '<p>Assistant 1</p>', undefined, 'NA', ''),
-        q('us-asm-q4-6', '<p>Expert</p>', undefined, 'NA', ''),
-        q('us-asm-q4-7', '<p>EQCR</p>', undefined, 'NA', 'EQCR not required for this engagement — private company, no listed entity.'),
+        h('us-asm-s4-h', '<p>Identify the audit team members assigned and their roles. Ensure the assignment of appropriately experienced team members to areas where there may be higher risks of material misstatement.</p>', [
+          la('us-asm-s4-1', '<p>Partner</p>', 'M. Thompson, CPA — Engagement Partner. 20 years experience in freight and logistics sector audits. Responsible for overall engagement quality and significant judgments.'),
+          la('us-asm-s4-2', '<p>Manager</p>', 'L. Garcia, CPA — Engagement Manager. 10 years experience. 3 prior freight logistics audits. Responsible for fieldwork coordination, revenue, AR, ASC 842, completion procedures.'),
+          la('us-asm-s4-3', '<p>Senior</p>', 'Senior 1 — Revenue and AR cycle. Senior 2 — Expenses, payroll, ASC 842. Both have 3+ years experience.'),
+          la('us-asm-s4-4', '<p>Assistant</p>', 'Staff 1 — Accounts payable and cash. Staff 2 — Fixed assets and other areas.'),
+          la('us-asm-s4-5', '<p>Assistant 1</p>', ''),
+          la('us-asm-s4-6', '<p>Expert</p>', ''),
+          la('us-asm-s4-7', '<p>EQR</p>', 'EQR not required for this engagement — private company, no listed entity.'),
+        ]),
       ],
       isExpanded: true
     },
@@ -11153,15 +11416,15 @@ export const generateUSAuditStrategyMemorandumChecklist = (): Checklist => {
       id: 'us-asm-s5',
       title: '5. Budget',
       questions: [
-        q('us-asm-q5-1', '<p>Establish the budgeted audit fee and labour hours (Form 450).</p>', undefined, 'Yes', 'Budgeted fee: $42,000. Estimated hours: 400. Planning 40 hrs, Fieldwork 280 hrs, Completion 80 hrs. See Form 450 for detailed time budget by team member and audit area.'),
+        la('us-asm-s5-1', '<p>Establish the budgeted audit fee and labour hours (Form 450).</p>', 'Budgeted fee: $42,000. Estimated hours: 400. Planning 40 hrs, Fieldwork 280 hrs, Completion 80 hrs. See Form 450 for detailed time budget by team member and audit area.'),
       ],
       isExpanded: true
     },
     {
       id: 'us-asm-s6',
-      title: '6. Audit strategy',
+      title: '6. Audit Strategy',
       questions: [
-        q('us-asm-q6-1', '<p>Provide a cross-reference to documents that outline the planned scope and timing of the audit, such as the communication with management and to TCWG (AU-C 260.15). For an example of a written planning letter, refer to Sample Letter AL3.1.</p>', undefined, 'Yes', 'Audit plan: Forms 500-590. Board of Managers (TCWG) communication: planned for February 28, 2025. Management planning letter sent January 17, 2025.'),
+        la('us-asm-s6-1', '<p>Provide a cross-reference to documents that outline the planned scope and timing of the audit, such as the communication with management and to TCWG (AU-C 260.15). For an example of a written planning letter, refer to Sample Letter AL3.1.</p>', 'Audit plan: Forms 500-590. Board of Managers (TCWG) communication: planned for February 28, 2025. Management planning letter sent January 17, 2025.'),
       ],
       isExpanded: true
     },
@@ -11169,7 +11432,18 @@ export const generateUSAuditStrategyMemorandumChecklist = (): Checklist => {
       id: 'us-asm-s7',
       title: '7. Subsequent Changes in Strategy',
       questions: [
-        q('us-asm-q7-1', '<p>Outline any significant changes made to the original audit strategy for this period as a result of performing further procedures or obtaining new information.</p>', undefined, 'NA', 'No subsequent changes to the original audit strategy as of file sign-off date.'),
+        la('us-asm-s7-1', '<p>Outline any significant changes made to the original audit strategy for this period as a result of performing further procedures or obtaining new information.</p>', 'No subsequent changes to the original audit strategy as of file sign-off date.'),
+      ],
+      isExpanded: true
+    },
+    {
+      id: 'us-asm-s8',
+      title: '8. Sign-off',
+      questions: [
+        la('us-asm-s8-prep', '<p>Prepared by</p>', 'M. Thompson, CPA'),
+        la('us-asm-s8-prep-date', '<p>Date</p>', 'January 15, 2025'),
+        la('us-asm-s8-rev', '<p>Reviewed by</p>', ''),
+        la('us-asm-s8-rev-date', '<p>Date</p>', ''),
       ],
       isExpanded: true
     },
@@ -11178,7 +11452,7 @@ export const generateUSAuditStrategyMemorandumChecklist = (): Checklist => {
     id: 'global-template-us-overall-audit-strategy',
     title: 'Overall Audit Strategy',
     description: 'Documents the overall audit strategy including scope, timing and direction of the audit as a guide for the development of the audit plan.',
-    objective: 'To document the scope, timing and direction of the audit as a guide for the development of the audit plan. (AU-C 300)',
+    objective: '<p>To document the scope, timing and direction of the audit as a guide for the development of the audit plan.</p>',
     sections,
     createdAt: new Date(),
     updatedAt: new Date(),

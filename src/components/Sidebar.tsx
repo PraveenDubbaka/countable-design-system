@@ -1546,8 +1546,8 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
                       { id: "aud-us-mat", code: "MAT", label: "Materiality", icon: "worksheet", route: "checklist/aud-us-mat" },
                       { id: "aud-us-scope", code: "SC", label: "Engagement Scope", icon: "worksheet", route: "checklist/aud-us-scope" },
                       { id: "aud-us-pap", code: "PAP", label: "Preliminary Analytical Procedures", icon: "worksheet", route: "checklist/aud-us-pap" },
-                      { id: "aud-us-asm", code: "ASM", label: "Overall Audit Strategy", icon: "checklist", route: "checklist/aud-us-asm" },
-                      { id: "aud-us-plan", code: "EP", label: "Engagement Planning", icon: "checklist", route: "checklist/aud-us-plan" },
+                      { id: "aud-us-asm", code: "OAS", label: "Overall Audit Strategy", icon: "checklist", route: "checklist/aud-us-asm" },
+                      { id: "aud-us-plan", code: "TPD", label: "Team Planning Discussions", icon: "checklist", route: "checklist/aud-us-plan" },
                       { id: "aud-us-tcwg-pl", code: "TCWG", label: "Communication with Those Charged with Governance (AU-C 260)", icon: "letter", route: "checklist/aud-us-tcwg-pl" },
                     ]
                   },
@@ -1707,8 +1707,8 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
                       { id: "aud-mat", code: "MAT", label: "Materiality", icon: "worksheet", route: "checklist/aud-mat" },
                       { id: "aud-scope", code: "SC", label: "Engagement Scope", icon: "worksheet", route: "checklist/aud-scope" },
                       { id: "aud-pap", code: "PAP", label: "Preliminary Analytical Procedures", icon: "worksheet", route: "checklist/aud-pap" },
-                      { id: "aud-asm", code: "ASM", label: "Overall Audit Strategy", icon: "checklist", route: "checklist/aud-asm" },
-                      { id: "aud-plan", code: "EP", label: "Engagement Planning", icon: "checklist", route: "checklist/aud-plan" },
+                      { id: "aud-asm", code: "OAS", label: "Overall Audit Strategy", icon: "checklist", route: "checklist/aud-asm" },
+                      { id: "aud-plan", code: "TPD", label: "Team Planning Discussions", icon: "checklist", route: "checklist/aud-plan" },
                       { id: "aud-tcwg-pl", code: "TCWG", label: "Communication with Those Charged with Governance", icon: "letter", route: "checklist/aud-tcwg-pl" },
                     ]
                   },
