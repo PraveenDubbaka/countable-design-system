@@ -192,7 +192,7 @@ export default function Teams() {
                         <td className="px-6 py-2 text-sm text-foreground whitespace-nowrap">{member.cellPhone}</td>
                         <td className="px-6 py-2 whitespace-nowrap">
                           {member.unassigned ? (
-                            <span className="text-sm text-emerald-600 cursor-pointer hover:underline flex items-center gap-1">
+                          <span className="text-sm text-link cursor-pointer hover:underline flex items-center gap-1">
                               Unassigned <Users className="h-3.5 w-3.5" />
                             </span>
                           ) : (
