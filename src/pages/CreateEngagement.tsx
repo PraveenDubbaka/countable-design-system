@@ -329,7 +329,7 @@ export default function CreateEngagement() {
 
                 {/* Current Year */}
                 <div className="flex items-start gap-8">
-                  <label className="text-sm text-muted-foreground w-24 pt-6">Current Year<span className="text-destructive">*</span></label>
+                  <label className="text-sm text-muted-foreground w-24 pt-6 whitespace-nowrap">Current Year<span className="text-destructive">*</span></label>
                   <div className="flex gap-4">
                     <div className="w-40">
                       <LabeledInput
@@ -354,7 +354,7 @@ export default function CreateEngagement() {
 
                 {/* Prior Year 1 */}
                 <div className="flex items-start gap-8">
-                  <label className="text-sm text-muted-foreground w-24 pt-6">Prior Year 1<span className="text-destructive">*</span></label>
+                  <label className="text-sm text-muted-foreground w-24 pt-6 whitespace-nowrap">Prior Year 1<span className="text-destructive">*</span></label>
                   <div className="flex gap-4">
                     <div className="w-40">
                       <LabeledInput
@@ -389,7 +389,7 @@ export default function CreateEngagement() {
 
                 {/* Prior Year 2 */}
                 <div className="flex items-start gap-8">
-                  <label className="text-sm text-muted-foreground w-24 pt-6">Prior Year 2<span className="text-destructive">*</span></label>
+                  <label className="text-sm text-muted-foreground w-24 pt-6 whitespace-nowrap">Prior Year 2<span className="text-destructive">*</span></label>
                   <div className="flex gap-4">
                     <div className="w-40">
                       <LabeledInput
