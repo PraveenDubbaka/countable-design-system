@@ -316,7 +316,7 @@ export default function CreateEngagement() {
               <div className="space-y-5">
                 {/* Period Type */}
                 <div className="flex items-center gap-8">
-                  <label className="text-sm text-muted-foreground w-24">Period Type<span className="text-destructive">*</span></label>
+                  <label className="text-sm text-muted-foreground w-24 whitespace-nowrap">Period Type<span className="text-destructive">*</span></label>
                   <div className="w-64">
                     <LabeledSelect
                       label=""
