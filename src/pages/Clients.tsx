@@ -449,14 +449,14 @@ export default function Clients() {
                               title="Create Engagement"
                               onClick={(e) => handleCreateEngagement(client.id, e)}
                             >
-                              <ClipboardPlus className="h-4 w-4 text-primary" />
+                              <ClipboardPlus className="h-4 w-4 text-link" />
                             </button>
                             <button
                               className="p-1.5 hover:bg-muted rounded-lg transition-colors"
                               title="Edit Client"
                               onClick={(e) => handleEditClient(client.id, e)}
                             >
-                              <Pencil className="h-4 w-4 text-primary" />
+                              <Pencil className="h-4 w-4 text-link" />
                             </button>
                             <button
                               className="p-1.5 hover:bg-muted rounded-lg transition-colors"
