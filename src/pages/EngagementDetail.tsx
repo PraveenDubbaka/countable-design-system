@@ -13,6 +13,9 @@ import { LetterView } from "@/components/LetterView";
 import { AuditMaterialityWorksheet } from "@/components/AuditMaterialityWorksheet";
 import { AuditScopeWorksheet } from "@/components/AuditScopeWorksheet";
 import { AuditPAPWorksheet } from "@/components/AuditPAPWorksheet";
+import { AuditTimeBudgetWorksheet } from "@/components/AuditTimeBudgetWorksheet";
+import { AuditDetailedBudgetWorksheet } from "@/components/AuditDetailedBudgetWorksheet";
+import { AuditMgmtRequestsWorksheet } from "@/components/AuditMgmtRequestsWorksheet";
 import { FloatingActionBar } from "@/components/FloatingActionBar";
 import { EngagementRightPanel } from "@/components/EngagementRightPanel";
 import { Checklist, Question } from "@/types/checklist";
@@ -135,6 +138,8 @@ import {
   generateUSJournalEntryTestingLog,
   generateUSRelatedPartyTransactionsWorksheet,
   generateUSGoodwillImpairmentAssessment,
+  generateSelectingAuditorExpertChecklist,
+  generateUSSelectingAuditorExpertChecklist,
 } from "@/lib/globalTemplates";
 
 // Sample engagement data matching the engagements page
@@ -254,6 +259,7 @@ const buildDefaultAuditChecklists = () => {
     { generator: generateUnderstandingEntityIndustryEnvironmentChecklist, id: "default-audit-uei" },
     { generator: generateEngagementPlanningChecklist, id: "default-audit-plan" },
     { generator: generateAuditMaterialityChecklist, id: "default-audit-mat" },
+    { generator: generateSelectingAuditorExpertChecklist, id: "default-audit-sae" },
     { generator: generateTCWGPlanningCommunicationChecklist, id: "default-audit-tcwg-pl" },
     { generator: generateEngagementScopeChecklist, id: "default-audit-scope" },
     { generator: generatePreliminaryAnalyticalProceduresChecklist, id: "default-audit-pap" },
@@ -317,6 +323,7 @@ const buildDefaultUSAuditChecklists = () => {
     { generator: generateUSUnderstandingEntityIndustryChecklist, id: "default-us-audit-uei" },
     { generator: generateUSEngagementPlanningChecklist, id: "default-us-audit-plan" },
     { generator: generateUSAuditMaterialityChecklist, id: "default-us-audit-mat" },
+    { generator: generateUSSelectingAuditorExpertChecklist, id: "default-us-audit-sae" },
     { generator: generateCommunicationTCWGPlanningUS, id: "default-us-audit-tcwg-pl" },
     { generator: generateUSEngagementScopeChecklist, id: "default-us-audit-scope" },
     { generator: generateUSPreliminaryAnalyticalProceduresChecklist, id: "default-us-audit-pap" },
@@ -432,6 +439,7 @@ const NAV_KEY_TO_CHECKLIST_ID: Record<string, string> = {
   "aud-uei": "default-audit-uei",
   "aud-plan": "default-audit-plan",
   "aud-mat": "default-audit-mat",
+  "aud-sae": "default-audit-sae",
   "aud-tcwg-pl": "default-audit-tcwg-pl",
   "aud-scope": "default-audit-scope",
   "aud-pap": "default-audit-pap",
@@ -475,6 +483,7 @@ const NAV_KEY_TO_CHECKLIST_ID: Record<string, string> = {
   "aud-us-uei": "default-us-audit-uei",
   "aud-us-plan": "default-us-audit-plan",
   "aud-us-mat": "default-us-audit-mat",
+  "aud-us-sae": "default-us-audit-sae",
   "aud-us-tcwg-pl": "default-us-audit-tcwg-pl",
   "aud-us-scope": "default-us-audit-scope",
   "aud-us-pap": "default-us-audit-pap",
@@ -1145,6 +1154,12 @@ export default function EngagementDetail() {
           {/* ── Interactive worksheets — rendered directly without checklist state ── */}
           {(checklistKey === 'aud-mat' || checklistKey === 'aud-us-mat') ? (
             <AuditMaterialityWorksheet isUS={checklistKey === 'aud-us-mat'} />
+          ) : (checklistKey === 'aud-tb' || checklistKey === 'aud-us-tb') ? (
+            <AuditTimeBudgetWorksheet isUS={checklistKey === 'aud-us-tb'} />
+          ) : (checklistKey === 'aud-db' || checklistKey === 'aud-us-db') ? (
+            <AuditDetailedBudgetWorksheet isUS={checklistKey === 'aud-us-db'} />
+          ) : (checklistKey === 'aud-iar' || checklistKey === 'aud-us-iar') ? (
+            <AuditMgmtRequestsWorksheet isUS={checklistKey === 'aud-us-iar'} />
           ) : (checklistKey === 'aud-scope' || checklistKey === 'aud-us-scope') ? (
             <AuditScopeWorksheet isUS={checklistKey === 'aud-us-scope'} />
           ) : (checklistKey === 'aud-pap' || checklistKey === 'aud-us-pap') ? (

@@ -13817,3 +13817,139 @@ export const generateUSForm410AcceptanceContinuance = (): Checklist => {
     updatedAt: new Date(),
   };
 };
+
+export const generateSelectingAuditorExpertChecklist = (): Checklist => {
+  const q = (id: string, text: string, sub?: Question[], answer = '', explanation = '', reference = ''): Question => ({
+    id, text, answerType: 'yes-no-na' as const, options: ['Yes', 'No', 'NA'],
+    required: false, answer, explanation, reference, ...(sub ? { subQuestions: sub } : {})
+  });
+  const la = (id: string, text: string, answer = ''): Question => ({
+    id, text, answerType: 'long-answer' as const, options: [], required: false, answer
+  });
+  const h = (id: string, text: string, sub?: Question[]): Question => ({
+    id, text, answerType: 'none' as const, options: [], required: false, answer: '',
+    showResponse: false as any, showExplanation: false as any, showReference: false as any,
+    ...(sub ? { subQuestions: sub } : {})
+  });
+
+  return {
+    id: 'default-audit-sae',
+    title: 'Selecting an Auditor\'s Expert',
+    description: 'CAS 620',
+    objective: '<p>To assist in the selection of an auditor\'s expert, to plan the work to be performed and to agree on the terms of engagement.</p>',
+    sections: [
+      {
+        id: 'sae-s1', title: 'Selecting an Auditor\'s Expert', isExpanded: true,
+        questions: [
+          q('sae-1', '<p><strong>Assess the need for an expert.</strong> Determine whether expertise in a field other than accounting or auditing is necessary to obtain sufficient appropriate audit evidence.</p>', [
+            la('sae-1a', '<p>Valuation of complex financial instruments, land and buildings, plant and machinery, jewelry, works of art, antiques, intangible assets, business combinations.</p>', '<p>Vessel fleet valuation required — chartered marine surveyor engaged to assess fair value of 4 vessels (total carrying value CAD $14.2M).</p>'),
+            la('sae-1b', '<p>Actuarial calculations of liabilities for insurance or employee benefit plans.</p>', '<p>N/A — no defined benefit plans.</p>'),
+            la('sae-1c', '<p>Estimation of oil and gas reserves.</p>', '<p>N/A.</p>'),
+            la('sae-1d', '<p>Valuation of environmental liabilities.</p>', '<p>N/A — no environmental remediation obligations identified.</p>'),
+            la('sae-1e', '<p>Interpretation of contracts, laws and regulations.</p>', '<p>N/A — standard shipping contracts reviewed by management\'s legal counsel.</p>'),
+            la('sae-1f', '<p>Analysis of complex tax compliance issues.</p>', '<p>N/A — standard corporate income tax, no complex structures.</p>'),
+            la('sae-1g', '<p>Other (specify).</p>', '<p>N/A.</p>'),
+          ], 'Yes', '<p>Marine surveyor engaged for vessel fleet valuation (CAD $14.2M carrying value). Expert required as fleet represents the largest single asset class and management uses a discounted cash flow model with industry-specific assumptions not independently verifiable by the audit team.</p>', 'CAS 620'),
+
+          la('sae-2', '<p><strong>Nature of evidence to be obtained.</strong> Determine the nature of the evidence to be provided by the expert, including whether that evidence will: assist in understanding the entity and its environment; assist in identifying and assessing risks of material misstatement; provide a response to an assessed risk; assist in designing further audit procedures; or provide sufficient appropriate evidence.</p>', '<p>The marine surveyor will provide a written valuation report for each vessel, confirming fair market value as at March 31, 2024. The report will be used as primary evidence to evaluate management\'s carrying values and assess whether any impairment indicators exist.</p>'),
+
+          la('sae-3', '<p><strong>Nature, scope and objectives.</strong> Determine the exact nature, timing and extent of the expert\'s procedures. Consider the significance and risks of the matter, and the firm\'s quality control policies and procedures.</p>', '<p>Scope: independent valuation of 4 vessels (MV Atlantic Carrier, MV Pacific Star, MV Northern Spirit, MV Eastern Venture) as at March 31, 2024 using market comparable and income approach methods. Timing: valuation report required by May 15, 2024.</p>'),
+
+          q('sae-4', '<p><strong>Expert\'s competence, capabilities and objectivity.</strong> Evaluate whether the expert has the necessary competence, capabilities and objectivity.</p>', [
+            q('sae-4a', '<p>Necessary competence and capabilities for the assignment.</p>', undefined, 'Yes', '<p>J. Hartley, P.Eng — Marine Surveyor with 22 years experience. Member of the Society of Accredited Marine Surveyors (SAMS).</p>'),
+            q('sae-4b', '<p>Compliance with relevant ethical requirements (independence from the entity and management).</p>', undefined, 'Yes', '<p>J. Hartley confirmed in writing that the firm has no financial relationship with Shipping Line Inc. and has not provided services in the past 5 years.</p>'),
+            q('sae-4c', '<p>Any threats to the expert\'s objectivity and safeguards applied.</p>', undefined, 'No', '<p>No threats identified. No prior relationship with the entity or management.</p>'),
+          ], 'Yes', '<p>Competence confirmed. J. Hartley, SAMS — 22 years marine valuation experience. Independence confirmed by written declaration.</p>'),
+
+          la('sae-5', '<p><strong>Auditor\'s understanding of the expert\'s field.</strong> Obtain sufficient understanding of the expert\'s field of expertise to enable the auditor to determine the nature, scope and objectives of the expert\'s work and evaluate the adequacy of that work for the audit\'s purposes.</p>', '<p>Engagement senior reviewed the Institute of Chartered Shipbrokers\' vessel valuation standards and discussed methodology with J. Hartley prior to engagement. The market comparable approach and income approach are both well-established methods for merchant vessel valuation.</p>'),
+
+          q('sae-6', '<p><strong>Terms of engagement.</strong> Agree on the nature, scope and objectives of the expert\'s work with the expert, and obtain a written agreement.</p>', [
+            q('sae-6a', '<p>Nature, scope and objectives of the expert\'s work.</p>', undefined, 'Yes', '<p>Documented in engagement letter dated March 28, 2024.</p>'),
+            q('sae-6b', '<p>Respective roles and responsibilities of the auditor and the expert.</p>', undefined, 'Yes', '<p>Expert provides independent valuation report; auditor evaluates reasonableness against management\'s carrying values.</p>'),
+            q('sae-6c', '<p>Nature, timing and extent of communication between the auditor and the expert.</p>', undefined, 'Yes', '<p>Draft report due May 1, 2024; final report due May 15, 2024. Direct communication permitted.</p>'),
+            q('sae-6d', '<p>Confidentiality requirements.</p>', undefined, 'Yes', '<p>Confidentiality agreement executed March 28, 2024.</p>'),
+          ], 'Yes', '<p>Written engagement letter executed March 28, 2024. Scope, responsibilities, timing and confidentiality requirements confirmed.</p>'),
+        ]
+      },
+      {
+        id: 'sae-signoff', title: 'Sign-off', isExpanded: true,
+        questions: [
+          la('sae-prep', '<p>Prepared by</p>', '<p>A. Kumar</p>'),
+          la('sae-prep-date', '<p>Date</p>', '<p>April 3, 2024</p>'),
+          la('sae-rev', '<p>Reviewed by</p>', '<p>S. Chen, CPA</p>'),
+          la('sae-rev-date', '<p>Date</p>', '<p>April 5, 2024</p>'),
+        ]
+      }
+    ],
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  };
+};
+
+export const generateUSSelectingAuditorExpertChecklist = (): Checklist => {
+  const q = (id: string, text: string, sub?: Question[], answer = '', explanation = '', reference = ''): Question => ({
+    id, text, answerType: 'yes-no-na' as const, options: ['Yes', 'No', 'NA'],
+    required: false, answer, explanation, reference, ...(sub ? { subQuestions: sub } : {})
+  });
+  const la = (id: string, text: string, answer = ''): Question => ({
+    id, text, answerType: 'long-answer' as const, options: [], required: false, answer
+  });
+  const h = (id: string, text: string, sub?: Question[]): Question => ({
+    id, text, answerType: 'none' as const, options: [], required: false, answer: '',
+    showResponse: false as any, showExplanation: false as any, showReference: false as any,
+    ...(sub ? { subQuestions: sub } : {})
+  });
+
+  return {
+    id: 'default-us-audit-sae',
+    title: 'Selecting an Auditor\'s Expert',
+    description: 'AU-C 620',
+    objective: '<p>To assist in the selection of an auditor\'s expert, to plan the work to be performed and to agree on the terms of engagement.</p>',
+    sections: [
+      {
+        id: 'us-sae-s1', title: 'Selecting an Auditor\'s Expert', isExpanded: true,
+        questions: [
+          q('us-sae-1', '<p><strong>Assess the need for an expert.</strong> Determine whether expertise in a field other than accounting or auditing is necessary to obtain sufficient appropriate audit evidence.</p>', [
+            la('us-sae-1a', '<p>Valuation of complex financial instruments, land and buildings, plant and machinery, jewelry, works of art, antiques, intangible assets, business combinations.</p>', '<p>Real property appraisal required — certified real estate appraiser engaged to assess fair value of warehouse facilities (total carrying value USD $8.5M).</p>'),
+            la('us-sae-1b', '<p>Actuarial calculations of liabilities for insurance or employee benefit plans.</p>', '<p>N/A — no defined benefit plans.</p>'),
+            la('us-sae-1c', '<p>Estimation of oil and gas reserves.</p>', '<p>N/A.</p>'),
+            la('us-sae-1d', '<p>Valuation of environmental liabilities.</p>', '<p>N/A — no environmental remediation obligations identified.</p>'),
+            la('us-sae-1e', '<p>Interpretation of contracts, laws and regulations.</p>', '<p>N/A — standard logistics contracts reviewed by management\'s legal counsel.</p>'),
+            la('us-sae-1f', '<p>Analysis of complex tax compliance issues.</p>', '<p>N/A — standard corporate income tax, no complex structures.</p>'),
+            la('us-sae-1g', '<p>Other (specify).</p>', '<p>N/A.</p>'),
+          ], 'Yes', '<p>Real property appraiser engaged for warehouse facility valuation (USD $8.5M carrying value). Expert required as warehouse facilities represent the largest single asset class and management uses a cost approach with market adjustments not independently verifiable by the audit team.</p>', 'AU-C 620'),
+
+          la('us-sae-2', '<p><strong>Nature of evidence to be obtained.</strong> Determine the nature of the evidence to be provided by the expert, including whether that evidence will: assist in understanding the entity and its environment; assist in identifying and assessing risks of material misstatement; provide a response to an assessed risk; assist in designing further audit procedures; or provide sufficient appropriate evidence.</p>', '<p>The real property appraiser will provide a written appraisal report for each warehouse facility, confirming fair market value as at December 31, 2024. The report will be used as primary evidence to evaluate management\'s carrying values and assess whether any impairment indicators exist.</p>'),
+
+          la('us-sae-3', '<p><strong>Nature, scope and objectives.</strong> Determine the exact nature, timing and extent of the expert\'s procedures. Consider the significance and risks of the matter, and the firm\'s quality control policies and procedures.</p>', '<p>Scope: independent appraisal of 3 warehouse facilities (Houston TX Distribution Center, Dallas TX Regional Hub, Memphis TN Logistics Center) as at December 31, 2024 using cost approach and market comparable methods. Timing: appraisal report required by February 28, 2025.</p>'),
+
+          q('us-sae-4', '<p><strong>Expert\'s competence, capabilities and objectivity.</strong> Evaluate whether the expert has the necessary competence, capabilities and objectivity.</p>', [
+            q('us-sae-4a', '<p>Necessary competence and capabilities for the assignment.</p>', undefined, 'Yes', '<p>R. Morrison, MAI — Certified General Appraiser with 18 years experience in commercial real estate. Member of the Appraisal Institute.</p>'),
+            q('us-sae-4b', '<p>Compliance with relevant ethical requirements (independence from the entity and management).</p>', undefined, 'Yes', '<p>R. Morrison confirmed in writing that the firm has no financial relationship with Harbor Freight Logistics LLC and has not provided services in the past 5 years.</p>'),
+            q('us-sae-4c', '<p>Any threats to the expert\'s objectivity and safeguards applied.</p>', undefined, 'No', '<p>No threats identified. No prior relationship with the entity or management.</p>'),
+          ], 'Yes', '<p>Competence confirmed. R. Morrison, MAI — 18 years commercial real estate appraisal experience. Independence confirmed by written declaration.</p>'),
+
+          la('us-sae-5', '<p><strong>Auditor\'s understanding of the expert\'s field.</strong> Obtain sufficient understanding of the expert\'s field of expertise to enable the auditor to determine the nature, scope and objectives of the expert\'s work and evaluate the adequacy of that work for the audit\'s purposes.</p>', '<p>Engagement senior reviewed the Uniform Standards of Professional Appraisal Practice (USPAP) standards and discussed methodology with R. Morrison prior to engagement. The cost approach and market comparable approach are both well-established methods for commercial warehouse valuation.</p>'),
+
+          q('us-sae-6', '<p><strong>Terms of engagement.</strong> Agree on the nature, scope and objectives of the expert\'s work with the expert, and obtain a written agreement.</p>', [
+            q('us-sae-6a', '<p>Nature, scope and objectives of the expert\'s work.</p>', undefined, 'Yes', '<p>Documented in engagement letter dated January 10, 2025.</p>'),
+            q('us-sae-6b', '<p>Respective roles and responsibilities of the auditor and the expert.</p>', undefined, 'Yes', '<p>Expert provides independent appraisal report; auditor evaluates reasonableness against management\'s carrying values.</p>'),
+            q('us-sae-6c', '<p>Nature, timing and extent of communication between the auditor and the expert.</p>', undefined, 'Yes', '<p>Draft report due February 15, 2025; final report due February 28, 2025. Direct communication permitted.</p>'),
+            q('us-sae-6d', '<p>Confidentiality requirements.</p>', undefined, 'Yes', '<p>Confidentiality agreement executed January 10, 2025.</p>'),
+          ], 'Yes', '<p>Written engagement letter executed January 10, 2025. Scope, responsibilities, timing and confidentiality requirements confirmed.</p>'),
+        ]
+      },
+      {
+        id: 'us-sae-signoff', title: 'Sign-off', isExpanded: true,
+        questions: [
+          la('us-sae-prep', '<p>Prepared by</p>', '<p>Senior 1</p>'),
+          la('us-sae-prep-date', '<p>Date</p>', '<p>January 10, 2025</p>'),
+          la('us-sae-rev', '<p>Reviewed by</p>', '<p>M. Thompson, CPA</p>'),
+          la('us-sae-rev-date', '<p>Date</p>', '<p>January 13, 2025</p>'),
+        ]
+      }
+    ],
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  };
+};
