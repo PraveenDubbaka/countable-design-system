@@ -13233,7 +13233,7 @@ export const generateForm410AcceptanceContinuance = (): Checklist => {
           q('f410-era-2d', '<p>The presentation in combined F/S of the financial information of entities or business units that have no parent but are under common control or common management.</p>', undefined, 'No'),
           q('f410-era-2e', '<p>The aggregation of the financial information of entities or business units.</p>', undefined, 'No'),
         ]),
-        q('f410-era-3', '<p>Identify any concerns about the integrity and ethical values of management/TCWG.</p>', [
+        q('f410-era-3', '<p><strong>Integrity and ethical values</strong><br/>Identify any concerns about the integrity and ethical values of management/TCWG.<br/>Consider:</p>', [
           q('f410-era-3a', '<p>Misleading/untrue management representations.</p>', undefined, 'No'),
           q('f410-era-3b', '<p>Convictions and regulatory sanctions.</p>', undefined, 'No'),
           q('f410-era-3c', '<p>Suspicions of unethical actions or fraud.</p>', undefined, 'No'),
