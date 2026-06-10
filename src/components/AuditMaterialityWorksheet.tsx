@@ -221,6 +221,12 @@ export function AuditMaterialityWorksheet({ isUS = false }: AuditMaterialityWork
   const [specPMPY, setSpecPMPY] = useState("");
   const [specPMWPRef, setSpecPMWPRef] = useState("WP-RPT-PM");
 
+  // Sign-off
+  const [preparedBy, setPreparedBy] = useState("");
+  const [preparedDate, setPreparedDate] = useState("");
+  const [reviewedBy, setReviewedBy] = useState("");
+  const [reviewedDate, setReviewedDate] = useState("");
+
   // Additional comments & conclusion
   const [additionalComments, setAdditionalComments] = useState("");
   const [conclusion, setConclusion] = useState(
@@ -260,6 +266,7 @@ export function AuditMaterialityWorksheet({ isUS = false }: AuditMaterialityWork
         benchmarkPct: "1.00",
         materialityCY: "",
         materialityPY: "",
+        comments: "",
       },
     ]);
   };
@@ -715,14 +722,12 @@ export function AuditMaterialityWorksheet({ isUS = false }: AuditMaterialityWork
                 </tbody>
               </table>
             </div>
-            <div className="px-6 py-3 border-t border-border flex items-center justify-between gap-4">
+            <div className="px-6 py-3 border-t border-border space-y-2">
               <button onClick={() => setAdjPMRows(p => [...p, {id: uid(), area:"", amount:"", reasoning:"", pyAmount:""}])} className="flex items-center gap-1.5 text-sm font-medium text-primary hover:text-primary/80 transition-colors"><Plus className="h-4 w-4" />Add Row</button>
-              {adjPMRows.length > 2 && (
-                <p className="flex items-start gap-1.5 text-xs text-muted-foreground">
-                  <Info className="h-3.5 w-3.5 flex-shrink-0 mt-0.5" />
-                  If there are more than two F/S areas or disclosures requiring an adjusted performance materiality level, provide details on a supplementary work paper that cross-references to this form.
-                </p>
-              )}
+              <p className="flex items-start gap-1.5 text-xs text-muted-foreground">
+                <Info className="h-3.5 w-3.5 flex-shrink-0 mt-0.5" />
+                If there are more than two F/S areas or disclosures that require an adjusted performance materiality level, provide details on a supplementary work paper that cross-references to this form.
+              </p>
             </div>
           </div>
 
@@ -818,6 +823,46 @@ export function AuditMaterialityWorksheet({ isUS = false }: AuditMaterialityWork
                 onChange={(e) => setConclusion(e.target.value)}
                 className="min-h-[72px] text-sm resize-none bg-background"
               />
+            </div>
+          </div>
+
+          {/* ── Sign-off footer ── */}
+          <div className="bg-card border border-border shadow-[0_2px_8px_hsl(213_40%_20%/0.06)] rounded-md overflow-hidden">
+            <div className="px-6 py-4 bg-muted/20">
+              <div className="grid grid-cols-2 gap-6">
+                <div className="flex items-center gap-3">
+                  <span className="text-xs font-semibold text-muted-foreground whitespace-nowrap">Prepared by:</span>
+                  <Input
+                    className="h-8 text-sm flex-1"
+                    value={preparedBy}
+                    onChange={(e) => setPreparedBy(e.target.value)}
+                    placeholder="Name"
+                  />
+                  <span className="text-xs font-semibold text-muted-foreground whitespace-nowrap">Date:</span>
+                  <Input
+                    type="date"
+                    className="h-8 text-sm w-36"
+                    value={preparedDate}
+                    onChange={(e) => setPreparedDate(e.target.value)}
+                  />
+                </div>
+                <div className="flex items-center gap-3">
+                  <span className="text-xs font-semibold text-muted-foreground whitespace-nowrap">Reviewed by:</span>
+                  <Input
+                    className="h-8 text-sm flex-1"
+                    value={reviewedBy}
+                    onChange={(e) => setReviewedBy(e.target.value)}
+                    placeholder="Name"
+                  />
+                  <span className="text-xs font-semibold text-muted-foreground whitespace-nowrap">Date:</span>
+                  <Input
+                    type="date"
+                    className="h-8 text-sm w-36"
+                    value={reviewedDate}
+                    onChange={(e) => setReviewedDate(e.target.value)}
+                  />
+                </div>
+              </div>
             </div>
           </div>
 
