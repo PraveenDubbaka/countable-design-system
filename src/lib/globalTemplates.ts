@@ -13343,7 +13343,7 @@ export const generateForm410AcceptanceContinuance = (): Checklist => {
     {
       id: 'f410-appA',
       title: 'Appendix A – Listing of potential engagement risk factors',
-      note: '<p>This appendix can be used to complete engagement risk assessment procedure #5 (engagement risk factors). Depending on the complexity, the risk can be described either under the responses/comments column above or in the chart below and referenced to the question above. Only document the information once.<br/><br/>Review Form 510, and identify engagement risk factors that may influence the acceptance/continuance decision.</p>',
+      note: '<p>This appendix can be used to complete engagement risk assessment procedure #5, engagement risk factors. Depending on the complexity, the risk can be described either under the responses/comments column above or in the chart below and referenced to the question above. Only document the information once.<br/><br/>Review Form 510, and identify engagement risk factors that may influence the acceptance/continuance decision.</p>',
       questions: [
         h('f410-appA-int-hdr', '<p><strong>Integrity and ethical values</strong></p>', [
           q('f410-appA-int-1', '<p>Management or TCWG have a history of unethical behaviour or suspected fraud.</p>', undefined, 'No'),
