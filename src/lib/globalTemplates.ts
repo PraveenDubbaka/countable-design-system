@@ -13215,7 +13215,7 @@ export const generateForm410AcceptanceContinuance = (): Checklist => {
   });
   const h = (id: string, text: string, sub?: Question[]): Question => ({
     id, text, answerType: 'none' as const, options: [], required: false, answer: '',
-    showResponse: false as any, showExplanation: false as any, showReference: false as any,
+    showResponse: false, showExplanation: false, showReference: false,
     ...(sub ? { subQuestions: sub } : {})
   });
 
