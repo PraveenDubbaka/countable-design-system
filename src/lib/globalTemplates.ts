@@ -13180,7 +13180,7 @@ export const generateForm408InitialAuditEngagements = (): Checklist => {
     {
       id: 'f408-conc',
       title: 'Conclusion',
-      note: '<p>We have obtained sufficient appropriate audit evidence regarding whether:<br/>1. To accept the new audit client or new engagement (see Form 410).<br/>2. Opening balances contain misstatements that materially affect the current period\'s F/S.<br/>3. Appropriate accounting policies were reflected in the opening balances and consistently applied in the current period\'s F/S. Where accounting policy changes have occurred, they have been appropriately accounted for and adequately presented/disclosed in accordance with the applicable financial reporting framework.</p>',
+      note: 'We have obtained sufficient appropriate audit evidence regarding whether:\n1. To accept the new audit client or new engagement (see Form 410).\n2. Opening balances contain misstatements that materially affect the current period\'s F/S.\n3. Appropriate accounting policies were reflected in the opening balances and consistently applied in the current period\'s F/S. Where accounting policy changes have occurred, they have been appropriately accounted for and adequately presented/disclosed in accordance with the applicable financial reporting framework.',
       questions: [
         { id: 'f408-conc-pb', text: '', answerType: 'none' as const, options: [], required: false, answer: '', columnLayout: { columns: 2, cells: [{ id: 'f408-conc-pb-c1', content: 'Prepared by', blockType: 'text' as const }, { id: 'f408-conc-pb-c2', content: '2024-04-05', blockType: 'date' as const }], columnWidths: [0.35, 0.65] } },
         { id: 'f408-conc-rb', text: '', answerType: 'none' as const, options: [], required: false, answer: '', columnLayout: { columns: 2, cells: [{ id: 'f408-conc-rb-c1', content: 'Reviewed by', blockType: 'text' as const }, { id: 'f408-conc-rb-c2', content: '2024-04-08', blockType: 'date' as const }], columnWidths: [0.35, 0.65] } },
@@ -13343,7 +13343,7 @@ export const generateForm410AcceptanceContinuance = (): Checklist => {
     {
       id: 'f410-appA',
       title: 'Appendix A – Listing of potential engagement risk factors',
-      note: '<p>This appendix can be used to complete engagement risk assessment procedure #5, engagement risk factors. Depending on the complexity, the risk can be described either under the responses/comments column above or in the chart below and referenced to the question above. Only document the information once.<br/><br/>Review Form 510, and identify engagement risk factors that may influence the acceptance/continuance decision.</p>',
+      note: 'This appendix can be used to complete engagement risk assessment procedure #5, engagement risk factors. Depending on the complexity, the risk can be described either under the responses/comments column above or in the chart below and referenced to the question above. Only document the information once.\n\nReview Form 510, and identify engagement risk factors that may influence the acceptance/continuance decision.',
       questions: [
         h('f410-appA-int-hdr', '<p><strong>Integrity and ethical values</strong></p>', [
           q('f410-appA-int-1', '<p>Management or TCWG have a history of unethical behaviour or suspected fraud.</p>', undefined, 'No'),
@@ -13392,7 +13392,7 @@ export const generateForm410AcceptanceContinuance = (): Checklist => {
     {
       id: 'f410-appB',
       title: 'Appendix B – Group Audit Guidance (CAS 600)',
-      note: '<p>This appendix provides additional guidance on determining whether the audit engagement is a group audit under revised CAS 600. Use this guidance to complete Engagement risk assessment question #2.</p>',
+      note: 'This appendix provides additional guidance on determining whether the audit engagement is a group audit under revised CAS 600. Use this guidance to complete Engagement risk assessment question #2.',
       questions: [
         la('f410-appB-def', '<p><strong>Definition of a group audit</strong><br/>A group audit is the audit of F/S that include the financial information of more than one entity or business unit through a consolidation process. For the purposes of CAS 600, a consolidation process includes:<br/>• Consolidation, proportionate consolidation, or an equity method of accounting.<br/>• The presentation in combined F/S of the financial information of entities or business units that have no parent but are under common control or common management.<br/>• The aggregation of the financial information of entities or business units.</p>', ''),
         la('f410-appB-indicators', '<p><strong>Indicators that suggest a group audit may exist</strong><br/>Consider the following when making the group audit determination:<br/>• Entity has subsidiaries, joint ventures, or equity-accounted investments.<br/>• Entity prepares consolidated financial statements.<br/>• Entity presents combined financial statements for commonly controlled entities.<br/>• Entity aggregates financial information from multiple operating divisions or business units.<br/>• Engagement involves auditing financial information prepared at multiple locations or by multiple teams.</p>', ''),
@@ -13457,7 +13457,7 @@ export const generateUSForm408InitialAuditEngagements = (): Checklist => {
     {
       id: 'us-f408-pB',
       title: 'PART B – PREDECESSOR AUDITOR/PRACTITIONER CONSIDERATIONS',
-      note: '<p>Refer to AU-C 210 — Terms of Engagement for predecessor auditor communication requirements.</p>',
+      note: 'Refer to AU-C 210 — Terms of Engagement for predecessor auditor communication requirements.',
       questions: [
         q('us-f408-pB-1', '<p>Inquire about the predecessor auditor/practitioner.</p>', [
           q('us-f408-pB-1a', '<p>Name and address of the predecessor firm and the engagement partner.</p>', undefined, 'Yes', '<p>Johnson &amp; Walsh LLP, 200 South Michigan Ave, Chicago IL. Engagement partner: R. Johnson, CPA.</p>'),
@@ -13559,7 +13559,7 @@ export const generateUSForm408InitialAuditEngagements = (): Checklist => {
     {
       id: 'us-f408-conc',
       title: 'Conclusion',
-      note: '<p>We have obtained sufficient appropriate audit evidence regarding whether:<br/>1. To accept the new audit client or new engagement (see Form 410).<br/>2. Opening balances contain misstatements that materially affect the current period\'s F/S.<br/>3. Appropriate accounting policies were reflected in the opening balances and consistently applied in the current period\'s F/S. Where accounting policy changes have occurred, they have been appropriately accounted for and adequately presented/disclosed in accordance with the applicable financial reporting framework.</p>',
+      note: 'We have obtained sufficient appropriate audit evidence regarding whether:\n1. To accept the new audit client or new engagement (see Form 410).\n2. Opening balances contain misstatements that materially affect the current period\'s F/S.\n3. Appropriate accounting policies were reflected in the opening balances and consistently applied in the current period\'s F/S. Where accounting policy changes have occurred, they have been appropriately accounted for and adequately presented/disclosed in accordance with the applicable financial reporting framework.',
       questions: [
         { id: 'us-f408-conc-pb', text: '', answerType: 'none' as const, options: [], required: false, answer: '', columnLayout: { columns: 2, cells: [{ id: 'us-f408-conc-pb-c1', content: 'Prepared by', blockType: 'text' as const }, { id: 'us-f408-conc-pb-c2', content: '2025-01-14', blockType: 'date' as const }], columnWidths: [0.35, 0.65] } },
         { id: 'us-f408-conc-rb', text: '', answerType: 'none' as const, options: [], required: false, answer: '', columnLayout: { columns: 2, cells: [{ id: 'us-f408-conc-rb-c1', content: 'Reviewed by', blockType: 'text' as const }, { id: 'us-f408-conc-rb-c2', content: '2025-01-16', blockType: 'date' as const }], columnWidths: [0.35, 0.65] } },
@@ -13669,7 +13669,7 @@ export const generateUSForm410AcceptanceContinuance = (): Checklist => {
     {
       id: 'us-f410-ind-prohibit',
       title: '6. Independence Prohibitions',
-      note: '<p>Refer to AICPA Code of Professional Conduct / ET for guidance, interpretations and additional independence prohibitions for SEC registrants.</p>',
+      note: 'Refer to AICPA Code of Professional Conduct / ET for guidance, interpretations and additional independence prohibitions for SEC registrants.',
       questions: [
         q('us-f410-ip-1', '<p>Identify and describe any potential independence prohibitions that could occur and provide reasons why they do or do not preclude the firm or particular staff members from performing the engagement. Address each of the prohibitions listed below:</p>', [
           h('us-f410-ip-svc-hdr', '<p><strong>Services performed</strong></p>'),

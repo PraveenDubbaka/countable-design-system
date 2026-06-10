@@ -2100,15 +2100,6 @@ function DocumentSectionBlock({
         </div>
       </div>
 
-      {/* Section note — formatted, below header */}
-      {section.isExpanded && section.note &&
-      <div className="px-[38px] py-3 border-b" style={{ borderColor: '#E2E5EB' }}>
-          <div
-          className="text-sm text-foreground [&_p]:mb-0 [&_em]:text-muted-foreground"
-          dangerouslySetInnerHTML={{ __html: sanitizeHtml(section.note) }} />
-        </div>
-      }
-
       {/* Content: either FormLayout or Questions */}
       {section.isExpanded &&
       <>
