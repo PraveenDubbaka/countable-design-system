@@ -1,7 +1,9 @@
-import { useState, useCallback } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { Badge } from "@/components/ui/badge";
+import { Switch } from "@/components/ui/switch";
 import {
   Select,
   SelectContent,
@@ -9,34 +11,128 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Info, RefreshCw, Trash2, Plus, Calendar } from "lucide-react";
+import { Info, RefreshCw, Trash2, Plus, AlertTriangle, CheckCircle2 } from "lucide-react";
 import { AddToMyTemplatesDialog } from "@/components/AddToMyTemplatesDialog";
+import { readJsonFromLocalStorage, writeJsonToLocalStorage } from "@/lib/safeJson";
 import { toast } from "sonner";
+
+// ── Benchmarks (profit-oriented corporations & partnerships only) ─────────────
+
+type BenchmarkBasis =
+  | "grossRevenue"
+  | "preTaxIncome"
+  | "totalAssets"
+  | "netAssets"
+  | "totalExpenses";
+
+const BENCHMARK_OPTIONS: { value: BenchmarkBasis; label: string }[] = [
+  { value: "grossRevenue", label: "Gross Revenue" },
+  { value: "preTaxIncome", label: "Pre-Tax Income (normalized)" },
+  { value: "totalAssets", label: "Total Assets" },
+  { value: "netAssets", label: "Net Assets / Equity" },
+  { value: "totalExpenses", label: "Total Expenses" },
+];
+
+const SUGGESTED_RANGES: Record<BenchmarkBasis, string> = {
+  grossRevenue: "0.5% – 1%",
+  preTaxIncome: "3% – 5%",
+  totalAssets: "0.5% – 1%",
+  netAssets: "1% – 2%",
+  totalExpenses: "0.5% – 1%",
+};
+
+// Income-statement flows annualize; balance-sheet positions are point-in-time.
+const FLOW_BASES = new Set<BenchmarkBasis>(["grossRevenue", "preTaxIncome", "totalExpenses"]);
+
+const REASON_OPTIONS = [
+  "Related party transactions",
+  "Regulatory compliance threshold",
+  "Executive compensation",
+  "Sensitive disclosures",
+  "Other",
+];
+
+// ── Simulated data source (QuickBooks / Xero pull) ────────────────────────────
+
+interface FinancialSnapshot {
+  grossRevenue: number;
+  preTaxIncome: number;
+  totalAssets: number;
+  netAssets: number;
+  totalExpenses: number;
+}
+
+interface MockFinancials {
+  entityName: string;
+  availableThrough: string; // last transaction date in the connected source
+  values: FinancialSnapshot; // year-to-date as of availableThrough
+  fullYear: FinancialSnapshot; // actuals once the year is complete
+}
+
+const FINANCIALS: { ca: MockFinancials; us: MockFinancials } = {
+  ca: {
+    entityName: "Shipping Line Inc.",
+    availableThrough: "2024-12-31",
+    values: { grossRevenue: 12500000, preTaxIncome: 460000, totalAssets: 21800000, netAssets: 8400000, totalExpenses: 12040000 },
+    fullYear: { grossRevenue: 16700000, preTaxIncome: 730000, totalAssets: 22400000, netAssets: 9100000, totalExpenses: 15970000 },
+  },
+  us: {
+    entityName: "Harbor Freight Logistics LLC",
+    availableThrough: "2024-09-30",
+    values: { grossRevenue: 18400000, preTaxIncome: 1140000, totalAssets: 14600000, netAssets: 5400000, totalExpenses: 17260000 },
+    fullYear: { grossRevenue: 24900000, preTaxIncome: 1310000, totalAssets: 15100000, netAssets: 5900000, totalExpenses: 23590000 },
+  },
+};
 
 // ── Types ──────────────────────────────────────────────────────────────────────
 
-interface EntityRow {
+interface BenchmarkRow {
   id: string;
-  entityName: string;
-  basis: string;
-  periodAmount: string;
-  extrapolatedPeriod: string;
-  benchmarkPct: string;
-  materialityCY: string; // calculated
-  materialityPY: string;
+  basis: BenchmarkBasis | "";
+  benchmarkValue: string; // manual value; ignored while the row is auto-filled
+  valueIsManual: boolean;
+  appliedPct: string;
+  priorYear: string;
   comments: string;
 }
 
-interface IntendedUser {
+interface SpecificRow {
   id: string;
-  user: string;
-  factors: string;
+  account: string;
+  reason: string;
+  amount: string;
+  pmAmount: string;
+  comments: string;
 }
 
-interface QualitativeItem {
-  id: string;
-  nature: string;
-  impact: string;
+interface PersistedMaterialityData {
+  // contract consumed by AuditScopeWorksheet / AuditPAPWorksheet — keep shapes
+  overallMateriality: string;
+  clearlyTrivial: string;
+  performanceMateriality: string;
+  performancePct: string;
+  specificItems: SpecificRow[];
+  refreshedOn: string | null;
+  periodStart: string;
+  periodEnd: string;
+  // self-restore extras
+  rows: BenchmarkRow[];
+  selectedRowId: string | null;
+  dataSource: "connected" | "none";
+  materialityShift: boolean;
+  pmPriorYear: string;
+  pmComments: string;
+  ctPct: string;
+  specificEnabled: boolean;
+  specificRows: SpecificRow[];
+  preparedBy: string;
+  preparedDate: string;
+  reviewedBy: string;
+  reviewedDate: string;
+  conclusion: string;
+  concluded: boolean;
+  concludedBy: string;
+  concludedOn: string;
 }
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
@@ -51,38 +147,31 @@ function formatNum(val: string | number): string {
   return n.toLocaleString("en-CA", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 }
 
-function calcMatCY(periodAmount: string, benchmarkPct: string): string {
-  const a = parseFloat(periodAmount.replace(/[^0-9.]/g, ""));
-  const p = parseFloat(benchmarkPct.replace(/[^0-9.]/g, ""));
-  if (isNaN(a) || isNaN(p)) return "";
-  return formatNum(a * p / 100);
+function parseNum(s: string): number | null {
+  const n = parseFloat(String(s).replace(/[^0-9.-]/g, ""));
+  return isNaN(n) ? null : n;
 }
 
-function sumColumn(rows: EntityRow[], field: keyof EntityRow): string {
-  let total = 0;
-  let hasValue = false;
-  for (const row of rows) {
-    const v = parseFloat(String(row[field]).replace(/[^0-9.]/g, ""));
-    if (!isNaN(v)) { total += v; hasValue = true; }
-  }
-  return hasValue ? formatNum(total) : "";
+function fmtAmt(n: number | null): string {
+  return n === null ? "—" : formatNum(n);
 }
 
-const BASIS_OPTIONS = [
-  "Gross revenues",
-  "Total assets",
-  "Profit before tax",
-  "Total expenses",
-  "Net assets",
-];
+function monthsBetween(startISO: string, endISO: string): number {
+  const start = new Date(startISO + "T00:00:00").getTime();
+  const end = new Date(endISO + "T00:00:00").getTime();
+  if (isNaN(start) || isNaN(end) || end <= start) return 0;
+  return Math.max(0, Math.round((end - start) / (1000 * 60 * 60 * 24 * 30.4375)));
+}
 
-const ENTITY_TYPE_OPTIONS = ["Profit Oriented", "Non-Profit", "Government", "Other"];
+function fmtDate(iso: string): string {
+  const dt = new Date(iso + "T00:00:00");
+  if (isNaN(dt.getTime())) return iso;
+  return dt.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
+}
 
-const formatDisplay = (v: string) => {
-  const n = parseFloat(v);
-  if (isNaN(n)) return v;
-  return n.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-};
+function todayISO(): string {
+  return new Date().toISOString().slice(0, 10);
+}
 
 // ── Sub-components ─────────────────────────────────────────────────────────────
 
@@ -118,14 +207,16 @@ function TdSelect({
   onChange,
   options,
   placeholder = "Select…",
+  disabled,
 }: {
   value: string;
   onChange: (v: string) => void;
   options: { value: string; label: string }[];
   placeholder?: string;
+  disabled?: boolean;
 }) {
   return (
-    <Select value={value} onValueChange={onChange}>
+    <Select value={value} onValueChange={onChange} disabled={disabled}>
       <SelectTrigger className="h-8 text-sm">
         <SelectValue placeholder={placeholder} />
       </SelectTrigger>
@@ -145,171 +236,230 @@ interface AuditMaterialityWorksheetProps {
 }
 
 export function AuditMaterialityWorksheet({ isUS = false }: AuditMaterialityWorksheetProps) {
+  // Keyed inner component: variant switches remount cleanly and lazy
+  // initializers re-run against the correct localStorage key.
+  return <WorksheetInner key={isUS ? "us" : "ca"} isUS={isUS} />;
+}
+
+function defaultRows(fin: MockFinancials): BenchmarkRow[] {
+  return [
+    { id: uid(), basis: "grossRevenue", benchmarkValue: String(fin.values.grossRevenue), valueIsManual: false, appliedPct: "1.00", priorYear: "", comments: "" },
+    { id: uid(), basis: "preTaxIncome", benchmarkValue: String(fin.values.preTaxIncome), valueIsManual: false, appliedPct: "5.00", priorYear: "", comments: "" },
+  ];
+}
+
+function WorksheetInner({ isUS }: { isUS: boolean }) {
+  const fin = isUS ? FINANCIALS.us : FINANCIALS.ca;
+  const storageKey = `audit-materiality-data-${isUS ? "us" : "ca"}`;
+  const persisted = useMemo(
+    () => readJsonFromLocalStorage<Partial<PersistedMaterialityData>>(storageKey, {}),
+    [storageKey]
+  );
+
+  const seedRows = useMemo(() => defaultRows(fin), [fin]);
+
   const [showAddDialog, setShowAddDialog] = useState(false);
-  const [concluded, setConcluded] = useState(false);
 
-  const [periodStart, setPeriodStart] = useState(isUS ? "2024-01-01" : "2024-04-01");
-  const [periodEnd, setPeriodEnd] = useState(isUS ? "2024-12-31" : "2025-03-31");
+  const [periodStart, setPeriodStart] = useState(persisted.periodStart ?? (isUS ? "2024-01-01" : "2024-04-01"));
+  const [periodEnd, setPeriodEnd] = useState(persisted.periodEnd ?? (isUS ? "2024-12-31" : "2025-03-31"));
 
-  // Preliminary Materiality table rows
-  const mockPeriodAmount = isUS ? "18400000" : "12500000";
-  const [entityRows, setEntityRows] = useState<EntityRow[]>([
-    {
-      id: uid(),
-      entityName: "Profit Oriented",
-      basis: "Gross revenues",
-      periodAmount: mockPeriodAmount,
-      extrapolatedPeriod: mockPeriodAmount,
-      benchmarkPct: "1.00",
-      materialityCY: calcMatCY(mockPeriodAmount, "1.00"),
-      materialityPY: "0",
-      comments: "",
-    },
-  ]);
+  const [dataSource, setDataSource] = useState<"connected" | "none">(persisted.dataSource ?? "connected");
+  const [refreshedOn, setRefreshedOn] = useState<string | null>(persisted.refreshedOn ?? null);
+  const [materialityShift, setMaterialityShift] = useState(persisted.materialityShift ?? false);
 
-  // Clearly trivial
-  const [ctThresholdPct, setCtThresholdPct] = useState("5.00");
-
-  // Performance Materiality
-  const [pmPct, setPmPct] = useState("70");
-  const [pmRationale, setPmRationale] = useState("");
-
-  // Intended Users
-  const [intendedUsers, setIntendedUsers] = useState<IntendedUser[]>([
-    { id: uid(), user: "", factors: "" },
-  ]);
-
-  // Qualitative considerations
-  const [qualitative, setQualitative] = useState<QualitativeItem[]>([
-    { id: uid(), nature: "", impact: "" },
-  ]);
-
-  // Section B — Qualitative disclosures
-  const [qualDisclosures, setQualDisclosures] = useState(
-    isUS
-      ? "ASC 842 first-year lease adoption — nature and extent of leases, ROU asset measurement, discount rate policy, and transition adjustments require complete disclosure. Goodwill impairment testing methodology and assumptions also require qualitative disclosure per ASC 350."
-      : "Vessel impairment indicators (CAS 36) — nature of impairment assessment and key assumptions (charter rate forecasts, useful lives) require qualitative disclosure. Foreign currency risk management policy disclosure under ASPE s.3856."
+  const [rows, setRows] = useState<BenchmarkRow[]>(persisted.rows?.length ? persisted.rows : seedRows);
+  const [selectedRowId, setSelectedRowId] = useState<string | null>(
+    persisted.selectedRowId !== undefined ? persisted.selectedRowId : (persisted.rows?.length ? persisted.rows : seedRows)[0]?.id ?? null
   );
 
-  // Section C adjusted — Performance materiality for specific F/S areas
-  interface AdjPMRow { id: string; area: string; amount: string; reasoning: string; pyAmount: string; }
-  const initAdjPM: AdjPMRow[] = isUS ? [
-    { id: uid(), area: "Revenue (ASC 606 — contract estimates)", amount: "92000", reasoning: "Higher risk of misstatement due to percentage-of-completion estimates. PM set at 50% of overall.", pyAmount: "" },
-    { id: uid(), area: "ROU Assets & Lease Liabilities (ASC 842)", amount: "64000", reasoning: "First-year adoption — increased inherent risk. PM set at 35% of overall.", pyAmount: "" },
-  ] : [
-    { id: uid(), area: "Vessel PP&E (CAS 36 impairment)", amount: "62000", reasoning: "Significant judgment in impairment assessment. PM set at 50% of performance materiality.", pyAmount: "" },
-  ];
-  const [adjPMRows, setAdjPMRows] = useState<AdjPMRow[]>(initAdjPM);
+  const [pmPct, setPmPct] = useState(persisted.performancePct ?? "70");
+  const [pmPriorYear, setPmPriorYear] = useState(persisted.pmPriorYear ?? "");
+  const [pmComments, setPmComments] = useState(persisted.pmComments ?? "");
 
-  // Section D — Materiality for specific circumstances
-  interface SpecMatRow { id: string; description: string; amount: string; reasoning: string; wpRef: string; pyAmount: string; }
-  const initSpecMat: SpecMatRow[] = isUS ? [
-    { id: uid(), description: "Related party transactions (ASC 850) — Board member loans and management compensation", amount: "10000", reasoning: "Users (lenders) particularly sensitive to RPTs. Lower materiality applied to ensure completeness of disclosure.", wpRef: "WP-RPT-01", pyAmount: "" },
-    { id: uid(), description: "Going concern disclosures — elevated D/E ratio (2.71x) and covenant compliance", amount: "0", reasoning: "Qualitative — any indication of substantial doubt requires disclosure regardless of dollar amount.", wpRef: "WP-GC-01", pyAmount: "" },
-  ] : [
-    { id: uid(), description: "Related party transactions — shareholder loans and management fees", amount: "5000", reasoning: "Bank covenant requires disclosure of all RPTs. Lower threshold applied for completeness.", wpRef: "WP-RPT-01", pyAmount: "" },
-  ];
-  const [specMatRows, setSpecMatRows] = useState<SpecMatRow[]>(initSpecMat);
+  const [ctPct, setCtPct] = useState(persisted.ctPct ?? "5.00");
 
-  // Section E — Performance materiality for specific circumstances
-  const [specPMAmount, setSpecPMAmount] = useState(isUS ? "7000" : "3500");
-  const [specPMReasoning, setSpecPMReasoning] = useState(
-    isUS
-      ? "Performance materiality for RPTs set at 70% of specific materiality ($10,000 × 70% = $7,000). Ensures detection of individually insignificant RPTs that aggregate to material amounts."
-      : "Performance materiality for RPTs set at 70% of specific materiality ($5,000 × 70% = $3,500)."
+  const [specificEnabled, setSpecificEnabled] = useState(persisted.specificEnabled ?? false);
+  const [specificRows, setSpecificRows] = useState<SpecificRow[]>(
+    persisted.specificRows?.length
+      ? persisted.specificRows
+      : [{ id: uid(), account: "", reason: "", amount: "", pmAmount: "", comments: "" }]
   );
-  const [specPMPY, setSpecPMPY] = useState("");
-  const [specPMWPRef, setSpecPMWPRef] = useState("WP-RPT-PM");
 
-  // Sign-off
-  const [preparedBy, setPreparedBy] = useState("");
-  const [preparedDate, setPreparedDate] = useState("");
-  const [reviewedBy, setReviewedBy] = useState("");
-  const [reviewedDate, setReviewedDate] = useState("");
-
-  // Additional comments & conclusion
-  const [additionalComments, setAdditionalComments] = useState("");
+  const [preparedBy, setPreparedBy] = useState(persisted.preparedBy ?? "");
+  const [preparedDate, setPreparedDate] = useState(persisted.preparedDate ?? "");
+  const [reviewedBy, setReviewedBy] = useState(persisted.reviewedBy ?? "");
+  const [reviewedDate, setReviewedDate] = useState(persisted.reviewedDate ?? "");
   const [conclusion, setConclusion] = useState(
-    "I am satisfied that the engagement planning adequately addresses the areas in the financial statements where material misstatements are likely to arise"
+    persisted.conclusion ??
+      "I am satisfied that the engagement planning adequately addresses the areas in the financial statements where material misstatements are likely to arise"
   );
+  const [concluded, setConcluded] = useState(persisted.concluded ?? false);
+  const [concludedBy, setConcludedBy] = useState(persisted.concludedBy ?? "");
+  const [concludedOn, setConcludedOn] = useState(persisted.concludedOn ?? "");
 
-  // ── Derived ──────────────────────────────────────────────────────────────────
+  const locked = concluded;
+  const connected = dataSource === "connected";
 
-  const updateEntityRow = useCallback(
-    (id: string, field: keyof EntityRow, value: string) => {
-      setEntityRows((prev) =>
-        prev.map((row) => {
-          if (row.id !== id) return row;
-          const updated = { ...row, [field]: value };
-          // recalculate materialityCY if periodAmount or benchmarkPct changed
-          if (field === "periodAmount" || field === "benchmarkPct") {
-            const pAmt = field === "periodAmount" ? value : row.periodAmount;
-            const bPct = field === "benchmarkPct" ? value : row.benchmarkPct;
-            updated.materialityCY = calcMatCY(pAmt, bPct);
-          }
-          return updated;
-        })
-      );
-    },
-    []
-  );
+  // ── Period & extrapolation ────────────────────────────────────────────────
 
-  const addEntityRow = () => {
-    setEntityRows((prev) => [
-      ...prev,
-      {
-        id: uid(),
-        entityName: "",
-        basis: "",
-        periodAmount: "",
-        extrapolatedPeriod: "",
-        benchmarkPct: "1.00",
-        materialityCY: "",
-        materialityPY: "",
-        comments: "",
-      },
-    ]);
+  const availableThrough = refreshedOn ? periodEnd : fin.availableThrough;
+  const totalMonths = monthsBetween(periodStart, periodEnd);
+  const availableMonths = monthsBetween(periodStart, availableThrough);
+  const isPartial =
+    !refreshedOn &&
+    availableThrough < periodEnd &&
+    availableMonths > 0 &&
+    totalMonths > 0 &&
+    availableMonths < totalMonths;
+
+  const autoValue = (basis: BenchmarkBasis): number =>
+    refreshedOn ? fin.fullYear[basis] : fin.values[basis];
+
+  const effectiveValue = (row: BenchmarkRow): number | null => {
+    if (connected && row.basis && !row.valueIsManual) return autoValue(row.basis);
+    return parseNum(row.benchmarkValue);
   };
 
-  const removeEntityRow = (id: string) => {
-    setEntityRows((prev) => prev.filter((r) => r.id !== id));
+  const extrapolatedValue = (row: BenchmarkRow, value: number | null): number | null => {
+    if (!isPartial || value === null || !row.basis || !FLOW_BASES.has(row.basis)) return null;
+    return (value / availableMonths) * totalMonths;
   };
 
-  // Totals for all numeric columns
-  const totalPeriod = sumColumn(entityRows, "periodAmount");
-  const totalExtrapolated = sumColumn(entityRows, "extrapolatedPeriod");
-  const totalBenchmark = sumColumn(entityRows, "benchmarkPct");
-  const totalMatCY = sumColumn(entityRows, "materialityCY");
-  const totalMatPY = sumColumn(entityRows, "materialityPY");
+  const rowCalc = (row: BenchmarkRow): { value: number | null; extrapolated: number | null; calc: number | null } => {
+    const value = effectiveValue(row);
+    const extrapolated = extrapolatedValue(row, value);
+    const pct = parseNum(row.appliedPct);
+    const base = extrapolated ?? value;
+    const calc = pct === null || base === null ? null : (pct / 100) * base;
+    return { value, extrapolated, calc };
+  };
 
-  // Clearly trivial amount
-  const ctAmount = (() => {
-    const m = parseFloat(totalMatCY.replace(/[^0-9.]/g, ""));
-    const p = parseFloat(ctThresholdPct.replace(/[^0-9.]/g, ""));
-    if (isNaN(m) || isNaN(p)) return "";
-    return formatNum(m * p / 100);
+  const calcs = useMemo(
+    () => new Map(rows.map((r) => [r.id, rowCalc(r)])),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [rows, dataSource, refreshedOn, isPartial, availableMonths, totalMonths]
+  );
+
+  const selectedRow = rows.find((r) => r.id === selectedRowId) ?? null;
+  const overall = selectedRow ? calcs.get(selectedRow.id)?.calc ?? null : null;
+  const pm = overall === null ? null : ((parseNum(pmPct) ?? NaN) / 100) * overall;
+  const pmValid = pm !== null && !isNaN(pm) ? pm : null;
+  const ct = overall === null ? null : ((parseNum(ctPct) ?? NaN) / 100) * overall;
+  const ctValid = ct !== null && !isNaN(ct) ? ct : null;
+
+  // Pre-tax income reliability check on the selected benchmark
+  const preTaxUnreliable = (() => {
+    if (!selectedRow || selectedRow.basis !== "preTaxIncome") return false;
+    const value = calcs.get(selectedRow.id)?.value ?? null;
+    if (value === null) return false;
+    if (value < 0) return true;
+    const revenueRef = connected
+      ? autoValue("grossRevenue")
+      : rows.map((r) => (r.basis === "grossRevenue" ? effectiveValue(r) : null)).find((v) => v !== null) ?? null;
+    if (revenueRef === null || revenueRef <= 0) return false;
+    return Math.abs(value) < 0.05 * revenueRef;
   })();
 
-  // Performance Materiality
-  const pmAmount = (() => {
-    const m = parseFloat(totalMatCY.replace(/[^0-9.]/g, ""));
-    const p = parseFloat(pmPct.replace(/[^0-9.]/g, ""));
-    if (isNaN(m) || isNaN(p)) return "";
-    return formatNum(m * p / 100);
-  })();
+  const specificTotal = specificEnabled
+    ? specificRows.reduce((sum, r) => sum + (parseNum(r.amount) ?? 0), 0)
+    : 0;
+  const specificCount = specificEnabled ? specificRows.filter((r) => parseNum(r.amount) !== null || r.account.trim()).length : 0;
 
-  const standardRef = isUS ? "AU-C 320" : "CAS 320";
-  const title = isUS ? "Materiality — AU-C 320" : "Materiality — CAS 320";
+  // ── Handlers ──────────────────────────────────────────────────────────────
 
-  const periodLabel = periodStart && periodEnd
-    ? (() => {
-        const fmt = (d: string) => {
-          const dt = new Date(d + 'T00:00:00');
-          return dt.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }).replace(/ /g, '');
-        };
-        return `${fmt(periodStart)}-${fmt(periodEnd)}($)`;
-      })()
-    : "Period ($)";
+  const updateRow = (id: string, patch: Partial<BenchmarkRow>) =>
+    setRows((prev) => prev.map((r) => (r.id === id ? { ...r, ...patch } : r)));
+
+  const addRow = () =>
+    setRows((prev) => [...prev, { id: uid(), basis: "", benchmarkValue: "", valueIsManual: !connected, appliedPct: "", priorYear: "", comments: "" }]);
+
+  const removeRow = (id: string) =>
+    setRows((prev) => {
+      const next = prev.filter((r) => r.id !== id);
+      if (selectedRowId === id) setSelectedRowId(next[0]?.id ?? null);
+      return next;
+    });
+
+  const updateSpecific = (id: string, patch: Partial<SpecificRow>) =>
+    setSpecificRows((prev) => prev.map((r) => (r.id === id ? { ...r, ...patch } : r)));
+
+  const addSpecific = () =>
+    setSpecificRows((prev) => [...prev, { id: uid(), account: "", reason: "", amount: "", pmAmount: "", comments: "" }]);
+
+  const removeSpecific = (id: string) =>
+    setSpecificRows((prev) => (prev.length > 1 ? prev.filter((r) => r.id !== id) : prev));
+
+  const handleRefresh = () => {
+    if (refreshedOn || !connected) return;
+    // before: calculated materiality per row under extrapolation
+    const before = new Map(rows.map((r) => [r.id, rowCalc(r).calc]));
+    // after: full-year actuals, no extrapolation, manual overrides cleared
+    let shift = false;
+    for (const r of rows) {
+      if (!r.basis) continue;
+      const pct = parseNum(r.appliedPct);
+      const b = before.get(r.id);
+      const after = pct === null ? null : (pct / 100) * fin.fullYear[r.basis];
+      if (b != null && after != null && b !== 0 && Math.abs(after - b) / Math.abs(b) > 0.10) shift = true;
+    }
+    setRows((prev) => prev.map((r) => (r.basis ? { ...r, valueIsManual: false, benchmarkValue: String(fin.fullYear[r.basis as BenchmarkBasis]) } : r)));
+    setRefreshedOn(todayISO());
+    if (shift) setMaterialityShift(true);
+    toast.success("Financial data refreshed with full-year actuals");
+  };
+
+  const handleConclude = () => {
+    setConcludedBy(preparedBy || (isUS ? "L. Garcia, CPA" : "J. Smith, CPA"));
+    setConcludedOn(todayISO());
+    setConcluded(true);
+    toast.success("Materiality worksheet concluded");
+  };
+
+  // ── Persistence ───────────────────────────────────────────────────────────
+
+  const snapshot: PersistedMaterialityData = {
+    overallMateriality: overall === null ? "" : formatNum(overall),
+    clearlyTrivial: ctValid === null ? "" : formatNum(ctValid),
+    performanceMateriality: pmValid === null ? "" : formatNum(pmValid),
+    performancePct: pmPct,
+    specificItems: specificEnabled ? specificRows : [],
+    refreshedOn,
+    periodStart,
+    periodEnd,
+    rows,
+    selectedRowId,
+    dataSource,
+    materialityShift,
+    pmPriorYear,
+    pmComments,
+    ctPct,
+    specificEnabled,
+    specificRows,
+    preparedBy,
+    preparedDate,
+    reviewedBy,
+    reviewedDate,
+    conclusion,
+    concluded,
+    concludedBy,
+    concludedOn,
+  };
+  const snapshotRef = useRef(snapshot);
+  snapshotRef.current = snapshot;
+  const snapJson = JSON.stringify(snapshot);
+  const firstRender = useRef(true);
+  useEffect(() => {
+    if (firstRender.current) {
+      firstRender.current = false;
+      return;
+    }
+    const t = setTimeout(() => writeJsonToLocalStorage(storageKey, snapshotRef.current), 300);
+    return () => clearTimeout(t);
+  }, [snapJson, storageKey]);
+
+  const title = "PL1 — Materiality";
+  const benchmarkLabel = (basis: BenchmarkBasis | "") =>
+    BENCHMARK_OPTIONS.find((o) => o.value === basis)?.label ?? "";
 
   return (
     <div className="flex flex-col h-full">
@@ -320,7 +470,7 @@ export function AuditMaterialityWorksheet({ isUS = false }: AuditMaterialityWork
         <span className="text-xs font-semibold text-primary whitespace-nowrap">Objective:</span>
         <p className="text-xs text-muted-foreground flex-1 leading-relaxed">
           Establish overall materiality, performance materiality, and the clearly trivial threshold for the audit
-          and document the rationale for each determination. ({isUS ? "AU-C 320 / AU-C 450" : "CAS 320 / CAS 450"})
+          and document the rationale for each determination.
         </p>
       </div>
 
@@ -328,150 +478,261 @@ export function AuditMaterialityWorksheet({ isUS = false }: AuditMaterialityWork
       <div className="flex-1 overflow-y-auto bg-muted/30">
         <div className="p-6 space-y-4">
 
-          {/* ── Preliminary Materiality ── */}
+          {/* ── Period & data source banner ── */}
           <div className="bg-card text-card-foreground border border-border shadow-[0_2px_8px_hsl(213_40%_20%/0.06)] rounded-md overflow-hidden">
-            <div className="px-6 py-3.5 bg-card border-b border-border flex items-center gap-3">
-              <span className="text-sm font-semibold text-foreground">Preliminary Materiality</span>
-              <span title="Set the period dates and populate the table below to calculate overall materiality.">
+            <div className="px-6 py-3.5 bg-card border-b border-border flex items-center gap-3 flex-wrap">
+              <span className="text-sm font-semibold text-foreground">Period &amp; Data Source</span>
+              <span title="The audit period comes from the engagement settings. The available data period reflects how far the connected accounting data goes.">
                 <Info className="h-3.5 w-3.5 text-muted-foreground cursor-help" />
               </span>
-              <Input
-                type="date"
-                value={periodStart}
-                onChange={(e) => setPeriodStart(e.target.value)}
-                className="h-8 text-sm w-44 pr-2"
-              />
-              <Input
-                type="date"
-                value={periodEnd}
-                onChange={(e) => setPeriodEnd(e.target.value)}
-                className="h-8 text-sm w-44 pr-2"
-              />
-              <Button variant="outline" size="sm" className="h-8 w-8 p-0 bg-muted/40 border-border">
-                <svg width="14" height="14" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M14 11.5C12.6193 11.5 11.5 12.6193 11.5 14C11.5 15.3807 12.6193 16.5 14 16.5C15.3807 16.5 16.5 15.3807 16.5 14C16.5 12.6193 15.3807 11.5 14 11.5ZM14 11.5V5.66667C14 5.22464 13.8244 4.80072 13.5118 4.48816C13.1993 4.17559 12.7754 4 12.3333 4H9.83333M4 6.5C5.38071 6.5 6.5 5.38071 6.5 4C6.5 2.61929 5.38071 1.5 4 1.5C2.61929 1.5 1.5 2.61929 1.5 4C1.5 5.38071 2.61929 6.5 4 6.5ZM4 6.5V16.5" stroke="#A7B2C2" strokeWidth="1.66667" strokeLinecap="round" strokeLinejoin="round"/>
-                </svg>
-              </Button>
               <div className="flex-1" />
-              <Button
-                variant="outline"
-                size="sm"
-                disabled
-                className="h-8 text-sm opacity-50 cursor-not-allowed"
-              >
-                <RefreshCw className="h-3.5 w-3.5 mr-1.5" />
-                Refresh
-              </Button>
+              {refreshedOn ? (
+                <Badge variant="success" className="gap-1"><CheckCircle2 className="h-3 w-3" />Refreshed on {fmtDate(refreshedOn)}</Badge>
+              ) : (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="h-8 text-sm"
+                  disabled={!connected || locked}
+                  onClick={handleRefresh}
+                  title="Re-pull financial data from the connected source. Once the fiscal year is complete this replaces extrapolated figures with actuals."
+                >
+                  <RefreshCw className="h-3.5 w-3.5 mr-1.5" />
+                  Refresh Data
+                </Button>
+              )}
+              <div className="flex items-center gap-2">
+                <span className="text-xs text-muted-foreground">Data source</span>
+                <Switch
+                  checked={connected}
+                  onCheckedChange={(v) => setDataSource(v ? "connected" : "none")}
+                  disabled={locked}
+                  className="scale-75"
+                />
+              </div>
+            </div>
+            <div className="px-6 py-4 grid grid-cols-1 xl:grid-cols-2 gap-4">
+              <div className="flex items-center gap-3">
+                <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider w-44 shrink-0">Audit period</span>
+                <Input type="date" value={periodStart} onChange={(e) => setPeriodStart(e.target.value)} readOnly={locked} className="h-8 text-sm w-40" />
+                <span className="text-muted-foreground text-sm">→</span>
+                <Input type="date" value={periodEnd} onChange={(e) => setPeriodEnd(e.target.value)} readOnly={locked} className="h-8 text-sm w-40" />
+              </div>
+              <div className="flex items-center gap-3">
+                <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider w-44 shrink-0">Available data period</span>
+                <span className="text-sm text-foreground tabular-nums">{fmtDate(periodStart)} → {fmtDate(availableThrough)}</span>
+                {isPartial && (
+                  <Badge variant="warning" title={`Based on ${availableMonths} months of data extrapolated to ${totalMonths} months`}>
+                    {availableMonths} months — extrapolated to {totalMonths}
+                  </Badge>
+                )}
+              </div>
+            </div>
+            {materialityShift && (
+              <div className="border-t border-border px-6 py-3 flex items-start gap-2 bg-amber-50">
+                <AlertTriangle className="h-4 w-4 text-amber-600 mt-0.5 shrink-0" />
+                <p className="text-sm text-amber-700">Materiality has changed. Please review and update your assessment.</p>
+                <div className="flex-1" />
+                {!locked && (
+                  <button className="text-xs text-amber-700 underline hover:opacity-80" onClick={() => setMaterialityShift(false)}>Dismiss</button>
+                )}
+              </div>
+            )}
+            {!connected && (
+              <div className="border-t border-border px-6 py-3 flex items-start gap-2 bg-muted/20">
+                <Info className="h-3.5 w-3.5 text-muted-foreground mt-0.5 shrink-0" />
+                <p className="text-xs text-muted-foreground">Connect a data source or upload a trial balance to auto-populate financial benchmarks. All values below are manual entries.</p>
+              </div>
+            )}
+          </div>
+
+          {/* ── Summary card ── */}
+          <div className="bg-card text-card-foreground border border-border shadow-[0_2px_8px_hsl(213_40%_20%/0.06)] rounded-md overflow-hidden">
+            <div className="px-6 py-3.5 bg-primary/[0.04] border-b border-border flex items-center gap-3">
+              <span className="text-sm font-semibold text-foreground">Materiality Summary</span>
+              <span title="Final figures determined on this worksheet. These feed the audit strategy, risk assessment, and procedures.">
+                <Info className="h-3.5 w-3.5 text-muted-foreground cursor-help" />
+              </span>
+            </div>
+            <div className="px-6 py-4 grid grid-cols-2 lg:grid-cols-4 gap-4">
+              <div>
+                <div className="text-xs text-muted-foreground">Overall Materiality</div>
+                <div className="text-lg font-semibold tabular-nums text-foreground">{overall === null ? "—" : `$${formatNum(overall)}`}</div>
+                {selectedRow?.basis && <div className="text-[11px] text-muted-foreground">{benchmarkLabel(selectedRow.basis)} × {selectedRow.appliedPct || "—"}%</div>}
+              </div>
+              <div>
+                <div className="text-xs text-muted-foreground">Performance Materiality</div>
+                <div className="text-lg font-semibold tabular-nums text-foreground">{pmValid === null ? "—" : `$${formatNum(pmValid)}`}</div>
+                <div className="text-[11px] text-muted-foreground">{pmPct || "—"}% of overall</div>
+              </div>
+              <div>
+                <div className="text-xs text-muted-foreground">Clearly Trivial Threshold</div>
+                <div className="text-lg font-semibold tabular-nums text-foreground">{ctValid === null ? "—" : `$${formatNum(ctValid)}`}</div>
+                <div className="text-[11px] text-muted-foreground">{ctPct || "—"}% of overall</div>
+              </div>
+              <div>
+                <div className="text-xs text-muted-foreground">Specific Materiality</div>
+                {specificEnabled && specificCount > 0 ? (
+                  <>
+                    <div className="text-lg font-semibold tabular-nums text-foreground">${formatNum(specificTotal)}</div>
+                    <div className="text-[11px] text-muted-foreground">{specificCount} item{specificCount === 1 ? "" : "s"}</div>
+                  </>
+                ) : (
+                  <div className="text-lg font-semibold text-muted-foreground">N/A</div>
+                )}
+              </div>
+            </div>
+          </div>
+
+          {/* ── Overall Materiality ── */}
+          <div className="bg-card text-card-foreground border border-border shadow-[0_2px_8px_hsl(213_40%_20%/0.06)] rounded-md overflow-hidden">
+            <div className="px-6 py-3.5 bg-card border-b border-border flex items-center gap-3">
+              <span className="text-sm font-semibold text-foreground">Overall Materiality</span>
+              <span title="The highest amount of misstatement that could be present in the financial statements without affecting the decisions of users. Select the benchmark that best reflects what users of these statements focus on.">
+                <Info className="h-3.5 w-3.5 text-muted-foreground cursor-help" />
+              </span>
+              <div className="flex-1" />
+              {!locked && (
+                <Button variant="outline" size="sm" className="h-8 text-sm" onClick={addRow}>
+                  <Plus className="h-3.5 w-3.5 mr-1.5" />
+                  Add Row
+                </Button>
+              )}
             </div>
             <div className="px-6 py-5">
-              {/* Main table */}
               <div className="overflow-x-auto">
                 <table className="w-full">
-                  <thead className="sticky top-0 z-10">
+                  <thead>
                     <tr className="bg-muted border-b border-border">
-                      <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider">Entity Name</th>
-                      <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider">Basis for calculations</th>
-                      <th className="px-4 py-3 text-right text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap">
-                        {periodLabel}
-                      </th>
-                      <th className="px-4 py-3 text-right text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap">Extrapolated period ($)</th>
-                      <th className="px-4 py-3 text-right text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap">Benchmark applied (%)</th>
-                      <th className="px-4 py-3 text-right text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap">Materiality CY ($)</th>
-                      <th className="px-4 py-3 text-right text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap">Materiality PY ($)</th>
-                      <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider">Comments</th>
+                      <th className="px-3 py-3 text-center text-xs font-semibold text-foreground uppercase tracking-wider w-16" title="Exactly one benchmark drives overall materiality.">Selected</th>
+                      <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider min-w-[190px]">Basis of Calculation</th>
+                      <th className="px-4 py-3 text-right text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap" title={connected ? "Pulled automatically from the connected data source. Type to override." : "Manual entry"}>Benchmark Value ($)</th>
+                      <th className="px-4 py-3 text-right text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap" title="Partial-year flows annualized: (value ÷ available months) × total months. Balance-sheet amounts are not extrapolated.">Extrapolated ($)</th>
+                      <th className="px-4 py-3 text-center text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap">Suggested Range</th>
+                      <th className="px-4 py-3 text-right text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap">Applied (%)</th>
+                      <th className="px-4 py-3 text-right text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap">Calculated Materiality ($)</th>
+                      <th className="px-4 py-3 text-right text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap">Prior Year ($)</th>
+                      <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider min-w-[170px]">Comments</th>
+                      {!locked && <th className="px-2 py-3 w-10" />}
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-border">
-                    {entityRows.map((row) => (
-                      <tr key={row.id} className="hover:bg-muted/50 transition-colors">
-                        <td className="px-4 py-2.5 align-top min-w-[160px]">
-                          <TdSelect
-                            value={row.entityName}
-                            onChange={(v) => updateEntityRow(row.id, "entityName", v)}
-                            options={ENTITY_TYPE_OPTIONS.map((e) => ({ value: e, label: e }))}
-                            placeholder="Select type…"
-                          />
-                        </td>
-                        <td className="px-4 py-2.5 align-top min-w-[160px]">
-                          <TdSelect
-                            value={row.basis}
-                            onChange={(v) => updateEntityRow(row.id, "basis", v)}
-                            options={BASIS_OPTIONS.map((b) => ({ value: b, label: b }))}
-                            placeholder="Select basis…"
-                          />
-                        </td>
-                        <td className="px-4 py-2.5 align-top text-right">
-                          <TdInput
-                            value={row.periodAmount}
-                            onChange={(v) => updateEntityRow(row.id, "periodAmount", v.replace(/[^0-9.]/g, ""))}
-                            placeholder="e.g. 12500000"
-                            className="tabular-nums text-right"
-                          />
-                        </td>
-                        <td className="px-4 py-2.5 align-top text-right">
-                          <TdInput
-                            value={row.extrapolatedPeriod}
-                            onChange={(v) => updateEntityRow(row.id, "extrapolatedPeriod", v.replace(/[^0-9.]/g, ""))}
-                            placeholder="e.g. 12500000"
-                            className="tabular-nums text-right"
-                          />
-                        </td>
-                        <td className="px-4 py-2.5 align-top w-28 text-right">
-                          <TdInput
-                            value={row.benchmarkPct}
-                            onChange={(v) => updateEntityRow(row.id, "benchmarkPct", v.replace(/[^0-9.]/g, ""))}
-                            placeholder="1.00"
-                            className="tabular-nums text-right"
-                          />
-                        </td>
-                        <td className="px-4 py-2.5 align-top w-44 text-right">
-                          <TdInput
-                            value={formatDisplay(row.materialityCY)}
-                            readOnly
-                            className="tabular-nums text-right"
-                          />
-                        </td>
-                        <td className="px-4 py-2.5 align-top w-40 text-right">
-                          <TdInput
-                            value={row.materialityPY}
-                            onChange={(v) => updateEntityRow(row.id, "materialityPY", v.replace(/[^0-9.]/g, ""))}
-                            placeholder="e.g. 0.00"
-                            className="tabular-nums text-right"
-                          />
-                        </td>
-                        <td className="px-4 py-2.5 align-top min-w-[180px]">
-                          <TdInput
-                            value={row.comments}
-                            onChange={(v) => updateEntityRow(row.id, "comments", v)}
-                            placeholder="Comments…"
-                          />
-                        </td>
-                      </tr>
-                    ))}
-                    {/* Total row */}
-                    <tr className="bg-muted/30 border-t border-border font-semibold">
-                      <td className="px-4 py-2 text-xs font-semibold text-foreground" colSpan={2}>Total</td>
-                      <td className="px-4 py-2 text-sm tabular-nums text-foreground text-right">{totalPeriod || "—"}</td>
-                      <td className="px-4 py-2 text-sm tabular-nums text-foreground text-right">{totalExtrapolated || "—"}</td>
-                      <td className="px-4 py-2 text-sm tabular-nums text-foreground text-right">{totalBenchmark || "—"}</td>
-                      <td className="px-4 py-2 text-sm tabular-nums text-foreground text-right">{totalMatCY || "—"}</td>
-                      <td className="px-4 py-2 text-sm tabular-nums text-foreground text-right">{totalMatPY || "—"}</td>
-                      <td className="px-4 py-2" />
-                    </tr>
+                    {rows.map((row) => {
+                      const c = calcs.get(row.id) ?? { value: null, extrapolated: null, calc: null };
+                      const isAuto = connected && !!row.basis && !row.valueIsManual;
+                      return (
+                        <tr key={row.id} className={`transition-colors ${row.id === selectedRowId ? "bg-primary/[0.03]" : "hover:bg-muted/50"}`}>
+                          <td className="px-3 py-2.5 text-center align-middle">
+                            <input
+                              type="radio"
+                              name={`overall-benchmark-${isUS ? "us" : "ca"}`}
+                              checked={row.id === selectedRowId}
+                              onChange={() => setSelectedRowId(row.id)}
+                              disabled={locked}
+                              className="h-4 w-4 accent-primary cursor-pointer"
+                            />
+                          </td>
+                          <td className="px-4 py-2.5 align-top">
+                            <TdSelect
+                              value={row.basis}
+                              onChange={(v) => updateRow(row.id, { basis: v as BenchmarkBasis, valueIsManual: !connected })}
+                              options={BENCHMARK_OPTIONS}
+                              placeholder="Select basis…"
+                              disabled={locked}
+                            />
+                          </td>
+                          <td className="px-4 py-2.5 align-top text-right w-44">
+                            <TdInput
+                              value={isAuto ? formatNum(c.value ?? "") : row.benchmarkValue}
+                              onChange={(v) => updateRow(row.id, { benchmarkValue: v.replace(/[^0-9.-]/g, ""), valueIsManual: true })}
+                              readOnly={locked}
+                              placeholder="e.g. 12500000"
+                              className={`tabular-nums text-right ${isAuto ? "bg-muted/30" : ""}`}
+                            />
+                          </td>
+                          <td className="px-4 py-2.5 align-middle text-right w-48 whitespace-nowrap">
+                            {c.extrapolated !== null ? (
+                              <span className="inline-flex items-center gap-2">
+                                <span className="text-sm tabular-nums">{formatNum(c.extrapolated)}</span>
+                                <Badge variant="warning" title={`Based on ${availableMonths} months of data extrapolated to ${totalMonths} months`}>Extrapolated</Badge>
+                              </span>
+                            ) : (
+                              <span className="text-sm text-muted-foreground">—</span>
+                            )}
+                          </td>
+                          <td className="px-4 py-2.5 align-middle text-center text-sm text-muted-foreground whitespace-nowrap">
+                            {row.basis ? SUGGESTED_RANGES[row.basis] : "—"}
+                          </td>
+                          <td className="px-4 py-2.5 align-top text-right w-28">
+                            <TdInput
+                              value={row.appliedPct}
+                              onChange={(v) => updateRow(row.id, { appliedPct: v.replace(/[^0-9.]/g, "") })}
+                              readOnly={locked}
+                              placeholder="1.00"
+                              className="tabular-nums text-right"
+                            />
+                          </td>
+                          <td className="px-4 py-2.5 align-middle text-right w-44">
+                            <span className="text-sm font-semibold tabular-nums">{fmtAmt(c.calc)}</span>
+                          </td>
+                          <td className="px-4 py-2.5 align-top text-right w-36">
+                            <TdInput
+                              value={row.priorYear}
+                              onChange={(v) => updateRow(row.id, { priorYear: v.replace(/[^0-9.]/g, "") })}
+                              readOnly={locked}
+                              placeholder="0.00"
+                              className="tabular-nums text-right"
+                            />
+                          </td>
+                          <td className="px-4 py-2.5 align-top">
+                            <TdInput
+                              value={row.comments}
+                              onChange={(v) => updateRow(row.id, { comments: v })}
+                              readOnly={locked}
+                              placeholder="Comments…"
+                            />
+                          </td>
+                          {!locked && (
+                            <td className="px-2 py-2.5 align-middle text-center">
+                              <button
+                                onClick={() => removeRow(row.id)}
+                                disabled={rows.length <= 1}
+                                className="text-muted-foreground hover:text-destructive disabled:opacity-30 disabled:cursor-not-allowed"
+                                title="Remove row"
+                              >
+                                <Trash2 className="h-4 w-4" />
+                              </button>
+                            </td>
+                          )}
+                        </tr>
+                      );
+                    })}
                   </tbody>
                 </table>
               </div>
+              {preTaxUnreliable && (
+                <div className="mt-3 flex items-start gap-2 rounded-md border border-amber-200 bg-amber-50 px-4 py-3">
+                  <AlertTriangle className="h-4 w-4 text-amber-600 mt-0.5 shrink-0" />
+                  <p className="text-sm text-amber-700">Pre-tax income may not be a reliable benchmark. Consider using Gross Revenue or Total Assets instead.</p>
+                </div>
+              )}
             </div>
-            {/* Clearly Trivial Misstatements footer — inside the same card */}
+            {/* Clearly trivial threshold — inside the same card */}
             <div className="border-t border-border px-4 py-3">
               <div className="flex items-center">
-                <span className="text-sm text-foreground flex-1">Clearly trivial misstatements <span className="text-xs text-muted-foreground font-normal">({isUS ? "AU-C 450.A2" : "CAS 450.A2"})</span></span>
+                <span className="text-sm text-foreground flex-1 pl-2">
+                  Clearly trivial misstatements threshold
+                  <span title="Misstatements below this amount are not accumulated during the audit. Typically 3–5% of overall materiality.">
+                    <Info className="inline h-3.5 w-3.5 text-muted-foreground cursor-help ml-1.5 -mt-0.5" />
+                  </span>
+                </span>
                 <div className="flex items-center gap-8 mr-8">
                   <div className="flex flex-col items-center gap-1">
                     <span className="text-xs text-muted-foreground">Threshold (%)</span>
                     <TdInput
-                      value={ctThresholdPct}
-                      onChange={(v) => setCtThresholdPct(v.replace(/[^0-9.]/g, ""))}
+                      value={ctPct}
+                      onChange={(v) => setCtPct(v.replace(/[^0-9.]/g, ""))}
+                      readOnly={locked}
                       placeholder="5.00"
                       className="w-24 tabular-nums"
                     />
@@ -479,7 +740,7 @@ export function AuditMaterialityWorksheet({ isUS = false }: AuditMaterialityWork
                   <div className="flex flex-col items-center gap-1">
                     <span className="text-xs text-muted-foreground">Amount ($)</span>
                     <TdInput
-                      value={ctAmount ? formatDisplay(ctAmount) : ""}
+                      value={ctValid === null ? "" : formatNum(ctValid)}
                       readOnly
                       className="w-32 tabular-nums"
                     />
@@ -498,7 +759,7 @@ export function AuditMaterialityWorksheet({ isUS = false }: AuditMaterialityWork
           <div className="bg-card text-card-foreground border border-border shadow-[0_2px_8px_hsl(213_40%_20%/0.06)] rounded-md overflow-hidden">
             <div className="px-6 py-3.5 bg-card border-b border-border flex items-center gap-3">
               <span className="text-sm font-semibold text-foreground">Performance Materiality</span>
-              <span title={`Reduces the risk that aggregate uncorrected and undetected misstatements exceed overall materiality. (${standardRef}.11)`}>
+              <span title="An amount set below overall materiality so that misstatements which go undetected or uncorrected are unlikely to add up to more than overall materiality.">
                 <Info className="h-3.5 w-3.5 text-muted-foreground cursor-help" />
               </span>
             </div>
@@ -506,28 +767,47 @@ export function AuditMaterialityWorksheet({ isUS = false }: AuditMaterialityWork
               <table className="w-full text-sm">
                 <tbody className="divide-y divide-border">
                   <tr className="hover:bg-muted/10 transition-colors">
-                    <td className="py-2 text-sm text-muted-foreground w-56">% of Overall Materiality</td>
-                    <td className="px-1 py-1 w-36">
-                      <TdInput
-                        value={pmPct}
-                        onChange={(v) => setPmPct(v.replace(/[^0-9.]/g, ""))}
-                        placeholder="70"
-                        className="tabular-nums w-28"
-                      />
+                    <td className="py-2 text-sm text-muted-foreground w-56">Overall Materiality ($)</td>
+                    <td className="py-2 text-sm font-semibold tabular-nums text-foreground">{overall === null ? "—" : formatNum(overall)}</td>
+                  </tr>
+                  <tr className="hover:bg-muted/10 transition-colors">
+                    <td className="py-2 text-sm text-muted-foreground">Applied % of Overall</td>
+                    <td className="px-1 py-1">
+                      <div className="flex items-center gap-3">
+                        <TdInput
+                          value={pmPct}
+                          onChange={(v) => setPmPct(v.replace(/[^0-9.]/g, ""))}
+                          readOnly={locked}
+                          placeholder="70"
+                          className="tabular-nums w-28"
+                        />
+                        <span className="text-xs text-muted-foreground">Suggested: 50% – 75%</span>
+                      </div>
                     </td>
                   </tr>
                   <tr className="hover:bg-muted/10 transition-colors">
                     <td className="py-2 text-sm text-muted-foreground">Performance Materiality ($)</td>
-                    <td className="py-2 text-sm font-semibold tabular-nums text-foreground">
-                      {pmAmount ? pmAmount : "—"}
+                    <td className="py-2 text-sm font-semibold tabular-nums text-foreground">{pmValid === null ? "—" : formatNum(pmValid)}</td>
+                  </tr>
+                  <tr className="hover:bg-muted/10 transition-colors">
+                    <td className="py-2 text-sm text-muted-foreground">Prior Year ($)</td>
+                    <td className="px-1 py-1">
+                      <TdInput
+                        value={pmPriorYear}
+                        onChange={(v) => setPmPriorYear(v.replace(/[^0-9.]/g, ""))}
+                        readOnly={locked}
+                        placeholder="0.00"
+                        className="tabular-nums w-40"
+                      />
                     </td>
                   </tr>
                   <tr className="hover:bg-muted/10 transition-colors">
-                    <td className="py-2 text-sm text-muted-foreground align-top pt-3">Rationale</td>
+                    <td className="py-2 text-sm text-muted-foreground align-top pt-3">Comments</td>
                     <td className="px-2 py-2 w-full">
                       <Textarea
-                        value={pmRationale}
-                        onChange={(e) => setPmRationale(e.target.value)}
+                        value={pmComments}
+                        onChange={(e) => setPmComments(e.target.value)}
+                        readOnly={locked}
                         placeholder="Explain why this percentage was selected…"
                         className="min-h-[72px] text-sm resize-none bg-background border-border"
                       />
@@ -535,292 +815,131 @@ export function AuditMaterialityWorksheet({ isUS = false }: AuditMaterialityWork
                   </tr>
                 </tbody>
               </table>
-            </div>
-          </div>
-
-          {/* ── Intended Users ── */}
-          <div className="bg-card text-card-foreground border border-border shadow-[0_2px_8px_hsl(213_40%_20%/0.06)] rounded-md overflow-hidden">
-            <div className="px-6 py-3.5 bg-card border-b border-border flex items-center gap-3">
-              <span className="text-sm font-semibold text-foreground">Intended Users</span>
-              <span title="Identify the primary users of the financial statements and the factors affecting their decision making.">
-                <Info className="h-3.5 w-3.5 text-muted-foreground cursor-help" />
-              </span>
-            </div>
-            <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead className="sticky top-0 z-10">
-                  <tr className="bg-muted border-b border-border">
-                    <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider w-1/3">Users</th>
-                    <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider">Factors affecting users decision making</th>
-                    <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider w-16">Action</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-border">
-                  {intendedUsers.map((u) => (
-                    <tr key={u.id} className="hover:bg-muted/50 transition-colors">
-                      <td className="px-4 py-2.5 align-top">
-                        <TdInput
-                          value={u.user}
-                          onChange={(v) =>
-                            setIntendedUsers((prev) =>
-                              prev.map((x) => (x.id === u.id ? { ...x, user: v } : x))
-                            )
-                          }
-                          placeholder="Define user"
-                        />
-                      </td>
-                      <td className="px-4 py-2.5 align-top">
-                        <TdInput
-                          value={u.factors}
-                          onChange={(v) =>
-                            setIntendedUsers((prev) =>
-                              prev.map((x) => (x.id === u.id ? { ...x, factors: v } : x))
-                            )
-                          }
-                          placeholder="Describe factors"
-                        />
-                      </td>
-                      <td className="px-4 py-2.5 align-top text-center">
-                        <button
-                          onClick={() =>
-                            setIntendedUsers((prev) => prev.filter((x) => x.id !== u.id))
-                          }
-                          className="text-muted-foreground hover:text-destructive transition-colors"
-                          disabled={intendedUsers.length === 1}
-                        >
-                          <Trash2 className="h-3.5 w-3.5" />
-                        </button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-            <div className="px-6 py-3 border-t border-border">
-              <button
-                onClick={() =>
-                  setIntendedUsers((prev) => [...prev, { id: uid(), user: "", factors: "" }])
-                }
-                className="flex items-center gap-1.5 text-sm font-medium text-primary hover:text-primary/80 transition-colors"
-              >
-                <Plus className="h-4 w-4" />
-                Add Row
-              </button>
-            </div>
-          </div>
-
-          {/* ── Qualitative Considerations ── */}
-          <div className="bg-card text-card-foreground border border-border shadow-[0_2px_8px_hsl(213_40%_20%/0.06)] rounded-md overflow-hidden">
-            <div className="px-6 py-3.5 bg-card border-b border-border flex items-center gap-3">
-              <span className="text-sm font-semibold text-foreground">Qualitative Considerations</span>
-              <span title="Document any qualitative factors that influenced the materiality determination.">
-                <Info className="h-3.5 w-3.5 text-muted-foreground cursor-help" />
-              </span>
-            </div>
-            <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead className="sticky top-0 z-10">
-                  <tr className="bg-muted border-b border-border">
-                    <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider w-1/2">Nature</th>
-                    <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider">Impact</th>
-                    <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider w-16">Action</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-border">
-                  {qualitative.map((item) => (
-                    <tr key={item.id} className="hover:bg-muted/50 transition-colors">
-                      <td className="px-4 py-2.5 align-top">
-                        <TdInput
-                          value={item.nature}
-                          onChange={(v) =>
-                            setQualitative((prev) =>
-                              prev.map((x) => (x.id === item.id ? { ...x, nature: v } : x))
-                            )
-                          }
-                          placeholder="Describe Nature"
-                        />
-                      </td>
-                      <td className="px-4 py-2.5 align-top">
-                        <TdInput
-                          value={item.impact}
-                          onChange={(v) =>
-                            setQualitative((prev) =>
-                              prev.map((x) => (x.id === item.id ? { ...x, impact: v } : x))
-                            )
-                          }
-                          placeholder="Describe impact"
-                        />
-                      </td>
-                      <td className="px-4 py-2.5 align-top text-center">
-                        <button
-                          onClick={() =>
-                            setQualitative((prev) => prev.filter((x) => x.id !== item.id))
-                          }
-                          className="text-muted-foreground hover:text-destructive transition-colors"
-                          disabled={qualitative.length === 1}
-                        >
-                          <Trash2 className="h-3.5 w-3.5" />
-                        </button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-            <div className="px-6 py-3 border-t border-border">
-              <button
-                onClick={() =>
-                  setQualitative((prev) => [...prev, { id: uid(), nature: "", impact: "" }])
-                }
-                className="flex items-center gap-1.5 text-sm font-medium text-primary hover:text-primary/80 transition-colors"
-              >
-                <Plus className="h-4 w-4" />
-                Add Row
-              </button>
-            </div>
-          </div>
-
-          {/* ── Section B: Possible misstatements in qualitative disclosures ── */}
-          <div className="bg-card text-card-foreground border border-border shadow-[0_2px_8px_hsl(213_40%_20%/0.06)] rounded-md overflow-hidden">
-            <div className="px-6 py-3.5 bg-card border-b border-border flex items-center gap-3">
-              <span className="text-sm font-semibold text-foreground">B. Possible Misstatements in Qualitative Disclosures</span>
-              <span title="Identify any possible misstatements in qualitative F/S disclosures that could be material to intended users. Consider significant transactions, applicable framework, and nature of entity."><Info className="h-3.5 w-3.5 text-muted-foreground cursor-help" /></span>
-            </div>
-            <div className="px-6 py-5">
-              <p className="text-xs text-muted-foreground mb-2">Describe the nature of any qualitative disclosures that could be material to F/S users. ({isUS ? "AU-C 320 / ASC disclosures" : "CAS 320.A8"})</p>
-              <Textarea value={qualDisclosures} onChange={(e) => setQualDisclosures(e.target.value)} className="min-h-[80px] text-sm resize-none" placeholder="Describe qualitative disclosures that could be material…" />
-            </div>
-          </div>
-
-          {/* ── Section C Adjusted: Performance materiality for specific F/S areas ── */}
-          <div className="bg-card text-card-foreground border border-border shadow-[0_2px_8px_hsl(213_40%_20%/0.06)] rounded-md overflow-hidden">
-            <div className="px-6 py-3.5 bg-card border-b border-border flex items-center gap-3">
-              <span className="text-sm font-semibold text-foreground">C. Adjusted Performance Materiality Levels</span>
-              <span title="Set adjusted performance materiality for specific F/S areas with higher risk. Set at an amount lower than overall performance materiality."><Info className="h-3.5 w-3.5 text-muted-foreground cursor-help" /></span>
-            </div>
-            <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead className="sticky top-0 z-10">
-                  <tr className="bg-muted border-b border-border">
-                    <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider">F/S Area or Disclosure</th>
-                    <th className="px-4 py-3 text-right text-xs font-semibold text-foreground uppercase tracking-wider w-32">Amount ($)</th>
-                    <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider">Reasoning</th>
-                    <th className="px-4 py-3 text-right text-xs font-semibold text-foreground uppercase tracking-wider w-28">PY Amount ($)</th>
-                    <th className="px-4 py-3 w-10" />
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-border">
-                  {adjPMRows.map((row) => (
-                    <tr key={row.id} className="hover:bg-muted/50 transition-colors">
-                      <td className="px-4 py-2.5 align-top"><TdInput value={row.area} onChange={(v) => setAdjPMRows(p => p.map(r => r.id === row.id ? {...r, area: v} : r))} placeholder="F/S area or disclosure" /></td>
-                      <td className="px-4 py-2.5 align-top"><TdInput value={row.amount} onChange={(v) => setAdjPMRows(p => p.map(r => r.id === row.id ? {...r, amount: v.replace(/[^0-9.]/g,"")} : r))} placeholder="0" className="text-right tabular-nums" /></td>
-                      <td className="px-4 py-2.5 align-top"><TdInput value={row.reasoning} onChange={(v) => setAdjPMRows(p => p.map(r => r.id === row.id ? {...r, reasoning: v} : r))} placeholder="Reasoning…" /></td>
-                      <td className="px-4 py-2.5 align-top"><TdInput value={row.pyAmount} onChange={(v) => setAdjPMRows(p => p.map(r => r.id === row.id ? {...r, pyAmount: v.replace(/[^0-9.]/g,"")} : r))} placeholder="—" className="text-right tabular-nums" /></td>
-                      <td className="px-2 py-2.5 align-top text-center"><button onClick={() => setAdjPMRows(p => p.filter(r => r.id !== row.id))} className="text-muted-foreground hover:text-destructive transition-colors" disabled={adjPMRows.length === 1}><Trash2 className="h-3.5 w-3.5" /></button></td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-            <div className="px-6 py-3 border-t border-border space-y-2">
-              <button onClick={() => setAdjPMRows(p => [...p, {id: uid(), area:"", amount:"", reasoning:"", pyAmount:""}])} className="flex items-center gap-1.5 text-sm font-medium text-primary hover:text-primary/80 transition-colors"><Plus className="h-4 w-4" />Add Row</button>
-              <p className="flex items-start gap-1.5 text-xs text-muted-foreground">
-                <Info className="h-3.5 w-3.5 flex-shrink-0 mt-0.5" />
-                If there are more than two F/S areas or disclosures that require an adjusted performance materiality level, provide details on a supplementary work paper that cross-references to this form.
+              <p className="mt-3 text-xs text-muted-foreground italic">
+                Performance materiality is set below overall materiality to reduce the risk that uncorrected and undetected misstatements in total exceed overall materiality.
               </p>
             </div>
           </div>
 
-          {/* ── Section D: Materiality for specific circumstances ── */}
+          {/* ── Specific Materiality (conditional) ── */}
           <div className="bg-card text-card-foreground border border-border shadow-[0_2px_8px_hsl(213_40%_20%/0.06)] rounded-md overflow-hidden">
             <div className="px-6 py-3.5 bg-card border-b border-border flex items-center gap-3">
-              <span className="text-sm font-semibold text-foreground">D. Materiality for Specific Circumstances</span>
-              <span title="Set lower materiality for specific classes of transactions, balances or disclosures where users are particularly sensitive. (CAS 320.10 and .A11-A12)"><Info className="h-3.5 w-3.5 text-muted-foreground cursor-help" /></span>
-            </div>
-            <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead className="sticky top-0 z-10">
-                  <tr className="bg-muted border-b border-border">
-                    <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider">Description / User Expectation</th>
-                    <th className="px-4 py-3 text-right text-xs font-semibold text-foreground uppercase tracking-wider w-28">Amount ($)</th>
-                    <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider">Reasoning</th>
-                    <th className="px-4 py-3 text-center text-xs font-semibold text-foreground uppercase tracking-wider w-24">W/P Ref.</th>
-                    <th className="px-4 py-3 text-right text-xs font-semibold text-foreground uppercase tracking-wider w-24">PY ($)</th>
-                    <th className="px-4 py-3 w-10" />
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-border">
-                  {specMatRows.map((row) => (
-                    <tr key={row.id} className="hover:bg-muted/50 transition-colors">
-                      <td className="px-4 py-2.5 align-top"><TdInput value={row.description} onChange={(v) => setSpecMatRows(p => p.map(r => r.id === row.id ? {...r, description: v} : r))} placeholder="Describe specific circumstances…" /></td>
-                      <td className="px-4 py-2.5 align-top"><TdInput value={row.amount} onChange={(v) => setSpecMatRows(p => p.map(r => r.id === row.id ? {...r, amount: v.replace(/[^0-9.]/g,"")} : r))} placeholder="0" className="text-right tabular-nums" /></td>
-                      <td className="px-4 py-2.5 align-top"><TdInput value={row.reasoning} onChange={(v) => setSpecMatRows(p => p.map(r => r.id === row.id ? {...r, reasoning: v} : r))} placeholder="Reasoning…" /></td>
-                      <td className="px-4 py-2.5 align-top"><TdInput value={row.wpRef} onChange={(v) => setSpecMatRows(p => p.map(r => r.id === row.id ? {...r, wpRef: v} : r))} placeholder="—" className="text-center" /></td>
-                      <td className="px-4 py-2.5 align-top"><TdInput value={row.pyAmount} onChange={(v) => setSpecMatRows(p => p.map(r => r.id === row.id ? {...r, pyAmount: v.replace(/[^0-9.]/g,"")} : r))} placeholder="—" className="text-right tabular-nums" /></td>
-                      <td className="px-2 py-2.5 align-top text-center"><button onClick={() => setSpecMatRows(p => p.filter(r => r.id !== row.id))} className="text-muted-foreground hover:text-destructive transition-colors" disabled={specMatRows.length === 1}><Trash2 className="h-3.5 w-3.5" /></button></td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-            <div className="px-6 py-3 border-t border-border">
-              <button onClick={() => setSpecMatRows(p => [...p, {id: uid(), description:"", amount:"", reasoning:"", wpRef:"", pyAmount:""}])} className="flex items-center gap-1.5 text-sm font-medium text-primary hover:text-primary/80 transition-colors"><Plus className="h-4 w-4" />Add Row</button>
-            </div>
-          </div>
-
-          {/* ── Section E: Performance materiality for specific circumstances ── */}
-          <div className="bg-card text-card-foreground border border-border shadow-[0_2px_8px_hsl(213_40%_20%/0.06)] rounded-md overflow-hidden">
-            <div className="px-6 py-3.5 bg-card border-b border-border flex items-center gap-3">
-              <span className="text-sm font-semibold text-foreground">E. Performance Materiality for Specific Circumstances</span>
-              <span title="Performance materiality applied to the specific circumstances identified in Step D. (CAS 320.10-11 and .A13)"><Info className="h-3.5 w-3.5 text-muted-foreground cursor-help" /></span>
-            </div>
-            <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead className="sticky top-0 z-10">
-                  <tr className="bg-muted border-b border-border">
-                    <th className="px-4 py-3 text-right text-xs font-semibold text-foreground uppercase tracking-wider w-32">Amount ($)</th>
-                    <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider">Reasoning</th>
-                    <th className="px-4 py-3 text-center text-xs font-semibold text-foreground uppercase tracking-wider w-24">W/P Ref.</th>
-                    <th className="px-4 py-3 text-right text-xs font-semibold text-foreground uppercase tracking-wider w-28">PY Amount ($)</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-border">
-                  <tr className="hover:bg-muted/50 transition-colors">
-                    <td className="px-4 py-2.5 align-top"><TdInput value={specPMAmount} onChange={setSpecPMAmount} placeholder="0" className="text-right tabular-nums" /></td>
-                    <td className="px-4 py-2.5 align-top"><TdInput value={specPMReasoning} onChange={setSpecPMReasoning} placeholder="Reasoning…" /></td>
-                    <td className="px-4 py-2.5 align-top"><TdInput value={specPMWPRef} onChange={setSpecPMWPRef} placeholder="—" className="text-center" /></td>
-                    <td className="px-4 py-2.5 align-top"><TdInput value={specPMPY} onChange={setSpecPMPY} placeholder="—" className="text-right tabular-nums" /></td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
-
-          {/* ── Additional Comments ── */}
-          <div className="bg-card text-card-foreground border border-border shadow-[0_2px_8px_hsl(213_40%_20%/0.06)] rounded-md overflow-hidden">
-            <div className="px-6 py-3.5 bg-card border-b border-border flex items-center gap-3">
-              <span className="text-sm font-semibold text-foreground">Additional Comments</span>
-            </div>
-            <div className="px-6 py-5">
-              <Textarea
-                value={additionalComments}
-                onChange={(e) => setAdditionalComments(e.target.value)}
-                placeholder="Add Comments"
-                className="min-h-[80px] text-sm resize-none bg-background"
+              <span className="text-sm font-semibold text-foreground">Specific Materiality</span>
+              <span title="Lower thresholds for particular accounts or disclosures where smaller misstatements could influence users — for example related party transactions or amounts tied to a compliance limit.">
+                <Info className="h-3.5 w-3.5 text-muted-foreground cursor-help" />
+              </span>
+              <Badge variant="info" className="font-normal">Optional</Badge>
+              <div className="flex-1" />
+              <span className="text-xs text-muted-foreground">Apply specific materiality to certain accounts or disclosures?</span>
+              <Switch
+                checked={specificEnabled}
+                onCheckedChange={setSpecificEnabled}
+                disabled={locked}
+                className="scale-75"
               />
             </div>
+            {specificEnabled ? (
+              <div className="px-6 py-5">
+                <div className="overflow-x-auto">
+                  <table className="w-full">
+                    <thead>
+                      <tr className="bg-muted border-b border-border">
+                        <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider min-w-[200px]">Account / Disclosure</th>
+                        <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider min-w-[210px]">Reason</th>
+                        <th className="px-4 py-3 text-right text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap">Specific Materiality ($)</th>
+                        <th className="px-4 py-3 text-right text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap" title="Set below the specific materiality amount, the same way performance materiality sits below overall materiality.">Specific Performance ($)</th>
+                        <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider min-w-[170px]">Comments</th>
+                        {!locked && <th className="px-2 py-3 w-10" />}
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-border">
+                      {specificRows.map((row) => (
+                        <tr key={row.id} className="hover:bg-muted/50 transition-colors">
+                          <td className="px-4 py-2.5 align-top">
+                            <TdInput
+                              value={row.account}
+                              onChange={(v) => updateSpecific(row.id, { account: v })}
+                              readOnly={locked}
+                              placeholder="e.g. Related party transactions"
+                            />
+                          </td>
+                          <td className="px-4 py-2.5 align-top">
+                            <TdSelect
+                              value={row.reason}
+                              onChange={(v) => updateSpecific(row.id, { reason: v })}
+                              options={REASON_OPTIONS.map((r) => ({ value: r, label: r }))}
+                              placeholder="Select reason…"
+                              disabled={locked}
+                            />
+                          </td>
+                          <td className="px-4 py-2.5 align-top text-right w-44">
+                            <TdInput
+                              value={row.amount}
+                              onChange={(v) => updateSpecific(row.id, { amount: v.replace(/[^0-9.]/g, "") })}
+                              readOnly={locked}
+                              placeholder="0.00"
+                              className="tabular-nums text-right"
+                            />
+                          </td>
+                          <td className="px-4 py-2.5 align-top text-right w-44">
+                            <TdInput
+                              value={row.pmAmount}
+                              onChange={(v) => updateSpecific(row.id, { pmAmount: v.replace(/[^0-9.]/g, "") })}
+                              readOnly={locked}
+                              placeholder="0.00"
+                              className="tabular-nums text-right"
+                            />
+                          </td>
+                          <td className="px-4 py-2.5 align-top">
+                            <TdInput
+                              value={row.comments}
+                              onChange={(v) => updateSpecific(row.id, { comments: v })}
+                              readOnly={locked}
+                              placeholder="Comments…"
+                            />
+                          </td>
+                          {!locked && (
+                            <td className="px-2 py-2.5 align-middle text-center">
+                              <button
+                                onClick={() => removeSpecific(row.id)}
+                                disabled={specificRows.length <= 1}
+                                className="text-muted-foreground hover:text-destructive disabled:opacity-30 disabled:cursor-not-allowed"
+                                title="Remove row"
+                              >
+                                <Trash2 className="h-4 w-4" />
+                              </button>
+                            </td>
+                          )}
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+                {!locked && (
+                  <Button variant="outline" size="sm" className="h-8 text-sm mt-3" onClick={addSpecific}>
+                    <Plus className="h-3.5 w-3.5 mr-1.5" />
+                    Add Row
+                  </Button>
+                )}
+              </div>
+            ) : (
+              <div className="px-6 py-4">
+                <p className="text-xs text-muted-foreground">No specific materiality applied. Turn the toggle on if smaller misstatements in particular accounts or disclosures could influence users of the financial statements.</p>
+              </div>
+            )}
           </div>
 
           {/* ── Conclusion ── */}
           <div className="bg-card border border-border shadow-[0_2px_8px_hsl(213_40%_20%/0.06)] rounded-md overflow-hidden">
             <div className="px-6 py-3.5 bg-card border-b border-border flex items-center gap-2">
               <span className="text-sm font-semibold text-foreground">Conclusion</span>
-              <span className="text-xs text-muted-foreground">— Document any changes in the materiality assessments and the final materiality on Form 335.</span>
+              <span className="text-xs text-muted-foreground">— Document any later changes in the materiality assessments and the final materiality on the summary of misstatements.</span>
             </div>
             <div className="px-6 py-5">
               <Textarea
                 value={conclusion}
                 onChange={(e) => setConclusion(e.target.value)}
+                readOnly={locked}
                 className="min-h-[72px] text-sm resize-none bg-background"
               />
             </div>
@@ -836,6 +955,7 @@ export function AuditMaterialityWorksheet({ isUS = false }: AuditMaterialityWork
                     className="h-8 text-sm flex-1"
                     value={preparedBy}
                     onChange={(e) => setPreparedBy(e.target.value)}
+                    readOnly={locked}
                     placeholder="Name"
                   />
                   <span className="text-xs font-semibold text-muted-foreground whitespace-nowrap">Date:</span>
@@ -844,6 +964,7 @@ export function AuditMaterialityWorksheet({ isUS = false }: AuditMaterialityWork
                     className="h-8 text-sm w-36"
                     value={preparedDate}
                     onChange={(e) => setPreparedDate(e.target.value)}
+                    readOnly={locked}
                   />
                 </div>
                 <div className="flex items-center gap-3">
@@ -852,6 +973,7 @@ export function AuditMaterialityWorksheet({ isUS = false }: AuditMaterialityWork
                     className="h-8 text-sm flex-1"
                     value={reviewedBy}
                     onChange={(e) => setReviewedBy(e.target.value)}
+                    readOnly={locked}
                     placeholder="Name"
                   />
                   <span className="text-xs font-semibold text-muted-foreground whitespace-nowrap">Date:</span>
@@ -860,24 +982,26 @@ export function AuditMaterialityWorksheet({ isUS = false }: AuditMaterialityWork
                     className="h-8 text-sm w-36"
                     value={reviewedDate}
                     onChange={(e) => setReviewedDate(e.target.value)}
+                    readOnly={locked}
                   />
                 </div>
               </div>
             </div>
           </div>
 
-          {/* Conclude button — bottom right */}
-          <div className="flex justify-end">
-            <Button
-              onClick={() => {
-                setConcluded(true);
-                toast.success("Materiality worksheet concluded");
-              }}
-              disabled={concluded}
-            >
-              {concluded ? "Worksheet concluded" : "Conclude worksheet"}
-            </Button>
-          </div>
+          {/* Concluded banner / Conclude button */}
+          {concluded ? (
+            <div className="flex items-center gap-2 rounded-md border border-green-200 bg-green-50 px-4 py-3">
+              <CheckCircle2 className="h-4 w-4 text-green-600 shrink-0" />
+              <p className="text-sm text-green-700">
+                Concluded by <span className="font-semibold">{concludedBy}</span>{concludedOn ? ` on ${fmtDate(concludedOn)}` : ""}. This worksheet is read-only.
+              </p>
+            </div>
+          ) : (
+            <div className="flex justify-end">
+              <Button onClick={handleConclude}>Conclude worksheet</Button>
+            </div>
+          )}
 
         </div>
       </div>
