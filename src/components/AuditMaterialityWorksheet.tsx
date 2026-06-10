@@ -84,10 +84,14 @@ const FINANCIALS: { ca: MockFinancials; us: MockFinancials } = {
   },
 };
 
+// Profit-oriented engagements only — NFP and government are out of scope.
+const ENTITY_OPTIONS = ["Profit-oriented corporation", "Profit-oriented partnership"];
+
 // ── Types ──────────────────────────────────────────────────────────────────────
 
 interface BenchmarkRow {
   id: string;
+  entity: string;
   basis: BenchmarkBasis | "";
   benchmarkValue: string; // manual value; ignored while the row is auto-filled
   valueIsManual: boolean;
@@ -241,10 +245,10 @@ export function AuditMaterialityWorksheet({ isUS = false }: AuditMaterialityWork
   return <WorksheetInner key={isUS ? "us" : "ca"} isUS={isUS} />;
 }
 
-function defaultRows(fin: MockFinancials): BenchmarkRow[] {
+function defaultRows(fin: MockFinancials, entity: string): BenchmarkRow[] {
   return [
-    { id: uid(), basis: "grossRevenue", benchmarkValue: String(fin.values.grossRevenue), valueIsManual: false, appliedPct: "1.00", priorYear: "", comments: "" },
-    { id: uid(), basis: "preTaxIncome", benchmarkValue: String(fin.values.preTaxIncome), valueIsManual: false, appliedPct: "5.00", priorYear: "", comments: "" },
+    { id: uid(), entity, basis: "grossRevenue", benchmarkValue: String(fin.values.grossRevenue), valueIsManual: false, appliedPct: "1.00", priorYear: "", comments: "" },
+    { id: uid(), entity, basis: "preTaxIncome", benchmarkValue: String(fin.values.preTaxIncome), valueIsManual: false, appliedPct: "5.00", priorYear: "", comments: "" },
   ];
 }
 
@@ -256,7 +260,10 @@ function WorksheetInner({ isUS }: { isUS: boolean }) {
     [storageKey]
   );
 
-  const seedRows = useMemo(() => defaultRows(fin), [fin]);
+  const seedRows = useMemo(
+    () => defaultRows(fin, isUS ? "Profit-oriented partnership" : "Profit-oriented corporation"),
+    [fin, isUS]
+  );
 
   const [showAddDialog, setShowAddDialog] = useState(false);
 
@@ -371,7 +378,7 @@ function WorksheetInner({ isUS }: { isUS: boolean }) {
     setRows((prev) => prev.map((r) => (r.id === id ? { ...r, ...patch } : r)));
 
   const addRow = () =>
-    setRows((prev) => [...prev, { id: uid(), basis: "", benchmarkValue: "", valueIsManual: !connected, appliedPct: "", priorYear: "", comments: "" }]);
+    setRows((prev) => [...prev, { id: uid(), entity: "", basis: "", benchmarkValue: "", valueIsManual: !connected, appliedPct: "", priorYear: "", comments: "" }]);
 
   const removeRow = (id: string) =>
     setRows((prev) => {
@@ -552,16 +559,6 @@ function WorksheetInner({ isUS }: { isUS: boolean }) {
                 />
               </div>
             </div>
-            {/* Available data period strip */}
-            <div className="px-6 py-2.5 border-b border-border bg-muted/20 flex items-center gap-3 flex-wrap">
-              <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Available data period</span>
-              <span className="text-sm text-foreground tabular-nums">{fmtDate(periodStart)} → {fmtDate(availableThrough)}</span>
-              {isPartial && (
-                <Badge variant="warning" title={`Based on ${availableMonths} months of data extrapolated to ${totalMonths} months`}>
-                  {availableMonths} months — extrapolated to {totalMonths}
-                </Badge>
-              )}
-            </div>
             {materialityShift && (
               <div className="border-b border-border px-6 py-3 flex items-start gap-2 bg-amber-50">
                 <AlertTriangle className="h-4 w-4 text-amber-600 mt-0.5 shrink-0" />
@@ -584,8 +581,12 @@ function WorksheetInner({ isUS }: { isUS: boolean }) {
                   <thead>
                     <tr className="bg-muted border-b border-border">
                       <th className="px-3 py-3 text-center text-xs font-semibold text-foreground uppercase tracking-wider w-16" title="Exactly one benchmark drives overall materiality.">Selected</th>
+                      <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider min-w-[200px]">Entity Name</th>
                       <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider min-w-[190px]">Basis of Calculation</th>
-                      <th className="px-4 py-3 text-right text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap" title={connected ? "Pulled automatically from the connected data source. Type to override." : "Manual entry"}>Benchmark Value ($)</th>
+                      <th className="px-4 py-3 text-right text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap" title={connected ? "Pulled automatically from the connected data source. Type to override." : "Manual entry"}>
+                        <div>Benchmark Value ($)</div>
+                        <div className="text-[10px] font-normal normal-case tracking-normal text-muted-foreground">{fmtDate(periodStart)} → {fmtDate(availableThrough)}</div>
+                      </th>
                       <th className="px-4 py-3 text-right text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap" title="Partial-year flows annualized: (value ÷ available months) × total months. Balance-sheet amounts are not extrapolated.">Extrapolated ($)</th>
                       <th className="px-4 py-3 text-center text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap">Suggested Range</th>
                       <th className="px-4 py-3 text-right text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap">Applied (%)</th>
@@ -609,6 +610,15 @@ function WorksheetInner({ isUS }: { isUS: boolean }) {
                               onChange={() => setSelectedRowId(row.id)}
                               disabled={locked}
                               className="h-4 w-4 accent-primary cursor-pointer"
+                            />
+                          </td>
+                          <td className="px-4 py-2.5 align-top">
+                            <TdSelect
+                              value={row.entity}
+                              onChange={(v) => updateRow(row.id, { entity: v })}
+                              options={ENTITY_OPTIONS.map((e) => ({ value: e, label: e }))}
+                              placeholder="Select entity…"
+                              disabled={locked}
                             />
                           </td>
                           <td className="px-4 py-2.5 align-top">
