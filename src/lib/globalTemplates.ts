@@ -13267,7 +13267,7 @@ export const generateForm410AcceptanceContinuance = (): Checklist => {
       id: 'f410-ind',
       title: 'Independence',
       questions: [
-        q('f410-ind-1', '<p>Identify and describe any potential independence prohibitions that could occur, and provide reasons why they do or do not preclude the firm or particular staff members from performing the engagement. Address each of the prohibitions listed below:</p>', [
+        q('f410-ind-1', '<p><strong>Independence prohibitions</strong><br/>Identify and describe any potential independence prohibitions that could occur, and provide reasons why they do or do not preclude the firm or particular staff members from performing the engagement. Address each of the prohibitions listed below:</p>', [
           h('f410-ind-svc-hdr', '<p><strong>Services performed</strong></p>'),
           q('f410-ind-1a', '<p>Recording journal entries or changing account classifications without first obtaining management\'s approval.</p>', undefined, 'No', '<p>The firm does not record journal entries on behalf of the client. All adjusting entries are proposed to and approved by management.</p>'),
           q('f410-ind-1b', '<p>Providing tax planning or other tax advisory services that may have a material impact on the F/S.</p>', undefined, 'No', '<p>No tax advisory services are provided by the audit firm to this client.</p>'),
