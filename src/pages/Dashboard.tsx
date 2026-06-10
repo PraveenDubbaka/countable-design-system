@@ -336,9 +336,9 @@ export default function Dashboard() {
         {/* Right Sidebar - Enhanced spacing */}
         <div className="w-80 flex-shrink-0 space-y-5">
           {/* Charts Row */}
-          <div className="flex gap-4 w-full">
+          <div className="flex gap-4">
             {/* Team Members Chart */}
-            <StyledCard className="flex-1 p-5">
+            <StyledCard className="flex-1 min-w-0 p-5">
               <h3 className="text-sm font-semibold text-foreground mb-3 whitespace-nowrap">Team Members</h3>
               <div className="h-28">
                 <ResponsiveContainer width="100%" height="100%">
@@ -364,7 +364,7 @@ export default function Dashboard() {
             </StyledCard>
 
             {/* Clients Chart */}
-            <StyledCard className="flex-1 p-5">
+            <StyledCard className="flex-1 min-w-0 p-5">
               <h3 className="text-sm font-semibold text-foreground mb-3 whitespace-nowrap">Clients</h3>
               <div className="h-28">
                 <ResponsiveContainer width="100%" height="100%">
