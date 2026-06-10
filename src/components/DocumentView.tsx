@@ -2039,8 +2039,8 @@ function DocumentSectionBlock({
           </h3>
         }
 
-        {/* Section Note */}
-        {!isPreviewMode ? (
+        {/* Section Note — editable only in template editing; view-only in engagements */}
+        {!isPreviewMode && !isEngagementMode ? (
           <Popover>
             <PopoverTrigger asChild>
               <button
