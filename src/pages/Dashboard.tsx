@@ -339,7 +339,7 @@ export default function Dashboard() {
           <div className="flex gap-4">
             {/* Team Members Chart */}
             <StyledCard className="flex-1 p-5">
-              <h3 className="text-sm font-semibold text-foreground mb-3">Team Members</h3>
+              <h3 className="text-sm font-semibold text-foreground mb-3 whitespace-nowrap">Team Members</h3>
               <div className="h-28">
                 <ResponsiveContainer width="100%" height="100%">
                   <PieChart>
@@ -365,7 +365,7 @@ export default function Dashboard() {
 
             {/* Clients Chart */}
             <StyledCard className="flex-1 p-5">
-              <h3 className="text-sm font-semibold text-foreground mb-3">Clients</h3>
+              <h3 className="text-sm font-semibold text-foreground mb-3 whitespace-nowrap">Clients</h3>
               <div className="h-28">
                 <ResponsiveContainer width="100%" height="100%">
                   <PieChart>
