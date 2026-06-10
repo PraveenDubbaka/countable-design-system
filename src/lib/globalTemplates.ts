@@ -13218,6 +13218,9 @@ export const generateForm410AcceptanceContinuance = (): Checklist => {
     showResponse: false, showExplanation: false, showReference: false,
     ...(sub ? { subQuestions: sub } : {})
   });
+  const mc = (id: string, text: string, opts: string[], answer = ''): Question => ({
+    id, text, answerType: 'multiple-choice' as const, options: opts, required: false, answer
+  });
 
   const sections: Section[] = [
     // ── 1. Engagement risk assessment ─────────────────────────────────────────
@@ -13317,6 +13320,27 @@ export const generateForm410AcceptanceContinuance = (): Checklist => {
       ],
       isExpanded: true,
     },
+    // ── Conclusion ────────────────────────────────────────────────────────────
+    {
+      id: 'f410-conc',
+      title: 'Conclusion',
+      questions: [
+        mc('f410-conc-risk', '<p><strong>Based on the information identified and documented above, the engagement risk to the firm is assessed as follows (check one):</strong></p>', ['Low Risk', 'Moderate Risk', 'High Risk', 'Not Accepted'], 'Low Risk'),
+        la('f410-conc-exp', '<p><em>Where the engagement risk is assessed at other than low, describe the firm\'s response (such as using more experienced staff or staff with specific expertise).</em></p>', 'All risk factors assessed. No material risk factors identified. Engagement is assessed as Low Risk. Client accepted.'),
+        la('f410-conc-group-audit', '<p><em>If indicators of a group audit exist after completion of Question 2 in the Engagement risk assessment section, document your professional judgment as to whether or not this engagement is a group audit.</em><br/><br/><strong>Note:</strong> <em>If the engagement is evaluated to be a group audit, ensure the 600 series of checklists is also used in addition to standard PEG forms.</em></p>', 'Not applicable — this engagement is not a group audit. Single entity with no subsidiaries or equity-accounted investments.'),
+        la('f410-conc-prior-risk', '<p><em>For continuing engagements, provide reasons for any change in the risk assessment from prior years.</em></p>', 'First year engagement — no prior year risk assessment on file.'),
+        mc('f410-conc-eqr', '<p><strong>Is an EQR required on this engagement (check one)?</strong><br/><em>This decision should be based on the engagement risk identified above and the firm\'s criteria for when an EQR is required.</em></p>', ['Yes', 'No'], 'No'),
+        la('f410-conc-eqr-criteria', '<p><strong>Reference to or document the firm\'s criteria for when an EQR is required:</strong></p>', 'Per firm quality management manual, an EQR is required for listed entities, high-risk engagements, significant judgment engagements, or where required by regulation. None of these criteria apply to this engagement.'),
+        la('f410-conc-basis', '<p><strong>Basis for decision:</strong></p>', 'Engagement risk assessed as Low Risk based on all factors reviewed. EQR not required under firm policy for low-risk private company engagements.'),
+        la('f410-conc-el', '<p><strong>Engagement letter</strong><br/><em>For new engagements, agree the terms and conditions of the engagement with management and TCWG, as appropriate, and obtain a signed engagement letter before commencing any work on the engagement. For continuing engagements, determine whether an updated engagement letter is required (such as to reflect changes in key personnel or engagement terms) before commencing any work on the engagement. Where an engagement is a group audit, ensure the engagement letter and expected audit report in the engagement letter are updated accordingly.</em></p>', 'New engagement — engagement letter agreed with management and signed prior to commencing audit work.'),
+        { id: 'f410-conc-el-date', text: '', answerType: 'none' as const, options: [], required: false, answer: '', columnLayout: { columns: 2, cells: [{ id: 'f410-conc-el-date-c1', content: 'Date of engagement letter', blockType: 'text' as const }, { id: 'f410-conc-el-date-c2', content: '2024-04-05', blockType: 'date' as const }], columnWidths: [0.45, 0.55] } },
+        la('f410-conc-pa-comments', '<p><strong>Partner/practitioner assessment</strong><br/>Comments:</p>', 'All engagement acceptance procedures completed. Engagement accepted. No significant risks or independence matters identified.'),
+        la('f410-conc-pa-decl', '<p>I have read the responses to the questions above and:<br/>• Agree with the risk assessment and conclusions above.<br/>• Declare that I am not aware of any other independence prohibitions, unmitigated independence threats or engagement risk factors that would prevent the firm or any member of the engagement team from performing this assignment.</p>', 'Engagement partner J. Williams, CPA has reviewed all responses. Agree with Low Risk assessment. No independence prohibitions, threats, or engagement risk factors identified. Engagement may proceed.'),
+        { id: 'f410-conc-preparer', text: '', answerType: 'none' as const, options: [], required: false, answer: '', columnLayout: { columns: 2, cells: [{ id: 'f410-conc-preparer-c1', content: 'Preparer', blockType: 'text' as const }, { id: 'f410-conc-preparer-c2', content: '2024-04-05', blockType: 'date' as const }], columnWidths: [0.35, 0.65] } },
+        { id: 'f410-conc-pb', text: '', answerType: 'none' as const, options: [], required: false, answer: '', columnLayout: { columns: 2, cells: [{ id: 'f410-conc-pb-c1', content: 'Partner/practitioner', blockType: 'text' as const }, { id: 'f410-conc-pb-c2', content: '2024-04-08', blockType: 'date' as const }], columnWidths: [0.35, 0.65] } },
+      ],
+      isExpanded: true,
+    },
     // ── Appendix A ────────────────────────────────────────────────────────────
     {
       id: 'f410-appA',
@@ -13371,27 +13395,6 @@ export const generateForm410AcceptanceContinuance = (): Checklist => {
         la('f410-appB-def', '<p><strong>Definition of a group audit</strong><br/>A group audit is the audit of F/S that include the financial information of more than one entity or business unit through a consolidation process. For the purposes of CAS 600, a consolidation process includes:<br/>• Consolidation, proportionate consolidation, or an equity method of accounting.<br/>• The presentation in combined F/S of the financial information of entities or business units that have no parent but are under common control or common management.<br/>• The aggregation of the financial information of entities or business units.</p>', ''),
         la('f410-appB-indicators', '<p><strong>Indicators that suggest a group audit may exist</strong><br/>Consider the following when making the group audit determination:<br/>• Entity has subsidiaries, joint ventures, or equity-accounted investments.<br/>• Entity prepares consolidated financial statements.<br/>• Entity presents combined financial statements for commonly controlled entities.<br/>• Entity aggregates financial information from multiple operating divisions or business units.<br/>• Engagement involves auditing financial information prepared at multiple locations or by multiple teams.</p>', ''),
         la('f410-appB-judgment', '<p><strong>Professional judgment required</strong><br/>If group audit indicators are present, document your professional judgment regarding the group audit determination in the Conclusion section. Where the engagement is determined to be a group audit, ensure the 600 series of checklists is used in addition to standard PEG forms, and update the engagement letter and expected audit report accordingly.</p>', ''),
-      ],
-      isExpanded: true,
-    },
-    // ── Conclusion ────────────────────────────────────────────────────────────
-    {
-      id: 'f410-conc',
-      title: 'Conclusion',
-      questions: [
-        la('f410-conc-risk', '<p><strong>Based on the information and risk factors identified above, this engagement is assessed as follows (check one):</strong><br/>☐ Low Risk &nbsp; ☐ Moderate Risk &nbsp; ☐ High Risk &nbsp; ☐ Not Accepted</p>', 'Low Risk'),
-        la('f410-conc-exp', '<p><strong>Additional Explanation</strong><br/><em>Where the engagement risk is assessed at other than low, describe the firm\'s response (such as using more experienced staff or staff with specific expertise).</em></p>', 'All risk factors assessed. No material risk factors identified. Engagement is assessed as Low Risk. Client accepted.'),
-        la('f410-conc-group-audit', '<p><strong>Group audit determination</strong><br/><em>If indicators of a group audit exist after completion of Question 2 in the Engagement risk assessment section, document your professional judgment as to whether or not this engagement is a group audit. If the engagement is evaluated to be a group audit, ensure the 600 series of checklists is also used in addition to standard PEG forms.</em></p>', 'Not applicable — this engagement is not a group audit. Single entity with no subsidiaries or equity-accounted investments.'),
-        la('f410-conc-prior-risk', '<p><strong>Prior year risk assessment</strong><br/><em>For continuing engagements, provide reasons for any change in the risk assessment from prior years.</em></p>', 'First year engagement — no prior year risk assessment on file.'),
-        la('f410-conc-eqr', '<p><strong>Is an EQR required on this engagement (check one)?</strong><br/>☐ Yes &nbsp; ☐ No<br/><em>This decision should be based on the engagement risk identified above and the firm\'s criteria for when an EQR is required.</em></p>', 'No — Engagement assessed as Low Risk. Entity is a private company with no public interest considerations and no elevated risk factors.'),
-        la('f410-conc-eqr-criteria', '<p><strong>Reference to or document the firm\'s criteria for when an EQR is required:</strong></p>', 'Per firm quality management manual, an EQR is required for listed entities, high-risk engagements, significant judgment engagements, or where required by regulation. None of these criteria apply to this engagement.'),
-        la('f410-conc-basis', '<p><strong>Basis for decision:</strong></p>', 'Engagement risk assessed as Low Risk based on all factors reviewed. EQR not required under firm policy for low-risk private company engagements.'),
-        la('f410-conc-el', '<p><strong>Engagement letter</strong><br/><em>For new engagements, agree the terms and conditions of the engagement with management and TCWG, as appropriate, and obtain a signed engagement letter before commencing any work on the engagement. For continuing engagements, determine whether an updated engagement letter is required (such as to reflect changes in key personnel or engagement terms) before commencing any work on the engagement. Where an engagement is a group audit, ensure the engagement letter and expected audit report in the engagement letter are updated accordingly.</em></p>', 'New engagement — engagement letter agreed with management and signed prior to commencing audit work.'),
-        { id: 'f410-conc-el-date', text: '', answerType: 'none' as const, options: [], required: false, answer: '', columnLayout: { columns: 2, cells: [{ id: 'f410-conc-el-date-c1', content: 'Date of engagement letter', blockType: 'text' as const }, { id: 'f410-conc-el-date-c2', content: '2024-04-05', blockType: 'date' as const }], columnWidths: [0.45, 0.55] } },
-        la('f410-conc-pa-comments', '<p><strong>Partner/practitioner assessment</strong><br/>Comments:</p>', 'All engagement acceptance procedures completed. Engagement accepted. No significant risks or independence matters identified.'),
-        la('f410-conc-pa-decl', '<p>I have read the responses to the questions above and:<br/>• Agree with the risk assessment and conclusions above.<br/>• Declare that I am not aware of any other independence prohibitions, unmitigated independence threats or engagement risk factors that would prevent the firm or any member of the engagement team from performing this assignment.</p>', 'Engagement partner J. Williams, CPA has reviewed all responses. Agree with Low Risk assessment. No independence prohibitions, threats, or engagement risk factors identified. Engagement may proceed.'),
-        { id: 'f410-conc-preparer', text: '', answerType: 'none' as const, options: [], required: false, answer: '', columnLayout: { columns: 2, cells: [{ id: 'f410-conc-preparer-c1', content: 'Preparer', blockType: 'text' as const }, { id: 'f410-conc-preparer-c2', content: '2024-04-05', blockType: 'date' as const }], columnWidths: [0.35, 0.65] } },
-        { id: 'f410-conc-pb', text: '', answerType: 'none' as const, options: [], required: false, answer: '', columnLayout: { columns: 2, cells: [{ id: 'f410-conc-pb-c1', content: 'Partner/practitioner', blockType: 'text' as const }, { id: 'f410-conc-pb-c2', content: '2024-04-08', blockType: 'date' as const }], columnWidths: [0.35, 0.65] } },
       ],
       isExpanded: true,
     },
