@@ -358,7 +358,7 @@ export default function Dashboard() {
                     <span className="text-xs text-muted-foreground">{item.name}</span>
                   </div>)}
               </div>
-              <Button variant="ghost" size="sm" className="w-full mt-3 h-9 text-sm text-primary hover:bg-primary/5 font-medium rounded-xl">
+              <Button variant="secondary" size="sm" className="w-full mt-3">
                 View Team
               </Button>
             </StyledCard>
@@ -384,7 +384,7 @@ export default function Dashboard() {
                     <span className="text-xs text-muted-foreground">{item.name}</span>
                   </div>)}
               </div>
-              <Button variant="ghost" size="sm" className="w-full mt-3 h-9 text-sm text-primary hover:bg-primary/5 font-medium rounded-xl">
+              <Button variant="secondary" size="sm" className="w-full mt-3">
                 View Clients
               </Button>
             </StyledCard>
