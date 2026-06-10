@@ -478,74 +478,6 @@ function WorksheetInner({ isUS }: { isUS: boolean }) {
       <div className="flex-1 overflow-y-auto bg-muted/30">
         <div className="p-6 space-y-4">
 
-          {/* ── Period & data source banner ── */}
-          <div className="bg-card text-card-foreground border border-border shadow-[0_2px_8px_hsl(213_40%_20%/0.06)] rounded-md overflow-hidden">
-            <div className="px-6 py-3.5 bg-card border-b border-border flex items-center gap-3 flex-wrap">
-              <span className="text-sm font-semibold text-foreground">Period &amp; Data Source</span>
-              <span title="The audit period comes from the engagement settings. The available data period reflects how far the connected accounting data goes.">
-                <Info className="h-3.5 w-3.5 text-muted-foreground cursor-help" />
-              </span>
-              <div className="flex-1" />
-              {refreshedOn ? (
-                <Badge variant="success" className="gap-1"><CheckCircle2 className="h-3 w-3" />Refreshed on {fmtDate(refreshedOn)}</Badge>
-              ) : (
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="h-8 text-sm"
-                  disabled={!connected || locked}
-                  onClick={handleRefresh}
-                  title="Re-pull financial data from the connected source. Once the fiscal year is complete this replaces extrapolated figures with actuals."
-                >
-                  <RefreshCw className="h-3.5 w-3.5 mr-1.5" />
-                  Refresh Data
-                </Button>
-              )}
-              <div className="flex items-center gap-2">
-                <span className="text-xs text-muted-foreground">Data source</span>
-                <Switch
-                  checked={connected}
-                  onCheckedChange={(v) => setDataSource(v ? "connected" : "none")}
-                  disabled={locked}
-                  className="scale-75"
-                />
-              </div>
-            </div>
-            <div className="px-6 py-4 grid grid-cols-1 xl:grid-cols-2 gap-4">
-              <div className="flex items-center gap-3">
-                <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider w-44 shrink-0">Audit period</span>
-                <Input type="date" value={periodStart} onChange={(e) => setPeriodStart(e.target.value)} readOnly={locked} className="h-8 text-sm w-40" />
-                <span className="text-muted-foreground text-sm">→</span>
-                <Input type="date" value={periodEnd} onChange={(e) => setPeriodEnd(e.target.value)} readOnly={locked} className="h-8 text-sm w-40" />
-              </div>
-              <div className="flex items-center gap-3">
-                <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider w-44 shrink-0">Available data period</span>
-                <span className="text-sm text-foreground tabular-nums">{fmtDate(periodStart)} → {fmtDate(availableThrough)}</span>
-                {isPartial && (
-                  <Badge variant="warning" title={`Based on ${availableMonths} months of data extrapolated to ${totalMonths} months`}>
-                    {availableMonths} months — extrapolated to {totalMonths}
-                  </Badge>
-                )}
-              </div>
-            </div>
-            {materialityShift && (
-              <div className="border-t border-border px-6 py-3 flex items-start gap-2 bg-amber-50">
-                <AlertTriangle className="h-4 w-4 text-amber-600 mt-0.5 shrink-0" />
-                <p className="text-sm text-amber-700">Materiality has changed. Please review and update your assessment.</p>
-                <div className="flex-1" />
-                {!locked && (
-                  <button className="text-xs text-amber-700 underline hover:opacity-80" onClick={() => setMaterialityShift(false)}>Dismiss</button>
-                )}
-              </div>
-            )}
-            {!connected && (
-              <div className="border-t border-border px-6 py-3 flex items-start gap-2 bg-muted/20">
-                <Info className="h-3.5 w-3.5 text-muted-foreground mt-0.5 shrink-0" />
-                <p className="text-xs text-muted-foreground">Connect a data source or upload a trial balance to auto-populate financial benchmarks. All values below are manual entries.</p>
-              </div>
-            )}
-          </div>
-
           {/* ── Summary card ── */}
           <div className="bg-card text-card-foreground border border-border shadow-[0_2px_8px_hsl(213_40%_20%/0.06)] rounded-md overflow-hidden">
             <div className="px-6 py-3.5 bg-primary/[0.04] border-b border-border flex items-center gap-3">
@@ -586,19 +518,66 @@ function WorksheetInner({ isUS }: { isUS: boolean }) {
 
           {/* ── Overall Materiality ── */}
           <div className="bg-card text-card-foreground border border-border shadow-[0_2px_8px_hsl(213_40%_20%/0.06)] rounded-md overflow-hidden">
-            <div className="px-6 py-3.5 bg-card border-b border-border flex items-center gap-3">
+            <div className="px-6 py-3.5 bg-card border-b border-border flex items-center gap-3 flex-wrap">
               <span className="text-sm font-semibold text-foreground">Overall Materiality</span>
               <span title="The highest amount of misstatement that could be present in the financial statements without affecting the decisions of users. Select the benchmark that best reflects what users of these statements focus on.">
                 <Info className="h-3.5 w-3.5 text-muted-foreground cursor-help" />
               </span>
+              <Input type="date" value={periodStart} onChange={(e) => setPeriodStart(e.target.value)} readOnly={locked} className="h-8 text-sm w-40" />
+              <span className="text-muted-foreground text-sm">→</span>
+              <Input type="date" value={periodEnd} onChange={(e) => setPeriodEnd(e.target.value)} readOnly={locked} className="h-8 text-sm w-40" />
               <div className="flex-1" />
-              {!locked && (
-                <Button variant="outline" size="sm" className="h-8 text-sm" onClick={addRow}>
-                  <Plus className="h-3.5 w-3.5 mr-1.5" />
-                  Add Row
+              {refreshedOn ? (
+                <Badge variant="success" className="gap-1"><CheckCircle2 className="h-3 w-3" />Refreshed on {fmtDate(refreshedOn)}</Badge>
+              ) : (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="h-8 text-sm"
+                  disabled={!connected || locked}
+                  onClick={handleRefresh}
+                  title="Re-pull financial data from the connected source. Once the fiscal year is complete this replaces extrapolated figures with actuals."
+                >
+                  <RefreshCw className="h-3.5 w-3.5 mr-1.5" />
+                  Refresh Data
                 </Button>
               )}
+              <div className="flex items-center gap-2">
+                <span className="text-xs text-muted-foreground">Data source</span>
+                <Switch
+                  checked={connected}
+                  onCheckedChange={(v) => setDataSource(v ? "connected" : "none")}
+                  disabled={locked}
+                  className="scale-75"
+                />
+              </div>
             </div>
+            {/* Available data period strip */}
+            <div className="px-6 py-2.5 border-b border-border bg-muted/20 flex items-center gap-3 flex-wrap">
+              <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Available data period</span>
+              <span className="text-sm text-foreground tabular-nums">{fmtDate(periodStart)} → {fmtDate(availableThrough)}</span>
+              {isPartial && (
+                <Badge variant="warning" title={`Based on ${availableMonths} months of data extrapolated to ${totalMonths} months`}>
+                  {availableMonths} months — extrapolated to {totalMonths}
+                </Badge>
+              )}
+            </div>
+            {materialityShift && (
+              <div className="border-b border-border px-6 py-3 flex items-start gap-2 bg-amber-50">
+                <AlertTriangle className="h-4 w-4 text-amber-600 mt-0.5 shrink-0" />
+                <p className="text-sm text-amber-700">Materiality has changed. Please review and update your assessment.</p>
+                <div className="flex-1" />
+                {!locked && (
+                  <button className="text-xs text-amber-700 underline hover:opacity-80" onClick={() => setMaterialityShift(false)}>Dismiss</button>
+                )}
+              </div>
+            )}
+            {!connected && (
+              <div className="border-b border-border px-6 py-3 flex items-start gap-2 bg-muted/20">
+                <Info className="h-3.5 w-3.5 text-muted-foreground mt-0.5 shrink-0" />
+                <p className="text-xs text-muted-foreground">Connect a data source or upload a trial balance to auto-populate financial benchmarks. All values below are manual entries.</p>
+              </div>
+            )}
             <div className="px-6 py-5">
               <div className="overflow-x-auto">
                 <table className="w-full">
@@ -715,6 +694,12 @@ function WorksheetInner({ isUS }: { isUS: boolean }) {
                   <AlertTriangle className="h-4 w-4 text-amber-600 mt-0.5 shrink-0" />
                   <p className="text-sm text-amber-700">Pre-tax income may not be a reliable benchmark. Consider using Gross Revenue or Total Assets instead.</p>
                 </div>
+              )}
+              {!locked && (
+                <Button variant="outline" size="sm" className="h-8 text-sm mt-3" onClick={addRow}>
+                  <Plus className="h-3.5 w-3.5 mr-1.5" />
+                  Add Row
+                </Button>
               )}
             </div>
             {/* Clearly trivial threshold — inside the same card */}
