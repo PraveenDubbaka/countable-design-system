@@ -13232,7 +13232,6 @@ export const generateForm410AcceptanceContinuance = (): Checklist => {
           q('f410-era-2c', '<p>Consolidation, proportionate consolidation, or an equity method of accounting.</p>', undefined, 'No'),
           q('f410-era-2d', '<p>The presentation in combined F/S of the financial information of entities or business units that have no parent but are under common control or common management.</p>', undefined, 'No'),
           q('f410-era-2e', '<p>The aggregation of the financial information of entities or business units.</p>', undefined, 'No'),
-          h('f410-era-2-appB', '<p><em>See Appendix B for additional guidance.</em></p>'),
         ]),
         q('f410-era-3', '<p>Identify any concerns about the integrity and ethical values of management/TCWG.</p>', [
           q('f410-era-3a', '<p>Misleading/untrue management representations.</p>', undefined, 'No'),
