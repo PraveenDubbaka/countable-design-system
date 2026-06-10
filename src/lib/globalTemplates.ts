@@ -13308,7 +13308,11 @@ export const generateForm410AcceptanceContinuance = (): Checklist => {
         q('f410-pre-2', '<p><strong>Understanding and responsibility</strong><br/>Confirm that management acknowledges its understanding and responsibility for:</p>', [
           q('f410-pre-2a', '<p>The preparation of F/S in accordance with the applicable financial reporting framework.</p>', undefined, 'Yes'),
           q('f410-pre-2b', '<p>Such internal controls as determined necessary to enable preparation of F/S free from material misstatement.</p>', undefined, 'Yes'),
-          q('f410-pre-2c', '<p>Providing the auditors with access to all relevant information, additional information requested, and unrestricted access to entity personnel to obtain audit evidence.</p>', undefined, 'Yes'),
+          h('f410-pre-2c', '<p>Providing the auditors with:</p>', [
+            q('f410-pre-2c-i', '<p>Access to all relevant information.</p>', undefined, 'Yes'),
+            q('f410-pre-2c-ii', '<p>Additional information requested.</p>', undefined, 'Yes'),
+            q('f410-pre-2c-iii', '<p>Unrestricted access to entity personnel to obtain audit evidence.</p>', undefined, 'Yes'),
+          ]),
         ], 'Yes', '<p>Management acknowledgement obtained via signed engagement letter dated April 5, 2024. CEO confirmed responsibilities for F/S preparation, internal controls, and providing full access to information and personnel.</p>', 'EL-01'),
         la('f410-pre-exp', '<p><strong>Additional Explanation</strong></p>', 'All engagement preconditions satisfied. Signed engagement letter on file.'),
       ],
