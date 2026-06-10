@@ -13314,7 +13314,6 @@ export const generateForm410AcceptanceContinuance = (): Checklist => {
             q('f410-pre-2c-iii', '<p>Unrestricted access to entity personnel to obtain audit evidence.</p>', undefined, 'Yes'),
           ]),
         ], 'Yes', '<p>Management acknowledgement obtained via signed engagement letter dated April 5, 2024. CEO confirmed responsibilities for F/S preparation, internal controls, and providing full access to information and personnel.</p>', 'EL-01'),
-        la('f410-pre-exp', '<p><strong>Additional Explanation</strong></p>', 'All engagement preconditions satisfied. Signed engagement letter on file.'),
       ],
       isExpanded: true,
     },
