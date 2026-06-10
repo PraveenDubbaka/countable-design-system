@@ -1535,7 +1535,7 @@ export const generateEngagementPlanningChecklist = (): Checklist => {
   });
   const h = (id: string, text: string, sub?: Question[]): Question => ({
     id, text, answerType: 'none' as const, options: [], required: false, answer: '',
-    showResponse: false as any, showExplanation: false as any, showReference: false as any,
+    showResponse: false, showExplanation: false, showReference: false,
     ...(sub ? { subQuestions: sub } : {})
   });
 
@@ -8863,7 +8863,7 @@ export const generateAuditStrategyMemorandumChecklist = (): Checklist => {
   });
   const h = (id: string, text: string, sub?: Question[]): Question => ({
     id, text, answerType: 'none' as const, options: [], required: false, answer: '',
-    showResponse: false as any, showExplanation: false as any, showReference: false as any,
+    showResponse: false, showExplanation: false, showReference: false,
     ...(sub ? { subQuestions: sub } : {})
   });
 
@@ -10974,7 +10974,7 @@ export const generateUSEngagementPlanningChecklist = (): Checklist => {
   });
   const h = (id: string, text: string, sub?: Question[]): Question => ({
     id, text, answerType: 'none' as const, options: [], required: false, answer: '',
-    showResponse: false as any, showExplanation: false as any, showReference: false as any,
+    showResponse: false, showExplanation: false, showReference: false,
     ...(sub ? { subQuestions: sub } : {})
   });
 
@@ -11349,7 +11349,7 @@ export const generateUSAuditStrategyMemorandumChecklist = (): Checklist => {
   });
   const h = (id: string, text: string, sub?: Question[]): Question => ({
     id, text, answerType: 'none' as const, options: [], required: false, answer: '',
-    showResponse: false as any, showExplanation: false as any, showReference: false as any,
+    showResponse: false, showExplanation: false, showReference: false,
     ...(sub ? { subQuestions: sub } : {})
   });
 
@@ -13054,7 +13054,7 @@ export const generateForm408InitialAuditEngagements = (): Checklist => {
   });
   const h = (id: string, text: string, sub?: Question[]): Question => ({
     id, text, answerType: 'none' as const, options: [], required: false, answer: '',
-    showResponse: false as any, showExplanation: false as any, showReference: false as any,
+    showResponse: false, showExplanation: false, showReference: false,
     ...(sub ? { subQuestions: sub } : {})
   });
 
@@ -13417,7 +13417,7 @@ export const generateUSForm408InitialAuditEngagements = (): Checklist => {
   });
   const h = (id: string, text: string, sub?: Question[]): Question => ({
     id, text, answerType: 'none' as const, options: [], required: false, answer: '',
-    showResponse: false as any, showExplanation: false as any, showReference: false as any,
+    showResponse: false, showExplanation: false, showReference: false,
     ...(sub ? { subQuestions: sub } : {})
   });
 
@@ -13579,7 +13579,7 @@ export const generateUSForm410AcceptanceContinuance = (): Checklist => {
   });
   const h = (id: string, text: string, sub?: Question[]): Question => ({
     id, text, answerType: 'none' as const, options: [], required: false, answer: '',
-    showResponse: false as any, showExplanation: false as any, showReference: false as any,
+    showResponse: false, showExplanation: false, showReference: false,
     ...(sub ? { subQuestions: sub } : {})
   });
 
@@ -13805,7 +13805,7 @@ export const generateSelectingAuditorExpertChecklist = (): Checklist => {
   });
   const h = (id: string, text: string, sub?: Question[]): Question => ({
     id, text, answerType: 'none' as const, options: [], required: false, answer: '',
-    showResponse: false as any, showExplanation: false as any, showReference: false as any,
+    showResponse: false, showExplanation: false, showReference: false,
     ...(sub ? { subQuestions: sub } : {})
   });
 
@@ -13873,7 +13873,7 @@ export const generateUSSelectingAuditorExpertChecklist = (): Checklist => {
   });
   const h = (id: string, text: string, sub?: Question[]): Question => ({
     id, text, answerType: 'none' as const, options: [], required: false, answer: '',
-    showResponse: false as any, showExplanation: false as any, showReference: false as any,
+    showResponse: false, showExplanation: false, showReference: false,
     ...(sub ? { subQuestions: sub } : {})
   });
 
