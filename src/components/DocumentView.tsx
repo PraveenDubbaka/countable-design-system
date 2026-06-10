@@ -17,6 +17,7 @@ import { AITextarea } from '@/components/AITextarea';
 import { RichTextQuestionEditor } from '@/components/RichTextQuestionEditor';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { FormLayoutEditor } from '@/components/FormLayoutEditor';
+import { AppendixBFaqDialog } from '@/components/AppendixBFaqDialog';
 import { EditOptionsPopover } from '@/components/EditOptionsPopover';
 import { Checklist, Question, Section, AnswerType, NumberingFormat, formatQuestionNumber, FormLayout, ColumnLayout, BorderStyle, CellBlockType } from '@/types/checklist';
 import {
@@ -2302,6 +2303,7 @@ export function DocumentView({
   const [activeId, setActiveId] = useState<string | null>(null);
   const [activeData, setActiveData] = useState<{type: string;text: string;} | null>(null);
   const [noteExpanded, setNoteExpanded] = useState(true);
+  const [appendixBOpen, setAppendixBOpen] = useState(false);
 
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 8 } }),
@@ -2446,7 +2448,14 @@ export function DocumentView({
       onDragStart={handleDragStart}
       onDragEnd={handleDragEnd}>
 
-      <div className={`dv-document ${!isPreviewMode ? 'dv-edit-mode' : ''}`}>
+      <div
+        className={`dv-document ${!isPreviewMode ? 'dv-edit-mode' : ''}`}
+        onClickCapture={(e) => {
+          // "See Appendix B" inline links open the document viewer instead of
+          // anchor-scrolling (capture phase: question rows stopPropagation on bubble)
+          const a = (e.target as HTMLElement).closest('a[href="#f410-appB"]');
+          if (a) { e.preventDefault(); e.stopPropagation(); setAppendixBOpen(true); }
+        }}>
         {/* Objective panel */}
         {checklist.objective && onToggleObjective && (
           <div className="dv-section dv-objective-panel rounded-[8px] border-[0.5px] overflow-hidden" style={{ borderColor: '#E2E5EB' }}>
@@ -2548,6 +2557,9 @@ export function DocumentView({
           </div>
         }
       </DragOverlay>
+
+      {/* Appendix B document viewer (Form 410 CA) */}
+      <AppendixBFaqDialog open={appendixBOpen} onOpenChange={setAppendixBOpen} />
     </DndContext>);
 
 }

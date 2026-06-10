@@ -13388,28 +13388,6 @@ export const generateForm410AcceptanceContinuance = (): Checklist => {
       ],
       isExpanded: true,
     },
-    // ── Appendix B ────────────────────────────────────────────────────────────
-    {
-      id: 'f410-appB',
-      title: 'Appendix B – Group Audit Guidance (CAS 600)',
-      note: 'This appendix provides additional guidance on determining whether the audit engagement is a group audit under revised CAS 600. Use this guidance to complete Engagement risk assessment question #2.',
-      questions: [
-        h('f410-appB-def', '<p><strong>Definition of a group audit</strong><br/>A group audit is the audit of F/S that include the financial information of more than one entity or business unit through a consolidation process. For the purposes of CAS 600, a consolidation process includes:</p>', [
-          h('f410-appB-def-1', '<p>Consolidation, proportionate consolidation, or an equity method of accounting.</p>'),
-          h('f410-appB-def-2', '<p>The presentation in combined F/S of the financial information of entities or business units that have no parent but are under common control or common management.</p>'),
-          h('f410-appB-def-3', '<p>The aggregation of the financial information of entities or business units.</p>'),
-        ]),
-        h('f410-appB-indicators', '<p><strong>Indicators that suggest a group audit may exist</strong><br/>Consider the following when making the group audit determination:</p>', [
-          h('f410-appB-ind-1', '<p>Entity has subsidiaries, joint ventures, or equity-accounted investments.</p>'),
-          h('f410-appB-ind-2', '<p>Entity prepares consolidated financial statements.</p>'),
-          h('f410-appB-ind-3', '<p>Entity presents combined financial statements for commonly controlled entities.</p>'),
-          h('f410-appB-ind-4', '<p>Entity aggregates financial information from multiple operating divisions or business units.</p>'),
-          h('f410-appB-ind-5', '<p>Engagement involves auditing financial information prepared at multiple locations or by multiple teams.</p>'),
-        ]),
-        h('f410-appB-judgment', '<p><strong>Professional judgment required</strong><br/>If group audit indicators are present, document your professional judgment regarding the group audit determination in the Conclusion section. Where the engagement is determined to be a group audit, ensure the 600 series of checklists is used in addition to standard PEG forms, and update the engagement letter and expected audit report accordingly.</p>'),
-      ],
-      isExpanded: true,
-    },
   ];
 
   return {
