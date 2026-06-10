@@ -13296,7 +13296,6 @@ export const generateForm410AcceptanceContinuance = (): Checklist => {
           q('f410-ind-2d', '<p>Familiarity (i.e., close, family or long-time relationships with the client that could result in being too sympathetic to the client\'s interests).</p>', undefined, 'No'),
           q('f410-ind-2e', '<p>Intimidation (i.e., where the client makes threats, such as to replace our firm as auditors unless we agree to certain scope limitations or to accept management positions, without question, on accounting matters).</p>', undefined, 'No', '<p>No intimidation threats noted. Management is cooperative and has not sought to impose scope limitations.</p>'),
         ], 'No', '<p>No significant independence threats identified for this new engagement. All threat categories assessed below.</p>', 'IND-02'),
-        la('f410-ind-exp', '<p><strong>Additional Explanation</strong></p>', 'No independence prohibitions or threats identified. Engagement team independence declarations on file. Engagement may proceed.'),
       ],
       isExpanded: true,
     },
