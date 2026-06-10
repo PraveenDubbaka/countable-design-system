@@ -13305,7 +13305,7 @@ export const generateForm410AcceptanceContinuance = (): Checklist => {
       title: 'Engagement preconditions',
       questions: [
         q('f410-pre-1', '<p><strong>Financial reporting framework</strong><br/>Determine whether the applicable financial reporting framework is appropriate for the entity.</p>', undefined, 'Yes', '<p>ASPE is the applicable financial reporting framework. Confirmed appropriate for Shipping Line Inc. as a privately held Canadian company with no public accountability obligations.</p>', 'AC-09'),
-        q('f410-pre-2', '<p>Confirm that management acknowledges its understanding and responsibility for:</p>', [
+        q('f410-pre-2', '<p><strong>Understanding and responsibility</strong><br/>Confirm that management acknowledges its understanding and responsibility for:</p>', [
           q('f410-pre-2a', '<p>The preparation of F/S in accordance with the applicable financial reporting framework.</p>', undefined, 'Yes'),
           q('f410-pre-2b', '<p>Such internal controls as determined necessary to enable preparation of F/S free from material misstatement.</p>', undefined, 'Yes'),
           q('f410-pre-2c', '<p>Providing the auditors with access to all relevant information, additional information requested, and unrestricted access to entity personnel to obtain audit evidence.</p>', undefined, 'Yes'),
