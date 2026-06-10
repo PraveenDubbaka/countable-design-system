@@ -1924,6 +1924,7 @@ function DocumentSectionBlock({
 
   return (
     <div
+      id={section.id}
       ref={setNodeRef}
       style={{ ...style, borderColor: '#E2E5EB' }}
       className={`dv-section group/section relative rounded-[8px] border-[0.5px] transition-colors ${isGlobalTemplate ? '' : 'focus-within:border-primary'} ${isDragging ? 'z-10' : ''}`}>
