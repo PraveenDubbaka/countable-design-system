@@ -13242,7 +13242,11 @@ export const generateForm410AcceptanceContinuance = (): Checklist => {
         ], 'No', '<p>No concerns identified regarding management integrity. Web searches and inquiries with bankers and advisors returned no adverse findings. Management has operated Shipping Line Inc. with a consistent reputation in the marine freight sector.</p>', 'AC-03'),
         q('f410-era-4', '<p><strong>Firm and engagement team competencies</strong><br/>Assess whether the firm and the engagement team have the necessary skills/resources to perform the engagement on a timely basis. Address the following:</p>', [
           q('f410-era-4a', '<p>The circumstances of the engagement and the reporting deadline.</p>', undefined, 'Yes'),
-          q('f410-era-4b', '<p>The availability of staff/resources with the appropriate competence and capabilities, including having sufficient time to perform the engagement (individuals with overall responsibility, industry knowledge, and component audit resources where applicable).</p>', undefined, 'Yes'),
+          q('f410-era-4b', '<p>The availability of staff/resources with the appropriate competence and capabilities, including having sufficient time to perform the engagement. Consider:</p>', [
+            q('f410-era-4b-i', '<p>Individuals with overall responsibility to direct and supervise the engagement.</p>', undefined, 'Yes'),
+            q('f410-era-4b-ii', '<p>Individuals with knowledge of the industry.</p>', undefined, 'Yes'),
+            q('f410-era-4b-iii', '<p>Resources (e.g. firm, network or external resources) to perform component audit work (if applicable in a group audit).</p>', undefined, 'Yes'),
+          ], 'Yes'),
           q('f410-era-4c', '<p>The availability of external experts (where required).</p>', undefined, 'No'),
           q('f410-era-4d', '<p>The availability and eligibility for an EQR (where required).</p>', undefined, 'No'),
           q('f410-era-4e', '<p>The need for technological resources, such as IT applications to perform procedures on the entity\'s data (where required).</p>', undefined, 'No'),
