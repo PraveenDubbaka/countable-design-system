@@ -367,6 +367,16 @@ function WorksheetInner({ isUS }: { isUS: boolean }) {
     return Math.abs(value) < 0.05 * revenueRef;
   })();
 
+  // Column totals for the benchmark table footer
+  const sumOrNull = (vals: (number | null)[]): number | null => {
+    const nums = vals.filter((v): v is number => v !== null);
+    return nums.length ? nums.reduce((a, b) => a + b, 0) : null;
+  };
+  const totalBenchmarkValue = sumOrNull(rows.map((r) => calcs.get(r.id)?.value ?? null));
+  const totalExtrapolated = sumOrNull(rows.map((r) => calcs.get(r.id)?.extrapolated ?? null));
+  const totalCalc = sumOrNull(rows.map((r) => calcs.get(r.id)?.calc ?? null));
+  const totalPriorYear = sumOrNull(rows.map((r) => parseNum(r.priorYear)));
+
   const specificTotal = specificEnabled
     ? specificRows.reduce((sum, r) => sum + (parseNum(r.amount) ?? 0), 0)
     : 0;
@@ -696,6 +706,18 @@ function WorksheetInner({ isUS }: { isUS: boolean }) {
                         </tr>
                       );
                     })}
+                    {/* Total footer */}
+                    <tr className="bg-muted/30 border-t border-border font-semibold">
+                      <td className="px-4 py-2 text-xs font-semibold text-foreground" colSpan={3}>Total</td>
+                      <td className="px-4 py-2 text-sm tabular-nums text-foreground text-right">{totalBenchmarkValue === null ? "—" : formatNum(totalBenchmarkValue)}</td>
+                      <td className="px-4 py-2 text-sm tabular-nums text-foreground text-right">{totalExtrapolated === null ? "—" : formatNum(totalExtrapolated)}</td>
+                      <td className="px-4 py-2" />
+                      <td className="px-4 py-2" />
+                      <td className="px-4 py-2 text-sm tabular-nums text-foreground text-right">{totalCalc === null ? "—" : formatNum(totalCalc)}</td>
+                      <td className="px-4 py-2 text-sm tabular-nums text-foreground text-right">{totalPriorYear === null ? "—" : formatNum(totalPriorYear)}</td>
+                      <td className="px-4 py-2" />
+                      {!locked && <td className="px-2 py-2" />}
+                    </tr>
                   </tbody>
                 </table>
               </div>
