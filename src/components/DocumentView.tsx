@@ -1591,7 +1591,7 @@ function DocumentQuestionBlock({
     : hasAnyBorder
     ? `border ${showTop ? 'border-t-border' : 'border-t-transparent'} ${showRight ? 'border-r-border' : 'border-r-transparent'} ${showBottom ? 'border-b-border' : 'border-b-transparent'} ${showLeft ? 'border-l-border' : 'border-l-transparent'}`
     : isSub
-    ? `border border-transparent ${isLastSubWithNextMain ? 'border-b-[#E2E5EB]' : ''} ${isGlobalTemplate ? '' : 'hover:bg-[#f2f9ff]'}`
+    ? `border border-transparent ${isLastSubWithNextMain && question.answerType !== 'none' ? 'border-b-[#E2E5EB]' : ''} ${isGlobalTemplate ? '' : 'hover:bg-[#f2f9ff]'}`
     : `border border-transparent ${(isLastInSection && !canEdit) || (question.subQuestions && question.subQuestions.length > 0) ? '' : 'border-b-[#E2E5EB]'} ${isGlobalTemplate ? '' : 'hover:bg-[#f2f9ff]'}`;
 
   return (
@@ -1797,7 +1797,7 @@ function DocumentQuestionBlock({
             showNumbering={showNumbering}
             isCompactMode={isCompactMode}
             isGlobalTemplate={isGlobalTemplate}
-            isLastSubWithNextMain={si === (question.subQuestions!.length - 1) && !isLastInSection} />
+            isLastSubWithNextMain={si === (question.subQuestions!.length - 1) && !isLastInSection && question.answerType !== 'none'} />
 
           )}
           </SortableContext>
