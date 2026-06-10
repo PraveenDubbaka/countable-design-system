@@ -32,6 +32,9 @@ export interface Question {
   reference?: string;
   isExpanded?: boolean;
   isUserAdded?: boolean; // Track if question was added by user in engagement mode
+  showResponse?: boolean; // UI flag to show/hide response field
+  showExplanation?: boolean; // UI flag to show/hide explanation field
+  showReference?: boolean; // UI flag to show/hide reference field
   columnLayout?: ColumnLayout; // If present, renders as a column block row
 }
 
