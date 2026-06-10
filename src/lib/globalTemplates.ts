@@ -1535,7 +1535,7 @@ export const generateEngagementPlanningChecklist = (): Checklist => {
   });
   const h = (id: string, text: string, sub?: Question[]): Question => ({
     id, text, answerType: 'none' as const, options: [], required: false, answer: '',
-    showResponse: false as any, showExplanation: false as any, showReference: false as any,
+    showResponse: false, showExplanation: false, showReference: false,
     ...(sub ? { subQuestions: sub } : {})
   });
 
@@ -8863,7 +8863,7 @@ export const generateAuditStrategyMemorandumChecklist = (): Checklist => {
   });
   const h = (id: string, text: string, sub?: Question[]): Question => ({
     id, text, answerType: 'none' as const, options: [], required: false, answer: '',
-    showResponse: false as any, showExplanation: false as any, showReference: false as any,
+    showResponse: false, showExplanation: false, showReference: false,
     ...(sub ? { subQuestions: sub } : {})
   });
 
@@ -10974,7 +10974,7 @@ export const generateUSEngagementPlanningChecklist = (): Checklist => {
   });
   const h = (id: string, text: string, sub?: Question[]): Question => ({
     id, text, answerType: 'none' as const, options: [], required: false, answer: '',
-    showResponse: false as any, showExplanation: false as any, showReference: false as any,
+    showResponse: false, showExplanation: false, showReference: false,
     ...(sub ? { subQuestions: sub } : {})
   });
 
@@ -11349,7 +11349,7 @@ export const generateUSAuditStrategyMemorandumChecklist = (): Checklist => {
   });
   const h = (id: string, text: string, sub?: Question[]): Question => ({
     id, text, answerType: 'none' as const, options: [], required: false, answer: '',
-    showResponse: false as any, showExplanation: false as any, showReference: false as any,
+    showResponse: false, showExplanation: false, showReference: false,
     ...(sub ? { subQuestions: sub } : {})
   });
 
@@ -13054,7 +13054,7 @@ export const generateForm408InitialAuditEngagements = (): Checklist => {
   });
   const h = (id: string, text: string, sub?: Question[]): Question => ({
     id, text, answerType: 'none' as const, options: [], required: false, answer: '',
-    showResponse: false as any, showExplanation: false as any, showReference: false as any,
+    showResponse: false, showExplanation: false, showReference: false,
     ...(sub ? { subQuestions: sub } : {})
   });
 
@@ -13215,7 +13215,7 @@ export const generateForm410AcceptanceContinuance = (): Checklist => {
   });
   const h = (id: string, text: string, sub?: Question[]): Question => ({
     id, text, answerType: 'none' as const, options: [], required: false, answer: '',
-    showResponse: false as any, showExplanation: false as any, showReference: false as any,
+    showResponse: false, showExplanation: false, showReference: false,
     ...(sub ? { subQuestions: sub } : {})
   });
 
@@ -13225,9 +13225,9 @@ export const generateForm410AcceptanceContinuance = (): Checklist => {
       id: 'f410-era',
       title: 'Engagement risk assessment',
       questions: [
-        q('f410-era-1', '<p>Determine whether accepting or continuing with this engagement would contravene any of the firm\'s quality management policies or requirements.</p>', undefined, 'Yes', '<p>Firm quality management policies reviewed. Accepting this engagement for Shipping Line Inc. does not contravene any firm policies. No related CSRS 4460 services are being provided.</p>', 'AC-01'),
-        h('f410-era-2', '<p>Gain an initial understanding of the organization that is sufficient to determine:<br/><br/><em>Note: Under the revised CAS 600, a group audit is the audit of F/S that include the financial information of more than one entity or business unit through a consolidation process. For the purposes of CAS 600, a consolidation process includes:<br/>• Consolidation, proportionate consolidation, or an equity method of accounting.<br/>• The presentation in combined F/S of the financial information of entities or business units that have no parent but are under common control or common management.<br/>• The aggregation of the financial information of entities or business units.<br/>See Appendix B for additional guidance.</em></p>', [
-          q('f410-era-2a', '<p>Is this a group audit?</p>', undefined, 'No', '<p>Initial understanding of Shipping Line Inc. obtained. This engagement is not a group audit — entity operates as a single Canadian-incorporated company with no subsidiaries or equity-accounted investments. No consolidation process applies.</p>'),
+        q('f410-era-1', '<p>Quality management - Determine whether accepting or continuing with this engagement would contravene any of the firm\'s quality management policies or requirements.</p>', undefined, 'Yes', '<p>Firm quality management policies reviewed. Accepting this engagement for Shipping Line Inc. does not contravene any firm policies. No related CSRS 4460 services are being provided.</p>', 'AC-01'),
+        h('f410-era-2', '<p>Group audit evaluation - Gain an initial understanding of the organization that is sufficient to determine:\n\nNote: Under the revised CAS 600, a group audit is the audit of F/S that include the financial information of more than one entity or business unit through a consolidation process. For the purposes of CAS 600, a consolidation process includes:\n• Consolidation, proportionate consolidation, or an equity method of accounting.\n• The presentation in combined F/S of the financial information of entities or business units that have no parent but are under common control or common management.\n• The aggregation of the financial information of entities or business units.\nSee Appendix B for additional guidance.</p>', [
+          q('f410-era-2a', '<p>If the audit is a group audit</p>', undefined, 'No', '<p>Initial understanding of Shipping Line Inc. obtained. This engagement is not a group audit — entity operates as a single Canadian-incorporated company with no subsidiaries or equity-accounted investments. No consolidation process applies.</p>'),
           q('f410-era-2b', '<p>Whether to accept/continue the audit engagement.</p>', undefined, 'Yes'),
         ]),
         q('f410-era-3', '<p>Identify any concerns about the integrity and ethical values of management/TCWG.</p>', [
@@ -13417,7 +13417,7 @@ export const generateUSForm408InitialAuditEngagements = (): Checklist => {
   });
   const h = (id: string, text: string, sub?: Question[]): Question => ({
     id, text, answerType: 'none' as const, options: [], required: false, answer: '',
-    showResponse: false as any, showExplanation: false as any, showReference: false as any,
+    showResponse: false, showExplanation: false, showReference: false,
     ...(sub ? { subQuestions: sub } : {})
   });
 
@@ -13579,7 +13579,7 @@ export const generateUSForm410AcceptanceContinuance = (): Checklist => {
   });
   const h = (id: string, text: string, sub?: Question[]): Question => ({
     id, text, answerType: 'none' as const, options: [], required: false, answer: '',
-    showResponse: false as any, showExplanation: false as any, showReference: false as any,
+    showResponse: false, showExplanation: false, showReference: false,
     ...(sub ? { subQuestions: sub } : {})
   });
 
@@ -13805,7 +13805,7 @@ export const generateSelectingAuditorExpertChecklist = (): Checklist => {
   });
   const h = (id: string, text: string, sub?: Question[]): Question => ({
     id, text, answerType: 'none' as const, options: [], required: false, answer: '',
-    showResponse: false as any, showExplanation: false as any, showReference: false as any,
+    showResponse: false, showExplanation: false, showReference: false,
     ...(sub ? { subQuestions: sub } : {})
   });
 
@@ -13873,7 +13873,7 @@ export const generateUSSelectingAuditorExpertChecklist = (): Checklist => {
   });
   const h = (id: string, text: string, sub?: Question[]): Question => ({
     id, text, answerType: 'none' as const, options: [], required: false, answer: '',
-    showResponse: false as any, showExplanation: false as any, showReference: false as any,
+    showResponse: false, showExplanation: false, showReference: false,
     ...(sub ? { subQuestions: sub } : {})
   });
 
