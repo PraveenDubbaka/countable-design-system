@@ -609,7 +609,7 @@ export default function Workbook() {
                             </tr>
                           ))}
                         {!collapsed && (
-                          <tr className="border-t border-border bg-muted/10 font-semibold">
+                          <tr className="border-t-2 border-border bg-muted/30 font-semibold">
                             <td colSpan={4}></td>
                             <td className="px-3 py-2.5 text-foreground">Total {group.title.replace(/^[A-Z]\s*-\s*/, "")}</td>
                             <td className="px-3 py-2.5 text-right tabular-nums text-foreground">{formatAmt(t.original)}</td>
