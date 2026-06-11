@@ -13,6 +13,10 @@ const buttonVariants = cva(
           "hover:bg-[#244266]",
           "active:bg-[#081F3B]",
           "focus-visible:bg-[#0C2D55] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A3A3A3]/50 focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+          "dark:bg-primary dark:text-primary-foreground",
+          "dark:hover:bg-primary/85",
+          "dark:active:bg-primary/75",
+          "dark:focus-visible:bg-primary",
         ].join(" "),
         destructive: [
           "bg-destructive text-destructive-foreground",

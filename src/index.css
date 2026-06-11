@@ -420,13 +420,13 @@
 
     --secondary: var(--m3-secondary-container);
     --secondary-foreground: var(--m3-on-secondary-container);
-    --secondary-button-bg: 220 33% 97%;
-    --secondary-button-bg-hover: 213 33% 94%;
-    --secondary-button-bg-active: 212 33% 90%;
-    --secondary-button-foreground: 213 75% 19%;
-    --secondary-button-border: 212 22% 86%;
-    --secondary-button-border-hover: 213 22% 80%;
-    --secondary-button-border-active: 212 21% 75%;
+    --secondary-button-bg: 220 25% 17%;
+    --secondary-button-bg-hover: 220 25% 22%;
+    --secondary-button-bg-active: 220 25% 26%;
+    --secondary-button-foreground: 213 30% 86%;
+    --secondary-button-border: 220 15% 32%;
+    --secondary-button-border-hover: 220 15% 40%;
+    --secondary-button-border-active: 220 15% 48%;
 
     --muted: var(--m3-surface-variant);
     --muted-foreground: var(--m3-on-surface-variant);
