@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { createPortal } from "react-dom";
 import { useNavigate, useLocation, useSearchParams } from "react-router-dom";
-import { ChevronDown, ChevronRight, ChevronLeft, Search, Plus, Expand, Trash2, Folder, Headphones, Check, FileText, FileBarChart, StickyNote, Table, Copy, Pencil, FolderInput, MoreVertical, GripVertical, X, Save, Files } from "lucide-react";
+import { ChevronDown, ChevronRight, ChevronLeft, Search, Plus, Expand, Trash2, Folder, Headphones, Check, FileText, FileBarChart, StickyNote, Table, Copy, Pencil, FolderInput, MoreVertical, GripVertical, X, Save, Files, Send, AlertCircle, MessageSquare, FilePlus2, FolderPlus, ArrowUpDown } from "lucide-react";
 import { templateTree, allTemplateViews, type TreeItem } from "@/lib/engagementTemplatesData";
 import { FolderSolidIcon, FolderPlusIcon, FolderMinusIcon } from "@/components/icons/FolderIcons";
 import { Input } from "@/components/ui/input";
@@ -1553,7 +1553,6 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
                       { id: "aud-us-sae", code: "SAE", label: "Selecting Auditor's Expert", icon: "checklist", route: "checklist/aud-us-sae" },
                       { id: "aud-us-asm", code: "OAS", label: "Overall Audit Strategy", icon: "checklist", route: "checklist/aud-us-asm" },
                       { id: "aud-us-plan", code: "TPD", label: "Team Planning Discussions", icon: "checklist", route: "checklist/aud-us-plan" },
-                      { id: "aud-us-iar", code: "IAR", label: "Information & Analysis Requested", icon: "worksheet", route: "checklist/aud-us-iar" },
                       { id: "aud-us-tb", code: "TB", label: "Time Budget", icon: "worksheet", route: "checklist/aud-us-tb" },
                       { id: "aud-us-db", code: "DB", label: "Detailed Budget", icon: "worksheet", route: "checklist/aud-us-db" },
                     ]
@@ -1715,7 +1714,6 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
                       { id: "aud-sae", code: "SAE", label: "Selecting Auditor's Expert", icon: "checklist", route: "checklist/aud-sae" },
                       { id: "aud-asm", code: "OAS", label: "Overall Audit Strategy", icon: "checklist", route: "checklist/aud-asm" },
                       { id: "aud-plan", code: "TPD", label: "Team Planning Discussions", icon: "checklist", route: "checklist/aud-plan" },
-                      { id: "aud-iar", code: "IAR", label: "Information & Analysis Requested", icon: "worksheet", route: "checklist/aud-iar" },
                       { id: "aud-tb", code: "TB", label: "Time Budget", icon: "worksheet", route: "checklist/aud-tb" },
                       { id: "aud-db", code: "DB", label: "Detailed Budget", icon: "worksheet", route: "checklist/aud-db" },
                     ]
@@ -1988,7 +1986,7 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
                   return <FolderSolidIcon className="h-4 w-4 text-primary flex-shrink-0" />;
                 };
 
-                const renderNode = (node: SectionNode, depth: number = 0): React.ReactNode => {
+                const renderNode = (node: SectionNode, depth: number = 0, parentLabel?: string): React.ReactNode => {
                   const hasChildren = node.children && node.children.length > 0;
                   const isOpen = expandedSections.has(node.id);
                   const isLeaf = !hasChildren;
@@ -1998,11 +1996,21 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
                     ? (currentSubPath === node.route || (currentSubPath === '' && node.route === defaultRoute))
                     : false;
 
+                  const handleRaiseRequest = (e: React.MouseEvent) => {
+                    e.stopPropagation();
+                    window.dispatchEvent(new CustomEvent('raise-doc-request', {
+                      detail: {
+                        folder: parentLabel ?? node.label,
+                        subFolder: parentLabel ? node.label : '',
+                      }
+                    }));
+                  };
+
                   return (
                     <div key={node.id}>
                       <div
                         className={cn(
-                          "flex items-center gap-1.5 py-1.5 px-2 rounded-[8px] cursor-pointer hover:bg-primary/10 transition-colors text-sm",
+                          "group flex items-center gap-1.5 py-1.5 px-2 rounded-[8px] cursor-pointer hover:bg-primary/10 transition-colors text-sm",
                           isActive && "bg-primary/10 ring-1 ring-primary/25"
                         )}
                         style={{ paddingLeft: `${depth * 16 + 8}px` }}
@@ -2053,11 +2061,49 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
                             ))}
                           </div>
                         )}
+                        {!signoffsMode && (
+                          <DropdownMenu>
+                            <DropdownMenuTrigger asChild onClick={e => e.stopPropagation()}>
+                              <button className="opacity-0 group-hover:opacity-100 p-0.5 hover:bg-muted-foreground/10 rounded transition-opacity flex-shrink-0">
+                                <MoreVertical className="h-3.5 w-3.5 text-muted-foreground" />
+                              </button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end" className="w-48 bg-card border shadow-sm">
+                              {isLeaf ? (
+                                <>
+                                  <DropdownMenuItem className="text-xs gap-2 cursor-pointer" onClick={e => e.stopPropagation()}>
+                                    <ArrowUpDown className="h-3.5 w-3.5" /> Reorder
+                                  </DropdownMenuItem>
+                                  <DropdownMenuSeparator />
+                                </>
+                              ) : null}
+                              <DropdownMenuItem className="text-xs gap-2 cursor-pointer text-primary font-medium" onClick={handleRaiseRequest}>
+                                <Send className="h-3.5 w-3.5" /> Raise a request
+                              </DropdownMenuItem>
+                              <DropdownMenuItem className="text-xs gap-2 cursor-pointer" onClick={e => e.stopPropagation()}>
+                                <AlertCircle className="h-3.5 w-3.5" /> Raise issue
+                              </DropdownMenuItem>
+                              <DropdownMenuItem className="text-xs gap-2 cursor-pointer" onClick={e => e.stopPropagation()}>
+                                <MessageSquare className="h-3.5 w-3.5" /> Add comment
+                              </DropdownMenuItem>
+                              <DropdownMenuSeparator />
+                              {isLeaf ? (
+                                <DropdownMenuItem className="text-xs gap-2 cursor-pointer" onClick={e => e.stopPropagation()}>
+                                  <FilePlus2 className="h-3.5 w-3.5" /> Add document
+                                </DropdownMenuItem>
+                              ) : (
+                                <DropdownMenuItem className="text-xs gap-2 cursor-pointer" onClick={e => e.stopPropagation()}>
+                                  <FolderPlus className="h-3.5 w-3.5" /> Add section
+                                </DropdownMenuItem>
+                              )}
+                            </DropdownMenuContent>
+                          </DropdownMenu>
+                        )}
                       </div>
 
                       {isOpen && hasChildren && (
                         <div>
-                          {node.children!.map(child => renderNode(child, depth + 1))}
+                          {node.children!.map(child => renderNode(child, depth + 1, node.label))}
                         </div>
                       )}
                     </div>
