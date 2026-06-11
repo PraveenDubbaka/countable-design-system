@@ -1052,6 +1052,16 @@ export default function EngagementDetail() {
                     size="sm"
                     icon={<action.icon className="h-4 w-4" />}
                     label={action.label}
+                    onClick={
+                      action.id === "workbook" && engagementId
+                        ? () =>
+                            window.open(
+                              `${import.meta.env.BASE_URL}engagements/${engagementId}/workbook`,
+                              "_blank",
+                              "noopener,noreferrer",
+                            )
+                        : undefined
+                    }
                   />
                 ))}
                 <DropdownMenu>

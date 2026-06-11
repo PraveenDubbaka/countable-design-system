@@ -14,6 +14,7 @@ import CreateEngagement from "./pages/CreateEngagement";
 import Clients from "./pages/Clients";
 import AddNewClient from "./pages/AddNewClient";
 import TrialBalance from "./pages/TrialBalance";
+import Workbook from "./pages/Workbook";
 import ProcedureDetail from "./pages/ProcedureDetail";
 import Teams from "./pages/Teams";
 import DesignSystem from "./pages/DesignSystem";
@@ -43,6 +44,7 @@ const App = () => (
             <Route path="/engagements/:engagementId/checklist/:checklistKey" element={<EngagementDetail />} />
             <Route path="/engagements/create" element={<CreateEngagement />} />
             <Route path="/engagements/:engagementId/trial-balance" element={<TrialBalance />} />
+            <Route path="/engagements/:engagementId/workbook" element={<Workbook />} />
             <Route path="/engagements/:engagementId/procedure/:procedureId" element={<ProcedureDetail />} />
             <Route path="/engagements/:engagementId/dependency-register" element={<AuditDependencyRegister />} />
             <Route path="/create" element={<CreationDashboard />} />
