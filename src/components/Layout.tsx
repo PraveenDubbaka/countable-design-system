@@ -21,11 +21,13 @@ export function Layout({ children, title, headerContent, showActions = false, sh
       radial-gradient(ellipse 680px 380px at 96%  7%,  rgba(120,86,200,0.65) 0%, transparent 100%),
       #0C2D55
     `.replace(/\n\s*/g, ' ') }}>
-      <Sidebar
-        pageTitle={title}
-        showBackButton={showBackButton}
-        onBack={onBack}
-      />
+      {!hideSidebar && (
+        <Sidebar
+          pageTitle={title}
+          showBackButton={showBackButton}
+          onBack={onBack}
+        />
+      )}
 
       <div className="layout-content flex-1 flex flex-col overflow-hidden">
         {/* Global Header - transparent so gradient shows through */}
