@@ -1,7 +1,7 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import intuitQuickbooksLogo from "@/assets/intuit-quickbooks-logo.svg";
-import { ArrowLeft, Briefcase, Calendar, Users, ChevronDown, Plus, Pencil, Trash2, Search, ExternalLink, X, Building2, FileText, Settings2 } from "lucide-react";
+import { ArrowLeft, Briefcase, Calendar, Users, ChevronDown, Plus, Pencil, Trash2, Search, ExternalLink, X, Building2, FileText, Settings2, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Layout } from "@/components/Layout";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -164,6 +164,81 @@ const SectionCard = ({
     {children}
   </div>
 );
+
+const MultiSelectDropdown = ({
+  label,
+  options,
+  selected,
+  onToggle,
+  required = false,
+}: {
+  label: string;
+  options: { key: string; label: string }[];
+  selected: Set<string>;
+  onToggle: (key: string) => void;
+  required?: boolean;
+}) => {
+  const [open, setOpen] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handler = (e: MouseEvent) => {
+      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
+    };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, []);
+
+  return (
+    <div className="flex flex-col gap-1" ref={ref}>
+      <label className="text-xs font-medium text-foreground">
+        {label}
+        {required && <span className="text-destructive ml-0.5">*</span>}
+      </label>
+      <div className="relative">
+        <button
+          type="button"
+          onClick={() => setOpen(!open)}
+          className="input-double-border w-full h-9 px-3 text-sm text-left rounded-[10px] outline-none transition-all bg-white border border-[#dcdfe4] dark:border-[hsl(220_15%_30%)] dark:bg-card hover:border-[hsl(210_25%_75%)] dark:hover:border-[hsl(220_15%_40%)] flex items-center justify-between gap-2"
+        >
+          <span className="text-muted-foreground truncate">
+            {selected.size === 0 ? "Select..." : `${selected.size} selected`}
+          </span>
+          <ChevronDown className="h-4 w-4 text-muted-foreground shrink-0" />
+        </button>
+        {open && (
+          <div className="absolute z-50 top-full mt-1 left-0 right-0 bg-white dark:bg-card border border-border rounded-lg shadow-lg py-1 max-h-52 overflow-y-auto">
+            {options.map(({ key, label: optLabel }) => (
+              <button
+                key={key}
+                type="button"
+                onClick={() => onToggle(key)}
+                className="w-full px-3 py-2 text-sm text-left flex items-center gap-2.5 hover:bg-muted transition-colors"
+              >
+                <div className={`h-4 w-4 rounded border flex items-center justify-center shrink-0 transition-colors ${selected.has(key) ? "bg-primary border-primary" : "border-border"}`}>
+                  {selected.has(key) && <Check className="h-2.5 w-2.5 text-white" />}
+                </div>
+                <span className={selected.has(key) ? "text-foreground" : "text-muted-foreground"}>{optLabel}</span>
+              </button>
+            ))}
+          </div>
+        )}
+      </div>
+      {selected.size > 0 && (
+        <div className="flex flex-wrap gap-1 mt-1">
+          {options.filter(o => selected.has(o.key)).map(({ key, label: chipLabel }) => (
+            <span key={key} className="inline-flex items-center gap-1 px-2 py-0.5 bg-primary/10 text-primary text-xs rounded-full">
+              {chipLabel}
+              <button type="button" onClick={() => onToggle(key)} className="hover:text-destructive transition-colors ml-0.5">
+                <X className="h-2.5 w-2.5" />
+              </button>
+            </span>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+};
 
 interface TeamMember {
   id: string;
@@ -463,8 +538,7 @@ export default function CreateEngagement() {
             {/* Audit Configuration — only for Audit (AUD) */}
             {isAudit && (
               <SectionCard icon={<Settings2 className="h-5 w-5" />} title="Audit Configuration">
-                {/* Row 1: Industry | Framework | Entity Classification */}
-                <div className="grid grid-cols-3 gap-5">
+                <div className="grid grid-cols-5 gap-5 items-start">
                   <LabeledSelect
                     label="Industry"
                     value={industry}
@@ -486,10 +560,6 @@ export default function CreateEngagement() {
                     options={ENTITY_CLASSIFICATIONS.map(ec => ({ value: ec, label: ec }))}
                     required
                   />
-                </div>
-
-                {/* Row 2: First-year Audit toggle | Financial statements checkboxes */}
-                <div className="grid grid-cols-3 gap-5 mt-5">
                   {/* First-year audit */}
                   <div className="flex flex-col gap-2">
                     <span className="text-xs font-medium text-foreground">First-Year Audit?</span>
@@ -500,31 +570,22 @@ export default function CreateEngagement() {
                         onCheckedChange={setFirstYearAudit}
                       />
                       <Label htmlFor="firstYearAudit" className="text-sm text-foreground cursor-pointer">
-                        {firstYearAudit ? "Yes — predecessor review required" : "No — continuing engagement"}
+                        {firstYearAudit ? "Yes" : "No"}
                       </Label>
                     </div>
                     {firstYearAudit && (
                       <p className="text-xs text-amber-600 dark:text-amber-400 mt-1">
-                        Opening balances and predecessor communication procedures will be included in the audit program.
+                        Predecessor review required. Opening balances will be included.
                       </p>
                     )}
                   </div>
-
-                  {/* Financial statements */}
-                  <div className="col-span-2 flex flex-col gap-2">
-                    <span className="text-xs font-medium text-foreground">Financial Statements &amp; Schedules</span>
-                    <div className="grid grid-cols-3 gap-x-6 gap-y-2 mt-0.5">
-                      {FINANCIAL_STATEMENTS.map(({ key, label }) => (
-                        <label key={key} className="flex items-center gap-2 cursor-pointer group">
-                          <Checkbox
-                            checked={financialStatements.has(key)}
-                            onCheckedChange={() => toggleStatement(key)}
-                          />
-                          <span className="text-sm text-foreground group-hover:text-primary transition-colors">{label}</span>
-                        </label>
-                      ))}
-                    </div>
-                  </div>
+                  {/* Financial statements multi-select */}
+                  <MultiSelectDropdown
+                    label="Financial Statements & Schedules"
+                    options={FINANCIAL_STATEMENTS}
+                    selected={financialStatements}
+                    onToggle={toggleStatement}
+                  />
                 </div>
               </SectionCard>
             )}
