@@ -356,6 +356,16 @@ export default function Workbook() {
   const [search, setSearch] = useState("");
   const [sidebarOpen, setSidebarOpen] = useState(true);
 
+  // Force light theme on this page for consistent white workbook experience
+  useEffect(() => {
+    const root = document.documentElement;
+    const hadDark = root.classList.contains("dark");
+    if (hadDark) root.classList.remove("dark");
+    return () => {
+      if (hadDark) root.classList.add("dark");
+    };
+  }, []);
+
   const toggleGroup = (id: string) =>
     setCollapsedGroups((prev) => {
       const n = new Set(prev);
