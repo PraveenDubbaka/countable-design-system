@@ -556,7 +556,7 @@ export default function Workbook() {
                     const t = totals(group.rows);
                     return (
                       <>
-                        <tr key={`${group.id}-h`} className="bg-muted/20 border-t border-border">
+                        <tr key={`${group.id}-h`} className="bg-muted/50 border-t border-border border-l-2 border-l-primary">
                           <td colSpan={12} className="px-3 py-2.5">
                             <button
                               onClick={() => toggleGroup(group.id)}
