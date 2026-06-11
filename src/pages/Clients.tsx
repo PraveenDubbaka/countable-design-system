@@ -362,10 +362,28 @@ export default function Clients() {
                     className="pl-9 w-44 h-9 text-sm"
                   />
                 </div>
-                <Button className="bg-primary hover:bg-primary/90 text-white h-9 px-4 text-sm font-medium">
-                  Add Client
-                  <ChevronDown className="h-4 w-4 ml-1.5" />
-                </Button>
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button className="bg-primary hover:bg-primary/90 text-white h-9 px-4 text-sm font-medium">
+                      Add Client
+                      <ChevronDown className="h-4 w-4 ml-1.5" />
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-56 p-1 bg-card" align="end">
+                    <button
+                      onClick={() => navigate("/clients/new")}
+                      className="w-full text-left px-3 py-2 text-sm rounded hover:bg-muted transition-colors"
+                    >
+                      Add New Client
+                    </button>
+                    <button
+                      onClick={() => toast.info("Upload Existing Client")}
+                      className="w-full text-left px-3 py-2 text-sm rounded hover:bg-muted transition-colors"
+                    >
+                      Upload Existing Client
+                    </button>
+                  </PopoverContent>
+                </Popover>
               </div>
             </div>
 
