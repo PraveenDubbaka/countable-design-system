@@ -4,6 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Badge } from "@/components/ui/badge";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Info, AlertTriangle } from "lucide-react";
 import { AddToMyTemplatesDialog } from "@/components/AddToMyTemplatesDialog";
 import { RefButton, RefDoc } from "@/components/RefButton";
@@ -138,30 +139,7 @@ export function AuditSAEWorksheet({ isUS }: { isUS?: boolean }) {
 
   const standardRef = isUS ? "AU-C 620" : "CAS 620";
 
-  // Reusable yes/no pill row — matches DocumentView answer pattern
-  function YesNoRow({ value, onChange }: { value: YesNo; onChange: (v: "yes" | "no") => void }) {
-    return (
-      <div className="flex items-center gap-1.5">
-        {(["Yes", "No"] as const).map((opt) => (
-          <button
-            key={opt}
-            type="button"
-            disabled={concluded}
-            onClick={() => onChange(opt.toLowerCase() as "yes" | "no")}
-            className={`px-3 py-1 text-xs rounded-full transition-all ${
-              value === opt.toLowerCase()
-                ? "bg-primary text-primary-foreground shadow-sm"
-                : "bg-muted hover:bg-muted/80 text-foreground"
-            }`}
-          >
-            {opt}
-          </button>
-        ))}
-      </div>
-    );
-  }
-
-  // Card shell — same as Materiality / PAP worksheets
+// Card shell — same as Materiality / PAP worksheets
   function Card({ title, subtitle, done, children }: {
     title: string; subtitle?: string; done?: boolean; children: React.ReactNode;
   }) {
@@ -202,7 +180,15 @@ export function AuditSAEWorksheet({ isUS }: { isUS?: boolean }) {
           {/* Step 1 */}
           <Card title="Step 1 — Expert Determination" subtitle="Is an auditor's expert required for this engagement?" done={step1Done}>
             <div className="space-y-4">
-              <YesNoRow value={expertRequired} onChange={(v) => { setExpertRequired(v); persist({ expertRequired: v }); }} />
+              <Select value={expertRequired} onValueChange={(v) => { setExpertRequired(v as YesNo); persist({ expertRequired: v as YesNo }); }} disabled={concluded}>
+                <SelectTrigger className="h-9 text-sm w-40">
+                  <SelectValue placeholder="Select…" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="yes">Yes</SelectItem>
+                  <SelectItem value="no">No</SelectItem>
+                </SelectContent>
+              </Select>
 
               {notNeeded && (
                 <p className="text-sm text-muted-foreground bg-muted rounded-md px-4 py-3">
@@ -310,7 +296,15 @@ export function AuditSAEWorksheet({ isUS }: { isUS?: boolean }) {
                       Threats to objectivity?
                     </label>
                     <p className="text-xs text-muted-foreground">Are there interests or relationships that may create a threat to the expert's objectivity?</p>
-                    <YesNoRow value={objectivityThreat} onChange={(v) => { setObjectivityThreat(v); persist({ objectivityThreat: v }); }} />
+                    <Select value={objectivityThreat} onValueChange={(v) => { setObjectivityThreat(v as YesNo); persist({ objectivityThreat: v as YesNo }); }} disabled={concluded}>
+                      <SelectTrigger className="h-9 text-sm w-40">
+                        <SelectValue placeholder="Select…" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="yes">Yes</SelectItem>
+                        <SelectItem value="no">No</SelectItem>
+                      </SelectContent>
+                    </Select>
                     {objectivityThreat === "yes" && (
                       <div className="flex items-start gap-2 mt-2 px-4 py-3 bg-amber-50 dark:bg-amber-950/20 rounded-md border border-amber-200 dark:border-amber-800">
                         <AlertTriangle className="h-4 w-4 text-amber-600 shrink-0 mt-0.5" />
@@ -328,7 +322,15 @@ export function AuditSAEWorksheet({ isUS }: { isUS?: boolean }) {
                   <div className="space-y-2">
                     <label className="text-xs font-semibold text-foreground uppercase tracking-wider">Subject to firm's quality control?</label>
                     <div className="flex items-center gap-3">
-                      <YesNoRow value={subjectToQC} onChange={(v) => { setSubjectToQC(v); persist({ subjectToQC: v }); }} />
+                      <Select value={subjectToQC} onValueChange={(v) => { setSubjectToQC(v as YesNo); persist({ subjectToQC: v as YesNo }); }} disabled={concluded}>
+                        <SelectTrigger className="h-9 text-sm w-40">
+                          <SelectValue placeholder="Select…" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="yes">Yes</SelectItem>
+                          <SelectItem value="no">No</SelectItem>
+                        </SelectContent>
+                      </Select>
                       {subjectToQC === "no" && (
                         <span className="text-xs text-muted-foreground">External expert — additional procedures may be required to evaluate their work.</span>
                       )}
@@ -376,7 +378,15 @@ export function AuditSAEWorksheet({ isUS }: { isUS?: boolean }) {
                   </div>
                   <div className="flex items-center gap-4 pt-1 border-t border-border">
                     <label className="text-sm font-medium text-foreground whitespace-nowrap">Written agreement obtained?</label>
-                    <YesNoRow value={writtenAgreement} onChange={(v) => { setWrittenAgreement(v); persist({ writtenAgreement: v }); }} />
+                    <Select value={writtenAgreement} onValueChange={(v) => { setWrittenAgreement(v as YesNo); persist({ writtenAgreement: v as YesNo }); }} disabled={concluded}>
+                      <SelectTrigger className="h-9 text-sm w-40">
+                        <SelectValue placeholder="Select…" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="yes">Yes</SelectItem>
+                        <SelectItem value="no">No</SelectItem>
+                      </SelectContent>
+                    </Select>
                     <div className="flex items-center gap-2 ml-auto">
                       <label className="text-xs font-semibold text-muted-foreground whitespace-nowrap">W/P Ref:</label>
                       <RefButton
