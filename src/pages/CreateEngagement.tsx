@@ -19,12 +19,15 @@ const AUDIT_ROLES = [
   "Engagement Partner", "Manager", "Senior Auditor", "Staff Auditor / Assistant",
   "EQCR (Quality Reviewer)", "Tax Reviewer", "Subject Matter Expert", "Preparer", "Other",
 ];
-const FINANCIAL_STATEMENTS = [
-  { key: "cashFlow", label: "Cash Flow Statement" },
-  { key: "shareholdersEquity", label: "Shareholders' Equity" },
-  { key: "schedulesOfExpenses", label: "Schedules of Expenses" },
-  { key: "segmentReporting", label: "Segment Reporting" },
-  { key: "interimFinancials", label: "Interim Financials" },
+const AUDIT_DISCLOSURE_OPTIONS = [
+  { key: "fullFinancials",         label: "Full financial statements" },
+  { key: "cashFlow",               label: "Cash Flow Statement" },
+  { key: "shareholdersEquity",     label: "Shareholders' Equity" },
+  { key: "notesToFinancials",      label: "Notes to financial statements" },
+  { key: "schedulesOfExpenses",    label: "Schedules of Expenses" },
+  { key: "supplementarySchedules", label: "Supplementary schedules" },
+  { key: "segmentReporting",       label: "Segment Reporting" },
+  { key: "interimFinancials",      label: "Interim Financials" },
 ];
 
 let _uid = 0;
@@ -464,21 +467,23 @@ export default function CreateEngagement() {
       setEngagementId("AUD-HFL-Mar312024");
       setEngagementTemplate("CAS Audit");
       setAccountingStandards("CAS (Canadian Auditing Standards)");
-      setAdditionalDisclosures("Full financial statements");
+      setAdditionalDisclosures("");
+      setAdditionalDisclosuresSet(new Set());
     } else {
       setEngagementId("REV-DEF-Nov302023");
       setEngagementTemplate("Review Section 2400");
       setAccountingStandards("Section 2400 Review standards");
       setAdditionalDisclosures("Statement of cash flows");
+      setAdditionalDisclosuresSet(new Set());
     }
   }, [isAudit]);
   const [industry, setIndustry] = useState("");
   const [accountingFramework, setAccountingFramework] = useState("");
   const [entityClassification, setEntityClassification] = useState("");
   const [firstYearAudit, setFirstYearAudit] = useState(false);
-  const [financialStatements, setFinancialStatements] = useState<Set<string>>(new Set());
-  const toggleStatement = (key: string) =>
-    setFinancialStatements(prev => {
+  const [additionalDisclosuresSet, setAdditionalDisclosuresSet] = useState<Set<string>>(new Set());
+  const toggleAdditionalDisclosure = (key: string) =>
+    setAdditionalDisclosuresSet(prev => {
       const next = new Set(prev);
       next.has(key) ? next.delete(key) : next.add(key);
       return next;
@@ -549,17 +554,10 @@ export default function CreateEngagement() {
         { value: "IFRS", label: "IFRS" },
       ];
 
-  const disclosureOptions = isAudit
-    ? [
-        { value: "Full financial statements", label: "Full financial statements" },
-        { value: "Statement of cash flows", label: "Statement of cash flows" },
-        { value: "Notes to financial statements", label: "Notes to financial statements" },
-        { value: "Supplementary schedules", label: "Supplementary schedules" },
-      ]
-    : [
-        { value: "Statement of cash flows", label: "Statement of cash flows" },
-        { value: "Notes to financial statements", label: "Notes to financial statements" },
-      ];
+  const disclosureOptions = [
+    { value: "Statement of cash flows", label: "Statement of cash flows" },
+    { value: "Notes to financial statements", label: "Notes to financial statements" },
+  ];
 
   const periodTypeOptions = [
     { value: "Full year", label: "Full year" },
@@ -666,20 +664,30 @@ export default function CreateEngagement() {
                   options={accountingStandardsOptions}
                   required
                 />
-                <LabeledSelect
-                  label="Additional disclosures"
-                  value={additionalDisclosures}
-                  onChange={setAdditionalDisclosures}
-                  options={disclosureOptions}
-                  required
-                />
+                {isAudit ? (
+                  <MultiSelectDropdown
+                    label="Additional disclosures"
+                    options={AUDIT_DISCLOSURE_OPTIONS}
+                    selected={additionalDisclosuresSet}
+                    onToggle={toggleAdditionalDisclosure}
+                    required
+                  />
+                ) : (
+                  <LabeledSelect
+                    label="Additional disclosures"
+                    value={additionalDisclosures}
+                    onChange={setAdditionalDisclosures}
+                    options={disclosureOptions}
+                    required
+                  />
+                )}
               </div>
             </SectionCard>
 
             {/* Audit Configuration — only for Audit (AUD) */}
             {isAudit && (
               <SectionCard icon={<Settings2 className="h-5 w-5" />} title="Audit Configuration">
-                <div className="grid grid-cols-5 gap-5 items-start">
+                <div className="grid grid-cols-4 gap-5 items-start">
                   <LabeledSelect
                     label="Industry"
                     value={industry}
@@ -700,13 +708,6 @@ export default function CreateEngagement() {
                     onChange={setEntityClassification}
                     options={ENTITY_CLASSIFICATIONS.map(ec => ({ value: ec, label: ec }))}
                     required
-                  />
-                  {/* Financial statements multi-select */}
-                  <MultiSelectDropdown
-                    label="Financial Statements & Schedules"
-                    options={FINANCIAL_STATEMENTS}
-                    selected={financialStatements}
-                    onToggle={toggleStatement}
                   />
                   {/* First-year audit */}
                   <div className="flex flex-col gap-2">
