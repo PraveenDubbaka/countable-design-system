@@ -9,9 +9,10 @@ interface LayoutProps {
   showActions?: boolean;
   showBackButton?: boolean;
   onBack?: () => void;
+  hideSidebar?: boolean;
 }
 
-export function Layout({ children, title, headerContent, showActions = false, showBackButton = false, onBack }: LayoutProps) {
+export function Layout({ children, title, headerContent, showActions = false, showBackButton = false, onBack, hideSidebar = false }: LayoutProps) {
   return (
     <div className="flex h-screen" style={{ background: `
       radial-gradient(ellipse 260px 400px at 2% 95%,   rgba(120,86,200,0.65) 0%, transparent 100%),
