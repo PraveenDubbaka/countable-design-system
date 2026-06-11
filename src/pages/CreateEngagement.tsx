@@ -472,48 +472,20 @@ export default function CreateEngagement() {
                     options={INDUSTRIES.map(i => ({ value: i, label: i }))}
                     required
                   />
-                  <div className="flex flex-col gap-1">
-                    <label className="text-xs font-medium text-foreground">
-                      Accounting Framework<span className="text-destructive ml-0.5">*</span>
-                    </label>
-                    <div className="flex gap-2 mt-0.5">
-                      {ACCOUNTING_FRAMEWORKS.map(fw => (
-                        <button
-                          key={fw}
-                          type="button"
-                          onClick={() => setAccountingFramework(fw)}
-                          className={`flex-1 h-9 rounded-[10px] text-sm font-medium border transition-colors ${
-                            accountingFramework === fw
-                              ? "bg-primary text-primary-foreground border-primary"
-                              : "bg-muted text-foreground border-border hover:border-primary/40"
-                          }`}
-                        >
-                          {fw}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                  <div className="flex flex-col gap-1">
-                    <label className="text-xs font-medium text-foreground">
-                      Entity Classification<span className="text-destructive ml-0.5">*</span>
-                    </label>
-                    <div className="flex gap-2 mt-0.5">
-                      {ENTITY_CLASSIFICATIONS.map(ec => (
-                        <button
-                          key={ec}
-                          type="button"
-                          onClick={() => setEntityClassification(ec)}
-                          className={`flex-1 h-9 rounded-[10px] text-sm font-medium border transition-colors ${
-                            entityClassification === ec
-                              ? "bg-primary text-primary-foreground border-primary"
-                              : "bg-muted text-foreground border-border hover:border-primary/40"
-                          }`}
-                        >
-                          {ec}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
+                  <LabeledSelect
+                    label="Accounting Framework"
+                    value={accountingFramework}
+                    onChange={setAccountingFramework}
+                    options={ACCOUNTING_FRAMEWORKS.map(fw => ({ value: fw, label: fw }))}
+                    required
+                  />
+                  <LabeledSelect
+                    label="Entity Classification"
+                    value={entityClassification}
+                    onChange={setEntityClassification}
+                    options={ENTITY_CLASSIFICATIONS.map(ec => ({ value: ec, label: ec }))}
+                    required
+                  />
                 </div>
 
                 {/* Row 2: First-year Audit toggle | Financial statements checkboxes */}
