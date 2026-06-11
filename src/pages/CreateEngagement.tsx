@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { ArrowLeft, Briefcase, Calendar, Users, ChevronDown, Plus, Pencil, Trash2, Search, ExternalLink, X, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Layout } from "@/components/Layout";
@@ -186,11 +186,14 @@ const TeamMemberRow = ({
 
 export default function CreateEngagement() {
   const navigate = useNavigate();
+  const location = useLocation();
+  const prefill = (location.state as { clientName?: string; engagementType?: string } | null) ?? {};
 
   // Engagement Details state
+  const [clientName, setClientName] = useState(prefill.clientName || "");
   const [engagementId, setEngagementId] = useState("REV-DEF-Nov302023");
   const [engagementTemplate, setEngagementTemplate] = useState("Review Section 2400");
-  const [engagementType, setEngagementType] = useState("Review (REV)");
+  const [engagementType, setEngagementType] = useState(prefill.engagementType || "Review (REV)");
   const [budget, setBudget] = useState("10000.00");
   const [accountingStandards, setAccountingStandards] = useState("Section 2400 Review standards");
   const [additionalDisclosures, setAdditionalDisclosures] = useState("Statement of cash flows");
@@ -223,9 +226,10 @@ export default function CreateEngagement() {
   const [teamSearch, setTeamSearch] = useState("");
 
   const engagementTypeOptions = [
-    { value: "Review (REV)", label: "Review (REV)" },
-    { value: "Compilation (COM)", label: "Compilation (COM)" },
     { value: "Audit (AUD)", label: "Audit (AUD)" },
+    { value: "Compilation (COM)", label: "Compilation (COM)" },
+    { value: "Review (REV)", label: "Review (REV)" },
+    { value: "T2 (Corporations)", label: "T2 (Corporations)" },
   ];
 
   const accountingStandardsOptions = [
@@ -265,6 +269,12 @@ export default function CreateEngagement() {
             <SectionCard icon={<Briefcase className="h-5 w-5" />} title="Engagement Details">
               <div className="grid grid-cols-4 gap-4">
                 <LabeledInput
+                  label="Client Name"
+                  value={clientName}
+                  onChange={setClientName}
+                  required
+                />
+                <LabeledInput
                   label="Engagement ID"
                   value={engagementId}
                   onChange={setEngagementId}
@@ -285,6 +295,8 @@ export default function CreateEngagement() {
                   options={engagementTypeOptions}
                   required
                 />
+              </div>
+              <div className="grid grid-cols-4 gap-4 mt-4">
                 <LabeledInput
                   label="Budget($)"
                   value={budget}
@@ -292,8 +304,6 @@ export default function CreateEngagement() {
                   required
                   type="text"
                 />
-              </div>
-              <div className="grid grid-cols-4 gap-4 mt-4">
                 <LabeledSelect
                   label="Accounting Standards"
                   value={accountingStandards}

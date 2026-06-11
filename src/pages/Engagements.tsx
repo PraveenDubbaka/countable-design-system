@@ -1,13 +1,24 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
-import { Search, ChevronDown, Pencil, Trash2, Download, Briefcase, Loader, CheckCircle2, Archive } from "lucide-react";
+import { Search, ChevronDown, Pencil, Trash2, Download, Briefcase, Loader, CheckCircle2, Archive, Check, X } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Layout } from "@/components/Layout";
 import { StyledCard } from "@/components/ui/card";
+
+const ENGAGEMENT_TYPES = [
+  { value: "Audit (AUD)", label: "Audit (AUD)" },
+  { value: "Compilation (COM)", label: "Compilation (COM)" },
+  { value: "Review (REV)", label: "Review (REV)" },
+  { value: "T2 (Corporations)", label: "T2 (Corporations)" },
+];
 
 // Sample stats data
 const stats = [
@@ -71,6 +82,21 @@ export default function Engagements() {
   const [searchQuery, setSearchQuery] = useState("");
   const [filterPeriod, setFilterPeriod] = useState("Last 6 Month Engagements");
   const [engagementList, setEngagementList] = useState(engagements);
+
+  // Create Engagement modal
+  const [createModalOpen, setCreateModalOpen] = useState(false);
+  const [selectedClient, setSelectedClient] = useState("");
+  const [selectedEngType, setSelectedEngType] = useState("");
+  const [typePopoverOpen, setTypePopoverOpen] = useState(false);
+
+  const uniqueClients = Array.from(new Set(engagements.map(e => e.client))).sort();
+
+  const handleProceed = () => {
+    setCreateModalOpen(false);
+    navigate("/engagements/create", {
+      state: { clientName: selectedClient, engagementType: selectedEngType },
+    });
+  };
 
   const filteredEngagements = engagementList.filter(e =>
     e.id.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -161,8 +187,8 @@ export default function Engagements() {
                 <Download className="mr-2 h-4 w-4 icon-download" />
                 Export
               </Button>
-              <Button 
-                onClick={() => navigate("/engagements/create")}
+              <Button
+                onClick={() => { setSelectedClient(""); setSelectedEngType(""); setCreateModalOpen(true); }}
                 className="bg-primary hover:bg-primary/90 text-white h-9 px-4 text-sm font-medium"
               >
                 Create Engagement
@@ -237,6 +263,109 @@ export default function Engagements() {
           </StyledCard>
         </div>
       </div>
+      {/* Create Engagement modal */}
+      <Dialog open={createModalOpen} onOpenChange={(open) => { setCreateModalOpen(open); if (!open) setTypePopoverOpen(false); }}>
+        <DialogContent className="sm:max-w-[400px] p-0 gap-0 overflow-hidden rounded-2xl">
+          {/* Custom close button */}
+          <button
+            onClick={() => setCreateModalOpen(false)}
+            className="absolute right-4 top-4 z-10 rounded-sm opacity-70 hover:opacity-100 transition-opacity"
+          >
+            <X className="h-4 w-4" />
+          </button>
+
+          <div className="p-6 flex flex-col gap-5">
+            {/* Icon + Title */}
+            <div className="flex flex-col items-start gap-3">
+              <div className="w-10 h-10 rounded-full bg-green-100 dark:bg-green-900/30 flex items-center justify-center">
+                <CheckCircle2 className="h-5 w-5 text-green-600 dark:text-green-400" />
+              </div>
+              <div>
+                <h2 className="text-base font-semibold text-foreground">Engagement Type</h2>
+                <p className="text-sm text-muted-foreground mt-0.5">
+                  Select type of engagement you wish to use for this engagement
+                </p>
+              </div>
+            </div>
+
+            {/* Client Name */}
+            <div className="flex flex-col gap-1.5">
+              <label className="text-sm font-medium text-foreground">
+                Client Name<span className="text-destructive">*</span>
+              </label>
+              <Select value={selectedClient} onValueChange={setSelectedClient}>
+                <SelectTrigger className="h-10 text-sm">
+                  <SelectValue placeholder="Select" />
+                </SelectTrigger>
+                <SelectContent>
+                  {uniqueClients.map(client => (
+                    <SelectItem key={client} value={client}>{client}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            {/* Engagement Type */}
+            <div className="flex flex-col gap-1.5">
+              <label className="text-sm font-medium text-foreground">
+                Select Engagement Type<span className="text-destructive">*</span>
+              </label>
+              <Popover open={typePopoverOpen} onOpenChange={setTypePopoverOpen}>
+                <PopoverTrigger asChild>
+                  <button
+                    className="flex items-center justify-between w-full h-10 px-3 text-sm rounded-md border border-input bg-background hover:bg-accent hover:text-accent-foreground transition-colors"
+                    role="combobox"
+                    aria-expanded={typePopoverOpen}
+                  >
+                    <span className={selectedEngType ? "text-foreground" : "text-muted-foreground"}>
+                      {selectedEngType || "Select"}
+                    </span>
+                    <ChevronDown className="h-4 w-4 shrink-0 text-muted-foreground" />
+                  </button>
+                </PopoverTrigger>
+                <PopoverContent className="w-[352px] p-0" align="start">
+                  <Command>
+                    <CommandInput placeholder="Search..." className="h-9" />
+                    <CommandList>
+                      <CommandEmpty>No results found.</CommandEmpty>
+                      <CommandGroup>
+                        {ENGAGEMENT_TYPES.map(et => (
+                          <CommandItem
+                            key={et.value}
+                            value={et.value}
+                            onSelect={(val) => { setSelectedEngType(val); setTypePopoverOpen(false); }}
+                          >
+                            {et.label}
+                            {selectedEngType === et.value && <Check className="ml-auto h-4 w-4" />}
+                          </CommandItem>
+                        ))}
+                      </CommandGroup>
+                    </CommandList>
+                  </Command>
+                </PopoverContent>
+              </Popover>
+            </div>
+
+            {/* Actions */}
+            <div className="flex gap-3 pt-1">
+              <Button
+                variant="outline"
+                className="flex-1 h-10"
+                onClick={() => setCreateModalOpen(false)}
+              >
+                Cancel
+              </Button>
+              <Button
+                className="flex-1 h-10"
+                disabled={!selectedClient || !selectedEngType}
+                onClick={handleProceed}
+              >
+                Proceed
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </Layout>
   );
 }
