@@ -6,7 +6,6 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Info, AlertTriangle } from "lucide-react";
-import { AddToMyTemplatesDialog } from "@/components/AddToMyTemplatesDialog";
 import { RefButton, RefDoc } from "@/components/RefButton";
 import { toast } from "sonner";
 
@@ -100,7 +99,6 @@ export function AuditSAEWorksheet({ isUS }: { isUS?: boolean }) {
   const [reviewedBy, setReviewedBy] = useState(saved.reviewedBy ?? "");
   const [reviewedDate, setReviewedDate] = useState(saved.reviewedDate ?? "");
   const [concluded, setConcluded] = useState(saved.concluded ?? false);
-  const [showAddDialog, setShowAddDialog] = useState(false);
 
   const expertNeeded = expertRequired === "yes";
   const notNeeded = expertRequired === "no";
@@ -447,10 +445,7 @@ export function AuditSAEWorksheet({ isUS }: { isUS?: boolean }) {
 
           {/* Conclude */}
           {expertRequired !== "" && (
-            <div className="flex justify-between items-center">
-              <Button variant="outline" size="sm" onClick={() => setShowAddDialog(true)}>
-                Add to My Templates
-              </Button>
+            <div className="flex justify-end">
               <Button
                 onClick={() => { setConcluded(true); persist({ concluded: true }); toast.success("SAE worksheet concluded"); }}
                 disabled={concluded || !allDone}
@@ -463,15 +458,6 @@ export function AuditSAEWorksheet({ isUS }: { isUS?: boolean }) {
         </div>
       </div>
 
-      <AddToMyTemplatesDialog
-        open={showAddDialog}
-        onOpenChange={setShowAddDialog}
-        checklist={{
-          title: isUS ? "SAE — Selecting an Auditor's Expert (US)" : "SAE — Selecting an Auditor's Expert",
-          sections: [],
-          id: isUS ? "sae-us" : "sae-ca",
-        }}
-      />
     </div>
   );
 }
