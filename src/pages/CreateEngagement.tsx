@@ -1,10 +1,34 @@
 import { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import intuitQuickbooksLogo from "@/assets/intuit-quickbooks-logo.svg";
-import { ArrowLeft, Briefcase, Calendar, Users, ChevronDown, Plus, Pencil, Trash2, Search, ExternalLink, X, ArrowRight } from "lucide-react";
+import { ArrowLeft, Briefcase, Calendar, Users, ChevronDown, Plus, Pencil, Trash2, Search, ExternalLink, X, Building2, FileText, Settings2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Layout } from "@/components/Layout";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Switch } from "@/components/ui/switch";
+import { Label } from "@/components/ui/label";
+
+const INDUSTRIES = [
+  "Construction & Real Estate", "Financial Services", "Healthcare & Life Sciences",
+  "Hospitality & Tourism", "Manufacturing", "Mining & Resources", "Not-for-Profit",
+  "Oil & Gas", "Professional Services", "Retail & Consumer", "Technology", "Transportation & Logistics",
+];
+const ACCOUNTING_FRAMEWORKS = ["ASPE", "IFRS", "US GAAP"];
+const ENTITY_CLASSIFICATIONS = ["Private", "Public", "Manufacturing"];
+const AUDIT_ROLES = [
+  "Engagement Partner", "Manager", "Senior Auditor", "Staff Auditor / Assistant",
+  "EQCR (Quality Reviewer)", "Tax Reviewer", "Subject Matter Expert", "Preparer", "Other",
+];
+const FINANCIAL_STATEMENTS = [
+  { key: "cashFlow", label: "Cash Flow Statement" },
+  { key: "shareholdersEquity", label: "Shareholders' Equity" },
+  { key: "schedulesOfExpenses", label: "Schedules of Expenses" },
+  { key: "segmentReporting", label: "Segment Reporting" },
+  { key: "interimFinancials", label: "Interim Financials" },
+];
+
+let _uid = 0;
+const uid = () => String(++_uid);
 
 // Standard input component with label above - matching design system
 const LabeledInput = ({ 
@@ -141,49 +165,75 @@ const SectionCard = ({
   </div>
 );
 
-// Team member row component
-const TeamMemberRow = ({ 
-  member, 
-  onEdit, 
-  onDelete 
-}: { 
-  member: {
-    role: string;
-    name: string;
-    email: string;
-    title: string;
-    hourlyRate: number;
-    timeAllocation: number;
-    budgetedCost: number;
-    budgetedHours: number;
-  };
-  onEdit: () => void;
+interface TeamMember {
+  id: string;
+  role: string;
+  name: string;
+  email: string;
+  title: string;
+  hourlyRate: string;
+  timeAllocation: string;
+}
+
+function calcBudgetedCost(hourlyRate: string, timeAllocation: string) {
+  const rate = parseFloat(hourlyRate) || 0;
+  const alloc = parseFloat(timeAllocation) || 0;
+  return (rate * alloc).toFixed(2);
+}
+
+const TeamMemberRow = ({
+  member,
+  roleOptions,
+  onChange,
+  onDelete,
+}: {
+  member: TeamMember;
+  roleOptions: string[];
+  onChange: (updated: TeamMember) => void;
   onDelete: () => void;
-}) => (
-  <tr className="hover:bg-muted/50 transition-colors group">
-    <td className="py-3 px-5">
-      <Checkbox />
-    </td>
-    <td className="py-3 px-5 text-sm text-foreground">{member.role}</td>
-    <td className="py-3 px-5 text-sm text-foreground">{member.name}</td>
-    <td className="py-3 px-5 text-sm text-muted-foreground">{member.email}</td>
-    <td className="py-3 px-5 text-sm text-muted-foreground">{member.title}</td>
-    <td className="py-3 px-5 text-sm text-foreground text-right">{member.hourlyRate.toFixed(2)}</td>
-    <td className="py-3 px-5 text-sm text-foreground text-right">{member.timeAllocation}</td>
-    <td className="py-3 px-5 text-sm text-foreground text-right">{member.budgetedCost.toFixed(2)}</td>
-    <td className="py-3 px-5 text-sm text-foreground text-right">{member.budgetedHours.toFixed(2)}</td>
-    <td className="py-3 px-5">
-      <div className="flex items-center gap-1.5 opacity-60 group-hover:opacity-100 transition-opacity">
-        <button onClick={onEdit} className="p-1.5 hover:bg-muted rounded transition-colors group/edit">
-          <Pencil className="h-4 w-4 text-link group-hover/edit:icon-edit" />
+}) => {
+  const inlineInput = (field: keyof TeamMember, align = "left") => (
+    <input
+      value={member[field] as string}
+      onChange={e => onChange({ ...member, [field]: e.target.value })}
+      className={`w-full min-w-[80px] h-7 px-2 text-xs rounded border border-transparent hover:border-border focus:border-primary bg-transparent outline-none text-${align}`}
+    />
+  );
+  return (
+    <tr className="hover:bg-muted/30 transition-colors group border-b border-border">
+      <td className="py-2 px-3"><Checkbox /></td>
+      <td className="py-2 px-3 min-w-[160px]">
+        <div className="relative">
+          <select
+            value={member.role}
+            onChange={e => onChange({ ...member, role: e.target.value })}
+            className="w-full h-7 pl-2 pr-6 text-xs rounded border border-transparent hover:border-border focus:border-primary bg-transparent outline-none appearance-none cursor-pointer"
+          >
+            <option value="">Select role…</option>
+            {roleOptions.map(r => <option key={r} value={r}>{r}</option>)}
+          </select>
+          <ChevronDown className="absolute right-1 top-1/2 -translate-y-1/2 h-3 w-3 text-muted-foreground pointer-events-none" />
+        </div>
+      </td>
+      <td className="py-2 px-3 min-w-[130px]">{inlineInput("name")}</td>
+      <td className="py-2 px-3 min-w-[160px]">{inlineInput("email")}</td>
+      <td className="py-2 px-3 min-w-[120px]">{inlineInput("title")}</td>
+      <td className="py-2 px-3 min-w-[90px]">{inlineInput("hourlyRate", "right")}</td>
+      <td className="py-2 px-3 min-w-[90px]">{inlineInput("timeAllocation", "right")}</td>
+      <td className="py-2 px-3 text-xs text-right text-foreground min-w-[100px]">
+        {calcBudgetedCost(member.hourlyRate, member.timeAllocation)}
+      </td>
+      <td className="py-2 px-3">
+        <button
+          onClick={onDelete}
+          className="p-1 hover:bg-destructive/10 rounded opacity-40 group-hover:opacity-100 transition-opacity"
+        >
+          <Trash2 className="h-3.5 w-3.5 text-destructive" />
         </button>
-        <button onClick={onDelete} className="p-1.5 hover:bg-destructive/10 rounded transition-colors group/trash">
-          <Trash2 className="h-4 w-4 text-destructive group-hover/trash:icon-trash" />
-        </button>
-      </div>
-    </td>
-  </tr>
-);
+      </td>
+    </tr>
+  );
+};
 
 const CLIENT_DATA: Record<string, {
   entityLegalName: string;
@@ -249,20 +299,32 @@ export default function CreateEngagement() {
   const [priorYear1NoData, setPriorYear1NoData] = useState(false);
   const [priorYear2NoData, setPriorYear2NoData] = useState(false);
 
-  // Team members state
-  const [teamMembers] = useState([
-    {
-      role: "Preparer",
-      name: "Jane DEF",
-      email: "John_DEF@email.com",
-      title: "",
-      hourlyRate: 25.00,
-      timeAllocation: 50,
-      budgetedCost: 1000.00,
-      budgetedHours: 24.66
-    }
-  ]);
+  // Audit-specific state
+  const isAudit = engagementType === "Audit (AUD)";
+  const [industry, setIndustry] = useState("");
+  const [accountingFramework, setAccountingFramework] = useState("");
+  const [entityClassification, setEntityClassification] = useState("");
+  const [firstYearAudit, setFirstYearAudit] = useState(false);
+  const [financialStatements, setFinancialStatements] = useState<Set<string>>(new Set());
+  const toggleStatement = (key: string) =>
+    setFinancialStatements(prev => {
+      const next = new Set(prev);
+      next.has(key) ? next.delete(key) : next.add(key);
+      return next;
+    });
 
+  // Team members — fully dynamic
+  const [teamMembers, setTeamMembers] = useState<TeamMember[]>([
+    { id: uid(), role: "Preparer", name: "Jane DEF", email: "John_DEF@email.com", title: "", hourlyRate: "25.00", timeAllocation: "50" },
+  ]);
+  const addTeamMember = () =>
+    setTeamMembers(prev => [...prev, { id: uid(), role: "", name: "", email: "", title: "", hourlyRate: "0.00", timeAllocation: "0" }]);
+  const updateMember = (updated: TeamMember) =>
+    setTeamMembers(prev => prev.map(m => m.id === updated.id ? updated : m));
+  const deleteMember = (id: string) =>
+    setTeamMembers(prev => prev.filter(m => m.id !== id));
+
+  const roleOptions = isAudit ? AUDIT_ROLES : ["Partner", "Manager", "Senior", "Staff / Assistant", "Preparer"];
   const [teamSearch, setTeamSearch] = useState("");
 
   const engagementTypeOptions = [
@@ -398,6 +460,103 @@ export default function CreateEngagement() {
               </div>
             </SectionCard>
 
+            {/* Audit Configuration — only for Audit (AUD) */}
+            {isAudit && (
+              <SectionCard icon={<Settings2 className="h-5 w-5" />} title="Audit Configuration">
+                {/* Row 1: Industry | Framework | Entity Classification */}
+                <div className="grid grid-cols-3 gap-5">
+                  <LabeledSelect
+                    label="Industry"
+                    value={industry}
+                    onChange={setIndustry}
+                    options={INDUSTRIES.map(i => ({ value: i, label: i }))}
+                    required
+                  />
+                  <div className="flex flex-col gap-1">
+                    <label className="text-xs font-medium text-foreground">
+                      Accounting Framework<span className="text-destructive ml-0.5">*</span>
+                    </label>
+                    <div className="flex gap-2 mt-0.5">
+                      {ACCOUNTING_FRAMEWORKS.map(fw => (
+                        <button
+                          key={fw}
+                          type="button"
+                          onClick={() => setAccountingFramework(fw)}
+                          className={`flex-1 h-9 rounded-[10px] text-sm font-medium border transition-colors ${
+                            accountingFramework === fw
+                              ? "bg-primary text-primary-foreground border-primary"
+                              : "bg-muted text-foreground border-border hover:border-primary/40"
+                          }`}
+                        >
+                          {fw}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                  <div className="flex flex-col gap-1">
+                    <label className="text-xs font-medium text-foreground">
+                      Entity Classification<span className="text-destructive ml-0.5">*</span>
+                    </label>
+                    <div className="flex gap-2 mt-0.5">
+                      {ENTITY_CLASSIFICATIONS.map(ec => (
+                        <button
+                          key={ec}
+                          type="button"
+                          onClick={() => setEntityClassification(ec)}
+                          className={`flex-1 h-9 rounded-[10px] text-sm font-medium border transition-colors ${
+                            entityClassification === ec
+                              ? "bg-primary text-primary-foreground border-primary"
+                              : "bg-muted text-foreground border-border hover:border-primary/40"
+                          }`}
+                        >
+                          {ec}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Row 2: First-year Audit toggle | Financial statements checkboxes */}
+                <div className="grid grid-cols-3 gap-5 mt-5">
+                  {/* First-year audit */}
+                  <div className="flex flex-col gap-2">
+                    <span className="text-xs font-medium text-foreground">First-Year Audit?</span>
+                    <div className="flex items-center gap-3 mt-0.5">
+                      <Switch
+                        id="firstYearAudit"
+                        checked={firstYearAudit}
+                        onCheckedChange={setFirstYearAudit}
+                      />
+                      <Label htmlFor="firstYearAudit" className="text-sm text-foreground cursor-pointer">
+                        {firstYearAudit ? "Yes — predecessor review required" : "No — continuing engagement"}
+                      </Label>
+                    </div>
+                    {firstYearAudit && (
+                      <p className="text-xs text-amber-600 dark:text-amber-400 mt-1">
+                        Opening balances and predecessor communication procedures will be included in the audit program.
+                      </p>
+                    )}
+                  </div>
+
+                  {/* Financial statements */}
+                  <div className="col-span-2 flex flex-col gap-2">
+                    <span className="text-xs font-medium text-foreground">Financial Statements &amp; Schedules</span>
+                    <div className="grid grid-cols-3 gap-x-6 gap-y-2 mt-0.5">
+                      {FINANCIAL_STATEMENTS.map(({ key, label }) => (
+                        <label key={key} className="flex items-center gap-2 cursor-pointer group">
+                          <Checkbox
+                            checked={financialStatements.has(key)}
+                            onCheckedChange={() => toggleStatement(key)}
+                          />
+                          <span className="text-sm text-foreground group-hover:text-primary transition-colors">{label}</span>
+                        </label>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </SectionCard>
+            )}
+
             {/* Engagement Period Section */}
             <SectionCard icon={<Calendar className="h-5 w-5" />} title="Engagement Period">
               <div className="space-y-5">
@@ -511,75 +670,87 @@ export default function CreateEngagement() {
               </div>
             </SectionCard>
 
-            {/* Assigned Team Section */}
-            <SectionCard 
-              icon={<Users className="h-5 w-5" />} 
-              title="Assigned team"
-              badge={`${teamMembers.length} users`}
+            {/* Assigned Team / Roles Section */}
+            <SectionCard
+              icon={<Users className="h-5 w-5" />}
+              title={isAudit ? "Engagement Team & Roles" : "Assigned team"}
+              badge={`${teamMembers.length} member${teamMembers.length !== 1 ? "s" : ""}`}
             >
-              <div className="flex items-center justify-end gap-3 mb-4">
+              {isAudit && (
+                <p className="text-xs text-muted-foreground mb-4">
+                  Add all engagement team members and assign their roles. Audit roles include partner, manager, senior, EQCR, tax reviewer, and subject matter experts. You can add as many members as required.
+                </p>
+              )}
+
+              <div className="flex items-center justify-between gap-3 mb-3">
                 <div className="relative">
-                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground icon-search" />
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                   <input
                     type="text"
-                    placeholder="Search"
+                    placeholder="Search members…"
                     value={teamSearch}
                     onChange={(e) => setTeamSearch(e.target.value)}
-                    className="input-double-border pl-9 pr-3 h-9 text-sm bg-card border border-border rounded-[10px] outline-none w-44 text-foreground placeholder:text-muted-foreground"
+                    className="input-double-border pl-9 pr-3 h-8 text-sm bg-card border border-border rounded-[10px] outline-none w-44 text-foreground placeholder:text-muted-foreground"
                   />
                 </div>
-                <Button variant="secondary" className="h-9 px-4 text-sm">
-                  <Trash2 className="h-4 w-4 mr-2 icon-trash" />
-                  Delete
+                <Button onClick={addTeamMember} className="h-8 px-3 text-sm">
+                  <Plus className="h-3.5 w-3.5 mr-1" />
+                  Add {isAudit ? "Role" : "Member"}
                 </Button>
               </div>
 
-              <div className="overflow-x-auto">
-                <table className="w-full">
-                  <thead className="sticky top-0 z-10">
+              <div className="overflow-x-auto rounded-lg border border-border">
+                <table className="w-full text-sm">
+                  <thead>
                     <tr className="bg-muted">
-                      <th className="py-3 px-5 text-left">
-                        <Checkbox />
+                      <th className="py-2.5 px-3 text-left w-8"><Checkbox /></th>
+                      <th className="py-2.5 px-3 text-left text-xs font-semibold text-muted-foreground uppercase tracking-wide whitespace-nowrap">
+                        Role <span className="text-destructive normal-case font-normal">*</span>
                       </th>
-                      <th className="text-left px-5 py-3 text-xs font-semibold text-muted-foreground uppercase tracking-wider">Role <span className="text-red-500 normal-case">*</span></th>
-                      <th className="text-left px-5 py-3 text-xs font-semibold text-muted-foreground uppercase tracking-wider">Team Member <span className="text-red-500 normal-case">*</span></th>
-                      <th className="text-left px-5 py-3 text-xs font-semibold text-muted-foreground uppercase tracking-wider">Email</th>
-                      <th className="text-left px-5 py-3 text-xs font-semibold text-muted-foreground uppercase tracking-wider">Title</th>
-                      <th className="text-right px-5 py-3 text-xs font-semibold text-muted-foreground uppercase tracking-wider">Hourly Rate ($) <span className="text-red-500 normal-case">*</span></th>
-                      <th className="text-right px-5 py-3 text-xs font-semibold text-muted-foreground uppercase tracking-wider">Time Allocation (%) <span className="text-red-500 normal-case">*</span></th>
-                      <th className="text-right px-5 py-3 text-xs font-semibold text-muted-foreground uppercase tracking-wider">Budgeted Cost ($)</th>
-                      <th className="text-right px-5 py-3 text-xs font-semibold text-muted-foreground uppercase tracking-wider">Budgeted Hours (H)</th>
-                      <th className="text-left px-5 py-3 text-xs font-semibold text-muted-foreground uppercase tracking-wider">Actions</th>
+                      <th className="py-2.5 px-3 text-left text-xs font-semibold text-muted-foreground uppercase tracking-wide whitespace-nowrap">Name</th>
+                      <th className="py-2.5 px-3 text-left text-xs font-semibold text-muted-foreground uppercase tracking-wide">Email</th>
+                      <th className="py-2.5 px-3 text-left text-xs font-semibold text-muted-foreground uppercase tracking-wide">Title</th>
+                      <th className="py-2.5 px-3 text-right text-xs font-semibold text-muted-foreground uppercase tracking-wide whitespace-nowrap">Rate ($/hr)</th>
+                      <th className="py-2.5 px-3 text-right text-xs font-semibold text-muted-foreground uppercase tracking-wide whitespace-nowrap">Alloc (%)</th>
+                      <th className="py-2.5 px-3 text-right text-xs font-semibold text-muted-foreground uppercase tracking-wide whitespace-nowrap">Budgeted Cost ($)</th>
+                      <th className="py-2.5 px-3 w-8"></th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-border">
-                    {teamMembers.map((member, index) => (
-                      <TeamMemberRow
-                        key={index}
-                        member={member}
-                        onEdit={() => {}}
-                        onDelete={() => {}}
-                      />
-                    ))}
+                  <tbody>
+                    {teamMembers
+                      .filter(m =>
+                        !teamSearch ||
+                        m.name.toLowerCase().includes(teamSearch.toLowerCase()) ||
+                        m.role.toLowerCase().includes(teamSearch.toLowerCase())
+                      )
+                      .map(member => (
+                        <TeamMemberRow
+                          key={member.id}
+                          member={member}
+                          roleOptions={roleOptions}
+                          onChange={updateMember}
+                          onDelete={() => deleteMember(member.id)}
+                        />
+                      ))}
+                    {teamMembers.length === 0 && (
+                      <tr>
+                        <td colSpan={9} className="py-8 text-center text-sm text-muted-foreground">
+                          No team members yet — click "Add {isAudit ? "Role" : "Member"}" to get started.
+                        </td>
+                      </tr>
+                    )}
                   </tbody>
                   <tfoot>
-                    <tr className="bg-muted">
-                      <td colSpan={4}></td>
-                      <td className="py-3 px-5 text-sm font-medium text-foreground">Avg Engagement Rate</td>
-                      <td className="py-3 px-5 text-sm font-medium text-foreground text-right">0.00</td>
-                      <td className="py-3 px-5 text-sm font-medium text-foreground text-right">0</td>
-                      <td className="py-3 px-5 text-sm font-medium text-foreground text-right">1000.00</td>
-                      <td className="py-3 px-5 text-sm font-medium text-foreground text-right">0.00</td>
+                    <tr className="bg-muted/60 border-t border-border">
+                      <td colSpan={7} className="py-2.5 px-3 text-xs font-semibold text-muted-foreground uppercase tracking-wide text-right">Total Budgeted Cost</td>
+                      <td className="py-2.5 px-3 text-xs font-bold text-foreground text-right">
+                        ${teamMembers.reduce((sum, m) => sum + (parseFloat(m.hourlyRate) || 0) * (parseFloat(m.timeAllocation) || 0), 0).toFixed(2)}
+                      </td>
                       <td></td>
                     </tr>
                   </tfoot>
                 </table>
               </div>
-
-              <Button className="mt-4 bg-primary hover:bg-primary/90 text-white h-10 px-4 text-sm font-medium">
-                <Plus className="h-4 w-4 mr-2" />
-                Add Member
-              </Button>
             </SectionCard>
           </div>
 
