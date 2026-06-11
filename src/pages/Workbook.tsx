@@ -575,7 +575,7 @@ export default function Workbook() {
                           group.rows.map((row) => (
                             <tr
                               key={row.id}
-                              className="border-t border-border/40 hover:bg-muted/30 transition-colors"
+                              className="border-t border-border hover:bg-muted/30 transition-colors"
                             >
                               <td className="px-3 py-2.5">
                                 <input
