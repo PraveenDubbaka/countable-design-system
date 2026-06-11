@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useParams } from "react-router-dom";
 import {
   ChevronDown,
@@ -356,6 +356,16 @@ export default function Workbook() {
   const [search, setSearch] = useState("");
   const [sidebarOpen, setSidebarOpen] = useState(true);
 
+  // Force light theme on this page for consistent white workbook experience
+  useEffect(() => {
+    const root = document.documentElement;
+    const hadDark = root.classList.contains("dark");
+    if (hadDark) root.classList.remove("dark");
+    return () => {
+      if (hadDark) root.classList.add("dark");
+    };
+  }, []);
+
   const toggleGroup = (id: string) =>
     setCollapsedGroups((prev) => {
       const n = new Set(prev);
@@ -525,7 +535,7 @@ export default function Workbook() {
             <div className="rounded-lg border border-border bg-card overflow-hidden shadow-[0_2px_8px_hsl(213_40%_20%/0.04)]">
               <table className="w-full text-sm">
                 <thead>
-                  <tr className="bg-muted/40 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                  <tr className="bg-muted text-xs font-semibold uppercase tracking-wider text-muted-foreground">
                     <th className="w-10 px-3 py-3"></th>
                     <th className="px-3 py-3 text-left w-16">LS</th>
                     <th className="px-3 py-3 text-left w-24">Map No.</th>
@@ -546,7 +556,7 @@ export default function Workbook() {
                     const t = totals(group.rows);
                     return (
                       <>
-                        <tr key={`${group.id}-h`} className="bg-muted/20 border-t border-border">
+                        <tr key={`${group.id}-h`} className="bg-muted/50 border-t border-border border-l-2 border-l-primary">
                           <td colSpan={12} className="px-3 py-2.5">
                             <button
                               onClick={() => toggleGroup(group.id)}
@@ -565,7 +575,7 @@ export default function Workbook() {
                           group.rows.map((row) => (
                             <tr
                               key={row.id}
-                              className="border-t border-border/40 hover:bg-muted/30 transition-colors"
+                              className="border-t border-border hover:bg-muted/30 transition-colors"
                             >
                               <td className="px-3 py-2.5">
                                 <input
@@ -599,7 +609,7 @@ export default function Workbook() {
                             </tr>
                           ))}
                         {!collapsed && (
-                          <tr className="border-t border-border bg-muted/10 font-semibold">
+                          <tr className="border-t-2 border-border bg-muted/30 font-semibold">
                             <td colSpan={4}></td>
                             <td className="px-3 py-2.5 text-foreground">Total {group.title.replace(/^[A-Z]\s*-\s*/, "")}</td>
                             <td className="px-3 py-2.5 text-right tabular-nums text-foreground">{formatAmt(t.original)}</td>
