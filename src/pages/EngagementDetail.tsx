@@ -16,6 +16,7 @@ import { AuditPAPWorksheet } from "@/components/AuditPAPWorksheet";
 import { AuditTimeBudgetWorksheet } from "@/components/AuditTimeBudgetWorksheet";
 import { AuditDetailedBudgetWorksheet } from "@/components/AuditDetailedBudgetWorksheet";
 import { AuditMgmtRequestsWorksheet } from "@/components/AuditMgmtRequestsWorksheet";
+import { AuditSAEWorksheet } from "@/components/AuditSAEWorksheet";
 import { FloatingActionBar } from "@/components/FloatingActionBar";
 import { EngagementRightPanel } from "@/components/EngagementRightPanel";
 import { Checklist, Question } from "@/types/checklist";
@@ -1174,6 +1175,8 @@ export default function EngagementDetail() {
             <AuditScopeWorksheet isUS={checklistKey === 'aud-us-scope'} />
           ) : (checklistKey === 'aud-pap' || checklistKey === 'aud-us-pap') ? (
             <AuditPAPWorksheet isUS={checklistKey === 'aud-us-pap'} />
+          ) : (checklistKey === 'aud-sae' || checklistKey === 'aud-us-sae') ? (
+            <AuditSAEWorksheet isUS={checklistKey === 'aud-us-sae'} />
           ) : checklist ? (
             <div className="p-4">
               {/* ASM import banner */}
