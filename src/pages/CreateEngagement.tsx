@@ -565,6 +565,19 @@ export default function CreateEngagement() {
     { value: "Monthly", label: "Monthly" },
   ];
 
+  const isFormValid =
+    clientName.trim() !== "" &&
+    engagementId.trim() !== "" &&
+    engagementTemplate.trim() !== "" &&
+    engagementType !== "" &&
+    budget.trim() !== "" &&
+    accountingStandards !== "" &&
+    (isAudit ? additionalDisclosuresSet.size > 0 : additionalDisclosures !== "") &&
+    (!isAudit || (industry !== "" && accountingFramework !== "" && entityClassification !== "")) &&
+    currentYearStart.trim() !== "" &&
+    currentYearEnd.trim() !== "" &&
+    teamMembers.length > 0;
+
   return (
     <Layout title="Create Engagement">
       <div className="flex-1 overflow-y-auto bg-background">
@@ -971,7 +984,7 @@ export default function CreateEngagement() {
               <X className="h-4 w-4" />
               Cancel
             </Button>
-            <Button>
+            <Button disabled={!isFormValid}>
               <Plus className="h-4 w-4" />
               Create Engagement
             </Button>
