@@ -284,6 +284,8 @@
     --border-category: 210 22% 82%;
     --category-accent: 210 100% 29%;
     --category-title: 220 26% 12%;
+    --dv-separator: #E2E5EB;
+    --dv-row-hover: #f2f9ff;
 
     /* Futuristic Shape System - Refined curvature */
     --radius: 1.25rem;
@@ -440,6 +442,9 @@
     --border: var(--m3-outline-variant);
     --input: var(--m3-outline-variant);
     --ring: var(--m3-primary);
+
+    --dv-separator: hsl(var(--border));
+    --dv-row-hover: hsl(var(--muted) / 0.3);
 
     /* Sidebar dark mode */
     --sidebar-bg: 220 30% 12%;

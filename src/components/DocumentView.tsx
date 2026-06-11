@@ -162,8 +162,8 @@ function RefButton({ reference, onAttach, onRemove, disabled }: RefButtonProps) 
           <button
             onClick={(e) => e.stopPropagation()}
             className={refs.length > 0
-              ? "flex items-center gap-1 px-2 py-1 text-xs text-blue-600 hover:bg-blue-50 rounded-md border border-dashed border-blue-300 transition-colors"
-              : "flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-blue-600 hover:bg-blue-50 rounded-md border border-dashed border-blue-300 transition-colors"
+              ? "flex items-center gap-1 px-2 py-1 text-xs text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-950/30 rounded-md border border-dashed border-blue-300 dark:border-blue-700/60 transition-colors"
+              : "flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-950/30 rounded-md border border-dashed border-blue-300 dark:border-blue-700/60 transition-colors"
             }>
             {refs.length > 0 ? <Plus className="h-3 w-3" /> : <><Paperclip className="h-3.5 w-3.5" /><span>+ Ref</span></>}
           </button>
@@ -826,7 +826,7 @@ function CellContentRenderer({
             {previousType && !pendingSmartType && (
               <button
                 onClick={(e) => { e.stopPropagation(); handleUndoClear(); }}
-                className="absolute -top-1 -right-1 flex items-center gap-1 px-1.5 py-0.5 rounded bg-amber-100 text-amber-700 text-[10px] font-medium hover:bg-amber-200 transition-colors shadow-sm border border-amber-200 z-10"
+                className="absolute -top-1 -right-1 flex items-center gap-1 px-1.5 py-0.5 rounded bg-amber-100 dark:bg-amber-950/40 text-amber-700 dark:text-amber-400 text-[10px] font-medium hover:bg-amber-200 dark:hover:bg-amber-950/60 transition-colors shadow-sm border border-amber-200 dark:border-amber-700/40 z-10"
                 title={`Undo clear – restore ${previousType.blockType}`}
               >
                 <Undo2 className="h-2.5 w-2.5" />
@@ -1348,7 +1348,7 @@ function QuestionInlineColumns({
               </span>
             )}
           </div>
-          <div className="shrink-0 w-px self-stretch mx-0 pointer-events-none" style={{ backgroundColor: '#E2E5EB' }} />
+          <div className="shrink-0 w-px self-stretch mx-0 pointer-events-none" style={{ backgroundColor: 'var(--dv-separator)' }} />
         </>}
 
         {isEditing && canEdit ?
@@ -1387,7 +1387,7 @@ function QuestionInlineColumns({
           <>
             <div
               className="shrink-0 w-px cursor-col-resize hover:bg-primary/30 transition-colors relative mx-0"
-              style={{ backgroundColor: '#E2E5EB' }}
+              style={{ backgroundColor: 'var(--dv-separator)' }}
               onMouseDown={(e) => handleResizeStart(widthIdx - 1, e)}>
               <div className="absolute inset-y-0 -left-1.5 -right-1.5" />
             </div>
@@ -1419,7 +1419,7 @@ function QuestionInlineColumns({
           <>
             <div
               className="shrink-0 w-px cursor-col-resize hover:bg-primary/30 transition-colors relative mx-0"
-              style={{ backgroundColor: '#E2E5EB' }}
+              style={{ backgroundColor: 'var(--dv-separator)' }}
               onMouseDown={(e) => handleResizeStart(widthIdx - 1, e)}>
               <div className="absolute inset-y-0 -left-1.5 -right-1.5" />
             </div>
@@ -1452,7 +1452,7 @@ function QuestionInlineColumns({
           <>
             <div
               className="shrink-0 w-px cursor-col-resize hover:bg-primary/30 transition-colors relative mx-0"
-              style={{ backgroundColor: '#E2E5EB' }}
+              style={{ backgroundColor: 'var(--dv-separator)' }}
               onMouseDown={(e) => handleResizeStart(widthIdx - 1, e)}>
               <div className="absolute inset-y-0 -left-1.5 -right-1.5" />
             </div>
@@ -1592,8 +1592,8 @@ function DocumentQuestionBlock({
     : hasAnyBorder
     ? `border ${showTop ? 'border-t-border' : 'border-t-transparent'} ${showRight ? 'border-r-border' : 'border-r-transparent'} ${showBottom ? 'border-b-border' : 'border-b-transparent'} ${showLeft ? 'border-l-border' : 'border-l-transparent'}`
     : isSub
-    ? `border border-transparent ${isGlobalTemplate ? '' : 'hover:bg-[#f2f9ff]'}`
-    : `border border-transparent ${(isLastInSection && !canEdit) || (question.subQuestions && question.subQuestions.length > 0) ? '' : 'border-b-[#E2E5EB]'} ${isGlobalTemplate ? '' : 'hover:bg-[#f2f9ff]'}`;
+    ? `border border-transparent ${isGlobalTemplate ? '' : 'hover:bg-[#f2f9ff] dark:hover:bg-muted/20'}`
+    : `border border-transparent ${(isLastInSection && !canEdit) || (question.subQuestions && question.subQuestions.length > 0) ? '' : 'border-b-border/50'} ${isGlobalTemplate ? '' : 'hover:bg-[#f2f9ff] dark:hover:bg-muted/20'}`;
 
   return (
     <div
@@ -1608,7 +1608,7 @@ function DocumentQuestionBlock({
       className={`dv-question group/q relative hover:z-30 ${isSub ? 'dv-sub-question' : ''} ${
       isDragging ? 'z-10 ring-2 ring-primary/30 rounded-lg' : ''} ${
       isApplying ? 'ring-2 ring-primary ring-inset animate-pulse' : ''} ${
-      isSelected && !isSub ? 'bg-[#f2f9ff]' : ''}`}
+      isSelected && !isSub ? 'bg-[#f2f9ff] dark:bg-muted/20' : ''}`}
       tabIndex={-1}>
 
       {/* Floating "..." border menu centered above — same as ColumnBlockRow */}
@@ -1927,11 +1927,11 @@ function DocumentSectionBlock({
     <div
       id={section.id}
       ref={setNodeRef}
-      style={{ ...style, borderColor: '#E2E5EB' }}
+      style={{ ...style, borderColor: 'var(--dv-separator)' }}
       className={`dv-section group/section relative rounded-[8px] border-[0.5px] transition-colors ${isGlobalTemplate ? '' : 'focus-within:border-primary'} ${isDragging ? 'z-10' : ''}`}>
 
       {/* Section header */}
-      <div className="dv-section-header flex items-center gap-2 pl-[38px] pr-4 py-0 relative border-b" style={{ borderColor: '#E2E5EB', height: '48px', minHeight: '48px' }}>
+      <div className="dv-section-header flex items-center gap-2 pl-[38px] pr-4 py-0 relative border-b" style={{ borderColor: 'var(--dv-separator)', height: '48px', minHeight: '48px' }}>
         {/* Drag handle */}
         {!isPreviewMode &&
         <div
@@ -2012,7 +2012,7 @@ function DocumentSectionBlock({
           <span className="text-xs font-medium text-muted-foreground select-none shrink-0 w-8 text-left">
             {numberingFormat === 'alphabet-number' ? `${String.fromCharCode(64 + sectionNumber)}.` : `${sectionNumber}.`}
           </span>
-          <div className="shrink-0 w-px self-stretch mx-0 pointer-events-none" style={{ backgroundColor: '#E2E5EB' }} />
+          <div className="shrink-0 w-px self-stretch mx-0 pointer-events-none" style={{ backgroundColor: 'var(--dv-separator)' }} />
         </>}
 
         {/* Title */}
@@ -2458,7 +2458,7 @@ export function DocumentView({
         }}>
         {/* Objective panel */}
         {checklist.objective && onToggleObjective && (
-          <div className="dv-section dv-objective-panel rounded-[8px] border-[0.5px] overflow-hidden" style={{ borderColor: '#E2E5EB' }}>
+          <div className="dv-section dv-objective-panel rounded-[8px] border-[0.5px] overflow-hidden" style={{ borderColor: 'var(--dv-separator)' }}>
             <button
               type="button"
               className="w-full flex items-center gap-2 pl-[38px] pr-4 text-left text-sm font-semibold transition-colors"
@@ -2469,7 +2469,7 @@ export function DocumentView({
               Objective
             </button>
             {objectiveExpanded && (
-              <div className="px-[38px] py-3 border-t" style={{ borderColor: '#E2E5EB' }}>
+              <div className="px-[38px] py-3 border-t" style={{ borderColor: 'var(--dv-separator)' }}>
                 <ObjectiveContent
                   objective={checklist.objective}
                   isPreviewMode={isPreviewMode}
@@ -2483,7 +2483,7 @@ export function DocumentView({
 
         {/* Note panel */}
         {checklist.note && (
-          <div className="dv-section dv-objective-panel rounded-[8px] border-[0.5px] overflow-hidden" style={{ borderColor: '#E2E5EB' }}>
+          <div className="dv-section dv-objective-panel rounded-[8px] border-[0.5px] overflow-hidden" style={{ borderColor: 'var(--dv-separator)' }}>
             <button
               type="button"
               className="w-full flex items-center gap-2 pl-[38px] pr-4 text-left text-sm font-semibold transition-colors"
@@ -2494,7 +2494,7 @@ export function DocumentView({
               Note
             </button>
             {noteExpanded && (
-              <div className="px-[38px] py-3 border-t" style={{ borderColor: '#E2E5EB' }}>
+              <div className="px-[38px] py-3 border-t" style={{ borderColor: 'var(--dv-separator)' }}>
                 <div
                   className="text-sm text-muted-foreground leading-relaxed p-1.5 rounded-md"
                   dangerouslySetInnerHTML={{ __html: checklist.note }}
