@@ -434,12 +434,13 @@ export default function CreateEngagement() {
   // Engagement Details state
   const [clientName, setClientName] = useState(prefill.clientName || "");
   const clientInfo = CLIENT_DATA[clientName] ?? null;
-  const [engagementId, setEngagementId] = useState("REV-DEF-Nov302023");
-  const [engagementTemplate, setEngagementTemplate] = useState("Review Section 2400");
   const [engagementType, setEngagementType] = useState(prefill.engagementType || "Review (REV)");
+  const prefillIsAudit = (prefill.engagementType || "Review (REV)") === "Audit (AUD)";
+  const [engagementId, setEngagementId] = useState(prefillIsAudit ? "AUD-HFL-Mar312024" : "REV-DEF-Nov302023");
+  const [engagementTemplate, setEngagementTemplate] = useState(prefillIsAudit ? "CAS Audit" : "Review Section 2400");
   const [budget, setBudget] = useState("10000.00");
-  const [accountingStandards, setAccountingStandards] = useState("Section 2400 Review standards");
-  const [additionalDisclosures, setAdditionalDisclosures] = useState("Statement of cash flows");
+  const [accountingStandards, setAccountingStandards] = useState(prefillIsAudit ? "CAS (Canadian Auditing Standards)" : "Section 2400 Review standards");
+  const [additionalDisclosures, setAdditionalDisclosures] = useState(prefillIsAudit ? "Full financial statements" : "Statement of cash flows");
 
   // Engagement Period state
   const [periodType, setPeriodType] = useState("Full year");
@@ -454,6 +455,23 @@ export default function CreateEngagement() {
 
   // Audit-specific state
   const isAudit = engagementType === "Audit (AUD)";
+
+  // Sync engagement details when type changes (skip initial render)
+  const isFirstMount = useRef(true);
+  useEffect(() => {
+    if (isFirstMount.current) { isFirstMount.current = false; return; }
+    if (isAudit) {
+      setEngagementId("AUD-HFL-Mar312024");
+      setEngagementTemplate("CAS Audit");
+      setAccountingStandards("CAS (Canadian Auditing Standards)");
+      setAdditionalDisclosures("Full financial statements");
+    } else {
+      setEngagementId("REV-DEF-Nov302023");
+      setEngagementTemplate("Review Section 2400");
+      setAccountingStandards("Section 2400 Review standards");
+      setAdditionalDisclosures("Statement of cash flows");
+    }
+  }, [isAudit]);
   const [industry, setIndustry] = useState("");
   const [accountingFramework, setAccountingFramework] = useState("");
   const [entityClassification, setEntityClassification] = useState("");
@@ -518,16 +536,30 @@ export default function CreateEngagement() {
     { value: "T2 (Corporations)", label: "T2 (Corporations)" },
   ];
 
-  const accountingStandardsOptions = [
-    { value: "Section 2400 Review standards", label: "Section 2400 Review standards" },
-    { value: "ASPE", label: "ASPE" },
-    { value: "IFRS", label: "IFRS" },
-  ];
+  const accountingStandardsOptions = isAudit
+    ? [
+        { value: "CAS (Canadian Auditing Standards)", label: "CAS (Canadian Auditing Standards)" },
+        { value: "ISA (International Standards on Auditing)", label: "ISA (International Standards on Auditing)" },
+        { value: "GAAS (US Generally Accepted Auditing Standards)", label: "GAAS (US Generally Accepted Auditing Standards)" },
+        { value: "PCAOB Standards", label: "PCAOB Standards" },
+      ]
+    : [
+        { value: "Section 2400 Review standards", label: "Section 2400 Review standards" },
+        { value: "ASPE", label: "ASPE" },
+        { value: "IFRS", label: "IFRS" },
+      ];
 
-  const disclosureOptions = [
-    { value: "Statement of cash flows", label: "Statement of cash flows" },
-    { value: "Notes to financial statements", label: "Notes to financial statements" },
-  ];
+  const disclosureOptions = isAudit
+    ? [
+        { value: "Full financial statements", label: "Full financial statements" },
+        { value: "Statement of cash flows", label: "Statement of cash flows" },
+        { value: "Notes to financial statements", label: "Notes to financial statements" },
+        { value: "Supplementary schedules", label: "Supplementary schedules" },
+      ]
+    : [
+        { value: "Statement of cash flows", label: "Statement of cash flows" },
+        { value: "Notes to financial statements", label: "Notes to financial statements" },
+      ];
 
   const periodTypeOptions = [
     { value: "Full year", label: "Full year" },
