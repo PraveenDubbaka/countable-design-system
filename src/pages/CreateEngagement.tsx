@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useEngagements } from "@/store/EngagementsContext";
-import { EngagementRecord } from "@/store/engagementsStore";
+import { EngagementRecord, setEngagementMeta } from "@/store/engagementsStore";
 import { toast } from "sonner";
 import intuitQuickbooksLogo from "@/assets/intuit-quickbooks-logo.svg";
 import { ArrowLeft, Briefcase, Calendar, Users, ChevronDown, Plus, Pencil, Trash2, Search, ExternalLink, X, Building2, FileText, Settings2, Check } from "lucide-react";
@@ -610,6 +610,15 @@ export default function CreateEngagement() {
       firstYearAudit,
     };
     addEngagement(record);
+    setEngagementMeta(engagementId, {
+      firstYearAudit,
+      accountingFramework: isAudit ? accountingFramework : undefined,
+      industry: isAudit ? industry : undefined,
+      accountingStandards,
+      budget,
+      periodStart: currentYearStart,
+      periodEnd: currentYearEnd,
+    });
     if (isAudit && firstYearAudit) {
       toast.success("Engagement created — IE checklist and predecessor letter added.");
     } else {

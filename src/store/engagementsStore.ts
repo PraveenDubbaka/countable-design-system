@@ -43,7 +43,17 @@ export function saveEngagements(list: EngagementRecord[]): void {
   } catch {}
 }
 
-export function getEngagementMeta(id: string): { firstYearAudit: boolean } {
+export type EngagementMeta = {
+  firstYearAudit: boolean;
+  accountingFramework?: string;
+  industry?: string;
+  accountingStandards?: string;
+  budget?: string;
+  periodStart?: string;
+  periodEnd?: string;
+};
+
+export function getEngagementMeta(id: string): EngagementMeta {
   try {
     const raw = localStorage.getItem(META_KEY(id));
     if (raw) return JSON.parse(raw);
@@ -51,7 +61,7 @@ export function getEngagementMeta(id: string): { firstYearAudit: boolean } {
   return { firstYearAudit: false };
 }
 
-export function setEngagementMeta(id: string, meta: { firstYearAudit: boolean }): void {
+export function setEngagementMeta(id: string, meta: EngagementMeta): void {
   try {
     localStorage.setItem(META_KEY(id), JSON.stringify(meta));
   } catch {}

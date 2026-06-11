@@ -1551,7 +1551,7 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
                     children: [
                       { id: "aud-us-mat", code: "PL1", label: "Materiality", icon: "worksheet", route: "checklist/aud-us-mat" },
                       { id: "aud-us-sae", code: "SAE", label: "Selecting Auditor's Expert", icon: "worksheet", route: "checklist/aud-us-sae" },
-                      { id: "aud-us-asm", code: "OAS", label: "Overall Audit Strategy", icon: "checklist", route: "checklist/aud-us-asm" },
+                      { id: "aud-us-asm", code: "OAS", label: "Overall Audit Strategy", icon: "worksheet", route: "checklist/aud-us-asm" },
                       { id: "aud-us-plan", code: "TPD", label: "Team Planning Discussions", icon: "checklist", route: "checklist/aud-us-plan" },
                       { id: "aud-us-tb", code: "TB", label: "Time Budget", icon: "worksheet", route: "checklist/aud-us-tb" },
                       { id: "aud-us-db", code: "DB", label: "Detailed Budget", icon: "worksheet", route: "checklist/aud-us-db" },
@@ -1712,7 +1712,7 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
                     children: [
                       { id: "aud-mat", code: "PL1", label: "Materiality", icon: "worksheet", route: "checklist/aud-mat" },
                       { id: "aud-sae", code: "SAE", label: "Selecting Auditor's Expert", icon: "worksheet", route: "checklist/aud-sae" },
-                      { id: "aud-asm", code: "OAS", label: "Overall Audit Strategy", icon: "checklist", route: "checklist/aud-asm" },
+                      { id: "aud-asm", code: "OAS", label: "Overall Audit Strategy", icon: "worksheet", route: "checklist/aud-asm" },
                       { id: "aud-plan", code: "TPD", label: "Team Planning Discussions", icon: "checklist", route: "checklist/aud-plan" },
                       { id: "aud-tb", code: "TB", label: "Time Budget", icon: "worksheet", route: "checklist/aud-tb" },
                       { id: "aud-db", code: "DB", label: "Detailed Budget", icon: "worksheet", route: "checklist/aud-db" },
