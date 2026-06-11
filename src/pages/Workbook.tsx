@@ -535,7 +535,7 @@ export default function Workbook() {
             <div className="rounded-lg border border-border bg-card overflow-hidden shadow-[0_2px_8px_hsl(213_40%_20%/0.04)]">
               <table className="w-full text-sm">
                 <thead>
-                  <tr className="bg-muted/40 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                  <tr className="bg-muted text-xs font-semibold uppercase tracking-wider text-muted-foreground">
                     <th className="w-10 px-3 py-3"></th>
                     <th className="px-3 py-3 text-left w-16">LS</th>
                     <th className="px-3 py-3 text-left w-24">Map No.</th>
