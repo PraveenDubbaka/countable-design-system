@@ -1,5 +1,8 @@
 import { useState, useRef, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
+import { useEngagements } from "@/store/EngagementsContext";
+import { EngagementRecord } from "@/store/engagementsStore";
+import { toast } from "sonner";
 import intuitQuickbooksLogo from "@/assets/intuit-quickbooks-logo.svg";
 import { ArrowLeft, Briefcase, Calendar, Users, ChevronDown, Plus, Pencil, Trash2, Search, ExternalLink, X, Building2, FileText, Settings2, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -429,9 +432,24 @@ const CLIENT_DATA: Record<string, {
   },
 };
 
+function formatYearEnd(dateStr: string): string {
+  const parts = dateStr.split("/");
+  if (parts.length !== 3) return dateStr;
+  const d = new Date(parseInt(parts[2]), parseInt(parts[0]) - 1, parseInt(parts[1]));
+  if (isNaN(d.getTime())) return dateStr;
+  return d.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
+}
+
+function formatDateCreated(): string {
+  const now = new Date();
+  return now.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }) +
+    " " + now.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit", hour12: true });
+}
+
 export default function CreateEngagement() {
   const navigate = useNavigate();
   const location = useLocation();
+  const { addEngagement } = useEngagements();
   const prefill = (location.state as { clientName?: string; engagementType?: string } | null) ?? {};
 
   // Engagement Details state
@@ -577,6 +595,28 @@ export default function CreateEngagement() {
     currentYearStart.trim() !== "" &&
     currentYearEnd.trim() !== "" &&
     teamMembers.length > 0;
+
+  const handleCreate = () => {
+    const record: EngagementRecord = {
+      id: engagementId,
+      client: clientName,
+      type: engagementType,
+      yearEnd: formatYearEnd(currentYearEnd),
+      team: "View Assignees",
+      status: "New",
+      statusVariant: "new",
+      hasRF: false,
+      dateCreated: formatDateCreated(),
+      firstYearAudit,
+    };
+    addEngagement(record);
+    if (isAudit && firstYearAudit) {
+      toast.success("Engagement created — IE checklist and predecessor letter added.");
+    } else {
+      toast.success("Engagement created successfully.");
+    }
+    navigate("/engagements");
+  };
 
   return (
     <Layout title="Create Engagement">
@@ -974,7 +1014,7 @@ export default function CreateEngagement() {
               <X className="h-4 w-4" />
               Cancel
             </Button>
-            <Button disabled={!isFormValid}>
+            <Button disabled={!isFormValid} onClick={handleCreate}>
               <Plus className="h-4 w-4" />
               Create Engagement
             </Button>

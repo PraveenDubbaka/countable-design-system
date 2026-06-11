@@ -20,6 +20,7 @@ import DesignSystem from "./pages/DesignSystem";
 import EngagementTemplates from "./pages/EngagementTemplates";
 import AuditDependencyRegister from "./pages/AuditDependencyRegister";
 import NotFound from "./pages/NotFound";
+import { EngagementsProvider } from "./store/EngagementsContext";
 
 const queryClient = new QueryClient();
 
@@ -30,6 +31,7 @@ const App = () => (
         <Toaster />
         <Sonner />
         <BrowserRouter basename={import.meta.env.BASE_URL}>
+          <EngagementsProvider>
           <Routes>
             <Route path="/" element={<Navigate to="/dashboard" replace />} />
             <Route path="/dashboard" element={<Dashboard />} />
@@ -51,6 +53,7 @@ const App = () => (
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
+          </EngagementsProvider>
         </BrowserRouter>
       </TooltipProvider>
     </ThemeProvider>

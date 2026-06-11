@@ -1530,12 +1530,18 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
                 const engId = location.pathname.split("/engagements/")[1]?.split("/")[0];
                 const isUSAuditEngagement = engId === "AUD-US-Dec312024" || (engId?.startsWith("AUD-") && engId?.includes("-US-"));
                 const isAuditEngagement = engId?.startsWith("AUD-");
+                const engFirstYear = (() => {
+                  try {
+                    const raw = engId ? localStorage.getItem(`engagement-meta-${engId}`) : null;
+                    return raw ? JSON.parse(raw).firstYearAudit === true : false;
+                  } catch { return false; }
+                })();
 
                 const usAuditEngagementTree: SectionNode[] = [
                   {
                     id: "aud-us-co", code: "CO", label: "Client Onboarding", icon: "folder",
                     children: [
-                      { id: "aud-us-form-408", code: "IAE", label: "Initial Audit Engagements", icon: "checklist", route: "checklist/aud-us-form-408" },
+                      ...(engFirstYear ? [{ id: "aud-us-form-408", code: "IAE", label: "Initial Audit Engagements", icon: "checklist" as const, route: "checklist/aud-us-form-408" }] : []),
                       { id: "aud-us-form-410", code: "AC", label: "New or Existing Engagement — Acceptance/Continuance", icon: "checklist", route: "checklist/aud-us-form-410" },
                       { id: "aud-us-el", code: "EL", label: "Engagement Letter", icon: "letter", route: "checklist/aud-us-el" },
                     ]
@@ -1697,7 +1703,7 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
                   {
                     id: "aud-co", code: "CO", label: "Client Onboarding", icon: "folder",
                     children: [
-                      { id: "aud-form-408", code: "IAE", label: "Initial Audit Engagements", icon: "checklist", route: "checklist/aud-form-408" },
+                      ...(engFirstYear ? [{ id: "aud-form-408", code: "IAE", label: "Initial Audit Engagements", icon: "checklist" as const, route: "checklist/aud-form-408" }] : []),
                       { id: "aud-form-410", code: "AC", label: "New or Existing Engagement — Acceptance/Continuance", icon: "checklist", route: "checklist/aud-form-410" },
                       { id: "aud-el", code: "EL", label: "Engagement Letter", icon: "letter", route: "checklist/aud-el" },
                     ]

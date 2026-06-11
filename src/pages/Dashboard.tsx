@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useEngagements } from "@/store/EngagementsContext";
 import { Search, ChevronDown, MessageSquare, Send, AlertCircle, Layers, Sparkles, Loader, CheckCircle2, Archive } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -230,7 +231,16 @@ const IntegrationBadge = ({
 };
 export default function Dashboard() {
   const navigate = useNavigate();
+  const { engagements: allEngagements } = useEngagements();
   const [searchQuery, setSearchQuery] = useState("");
+  const dashboardEngagements = allEngagements.map(e => ({
+    id: e.id,
+    client: e.client,
+    yearEnd: e.yearEnd,
+    integration: null as string | null,
+    status: e.status,
+    statusVariant: e.status === "New" ? ("secondary" as const) : ("default" as const),
+  }));
   return <Layout title="Dashboard">
       <div className="flex-1 p-6 overflow-auto bg-background h-full">
 
@@ -293,7 +303,7 @@ export default function Dashboard() {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-border">
-                  {engagements.map((engagement, idx) => <tr key={engagement.id} className="hover:bg-muted/50 transition-colors group max-h-[50px]" style={{ maxHeight: '50px' }}>
+                  {dashboardEngagements.map((engagement, idx) => <tr key={engagement.id} className="hover:bg-muted/50 transition-colors group max-h-[50px]" style={{ maxHeight: '50px' }}>
                       <td className="px-6 py-2 whitespace-nowrap">
                         <span className="text-sm text-link font-medium cursor-pointer hover:underline" onClick={() => navigate(`/engagements/${engagement.id}`)}>
                           {engagement.id}

@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useEngagements } from "@/store/EngagementsContext";
 import { toast } from "sonner";
 import { Search, ChevronDown, Pencil, Trash2, Download, Briefcase, Loader, CheckCircle2, Archive, Check, X } from "lucide-react";
 import { Input } from "@/components/ui/input";
@@ -79,9 +80,9 @@ const filterPeriodOptions = [
 
 export default function Engagements() {
   const navigate = useNavigate();
+  const { engagements: engagementList, deleteEngagement } = useEngagements();
   const [searchQuery, setSearchQuery] = useState("");
   const [filterPeriod, setFilterPeriod] = useState("Last 6 Month Engagements");
-  const [engagementList, setEngagementList] = useState(engagements);
 
   // Create Engagement modal
   const [createModalOpen, setCreateModalOpen] = useState(false);
@@ -89,7 +90,7 @@ export default function Engagements() {
   const [selectedEngType, setSelectedEngType] = useState("");
   const [typePopoverOpen, setTypePopoverOpen] = useState(false);
 
-  const uniqueClients = Array.from(new Set(engagements.map(e => e.client))).sort();
+  const uniqueClients = Array.from(new Set(engagementList.map(e => e.client))).sort();
 
   const handleProceed = () => {
     setCreateModalOpen(false);
@@ -105,7 +106,7 @@ export default function Engagements() {
 
   const handleDelete = (id: string, e: React.MouseEvent) => {
     e.stopPropagation();
-    setEngagementList(prev => prev.filter(eng => eng.id !== id));
+    deleteEngagement(id);
     toast.success(`Engagement ${id} deleted`);
   };
 
