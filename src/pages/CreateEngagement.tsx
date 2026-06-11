@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
+import intuitQuickbooksLogo from "@/assets/intuit-quickbooks-logo.svg";
 import { ArrowLeft, Briefcase, Calendar, Users, ChevronDown, Plus, Pencil, Trash2, Search, ExternalLink, X, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Layout } from "@/components/Layout";
@@ -184,6 +185,44 @@ const TeamMemberRow = ({
   </tr>
 );
 
+const CLIENT_DATA: Record<string, {
+  entityLegalName: string;
+  entityType: string;
+  contactPerson: string;
+  engagementPartner: string;
+  integrations: string[];
+  businessPhone: string;
+  cellPhone: string;
+}> = {
+  "Harbor Freight Logistics LLC": {
+    entityLegalName: "Harbor Freight Logistics LLC",
+    entityType: "Corporation",
+    contactPerson: "Michael Torres",
+    engagementPartner: "Atin Gupta",
+    integrations: ["quickbooks"],
+    businessPhone: "+1 (604) 555-0192",
+    cellPhone: "-",
+  },
+  "Shipping Line Inc.": {
+    entityLegalName: "Shipping Line Inc.",
+    entityType: "Corporation",
+    contactPerson: "Sarah Chen",
+    engagementPartner: "Atin Gupta",
+    integrations: ["quickbooks"],
+    businessPhone: "+1 (604) 555-0134",
+    cellPhone: "+1 (778) 555-0221",
+  },
+  "John Doe Inc.": {
+    entityLegalName: "John Doe Inc.",
+    entityType: "Corporation",
+    contactPerson: "John Doe",
+    engagementPartner: "Atin Gupta",
+    integrations: ["quickbooks"],
+    businessPhone: "-",
+    cellPhone: "-",
+  },
+};
+
 export default function CreateEngagement() {
   const navigate = useNavigate();
   const location = useLocation();
@@ -191,6 +230,7 @@ export default function CreateEngagement() {
 
   // Engagement Details state
   const [clientName, setClientName] = useState(prefill.clientName || "");
+  const clientInfo = CLIENT_DATA[clientName] ?? null;
   const [engagementId, setEngagementId] = useState("REV-DEF-Nov302023");
   const [engagementTemplate, setEngagementTemplate] = useState("Review Section 2400");
   const [engagementType, setEngagementType] = useState(prefill.engagementType || "Review (REV)");
@@ -265,6 +305,43 @@ export default function CreateEngagement() {
           </div>
 
           <div className="flex flex-col gap-5">
+            {/* Client Info Section */}
+            {clientInfo && (
+              <div className="bg-card rounded-lg shadow-sm px-6 py-5 border border-border">
+                <h2 className="text-sm font-semibold text-foreground mb-4">Client Info</h2>
+                <div className="grid grid-cols-7 gap-4">
+                  {[
+                    { label: "Entity legal name", value: clientInfo.entityLegalName },
+                    { label: "Entity type", value: clientInfo.entityType },
+                    { label: "Contact person", value: clientInfo.contactPerson },
+                    { label: "Engagement partner", value: clientInfo.engagementPartner, isLink: true },
+                    { label: "Integrations", value: clientInfo.integrations },
+                    { label: "Business phone", value: clientInfo.businessPhone },
+                    { label: "Cell phone", value: clientInfo.cellPhone },
+                  ].map((col) => (
+                    <div key={col.label} className="flex flex-col gap-1">
+                      <span className="text-xs font-semibold text-primary">{col.label}</span>
+                      {Array.isArray(col.value) ? (
+                        <div className="flex items-center gap-1.5">
+                          {col.value.includes("quickbooks") && (
+                            <img
+                              src={intuitQuickbooksLogo}
+                              alt="QuickBooks"
+                              className="h-5 object-contain"
+                            />
+                          )}
+                        </div>
+                      ) : (col as any).isLink ? (
+                        <span className="text-sm text-link font-medium cursor-pointer hover:underline">{col.value as string}</span>
+                      ) : (
+                        <span className="text-sm text-foreground">{col.value as string}</span>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
             {/* Engagement Details Section */}
             <SectionCard icon={<Briefcase className="h-5 w-5" />} title="Engagement Details">
               <div className="grid grid-cols-4 gap-4">
