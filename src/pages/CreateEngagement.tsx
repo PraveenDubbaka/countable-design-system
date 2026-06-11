@@ -572,7 +572,7 @@ export default function CreateEngagement() {
     engagementType !== "" &&
     budget.trim() !== "" &&
     accountingStandards !== "" &&
-    (isAudit ? additionalDisclosuresSet.size > 0 : additionalDisclosures !== "") &&
+    additionalDisclosures !== "" &&
     (!isAudit || (industry !== "" && accountingFramework !== "" && entityClassification !== "")) &&
     currentYearStart.trim() !== "" &&
     currentYearEnd.trim() !== "" &&
@@ -677,23 +677,15 @@ export default function CreateEngagement() {
                   options={accountingStandardsOptions}
                   required
                 />
-                {isAudit ? (
-                  <MultiSelectDropdown
-                    label="Additional disclosures"
-                    options={AUDIT_DISCLOSURE_OPTIONS}
-                    selected={additionalDisclosuresSet}
-                    onToggle={toggleAdditionalDisclosure}
-                    required
-                  />
-                ) : (
-                  <LabeledSelect
-                    label="Additional disclosures"
-                    value={additionalDisclosures}
-                    onChange={setAdditionalDisclosures}
-                    options={disclosureOptions}
-                    required
-                  />
-                )}
+                <LabeledSelect
+                  label="Additional disclosures"
+                  value={additionalDisclosures}
+                  onChange={setAdditionalDisclosures}
+                  options={isAudit
+                    ? AUDIT_DISCLOSURE_OPTIONS.map(o => ({ value: o.label, label: o.label }))
+                    : disclosureOptions}
+                  required
+                />
               </div>
             </SectionCard>
 
