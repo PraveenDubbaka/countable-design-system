@@ -33,6 +33,7 @@ const App = () => (
             <Route path="/" element={<Navigate to="/dashboard" replace />} />
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/clients" element={<Clients />} />
+            <Route path="/clients/new" element={<AddNewClient />} />
             <Route path="/teams" element={<Teams />} />
             <Route path="/engagements" element={<Engagements />} />
             <Route path="/engagements/:engagementId" element={<EngagementDetail />} />
