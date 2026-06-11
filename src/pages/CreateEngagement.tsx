@@ -669,6 +669,13 @@ export default function CreateEngagement() {
                     options={ENTITY_CLASSIFICATIONS.map(ec => ({ value: ec, label: ec }))}
                     required
                   />
+                  {/* Financial statements multi-select */}
+                  <MultiSelectDropdown
+                    label="Financial Statements & Schedules"
+                    options={FINANCIAL_STATEMENTS}
+                    selected={financialStatements}
+                    onToggle={toggleStatement}
+                  />
                   {/* First-year audit */}
                   <div className="flex flex-col gap-2">
                     <span className="text-xs font-medium text-foreground">First-Year Audit?</span>
@@ -688,13 +695,6 @@ export default function CreateEngagement() {
                       </p>
                     )}
                   </div>
-                  {/* Financial statements multi-select */}
-                  <MultiSelectDropdown
-                    label="Financial Statements & Schedules"
-                    options={FINANCIAL_STATEMENTS}
-                    selected={financialStatements}
-                    onToggle={toggleStatement}
-                  />
                 </div>
               </SectionCard>
             )}
