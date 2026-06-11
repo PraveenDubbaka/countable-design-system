@@ -6,6 +6,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Badge } from "@/components/ui/badge";
 import { Info, AlertTriangle } from "lucide-react";
 import { AddToMyTemplatesDialog } from "@/components/AddToMyTemplatesDialog";
+import { RefButton, RefDoc } from "@/components/RefButton";
 import { toast } from "sonner";
 
 // ── Types ──────────────────────────────────────────────────────────────────────
@@ -25,7 +26,7 @@ interface SAEState {
   understandingNotes: string;
   termsChecked: string[];
   writtenAgreement: YesNo;
-  wpRef: string;
+  wpRef: RefDoc[];
   conclusion: string;
   preparedBy: string;
   preparedDate: string;
@@ -91,7 +92,7 @@ export function AuditSAEWorksheet({ isUS }: { isUS?: boolean }) {
   const [understandingNotes, setUnderstandingNotes] = useState(saved.understandingNotes ?? "");
   const [termsChecked, setTermsChecked] = useState<string[]>(saved.termsChecked ?? []);
   const [writtenAgreement, setWrittenAgreement] = useState<YesNo>(saved.writtenAgreement ?? "");
-  const [wpRef, setWpRef] = useState(saved.wpRef ?? "");
+  const [wpRef, setWpRef] = useState<RefDoc[]>(saved.wpRef ?? []);
   const [conclusion, setConclusion] = useState(saved.conclusion ?? "");
   const [preparedBy, setPreparedBy] = useState(saved.preparedBy ?? "");
   const [preparedDate, setPreparedDate] = useState(saved.preparedDate ?? "");
@@ -378,11 +379,10 @@ export function AuditSAEWorksheet({ isUS }: { isUS?: boolean }) {
                     <YesNoRow value={writtenAgreement} onChange={(v) => { setWrittenAgreement(v); persist({ writtenAgreement: v }); }} />
                     <div className="flex items-center gap-2 ml-auto">
                       <label className="text-xs font-semibold text-muted-foreground whitespace-nowrap">W/P Ref:</label>
-                      <Input
-                        value={wpRef}
-                        onChange={e => { setWpRef(e.target.value); persist({ wpRef: e.target.value }); }}
-                        placeholder="e.g. SAE-01"
-                        className="h-8 text-sm w-32"
+                      <RefButton
+                        reference={wpRef}
+                        onAttach={doc => { const next = [...wpRef, doc]; setWpRef(next); persist({ wpRef: next }); }}
+                        onRemove={idx => { const next = wpRef.filter((_, i) => i !== idx); setWpRef(next); persist({ wpRef: next }); }}
                         disabled={concluded}
                       />
                     </div>
