@@ -715,18 +715,16 @@ export default function CreateEngagement() {
                     required
                   />
                   {/* First-year audit */}
-                  <div className="flex flex-col gap-2">
-                    <span className="text-xs font-medium text-foreground">First-Year Audit?</span>
-                    <div className="flex items-center gap-3 mt-0.5">
-                      <Switch
-                        id="firstYearAudit"
-                        checked={firstYearAudit}
-                        onCheckedChange={setFirstYearAudit}
-                      />
-                      <Label htmlFor="firstYearAudit" className="text-sm text-foreground cursor-pointer">
-                        {firstYearAudit ? "Yes" : "No"}
-                      </Label>
-                    </div>
+                  <div className="flex flex-col gap-1">
+                    <LabeledSelect
+                      label="First-Year Audit?"
+                      value={firstYearAudit ? "yes" : "no"}
+                      onChange={v => setFirstYearAudit(v === "yes")}
+                      options={[
+                        { value: "no", label: "No" },
+                        { value: "yes", label: "Yes" },
+                      ]}
+                    />
                     {firstYearAudit && (
                       <p className="text-xs text-amber-600 dark:text-amber-400 mt-1">
                         Predecessor review required. Opening balances will be included.
