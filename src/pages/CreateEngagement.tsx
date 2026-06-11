@@ -288,25 +288,25 @@ const TeamMemberViewRow = ({
   onEdit: () => void;
   onDelete: () => void;
 }) => (
-  <tr className="hover:bg-muted/30 transition-colors group border-b border-border">
-    <td className="py-2.5 px-3 w-8">
+  <tr className="hover:bg-muted/50 transition-colors group border-b border-border/40">
+    <td className="px-6 py-2 w-10">
       <Checkbox checked={checked} onCheckedChange={onCheck} />
     </td>
-    <td className="py-2.5 px-3 text-sm text-foreground whitespace-nowrap">{member.role}</td>
-    <td className="py-2.5 px-3 text-sm font-medium text-foreground whitespace-nowrap">{member.name}</td>
-    <td className="py-2.5 px-3 text-sm text-muted-foreground">{member.email}</td>
-    <td className="py-2.5 px-3 text-sm text-muted-foreground whitespace-nowrap">{member.title}</td>
-    <td className="py-2.5 px-3 text-sm text-right text-foreground">{parseFloat(member.hourlyRate || "0").toFixed(2)}</td>
-    <td className="py-2.5 px-3 text-sm text-right text-foreground">{member.timeAllocation}</td>
-    <td className="py-2.5 px-3 text-sm text-right text-foreground">{calcBudgetedCost(member.hourlyRate, member.timeAllocation)}</td>
-    <td className="py-2.5 px-3 text-sm text-right text-foreground">{calcBudgetedHours(member.timeAllocation)}</td>
-    <td className="py-2.5 px-3 w-16">
-      <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-        <button type="button" onClick={onEdit} className="p-1 rounded hover:bg-primary/10 text-primary transition-colors">
-          <Pencil className="h-3.5 w-3.5" />
+    <td className="px-6 py-2 text-sm text-foreground whitespace-nowrap">{member.role}</td>
+    <td className="px-6 py-2 text-sm font-medium text-foreground whitespace-nowrap">{member.name}</td>
+    <td className="px-6 py-2 text-sm text-muted-foreground">{member.email}</td>
+    <td className="px-6 py-2 text-sm text-muted-foreground whitespace-nowrap">{member.title}</td>
+    <td className="px-6 py-2 text-sm text-right text-foreground">{parseFloat(member.hourlyRate || "0").toFixed(2)}</td>
+    <td className="px-6 py-2 text-sm text-right text-foreground">{member.timeAllocation}</td>
+    <td className="px-6 py-2 text-sm text-right text-foreground">{calcBudgetedCost(member.hourlyRate, member.timeAllocation)}</td>
+    <td className="px-6 py-2 text-sm text-right text-foreground">{calcBudgetedHours(member.timeAllocation)}</td>
+    <td className="px-6 py-2">
+      <div className="flex items-center gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity">
+        <button type="button" onClick={onEdit} className="p-1.5 hover:bg-muted rounded-lg transition-colors">
+          <Pencil className="h-4 w-4 text-link" />
         </button>
-        <button type="button" onClick={onDelete} className="p-1 rounded hover:bg-destructive/10 text-destructive transition-colors">
-          <Trash2 className="h-3.5 w-3.5" />
+        <button type="button" onClick={onDelete} className="p-1.5 hover:bg-muted rounded-lg transition-colors">
+          <Trash2 className="h-4 w-4 text-destructive" />
         </button>
       </div>
     </td>
@@ -330,56 +330,56 @@ const TeamMemberEditRow = ({
     const found = MOCK_TEAM_MEMBERS.find(m => m.name === name);
     onChangeDraft({ ...draft, name, email: found?.email ?? "", title: found?.title ?? "", hourlyRate: found?.hourlyRate ?? draft.hourlyRate });
   };
+  const selectCls = "input-double-border w-full h-9 pl-3 pr-8 text-sm text-foreground rounded-[10px] outline-none transition-all duration-200 appearance-none cursor-pointer bg-white border border-[#dcdfe4] dark:border-[hsl(220_15%_30%)] dark:bg-card hover:border-[hsl(210_25%_75%)] dark:hover:border-[hsl(220_15%_40%)]";
+  const numCls  = "input-double-border w-full h-9 px-3 text-sm text-right text-foreground rounded-[10px] outline-none transition-all duration-200 bg-white border border-[#dcdfe4] dark:border-[hsl(220_15%_30%)] dark:bg-card hover:border-[hsl(210_25%_75%)] dark:hover:border-[hsl(220_15%_40%)]";
   return (
-    <tr className="bg-primary/[0.03] dark:bg-primary/[0.06] border-b border-primary/20">
-      <td className="py-2 px-3 w-8"><Checkbox /></td>
-      <td className="py-2 px-3 min-w-[140px]">
+    <tr className="bg-primary/[0.03] dark:bg-primary/[0.05] border-b border-border/40">
+      <td className="px-6 py-2 w-10"><Checkbox /></td>
+      <td className="px-6 py-2 min-w-[160px]">
         <div className="relative">
-          <select value={draft.role} onChange={e => onChangeDraft({ ...draft, role: e.target.value })}
-            className="w-full h-8 pl-2 pr-6 text-sm rounded-md border border-border bg-background outline-none appearance-none cursor-pointer focus:border-primary">
+          <select value={draft.role} onChange={e => onChangeDraft({ ...draft, role: e.target.value })} className={selectCls}>
             {roleOptions.map(r => <option key={r} value={r}>{r}</option>)}
           </select>
-          <ChevronDown className="absolute right-2 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground pointer-events-none" />
+          <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
         </div>
       </td>
-      <td className="py-2 px-3 min-w-[180px]">
+      <td className="px-6 py-2 min-w-[200px]">
         <div className="relative">
-          <select value={draft.name} onChange={e => handleMemberSelect(e.target.value)}
-            className="w-full h-8 pl-2 pr-6 text-sm rounded-md border border-border bg-background outline-none appearance-none cursor-pointer focus:border-primary">
+          <select value={draft.name} onChange={e => handleMemberSelect(e.target.value)} className={selectCls}>
             <option value="">Select an option</option>
             {MOCK_TEAM_MEMBERS.map(m => (
               <option key={m.name} value={m.name} title={m.email}>{m.name}</option>
             ))}
           </select>
-          <ChevronDown className="absolute right-2 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground pointer-events-none" />
+          <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
         </div>
       </td>
-      <td className="py-2 px-3 text-sm text-muted-foreground max-w-[150px] truncate">{draft.email}</td>
-      <td className="py-2 px-3 text-sm text-muted-foreground whitespace-nowrap">{draft.title}</td>
-      <td className="py-2 px-3 min-w-[100px]">
+      <td className="px-6 py-2 text-sm text-muted-foreground max-w-[160px] truncate">{draft.email}</td>
+      <td className="px-6 py-2 text-sm text-muted-foreground whitespace-nowrap">{draft.title}</td>
+      <td className="px-6 py-2 min-w-[110px]">
         <input type="number" value={draft.hourlyRate} min="0" step="0.01"
           onChange={e => onChangeDraft({ ...draft, hourlyRate: e.target.value })}
-          className="w-full h-8 px-2 text-sm text-right rounded-md border border-border bg-background outline-none focus:border-primary" />
+          className={numCls} />
       </td>
-      <td className="py-2 px-3 min-w-[100px]">
+      <td className="px-6 py-2 min-w-[110px]">
         <input type="number" value={draft.timeAllocation} min="0" max="100"
           onChange={e => onChangeDraft({ ...draft, timeAllocation: e.target.value })}
-          className="w-full h-8 px-2 text-sm text-right rounded-md border border-border bg-background outline-none focus:border-primary" />
+          className={numCls} />
       </td>
-      <td className="py-2 px-3 text-sm text-right text-muted-foreground min-w-[100px]">
+      <td className="px-6 py-2 text-sm text-right text-muted-foreground min-w-[110px]">
         {calcBudgetedCost(draft.hourlyRate, draft.timeAllocation)}
       </td>
-      <td className="py-2 px-3 text-sm text-right text-muted-foreground min-w-[80px]">
+      <td className="px-6 py-2 text-sm text-right text-muted-foreground min-w-[100px]">
         {calcBudgetedHours(draft.timeAllocation)}
       </td>
-      <td className="py-2 px-3 w-16">
-        <div className="flex items-center gap-1">
+      <td className="px-6 py-2">
+        <div className="flex items-center gap-0.5">
           <button type="button" onClick={onConfirm}
-            className="p-1 rounded hover:bg-green-100 dark:hover:bg-green-950/30 text-green-600 dark:text-green-400 transition-colors">
+            className="p-1.5 hover:bg-muted rounded-lg transition-colors text-green-600 dark:text-green-400">
             <Check className="h-4 w-4" />
           </button>
           <button type="button" onClick={onCancel}
-            className="p-1 rounded hover:bg-destructive/10 text-destructive transition-colors">
+            className="p-1.5 hover:bg-muted rounded-lg transition-colors text-destructive">
             <X className="h-4 w-4" />
           </button>
         </div>
@@ -820,54 +820,54 @@ export default function CreateEngagement() {
               headerRight={
                 <div className="flex items-center gap-2">
                   <div className="relative">
-                    <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
+                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                     <input
                       type="text"
                       placeholder="Search"
                       value={teamSearch}
                       onChange={(e) => setTeamSearch(e.target.value)}
-                      className="pl-8 pr-3 h-8 text-sm bg-background border border-border rounded-md outline-none w-36 text-foreground placeholder:text-muted-foreground focus:border-primary transition-colors"
+                      className="input-double-border pl-9 pr-3 h-9 text-sm bg-card border border-border rounded-[10px] outline-none w-40 text-foreground placeholder:text-muted-foreground"
                     />
                   </div>
-                  <button
-                    type="button"
+                  <Button
+                    variant="outline"
                     onClick={deleteSelected}
                     disabled={selectedIds.size === 0}
-                    className="inline-flex items-center gap-1.5 h-8 px-3 text-sm rounded-md border border-border bg-background text-foreground hover:bg-muted disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+                    className="h-9 px-3 gap-1.5 text-sm"
                   >
-                    <Trash2 className="h-3.5 w-3.5" />
+                    <Trash2 className="h-4 w-4" />
                     Delete
-                  </button>
+                  </Button>
                 </div>
               }
             >
               <div className="overflow-x-auto rounded-lg border border-border">
                 <table className="w-full text-sm">
                   <thead>
-                    <tr className="bg-muted/60 border-b border-border">
-                      <th className="py-2.5 px-3 text-left w-8">
+                    <tr className="bg-muted border-b border-border">
+                      <th className="text-left px-6 py-4 w-10">
                         <Checkbox
                           checked={teamMembers.length > 0 && selectedIds.size === teamMembers.length}
                           onCheckedChange={(v) => setSelectedIds(v ? new Set(teamMembers.map(m => m.id)) : new Set())}
                         />
                       </th>
-                      <th className="py-2.5 px-3 text-left text-xs font-semibold text-muted-foreground whitespace-nowrap">
+                      <th className="text-left px-6 py-4 text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap">
                         Role<span className="text-destructive ml-0.5">*</span>
                       </th>
-                      <th className="py-2.5 px-3 text-left text-xs font-semibold text-muted-foreground whitespace-nowrap">
+                      <th className="text-left px-6 py-4 text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap">
                         Team member<span className="text-destructive ml-0.5">*</span>
                       </th>
-                      <th className="py-2.5 px-3 text-left text-xs font-semibold text-muted-foreground">Email</th>
-                      <th className="py-2.5 px-3 text-left text-xs font-semibold text-muted-foreground">Title</th>
-                      <th className="py-2.5 px-3 text-right text-xs font-semibold text-muted-foreground whitespace-nowrap">
+                      <th className="text-left px-6 py-4 text-xs font-semibold text-foreground uppercase tracking-wider">Email</th>
+                      <th className="text-left px-6 py-4 text-xs font-semibold text-foreground uppercase tracking-wider">Title</th>
+                      <th className="text-right px-6 py-4 text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap">
                         Hourly rate ($)<span className="text-destructive ml-0.5">*</span>
                       </th>
-                      <th className="py-2.5 px-3 text-right text-xs font-semibold text-muted-foreground whitespace-nowrap">
+                      <th className="text-right px-6 py-4 text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap">
                         Time Allocation(%)<span className="text-destructive ml-0.5">*</span>
                       </th>
-                      <th className="py-2.5 px-3 text-right text-xs font-semibold text-muted-foreground whitespace-nowrap">Budgeted cost ($)</th>
-                      <th className="py-2.5 px-3 text-right text-xs font-semibold text-muted-foreground whitespace-nowrap">Budgeted hours (H)</th>
-                      <th className="py-2.5 px-3 text-left text-xs font-semibold text-muted-foreground">Actions</th>
+                      <th className="text-right px-6 py-4 text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap">Budgeted cost ($)</th>
+                      <th className="text-right px-6 py-4 text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap">Budgeted hours (H)</th>
+                      <th className="text-left px-6 py-4 text-xs font-semibold text-foreground uppercase tracking-wider">Actions</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -903,13 +903,13 @@ export default function CreateEngagement() {
                     )}
                   </tbody>
                   <tfoot>
-                    <tr className="bg-muted/40 border-t border-border">
-                      <td className="py-2.5 px-3" />
-                      <td colSpan={4} className="py-2.5 px-3 text-xs font-semibold text-foreground">Avg Engagement Rate</td>
-                      <td className="py-2.5 px-3 text-xs font-semibold text-foreground text-right">{avgRate}</td>
-                      <td className="py-2.5 px-3 text-xs font-semibold text-foreground text-right">{avgAlloc}</td>
-                      <td className="py-2.5 px-3 text-xs font-semibold text-foreground text-right">{avgCost}</td>
-                      <td className="py-2.5 px-3 text-xs font-semibold text-foreground text-right">{avgHours}</td>
+                    <tr className="bg-muted/30 border-t border-border/30">
+                      <td className="px-6 py-3" />
+                      <td colSpan={4} className="px-6 py-3 text-xs font-semibold text-foreground uppercase tracking-wider">Avg Engagement Rate</td>
+                      <td className="px-6 py-3 text-sm font-semibold text-foreground text-right">{avgRate}</td>
+                      <td className="px-6 py-3 text-sm font-semibold text-foreground text-right">{avgAlloc}</td>
+                      <td className="px-6 py-3 text-sm font-semibold text-foreground text-right">{avgCost}</td>
+                      <td className="px-6 py-3 text-sm font-semibold text-foreground text-right">{avgHours}</td>
                       <td />
                     </tr>
                   </tfoot>
