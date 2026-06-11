@@ -142,16 +142,18 @@ const LabeledSelect = ({
 };
 
 // Section card component
-const SectionCard = ({ 
-  icon, 
-  title, 
+const SectionCard = ({
+  icon,
+  title,
   children,
-  badge
-}: { 
-  icon: React.ReactNode; 
-  title: string; 
+  badge,
+  headerRight,
+}: {
+  icon: React.ReactNode;
+  title: string;
   children: React.ReactNode;
   badge?: string;
+  headerRight?: React.ReactNode;
 }) => (
   <div className="bg-card rounded-lg shadow-sm p-6 border border-border">
     <div className="flex items-center gap-2 mb-5">
@@ -160,6 +162,7 @@ const SectionCard = ({
       {badge && (
         <span className="text-xs px-2 py-0.5 bg-muted text-muted-foreground rounded-full">{badge}</span>
       )}
+      {headerRight && <div className="ml-auto">{headerRight}</div>}
     </div>
     {children}
   </div>
@@ -250,61 +253,136 @@ interface TeamMember {
   timeAllocation: string;
 }
 
+type PendingRow =
+  | { mode: 'add'; draft: TeamMember }
+  | { mode: 'edit'; originalId: string; draft: TeamMember };
+
 function calcBudgetedCost(hourlyRate: string, timeAllocation: string) {
   const rate = parseFloat(hourlyRate) || 0;
   const alloc = parseFloat(timeAllocation) || 0;
-  return (rate * alloc).toFixed(2);
+  return (rate * (alloc / 100)).toFixed(2);
 }
 
-const TeamMemberRow = ({
+function calcBudgetedHours(timeAllocation: string) {
+  return ((parseFloat(timeAllocation) || 0) / 100).toFixed(2);
+}
+
+const MOCK_TEAM_MEMBERS = [
+  { name: "Kaushal Bhagat",  email: "kaushalb@countable.co",  title: "Manager",       hourlyRate: "100.00" },
+  { name: "Atin Gupta",      email: "atin@countable.co",       title: "Partner",       hourlyRate: "200.00" },
+  { name: "Michael Torres",  email: "michaelt@countable.co",   title: "Senior Auditor",hourlyRate: "85.00"  },
+  { name: "Sarah Chen",      email: "sarahc@countable.co",     title: "Staff Auditor", hourlyRate: "65.00"  },
+  { name: "Jane DEF",        email: "John_DEF@email.com",      title: "Associate",     hourlyRate: "25.00"  },
+];
+
+const TeamMemberViewRow = ({
   member,
-  roleOptions,
-  onChange,
+  checked,
+  onCheck,
+  onEdit,
   onDelete,
 }: {
   member: TeamMember;
-  roleOptions: string[];
-  onChange: (updated: TeamMember) => void;
+  checked: boolean;
+  onCheck: () => void;
+  onEdit: () => void;
   onDelete: () => void;
+}) => (
+  <tr className="hover:bg-muted/30 transition-colors group border-b border-border">
+    <td className="py-2.5 px-3 w-8">
+      <Checkbox checked={checked} onCheckedChange={onCheck} />
+    </td>
+    <td className="py-2.5 px-3 text-sm text-foreground whitespace-nowrap">{member.role}</td>
+    <td className="py-2.5 px-3 text-sm font-medium text-foreground whitespace-nowrap">{member.name}</td>
+    <td className="py-2.5 px-3 text-sm text-muted-foreground">{member.email}</td>
+    <td className="py-2.5 px-3 text-sm text-muted-foreground whitespace-nowrap">{member.title}</td>
+    <td className="py-2.5 px-3 text-sm text-right text-foreground">{parseFloat(member.hourlyRate || "0").toFixed(2)}</td>
+    <td className="py-2.5 px-3 text-sm text-right text-foreground">{member.timeAllocation}</td>
+    <td className="py-2.5 px-3 text-sm text-right text-foreground">{calcBudgetedCost(member.hourlyRate, member.timeAllocation)}</td>
+    <td className="py-2.5 px-3 text-sm text-right text-foreground">{calcBudgetedHours(member.timeAllocation)}</td>
+    <td className="py-2.5 px-3 w-16">
+      <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+        <button type="button" onClick={onEdit} className="p-1 rounded hover:bg-primary/10 text-primary transition-colors">
+          <Pencil className="h-3.5 w-3.5" />
+        </button>
+        <button type="button" onClick={onDelete} className="p-1 rounded hover:bg-destructive/10 text-destructive transition-colors">
+          <Trash2 className="h-3.5 w-3.5" />
+        </button>
+      </div>
+    </td>
+  </tr>
+);
+
+const TeamMemberEditRow = ({
+  draft,
+  onChangeDraft,
+  onConfirm,
+  onCancel,
+  roleOptions,
+}: {
+  draft: TeamMember;
+  onChangeDraft: (d: TeamMember) => void;
+  onConfirm: () => void;
+  onCancel: () => void;
+  roleOptions: string[];
 }) => {
-  const inlineInput = (field: keyof TeamMember, align = "left") => (
-    <input
-      value={member[field] as string}
-      onChange={e => onChange({ ...member, [field]: e.target.value })}
-      className={`w-full min-w-[80px] h-7 px-2 text-xs rounded border border-transparent hover:border-border focus:border-primary bg-transparent outline-none text-${align}`}
-    />
-  );
+  const handleMemberSelect = (name: string) => {
+    const found = MOCK_TEAM_MEMBERS.find(m => m.name === name);
+    onChangeDraft({ ...draft, name, email: found?.email ?? "", title: found?.title ?? "", hourlyRate: found?.hourlyRate ?? draft.hourlyRate });
+  };
   return (
-    <tr className="hover:bg-muted/30 transition-colors group border-b border-border">
-      <td className="py-2 px-3"><Checkbox /></td>
-      <td className="py-2 px-3 min-w-[160px]">
+    <tr className="bg-primary/[0.03] dark:bg-primary/[0.06] border-b border-primary/20">
+      <td className="py-2 px-3 w-8"><Checkbox /></td>
+      <td className="py-2 px-3 min-w-[140px]">
         <div className="relative">
-          <select
-            value={member.role}
-            onChange={e => onChange({ ...member, role: e.target.value })}
-            className="w-full h-7 pl-2 pr-6 text-xs rounded border border-transparent hover:border-border focus:border-primary bg-transparent outline-none appearance-none cursor-pointer"
-          >
-            <option value="">Select role…</option>
+          <select value={draft.role} onChange={e => onChangeDraft({ ...draft, role: e.target.value })}
+            className="w-full h-8 pl-2 pr-6 text-sm rounded-md border border-border bg-background outline-none appearance-none cursor-pointer focus:border-primary">
             {roleOptions.map(r => <option key={r} value={r}>{r}</option>)}
           </select>
-          <ChevronDown className="absolute right-1 top-1/2 -translate-y-1/2 h-3 w-3 text-muted-foreground pointer-events-none" />
+          <ChevronDown className="absolute right-2 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground pointer-events-none" />
         </div>
       </td>
-      <td className="py-2 px-3 min-w-[130px]">{inlineInput("name")}</td>
-      <td className="py-2 px-3 min-w-[160px]">{inlineInput("email")}</td>
-      <td className="py-2 px-3 min-w-[120px]">{inlineInput("title")}</td>
-      <td className="py-2 px-3 min-w-[90px]">{inlineInput("hourlyRate", "right")}</td>
-      <td className="py-2 px-3 min-w-[90px]">{inlineInput("timeAllocation", "right")}</td>
-      <td className="py-2 px-3 text-xs text-right text-foreground min-w-[100px]">
-        {calcBudgetedCost(member.hourlyRate, member.timeAllocation)}
+      <td className="py-2 px-3 min-w-[180px]">
+        <div className="relative">
+          <select value={draft.name} onChange={e => handleMemberSelect(e.target.value)}
+            className="w-full h-8 pl-2 pr-6 text-sm rounded-md border border-border bg-background outline-none appearance-none cursor-pointer focus:border-primary">
+            <option value="">Select an option</option>
+            {MOCK_TEAM_MEMBERS.map(m => (
+              <option key={m.name} value={m.name} title={m.email}>{m.name}</option>
+            ))}
+          </select>
+          <ChevronDown className="absolute right-2 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground pointer-events-none" />
+        </div>
       </td>
-      <td className="py-2 px-3">
-        <button
-          onClick={onDelete}
-          className="p-1 hover:bg-destructive/10 rounded opacity-40 group-hover:opacity-100 transition-opacity"
-        >
-          <Trash2 className="h-3.5 w-3.5 text-destructive" />
-        </button>
+      <td className="py-2 px-3 text-sm text-muted-foreground max-w-[150px] truncate">{draft.email}</td>
+      <td className="py-2 px-3 text-sm text-muted-foreground whitespace-nowrap">{draft.title}</td>
+      <td className="py-2 px-3 min-w-[100px]">
+        <input type="number" value={draft.hourlyRate} min="0" step="0.01"
+          onChange={e => onChangeDraft({ ...draft, hourlyRate: e.target.value })}
+          className="w-full h-8 px-2 text-sm text-right rounded-md border border-border bg-background outline-none focus:border-primary" />
+      </td>
+      <td className="py-2 px-3 min-w-[100px]">
+        <input type="number" value={draft.timeAllocation} min="0" max="100"
+          onChange={e => onChangeDraft({ ...draft, timeAllocation: e.target.value })}
+          className="w-full h-8 px-2 text-sm text-right rounded-md border border-border bg-background outline-none focus:border-primary" />
+      </td>
+      <td className="py-2 px-3 text-sm text-right text-muted-foreground min-w-[100px]">
+        {calcBudgetedCost(draft.hourlyRate, draft.timeAllocation)}
+      </td>
+      <td className="py-2 px-3 text-sm text-right text-muted-foreground min-w-[80px]">
+        {calcBudgetedHours(draft.timeAllocation)}
+      </td>
+      <td className="py-2 px-3 w-16">
+        <div className="flex items-center gap-1">
+          <button type="button" onClick={onConfirm}
+            className="p-1 rounded hover:bg-green-100 dark:hover:bg-green-950/30 text-green-600 dark:text-green-400 transition-colors">
+            <Check className="h-4 w-4" />
+          </button>
+          <button type="button" onClick={onCancel}
+            className="p-1 rounded hover:bg-destructive/10 text-destructive transition-colors">
+            <X className="h-4 w-4" />
+          </button>
+        </div>
       </td>
     </tr>
   );
@@ -388,19 +466,50 @@ export default function CreateEngagement() {
       return next;
     });
 
-  // Team members — fully dynamic
-  const [teamMembers, setTeamMembers] = useState<TeamMember[]>([
-    { id: uid(), role: "Preparer", name: "Jane DEF", email: "John_DEF@email.com", title: "", hourlyRate: "25.00", timeAllocation: "50" },
-  ]);
-  const addTeamMember = () =>
-    setTeamMembers(prev => [...prev, { id: uid(), role: "", name: "", email: "", title: "", hourlyRate: "0.00", timeAllocation: "0" }]);
-  const updateMember = (updated: TeamMember) =>
-    setTeamMembers(prev => prev.map(m => m.id === updated.id ? updated : m));
-  const deleteMember = (id: string) =>
-    setTeamMembers(prev => prev.filter(m => m.id !== id));
+  // Team members
+  const [teamMembers, setTeamMembers] = useState<TeamMember[]>([]);
+  const [pendingRow, setPendingRow] = useState<PendingRow | null>(null);
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
+  const [teamSearch, setTeamSearch] = useState("");
 
   const roleOptions = isAudit ? AUDIT_ROLES : ["Partner", "Manager", "Senior", "Staff / Assistant", "Preparer"];
-  const [teamSearch, setTeamSearch] = useState("");
+
+  const startAddMember = () => {
+    if (pendingRow) return;
+    setPendingRow({ mode: 'add', draft: { id: uid(), role: roleOptions[0] ?? "", name: "", email: "", title: "", hourlyRate: "0.00", timeAllocation: "" } });
+  };
+  const startEditMember = (member: TeamMember) => {
+    if (pendingRow) return;
+    setPendingRow({ mode: 'edit', originalId: member.id, draft: { ...member } });
+  };
+  const confirmPendingRow = () => {
+    if (!pendingRow) return;
+    if (pendingRow.mode === 'add') {
+      setTeamMembers(prev => [...prev, pendingRow.draft]);
+    } else {
+      setTeamMembers(prev => prev.map(m => m.id === pendingRow.originalId ? pendingRow.draft : m));
+    }
+    setPendingRow(null);
+  };
+  const cancelPendingRow = () => setPendingRow(null);
+  const deleteMember = (id: string) => {
+    setTeamMembers(prev => prev.filter(m => m.id !== id));
+    setSelectedIds(prev => { const n = new Set(prev); n.delete(id); return n; });
+  };
+  const toggleSelect = (id: string) =>
+    setSelectedIds(prev => { const n = new Set(prev); n.has(id) ? n.delete(id) : n.add(id); return n; });
+  const deleteSelected = () => {
+    setTeamMembers(prev => prev.filter(m => !selectedIds.has(m.id)));
+    setSelectedIds(new Set());
+  };
+
+  const filteredMembers = teamMembers.filter(m =>
+    !teamSearch || m.name.toLowerCase().includes(teamSearch.toLowerCase()) || m.role.toLowerCase().includes(teamSearch.toLowerCase())
+  );
+  const avgRate = teamMembers.length ? (teamMembers.reduce((s, m) => s + (parseFloat(m.hourlyRate) || 0), 0) / teamMembers.length).toFixed(2) : "0.00";
+  const avgAlloc = teamMembers.length ? (teamMembers.reduce((s, m) => s + (parseFloat(m.timeAllocation) || 0), 0) / teamMembers.length).toFixed(0) : "0";
+  const avgCost = teamMembers.length ? (teamMembers.reduce((s, m) => s + parseFloat(calcBudgetedCost(m.hourlyRate, m.timeAllocation)), 0) / teamMembers.length).toFixed(2) : "0.00";
+  const avgHours = teamMembers.length ? (teamMembers.reduce((s, m) => s + parseFloat(calcBudgetedHours(m.timeAllocation)), 0) / teamMembers.length).toFixed(2) : "0.00";
 
   const engagementTypeOptions = [
     { value: "Audit (AUD)", label: "Audit (AUD)" },
@@ -703,86 +812,119 @@ export default function CreateEngagement() {
               </div>
             </SectionCard>
 
-            {/* Assigned Team / Roles Section */}
+            {/* Assigned Team Section */}
             <SectionCard
               icon={<Users className="h-5 w-5" />}
-              title={isAudit ? "Engagement Team & Roles" : "Assigned team"}
-              badge={`${teamMembers.length} member${teamMembers.length !== 1 ? "s" : ""}`}
-            >
-              {isAudit && (
-                <p className="text-xs text-muted-foreground mb-4">
-                  Add all engagement team members and assign their roles. Audit roles include partner, manager, senior, EQCR, tax reviewer, and subject matter experts. You can add as many members as required.
-                </p>
-              )}
-
-              <div className="flex items-center justify-between gap-3 mb-3">
-                <div className="relative">
-                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                  <input
-                    type="text"
-                    placeholder="Search members…"
-                    value={teamSearch}
-                    onChange={(e) => setTeamSearch(e.target.value)}
-                    className="input-double-border pl-9 pr-3 h-8 text-sm bg-card border border-border rounded-[10px] outline-none w-44 text-foreground placeholder:text-muted-foreground"
-                  />
+              title="Assigned team"
+              badge={`${teamMembers.length} User`}
+              headerRight={
+                <div className="flex items-center gap-2">
+                  <div className="relative">
+                    <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
+                    <input
+                      type="text"
+                      placeholder="Search"
+                      value={teamSearch}
+                      onChange={(e) => setTeamSearch(e.target.value)}
+                      className="pl-8 pr-3 h-8 text-sm bg-background border border-border rounded-md outline-none w-36 text-foreground placeholder:text-muted-foreground focus:border-primary transition-colors"
+                    />
+                  </div>
+                  <button
+                    type="button"
+                    onClick={deleteSelected}
+                    disabled={selectedIds.size === 0}
+                    className="inline-flex items-center gap-1.5 h-8 px-3 text-sm rounded-md border border-border bg-background text-foreground hover:bg-muted disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+                  >
+                    <Trash2 className="h-3.5 w-3.5" />
+                    Delete
+                  </button>
                 </div>
-                <Button onClick={addTeamMember} className="h-8 px-3 text-sm">
-                  <Plus className="h-3.5 w-3.5 mr-1" />
-                  Add {isAudit ? "Role" : "Member"}
-                </Button>
-              </div>
-
+              }
+            >
               <div className="overflow-x-auto rounded-lg border border-border">
                 <table className="w-full text-sm">
                   <thead>
-                    <tr className="bg-muted">
-                      <th className="py-2.5 px-3 text-left w-8"><Checkbox /></th>
-                      <th className="py-2.5 px-3 text-left text-xs font-semibold text-muted-foreground uppercase tracking-wide whitespace-nowrap">
-                        Role <span className="text-destructive normal-case font-normal">*</span>
+                    <tr className="bg-muted/60 border-b border-border">
+                      <th className="py-2.5 px-3 text-left w-8">
+                        <Checkbox
+                          checked={teamMembers.length > 0 && selectedIds.size === teamMembers.length}
+                          onCheckedChange={(v) => setSelectedIds(v ? new Set(teamMembers.map(m => m.id)) : new Set())}
+                        />
                       </th>
-                      <th className="py-2.5 px-3 text-left text-xs font-semibold text-muted-foreground uppercase tracking-wide whitespace-nowrap">Name</th>
-                      <th className="py-2.5 px-3 text-left text-xs font-semibold text-muted-foreground uppercase tracking-wide">Email</th>
-                      <th className="py-2.5 px-3 text-left text-xs font-semibold text-muted-foreground uppercase tracking-wide">Title</th>
-                      <th className="py-2.5 px-3 text-right text-xs font-semibold text-muted-foreground uppercase tracking-wide whitespace-nowrap">Rate ($/hr)</th>
-                      <th className="py-2.5 px-3 text-right text-xs font-semibold text-muted-foreground uppercase tracking-wide whitespace-nowrap">Alloc (%)</th>
-                      <th className="py-2.5 px-3 text-right text-xs font-semibold text-muted-foreground uppercase tracking-wide whitespace-nowrap">Budgeted Cost ($)</th>
-                      <th className="py-2.5 px-3 w-8"></th>
+                      <th className="py-2.5 px-3 text-left text-xs font-semibold text-muted-foreground whitespace-nowrap">
+                        Role<span className="text-destructive ml-0.5">*</span>
+                      </th>
+                      <th className="py-2.5 px-3 text-left text-xs font-semibold text-muted-foreground whitespace-nowrap">
+                        Team member<span className="text-destructive ml-0.5">*</span>
+                      </th>
+                      <th className="py-2.5 px-3 text-left text-xs font-semibold text-muted-foreground">Email</th>
+                      <th className="py-2.5 px-3 text-left text-xs font-semibold text-muted-foreground">Title</th>
+                      <th className="py-2.5 px-3 text-right text-xs font-semibold text-muted-foreground whitespace-nowrap">
+                        Hourly rate ($)<span className="text-destructive ml-0.5">*</span>
+                      </th>
+                      <th className="py-2.5 px-3 text-right text-xs font-semibold text-muted-foreground whitespace-nowrap">
+                        Time Allocation(%)<span className="text-destructive ml-0.5">*</span>
+                      </th>
+                      <th className="py-2.5 px-3 text-right text-xs font-semibold text-muted-foreground whitespace-nowrap">Budgeted cost ($)</th>
+                      <th className="py-2.5 px-3 text-right text-xs font-semibold text-muted-foreground whitespace-nowrap">Budgeted hours (H)</th>
+                      <th className="py-2.5 px-3 text-left text-xs font-semibold text-muted-foreground">Actions</th>
                     </tr>
                   </thead>
                   <tbody>
-                    {teamMembers
-                      .filter(m =>
-                        !teamSearch ||
-                        m.name.toLowerCase().includes(teamSearch.toLowerCase()) ||
-                        m.role.toLowerCase().includes(teamSearch.toLowerCase())
-                      )
-                      .map(member => (
-                        <TeamMemberRow
+                    {filteredMembers.map(member =>
+                      pendingRow?.mode === 'edit' && pendingRow.originalId === member.id ? (
+                        <TeamMemberEditRow
+                          key={member.id}
+                          draft={pendingRow.draft}
+                          onChangeDraft={d => setPendingRow({ mode: 'edit', originalId: member.id, draft: d })}
+                          onConfirm={confirmPendingRow}
+                          onCancel={cancelPendingRow}
+                          roleOptions={roleOptions}
+                        />
+                      ) : (
+                        <TeamMemberViewRow
                           key={member.id}
                           member={member}
-                          roleOptions={roleOptions}
-                          onChange={updateMember}
+                          checked={selectedIds.has(member.id)}
+                          onCheck={() => toggleSelect(member.id)}
+                          onEdit={() => startEditMember(member)}
                           onDelete={() => deleteMember(member.id)}
                         />
-                      ))}
-                    {teamMembers.length === 0 && (
-                      <tr>
-                        <td colSpan={9} className="py-8 text-center text-sm text-muted-foreground">
-                          No team members yet — click "Add {isAudit ? "Role" : "Member"}" to get started.
-                        </td>
-                      </tr>
+                      )
+                    )}
+                    {pendingRow?.mode === 'add' && (
+                      <TeamMemberEditRow
+                        draft={pendingRow.draft}
+                        onChangeDraft={d => setPendingRow({ mode: 'add', draft: d })}
+                        onConfirm={confirmPendingRow}
+                        onCancel={cancelPendingRow}
+                        roleOptions={roleOptions}
+                      />
                     )}
                   </tbody>
                   <tfoot>
-                    <tr className="bg-muted/60 border-t border-border">
-                      <td colSpan={7} className="py-2.5 px-3 text-xs font-semibold text-muted-foreground uppercase tracking-wide text-right">Total Budgeted Cost</td>
-                      <td className="py-2.5 px-3 text-xs font-bold text-foreground text-right">
-                        ${teamMembers.reduce((sum, m) => sum + (parseFloat(m.hourlyRate) || 0) * (parseFloat(m.timeAllocation) || 0), 0).toFixed(2)}
-                      </td>
-                      <td></td>
+                    <tr className="bg-muted/40 border-t border-border">
+                      <td className="py-2.5 px-3" />
+                      <td colSpan={4} className="py-2.5 px-3 text-xs font-semibold text-foreground">Avg Engagement Rate</td>
+                      <td className="py-2.5 px-3 text-xs font-semibold text-foreground text-right">{avgRate}</td>
+                      <td className="py-2.5 px-3 text-xs font-semibold text-foreground text-right">{avgAlloc}</td>
+                      <td className="py-2.5 px-3 text-xs font-semibold text-foreground text-right">{avgCost}</td>
+                      <td className="py-2.5 px-3 text-xs font-semibold text-foreground text-right">{avgHours}</td>
+                      <td />
                     </tr>
                   </tfoot>
                 </table>
+              </div>
+              <div className="mt-3">
+                <button
+                  type="button"
+                  onClick={startAddMember}
+                  disabled={!!pendingRow}
+                  className="inline-flex items-center gap-1.5 h-8 px-4 text-sm font-medium rounded-md bg-[#0C2D55] text-white hover:bg-[#0a2447] disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+                >
+                  <Plus className="h-3.5 w-3.5" />
+                  Add member
+                </button>
               </div>
             </SectionCard>
           </div>
