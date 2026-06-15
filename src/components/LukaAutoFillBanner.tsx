@@ -52,6 +52,7 @@ export type AutoFillConfig = {
   query: string;
   label: string;
   sources: string[];
+  engagementLabel: string;
 };
 
 interface LukaAutoFillBannerProps {
@@ -120,7 +121,12 @@ export function LukaAutoFillBanner({ checklistKey, engagementId, checklistName, 
       {/* Action */}
       <div className="flex items-center gap-2">
         <button
-          onClick={() => onRunAutoFill({ query: buildQuery(), label, sources })}
+          onClick={() => onRunAutoFill({
+            query: buildQuery(),
+            label,
+            sources,
+            engagementLabel: [engagement?.client, engagementId].filter(Boolean).join(' · '),
+          })}
           className={cn(
             "inline-flex items-center gap-1.5 h-7 px-3 rounded-[8px] text-xs font-semibold text-white shadow-sm",
             "bg-gradient-to-br from-[#8649F1] to-[#2355A4] hover:opacity-90 transition-opacity"

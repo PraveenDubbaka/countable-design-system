@@ -573,8 +573,9 @@ export default function EngagementDetail() {
   const [showClipboardPrompt, setShowClipboardPrompt] = useState(false);
   const [lukaOpen, setLukaOpen] = useState(false);
   const [lukaQuery, setLukaQuery] = useState("");
-  const [lukaAutoFillConfig, setLukaAutoFillConfig] = useState<{ label: string; sources: string[] } | null>(null);
+  const [lukaAutoFillConfig, setLukaAutoFillConfig] = useState<{ label: string; sources: string[]; engagementLabel: string } | null>(null);
   const [isAutoFilling, setIsAutoFilling] = useState(false);
+  const [liveApplyingId, setLiveApplyingId] = useState<string | null>(null);
   const [lukaFillSummary, setLukaFillSummary] = useState<{
     filledCount: number;
     totalCount: number;
@@ -848,6 +849,7 @@ export default function EngagementDetail() {
     const fillNext = () => {
       if (i >= toFill.length) {
         handleChecklistUpdate(current);
+        setLiveApplyingId(null);
         setIsAutoFilling(false);
         setLukaFillSummary({
           filledCount: toFill.length,
@@ -862,26 +864,27 @@ export default function EngagementDetail() {
         return;
       }
 
-      const { sIdx, qIdx, answer } = toFill[i];
+      const { sIdx, qIdx, answer, q } = toFill[i];
+      setLiveApplyingId(q.id);
       current = {
         ...current,
         sections: current.sections.map((s, si) =>
           si !== sIdx ? s : {
             ...s,
-            questions: s.questions.map((q, qi) =>
-              qi !== qIdx ? q : { ...q, answer }
+            questions: s.questions.map((qq, qi) =>
+              qi !== qIdx ? qq : { ...qq, answer }
             ),
           }
         ),
       };
       setChecklist({ ...current });
-      const justFilledId = toFill[i].q.id;
+      const filledId = q.id;
       i++;
       window.requestAnimationFrame(() => {
-        document.querySelector(`[data-question-id="${justFilledId}"]`)
+        document.querySelector(`[data-question-id="${filledId}"]`)
           ?.scrollIntoView({ behavior: 'smooth', block: 'center' });
       });
-      autoFillRef.current = setTimeout(fillNext, 350);
+      autoFillRef.current = setTimeout(fillNext, 380);
     };
 
     toast('Luka is auto-filling your checklist…', { duration: 4000 });
@@ -890,6 +893,69 @@ export default function EngagementDetail() {
 
   const handleAutoFillConfirmed = () => {
     if (checklist) startAutoFill(checklist);
+  };
+
+  const handleAutoFillAll = () => {
+    const savedChecklists = readJsonFromLocalStorage<any[]>('savedChecklists', []);
+    if (!Array.isArray(savedChecklists) || savedChecklists.length === 0) return;
+    const eligible = savedChecklists.filter((c: any) => {
+      if (!c?.data?.sections) return false;
+      const firstQ = c.data.sections[0]?.questions?.[0];
+      return !(firstQ?.answerType === 'none' && !c.data.objective);
+    });
+    if (eligible.length === 0) return;
+
+    let idx = 0;
+    const fillOneChecklist = () => {
+      if (idx >= eligible.length) {
+        toast.success(`Luka filled all ${eligible.length} templates in this engagement`);
+        return;
+      }
+      const entry = eligible[idx];
+      const cl: Checklist = entry.data;
+      toast(`Filling: ${cl.title} (${idx + 1}/${eligible.length})`, { duration: 2000 });
+      idx++;
+
+      type FlatQ = { sIdx: number; qIdx: number; q: Question };
+      const allQ: FlatQ[] = [];
+      cl.sections.forEach((s, si) => {
+        s.questions.forEach((q, qi) => {
+          if (q.answerType !== 'none') allQ.push({ sIdx: si, qIdx: qi, q });
+        });
+      });
+
+      const cleared: Checklist = {
+        ...cl,
+        sections: cl.sections.map(s => ({ ...s, questions: s.questions.map(q => ({ ...q, answer: '' })) })),
+      };
+
+      const toFill: (FlatQ & { answer: string })[] = [];
+      let eIdx = 0;
+      allQ.forEach(({ sIdx, qIdx, q }) => {
+        const skip = q.answerType === 'long-answer' || q.answerType === 'follow-up' || q.answerType === 'file-upload' || eIdx % 5 === 4;
+        if (!skip) toFill.push({ sIdx, qIdx, q, answer: getMockAnswer(q, eIdx) });
+        eIdx++;
+      });
+
+      let current: Checklist = { ...cleared, sections: cleared.sections.map(s => ({ ...s, questions: [...s.questions] })) };
+      toFill.forEach(({ sIdx, qIdx, answer }) => {
+        current = {
+          ...current,
+          sections: current.sections.map((s, si) =>
+            si !== sIdx ? s : { ...s, questions: s.questions.map((q, qi) => qi !== qIdx ? q : { ...q, answer }) }
+          ),
+        };
+      });
+
+      const updated = savedChecklists.map((c: any) => c?.id === entry.id ? { ...c, data: current } : c);
+      writeJsonToLocalStorage('savedChecklists', updated);
+      if (entry.id) dispatchChecklistSync(entry.id, current);
+
+      setTimeout(fillOneChecklist, 600);
+    };
+
+    setLukaOpen(false);
+    fillOneChecklist();
   };
 
   const handleSave = () => {
@@ -1308,10 +1374,10 @@ export default function EngagementDetail() {
             <LukaAutoFillBanner
               checklistKey={checklistKey}
               engagementId={engagementId}
-              checklistName={checklist?.name}
-              onRunAutoFill={({ query, label, sources }) => {
+              checklistName={checklist?.title}
+              onRunAutoFill={({ query, label, sources, engagementLabel }) => {
                 setLukaQuery(query);
-                setLukaAutoFillConfig({ label, sources });
+                setLukaAutoFillConfig({ label, sources, engagementLabel });
                 setLukaOpen(true);
               }}
             />
@@ -1395,7 +1461,7 @@ export default function EngagementDetail() {
                       selectedQuestions={selectedQuestions}
                       onSelectionChange={setSelectedQuestions}
                       isEngagementMode={true}
-                      applyingQuestionId={clientResponses.applyingQuestionId}
+                      applyingQuestionId={liveApplyingId ?? clientResponses.applyingQuestionId}
                       objectiveExpanded={objectiveExpanded}
                       onToggleObjective={() => setObjectiveExpanded(prev => !prev)}
                     />
@@ -1533,8 +1599,10 @@ export default function EngagementDetail() {
       initialQuery={lukaQuery}
       autoFillMode={!!lukaAutoFillConfig}
       checklistLabel={lukaAutoFillConfig?.label}
+      engagementLabel={lukaAutoFillConfig?.engagementLabel}
       autoFillSources={lukaAutoFillConfig?.sources}
       onAutoFillConfirmed={handleAutoFillConfirmed}
+      onAutoFillAll={handleAutoFillAll}
       summaryMode={!!lukaFillSummary}
       fillSummary={lukaFillSummary ?? undefined}
     />

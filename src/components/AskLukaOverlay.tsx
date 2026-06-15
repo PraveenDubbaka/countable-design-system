@@ -24,8 +24,10 @@ interface AskLukaOverlayProps {
   initialQuery?: string;
   autoFillMode?: boolean;
   checklistLabel?: string;
+  engagementLabel?: string;
   autoFillSources?: string[];
   onAutoFillConfirmed?: () => void;
+  onAutoFillAll?: () => void;
   summaryMode?: boolean;
   fillSummary?: FillSummary;
 }
@@ -75,7 +77,7 @@ const RELATED_TEMPLATES = [
   "Audit Planning Memo",
 ];
 
-export function AskLukaOverlay({ open, onOpenChange, initialQuery, autoFillMode, checklistLabel, autoFillSources, onAutoFillConfirmed, summaryMode, fillSummary }: AskLukaOverlayProps) {
+export function AskLukaOverlay({ open, onOpenChange, initialQuery, autoFillMode, checklistLabel, engagementLabel, autoFillSources, onAutoFillConfirmed, onAutoFillAll, summaryMode, fillSummary }: AskLukaOverlayProps) {
   const [message, setMessage] = useState("");
   const [analysisPhase, setAnalysisPhase] = useState<"idle" | "analyzing" | "ready">("idle");
 
@@ -589,8 +591,11 @@ export function AskLukaOverlay({ open, onOpenChange, initialQuery, autoFillMode,
                         <div className="mb-5 flex items-center justify-center w-[52px] h-[52px] rounded-full bg-gradient-to-br from-[#8649F1] to-[#2355A4]">
                           <LukaIcon size={22} />
                         </div>
+                        {engagementLabel && (
+                          <p className="text-xs font-medium text-muted-foreground mb-1 text-center tracking-wide uppercase">{engagementLabel}</p>
+                        )}
                         <h2 className="text-lg font-semibold text-foreground mb-1 text-center">
-                          Ready to auto-fill your {checklistLabel || "checklist"}
+                          {checklistLabel || "checklist"}
                         </h2>
                         <p className="text-sm text-muted-foreground text-center mb-5 max-w-[340px]">
                           Luka analyzed {(autoFillSources ?? []).length} connected source{(autoFillSources ?? []).length !== 1 ? "s" : ""} and found responses for <span className="font-semibold text-foreground">{Math.min(90, 60 + (autoFillSources ?? []).length * 10)}%</span> of fields.
@@ -618,17 +623,26 @@ export function AskLukaOverlay({ open, onOpenChange, initialQuery, autoFillMode,
                           </div>
                         </div>
 
-                        {/* CTA */}
-                        <button
-                          onClick={() => { onAutoFillConfirmed?.(); onOpenChange(false); }}
-                          className="inline-flex items-center gap-2 h-10 px-5 rounded-[10px] text-sm font-semibold text-white bg-gradient-to-br from-[#8649F1] to-[#2355A4] hover:opacity-90 transition-opacity shadow-md"
-                        >
-                          <Zap className="h-4 w-4 text-white fill-white" strokeWidth={0} />
-                          Auto-fill this checklist
-                        </button>
+                        {/* CTAs */}
+                        <div className="flex flex-col items-center gap-2.5 w-full max-w-[320px]">
+                          <button
+                            onClick={() => { onAutoFillConfirmed?.(); onOpenChange(false); }}
+                            className="w-full inline-flex items-center justify-center gap-2 h-10 px-5 rounded-[10px] text-sm font-semibold text-white bg-gradient-to-br from-[#8649F1] to-[#2355A4] hover:opacity-90 transition-opacity shadow-md"
+                          >
+                            <Zap className="h-4 w-4 text-white fill-white" strokeWidth={0} />
+                            Auto-fill this checklist
+                          </button>
+                          <button
+                            onClick={() => { onAutoFillAll?.(); }}
+                            className="w-full inline-flex items-center justify-center gap-2 h-10 px-5 rounded-[10px] text-sm font-semibold border border-primary/40 text-primary hover:bg-primary/5 transition-colors"
+                          >
+                            <Zap className="h-4 w-4" />
+                            Fill all templates in this engagement
+                          </button>
+                        </div>
 
                         <p className="text-xs text-muted-foreground mt-3 text-center max-w-[300px]">
-                          Luka will fill each field one by one with citations. Items requiring judgment stay flagged.
+                          Luka fills each field one by one with citations. Items requiring judgment stay flagged.
                         </p>
                       </>
                     )}
