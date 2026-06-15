@@ -19,7 +19,7 @@ import { AuditMgmtRequestsWorksheet } from "@/components/AuditMgmtRequestsWorksh
 import { AuditSAEWorksheet } from "@/components/AuditSAEWorksheet";
 import { AuditOASWorksheet } from "@/components/AuditOASWorksheet";
 import { LukaAutoFillBanner } from "@/components/LukaAutoFillBanner";
-import { AskLukaOverlay } from "@/components/AskLukaOverlay";
+import { AskLukaOverlay, AllTemplateSummary } from "@/components/AskLukaOverlay";
 import { FloatingActionBar } from "@/components/FloatingActionBar";
 import { EngagementRightPanel } from "@/components/EngagementRightPanel";
 import { Checklist, Question } from "@/types/checklist";
@@ -581,6 +581,11 @@ export default function EngagementDetail() {
     totalCount: number;
     skippedItems: Array<{ sectionTitle: string; questionText: string }>;
   } | null>(null);
+  const [lukaAllTemplateSummary, setLukaAllTemplateSummary] = useState<{
+    templates: Array<{ name: string; filledCount: number; totalCount: number }>;
+    totalFilled: number;
+    totalFields: number;
+  } | null>(null);
   const autoFillRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // Client responses hook
@@ -794,7 +799,10 @@ export default function EngagementDetail() {
     }
   };
 
-  const startAutoFill = (target: Checklist) => {
+  const startAutoFill = (
+    target: Checklist,
+    afterDone?: (result: { filledCount: number; totalCount: number; skippedItems: Array<{ sectionTitle: string; questionText: string }> }) => void
+  ) => {
     if (!target || isAutoFilling) return;
 
     type FlatQ = { sIdx: number; qIdx: number; q: Question; sectionTitle: string };
@@ -851,16 +859,21 @@ export default function EngagementDetail() {
         handleChecklistUpdate(current);
         setLiveApplyingId(null);
         setIsAutoFilling(false);
-        setLukaFillSummary({
+        const result = {
           filledCount: toFill.length,
           totalCount: allQ.length,
           skippedItems: skipped.map(({ q, sectionTitle }) => ({
             sectionTitle,
             questionText: q.text.replace(/<[^>]+>/g, '').trim().slice(0, 90),
           })),
-        });
-        setLukaAutoFillConfig(null);
-        setLukaOpen(true);
+        };
+        if (afterDone) {
+          afterDone(result);
+        } else {
+          setLukaFillSummary(result);
+          setLukaAutoFillConfig(null);
+          setLukaOpen(true);
+        }
         return;
       }
 
@@ -896,66 +909,93 @@ export default function EngagementDetail() {
   };
 
   const handleAutoFillAll = () => {
-    const savedChecklists = readJsonFromLocalStorage<any[]>('savedChecklists', []);
-    if (!Array.isArray(savedChecklists) || savedChecklists.length === 0) return;
-    const eligible = savedChecklists.filter((c: any) => {
-      if (!c?.data?.sections) return false;
-      const firstQ = c.data.sections[0]?.questions?.[0];
-      return !(firstQ?.answerType === 'none' && !c.data.objective);
-    });
-    if (eligible.length === 0) return;
+    if (!checklist || isAutoFilling) return;
+    setLukaOpen(false);
 
-    let idx = 0;
-    const fillOneChecklist = () => {
-      if (idx >= eligible.length) {
-        toast.success(`Luka filled all ${eligible.length} templates in this engagement`);
-        return;
-      }
-      const entry = eligible[idx];
-      const cl: Checklist = entry.data;
-      toast(`Filling: ${cl.title} (${idx + 1}/${eligible.length})`, { duration: 2000 });
-      idx++;
+    const firstTitle = checklist.title;
+    const allResults: Array<{ name: string; filledCount: number; totalCount: number }> = [];
 
-      type FlatQ = { sIdx: number; qIdx: number; q: Question };
-      const allQ: FlatQ[] = [];
-      cl.sections.forEach((s, si) => {
-        s.questions.forEach((q, qi) => {
-          if (q.answerType !== 'none') allQ.push({ sIdx: si, qIdx: qi, q });
-        });
+    const showAllSummary = (results: typeof allResults) => {
+      setLukaAllTemplateSummary({
+        templates: results,
+        totalFilled: results.reduce((s, t) => s + t.filledCount, 0),
+        totalFields: results.reduce((s, t) => s + t.totalCount, 0),
       });
-
-      const cleared: Checklist = {
-        ...cl,
-        sections: cl.sections.map(s => ({ ...s, questions: s.questions.map(q => ({ ...q, answer: '' })) })),
-      };
-
-      const toFill: (FlatQ & { answer: string })[] = [];
-      let eIdx = 0;
-      allQ.forEach(({ sIdx, qIdx, q }) => {
-        const skip = q.answerType === 'long-answer' || q.answerType === 'follow-up' || q.answerType === 'file-upload' || eIdx % 5 === 4;
-        if (!skip) toFill.push({ sIdx, qIdx, q, answer: getMockAnswer(q, eIdx) });
-        eIdx++;
-      });
-
-      let current: Checklist = { ...cleared, sections: cleared.sections.map(s => ({ ...s, questions: [...s.questions] })) };
-      toFill.forEach(({ sIdx, qIdx, answer }) => {
-        current = {
-          ...current,
-          sections: current.sections.map((s, si) =>
-            si !== sIdx ? s : { ...s, questions: s.questions.map((q, qi) => qi !== qIdx ? q : { ...q, answer }) }
-          ),
-        };
-      });
-
-      const updated = savedChecklists.map((c: any) => c?.id === entry.id ? { ...c, data: current } : c);
-      writeJsonToLocalStorage('savedChecklists', updated);
-      if (entry.id) dispatchChecklistSync(entry.id, current);
-
-      setTimeout(fillOneChecklist, 600);
+      setLukaOpen(true);
     };
 
-    setLukaOpen(false);
-    fillOneChecklist();
+    // Determine engagement-type prefix so we only fill relevant templates
+    const engPrefix = engagementId?.startsWith('AUD-US-')
+      ? 'default-us-audit-'
+      : engagementId?.startsWith('AUD-')
+      ? 'default-audit-'
+      : engagementId?.startsWith('COM-')
+      ? 'default-compilation-'
+      : engagementId?.startsWith('T2-')
+      ? 'default-t2-'
+      : null;
+
+    startAutoFill(checklist, (firstResult) => {
+      allResults.push({ name: firstTitle, filledCount: firstResult.filledCount, totalCount: firstResult.totalCount });
+
+      const savedChecklists = readJsonFromLocalStorage<any[]>('savedChecklists', []);
+      if (!Array.isArray(savedChecklists)) { showAllSummary(allResults); return; }
+
+      const checklistId = currentChecklistId ?? savedChecklists[0]?.id;
+      const remaining = savedChecklists.filter((c: any) => {
+        if (!c?.data?.sections) return false;
+        if (c?.id === checklistId) return false;
+        // Only fill templates relevant to this engagement type
+        if (engPrefix && !String(c?.id ?? '').startsWith(engPrefix)) return false;
+        const firstQ = c.data.sections[0]?.questions?.[0];
+        return !(firstQ?.answerType === 'none' && !c.data.objective);
+      }).slice(0, 12); // Cap at 12 so completion takes ~2s not 50s
+
+      if (remaining.length === 0) { showAllSummary(allResults); return; }
+
+      toast(`Luka filling ${remaining.length} more template${remaining.length !== 1 ? 's' : ''}…`, { duration: 3000 });
+
+      let ridx = 0;
+      const fillOneRemaining = () => {
+        if (ridx >= remaining.length) { showAllSummary(allResults); return; }
+        const entry = remaining[ridx];
+        const cl: Checklist = entry.data;
+        toast(`Auto-filling: ${cl.title}`, { duration: 1000 });
+        ridx++;
+
+        type RFlatQ = { sIdx: number; qIdx: number; q: Question };
+        const rAllQ: RFlatQ[] = [];
+        cl.sections.forEach((s, si) => {
+          s.questions.forEach((q, qi) => {
+            if (q.answerType !== 'none') rAllQ.push({ sIdx: si, qIdx: qi, q });
+          });
+        });
+
+        const rToFill: (RFlatQ & { answer: string })[] = [];
+        let rIdx = 0;
+        rAllQ.forEach(({ sIdx, qIdx, q }) => {
+          const skip = q.answerType === 'long-answer' || q.answerType === 'follow-up' || q.answerType === 'file-upload' || rIdx % 5 === 4;
+          if (!skip) rToFill.push({ sIdx, qIdx, q, answer: getMockAnswer(q, rIdx) });
+          rIdx++;
+        });
+
+        const rCleared: Checklist = { ...cl, sections: cl.sections.map(s => ({ ...s, questions: s.questions.map(q => ({ ...q, answer: '' })) })) };
+        let rCurrent = { ...rCleared, sections: rCleared.sections.map(s => ({ ...s, questions: [...s.questions] })) };
+        rToFill.forEach(({ sIdx, qIdx, answer }) => {
+          rCurrent = { ...rCurrent, sections: rCurrent.sections.map((s, si) => si !== sIdx ? s : { ...s, questions: s.questions.map((q, qi) => qi !== qIdx ? q : { ...q, answer }) }) };
+        });
+
+        const latest = readJsonFromLocalStorage<any[]>('savedChecklists', []);
+        const rUpdated = latest.map((c: any) => c?.id === entry.id ? { ...c, data: rCurrent } : c);
+        writeJsonToLocalStorage('savedChecklists', rUpdated);
+        // Do NOT dispatchChecklistSync here — that would update the current view's checklist state
+
+        allResults.push({ name: cl.title, filledCount: rToFill.length, totalCount: rAllQ.length });
+        setTimeout(fillOneRemaining, 180); // 180ms per template keeps total ~2s for 12 templates
+      };
+
+      fillOneRemaining();
+    });
   };
 
   const handleSave = () => {
@@ -1595,7 +1635,7 @@ export default function EngagementDetail() {
     </Layout>
     <AskLukaOverlay
       open={lukaOpen}
-      onOpenChange={(o) => { setLukaOpen(o); if (!o) { setLukaAutoFillConfig(null); setLukaFillSummary(null); } }}
+      onOpenChange={(o) => { setLukaOpen(o); if (!o) { setLukaAutoFillConfig(null); setLukaFillSummary(null); setLukaAllTemplateSummary(null); } }}
       initialQuery={lukaQuery}
       autoFillMode={!!lukaAutoFillConfig}
       checklistLabel={lukaAutoFillConfig?.label}
@@ -1605,6 +1645,7 @@ export default function EngagementDetail() {
       onAutoFillAll={handleAutoFillAll}
       summaryMode={!!lukaFillSummary}
       fillSummary={lukaFillSummary ?? undefined}
+      allTemplateSummary={lukaAllTemplateSummary ?? undefined}
     />
   </>;
 }

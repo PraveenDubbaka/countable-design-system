@@ -18,6 +18,12 @@ interface FillSummary {
   skippedItems: Array<{ sectionTitle: string; questionText: string }>;
 }
 
+export interface AllTemplateSummary {
+  templates: Array<{ name: string; filledCount: number; totalCount: number }>;
+  totalFilled: number;
+  totalFields: number;
+}
+
 interface AskLukaOverlayProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
@@ -30,6 +36,7 @@ interface AskLukaOverlayProps {
   onAutoFillAll?: () => void;
   summaryMode?: boolean;
   fillSummary?: FillSummary;
+  allTemplateSummary?: AllTemplateSummary;
 }
 
 const statusColors = ["bg-green-500", "bg-green-500", "bg-amber-500", "bg-green-500", "bg-green-500", "bg-green-500", "bg-purple-500", "bg-purple-500", "bg-amber-500", "bg-green-500", "bg-purple-500"];
@@ -77,7 +84,7 @@ const RELATED_TEMPLATES = [
   "Audit Planning Memo",
 ];
 
-export function AskLukaOverlay({ open, onOpenChange, initialQuery, autoFillMode, checklistLabel, engagementLabel, autoFillSources, onAutoFillConfirmed, onAutoFillAll, summaryMode, fillSummary }: AskLukaOverlayProps) {
+export function AskLukaOverlay({ open, onOpenChange, initialQuery, autoFillMode, checklistLabel, engagementLabel, autoFillSources, onAutoFillConfirmed, onAutoFillAll, summaryMode, fillSummary, allTemplateSummary }: AskLukaOverlayProps) {
   const [message, setMessage] = useState("");
   const [analysisPhase, setAnalysisPhase] = useState<"idle" | "analyzing" | "ready">("idle");
 
@@ -511,7 +518,45 @@ export function AskLukaOverlay({ open, onOpenChange, initialQuery, autoFillMode,
             <div className="flex-1 flex flex-col min-w-0 min-h-0">
               {/* Messages area or welcome */}
               <div className="flex-1 min-w-0 overflow-y-auto overflow-x-hidden">
-                {summaryMode && fillSummary ? (
+                {allTemplateSummary ? (
+                  /* All-templates post-fill summary */
+                  <div className="flex flex-col items-center px-8 pt-8 pb-6 min-h-[60vh]">
+                    <div className="mb-4 flex items-center justify-center w-[52px] h-[52px] rounded-full bg-gradient-to-br from-[#8649F1] to-[#2355A4]">
+                      <LukaIcon size={22} />
+                    </div>
+                    <h2 className="text-lg font-semibold text-foreground mb-1 text-center">All Templates Auto-filled</h2>
+                    <p className="text-sm text-muted-foreground text-center mb-4 max-w-[320px]">
+                      Luka filled <span className="font-semibold text-foreground">{allTemplateSummary.totalFilled}</span> of <span className="font-semibold text-foreground">{allTemplateSummary.totalFields}</span> fields across <span className="font-semibold text-foreground">{allTemplateSummary.templates.length}</span> template{allTemplateSummary.templates.length !== 1 ? 's' : ''} ({Math.round(allTemplateSummary.totalFilled / Math.max(allTemplateSummary.totalFields, 1) * 100)}%).
+                    </p>
+
+                    {/* Overall progress bar */}
+                    <div className="w-full max-w-[320px] h-2 rounded-full bg-muted mb-5 overflow-hidden">
+                      <div
+                        className="h-full rounded-full bg-gradient-to-r from-[#8649F1] to-[#2355A4] transition-all"
+                        style={{ width: `${Math.round(allTemplateSummary.totalFilled / Math.max(allTemplateSummary.totalFields, 1) * 100)}%` }}
+                      />
+                    </div>
+
+                    {/* Per-template breakdown */}
+                    <div className="w-full max-w-[320px] rounded-[10px] border border-border bg-muted/30 px-4 py-3 mb-5 space-y-2.5">
+                      <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-1">Template breakdown</p>
+                      {allTemplateSummary.templates.map((t, i) => (
+                        <div key={i} className="flex items-center gap-2">
+                          <CheckCircle2 className="h-3.5 w-3.5 text-green-500 shrink-0" />
+                          <span className="text-sm text-foreground flex-1 truncate">{t.name}</span>
+                          <span className="text-xs text-muted-foreground shrink-0">{t.filledCount}/{t.totalCount}</span>
+                        </div>
+                      ))}
+                    </div>
+
+                    <button
+                      onClick={() => onOpenChange(false)}
+                      className="inline-flex items-center gap-2 h-10 px-5 rounded-[10px] text-sm font-semibold text-white bg-gradient-to-br from-[#8649F1] to-[#2355A4] hover:opacity-90 transition-opacity shadow-md"
+                    >
+                      Back to checklist
+                    </button>
+                  </div>
+                ) : summaryMode && fillSummary ? (
                   /* Post auto-fill summary view */
                   <div className="flex flex-col items-center px-8 pt-8 pb-6 min-h-[60vh]">
                     <div className="mb-4 flex items-center justify-center w-[52px] h-[52px] rounded-full bg-gradient-to-br from-[#8649F1] to-[#2355A4]">
@@ -634,10 +679,10 @@ export function AskLukaOverlay({ open, onOpenChange, initialQuery, autoFillMode,
                           </button>
                           <button
                             onClick={() => { onAutoFillAll?.(); }}
-                            className="w-full inline-flex items-center justify-center gap-2 h-10 px-5 rounded-[10px] text-sm font-semibold border border-primary/40 text-primary hover:bg-primary/5 transition-colors"
+                            className="w-full inline-flex items-center justify-center gap-2 h-10 px-5 rounded-[10px] text-sm font-semibold border border-primary/40 text-primary hover:bg-primary/5 transition-colors whitespace-nowrap"
                           >
-                            <Zap className="h-4 w-4" />
-                            Fill all templates in this engagement
+                            <Zap className="h-4 w-4 shrink-0" />
+                            Auto-fill all templates
                           </button>
                         </div>
 
