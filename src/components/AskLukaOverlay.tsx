@@ -19,7 +19,7 @@ interface FillSummary {
 }
 
 export interface AllTemplateSummary {
-  templates: Array<{ name: string; filledCount: number; totalCount: number; section?: string }>;
+  templates: Array<{ name: string; code?: string; filledCount: number; totalCount: number; section?: string }>;
   totalFilled: number;
   totalFields: number;
   engagementLabel?: string;
@@ -541,10 +541,10 @@ export function AskLukaOverlay({ open, onOpenChange, initialQuery, autoFillMode,
                       />
                     </div>
 
-                    {/* Per-template breakdown — grouped by section */}
+                    {/* Per-template breakdown — grouped by section, matching sidebar structure */}
                     <div className="w-full max-w-[340px] rounded-[10px] border border-border bg-muted/30 px-4 py-3 mb-5">
                       <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-2">Template breakdown</p>
-                      <ScrollArea className="max-h-[340px]">
+                      <div className="overflow-y-auto" style={{ maxHeight: '320px' }}>
                         <div className="space-y-3 pr-1">
                           {(() => {
                             const SECTION_LABELS: Record<string, string> = {
@@ -563,16 +563,17 @@ export function AskLukaOverlay({ open, onOpenChange, initialQuery, autoFillMode,
                             const sections = SECTION_ORDER.filter(s => grouped[s]);
                             return (
                               <>
-                                {sections.map(code => (
-                                  <div key={code}>
+                                {sections.map(sectionCode => (
+                                  <div key={sectionCode}>
                                     <div className="flex items-center gap-1.5 mb-1.5">
-                                      <span className="text-[10px] font-bold text-muted-foreground font-mono">{code}</span>
-                                      <span className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wide">{SECTION_LABELS[code]}</span>
+                                      <span className="text-[10px] font-bold text-muted-foreground font-mono">{sectionCode}</span>
+                                      <span className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wide">{SECTION_LABELS[sectionCode]}</span>
                                     </div>
                                     <div className="pl-3 space-y-1 border-l border-border/60">
-                                      {grouped[code].map((t, i) => (
+                                      {grouped[sectionCode].map((t, i) => (
                                         <div key={i} className="flex items-start gap-2 py-0.5">
                                           <CheckCircle2 className="h-3.5 w-3.5 text-green-500 shrink-0 mt-0.5" />
+                                          {t.code && <span className="text-[10px] font-bold text-muted-foreground font-mono shrink-0 mt-0.5">{t.code}</span>}
                                           <span className="text-sm text-foreground flex-1 min-w-0 break-words leading-snug">{t.name}</span>
                                           <span className="text-xs text-muted-foreground shrink-0 tabular-nums">{t.filledCount}/{t.totalCount}</span>
                                         </div>
@@ -583,6 +584,7 @@ export function AskLukaOverlay({ open, onOpenChange, initialQuery, autoFillMode,
                                 {ungrouped.map((t, i) => (
                                   <div key={`ung-${i}`} className="flex items-start gap-2 py-0.5">
                                     <CheckCircle2 className="h-3.5 w-3.5 text-green-500 shrink-0 mt-0.5" />
+                                    {t.code && <span className="text-[10px] font-bold text-muted-foreground font-mono shrink-0 mt-0.5">{t.code}</span>}
                                     <span className="text-sm text-foreground flex-1 min-w-0 break-words leading-snug">{t.name}</span>
                                     <span className="text-xs text-muted-foreground shrink-0 tabular-nums">{t.filledCount}/{t.totalCount}</span>
                                   </div>
@@ -591,7 +593,7 @@ export function AskLukaOverlay({ open, onOpenChange, initialQuery, autoFillMode,
                             );
                           })()}
                         </div>
-                      </ScrollArea>
+                      </div>
                     </div>
 
                     <button

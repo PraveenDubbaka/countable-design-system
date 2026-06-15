@@ -538,66 +538,67 @@ const NAV_KEY_TO_CHECKLIST_ID: Record<string, string> = {
   "aud-us-rp-gwi": "default-us-audit-rp-gwi",
 };
 
-// Maps savedChecklist.id → sidebar section code + display label matching the engagement menu
-const CHECKLIST_SIDEBAR_INFO: Record<string, { section: string; label: string }> = {
+// Maps savedChecklist.id → sidebar nav item (section, code, label) matching the engagement menu exactly.
+// Sub-forms that share a parent sidebar nav item use that item's code+label so they aggregate in the summary.
+const CHECKLIST_SIDEBAR_INFO: Record<string, { section: string; code: string; label: string }> = {
   // Compilation — CO
-  'default-compilation-cac':          { section: 'CO', label: 'Client Acceptance & Continuance' },
-  'default-compilation-independence':  { section: 'CO', label: 'Independence' },
-  'default-compilation-kcb':           { section: 'CO', label: 'Knowledge of Client Business' },
-  'default-compilation-planning':      { section: 'CO', label: 'Planning' },
-  'default-compilation-el':            { section: 'CO', label: 'Engagement Letter' },
-  'default-compilation-mr':            { section: 'CO', label: 'Management Responsibility' },
-  // CA Audit — CO
-  'default-audit-form-408':    { section: 'CO', label: 'Initial Audit Engagements' },
-  'default-audit-form-410':    { section: 'CO', label: 'New or Existing Engagement' },
-  'default-audit-new-accept':  { section: 'CO', label: 'New Engagement Acceptance' },
-  'default-audit-exist-cont':  { section: 'CO', label: 'Existing Engagement Continuance' },
-  'default-audit-ind':         { section: 'CO', label: 'Independence & Ethical Req.' },
-  'default-audit-el':          { section: 'CO', label: 'Engagement Letter' },
-  'default-audit-aml':         { section: 'CO', label: 'Anti-Money Laundering' },
-  'default-audit-tcwg-pl':     { section: 'CO', label: 'TCWG — Planning' },
-  // CA Audit — PL
-  'default-audit-ueb':    { section: 'PL', label: 'Understanding Entity — Business' },
-  'default-audit-ues':    { section: 'PL', label: 'Understanding Entity — Structure' },
-  'default-audit-uei':    { section: 'PL', label: 'Understanding Entity — IT' },
-  'default-audit-plan':   { section: 'PL', label: 'Team Planning Discussions' },
-  'default-audit-mat':    { section: 'PL', label: 'Materiality' },
-  'default-audit-sae':    { section: 'PL', label: "Selecting Auditor's Expert" },
-  'default-audit-asm':    { section: 'PL', label: 'Overall Audit Strategy' },
-  'default-audit-pap':    { section: 'PL', label: 'Plan Audit Procedures' },
-  'default-audit-stb':    { section: 'PL', label: 'Scope & Time Budget' },
-  'default-audit-scope':  { section: 'PL', label: 'Engagement Scope' },
-  'default-audit-tb':     { section: 'PL', label: 'Time Budget' },
-  'default-audit-db':     { section: 'PL', label: 'Detailed Budget' },
+  'default-compilation-cac':          { section: 'CO', code: 'CAC', label: 'Client Acceptance & Continuance' },
+  'default-compilation-independence':  { section: 'CO', code: 'IND', label: 'Independence' },
+  'default-compilation-kcb':           { section: 'CO', code: 'KCB', label: 'Knowledge of Client Business' },
+  'default-compilation-planning':      { section: 'CO', code: 'PL',  label: 'Planning' },
+  'default-compilation-el':            { section: 'CO', code: 'EL',  label: 'Engagement Letter' },
+  'default-compilation-mr':            { section: 'CO', code: 'MR',  label: 'Management Responsibility' },
+  // CA Audit — CO  (sub-forms that share a sidebar nav item use that item's code+label)
+  'default-audit-form-408':    { section: 'CO', code: 'IAE', label: 'Initial Audit Engagements' },
+  'default-audit-form-410':    { section: 'CO', code: 'AC',  label: 'New or Existing Engagement — Acceptance/Continuance' },
+  'default-audit-new-accept':  { section: 'CO', code: 'AC',  label: 'New or Existing Engagement — Acceptance/Continuance' },
+  'default-audit-exist-cont':  { section: 'CO', code: 'AC',  label: 'New or Existing Engagement — Acceptance/Continuance' },
+  'default-audit-ind':         { section: 'CO', code: 'AC',  label: 'New or Existing Engagement — Acceptance/Continuance' },
+  'default-audit-aml':         { section: 'CO', code: 'AC',  label: 'New or Existing Engagement — Acceptance/Continuance' },
+  'default-audit-tcwg-pl':     { section: 'CO', code: 'AC',  label: 'New or Existing Engagement — Acceptance/Continuance' },
+  'default-audit-el':          { section: 'CO', code: 'EL',  label: 'Engagement Letter' },
+  // CA Audit — PL  (sub-forms without sidebar routes are grouped under their closest parent)
+  'default-audit-mat':    { section: 'PL', code: 'PL1', label: 'Materiality' },
+  'default-audit-sae':    { section: 'PL', code: 'SAE', label: "Selecting Auditor's Expert" },
+  'default-audit-asm':    { section: 'PL', code: 'OAS', label: 'Overall Audit Strategy' },
+  'default-audit-ueb':    { section: 'PL', code: 'OAS', label: 'Overall Audit Strategy' },
+  'default-audit-ues':    { section: 'PL', code: 'OAS', label: 'Overall Audit Strategy' },
+  'default-audit-uei':    { section: 'PL', code: 'OAS', label: 'Overall Audit Strategy' },
+  'default-audit-pap':    { section: 'PL', code: 'OAS', label: 'Overall Audit Strategy' },
+  'default-audit-scope':  { section: 'PL', code: 'OAS', label: 'Overall Audit Strategy' },
+  'default-audit-plan':   { section: 'PL', code: 'TPD', label: 'Team Planning Discussions' },
+  'default-audit-tb':     { section: 'PL', code: 'TB',  label: 'Time Budget' },
+  'default-audit-stb':    { section: 'PL', code: 'TB',  label: 'Time Budget' },
+  'default-audit-db':     { section: 'PL', code: 'DB',  label: 'Detailed Budget' },
   // CA Audit — RA
-  'default-audit-ra-rap':       { section: 'RA', label: 'Risk Assessment Procedures' },
-  'default-audit-ra-ic':        { section: 'RA', label: 'Understanding Internal Controls' },
-  'default-audit-ra-itgc':      { section: 'RA', label: 'IT General Controls (ITGC)' },
-  'default-audit-ra-fraud':     { section: 'RA', label: 'Fraud Risk Assessment' },
-  'default-audit-ra-srr':       { section: 'RA', label: 'Significant Risks Register' },
-  'default-audit-ra-rmm':       { section: 'RA', label: 'Risk of Material Misstatement' },
-  'default-audit-ra-scot-rev':  { section: 'RA', label: 'SCOT — Revenue Cycle' },
-  'default-audit-ra-scot-exp':  { section: 'RA', label: 'SCOT — Expenditure Cycle' },
-  'default-audit-ra-scot-pay':  { section: 'RA', label: 'SCOT — Payroll Cycle' },
-  'default-audit-ra-gc':        { section: 'RA', label: 'Going Concern (Initial)' },
+  'default-audit-ra-rap':       { section: 'RA', code: 'RAP',  label: 'Risk Assessment Procedures' },
+  'default-audit-ra-ic':        { section: 'RA', code: 'IC',   label: 'Understanding Internal Controls' },
+  'default-audit-ra-itgc':      { section: 'RA', code: 'ITGC', label: 'IT General Controls (ITGC)' },
+  'default-audit-ra-fraud':     { section: 'RA', code: 'FRA',  label: 'Fraud Risk Assessment (CAS 240)' },
+  'default-audit-ra-srr':       { section: 'RA', code: 'SRR',  label: 'Significant Risks Register' },
+  'default-audit-ra-rmm':       { section: 'RA', code: 'RMM',  label: 'Risk of Material Misstatement (RMM)' },
+  'default-audit-ra-scot-rev':  { section: 'RA', code: 'S1',   label: 'SCOT — Revenue Cycle' },
+  'default-audit-ra-scot-exp':  { section: 'RA', code: 'S2',   label: 'SCOT — Expenditure Cycle' },
+  'default-audit-ra-scot-pay':  { section: 'RA', code: 'S3',   label: 'SCOT — Payroll Cycle' },
+  'default-audit-ra-gc':        { section: 'RA', code: 'GC',   label: 'Going Concern (Initial Assessment)' },
   // CA Audit — RP
-  'default-audit-rp-oar':      { section: 'RP', label: 'Overall Audit Response' },
-  'default-audit-rp-toc':      { section: 'RP', label: 'Test of Controls' },
-  'default-audit-rp-sap':      { section: 'RP', label: 'Substantive Analytical Procedures' },
-  'default-audit-rp-tod-rev':  { section: 'RP', label: 'Test of Details — Revenue' },
-  'default-audit-rp-tod-exp':  { section: 'RP', label: 'Test of Details — Expenses' },
-  'default-audit-rp-aps':      { section: 'RP', label: 'Audit Procedures Summary' },
+  'default-audit-rp-oar':      { section: 'RP', code: 'OAR', label: 'Overall Audit Response' },
+  'default-audit-rp-toc':      { section: 'RP', code: 'TOC', label: 'Test of Controls' },
+  'default-audit-rp-sap':      { section: 'RP', code: 'SAP', label: 'Substantive Analytical Procedures' },
+  'default-audit-rp-tod-rev':  { section: 'RP', code: 'TR',  label: 'Test of Details — Revenue' },
+  'default-audit-rp-tod-exp':  { section: 'RP', code: 'TE',  label: 'Test of Details — Expenses' },
+  'default-audit-rp-aps':      { section: 'RP', code: 'APS', label: 'Audit Procedures Summary' },
   // CA Audit — FS
-  'default-audit-ar': { section: 'FS', label: "Independent Auditor's Report" },
+  'default-audit-ar': { section: 'FS', code: 'IAR', label: "Independent Auditor's Report" },
   // CA Audit — SO
-  'default-audit-so-aim':    { section: 'SO', label: 'Accumulation of Misstatements' },
-  'default-audit-so-far':    { section: 'SO', label: 'Final Analytical Review' },
-  'default-audit-subseq':    { section: 'SO', label: 'Subsequent Events' },
-  'default-audit-wgc-final': { section: 'SO', label: 'Going Concern (Final)' },
-  'default-audit-mr':        { section: 'SO', label: 'Management Representation Letter' },
-  'default-audit-tcwg-fin':  { section: 'SO', label: 'Communication with Governance' },
-  'default-audit-comp':      { section: 'SO', label: 'Completion Checklist' },
-  'default-audit-ep':        { section: 'SO', label: 'Quality Control Review' },
+  'default-audit-so-aim':    { section: 'SO', code: 'AIM',  label: 'Accumulation of Identified Misstatements' },
+  'default-audit-so-far':    { section: 'SO', code: 'FAR',  label: 'Final Analytical Review' },
+  'default-audit-subseq':    { section: 'SO', code: 'SE',   label: 'Subsequent Events' },
+  'default-audit-wgc-final': { section: 'SO', code: 'GC',   label: 'Going Concern (Final Assessment)' },
+  'default-audit-mr':        { section: 'SO', code: 'MR',   label: 'Management Representation Letter' },
+  'default-audit-tcwg-fin':  { section: 'SO', code: 'TCWG', label: 'Communication with Those Charged with Governance' },
+  'default-audit-comp':      { section: 'SO', code: 'CM',   label: 'Completion Checklist' },
+  'default-audit-ep':        { section: 'SO', code: 'QCR',  label: 'Quality Control Review' },
 };
 
 const LEGACY_COMPILATION_CHECKLIST_IDS = new Set([
@@ -977,9 +978,18 @@ export default function EngagementDetail() {
     const firstSidebar = currentChecklistId ? CHECKLIST_SIDEBAR_INFO[currentChecklistId] : undefined;
     const firstTitle = firstSidebar?.label ?? checklist.title;
     const firstSection = firstSidebar?.section;
+    const firstCode = firstSidebar?.code;
     const engLabel = [engagement?.client, engagementId].filter(Boolean).join(' · ');
 
-    const allResults: Array<{ name: string; filledCount: number; totalCount: number; section?: string }> = [];
+    const allResults: Array<{ name: string; code?: string; filledCount: number; totalCount: number; section?: string }> = [];
+    // Aggregate sub-forms that share the same sidebar nav item (same section+code)
+    const addResult = (name: string, code: string | undefined, filled: number, total: number, section: string | undefined) => {
+      if (code) {
+        const existing = allResults.find(r => r.section === section && r.code === code);
+        if (existing) { existing.filledCount += filled; existing.totalCount += total; return; }
+      }
+      allResults.push({ name, code, filledCount: filled, totalCount: total, section });
+    };
 
     const showAllSummary = (results: typeof allResults) => {
       setLukaAllTemplateSummary({
@@ -1003,7 +1013,7 @@ export default function EngagementDetail() {
       : null;
 
     startAutoFill(checklist, (firstResult) => {
-      allResults.push({ name: firstTitle, filledCount: firstResult.filledCount, totalCount: firstResult.totalCount, section: firstSection });
+      addResult(firstTitle, firstCode, firstResult.filledCount, firstResult.totalCount, firstSection);
 
       const savedChecklists = readJsonFromLocalStorage<any[]>('savedChecklists', []);
       if (!Array.isArray(savedChecklists)) { showAllSummary(allResults); return; }
@@ -1058,7 +1068,7 @@ export default function EngagementDetail() {
         // Do NOT dispatchChecklistSync here — that would update the current view's checklist state
 
         const rSidebar = CHECKLIST_SIDEBAR_INFO[entry.id];
-        allResults.push({ name: rSidebar?.label ?? cl.title, filledCount: rToFill.length, totalCount: rAllQ.length, section: rSidebar?.section });
+        addResult(rSidebar?.label ?? cl.title, rSidebar?.code, rToFill.length, rAllQ.length, rSidebar?.section);
         setTimeout(fillOneRemaining, 180); // 180ms per template keeps total ~2s for 12 templates
       };
 
