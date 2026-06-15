@@ -1,7 +1,7 @@
 import { useState, useRef, useCallback, useEffect } from "react";
 import { LukaAttachMenu, AttachedFilesBar, useAttachedFiles } from "@/components/luka/LukaAttachMenu";
 import { VoiceRecordingOverlay } from "@/components/luka/VoiceRecordingOverlay";
-import { X, Mic, Plus, Search, MessageSquare, Minus, Send, Inbox, Maximize2, ChevronLeft, ChevronRight, Clock, PanelLeftClose, MoreHorizontal, Zap, Building2 } from "lucide-react";
+import { X, Mic, Plus, Search, MessageSquare, Minus, Send, Inbox, Maximize2, ChevronLeft, ChevronRight, Clock, PanelLeftClose, MoreHorizontal, Zap, Building2, CheckCircle2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from "@/components/ui/tooltip";
@@ -16,6 +16,10 @@ interface AskLukaOverlayProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   initialQuery?: string;
+  autoFillMode?: boolean;
+  checklistLabel?: string;
+  autoFillSources?: string[];
+  onAutoFillConfirmed?: () => void;
 }
 
 const statusColors = ["bg-green-500", "bg-green-500", "bg-amber-500", "bg-green-500", "bg-green-500", "bg-green-500", "bg-purple-500", "bg-purple-500", "bg-amber-500", "bg-green-500", "bg-purple-500"];
@@ -57,14 +61,31 @@ function LukaIcon({ size = 20 }: { size?: number }) {
   return <Zap className="text-white" size={size} fill="white" strokeWidth={0} />;
 }
 
-export function AskLukaOverlay({ open, onOpenChange, initialQuery }: AskLukaOverlayProps) {
+const RELATED_TEMPLATES = [
+  "Management Representation Letter",
+  "Risk Assessment Summary",
+  "Audit Planning Memo",
+];
+
+export function AskLukaOverlay({ open, onOpenChange, initialQuery, autoFillMode, checklistLabel, autoFillSources, onAutoFillConfirmed }: AskLukaOverlayProps) {
   const [message, setMessage] = useState("");
+  const [analysisPhase, setAnalysisPhase] = useState<"idle" | "analyzing" | "ready">("idle");
 
   useEffect(() => {
     if (open && initialQuery) {
       setMessage(initialQuery);
     }
   }, [open, initialQuery]);
+
+  useEffect(() => {
+    if (open && autoFillMode) {
+      setAnalysisPhase("analyzing");
+      const t = window.setTimeout(() => setAnalysisPhase("ready"), 2200);
+      return () => window.clearTimeout(t);
+    } else {
+      setAnalysisPhase("idle");
+    }
+  }, [open, autoFillMode]);
   const [activeTab, setActiveTab] = useState<"threads" | "workspaces">("threads");
   const [showAllRecent, setShowAllRecent] = useState(false);
   const [viewMode, setViewMode] = useState<"full" | "half">("half");
@@ -480,7 +501,76 @@ export function AskLukaOverlay({ open, onOpenChange, initialQuery }: AskLukaOver
             <div className="flex-1 flex flex-col min-w-0 min-h-0">
               {/* Messages area or welcome */}
               <div className="flex-1 min-w-0 overflow-y-auto overflow-x-hidden">
-                {!sentMessage ? (
+                {autoFillMode ? (
+                  /* Auto-fill analysis view */
+                  <div className="flex-1 flex flex-col items-center justify-center px-8 min-h-[60vh]">
+                    {analysisPhase === "analyzing" ? (
+                      <>
+                        <div className="mb-6 relative flex items-center justify-center w-20 h-20">
+                          <div className="absolute -inset-4 luka-ambient-glow" />
+                          <div className="relative flex items-center justify-center w-[52px] h-[52px] rounded-full bg-gradient-to-br from-[#8649F1] to-[#2355A4] z-10 luka-thinking-spin">
+                            <LukaIcon size={24} />
+                          </div>
+                        </div>
+                        <h2 className="text-lg font-semibold text-foreground mb-2 text-center">
+                          Analyzing your {checklistLabel || "checklist"}…
+                        </h2>
+                        <div className="flex items-center gap-1.5">
+                          <span className="w-1.5 h-1.5 rounded-full bg-primary/60 luka-dot luka-dot-1" />
+                          <span className="w-1.5 h-1.5 rounded-full bg-primary/60 luka-dot luka-dot-2" />
+                          <span className="w-1.5 h-1.5 rounded-full bg-primary/60 luka-dot luka-dot-3" />
+                        </div>
+                      </>
+                    ) : (
+                      <>
+                        <div className="mb-5 flex items-center justify-center w-[52px] h-[52px] rounded-full bg-gradient-to-br from-[#8649F1] to-[#2355A4]">
+                          <LukaIcon size={22} />
+                        </div>
+                        <h2 className="text-lg font-semibold text-foreground mb-1 text-center">
+                          Ready to auto-fill your {checklistLabel || "checklist"}
+                        </h2>
+                        <p className="text-sm text-muted-foreground text-center mb-5 max-w-[340px]">
+                          Luka analyzed {(autoFillSources ?? []).length} connected source{(autoFillSources ?? []).length !== 1 ? "s" : ""} and found responses for <span className="font-semibold text-foreground">{Math.min(90, 60 + (autoFillSources ?? []).length * 10)}%</span> of fields.
+                        </p>
+
+                        {/* Sources */}
+                        <div className="w-full max-w-[320px] rounded-[10px] border border-border bg-muted/30 px-4 py-3 mb-5 space-y-2">
+                          {(autoFillSources ?? []).map(src => (
+                            <div key={src} className="flex items-center gap-2">
+                              <CheckCircle2 className="h-4 w-4 text-green-500 shrink-0" />
+                              <span className="text-sm text-foreground">{src}</span>
+                            </div>
+                          ))}
+                        </div>
+
+                        {/* Related templates */}
+                        <div className="w-full max-w-[320px] mb-6">
+                          <p className="text-xs font-semibold text-muted-foreground mb-2 uppercase tracking-wide">Also fill related templates</p>
+                          <div className="flex flex-wrap gap-2">
+                            {RELATED_TEMPLATES.map(t => (
+                              <span key={t} className="text-xs px-2.5 py-1 rounded-full border border-border bg-background text-muted-foreground">
+                                {t}
+                              </span>
+                            ))}
+                          </div>
+                        </div>
+
+                        {/* CTA */}
+                        <button
+                          onClick={() => { onAutoFillConfirmed?.(); onOpenChange(false); }}
+                          className="inline-flex items-center gap-2 h-10 px-5 rounded-[10px] text-sm font-semibold text-white bg-gradient-to-br from-[#8649F1] to-[#2355A4] hover:opacity-90 transition-opacity shadow-md"
+                        >
+                          <Zap className="h-4 w-4 text-white fill-white" strokeWidth={0} />
+                          Auto-fill this checklist
+                        </button>
+
+                        <p className="text-xs text-muted-foreground mt-3 text-center max-w-[300px]">
+                          Luka will fill each field one by one with citations. Items requiring judgment stay flagged.
+                        </p>
+                      </>
+                    )}
+                  </div>
+                ) : !sentMessage ? (
                   /* Welcome state */
                   <div className="flex-1 flex flex-col items-center justify-center px-6 min-h-[60vh]">
                     {/* Luka logo icon */}
@@ -568,8 +658,8 @@ export function AskLukaOverlay({ open, onOpenChange, initialQuery }: AskLukaOver
                 )}
               </div>
 
-              {/* Chat Input - pinned to bottom */}
-              <div className={cn("pb-6 pt-2", viewMode === "full" ? "px-12" : "px-6")}>
+              {/* Chat Input - pinned to bottom; hidden in auto-fill mode */}
+              {!autoFillMode && <div className={cn("pb-6 pt-2", viewMode === "full" ? "px-12" : "px-6")}>
                 <div className={cn("w-full mx-auto relative", viewMode === "full" ? "max-w-none" : "max-w-[700px]")}>
                   {/* Prompt Picker */}
                   <PromptPicker
@@ -641,7 +731,7 @@ export function AskLukaOverlay({ open, onOpenChange, initialQuery }: AskLukaOver
                     onComplete={(text) => setMessage((prev) => (prev ? prev + " " + text : text))}
                   />
                 </div>
-              </div>
+              </div>}
             </div>
           </main>
         </div>

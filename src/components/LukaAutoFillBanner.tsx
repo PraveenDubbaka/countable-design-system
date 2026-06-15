@@ -1,7 +1,6 @@
 import { useMemo } from "react";
-import { Plus, ArrowLeftRight } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { toast } from "sonner";
+import { ArrowLeftRight, Zap } from "lucide-react";
+import { cn } from "@/lib/utils";
 import { useEngagements } from "@/store/EngagementsContext";
 import { getEngagementMeta } from "@/store/engagementsStore";
 
@@ -23,13 +22,43 @@ const CHECKLIST_LABELS: Record<string, string> = {
   "aud-iar": "Management Requests",
   "aud-us-iar": "Management Requests",
   "aud-cac": "Client Acceptance & Continuance",
+  "aud-form-410": "Client Acceptance & Continuance",
+};
+
+const CHECKLIST_CONTEXT: Record<string, string> = {
+  "aud-mat": "Materiality benchmarks extracted from Xero trial balance. Gross revenue, pre-tax income, and net assets ready to populate thresholds and calculate performance materiality.",
+  "aud-us-mat": "Materiality benchmarks extracted from connected trial balance. Gross revenue, pre-tax income, and net assets ready to populate thresholds and calculate performance materiality.",
+  "aud-tb": "Time estimates pre-populated from similar engagements and prior year actuals. Hours by section and partner/staff allocation ready to fill.",
+  "aud-us-tb": "Time estimates pre-populated from similar engagements and prior year actuals. Hours by section and partner/staff allocation ready to fill.",
+  "aud-db": "Detailed budget lines mapped from prior year actuals and current engagement scope. Budgeted hours per procedure area ready to pre-fill.",
+  "aud-us-db": "Detailed budget lines mapped from prior year actuals and current engagement scope. Budgeted hours per procedure area ready to pre-fill.",
+  "aud-scope": "Audit scope parameters derived from entity profile, Xero chart of accounts, and engagement settings. Coverage assertions and rationale ready to populate.",
+  "aud-us-scope": "Audit scope parameters derived from entity profile, connected chart of accounts, and engagement settings. Coverage assertions and rationale ready to populate.",
+  "aud-pap": "Planned procedures matched to identified risks from prior files. Budgeted hours and assertions ready to pre-populate for all significant account areas.",
+  "aud-us-pap": "Planned procedures matched to identified risks from prior files. Budgeted hours and assertions ready to pre-populate for all significant account areas.",
+  "aud-sae": "Auditor's expert engagement details pre-populated from engagement meta. Expert independence assessment and scope of work ready to fill.",
+  "aud-us-sae": "Auditor's expert engagement details pre-populated from engagement meta. Expert independence assessment and scope of work ready to fill.",
+  "aud-asm": "Overall audit strategy parameters derived from scope, materiality, and risk assessment. Entity and environment considerations ready to populate.",
+  "aud-us-asm": "Overall audit strategy parameters derived from scope, materiality, and risk assessment. Entity and environment considerations ready to populate.",
+  "aud-iar": "Management information requests pre-populated from prior year files and Xero chart of accounts. Complete request list ready to generate.",
+  "aud-us-iar": "Management information requests pre-populated from prior year files and connected accounting data. Complete request list ready to generate.",
+  "aud-cac": "Risk factors cross-referenced against Xero transaction history and predecessor audit files. Ready to flag acceptance concerns and auto-populate standard responses.",
+  "aud-form-410": "Risk factors cross-referenced against Xero transaction history and predecessor audit files. Ready to flag acceptance concerns and auto-populate standard responses.",
+};
+
+const GENERIC_CONTEXT = "Connected data sources analyzed and ready to populate this checklist with citations. Items requiring professional judgment will be flagged for review.";
+
+export type AutoFillConfig = {
+  query: string;
+  label: string;
+  sources: string[];
 };
 
 interface LukaAutoFillBannerProps {
   checklistKey: string;
   engagementId: string;
   checklistName?: string;
-  onRunAutoFill: (query: string) => void;
+  onRunAutoFill: (config: AutoFillConfig) => void;
 }
 
 export function LukaAutoFillBanner({ checklistKey, engagementId, checklistName, onRunAutoFill }: LukaAutoFillBannerProps) {
@@ -38,6 +67,7 @@ export function LukaAutoFillBanner({ checklistKey, engagementId, checklistName, 
   const meta = useMemo(() => getEngagementMeta(engagementId), [engagementId]);
 
   const label = CHECKLIST_LABELS[checklistKey] || checklistName || checklistKey;
+  const context = CHECKLIST_CONTEXT[checklistKey] || GENERIC_CONTEXT;
 
   const sources: string[] = [];
   sources.push("Xero connection");
@@ -66,7 +96,7 @@ export function LukaAutoFillBanner({ checklistKey, engagementId, checklistName, 
       {/* Row 1: pill + progress + source tags */}
       <div className="flex items-center gap-2 flex-wrap mb-2">
         <span className="inline-flex items-center gap-1 rounded-full border border-primary/40 bg-primary/5 text-primary text-xs px-2.5 py-1 font-medium">
-          <Plus className="h-3 w-3" />
+          <Zap className="h-3 w-3" />
           Luka auto-populate
         </span>
         <div className="h-1.5 rounded-full bg-muted w-16 overflow-hidden">
@@ -81,27 +111,24 @@ export function LukaAutoFillBanner({ checklistKey, engagementId, checklistName, 
         ))}
       </div>
 
-      {/* Description */}
+      {/* Context description */}
       <p className="text-sm text-muted-foreground mb-2.5 leading-relaxed">
-        Target <span className="font-semibold text-foreground">{score}% automation</span>. Click to fill the worksheet — responses populate field-by-field with citations. Items Luka can't answer route to the{" "}
-        <span className="font-semibold text-foreground">client app</span>{" "}
-        <span className="inline-flex items-center justify-center w-4 h-4 rounded-full bg-muted text-muted-foreground text-[10px] font-bold align-middle">?</span>{" "}
-        or stay flagged <span className="text-amber-500">△</span> <span className="font-semibold text-foreground">judgment</span>.
+        {context}
         {meta.firstYearAudit && " This is a first-year engagement — predecessor files are not available."}
       </p>
 
-      {/* Actions */}
-      <div className="flex items-center gap-2 flex-wrap">
-        <Button size="sm" className="h-7 text-xs gap-1" onClick={() => onRunAutoFill(buildQuery())}>
-          <Plus className="h-3 w-3" />
+      {/* Action */}
+      <div className="flex items-center gap-2">
+        <button
+          onClick={() => onRunAutoFill({ query: buildQuery(), label, sources })}
+          className={cn(
+            "inline-flex items-center gap-1.5 h-7 px-3 rounded-[8px] text-xs font-semibold text-white shadow-sm",
+            "bg-gradient-to-br from-[#8649F1] to-[#2355A4] hover:opacity-90 transition-opacity"
+          )}
+        >
+          <Zap className="h-3.5 w-3.5 text-white fill-white" strokeWidth={0} />
           Run Luka auto-fill
-        </Button>
-        <Button size="sm" variant="outline" className="h-7 text-xs" onClick={() => toast("Data lineage coming soon")}>
-          View data lineage
-        </Button>
-        <Button size="sm" variant="outline" className="h-7 text-xs" onClick={() => toast("Customize template coming soon")}>
-          Customize template
-        </Button>
+        </button>
       </div>
     </div>
   );

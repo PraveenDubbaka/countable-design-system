@@ -573,6 +573,8 @@ export default function EngagementDetail() {
   const [showClipboardPrompt, setShowClipboardPrompt] = useState(false);
   const [lukaOpen, setLukaOpen] = useState(false);
   const [lukaQuery, setLukaQuery] = useState("");
+  const [lukaAutoFillConfig, setLukaAutoFillConfig] = useState<{ label: string; sources: string[] } | null>(null);
+  const autoFillRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // Client responses hook
   const clientResponses = useClientResponses(checklist);
@@ -757,6 +759,68 @@ export default function EngagementDetail() {
       }
     }
   };
+  const getMockAnswer = (answerType: string, idx: number): string => {
+    const MOCK: Record<string, string[]> = {
+      'yes-no': ['Yes', 'Yes', 'No', 'Yes'],
+      'yes-no-na': ['Yes', 'Yes', 'N/A', 'Yes', 'No'],
+      'date': ['2024-03-31', '2024-04-01', '2023-12-31'],
+      'amount': ['125,000', '48,500', '2,250,000', '875,000'],
+      'answer': ['Reviewed and confirmed.', 'Obtained from client.', 'Verified against prior year.', 'No exceptions noted.'],
+      'long-answer': ['Based on procedures performed, no material exceptions were identified. Responses are consistent with prior year findings and available accounting data.', 'Client confirmed during planning meeting. Documentation on file.'],
+      'multiple-choice': ['Option A', 'Option B'],
+      'dropdown': ['Standard', 'Low Risk', 'Moderate Risk'],
+      'toggle': ['true'],
+      'reference': ['WP-A1'],
+    };
+    const options = MOCK[answerType] ?? MOCK['answer'];
+    return options[idx % options.length];
+  };
+
+  const startAutoFill = (target: Checklist) => {
+    if (!target) return;
+    const questions: { sIdx: number; qIdx: number; id: string; answerType: string }[] = [];
+    target.sections.forEach((s, si) => {
+      s.questions.forEach((q, qi) => {
+        if (q.answerType !== 'none') questions.push({ sIdx: si, qIdx: qi, id: q.id, answerType: q.answerType });
+      });
+    });
+    if (questions.length === 0) {
+      toast.success('Checklist auto-filled by Luka');
+      return;
+    }
+    let current = { ...target, sections: target.sections.map(s => ({ ...s, questions: [...s.questions] })) };
+    let i = 0;
+    const fillNext = () => {
+      if (i >= questions.length) {
+        handleChecklistUpdate(current);
+        toast.success('Luka auto-fill complete — all fields populated');
+        return;
+      }
+      const { sIdx, qIdx, answerType, id } = questions[i];
+      const answer = getMockAnswer(answerType, i);
+      current = {
+        ...current,
+        sections: current.sections.map((s, si) =>
+          si !== sIdx ? s : {
+            ...s,
+            questions: s.questions.map((q, qi) =>
+              qi !== qIdx ? q : { ...q, answer }
+            ),
+          }
+        ),
+      };
+      setChecklist({ ...current });
+      i++;
+      autoFillRef.current = setTimeout(fillNext, 120);
+    };
+    toast('Luka is filling your checklist…', { duration: 2000 });
+    autoFillRef.current = setTimeout(fillNext, 400);
+  };
+
+  const handleAutoFillConfirmed = () => {
+    if (checklist) startAutoFill(checklist);
+  };
+
   const handleSave = () => {
     if (checklist) {
       const savedChecklists = readJsonFromLocalStorage<any[]>('savedChecklists', []);
@@ -1174,7 +1238,11 @@ export default function EngagementDetail() {
               checklistKey={checklistKey}
               engagementId={engagementId}
               checklistName={checklist?.name}
-              onRunAutoFill={(query) => { setLukaQuery(query); setLukaOpen(true); }}
+              onRunAutoFill={({ query, label, sources }) => {
+                setLukaQuery(query);
+                setLukaAutoFillConfig({ label, sources });
+                setLukaOpen(true);
+              }}
             />
           )}
           {/* ── Interactive worksheets — rendered directly without checklist state ── */}
@@ -1378,6 +1446,14 @@ export default function EngagementDetail() {
         </Dialog>
       </div>
     </Layout>
-    <AskLukaOverlay open={lukaOpen} onOpenChange={setLukaOpen} initialQuery={lukaQuery} />
+    <AskLukaOverlay
+      open={lukaOpen}
+      onOpenChange={(o) => { setLukaOpen(o); if (!o) setLukaAutoFillConfig(null); }}
+      initialQuery={lukaQuery}
+      autoFillMode={!!lukaAutoFillConfig}
+      checklistLabel={lukaAutoFillConfig?.label}
+      autoFillSources={lukaAutoFillConfig?.sources}
+      onAutoFillConfirmed={handleAutoFillConfirmed}
+    />
   </>;
 }
