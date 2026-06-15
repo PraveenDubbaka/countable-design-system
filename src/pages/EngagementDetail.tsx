@@ -18,6 +18,8 @@ import { AuditDetailedBudgetWorksheet } from "@/components/AuditDetailedBudgetWo
 import { AuditMgmtRequestsWorksheet } from "@/components/AuditMgmtRequestsWorksheet";
 import { AuditSAEWorksheet } from "@/components/AuditSAEWorksheet";
 import { AuditOASWorksheet } from "@/components/AuditOASWorksheet";
+import { LukaAutoFillBanner } from "@/components/LukaAutoFillBanner";
+import { AskLukaOverlay } from "@/components/AskLukaOverlay";
 import { FloatingActionBar } from "@/components/FloatingActionBar";
 import { EngagementRightPanel } from "@/components/EngagementRightPanel";
 import { Checklist, Question } from "@/types/checklist";
@@ -569,6 +571,8 @@ export default function EngagementDetail() {
   const [showAddChecklistSheet, setShowAddChecklistSheet] = useState(false);
   const [clipboardResponses, setClipboardResponses] = useState<{ checklistTitle: string; responses: Record<string, { answer: string; explanation?: string }> } | null>(null);
   const [showClipboardPrompt, setShowClipboardPrompt] = useState(false);
+  const [lukaOpen, setLukaOpen] = useState(false);
+  const [lukaQuery, setLukaQuery] = useState("");
 
   // Client responses hook
   const clientResponses = useClientResponses(checklist);
@@ -1024,7 +1028,8 @@ export default function EngagementDetail() {
     </div>
   );
 
-  return <Layout title="Engagements" headerContent={engagementBreadcrumb}>
+  return <>
+    <Layout title="Engagements" headerContent={engagementBreadcrumb}>
       <div className="flex h-full overflow-hidden">
         {/* Main Content Area */}
         <div className="flex-1 flex flex-col min-w-0 overflow-hidden relative">
@@ -1163,6 +1168,15 @@ export default function EngagementDetail() {
 
           {/* Content Area */}
           <div className="flex-1 overflow-auto bg-card">
+          {/* Luka auto-fill banner — shown on every checklist/worksheet */}
+          {checklistKey && engagementId && (
+            <LukaAutoFillBanner
+              checklistKey={checklistKey}
+              engagementId={engagementId}
+              checklistName={checklist?.name}
+              onRunAutoFill={(query) => { setLukaQuery(query); setLukaOpen(true); }}
+            />
+          )}
           {/* ── Interactive worksheets — rendered directly without checklist state ── */}
           {(checklistKey === 'aud-mat' || checklistKey === 'aud-us-mat') ? (
             <AuditMaterialityWorksheet isUS={checklistKey === 'aud-us-mat'} />
@@ -1363,5 +1377,7 @@ export default function EngagementDetail() {
           </DialogContent>
         </Dialog>
       </div>
-    </Layout>;
+    </Layout>
+    <AskLukaOverlay open={lukaOpen} onOpenChange={setLukaOpen} initialQuery={lukaQuery} />
+  </>;
 }

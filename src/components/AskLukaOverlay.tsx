@@ -1,4 +1,4 @@
-import { useState, useRef, useCallback } from "react";
+import { useState, useRef, useCallback, useEffect } from "react";
 import { LukaAttachMenu, AttachedFilesBar, useAttachedFiles } from "@/components/luka/LukaAttachMenu";
 import { VoiceRecordingOverlay } from "@/components/luka/VoiceRecordingOverlay";
 import { X, Mic, Plus, Search, MessageSquare, Minus, Send, Inbox, Maximize2, ChevronLeft, ChevronRight, Clock, PanelLeftClose, MoreHorizontal, Zap, Building2 } from "lucide-react";
@@ -15,6 +15,7 @@ import { LukaResponseActions } from "@/components/luka/LukaResponseActions";
 interface AskLukaOverlayProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  initialQuery?: string;
 }
 
 const statusColors = ["bg-green-500", "bg-green-500", "bg-amber-500", "bg-green-500", "bg-green-500", "bg-green-500", "bg-purple-500", "bg-purple-500", "bg-amber-500", "bg-green-500", "bg-purple-500"];
@@ -56,8 +57,14 @@ function LukaIcon({ size = 20 }: { size?: number }) {
   return <Zap className="text-white" size={size} fill="white" strokeWidth={0} />;
 }
 
-export function AskLukaOverlay({ open, onOpenChange }: AskLukaOverlayProps) {
+export function AskLukaOverlay({ open, onOpenChange, initialQuery }: AskLukaOverlayProps) {
   const [message, setMessage] = useState("");
+
+  useEffect(() => {
+    if (open && initialQuery) {
+      setMessage(initialQuery);
+    }
+  }, [open, initialQuery]);
   const [activeTab, setActiveTab] = useState<"threads" | "workspaces">("threads");
   const [showAllRecent, setShowAllRecent] = useState(false);
   const [viewMode, setViewMode] = useState<"full" | "half">("half");
