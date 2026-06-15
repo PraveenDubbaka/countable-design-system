@@ -94,24 +94,6 @@ export function LukaAutoFillBanner({ checklistKey, engagementId, checklistName, 
 
   return (
     <div className="mx-4 mt-4 rounded-lg border border-border bg-card px-4 py-3">
-      {/* Row 1: pill + progress + source tags */}
-      <div className="flex items-center gap-2 flex-wrap mb-2">
-        <span className="inline-flex items-center gap-1 rounded-full border border-primary/40 bg-primary/5 text-primary text-xs px-2.5 py-1 font-medium">
-          <Zap className="h-3 w-3" />
-          Luka auto-populate
-        </span>
-        <div className="h-1.5 rounded-full bg-muted w-16 overflow-hidden">
-          <div className="h-full rounded-full bg-primary transition-all" style={{ width: `${score}%` }} />
-        </div>
-        <span className="text-xs font-semibold text-foreground">{score}%</span>
-        {sources.map(src => (
-          <span key={src} className="inline-flex items-center gap-1 rounded-full bg-muted text-muted-foreground text-xs px-2.5 py-1">
-            <ArrowLeftRight className="h-3 w-3" />
-            {src}
-          </span>
-        ))}
-      </div>
-
       {/* Context description */}
       <p className="text-sm text-muted-foreground mb-2.5 leading-relaxed">
         {context}

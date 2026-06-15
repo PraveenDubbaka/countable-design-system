@@ -1487,6 +1487,19 @@ export default function EngagementDetail() {
 
           {/* Content Area */}
           <div className="flex-1 overflow-auto bg-card">
+          {/* Luka auto-fill banner — shown on every checklist/worksheet */}
+          {checklistKey && engagementId && (
+            <LukaAutoFillBanner
+              checklistKey={checklistKey}
+              engagementId={engagementId}
+              checklistName={checklist?.title}
+              onRunAutoFill={({ query, label, sources, engagementLabel }) => {
+                setLukaQuery(query);
+                setLukaAutoFillConfig({ label, sources, engagementLabel });
+                setLukaOpen(true);
+              }}
+            />
+          )}
           {/* Auto-fill progress indicator */}
           {isAutoFilling && (
             <div className="mx-4 mt-2 rounded-lg border border-primary/20 bg-primary/5 px-4 py-2.5 flex items-center gap-3">
