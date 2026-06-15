@@ -66,7 +66,7 @@ export function LukaAutoFillBanner({ checklistKey, engagementId, checklistName, 
   const engagement = engagements.find(e => e.id === engagementId);
   const meta = useMemo(() => getEngagementMeta(engagementId), [engagementId]);
 
-  const label = CHECKLIST_LABELS[checklistKey] || checklistName || checklistKey;
+  const label = checklistName || CHECKLIST_LABELS[checklistKey] || checklistKey;
   const context = CHECKLIST_CONTEXT[checklistKey] || GENERIC_CONTEXT;
 
   const sources: string[] = [];

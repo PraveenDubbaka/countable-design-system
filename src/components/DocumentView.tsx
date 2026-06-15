@@ -1456,6 +1456,7 @@ function DocumentQuestionBlock({
     <div
       ref={setNodeRef}
       style={style}
+      data-question-id={question.id}
       onClick={(e) => {
         if (onSelectionChange && !isSub && !isPreviewMode && (e.target as HTMLElement).closest('[data-drag-handle]')) {
           e.stopPropagation();

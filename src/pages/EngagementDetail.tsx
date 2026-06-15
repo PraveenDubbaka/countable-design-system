@@ -594,6 +594,19 @@ export default function EngagementDetail() {
   const clientEngagements = useMemo(() => getEngagementsForClient(clientName), [clientName]);
   const currentChecklistId = checklistKey ? NAV_KEY_TO_CHECKLIST_ID[checklistKey] : undefined;
 
+  // Redirect to first checklist when no key is in URL
+  useEffect(() => {
+    if (checklistKey || !engagementId) return;
+    const type = engagement?.type ?? '';
+    let defaultKey = 'co-ca';
+    if (type.includes('GAAS/US') || engagementId.startsWith('AUD-US-')) {
+      defaultKey = 'aud-us-form-410';
+    } else if (type.includes('Audit') || engagementId.startsWith('AUD-')) {
+      defaultKey = 'aud-form-410';
+    }
+    navigate(`/engagements/${engagementId}/checklist/${defaultKey}`, { replace: true });
+  }, [engagementId, checklistKey]);
+
   // Handle client change - show dialog with engagements
   const handleClientChange = (newClient: string) => {
     if (newClient !== clientName) {
@@ -862,7 +875,12 @@ export default function EngagementDetail() {
         ),
       };
       setChecklist({ ...current });
+      const justFilledId = toFill[i].q.id;
       i++;
+      window.requestAnimationFrame(() => {
+        document.querySelector(`[data-question-id="${justFilledId}"]`)
+          ?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      });
       autoFillRef.current = setTimeout(fillNext, 350);
     };
 
