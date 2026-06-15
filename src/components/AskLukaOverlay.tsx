@@ -12,6 +12,12 @@ import { GrossMarginResponse } from "@/components/luka/GrossMarginResponse";
 import { TrialBalanceGIFIResponse } from "@/components/luka/TrialBalanceGIFIResponse";
 import { LukaResponseActions } from "@/components/luka/LukaResponseActions";
 
+interface FillSummary {
+  filledCount: number;
+  totalCount: number;
+  skippedItems: Array<{ sectionTitle: string; questionText: string }>;
+}
+
 interface AskLukaOverlayProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
@@ -20,6 +26,8 @@ interface AskLukaOverlayProps {
   checklistLabel?: string;
   autoFillSources?: string[];
   onAutoFillConfirmed?: () => void;
+  summaryMode?: boolean;
+  fillSummary?: FillSummary;
 }
 
 const statusColors = ["bg-green-500", "bg-green-500", "bg-amber-500", "bg-green-500", "bg-green-500", "bg-green-500", "bg-purple-500", "bg-purple-500", "bg-amber-500", "bg-green-500", "bg-purple-500"];
@@ -67,7 +75,7 @@ const RELATED_TEMPLATES = [
   "Audit Planning Memo",
 ];
 
-export function AskLukaOverlay({ open, onOpenChange, initialQuery, autoFillMode, checklistLabel, autoFillSources, onAutoFillConfirmed }: AskLukaOverlayProps) {
+export function AskLukaOverlay({ open, onOpenChange, initialQuery, autoFillMode, checklistLabel, autoFillSources, onAutoFillConfirmed, summaryMode, fillSummary }: AskLukaOverlayProps) {
   const [message, setMessage] = useState("");
   const [analysisPhase, setAnalysisPhase] = useState<"idle" | "analyzing" | "ready">("idle");
 
@@ -501,7 +509,62 @@ export function AskLukaOverlay({ open, onOpenChange, initialQuery, autoFillMode,
             <div className="flex-1 flex flex-col min-w-0 min-h-0">
               {/* Messages area or welcome */}
               <div className="flex-1 min-w-0 overflow-y-auto overflow-x-hidden">
-                {autoFillMode ? (
+                {summaryMode && fillSummary ? (
+                  /* Post auto-fill summary view */
+                  <div className="flex flex-col items-center px-8 pt-8 pb-6 min-h-[60vh]">
+                    <div className="mb-4 flex items-center justify-center w-[52px] h-[52px] rounded-full bg-gradient-to-br from-[#8649F1] to-[#2355A4]">
+                      <LukaIcon size={22} />
+                    </div>
+                    <h2 className="text-lg font-semibold text-foreground mb-1 text-center">Auto-fill Complete</h2>
+                    <p className="text-sm text-muted-foreground text-center mb-5 max-w-[320px]">
+                      Luka filled <span className="font-semibold text-foreground">{fillSummary.filledCount}</span> of <span className="font-semibold text-foreground">{fillSummary.totalCount}</span> fields ({Math.round(fillSummary.filledCount / Math.max(fillSummary.totalCount, 1) * 100)}%).
+                    </p>
+
+                    {/* Progress bar */}
+                    <div className="w-full max-w-[320px] h-2 rounded-full bg-muted mb-5 overflow-hidden">
+                      <div
+                        className="h-full rounded-full bg-gradient-to-r from-[#8649F1] to-[#2355A4] transition-all"
+                        style={{ width: `${Math.round(fillSummary.filledCount / Math.max(fillSummary.totalCount, 1) * 100)}%` }}
+                      />
+                    </div>
+
+                    {/* Filled confirmation */}
+                    <div className="w-full max-w-[320px] rounded-[10px] border border-green-200 dark:border-green-900 bg-green-50 dark:bg-green-950/30 px-4 py-3 mb-4">
+                      <div className="flex items-center gap-2 mb-1">
+                        <CheckCircle2 className="h-4 w-4 text-green-600 shrink-0" />
+                        <span className="text-sm font-semibold text-green-700 dark:text-green-400">{fillSummary.filledCount} fields auto-filled by Luka</span>
+                      </div>
+                      <p className="text-xs text-green-700/70 dark:text-green-400/70 pl-6">Responses populated from Xero data and prior year files with citations.</p>
+                    </div>
+
+                    {/* Needs review */}
+                    {fillSummary.skippedItems.length > 0 && (
+                      <div className="w-full max-w-[320px] rounded-[10px] border border-amber-200 dark:border-amber-900 bg-amber-50 dark:bg-amber-950/30 px-4 py-3 mb-5">
+                        <div className="flex items-center gap-2 mb-2">
+                          <span className="text-amber-500 text-base">△</span>
+                          <span className="text-sm font-semibold text-amber-700 dark:text-amber-400">{fillSummary.skippedItems.length} items need your review</span>
+                        </div>
+                        <ScrollArea className="max-h-[200px]">
+                          <div className="space-y-2">
+                            {fillSummary.skippedItems.map((item, i) => (
+                              <div key={i} className="pl-1">
+                                <p className="text-xs font-medium text-amber-700/80 dark:text-amber-400/80">{item.sectionTitle}</p>
+                                <p className="text-xs text-amber-700/60 dark:text-amber-400/60 truncate">{item.questionText || '(question)'}</p>
+                              </div>
+                            ))}
+                          </div>
+                        </ScrollArea>
+                      </div>
+                    )}
+
+                    <button
+                      onClick={() => onOpenChange(false)}
+                      className="inline-flex items-center gap-2 h-10 px-5 rounded-[10px] text-sm font-semibold text-white bg-gradient-to-br from-[#8649F1] to-[#2355A4] hover:opacity-90 transition-opacity shadow-md"
+                    >
+                      Back to checklist
+                    </button>
+                  </div>
+                ) : autoFillMode ? (
                   /* Auto-fill analysis view */
                   <div className="flex-1 flex flex-col items-center justify-center px-8 min-h-[60vh]">
                     {analysisPhase === "analyzing" ? (
@@ -658,8 +721,8 @@ export function AskLukaOverlay({ open, onOpenChange, initialQuery, autoFillMode,
                 )}
               </div>
 
-              {/* Chat Input - pinned to bottom; hidden in auto-fill mode */}
-              {!autoFillMode && <div className={cn("pb-6 pt-2", viewMode === "full" ? "px-12" : "px-6")}>
+              {/* Chat Input - pinned to bottom; hidden in auto-fill and summary modes */}
+              {!autoFillMode && !summaryMode && <div className={cn("pb-6 pt-2", viewMode === "full" ? "px-12" : "px-6")}>
                 <div className={cn("w-full mx-auto relative", viewMode === "full" ? "max-w-none" : "max-w-[700px]")}>
                   {/* Prompt Picker */}
                   <PromptPicker

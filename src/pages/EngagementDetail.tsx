@@ -574,6 +574,12 @@ export default function EngagementDetail() {
   const [lukaOpen, setLukaOpen] = useState(false);
   const [lukaQuery, setLukaQuery] = useState("");
   const [lukaAutoFillConfig, setLukaAutoFillConfig] = useState<{ label: string; sources: string[] } | null>(null);
+  const [isAutoFilling, setIsAutoFilling] = useState(false);
+  const [lukaFillSummary, setLukaFillSummary] = useState<{
+    filledCount: number;
+    totalCount: number;
+    skippedItems: Array<{ sectionTitle: string; questionText: string }>;
+  } | null>(null);
   const autoFillRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // Client responses hook
@@ -759,45 +765,91 @@ export default function EngagementDetail() {
       }
     }
   };
-  const getMockAnswer = (answerType: string, idx: number): string => {
-    const MOCK: Record<string, string[]> = {
-      'yes-no': ['Yes', 'Yes', 'No', 'Yes'],
-      'yes-no-na': ['Yes', 'Yes', 'N/A', 'Yes', 'No'],
-      'date': ['2024-03-31', '2024-04-01', '2023-12-31'],
-      'amount': ['125,000', '48,500', '2,250,000', '875,000'],
-      'answer': ['Reviewed and confirmed.', 'Obtained from client.', 'Verified against prior year.', 'No exceptions noted.'],
-      'long-answer': ['Based on procedures performed, no material exceptions were identified. Responses are consistent with prior year findings and available accounting data.', 'Client confirmed during planning meeting. Documentation on file.'],
-      'multiple-choice': ['Option A', 'Option B'],
-      'dropdown': ['Standard', 'Low Risk', 'Moderate Risk'],
-      'toggle': ['true'],
-      'reference': ['WP-A1'],
-    };
-    const options = MOCK[answerType] ?? MOCK['answer'];
-    return options[idx % options.length];
+  const getMockAnswer = (q: Question, idx: number): string => {
+    switch (q.answerType) {
+      case 'yes-no': return idx % 4 === 2 ? 'No' : 'Yes';
+      case 'yes-no-na': return idx % 5 === 2 ? 'N/A' : (idx % 7 === 0 ? 'No' : 'Yes');
+      case 'date': return ['2024-03-31', '2024-04-01', '2023-12-31'][idx % 3];
+      case 'amount': return ['125,000', '48,500', '2,250,000', '875,000'][idx % 4];
+      case 'answer': return ['Reviewed and confirmed with client.', 'Obtained from client documentation.', 'Verified against prior year file.', 'No exceptions noted.'][idx % 4];
+      case 'multiple-choice': return q.options?.[idx % (q.options.length || 1)] ?? 'Option A';
+      case 'dropdown': return q.options?.[0] ?? 'Standard';
+      case 'toggle': return 'true';
+      case 'reference': return ['WP-A1', 'WP-B2', 'WP-C3'][idx % 3];
+      default: return 'Confirmed';
+    }
   };
 
   const startAutoFill = (target: Checklist) => {
-    if (!target) return;
-    const questions: { sIdx: number; qIdx: number; id: string; answerType: string }[] = [];
+    if (!target || isAutoFilling) return;
+
+    type FlatQ = { sIdx: number; qIdx: number; q: Question; sectionTitle: string };
+    const allQ: FlatQ[] = [];
     target.sections.forEach((s, si) => {
       s.questions.forEach((q, qi) => {
-        if (q.answerType !== 'none') questions.push({ sIdx: si, qIdx: qi, id: q.id, answerType: q.answerType });
+        if (q.answerType !== 'none') allQ.push({ sIdx: si, qIdx: qi, q, sectionTitle: s.title });
       });
     });
-    if (questions.length === 0) {
-      toast.success('Checklist auto-filled by Luka');
+
+    if (allQ.length === 0) {
+      toast('Nothing to fill in this checklist', { duration: 2000 });
       return;
     }
-    let current = { ...target, sections: target.sections.map(s => ({ ...s, questions: [...s.questions] })) };
+
+    // Clear all answers first
+    const cleared: Checklist = {
+      ...target,
+      sections: target.sections.map(s => ({
+        ...s,
+        questions: s.questions.map(q => ({ ...q, answer: '' })),
+      })),
+    };
+    setChecklist(cleared);
+    setIsAutoFilling(true);
+
+    // Split: long-answer/follow-up/file-upload + every 5th eligible = needs human (~20%)
+    const toFill: (FlatQ & { answer: string })[] = [];
+    const skipped: FlatQ[] = [];
+    let eligibleIdx = 0;
+
+    allQ.forEach(({ sIdx, qIdx, q, sectionTitle }) => {
+      const needsJudgment =
+        q.answerType === 'long-answer' ||
+        q.answerType === 'follow-up' ||
+        q.answerType === 'file-upload';
+
+      if (needsJudgment || eligibleIdx % 5 === 4) {
+        skipped.push({ sIdx, qIdx, q, sectionTitle });
+      } else {
+        toFill.push({ sIdx, qIdx, q, sectionTitle, answer: getMockAnswer(q, eligibleIdx) });
+      }
+      eligibleIdx++;
+    });
+
+    let current: Checklist = {
+      ...cleared,
+      sections: cleared.sections.map(s => ({ ...s, questions: [...s.questions] })),
+    };
     let i = 0;
+
     const fillNext = () => {
-      if (i >= questions.length) {
+      if (i >= toFill.length) {
         handleChecklistUpdate(current);
-        toast.success('Luka auto-fill complete — all fields populated');
+        setIsAutoFilling(false);
+        setLukaFillSummary({
+          filledCount: toFill.length,
+          totalCount: allQ.length,
+          skippedItems: skipped.map(({ q, sectionTitle }) => ({
+            sectionTitle,
+            questionText: q.text.replace(/<[^>]+>/g, '').trim().slice(0, 90),
+          })),
+        });
+        setLukaAutoFillConfig(null);
+        setLukaOpen(true);
         return;
       }
-      const { sIdx, qIdx, answerType, id } = questions[i];
-      const answer = getMockAnswer(answerType, i);
+
+      const { sIdx, qIdx, answer } = toFill[i];
       current = {
         ...current,
         sections: current.sections.map((s, si) =>
@@ -811,10 +863,11 @@ export default function EngagementDetail() {
       };
       setChecklist({ ...current });
       i++;
-      autoFillRef.current = setTimeout(fillNext, 120);
+      autoFillRef.current = setTimeout(fillNext, 350);
     };
-    toast('Luka is filling your checklist…', { duration: 2000 });
-    autoFillRef.current = setTimeout(fillNext, 400);
+
+    toast('Luka is auto-filling your checklist…', { duration: 4000 });
+    autoFillRef.current = setTimeout(fillNext, 600);
   };
 
   const handleAutoFillConfirmed = () => {
@@ -1245,6 +1298,16 @@ export default function EngagementDetail() {
               }}
             />
           )}
+          {/* Auto-fill progress indicator */}
+          {isAutoFilling && (
+            <div className="mx-4 mt-2 rounded-lg border border-primary/20 bg-primary/5 px-4 py-2.5 flex items-center gap-3">
+              <div className="w-4 h-4 rounded-full bg-gradient-to-br from-[#8649F1] to-[#2355A4] luka-thinking-spin shrink-0" />
+              <span className="text-sm font-medium text-primary">Luka is auto-filling your checklist…</span>
+              <div className="flex-1 h-1 rounded-full bg-muted overflow-hidden">
+                <div className="h-full rounded-full bg-gradient-to-r from-[#8649F1] to-[#2355A4] luka-thinking-text" style={{ width: '60%' }} />
+              </div>
+            </div>
+          )}
           {/* ── Interactive worksheets — rendered directly without checklist state ── */}
           {(checklistKey === 'aud-mat' || checklistKey === 'aud-us-mat') ? (
             <AuditMaterialityWorksheet isUS={checklistKey === 'aud-us-mat'} />
@@ -1448,12 +1511,14 @@ export default function EngagementDetail() {
     </Layout>
     <AskLukaOverlay
       open={lukaOpen}
-      onOpenChange={(o) => { setLukaOpen(o); if (!o) setLukaAutoFillConfig(null); }}
+      onOpenChange={(o) => { setLukaOpen(o); if (!o) { setLukaAutoFillConfig(null); setLukaFillSummary(null); } }}
       initialQuery={lukaQuery}
       autoFillMode={!!lukaAutoFillConfig}
       checklistLabel={lukaAutoFillConfig?.label}
       autoFillSources={lukaAutoFillConfig?.sources}
       onAutoFillConfirmed={handleAutoFillConfirmed}
+      summaryMode={!!lukaFillSummary}
+      fillSummary={lukaFillSummary ?? undefined}
     />
   </>;
 }
