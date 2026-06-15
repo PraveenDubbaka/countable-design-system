@@ -541,21 +541,55 @@ export function AskLukaOverlay({ open, onOpenChange, initialQuery, autoFillMode,
                       />
                     </div>
 
-                    {/* Per-template breakdown */}
+                    {/* Per-template breakdown — grouped by section */}
                     <div className="w-full max-w-[340px] rounded-[10px] border border-border bg-muted/30 px-4 py-3 mb-5">
                       <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-2">Template breakdown</p>
-                      <ScrollArea className="max-h-[260px]">
-                        <div className="space-y-1.5 pr-1">
-                          {allTemplateSummary.templates.map((t, i) => (
-                            <div key={i} className="flex items-start gap-2 py-0.5">
-                              <CheckCircle2 className="h-3.5 w-3.5 text-green-500 shrink-0" />
-                              {t.section && (
-                                <span className="text-[10px] font-bold text-primary/70 bg-primary/10 px-1.5 py-0.5 rounded shrink-0 font-mono">{t.section}</span>
-                              )}
-                              <span className="text-sm text-foreground flex-1 min-w-0 break-words leading-snug">{t.name}</span>
-                              <span className="text-xs text-muted-foreground shrink-0 tabular-nums">{t.filledCount}/{t.totalCount}</span>
-                            </div>
-                          ))}
+                      <ScrollArea className="max-h-[340px]">
+                        <div className="space-y-3 pr-1">
+                          {(() => {
+                            const SECTION_LABELS: Record<string, string> = {
+                              CO: 'Client Onboarding', PL: 'Planning', DO: 'Documents',
+                              TB: 'Trial Balance & Adjusting Entries', RA: 'Risk Assessment',
+                              RP: 'Response to Assessed Risks', PR: 'Procedures',
+                              FS: 'Financial Statements', SO: 'Completion & Signoffs',
+                            };
+                            const SECTION_ORDER = ['CO','PL','DO','TB','RA','RP','PR','FS','SO'];
+                            const grouped: Record<string, typeof allTemplateSummary.templates> = {};
+                            const ungrouped: typeof allTemplateSummary.templates = [];
+                            for (const t of allTemplateSummary.templates) {
+                              if (t.section) { (grouped[t.section] = grouped[t.section] || []).push(t); }
+                              else { ungrouped.push(t); }
+                            }
+                            const sections = SECTION_ORDER.filter(s => grouped[s]);
+                            return (
+                              <>
+                                {sections.map(code => (
+                                  <div key={code}>
+                                    <div className="flex items-center gap-1.5 mb-1.5">
+                                      <span className="text-[10px] font-bold text-muted-foreground font-mono">{code}</span>
+                                      <span className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wide">{SECTION_LABELS[code]}</span>
+                                    </div>
+                                    <div className="pl-3 space-y-1 border-l border-border/60">
+                                      {grouped[code].map((t, i) => (
+                                        <div key={i} className="flex items-start gap-2 py-0.5">
+                                          <CheckCircle2 className="h-3.5 w-3.5 text-green-500 shrink-0 mt-0.5" />
+                                          <span className="text-sm text-foreground flex-1 min-w-0 break-words leading-snug">{t.name}</span>
+                                          <span className="text-xs text-muted-foreground shrink-0 tabular-nums">{t.filledCount}/{t.totalCount}</span>
+                                        </div>
+                                      ))}
+                                    </div>
+                                  </div>
+                                ))}
+                                {ungrouped.map((t, i) => (
+                                  <div key={`ung-${i}`} className="flex items-start gap-2 py-0.5">
+                                    <CheckCircle2 className="h-3.5 w-3.5 text-green-500 shrink-0 mt-0.5" />
+                                    <span className="text-sm text-foreground flex-1 min-w-0 break-words leading-snug">{t.name}</span>
+                                    <span className="text-xs text-muted-foreground shrink-0 tabular-nums">{t.filledCount}/{t.totalCount}</span>
+                                  </div>
+                                ))}
+                              </>
+                            );
+                          })()}
                         </div>
                       </ScrollArea>
                     </div>
