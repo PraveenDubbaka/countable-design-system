@@ -19,9 +19,10 @@ interface FillSummary {
 }
 
 export interface AllTemplateSummary {
-  templates: Array<{ name: string; filledCount: number; totalCount: number }>;
+  templates: Array<{ name: string; filledCount: number; totalCount: number; section?: string }>;
   totalFilled: number;
   totalFields: number;
+  engagementLabel?: string;
 }
 
 interface AskLukaOverlayProps {
@@ -520,17 +521,20 @@ export function AskLukaOverlay({ open, onOpenChange, initialQuery, autoFillMode,
               <div className="flex-1 min-w-0 overflow-y-auto overflow-x-hidden">
                 {allTemplateSummary ? (
                   /* All-templates post-fill summary */
-                  <div className="flex flex-col items-center px-8 pt-8 pb-6 min-h-[60vh]">
-                    <div className="mb-4 flex items-center justify-center w-[52px] h-[52px] rounded-full bg-gradient-to-br from-[#8649F1] to-[#2355A4]">
+                  <div className="flex flex-col items-center px-6 pt-6 pb-6 min-h-[60vh]">
+                    <div className="mb-3 flex items-center justify-center w-[52px] h-[52px] rounded-full bg-gradient-to-br from-[#8649F1] to-[#2355A4]">
                       <LukaIcon size={22} />
                     </div>
+                    {allTemplateSummary.engagementLabel && (
+                      <p className="text-xs font-medium text-muted-foreground mb-1 text-center tracking-wide uppercase">{allTemplateSummary.engagementLabel}</p>
+                    )}
                     <h2 className="text-lg font-semibold text-foreground mb-1 text-center">All Templates Auto-filled</h2>
                     <p className="text-sm text-muted-foreground text-center mb-4 max-w-[320px]">
                       Luka filled <span className="font-semibold text-foreground">{allTemplateSummary.totalFilled}</span> of <span className="font-semibold text-foreground">{allTemplateSummary.totalFields}</span> fields across <span className="font-semibold text-foreground">{allTemplateSummary.templates.length}</span> template{allTemplateSummary.templates.length !== 1 ? 's' : ''} ({Math.round(allTemplateSummary.totalFilled / Math.max(allTemplateSummary.totalFields, 1) * 100)}%).
                     </p>
 
                     {/* Overall progress bar */}
-                    <div className="w-full max-w-[320px] h-2 rounded-full bg-muted mb-5 overflow-hidden">
+                    <div className="w-full max-w-[320px] h-2 rounded-full bg-muted mb-4 overflow-hidden">
                       <div
                         className="h-full rounded-full bg-gradient-to-r from-[#8649F1] to-[#2355A4] transition-all"
                         style={{ width: `${Math.round(allTemplateSummary.totalFilled / Math.max(allTemplateSummary.totalFields, 1) * 100)}%` }}
@@ -538,15 +542,22 @@ export function AskLukaOverlay({ open, onOpenChange, initialQuery, autoFillMode,
                     </div>
 
                     {/* Per-template breakdown */}
-                    <div className="w-full max-w-[320px] rounded-[10px] border border-border bg-muted/30 px-4 py-3 mb-5 space-y-2.5">
-                      <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-1">Template breakdown</p>
-                      {allTemplateSummary.templates.map((t, i) => (
-                        <div key={i} className="flex items-center gap-2">
-                          <CheckCircle2 className="h-3.5 w-3.5 text-green-500 shrink-0" />
-                          <span className="text-sm text-foreground flex-1 truncate">{t.name}</span>
-                          <span className="text-xs text-muted-foreground shrink-0">{t.filledCount}/{t.totalCount}</span>
+                    <div className="w-full max-w-[340px] rounded-[10px] border border-border bg-muted/30 px-4 py-3 mb-5">
+                      <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-2">Template breakdown</p>
+                      <ScrollArea className="max-h-[260px]">
+                        <div className="space-y-1.5 pr-1">
+                          {allTemplateSummary.templates.map((t, i) => (
+                            <div key={i} className="flex items-start gap-2 py-0.5">
+                              <CheckCircle2 className="h-3.5 w-3.5 text-green-500 shrink-0" />
+                              {t.section && (
+                                <span className="text-[10px] font-bold text-primary/70 bg-primary/10 px-1.5 py-0.5 rounded shrink-0 font-mono">{t.section}</span>
+                              )}
+                              <span className="text-sm text-foreground flex-1 min-w-0 break-words leading-snug">{t.name}</span>
+                              <span className="text-xs text-muted-foreground shrink-0 tabular-nums">{t.filledCount}/{t.totalCount}</span>
+                            </div>
+                          ))}
                         </div>
-                      ))}
+                      </ScrollArea>
                     </div>
 
                     <button
