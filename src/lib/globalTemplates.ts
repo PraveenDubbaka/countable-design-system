@@ -332,7 +332,7 @@ export const generateEngagementLetterChecklist = (): Checklist => {
     id: 'global-template-engagement-letter',
     title: 'Engagement Letter',
     description: 'Compilation engagement letter outlining terms, responsibilities, and acceptance.',
-    objective: 'Establish the terms of the engagement.',
+    objective: '',
     sections: [
       {
         id: 'section-el-letter',
@@ -398,7 +398,7 @@ export const generateManagementResponsibilityChecklist = (): Checklist => {
     id: 'global-template-management-responsibility',
     title: 'Management responsibility and acknowledgement',
     description: 'Management acknowledgement of responsibilities for the compilation engagement.',
-    objective: 'Document management acknowledgement.',
+    objective: '',
     sections: [
       {
         id: 'section-mr-letter',
@@ -5622,320 +5622,197 @@ This worksheet addresses:
 };
 
 // Audit Engagement Letter — CAS 210 (Letter format — rendered by LetterView)
-export const generateAuditEngagementLetterChecklist = (): Checklist => {
-  const la = (id: string, text: string, answer = ''): Question => ({
-    id, text, answerType: 'long-answer' as const, options: [], required: false, answer
-  });
-  const q = (id: string, text: string, answer = '', explanation = '', reference = ''): Question => ({
-    id, text, answerType: 'yes-no-na' as const, options: ['Yes', 'No', 'NA'], required: false, answer,
-    ...(explanation ? { explanation } : {}), ...(reference ? { reference } : {})
-  });
-
-  const sections: Section[] = [
-    {
-      id: 'aud-el-header',
-      title: 'Letter Header',
-      questions: [
-        la('aud-el-date', '<p><strong>Date of Letter</strong></p>', 'April 5, 2024'),
-        la('aud-el-addressee', '<p><strong>Addressed To</strong> (name and title of management representative or TCWG)</p>', 'Mr. Robert Morrison, Chief Executive Officer'),
-        la('aud-el-entity', '<p><strong>Entity Name</strong></p>', 'Shipping Line Inc.'),
-        la('aud-el-address', '<p><strong>Entity Address</strong></p>', '123 Harbour Drive, Halifax, Nova Scotia, B3J 1A1'),
-      ],
-      isExpanded: true
-    },
-    {
-      id: 'aud-el-s1',
-      title: '1. Objective and Scope of the Audit (CAS 210.10(a))',
-      questions: [
-        la('aud-el-1-period', '<p><strong>Audit period:</strong> Financial statements for the year ended _______________</p>', 'March 31, 2024'),
-        la('aud-el-1-framework', '<p><strong>Applicable financial reporting framework</strong> (e.g., ASPE, IFRS, Public Sector Accounting Standards)</p>', 'Accounting Standards for Private Enterprises (ASPE)'),
-        la('aud-el-1-scope', '<p><strong>Scope of the audit:</strong></p><p>We will audit the financial statements of [Entity Name] which comprise the statement of financial position as at [Year End], and the statements of income, retained earnings, and cash flows for the year then ended, and notes to the financial statements. Our audit will be conducted in accordance with Canadian Auditing Standards (CAS).</p>', 'We will audit the financial statements of Shipping Line Inc. which comprise the statement of financial position as at March 31, 2024, and the statements of income, retained earnings, and cash flows for the year then ended, and notes to the financial statements. Our audit will be conducted in accordance with Canadian Auditing Standards (CAS).'),
-      ],
-      isExpanded: true
-    },
-    {
-      id: 'aud-el-s2',
-      title: '2. Auditor\'s Responsibilities (CAS 210.10(b))',
-      questions: [
-        la('aud-el-2-resp', '<p><strong>Auditor\'s responsibilities:</strong></p><p>Our responsibility is to express an opinion on these financial statements based on our audit. We will conduct our audit in accordance with Canadian Auditing Standards (CAS). Those standards require that we comply with ethical requirements and plan and perform the audit to obtain reasonable assurance about whether the financial statements are free from material misstatement, whether due to fraud or error.</p><p>An audit involves performing procedures to obtain audit evidence about the amounts and disclosures in the financial statements. The procedures selected depend on our judgment, including the assessment of the risks of material misstatement, whether due to fraud or error. We also evaluate the appropriateness of accounting policies used, the reasonableness of accounting estimates made by management, and the overall presentation of the financial statements.</p>'),
-      ],
-      isExpanded: true
-    },
-    {
-      id: 'aud-el-s3',
-      title: '3. Management\'s Responsibilities (CAS 210.10(c))',
-      questions: [
-        la('aud-el-3-mgmt', '<p><strong>Management\'s responsibilities:</strong></p><p>Our audit will be conducted on the basis that management acknowledges and understands that it has the responsibility:</p><p>(a) For the preparation and fair presentation of the financial statements in accordance with [applicable framework];</p><p>(b) For such internal control as management determines is necessary to enable the preparation of financial statements that are free from material misstatement, whether due to fraud or error; and</p><p>(c) To provide us with: (i) access to all information relevant to the preparation of the financial statements; (ii) additional information we may request; and (iii) unrestricted access to persons from whom we determine it necessary to obtain audit evidence.</p>'),
-      ],
-      isExpanded: true
-    },
-    {
-      id: 'aud-el-s4',
-      title: '4. Inherent Limitations of the Audit',
-      questions: [
-        la('aud-el-4-limit', '<p><strong>Inherent limitations statement:</strong></p><p>Because of the inherent limitations of an audit, together with the inherent limitations of internal control, there is an unavoidable risk that some material misstatements may not be detected, even though the audit is properly planned and performed in accordance with CAS.</p>'),
-      ],
-      isExpanded: true
-    },
-    {
-      id: 'aud-el-s5',
-      title: '5. Form of the Auditor\'s Report',
-      questions: [
-        la('aud-el-5-report', '<p><strong>Expected form of the auditor\'s report:</strong></p><p>In circumstances where we are able to express an unmodified opinion, our report will be in the standard form for an audit of financial statements prepared in accordance with [applicable framework]. We draw your attention to the fact that our opinion is not a guarantee; it provides reasonable but not absolute assurance.</p>'),
-      ],
-      isExpanded: true
-    },
-    {
-      id: 'aud-el-s6',
-      title: '6. Fees and Billing Arrangements',
-      questions: [
-        la('aud-el-6-fees', '<p><strong>Fee arrangement:</strong></p><p>Our fees for the audit services will be based on [time spent at our standard hourly rates / a fixed fee of $___________]. We will provide an estimate before commencing work and will advise you promptly if we believe the estimate will be exceeded. Out-of-pocket expenses will be billed separately.</p>', 'Our fees for the audit services will be based on time spent at our standard hourly rates, with an estimated total fee of $28,500 to $32,000 for the year ended March 31, 2024. We will advise you promptly if we believe the estimate will be exceeded. Out-of-pocket expenses (travel, courier, etc.) will be billed separately.'),
-      ],
-      isExpanded: true
-    },
-    {
-      id: 'aud-el-s7',
-      title: '7. Other Services and Matters',
-      questions: [
-        q('aud-el-7a', '<p>Is this engagement subject to an Engagement Quality Control Review (EQCR)?</p>', 'No', '<p>EQCR not required. Engagement assessed as Low Risk. Private company with no public interest considerations.</p>'),
-        la('aud-el-7-other', '<p><strong>Other services / other matters to address</strong> (e.g., tax returns, use of specialists, component auditors, predecessor auditor, restriction on use of the report):</p>', 'Predecessor auditor contacted — no concerns raised. No component auditors required. No specialists required. Report intended for management and RBC (banking covenant purposes). No restriction on general use.'),
-      ],
-      isExpanded: true
-    },
-    {
-      id: 'aud-el-closing',
-      title: '8. Signatures and Agreement',
-      questions: [
-        la('aud-el-close', '<p><strong>Closing paragraph:</strong></p><p>Please sign and return the attached copy of this letter to indicate your acknowledgement of, and agreement with, the arrangements for our audit of the financial statements including our respective responsibilities.</p>'),
-        la('aud-el-firm', '<p><strong>Firm name and engagement partner signature</strong></p>', 'Williams Chen & Associates LLP — J. Williams, CPA, CA — Engagement Partner'),
-        la('aud-el-firmdate', '<p><strong>Date</strong></p>', 'April 5, 2024'),
-        la('aud-el-mgmt', '<p><strong>Acknowledged and agreed on behalf of [Entity Name]</strong></p><p>Name: _______________ Title: _______________</p>', 'Robert Morrison — Chief Executive Officer — Shipping Line Inc.'),
-        la('aud-el-mgmtdate', '<p><strong>Date acknowledged by management</strong></p>', 'April 5, 2024'),
-      ],
-      isExpanded: true
-    },
-  ];
-
-  return {
-    id: 'global-template-audit-engagement-letter',
-    title: 'Engagement Letter',
-    description: 'Audit engagement letter — CAS 210 (Agreeing the Terms of Audit Engagements).',
-    objective: `Objective: To establish the terms of the audit engagement in writing, documenting the objective and scope, the auditor's and management's responsibilities, and the form of the auditor's report.
-
-Reference: CAS 210 — Agreeing the Terms of Audit Engagements.`,
-    sections,
-    createdAt: new Date(),
-    updatedAt: new Date(),
-  };
-};
+export const generateAuditEngagementLetterChecklist = (): Checklist =>
+  makeLetterChecklist('global-template-audit-engagement-letter', 'Engagement Letter', 'Audit engagement letter — CAS 210 (Agreeing the Terms of Audit Engagements).', `
+    <div style="background:#f0fdf4;border:1px solid #86efac;border-radius:6px;padding:8px 12px;margin-bottom:16px;font-size:11px;color:#15803d;display:flex;align-items:center;gap:8px;"> <span style="font-weight:700;">✓ Sent to client portal</span> · April 5, 2024 · Acknowledged by Robert Morrison (CEO) · April 5, 2024 </div>
+    <p class="text-sm text-foreground">April 5, 2024</p>
+    <p class="mt-6 text-sm text-foreground">Mr. Robert Morrison<br/>Chief Executive Officer<br/>Shipping Line Inc.<br/>123 Harbour Drive, Halifax, Nova Scotia, B3J 1A1</p>
+    <p class="mt-6 text-sm text-foreground">Dear Mr. Morrison,</p>
+    <p class="mt-4 text-sm text-foreground">
+      We are pleased to confirm our acceptance of the engagement to audit the financial statements of
+      <strong>Shipping Line Inc.</strong> for the year ended <strong>March 31, 2024</strong>.
+    </p>
+    <p class="mt-4 text-sm text-foreground font-semibold">Objective and Scope of the Audit</p>
+    <p class="mt-2 text-sm text-foreground">
+      We will audit the financial statements of Shipping Line Inc. which comprise the statement of financial position
+      as at March 31, 2024, and the statements of income, retained earnings, and cash flows for the year then ended,
+      and notes to the financial statements. Our audit will be conducted in accordance with
+      <strong>Canadian Auditing Standards (CAS)</strong>.
+    </p>
+    <p class="mt-4 text-sm text-foreground font-semibold">Auditor's Responsibilities</p>
+    <p class="mt-2 text-sm text-foreground">
+      Our responsibility is to express an opinion on these financial statements based on our audit. We will conduct
+      our audit in accordance with Canadian Auditing Standards. Those standards require that we comply with ethical
+      requirements and plan and perform the audit to obtain reasonable assurance about whether the financial statements
+      are free from material misstatement, whether due to fraud or error.
+    </p>
+    <p class="mt-2 text-sm text-foreground">
+      An audit involves performing procedures to obtain audit evidence about the amounts and disclosures in the
+      financial statements. The procedures selected depend on our judgment, including the assessment of the risks of
+      material misstatement, whether due to fraud or error. We also evaluate the appropriateness of accounting
+      policies used, the reasonableness of accounting estimates made by management, and the overall presentation of
+      the financial statements.
+    </p>
+    <p class="mt-4 text-sm text-foreground font-semibold">Management's Responsibilities</p>
+    <p class="mt-2 text-sm text-foreground">
+      Our audit will be conducted on the basis that management acknowledges and understands that it has the responsibility:
+    </p>
+    <p class="mt-2 text-sm text-foreground">(a) For the preparation and fair presentation of the financial statements in accordance with <strong>Accounting Standards for Private Enterprises (ASPE)</strong>;</p>
+    <p class="mt-2 text-sm text-foreground">(b) For such internal control as management determines is necessary to enable the preparation of financial statements that are free from material misstatement, whether due to fraud or error; and</p>
+    <p class="mt-2 text-sm text-foreground">(c) To provide us with: (i) access to all information relevant to the preparation of the financial statements; (ii) additional information we may request; and (iii) unrestricted access to persons from whom we determine it necessary to obtain audit evidence.</p>
+    <p class="mt-4 text-sm text-foreground font-semibold">Inherent Limitations</p>
+    <p class="mt-2 text-sm text-foreground">
+      Because of the inherent limitations of an audit, together with the inherent limitations of internal control,
+      there is an unavoidable risk that some material misstatements may not be detected, even though the audit is
+      properly planned and performed in accordance with CAS.
+    </p>
+    <p class="mt-4 text-sm text-foreground font-semibold">Fees</p>
+    <p class="mt-2 text-sm text-foreground">
+      Our fees for the audit services will be based on time spent at our standard hourly rates, with an estimated
+      total fee of <strong>$28,500 to $32,000</strong> for the year ended March 31, 2024. Out-of-pocket expenses
+      (travel, courier, etc.) will be billed separately. We will advise you promptly if we believe the estimate
+      will be exceeded.
+    </p>
+    <p class="mt-4 text-sm text-foreground">
+      Please sign and return the attached copy of this letter to indicate your acknowledgement of, and agreement
+      with, the arrangements for our audit of the financial statements including our respective responsibilities.
+    </p>
+    <p class="mt-6 text-sm text-foreground">Yours truly,</p>
+    <p class="mt-4 text-sm text-foreground"><strong>Williams Chen &amp; Associates LLP</strong></p>
+    <p class="mt-1 text-sm text-foreground">J. Williams, CPA, CA — Engagement Partner</p>
+    <p class="mt-8 text-sm text-foreground font-semibold">Acknowledged and agreed on behalf of Shipping Line Inc.:</p>
+    <p class="mt-4 text-sm text-foreground">_______________________________&nbsp;&nbsp;&nbsp;&nbsp;Date: April 5, 2024</p>
+    <p class="mt-1 text-sm text-foreground">Robert Morrison — Chief Executive Officer — Shipping Line Inc.</p>
+  `);
 
 // TCWG Planning Communication — CAS 260 (Letter format — rendered by LetterView)
-export const generateTCWGPlanningCommunicationChecklist = (): Checklist => {
-  const la = (id: string, text: string, answer = ''): Question => ({
-    id, text, answerType: 'long-answer' as const, options: [], required: false, answer
-  });
-  const q = (id: string, text: string, answer = '', explanation = '', reference = ''): Question => ({
-    id, text, answerType: 'yes-no-na' as const, options: ['Yes', 'No', 'NA'], required: false, answer, explanation, reference
-  });
-
-  const sections: Section[] = [
-    {
-      id: 'aud-tcwg-pl-header',
-      title: 'Letter Header',
-      questions: [
-        la('tcwg-pl-date', '<p><strong>Date of Communication</strong></p>', 'February 28, 2024'),
-        la('tcwg-pl-addressee', '<p><strong>Addressed To</strong> (Those Charged with Governance — Board of Directors / Audit Committee)</p>', 'Board of Directors, Shipping Line Inc.'),
-        la('tcwg-pl-entity', '<p><strong>Entity Name</strong></p>', 'Shipping Line Inc.'),
-        la('tcwg-pl-period', '<p><strong>Audit period — financial statements for the year ended:</strong></p>', 'March 31, 2024'),
-      ],
-      isExpanded: true
-    },
-    {
-      id: 'aud-tcwg-pl-s1',
-      title: '1. Purpose of Communication (CAS 260.14)',
-      questions: [
-        la('tcwg-pl-1-purpose', '<p><strong>Purpose statement:</strong></p><p>CAS 260 requires us to communicate with those charged with governance our overall audit approach and strategy before the audit begins. This letter fulfills that requirement and is intended to provide transparency about our planned audit scope, timing, and focus areas.</p>', 'Confirmed — letter issued February 28, 2024 to the Board of Directors.'),
-      ],
-      isExpanded: true
-    },
-    {
-      id: 'aud-tcwg-pl-s2',
-      title: '2. Our Responsibilities as Auditors',
-      questions: [
-        la('tcwg-pl-2-resp', '<p><strong>Our responsibilities:</strong></p><p>Our objective is to obtain reasonable assurance about whether the financial statements are free from material misstatement, whether due to fraud or error, and to issue an auditor\'s report that includes our opinion. Reasonable assurance is a high level of assurance, but is not a guarantee that an audit conducted in accordance with CASs will always detect a material misstatement when it exists. Our audit opinion is not a guarantee of the accuracy or completeness of the financial statements.</p>', 'Auditor responsibilities confirmed per standard CAS language.'),
-      ],
-      isExpanded: true
-    },
-    {
-      id: 'aud-tcwg-pl-s3',
-      title: '3. Overall Audit Approach and Engagement Team',
-      questions: [
-        la('tcwg-pl-3-approach', '<p><strong>Audit approach:</strong></p><p>Our audit approach is [risk-based / substantive / combined]. We will obtain an understanding of the entity and its environment, identify and assess risks of material misstatement, and design and perform audit procedures responsive to those risks.</p>', 'Primarily substantive risk-based approach. We will obtain an understanding of Shipping Line Inc. and its maritime freight operations, identify and assess risks of material misstatement, and design audit procedures responsive to those risks — particularly around revenue recognition and vessel carrying values.'),
-        la('tcwg-pl-3-team', '<p><strong>Engagement team:</strong></p><p>Engagement Partner: _______________</p><p>Senior Manager / Manager: _______________</p><p>Staff: _______________</p><p>EQCR (if applicable): _______________</p>', 'Engagement Partner: J. Williams, CPA\nEngagement Manager: S. Chen, CPA\nSenior Auditor: [TBD]\nStaff Auditor: [TBD]\nEQCR: Not applicable for this engagement'),
-        la('tcwg-pl-3-timeline', '<p><strong>Planned timeline:</strong></p><p>Interim procedures: _______________</p><p>Year-end fieldwork: _______________</p><p>Expected report issuance: _______________</p>', 'Interim procedures: None planned\nYear-end fieldwork: April 14–25, 2024\nExpected report issuance: May 31, 2024'),
-      ],
-      isExpanded: true
-    },
-    {
-      id: 'aud-tcwg-pl-s4',
-      title: '4. Significant Audit Focus Areas',
-      questions: [
-        la('tcwg-pl-4-focus', '<p><strong>Key areas of audit focus identified during planning:</strong></p><p>1. _______________</p><p>2. _______________</p><p>3. _______________</p><p>4. _______________</p>', '1. Revenue recognition — voyage completion cut-off for freight revenue at March 31, 2024\n2. Vessel impairment assessment — fleet PP&E of $8.2M representing 45% of total assets\n3. Foreign currency transactions — USD-denominated freight revenue and receivables\n4. Management override of controls — journal entry testing and accounting estimates'),
-      ],
-      isExpanded: true
-    },
-    {
-      id: 'aud-tcwg-pl-s5',
-      title: '5. Materiality',
-      questions: [
-        la('tcwg-pl-5-mat', '<p><strong>Materiality for planning purposes:</strong></p><p>Overall materiality: $_______________</p><p>Performance materiality: $_______________</p><p>Clearly trivial threshold: $_______________</p><p>Benchmark: _______________</p>', 'Overall materiality: $125,000\nPerformance materiality: $87,500\nClearly trivial threshold: $6,250\nBenchmark: 1% of total revenues ($12,500,000)'),
-      ],
-      isExpanded: true
-    },
-    {
-      id: 'aud-tcwg-pl-s6',
-      title: '6. Fraud Risk Inquiries (CAS 240.20)',
-      questions: [
-        la('tcwg-pl-6-fraud', '<p><strong>CAS 240 requires us to inquire of TCWG regarding:</strong></p><p>(a) Your assessment of the risk that the financial statements may be materially misstated due to fraud;</p><p>(b) Your knowledge of any actual, suspected, or alleged fraud affecting the entity;</p><p>(c) The procedures management performs to prevent and detect fraud.</p>', 'CAS 240 fraud inquiries communicated to TCWG in this letter. Responses from TCWG to be documented in the fraud risk assessment working paper.'),
-        q('tcwg-pl-6-fraud-q', '<p>Are you aware of any fraud or suspected fraud that we should know about?</p>', 'No', 'TCWG confirmed no knowledge of actual, suspected, or alleged fraud affecting the entity. Documented in the TCWG planning communication signed by the board chair.'),
-        la('tcwg-pl-6-fraud-exp', '<p><strong>TCWG response regarding fraud risk</strong></p>', 'TCWG (Board of Directors) confirmed no awareness of fraud or suspected fraud. Management anti-fraud controls include separation of duties in AP and payroll, dual authorization for payments, and quarterly board review of financial results. No fraud risk factors identified at the TCWG level.'),
-      ],
-      isExpanded: true
-    },
-    {
-      id: 'aud-tcwg-pl-s7',
-      title: '7. Going Concern and Independence',
-      questions: [
-        q('tcwg-pl-7-gc', '<p>Are you aware of any events or conditions that may cast significant doubt on the entity\'s ability to continue as a going concern?</p>', 'No', 'TCWG confirmed no awareness of events or conditions casting doubt on the entity\'s ability to continue as a going concern. Banking covenants are being met with comfortable headroom.'),
-        la('tcwg-pl-7-gc-exp', '<p><strong>TCWG response regarding going concern</strong></p>', 'TCWG confirmed no going concern concerns. The entity has positive operating cash flows, meets all banking covenants, and has sufficient liquidity. Management projects continued profitable operations for the foreseeable future.'),
-        la('tcwg-pl-8-ind', '<p><strong>Independence confirmation:</strong></p><p>We confirm that we are independent of the entity in accordance with the CPA Canada Code of Professional Conduct. We are not aware of any relationships or interests that may reasonably be thought to bear on our independence.</p>', 'Independence confirmed. No relationships, interests, or threats to independence have been identified. The engagement firm is independent of Shipping Line Inc. in accordance with the CPA Canada Code of Professional Conduct.'),
-        la('tcwg-pl-8-ind-matters', '<p><strong>Independence matters to disclose to TCWG (if any)</strong></p>', 'None. No independence matters require disclosure to TCWG.'),
-      ],
-      isExpanded: true
-    },
-    {
-      id: 'aud-tcwg-pl-closing',
-      title: '8. Closing',
-      questions: [
-        la('tcwg-pl-closing', '<p>We welcome the opportunity to discuss our audit approach and focus areas. Please contact [Engagement Partner] at [phone/email] if you require further information prior to the commencement of our audit.</p>', 'We welcome the opportunity to discuss our audit approach and focus areas. Please contact J. Williams, CPA at (604) 555-0100 or j.williams@auditfirm.ca if you require further information prior to the commencement of our audit fieldwork on April 14, 2024.'),
-        la('tcwg-pl-firm', '<p><strong>Firm name and engagement partner signature</strong></p>', '[Audit Firm Name]\nJ. Williams, CPA — Engagement Partner'),
-        la('tcwg-pl-firmdate', '<p><strong>Date</strong></p>', 'February 28, 2024'),
-      ],
-      isExpanded: true
-    },
-  ];
-
-  return {
-    id: 'global-template-audit-tcwg-planning',
-    title: 'TCWG Communication — Planning',
-    description: 'Pre-audit communication with those charged with governance — CAS 260.',
-    objective: `Objective: To communicate with TCWG the planned scope, timing, and significant matters before the audit commences.
-
-Reference: CAS 260 — Communication with Those Charged with Governance.`,
-    sections,
-    createdAt: new Date(),
-    updatedAt: new Date(),
-  };
-};
+export const generateTCWGPlanningCommunicationChecklist = (): Checklist =>
+  makeLetterChecklist('global-template-audit-tcwg-planning', 'TCWG Communication — Planning', 'Pre-audit communication with those charged with governance — CAS 260.', `
+    <p class="text-sm text-foreground font-semibold text-center mt-2">COMMUNICATION WITH THOSE CHARGED WITH GOVERNANCE — PLANNING</p>
+    <p class="mt-4 text-sm text-foreground">February 28, 2024</p>
+    <p class="mt-4 text-sm text-foreground">Board of Directors<br/>Shipping Line Inc.<br/>123 Harbour Drive, Halifax, Nova Scotia, B3J 1A1</p>
+    <p class="mt-4 text-sm text-foreground">Dear Members of the Board,</p>
+    <p class="mt-4 text-sm text-foreground">
+      In accordance with <strong>Canadian Auditing Standard (CAS) 260</strong>, we are providing you with an
+      overview of the planned scope and timing of our audit of the financial statements of
+      <strong>Shipping Line Inc.</strong> for the year ended <strong>March 31, 2024</strong>.
+    </p>
+    <p class="mt-4 text-sm text-foreground font-semibold">Our Responsibilities as Auditors</p>
+    <p class="mt-2 text-sm text-foreground">
+      Our objective is to obtain reasonable assurance about whether the financial statements are free from material
+      misstatement, whether due to fraud or error, and to issue an auditor's report that includes our opinion.
+      Reasonable assurance is a high level of assurance, but is not a guarantee. Our audit opinion is not a
+      guarantee of the accuracy or completeness of the financial statements.
+    </p>
+    <p class="mt-4 text-sm text-foreground font-semibold">Overall Audit Approach and Engagement Team</p>
+    <p class="mt-2 text-sm text-foreground">
+      Our audit approach is primarily substantive and risk-based. We will obtain an understanding of Shipping Line
+      Inc. and its maritime freight operations, identify and assess risks of material misstatement, and design audit
+      procedures responsive to those risks — particularly around revenue recognition and vessel carrying values.
+    </p>
+    <p class="mt-2 text-sm text-foreground">
+      <strong>Engagement team:</strong> Engagement Partner: J. Williams, CPA, CA — Engagement Manager: S. Chen,
+      CPA — EQCR: Not applicable for this engagement.
+    </p>
+    <p class="mt-2 text-sm text-foreground">
+      <strong>Planned timeline:</strong> Year-end fieldwork: April 14–25, 2024 — Expected report issuance: May 31, 2024.
+    </p>
+    <p class="mt-4 text-sm text-foreground font-semibold">Significant Audit Focus Areas</p>
+    <p class="mt-2 text-sm text-foreground">1. Revenue recognition — voyage completion cut-off for freight revenue at March 31, 2024</p>
+    <p class="mt-1 text-sm text-foreground">2. Vessel impairment assessment — fleet PP&amp;E of $8.2M representing 45% of total assets</p>
+    <p class="mt-1 text-sm text-foreground">3. Foreign currency transactions — USD-denominated freight revenue and receivables</p>
+    <p class="mt-1 text-sm text-foreground">4. Management override of controls — journal entry testing and accounting estimates</p>
+    <p class="mt-4 text-sm text-foreground font-semibold">Materiality</p>
+    <p class="mt-2 text-sm text-foreground">
+      Overall materiality: <strong>$125,000</strong> — Performance materiality: <strong>$87,500</strong> —
+      Clearly trivial threshold: <strong>$6,250</strong> — Benchmark: 1% of total revenues ($12,500,000).
+    </p>
+    <p class="mt-4 text-sm text-foreground font-semibold">Fraud Risk Inquiries (CAS 240.20)</p>
+    <p class="mt-2 text-sm text-foreground">
+      CAS 240 requires us to inquire of those charged with governance regarding: (a) your assessment of the risk
+      that the financial statements may be materially misstated due to fraud; (b) your knowledge of any actual,
+      suspected, or alleged fraud affecting the entity; and (c) the procedures management performs to prevent and
+      detect fraud. Please advise us if you are aware of any such matters.
+    </p>
+    <p class="mt-4 text-sm text-foreground font-semibold">Going Concern and Independence</p>
+    <p class="mt-2 text-sm text-foreground">
+      Please advise us if you are aware of any events or conditions that may cast significant doubt on the entity's
+      ability to continue as a going concern.
+    </p>
+    <p class="mt-2 text-sm text-foreground">
+      We confirm that we are independent of the entity in accordance with the CPA Canada Code of Professional
+      Conduct. We are not aware of any relationships or interests that may reasonably be thought to bear on our
+      independence.
+    </p>
+    <p class="mt-4 text-sm text-foreground">
+      We welcome the opportunity to discuss our audit approach and focus areas. Please contact J. Williams, CPA at
+      (604) 555-0100 or j.williams@auditfirm.ca if you require further information prior to the commencement of
+      our audit fieldwork on April 14, 2024.
+    </p>
+    <p class="mt-6 text-sm text-foreground">Respectfully submitted,</p>
+    <p class="mt-4 text-sm text-foreground"><strong>Williams Chen &amp; Associates LLP</strong></p>
+    <p class="mt-1 text-sm text-foreground">J. Williams, CPA, CA — Engagement Partner</p>
+    <p class="mt-1 text-sm text-foreground">February 28, 2024</p>
+  `);
 
 // TCWG Final Communication — CAS 260 (Letter format — rendered by LetterView)
-export const generateTCWGFinalCommunicationChecklist = (): Checklist => {
-  const la = (id: string, text: string, answer = ''): Question => ({
-    id, text, answerType: 'long-answer' as const, options: [], required: false, answer
-  });
-  const q = (id: string, text: string, answer = '', explanation = '', reference = ''): Question => ({
-    id, text, answerType: 'yes-no-na' as const, options: ['Yes', 'No', 'NA'], required: false, answer, explanation, reference
-  });
-
-  const sections: Section[] = [
-    {
-      id: 'aud-tcwg-fin-header',
-      title: 'Letter Header',
-      questions: [
-        la('tcwg-fin-date', '<p><strong>Date of Communication</strong></p>', 'May 2, 2024'),
-        la('tcwg-fin-addressee', '<p><strong>Addressed To</strong> (Those Charged with Governance)</p>', 'Board of Directors, Shipping Line Inc.'),
-        la('tcwg-fin-entity', '<p><strong>Entity Name</strong></p>', 'Shipping Line Inc.'),
-        la('tcwg-fin-period', '<p><strong>Audit period:</strong></p>', 'Year ended March 31, 2024'),
-      ],
-      isExpanded: true
-    },
-    {
-      id: 'aud-tcwg-fin-s1',
-      title: '1. Audit Opinion',
-      questions: [
-        la('tcwg-fin-1-opinion', '<p><strong>Audit opinion issued:</strong></p><p>We have issued an [unmodified / qualified / adverse / disclaimer of] opinion on the financial statements of [Entity Name] for the year ended [date].</p>', 'We have issued an unmodified opinion on the financial statements of Shipping Line Inc. for the year ended March 31, 2024, confirming that the financial statements present fairly, in all material respects, in accordance with ASPE.'),
-        q('tcwg-fin-1-modified', '<p>If modified: has the nature and reason for the modification been communicated to TCWG?</p>', 'NA', '<p>Unmodified opinion issued. No modification to communicate.</p>'),
-        la('tcwg-fin-1-kem', '<p><strong>Key audit matters (if applicable):</strong></p>', 'Not applicable — Shipping Line Inc. is not a listed entity. Key audit matters are not included in the auditor report.'),
-      ],
-      isExpanded: true
-    },
-    {
-      id: 'aud-tcwg-fin-s2',
-      title: '2. Significant Accounting Policies and Estimates (CAS 260.14(b))',
-      questions: [
-        la('tcwg-fin-2-policies', '<p><strong>Significant accounting policies applied:</strong></p><p>1. _______________</p><p>2. _______________</p><p>3. _______________</p>', '1. Revenue recognition: Freight revenue recognized upon voyage completion (ASPE 3400). 2. Vessels: Recorded at cost less accumulated depreciation; straight-line over 20-25 year useful lives (ASPE 3061). 3. Foreign currency: USD transactions translated at transaction-date rates; year-end monetary balances at closing rate (ASPE 1651).'),
-        q('tcwg-fin-2-policies-q', '<p>Are all significant accounting policies appropriate and consistently applied?</p>', 'Yes', '<p>All significant accounting policies (voyage completion revenue recognition, straight-line vessel depreciation, foreign currency translation) assessed as appropriate and consistently applied per ASPE.</p>'),
-        la('tcwg-fin-2-estimates', '<p><strong>Significant accounting estimates requiring significant judgment:</strong></p><p>1. _______________</p><p>2. _______________</p>', '1. Vessel useful lives and residual values (significant judgment in depreciation rates — assessed as reasonable). 2. Allowance for doubtful accounts ($85K at March 31, 2024 — assessed as appropriate based on aging and collection history).'),
-        la('tcwg-fin-2-changes', '<p><strong>Changes in accounting policies or estimates during the year (if any):</strong></p>', 'No changes in accounting policies or estimates during the year ended March 31, 2024.'),
-      ],
-      isExpanded: true
-    },
-    {
-      id: 'aud-tcwg-fin-s3',
-      title: '3. Significant Audit Findings (CAS 260.14(c))',
-      questions: [
-        la('tcwg-fin-3-findings', '<p><strong>Significant audit findings and observations:</strong></p><p>1. _______________</p><p>2. _______________</p><p>3. _______________</p>', '1. Revenue cutoff (AJE-001, $45K): One voyage invoice recorded as revenue in March 2024 related to a voyage not completed at year-end. Corrected by management. 2. Depreciation correction (AJE-002, $12K): Depreciation on a vessel component was incorrectly calculated. Corrected by management. 3. Deferred revenue reclassification (AJE-003, $28K): Deferred revenue was misclassified as accounts payable. Reclassified by management.'),
-        la('tcwg-fin-3-uncorrected', '<p><strong>Uncorrected misstatements (management has determined these are immaterial):</strong></p>', 'Projected uncorrected misstatements of approximately $30K in aggregate (revenue $18K, expenses $12K). Management has determined these are immaterial to the financial statements, individually and in aggregate. The audit team concurs with this assessment.'),
-        la('tcwg-fin-3-corrected', '<p><strong>Corrected misstatements that were individually significant:</strong></p>', 'AJE-001 ($45K revenue cutoff), AJE-002 ($12K depreciation correction), AJE-003 ($28K deferred revenue reclassification). Total corrections: $85K. All corrected in the final financial statements.'),
-      ],
-      isExpanded: true
-    },
-    {
-      id: 'aud-tcwg-fin-s4',
-      title: '4. Internal Control and Fraud (CAS 265 / CAS 240)',
-      questions: [
-        q('tcwg-fin-4-deficiencies', '<p>Were any significant deficiencies or material weaknesses in internal control identified during the audit?</p>', 'No', '<p>No significant deficiencies or material weaknesses identified. One minor observation (isolated AP three-way match deviation) communicated as a recommendation in the management letter.</p>'),
-        la('tcwg-fin-4-ic-detail', '<p><strong>Description of significant deficiencies / material weaknesses and management\'s response:</strong></p>', 'No significant deficiencies or material weaknesses identified. Minor observation: one isolated instance of an accounts payable invoice processed without completing the three-way match control (1 of 25 samples tested). Recommendation: reinforce staff training on AP procedures. Management agreed to implement additional training.'),
-        q('tcwg-fin-4-fraud', '<p>Were any indicators of fraud identified during the audit requiring communication to TCWG?</p>', 'No', '<p>No indicators of fraud identified during the audit of Shipping Line Inc. for the year ended March 31, 2024.</p>'),
-        la('tcwg-fin-4-fraud-detail', '<p><strong>Fraud matters to communicate (if any)</strong></p>', 'Not applicable — no fraud indicators identified during the audit.'),
-        q('tcwg-fin-4-gc', '<p>Were any going concern events or conditions identified during the audit?</p>', 'No', '<p>No going concern events or conditions identified. Entity has positive net income of $847K, adequate working capital, and an established credit facility with availability.</p>'),
-        la('tcwg-fin-4-gc-detail', '<p><strong>Going concern matters (if any)</strong></p>', 'Not applicable — no going concern issues identified.'),
-      ],
-      isExpanded: true
-    },
-    {
-      id: 'aud-tcwg-fin-s5',
-      title: '5. Independence Confirmation (CAS 260.14(e))',
-      questions: [
-        la('tcwg-fin-5-ind', '<p><strong>Independence confirmation:</strong></p><p>We confirm that as of the date of this communication, we are independent of the entity in accordance with ethical requirements relevant to our audit in Canada.</p>', 'We confirm that as of May 2, 2024, we are independent of Shipping Line Inc. in accordance with the ethical requirements relevant to our audit in Canada, including the CPA Canada Code of Professional Conduct.'),
-        la('tcwg-fin-5-ind-matters', '<p><strong>Independence matters identified during the audit (if any):</strong></p>', 'No independence matters identified during the audit.'),
-      ],
-      isExpanded: true
-    },
-    {
-      id: 'aud-tcwg-fin-closing',
-      title: '6. Closing',
-      questions: [
-        la('tcwg-fin-closing', '<p>We thank you for your cooperation during the audit. Please contact [Engagement Partner] at [phone/email] with any questions or comments.</p>', 'We thank the management and Board of Shipping Line Inc. for their cooperation and assistance during the audit for the year ended March 31, 2024. Please contact J. Williams, CPA (Engagement Partner) with any questions or comments.'),
-        la('tcwg-fin-firm', '<p><strong>Firm name and engagement partner signature</strong></p>', '[Firm Name], Chartered Professional Accountants — J. Williams, CPA, Engagement Partner'),
-        la('tcwg-fin-firmdate', '<p><strong>Date</strong></p>', 'May 2, 2024'),
-      ],
-      isExpanded: true
-    },
-  ];
-
-  return {
-    id: 'global-template-audit-tcwg-final',
-    title: 'TCWG Communication — Completion',
-    description: 'Post-audit communication with those charged with governance — CAS 260.',
-    objective: `Objective: To communicate with TCWG the results of the audit, significant findings, and other matters arising from the audit.
-
-Reference: CAS 260 — Communication with Those Charged with Governance.`,
-    sections,
-    createdAt: new Date(),
-    updatedAt: new Date(),
-  };
-};
+export const generateTCWGFinalCommunicationChecklist = (): Checklist =>
+  makeLetterChecklist('global-template-audit-tcwg-final', 'TCWG Communication — Completion', 'Post-audit communication with those charged with governance — CAS 260.', `
+    <p class="text-sm text-foreground font-semibold text-center mt-2">COMMUNICATION WITH THOSE CHARGED WITH GOVERNANCE — COMPLETION</p>
+    <p class="mt-4 text-sm text-foreground">May 2, 2024</p>
+    <p class="mt-4 text-sm text-foreground">Board of Directors<br/>Shipping Line Inc.<br/>123 Harbour Drive, Halifax, Nova Scotia, B3J 1A1</p>
+    <p class="mt-4 text-sm text-foreground">Dear Members of the Board,</p>
+    <p class="mt-4 text-sm text-foreground">
+      In accordance with <strong>Canadian Auditing Standard (CAS) 260</strong>, we are providing you with the
+      results of our audit of the financial statements of <strong>Shipping Line Inc.</strong> for the year ended
+      <strong>March 31, 2024</strong>.
+    </p>
+    <p class="mt-4 text-sm text-foreground font-semibold">Audit Opinion</p>
+    <p class="mt-2 text-sm text-foreground">
+      We have issued an <strong>unmodified opinion</strong> on the financial statements of Shipping Line Inc. for
+      the year ended March 31, 2024, confirming that the financial statements present fairly, in all material
+      respects, in accordance with <strong>Accounting Standards for Private Enterprises (ASPE)</strong>.
+    </p>
+    <p class="mt-4 text-sm text-foreground font-semibold">Significant Accounting Policies and Estimates</p>
+    <p class="mt-2 text-sm text-foreground">The following significant accounting policies were applied consistently during the year:</p>
+    <p class="mt-1 text-sm text-foreground">1. Revenue recognition: Freight revenue recognized upon voyage completion (ASPE 3400).</p>
+    <p class="mt-1 text-sm text-foreground">2. Vessels: Recorded at cost less accumulated depreciation; straight-line over 20–25 year useful lives (ASPE 3061).</p>
+    <p class="mt-1 text-sm text-foreground">3. Foreign currency: USD transactions translated at transaction-date rates; year-end monetary balances at closing rate (ASPE 1651).</p>
+    <p class="mt-2 text-sm text-foreground">
+      Significant accounting estimates requiring judgment: vessel useful lives and residual values; allowance for
+      doubtful accounts ($85K at March 31, 2024). No changes in accounting policies or estimates during the year.
+    </p>
+    <p class="mt-4 text-sm text-foreground font-semibold">Significant Audit Findings</p>
+    <p class="mt-2 text-sm text-foreground">The following correcting adjustments were recorded during the audit:</p>
+    <p class="mt-1 text-sm text-foreground">1. Revenue cutoff (AJE-001, $45K): Voyage invoice recorded as revenue for a voyage not completed at March 31, 2024. Corrected by management.</p>
+    <p class="mt-1 text-sm text-foreground">2. Depreciation correction (AJE-002, $12K): Depreciation on a vessel component was incorrectly calculated. Corrected by management.</p>
+    <p class="mt-1 text-sm text-foreground">3. Deferred revenue reclassification (AJE-003, $28K): Deferred revenue was misclassified as accounts payable. Reclassified by management.</p>
+    <p class="mt-2 text-sm text-foreground">
+      Projected uncorrected misstatements of approximately $30K in aggregate (revenue $18K, expenses $12K).
+      Management has determined these are immaterial, individually and in aggregate. The audit team concurs.
+    </p>
+    <p class="mt-4 text-sm text-foreground font-semibold">Internal Control and Fraud</p>
+    <p class="mt-2 text-sm text-foreground">
+      No significant deficiencies or material weaknesses in internal control were identified. One minor observation
+      (isolated AP three-way match deviation) has been communicated as a recommendation in the management letter.
+      No indicators of fraud were identified during the audit. No going concern events or conditions were identified;
+      the entity has positive net income of $847K with adequate working capital.
+    </p>
+    <p class="mt-4 text-sm text-foreground font-semibold">Independence</p>
+    <p class="mt-2 text-sm text-foreground">
+      We confirm that as of May 2, 2024, we are independent of Shipping Line Inc. in accordance with the ethical
+      requirements relevant to our audit in Canada, including the CPA Canada Code of Professional Conduct. No
+      independence matters require disclosure.
+    </p>
+    <p class="mt-4 text-sm text-foreground">
+      We thank the management and Board of Shipping Line Inc. for their cooperation and assistance during the audit.
+      Please contact J. Williams, CPA (Engagement Partner) with any questions or comments.
+    </p>
+    <p class="mt-6 text-sm text-foreground">Respectfully submitted,</p>
+    <p class="mt-4 text-sm text-foreground"><strong>Williams Chen &amp; Associates LLP</strong></p>
+    <p class="mt-1 text-sm text-foreground">J. Williams, CPA, CA — Engagement Partner</p>
+    <p class="mt-1 text-sm text-foreground">May 2, 2024</p>
+  `);
 
 // ─── Report template helpers ──────────────────────────────────────────────────
 
