@@ -1722,6 +1722,7 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
                     id: "aud-ra-sec", code: "RA", label: "Risk Assessment", icon: "folder",
                     children: [
                       { id: "aud-ra-oi", code: "OI", label: "Observation & Inspection Procedures", icon: "worksheet", route: "checklist/aud-ra-oi" },
+                      { id: "aud-ra-pap501", code: "PAP", label: "Preliminary Analytical Procedures", icon: "worksheet", route: "checklist/aud-ra-pap501" },
                       { id: "aud-ra-rap", code: "RAP", label: "Risk Assessment Procedures", icon: "checklist", route: "checklist/aud-ra-rap" },
                       { id: "aud-ra-ic", code: "IC", label: "Understanding Internal Controls", icon: "checklist", route: "checklist/aud-ra-ic" },
                       { id: "aud-ra-itgc", code: "ITGC", label: "IT General Controls (ITGC)", icon: "checklist", route: "checklist/aud-ra-itgc" },

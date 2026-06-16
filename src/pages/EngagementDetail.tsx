@@ -19,6 +19,7 @@ import { AuditMgmtRequestsWorksheet } from "@/components/AuditMgmtRequestsWorksh
 import { AuditSAEWorksheet } from "@/components/AuditSAEWorksheet";
 import { AuditOASWorksheet } from "@/components/AuditOASWorksheet";
 import { AuditOIWorksheet } from "@/components/AuditOIWorksheet";
+import { AuditPAP501Worksheet } from "@/components/AuditPAP501Worksheet";
 import { LukaAutoFillBanner } from "@/components/LukaAutoFillBanner";
 import { AuditFSViewer, FSPageType } from "@/components/AuditFSViewer";
 import { AskLukaOverlay, AllTemplateSummary } from "@/components/AskLukaOverlay";
@@ -550,6 +551,7 @@ const CUSTOM_WORKSHEET_TITLES: Record<string, string> = {
   'aud-sae': "Using the Work of an Auditor's Expert", 'aud-us-sae': "Using the Work of an Auditor's Expert",
   'aud-asm': 'Overall Audit Strategy', 'aud-us-asm': 'Overall Audit Strategy',
   'aud-ra-oi': 'Observation & Inspection Procedures', 'aud-us-ra-oi': 'Observation & Inspection Procedures',
+  'aud-ra-pap501': 'Preliminary Analytical Procedures',
 };
 
 const FS_PAGE_KEYS = new Set([
@@ -1615,6 +1617,8 @@ export default function EngagementDetail() {
             <AuditOASWorksheet isUS={checklistKey === 'aud-us-asm'} />
           ) : (checklistKey === 'aud-ra-oi' || checklistKey === 'aud-us-ra-oi') ? (
             <AuditOIWorksheet isUS={checklistKey === 'aud-us-ra-oi'} />
+          ) : (checklistKey === 'aud-ra-pap501') ? (
+            <AuditPAP501Worksheet />
           ) : checklist ? (
             <div className="p-4">
               {/* ASM import banner */}
