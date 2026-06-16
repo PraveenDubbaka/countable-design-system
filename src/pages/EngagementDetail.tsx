@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo, useCallback, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { ChevronRight, ChevronDown, Landmark, FileText, Triangle, FileSpreadsheet, PencilLine, Pencil, Settings2, Download, FileType, Share2, Save, RefreshCw, Trash2, Building2, Calendar, Check, AlertTriangle, Loader2, History, Upload, FileUp, Bell, Plus, X } from "lucide-react";
+import { ChevronRight, ChevronDown, Landmark, FileText, Triangle, FileSpreadsheet, PencilLine, Pencil, Settings2, Download, FileType, Share2, Save, RefreshCw, Trash2, Building2, Calendar, Check, AlertTriangle, Loader2, History, Upload, FileUp, Bell, Plus, X, LayoutGrid, CheckCircle2 } from "lucide-react";
 import { ExpandableIconButton } from "@/components/ui/expandable-icon-button";
 import { ChecklistIcon } from "@/components/icons/ChecklistIcon";
 import { Button } from "@/components/ui/button";
@@ -19,6 +19,7 @@ import { AuditMgmtRequestsWorksheet } from "@/components/AuditMgmtRequestsWorksh
 import { AuditSAEWorksheet } from "@/components/AuditSAEWorksheet";
 import { AuditOASWorksheet } from "@/components/AuditOASWorksheet";
 import { LukaAutoFillBanner } from "@/components/LukaAutoFillBanner";
+import { AuditFSViewer, FSPageType } from "@/components/AuditFSViewer";
 import { AskLukaOverlay, AllTemplateSummary } from "@/components/AskLukaOverlay";
 import { FloatingActionBar } from "@/components/FloatingActionBar";
 import { EngagementRightPanel } from "@/components/EngagementRightPanel";
@@ -538,6 +539,17 @@ const NAV_KEY_TO_CHECKLIST_ID: Record<string, string> = {
   "aud-us-rp-gwi": "default-us-audit-rp-gwi",
 };
 
+const FS_PAGE_KEYS = new Set([
+  'aud-fs-cover', 'aud-fs-toc', 'aud-fs-bs', 'aud-fs-is', 'aud-fs-cf', 'aud-fs-eq', 'aud-fs-notes',
+  'aud-us-fs-cover', 'aud-us-fs-toc', 'aud-us-fs-bs', 'aud-us-fs-is', 'aud-us-fs-cf', 'aud-us-fs-eq', 'aud-us-fs-notes',
+]);
+const FS_PAGE_TYPE_MAP: Record<string, FSPageType> = {
+  'aud-fs-cover': 'cover', 'aud-fs-toc': 'toc', 'aud-fs-bs': 'bs',
+  'aud-fs-is': 'is', 'aud-fs-cf': 'cf', 'aud-fs-eq': 'eq', 'aud-fs-notes': 'notes',
+  'aud-us-fs-cover': 'cover', 'aud-us-fs-toc': 'toc', 'aud-us-fs-bs': 'bs',
+  'aud-us-fs-is': 'is', 'aud-us-fs-cf': 'cf', 'aud-us-fs-eq': 'eq', 'aud-us-fs-notes': 'notes',
+};
+
 // Maps savedChecklist.id → sidebar nav item (section, code, label) matching the engagement menu exactly.
 // Sub-forms that share a parent sidebar nav item use that item's code+label so they aggregate in the summary.
 const CHECKLIST_SIDEBAR_INFO: Record<string, { section: string; code: string; label: string }> = {
@@ -623,6 +635,8 @@ export default function EngagementDetail() {
   const [objectiveExpanded, setObjectiveExpanded] = useState(false);
   const [isLetterEditing, setIsLetterEditing] = useState(false);
   const letterSaveRef = useRef<(() => void) | null>(null);
+  const [isFSEditing, setIsFSEditing] = useState(false);
+  const fsSaveRef = useRef<(() => void) | null>(null);
   const [showShareDialog, setShowShareDialog] = useState(false);
   const [showResponseDialog, setShowResponseDialog] = useState(false);
   const [pendingEngagementId, setPendingEngagementId] = useState<string | null>(null);
@@ -734,6 +748,12 @@ export default function EngagementDetail() {
 
   // Load checklist from localStorage - use first saved checklist or fallback
   useEffect(() => {
+    // FS pages render standalone — no checklist loading needed
+    if (checklistKey && FS_PAGE_KEYS.has(checklistKey)) {
+      setIsLoading(false);
+      return;
+    }
+
     // Set loading state when engagement changes
     setIsLoading(true);
     setChecklist(null);
@@ -1412,6 +1432,50 @@ export default function EngagementDetail() {
             </div>
             {/* Action buttons row */}
             <div className="flex items-center justify-end gap-1 px-4 py-1.5 border-t border-border/50">
+              {checklistKey && FS_PAGE_KEYS.has(checklistKey) ? (
+                <>
+                  {isFSEditing ? (
+                    <>
+                      <ExpandableIconButton variant="secondary" icon={<X className="h-4 w-4" />} label="Cancel" size="sm" onClick={() => setIsFSEditing(false)} />
+                      <ExpandableIconButton variant="default" icon={<Check className="h-4 w-4" />} label="Save" size="sm" onClick={() => { fsSaveRef.current?.(); setIsFSEditing(false); }} />
+                    </>
+                  ) : (
+                    <ExpandableIconButton variant="secondary" icon={<Pencil className="h-4 w-4" />} label="Edit" size="sm" onClick={() => setIsFSEditing(true)} />
+                  )}
+                  <ExpandableIconButton variant="secondary" icon={<Settings2 className="h-4 w-4" />} label="FS Settings" size="sm" onClick={() => toast.info('FS Settings — coming soon')} />
+                  <ExpandableIconButton variant="secondary" icon={<LayoutGrid className="h-4 w-4" />} label="Layout" size="sm" onClick={() => toast.info('Layout options — coming soon')} />
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <ExpandableIconButton variant="secondary" size="sm" icon={<Download className="h-4 w-4" />} label="Export" />
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end" className="bg-card border shadow-lg z-50 w-40">
+                      <DropdownMenuItem className="flex items-center gap-2 cursor-pointer group" onClick={() => toast.info('Exporting as PDF...')}>
+                        <FileText className="h-4 w-4 text-muted-foreground group-hover:text-foreground transition-colors" />
+                        <span>PDF</span>
+                      </DropdownMenuItem>
+                      <DropdownMenuItem className="flex items-center gap-2 cursor-pointer group" onClick={() => toast.info('Exporting as Word...')}>
+                        <FileType className="h-4 w-4 text-muted-foreground group-hover:text-foreground transition-colors" />
+                        <span>Word</span>
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <ExpandableIconButton variant="default" size="sm" icon={<CheckCircle2 className="h-4 w-4" />} label="Signoff" />
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end" className="bg-card border shadow-lg z-50 w-44">
+                      <DropdownMenuItem className="flex items-center gap-2 cursor-pointer" onClick={() => toast.success('Signed off as Preparer')}>
+                        <Check className="h-4 w-4" />
+                        <span>Sign off as Preparer</span>
+                      </DropdownMenuItem>
+                      <DropdownMenuItem className="flex items-center gap-2 cursor-pointer" onClick={() => toast.success('Signed off as Reviewer')}>
+                        <Check className="h-4 w-4" />
+                        <span>Sign off as Reviewer</span>
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                </>
+              ) : null}
               {checklist && <>
                 {(() => {
                   const isLetter = checklist?.sections?.length > 0 && checklist.sections[0]?.questions?.length > 0 && checklist.sections[0].questions[0]?.answerType === 'none' && !checklist.objective;
@@ -1488,7 +1552,7 @@ export default function EngagementDetail() {
           {/* Content Area */}
           <div className="flex-1 overflow-auto bg-card">
           {/* Luka auto-fill banner — shown on every checklist/worksheet */}
-          {checklistKey && engagementId && (
+          {checklistKey && engagementId && !FS_PAGE_KEYS.has(checklistKey) && (
             <LukaAutoFillBanner
               checklistKey={checklistKey}
               engagementId={engagementId}
@@ -1510,8 +1574,16 @@ export default function EngagementDetail() {
               </div>
             </div>
           )}
-          {/* ── Interactive worksheets — rendered directly without checklist state ── */}
-          {(checklistKey === 'aud-mat' || checklistKey === 'aud-us-mat') ? (
+          {/* ── Financial Statement pages ── */}
+          {checklistKey && FS_PAGE_KEYS.has(checklistKey) && engagementId ? (
+            <AuditFSViewer
+              pageType={FS_PAGE_TYPE_MAP[checklistKey]}
+              engagementId={engagementId}
+              isUS={checklistKey.startsWith('aud-us-fs-')}
+              isEditing={isFSEditing}
+              saveRef={fsSaveRef}
+            />
+          ) : (checklistKey === 'aud-mat' || checklistKey === 'aud-us-mat') ? (
             <AuditMaterialityWorksheet isUS={checklistKey === 'aud-us-mat'} />
           ) : (checklistKey === 'aud-tb' || checklistKey === 'aud-us-tb') ? (
             <AuditTimeBudgetWorksheet isUS={checklistKey === 'aud-us-tb'} />

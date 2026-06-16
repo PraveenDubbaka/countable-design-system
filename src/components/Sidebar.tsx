@@ -1659,14 +1659,14 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
                       {
                         id: "aud-us-fs-docs", label: "Financial Statement Docs", icon: "folder",
                         children: [
-                          { id: "aud-us-fs-cover", label: "Cover Page", icon: "doc" },
-                          { id: "aud-us-fs-toc", label: "Table of Contents", icon: "doc" },
+                          { id: "aud-us-fs-cover", label: "Cover Page", icon: "doc", route: "checklist/aud-us-fs-cover" },
+                          { id: "aud-us-fs-toc", label: "Table of Contents", icon: "doc", route: "checklist/aud-us-fs-toc" },
                           { id: "aud-us-fs-iar", label: "Independent Auditor's Report (AU-C 700)", icon: "checklist", route: "checklist/aud-us-ar" },
-                          { id: "aud-us-fs-bs", label: "Balance Sheet", icon: "doc" },
-                          { id: "aud-us-fs-is", label: "Statement of Income (Loss) and Retained Earnings (Deficit)", icon: "doc" },
-                          { id: "aud-us-fs-cf", label: "Statement of Cash Flows", icon: "doc" },
-                          { id: "aud-us-fs-eq", label: "Statement of Changes in Equity", icon: "doc" },
-                          { id: "aud-us-fs-notes", label: "Notes to Financial Statements", icon: "doc" },
+                          { id: "aud-us-fs-bs", label: "Balance Sheet", icon: "doc", route: "checklist/aud-us-fs-bs" },
+                          { id: "aud-us-fs-is", label: "Statement of Income (Loss) and Retained Earnings (Deficit)", icon: "doc", route: "checklist/aud-us-fs-is" },
+                          { id: "aud-us-fs-cf", label: "Statement of Cash Flows", icon: "doc", route: "checklist/aud-us-fs-cf" },
+                          { id: "aud-us-fs-eq", label: "Statement of Changes in Equity", icon: "doc", route: "checklist/aud-us-fs-eq" },
+                          { id: "aud-us-fs-notes", label: "Notes to Financial Statements", icon: "doc", route: "checklist/aud-us-fs-notes" },
                         ]
                       },
                     ]
@@ -1817,14 +1817,14 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
                       {
                         id: "aud-fs-docs", label: "Financial Statement Docs", icon: "folder",
                         children: [
-                          { id: "aud-fs-cover", label: "Cover Page", icon: "doc" },
-                          { id: "aud-fs-toc", label: "Table of Contents", icon: "doc" },
+                          { id: "aud-fs-cover", label: "Cover Page", icon: "doc", route: "checklist/aud-fs-cover" },
+                          { id: "aud-fs-toc", label: "Table of Contents", icon: "doc", route: "checklist/aud-fs-toc" },
                           { id: "aud-fs-iar", label: "Independent Auditor's Report", icon: "checklist", route: "checklist/aud-ar" },
-                          { id: "aud-fs-bs", label: "Balance Sheet", icon: "doc" },
-                          { id: "aud-fs-is", label: "Statement of Income (Loss) and Retained Earnings (Deficit)", icon: "doc" },
-                          { id: "aud-fs-cf", label: "Statement of Cash Flows", icon: "doc" },
-                          { id: "aud-fs-eq", label: "Statement of Changes in Equity", icon: "doc" },
-                          { id: "aud-fs-notes", label: "Notes to Financial Statements", icon: "doc" },
+                          { id: "aud-fs-bs", label: "Balance Sheet", icon: "doc", route: "checklist/aud-fs-bs" },
+                          { id: "aud-fs-is", label: "Statement of Income (Loss) and Retained Earnings (Deficit)", icon: "doc", route: "checklist/aud-fs-is" },
+                          { id: "aud-fs-cf", label: "Statement of Cash Flows", icon: "doc", route: "checklist/aud-fs-cf" },
+                          { id: "aud-fs-eq", label: "Statement of Changes in Equity", icon: "doc", route: "checklist/aud-fs-eq" },
+                          { id: "aud-fs-notes", label: "Notes to Financial Statements", icon: "doc", route: "checklist/aud-fs-notes" },
                         ]
                       },
                     ]
