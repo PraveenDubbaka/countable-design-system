@@ -3,9 +3,8 @@ import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Info, Plus } from "lucide-react";
+import { Info } from "lucide-react";
 import { RefButton, RefDoc } from "@/components/RefButton";
-import { AddToMyTemplatesDialog } from "@/components/AddToMyTemplatesDialog";
 import { readJsonFromLocalStorage, writeJsonToLocalStorage } from "@/lib/safeJson";
 
 // ── Types ──────────────────────────────────────────────────────────────────────
@@ -113,8 +112,6 @@ function ColHeaders() {
 
 export function AuditOIWorksheet({ isUS = false }: { isUS?: boolean }) {
   const storageKey = `audit-oi-data-${isUS ? "us" : "ca"}`;
-  const [showAddDialog, setShowAddDialog] = useState(false);
-
   const [data, setData] = useState<OIData>(() => {
     const saved = readJsonFromLocalStorage<OIData | null>(storageKey, null);
     if (!saved) return buildDefault();
@@ -258,13 +255,6 @@ export function AuditOIWorksheet({ isUS = false }: { isUS?: boolean }) {
           <span className="font-medium text-foreground">PSC</span> = Procedure successfully completed.{" "}
           <span className="font-medium text-foreground">TCWG</span> = Those charged with governance.
         </p>
-        <button
-          onClick={() => setShowAddDialog(true)}
-          className="text-xs text-muted-foreground hover:text-foreground underline underline-offset-2 transition-colors flex-shrink-0 whitespace-nowrap"
-        >
-          <Plus className="h-3 w-3 inline mr-0.5" />
-          Add to templates
-        </button>
       </div>
 
       {/* Scrollable body */}
@@ -325,11 +315,6 @@ export function AuditOIWorksheet({ isUS = false }: { isUS?: boolean }) {
         </div>
       </div>
 
-      <AddToMyTemplatesDialog
-        open={showAddDialog}
-        onOpenChange={setShowAddDialog}
-        checklistName="Form 500 — Observation and Inspection Procedures"
-      />
     </div>
   );
 }
