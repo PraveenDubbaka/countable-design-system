@@ -27,65 +27,65 @@ const CA_DEFAULT: FSData = {
   periodLabel: 'Year ended March 31, 2024',
   priorPeriodLabel: 'Year ended March 31, 2023',
   bs: {
-    cash: 1062277,           cashPY: 892441,
-    receivables: 2890123,    receivablesPY: 2340567,
-    inventory: 456234,       inventoryPY: 523891,
-    prepaid: 125678,         prepaidPY: 98345,
-    ppe: 8456789,            ppePY: 9123456,
-    rou: 2345678,            rouPY: 2890234,
-    intangibles: 234567,     intangiblesPY: 312789,
-    ap: 1890456,             apPY: 1670234,
-    currentLtd: 456789,      currentLtdPY: 435678,
-    currentLease: 345678,    currentLeasePY: 378456,
-    taxPayable: 123456,      taxPayablePY: 89234,
-    ltDebt: 4567890,         ltDebtPY: 5023456,
-    ltLease: 2123456,        ltLeasePY: 2468789,
-    deferredTax: 456789,     deferredTaxPY: 423456,
-    shareCapital: 1000000,   shareCapitalPY: 1000000,
+    cash: 1062277,             cashPY: 892441,
+    receivables: 2890123,      receivablesPY: 2340567,
+    inventory: 456234,         inventoryPY: 523891,
+    prepaid: 125678,           prepaidPY: 98345,
+    ppe: 8456789,              ppePY: 9123456,
+    rou: 2345678,              rouPY: 2890234,
+    intangibles: 234567,       intangiblesPY: 312789,
+    ap: 1890456,               apPY: 1670234,
+    currentLtd: 456789,        currentLtdPY: 435678,
+    currentLease: 345678,      currentLeasePY: 378456,
+    taxPayable: 123456,        taxPayablePY: 89234,
+    ltDebt: 4567890,           ltDebtPY: 5023456,
+    ltLease: 2123456,          ltLeasePY: 2468789,
+    deferredTax: 456789,       deferredTaxPY: 423456,
+    shareCapital: 1000000,     shareCapitalPY: 1000000,
     retainedEarnings: 4606832, retainedEarningsPY: 4692420,
   },
   is: {
-    revenue: 18450234,       revenuePY: 16820456,
-    cogs: 12340567,          cogsPY: 11234789,
-    admin: 2890456,          adminPY: 2670234,
-    da: 1234567,             daPY: 1123456,
-    interest: 456789,        interestPY: 489234,
-    tax: 430353,             taxPY: 312066,
-    reBeg: 4692420,          reBegPY: 3701743,
-    dividends: 1183090,      dividendsPY: 0,
+    revenue: 18450234,  revenuePY: 16820456,
+    cogs: 12340567,     cogsPY: 11234789,
+    admin: 2890456,     adminPY: 2670234,
+    da: 1234567,        daPY: 1123456,
+    interest: 456789,   interestPY: 489234,
+    tax: 430353,        taxPY: 312066,
+    reBeg: 4692420,     reBegPY: 3701743,
+    dividends: 1183090, dividendsPY: 0,
   },
   cf: {
-    netIncome: 1097502,      netIncomePY: 990677,
-    da: 1234567,             daPY: 1123456,
-    rouAmort: 344556,        rouAmortPY: 378456,
-    deferredTax: 33333,      deferredTaxPY: 45678,
-    receivables: -549556,    receivablesPY: -289345,
-    inventory: 67657,        inventoryPY: 45678,
-    prepaid: -27333,         prepaidPY: 12456,
-    payables: 220222,        payablesPY: 189345,
-    taxPayable: 34222,       taxPayablePY: -12066,
-    capex: -478900,          capexPY: -456789,
-    ltdRepay: -434555,       ltdRepayPY: -423456,
-    leaseRepay: -373001,     leaseRepayPY: -389234,
-    dividendsPaid: -998878,  dividendsPaidPY: -892415,
-    cashBeg: 892441,         cashBegPY: 570000,
+    netIncome: 1097502,    netIncomePY: 990677,
+    da: 1234567,           daPY: 1123456,
+    rouAmort: 344556,      rouAmortPY: 378456,
+    deferredTax: 33333,    deferredTaxPY: 45678,
+    receivables: -549556,  receivablesPY: -289345,
+    inventory: 67657,      inventoryPY: 45678,
+    prepaid: -27333,       prepaidPY: 12456,
+    payables: 220222,      payablesPY: 189345,
+    taxPayable: 34222,     taxPayablePY: -12066,
+    capex: -478900,        capexPY: -456789,
+    ltdRepay: -434555,     ltdRepayPY: -423456,
+    leaseRepay: -373001,   leaseRepayPY: -389234,
+    dividendsPaid: -998878,dividendsPaidPY: -892415,
+    cashBeg: 892441,       cashBegPY: 570000,
   },
   eq: {
-    scBeg: 1000000,    scBegPY: 1000000,
-    reBeg: 4692420,    reBegPY: 3701743,
-    netIncome: 1097502,netIncomePY: 990677,
-    dividends: 1183090,dividendsPY: 0,
-    scEnd: 1000000,    scEndPY: 1000000,
-    reEnd: 4606832,    reEndPY: 4692420,
+    scBeg: 1000000,     scBegPY: 1000000,
+    reBeg: 4692420,     reBegPY: 3701743,
+    netIncome: 1097502, netIncomePY: 990677,
+    dividends: 1183090, dividendsPY: 0,
+    scEnd: 1000000,     scEndPY: 1000000,
+    reEnd: 4606832,     reEndPY: 4692420,
   },
   notes: {
     '1': 'Shipping Line Inc. (the "Company") is incorporated under the laws of Ontario, Canada. The Company provides marine transportation, logistics, and freight forwarding services primarily in the Great Lakes and St. Lawrence Seaway region.',
-    '2': 'These financial statements have been prepared in accordance with Canadian generally accepted accounting principles (GAAP) as set out in Part II of the CPA Canada Handbook – Accounting.\n\nRevenue Recognition: Revenue from services is recognized when the performance obligation to the customer is satisfied, at the point in time when services are rendered and the customer can benefit from them.\n\nProperty, Plant and Equipment: Assets are recorded at cost less accumulated depreciation. Depreciation is calculated using the straight-line method over the estimated useful lives of the assets ranging from 3 to 30 years.\n\nLeases: The Company recognizes a right-of-use asset and lease liability at the commencement date of a lease. Lease liabilities are measured at the present value of remaining lease payments discounted at the incremental borrowing rate.',
-    '3': 'Income taxes are accounted for using the asset and liability method. Deferred income taxes are recognized for the expected future tax consequences of temporary differences between the carrying amounts and tax bases of assets and liabilities using enacted or substantively enacted tax rates.',
-    '4': 'Trade and other receivables are recorded at amortized cost using the effective interest method, net of an allowance for expected credit losses. The allowance is estimated based on historical collection experience and current conditions.',
-    '5': 'Property, plant and equipment consist of vessels, terminal equipment, vehicles, and office equipment. Vessels are depreciated over 20–30 years; terminal equipment over 10–15 years; vehicles over 5–8 years; office equipment over 3–5 years.',
-    '6': 'Long-term debt consists of a secured term loan bearing interest at the bank prime rate plus 1.25% per annum, repayable in equal quarterly instalments with the final payment due September 2028. The loan is secured by a general security agreement over all assets of the Company.',
-    '7': 'The Company has a $2,000,000 revolving operating line of credit bearing interest at prime plus 0.50%, secured by trade receivables. As at March 31, 2024, no amount was drawn on the operating line.',
+    '2': 'These financial statements have been prepared in accordance with Canadian generally accepted accounting principles (GAAP) as set out in Part II of the CPA Canada Handbook – Accounting.\n\nRevenue Recognition: Revenue from services is recognized when the performance obligation to the customer is satisfied, at the point in time when services are rendered.\n\nProperty, Plant and Equipment: Assets are recorded at cost less accumulated depreciation. Depreciation is calculated using the straight-line method over estimated useful lives of 3 to 30 years.\n\nLeases: Right-of-use assets and lease liabilities are recognized at commencement using the incremental borrowing rate.',
+    '3': 'Income taxes are accounted for using the asset and liability method. Deferred income taxes are recognized for the expected future tax consequences of temporary differences using enacted tax rates.',
+    '4': 'Trade and other receivables are recorded at amortized cost net of an allowance for expected credit losses estimated based on historical collection experience.',
+    '5': 'Property, plant and equipment consist of vessels (20–30 years), terminal equipment (10–15 years), vehicles (5–8 years), and office equipment (3–5 years).',
+    '6': 'Long-term debt consists of a secured term loan at prime plus 1.25%, repayable quarterly with final payment September 2028, secured by a general security agreement over all assets.',
+    '7': 'The Company has a $2,000,000 revolving operating line of credit at prime plus 0.50%, secured by trade receivables. As at March 31, 2024, no amount was drawn.',
   },
 };
 
@@ -98,65 +98,65 @@ const US_DEFAULT: FSData = {
   periodLabel: 'Year ended December 31, 2024',
   priorPeriodLabel: 'Year ended December 31, 2023',
   bs: {
-    cash: 1456789,           cashPY: 1123456,
-    receivables: 2890234,    receivablesPY: 2456789,
-    inventory: 567890,       inventoryPY: 534567,
-    prepaid: 145678,         prepaidPY: 123456,
-    ppe: 9234567,            ppePY: 10123456,
-    rou: 2345678,            rouPY: 2890234,
-    intangibles: 234567,     intangiblesPY: 312345,
-    ap: 1789012,             apPY: 1567890,
-    currentLtd: 456789,      currentLtdPY: 423456,
-    currentLease: 345678,    currentLeasePY: 378901,
-    taxPayable: 189234,      taxPayablePY: 156789,
-    ltDebt: 4567890,         ltDebtPY: 5023456,
-    ltLease: 2012345,        ltLeasePY: 2356789,
-    deferredTax: 456789,     deferredTaxPY: 412345,
-    shareCapital: 1000000,   shareCapitalPY: 1000000,
+    cash: 1456789,             cashPY: 1123456,
+    receivables: 2890234,      receivablesPY: 2456789,
+    inventory: 567890,         inventoryPY: 534567,
+    prepaid: 145678,           prepaidPY: 123456,
+    ppe: 9234567,              ppePY: 10123456,
+    rou: 2345678,              rouPY: 2890234,
+    intangibles: 234567,       intangiblesPY: 312345,
+    ap: 1789012,               apPY: 1567890,
+    currentLtd: 456789,        currentLtdPY: 423456,
+    currentLease: 345678,      currentLeasePY: 378901,
+    taxPayable: 189234,        taxPayablePY: 156789,
+    ltDebt: 4567890,           ltDebtPY: 5023456,
+    ltLease: 2012345,          ltLeasePY: 2356789,
+    deferredTax: 456789,       deferredTaxPY: 412345,
+    shareCapital: 1000000,     shareCapitalPY: 1000000,
     retainedEarnings: 6057666, retainedEarningsPY: 6244677,
   },
   is: {
-    revenue: 24567890,       revenuePY: 21890123,
-    cogs: 16234567,          cogsPY: 14567890,
-    admin: 2890456,          adminPY: 2634567,
-    da: 1456789,             daPY: 1312345,
-    interest: 567890,        interestPY: 612345,
-    tax: 876543,             taxPY: 712345,
-    reBeg: 6244677,          reBegPY: 6244046,
-    dividends: 2728656,      dividendsPY: 2050000,
+    revenue: 24567890,  revenuePY: 21890123,
+    cogs: 16234567,     cogsPY: 14567890,
+    admin: 2890456,     adminPY: 2634567,
+    da: 1456789,        daPY: 1312345,
+    interest: 567890,   interestPY: 612345,
+    tax: 876543,        taxPY: 712345,
+    reBeg: 6244677,     reBegPY: 6244046,
+    dividends: 2728656, dividendsPY: 2050000,
   },
   cf: {
-    netIncome: 2541645,      netIncomePY: 2050631,
-    da: 1456789,             daPY: 1312345,
-    rouAmort: 345678,        rouAmortPY: 378901,
-    deferredTax: 44444,      deferredTaxPY: 38901,
-    receivables: -433445,    receivablesPY: -234567,
-    inventory: -33323,       inventoryPY: -34567,
-    prepaid: -22222,         prepaidPY: -12345,
-    payables: 221122,        payablesPY: 167890,
-    taxPayable: 32445,       taxPayablePY: -23456,
-    capex: -678900,          capexPY: -534567,
-    ltdRepay: -455566,       ltdRepayPY: -423456,
-    leaseRepay: -356678,     leaseRepayPY: -389234,
-    dividendsPaid: -2328656, dividendsPaidPY: -1962032,
-    cashBeg: 1123456,        cashBegPY: 789012,
+    netIncome: 2541645,    netIncomePY: 2050631,
+    da: 1456789,           daPY: 1312345,
+    rouAmort: 345678,      rouAmortPY: 378901,
+    deferredTax: 44444,    deferredTaxPY: 38901,
+    receivables: -433445,  receivablesPY: -234567,
+    inventory: -33323,     inventoryPY: -34567,
+    prepaid: -22222,       prepaidPY: -12345,
+    payables: 221122,      payablesPY: 167890,
+    taxPayable: 32445,     taxPayablePY: -23456,
+    capex: -678900,        capexPY: -534567,
+    ltdRepay: -455566,     ltdRepayPY: -423456,
+    leaseRepay: -356678,   leaseRepayPY: -389234,
+    dividendsPaid: -2328656,dividendsPaidPY: -1962032,
+    cashBeg: 1123456,      cashBegPY: 789012,
   },
   eq: {
-    scBeg: 1000000,    scBegPY: 1000000,
-    reBeg: 6244677,    reBegPY: 6244046,
-    netIncome: 2541645,netIncomePY: 2050631,
-    dividends: 2728656,dividendsPY: 2050000,
-    scEnd: 1000000,    scEndPY: 1000000,
-    reEnd: 6057666,    reEndPY: 6244677,
+    scBeg: 1000000,     scBegPY: 1000000,
+    reBeg: 6244677,     reBegPY: 6244046,
+    netIncome: 2541645, netIncomePY: 2050631,
+    dividends: 2728656, dividendsPY: 2050000,
+    scEnd: 1000000,     scEndPY: 1000000,
+    reEnd: 6057666,     reEndPY: 6244677,
   },
   notes: {
     '1': 'Harbor Freight Logistics LLC (the "Company") is organized under the laws of Delaware, United States. The Company provides freight brokerage, transportation management, and third-party logistics services throughout North America.',
-    '2': 'These financial statements have been prepared in accordance with accounting principles generally accepted in the United States of America (U.S. GAAP).\n\nRevenue Recognition: Revenue is recognized in accordance with ASC 606, Revenue from Contracts with Customers, when control of the promised services is transferred to the customer, in an amount reflecting the consideration expected in exchange for those services.\n\nProperty and Equipment: Property and equipment are stated at cost less accumulated depreciation. Depreciation is computed using the straight-line method over the estimated useful lives of the assets, ranging from 3 to 20 years.\n\nLeases: The Company accounts for leases in accordance with ASC 842. Operating lease right-of-use assets and liabilities are recognized at the commencement date.',
-    '3': 'The Company accounts for income taxes under the asset and liability method in accordance with ASC 740. Deferred tax assets and liabilities are recognized for the expected future tax consequences of temporary differences between the financial statement carrying amounts and the tax bases of assets and liabilities.',
-    '4': 'Trade receivables are recorded at the invoiced amount and do not bear interest. An allowance for doubtful accounts is established when there is objective evidence that the Company will not be able to collect amounts due.',
-    '5': 'Property and equipment consist of trucks and trailers, warehouse equipment, technology infrastructure, and office furniture. Trucks and trailers are depreciated over 5–10 years; warehouse equipment over 7–15 years; technology over 3–5 years.',
-    '6': 'Long-term debt consists of a revolving credit facility bearing interest at SOFR plus 1.50% and a term loan bearing interest at SOFR plus 1.75%. Both facilities are secured by substantially all assets of the Company.',
-    '7': 'Member distributions declared during the year ended December 31, 2024 totaled $2,728,656 (2023 – $2,050,000). Distributions are made in accordance with the Company\'s operating agreement.',
+    '2': 'These financial statements have been prepared in accordance with accounting principles generally accepted in the United States of America (U.S. GAAP).\n\nRevenue Recognition: Revenue is recognized in accordance with ASC 606 when control of promised services transfers to the customer.\n\nProperty and Equipment: Stated at cost less accumulated depreciation using the straight-line method over 3 to 20 years.\n\nLeases: Accounted for under ASC 842 with operating lease right-of-use assets and liabilities at commencement.',
+    '3': 'The Company accounts for income taxes under the asset and liability method per ASC 740. Deferred tax assets and liabilities are recognized for temporary differences.',
+    '4': 'Trade receivables are recorded at invoice amount net of an allowance for doubtful accounts based on objective evidence of collectability.',
+    '5': 'Property and equipment consist of trucks and trailers (5–10 years), warehouse equipment (7–15 years), and technology infrastructure (3–5 years).',
+    '6': 'Long-term debt consists of a revolving credit facility at SOFR plus 1.50% and a term loan at SOFR plus 1.75%, both secured by substantially all assets of the Company.',
+    '7': "Member distributions declared during the year ended December 31, 2024 totaled $2,728,656 (2023 – $2,050,000), per the Company's operating agreement.",
   },
 };
 
@@ -170,52 +170,77 @@ function fmtN(n: number): string {
 }
 
 function computedBS(d: FSData['bs']) {
-  const totCurrentAssets = d.cash + d.receivables + d.inventory + d.prepaid;
-  const totCurrentAssetsPY = d.cashPY + d.receivablesPY + d.inventoryPY + d.prepaidPY;
-  const totNonCurrentAssets = d.ppe + d.rou + d.intangibles;
+  const totCurrentAssets    = d.cash + d.receivables + d.inventory + d.prepaid;
+  const totCurrentAssetsPY  = d.cashPY + d.receivablesPY + d.inventoryPY + d.prepaidPY;
+  const totNonCurrentAssets   = d.ppe + d.rou + d.intangibles;
   const totNonCurrentAssetsPY = d.ppePY + d.rouPY + d.intangiblesPY;
-  const totalAssets = totCurrentAssets + totNonCurrentAssets;
-  const totalAssetsPY = totCurrentAssetsPY + totNonCurrentAssetsPY;
-  const totCurrentLiab = d.ap + d.currentLtd + d.currentLease + d.taxPayable;
-  const totCurrentLiabPY = d.apPY + d.currentLtdPY + d.currentLeasePY + d.taxPayablePY;
-  const totNonCurrentLiab = d.ltDebt + d.ltLease + d.deferredTax;
-  const totNonCurrentLiabPY = d.ltDebtPY + d.ltLeasePY + d.deferredTaxPY;
-  const totalLiab = totCurrentLiab + totNonCurrentLiab;
-  const totalLiabPY = totCurrentLiabPY + totNonCurrentLiabPY;
-  const totalEquity = d.shareCapital + d.retainedEarnings;
-  const totalEquityPY = d.shareCapitalPY + d.retainedEarningsPY;
+  const totalAssets    = totCurrentAssets + totNonCurrentAssets;
+  const totalAssetsPY  = totCurrentAssetsPY + totNonCurrentAssetsPY;
+  const totCurrentLiab    = d.ap + d.currentLtd + d.currentLease + d.taxPayable;
+  const totCurrentLiabPY  = d.apPY + d.currentLtdPY + d.currentLeasePY + d.taxPayablePY;
+  const totNonCurrentLiab    = d.ltDebt + d.ltLease + d.deferredTax;
+  const totNonCurrentLiabPY  = d.ltDebtPY + d.ltLeasePY + d.deferredTaxPY;
+  const totalLiab    = totCurrentLiab + totNonCurrentLiab;
+  const totalLiabPY  = totCurrentLiabPY + totNonCurrentLiabPY;
+  const totalEquity    = d.shareCapital + d.retainedEarnings;
+  const totalEquityPY  = d.shareCapitalPY + d.retainedEarningsPY;
   return { totCurrentAssets, totCurrentAssetsPY, totNonCurrentAssets, totNonCurrentAssetsPY, totalAssets, totalAssetsPY, totCurrentLiab, totCurrentLiabPY, totNonCurrentLiab, totNonCurrentLiabPY, totalLiab, totalLiabPY, totalEquity, totalEquityPY };
 }
 
 function computedIS(d: FSData['is']) {
-  const grossProfit = d.revenue - d.cogs;
-  const grossProfitPY = d.revenuePY - d.cogsPY;
-  const totalExpenses = d.admin + d.da + d.interest;
-  const totalExpensesPY = d.adminPY + d.daPY + d.interestPY;
-  const incomeBeforeTax = grossProfit - totalExpenses;
+  const grossProfit      = d.revenue - d.cogs;
+  const grossProfitPY    = d.revenuePY - d.cogsPY;
+  const totalExpenses    = d.admin + d.da + d.interest;
+  const totalExpensesPY  = d.adminPY + d.daPY + d.interestPY;
+  const incomeBeforeTax   = grossProfit - totalExpenses;
   const incomeBeforeTaxPY = grossProfitPY - totalExpensesPY;
-  const netIncome = incomeBeforeTax - d.tax;
+  const netIncome   = incomeBeforeTax - d.tax;
   const netIncomePY = incomeBeforeTaxPY - d.taxPY;
-  const reEnd = d.reBeg + netIncome - d.dividends;
+  const reEnd   = d.reBeg + netIncome - d.dividends;
   const reEndPY = d.reBegPY + netIncomePY - d.dividendsPY;
   return { grossProfit, grossProfitPY, totalExpenses, totalExpensesPY, incomeBeforeTax, incomeBeforeTaxPY, netIncome, netIncomePY, reEnd, reEndPY };
 }
 
 function computedCF(d: FSData['cf']) {
-  const operating = d.netIncome + d.da + d.rouAmort + d.deferredTax + d.receivables + d.inventory + d.prepaid + d.payables + d.taxPayable;
+  const operating   = d.netIncome + d.da + d.rouAmort + d.deferredTax + d.receivables + d.inventory + d.prepaid + d.payables + d.taxPayable;
   const operatingPY = d.netIncomePY + d.daPY + d.rouAmortPY + d.deferredTaxPY + d.receivablesPY + d.inventoryPY + d.prepaidPY + d.payablesPY + d.taxPayablePY;
-  const investing = d.capex;
+  const investing   = d.capex;
   const investingPY = d.capexPY;
-  const financing = d.ltdRepay + d.leaseRepay + d.dividendsPaid;
+  const financing   = d.ltdRepay + d.leaseRepay + d.dividendsPaid;
   const financingPY = d.ltdRepayPY + d.leaseRepayPY + d.dividendsPaidPY;
-  const netChange = operating + investing + financing;
+  const netChange   = operating + investing + financing;
   const netChangePY = operatingPY + investingPY + financingPY;
-  const cashEnd = d.cashBeg + netChange;
+  const cashEnd   = d.cashBeg + netChange;
   const cashEndPY = d.cashBegPY + netChangePY;
   return { operating, operatingPY, investing, investingPY, financing, financingPY, netChange, netChangePY, cashEnd, cashEndPY };
 }
 
-// ─── Sub-components ─────────────────────────────────────────────────────────
+// ─── Shared table styles ─────────────────────────────────────────────────────
+
+const S = {
+  // Column widths: label 55% | notes 6% | CY 19.5% | PY 19.5%
+  colLabel: { width: '55%' } as React.CSSProperties,
+  colNotes: { width: '6%', textAlign: 'right' as const, paddingRight: '6px' } as React.CSSProperties,
+  colNum:   { width: '19.5%' } as React.CSSProperties,
+
+  // Text styles
+  sectionHead: { paddingTop: '14px', paddingBottom: '3px', fontSize: '11px', fontWeight: 700, textTransform: 'uppercase' as const, letterSpacing: '0.07em', color: '#222' } as React.CSSProperties,
+  groupLabel:  { fontSize: '12px', paddingTop: '6px', paddingBottom: '1px', fontStyle: 'italic' as const, color: '#444' } as React.CSSProperties,
+  rowLabel:    { fontSize: '12.5px', paddingTop: '2px', paddingBottom: '2px', color: '#111' } as React.CSSProperties,
+  noteRef:     { fontSize: '11px', color: '#555', textAlign: 'right' as const, paddingRight: '6px', verticalAlign: 'middle' as const } as React.CSSProperties,
+  subtotalRow: { fontWeight: 600, fontSize: '12.5px', paddingTop: '4px', paddingBottom: '4px', color: '#111' } as React.CSSProperties,
+  totalRow:    { fontWeight: 700, fontSize: '12.5px', paddingTop: '5px', paddingBottom: '5px', textTransform: 'uppercase' as const, letterSpacing: '0.03em', color: '#000' } as React.CSSProperties,
+
+  // Number cells
+  numCell:   { fontFamily: "'Courier New', monospace", fontSize: '12.5px', textAlign: 'right' as const, paddingRight: '8px', paddingTop: '2px', paddingBottom: '2px', verticalAlign: 'middle' as const } as React.CSSProperties,
+  subtotal:  { fontFamily: "'Courier New', monospace", fontSize: '12.5px', textAlign: 'right' as const, paddingRight: '8px', fontWeight: 600, borderTop: '1px solid #999', paddingTop: '4px', paddingBottom: '4px' } as React.CSSProperties,
+  grandTotal:{ fontFamily: "'Courier New', monospace", fontSize: '12.5px', textAlign: 'right' as const, paddingRight: '8px', fontWeight: 700, borderTop: '1px solid #333', borderBottom: '3px double #333', paddingTop: '5px', paddingBottom: '5px' } as React.CSSProperties,
+
+  // Dividers
+  colHeaderDiv: { borderBottom: '1px solid #333' } as React.CSSProperties,
+};
+
+// ─── Shared sub-components ───────────────────────────────────────────────────
 
 interface NumCellProps {
   value: number;
@@ -223,88 +248,165 @@ interface NumCellProps {
   section: 'bs' | 'is' | 'cf' | 'eq';
   isEditing: boolean;
   onUpdate: (section: 'bs' | 'is' | 'cf' | 'eq', key: string, val: number) => void;
-  bold?: boolean;
-  className?: string;
+  style?: React.CSSProperties;
 }
 
-function NumCell({ value, fieldKey, section, isEditing, onUpdate, bold, className }: NumCellProps) {
+function NumCell({ value, fieldKey, section, isEditing, onUpdate, style }: NumCellProps) {
   const [raw, setRaw] = useState('');
   useEffect(() => { if (isEditing) setRaw(value < 0 ? `-${Math.abs(value)}` : String(value)); }, [isEditing, value]);
 
   if (isEditing) {
     return (
-      <td className={`py-0.5 px-1 w-36 ${className ?? ''}`}>
+      <td style={{ ...S.numCell, ...style, padding: '1px 4px' }}>
         <input
-          type="text"
-          value={raw}
+          type="text" value={raw}
           onChange={e => setRaw(e.target.value)}
-          onBlur={() => {
-            const parsed = parseFloat(raw.replace(/,/g, '')) || 0;
-            onUpdate(section, fieldKey, parsed);
-          }}
-          className="w-full text-right bg-blue-50 border border-blue-200 rounded px-1 py-0 text-sm focus:outline-none focus:border-blue-400"
-          style={{ fontFamily: 'monospace' }}
+          onBlur={() => { const p = parseFloat(raw.replace(/,/g, '')) || 0; onUpdate(section, fieldKey, p); }}
+          className="w-full text-right bg-blue-50 border border-blue-200 rounded px-1 py-0 focus:outline-none focus:border-blue-400"
+          style={{ fontFamily: "'Courier New', monospace", fontSize: '12px' }}
         />
       </td>
     );
   }
+  return <td style={{ ...S.numCell, ...style }}>{fmtN(value)}</td>;
+}
+
+// ─── Statement header block ───────────────────────────────────────────────────
+
+function StmtHeader({ entityName, title, subTitle }: { entityName: string; title: string; subTitle: string }) {
   return (
-    <td className={`py-0.5 px-2 text-right tabular-nums w-36 ${bold ? 'font-semibold' : ''} ${className ?? ''}`}
-        style={{ fontFamily: "'Courier New', monospace", fontSize: '13px' }}>
-      {fmtN(value)}
-    </td>
+    <div style={{ marginBottom: '20px' }}>
+      <p style={{ fontSize: '12px', color: '#333', marginBottom: '3px' }}>{entityName}</p>
+      <h2 style={{ fontSize: '15px', fontWeight: 700, marginBottom: '3px', color: '#000' }}>{title}</h2>
+      <p style={{ fontSize: '12px', color: '#555' }}>{subTitle}</p>
+    </div>
   );
 }
 
-interface TotalCellProps {
-  value: number;
-  borderTop?: boolean;
-  doubleUnderline?: boolean;
-  className?: string;
-}
+// ─── Column header row ────────────────────────────────────────────────────────
 
-function TotalCell({ value, borderTop, doubleUnderline, className }: TotalCellProps) {
+function ColHeaders({ yearEnd, priorYearEnd }: { yearEnd: string; priorYearEnd: string }) {
   return (
-    <td
-      className={`py-0.5 px-2 text-right tabular-nums w-36 font-semibold ${className ?? ''}`}
-      style={{
-        fontFamily: "'Courier New', monospace",
-        fontSize: '13px',
-        borderTop: borderTop ? '1px solid #333' : undefined,
-        borderBottom: doubleUnderline ? '3px double #333' : undefined,
-      }}
-    >
-      {fmtN(value)}
-    </td>
+    <thead>
+      <tr style={S.colHeaderDiv}>
+        <th style={{ ...S.colLabel, textAlign: 'left', fontWeight: 'normal', paddingBottom: '8px' }} />
+        <th style={{ ...S.colNotes, fontWeight: 700, fontSize: '11px', paddingBottom: '8px', textTransform: 'uppercase', letterSpacing: '0.05em', color: '#555' }}>Notes</th>
+        <th style={{ ...S.colNum, textAlign: 'right', fontWeight: 700, fontSize: '12px', paddingBottom: '8px', paddingRight: '8px', whiteSpace: 'nowrap', color: '#111' }}>{yearEnd}</th>
+        <th style={{ ...S.colNum, textAlign: 'right', fontWeight: 700, fontSize: '12px', paddingBottom: '8px', paddingRight: '8px', whiteSpace: 'nowrap', color: '#111' }}>{priorYearEnd}</th>
+      </tr>
+    </thead>
   );
 }
 
-// ─── Page: Cover ─────────────────────────────────────────────────────────────
+// ─── Shared row helpers ───────────────────────────────────────────────────────
+
+function SectionHeadRow({ label }: { label: string }) {
+  return <tr><td colSpan={4} style={S.sectionHead}>{label}</td></tr>;
+}
+function GroupLabelRow({ label }: { label: string }) {
+  return <tr><td colSpan={4} style={{ ...S.groupLabel, paddingLeft: '8px' }}>{label}</td></tr>;
+}
+function SpacerRow() {
+  return <tr><td colSpan={4} style={{ paddingTop: '6px' }} /></tr>;
+}
+
+interface DataRowProps {
+  label: string;
+  cy: number; cyKey: string;
+  py: number; pyKey: string;
+  section: 'bs' | 'is' | 'cf' | 'eq';
+  indent?: number;
+  note?: string;
+  isEditing: boolean;
+  onUpdate: (section: 'bs' | 'is' | 'cf' | 'eq', key: string, val: number) => void;
+}
+function DataRow({ label, cy, cyKey, py, pyKey, section, indent = 0, note, isEditing, onUpdate }: DataRowProps) {
+  return (
+    <tr>
+      <td style={{ ...S.rowLabel, paddingLeft: `${12 + indent * 14}px` }}>{label}</td>
+      <td style={S.noteRef}>{note ?? ''}</td>
+      <NumCell value={cy} fieldKey={cyKey} section={section} isEditing={isEditing} onUpdate={onUpdate} />
+      <NumCell value={py} fieldKey={pyKey} section={section} isEditing={isEditing} onUpdate={onUpdate} />
+    </tr>
+  );
+}
+
+interface SubtotalRowProps {
+  label: string; cy: number; py: number; indent?: number;
+}
+function SubtotalRow({ label, cy, py, indent = 0 }: SubtotalRowProps) {
+  return (
+    <tr>
+      <td style={{ ...S.subtotalRow, paddingLeft: `${12 + indent * 14}px` }}>{label}</td>
+      <td />
+      <td style={S.subtotal}>{fmtN(cy)}</td>
+      <td style={S.subtotal}>{fmtN(py)}</td>
+    </tr>
+  );
+}
+
+interface TotalRowProps {
+  label: string; cy: number; py: number;
+}
+function TotalRow({ label, cy, py }: TotalRowProps) {
+  return (
+    <tr>
+      <td style={{ ...S.totalRow, paddingLeft: '12px' }}>{label}</td>
+      <td />
+      <td style={S.grandTotal}>{fmtN(cy)}</td>
+      <td style={S.grandTotal}>{fmtN(py)}</td>
+    </tr>
+  );
+}
+
+function FooterNote() {
+  return (
+    <p style={{ fontSize: '11px', color: '#555', marginTop: '28px', fontStyle: 'italic' }}>
+      See accompanying notes to the financial statements
+    </p>
+  );
+}
+
+function SignatureBlock({ yearEnd }: { yearEnd: string }) {
+  return (
+    <div style={{ marginTop: '32px', display: 'flex', gap: '64px' }}>
+      {['Director', 'Director'].map((role, i) => (
+        <div key={i}>
+          <div style={{ borderTop: '1px solid #444', width: '180px', marginBottom: '4px' }} />
+          <p style={{ fontSize: '11px', color: '#555' }}>{role}</p>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+// ─── Page: Cover ──────────────────────────────────────────────────────────────
 
 function CoverPage({ data, isEditing, onUpdateText }: {
   data: FSData; isEditing: boolean; onUpdateText: (field: keyof FSData, val: string) => void;
 }) {
   return (
-    <div className="flex flex-col items-center justify-center min-h-[700px] text-center gap-8">
-      <div className="space-y-2">
+    <div style={{ position: 'relative', zIndex: 1, padding: '64px' }}>
+      <div style={{ fontSize: '72px', fontWeight: 900, color: '#ccc', opacity: 0.18, position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%,-50%) rotate(-35deg)', letterSpacing: '0.12em', whiteSpace: 'nowrap', userSelect: 'none', pointerEvents: 'none', zIndex: 0 }}>
+        DRAFT UNDER DISCUSSION
+      </div>
+      <div style={{ position: 'relative', zIndex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: '700px', textAlign: 'center', gap: '28px' }}>
         {isEditing ? (
-          <input className="text-3xl font-bold text-center border-b border-blue-300 bg-blue-50 focus:outline-none w-full"
+          <input className="text-3xl font-bold text-center border-b border-blue-300 bg-blue-50 focus:outline-none w-full max-w-md"
             value={data.entityName} onChange={e => onUpdateText('entityName', e.target.value)} />
         ) : (
-          <h1 style={{ fontSize: '28px', fontWeight: 700, letterSpacing: '0.01em' }}>{data.entityName}</h1>
+          <h1 style={{ fontSize: '26px', fontWeight: 700 }}>{data.entityName}</h1>
         )}
-      </div>
-      <div style={{ width: '120px', borderTop: '2px solid #333' }} />
-      <div className="space-y-3">
-        <p style={{ fontSize: '22px', fontWeight: 600, letterSpacing: '0.05em', textTransform: 'uppercase' }}>
-          Financial Statements
-        </p>
-        {isEditing ? (
-          <input className="text-base text-center border-b border-blue-300 bg-blue-50 focus:outline-none w-full"
-            value={data.yearEnd} onChange={e => onUpdateText('yearEnd', e.target.value)} />
-        ) : (
-          <p style={{ fontSize: '15px' }}>For the Year Ended {data.yearEnd}</p>
-        )}
+        <div style={{ width: '100px', borderTop: '2px solid #333' }} />
+        <div>
+          <p style={{ fontSize: '20px', fontWeight: 600, letterSpacing: '0.06em', textTransform: 'uppercase', marginBottom: '10px' }}>Financial Statements</p>
+          {isEditing ? (
+            <input className="text-sm text-center border-b border-blue-300 bg-blue-50 focus:outline-none w-full"
+              value={data.yearEnd} onChange={e => onUpdateText('yearEnd', e.target.value)} />
+          ) : (
+            <p style={{ fontSize: '13px', color: '#444' }}>For the Year Ended {data.yearEnd}</p>
+          )}
+        </div>
       </div>
     </div>
   );
@@ -314,30 +416,28 @@ function CoverPage({ data, isEditing, onUpdateText }: {
 
 function TocPage({ data }: { data: FSData }) {
   const items = [
-    { label: "Independent Auditor's Report", page: '1–2' },
+    { label: "Independent Auditor's Report", page: '1 – 2' },
     { label: 'Balance Sheet', page: '3' },
     { label: 'Statement of Income (Loss) and Retained Earnings (Deficit)', page: '4' },
     { label: 'Statement of Cash Flows', page: '5' },
     { label: 'Statement of Changes in Equity', page: '6' },
-    { label: 'Notes to Financial Statements', page: '7–20' },
+    { label: 'Notes to Financial Statements', page: '7 – 20' },
   ];
   return (
-    <div>
-      <p style={{ fontSize: '13px', marginBottom: '8px', color: '#555' }}>{data.entityName}</p>
-      <h2 style={{ fontSize: '18px', fontWeight: 700, marginBottom: '4px' }}>Table of Contents</h2>
-      <p style={{ fontSize: '13px', marginBottom: '28px', color: '#555' }}>{data.yearEnd}</p>
-      <table className="w-full" style={{ borderCollapse: 'collapse' }}>
+    <div style={{ padding: '64px' }}>
+      <StmtHeader entityName={data.entityName} title="Table of Contents" subTitle={data.yearEnd} />
+      <table style={{ width: '100%', borderCollapse: 'collapse' }}>
         <thead>
           <tr style={{ borderBottom: '1px solid #333' }}>
-            <th style={{ textAlign: 'left', fontSize: '12px', fontWeight: 600, paddingBottom: '6px', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Financial Statement</th>
-            <th style={{ textAlign: 'right', fontSize: '12px', fontWeight: 600, paddingBottom: '6px', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Page</th>
+            <th style={{ textAlign: 'left', fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em', paddingBottom: '6px', color: '#555' }}>Financial Statement</th>
+            <th style={{ textAlign: 'right', fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em', paddingBottom: '6px', color: '#555' }}>Page</th>
           </tr>
         </thead>
         <tbody>
           {items.map((item, i) => (
             <tr key={i} style={{ borderBottom: '1px solid #e5e5e5' }}>
-              <td style={{ fontSize: '13px', padding: '10px 0' }}>{item.label}</td>
-              <td style={{ fontSize: '13px', padding: '10px 0', textAlign: 'right', fontFamily: 'monospace' }}>{item.page}</td>
+              <td style={{ fontSize: '12.5px', padding: '9px 0' }}>{item.label}</td>
+              <td style={{ fontSize: '12.5px', padding: '9px 0', textAlign: 'right', fontFamily: "'Courier New', monospace" }}>{item.page}</td>
             </tr>
           ))}
         </tbody>
@@ -354,109 +454,58 @@ function BSPage({ data, isEditing, onUpdate }: {
 }) {
   const c = computedBS(data.bs);
   const bs = data.bs;
-  type LabelRowProps = { label: string; indent?: number; note?: string };
-  function LabelRow({ label, indent = 0, note }: LabelRowProps) {
-    return (
-      <tr>
-        <td style={{ paddingLeft: `${12 + indent * 20}px`, fontSize: '13px', paddingTop: '2px', paddingBottom: '2px' }}>
-          {label}{note && <em style={{ color: '#555', fontSize: '12px' }}> (Note {note})</em>}
-        </td>
-        <td /><td />
-      </tr>
-    );
-  }
-  function DataRow({ label, cy, cyKey, py, pyKey, indent = 0, note }: {
-    label: string; cy: number; cyKey: string; py: number; pyKey: string; indent?: number; note?: string;
-  }) {
-    return (
-      <tr>
-        <td style={{ paddingLeft: `${28 + indent * 16}px`, fontSize: '13px', paddingTop: '2px', paddingBottom: '2px' }}>
-          {label}{note && <em style={{ color: '#555', fontSize: '12px' }}> (Note {note})</em>}
-        </td>
-        <NumCell value={cy} fieldKey={cyKey} section="bs" isEditing={isEditing} onUpdate={onUpdate} />
-        <NumCell value={py} fieldKey={pyKey} section="bs" isEditing={isEditing} onUpdate={onUpdate} />
-      </tr>
-    );
-  }
-  function SubtotalRow({ label, cy, py }: { label: string; cy: number; py: number }) {
-    return (
-      <tr>
-        <td style={{ paddingLeft: '28px', fontSize: '13px', paddingTop: '4px', paddingBottom: '4px', fontWeight: 600 }}>{label}</td>
-        <TotalCell value={cy} borderTop />
-        <TotalCell value={py} borderTop />
-      </tr>
-    );
-  }
-  function TotalRow({ label, cy, py, double }: { label: string; cy: number; py: number; double?: boolean }) {
-    return (
-      <tr>
-        <td style={{ paddingLeft: '12px', fontSize: '13px', paddingTop: '4px', paddingBottom: '4px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.04em' }}>{label}</td>
-        <TotalCell value={cy} borderTop doubleUnderline={double} />
-        <TotalCell value={py} borderTop doubleUnderline={double} />
-      </tr>
-    );
-  }
+  const dr = (label: string, cy: number, cyKey: string, py: number, pyKey: string, indent = 0, note?: string) => (
+    <DataRow key={cyKey} label={label} cy={cy} cyKey={cyKey} py={py} pyKey={pyKey} section="bs" indent={indent} note={note} isEditing={isEditing} onUpdate={onUpdate} />
+  );
 
   return (
-    <div>
-      <p style={{ fontSize: '13px', color: '#555', marginBottom: '2px' }}>{data.entityName}</p>
-      <h2 style={{ fontSize: '18px', fontWeight: 700, marginBottom: '2px' }}>Balance Sheet</h2>
-      <p style={{ fontSize: '13px', color: '#555', marginBottom: '20px' }}>As at {data.yearEnd}</p>
-      <table className="w-full" style={{ borderCollapse: 'collapse' }}>
-        <thead>
-          <tr style={{ borderBottom: '1px solid #333' }}>
-            <th style={{ textAlign: 'left', fontWeight: 'normal', paddingBottom: '6px', width: '60%' }} />
-            <th style={{ textAlign: 'right', fontSize: '12px', fontWeight: 700, paddingBottom: '6px', width: '20%', paddingRight: '8px' }}>{data.yearEnd.split(' ').slice(-2).join(' ')}</th>
-            <th style={{ textAlign: 'right', fontSize: '12px', fontWeight: 700, paddingBottom: '6px', width: '20%', paddingRight: '8px' }}>{data.priorYearEnd.split(' ').slice(-2).join(' ')}</th>
-          </tr>
-        </thead>
+    <div style={{ padding: '64px' }}>
+      <StmtHeader entityName={data.entityName} title="Balance Sheet" subTitle={`As at ${data.yearEnd}`} />
+      <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+        <ColHeaders yearEnd={data.yearEnd} priorYearEnd={data.priorYearEnd} />
         <tbody>
-          {/* Assets */}
-          <tr><td colSpan={3} style={{ paddingTop: '14px', paddingBottom: '4px', fontSize: '12px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em' }}>Assets</td></tr>
-          <LabelRow label="Current assets" />
-          <DataRow label="Cash and cash equivalents" cy={bs.cash} cyKey="cash" py={bs.cashPY} pyKey="cashPY" indent={1} />
-          <DataRow label="Trade and other receivables" cy={bs.receivables} cyKey="receivables" py={bs.receivablesPY} pyKey="receivablesPY" indent={1} note="5" />
-          <DataRow label="Inventories" cy={bs.inventory} cyKey="inventory" py={bs.inventoryPY} pyKey="inventoryPY" indent={1} />
-          <DataRow label="Prepaid expenses and deposits" cy={bs.prepaid} cyKey="prepaid" py={bs.prepaidPY} pyKey="prepaidPY" indent={1} />
-          <SubtotalRow label="Total current assets" cy={c.totCurrentAssets} py={c.totCurrentAssetsPY} />
-          <tr><td style={{ paddingTop: '12px' }} /></tr>
-          <LabelRow label="Non-current assets" />
-          <DataRow label="Property, plant and equipment" cy={bs.ppe} cyKey="ppe" py={bs.ppePY} pyKey="ppePY" indent={1} note="6" />
-          <DataRow label="Right-of-use assets" cy={bs.rou} cyKey="rou" py={bs.rouPY} pyKey="rouPY" indent={1} />
-          <DataRow label="Intangible assets" cy={bs.intangibles} cyKey="intangibles" py={bs.intangiblesPY} pyKey="intangiblesPY" indent={1} />
-          <SubtotalRow label="Total non-current assets" cy={c.totNonCurrentAssets} py={c.totNonCurrentAssetsPY} />
-          <tr><td style={{ paddingTop: '4px' }} /></tr>
-          <TotalRow label="Total Assets" cy={c.totalAssets} py={c.totalAssetsPY} double />
+          <SectionHeadRow label="Assets" />
+          <GroupLabelRow label="Current assets" />
+          {dr('Cash and cash equivalents', bs.cash, 'cash', bs.cashPY, 'cashPY', 1)}
+          {dr('Trade and other receivables', bs.receivables, 'receivables', bs.receivablesPY, 'receivablesPY', 1, '4')}
+          {dr('Inventories', bs.inventory, 'inventory', bs.inventoryPY, 'inventoryPY', 1)}
+          {dr('Prepaid expenses and deposits', bs.prepaid, 'prepaid', bs.prepaidPY, 'prepaidPY', 1)}
+          <SubtotalRow label="Total current assets" cy={c.totCurrentAssets} py={c.totCurrentAssetsPY} indent={1} />
+          <SpacerRow />
+          <GroupLabelRow label="Non-current assets" />
+          {dr('Property, plant and equipment', bs.ppe, 'ppe', bs.ppePY, 'ppePY', 1, '5')}
+          {dr('Right-of-use assets', bs.rou, 'rou', bs.rouPY, 'rouPY', 1)}
+          {dr('Intangible assets', bs.intangibles, 'intangibles', bs.intangiblesPY, 'intangiblesPY', 1)}
+          <SubtotalRow label="Total non-current assets" cy={c.totNonCurrentAssets} py={c.totNonCurrentAssetsPY} indent={1} />
+          <SpacerRow />
+          <TotalRow label="Total Assets" cy={c.totalAssets} py={c.totalAssetsPY} />
 
-          {/* Liabilities */}
-          <tr><td colSpan={3} style={{ paddingTop: '20px', paddingBottom: '4px', fontSize: '12px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em' }}>Liabilities</td></tr>
-          <LabelRow label="Current liabilities" />
-          <DataRow label="Accounts payable and accrued liabilities" cy={bs.ap} cyKey="ap" py={bs.apPY} pyKey="apPY" indent={1} />
-          <DataRow label="Current portion of long-term debt" cy={bs.currentLtd} cyKey="currentLtd" py={bs.currentLtdPY} pyKey="currentLtdPY" indent={1} note="7" />
-          <DataRow label="Current portion of lease liabilities" cy={bs.currentLease} cyKey="currentLease" py={bs.currentLeasePY} pyKey="currentLeasePY" indent={1} />
-          <DataRow label="Income taxes payable" cy={bs.taxPayable} cyKey="taxPayable" py={bs.taxPayablePY} pyKey="taxPayablePY" indent={1} />
-          <SubtotalRow label="Total current liabilities" cy={c.totCurrentLiab} py={c.totCurrentLiabPY} />
-          <tr><td style={{ paddingTop: '12px' }} /></tr>
-          <LabelRow label="Non-current liabilities" />
-          <DataRow label="Long-term debt" cy={bs.ltDebt} cyKey="ltDebt" py={bs.ltDebtPY} pyKey="ltDebtPY" indent={1} note="7" />
-          <DataRow label="Lease liabilities" cy={bs.ltLease} cyKey="ltLease" py={bs.ltLeasePY} pyKey="ltLeasePY" indent={1} />
-          <DataRow label="Deferred income taxes" cy={bs.deferredTax} cyKey="deferredTax" py={bs.deferredTaxPY} pyKey="deferredTaxPY" indent={1} />
-          <SubtotalRow label="Total non-current liabilities" cy={c.totNonCurrentLiab} py={c.totNonCurrentLiabPY} />
-          <tr><td style={{ paddingTop: '4px' }} /></tr>
+          <SectionHeadRow label="Liabilities" />
+          <GroupLabelRow label="Current liabilities" />
+          {dr('Accounts payable and accrued liabilities', bs.ap, 'ap', bs.apPY, 'apPY', 1)}
+          {dr('Current portion of long-term debt', bs.currentLtd, 'currentLtd', bs.currentLtdPY, 'currentLtdPY', 1, '6')}
+          {dr('Current portion of lease liabilities', bs.currentLease, 'currentLease', bs.currentLeasePY, 'currentLeasePY', 1)}
+          {dr('Income taxes payable', bs.taxPayable, 'taxPayable', bs.taxPayablePY, 'taxPayablePY', 1)}
+          <SubtotalRow label="Total current liabilities" cy={c.totCurrentLiab} py={c.totCurrentLiabPY} indent={1} />
+          <SpacerRow />
+          <GroupLabelRow label="Non-current liabilities" />
+          {dr('Long-term debt', bs.ltDebt, 'ltDebt', bs.ltDebtPY, 'ltDebtPY', 1, '6')}
+          {dr('Lease liabilities', bs.ltLease, 'ltLease', bs.ltLeasePY, 'ltLeasePY', 1)}
+          {dr('Deferred income taxes', bs.deferredTax, 'deferredTax', bs.deferredTaxPY, 'deferredTaxPY', 1)}
+          <SubtotalRow label="Total non-current liabilities" cy={c.totNonCurrentLiab} py={c.totNonCurrentLiabPY} indent={1} />
+          <SpacerRow />
           <TotalRow label="Total Liabilities" cy={c.totalLiab} py={c.totalLiabPY} />
 
-          {/* Equity */}
-          <tr><td colSpan={3} style={{ paddingTop: '20px', paddingBottom: '4px', fontSize: '12px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em' }}>Shareholders' Equity</td></tr>
-          <DataRow label="Share capital" cy={bs.shareCapital} cyKey="shareCapital" py={bs.shareCapitalPY} pyKey="shareCapitalPY" />
-          <DataRow label="Retained earnings" cy={bs.retainedEarnings} cyKey="retainedEarnings" py={bs.retainedEarningsPY} pyKey="retainedEarningsPY" />
-          <SubtotalRow label="Total shareholders' equity" cy={c.totalEquity} py={c.totalEquityPY} />
-          <tr><td style={{ paddingTop: '4px' }} /></tr>
-          <TotalRow label="Total Liabilities and Shareholders' Equity" cy={c.totalAssets} py={c.totalAssetsPY} double />
+          <SectionHeadRow label="Shareholders' Equity" />
+          {dr('Share capital', bs.shareCapital, 'shareCapital', bs.shareCapitalPY, 'shareCapitalPY', 1)}
+          {dr('Retained earnings', bs.retainedEarnings, 'retainedEarnings', bs.retainedEarningsPY, 'retainedEarningsPY', 1)}
+          <SubtotalRow label="Total shareholders' equity" cy={c.totalEquity} py={c.totalEquityPY} indent={1} />
+          <SpacerRow />
+          <TotalRow label="Total Liabilities and Shareholders' Equity" cy={c.totalAssets} py={c.totalAssetsPY} />
         </tbody>
       </table>
-      <p style={{ fontSize: '11px', color: '#666', marginTop: '24px', fontStyle: 'italic' }}>
-        See accompanying notes to financial statements
-      </p>
+      <FooterNote />
+      <SignatureBlock yearEnd={data.yearEnd} />
     </div>
   );
 }
@@ -469,89 +518,50 @@ function ISPage({ data, isEditing, onUpdate }: {
 }) {
   const c = computedIS(data.is);
   const is = data.is;
-  function DataRow({ label, cy, cyKey, py, pyKey, indent = 0 }: {
-    label: string; cy: number; cyKey: string; py: number; pyKey: string; indent?: number;
-  }) {
-    return (
-      <tr>
-        <td style={{ paddingLeft: `${28 + indent * 16}px`, fontSize: '13px', paddingTop: '2px', paddingBottom: '2px' }}>{label}</td>
-        <NumCell value={cy} fieldKey={cyKey} section="is" isEditing={isEditing} onUpdate={onUpdate} />
-        <NumCell value={py} fieldKey={pyKey} section="is" isEditing={isEditing} onUpdate={onUpdate} />
-      </tr>
-    );
-  }
-  function SubtotalRow({ label, cy, py, indent = 0 }: { label: string; cy: number; py: number; indent?: number }) {
-    return (
-      <tr>
-        <td style={{ paddingLeft: `${28 + indent * 16}px`, fontSize: '13px', paddingTop: '4px', paddingBottom: '4px', fontWeight: 600 }}>{label}</td>
-        <TotalCell value={cy} borderTop />
-        <TotalCell value={py} borderTop />
-      </tr>
-    );
-  }
-
+  const dr = (label: string, cy: number, cyKey: string, py: number, pyKey: string, indent = 0, note?: string) => (
+    <DataRow key={cyKey} label={label} cy={cy} cyKey={cyKey} py={py} pyKey={pyKey} section="is" indent={indent} note={note} isEditing={isEditing} onUpdate={onUpdate} />
+  );
   const dividendLabel = data.entityName.includes('LLC') ? 'Member distributions' : 'Dividends declared';
 
   return (
-    <div>
-      <p style={{ fontSize: '13px', color: '#555', marginBottom: '2px' }}>{data.entityName}</p>
-      <h2 style={{ fontSize: '18px', fontWeight: 700, marginBottom: '2px' }}>
-        Statement of Income (Loss) and Retained Earnings (Deficit)
-      </h2>
-      <p style={{ fontSize: '13px', color: '#555', marginBottom: '20px' }}>{data.periodLabel}</p>
-      <table className="w-full" style={{ borderCollapse: 'collapse' }}>
-        <thead>
-          <tr style={{ borderBottom: '1px solid #333' }}>
-            <th style={{ textAlign: 'left', fontWeight: 'normal', paddingBottom: '6px', width: '60%' }} />
-            <th style={{ textAlign: 'right', fontSize: '12px', fontWeight: 700, paddingBottom: '6px', width: '20%', paddingRight: '8px' }}>{data.yearEnd.split(' ').slice(-2).join(' ')}</th>
-            <th style={{ textAlign: 'right', fontSize: '12px', fontWeight: 700, paddingBottom: '6px', width: '20%', paddingRight: '8px' }}>{data.priorYearEnd.split(' ').slice(-2).join(' ')}</th>
-          </tr>
-        </thead>
+    <div style={{ padding: '64px' }}>
+      <StmtHeader entityName={data.entityName} title="Statement of Income (Loss) and Retained Earnings (Deficit)" subTitle={data.periodLabel} />
+      <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+        <ColHeaders yearEnd={data.yearEnd} priorYearEnd={data.priorYearEnd} />
         <tbody>
-          <tr><td colSpan={3} style={{ paddingTop: '14px', paddingBottom: '4px', fontSize: '12px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em' }}>Revenue</td></tr>
-          <DataRow label="Revenue from services" cy={is.revenue} cyKey="revenue" py={is.revenuePY} pyKey="revenuePY" indent={1} />
+          <SectionHeadRow label="Revenue" />
+          {dr('Revenue from services', is.revenue, 'revenue', is.revenuePY, 'revenuePY', 1)}
 
-          <tr><td colSpan={3} style={{ paddingTop: '14px', paddingBottom: '4px', fontSize: '12px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em' }}>Cost of Services</td></tr>
-          <DataRow label="Direct service costs" cy={is.cogs} cyKey="cogs" py={is.cogsPY} pyKey="cogsPY" indent={1} />
-
-          <tr><td style={{ paddingTop: '4px' }} /></tr>
+          <SectionHeadRow label="Cost of Services" />
+          {dr('Direct service costs', is.cogs, 'cogs', is.cogsPY, 'cogsPY', 1)}
+          <SpacerRow />
           <SubtotalRow label="Gross Profit" cy={c.grossProfit} py={c.grossProfitPY} />
 
-          <tr><td colSpan={3} style={{ paddingTop: '14px', paddingBottom: '4px', fontSize: '12px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em' }}>Operating Expenses</td></tr>
-          <DataRow label="Administrative expenses" cy={is.admin} cyKey="admin" py={is.adminPY} pyKey="adminPY" indent={1} />
-          <DataRow label="Depreciation and amortization" cy={is.da} cyKey="da" py={is.daPY} pyKey="daPY" indent={1} />
-          <DataRow label="Interest expense" cy={is.interest} cyKey="interest" py={is.interestPY} pyKey="interestPY" indent={1} />
+          <SectionHeadRow label="Operating Expenses" />
+          {dr('Administrative expenses', is.admin, 'admin', is.adminPY, 'adminPY', 1)}
+          {dr('Depreciation and amortization', is.da, 'da', is.daPY, 'daPY', 1)}
+          {dr('Interest expense', is.interest, 'interest', is.interestPY, 'interestPY', 1)}
           <SubtotalRow label="Total expenses" cy={c.totalExpenses} py={c.totalExpensesPY} />
-
-          <tr><td style={{ paddingTop: '4px' }} /></tr>
+          <SpacerRow />
           <SubtotalRow label="Income before income taxes" cy={c.incomeBeforeTax} py={c.incomeBeforeTaxPY} />
-          <DataRow label="Income tax expense" cy={is.tax} cyKey="tax" py={is.taxPY} pyKey="taxPY" indent={1} />
+          {dr('Income tax expense', is.tax, 'tax', is.taxPY, 'taxPY', 1)}
+          <SpacerRow />
+          <TotalRow label="Net Income" cy={c.netIncome} py={c.netIncomePY} />
 
-          <tr><td style={{ paddingTop: '4px' }} /></tr>
+          <SectionHeadRow label="Retained Earnings" />
+          {dr('Retained earnings, beginning of year', is.reBeg, 'reBeg', is.reBegPY, 'reBegPY', 1)}
           <tr>
-            <td style={{ paddingLeft: '28px', fontSize: '13px', paddingTop: '4px', paddingBottom: '4px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.04em' }}>Net Income</td>
-            <TotalCell value={c.netIncome} borderTop />
-            <TotalCell value={c.netIncomePY} borderTop />
+            <td style={{ ...S.rowLabel, paddingLeft: '26px' }}>Net income for the year</td>
+            <td />
+            <td style={S.numCell}>{fmtN(c.netIncome)}</td>
+            <td style={S.numCell}>{fmtN(c.netIncomePY)}</td>
           </tr>
-
-          <tr><td colSpan={3} style={{ paddingTop: '20px', paddingBottom: '4px', fontSize: '12px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em' }}>Retained Earnings</td></tr>
-          <DataRow label="Retained earnings, beginning of year" cy={is.reBeg} cyKey="reBeg" py={is.reBegPY} pyKey="reBegPY" indent={1} />
-          <tr>
-            <td style={{ paddingLeft: '28px', fontSize: '13px', paddingTop: '2px', paddingBottom: '2px' }}>Net income for the year</td>
-            <td style={{ textAlign: 'right', fontSize: '13px', paddingRight: '8px', fontFamily: 'monospace' }}>{fmtN(c.netIncome)}</td>
-            <td style={{ textAlign: 'right', fontSize: '13px', paddingRight: '8px', fontFamily: 'monospace' }}>{fmtN(c.netIncomePY)}</td>
-          </tr>
-          <DataRow label={dividendLabel} cy={-is.dividends} cyKey="dividends" py={-is.dividendsPY} pyKey="dividendsPY" indent={1} />
-          <tr>
-            <td style={{ paddingLeft: '28px', fontSize: '13px', paddingTop: '4px', paddingBottom: '4px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.04em' }}>Retained Earnings, End of Year</td>
-            <TotalCell value={c.reEnd} borderTop doubleUnderline />
-            <TotalCell value={c.reEndPY} borderTop doubleUnderline />
-          </tr>
+          {dr(dividendLabel, -is.dividends, 'dividends', -is.dividendsPY, 'dividendsPY', 1)}
+          <SpacerRow />
+          <TotalRow label="Retained Earnings, End of Year" cy={c.reEnd} py={c.reEndPY} />
         </tbody>
       </table>
-      <p style={{ fontSize: '11px', color: '#666', marginTop: '24px', fontStyle: 'italic' }}>
-        See accompanying notes to financial statements
-      </p>
+      <FooterNote />
     </div>
   );
 }
@@ -564,84 +574,49 @@ function CFPage({ data, isEditing, onUpdate }: {
 }) {
   const c = computedCF(data.cf);
   const cf = data.cf;
-  function DataRow({ label, cy, cyKey, py, pyKey, indent = 0 }: {
-    label: string; cy: number; cyKey: string; py: number; pyKey: string; indent?: number;
-  }) {
-    return (
-      <tr>
-        <td style={{ paddingLeft: `${28 + indent * 16}px`, fontSize: '13px', paddingTop: '2px', paddingBottom: '2px' }}>{label}</td>
-        <NumCell value={cy} fieldKey={cyKey} section="cf" isEditing={isEditing} onUpdate={onUpdate} />
-        <NumCell value={py} fieldKey={pyKey} section="cf" isEditing={isEditing} onUpdate={onUpdate} />
-      </tr>
-    );
-  }
-  function SectionTotal({ label, cy, py }: { label: string; cy: number; py: number }) {
-    return (
-      <tr>
-        <td style={{ paddingLeft: '28px', fontSize: '13px', paddingTop: '4px', paddingBottom: '4px', fontWeight: 600 }}>{label}</td>
-        <TotalCell value={cy} borderTop />
-        <TotalCell value={py} borderTop />
-      </tr>
-    );
-  }
-
+  const dr = (label: string, cy: number, cyKey: string, py: number, pyKey: string, indent = 0) => (
+    <DataRow key={cyKey} label={label} cy={cy} cyKey={cyKey} py={py} pyKey={pyKey} section="cf" indent={indent} isEditing={isEditing} onUpdate={onUpdate} />
+  );
   const distLabel = data.entityName.includes('LLC') ? 'Member distributions paid' : 'Dividends paid';
 
   return (
-    <div>
-      <p style={{ fontSize: '13px', color: '#555', marginBottom: '2px' }}>{data.entityName}</p>
-      <h2 style={{ fontSize: '18px', fontWeight: 700, marginBottom: '2px' }}>Statement of Cash Flows</h2>
-      <p style={{ fontSize: '13px', color: '#555', marginBottom: '20px' }}>{data.periodLabel}</p>
-      <table className="w-full" style={{ borderCollapse: 'collapse' }}>
-        <thead>
-          <tr style={{ borderBottom: '1px solid #333' }}>
-            <th style={{ textAlign: 'left', fontWeight: 'normal', paddingBottom: '6px', width: '60%' }} />
-            <th style={{ textAlign: 'right', fontSize: '12px', fontWeight: 700, paddingBottom: '6px', width: '20%', paddingRight: '8px' }}>{data.yearEnd.split(' ').slice(-2).join(' ')}</th>
-            <th style={{ textAlign: 'right', fontSize: '12px', fontWeight: 700, paddingBottom: '6px', width: '20%', paddingRight: '8px' }}>{data.priorYearEnd.split(' ').slice(-2).join(' ')}</th>
-          </tr>
-        </thead>
+    <div style={{ padding: '64px' }}>
+      <StmtHeader entityName={data.entityName} title="Statement of Cash Flows" subTitle={data.periodLabel} />
+      <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+        <ColHeaders yearEnd={data.yearEnd} priorYearEnd={data.priorYearEnd} />
         <tbody>
-          <tr><td colSpan={3} style={{ paddingTop: '14px', paddingBottom: '4px', fontSize: '12px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em' }}>Operating Activities</td></tr>
-          <DataRow label="Net income" cy={cf.netIncome} cyKey="netIncome" py={cf.netIncomePY} pyKey="netIncomePY" indent={1} />
-          <tr><td style={{ paddingLeft: '28px', fontSize: '12px', fontStyle: 'italic', color: '#555', paddingTop: '6px', paddingBottom: '2px' }} colSpan={3}>Adjustments:</td></tr>
-          <DataRow label="Depreciation and amortization" cy={cf.da} cyKey="da" py={cf.daPY} pyKey="daPY" indent={2} />
-          <DataRow label="Amortization of right-of-use assets" cy={cf.rouAmort} cyKey="rouAmort" py={cf.rouAmortPY} pyKey="rouAmortPY" indent={2} />
-          <DataRow label="Deferred income taxes" cy={cf.deferredTax} cyKey="deferredTax" py={cf.deferredTaxPY} pyKey="deferredTaxPY" indent={2} />
-          <tr><td style={{ paddingLeft: '28px', fontSize: '12px', fontStyle: 'italic', color: '#555', paddingTop: '6px', paddingBottom: '2px' }} colSpan={3}>Changes in working capital:</td></tr>
-          <DataRow label="Trade and other receivables" cy={cf.receivables} cyKey="receivables" py={cf.receivablesPY} pyKey="receivablesPY" indent={2} />
-          <DataRow label="Inventories" cy={cf.inventory} cyKey="inventory" py={cf.inventoryPY} pyKey="inventoryPY" indent={2} />
-          <DataRow label="Prepaid expenses and deposits" cy={cf.prepaid} cyKey="prepaid" py={cf.prepaidPY} pyKey="prepaidPY" indent={2} />
-          <DataRow label="Accounts payable and accrued liabilities" cy={cf.payables} cyKey="payables" py={cf.payablesPY} pyKey="payablesPY" indent={2} />
-          <DataRow label="Income taxes payable" cy={cf.taxPayable} cyKey="taxPayable" py={cf.taxPayablePY} pyKey="taxPayablePY" indent={2} />
-          <SectionTotal label="Net cash provided by operating activities" cy={c.operating} py={c.operatingPY} />
+          <SectionHeadRow label="Operating Activities" />
+          {dr('Net income', cf.netIncome, 'netIncome', cf.netIncomePY, 'netIncomePY', 1)}
+          <GroupLabelRow label="Adjustments for non-cash items:" />
+          {dr('Depreciation and amortization', cf.da, 'da', cf.daPY, 'daPY', 2)}
+          {dr('Amortization of right-of-use assets', cf.rouAmort, 'rouAmort', cf.rouAmortPY, 'rouAmortPY', 2)}
+          {dr('Deferred income taxes', cf.deferredTax, 'deferredTax', cf.deferredTaxPY, 'deferredTaxPY', 2)}
+          <GroupLabelRow label="Changes in working capital:" />
+          {dr('Trade and other receivables', cf.receivables, 'receivables', cf.receivablesPY, 'receivablesPY', 2)}
+          {dr('Inventories', cf.inventory, 'inventory', cf.inventoryPY, 'inventoryPY', 2)}
+          {dr('Prepaid expenses and deposits', cf.prepaid, 'prepaid', cf.prepaidPY, 'prepaidPY', 2)}
+          {dr('Accounts payable and accrued liabilities', cf.payables, 'payables', cf.payablesPY, 'payablesPY', 2)}
+          {dr('Income taxes payable', cf.taxPayable, 'taxPayable', cf.taxPayablePY, 'taxPayablePY', 2)}
+          <SubtotalRow label="Net cash provided by operating activities" cy={c.operating} py={c.operatingPY} indent={1} />
 
-          <tr><td colSpan={3} style={{ paddingTop: '16px', paddingBottom: '4px', fontSize: '12px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em' }}>Investing Activities</td></tr>
-          <DataRow label="Purchase of property, plant and equipment" cy={cf.capex} cyKey="capex" py={cf.capexPY} pyKey="capexPY" indent={1} />
-          <SectionTotal label="Net cash used in investing activities" cy={c.investing} py={c.investingPY} />
+          <SectionHeadRow label="Investing Activities" />
+          {dr('Purchase of property, plant and equipment', cf.capex, 'capex', cf.capexPY, 'capexPY', 1)}
+          <SubtotalRow label="Net cash used in investing activities" cy={c.investing} py={c.investingPY} indent={1} />
 
-          <tr><td colSpan={3} style={{ paddingTop: '16px', paddingBottom: '4px', fontSize: '12px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em' }}>Financing Activities</td></tr>
-          <DataRow label="Repayment of long-term debt" cy={cf.ltdRepay} cyKey="ltdRepay" py={cf.ltdRepayPY} pyKey="ltdRepayPY" indent={1} />
-          <DataRow label="Repayment of lease liabilities" cy={cf.leaseRepay} cyKey="leaseRepay" py={cf.leaseRepayPY} pyKey="leaseRepayPY" indent={1} />
-          <DataRow label={distLabel} cy={cf.dividendsPaid} cyKey="dividendsPaid" py={cf.dividendsPaidPY} pyKey="dividendsPaidPY" indent={1} />
-          <SectionTotal label="Net cash used in financing activities" cy={c.financing} py={c.financingPY} />
+          <SectionHeadRow label="Financing Activities" />
+          {dr('Repayment of long-term debt', cf.ltdRepay, 'ltdRepay', cf.ltdRepayPY, 'ltdRepayPY', 1)}
+          {dr('Repayment of lease liabilities', cf.leaseRepay, 'leaseRepay', cf.leaseRepayPY, 'leaseRepayPY', 1)}
+          {dr(distLabel, cf.dividendsPaid, 'dividendsPaid', cf.dividendsPaidPY, 'dividendsPaidPY', 1)}
+          <SubtotalRow label="Net cash used in financing activities" cy={c.financing} py={c.financingPY} indent={1} />
 
-          <tr><td style={{ paddingTop: '8px' }} /></tr>
-          <tr>
-            <td style={{ paddingLeft: '12px', fontSize: '13px', paddingTop: '4px', paddingBottom: '4px', fontWeight: 600 }}>Net increase (decrease) in cash and cash equivalents</td>
-            <TotalCell value={c.netChange} borderTop />
-            <TotalCell value={c.netChangePY} borderTop />
-          </tr>
-          <DataRow label="Cash and cash equivalents, beginning of year" cy={cf.cashBeg} cyKey="cashBeg" py={cf.cashBegPY} pyKey="cashBegPY" />
-          <tr>
-            <td style={{ paddingLeft: '12px', fontSize: '13px', paddingTop: '4px', paddingBottom: '4px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.04em' }}>Cash and cash equivalents, end of year</td>
-            <TotalCell value={c.cashEnd} borderTop doubleUnderline />
-            <TotalCell value={c.cashEndPY} borderTop doubleUnderline />
-          </tr>
+          <SpacerRow />
+          <SubtotalRow label="Net increase (decrease) in cash and cash equivalents" cy={c.netChange} py={c.netChangePY} />
+          {dr('Cash and cash equivalents, beginning of year', cf.cashBeg, 'cashBeg', cf.cashBegPY, 'cashBegPY', 1)}
+          <SpacerRow />
+          <TotalRow label="Cash and cash equivalents, end of year" cy={c.cashEnd} py={c.cashEndPY} />
         </tbody>
       </table>
-      <p style={{ fontSize: '11px', color: '#666', marginTop: '24px', fontStyle: 'italic' }}>
-        See accompanying notes to financial statements
-      </p>
+      <FooterNote />
     </div>
   );
 }
@@ -653,122 +628,110 @@ function EQPage({ data, isEditing, onUpdate }: {
   onUpdate: (section: 'bs' | 'is' | 'cf' | 'eq', key: string, val: number) => void;
 }) {
   const eq = data.eq;
-  function DataCell({ cy, cyKey, py, pyKey, bold }: { cy: number; cyKey: string; py: number; pyKey: string; bold?: boolean }) {
-    return (
-      <>
-        <NumCell value={cy} fieldKey={cyKey} section="eq" isEditing={isEditing} onUpdate={onUpdate} bold={bold} />
-        <NumCell value={py} fieldKey={pyKey} section="eq" isEditing={isEditing} onUpdate={onUpdate} bold={bold} />
-      </>
-    );
-  }
-
-  const totalBeg = eq.scBeg + eq.reBeg;
-  const totalBegPY = eq.scBegPY + eq.reBegPY;
-  const totalEnd = eq.scEnd + eq.reEnd;
-  const totalEndPY = eq.scEndPY + eq.reEndPY;
-  const shareCapLabel = data.entityName.includes('LLC') ? "Members' Capital" : 'Share Capital';
+  const scLabel = data.entityName.includes('LLC') ? "Members' Capital" : 'Share Capital';
   const distLabel = data.entityName.includes('LLC') ? 'Member distributions' : 'Dividends declared';
+  const totalBeg    = eq.scBeg + eq.reBeg;
+  const totalBegPY  = eq.scBegPY + eq.reBegPY;
+  const totalEnd    = eq.scEnd + eq.reEnd;
+  const totalEndPY  = eq.scEndPY + eq.reEndPY;
 
-  const colHeader: React.CSSProperties = { textAlign: 'right', fontSize: '11px', fontWeight: 700, paddingBottom: '6px', width: '15%', paddingRight: '8px' };
+  const colH: React.CSSProperties = { textAlign: 'right', fontSize: '11px', fontWeight: 700, paddingBottom: '8px', paddingRight: '8px', whiteSpace: 'nowrap', color: '#111', width: '17%' };
+
+  const numC = (v: number, key: string, sec: 'eq', st?: React.CSSProperties) => (
+    <NumCell value={v} fieldKey={key} section={sec} isEditing={isEditing} onUpdate={onUpdate} style={st} />
+  );
+  const zeroTd = () => <td style={S.numCell}>—</td>;
 
   return (
-    <div>
-      <p style={{ fontSize: '13px', color: '#555', marginBottom: '2px' }}>{data.entityName}</p>
-      <h2 style={{ fontSize: '18px', fontWeight: 700, marginBottom: '2px' }}>Statement of Changes in Equity</h2>
-      <p style={{ fontSize: '13px', color: '#555', marginBottom: '20px' }}>{data.periodLabel}</p>
-      <table className="w-full" style={{ borderCollapse: 'collapse' }}>
+    <div style={{ padding: '64px' }}>
+      <StmtHeader entityName={data.entityName} title="Statement of Changes in Equity" subTitle={data.periodLabel} />
+      <table style={{ width: '100%', borderCollapse: 'collapse' }}>
         <thead>
-          <tr style={{ borderBottom: '1px solid #333' }}>
-            <th style={{ textAlign: 'left', fontWeight: 'normal', paddingBottom: '6px' }} />
-            <th style={colHeader}>{shareCapLabel}</th>
-            <th style={colHeader}>Retained Earnings</th>
-            <th style={colHeader}>{shareCapLabel} PY</th>
-            <th style={colHeader}>RE PY</th>
+          <tr style={S.colHeaderDiv}>
+            <th style={{ textAlign: 'left', fontWeight: 'normal', paddingBottom: '8px', width: '32%' }} />
+            <th style={colH}>{scLabel}</th>
+            <th style={colH}>Retained Earnings</th>
+            <th style={{ ...colH, color: '#777' }}>{scLabel} (PY)</th>
+            <th style={{ ...colH, color: '#777' }}>RE (PY)</th>
           </tr>
         </thead>
         <tbody>
           <tr>
-            <td style={{ fontSize: '13px', paddingTop: '12px', paddingBottom: '4px', fontWeight: 600 }}>Balance, beginning of year</td>
-            <DataCell cy={eq.scBeg} cyKey="scBeg" py={eq.scBegPY} pyKey="scBegPY" />
+            <td style={S.subtotalRow}>Balance, beginning of year</td>
+            {numC(eq.scBeg, 'scBeg', 'eq')}
+            {numC(eq.reBeg, 'reBeg', 'eq')}
+            {numC(eq.scBegPY, 'scBegPY', 'eq')}
+            {numC(eq.reBegPY, 'reBegPY', 'eq')}
           </tr>
           <tr>
-            <td style={{ paddingLeft: '24px', fontSize: '13px', paddingTop: '2px', paddingBottom: '2px' }}>Net income</td>
-            <NumCell value={0} fieldKey="scNet" section="eq" isEditing={false} onUpdate={onUpdate} />
-            <NumCell value={eq.netIncome} fieldKey="netIncome" section="eq" isEditing={isEditing} onUpdate={onUpdate} />
-            <NumCell value={0} fieldKey="scNetPY" section="eq" isEditing={false} onUpdate={onUpdate} />
-            <NumCell value={eq.netIncomePY} fieldKey="netIncomePY" section="eq" isEditing={isEditing} onUpdate={onUpdate} />
+            <td style={{ ...S.rowLabel, paddingLeft: '20px' }}>Net income for the year</td>
+            {zeroTd()}
+            {numC(eq.netIncome, 'netIncome', 'eq')}
+            {zeroTd()}
+            {numC(eq.netIncomePY, 'netIncomePY', 'eq')}
           </tr>
           <tr>
-            <td style={{ paddingLeft: '24px', fontSize: '13px', paddingTop: '2px', paddingBottom: '2px' }}>{distLabel}</td>
-            <NumCell value={0} fieldKey="scDiv" section="eq" isEditing={false} onUpdate={onUpdate} />
-            <NumCell value={-eq.dividends} fieldKey="dividends" section="eq" isEditing={isEditing} onUpdate={onUpdate} />
-            <NumCell value={0} fieldKey="scDivPY" section="eq" isEditing={false} onUpdate={onUpdate} />
-            <NumCell value={-eq.dividendsPY} fieldKey="dividendsPY" section="eq" isEditing={isEditing} onUpdate={onUpdate} />
+            <td style={{ ...S.rowLabel, paddingLeft: '20px' }}>{distLabel}</td>
+            {zeroTd()}
+            {numC(-eq.dividends, 'dividends', 'eq')}
+            {zeroTd()}
+            {numC(-eq.dividendsPY, 'dividendsPY', 'eq')}
+          </tr>
+          <SpacerRow />
+          <tr>
+            <td style={S.totalRow}>Balance, end of year</td>
+            <td style={S.grandTotal}>{fmtN(eq.scEnd)}</td>
+            <td style={S.grandTotal}>{fmtN(eq.reEnd)}</td>
+            <td style={S.grandTotal}>{fmtN(eq.scEndPY)}</td>
+            <td style={S.grandTotal}>{fmtN(eq.reEndPY)}</td>
           </tr>
           <tr>
-            <td style={{ fontSize: '13px', paddingTop: '6px', paddingBottom: '6px', fontWeight: 700 }}>Balance, end of year</td>
-            <TotalCell value={eq.scEnd} borderTop doubleUnderline />
-            <TotalCell value={eq.reEnd} borderTop doubleUnderline />
-            <TotalCell value={eq.scEndPY} borderTop doubleUnderline />
-            <TotalCell value={eq.reEndPY} borderTop doubleUnderline />
-          </tr>
-          <tr>
-            <td style={{ fontSize: '13px', paddingTop: '6px', paddingBottom: '2px', fontWeight: 600 }}>Total equity</td>
-            <td colSpan={2} style={{ textAlign: 'right', fontSize: '13px', fontFamily: 'monospace', fontWeight: 700, paddingRight: '8px', borderTop: '1px solid #333' }}>
-              {fmtN(totalEnd)}
-            </td>
-            <td colSpan={2} style={{ textAlign: 'right', fontSize: '13px', fontFamily: 'monospace', fontWeight: 700, paddingRight: '8px', borderTop: '1px solid #333' }}>
-              {fmtN(totalEndPY)}
-            </td>
+            <td style={{ ...S.subtotalRow, paddingTop: '10px' }}>Total equity</td>
+            <td colSpan={2} style={{ ...S.subtotal, textAlign: 'right' }}>{fmtN(totalEnd)}</td>
+            <td colSpan={2} style={{ ...S.subtotal, textAlign: 'right', color: '#777' }}>{fmtN(totalEndPY)}</td>
           </tr>
         </tbody>
       </table>
-      <p style={{ fontSize: '11px', color: '#666', marginTop: '24px', fontStyle: 'italic' }}>
-        See accompanying notes to financial statements
-      </p>
+      <FooterNote />
     </div>
   );
 }
 
 // ─── Page: Notes ──────────────────────────────────────────────────────────────
 
+const NOTE_TITLES: Record<string, string> = {
+  '1': 'Nature of Operations',
+  '2': 'Significant Accounting Policies',
+  '3': 'Income Taxes',
+  '4': 'Trade and Other Receivables',
+  '5': 'Property, Plant and Equipment',
+  '6': 'Long-term Debt',
+  '7': 'Commitments and Contingencies',
+};
+
 function NotesPage({ data, isEditing, onUpdateNote }: {
   data: FSData; isEditing: boolean;
   onUpdateNote: (key: string, val: string) => void;
 }) {
-  const noteKeys = Object.keys(data.notes).sort((a, b) => Number(a) - Number(b));
-  const noteTitles: Record<string, string> = {
-    '1': 'Nature of Operations',
-    '2': 'Significant Accounting Policies',
-    '3': 'Income Taxes',
-    '4': 'Trade and Other Receivables',
-    '5': 'Property, Plant and Equipment',
-    '6': 'Long-term Debt',
-    '7': 'Commitments and Contingencies',
-  };
+  const keys = Object.keys(data.notes).sort((a, b) => Number(a) - Number(b));
   return (
-    <div>
-      <p style={{ fontSize: '13px', color: '#555', marginBottom: '2px' }}>{data.entityName}</p>
-      <h2 style={{ fontSize: '18px', fontWeight: 700, marginBottom: '2px' }}>Notes to Financial Statements</h2>
-      <p style={{ fontSize: '13px', color: '#555', marginBottom: '28px' }}>{data.yearEnd}</p>
-      <div className="space-y-6">
-        {noteKeys.map(key => (
-          <div key={key}>
-            <h3 style={{ fontSize: '13px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '6px' }}>
-              Note {key} — {noteTitles[key] ?? 'Additional Disclosure'}
-            </h3>
+    <div style={{ padding: '64px' }}>
+      <StmtHeader entityName={data.entityName} title="Notes to Financial Statements" subTitle={data.yearEnd} />
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+        {keys.map(k => (
+          <div key={k}>
+            <p style={{ fontSize: '12px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: '6px', color: '#111' }}>
+              {k}. {NOTE_TITLES[k] ?? 'Additional Disclosure'}
+            </p>
             {isEditing ? (
-              <textarea
-                value={data.notes[key]}
-                onChange={e => onUpdateNote(key, e.target.value)}
-                rows={Math.max(3, data.notes[key].split('\n').length + 1)}
-                className="w-full text-sm border border-blue-200 bg-blue-50 rounded p-2 focus:outline-none resize-y"
-                style={{ fontSize: '13px', lineHeight: '1.6', fontFamily: 'inherit' }}
-              />
+              <textarea value={data.notes[k]} onChange={e => onUpdateNote(k, e.target.value)}
+                rows={Math.max(3, data.notes[k].split('\n').length + 1)}
+                className="w-full border border-blue-200 bg-blue-50 rounded p-2 focus:outline-none resize-y"
+                style={{ fontSize: '12.5px', lineHeight: '1.7', fontFamily: 'inherit' }} />
             ) : (
-              <div style={{ fontSize: '13px', lineHeight: '1.65', color: '#222' }}>
-                {data.notes[key].split('\n').map((para, i) => (
-                  <p key={i} style={{ marginBottom: para ? '8px' : '0' }}>{para}</p>
+              <div>
+                {data.notes[k].split('\n').map((para, i) => (
+                  <p key={i} style={{ fontSize: '12.5px', lineHeight: '1.7', color: '#222', marginBottom: para ? '6px' : '0' }}>{para}</p>
                 ))}
               </div>
             )}
@@ -797,19 +760,16 @@ export function AuditFSViewer({ pageType, engagementId, isUS, isEditing, saveRef
     readJsonFromLocalStorage<FSData>(storageKey, defaultData)
   );
 
-  // Reload from storage when engagement changes
   useEffect(() => {
     setData(readJsonFromLocalStorage<FSData>(storageKey, isUS ? US_DEFAULT : CA_DEFAULT));
   }, [engagementId, isUS, storageKey]);
 
-  // Expose save function via ref
   useEffect(() => {
     if (saveRef) {
       saveRef.current = () => writeJsonToLocalStorage(storageKey, data);
     }
   }, [data, saveRef, storageKey]);
 
-  // Auto-save when editing
   const saveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   useEffect(() => {
     if (!isEditing) return;
@@ -830,65 +790,32 @@ export function AuditFSViewer({ pageType, engagementId, isUS, isEditing, saveRef
     setData(prev => ({ ...prev, [field]: val }));
   }, []);
 
-  const paperStyle: React.CSSProperties = {
-    background: '#ffffff',
-    color: '#111111',
-    fontFamily: "'Times New Roman', 'Georgia', serif",
-    minHeight: '960px',
-  };
-
   return (
     <div style={{ minHeight: '100%', backgroundColor: 'hsl(var(--card))', padding: '32px 24px' }}>
       <div
         className="max-w-3xl mx-auto shadow-[0_4px_32px_rgba(0,0,0,0.18)] rounded-sm relative overflow-hidden"
-        style={paperStyle}
+        style={{ background: '#ffffff', color: '#111111', fontFamily: "'Times New Roman', Georgia, serif", minHeight: '960px' }}
       >
-        {/* DRAFT watermark */}
-        {!isEditing && (
-          <div
-            className="absolute inset-0 flex items-center justify-center pointer-events-none"
-            aria-hidden="true"
-            style={{ zIndex: 0, overflow: 'hidden' }}
-          >
-            <span
-              style={{
-                fontSize: '72px',
-                fontWeight: 900,
-                color: '#bbb',
-                opacity: 0.18,
-                transform: 'rotate(-35deg)',
-                letterSpacing: '0.12em',
-                whiteSpace: 'nowrap',
-                userSelect: 'none',
-              }}
-            >
-              DRAFT UNDER DISCUSSION
-            </span>
-          </div>
+        {pageType === 'cover' ? (
+          <CoverPage data={data} isEditing={isEditing} onUpdateText={onUpdateText} />
+        ) : (
+          <>
+            {/* Subtle DRAFT watermark on non-cover pages */}
+            <div className="absolute inset-0 flex items-center justify-center pointer-events-none" aria-hidden="true" style={{ zIndex: 0, overflow: 'hidden' }}>
+              <span style={{ fontSize: '64px', fontWeight: 900, color: '#ccc', opacity: 0.12, transform: 'rotate(-35deg)', letterSpacing: '0.12em', whiteSpace: 'nowrap', userSelect: 'none' }}>
+                DRAFT
+              </span>
+            </div>
+            <div style={{ position: 'relative', zIndex: 1 }}>
+              {pageType === 'toc'   && <TocPage data={data} />}
+              {pageType === 'bs'    && <BSPage data={data} isEditing={isEditing} onUpdate={onUpdate} />}
+              {pageType === 'is'    && <ISPage data={data} isEditing={isEditing} onUpdate={onUpdate} />}
+              {pageType === 'cf'    && <CFPage data={data} isEditing={isEditing} onUpdate={onUpdate} />}
+              {pageType === 'eq'    && <EQPage data={data} isEditing={isEditing} onUpdate={onUpdate} />}
+              {pageType === 'notes' && <NotesPage data={data} isEditing={isEditing} onUpdateNote={onUpdateNote} />}
+            </div>
+          </>
         )}
-
-        {/* Page content */}
-        <div style={{ position: 'relative', zIndex: 1, padding: '64px' }}>
-          {pageType === 'cover' && (
-            <CoverPage data={data} isEditing={isEditing} onUpdateText={onUpdateText} />
-          )}
-          {pageType === 'toc' && <TocPage data={data} />}
-          {pageType === 'bs' && (
-            <BSPage data={data} isEditing={isEditing} onUpdate={onUpdate} />
-          )}
-          {pageType === 'is' && (
-            <ISPage data={data} isEditing={isEditing} onUpdate={onUpdate} />
-          )}
-          {pageType === 'cf' && (
-            <CFPage data={data} isEditing={isEditing} onUpdate={onUpdate} />
-          )}
-          {pageType === 'eq' && (
-            <EQPage data={data} isEditing={isEditing} onUpdate={onUpdate} />
-          )}
-          {pageType === 'notes' && (
-            <NotesPage data={data} isEditing={isEditing} onUpdateNote={onUpdateNote} />
-          )}
-        </div>
       </div>
     </div>
   );
