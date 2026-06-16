@@ -217,6 +217,9 @@ function computedCF(d: FSData['cf']) {
 
 // ─── Shared table styles ─────────────────────────────────────────────────────
 
+// Thin black rule used throughout — consistent single weight, pure black
+const RULE = '1px solid #000';
+
 const S = {
   // Column widths: label 55% | notes 6% | CY 19.5% | PY 19.5%
   colLabel: { width: '55%' } as React.CSSProperties,
@@ -228,16 +231,20 @@ const S = {
   groupLabel:  { fontSize: '12px', paddingTop: '6px', paddingBottom: '1px', fontStyle: 'italic' as const, color: '#444' } as React.CSSProperties,
   rowLabel:    { fontSize: '12.5px', paddingTop: '2px', paddingBottom: '2px', color: '#111' } as React.CSSProperties,
   noteRef:     { fontSize: '11px', color: '#555', textAlign: 'right' as const, paddingRight: '6px', verticalAlign: 'middle' as const } as React.CSSProperties,
-  subtotalRow: { fontWeight: 600, fontSize: '12.5px', paddingTop: '4px', paddingBottom: '4px', color: '#111' } as React.CSSProperties,
-  totalRow:    { fontWeight: 700, fontSize: '12.5px', paddingTop: '5px', paddingBottom: '5px', textTransform: 'uppercase' as const, letterSpacing: '0.03em', color: '#000' } as React.CSSProperties,
+  // Subtotal label: single rule above + below matching the number cells
+  subtotalLabel: { fontWeight: 600, fontSize: '12.5px', paddingTop: '4px', paddingBottom: '4px', color: '#111', borderTop: RULE, borderBottom: RULE } as React.CSSProperties,
+  // Grand total label: same rules, bold uppercase
+  totalLabel:    { fontWeight: 700, fontSize: '12.5px', paddingTop: '5px', paddingBottom: '5px', textTransform: 'uppercase' as const, letterSpacing: '0.03em', color: '#000', borderTop: RULE, borderBottom: RULE } as React.CSSProperties,
 
-  // Number cells
-  numCell:   { fontFamily: "'Courier New', monospace", fontSize: '12.5px', textAlign: 'right' as const, paddingRight: '8px', paddingTop: '2px', paddingBottom: '2px', verticalAlign: 'middle' as const } as React.CSSProperties,
-  subtotal:  { fontFamily: "'Courier New', monospace", fontSize: '12.5px', textAlign: 'right' as const, paddingRight: '8px', fontWeight: 600, borderTop: '1px solid #999', paddingTop: '4px', paddingBottom: '4px' } as React.CSSProperties,
-  grandTotal:{ fontFamily: "'Courier New', monospace", fontSize: '12.5px', textAlign: 'right' as const, paddingRight: '8px', fontWeight: 700, borderTop: '1px solid #333', borderBottom: '3px double #333', paddingTop: '5px', paddingBottom: '5px' } as React.CSSProperties,
+  // Number cells — no border on plain rows
+  numCell:    { fontFamily: "'Courier New', monospace", fontSize: '12.5px', textAlign: 'right' as const, paddingRight: '8px', paddingTop: '2px', paddingBottom: '2px', verticalAlign: 'middle' as const } as React.CSSProperties,
+  // Subtotal number cells: single rule above + below
+  subtotalNum:{ fontFamily: "'Courier New', monospace", fontSize: '12.5px', textAlign: 'right' as const, paddingRight: '8px', fontWeight: 600, borderTop: RULE, borderBottom: RULE, paddingTop: '4px', paddingBottom: '4px' } as React.CSSProperties,
+  // Grand total number cells: single rule above, double rule below (box-shadow creates the second line cleanly)
+  grandTotalNum: { fontFamily: "'Courier New', monospace", fontSize: '12.5px', textAlign: 'right' as const, paddingRight: '8px', fontWeight: 700, borderTop: RULE, borderBottom: RULE, boxShadow: '0 3px 0 0 #000', paddingTop: '5px', paddingBottom: '8px' } as React.CSSProperties,
 
-  // Dividers
-  colHeaderDiv: { borderBottom: '1px solid #333' } as React.CSSProperties,
+  // Column header separator
+  colHeaderDiv: { borderBottom: RULE } as React.CSSProperties,
 };
 
 // ─── Shared sub-components ───────────────────────────────────────────────────
@@ -337,10 +344,10 @@ interface SubtotalRowProps {
 function SubtotalRow({ label, cy, py, indent = 0 }: SubtotalRowProps) {
   return (
     <tr>
-      <td style={{ ...S.subtotalRow, paddingLeft: `${12 + indent * 14}px` }}>{label}</td>
-      <td />
-      <td style={S.subtotal}>{fmtN(cy)}</td>
-      <td style={S.subtotal}>{fmtN(py)}</td>
+      <td style={{ ...S.subtotalLabel, paddingLeft: `${12 + indent * 14}px` }}>{label}</td>
+      <td style={{ borderTop: RULE, borderBottom: RULE }} />
+      <td style={S.subtotalNum}>{fmtN(cy)}</td>
+      <td style={S.subtotalNum}>{fmtN(py)}</td>
     </tr>
   );
 }
@@ -351,10 +358,10 @@ interface TotalRowProps {
 function TotalRow({ label, cy, py }: TotalRowProps) {
   return (
     <tr>
-      <td style={{ ...S.totalRow, paddingLeft: '12px' }}>{label}</td>
-      <td />
-      <td style={S.grandTotal}>{fmtN(cy)}</td>
-      <td style={S.grandTotal}>{fmtN(py)}</td>
+      <td style={{ ...S.totalLabel, paddingLeft: '12px' }}>{label}</td>
+      <td style={{ borderTop: RULE, borderBottom: RULE, boxShadow: '0 3px 0 0 #000' }} />
+      <td style={S.grandTotalNum}>{fmtN(cy)}</td>
+      <td style={S.grandTotalNum}>{fmtN(py)}</td>
     </tr>
   );
 }
@@ -657,14 +664,16 @@ function EQPage({ data, isEditing, onUpdate }: {
         </thead>
         <tbody>
           <tr>
-            <td style={S.subtotalRow}>Balance, beginning of year</td>
-            {numC(eq.scBeg, 'scBeg', 'eq')}
-            {numC(eq.reBeg, 'reBeg', 'eq')}
-            {numC(eq.scBegPY, 'scBegPY', 'eq')}
-            {numC(eq.reBegPY, 'reBegPY', 'eq')}
+            <td style={S.subtotalLabel}>Balance, beginning of year</td>
+            <td style={{ borderTop: RULE, borderBottom: RULE }} />
+            {numC(eq.scBeg, 'scBeg', 'eq', S.subtotalNum)}
+            {numC(eq.reBeg, 'reBeg', 'eq', S.subtotalNum)}
+            {numC(eq.scBegPY, 'scBegPY', 'eq', S.subtotalNum)}
+            {numC(eq.reBegPY, 'reBegPY', 'eq', S.subtotalNum)}
           </tr>
           <tr>
             <td style={{ ...S.rowLabel, paddingLeft: '20px' }}>Net income for the year</td>
+            <td />
             {zeroTd()}
             {numC(eq.netIncome, 'netIncome', 'eq')}
             {zeroTd()}
@@ -672,6 +681,7 @@ function EQPage({ data, isEditing, onUpdate }: {
           </tr>
           <tr>
             <td style={{ ...S.rowLabel, paddingLeft: '20px' }}>{distLabel}</td>
+            <td />
             {zeroTd()}
             {numC(-eq.dividends, 'dividends', 'eq')}
             {zeroTd()}
@@ -679,16 +689,18 @@ function EQPage({ data, isEditing, onUpdate }: {
           </tr>
           <SpacerRow />
           <tr>
-            <td style={S.totalRow}>Balance, end of year</td>
-            <td style={S.grandTotal}>{fmtN(eq.scEnd)}</td>
-            <td style={S.grandTotal}>{fmtN(eq.reEnd)}</td>
-            <td style={S.grandTotal}>{fmtN(eq.scEndPY)}</td>
-            <td style={S.grandTotal}>{fmtN(eq.reEndPY)}</td>
+            <td style={S.totalLabel}>Balance, end of year</td>
+            <td style={{ borderTop: RULE, borderBottom: RULE, boxShadow: '0 3px 0 0 #000' }} />
+            <td style={S.grandTotalNum}>{fmtN(eq.scEnd)}</td>
+            <td style={S.grandTotalNum}>{fmtN(eq.reEnd)}</td>
+            <td style={S.grandTotalNum}>{fmtN(eq.scEndPY)}</td>
+            <td style={S.grandTotalNum}>{fmtN(eq.reEndPY)}</td>
           </tr>
           <tr>
-            <td style={{ ...S.subtotalRow, paddingTop: '10px' }}>Total equity</td>
-            <td colSpan={2} style={{ ...S.subtotal, textAlign: 'right' }}>{fmtN(totalEnd)}</td>
-            <td colSpan={2} style={{ ...S.subtotal, textAlign: 'right', color: '#777' }}>{fmtN(totalEndPY)}</td>
+            <td style={{ ...S.subtotalLabel, paddingTop: '10px' }}>Total equity</td>
+            <td style={{ borderTop: RULE, borderBottom: RULE }} />
+            <td colSpan={2} style={{ ...S.subtotalNum, textAlign: 'right' }}>{fmtN(totalEnd)}</td>
+            <td colSpan={2} style={{ ...S.subtotalNum, textAlign: 'right', color: '#777' }}>{fmtN(totalEndPY)}</td>
           </tr>
         </tbody>
       </table>
