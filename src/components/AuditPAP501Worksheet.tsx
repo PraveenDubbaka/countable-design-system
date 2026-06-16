@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from "react";
+import { useParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
@@ -7,6 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Info } from "lucide-react";
 import { RefButton, RefDoc } from "@/components/RefButton";
 import { readJsonFromLocalStorage, writeJsonToLocalStorage } from "@/lib/safeJson";
+import { loadEngagements } from "@/store/engagementsStore";
 
 // ── Types ──────────────────────────────────────────────────────────────────────
 
@@ -15,8 +17,6 @@ interface FinRow   { current: string; budget: string; prior: string; hasIssue: s
 interface MatterRow { partBRef: string; summary: string; mgmtResponse: string; auditImplications: string }
 
 interface PAP501Data {
-  entity: string; periodEnded: string; perfMateriality: string;
-  activeTab: 'a' | 'b' | 'c';
   partA: Record<string, PartARow>;
   numStreams: number;
   streamLabels: string[];
@@ -64,7 +64,6 @@ function buildDefault(): PAP501Data {
   const fin: Record<string, FinRow> = {};
   ALL_FIN_IDS.forEach(id => { fin[id] = emptyFin(); });
   return {
-    entity: '', periodEnded: '', perfMateriality: '', activeTab: 'a',
     partA, numStreams: 1,
     streamLabels: ['Product category', 'Stream 2', 'Stream 3', 'Stream 4', 'Stream 5'],
     fin, matters: Array(10).fill(null).map(emptyMatter),
@@ -131,6 +130,21 @@ function FinColHeaders({ showBudget }: { showBudget: boolean }) {
 
 export function AuditPAP501Worksheet({ isUS = false }: { isUS?: boolean }) {
   const storageKey = `audit-pap501-data-${isUS ? 'us' : 'ca'}`;
+  const { engagementId = '' } = useParams<{ engagementId: string }>();
+
+  // Engagement context
+  const engRecord = loadEngagements().find(e => e.id === engagementId);
+  const entityName = engRecord?.client ?? '—';
+  const periodEnded = engRecord?.yearEnd ?? '—';
+
+  // Performance materiality from materiality worksheet
+  const matKey = `audit-materiality-data-${isUS ? 'us' : 'ca'}`;
+  const matData = readJsonFromLocalStorage<Record<string, string> | null>(matKey, null);
+  const perfMateriality = matData?.performanceMateriality
+    ? `$${matData.performanceMateriality}`
+    : matData?.overallMateriality
+      ? (() => { const v = parseFloat(matData.overallMateriality.replace(/,/g, '')); return isNaN(v) ? '—' : `$${(v * 0.7).toLocaleString('en-CA', {maximumFractionDigits:0})}`; })()
+      : '—';
 
   const [data, setData] = useState<PAP501Data>(() => {
     const saved = readJsonFromLocalStorage<PAP501Data | null>(storageKey, null);
@@ -320,8 +334,7 @@ export function AuditPAP501Worksheet({ isUS = false }: { isUS?: boolean }) {
 
   // ── Render ───────────────────────────────────────────────────────────────────
 
-  const tab = data.activeTab;
-  const showBudget = true; // always show budget column
+  const showBudget = true;
 
   return (
     <div className="flex flex-col h-full">
@@ -337,27 +350,21 @@ export function AuditPAP501Worksheet({ isUS = false }: { isUS?: boolean }) {
         </p>
       </div>
 
-      {/* Header strip: entity / period / performance materiality + tabs */}
-      <div className="px-6 py-3 border-b border-border bg-card flex flex-wrap items-center gap-4 shrink-0">
-        <div className="flex items-center gap-2 min-w-0">
-          <span className="text-xs font-medium text-muted-foreground whitespace-nowrap">Entity</span>
-          <Input value={data.entity} onChange={e => set({entity:e.target.value})} placeholder="Entity name" className="h-7 text-sm w-48" />
+      {/* Read-only meta strip */}
+      <div className="px-6 py-2.5 border-b border-border bg-card flex flex-wrap items-center gap-6 shrink-0">
+        <div className="flex items-center gap-2">
+          <span className="text-xs font-medium text-muted-foreground">Entity</span>
+          <span className="text-sm font-medium text-foreground">{entityName}</span>
         </div>
-        <div className="flex items-center gap-2 min-w-0">
-          <span className="text-xs font-medium text-muted-foreground whitespace-nowrap">Period ended</span>
-          <Input value={data.periodEnded} onChange={e => set({periodEnded:e.target.value})} placeholder="e.g. March 31, 2024" className="h-7 text-sm w-40" />
+        <div className="w-px h-4 bg-border" />
+        <div className="flex items-center gap-2">
+          <span className="text-xs font-medium text-muted-foreground">Period ended</span>
+          <span className="text-sm font-medium text-foreground">{periodEnded}</span>
         </div>
-        <div className="flex items-center gap-2 min-w-0">
-          <span className="text-xs font-medium text-muted-foreground whitespace-nowrap">Performance materiality</span>
-          <Input value={data.perfMateriality} onChange={e => set({perfMateriality:e.target.value})} placeholder="e.g. 12,000" className="h-7 text-sm w-32 font-mono" />
-        </div>
-        <div className="ml-auto flex items-center gap-1">
-          {(['a','b','c'] as const).map(t => (
-            <button key={t} onClick={() => set({activeTab:t})}
-              className={`px-3 py-1 rounded-md text-xs font-semibold transition-colors ${tab===t ? 'bg-primary text-primary-foreground' : 'text-muted-foreground hover:bg-muted hover:text-foreground'}`}>
-              Part {t.toUpperCase()}
-            </button>
-          ))}
+        <div className="w-px h-4 bg-border" />
+        <div className="flex items-center gap-2">
+          <span className="text-xs font-medium text-muted-foreground">Performance materiality</span>
+          <span className="text-sm font-semibold text-foreground font-mono">{perfMateriality}</span>
         </div>
       </div>
 
@@ -366,8 +373,11 @@ export function AuditPAP501Worksheet({ isUS = false }: { isUS?: boolean }) {
         <div className="p-6 space-y-4">
 
           {/* ═══════════════════════════════════════════════════════════ PART A */}
-          {tab === 'a' && (
-            <>
+          <div className="flex items-center gap-3 pt-1">
+            <span className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Part A — Qualitative assessment</span>
+            <div className="flex-1 h-px bg-border" />
+          </div>
+          <>
               {PART_A_PROCS.map(proc => (
                 <div key={proc.id} className="bg-card text-card-foreground border border-border shadow-[0_2px_8px_hsl(213_40%_20%/0.06)] rounded-md overflow-hidden">
                   <div className="px-6 py-3.5 bg-card border-b border-border">
@@ -384,12 +394,14 @@ export function AuditPAP501Worksheet({ isUS = false }: { isUS?: boolean }) {
                   </div>
                 </div>
               ))}
-            </>
-          )}
+          </>
 
           {/* ═══════════════════════════════════════════════════════════ PART B */}
-          {tab === 'b' && (
-            <>
+          <div className="flex items-center gap-3 pt-2">
+            <span className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Part B — Quantitative comparison</span>
+            <div className="flex-1 h-px bg-border" />
+          </div>
+          <>
               {/* Settings */}
               <div className="bg-card border border-border shadow-[0_2px_8px_hsl(213_40%_20%/0.06)] rounded-md px-5 py-4 flex flex-wrap items-center gap-6">
                 <div className="flex items-center gap-2">
@@ -591,12 +603,14 @@ export function AuditPAP501Worksheet({ isUS = false }: { isUS?: boolean }) {
                   </table>
                 </div>
               </div>
-            </>
-          )}
+          </>
 
           {/* ═══════════════════════════════════════════════════════════ PART C */}
-          {tab === 'c' && (
-            <>
+          <div className="flex items-center gap-3 pt-2">
+            <span className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Part C — Management discussion</span>
+            <div className="flex-1 h-px bg-border" />
+          </div>
+          <>
               {/* Matter table */}
               <div className="bg-card text-card-foreground border border-border shadow-[0_2px_8px_hsl(213_40%_20%/0.06)] rounded-md overflow-hidden">
                 <div className="px-6 py-3.5 bg-card border-b border-border">
@@ -697,8 +711,7 @@ export function AuditPAP501Worksheet({ isUS = false }: { isUS?: boolean }) {
                   </div>
                 </div>
               </div>
-            </>
-          )}
+          </>
 
         </div>
       </div>
