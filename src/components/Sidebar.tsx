@@ -1558,21 +1558,6 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
                     ]
                   },
                   {
-                    id: "aud-us-do", code: "DO", label: "Documents", icon: "folder", hasPlus: true,
-                    children: [
-                      { id: "aud-us-do-sha", code: "SHA", label: "Shareholders Agreements", icon: "folder" },
-                      { id: "aud-us-do-ren", code: "REN", label: "Rental/Lease Agreements", icon: "folder" },
-                      { id: "aud-us-do-inc", code: "INC", label: "Incorporation Documents", icon: "folder" },
-                      { id: "aud-us-do-ban", code: "BAN", label: "Banking Agreements", icon: "folder" },
-                      { id: "aud-us-do-cma", code: "CMA", label: "Contracts & Material Agreements", icon: "folder" },
-                      { id: "aud-us-do-cmb", code: "CMB", label: "Corporate Minute Book", icon: "folder" },
-                      { id: "aud-us-do-rcf", code: "RCF", label: "Regulatory & Compliance Filings", icon: "folder" },
-                    ]
-                  },
-                  {
-                    id: "aud-us-tb", code: "TB", label: "Trial Balance & Adjusting Entries", icon: "folder", route: "trial-balance"
-                  },
-                  {
                     id: "aud-us-ra-sec", code: "RA", label: "Risk Assessment", icon: "folder",
                     children: [
                       { id: "aud-us-ra-rap", code: "RAP", label: "Risk Assessment Procedures", icon: "checklist", route: "checklist/aud-us-ra-rap" },
@@ -1600,6 +1585,21 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
                       { id: "aud-us-rp-gwi", code: "GWI", label: "Goodwill Impairment Assessment (ASC 350)", icon: "checklist", route: "checklist/aud-us-rp-gwi" },
                       { id: "aud-us-rp-aps", code: "APS", label: "Audit Procedures Summary", icon: "checklist", route: "checklist/aud-us-rp-aps" },
                     ]
+                  },
+                  {
+                    id: "aud-us-do", code: "DO", label: "Documents", icon: "folder", hasPlus: true,
+                    children: [
+                      { id: "aud-us-do-sha", code: "SHA", label: "Shareholders Agreements", icon: "folder" },
+                      { id: "aud-us-do-ren", code: "REN", label: "Rental/Lease Agreements", icon: "folder" },
+                      { id: "aud-us-do-inc", code: "INC", label: "Incorporation Documents", icon: "folder" },
+                      { id: "aud-us-do-ban", code: "BAN", label: "Banking Agreements", icon: "folder" },
+                      { id: "aud-us-do-cma", code: "CMA", label: "Contracts & Material Agreements", icon: "folder" },
+                      { id: "aud-us-do-cmb", code: "CMB", label: "Corporate Minute Book", icon: "folder" },
+                      { id: "aud-us-do-rcf", code: "RCF", label: "Regulatory & Compliance Filings", icon: "folder" },
+                    ]
+                  },
+                  {
+                    id: "aud-us-tb", code: "TB", label: "Trial Balance & Adjusting Entries", icon: "folder", route: "trial-balance"
                   },
                   {
                     id: "aud-us-pr", code: "PR", label: "Procedures", icon: "folder",
@@ -1719,21 +1719,6 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
                     ]
                   },
                   {
-                    id: "aud-do", code: "DO", label: "Documents", icon: "folder", hasPlus: true,
-                    children: [
-                      { id: "aud-do-sha", code: "SHA", label: "Shareholders Agreements", icon: "folder" },
-                      { id: "aud-do-ren", code: "REN", label: "Rental/Lease Agreements", icon: "folder" },
-                      { id: "aud-do-inc", code: "INC", label: "Incorporation Documents", icon: "folder" },
-                      { id: "aud-do-ban", code: "BAN", label: "Banking Agreements", icon: "folder" },
-                      { id: "aud-do-cma", code: "CMA", label: "Contracts & Material Agreements", icon: "folder" },
-                      { id: "aud-do-cmb", code: "CMB", label: "Corporate Minute Book", icon: "folder" },
-                      { id: "aud-do-rcf", code: "RCF", label: "Regulatory & Compliance Filings", icon: "folder" },
-                    ]
-                  },
-                  {
-                    id: "aud-tb", code: "TB", label: "Trial Balance & Adjusting Entries", icon: "folder", route: "trial-balance"
-                  },
-                  {
                     id: "aud-ra-sec", code: "RA", label: "Risk Assessment", icon: "folder",
                     children: [
                       { id: "aud-ra-rap", code: "RAP", label: "Risk Assessment Procedures", icon: "checklist", route: "checklist/aud-ra-rap" },
@@ -1758,6 +1743,21 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
                       { id: "aud-rp-tod-exp", code: "TE", label: "Test of Details — Expenses", icon: "checklist", route: "checklist/aud-rp-tod-exp" },
                       { id: "aud-rp-aps", code: "APS", label: "Audit Procedures Summary", icon: "checklist", route: "checklist/aud-rp-aps" },
                     ]
+                  },
+                  {
+                    id: "aud-do", code: "DO", label: "Documents", icon: "folder", hasPlus: true,
+                    children: [
+                      { id: "aud-do-sha", code: "SHA", label: "Shareholders Agreements", icon: "folder" },
+                      { id: "aud-do-ren", code: "REN", label: "Rental/Lease Agreements", icon: "folder" },
+                      { id: "aud-do-inc", code: "INC", label: "Incorporation Documents", icon: "folder" },
+                      { id: "aud-do-ban", code: "BAN", label: "Banking Agreements", icon: "folder" },
+                      { id: "aud-do-cma", code: "CMA", label: "Contracts & Material Agreements", icon: "folder" },
+                      { id: "aud-do-cmb", code: "CMB", label: "Corporate Minute Book", icon: "folder" },
+                      { id: "aud-do-rcf", code: "RCF", label: "Regulatory & Compliance Filings", icon: "folder" },
+                    ]
+                  },
+                  {
+                    id: "aud-tb", code: "TB", label: "Trial Balance & Adjusting Entries", icon: "folder", route: "trial-balance"
                   },
                   {
                     id: "aud-pr", code: "PR", label: "Procedures", icon: "folder",
