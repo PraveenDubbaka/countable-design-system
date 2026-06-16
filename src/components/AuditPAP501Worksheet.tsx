@@ -351,21 +351,9 @@ export function AuditPAP501Worksheet({ isUS = false }: { isUS?: boolean }) {
       </div>
 
       {/* Read-only meta strip */}
-      <div className="px-6 py-2.5 border-b border-border bg-card flex flex-wrap items-center gap-6 shrink-0">
-        <div className="flex items-center gap-2">
-          <span className="text-xs font-medium text-muted-foreground">Entity</span>
-          <span className="text-sm font-medium text-foreground">{entityName}</span>
-        </div>
-        <div className="w-px h-4 bg-border" />
-        <div className="flex items-center gap-2">
-          <span className="text-xs font-medium text-muted-foreground">Period ended</span>
-          <span className="text-sm font-medium text-foreground">{periodEnded}</span>
-        </div>
-        <div className="w-px h-4 bg-border" />
-        <div className="flex items-center gap-2">
-          <span className="text-xs font-medium text-muted-foreground">Performance materiality</span>
-          <span className="text-sm font-semibold text-foreground font-mono">{perfMateriality}</span>
-        </div>
+      <div className="px-6 py-2.5 border-b border-border bg-card flex items-center gap-2 shrink-0">
+        <span className="text-xs font-medium text-muted-foreground">Performance materiality</span>
+        <span className="text-sm font-semibold text-foreground font-mono">{perfMateriality}</span>
       </div>
 
       {/* Scrollable body */}
