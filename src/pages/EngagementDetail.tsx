@@ -540,6 +540,18 @@ const NAV_KEY_TO_CHECKLIST_ID: Record<string, string> = {
   "aud-us-rp-gwi": "default-us-audit-rp-gwi",
 };
 
+const CUSTOM_WORKSHEET_TITLES: Record<string, string> = {
+  'aud-mat': 'Materiality', 'aud-us-mat': 'Materiality',
+  'aud-tb': 'Time Budget', 'aud-us-tb': 'Time Budget',
+  'aud-db': 'Detailed Budget', 'aud-us-db': 'Detailed Budget',
+  'aud-iar': 'Management Requests', 'aud-us-iar': 'Management Requests',
+  'aud-scope': 'Audit Scope', 'aud-us-scope': 'Audit Scope',
+  'aud-pap': 'Preliminary Analytical Procedures', 'aud-us-pap': 'Preliminary Analytical Procedures',
+  'aud-sae': "Using the Work of an Auditor's Expert", 'aud-us-sae': "Using the Work of an Auditor's Expert",
+  'aud-asm': 'Overall Audit Strategy', 'aud-us-asm': 'Overall Audit Strategy',
+  'aud-ra-oi': 'Observation & Inspection Procedures', 'aud-us-ra-oi': 'Observation & Inspection Procedures',
+};
+
 const FS_PAGE_KEYS = new Set([
   'aud-fs-cover', 'aud-fs-toc', 'aud-fs-bs', 'aud-fs-is', 'aud-fs-cf', 'aud-fs-eq', 'aud-fs-notes',
   'aud-us-fs-cover', 'aud-us-fs-toc', 'aud-us-fs-bs', 'aud-us-fs-is', 'aud-us-fs-cf', 'aud-us-fs-eq', 'aud-us-fs-notes',
@@ -749,9 +761,10 @@ export default function EngagementDetail() {
 
   // Load checklist from localStorage - use first saved checklist or fallback
   useEffect(() => {
-    // FS pages render standalone — no checklist loading needed
-    if (checklistKey && FS_PAGE_KEYS.has(checklistKey)) {
+    // FS pages and standalone custom worksheets render without a checklist
+    if (checklistKey && (FS_PAGE_KEYS.has(checklistKey) || checklistKey in CUSTOM_WORKSHEET_TITLES)) {
       setIsLoading(false);
+      setChecklist(null);
       return;
     }
 
@@ -1388,7 +1401,7 @@ export default function EngagementDetail() {
                   </svg>
                 </button>
                 <h1 className="font-semibold text-foreground truncate text-lg">
-                  {checklist?.title || 'Client acceptance and continuance'}
+                  {checklist?.title || (checklistKey && CUSTOM_WORKSHEET_TITLES[checklistKey]) || 'Client acceptance and continuance'}
                 </h1>
               </div>
               <div className="flex items-center gap-1">

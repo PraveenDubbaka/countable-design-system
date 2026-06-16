@@ -1731,7 +1731,7 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
                       { id: "aud-ra-scot-exp", code: "S2", label: "SCOT — Expenditure Cycle", icon: "checklist", route: "checklist/aud-ra-scot-exp" },
                       { id: "aud-ra-scot-pay", code: "S3", label: "SCOT — Payroll Cycle", icon: "checklist", route: "checklist/aud-ra-scot-pay" },
                       { id: "aud-ra-gc", code: "GC", label: "Going Concern (Initial Assessment)", icon: "checklist", route: "checklist/aud-ra-gc" },
-                      { id: "aud-ra-oi", code: "500", label: "Observation & Inspection Procedures", icon: "worksheet", route: "checklist/aud-ra-oi" },
+                      { id: "aud-ra-oi", code: "OI", label: "Observation & Inspection Procedures", icon: "worksheet", route: "checklist/aud-ra-oi" },
                     ]
                   },
                   {
