@@ -18,6 +18,7 @@ import { AuditDetailedBudgetWorksheet } from "@/components/AuditDetailedBudgetWo
 import { AuditMgmtRequestsWorksheet } from "@/components/AuditMgmtRequestsWorksheet";
 import { AuditSAEWorksheet } from "@/components/AuditSAEWorksheet";
 import { AuditOASWorksheet } from "@/components/AuditOASWorksheet";
+import { AuditOIWorksheet } from "@/components/AuditOIWorksheet";
 import { LukaAutoFillBanner } from "@/components/LukaAutoFillBanner";
 import { AuditFSViewer, FSPageType } from "@/components/AuditFSViewer";
 import { AskLukaOverlay, AllTemplateSummary } from "@/components/AskLukaOverlay";
@@ -1599,6 +1600,8 @@ export default function EngagementDetail() {
             <AuditSAEWorksheet isUS={checklistKey === 'aud-us-sae'} />
           ) : (checklistKey === 'aud-asm' || checklistKey === 'aud-us-asm') ? (
             <AuditOASWorksheet isUS={checklistKey === 'aud-us-asm'} />
+          ) : (checklistKey === 'aud-ra-oi' || checklistKey === 'aud-us-ra-oi') ? (
+            <AuditOIWorksheet isUS={checklistKey === 'aud-us-ra-oi'} />
           ) : checklist ? (
             <div className="p-4">
               {/* ASM import banner */}
