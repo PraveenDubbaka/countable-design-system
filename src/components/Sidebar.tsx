@@ -1721,6 +1721,7 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
                   {
                     id: "aud-ra-sec", code: "RA", label: "Risk Assessment", icon: "folder",
                     children: [
+                      { id: "aud-ra-oi", code: "OI", label: "Observation & Inspection Procedures", icon: "worksheet", route: "checklist/aud-ra-oi" },
                       { id: "aud-ra-rap", code: "RAP", label: "Risk Assessment Procedures", icon: "checklist", route: "checklist/aud-ra-rap" },
                       { id: "aud-ra-ic", code: "IC", label: "Understanding Internal Controls", icon: "checklist", route: "checklist/aud-ra-ic" },
                       { id: "aud-ra-itgc", code: "ITGC", label: "IT General Controls (ITGC)", icon: "checklist", route: "checklist/aud-ra-itgc" },
@@ -1731,7 +1732,6 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
                       { id: "aud-ra-scot-exp", code: "S2", label: "SCOT — Expenditure Cycle", icon: "checklist", route: "checklist/aud-ra-scot-exp" },
                       { id: "aud-ra-scot-pay", code: "S3", label: "SCOT — Payroll Cycle", icon: "checklist", route: "checklist/aud-ra-scot-pay" },
                       { id: "aud-ra-gc", code: "GC", label: "Going Concern (Initial Assessment)", icon: "checklist", route: "checklist/aud-ra-gc" },
-                      { id: "aud-ra-oi", code: "OI", label: "Observation & Inspection Procedures", icon: "worksheet", route: "checklist/aud-ra-oi" },
                     ]
                   },
                   {
