@@ -665,29 +665,14 @@ export function AuditPAP501Worksheet({ isUS = false }: { isUS?: boolean }) {
                       Concluded on {data.concludedOn}
                     </div>
                   )}
-                  <div className="grid grid-cols-2 gap-6">
-                    <div className="space-y-3">
-                      <div className="flex items-center gap-3">
-                        <span className="text-sm font-medium text-muted-foreground w-28 flex-shrink-0">Prepared by</span>
-                        <Input disabled={locked} value={data.preparedBy} onChange={e => set({preparedBy:e.target.value})} placeholder="Name" className="h-8 text-sm" />
-                      </div>
-                      <div className="flex items-center gap-3">
-                        <span className="text-sm font-medium text-muted-foreground w-28 flex-shrink-0">Date</span>
-                        <Input disabled={locked} value={data.preparedDate} onChange={e => set({preparedDate:e.target.value})} placeholder="YYYY-MM-DD" className="h-8 text-sm" />
-                      </div>
-                    </div>
-                    <div className="space-y-3">
-                      <div className="flex items-center gap-3">
-                        <span className="text-sm font-medium text-muted-foreground w-28 flex-shrink-0">Reviewed by</span>
-                        <Input disabled={locked} value={data.reviewedBy} onChange={e => set({reviewedBy:e.target.value})} placeholder="Name" className="h-8 text-sm" />
-                      </div>
-                      <div className="flex items-center gap-3">
-                        <span className="text-sm font-medium text-muted-foreground w-28 flex-shrink-0">Date</span>
-                        <Input disabled={locked} value={data.reviewedDate} onChange={e => set({reviewedDate:e.target.value})} placeholder="YYYY-MM-DD" className="h-8 text-sm" />
-                      </div>
-                    </div>
-                  </div>
-                  <div className="flex justify-end pt-2">
+                  <Textarea
+                    disabled={locked}
+                    value={data.fraudAnswer}
+                    onChange={e => set({fraudAnswer: e.target.value})}
+                    placeholder="Document your overall conclusion and assessment…"
+                    className="min-h-[100px] text-sm resize-none bg-background"
+                  />
+                  <div className="flex justify-end">
                     <Button
                       disabled={locked}
                       onClick={() => {
