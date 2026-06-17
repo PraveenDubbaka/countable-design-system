@@ -28,6 +28,13 @@ import { Audit520Worksheet } from "@/components/Audit520Worksheet";
 import { Audit540Worksheet } from "@/components/Audit540Worksheet";
 import { Audit575Worksheet } from "@/components/Audit575Worksheet";
 import { Audit590Worksheet } from "@/components/Audit590Worksheet";
+import { Audit610Worksheet } from "@/components/Audit610Worksheet";
+import { Audit625Worksheet } from "@/components/Audit625Worksheet";
+import { Audit630Worksheet } from "@/components/Audit630Worksheet";
+import { Audit635Worksheet } from "@/components/Audit635Worksheet";
+import { Audit655Worksheet } from "@/components/Audit655Worksheet";
+import { Audit666Worksheet } from "@/components/Audit666Worksheet";
+import { Audit680Worksheet } from "@/components/Audit680Worksheet";
 import { ConnectorsModal, CONNECTORS_BY_ID } from "@/components/ConnectorsModal";
 import { LukaAutoFillBanner } from "@/components/LukaAutoFillBanner";
 import { AuditFSViewer, FSPageType } from "@/components/AuditFSViewer";
@@ -166,6 +173,10 @@ import {
   generate550ControlActivitiesChecklist,
   generate551ITGCChecklist,
   generate580SignificantDeficienciesChecklist,
+  generate605RespondingToRiskChecklist,
+  generate645LitigationClaimsChecklist,
+  generate650SubsequentEventsChecklist2,
+  generate670JournalEntryTestingChecklist,
 } from "@/lib/globalTemplates";
 
 // Sample engagement data matching the engagements page
@@ -312,12 +323,10 @@ const buildDefaultAuditChecklists = () => {
     { generator: generate550ControlActivitiesChecklist, id: "default-audit-ra-550" },
     { generator: generate551ITGCChecklist, id: "default-audit-ra-551" },
     { generator: generate580SignificantDeficienciesChecklist, id: "default-audit-ra-580" },
-    { generator: generateOverallAuditResponseChecklist, id: "default-audit-rp-oar" },
-    { generator: generateTestOfControlsChecklist, id: "default-audit-rp-toc" },
-    { generator: generateSubstantiveAnalyticalProceduresChecklist, id: "default-audit-rp-sap" },
-    { generator: generateTestOfDetailsRevenueChecklist, id: "default-audit-rp-tod-rev" },
-    { generator: generateTestOfDetailsExpensesChecklist, id: "default-audit-rp-tod-exp" },
-    { generator: generateAuditProceduresSummaryChecklist, id: "default-audit-rp-aps" },
+    { generator: generate605RespondingToRiskChecklist, id: "default-audit-rp-605" },
+    { generator: generate645LitigationClaimsChecklist, id: "default-audit-rp-645" },
+    { generator: generate650SubsequentEventsChecklist2, id: "default-audit-rp-650" },
+    { generator: generate670JournalEntryTestingChecklist, id: "default-audit-rp-670" },
     // Financial Statements
     { generator: generateAuditorsReportChecklist, id: "default-audit-ar" },
     // Completion & Signoffs
@@ -502,12 +511,10 @@ const NAV_KEY_TO_CHECKLIST_ID: Record<string, string> = {
   "aud-ra-550": "default-audit-ra-550",
   "aud-ra-551": "default-audit-ra-551",
   "aud-ra-580": "default-audit-ra-580",
-  "aud-rp-oar": "default-audit-rp-oar",
-  "aud-rp-toc": "default-audit-rp-toc",
-  "aud-rp-sap": "default-audit-rp-sap",
-  "aud-rp-tod-rev": "default-audit-rp-tod-rev",
-  "aud-rp-tod-exp": "default-audit-rp-tod-exp",
-  "aud-rp-aps": "default-audit-rp-aps",
+  "aud-rp-605": "default-audit-rp-605",
+  "aud-rp-645": "default-audit-rp-645",
+  "aud-rp-650": "default-audit-rp-650",
+  "aud-rp-670": "default-audit-rp-670",
   // Audit — Financial Statements
   "aud-ar": "default-audit-ar",
   // Audit — Completion & Signoffs
@@ -599,6 +606,13 @@ const CUSTOM_WORKSHEET_TITLES: Record<string, string> = {
   'aud-ra-540': 'Control Design / Implementation Assessment',
   'aud-ra-575': 'Internal Control Deficiencies Identified',
   'aud-ra-590': 'Engagement Scoping — Classes of Transactions, Account Balances and Disclosures',
+  'aud-rp-610': 'Sampling — Tests of Details',
+  'aud-rp-625': 'Going-Concern Evaluation',
+  'aud-rp-630': 'Summary of External Confirmations',
+  'aud-rp-635': 'Accounting Estimates — Further Audit Procedures',
+  'aud-rp-655': 'Final Analytical Procedures',
+  'aud-rp-666': 'Related-Party Transactions',
+  'aud-rp-680': 'ASPE Supplementary Audit Procedures',
 };
 
 const FS_PAGE_KEYS = new Set([
@@ -666,12 +680,10 @@ const CHECKLIST_SIDEBAR_INFO: Record<string, { section: string; code: string; la
   'default-audit-ra-551':       { section: 'RA', code: '551',  label: 'General IT Controls — Design and Implementation' },
   'default-audit-ra-580':       { section: 'RA', code: '580',  label: 'Communication of Significant Deficiencies in Internal Control' },
   // CA Audit — RP
-  'default-audit-rp-oar':      { section: 'RP', code: 'OAR', label: 'Overall Audit Response' },
-  'default-audit-rp-toc':      { section: 'RP', code: 'TOC', label: 'Test of Controls' },
-  'default-audit-rp-sap':      { section: 'RP', code: 'SAP', label: 'Substantive Analytical Procedures' },
-  'default-audit-rp-tod-rev':  { section: 'RP', code: 'TR',  label: 'Test of Details — Revenue' },
-  'default-audit-rp-tod-exp':  { section: 'RP', code: 'TE',  label: 'Test of Details — Expenses' },
-  'default-audit-rp-aps':      { section: 'RP', code: 'APS', label: 'Audit Procedures Summary' },
+  'default-audit-rp-605': { section: 'RP', code: 'RFS', label: 'Responding to Risk at the Financial Statement Level' },
+  'default-audit-rp-645': { section: 'RP', code: 'LCN', label: 'Litigation, Claims and Non-Compliance' },
+  'default-audit-rp-650': { section: 'RP', code: 'SUB', label: 'Subsequent Events' },
+  'default-audit-rp-670': { section: 'RP', code: 'JET', label: 'Use of Journal Entries' },
   // CA Audit — FS
   'default-audit-ar': { section: 'FS', code: 'IAR', label: "Independent Auditor's Report" },
   // CA Audit — SO
@@ -1744,6 +1756,20 @@ export default function EngagementDetail() {
             <Audit575Worksheet />
           ) : (checklistKey === 'aud-ra-590') ? (
             <Audit590Worksheet />
+          ) : (checklistKey === 'aud-rp-610') ? (
+            <Audit610Worksheet />
+          ) : (checklistKey === 'aud-rp-625') ? (
+            <Audit625Worksheet />
+          ) : (checklistKey === 'aud-rp-630') ? (
+            <Audit630Worksheet />
+          ) : (checklistKey === 'aud-rp-635') ? (
+            <Audit635Worksheet />
+          ) : (checklistKey === 'aud-rp-655') ? (
+            <Audit655Worksheet />
+          ) : (checklistKey === 'aud-rp-666') ? (
+            <Audit666Worksheet />
+          ) : (checklistKey === 'aud-rp-680') ? (
+            <Audit680Worksheet />
           ) : checklist ? (
             <div className="p-4">
               {/* ASM import banner */}

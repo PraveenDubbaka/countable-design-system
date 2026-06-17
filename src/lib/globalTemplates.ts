@@ -14271,3 +14271,183 @@ export const generate580SignificantDeficienciesChecklist = (): Checklist => {
     createdAt: new Date(), updatedAt: new Date(),
   };
 };
+
+// ─── RP 605–670 Checklist Generators ──────────────────────────────────────────
+
+export const generate605RespondingToRiskChecklist = (): Checklist => {
+  const q = (id: string, text: string, sub?: Question[], answer = '', explanation = ''): Question => ({
+    id, text, answerType: 'yes-no-na' as const, options: ['Yes', 'No', 'NA'],
+    required: false, answer, explanation, ...(sub ? { subQuestions: sub } : {})
+  });
+  const la = (id: string, text: string, answer = ''): Question => ({
+    id, text, answerType: 'long-answer' as const, options: [], required: false, answer
+  });
+  return {
+    id: 'default-audit-rp-605',
+    title: 'Responding to Risk at the Financial Statement Level',
+    description: 'Document the overall audit response to assessed risks of material misstatement at the financial statement level (CAS 330).',
+    objective: 'Design and implement overall audit responses to address assessed risks of material misstatement at the financial statement level, and document the rationale for the planned approach.',
+    sections: [
+      {
+        id: 'rp605-s1', title: '1. Overall Audit Response', isExpanded: true,
+        questions: [
+          la('605-1-risks', '<p><strong>Pervasive risks identified at the financial statement level:</strong></p>', 'Management override risk (significant risk — owner-managed). No other pervasive risks identified.'),
+          q('605-1a', '<p>Has the auditor considered whether the overall audit response addresses the assessed risks at the financial statement level?</p>', undefined, 'Yes', 'Overall response designed to address management override risk. Includes unpredictability in audit procedures, scrutiny of journal entries, and assessment of estimates for bias.'),
+          q('605-1b', '<p>Has the overall response been adjusted for a control environment that has deficiencies?</p>', undefined, 'No', 'No significant deficiencies in control environment. Owner-managed structure is acknowledged; substantive approach planned throughout.'),
+          q('605-1c', '<p>Has an element of unpredictability been incorporated into the audit procedures?</p>', undefined, 'Yes', 'Unpredictability introduced through: (1) unannounced observation of inventory (if applicable), (2) sampling of transactions from prior periods, (3) selection of items outside normal focus areas.'),
+        ]
+      },
+      {
+        id: 'rp605-s2', title: '2. Nature, Timing and Extent — Overall', isExpanded: true,
+        questions: [
+          q('605-2a', '<p>Has the auditor considered whether to use a controls reliance approach or a purely substantive approach?</p>', undefined, 'Yes', 'Substantive approach planned for all significant accounts. No reliance on controls due to owner-managed structure.'),
+          q('605-2b', '<p>Has the auditor considered whether to modify the timing of audit procedures (e.g., performing more procedures at year-end)?</p>', undefined, 'Yes', 'Primarily year-end testing. Some interim testing performed for payroll and expense accruals.'),
+          q('605-2c', '<p>Has the auditor assigned more experienced team members or those with specialized skills to areas of higher risk?</p>', undefined, 'Yes', 'Senior auditor assigned to revenue, receivables, and related-party transactions. Manager review of significant estimates.'),
+          la('605-2-response', '<p><strong>Overall audit response — summary:</strong></p>', 'Substantive approach throughout. Engagement partner maintains heightened skepticism regarding estimates and related-party transactions. Journal entries to be reviewed for unusual items. Interim visit planned for payroll walk-through. Year-end visit for remaining substantive procedures.'),
+        ]
+      },
+      {
+        id: 'rp605-s3', title: '3. Fraud Risk Response', isExpanded: true,
+        questions: [
+          q('605-3a', '<p>Has the auditor designed procedures specifically to address the risk of management override of controls?</p>', undefined, 'Yes', '(1) Test journal entries and other adjustments. (2) Review accounting estimates for bias. (3) Evaluate business rationale of significant unusual transactions.'),
+          q('605-3b', '<p>Has the auditor designed procedures to address the risk of fraudulent revenue recognition?</p>', undefined, 'Yes', 'Revenue recognized assessed as significant risk — fraud. Revenue testing includes cut-off, contract review, and analytical procedures.'),
+          la('605-3-notes', '<p><strong>Additional responses to fraud risks:</strong></p>', 'Fraud inquiries performed with CEO, CFO, and operational staff. No indicators of fraud identified. Confirmation of revenue with major customers planned.'),
+        ]
+      },
+    ],
+    createdAt: new Date(), updatedAt: new Date(),
+  };
+};
+
+export const generate645LitigationClaimsChecklist = (): Checklist => {
+  const q = (id: string, text: string, sub?: Question[], answer = '', explanation = ''): Question => ({
+    id, text, answerType: 'yes-no-na' as const, options: ['Yes', 'No', 'NA'],
+    required: false, answer, explanation, ...(sub ? { subQuestions: sub } : {})
+  });
+  const la = (id: string, text: string, answer = ''): Question => ({
+    id, text, answerType: 'long-answer' as const, options: [], required: false, answer
+  });
+  return {
+    id: 'default-audit-rp-645',
+    title: 'Litigation, Claims and Non-Compliance',
+    description: 'Identify and assess the impact of litigation, claims, and instances of non-compliance with laws and regulations (CAS 250, CAS 501).',
+    objective: 'Identify pending or threatened litigation and claims, assess their potential impact on the financial statements, and evaluate the entity\'s compliance with laws and regulations.',
+    sections: [
+      {
+        id: 'rp645-s1', title: '1. Identification of Litigation and Claims', isExpanded: true,
+        questions: [
+          q('645-1a', '<p>Has management been inquired about the existence of pending or threatened litigation, claims, and assessments?</p>', undefined, 'Yes', 'Inquiry of CEO and CFO performed. Management representation obtained confirming no pending litigation.'),
+          q('645-1b', '<p>Have minutes of board/governance meetings been reviewed for indications of litigation or claims?</p>', undefined, 'Yes', 'Board minutes reviewed — no litigation matters noted.'),
+          q('645-1c', '<p>Has correspondence with legal counsel been reviewed?</p>', undefined, 'NA', 'No legal correspondence obtained — management confirmed no pending legal matters. Inquiry to legal counsel letter not required for this engagement.'),
+          q('645-1d', '<p>Have invoices for legal and professional fees been reviewed for potential indicators of litigation?</p>', undefined, 'Yes', 'Legal fees reviewed — nominal amounts for routine corporate matters only.'),
+          la('645-1-list', '<p><strong>Litigation and claims identified:</strong></p>', 'None identified. Management confirmed no pending or threatened litigation, claims, or assessments as at the balance sheet date and through the date of this report.'),
+        ]
+      },
+      {
+        id: 'rp645-s2', title: '2. Compliance with Laws and Regulations', isExpanded: true,
+        questions: [
+          q('645-2a', '<p>Has the auditor obtained an understanding of the legal and regulatory framework applicable to the entity?</p>', undefined, 'Yes', 'Applicable regulations: Transport Canada (vessel licensing), CTA (freight brokerage), CRA (tax filings), Employment Standards Act, PIPEDA.'),
+          q('645-2b', '<p>Are there indications of non-compliance with laws and regulations that could have a material effect on the financial statements?</p>', undefined, 'No', 'No indicators of non-compliance identified. All regulatory filings current. No penalties or fines noted in financial records.'),
+          q('645-2c', '<p>Has management been inquired about compliance with laws and regulations?</p>', undefined, 'Yes', 'Management confirmed compliance with all applicable laws and regulations. No violations or investigations pending.'),
+          q('645-2d', '<p>Has the auditor considered whether non-compliance could indicate fraud?</p>', undefined, 'No', 'No non-compliance identified; fraud indicators not present in this area.'),
+          la('645-2-notes', '<p><strong>Non-compliance observations:</strong></p>', 'No instances of non-compliance identified. All tax filings are current. Transport Canada certifications are valid through December 2024.'),
+        ]
+      },
+      {
+        id: 'rp645-s3', title: '3. Financial Statement Impact', isExpanded: true,
+        questions: [
+          q('645-3a', '<p>Are there any contingent liabilities arising from litigation or claims that require disclosure in the financial statements?</p>', undefined, 'No', 'No contingent liabilities to disclose.'),
+          q('645-3b', '<p>Are there any provisions required for claims or legal settlements?</p>', undefined, 'No', 'No provisions required.'),
+        ]
+      },
+    ],
+    createdAt: new Date(), updatedAt: new Date(),
+  };
+};
+
+export const generate650SubsequentEventsChecklist2 = (): Checklist => {
+  const q = (id: string, text: string, sub?: Question[], answer = '', explanation = ''): Question => ({
+    id, text, answerType: 'yes-no-na' as const, options: ['Yes', 'No', 'NA'],
+    required: false, answer, explanation, ...(sub ? { subQuestions: sub } : {})
+  });
+  const la = (id: string, text: string, answer = ''): Question => ({
+    id, text, answerType: 'long-answer' as const, options: [], required: false, answer
+  });
+  return {
+    id: 'default-audit-rp-650',
+    title: 'Subsequent Events',
+    description: 'Identify and evaluate events occurring after the balance sheet date that require adjustment or disclosure in the financial statements (CAS 560).',
+    objective: 'Perform procedures to identify subsequent events up to the date of the auditor\'s report, and evaluate whether any identified events require adjustment to or disclosure in the financial statements.',
+    sections: [
+      {
+        id: 'rp650-s1', title: '1. Procedures to Identify Subsequent Events', isExpanded: true,
+        questions: [
+          q('650-1a', '<p>Have minutes of management and governance meetings held after the balance sheet date been reviewed?</p>', undefined, 'Yes', 'Board minutes through April 2024 reviewed. No significant events noted.'),
+          q('650-1b', '<p>Have the most recent interim financial statements been reviewed for significant changes from the balance sheet date?</p>', undefined, 'Yes', 'Q1 FY2025 management accounts reviewed. Revenue and expenses trending in line with FY2024. No unusual items.'),
+          q('650-1c', '<p>Has management been inquired about subsequent events, including: new commitments, borrowings, or guarantees; sales or acquisitions of assets; new issuances of shares or debt; assets destroyed by fire, flood, or other casualty; developments in contingencies; unusual accounting adjustments; and events that call into question the going concern?</p>', undefined, 'Yes', 'Management inquiry performed April 25, 2024. No significant subsequent events identified.'),
+          q('650-1d', '<p>Have bank and legal confirmations outstanding at the report date been reviewed for indications of subsequent events?</p>', undefined, 'Yes', 'Bank confirmations received — no material changes to financing arrangements.'),
+        ]
+      },
+      {
+        id: 'rp650-s2', title: '2. Adjusting vs. Non-Adjusting Events', isExpanded: true,
+        questions: [
+          la('650-2-events', '<p><strong>Subsequent events identified:</strong></p>', 'No subsequent events identified that require adjustment to or disclosure in the financial statements. The period from the balance sheet date (December 31, 2023) to the audit report date (May 8, 2024) has been covered by our procedures.'),
+          q('650-2a', '<p>Have adjusting subsequent events (events providing evidence of conditions at the balance sheet date) been reflected in the financial statements?</p>', undefined, 'NA', 'No adjusting subsequent events identified.'),
+          q('650-2b', '<p>Have non-adjusting subsequent events (events indicating conditions arising after the balance sheet date) that are material been disclosed?</p>', undefined, 'NA', 'No non-adjusting subsequent events requiring disclosure identified.'),
+        ]
+      },
+      {
+        id: 'rp650-s3', title: '3. Facts Discovered After Report Date', isExpanded: true,
+        questions: [
+          q('650-3a', '<p>If facts are discovered after the audit report date but before the financial statements are issued, have procedures been performed in accordance with CAS 560?</p>', undefined, 'NA', 'No facts discovered after the audit report date.'),
+          la('650-3-conclusion', '<p><strong>Subsequent events conclusion:</strong></p>', 'No subsequent events have been identified that require adjustment to or disclosure in the financial statements for the year ended December 31, 2023.'),
+        ]
+      },
+    ],
+    createdAt: new Date(), updatedAt: new Date(),
+  };
+};
+
+export const generate670JournalEntryTestingChecklist = (): Checklist => {
+  const q = (id: string, text: string, sub?: Question[], answer = '', explanation = ''): Question => ({
+    id, text, answerType: 'yes-no-na' as const, options: ['Yes', 'No', 'NA'],
+    required: false, answer, explanation, ...(sub ? { subQuestions: sub } : {})
+  });
+  const la = (id: string, text: string, answer = ''): Question => ({
+    id, text, answerType: 'long-answer' as const, options: [], required: false, answer
+  });
+  return {
+    id: 'default-audit-rp-670',
+    title: 'Use of Journal Entries',
+    description: 'Design and perform procedures to address the risk of material misstatement through fraudulent or erroneous journal entries and other adjustments (CAS 240).',
+    objective: 'Test the completeness and accuracy of journal entries and other adjustments, with particular attention to entries that may indicate management override of controls or fraudulent financial reporting.',
+    sections: [
+      {
+        id: 'rp670-s1', title: '1. Understanding and Risk Assessment', isExpanded: true,
+        questions: [
+          q('670-1a', '<p>Has the auditor obtained an understanding of the entity\'s financial reporting process, including journal entry authorization and posting procedures?</p>', undefined, 'Yes', 'All JEs entered in QBO. CFO reviews and approves before posting. Audit log accessible for review.'),
+          q('670-1b', '<p>Has the auditor inquired of individuals involved in the financial reporting process about inappropriate or unusual journal entries?</p>', undefined, 'Yes', 'Inquiries of CFO and bookkeeper. No unusual journal entries noted by staff.'),
+          la('670-1-risk', '<p><strong>Journal entry risk factors identified:</strong></p>', 'Risk of management override (significant risk per CAS 240). Owner has access to post journal entries without secondary approval. QBO audit log maintained but not reviewed regularly by independent party.'),
+        ]
+      },
+      {
+        id: 'rp670-s2', title: '2. Journal Entry Procedures', isExpanded: true,
+        questions: [
+          q('670-2a', '<p>Has the auditor obtained a complete listing of journal entries for the period under audit?</p>', undefined, 'Yes', 'Complete JE listing exported from QBO for FY2024. Total entries: 847.'),
+          q('670-2b', '<p>Has the auditor tested journal entries and other adjustments for completeness and accuracy?</p>', undefined, 'Yes', 'Tested a representative sample of 45 journal entries (selected using risk-based criteria and random sampling). No exceptions noted.'),
+          q('670-2c', '<p>Have journal entries with the following characteristics been specifically examined: entries posted to unusual accounts; entries posted by users who do not normally post JEs; entries posted at or near period-end; entries without business purpose descriptions; round-number or estimated entries?</p>', undefined, 'Yes', 'Risk-based selection criteria applied. Identified 12 entries meeting risk criteria — all examined and supported with documentation.'),
+          q('670-2d', '<p>Have year-end adjusting entries been reviewed by management and approved before inclusion in the financial statements?</p>', undefined, 'Yes', 'Year-end adjusting entries reviewed by CFO. All entries traced to supporting documentation.'),
+          la('670-2-findings', '<p><strong>Journal entry testing findings:</strong></p>', 'Sample of 45 journal entries tested — no exceptions. 12 risk-flagged entries reviewed in detail — all appropriately supported. No indicators of fraudulent entries or management override identified.'),
+        ]
+      },
+      {
+        id: 'rp670-s3', title: '3. Management Estimates Review', isExpanded: true,
+        questions: [
+          q('670-3a', '<p>Has the auditor reviewed accounting estimates recorded through journal entries for potential management bias?</p>', undefined, 'Yes', 'AR allowance, depreciation, and deferred revenue entries reviewed. No bias indicators.'),
+          q('670-3b', '<p>Have any differences been identified that could indicate management bias in the preparation of accounting estimates?</p>', undefined, 'No', 'No bias indicators identified. Estimates are consistent with prior years and supported by analysis.'),
+        ]
+      },
+    ],
+    createdAt: new Date(), updatedAt: new Date(),
+  };
+};

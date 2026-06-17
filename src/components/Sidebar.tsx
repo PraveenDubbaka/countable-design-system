@@ -1746,12 +1746,17 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
                   {
                     id: "aud-rp-sec", code: "RP", label: "Response to Assessed Risks", icon: "folder",
                     children: [
-                      { id: "aud-rp-oar", code: "OAR", label: "Overall Audit Response", icon: "checklist", route: "checklist/aud-rp-oar" },
-                      { id: "aud-rp-toc", code: "TOC", label: "Test of Controls", icon: "checklist", route: "checklist/aud-rp-toc" },
-                      { id: "aud-rp-sap", code: "SAP", label: "Substantive Analytical Procedures", icon: "checklist", route: "checklist/aud-rp-sap" },
-                      { id: "aud-rp-tod-rev", code: "TR", label: "Test of Details — Revenue", icon: "checklist", route: "checklist/aud-rp-tod-rev" },
-                      { id: "aud-rp-tod-exp", code: "TE", label: "Test of Details — Expenses", icon: "checklist", route: "checklist/aud-rp-tod-exp" },
-                      { id: "aud-rp-aps", code: "APS", label: "Audit Procedures Summary", icon: "checklist", route: "checklist/aud-rp-aps" },
+                      { id: "aud-rp-605", code: "RFS", label: "Responding to Risk at the Financial Statement Level", icon: "checklist", route: "checklist/aud-rp-605" },
+                      { id: "aud-rp-610", code: "SMP", label: "Sampling — Tests of Details", icon: "worksheet", route: "checklist/aud-rp-610" },
+                      { id: "aud-rp-625", code: "GCE", label: "Going-Concern Evaluation", icon: "worksheet", route: "checklist/aud-rp-625" },
+                      { id: "aud-rp-630", code: "EXT", label: "Summary of External Confirmations", icon: "worksheet", route: "checklist/aud-rp-630" },
+                      { id: "aud-rp-635", code: "AEP", label: "Accounting Estimates — Further Audit Procedures", icon: "worksheet", route: "checklist/aud-rp-635" },
+                      { id: "aud-rp-645", code: "LCN", label: "Litigation, Claims and Non-Compliance", icon: "checklist", route: "checklist/aud-rp-645" },
+                      { id: "aud-rp-650", code: "SUB", label: "Subsequent Events", icon: "checklist", route: "checklist/aud-rp-650" },
+                      { id: "aud-rp-655", code: "FAP", label: "Final Analytical Procedures", icon: "worksheet", route: "checklist/aud-rp-655" },
+                      { id: "aud-rp-666", code: "RPT", label: "Related-Party Transactions", icon: "worksheet", route: "checklist/aud-rp-666" },
+                      { id: "aud-rp-670", code: "JET", label: "Use of Journal Entries", icon: "checklist", route: "checklist/aud-rp-670" },
+                      { id: "aud-rp-680", code: "ASP", label: "ASPE Supplementary Audit Procedures", icon: "worksheet", route: "checklist/aud-rp-680" },
                     ]
                   },
                   {
