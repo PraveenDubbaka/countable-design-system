@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo, useCallback, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { ChevronRight, ChevronDown, Landmark, FileText, Triangle, FileSpreadsheet, PencilLine, Pencil, Settings2, Download, FileType, Share2, Save, RefreshCw, Trash2, Building2, Calendar, Check, AlertTriangle, Loader2, History, Upload, FileUp, Bell, Plus, X, LayoutGrid, CheckCircle2 } from "lucide-react";
+import { ChevronRight, ChevronDown, Landmark, FileText, Triangle, FileSpreadsheet, PencilLine, Pencil, Settings2, Download, FileType, Share2, Save, RefreshCw, Trash2, Building2, Calendar, Check, AlertTriangle, Loader2, History, Upload, FileUp, Bell, Plus, X, LayoutGrid, CheckCircle2, PlugZap } from "lucide-react";
 import { ExpandableIconButton } from "@/components/ui/expandable-icon-button";
 import { ChecklistIcon } from "@/components/icons/ChecklistIcon";
 import { Button } from "@/components/ui/button";
@@ -20,6 +20,15 @@ import { AuditSAEWorksheet } from "@/components/AuditSAEWorksheet";
 import { AuditOASWorksheet } from "@/components/AuditOASWorksheet";
 import { AuditOIWorksheet } from "@/components/AuditOIWorksheet";
 import { AuditPAP501Worksheet } from "@/components/AuditPAP501Worksheet";
+import { Audit505Worksheet } from "@/components/Audit505Worksheet";
+import { Audit507Worksheet } from "@/components/Audit507Worksheet";
+import { Audit506Worksheet } from "@/components/Audit506Worksheet";
+import { Audit514Worksheet } from "@/components/Audit514Worksheet";
+import { Audit520Worksheet } from "@/components/Audit520Worksheet";
+import { Audit540Worksheet } from "@/components/Audit540Worksheet";
+import { Audit575Worksheet } from "@/components/Audit575Worksheet";
+import { Audit590Worksheet } from "@/components/Audit590Worksheet";
+import { ConnectorsModal, CONNECTORS_BY_ID } from "@/components/ConnectorsModal";
 import { LukaAutoFillBanner } from "@/components/LukaAutoFillBanner";
 import { AuditFSViewer, FSPageType } from "@/components/AuditFSViewer";
 import { AskLukaOverlay, AllTemplateSummary } from "@/components/AskLukaOverlay";
@@ -147,6 +156,16 @@ import {
   generateUSGoodwillImpairmentAssessment,
   generateSelectingAuditorExpertChecklist,
   generateUSSelectingAuditorExpertChecklist,
+  generate510IdentifyingRisksChecklist,
+  generate511ITEnvironmentChecklist,
+  generate513AccountingEstimatesChecklist,
+  generate515RelatedPartiesChecklist,
+  generate525GoingConcernChecklist,
+  generate530PervasiveRisksChecklist,
+  generate535InfoSystemChecklist,
+  generate550ControlActivitiesChecklist,
+  generate551ITGCChecklist,
+  generate580SignificantDeficienciesChecklist,
 } from "@/lib/globalTemplates";
 
 // Sample engagement data matching the engagements page
@@ -283,6 +302,16 @@ const buildDefaultAuditChecklists = () => {
     { generator: generateSCOTExpenditureCycleChecklist, id: "default-audit-ra-scot-exp" },
     { generator: generateSCOTPayrollCycleChecklist, id: "default-audit-ra-scot-pay" },
     { generator: generateGoingConcernInitialAssessmentChecklist, id: "default-audit-ra-gc" },
+    { generator: generate510IdentifyingRisksChecklist, id: "default-audit-ra-510" },
+    { generator: generate511ITEnvironmentChecklist, id: "default-audit-ra-511" },
+    { generator: generate513AccountingEstimatesChecklist, id: "default-audit-ra-513" },
+    { generator: generate515RelatedPartiesChecklist, id: "default-audit-ra-515" },
+    { generator: generate525GoingConcernChecklist, id: "default-audit-ra-525" },
+    { generator: generate530PervasiveRisksChecklist, id: "default-audit-ra-530" },
+    { generator: generate535InfoSystemChecklist, id: "default-audit-ra-535" },
+    { generator: generate550ControlActivitiesChecklist, id: "default-audit-ra-550" },
+    { generator: generate551ITGCChecklist, id: "default-audit-ra-551" },
+    { generator: generate580SignificantDeficienciesChecklist, id: "default-audit-ra-580" },
     { generator: generateOverallAuditResponseChecklist, id: "default-audit-rp-oar" },
     { generator: generateTestOfControlsChecklist, id: "default-audit-rp-toc" },
     { generator: generateSubstantiveAnalyticalProceduresChecklist, id: "default-audit-rp-sap" },
@@ -463,6 +492,16 @@ const NAV_KEY_TO_CHECKLIST_ID: Record<string, string> = {
   "aud-ra-scot-exp": "default-audit-ra-scot-exp",
   "aud-ra-scot-pay": "default-audit-ra-scot-pay",
   "aud-ra-gc": "default-audit-ra-gc",
+  "aud-ra-510": "default-audit-ra-510",
+  "aud-ra-511": "default-audit-ra-511",
+  "aud-ra-513": "default-audit-ra-513",
+  "aud-ra-515": "default-audit-ra-515",
+  "aud-ra-525": "default-audit-ra-525",
+  "aud-ra-530": "default-audit-ra-530",
+  "aud-ra-535": "default-audit-ra-535",
+  "aud-ra-550": "default-audit-ra-550",
+  "aud-ra-551": "default-audit-ra-551",
+  "aud-ra-580": "default-audit-ra-580",
   "aud-rp-oar": "default-audit-rp-oar",
   "aud-rp-toc": "default-audit-rp-toc",
   "aud-rp-sap": "default-audit-rp-sap",
@@ -552,6 +591,14 @@ const CUSTOM_WORKSHEET_TITLES: Record<string, string> = {
   'aud-asm': 'Overall Audit Strategy', 'aud-us-asm': 'Overall Audit Strategy',
   'aud-ra-oi': 'Observation & Inspection Procedures', 'aud-us-ra-oi': 'Observation & Inspection Procedures',
   'aud-ra-pap501': 'Preliminary Analytical Procedures',
+  'aud-ra-505': 'Inquiries of Management and Others',
+  'aud-ra-507': 'Minutes of Governance Meetings',
+  'aud-ra-506': 'Identifying Fraud Risks',
+  'aud-ra-514': 'Outcome of Prior Period Accounting Estimates',
+  'aud-ra-520': 'Risk Register — Entity Specific (Business / Operating)',
+  'aud-ra-540': 'Control Design / Implementation Assessment',
+  'aud-ra-575': 'Internal Control Deficiencies Identified',
+  'aud-ra-590': 'Engagement Scoping — Classes of Transactions, Account Balances and Disclosures',
 };
 
 const FS_PAGE_KEYS = new Set([
@@ -608,6 +655,16 @@ const CHECKLIST_SIDEBAR_INFO: Record<string, { section: string; code: string; la
   'default-audit-ra-scot-exp':  { section: 'RA', code: 'S2',   label: 'SCOT — Expenditure Cycle' },
   'default-audit-ra-scot-pay':  { section: 'RA', code: 'S3',   label: 'SCOT — Payroll Cycle' },
   'default-audit-ra-gc':        { section: 'RA', code: 'GC',   label: 'Going Concern (Initial Assessment)' },
+  'default-audit-ra-510':       { section: 'RA', code: '510',  label: 'Identifying Risks through Understanding the Entity' },
+  'default-audit-ra-511':       { section: 'RA', code: '511',  label: 'Understanding the IT Environment' },
+  'default-audit-ra-513':       { section: 'RA', code: '513',  label: 'Understanding Accounting Estimates and Related Disclosures' },
+  'default-audit-ra-515':       { section: 'RA', code: '515',  label: 'Understanding Related Parties' },
+  'default-audit-ra-525':       { section: 'RA', code: '525',  label: 'Going Concern — Identifying Events and Conditions' },
+  'default-audit-ra-530':       { section: 'RA', code: '530',  label: 'Pervasive Risks and Controls' },
+  'default-audit-ra-535':       { section: 'RA', code: '535',  label: 'Understanding the Information System and Communication' },
+  'default-audit-ra-550':       { section: 'RA', code: '550',  label: 'Control Activities — Design, Implementation and Control Risk' },
+  'default-audit-ra-551':       { section: 'RA', code: '551',  label: 'General IT Controls — Design and Implementation' },
+  'default-audit-ra-580':       { section: 'RA', code: '580',  label: 'Communication of Significant Deficiencies in Internal Control' },
   // CA Audit — RP
   'default-audit-rp-oar':      { section: 'RP', code: 'OAR', label: 'Overall Audit Response' },
   'default-audit-rp-toc':      { section: 'RP', code: 'TOC', label: 'Test of Controls' },
@@ -679,6 +736,26 @@ export default function EngagementDetail() {
     totalFields: number;
   } | null>(null);
   const autoFillRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // Connectors modal
+  const [connectorsOpen, setConnectorsOpen] = useState(false);
+  const [connectedApps, setConnectedApps] = useState<Set<string>>(() => {
+    const stored = localStorage.getItem(`connectors-${engagementId}`);
+    if (stored) {
+      try { return new Set(JSON.parse(stored) as string[]); } catch { /* fall through */ }
+    }
+    return new Set(["xero"]);
+  });
+  useEffect(() => {
+    if (!engagementId) return;
+    localStorage.setItem(`connectors-${engagementId}`, JSON.stringify(Array.from(connectedApps)));
+  }, [connectedApps, engagementId]);
+  const handleConnectorConnect = useCallback((id: string) => {
+    setConnectedApps(prev => new Set([...prev, id]));
+  }, []);
+  const handleConnectorDisconnect = useCallback((id: string) => {
+    setConnectedApps(prev => { const n = new Set(prev); n.delete(id); return n; });
+  }, []);
 
   // Client responses hook
   const clientResponses = useClientResponses(checklist);
@@ -1375,11 +1452,13 @@ export default function EngagementDetail() {
         {status}
       </Badge>
 
-      {/* Xero Integration Badge */}
-      <div className="ml-1 inline-flex items-center justify-center h-7 w-20 px-1 bg-card border border-border rounded-sm gap-1">
-        <img src="https://upload.wikimedia.org/wikipedia/en/9/9f/Xero_software_logo.svg" alt="Xero" className="h-4" />
-        <span className="text-xs font-medium text-foreground">Xero</span>
-      </div>
+      {/* Xero Integration Badge — shown when Xero is connected */}
+      {connectedApps.has("xero") && (
+        <div className="ml-1 inline-flex items-center justify-center h-7 w-20 px-1 bg-card border border-border rounded-sm gap-1">
+          <img src="https://upload.wikimedia.org/wikipedia/en/9/9f/Xero_software_logo.svg" alt="Xero" className="h-4" />
+          <span className="text-xs font-medium text-foreground">Xero</span>
+        </div>
+      )}
     </div>
   );
 
@@ -1435,13 +1514,43 @@ export default function EngagementDetail() {
                       label={<span className="inline-flex items-center gap-1">Tools<ChevronDown className="h-3 w-3" /></span>}
                     />
                   </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end" className="w-48 bg-card border shadow-lg z-50">
+                  <DropdownMenuContent align="end" className="w-56 bg-card border shadow-lg z-50">
+                    <DropdownMenuItem
+                      className="flex items-center gap-2 cursor-pointer group"
+                      onClick={() => setConnectorsOpen(true)}
+                    >
+                      <PlugZap className="h-4 w-4 text-muted-foreground group-hover:text-foreground transition-colors" />
+                      <span className="flex-1">Connectors</span>
+                      {connectedApps.size > 0 && (
+                        <span className="text-xs text-muted-foreground tabular-nums">{connectedApps.size}</span>
+                      )}
+                    </DropdownMenuItem>
                     {toolsMenuActions.map(action => (
                       <DropdownMenuItem key={action.id} className="flex items-center gap-2 cursor-pointer group">
                         <action.icon className="h-4 w-4 text-muted-foreground group-hover:text-foreground transition-colors" />
                         <span>{action.label}</span>
                       </DropdownMenuItem>
                     ))}
+                    {connectedApps.size > 0 && (
+                      <>
+                        <DropdownMenuSeparator />
+                        {Array.from(connectedApps).map(appId => {
+                          const c = CONNECTORS_BY_ID[appId];
+                          if (!c) return null;
+                          return (
+                            <DropdownMenuItem
+                              key={appId}
+                              className="flex items-center gap-2 cursor-pointer group"
+                              onClick={() => { handleConnectorDisconnect(appId); }}
+                            >
+                              <span className="h-2 w-2 rounded-full flex-shrink-0" style={{ backgroundColor: c.bg }} />
+                              <span className="flex-1 text-xs">{c.name}</span>
+                              <span className="text-[10px] text-green-600 font-medium">Connected</span>
+                            </DropdownMenuItem>
+                          );
+                        })}
+                      </>
+                    )}
                   </DropdownMenuContent>
                 </DropdownMenu>
               </div>
@@ -1619,6 +1728,22 @@ export default function EngagementDetail() {
             <AuditOIWorksheet isUS={checklistKey === 'aud-us-ra-oi'} />
           ) : (checklistKey === 'aud-ra-pap501') ? (
             <AuditPAP501Worksheet />
+          ) : (checklistKey === 'aud-ra-505') ? (
+            <Audit505Worksheet />
+          ) : (checklistKey === 'aud-ra-507') ? (
+            <Audit507Worksheet />
+          ) : (checklistKey === 'aud-ra-506') ? (
+            <Audit506Worksheet />
+          ) : (checklistKey === 'aud-ra-514') ? (
+            <Audit514Worksheet />
+          ) : (checklistKey === 'aud-ra-520') ? (
+            <Audit520Worksheet />
+          ) : (checklistKey === 'aud-ra-540') ? (
+            <Audit540Worksheet />
+          ) : (checklistKey === 'aud-ra-575') ? (
+            <Audit575Worksheet />
+          ) : (checklistKey === 'aud-ra-590') ? (
+            <Audit590Worksheet />
           ) : checklist ? (
             <div className="p-4">
               {/* ASM import banner */}
@@ -1716,6 +1841,14 @@ export default function EngagementDetail() {
 
         {/* Share with Client Dialog */}
         <ShareWithClientDialog open={showShareDialog} onOpenChange={setShowShareDialog} checklistName={checklist?.title} onConfirm={handleShareConfirm} />
+
+        <ConnectorsModal
+          open={connectorsOpen}
+          onOpenChange={setConnectorsOpen}
+          connectedApps={connectedApps}
+          onConnect={handleConnectorConnect}
+          onDisconnect={handleConnectorDisconnect}
+        />
 
         {/* Client Response Dialog */}
         <ClientResponseDialog open={showResponseDialog} onOpenChange={setShowResponseDialog} totalQuestions={clientResponses.totalQuestions} answeredQuestions={clientResponses.answeredQuestions} responses={clientResponses.responses} onAcceptSelected={handleAcceptSelectedResponses} isApplying={clientResponses.isApplyingResponses} checklist={checklist} />

@@ -13810,3 +13810,464 @@ export const generateUSSelectingAuditorExpertChecklist = (): Checklist => {
     updatedAt: new Date(),
   };
 };
+
+// ─── RA 510–580 Checklist Generators ──────────────────────────────────────────
+
+export const generate510IdentifyingRisksChecklist = (): Checklist => {
+  const q = (id: string, text: string, sub?: Question[], answer = '', explanation = '', reference = ''): Question => ({
+    id, text, answerType: 'yes-no-na' as const, options: ['Yes', 'No', 'NA'],
+    required: false, answer, explanation, reference, ...(sub ? { subQuestions: sub } : {})
+  });
+  const la = (id: string, text: string, answer = ''): Question => ({
+    id, text, answerType: 'long-answer' as const, options: [], required: false, answer
+  });
+  return {
+    id: 'default-audit-ra-510',
+    title: 'Identifying Risks through Understanding the Entity',
+    description: 'Document understanding of the entity to identify risks of material misstatement (CAS 315).',
+    objective: 'Obtain sufficient understanding of the entity and its environment to identify and assess the risks of material misstatement.',
+    sections: [
+      {
+        id: 'ra510-s1', title: '1. Industry, Regulatory and External Factors', isExpanded: true,
+        questions: [
+          q('510-1a', '<p>Has the auditor obtained an understanding of the industry conditions relevant to the entity, including competitive conditions, supplier and customer relationships, and technological developments?</p>', undefined, 'Yes', 'Shipping industry — highly competitive freight and logistics market. Reviewed industry publications and discussed with management.'),
+          q('510-1b', '<p>Have regulatory requirements and the regulatory environment been considered, including applicable financial reporting framework?</p>', undefined, 'Yes', 'ASPE applied. Transport Canada and CTA regulations reviewed for compliance.'),
+          la('510-1-notes', '<p><strong>Industry and external factors noted:</strong></p>', 'Marine freight and shipping — Transport Canada regulations, cross-border customs, fuel price volatility (bunker fuel), seasonal demand fluctuations. No significant new regulations during the year.'),
+        ]
+      },
+      {
+        id: 'ra510-s2', title: '2. Nature of the Entity', isExpanded: true,
+        questions: [
+          q('510-2a', '<p>Has the auditor obtained an understanding of the entity\'s operations, ownership structure, governance, investments, and how the entity is financed?</p>', undefined, 'Yes', 'Reviewed corporate structure, minute books, and organizational charts.'),
+          q('510-2b', '<p>Are there complex transactions, unusual events or matters that give rise to significant risks?</p>', undefined, 'No', 'Operations are straightforward freight and warehousing. No complex transactions identified.'),
+          la('510-2-notes', '<p><strong>Nature of entity — key observations:</strong></p>', 'Incorporated federally. Three operating divisions: ocean freight, warehousing, logistics. Revenue $12.5M. Owner-managed with single majority shareholder. Financing: RBC operating line + equipment loan.'),
+        ]
+      },
+      {
+        id: 'ra510-s3', title: '3. Accounting Policies and Financial Performance', isExpanded: true,
+        questions: [
+          q('510-3a', '<p>Has the auditor considered whether the entity\'s accounting policies are appropriate, consistently applied, and in compliance with the applicable financial reporting framework?</p>', undefined, 'Yes', 'ASPE policies reviewed and appear appropriate for the entity.'),
+          q('510-3b', '<p>Are there areas where management uses significant judgment or estimation in the preparation of the financial statements?</p>', undefined, 'Yes', 'Accounts receivable allowance, vessel useful lives and residual values, revenue recognition timing.'),
+          la('510-3-notes', '<p><strong>Significant accounting judgments identified:</strong></p>', '1. AR allowance — $45K estimate based on aging analysis. 2. Vessel depreciation — straight-line 20-25 years, reviewed annually. 3. Deferred revenue — timing of voyage completion.'),
+        ]
+      },
+      {
+        id: 'ra510-s4', title: '4. Business Risks and Identified Risks of Material Misstatement', isExpanded: true,
+        questions: [
+          q('510-4a', '<p>Have the risks arising from the entity\'s business strategy and objectives been identified and considered in the context of financial reporting?</p>', undefined, 'Yes'),
+          q('510-4b', '<p>Have the risks identified from understanding the entity been used as a basis for the risk assessment (510 feeds into the risk register)?</p>', undefined, 'Yes', 'Risks documented in Risk Register (WP 520).'),
+          la('510-4-notes', '<p><strong>Summary of identified risks of material misstatement:</strong></p>', 'Revenue recognition (completeness, cut-off), AR collectibility, vessel PP&E valuation (impairment indicators), related party transactions with affiliated logistics companies.'),
+        ]
+      },
+    ],
+    createdAt: new Date(), updatedAt: new Date(),
+  };
+};
+
+export const generate511ITEnvironmentChecklist = (): Checklist => {
+  const q = (id: string, text: string, sub?: Question[], answer = '', explanation = '', reference = ''): Question => ({
+    id, text, answerType: 'yes-no-na' as const, options: ['Yes', 'No', 'NA'],
+    required: false, answer, explanation, reference, ...(sub ? { subQuestions: sub } : {})
+  });
+  const la = (id: string, text: string, answer = ''): Question => ({
+    id, text, answerType: 'long-answer' as const, options: [], required: false, answer
+  });
+  return {
+    id: 'default-audit-ra-511',
+    title: 'Understanding the IT Environment',
+    description: 'Document the entity\'s IT environment and assess IT-related risks (CAS 315).',
+    objective: 'Obtain sufficient understanding of the IT environment, including IT general controls and application controls, to assess the impact of IT on audit risk.',
+    sections: [
+      {
+        id: 'ra511-s1', title: '1. IT Infrastructure Overview', isExpanded: true,
+        questions: [
+          la('511-1a', '<p><strong>Describe the key IT systems used for financial reporting:</strong></p>', 'QuickBooks Online — primary accounting system. TruckMate — freight management and dispatch (integrated with QBO via API). Xero — used for payroll sub-ledger. All cloud-hosted SaaS systems.'),
+          q('511-1b', '<p>Are the IT systems relevant to financial reporting cloud-based, on-premises, or a hybrid?</p>', undefined, 'Yes', 'Fully cloud-based (SaaS). No on-premises servers for accounting functions.'),
+          q('511-1c', '<p>Are there significant changes to IT systems during the period that could affect financial reporting?</p>', undefined, 'No', 'No new system implementations during FY2024.'),
+        ]
+      },
+      {
+        id: 'ra511-s2', title: '2. IT General Controls (ITGC)', isExpanded: true,
+        questions: [
+          q('511-2a', '<p>Does the entity have formal access controls (user provisioning, role-based access, periodic access reviews)?</p>', undefined, 'Yes', 'QBO has role-based access. Finance manager and owner have admin rights. Quarterly access reviews performed.'),
+          q('511-2b', '<p>Does the entity have controls over program changes (change management procedures)?</p>', undefined, 'NA', 'SaaS — changes managed by vendor. Entity cannot modify core application.'),
+          q('511-2c', '<p>Are there adequate backup and recovery procedures in place?</p>', undefined, 'Yes', 'Cloud providers maintain redundant backups. Entity has confirmed backup procedures with QBO and TruckMate.'),
+          q('511-2d', '<p>Are there formal IT security policies (password policies, MFA, firewall)?</p>', undefined, 'Yes', 'MFA enabled on all financial systems. Password policy requires 12+ characters.'),
+        ]
+      },
+      {
+        id: 'ra511-s3', title: '3. Application Controls and Data Integrity', isExpanded: true,
+        questions: [
+          q('511-3a', '<p>Are there automated controls within the accounting application that prevent or detect errors (e.g., edit checks, reconciliation reports, automated postings)?</p>', undefined, 'Yes', 'QBO edit checks, bank reconciliation module, automated revenue recognition rules.'),
+          q('511-3b', '<p>Is there an automated interface between operational systems (e.g., billing, payroll) and the general ledger? Has the interface been tested?</p>', undefined, 'Yes', 'TruckMate-to-QBO API sync tested quarterly by IT admin.'),
+          la('511-3-notes', '<p><strong>IT risks identified and audit implications:</strong></p>', 'Automated interface between TruckMate and QBO — completeness of revenue postings. Risk: interface failure could result in unposted revenue. Mitigation: monthly reconciliation by finance manager.'),
+        ]
+      },
+    ],
+    createdAt: new Date(), updatedAt: new Date(),
+  };
+};
+
+export const generate513AccountingEstimatesChecklist = (): Checklist => {
+  const q = (id: string, text: string, sub?: Question[], answer = '', explanation = '', reference = ''): Question => ({
+    id, text, answerType: 'yes-no-na' as const, options: ['Yes', 'No', 'NA'],
+    required: false, answer, explanation, reference, ...(sub ? { subQuestions: sub } : {})
+  });
+  const la = (id: string, text: string, answer = ''): Question => ({
+    id, text, answerType: 'long-answer' as const, options: [], required: false, answer
+  });
+  return {
+    id: 'default-audit-ra-513',
+    title: 'Accounting Estimates and Related Disclosures',
+    description: 'Understand how the entity identifies and makes accounting estimates (CAS 540).',
+    objective: 'Identify and assess risks of material misstatement arising from accounting estimates, including those with high estimation uncertainty.',
+    sections: [
+      {
+        id: 'ra513-s1', title: '1. Identification of Accounting Estimates', isExpanded: true,
+        questions: [
+          q('513-1a', '<p>Has the entity identified all accounting estimates required under the applicable financial reporting framework?</p>', undefined, 'Yes', 'Management provided a schedule of estimates. Auditor verified completeness by reference to prior year file.'),
+          la('513-1-list', '<p><strong>List all accounting estimates identified:</strong></p>', '1. Allowance for doubtful accounts — $45K\n2. Depreciation of vessels and equipment — useful lives/residual values\n3. Deferred revenue — voyage completion percentage\n4. Accrued liabilities (port charges, fuel estimates)\n5. Employee benefit obligations (vacation accrual)'),
+        ]
+      },
+      {
+        id: 'ra513-s2', title: '2. How Estimates are Made', isExpanded: true,
+        questions: [
+          q('513-2a', '<p>Has the auditor understood the method, assumptions, and data used by management for each significant estimate?</p>', undefined, 'Yes', 'Discussed with CFO. Methods documented for each estimate above.'),
+          q('513-2b', '<p>Are the methods and assumptions used consistent with prior periods? If not, are the changes disclosed?</p>', undefined, 'Yes', 'No changes in estimation methods from prior year. Consistent application of ASPE policies.'),
+          q('513-2c', '<p>Has management engaged a specialist (e.g., actuary, appraiser) to develop or assist with any estimates?</p>', undefined, 'No', 'No external specialists used for estimates in FY2024.'),
+        ]
+      },
+      {
+        id: 'ra513-s3', title: '3. Estimation Uncertainty and Significant Risks', isExpanded: true,
+        questions: [
+          q('513-3a', '<p>Have estimates with high estimation uncertainty been identified?</p>', undefined, 'Yes', 'AR allowance and vessel residual values have moderate estimation uncertainty.'),
+          q('513-3b', '<p>Has the auditor considered whether any estimates are subject to management bias?</p>', undefined, 'Yes', 'No indicators of management bias identified. Estimates appear reasonable based on historical patterns.'),
+          la('513-3-risk', '<p><strong>Risk assessment for significant estimates:</strong></p>', 'Allowance for doubtful accounts: Low-to-moderate risk. Method: specific identification + 2% of outstanding >90 days. AR balance $1.8M, allowance $45K (2.5%). Historically accurate within 10% variance. Vessels: Straight-line 20-25 years. Residual value 10% of cost. Consistent with industry practice. Low risk.'),
+        ]
+      },
+    ],
+    createdAt: new Date(), updatedAt: new Date(),
+  };
+};
+
+export const generate515RelatedPartiesChecklist = (): Checklist => {
+  const q = (id: string, text: string, sub?: Question[], answer = '', explanation = '', reference = ''): Question => ({
+    id, text, answerType: 'yes-no-na' as const, options: ['Yes', 'No', 'NA'],
+    required: false, answer, explanation, reference, ...(sub ? { subQuestions: sub } : {})
+  });
+  const la = (id: string, text: string, answer = ''): Question => ({
+    id, text, answerType: 'long-answer' as const, options: [], required: false, answer
+  });
+  return {
+    id: 'default-audit-ra-515',
+    title: 'Understanding Related Parties',
+    description: 'Identify and understand the entity\'s related party relationships and transactions (CAS 550).',
+    objective: 'Obtain sufficient understanding of related party relationships and transactions to identify, assess, and respond to the risks of material misstatement arising from related parties.',
+    sections: [
+      {
+        id: 'ra515-s1', title: '1. Identification of Related Parties', isExpanded: true,
+        questions: [
+          q('515-1a', '<p>Has the entity provided a complete and accurate list of related parties (including directors, officers, key management, shareholders, and entities under common control)?</p>', undefined, 'Yes', 'Management representation obtained. Related party schedule provided.'),
+          la('515-1-list', '<p><strong>Related parties identified:</strong></p>', '1. Pacific Coast Logistics Ltd. — wholly-owned subsidiary\n2. J. Chen Holding Corp. — controlled by majority shareholder (same individual)\n3. Key management: J. Chen (CEO/owner), L. Park (CFO), A. Reyes (VP Operations)\n4. Board members: 3 directors identified\n5. No other entities under common control identified'),
+          q('515-1b', '<p>Have related parties been confirmed through review of shareholder agreements, corporate registry, board minutes, and other relevant documents?</p>', undefined, 'Yes', 'Corporate registry, shareholder register, and minute books reviewed.'),
+        ]
+      },
+      {
+        id: 'ra515-s2', title: '2. Related Party Transactions', isExpanded: true,
+        questions: [
+          q('515-2a', '<p>Has the auditor identified all significant related party transactions during the period?</p>', undefined, 'Yes', 'GL reviewed for related party indicators. Management inquiry performed.'),
+          la('515-2-transactions', '<p><strong>Significant related party transactions identified:</strong></p>', '1. Management fees paid to J. Chen Holding Corp. — $180K/year (approved by board, market rate confirmed)\n2. Subcontracting revenue from Pacific Coast Logistics Ltd. — $340K\n3. Short-term loan from shareholder — $0 balance at year-end (repaid during year)\n4. Lease of warehouse facility from related party — $96K/year (market rate assessed)'),
+          q('515-2b', '<p>Have all related party transactions been conducted on terms equivalent to those prevailing in an arm\'s length transaction?</p>', undefined, 'Yes', 'Management confirmed arm\'s length terms. Auditor assessed reasonableness of amounts.'),
+          q('515-2c', '<p>Are related party transactions appropriately disclosed in the financial statements?</p>', undefined, 'Yes', 'Disclosures reviewed and appear adequate per ASPE Section 3840.'),
+        ]
+      },
+      {
+        id: 'ra515-s3', title: '3. Fraud Risk from Related Parties', isExpanded: true,
+        questions: [
+          q('515-3a', '<p>Are there any related party transactions that appear unusual, complex, or lack a clear business rationale?</p>', undefined, 'No', 'All related party transactions have clear business rationale.'),
+          q('515-3b', '<p>Has management override of controls related to related party transactions been considered?</p>', undefined, 'Yes', 'Considered — owner-manager controls present. Reliance on substantive procedures.'),
+        ]
+      },
+    ],
+    createdAt: new Date(), updatedAt: new Date(),
+  };
+};
+
+export const generate525GoingConcernChecklist = (): Checklist => {
+  const q = (id: string, text: string, sub?: Question[], answer = '', explanation = '', reference = ''): Question => ({
+    id, text, answerType: 'yes-no-na' as const, options: ['Yes', 'No', 'NA'],
+    required: false, answer, explanation, reference, ...(sub ? { subQuestions: sub } : {})
+  });
+  const la = (id: string, text: string, answer = ''): Question => ({
+    id, text, answerType: 'long-answer' as const, options: [], required: false, answer
+  });
+  return {
+    id: 'default-audit-ra-525',
+    title: 'Going Concern — Identifying Events and Conditions',
+    description: 'Identify events and conditions that may cast significant doubt on the entity\'s ability to continue as a going concern (CAS 570).',
+    objective: 'Identify and evaluate events and conditions that, individually or collectively, may cast significant doubt on the entity\'s ability to continue as a going concern.',
+    sections: [
+      {
+        id: 'ra525-s1', title: '1. Financial Indicators', isExpanded: true,
+        questions: [
+          q('525-1a', '<p>Net liability or net current liability position?</p>', undefined, 'No', 'Working capital positive: current assets $4.2M vs. current liabilities $2.3M. Current ratio 1.85:1.'),
+          q('525-1b', '<p>Fixed-term borrowings approaching maturity without realistic prospects of renewal/repayment?</p>', undefined, 'No', 'Term loan due 2027. Operating LOC renewed annually — renewal confirmed by RBC.'),
+          q('525-1c', '<p>Indications of withdrawal of financial support by creditors?</p>', undefined, 'No', 'No indicators. Banking relationship is stable.'),
+          q('525-1d', '<p>Negative operating cash flows indicated by historical or prospective financial statements?</p>', undefined, 'No', 'Operating cash flow positive $1.1M for FY2024.'),
+          q('525-1e', '<p>Adverse key financial ratios?</p>', undefined, 'No', 'DSCR 2.1:1 (covenant 1.25:1 — complied). Debt/equity 0.57:1.'),
+          q('525-1f', '<p>Substantial operating losses or significant deterioration in the value of assets?</p>', undefined, 'No', 'Net income $624K. Total assets increased from $17.1M to $18.2M.'),
+          q('525-1g', '<p>Arrears or discontinuance of dividends?</p>', undefined, 'NA', 'No dividends declared. Owner draw through management fees.'),
+          q('525-1h', '<p>Inability to pay creditors on due dates?</p>', undefined, 'No', 'Payables aging review shows no significant overdue amounts.'),
+        ]
+      },
+      {
+        id: 'ra525-s2', title: '2. Operating Indicators', isExpanded: true,
+        questions: [
+          q('525-2a', '<p>Loss of key management without replacement?</p>', undefined, 'No'),
+          q('525-2b', '<p>Loss of a major market, franchise, license, or principal supplier?</p>', undefined, 'No', 'Top 5 customers account for 61% of revenue. All relationships renewed for FY2025.'),
+          q('525-2c', '<p>Labour difficulties or shortages of important supplies?</p>', undefined, 'No', 'No labour disputes. Fuel supply secured through 12-month contract.'),
+          q('525-2d', '<p>Fundamental changes in technology or market conditions to which the entity cannot adapt?</p>', undefined, 'No'),
+        ]
+      },
+      {
+        id: 'ra525-s3', title: '3. Other Indicators', isExpanded: true,
+        questions: [
+          q('525-3a', '<p>Non-compliance with capital requirements or other statutory requirements?</p>', undefined, 'No', 'All regulatory filings current. Transport Canada certifications valid.'),
+          q('525-3b', '<p>Pending legal or regulatory proceedings against the entity?</p>', undefined, 'No', 'No pending litigation identified per legal inquiry.'),
+          q('525-3c', '<p>Changes in legislation or government policy expected to adversely affect the entity?</p>', undefined, 'No'),
+        ]
+      },
+      {
+        id: 'ra525-s4', title: '4. Overall Conclusion', isExpanded: true,
+        questions: [
+          q('525-4a', '<p>Based on the above, have events or conditions been identified that may cast significant doubt on the entity\'s ability to continue as a going concern?</p>', undefined, 'No', 'No indicators of going concern doubt identified. Entity is financially stable with positive operating results and adequate liquidity.'),
+          la('525-4-conclusion', '<p><strong>Going concern conclusion:</strong></p>', 'No events or conditions identified that cast significant doubt on Shipping Line Inc.\'s ability to continue as a going concern. Management\'s use of the going concern basis of accounting is appropriate.'),
+        ]
+      },
+    ],
+    createdAt: new Date(), updatedAt: new Date(),
+  };
+};
+
+export const generate530PervasiveRisksChecklist = (): Checklist => {
+  const q = (id: string, text: string, sub?: Question[], answer = '', explanation = '', reference = ''): Question => ({
+    id, text, answerType: 'yes-no-na' as const, options: ['Yes', 'No', 'NA'],
+    required: false, answer, explanation, reference, ...(sub ? { subQuestions: sub } : {})
+  });
+  const la = (id: string, text: string, answer = ''): Question => ({
+    id, text, answerType: 'long-answer' as const, options: [], required: false, answer
+  });
+  return {
+    id: 'default-audit-ra-530',
+    title: 'Pervasive (Financial Statement Level) Risks and Controls',
+    description: 'Identify and assess pervasive risks that affect the financial statements as a whole and entity-level controls that mitigate them.',
+    objective: 'Identify risks that are pervasive in nature (i.e., not related to specific assertions for particular classes of transactions, account balances, or disclosures) and assess entity-level controls.',
+    sections: [
+      {
+        id: 'ra530-s1', title: '1. Pervasive Risks Identified', isExpanded: true,
+        questions: [
+          q('530-1a', '<p>Is there a risk of management override of controls?</p>', undefined, 'Yes', 'Owner-managed entity — inherent risk of management override. No mitigating controls from segregation of duties at the owner level. Assessed as significant risk — fraud (CAS 240).'),
+          q('530-1b', '<p>Is there a risk related to the control environment (tone at the top, ethical culture)?</p>', undefined, 'No', 'Management demonstrates commitment to ethics. Code of conduct in place and communicated.'),
+          q('530-1c', '<p>Is there a risk from the entity\'s IT environment that is pervasive?</p>', undefined, 'No', 'Cloud-based systems with adequate ITGC. No pervasive IT risk identified.'),
+          q('530-1d', '<p>Are there significant changes in the entity (new products, reorganization, new standards) that create pervasive risk?</p>', undefined, 'No', 'No significant changes to operations, structure, or applicable financial reporting standards.'),
+          la('530-1-risks', '<p><strong>Summary of pervasive risks:</strong></p>', '1. Management override risk (owner-managed, significant risk — refer to fraud risk assessment WP 506)\n2. Judgment-intensive estimates (AR allowance, vessel lives) — moderate, addressed by substantive procedures'),
+        ]
+      },
+      {
+        id: 'ra530-s2', title: '2. Entity-Level Controls Assessment', isExpanded: true,
+        questions: [
+          q('530-2a', '<p>Does management perform budget-to-actual comparisons and investigate variances?</p>', undefined, 'Yes', 'Monthly management accounts prepared. CFO reviews variance report. Board reviews quarterly.'),
+          q('530-2b', '<p>Are financial statements reviewed by a level of management above the preparer?</p>', undefined, 'Yes', 'CFO prepares; owner/CEO reviews. External accountant performs year-end procedures.'),
+          q('530-2c', '<p>Are there controls over journal entries (authorization, review, numbering)?</p>', undefined, 'Yes', 'All JEs reviewed by CFO before posting. QBO audit log reviewed monthly.'),
+          q('530-2d', '<p>Does the entity have a whistleblower policy or mechanism for reporting concerns?</p>', undefined, 'No', 'No formal whistleblower policy. Size of entity (15 employees) makes formal policy less critical.'),
+        ]
+      },
+      {
+        id: 'ra530-s3', title: '3. Audit Response to Pervasive Risks', isExpanded: true,
+        questions: [
+          la('530-3-response', '<p><strong>Planned overall audit response to pervasive risks:</strong></p>', 'Due to management override risk: (1) Examine journal entries and other adjustments — particular focus on late entries and unusual entries. (2) Review accounting estimates for bias. (3) Evaluate business rationale of significant unusual transactions. Unpredictability element introduced in sample selection.'),
+        ]
+      },
+    ],
+    createdAt: new Date(), updatedAt: new Date(),
+  };
+};
+
+export const generate535InfoSystemChecklist = (): Checklist => {
+  const q = (id: string, text: string, sub?: Question[], answer = '', explanation = '', reference = ''): Question => ({
+    id, text, answerType: 'yes-no-na' as const, options: ['Yes', 'No', 'NA'],
+    required: false, answer, explanation, reference, ...(sub ? { subQuestions: sub } : {})
+  });
+  const la = (id: string, text: string, answer = ''): Question => ({
+    id, text, answerType: 'long-answer' as const, options: [], required: false, answer
+  });
+  return {
+    id: 'default-audit-ra-535',
+    title: 'Understanding the Information System and Communication',
+    description: 'Document understanding of the information system and communication relevant to financial reporting (CAS 315).',
+    objective: 'Understand the information system, including related business processes, relevant to financial reporting, including the methods used to initiate, record, process, correct, transfer, and report transactions.',
+    sections: [
+      {
+        id: 'ra535-s1', title: '1. Classes of Transactions and Accounting Records', isExpanded: true,
+        questions: [
+          q('535-1a', '<p>Does the auditor understand the classes of transactions in the entity\'s operations that are significant to the financial statements?</p>', undefined, 'Yes', 'Revenue (freight billings), direct costs (fuel, port charges), payroll, capital expenditures, financing.'),
+          q('535-1b', '<p>Has the auditor documented how transactions are initiated, authorized, recorded, processed, and reported?</p>', undefined, 'Yes', 'Transaction flow documented for revenue and payroll cycles. See flowcharts in Appendix.'),
+          la('535-1-systems', '<p><strong>Key transaction systems and accounting records:</strong></p>', 'TruckMate: freight billing, job costing, dispatch\nQBO: general ledger, AP, AR\nXero Payroll: payroll processing (integrated with QBO)\nBank: RBC online banking — direct feeds to QBO\nPaper: Customer contracts filed in shared drive'),
+        ]
+      },
+      {
+        id: 'ra535-s2', title: '2. Financial Reporting Process', isExpanded: true,
+        questions: [
+          q('535-2a', '<p>Does the auditor understand the financial reporting process, including how financial statement disclosures are prepared?</p>', undefined, 'Yes', 'CFO prepares monthly management accounts. Year-end working papers prepared by CFO with auditor assistance.'),
+          q('535-2b', '<p>Are there controls over the selection and application of accounting policies?</p>', undefined, 'Yes', 'ASPE policies documented in accounting manual. Reviewed and confirmed with management.'),
+          q('535-2c', '<p>Does the auditor understand how the entity captures and processes events outside the normal course of business?</p>', undefined, 'Yes', 'Management discusses significant unusual transactions with auditor during the year.'),
+        ]
+      },
+      {
+        id: 'ra535-s3', title: '3. Communication', isExpanded: true,
+        questions: [
+          q('535-3a', '<p>Has the entity communicated roles and responsibilities for internal control to employees?</p>', undefined, 'Yes', 'Job descriptions updated annually. Accounting responsibilities clearly defined between CFO, bookkeeper, and management.'),
+          q('535-3b', '<p>Does management communicate matters regarding financial reporting to TCWG (e.g., board of directors)?</p>', undefined, 'Yes', 'CFO presents quarterly financial reports to the board. Year-end financial statements presented to board prior to finalization.'),
+          la('535-3-notes', '<p><strong>Notes on communication and information flow:</strong></p>', 'Finance team of 3: CFO (L. Park), AR/AP clerk, and payroll administrator. Weekly finance meetings. Monthly board package distributed. No formal audit committee.'),
+        ]
+      },
+    ],
+    createdAt: new Date(), updatedAt: new Date(),
+  };
+};
+
+export const generate550ControlActivitiesChecklist = (): Checklist => {
+  const q = (id: string, text: string, sub?: Question[], answer = '', explanation = '', reference = ''): Question => ({
+    id, text, answerType: 'yes-no-na' as const, options: ['Yes', 'No', 'NA'],
+    required: false, answer, explanation, reference, ...(sub ? { subQuestions: sub } : {})
+  });
+  const la = (id: string, text: string, answer = ''): Question => ({
+    id, text, answerType: 'long-answer' as const, options: [], required: false, answer
+  });
+  return {
+    id: 'default-audit-ra-550',
+    title: 'Control Activities — Design, Implementation and Control Risk',
+    description: 'Evaluate the design and implementation of controls relevant to significant risks and assess control risk (CAS 315).',
+    objective: 'Evaluate the design and determine the implementation of controls that are relevant to the audit, and assess the risk of material misstatement at the assertion level.',
+    sections: [
+      {
+        id: 'ra550-s1', title: '1. Revenue and Accounts Receivable Controls', isExpanded: true,
+        questions: [
+          q('550-1a', '<p>Are freight invoices independently generated from the TruckMate job completion records, and reviewed before sending?</p>', undefined, 'Yes', 'Invoices auto-generated from TruckMate upon job closure. CFO reviews weekly billing report.'),
+          q('550-1b', '<p>Are there controls over credit approval for new customers?</p>', undefined, 'Yes', 'CFO approves credit limits >$10K. D&B credit reports obtained for new customers.'),
+          q('550-1c', '<p>Is the bank reconciliation performed by a person independent of cash receipts?</p>', undefined, 'Yes', 'CFO performs bank rec. AR clerk posts receipts. Adequate segregation.'),
+          q('550-1d', '<p>Are AR aging reports reviewed by management and is follow-up on overdue accounts performed?</p>', undefined, 'Yes', 'Monthly AR aging reviewed by CFO. Formal collection letters sent at 60+ days.'),
+        ]
+      },
+      {
+        id: 'ra550-s2', title: '2. Expenditure and Accounts Payable Controls', isExpanded: true,
+        questions: [
+          q('550-2a', '<p>Is there a formal purchase authorization process (purchase orders, approval thresholds)?</p>', undefined, 'Yes', 'POs required for amounts >$5K. CEO approves >$25K. No single-cheque signing >$10K without dual signatures.'),
+          q('550-2b', '<p>Is the AP function independent of the cheque signing function?</p>', undefined, 'Yes', 'AP clerk codes invoices; CEO/CFO co-sign cheques.'),
+          q('550-2c', '<p>Are vendor statements reconciled to the AP sub-ledger periodically?</p>', undefined, 'Yes', 'Quarterly vendor statement reconciliations for top 10 vendors.'),
+        ]
+      },
+      {
+        id: 'ra550-s3', title: '3. Payroll Controls', isExpanded: true,
+        questions: [
+          q('550-3a', '<p>Is the preparation and authorization of payroll performed by different individuals?</p>', undefined, 'Yes', 'Payroll administrator prepares; CFO authorizes each payroll run.'),
+          q('550-3b', '<p>Are changes to the payroll master file (new hires, terminations, rate changes) authorized by HR/management?</p>', undefined, 'Yes', 'HR manager approves all changes. CFO reviews payroll register for changes prior to payment.'),
+          q('550-3c', '<p>Are payroll bank accounts reconciled to payroll records?</p>', undefined, 'Yes', 'Monthly reconciliation of payroll clearing account.'),
+        ]
+      },
+      {
+        id: 'ra550-s4', title: '4. Control Risk Assessment', isExpanded: true,
+        questions: [
+          la('550-4-assessment', '<p><strong>Overall control risk assessment and reliance decision:</strong></p>', 'Control risk assessed as MODERATE. Adequate controls exist for revenue, AR, AP, and payroll cycles. However, given owner-managed structure and small finance team, we will NOT rely on controls and will apply substantive procedures for all significant accounts. Exception: bank reconciliation controls — will test for efficiency.'),
+        ]
+      },
+    ],
+    createdAt: new Date(), updatedAt: new Date(),
+  };
+};
+
+export const generate551ITGCChecklist = (): Checklist => {
+  const q = (id: string, text: string, sub?: Question[], answer = '', explanation = '', reference = ''): Question => ({
+    id, text, answerType: 'yes-no-na' as const, options: ['Yes', 'No', 'NA'],
+    required: false, answer, explanation, reference, ...(sub ? { subQuestions: sub } : {})
+  });
+  const la = (id: string, text: string, answer = ''): Question => ({
+    id, text, answerType: 'long-answer' as const, options: [], required: false, answer
+  });
+  return {
+    id: 'default-audit-ra-551',
+    title: 'General IT Controls — Design and Implementation',
+    description: 'Evaluate the design and implementation of IT General Controls (ITGCs) relevant to the audit.',
+    objective: 'Assess whether IT general controls (access controls, change management, IT operations) are designed effectively and have been implemented, and consider their impact on the reliability of application controls.',
+    sections: [
+      {
+        id: 'ra551-s1', title: '1. Access to Programs and Data', isExpanded: true,
+        questions: [
+          q('551-1a', '<p>Are access rights to financial systems appropriately restricted based on job function?</p>', undefined, 'Yes', 'QBO: Admin (owner, CFO), Read-only (board). TruckMate: Role-based by department. Reviewed access list — no excessive access identified.'),
+          q('551-1b', '<p>Are user accounts reviewed and updated when employees join, change roles, or leave?</p>', undefined, 'Yes', 'CFO manages user provisioning. Termination checklist includes system access removal. Last review: February 2024.'),
+          q('551-1c', '<p>Is multi-factor authentication (MFA) enforced for all financial systems?</p>', undefined, 'Yes', 'MFA enabled via Microsoft Authenticator for all SaaS applications.'),
+          q('551-1d', '<p>Are there shared user accounts or generic logins in use?</p>', undefined, 'No', 'All users have individual logins. No shared accounts identified.'),
+        ]
+      },
+      {
+        id: 'ra551-s2', title: '2. Change Management', isExpanded: true,
+        questions: [
+          q('551-2a', '<p>For cloud/SaaS systems: does the entity monitor vendor-driven updates and assess their impact on financial controls?</p>', undefined, 'Yes', 'CFO reviews QBO release notes quarterly. No material changes to controls in FY2024.'),
+          q('551-2b', '<p>Are changes to system configurations (chart of accounts, tax codes, workflow rules) authorized and tested before implementation?</p>', undefined, 'Yes', 'CFO authorizes all configuration changes. Tested in sandbox environment before go-live.'),
+        ]
+      },
+      {
+        id: 'ra551-s3', title: '3. IT Operations and Backup/Recovery', isExpanded: true,
+        questions: [
+          q('551-3a', '<p>Are there adequate data backup procedures? Has recovery been tested?</p>', undefined, 'Yes', 'Cloud providers (QBO, TruckMate) maintain automated daily backups. Entity confirmed disaster recovery capability with vendors.'),
+          q('551-3b', '<p>Are there monitoring controls to detect system failures or processing errors?</p>', undefined, 'Yes', 'QBO error logs monitored by CFO. TruckMate auto-alerts on interface failures.'),
+          la('551-3-conclusion', '<p><strong>ITGC assessment conclusion:</strong></p>', 'ITGCs are assessed as EFFECTIVE for the SaaS environment. Access controls are adequate, change management is appropriate for a cloud environment, and backup/recovery is vendor-managed. Impact: Application controls within QBO and TruckMate can be relied upon as designed. However, due to entity size, we will still apply substantive procedures for all significant balances.'),
+        ]
+      },
+    ],
+    createdAt: new Date(), updatedAt: new Date(),
+  };
+};
+
+export const generate580SignificantDeficienciesChecklist = (): Checklist => {
+  const q = (id: string, text: string, sub?: Question[], answer = '', explanation = '', reference = ''): Question => ({
+    id, text, answerType: 'yes-no-na' as const, options: ['Yes', 'No', 'NA'],
+    required: false, answer, explanation, reference, ...(sub ? { subQuestions: sub } : {})
+  });
+  const la = (id: string, text: string, answer = ''): Question => ({
+    id, text, answerType: 'long-answer' as const, options: [], required: false, answer
+  });
+  return {
+    id: 'default-audit-ra-580',
+    title: 'Communication of Significant Deficiencies in Internal Control',
+    description: 'Document deficiencies in internal control identified during the audit and communications to management and TCWG (CAS 265).',
+    objective: 'Communicate significant deficiencies in internal control identified during the audit to those charged with governance and management, on a timely basis.',
+    sections: [
+      {
+        id: 'ra580-s1', title: '1. Deficiencies Identified', isExpanded: true,
+        questions: [
+          q('580-1a', '<p>Have all deficiencies in internal control identified during the audit been evaluated to determine whether, individually or in combination, they constitute significant deficiencies?</p>', undefined, 'Yes', 'All deficiencies documented in WP 575 and evaluated per CAS 265 criteria.'),
+          la('580-1-deficiencies', '<p><strong>Summary of significant deficiencies identified:</strong></p>', 'No significant deficiencies identified in the current year audit of Shipping Line Inc. The following control observations (not significant deficiencies) were noted:\n1. No formal whistleblower policy — recommend consideration given revenue growth\n2. Vendor statement reconciliations only for top 10 vendors — recommend expanding coverage\n3. Absence of a formal documented IT policy manual — recommend formalizing existing practices'),
+          q('580-1b', '<p>Have material weaknesses been identified (i.e., deficiencies that could result in a material misstatement that is not prevented or detected on a timely basis)?</p>', undefined, 'No', 'No material weaknesses identified.'),
+        ]
+      },
+      {
+        id: 'ra580-s2', title: '2. Communication Requirements', isExpanded: true,
+        questions: [
+          q('580-2a', '<p>Have significant deficiencies been communicated in writing to TCWG on a timely basis?</p>', undefined, 'NA', 'No significant deficiencies to communicate. Control observations communicated verbally to management and noted in management letter.'),
+          q('580-2b', '<p>Have deficiencies (other than significant deficiencies) that are of sufficient importance to merit management\'s attention been communicated?</p>', undefined, 'Yes', '3 control observations communicated to management in draft management letter.'),
+          q('580-2c', '<p>Has the auditor communicated prior year deficiencies that remain uncorrected?</p>', undefined, 'NA', 'Prior year engagement — first year audit, no prior year deficiencies on file.'),
+          la('580-2-communication', '<p><strong>Communication details:</strong></p>', 'Management letter draft prepared — dated April 25, 2024. Communicated to CFO (L. Park) and CEO (J. Chen). Three control observations noted. Management response received May 1, 2024. Final management letter issued May 8, 2024.'),
+        ]
+      },
+      {
+        id: 'ra580-s3', title: '3. Documentation', isExpanded: true,
+        questions: [
+          q('580-3a', '<p>Is the written communication of significant deficiencies included in the working paper file?</p>', undefined, 'NA', 'No significant deficiencies — management letter filed. See WP: ML-01.'),
+          q('580-3b', '<p>Has management\'s response to the communication been documented?</p>', undefined, 'Yes', 'Management response letter filed. WP ref: ML-02.'),
+        ]
+      },
+    ],
+    createdAt: new Date(), updatedAt: new Date(),
+  };
+};
