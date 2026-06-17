@@ -1723,9 +1723,9 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
                     children: [
                       { id: "aud-ra-oi", code: "OI", label: "Observation & Inspection Procedures", icon: "worksheet", route: "checklist/aud-ra-oi" },
                       { id: "aud-ra-pap501", code: "PAP", label: "Preliminary Analytical Procedures", icon: "worksheet", route: "checklist/aud-ra-pap501" },
-                      { id: "aud-ra-505", code: "505", label: "Inquiries of Management and Others", icon: "worksheet", route: "checklist/aud-ra-505" },
-                      { id: "aud-ra-507", code: "507", label: "Minutes of Governance Meetings", icon: "worksheet", route: "checklist/aud-ra-507" },
-                      { id: "aud-ra-506", code: "506", label: "Identifying Fraud Risks", icon: "worksheet", route: "checklist/aud-ra-506" },
+                      { id: "aud-ra-505", code: "IQM", label: "Inquiries of Management and Others", icon: "worksheet", route: "checklist/aud-ra-505" },
+                      { id: "aud-ra-507", code: "MGM", label: "Minutes of Governance Meetings", icon: "worksheet", route: "checklist/aud-ra-507" },
+                      { id: "aud-ra-506", code: "IFR", label: "Identifying Fraud Risks", icon: "worksheet", route: "checklist/aud-ra-506" },
                       { id: "aud-ra-510", code: "IRE", label: "Identifying Risks through Understanding the Entity", icon: "checklist", route: "checklist/aud-ra-510" },
                       { id: "aud-ra-511", code: "ITE", label: "Understanding the IT Environment", icon: "checklist", route: "checklist/aud-ra-511" },
                       { id: "aud-ra-513", code: "UAE", label: "Understanding Accounting Estimates and Related Disclosures", icon: "checklist", route: "checklist/aud-ra-513" },
