@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import userAvatar from "@/assets/user-avatar.png";
-import { Bell, User, Sparkles, Moon, Sun, Zap, UserCircle, Building2, Settings, CreditCard, Monitor, Gift, LogOut, Check, Trash2, Search, MoreVertical, Type } from "lucide-react";
+import { Bell, User, Sparkles, Moon, Sun, Zap, UserCircle, Building2, Settings, CreditCard, Monitor, Gift, LogOut, Check, Trash2, Search, MoreVertical, Type, ChevronDown } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
@@ -233,11 +233,16 @@ export function GlobalHeader({ title, headerContent }: { title?: string; headerC
           {/* User Profile Dropdown */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <div 
-                className="flex items-center justify-center w-9 h-9 rounded-xl cursor-pointer hover:bg-white/10 transition-colors"
-                style={{ borderRadius: '12px' }}
-              >
-                <img src={userAvatar} alt="User" className="w-7 h-7 rounded-full object-cover" />
+              <div className="flex items-center gap-2 pl-2 pr-2.5 py-1 rounded-xl cursor-pointer hover:bg-white/15 transition-all duration-200 border border-white/15 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/40">
+                {/* Avatar + online status dot */}
+                <div className="relative flex-shrink-0">
+                  <img src={userAvatar} alt="PD" className="w-7 h-7 rounded-full object-cover" />
+                  <span className="absolute bottom-0 right-0 w-2 h-2 rounded-full bg-emerald-400 border border-[#0C2D55]" />
+                </div>
+                {/* Initials */}
+                <span className="text-white/90 text-xs font-semibold tracking-wide leading-none">PD</span>
+                {/* Caret */}
+                <ChevronDown className="h-3 w-3 text-white/50 flex-shrink-0 -ml-0.5" />
               </div>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-56">
