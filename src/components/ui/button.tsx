@@ -4,7 +4,7 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/utils";
 
 const buttonVariants = cva(
-  "inline-flex items-center justify-center gap-2 whitespace-nowrap text-[0.9375rem] font-semibold leading-[1.3] ring-offset-background transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-[18px] [&_svg]:shrink-0 cursor-pointer select-none rounded-[10px]",
+  "inline-flex items-center justify-center gap-2 whitespace-nowrap text-[0.9375rem] font-semibold leading-[1.3] transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-0 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-[18px] [&_svg]:shrink-0 cursor-pointer select-none rounded-[10px]",
   {
     variants: {
       variant: {
@@ -12,7 +12,7 @@ const buttonVariants = cva(
           "bg-[#0C2D55] text-white border border-transparent",
           "hover:bg-[#244266]",
           "active:bg-[#081F3B]",
-          "focus-visible:bg-[#0C2D55] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A3A3A3]/50 focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+          "focus-visible:bg-[#0C2D55] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A3A3A3]/50 focus-visible:ring-offset-0",
           "dark:bg-primary dark:text-primary-foreground",
           "dark:hover:bg-primary/85",
           "dark:active:bg-primary/75",
