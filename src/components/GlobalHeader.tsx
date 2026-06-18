@@ -233,16 +233,14 @@ export function GlobalHeader({ title, headerContent }: { title?: string; headerC
           {/* User Profile Dropdown */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <div className="flex items-center gap-2 pl-2 pr-2.5 py-1 rounded-xl cursor-pointer hover:bg-white/15 transition-all duration-200 border border-white/15 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/40">
+              <div className="flex items-center gap-1.5 pl-1.5 pr-2 py-1 cursor-pointer hover:bg-white/15 transition-all duration-200 border border-white/15 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/40" style={{ borderRadius: '12px' }}>
                 {/* Avatar + online status dot */}
                 <div className="relative flex-shrink-0">
-                  <img src={userAvatar} alt="PD" className="w-7 h-7 rounded-full object-cover" />
+                  <img src={userAvatar} alt="User" className="w-7 h-7 rounded-full object-cover" />
                   <span className="absolute bottom-0 right-0 w-2 h-2 rounded-full bg-emerald-400 border border-[#0C2D55]" />
                 </div>
-                {/* Initials */}
-                <span className="text-white/90 text-xs font-semibold tracking-wide leading-none">PD</span>
                 {/* Caret */}
-                <ChevronDown className="h-3 w-3 text-white/50 flex-shrink-0 -ml-0.5" />
+                <ChevronDown className="h-3.5 w-3.5 text-white/70 flex-shrink-0" strokeWidth={3} />
               </div>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-56">
