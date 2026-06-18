@@ -1,8 +1,9 @@
 import { useMemo } from "react";
-import { ArrowLeftRight, Zap } from "lucide-react";
+import { ArrowLeftRight, Zap, CheckCircle2, AlertTriangle } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useEngagements } from "@/store/EngagementsContext";
 import { getEngagementMeta } from "@/store/engagementsStore";
+import { Button } from "@/components/ui/button";
 
 const CHECKLIST_LABELS: Record<string, string> = {
   "aud-mat": "Materiality",
@@ -60,9 +61,14 @@ interface LukaAutoFillBannerProps {
   engagementId: string;
   checklistName?: string;
   onRunAutoFill: (config: AutoFillConfig) => void;
+  fillStatus?: 'idle' | 'completed' | 'prerequisite-missing';
+  filledCount?: number;
+  totalCount?: number;
+  prerequisiteLabel?: string;
+  onNavigateToPrerequisite?: () => void;
 }
 
-export function LukaAutoFillBanner({ checklistKey, engagementId, checklistName, onRunAutoFill }: LukaAutoFillBannerProps) {
+export function LukaAutoFillBanner({ checklistKey, engagementId, checklistName, onRunAutoFill, fillStatus = 'idle', filledCount, totalCount, prerequisiteLabel, onNavigateToPrerequisite }: LukaAutoFillBannerProps) {
   const { engagements } = useEngagements();
   const engagement = engagements.find(e => e.id === engagementId);
   const meta = useMemo(() => getEngagementMeta(engagementId), [engagementId]);
@@ -91,6 +97,56 @@ export function LukaAutoFillBanner({ checklistKey, engagementId, checklistName, 
       "Populate field-by-field with citations. Flag any items requiring professional judgment.",
     ].filter(Boolean).join(" ");
   };
+
+  if (fillStatus === 'completed') {
+    const skipped = (totalCount ?? 0) - (filledCount ?? 0);
+    return (
+      <div className="mx-4 mt-4 rounded-lg border border-border bg-card px-4 py-3 border-l-4 border-l-green-500">
+        <div className="flex items-center justify-between gap-3">
+          <div className="flex items-center gap-2 min-w-0">
+            <CheckCircle2 className="h-4 w-4 text-green-600 shrink-0" />
+            <span className="text-sm font-medium text-foreground">
+              Luka filled {filledCount ?? 0} fields
+              {skipped > 0 && <span className="text-muted-foreground font-normal"> · {skipped} need review</span>}
+            </span>
+          </div>
+          <Button
+            variant="outline"
+            size="sm"
+            className="h-7 text-xs shrink-0"
+            onClick={() => onRunAutoFill({
+              query: buildQuery(),
+              label,
+              sources,
+              engagementLabel: [engagement?.client, engagementId].filter(Boolean).join(' · '),
+            })}
+          >
+            Re-run
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
+  if (fillStatus === 'prerequisite-missing') {
+    return (
+      <div className="mx-4 mt-4 rounded-lg border border-border bg-card px-4 py-3 border-l-4 border-l-amber-400">
+        <div className="flex items-center gap-2">
+          <AlertTriangle className="h-4 w-4 text-amber-500 shrink-0" />
+          <span className="text-sm text-muted-foreground">
+            Complete{' '}
+            <button
+              onClick={onNavigateToPrerequisite}
+              className="font-medium text-foreground underline underline-offset-2 hover:text-primary transition-colors"
+            >
+              {prerequisiteLabel ?? 'Materiality'}
+            </button>
+            {' '}first for best results →
+          </span>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="mx-4 mt-4 rounded-lg border border-border bg-card px-4 py-3">

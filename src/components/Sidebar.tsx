@@ -1277,6 +1277,27 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
   const [signoffChecks, setSignoffChecks] = useState<Record<string, { p1: boolean; p2: boolean }>>({});
   const allNodeIdsRef = useRef<string[]>([]);
   const [hasDarkSecondary, setHasDarkSecondary] = useState(false);
+  const [sectionFillStatus, setSectionFillStatus] = useState<Record<string, boolean>>({});
+
+  // Listen for Luka fill status changes in localStorage
+  useEffect(() => {
+    const readFillStatuses = () => {
+      const engId = location.pathname.split("/engagements/")[1]?.split("/")[0];
+      if (!engId) return;
+      const next: Record<string, boolean> = {};
+      ['CO', 'PL', 'RA', 'RP', 'SO'].forEach(code => {
+        next[code] = !!localStorage.getItem(`luka-fill-status-${engId}-${code}`);
+      });
+      setSectionFillStatus(next);
+    };
+    readFillStatuses();
+    window.addEventListener('storage', readFillStatuses);
+    window.addEventListener('luka-fill-status-updated', readFillStatuses);
+    return () => {
+      window.removeEventListener('storage', readFillStatuses);
+      window.removeEventListener('luka-fill-status-updated', readFillStatuses);
+    };
+  }, [location.pathname]);
 
   const toggleAllSignoffs = (pid: "p1" | "p2") => {
     const ids = allNodeIdsRef.current;
@@ -2057,6 +2078,9 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
                         )}
                         {node.code && <span className="font-semibold text-primary">{node.code}</span>}
                         <span className={cn("truncate flex-1 text-black dark:text-white", isLeaf ? "font-medium" : "font-semibold")}>{node.label}</span>
+                        {!isLeaf && sectionFillStatus[node.code ?? ''] && (
+                          <span className="w-2 h-2 rounded-full bg-green-500 flex-shrink-0 ml-auto" title="Luka filled" />
+                        )}
                         {node.hasPlus && <Plus className="h-4 w-4 text-muted-foreground hover:text-foreground flex-shrink-0" />}
                         {signoffsMode && (
                           <div className="flex items-center gap-2 ml-4 -mr-2 pl-3 flex-shrink-0 self-stretch" onClick={(e) => e.stopPropagation()}>

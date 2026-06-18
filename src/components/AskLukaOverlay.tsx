@@ -1,7 +1,7 @@
 import { useState, useRef, useCallback, useEffect } from "react";
 import { LukaAttachMenu, AttachedFilesBar, useAttachedFiles } from "@/components/luka/LukaAttachMenu";
 import { VoiceRecordingOverlay } from "@/components/luka/VoiceRecordingOverlay";
-import { X, Mic, Plus, Search, MessageSquare, Minus, Send, Inbox, Maximize2, ChevronLeft, ChevronRight, Clock, PanelLeftClose, MoreHorizontal, Zap, Building2, CheckCircle2 } from "lucide-react";
+import { X, Mic, Plus, Search, MessageSquare, Minus, Send, Inbox, Maximize2, ChevronLeft, ChevronRight, Clock, PanelLeftClose, MoreHorizontal, Zap, Building2, CheckCircle2, Loader2, Circle, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from "@/components/ui/tooltip";
@@ -25,6 +25,14 @@ export interface AllTemplateSummary {
   engagementLabel?: string;
 }
 
+export interface AutoFillProgressItem {
+  code: string;
+  label: string;
+  status: 'pending' | 'running' | 'done';
+  filledCount?: number;
+  totalCount?: number;
+}
+
 interface AskLukaOverlayProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
@@ -38,6 +46,10 @@ interface AskLukaOverlayProps {
   summaryMode?: boolean;
   fillSummary?: FillSummary;
   allTemplateSummary?: AllTemplateSummary;
+  autoFillProgress?: AutoFillProgressItem[];
+  nextChecklistLabel?: string;
+  onNavigateNext?: () => void;
+  onOpenEngagementSheet?: () => void;
 }
 
 const statusColors = ["bg-green-500", "bg-green-500", "bg-amber-500", "bg-green-500", "bg-green-500", "bg-green-500", "bg-purple-500", "bg-purple-500", "bg-amber-500", "bg-green-500", "bg-purple-500"];
@@ -85,7 +97,7 @@ const RELATED_TEMPLATES = [
   "Audit Planning Memo",
 ];
 
-export function AskLukaOverlay({ open, onOpenChange, initialQuery, autoFillMode, checklistLabel, engagementLabel, autoFillSources, onAutoFillConfirmed, onAutoFillAll, summaryMode, fillSummary, allTemplateSummary }: AskLukaOverlayProps) {
+export function AskLukaOverlay({ open, onOpenChange, initialQuery, autoFillMode, checklistLabel, engagementLabel, autoFillSources, onAutoFillConfirmed, onAutoFillAll, summaryMode, fillSummary, allTemplateSummary, autoFillProgress, nextChecklistLabel, onNavigateNext, onOpenEngagementSheet }: AskLukaOverlayProps) {
   const [message, setMessage] = useState("");
   const [analysisPhase, setAnalysisPhase] = useState<"idle" | "analyzing" | "ready">("idle");
 
@@ -596,12 +608,28 @@ export function AskLukaOverlay({ open, onOpenChange, initialQuery, autoFillMode,
                       </div>
                     </div>
 
-                    <button
-                      onClick={() => onOpenChange(false)}
-                      className="inline-flex items-center gap-2 h-10 px-5 rounded-[10px] text-sm font-semibold text-white bg-gradient-to-br from-[#8649F1] to-[#2355A4] hover:opacity-90 transition-opacity shadow-md"
-                    >
-                      Back to checklist
-                    </button>
+                    <div className="flex flex-col items-center gap-2.5 w-full max-w-[320px]">
+                      {allTemplateSummary.templates.some(t => (t.totalCount - t.filledCount) > 0) && (
+                        <button
+                          onClick={() => onOpenChange(false)}
+                          className="w-full inline-flex items-center justify-center gap-2 h-10 px-5 rounded-[10px] text-sm font-semibold text-white bg-gradient-to-br from-[#8649F1] to-[#2355A4] hover:opacity-90 transition-opacity shadow-md"
+                        >
+                          Review {allTemplateSummary.templates.reduce((s, t) => s + Math.max(0, t.totalCount - t.filledCount), 0)} flagged items
+                        </button>
+                      )}
+                      <button
+                        onClick={() => { onOpenChange(false); onOpenEngagementSheet?.(); }}
+                        className="w-full inline-flex items-center justify-center gap-2 h-10 px-5 rounded-[10px] text-sm font-semibold border border-primary/40 text-primary hover:bg-primary/5 transition-colors"
+                      >
+                        View engagement overview
+                      </button>
+                      <button
+                        onClick={() => onOpenChange(false)}
+                        className="text-xs text-muted-foreground hover:text-foreground transition-colors"
+                      >
+                        Back to checklist
+                      </button>
+                    </div>
                   </div>
                 ) : summaryMode && fillSummary ? (
                   /* Post auto-fill summary view */
@@ -651,17 +679,71 @@ export function AskLukaOverlay({ open, onOpenChange, initialQuery, autoFillMode,
                       </div>
                     )}
 
-                    <button
-                      onClick={() => onOpenChange(false)}
-                      className="inline-flex items-center gap-2 h-10 px-5 rounded-[10px] text-sm font-semibold text-white bg-gradient-to-br from-[#8649F1] to-[#2355A4] hover:opacity-90 transition-opacity shadow-md"
-                    >
-                      Back to checklist
-                    </button>
+                    <div className="flex flex-col items-center gap-2.5 w-full max-w-[320px]">
+                      <button
+                        onClick={() => onOpenChange(false)}
+                        className="w-full inline-flex items-center justify-center gap-2 h-10 px-5 rounded-[10px] text-sm font-semibold text-white bg-gradient-to-br from-[#8649F1] to-[#2355A4] hover:opacity-90 transition-opacity shadow-md"
+                      >
+                        Back to checklist
+                      </button>
+                      {nextChecklistLabel && onNavigateNext && (
+                        <button
+                          onClick={() => { onOpenChange(false); onNavigateNext(); }}
+                          className="w-full inline-flex items-center justify-center gap-2 h-10 px-5 rounded-[10px] text-sm font-semibold border border-primary/40 text-primary hover:bg-primary/5 transition-colors"
+                        >
+                          <span className="truncate">Next → {nextChecklistLabel}</span>
+                          <ArrowRight className="h-3.5 w-3.5 shrink-0" />
+                        </button>
+                      )}
+                    </div>
                   </div>
                 ) : autoFillMode ? (
                   /* Auto-fill analysis view */
                   <div className="flex-1 flex flex-col items-center justify-center px-8 min-h-[60vh]">
-                    {analysisPhase === "analyzing" ? (
+                    {autoFillProgress ? (
+                      /* Sequential section progress view (engagement-wide fill) */
+                      <div className="w-full max-w-[360px]">
+                        <div className="mb-6 flex items-center gap-3">
+                          <div className="relative flex items-center justify-center w-10 h-10 rounded-full bg-gradient-to-br from-[#8649F1] to-[#2355A4] shrink-0">
+                            <LukaIcon size={18} />
+                          </div>
+                          <div>
+                            <h2 className="text-base font-semibold text-foreground">Filling your engagement…</h2>
+                            <p className="text-xs text-muted-foreground">Luka is auto-filling each section</p>
+                          </div>
+                        </div>
+                        <div className="space-y-3">
+                          {autoFillProgress.map(item => (
+                            <div key={item.code} className="flex items-center gap-3">
+                              {item.status === 'done' ? (
+                                <CheckCircle2 className="h-4 w-4 text-green-500 shrink-0" />
+                              ) : item.status === 'running' ? (
+                                <Loader2 className="h-4 w-4 text-primary shrink-0 animate-spin" />
+                              ) : (
+                                <Circle className="h-4 w-4 text-muted-foreground/40 shrink-0" />
+                              )}
+                              <span className={cn(
+                                "text-[11px] font-bold px-1.5 py-0.5 rounded font-mono shrink-0",
+                                item.status === 'done' ? "bg-green-100 text-green-700 dark:bg-green-900/40 dark:text-green-300" :
+                                item.status === 'running' ? "bg-primary/10 text-primary" :
+                                "bg-muted text-muted-foreground"
+                              )}>{item.code}</span>
+                              <span className={cn(
+                                "text-sm flex-1",
+                                item.status === 'pending' ? "text-muted-foreground" : "text-foreground"
+                              )}>{item.label}</span>
+                              <span className="text-xs text-muted-foreground tabular-nums shrink-0">
+                                {item.status === 'done' && item.filledCount !== undefined
+                                  ? `${item.filledCount} / ${item.totalCount}`
+                                  : item.status === 'running'
+                                  ? 'filling…'
+                                  : '—'}
+                              </span>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    ) : analysisPhase === "analyzing" ? (
                       <>
                         <div className="mb-6 relative flex items-center justify-center w-20 h-20">
                           <div className="absolute -inset-4 luka-ambient-glow" />
