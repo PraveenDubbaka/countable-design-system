@@ -303,22 +303,10 @@ function SectionCard({ title, children }: { title: string; children: React.React
 
 // ── TABS ───────────────────────────────────────────────────────────────────────
 
-const TABS = [
-  { id: "A", label: "Nature of Business" },
-  { id: "B", label: "Ownership & Governance" },
-  { id: "C", label: "Laws & Regulations" },
-  { id: "D", label: "Accounting Policies" },
-  { id: "E", label: "Investments" },
-  { id: "F", label: "Financing" },
-  { id: "G", label: "Performance Review" },
-  { id: "Z", label: "Conclusion" },
-];
-
 // ── Main Component ─────────────────────────────────────────────────────────────
 
 export function Audit510Worksheet({ isUS = false }: { isUS?: boolean }) {
   const storageKey = `audit-510-data-${isUS ? "us" : "ca"}`;
-  const [tab, setTab] = useState("A");
 
   const [data, setData] = useState<Data510>(() => {
     const saved = readJsonFromLocalStorage<Data510 | null>(storageKey, null);
@@ -955,11 +943,6 @@ export function Audit510Worksheet({ isUS = false }: { isUS?: boolean }) {
     </div>
   );
 
-  const SECTION_CONTENT: Record<string, React.ReactNode> = {
-    A: SectionA, B: SectionB, C: SectionC, D: SectionD,
-    E: SectionE, F: SectionF, G: SectionG, Z: SectionZ,
-  };
-
   return (
     <div className="flex flex-col h-full">
       {/* Objective bar */}
@@ -971,38 +954,17 @@ export function Audit510Worksheet({ isUS = false }: { isUS?: boolean }) {
         </p>
       </div>
 
-      {/* Section tabs */}
-      <div className="shrink-0 border-b border-border bg-card px-6">
-        <div className="flex gap-0 overflow-x-auto">
-          {TABS.map(t => (
-            <button
-              key={t.id}
-              onClick={() => setTab(t.id)}
-              className={cn(
-                "relative flex items-center gap-1.5 px-3.5 py-3 text-xs font-medium whitespace-nowrap transition-colors border-b-2 -mb-px",
-                tab === t.id
-                  ? "text-primary border-primary"
-                  : "text-muted-foreground border-transparent hover:text-foreground hover:border-border",
-              )}
-            >
-              {t.id !== "Z" && (
-                <span className={cn(
-                  "inline-flex items-center justify-center w-4 h-4 rounded text-[9px] font-bold shrink-0",
-                  tab === t.id ? "bg-primary text-white" : "bg-muted text-muted-foreground",
-                )}>
-                  {t.id}
-                </span>
-              )}
-              {t.label}
-            </button>
-          ))}
-        </div>
-      </div>
-
-      {/* Content area */}
+      {/* Single scrollable page */}
       <div className="flex-1 overflow-y-auto bg-muted/30">
         <div className="p-6 space-y-5 max-w-6xl">
-          {SECTION_CONTENT[tab]}
+          {SectionA}
+          {SectionB}
+          {SectionC}
+          {SectionD}
+          {SectionE}
+          {SectionF}
+          {SectionG}
+          {SectionZ}
         </div>
       </div>
     </div>
