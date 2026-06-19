@@ -8,7 +8,7 @@ export default defineConfig(({ mode }) => ({
   base: "/",
   server: {
     host: "127.0.0.1",
-    port: 8080,
+    port: process.env.PORT ? parseInt(process.env.PORT) : undefined,
     hmr: {
       overlay: false,
     },

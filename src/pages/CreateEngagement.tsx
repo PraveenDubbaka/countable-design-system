@@ -495,10 +495,14 @@ export default function CreateEngagement() {
       setAdditionalDisclosuresSet(new Set());
     }
   }, [isAudit]);
-  const [industry, setIndustry] = useState("");
   const [accountingFramework, setAccountingFramework] = useState("");
-  const [entityClassification, setEntityClassification] = useState("");
   const [firstYearAudit, setFirstYearAudit] = useState(false);
+  const [firstYearOnPlatform, setFirstYearOnPlatform] = useState("");
+  const [isRollForward, setIsRollForward] = useState("");
+  const [priorEngagementType, setPriorEngagementType] = useState("");
+  const [firstYearTemplates, setFirstYearTemplates] = useState<Set<string>>(new Set());
+  const toggleFirstYearTemplate = (key: string) =>
+    setFirstYearTemplates(prev => { const n = new Set(prev); n.has(key) ? n.delete(key) : n.add(key); return n; });
   const [additionalDisclosuresSet, setAdditionalDisclosuresSet] = useState<Set<string>>(new Set());
   const toggleAdditionalDisclosure = (key: string) =>
     setAdditionalDisclosuresSet(prev => {
@@ -591,7 +595,7 @@ export default function CreateEngagement() {
     budget.trim() !== "" &&
     accountingStandards !== "" &&
     additionalDisclosures !== "" &&
-    (!isAudit || (industry !== "" && accountingFramework !== "" && entityClassification !== "")) &&
+    (!isAudit || accountingFramework !== "") &&
     currentYearStart.trim() !== "" &&
     currentYearEnd.trim() !== "" &&
     teamMembers.length > 0;
@@ -612,8 +616,11 @@ export default function CreateEngagement() {
     addEngagement(record);
     setEngagementMeta(engagementId, {
       firstYearAudit,
+      firstYearOnPlatform: firstYearAudit ? firstYearOnPlatform : undefined,
+      isRollForward: firstYearAudit ? isRollForward : undefined,
+      priorEngagementType: firstYearAudit ? priorEngagementType : undefined,
+      firstYearTemplates: firstYearAudit ? [...firstYearTemplates] : undefined,
       accountingFramework: isAudit ? accountingFramework : undefined,
-      industry: isAudit ? industry : undefined,
       accountingStandards,
       budget,
       periodStart: currentYearStart,
@@ -743,13 +750,6 @@ export default function CreateEngagement() {
               <SectionCard icon={<Settings2 className="h-5 w-5" />} title="Audit Configuration">
                 <div className="grid grid-cols-4 gap-5 items-start">
                   <LabeledSelect
-                    label="Industry"
-                    value={industry}
-                    onChange={setIndustry}
-                    options={INDUSTRIES.map(i => ({ value: i, label: i }))}
-                    required
-                  />
-                  <LabeledSelect
                     label="Accounting Framework"
                     value={accountingFramework}
                     onChange={setAccountingFramework}
@@ -757,29 +757,49 @@ export default function CreateEngagement() {
                     required
                   />
                   <LabeledSelect
-                    label="Entity Classification"
-                    value={entityClassification}
-                    onChange={setEntityClassification}
-                    options={ENTITY_CLASSIFICATIONS.map(ec => ({ value: ec, label: ec }))}
-                    required
+                    label="First-Year Audit?"
+                    value={firstYearAudit ? "yes" : "no"}
+                    onChange={v => { setFirstYearAudit(v === "yes"); if (v !== "yes") { setFirstYearOnPlatform(""); setIsRollForward(""); setPriorEngagementType(""); setFirstYearTemplates(new Set()); } }}
+                    options={[
+                      { value: "no", label: "No" },
+                      { value: "yes", label: "Yes" },
+                    ]}
                   />
-                  {/* First-year audit */}
-                  <div className="flex flex-col gap-1">
+                  {firstYearAudit && (
                     <LabeledSelect
-                      label="First-Year Audit?"
-                      value={firstYearAudit ? "yes" : "no"}
-                      onChange={v => setFirstYearAudit(v === "yes")}
+                      label="First audit on this platform?"
+                      value={firstYearOnPlatform}
+                      onChange={v => { setFirstYearOnPlatform(v); setIsRollForward(""); setPriorEngagementType(""); }}
                       options={[
-                        { value: "no", label: "No" },
-                        { value: "yes", label: "Yes" },
+                        { value: "yes", label: "Yes — no prior files" },
+                        { value: "no", label: "No — prior files exist" },
                       ]}
                     />
-                    {firstYearAudit && (
-                      <p className="text-xs text-amber-600 dark:text-amber-400 mt-1">
-                        Predecessor review required. Opening balances will be included.
-                      </p>
-                    )}
-                  </div>
+                  )}
+                  {firstYearAudit && firstYearOnPlatform !== "" && (
+                    <LabeledSelect
+                      label="Is this a roll-forward?"
+                      value={isRollForward}
+                      onChange={v => { setIsRollForward(v); setPriorEngagementType(""); }}
+                      options={[
+                        { value: "yes", label: "Yes — roll forward" },
+                        { value: "no", label: "No — new engagement" },
+                      ]}
+                    />
+                  )}
+                  {firstYearAudit && isRollForward !== "" && (
+                    <LabeledSelect
+                      label="Coming from?"
+                      value={priorEngagementType}
+                      onChange={setPriorEngagementType}
+                      options={[
+                        { value: "compilation", label: "Compilation" },
+                        { value: "review", label: "Review" },
+                        { value: "other-auditor", label: "Other auditor" },
+                        { value: "none", label: "New entity" },
+                      ]}
+                    />
+                  )}
                 </div>
               </SectionCard>
             )}

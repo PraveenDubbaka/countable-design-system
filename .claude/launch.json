@@ -5,7 +5,7 @@
       "name": "countable-design-system",
       "runtimeExecutable": "npm",
       "runtimeArgs": ["run", "dev"],
-      "port": 8080
+      "autoPort": true
     }
   ]
 }

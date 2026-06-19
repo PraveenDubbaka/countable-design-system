@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Sparkles, X, Plus, Trash2, Check } from "lucide-react";
+import { Sparkles, X, Plus, Trash2, Check, Info } from "lucide-react";
 import { toast } from "sonner";
 import { readJsonFromLocalStorage, writeJsonToLocalStorage } from "@/lib/safeJson";
 import { loadEngagements, getEngagementMeta } from "@/store/engagementsStore";
@@ -23,6 +23,9 @@ const TEAM_ROLES = [
   "Engagement Partner", "Manager", "Senior Auditor", "Staff Auditor / Assistant",
   "EQCR (Quality Reviewer)", "Tax Reviewer", "Subject Matter Expert (SME)", "Other",
 ];
+
+const TEAM_MEMBERS_CA = ["J. Patel, CPA", "A. Nguyen, CPA", "T. Brown", "D. Kim", "S. Lavoie, CPA"];
+const TEAM_MEMBERS_US = ["M. Thompson, CPA", "L. Garcia, CPA", "K. Patel", "J. Chen", "D. Anderson, CPA"];
 
 const S2_LABELS = [
   "Entity's reporting deadlines (if any).",
@@ -198,7 +201,7 @@ function WorksheetInner({ isUS }: { isUS: boolean }) {
   const [s6,     setS6]     = useState<RowState>(get("s6",     { ...seed.s6 }));
   const [subseq, setSubseq] = useState<RowState>(get("subseq", { ...seed.subseq }));
 
-  const [signOffs, setSignOffs] = useState<SignOff[]>(get("signOffs", seed.signOffs.map(s => ({ ...s }))));
+  const [conclusion, setConclusion] = useState(get("conclusion", ""));
 
   const [meetingImported, setMeetingImported] = useState(get("meetingImported", false));
   const [importStep,      setImportStep]      = useState(0);
@@ -211,7 +214,7 @@ function WorksheetInner({ isUS }: { isUS: boolean }) {
 
   // ── Persistence ────────────────────────────────────────────────────────────
   const firstRender = useRef(true);
-  const snap = { entity, period, s1, s2, s3, teamRows, s5, s6, subseq, signOffs, meetingImported, concluded, concludedBy, concludedOn };
+  const snap = { entity, period, s1, s2, s3, teamRows, s5, s6, subseq, conclusion, meetingImported, concluded, concludedBy, concludedOn };
   const snapRef = useRef(snap);
   snapRef.current = snap;
 
@@ -219,7 +222,7 @@ function WorksheetInner({ isUS }: { isUS: boolean }) {
     if (firstRender.current) { firstRender.current = false; return; }
     const t = setTimeout(() => writeJsonToLocalStorage(storageKey, snapRef.current), 450);
     return () => clearTimeout(t);
-  }, [entity, period, s1, s2, s3, teamRows, s5, s6, subseq, signOffs, meetingImported, concluded, concludedBy, concludedOn, storageKey]);
+  }, [entity, period, s1, s2, s3, teamRows, s5, s6, subseq, conclusion, meetingImported, concluded, concludedBy, concludedOn, storageKey]);
 
   // ── Row updaters ───────────────────────────────────────────────────────────
   function updRow(setter: React.Dispatch<React.SetStateAction<RowState[]>>, i: number, f: keyof RowState, v: string) {
@@ -237,22 +240,11 @@ function WorksheetInner({ isUS }: { isUS: boolean }) {
   function removeTeamRow(id: string) {
     setTeamRows(prev => prev.filter(r => r.id !== id));
   }
-  function updSignOff(id: string, f: keyof SignOff, v: string) {
-    setSignOffs(prev => prev.map(s => s.id === id ? { ...s, [f]: v } : s));
-  }
-  function addSignOff() {
-    setSignOffs(prev => [...prev, { id: uid(), name: "", role: "Reviewed by", initials: "", date: "" }]);
-  }
-  function removeSignOff(id: string) {
-    setSignOffs(prev => prev.filter(s => s.id !== id));
-  }
-
   // ── Conclude ───────────────────────────────────────────────────────────────
   function handleConclude() {
     const today = new Date().toLocaleDateString("en-CA");
-    const by = signOffs.find(s => s.role === "Prepared by")?.name || signOffs[0]?.name || "Auditor";
-    setConcluded(true); setConcludedBy(by); setConcludedOn(today);
-    writeJsonToLocalStorage(storageKey, { ...snapRef.current, concluded: true, concludedBy: by, concludedOn: today });
+    setConcluded(true); setConcludedBy("Auditor"); setConcludedOn(today);
+    writeJsonToLocalStorage(storageKey, { ...snapRef.current, concluded: true, concludedBy: "Auditor", concludedOn: today });
     toast.success("Overall Audit Strategy concluded.");
   }
 
@@ -274,7 +266,7 @@ function WorksheetInner({ isUS }: { isUS: boolean }) {
   function SectionHeader({ label }: { label: string }) {
     return (
       <tr className="bg-muted/60">
-        <td className="px-3 py-2.5 text-sm font-bold text-foreground" colSpan={5}>{label}</td>
+        <td className="px-3 py-2.5 text-sm font-bold text-foreground" colSpan={4}>{label}</td>
       </tr>
     );
   }
@@ -282,7 +274,7 @@ function WorksheetInner({ isUS }: { isUS: boolean }) {
   function SubNote({ text }: { text: string }) {
     return (
       <tr className="bg-muted/20">
-        <td className="px-3 py-1" /><td className="px-4 py-1.5 text-xs text-muted-foreground italic" colSpan={4}>{text}</td>
+        <td className="px-3 py-1" /><td className="px-4 py-1.5 text-xs text-muted-foreground italic" colSpan={3}>{text}</td>
       </tr>
     );
   }
@@ -303,12 +295,6 @@ function WorksheetInner({ isUS }: { isUS: boolean }) {
         <td className="px-3 py-2 align-top min-w-[280px]">
           <Textarea className="min-h-[56px] text-sm resize-none" value={row.response} onChange={e => onRow("response", e.target.value)} disabled={dis} />
           {extra && <div className="mt-1.5">{extra}</div>}
-        </td>
-        <td className="px-3 py-2 align-top w-32">
-          <div className="flex flex-col gap-1">
-            <Input className="h-6 text-xs" placeholder="Initials" value={row.initials} onChange={e => onRow("initials", e.target.value)} disabled={dis} />
-            <Input className="h-6 text-xs" type="date" value={row.date} onChange={e => onRow("date", e.target.value)} disabled={dis} />
-          </div>
         </td>
       </tr>
     );
@@ -400,6 +386,18 @@ function WorksheetInner({ isUS }: { isUS: boolean }) {
         </div>
       )}
 
+      {/* Objective bar */}
+      <div className="px-6 py-2.5 border-b border-border bg-primary/[0.03] flex items-start gap-2 shrink-0">
+        <Info className="h-3.5 w-3.5 text-primary mt-0.5 shrink-0" />
+        <span className="text-xs font-semibold text-primary whitespace-nowrap">Objective:</span>
+        <p className="text-xs text-muted-foreground flex-1 leading-relaxed">
+          To document the scope, timing and direction of the audit as a guide for the development of the audit plan.{" "}
+          <span className="text-foreground font-medium">Reference: {standardRef}</span>{" · "}
+          <span className="font-medium text-foreground">Legend:</span> EQCR = Engagement quality control review. TCWG = Those charged with governance.
+          {(autoFramework || engMeta?.budget) && <span className="ml-2 text-primary/70">• Auto-populated from engagement setup</span>}
+        </p>
+      </div>
+
       {/* Body */}
       <div className="flex-1 overflow-y-auto bg-muted/30">
         <div className="p-6">
@@ -415,29 +413,6 @@ function WorksheetInner({ isUS }: { isUS: boolean }) {
           {/* Main card */}
           <div className="bg-card text-card-foreground border border-border shadow-[0_2px_8px_hsl(213_40%_20%/0.06)] rounded-md overflow-hidden">
 
-            {/* Card header */}
-            <div className="px-6 py-4 border-b border-border bg-card">
-              <div className="grid grid-cols-2 gap-x-8 gap-y-3 mb-3">
-                <div className="flex items-center gap-3">
-                  <span className="text-xs font-semibold text-muted-foreground w-24 shrink-0">Entity:</span>
-                  <Input className="h-8 text-sm flex-1" value={entity} onChange={e => setEntity(e.target.value)} disabled={locked} />
-                </div>
-                <div className="flex items-center gap-3">
-                  <span className="text-xs font-semibold text-muted-foreground w-24 shrink-0">Period ended:</span>
-                  <Input className="h-8 text-sm flex-1" value={period} onChange={e => setPeriod(e.target.value)} disabled={locked} />
-                </div>
-                <div className="col-span-2 flex items-start gap-3">
-                  <span className="text-xs font-semibold text-muted-foreground w-24 shrink-0 pt-0.5">Objective:</span>
-                  <p className="text-xs text-muted-foreground leading-relaxed flex-1">To document the scope, timing and direction of the audit as a guide for the development of the audit plan.</p>
-                  <span className="text-xs text-muted-foreground whitespace-nowrap shrink-0">Reference: {standardRef}</span>
-                </div>
-              </div>
-              <div className="px-3 py-1.5 bg-muted/50 rounded text-xs text-muted-foreground">
-                <span className="font-semibold">Legend:</span> EQCR = Engagement quality control review. TCWG = Those charged with governance.
-                {(autoFramework || engMeta?.budget) && <span className="ml-3 text-primary/70">• Auto-populated from engagement setup</span>}
-              </div>
-            </div>
-
             {/* Main table */}
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
@@ -447,7 +422,6 @@ function WorksheetInner({ isUS }: { isUS: boolean }) {
                     <th className="px-4 py-2.5 text-left text-xs font-semibold text-foreground uppercase">Description</th>
                     <th className="w-20 px-3 py-2.5 text-center text-xs font-semibold text-foreground uppercase">W/P Ref.</th>
                     <th className="w-80 px-3 py-2.5 text-left text-xs font-semibold text-foreground uppercase">Responses and Comments</th>
-                    <th className="w-32 px-3 py-2.5 text-center text-xs font-semibold text-foreground uppercase">Initials / Date</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -508,25 +482,19 @@ function WorksheetInner({ isUS }: { isUS: boolean }) {
                         <Input className="h-7 text-xs w-16 text-center" value={row.wpRef} onChange={e => updTeam(row.id,"wpRef",e.target.value)} placeholder="—" disabled={locked} />
                       </td>
                       <td className="px-3 py-2 align-top">
-                        <div className="flex flex-col gap-1">
-                          <Input className="h-7 text-xs" placeholder="Name, credentials" value={row.name} onChange={e => updTeam(row.id,"name",e.target.value)} disabled={locked} />
-                          <div className="flex gap-1">
-                            <Input className="h-7 text-xs flex-1" placeholder="Experience / notes" value={row.experience} onChange={e => updTeam(row.id,"experience",e.target.value)} disabled={locked} />
-                            {!locked && <button onClick={() => removeTeamRow(row.id)} className="h-7 w-7 flex items-center justify-center text-muted-foreground hover:text-destructive transition-colors rounded shrink-0"><Trash2 className="h-3.5 w-3.5" /></button>}
-                          </div>
-                        </div>
-                      </td>
-                      <td className="px-3 py-2 align-top w-32">
-                        <div className="flex flex-col gap-1">
-                          <Input className="h-6 text-xs" placeholder="Initials" value={row.initials} onChange={e => updTeam(row.id,"initials",e.target.value)} disabled={locked} />
-                          <Input className="h-6 text-xs" type="date" value={row.date} onChange={e => updTeam(row.id,"date",e.target.value)} disabled={locked} />
+                        <div className="flex items-center gap-1">
+                          <Select value={row.name} onValueChange={v => updTeam(row.id,"name",v)} disabled={locked}>
+                            <SelectTrigger className="h-8 text-xs"><SelectValue placeholder="Select member" /></SelectTrigger>
+                            <SelectContent>{(isUS ? TEAM_MEMBERS_US : TEAM_MEMBERS_CA).map(n => <SelectItem key={n} value={n}>{n}</SelectItem>)}</SelectContent>
+                          </Select>
+                          {!locked && <button onClick={() => removeTeamRow(row.id)} className="h-7 w-7 flex items-center justify-center text-muted-foreground hover:text-destructive transition-colors rounded shrink-0"><Trash2 className="h-3.5 w-3.5" /></button>}
                         </div>
                       </td>
                     </tr>
                   ))}
                   {!locked && (
                     <tr>
-                      <td colSpan={5} className="px-4 py-2.5">
+                      <td colSpan={4} className="px-4 py-2.5">
                         <button onClick={addTeamRow} className="inline-flex items-center gap-1.5 text-xs text-primary hover:underline">
                           <Plus className="h-3.5 w-3.5" />Add team member
                         </button>
@@ -544,7 +512,7 @@ function WorksheetInner({ isUS }: { isUS: boolean }) {
 
                   {/* Subsequent Changes */}
                   <tr className="bg-muted">
-                    <td className="px-3 py-3 text-sm font-bold text-foreground uppercase tracking-wide" colSpan={5}>Subsequent Changes in Strategy</td>
+                    <td className="px-3 py-3 text-sm font-bold text-foreground uppercase tracking-wide" colSpan={4}>Subsequent Changes in Strategy</td>
                   </tr>
                   <DataRow
                     num="" description="Outline any significant changes made to the original audit strategy for this period as a result of performing further procedures or obtaining new information."
@@ -555,55 +523,26 @@ function WorksheetInner({ isUS }: { isUS: boolean }) {
               </table>
             </div>
 
-            {/* Card footer — sign-offs + conclude */}
-            <div className="px-6 py-5 border-t border-border bg-muted/20">
-
-              {/* Dynamic sign-offs */}
-              <div className="mb-5">
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Sign-offs</span>
-                  {!locked && <button onClick={addSignOff} className="inline-flex items-center gap-1 text-xs text-primary hover:underline"><Plus className="h-3 w-3" />Add reviewer</button>}
+            {/* Conclusion */}
+            <div className="px-6 py-5 border-t border-border space-y-3">
+              <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Conclusion</span>
+              {concluded && (
+                <div className="rounded-md bg-green-50 dark:bg-green-950/30 border border-green-200 dark:border-green-800 px-4 py-3 text-sm text-green-800 dark:text-green-300">
+                  Concluded on {concludedOn}
                 </div>
-                <div className="overflow-x-auto rounded-md border border-border">
-                  <table className="w-full text-sm">
-                    <thead>
-                      <tr className="bg-muted border-b border-border">
-                        <th className="text-left px-4 py-2 text-xs font-semibold text-foreground uppercase tracking-wider">Name</th>
-                        <th className="text-left px-4 py-2 text-xs font-semibold text-foreground uppercase tracking-wider w-36">Role</th>
-                        <th className="text-left px-4 py-2 text-xs font-semibold text-foreground uppercase tracking-wider w-20">Initials</th>
-                        <th className="text-left px-4 py-2 text-xs font-semibold text-foreground uppercase tracking-wider w-36">Date</th>
-                        {!locked && <th className="w-8 px-3 py-2" />}
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-border">
-                      {signOffs.map(s => (
-                        <tr key={s.id} className="hover:bg-muted/40 transition-colors">
-                          <td className="px-4 py-1.5"><Input className="h-7 text-xs" value={s.name} onChange={e => updSignOff(s.id,"name",e.target.value)} placeholder="Full name" disabled={locked} /></td>
-                          <td className="px-4 py-1.5">
-                            <Select value={s.role} onValueChange={v => updSignOff(s.id,"role",v)} disabled={locked}>
-                              <SelectTrigger className="h-7 text-xs"><SelectValue /></SelectTrigger>
-                              <SelectContent>{["Prepared by","Reviewed by","Approved by","EQCR","Partner","Manager"].map(r => <SelectItem key={r} value={r}>{r}</SelectItem>)}</SelectContent>
-                            </Select>
-                          </td>
-                          <td className="px-4 py-1.5"><Input className="h-7 text-xs" value={s.initials} onChange={e => updSignOff(s.id,"initials",e.target.value)} placeholder="JD" disabled={locked} /></td>
-                          <td className="px-4 py-1.5"><Input className="h-7 text-xs" type="date" value={s.date} onChange={e => updSignOff(s.id,"date",e.target.value)} disabled={locked} /></td>
-                          {!locked && <td className="px-3 py-1.5"><button onClick={() => removeSignOff(s.id)} className="text-muted-foreground hover:text-destructive transition-colors"><Trash2 className="h-3.5 w-3.5" /></button></td>}
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
+              )}
+              <Textarea
+                disabled={locked}
+                value={conclusion}
+                onChange={e => setConclusion(e.target.value)}
+                placeholder="Document your overall conclusion and assessment…"
+                className="min-h-[100px] text-sm resize-none bg-background"
+              />
+              <div className="flex justify-end">
+                <Button disabled={locked} onClick={handleConclude}>
+                  <Check className="h-4 w-4 mr-1.5" />Conclude Worksheet
+                </Button>
               </div>
-
-              {/* Conclude */}
-              <div className="flex items-center justify-between">
-                <span className="text-xs text-muted-foreground">Overall audit strategy — OAS</span>
-                {!locked
-                  ? <Button onClick={handleConclude}><Check className="h-4 w-4 mr-1.5" />Conclude Worksheet</Button>
-                  : <div className="inline-flex items-center gap-2 px-4 py-2 bg-green-50 dark:bg-green-950/20 border border-green-200 dark:border-green-800 rounded-md text-sm text-green-800 dark:text-green-400"><Check className="h-4 w-4" />Concluded by {concludedBy} on {concludedOn}</div>
-                }
-              </div>
-
             </div>
           </div>
         </div>
