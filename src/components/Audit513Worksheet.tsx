@@ -25,9 +25,6 @@ interface EstimateRow {
 }
 
 interface Data513 {
-  entity: string;
-  periodEnded: string;
-  performanceMateriality: string;
 
   // Part A
   partAPsc: string;
@@ -49,10 +46,6 @@ interface Data513 {
   evaluation: string;
 
   // Sign-off
-  preparedBy: string;
-  preparedDate: string;
-  reviewedBy: string;
-  reviewedDate: string;
   concluded: boolean;
   concludedOn: string;
 }
@@ -87,14 +80,12 @@ function buildDefaultEstimates(): EstimateRow[] {
 
 function buildDefault(): Data513 {
   return {
-    entity: "", periodEnded: "", performanceMateriality: "",
     partAPsc: "", partAWpRef: [], partAResponse: "",
     estimates: buildDefaultEstimates(),
     partBWpRef: [], partBPsc: "", partBDeficiencies: "",
     controlEnvironment: "", riskAssessmentProcess: "", specializedSkills: "",
     monitoringOutcomes: "", monitoringPolicies: "",
     evaluation: "",
-    preparedBy: "", preparedDate: "", reviewedBy: "", reviewedDate: "",
     concluded: false, concludedOn: "",
   };
 }
@@ -182,6 +173,11 @@ export function Audit513Worksheet({ isUS = false }: { isUS?: boolean }) {
 
   const locked = data.concluded;
 
+  const matKey = `audit-materiality-data-${isUS ? "us" : "ca"}`;
+  const pmFromMateriality: string | null =
+    readJsonFromLocalStorage<{ performanceMateriality?: string }>(matKey, null)
+      ?.performanceMateriality ?? null;
+
   function patch<K extends keyof Data513>(key: K, val: Data513[K]) {
     setData(d => ({ ...d, [key]: val }));
   }
@@ -236,23 +232,17 @@ export function Audit513Worksheet({ isUS = false }: { isUS?: boolean }) {
       <div className="flex-1 overflow-y-auto bg-muted/30">
         <div className="p-6 space-y-6 max-w-6xl">
 
-          {/* ── Header fields ──────────────────────────────────────────────── */}
-          <div className="grid grid-cols-3 gap-4">
-            <div className="bg-card border border-border rounded-md px-4 py-3 space-y-1">
-              <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Entity</p>
-              <Input disabled={locked} value={data.entity} onChange={e => patch("entity", e.target.value)}
-                placeholder="Entity name" className="h-8 text-sm border-0 shadow-none px-0 focus-visible:ring-0 bg-transparent font-medium" />
+          {/* ── Header — Performance Materiality (auto-populated) ──────────── */}
+          <div className="bg-card border border-border rounded-md px-4 py-3 flex items-center gap-3">
+            <div className="flex-1">
+              <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-0.5">Performance Materiality</p>
+              {pmFromMateriality ? (
+                <p className="text-sm font-semibold text-foreground">${pmFromMateriality}</p>
+              ) : (
+                <p className="text-sm text-muted-foreground italic">— Complete Form PL1 (Materiality) to auto-populate</p>
+              )}
             </div>
-            <div className="bg-card border border-border rounded-md px-4 py-3 space-y-1">
-              <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Period Ended</p>
-              <Input disabled={locked} value={data.periodEnded} onChange={e => patch("periodEnded", e.target.value)}
-                placeholder="YYYY-MM-DD" className="h-8 text-sm border-0 shadow-none px-0 focus-visible:ring-0 bg-transparent font-medium" />
-            </div>
-            <div className="bg-card border border-border rounded-md px-4 py-3 space-y-1">
-              <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Performance Materiality</p>
-              <Input disabled={locked} value={data.performanceMateriality} onChange={e => patch("performanceMateriality", e.target.value)}
-                placeholder="$" className="h-8 text-sm border-0 shadow-none px-0 focus-visible:ring-0 bg-transparent font-medium" />
-            </div>
+            <Badge variant="secondary" className="shrink-0 text-[10px]">From Form PL1</Badge>
           </div>
 
           {/* ── PART A ─────────────────────────────────────────────────────── */}
@@ -572,47 +562,24 @@ export function Audit513Worksheet({ isUS = false }: { isUS?: boolean }) {
           </SectionCard>
 
           {/* ── SIGN-OFF ───────────────────────────────────────────────────── */}
-          <SectionCard title="Sign-off">
-            <div className="px-6 py-5 space-y-5">
-              <div className="grid grid-cols-2 gap-6">
-                <div className="space-y-3">
-                  <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">Prepared by</p>
-                  <Input disabled={locked} value={data.preparedBy} onChange={e => patch("preparedBy", e.target.value)}
-                    placeholder="Name" className="h-8 text-sm bg-background" />
-                  <Input disabled={locked} value={data.preparedDate} onChange={e => patch("preparedDate", e.target.value)}
-                    placeholder="Date (YYYY-MM-DD)" className="h-8 text-sm bg-background" />
-                </div>
-                <div className="space-y-3">
-                  <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">Reviewed by</p>
-                  <Input disabled={locked} value={data.reviewedBy} onChange={e => patch("reviewedBy", e.target.value)}
-                    placeholder="Name" className="h-8 text-sm bg-background" />
-                  <Input disabled={locked} value={data.reviewedDate} onChange={e => patch("reviewedDate", e.target.value)}
-                    placeholder="Date (YYYY-MM-DD)" className="h-8 text-sm bg-background" />
-                </div>
-              </div>
-
-              {data.concluded && (
-                <div className="rounded-md bg-green-50 dark:bg-green-950/30 border border-green-200 dark:border-green-800 px-4 py-3 text-sm text-green-800 dark:text-green-300">
-                  Concluded on {data.concludedOn}
-                </div>
-              )}
-              <div className="flex justify-end">
-                <Button
-                  disabled={locked}
-                  onClick={() => {
-                    const now = new Date().toISOString().slice(0, 10);
-                    setData(d => {
-                      const next = { ...d, concluded: true, concludedOn: now };
-                      writeJsonToLocalStorage(storageKey, next);
-                      return next;
-                    });
-                  }}
-                >
-                  Conclude worksheet
-                </Button>
-              </div>
-            </div>
-          </SectionCard>
+          <div className="flex items-center justify-end gap-3">
+            {data.concluded && (
+              <span className="text-sm text-green-700 dark:text-green-400">Concluded on {data.concludedOn}</span>
+            )}
+            <Button
+              disabled={locked}
+              onClick={() => {
+                const now = new Date().toISOString().slice(0, 10);
+                setData(d => {
+                  const next = { ...d, concluded: true, concludedOn: now };
+                  writeJsonToLocalStorage(storageKey, next);
+                  return next;
+                });
+              }}
+            >
+              Conclude worksheet
+            </Button>
+          </div>
 
         </div>
       </div>
