@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
-import { ChevronLeft, ChevronRight, Send, Clock, MessageSquare, FolderOpen, Search, Plus, CalendarClock, ArrowLeft, Upload, X } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Send, Clock, MessageSquare, FolderOpen, StickyNote, Search, Plus, CalendarClock, ArrowLeft, Upload, X } from 'lucide-react';
+import { EngagementNotesPanel } from './EngagementNotesPanel';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -12,7 +13,7 @@ interface EngagementRightPanelProps {
   className?: string;
 }
 
-type PanelMode = 'folders' | 'doc-request';
+type PanelMode = 'folders' | 'doc-request' | 'notes';
 
 interface DocRequestContext {
   folder: string;
@@ -24,6 +25,7 @@ const menuItems = [
   { icon: Clock, label: 'Timeline', id: 'timeline' },
   { icon: MessageSquare, label: 'Messages', id: 'messages' },
   { icon: FolderOpen, label: 'Folders', id: 'folders' },
+  { icon: StickyNote, label: 'Notes', id: 'notes' },
 ];
 
 const ENGAGEMENT_FOLDERS = ['Client Onboarding', 'Planning', 'Risk Assessment', 'Procedures', 'Financial Statements', 'Completion & Signoffs'];
@@ -224,6 +226,7 @@ export function EngagementRightPanel({ className }: EngagementRightPanelProps) {
   const [portalTarget, setPortalTarget] = useState<HTMLElement | null>(null);
   const [mode, setMode] = useState<PanelMode>('folders');
   const [docRequestCtx, setDocRequestCtx] = useState<DocRequestContext>({ folder: '', subFolder: '' });
+  const [notesLinkedSection, setNotesLinkedSection] = useState<string | undefined>();
 
   useEffect(() => {
     const el = document.getElementById('right-panel-portal');
@@ -239,6 +242,18 @@ export function EngagementRightPanel({ className }: EngagementRightPanelProps) {
     };
     window.addEventListener('raise-doc-request', handler);
     return () => window.removeEventListener('raise-doc-request', handler);
+  }, []);
+
+  useEffect(() => {
+    const handler = (e: Event) => {
+      const { linkedSection } = (e as CustomEvent).detail ?? {};
+      setNotesLinkedSection(linkedSection ?? undefined);
+      setMode('notes');
+      setActiveItem('notes');
+      setIsExpanded(true);
+    };
+    window.addEventListener('open-notes-panel', handler);
+    return () => window.removeEventListener('open-notes-panel', handler);
   }, []);
 
   const panel = (
@@ -269,6 +284,8 @@ export function EngagementRightPanel({ className }: EngagementRightPanelProps) {
             )}
             onClick={() => {
               setActiveItem(item.id);
+              if (item.id === 'notes') setMode('notes');
+              else if (item.id === 'folders') setMode('folders');
               if (!isExpanded) setIsExpanded(true);
             }}
           >
@@ -289,7 +306,12 @@ export function EngagementRightPanel({ className }: EngagementRightPanelProps) {
             {mode === 'doc-request' ? (
               <DocRequestForm
                 context={docRequestCtx}
-                onBack={() => setMode('folders')}
+                onBack={() => { setMode('folders'); setActiveItem('folders'); }}
+              />
+            ) : mode === 'notes' ? (
+              <EngagementNotesPanel
+                linkedSection={notesLinkedSection}
+                onLinkedSectionClear={() => setNotesLinkedSection(undefined)}
               />
             ) : (
               <>

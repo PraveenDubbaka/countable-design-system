@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
-import { 
-  Minimize2, GripVertical, 
-  ArrowUpDown, 
+import {
+  Minimize2, GripVertical,
+  ArrowUpDown,
   Layers,
   Trash2,
   FolderPlus,
@@ -17,7 +17,8 @@ import {
   DollarSign,
   Menu,
   ToggleLeft,
-  Type
+  Type,
+  StickyNote
 } from 'lucide-react';
 import { SmartLayoutIcon } from './icons/SmartLayoutIcon';
 import { Checklist, CellBlockType } from '@/types/checklist';
@@ -389,6 +390,19 @@ export function FloatingActionBar({
             title="Reorder questions"
           >
             <ArrowUpDown className="h-4 w-4 text-muted-foreground group-hover:text-foreground group-hover:icon-reorder" />
+          </button>
+
+          {/* Notes */}
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              window.dispatchEvent(new CustomEvent('open-notes-panel', { detail: {} }));
+            }}
+            onMouseDown={(e) => e.stopPropagation()}
+            className="w-9 h-9 flex items-center justify-center rounded-lg hover:bg-muted transition-colors group"
+            title="Open notes"
+          >
+            <StickyNote className="h-4 w-4 text-muted-foreground group-hover:text-foreground" />
           </button>
 
           {/* Add Category - Hidden in preview mode */}

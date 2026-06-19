@@ -1623,6 +1623,9 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
                     id: "aud-us-tb", code: "TB", label: "Trial Balance & Adjusting Entries", icon: "folder", route: "trial-balance"
                   },
                   {
+                    id: "aud-us-notes", code: "NT", label: "Notes", icon: "doc", hasPlus: true
+                  },
+                  {
                     id: "aud-us-pr", code: "PR", label: "Procedures", icon: "folder",
                     children: [
                       {
@@ -1796,6 +1799,9 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
                     id: "aud-tb", code: "TB", label: "Trial Balance & Adjusting Entries", icon: "folder", route: "trial-balance"
                   },
                   {
+                    id: "aud-notes", code: "NT", label: "Notes", icon: "doc", hasPlus: true
+                  },
+                  {
                     id: "aud-pr", code: "PR", label: "Procedures", icon: "folder",
                     children: [
                       {
@@ -1907,6 +1913,9 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
                   },
                   {
                     id: "tb", code: "TB", label: "Trial Balance & Adj. Entries", icon: "folder", route: "trial-balance"
+                  },
+                  {
+                    id: "notes", code: "NT", label: "Notes", icon: "doc", hasPlus: true
                   },
                   {
                     id: "pr", code: "PR", label: "Procedures", icon: "folder",
@@ -2051,7 +2060,9 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
                         )}
                         style={{ paddingLeft: `${depth * 16 + 8}px` }}
                         onClick={() => {
-                          if (node.route) {
+                          if (node.code === 'NT') {
+                            window.dispatchEvent(new CustomEvent('open-notes-panel', { detail: {} }));
+                          } else if (node.route) {
                             if (engId) {
                               navigate(`/engagements/${engId}/${node.route}`);
                             }
@@ -2124,6 +2135,15 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
                               </DropdownMenuItem>
                               <DropdownMenuItem className="text-xs gap-2 cursor-pointer" onClick={e => e.stopPropagation()}>
                                 <MessageSquare className="h-3.5 w-3.5" /> Add comment
+                              </DropdownMenuItem>
+                              <DropdownMenuItem
+                                className="text-xs gap-2 cursor-pointer"
+                                onClick={e => {
+                                  e.stopPropagation();
+                                  window.dispatchEvent(new CustomEvent('open-notes-panel', { detail: { linkedSection: node.label } }));
+                                }}
+                              >
+                                <StickyNote className="h-3.5 w-3.5" /> Add note
                               </DropdownMenuItem>
                               <DropdownMenuSeparator />
                               {isLeaf ? (
