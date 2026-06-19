@@ -11,6 +11,12 @@ export interface NoteBlock {
   aiCommand?: string;
 }
 
+export interface NoteAuthor {
+  name: string;
+  initials: string;
+  color: string;
+}
+
 export interface Note {
   id: string;
   title: string;
@@ -18,6 +24,7 @@ export interface Note {
   createdAt: string;
   modifiedAt: string;
   linkedSection?: string;
+  createdBy: NoteAuthor;
 }
 
 const uid = () => Math.random().toString(36).slice(2, 9);
@@ -360,6 +367,12 @@ export function NoteEditor({ note, onChange }: NoteEditorProps) {
   );
 }
 
+const CURRENT_USER: NoteAuthor = {
+  name: 'Praveen D',
+  initials: 'PD',
+  color: '#155EEF',
+};
+
 export function createEmptyNote(linkedSection?: string): Note {
   return {
     id: uid(),
@@ -368,5 +381,6 @@ export function createEmptyNote(linkedSection?: string): Note {
     createdAt: new Date().toISOString(),
     modifiedAt: new Date().toISOString(),
     linkedSection,
+    createdBy: CURRENT_USER,
   };
 }

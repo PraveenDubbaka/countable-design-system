@@ -135,9 +135,20 @@ export function EngagementNotesPanel({ linkedSection, onLinkedSectionClear }: En
                     )}>
                       {note.title || 'Untitled'}
                     </p>
-                    <p className="text-[10px] text-muted-foreground mt-0.5">
-                      {note.linkedSection ? `${note.linkedSection} · ` : ''}{formatRelative(note.modifiedAt)}
-                    </p>
+                    <div className="flex items-center gap-1.5 mt-0.5">
+                      {note.createdBy && (
+                        <span
+                          className="inline-flex items-center justify-center w-4 h-4 rounded-full text-white shrink-0"
+                          style={{ backgroundColor: note.createdBy.color, fontSize: '8px', fontWeight: 700 }}
+                          title={note.createdBy.name}
+                        >
+                          {note.createdBy.initials}
+                        </span>
+                      )}
+                      <p className="text-[10px] text-muted-foreground truncate">
+                        {note.linkedSection ? `${note.linkedSection} · ` : ''}{formatRelative(note.modifiedAt)}
+                      </p>
+                    </div>
                   </div>
                   <button
                     onClick={e => deleteNote(note.id, e)}
@@ -160,9 +171,22 @@ export function EngagementNotesPanel({ linkedSection, onLinkedSectionClear }: En
                         onClick={e => e.stopPropagation()}
                         className="w-full bg-transparent text-xs font-semibold text-foreground outline-none placeholder:text-muted-foreground/50"
                       />
-                      {note.linkedSection && (
-                        <p className="text-[10px] text-muted-foreground mt-0.5">↗ {note.linkedSection}</p>
-                      )}
+                      <div className="flex items-center gap-1.5 mt-0.5 flex-wrap">
+                        {note.createdBy && (
+                          <div className="flex items-center gap-1">
+                            <span
+                              className="inline-flex items-center justify-center w-4 h-4 rounded-full text-white shrink-0"
+                              style={{ backgroundColor: note.createdBy.color, fontSize: '8px', fontWeight: 700 }}
+                            >
+                              {note.createdBy.initials}
+                            </span>
+                            <span className="text-[10px] text-muted-foreground">{note.createdBy.name}</span>
+                          </div>
+                        )}
+                        {note.linkedSection && (
+                          <span className="text-[10px] text-muted-foreground">· ↗ {note.linkedSection}</span>
+                        )}
+                      </div>
                     </div>
                     <NoteEditor note={note} onChange={updateNote} />
                   </div>
