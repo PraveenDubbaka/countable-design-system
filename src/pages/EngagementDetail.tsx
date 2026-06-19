@@ -37,7 +37,6 @@ import { Audit666Worksheet } from "@/components/Audit666Worksheet";
 import { Audit680Worksheet } from "@/components/Audit680Worksheet";
 import { ConnectorsModal, CONNECTORS_BY_ID } from "@/components/ConnectorsModal";
 import { LukaAutoFillBanner } from "@/components/LukaAutoFillBanner";
-import { LukaEngagementSheet } from "@/components/LukaEngagementSheet";
 import { AuditFSViewer, FSPageType } from "@/components/AuditFSViewer";
 import { AskLukaOverlay, AllTemplateSummary, AutoFillProgressItem } from "@/components/AskLukaOverlay";
 import { FloatingActionBar } from "@/components/FloatingActionBar";
@@ -734,7 +733,7 @@ export default function EngagementDetail() {
   const [clipboardResponses, setClipboardResponses] = useState<{ checklistTitle: string; responses: Record<string, { answer: string; explanation?: string }> } | null>(null);
   const [showClipboardPrompt, setShowClipboardPrompt] = useState(false);
   const [lukaOpen, setLukaOpen] = useState(false);
-  const [lukaSheetOpen, setLukaSheetOpen] = useState(false);
+  const [lukaEngagementOverviewMode, setLukaEngagementOverviewMode] = useState(false);
   const [lukaQuery, setLukaQuery] = useState("");
   const [lukaAutoFillConfig, setLukaAutoFillConfig] = useState<{ label: string; sources: string[]; engagementLabel: string } | null>(null);
   const [isAutoFilling, setIsAutoFilling] = useState(false);
@@ -751,6 +750,12 @@ export default function EngagementDetail() {
   } | null>(null);
   const [lukaAutoFillProgress, setLukaAutoFillProgress] = useState<AutoFillProgressItem[] | null>(null);
   const autoFillRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const [lukaFillStatusVersion, setLukaFillStatusVersion] = useState(0);
+  useEffect(() => {
+    const bump = () => setLukaFillStatusVersion(v => v + 1);
+    window.addEventListener('luka-fill-status-updated', bump);
+    return () => window.removeEventListener('luka-fill-status-updated', bump);
+  }, []);
 
   // Connectors modal
   const [connectorsOpen, setConnectorsOpen] = useState(false);
@@ -784,18 +789,24 @@ export default function EngagementDetail() {
   const clientEngagements = useMemo(() => getEngagementsForClient(clientName), [clientName]);
   const currentChecklistId = checklistKey ? NAV_KEY_TO_CHECKLIST_ID[checklistKey] : undefined;
 
-  // Compute banner fill status
-  const bannerFillStatus = useMemo((): 'idle' | 'completed' | 'prerequisite-missing' => {
-    if (!checklistKey || !engagementId) return 'idle';
-    if (lukaFillSummary) return 'completed';
+  // Compute banner fill status + counts
+  const { bannerFillStatus, bannerFilledCount, bannerTotalCount } = useMemo(() => {
+    void lukaFillStatusVersion; // reactive to fill status changes
+    if (!checklistKey || !engagementId) return { bannerFillStatus: 'idle' as const, bannerFilledCount: undefined, bannerTotalCount: undefined };
+    if (lukaFillSummary) return { bannerFillStatus: 'completed' as const, bannerFilledCount: lukaFillSummary.filledCount, bannerTotalCount: lukaFillSummary.totalCount };
     const info = currentChecklistId ? CHECKLIST_SIDEBAR_INFO[currentChecklistId] : undefined;
+    if (info?.section && localStorage.getItem(`luka-fill-status-${engagementId}-${info.section}`)) {
+      try {
+        const counts = JSON.parse(localStorage.getItem(`luka-fill-counts-${engagementId}-${info.section}`) ?? 'null');
+        return { bannerFillStatus: 'completed' as const, bannerFilledCount: counts?.filled as number | undefined, bannerTotalCount: counts?.total as number | undefined };
+      } catch { return { bannerFillStatus: 'completed' as const, bannerFilledCount: undefined, bannerTotalCount: undefined }; }
+    }
     if (info?.section === 'RA' || info?.section === 'RP') {
       const matKey = engagementId.startsWith('AUD-US-') ? 'audit-materiality-data-us' : 'audit-materiality-data-ca';
-      const matData = localStorage.getItem(matKey);
-      if (!matData) return 'prerequisite-missing';
+      if (!localStorage.getItem(matKey)) return { bannerFillStatus: 'prerequisite-missing' as const, bannerFilledCount: undefined, bannerTotalCount: undefined };
     }
-    return 'idle';
-  }, [checklistKey, engagementId, currentChecklistId, lukaFillSummary]);
+    return { bannerFillStatus: 'idle' as const, bannerFilledCount: undefined, bannerTotalCount: undefined };
+  }, [checklistKey, engagementId, currentChecklistId, lukaFillSummary, lukaFillStatusVersion]);
 
   // Compute next checklist label and navigate callback for post-fill smart nav
   const { nextChecklistLabel, nextChecklistKey } = useMemo(() => {
@@ -1030,7 +1041,11 @@ export default function EngagementDetail() {
     });
 
     if (allQ.length === 0) {
-      toast('Nothing to fill in this checklist', { duration: 2000 });
+      if (afterDone) {
+        afterDone({ filledCount: 0, totalCount: 0, skippedItems: [] });
+      } else {
+        toast('Nothing to fill in this checklist', { duration: 2000 });
+      }
       return;
     }
 
@@ -1125,7 +1140,8 @@ export default function EngagementDetail() {
   };
 
   const handleAutoFillAll = () => {
-    if (!checklist || isAutoFilling) return;
+    if (isAutoFilling) return;
+    setLukaEngagementOverviewMode(false);
     setLukaOpen(false);
 
     // Initialize section progress
@@ -1136,25 +1152,22 @@ export default function EngagementDetail() {
       { code: 'RP', label: 'Response to Risk', status: 'pending' },
       { code: 'SO', label: 'Completion & Signoffs', status: 'pending' },
     ];
-    // Determine which section the current checklist belongs to and mark it running
     const firstSidebarSection = (currentChecklistId ? CHECKLIST_SIDEBAR_INFO[currentChecklistId] : undefined)?.section;
     const initProgress = PROGRESS_SECTIONS.map(s => ({
       ...s,
       status: (s.code === firstSidebarSection ? 'running' : 'pending') as AutoFillProgressItem['status'],
     }));
     setLukaAutoFillProgress(initProgress);
-    // Open overlay immediately to show section progress
-    setLukaAutoFillConfig({ label: checklist.title, sources: ['Xero connection', 'Predecessor file'], engagementLabel: [engagement?.client, engagementId].filter(Boolean).join(' · ') });
+    setLukaAutoFillConfig({ label: checklist?.title ?? 'Engagement Fill', sources: ['Xero connection', 'Predecessor file'], engagementLabel: [engagement?.client, engagementId].filter(Boolean).join(' · ') });
     setLukaOpen(true);
 
     const firstSidebar = currentChecklistId ? CHECKLIST_SIDEBAR_INFO[currentChecklistId] : undefined;
-    const firstTitle = firstSidebar?.label ?? checklist.title;
+    const firstTitle = firstSidebar?.label ?? checklist?.title ?? '';
     const firstSection = firstSidebar?.section;
     const firstCode = firstSidebar?.code;
     const engLabel = [engagement?.client, engagementId].filter(Boolean).join(' · ');
 
     const allResults: Array<{ name: string; code?: string; filledCount: number; totalCount: number; section?: string }> = [];
-    // Aggregate sub-forms that share the same sidebar nav item (same section+code)
     const addResult = (name: string, code: string | undefined, filled: number, total: number, section: string | undefined) => {
       if (code) {
         const existing = allResults.find(r => r.section === section && r.code === code);
@@ -1183,8 +1196,15 @@ export default function EngagementDetail() {
     };
 
     const showAllSummary = (results: typeof allResults) => {
-      // Mark all sections as done and persist to localStorage
-      ['CO', 'PL', 'RA', 'RP', 'SO'].forEach(code => writeSectionFillStatus(code));
+      // Mark all sections as done, persist per-section counts to localStorage
+      const SECTION_CODES = ['CO', 'PL', 'RA', 'RP', 'SO'];
+      SECTION_CODES.forEach(code => {
+        writeSectionFillStatus(code);
+        const sectionResults = results.filter(r => r.section === code);
+        const filled = sectionResults.reduce((s, r) => s + r.filledCount, 0);
+        const total = sectionResults.reduce((s, r) => s + r.totalCount, 0);
+        if (engagementId) localStorage.setItem(`luka-fill-counts-${engagementId}-${code}`, JSON.stringify({ filled, total }));
+      });
       setLukaAutoFillProgress(prev => prev ? prev.map(s => ({ ...s, status: 'done' as const })) : prev);
       setLukaAllTemplateSummary({
         templates: results,
@@ -1206,25 +1226,26 @@ export default function EngagementDetail() {
       ? 'default-t2-'
       : null;
 
-    startAutoFill(checklist, (firstResult) => {
-      addResult(firstTitle, firstCode, firstResult.filledCount, firstResult.totalCount, firstSection);
-
+    const startRemainingFill = (excludeId: string | undefined, prevSection: string | undefined) => {
       const savedChecklists = readJsonFromLocalStorage<any[]>('savedChecklists', []);
       if (!Array.isArray(savedChecklists)) { showAllSummary(allResults); return; }
 
-      const checklistId = currentChecklistId ?? savedChecklists[0]?.id;
       const remaining = savedChecklists.filter((c: any) => {
         if (!c?.data?.sections) return false;
-        if (c?.id === checklistId) return false;
-        // Only fill templates relevant to this engagement type
+        if (excludeId && c?.id === excludeId) return false;
         if (engPrefix && !String(c?.id ?? '').startsWith(engPrefix)) return false;
         const firstQ = c.data.sections[0]?.questions?.[0];
         return !(firstQ?.answerType === 'none' && !c.data.objective);
-      }).slice(0, 12); // Cap at 12 so completion takes ~2s not 50s
+      }).slice(0, 12);
 
       if (remaining.length === 0) { showAllSummary(allResults); return; }
 
-      toast(`Luka filling ${remaining.length} more template${remaining.length !== 1 ? 's' : ''}…`, { duration: 3000 });
+      const firstRemainingSidebar = CHECKLIST_SIDEBAR_INFO[remaining[0]?.id];
+      if (firstRemainingSidebar?.section && firstRemainingSidebar.section !== prevSection) {
+        markSectionProgress(prevSection, 'done', firstRemainingSidebar.section);
+      }
+
+      toast(`Luka filling ${remaining.length} template${remaining.length !== 1 ? 's' : ''}…`, { duration: 3000 });
 
       let ridx = 0;
       const fillOneRemaining = () => {
@@ -1259,22 +1280,33 @@ export default function EngagementDetail() {
         const latest = readJsonFromLocalStorage<any[]>('savedChecklists', []);
         const rUpdated = latest.map((c: any) => c?.id === entry.id ? { ...c, data: rCurrent } : c);
         writeJsonToLocalStorage('savedChecklists', rUpdated);
-        // Do NOT dispatchChecklistSync here — that would update the current view's checklist state
 
         const rSidebar = CHECKLIST_SIDEBAR_INFO[entry.id];
         addResult(rSidebar?.label ?? cl.title, rSidebar?.code, rToFill.length, rAllQ.length, rSidebar?.section);
-        // Update section progress: if next entry has a different section, mark current done and next running
         if (ridx < remaining.length) {
           const nextSidebar = CHECKLIST_SIDEBAR_INFO[remaining[ridx]?.id];
           if (nextSidebar?.section !== rSidebar?.section) {
             markSectionProgress(rSidebar?.section, 'done', nextSidebar?.section);
           }
         }
-        setTimeout(fillOneRemaining, 180); // 180ms per template keeps total ~2s for 12 templates
+        setTimeout(fillOneRemaining, 180);
       };
 
       fillOneRemaining();
-    });
+    };
+
+    if (checklist) {
+      startAutoFill(checklist, (firstResult) => {
+        addResult(firstTitle, firstCode, firstResult.filledCount, firstResult.totalCount, firstSection);
+        const savedChecklists = readJsonFromLocalStorage<any[]>('savedChecklists', []);
+        const checklistId = currentChecklistId ?? (Array.isArray(savedChecklists) ? savedChecklists[0]?.id : undefined);
+        startRemainingFill(checklistId, firstSection);
+      });
+    } else {
+      // Custom worksheet page — no current checklist to fill first, go directly to remaining
+      toast('Luka is auto-filling your engagement…', { duration: 4000 });
+      startRemainingFill(undefined, undefined);
+    }
   };
 
   const handleSave = () => {
@@ -1593,13 +1625,6 @@ export default function EngagementDetail() {
                     }
                   />
                 ))}
-                <button
-                  onClick={() => setLukaSheetOpen(true)}
-                  className="inline-flex items-center gap-1.5 h-8 px-3 rounded-full bg-gradient-to-r from-[#1C63A6] to-[#7A31D8] hover:opacity-90 transition-opacity text-white text-xs font-medium shadow-sm"
-                >
-                  <Zap className="h-3.5 w-3.5 fill-white" strokeWidth={0} />
-                  Luka
-                </button>
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                     <ExpandableIconButton
@@ -1783,10 +1808,16 @@ export default function EngagementDetail() {
                 setLukaOpen(true);
               }}
               fillStatus={bannerFillStatus}
-              filledCount={lukaFillSummary?.filledCount}
-              totalCount={lukaFillSummary?.totalCount}
+              filledCount={bannerFilledCount}
+              totalCount={bannerTotalCount}
               prerequisiteLabel="Materiality"
               onNavigateToPrerequisite={() => navigate(`/engagements/${engagementId}/checklist/aud-mat`)}
+              onOpenLukaStatus={() => {
+                const engLabel = [engagement?.client, engagementId].filter(Boolean).join(' · ');
+                setLukaEngagementOverviewMode(true);
+                setLukaAutoFillConfig({ label: 'Luka Engagement Plan', sources: ['Xero connection', 'Predecessor file'], engagementLabel: engLabel });
+                setLukaOpen(true);
+              }}
             />
           )}
           {/* Auto-fill progress indicator */}
@@ -2052,7 +2083,7 @@ export default function EngagementDetail() {
     </Layout>
     <AskLukaOverlay
       open={lukaOpen}
-      onOpenChange={(o) => { setLukaOpen(o); if (!o) { setLukaAutoFillConfig(null); setLukaFillSummary(null); setLukaAllTemplateSummary(null); setLukaAutoFillProgress(null); } }}
+      onOpenChange={(o) => { setLukaOpen(o); if (!o) { setLukaAutoFillConfig(null); setLukaFillSummary(null); setLukaAllTemplateSummary(null); setLukaAutoFillProgress(null); setLukaEngagementOverviewMode(false); } }}
       initialQuery={lukaQuery}
       autoFillMode={!!lukaAutoFillConfig}
       checklistLabel={lukaAutoFillConfig?.label}
@@ -2066,15 +2097,13 @@ export default function EngagementDetail() {
       autoFillProgress={lukaAutoFillProgress ?? undefined}
       nextChecklistLabel={nextChecklistLabel}
       onNavigateNext={nextChecklistKey ? () => navigate(`/engagements/${engagementId}/checklist/${nextChecklistKey}`) : undefined}
-      onOpenEngagementSheet={() => setLukaSheetOpen(true)}
-    />
-    <LukaEngagementSheet
-      open={lukaSheetOpen}
-      onOpenChange={setLukaSheetOpen}
-      engagementLabel={[engagement?.client, engagementId].filter(Boolean).join(' · ')}
-      sources={['Xero connection', 'Predecessor file']}
-      onAutoFillAll={handleAutoFillAll}
-      onStartSectionBySection={() => navigate(`/engagements/${engagementId}/checklist/aud-form-410`)}
+      engagementOverviewMode={lukaEngagementOverviewMode}
+      onOpenEngagementSheet={() => {
+        setLukaAllTemplateSummary(null);
+        setLukaFillSummary(null);
+        setLukaEngagementOverviewMode(true);
+      }}
+      onStartSectionBySection={() => { setLukaOpen(false); navigate(`/engagements/${engagementId}/checklist/aud-form-410`); }}
     />
   </>;
 }

@@ -3,7 +3,6 @@ import { ArrowLeftRight, Zap, CheckCircle2, AlertTriangle } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useEngagements } from "@/store/EngagementsContext";
 import { getEngagementMeta } from "@/store/engagementsStore";
-import { Button } from "@/components/ui/button";
 
 const CHECKLIST_LABELS: Record<string, string> = {
   "aud-mat": "Materiality",
@@ -66,9 +65,10 @@ interface LukaAutoFillBannerProps {
   totalCount?: number;
   prerequisiteLabel?: string;
   onNavigateToPrerequisite?: () => void;
+  onOpenLukaStatus?: () => void;
 }
 
-export function LukaAutoFillBanner({ checklistKey, engagementId, checklistName, onRunAutoFill, fillStatus = 'idle', filledCount, totalCount, prerequisiteLabel, onNavigateToPrerequisite }: LukaAutoFillBannerProps) {
+export function LukaAutoFillBanner({ checklistKey, engagementId, checklistName, onRunAutoFill, fillStatus = 'idle', filledCount, totalCount, prerequisiteLabel, onNavigateToPrerequisite, onOpenLukaStatus }: LukaAutoFillBannerProps) {
   const { engagements } = useEngagements();
   const engagement = engagements.find(e => e.id === engagementId);
   const meta = useMemo(() => getEngagementMeta(engagementId), [engagementId]);
@@ -98,31 +98,45 @@ export function LukaAutoFillBanner({ checklistKey, engagementId, checklistName, 
     ].filter(Boolean).join(" ");
   };
 
+  const lukaStatusBtn = onOpenLukaStatus ? (
+    <button
+      onClick={onOpenLukaStatus}
+      className="inline-flex items-center gap-1.5 h-7 px-3 rounded-[8px] text-xs font-semibold border border-border bg-background text-foreground hover:bg-muted transition-colors"
+    >
+      <Zap className="h-3 w-3 opacity-60" />
+      LUKA status
+    </button>
+  ) : null;
+
   if (fillStatus === 'completed') {
     const skipped = (totalCount ?? 0) - (filledCount ?? 0);
     return (
-      <div className="mx-4 mt-4 rounded-lg border border-border bg-card px-4 py-3 border-l-4 border-l-green-500">
-        <div className="flex items-center justify-between gap-3">
-          <div className="flex items-center gap-2 min-w-0">
-            <CheckCircle2 className="h-4 w-4 text-green-600 shrink-0" />
-            <span className="text-sm font-medium text-foreground">
-              Luka filled {filledCount ?? 0} fields
-              {skipped > 0 && <span className="text-muted-foreground font-normal"> · {skipped} need review</span>}
-            </span>
-          </div>
-          <Button
-            variant="outline"
-            size="sm"
-            className="h-7 text-xs shrink-0"
+      <div className="mx-4 mt-4 rounded-lg border border-border bg-card px-4 py-3">
+        <p className="text-sm text-muted-foreground mb-2.5 leading-relaxed opacity-60">
+          {context}
+          {meta.firstYearAudit && " This is a first-year engagement — predecessor files are not available."}
+        </p>
+        <div className="flex items-center gap-2 flex-wrap">
+          <button
             onClick={() => onRunAutoFill({
               query: buildQuery(),
               label,
               sources,
               engagementLabel: [engagement?.client, engagementId].filter(Boolean).join(' · '),
             })}
+            className={cn(
+              "inline-flex items-center gap-1.5 h-7 px-3 rounded-[8px] text-xs font-semibold text-white shadow-sm",
+              "bg-gradient-to-br from-[#8649F1] to-[#2355A4] hover:opacity-90 transition-opacity"
+            )}
           >
-            Re-run
-          </Button>
+            <Zap className="h-3.5 w-3.5 text-white fill-white" strokeWidth={0} />
+            Re-run Luka auto-fill
+          </button>
+          <span className="inline-flex items-center gap-1 text-xs text-green-700 dark:text-green-400 bg-green-50 dark:bg-green-950/30 border border-green-200 dark:border-green-800 px-2 py-0.5 rounded-full">
+            <CheckCircle2 className="h-3 w-3 shrink-0" />
+            {filledCount ?? 0} filled{skipped > 0 ? ` · ${skipped} flagged` : ''}
+          </span>
+          {lukaStatusBtn}
         </div>
       </div>
     );
@@ -131,7 +145,7 @@ export function LukaAutoFillBanner({ checklistKey, engagementId, checklistName, 
   if (fillStatus === 'prerequisite-missing') {
     return (
       <div className="mx-4 mt-4 rounded-lg border border-border bg-card px-4 py-3 border-l-4 border-l-amber-400">
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 flex-wrap">
           <AlertTriangle className="h-4 w-4 text-amber-500 shrink-0" />
           <span className="text-sm text-muted-foreground">
             Complete{' '}
@@ -143,6 +157,7 @@ export function LukaAutoFillBanner({ checklistKey, engagementId, checklistName, 
             </button>
             {' '}first for best results →
           </span>
+          {lukaStatusBtn}
         </div>
       </div>
     );
@@ -150,14 +165,11 @@ export function LukaAutoFillBanner({ checklistKey, engagementId, checklistName, 
 
   return (
     <div className="mx-4 mt-4 rounded-lg border border-border bg-card px-4 py-3">
-      {/* Context description */}
       <p className="text-sm text-muted-foreground mb-2.5 leading-relaxed">
         {context}
         {meta.firstYearAudit && " This is a first-year engagement — predecessor files are not available."}
       </p>
-
-      {/* Action */}
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-2 flex-wrap">
         <button
           onClick={() => onRunAutoFill({
             query: buildQuery(),
@@ -173,6 +185,7 @@ export function LukaAutoFillBanner({ checklistKey, engagementId, checklistName, 
           <Zap className="h-3.5 w-3.5 text-white fill-white" strokeWidth={0} />
           Run Luka auto-fill
         </button>
+        {lukaStatusBtn}
       </div>
     </div>
   );

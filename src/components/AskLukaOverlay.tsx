@@ -50,6 +50,8 @@ interface AskLukaOverlayProps {
   nextChecklistLabel?: string;
   onNavigateNext?: () => void;
   onOpenEngagementSheet?: () => void;
+  engagementOverviewMode?: boolean;
+  onStartSectionBySection?: () => void;
 }
 
 const statusColors = ["bg-green-500", "bg-green-500", "bg-amber-500", "bg-green-500", "bg-green-500", "bg-green-500", "bg-purple-500", "bg-purple-500", "bg-amber-500", "bg-green-500", "bg-purple-500"];
@@ -91,13 +93,29 @@ function LukaIcon({ size = 20 }: { size?: number }) {
   return <Zap className="text-white" size={size} fill="white" strokeWidth={0} />;
 }
 
+const ENGAGEMENT_SECTIONS = [
+  { code: 'CO', label: 'Client Onboarding', forms: 3, estimatedPct: 75 },
+  { code: 'PL', label: 'Planning', forms: 8, estimatedPct: 80 },
+  { code: 'RA', label: 'Risk Assessment', forms: 20, estimatedPct: 65 },
+  { code: 'RP', label: 'Response to Risk', forms: 11, estimatedPct: 70 },
+  { code: 'SO', label: 'Completion & Signoffs', forms: 20, estimatedPct: 60 },
+];
+
+const SECTION_BADGE_COLORS: Record<string, string> = {
+  CO: 'bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300',
+  PL: 'bg-violet-100 text-violet-700 dark:bg-violet-900/40 dark:text-violet-300',
+  RA: 'bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-300',
+  RP: 'bg-green-100 text-green-700 dark:bg-green-900/40 dark:text-green-300',
+  SO: 'bg-slate-100 text-slate-700 dark:bg-slate-800/60 dark:text-slate-300',
+};
+
 const RELATED_TEMPLATES = [
   "Management Representation Letter",
   "Risk Assessment Summary",
   "Audit Planning Memo",
 ];
 
-export function AskLukaOverlay({ open, onOpenChange, initialQuery, autoFillMode, checklistLabel, engagementLabel, autoFillSources, onAutoFillConfirmed, onAutoFillAll, summaryMode, fillSummary, allTemplateSummary, autoFillProgress, nextChecklistLabel, onNavigateNext, onOpenEngagementSheet }: AskLukaOverlayProps) {
+export function AskLukaOverlay({ open, onOpenChange, initialQuery, autoFillMode, checklistLabel, engagementLabel, autoFillSources, onAutoFillConfirmed, onAutoFillAll, summaryMode, fillSummary, allTemplateSummary, autoFillProgress, nextChecklistLabel, onNavigateNext, onOpenEngagementSheet, engagementOverviewMode, onStartSectionBySection }: AskLukaOverlayProps) {
   const [message, setMessage] = useState("");
   const [analysisPhase, setAnalysisPhase] = useState<"idle" | "analyzing" | "ready">("idle");
 
@@ -618,7 +636,7 @@ export function AskLukaOverlay({ open, onOpenChange, initialQuery, autoFillMode,
                         </button>
                       )}
                       <button
-                        onClick={() => { onOpenChange(false); onOpenEngagementSheet?.(); }}
+                        onClick={() => onOpenEngagementSheet?.()}
                         className="w-full inline-flex items-center justify-center gap-2 h-10 px-5 rounded-[10px] text-sm font-semibold border border-primary/40 text-primary hover:bg-primary/5 transition-colors"
                       >
                         View engagement overview
@@ -695,6 +713,80 @@ export function AskLukaOverlay({ open, onOpenChange, initialQuery, autoFillMode,
                           <ArrowRight className="h-3.5 w-3.5 shrink-0" />
                         </button>
                       )}
+                    </div>
+                  </div>
+                ) : engagementOverviewMode ? (
+                  /* Engagement-wide Luka plan view */
+                  <div className="flex flex-col items-center px-6 pt-6 pb-6 min-h-[60vh]">
+                    <div className="mb-3 flex items-center justify-center w-[52px] h-[52px] rounded-full bg-gradient-to-br from-[#8649F1] to-[#2355A4]">
+                      <LukaIcon size={22} />
+                    </div>
+                    {engagementLabel && (
+                      <p className="text-xs font-medium text-muted-foreground mb-1 text-center tracking-wide uppercase">{engagementLabel}</p>
+                    )}
+                    <h2 className="text-lg font-semibold text-foreground mb-3 text-center">Luka Engagement Plan</h2>
+
+                    {/* Connected sources */}
+                    {(autoFillSources ?? []).length > 0 && (
+                      <div className="flex flex-wrap justify-center gap-1.5 mb-4">
+                        {(autoFillSources ?? []).map(src => (
+                          <span key={src} className="inline-flex items-center gap-1 rounded-full bg-muted text-muted-foreground text-[11px] px-2.5 py-0.5 font-medium">
+                            ⇌ {src}
+                          </span>
+                        ))}
+                      </div>
+                    )}
+
+                    <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wide mb-3 self-start w-full max-w-[380px]">
+                      Engagement auto-fill plan
+                    </p>
+
+                    {/* Sections */}
+                    <div className="w-full max-w-[380px] space-y-1.5 mb-5">
+                      {ENGAGEMENT_SECTIONS.map((section, idx) => (
+                        <div key={section.code}>
+                          <div className="flex items-center gap-3 rounded-lg px-3 py-2.5 border border-border bg-card">
+                            <span className={cn("text-[11px] font-bold px-1.5 py-0.5 rounded font-mono shrink-0", SECTION_BADGE_COLORS[section.code])}>{section.code}</span>
+                            <div className="flex-1 min-w-0">
+                              <div className="flex items-center justify-between gap-2">
+                                <span className="text-sm font-medium text-foreground truncate">{section.label}</span>
+                                <span className="text-xs text-muted-foreground shrink-0">{section.forms} forms</span>
+                              </div>
+                              <div className="mt-1 flex items-center gap-2">
+                                <div className="flex-1 h-1.5 rounded-full bg-muted overflow-hidden">
+                                  <div className="h-full rounded-full bg-gradient-to-r from-[#8649F1] to-[#2355A4]" style={{ width: `${section.estimatedPct}%` }} />
+                                </div>
+                                <span className="text-[11px] text-muted-foreground shrink-0 tabular-nums">~{section.estimatedPct}%</span>
+                              </div>
+                            </div>
+                          </div>
+                          {idx < ENGAGEMENT_SECTIONS.length - 1 && (
+                            <div className="flex justify-center py-0.5">
+                              <ArrowRight className="h-3 w-3 text-muted-foreground/40 rotate-90" />
+                            </div>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+
+                    <p className="text-xs text-muted-foreground mb-5 text-center max-w-[340px] leading-relaxed">
+                      Luka fills each field one by one with citations from connected sources. Items requiring professional judgment stay flagged for review.
+                    </p>
+
+                    <div className="flex flex-col items-center gap-2.5 w-full max-w-[380px]">
+                      <button
+                        onClick={() => onAutoFillAll?.()}
+                        className="w-full inline-flex items-center justify-center gap-2 h-10 px-5 rounded-[10px] text-sm font-semibold text-white bg-gradient-to-br from-[#8649F1] to-[#2355A4] hover:opacity-90 transition-opacity shadow-md"
+                      >
+                        <Zap className="h-4 w-4 text-white fill-white" strokeWidth={0} />
+                        Auto-fill entire engagement
+                      </button>
+                      <button
+                        onClick={() => onStartSectionBySection?.()}
+                        className="w-full inline-flex items-center justify-center gap-2 h-10 px-5 rounded-[10px] text-sm font-semibold border border-primary/40 text-primary hover:bg-primary/5 transition-colors"
+                      >
+                        Start section by section
+                      </button>
                     </div>
                   </div>
                 ) : autoFillMode ? (

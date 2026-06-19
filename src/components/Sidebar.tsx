@@ -2079,7 +2079,7 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
                         {node.code && <span className="font-semibold text-primary">{node.code}</span>}
                         <span className={cn("truncate flex-1 text-black dark:text-white", isLeaf ? "font-medium" : "font-semibold")}>{node.label}</span>
                         {!isLeaf && sectionFillStatus[node.code ?? ''] && (
-                          <span className="w-2 h-2 rounded-full bg-green-500 flex-shrink-0 ml-auto" title="Luka filled" />
+                          <span className="w-2 h-2 rounded-full flex-shrink-0 ml-auto luka-dot-filled" title="Luka filled" />
                         )}
                         {node.hasPlus && <Plus className="h-4 w-4 text-muted-foreground hover:text-foreground flex-shrink-0" />}
                         {signoffsMode && (

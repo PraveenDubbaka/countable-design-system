@@ -144,6 +144,16 @@
   animation: luka-text-shimmer 2s ease-in-out infinite;
 }
 
+@keyframes luka-pulse-glow {
+  0%, 100% { opacity: 1; box-shadow: 0 0 0 0 rgba(134, 73, 241, 0.4); }
+  50% { opacity: 0.65; box-shadow: 0 0 0 3px rgba(134, 73, 241, 0); }
+}
+
+.luka-dot-filled {
+  background: linear-gradient(135deg, #8649F1, #2355A4);
+  animation: luka-pulse-glow 2.4s ease-in-out infinite;
+}
+
 
 .shadow-sm {
   --tw-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.15);
