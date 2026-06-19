@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
+import { createPortal } from 'react-dom';
 import { cn } from '@/lib/utils';
 import { NoteAIBlock } from './NoteAIBlock';
 
@@ -107,6 +108,7 @@ function BlockRow({
   const [showPalette, setShowPalette] = useState(false);
   const [paletteFilter, setPaletteFilter] = useState('');
   const [paletteIdx, setPaletteIdx] = useState(0);
+  const [palettePos, setPalettePos] = useState({ top: 0, left: 0 });
   const taRef = useRef<HTMLTextAreaElement>(null);
 
   const palette = buildPalette(paletteFilter);
@@ -127,13 +129,20 @@ function BlockRow({
     if (autoFocus && taRef.current) taRef.current.focus();
   }, [autoFocus]);
 
+  const openPalette = () => {
+    const rect = taRef.current?.getBoundingClientRect();
+    if (rect) setPalettePos({ top: rect.bottom + 4, left: rect.left });
+  };
+
   const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const val = e.target.value;
     if (val === '/') {
+      openPalette();
       setShowPalette(true);
       setPaletteFilter('');
       setPaletteIdx(0);
     } else if (val.startsWith('/')) {
+      if (!showPalette) openPalette();
       setShowPalette(true);
       setPaletteFilter(val.slice(1));
       setPaletteIdx(0);
@@ -222,8 +231,11 @@ function BlockRow({
         rows={1}
       />
 
-      {showPalette && palette.length > 0 && (
-        <div className="absolute left-0 top-full z-50 w-52 bg-popover border border-border rounded-lg shadow-lg py-1 mt-0.5 max-h-72 overflow-y-auto">
+      {showPalette && palette.length > 0 && createPortal(
+        <div
+          className="fixed z-[9999] w-52 bg-popover border border-border rounded-lg shadow-lg py-1 max-h-72 overflow-y-auto"
+          style={{ top: palettePos.top, left: palettePos.left }}
+        >
           {palette.map((item, i) => {
             if (item.kind === 'luka-header') {
               return (
@@ -256,7 +268,8 @@ function BlockRow({
               </button>
             );
           })}
-        </div>
+        </div>,
+        document.body,
       )}
     </div>
   );
