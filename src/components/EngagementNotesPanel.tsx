@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { useParams } from 'react-router-dom';
-import { Plus, StickyNote, Trash2 } from 'lucide-react';
+import { Plus, StickyNote, Trash2, ChevronRight } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { NoteEditor, createEmptyNote } from './NoteEditor';
 import type { Note } from './NoteEditor';
@@ -12,16 +12,13 @@ function storageKey(engagementId: string) {
 
 function formatRelative(iso: string) {
   try {
-    const d = new Date(iso);
-    const diff = Date.now() - d.getTime();
+    const diff = Date.now() - new Date(iso).getTime();
     const mins = Math.floor(diff / 60000);
     if (mins < 1) return 'Just now';
     if (mins < 60) return `${mins}m ago`;
     const hrs = Math.floor(mins / 60);
     if (hrs < 24) return `${hrs}h ago`;
-    const days = Math.floor(hrs / 24);
-    if (days < 7) return `${days}d ago`;
-    return d.toLocaleDateString();
+    return `${Math.floor(hrs / 24)}d ago`;
   } catch { return ''; }
 }
 
@@ -37,7 +34,7 @@ export function EngagementNotesPanel({ linkedSection, onLinkedSectionClear }: En
   const [notes, setNotes] = useState<Note[]>(() =>
     readJsonFromLocalStorage<Note[]>(storageKey(eid), []),
   );
-  const [activeId, setActiveId] = useState<string | null>(null);
+  const [openId, setOpenId] = useState<string | null>(null);
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const persist = useCallback((updated: Note[]) => {
@@ -48,44 +45,30 @@ export function EngagementNotesPanel({ linkedSection, onLinkedSectionClear }: En
   }, [eid]);
 
   useEffect(() => {
-    if (linkedSection && notes.length === 0) {
-      const n = createEmptyNote(linkedSection);
-      setNotes([n]);
-      setActiveId(n.id);
-      persist([n]);
-      onLinkedSectionClear?.();
-    } else if (linkedSection) {
-      const n = createEmptyNote(linkedSection);
-      const next = [...notes, n];
-      setNotes(next);
-      setActiveId(n.id);
-      persist(next);
-      onLinkedSectionClear?.();
-    }
+    if (!linkedSection) return;
+    const n = createEmptyNote(linkedSection);
+    const next = [...notes, n];
+    setNotes(next);
+    setOpenId(n.id);
+    persist(next);
+    onLinkedSectionClear?.();
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [linkedSection]);
-
-  useEffect(() => {
-    if (notes.length > 0 && !activeId) {
-      setActiveId(notes[0].id);
-    }
-  }, [notes, activeId]);
 
   const addNote = () => {
     const n = createEmptyNote();
     const next = [...notes, n];
     setNotes(next);
-    setActiveId(n.id);
+    setOpenId(n.id);
     persist(next);
   };
 
-  const deleteNote = (id: string) => {
+  const deleteNote = (id: string, e: React.MouseEvent) => {
+    e.stopPropagation();
     const next = notes.filter(n => n.id !== id);
     setNotes(next);
     persist(next);
-    if (activeId === id) {
-      setActiveId(next[next.length - 1]?.id ?? null);
-    }
+    if (openId === id) setOpenId(next[next.length - 1]?.id ?? null);
   };
 
   const updateNote = (updated: Note) => {
@@ -100,95 +83,93 @@ export function EngagementNotesPanel({ linkedSection, onLinkedSectionClear }: En
     persist(next);
   };
 
-  const activeNote = notes.find(n => n.id === activeId) ?? null;
+  const toggle = (id: string) => setOpenId(prev => prev === id ? null : id);
 
   return (
-    <div className="flex h-full w-full overflow-hidden">
-      {/* Note list */}
-      <div className="w-40 shrink-0 flex flex-col border-r border-border overflow-hidden">
-        <div className="flex items-center gap-1 px-3 py-2.5 border-b border-border">
-          <span className="text-xs font-semibold text-foreground flex-1">Notes</span>
-          <button
-            onClick={addNote}
-            title="New note"
-            className="p-1 rounded-md hover:bg-muted transition-colors"
-          >
-            <Plus className="h-3.5 w-3.5 text-muted-foreground" />
-          </button>
-        </div>
+    <div className="flex flex-col h-full overflow-hidden">
+      {/* Header */}
+      <div className="flex items-center gap-2 px-4 py-3 border-b border-border shrink-0">
+        <h3 className="text-sm font-semibold text-foreground flex-1">Notes</h3>
+        <button
+          onClick={addNote}
+          title="New note"
+          className="p-1 rounded-md hover:bg-muted transition-colors"
+        >
+          <Plus className="h-3.5 w-3.5 text-muted-foreground" />
+        </button>
+      </div>
 
-        <div className="flex-1 overflow-y-auto py-1">
-          {notes.length === 0 ? (
-            <div className="flex flex-col items-center justify-center gap-2 py-8 px-3 text-center">
-              <StickyNote className="h-6 w-6 text-muted-foreground/40" />
-              <p className="text-[11px] text-muted-foreground leading-snug">No notes yet. Click + to create one.</p>
-            </div>
-          ) : (
-            notes.map(note => (
-              <button
-                key={note.id}
-                onClick={() => setActiveId(note.id)}
-                className={cn(
-                  'w-full text-left px-3 py-2 group flex flex-col gap-0.5 transition-colors',
-                  activeId === note.id ? 'bg-primary/10' : 'hover:bg-muted',
-                )}
-              >
-                <div className="flex items-center gap-1">
-                  <span className={cn(
-                    'flex-1 text-[11px] font-medium truncate',
-                    activeId === note.id ? 'text-primary' : 'text-foreground',
-                  )}>
-                    {note.title || 'Untitled'}
-                  </span>
+      {/* Accordion list */}
+      <div className="flex-1 overflow-y-auto divide-y divide-border">
+        {notes.length === 0 ? (
+          <div className="flex flex-col items-center justify-center gap-3 py-12 px-4 text-center">
+            <StickyNote className="h-7 w-7 text-muted-foreground/30" />
+            <p className="text-xs text-muted-foreground leading-snug">No notes yet.<br />Click + to create one.</p>
+            <button
+              onClick={addNote}
+              className="inline-flex items-center gap-1.5 h-7 px-3 rounded-lg text-xs font-medium bg-primary text-white hover:bg-primary/90 transition-colors"
+            >
+              <Plus className="h-3 w-3" /> New Note
+            </button>
+          </div>
+        ) : (
+          notes.map(note => {
+            const isOpen = openId === note.id;
+            return (
+              <div key={note.id}>
+                {/* Accordion header row */}
+                <div
+                  className="group flex items-center gap-2 px-3 py-2.5 cursor-pointer hover:bg-muted/50 transition-colors"
+                  onClick={() => toggle(note.id)}
+                >
+                  <ChevronRight
+                    className={cn(
+                      'h-3.5 w-3.5 text-muted-foreground shrink-0 transition-transform duration-150',
+                      isOpen && 'rotate-90',
+                    )}
+                  />
+                  <div className="flex-1 min-w-0">
+                    <p className={cn(
+                      'text-xs font-medium truncate leading-snug',
+                      isOpen ? 'text-primary' : 'text-foreground',
+                    )}>
+                      {note.title || 'Untitled'}
+                    </p>
+                    <p className="text-[10px] text-muted-foreground mt-0.5">
+                      {note.linkedSection ? `${note.linkedSection} · ` : ''}{formatRelative(note.modifiedAt)}
+                    </p>
+                  </div>
                   <button
-                    onClick={e => { e.stopPropagation(); deleteNote(note.id); }}
-                    className="opacity-0 group-hover:opacity-100 p-0.5 rounded hover:bg-destructive/10 transition-all"
+                    onClick={e => deleteNote(note.id, e)}
+                    className="opacity-0 group-hover:opacity-100 p-1 rounded hover:bg-destructive/10 transition-all shrink-0"
                     title="Delete note"
                   >
                     <Trash2 className="h-3 w-3 text-destructive" />
                   </button>
                 </div>
-                <span className="text-[10px] text-muted-foreground truncate">
-                  {note.linkedSection ? `${note.linkedSection} · ` : ''}{formatRelative(note.modifiedAt)}
-                </span>
-              </button>
-            ))
-          )}
-        </div>
-      </div>
 
-      {/* Editor */}
-      <div className="flex-1 flex flex-col overflow-hidden">
-        {activeNote ? (
-          <>
-            <div className="px-4 py-2.5 border-b border-border shrink-0">
-              <input
-                value={activeNote.title}
-                onChange={e => updateTitle(activeNote.id, e.target.value)}
-                placeholder="Untitled"
-                className="w-full bg-transparent text-sm font-semibold text-foreground outline-none placeholder:text-muted-foreground/50"
-              />
-              {activeNote.linkedSection && (
-                <p className="text-[10px] text-muted-foreground mt-0.5">Linked: {activeNote.linkedSection}</p>
-              )}
-            </div>
-            <NoteEditor note={activeNote} onChange={updateNote} />
-          </>
-        ) : (
-          <div className="flex flex-col items-center justify-center h-full gap-3">
-            <StickyNote className="h-8 w-8 text-muted-foreground/30" />
-            <div className="text-center">
-              <p className="text-sm text-muted-foreground">No note selected</p>
-              <p className="text-xs text-muted-foreground/60 mt-0.5">Create a note using the + button</p>
-            </div>
-            <button
-              onClick={addNote}
-              className="inline-flex items-center gap-1.5 h-8 px-3 rounded-lg text-xs font-medium bg-primary text-white hover:bg-primary/90 transition-colors"
-            >
-              <Plus className="h-3.5 w-3.5" />
-              New Note
-            </button>
-          </div>
+                {/* Expanded editor */}
+                {isOpen && (
+                  <div className="border-t border-border/50 bg-muted/20">
+                    {/* Editable title */}
+                    <div className="px-4 pt-2.5 pb-1">
+                      <input
+                        value={note.title}
+                        onChange={e => updateTitle(note.id, e.target.value)}
+                        placeholder="Untitled"
+                        onClick={e => e.stopPropagation()}
+                        className="w-full bg-transparent text-xs font-semibold text-foreground outline-none placeholder:text-muted-foreground/50"
+                      />
+                      {note.linkedSection && (
+                        <p className="text-[10px] text-muted-foreground mt-0.5">↗ {note.linkedSection}</p>
+                      )}
+                    </div>
+                    <NoteEditor note={note} onChange={updateNote} />
+                  </div>
+                )}
+              </div>
+            );
+          })
         )}
       </div>
     </div>

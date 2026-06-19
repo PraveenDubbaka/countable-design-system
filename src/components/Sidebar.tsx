@@ -1623,9 +1623,6 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
                     id: "aud-us-tb", code: "TB", label: "Trial Balance & Adjusting Entries", icon: "folder", route: "trial-balance"
                   },
                   {
-                    id: "aud-us-notes", code: "NT", label: "Notes", icon: "doc", hasPlus: true
-                  },
-                  {
                     id: "aud-us-pr", code: "PR", label: "Procedures", icon: "folder",
                     children: [
                       {
@@ -1799,9 +1796,6 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
                     id: "aud-tb", code: "TB", label: "Trial Balance & Adjusting Entries", icon: "folder", route: "trial-balance"
                   },
                   {
-                    id: "aud-notes", code: "NT", label: "Notes", icon: "doc", hasPlus: true
-                  },
-                  {
                     id: "aud-pr", code: "PR", label: "Procedures", icon: "folder",
                     children: [
                       {
@@ -1913,9 +1907,6 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
                   },
                   {
                     id: "tb", code: "TB", label: "Trial Balance & Adj. Entries", icon: "folder", route: "trial-balance"
-                  },
-                  {
-                    id: "notes", code: "NT", label: "Notes", icon: "doc", hasPlus: true
                   },
                   {
                     id: "pr", code: "PR", label: "Procedures", icon: "folder",
