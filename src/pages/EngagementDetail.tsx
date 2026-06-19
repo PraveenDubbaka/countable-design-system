@@ -25,6 +25,7 @@ import { Audit507Worksheet } from "@/components/Audit507Worksheet";
 import { Audit506Worksheet } from "@/components/Audit506Worksheet";
 import { Audit510Worksheet } from "@/components/Audit510Worksheet";
 import { Audit511Worksheet } from "@/components/Audit511Worksheet";
+import { Audit513Worksheet } from "@/components/Audit513Worksheet";
 import { Audit514Worksheet } from "@/components/Audit514Worksheet";
 import { Audit520Worksheet } from "@/components/Audit520Worksheet";
 import { Audit540Worksheet } from "@/components/Audit540Worksheet";
@@ -1871,6 +1872,8 @@ export default function EngagementDetail() {
             <Audit510Worksheet />
           ) : (checklistKey === 'aud-ra-511') ? (
             <Audit511Worksheet />
+          ) : (checklistKey === 'aud-ra-513') ? (
+            <Audit513Worksheet />
           ) : (checklistKey === 'aud-ra-514') ? (
             <Audit514Worksheet />
           ) : (checklistKey === 'aud-ra-520') ? (
