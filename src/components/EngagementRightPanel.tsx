@@ -227,6 +227,7 @@ export function EngagementRightPanel({ className }: EngagementRightPanelProps) {
   const [mode, setMode] = useState<PanelMode>('folders');
   const [docRequestCtx, setDocRequestCtx] = useState<DocRequestContext>({ folder: '', subFolder: '' });
   const [notesLinkedSection, setNotesLinkedSection] = useState<string | undefined>();
+  const [notesSectionFolder, setNotesSectionFolder] = useState<string | undefined>();
 
   useEffect(() => {
     const el = document.getElementById('right-panel-portal');
@@ -246,8 +247,9 @@ export function EngagementRightPanel({ className }: EngagementRightPanelProps) {
 
   useEffect(() => {
     const handler = (e: Event) => {
-      const { linkedSection } = (e as CustomEvent).detail ?? {};
+      const { linkedSection, sectionFolder } = (e as CustomEvent).detail ?? {};
       setNotesLinkedSection(linkedSection ?? undefined);
+      setNotesSectionFolder(sectionFolder ?? undefined);
       setMode('notes');
       setActiveItem('notes');
       setIsExpanded(true);
@@ -311,7 +313,8 @@ export function EngagementRightPanel({ className }: EngagementRightPanelProps) {
             ) : mode === 'notes' ? (
               <EngagementNotesPanel
                 linkedSection={notesLinkedSection}
-                onLinkedSectionClear={() => setNotesLinkedSection(undefined)}
+                sectionFolder={notesSectionFolder}
+                onLinkedSectionClear={() => { setNotesLinkedSection(undefined); setNotesSectionFolder(undefined); }}
               />
             ) : (
               <>

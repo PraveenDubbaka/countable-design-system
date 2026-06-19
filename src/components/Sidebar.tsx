@@ -2131,7 +2131,9 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
                                 className="text-xs gap-2 cursor-pointer"
                                 onClick={e => {
                                   e.stopPropagation();
-                                  window.dispatchEvent(new CustomEvent('open-notes-panel', { detail: { linkedSection: node.label } }));
+                                  window.dispatchEvent(new CustomEvent('open-notes-panel', {
+                                    detail: { linkedSection: node.label, sectionFolder: parentLabel },
+                                  }));
                                 }}
                               >
                                 <StickyNote className="h-3.5 w-3.5" /> Add note

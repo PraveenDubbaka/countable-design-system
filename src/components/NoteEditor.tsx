@@ -386,10 +386,10 @@ const CURRENT_USER: NoteAuthor = {
   color: '#155EEF',
 };
 
-export function createEmptyNote(linkedSection?: string): Note {
+export function createEmptyNote(title: string = 'Untitled', linkedSection?: string): Note {
   return {
     id: uid(),
-    title: 'Untitled',
+    title,
     content: [{ id: uid(), type: 'text', content: '' }],
     createdAt: new Date().toISOString(),
     modifiedAt: new Date().toISOString(),

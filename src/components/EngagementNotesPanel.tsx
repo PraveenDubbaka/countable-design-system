@@ -1,10 +1,63 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useLocation } from 'react-router-dom';
 import { Plus, StickyNote, Trash2, ChevronRight } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { NoteEditor, createEmptyNote } from './NoteEditor';
 import type { Note } from './NoteEditor';
 import { readJsonFromLocalStorage, writeJsonToLocalStorage } from '@/lib/safeJson';
+
+const PAGE_LABELS: Record<string, { section: string; label: string }> = {
+  'aud-mat': { section: 'Planning', label: 'Materiality' },
+  'aud-us-mat': { section: 'Planning', label: 'Materiality' },
+  'aud-asm': { section: 'Planning', label: 'Overall Audit Strategy' },
+  'aud-us-asm': { section: 'Planning', label: 'Overall Audit Strategy' },
+  'aud-sae': { section: 'Planning', label: "Auditor's Expert" },
+  'aud-us-sae': { section: 'Planning', label: "Auditor's Expert" },
+  'aud-tb': { section: 'Planning', label: 'Time Budget' },
+  'aud-us-tb': { section: 'Planning', label: 'Time Budget' },
+  'aud-db': { section: 'Planning', label: 'Detailed Budget' },
+  'aud-us-db': { section: 'Planning', label: 'Detailed Budget' },
+  'aud-plan': { section: 'Planning', label: 'Team Planning Discussions' },
+  'aud-us-plan': { section: 'Planning', label: 'Team Planning Discussions' },
+  'aud-scope': { section: 'Planning', label: 'Audit Scope' },
+  'aud-us-scope': { section: 'Planning', label: 'Audit Scope' },
+  'aud-pap': { section: 'Planning', label: 'Audit Procedures' },
+  'aud-us-pap': { section: 'Planning', label: 'Audit Procedures' },
+  'aud-form-410': { section: 'Client Onboarding', label: 'Acceptance/Continuance' },
+  'aud-us-form-410': { section: 'Client Onboarding', label: 'Acceptance/Continuance' },
+  'aud-form-408': { section: 'Client Onboarding', label: 'Initial Audit Engagements' },
+  'aud-us-form-408': { section: 'Client Onboarding', label: 'Initial Audit Engagements' },
+  'aud-el': { section: 'Client Onboarding', label: 'Engagement Letter' },
+  'aud-us-el': { section: 'Client Onboarding', label: 'Engagement Letter' },
+  'aud-cac': { section: 'Client Onboarding', label: 'Client Acceptance' },
+  'aud-iar': { section: 'Client Onboarding', label: 'Management Requests' },
+  'aud-us-iar': { section: 'Client Onboarding', label: 'Management Requests' },
+};
+
+function deriveTitle(pathname: string, sectionFolder?: string, linkedSection?: string): string {
+  if (sectionFolder && linkedSection) return `${sectionFolder} — ${linkedSection}`;
+  if (linkedSection) return linkedSection;
+  const checklistMatch = pathname.match(/\/checklist\/([^/]+)/);
+  if (checklistMatch) {
+    const key = checklistMatch[1];
+    const info = PAGE_LABELS[key];
+    if (info) return `${info.section} — ${info.label}`;
+    const stripped = key.replace(/^aud-us-/, '').replace(/^aud-/, '').replace(/^(ra|rp|co|pl|pr|do|so|tb|fs|oa|pap|asm)-/, '');
+    const readable = stripped.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+    return readable;
+  }
+  if (pathname.includes('trial-balance')) return 'Trial Balance';
+  if (pathname.includes('procedure')) return 'Procedures';
+  return 'Note';
+}
+
+function makeUniqueTitle(base: string, existingNotes: Note[]): string {
+  const titles = new Set(existingNotes.map(n => n.title));
+  if (!titles.has(base)) return base;
+  let n = 2;
+  while (titles.has(`${base} ${n}`)) n++;
+  return `${base} ${n}`;
+}
 
 function storageKey(engagementId: string) {
   return `engagement-notes-${engagementId}`;
@@ -24,11 +77,13 @@ function formatRelative(iso: string) {
 
 interface EngagementNotesPanelProps {
   linkedSection?: string;
+  sectionFolder?: string;
   onLinkedSectionClear?: () => void;
 }
 
-export function EngagementNotesPanel({ linkedSection, onLinkedSectionClear }: EngagementNotesPanelProps) {
+export function EngagementNotesPanel({ linkedSection, sectionFolder, onLinkedSectionClear }: EngagementNotesPanelProps) {
   const { engagementId } = useParams<{ engagementId: string }>();
+  const { pathname } = useLocation();
   const eid = engagementId ?? '';
 
   const [notes, setNotes] = useState<Note[]>(() =>
@@ -45,18 +100,22 @@ export function EngagementNotesPanel({ linkedSection, onLinkedSectionClear }: En
   }, [eid]);
 
   useEffect(() => {
-    if (!linkedSection) return;
-    const n = createEmptyNote(linkedSection);
+    if (!linkedSection && !sectionFolder) return;
+    const base = deriveTitle(pathname, sectionFolder, linkedSection);
+    const title = makeUniqueTitle(base, notes);
+    const n = createEmptyNote(title, linkedSection);
     const next = [...notes, n];
     setNotes(next);
     setOpenId(n.id);
     persist(next);
     onLinkedSectionClear?.();
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [linkedSection]);
+  }, [linkedSection, sectionFolder]);
 
   const addNote = () => {
-    const n = createEmptyNote();
+    const base = deriveTitle(pathname);
+    const title = makeUniqueTitle(base, notes);
+    const n = createEmptyNote(title);
     const next = [...notes, n];
     setNotes(next);
     setOpenId(n.id);
