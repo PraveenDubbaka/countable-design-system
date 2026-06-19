@@ -1747,7 +1747,7 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
                       { id: "aud-ra-505", code: "IQM", label: "Inquiries of Management and Others", icon: "worksheet", route: "checklist/aud-ra-505" },
                       { id: "aud-ra-507", code: "MGM", label: "Minutes of Governance Meetings", icon: "worksheet", route: "checklist/aud-ra-507" },
                       { id: "aud-ra-506", code: "IFR", label: "Identifying Fraud Risks", icon: "worksheet", route: "checklist/aud-ra-506" },
-                      { id: "aud-ra-510", code: "IRE", label: "Identifying Risks through Understanding the Entity", icon: "checklist", route: "checklist/aud-ra-510" },
+                      { id: "aud-ra-510", code: "IRE", label: "Identifying Risks through Understanding the Entity", icon: "worksheet", route: "checklist/aud-ra-510" },
                       { id: "aud-ra-511", code: "ITE", label: "Understanding the IT Environment", icon: "checklist", route: "checklist/aud-ra-511" },
                       { id: "aud-ra-513", code: "UAE", label: "Understanding Accounting Estimates and Related Disclosures", icon: "checklist", route: "checklist/aud-ra-513" },
                       { id: "aud-ra-514", code: "PPE", label: "Outcome of Prior Period Accounting Estimates", icon: "worksheet", route: "checklist/aud-ra-514" },
