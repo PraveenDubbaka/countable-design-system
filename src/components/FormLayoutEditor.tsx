@@ -508,7 +508,7 @@ export function FormLayoutEditor({ formLayout, onUpdate, isPreviewMode }: FormLa
           <input
             type="text"
             placeholder={label || element.placeholder}
-            className="h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm placeholder:text-muted-foreground placeholder:italic focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+            className="h-9 w-full appearance-none rounded-[4px] border border-border bg-background px-3 py-1 text-sm placeholder:text-muted-foreground placeholder:italic focus:outline-none focus:border-primary"
           />
         );
       
@@ -544,7 +544,7 @@ export function FormLayoutEditor({ formLayout, onUpdate, isPreviewMode }: FormLa
         return (
           <input
             type="date"
-            className="h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+            className="h-9 w-full appearance-none rounded-[4px] border border-border bg-background px-3 py-1 text-sm text-muted-foreground focus:outline-none focus:border-primary"
           />
         );
       

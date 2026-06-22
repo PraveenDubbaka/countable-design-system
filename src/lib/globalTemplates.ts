@@ -14055,15 +14055,15 @@ export const generate525GoingConcernChecklist = (): Checklist => {
         formLayout: {
           columns: 3,
           elements: [
-            { id: 'ra525-inq-1-name', type: 'text-input', label: 'Name', placeholder: '' },
+            { id: 'ra525-inq-1-who', type: 'text-input', label: 'Who interviewed', placeholder: '' },
             { id: 'ra525-inq-1-date', type: 'date', label: 'Date' },
-            { id: 'ra525-inq-1-desc', type: 'text-input', label: 'Description', placeholder: '' },
-            { id: 'ra525-inq-2-name', type: 'text-input', label: 'Name', placeholder: '' },
+            { id: 'ra525-inq-1-by', type: 'text-input', label: 'By whom', placeholder: '' },
+            { id: 'ra525-inq-2-who', type: 'text-input', label: 'Who interviewed', placeholder: '' },
             { id: 'ra525-inq-2-date', type: 'date', label: 'Date' },
-            { id: 'ra525-inq-2-desc', type: 'text-input', label: 'Description', placeholder: '' },
-            { id: 'ra525-inq-3-name', type: 'text-input', label: 'Name', placeholder: '' },
+            { id: 'ra525-inq-2-by', type: 'text-input', label: 'By whom', placeholder: '' },
+            { id: 'ra525-inq-3-who', type: 'text-input', label: 'Who interviewed', placeholder: '' },
             { id: 'ra525-inq-3-date', type: 'date', label: 'Date' },
-            { id: 'ra525-inq-3-desc', type: 'text-input', label: 'Description', placeholder: '' },
+            { id: 'ra525-inq-3-by', type: 'text-input', label: 'By whom', placeholder: '' },
           ]
         }
       },
