@@ -153,89 +153,88 @@ export function Audit514Worksheet({ isUS = false }: { isUS?: boolean }) {
 
           {/* ── Estimates table ───────────────────────────────────────────── */}
           <SectionCard title="Prior Period Estimates — Outcome Analysis">
-            <div className="px-6 py-5">
-              <div className="overflow-x-auto">
-                <table className="w-full">
-                  <thead className="sticky top-0 z-10">
-                    <tr className="bg-muted border-b border-border">
-                      <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider">Type of Estimate</th>
-                      <th className="px-4 py-3 text-right text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap">Prior Period $</th>
-                      <th className="px-4 py-3 text-right text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap">Actual Outcome $</th>
-                      <th className="px-4 py-3 text-right text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap">Difference $</th>
-                      <th className="px-4 py-3 text-right text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap">% Variance</th>
-                      <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider">Explanation of Variance</th>
-                      <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap">Management Bias?</th>
-                      <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider">Implications for Current Period</th>
-                      <th className="w-8" />
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-border">
-                    {data.rows.map(row => {
-                      const { diff, pct } = calcMap[row.id];
-                      const hasBias = row.bias === "Yes";
+            <div className="overflow-x-auto">
+              <table className="w-full border-collapse">
+                <thead>
+                  <tr className="bg-muted">
+                    <th className="border border-border px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider">Type of Estimate</th>
+                    <th className="border border-border px-4 py-3 text-right text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap">Prior Period $</th>
+                    <th className="border border-border px-4 py-3 text-right text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap">Actual Outcome $</th>
+                    <th className="border border-border px-4 py-3 text-right text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap">Difference $</th>
+                    <th className="border border-border px-4 py-3 text-right text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap">% Variance</th>
+                    <th className="border border-border px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider">Explanation of Variance</th>
+                    <th className="border border-border px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap">Management Bias?</th>
+                    <th className="border border-border px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider">Implications for Current Period</th>
+                    <th className="border border-border w-8" />
+                  </tr>
+                </thead>
+                <tbody>
+                  {data.rows.map(row => {
+                    const { diff, pct } = calcMap[row.id];
+                    const hasBias = row.bias === "Yes";
 
-                      return (
-                        <tr key={row.id} className={cn(
-                          "transition-colors",
-                          hasBias ? "bg-amber-50/60 dark:bg-amber-950/10 hover:bg-amber-50 dark:hover:bg-amber-950/20" : "hover:bg-muted/50"
-                        )}>
-                          <td className="px-4 py-2.5 align-top min-w-[200px]">
-                            <Input
-                              disabled={locked}
-                              value={row.estimateType}
-                              onChange={e => updateRow(row.id, "estimateType", e.target.value)}
-                              placeholder="e.g. Allowance for doubtful accounts"
-                              className="h-8 text-sm"
-                            />
-                          </td>
-                          <td className="px-4 py-2.5 align-top text-right w-32">
-                            <Input
-                              disabled={locked}
-                              value={row.priorAmt}
-                              onChange={e => updateRow(row.id, "priorAmt", e.target.value)}
-                              placeholder="0"
-                              className="h-8 text-sm tabular-nums text-right"
-                            />
-                          </td>
-                          <td className="px-4 py-2.5 align-top text-right w-32">
-                            <Input
-                              disabled={locked}
-                              value={row.actualAmt}
-                              onChange={e => updateRow(row.id, "actualAmt", e.target.value)}
-                              placeholder="0"
-                              className="h-8 text-sm tabular-nums text-right"
-                            />
-                          </td>
-                          <td className="px-4 py-2.5 align-middle text-right w-28 tabular-nums">
-                            <span className={cn(
-                              "text-sm font-mono",
-                              diff !== null && diff !== 0
-                                ? diff > 0 ? "text-green-700 dark:text-green-400" : "text-destructive"
-                                : "text-muted-foreground"
-                            )}>
-                              {fmtDollar(diff)}
-                            </span>
-                          </td>
-                          <td className="px-4 py-2.5 align-middle text-right w-24 tabular-nums">
-                            <span className={cn(
-                              "text-sm font-mono",
-                              pct !== null && Math.abs(pct) > 0.10
-                                ? "text-amber-600 dark:text-amber-400 font-semibold"
-                                : "text-muted-foreground"
-                            )}>
-                              {fmtPct(pct)}
-                            </span>
-                          </td>
-                          <td className="px-4 py-2.5 align-top min-w-[200px]">
-                            <Input
-                              disabled={locked}
-                              value={row.explanationVariance}
-                              onChange={e => updateRow(row.id, "explanationVariance", e.target.value)}
-                              placeholder="Reason for variance…"
-                              className="h-8 text-sm"
-                            />
-                          </td>
-                          <td className="px-4 py-2.5 align-top w-36">
+                    return (
+                      <tr key={row.id} className={cn(
+                        "transition-colors",
+                        hasBias ? "bg-amber-50/60 dark:bg-amber-950/10 hover:bg-amber-50 dark:hover:bg-amber-950/20" : "hover:bg-muted/50"
+                      )}>
+                        <td className="border border-border px-4 py-2.5 align-top min-w-[200px]">
+                          <Input
+                            disabled={locked}
+                            value={row.estimateType}
+                            onChange={e => updateRow(row.id, "estimateType", e.target.value)}
+                            placeholder="e.g. Allowance for doubtful accounts"
+                            className="h-8 text-sm"
+                          />
+                        </td>
+                        <td className="border border-border px-4 py-2.5 align-top text-right w-32">
+                          <Input
+                            disabled={locked}
+                            value={row.priorAmt}
+                            onChange={e => updateRow(row.id, "priorAmt", e.target.value)}
+                            placeholder="0"
+                            className="h-8 text-sm tabular-nums text-right"
+                          />
+                        </td>
+                        <td className="border border-border px-4 py-2.5 align-top text-right w-32">
+                          <Input
+                            disabled={locked}
+                            value={row.actualAmt}
+                            onChange={e => updateRow(row.id, "actualAmt", e.target.value)}
+                            placeholder="0"
+                            className="h-8 text-sm tabular-nums text-right"
+                          />
+                        </td>
+                        <td className="border border-border px-4 py-2.5 align-middle text-right w-28 tabular-nums">
+                          <span className={cn(
+                            "text-sm font-mono",
+                            diff !== null && diff !== 0
+                              ? diff > 0 ? "text-green-700 dark:text-green-400" : "text-destructive"
+                              : "text-muted-foreground"
+                          )}>
+                            {fmtDollar(diff)}
+                          </span>
+                        </td>
+                        <td className="border border-border px-4 py-2.5 align-middle text-right w-24 tabular-nums">
+                          <span className={cn(
+                            "text-sm font-mono",
+                            pct !== null && Math.abs(pct) > 0.10
+                              ? "text-amber-600 dark:text-amber-400 font-semibold"
+                              : "text-muted-foreground"
+                          )}>
+                            {fmtPct(pct)}
+                          </span>
+                        </td>
+                        <td className="border border-border px-4 py-2.5 align-top min-w-[200px]">
+                          <Input
+                            disabled={locked}
+                            value={row.explanationVariance}
+                            onChange={e => updateRow(row.id, "explanationVariance", e.target.value)}
+                            placeholder="Reason for variance…"
+                            className="h-8 text-sm"
+                          />
+                        </td>
+                        <td className="border border-border px-4 py-2.5 align-top w-36">
                             <Select
                               disabled={locked}
                               value={row.bias}
@@ -254,31 +253,30 @@ export function Audit514Worksheet({ isUS = false }: { isUS?: boolean }) {
                               </SelectContent>
                             </Select>
                           </td>
-                          <td className="px-4 py-2.5 align-top min-w-[200px]">
-                            <Input
-                              disabled={locked}
-                              value={row.implications}
-                              onChange={e => updateRow(row.id, "implications", e.target.value)}
-                              placeholder="Implications for current period…"
-                              className="h-8 text-sm"
-                            />
+                        <td className="border border-border px-4 py-2.5 align-top min-w-[200px]">
+                          <Input
+                            disabled={locked}
+                            value={row.implications}
+                            onChange={e => updateRow(row.id, "implications", e.target.value)}
+                            placeholder="Implications for current period…"
+                            className="h-8 text-sm"
+                          />
+                        </td>
+                        {!locked && (
+                          <td className="border border-border px-2 py-2.5 align-middle text-center">
+                            <button
+                              onClick={() => removeRow(row.id)}
+                              className="text-muted-foreground hover:text-destructive transition-colors"
+                            >
+                              <Trash2 className="h-3.5 w-3.5" />
+                            </button>
                           </td>
-                          {!locked && (
-                            <td className="px-2 py-2.5 align-middle text-center">
-                              <button
-                                onClick={() => removeRow(row.id)}
-                                className="text-muted-foreground hover:text-destructive transition-colors"
-                              >
-                                <Trash2 className="h-3.5 w-3.5" />
-                              </button>
-                            </td>
-                          )}
-                        </tr>
-                      );
-                    })}
-                  </tbody>
-                </table>
-              </div>
+                        )}
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
             </div>
             {!locked && (
               <div className="border-t border-border px-4 py-3">

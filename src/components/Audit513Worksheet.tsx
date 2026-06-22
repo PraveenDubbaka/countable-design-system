@@ -255,18 +255,18 @@ export function Audit513Worksheet({ isUS = false }: { isUS?: boolean }) {
           {/* Part A procedure row */}
           <SectionCard title="A. Risk Assessment Procedures">
             <div className="overflow-x-auto">
-              <table className="w-full">
+              <table className="w-full border-collapse">
                 <thead>
                   <tr className="bg-muted border-b border-border">
-                    <th className="px-5 py-2.5 text-left text-xs font-semibold text-foreground uppercase tracking-wider w-[40%]">Procedure</th>
-                    <th className="px-4 py-2.5 text-left text-xs font-semibold text-foreground uppercase tracking-wider">Response / Comments</th>
-                    <th className="px-4 py-2.5 text-center text-xs font-semibold text-foreground uppercase tracking-wider w-28">PSC? (Y/N)</th>
-                    <th className="px-4 py-2.5 text-center text-xs font-semibold text-foreground uppercase tracking-wider w-24">W/P Ref.</th>
+                    <th className="border border-border px-5 py-2.5 text-left text-xs font-semibold text-foreground uppercase tracking-wider w-[40%]">Procedure</th>
+                    <th className="border border-border px-4 py-2.5 text-left text-xs font-semibold text-foreground uppercase tracking-wider">Response / Comments</th>
+                    <th className="border border-border px-4 py-2.5 text-center text-xs font-semibold text-foreground uppercase tracking-wider w-28">PSC? (Y/N)</th>
+                    <th className="border border-border px-4 py-2.5 text-center text-xs font-semibold text-foreground uppercase tracking-wider w-24">W/P Ref.</th>
                   </tr>
                 </thead>
                 <tbody>
                   <tr className="hover:bg-muted/30 transition-colors align-top">
-                    <td className="px-5 py-3 text-sm text-foreground">
+                    <td className="border border-border px-5 py-3 text-sm text-foreground">
                       <span className="font-medium">Identify and describe accounting estimates and related disclosures expected to be in the F/S by:</span>
                       <ul className="mt-1.5 space-y-0.5 list-disc list-inside">
                         <li className="text-xs text-muted-foreground">Reviewing the results of understanding the entity and its environment (Form 510).</li>
@@ -275,7 +275,7 @@ export function Audit513Worksheet({ isUS = false }: { isUS?: boolean }) {
                         <li className="text-xs text-muted-foreground">Recording all estimates identified in the table below.</li>
                       </ul>
                     </td>
-                    <td className="px-4 py-3">
+                    <td className="border border-border px-4 py-3">
                       <Textarea
                         disabled={locked}
                         value={data.partAResponse}
@@ -284,7 +284,7 @@ export function Audit513Worksheet({ isUS = false }: { isUS?: boolean }) {
                         className="min-h-[72px] text-sm resize-none border-0 shadow-none p-0 focus-visible:ring-0 bg-transparent"
                       />
                     </td>
-                    <td className="px-4 py-3 w-28">
+                    <td className="border border-border px-4 py-3 w-28">
                       <Select value={data.partAPsc} onValueChange={v => patch("partAPsc", v)} disabled={locked}>
                         <SelectTrigger className="h-8 text-sm"><SelectValue placeholder="—" /></SelectTrigger>
                         <SelectContent>
@@ -294,7 +294,7 @@ export function Audit513Worksheet({ isUS = false }: { isUS?: boolean }) {
                         </SelectContent>
                       </Select>
                     </td>
-                    <td className="px-4 py-3 text-center w-24">
+                    <td className="border border-border px-4 py-3 text-center w-24">
                       <RefButton
                         reference={data.partAWpRef}
                         onAttach={doc => patch("partAWpRef", [...data.partAWpRef, doc])}
@@ -314,19 +314,19 @@ export function Audit513Worksheet({ isUS = false }: { isUS?: boolean }) {
             subtitle="Select all applicable estimates. Complexity involves the use of complex models, unobservable inputs, or significant assumptions/judgments."
           >
             <div className="overflow-x-auto">
-              <table className="w-full min-w-[700px]">
+              <table className="w-full min-w-[700px] border-collapse">
                 <thead>
                   <tr className="bg-muted border-b border-border text-xs font-semibold text-foreground uppercase tracking-wider">
-                    <th className="px-4 py-2.5 text-center w-10">In scope</th>
-                    <th className="px-4 py-2.5 text-left border-l border-border">Nature of Estimate</th>
-                    <th className="px-4 py-2.5 text-left border-l border-border w-40">F/S Area</th>
-                    <th className="px-4 py-2.5 text-center border-l border-border w-28">SCOTABD?</th>
-                    <th className="px-4 py-2.5 text-center border-l border-border w-28">Complex?</th>
-                    <th className="px-4 py-2.5 text-center border-l border-border w-28">Use form</th>
-                    <th className="w-8" />
+                    <th className="border border-border px-4 py-2.5 text-center w-10">In scope</th>
+                    <th className="border border-border px-4 py-2.5 text-left">Nature of Estimate</th>
+                    <th className="border border-border px-4 py-2.5 text-left w-40">F/S Area</th>
+                    <th className="border border-border px-4 py-2.5 text-center w-28">SCOTABD?</th>
+                    <th className="border border-border px-4 py-2.5 text-center w-28">Complex?</th>
+                    <th className="border border-border px-4 py-2.5 text-center w-28">Use form</th>
+                    <th className="border border-border w-8" />
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-border">
+                <tbody>
                   {data.estimates.map(est => (
                     <tr
                       key={est.id}
@@ -335,14 +335,14 @@ export function Audit513Worksheet({ isUS = false }: { isUS?: boolean }) {
                         est.selected ? "bg-primary/[0.02] hover:bg-primary/[0.04]" : "hover:bg-muted/30 opacity-60",
                       )}
                     >
-                      <td className="px-4 py-2.5 text-center">
+                      <td className="border border-border px-4 py-2.5 text-center">
                         <Checkbox
                           checked={est.selected}
                           onCheckedChange={v => updateEstimate(est.id, { selected: !!v })}
                           disabled={locked}
                         />
                       </td>
-                      <td className="px-4 py-2.5 border-l border-border">
+                      <td className="border border-border px-4 py-2.5">
                         {est.isPreset ? (
                           <span className={cn("text-sm", est.selected ? "text-foreground font-medium" : "text-muted-foreground")}>{est.name}</span>
                         ) : (
@@ -355,7 +355,7 @@ export function Audit513Worksheet({ isUS = false }: { isUS?: boolean }) {
                           />
                         )}
                       </td>
-                      <td className="px-4 py-2.5 border-l border-border w-40">
+                      <td className="border border-border px-4 py-2.5 w-40">
                         <Input
                           disabled={locked || !est.selected}
                           value={est.fsArea}
@@ -364,7 +364,7 @@ export function Audit513Worksheet({ isUS = false }: { isUS?: boolean }) {
                           className="h-7 text-sm border-0 shadow-none px-0 focus-visible:ring-0 bg-transparent"
                         />
                       </td>
-                      <td className="px-4 py-2.5 border-l border-border w-28">
+                      <td className="border border-border px-4 py-2.5 w-28">
                         <Select
                           value={est.scotabd}
                           onValueChange={v => updateEstimate(est.id, { scotabd: v as "Y" | "N" })}
@@ -374,7 +374,7 @@ export function Audit513Worksheet({ isUS = false }: { isUS?: boolean }) {
                           <SelectContent><SelectItem value="Y">Y</SelectItem><SelectItem value="N">N</SelectItem></SelectContent>
                         </Select>
                       </td>
-                      <td className="px-4 py-2.5 border-l border-border w-28">
+                      <td className="border border-border px-4 py-2.5 w-28">
                         <Select
                           value={est.complex}
                           onValueChange={v => updateEstimate(est.id, { complex: v as "Y" | "N" })}
@@ -384,7 +384,7 @@ export function Audit513Worksheet({ isUS = false }: { isUS?: boolean }) {
                           <SelectContent><SelectItem value="Y">Y</SelectItem><SelectItem value="N">N</SelectItem></SelectContent>
                         </Select>
                       </td>
-                      <td className="px-4 py-2.5 border-l border-border w-28 text-center">
+                      <td className="border border-border px-4 py-2.5 w-28 text-center">
                         {est.selected && est.complex === "Y" && (
                           <Badge variant="outline" className="text-[10px] border-amber-300 text-amber-700 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/20">
                             Form 513-2
@@ -396,7 +396,7 @@ export function Audit513Worksheet({ isUS = false }: { isUS?: boolean }) {
                           </Badge>
                         )}
                       </td>
-                      <td className="px-2 py-2 text-center w-8">
+                      <td className="border border-border px-2 py-2 text-center w-8">
                         {!est.isPreset && !locked && (
                           <button onClick={() => deleteCustomEstimate(est.id)} className="opacity-0 group-hover:opacity-100 p-1 rounded hover:bg-destructive/10 transition-all">
                             <Trash2 className="h-3 w-3 text-destructive" />
@@ -450,22 +450,22 @@ export function Audit513Worksheet({ isUS = false }: { isUS?: boolean }) {
           {/* Control deficiencies row */}
           <SectionCard title="B. Understand Management's Estimate Preparation Process">
             <div className="overflow-x-auto">
-              <table className="w-full">
+              <table className="w-full border-collapse">
                 <thead>
                   <tr className="bg-muted border-b border-border">
-                    <th className="px-5 py-2.5 text-left text-xs font-semibold text-foreground uppercase tracking-wider w-[40%]">Control Component</th>
-                    <th className="px-4 py-2.5 text-left text-xs font-semibold text-foreground uppercase tracking-wider">Control Deficiencies Identified & Audit Implications</th>
-                    <th className="px-4 py-2.5 text-center text-xs font-semibold text-foreground uppercase tracking-wider w-28">PSC? (Y/N)</th>
-                    <th className="px-4 py-2.5 text-center text-xs font-semibold text-foreground uppercase tracking-wider w-24">W/P Ref.</th>
+                    <th className="border border-border px-5 py-2.5 text-left text-xs font-semibold text-foreground uppercase tracking-wider w-[40%]">Control Component</th>
+                    <th className="border border-border px-4 py-2.5 text-left text-xs font-semibold text-foreground uppercase tracking-wider">Control Deficiencies Identified & Audit Implications</th>
+                    <th className="border border-border px-4 py-2.5 text-center text-xs font-semibold text-foreground uppercase tracking-wider w-28">PSC? (Y/N)</th>
+                    <th className="border border-border px-4 py-2.5 text-center text-xs font-semibold text-foreground uppercase tracking-wider w-24">W/P Ref.</th>
                   </tr>
                 </thead>
                 <tbody>
                   <tr className="hover:bg-muted/30 transition-colors align-top">
-                    <td className="px-5 py-3 text-sm text-foreground">
+                    <td className="border border-border px-5 py-3 text-sm text-foreground">
                       <p className="font-medium mb-1">Understand estimate preparation</p>
                       <p className="text-xs text-muted-foreground">Understand management's process for preparing estimates and making F/S disclosures. Consider responses to entity-level risks and controls on Form 530.</p>
                     </td>
-                    <td className="px-4 py-3">
+                    <td className="border border-border px-4 py-3">
                       <Textarea
                         disabled={locked}
                         value={data.partBDeficiencies}
@@ -474,7 +474,7 @@ export function Audit513Worksheet({ isUS = false }: { isUS?: boolean }) {
                         className="min-h-[72px] text-sm resize-none border-0 shadow-none p-0 focus-visible:ring-0 bg-transparent"
                       />
                     </td>
-                    <td className="px-4 py-3 w-28">
+                    <td className="border border-border px-4 py-3 w-28">
                       <Select value={data.partBPsc} onValueChange={v => patch("partBPsc", v)} disabled={locked}>
                         <SelectTrigger className="h-8 text-sm"><SelectValue placeholder="—" /></SelectTrigger>
                         <SelectContent>
@@ -484,7 +484,7 @@ export function Audit513Worksheet({ isUS = false }: { isUS?: boolean }) {
                         </SelectContent>
                       </Select>
                     </td>
-                    <td className="px-4 py-3 text-center w-24">
+                    <td className="border border-border px-4 py-3 text-center w-24">
                       <RefButton
                         reference={data.partBWpRef}
                         onAttach={doc => patch("partBWpRef", [...data.partBWpRef, doc])}
