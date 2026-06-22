@@ -14050,9 +14050,26 @@ export const generate525GoingConcernChecklist = (): Checklist => {
     note: '<p><strong>Notes:</strong></p><ol style="margin: 4px 0 0 1.25rem;"><li>Where events and conditions are identified, Form 625 (or its equivalent) also needs to be completed.</li><li>Record risk factors identified on Form 520 for further assessment.</li></ol><p style="margin-top: 8px; color: var(--muted-foreground); font-size: 0.8125rem;">PSC = Procedure successfully completed. &nbsp; F/S = Financial statements.</p>',
     sections: [
       {
+        id: 'ra525-s0', title: 'Inquiries', isExpanded: true,
+        questions: [],
+        formLayout: {
+          columns: 3,
+          elements: [
+            { id: 'ra525-inq-1-name', type: 'text-input', label: 'Name', placeholder: '' },
+            { id: 'ra525-inq-1-date', type: 'date', label: 'Date' },
+            { id: 'ra525-inq-1-desc', type: 'text-input', label: 'Description', placeholder: '' },
+            { id: 'ra525-inq-2-name', type: 'text-input', label: 'Name', placeholder: '' },
+            { id: 'ra525-inq-2-date', type: 'date', label: 'Date' },
+            { id: 'ra525-inq-2-desc', type: 'text-input', label: 'Description', placeholder: '' },
+            { id: 'ra525-inq-3-name', type: 'text-input', label: 'Name', placeholder: '' },
+            { id: 'ra525-inq-3-date', type: 'date', label: 'Date' },
+            { id: 'ra525-inq-3-desc', type: 'text-input', label: 'Description', placeholder: '' },
+          ]
+        }
+      },
+      {
         id: 'ra525-s1', title: 'Part 1 — Required Inquiries', isExpanded: true,
         questions: [
-          la('525-1-inquiry', '<p><strong>Who interviewed / By whom / Date:</strong></p>', 'Interviewed: CFO (James Thornton) / By: Senior Auditor (M. Patel) / Date: 2024-11-15'),
           q('525-1a', '<p><strong>Management\'s preliminary assessment:</strong> Has management performed a preliminary assessment of the entity\'s ability to continue as a going concern?</p>',
             [
               q('525-1a-i', '<p>Did management identify any events or conditions that cast significant doubt on the entity\'s ability to continue as a going concern? (See Appendix A)</p>', undefined, 'No', 'No adverse events or conditions identified by management.'),

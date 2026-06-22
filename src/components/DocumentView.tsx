@@ -1966,7 +1966,7 @@ function DocumentSectionBlock({
         <FormLayoutEditor
           formLayout={section.formLayout}
           onUpdate={(fl: FormLayout) => onUpdate({ ...section, formLayout: fl })}
-          isPreviewMode={isPreviewMode} /> :
+          isPreviewMode={isPreviewMode || isEngagementMode} /> :
 
 
         <div className="dv-questions py-0">
