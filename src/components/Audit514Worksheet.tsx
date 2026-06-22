@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef, useMemo } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Plus, Trash2, Info, AlertTriangle } from "lucide-react";
 import { readJsonFromLocalStorage, writeJsonToLocalStorage } from "@/lib/safeJson";
@@ -22,7 +23,7 @@ interface EstimateRow {
 
 interface Data514 {
   rows: EstimateRow[];
-  auditConclusionChecked: boolean;
+  conclusion: string;
   concluded: boolean;
   concludedOn: string;
 }
@@ -44,7 +45,7 @@ function newRow(): EstimateRow {
 function buildDefault(): Data514 {
   return {
     rows: [newRow(), newRow(), newRow()],
-    auditConclusionChecked: false,
+    conclusion: "",
     concluded: false,
     concludedOn: "",
   };
@@ -288,33 +289,19 @@ export function Audit514Worksheet({ isUS = false }: { isUS?: boolean }) {
             )}
           </SectionCard>
 
-          {/* ── Audit conclusion ──────────────────────────────────────────── */}
+          {/* ── Conclusion ────────────────────────────────────────────────── */}
           <SectionCard title="Conclusion">
-            <div className="px-6 py-5">
-              <label className={cn(
-                "flex items-start gap-3 cursor-pointer rounded-md px-4 py-3 border transition-colors",
-                data.auditConclusionChecked
-                  ? "border-green-300 bg-green-50 dark:border-green-700 dark:bg-green-950/20"
-                  : "border-border bg-muted/40",
-                locked && "cursor-not-allowed opacity-70"
-              )}>
-                <input
-                  type="checkbox"
-                  disabled={locked}
-                  checked={data.auditConclusionChecked}
-                  onChange={e => setData(d => ({ ...d, auditConclusionChecked: e.target.checked }))}
-                  className="mt-0.5 h-4 w-4 accent-primary cursor-pointer disabled:cursor-not-allowed"
-                />
-                <p className="text-sm text-foreground leading-relaxed">
-                  I have reviewed the outcome of accounting estimates included in the prior period&apos;s financial statements and documented information relevant to identifying and assessing risks of material misstatement in the current period.
-                </p>
-              </label>
-              {data.auditConclusionChecked && !locked && (
-                <p className="mt-2 text-xs text-green-700 dark:text-green-400 flex items-center gap-1.5">
-                  <span className="inline-block h-1.5 w-1.5 rounded-full bg-green-500" />
-                  Conclusion confirmed
-                </p>
-              )}
+            <div className="px-6 py-5 space-y-4">
+              <p className="text-sm text-muted-foreground">
+                Summarize whether any differences indicate possible management bias and the overall impact on the current period audit.
+              </p>
+              <Textarea
+                disabled={locked}
+                value={data.conclusion}
+                onChange={e => setData(d => ({ ...d, conclusion: e.target.value }))}
+                placeholder="Document your conclusion…"
+                className="min-h-[120px] text-sm resize-none bg-background"
+              />
             </div>
           </SectionCard>
 
