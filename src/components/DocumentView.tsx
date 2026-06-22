@@ -1866,7 +1866,7 @@ function DocumentSectionBlock({
         </button>
 
         {/* Section number + separator + Title — aligned with question text */}
-        {showNumbering && <>
+        {showNumbering && !(isEngagementMode && section.formLayout) && <>
           <span className="text-xs font-medium text-muted-foreground select-none shrink-0 w-8 text-left">
             {numberingFormat === 'alphabet-number' ? `${String.fromCharCode(64 + sectionNumber)}.` : `${sectionNumber}.`}
           </span>
@@ -1951,7 +1951,7 @@ function DocumentSectionBlock({
 
         {/* Section info */}
         <div className="dv-section-meta flex items-center gap-2 mr-8">
-          {section.formLayout &&
+          {section.formLayout && !isEngagementMode &&
           <span className="text-xs text-muted-foreground">
             <span className="flex items-center gap-1"><LayoutGrid className="h-3 w-3" />{section.formLayout.columns} Column{section.formLayout.columns > 1 ? 's' : ''}</span>
           </span>

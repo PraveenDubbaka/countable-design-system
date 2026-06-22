@@ -505,11 +505,10 @@ export function FormLayoutEditor({ formLayout, onUpdate, isPreviewMode }: FormLa
       
       case 'text-input':
         return (
-          <LabeledInput
-            label={label}
-            value=""
-            onChange={() => {}}
-            placeholder={element.placeholder}
+          <input
+            type="text"
+            placeholder={label || element.placeholder}
+            className="h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm placeholder:text-muted-foreground placeholder:italic focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
           />
         );
       
@@ -543,8 +542,9 @@ export function FormLayoutEditor({ formLayout, onUpdate, isPreviewMode }: FormLa
       
       case 'date':
         return (
-          <LabeledDatePicker
-            label={label}
+          <input
+            type="date"
+            className="h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
           />
         );
       
