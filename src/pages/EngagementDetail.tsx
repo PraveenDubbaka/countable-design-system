@@ -605,7 +605,7 @@ const CUSTOM_WORKSHEET_TITLES: Record<string, string> = {
   'aud-ra-507': 'Minutes of Governance Meetings',
   'aud-ra-506': 'Identifying Fraud Risks',
   'aud-ra-514': 'Outcome of Prior Period Accounting Estimates',
-  'aud-ra-520': 'Risk Register — Entity Specific (Business / Operating)',
+  'aud-ra-520': 'Risk Register — Identifying and Assessing Risks of Material Misstatement',
   'aud-ra-540': 'Control Design / Implementation Assessment',
   'aud-ra-575': 'Internal Control Deficiencies Identified',
   'aud-ra-590': 'Engagement Scoping — Classes of Transactions, Account Balances and Disclosures',

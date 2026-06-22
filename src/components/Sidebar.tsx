@@ -1752,7 +1752,7 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
                       { id: "aud-ra-513", code: "UAE", label: "Understanding Accounting Estimates and Related Disclosures", icon: "worksheet", route: "checklist/aud-ra-513" },
                       { id: "aud-ra-514", code: "PPE", label: "Outcome of Prior Period Accounting Estimates", icon: "worksheet", route: "checklist/aud-ra-514" },
                       { id: "aud-ra-515", code: "URP", label: "Understanding Related Parties", icon: "checklist", route: "checklist/aud-ra-515" },
-                      { id: "aud-ra-520", code: "RRE", label: "Risk Register — Entity Specific — Business / Operating", icon: "worksheet", route: "checklist/aud-ra-520" },
+                      { id: "aud-ra-520", code: "RRE", label: "Risk Register — Identifying and Assessing RMMs", icon: "worksheet", route: "checklist/aud-ra-520" },
                       { id: "aud-ra-525", code: "GCI", label: "Going Concern — Identifying Events and Conditions", icon: "checklist", route: "checklist/aud-ra-525" },
                       { id: "aud-ra-530", code: "PRC", label: "Pervasive (Financial Statement Level) Risks and Controls", icon: "checklist", route: "checklist/aud-ra-530" },
                       { id: "aud-ra-535", code: "ISC", label: "Understanding the Information System and Communication", icon: "checklist", route: "checklist/aud-ra-535" },
