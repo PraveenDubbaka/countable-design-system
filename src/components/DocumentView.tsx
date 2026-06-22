@@ -2365,6 +2365,28 @@ export function DocumentView({
         <SortableContext items={checklist.sections.map((s) => s.id)} strategy={verticalListSortingStrategy}>
           {checklist.sections.map((section, idx) =>
           <Fragment key={section.id}>
+            {section.formLayout && isEngagementMode ? (
+              <div className="dv-section dv-objective-panel rounded-[8px] border-[0.5px] overflow-hidden" style={{ borderColor: 'var(--dv-separator)' }}>
+                <button
+                  type="button"
+                  className="w-full flex items-center gap-2 pl-[38px] pr-4 text-left text-sm font-semibold transition-colors"
+                  style={{ height: '48px', minHeight: '48px' }}
+                  onClick={() => handleSectionUpdate(idx, { ...section, isExpanded: !section.isExpanded })}
+                >
+                  {section.isExpanded ? <ChevronDown className="h-4 w-4 text-muted-foreground" /> : <ChevronRight className="h-4 w-4 text-muted-foreground" />}
+                  {section.title}
+                </button>
+                {section.isExpanded && (
+                  <div className="px-6 py-4 border-t" style={{ borderColor: 'var(--dv-separator)' }}>
+                    <FormLayoutEditor
+                      formLayout={section.formLayout}
+                      onUpdate={(fl) => handleSectionUpdate(idx, { ...section, formLayout: fl })}
+                      isPreviewMode={true}
+                    />
+                  </div>
+                )}
+              </div>
+            ) : (
               <DocumentSectionBlock
               section={section}
               sectionIndex={idx}
@@ -2387,6 +2409,7 @@ export function DocumentView({
               onShowNumberingChange={(v) => { setShowNumbering(v); localStorage.setItem('dv-show-numbering', String(v)); }}
               isCompactMode={isCompactMode}
               isGlobalTemplate={isGlobalTemplate} />
+            )}
 
               {/* Between-section toolbar — Gamma style */}
               {!isPreviewMode &&
