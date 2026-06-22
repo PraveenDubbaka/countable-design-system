@@ -230,6 +230,26 @@ const LabeledDatePicker = ({
   );
 };
 
+const DatePickerPreview = () => {
+  const [date, setDate] = useState<Date>();
+  return (
+    <Popover>
+      <PopoverTrigger asChild>
+        <button
+          type="button"
+          className="w-full appearance-none border-2 border-transparent rounded-md bg-transparent p-1.5 text-sm text-muted-foreground text-left flex items-center gap-2 focus:outline-none hover:bg-muted/40"
+        >
+          <span className="flex-1 italic">{date ? format(date, 'yyyy-MM-dd') : 'yyyy-mm-dd'}</span>
+          <CalendarIcon className="h-3.5 w-3.5 flex-shrink-0" />
+        </button>
+      </PopoverTrigger>
+      <PopoverContent className="w-auto p-0 bg-card border shadow-lg z-50" align="start">
+        <CalendarComponent mode="single" selected={date} onSelect={setDate} initialFocus className="p-3 pointer-events-auto" />
+      </PopoverContent>
+    </Popover>
+  );
+};
+
 export function FormLayoutEditor({ formLayout, onUpdate, isPreviewMode }: FormLayoutEditorProps) {
   const handleAddColumn = () => {
     if (formLayout.columns >= 5) return;
@@ -508,7 +528,7 @@ export function FormLayoutEditor({ formLayout, onUpdate, isPreviewMode }: FormLa
           <input
             type="text"
             placeholder={label || element.placeholder}
-            className="h-9 w-full appearance-none rounded-[4px] border border-border bg-background px-3 py-1 text-sm placeholder:text-muted-foreground placeholder:italic focus:outline-none focus:border-primary"
+            className="w-full appearance-none border-2 border-transparent rounded-md bg-transparent p-1.5 text-sm placeholder:text-muted-foreground placeholder:italic focus:outline-none focus:border-primary/30"
           />
         );
       
@@ -541,12 +561,7 @@ export function FormLayoutEditor({ formLayout, onUpdate, isPreviewMode }: FormLa
         );
       
       case 'date':
-        return (
-          <input
-            type="date"
-            className="h-9 w-full appearance-none rounded-[4px] border border-border bg-background px-3 py-1 text-sm text-muted-foreground focus:outline-none focus:border-primary"
-          />
-        );
+        return <DatePickerPreview />;
       
       case 'radio':
         return (
