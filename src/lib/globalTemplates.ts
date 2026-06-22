@@ -14046,43 +14046,84 @@ export const generate525GoingConcernChecklist = (): Checklist => {
     id: 'default-audit-ra-525',
     title: 'Going Concern — Identifying Events and Conditions',
     description: 'Identify events and conditions that may cast significant doubt on the entity\'s ability to continue as a going concern (CAS 570).',
-    objective: 'Identify and evaluate events and conditions that, individually or collectively, may cast significant doubt on the entity\'s ability to continue as a going concern.',
+    objective: 'To identify any events/conditions that may cast significant doubt on the entity\'s ability to continue as a going concern.',
+    note: '<p><strong>Notes:</strong></p><ol style="margin: 4px 0 0 1.25rem;"><li>Where events and conditions are identified, Form 625 (or its equivalent) also needs to be completed.</li><li>Record risk factors identified on Form 520 for further assessment.</li></ol><p style="margin-top: 8px; color: var(--muted-foreground); font-size: 0.8125rem;">PSC = Procedure successfully completed. &nbsp; F/S = Financial statements.</p>',
     sections: [
       {
-        id: 'ra525-s1', title: '1. Financial Indicators', isExpanded: true,
+        id: 'ra525-s1', title: 'Part 1 — Required Inquiries', isExpanded: true,
         questions: [
-          q('525-1a', '<p>Net liability or net current liability position?</p>', undefined, 'No', 'Working capital positive: current assets $4.2M vs. current liabilities $2.3M. Current ratio 1.85:1.'),
-          q('525-1b', '<p>Fixed-term borrowings approaching maturity without realistic prospects of renewal/repayment?</p>', undefined, 'No', 'Term loan due 2027. Operating LOC renewed annually — renewal confirmed by RBC.'),
-          q('525-1c', '<p>Indications of withdrawal of financial support by creditors?</p>', undefined, 'No', 'No indicators. Banking relationship is stable.'),
-          q('525-1d', '<p>Negative operating cash flows indicated by historical or prospective financial statements?</p>', undefined, 'No', 'Operating cash flow positive $1.1M for FY2024.'),
-          q('525-1e', '<p>Adverse key financial ratios?</p>', undefined, 'No', 'DSCR 2.1:1 (covenant 1.25:1 — complied). Debt/equity 0.57:1.'),
-          q('525-1f', '<p>Substantial operating losses or significant deterioration in the value of assets?</p>', undefined, 'No', 'Net income $624K. Total assets increased from $17.1M to $18.2M.'),
-          q('525-1g', '<p>Arrears or discontinuance of dividends?</p>', undefined, 'NA', 'No dividends declared. Owner draw through management fees.'),
-          q('525-1h', '<p>Inability to pay creditors on due dates?</p>', undefined, 'No', 'Payables aging review shows no significant overdue amounts.'),
+          la('525-1-inquiry', '<p><strong>Who interviewed / By whom / Date:</strong></p>', 'Interviewed: CFO (James Thornton) / By: Senior Auditor (M. Patel) / Date: 2024-11-15'),
+          q('525-1a', '<p><strong>Management\'s preliminary assessment:</strong> Has management performed a preliminary assessment of the entity\'s ability to continue as a going concern?</p>',
+            [
+              q('525-1a-i', '<p>Did management identify any events or conditions that cast significant doubt on the entity\'s ability to continue as a going concern? (See Appendix A)</p>', undefined, 'No', 'No adverse events or conditions identified by management.'),
+              q('525-1a-ii', '<p>Was management\'s assessment evaluated for completeness, including all relevant information?</p>', undefined, 'Yes', 'Assessment reviewed — management considered all financial covenants, cash flow projections, and credit facilities.'),
+            ],
+            'Yes', 'Management prepared a going concern assessment for FY2024 — no adverse conditions identified.'
+          ),
+          q('525-1b', '<p><strong>Period beyond management\'s assessment:</strong> Does management have any knowledge of events or conditions beyond the period of their assessment that may cast significant doubt on the entity\'s ability to continue as a going concern?</p>',
+            undefined, 'No', 'Management confirmed no known events or conditions beyond the 12-month assessment period. The minimum period for management\'s assessment is 12 months from the date of the F/S.'
+          ),
+          q('525-1c', '<p><strong>No going-concern assessment:</strong> If no going-concern assessment has been made by management — was the intended use of the going-concern basis of accounting discussed with management?</p>',
+            [
+              q('525-1c-i', '<p>Was management inquired about whether events or conditions exist (see Appendix A) that, individually or collectively, may cast significant doubt on the entity\'s ability to continue as a going concern?</p>', undefined, 'NA'),
+            ],
+            'NA', 'Management performed a going concern assessment — this step is not applicable.'
+          ),
+          q('525-1d', '<p><strong>Other risk assessment procedures:</strong> Have any adverse events/conditions been identified as a result of performing other risk assessment procedures? Consider the following:</p>',
+            [
+              q('525-1d-i',   '<p>Financing/cash flow challenges</p>', undefined, 'No'),
+              q('525-1d-ii',  '<p>Adverse market conditions, trends or events</p>', undefined, 'No'),
+              q('525-1d-iii', '<p>Regulatory or legal challenges</p>', undefined, 'No'),
+              q('525-1d-iv',  '<p>Other (including accounting estimates)</p>', undefined, 'No'),
+            ],
+            'No', 'No adverse events or conditions identified from other risk assessment procedures.'
+          ),
+          q('525-1e', '<p><strong>Adverse events and conditions — documentation:</strong> When adverse events or conditions are present: have resulting risks of material misstatement been documented on Form 520, and has Form 625 been completed?</p>',
+            undefined, 'NA', 'No adverse events or conditions identified — Form 625 not required.'
+          ),
         ]
       },
       {
-        id: 'ra525-s2', title: '2. Operating Indicators', isExpanded: true,
+        id: 'ra525-s2', title: 'Appendix A — Financing / Cash Flow Challenges', isExpanded: true,
         questions: [
-          q('525-2a', '<p>Loss of key management without replacement?</p>', undefined, 'No'),
-          q('525-2b', '<p>Loss of a major market, franchise, license, or principal supplier?</p>', undefined, 'No', 'Top 5 customers account for 61% of revenue. All relationships renewed for FY2025.'),
-          q('525-2c', '<p>Labour difficulties or shortages of important supplies?</p>', undefined, 'No', 'No labour disputes. Fuel supply secured through 12-month contract.'),
-          q('525-2d', '<p>Fundamental changes in technology or market conditions to which the entity cannot adapt?</p>', undefined, 'No'),
+          q('525-A1a', '<p>Insufficient equity or working capital (net liability or net current liability position)?</p>', undefined, 'No', 'Working capital positive: current assets $4.2M vs. current liabilities $2.3M. Current ratio 1.85:1.'),
+          q('525-A1b', '<p>Inability to obtain or refinance borrowings?</p>', undefined, 'No', 'Term loan due 2027. Operating LOC renewed annually — renewal confirmed by RBC.'),
+          q('525-A1c', '<p>Indications of withdrawal of financial support by creditors or owners?</p>', undefined, 'No', 'No indicators. Banking relationship is stable.'),
+          q('525-A1d', '<p>Negative operating cash flows indicated by historical or prospective F/S?</p>', undefined, 'No', 'Operating cash flow positive $1.1M for FY2024.'),
+          q('525-A1e', '<p>Inability to pay creditors on due dates?</p>', undefined, 'No', 'Payables aging review shows no significant overdue amounts.'),
+          q('525-A1f', '<p>Inability to comply with the terms of loan agreements?</p>', undefined, 'No', 'DSCR 2.1:1 (covenant 1.25:1 — complied). Debt/equity 0.57:1.'),
         ]
       },
       {
-        id: 'ra525-s3', title: '3. Other Indicators', isExpanded: true,
+        id: 'ra525-s3', title: 'Appendix A — Adverse Market Conditions, Trends or Events', isExpanded: true,
         questions: [
-          q('525-3a', '<p>Non-compliance with capital requirements or other statutory requirements?</p>', undefined, 'No', 'All regulatory filings current. Transport Canada certifications valid.'),
-          q('525-3b', '<p>Pending legal or regulatory proceedings against the entity?</p>', undefined, 'No', 'No pending litigation identified per legal inquiry.'),
-          q('525-3c', '<p>Changes in legislation or government policy expected to adversely affect the entity?</p>', undefined, 'No'),
+          q('525-A2a', '<p>Management intentions to liquidate the entity or to cease operations?</p>', undefined, 'No'),
+          q('525-A2b', '<p>Loss of key management or employees without replacement?</p>', undefined, 'No', 'All key management in place. Succession plan documented.'),
+          q('525-A2c', '<p>Loss of a major market, key customer(s), franchise, licence, or principal supplier(s)?</p>', undefined, 'No', 'Top 5 customers account for 61% of revenue. All relationships renewed for FY2025.'),
+          q('525-A2d', '<p>Emergence of a highly successful competitor?</p>', undefined, 'No'),
+          q('525-A2e', '<p>Substantial operating losses or significant deterioration in the value of assets used to generate cash flows?</p>', undefined, 'No', 'Net income $624K. Total assets increased from $17.1M to $18.2M.'),
         ]
       },
       {
-        id: 'ra525-s4', title: '4. Overall Conclusion', isExpanded: true,
+        id: 'ra525-s4', title: 'Appendix A — Regulatory or Legal Challenges', isExpanded: true,
         questions: [
-          q('525-4a', '<p>Based on the above, have events or conditions been identified that may cast significant doubt on the entity\'s ability to continue as a going concern?</p>', undefined, 'No', 'No indicators of going concern doubt identified. Entity is financially stable with positive operating results and adequate liquidity.'),
-          la('525-4-conclusion', '<p><strong>Going concern conclusion:</strong></p>', 'No events or conditions identified that cast significant doubt on Shipping Line Inc.\'s ability to continue as a going concern. Management\'s use of the going concern basis of accounting is appropriate.'),
+          q('525-A3a', '<p>Pending legal or regulatory proceedings against the entity?</p>', undefined, 'No', 'No pending litigation identified per legal inquiry.'),
+          q('525-A3b', '<p>Changes in law or regulation or government policy expected to adversely affect the entity?</p>', undefined, 'No'),
+          q('525-A3c', '<p>Non-compliance with capital or other statutory requirements?</p>', undefined, 'No', 'All regulatory filings current. Transport Canada certifications valid.'),
+        ]
+      },
+      {
+        id: 'ra525-s5', title: 'Appendix A — Other Events or Conditions Identified', isExpanded: true,
+        questions: [
+          q('525-A4a', '<p>Significant estimation uncertainty relating to an accounting estimate?</p>', undefined, 'No', 'Accounting estimates reviewed — no significant uncertainty that would impact going concern.'),
+          la('525-A4-other', '<p>Other events or conditions identified (describe):</p>', ''),
+        ]
+      },
+      {
+        id: 'ra525-s6', title: 'Overall Conclusion', isExpanded: true,
+        questions: [
+          q('525-conc-q', '<p>Based on the above, have events or conditions been identified that, individually or collectively, may cast significant doubt on the entity\'s ability to continue as a going concern?</p>', undefined, 'No', 'No indicators of going concern doubt identified. Entity is financially stable with positive operating results and adequate liquidity.'),
+          la('525-conc', '<p><strong>Going concern conclusion:</strong></p>', 'No events or conditions identified that cast significant doubt on Shipping Line Inc.\'s ability to continue as a going concern. Management\'s use of the going concern basis of accounting is appropriate. Form 625 is not required.'),
         ]
       },
     ],
