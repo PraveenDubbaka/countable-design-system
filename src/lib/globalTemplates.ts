@@ -13962,30 +13962,78 @@ export const generate515RelatedPartiesChecklist = (): Checklist => {
     id: 'default-audit-ra-515',
     title: 'Understanding Related Parties',
     description: 'Identify and understand the entity\'s related party relationships and transactions (CAS 550).',
-    objective: 'Obtain sufficient understanding of related party relationships and transactions to identify, assess, and respond to the risks of material misstatement arising from related parties.',
+    objective: 'To understand the use and extent of related-party relationships and transactions, to recognize fraud risk factors and to assess possible risks of material misstatement (fraud or error) in the financial statements.\n\nNote: Information on related parties may already have been documented on Form 510, to which reference can be made.\n\nPSC = Procedures successfully completed.  F/S = Financial statements.',
     sections: [
       {
-        id: 'ra515-s1', title: '1. Identification of Related Parties', isExpanded: true,
+        id: 'ra515-s1', title: '1. Obtain Listing of Related Parties', isExpanded: true,
         questions: [
-          q('515-1a', '<p>Has the entity provided a complete and accurate list of related parties (including directors, officers, key management, shareholders, and entities under common control)?</p>', undefined, 'Yes', 'Management representation obtained. Related party schedule provided.'),
-          la('515-1-list', '<p><strong>Related parties identified:</strong></p>', '1. Pacific Coast Logistics Ltd. — wholly-owned subsidiary\n2. J. Chen Holding Corp. — controlled by majority shareholder (same individual)\n3. Key management: J. Chen (CEO/owner), L. Park (CFO), A. Reyes (VP Operations)\n4. Board members: 3 directors identified\n5. No other entities under common control identified'),
-          q('515-1b', '<p>Have related parties been confirmed through review of shareholder agreements, corporate registry, board minutes, and other relevant documents?</p>', undefined, 'Yes', 'Corporate registry, shareholder register, and minute books reviewed.'),
+          q('515-1a',
+            '<p>Request management to prepare (or assist in preparing) a comprehensive listing of related parties and transactions during the period (with information such as included in the table below), including details of changes from the previous period.</p>',
+            undefined, 'Yes', 'Management provided a comprehensive related-party schedule. Changes from prior year reviewed and documented.'),
+          q('515-1b',
+            '<p>Ensure listing includes the names of directors, managers, key staff, family members and any other entities they may own or control.</p>',
+            undefined, 'Yes', 'Listing confirmed to cover all directors, key management personnel, family members, and entities under common control. No omissions identified.'),
         ]
       },
       {
-        id: 'ra515-s2', title: '2. Related Party Transactions', isExpanded: true,
+        id: 'ra515-s2', title: '2. Relevant Controls and Procedures', isExpanded: true,
         questions: [
-          q('515-2a', '<p>Has the auditor identified all significant related party transactions during the period?</p>', undefined, 'Yes', 'GL reviewed for related party indicators. Management inquiry performed.'),
-          la('515-2-transactions', '<p><strong>Significant related party transactions identified:</strong></p>', '1. Management fees paid to J. Chen Holding Corp. — $180K/year (approved by board, market rate confirmed)\n2. Subcontracting revenue from Pacific Coast Logistics Ltd. — $340K\n3. Short-term loan from shareholder — $0 balance at year-end (repaid during year)\n4. Lease of warehouse facility from related party — $96K/year (market rate assessed)'),
-          q('515-2b', '<p>Have all related party transactions been conducted on terms equivalent to those prevailing in an arm\'s length transaction?</p>', undefined, 'Yes', 'Management confirmed arm\'s length terms. Auditor assessed reasonableness of amounts.'),
-          q('515-2c', '<p>Are related party transactions appropriately disclosed in the financial statements?</p>', undefined, 'Yes', 'Disclosures reviewed and appear adequate per ASPE Section 3840.'),
+          la('515-2-controls',
+            '<p><strong>Document any controls/procedures that exist to ensure related parties are identified and significant transactions are:</strong></p><ul><li>Authorized and approved (especially those outside the normal course of business).</li><li>Accounted for and disclosed in accordance with the applicable financial reporting framework.</li></ul>',
+            'Authorization controls: All related-party transactions require board approval and are documented in board minutes. CFO reviews all related-party invoices prior to payment.\nDisclosure controls: Controller maintains a related-party register updated quarterly. External counsel reviews F/S disclosures annually.\nNo transactions outside the normal course of business identified this period.'),
+          q('515-2a',
+            '<p>Where controls that meet the requirements of CAS 315.26(a) are identified, assess the control design and implementation on Form 550.</p>',
+            undefined, 'NA', 'No controls meeting CAS 315.26(a) thresholds identified at the related-party level. Reliance on substantive procedures only.'),
         ]
       },
       {
-        id: 'ra515-s3', title: '3. Fraud Risk from Related Parties', isExpanded: true,
+        id: 'ra515-s3', title: '3. Risk of Undisclosed Related Parties', isExpanded: true,
         questions: [
-          q('515-3a', '<p>Are there any related party transactions that appear unusual, complex, or lack a clear business rationale?</p>', undefined, 'No', 'All related party transactions have clear business rationale.'),
-          q('515-3b', '<p>Has management override of controls related to related party transactions been considered?</p>', undefined, 'Yes', 'Considered — owner-manager controls present. Reliance on substantive procedures.'),
+          q('515-3a',
+            '<p>Consider any previous history of not disclosing related parties or transactions.</p>',
+            undefined, 'No', 'No prior history of undisclosed related parties. Prior year audit confirmed complete disclosure.'),
+          q('515-3b',
+            '<p>Consider the involvement of related parties in transactions outside the normal course of business.</p>',
+            undefined, 'No', 'All identified related-party transactions are in the normal course of business. No unusual or complex arrangements noted.'),
+          q('515-3c',
+            '<p>Consider the susceptibility of financial statements to material misstatement through the use of related-party transactions. Consider transactions that would improve liquidity/profitability, avoid corporate/personal taxes, avoid breach of a bank covenant or shift income/expense to future periods or between related entities.</p>',
+            undefined, 'No', 'No indicators of transactions structured to achieve a specific F/S outcome. All related-party transactions appear commercially driven and priced at market rates.'),
+          q('515-3d',
+            '<p>Inspect the following for any indications of undisclosed related-party relationships or transactions:</p><ul><li>Minutes of corporate meetings.</li><li>Bank and legal confirmations.</li><li>Other records or documents as necessary in the circumstances of the entity (e.g., tax returns, loan agreements).</li></ul>',
+            undefined, 'Yes', 'Board minutes reviewed for the full period — no undisclosed related parties identified. Bank confirmation received and cross-referenced. Legal confirmation obtained. Prior-year tax return reviewed.'),
+          q('515-3e',
+            '<p>Inquire of key employees, advisors and any component auditors about:</p><ul><li>Related parties not already identified and, if so, details of transactions.</li><li>Agreements or loan guarantees not reflected in the financial statements.</li><li>Payments (kickbacks), preferential terms or side deals not disclosed.</li></ul>',
+            undefined, 'Yes', 'Management inquiry performed — no additional related parties or undisclosed arrangements identified. No off-balance-sheet guarantees or kickback arrangements noted. No component auditors applicable for this engagement.'),
+          q('515-3f',
+            '<p>Ensure audit team is aware of related parties and the need for professional skepticism.</p>',
+            undefined, 'Yes', 'Related-party details communicated to engagement team at the planning meeting. Team briefed on CAS 550 professional skepticism requirements.'),
+        ]
+      },
+      {
+        id: 'ra515-s4', title: '4. Risk Assessment', isExpanded: true,
+        questions: [
+          q('515-4a',
+            '<p>Document any risks of material misstatement on Form 520, and assess the risks of material misstatement arising from related-party relationships and transactions.</p>',
+            undefined, 'Yes', 'Related-party risk assessed as low-to-moderate. No significant risks identified. Risk documented and cross-referenced to Form 520 (Risk Register).'),
+          q('515-4b',
+            '<p>Identify significant risks that will require special attention, including:</p><ul><li>Fraud risk factors (involving related parties).</li><li>Significant related-party transactions outside the normal course of business.</li></ul>',
+            undefined, 'No', 'No fraud risk factors related to related parties identified. No transactions outside the normal course of business. No significant risks requiring special audit attention at this time.'),
+        ]
+      },
+      {
+        id: 'ra515-s5', title: 'Related Party Listing', isExpanded: true,
+        questions: [
+          la('515-5-listing',
+            '<p><strong>List related parties below or cross-reference to other relevant working papers.</strong></p><p style="color:var(--muted-foreground);font-size:0.75rem;margin-top:4px">Columns: # | Name | Relationship | $ Value of transactions | Reasons for transaction, whether in the normal course of business and the terms | W/P ref.</p>',
+            '1. | Pacific Coast Logistics Ltd. | Wholly-owned subsidiary | $340,000 | Subcontracting revenue — normal course of business; arm\'s length pricing confirmed by benchmarking to third-party rates | —\n2. | J. Chen Holding Corp. | Controlled by majority shareholder (J. Chen) | $180,000 | Management fees — board-approved; market rate confirmed by independent compensation review | —\n3. | J. Chen (CEO/Owner) | Majority shareholder and key management | $0 (nil at year-end) | Short-term shareholder loan — fully repaid during the year; no balance outstanding | —\n4. | Harbourside Properties Inc. | Entity controlled by related shareholder | $96,000 | Warehouse operating lease — market rate assessed by comparison to similar properties in the area | —\n5. | L. Park (CFO) | Key management personnel | $285,000 | Annual compensation — approved by board; within industry benchmark range | —'),
+        ]
+      },
+      {
+        id: 'ra515-s6', title: 'Notes', isExpanded: true,
+        questions: [
+          la('515-6-notes',
+            '<p><strong>Notes:</strong></p>',
+            ''),
         ]
       },
     ],

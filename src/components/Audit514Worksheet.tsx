@@ -28,6 +28,19 @@ interface Data514 {
   concludedOn: string;
 }
 
+const ESTIMATE_TYPE_OPTIONS = [
+  "Allowance for Doubtful Accounts",
+  "Inventory Obsolescence Reserve",
+  "Useful Life of Capital Assets",
+  "Accrued Warranty Provision",
+  "Employee Future Benefits",
+  "Revenue Recognition (Stage of Completion)",
+  "Goodwill Impairment",
+  "Environmental Remediation Provision",
+  "Income Tax Provision",
+  "Other",
+];
+
 const uid = () => Math.random().toString(36).slice(2, 9);
 
 function newRow(): EstimateRow {
@@ -44,7 +57,35 @@ function newRow(): EstimateRow {
 
 function buildDefault(): Data514 {
   return {
-    rows: [newRow(), newRow(), newRow()],
+    rows: [
+      {
+        id: uid(),
+        estimateType: "Allowance for Doubtful Accounts",
+        priorAmt: "245000",
+        actualAmt: "218000",
+        explanationVariance: "Actual write-offs lower than estimated due to improved collections performance and proactive AR follow-up.",
+        bias: "No",
+        implications: "Management's estimate appears conservative. Consider adjusting the current-year allowance methodology.",
+      },
+      {
+        id: uid(),
+        estimateType: "Inventory Obsolescence Reserve",
+        priorAmt: "88000",
+        actualAmt: "112000",
+        explanationVariance: "Actual obsolescence exceeded estimate following introduction of new product lines that accelerated turnover of legacy SKUs.",
+        bias: "Yes",
+        implications: "Indicates possible underestimation bias. Obtain management's updated methodology and test reasonableness of current-year reserve.",
+      },
+      {
+        id: uid(),
+        estimateType: "Accrued Warranty Provision",
+        priorAmt: "156000",
+        actualAmt: "149000",
+        explanationVariance: "Slight overstatement; fewer warranty claims filed than anticipated, consistent with improved product quality controls.",
+        bias: "No",
+        implications: "Immaterial difference. No change to audit approach required.",
+      },
+    ],
     conclusion: "",
     concluded: false,
     concludedOn: "",
@@ -178,14 +219,21 @@ export function Audit514Worksheet({ isUS = false }: { isUS?: boolean }) {
                         "transition-colors",
                         hasBias ? "bg-amber-50/60 dark:bg-amber-950/10 hover:bg-amber-50 dark:hover:bg-amber-950/20" : "hover:bg-muted/50"
                       )}>
-                        <td className="px-4 py-2.5 align-top min-w-[200px]">
-                          <Input
+                        <td className="px-4 py-2.5 align-top min-w-[220px]">
+                          <Select
                             disabled={locked}
                             value={row.estimateType}
-                            onChange={e => updateRow(row.id, "estimateType", e.target.value)}
-                            placeholder="e.g. Allowance for doubtful accounts"
-                            className="h-8 text-sm"
-                          />
+                            onValueChange={v => updateRow(row.id, "estimateType", v)}
+                          >
+                            <SelectTrigger className="h-8 text-sm">
+                              <SelectValue placeholder="Select estimate type…" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {ESTIMATE_TYPE_OPTIONS.map(opt => (
+                                <SelectItem key={opt} value={opt}>{opt}</SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
                         </td>
                         <td className="px-4 py-2.5 align-top text-right w-32">
                           <Input
@@ -206,22 +254,12 @@ export function Audit514Worksheet({ isUS = false }: { isUS?: boolean }) {
                           />
                         </td>
                         <td className="px-4 py-2.5 align-middle text-right w-28 tabular-nums">
-                          <span className={cn(
-                            "text-sm font-mono",
-                            diff !== null && diff !== 0
-                              ? diff > 0 ? "text-green-700 dark:text-green-400" : "text-destructive"
-                              : "text-muted-foreground"
-                          )}>
+                          <span className="text-sm font-mono text-foreground">
                             {fmtDollar(diff)}
                           </span>
                         </td>
                         <td className="px-4 py-2.5 align-middle text-right w-24 tabular-nums">
-                          <span className={cn(
-                            "text-sm font-mono",
-                            pct !== null && Math.abs(pct) > 0.10
-                              ? "text-amber-600 dark:text-amber-400 font-semibold"
-                              : "text-muted-foreground"
-                          )}>
+                          <span className="text-sm font-mono text-foreground">
                             {fmtPct(pct)}
                           </span>
                         </td>
@@ -240,10 +278,7 @@ export function Audit514Worksheet({ isUS = false }: { isUS?: boolean }) {
                             value={row.bias}
                             onValueChange={v => updateRow(row.id, "bias", v as BiasAnswer)}
                           >
-                            <SelectTrigger className={cn(
-                              "h-8 text-sm",
-                              hasBias && "border-amber-400 text-amber-700 dark:text-amber-400"
-                            )}>
+                            <SelectTrigger className="h-8 text-sm">
                               <SelectValue placeholder="Select…" />
                             </SelectTrigger>
                             <SelectContent>
