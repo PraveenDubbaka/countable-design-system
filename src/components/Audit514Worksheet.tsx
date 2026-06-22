@@ -289,7 +289,7 @@ export function Audit514Worksheet({ isUS = false }: { isUS?: boolean }) {
           </SectionCard>
 
           {/* ── Audit conclusion ──────────────────────────────────────────── */}
-          <SectionCard title="Audit Conclusion">
+          <SectionCard title="Conclusion">
             <div className="px-6 py-5">
               <label className={cn(
                 "flex items-start gap-3 cursor-pointer rounded-md px-4 py-3 border transition-colors",
