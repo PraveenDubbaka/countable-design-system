@@ -1,9 +1,7 @@
 import { useState, useEffect, useRef, useMemo } from "react";
 import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Badge } from "@/components/ui/badge";
 import { Plus, Trash2, Info, AlertTriangle } from "lucide-react";
 import { readJsonFromLocalStorage, writeJsonToLocalStorage } from "@/lib/safeJson";
 import { cn } from "@/lib/utils";
@@ -154,140 +152,135 @@ export function Audit514Worksheet({ isUS = false }: { isUS?: boolean }) {
 
           {/* ── Estimates table ───────────────────────────────────────────── */}
           <SectionCard title="Prior Period Estimates — Outcome Analysis">
-            <div className="overflow-x-auto">
-              <table className="w-full min-w-[900px]">
-                <thead>
-                  <tr className="bg-muted border-b border-border text-xs font-semibold text-foreground uppercase tracking-wider">
-                    <th className="px-4 py-2.5 text-left">Type of Estimate</th>
-                    <th className="px-4 py-2.5 text-left border-l border-border w-28">Prior Period $</th>
-                    <th className="px-4 py-2.5 text-left border-l border-border w-28">Actual Outcome $</th>
-                    <th className="px-4 py-2.5 text-center border-l border-border w-28">
-                      <span className="block">Difference $</span>
-                      <span className="text-[9px] font-normal text-muted-foreground normal-case tracking-normal">auto-calculated</span>
-                    </th>
-                    <th className="px-4 py-2.5 text-center border-l border-border w-20">
-                      <span className="block">% Var.</span>
-                      <span className="text-[9px] font-normal text-muted-foreground normal-case tracking-normal">auto-calculated</span>
-                    </th>
-                    <th className="px-4 py-2.5 text-left border-l border-border">Explanation of Variance</th>
-                    <th className="px-4 py-2.5 text-left border-l border-border w-36">Management Bias?</th>
-                    <th className="px-4 py-2.5 text-left border-l border-border">Implications for Current Period</th>
-                    {!locked && <th className="w-8" />}
-                  </tr>
-                </thead>
-                <tbody>
-                  {data.rows.map(row => {
-                    const { diff, pct } = calcMap[row.id];
-                    const hasBias = row.bias === "Yes";
+            <div className="px-6 py-5">
+              <div className="overflow-x-auto">
+                <table className="w-full">
+                  <thead className="sticky top-0 z-10">
+                    <tr className="bg-muted border-b border-border">
+                      <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider">Type of Estimate</th>
+                      <th className="px-4 py-3 text-right text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap">Prior Period $</th>
+                      <th className="px-4 py-3 text-right text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap">Actual Outcome $</th>
+                      <th className="px-4 py-3 text-right text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap">Difference $</th>
+                      <th className="px-4 py-3 text-right text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap">% Variance</th>
+                      <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider">Explanation of Variance</th>
+                      <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap">Management Bias?</th>
+                      <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider">Implications for Current Period</th>
+                      <th className="w-8" />
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-border">
+                    {data.rows.map(row => {
+                      const { diff, pct } = calcMap[row.id];
+                      const hasBias = row.bias === "Yes";
 
-                    return (
-                      <tr key={row.id} className={cn(
-                        "border-b border-border last:border-0 transition-colors align-top",
-                        hasBias ? "bg-amber-50/60 dark:bg-amber-950/10 hover:bg-amber-50 dark:hover:bg-amber-950/20" : "hover:bg-muted/30"
-                      )}>
-                        <td className="px-4 py-2.5 align-top">
-                          <Textarea
-                            disabled={locked}
-                            value={row.estimateType}
-                            onChange={e => updateRow(row.id, "estimateType", e.target.value)}
-                            className="min-h-[52px] text-xs resize-none border-0 p-0 shadow-none focus-visible:ring-0 bg-transparent"
-                            placeholder="e.g. Allowance for doubtful accounts"
-                          />
-                        </td>
-                        <td className="px-4 py-2.5 align-top border-l border-border">
-                          <Input
-                            disabled={locked}
-                            value={row.priorAmt}
-                            onChange={e => updateRow(row.id, "priorAmt", e.target.value)}
-                            className="h-7 text-xs border-0 p-0 shadow-none focus-visible:ring-0 bg-transparent font-mono"
-                            placeholder="0"
-                          />
-                        </td>
-                        <td className="px-4 py-2.5 align-top border-l border-border">
-                          <Input
-                            disabled={locked}
-                            value={row.actualAmt}
-                            onChange={e => updateRow(row.id, "actualAmt", e.target.value)}
-                            className="h-7 text-xs border-0 p-0 shadow-none focus-visible:ring-0 bg-transparent font-mono"
-                            placeholder="0"
-                          />
-                        </td>
-                        <td className="px-4 py-2.5 align-middle border-l border-border text-center bg-primary/[0.02] font-mono text-xs tabular-nums">
-                          <span className={cn(
-                            diff !== null && diff !== 0
-                              ? diff > 0 ? "text-green-700 dark:text-green-400" : "text-destructive"
-                              : "text-muted-foreground"
-                          )}>
-                            {fmtDollar(diff)}
-                          </span>
-                        </td>
-                        <td className="px-4 py-2.5 align-middle border-l border-border text-center bg-primary/[0.02] font-mono text-xs tabular-nums">
-                          <span className={cn(
-                            pct !== null && Math.abs(pct) > 0.10
-                              ? "text-amber-600 dark:text-amber-400 font-semibold"
-                              : "text-muted-foreground"
-                          )}>
-                            {fmtPct(pct)}
-                          </span>
-                        </td>
-                        <td className="px-4 py-2.5 align-top border-l border-border">
-                          <Textarea
-                            disabled={locked}
-                            value={row.explanationVariance}
-                            onChange={e => updateRow(row.id, "explanationVariance", e.target.value)}
-                            className="min-h-[52px] text-xs resize-none border-0 p-0 shadow-none focus-visible:ring-0 bg-transparent"
-                            placeholder="Explain the reason for the variance…"
-                          />
-                        </td>
-                        <td className="px-4 py-2.5 align-top border-l border-border">
-                          <Select
-                            disabled={locked}
-                            value={row.bias}
-                            onValueChange={v => updateRow(row.id, "bias", v as BiasAnswer)}
-                          >
-                            <SelectTrigger className={cn(
-                              "h-7 text-xs border-0 shadow-none focus:ring-0 px-0 bg-transparent",
-                              hasBias && "text-amber-700 dark:text-amber-400 font-semibold"
-                            )}>
-                              <SelectValue placeholder="Select…" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              <SelectItem value="Yes" className="text-xs text-amber-700">Yes</SelectItem>
-                              <SelectItem value="No" className="text-xs">No</SelectItem>
-                              <SelectItem value="N/A" className="text-xs">N/A</SelectItem>
-                            </SelectContent>
-                          </Select>
-                          {hasBias && (
-                            <Badge variant="destructive" className="mt-1 text-[9px] h-4 px-1.5">Bias indicated</Badge>
-                          )}
-                        </td>
-                        <td className="px-4 py-2.5 align-top border-l border-border">
-                          <Textarea
-                            disabled={locked}
-                            value={row.implications}
-                            onChange={e => updateRow(row.id, "implications", e.target.value)}
-                            className="min-h-[52px] text-xs resize-none border-0 p-0 shadow-none focus-visible:ring-0 bg-transparent"
-                            placeholder="Describe implications for current period estimates…"
-                          />
-                        </td>
-                        {!locked && (
-                          <td className="px-2 py-2.5 align-middle text-center border-l border-border">
-                            <button
-                              onClick={() => removeRow(row.id)}
-                              className="text-muted-foreground hover:text-destructive transition-colors"
-                            >
-                              <Trash2 className="h-3.5 w-3.5" />
-                            </button>
+                      return (
+                        <tr key={row.id} className={cn(
+                          "transition-colors",
+                          hasBias ? "bg-amber-50/60 dark:bg-amber-950/10 hover:bg-amber-50 dark:hover:bg-amber-950/20" : "hover:bg-muted/50"
+                        )}>
+                          <td className="px-4 py-2.5 align-top min-w-[200px]">
+                            <Input
+                              disabled={locked}
+                              value={row.estimateType}
+                              onChange={e => updateRow(row.id, "estimateType", e.target.value)}
+                              placeholder="e.g. Allowance for doubtful accounts"
+                              className="h-8 text-sm"
+                            />
                           </td>
-                        )}
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
+                          <td className="px-4 py-2.5 align-top text-right w-32">
+                            <Input
+                              disabled={locked}
+                              value={row.priorAmt}
+                              onChange={e => updateRow(row.id, "priorAmt", e.target.value)}
+                              placeholder="0"
+                              className="h-8 text-sm tabular-nums text-right"
+                            />
+                          </td>
+                          <td className="px-4 py-2.5 align-top text-right w-32">
+                            <Input
+                              disabled={locked}
+                              value={row.actualAmt}
+                              onChange={e => updateRow(row.id, "actualAmt", e.target.value)}
+                              placeholder="0"
+                              className="h-8 text-sm tabular-nums text-right"
+                            />
+                          </td>
+                          <td className="px-4 py-2.5 align-middle text-right w-28 tabular-nums">
+                            <span className={cn(
+                              "text-sm font-mono",
+                              diff !== null && diff !== 0
+                                ? diff > 0 ? "text-green-700 dark:text-green-400" : "text-destructive"
+                                : "text-muted-foreground"
+                            )}>
+                              {fmtDollar(diff)}
+                            </span>
+                          </td>
+                          <td className="px-4 py-2.5 align-middle text-right w-24 tabular-nums">
+                            <span className={cn(
+                              "text-sm font-mono",
+                              pct !== null && Math.abs(pct) > 0.10
+                                ? "text-amber-600 dark:text-amber-400 font-semibold"
+                                : "text-muted-foreground"
+                            )}>
+                              {fmtPct(pct)}
+                            </span>
+                          </td>
+                          <td className="px-4 py-2.5 align-top min-w-[200px]">
+                            <Input
+                              disabled={locked}
+                              value={row.explanationVariance}
+                              onChange={e => updateRow(row.id, "explanationVariance", e.target.value)}
+                              placeholder="Reason for variance…"
+                              className="h-8 text-sm"
+                            />
+                          </td>
+                          <td className="px-4 py-2.5 align-top w-36">
+                            <Select
+                              disabled={locked}
+                              value={row.bias}
+                              onValueChange={v => updateRow(row.id, "bias", v as BiasAnswer)}
+                            >
+                              <SelectTrigger className={cn(
+                                "h-8 text-sm",
+                                hasBias && "border-amber-400 text-amber-700 dark:text-amber-400"
+                              )}>
+                                <SelectValue placeholder="Select…" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectItem value="Yes">Yes — bias indicated</SelectItem>
+                                <SelectItem value="No">No</SelectItem>
+                                <SelectItem value="N/A">N/A</SelectItem>
+                              </SelectContent>
+                            </Select>
+                          </td>
+                          <td className="px-4 py-2.5 align-top min-w-[200px]">
+                            <Input
+                              disabled={locked}
+                              value={row.implications}
+                              onChange={e => updateRow(row.id, "implications", e.target.value)}
+                              placeholder="Implications for current period…"
+                              className="h-8 text-sm"
+                            />
+                          </td>
+                          {!locked && (
+                            <td className="px-2 py-2.5 align-middle text-center">
+                              <button
+                                onClick={() => removeRow(row.id)}
+                                className="text-muted-foreground hover:text-destructive transition-colors"
+                              >
+                                <Trash2 className="h-3.5 w-3.5" />
+                              </button>
+                            </td>
+                          )}
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
             </div>
             {!locked && (
-              <div className="px-4 py-3 border-t border-border">
+              <div className="border-t border-border px-4 py-3">
                 <Button size="sm" variant="outline" className="h-7 text-xs gap-1" onClick={addRow}>
                   <Plus className="h-3 w-3" /> Add Estimate
                 </Button>
