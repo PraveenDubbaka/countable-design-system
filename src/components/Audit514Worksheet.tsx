@@ -1,220 +1,355 @@
-import { useState, useEffect, useRef } from "react";
-import { useParams } from "react-router-dom";
+import { useState, useEffect, useRef, useMemo } from "react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Plus, Trash2 } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { Plus, Trash2, Info, AlertTriangle } from "lucide-react";
 import { readJsonFromLocalStorage, writeJsonToLocalStorage } from "@/lib/safeJson";
+import { cn } from "@/lib/utils";
+
+// ── Types ──────────────────────────────────────────────────────────────────────
+
+type BiasAnswer = "Yes" | "No" | "N/A" | "";
 
 interface EstimateRow {
   id: string;
   estimateType: string;
-  accountBalance: string;
-  priorYearAmt: string;
-  priorYearMethod: string;
-  currentYearAmt: string;
-  currentYearMethod: string;
-  difference: string;
-  assessment: string;
-  auditResponse: string;
+  priorAmt: string;
+  actualAmt: string;
+  explanationVariance: string;
+  bias: BiasAnswer;
+  implications: string;
 }
 
 interface Data514 {
   rows: EstimateRow[];
-  conclusion: string;
-  preparedBy: string; preparedDate: string;
-  reviewedBy: string; reviewedDate: string;
-  concluded: boolean; concludedOn: string;
+  auditConclusionChecked: boolean;
+  concluded: boolean;
+  concludedOn: string;
 }
+
+const uid = () => Math.random().toString(36).slice(2, 9);
 
 function newRow(): EstimateRow {
   return {
-    id: Math.random().toString(36).slice(2),
-    estimateType: '', accountBalance: '', priorYearAmt: '', priorYearMethod: '',
-    currentYearAmt: '', currentYearMethod: '', difference: '', assessment: '', auditResponse: '',
+    id: uid(),
+    estimateType: "",
+    priorAmt: "",
+    actualAmt: "",
+    explanationVariance: "",
+    bias: "",
+    implications: "",
   };
 }
 
 function buildDefault(): Data514 {
   return {
     rows: [newRow(), newRow(), newRow()],
-    conclusion: '',
-    preparedBy: '', preparedDate: '', reviewedBy: '', reviewedDate: '',
-    concluded: false, concludedOn: '',
+    auditConclusionChecked: false,
+    concluded: false,
+    concludedOn: "",
   };
 }
 
-const ASSESSMENT_OPTIONS = ['Reasonable', 'Requires explanation', 'Potential misstatement', 'N/A'];
+// ── Derived calc helpers ───────────────────────────────────────────────────────
 
-export function Audit514Worksheet() {
-  const { engagementId } = useParams<{ engagementId: string }>();
-  const storageKey = `audit-514-data-${engagementId ?? 'default'}`;
-  const saveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const isFirstRender = useRef(true);
+function parseNum(s: string): number | null {
+  const n = parseFloat(s.replace(/,/g, ""));
+  return isNaN(n) ? null : n;
+}
+
+function fmtDollar(n: number | null): string {
+  if (n === null) return "—";
+  return n.toLocaleString("en-CA", { minimumFractionDigits: 0, maximumFractionDigits: 0 });
+}
+
+function fmtPct(n: number | null): string {
+  if (n === null) return "—";
+  return (n * 100).toFixed(1) + "%";
+}
+
+function calcRow(row: EstimateRow): { diff: number | null; pct: number | null } {
+  const prior = parseNum(row.priorAmt);
+  const actual = parseNum(row.actualAmt);
+  if (prior === null || actual === null) return { diff: null, pct: null };
+  const diff = actual - prior;
+  const pct = prior !== 0 ? diff / prior : null;
+  return { diff, pct };
+}
+
+// ── Sub-components ─────────────────────────────────────────────────────────────
+
+function SectionCard({ title, children }: { title: string; children: React.ReactNode }) {
+  return (
+    <div className="bg-card text-card-foreground border border-border shadow-[0_2px_8px_hsl(213_40%_20%/0.06)] rounded-md overflow-hidden">
+      <div className="px-6 py-3.5 bg-card border-b border-border">
+        <span className="text-sm font-semibold text-foreground">{title}</span>
+      </div>
+      {children}
+    </div>
+  );
+}
+
+// ── Main component ─────────────────────────────────────────────────────────────
+
+export function Audit514Worksheet({ isUS = false }: { isUS?: boolean }) {
+  const storageKey = `audit-514-data-${isUS ? "us" : "ca"}`;
 
   const [data, setData] = useState<Data514>(() => {
-    const saved = readJsonFromLocalStorage<Data514>(storageKey);
-    return saved ?? buildDefault();
+    const saved = readJsonFromLocalStorage<Data514 | null>(storageKey, null);
+    if (!saved) return buildDefault();
+    return { ...buildDefault(), ...saved };
   });
 
+  const firstRender = useRef(true);
   useEffect(() => {
-    if (isFirstRender.current) { isFirstRender.current = false; return; }
-    if (saveTimerRef.current) clearTimeout(saveTimerRef.current);
-    saveTimerRef.current = setTimeout(() => writeJsonToLocalStorage(storageKey, data), 450);
+    if (firstRender.current) { firstRender.current = false; return; }
+    const t = setTimeout(() => writeJsonToLocalStorage(storageKey, data), 600);
+    return () => clearTimeout(t);
   }, [data, storageKey]);
 
   const locked = data.concluded;
 
-  function updateRow(id: string, field: keyof EstimateRow, value: string) {
-    setData(d => ({ ...d, rows: d.rows.map(r => r.id === id ? { ...r, [field]: value } : r) }));
+  function updateRow(id: string, field: keyof EstimateRow, val: string) {
+    setData(d => ({ ...d, rows: d.rows.map(r => r.id === id ? { ...r, [field]: val } : r) }));
   }
   function addRow() { setData(d => ({ ...d, rows: [...d.rows, newRow()] })); }
   function removeRow(id: string) { setData(d => ({ ...d, rows: d.rows.filter(r => r.id !== id) })); }
 
-  const tdCls = "border border-border px-2 py-1.5 text-xs align-top";
-  const thCls = "border border-border bg-muted px-2 py-1.5 text-xs font-medium text-left align-middle whitespace-nowrap";
+  const calcMap = useMemo(() => {
+    const m: Record<string, { diff: number | null; pct: number | null }> = {};
+    data.rows.forEach(r => { m[r.id] = calcRow(r); });
+    return m;
+  }, [data.rows]);
+
+  const biasYesCount = data.rows.filter(r => r.bias === "Yes").length;
+
+  const thCls = "border border-border bg-muted px-3 py-2 text-left text-xs font-semibold text-foreground uppercase tracking-wider align-middle whitespace-nowrap";
+  const tdCls = "border border-border px-3 py-2 text-xs align-top";
+  const tdCalcCls = "border border-border px-3 py-2 text-xs align-middle text-center font-mono tabular-nums";
 
   return (
-    <div className="p-4 space-y-4 text-sm">
-      {/* Objective */}
-      <div className="rounded-lg border border-border bg-card px-4 py-3">
-        <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-1">Objective</p>
-        <p className="text-sm text-foreground">
-          Document the outcome of prior period accounting estimates compared to the current year, identify any significant differences,
-          and assess whether the differences indicate possible management bias or require audit response.
+    <div className="flex flex-col h-full">
+
+      {/* ── Objective bar ─────────────────────────────────────────────────── */}
+      <div className="px-6 py-2.5 border-b border-border bg-primary/[0.03] flex items-start gap-2 shrink-0">
+        <Info className="h-3.5 w-3.5 text-primary shrink-0 mt-0.5" />
+        <p className="text-xs text-foreground leading-relaxed">
+          <span className="font-semibold text-primary">Objective: </span>
+          To facilitate and document the results of reviewing the outcome of previous years&apos; accounting estimates, and assess whether differences indicate possible management bias or require audit response.
         </p>
       </div>
 
-      {/* Table */}
-      <div className="rounded-lg border border-border bg-card overflow-hidden">
-        <div className="px-4 py-2.5 border-b border-border flex items-center justify-between">
-          <h3 className="text-sm font-semibold">Prior Period Estimates — Outcome Analysis</h3>
-          {!locked && (
-            <Button size="sm" variant="outline" className="h-7 text-xs gap-1" onClick={addRow}>
-              <Plus className="h-3 w-3" /> Add Row
-            </Button>
-          )}
-        </div>
-        <div className="overflow-x-auto">
-          <table className="w-full border-collapse text-xs">
-            <thead>
-              <tr>
-                <th className={thCls} style={{ width: 140 }}>Estimate Type</th>
-                <th className={thCls} style={{ width: 110 }}>Account/Balance</th>
-                <th className={thCls} style={{ width: 90 }}>Prior Year $</th>
-                <th className={thCls} style={{ width: 130 }}>Prior Year Method</th>
-                <th className={thCls} style={{ width: 90 }}>Current Year $</th>
-                <th className={thCls} style={{ width: 130 }}>Current Year Method</th>
-                <th className={thCls} style={{ width: 90 }}>Difference $</th>
-                <th className={thCls} style={{ width: 130 }}>Assessment</th>
-                <th className={thCls}>Audit Response</th>
-                {!locked && <th className={thCls} style={{ width: 32 }}></th>}
-              </tr>
-            </thead>
-            <tbody>
-              {data.rows.map(row => (
-                <tr key={row.id} className="hover:bg-muted/30 transition-colors">
-                  <td className={tdCls}>
-                    <Textarea disabled={locked} value={row.estimateType} onChange={e => updateRow(row.id, 'estimateType', e.target.value)}
-                      className="min-h-[56px] text-xs resize-none border-0 p-0 shadow-none focus-visible:ring-0 bg-transparent" placeholder="e.g. AR allowance" />
-                  </td>
-                  <td className={tdCls}>
-                    <Input disabled={locked} value={row.accountBalance} onChange={e => updateRow(row.id, 'accountBalance', e.target.value)}
-                      className="h-7 text-xs border-0 p-0 shadow-none focus-visible:ring-0 bg-transparent" placeholder="Account name" />
-                  </td>
-                  <td className={tdCls}>
-                    <Input disabled={locked} value={row.priorYearAmt} onChange={e => updateRow(row.id, 'priorYearAmt', e.target.value)}
-                      className="h-7 text-xs border-0 p-0 shadow-none focus-visible:ring-0 bg-transparent" placeholder="0" />
-                  </td>
-                  <td className={tdCls}>
-                    <Textarea disabled={locked} value={row.priorYearMethod} onChange={e => updateRow(row.id, 'priorYearMethod', e.target.value)}
-                      className="min-h-[56px] text-xs resize-none border-0 p-0 shadow-none focus-visible:ring-0 bg-transparent" placeholder="Method used" />
-                  </td>
-                  <td className={tdCls}>
-                    <Input disabled={locked} value={row.currentYearAmt} onChange={e => updateRow(row.id, 'currentYearAmt', e.target.value)}
-                      className="h-7 text-xs border-0 p-0 shadow-none focus-visible:ring-0 bg-transparent" placeholder="0" />
-                  </td>
-                  <td className={tdCls}>
-                    <Textarea disabled={locked} value={row.currentYearMethod} onChange={e => updateRow(row.id, 'currentYearMethod', e.target.value)}
-                      className="min-h-[56px] text-xs resize-none border-0 p-0 shadow-none focus-visible:ring-0 bg-transparent" placeholder="Method used" />
-                  </td>
-                  <td className={tdCls}>
-                    <Input disabled={locked} value={row.difference} onChange={e => updateRow(row.id, 'difference', e.target.value)}
-                      className="h-7 text-xs border-0 p-0 shadow-none focus-visible:ring-0 bg-transparent" placeholder="0" />
-                  </td>
-                  <td className={tdCls}>
-                    <Select disabled={locked} value={row.assessment} onValueChange={v => updateRow(row.id, 'assessment', v)}>
-                      <SelectTrigger className="h-7 text-xs border-0 shadow-none focus:ring-0 px-0 bg-transparent">
-                        <SelectValue placeholder="Select…" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {ASSESSMENT_OPTIONS.map(o => <SelectItem key={o} value={o} className="text-xs">{o}</SelectItem>)}
-                      </SelectContent>
-                    </Select>
-                  </td>
-                  <td className={tdCls}>
-                    <Textarea disabled={locked} value={row.auditResponse} onChange={e => updateRow(row.id, 'auditResponse', e.target.value)}
-                      className="min-h-[56px] text-xs resize-none border-0 p-0 shadow-none focus-visible:ring-0 bg-transparent" placeholder="Response if needed" />
-                  </td>
-                  {!locked && (
-                    <td className={tdCls + " text-center"}>
-                      <button onClick={() => removeRow(row.id)} className="text-muted-foreground hover:text-destructive transition-colors">
-                        <Trash2 className="h-3.5 w-3.5" />
-                      </button>
-                    </td>
-                  )}
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </div>
+      {/* ── Scrollable body ────────────────────────────────────────────────── */}
+      <div className="flex-1 overflow-y-auto bg-muted/30">
+        <div className="p-6 space-y-6 max-w-7xl">
 
-      {/* Conclusion */}
-      <div className="rounded-lg border border-border bg-card px-4 py-3 space-y-2">
-        <h3 className="text-sm font-semibold">Conclusion</h3>
-        <Textarea disabled={locked} value={data.conclusion}
-          onChange={e => setData(d => ({ ...d, conclusion: e.target.value }))}
-          className="text-xs min-h-[80px]"
-          placeholder="Summarize whether any differences indicate possible management bias and the overall impact on the audit." />
-      </div>
-
-      {/* Sign-off */}
-      <div className="rounded-lg border border-border bg-card px-4 py-3">
-        <h3 className="text-sm font-semibold mb-3">Sign-off</h3>
-        <div className="grid grid-cols-2 gap-3">
-          {[['Prepared by', 'preparedBy', 'preparedDate'], ['Reviewed by', 'reviewedBy', 'reviewedDate']].map(([label, nameKey, dateKey]) => (
-            <div key={nameKey} className="space-y-1.5">
-              <p className="text-xs font-medium text-muted-foreground">{label}</p>
-              <div className="flex gap-2">
-                <Input disabled={locked} value={(data as Record<string, string>)[nameKey]} onChange={e => setData(d => ({ ...d, [nameKey]: e.target.value }))}
-                  className="h-7 text-xs flex-1" placeholder="Name" />
-                <Input disabled={locked} type="date" value={(data as Record<string, string>)[dateKey]} onChange={e => setData(d => ({ ...d, [dateKey]: e.target.value }))}
-                  className="h-7 text-xs w-32" />
-              </div>
+          {/* ── Management bias summary banner ─────────────────────────────── */}
+          {biasYesCount > 0 && (
+            <div className="flex items-start gap-2.5 rounded-md border border-amber-300 bg-amber-50 dark:bg-amber-950/20 dark:border-amber-700 px-4 py-2.5">
+              <AlertTriangle className="h-4 w-4 text-amber-600 dark:text-amber-400 shrink-0 mt-0.5" />
+              <p className="text-xs text-amber-800 dark:text-amber-300">
+                <span className="font-semibold">{biasYesCount} estimate{biasYesCount > 1 ? "s" : ""} indicate possible management bias.</span> Document implications and consider impact on the current period audit response.
+              </p>
             </div>
-          ))}
+          )}
+
+          {/* ── Estimates table ───────────────────────────────────────────── */}
+          <SectionCard title="Prior Period Estimates — Outcome Analysis">
+            <div className="px-5 py-3 border-b border-border bg-muted/40 flex flex-wrap gap-x-5 gap-y-1">
+              {[
+                ["Difference $", "Actual outcome minus prior period estimate (auto-calculated)"],
+                ["% Variance", "Difference as a % of prior period estimate (auto-calculated)"],
+              ].map(([label, desc]) => (
+                <div key={label} className="flex items-center gap-1.5">
+                  <span className="text-xs font-medium text-foreground">{label}</span>
+                  <span className="text-xs text-muted-foreground">= {desc}</span>
+                </div>
+              ))}
+            </div>
+            <div className="overflow-x-auto">
+              <table className="w-full border-collapse">
+                <thead>
+                  <tr className="bg-muted">
+                    <th className={thCls} style={{ width: 170 }}>Type of Estimate</th>
+                    <th className={thCls} style={{ width: 110 }}>Prior Period $</th>
+                    <th className={thCls} style={{ width: 110 }}>Actual Outcome $</th>
+                    <th className={cn(thCls, "text-center bg-primary/[0.04]")} style={{ width: 100 }}>Difference $</th>
+                    <th className={cn(thCls, "text-center bg-primary/[0.04]")} style={{ width: 80 }}>% Var.</th>
+                    <th className={thCls} style={{ width: 200 }}>Explanation of Variance</th>
+                    <th className={thCls} style={{ width: 120 }}>Management Bias?</th>
+                    <th className={thCls}>Implications for Current Period</th>
+                    {!locked && <th className={thCls} style={{ width: 36 }} />}
+                  </tr>
+                </thead>
+                <tbody>
+                  {data.rows.map(row => {
+                    const { diff, pct } = calcMap[row.id];
+                    const hasBias = row.bias === "Yes";
+                    const rowBg = hasBias ? "bg-amber-50/60 dark:bg-amber-950/10" : "";
+
+                    return (
+                      <tr key={row.id} className={cn("transition-colors", rowBg)}>
+                        <td className={tdCls}>
+                          <Textarea
+                            disabled={locked}
+                            value={row.estimateType}
+                            onChange={e => updateRow(row.id, "estimateType", e.target.value)}
+                            className="min-h-[56px] text-xs resize-none border-0 p-0 shadow-none focus-visible:ring-0 bg-transparent"
+                            placeholder="e.g. Allowance for doubtful accounts"
+                          />
+                        </td>
+                        <td className={tdCls}>
+                          <Input
+                            disabled={locked}
+                            value={row.priorAmt}
+                            onChange={e => updateRow(row.id, "priorAmt", e.target.value)}
+                            className="h-7 text-xs border-0 p-0 shadow-none focus-visible:ring-0 bg-transparent font-mono"
+                            placeholder="0"
+                          />
+                        </td>
+                        <td className={tdCls}>
+                          <Input
+                            disabled={locked}
+                            value={row.actualAmt}
+                            onChange={e => updateRow(row.id, "actualAmt", e.target.value)}
+                            className="h-7 text-xs border-0 p-0 shadow-none focus-visible:ring-0 bg-transparent font-mono"
+                            placeholder="0"
+                          />
+                        </td>
+                        {/* Auto-calculated columns */}
+                        <td className={cn(tdCalcCls, "bg-primary/[0.03]")}>
+                          <span className={cn(
+                            diff !== null && diff !== 0 ? (diff > 0 ? "text-green-700 dark:text-green-400" : "text-destructive") : "text-muted-foreground"
+                          )}>
+                            {fmtDollar(diff)}
+                          </span>
+                        </td>
+                        <td className={cn(tdCalcCls, "bg-primary/[0.03]")}>
+                          <span className={cn(
+                            pct !== null && Math.abs(pct) > 0.10 ? "text-amber-600 dark:text-amber-400 font-semibold" : "text-muted-foreground"
+                          )}>
+                            {fmtPct(pct)}
+                          </span>
+                        </td>
+                        <td className={tdCls}>
+                          <Textarea
+                            disabled={locked}
+                            value={row.explanationVariance}
+                            onChange={e => updateRow(row.id, "explanationVariance", e.target.value)}
+                            className="min-h-[56px] text-xs resize-none border-0 p-0 shadow-none focus-visible:ring-0 bg-transparent"
+                            placeholder="Explain the reason for the variance…"
+                          />
+                        </td>
+                        <td className={cn(tdCls, "align-middle")}>
+                          <Select
+                            disabled={locked}
+                            value={row.bias}
+                            onValueChange={v => updateRow(row.id, "bias", v as BiasAnswer)}
+                          >
+                            <SelectTrigger className={cn(
+                              "h-7 text-xs border-0 shadow-none focus:ring-0 px-0 bg-transparent",
+                              hasBias && "text-amber-700 dark:text-amber-400 font-semibold"
+                            )}>
+                              <SelectValue placeholder="Select…" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="Yes" className="text-xs text-amber-700">Yes</SelectItem>
+                              <SelectItem value="No" className="text-xs">No</SelectItem>
+                              <SelectItem value="N/A" className="text-xs">N/A</SelectItem>
+                            </SelectContent>
+                          </Select>
+                          {hasBias && (
+                            <Badge variant="destructive" className="mt-1 text-[9px] h-4 px-1">Bias indicated</Badge>
+                          )}
+                        </td>
+                        <td className={tdCls}>
+                          <Textarea
+                            disabled={locked}
+                            value={row.implications}
+                            onChange={e => updateRow(row.id, "implications", e.target.value)}
+                            className="min-h-[56px] text-xs resize-none border-0 p-0 shadow-none focus-visible:ring-0 bg-transparent"
+                            placeholder="Describe implications for current period estimates…"
+                          />
+                        </td>
+                        {!locked && (
+                          <td className={cn(tdCls, "text-center align-middle")}>
+                            <button
+                              onClick={() => removeRow(row.id)}
+                              className="text-muted-foreground hover:text-destructive transition-colors"
+                            >
+                              <Trash2 className="h-3.5 w-3.5" />
+                            </button>
+                          </td>
+                        )}
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+            {!locked && (
+              <div className="px-5 py-3 border-t border-border">
+                <Button size="sm" variant="outline" className="h-7 text-xs gap-1" onClick={addRow}>
+                  <Plus className="h-3 w-3" /> Add Estimate
+                </Button>
+              </div>
+            )}
+          </SectionCard>
+
+          {/* ── Audit conclusion ──────────────────────────────────────────── */}
+          <SectionCard title="Audit Conclusion">
+            <div className="px-6 py-5">
+              <label className={cn(
+                "flex items-start gap-3 cursor-pointer rounded-md px-4 py-3 border transition-colors",
+                data.auditConclusionChecked
+                  ? "border-green-300 bg-green-50 dark:border-green-700 dark:bg-green-950/20"
+                  : "border-border bg-muted/40",
+                locked && "cursor-not-allowed opacity-70"
+              )}>
+                <input
+                  type="checkbox"
+                  disabled={locked}
+                  checked={data.auditConclusionChecked}
+                  onChange={e => setData(d => ({ ...d, auditConclusionChecked: e.target.checked }))}
+                  className="mt-0.5 h-4 w-4 accent-primary cursor-pointer disabled:cursor-not-allowed"
+                />
+                <p className="text-sm text-foreground leading-relaxed">
+                  I have reviewed the outcome of accounting estimates included in the prior period&apos;s financial statements and documented information relevant to identifying and assessing risks of material misstatement in the current period.
+                </p>
+              </label>
+              {data.auditConclusionChecked && !locked && (
+                <p className="mt-2 text-xs text-green-700 dark:text-green-400 flex items-center gap-1.5">
+                  <span className="inline-block h-1.5 w-1.5 rounded-full bg-green-500" />
+                  Conclusion confirmed
+                </p>
+              )}
+            </div>
+          </SectionCard>
+
+          {/* ── Conclude button ───────────────────────────────────────────── */}
+          <div className="flex items-center justify-end gap-3">
+            {data.concluded && (
+              <span className="text-sm text-green-700 dark:text-green-400">Concluded on {data.concludedOn}</span>
+            )}
+            <Button
+              disabled={locked}
+              onClick={() => {
+                const now = new Date().toISOString().slice(0, 10);
+                setData(d => {
+                  const next = { ...d, concluded: true, concludedOn: now };
+                  writeJsonToLocalStorage(storageKey, next);
+                  return next;
+                });
+              }}
+            >
+              Conclude Worksheet
+            </Button>
+          </div>
+
         </div>
       </div>
-
-      {/* Conclude */}
-      {locked ? (
-        <div className="rounded-lg border border-green-200 bg-green-50 px-4 py-2.5 text-xs text-green-800 font-medium">
-          Concluded on {data.concludedOn}
-        </div>
-      ) : (
-        <div className="flex justify-end">
-          <Button size="sm" onClick={() => {
-            const today = new Date().toISOString().slice(0, 10);
-            const updated = { ...data, concluded: true, concludedOn: today };
-            setData(updated);
-            writeJsonToLocalStorage(storageKey, updated);
-          }}>
-            Conclude Worksheet
-          </Button>
-        </div>
-      )}
     </div>
   );
 }
