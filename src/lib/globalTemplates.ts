@@ -13962,7 +13962,8 @@ export const generate515RelatedPartiesChecklist = (): Checklist => {
     id: 'default-audit-ra-515',
     title: 'Understanding Related Parties',
     description: 'Identify and understand the entity\'s related party relationships and transactions (CAS 550).',
-    objective: 'To understand the use and extent of related-party relationships and transactions, to recognize fraud risk factors and to assess possible risks of material misstatement (fraud or error) in the financial statements.\n\nNote: Information on related parties may already have been documented on Form 510, to which reference can be made.\n\nPSC = Procedures successfully completed.  F/S = Financial statements.',
+    objective: 'To understand the use and extent of related-party relationships and transactions, to recognize fraud risk factors and to assess possible risks of material misstatement (fraud or error) in the financial statements.',
+    note: '<p><strong>Note:</strong> Information on related parties may already have been documented on Form 510, to which reference can be made.</p><p style="margin-top:6px;color:var(--muted-foreground);font-size:0.8125rem">PSC = Procedures successfully completed.&nbsp;&nbsp;F/S = Financial statements.</p>',
     sections: [
       {
         id: 'ra515-s1', title: '1. Obtain Listing of Related Parties', isExpanded: true,
@@ -14026,14 +14027,6 @@ export const generate515RelatedPartiesChecklist = (): Checklist => {
           la('515-5-listing',
             '<p><strong>List related parties below or cross-reference to other relevant working papers.</strong></p><p style="color:var(--muted-foreground);font-size:0.75rem;margin-top:4px">Columns: # | Name | Relationship | $ Value of transactions | Reasons for transaction, whether in the normal course of business and the terms | W/P ref.</p>',
             '1. | Pacific Coast Logistics Ltd. | Wholly-owned subsidiary | $340,000 | Subcontracting revenue — normal course of business; arm\'s length pricing confirmed by benchmarking to third-party rates | —\n2. | J. Chen Holding Corp. | Controlled by majority shareholder (J. Chen) | $180,000 | Management fees — board-approved; market rate confirmed by independent compensation review | —\n3. | J. Chen (CEO/Owner) | Majority shareholder and key management | $0 (nil at year-end) | Short-term shareholder loan — fully repaid during the year; no balance outstanding | —\n4. | Harbourside Properties Inc. | Entity controlled by related shareholder | $96,000 | Warehouse operating lease — market rate assessed by comparison to similar properties in the area | —\n5. | L. Park (CFO) | Key management personnel | $285,000 | Annual compensation — approved by board; within industry benchmark range | —'),
-        ]
-      },
-      {
-        id: 'ra515-s6', title: 'Notes', isExpanded: true,
-        questions: [
-          la('515-6-notes',
-            '<p><strong>Notes:</strong></p>',
-            ''),
         ]
       },
     ],
