@@ -154,21 +154,21 @@ export function Audit514Worksheet({ isUS = false }: { isUS?: boolean }) {
           {/* ── Estimates table ───────────────────────────────────────────── */}
           <SectionCard title="Prior Period Estimates — Outcome Analysis">
             <div className="overflow-x-auto">
-              <table className="w-full border-collapse">
-                <thead>
-                  <tr className="bg-muted">
-                    <th className="border border-border px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider">Type of Estimate</th>
-                    <th className="border border-border px-4 py-3 text-right text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap">Prior Period $</th>
-                    <th className="border border-border px-4 py-3 text-right text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap">Actual Outcome $</th>
-                    <th className="border border-border px-4 py-3 text-right text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap">Difference $</th>
-                    <th className="border border-border px-4 py-3 text-right text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap">% Variance</th>
-                    <th className="border border-border px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider">Explanation of Variance</th>
-                    <th className="border border-border px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap">Management Bias?</th>
-                    <th className="border border-border px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider">Implications for Current Period</th>
-                    <th className="border border-border w-8" />
+              <table className="w-full">
+                <thead className="sticky top-0 z-10">
+                  <tr className="bg-muted border-b border-border">
+                    <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider">Type of Estimate</th>
+                    <th className="px-4 py-3 text-right text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap">Prior Period $</th>
+                    <th className="px-4 py-3 text-right text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap">Actual Outcome $</th>
+                    <th className="px-4 py-3 text-right text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap">Difference $</th>
+                    <th className="px-4 py-3 text-right text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap">% Variance</th>
+                    <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider">Explanation of Variance</th>
+                    <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap">Management Bias?</th>
+                    <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider">Implications for Current Period</th>
+                    <th className="w-8" />
                   </tr>
                 </thead>
-                <tbody>
+                <tbody className="divide-y divide-border">
                   {data.rows.map(row => {
                     const { diff, pct } = calcMap[row.id];
                     const hasBias = row.bias === "Yes";
@@ -178,7 +178,7 @@ export function Audit514Worksheet({ isUS = false }: { isUS?: boolean }) {
                         "transition-colors",
                         hasBias ? "bg-amber-50/60 dark:bg-amber-950/10 hover:bg-amber-50 dark:hover:bg-amber-950/20" : "hover:bg-muted/50"
                       )}>
-                        <td className="border border-border px-4 py-2.5 align-top min-w-[200px]">
+                        <td className="px-4 py-2.5 align-top min-w-[200px]">
                           <Input
                             disabled={locked}
                             value={row.estimateType}
@@ -187,7 +187,7 @@ export function Audit514Worksheet({ isUS = false }: { isUS?: boolean }) {
                             className="h-8 text-sm"
                           />
                         </td>
-                        <td className="border border-border px-4 py-2.5 align-top text-right w-32">
+                        <td className="px-4 py-2.5 align-top text-right w-32">
                           <Input
                             disabled={locked}
                             value={row.priorAmt}
@@ -196,7 +196,7 @@ export function Audit514Worksheet({ isUS = false }: { isUS?: boolean }) {
                             className="h-8 text-sm tabular-nums text-right"
                           />
                         </td>
-                        <td className="border border-border px-4 py-2.5 align-top text-right w-32">
+                        <td className="px-4 py-2.5 align-top text-right w-32">
                           <Input
                             disabled={locked}
                             value={row.actualAmt}
@@ -205,7 +205,7 @@ export function Audit514Worksheet({ isUS = false }: { isUS?: boolean }) {
                             className="h-8 text-sm tabular-nums text-right"
                           />
                         </td>
-                        <td className="border border-border px-4 py-2.5 align-middle text-right w-28 tabular-nums">
+                        <td className="px-4 py-2.5 align-middle text-right w-28 tabular-nums">
                           <span className={cn(
                             "text-sm font-mono",
                             diff !== null && diff !== 0
@@ -215,7 +215,7 @@ export function Audit514Worksheet({ isUS = false }: { isUS?: boolean }) {
                             {fmtDollar(diff)}
                           </span>
                         </td>
-                        <td className="border border-border px-4 py-2.5 align-middle text-right w-24 tabular-nums">
+                        <td className="px-4 py-2.5 align-middle text-right w-24 tabular-nums">
                           <span className={cn(
                             "text-sm font-mono",
                             pct !== null && Math.abs(pct) > 0.10
@@ -225,7 +225,7 @@ export function Audit514Worksheet({ isUS = false }: { isUS?: boolean }) {
                             {fmtPct(pct)}
                           </span>
                         </td>
-                        <td className="border border-border px-4 py-2.5 align-top min-w-[200px]">
+                        <td className="px-4 py-2.5 align-top min-w-[200px]">
                           <Input
                             disabled={locked}
                             value={row.explanationVariance}
@@ -234,26 +234,26 @@ export function Audit514Worksheet({ isUS = false }: { isUS?: boolean }) {
                             className="h-8 text-sm"
                           />
                         </td>
-                        <td className="border border-border px-4 py-2.5 align-top w-36">
-                            <Select
-                              disabled={locked}
-                              value={row.bias}
-                              onValueChange={v => updateRow(row.id, "bias", v as BiasAnswer)}
-                            >
-                              <SelectTrigger className={cn(
-                                "h-8 text-sm",
-                                hasBias && "border-amber-400 text-amber-700 dark:text-amber-400"
-                              )}>
-                                <SelectValue placeholder="Select…" />
-                              </SelectTrigger>
-                              <SelectContent>
-                                <SelectItem value="Yes">Yes — bias indicated</SelectItem>
-                                <SelectItem value="No">No</SelectItem>
-                                <SelectItem value="N/A">N/A</SelectItem>
-                              </SelectContent>
-                            </Select>
-                          </td>
-                        <td className="border border-border px-4 py-2.5 align-top min-w-[200px]">
+                        <td className="px-4 py-2.5 align-top w-36">
+                          <Select
+                            disabled={locked}
+                            value={row.bias}
+                            onValueChange={v => updateRow(row.id, "bias", v as BiasAnswer)}
+                          >
+                            <SelectTrigger className={cn(
+                              "h-8 text-sm",
+                              hasBias && "border-amber-400 text-amber-700 dark:text-amber-400"
+                            )}>
+                              <SelectValue placeholder="Select…" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="Yes">Yes — bias indicated</SelectItem>
+                              <SelectItem value="No">No</SelectItem>
+                              <SelectItem value="N/A">N/A</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </td>
+                        <td className="px-4 py-2.5 align-top min-w-[200px]">
                           <Input
                             disabled={locked}
                             value={row.implications}
@@ -263,7 +263,7 @@ export function Audit514Worksheet({ isUS = false }: { isUS?: boolean }) {
                           />
                         </td>
                         {!locked && (
-                          <td className="border border-border px-2 py-2.5 align-middle text-center">
+                          <td className="px-2 py-2.5 align-middle text-center">
                             <button
                               onClick={() => removeRow(row.id)}
                               className="text-muted-foreground hover:text-destructive transition-colors"
