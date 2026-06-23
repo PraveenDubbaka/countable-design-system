@@ -15,7 +15,6 @@ import { AuditScopeWorksheet } from "@/components/AuditScopeWorksheet";
 import { AuditPAPWorksheet } from "@/components/AuditPAPWorksheet";
 import { AuditTimeBudgetWorksheet } from "@/components/AuditTimeBudgetWorksheet";
 import { AuditDetailedBudgetWorksheet } from "@/components/AuditDetailedBudgetWorksheet";
-import { AuditTimeTrackerWorksheet } from "@/components/AuditTimeTrackerWorksheet";
 import { AuditMgmtRequestsWorksheet } from "@/components/AuditMgmtRequestsWorksheet";
 import { AuditSAEWorksheet } from "@/components/AuditSAEWorksheet";
 import { AuditOASWorksheet } from "@/components/AuditOASWorksheet";
@@ -595,7 +594,6 @@ const CUSTOM_WORKSHEET_TITLES: Record<string, string> = {
   'aud-mat': 'Materiality', 'aud-us-mat': 'Materiality',
   'aud-tb': 'Time Budget', 'aud-us-tb': 'Time Budget',
   'aud-db': 'Detailed Budget', 'aud-us-db': 'Detailed Budget',
-  'aud-tt': 'Time Tracker', 'aud-us-tt': 'Time Tracker',
   'aud-iar': 'Management Requests', 'aud-us-iar': 'Management Requests',
   'aud-scope': 'Audit Scope', 'aud-us-scope': 'Audit Scope',
   'aud-pap': 'Preliminary Analytical Procedures', 'aud-us-pap': 'Preliminary Analytical Procedures',
@@ -1850,8 +1848,6 @@ export default function EngagementDetail() {
             <AuditTimeBudgetWorksheet isUS={checklistKey === 'aud-us-tb'} />
           ) : (checklistKey === 'aud-db' || checklistKey === 'aud-us-db') ? (
             <AuditDetailedBudgetWorksheet isUS={checklistKey === 'aud-us-db'} />
-          ) : (checklistKey === 'aud-tt' || checklistKey === 'aud-us-tt') ? (
-            <AuditTimeTrackerWorksheet />
           ) : (checklistKey === 'aud-iar' || checklistKey === 'aud-us-iar') ? (
             <AuditMgmtRequestsWorksheet isUS={checklistKey === 'aud-us-iar'} />
           ) : (checklistKey === 'aud-scope' || checklistKey === 'aud-us-scope') ? (

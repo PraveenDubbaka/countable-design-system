@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 
 export type RoleKey = 'senior' | 'assistant' | 'manager' | 'partner' | 'eqcr' | 'specialist' | 'admin' | 'other';
 
@@ -61,6 +61,51 @@ export function loadTimeEntries(engagementId: string): TimeEntry[] {
     return SEED_ENTRIES;
   } catch { return []; }
 }
+
+// ── Current user (auto-identified from engagement context) ───────────────────
+export interface CurrentUser {
+  name: string;
+  initials: string;
+  roleKey: RoleKey;
+}
+
+export const CURRENT_USER: CurrentUser = {
+  name: 'Praveen D.',
+  initials: 'PD',
+  roleKey: 'manager',
+};
+
+// ── Session auto-timer ───────────────────────────────────────────────────────
+// Tracks elapsed time (seconds) since the hook mounted. Pauses when tab hidden.
+export function useSessionTimer() {
+  const [elapsed, setElapsed] = useState(0);
+  const running = useRef(true);
+  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  useEffect(() => {
+    intervalRef.current = setInterval(() => {
+      if (running.current) setElapsed(s => s + 1);
+    }, 1000);
+
+    const onVisible = () => { running.current = document.visibilityState === 'visible'; };
+    document.addEventListener('visibilitychange', onVisible);
+
+    return () => {
+      if (intervalRef.current) clearInterval(intervalRef.current);
+      document.removeEventListener('visibilitychange', onVisible);
+    };
+  }, []);
+
+  const reset = () => setElapsed(0);
+  return { elapsed, reset };
+}
+
+export const fmtElapsed = (s: number) => {
+  const h = Math.floor(s / 3600).toString().padStart(2, '0');
+  const m = Math.floor((s % 3600) / 60).toString().padStart(2, '0');
+  const sec = (s % 60).toString().padStart(2, '0');
+  return `${h}:${m}:${sec}`;
+};
 
 export function useTimeEntries(engagementId: string) {
   const [entries, setEntries] = useState<TimeEntry[]>(() => loadTimeEntries(engagementId));

@@ -1,11 +1,15 @@
 import { Dispatch, SetStateAction, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { Info, Plus, Trash2 } from 'lucide-react';
+import { Info, Plus, Trash2, UserCircle2 } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
-import { useTimeEntries, type RoleKey } from '@/lib/useTimeEntries';
+import {
+  useTimeEntries, ROLE_LABELS,
+  CURRENT_USER, useSessionTimer, fmtElapsed,
+  type RoleKey, type TimeEntry,
+} from '@/lib/useTimeEntries';
 
 interface AuditDetailedBudgetWorksheetProps {
   isUS?: boolean;
@@ -29,7 +33,37 @@ const ROW_TO_ROLE: Record<string, RoleKey> = {
 
 export function AuditDetailedBudgetWorksheet({ isUS = false }: AuditDetailedBudgetWorksheetProps) {
   const { engagementId = 'default' } = useParams<{ engagementId: string }>();
-  const { hrsForRole } = useTimeEntries(engagementId);
+  const { entries, addEntry, removeEntry, hrsForRole } = useTimeEntries(engagementId);
+  const { elapsed, reset: resetTimer } = useSessionTimer();
+
+  // Quick-log state for DB worksheet (role-based)
+  const [logHours, setLogHours] = useState('');
+  const [logDesc,  setLogDesc]  = useState('');
+
+  const handleLogSession = (hoursOverride?: number) => {
+    const hrs = hoursOverride ?? parseFloat(logHours);
+    if (!hrs || hrs <= 0) { toast.error('Enter a valid hours value'); return; }
+    const entry: TimeEntry = {
+      id: `te-${Date.now()}`,
+      date: new Date().toISOString().slice(0, 10),
+      roleKey: CURRENT_USER.roleKey,
+      tbRowId: 'g2',
+      tbSection: 'general',
+      hours: parseFloat(hrs.toFixed(2)),
+      description: logDesc || ROLE_LABELS[CURRENT_USER.roleKey],
+    };
+    addEntry(entry);
+    setLogHours('');
+    setLogDesc('');
+    toast.success(`${hrs.toFixed(2)}h logged for ${CURRENT_USER.name}`);
+  };
+
+  const handleLogCurrentSession = () => {
+    const hrs = parseFloat((elapsed / 3600).toFixed(2));
+    if (hrs < 0.02) { toast.error('Session too short to log (< 1 min)'); return; }
+    handleLogSession(hrs);
+    resetTimer();
+  };
   const EQCR = isUS ? 'EQR' : 'EQCR';
 
   const [fieldRows,     setFieldRows]     = useState<StaffRow[]>([makeStaff('f1', 'Senior'), makeStaff('f2', 'Assistant(s)')]);
@@ -230,6 +264,47 @@ export function AuditDetailedBudgetWorksheet({ isUS = false }: AuditDetailedBudg
       <div className="flex-1 overflow-y-auto bg-muted/30">
         <div className="p-6 space-y-4">
 
+          {/* ── Active session tracker ──────────────────────────────────────── */}
+          <div className="bg-card border border-border rounded-md shadow-[0_2px_8px_hsl(213_40%_20%/0.06)] overflow-hidden">
+            <div className="px-5 py-3 flex items-center gap-4">
+              {/* User badge */}
+              <div className="flex items-center gap-2.5 shrink-0">
+                <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-xs font-bold text-primary">
+                  {CURRENT_USER.initials}
+                </div>
+                <div>
+                  <p className="text-sm font-semibold text-foreground leading-tight">{CURRENT_USER.name}</p>
+                  <p className="text-xs text-muted-foreground">{ROLE_LABELS[CURRENT_USER.roleKey]}</p>
+                </div>
+              </div>
+              <div className="h-6 w-px bg-border shrink-0" />
+              {/* Session timer */}
+              <div className="flex items-center gap-2 shrink-0">
+                <div className={`w-2 h-2 rounded-full shrink-0 ${elapsed > 0 ? 'bg-emerald-500 animate-pulse' : 'bg-muted-foreground'}`} />
+                <span className="text-xs text-muted-foreground">Session active</span>
+                <span className="text-sm font-mono font-semibold tabular-nums text-primary">{fmtElapsed(elapsed)}</span>
+              </div>
+              <div className="flex-1" />
+              <Button size="sm" variant="outline" className="h-7 text-xs gap-1.5 shrink-0"
+                onClick={handleLogCurrentSession} disabled={elapsed < 60}>
+                Log session ({(elapsed / 3600).toFixed(2)}h)
+              </Button>
+            </div>
+            {/* Manual quick-log row */}
+            <div className="px-5 py-3 border-t border-border/50 bg-muted/20 flex items-center gap-3">
+              <UserCircle2 className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
+              <span className="text-xs text-muted-foreground shrink-0">Manual entry:</span>
+              <Input type="number" min="0.25" step="0.25" placeholder="Hours" className="h-7 text-xs w-20 tabular-nums text-right"
+                value={logHours} onChange={e => setLogHours(e.target.value)} />
+              <Input placeholder="Description (optional)" className="h-7 text-xs flex-1"
+                value={logDesc} onChange={e => setLogDesc(e.target.value)}
+                onKeyDown={e => { if (e.key === 'Enter') handleLogSession(); }} />
+              <Button size="sm" className="h-7 text-xs gap-1.5 shrink-0" onClick={() => handleLogSession()}>
+                <Plus className="h-3.5 w-3.5" /> Log
+              </Button>
+            </div>
+          </div>
+
           {/* Staff Resources */}
           <div className="bg-card text-card-foreground border border-border shadow-[0_2px_8px_hsl(213_40%_20%/0.06)] rounded-md overflow-hidden">
             <div className="px-6 py-3.5 bg-card border-b border-border flex items-center gap-3">
@@ -317,6 +392,43 @@ export function AuditDetailedBudgetWorksheet({ isUS = false }: AuditDetailedBudg
               <Textarea className="min-h-[72px] text-sm resize-none" placeholder="Enter comments…" value={timeComments} onChange={e => setTimeComments(e.target.value)} />
             </div>
           </div>
+
+          {/* ── Time log ────────────────────────────────────────────────────── */}
+          {entries.length > 0 && (
+            <div className="bg-card border border-border shadow-[0_2px_8px_hsl(213_40%_20%/0.06)] rounded-md overflow-hidden">
+              <div className="px-6 py-3.5 border-b border-border flex items-center justify-between">
+                <span className="text-sm font-semibold text-foreground">Time Log</span>
+                <span className="text-xs text-muted-foreground">{entries.reduce((a,e)=>a+e.hours,0).toFixed(1)}h · {entries.length} entries</span>
+              </div>
+              <div className="overflow-x-auto">
+                <table className="w-full">
+                  <thead>
+                    <tr className="bg-muted border-b border-border">
+                      {['Date','Role','Task / Description','Hours',''].map(h => (
+                        <th key={h} className="px-4 py-2.5 text-left text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap">{h}</th>
+                      ))}
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-border">
+                    {entries.slice(0, 8).map(e => (
+                      <tr key={e.id} className="hover:bg-muted/50 transition-colors">
+                        <td className="px-4 py-2 text-xs tabular-nums whitespace-nowrap">{e.date}</td>
+                        <td className="px-4 py-2 text-xs whitespace-nowrap">{ROLE_LABELS[e.roleKey]}</td>
+                        <td className="px-4 py-2 text-xs text-muted-foreground max-w-[240px] truncate">{e.description}</td>
+                        <td className="px-4 py-2 text-xs tabular-nums font-medium text-right">{e.hours.toFixed(1)}</td>
+                        <td className="px-3 py-2 text-center">
+                          <button onClick={() => { removeEntry(e.id); toast.success('Entry removed'); }}
+                            className="text-muted-foreground hover:text-destructive transition-colors">
+                            <Trash2 className="h-3 w-3" />
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
 
           {/* Conclusion */}
           <div className="bg-card text-card-foreground border border-border shadow-[0_2px_8px_hsl(213_40%_20%/0.06)] rounded-md overflow-hidden">

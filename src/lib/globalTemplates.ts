@@ -12973,12 +12973,6 @@ export const generateForm408InitialAuditEngagements = (): Checklist => {
     {
       id: 'f408-pC',
       title: 'PART C – PROCEDURES ON OPENING BALANCES',
-      questions: [],
-      isExpanded: true,
-    },
-    {
-      id: 'f408-pC-basic',
-      title: 'BASIC INFORMATION',
       questions: [
         q('f408-pC-bi-1', '<p><strong>Previous auditor\'s/practitioner\'s working papers</strong><br/>Where possible, review the previous auditor\'s or practitioner\'s working papers.</p>', [
           q('f408-pC-bi-1a', '<p>Composition of opening balances, including F/S disclosures.</p>', undefined, 'Yes'),
