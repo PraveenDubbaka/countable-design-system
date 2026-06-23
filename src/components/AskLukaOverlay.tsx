@@ -1,20 +1,68 @@
-import { useState, useRef, useCallback, useEffect } from "react";
-import { LukaAttachMenu, AttachedFilesBar, useAttachedFiles } from "@/components/luka/LukaAttachMenu";
-import { VoiceRecordingOverlay } from "@/components/luka/VoiceRecordingOverlay";
-import { X, Mic, Plus, Search, MessageSquare, Minus, Send, Inbox, Maximize2, ChevronLeft, ChevronRight, Clock, PanelLeftClose, MoreHorizontal, Zap, Building2, CheckCircle2, Loader2, Circle, ArrowRight, Wand2, Pin, PinOff, Trash2, Settings, ChevronDown, Globe, Check } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from "@/components/ui/tooltip";
-import { cn } from "@/lib/utils";
-import { PromptPicker } from "@/components/luka/PromptPicker";
-import { LukaThinkingMessage } from "@/components/luka/LukaThinkingMessage";
-import { GrossMarginResponse } from "@/components/luka/GrossMarginResponse";
-import { TrialBalanceGIFIResponse } from "@/components/luka/TrialBalanceGIFIResponse";
-import { LukaResponseActions } from "@/components/luka/LukaResponseActions";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import LukaActivityPanel, { type ActivityEntry } from "@/components/luka/LukaActivityPanel";
-import LukaSettingsOverlay from "@/components/luka/LukaSettingsOverlay";
+import { useState, useCallback, useRef, useEffect } from "react";
 import { setLukaOpen } from "@/lib/lukaOpenStore";
+
+import LukaActivityPanel, { type ActivityEntry } from "@/components/luka/LukaActivityPanel";
+import lukaLogo from "@/assets/luka-logo.png";
+import quickbooksLogo from "@/assets/quickbooks-intuit-logo.png";
+import { motion, AnimatePresence, LayoutGroup } from "framer-motion";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+  TooltipProvider,
+} from "@/components/ui/tooltip";
+import WorkspaceView from "@/components/luka/workspace/WorkspaceView";
+import WorkspaceEmptyState from "@/components/luka/workspace/WorkspaceEmptyState";
+import AddEngagementModal from "@/components/luka/workspace/AddEngagementModal";
+import EngagementWorkspaceShell from "@/components/luka/workspace/EngagementWorkspaceShell";
+import LukaSettingsOverlay from "@/components/luka/LukaSettingsOverlay";
+import ReconciliationFlow from "@/components/luka/reconciliation/ReconciliationFlow";
+import TaxPayableFlow from "@/components/luka/TaxPayableFlow";
+import {
+  X,
+  Menu,
+  Minus,
+  Maximize2,
+  Minimize2,
+  ExternalLink,
+  Zap,
+  Plus,
+  Inbox,
+  Mic,
+  Send,
+  Sparkles,
+  MessageSquare,
+  Search,
+  ChevronDown,
+  PlusCircle,
+  Pin,
+  ChevronsLeft,
+  ChevronsRight,
+  Wand2,
+  Loader2,
+  Check,
+  Upload,
+  GitBranch,
+  Globe,
+  MessageCircle,
+  Settings,
+  MoreVertical,
+  Trash2,
+  PinOff,
+  CheckCircle2,
+  Circle,
+  ArrowRight,
+} from "lucide-react";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { cn } from "@/lib/utils";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+
+/* ── Interfaces (preserved from design system for backward compat) ── */
 
 interface FillSummary {
   filledCount: number;
@@ -58,66 +106,101 @@ interface AskLukaOverlayProps {
   onStartSectionBySection?: () => void;
 }
 
-const statusColors = ["bg-green-500", "bg-green-500", "bg-amber-500", "bg-green-500", "bg-green-500", "bg-green-500", "bg-purple-500", "bg-purple-500", "bg-amber-500", "bg-green-500", "bg-purple-500"];
-
-const INITIAL_PINNED = [
-  { id: 1, name: "Emerging Trends in Accounting" },
-  { id: 2, name: "Capital Asset Amortization" },
-  { id: 3, name: "Generate Variance Analysis" },
-  { id: 4, name: "Details on the report" },
-  { id: 5, name: "Summarise uploaded report" },
+const quickPrompts = [
+  "/Variance Analysis",
+  "/Account Reconciliation",
+  "/Bank Reconciliation",
+  "/Capital Asset Amortization",
 ];
 
-const INITIAL_RECENT = [
-  { id: 6, name: "Run Client Heath Check" },
-  { id: 7, name: "Generate Trial Balance" },
-  { id: 8, name: "Aged AR Analysis" },
-  { id: 9, name: "General Ledger Analysis" },
-  { id: 10, name: "Account Reconciliation" },
-  { id: 11, name: "Notes Generator" },
-  { id: 12, name: "Bank to Trial Balance" },
+type ThreadItem = { name: string; createdAt: Date };
+
+const initialPinnedThreads: ThreadItem[] = [
+  { name: "Capital Asset Amortization", createdAt: new Date(2026, 4, 28, 9, 14) },
+  { name: "Generate Variance Analysis", createdAt: new Date(2026, 4, 26, 15, 42) },
+  { name: "Summarise Uploaded Report", createdAt: new Date(2026, 4, 22, 11, 5) },
 ];
 
-const SLASH_PROMPTS = ["Variance Analysis","General Ledger Analysis","Account Reconciliation","Bank Reconciliation","Aged AR Analysis","Loan Amortization","Tax Payable"];
-
-const INITIAL_CONNECTORS = [
-  { id: "xero",         name: "Xero",              connected: false, color: "#13B5EA", abbr: "XE" },
-  { id: "quickbooks",   name: "QuickBooks",         connected: false, color: "#2CA01C", abbr: "QB" },
-  { id: "google-drive", name: "Google Drive",       connected: false, color: "#4285F4", abbr: "GD" },
-  { id: "slack",        name: "Slack",              connected: false, color: "#4A154B", abbr: "SL" },
-  { id: "stripe",       name: "Stripe",             connected: false, color: "#635BFF", abbr: "ST" },
-  { id: "excel",        name: "Microsoft Excel",    connected: false, color: "#217346", abbr: "XL" },
-  { id: "outlook",      name: "Microsoft Outlook",  connected: false, color: "#0078D4", abbr: "OL" },
-  { id: "hubspot",      name: "HubSpot",            connected: false, color: "#FF7A59", abbr: "HS" },
+const initialRecentThreads: ThreadItem[] = [
+  { name: "Run Client Health Check", createdAt: new Date(2026, 4, 30, 8, 21) },
+  { name: "Aged AR Analysis", createdAt: new Date(2026, 4, 29, 17, 3) },
+  { name: "Generate Trial Balance", createdAt: new Date(2026, 4, 29, 10, 47) },
+  { name: "Capital Asset Amortization", createdAt: new Date(2026, 4, 28, 14, 12) },
+  { name: "Summarise Uploaded Report", createdAt: new Date(2026, 4, 27, 9, 33) },
+  { name: "Bank To Trial Balance", createdAt: new Date(2026, 4, 26, 16, 58) },
+  { name: "Account Reconciliation", createdAt: new Date(2026, 4, 25, 13, 24) },
+  { name: "Notes Generator", createdAt: new Date(2026, 4, 24, 11, 9) },
 ];
 
-const MODEL_GROUPS = [
-  { ecosystem: "ChatGPT Ecosystem", models: [
-    { name: "GPT-5.4 Pro", badge: "Thinking" },
-    { name: "GPT-5.4 Standard", badge: "Fast" },
-    { name: "o3 Reasoning", badge: "Reasoning" },
-    { name: "GPT-4.1 Mini", badge: "Cheap" },
-  ]},
-  { ecosystem: "Google · Gemini", models: [
-    { name: "Gemini 3.1 Pro", badge: "Large docs" },
-    { name: "Gemini 3 Flash", badge: "Fast" },
-    { name: "Gemini Deep Think", badge: "Reasoning" },
-  ]},
-  { ecosystem: "Anthropic · Claude", models: [
-    { name: "Claude Opus 4.6", badge: "Deep analysis" },
-    { name: "Claude Sonnet 4.6", badge: "Fast" },
-    { name: "Claude Haiku", badge: "Cheap" },
-  ]},
-];
+const formatThreadDate = (d: Date) =>
+  d.toLocaleString(undefined, {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+    hour: "numeric",
+    minute: "2-digit",
+  });
 
-const suggestions = [
-  "#Variance Analysis",
-  "#Account Reconciliation",
-  "#Bank Reconciliation",
-  "#Capital Asset Amortization",
-];
+interface ThreadRowProps {
+  thread: ThreadItem;
+  icon: React.ReactNode;
+  isPinned: boolean;
+  onPinToggle: () => void;
+  onDelete: () => void;
+}
 
-/* Simple Luka flash icon using Lucide Zap */
+const ThreadRow = ({ thread, icon, isPinned, onPinToggle, onDelete }: ThreadRowProps) => {
+  const [menuOpen, setMenuOpen] = useState(false);
+  return (
+    <TooltipProvider delayDuration={300}>
+    <Tooltip delayDuration={300}>
+      <TooltipTrigger asChild>
+        <div className="luka-thread-item group relative pr-7" role="button" tabIndex={0}>
+          {icon}
+          <span className="truncate flex-1 text-left">{thread.name}</span>
+          <DropdownMenu open={menuOpen} onOpenChange={setMenuOpen}>
+            <DropdownMenuTrigger asChild>
+              <button
+                type="button"
+                onClick={(e) => e.stopPropagation()}
+                className={`absolute right-1.5 top-1/2 -translate-y-1/2 w-6 h-6 rounded-md flex items-center justify-center transition-opacity duration-150 hover:bg-[hsl(var(--primary)/0.12)] ${
+                  menuOpen ? "opacity-100" : "opacity-0 group-hover:opacity-100 focus:opacity-100"
+                }`}
+                aria-label="Thread actions"
+              >
+                <MoreVertical size={14} className="text-muted-foreground" />
+              </button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" side="right" className="w-36">
+              <DropdownMenuItem onClick={onPinToggle}>
+                {isPinned ? (
+                  <>
+                    <PinOff size={14} className="mr-2" /> Unpin
+                  </>
+                ) : (
+                  <>
+                    <Pin size={14} className="mr-2" /> Pin
+                  </>
+                )}
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={onDelete} className="text-destructive focus:text-destructive">
+                <Trash2 size={14} className="mr-2" /> Delete
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
+      </TooltipTrigger>
+      <TooltipContent side="right" className="max-w-xs">
+        <div className="font-medium text-xs">{thread.name}</div>
+        <div className="text-[10px] opacity-70 mt-0.5">Created {formatThreadDate(thread.createdAt)}</div>
+      </TooltipContent>
+    </Tooltip>
+    </TooltipProvider>
+  );
+};
+
+
+/* ── AutoFill constants ── */
 function LukaIcon({ size = 20 }: { size?: number }) {
   return <Zap className="text-white" size={size} fill="white" strokeWidth={0} />;
 }
@@ -144,14 +227,39 @@ const RELATED_TEMPLATES = [
   "Audit Planning Memo",
 ];
 
-export function AskLukaOverlay({ open, onOpenChange, initialQuery, autoFillMode, checklistLabel, engagementLabel, autoFillSources, onAutoFillConfirmed, onAutoFillAll, summaryMode, fillSummary, allTemplateSummary, autoFillProgress, nextChecklistLabel, onNavigateNext, onOpenEngagementSheet, engagementOverviewMode, onStartSectionBySection }: AskLukaOverlayProps) {
-  const [message, setMessage] = useState("");
+export function AskLukaOverlay({
+  open,
+  onOpenChange,
+  initialQuery,
+  autoFillMode,
+  checklistLabel,
+  engagementLabel,
+  autoFillSources,
+  onAutoFillConfirmed,
+  onAutoFillAll,
+  summaryMode,
+  fillSummary,
+  allTemplateSummary,
+  autoFillProgress,
+  nextChecklistLabel,
+  onNavigateNext,
+  onOpenEngagementSheet,
+  engagementOverviewMode,
+  onStartSectionBySection,
+}: AskLukaOverlayProps) {
+  const [activeTab, setActiveTab] = useState<"threads" | "workspace">("threads");
+  const [inputValue, setInputValue] = useState("");
+  const [threadSearch, setThreadSearch] = useState("");
+  const [isFullscreen, setIsFullscreen] = useState(false);
+  const [threadsSidebarCollapsed, setThreadsSidebarCollapsed] = useState(true);
+  const [workspaceSidebarCollapsed, setWorkspaceSidebarCollapsed] = useState(false);
+  const [pinnedThreads, setPinnedThreads] = useState<ThreadItem[]>(initialPinnedThreads);
+  const [recentThreads, setRecentThreads] = useState<ThreadItem[]>(initialRecentThreads);
+  const [settingsOpen, setSettingsOpen] = useState(false);
   const [analysisPhase, setAnalysisPhase] = useState<"idle" | "analyzing" | "ready">("idle");
 
   useEffect(() => {
-    if (open && initialQuery) {
-      setMessage(initialQuery);
-    }
+    if (open && initialQuery) setInputValue(initialQuery);
   }, [open, initialQuery]);
 
   useEffect(() => {
@@ -163,80 +271,111 @@ export function AskLukaOverlay({ open, onOpenChange, initialQuery, autoFillMode,
       setAnalysisPhase("idle");
     }
   }, [open, autoFillMode]);
-  const [activeTab, setActiveTab] = useState<"threads" | "workspaces">("threads");
-  const [showAllRecent, setShowAllRecent] = useState(false);
-  const [viewMode, setViewMode] = useState<"full" | "half">("half");
-  const [sidebarExpanded, setSidebarExpanded] = useState(false);
-  const [sidebarHovered, setSidebarHovered] = useState(false);
-  const [showPromptPicker, setShowPromptPicker] = useState(false);
-  const [hashFilter, setHashFilter] = useState("");
-  const [isThinking, setIsThinking] = useState(false);
-  const [sentMessage, setSentMessage] = useState<string | null>(null);
-  const [aiResponse, setAiResponse] = useState<string | null>(null);
-  const [displayedResponse, setDisplayedResponse] = useState("");
-  const [isStreaming, setIsStreaming] = useState(false);
-  const [richResponseType, setRichResponseType] = useState<"gross-margin" | "tb-gifi" | null>(null);
-  const [revealStep, setRevealStep] = useState(-1);
-  const inputRef = useRef<HTMLInputElement>(null);
-  const streamRef = useRef<number | null>(null);
-  const revealRef = useRef<number | null>(null);
-  const { files: attachedFiles, addFiles, removeFile, clearAll: clearFiles } = useAttachedFiles();
-  const [voiceOpen, setVoiceOpen] = useState(false);
 
-  // Thread state
-  const [pinnedThreads, setPinnedThreads] = useState(INITIAL_PINNED);
-  const [recentThreads, setRecentThreads] = useState(INITIAL_RECENT);
+  useEffect(() => {
+    const openHandler = () => setSettingsOpen(true);
+    window.addEventListener("open-luka-settings", openHandler);
+    return () => window.removeEventListener("open-luka-settings", openHandler);
+  }, []);
 
-  // Model picker
-  const [settingsOpen, setSettingsOpen] = useState(false);
-  const [selectedModel, setSelectedModel] = useState("Gemini 3 Flash");
-  const [showModelDropdown, setShowModelDropdown] = useState(false);
-  const modelDropdownRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    setLukaOpen(open);
+  }, [open]);
 
-  // Connectors / plus tray
-  const [connectors, setConnectors] = useState(INITIAL_CONNECTORS);
-  const [showPlusTray, setShowPlusTray] = useState(false);
-  const plusTrayRef = useRef<HTMLDivElement>(null);
-
-  // Activity panel
+  const unpinThread = (idx: number) => {
+    setPinnedThreads((prev) => {
+      const next = [...prev];
+      const [item] = next.splice(idx, 1);
+      if (item) setRecentThreads((r) => [item, ...r]);
+      return next;
+    });
+  };
+  const pinThread = (idx: number) => {
+    setRecentThreads((prev) => {
+      const next = [...prev];
+      const [item] = next.splice(idx, 1);
+      if (item) setPinnedThreads((p) => [...p, item]);
+      return next;
+    });
+  };
+  const deletePinned = (idx: number) =>
+    setPinnedThreads((prev) => prev.filter((_, i) => i !== idx));
+  const deleteRecent = (idx: number) =>
+    setRecentThreads((prev) => prev.filter((_, i) => i !== idx));
+  const [isMinimized, setIsMinimized] = useState(false);
+const [workspaceLoading, setWorkspaceLoading] = useState(false);
+  const [hasWorkspaceEngagement, setHasWorkspaceEngagement] = useState(false);
+  const [showAddEngagementModal, setShowAddEngagementModal] = useState(false);
+  const [workspaceEngagement, setWorkspaceEngagement] = useState<{ name: string; code: string; source?: "quickbooks" | "xero" } | null>(null);
+  const [showPromptWindow, setShowPromptWindow] = useState(false);
+  const [selectedPromptIndex, setSelectedPromptIndex] = useState(0);
+  const [activeFlow, setActiveFlow] = useState<string | null>(null);
+  const hasLoadedWorkspace = useRef(false);
+  const threadsFullscreenRef = useRef(false);
+  const inputRef = useRef<HTMLTextAreaElement>(null);
   const [activityEntries, setActivityEntries] = useState<ActivityEntry[]>([]);
   const [activityMinimized, setActivityMinimized] = useState(false);
   const [isActivityProcessing, setIsActivityProcessing] = useState(false);
   const activityIdCounter = useRef(0);
-
-  // Prompt enhancement
-  const [enhancedPrompt, setEnhancedPrompt] = useState<string | null>(null);
   const [isEnhancing, setIsEnhancing] = useState(false);
-
-  // Slash command menu
-  const [showSlashMenu, setShowSlashMenu] = useState(false);
-  const [selectedSlashIndex, setSelectedSlashIndex] = useState(0);
-
-  // Effects: broadcast open state
-  useEffect(() => { setLukaOpen(open); }, [open]);
-
-  // Effect: listen for open-luka-settings event
+  const [originalPrompt, setOriginalPrompt] = useState<string | null>(null);
+  const [enhancedPrompt, setEnhancedPrompt] = useState<string | null>(null);
+  const [enhanceCount, setEnhanceCount] = useState(0);
+  const [selectedModel, setSelectedModel] = useState("GPT-5.4 Pro");
+  const [showModelDropdown, setShowModelDropdown] = useState(false);
+  const [hoveredModelIndex, setHoveredModelIndex] = useState(-1);
+  const modelDropdownRef = useRef<HTMLDivElement>(null);
+  const [showPlusTray, setShowPlusTray] = useState(false);
+  const plusTrayRef = useRef<HTMLDivElement>(null);
+  const [showEngagementTray, setShowEngagementTray] = useState(false);
+  const [engagementSearch, setEngagementSearch] = useState("");
+  const [selectedEngagement, setSelectedEngagement] = useState<{ client: string; id: string; yearEnd: string; status: string } | null>(null);
+  const engagementTrayRef = useRef<HTMLDivElement>(null);
+  const ENGAGEMENTS = [
+    { client: "Phoenix Marie", id: "COM-DEF-May312024", yearEnd: "22 Jan 2022", status: "Active" },
+    { client: "Circooles", id: "COM-DEF-Dec312024", yearEnd: "20 Jan 2022", status: "Active" },
+    { client: "Command+R", id: "COM-DEF-Dec312024", yearEnd: "24 Jan 2022", status: "Active" },
+    { client: "Hourglass", id: "REV-DEF-Dec312024", yearEnd: "26 Jan 2022", status: "Active" },
+    { client: "Layers", id: "REV-DEF-Dec312024", yearEnd: "18 Jan 2022", status: "Active" },
+    { client: "Quotient", id: "COM-DEF-Dec312024", yearEnd: "28 Jan 2022", status: "Active" },
+    { client: "Sisyphus", id: "REV-DEF-Dec312024", yearEnd: "16 Jan 2022", status: "Active" },
+    { client: "Catalog", id: "COM-DEF-Dec312024", yearEnd: "12 Jan 2022", status: "Active" },
+    { client: "Optimal", id: "REV-DEF-Dec312024", yearEnd: "08 Jan 2022", status: "Active" },
+  ];
   useEffect(() => {
-    const handler = () => setSettingsOpen(true);
-    window.addEventListener("open-luka-settings", handler);
-    return () => window.removeEventListener("open-luka-settings", handler);
-  }, []);
-
-  // Effect: close model dropdown on outside click
-  useEffect(() => {
-    if (!showModelDropdown) return;
+    if (!showEngagementTray) return;
     const handler = (e: MouseEvent) => {
-      if (modelDropdownRef.current && !modelDropdownRef.current.contains(e.target as Node)) {
-        setShowModelDropdown(false);
+      if (engagementTrayRef.current && !engagementTrayRef.current.contains(e.target as Node)) {
+        setShowEngagementTray(false);
       }
     };
     document.addEventListener("mousedown", handler);
     return () => document.removeEventListener("mousedown", handler);
-  }, [showModelDropdown]);
+  }, [showEngagementTray]);
 
-  // Effect: close plus tray on outside click
+
+  // Connector definitions - stateful
+  const [connectors, setConnectors] = useState([
+    { id: "quickbooks", name: "QuickBooks", connected: false, color: "#2CA01C", abbr: "QB" },
+    { id: "xero", name: "Xero", connected: false, color: "#13B5EA", abbr: "XE" },
+    { id: "google-drive", name: "Google Drive", connected: false, color: "#4285F4", abbr: "GD" },
+    { id: "slack", name: "Slack", connected: false, color: "#4A154B", abbr: "SL" },
+    { id: "plaid", name: "Plaid", connected: false, color: "#111111", abbr: "PL" },
+    { id: "hubspot", name: "HubSpot", connected: false, color: "#FF7A59", abbr: "HS" },
+    { id: "stripe", name: "Stripe", connected: false, color: "#635BFF", abbr: "ST" },
+    { id: "excel", name: "Microsoft Excel", connected: false, color: "#217346", abbr: "XL" },
+    { id: "outlook", name: "Microsoft Outlook", connected: false, color: "#0078D4", abbr: "OL" },
+  ]);
+
+  const connectedConnectors = connectors.filter(c => c.connected);
+  const availableConnectors = connectors.filter(c => !c.connected);
+
+  const handleConnectConnector = useCallback((id: string) => {
+    setConnectors(prev => prev.map(c => c.id === id ? { ...c, connected: true } : c));
+  }, []);
+
+  // Close plus tray on outside click
   useEffect(() => {
-    if (!showPlusTray) return;
     const handler = (e: MouseEvent) => {
       if (plusTrayRef.current && !plusTrayRef.current.contains(e.target as Node)) {
         setShowPlusTray(false);
@@ -244,1157 +383,1626 @@ export function AskLukaOverlay({ open, onOpenChange, initialQuery, autoFillMode,
     };
     document.addEventListener("mousedown", handler);
     return () => document.removeEventListener("mousedown", handler);
-  }, [showPlusTray]);
-
-  // Thread handlers
-  const handlePinThread = useCallback((thread: { id: number; name: string }) => {
-    setRecentThreads(prev => prev.filter(t => t.id !== thread.id));
-    setPinnedThreads(prev => [thread, ...prev]);
   }, []);
 
-  const handleUnpinThread = useCallback((thread: { id: number; name: string }) => {
-    setPinnedThreads(prev => prev.filter(t => t.id !== thread.id));
-    setRecentThreads(prev => [thread, ...prev]);
+
+  const openaiIcon = (
+    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" style={{ flexShrink: 0 }}>
+      <path d="M22.28 9.37a5.98 5.98 0 0 0-.52-4.93 6.07 6.07 0 0 0-6.55-2.91A5.98 5.98 0 0 0 10.69 0a6.07 6.07 0 0 0-5.8 4.27 5.98 5.98 0 0 0-4 2.9 6.07 6.07 0 0 0 .74 7.12 5.98 5.98 0 0 0 .52 4.93 6.07 6.07 0 0 0 6.55 2.91A5.98 5.98 0 0 0 13.31 24a6.07 6.07 0 0 0 5.8-4.27 5.98 5.98 0 0 0 4-2.9 6.07 6.07 0 0 0-.74-7.12ZM13.31 22.43a4.48 4.48 0 0 1-2.88-1.05l.14-.08 4.79-2.76a.78.78 0 0 0 .39-.67v-6.74l2.02 1.17a.07.07 0 0 1 .04.05v5.58a4.5 4.5 0 0 1-4.5 4.5ZM3.51 18.29a4.47 4.47 0 0 1-.54-3.01l.14.09 4.79 2.76a.78.78 0 0 0 .78 0l5.85-3.38v2.33a.07.07 0 0 1-.03.06l-4.84 2.8a4.5 4.5 0 0 1-6.15-1.65ZM2.27 7.87a4.48 4.48 0 0 1 2.34-1.97V11.6a.78.78 0 0 0 .39.67l5.85 3.38-2.02 1.17a.07.07 0 0 1-.07 0L3.92 14a4.5 4.5 0 0 1-1.65-6.15Zm17.15 4 L13.57 8.5l2.02-1.17a.07.07 0 0 1 .07 0l4.84 2.8a4.5 4.5 0 0 1-.7 8.12V12.56a.78.78 0 0 0-.39-.67Zm2.01-3.02-.14-.09-4.79-2.76a.78.78 0 0 0-.78 0L9.87 9.38V7.05a.07.07 0 0 1 .03-.06l4.84-2.8a4.5 4.5 0 0 1 6.69 4.66ZM8.72 12.63l-2.02-1.17a.07.07 0 0 1-.04-.05V5.83a4.5 4.5 0 0 1 7.38-3.45l-.14.08-4.79 2.76a.78.78 0 0 0-.39.67v6.74Zm1.1-2.37 2.6-1.5 2.6 1.5v3l-2.6 1.5-2.6-1.5v-3Z" fill="currentColor"/>
+    </svg>
+  );
+
+  const googleIcon = (
+    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" style={{ flexShrink: 0 }}>
+      <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1Z" fill="#4285F4"/>
+      <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23Z" fill="#34A853"/>
+      <path d="M5.84 14.09A6.56 6.56 0 0 1 5.5 12c0-.72.12-1.43.34-2.09V7.07H2.18A10.96 10.96 0 0 0 1 12c0 1.77.42 3.45 1.18 4.93l3.66-2.84Z" fill="#FBBC05"/>
+      <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53Z" fill="#EA4335"/>
+    </svg>
+  );
+
+  const anthropicIcon = (
+    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" style={{ flexShrink: 0 }}>
+      <path d="M13.83 2H16.8l6.2 20h-2.97l-1.51-5.08h-7.25L9.76 22H6.8l7.04-20Zm1.37 3.63L12.45 14.2h5.5l-2.75-8.57ZM8.6 2H5.6L0 22h2.97L8.6 2Z" fill="#D4A27F"/>
+    </svg>
+  );
+
+  const modelGroups = [
+    {
+      ecosystem: "ChatGPT Ecosystem",
+      icon: openaiIcon,
+      models: [
+        { name: "GPT-5.4 Pro", desc: "Analyze deeply", badge: "Thinking" },
+        { name: "GPT-5.4 Standard", desc: "Write / summarize", badge: "Fast" },
+        { name: "o3 Reasoning", desc: "Complex calculations", badge: "Reasoning" },
+        { name: "GPT-4.1 Mini", desc: "Everyday tasks", badge: "Cheap + fast tasks" },
+      ],
+    },
+    {
+      ecosystem: "Google · Gemini",
+      icon: googleIcon,
+      models: [
+        { name: "Gemini 3.1 Pro", desc: "Large documents", badge: "Large documents" },
+        { name: "Gemini 3.1 Flash", desc: "Fast analysis", badge: "Fast" },
+        { name: "Gemini Deep Think", desc: "Advanced reasoning", badge: "Reasoning" },
+      ],
+    },
+    {
+      ecosystem: "Anthropic · Claude",
+      icon: anthropicIcon,
+      models: [
+        { name: "Claude Opus 4.6", desc: "Deep analysis", badge: "Large documents" },
+        { name: "Claude Sonnet 4.6", desc: "Cheap + fast", badge: "Fast" },
+        { name: "Claude Haiku", desc: "Cheap + fast", badge: "Cheap + fast tasks" },
+      ],
+    },
+  ];
+
+  const allModels = modelGroups.flatMap(g => g.models);
+
+  // Close model dropdown on outside click
+  const handleModelDropdownOutsideClick = useCallback((e: MouseEvent) => {
+    if (modelDropdownRef.current && !modelDropdownRef.current.contains(e.target as Node)) {
+      setShowModelDropdown(false);
+    }
   }, []);
 
-  const handleDeleteThread = useCallback((id: number) => {
-    setPinnedThreads(prev => prev.filter(t => t.id !== id));
-    setRecentThreads(prev => prev.filter(t => t.id !== id));
+  useEffect(() => {
+    document.addEventListener("mousedown", handleModelDropdownOutsideClick);
+    return () => document.removeEventListener("mousedown", handleModelDropdownOutsideClick);
+  }, [handleModelDropdownOutsideClick]);
+
+  const promptList = [
+    "Variance Analysis",
+    "General Ledger Analysis",
+    "Account Reconciliation",
+    "Bank Reconciliation",
+    "Aged AR Analysis",
+    "Loan Amortization",
+    "Tax Payable",
+  ];
+
+  const autoResizeTextarea = useCallback(() => {
+    const el = inputRef.current;
+    if (!el) return;
+    el.style.height = 'auto';
+    const lineHeight = parseInt(getComputedStyle(el).lineHeight) || 20;
+    const maxHeight = lineHeight * 12;
+    el.style.height = `${Math.min(el.scrollHeight, maxHeight)}px`;
+    el.style.overflowY = el.scrollHeight > maxHeight ? 'auto' : 'hidden';
   }, []);
 
-  // Connector handler
-  const handleConnectConnector = useCallback((id: string) => {
-    setConnectors(prev => prev.map(c => c.id === id ? { ...c, connected: !c.connected } : c));
+  const handleInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    const val = e.target.value;
+    setInputValue(val);
+    // Show prompt window when last character typed is /
+    if (val.endsWith("/")) {
+      setShowPromptWindow(true);
+      setSelectedPromptIndex(0);
+    } else if (!val.includes("/")) {
+      setShowPromptWindow(false);
+    }
+    requestAnimationFrame(autoResizeTextarea);
+  };
+
+  useEffect(() => {
+    autoResizeTextarea();
+  }, [inputValue, autoResizeTextarea]);
+
+  const handleActivityUpdate = useCallback((text: string, status: "done" | "processing" | "pending", highlight?: boolean) => {
+    const now = new Date();
+    const timestamp = now.toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit", second: "2-digit", hour12: false });
+    
+    setActivityEntries(prev => {
+      // If status is "done", find and update existing entry with same text
+      if (status === "done") {
+        const existingIdx = prev.findIndex(e => e.text === text && e.status === "processing");
+        if (existingIdx !== -1) {
+          const updated = [...prev];
+          updated[existingIdx] = { ...updated[existingIdx], status: "done", timestamp };
+          return updated;
+        }
+      }
+      // If status is "processing", check if already exists as processing
+      if (status === "processing") {
+        const exists = prev.find(e => e.text === text && e.status === "processing");
+        if (exists) return prev;
+      }
+      activityIdCounter.current += 1;
+      return [...prev, { id: `act-${activityIdCounter.current}`, text, timestamp, status, highlight }];
+    });
+    
+    setIsActivityProcessing(status === "processing");
   }, []);
 
-  // Prompt enhancement
-  const handleEnhancePrompt = useCallback(() => {
-    if (!message.trim() || isEnhancing) return;
+  const handlePromptSelect = (prompt: string) => {
+    if (prompt === "Account Reconciliation") {
+      setShowPromptWindow(false);
+      setInputValue("");
+      setActiveFlow("account-reconciliation");
+      setIsFullscreen(true);
+      setThreadsSidebarCollapsed(true);
+      setActivityEntries([]);
+      setActivityMinimized(true);
+      return;
+    }
+    if (prompt === "Tax Payable") {
+      setShowPromptWindow(false);
+      setInputValue("");
+      setActiveFlow("tax-payable");
+      setIsFullscreen(true);
+      setThreadsSidebarCollapsed(true);
+      setActivityEntries([]);
+      setActivityMinimized(false);
+      return;
+    }
+    setInputValue(inputValue.replace(/\/$/, "") + "/" + prompt + " ");
+    setShowPromptWindow(false);
+    inputRef.current?.focus();
+  };
+
+  const handleInputKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (!showPromptWindow) return;
+    if (e.key === "ArrowDown") {
+      e.preventDefault();
+      setSelectedPromptIndex((prev) => Math.min(prev + 1, promptList.length - 1));
+    } else if (e.key === "ArrowUp") {
+      e.preventDefault();
+      setSelectedPromptIndex((prev) => Math.max(prev - 1, 0));
+    } else if (e.key === "Enter") {
+      e.preventDefault();
+      handlePromptSelect(promptList[selectedPromptIndex]);
+    } else if (e.key === "Escape") {
+      e.preventDefault();
+      setShowPromptWindow(false);
+    }
+  };
+  const handleEnhancePrompt = useCallback(async () => {
+    if (!inputValue.trim() || isEnhancing) return;
+    const source = inputValue.trim();
+    setOriginalPrompt(source);
     setIsEnhancing(true);
-    const original = message.trim();
-    setTimeout(() => {
-      setEnhancedPrompt(`${original} — with detailed analysis, supporting evidence, and actionable recommendations tailored to the current engagement context.`);
-      setIsEnhancing(false);
-    }, 1200);
-  }, [message, isEnhancing]);
+    await new Promise((r) => setTimeout(r, 1200));
+    const enhanced = `Analyze and provide a detailed breakdown of ${source}, including key insights, trends, and actionable recommendations based on the current financial data.`;
+    setEnhancedPrompt(enhanced);
+    setEnhanceCount(prev => prev + 1);
+    setIsEnhancing(false);
+  }, [inputValue, isEnhancing]);
 
   const handleReplaceWithEnhanced = useCallback(() => {
-    if (enhancedPrompt) { setMessage(enhancedPrompt); setEnhancedPrompt(null); }
+    if (!enhancedPrompt) return;
+    setInputValue(enhancedPrompt);
+    setEnhancedPrompt(null);
+    setOriginalPrompt(null);
+    setEnhanceCount(0);
+    inputRef.current?.focus();
   }, [enhancedPrompt]);
 
-  const handleDismissEnhanced = useCallback(() => { setEnhancedPrompt(null); }, []);
-
-  // Slash command select
-  const handleSlashSelect = useCallback((prompt: string) => {
-    setMessage(prompt);
-    setShowSlashMenu(false);
-    setSelectedSlashIndex(0);
-    inputRef.current?.focus();
+  const handleDismissEnhanced = useCallback(() => {
+    setEnhancedPrompt(null);
+    setOriginalPrompt(null);
+    setEnhanceCount(0);
   }, []);
 
-  const handleInputChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    const val = e.target.value;
-    setMessage(val);
-
-    // Slash command detection
-    if (val === "/") {
-      setShowSlashMenu(true);
-      setSelectedSlashIndex(0);
-    } else if (val.startsWith("/") && val.length > 1) {
-      setShowSlashMenu(true);
-    } else {
-      setShowSlashMenu(false);
-    }
-
-    // Check if # is typed — open prompt picker
-    const hashIdx = val.lastIndexOf("#");
-    if (hashIdx !== -1) {
-      setShowPromptPicker(true);
-      setHashFilter(val.slice(hashIdx + 1));
-    } else {
-      setShowPromptPicker(false);
-      setHashFilter("");
+  const handleOpenNewWindow = useCallback(() => {
+    const newWindow = window.open("", "_blank", "width=720,height=700,menubar=no,toolbar=no,location=no,status=no");
+    if (newWindow) {
+      newWindow.document.title = "Luka Chat";
+      newWindow.document.body.innerHTML = `
+        <div style="display:flex;align-items:center;justify-content:center;height:100vh;font-family:Inter,sans-serif;color:#333;">
+          <div style="text-align:center;">
+            <h2>⚡ Luka Chat</h2>
+            <p style="color:#888;">Chat window opened in new tab</p>
+          </div>
+        </div>
+      `;
     }
   }, []);
 
-  const handlePromptSelect = useCallback((promptLabel: string) => {
-    setShowPromptPicker(false);
-    setHashFilter("");
-    setMessage("");
-    setSentMessage(promptLabel);
-    setIsThinking(true);
-    setAiResponse(null);
-    setDisplayedResponse("");
-    setIsStreaming(false);
-    setRichResponseType(null);
-    setRevealStep(-1);
-    if (streamRef.current) clearTimeout(streamRef.current);
-    if (revealRef.current) clearTimeout(revealRef.current);
-
-    const isGrossMargin = promptLabel.toLowerCase().includes("gross profit margin");
-    const isTbGifi = promptLabel.toLowerCase().includes("trial balance by gifi");
-
-    // Simulate thinking then reveal
-    setTimeout(() => {
-      setIsThinking(false);
-
-      if (isGrossMargin || isTbGifi) {
-        setRichResponseType(isGrossMargin ? "gross-margin" : "tb-gifi");
-        setAiResponse("__rich__");
-        let step = 0;
-        const reveal = () => {
-          setRevealStep(step);
-          step++;
-          if (step <= 5) {
-            revealRef.current = window.setTimeout(reveal, 600);
-          }
-        };
-        reveal();
-      } else {
-        const fullResponse = `Here's an overview of **${promptLabel}** with key insights and analysis.\n\nThis covers the essential metrics, trends, and recommendations based on your current financial data. The analysis includes year-over-year comparisons and highlights areas that may require attention.`;
-        setAiResponse(fullResponse);
-        setIsStreaming(true);
-        let idx = 0;
-        const stream = () => {
-          if (idx < fullResponse.length) {
-            const chunkSize = Math.floor(Math.random() * 3) + 1;
-            idx = Math.min(idx + chunkSize, fullResponse.length);
-            setDisplayedResponse(fullResponse.slice(0, idx));
-            streamRef.current = window.setTimeout(stream, 15 + Math.random() * 25);
-          } else {
-            setIsStreaming(false);
-          }
-        };
-        stream();
-      }
-    }, 2500);
+  const handleFullscreen = useCallback(() => {
+    setIsFullscreen((prev) => !prev);
   }, []);
 
-  const handleSend = useCallback(() => {
-    if (!message.trim()) return;
-    const msg = message.trim();
-    setMessage("");
-    setShowPromptPicker(false);
-    setSentMessage(msg);
-    setIsThinking(true);
-    setAiResponse(null);
-    setDisplayedResponse("");
-    setIsStreaming(false);
-    if (streamRef.current) clearTimeout(streamRef.current);
+  const handleMinimize = useCallback(() => {
+    setIsMinimized((prev) => !prev);
+  }, []);
 
-    const fullResponse = `Here's my response to "${msg}". This analysis covers the key aspects and provides actionable insights based on the available data.`;
-
-    setTimeout(() => {
-      setIsThinking(false);
-      setAiResponse(fullResponse);
-      setIsStreaming(true);
-      let idx = 0;
-      const stream = () => {
-        if (idx < fullResponse.length) {
-          const chunkSize = Math.floor(Math.random() * 3) + 1;
-          idx = Math.min(idx + chunkSize, fullResponse.length);
-          setDisplayedResponse(fullResponse.slice(0, idx));
-          streamRef.current = window.setTimeout(stream, 15 + Math.random() * 25);
-        } else {
-          setIsStreaming(false);
-        }
-      };
-      stream();
-    }, 2500);
-  }, [message]);
-
-  const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
-    if (showSlashMenu) {
-      const filtered = SLASH_PROMPTS.filter(p => message.length <= 1 || p.toLowerCase().includes(message.slice(1).toLowerCase()));
-      if (e.key === "ArrowDown") {
-        e.preventDefault();
-        setSelectedSlashIndex(i => Math.min(i + 1, filtered.length - 1));
-        return;
-      }
-      if (e.key === "ArrowUp") {
-        e.preventDefault();
-        setSelectedSlashIndex(i => Math.max(i - 1, 0));
-        return;
-      }
-      if (e.key === "Enter") {
-        e.preventDefault();
-        if (filtered[selectedSlashIndex]) handleSlashSelect(filtered[selectedSlashIndex]);
-        return;
-      }
-      if (e.key === "Escape") {
-        setShowSlashMenu(false);
-        return;
-      }
-    }
-    if (e.key === "Enter" && !showPromptPicker && message.trim()) {
-      e.preventDefault();
-      handleSend();
-    }
-  }, [showSlashMenu, showPromptPicker, message, selectedSlashIndex, handleSlashSelect, handleSend]);
-
-  if (!open) return null;
-
-  const allThreads = [...pinnedThreads, ...recentThreads];
+  const isWorkspace = activeTab === "workspace";
+  const isPostAutomation = false;
 
   return (
-    <>
-      {/* Backdrop for half mode */}
-      {viewMode === "half" && (
-        <div className="fixed inset-0 z-40" onClick={() => onOpenChange(false)} />
-      )}
+    <AnimatePresence>
+      {open && (
+        <>
+          {/* Overlay */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            className="fixed inset-0 z-40 bg-black/20"
+            onClick={() => onOpenChange(false)}
+          />
 
-      <div
-        className={cn(
-          "fixed top-0 right-0 bottom-0 z-50 bg-background dark:bg-card overflow-hidden",
-          "animate-in slide-in-from-right-5 fade-in zoom-in-[0.97] duration-400 ease-out",
-          viewMode === "full"
-            ? "left-14 rounded-tl-[1.25rem] rounded-bl-[1.25rem]"
-            : "left-[45%] rounded-tl-[1.25rem] rounded-bl-[1.25rem] shadow-[-8px_0_30px_-10px_hsl(var(--primary)/0.15)] border-l border-border"
-        )}
-      >
-        <div className="flex h-full min-w-0 w-full">
-          {/* ===== LEFT SIDEBAR ===== */}
-          <aside
-            className={cn(
-              "relative border-r border-border flex flex-col bg-background dark:bg-card transition-all duration-300 ease-in-out",
-              sidebarExpanded ? "w-[260px]" : "w-[60px]"
-            )}
-            onMouseEnter={() => setSidebarHovered(true)}
-            onMouseLeave={() => setSidebarHovered(false)}
+          {/* Panel */}
+          <motion.div
+            initial={{ x: "100%", opacity: 0.6 }}
+            animate={
+              isFullscreen
+                ? { x: 0, y: 0, opacity: 1, width: "100vw" }
+                : isMinimized
+                ? { x: 0, y: "calc(100% - 56px)", opacity: 1, width: threadsSidebarCollapsed ? 640 : 909 }
+                : { x: 0, y: 0, opacity: 1, width: threadsSidebarCollapsed ? 640 : 909 }
+            }
+            exit={{ x: "100%", opacity: 0.6 }}
+            transition={{ type: "spring", damping: 32, stiffness: 280, mass: 0.85 }}
+            className={`fixed top-0 right-0 z-50 flex ${isFullscreen ? "w-full h-full" : "h-full rounded-l-2xl overflow-hidden"}`}
+            style={isFullscreen ? undefined : { maxWidth: "98vw" }}
           >
-            {/* Collapse/Expand toggle */}
-            <button
-              onClick={() => setSidebarExpanded(!sidebarExpanded)}
-              className={cn(
-                "absolute -right-3 top-[50px] z-20 w-6 h-6 rounded-full border border-border bg-background dark:bg-card shadow-sm flex items-center justify-center transition-opacity duration-200 hover:bg-muted",
-                sidebarHovered ? "opacity-100" : "opacity-0"
-              )}
-            >
-              {sidebarExpanded ? (
-                <ChevronLeft className="h-3 w-3 text-muted-foreground" />
-              ) : (
-                <ChevronRight className="h-3 w-3 text-muted-foreground" />
-              )}
-            </button>
-
-            <TooltipProvider delayDuration={100}>
-              {sidebarExpanded ? (
-                /* ===== EXPANDED VIEW ===== */
-                <>
-                  {/* Header: Luka icon + name */}
-                  <div className="px-4 pt-4 pb-3 flex flex-col gap-3">
-                    <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[hsl(var(--primary))] to-[hsl(265_80%_55%)] flex items-center justify-center shrink-0">
-                        <LukaIcon size={18} />
+            {/* LHS sidebar — only show in threads mode */}
+            {!isWorkspace && !isPostAutomation && (
+              <motion.div
+                className="luka-threads-sidebar"
+                animate={{ width: threadsSidebarCollapsed ? 0 : 269 }}
+                transition={{ type: "spring", damping: 32, stiffness: 280, mass: 0.85 }}
+                style={{ overflow: threadsSidebarCollapsed ? "hidden" : "visible", position: "relative", zIndex: 10 }}
+              >
+                <div className={`flex flex-col h-full ${threadsSidebarCollapsed ? 'items-center' : ''}`} style={{ overflowX: "visible", overflowY: "auto", scrollbarWidth: "none" }}>
+                  
+                  {/* ─── Collapsed icon view ─── */}
+                  {threadsSidebarCollapsed ? (
+                    <>
+                      {/* Expand toggle */}
+                      <div className="flex flex-col items-center pt-3 pb-1 gap-2">
+                        <motion.button
+                          whileHover={{ scale: 1.12, backgroundColor: "hsl(270 60% 55% / 0.08)" }}
+                          whileTap={{ scale: 0.9 }}
+                          onClick={() => setThreadsSidebarCollapsed(false)}
+                          className="w-9 h-9 rounded-xl flex items-center justify-center cursor-pointer transition-all duration-200 relative group"
+                          style={{
+                            color: "hsl(var(--muted-foreground))",
+                            background: "hsl(var(--muted) / 0.5)",
+                            border: "1px solid hsl(var(--border) / 0.6)",
+                          }}
+                        >
+                          <motion.div
+                            animate={{ x: [0, 2, 0] }}
+                            transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
+                          >
+                            <ChevronsRight size={16} />
+                          </motion.div>
+                          <div className="lhs-tooltip">Expand sidebar</div>
+                        </motion.button>
                       </div>
-                      <span className="text-lg font-bold text-foreground">Luka</span>
-                    </div>
 
-                    {/* Tabs: Threads / Workspaces */}
-                    <div className="flex gap-1">
-                      <button
-                        onClick={() => setActiveTab("threads")}
-                        className={cn(
-                          "flex-1 h-8 rounded-[8px] text-xs font-medium transition-colors flex items-center justify-center gap-1.5",
-                          activeTab === "threads"
-                            ? "bg-primary text-primary-foreground"
-                            : "bg-muted/60 dark:bg-muted/30 text-muted-foreground hover:bg-muted"
-                        )}
-                      >
-                        <MessageSquare className="h-3.5 w-3.5" />
-                        Threads
-                      </button>
-                      <button
-                        onClick={() => setActiveTab("workspaces")}
-                        className={cn(
-                          "flex-1 h-8 rounded-[8px] text-xs font-medium transition-colors flex items-center justify-center gap-1.5",
-                          activeTab === "workspaces"
-                            ? "bg-primary text-primary-foreground"
-                            : "bg-muted/60 dark:bg-muted/30 text-muted-foreground hover:bg-muted"
-                        )}
-                      >
-                        <Building2 className="h-3.5 w-3.5" />
-                        Workspaces
-                      </button>
-                    </div>
-                  </div>
+                      <div className="w-6 h-px rounded-full mx-auto my-1" style={{ background: "hsl(var(--border))" }} />
 
-                  {/* Search + New Thread */}
-                  <div className="px-3 pb-3 pt-1 flex items-center gap-2">
-                    <div className="relative flex items-center h-9 flex-1 rounded-[10px] border border-border bg-background dark:bg-muted/20 hover:border-primary/30 transition-all duration-200 input-double-border">
-                      <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                      <input
-                        placeholder="Search"
-                        className="h-full w-full bg-transparent pl-9 pr-3 text-sm text-foreground placeholder:text-muted-foreground/70 outline-none border-none"
-                      />
-                    </div>
-                    <Button size="icon" className="h-9 w-9 shrink-0 rounded-[10px] bg-primary hover:bg-primary/90 text-primary-foreground">
-                      <Plus className="h-4 w-4" />
-                    </Button>
-                  </div>
+                      {/* Luka logo icon */}
+                      <div className="flex flex-col items-center gap-1.5">
+                        <motion.div
+                          whileHover={{ scale: 1.08 }}
+                          className="w-8 h-8 rounded-lg flex items-center justify-center relative group cursor-pointer"
+                          style={{ background: "linear-gradient(135deg, hsl(270 60% 55% / 0.1), hsl(207 71% 38% / 0.08))", border: "1px solid hsl(270 60% 55% / 0.15)" }}
+                        >
+                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                            <defs><linearGradient id="luka-grad-c" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stopColor="#9747FF" /><stop offset="100%" stopColor="#115697" /></linearGradient></defs>
+                            <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" fill="url(#luka-grad-c)" />
+                          </svg>
+                          <div className="lhs-tooltip">Luka</div>
+                        </motion.div>
 
-                  {/* Thread lists */}
-                  <ScrollArea className="flex-1 px-1">
-                    {/* Pinned */}
-                    <div className="px-3 pb-1 pt-1">
-                      <span className="text-xs font-semibold text-muted-foreground">Pinned</span>
-                    </div>
-                    <div className="pb-2">
-                      {pinnedThreads.map((thread) => (
-                        <div key={thread.id} className="group w-full flex items-center px-4 py-2 hover:bg-muted/60 dark:hover:bg-muted/30 rounded-lg transition-colors">
-                          <span className="text-sm text-foreground truncate flex-1 cursor-pointer">{thread.name}</span>
-                          <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
-                              <button className="opacity-0 group-hover:opacity-100 transition-opacity p-0.5 rounded hover:bg-muted">
-                                <MoreHorizontal className="h-3.5 w-3.5 text-muted-foreground" />
-                              </button>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent align="end" className="w-36">
-                              <DropdownMenuItem onClick={() => handleUnpinThread(thread)}>
-                                <PinOff className="h-3.5 w-3.5 mr-2" />Unpin
-                              </DropdownMenuItem>
-                              <DropdownMenuItem onClick={() => handleDeleteThread(thread.id)} className="text-destructive focus:text-destructive">
-                                <Trash2 className="h-3.5 w-3.5 mr-2" />Delete
-                              </DropdownMenuItem>
-                            </DropdownMenuContent>
-                          </DropdownMenu>
+                        {/* New thread */}
+                        <motion.button
+                          whileHover={{ scale: 1.1, backgroundColor: "hsl(207 71% 38% / 0.12)" }}
+                          whileTap={{ scale: 0.92 }}
+                          className="w-9 h-9 rounded-xl flex items-center justify-center cursor-pointer transition-all duration-200 relative group"
+                          style={{ background: "linear-gradient(135deg, hsl(207 71% 38% / 0.06), hsl(260 70% 60% / 0.04))", border: "1px solid hsl(207 71% 38% / 0.12)", color: "hsl(207 71% 34%)" }}
+                        >
+                          <PlusCircle size={15} />
+                          <div className="lhs-tooltip">Start new thread</div>
+                        </motion.button>
+
+                        {/* Search */}
+                        <motion.button
+                          whileHover={{ scale: 1.1, backgroundColor: "hsl(var(--muted))" }}
+                          whileTap={{ scale: 0.92 }}
+                          className="w-9 h-9 rounded-xl flex items-center justify-center cursor-pointer transition-all duration-200 relative group"
+                          style={{ color: "hsl(var(--muted-foreground))", background: "transparent", border: "1px solid transparent" }}
+                        >
+                          <Search size={15} />
+                          <div className="lhs-tooltip">Search threads</div>
+                        </motion.button>
+                      </div>
+
+                      <div className="w-6 h-px rounded-full mx-auto my-1.5" style={{ background: "hsl(var(--border))" }} />
+
+                      {/* Pinned threads as icons */}
+                      <div className="flex flex-col items-center gap-1">
+                        {pinnedThreads.map((thread, i) => (
+                          <motion.button
+                            key={`pinned-c-${i}`}
+                            whileHover={{ scale: 1.1, backgroundColor: "hsl(var(--primary) / 0.06)" }}
+                            whileTap={{ scale: 0.92 }}
+                            className="w-9 h-9 rounded-xl flex items-center justify-center cursor-pointer transition-all duration-200 relative group"
+                            style={{ color: "hsl(var(--muted-foreground))", background: "transparent", border: "1px solid transparent" }}
+                          >
+                            <Pin size={14} />
+                            <div className="lhs-tooltip">
+                              <div className="font-medium">{thread.name}</div>
+                              <div className="text-[10px] opacity-70 mt-0.5">{formatThreadDate(thread.createdAt)}</div>
+                            </div>
+                          </motion.button>
+                        ))}
+                      </div>
+
+                      <div className="w-6 h-px rounded-full mx-auto my-1.5" style={{ background: "hsl(var(--border))" }} />
+
+                      {/* Recent threads as icons */}
+                      <div className="flex flex-col items-center gap-1">
+                        {recentThreads.slice(0, 5).map((thread, i) => (
+                          <motion.button
+                            key={`recent-c-${i}`}
+                            whileHover={{ scale: 1.1, backgroundColor: "hsl(var(--primary) / 0.06)" }}
+                            whileTap={{ scale: 0.92 }}
+                            className="w-8 h-8 rounded-xl flex items-center justify-center cursor-pointer transition-all duration-200 relative group"
+                            style={{ color: "hsl(var(--muted-foreground) / 0.55)", background: "transparent", border: "1px solid transparent" }}
+                          >
+                            <MessageSquare size={13} />
+                            <div className="lhs-tooltip">
+                              <div className="font-medium">{thread.name}</div>
+                              <div className="text-[10px] opacity-70 mt-0.5">{formatThreadDate(thread.createdAt)}</div>
+                            </div>
+                          </motion.button>
+                        ))}
+                      </div>
+
+                      {/* Bottom utility icons: AI Settings, Credit Usage, Help */}
+                      <div className="mt-auto pb-3 flex flex-col items-center gap-1.5">
+                        <motion.button
+                          whileHover={{ scale: 1.1, backgroundColor: "hsl(270 60% 55% / 0.08)" }}
+                          whileTap={{ scale: 0.92 }}
+                          onClick={() => setSettingsOpen(true)}
+                          className="w-9 h-9 rounded-xl flex items-center justify-center relative group cursor-pointer transition-all duration-200"
+                          style={{ color: "hsl(var(--muted-foreground))", background: "transparent", border: "1px solid transparent" }}
+                        >
+                          <Settings size={15} />
+                          <div className="lhs-tooltip">AI Settings</div>
+                        </motion.button>
+                      </div>
+                    </>
+                  ) : (
+                    /* ─── Expanded full view ─── */
+                    <>
+                      <div className="flex-1 overflow-y-auto" style={{ scrollbarWidth: "none" }}>
+                        {/* Logo + collapse toggle */}
+                        <div className="flex items-center gap-2 px-4 pt-4 pb-3">
+                          <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                            <defs><linearGradient id="luka-grad-sm" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stopColor="#9747FF" /><stop offset="100%" stopColor="#115697" /></linearGradient></defs>
+                            <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" fill="url(#luka-grad-sm)" />
+                          </svg>
+                          <span className="text-lg font-bold" style={{ background: "linear-gradient(135deg, #9747FF, #115697)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>Luka</span>
+                          <motion.button
+                            whileHover={{ scale: 1.12, backgroundColor: "hsl(270 60% 55% / 0.08)" }}
+                            whileTap={{ scale: 0.9 }}
+                            onClick={() => setThreadsSidebarCollapsed(true)}
+                            className="ml-auto w-8 h-8 rounded-xl flex items-center justify-center cursor-pointer transition-all duration-200"
+                            style={{
+                              color: "hsl(var(--muted-foreground))",
+                              background: "hsl(var(--muted) / 0.4)",
+                              border: "1px solid hsl(var(--border) / 0.5)",
+                            }}
+                            title="Collapse sidebar"
+                          >
+                            <ChevronsLeft size={15} />
+                          </motion.button>
                         </div>
-                      ))}
-                    </div>
 
-                    {/* Recent */}
-                    <div className="px-3 pb-1 pt-2">
-                      <span className="text-xs font-semibold text-muted-foreground">Recent</span>
-                    </div>
-                    <div className="pb-2">
-                      {recentThreads.map((thread) => (
-                        <div key={thread.id} className="group w-full flex items-center px-4 py-2 hover:bg-muted/60 dark:hover:bg-muted/30 rounded-lg transition-colors">
-                          <span className="text-sm text-foreground truncate flex-1 cursor-pointer">{thread.name}</span>
-                          <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
-                              <button className="opacity-0 group-hover:opacity-100 transition-opacity p-0.5 rounded hover:bg-muted">
-                                <MoreHorizontal className="h-3.5 w-3.5 text-muted-foreground" />
-                              </button>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent align="end" className="w-36">
-                              <DropdownMenuItem onClick={() => handlePinThread(thread)}>
-                                <Pin className="h-3.5 w-3.5 mr-2" />Pin
-                              </DropdownMenuItem>
-                              <DropdownMenuItem onClick={() => handleDeleteThread(thread.id)} className="text-destructive focus:text-destructive">
-                                <Trash2 className="h-3.5 w-3.5 mr-2" />Delete
-                              </DropdownMenuItem>
-                            </DropdownMenuContent>
-                          </DropdownMenu>
+                        {/* Start new thread */}
+                        <div className="px-3 mb-3">
+                          <motion.button
+                            whileHover={{ scale: 1.01, x: 2 }}
+                            whileTap={{ scale: 0.98 }}
+                            className="luka-new-thread-btn"
+                          >
+                            <PlusCircle size={16} />
+                            <span>Start new thread</span>
+                          </motion.button>
                         </div>
-                      ))}
-                    </div>
-                  </ScrollArea>
 
-                  {/* Show More - sticky at bottom */}
-                  <div className="px-4 py-3 border-t border-border">
-                    <button
-                      onClick={() => setShowAllRecent(!showAllRecent)}
-                      className="text-sm font-semibold text-link hover:underline"
-                    >
-                      {showAllRecent ? "Show Less" : "Show More"}
-                    </button>
+                        {/* Search */}
+                        <div className="px-3 mb-4">
+                          <div className="relative">
+                            <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
+                            <input
+                              type="text"
+                              placeholder="Search"
+                              value={threadSearch}
+                              onChange={(e) => setThreadSearch(e.target.value)}
+                              className="luka-thread-search"
+                            />
+                          </div>
+                        </div>
+
+                        {/* Pinned */}
+                        <div className="px-4 mb-1">
+                          <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Pinned</span>
+                        </div>
+                        <div className="px-2 mb-4">
+                          {pinnedThreads.map((thread, i) => (
+                            <ThreadRow
+                              key={`pinned-${i}`}
+                              thread={thread}
+                              icon={<Pin size={13} className="text-muted-foreground shrink-0" />}
+                              isPinned
+                              onPinToggle={() => unpinThread(i)}
+                              onDelete={() => deletePinned(i)}
+                            />
+                          ))}
+                        </div>
+
+                        {/* Recents */}
+                        <div className="px-4 mb-1">
+                          <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Recents</span>
+                        </div>
+                        <div className="px-2">
+                          {recentThreads.map((thread, i) => (
+                            <ThreadRow
+                              key={`recent-${i}`}
+                              thread={thread}
+                              icon={<MessageSquare size={13} className="text-muted-foreground shrink-0" />}
+                              isPinned={false}
+                              onPinToggle={() => pinThread(i)}
+                              onDelete={() => deleteRecent(i)}
+                            />
+                          ))}
+                        </div>
+
+                        {/* View all */}
+                        <div className="px-4 pt-3 pb-4">
+                          <motion.button
+                            whileHover={{ x: 2 }}
+                            className="text-sm font-medium"
+                            style={{ color: "hsl(var(--link-color))" }}
+                          >
+                            View all
+                          </motion.button>
+                        </div>
+                      </div>
+
+                      {/* Bottom utility menu — AI Settings */}
+                      <div className="border-t" style={{ borderColor: "hsl(var(--border))" }}>
+                        <div className="px-2 pt-2 pb-1">
+                          <motion.button
+                            whileHover={{ x: 2, backgroundColor: "hsl(270 60% 55% / 0.06)" }}
+                            whileTap={{ scale: 0.99 }}
+                            onClick={() => setSettingsOpen(true)}
+                            className="luka-thread-item w-full"
+                          >
+                            <Settings size={14} className="text-muted-foreground shrink-0" />
+                            <span className="truncate">AI Settings</span>
+                          </motion.button>
+                        </div>
+                      </div>
+                    </>
+                  )}
+                </div>
+              </motion.div>
+            )}
+
+            {/* Main area */}
+            <div className="flex-1 flex flex-col bg-card border-l relative" style={{ borderColor: "hsl(var(--border))" }}>
+              {/* Header */}
+              <div className="flex items-center gap-3 px-4 py-3 border-b" style={{ borderColor: "hsl(var(--border))" }}>
+                {/* Left controls — hamburger when threads sidebar collapsed, spacer otherwise for visual balance */}
+                <div className="flex items-center gap-1 shrink-0">
+                  {activeTab === "threads" && threadsSidebarCollapsed ? (
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <motion.button
+                          whileHover={{ scale: 1.1, backgroundColor: "hsl(270 60% 55% / 0.08)" }}
+                          whileTap={{ scale: 0.9 }}
+                          onClick={() => setThreadsSidebarCollapsed(false)}
+                          className="action-icon"
+                          style={{ color: "hsl(0 0% 0%)" }}
+                        >
+                          <Menu size={18} />
+                        </motion.button>
+                      </TooltipTrigger>
+                      <TooltipContent side="bottom"><p>Open Threads</p></TooltipContent>
+                    </Tooltip>
+                  ) : activeTab === "workspace" && hasWorkspaceEngagement && workspaceSidebarCollapsed ? (
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <motion.button
+                          whileHover={{ scale: 1.1, backgroundColor: "hsl(270 60% 55% / 0.08)" }}
+                          whileTap={{ scale: 0.9 }}
+                          onClick={() => setWorkspaceSidebarCollapsed(false)}
+                          className="action-icon"
+                          style={{ color: "hsl(0 0% 0%)" }}
+                        >
+                          <Menu size={18} />
+                        </motion.button>
+                      </TooltipTrigger>
+                      <TooltipContent side="bottom"><p>Open Workspace</p></TooltipContent>
+                    </Tooltip>
+                  ) : (
+                    <span className="action-icon w-8 h-8 invisible" />
+                  )}
+                  <span className="action-icon w-8 h-8 invisible" />
+                  <span className="action-icon w-8 h-8 invisible" />
+                  <span className="action-icon w-8 h-8 invisible" />
+                </div>
+
+                {/* Tabs — pill switch */}
+                <LayoutGroup><div className="flex-1 flex items-center justify-center">
+                  <div
+                    className="relative flex items-center gap-1 rounded-full p-1"
+                    style={{
+                      background: "hsl(0 0% 100%)",
+                      border: "1px solid hsl(220 20% 92%)",
+                      boxShadow: "0 6px 18px -8px hsl(250 40% 40% / 0.18), 0 1px 2px hsl(220 30% 50% / 0.05)",
+                    }}
+                  >
+                    {([
+                      { id: "threads", label: "Threads", icon: MessageCircle },
+                      { id: "workspace", label: "Workspace", icon: Zap },
+                    ] as const).map((tab) => {
+                      const isActive = activeTab === tab.id;
+                      const Icon = tab.icon;
+                      return (
+                        <motion.button
+                          key={tab.id}
+                          onClick={() => {
+                            setActiveTab((prevTab) => {
+                              if (tab.id === "workspace" && prevTab !== "workspace") {
+                                threadsFullscreenRef.current = isFullscreen;
+                                setIsFullscreen(true);
+                                setThreadsSidebarCollapsed(true);
+                              } else if (tab.id === "threads" && prevTab === "workspace") {
+                                setIsFullscreen(threadsFullscreenRef.current);
+                              }
+                              return tab.id;
+                            });
+                          }}
+                          whileTap={{ scale: 0.96 }}
+                          className="relative z-10 pl-2.5 pr-5 py-1.5 rounded-full text-sm font-semibold transition-colors duration-200 flex items-center gap-2 whitespace-nowrap cursor-pointer"
+                          style={{
+                            color: isActive ? "hsl(0 0% 100%)" : "hsl(222 30% 18%)",
+                          }}
+                        >
+                          {isActive && (
+                            <motion.div
+                              layoutId="luka-tab-indicator"
+                              className="absolute inset-0 rounded-full"
+                              style={{
+                                background: "linear-gradient(135deg, #6C2FF2 0%, #8A5BFF 55%, #B084FF 100%)",
+                                boxShadow: "0 6px 16px -6px hsl(265 80% 55% / 0.55), inset 0 1px 0 hsl(0 0% 100% / 0.25)",
+                              }}
+                              transition={{ type: "spring", stiffness: 420, damping: 32 }}
+                            />
+                          )}
+                          <Icon size={14} className="relative z-10" />
+                          <span className="relative z-10">{tab.label}</span>
+                        </motion.button>
+                      );
+                    })}
                   </div>
-                </>
-              ) : (
-                /* ===== COLLAPSED ICON VIEW ===== */
+                </div></LayoutGroup>
+
+                {/* Window controls */}
+                <div className="flex items-center gap-1 shrink-0">
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <motion.button whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }} onClick={handleOpenNewWindow} className="action-icon" aria-label="Open in new window">
+                        <ExternalLink size={16} />
+                      </motion.button>
+                    </TooltipTrigger>
+                    <TooltipContent side="bottom"><p>Open in new window</p></TooltipContent>
+                  </Tooltip>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <motion.button
+                        whileHover={activeTab === "workspace" ? undefined : { scale: 1.1 }}
+                        whileTap={activeTab === "workspace" ? undefined : { scale: 0.9 }}
+                        onClick={activeTab === "workspace" ? undefined : handleFullscreen}
+                        disabled={activeTab === "workspace"}
+                        className={`action-icon ${isFullscreen ? "action-icon-active" : ""} ${activeTab === "workspace" ? "action-icon-disabled" : ""}`}
+                        aria-label={activeTab === "workspace" ? "Fullscreen disabled in workspace" : isFullscreen ? "Exit fullscreen" : "Fullscreen"}
+                      >
+                        {isFullscreen ? <Minimize2 size={16} /> : <Maximize2 size={16} />}
+                      </motion.button>
+                    </TooltipTrigger>
+                    <TooltipContent side="bottom"><p>{activeTab === "workspace" ? "Fullscreen disabled in workspace" : isFullscreen ? "Exit fullscreen" : "Fullscreen"}</p></TooltipContent>
+                  </Tooltip>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <motion.button whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }} onClick={handleMinimize} className="action-icon" aria-label={isMinimized ? "Restore" : "Minimize"}>
+                        <Minus size={16} />
+                      </motion.button>
+                    </TooltipTrigger>
+                    <TooltipContent side="bottom"><p>{isMinimized ? "Restore" : "Minimize"}</p></TooltipContent>
+                  </Tooltip>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <motion.button whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }} onClick={() => onOpenChange(false)} className="action-icon" aria-label="Close">
+                        <X size={16} />
+                      </motion.button>
+                    </TooltipTrigger>
+                    <TooltipContent side="bottom"><p>Close</p></TooltipContent>
+                  </Tooltip>
+                </div>
+              </div>
+
+              {activeTab === "threads" ? (
                 <>
-                  {/* New thread button */}
-                  <div className="flex justify-center pt-3 pb-2">
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <Button size="icon" className="h-10 w-10 rounded-[10px] bg-primary hover:bg-primary/90 text-primary-foreground">
-                          <Plus className="h-4 w-4" />
-                        </Button>
-                      </TooltipTrigger>
-                      <TooltipContent side="right"><p>New Thread</p></TooltipContent>
-                    </Tooltip>
-                  </div>
-
-                  {/* Tab icons */}
-                  <div className="flex flex-col items-center gap-1 py-2 mx-2 border-t border-b border-border">
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <button
-                          onClick={() => setActiveTab("threads")}
-                          className={cn("h-10 w-10 rounded-[10px] flex items-center justify-center transition-colors", activeTab === "threads" ? "bg-primary/15 hover:bg-primary/25" : "hover:bg-muted/60")}
-                        >
-                          <MessageSquare className={cn("h-5 w-5", activeTab === "threads" ? "text-primary" : "text-muted-foreground")} />
-                        </button>
-                      </TooltipTrigger>
-                      <TooltipContent side="right"><p>Threads</p></TooltipContent>
-                    </Tooltip>
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <button
-                          onClick={() => setActiveTab("workspaces")}
-                          className={cn("h-10 w-10 rounded-[10px] flex items-center justify-center transition-colors", activeTab === "workspaces" ? "bg-primary/15 hover:bg-primary/25" : "hover:bg-muted/60")}
-                        >
-                          <Building2 className={cn("h-5 w-5", activeTab === "workspaces" ? "text-primary" : "text-muted-foreground")} />
-                        </button>
-                      </TooltipTrigger>
-                      <TooltipContent side="right"><p>Workspaces</p></TooltipContent>
-                    </Tooltip>
-                  </div>
-
-                  {/* Thread icons */}
-                  <ScrollArea className="flex-1 py-1">
-                    <div className="flex flex-col items-center gap-0.5">
-                      {allThreads.map((thread, i) => (
-                        <Tooltip key={thread.id}>
-                          <TooltipTrigger asChild>
-                            <button className="h-9 w-10 flex items-center justify-center rounded-lg hover:bg-muted/60 dark:hover:bg-muted/30 transition-colors relative">
-                              <MessageSquare className="h-4 w-4 text-muted-foreground" />
-                              <div className={cn("absolute top-1.5 right-1.5 w-2 h-2 rounded-full border border-background dark:border-card", statusColors[i % statusColors.length])} />
-                            </button>
-                          </TooltipTrigger>
-                          <TooltipContent side="right"><p>{thread.name}</p></TooltipContent>
-                        </Tooltip>
-                      ))}
-                    </div>
-                  </ScrollArea>
-
-                  {/* Show More + Clock at bottom */}
-                  <div className="flex flex-col items-center gap-1 pb-3 pt-2 border-t border-border mx-2">
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <button className="h-9 w-10 flex items-center justify-center rounded-lg hover:bg-muted/60 dark:hover:bg-muted/30 transition-colors">
-                          <Clock className="h-4 w-4 text-muted-foreground" />
-                        </button>
-                      </TooltipTrigger>
-                      <TooltipContent side="right"><p>Recent</p></TooltipContent>
-                    </Tooltip>
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <button
-                          onClick={() => setShowAllRecent(!showAllRecent)}
-                          className="h-10 w-10 rounded-[10px] flex items-center justify-center transition-colors bg-primary/10 hover:bg-primary/15"
-                        >
-                          <MoreHorizontal className="h-5 w-5 text-primary" />
-                        </button>
-                      </TooltipTrigger>
-                      <TooltipContent side="right"><p>{showAllRecent ? "Show Less" : "Show More"}</p></TooltipContent>
-                    </Tooltip>
-                  </div>
-                </>
-              )}
-            </TooltipProvider>
-          </aside>
-
-          {/* ===== MAIN CONTENT AREA ===== */}
-          <main className={cn("flex-1 min-w-0 flex flex-col overflow-hidden transition-all duration-300 ease-in-out", (isThinking || aiResponse) ? "bg-background" : "bg-gradient-to-b from-[hsl(210_60%_97%)] via-[hsl(260_40%_96%)] to-[hsl(300_30%_96%)] dark:from-[hsl(220_20%_12%)] dark:via-[hsl(260_15%_14%)] dark:to-[hsl(280_10%_13%)]")}>
-            {/* Top right controls */}
-            <div className="h-12 px-4 flex items-center justify-end gap-1">
-              <TooltipProvider delayDuration={200}>
-                {/* Sidebar toggle */}
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      className="h-8 w-8"
-                      onClick={() => setSidebarExpanded(!sidebarExpanded)}
+                  {/* Context bar */}
+                  <div className="flex items-center gap-3 px-4 py-2.5 border-b relative" style={{ borderColor: "hsl(var(--border))" }}>
+                    <motion.button
+                      whileHover={{ backgroundColor: "hsl(var(--muted) / 0.6)" }}
+                      whileTap={{ scale: 0.98 }}
+                      onClick={(e) => { e.stopPropagation(); setShowEngagementTray((v) => !v); }}
+                      className="flex items-center gap-2 px-2 py-1 rounded-lg cursor-pointer transition-colors"
                     >
-                      <PanelLeftClose className="h-4 w-4 text-muted-foreground" />
-                    </Button>
-                  </TooltipTrigger>
-                  <TooltipContent side="bottom"><p>Toggle Sidebar</p></TooltipContent>
-                </Tooltip>
-                {/* Settings */}
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => setSettingsOpen(true)}>
-                      <Settings className="h-4 w-4 text-muted-foreground" />
-                    </Button>
-                  </TooltipTrigger>
-                  <TooltipContent side="bottom"><p>Settings</p></TooltipContent>
-                </Tooltip>
-                {/* Full-screen mode */}
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      className={cn("h-8 w-8", viewMode === "full" && "bg-muted")}
-                      onClick={() => setViewMode(viewMode === "full" ? "half" : "full")}
-                    >
-                      <Maximize2 className="h-4 w-4 text-muted-foreground" />
-                    </Button>
-                  </TooltipTrigger>
-                  <TooltipContent side="bottom"><p>{viewMode === "full" ? "Half Mode" : "Full Mode"}</p></TooltipContent>
-                </Tooltip>
-                {/* Minimize */}
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Button variant="ghost" size="icon" className="h-8 w-8">
-                      <Minus className="h-4 w-4 text-muted-foreground" />
-                    </Button>
-                  </TooltipTrigger>
-                  <TooltipContent side="bottom"><p>Minimize</p></TooltipContent>
-                </Tooltip>
-                {/* Close */}
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => onOpenChange(false)}>
-                      <X className="h-4 w-4 text-muted-foreground" />
-                    </Button>
-                  </TooltipTrigger>
-                  <TooltipContent side="bottom"><p>Close</p></TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
-            </div>
-
-            {/* Main content area */}
-            <div className="flex-1 flex flex-col min-w-0 min-h-0">
-              {/* Messages area or welcome */}
-              <div className="flex-1 min-w-0 overflow-y-auto overflow-x-hidden">
-                {allTemplateSummary ? (
-                  /* All-templates post-fill summary */
-                  <div className="flex flex-col items-center px-6 pt-6 pb-6 min-h-[60vh]">
-                    <div className="mb-3 flex items-center justify-center w-[52px] h-[52px] rounded-full bg-gradient-to-br from-[#8649F1] to-[#2355A4]">
-                      <LukaIcon size={22} />
-                    </div>
-                    {allTemplateSummary.engagementLabel && (
-                      <p className="text-xs font-medium text-muted-foreground mb-1 text-center tracking-wide uppercase">{allTemplateSummary.engagementLabel}</p>
+                      <div className="w-6 h-6 rounded-md bg-muted flex items-center justify-center">
+                        <Inbox size={14} className="text-muted-foreground" />
+                      </div>
+                      <span className="text-sm font-medium text-foreground">
+                        {selectedEngagement ? selectedEngagement.id : "Select Engagement"}
+                      </span>
+                      {selectedEngagement && (
+                        <img src={quickbooksLogo} alt="QuickBooks" className="h-[24px] w-auto object-contain" />
+                      )}
+                      <ChevronDown size={14} className={`text-muted-foreground transition-transform ${showEngagementTray ? "rotate-180" : ""}`} />
+                    </motion.button>
+                    
+                    {/* Minimized activity badge */}
+                    {(activeFlow === "account-reconciliation" || activeFlow === "tax-payable") && activityMinimized && (
+                      <div className="ml-auto">
+                        <LukaActivityPanel
+                          entries={activityEntries}
+                          isProcessing={isActivityProcessing}
+                          minimized={true}
+                          onToggleMinimize={() => setActivityMinimized(false)}
+                        />
+                      </div>
                     )}
+                  </div>
+
+                  {/* Enhanced Prompt Banner — sticky at top of chat area */}
+                  <AnimatePresence>
+                    {(enhancedPrompt || isEnhancing) && (
+                      <motion.div
+                        initial={{ opacity: 0, y: -8, height: 0 }}
+                        animate={{ opacity: 1, y: 0, height: "auto" }}
+                        exit={{ opacity: 0, y: -8, height: 0 }}
+                        transition={{ type: "spring", damping: 24, stiffness: 320 }}
+                        className="border-b overflow-hidden"
+                        style={{
+                          borderColor: "hsl(var(--border))",
+                          background: "linear-gradient(135deg, hsl(270 65% 55% / 0.04), hsl(207 71% 38% / 0.04))",
+                        }}
+                      >
+                        <div className="px-4 py-3 flex items-start gap-3">
+                          <div
+                            className="w-7 h-7 rounded-lg flex items-center justify-center shrink-0 mt-0.5"
+                            style={{
+                              background: "linear-gradient(135deg, hsl(270 65% 55%), hsl(207 71% 38%))",
+                              boxShadow: "0 2px 8px hsl(270 65% 55% / 0.25)",
+                            }}
+                          >
+                            {isEnhancing ? (
+                              <motion.div animate={{ rotate: 360 }} transition={{ duration: 0.9, repeat: Infinity, ease: "linear" }}>
+                                <Loader2 size={14} className="text-white" />
+                              </motion.div>
+                            ) : (
+                              <Wand2 size={14} className="text-white" />
+                            )}
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center gap-2 mb-1">
+                              <span
+                                className="text-[10px] font-bold uppercase tracking-wider"
+                                style={{ color: "hsl(270 65% 45%)", fontFamily: "'Rajdhani', sans-serif", letterSpacing: "0.08em" }}
+                              >
+                                {isEnhancing ? "Enhancing prompt…" : "Enhanced by Luka"}
+                              </span>
+                              {enhanceCount > 0 && !isEnhancing && (
+                                <span
+                                  className="text-[9px] font-bold px-1.5 rounded-md"
+                                  style={{
+                                    background: "hsl(270 65% 55%)",
+                                    color: "white",
+                                    height: 14,
+                                    lineHeight: "14px",
+                                  }}
+                                >
+                                  v{enhanceCount}
+                                </span>
+                              )}
+                            </div>
+                            {isEnhancing ? (
+                              <div className="flex gap-1.5">
+                                {[0, 1, 2].map((i) => (
+                                  <motion.div
+                                    key={i}
+                                    className="h-2 rounded-full"
+                                    style={{ background: "hsl(270 65% 55% / 0.25)", flex: i === 1 ? 2 : 1 }}
+                                    animate={{ opacity: [0.3, 0.9, 0.3] }}
+                                    transition={{ duration: 1.2, repeat: Infinity, delay: i * 0.15 }}
+                                  />
+                                ))}
+                              </div>
+                            ) : (
+                              <p className="text-[12.5px] leading-relaxed text-foreground" style={{ fontFamily: "'DM Sans', sans-serif" }}>
+                                {enhancedPrompt}
+                              </p>
+                            )}
+                          </div>
+                          {!isEnhancing && enhancedPrompt && (
+                            <div className="flex items-center gap-1.5 shrink-0">
+                              <motion.button
+                                whileHover={{ scale: 1.04 }}
+                                whileTap={{ scale: 0.96 }}
+                                onClick={handleReplaceWithEnhanced}
+                                className="inline-flex items-center gap-1.5 px-3 h-7 rounded-lg text-[11px] font-semibold cursor-pointer"
+                                style={{
+                                  background: "linear-gradient(135deg, hsl(270 65% 55%), hsl(207 71% 38%))",
+                                  color: "white",
+                                  boxShadow: "0 2px 6px hsl(270 65% 55% / 0.3)",
+                                }}
+                              >
+                                <Check size={12} strokeWidth={2.5} />
+                                Replace
+                              </motion.button>
+                              <motion.button
+                                whileHover={{ scale: 1.08, backgroundColor: "hsl(var(--muted) / 0.7)" }}
+                                whileTap={{ scale: 0.92 }}
+                                onClick={handleDismissEnhanced}
+                                className="w-7 h-7 rounded-lg flex items-center justify-center cursor-pointer"
+                                style={{ color: "hsl(var(--muted-foreground))" }}
+                                title="Dismiss"
+                              >
+                                <X size={13} />
+                              </motion.button>
+                            </div>
+                          )}
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+
+                  {/* Chat body */}
+                  <div className="relative flex-1 flex flex-col overflow-hidden">
+                    {/* Engagement Selection Tray */}
+                    <AnimatePresence>
+                      {showEngagementTray && (
+                        <motion.div
+                          ref={engagementTrayRef}
+                          initial={{ opacity: 0, y: 16, scale: 0.98 }}
+                          animate={{ opacity: 1, y: 0, scale: 1 }}
+                          exit={{ opacity: 0, y: 12, scale: 0.98 }}
+                          transition={{ type: "spring", damping: 28, stiffness: 320, mass: 0.7 }}
+                          className="absolute left-4 right-4 bottom-2 z-30"
+                          style={{ maxHeight: "60%" }}
+                        >
+                          <div className="prompt-window-shimmer-border rounded-2xl h-full">
+                            <div
+                              className="rounded-2xl overflow-hidden h-full flex flex-col"
+                              style={{
+                                background: "hsl(var(--card))",
+                                boxShadow: "0 8px 32px -8px hsla(260, 60%, 40%, 0.18), 0 2px 8px -2px hsla(210, 80%, 50%, 0.1)",
+                              }}
+                            >
+                              <div className="flex items-center justify-between gap-3 px-5 pt-4 pb-3">
+                                <h3 className="text-base font-semibold text-foreground">Select Engagement</h3>
+                                <div className="flex items-center gap-2">
+                                  <div className="relative">
+                                    <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none" />
+                                    <input
+                                      value={engagementSearch}
+                                      onChange={(e) => setEngagementSearch(e.target.value)}
+                                      placeholder="Search"
+                                      className="h-9 w-56 pl-8 pr-3 text-sm rounded-lg border bg-background focus:outline-none focus:ring-2 focus:ring-primary/30"
+                                      style={{ borderColor: "hsl(var(--border))" }}
+                                    />
+                                  </div>
+                                  <Tooltip>
+                                    <TooltipTrigger asChild>
+                                      <motion.button
+                                        whileHover={{ scale: 1.05, backgroundColor: "hsl(var(--muted) / 0.8)" }}
+                                        whileTap={{ scale: 0.95 }}
+                                        onClick={() => { setShowEngagementTray(false); setEngagementSearch(""); }}
+                                        className="h-9 w-9 inline-flex items-center justify-center rounded-lg border transition-colors"
+                                        style={{ borderColor: "hsl(var(--border))", background: "hsl(var(--background))" }}
+                                        aria-label="Close"
+                                      >
+                                        <X size={14} className="text-foreground" />
+                                      </motion.button>
+                                    </TooltipTrigger>
+                                    <TooltipContent side="bottom"><p>Close</p></TooltipContent>
+                                  </Tooltip>
+                                </div>
+                              </div>
+                              <div className="overflow-x-auto overflow-y-auto flex-1" style={{ maxHeight: "calc(60vh - 70px)" }}>
+                                <table className="w-full text-sm" style={{ minWidth: 720 }}>
+                                  <thead>
+                                    <tr className="text-left" style={{ borderTop: "1px solid hsl(var(--border) / 0.6)", borderBottom: "1px solid hsl(var(--border) / 0.6)" }}>
+                                      <th className="px-5 py-2.5 font-medium text-muted-foreground">
+                                        <span className="inline-flex items-center gap-1">Client Name</span>
+                                      </th>
+                                      <th className="px-5 py-2.5 font-medium text-muted-foreground">Engagement ID</th>
+                                      <th className="px-5 py-2.5 font-medium text-muted-foreground">Year End</th>
+                                      <th className="px-5 py-2.5 font-medium text-muted-foreground">Status</th>
+                                    </tr>
+                                  </thead>
+                                  <tbody>
+                                    {ENGAGEMENTS.filter((e) => {
+                                      const q = engagementSearch.toLowerCase().trim();
+                                      if (!q) return true;
+                                      return e.client.toLowerCase().includes(q) || e.id.toLowerCase().includes(q);
+                                    }).map((e, i) => (
+                                      <motion.tr
+                                        key={`${e.client}-${i}`}
+                                        whileHover={{ backgroundColor: "hsl(270, 80%, 65% / 0.06)" }}
+                                        onClick={() => {
+                                          setSelectedEngagement(e);
+                                          setShowEngagementTray(false);
+                                          setEngagementSearch("");
+                                        }}
+                                        className="cursor-pointer"
+                                        style={{ borderBottom: "1px solid hsl(var(--border) / 0.4)" }}
+                                      >
+                                        <td className="px-5 py-3 font-semibold text-foreground whitespace-nowrap">{e.client}</td>
+                                        <td className="px-5 py-3 text-foreground whitespace-nowrap">{e.id}</td>
+                                        <td className="px-5 py-3 text-foreground whitespace-nowrap">{e.yearEnd}</td>
+                                        <td className="px-5 py-3 whitespace-nowrap">
+                                          <span className="inline-flex items-center px-2 py-0.5 rounded-md text-xs font-medium" style={{ background: "hsl(142, 70%, 45% / 0.12)", color: "hsl(142, 70%, 35%)", border: "1px solid hsl(142, 70%, 45% / 0.3)" }}>
+                                            {e.status}
+                                          </span>
+                                        </td>
+                                      </motion.tr>
+                                    ))}
+                                  </tbody>
+                                </table>
+                              </div>
+                            </div>
+                          </div>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+
+                    {activeFlow === "account-reconciliation" ? (
+                      <>
+                        <ReconciliationFlow onActivity={handleActivityUpdate} activityMinimized={activityMinimized} />
+                        {!activityMinimized && (
+                          <LukaActivityPanel
+                            entries={activityEntries}
+                            isProcessing={isActivityProcessing}
+                            minimized={false}
+                            onToggleMinimize={() => setActivityMinimized(true)}
+                          />
+                        )}
+                      </>
+                    ) : activeFlow === "tax-payable" ? (
+                      <>
+                        <TaxPayableFlow onActivity={handleActivityUpdate} activityMinimized={activityMinimized} />
+                        {!activityMinimized && (
+                          <LukaActivityPanel
+                            entries={activityEntries}
+                            isProcessing={isActivityProcessing}
+                            minimized={false}
+                            onToggleMinimize={() => setActivityMinimized(true)}
+                          />
+                        )}
+                      </>
+                    ) : allTemplateSummary ? (
+                  /* ── All-templates post-fill summary ── */
+                  <div className="flex flex-col items-center px-6 pt-6 pb-6 min-h-[60vh] overflow-y-auto">
+                    <div className="mb-3 flex items-center justify-center w-[52px] h-[52px] rounded-full bg-gradient-to-br from-[#8649F1] to-[#2355A4]"><LukaIcon size={22} /></div>
+                    {allTemplateSummary.engagementLabel && <p className="text-xs font-medium text-muted-foreground mb-1 text-center tracking-wide uppercase">{allTemplateSummary.engagementLabel}</p>}
                     <h2 className="text-lg font-semibold text-foreground mb-1 text-center">All Templates Auto-filled</h2>
-                    <p className="text-sm text-muted-foreground text-center mb-4 max-w-[320px]">
-                      Luka filled <span className="font-semibold text-foreground">{allTemplateSummary.totalFilled}</span> of <span className="font-semibold text-foreground">{allTemplateSummary.totalFields}</span> fields across <span className="font-semibold text-foreground">{allTemplateSummary.templates.length}</span> template{allTemplateSummary.templates.length !== 1 ? 's' : ''} ({Math.round(allTemplateSummary.totalFilled / Math.max(allTemplateSummary.totalFields, 1) * 100)}%).
-                    </p>
-
-                    {/* Overall progress bar */}
-                    <div className="w-full max-w-[320px] h-2 rounded-full bg-muted mb-4 overflow-hidden">
-                      <div
-                        className="h-full rounded-full bg-gradient-to-r from-[#8649F1] to-[#2355A4] transition-all"
-                        style={{ width: `${Math.round(allTemplateSummary.totalFilled / Math.max(allTemplateSummary.totalFields, 1) * 100)}%` }}
-                      />
-                    </div>
-
-                    {/* Per-template breakdown — grouped by section, matching sidebar structure */}
+                    <p className="text-sm text-muted-foreground text-center mb-4 max-w-[320px]">Luka filled <span className="font-semibold text-foreground">{allTemplateSummary.totalFilled}</span> of <span className="font-semibold text-foreground">{allTemplateSummary.totalFields}</span> fields across <span className="font-semibold text-foreground">{allTemplateSummary.templates.length}</span> template{allTemplateSummary.templates.length !== 1 ? 's' : ''} ({Math.round(allTemplateSummary.totalFilled / Math.max(allTemplateSummary.totalFields, 1) * 100)}%).</p>
+                    <div className="w-full max-w-[320px] h-2 rounded-full bg-muted mb-4 overflow-hidden"><div className="h-full rounded-full bg-gradient-to-r from-[#8649F1] to-[#2355A4]" style={{ width: `${Math.round(allTemplateSummary.totalFilled / Math.max(allTemplateSummary.totalFields, 1) * 100)}%` }} /></div>
                     <div className="w-full max-w-[340px] rounded-[10px] border border-border bg-muted/30 px-4 py-3 mb-5">
                       <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-2">Template breakdown</p>
-                      <div className="overflow-y-auto" style={{ maxHeight: '320px' }}>
+                      <ScrollArea className="max-h-[280px]">
                         <div className="space-y-3 pr-1">
                           {(() => {
-                            const SECTION_LABELS: Record<string, string> = {
-                              CO: 'Client Onboarding', PL: 'Planning', DO: 'Documents',
-                              TB: 'Trial Balance & Adjusting Entries', RA: 'Risk Assessment',
-                              RP: 'Response to Assessed Risks', PR: 'Procedures',
-                              FS: 'Financial Statements', SO: 'Completion & Signoffs',
-                            };
+                            const SECTION_LABELS: Record<string, string> = { CO: 'Client Onboarding', PL: 'Planning', DO: 'Documents', TB: 'Trial Balance & Adjusting Entries', RA: 'Risk Assessment', RP: 'Response to Assessed Risks', PR: 'Procedures', FS: 'Financial Statements', SO: 'Completion & Signoffs' };
                             const SECTION_ORDER = ['CO','PL','DO','TB','RA','RP','PR','FS','SO'];
                             const grouped: Record<string, typeof allTemplateSummary.templates> = {};
                             const ungrouped: typeof allTemplateSummary.templates = [];
-                            for (const t of allTemplateSummary.templates) {
-                              if (t.section) { (grouped[t.section] = grouped[t.section] || []).push(t); }
-                              else { ungrouped.push(t); }
-                            }
+                            for (const t of allTemplateSummary.templates) { if (t.section) { (grouped[t.section] = grouped[t.section] || []).push(t); } else { ungrouped.push(t); } }
                             const sections = SECTION_ORDER.filter(s => grouped[s]);
-                            return (
-                              <>
-                                {sections.map(sectionCode => (
-                                  <div key={sectionCode}>
-                                    <div className="flex items-center gap-1.5 mb-1.5">
-                                      <span className="text-[10px] font-bold text-muted-foreground font-mono">{sectionCode}</span>
-                                      <span className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wide">{SECTION_LABELS[sectionCode]}</span>
-                                    </div>
-                                    <div className="pl-3 space-y-1 border-l border-border/60">
-                                      {grouped[sectionCode].map((t, i) => (
-                                        <div key={i} className="flex items-start gap-2 py-0.5">
-                                          <CheckCircle2 className="h-3.5 w-3.5 text-green-500 shrink-0 mt-0.5" />
-                                          {t.code && <span className="text-[10px] font-bold text-muted-foreground font-mono shrink-0 mt-0.5">{t.code}</span>}
-                                          <span className="text-sm text-foreground flex-1 min-w-0 break-words leading-snug">{t.name}</span>
-                                          <span className="text-xs text-muted-foreground shrink-0 tabular-nums">{t.filledCount}/{t.totalCount}</span>
-                                        </div>
-                                      ))}
-                                    </div>
-                                  </div>
-                                ))}
-                                {ungrouped.map((t, i) => (
-                                  <div key={`ung-${i}`} className="flex items-start gap-2 py-0.5">
-                                    <CheckCircle2 className="h-3.5 w-3.5 text-green-500 shrink-0 mt-0.5" />
-                                    {t.code && <span className="text-[10px] font-bold text-muted-foreground font-mono shrink-0 mt-0.5">{t.code}</span>}
-                                    <span className="text-sm text-foreground flex-1 min-w-0 break-words leading-snug">{t.name}</span>
-                                    <span className="text-xs text-muted-foreground shrink-0 tabular-nums">{t.filledCount}/{t.totalCount}</span>
-                                  </div>
-                                ))}
-                              </>
-                            );
+                            return (<>{sections.map(sectionCode => (<div key={sectionCode}><div className="flex items-center gap-1.5 mb-1.5"><span className="text-[10px] font-bold text-muted-foreground font-mono">{sectionCode}</span><span className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wide">{SECTION_LABELS[sectionCode]}</span></div><div className="pl-3 space-y-1 border-l border-border/60">{grouped[sectionCode].map((t, i) => (<div key={i} className="flex items-start gap-2 py-0.5"><CheckCircle2 className="h-3.5 w-3.5 text-green-500 shrink-0 mt-0.5" />{t.code && <span className="text-[10px] font-bold text-muted-foreground font-mono shrink-0 mt-0.5">{t.code}</span>}<span className="text-sm text-foreground flex-1 min-w-0 break-words leading-snug">{t.name}</span><span className="text-xs text-muted-foreground shrink-0 tabular-nums">{t.filledCount}/{t.totalCount}</span></div>))}</div></div>))}{ungrouped.map((t, i) => (<div key={`ung-${i}`} className="flex items-start gap-2 py-0.5"><CheckCircle2 className="h-3.5 w-3.5 text-green-500 shrink-0 mt-0.5" />{t.code && <span className="text-[10px] font-bold text-muted-foreground font-mono shrink-0 mt-0.5">{t.code}</span>}<span className="text-sm text-foreground flex-1 min-w-0 break-words leading-snug">{t.name}</span><span className="text-xs text-muted-foreground shrink-0 tabular-nums">{t.filledCount}/{t.totalCount}</span></div>))}</>);
                           })()}
                         </div>
-                      </div>
+                      </ScrollArea>
                     </div>
-
                     <div className="flex flex-col items-center gap-2.5 w-full max-w-[320px]">
-                      {allTemplateSummary.templates.some(t => (t.totalCount - t.filledCount) > 0) && (
-                        <button
-                          onClick={() => onOpenChange(false)}
-                          className="w-full inline-flex items-center justify-center gap-2 h-10 px-5 rounded-[10px] text-sm font-semibold text-white bg-gradient-to-br from-[#8649F1] to-[#2355A4] hover:opacity-90 transition-opacity shadow-md"
-                        >
-                          Review {allTemplateSummary.templates.reduce((s, t) => s + Math.max(0, t.totalCount - t.filledCount), 0)} flagged items
-                        </button>
-                      )}
-                      <button
-                        onClick={() => onOpenEngagementSheet?.()}
-                        className="w-full inline-flex items-center justify-center gap-2 h-10 px-5 rounded-[10px] text-sm font-semibold border border-primary/40 text-primary hover:bg-primary/5 transition-colors"
-                      >
-                        View engagement overview
-                      </button>
-                      <button
-                        onClick={() => onOpenChange(false)}
-                        className="text-xs text-muted-foreground hover:text-foreground transition-colors"
-                      >
-                        Back to checklist
-                      </button>
+                      {allTemplateSummary.templates.some(t => (t.totalCount - t.filledCount) > 0) && (<button onClick={() => onOpenChange(false)} className="w-full inline-flex items-center justify-center gap-2 h-10 px-5 rounded-[10px] text-sm font-semibold text-white bg-gradient-to-br from-[#8649F1] to-[#2355A4] hover:opacity-90 transition-opacity shadow-md">Review {allTemplateSummary.templates.reduce((s, t) => s + Math.max(0, t.totalCount - t.filledCount), 0)} flagged items</button>)}
+                      <button onClick={() => onOpenEngagementSheet?.()} className="w-full inline-flex items-center justify-center gap-2 h-10 px-5 rounded-[10px] text-sm font-semibold border border-primary/40 text-primary hover:bg-primary/5 transition-colors">View engagement overview</button>
+                      <button onClick={() => onOpenChange(false)} className="text-xs text-muted-foreground hover:text-foreground transition-colors">Back to checklist</button>
                     </div>
                   </div>
-                ) : summaryMode && fillSummary ? (
-                  /* Post auto-fill summary view */
-                  <div className="flex flex-col items-center px-8 pt-8 pb-6 min-h-[60vh]">
-                    <div className="mb-4 flex items-center justify-center w-[52px] h-[52px] rounded-full bg-gradient-to-br from-[#8649F1] to-[#2355A4]">
-                      <LukaIcon size={22} />
-                    </div>
+                    ) : summaryMode && fillSummary ? (
+                  /* ── Single checklist fill summary ── */
+                  <div className="flex flex-col items-center px-8 pt-8 pb-6 min-h-[60vh] overflow-y-auto">
+                    <div className="mb-4 flex items-center justify-center w-[52px] h-[52px] rounded-full bg-gradient-to-br from-[#8649F1] to-[#2355A4]"><LukaIcon size={22} /></div>
                     <h2 className="text-lg font-semibold text-foreground mb-1 text-center">Auto-fill Complete</h2>
-                    <p className="text-sm text-muted-foreground text-center mb-5 max-w-[320px]">
-                      Luka filled <span className="font-semibold text-foreground">{fillSummary.filledCount}</span> of <span className="font-semibold text-foreground">{fillSummary.totalCount}</span> fields ({Math.round(fillSummary.filledCount / Math.max(fillSummary.totalCount, 1) * 100)}%).
-                    </p>
-
-                    {/* Progress bar */}
-                    <div className="w-full max-w-[320px] h-2 rounded-full bg-muted mb-5 overflow-hidden">
-                      <div
-                        className="h-full rounded-full bg-gradient-to-r from-[#8649F1] to-[#2355A4] transition-all"
-                        style={{ width: `${Math.round(fillSummary.filledCount / Math.max(fillSummary.totalCount, 1) * 100)}%` }}
-                      />
-                    </div>
-
-                    {/* Filled confirmation */}
-                    <div className="w-full max-w-[320px] rounded-[10px] border border-green-200 dark:border-green-900 bg-green-50 dark:bg-green-950/30 px-4 py-3 mb-4">
-                      <div className="flex items-center gap-2 mb-1">
-                        <CheckCircle2 className="h-4 w-4 text-green-600 shrink-0" />
-                        <span className="text-sm font-semibold text-green-700 dark:text-green-400">{fillSummary.filledCount} fields auto-filled by Luka</span>
-                      </div>
-                      <p className="text-xs text-green-700/70 dark:text-green-400/70 pl-6">Responses populated from Xero data and prior year files with citations.</p>
-                    </div>
-
-                    {/* Needs review */}
-                    {fillSummary.skippedItems.length > 0 && (
-                      <div className="w-full max-w-[320px] rounded-[10px] border border-amber-200 dark:border-amber-900 bg-amber-50 dark:bg-amber-950/30 px-4 py-3 mb-5">
-                        <div className="flex items-center gap-2 mb-2">
-                          <span className="text-amber-500 text-base">△</span>
-                          <span className="text-sm font-semibold text-amber-700 dark:text-amber-400">{fillSummary.skippedItems.length} items need your review</span>
-                        </div>
-                        <ScrollArea className="max-h-[200px]">
-                          <div className="space-y-2">
-                            {fillSummary.skippedItems.map((item, i) => (
-                              <div key={i} className="pl-1">
-                                <p className="text-xs font-medium text-amber-700/80 dark:text-amber-400/80">{item.sectionTitle}</p>
-                                <p className="text-xs text-amber-700/60 dark:text-amber-400/60 truncate">{item.questionText || '(question)'}</p>
-                              </div>
-                            ))}
-                          </div>
-                        </ScrollArea>
-                      </div>
-                    )}
-
+                    <p className="text-sm text-muted-foreground text-center mb-5 max-w-[320px]">Luka filled <span className="font-semibold text-foreground">{fillSummary.filledCount}</span> of <span className="font-semibold text-foreground">{fillSummary.totalCount}</span> fields ({Math.round(fillSummary.filledCount / Math.max(fillSummary.totalCount, 1) * 100)}%).</p>
+                    <div className="w-full max-w-[320px] h-2 rounded-full bg-muted mb-5 overflow-hidden"><div className="h-full rounded-full bg-gradient-to-r from-[#8649F1] to-[#2355A4]" style={{ width: `${Math.round(fillSummary.filledCount / Math.max(fillSummary.totalCount, 1) * 100)}%` }} /></div>
+                    <div className="w-full max-w-[320px] rounded-[10px] border border-green-200 dark:border-green-900 bg-green-50 dark:bg-green-950/30 px-4 py-3 mb-4"><div className="flex items-center gap-2 mb-1"><CheckCircle2 className="h-4 w-4 text-green-600 shrink-0" /><span className="text-sm font-semibold text-green-700 dark:text-green-400">{fillSummary.filledCount} fields auto-filled by Luka</span></div><p className="text-xs text-green-700/70 dark:text-green-400/70 pl-6">Responses populated from connected sources and prior year files.</p></div>
+                    {fillSummary.skippedItems.length > 0 && (<div className="w-full max-w-[320px] rounded-[10px] border border-amber-200 dark:border-amber-900 bg-amber-50 dark:bg-amber-950/30 px-4 py-3 mb-5"><div className="flex items-center gap-2 mb-2"><span className="text-amber-500 text-base">△</span><span className="text-sm font-semibold text-amber-700 dark:text-amber-400">{fillSummary.skippedItems.length} items need your review</span></div><ScrollArea className="max-h-[200px]"><div className="space-y-2">{fillSummary.skippedItems.map((item, i) => (<div key={i} className="pl-1"><p className="text-xs font-medium text-amber-700/80 dark:text-amber-400/80">{item.sectionTitle}</p><p className="text-xs text-amber-700/60 dark:text-amber-400/60 truncate">{item.questionText || '(question)'}</p></div>))}</div></ScrollArea></div>)}
                     <div className="flex flex-col items-center gap-2.5 w-full max-w-[320px]">
-                      <button
-                        onClick={() => onOpenChange(false)}
-                        className="w-full inline-flex items-center justify-center gap-2 h-10 px-5 rounded-[10px] text-sm font-semibold text-white bg-gradient-to-br from-[#8649F1] to-[#2355A4] hover:opacity-90 transition-opacity shadow-md"
-                      >
-                        Back to checklist
-                      </button>
-                      {nextChecklistLabel && onNavigateNext && (
-                        <button
-                          onClick={() => { onOpenChange(false); onNavigateNext(); }}
-                          className="w-full inline-flex items-center justify-center gap-2 h-10 px-5 rounded-[10px] text-sm font-semibold border border-primary/40 text-primary hover:bg-primary/5 transition-colors"
-                        >
-                          <span className="truncate">Next → {nextChecklistLabel}</span>
-                          <ArrowRight className="h-3.5 w-3.5 shrink-0" />
-                        </button>
-                      )}
+                      {nextChecklistLabel && <button onClick={() => { onNavigateNext?.(); onOpenChange(false); }} className="w-full inline-flex items-center justify-center gap-2 h-10 px-5 rounded-[10px] text-sm font-semibold text-white bg-gradient-to-br from-[#8649F1] to-[#2355A4] hover:opacity-90 transition-opacity shadow-md"><ArrowRight className="h-4 w-4" />Next → {nextChecklistLabel}</button>}
+                      <button onClick={() => onOpenChange(false)} className="w-full inline-flex items-center justify-center gap-2 h-10 px-5 rounded-[10px] text-sm font-semibold border border-primary/40 text-primary hover:bg-primary/5 transition-colors">Back to checklist</button>
                     </div>
                   </div>
-                ) : engagementOverviewMode ? (
-                  /* Engagement-wide Luka plan view */
-                  <div className="flex flex-col items-center px-6 pt-6 pb-6 min-h-[60vh]">
-                    <div className="mb-3 flex items-center justify-center w-[52px] h-[52px] rounded-full bg-gradient-to-br from-[#8649F1] to-[#2355A4]">
-                      <LukaIcon size={22} />
-                    </div>
-                    {engagementLabel && (
-                      <p className="text-xs font-medium text-muted-foreground mb-1 text-center tracking-wide uppercase">{engagementLabel}</p>
-                    )}
-                    <h2 className="text-lg font-semibold text-foreground mb-3 text-center">Luka Engagement Plan</h2>
-
-                    {/* Connected sources */}
-                    {(autoFillSources ?? []).length > 0 && (
-                      <div className="flex flex-wrap justify-center gap-1.5 mb-4">
-                        {(autoFillSources ?? []).map(src => (
-                          <span key={src} className="inline-flex items-center gap-1 rounded-full bg-muted text-muted-foreground text-[11px] px-2.5 py-0.5 font-medium">
-                            ⇌ {src}
-                          </span>
-                        ))}
-                      </div>
-                    )}
-
-                    <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wide mb-3 self-start w-full max-w-[380px]">
-                      Engagement auto-fill plan
-                    </p>
-
-                    {/* Sections */}
+                    ) : engagementOverviewMode ? (
+                  /* ── Engagement overview mode ── */
+                  <div className="flex flex-col items-center px-8 pt-8 pb-6 min-h-[60vh] overflow-y-auto">
+                    <div className="mb-5 flex items-center justify-center w-[52px] h-[52px] rounded-full bg-gradient-to-br from-[#8649F1] to-[#2355A4]"><LukaIcon size={22} /></div>
+                    {engagementLabel && <p className="text-xs font-medium text-muted-foreground mb-1 text-center tracking-wide uppercase">{engagementLabel}</p>}
+                    <h2 className="text-lg font-semibold text-foreground mb-1 text-center">Engagement Auto-fill Plan</h2>
+                    <p className="text-sm text-muted-foreground text-center mb-5 max-w-[340px]">Select sections to fill and start Luka's engagement-wide auto-fill.</p>
                     <div className="w-full max-w-[380px] space-y-1.5 mb-5">
                       {ENGAGEMENT_SECTIONS.map((section, idx) => (
                         <div key={section.code}>
                           <div className="flex items-center gap-3 rounded-lg px-3 py-2.5 border border-border bg-card">
                             <span className={cn("text-[11px] font-bold px-1.5 py-0.5 rounded font-mono shrink-0", SECTION_BADGE_COLORS[section.code])}>{section.code}</span>
-                            <div className="flex-1 min-w-0">
-                              <div className="flex items-center justify-between gap-2">
-                                <span className="text-sm font-medium text-foreground truncate">{section.label}</span>
-                                <span className="text-xs text-muted-foreground shrink-0">{section.forms} forms</span>
-                              </div>
-                              <div className="mt-1 flex items-center gap-2">
-                                <div className="flex-1 h-1.5 rounded-full bg-muted overflow-hidden">
-                                  <div className="h-full rounded-full bg-gradient-to-r from-[#8649F1] to-[#2355A4]" style={{ width: `${section.estimatedPct}%` }} />
-                                </div>
-                                <span className="text-[11px] text-muted-foreground shrink-0 tabular-nums">~{section.estimatedPct}%</span>
-                              </div>
-                            </div>
+                            <div className="flex-1 min-w-0"><div className="flex items-center justify-between gap-2"><span className="text-sm font-medium text-foreground truncate">{section.label}</span><span className="text-xs text-muted-foreground shrink-0">{section.forms} forms</span></div><div className="mt-1 flex items-center gap-2"><div className="flex-1 h-1.5 rounded-full bg-muted overflow-hidden"><div className="h-full rounded-full bg-gradient-to-r from-[#8649F1] to-[#2355A4]" style={{ width: `${section.estimatedPct}%` }} /></div><span className="text-[11px] text-muted-foreground shrink-0 tabular-nums">~{section.estimatedPct}%</span></div></div>
                           </div>
-                          {idx < ENGAGEMENT_SECTIONS.length - 1 && (
-                            <div className="flex justify-center py-0.5">
-                              <ArrowRight className="h-3 w-3 text-muted-foreground/40 rotate-90" />
-                            </div>
-                          )}
+                          {idx < ENGAGEMENT_SECTIONS.length - 1 && <div className="flex justify-center py-0.5"><ArrowRight className="h-3 w-3 text-muted-foreground/40 rotate-90" /></div>}
                         </div>
                       ))}
                     </div>
-
-                    <p className="text-xs text-muted-foreground mb-5 text-center max-w-[340px] leading-relaxed">
-                      Luka fills each field one by one with citations from connected sources. Items requiring professional judgment stay flagged for review.
-                    </p>
-
+                    <p className="text-xs text-muted-foreground mb-5 text-center max-w-[340px] leading-relaxed">Luka fills each field one by one with citations from connected sources. Items requiring professional judgment stay flagged for review.</p>
                     <div className="flex flex-col items-center gap-2.5 w-full max-w-[380px]">
-                      <button
-                        onClick={() => onAutoFillAll?.()}
-                        className="w-full inline-flex items-center justify-center gap-2 h-10 px-5 rounded-[10px] text-sm font-semibold text-white bg-gradient-to-br from-[#8649F1] to-[#2355A4] hover:opacity-90 transition-opacity shadow-md"
-                      >
-                        <Zap className="h-4 w-4 text-white fill-white" strokeWidth={0} />
-                        Auto-fill entire engagement
-                      </button>
-                      <button
-                        onClick={() => onStartSectionBySection?.()}
-                        className="w-full inline-flex items-center justify-center gap-2 h-10 px-5 rounded-[10px] text-sm font-semibold border border-primary/40 text-primary hover:bg-primary/5 transition-colors"
-                      >
-                        Start section by section
-                      </button>
+                      <button onClick={() => onAutoFillAll?.()} className="w-full inline-flex items-center justify-center gap-2 h-10 px-5 rounded-[10px] text-sm font-semibold text-white bg-gradient-to-br from-[#8649F1] to-[#2355A4] hover:opacity-90 transition-opacity shadow-md"><Zap className="h-4 w-4 text-white fill-white" strokeWidth={0} />Auto-fill entire engagement</button>
+                      <button onClick={() => onStartSectionBySection?.()} className="w-full inline-flex items-center justify-center gap-2 h-10 px-5 rounded-[10px] text-sm font-semibold border border-primary/40 text-primary hover:bg-primary/5 transition-colors">Start section by section</button>
                     </div>
                   </div>
-                ) : autoFillMode ? (
-                  /* Auto-fill analysis view */
+                    ) : autoFillMode ? (
+                  /* ── AutoFill analysis view ── */
                   <div className="flex-1 flex flex-col items-center justify-center px-8 min-h-[60vh]">
                     {autoFillProgress ? (
-                      /* Sequential section progress view (engagement-wide fill) */
                       <div className="w-full max-w-[360px]">
-                        <div className="mb-6 flex items-center gap-3">
-                          <div className="relative flex items-center justify-center w-10 h-10 rounded-full bg-gradient-to-br from-[#8649F1] to-[#2355A4] shrink-0">
-                            <LukaIcon size={18} />
-                          </div>
-                          <div>
-                            <h2 className="text-base font-semibold text-foreground">Filling your engagement…</h2>
-                            <p className="text-xs text-muted-foreground">Luka is auto-filling each section</p>
-                          </div>
-                        </div>
+                        <div className="mb-6 flex items-center gap-3"><div className="relative flex items-center justify-center w-10 h-10 rounded-full bg-gradient-to-br from-[#8649F1] to-[#2355A4] shrink-0"><LukaIcon size={18} /></div><div><h2 className="text-base font-semibold text-foreground">Filling your engagement…</h2><p className="text-xs text-muted-foreground">Luka is auto-filling each section</p></div></div>
                         <div className="space-y-3">
                           {autoFillProgress.map(item => (
                             <div key={item.code} className="flex items-center gap-3">
-                              {item.status === 'done' ? (
-                                <CheckCircle2 className="h-4 w-4 text-green-500 shrink-0" />
-                              ) : item.status === 'running' ? (
-                                <Loader2 className="h-4 w-4 text-primary shrink-0 animate-spin" />
-                              ) : (
-                                <Circle className="h-4 w-4 text-muted-foreground/40 shrink-0" />
-                              )}
-                              <span className={cn(
-                                "text-[11px] font-bold px-1.5 py-0.5 rounded font-mono shrink-0",
-                                item.status === 'done' ? "bg-green-100 text-green-700 dark:bg-green-900/40 dark:text-green-300" :
-                                item.status === 'running' ? "bg-primary/10 text-primary" :
-                                "bg-muted text-muted-foreground"
-                              )}>{item.code}</span>
-                              <span className={cn(
-                                "text-sm flex-1",
-                                item.status === 'pending' ? "text-muted-foreground" : "text-foreground"
-                              )}>{item.label}</span>
-                              <span className="text-xs text-muted-foreground tabular-nums shrink-0">
-                                {item.status === 'done' && item.filledCount !== undefined
-                                  ? `${item.filledCount} / ${item.totalCount}`
-                                  : item.status === 'running'
-                                  ? 'filling…'
-                                  : '—'}
-                              </span>
+                              {item.status === 'done' ? <CheckCircle2 className="h-4 w-4 text-green-500 shrink-0" /> : item.status === 'running' ? <Loader2 className="h-4 w-4 text-primary shrink-0 animate-spin" /> : <Circle className="h-4 w-4 text-muted-foreground/40 shrink-0" />}
+                              <span className={cn("text-[11px] font-bold px-1.5 py-0.5 rounded font-mono shrink-0", item.status === 'done' ? "bg-green-100 text-green-700 dark:bg-green-900/40 dark:text-green-300" : item.status === 'running' ? "bg-primary/10 text-primary" : "bg-muted text-muted-foreground")}>{item.code}</span>
+                              <span className={cn("text-sm flex-1", item.status === 'pending' ? "text-muted-foreground" : "text-foreground")}>{item.label}</span>
+                              <span className="text-xs text-muted-foreground tabular-nums shrink-0">{item.status === 'done' && item.filledCount !== undefined ? `${item.filledCount} / ${item.totalCount}` : item.status === 'running' ? 'filling…' : '—'}</span>
                             </div>
                           ))}
                         </div>
                       </div>
                     ) : analysisPhase === "analyzing" ? (
                       <>
-                        <div className="mb-6 relative flex items-center justify-center w-20 h-20">
-                          <div className="absolute -inset-4 luka-ambient-glow" />
-                          <div className="relative flex items-center justify-center w-[52px] h-[52px] rounded-full bg-gradient-to-br from-[#8649F1] to-[#2355A4] z-10 luka-thinking-spin">
-                            <LukaIcon size={24} />
-                          </div>
-                        </div>
-                        <h2 className="text-lg font-semibold text-foreground mb-2 text-center">
-                          Analyzing your {checklistLabel || "checklist"}…
-                        </h2>
-                        <div className="flex items-center gap-1.5">
-                          <span className="w-1.5 h-1.5 rounded-full bg-primary/60 luka-dot luka-dot-1" />
-                          <span className="w-1.5 h-1.5 rounded-full bg-primary/60 luka-dot luka-dot-2" />
-                          <span className="w-1.5 h-1.5 rounded-full bg-primary/60 luka-dot luka-dot-3" />
-                        </div>
+                        <div className="mb-6 flex items-center justify-center w-[52px] h-[52px] rounded-full bg-gradient-to-br from-[#8649F1] to-[#2355A4]"><LukaIcon size={24} /></div>
+                        <h2 className="text-lg font-semibold text-foreground mb-2 text-center">Analyzing your {checklistLabel || "checklist"}…</h2>
+                        <div className="flex items-center gap-1.5"><span className="w-1.5 h-1.5 rounded-full bg-primary/60 animate-bounce" style={{ animationDelay: '0ms' }} /><span className="w-1.5 h-1.5 rounded-full bg-primary/60 animate-bounce" style={{ animationDelay: '150ms' }} /><span className="w-1.5 h-1.5 rounded-full bg-primary/60 animate-bounce" style={{ animationDelay: '300ms' }} /></div>
                       </>
                     ) : (
                       <>
-                        <div className="mb-5 flex items-center justify-center w-[52px] h-[52px] rounded-full bg-gradient-to-br from-[#8649F1] to-[#2355A4]">
-                          <LukaIcon size={22} />
-                        </div>
-                        {engagementLabel && (
-                          <p className="text-xs font-medium text-muted-foreground mb-1 text-center tracking-wide uppercase">{engagementLabel}</p>
-                        )}
-                        <h2 className="text-lg font-semibold text-foreground mb-1 text-center">
-                          {checklistLabel || "checklist"}
-                        </h2>
-                        <p className="text-sm text-muted-foreground text-center mb-5 max-w-[340px]">
-                          Luka analyzed {(autoFillSources ?? []).length} connected source{(autoFillSources ?? []).length !== 1 ? "s" : ""} and found responses for <span className="font-semibold text-foreground">{Math.min(90, 60 + (autoFillSources ?? []).length * 10)}%</span> of fields.
-                        </p>
-
-                        {/* Sources */}
-                        <div className="w-full max-w-[320px] rounded-[10px] border border-border bg-muted/30 px-4 py-3 mb-5 space-y-2">
-                          {(autoFillSources ?? []).map(src => (
-                            <div key={src} className="flex items-center gap-2">
-                              <CheckCircle2 className="h-4 w-4 text-green-500 shrink-0" />
-                              <span className="text-sm text-foreground">{src}</span>
-                            </div>
-                          ))}
-                        </div>
-
-                        {/* Related templates */}
-                        <div className="w-full max-w-[320px] mb-6">
-                          <p className="text-xs font-semibold text-muted-foreground mb-2 uppercase tracking-wide">Also fill related templates</p>
-                          <div className="flex flex-wrap gap-2">
-                            {RELATED_TEMPLATES.map(t => (
-                              <span key={t} className="text-xs px-2.5 py-1 rounded-full border border-border bg-background text-muted-foreground">
-                                {t}
-                              </span>
-                            ))}
-                          </div>
-                        </div>
-
-                        {/* CTAs */}
+                        <div className="mb-5 flex items-center justify-center w-[52px] h-[52px] rounded-full bg-gradient-to-br from-[#8649F1] to-[#2355A4]"><LukaIcon size={22} /></div>
+                        {engagementLabel && <p className="text-xs font-medium text-muted-foreground mb-1 text-center tracking-wide uppercase">{engagementLabel}</p>}
+                        <h2 className="text-lg font-semibold text-foreground mb-1 text-center">{checklistLabel || "checklist"}</h2>
+                        <p className="text-sm text-muted-foreground text-center mb-5 max-w-[340px]">Luka analyzed {(autoFillSources ?? []).length} connected source{(autoFillSources ?? []).length !== 1 ? "s" : ""} and found responses for <span className="font-semibold text-foreground">{Math.min(90, 60 + (autoFillSources ?? []).length * 10)}%</span> of fields.</p>
+                        <div className="w-full max-w-[320px] rounded-[10px] border border-border bg-muted/30 px-4 py-3 mb-5 space-y-2">{(autoFillSources ?? []).map(src => (<div key={src} className="flex items-center gap-2"><CheckCircle2 className="h-4 w-4 text-green-500 shrink-0" /><span className="text-sm text-foreground">{src}</span></div>))}</div>
+                        <div className="w-full max-w-[320px] mb-6"><p className="text-xs font-semibold text-muted-foreground mb-2 uppercase tracking-wide">Also fill related templates</p><div className="flex flex-wrap gap-2">{RELATED_TEMPLATES.map(t => (<span key={t} className="text-xs px-2.5 py-1 rounded-full border border-border bg-background text-muted-foreground">{t}</span>))}</div></div>
                         <div className="flex flex-col items-center gap-2.5 w-full max-w-[320px]">
-                          <button
-                            onClick={() => { onAutoFillConfirmed?.(); onOpenChange(false); }}
-                            className="w-full inline-flex items-center justify-center gap-2 h-10 px-5 rounded-[10px] text-sm font-semibold text-white bg-gradient-to-br from-[#8649F1] to-[#2355A4] hover:opacity-90 transition-opacity shadow-md"
-                          >
-                            <Zap className="h-4 w-4 text-white fill-white" strokeWidth={0} />
-                            Auto-fill this checklist
-                          </button>
-                          <button
-                            onClick={() => { onAutoFillAll?.(); }}
-                            className="w-full inline-flex items-center justify-center gap-2 h-10 px-5 rounded-[10px] text-sm font-semibold border border-primary/40 text-primary hover:bg-primary/5 transition-colors whitespace-nowrap"
-                          >
-                            <Zap className="h-4 w-4 shrink-0" />
-                            Auto-fill all templates
-                          </button>
+                          <button onClick={() => { onAutoFillConfirmed?.(); onOpenChange(false); }} className="w-full inline-flex items-center justify-center gap-2 h-10 px-5 rounded-[10px] text-sm font-semibold text-white bg-gradient-to-br from-[#8649F1] to-[#2355A4] hover:opacity-90 transition-opacity shadow-md"><Zap className="h-4 w-4 text-white fill-white" strokeWidth={0} />Auto-fill this checklist</button>
+                          <button onClick={() => { onAutoFillAll?.(); }} className="w-full inline-flex items-center justify-center gap-2 h-10 px-5 rounded-[10px] text-sm font-semibold border border-primary/40 text-primary hover:bg-primary/5 transition-colors whitespace-nowrap"><Zap className="h-4 w-4 shrink-0" />Auto-fill all templates</button>
                         </div>
-
-                        <p className="text-xs text-muted-foreground mt-3 text-center max-w-[300px]">
-                          Luka fills each field one by one with citations. Items requiring judgment stay flagged.
-                        </p>
+                        <p className="text-xs text-muted-foreground mt-3 text-center max-w-[300px]">Luka fills each field one by one with citations. Items requiring judgment stay flagged.</p>
                       </>
                     )}
                   </div>
-                ) : !sentMessage ? (
-                  /* Welcome state */
-                  <div className="flex-1 flex flex-col items-center justify-center px-6 min-h-[60vh]">
-                    {/* Luka logo icon */}
-                    <div className="mb-8 relative flex items-center justify-center w-24 h-24">
-                      <div className="absolute -inset-4 luka-ambient-glow" />
-                      <div className="absolute inset-0 luka-ambient-orb opacity-20" />
-                      <div className="relative flex items-center justify-center w-[52px] h-[52px] rounded-full bg-gradient-to-br from-[hsl(var(--primary))] to-[hsl(265_80%_55%)] backdrop-blur-sm z-10 shadow-[0_0_30px_rgba(151,71,255,0.12)]">
-                        <LukaIcon size={24} />
-                      </div>
-                    </div>
+                    ) : (
+                  <div className="flex-1 flex flex-col items-center justify-center luka-chat-body">
+                    <motion.div
+                      initial={{ scale: 0.8, opacity: 0 }}
+                      animate={{ scale: 1, opacity: 1 }}
+                      transition={{ delay: 0.2, type: "spring", stiffness: 200 }}
+                      className="flex flex-col items-center gap-5"
+                    >
+                      <motion.div
+                        className="luka-bolt-icon"
+                        animate={{
+                          scale: [1, 1.06, 1],
+                          boxShadow: [
+                            "0 0 0px hsla(270, 65%, 64%, 0.15)",
+                            "0 0 24px hsla(270, 65%, 64%, 0.25)",
+                            "0 0 0px hsla(270, 65%, 64%, 0.15)",
+                          ],
+                        }}
+                        transition={{
+                          duration: 3,
+                          repeat: Infinity,
+                          ease: "easeInOut",
+                        }}
+                      >
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
+                          <defs>
+                            <linearGradient id="luka-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+                              <stop offset="0%" stopColor="#9747FF" />
+                              <stop offset="100%" stopColor="#115697" />
+                            </linearGradient>
+                          </defs>
+                          <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" fill="url(#luka-grad)" />
+                        </svg>
+                      </motion.div>
+                      <h3 className="text-xl font-semibold text-foreground">How can I help you today?</h3>
 
-                    <h1 className="text-2xl font-semibold text-foreground mb-8 text-center">
-                      How can I help you today?
-                    </h1>
-
-                    {/* Suggestion chips */}
-                    <div className="flex flex-wrap items-center justify-center gap-3 mb-12">
-                      {suggestions.map((s) => (
-                        <button
-                          key={s}
-                          onClick={() => handlePromptSelect(s.replace("#", ""))}
-                          className="px-4 py-2 rounded-[10px] border border-border bg-background dark:bg-card text-sm text-foreground hover:bg-muted/60 dark:hover:bg-muted/30 transition-colors"
-                        >
-                          {s}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                ) : (
-                  /* Chat messages */
-                  <div className="px-6 py-4 space-y-4 min-w-0 max-w-full overflow-hidden">
-                    {/* User message */}
-                    <div className="flex justify-end">
-                      <div className="max-w-[80%] px-4 py-3 rounded-[12px] bg-primary text-primary-foreground text-base">
-                        {sentMessage}
-                      </div>
-                    </div>
-
-                    {/* Unified Luka response container — icon stays in place */}
-                    {(isThinking || aiResponse) && (
-                      <div className="flex items-start gap-3 min-w-0 max-w-full">
-                        <div className={cn(
-                          "w-9 h-9 rounded-full bg-gradient-to-br from-[hsl(var(--primary))] to-[hsl(265_80%_55%)] flex items-center justify-center shrink-0",
-                          isThinking && "luka-thinking-spin"
-                        )}>
-                          <LukaIcon size={16} />
-                        </div>
-                        <div className="flex-1 pt-1.5 min-h-[28px] min-w-0 overflow-x-auto">
-                          {isThinking ? (
-                            <div className="flex items-center gap-2">
-                              <span className="text-sm font-medium text-muted-foreground luka-thinking-text">
-                                Thinking
-                              </span>
-                              <span className="flex gap-0.5">
-                                <span className="w-1 h-1 rounded-full bg-primary/60 luka-dot luka-dot-1" />
-                                <span className="w-1 h-1 rounded-full bg-primary/60 luka-dot luka-dot-2" />
-                                <span className="w-1 h-1 rounded-full bg-primary/60 luka-dot luka-dot-3" />
-                              </span>
-                            </div>
-                          ) : richResponseType === "gross-margin" ? (
-                            <>
-                              <GrossMarginResponse revealStep={revealStep} />
-                              {revealStep >= 5 && <LukaResponseActions />}
-                            </>
-                          ) : richResponseType === "tb-gifi" ? (
-                            <>
-                              <TrialBalanceGIFIResponse revealStep={revealStep} />
-                              {revealStep >= 5 && <LukaResponseActions />}
-                            </>
-                          ) : (
-                            <>
-                              <div className="text-base text-foreground leading-relaxed whitespace-pre-wrap">
-                                {displayedResponse}
-                                {isStreaming && (
-                                  <span className="inline-block w-0.5 h-4 bg-primary/70 ml-0.5 align-middle luka-thinking-text" />
-                                )}
-                              </div>
-                              {!isStreaming && aiResponse && <LukaResponseActions />}
-                            </>
-                          )}
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                )}
-              </div>
-
-              {/* Chat Input - pinned to bottom; hidden in auto-fill and summary modes */}
-              {!autoFillMode && !summaryMode && <div className={cn("pb-6 pt-2", viewMode === "full" ? "px-12" : "px-6")}>
-                <div className={cn("w-full mx-auto relative", viewMode === "full" ? "max-w-none" : "max-w-[700px]")}>
-                  {/* Prompt Picker */}
-                  <PromptPicker
-                    open={showPromptPicker}
-                    filter={hashFilter}
-                    onSelect={handlePromptSelect}
-                    onClose={() => { setShowPromptPicker(false); setHashFilter(""); }}
-                  />
-
-                  {/* Slash command menu */}
-                  {showSlashMenu && (() => {
-                    const filtered = SLASH_PROMPTS.filter(p => message.length <= 1 || p.toLowerCase().includes(message.slice(1).toLowerCase()));
-                    return filtered.length > 0 ? (
-                      <div className="absolute bottom-full mb-2 left-0 right-0 z-50 rounded-xl border border-border bg-popover shadow-xl overflow-hidden">
-                        {filtered.map((p, i) => (
-                          <button
-                            key={p}
-                            className={cn("w-full text-left px-4 py-2.5 text-sm flex items-center gap-2 transition-colors", i === selectedSlashIndex ? "bg-primary/10 text-primary" : "hover:bg-muted/60 text-foreground")}
-                            onMouseDown={(e) => { e.preventDefault(); handleSlashSelect(p); }}
+                      {/* Quick prompts */}
+                      <div className="flex flex-wrap items-center justify-center gap-2 max-w-sm">
+                        {quickPrompts.map((prompt) => (
+                          <motion.button
+                            key={prompt}
+                            whileHover={{ scale: 1.04, y: -1 }}
+                            whileTap={{ scale: 0.97 }}
+                            className="luka-prompt-chip"
+                            onClick={() => handlePromptSelect(prompt.replace(/^\//, ""))}
                           >
-                            <ArrowRight className="h-3.5 w-3.5 opacity-60" />{p}
-                          </button>
+                            <span style={{ color: "hsl(207 71% 38%)", fontWeight: 700 }}>/</span>{prompt.replace(/^\//, "")}
+                          </motion.button>
                         ))}
                       </div>
-                    ) : null;
-                  })()}
-
-                  {/* Enhanced prompt preview */}
-                  {enhancedPrompt && (
-                    <div className="mb-2 rounded-xl border border-primary/20 bg-primary/5 px-4 py-3">
-                      <p className="text-xs font-semibold text-primary mb-1 flex items-center gap-1.5"><Wand2 className="h-3.5 w-3.5" />Enhanced prompt</p>
-                      <p className="text-sm text-foreground/80 leading-snug">{enhancedPrompt}</p>
-                      <div className="mt-2 flex gap-2">
-                        <button onClick={handleReplaceWithEnhanced} className="text-xs font-medium text-primary hover:underline">Use this</button>
-                        <button onClick={handleDismissEnhanced} className="text-xs text-muted-foreground hover:underline">Dismiss</button>
-                      </div>
-                    </div>
+                    </motion.div>
+                  </div>
                   )}
+                  </div>
 
-                  <div className="border border-border rounded-[12px] overflow-visible bg-background dark:bg-card hover:border-primary/30 transition-all duration-200 luka-gradient-border relative">
-                    {/* Attached files bar */}
-                    <AttachedFilesBar files={attachedFiles} onRemove={removeFile} onClearAll={clearFiles} />
-
-                    {/* Connected connector badges */}
-                    {connectors.some(c => c.connected) && (
-                      <div className="px-4 pt-2 flex flex-wrap gap-1.5">
-                        {connectors.filter(c => c.connected).map(c => (
-                          <span key={c.id} className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium border" style={{ borderColor: c.color + "40", color: c.color, background: c.color + "10" }}>
-                            <Globe className="h-3 w-3" />{c.name}
-                          </span>
-                        ))}
-                      </div>
-                    )}
-
-                    <div className="px-4 pt-3 pb-2">
-                      {/* Render input with blue # styling */}
-                      <div className="relative">
-                        <input
-                          ref={inputRef}
-                          type="text"
-                          value={message}
-                          onChange={handleInputChange}
-                          onKeyDown={handleKeyDown}
-                          placeholder="Type / for commands, # for prompts, or ask anything..."
-                          className={cn(
-                            "w-full bg-transparent h-9 placeholder:text-muted-foreground/70 outline-none border-none text-sm",
-                            message.includes("#") ? "text-primary font-medium" : "text-foreground"
-                          )}
-                        />
-                      </div>
-                    </div>
-
-                    {/* Bottom toolbar */}
-                    <div className="px-3 pb-3 flex items-center justify-between">
-                      <div className="flex items-center gap-1">
-                        {/* Connectors / plus tray */}
-                        <div className="relative" ref={plusTrayRef}>
-                          <Button variant="outline" size="icon" className="h-9 w-9 rounded-[10px]" onClick={() => setShowPlusTray(v => !v)}>
-                            <Plus className="h-4 w-4 text-muted-foreground" />
-                          </Button>
-                          {showPlusTray && (
-                            <div className="absolute bottom-full mb-2 left-0 z-50 w-64 rounded-xl border border-border bg-popover shadow-xl p-3">
-                              <p className="text-xs font-semibold text-muted-foreground mb-2 px-1">Connect a source</p>
-                              <div className="space-y-1">
-                                {connectors.map(c => (
-                                  <button
-                                    key={c.id}
-                                    onClick={() => handleConnectConnector(c.id)}
-                                    className="w-full flex items-center gap-2.5 px-2 py-2 rounded-lg hover:bg-muted/60 transition-colors text-left"
+                  {/* Input area — hidden in autoFill/summary/overview modes */}
+                  {!autoFillMode && !summaryMode && !allTemplateSummary && !engagementOverviewMode && (
+                  <div className="px-4 pb-4 pt-2 relative">
+                    {/* Prompt Window */}
+                    <AnimatePresence>
+                      {showPromptWindow && (
+                        <motion.div
+                          initial={{ opacity: 0, y: 8, scale: 0.96 }}
+                          animate={{ opacity: 1, y: 0, scale: 1 }}
+                          exit={{ opacity: 0, y: 8, scale: 0.96 }}
+                          transition={{ type: "spring", damping: 22, stiffness: 400 }}
+                          className="absolute bottom-full left-4 right-4 mb-2 z-50"
+                        >
+                          <div className="prompt-window-shimmer-border rounded-2xl">
+                            <div
+                              className="rounded-2xl overflow-hidden"
+                              style={{
+                                background: "hsl(var(--card))",
+                                boxShadow: "0 8px 32px -8px hsla(260, 60%, 40%, 0.18), 0 2px 8px -2px hsla(210, 80%, 50%, 0.1)",
+                              }}
+                            >
+                              <div className="py-1">
+                                {promptList.map((prompt, i) => (
+                                  <motion.button
+                                    key={prompt}
+                                    initial={{ opacity: 0, x: -8 }}
+                                    animate={{ opacity: 1, x: 0 }}
+                                    transition={{ delay: i * 0.03, duration: 0.2 }}
+                                    onClick={() => handlePromptSelect(prompt)}
+                                    onMouseEnter={() => setSelectedPromptIndex(i)}
+                                    className="w-full text-left px-5 py-3 text-[15px] font-medium transition-colors duration-150 cursor-pointer flex items-center"
+                                    style={{
+                                      color: selectedPromptIndex === i ? "hsl(var(--foreground))" : "hsl(var(--foreground) / 0.8)",
+                                      background: selectedPromptIndex === i ? "hsl(var(--muted) / 0.6)" : "transparent",
+                                      borderBottom: i < promptList.length - 1 ? "1px solid hsl(var(--border) / 0.4)" : "none",
+                                    }}
                                   >
-                                    <span className="w-6 h-6 rounded-md flex items-center justify-center text-xs font-bold text-white shrink-0" style={{ background: c.color }}>{c.abbr}</span>
-                                    <span className="text-sm text-foreground flex-1">{c.name}</span>
-                                    {c.connected && <Check className="h-4 w-4 text-green-500 shrink-0" />}
-                                  </button>
+                                    {prompt}
+                                  </motion.button>
                                 ))}
                               </div>
-                            </div>
-                          )}
-                        </div>
-                        <Button variant="outline" size="icon" className="h-9 w-9 rounded-[10px]">
-                          <Inbox className="h-4 w-4 text-muted-foreground" />
-                        </Button>
-                        {/* Model picker */}
-                        <div className="relative" ref={modelDropdownRef}>
-                          <button
-                            onClick={() => setShowModelDropdown(v => !v)}
-                            className="flex items-center gap-1.5 px-3 h-9 rounded-[10px] border border-border bg-background dark:bg-muted/20 text-sm text-foreground hover:border-primary/40 transition-colors"
-                          >
-                            <span className="text-amber-500">✨</span>
-                            <span className="text-sm font-medium">{selectedModel}</span>
-                            <ChevronDown className="h-3.5 w-3.5 text-muted-foreground ml-0.5" />
-                          </button>
-                          {showModelDropdown && (
-                            <div className="absolute bottom-full mb-2 left-0 z-50 w-72 rounded-xl border border-border bg-popover shadow-xl overflow-hidden">
-                              {MODEL_GROUPS.map(group => (
-                                <div key={group.ecosystem}>
-                                  <div className="px-4 py-2 text-xs font-semibold text-muted-foreground border-b border-border bg-muted/30">{group.ecosystem}</div>
-                                  {group.models.map(m => (
-                                    <button
-                                      key={m.name}
-                                      onClick={() => { setSelectedModel(m.name); setShowModelDropdown(false); }}
-                                      className={cn("w-full flex items-center justify-between px-4 py-2.5 text-sm hover:bg-muted/60 transition-colors", selectedModel === m.name && "bg-primary/8 text-primary")}
-                                    >
-                                      <span className="font-medium">{m.name}</span>
-                                      <div className="flex items-center gap-2">
-                                        <span className="text-xs text-muted-foreground">{m.badge}</span>
-                                        {selectedModel === m.name && <Check className="h-3.5 w-3.5 text-primary" />}
-                                      </div>
-                                    </button>
-                                  ))}
+                              <div
+                                className="flex items-center justify-between px-5 py-2.5 text-xs"
+                                style={{
+                                  color: "hsl(var(--muted-foreground))",
+                                  borderTop: "1px solid hsl(var(--border) / 0.4)",
+                                }}
+                              >
+                                <div className="flex items-center gap-2">
+                                  <span>Use</span>
+                                  <kbd className="inline-flex items-center justify-center w-6 h-6 rounded-md border text-[11px] font-semibold" style={{ borderColor: "hsl(var(--border))", background: "hsl(var(--muted) / 0.5)" }}>↑</kbd>
+                                  <kbd className="inline-flex items-center justify-center w-6 h-6 rounded-md border text-[11px] font-semibold" style={{ borderColor: "hsl(var(--border))", background: "hsl(var(--muted) / 0.5)" }}>↓</kbd>
+                                  <span>to navigate</span>
                                 </div>
-                              ))}
+                                <div className="flex items-center gap-2">
+                                  <span>To close, press</span>
+                                  <kbd className="inline-flex items-center justify-center px-2 h-6 rounded-md border text-[11px] font-semibold" style={{ borderColor: "hsl(var(--border))", background: "hsl(var(--muted) / 0.5)" }}>Esc</kbd>
+                                </div>
+                              </div>
                             </div>
-                          )}
-                        </div>
-                      </div>
+                          </div>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
 
-                      <div className="flex items-center gap-1">
-                        {/* Wand - enhance prompt */}
-                        <Tooltip>
-                          <TooltipTrigger asChild>
-                            <Button variant="ghost" size="icon" className="h-9 w-9 rounded-[10px]" onClick={handleEnhancePrompt} disabled={!message.trim() || isEnhancing}>
-                              {isEnhancing ? <Loader2 className="h-4 w-4 animate-spin text-primary" /> : <Wand2 className="h-4 w-4 text-muted-foreground" />}
-                            </Button>
-                          </TooltipTrigger>
-                          <TooltipContent side="top"><p>Enhance prompt</p></TooltipContent>
-                        </Tooltip>
-                        <Button variant="ghost" size="icon" className="h-9 w-9 rounded-[10px]" onClick={() => setVoiceOpen(true)}>
-                          <Mic className="h-4 w-4 text-muted-foreground" />
-                        </Button>
-                        <Button
-                          size="icon"
-                          className={cn(
-                            "h-9 w-9 rounded-full transition-all duration-200",
-                            message.trim()
-                              ? "bg-gradient-to-br from-[#8649F1] to-[#2355A4] hover:opacity-90 text-white shadow-md"
-                              : "bg-muted hover:bg-muted/80 text-muted-foreground"
-                          )}
-                          onClick={handleSend}
-                        >
-                          <Send className="h-4 w-4" />
-                        </Button>
+                    <div className="luka-input-wrapper">
+                      <textarea
+                        ref={inputRef}
+                        value={inputValue}
+                        onChange={handleInputChange}
+                        onKeyDown={handleInputKeyDown}
+                        placeholder="Type / for prompts or just ask anything..."
+                        rows={1}
+                        className="luka-input luka-input-autoresize"
+                      />
+                      <div className="flex items-center justify-between pt-1 px-1">
+                        <div className="flex items-center gap-2">
+                          {/* + Button with Tray */}
+                          <div ref={plusTrayRef} style={{ position: "relative" }}>
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <motion.button
+                                  whileHover={{ scale: 1.1, boxShadow: "0 2px 8px hsla(0,0%,0%,0.10)" }}
+                                  whileTap={{ scale: 0.9 }}
+                                  onClick={() => setShowPlusTray(prev => !prev)}
+                                  style={{
+                                    width: 30, height: 30, borderRadius: 8,
+                                    display: "flex", alignItems: "center", justifyContent: "center",
+                                    background: showPlusTray ? "hsl(var(--muted))" : "hsl(var(--background))",
+                                    border: `1px solid ${showPlusTray ? "hsl(var(--primary) / 0.3)" : "hsl(var(--border) / 0.6)"}`,
+                                    boxShadow: "0 1px 3px hsla(0,0%,0%,0.06)",
+                                    color: "hsl(0 0% 0%)", cursor: "pointer",
+                                    transition: "background 0.2s, border-color 0.2s",
+                                  }}
+                                >
+                                  <motion.div animate={{ rotate: showPlusTray ? 45 : 0 }} transition={{ duration: 0.2 }}>
+                                    <Plus size={15} strokeWidth={2.2} />
+                                  </motion.div>
+                                </motion.button>
+                              </TooltipTrigger>
+                              <TooltipContent side="top" sideOffset={6}>
+                                Add files & connectors
+                              </TooltipContent>
+                            </Tooltip>
+
+                            <AnimatePresence>
+                              {showPlusTray && (
+                                <motion.div
+                                  initial={{ opacity: 0, y: 6, scale: 0.96 }}
+                                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                                  exit={{ opacity: 0, y: 6, scale: 0.96 }}
+                                  transition={{ type: "spring", damping: 24, stiffness: 400 }}
+                                  style={{
+                                    position: "absolute",
+                                    bottom: "calc(100% + 8px)",
+                                    left: 0,
+                                    width: 280,
+                                    background: "hsl(var(--card))",
+                                    border: "1px solid hsl(var(--border))",
+                                    borderRadius: 12,
+                                    boxShadow: "0 8px 32px -8px hsla(220, 40%, 20%, 0.18), 0 2px 8px -2px hsla(220, 40%, 20%, 0.08)",
+                                    zIndex: 100,
+                                    overflow: "hidden",
+                                  }}
+                                >
+                                  {/* Upload & Repository */}
+                                  <div style={{ padding: "6px 0" }}>
+                                    <motion.button
+                                      whileHover={{ backgroundColor: "hsl(var(--muted) / 0.5)" }}
+                                      style={{
+                                        width: "100%", display: "flex", alignItems: "center", gap: 10,
+                                        padding: "10px 14px", fontSize: 13, fontWeight: 500,
+                                        color: "hsl(var(--foreground))", background: "transparent",
+                                        border: "none", cursor: "pointer", transition: "background 0.15s",
+                                      }}
+                                    >
+                                      <div style={{
+                                        width: 32, height: 32, borderRadius: 8,
+                                        display: "flex", alignItems: "center", justifyContent: "center",
+                                        background: "hsl(207 71% 38% / 0.08)",
+                                        color: "hsl(207 71% 31%)",
+                                      }}>
+                                        <Upload size={16} strokeWidth={2} />
+                                      </div>
+                                      <div style={{ textAlign: "left" }}>
+                                        <div style={{ fontWeight: 600, fontSize: 13 }}>Upload from Computer</div>
+                                        <div style={{ fontSize: 11, color: "hsl(var(--muted-foreground))", marginTop: 1 }}>PDF, Excel, CSV, Images</div>
+                                      </div>
+                                    </motion.button>
+                                    <motion.button
+                                      whileHover={{ backgroundColor: "hsl(var(--muted) / 0.5)" }}
+                                      style={{
+                                        width: "100%", display: "flex", alignItems: "center", gap: 10,
+                                        padding: "10px 14px", fontSize: 13, fontWeight: 500,
+                                        color: "hsl(var(--foreground))", background: "transparent",
+                                        border: "none", cursor: "pointer", transition: "background 0.15s",
+                                      }}
+                                    >
+                                      <div style={{
+                                        width: 32, height: 32, borderRadius: 8,
+                                        display: "flex", alignItems: "center", justifyContent: "center",
+                                        background: "hsl(270 60% 55% / 0.08)",
+                                        color: "hsl(270 60% 50%)",
+                                      }}>
+                                        <GitBranch size={16} strokeWidth={2} />
+                                      </div>
+                                      <div style={{ textAlign: "left" }}>
+                                        <div style={{ fontWeight: 600, fontSize: 13 }}>Pull from Repository</div>
+                                        <div style={{ fontSize: 11, color: "hsl(var(--muted-foreground))", marginTop: 1 }}>Drop previous years files</div>
+                                      </div>
+                                    </motion.button>
+                                  </div>
+
+                                  {/* Divider */}
+                                  <div style={{ height: 1, background: "hsl(var(--border) / 0.6)", margin: "0 12px" }} />
+
+                                  {/* Available Connectors Header */}
+                                  <div style={{
+                                    padding: "10px 14px 6px",
+                                    display: "flex", alignItems: "center", justifyContent: "space-between",
+                                  }}>
+                                    <span style={{ fontSize: 11, fontWeight: 600, color: "hsl(var(--muted-foreground))", textTransform: "uppercase", letterSpacing: "0.05em" }}>
+                                      Available Connectors
+                                    </span>
+                                    <span style={{
+                                      fontSize: 10, fontWeight: 600,
+                                      padding: "2px 7px", borderRadius: 10,
+                                      background: "hsl(207 71% 38% / 0.1)",
+                                      color: "hsl(207 71% 31%)",
+                                    }}>
+                                      {availableConnectors.length}
+                                    </span>
+                                  </div>
+
+                                  {/* Connector List */}
+                                  <div style={{ padding: "2px 0 8px", maxHeight: 200, overflowY: "auto", scrollbarWidth: "none" }}>
+                                    {availableConnectors.map((connector) => (
+                                      <motion.button
+                                        key={connector.id}
+                                        whileHover={{ backgroundColor: "hsl(var(--muted) / 0.4)" }}
+                                        onClick={() => handleConnectConnector(connector.id)}
+                                        style={{
+                                          width: "100%", display: "flex", alignItems: "center", gap: 10,
+                                          padding: "8px 14px", fontSize: 13, fontWeight: 400,
+                                          color: "hsl(var(--foreground))", background: "transparent",
+                                          border: "none", cursor: "pointer", transition: "background 0.15s",
+                                        }}
+                                      >
+                                        <div style={{
+                                          width: 28, height: 28, borderRadius: 7,
+                                          display: "flex", alignItems: "center", justifyContent: "center",
+                                          background: `${connector.color}14`,
+                                          border: `1px solid ${connector.color}20`,
+                                        }}>
+                                          <Globe size={14} style={{ color: connector.color }} />
+                                        </div>
+                                        <span style={{ flex: 1, textAlign: "left" }}>{connector.name}</span>
+                                        <span style={{
+                                          fontSize: 10, fontWeight: 500,
+                                          padding: "3px 8px", borderRadius: 6,
+                                          background: "hsl(var(--muted) / 0.6)",
+                                          color: "hsl(var(--muted-foreground))",
+                                        }}>
+                                          Connect
+                                        </span>
+                                      </motion.button>
+                                    ))}
+                                  </div>
+                                </motion.div>
+                              )}
+                            </AnimatePresence>
+                          </div>
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <motion.button
+                                whileHover={{ scale: 1.1, boxShadow: "0 2px 8px hsla(0,0%,0%,0.10)" }}
+                                whileTap={{ scale: 0.9 }}
+                                onClick={() => setShowEngagementTray((v) => !v)}
+                                style={{ width: 30, height: 30, borderRadius: 8, display: "flex", alignItems: "center", justifyContent: "center", background: "hsl(var(--background))", border: "1px solid hsl(var(--border) / 0.6)", boxShadow: "0 1px 3px hsla(0,0%,0%,0.06)", color: "hsl(0 0% 0%)", cursor: "pointer" }}
+                              >
+                                <Inbox size={15} strokeWidth={2.2} />
+                              </motion.button>
+                            </TooltipTrigger>
+                            <TooltipContent side="top" sideOffset={6}>
+                              Select Engagement
+                            </TooltipContent>
+                          </Tooltip>
+                          <div ref={modelDropdownRef} style={{ position: "relative" }}>
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <motion.button
+                                  whileHover={{ scale: 1.03 }}
+                                  whileTap={{ scale: 0.97 }}
+                                  className="luka-model-badge"
+                                  onClick={() => setShowModelDropdown(prev => !prev)}
+                                  style={{ cursor: "pointer" }}
+                                >
+                                  <Sparkles size={12} style={{ color: "hsl(40 90% 50%)" }} />
+                                  <span>{selectedModel}</span>
+                                  <ChevronDown size={14} strokeWidth={2.2} className="ml-0.5 opacity-60" style={{ transition: "transform 0.2s ease", transform: showModelDropdown ? "rotate(180deg)" : "rotate(0deg)" }} />
+                                </motion.button>
+                              </TooltipTrigger>
+                              <TooltipContent side="top" sideOffset={6}>
+                                Change AI model
+                              </TooltipContent>
+                            </Tooltip>
+
+                            <AnimatePresence>
+                              {showModelDropdown && (
+                                <motion.div
+                                  initial={{ opacity: 0, y: 6, scale: 0.96 }}
+                                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                                  exit={{ opacity: 0, y: 6, scale: 0.96 }}
+                                  transition={{ type: "spring", damping: 24, stiffness: 400 }}
+                                  style={{
+                                    position: "absolute",
+                                    bottom: "calc(100% + 8px)",
+                                    left: 0,
+                                    minWidth: 260,
+                                    background: "hsl(var(--card))",
+                                    border: "1px solid #0C2D55",
+                                    borderRadius: 12,
+                                    boxShadow: "0 8px 32px -8px hsla(220, 40%, 20%, 0.18), 0 2px 8px -2px hsla(220, 40%, 20%, 0.08)",
+                                    zIndex: 100,
+                                    overflow: "hidden",
+                                  }}
+                                >
+                                  <div style={{ padding: "10px 12px 6px", fontSize: 11, fontWeight: 600, color: "hsl(var(--muted-foreground))", textTransform: "uppercase", letterSpacing: "0.05em" }}>
+                                    Select Model
+                                  </div>
+                                  <div style={{ padding: "0 0 6px", maxHeight: 380, overflowY: "auto", scrollbarWidth: "none" }}>
+                                    {modelGroups.map((group, gi) => (
+                                      <div key={group.ecosystem}>
+                                        {gi > 0 && <div style={{ height: 1, background: "hsl(var(--border) / 0.5)", margin: "4px 12px" }} />}
+                                        <div
+                                          style={{ padding: "6px 12px", margin: "2px 6px", borderRadius: 6, fontSize: 10, fontWeight: 600, color: "hsl(var(--muted-foreground) / 0.7)", letterSpacing: "0.04em", display: "flex", alignItems: "center", gap: 5, transition: "background 0.15s ease, color 0.15s ease", cursor: "default" }}
+                                          onMouseEnter={(e) => { e.currentTarget.style.background = "hsl(var(--muted) / 0.5)"; e.currentTarget.style.color = "hsl(var(--muted-foreground))"; }}
+                                          onMouseLeave={(e) => { e.currentTarget.style.background = "transparent"; e.currentTarget.style.color = "hsl(var(--muted-foreground) / 0.7)"; }}
+                                        >
+                                          {group.icon}
+                                          {group.ecosystem}
+                                        </div>
+                                        {group.models.map((model) => {
+                                          const isSelected = selectedModel === model.name;
+                                          return (
+                                            <motion.button
+                                              key={model.name}
+                                              onClick={() => { setSelectedModel(model.name); setShowModelDropdown(false); }}
+                                              style={{
+                                                width: "100%",
+                                                display: "flex",
+                                                alignItems: "center",
+                                                gap: 8,
+                                                padding: "7px 12px",
+                                                fontSize: 13,
+                                                fontWeight: isSelected ? 600 : 400,
+                                                color: isSelected ? "#0C2D55" : "#1a1a1a",
+                                                background: isSelected ? "hsl(var(--muted) / 0.5)" : "transparent",
+                                                border: "none",
+                                                cursor: "pointer",
+                                                transition: "background 0.15s ease",
+                                              }}
+                                              onMouseEnter={(e) => { if (!isSelected) e.currentTarget.style.background = "hsl(var(--muted) / 0.4)"; }}
+                                              onMouseLeave={(e) => { if (!isSelected) e.currentTarget.style.background = "transparent"; }}
+                                            >
+                                              <span style={{ flex: 1, textAlign: "left", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{model.name}</span>
+                                              <span style={{
+                                                fontSize: 10,
+                                                fontWeight: 500,
+                                                padding: "2px 6px",
+                                                borderRadius: 6,
+                                                background: "hsl(var(--muted) / 0.6)",
+                                                color: "#555555",
+                                                minWidth: 44,
+                                                textAlign: "center",
+                                                flexShrink: 0,
+                                              }}>
+                                                {model.badge}
+                                              </span>
+                                              <div style={{ width: 18, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+                                                {isSelected && <Check size={14} strokeWidth={2.5} style={{ color: "#0C2D55" }} />}
+                                              </div>
+                                            </motion.button>
+                                          );
+                                        })}
+                                      </div>
+                                    ))}
+                                  </div>
+                                </motion.div>
+                              )}
+                            </AnimatePresence>
+                          </div>
+                          {/* Luka Enhancer moved next to mic */}
+                          {/* Connected Connectors - visible labels */}
+                          <AnimatePresence>
+                            {connectedConnectors.map((connector) => (
+                              <motion.div
+                                key={connector.id}
+                                initial={{ opacity: 0, scale: 0.8, width: 0 }}
+                                animate={{ opacity: 1, scale: 1, width: "auto" }}
+                                exit={{ opacity: 0, scale: 0.8, width: 0 }}
+                                transition={{ type: "spring", damping: 20, stiffness: 300 }}
+                                style={{
+                                  display: "inline-flex",
+                                  alignItems: "center",
+                                  gap: 5,
+                                  padding: "4px 10px 4px 6px",
+                                  borderRadius: 7,
+                                  border: `1px solid ${connector.color}30`,
+                                  background: `${connector.color}08`,
+                                  cursor: "default",
+                                  overflow: "hidden",
+                                  whiteSpace: "nowrap",
+                                }}
+                              >
+                                <div style={{
+                                  width: 6, height: 6, borderRadius: "50%",
+                                  background: connector.color,
+                                  flexShrink: 0,
+                                }} />
+                                <span style={{
+                                  fontSize: 11, fontWeight: 600,
+                                  color: connector.color,
+                                  letterSpacing: "0.01em",
+                                }}>
+                                  {connector.abbr}
+                                </span>
+                              </motion.div>
+                            ))}
+                          </AnimatePresence>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          {/* Luka Enhancer (icon-only) — sits to the left of audio */}
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <motion.button
+                                whileHover={inputValue.trim() && !isEnhancing ? { scale: 1.1, boxShadow: "0 2px 8px hsla(270,65%,55%,0.18)" } : {}}
+                                whileTap={inputValue.trim() && !isEnhancing ? { scale: 0.9 } : {}}
+                                onClick={handleEnhancePrompt}
+                                disabled={!inputValue.trim() || isEnhancing}
+                                style={{
+                                  position: "relative",
+                                  width: 30,
+                                  height: 30,
+                                  borderRadius: 8,
+                                  display: "flex",
+                                  alignItems: "center",
+                                  justifyContent: "center",
+                                  background: "hsl(var(--background))",
+                                  border: "1px solid hsl(var(--border) / 0.6)",
+                                  boxShadow: "0 1px 3px hsla(0,0%,0%,0.06)",
+                                  color: "hsl(270 65% 55%)",
+                                  cursor: !inputValue.trim() || isEnhancing ? "not-allowed" : "pointer",
+                                  opacity: !inputValue.trim() ? 0.4 : 1,
+                                  transition: "opacity 0.2s ease",
+                                }}
+                              >
+                                <AnimatePresence mode="wait">
+                                  {isEnhancing ? (
+                                    <motion.div
+                                      key="loader"
+                                      initial={{ opacity: 0, rotate: 0 }}
+                                      animate={{ opacity: 1, rotate: 360 }}
+                                      exit={{ opacity: 0 }}
+                                      transition={{ rotate: { duration: 0.8, repeat: Infinity, ease: "linear" }, opacity: { duration: 0.15 } }}
+                                    >
+                                      <Loader2 size={15} strokeWidth={2.2} />
+                                    </motion.div>
+                                  ) : (
+                                    <motion.div
+                                      key="wand"
+                                      initial={{ opacity: 0 }}
+                                      animate={{ opacity: 1 }}
+                                      exit={{ opacity: 0 }}
+                                      transition={{ duration: 0.15 }}
+                                    >
+                                      <Wand2 size={15} strokeWidth={2.2} />
+                                    </motion.div>
+                                  )}
+                                </AnimatePresence>
+                                <AnimatePresence>
+                                  {enhanceCount > 0 && !isEnhancing && (
+                                    <motion.span
+                                      initial={{ opacity: 0, scale: 0.5 }}
+                                      animate={{ opacity: 1, scale: 1 }}
+                                      exit={{ opacity: 0, scale: 0.5 }}
+                                      transition={{ type: "spring", damping: 18, stiffness: 400 }}
+                                      style={{
+                                        position: "absolute",
+                                        top: -4,
+                                        right: -4,
+                                        display: "inline-flex",
+                                        alignItems: "center",
+                                        justifyContent: "center",
+                                        minWidth: 14,
+                                        height: 14,
+                                        borderRadius: 7,
+                                        fontSize: 9,
+                                        fontWeight: 700,
+                                        lineHeight: 1,
+                                        padding: "0 4px",
+                                        background: "hsl(270 65% 55%)",
+                                        color: "hsl(0 0% 100%)",
+                                        letterSpacing: "0.02em",
+                                      }}
+                                    >
+                                      {enhanceCount}
+                                    </motion.span>
+                                  )}
+                                </AnimatePresence>
+                              </motion.button>
+                            </TooltipTrigger>
+                            <TooltipContent side="top" className="text-xs">Enhance your prompt with Luka</TooltipContent>
+                          </Tooltip>
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <motion.button whileHover={{ scale: 1.1, boxShadow: "0 2px 8px hsla(0,0%,0%,0.10)" }} whileTap={{ scale: 0.9 }} style={{ width: 30, height: 30, borderRadius: 8, display: "flex", alignItems: "center", justifyContent: "center", background: "hsl(var(--background))", border: "1px solid hsl(var(--border) / 0.6)", boxShadow: "0 1px 3px hsla(0,0%,0%,0.06)", color: "hsl(0 0% 0%)", cursor: "pointer" }}>
+                                <Mic size={15} strokeWidth={2.2} />
+                              </motion.button>
+                            </TooltipTrigger>
+                            <TooltipContent side="top" sideOffset={6}>
+                              Voice input
+                            </TooltipContent>
+                          </Tooltip>
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <motion.button
+                                whileHover={inputValue.trim() ? { scale: 1.1 } : {}}
+                                whileTap={inputValue.trim() ? { scale: 0.9 } : {}}
+                                className={`luka-send-btn ${inputValue.trim() ? "enabled" : ""}`}
+                                disabled={!inputValue.trim()}
+                              >
+                                <Send size={15} strokeWidth={2.2} />
+                              </motion.button>
+                            </TooltipTrigger>
+                            <TooltipContent side="top" sideOffset={6}>
+                              Send message
+                            </TooltipContent>
+                          </Tooltip>
+                        </div>
                       </div>
                     </div>
                   </div>
-
-                  {/* Voice Recording Overlay */}
-                  <VoiceRecordingOverlay
-                    open={voiceOpen}
-                    onClose={() => setVoiceOpen(false)}
-                    onComplete={(text) => setMessage((prev) => (prev ? prev + " " + text : text))}
+                  )}
+                </>
+              ) : activeTab === "workspace" ? (
+                !hasWorkspaceEngagement ? (
+                  <>
+                    <WorkspaceEmptyState onAddEngagement={() => setShowAddEngagementModal(true)} />
+                    <AddEngagementModal
+                      open={showAddEngagementModal}
+                      onClose={() => setShowAddEngagementModal(false)}
+                      onSelect={(eng) => {
+                        setWorkspaceEngagement({ name: eng.name, code: eng.code, source: eng.source });
+                        setShowAddEngagementModal(false);
+                        setHasWorkspaceEngagement(true);
+                      }}
+                    />
+                  </>
+                ) : (
+                  <EngagementWorkspaceShell
+                    engagement={workspaceEngagement ?? { name: "", code: "" }}
+                    onAddEngagement={() => setShowAddEngagementModal(true)}
+                    collapsed={workspaceSidebarCollapsed}
+                    onCollapse={() => setWorkspaceSidebarCollapsed(true)}
                   />
-                </div>
-              </div>}
+                )
+              ) : (
+                <WorkspaceView postAutomationActive={true} />
+              )}
+              <LukaSettingsOverlay
+                open={settingsOpen}
+                onClose={() => setSettingsOpen(false)}
+                activeTab={activeTab}
+                onOpenNewWindow={handleOpenNewWindow}
+                onFullscreen={handleFullscreen}
+                onMinimize={handleMinimize}
+                isFullscreen={isFullscreen}
+                isMinimized={isMinimized}
+              />
             </div>
-          </main>
-        </div>
-      </div>
-
-      {/* Activity panel */}
-      <LukaActivityPanel
-        entries={activityEntries}
-        isProcessing={isActivityProcessing}
-        minimized={activityMinimized}
-        onToggleMinimize={() => setActivityMinimized(v => !v)}
-      />
-
-      {/* Settings overlay */}
-      <LukaSettingsOverlay open={settingsOpen} onClose={() => setSettingsOpen(false)} />
-    </>
+          </motion.div>
+        </>
+      )}
+    </AnimatePresence>
   );
 }
+
+export default AskLukaOverlay;
