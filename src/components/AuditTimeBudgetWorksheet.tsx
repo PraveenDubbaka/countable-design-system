@@ -96,6 +96,18 @@ const sumField = (rows: BudgetRow[], field: keyof BudgetRow) => {
 };
 const fmtNum = (n: number) => n > 0 ? n.toFixed(1) : '';
 
+const TableCols = () => (
+  <colgroup>
+    <col />
+    <col style={{ width: '96px' }} />
+    <col style={{ width: '96px' }} />
+    <col style={{ width: '96px' }} />
+    <col style={{ width: '96px' }} />
+    <col style={{ width: '96px' }} />
+    <col style={{ width: '96px' }} />
+  </colgroup>
+);
+
 // Role keys that map to each "Budget by Team Member" row
 const TB_ROW_TO_ROLES: Record<string, RoleKey[]> = Object.entries(ROLE_TO_TB_ROW).reduce(
   (acc, [role, rowId]) => {
@@ -221,6 +233,7 @@ export function AuditTimeBudgetWorksheet({ isUS = false }: { isUS?: boolean }) {
                 </div>
                 <div className="overflow-x-auto">
                   <table className="w-full">
+                    <TableCols />
                     <thead className="sticky top-0 z-10">
                       <tr className="bg-muted border-b border-border">
                         <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider">Description</th>
@@ -288,6 +301,7 @@ export function AuditTimeBudgetWorksheet({ isUS = false }: { isUS?: boolean }) {
           <div className="bg-card border border-border shadow-[0_2px_8px_hsl(213_40%_20%/0.06)] rounded-md overflow-hidden">
             <div className="overflow-x-auto">
               <table className="w-full">
+                <TableCols />
                 <tbody>
                   <tr className="bg-primary/5 border-b border-border">
                     <td className="px-4 py-3 text-sm font-bold text-foreground">Grand Total</td>
