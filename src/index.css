@@ -1947,3 +1947,12 @@
     hsla(211, 76%, 33%, 0.12) 100%
   );
 }
+
+/* Engagement selector tray — border + corner radius matching concept */
+.prompt-window-shimmer-border {
+  border: 1px solid hsl(220 10% 35%);
+  border-radius: 16px;
+}
+.prompt-window-shimmer-border > div {
+  border-radius: 15px;
+}
