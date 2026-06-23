@@ -98,6 +98,21 @@ const SECTIONS_WITH_HEADERS = INQUIRY_GROUPS.map((sec, i) => ({
   showGroupHeader: sec.group !== null && (i === 0 || sec.group !== INQUIRY_GROUPS[i - 1].group),
 }));
 
+const INTERVIEWEE_ROLES: Record<string, string[]> = {
+  mgmt:    ['CEO', 'CFO', 'COO', 'President', 'Controller', 'VP Finance', 'Managing Director', 'VP Operations', 'Other'],
+  sales:   ['Sales Director', 'VP Sales', 'Sales Manager', 'Marketing Manager', 'Account Manager', 'Business Development Manager', 'Other'],
+  ops:     ['Operations Manager', 'Purchasing Manager', 'Supply Chain Manager', 'Production Manager', 'Warehouse Manager', 'Plant Manager', 'Other'],
+  it:      ['IT Manager', 'IT Director', 'CTO', 'Systems Administrator', 'Network Administrator', 'IT Coordinator', 'Other'],
+  acctg:   ['Controller', 'Chief Accountant', 'Accounting Manager', 'AP Manager', 'AR Manager', 'Financial Analyst', 'Bookkeeper', 'Other'],
+  lawyers: ['Legal Counsel', 'General Counsel', 'Internal Auditor', 'Risk Manager', 'Compliance Officer', 'Other'],
+};
+
+const AUDITOR_OPTIONS = [
+  'Elena Sokolova — Partner',
+  'Priya Raman — Staff',
+  'Marcus Chen — CMS',
+];
+
 function emptyPlan(): PlanRow { return { checked: false, psc: '', response: '', wpRef: [] }; }
 function emptyIv(): Interviewee { return { who: '', byWhom: '', date: '' }; }
 function emptySec(): SectionRow { return { psc: '', response: '', wpRef: [] }; }
@@ -234,9 +249,39 @@ export function Audit505Worksheet({ isUS = false }: { isUS?: boolean }) {
                         <tbody className="divide-y divide-border">
                           {interviews.map((iv, i) => (
                             <tr key={i} className="hover:bg-muted/30">
-                              <td className="px-4 py-1.5"><Input disabled={locked} value={iv.who} onChange={e => setIv(sec.id, i, {who:e.target.value})} placeholder="Name / role" className="h-7 text-sm border-0 shadow-none px-0 focus-visible:ring-0 bg-transparent" /></td>
-                              <td className="px-4 py-1.5 border-l border-border"><Input disabled={locked} value={iv.byWhom} onChange={e => setIv(sec.id, i, {byWhom:e.target.value})} placeholder="Auditor name" className="h-7 text-sm border-0 shadow-none px-0 focus-visible:ring-0 bg-transparent" /></td>
-                              <td className="px-4 py-1.5 border-l border-border" style={{width:140}}><Input disabled={locked} value={iv.date} onChange={e => setIv(sec.id, i, {date:e.target.value})} placeholder="YYYY-MM-DD" className="h-7 text-sm border-0 shadow-none px-0 focus-visible:ring-0 bg-transparent" /></td>
+                              <td className="px-2 py-1">
+                                <Select value={iv.who} onValueChange={v => setIv(sec.id, i, {who: v})} disabled={locked}>
+                                  <SelectTrigger className="h-7 text-sm border-0 shadow-none bg-transparent focus:ring-0 focus:ring-offset-0 px-2">
+                                    <SelectValue placeholder="Select name / role" />
+                                  </SelectTrigger>
+                                  <SelectContent>
+                                    {(INTERVIEWEE_ROLES[sec.id] ?? INTERVIEWEE_ROLES['mgmt']).map(role => (
+                                      <SelectItem key={role} value={role}>{role}</SelectItem>
+                                    ))}
+                                  </SelectContent>
+                                </Select>
+                              </td>
+                              <td className="px-2 py-1 border-l border-border">
+                                <Select value={iv.byWhom} onValueChange={v => setIv(sec.id, i, {byWhom: v})} disabled={locked}>
+                                  <SelectTrigger className="h-7 text-sm border-0 shadow-none bg-transparent focus:ring-0 focus:ring-offset-0 px-2">
+                                    <SelectValue placeholder="Select auditor" />
+                                  </SelectTrigger>
+                                  <SelectContent>
+                                    {AUDITOR_OPTIONS.map(name => (
+                                      <SelectItem key={name} value={name}>{name}</SelectItem>
+                                    ))}
+                                  </SelectContent>
+                                </Select>
+                              </td>
+                              <td className="px-2 py-1 border-l border-border" style={{width:160}}>
+                                <Input
+                                  type="date"
+                                  disabled={locked}
+                                  value={iv.date}
+                                  onChange={e => setIv(sec.id, i, {date: e.target.value})}
+                                  className="h-7 text-sm border-0 shadow-none px-2 focus-visible:ring-0 bg-transparent"
+                                />
+                              </td>
                             </tr>
                           ))}
                         </tbody>

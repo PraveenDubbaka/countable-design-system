@@ -46,6 +46,10 @@ const PART_B = [
 
 const ALL_PROC_IDS = [...PART_A_MGMT, ...PART_A_TCWG, ...PART_B].map(p => p.id);
 
+const MGMT_ROLES = ['CEO', 'CFO', 'COO', 'President', 'Controller', 'VP Finance', 'Managing Director', 'VP Operations', 'Other'];
+const TCWG_ROLES = ['Board Chair', 'Audit Committee Chair', 'Board Member', 'Director', 'Independent Director', 'Trustee', 'Other'];
+const AUDITOR_OPTIONS = ['Elena Sokolova — Partner', 'Priya Raman — Staff', 'Marcus Chen — CMS'];
+
 function emptyIv(): InterviewLog { return { who: '', byWhom: '', date: '' }; }
 function emptyProc(): ProcRow { return { psc: '', wpRef: [], response: '' }; }
 
@@ -96,7 +100,7 @@ export function Audit506Worksheet({ isUS = false }: { isUS?: boolean }) {
     setData(d => ({ ...d, procedures: { ...d.procedures, [id]: { ...d.procedures[id], ...patch } } }));
   }
 
-  function renderInterviewTable(interviews: InterviewLog[], setIv: (idx: number, patch: Partial<InterviewLog>) => void) {
+  function renderInterviewTable(interviews: InterviewLog[], setIv: (idx: number, patch: Partial<InterviewLog>) => void, roles: string[]) {
     return (
       <div className="rounded-md border border-border overflow-hidden mb-4">
         <table className="w-full">
@@ -104,15 +108,35 @@ export function Audit506Worksheet({ isUS = false }: { isUS?: boolean }) {
             <tr className="bg-muted text-xs font-semibold text-foreground uppercase tracking-wider border-b border-border">
               <th className="px-4 py-2 text-left">Who interviewed</th>
               <th className="px-4 py-2 text-left border-l border-border">By whom</th>
-              <th className="px-4 py-2 text-left border-l border-border" style={{width:140}}>Date</th>
+              <th className="px-4 py-2 text-left border-l border-border" style={{width:160}}>Date</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-border">
             {interviews.map((iv, i) => (
               <tr key={i} className="hover:bg-muted/30">
-                <td className="px-4 py-1.5"><Input disabled={locked} value={iv.who} onChange={e => setIv(i, {who:e.target.value})} placeholder="Name / role" className="h-7 text-sm border-0 shadow-none px-0 focus-visible:ring-0 bg-transparent" /></td>
-                <td className="px-4 py-1.5 border-l border-border"><Input disabled={locked} value={iv.byWhom} onChange={e => setIv(i, {byWhom:e.target.value})} placeholder="Auditor name" className="h-7 text-sm border-0 shadow-none px-0 focus-visible:ring-0 bg-transparent" /></td>
-                <td className="px-4 py-1.5 border-l border-border" style={{width:140}}><Input disabled={locked} value={iv.date} onChange={e => setIv(i, {date:e.target.value})} placeholder="YYYY-MM-DD" className="h-7 text-sm border-0 shadow-none px-0 focus-visible:ring-0 bg-transparent" /></td>
+                <td className="px-2 py-1">
+                  <Select value={iv.who} onValueChange={v => setIv(i, {who: v})} disabled={locked}>
+                    <SelectTrigger className="h-7 text-sm border-0 shadow-none bg-transparent focus:ring-0 focus:ring-offset-0 px-2">
+                      <SelectValue placeholder="Select name / role" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {roles.map(role => <SelectItem key={role} value={role}>{role}</SelectItem>)}
+                    </SelectContent>
+                  </Select>
+                </td>
+                <td className="px-2 py-1 border-l border-border">
+                  <Select value={iv.byWhom} onValueChange={v => setIv(i, {byWhom: v})} disabled={locked}>
+                    <SelectTrigger className="h-7 text-sm border-0 shadow-none bg-transparent focus:ring-0 focus:ring-offset-0 px-2">
+                      <SelectValue placeholder="Select auditor" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {AUDITOR_OPTIONS.map(name => <SelectItem key={name} value={name}>{name}</SelectItem>)}
+                    </SelectContent>
+                  </Select>
+                </td>
+                <td className="px-2 py-1 border-l border-border" style={{width:160}}>
+                  <Input type="date" disabled={locked} value={iv.date} onChange={e => setIv(i, {date: e.target.value})} className="h-7 text-sm border-0 shadow-none px-2 focus-visible:ring-0 bg-transparent" />
+                </td>
               </tr>
             ))}
           </tbody>
@@ -184,7 +208,7 @@ export function Audit506Worksheet({ isUS = false }: { isUS?: boolean }) {
                 <div className="flex-1 h-px bg-border" />
               </div>
               <p className="text-xs text-muted-foreground mb-2">Document who was interviewed:</p>
-              {renderInterviewTable(data.mgmtInterviews, setMgmtIv)}
+              {renderInterviewTable(data.mgmtInterviews, setMgmtIv, MGMT_ROLES)}
             </div>
             <div className="overflow-x-auto">
               <table className="w-full">
@@ -200,7 +224,7 @@ export function Audit506Worksheet({ isUS = false }: { isUS?: boolean }) {
                 <div className="flex-1 h-px bg-border" />
               </div>
               <p className="text-xs text-muted-foreground mb-2">Document who was interviewed:</p>
-              {renderInterviewTable(data.tcwgInterviews, setTcwgIv)}
+              {renderInterviewTable(data.tcwgInterviews, setTcwgIv, TCWG_ROLES)}
             </div>
             <div className="overflow-x-auto border-t border-border">
               <table className="w-full">

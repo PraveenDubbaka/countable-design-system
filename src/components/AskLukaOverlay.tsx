@@ -1329,7 +1329,7 @@ const [workspaceLoading, setWorkspaceLoading] = useState(false);
                     <div className="w-full max-w-[320px] h-2 rounded-full bg-muted mb-4 overflow-hidden"><div className="h-full rounded-full bg-gradient-to-r from-[#8649F1] to-[#2355A4]" style={{ width: `${Math.round(allTemplateSummary.totalFilled / Math.max(allTemplateSummary.totalFields, 1) * 100)}%` }} /></div>
                     <div className="w-full max-w-[340px] rounded-[10px] border border-border bg-muted/30 px-4 py-3 mb-5">
                       <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-2">Template breakdown</p>
-                      <ScrollArea className="max-h-[280px]">
+                      <ScrollArea className="max-h-[360px]">
                         <div className="space-y-3 pr-1">
                           {(() => {
                             const SECTION_LABELS: Record<string, string> = { CO: 'Client Onboarding', PL: 'Planning', DO: 'Documents', TB: 'Trial Balance & Adjusting Entries', RA: 'Risk Assessment', RP: 'Response to Assessed Risks', PR: 'Procedures', FS: 'Financial Statements', SO: 'Completion & Signoffs' };

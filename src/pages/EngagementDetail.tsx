@@ -1239,7 +1239,7 @@ export default function EngagementDetail() {
         if (engPrefix && !String(c?.id ?? '').startsWith(engPrefix)) return false;
         const firstQ = c.data.sections[0]?.questions?.[0];
         return !(firstQ?.answerType === 'none' && !c.data.objective);
-      }).slice(0, 12);
+      }).slice(0, 60);
 
       if (remaining.length === 0) { showAllSummary(allResults); return; }
 

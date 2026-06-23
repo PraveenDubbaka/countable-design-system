@@ -223,6 +223,9 @@ function DeleteCell({ onDelete, locked }: { onDelete: () => void; locked: boolea
   );
 }
 
+const INQUIRY_WHO_ROLES = ['CEO', 'CFO', 'COO', 'Controller', 'VP Finance', 'Managing Director', 'Board Chair', 'Audit Committee Chair', 'Board Member', 'Director', 'Other'];
+const INQUIRY_AUDITOR_OPTIONS = ['Elena Sokolova — Partner', 'Priya Raman — Staff', 'Marcus Chen — CMS'];
+
 function RequiredInquiryBanner({ inquiry, locked, onChange }: {
   inquiry: InquiryField; locked: boolean;
   onChange: (f: InquiryField) => void;
@@ -235,22 +238,38 @@ function RequiredInquiryBanner({ inquiry, locked, onChange }: {
         <span className="text-xs text-amber-700 dark:text-amber-400 ml-1">— to be completed every period</span>
       </div>
       <div className="grid grid-cols-3 gap-3">
-        {[
-          { label: "Who interviewed", key: "who" as const, placeholder: "Name / role" },
-          { label: "By whom", key: "byWhom" as const, placeholder: "Auditor name" },
-          { label: "Date", key: "date" as const, placeholder: "YYYY-MM-DD" },
-        ].map(f => (
-          <div key={f.key}>
-            <p className="text-xs font-medium text-amber-800 dark:text-amber-400 mb-1">{f.label}</p>
-            <Input
-              disabled={locked}
-              value={inquiry[f.key]}
-              onChange={e => onChange({ ...inquiry, [f.key]: e.target.value })}
-              placeholder={f.placeholder}
-              className="h-8 text-sm bg-white dark:bg-background border-amber-200 dark:border-amber-700 focus-visible:ring-amber-400"
-            />
-          </div>
-        ))}
+        <div>
+          <p className="text-xs font-medium text-amber-800 dark:text-amber-400 mb-1">Who interviewed</p>
+          <Select value={inquiry.who} onValueChange={v => onChange({ ...inquiry, who: v })} disabled={locked}>
+            <SelectTrigger className="h-8 text-sm bg-white dark:bg-background border-amber-200 dark:border-amber-700 focus:ring-amber-400">
+              <SelectValue placeholder="Select name / role" />
+            </SelectTrigger>
+            <SelectContent>
+              {INQUIRY_WHO_ROLES.map(r => <SelectItem key={r} value={r}>{r}</SelectItem>)}
+            </SelectContent>
+          </Select>
+        </div>
+        <div>
+          <p className="text-xs font-medium text-amber-800 dark:text-amber-400 mb-1">By whom</p>
+          <Select value={inquiry.byWhom} onValueChange={v => onChange({ ...inquiry, byWhom: v })} disabled={locked}>
+            <SelectTrigger className="h-8 text-sm bg-white dark:bg-background border-amber-200 dark:border-amber-700 focus:ring-amber-400">
+              <SelectValue placeholder="Select auditor" />
+            </SelectTrigger>
+            <SelectContent>
+              {INQUIRY_AUDITOR_OPTIONS.map(n => <SelectItem key={n} value={n}>{n}</SelectItem>)}
+            </SelectContent>
+          </Select>
+        </div>
+        <div>
+          <p className="text-xs font-medium text-amber-800 dark:text-amber-400 mb-1">Date</p>
+          <Input
+            type="date"
+            disabled={locked}
+            value={inquiry.date}
+            onChange={e => onChange({ ...inquiry, date: e.target.value })}
+            className="h-8 text-sm bg-white dark:bg-background border-amber-200 dark:border-amber-700 focus-visible:ring-amber-400"
+          />
+        </div>
       </div>
     </div>
   );

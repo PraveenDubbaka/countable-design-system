@@ -16,7 +16,19 @@ const INDUSTRIES = [
   "Hospitality & Tourism", "Manufacturing", "Mining & Resources", "Not-for-Profit",
   "Oil & Gas", "Professional Services", "Retail & Consumer", "Technology", "Transportation & Logistics",
 ];
-const ACCOUNTING_FRAMEWORKS = ["ASPE", "IFRS", "US GAAP"];
+const ACCOUNTING_FRAMEWORKS = [
+  "ASPE — Canadian Accounting Standards for Private Enterprises",
+  "IFRS — International Financial Reporting Standards",
+  "IFRS for SMEs",
+  "PE GAAP / PEM — Canadian Generally Accepted Accounting Principles",
+  "ASNPO — Canadian Accounting Standards for Not-for-Profit Organizations",
+  "PSAB — Public Sector Accounting Standards",
+  "Pension Plans — Canadian Accounting Standards for Pension Plans",
+  "US GAAP — Generally Accepted Accounting Principles (United States)",
+  "Income Tax Basis",
+  "Compliance / Regulatory Basis",
+  "Other Comprehensive Basis of Accounting (OCBOA)",
+];
 const ENTITY_CLASSIFICATIONS = ["Private", "Public", "Manufacturing"];
 const AUDIT_ROLES = [
   "Engagement Partner", "Manager", "Senior Auditor", "Staff Auditor / Assistant",
@@ -496,6 +508,7 @@ export default function CreateEngagement() {
     }
   }, [isAudit]);
   const [accountingFramework, setAccountingFramework] = useState("");
+  const [condensedForms, setCondensedForms] = useState(false);
   const [firstYearAudit, setFirstYearAudit] = useState(false);
   const [firstYearOnPlatform, setFirstYearOnPlatform] = useState("");
   const [isRollForward, setIsRollForward] = useState("");
@@ -569,11 +582,21 @@ export default function CreateEngagement() {
         { value: "ISA (International Standards on Auditing)", label: "ISA (International Standards on Auditing)" },
         { value: "GAAS (US Generally Accepted Auditing Standards)", label: "GAAS (US Generally Accepted Auditing Standards)" },
         { value: "PCAOB Standards", label: "PCAOB Standards" },
+        { value: "CPA Canada Handbook — Assurance", label: "CPA Canada Handbook — Assurance" },
+        { value: "CSAE 3000 — Attestation Engagements", label: "CSAE 3000 — Attestation Engagements" },
+        { value: "CSAE 3001 — Direct Engagements", label: "CSAE 3001 — Direct Engagements" },
+        { value: "CSAE 3410 — Greenhouse Gas Statements", label: "CSAE 3410 — Greenhouse Gas Statements" },
+        { value: "AICPA Statements on Auditing Standards (SAS)", label: "AICPA Statements on Auditing Standards (SAS)" },
       ]
     : [
         { value: "Section 2400 Review standards", label: "Section 2400 Review standards" },
+        { value: "CSRE 2400 — Review of Historical Financial Statements", label: "CSRE 2400 — Review of Historical Financial Statements" },
         { value: "ASPE", label: "ASPE" },
         { value: "IFRS", label: "IFRS" },
+        { value: "ASNPO — Accounting Standards for Not-for-Profit Organizations", label: "ASNPO — Accounting Standards for Not-for-Profit Organizations" },
+        { value: "PSAB — Public Sector Accounting Standards", label: "PSAB — Public Sector Accounting Standards" },
+        { value: "Pension Plans Accounting Standards", label: "Pension Plans Accounting Standards" },
+        { value: "CSRS 4200 — Compilation Engagements", label: "CSRS 4200 — Compilation Engagements" },
       ];
 
   const disclosureOptions = [
@@ -800,6 +823,19 @@ export default function CreateEngagement() {
                       ]}
                     />
                   )}
+                  <div className="flex flex-col gap-1">
+                    <label className="text-xs font-medium text-foreground">Use condensed audit forms?</label>
+                    <div className="flex items-center gap-4 h-9">
+                      <label className="flex items-center gap-1.5 cursor-pointer text-sm text-foreground">
+                        <input type="radio" name="condensedForms" value="yes" checked={condensedForms} onChange={() => setCondensedForms(true)} className="accent-primary" />
+                        Yes
+                      </label>
+                      <label className="flex items-center gap-1.5 cursor-pointer text-sm text-foreground">
+                        <input type="radio" name="condensedForms" value="no" checked={!condensedForms} onChange={() => setCondensedForms(false)} className="accent-primary" />
+                        No
+                      </label>
+                    </div>
+                  </div>
                 </div>
               </SectionCard>
             )}
