@@ -1352,23 +1352,6 @@ const [workspaceLoading, setWorkspaceLoading] = useState(false);
                         <span className="text-[10px] font-semibold text-muted-foreground uppercase tracking-widest">Next step</span>
                         <div className="flex-1 h-px bg-border" />
                       </div>
-                      {/* Workflow progress */}
-                      <div className="flex items-center justify-center gap-1 mb-4 text-[10px] font-medium">
-                        {[
-                          { label: "Onboarding", done: true },
-                          { label: "Planning", done: true },
-                          { label: "Populate", done: true },
-                          { label: "Send to Client", done: false },
-                        ].map((step, i, arr) => (
-                          <span key={step.label} className="flex items-center gap-1">
-                            <span className={`inline-flex items-center gap-0.5 px-2 py-0.5 rounded-full ${step.done ? "bg-green-100 text-green-700 dark:bg-green-950/40 dark:text-green-400" : "bg-primary/10 text-primary font-semibold"}`}>
-                              {step.done && <CheckCircle2 className="h-2.5 w-2.5" />}
-                              {step.label}
-                            </span>
-                            {i < arr.length - 1 && <ArrowRight className="h-2.5 w-2.5 text-muted-foreground shrink-0" />}
-                          </span>
-                        ))}
-                      </div>
                       <p className="text-xs text-muted-foreground text-center mb-3 leading-relaxed">
                         Luka can automatically deliver required letters and documents to your client via their portal or mobile app.
                       </p>
