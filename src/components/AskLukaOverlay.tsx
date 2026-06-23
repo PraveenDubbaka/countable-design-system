@@ -52,6 +52,7 @@ import {
   CheckCircle2,
   Circle,
   ArrowRight,
+  Smartphone,
 } from "lucide-react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { cn } from "@/lib/utils";
@@ -271,6 +272,25 @@ export function AskLukaOverlay({
       setAnalysisPhase("idle");
     }
   }, [open, autoFillMode]);
+
+  // Auto-select the current engagement when opening in autoFillMode
+  useEffect(() => {
+    if (open && autoFillMode && engagementLabel && !selectedEngagement) {
+      const match = ENGAGEMENTS.find(e =>
+        e.id.toLowerCase().includes(engagementLabel.toLowerCase()) ||
+        engagementLabel.toLowerCase().includes(e.id.toLowerCase()) ||
+        e.client.toLowerCase().includes(engagementLabel.toLowerCase())
+      );
+      if (match) {
+        setSelectedEngagement(match);
+      } else {
+        // Synthesise from the label so the header always shows something
+        const parts = engagementLabel.split(" · ");
+        setSelectedEngagement({ client: parts[0] ?? engagementLabel, id: parts[1] ?? engagementLabel, yearEnd: "", status: "Active" });
+      }
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [open, autoFillMode, engagementLabel]);
 
   useEffect(() => {
     const openHandler = () => setSettingsOpen(true);
@@ -1323,6 +1343,54 @@ const [workspaceLoading, setWorkspaceLoading] = useState(false);
                       {allTemplateSummary.templates.some(t => (t.totalCount - t.filledCount) > 0) && (<button onClick={() => onOpenChange(false)} className="w-full inline-flex items-center justify-center gap-2 h-10 px-5 rounded-[10px] text-sm font-semibold text-white bg-gradient-to-br from-[#8649F1] to-[#2355A4] hover:opacity-90 transition-opacity shadow-md">Review {allTemplateSummary.templates.reduce((s, t) => s + Math.max(0, t.totalCount - t.filledCount), 0)} flagged items</button>)}
                       <button onClick={() => onOpenEngagementSheet?.()} className="w-full inline-flex items-center justify-center gap-2 h-10 px-5 rounded-[10px] text-sm font-semibold border border-primary/40 text-primary hover:bg-primary/5 transition-colors">View engagement overview</button>
                       <button onClick={() => onOpenChange(false)} className="text-xs text-muted-foreground hover:text-foreground transition-colors">Back to checklist</button>
+                    </div>
+
+                    {/* ── Client delivery section ── */}
+                    <div className="w-full max-w-[320px] mt-4">
+                      <div className="flex items-center gap-2 mb-3">
+                        <div className="flex-1 h-px bg-border" />
+                        <span className="text-[10px] font-semibold text-muted-foreground uppercase tracking-widest">Next step</span>
+                        <div className="flex-1 h-px bg-border" />
+                      </div>
+                      {/* Workflow progress */}
+                      <div className="flex items-center justify-center gap-1 mb-4 text-[10px] font-medium">
+                        {[
+                          { label: "Onboarding", done: true },
+                          { label: "Planning", done: true },
+                          { label: "Populate", done: true },
+                          { label: "Send to Client", done: false },
+                        ].map((step, i, arr) => (
+                          <span key={step.label} className="flex items-center gap-1">
+                            <span className={`inline-flex items-center gap-0.5 px-2 py-0.5 rounded-full ${step.done ? "bg-green-100 text-green-700 dark:bg-green-950/40 dark:text-green-400" : "bg-primary/10 text-primary font-semibold"}`}>
+                              {step.done && <CheckCircle2 className="h-2.5 w-2.5" />}
+                              {step.label}
+                            </span>
+                            {i < arr.length - 1 && <ArrowRight className="h-2.5 w-2.5 text-muted-foreground shrink-0" />}
+                          </span>
+                        ))}
+                      </div>
+                      <p className="text-xs text-muted-foreground text-center mb-3 leading-relaxed">
+                        Luka can automatically deliver required letters and documents to your client via their portal or mobile app.
+                      </p>
+                      <div className="flex flex-col gap-2">
+                        <button
+                          onClick={() => { /* portal delivery — stub */ }}
+                          className="w-full inline-flex items-center justify-center gap-2 h-10 px-5 rounded-[10px] text-sm font-semibold text-white bg-gradient-to-br from-[#8649F1] to-[#2355A4] hover:opacity-90 transition-opacity shadow-md"
+                        >
+                          <Globe className="h-4 w-4" />
+                          Send to Client Portal
+                        </button>
+                        <button
+                          onClick={() => { /* mobile app delivery — stub */ }}
+                          className="w-full inline-flex items-center justify-center gap-2 h-10 px-5 rounded-[10px] text-sm font-semibold border border-border text-foreground hover:bg-muted/50 transition-colors"
+                        >
+                          <Smartphone className="h-4 w-4" />
+                          Send to Client App
+                        </button>
+                        <p className="text-[10px] text-muted-foreground text-center mt-1">
+                          Documents are encrypted in transit and require client authentication.
+                        </p>
+                      </div>
                     </div>
                   </div>
                     ) : summaryMode && fillSummary ? (
