@@ -4,6 +4,7 @@ import { setLukaOpen } from "@/lib/lukaOpenStore";
 import LukaActivityPanel, { type ActivityEntry } from "@/components/luka/LukaActivityPanel";
 import lukaLogo from "@/assets/luka-logo.png";
 import quickbooksLogo from "@/assets/quickbooks-intuit-logo.png";
+import xeroLogo from "@/assets/xero-logo.png";
 import { motion, AnimatePresence, LayoutGroup } from "framer-motion";
 import {
   Tooltip,
@@ -1069,9 +1070,12 @@ const [workspaceLoading, setWorkspaceLoading] = useState(false);
                       <span className="text-sm font-medium text-foreground">
                         {selectedEngagement ? selectedEngagement.id : "Select Engagement"}
                       </span>
-                      {selectedEngagement && (
-                        <img src={quickbooksLogo} alt="QuickBooks" className="h-[24px] w-auto object-contain" />
-                      )}
+                      {selectedEngagement && (() => {
+                        const src = (autoFillSources ?? []).join(" ").toLowerCase();
+                        if (src.includes("xero")) return <img src={xeroLogo} alt="Xero" className="h-[20px] w-auto object-contain" />;
+                        if (src.includes("quickbooks") || src.includes("qbo")) return <img src={quickbooksLogo} alt="QuickBooks" className="h-[24px] w-auto object-contain" />;
+                        return null;
+                      })()}
                       <ChevronDown size={14} className={`text-muted-foreground transition-transform ${showEngagementTray ? "rotate-180" : ""}`} />
                     </motion.button>
                     
