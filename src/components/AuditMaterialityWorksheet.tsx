@@ -363,10 +363,8 @@ export function AuditMaterialityWorksheet({ isUS = false }: AuditMaterialityWork
                 Refresh
               </Button>
             </div>
-            <div className="px-6 py-5">
-              {/* Main table */}
-              <div className="overflow-x-auto">
-                <table className="w-full">
+            <div className="overflow-x-auto">
+              <table className="w-full">
                   <thead className="sticky top-0 z-10">
                     <tr className="bg-muted border-b border-border">
                       <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider">Entity Name</th>
@@ -460,7 +458,6 @@ export function AuditMaterialityWorksheet({ isUS = false }: AuditMaterialityWork
                     </tr>
                   </tbody>
                 </table>
-              </div>
             </div>
             {/* Clearly Trivial Misstatements footer — inside the same card */}
             <div className="border-t border-border px-4 py-3">
