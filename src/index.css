@@ -1753,3 +1753,121 @@
   white-space: nowrap;
 }
 .letter-body p { line-height: 1.55; }
+
+/* ============================================
+   LUKA UI COMPONENT CLASSES
+   ============================================ */
+
+.action-icon {
+  @apply p-1.5 rounded-md transition-all duration-200 ease-out cursor-pointer;
+  color: hsl(var(--muted-foreground));
+}
+.action-icon:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px hsl(var(--background)), 0 0 0 4px hsl(var(--ring));
+}
+.action-icon:hover {
+  color: hsl(var(--primary));
+  background: hsl(var(--primary) / 0.08);
+  transform: scale(1.1);
+}
+.action-icon-active {
+  color: hsl(var(--primary));
+  background: hsl(var(--primary) / 0.12);
+}
+.action-icon-disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+.action-icon-disabled:hover {
+  color: hsl(var(--muted-foreground));
+  background: transparent;
+  transform: none;
+}
+
+.luka-prompt-chip {
+  @apply px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 cursor-pointer;
+  border: 1px solid hsl(var(--border));
+  background: hsl(var(--card));
+  color: hsl(var(--foreground));
+}
+.luka-prompt-chip:hover {
+  border-color: hsl(var(--primary) / 0.3);
+  background: hsl(var(--primary) / 0.04);
+  box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.15);
+}
+
+.luka-input-wrapper {
+  @apply rounded-xl border p-3 transition-all duration-200;
+  border-color: hsl(0 0% 35%);
+  background: hsl(var(--card));
+  box-shadow: 0 2px 12px 0 hsla(0, 0%, 0%, 0.10), 0 1px 4px 0 hsla(0, 0%, 0%, 0.06);
+}
+.luka-input-wrapper:focus-within {
+  border-color: hsl(207 71% 19%);
+  border-width: 2px;
+  padding: calc(0.75rem - 1px);
+}
+
+.luka-input {
+  @apply w-full text-sm outline-none resize-none bg-transparent;
+  color: hsl(var(--foreground));
+  line-height: 20px;
+}
+.luka-input-autoresize {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.luka-input-autoresize::-webkit-scrollbar {
+  display: none;
+}
+.luka-input::placeholder {
+  color: hsl(var(--muted-foreground));
+}
+
+.luka-input-action {
+  @apply p-1.5 rounded-md transition-all duration-200 cursor-pointer;
+  color: hsl(var(--muted-foreground));
+}
+.luka-input-action:hover {
+  color: hsl(var(--foreground));
+  background: hsl(var(--muted));
+}
+
+.luka-model-badge {
+  @apply inline-flex items-center gap-1.5 px-3 py-1 rounded-md text-xs font-medium transition-all duration-200 cursor-pointer;
+  border: 1px solid hsl(var(--border));
+  color: hsl(var(--foreground));
+}
+.luka-model-badge:hover {
+  background: hsl(var(--muted));
+}
+
+.luka-send-btn {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  cursor: not-allowed;
+  background: hsl(var(--muted));
+  color: hsl(var(--muted-foreground) / 0.5);
+  border: none;
+}
+.luka-send-btn.enabled {
+  cursor: pointer;
+  background: linear-gradient(135deg, #9747FF, #115697);
+  color: white;
+  box-shadow: 0 2px 8px hsla(270, 60%, 50%, 0.3);
+}
+.luka-send-btn.enabled:hover {
+  box-shadow: 0 4px 14px hsla(270, 60%, 50%, 0.45);
+}
+
+.luka-qb-badge {
+  @apply inline-flex items-center gap-1 px-2 py-0.5 rounded-md;
+  border: 1px solid hsl(var(--border));
+  background: hsl(var(--card));
+}
