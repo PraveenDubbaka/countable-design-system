@@ -1202,8 +1202,8 @@ const [workspaceLoading, setWorkspaceLoading] = useState(false);
                                       value={engagementSearch}
                                       onChange={(e) => setEngagementSearch(e.target.value)}
                                       placeholder="Search"
-                                      className="h-9 w-56 pl-8 pr-3 text-sm rounded-lg border bg-background focus:outline-none focus:ring-2 focus:ring-primary/30"
-                                      style={{ borderColor: "hsl(var(--border))" }}
+                                      className="h-9 w-56 pl-8 pr-3 text-sm border bg-background focus:outline-none focus:ring-2 focus:ring-primary/30"
+                                      style={{ borderColor: "hsl(var(--border))", borderRadius: "8px" }}
                                     />
                                   </div>
                                   <Tooltip>
@@ -1212,8 +1212,8 @@ const [workspaceLoading, setWorkspaceLoading] = useState(false);
                                         whileHover={{ scale: 1.05, backgroundColor: "hsl(var(--muted) / 0.8)" }}
                                         whileTap={{ scale: 0.95 }}
                                         onClick={() => { setShowEngagementTray(false); setEngagementSearch(""); }}
-                                        className="h-9 w-9 inline-flex items-center justify-center rounded-lg border transition-colors"
-                                        style={{ borderColor: "hsl(var(--border))", background: "hsl(var(--background))" }}
+                                        className="h-9 w-9 inline-flex items-center justify-center border transition-colors"
+                                        style={{ borderColor: "hsl(var(--border))", background: "hsl(var(--background))", borderRadius: "8px" }}
                                         aria-label="Close"
                                       >
                                         <X size={14} className="text-foreground" />
@@ -1256,7 +1256,7 @@ const [workspaceLoading, setWorkspaceLoading] = useState(false);
                                         <td className="px-5 py-3 text-foreground whitespace-nowrap">{e.id}</td>
                                         <td className="px-5 py-3 text-foreground whitespace-nowrap">{e.yearEnd}</td>
                                         <td className="px-5 py-3 whitespace-nowrap">
-                                          <span className="inline-flex items-center px-2 py-0.5 rounded-md text-xs font-medium" style={{ background: "hsl(142, 70%, 45% / 0.12)", color: "hsl(142, 70%, 35%)", border: "1px solid hsl(142, 70%, 45% / 0.3)" }}>
+                                          <span className="inline-flex items-center px-2 py-0.5 text-xs font-medium" style={{ background: "hsl(142, 70%, 45% / 0.12)", color: "hsl(142, 70%, 35%)", border: "1px solid hsl(142, 70%, 45% / 0.3)", borderRadius: "6px" }}>
                                             {e.status}
                                           </span>
                                         </td>
