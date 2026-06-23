@@ -1835,7 +1835,8 @@
 }
 
 .luka-model-badge {
-  @apply inline-flex items-center gap-1.5 px-3 py-1 rounded-md text-xs font-medium transition-all duration-200 cursor-pointer;
+  @apply inline-flex items-center gap-1.5 px-3 py-1 text-xs font-medium transition-all duration-200 cursor-pointer;
+  border-radius: 6px;
   border: 1px solid hsl(var(--border));
   color: hsl(var(--foreground));
 }
