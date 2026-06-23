@@ -1,9 +1,11 @@
 import { Dispatch, SetStateAction, useState } from 'react';
+import { useParams } from 'react-router-dom';
 import { Info, Plus, Trash2 } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
+import { useTimeEntries, type RoleKey } from '@/lib/useTimeEntries';
 
 interface AuditDetailedBudgetWorksheetProps {
   isUS?: boolean;
@@ -19,7 +21,15 @@ const parseNum = (s: string) => parseFloat(s.replace(/[^0-9.]/g, '')) || 0;
 const fmtAmt   = (n: number) => n > 0 ? `$${n.toFixed(2)}` : '—';
 const fmtHrs   = (n: number) => n > 0 ? n.toFixed(1) : '—';
 
+// Maps each staff-section row to a tracker RoleKey
+const ROW_TO_ROLE: Record<string, RoleKey> = {
+  f1: 'senior', f2: 'assistant',
+  m1: 'partner', m2: 'manager', m3: 'eqcr',
+};
+
 export function AuditDetailedBudgetWorksheet({ isUS = false }: AuditDetailedBudgetWorksheetProps) {
+  const { engagementId = 'default' } = useParams<{ engagementId: string }>();
+  const { hrsForRole } = useTimeEntries(engagementId);
   const EQCR = isUS ? 'EQR' : 'EQCR';
 
   const [fieldRows,     setFieldRows]     = useState<StaffRow[]>([makeStaff('f1', 'Senior'), makeStaff('f2', 'Assistant(s)')]);
@@ -95,13 +105,22 @@ export function AuditDetailedBudgetWorksheet({ isUS = false }: AuditDetailedBudg
     title: string; rows: StaffRow[];
     setter?: Dispatch<SetStateAction<StaffRow[]>>;
     roleEditable?: boolean; showAdd?: boolean; showRemove?: boolean;
-  }) => (
+  }) => {
+    const sectionLoggedHrs = rows.reduce((a, r) => {
+      const role = ROW_TO_ROLE[r.id];
+      return a + (role ? hrsForRole(role) : 0);
+    }, 0);
+    return (
     <>
-      {/* Sub-section header */}
       <tr className="bg-muted/40 border-y border-border">
-        <td className="px-4 py-2 text-xs font-semibold text-foreground" colSpan={5}>{title}</td>
+        <td className="px-4 py-2 text-xs font-semibold text-foreground" colSpan={6}>{title}</td>
       </tr>
-      {rows.map((row, i) => (
+      {rows.map((row, i) => {
+        const trackedRole = ROW_TO_ROLE[row.id];
+        const loggedHrs = trackedRole ? hrsForRole(trackedRole) : 0;
+        const budgetHrs = parseNum(row.hours);
+        const over = budgetHrs > 0 && loggedHrs > budgetHrs;
+        return (
         <tr key={row.id} className="hover:bg-muted/50 transition-colors border-b border-border/50">
           <td className="px-4 py-2.5 align-top">
             {roleEditable && setter
@@ -112,6 +131,12 @@ export function AuditDetailedBudgetWorksheet({ isUS = false }: AuditDetailedBudg
             {setter
               ? <Input className="h-8 text-sm tabular-nums text-right" placeholder="0.0" value={row.hours} onChange={e => updateStaff(setter, i, 'hours', e.target.value)} />
               : <span className="text-sm text-right block">{row.hours}</span>}
+          </td>
+          {/* Logged hours from tracker */}
+          <td className="px-4 py-2.5 align-top w-28">
+            <div className={`h-8 flex items-center justify-end px-3 text-sm tabular-nums font-medium rounded-[10px] ${loggedHrs > 0 ? (over ? 'bg-destructive/10 text-destructive' : 'bg-primary/5 text-primary') : 'text-muted-foreground'}`}>
+              {loggedHrs > 0 ? loggedHrs.toFixed(1) : '—'}
+            </div>
           </td>
           <td className="px-4 py-2.5 align-top w-28">
             {setter
@@ -129,26 +154,28 @@ export function AuditDetailedBudgetWorksheet({ isUS = false }: AuditDetailedBudg
             )}
           </td>
         </tr>
-      ))}
+        );
+      })}
       {showAdd && setter && (
         <tr className="border-b border-border/30">
-          <td colSpan={5} className="px-4 py-2">
+          <td colSpan={6} className="px-4 py-2">
             <button onClick={() => addStaff(setter)} className="flex items-center gap-1.5 text-sm font-medium text-primary hover:text-primary/80 transition-colors">
               <Plus className="h-4 w-4" />Add Row
             </button>
           </td>
         </tr>
       )}
-      {/* Sub-section subtotal */}
       <tr className="bg-muted/30 border-t border-border">
         <td className="px-4 py-2 text-xs font-semibold text-foreground">Subtotal</td>
         <td className="px-4 py-2 text-sm tabular-nums text-right font-semibold">{fmtHrs(rows.reduce((a, r) => a + parseNum(r.hours), 0))}</td>
+        <td className="px-4 py-2 text-sm tabular-nums text-right font-semibold text-primary">{sectionLoggedHrs > 0 ? fmtHrs(sectionLoggedHrs) : '—'}</td>
         <td className="px-4 py-2" />
         <td className="px-4 py-2 text-sm tabular-nums text-right font-semibold">{fmtAmt(subAmt(rows))}</td>
         <td className="px-2 py-2" />
       </tr>
     </>
-  );
+    );
+  };
 
   const TimeSection = ({
     title, rows, setter, showAdd = false,
@@ -216,7 +243,8 @@ export function AuditDetailedBudgetWorksheet({ isUS = false }: AuditDetailedBudg
                 <thead className="sticky top-0 z-10">
                   <tr className="bg-muted border-b border-border">
                     <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider">Role</th>
-                    <th className="px-4 py-3 text-right text-xs font-semibold text-foreground uppercase tracking-wider w-28">Hours</th>
+                    <th className="px-4 py-3 text-right text-xs font-semibold text-foreground uppercase tracking-wider w-28">Budget Hrs</th>
+                    <th className="px-4 py-3 text-right text-xs font-semibold text-primary uppercase tracking-wider w-28">Logged <span className="text-[10px] font-normal opacity-60">auto</span></th>
                     <th className="px-4 py-3 text-right text-xs font-semibold text-foreground uppercase tracking-wider w-28">Rate ($/hr)</th>
                     <th className="px-4 py-3 text-right text-xs font-semibold text-foreground uppercase tracking-wider w-32">Amount</th>
                     <th className="px-4 py-3 w-10" />
@@ -229,19 +257,19 @@ export function AuditDetailedBudgetWorksheet({ isUS = false }: AuditDetailedBudg
                   <StaffSection title="Administration"               rows={adminRows}      setter={setAdminRows}      roleEditable={false} showAdd={false} showRemove={false} />
                   {/* Grand total */}
                   <tr className="bg-primary/5 border-t-2 border-primary/20">
-                    <td className="px-4 py-3 text-sm font-bold text-foreground" colSpan={3}>Total</td>
+                    <td className="px-4 py-3 text-sm font-bold text-foreground" colSpan={4}>Total</td>
                     <td className="px-4 py-3 text-sm font-bold tabular-nums text-right">{fmtAmt(totalAmt)}</td>
                     <td className="px-2 py-3" />
                   </tr>
                   <tr className="border-t border-border/50">
-                    <td className="px-4 py-2.5 text-sm font-medium text-foreground" colSpan={3}>Proposed fee</td>
+                    <td className="px-4 py-2.5 text-sm font-medium text-foreground" colSpan={4}>Proposed fee</td>
                     <td className="px-4 py-2.5 w-32">
                       <Input className="h-8 text-sm tabular-nums text-right" placeholder="0.00" value={proposedFee} onChange={e => setProposedFee(e.target.value)} />
                     </td>
                     <td className="px-2 py-2.5" />
                   </tr>
                   <tr className="bg-muted/20 border-t border-border/50">
-                    <td className="px-4 py-2.5 text-sm font-medium text-foreground" colSpan={3}>Variance</td>
+                    <td className="px-4 py-2.5 text-sm font-medium text-foreground" colSpan={4}>Variance</td>
                     <td className={`px-4 py-2.5 text-sm tabular-nums text-right font-semibold ${variance > 0 ? 'text-emerald-600' : variance < 0 ? 'text-destructive' : 'text-muted-foreground'}`}>
                       {proposedFee ? fmtAmt(variance) : '—'}
                     </td>
