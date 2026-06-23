@@ -1,13 +1,12 @@
 import { useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { Info, Plus, Trash2, UserCircle2 } from 'lucide-react';
+import { Info, Plus, Trash2 } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 import {
   useTimeEntries, ROLE_TO_TB_ROW, ROLE_LABELS,
-  CURRENT_USER, useSessionTimer, fmtElapsed,
   type RoleKey, type TimeEntry,
 } from '@/lib/useTimeEntries';
 
@@ -51,8 +50,7 @@ const TableCols = () => (
 
 export function AuditTimeBudgetWorksheet({ isUS = false }: { isUS?: boolean }) {
   const { engagementId = 'default' } = useParams<{ engagementId: string }>();
-  const { entries, addEntry, removeEntry, hrsForRow, hrsForRole } = useTimeEntries(engagementId);
-  const { elapsed, reset: resetTimer } = useSessionTimer();
+  const { entries, removeEntry, hrsForRow, hrsForRole } = useTimeEntries(engagementId);
 
   const [sections, setSections] = useState(() =>
     (isUS ? US_SECTIONS : CA_SECTIONS).map(s => ({ ...s, rows: s.rows.map(r => ({ ...r })) }))
@@ -62,44 +60,6 @@ export function AuditTimeBudgetWorksheet({ isUS = false }: { isUS?: boolean }) {
   const [actualRate, setActualRate] = useState('');
   const [conclusion, setConclusion] = useState('');
   const [concluded,  setConcluded]  = useState(false);
-
-  // Quick-log form state
-  const [logSection, setLogSection] = useState('general');
-  const [logRowId,   setLogRowId]   = useState('g2');  // default: Supervision and review (manager task)
-  const [logHours,   setLogHours]   = useState('');
-  const [logDesc,    setLogDesc]    = useState('');
-
-  const handleSectionChange = (sec: string) => {
-    setLogSection(sec);
-    const first = TB_ROWS_FLAT.find(r => r.section === sec);
-    if (first) setLogRowId(first.id);
-  };
-
-  const handleLogSession = (hoursOverride?: number) => {
-    const hrs = hoursOverride ?? parseFloat(logHours);
-    if (!hrs || hrs <= 0) { toast.error('Enter a valid hours value'); return; }
-    const row = TB_ROWS_FLAT.find(r => r.id === logRowId);
-    const entry: TimeEntry = {
-      id: `te-${Date.now()}`,
-      date: new Date().toISOString().slice(0, 10),
-      roleKey: CURRENT_USER.roleKey,
-      tbRowId: logRowId,
-      tbSection: logSection,
-      hours: parseFloat(hrs.toFixed(2)),
-      description: logDesc || (row?.label ?? ''),
-    };
-    addEntry(entry);
-    setLogHours('');
-    setLogDesc('');
-    toast.success(`${hrs.toFixed(2)}h logged for ${CURRENT_USER.name}`);
-  };
-
-  const handleLogCurrentSession = () => {
-    const hrs = parseFloat((elapsed / 3600).toFixed(2));
-    if (hrs < 0.02) { toast.error('Session too short to log (< 1 min)'); return; }
-    handleLogSession(hrs);
-    resetTimer();
-  };
 
   const updateCell = (si: number, ri: number, field: keyof BudgetRow, val: string) =>
     setSections(prev => prev.map((s, i) => i !== si ? s : { ...s, rows: s.rows.map((r, j) => j !== ri ? r : { ...r, [field]: val }) }));
@@ -113,7 +73,6 @@ export function AuditTimeBudgetWorksheet({ isUS = false }: { isUS?: boolean }) {
   const totalLogged       = entries.reduce((a, e) => a + e.hours, 0);
 
   const standard = isUS ? 'AU-C 300' : 'CAS 300';
-  const filteredRows = TB_ROWS_FLAT.filter(r => r.section === logSection);
 
   return (
     <div className="flex flex-col h-full">
@@ -130,65 +89,6 @@ export function AuditTimeBudgetWorksheet({ isUS = false }: { isUS?: boolean }) {
 
       <div className="flex-1 overflow-y-auto bg-muted/30">
         <div className="p-6 space-y-4">
-
-          {/* ── Active session tracker ──────────────────────────────────────── */}
-          <div className="bg-card border border-border rounded-md shadow-[0_2px_8px_hsl(213_40%_20%/0.06)] overflow-hidden">
-            <div className="px-5 py-3 flex items-center gap-4">
-              {/* User badge */}
-              <div className="flex items-center gap-2.5 shrink-0">
-                <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-xs font-bold text-primary">
-                  {CURRENT_USER.initials}
-                </div>
-                <div>
-                  <p className="text-sm font-semibold text-foreground leading-tight">{CURRENT_USER.name}</p>
-                  <p className="text-xs text-muted-foreground">{ROLE_LABELS[CURRENT_USER.roleKey]}</p>
-                </div>
-              </div>
-
-              <div className="h-6 w-px bg-border shrink-0" />
-
-              {/* Session timer */}
-              <div className="flex items-center gap-2 shrink-0">
-                <div className={`w-2 h-2 rounded-full shrink-0 ${elapsed > 0 ? 'bg-emerald-500 animate-pulse' : 'bg-muted-foreground'}`} />
-                <span className="text-xs text-muted-foreground">Session active</span>
-                <span className="text-sm font-mono font-semibold tabular-nums text-primary">{fmtElapsed(elapsed)}</span>
-              </div>
-
-              <div className="flex-1" />
-
-              {/* Quick-log selectors */}
-              <div className="flex items-center gap-2">
-                <select className="input-double-border h-7 text-xs rounded-[8px] border border-[#dcdfe4] bg-white px-2 text-foreground focus:outline-none"
-                  value={logSection} onChange={e => handleSectionChange(e.target.value)}>
-                  {Object.entries(SECTION_LABELS).map(([k,v]) => <option key={k} value={k}>{v}</option>)}
-                </select>
-                <select className="input-double-border h-7 text-xs rounded-[8px] border border-[#dcdfe4] bg-white px-2 text-foreground focus:outline-none max-w-[200px]"
-                  value={logRowId} onChange={e => setLogRowId(e.target.value)}>
-                  {filteredRows.map(r => <option key={r.id} value={r.id}>{r.label}</option>)}
-                </select>
-              </div>
-
-              {/* Log session button */}
-              <Button size="sm" variant="outline" className="h-7 text-xs gap-1.5 shrink-0"
-                onClick={handleLogCurrentSession} disabled={elapsed < 60}>
-                Log session ({(elapsed / 3600).toFixed(2)}h)
-              </Button>
-            </div>
-
-            {/* Manual quick-log row */}
-            <div className="px-5 py-3 border-t border-border/50 bg-muted/20 flex items-center gap-3">
-              <UserCircle2 className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
-              <span className="text-xs text-muted-foreground shrink-0">Manual entry:</span>
-              <Input type="number" min="0.25" step="0.25" placeholder="Hours" className="h-7 text-xs w-20 tabular-nums text-right"
-                value={logHours} onChange={e => setLogHours(e.target.value)} />
-              <Input placeholder="Description (optional)" className="h-7 text-xs flex-1"
-                value={logDesc} onChange={e => setLogDesc(e.target.value)}
-                onKeyDown={e => { if (e.key === 'Enter') handleLogSession(); }} />
-              <Button size="sm" className="h-7 text-xs gap-1.5 shrink-0" onClick={() => handleLogSession()}>
-                <Plus className="h-3.5 w-3.5" /> Log
-              </Button>
-            </div>
-          </div>
 
           {/* ── Average charge-out rate ─────────────────────────────────────── */}
           <div className="bg-card border border-border shadow-[0_2px_8px_hsl(213_40%_20%/0.06)] rounded-md overflow-hidden">
