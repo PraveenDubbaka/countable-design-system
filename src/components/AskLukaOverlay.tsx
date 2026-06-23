@@ -1,7 +1,7 @@
 import { useState, useRef, useCallback, useEffect } from "react";
 import { LukaAttachMenu, AttachedFilesBar, useAttachedFiles } from "@/components/luka/LukaAttachMenu";
 import { VoiceRecordingOverlay } from "@/components/luka/VoiceRecordingOverlay";
-import { X, Mic, Plus, Search, MessageSquare, Minus, Send, Inbox, Maximize2, ChevronLeft, ChevronRight, Clock, PanelLeftClose, MoreHorizontal, Zap, Building2, CheckCircle2, Loader2, Circle, ArrowRight } from "lucide-react";
+import { X, Mic, Plus, Search, MessageSquare, Minus, Send, Inbox, Maximize2, ChevronLeft, ChevronRight, Clock, PanelLeftClose, MoreHorizontal, Zap, Building2, CheckCircle2, Loader2, Circle, ArrowRight, Wand2, Pin, PinOff, Trash2, Settings, ChevronDown, Globe, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from "@/components/ui/tooltip";
@@ -11,6 +11,10 @@ import { LukaThinkingMessage } from "@/components/luka/LukaThinkingMessage";
 import { GrossMarginResponse } from "@/components/luka/GrossMarginResponse";
 import { TrialBalanceGIFIResponse } from "@/components/luka/TrialBalanceGIFIResponse";
 import { LukaResponseActions } from "@/components/luka/LukaResponseActions";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import LukaActivityPanel, { type ActivityEntry } from "@/components/luka/LukaActivityPanel";
+import LukaSettingsOverlay from "@/components/luka/LukaSettingsOverlay";
+import { setLukaOpen } from "@/lib/lukaOpenStore";
 
 interface FillSummary {
   filledCount: number;
@@ -56,29 +60,54 @@ interface AskLukaOverlayProps {
 
 const statusColors = ["bg-green-500", "bg-green-500", "bg-amber-500", "bg-green-500", "bg-green-500", "bg-green-500", "bg-purple-500", "bg-purple-500", "bg-amber-500", "bg-green-500", "bg-purple-500"];
 
-const pinnedThreads = [
+const INITIAL_PINNED = [
   { id: 1, name: "Emerging Trends in Accounting" },
   { id: 2, name: "Capital Asset Amortization" },
   { id: 3, name: "Generate Variance Analysis" },
   { id: 4, name: "Details on the report" },
   { id: 5, name: "Summarise uploaded report" },
+];
+
+const INITIAL_RECENT = [
   { id: 6, name: "Run Client Heath Check" },
   { id: 7, name: "Generate Trial Balance" },
   { id: 8, name: "Aged AR Analysis" },
   { id: 9, name: "General Ledger Analysis" },
   { id: 10, name: "Account Reconciliation" },
   { id: 11, name: "Notes Generator" },
+  { id: 12, name: "Bank to Trial Balance" },
 ];
 
-const recentThreads = [
-  { id: 12, name: "Emerging Trends in Accounting" },
-  { id: 13, name: "Capital Asset Amortization" },
-  { id: 14, name: "Generate Variance Analysis" },
-  { id: 15, name: "Details on the report" },
-  { id: 16, name: "Summarise uploaded report" },
-  { id: 17, name: "Run Client Heath Check" },
-  { id: 18, name: "Generate Trial Balance" },
-  { id: 19, name: "Aged AR Analysis" },
+const SLASH_PROMPTS = ["Variance Analysis","General Ledger Analysis","Account Reconciliation","Bank Reconciliation","Aged AR Analysis","Loan Amortization","Tax Payable"];
+
+const INITIAL_CONNECTORS = [
+  { id: "xero",         name: "Xero",              connected: false, color: "#13B5EA", abbr: "XE" },
+  { id: "quickbooks",   name: "QuickBooks",         connected: false, color: "#2CA01C", abbr: "QB" },
+  { id: "google-drive", name: "Google Drive",       connected: false, color: "#4285F4", abbr: "GD" },
+  { id: "slack",        name: "Slack",              connected: false, color: "#4A154B", abbr: "SL" },
+  { id: "stripe",       name: "Stripe",             connected: false, color: "#635BFF", abbr: "ST" },
+  { id: "excel",        name: "Microsoft Excel",    connected: false, color: "#217346", abbr: "XL" },
+  { id: "outlook",      name: "Microsoft Outlook",  connected: false, color: "#0078D4", abbr: "OL" },
+  { id: "hubspot",      name: "HubSpot",            connected: false, color: "#FF7A59", abbr: "HS" },
+];
+
+const MODEL_GROUPS = [
+  { ecosystem: "ChatGPT Ecosystem", models: [
+    { name: "GPT-5.4 Pro", badge: "Thinking" },
+    { name: "GPT-5.4 Standard", badge: "Fast" },
+    { name: "o3 Reasoning", badge: "Reasoning" },
+    { name: "GPT-4.1 Mini", badge: "Cheap" },
+  ]},
+  { ecosystem: "Google · Gemini", models: [
+    { name: "Gemini 3.1 Pro", badge: "Large docs" },
+    { name: "Gemini 3 Flash", badge: "Fast" },
+    { name: "Gemini Deep Think", badge: "Reasoning" },
+  ]},
+  { ecosystem: "Anthropic · Claude", models: [
+    { name: "Claude Opus 4.6", badge: "Deep analysis" },
+    { name: "Claude Sonnet 4.6", badge: "Fast" },
+    { name: "Claude Haiku", badge: "Cheap" },
+  ]},
 ];
 
 const suggestions = [
@@ -154,9 +183,128 @@ export function AskLukaOverlay({ open, onOpenChange, initialQuery, autoFillMode,
   const { files: attachedFiles, addFiles, removeFile, clearAll: clearFiles } = useAttachedFiles();
   const [voiceOpen, setVoiceOpen] = useState(false);
 
+  // Thread state
+  const [pinnedThreads, setPinnedThreads] = useState(INITIAL_PINNED);
+  const [recentThreads, setRecentThreads] = useState(INITIAL_RECENT);
+
+  // Model picker
+  const [settingsOpen, setSettingsOpen] = useState(false);
+  const [selectedModel, setSelectedModel] = useState("Gemini 3 Flash");
+  const [showModelDropdown, setShowModelDropdown] = useState(false);
+  const modelDropdownRef = useRef<HTMLDivElement>(null);
+
+  // Connectors / plus tray
+  const [connectors, setConnectors] = useState(INITIAL_CONNECTORS);
+  const [showPlusTray, setShowPlusTray] = useState(false);
+  const plusTrayRef = useRef<HTMLDivElement>(null);
+
+  // Activity panel
+  const [activityEntries, setActivityEntries] = useState<ActivityEntry[]>([]);
+  const [activityMinimized, setActivityMinimized] = useState(false);
+  const [isActivityProcessing, setIsActivityProcessing] = useState(false);
+  const activityIdCounter = useRef(0);
+
+  // Prompt enhancement
+  const [enhancedPrompt, setEnhancedPrompt] = useState<string | null>(null);
+  const [isEnhancing, setIsEnhancing] = useState(false);
+
+  // Slash command menu
+  const [showSlashMenu, setShowSlashMenu] = useState(false);
+  const [selectedSlashIndex, setSelectedSlashIndex] = useState(0);
+
+  // Effects: broadcast open state
+  useEffect(() => { setLukaOpen(open); }, [open]);
+
+  // Effect: listen for open-luka-settings event
+  useEffect(() => {
+    const handler = () => setSettingsOpen(true);
+    window.addEventListener("open-luka-settings", handler);
+    return () => window.removeEventListener("open-luka-settings", handler);
+  }, []);
+
+  // Effect: close model dropdown on outside click
+  useEffect(() => {
+    if (!showModelDropdown) return;
+    const handler = (e: MouseEvent) => {
+      if (modelDropdownRef.current && !modelDropdownRef.current.contains(e.target as Node)) {
+        setShowModelDropdown(false);
+      }
+    };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, [showModelDropdown]);
+
+  // Effect: close plus tray on outside click
+  useEffect(() => {
+    if (!showPlusTray) return;
+    const handler = (e: MouseEvent) => {
+      if (plusTrayRef.current && !plusTrayRef.current.contains(e.target as Node)) {
+        setShowPlusTray(false);
+      }
+    };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, [showPlusTray]);
+
+  // Thread handlers
+  const handlePinThread = useCallback((thread: { id: number; name: string }) => {
+    setRecentThreads(prev => prev.filter(t => t.id !== thread.id));
+    setPinnedThreads(prev => [thread, ...prev]);
+  }, []);
+
+  const handleUnpinThread = useCallback((thread: { id: number; name: string }) => {
+    setPinnedThreads(prev => prev.filter(t => t.id !== thread.id));
+    setRecentThreads(prev => [thread, ...prev]);
+  }, []);
+
+  const handleDeleteThread = useCallback((id: number) => {
+    setPinnedThreads(prev => prev.filter(t => t.id !== id));
+    setRecentThreads(prev => prev.filter(t => t.id !== id));
+  }, []);
+
+  // Connector handler
+  const handleConnectConnector = useCallback((id: string) => {
+    setConnectors(prev => prev.map(c => c.id === id ? { ...c, connected: !c.connected } : c));
+  }, []);
+
+  // Prompt enhancement
+  const handleEnhancePrompt = useCallback(() => {
+    if (!message.trim() || isEnhancing) return;
+    setIsEnhancing(true);
+    const original = message.trim();
+    setTimeout(() => {
+      setEnhancedPrompt(`${original} — with detailed analysis, supporting evidence, and actionable recommendations tailored to the current engagement context.`);
+      setIsEnhancing(false);
+    }, 1200);
+  }, [message, isEnhancing]);
+
+  const handleReplaceWithEnhanced = useCallback(() => {
+    if (enhancedPrompt) { setMessage(enhancedPrompt); setEnhancedPrompt(null); }
+  }, [enhancedPrompt]);
+
+  const handleDismissEnhanced = useCallback(() => { setEnhancedPrompt(null); }, []);
+
+  // Slash command select
+  const handleSlashSelect = useCallback((prompt: string) => {
+    setMessage(prompt);
+    setShowSlashMenu(false);
+    setSelectedSlashIndex(0);
+    inputRef.current?.focus();
+  }, []);
+
   const handleInputChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const val = e.target.value;
     setMessage(val);
+
+    // Slash command detection
+    if (val === "/") {
+      setShowSlashMenu(true);
+      setSelectedSlashIndex(0);
+    } else if (val.startsWith("/") && val.length > 1) {
+      setShowSlashMenu(true);
+    } else {
+      setShowSlashMenu(false);
+    }
 
     // Check if # is typed — open prompt picker
     const hashIdx = val.lastIndexOf("#");
@@ -256,11 +404,33 @@ export function AskLukaOverlay({ open, onOpenChange, initialQuery, autoFillMode,
   }, [message]);
 
   const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
+    if (showSlashMenu) {
+      const filtered = SLASH_PROMPTS.filter(p => message.length <= 1 || p.toLowerCase().includes(message.slice(1).toLowerCase()));
+      if (e.key === "ArrowDown") {
+        e.preventDefault();
+        setSelectedSlashIndex(i => Math.min(i + 1, filtered.length - 1));
+        return;
+      }
+      if (e.key === "ArrowUp") {
+        e.preventDefault();
+        setSelectedSlashIndex(i => Math.max(i - 1, 0));
+        return;
+      }
+      if (e.key === "Enter") {
+        e.preventDefault();
+        if (filtered[selectedSlashIndex]) handleSlashSelect(filtered[selectedSlashIndex]);
+        return;
+      }
+      if (e.key === "Escape") {
+        setShowSlashMenu(false);
+        return;
+      }
+    }
     if (e.key === "Enter" && !showPromptPicker && message.trim()) {
       e.preventDefault();
       handleSend();
     }
-  }, [showPromptPicker, message, handleSend]);
+  }, [showSlashMenu, showPromptPicker, message, selectedSlashIndex, handleSlashSelect, handleSend]);
 
   if (!open) return null;
 
@@ -371,12 +541,24 @@ export function AskLukaOverlay({ open, onOpenChange, initialQuery, autoFillMode,
                     </div>
                     <div className="pb-2">
                       {pinnedThreads.map((thread) => (
-                        <button
-                          key={thread.id}
-                          className="w-full flex items-center px-4 py-2 text-left hover:bg-muted/60 dark:hover:bg-muted/30 rounded-lg transition-colors"
-                        >
-                          <span className="text-sm text-foreground truncate">{thread.name}</span>
-                        </button>
+                        <div key={thread.id} className="group w-full flex items-center px-4 py-2 hover:bg-muted/60 dark:hover:bg-muted/30 rounded-lg transition-colors">
+                          <span className="text-sm text-foreground truncate flex-1 cursor-pointer">{thread.name}</span>
+                          <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                              <button className="opacity-0 group-hover:opacity-100 transition-opacity p-0.5 rounded hover:bg-muted">
+                                <MoreHorizontal className="h-3.5 w-3.5 text-muted-foreground" />
+                              </button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end" className="w-36">
+                              <DropdownMenuItem onClick={() => handleUnpinThread(thread)}>
+                                <PinOff className="h-3.5 w-3.5 mr-2" />Unpin
+                              </DropdownMenuItem>
+                              <DropdownMenuItem onClick={() => handleDeleteThread(thread.id)} className="text-destructive focus:text-destructive">
+                                <Trash2 className="h-3.5 w-3.5 mr-2" />Delete
+                              </DropdownMenuItem>
+                            </DropdownMenuContent>
+                          </DropdownMenu>
+                        </div>
                       ))}
                     </div>
 
@@ -386,12 +568,24 @@ export function AskLukaOverlay({ open, onOpenChange, initialQuery, autoFillMode,
                     </div>
                     <div className="pb-2">
                       {recentThreads.map((thread) => (
-                        <button
-                          key={thread.id}
-                          className="w-full flex items-center px-4 py-2 text-left hover:bg-muted/60 dark:hover:bg-muted/30 rounded-lg transition-colors"
-                        >
-                          <span className="text-sm text-foreground truncate">{thread.name}</span>
-                        </button>
+                        <div key={thread.id} className="group w-full flex items-center px-4 py-2 hover:bg-muted/60 dark:hover:bg-muted/30 rounded-lg transition-colors">
+                          <span className="text-sm text-foreground truncate flex-1 cursor-pointer">{thread.name}</span>
+                          <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                              <button className="opacity-0 group-hover:opacity-100 transition-opacity p-0.5 rounded hover:bg-muted">
+                                <MoreHorizontal className="h-3.5 w-3.5 text-muted-foreground" />
+                              </button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end" className="w-36">
+                              <DropdownMenuItem onClick={() => handlePinThread(thread)}>
+                                <Pin className="h-3.5 w-3.5 mr-2" />Pin
+                              </DropdownMenuItem>
+                              <DropdownMenuItem onClick={() => handleDeleteThread(thread.id)} className="text-destructive focus:text-destructive">
+                                <Trash2 className="h-3.5 w-3.5 mr-2" />Delete
+                              </DropdownMenuItem>
+                            </DropdownMenuContent>
+                          </DropdownMenu>
+                        </div>
                       ))}
                     </div>
                   </ScrollArea>
@@ -509,6 +703,15 @@ export function AskLukaOverlay({ open, onOpenChange, initialQuery, autoFillMode,
                     </Button>
                   </TooltipTrigger>
                   <TooltipContent side="bottom"><p>Toggle Sidebar</p></TooltipContent>
+                </Tooltip>
+                {/* Settings */}
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => setSettingsOpen(true)}>
+                      <Settings className="h-4 w-4 text-muted-foreground" />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent side="bottom"><p>Settings</p></TooltipContent>
                 </Tooltip>
                 {/* Full-screen mode */}
                 <Tooltip>
@@ -1012,9 +1215,50 @@ export function AskLukaOverlay({ open, onOpenChange, initialQuery, autoFillMode,
                     onClose={() => { setShowPromptPicker(false); setHashFilter(""); }}
                   />
 
+                  {/* Slash command menu */}
+                  {showSlashMenu && (() => {
+                    const filtered = SLASH_PROMPTS.filter(p => message.length <= 1 || p.toLowerCase().includes(message.slice(1).toLowerCase()));
+                    return filtered.length > 0 ? (
+                      <div className="absolute bottom-full mb-2 left-0 right-0 z-50 rounded-xl border border-border bg-popover shadow-xl overflow-hidden">
+                        {filtered.map((p, i) => (
+                          <button
+                            key={p}
+                            className={cn("w-full text-left px-4 py-2.5 text-sm flex items-center gap-2 transition-colors", i === selectedSlashIndex ? "bg-primary/10 text-primary" : "hover:bg-muted/60 text-foreground")}
+                            onMouseDown={(e) => { e.preventDefault(); handleSlashSelect(p); }}
+                          >
+                            <ArrowRight className="h-3.5 w-3.5 opacity-60" />{p}
+                          </button>
+                        ))}
+                      </div>
+                    ) : null;
+                  })()}
+
+                  {/* Enhanced prompt preview */}
+                  {enhancedPrompt && (
+                    <div className="mb-2 rounded-xl border border-primary/20 bg-primary/5 px-4 py-3">
+                      <p className="text-xs font-semibold text-primary mb-1 flex items-center gap-1.5"><Wand2 className="h-3.5 w-3.5" />Enhanced prompt</p>
+                      <p className="text-sm text-foreground/80 leading-snug">{enhancedPrompt}</p>
+                      <div className="mt-2 flex gap-2">
+                        <button onClick={handleReplaceWithEnhanced} className="text-xs font-medium text-primary hover:underline">Use this</button>
+                        <button onClick={handleDismissEnhanced} className="text-xs text-muted-foreground hover:underline">Dismiss</button>
+                      </div>
+                    </div>
+                  )}
+
                   <div className="border border-border rounded-[12px] overflow-visible bg-background dark:bg-card hover:border-primary/30 transition-all duration-200 luka-gradient-border relative">
                     {/* Attached files bar */}
                     <AttachedFilesBar files={attachedFiles} onRemove={removeFile} onClearAll={clearFiles} />
+
+                    {/* Connected connector badges */}
+                    {connectors.some(c => c.connected) && (
+                      <div className="px-4 pt-2 flex flex-wrap gap-1.5">
+                        {connectors.filter(c => c.connected).map(c => (
+                          <span key={c.id} className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium border" style={{ borderColor: c.color + "40", color: c.color, background: c.color + "10" }}>
+                            <Globe className="h-3 w-3" />{c.name}
+                          </span>
+                        ))}
+                      </div>
+                    )}
 
                     <div className="px-4 pt-3 pb-2">
                       {/* Render input with blue # styling */}
@@ -1025,7 +1269,7 @@ export function AskLukaOverlay({ open, onOpenChange, initialQuery, autoFillMode,
                           value={message}
                           onChange={handleInputChange}
                           onKeyDown={handleKeyDown}
-                          placeholder="Type # for prompts or just ask anything..."
+                          placeholder="Type / for commands, # for prompts, or ask anything..."
                           className={cn(
                             "w-full bg-transparent h-9 placeholder:text-muted-foreground/70 outline-none border-none text-sm",
                             message.includes("#") ? "text-primary font-medium" : "text-foreground"
@@ -1037,17 +1281,78 @@ export function AskLukaOverlay({ open, onOpenChange, initialQuery, autoFillMode,
                     {/* Bottom toolbar */}
                     <div className="px-3 pb-3 flex items-center justify-between">
                       <div className="flex items-center gap-1">
-                        <LukaAttachMenu onFilesAdded={addFiles} />
+                        {/* Connectors / plus tray */}
+                        <div className="relative" ref={plusTrayRef}>
+                          <Button variant="outline" size="icon" className="h-9 w-9 rounded-[10px]" onClick={() => setShowPlusTray(v => !v)}>
+                            <Plus className="h-4 w-4 text-muted-foreground" />
+                          </Button>
+                          {showPlusTray && (
+                            <div className="absolute bottom-full mb-2 left-0 z-50 w-64 rounded-xl border border-border bg-popover shadow-xl p-3">
+                              <p className="text-xs font-semibold text-muted-foreground mb-2 px-1">Connect a source</p>
+                              <div className="space-y-1">
+                                {connectors.map(c => (
+                                  <button
+                                    key={c.id}
+                                    onClick={() => handleConnectConnector(c.id)}
+                                    className="w-full flex items-center gap-2.5 px-2 py-2 rounded-lg hover:bg-muted/60 transition-colors text-left"
+                                  >
+                                    <span className="w-6 h-6 rounded-md flex items-center justify-center text-xs font-bold text-white shrink-0" style={{ background: c.color }}>{c.abbr}</span>
+                                    <span className="text-sm text-foreground flex-1">{c.name}</span>
+                                    {c.connected && <Check className="h-4 w-4 text-green-500 shrink-0" />}
+                                  </button>
+                                ))}
+                              </div>
+                            </div>
+                          )}
+                        </div>
                         <Button variant="outline" size="icon" className="h-9 w-9 rounded-[10px]">
                           <Inbox className="h-4 w-4 text-muted-foreground" />
                         </Button>
-                        <div className="flex items-center gap-1.5 px-3 h-9 rounded-[10px] border border-border bg-background dark:bg-muted/20 text-sm text-foreground">
-                          <span className="text-amber-500">✨</span>
-                          <span className="text-sm font-medium">Gemini 3 Flash</span>
+                        {/* Model picker */}
+                        <div className="relative" ref={modelDropdownRef}>
+                          <button
+                            onClick={() => setShowModelDropdown(v => !v)}
+                            className="flex items-center gap-1.5 px-3 h-9 rounded-[10px] border border-border bg-background dark:bg-muted/20 text-sm text-foreground hover:border-primary/40 transition-colors"
+                          >
+                            <span className="text-amber-500">✨</span>
+                            <span className="text-sm font-medium">{selectedModel}</span>
+                            <ChevronDown className="h-3.5 w-3.5 text-muted-foreground ml-0.5" />
+                          </button>
+                          {showModelDropdown && (
+                            <div className="absolute bottom-full mb-2 left-0 z-50 w-72 rounded-xl border border-border bg-popover shadow-xl overflow-hidden">
+                              {MODEL_GROUPS.map(group => (
+                                <div key={group.ecosystem}>
+                                  <div className="px-4 py-2 text-xs font-semibold text-muted-foreground border-b border-border bg-muted/30">{group.ecosystem}</div>
+                                  {group.models.map(m => (
+                                    <button
+                                      key={m.name}
+                                      onClick={() => { setSelectedModel(m.name); setShowModelDropdown(false); }}
+                                      className={cn("w-full flex items-center justify-between px-4 py-2.5 text-sm hover:bg-muted/60 transition-colors", selectedModel === m.name && "bg-primary/8 text-primary")}
+                                    >
+                                      <span className="font-medium">{m.name}</span>
+                                      <div className="flex items-center gap-2">
+                                        <span className="text-xs text-muted-foreground">{m.badge}</span>
+                                        {selectedModel === m.name && <Check className="h-3.5 w-3.5 text-primary" />}
+                                      </div>
+                                    </button>
+                                  ))}
+                                </div>
+                              ))}
+                            </div>
+                          )}
                         </div>
                       </div>
 
                       <div className="flex items-center gap-1">
+                        {/* Wand - enhance prompt */}
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <Button variant="ghost" size="icon" className="h-9 w-9 rounded-[10px]" onClick={handleEnhancePrompt} disabled={!message.trim() || isEnhancing}>
+                              {isEnhancing ? <Loader2 className="h-4 w-4 animate-spin text-primary" /> : <Wand2 className="h-4 w-4 text-muted-foreground" />}
+                            </Button>
+                          </TooltipTrigger>
+                          <TooltipContent side="top"><p>Enhance prompt</p></TooltipContent>
+                        </Tooltip>
                         <Button variant="ghost" size="icon" className="h-9 w-9 rounded-[10px]" onClick={() => setVoiceOpen(true)}>
                           <Mic className="h-4 w-4 text-muted-foreground" />
                         </Button>
@@ -1079,6 +1384,17 @@ export function AskLukaOverlay({ open, onOpenChange, initialQuery, autoFillMode,
           </main>
         </div>
       </div>
+
+      {/* Activity panel */}
+      <LukaActivityPanel
+        entries={activityEntries}
+        isProcessing={isActivityProcessing}
+        minimized={activityMinimized}
+        onToggleMinimize={() => setActivityMinimized(v => !v)}
+      />
+
+      {/* Settings overlay */}
+      <LukaSettingsOverlay open={settingsOpen} onClose={() => setSettingsOpen(false)} />
     </>
   );
 }
