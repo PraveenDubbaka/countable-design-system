@@ -66,10 +66,11 @@ export function BulkRequestsWorksheet({ isUS = false }: BulkRequestsWorksheetPro
   };
 
   const validCount = rows.filter(r => r.recipient && r.docName.trim() && r.dueDate).length;
+  const allRowsValid = rows.length > 0 && validCount === rows.length;
 
   const handleSendAll = () => {
-    if (!validCount) {
-      toast.error('Add at least one valid request');
+    if (!allRowsValid) {
+      toast.error('All mandatory fields must be filled before sending');
       return;
     }
     toast.success(`${validCount} request${validCount > 1 ? 's' : ''} sent successfully`);
