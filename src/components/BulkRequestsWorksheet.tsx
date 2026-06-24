@@ -261,7 +261,7 @@ export function BulkRequestsWorksheet({ isUS = false }: BulkRequestsWorksheetPro
               <p className="text-xs text-muted-foreground">
                 <span className="font-semibold text-foreground">{validCount}</span> of {rows.length} ready to send
               </p>
-              <Button onClick={handleSendAll} disabled={!validCount} size="sm" className="gap-1.5">
+              <Button onClick={handleSendAll} disabled={!allRowsValid} size="sm" className="gap-1.5">
                 <Send className="h-3.5 w-3.5" />
                 Send {validCount > 0 ? `${validCount} ` : ''}Request{validCount === 1 ? '' : 's'}
               </Button>
