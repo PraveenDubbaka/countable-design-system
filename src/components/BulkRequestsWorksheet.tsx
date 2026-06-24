@@ -22,8 +22,90 @@ interface RequestRow {
   wpRef: RefDoc[];
 }
 
-const ENGAGEMENT_FOLDERS = ['Client Onboarding', 'Planning', 'Risk Assessment', 'Procedures', 'Financial Statements', 'Completion & Signoffs'];
-const SUB_FOLDERS = ['Team Planning Discussions', 'Risk Assessment', 'Internal Controls', 'Substantive Testing', 'Wrap-up'];
+// Mirrors the left-menu Audit engagement folder structure (Sidebar.tsx)
+const FOLDER_STRUCTURE: Record<string, string[]> = {
+  'Client Onboarding': [
+    '408 — Initial Audit Engagements',
+    '410 — New or Existing Engagement — Acceptance/Continuance',
+    '440 — Information / Analysis Requested from Management',
+    'AL1.1 — Engagement Letter',
+  ],
+  'Planning': [
+    '420 — Materiality',
+    '428 — Selecting Auditor\'s Expert',
+    '430 — Overall Audit Strategy',
+    '436 — Team Planning Discussions',
+    '450 — Time Tracker',
+  ],
+  'Risk Assessment': [
+    'RAP — Risk Assessment Procedures',
+    'IC — Understanding Internal Controls',
+    'ITGC — IT General Controls (ITGC)',
+    'FRA — Fraud Risk Assessment',
+    'SRR — Significant Risks Register',
+    'RMM — Risk of Material Misstatement',
+    'S1 — SCOT — Revenue Cycle',
+    'S2 — SCOT — Expenditure Cycle',
+    'S3 — SCOT — Payroll Cycle',
+    'GC — Going Concern (Initial Assessment)',
+    'JE — Journal Entry Testing Log',
+  ],
+  'Response to Assessed Risks': [
+    'OAR — Overall Audit Response',
+    'TOC — Test of Controls',
+    'SAP — Substantive Analytical Procedures',
+    'TR — Test of Details — Revenue',
+    'TE — Test of Details — Expenses',
+    'RPT — Related Party Transactions',
+    'GWI — Goodwill Impairment Assessment',
+    'APS — Audit Procedures Summary',
+  ],
+  'Documents': [
+    'SHA — Shareholders Agreements',
+    'REN — Rental/Lease Agreements',
+    'INC — Incorporation Documents',
+    'BAN — Banking Agreements',
+    'CMA — Contracts & Material Agreements',
+    'CMB — Corporate Minute Book',
+    'RCF — Regulatory & Compliance Filings',
+  ],
+  'Trial Balance & Adjusting Entries': [
+    'Trial Balance & Adjusting Entries',
+  ],
+  'Procedures': [
+    'Assets',
+    'Liabilities',
+    'Equity',
+    'Revenue',
+    'Expenses',
+  ],
+  'Financial Statements': [
+    'Financial Statement Docs',
+  ],
+  'Completion & Signoffs': [
+    'AIM — Accumulation of Identified Misstatements',
+    'FAR — Final Analytical Review',
+    'SE — Subsequent Events',
+    'GC — Going Concern (Final Assessment)',
+    'SD — Notes on Significant Audit Decisions',
+    'KAM — Key Audit Matters Worksheet',
+    'FND — Audit Findings and Matters for Discussion',
+    'MC — Matters Communicated to Management and TCWG',
+    'FC — Matters for Future Consideration',
+    'CON — Documenting Consultation',
+    'MR — Management Representation Letter',
+    'IC — Internal Control Deficiencies Communication',
+    'TCWG — Communication with Those Charged with Governance',
+    'CM — Completion Checklist',
+    'DC — Disclosure Checklist',
+    'QCR — Quality Control Review',
+    'WD — Withdrawal Worksheet',
+    'SO — Signoffs',
+    'FR — Final Review',
+    'ALF — Archive & Lock File',
+  ],
+};
+const ENGAGEMENT_FOLDERS = Object.keys(FOLDER_STRUCTURE);
 const RECIPIENTS = ['one@gmail.com', 'cfo@client.com', 'controller@client.com', 'accounting@client.com'];
 
 const defaultDueDate = () => {
