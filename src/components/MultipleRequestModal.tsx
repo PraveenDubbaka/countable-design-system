@@ -201,6 +201,13 @@ export function MultipleRequestModal({ open, onOpenChange }: MultipleRequestModa
                       />
                     </td>
                     <td className="px-3 py-2">
+                      <RefButton
+                        reference={row.wpRef}
+                        onAttach={(doc) => update(row.id, { wpRef: [...row.wpRef, doc] })}
+                        onRemove={(idx) => update(row.id, { wpRef: row.wpRef.filter((_, i) => i !== (idx ?? -1)) })}
+                      />
+                    </td>
+                    <td className="px-3 py-2">
                       <div className="flex items-center gap-1">
                         <Button variant="ghost" size="icon" className="h-7 w-7 text-link hover:bg-link/10" onClick={() => duplicateRow(row.id)} title="Duplicate">
                           <Copy className="h-3.5 w-3.5" />
