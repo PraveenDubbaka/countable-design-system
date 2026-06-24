@@ -6,6 +6,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Plus, Trash2, Copy, CalendarClock } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
+import { RefButton, RefDoc } from '@/components/RefButton';
 
 interface MultipleRequestModalProps {
   open: boolean;
@@ -20,6 +21,7 @@ interface RequestRow {
   docName: string;
   description: string;
   dueDate: string;
+  wpRef: RefDoc[];
 }
 
 const ENGAGEMENT_FOLDERS = ['Client Onboarding', 'Planning', 'Risk Assessment', 'Procedures', 'Financial Statements', 'Completion & Signoffs'];
@@ -40,6 +42,7 @@ const newRow = (): RequestRow => ({
   docName: '',
   description: '',
   dueDate: defaultDueDate(),
+  wpRef: [],
 });
 
 export function MultipleRequestModal({ open, onOpenChange }: MultipleRequestModalProps) {
@@ -134,6 +137,7 @@ export function MultipleRequestModal({ open, onOpenChange }: MultipleRequestModa
                 <th className="text-left text-xs font-semibold text-foreground px-3 py-2">Document Name{required}</th>
                 <th className="text-left text-xs font-semibold text-foreground px-3 py-2">Description</th>
                 <th className="text-left text-xs font-semibold text-foreground px-3 py-2 w-[150px]">Due Date{required}</th>
+                <th className="text-left text-xs font-semibold text-foreground px-3 py-2 w-[140px]">W/P Ref / Attachment</th>
                 <th className="text-left text-xs font-semibold text-foreground px-3 py-2 w-[90px]">Actions</th>
               </tr>
             </thead>
@@ -194,6 +198,13 @@ export function MultipleRequestModal({ open, onOpenChange }: MultipleRequestModa
                         value={row.dueDate}
                         onChange={e => update(row.id, { dueDate: e.target.value })}
                         className={cn('h-8 text-xs', !row.dueDate && 'border-destructive')}
+                      />
+                    </td>
+                    <td className="px-3 py-2">
+                      <RefButton
+                        reference={row.wpRef}
+                        onAttach={(doc) => update(row.id, { wpRef: [...row.wpRef, doc] })}
+                        onRemove={(idx) => update(row.id, { wpRef: row.wpRef.filter((_, i) => i !== (idx ?? -1)) })}
                       />
                     </td>
                     <td className="px-3 py-2">
