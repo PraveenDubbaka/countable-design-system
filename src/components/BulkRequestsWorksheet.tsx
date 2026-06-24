@@ -533,7 +533,7 @@ export function BulkRequestsWorksheet({ isUS = false }: BulkRequestsWorksheetPro
           </TabsContent>
 
           {/* ============ AVAILABLE ============ */}
-          <TabsContent value="available" className="m-0 p-6 space-y-4">
+          <TabsContent forceMount value="available" className="m-0 p-6 space-y-4 data-[state=inactive]:hidden">
             <div className={cardCls}>
               <div className={cardHeaderCls}>
                 <span className="text-sm font-semibold text-foreground">Available Documents</span>
