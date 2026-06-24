@@ -735,7 +735,7 @@ export default function CreateEngagement() {
 
             {/* Engagement Details Section */}
             <SectionCard icon={<Briefcase className="h-5 w-5" />} title="Engagement Details">
-              <div className="grid grid-cols-3 gap-4">
+              <div className="grid grid-cols-4 gap-4">
                 <LabeledInput
                   label="Engagement ID"
                   value={engagementId}
@@ -757,8 +757,6 @@ export default function CreateEngagement() {
                   options={engagementTypeOptions}
                   required
                 />
-              </div>
-              <div className="grid grid-cols-4 gap-4 mt-4">
                 <LabeledInput
                   label="Budget($)"
                   value={budget}
