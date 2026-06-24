@@ -369,6 +369,7 @@ const buildDefaultUSAuditChecklists = () => {
     { generator: generateUSExistingEngagementContinuanceChecklist, id: "default-us-audit-exist-cont" },
     { generator: generateUSAuditIndependenceChecklist, id: "default-us-audit-ind" },
     { generator: generateAuditEngagementLetterGAASUSGAAP, id: "default-us-audit-el" },
+    { generator: generateLetterToPredecessorAccountingFirmChecklist, id: "default-us-audit-pred" },
     { generator: generateUSAMLComplianceChecklist, id: "default-us-audit-aml" },
     { generator: generateUSUnderstandingEntityBasicsChecklist, id: "default-us-audit-ueb" },
     { generator: generateUSUnderstandingEntitySystemsChecklist, id: "default-us-audit-ues" },
