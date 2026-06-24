@@ -398,7 +398,7 @@ export function FloatingActionBar({
           <button
             onClick={(e) => {
               e.stopPropagation();
-              window.dispatchEvent(new CustomEvent('open-notes-modal', { detail: {} }));
+              window.dispatchEvent(new CustomEvent('navigate-to-notes'));
             }}
             onMouseDown={(e) => e.stopPropagation()}
             className="w-9 h-9 flex items-center justify-center rounded-lg hover:bg-muted transition-colors group"

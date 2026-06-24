@@ -51,7 +51,7 @@ import { readJsonFromLocalStorage, writeJsonToLocalStorage } from "@/lib/safeJso
 import { subscribeToChecklistSync, dispatchChecklistSync } from "@/lib/checklistSync";
 import { toast } from "sonner";
 import { ShareWithClientDialog } from "@/components/ShareWithClientDialog";
-import { NotesModal } from "@/components/NotesModal";
+import { NotesWorksheet } from "@/components/NotesWorksheet";
 import { ClientResponseDialog } from "@/components/ClientResponseDialog";
 import { useClientResponses } from "@/hooks/useClientResponses";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter, DialogClose } from "@/components/ui/dialog";
@@ -771,9 +771,6 @@ export default function EngagementDetail() {
   const [selectedClientEngagement, setSelectedClientEngagement] = useState<string | null>(null);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [showAddChecklistSheet, setShowAddChecklistSheet] = useState(false);
-  const [notesModalOpen, setNotesModalOpen] = useState(false);
-  const [notesLinkedSection, setNotesLinkedSection] = useState<string | undefined>();
-  const [notesSectionFolder, setNotesSectionFolder] = useState<string | undefined>();
   const [clipboardResponses, setClipboardResponses] = useState<{ checklistTitle: string; responses: Record<string, { answer: string; explanation?: string }> } | null>(null);
   const [showClipboardPrompt, setShowClipboardPrompt] = useState(false);
   const [lukaOpen, setLukaOpen] = useState(false);
@@ -807,15 +804,14 @@ export default function EngagementDetail() {
   const { addEntry: addTimeEntry } = useTimeEntries(engagementId ?? "default");
 
   useEffect(() => {
-    const handler = (e: Event) => {
-      const { linkedSection, sectionFolder } = (e as CustomEvent).detail ?? {};
-      setNotesLinkedSection(linkedSection ?? undefined);
-      setNotesSectionFolder(sectionFolder ?? undefined);
-      setNotesModalOpen(true);
+    const handler = () => {
+      if (engagementId && checklistKey && !checklistKey.startsWith('notes-')) {
+        navigate(`/engagements/${engagementId}/checklist/notes-${checklistKey}`);
+      }
     };
-    window.addEventListener('open-notes-modal', handler);
-    return () => window.removeEventListener('open-notes-modal', handler);
-  }, []);
+    window.addEventListener('navigate-to-notes', handler);
+    return () => window.removeEventListener('navigate-to-notes', handler);
+  }, [engagementId, checklistKey, navigate]);
 
   const toggleGlobalTimer = () => {
     if (globalActiveRef.current) {
@@ -991,8 +987,8 @@ export default function EngagementDetail() {
 
   // Load checklist from localStorage - use first saved checklist or fallback
   useEffect(() => {
-    // FS pages and standalone custom worksheets render without a checklist
-    if (checklistKey && (FS_PAGE_KEYS.has(checklistKey) || checklistKey in CUSTOM_WORKSHEET_TITLES)) {
+    // FS pages, standalone custom worksheets, and notes pages render without a checklist
+    if (checklistKey && (FS_PAGE_KEYS.has(checklistKey) || checklistKey in CUSTOM_WORKSHEET_TITLES || checklistKey.startsWith('notes-'))) {
       setIsLoading(false);
       setChecklist(null);
       return;
@@ -1707,7 +1703,10 @@ export default function EngagementDetail() {
                   </svg>
                 </button>
                 <h1 className="font-semibold text-foreground truncate text-lg">
-                  {checklist?.title || (checklistKey && CUSTOM_WORKSHEET_TITLES[checklistKey]) || 'Client acceptance and continuance'}
+                  {checklist?.title
+                    || (checklistKey && CUSTOM_WORKSHEET_TITLES[checklistKey])
+                    || (checklistKey?.startsWith('notes-') && `Notes — ${CUSTOM_WORKSHEET_TITLES[checklistKey.slice('notes-'.length)] || checklistKey.slice('notes-'.length)}`)
+                    || 'Client acceptance and continuance'}
                 </h1>
               </div>
               <div className="flex items-center gap-1">
@@ -1983,6 +1982,11 @@ export default function EngagementDetail() {
               isEditing={isFSEditing}
               saveRef={fsSaveRef}
             />
+          ) : checklistKey?.startsWith('notes-') ? (
+            <NotesWorksheet
+              parentKey={checklistKey.slice('notes-'.length)}
+              parentTitle={CUSTOM_WORKSHEET_TITLES[checklistKey.slice('notes-'.length)] || checklistKey.slice('notes-'.length)}
+            />
           ) : (checklistKey === 'aud-mat' || checklistKey === 'aud-us-mat') ? (
             <AuditMaterialityWorksheet isUS={checklistKey === 'aud-us-mat'} />
           ) : (checklistKey === 'aud-tt' || checklistKey === 'aud-us-tt') ? (
@@ -2123,7 +2127,7 @@ export default function EngagementDetail() {
           </div>
 
           {/* Floating Action Bar for Preview Mode - Inside content area */}
-          {(checklist || (checklistKey && checklistKey in CUSTOM_WORKSHEET_TITLES)) && !FS_PAGE_KEYS.has(checklistKey ?? '') && <FloatingActionBar checklist={checklist ?? undefined} onUpdate={handleChecklistUpdate} onCollapseSections={handleCollapseSections} onExpandSections={handleExpandSections} onCollapseQuestions={handleCollapseQuestions} onExpandQuestions={handleExpandQuestions} allSectionsCollapsed={allSectionsCollapsed} allQuestionsCollapsed={allQuestionsCollapsed} isCompactMode={isCompactMode} onToggleCompactMode={handleToggleCompactMode} selectedQuestions={selectedQuestions} onBulkDelete={handleBulkDelete} onAddCategory={handleAddCategory} isPreviewMode={true} isChecklist={!!checklist && !(checklist.sections?.length && checklist.sections[0]?.questions?.length && checklist.sections[0].questions[0]?.answerType === 'none' && !checklist.objective)} />}
+          {(checklist || (checklistKey && checklistKey in CUSTOM_WORKSHEET_TITLES)) && !FS_PAGE_KEYS.has(checklistKey ?? '') && !checklistKey?.startsWith('notes-') && <FloatingActionBar checklist={checklist ?? undefined} onUpdate={handleChecklistUpdate} onCollapseSections={handleCollapseSections} onExpandSections={handleExpandSections} onCollapseQuestions={handleCollapseQuestions} onExpandQuestions={handleExpandQuestions} allSectionsCollapsed={allSectionsCollapsed} allQuestionsCollapsed={allQuestionsCollapsed} isCompactMode={isCompactMode} onToggleCompactMode={handleToggleCompactMode} selectedQuestions={selectedQuestions} onBulkDelete={handleBulkDelete} onAddCategory={handleAddCategory} isPreviewMode={true} isChecklist={!!checklist && !(checklist.sections?.length && checklist.sections[0]?.questions?.length && checklist.sections[0].questions[0]?.answerType === 'none' && !checklist.objective)} />}
         </div>
 
         {/* Right Panel or Add Checklist Sheet */}
@@ -2136,13 +2140,6 @@ export default function EngagementDetail() {
         {/* Delete Checklist Confirmation */}
         <DeleteChecklistDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog} onConfirm={handleDeleteChecklist} />
 
-        {/* Notes Modal */}
-        <NotesModal
-          open={notesModalOpen}
-          onOpenChange={(v) => { setNotesModalOpen(v); if (!v) { setNotesLinkedSection(undefined); setNotesSectionFolder(undefined); } }}
-          initialLinkedSection={notesLinkedSection}
-          initialSectionFolder={notesSectionFolder}
-        />
 
         {/* Share with Client Dialog */}
         <ShareWithClientDialog open={showShareDialog} onOpenChange={setShowShareDialog} checklistName={checklist?.title} onConfirm={handleShareConfirm} isLetter={!!(checklist?.sections?.length && checklist.sections[0]?.questions?.length && checklist.sections[0].questions[0]?.answerType === 'none' && !checklist.objective)} />

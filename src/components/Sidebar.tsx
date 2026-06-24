@@ -1278,6 +1278,27 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
   const allNodeIdsRef = useRef<string[]>([]);
   const [hasDarkSecondary, setHasDarkSecondary] = useState(false);
   const [sectionFillStatus, setSectionFillStatus] = useState<Record<string, boolean>>({});
+  const [notesPages, setNotesPages] = useState<Set<string>>(new Set());
+
+  // Load notes index for the current engagement
+  useEffect(() => {
+    const readNotesIndex = () => {
+      const engId = location.pathname.split("/engagements/")[1]?.split("/")[0];
+      if (!engId) return;
+      try {
+        const raw = localStorage.getItem(`engagement-notes-index-${engId}`);
+        const arr: string[] = raw ? JSON.parse(raw) : [];
+        setNotesPages(new Set(arr));
+      } catch { setNotesPages(new Set()); }
+    };
+    readNotesIndex();
+    window.addEventListener('storage', readNotesIndex);
+    window.addEventListener('page-notes-updated', readNotesIndex);
+    return () => {
+      window.removeEventListener('storage', readNotesIndex);
+      window.removeEventListener('page-notes-updated', readNotesIndex);
+    };
+  }, [location.pathname]);
 
   // Listen for Luka fill status changes in localStorage
   useEffect(() => {
@@ -2133,9 +2154,7 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
                                 className="text-xs gap-2 cursor-pointer"
                                 onClick={e => {
                                   e.stopPropagation();
-                                  window.dispatchEvent(new CustomEvent('open-notes-modal', {
-                                    detail: { linkedSection: node.label, sectionFolder: parentLabel },
-                                  }));
+                                  if (engId) navigate(`/engagements/${engId}/checklist/notes-${node.id}`);
                                 }}
                               >
                                 <StickyNote className="h-3.5 w-3.5" /> Add note
@@ -2154,6 +2173,21 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
                           </DropdownMenu>
                         )}
                       </div>
+
+                      {/* Notes sub-item — shown when this page has notes */}
+                      {isLeaf && notesPages.has(node.id) && (
+                        <div
+                          className={cn(
+                            "group flex items-center gap-1.5 py-1.5 px-2 rounded-[8px] cursor-pointer hover:bg-primary/10 transition-colors text-xs mt-0.5",
+                            engId && location.pathname.endsWith(`/checklist/notes-${node.id}`) && "bg-primary/10 ring-1 ring-primary/25",
+                          )}
+                          style={{ paddingLeft: `${(depth + 1) * 16 + 8}px` }}
+                          onClick={e => { e.stopPropagation(); if (engId) navigate(`/engagements/${engId}/checklist/notes-${node.id}`); }}
+                        >
+                          <StickyNote className="h-3 w-3 text-muted-foreground flex-shrink-0" />
+                          <span className="truncate flex-1 text-black dark:text-white font-medium">Notes</span>
+                        </div>
+                      )}
 
                       {isOpen && hasChildren && (
                         <div>
