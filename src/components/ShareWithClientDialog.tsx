@@ -22,6 +22,7 @@ interface ShareWithClientDialogProps {
   checklistName?: string;
   onConfirm?: (scope: ShareScope, method: ShareMethod) => void;
   hasSelectedQuestions?: boolean;
+  isLetter?: boolean;
 }
 
 export function ShareWithClientDialog({
@@ -30,6 +31,7 @@ export function ShareWithClientDialog({
   checklistName,
   onConfirm,
   hasSelectedQuestions = false,
+  isLetter = false,
 }: ShareWithClientDialogProps) {
   const [clientPortalSelected, setClientPortalSelected] = useState(false);
   const [clientAppSelected, setClientAppSelected] = useState(false);
@@ -78,8 +80,8 @@ export function ShareWithClientDialog({
         </DialogHeader>
 
         <div className="py-4 space-y-4">
-          {/* Share scope */}
-          <div>
+          {/* Share scope — hidden for letters (no questions to select) */}
+          {!isLetter && <div>
             <p className="text-sm font-medium text-muted-foreground mb-3">
               What to Share
             </p>
@@ -121,7 +123,7 @@ export function ShareWithClientDialog({
                 </Label>
               </label>
             </RadioGroup>
-          </div>
+          </div>}
 
           {/* Share method */}
           <div>

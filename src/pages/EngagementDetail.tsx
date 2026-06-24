@@ -2122,7 +2122,7 @@ export default function EngagementDetail() {
         <DeleteChecklistDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog} onConfirm={handleDeleteChecklist} />
 
         {/* Share with Client Dialog */}
-        <ShareWithClientDialog open={showShareDialog} onOpenChange={setShowShareDialog} checklistName={checklist?.title} onConfirm={handleShareConfirm} />
+        <ShareWithClientDialog open={showShareDialog} onOpenChange={setShowShareDialog} checklistName={checklist?.title} onConfirm={handleShareConfirm} isLetter={!!(checklist?.sections?.length && checklist.sections[0]?.questions?.length && checklist.sections[0].questions[0]?.answerType === 'none' && !checklist.objective)} />
 
         <ConnectorsModal
           open={connectorsOpen}
