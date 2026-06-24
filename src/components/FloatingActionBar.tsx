@@ -45,7 +45,7 @@ const SMART_LAYOUT_OPTIONS: {value: CellBlockType; label: string; icon: React.El
 type SnapPosition = 'top' | 'center' | 'bottom';
 
 interface FloatingActionBarProps {
-  checklist: Checklist;
+  checklist?: Checklist;
   onUpdate: (checklist: Checklist) => void;
   onCollapseSections: () => void;
   onExpandSections: () => void;
@@ -496,13 +496,13 @@ export function FloatingActionBar({
         </div>
       </div>
 
-      {/* Reorder Modal */}
-      <ReorderModal
+      {/* Reorder Modal — only mounted when checklist is available */}
+      {checklist && <ReorderModal
         isOpen={showReorderModal}
         onClose={() => setShowReorderModal(false)}
         checklist={checklist}
         onUpdate={onUpdate}
-      />
+      />}
     </>
   );
 }
