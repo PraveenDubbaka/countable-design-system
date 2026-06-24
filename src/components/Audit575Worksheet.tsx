@@ -65,7 +65,7 @@ export function Audit575Worksheet() {
   const isFirstRender = useRef(true);
 
   const [data, setData] = useState<Data575>(() => {
-    const saved = readJsonFromLocalStorage<Data575>(storageKey);
+    const saved = readJsonFromLocalStorage<Data575>(storageKey, buildDefault());
     return saved ?? buildDefault();
   });
 
@@ -221,9 +221,9 @@ export function Audit575Worksheet() {
             <div key={nameKey} className="space-y-1.5">
               <p className="text-xs font-medium text-muted-foreground">{label}</p>
               <div className="flex gap-2">
-                <Input disabled={locked} value={(data as Record<string, string>)[nameKey]} onChange={e => setData(d => ({ ...d, [nameKey]: e.target.value }))}
+                <Input disabled={locked} value={(data as unknown as Record<string, string>)[nameKey]} onChange={e => setData(d => ({ ...d, [nameKey]: e.target.value }))}
                   className="h-7 text-xs flex-1" placeholder="Name" />
-                <Input disabled={locked} type="date" value={(data as Record<string, string>)[dateKey]} onChange={e => setData(d => ({ ...d, [dateKey]: e.target.value }))}
+                <Input disabled={locked} type="date" value={(data as unknown as Record<string, string>)[dateKey]} onChange={e => setData(d => ({ ...d, [dateKey]: e.target.value }))}
                   className="h-7 text-xs w-32" />
               </div>
             </div>
