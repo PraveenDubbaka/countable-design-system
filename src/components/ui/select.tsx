@@ -8,7 +8,18 @@ const Select = SelectPrimitive.Root;
 
 const SelectGroup = SelectPrimitive.Group;
 
-const SelectValue = SelectPrimitive.Value;
+const wrapSelectText = (content: React.ReactNode) =>
+  typeof content === "string" || typeof content === "number" ? <span>{content}</span> : content;
+
+const SelectValue = React.forwardRef<
+  React.ElementRef<typeof SelectPrimitive.Value>,
+  React.ComponentPropsWithoutRef<typeof SelectPrimitive.Value>
+>(({ placeholder, children, ...props }, ref) => (
+  <SelectPrimitive.Value ref={ref} placeholder={wrapSelectText(placeholder)} {...props}>
+    {wrapSelectText(children)}
+  </SelectPrimitive.Value>
+));
+SelectValue.displayName = SelectPrimitive.Value.displayName;
 
 const SelectTrigger = React.forwardRef<
   React.ElementRef<typeof SelectPrimitive.Trigger>,
@@ -139,7 +150,7 @@ const SelectItem = React.forwardRef<
     )}
     {...props}
   >
-    <SelectPrimitive.ItemText>{children}</SelectPrimitive.ItemText>
+      <SelectPrimitive.ItemText>{wrapSelectText(children)}</SelectPrimitive.ItemText>
     <span className="ml-auto flex h-4 w-4 items-center justify-center shrink-0">
       <SelectPrimitive.ItemIndicator>
         <Check className="h-4 w-4 text-primary" />
