@@ -754,6 +754,7 @@ export default function EngagementDetail() {
     templates: Array<{ name: string; filledCount: number; totalCount: number }>;
     totalFilled: number;
     totalFields: number;
+    engagementLabel?: string;
   } | null>(null);
   const [lukaAutoFillProgress, setLukaAutoFillProgress] = useState<AutoFillProgressItem[] | null>(null);
   // ── Global timer ────────────────────────────────────────────────────────────
