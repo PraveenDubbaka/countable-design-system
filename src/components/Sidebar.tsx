@@ -1725,6 +1725,7 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
                     children: [
                       ...(engFirstYear ? [{ id: "aud-form-408", code: "408", label: "Initial Audit Engagements", icon: "checklist" as const, route: "checklist/aud-form-408" }] : []),
                       { id: "aud-form-410", code: "410", label: "New or Existing Engagement — Acceptance/Continuance", icon: "checklist", route: "checklist/aud-form-410" },
+                      { id: "aud-form-440", code: "440", label: "Information / Analysis Requested from Management", icon: "worksheet", route: "checklist/aud-form-440" },
                       { id: "aud-el", code: "AL1.1", label: "Engagement Letter", icon: "letter", route: "checklist/aud-el" },
                     ]
                   },
