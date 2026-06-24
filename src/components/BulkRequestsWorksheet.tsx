@@ -267,45 +267,6 @@ export function BulkRequestsWorksheet({ isUS = false }: BulkRequestsWorksheetPro
             </div>
           </div>
 
-          {/* ── Section C: Conclusion ── */}
-          <div className={cardCls}>
-            <div className={cardHeaderCls}>
-              <span className="text-sm font-semibold text-foreground">Conclusion</span>
-            </div>
-            <div className="p-6">
-              <Textarea
-                value={conclusion}
-                onChange={e => setConclusion(e.target.value)}
-                placeholder="Document the rationale, completeness assessment, and any follow-up actions for the requests issued."
-                className="min-h-[96px] text-sm"
-              />
-            </div>
-          </div>
-
-          {/* ── Section D: Sign-Off ── */}
-          <div className={cardCls}>
-            <div className={cardHeaderCls}>
-              <span className="text-sm font-semibold text-foreground">Sign-Off</span>
-            </div>
-            <div className="p-6 grid grid-cols-1 md:grid-cols-4 gap-4">
-              <div>
-                <label className="text-xs font-medium text-foreground block mb-1.5">Prepared By</label>
-                <Input value={preparedBy} onChange={e => setPreparedBy(e.target.value)} className="h-8 text-sm" />
-              </div>
-              <div>
-                <label className="text-xs font-medium text-foreground block mb-1.5">Date</label>
-                <Input type="date" value={preparedDate} onChange={e => setPreparedDate(e.target.value)} className="h-8 text-sm" />
-              </div>
-              <div>
-                <label className="text-xs font-medium text-foreground block mb-1.5">Reviewed By</label>
-                <Input value={reviewedBy} onChange={e => setReviewedBy(e.target.value)} className="h-8 text-sm" />
-              </div>
-              <div>
-                <label className="text-xs font-medium text-foreground block mb-1.5">Date</label>
-                <Input type="date" value={reviewedDate} onChange={e => setReviewedDate(e.target.value)} className="h-8 text-sm" />
-              </div>
-            </div>
-          </div>
 
         </div>
       </div>
