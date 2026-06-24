@@ -256,7 +256,7 @@ function WorksheetInner({ isUS }: { isUS: boolean }) {
     return (idx: number) => setTeamRows(prev => prev.map(r => r.id === id ? { ...r, wpRef: r.wpRef.filter((_,j) => j !== idx) } : r));
   }
   function addTeamRow() {
-    setTeamRows(prev => [...prev, { id: uid(), role: TEAM_ROLES[0], name: "", experience: "", wpRef: "", initials: "", date: "" }]);
+    setTeamRows(prev => [...prev, { id: uid(), role: TEAM_ROLES[0], name: "", experience: "", wpRef: [], initials: "", date: "" }]);
   }
   function removeTeamRow(id: string) {
     setTeamRows(prev => prev.filter(r => r.id !== id));
