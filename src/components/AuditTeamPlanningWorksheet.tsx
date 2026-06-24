@@ -246,9 +246,9 @@ export function AuditTeamPlanningWorksheet({ isUS = false }: { isUS?: boolean })
           <thead className="sticky top-0 z-10">
             <tr className="bg-muted border-b border-border">
               <th className="w-10 px-4 py-3 text-center text-xs font-semibold text-foreground uppercase tracking-wider">#</th>
-              <th className="px-6 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider">Agenda item</th>
+              <th className="px-6 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider" style={{ width: '28%', minWidth: 240 }}>Agenda item</th>
               <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider" style={{ width: 220, minWidth: 220 }}>Discussion leader</th>
-              <th className="px-6 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider">Matters arising &amp; decisions reached</th>
+              <th className="px-6 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider" style={{ width: '40%', minWidth: 360 }}>Matters arising &amp; decisions reached</th>
               <th className="px-4 py-3 text-center text-xs font-semibold text-foreground uppercase tracking-wider" style={{ width: 110, minWidth: 110 }}>W/P ref.</th>
             </tr>
           </thead>
@@ -258,7 +258,7 @@ export function AuditTeamPlanningWorksheet({ isUS = false }: { isUS?: boolean })
               return (
                 <tr key={item.id} className="hover:bg-muted/50 transition-colors align-top">
                   <td className="px-4 py-3 text-center text-xs font-semibold font-mono text-foreground">{item.num}</td>
-                  <td className="px-6 py-3 text-sm text-foreground">
+                  <td className="px-6 py-3 text-sm text-foreground" style={{ width: '28%', minWidth: 240 }}>
                     <div className="font-semibold">{item.title}</div>
                     {item.intro && <div className="mt-1 text-xs text-muted-foreground">{item.intro}</div>}
                     {item.items && item.items.length > 0 && (
@@ -275,12 +275,12 @@ export function AuditTeamPlanningWorksheet({ isUS = false }: { isUS?: boolean })
                       </SelectContent>
                     </Select>
                   </td>
-                  <td className="px-6 py-3">
+                  <td className="px-6 py-3" style={{ width: '40%', minWidth: 360 }}>
                     <Textarea
                       value={row.notes}
                       onChange={e => setRow(item.id, { notes: e.target.value })}
                       placeholder="Document matters arising and decisions reached…"
-                      className="min-h-[60px] text-sm resize-none border-0 shadow-none p-0 focus-visible:ring-0 bg-transparent"
+                      className="min-h-[80px] w-full text-sm resize-none border-0 shadow-none p-0 focus-visible:ring-0 bg-transparent"
                     />
                   </td>
                   <td className="px-4 py-3 text-center" style={{ width: 110 }}>
