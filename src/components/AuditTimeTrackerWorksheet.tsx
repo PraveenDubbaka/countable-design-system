@@ -346,9 +346,9 @@ export function AuditTimeTrackerWorksheet() {
 
             {/* Role budget table */}
             <div className="overflow-x-auto">
-              <table className="w-full text-sm">
+              <table className="w-full text-base">
                 <thead>
-                  <tr className="bg-muted text-[11px] font-semibold uppercase tracking-wider text-foreground border-b border-border">
+                  <tr className="bg-muted text-xs font-semibold uppercase tracking-wider text-foreground border-b border-border">
                     <th className="px-5 py-2 text-left">Role</th>
                     <th className="px-3 py-2 text-center w-14">Std %</th>
                     <th className="px-3 py-2 text-right w-28">Rate ($/hr)</th>
@@ -369,33 +369,33 @@ export function AuditTimeTrackerWorksheet() {
                     return (
                       <tr key={rk} className="hover:bg-muted/30 transition-colors">
                         <td className="px-5 py-1.5 font-medium text-foreground">{ROLE_LABELS[rk]}</td>
-                        <td className="px-3 py-1.5 text-center text-xs text-muted-foreground">{INDUSTRY_ROLE_PCT[rk]}%</td>
+                        <td className="px-3 py-1.5 text-center text-base text-foreground">{INDUSTRY_ROLE_PCT[rk]}%</td>
                         <td className="px-3 py-1.5 text-right">
                           <Input value={rates[rk] ?? ""}
                             onChange={e => setRates(r => ({ ...r, [rk]: e.target.value }))}
-                            className="h-6 text-sm text-right border-0 shadow-none px-0 focus-visible:ring-0 bg-transparent w-20 ml-auto"
+                            className="h-6 text-base text-right border-0 shadow-none px-0 focus-visible:ring-0 bg-transparent w-20 ml-auto"
                             placeholder="0" />
                         </td>
                         <td className="px-3 py-1.5 text-right">
                           <Input value={budget.byRole[rk] ?? ""}
                             onChange={e => setBudget(b => ({ ...b, byRole: { ...b.byRole, [rk]: e.target.value } }))}
-                            className="h-6 text-sm text-right border-0 shadow-none px-0 focus-visible:ring-0 bg-transparent w-20 ml-auto"
+                            className="h-6 text-base text-right border-0 shadow-none px-0 focus-visible:ring-0 bg-transparent w-20 ml-auto"
                             placeholder="0" />
                         </td>
-                        <td className="px-3 py-1.5 text-right text-xs text-muted-foreground">
+                        <td className="px-3 py-1.5 text-right text-base text-foreground">
                           {bh > 0 && rate > 0 ? fmt$(bh * rate) : "—"}
                         </td>
                         <td className="px-3 py-1.5 text-right">
                           <Input value={budget.priorByRole[rk] ?? ""}
                             onChange={e => setBudget(b => ({ ...b, priorByRole: { ...b.priorByRole, [rk]: e.target.value } }))}
-                            className="h-6 text-sm text-right border-0 shadow-none px-0 focus-visible:ring-0 bg-transparent w-16 ml-auto text-muted-foreground"
+                            className="h-6 text-base text-right border-0 shadow-none px-0 focus-visible:ring-0 bg-transparent w-16 ml-auto"
                             placeholder="—" />
                         </td>
-                        <td className="px-3 py-1.5 text-right font-medium">{ah > 0 ? fmtH(ah) : "—"}</td>
-                        <td className={`px-3 py-1.5 text-right font-semibold ${varH < 0 ? "text-red-600 dark:text-red-400" : varH > 0 && bh > 0 ? "text-green-600 dark:text-green-400" : "text-muted-foreground"}`}>
+                        <td className="px-3 py-1.5 text-right font-medium text-foreground">{ah > 0 ? fmtH(ah) : "—"}</td>
+                        <td className={`px-3 py-1.5 text-right font-semibold ${varH < 0 ? "text-red-600 dark:text-red-400" : varH > 0 && bh > 0 ? "text-green-600 dark:text-green-400" : "text-foreground"}`}>
                           {bh > 0 ? (varH >= 0 ? "+" : "") + fmtH(varH) : "—"}
                         </td>
-                        <td className="px-3 py-1.5 text-right text-xs text-muted-foreground">
+                        <td className="px-3 py-1.5 text-right text-base text-foreground">
                           {ah > 0 && rate > 0 ? fmt$(ah * rate) : "—"}
                         </td>
                       </tr>
@@ -403,20 +403,20 @@ export function AuditTimeTrackerWorksheet() {
                   })}
                 </tbody>
                 <tfoot>
-                  <tr className="bg-muted/50 border-t-2 border-border font-semibold text-sm">
+                  <tr className="bg-muted/50 border-t-2 border-border font-semibold text-base">
                     <td className="px-5 py-2 text-foreground">Total</td>
-                    <td className="px-3 py-2 text-center text-xs text-muted-foreground">100%</td>
-                    <td className="px-3 py-2 text-right text-xs text-muted-foreground">
+                    <td className="px-3 py-2 text-center text-base text-foreground">100%</td>
+                    <td className="px-3 py-2 text-right text-base text-foreground">
                       {blendedRate > 0 ? `${fmt$(blendedRate)} blended` : "—"}
                     </td>
-                    <td className="px-3 py-2 text-right">{totalBudgetHrs > 0 ? fmtH(totalBudgetHrs) : "—"}</td>
-                    <td className="px-3 py-2 text-right text-xs">{totalBudgetCost > 0 ? fmt$(totalBudgetCost) : "—"}</td>
+                    <td className="px-3 py-2 text-right text-foreground">{totalBudgetHrs > 0 ? fmtH(totalBudgetHrs) : "—"}</td>
+                    <td className="px-3 py-2 text-right text-base text-foreground">{totalBudgetCost > 0 ? fmt$(totalBudgetCost) : "—"}</td>
                     <td className="px-3 py-2" />
-                    <td className="px-3 py-2 text-right">{totalActualHrs > 0 ? fmtH(totalActualHrs) : "—"}</td>
-                    <td className={`px-3 py-2 text-right ${overBudget ? "text-red-600" : totalBudgetHrs > 0 ? "text-green-600" : "text-muted-foreground"}`}>
+                    <td className="px-3 py-2 text-right text-foreground">{totalActualHrs > 0 ? fmtH(totalActualHrs) : "—"}</td>
+                    <td className={`px-3 py-2 text-right ${overBudget ? "text-red-600" : totalBudgetHrs > 0 ? "text-green-600" : "text-foreground"}`}>
                       {totalBudgetHrs > 0 ? (varHrs >= 0 ? "+" : "") + fmtH(varHrs) : "—"}
                     </td>
-                    <td className="px-3 py-2 text-right text-xs">{totalActualCost > 0 ? fmt$(totalActualCost) : "—"}</td>
+                    <td className="px-3 py-2 text-right text-base text-foreground">{totalActualCost > 0 ? fmt$(totalActualCost) : "—"}</td>
                   </tr>
                 </tfoot>
               </table>
@@ -429,9 +429,9 @@ export function AuditTimeTrackerWorksheet() {
               <span className="text-sm font-semibold">Budget vs Actual — By Section</span>
             </div>
             <div className="overflow-x-auto">
-              <table className="w-full text-sm">
+              <table className="w-full text-base">
                 <thead>
-                  <tr className="bg-muted text-[11px] font-semibold uppercase tracking-wider text-foreground border-b border-border">
+                  <tr className="bg-muted text-xs font-semibold uppercase tracking-wider text-foreground border-b border-border">
                     <th className="px-5 py-2 text-left">Section</th>
                     <th className="px-3 py-2 text-center w-14">Std %</th>
                     <th className="px-3 py-2 text-right w-28">Budget Hrs</th>
@@ -449,16 +449,16 @@ export function AuditTimeTrackerWorksheet() {
                     const over = bh > 0 && ah > bh;
                     return (
                       <tr key={sec.key} className="hover:bg-muted/30 transition-colors">
-                        <td className="px-5 py-2 font-medium">{sec.label}</td>
-                        <td className="px-3 py-2 text-center text-xs text-muted-foreground">{sec.pct}%</td>
+                        <td className="px-5 py-2 font-medium text-foreground">{sec.label}</td>
+                        <td className="px-3 py-2 text-center text-base text-foreground">{sec.pct}%</td>
                         <td className="px-3 py-2 text-right">
                           <Input value={budget.bySection[sec.key] ?? ""}
                             onChange={e => setBudget(b => ({ ...b, bySection: { ...b.bySection, [sec.key]: e.target.value } }))}
-                            className="h-6 text-sm text-right border-0 shadow-none px-0 focus-visible:ring-0 bg-transparent w-16 ml-auto"
+                            className="h-6 text-base text-right border-0 shadow-none px-0 focus-visible:ring-0 bg-transparent w-16 ml-auto"
                             placeholder="0" />
                         </td>
-                        <td className="px-3 py-2 text-right font-medium">{ah > 0 ? fmtH(ah) : "—"}</td>
-                        <td className={`px-3 py-2 text-right font-semibold ${varH < 0 ? "text-red-600 dark:text-red-400" : varH > 0 && bh > 0 ? "text-green-600 dark:text-green-400" : "text-muted-foreground"}`}>
+                        <td className="px-3 py-2 text-right font-medium text-foreground">{ah > 0 ? fmtH(ah) : "—"}</td>
+                        <td className={`px-3 py-2 text-right font-semibold ${varH < 0 ? "text-red-600 dark:text-red-400" : varH > 0 && bh > 0 ? "text-green-600 dark:text-green-400" : "text-foreground"}`}>
                           {bh > 0 ? (varH >= 0 ? "+" : "") + fmtH(varH) : "—"}
                         </td>
                         <td className="px-5 py-2">
@@ -470,11 +470,11 @@ export function AuditTimeTrackerWorksheet() {
                                   style={{ width: `${pct}%` }}
                                 />
                               </div>
-                              <span className={`text-xs font-medium w-9 shrink-0 text-right ${over ? "text-red-500" : "text-muted-foreground"}`}>
+                              <span className={`text-sm font-medium w-9 shrink-0 text-right ${over ? "text-red-500" : "text-foreground"}`}>
                                 {Math.round(pct)}%
                               </span>
                             </div>
-                          ) : <span className="text-xs text-muted-foreground">Set budget hrs to track</span>}
+                          ) : <span className="text-sm text-muted-foreground">Set budget hrs to track</span>}
                         </td>
                       </tr>
                     );
@@ -560,9 +560,9 @@ export function AuditTimeTrackerWorksheet() {
               </span>
             </div>
             <div className="overflow-x-auto">
-              <table className="w-full text-sm">
+              <table className="w-full text-base">
                 <thead>
-                  <tr className="bg-muted text-[11px] font-semibold uppercase tracking-wider text-foreground border-b border-border">
+                  <tr className="bg-muted text-xs font-semibold uppercase tracking-wider text-foreground border-b border-border">
                     <th className="px-4 py-2 text-left">Date</th>
                     <th className="px-4 py-2 text-left">Role</th>
                     <th className="px-4 py-2 text-left">Section › Task</th>
@@ -579,12 +579,12 @@ export function AuditTimeTrackerWorksheet() {
                     const cost    = e.hours * num(rates[e.roleKey]);
                     return (
                       <tr key={e.id} className="hover:bg-muted/30 transition-colors">
-                        <td className="px-4 py-1.5 text-xs text-muted-foreground">{e.date}</td>
-                        <td className="px-4 py-1.5">{ROLE_LABELS[e.roleKey]}</td>
-                        <td className="px-4 py-1.5 text-xs text-muted-foreground">{section} › {task}</td>
-                        <td className="px-4 py-1.5 text-right font-medium">{fmtH(e.hours)}</td>
-                        <td className="px-4 py-1.5 text-right text-xs text-muted-foreground">{cost > 0 ? fmt$(cost) : "—"}</td>
-                        <td className="px-4 py-1.5 text-xs text-muted-foreground max-w-[200px] truncate">{e.description || "—"}</td>
+                        <td className="px-4 py-1.5 text-base text-foreground">{e.date}</td>
+                        <td className="px-4 py-1.5 text-foreground">{ROLE_LABELS[e.roleKey]}</td>
+                        <td className="px-4 py-1.5 text-base text-foreground">{section} › {task}</td>
+                        <td className="px-4 py-1.5 text-right font-medium text-foreground">{fmtH(e.hours)}</td>
+                        <td className="px-4 py-1.5 text-right text-base text-foreground">{cost > 0 ? fmt$(cost) : "—"}</td>
+                        <td className="px-4 py-1.5 text-base text-foreground max-w-[200px] truncate">{e.description || "—"}</td>
                         <td className="px-4 py-1.5 text-right">
                           <button onClick={() => removeEntry(e.id)}
                             className="text-muted-foreground hover:text-destructive transition-colors">
