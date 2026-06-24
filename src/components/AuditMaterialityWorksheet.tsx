@@ -10,6 +10,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Info, RefreshCw, Trash2, Plus, Calendar } from "lucide-react";
+import { RefButton, RefDoc } from "@/components/RefButton";
 import { AddToMyTemplatesDialog } from "@/components/AddToMyTemplatesDialog";
 import { toast } from "sonner";
 
@@ -222,12 +223,12 @@ export function AuditMaterialityWorksheet({ isUS = false }: AuditMaterialityWork
   const [adjPMRows, setAdjPMRows] = useState<AdjPMRow[]>(initAdjPM);
 
   // Section D — Materiality for specific circumstances
-  interface SpecMatRow { id: string; description: string; amount: string; reasoning: string; wpRef: string; pyAmount: string; }
+  interface SpecMatRow { id: string; description: string; amount: string; reasoning: string; wpRef: RefDoc[]; pyAmount: string; }
   const initSpecMat: SpecMatRow[] = isUS ? [
-    { id: uid(), description: "Related party transactions (ASC 850) — Board member loans and management compensation", amount: "10000", reasoning: "Users (lenders) particularly sensitive to RPTs. Lower materiality applied to ensure completeness of disclosure.", wpRef: "WP-RPT-01", pyAmount: "" },
-    { id: uid(), description: "Going concern disclosures — elevated D/E ratio (2.71x) and covenant compliance", amount: "0", reasoning: "Qualitative — any indication of substantial doubt requires disclosure regardless of dollar amount.", wpRef: "WP-GC-01", pyAmount: "" },
+    { id: uid(), description: "Related party transactions (ASC 850) — Board member loans and management compensation", amount: "10000", reasoning: "Users (lenders) particularly sensitive to RPTs. Lower materiality applied to ensure completeness of disclosure.", wpRef: [{ name: "WP-RPT-01" }], pyAmount: "" },
+    { id: uid(), description: "Going concern disclosures — elevated D/E ratio (2.71x) and covenant compliance", amount: "0", reasoning: "Qualitative — any indication of substantial doubt requires disclosure regardless of dollar amount.", wpRef: [{ name: "WP-GC-01" }], pyAmount: "" },
   ] : [
-    { id: uid(), description: "Related party transactions — shareholder loans and management fees", amount: "5000", reasoning: "Bank covenant requires disclosure of all RPTs. Lower threshold applied for completeness.", wpRef: "WP-RPT-01", pyAmount: "" },
+    { id: uid(), description: "Related party transactions — shareholder loans and management fees", amount: "5000", reasoning: "Bank covenant requires disclosure of all RPTs. Lower threshold applied for completeness.", wpRef: [{ name: "WP-RPT-01" }], pyAmount: "" },
   ];
   const [specMatRows, setSpecMatRows] = useState<SpecMatRow[]>(initSpecMat);
 
@@ -239,13 +240,7 @@ export function AuditMaterialityWorksheet({ isUS = false }: AuditMaterialityWork
       : "Performance materiality for RPTs set at 70% of specific materiality ($5,000 × 70% = $3,500)."
   );
   const [specPMPY, setSpecPMPY] = useState("");
-  const [specPMWPRef, setSpecPMWPRef] = useState("WP-RPT-PM");
-
-  // Sign-off
-  const [preparedBy, setPreparedBy] = useState("");
-  const [preparedDate, setPreparedDate] = useState("");
-  const [reviewedBy, setReviewedBy] = useState("");
-  const [reviewedDate, setReviewedDate] = useState("");
+  const [specPMWPRef, setSpecPMWPRef] = useState<RefDoc[]>([{ name: "WP-RPT-PM" }]);
 
   // Additional comments & conclusion
   const [additionalComments, setAdditionalComments] = useState("");
@@ -824,7 +819,7 @@ export function AuditMaterialityWorksheet({ isUS = false }: AuditMaterialityWork
                       <td className="px-4 py-2.5 align-top"><TdInput value={row.description} onChange={(v) => setSpecMatRows(p => p.map(r => r.id === row.id ? {...r, description: v} : r))} placeholder="Describe specific circumstances…" /></td>
                       <td className="px-4 py-2.5 align-top"><TdInput value={row.amount} onChange={(v) => setSpecMatRows(p => p.map(r => r.id === row.id ? {...r, amount: v.replace(/[^0-9.]/g,"")} : r))} placeholder="0" className="text-right tabular-nums" /></td>
                       <td className="px-4 py-2.5 align-top"><TdInput value={row.reasoning} onChange={(v) => setSpecMatRows(p => p.map(r => r.id === row.id ? {...r, reasoning: v} : r))} placeholder="Reasoning…" /></td>
-                      <td className="px-4 py-2.5 align-top"><TdInput value={row.wpRef} onChange={(v) => setSpecMatRows(p => p.map(r => r.id === row.id ? {...r, wpRef: v} : r))} placeholder="—" className="text-center" /></td>
+                      <td className="px-4 py-2.5 align-top"><RefButton reference={row.wpRef} onAttach={(doc) => setSpecMatRows(p => p.map(r => r.id === row.id ? {...r, wpRef: [...r.wpRef, doc]} : r))} onRemove={(idx) => setSpecMatRows(p => p.map(r => r.id === row.id ? {...r, wpRef: r.wpRef.filter((_,j) => j !== idx)} : r))} /></td>
                       <td className="px-4 py-2.5 align-top"><TdInput value={row.pyAmount} onChange={(v) => setSpecMatRows(p => p.map(r => r.id === row.id ? {...r, pyAmount: v.replace(/[^0-9.]/g,"")} : r))} placeholder="—" className="text-right tabular-nums" /></td>
                       <td className="px-2 py-2.5 align-top text-center"><button onClick={() => setSpecMatRows(p => p.filter(r => r.id !== row.id))} className="text-muted-foreground hover:text-destructive transition-colors" disabled={specMatRows.length === 1}><Trash2 className="h-3.5 w-3.5" /></button></td>
                     </tr>
@@ -833,7 +828,7 @@ export function AuditMaterialityWorksheet({ isUS = false }: AuditMaterialityWork
               </table>
             </div>
             <div className="px-6 py-3 border-t border-border">
-              <button onClick={() => setSpecMatRows(p => [...p, {id: uid(), description:"", amount:"", reasoning:"", wpRef:"", pyAmount:""}])} className="flex items-center gap-1.5 text-sm font-medium text-primary hover:text-primary/80 transition-colors"><Plus className="h-4 w-4" />Add Row</button>
+              <button onClick={() => setSpecMatRows(p => [...p, {id: uid(), description:"", amount:"", reasoning:"", wpRef:[], pyAmount:""}])} className="flex items-center gap-1.5 text-sm font-medium text-primary hover:text-primary/80 transition-colors"><Plus className="h-4 w-4" />Add Row</button>
             </div>
           </div>
 
@@ -857,7 +852,7 @@ export function AuditMaterialityWorksheet({ isUS = false }: AuditMaterialityWork
                   <tr className="hover:bg-muted/50 transition-colors">
                     <td className="px-4 py-2.5 align-top"><TdInput value={specPMAmount} onChange={setSpecPMAmount} placeholder="0" className="text-right tabular-nums" /></td>
                     <td className="px-4 py-2.5 align-top"><TdInput value={specPMReasoning} onChange={setSpecPMReasoning} placeholder="Reasoning…" /></td>
-                    <td className="px-4 py-2.5 align-top"><TdInput value={specPMWPRef} onChange={setSpecPMWPRef} placeholder="—" className="text-center" /></td>
+                    <td className="px-4 py-2.5 align-top"><RefButton reference={specPMWPRef} onAttach={(doc) => setSpecPMWPRef(p => [...p, doc])} onRemove={(idx) => setSpecPMWPRef(p => p.filter((_,j) => j !== idx))} /></td>
                     <td className="px-4 py-2.5 align-top"><TdInput value={specPMPY} onChange={setSpecPMPY} placeholder="—" className="text-right tabular-nums" /></td>
                   </tr>
                 </tbody>
@@ -892,46 +887,6 @@ export function AuditMaterialityWorksheet({ isUS = false }: AuditMaterialityWork
                 onChange={(e) => setConclusion(e.target.value)}
                 className="min-h-[72px] text-sm resize-none bg-background"
               />
-            </div>
-          </div>
-
-          {/* ── Sign-off footer ── */}
-          <div className="bg-card border border-border shadow-[0_2px_8px_hsl(213_40%_20%/0.06)] rounded-md overflow-hidden">
-            <div className="px-6 py-4 bg-muted/20">
-              <div className="grid grid-cols-2 gap-6">
-                <div className="flex items-center gap-3">
-                  <span className="text-xs font-semibold text-muted-foreground whitespace-nowrap">Prepared by:</span>
-                  <Input
-                    className="h-8 text-sm flex-1"
-                    value={preparedBy}
-                    onChange={(e) => setPreparedBy(e.target.value)}
-                    placeholder="Name"
-                  />
-                  <span className="text-xs font-semibold text-muted-foreground whitespace-nowrap">Date:</span>
-                  <Input
-                    type="date"
-                    className="h-8 text-sm w-36"
-                    value={preparedDate}
-                    onChange={(e) => setPreparedDate(e.target.value)}
-                  />
-                </div>
-                <div className="flex items-center gap-3">
-                  <span className="text-xs font-semibold text-muted-foreground whitespace-nowrap">Reviewed by:</span>
-                  <Input
-                    className="h-8 text-sm flex-1"
-                    value={reviewedBy}
-                    onChange={(e) => setReviewedBy(e.target.value)}
-                    placeholder="Name"
-                  />
-                  <span className="text-xs font-semibold text-muted-foreground whitespace-nowrap">Date:</span>
-                  <Input
-                    type="date"
-                    className="h-8 text-sm w-36"
-                    value={reviewedDate}
-                    onChange={(e) => setReviewedDate(e.target.value)}
-                  />
-                </div>
-              </div>
             </div>
           </div>
 
