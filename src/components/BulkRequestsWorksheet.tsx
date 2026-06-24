@@ -193,7 +193,7 @@ export function BulkRequestsWorksheet({ isUS = false }: BulkRequestsWorksheetPro
                 <label className="text-xs font-medium text-foreground block mb-1.5">
                   Engagement Folder{required}
                 </label>
-                <Select value={folder} onValueChange={setFolder}>
+                <Select value={folder} onValueChange={(v) => { setFolder(v); setSubFolder(FOLDER_STRUCTURE[v]?.[0] ?? ''); }}>
                   <SelectTrigger className="h-8 text-sm"><SelectValue /></SelectTrigger>
                   <SelectContent>
                     {ENGAGEMENT_FOLDERS.map(f => <SelectItem key={f} value={f}>{f}</SelectItem>)}
