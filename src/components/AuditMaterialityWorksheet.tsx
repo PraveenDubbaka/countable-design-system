@@ -68,18 +68,24 @@ function sumColumn(rows: EntityRow[], field: keyof EntityRow): string {
   return hasValue ? formatNum(total) : "";
 }
 
-const BASIS_OPTIONS = [
-  "Gross revenues",
-  "Total assets",
-  "Profit before tax",
-  "Total expenses",
-  "Net assets",
+// TB benchmark values — sourced from QBO connector via TrialBalance
+const TB_CA = { grossRevenue: 12500000, profitBeforeTax: 460000, totalAssets: 21800000, totalExpenses: 12040000, netAssets: 8400000 };
+const TB_US = { grossRevenue: 18400000, profitBeforeTax: 1003000, totalAssets: 13100000, totalExpenses: 17444000, netAssets: 3183000 };
+type TBKey = keyof typeof TB_CA;
+
+const BASIS_OPTIONS: { value: string; label: string; tbKey: TBKey }[] = [
+  { value: "grossRevenue",    label: "Gross Revenue",       tbKey: "grossRevenue" },
+  { value: "profitBeforeTax", label: "Profit Before Tax",   tbKey: "profitBeforeTax" },
+  { value: "totalAssets",     label: "Total Assets",        tbKey: "totalAssets" },
+  { value: "totalExpenses",   label: "Total Expenses",      tbKey: "totalExpenses" },
+  { value: "netAssets",       label: "Net Assets / Equity", tbKey: "netAssets" },
 ];
 
-const ENTITY_TYPE_OPTIONS = ["Profit Oriented", "Non-Profit", "Government", "Other"];
+const SEED_ROW_A = "mat-row-a";
+const SEED_ROW_B = "mat-row-b";
 
 const formatDisplay = (v: string) => {
-  const n = parseFloat(v);
+  const n = parseFloat(String(v).replace(/,/g, ""));
   if (isNaN(n)) return v;
   return n.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 };
@@ -151,18 +157,32 @@ export function AuditMaterialityWorksheet({ isUS = false }: AuditMaterialityWork
   const [periodStart, setPeriodStart] = useState(isUS ? "2024-01-01" : "2024-04-01");
   const [periodEnd, setPeriodEnd] = useState(isUS ? "2024-12-31" : "2025-03-31");
 
-  // Preliminary Materiality table rows
-  const mockPeriodAmount = isUS ? "18400000" : "12500000";
+  const TB = isUS ? TB_US : TB_CA;
+  const entityLabel = isUS ? "Harbor Freight LLC" : "Shipping Line Inc.";
+
+  // Preliminary Materiality — two benchmark rows seeded from Trial Balance
+  const [selectedRowId, setSelectedRowId] = useState(SEED_ROW_A);
   const [entityRows, setEntityRows] = useState<EntityRow[]>([
     {
-      id: uid(),
-      entityName: "Profit Oriented",
-      basis: "Gross revenues",
-      periodAmount: mockPeriodAmount,
-      extrapolatedPeriod: mockPeriodAmount,
+      id: SEED_ROW_A,
+      entityName: entityLabel,
+      basis: "grossRevenue",
+      periodAmount: String(TB.grossRevenue),
+      extrapolatedPeriod: String(TB.grossRevenue),
       benchmarkPct: "1.00",
-      materialityCY: calcMatCY(mockPeriodAmount, "1.00"),
-      materialityPY: "0",
+      materialityCY: calcMatCY(String(TB.grossRevenue), "1.00"),
+      materialityPY: "",
+      comments: "",
+    },
+    {
+      id: SEED_ROW_B,
+      entityName: entityLabel,
+      basis: "profitBeforeTax",
+      periodAmount: String(TB.profitBeforeTax),
+      extrapolatedPeriod: String(TB.profitBeforeTax),
+      benchmarkPct: "5.00",
+      materialityCY: calcMatCY(String(TB.profitBeforeTax), "5.00"),
+      materialityPY: "",
       comments: "",
     },
   ]);
@@ -241,25 +261,46 @@ export function AuditMaterialityWorksheet({ isUS = false }: AuditMaterialityWork
         prev.map((row) => {
           if (row.id !== id) return row;
           const updated = { ...row, [field]: value };
-          // recalculate materialityCY if periodAmount or benchmarkPct changed
-          if (field === "periodAmount" || field === "benchmarkPct") {
-            const pAmt = field === "periodAmount" ? value : row.periodAmount;
+          // auto-populate from TB when basis changes
+          if (field === "basis") {
+            const opt = BASIS_OPTIONS.find(o => o.value === value);
+            if (opt) {
+              const tbVal = String(TB[opt.tbKey]);
+              updated.periodAmount = tbVal;
+              updated.extrapolatedPeriod = tbVal;
+              updated.materialityCY = calcMatCY(tbVal, row.benchmarkPct);
+            }
+          }
+          // recalculate when amounts or % change (use extrapolated as the basis amount)
+          if (field === "periodAmount" || field === "extrapolatedPeriod" || field === "benchmarkPct") {
+            const extAmt = field === "extrapolatedPeriod" ? value
+              : (row.extrapolatedPeriod || (field === "periodAmount" ? value : row.periodAmount));
             const bPct = field === "benchmarkPct" ? value : row.benchmarkPct;
-            updated.materialityCY = calcMatCY(pAmt, bPct);
+            updated.materialityCY = calcMatCY(extAmt, bPct);
           }
           return updated;
         })
       );
     },
-    []
+    [TB]
   );
+
+  const handleRefresh = () => {
+    setEntityRows(prev => prev.map(row => {
+      const opt = BASIS_OPTIONS.find(o => o.value === row.basis);
+      if (!opt) return row;
+      const tbVal = String(TB[opt.tbKey]);
+      return { ...row, periodAmount: tbVal, extrapolatedPeriod: tbVal, materialityCY: calcMatCY(tbVal, row.benchmarkPct) };
+    }));
+    toast.success("Benchmarks refreshed from Trial Balance");
+  };
 
   const addEntityRow = () => {
     setEntityRows((prev) => [
       ...prev,
       {
         id: uid(),
-        entityName: "",
+        entityName: entityLabel,
         basis: "",
         periodAmount: "",
         extrapolatedPeriod: "",
@@ -272,27 +313,33 @@ export function AuditMaterialityWorksheet({ isUS = false }: AuditMaterialityWork
   };
 
   const removeEntityRow = (id: string) => {
-    setEntityRows((prev) => prev.filter((r) => r.id !== id));
+    setEntityRows((prev) => {
+      const next = prev.filter((r) => r.id !== id);
+      if (id === selectedRowId && next.length > 0) setSelectedRowId(next[0].id);
+      return next;
+    });
   };
 
-  // Totals for all numeric columns
+  // Overall materiality = selected row's materialityCY (not a sum)
+  const selectedRow = entityRows.find(r => r.id === selectedRowId) ?? entityRows[0];
+  const overallMateriality = selectedRow?.materialityCY ?? "";
+
+  // Reference totals (period/extrapolated displayed in summary row)
   const totalPeriod = sumColumn(entityRows, "periodAmount");
   const totalExtrapolated = sumColumn(entityRows, "extrapolatedPeriod");
-  const totalBenchmark = sumColumn(entityRows, "benchmarkPct");
-  const totalMatCY = sumColumn(entityRows, "materialityCY");
   const totalMatPY = sumColumn(entityRows, "materialityPY");
 
-  // Clearly trivial amount
+  // Clearly trivial — flows from overall materiality
   const ctAmount = (() => {
-    const m = parseFloat(totalMatCY.replace(/[^0-9.]/g, ""));
+    const m = parseFloat(overallMateriality.replace(/[^0-9.]/g, ""));
     const p = parseFloat(ctThresholdPct.replace(/[^0-9.]/g, ""));
     if (isNaN(m) || isNaN(p)) return "";
     return formatNum(m * p / 100);
   })();
 
-  // Performance Materiality
+  // Performance Materiality — flows from overall materiality
   const pmAmount = (() => {
-    const m = parseFloat(totalMatCY.replace(/[^0-9.]/g, ""));
+    const m = parseFloat(overallMateriality.replace(/[^0-9.]/g, ""));
     const p = parseFloat(pmPct.replace(/[^0-9.]/g, ""));
     if (isNaN(m) || isNaN(p)) return "";
     return formatNum(m * p / 100);
@@ -356,8 +403,8 @@ export function AuditMaterialityWorksheet({ isUS = false }: AuditMaterialityWork
               <Button
                 variant="outline"
                 size="sm"
-                disabled
-                className="h-8 text-sm opacity-50 cursor-not-allowed"
+                onClick={handleRefresh}
+                className="h-8 text-sm"
               >
                 <RefreshCw className="h-3.5 w-3.5 mr-1.5" />
                 Refresh
@@ -365,36 +412,46 @@ export function AuditMaterialityWorksheet({ isUS = false }: AuditMaterialityWork
             </div>
             <div className="overflow-x-auto">
               <table className="w-full">
-                  <thead className="sticky top-0 z-10">
-                    <tr className="bg-muted border-b border-border">
-                      <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider">Entity Name</th>
-                      <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider">Basis for calculations</th>
-                      <th className="px-4 py-3 text-right text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap">
-                        {periodLabel}
-                      </th>
-                      <th className="px-4 py-3 text-right text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap">Extrapolated period ($)</th>
-                      <th className="px-4 py-3 text-right text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap">Benchmark applied (%)</th>
-                      <th className="px-4 py-3 text-right text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap">Materiality CY ($)</th>
-                      <th className="px-4 py-3 text-right text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap">Materiality PY ($)</th>
-                      <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider">Comments</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-border">
-                    {entityRows.map((row) => (
-                      <tr key={row.id} className="hover:bg-muted/50 transition-colors">
-                        <td className="px-4 py-2.5 align-top min-w-[160px]">
-                          <TdSelect
-                            value={row.entityName}
-                            onChange={(v) => updateEntityRow(row.id, "entityName", v)}
-                            options={ENTITY_TYPE_OPTIONS.map((e) => ({ value: e, label: e }))}
-                            placeholder="Select type…"
+                <thead className="sticky top-0 z-10">
+                  <tr className="bg-muted border-b border-border">
+                    <th className="px-3 py-3 text-center text-xs font-semibold text-foreground uppercase tracking-wider w-10">Primary</th>
+                    <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider">Entity / Component</th>
+                    <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider">Basis for Calculations</th>
+                    <th className="px-4 py-3 text-right text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap">{periodLabel}</th>
+                    <th className="px-4 py-3 text-right text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap">Extrapolated ($)</th>
+                    <th className="px-4 py-3 text-right text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap">Benchmark (%)</th>
+                    <th className="px-4 py-3 text-right text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap">Materiality CY ($)</th>
+                    <th className="px-4 py-3 text-right text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap">Materiality PY ($)</th>
+                    <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider">Comments</th>
+                    <th className="px-2 py-3 w-8" />
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-border">
+                  {entityRows.map((row) => {
+                    const isSelected = row.id === selectedRowId;
+                    return (
+                      <tr key={row.id} className={`transition-colors ${isSelected ? "bg-primary/[0.04]" : "hover:bg-muted/50"}`}>
+                        <td className="px-3 py-2.5 align-middle text-center">
+                          <input
+                            type="radio"
+                            name="primary-benchmark"
+                            checked={isSelected}
+                            onChange={() => setSelectedRowId(row.id)}
+                            className="h-4 w-4 accent-primary cursor-pointer"
                           />
                         </td>
                         <td className="px-4 py-2.5 align-top min-w-[160px]">
+                          <TdInput
+                            value={row.entityName}
+                            onChange={(v) => updateEntityRow(row.id, "entityName", v)}
+                            placeholder="Entity name…"
+                          />
+                        </td>
+                        <td className="px-4 py-2.5 align-top min-w-[170px]">
                           <TdSelect
                             value={row.basis}
                             onChange={(v) => updateEntityRow(row.id, "basis", v)}
-                            options={BASIS_OPTIONS.map((b) => ({ value: b, label: b }))}
+                            options={BASIS_OPTIONS}
                             placeholder="Select basis…"
                           />
                         </td>
@@ -422,42 +479,65 @@ export function AuditMaterialityWorksheet({ isUS = false }: AuditMaterialityWork
                             className="tabular-nums text-right"
                           />
                         </td>
-                        <td className="px-4 py-2.5 align-top w-44 text-right">
+                        <td className="px-4 py-2.5 align-top w-40 text-right">
                           <TdInput
                             value={formatDisplay(row.materialityCY)}
                             readOnly
-                            className="tabular-nums text-right"
+                            className={`tabular-nums text-right${isSelected ? " font-semibold" : ""}`}
                           />
                         </td>
-                        <td className="px-4 py-2.5 align-top w-40 text-right">
+                        <td className="px-4 py-2.5 align-top w-36 text-right">
                           <TdInput
                             value={row.materialityPY}
                             onChange={(v) => updateEntityRow(row.id, "materialityPY", v.replace(/[^0-9.]/g, ""))}
-                            placeholder="e.g. 0.00"
+                            placeholder="—"
                             className="tabular-nums text-right"
                           />
                         </td>
-                        <td className="px-4 py-2.5 align-top min-w-[180px]">
+                        <td className="px-4 py-2.5 align-top min-w-[160px]">
                           <TdInput
                             value={row.comments}
                             onChange={(v) => updateEntityRow(row.id, "comments", v)}
                             placeholder="Comments…"
                           />
                         </td>
+                        <td className="px-2 py-2.5 align-top text-center">
+                          <button
+                            onClick={() => removeEntityRow(row.id)}
+                            className="text-muted-foreground hover:text-destructive transition-colors"
+                            disabled={entityRows.length === 1}
+                          >
+                            <Trash2 className="h-3.5 w-3.5" />
+                          </button>
+                        </td>
                       </tr>
-                    ))}
-                    {/* Total row */}
-                    <tr className="bg-muted/30 border-t border-border font-semibold">
-                      <td className="px-4 py-2 text-xs font-semibold text-foreground" colSpan={2}>Total</td>
-                      <td className="px-4 py-2 text-sm tabular-nums text-foreground text-right">{totalPeriod || "—"}</td>
-                      <td className="px-4 py-2 text-sm tabular-nums text-foreground text-right">{totalExtrapolated || "—"}</td>
-                      <td className="px-4 py-2 text-sm tabular-nums text-foreground text-right">{totalBenchmark || "—"}</td>
-                      <td className="px-4 py-2 text-sm tabular-nums text-foreground text-right">{totalMatCY || "—"}</td>
-                      <td className="px-4 py-2 text-sm tabular-nums text-foreground text-right">{totalMatPY || "—"}</td>
-                      <td className="px-4 py-2" />
-                    </tr>
-                  </tbody>
-                </table>
+                    );
+                  })}
+                  {/* Overall Materiality summary row */}
+                  <tr className="bg-primary/[0.06] border-t-2 border-primary/20">
+                    <td className="px-3 py-2" />
+                    <td className="px-4 py-2 text-xs font-semibold text-primary" colSpan={2}>
+                      Overall Materiality — {BASIS_OPTIONS.find(o => o.value === selectedRow?.basis)?.label ?? "Select a primary benchmark ↑"}
+                    </td>
+                    <td className="px-4 py-2 text-sm tabular-nums text-foreground text-right">{selectedRow?.periodAmount ? formatDisplay(selectedRow.periodAmount) : "—"}</td>
+                    <td className="px-4 py-2 text-sm tabular-nums text-foreground text-right">{selectedRow?.extrapolatedPeriod ? formatDisplay(selectedRow.extrapolatedPeriod) : "—"}</td>
+                    <td className="px-4 py-2 text-sm tabular-nums text-foreground text-right">{selectedRow?.benchmarkPct || "—"}</td>
+                    <td className="px-4 py-2 text-sm tabular-nums font-bold text-primary text-right">{overallMateriality ? formatDisplay(overallMateriality) : "—"}</td>
+                    <td className="px-4 py-2 text-sm tabular-nums text-foreground text-right">{selectedRow?.materialityPY || "—"}</td>
+                    <td className="px-4 py-2" />
+                    <td className="px-4 py-2" />
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div className="px-6 py-3 border-t border-border">
+              <button
+                onClick={addEntityRow}
+                className="flex items-center gap-1.5 text-sm font-medium text-primary hover:text-primary/80 transition-colors"
+              >
+                <Plus className="h-4 w-4" />
+                Add Benchmark
+              </button>
             </div>
             {/* Clearly Trivial Misstatements footer — inside the same card */}
             <div className="border-t border-border px-4 py-3">
