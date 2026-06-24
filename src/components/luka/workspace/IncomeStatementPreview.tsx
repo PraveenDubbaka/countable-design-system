@@ -1,5 +1,5 @@
 import { useState } from "react";
-import AddColumnButton from "@/components/dashboard/templates/AddColumnButton";
+import AddColumnButton from "@/components/luka/templates/AddColumnButton";
 import EditableTitleBlock from "./EditableTitleBlock";
 import EditableTableControls from "./EditableTableControls";
 import { useStatementOverlays } from "./StatementImageOverlays";
