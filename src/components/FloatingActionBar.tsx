@@ -59,6 +59,7 @@ interface FloatingActionBarProps {
   onBulkDelete: () => void;
   onAddCategory: (position: 'top' | 'bottom', type: 'empty' | 'template' | 'form' | 'inquires-form') => void;
   isPreviewMode?: boolean;
+  isChecklist?: boolean;
 }
 
 const getStorageKey = (isPreviewMode: boolean) => 
@@ -78,7 +79,8 @@ export function FloatingActionBar({
   selectedQuestions,
   onBulkDelete,
   onAddCategory,
-  isPreviewMode = false
+  isPreviewMode = false,
+  isChecklist = true,
 }: FloatingActionBarProps) {
   const [showReorderModal, setShowReorderModal] = useState(false);
   const [showAddCategoryPopover, setShowAddCategoryPopover] = useState(false);
@@ -302,8 +304,8 @@ export function FloatingActionBar({
           style={{ borderRadius: '9999px' }}
           title="Drag to reposition • Double-click to cycle positions"
         >
-          {/* Smart Layout - Hidden in preview mode */}
-          {!isPreviewMode && (
+          {/* Smart Layout - Hidden in preview mode and non-checklists */}
+          {isChecklist && !isPreviewMode && (
             <Popover 
               open={showSmartLayoutPopover} 
               onOpenChange={setShowSmartLayoutPopover}
@@ -362,35 +364,35 @@ export function FloatingActionBar({
             </Popover>
           )}
 
-          {/* Collapse/Expand Sections */}
-          <button
+          {/* Collapse/Expand Sections — checklists only */}
+          {isChecklist && <button
             onClick={(e) => { e.stopPropagation(); handleToggleSections(); }}
             onMouseDown={(e) => e.stopPropagation()}
             className="w-9 h-9 flex items-center justify-center rounded-lg hover:bg-muted transition-colors group"
             title={allSectionsCollapsed ? "Expand all categories" : "Collapse all categories"}
           >
             <Layers className={`h-4 w-4 text-muted-foreground group-hover:text-foreground group-hover:icon-layers transition-transform ${allSectionsCollapsed ? 'opacity-50' : ''}`} />
-          </button>
+          </button>}
 
-          {/* Collapse/Expand Row Text (Compact Mode) */}
-          <button
+          {/* Collapse/Expand Row Text — checklists only */}
+          {isChecklist && <button
             onClick={(e) => { e.stopPropagation(); onToggleCompactMode(); }}
             onMouseDown={(e) => e.stopPropagation()}
             className="w-9 h-9 flex items-center justify-center rounded-lg hover:bg-muted transition-colors group"
             title={isCompactMode ? "Expand row text" : "Collapse row text"}
           >
             <Minimize2 className={`h-4 w-4 text-muted-foreground group-hover:text-foreground transition-transform ${isCompactMode ? 'rotate-180' : ''}`} />
-          </button>
+          </button>}
 
-          {/* Reorder Questions */}
-          <button
+          {/* Reorder Questions — checklists only */}
+          {isChecklist && <button
             onClick={(e) => { e.stopPropagation(); setShowReorderModal(true); }}
             onMouseDown={(e) => e.stopPropagation()}
             className="w-9 h-9 flex items-center justify-center rounded-lg hover:bg-muted transition-colors group"
             title="Reorder questions"
           >
             <ArrowUpDown className="h-4 w-4 text-muted-foreground group-hover:text-foreground group-hover:icon-reorder" />
-          </button>
+          </button>}
 
           {/* Notes */}
           <button
@@ -405,8 +407,8 @@ export function FloatingActionBar({
             <StickyNote className="h-4 w-4 text-muted-foreground group-hover:text-foreground" />
           </button>
 
-          {/* Add Category - Hidden in preview mode */}
-          {!isPreviewMode && (
+          {/* Add Category - Hidden in preview mode and non-checklists */}
+          {isChecklist && !isPreviewMode && (
             <Popover 
               open={showAddCategoryPopover} 
               onOpenChange={(open) => {
@@ -475,8 +477,8 @@ export function FloatingActionBar({
             </Popover>
           )}
 
-          {/* Bulk Delete - Hidden in preview mode */}
-          {!isPreviewMode && (
+          {/* Bulk Delete - Hidden in preview mode and non-checklists */}
+          {isChecklist && !isPreviewMode && (
             <button
               onClick={(e) => { e.stopPropagation(); onBulkDelete(); }}
               onMouseDown={(e) => e.stopPropagation()}
