@@ -1,8 +1,10 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Info, Plus, Trash2, Copy, CalendarClock, Send } from 'lucide-react';
+import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
+import { Badge } from '@/components/ui/badge';
+import { Info, Plus, Trash2, Copy, CalendarClock, Send, Paperclip, MessageSquare, Pencil, ChevronDown, ChevronRight, Inbox, ArrowUpDown, Download } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
 import { RefButton, RefDoc } from '@/components/RefButton';
@@ -10,6 +12,8 @@ import { RefButton, RefDoc } from '@/components/RefButton';
 interface BulkRequestsWorksheetProps {
   isUS?: boolean;
 }
+
+type RequestStatus = 'Pending' | 'Sent' | 'Overdue' | 'Received' | 'Cancelled';
 
 interface RequestRow {
   id: string;
@@ -20,6 +24,17 @@ interface RequestRow {
   description: string;
   dueDate: string;
   wpRef: RefDoc[];
+}
+
+interface SentRequest extends RequestRow {
+  reqId: string;
+  folder: string;
+  subFolder: string;
+  sentAt: string; // ISO
+  status: RequestStatus;
+  batchId: string;
+  attachments: number;
+  comments: number;
 }
 
 // Mirrors the left-menu Audit engagement folder structure (Sidebar.tsx)
@@ -125,11 +140,33 @@ const newRow = (): RequestRow => ({
   wpRef: [],
 });
 
+const statusStyles: Record<RequestStatus, string> = {
+  Pending: 'bg-amber-50 text-amber-700 border-amber-200',
+  Sent: 'bg-blue-50 text-blue-700 border-blue-200',
+  Overdue: 'bg-red-50 text-red-700 border-red-200',
+  Received: 'bg-emerald-50 text-emerald-700 border-emerald-200',
+  Cancelled: 'bg-muted text-muted-foreground border-border',
+};
+
+const formatDateTime = (iso: string) => {
+  const d = new Date(iso);
+  return d.toLocaleString(undefined, { month: 'short', day: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+};
+
+const daysUntil = (iso: string) => {
+  const due = new Date(iso).getTime();
+  const today = new Date(); today.setHours(0, 0, 0, 0);
+  return Math.ceil((due - today.getTime()) / (1000 * 60 * 60 * 24));
+};
+
 export function BulkRequestsWorksheet({ isUS = false }: BulkRequestsWorksheetProps) {
+  const [activeTab, setActiveTab] = useState<'create' | 'all' | 'available'>('create');
   const [folder, setFolder] = useState('Client Onboarding');
-  const [subFolder, setSubFolder] = useState('Team Planning Discussions');
+  const [subFolder, setSubFolder] = useState(FOLDER_STRUCTURE['Client Onboarding'][0]);
   const [globalDueDate, setGlobalDueDate] = useState(defaultDueDate());
   const [rows, setRows] = useState<RequestRow[]>(() => Array.from({ length: 3 }, newRow));
+  const [sentRequests, setSentRequests] = useState<SentRequest[]>([]);
+  const [expandedGroups, setExpandedGroups] = useState<Record<string, boolean>>({});
 
   const update = (id: string, patch: Partial<RequestRow>) =>
     setRows(prev => prev.map(r => (r.id === id ? { ...r, ...patch } : r)));
@@ -155,14 +192,47 @@ export function BulkRequestsWorksheet({ isUS = false }: BulkRequestsWorksheetPro
       toast.error('All mandatory fields must be filled before sending');
       return;
     }
+    const batchId = `BATCH-${Date.now().toString().slice(-6)}`;
+    const sentAt = new Date().toISOString();
+    const nextSeq = sentRequests.length;
+    const newSent: SentRequest[] = rows.map((r, i) => ({
+      ...r,
+      reqId: `REQ-${nextSeq + i + 1}`,
+      folder,
+      subFolder,
+      sentAt,
+      status: daysUntil(r.dueDate) < 0 ? 'Overdue' : 'Sent',
+      batchId,
+      attachments: 0,
+      comments: 0,
+    }));
+    setSentRequests(prev => [...newSent, ...prev]);
     toast.success(`${validCount} request${validCount > 1 ? 's' : ''} sent successfully`);
     setRows(Array.from({ length: 3 }, newRow));
+    setActiveTab('all');
   };
+
+  // Group sent requests by folder/subFolder
+  const grouped = useMemo(() => {
+    const map: Record<string, SentRequest[]> = {};
+    sentRequests.forEach(r => {
+      const key = `${r.folder} › ${r.subFolder}`;
+      (map[key] ||= []).push(r);
+    });
+    return map;
+  }, [sentRequests]);
+
+  const availableRequests = sentRequests.filter(r => r.status === 'Received');
+
+  const toggleGroup = (key: string) => setExpandedGroups(p => ({ ...p, [key]: !(p[key] ?? true) }));
 
   const cardCls = 'bg-card text-card-foreground border border-border shadow-[0_2px_8px_hsl(213_40%_20%/0.06)] rounded-md overflow-hidden';
   const cardHeaderCls = 'px-6 py-3.5 bg-card border-b border-border flex items-center gap-3';
   const thCls = 'px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap';
   const required = <span className="text-destructive ml-0.5">*</span>;
+
+  const allCount = sentRequests.length;
+  const availableCount = availableRequests.length;
 
   return (
     <div className="flex flex-col h-full">
@@ -171,188 +241,360 @@ export function BulkRequestsWorksheet({ isUS = false }: BulkRequestsWorksheetPro
         <Info className="h-3.5 w-3.5 text-primary mt-0.5 shrink-0" />
         <span className="text-xs font-semibold text-primary whitespace-nowrap">Objective:</span>
         <p className="text-xs text-muted-foreground flex-1 leading-relaxed">
-          Generate and send multiple Provided-by-Client (PBC) requests for information or analysis required from
-          management in a single batch, ensuring complete documentation under {isUS ? 'AU-C 580' : 'CAS 580'}.
+          Generate, send and track multiple Provided-by-Client (PBC) requests for information or analysis required from
+          management, ensuring complete documentation under {isUS ? 'AU-C 580' : 'CAS 580'}.
         </p>
       </div>
 
-      {/* Body */}
-      <div className="flex-1 overflow-y-auto bg-muted/30">
-        <div className="p-6 space-y-4">
-
-          {/* ── Section A: Batch Settings ── */}
-          <div className={cardCls}>
-            <div className={cardHeaderCls}>
-              <span className="text-sm font-semibold text-foreground">Batch Settings</span>
-              <span title="Apply common folder and due-date settings to all rows below.">
-                <Info className="h-3.5 w-3.5 text-muted-foreground cursor-help" />
+      <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as typeof activeTab)} className="flex-1 flex flex-col min-h-0">
+        {/* Tabs bar */}
+        <div className="px-6 pt-4 bg-muted/30 border-b border-border shrink-0">
+          <TabsList className="bg-transparent p-0 h-auto gap-1">
+            <TabsTrigger
+              value="create"
+              className="data-[state=active]:bg-card data-[state=active]:text-primary data-[state=active]:shadow-none data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-t-md rounded-b-none border border-transparent border-b-border px-4 py-2 text-sm font-medium"
+            >
+              <Plus className="h-3.5 w-3.5 mr-1.5" /> Create New
+            </TabsTrigger>
+            <TabsTrigger
+              value="all"
+              className="data-[state=active]:bg-card data-[state=active]:text-primary data-[state=active]:shadow-none data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-t-md rounded-b-none border border-transparent border-b-border px-4 py-2 text-sm font-medium gap-1.5"
+            >
+              All Requests
+              <span className="inline-flex items-center justify-center min-w-[20px] h-5 px-1.5 rounded-full bg-muted text-foreground text-[10px] font-semibold">
+                {allCount}
               </span>
+            </TabsTrigger>
+            <TabsTrigger
+              value="available"
+              className="data-[state=active]:bg-card data-[state=active]:text-primary data-[state=active]:shadow-none data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-t-md rounded-b-none border border-transparent border-b-border px-4 py-2 text-sm font-medium gap-1.5"
+            >
+              Available
+              <span className="inline-flex items-center justify-center min-w-[20px] h-5 px-1.5 rounded-full bg-muted text-foreground text-[10px] font-semibold">
+                {availableCount}
+              </span>
+            </TabsTrigger>
+          </TabsList>
+        </div>
+
+        {/* Body */}
+        <div className="flex-1 overflow-y-auto bg-muted/30 min-h-0">
+          {/* ============ CREATE NEW ============ */}
+          <TabsContent value="create" className="m-0 p-6 space-y-4">
+            {/* Batch Settings */}
+            <div className={cardCls}>
+              <div className={cardHeaderCls}>
+                <span className="text-sm font-semibold text-foreground">Batch Settings</span>
+                <span title="Apply common folder and due-date settings to all rows below.">
+                  <Info className="h-3.5 w-3.5 text-muted-foreground cursor-help" />
+                </span>
+              </div>
+              <div className="p-6 grid grid-cols-1 md:grid-cols-4 gap-4">
+                <div>
+                  <label className="text-xs font-medium text-foreground block mb-1.5">Engagement Folder{required}</label>
+                  <Select value={folder} onValueChange={(v) => { setFolder(v); setSubFolder(FOLDER_STRUCTURE[v]?.[0] ?? ''); }}>
+                    <SelectTrigger className="h-8 text-sm"><SelectValue /></SelectTrigger>
+                    <SelectContent>
+                      {ENGAGEMENT_FOLDERS.map(f => <SelectItem key={f} value={f}>{f}</SelectItem>)}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div>
+                  <label className="text-xs font-medium text-foreground block mb-1.5">Sub Folder{required}</label>
+                  <Select value={subFolder} onValueChange={setSubFolder}>
+                    <SelectTrigger className="h-8 text-sm"><SelectValue /></SelectTrigger>
+                    <SelectContent>
+                      {(FOLDER_STRUCTURE[folder] ?? []).map(s => <SelectItem key={s} value={s}>{s}</SelectItem>)}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div>
+                  <label className="text-xs font-medium text-foreground block mb-1.5">Auto-Populate Due Date</label>
+                  <Input type="date" value={globalDueDate} onChange={e => setGlobalDueDate(e.target.value)} className="h-8 text-sm" />
+                </div>
+                <div className="flex items-end">
+                  <Button variant="outline" size="sm" className="h-8 gap-1.5" onClick={applyGlobalDueDate}>
+                    <CalendarClock className="h-3.5 w-3.5" /> Apply to All
+                  </Button>
+                </div>
+              </div>
             </div>
-            <div className="p-6 grid grid-cols-1 md:grid-cols-4 gap-4">
-              <div>
-                <label className="text-xs font-medium text-foreground block mb-1.5">
-                  Engagement Folder{required}
-                </label>
-                <Select value={folder} onValueChange={(v) => { setFolder(v); setSubFolder(FOLDER_STRUCTURE[v]?.[0] ?? ''); }}>
-                  <SelectTrigger className="h-8 text-sm"><SelectValue /></SelectTrigger>
-                  <SelectContent>
-                    {ENGAGEMENT_FOLDERS.map(f => <SelectItem key={f} value={f}>{f}</SelectItem>)}
-                  </SelectContent>
-                </Select>
+
+            {/* Requests Table */}
+            <div className={cardCls}>
+              <div className={cardHeaderCls}>
+                <span className="text-sm font-semibold text-foreground">Document Requests</span>
+                <span title="Add one row per request. All required fields must be filled before sending.">
+                  <Info className="h-3.5 w-3.5 text-muted-foreground cursor-help" />
+                </span>
+                <div className="flex-1" />
+                <Button variant="outline" size="sm" className="h-8 gap-1.5" onClick={addRow}>
+                  <Plus className="h-3.5 w-3.5" /> Add Request
+                </Button>
               </div>
-              <div>
-                <label className="text-xs font-medium text-foreground block mb-1.5">
-                  Sub Folder{required}
-                </label>
-                <Select value={subFolder} onValueChange={setSubFolder}>
-                  <SelectTrigger className="h-8 text-sm"><SelectValue /></SelectTrigger>
-                  <SelectContent>
-                    {(FOLDER_STRUCTURE[folder] ?? []).map(s => <SelectItem key={s} value={s}>{s}</SelectItem>)}
-                  </SelectContent>
-                </Select>
+              <div className="overflow-x-auto">
+                <table className="w-full">
+                  <thead className="sticky top-0 z-10">
+                    <tr className="bg-muted border-b border-border">
+                      <th className={cn(thCls, 'w-10')}>#</th>
+                      <th className={cn(thCls, 'w-[130px]')}>Type{required}</th>
+                      <th className={cn(thCls, 'w-[200px]')}>Recipient{required}</th>
+                      <th className={cn(thCls, 'w-[120px]')}>Priority{required}</th>
+                      <th className={thCls}>Document Name{required}</th>
+                      <th className={thCls}>Description</th>
+                      <th className={cn(thCls, 'w-[160px]')}>Due Date{required}</th>
+                      <th className={cn(thCls, 'w-[140px]')}>W/P Ref</th>
+                      <th className={cn(thCls, 'w-[90px] text-center')}>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-border">
+                    {rows.map((row, idx) => {
+                      const invalid = !row.recipient || !row.docName.trim() || !row.dueDate;
+                      return (
+                        <tr key={row.id} className={cn('hover:bg-muted/50 transition-colors', invalid && 'bg-destructive/[0.02]')}>
+                          <td className="px-4 py-2.5 align-top text-xs text-muted-foreground">{idx + 1}</td>
+                          <td className="px-4 py-2.5 align-top">
+                            <Select value={row.type} onValueChange={v => update(row.id, { type: v as RequestRow['type'] })}>
+                              <SelectTrigger className="h-8 text-sm"><SelectValue /></SelectTrigger>
+                              <SelectContent>
+                                <SelectItem value="General">General</SelectItem>
+                                <SelectItem value="Line Item">Line Item</SelectItem>
+                              </SelectContent>
+                            </Select>
+                          </td>
+                          <td className="px-4 py-2.5 align-top">
+                            <Select value={row.recipient} onValueChange={v => update(row.id, { recipient: v })}>
+                              <SelectTrigger className={cn('h-8 text-sm', !row.recipient && 'border-destructive')}>
+                                <SelectValue placeholder="Select recipient" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                {RECIPIENTS.map(r => <SelectItem key={r} value={r}>{r}</SelectItem>)}
+                              </SelectContent>
+                            </Select>
+                          </td>
+                          <td className="px-4 py-2.5 align-top">
+                            <Select value={row.priority} onValueChange={v => update(row.id, { priority: v as RequestRow['priority'] })}>
+                              <SelectTrigger className="h-8 text-sm"><SelectValue /></SelectTrigger>
+                              <SelectContent>
+                                <SelectItem value="High">High</SelectItem>
+                                <SelectItem value="Medium">Medium</SelectItem>
+                                <SelectItem value="Low">Low</SelectItem>
+                              </SelectContent>
+                            </Select>
+                          </td>
+                          <td className="px-4 py-2.5 align-top min-w-[180px]">
+                            <Input value={row.docName} onChange={e => update(row.id, { docName: e.target.value })} placeholder="Document name" className={cn('h-8 text-sm', !row.docName.trim() && 'border-destructive')} />
+                          </td>
+                          <td className="px-4 py-2.5 align-top min-w-[200px]">
+                            <Input value={row.description} onChange={e => update(row.id, { description: e.target.value })} placeholder="Optional notes" className="h-8 text-sm" />
+                          </td>
+                          <td className="px-4 py-2.5 align-top">
+                            <Input type="date" value={row.dueDate} onChange={e => update(row.id, { dueDate: e.target.value })} className={cn('h-8 text-sm', !row.dueDate && 'border-destructive')} />
+                          </td>
+                          <td className="px-4 py-2.5 align-top">
+                            <RefButton
+                              reference={row.wpRef}
+                              onAttach={(doc) => update(row.id, { wpRef: [...row.wpRef, doc] })}
+                              onRemove={(rIdx) => update(row.id, { wpRef: row.wpRef.filter((_, i) => i !== (rIdx ?? -1)) })}
+                            />
+                          </td>
+                          <td className="px-4 py-2.5 align-top">
+                            <div className="flex items-center justify-center gap-1">
+                              <Button variant="ghost" size="icon" className="h-7 w-7 text-link hover:bg-link/10" onClick={() => duplicateRow(row.id)} title="Duplicate">
+                                <Copy className="h-3.5 w-3.5" />
+                              </Button>
+                              <Button variant="ghost" size="icon" className="h-7 w-7 text-destructive hover:bg-destructive/10" onClick={() => removeRow(row.id)} disabled={rows.length === 1} title="Remove">
+                                <Trash2 className="h-3.5 w-3.5" />
+                              </Button>
+                            </div>
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
               </div>
-              <div>
-                <label className="text-xs font-medium text-foreground block mb-1.5">
-                  Auto-Populate Due Date
-                </label>
-                <Input
-                  type="date"
-                  value={globalDueDate}
-                  onChange={e => setGlobalDueDate(e.target.value)}
-                  className="h-8 text-sm"
-                />
-              </div>
-              <div className="flex items-end">
-                <Button variant="outline" size="sm" className="h-8 gap-1.5" onClick={applyGlobalDueDate}>
-                  <CalendarClock className="h-3.5 w-3.5" /> Apply to All
+              <div className="px-6 py-3 border-t border-border flex items-center justify-between bg-muted/20">
+                <p className="text-xs text-muted-foreground">
+                  <span className="font-semibold text-foreground">{validCount}</span> of {rows.length} ready to send
+                </p>
+                <Button onClick={handleSendAll} disabled={!allRowsValid} size="sm" className="gap-1.5">
+                  <Send className="h-3.5 w-3.5" />
+                  Send {validCount > 0 ? `${validCount} ` : ''}Request{validCount === 1 ? '' : 's'}
                 </Button>
               </div>
             </div>
-          </div>
+          </TabsContent>
 
-          {/* ── Section B: Requests Table ── */}
-          <div className={cardCls}>
-            <div className={cardHeaderCls}>
-              <span className="text-sm font-semibold text-foreground">Document Requests</span>
-              <span title="Add one row per request. All required fields must be filled before sending.">
-                <Info className="h-3.5 w-3.5 text-muted-foreground cursor-help" />
-              </span>
-              <div className="flex-1" />
-              <Button variant="outline" size="sm" className="h-8 gap-1.5" onClick={addRow}>
-                <Plus className="h-3.5 w-3.5" /> Add Request
-              </Button>
-            </div>
-            <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead className="sticky top-0 z-10">
-                  <tr className="bg-muted border-b border-border">
-                    <th className={cn(thCls, 'w-10')}>#</th>
-                    <th className={cn(thCls, 'w-[130px]')}>Type{required}</th>
-                    <th className={cn(thCls, 'w-[200px]')}>Recipient{required}</th>
-                    <th className={cn(thCls, 'w-[120px]')}>Priority{required}</th>
-                    <th className={thCls}>Document Name{required}</th>
-                    <th className={thCls}>Description</th>
-                    <th className={cn(thCls, 'w-[160px]')}>Due Date{required}</th>
-                    <th className={cn(thCls, 'w-[140px]')}>W/P Ref</th>
-                    <th className={cn(thCls, 'w-[90px] text-center')}>Actions</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-border">
-                  {rows.map((row, idx) => {
-                    const invalid = !row.recipient || !row.docName.trim() || !row.dueDate;
+          {/* ============ ALL REQUESTS ============ */}
+          <TabsContent value="all" className="m-0 p-6 space-y-4">
+            <div className={cardCls}>
+              <div className={cardHeaderCls}>
+                <span className="text-sm font-semibold text-foreground">All Requests</span>
+                <span title="All requests grouped by engagement folder/sub-folder.">
+                  <Info className="h-3.5 w-3.5 text-muted-foreground cursor-help" />
+                </span>
+                <div className="flex-1" />
+                <Button variant="outline" size="sm" className="h-8 gap-1.5">
+                  <ArrowUpDown className="h-3.5 w-3.5" /> Sort By
+                </Button>
+              </div>
+
+              {sentRequests.length === 0 ? (
+                <EmptyState icon={<Inbox className="h-10 w-10 text-muted-foreground" />} title="No requests yet" description="Create and send requests from the Create New tab — they'll be tracked here." />
+              ) : (
+                <div className="divide-y divide-border">
+                  {Object.entries(grouped).map(([groupKey, items]) => {
+                    const expanded = expandedGroups[groupKey] ?? true;
                     return (
-                      <tr key={row.id} className={cn('hover:bg-muted/50 transition-colors', invalid && 'bg-destructive/[0.02]')}>
-                        <td className="px-4 py-2.5 align-top text-xs text-muted-foreground">{idx + 1}</td>
-                        <td className="px-4 py-2.5 align-top">
-                          <Select value={row.type} onValueChange={v => update(row.id, { type: v as RequestRow['type'] })}>
-                            <SelectTrigger className="h-8 text-sm"><SelectValue /></SelectTrigger>
-                            <SelectContent>
-                              <SelectItem value="General">General</SelectItem>
-                              <SelectItem value="Line Item">Line Item</SelectItem>
-                            </SelectContent>
-                          </Select>
-                        </td>
-                        <td className="px-4 py-2.5 align-top">
-                          <Select value={row.recipient} onValueChange={v => update(row.id, { recipient: v })}>
-                            <SelectTrigger className={cn('h-8 text-sm', !row.recipient && 'border-destructive')}>
-                              <SelectValue placeholder="Select recipient" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              {RECIPIENTS.map(r => <SelectItem key={r} value={r}>{r}</SelectItem>)}
-                            </SelectContent>
-                          </Select>
-                        </td>
-                        <td className="px-4 py-2.5 align-top">
-                          <Select value={row.priority} onValueChange={v => update(row.id, { priority: v as RequestRow['priority'] })}>
-                            <SelectTrigger className="h-8 text-sm"><SelectValue /></SelectTrigger>
-                            <SelectContent>
-                              <SelectItem value="High">High</SelectItem>
-                              <SelectItem value="Medium">Medium</SelectItem>
-                              <SelectItem value="Low">Low</SelectItem>
-                            </SelectContent>
-                          </Select>
-                        </td>
-                        <td className="px-4 py-2.5 align-top min-w-[180px]">
-                          <Input
-                            value={row.docName}
-                            onChange={e => update(row.id, { docName: e.target.value })}
-                            placeholder="Document name"
-                            className={cn('h-8 text-sm', !row.docName.trim() && 'border-destructive')}
-                          />
-                        </td>
-                        <td className="px-4 py-2.5 align-top min-w-[200px]">
-                          <Input
-                            value={row.description}
-                            onChange={e => update(row.id, { description: e.target.value })}
-                            placeholder="Optional notes"
-                            className="h-8 text-sm"
-                          />
-                        </td>
-                        <td className="px-4 py-2.5 align-top">
-                          <Input
-                            type="date"
-                            value={row.dueDate}
-                            onChange={e => update(row.id, { dueDate: e.target.value })}
-                            className={cn('h-8 text-sm', !row.dueDate && 'border-destructive')}
-                          />
-                        </td>
-                        <td className="px-4 py-2.5 align-top">
-                          <RefButton
-                            reference={row.wpRef}
-                            onAttach={(doc) => update(row.id, { wpRef: [...row.wpRef, doc] })}
-                            onRemove={(rIdx) => update(row.id, { wpRef: row.wpRef.filter((_, i) => i !== (rIdx ?? -1)) })}
-                          />
-                        </td>
-                        <td className="px-4 py-2.5 align-top">
-                          <div className="flex items-center justify-center gap-1">
-                            <Button variant="ghost" size="icon" className="h-7 w-7 text-link hover:bg-link/10" onClick={() => duplicateRow(row.id)} title="Duplicate">
-                              <Copy className="h-3.5 w-3.5" />
-                            </Button>
-                            <Button variant="ghost" size="icon" className="h-7 w-7 text-destructive hover:bg-destructive/10" onClick={() => removeRow(row.id)} disabled={rows.length === 1} title="Remove">
-                              <Trash2 className="h-3.5 w-3.5" />
-                            </Button>
+                      <div key={groupKey}>
+                        <button
+                          type="button"
+                          onClick={() => toggleGroup(groupKey)}
+                          className="w-full px-6 py-3 flex items-center gap-2 bg-muted/40 hover:bg-muted/60 transition-colors text-left"
+                        >
+                          {expanded ? <ChevronDown className="h-4 w-4 text-muted-foreground" /> : <ChevronRight className="h-4 w-4 text-muted-foreground" />}
+                          <span className="text-sm font-semibold text-foreground flex-1">{groupKey}</span>
+                          <span className="text-xs text-muted-foreground">({items.length})</span>
+                        </button>
+                        {expanded && (
+                          <div className="overflow-x-auto">
+                            <table className="w-full">
+                              <thead>
+                                <tr className="bg-card border-b border-border">
+                                  <th className={cn(thCls, 'w-[100px]')}>Req ID</th>
+                                  <th className={thCls}>Document</th>
+                                  <th className={cn(thCls, 'w-[200px]')}>Recipient</th>
+                                  <th className={cn(thCls, 'w-[110px]')}>Priority</th>
+                                  <th className={cn(thCls, 'w-[140px]')}>Due Date</th>
+                                  <th className={cn(thCls, 'w-[160px]')}>Sent</th>
+                                  <th className={cn(thCls, 'w-[120px]')}>Status</th>
+                                  <th className={cn(thCls, 'w-[100px] text-center')}>Activity</th>
+                                  <th className={cn(thCls, 'w-[90px] text-center')}>Actions</th>
+                                </tr>
+                              </thead>
+                              <tbody className="divide-y divide-border">
+                                {items.map(req => {
+                                  const days = daysUntil(req.dueDate);
+                                  return (
+                                    <tr key={req.reqId} className="hover:bg-muted/30 transition-colors">
+                                      <td className="px-4 py-2.5 text-xs font-mono text-link">{req.reqId}</td>
+                                      <td className="px-4 py-2.5">
+                                        <div className="text-sm text-foreground font-medium">{req.docName}</div>
+                                        {req.description && <div className="text-xs text-muted-foreground mt-0.5 line-clamp-1">{req.description}</div>}
+                                      </td>
+                                      <td className="px-4 py-2.5 text-xs text-foreground">{req.recipient}</td>
+                                      <td className="px-4 py-2.5">
+                                        <Badge variant="outline" className="text-xs font-normal">{req.priority}</Badge>
+                                      </td>
+                                      <td className="px-4 py-2.5">
+                                        <div className="text-xs text-foreground">{req.dueDate}</div>
+                                        {req.status !== 'Received' && req.status !== 'Cancelled' && (
+                                          <div className={cn('text-[10px] mt-0.5', days < 0 ? 'text-destructive' : days <= 3 ? 'text-amber-600' : 'text-muted-foreground')}>
+                                            {days < 0 ? `Overdue ${Math.abs(days)}d` : days === 0 ? 'Due today' : `${days}d left`}
+                                          </div>
+                                        )}
+                                      </td>
+                                      <td className="px-4 py-2.5 text-xs text-muted-foreground">{formatDateTime(req.sentAt)}</td>
+                                      <td className="px-4 py-2.5">
+                                        <Badge variant="outline" className={cn('text-xs font-medium', statusStyles[req.status])}>{req.status}</Badge>
+                                      </td>
+                                      <td className="px-4 py-2.5">
+                                        <div className="flex items-center justify-center gap-3 text-xs text-muted-foreground">
+                                          <span className="inline-flex items-center gap-0.5"><Paperclip className="h-3 w-3" />{req.attachments}</span>
+                                          <span className="inline-flex items-center gap-0.5"><MessageSquare className="h-3 w-3" />{req.comments}</span>
+                                        </div>
+                                      </td>
+                                      <td className="px-4 py-2.5">
+                                        <div className="flex items-center justify-center gap-1">
+                                          <Button variant="ghost" size="icon" className="h-7 w-7 text-link hover:bg-link/10" title="Edit">
+                                            <Pencil className="h-3.5 w-3.5" />
+                                          </Button>
+                                          <Button
+                                            variant="ghost"
+                                            size="icon"
+                                            className="h-7 w-7 text-destructive hover:bg-destructive/10"
+                                            title="Cancel"
+                                            onClick={() => setSentRequests(prev => prev.filter(r => r.reqId !== req.reqId))}
+                                          >
+                                            <Trash2 className="h-3.5 w-3.5" />
+                                          </Button>
+                                        </div>
+                                      </td>
+                                    </tr>
+                                  );
+                                })}
+                              </tbody>
+                            </table>
                           </div>
-                        </td>
-                      </tr>
+                        )}
+                      </div>
                     );
                   })}
-                </tbody>
-              </table>
+                </div>
+              )}
             </div>
-            <div className="px-6 py-3 border-t border-border flex items-center justify-between bg-muted/20">
-              <p className="text-xs text-muted-foreground">
-                <span className="font-semibold text-foreground">{validCount}</span> of {rows.length} ready to send
-              </p>
-              <Button onClick={handleSendAll} disabled={!allRowsValid} size="sm" className="gap-1.5">
-                <Send className="h-3.5 w-3.5" />
-                Send {validCount > 0 ? `${validCount} ` : ''}Request{validCount === 1 ? '' : 's'}
-              </Button>
+          </TabsContent>
+
+          {/* ============ AVAILABLE ============ */}
+          <TabsContent value="available" className="m-0 p-6 space-y-4">
+            <div className={cardCls}>
+              <div className={cardHeaderCls}>
+                <span className="text-sm font-semibold text-foreground">Available Documents</span>
+                <span title="Documents received from clients in response to sent requests.">
+                  <Info className="h-3.5 w-3.5 text-muted-foreground cursor-help" />
+                </span>
+              </div>
+              {availableRequests.length === 0 ? (
+                <EmptyState icon={<Inbox className="h-10 w-10 text-muted-foreground" />} title="There are no available docs to show up" description="Documents submitted by the client will appear here once received." />
+              ) : (
+                <div className="overflow-x-auto">
+                  <table className="w-full">
+                    <thead>
+                      <tr className="bg-muted border-b border-border">
+                        <th className={cn(thCls, 'w-[100px]')}>Req ID</th>
+                        <th className={thCls}>Document</th>
+                        <th className={cn(thCls, 'w-[220px]')}>Folder</th>
+                        <th className={cn(thCls, 'w-[200px]')}>Received From</th>
+                        <th className={cn(thCls, 'w-[160px]')}>Received On</th>
+                        <th className={cn(thCls, 'w-[90px] text-center')}>Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-border">
+                      {availableRequests.map(req => (
+                        <tr key={req.reqId} className="hover:bg-muted/30 transition-colors">
+                          <td className="px-4 py-2.5 text-xs font-mono text-link">{req.reqId}</td>
+                          <td className="px-4 py-2.5 text-sm text-foreground font-medium">{req.docName}</td>
+                          <td className="px-4 py-2.5 text-xs text-muted-foreground">{req.folder} › {req.subFolder}</td>
+                          <td className="px-4 py-2.5 text-xs text-foreground">{req.recipient}</td>
+                          <td className="px-4 py-2.5 text-xs text-muted-foreground">{formatDateTime(req.sentAt)}</td>
+                          <td className="px-4 py-2.5">
+                            <div className="flex items-center justify-center">
+                              <Button variant="ghost" size="icon" className="h-7 w-7 text-link hover:bg-link/10" title="Download">
+                                <Download className="h-3.5 w-3.5" />
+                              </Button>
+                            </div>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
             </div>
-          </div>
-
-
+          </TabsContent>
         </div>
-      </div>
+      </Tabs>
+    </div>
+  );
+}
+
+function EmptyState({ icon, title, description }: { icon: React.ReactNode; title: string; description: string }) {
+  return (
+    <div className="flex flex-col items-center justify-center py-16 px-6 text-center">
+      <div className="mb-4 opacity-70">{icon}</div>
+      <p className="text-sm font-semibold text-foreground">{title}</p>
+      <p className="text-xs text-muted-foreground mt-1 max-w-sm">{description}</p>
     </div>
   );
 }
