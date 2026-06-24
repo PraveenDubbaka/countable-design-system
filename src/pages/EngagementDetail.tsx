@@ -486,6 +486,7 @@ const NAV_KEY_TO_CHECKLIST_ID: Record<string, string> = {
   "aud-form-408": "default-audit-form-408",
   "aud-form-410": "default-audit-form-410",
   "aud-el": "default-audit-el",
+  "aud-pred": "default-audit-pred",
   // Audit — Planning
   "aud-ueb": "default-audit-ueb",
   "aud-ues": "default-audit-ues",
