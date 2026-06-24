@@ -45,6 +45,10 @@ export function saveEngagements(list: EngagementRecord[]): void {
 
 export type EngagementMeta = {
   firstYearAudit: boolean;
+  firstYearOnPlatform?: boolean;
+  isRollForward?: boolean;
+  priorEngagementType?: string;
+  firstYearTemplates?: string[];
   accountingFramework?: string;
   industry?: string;
   accountingStandards?: string;
