@@ -1,7 +1,8 @@
 import { useState, useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
-import { ChevronLeft, ChevronRight, Send, Clock, MessageSquare, FolderOpen, StickyNote, Search, Plus, CalendarClock, ArrowLeft, Upload, X } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Send, Clock, MessageSquare, FolderOpen, StickyNote, Search, Plus, CalendarClock, ArrowLeft, Upload, X, Layers } from 'lucide-react';
 import { EngagementNotesPanel } from './EngagementNotesPanel';
+import { MultipleRequestModal } from './MultipleRequestModal';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
