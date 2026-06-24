@@ -415,7 +415,6 @@ export function AuditMaterialityWorksheet({ isUS = false }: AuditMaterialityWork
                 <thead className="sticky top-0 z-10">
                   <tr className="bg-muted border-b border-border">
                     <th className="px-3 py-3 text-center text-xs font-semibold text-foreground uppercase tracking-wider w-10">Primary</th>
-                    <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider">Entity / Component</th>
                     <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider">Basis for Calculations</th>
                     <th className="px-4 py-3 text-right text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap">{periodLabel}</th>
                     <th className="px-4 py-3 text-right text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap">Extrapolated ($)</th>
@@ -438,13 +437,6 @@ export function AuditMaterialityWorksheet({ isUS = false }: AuditMaterialityWork
                             checked={isSelected}
                             onChange={() => setSelectedRowId(row.id)}
                             className="h-4 w-4 accent-primary cursor-pointer"
-                          />
-                        </td>
-                        <td className="px-4 py-2.5 align-top min-w-[160px]">
-                          <TdInput
-                            value={row.entityName}
-                            onChange={(v) => updateEntityRow(row.id, "entityName", v)}
-                            placeholder="Entity name…"
                           />
                         </td>
                         <td className="px-4 py-2.5 align-top min-w-[170px]">
@@ -516,7 +508,7 @@ export function AuditMaterialityWorksheet({ isUS = false }: AuditMaterialityWork
                   {/* Overall Materiality summary row */}
                   <tr className="bg-primary/[0.06] border-t-2 border-primary/20">
                     <td className="px-3 py-2" />
-                    <td className="px-4 py-2 text-xs font-semibold text-primary" colSpan={2}>
+                    <td className="px-4 py-2 text-xs font-semibold text-primary">
                       Overall Materiality — {BASIS_OPTIONS.find(o => o.value === selectedRow?.basis)?.label ?? "Select a primary benchmark ↑"}
                     </td>
                     <td className="px-4 py-2 text-sm tabular-nums text-foreground text-right">{selectedRow?.periodAmount ? formatDisplay(selectedRow.periodAmount) : "—"}</td>
@@ -550,7 +542,7 @@ export function AuditMaterialityWorksheet({ isUS = false }: AuditMaterialityWork
                       value={ctThresholdPct}
                       onChange={(v) => setCtThresholdPct(v.replace(/[^0-9.]/g, ""))}
                       placeholder="5.00"
-                      className="w-24 tabular-nums"
+                      className="w-24 tabular-nums text-right"
                     />
                   </div>
                   <div className="flex flex-col items-center gap-1">
@@ -558,7 +550,7 @@ export function AuditMaterialityWorksheet({ isUS = false }: AuditMaterialityWork
                     <TdInput
                       value={ctAmount ? formatDisplay(ctAmount) : ""}
                       readOnly
-                      className="w-32 tabular-nums"
+                      className="w-32 tabular-nums text-right"
                     />
                   </div>
                 </div>
