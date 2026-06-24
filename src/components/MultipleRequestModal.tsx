@@ -42,6 +42,7 @@ const newRow = (): RequestRow => ({
   docName: '',
   description: '',
   dueDate: defaultDueDate(),
+  wpRef: [],
 });
 
 export function MultipleRequestModal({ open, onOpenChange }: MultipleRequestModalProps) {
