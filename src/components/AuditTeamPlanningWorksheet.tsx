@@ -3,9 +3,11 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Info, Plus, Trash2 } from "lucide-react";
+import { Info, Plus, Trash2, Sparkles } from "lucide-react";
 import { RefButton, RefDoc } from "@/components/RefButton";
 import { readJsonFromLocalStorage, writeJsonToLocalStorage } from "@/lib/safeJson";
+import { ImportNotesDialog, ImportResult } from "@/components/ImportNotesDialog";
+import { toast } from "sonner";
 
 // ── Types ──────────────────────────────────────────────────────────────────────
 
@@ -180,6 +182,39 @@ export function AuditTeamPlanningWorksheet({ isUS = false }: { isUS?: boolean })
     return () => clearTimeout(t);
   }, [data, storageKey]);
 
+  const [importOpen, setImportOpen] = useState(false);
+
+  function applyImport(result: ImportResult) {
+    setData(d => {
+      const next: Data436 = { ...d };
+      if (result.meetingDate) next.meetingDate = result.meetingDate;
+      if (result.attendees?.length) {
+        next.attendeesList = result.attendees.map(a => ({ id: uid(), name: a.name, role: a.role }));
+      }
+      if (result.agendaNotes) {
+        const rows = { ...d.rows };
+        for (const [id, notes] of Object.entries(result.agendaNotes)) {
+          if (rows[id]) rows[id] = { ...rows[id], notes };
+        }
+        next.rows = rows;
+      }
+      if (result.actionSteps?.length) {
+        next.actionSteps = result.actionSteps.map(s => ({
+          id: uid(),
+          action: s.action,
+          person: s.person,
+          deadline: s.deadline,
+          actualCompletion: '',
+        }));
+      }
+      return next;
+    });
+    const sourceLabel = result.source.charAt(0).toUpperCase() + result.source.slice(1);
+    toast.success(`Worksheet populated from ${sourceLabel}`, {
+      description: 'Review and refine the auto-filled content before sign-off.',
+    });
+  }
+
   function setRow(id: string, patch: Partial<AgendaRow>) {
     setData(d => ({ ...d, rows: { ...d.rows, [id]: { ...d.rows[id], ...patch } } }));
   }
@@ -266,7 +301,7 @@ export function AuditTeamPlanningWorksheet({ isUS = false }: { isUS?: boolean })
 
   return (
     <div className="flex flex-col h-full">
-      <div className="px-6 py-2.5 border-b border-border bg-primary/[0.03] flex items-start gap-2 shrink-0">
+      <div className="px-6 py-2.5 border-b border-border bg-primary/[0.03] flex items-start gap-3 shrink-0">
         <Info className="h-3.5 w-3.5 text-primary mt-0.5 shrink-0" />
         <span className="text-xs font-semibold text-primary whitespace-nowrap">Objective:</span>
         <p className="text-xs text-muted-foreground flex-1 leading-relaxed">
@@ -274,7 +309,13 @@ export function AuditTeamPlanningWorksheet({ isUS = false }: { isUS?: boolean })
           <span className="font-medium text-foreground">Notes:</span> Ensure involvement of the engagement partner and key team members (plus the engagement quality reviewer, if applicable). This form is divided into two parts — Part A would typically take place at the commencement of the audit; Part B would start by reviewing the assessed risks and developing appropriate audit responses. In some cases, the two discussions could be combined.{" "}
           <span className="font-medium text-foreground">F/S</span> = Financial statements. <span className="font-medium text-foreground">TCWG</span> = Those charged with governance. <span className="font-medium text-foreground">RMMs</span> = Risks of material misstatement. <span className="font-medium text-foreground">RAPs</span> = Risk assessment procedures.
         </p>
+        <Button size="sm" onClick={() => setImportOpen(true)} className="h-8 shrink-0 whitespace-nowrap">
+          <Sparkles className="h-3.5 w-3.5 mr-1.5" />
+          AI-assisted import
+        </Button>
       </div>
+
+      <ImportNotesDialog open={importOpen} onOpenChange={setImportOpen} onImport={applyImport} />
 
       <div className="flex-1 overflow-y-auto bg-muted/30">
         <div className="p-6 space-y-4">
