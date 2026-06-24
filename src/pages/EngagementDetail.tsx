@@ -15,6 +15,7 @@ import { AuditScopeWorksheet } from "@/components/AuditScopeWorksheet";
 import { AuditPAPWorksheet } from "@/components/AuditPAPWorksheet";
 import { AuditTimeTrackerWorksheet } from "@/components/AuditTimeTrackerWorksheet";
 import { AuditMgmtRequestsWorksheet } from "@/components/AuditMgmtRequestsWorksheet";
+import { BulkRequestsWorksheet } from "@/components/BulkRequestsWorksheet";
 import { AuditSAEWorksheet } from "@/components/AuditSAEWorksheet";
 import { AuditOASWorksheet } from "@/components/AuditOASWorksheet";
 import { AuditOIWorksheet } from "@/components/AuditOIWorksheet";
