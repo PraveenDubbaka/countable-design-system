@@ -21,6 +21,7 @@ interface RequestRow {
   docName: string;
   description: string;
   dueDate: string;
+  wpRef: RefDoc[];
 }
 
 const ENGAGEMENT_FOLDERS = ['Client Onboarding', 'Planning', 'Risk Assessment', 'Procedures', 'Financial Statements', 'Completion & Signoffs'];
