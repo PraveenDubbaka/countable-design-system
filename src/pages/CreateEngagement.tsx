@@ -649,6 +649,29 @@ export default function CreateEngagement() {
       periodStart: currentYearStart,
       periodEnd: currentYearEnd,
     });
+    if (isAudit && teamMembers.length > 0) {
+      const roleMap: Record<string, string> = {
+        "Engagement Partner": "partner",
+        "Manager": "manager",
+        "Senior Auditor": "senior",
+        "Staff Auditor / Assistant": "assistant",
+        "EQCR (Quality Reviewer)": "eqcr",
+        "Subject Matter Expert": "specialist",
+        "Tax Reviewer": "admin",
+        "Preparer": "admin",
+        "Other": "other",
+      };
+      const rateMap: Record<string, string> = {};
+      teamMembers.forEach(m => {
+        const key = roleMap[m.role];
+        if (key && m.hourlyRate && parseFloat(m.hourlyRate) > 0 && !rateMap[key]) {
+          rateMap[key] = m.hourlyRate;
+        }
+      });
+      if (Object.keys(rateMap).length > 0) {
+        localStorage.setItem(`audit-team-rates-${engagementId}`, JSON.stringify(rateMap));
+      }
+    }
     if (isAudit && firstYearAudit) {
       toast.success("Engagement created — IE checklist and predecessor letter added.");
     } else {

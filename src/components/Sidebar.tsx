@@ -1574,8 +1574,7 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
                       { id: "aud-us-sae", code: "SAE", label: "Selecting Auditor's Expert", icon: "worksheet", route: "checklist/aud-us-sae" },
                       { id: "aud-us-asm", code: "OAS", label: "Overall Audit Strategy", icon: "worksheet", route: "checklist/aud-us-asm" },
                       { id: "aud-us-plan", code: "TPD", label: "Team Planning Discussions", icon: "checklist", route: "checklist/aud-us-plan" },
-                      { id: "aud-us-tb", code: "TB", label: "Time Budget", icon: "worksheet", route: "checklist/aud-us-tb" },
-                      { id: "aud-us-db", code: "DB", label: "Detailed Budget", icon: "worksheet", route: "checklist/aud-us-db" },
+                      { id: "aud-us-tt", code: "TT", label: "Time Tracker", icon: "worksheet", route: "checklist/aud-us-tt" },
                     ]
                   },
                   {
@@ -1735,8 +1734,7 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
                       { id: "aud-sae", code: "SAE", label: "Selecting Auditor's Expert", icon: "worksheet", route: "checklist/aud-sae" },
                       { id: "aud-asm", code: "OAS", label: "Overall Audit Strategy", icon: "worksheet", route: "checklist/aud-asm" },
                       { id: "aud-plan", code: "TPD", label: "Team Planning Discussions", icon: "checklist", route: "checklist/aud-plan" },
-                      { id: "aud-tb", code: "TB", label: "Time Budget", icon: "worksheet", route: "checklist/aud-tb" },
-                      { id: "aud-db", code: "DB", label: "Detailed Budget", icon: "worksheet", route: "checklist/aud-db" },
+                      { id: "aud-tt", code: "TT", label: "Time Tracker", icon: "worksheet", route: "checklist/aud-tt" },
                     ]
                   },
                   {
