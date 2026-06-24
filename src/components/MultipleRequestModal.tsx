@@ -137,6 +137,7 @@ export function MultipleRequestModal({ open, onOpenChange }: MultipleRequestModa
                 <th className="text-left text-xs font-semibold text-foreground px-3 py-2">Document Name{required}</th>
                 <th className="text-left text-xs font-semibold text-foreground px-3 py-2">Description</th>
                 <th className="text-left text-xs font-semibold text-foreground px-3 py-2 w-[150px]">Due Date{required}</th>
+                <th className="text-left text-xs font-semibold text-foreground px-3 py-2 w-[140px]">W/P Ref / Attachment</th>
                 <th className="text-left text-xs font-semibold text-foreground px-3 py-2 w-[90px]">Actions</th>
               </tr>
             </thead>
