@@ -280,7 +280,7 @@ export function AuditTeamPlanningWorksheet({ isUS = false }: { isUS?: boolean })
                       value={row.notes}
                       onChange={e => setRow(item.id, { notes: e.target.value })}
                       placeholder="Document matters arising and decisions reached…"
-                      className="min-h-[80px] w-full text-sm resize-none border-0 shadow-none p-0 focus-visible:ring-0 bg-transparent"
+                      className="min-h-[80px] w-full text-sm resize-none rounded-[10px] border border-input bg-white px-3 py-2 focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
                     />
                   </td>
                   <td className="px-4 py-3 text-center" style={{ width: 110 }}>
