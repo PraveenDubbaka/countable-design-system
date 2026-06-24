@@ -18,7 +18,6 @@ import {
   Menu,
   ToggleLeft,
   Type,
-  StickyNote
 } from 'lucide-react';
 import { SmartLayoutIcon } from './icons/SmartLayoutIcon';
 import { Checklist, CellBlockType } from '@/types/checklist';
@@ -393,19 +392,6 @@ export function FloatingActionBar({
           >
             <ArrowUpDown className="h-4 w-4 text-muted-foreground group-hover:text-foreground group-hover:icon-reorder" />
           </button>}
-
-          {/* Notes */}
-          <button
-            onClick={(e) => {
-              e.stopPropagation();
-              window.dispatchEvent(new CustomEvent('navigate-to-notes'));
-            }}
-            onMouseDown={(e) => e.stopPropagation()}
-            className="w-9 h-9 flex items-center justify-center rounded-lg hover:bg-muted transition-colors group"
-            title="Open notes"
-          >
-            <StickyNote className="h-4 w-4 text-muted-foreground group-hover:text-foreground" />
-          </button>
 
           {/* Add Category - Hidden in preview mode and non-checklists */}
           {isChecklist && !isPreviewMode && (
