@@ -656,6 +656,8 @@ const CHECKLIST_SIDEBAR_INFO: Record<string, { section: string; code: string; la
   'default-audit-aml':         { section: 'CO', code: 'AC',  label: 'New or Existing Engagement — Acceptance/Continuance' },
   'default-audit-tcwg-pl':     { section: 'CO', code: 'AC',  label: 'New or Existing Engagement — Acceptance/Continuance' },
   'default-audit-el':          { section: 'CO', code: 'AL1.1',  label: 'Engagement Letter' },
+  'default-audit-pred':        { section: 'CO', code: 'AL1.4',  label: 'Letter to a predecessor accounting firm' },
+  'default-us-audit-pred':     { section: 'CO', code: 'AL1.4',  label: 'Letter to a predecessor accounting firm' },
   // CA Audit — PL  (sub-forms without sidebar routes are grouped under their closest parent)
   'default-audit-mat':    { section: 'PL', code: 'PL1', label: 'Materiality' },
   'default-audit-sae':    { section: 'PL', code: 'SAE', label: "Selecting Auditor's Expert" },
