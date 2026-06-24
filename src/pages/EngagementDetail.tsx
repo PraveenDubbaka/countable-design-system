@@ -15,6 +15,7 @@ import { AuditScopeWorksheet } from "@/components/AuditScopeWorksheet";
 import { AuditPAPWorksheet } from "@/components/AuditPAPWorksheet";
 import { AuditTimeTrackerWorksheet } from "@/components/AuditTimeTrackerWorksheet";
 import { AuditMgmtRequestsWorksheet } from "@/components/AuditMgmtRequestsWorksheet";
+import { BulkRequestsWorksheet } from "@/components/BulkRequestsWorksheet";
 import { AuditSAEWorksheet } from "@/components/AuditSAEWorksheet";
 import { AuditOASWorksheet } from "@/components/AuditOASWorksheet";
 import { AuditOIWorksheet } from "@/components/AuditOIWorksheet";
@@ -594,6 +595,8 @@ const CUSTOM_WORKSHEET_TITLES: Record<string, string> = {
   'aud-mat': 'Materiality', 'aud-us-mat': 'Materiality',
   'aud-tt': 'Time Tracker', 'aud-us-tt': 'Time Tracker',
   'aud-iar': 'Management Requests', 'aud-us-iar': 'Management Requests',
+  'aud-form-440': '440 — Information / Analysis Requested from Management',
+  'aud-us-form-440': '440 — Information / Analysis Requested from Management',
   'aud-scope': 'Audit Scope', 'aud-us-scope': 'Audit Scope',
   'aud-pap': 'Preliminary Analytical Procedures', 'aud-us-pap': 'Preliminary Analytical Procedures',
   'aud-sae': "Using the Work of an Auditor's Expert", 'aud-us-sae': "Using the Work of an Auditor's Expert",
@@ -1931,6 +1934,8 @@ export default function EngagementDetail() {
             <AuditTimeTrackerWorksheet />
           ) : (checklistKey === 'aud-iar' || checklistKey === 'aud-us-iar') ? (
             <AuditMgmtRequestsWorksheet isUS={checklistKey === 'aud-us-iar'} />
+          ) : (checklistKey === 'aud-form-440' || checklistKey === 'aud-us-form-440') ? (
+            <BulkRequestsWorksheet isUS={checklistKey === 'aud-us-form-440'} />
           ) : (checklistKey === 'aud-scope' || checklistKey === 'aud-us-scope') ? (
             <AuditScopeWorksheet isUS={checklistKey === 'aud-us-scope'} />
           ) : (checklistKey === 'aud-pap' || checklistKey === 'aud-us-pap') ? (
