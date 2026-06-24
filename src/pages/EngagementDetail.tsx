@@ -595,6 +595,8 @@ const CUSTOM_WORKSHEET_TITLES: Record<string, string> = {
   'aud-mat': 'Materiality', 'aud-us-mat': 'Materiality',
   'aud-tt': 'Time Tracker', 'aud-us-tt': 'Time Tracker',
   'aud-iar': 'Management Requests', 'aud-us-iar': 'Management Requests',
+  'aud-form-440': '440 — Information / Analysis Requested from Management',
+  'aud-us-form-440': '440 — Information / Analysis Requested from Management',
   'aud-scope': 'Audit Scope', 'aud-us-scope': 'Audit Scope',
   'aud-pap': 'Preliminary Analytical Procedures', 'aud-us-pap': 'Preliminary Analytical Procedures',
   'aud-sae': "Using the Work of an Auditor's Expert", 'aud-us-sae': "Using the Work of an Auditor's Expert",
