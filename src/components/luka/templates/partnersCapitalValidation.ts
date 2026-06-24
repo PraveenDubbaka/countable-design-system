@@ -1,5 +1,5 @@
 import { z } from "zod";
-import type { PartnersCapitalSettings } from "@/components/dashboard/workspace/LayoutSettingsContext";
+import type { PartnersCapitalSettings } from "@/components/luka/workspace/LayoutSettingsContext";
 
 /**
  * Validation rules for the Partners' Capital "Template Settings" panel.
