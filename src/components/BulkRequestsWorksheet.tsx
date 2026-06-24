@@ -207,7 +207,7 @@ export function BulkRequestsWorksheet({ isUS = false }: BulkRequestsWorksheetPro
                 <Select value={subFolder} onValueChange={setSubFolder}>
                   <SelectTrigger className="h-8 text-sm"><SelectValue /></SelectTrigger>
                   <SelectContent>
-                    {SUB_FOLDERS.map(s => <SelectItem key={s} value={s}>{s}</SelectItem>)}
+                    {(FOLDER_STRUCTURE[folder] ?? []).map(s => <SelectItem key={s} value={s}>{s}</SelectItem>)}
                   </SelectContent>
                 </Select>
               </div>
