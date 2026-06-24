@@ -1,5 +1,5 @@
 import { useState, useRef, useCallback, useEffect } from "react";
-import CoverPageToolbar, { CoverPageFormatting, defaultFormatting } from "@/components/dashboard/workspace/CoverPageToolbar";
+import CoverPageToolbar, { CoverPageFormatting, defaultFormatting } from "@/components/luka/workspace/CoverPageToolbar";
 
 interface TemplateEditableWrapperProps {
   isEditMode: boolean;

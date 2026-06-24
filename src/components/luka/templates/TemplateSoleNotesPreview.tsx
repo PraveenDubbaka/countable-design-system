@@ -1,8 +1,8 @@
 import React from "react";
 import { useState } from "react";
 import AddColumnButton from "./AddColumnButton";
-import { useStatementOverlays } from "@/components/dashboard/workspace/StatementImageOverlays";
-import { useLayoutSettings, getFontFamily, getBodyPadding, getCompressionScale, formatValue } from "@/components/dashboard/workspace/LayoutSettingsContext";
+import { useStatementOverlays } from "@/components/luka/workspace/StatementImageOverlays";
+import { useLayoutSettings, getFontFamily, getBodyPadding, getCompressionScale, formatValue } from "@/components/luka/workspace/LayoutSettingsContext";
 
 const ManualCell = ({ className, style }: { className?: string; style?: React.CSSProperties }) => {
   const [value, setValue] = useState("");

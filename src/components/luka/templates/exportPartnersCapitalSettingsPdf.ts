@@ -1,6 +1,6 @@
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
-import type { PartnersCapitalSettings } from "@/components/dashboard/workspace/LayoutSettingsContext";
+import type { PartnersCapitalSettings } from "@/components/luka/workspace/LayoutSettingsContext";
 
 /**
  * Generate a PDF summary of the current Statement of Partners' Capital

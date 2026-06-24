@@ -9,16 +9,16 @@ import { Switch } from "@/components/ui/switch";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Slider } from "@/components/ui/slider";
 import { Input } from "@/components/ui/input";
-import { useLayoutSettings } from "@/components/dashboard/workspace/LayoutSettingsContext";
+import { useLayoutSettings } from "@/components/luka/workspace/LayoutSettingsContext";
 import { motion, AnimatePresence, Reorder } from "framer-motion";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { LayoutSettingsProvider } from "@/components/dashboard/workspace/LayoutSettingsContext";
+import { LayoutSettingsProvider } from "@/components/luka/workspace/LayoutSettingsContext";
 import { validatePartnersCapital, partnersCapitalLimits } from "./partnersCapitalValidation";
 import { exportPartnersCapitalSettingsPdf } from "./exportPartnersCapitalSettingsPdf";
-import CoverPagePreview from "@/components/dashboard/workspace/CoverPagePreview";
+import CoverPagePreview from "@/components/luka/workspace/CoverPagePreview";
 
 import TemplateTableOfContentsPreview from "@/components/dashboard/templates/TemplateTableOfContentsPreview";
-import CompilationReportPreview from "@/components/dashboard/workspace/CompilationReportPreview";
+import CompilationReportPreview from "@/components/luka/workspace/CompilationReportPreview";
 import TemplateBalanceSheetPreview from "@/components/dashboard/templates/TemplateBalanceSheetPreview";
 import TemplateRetainedEarningsPreview from "@/components/dashboard/templates/TemplateRetainedEarningsPreview";
 import TemplateCCorpBalanceSheetPreview from "@/components/dashboard/templates/TemplateCCorpBalanceSheetPreview";
@@ -62,7 +62,7 @@ import TemplateSoleTaxIncomePreview from "@/components/dashboard/templates/Templ
 import TemplateSoleTaxCapitalPreview from "@/components/dashboard/templates/TemplateSoleTaxCapitalPreview";
 import TemplateSoleTaxCashFlowsPreview from "@/components/dashboard/templates/TemplateSoleTaxCashFlowsPreview";
 import TemplateSoleTaxNotesPreview from "@/components/dashboard/templates/TemplateSoleTaxNotesPreview";
-import IncomeStatementPreview from "@/components/dashboard/workspace/IncomeStatementPreview";
+import IncomeStatementPreview from "@/components/luka/workspace/IncomeStatementPreview";
 import TemplateTrustBalanceSheetPreview from "@/components/dashboard/templates/TemplateTrustBalanceSheetPreview";
 import TemplateTrustIncomePreview from "@/components/dashboard/templates/TemplateTrustIncomePreview";
 import TemplateTrustCapitalPreview from "@/components/dashboard/templates/TemplateTrustCapitalPreview";
@@ -86,8 +86,8 @@ import TemplateLLCMultiTaxIncomePreview from "@/components/dashboard/templates/T
 import TemplateLLCMultiTaxCapitalPreview from "@/components/dashboard/templates/TemplateLLCMultiTaxCapitalPreview";
 import TemplateLLCMultiTaxCashFlowsPreview from "@/components/dashboard/templates/TemplateLLCMultiTaxCashFlowsPreview";
 import TemplateLLCMultiTaxNotesPreview from "@/components/dashboard/templates/TemplateLLCMultiTaxNotesPreview";
-import CashFlowsPreview from "@/components/dashboard/workspace/CashFlowsPreview";
-import NotesPreview from "@/components/dashboard/workspace/NotesPreview";
+import CashFlowsPreview from "@/components/luka/workspace/CashFlowsPreview";
+import NotesPreview from "@/components/luka/workspace/NotesPreview";
 
 interface DocItem {
   id: number;

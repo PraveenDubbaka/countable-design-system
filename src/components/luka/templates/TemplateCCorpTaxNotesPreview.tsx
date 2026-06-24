@@ -1,5 +1,5 @@
-import { useStatementOverlays } from "@/components/dashboard/workspace/StatementImageOverlays";
-import { useLayoutSettings, getFontFamily, getBodyPadding, getCompressionScale } from "@/components/dashboard/workspace/LayoutSettingsContext";
+import { useStatementOverlays } from "@/components/luka/workspace/StatementImageOverlays";
+import { useLayoutSettings, getFontFamily, getBodyPadding, getCompressionScale } from "@/components/luka/workspace/LayoutSettingsContext";
 
 const TemplateCCorpTaxNotesPreview = ({ isEditMode = false }: { isEditMode?: boolean }) => {
   const { settings } = useLayoutSettings();
