@@ -92,6 +92,7 @@ import {
   generateAMLComplianceChecklist,
   generateAuditMaterialityChecklist,
   generateAuditEngagementLetterChecklist,
+  generateLetterToPredecessorAccountingFirmChecklist,
   generateTCWGPlanningCommunicationChecklist,
   generateTCWGFinalCommunicationChecklist,
   generateEngagementScopeChecklist,
@@ -294,6 +295,7 @@ const buildDefaultAuditChecklists = () => {
     { generator: generateExistingEngagementContinuanceChecklist, id: "default-audit-exist-cont" },
     { generator: generateAuditIndependenceChecklist, id: "default-audit-ind" },
     { generator: generateAuditEngagementLetterChecklist, id: "default-audit-el" },
+    { generator: generateLetterToPredecessorAccountingFirmChecklist, id: "default-audit-pred" },
     { generator: generateAMLComplianceChecklist, id: "default-audit-aml" },
     // Planning
     { generator: generateUnderstandingEntityBasicsChecklist, id: "default-audit-ueb" },
@@ -367,6 +369,7 @@ const buildDefaultUSAuditChecklists = () => {
     { generator: generateUSExistingEngagementContinuanceChecklist, id: "default-us-audit-exist-cont" },
     { generator: generateUSAuditIndependenceChecklist, id: "default-us-audit-ind" },
     { generator: generateAuditEngagementLetterGAASUSGAAP, id: "default-us-audit-el" },
+    { generator: generateLetterToPredecessorAccountingFirmChecklist, id: "default-us-audit-pred" },
     { generator: generateUSAMLComplianceChecklist, id: "default-us-audit-aml" },
     { generator: generateUSUnderstandingEntityBasicsChecklist, id: "default-us-audit-ueb" },
     { generator: generateUSUnderstandingEntitySystemsChecklist, id: "default-us-audit-ues" },
@@ -483,6 +486,7 @@ const NAV_KEY_TO_CHECKLIST_ID: Record<string, string> = {
   "aud-form-408": "default-audit-form-408",
   "aud-form-410": "default-audit-form-410",
   "aud-el": "default-audit-el",
+  "aud-pred": "default-audit-pred",
   // Audit — Planning
   "aud-ueb": "default-audit-ueb",
   "aud-ues": "default-audit-ues",
@@ -535,6 +539,7 @@ const NAV_KEY_TO_CHECKLIST_ID: Record<string, string> = {
   "aud-us-form-408": "default-us-audit-form-408",
   "aud-us-form-410": "default-us-audit-form-410",
   "aud-us-el": "default-us-audit-el",
+  "aud-us-pred": "default-us-audit-pred",
   // US Audit — Planning
   "aud-us-ueb": "default-us-audit-ueb",
   "aud-us-ues": "default-us-audit-ues",
@@ -651,6 +656,8 @@ const CHECKLIST_SIDEBAR_INFO: Record<string, { section: string; code: string; la
   'default-audit-aml':         { section: 'CO', code: 'AC',  label: 'New or Existing Engagement — Acceptance/Continuance' },
   'default-audit-tcwg-pl':     { section: 'CO', code: 'AC',  label: 'New or Existing Engagement — Acceptance/Continuance' },
   'default-audit-el':          { section: 'CO', code: 'AL1.1',  label: 'Engagement Letter' },
+  'default-audit-pred':        { section: 'CO', code: 'AL1.4',  label: 'Letter to a predecessor accounting firm' },
+  'default-us-audit-pred':     { section: 'CO', code: 'AL1.4',  label: 'Letter to a predecessor accounting firm' },
   // CA Audit — PL  (sub-forms without sidebar routes are grouped under their closest parent)
   'default-audit-mat':    { section: 'PL', code: 'PL1', label: 'Materiality' },
   'default-audit-sae':    { section: 'PL', code: 'SAE', label: "Selecting Auditor's Expert" },
