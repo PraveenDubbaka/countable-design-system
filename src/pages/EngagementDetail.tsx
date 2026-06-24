@@ -636,7 +636,7 @@ const CHECKLIST_SIDEBAR_INFO: Record<string, { section: string; code: string; la
   'default-compilation-independence':  { section: 'CO', code: 'IND', label: 'Independence' },
   'default-compilation-kcb':           { section: 'CO', code: 'KCB', label: 'Knowledge of Client Business' },
   'default-compilation-planning':      { section: 'CO', code: 'PL',  label: 'Planning' },
-  'default-compilation-el':            { section: 'CO', code: 'EL',  label: 'Engagement Letter' },
+  'default-compilation-el':            { section: 'CO', code: 'AL1.1',  label: 'Engagement Letter' },
   'default-compilation-mr':            { section: 'CO', code: 'MR',  label: 'Management Responsibility' },
   // CA Audit — CO  (sub-forms that share a sidebar nav item use that item's code+label)
   'default-audit-form-408':    { section: 'CO', code: 'IAE', label: 'Initial Audit Engagements' },
@@ -646,7 +646,7 @@ const CHECKLIST_SIDEBAR_INFO: Record<string, { section: string; code: string; la
   'default-audit-ind':         { section: 'CO', code: 'AC',  label: 'New or Existing Engagement — Acceptance/Continuance' },
   'default-audit-aml':         { section: 'CO', code: 'AC',  label: 'New or Existing Engagement — Acceptance/Continuance' },
   'default-audit-tcwg-pl':     { section: 'CO', code: 'AC',  label: 'New or Existing Engagement — Acceptance/Continuance' },
-  'default-audit-el':          { section: 'CO', code: 'EL',  label: 'Engagement Letter' },
+  'default-audit-el':          { section: 'CO', code: 'AL1.1',  label: 'Engagement Letter' },
   // CA Audit — PL  (sub-forms without sidebar routes are grouped under their closest parent)
   'default-audit-mat':    { section: 'PL', code: 'PL1', label: 'Materiality' },
   'default-audit-sae':    { section: 'PL', code: 'SAE', label: "Selecting Auditor's Expert" },
