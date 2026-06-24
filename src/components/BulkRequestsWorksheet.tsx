@@ -254,26 +254,17 @@ export function BulkRequestsWorksheet({ isUS = false }: BulkRequestsWorksheetPro
       <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as typeof activeTab)} className="flex-1 flex flex-col min-h-0">
         {/* Tabs bar */}
         <div className="px-6 pt-4 bg-muted/30 border-b border-border shrink-0">
-          <TabsList className="bg-transparent p-0 h-auto gap-1">
-            <TabsTrigger
-              value="create"
-              className="data-[state=active]:bg-card data-[state=active]:text-primary data-[state=active]:shadow-none data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-t-md rounded-b-none border border-transparent border-b-border px-4 py-2 text-sm font-medium"
-            >
+          <TabsList>
+            <TabsTrigger value="create">
               <Plus className="h-3.5 w-3.5 mr-1.5" /> Create New
             </TabsTrigger>
-            <TabsTrigger
-              value="all"
-              className="data-[state=active]:bg-card data-[state=active]:text-primary data-[state=active]:shadow-none data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-t-md rounded-b-none border border-transparent border-b-border px-4 py-2 text-sm font-medium gap-1.5"
-            >
+            <TabsTrigger value="all" className="gap-1.5">
               All Requests
               <span className="inline-flex items-center justify-center min-w-[20px] h-5 px-1.5 rounded-full bg-muted text-foreground text-[10px] font-semibold">
                 {allCount}
               </span>
             </TabsTrigger>
-            <TabsTrigger
-              value="available"
-              className="data-[state=active]:bg-card data-[state=active]:text-primary data-[state=active]:shadow-none data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-t-md rounded-b-none border border-transparent border-b-border px-4 py-2 text-sm font-medium gap-1.5"
-            >
+            <TabsTrigger value="available" className="gap-1.5">
               Available
               <span className="inline-flex items-center justify-center min-w-[20px] h-5 px-1.5 rounded-full bg-muted text-foreground text-[10px] font-semibold">
                 {availableCount}
