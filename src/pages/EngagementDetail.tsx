@@ -92,6 +92,7 @@ import {
   generateAMLComplianceChecklist,
   generateAuditMaterialityChecklist,
   generateAuditEngagementLetterChecklist,
+  generateLetterToPredecessorAccountingFirmChecklist,
   generateTCWGPlanningCommunicationChecklist,
   generateTCWGFinalCommunicationChecklist,
   generateEngagementScopeChecklist,
