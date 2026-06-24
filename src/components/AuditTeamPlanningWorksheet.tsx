@@ -301,7 +301,7 @@ export function AuditTeamPlanningWorksheet({ isUS = false }: { isUS?: boolean })
 
   return (
     <div className="flex flex-col h-full">
-      <div className="px-6 py-2.5 border-b border-border bg-primary/[0.03] flex items-start gap-2 shrink-0">
+      <div className="px-6 py-2.5 border-b border-border bg-primary/[0.03] flex items-start gap-3 shrink-0">
         <Info className="h-3.5 w-3.5 text-primary mt-0.5 shrink-0" />
         <span className="text-xs font-semibold text-primary whitespace-nowrap">Objective:</span>
         <p className="text-xs text-muted-foreground flex-1 leading-relaxed">
@@ -309,7 +309,13 @@ export function AuditTeamPlanningWorksheet({ isUS = false }: { isUS?: boolean })
           <span className="font-medium text-foreground">Notes:</span> Ensure involvement of the engagement partner and key team members (plus the engagement quality reviewer, if applicable). This form is divided into two parts — Part A would typically take place at the commencement of the audit; Part B would start by reviewing the assessed risks and developing appropriate audit responses. In some cases, the two discussions could be combined.{" "}
           <span className="font-medium text-foreground">F/S</span> = Financial statements. <span className="font-medium text-foreground">TCWG</span> = Those charged with governance. <span className="font-medium text-foreground">RMMs</span> = Risks of material misstatement. <span className="font-medium text-foreground">RAPs</span> = Risk assessment procedures.
         </p>
+        <Button size="sm" onClick={() => setImportOpen(true)} className="h-8 shrink-0 whitespace-nowrap">
+          <Sparkles className="h-3.5 w-3.5 mr-1.5" />
+          AI-assisted import
+        </Button>
       </div>
+
+      <ImportNotesDialog open={importOpen} onOpenChange={setImportOpen} onImport={applyImport} />
 
       <div className="flex-1 overflow-y-auto bg-muted/30">
         <div className="p-6 space-y-4">
