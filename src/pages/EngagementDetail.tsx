@@ -473,6 +473,33 @@ const toolsMenuActions = [{
   label: "Source Docs",
   icon: FileText
 }];
+// Adapt form 410 content to new vs. existing engagement at render time.
+function adaptForm410ForEngagement(data: any, firstYearAudit: boolean): any {
+  const title = firstYearAudit
+    ? 'New Engagement — Acceptance/Continuance'
+    : 'Existing Engagement — Acceptance/Continuance';
+  // For existing engagements: remove the "complete Form 408" note sentence and strip the new-only q.
+  // For new engagements: remove the "continuing engagement" prior-risk question.
+  const note = firstYearAudit
+    ? data.note
+    : (typeof data.note === 'string'
+        ? data.note.replace(/For first year audit engagements[^<]*complete Form 408[^<]*<\/p>\s*/gi, '').trim()
+        : data.note);
+  const sections = Array.isArray(data.sections)
+    ? data.sections.map((sec: any) => ({
+        ...sec,
+        questions: Array.isArray(sec.questions)
+          ? sec.questions.filter((q: any) => {
+              // 'f410-conc-prior-risk' / 'us-f410-conc-prior-risk' are continuing-only
+              if (firstYearAudit && (q.id === 'f410-conc-prior-risk' || q.id === 'us-f410-conc-prior-risk')) return false;
+              return true;
+            })
+          : sec.questions,
+      }))
+    : data.sections;
+  return { ...data, title, note, sections };
+}
+
 // Map sidebar nav keys (e.g. "co-ca") to seeded checklist ids.
 const NAV_KEY_TO_CHECKLIST_ID: Record<string, string> = {
   // Compilation
@@ -1012,7 +1039,12 @@ export default function EngagementDetail() {
           : undefined;
         const chosen = requested ?? savedChecklists[0];
         if (chosen?.data) {
-          setChecklist(chosen.data);
+          let checklistData = chosen.data;
+          if (checklistKey === 'aud-form-410' || checklistKey === 'aud-us-form-410') {
+            const meta = getEngagementMeta(engagementId ?? '');
+            checklistData = adaptForm410ForEngagement(checklistData, meta.firstYearAudit ?? false);
+          }
+          setChecklist(checklistData);
           setIsLoading(false);
           return;
         }
