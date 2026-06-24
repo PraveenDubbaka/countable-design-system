@@ -295,6 +295,7 @@ const buildDefaultAuditChecklists = () => {
     { generator: generateExistingEngagementContinuanceChecklist, id: "default-audit-exist-cont" },
     { generator: generateAuditIndependenceChecklist, id: "default-audit-ind" },
     { generator: generateAuditEngagementLetterChecklist, id: "default-audit-el" },
+    { generator: generateLetterToPredecessorAccountingFirmChecklist, id: "default-audit-pred" },
     { generator: generateAMLComplianceChecklist, id: "default-audit-aml" },
     // Planning
     { generator: generateUnderstandingEntityBasicsChecklist, id: "default-audit-ueb" },
