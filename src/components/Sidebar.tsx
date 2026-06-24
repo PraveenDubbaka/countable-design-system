@@ -1566,6 +1566,7 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
                       { id: "aud-us-form-410", code: "410", label: "New or Existing Engagement — Acceptance/Continuance", icon: "checklist", route: "checklist/aud-us-form-410" },
                       { id: "aud-us-form-440", code: "440", label: "Information / Analysis Requested from Management", icon: "worksheet", route: "checklist/aud-us-form-440" },
                       { id: "aud-us-el", code: "AL1.1", label: "Engagement Letter", icon: "letter", route: "checklist/aud-us-el" },
+                      ...(engFirstYear ? [{ id: "aud-us-pred", code: "AL1.4", label: "Letter to a predecessor accounting firm", icon: "letter" as const, route: "checklist/aud-us-pred" }] : []),
                     ]
                   },
                   {
