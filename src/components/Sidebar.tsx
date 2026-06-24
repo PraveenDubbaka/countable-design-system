@@ -1564,7 +1564,7 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
                     children: [
                       ...(engFirstYear ? [{ id: "aud-us-form-408", code: "408", label: "Initial Audit Engagements", icon: "checklist" as const, route: "checklist/aud-us-form-408" }] : []),
                       { id: "aud-us-form-410", code: "410", label: "New or Existing Engagement — Acceptance/Continuance", icon: "checklist", route: "checklist/aud-us-form-410" },
-                      { id: "aud-us-el", code: "EL", label: "Engagement Letter", icon: "letter", route: "checklist/aud-us-el" },
+                      { id: "aud-us-el", code: "AL1.1", label: "Engagement Letter", icon: "letter", route: "checklist/aud-us-el" },
                     ]
                   },
                   {
@@ -1724,7 +1724,7 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
                     children: [
                       ...(engFirstYear ? [{ id: "aud-form-408", code: "408", label: "Initial Audit Engagements", icon: "checklist" as const, route: "checklist/aud-form-408" }] : []),
                       { id: "aud-form-410", code: "410", label: "New or Existing Engagement — Acceptance/Continuance", icon: "checklist", route: "checklist/aud-form-410" },
-                      { id: "aud-el", code: "EL", label: "Engagement Letter", icon: "letter", route: "checklist/aud-el" },
+                      { id: "aud-el", code: "AL1.1", label: "Engagement Letter", icon: "letter", route: "checklist/aud-el" },
                     ]
                   },
                   {
@@ -1890,7 +1890,7 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
                       { id: "co-ind", code: "IND", label: "Independence", icon: "checklist", route: "checklist/co-ind" },
                       { id: "co-kcb", code: "KCB", label: "Knowledge of client business", icon: "checklist", route: "checklist/co-kcb" },
                       { id: "co-pl", code: "PL", label: "Planning", icon: "checklist", route: "checklist/co-pl" },
-                      { id: "co-el", code: "EL", label: "Engagement Letter", icon: "letter", route: "checklist/co-el" },
+                      { id: "co-el", code: "AL1.1", label: "Engagement Letter", icon: "letter", route: "checklist/co-el" },
                       { id: "co-mr", code: "MR", label: "Management responsibility and acknowledgement", icon: "letter", route: "checklist/co-mr" },
                     ]
                   },
