@@ -209,7 +209,8 @@ export default function Clients() {
 
   const handleCreateEngagement = (clientId: string, e: React.MouseEvent) => {
     e.stopPropagation();
-    navigate("/engagements/create");
+    const client = clientList.find(c => c.id === clientId);
+    navigate("/engagements/create", { state: { clientName: client?.entityName } });
   };
 
   const handleDeleteClient = (clientId: string, e: React.MouseEvent) => {

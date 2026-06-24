@@ -735,13 +735,7 @@ export default function CreateEngagement() {
 
             {/* Engagement Details Section */}
             <SectionCard icon={<Briefcase className="h-5 w-5" />} title="Engagement Details">
-              <div className="grid grid-cols-4 gap-4">
-                <LabeledInput
-                  label="Client Name"
-                  value={clientName}
-                  onChange={setClientName}
-                  required
-                />
+              <div className="grid grid-cols-3 gap-4">
                 <LabeledInput
                   label="Engagement ID"
                   value={engagementId}
