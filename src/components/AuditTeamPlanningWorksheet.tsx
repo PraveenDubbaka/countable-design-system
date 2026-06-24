@@ -182,6 +182,39 @@ export function AuditTeamPlanningWorksheet({ isUS = false }: { isUS?: boolean })
     return () => clearTimeout(t);
   }, [data, storageKey]);
 
+  const [importOpen, setImportOpen] = useState(false);
+
+  function applyImport(result: ImportResult) {
+    setData(d => {
+      const next: Data436 = { ...d };
+      if (result.meetingDate) next.meetingDate = result.meetingDate;
+      if (result.attendees?.length) {
+        next.attendeesList = result.attendees.map(a => ({ id: uid(), name: a.name, role: a.role }));
+      }
+      if (result.agendaNotes) {
+        const rows = { ...d.rows };
+        for (const [id, notes] of Object.entries(result.agendaNotes)) {
+          if (rows[id]) rows[id] = { ...rows[id], notes };
+        }
+        next.rows = rows;
+      }
+      if (result.actionSteps?.length) {
+        next.actionSteps = result.actionSteps.map(s => ({
+          id: uid(),
+          action: s.action,
+          person: s.person,
+          deadline: s.deadline,
+          actualCompletion: '',
+        }));
+      }
+      return next;
+    });
+    const sourceLabel = result.source.charAt(0).toUpperCase() + result.source.slice(1);
+    toast.success(`Worksheet populated from ${sourceLabel}`, {
+      description: 'Review and refine the auto-filled content before sign-off.',
+    });
+  }
+
   function setRow(id: string, patch: Partial<AgendaRow>) {
     setData(d => ({ ...d, rows: { ...d.rows, [id]: { ...d.rows[id], ...patch } } }));
   }
