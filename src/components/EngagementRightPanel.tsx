@@ -1,7 +1,8 @@
 import { useState, useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
-import { ChevronLeft, ChevronRight, Send, Clock, MessageSquare, FolderOpen, StickyNote, Search, Plus, CalendarClock, ArrowLeft, Upload, X } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Send, Clock, MessageSquare, FolderOpen, StickyNote, Search, Plus, CalendarClock, ArrowLeft, Upload, X, Layers } from 'lucide-react';
 import { EngagementNotesPanel } from './EngagementNotesPanel';
+import { MultipleRequestModal } from './MultipleRequestModal';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -42,6 +43,7 @@ function DocRequestForm({ context, onBack }: { context: DocRequestContext; onBac
   const [notes, setNotes] = useState('');
   const [dueDate, setDueDate] = useState('');
   const [files, setFiles] = useState<File[]>([]);
+  const [bulkOpen, setBulkOpen] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const isValid = folder && recipient.trim() && docName.trim() && dueDate;
@@ -71,7 +73,24 @@ function DocRequestForm({ context, onBack }: { context: DocRequestContext; onBac
         <button type="button" onClick={onBack} className="p-1 hover:bg-muted rounded-md transition-colors">
           <ArrowLeft className="h-4 w-4 text-muted-foreground" />
         </button>
-        <h3 className="text-sm font-semibold text-foreground">Doc Request</h3>
+        <h3 className="text-sm font-semibold text-foreground flex-1">Doc Request</h3>
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                variant="outline"
+                size="sm"
+                className="h-7 px-2 gap-1.5 text-[11px] font-medium text-[#0C2D55] border-[#0C2D55]/30"
+                onClick={() => setBulkOpen(true)}
+              >
+                <Layers className="h-3 w-3" />
+                Multiple Request
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent side="bottom">Raise multiple PBC requests at once</TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+        <MultipleRequestModal open={bulkOpen} onOpenChange={setBulkOpen} />
       </div>
 
       {/* Form */}
