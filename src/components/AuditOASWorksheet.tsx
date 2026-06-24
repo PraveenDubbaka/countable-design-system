@@ -461,11 +461,7 @@ function WorksheetInner({ isUS }: { isUS: boolean }) {
                       key={i} num={`2.${i+1}`} description={label}
                       row={s2[i]} onRow={(f,v) => updRow(setS2,i,f,v)}
                       onRefAttach={attachRef(setS2,i)} onRefRemove={removeRef(setS2,i)}
-                      extra={i === 1 ? (
-                        meetingImported
-                          ? <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium bg-green-100 dark:bg-green-950/30 text-green-700 dark:text-green-400 border border-green-200 dark:border-green-800"><Check className="h-3 w-3" /> Imported</span>
-                          : !locked && <button onClick={() => setImportStep(1)} className="h-7 px-2.5 rounded-full bg-gradient-to-r from-[#1C63A6] to-[#7A31D8] text-white text-xs font-medium flex items-center gap-1.5 shadow-sm hover:from-[#1a5a96] hover:to-[#6a2bc2]"><Sparkles className="h-3 w-3" />Import Meeting Notes</button>
-                      ) : undefined}
+                      extra={undefined}
                     />
                   ))}
 
