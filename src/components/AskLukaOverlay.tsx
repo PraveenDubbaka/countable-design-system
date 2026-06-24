@@ -106,6 +106,8 @@ interface AskLukaOverlayProps {
   onOpenEngagementSheet?: () => void;
   engagementOverviewMode?: boolean;
   onStartSectionBySection?: () => void;
+  initialTab?: "threads" | "workspace";
+  initialWorkspaceEngagement?: { name: string; code: string; source?: "quickbooks" | "xero" };
 }
 
 const quickPrompts = [
@@ -248,6 +250,8 @@ export function AskLukaOverlay({
   onOpenEngagementSheet,
   engagementOverviewMode,
   onStartSectionBySection,
+  initialTab,
+  initialWorkspaceEngagement,
 }: AskLukaOverlayProps) {
   const [activeTab, setActiveTab] = useState<"threads" | "workspace">("threads");
   const [inputValue, setInputValue] = useState("");
@@ -302,6 +306,19 @@ export function AskLukaOverlay({
   useEffect(() => {
     setLukaOpen(open);
   }, [open]);
+
+  useEffect(() => {
+    if (open && initialTab === "workspace") {
+      setActiveTab("workspace");
+      setIsFullscreen(true);
+      setThreadsSidebarCollapsed(true);
+      if (initialWorkspaceEngagement) {
+        setWorkspaceEngagement(initialWorkspaceEngagement);
+        setHasWorkspaceEngagement(true);
+      }
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [open, initialTab]);
 
   const unpinThread = (idx: number) => {
     setPinnedThreads((prev) => {

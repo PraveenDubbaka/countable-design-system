@@ -125,7 +125,7 @@ const SelectItem = React.forwardRef<
     ref={ref}
     className={cn(
       // Curved edges on items with pop-out effect
-      "relative flex w-full cursor-pointer select-none items-center rounded-lg py-2.5 pl-9 pr-3 text-sm outline-none transition-all duration-200 ease-emphasized",
+      "relative flex w-full cursor-pointer select-none items-center rounded-lg py-2.5 pl-3 pr-3 text-sm outline-none transition-all duration-200 ease-emphasized",
       // Pop-out hover effect
       "hover:bg-primary/[0.08] hover:scale-[1.01] hover:shadow-[0_2px_8px_hsl(213_40%_20%/0.06)]",
       "dark:hover:bg-primary/[0.15]",
@@ -139,13 +139,12 @@ const SelectItem = React.forwardRef<
     )}
     {...props}
   >
-    <span className="absolute left-2.5 flex h-4 w-4 items-center justify-center">
+    <SelectPrimitive.ItemText>{children}</SelectPrimitive.ItemText>
+    <span className="ml-auto flex h-4 w-4 items-center justify-center shrink-0">
       <SelectPrimitive.ItemIndicator>
         <Check className="h-4 w-4 text-primary" />
       </SelectPrimitive.ItemIndicator>
     </span>
-
-    <SelectPrimitive.ItemText>{children}</SelectPrimitive.ItemText>
   </SelectPrimitive.Item>
 ));
 SelectItem.displayName = SelectPrimitive.Item.displayName;

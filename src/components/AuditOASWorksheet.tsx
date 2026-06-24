@@ -1,20 +1,20 @@
 import { useState, useRef, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Sparkles, X, Plus, Trash2, Check, Info } from "lucide-react";
+import { RefButton, RefDoc } from "@/components/RefButton";
 import { toast } from "sonner";
 import { readJsonFromLocalStorage, writeJsonToLocalStorage } from "@/lib/safeJson";
 import { loadEngagements, getEngagementMeta } from "@/store/engagementsStore";
 
 // ── Types ──────────────────────────────────────────────────────────────────────
 
-interface RowState { response: string; wpRef: string; initials: string; date: string; }
+interface RowState { response: string; wpRef: RefDoc[]; initials: string; date: string; }
 interface AreaRow extends RowState { relevant: boolean; }
-interface TeamRow { id: string; role: string; name: string; experience: string; wpRef: string; initials: string; date: string; }
+interface TeamRow { id: string; role: string; name: string; experience: string; wpRef: RefDoc[]; initials: string; date: string; }
 interface SignOff { id: string; name: string; role: string; initials: string; date: string; }
 
 // ── Constants ──────────────────────────────────────────────────────────────────
@@ -52,9 +52,9 @@ const S3_LABELS = [
 
 // ── Mock seed data ─────────────────────────────────────────────────────────────
 
-function emptyRow(): RowState { return { response: "", wpRef: "", initials: "", date: "" }; }
-function seedRow(response: string): RowState { return { response, wpRef: "", initials: "", date: "" }; }
-function areaRow(relevant: boolean, response = ""): AreaRow { return { relevant, response, wpRef: "", initials: "", date: "" }; }
+function emptyRow(): RowState { return { response: "", wpRef: [], initials: "", date: "" }; }
+function seedRow(response: string): RowState { return { response, wpRef: [], initials: "", date: "" }; }
+function areaRow(relevant: boolean, response = ""): AreaRow { return { relevant, response, wpRef: [], initials: "", date: "" }; }
 
 let _uid = 0;
 const uid = () => `r${++_uid}`;
@@ -89,11 +89,11 @@ const CA_SEED = {
     areaRow(false, "N/A — private company audit, ASPE. Not applicable."),
   ],
   teamRows: [
-    { id: "t1", role: "Engagement Partner",       name: "J. Patel, CPA",   experience: "15 years experience", wpRef: "", initials: "", date: "" },
-    { id: "t2", role: "Manager",                  name: "A. Nguyen, CPA",  experience: "7 years experience",  wpRef: "", initials: "", date: "" },
-    { id: "t3", role: "Senior Auditor",           name: "T. Brown",        experience: "3 years experience",  wpRef: "", initials: "", date: "" },
-    { id: "t4", role: "Staff Auditor / Assistant",name: "D. Kim",          experience: "1 year experience",   wpRef: "", initials: "", date: "" },
-    { id: "t5", role: "EQCR (Quality Reviewer)",  name: "S. Lavoie, CPA", experience: "Independent reviewer", wpRef: "", initials: "", date: "" },
+    { id: "t1", role: "Engagement Partner",       name: "J. Patel, CPA",   experience: "15 years experience", wpRef: [], initials: "", date: "" },
+    { id: "t2", role: "Manager",                  name: "A. Nguyen, CPA",  experience: "7 years experience",  wpRef: [], initials: "", date: "" },
+    { id: "t3", role: "Senior Auditor",           name: "T. Brown",        experience: "3 years experience",  wpRef: [], initials: "", date: "" },
+    { id: "t4", role: "Staff Auditor / Assistant",name: "D. Kim",          experience: "1 year experience",   wpRef: [], initials: "", date: "" },
+    { id: "t5", role: "EQCR (Quality Reviewer)",  name: "S. Lavoie, CPA", experience: "Independent reviewer", wpRef: [], initials: "", date: "" },
   ] as TeamRow[],
   s5: seedRow("Budgeted fee: $31,000. Estimated hours: 195. See Form 450 for detailed time budget."),
   s6: seedRow("Audit plan documented in Forms 500-590. TCWG planning communication: Letter AL3.1 sent April 9, 2024."),
@@ -134,12 +134,12 @@ const US_SEED = {
     areaRow(false, "N/A — private company audit (AICPA non-issuer). CAMs not required."),
   ],
   teamRows: [
-    { id: "t1", role: "Engagement Partner",       name: "M. Thompson, CPA",  experience: "18 years experience",   wpRef: "", initials: "", date: "" },
-    { id: "t2", role: "Manager",                  name: "L. Garcia, CPA",    experience: "9 years experience",    wpRef: "", initials: "", date: "" },
-    { id: "t3", role: "Senior Auditor",           name: "K. Patel",          experience: "4 years experience",    wpRef: "", initials: "", date: "" },
-    { id: "t4", role: "Staff Auditor / Assistant",name: "J. Chen",           experience: "1 year experience",     wpRef: "", initials: "", date: "" },
-    { id: "t5", role: "Subject Matter Expert (SME)", name: "Summit Valuation Group", experience: "Goodwill impairment", wpRef: "", initials: "", date: "" },
-    { id: "t6", role: "EQCR (Quality Reviewer)",  name: "D. Anderson, CPA",  experience: "Independent reviewer",  wpRef: "", initials: "", date: "" },
+    { id: "t1", role: "Engagement Partner",       name: "M. Thompson, CPA",  experience: "18 years experience",   wpRef: [], initials: "", date: "" },
+    { id: "t2", role: "Manager",                  name: "L. Garcia, CPA",    experience: "9 years experience",    wpRef: [], initials: "", date: "" },
+    { id: "t3", role: "Senior Auditor",           name: "K. Patel",          experience: "4 years experience",    wpRef: [], initials: "", date: "" },
+    { id: "t4", role: "Staff Auditor / Assistant",name: "J. Chen",           experience: "1 year experience",     wpRef: [], initials: "", date: "" },
+    { id: "t5", role: "Subject Matter Expert (SME)", name: "Summit Valuation Group", experience: "Goodwill impairment", wpRef: [], initials: "", date: "" },
+    { id: "t6", role: "EQCR (Quality Reviewer)",  name: "D. Anderson, CPA",  experience: "Independent reviewer",  wpRef: [], initials: "", date: "" },
   ] as TeamRow[],
   s5: seedRow("Budgeted fee: $42,500. Estimated hours: 280. See Form 450 for detailed time budget."),
   s6: seedRow("Audit plan documented in Forms 500-590. TCWG planning communication: Letter AL3.1 sent January 22, 2025."),
@@ -225,14 +225,35 @@ function WorksheetInner({ isUS }: { isUS: boolean }) {
   }, [entity, period, s1, s2, s3, teamRows, s5, s6, subseq, conclusion, meetingImported, concluded, concludedBy, concludedOn, storageKey]);
 
   // ── Row updaters ───────────────────────────────────────────────────────────
-  function updRow(setter: React.Dispatch<React.SetStateAction<RowState[]>>, i: number, f: keyof RowState, v: string) {
+  type StrField = Exclude<keyof RowState, 'wpRef'>;
+  type StrTeamField = Exclude<keyof TeamRow, 'wpRef'>;
+  function updRow(setter: React.Dispatch<React.SetStateAction<RowState[]>>, i: number, f: StrField, v: string) {
     setter(prev => { const n = [...prev]; n[i] = { ...n[i], [f]: v }; return n; });
   }
-  function updSingle(setter: React.Dispatch<React.SetStateAction<RowState>>, f: keyof RowState, v: string) {
+  function updSingle(setter: React.Dispatch<React.SetStateAction<RowState>>, f: StrField, v: string) {
     setter(prev => ({ ...prev, [f]: v }));
   }
-  function updTeam(id: string, f: keyof TeamRow, v: string) {
+  function updTeam(id: string, f: StrTeamField, v: string) {
     setTeamRows(prev => prev.map(r => r.id === id ? { ...r, [f]: v } : r));
+  }
+  // wpRef helpers
+  function attachRef(setter: React.Dispatch<React.SetStateAction<RowState[]>>, i: number) {
+    return (doc: RefDoc) => setter(prev => { const n = [...prev]; n[i] = { ...n[i], wpRef: [...n[i].wpRef, doc] }; return n; });
+  }
+  function removeRef(setter: React.Dispatch<React.SetStateAction<RowState[]>>, i: number) {
+    return (idx: number) => setter(prev => { const n = [...prev]; n[i] = { ...n[i], wpRef: n[i].wpRef.filter((_,j) => j !== idx) }; return n; });
+  }
+  function attachSingle(setter: React.Dispatch<React.SetStateAction<RowState>>) {
+    return (doc: RefDoc) => setter(prev => ({ ...prev, wpRef: [...prev.wpRef, doc] }));
+  }
+  function removeSingle(setter: React.Dispatch<React.SetStateAction<RowState>>) {
+    return (idx: number) => setter(prev => ({ ...prev, wpRef: prev.wpRef.filter((_,j) => j !== idx) }));
+  }
+  function attachTeam(id: string) {
+    return (doc: RefDoc) => setTeamRows(prev => prev.map(r => r.id === id ? { ...r, wpRef: [...r.wpRef, doc] } : r));
+  }
+  function removeTeam(id: string) {
+    return (idx: number) => setTeamRows(prev => prev.map(r => r.id === id ? { ...r, wpRef: r.wpRef.filter((_,j) => j !== idx) } : r));
   }
   function addTeamRow() {
     setTeamRows(prev => [...prev, { id: uid(), role: TEAM_ROLES[0], name: "", experience: "", wpRef: "", initials: "", date: "" }]);
@@ -279,22 +300,24 @@ function WorksheetInner({ isUS }: { isUS: boolean }) {
     );
   }
 
-  function DataRow({ num, description, row, onRow, extra, locked: rowLocked }: {
+  function DataRow({ num, description, row, onRow, onRefAttach, onRefRemove, extra, locked: rowLocked }: {
     num: string; description: React.ReactNode;
-    row: RowState; onRow: (f: keyof RowState, v: string) => void;
+    row: RowState; onRow: (f: StrField, v: string) => void;
+    onRefAttach: (doc: RefDoc) => void;
+    onRefRemove: (i: number) => void;
     extra?: React.ReactNode; locked?: boolean;
   }) {
     const dis = rowLocked ?? locked;
     return (
       <tr className="hover:bg-muted/50 transition-colors border-b border-border/40">
         <td className="px-3 py-2.5 text-xs text-muted-foreground font-mono align-top whitespace-nowrap w-10">{num}</td>
-        <td className="px-4 py-2.5 text-sm text-foreground align-top">{description}</td>
-        <td className="px-3 py-2 align-top w-20">
-          <Input className="h-7 text-xs w-16 text-center" value={row.wpRef} onChange={e => onRow("wpRef", e.target.value)} placeholder="—" disabled={dis} />
-        </td>
-        <td className="px-3 py-2 align-top min-w-[280px]">
-          <Textarea className="min-h-[56px] text-sm resize-none" value={row.response} onChange={e => onRow("response", e.target.value)} disabled={dis} />
+        <td className="px-4 py-2.5 text-sm text-foreground align-top w-[200px]">{description}</td>
+        <td className="px-3 py-2 align-top">
+          <Textarea className="min-h-[88px] text-sm resize-y" value={row.response} onChange={e => onRow("response", e.target.value)} disabled={dis} />
           {extra && <div className="mt-1.5">{extra}</div>}
+        </td>
+        <td className="px-3 py-2.5 align-top w-[150px]">
+          <RefButton reference={row.wpRef} onAttach={onRefAttach} onRemove={onRefRemove} disabled={dis} />
         </td>
       </tr>
     );
@@ -419,17 +442,17 @@ function WorksheetInner({ isUS }: { isUS: boolean }) {
                 <thead className="sticky top-0 z-10">
                   <tr className="bg-muted border-b border-border">
                     <th className="w-10 px-3 py-2.5 text-left text-xs font-semibold text-foreground uppercase">#</th>
-                    <th className="px-4 py-2.5 text-left text-xs font-semibold text-foreground uppercase">Description</th>
-                    <th className="w-20 px-3 py-2.5 text-center text-xs font-semibold text-foreground uppercase">W/P Ref.</th>
-                    <th className="w-80 px-3 py-2.5 text-left text-xs font-semibold text-foreground uppercase">Responses and Comments</th>
+                    <th className="w-[200px] px-4 py-2.5 text-left text-xs font-semibold text-foreground uppercase">Description</th>
+                    <th className="px-3 py-2.5 text-left text-xs font-semibold text-foreground uppercase">Responses and Comments</th>
+                    <th className="w-[150px] px-3 py-2.5 text-left text-xs font-semibold text-foreground uppercase">W/P Ref.</th>
                   </tr>
                 </thead>
                 <tbody>
 
                   {/* Section 1 */}
                   <SectionHeader label="1. Reporting Requirements" />
-                  <DataRow num="1.1" description="The applicable financial reporting framework (such as ASPE or IFRS)." row={s1[0]} onRow={(f,v) => updRow(setS1,0,f,v)} />
-                  <DataRow num="1.2" description="Industry-specific or specialized requirements." row={s1[1]} onRow={(f,v) => updRow(setS1,1,f,v)} />
+                  <DataRow num="1.1" description="The applicable financial reporting framework (such as ASPE or IFRS)." row={s1[0]} onRow={(f,v) => updRow(setS1,0,f,v)} onRefAttach={attachRef(setS1,0)} onRefRemove={removeRef(setS1,0)} />
+                  <DataRow num="1.2" description="Industry-specific or specialized requirements." row={s1[1]} onRow={(f,v) => updRow(setS1,1,f,v)} onRefAttach={attachRef(setS1,1)} onRefRemove={removeRef(setS1,1)} />
 
                   {/* Section 2 */}
                   <SectionHeader label="2. Timing" />
@@ -437,6 +460,7 @@ function WorksheetInner({ isUS }: { isUS: boolean }) {
                     <DataRow
                       key={i} num={`2.${i+1}`} description={label}
                       row={s2[i]} onRow={(f,v) => updRow(setS2,i,f,v)}
+                      onRefAttach={attachRef(setS2,i)} onRefRemove={removeRef(setS2,i)}
                       extra={i === 1 ? (
                         meetingImported
                           ? <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium bg-green-100 dark:bg-green-950/30 text-green-700 dark:text-green-400 border border-green-200 dark:border-green-800"><Check className="h-3 w-3" /> Imported</span>
@@ -463,6 +487,8 @@ function WorksheetInner({ isUS }: { isUS: boolean }) {
                         </div>
                       }
                       row={s3[i]} onRow={(f,v) => setS3(prev => prev.map((a,j) => j===i ? { ...a, [f]: v } : a))}
+                      onRefAttach={doc => setS3(prev => prev.map((a,j) => j===i ? { ...a, wpRef: [...a.wpRef, doc] } : a))}
+                      onRefRemove={idx => setS3(prev => prev.map((a,j) => j===i ? { ...a, wpRef: a.wpRef.filter((_,k) => k !== idx) } : a))}
                     />
                   ))}
 
@@ -472,14 +498,11 @@ function WorksheetInner({ isUS }: { isUS: boolean }) {
                   {teamRows.map((row, i) => (
                     <tr key={row.id} className="hover:bg-muted/50 transition-colors border-b border-border/40">
                       <td className="px-3 py-2.5 text-xs text-muted-foreground font-mono align-top whitespace-nowrap">{`4.${i+1}`}</td>
-                      <td className="px-4 py-2 align-top min-w-[180px]">
+                      <td className="px-4 py-2 align-top w-[200px]">
                         <Select value={row.role} onValueChange={v => updTeam(row.id,"role",v)} disabled={locked}>
                           <SelectTrigger className="h-8 text-xs"><SelectValue /></SelectTrigger>
                           <SelectContent>{TEAM_ROLES.map(r => <SelectItem key={r} value={r}>{r}</SelectItem>)}</SelectContent>
                         </Select>
-                      </td>
-                      <td className="px-3 py-2 align-top w-20">
-                        <Input className="h-7 text-xs w-16 text-center" value={row.wpRef} onChange={e => updTeam(row.id,"wpRef",e.target.value)} placeholder="—" disabled={locked} />
                       </td>
                       <td className="px-3 py-2 align-top">
                         <div className="flex items-center gap-1">
@@ -489,6 +512,9 @@ function WorksheetInner({ isUS }: { isUS: boolean }) {
                           </Select>
                           {!locked && <button onClick={() => removeTeamRow(row.id)} className="h-7 w-7 flex items-center justify-center text-muted-foreground hover:text-destructive transition-colors rounded shrink-0"><Trash2 className="h-3.5 w-3.5" /></button>}
                         </div>
+                      </td>
+                      <td className="px-3 py-2.5 align-top w-[150px]">
+                        <RefButton reference={row.wpRef} onAttach={attachTeam(row.id)} onRemove={removeTeam(row.id)} disabled={locked} />
                       </td>
                     </tr>
                   ))}
@@ -504,11 +530,11 @@ function WorksheetInner({ isUS }: { isUS: boolean }) {
 
                   {/* Section 5 */}
                   <SectionHeader label="5. Budget" />
-                  <DataRow num="5.1" description="Establish the budgeted audit fee and labour hours (Form 450)." row={s5} onRow={(f,v) => updSingle(setS5,f,v)} />
+                  <DataRow num="5.1" description="Establish the budgeted audit fee and labour hours (Form 450)." row={s5} onRow={(f,v) => updSingle(setS5,f,v)} onRefAttach={attachSingle(setS5)} onRefRemove={removeSingle(setS5)} />
 
                   {/* Section 6 */}
                   <SectionHeader label="6. Audit Strategy" />
-                  <DataRow num="6.1" description="Provide a cross-reference to documents that outline the planned scope and timing of the audit, such as the communication with management and to TCWG." row={s6} onRow={(f,v) => updSingle(setS6,f,v)} />
+                  <DataRow num="6.1" description="Provide a cross-reference to documents that outline the planned scope and timing of the audit, such as the communication with management and to TCWG." row={s6} onRow={(f,v) => updSingle(setS6,f,v)} onRefAttach={attachSingle(setS6)} onRefRemove={removeSingle(setS6)} />
 
                   {/* Subsequent Changes */}
                   <tr className="bg-muted">
@@ -516,7 +542,7 @@ function WorksheetInner({ isUS }: { isUS: boolean }) {
                   </tr>
                   <DataRow
                     num="" description="Outline any significant changes made to the original audit strategy for this period as a result of performing further procedures or obtaining new information."
-                    row={subseq} onRow={(f,v) => updSingle(setSubseq,f,v)}
+                    row={subseq} onRow={(f,v) => updSingle(setSubseq,f,v)} onRefAttach={attachSingle(setSubseq)} onRefRemove={removeSingle(setSubseq)}
                   />
 
                 </tbody>

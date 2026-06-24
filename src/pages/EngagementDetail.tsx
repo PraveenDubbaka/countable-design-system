@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo, useCallback, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { ChevronRight, ChevronDown, Landmark, FileText, Triangle, FileSpreadsheet, PencilLine, Pencil, Settings2, Download, FileType, Share2, Save, RefreshCw, Trash2, Building2, Calendar, Check, AlertTriangle, Loader2, History, Upload, FileUp, Bell, Plus, X, LayoutGrid, CheckCircle2, PlugZap, Zap } from "lucide-react";
+import { ChevronRight, ChevronDown, Landmark, FileText, Triangle, FileSpreadsheet, PencilLine, Pencil, Settings2, Download, FileType, Share2, Save, RefreshCw, Trash2, Building2, Calendar, Check, AlertTriangle, Loader2, History, Upload, FileUp, Bell, Plus, X, LayoutGrid, CheckCircle2, PlugZap, Zap, Play, Square } from "lucide-react";
 import { ExpandableIconButton } from "@/components/ui/expandable-icon-button";
 import { ChecklistIcon } from "@/components/icons/ChecklistIcon";
 import { Button } from "@/components/ui/button";
@@ -38,10 +38,11 @@ import { Audit655Worksheet } from "@/components/Audit655Worksheet";
 import { Audit666Worksheet } from "@/components/Audit666Worksheet";
 import { Audit680Worksheet } from "@/components/Audit680Worksheet";
 import { ConnectorsModal, CONNECTORS_BY_ID } from "@/components/ConnectorsModal";
-import { LukaAutoFillBanner } from "@/components/LukaAutoFillBanner";
+import { getEngagementMeta } from "@/store/engagementsStore";
 import { AuditFSViewer, FSPageType } from "@/components/AuditFSViewer";
 import { AskLukaOverlay, AllTemplateSummary, AutoFillProgressItem } from "@/components/AskLukaOverlay";
 import { FloatingActionBar } from "@/components/FloatingActionBar";
+import { useTimeEntries, fmtElapsed, CURRENT_USER, TimeEntry } from "@/lib/useTimeEntries";
 import { EngagementRightPanel } from "@/components/EngagementRightPanel";
 import { Checklist, Question } from "@/types/checklist";
 import { readJsonFromLocalStorage, writeJsonToLocalStorage } from "@/lib/safeJson";
@@ -734,7 +735,12 @@ export default function EngagementDetail() {
   const [clipboardResponses, setClipboardResponses] = useState<{ checklistTitle: string; responses: Record<string, { answer: string; explanation?: string }> } | null>(null);
   const [showClipboardPrompt, setShowClipboardPrompt] = useState(false);
   const [lukaOpen, setLukaOpen] = useState(false);
+  const [lukaInitialTab, setLukaInitialTab] = useState<"threads" | "workspace">("threads");
+  const [lukaInitialWorkspaceEngagement, setLukaInitialWorkspaceEngagement] = useState<{ name: string; code: string; source?: "quickbooks" | "xero" } | undefined>(undefined);
   const [lukaEngagementOverviewMode, setLukaEngagementOverviewMode] = useState(false);
+  const [hasUsedLuka, setHasUsedLuka] = useState(() =>
+    !!localStorage.getItem(`luka-used-${engagementId}`)
+  );
   const [lukaQuery, setLukaQuery] = useState("");
   const [lukaAutoFillConfig, setLukaAutoFillConfig] = useState<{ label: string; sources: string[]; engagementLabel: string } | null>(null);
   const [isAutoFilling, setIsAutoFilling] = useState(false);
@@ -750,6 +756,45 @@ export default function EngagementDetail() {
     totalFields: number;
   } | null>(null);
   const [lukaAutoFillProgress, setLukaAutoFillProgress] = useState<AutoFillProgressItem[] | null>(null);
+  // ── Global timer ────────────────────────────────────────────────────────────
+  const [globalTimerSec, setGlobalTimerSec]         = useState(0);
+  const [globalTimerRunning, setGlobalTimerRunning] = useState(false);
+  const globalTimerRef  = useRef<ReturnType<typeof setInterval> | null>(null);
+  const globalActiveRef = useRef(false);
+  const { addEntry: addTimeEntry } = useTimeEntries(engagementId ?? "default");
+
+  const toggleGlobalTimer = () => {
+    if (globalActiveRef.current) {
+      clearInterval(globalTimerRef.current!);
+      globalActiveRef.current = false;
+      setGlobalTimerRunning(false);
+      const hrs = Math.round(globalTimerSec / 900) / 4;
+      if (hrs > 0) {
+        addTimeEntry({
+          id: `e-${Date.now()}`,
+          date: new Date().toISOString().slice(0, 10),
+          roleKey: CURRENT_USER.roleKey,
+          userName: CURRENT_USER.name,
+          tbRowId: 'g1',
+          tbSection: 'general',
+          hours: hrs,
+          description: 'Time tracked via timer',
+        } as TimeEntry);
+      }
+      setGlobalTimerSec(0);
+    } else {
+      setGlobalTimerSec(0);
+      globalActiveRef.current = true;
+      setGlobalTimerRunning(true);
+      globalTimerRef.current = setInterval(() => {
+        if (document.visibilityState === 'visible') setGlobalTimerSec(s => s + 1);
+      }, 1000);
+    }
+  };
+
+  useEffect(() => () => { if (globalTimerRef.current) clearInterval(globalTimerRef.current); }, []);
+  // ────────────────────────────────────────────────────────────────────────────
+
   const autoFillRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [lukaFillStatusVersion, setLukaFillStatusVersion] = useState(0);
   useEffect(() => {
@@ -1677,7 +1722,69 @@ export default function EngagementDetail() {
               </div>
             </div>
             {/* Action buttons row */}
-            <div className="flex items-center justify-end gap-1 px-4 py-1.5 border-t border-border/50">
+            <div className="flex items-center justify-between gap-2 px-4 py-1.5 border-t border-border/50">
+              {/* Global timer — always visible on all pages */}
+              <div className="flex items-center gap-4 shrink-0">
+                <div className="flex items-center gap-2">
+                  {globalTimerRunning && (
+                    <span className="inline-flex items-center gap-1.5 text-xs font-medium text-primary">
+                      <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
+                      Recording
+                    </span>
+                  )}
+                  <span className="font-mono text-sm font-semibold tabular-nums text-foreground w-16 text-center">
+                    {fmtElapsed(globalTimerSec)}
+                  </span>
+                </div>
+                <Button
+                  onClick={toggleGlobalTimer}
+                  variant={globalTimerRunning ? 'destructive' : 'secondary'}
+                  size="sm"
+                  className="h-7 px-2.5 text-xs gap-1.5"
+                >
+                  {globalTimerRunning ? <Square className="h-3 w-3" /> : <Play className="h-3 w-3" />}
+                  {globalTimerRunning ? 'Stop & Log' : 'Start Time Log'}
+                </Button>
+              </div>
+              <div className="flex items-center gap-1">
+              {checklistKey && engagementId && !FS_PAGE_KEYS.has(checklistKey) && (
+                <>
+                  <button
+                    onClick={() => {
+                      if (!hasUsedLuka) {
+                        setHasUsedLuka(true);
+                        localStorage.setItem(`luka-used-${engagementId}`, '1');
+                      }
+                      setLukaInitialTab("workspace");
+                      setLukaInitialWorkspaceEngagement({
+                        name: engagement?.client || engagementId,
+                        code: engagementId,
+                        source: "xero",
+                      });
+                      setLukaOpen(true);
+                    }}
+                    className="inline-flex items-center gap-1.5 h-7 px-3 rounded-[8px] text-xs font-semibold text-white shadow-sm bg-gradient-to-br from-[#8649F1] to-[#2355A4] hover:opacity-90 transition-opacity"
+                  >
+                    <Zap className="h-3.5 w-3.5 fill-white stroke-0" />
+                    Run on workspace
+                  </button>
+                  {hasUsedLuka && (
+                    <button
+                      onClick={() => {
+                        const engLabel = [engagement?.client, engagementId].filter(Boolean).join(' · ');
+                        setLukaEngagementOverviewMode(true);
+                        setLukaAutoFillConfig({ label: 'Luka Engagement Plan', sources: ['Xero connection', 'Predecessor file'], engagementLabel: engLabel });
+                        setLukaOpen(true);
+                      }}
+                      className="inline-flex items-center gap-1.5 h-7 px-3 rounded-[8px] text-xs font-semibold border border-border bg-background text-foreground hover:bg-muted transition-colors"
+                    >
+                      <Zap className="h-3 w-3 opacity-60" />
+                      LUKA status
+                    </button>
+                  )}
+                  <div className="w-px h-4 bg-border mx-0.5" />
+                </>
+              )}
               {checklistKey && FS_PAGE_KEYS.has(checklistKey) ? (
                 <>
                   {isFSEditing ? (
@@ -1792,35 +1899,12 @@ export default function EngagementDetail() {
                   onClick={() => setShowDeleteDialog(true)}
                 />
               </>}
+              </div>
             </div>
           </div>
 
           {/* Content Area */}
           <div className="flex-1 overflow-auto bg-card">
-          {/* Luka auto-fill banner — shown on every checklist/worksheet */}
-          {checklistKey && engagementId && !FS_PAGE_KEYS.has(checklistKey) && (
-            <LukaAutoFillBanner
-              checklistKey={checklistKey}
-              engagementId={engagementId}
-              checklistName={checklist?.title}
-              onRunAutoFill={({ query, label, sources, engagementLabel }) => {
-                setLukaQuery(query);
-                setLukaAutoFillConfig({ label, sources, engagementLabel });
-                setLukaOpen(true);
-              }}
-              fillStatus={bannerFillStatus}
-              filledCount={bannerFilledCount}
-              totalCount={bannerTotalCount}
-              prerequisiteLabel="Materiality"
-              onNavigateToPrerequisite={() => navigate(`/engagements/${engagementId}/checklist/aud-mat`)}
-              onOpenLukaStatus={() => {
-                const engLabel = [engagement?.client, engagementId].filter(Boolean).join(' · ');
-                setLukaEngagementOverviewMode(true);
-                setLukaAutoFillConfig({ label: 'Luka Engagement Plan', sources: ['Xero connection', 'Predecessor file'], engagementLabel: engLabel });
-                setLukaOpen(true);
-              }}
-            />
-          )}
           {/* Auto-fill progress indicator */}
           {isAutoFilling && (
             <div className="mx-4 mt-2 rounded-lg border border-primary/20 bg-primary/5 px-4 py-2.5 flex items-center gap-3">
@@ -2088,7 +2172,7 @@ export default function EngagementDetail() {
     </Layout>
     <AskLukaOverlay
       open={lukaOpen}
-      onOpenChange={(o) => { setLukaOpen(o); if (!o) { setLukaAutoFillConfig(null); setLukaFillSummary(null); setLukaAllTemplateSummary(null); setLukaAutoFillProgress(null); setLukaEngagementOverviewMode(false); } }}
+      onOpenChange={(o) => { setLukaOpen(o); if (!o) { setLukaAutoFillConfig(null); setLukaFillSummary(null); setLukaAllTemplateSummary(null); setLukaAutoFillProgress(null); setLukaEngagementOverviewMode(false); setLukaInitialTab("threads"); setLukaInitialWorkspaceEngagement(undefined); } }}
       initialQuery={lukaQuery}
       autoFillMode={!!lukaAutoFillConfig}
       checklistLabel={lukaAutoFillConfig?.label}
@@ -2109,6 +2193,8 @@ export default function EngagementDetail() {
         setLukaEngagementOverviewMode(true);
       }}
       onStartSectionBySection={() => { setLukaOpen(false); navigate(`/engagements/${engagementId}/checklist/aud-form-410`); }}
+      initialTab={lukaInitialTab}
+      initialWorkspaceEngagement={lukaInitialWorkspaceEngagement}
     />
   </>;
 }

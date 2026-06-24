@@ -1,10 +1,12 @@
 import { useState, useEffect, useRef, useMemo } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Info, Play, Square, Trash2, Zap, AlertTriangle } from "lucide-react";
+import { Info, Trash2, Zap, AlertTriangle, Filter } from "lucide-react";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger, DropdownMenuRadioGroup, DropdownMenuRadioItem, DropdownMenuSeparator, DropdownMenuItem } from "@/components/ui/dropdown-menu";
 import { useParams } from "react-router-dom";
-import { useTimeEntries, fmtElapsed, RoleKey, ROLE_LABELS, CURRENT_USER, TimeEntry } from "@/lib/useTimeEntries";
+import { useTimeEntries, RoleKey, ROLE_LABELS, CURRENT_USER, TimeEntry } from "@/lib/useTimeEntries";
 import { readJsonFromLocalStorage, writeJsonToLocalStorage } from "@/lib/safeJson";
 
 // ── Constants ────────────────────────────────────────────────────────────────
@@ -77,6 +79,17 @@ const TASKS: Record<string, { id: string; label: string }[]> = {
 
 const ALL_TASKS = Object.values(TASKS).flat();
 
+const TEAM_MEMBERS: Record<RoleKey, string[]> = {
+  partner:    ['John M.', 'Sarah K.'],
+  manager:    ['Praveen D.', 'Lisa T.'],
+  senior:     ['Alex R.', 'Michelle C.', 'Ryan B.'],
+  assistant:  ['Tom B.', 'Nina F.', 'Daniel W.', 'Emma L.'],
+  eqcr:       ['Robert H.'],
+  specialist: ['Karen L.'],
+  admin:      ['Grace P.'],
+  other:      ['Other'],
+};
+
 // ── Helpers ──────────────────────────────────────────────────────────────────
 
 const num    = (s: string | undefined | null) => parseFloat(s ?? "") || 0;
@@ -102,7 +115,37 @@ export function AuditTimeTrackerWorksheet() {
   const ratesKey  = `audit-team-rates-${engagementId}`;
   const budgetKey = `audit-time-budget-${engagementId}`;
 
-  const { entries, addEntry, removeEntry, hrsForRole, hrsForSection } = useTimeEntries(engagementId);
+  const { entries, addEntry, removeEntry, updateEntry, hrsForRole, hrsForSection } = useTimeEntries(engagementId);
+
+  // ── Inline edit state for Time Log rows ───────────────────────────────────
+  const [edits, setEdits] = useState<Record<string, Partial<TimeEntry>>>({});
+
+  const getVal = <K extends keyof TimeEntry>(e: TimeEntry, field: K): TimeEntry[K] =>
+    (edits[e.id]?.[field] ?? e[field]) as TimeEntry[K];
+
+  const setField = (id: string, field: keyof TimeEntry, value: string | number) => {
+    setEdits(prev => {
+      const patch: Partial<TimeEntry> = { ...prev[id], [field]: value };
+      if (field === 'tbSection') {
+        patch.tbRowId = TASKS[value as string]?.[0]?.id ?? '';
+      }
+      return { ...prev, [id]: patch };
+    });
+  };
+
+  const commitEdit = (e: TimeEntry) => {
+    const patch = edits[e.id];
+    if (!patch || Object.keys(patch).length === 0) return;
+    updateEntry({ ...e, ...patch });
+    setEdits(prev => { const next = { ...prev }; delete next[e.id]; return next; });
+  };
+
+  const commitSelect = (e: TimeEntry, field: keyof TimeEntry, value: string) => {
+    const patch: Partial<TimeEntry> = { [field]: value };
+    if (field === 'tbSection') patch.tbRowId = TASKS[value]?.[0]?.id ?? '';
+    updateEntry({ ...e, ...edits[e.id], ...patch });
+    setEdits(prev => { const next = { ...prev }; delete next[e.id]; return next; });
+  };
 
   // ── Rates ─────────────────────────────────────────────────────────────────
   const [rates, setRates] = useState<Partial<Record<RoleKey, string>>>(() => {
@@ -122,44 +165,36 @@ export function AuditTimeTrackerWorksheet() {
     readJsonFromLocalStorage<BudgetPlan | null>(budgetKey, null) ?? emptyBudget()
   );
 
+  // ── Time Log filters ─────────────────────────────────────────────────────
+  const [filterDate,    setFilterDate]    = useState('');
+  const [filterRole,    setFilterRole]    = useState('all');
+  const [filterSection, setFilterSection] = useState('all');
+  const [filterDesc,    setFilterDesc]    = useState('');
+
+  const clearFilters = () => { setFilterDate(''); setFilterRole('all'); setFilterSection('all'); setFilterDesc(''); };
+  const hasFilters = filterDate || filterRole !== 'all' || filterSection !== 'all' || filterDesc;
+
   // ── Log form ──────────────────────────────────────────────────────────────
   const today = new Date().toISOString().slice(0, 10);
-  const [logDate, setLogDate]       = useState(today);
-  const [logRole, setLogRole]       = useState<RoleKey>(CURRENT_USER.roleKey);
-  const [logSection, setLogSection] = useState("general");
-  const [logTask, setLogTask]       = useState("g1");
-  const [logHours, setLogHours]     = useState("");
-  const [logDesc, setLogDesc]       = useState("");
+  const [logDate, setLogDate]         = useState(today);
+  const [logRole, setLogRole]         = useState<RoleKey>(CURRENT_USER.roleKey);
+  const [logUserName, setLogUserName] = useState(CURRENT_USER.name);
+  const [logSection, setLogSection]   = useState("general");
+  const [logTask, setLogTask]         = useState("g1");
+  const [logHours, setLogHours]       = useState("");
+  const [logDesc, setLogDesc]         = useState("");
 
   useEffect(() => {
     const first = TASKS[logSection]?.[0];
     if (first) setLogTask(first.id);
   }, [logSection]);
 
-  // ── Manual timer ─────────────────────────────────────────────────────────
-  const [timerSec, setTimerSec]         = useState(0);
-  const [timerRunning, setTimerRunning] = useState(false);
-  const timerRef  = useRef<ReturnType<typeof setInterval> | null>(null);
-  const activeRef = useRef(false);
-
-  const toggleTimer = () => {
-    if (activeRef.current) {
-      clearInterval(timerRef.current!);
-      activeRef.current = false;
-      setTimerRunning(false);
-      const hrs = timerSec / 3600;
-      if (hrs > 0) setLogHours(round4(hrs).toString());
-    } else {
-      setTimerSec(0);
-      activeRef.current = true;
-      setTimerRunning(true);
-      timerRef.current = setInterval(() => {
-        if (document.visibilityState === "visible") setTimerSec(s => s + 1);
-      }, 1000);
-    }
+  const handleLogRoleChange = (role: RoleKey) => {
+    setLogRole(role);
+    const members = TEAM_MEMBERS[role] ?? [];
+    if (!members.includes(logUserName)) setLogUserName(members[0] ?? '');
   };
 
-  useEffect(() => () => { if (timerRef.current) clearInterval(timerRef.current); }, []);
 
   // ── Persist ───────────────────────────────────────────────────────────────
   const firstRender = useRef(true);
@@ -175,6 +210,14 @@ export function AuditTimeTrackerWorksheet() {
 
   // ── Derived ───────────────────────────────────────────────────────────────
   const totalActualHrs = useMemo(() => entries.reduce((s, e) => s + e.hours, 0), [entries]);
+
+  const filteredEntries = useMemo(() => entries.filter(e => {
+    if (filterDate    && e.date     !== filterDate)                                          return false;
+    if (filterRole    !== 'all'     && e.roleKey   !== filterRole)                           return false;
+    if (filterSection !== 'all'     && e.tbSection !== filterSection)                        return false;
+    if (filterDesc    && !e.description.toLowerCase().includes(filterDesc.toLowerCase()))    return false;
+    return true;
+  }), [entries, filterDate, filterRole, filterSection, filterDesc]);
 
   const actualsByRole = useMemo(() => {
     const m: Partial<Record<RoleKey, number>> = {};
@@ -240,14 +283,19 @@ export function AuditTimeTrackerWorksheet() {
   const logTime = () => {
     const hrs = parseFloat(logHours);
     if (!hrs || hrs <= 0) return;
+    const cost = hrs * num(rates[logRole]);
     addEntry({
       id: `e-${Date.now()}`,
       date: logDate, roleKey: logRole,
+      userName: logUserName || CURRENT_USER.name,
       tbRowId: logTask, tbSection: logSection,
       hours: hrs, description: logDesc,
+      ...(cost > 0 ? { costOverride: cost } : {}),
     } as TimeEntry);
     setLogHours(""); setLogDesc("");
   };
+
+  const logCost = (() => { const h = parseFloat(logHours); return h > 0 ? h * num(rates[logRole]) : 0; })();
 
   // ── JSX ───────────────────────────────────────────────────────────────────
   return (
@@ -277,7 +325,7 @@ export function AuditTimeTrackerWorksheet() {
               { label: "Variance",
                 value: totalBudgetHrs > 0 ? (varHrs >= 0 ? "+" : "") + fmtH(varHrs) + " h" : "—",
                 sub: overBudget ? "over budget" : totalBudgetHrs > 0 ? "remaining" : "no budget set",
-                color: overBudget ? "text-red-600 dark:text-red-400" : totalBudgetHrs > 0 ? "text-green-600 dark:text-green-400" : "" },
+                color: "" },
               { label: "Blended Rate", value: blendedRate > 0 ? fmt$(blendedRate) + "/hr" : "—",
                 sub: "weighted avg by role", color: "" },
             ].map(k => (
@@ -294,15 +342,10 @@ export function AuditTimeTrackerWorksheet() {
             <div className="px-5 py-3 border-b border-border flex flex-wrap items-center gap-3">
               <span className="text-sm font-semibold text-foreground">Rates &amp; Budget Planning</span>
               <div className="ml-auto flex flex-wrap gap-2">
-                <Button variant="outline" size="sm" onClick={loadPriorYear}
+                <Button variant="secondary" size="sm" onClick={loadPriorYear}
                   title="Load prior year hours as starting budget"
                   disabled={!ROLE_KEYS.some(r => budget.priorByRole[r])}>
                   ↩ Load Prior Year
-                </Button>
-                <Button variant="outline" size="sm" onClick={saveAsPriorYear}
-                  title="Save current budget as prior year baseline"
-                  disabled={!ROLE_KEYS.some(r => budget.byRole[r])}>
-                  Save as Prior Year
                 </Button>
               </div>
             </div>
@@ -337,7 +380,7 @@ export function AuditTimeTrackerWorksheet() {
                 <p className="text-[11px] text-muted-foreground">Total Budget Cost</p>
                 <p className="text-lg font-bold">{totalBudgetCost > 0 ? fmt$(totalBudgetCost) : "—"}</p>
                 {num(budget.proposedFee) > 0 && totalBudgetCost > 0 && (
-                  <p className={`text-xs font-medium ${num(budget.proposedFee) >= totalBudgetCost ? "text-green-600" : "text-red-500"}`}>
+                  <p className="text-xs font-medium text-foreground">
                     vs. fee: {(num(budget.proposedFee) >= totalBudgetCost ? "+" : "") + fmt$(num(budget.proposedFee) - totalBudgetCost)}
                   </p>
                 )}
@@ -348,7 +391,7 @@ export function AuditTimeTrackerWorksheet() {
             <div className="overflow-x-auto">
               <table className="w-full text-base">
                 <thead>
-                  <tr className="bg-muted text-xs font-semibold uppercase tracking-wider text-foreground border-b border-border">
+                  <tr className="bg-muted text-xs font-semibold uppercase tracking-wider text-foreground border-b border-border [&>th]:whitespace-nowrap">
                     <th className="px-5 py-2 text-left">Role</th>
                     <th className="px-3 py-2 text-center w-14">Std %</th>
                     <th className="px-3 py-2 text-right w-28">Rate ($/hr)</th>
@@ -368,34 +411,34 @@ export function AuditTimeTrackerWorksheet() {
                     const varH = bh - ah;
                     return (
                       <tr key={rk} className="hover:bg-muted/30 transition-colors">
-                        <td className="px-5 py-1.5 font-medium text-foreground">{ROLE_LABELS[rk]}</td>
-                        <td className="px-3 py-1.5 text-center text-base text-foreground">{INDUSTRY_ROLE_PCT[rk]}%</td>
-                        <td className="px-3 py-1.5 text-right">
+                        <td className="px-5 py-2.5 font-medium text-foreground align-top">{ROLE_LABELS[rk]}</td>
+                        <td className="px-3 py-2.5 text-center text-sm text-foreground align-top">{INDUSTRY_ROLE_PCT[rk]}%</td>
+                        <td className="px-3 py-2.5 align-top">
                           <Input value={rates[rk] ?? ""}
                             onChange={e => setRates(r => ({ ...r, [rk]: e.target.value }))}
-                            className="h-6 text-base text-right border-0 shadow-none px-0 focus-visible:ring-0 bg-transparent w-20 ml-auto"
+                            className="h-8 text-sm text-right"
                             placeholder="0" />
                         </td>
-                        <td className="px-3 py-1.5 text-right">
+                        <td className="px-3 py-2.5 align-top">
                           <Input value={budget.byRole[rk] ?? ""}
                             onChange={e => setBudget(b => ({ ...b, byRole: { ...b.byRole, [rk]: e.target.value } }))}
-                            className="h-6 text-base text-right border-0 shadow-none px-0 focus-visible:ring-0 bg-transparent w-20 ml-auto"
+                            className="h-8 text-sm text-right"
                             placeholder="0" />
                         </td>
-                        <td className="px-3 py-1.5 text-right text-base text-foreground">
+                        <td className="px-3 py-2.5 text-right text-sm text-foreground align-top">
                           {bh > 0 && rate > 0 ? fmt$(bh * rate) : "—"}
                         </td>
-                        <td className="px-3 py-1.5 text-right">
+                        <td className="px-3 py-2.5 align-top">
                           <Input value={budget.priorByRole[rk] ?? ""}
                             onChange={e => setBudget(b => ({ ...b, priorByRole: { ...b.priorByRole, [rk]: e.target.value } }))}
-                            className="h-6 text-base text-right border-0 shadow-none px-0 focus-visible:ring-0 bg-transparent w-16 ml-auto"
+                            className="h-8 text-sm text-right"
                             placeholder="—" />
                         </td>
-                        <td className="px-3 py-1.5 text-right font-medium text-foreground">{ah > 0 ? fmtH(ah) : "—"}</td>
-                        <td className={`px-3 py-1.5 text-right font-semibold ${varH < 0 ? "text-red-600 dark:text-red-400" : varH > 0 && bh > 0 ? "text-green-600 dark:text-green-400" : "text-foreground"}`}>
+                        <td className="px-3 py-2.5 text-right text-sm font-medium text-foreground align-top">{ah > 0 ? fmtH(ah) : "—"}</td>
+                        <td className="px-3 py-2.5 text-right text-sm font-semibold text-foreground align-top">
                           {bh > 0 ? (varH >= 0 ? "+" : "") + fmtH(varH) : "—"}
                         </td>
-                        <td className="px-3 py-1.5 text-right text-base text-foreground">
+                        <td className="px-3 py-2.5 text-right text-sm text-foreground align-top">
                           {ah > 0 && rate > 0 ? fmt$(ah * rate) : "—"}
                         </td>
                       </tr>
@@ -403,17 +446,17 @@ export function AuditTimeTrackerWorksheet() {
                   })}
                 </tbody>
                 <tfoot>
-                  <tr className="bg-muted/50 border-t-2 border-border font-semibold text-base">
+                  <tr className="bg-muted/50 border-t-2 border-border font-semibold text-base [&>td]:whitespace-nowrap">
                     <td className="px-5 py-2 text-foreground">Total</td>
                     <td className="px-3 py-2 text-center text-base text-foreground">100%</td>
                     <td className="px-3 py-2 text-right text-base text-foreground">
-                      {blendedRate > 0 ? `${fmt$(blendedRate)} blended` : "—"}
+                      {blendedRate > 0 ? fmt$(blendedRate) : "—"}
                     </td>
                     <td className="px-3 py-2 text-right text-foreground">{totalBudgetHrs > 0 ? fmtH(totalBudgetHrs) : "—"}</td>
                     <td className="px-3 py-2 text-right text-base text-foreground">{totalBudgetCost > 0 ? fmt$(totalBudgetCost) : "—"}</td>
                     <td className="px-3 py-2" />
                     <td className="px-3 py-2 text-right text-foreground">{totalActualHrs > 0 ? fmtH(totalActualHrs) : "—"}</td>
-                    <td className={`px-3 py-2 text-right ${overBudget ? "text-red-600" : totalBudgetHrs > 0 ? "text-green-600" : "text-foreground"}`}>
+                    <td className="px-3 py-2 text-right text-foreground">
                       {totalBudgetHrs > 0 ? (varHrs >= 0 ? "+" : "") + fmtH(varHrs) : "—"}
                     </td>
                     <td className="px-3 py-2 text-right text-base text-foreground">{totalActualCost > 0 ? fmt$(totalActualCost) : "—"}</td>
@@ -431,7 +474,7 @@ export function AuditTimeTrackerWorksheet() {
             <div className="overflow-x-auto">
               <table className="w-full text-base">
                 <thead>
-                  <tr className="bg-muted text-xs font-semibold uppercase tracking-wider text-foreground border-b border-border">
+                  <tr className="bg-muted text-xs font-semibold uppercase tracking-wider text-foreground border-b border-border [&>th]:whitespace-nowrap">
                     <th className="px-5 py-2 text-left">Section</th>
                     <th className="px-3 py-2 text-center w-14">Std %</th>
                     <th className="px-3 py-2 text-right w-28">Budget Hrs</th>
@@ -449,16 +492,16 @@ export function AuditTimeTrackerWorksheet() {
                     const over = bh > 0 && ah > bh;
                     return (
                       <tr key={sec.key} className="hover:bg-muted/30 transition-colors">
-                        <td className="px-5 py-2 font-medium text-foreground">{sec.label}</td>
-                        <td className="px-3 py-2 text-center text-base text-foreground">{sec.pct}%</td>
-                        <td className="px-3 py-2 text-right">
+                        <td className="px-5 py-2.5 font-medium text-foreground align-top">{sec.label}</td>
+                        <td className="px-3 py-2.5 text-center text-sm text-foreground align-top">{sec.pct}%</td>
+                        <td className="px-3 py-2.5 align-top">
                           <Input value={budget.bySection[sec.key] ?? ""}
                             onChange={e => setBudget(b => ({ ...b, bySection: { ...b.bySection, [sec.key]: e.target.value } }))}
-                            className="h-6 text-base text-right border-0 shadow-none px-0 focus-visible:ring-0 bg-transparent w-16 ml-auto"
+                            className="h-8 text-sm text-right"
                             placeholder="0" />
                         </td>
-                        <td className="px-3 py-2 text-right font-medium text-foreground">{ah > 0 ? fmtH(ah) : "—"}</td>
-                        <td className={`px-3 py-2 text-right font-semibold ${varH < 0 ? "text-red-600 dark:text-red-400" : varH > 0 && bh > 0 ? "text-green-600 dark:text-green-400" : "text-foreground"}`}>
+                        <td className="px-3 py-2.5 text-right text-sm font-medium text-foreground align-top">{ah > 0 ? fmtH(ah) : "—"}</td>
+                        <td className="px-3 py-2.5 text-right text-sm font-semibold text-foreground align-top">
                           {bh > 0 ? (varH >= 0 ? "+" : "") + fmtH(varH) : "—"}
                         </td>
                         <td className="px-5 py-2">
@@ -470,7 +513,7 @@ export function AuditTimeTrackerWorksheet() {
                                   style={{ width: `${pct}%` }}
                                 />
                               </div>
-                              <span className={`text-sm font-medium w-9 shrink-0 text-right ${over ? "text-red-500" : "text-foreground"}`}>
+                              <span className="text-sm font-medium w-9 shrink-0 text-right text-foreground">
                                 {Math.round(pct)}%
                               </span>
                             </div>
@@ -486,34 +529,33 @@ export function AuditTimeTrackerWorksheet() {
 
           {/* ── Timer + Log Time */}
           <div className="bg-card border border-border rounded-lg overflow-hidden shadow-[0_2px_8px_hsl(213_40%_20%/0.06)]">
-            <div className="px-5 py-3 border-b border-border flex items-center gap-4">
+            <div className="px-5 py-3 border-b border-border">
               <span className="text-sm font-semibold">Log Time</span>
-              <div className="ml-auto flex items-center gap-3">
-                {timerRunning && (
-                  <span className="inline-flex items-center gap-1.5 text-xs font-medium text-primary">
-                    <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
-                    Recording
-                  </span>
-                )}
-                <span className="font-mono text-base font-semibold tabular-nums text-foreground">{fmtElapsed(timerSec)}</span>
-                <Button variant={timerRunning ? "destructive" : "outline"} size="sm" onClick={toggleTimer} className="gap-1.5">
-                  {timerRunning ? <Square className="h-3.5 w-3.5" /> : <Play className="h-3.5 w-3.5" />}
-                  {timerRunning ? "Stop & Fill" : "Start Timer"}
-                </Button>
-              </div>
             </div>
             <div className="p-5 space-y-3">
-              <div className="grid grid-cols-2 md:grid-cols-6 gap-3">
+              {/* Row 1: Date, Role, User Name, Section, Task */}
+              <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
                 <div>
                   <p className="text-xs font-medium text-muted-foreground mb-1">Date</p>
                   <Input type="date" value={logDate} onChange={e => setLogDate(e.target.value)} className="h-8 text-sm" />
                 </div>
                 <div>
                   <p className="text-xs font-medium text-muted-foreground mb-1">Role</p>
-                  <Select value={logRole} onValueChange={v => setLogRole(v as RoleKey)}>
+                  <Select value={logRole} onValueChange={v => handleLogRoleChange(v as RoleKey)}>
                     <SelectTrigger className="h-8 text-sm"><SelectValue /></SelectTrigger>
                     <SelectContent>
                       {ROLE_KEYS.map(r => <SelectItem key={r} value={r}>{ROLE_LABELS[r]}</SelectItem>)}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div>
+                  <p className="text-xs font-medium text-muted-foreground mb-1">User Name</p>
+                  <Select value={logUserName} onValueChange={setLogUserName}>
+                    <SelectTrigger className="h-8 text-sm"><SelectValue /></SelectTrigger>
+                    <SelectContent>
+                      {(TEAM_MEMBERS[logRole] ?? []).map(name => (
+                        <SelectItem key={name} value={name}>{name}</SelectItem>
+                      ))}
                     </SelectContent>
                   </Select>
                 </div>
@@ -535,10 +577,24 @@ export function AuditTimeTrackerWorksheet() {
                     </SelectContent>
                   </Select>
                 </div>
+              </div>
+              {/* Row 2: Hours, Cost (auto), Description, Log Time */}
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                 <div>
                   <p className="text-xs font-medium text-muted-foreground mb-1">Hours</p>
                   <Input type="number" step="0.25" min="0" value={logHours}
                     onChange={e => setLogHours(e.target.value)} placeholder="0.0" className="h-8 text-sm" />
+                </div>
+                <div>
+                  <p className="text-xs font-medium text-muted-foreground mb-1">Cost (auto)</p>
+                  <div className="h-8 flex items-center px-3 rounded-[10px] border border-border bg-muted/40 text-sm text-foreground">
+                    {logCost > 0 ? fmt$(logCost) : <span className="text-muted-foreground">—</span>}
+                  </div>
+                </div>
+                <div>
+                  <p className="text-xs font-medium text-muted-foreground mb-1">Description</p>
+                  <Input value={logDesc} onChange={e => setLogDesc(e.target.value)}
+                    placeholder="Work performed (optional)…" className="h-8 text-sm" />
                 </div>
                 <div className="flex flex-col justify-end">
                   <Button onClick={logTime} disabled={!logHours || parseFloat(logHours) <= 0} className="h-8 w-full">
@@ -546,8 +602,6 @@ export function AuditTimeTrackerWorksheet() {
                   </Button>
                 </div>
               </div>
-              <Input value={logDesc} onChange={e => setLogDesc(e.target.value)}
-                placeholder="Brief description of work performed (optional)…" className="h-8 text-sm" />
             </div>
           </div>
 
@@ -555,37 +609,238 @@ export function AuditTimeTrackerWorksheet() {
           <div className="bg-card border border-border rounded-lg overflow-hidden shadow-[0_2px_8px_hsl(213_40%_20%/0.06)]">
             <div className="px-5 py-3 border-b border-border flex items-center justify-between">
               <span className="text-sm font-semibold">Time Log</span>
-              <span className="text-xs text-muted-foreground">
-                {entries.length} entries · {fmtH(totalActualHrs)} h · {totalActualCost > 0 ? fmt$(totalActualCost) : "—"}
-              </span>
+              <div className="flex items-center gap-2">
+                {hasFilters && (
+                  <button onClick={clearFilters} className="text-xs text-primary hover:underline">
+                    Clear filters
+                  </button>
+                )}
+                <span className="text-xs text-muted-foreground">
+                  {hasFilters
+                    ? `${filteredEntries.length} of ${entries.length} entries`
+                    : `${entries.length} entries`
+                  } · {fmtH(totalActualHrs)} h · {totalActualCost > 0 ? fmt$(totalActualCost) : "—"}
+                </span>
+              </div>
             </div>
             <div className="overflow-x-auto">
               <table className="w-full text-base">
                 <thead>
-                  <tr className="bg-muted text-xs font-semibold uppercase tracking-wider text-foreground border-b border-border">
-                    <th className="px-4 py-2 text-left">Date</th>
-                    <th className="px-4 py-2 text-left">Role</th>
-                    <th className="px-4 py-2 text-left">Section › Task</th>
-                    <th className="px-4 py-2 text-right w-16">Hours</th>
-                    <th className="px-4 py-2 text-right w-24">Cost</th>
-                    <th className="px-4 py-2 text-left">Description</th>
+                  <tr className="bg-muted text-xs font-semibold uppercase tracking-wider text-foreground border-b border-border [&>th]:whitespace-nowrap">
+                    {/* Date */}
+                    <th className="px-4 py-2 text-left">
+                      <div className="flex items-center gap-1">
+                        <span>Date</span>
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <button className={`p-0.5 rounded transition-colors ${filterDate ? 'text-primary' : 'text-muted-foreground hover:text-foreground'}`}>
+                              <Filter className={`h-3 w-3 ${filterDate ? 'fill-primary/20' : ''}`} />
+                            </button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align="start" className="w-52 bg-card p-2">
+                            <p className="text-[10px] font-semibold text-muted-foreground uppercase mb-1.5 px-1">Filter by date</p>
+                            <Input type="date" value={filterDate} onChange={e => setFilterDate(e.target.value)} className="h-7 text-xs" />
+                            {filterDate && (
+                              <button onClick={() => setFilterDate('')} className="mt-1.5 w-full text-left text-xs text-muted-foreground hover:text-foreground px-1">Clear</button>
+                            )}
+                          </DropdownMenuContent>
+                        </DropdownMenu>
+                      </div>
+                    </th>
+                    {/* Role */}
+                    <th className="px-4 py-2 text-left">
+                      <div className="flex items-center gap-1">
+                        <span>Role</span>
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <button className={`p-0.5 rounded transition-colors ${filterRole !== 'all' ? 'text-primary' : 'text-muted-foreground hover:text-foreground'}`}>
+                              <Filter className={`h-3 w-3 ${filterRole !== 'all' ? 'fill-primary/20' : ''}`} />
+                            </button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align="start" className="w-52 bg-card">
+                            <DropdownMenuRadioGroup value={filterRole} onValueChange={setFilterRole}>
+                              <DropdownMenuRadioItem value="all">All Roles</DropdownMenuRadioItem>
+                              <DropdownMenuSeparator />
+                              {ROLE_KEYS.map(r => (
+                                <DropdownMenuRadioItem key={r} value={r}>{ROLE_LABELS[r]}</DropdownMenuRadioItem>
+                              ))}
+                            </DropdownMenuRadioGroup>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
+                      </div>
+                    </th>
+                    {/* Section › Task */}
+                    <th className="px-4 py-2 text-left">
+                      <div className="flex items-center gap-1">
+                        <span>Section › Task</span>
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <button className={`p-0.5 rounded transition-colors ${filterSection !== 'all' ? 'text-primary' : 'text-muted-foreground hover:text-foreground'}`}>
+                              <Filter className={`h-3 w-3 ${filterSection !== 'all' ? 'fill-primary/20' : ''}`} />
+                            </button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align="start" className="w-56 bg-card">
+                            <DropdownMenuRadioGroup value={filterSection} onValueChange={setFilterSection}>
+                              <DropdownMenuRadioItem value="all">All Sections</DropdownMenuRadioItem>
+                              <DropdownMenuSeparator />
+                              {SECTIONS.map(s => (
+                                <DropdownMenuRadioItem key={s.key} value={s.key}>{s.label}</DropdownMenuRadioItem>
+                              ))}
+                            </DropdownMenuRadioGroup>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
+                      </div>
+                    </th>
+                    <th className="px-4 py-2 text-left w-28">Hours</th>
+                    <th className="px-4 py-2 text-right w-32">Cost</th>
+                    {/* Description */}
+                    <th className="px-4 py-2 text-left">
+                      <div className="flex items-center gap-1">
+                        <span>Description</span>
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <button className={`p-0.5 rounded transition-colors ${filterDesc ? 'text-primary' : 'text-muted-foreground hover:text-foreground'}`}>
+                              <Filter className={`h-3 w-3 ${filterDesc ? 'fill-primary/20' : ''}`} />
+                            </button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align="start" className="w-56 bg-card p-2">
+                            <p className="text-[10px] font-semibold text-muted-foreground uppercase mb-1.5 px-1">Search description</p>
+                            <Input value={filterDesc} onChange={e => setFilterDesc(e.target.value)}
+                              placeholder="Search…" className="h-7 text-xs" autoFocus />
+                            {filterDesc && (
+                              <button onClick={() => setFilterDesc('')} className="mt-1.5 w-full text-left text-xs text-muted-foreground hover:text-foreground px-1">Clear</button>
+                            )}
+                          </DropdownMenuContent>
+                        </DropdownMenu>
+                      </div>
+                    </th>
                     <th className="px-4 py-2 w-8" />
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-border">
-                  {entries.slice(0, 60).map(e => {
-                    const task    = ALL_TASKS.find(t => t.id === e.tbRowId)?.label ?? e.tbRowId;
-                    const section = SECTIONS.find(s => s.key === e.tbSection)?.label ?? e.tbSection;
-                    const cost    = e.hours * num(rates[e.roleKey]);
+                  {filteredEntries.slice(0, 60).map(e => {
+                    const curSection      = getVal(e, 'tbSection') as string;
+                    const curTask         = getVal(e, 'tbRowId')   as string;
+                    const curHours        = getVal(e, 'hours')     as number;
+                    const curRole         = getVal(e, 'roleKey')   as RoleKey;
+                    const rawUserName     = (getVal(e, 'userName') as string | undefined) ?? '';
+                    const roleMembers     = TEAM_MEMBERS[curRole] ?? [];
+                    const curUserName     = roleMembers.includes(rawUserName) ? rawUserName : (roleMembers[0] ?? rawUserName);
+                    const computedCost    = curHours * num(rates[curRole]);
+                    const curCostOverride = getVal(e, 'costOverride') as number | undefined;
+                    const displayCost     = curCostOverride !== undefined ? curCostOverride : computedCost;
                     return (
                       <tr key={e.id} className="hover:bg-muted/30 transition-colors">
-                        <td className="px-4 py-1.5 text-base text-foreground">{e.date}</td>
-                        <td className="px-4 py-1.5 text-foreground">{ROLE_LABELS[e.roleKey]}</td>
-                        <td className="px-4 py-1.5 text-base text-foreground">{section} › {task}</td>
-                        <td className="px-4 py-1.5 text-right font-medium text-foreground">{fmtH(e.hours)}</td>
-                        <td className="px-4 py-1.5 text-right text-base text-foreground">{cost > 0 ? fmt$(cost) : "—"}</td>
-                        <td className="px-4 py-1.5 text-base text-foreground max-w-[200px] truncate">{e.description || "—"}</td>
-                        <td className="px-4 py-1.5 text-right">
+                        {/* Date */}
+                        <td className="px-4 py-2.5 align-top">
+                          <Input
+                            type="date"
+                            value={getVal(e, 'date') as string}
+                            onChange={ev => setField(e.id, 'date', ev.target.value)}
+                            onBlur={() => commitEdit(e)}
+                            className="h-8 text-sm"
+                          />
+                        </td>
+                        {/* Role — User Name */}
+                        <td className="px-4 py-2.5 align-top">
+                          <Select
+                            value={curRole}
+                            onValueChange={v => {
+                              const newRole = v as RoleKey;
+                              const members = TEAM_MEMBERS[newRole] ?? [];
+                              const newUser = members.includes(curUserName) ? curUserName : (members[0] ?? curUserName);
+                              updateEntry({ ...e, ...edits[e.id], roleKey: newRole, userName: newUser });
+                              setEdits(prev => { const next = { ...prev }; delete next[e.id]; return next; });
+                            }}
+                          >
+                            <SelectTrigger className="h-8 text-sm">
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {ROLE_KEYS.map(r => <SelectItem key={r} value={r}>{ROLE_LABELS[r]}</SelectItem>)}
+                            </SelectContent>
+                          </Select>
+                          <Select
+                            value={curUserName}
+                            onValueChange={v => commitSelect(e, 'userName', v)}
+                          >
+                            <SelectTrigger className="h-7 text-xs mt-1.5">
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {(TEAM_MEMBERS[curRole] ?? []).map(name => (
+                                <SelectItem key={name} value={name}>{name}</SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </td>
+                        {/* Section then Task */}
+                        <td className="px-4 py-2.5 align-top">
+                          <Select
+                            value={curSection}
+                            onValueChange={v => commitSelect(e, 'tbSection', v)}
+                          >
+                            <SelectTrigger className="h-8 text-sm">
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {SECTIONS.map(s => <SelectItem key={s.key} value={s.key}>{s.label}</SelectItem>)}
+                            </SelectContent>
+                          </Select>
+                          <Select
+                            value={curTask}
+                            onValueChange={v => commitSelect(e, 'tbRowId', v)}
+                          >
+                            <SelectTrigger className="h-8 text-sm mt-1.5">
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {(TASKS[curSection] ?? []).map(t => <SelectItem key={t.id} value={t.id}>{t.label}</SelectItem>)}
+                            </SelectContent>
+                          </Select>
+                        </td>
+                        {/* Hours */}
+                        <td className="px-4 py-2.5 align-top">
+                          <Input
+                            type="number"
+                            step="0.25"
+                            min="0"
+                            value={curHours}
+                            onChange={ev => {
+                              const v = ev.target.valueAsNumber;
+                              if (!isNaN(v) && v >= 0) setField(e.id, 'hours', v);
+                            }}
+                            onBlur={() => commitEdit(e)}
+                            className="h-8 text-sm"
+                          />
+                        </td>
+                        {/* Cost (editable, overrides computed) */}
+                        <td className="px-4 py-2.5 align-top">
+                          <Input
+                            type="number"
+                            step="1"
+                            min="0"
+                            value={displayCost}
+                            onChange={ev => {
+                              const v = ev.target.valueAsNumber;
+                              if (!isNaN(v) && v >= 0) setField(e.id, 'costOverride', v);
+                            }}
+                            onBlur={() => commitEdit(e)}
+                            className="h-8 text-sm text-right"
+                          />
+                        </td>
+                        {/* Description */}
+                        <td className="px-4 py-2.5 align-top">
+                          <Textarea
+                            value={getVal(e, 'description') as string}
+                            onChange={ev => setField(e.id, 'description', ev.target.value)}
+                            onBlur={() => commitEdit(e)}
+                            placeholder="Description…"
+                            className="min-h-[60px] px-3 py-2 text-sm"
+                          />
+                        </td>
+                        {/* Delete */}
+                        <td className="px-4 py-2.5 align-top text-center">
                           <button onClick={() => removeEntry(e.id)}
                             className="text-muted-foreground hover:text-destructive transition-colors">
                             <Trash2 className="h-3.5 w-3.5" />

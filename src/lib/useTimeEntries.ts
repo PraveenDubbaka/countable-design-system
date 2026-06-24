@@ -33,6 +33,8 @@ export interface TimeEntry {
   tbSection: string;    // 'general' | 'risk-assess' | 'risk-resp'
   hours: number;
   description: string;
+  userName?: string;    // display name of the person who logged this entry
+  costOverride?: number; // manual cost override; when absent, computed as hours × rate
 }
 
 const storageKey = (eid: string) => `audit-time-entries-${eid}`;
@@ -140,9 +142,17 @@ export function useTimeEntries(engagementId: string) {
     });
   }, [engagementId]);
 
+  const updateEntry = useCallback((updated: TimeEntry) => {
+    setEntries(prev => {
+      const next = prev.map(e => e.id === updated.id ? updated : e);
+      localStorage.setItem(storageKey(engagementId), JSON.stringify(next));
+      return next;
+    });
+  }, [engagementId]);
+
   const hrsForRow     = (rowId: string)     => entries.filter(e => e.tbRowId   === rowId).reduce((a, e) => a + e.hours, 0);
   const hrsForRole    = (role: RoleKey)     => entries.filter(e => e.roleKey   === role).reduce((a, e) => a + e.hours, 0);
   const hrsForSection = (sec: string)      => entries.filter(e => e.tbSection  === sec).reduce((a, e) => a + e.hours, 0);
 
-  return { entries, addEntry, removeEntry, persist, hrsForRow, hrsForRole, hrsForSection };
+  return { entries, addEntry, removeEntry, updateEntry, persist, hrsForRow, hrsForRole, hrsForSection };
 }
