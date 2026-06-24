@@ -1574,7 +1574,7 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
                       { id: "aud-us-mat", code: "420", label: "Materiality", icon: "worksheet", route: "checklist/aud-us-mat" },
                       { id: "aud-us-sae", code: "428", label: "Selecting Auditor's Expert", icon: "worksheet", route: "checklist/aud-us-sae" },
                       { id: "aud-us-asm", code: "430", label: "Overall Audit Strategy", icon: "worksheet", route: "checklist/aud-us-asm" },
-                      { id: "aud-us-plan", code: "436", label: "Team Planning Discussions", icon: "checklist", route: "checklist/aud-us-plan" },
+                      { id: "aud-us-plan", code: "436", label: "Team Planning Discussions", icon: "worksheet", route: "checklist/aud-us-plan" },
                       { id: "aud-us-tt", code: "450", label: "Time Tracker", icon: "worksheet", route: "checklist/aud-us-tt" },
                     ]
                   },
@@ -1735,7 +1735,7 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
                       { id: "aud-mat", code: "420", label: "Materiality", icon: "worksheet", route: "checklist/aud-mat" },
                       { id: "aud-sae", code: "428", label: "Selecting Auditor's Expert", icon: "worksheet", route: "checklist/aud-sae" },
                       { id: "aud-asm", code: "430", label: "Overall Audit Strategy", icon: "worksheet", route: "checklist/aud-asm" },
-                      { id: "aud-plan", code: "436", label: "Team Planning Discussions", icon: "checklist", route: "checklist/aud-plan" },
+                      { id: "aud-plan", code: "436", label: "Team Planning Discussions", icon: "worksheet", route: "checklist/aud-plan" },
                       { id: "aud-tt", code: "450", label: "Time Tracker", icon: "worksheet", route: "checklist/aud-tt" },
                     ]
                   },
