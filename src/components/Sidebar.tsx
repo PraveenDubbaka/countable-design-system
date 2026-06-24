@@ -2054,7 +2054,7 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
                         style={{ paddingLeft: `${depth * 16 + 8}px` }}
                         onClick={() => {
                           if (node.code === 'NT') {
-                            window.dispatchEvent(new CustomEvent('open-notes-panel', { detail: {} }));
+                            window.dispatchEvent(new CustomEvent('open-notes-modal', { detail: {} }));
                           } else if (node.route) {
                             if (engId) {
                               navigate(`/engagements/${engId}/${node.route}`);
@@ -2133,7 +2133,7 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
                                 className="text-xs gap-2 cursor-pointer"
                                 onClick={e => {
                                   e.stopPropagation();
-                                  window.dispatchEvent(new CustomEvent('open-notes-panel', {
+                                  window.dispatchEvent(new CustomEvent('open-notes-modal', {
                                     detail: { linkedSection: node.label, sectionFolder: parentLabel },
                                   }));
                                 }}

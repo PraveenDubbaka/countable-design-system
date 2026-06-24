@@ -51,6 +51,7 @@ import { readJsonFromLocalStorage, writeJsonToLocalStorage } from "@/lib/safeJso
 import { subscribeToChecklistSync, dispatchChecklistSync } from "@/lib/checklistSync";
 import { toast } from "sonner";
 import { ShareWithClientDialog } from "@/components/ShareWithClientDialog";
+import { NotesModal } from "@/components/NotesModal";
 import { ClientResponseDialog } from "@/components/ClientResponseDialog";
 import { useClientResponses } from "@/hooks/useClientResponses";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter, DialogClose } from "@/components/ui/dialog";
@@ -770,6 +771,9 @@ export default function EngagementDetail() {
   const [selectedClientEngagement, setSelectedClientEngagement] = useState<string | null>(null);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [showAddChecklistSheet, setShowAddChecklistSheet] = useState(false);
+  const [notesModalOpen, setNotesModalOpen] = useState(false);
+  const [notesLinkedSection, setNotesLinkedSection] = useState<string | undefined>();
+  const [notesSectionFolder, setNotesSectionFolder] = useState<string | undefined>();
   const [clipboardResponses, setClipboardResponses] = useState<{ checklistTitle: string; responses: Record<string, { answer: string; explanation?: string }> } | null>(null);
   const [showClipboardPrompt, setShowClipboardPrompt] = useState(false);
   const [lukaOpen, setLukaOpen] = useState(false);
@@ -801,6 +805,17 @@ export default function EngagementDetail() {
   const globalTimerRef  = useRef<ReturnType<typeof setInterval> | null>(null);
   const globalActiveRef = useRef(false);
   const { addEntry: addTimeEntry } = useTimeEntries(engagementId ?? "default");
+
+  useEffect(() => {
+    const handler = (e: Event) => {
+      const { linkedSection, sectionFolder } = (e as CustomEvent).detail ?? {};
+      setNotesLinkedSection(linkedSection ?? undefined);
+      setNotesSectionFolder(sectionFolder ?? undefined);
+      setNotesModalOpen(true);
+    };
+    window.addEventListener('open-notes-modal', handler);
+    return () => window.removeEventListener('open-notes-modal', handler);
+  }, []);
 
   const toggleGlobalTimer = () => {
     if (globalActiveRef.current) {
@@ -2120,6 +2135,14 @@ export default function EngagementDetail() {
 
         {/* Delete Checklist Confirmation */}
         <DeleteChecklistDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog} onConfirm={handleDeleteChecklist} />
+
+        {/* Notes Modal */}
+        <NotesModal
+          open={notesModalOpen}
+          onOpenChange={(v) => { setNotesModalOpen(v); if (!v) { setNotesLinkedSection(undefined); setNotesSectionFolder(undefined); } }}
+          initialLinkedSection={notesLinkedSection}
+          initialSectionFolder={notesSectionFolder}
+        />
 
         {/* Share with Client Dialog */}
         <ShareWithClientDialog open={showShareDialog} onOpenChange={setShowShareDialog} checklistName={checklist?.title} onConfirm={handleShareConfirm} isLetter={!!(checklist?.sections?.length && checklist.sections[0]?.questions?.length && checklist.sections[0].questions[0]?.answerType === 'none' && !checklist.objective)} />
