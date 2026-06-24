@@ -5685,6 +5685,35 @@ export const generateAuditEngagementLetterChecklist = (): Checklist =>
     <p class="mt-1 text-sm text-foreground">Robert Morrison — Chief Executive Officer — Shipping Line Inc.</p>
   `);
 
+// Letter to a Predecessor Accounting Firm — AL1.4 (First-Year Audit) — rendered by LetterView
+export const generateLetterToPredecessorAccountingFirmChecklist = (): Checklist =>
+  makeLetterChecklist('global-template-audit-letter-predecessor', 'Letter to a predecessor accounting firm', 'First-year audit communication to the predecessor accounting firm (AL1.4).', `
+    <p class="text-sm text-foreground text-center font-semibold">[LETTERHEAD]</p>
+    <p class="mt-6 text-sm text-foreground">[Date]</p>
+    <p class="mt-6 text-sm text-foreground">[Predecessor Auditor's Name<br/>Firm's Name<br/>Street Address<br/>City, Province, Postal Code]</p>
+    <p class="mt-4 text-sm text-foreground">Re:&nbsp;&nbsp;_______________________________</p>
+    <p class="mt-4 text-sm text-foreground">Dear [predecessor auditor's name]:</p>
+    <p class="mt-4 text-sm text-foreground">
+      We have been asked to accept an appointment as the auditor of [<em>entity's name</em>]. We would appreciate your
+      advising us whether you are aware of any circumstances we should take into account that might influence our
+      decision on whether or not to accept the appointment. In addition, to ensure that the client's interests are
+      protected, we would appreciate that you inform us of any ongoing business of which we should be aware.
+    </p>
+    <p class="mt-4 text-sm text-foreground">
+      In accordance with Section 168.7 of the <em>Canada Business Corporations Act,</em> we are requesting that you provide
+      us with a written statement of the circumstances and the reasons that, in your opinion, led to your replacement
+      as auditors.
+    </p>
+    <p class="mt-4 text-sm text-foreground">
+      [<em>Note: reference to the</em> Canada Business Corporations Act <em>is not applicable to entities located in Quebec and
+      those incorporated under a provincial act.</em>]
+    </p>
+    <p class="mt-4 text-sm text-foreground">Please reply to this request as soon as possible.</p>
+    <p class="mt-6 text-sm text-foreground">Yours truly,</p>
+    <p class="mt-6 text-sm text-foreground">Signed&nbsp;&nbsp;_____________________________________________</p>
+    <p class="mt-2 text-sm text-foreground">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[Firm's name]</p>
+  `);
+
 // TCWG Planning Communication — CAS 260 (Letter format — rendered by LetterView)
 export const generateTCWGPlanningCommunicationChecklist = (): Checklist =>
   makeLetterChecklist('global-template-audit-tcwg-planning', 'TCWG Communication — Planning', 'Pre-audit communication with those charged with governance — CAS 260.', `
