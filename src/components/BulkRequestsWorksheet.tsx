@@ -48,11 +48,6 @@ export function BulkRequestsWorksheet({ isUS = false }: BulkRequestsWorksheetPro
   const [subFolder, setSubFolder] = useState('Team Planning Discussions');
   const [globalDueDate, setGlobalDueDate] = useState(defaultDueDate());
   const [rows, setRows] = useState<RequestRow[]>(() => Array.from({ length: 3 }, newRow));
-  const [conclusion, setConclusion] = useState('');
-  const [preparedBy, setPreparedBy] = useState('');
-  const [preparedDate, setPreparedDate] = useState('');
-  const [reviewedBy, setReviewedBy] = useState('');
-  const [reviewedDate, setReviewedDate] = useState('');
 
   const update = (id: string, patch: Partial<RequestRow>) =>
     setRows(prev => prev.map(r => (r.id === id ? { ...r, ...patch } : r)));
