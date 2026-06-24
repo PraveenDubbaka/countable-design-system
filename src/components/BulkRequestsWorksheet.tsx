@@ -66,10 +66,11 @@ export function BulkRequestsWorksheet({ isUS = false }: BulkRequestsWorksheetPro
   };
 
   const validCount = rows.filter(r => r.recipient && r.docName.trim() && r.dueDate).length;
+  const allRowsValid = rows.length > 0 && validCount === rows.length;
 
   const handleSendAll = () => {
-    if (!validCount) {
-      toast.error('Add at least one valid request');
+    if (!allRowsValid) {
+      toast.error('All mandatory fields must be filled before sending');
       return;
     }
     toast.success(`${validCount} request${validCount > 1 ? 's' : ''} sent successfully`);
@@ -260,7 +261,7 @@ export function BulkRequestsWorksheet({ isUS = false }: BulkRequestsWorksheetPro
               <p className="text-xs text-muted-foreground">
                 <span className="font-semibold text-foreground">{validCount}</span> of {rows.length} ready to send
               </p>
-              <Button onClick={handleSendAll} disabled={!validCount} size="sm" className="gap-1.5">
+              <Button onClick={handleSendAll} disabled={!allRowsValid} size="sm" className="gap-1.5">
                 <Send className="h-3.5 w-3.5" />
                 Send {validCount > 0 ? `${validCount} ` : ''}Request{validCount === 1 ? '' : 's'}
               </Button>
