@@ -276,7 +276,7 @@ export function BulkRequestsWorksheet({ isUS = false }: BulkRequestsWorksheetPro
         {/* Body */}
         <div className="flex-1 overflow-y-auto bg-muted/30 min-h-0">
           {/* ============ CREATE NEW ============ */}
-          <TabsContent value="create" className="m-0 p-6 space-y-4">
+          <TabsContent forceMount value="create" className="m-0 p-6 space-y-4 data-[state=inactive]:hidden">
             {/* Batch Settings */}
             <div className={cardCls}>
               <div className={cardHeaderCls}>
