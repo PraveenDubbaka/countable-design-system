@@ -322,7 +322,7 @@ export function AuditTeamPlanningWorksheet({ isUS = false }: { isUS?: boolean })
               <span className="text-sm font-semibold text-foreground">Meeting Details</span>
               <Button size="sm" onClick={() => setImportOpen(true)} className="h-8 shrink-0 whitespace-nowrap">
                 <Sparkles className="h-3.5 w-3.5 mr-1.5" />
-                AI-assisted import
+                Import
               </Button>
             </div>
             <div className="p-6 space-y-5">
