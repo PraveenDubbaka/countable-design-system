@@ -208,8 +208,13 @@ export function BulkRequestsWorksheet({ isUS = false }: BulkRequestsWorksheetPro
     }));
     setSentRequests(prev => [...newSent, ...prev]);
     toast.success(`${validCount} request${validCount > 1 ? 's' : ''} sent successfully`);
-    setRows(Array.from({ length: 3 }, newRow));
-    setActiveTab('all');
+    // Defer tab switch + row reset so any open Radix Select/Popover portals
+    // can close & cleanup before the create form unmounts (avoids React
+    // "removeChild" NotFoundError from stale portal nodes).
+    setTimeout(() => {
+      setRows(Array.from({ length: 3 }, newRow));
+      setActiveTab('all');
+    }, 0);
   };
 
   // Group sent requests by folder/subFolder
