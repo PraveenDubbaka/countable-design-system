@@ -1937,6 +1937,8 @@ export default function EngagementDetail() {
             <AuditMgmtRequestsWorksheet isUS={checklistKey === 'aud-us-iar'} />
           ) : (checklistKey === 'aud-form-440' || checklistKey === 'aud-us-form-440') ? (
             <BulkRequestsWorksheet isUS={checklistKey === 'aud-us-form-440'} />
+          ) : (checklistKey === 'aud-plan' || checklistKey === 'aud-us-plan') ? (
+            <AuditTeamPlanningWorksheet isUS={checklistKey === 'aud-us-plan'} />
           ) : (checklistKey === 'aud-scope' || checklistKey === 'aud-us-scope') ? (
             <AuditScopeWorksheet isUS={checklistKey === 'aud-us-scope'} />
           ) : (checklistKey === 'aud-pap' || checklistKey === 'aud-us-pap') ? (
