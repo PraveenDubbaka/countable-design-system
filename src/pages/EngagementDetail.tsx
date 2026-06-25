@@ -1959,7 +1959,7 @@ export default function EngagementDetail() {
                           <ChevronDown className="h-3.5 w-3.5" />
                         </Button>
                       </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end" className="w-52">
+                      <DropdownMenuContent align="end" className="min-w-max">
                         <DropdownMenuItem className="flex items-center gap-2 cursor-pointer text-sm whitespace-nowrap" onClick={() => letterPageRef.current?.openUpload()}>
                           <span className="flex shrink-0"><Upload className="h-4 w-4" /></span><span>Upload a letter</span>
                         </DropdownMenuItem>
