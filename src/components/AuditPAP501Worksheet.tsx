@@ -194,7 +194,9 @@ export function AuditPAP501Worksheet({ isUS = false }: { isUS?: boolean }) {
   });
   const persistFlow = (s: FlowState) => {
     setFlowState(s);
-    writeJsonToLocalStorage(flowKey, { s });
+    // Persist in-progress states only; 'worksheet' resets to 'idle' so next
+    // visit always shows the landing screen (data itself stays in storageKey).
+    writeJsonToLocalStorage(flowKey, { s: s === 'worksheet' ? 'idle' : s });
   };
 
   const [connectedSource, setConnectedSource] = useState<string | null>(null);
