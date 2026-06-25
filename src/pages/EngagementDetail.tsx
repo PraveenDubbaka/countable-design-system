@@ -51,6 +51,8 @@ import { readJsonFromLocalStorage, writeJsonToLocalStorage } from "@/lib/safeJso
 import { subscribeToChecklistSync, dispatchChecklistSync } from "@/lib/checklistSync";
 import { toast } from "sonner";
 import { ShareWithClientDialog } from "@/components/ShareWithClientDialog";
+import { LetterSectionPage } from "@/components/LetterSectionPage";
+import { CustomSection } from "@/components/Sidebar";
 import { NotesWorksheet } from "@/components/NotesWorksheet";
 import { ClientResponseDialog } from "@/components/ClientResponseDialog";
 import { useClientResponses } from "@/hooks/useClientResponses";
@@ -805,7 +807,7 @@ export default function EngagementDetail() {
 
   useEffect(() => {
     const handler = () => {
-      if (engagementId && checklistKey && !checklistKey.startsWith('notes-')) {
+      if (engagementId && checklistKey && !checklistKey.startsWith('notes-') && !checklistKey.startsWith('custom-')) {
         navigate(`/engagements/${engagementId}/checklist/notes-${checklistKey}`);
       }
     };
@@ -988,7 +990,7 @@ export default function EngagementDetail() {
   // Load checklist from localStorage - use first saved checklist or fallback
   useEffect(() => {
     // FS pages, standalone custom worksheets, and notes pages render without a checklist
-    if (checklistKey && (FS_PAGE_KEYS.has(checklistKey) || checklistKey in CUSTOM_WORKSHEET_TITLES || checklistKey.startsWith('notes-'))) {
+    if (checklistKey && (FS_PAGE_KEYS.has(checklistKey) || checklistKey in CUSTOM_WORKSHEET_TITLES || checklistKey.startsWith('notes-') || checklistKey.startsWith('custom-'))) {
       setIsLoading(false);
       setChecklist(null);
       return;
@@ -1706,6 +1708,7 @@ export default function EngagementDetail() {
                   {checklist?.title
                     || (checklistKey && CUSTOM_WORKSHEET_TITLES[checklistKey])
                     || (checklistKey?.startsWith('notes-') && `Notes — ${CUSTOM_WORKSHEET_TITLES[checklistKey.slice('notes-'.length)] || checklistKey.slice('notes-'.length)}`)
+                    || (checklistKey?.startsWith('custom-') && (() => { const s = readJsonFromLocalStorage<CustomSection[]>(`engagement-custom-sections-${engagementId}`, []).find(s => s.id === checklistKey); return s?.name; })())
                     || 'Client acceptance and continuance'}
                 </h1>
               </div>
@@ -1987,7 +1990,19 @@ export default function EngagementDetail() {
               parentKey={checklistKey.slice('notes-'.length)}
               parentTitle={CUSTOM_WORKSHEET_TITLES[checklistKey.slice('notes-'.length)] || checklistKey.slice('notes-'.length)}
             />
-          ) : (checklistKey === 'aud-mat' || checklistKey === 'aud-us-mat') ? (
+          ) : checklistKey?.startsWith('custom-') ? (() => {
+            const sections = readJsonFromLocalStorage<CustomSection[]>(`engagement-custom-sections-${engagementId}`, []);
+            const sec = sections.find(s => s.id === checklistKey);
+            return (
+              <div className="relative flex flex-col flex-1 min-h-0">
+                <LetterSectionPage
+                  sectionId={checklistKey}
+                  sectionName={sec?.name ?? 'Letter'}
+                  engagementId={engagementId ?? ''}
+                />
+              </div>
+            );
+          })() : (checklistKey === 'aud-mat' || checklistKey === 'aud-us-mat') ? (
             <AuditMaterialityWorksheet isUS={checklistKey === 'aud-us-mat'} />
           ) : (checklistKey === 'aud-tt' || checklistKey === 'aud-us-tt') ? (
             <AuditTimeTrackerWorksheet />

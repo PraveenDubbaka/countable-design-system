@@ -574,6 +574,8 @@ export default function CreateEngagement() {
     { value: "Compilation (COM)", label: "Compilation (COM)" },
     { value: "Review (REV)", label: "Review (REV)" },
     { value: "T2 (Corporations)", label: "T2 (Corporations)" },
+    { value: "1120 (US C-Corporation)", label: "1120 (US C-Corporation)" },
+    { value: "1120S (US S-Corporation)", label: "1120S (US S-Corporation)" },
   ];
 
   const accountingStandardsOptions = isAudit

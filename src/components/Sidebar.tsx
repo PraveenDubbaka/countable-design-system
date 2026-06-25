@@ -48,6 +48,15 @@ export interface SavedChecklist {
   folderName: string;
   data?: any; // Full checklist data for editing
 }
+
+export interface CustomSection {
+  id: string;
+  name: string;
+  category: 'checklist' | 'letter';
+  parentId: string;
+  engId: string;
+  createdAt: string;
+}
 const initialTemplates: Template[] = [{
   id: "1",
   name: "Before Release V22Comp",
@@ -332,6 +341,7 @@ const initialGlobalLetters: GlobalTemplate[] = [
       { id: "glt-ca-6", name: "Inquiry to Legal Counsel (Lawyer's Letter)", type: "file" },
       { id: "glt-ca-7", name: "Communication to Predecessor Auditor", type: "file" },
       { id: "glt-ca-8", name: "Letter to Management — Significant Deficiencies (CAS 265)", type: "file" },
+      { id: "glt-ca-9", name: "Letter to a predecessor accounting firm", type: "file" },
     ]},
     { id: "glt-audit-us", name: "United States", type: "folder", isExpanded: true, children: [
       { id: "glt-us-1", name: "Audit Engagement Letter (GAAS/US GAAP)", type: "file" },
@@ -1300,6 +1310,34 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
     };
   }, [location.pathname]);
 
+  const [customSections, setCustomSections] = useState<CustomSection[]>([]);
+  const [addSectionModal, setAddSectionModal] = useState<{ open: boolean; parentNodeId: string } | null>(null);
+  const [addSectionName, setAddSectionName] = useState('');
+  const [addSectionCategory, setAddSectionCategory] = useState<'checklist' | 'letter'>('checklist');
+
+  useEffect(() => {
+    const engId = location.pathname.split("/engagements/")[1]?.split("/")[0];
+    if (!engId) { setCustomSections([]); return; }
+    const read = () => setCustomSections(readJsonFromLocalStorage<CustomSection[]>(`engagement-custom-sections-${engId}`, []));
+    read();
+    window.addEventListener('custom-sections-updated', read);
+    window.addEventListener('storage', read);
+    return () => { window.removeEventListener('custom-sections-updated', read); window.removeEventListener('storage', read); };
+  }, [location.pathname]);
+
+  const handleAddSection = () => {
+    const engId = location.pathname.split("/engagements/")[1]?.split("/")[0];
+    if (!engId || !addSectionModal || !addSectionName.trim()) return;
+    const id = `custom-${Date.now()}`;
+    const newSection: CustomSection = { id, name: addSectionName.trim(), category: addSectionCategory, parentId: addSectionModal.parentNodeId, engId, createdAt: new Date().toISOString() };
+    const existing = readJsonFromLocalStorage<CustomSection[]>(`engagement-custom-sections-${engId}`, []);
+    writeJsonToLocalStorage(`engagement-custom-sections-${engId}`, [...existing, newSection]);
+    window.dispatchEvent(new CustomEvent('custom-sections-updated'));
+    setAddSectionModal(null);
+    setAddSectionName('');
+    navigate(`/engagements/${engId}/checklist/${id}`);
+  };
+
   // Listen for Luka fill status changes in localStorage
   useEffect(() => {
     const readFillStatuses = () => {
@@ -1584,7 +1622,6 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
                     id: "aud-us-co", code: "CO", label: "Client Onboarding", icon: "folder",
                     children: [
                       ...(engFirstYear ? [{ id: "aud-us-form-408", code: "408", label: "Initial Audit Engagements", icon: "checklist" as const, route: "checklist/aud-us-form-408" }] : []),
-                      ...(engFirstYear ? [{ id: "aud-us-pred", code: "AL1.4", label: "Letter to a predecessor accounting firm", icon: "letter" as const, route: "checklist/aud-us-pred" }] : []),
                       { id: "aud-us-form-410", code: "410", label: engFirstYear ? "New Engagement — Acceptance/Continuance" : "Existing Engagement — Acceptance/Continuance", icon: "checklist", route: "checklist/aud-us-form-410" },
                       { id: "aud-us-form-440", code: "440", label: "Information / Analysis Requested from Management", icon: "worksheet", route: "checklist/aud-us-form-440" },
                       { id: "aud-us-el", code: "AL1.1", label: "Engagement Letter", icon: "letter", route: "checklist/aud-us-el" },
@@ -1746,7 +1783,6 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
                     id: "aud-co", code: "CO", label: "Client Onboarding", icon: "folder",
                     children: [
                       ...(engFirstYear ? [{ id: "aud-form-408", code: "408", label: "Initial Audit Engagements", icon: "checklist" as const, route: "checklist/aud-form-408" }] : []),
-                      ...(engFirstYear ? [{ id: "aud-pred", code: "AL1.4", label: "Letter to a predecessor accounting firm", icon: "letter" as const, route: "checklist/aud-pred" }] : []),
                       { id: "aud-form-410", code: "410", label: engFirstYear ? "New Engagement — Acceptance/Continuance" : "Existing Engagement — Acceptance/Continuance", icon: "checklist", route: "checklist/aud-form-410" },
                       { id: "aud-form-440", code: "440", label: "Information / Analysis Requested from Management", icon: "worksheet", route: "checklist/aud-form-440" },
                       { id: "aud-el", code: "AL1.1", label: "Engagement Letter", icon: "letter", route: "checklist/aud-el" },
@@ -2165,7 +2201,7 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
                                   <FilePlus2 className="h-3.5 w-3.5" /> Add document
                                 </DropdownMenuItem>
                               ) : (
-                                <DropdownMenuItem className="text-xs gap-2 cursor-pointer" onClick={e => e.stopPropagation()}>
+                                <DropdownMenuItem className="text-xs gap-2 cursor-pointer" onClick={e => { e.stopPropagation(); setAddSectionModal({ open: true, parentNodeId: node.id }); setAddSectionName(''); setAddSectionCategory('checklist'); }}>
                                   <FolderPlus className="h-3.5 w-3.5" /> Add section
                                 </DropdownMenuItem>
                               )}
@@ -2194,6 +2230,27 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
                           {node.children!.map(child => renderNode(child, depth + 1, node.label))}
                         </div>
                       )}
+
+                      {/* User-added sections under this folder */}
+                      {!isLeaf && isOpen && customSections
+                        .filter(s => s.parentId === node.id)
+                        .map(section => {
+                          const isActive = !!engId && location.pathname.includes(`/checklist/${section.id}`);
+                          const code = section.name.slice(0, 2).toUpperCase();
+                          return (
+                            <div
+                              key={section.id}
+                              style={{ paddingLeft: `${(depth + 1) * 16 + 8}px` }}
+                              className={cn("group flex items-center gap-1.5 py-1.5 px-2 rounded-[8px] cursor-pointer hover:bg-primary/10 transition-colors text-sm", isActive && "bg-primary/10 ring-1 ring-primary/25")}
+                              onClick={() => engId && navigate(`/engagements/${engId}/checklist/${section.id}`)}
+                            >
+                              {section.category === 'letter' ? <LetterIcon className="h-4 w-4 flex-shrink-0" /> : <ChecklistIcon className="h-4 w-4 flex-shrink-0" />}
+                              <span className="font-semibold text-primary">{code}</span>
+                              <span className="truncate flex-1 text-black dark:text-white font-medium">{section.name}</span>
+                            </div>
+                          );
+                        })
+                      }
                     </div>
                   );
                 };
@@ -2622,6 +2679,63 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
               <Pencil className="h-4 w-4" />
               Rename
             </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Add Section Dialog */}
+      <Dialog open={addSectionModal?.open ?? false} onOpenChange={open => !open && setAddSectionModal(null)}>
+        <DialogContent className="sm:max-w-[420px]">
+          <DialogHeader>
+            <div className="flex items-start gap-3 mb-1">
+              <div className="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center flex-shrink-0">
+                <Check className="h-5 w-5 text-green-600" />
+              </div>
+              <div>
+                <DialogTitle>Add Section</DialogTitle>
+                <p className="text-xs text-muted-foreground mt-0.5">Enter section name and select a section category</p>
+              </div>
+            </div>
+          </DialogHeader>
+          <div className="py-2 space-y-4">
+            <div>
+              <label className="text-sm font-medium mb-1.5 block">Section name <span className="text-destructive">*</span></label>
+              <Input
+                value={addSectionName}
+                onChange={e => setAddSectionName(e.target.value)}
+                placeholder="Section Name"
+                autoFocus
+                onKeyDown={e => e.key === 'Enter' && addSectionName.trim() && handleAddSection()}
+              />
+            </div>
+            <div>
+              <label className="text-sm font-medium mb-1.5 block">Category <span className="text-destructive">*</span></label>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <button className="w-full h-9 px-3 py-2 text-sm text-foreground rounded-[10px] outline-none transition-all border border-border bg-white dark:bg-card flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      {addSectionCategory === 'letter' ? <LetterIcon className="h-4 w-4 text-purple-500" /> : <ChecklistIcon className="h-4 w-4 text-orange-500" />}
+                      <span>{addSectionCategory === 'letter' ? 'Letters' : 'Checklists'}</span>
+                    </div>
+                    <ChevronDown className="h-4 w-4 text-muted-foreground" />
+                  </button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent className="w-[360px]">
+                  <DropdownMenuItem onClick={() => setAddSectionCategory('checklist')} className="flex items-center gap-2 cursor-pointer">
+                    <ChecklistIcon className="h-4 w-4 text-orange-500" /> Checklists
+                    {addSectionCategory === 'checklist' && <Check className="h-4 w-4 text-primary ml-auto" />}
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => setAddSectionCategory('letter')} className="flex items-center gap-2 cursor-pointer">
+                    <LetterIcon className="h-4 w-4 text-purple-500" /> Letters
+                    {addSectionCategory === 'letter' && <Check className="h-4 w-4 text-primary ml-auto" />}
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setAddSectionModal(null)}>Cancel</Button>
+            <Button onClick={handleAddSection} disabled={!addSectionName.trim()}>Add</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
