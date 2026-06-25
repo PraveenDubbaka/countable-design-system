@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -24,6 +24,7 @@ interface RequestRow {
   description: string;
   dueDate: string;
   wpRef: RefDoc[];
+  attachments: File[];
 }
 
 interface SentRequest extends RequestRow {
@@ -138,6 +139,7 @@ const newRow = (): RequestRow => ({
   description: '',
   dueDate: defaultDueDate(),
   wpRef: [],
+  attachments: [],
 });
 
 const statusStyles: Record<RequestStatus, string> = {
@@ -167,6 +169,8 @@ export function BulkRequestsWorksheet({ isUS = false }: BulkRequestsWorksheetPro
   const [rows, setRows] = useState<RequestRow[]>(() => Array.from({ length: 3 }, newRow));
   const [sentRequests, setSentRequests] = useState<SentRequest[]>([]);
   const [expandedGroups, setExpandedGroups] = useState<Record<string, boolean>>({});
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const uploadTargetRowId = useRef<string | null>(null);
 
   const update = (id: string, patch: Partial<RequestRow>) =>
     setRows(prev => prev.map(r => (r.id === id ? { ...r, ...patch } : r)));
@@ -241,6 +245,19 @@ export function BulkRequestsWorksheet({ isUS = false }: BulkRequestsWorksheetPro
 
   return (
     <div className="flex flex-col h-full">
+      <input
+        ref={fileInputRef}
+        type="file"
+        multiple
+        className="hidden"
+        onChange={e => {
+          const files = Array.from(e.target.files ?? []);
+          if (files.length && uploadTargetRowId.current) {
+            update(uploadTargetRowId.current, { attachments: [...(rows.find(r => r.id === uploadTargetRowId.current)?.attachments ?? []), ...files] });
+          }
+          e.target.value = '';
+        }}
+      />
       <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as typeof activeTab)} className="flex-1 flex flex-col min-h-0">
         {/* Tabs bar */}
         <div className="px-6 pt-4 bg-muted/30 shrink-0">
@@ -329,6 +346,7 @@ export function BulkRequestsWorksheet({ isUS = false }: BulkRequestsWorksheetPro
                       <th className={thCls}>Document Name{required}</th>
                       <th className={thCls}>Description</th>
                       <th className={cn(thCls, 'w-[160px]')}>Due Date{required}</th>
+                      <th className={cn(thCls, 'w-[160px]')}>Attachments</th>
                       <th className={cn(thCls, 'w-[90px] text-center sticky right-0 bg-muted')}>Actions</th>
                     </tr>
                   </thead>
@@ -375,6 +393,25 @@ export function BulkRequestsWorksheet({ isUS = false }: BulkRequestsWorksheetPro
                           </td>
                           <td className="px-4 py-2.5 align-top">
                             <Input type="date" value={row.dueDate} onChange={e => update(row.id, { dueDate: e.target.value })} className={cn('h-8 text-sm', !row.dueDate && 'border-destructive')} />
+                          </td>
+                          <td className="px-4 py-2.5 align-top min-w-[160px]">
+                            <div className="flex flex-col gap-1">
+                              {row.attachments.map((f, fi) => (
+                                <div key={fi} className="flex items-center gap-1 text-xs text-foreground bg-muted rounded px-2 py-0.5 group">
+                                  <Paperclip className="h-3 w-3 shrink-0 text-muted-foreground" />
+                                  <span className="truncate max-w-[100px]" title={f.name}>{f.name}</span>
+                                  <button type="button" className="ml-auto text-muted-foreground hover:text-destructive opacity-0 group-hover:opacity-100 transition-opacity" onClick={() => update(row.id, { attachments: row.attachments.filter((_, i) => i !== fi) })}>×</button>
+                                </div>
+                              ))}
+                              <button
+                                type="button"
+                                className="inline-flex items-center gap-1 text-xs text-link hover:text-link/80 transition-colors"
+                                onClick={() => { uploadTargetRowId.current = row.id; fileInputRef.current?.click(); }}
+                              >
+                                <Paperclip className="h-3 w-3" />
+                                {row.attachments.length === 0 ? 'Attach file' : 'Add more'}
+                              </button>
+                            </div>
                           </td>
                           <td className="px-4 py-2.5 align-top sticky right-0 bg-card">
                             <div className="flex items-center justify-center gap-1">
