@@ -1960,11 +1960,11 @@ export default function EngagementDetail() {
                         </Button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end" className="w-52">
-                        <DropdownMenuItem className="gap-2 cursor-pointer text-sm whitespace-nowrap" onClick={() => letterPageRef.current?.openUpload()}>
-                          <Upload className="h-4 w-4 text-muted-foreground" /> Upload a letter
+                        <DropdownMenuItem className="flex items-center gap-2 cursor-pointer text-sm whitespace-nowrap" onClick={() => letterPageRef.current?.openUpload()}>
+                          <span className="flex shrink-0"><Upload className="h-4 w-4" /></span><span>Upload a letter</span>
                         </DropdownMenuItem>
-                        <DropdownMenuItem className="gap-2 cursor-pointer text-sm whitespace-nowrap" onClick={() => letterPageRef.current?.openTemplatePanel()}>
-                          <FileText className="h-4 w-4 text-muted-foreground" /> Create from template
+                        <DropdownMenuItem className="flex items-center gap-2 cursor-pointer text-sm whitespace-nowrap" onClick={() => letterPageRef.current?.openTemplatePanel()}>
+                          <span className="flex shrink-0"><FileText className="h-4 w-4" /></span><span>Create from template</span>
                         </DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>
