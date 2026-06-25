@@ -791,6 +791,9 @@ export default function EngagementDetail() {
   const [lukaQuery, setLukaQuery] = useState("");
   const [lukaAutoFillConfig, setLukaAutoFillConfig] = useState<{ label: string; sources: string[]; engagementLabel: string } | null>(null);
   const [lukaPap501Config, setLukaPap501Config] = useState<{ engLabel: string; sources: string[] } | null>(null);
+  const [pap501Accepted, setPap501Accepted] = useState(() =>
+    !!localStorage.getItem(`pap501-accepted-${engagementId}-ca`) || !!localStorage.getItem(`pap501-accepted-${engagementId}-us`)
+  );
   const [isAutoFilling, setIsAutoFilling] = useState(false);
   const [liveApplyingId, setLiveApplyingId] = useState<string | null>(null);
   const [lukaFillSummary, setLukaFillSummary] = useState<{
@@ -1884,6 +1887,31 @@ export default function EngagementDetail() {
                   <div className="w-px h-4 bg-border mx-0.5" />
                 </>
               )}
+              {checklistKey === 'aud-ra-pap501' && pap501Accepted && (
+                <>
+                  <Button variant="secondary" size="sm" className="h-7 px-2.5 text-xs gap-1.5"
+                    onClick={() => {
+                      localStorage.removeItem(`pap501-accepted-${engagementId}-ca`);
+                      localStorage.removeItem(`pap501-accepted-${engagementId}-us`);
+                      setPap501Accepted(false);
+                      window.dispatchEvent(new CustomEvent('pap501-regenerate', { detail: { engagementId } }));
+                    }}>
+                    <RefreshCw className="h-3 w-3" />Regenerate
+                  </Button>
+                  <Button variant="secondary" size="sm" className="h-7 px-2.5 text-xs gap-1.5"
+                    onClick={() => toast('Export coming soon')}>
+                    <Download className="h-3 w-3" />Export
+                  </Button>
+                  <Button variant="secondary" size="sm" className="h-7 px-2.5 text-xs gap-1.5"
+                    onClick={() => toast('Share coming soon')}>
+                    <Share2 className="h-3 w-3" />Share
+                  </Button>
+                  <Button variant="secondary" size="sm" className="h-7 px-2.5 text-xs gap-1.5"
+                    onClick={() => toast('Delete coming soon')}>
+                    <Trash2 className="h-3 w-3" />Delete
+                  </Button>
+                </>
+              )}
               {checklistKey && FS_PAGE_KEYS.has(checklistKey) ? (
                 <>
                   {isFSEditing ? (
@@ -2399,6 +2427,7 @@ export default function EngagementDetail() {
       pap501Sources={lukaPap501Config?.sources}
       onPap501Accept={() => {
         window.dispatchEvent(new CustomEvent('pap501-luka-accepted', { detail: { engagementId } }));
+        setPap501Accepted(true);
         setLukaOpen(false);
       }}
       onAutoFillConfirmed={handleAutoFillConfirmed}

@@ -6,8 +6,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Info, FileSpreadsheet, CheckCircle2, RefreshCw, AlertCircle, Loader2, Download, Share2, Trash2, MoreHorizontal } from "lucide-react";
-import { toast } from "sonner";
+import { Info, FileSpreadsheet, CheckCircle2, AlertCircle, Loader2 } from "lucide-react";
 import { RefButton, RefDoc } from "@/components/RefButton";
 import { readJsonFromLocalStorage, writeJsonToLocalStorage } from "@/lib/safeJson";
 import { loadEngagements } from "@/store/engagementsStore";
@@ -476,6 +475,18 @@ export function AuditPAP501Worksheet({ isUS = false }: { isUS?: boolean }) {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [engagementId]);
 
+  useEffect(() => {
+    const handler = (e: Event) => {
+      const ce = e as CustomEvent<{ engagementId?: string }>;
+      if (ce.detail?.engagementId && ce.detail.engagementId !== engagementId) return;
+      setFlowState('idle');
+      setXlsxSheets([]);
+    };
+    window.addEventListener('pap501-regenerate', handler);
+    return () => window.removeEventListener('pap501-regenerate', handler);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [engagementId]);
+
   return (
     <div className="flex flex-col h-full">
 
@@ -550,47 +561,23 @@ export function AuditPAP501Worksheet({ isUS = false }: { isUS?: boolean }) {
       {/* ── WORKSHEET: XLSX embed ─────────────────────────────────────────── */}
       {flowState === 'worksheet' && (<>
 
-        {/* Sheet tabs + actions */}
-        <div className="flex items-center border-b border-border bg-muted/20 px-2 shrink-0">
-          <div className="flex items-end gap-0 flex-1 overflow-x-auto">
-            {xlsxSheets.length > 0 ? xlsxSheets.map(s => (
-              <button
-                key={s.name}
-                onClick={() => setXlsxActiveSheet(s.name)}
-                className={`px-4 py-2 text-xs font-medium border-b-2 transition-colors whitespace-nowrap ${
-                  xlsxActiveSheet === s.name
-                    ? 'border-primary text-primary'
-                    : 'border-transparent text-muted-foreground hover:text-foreground'
-                }`}
-              >
-                {s.name}
-              </button>
-            )) : ['501 - Part A', '501 - Part B', '501- Part C'].map(n => (
-              <button key={n} className="px-4 py-2 text-xs font-medium border-b-2 border-transparent text-muted-foreground">{n}</button>
-            ))}
-          </div>
-          <div className="flex items-center gap-0.5 shrink-0 pl-2">
-            <Button variant="ghost" size="sm" className="h-7 px-2 text-xs gap-1.5 text-muted-foreground"
-              onClick={() => { setFlowState('idle'); setXlsxSheets([]); localStorage.removeItem(acceptedKey); }}>
-              <RefreshCw className="h-3 w-3" />Regenerate
-            </Button>
-            <Button variant="ghost" size="sm" className="h-7 px-2 text-xs gap-1.5 text-muted-foreground"
-              onClick={() => toast('Export coming soon')}>
-              <Download className="h-3 w-3" />Export
-            </Button>
-            <Button variant="ghost" size="sm" className="h-7 px-2 text-xs gap-1.5 text-muted-foreground"
-              onClick={() => toast('Share coming soon')}>
-              <Share2 className="h-3 w-3" />Share
-            </Button>
-            <Button variant="ghost" size="sm" className="h-7 px-2 text-xs gap-1.5 text-muted-foreground"
-              onClick={() => toast('Delete coming soon')}>
-              <Trash2 className="h-3 w-3" />Delete
-            </Button>
-            <Button variant="ghost" size="sm" className="h-7 w-7 p-0 text-muted-foreground"
-              onClick={() => toast('More options coming soon')}>
-              <MoreHorizontal className="h-4 w-4" />
-            </Button>
-          </div>
+        {/* Sheet tabs */}
+        <div className="flex items-end gap-0 border-b border-border bg-muted/20 px-4 shrink-0">
+          {xlsxSheets.length > 0 ? xlsxSheets.map(s => (
+            <button
+              key={s.name}
+              onClick={() => setXlsxActiveSheet(s.name)}
+              className={`px-4 py-2 text-xs font-medium border-b-2 transition-colors whitespace-nowrap ${
+                xlsxActiveSheet === s.name
+                  ? 'border-primary text-primary'
+                  : 'border-transparent text-muted-foreground hover:text-foreground'
+              }`}
+            >
+              {s.name}
+            </button>
+          )) : ['501 - Part A', '501 - Part B', '501- Part C'].map(n => (
+            <button key={n} className="px-4 py-2 text-xs font-medium border-b-2 border-transparent text-muted-foreground">{n}</button>
+          ))}
         </div>
 
         {/* ── WORKSHEET: XLSX embed ── */}
