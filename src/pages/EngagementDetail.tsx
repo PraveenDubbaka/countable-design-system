@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo, useCallback, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { ChevronRight, ChevronDown, Landmark, FileText, Triangle, FileSpreadsheet, PencilLine, Pencil, Settings2, Download, FileType, Share2, Save, RefreshCw, Trash2, Building2, Calendar, Check, AlertTriangle, Loader2, History, Upload, FileUp, Bell, Plus, X, LayoutGrid, CheckCircle2, PlugZap, Zap, Play, Square } from "lucide-react";
+import { ChevronRight, ChevronDown, Landmark, FileText, Triangle, FileSpreadsheet, PencilLine, Pencil, Settings2, Download, FileType, Share2, Save, RefreshCw, Trash2, Building2, Calendar, Check, AlertTriangle, Loader2, History, Upload, FileUp, Bell, Plus, X, LayoutGrid, CheckCircle2, PlugZap, Zap, Play, Square, ClipboardList } from "lucide-react";
 import { ExpandableIconButton } from "@/components/ui/expandable-icon-button";
 import { ChecklistIcon } from "@/components/icons/ChecklistIcon";
 import { Button } from "@/components/ui/button";
@@ -59,6 +59,7 @@ import { useClientResponses } from "@/hooks/useClientResponses";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter, DialogClose } from "@/components/ui/dialog";
 import { DeleteChecklistDialog } from "@/components/DeleteChecklistDialog";
 import { AddChecklistSheet } from "@/components/AddChecklistSheet";
+import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { AuditASMImportBanner } from "@/components/AuditASMImportBanner";
 import { useSecondaryPanel } from "@/hooks/useSecondaryPanel";
 import {
@@ -776,6 +777,7 @@ export default function EngagementDetail() {
   const [selectedClientEngagement, setSelectedClientEngagement] = useState<string | null>(null);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [showAddChecklistSheet, setShowAddChecklistSheet] = useState(false);
+  const [showRequestPanel, setShowRequestPanel] = useState(false);
   const [clipboardResponses, setClipboardResponses] = useState<{ checklistTitle: string; responses: Record<string, { answer: string; explanation?: string }> } | null>(null);
   const [showClipboardPrompt, setShowClipboardPrompt] = useState(false);
   const [lukaOpen, setLukaOpen] = useState(false);
@@ -1727,6 +1729,13 @@ export default function EngagementDetail() {
                 </h1>
               </div>
               <div className="flex items-center gap-1">
+                <ExpandableIconButton
+                  variant="secondary"
+                  size="sm"
+                  icon={<ClipboardList className="h-4 w-4" />}
+                  label="Request"
+                  onClick={() => setShowRequestPanel(true)}
+                />
                 {inlineHeaderActions.map(action => (
                   <ExpandableIconButton
                     key={action.id}
@@ -2235,6 +2244,21 @@ export default function EngagementDetail() {
         ) : (
           <EngagementRightPanel />
         )}
+
+        {/* Document Request Panel */}
+        <Sheet open={showRequestPanel} onOpenChange={setShowRequestPanel}>
+          <SheetContent side="right" className="!w-[900px] !max-w-[900px] p-0 flex flex-col">
+            <SheetHeader className="px-6 py-4 border-b border-border shrink-0">
+              <SheetTitle className="text-base font-semibold flex items-center gap-2">
+                <ClipboardList className="h-4 w-4 text-muted-foreground" />
+                Information / Analysis Requested from Management
+              </SheetTitle>
+            </SheetHeader>
+            <div className="flex-1 min-h-0 overflow-hidden">
+              <BulkRequestsWorksheet />
+            </div>
+          </SheetContent>
+        </Sheet>
 
         {/* Delete Checklist Confirmation */}
         <DeleteChecklistDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog} onConfirm={handleDeleteChecklist} />
