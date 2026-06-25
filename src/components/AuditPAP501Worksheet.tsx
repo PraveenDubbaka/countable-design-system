@@ -6,7 +6,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Info, FileSpreadsheet, CheckCircle2, RefreshCw, AlertCircle } from "lucide-react";
+import { Info, FileSpreadsheet, CheckCircle2, RefreshCw, AlertCircle, Loader2 } from "lucide-react";
 import { RefButton, RefDoc } from "@/components/RefButton";
 import { readJsonFromLocalStorage, writeJsonToLocalStorage } from "@/lib/safeJson";
 import { loadEngagements } from "@/store/engagementsStore";
@@ -184,6 +184,61 @@ export function AuditPAP501Worksheet({ isUS = false }: { isUS?: boolean }) {
     const connectors = readJsonFromLocalStorage<string[]>(`connectors-${engagementId}`, ['xero']);
     setConnectedSource(connectors[0] ?? null);
   }, [engagementId]);
+
+  // ── XLSX embed state ────────────────────────────────────────────────────────
+
+  interface XlsxSheetData {
+    name: string;
+    rows: (string | number)[][];
+    merges: Array<{ sr: number; sc: number; er: number; ec: number }>;
+  }
+  const [xlsxSheets, setXlsxSheets] = useState<XlsxSheetData[]>([]);
+  const [xlsxActiveSheet, setXlsxActiveSheet] = useState('');
+  const [xlsxLoading, setXlsxLoading] = useState(false);
+
+  const COL_LIMITS: Record<string, number> = {
+    '501 - Part A': 7,
+    '501 - Part B': 10,
+    '501- Part C': 9,
+  };
+
+  useEffect(() => {
+    if (flowState !== 'worksheet') return;
+    if (xlsxSheets.length > 0) return;
+    setXlsxLoading(true);
+    import('xlsx').then(XLSX => {
+      fetch('/assets/pap501-worksheet.xlsm')
+        .then(r => r.arrayBuffer())
+        .then(buf => {
+          const wb = XLSX.read(new Uint8Array(buf), { type: 'array' });
+          const visible = wb.SheetNames.filter((n: string) => n !== 'programming');
+          const sheets: XlsxSheetData[] = visible.map((name: string) => {
+            const ws = wb.Sheets[name];
+            const limit = COL_LIMITS[name] ?? 10;
+            const raw = XLSX.utils.sheet_to_json<(string | number)[]>(ws, {
+              header: 1, defval: '', blankrows: true,
+            }) as (string | number)[][];
+            const rows = raw.map(row =>
+              (row as (string | number)[]).slice(0, limit).map(c =>
+                typeof c === 'string' ? c.replace(/\r\n/g, '\n').trim() : c
+              )
+            );
+            const merges = ((ws['!merges'] as Array<{ s: { r: number; c: number }; e: { r: number; c: number } }>) ?? [])
+              .filter((m) => m.s.c < limit)
+              .map((m) => ({
+                sr: m.s.r, sc: m.s.c,
+                er: m.e.r, ec: Math.min(m.e.c, limit - 1),
+              }));
+            return { name, rows, merges };
+          });
+          setXlsxSheets(sheets);
+          setXlsxActiveSheet(sheets[0]?.name ?? '');
+        })
+        .catch(console.error)
+        .finally(() => setXlsxLoading(false));
+    });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [flowState, xlsxSheets.length]);
 
   const locked = data.concluded;
   const set = (patch: Partial<PAP501Data>) => setData(d => ({ ...d, ...patch }));
@@ -491,7 +546,7 @@ export function AuditPAP501Worksheet({ isUS = false }: { isUS?: boolean }) {
       )}
 
 
-      {/* ── WORKSHEET: Excel-chrome tabbed view ────────────────────────────── */}
+      {/* ── WORKSHEET: XLSX embed ─────────────────────────────────────────── */}
       {flowState === 'worksheet' && (<>
 
         {/* Excel toolbar */}
@@ -506,6 +561,7 @@ export function AuditPAP501Worksheet({ isUS = false }: { isUS?: boolean }) {
             className="h-7 px-2 text-xs gap-1.5 text-muted-foreground shrink-0"
             onClick={() => {
               setFlowState('idle');
+              setXlsxSheets([]);
               localStorage.removeItem(acceptedKey);
             }}
           >
@@ -513,340 +569,78 @@ export function AuditPAP501Worksheet({ isUS = false }: { isUS?: boolean }) {
           </Button>
         </div>
 
-        {/* Sheet tabs */}
+        {/* Sheet tabs — from actual XLSX */}
         <div className="flex items-end gap-0 border-b border-border bg-muted/20 px-4 shrink-0">
-          {([
-            { id: 'partA', label: 'Part A — Qualitative' },
-            { id: 'partB', label: 'Part B — Quantitative' },
-            { id: 'partC', label: 'Part C — Matters' },
-          ] as { id: 'partA' | 'partB' | 'partC'; label: string }[]).map(tab => (
+          {xlsxSheets.length > 0 ? xlsxSheets.map(s => (
             <button
-              key={tab.id}
-              onClick={() => setActiveSheet(tab.id)}
-              className={`px-4 py-2 text-xs font-medium border-b-2 transition-colors ${
-                activeSheet === tab.id
+              key={s.name}
+              onClick={() => setXlsxActiveSheet(s.name)}
+              className={`px-4 py-2 text-xs font-medium border-b-2 transition-colors whitespace-nowrap ${
+                xlsxActiveSheet === s.name
                   ? 'border-primary text-primary'
                   : 'border-transparent text-muted-foreground hover:text-foreground'
               }`}
             >
-              {tab.label}
+              {s.name}
             </button>
+          )) : ['501 - Part A', '501 - Part B', '501- Part C'].map(n => (
+            <button key={n} className="px-4 py-2 text-xs font-medium border-b-2 border-transparent text-muted-foreground">{n}</button>
           ))}
         </div>
 
-        {/* Objective bar */}
-        <div className="px-6 py-2.5 border-b border-border bg-primary/[0.03] flex items-start gap-2 shrink-0">
-          <Info className="h-3.5 w-3.5 text-primary mt-0.5 shrink-0" />
-          <span className="text-xs font-semibold text-primary whitespace-nowrap">Objective:</span>
-          <p className="text-xs text-muted-foreground flex-1 leading-relaxed">
-            To identify relationships, risks, inconsistencies, unusual transactions, events, amounts, ratios or trends
-            that will likely require an audit response.{" "}
-            <span className="font-medium text-foreground">Note:</span> Use Parts A and B to identify matters. Use Part C to document discussions with management. Do NOT use for substantive procedures — use Form 614.
-          </p>
-        </div>
+        {/* ── WORKSHEET: XLSX embed ── */}
+        <div className="flex-1 overflow-auto bg-background">
 
-        {/* Meta strip */}
-        <div className="px-6 py-2.5 border-b border-border bg-card flex items-center gap-2 shrink-0">
-          <span className="text-xs font-medium text-muted-foreground">Performance materiality</span>
-          <span className="text-sm font-semibold text-foreground font-mono">{perfMateriality}</span>
-        </div>
-
-        {/* Sheet body */}
-        <div className="flex-1 overflow-y-auto bg-muted/30">
-          <div className="p-6 space-y-4">
-
-            {/* ── PART A sheet ── */}
-            {activeSheet === 'partA' && (<>
-              <div className="flex items-center gap-3 pt-1">
-                <span className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Part A — Qualitative assessment</span>
-                <div className="flex-1 h-px bg-border" />
-              </div>
-              {PART_A_PROCS.map(proc => (
-                <div key={proc.id} className="bg-card text-card-foreground border border-border shadow-[0_2px_8px_hsl(213_40%_20%/0.06)] rounded-md overflow-hidden">
-                  <div className="px-6 py-3.5 bg-card border-b border-border">
-                    <span className="text-sm font-semibold text-foreground">{proc.num}. {proc.description.slice(0,60)}{proc.description.length > 60 ? '…' : ''}</span>
-                  </div>
-                  <div className="overflow-x-auto">
-                    <table className="w-full">
-                      <PartAColHeaders />
-                      <tbody className="divide-y divide-border">
-                        <PATopRow proc={proc} />
-                        {proc.items.map((item, idx) => <PASubRow key={item.id} item={item} letterIdx={idx} />)}
-                      </tbody>
-                    </table>
-                  </div>
-                </div>
-              ))}
-              <div className="bg-card border border-border shadow-[0_2px_8px_hsl(213_40%_20%/0.06)] rounded-md overflow-hidden">
-                <div className="px-6 py-3.5 border-b border-border">
-                  <p className="text-sm font-semibold text-foreground">Management / fraud discussion summary</p>
-                </div>
-                <div className="px-6 py-4">
-                  <Textarea disabled={locked} value={data.fraudAnswer} onChange={e => set({fraudAnswer:e.target.value})} placeholder="Describe any unusual or unexpected relationships identified…" className="min-h-[80px] text-sm resize-none bg-background" />
-                </div>
-              </div>
-            </>)}
-
-            {/* ── PART B sheet ── */}
-            {activeSheet === 'partB' && (<>
-              <div className="flex items-center gap-3 pt-1">
-                <span className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Part B — Quantitative comparison</span>
-                <div className="flex-1 h-px bg-border" />
-              </div>
-
-              <div className="bg-card border border-border shadow-[0_2px_8px_hsl(213_40%_20%/0.06)] rounded-md px-5 py-4 flex flex-wrap items-center gap-6">
-                <div className="flex items-center gap-2">
-                  <span className="text-sm font-medium text-muted-foreground whitespace-nowrap">Number of sales streams</span>
-                  <Select value={String(data.numStreams)} onValueChange={v => set({numStreams:parseInt(v)})} disabled={locked}>
-                    <SelectTrigger className="h-8 text-sm w-20"><SelectValue /></SelectTrigger>
-                    <SelectContent>{[1,2,3,4,5].map(n => <SelectItem key={n} value={String(n)}>{n}</SelectItem>)}</SelectContent>
-                  </Select>
-                </div>
-                <p className="text-xs text-muted-foreground">Customize stream labels below. Enter amounts in thousands (or as-is — consistent units throughout).</p>
-              </div>
-
-              {data.numStreams > 1 && (
-                <div className="bg-card border border-border shadow-[0_2px_8px_hsl(213_40%_20%/0.06)] rounded-md px-5 py-4">
-                  <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-3">Sales stream labels</p>
-                  <div className="flex flex-wrap gap-3">
-                    {Array.from({length: data.numStreams}, (_, i) => (
-                      <div key={i} className="flex items-center gap-2">
-                        <span className="text-xs text-muted-foreground w-12">Stream {i+1}</span>
-                        <Input value={data.streamLabels[i]} onChange={e => { const sl = [...data.streamLabels]; sl[i] = e.target.value; set({streamLabels:sl}); }} className="h-7 text-sm w-40" />
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              <div className="bg-card text-card-foreground border border-border shadow-[0_2px_8px_hsl(213_40%_20%/0.06)] rounded-md overflow-hidden">
-                <div className="px-6 py-3.5 bg-card border-b border-border"><span className="text-sm font-semibold text-foreground">Income Statement</span></div>
-                <div className="overflow-x-auto">
-                  <table className="w-full">
-                    <FinColHeaders showBudget={showBudget} />
-                    <tbody>
-                      <FinSectionRow label="Sales" />
-                      {salesIds.map((id, i) => <FinEditRow key={id} id={id} label={data.streamLabels[i] || `Stream ${i+1}`} indent={1} showBudget={showBudget} />)}
-                      <FinTotalRow label="Total sales" c={totalSales.c} b={totalSales.b} pr={totalSales.pr} showBudget={showBudget} />
-                      <FinSectionRow label="Cost of Sales" />
-                      {cosIds.map((id, i) => <FinEditRow key={id} id={id} label={data.streamLabels[i] || `Stream ${i+1}`} indent={1} showBudget={showBudget} />)}
-                      <FinTotalRow label="Total cost of sales" c={totalCos.c} b={totalCos.b} pr={totalCos.pr} showBudget={showBudget} />
-                      <FinSectionRow label="Gross Margin $" />
-                      {salesIds.map((id, i) => {
-                        const cosId = cosIds[i];
-                        const gc = p(f[id]?.current??'') - p(f[cosId]?.current??'');
-                        const gb = p(f[id]?.budget??'') - p(f[cosId]?.budget??'');
-                        const gp = p(f[id]?.prior??'') - p(f[cosId]?.prior??'');
-                        return <FinTotalRow key={`gm-${i}`} label={data.streamLabels[i] || `Stream ${i+1}`} c={gc} b={gb} pr={gp} showBudget={showBudget} indent={1} />;
-                      })}
-                      <FinTotalRow label="Total gross margin $" c={totalGM.c} b={totalGM.b} pr={totalGM.pr} showBudget={showBudget} />
-                      <FinSectionRow label="Gross Margin %" />
-                      {salesIds.map((id, i) => {
-                        const cosId = cosIds[i];
-                        const gc = p(f[id]?.current??'') - p(f[cosId]?.current??'');
-                        const gb = p(f[id]?.budget??'') - p(f[cosId]?.budget??'');
-                        const gp = p(f[id]?.prior??'') - p(f[cosId]?.prior??'');
-                        const sc = p(f[id]?.current??''), sb = p(f[id]?.budget??''), sp = p(f[id]?.prior??'');
-                        const label = data.streamLabels[i] || `Stream ${i+1}`;
-                        return (
-                          <tr key={`gmpct-${i}`} className="border-b border-border bg-muted/20">
-                            <td className="px-4 py-2 text-sm text-muted-foreground" style={{paddingLeft:'28px'}}>{label}</td>
-                            <td className="px-3 py-2 text-right text-xs font-mono border-l border-border">{sc!==0 ? fmtP(gc/sc) : '—'}</td>
-                            {showBudget && <td className="px-3 py-2 text-right text-xs font-mono border-l border-border">{sb!==0 ? fmtP(gb/sb) : '—'}</td>}
-                            <td className="px-3 py-2 text-right text-xs font-mono border-l border-border">{sp!==0 ? fmtP(gp/sp) : '—'}</td>
-                            {showBudget && <><td className="border-l border-border bg-blue-50/30" /><td className="border-l border-border bg-blue-50/30" /></>}
-                            <td className="border-l border-border bg-purple-50/30" /><td className="border-l border-border bg-purple-50/30" />
-                            <td className="border-l border-border" colSpan={3} />
-                          </tr>
-                        );
-                      })}
-                      <tr className="border-b border-border bg-muted/40">
-                        <td className="px-4 py-2 text-sm font-bold text-foreground">Total gross margin %</td>
-                        <td className="px-3 py-2 text-right text-sm font-bold font-mono border-l border-border">{totalSales.c!==0 ? fmtP(totalGM.c/totalSales.c) : '—'}</td>
-                        {showBudget && <td className="px-3 py-2 text-right text-sm font-bold font-mono border-l border-border">{totalSales.b!==0 ? fmtP(totalGM.b/totalSales.b) : '—'}</td>}
-                        <td className="px-3 py-2 text-right text-sm font-bold font-mono border-l border-border">{totalSales.pr!==0 ? fmtP(totalGM.pr/totalSales.pr) : '—'}</td>
-                        {showBudget && <><td className="border-l border-border bg-blue-50/40" /><td className="border-l border-border bg-blue-50/40" /></>}
-                        <td className="border-l border-border bg-purple-50/40" /><td className="border-l border-border bg-purple-50/40" />
-                        <td className="border-l border-border" colSpan={3} />
-                      </tr>
-                      <FinSectionRow label="Other Revenue" />
-                      <FinEditRow id="or1" label="Other revenue" indent={1} showBudget={showBudget} />
-                      <FinEditRow id="or2" label="Other revenue" indent={1} showBudget={showBudget} />
-                      <FinTotalRow label="Total other revenue" c={totalOR.c} b={totalOR.b} pr={totalOR.pr} showBudget={showBudget} />
-                      <FinSectionRow label="Expenses" />
-                      <FinEditRow id="exp-sal"  label="Salaries / payroll"           indent={1} showBudget={showBudget} />
-                      <FinEditRow id="exp-occ"  label="Occupancy"                    indent={1} showBudget={showBudget} />
-                      <FinEditRow id="exp-int"  label="Interest / bank charges"      indent={1} showBudget={showBudget} />
-                      <FinEditRow id="exp-bon"  label="Bonuses"                      indent={1} showBudget={showBudget} />
-                      <FinEditRow id="exp-rep"  label="Repairs and maintenance"      indent={1} showBudget={showBudget} />
-                      <FinEditRow id="exp-bad"  label="Bad debts"                    indent={1} showBudget={showBudget} />
-                      <FinEditRow id="exp-non"  label="Non-recurring transactions"   indent={1} showBudget={showBudget} />
-                      <FinEditRow id="exp-oth1" label="Other expenses"               indent={1} showBudget={showBudget} />
-                      <FinEditRow id="exp-oth2" label="Other expenses"               indent={1} showBudget={showBudget} />
-                      <FinEditRow id="exp-oth3" label="Other expenses"               indent={1} showBudget={showBudget} />
-                      <FinTotalRow label="Total expenses" c={totalExp.c} b={totalExp.b} pr={totalExp.pr} showBudget={showBudget} />
-                      <FinTotalRow label="Net income before tax" c={netIncome.c} b={netIncome.b} pr={netIncome.pr} showBudget={showBudget} />
-                      <tr className="border-b border-border bg-muted/20">
-                        <td className="px-4 py-2 text-sm font-semibold text-muted-foreground">% of revenue</td>
-                        <td className="px-3 py-2 text-right text-xs font-mono border-l border-border">{totalSales.c!==0 ? fmtP(netIncome.c/totalSales.c) : '—'}</td>
-                        {showBudget && <td className="px-3 py-2 text-right text-xs font-mono border-l border-border">{totalSales.b!==0 ? fmtP(netIncome.b/totalSales.b) : '—'}</td>}
-                        <td className="px-3 py-2 text-right text-xs font-mono border-l border-border">{totalSales.pr!==0 ? fmtP(netIncome.pr/totalSales.pr) : '—'}</td>
-                        {showBudget && <><td className="border-l border-border bg-blue-50/30" /><td className="border-l border-border bg-blue-50/30" /></>}
-                        <td className="border-l border-border bg-purple-50/30" /><td className="border-l border-border bg-purple-50/30" />
-                        <td className="border-l border-border" colSpan={3} />
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-
-              <div className="bg-card text-card-foreground border border-border shadow-[0_2px_8px_hsl(213_40%_20%/0.06)] rounded-md overflow-hidden">
-                <div className="px-6 py-3.5 bg-card border-b border-border"><span className="text-sm font-semibold text-foreground">Balance Sheet</span></div>
-                <div className="overflow-x-auto">
-                  <table className="w-full">
-                    <FinColHeaders showBudget={showBudget} />
-                    <tbody>
-                      <FinSectionRow label="Assets" />
-                      <FinSectionRow label="Current assets" />
-                      <FinEditRow id="ca-cash"      label="Cash"                               indent={1} showBudget={showBudget} />
-                      <FinEditRow id="ca-inv"       label="Investments"                        indent={1} showBudget={showBudget} />
-                      <FinEditRow id="ca-ar"        label="Accounts receivable"                indent={1} showBudget={showBudget} />
-                      <FinEditRow id="ca-inventory" label="Inventory"                          indent={1} showBudget={showBudget} />
-                      <FinEditRow id="ca-oth1"      label="Other assets"                       indent={1} showBudget={showBudget} />
-                      <FinEditRow id="ca-oth2"      label="Other assets"                       indent={1} showBudget={showBudget} />
-                      <FinTotalRow label="Total current assets" c={totalCA.c} b={totalCA.b} pr={totalCA.pr} showBudget={showBudget} />
-                      <FinSectionRow label="Long-term assets" />
-                      <FinEditRow id="lta-ppe"  label="Property, plant and equipment"          indent={1} showBudget={showBudget} />
-                      <FinEditRow id="lta-oth1" label="Other assets"                           indent={1} showBudget={showBudget} />
-                      <FinEditRow id="lta-oth2" label="Other assets"                           indent={1} showBudget={showBudget} />
-                      <FinEditRow id="lta-oth3" label="Other assets"                           indent={1} showBudget={showBudget} />
-                      <FinTotalRow label="Total long-term assets" c={totalLTA.c} b={totalLTA.b} pr={totalLTA.pr} showBudget={showBudget} />
-                      <FinTotalRow label="Total assets" c={totalA.c} b={totalA.b} pr={totalA.pr} showBudget={showBudget} />
-                      <FinSectionRow label="Liabilities" />
-                      <FinSectionRow label="Current liabilities" />
-                      <FinEditRow id="cl-bank"  label="Bank indebtedness"                         indent={1} showBudget={showBudget} />
-                      <FinEditRow id="cl-ap"    label="Accounts payable and accrued liabilities"  indent={1} showBudget={showBudget} />
-                      <FinEditRow id="cl-tax"   label="Income taxes payable"                      indent={1} showBudget={showBudget} />
-                      <FinEditRow id="cl-fut"   label="Future income taxes payable"               indent={1} showBudget={showBudget} />
-                      <FinEditRow id="cl-def"   label="Deferred revenue"                          indent={1} showBudget={showBudget} />
-                      <FinEditRow id="cl-dep"   label="Customer deposits"                         indent={1} showBudget={showBudget} />
-                      <FinEditRow id="cl-std"   label="Short-term debt"                           indent={1} showBudget={showBudget} />
-                      <FinEditRow id="cl-cpltd" label="Current portion of long-term debt"         indent={1} showBudget={showBudget} />
-                      <FinEditRow id="cl-oth1"  label="Other current liabilities"                 indent={1} showBudget={showBudget} />
-                      <FinEditRow id="cl-oth2"  label="Other current liabilities"                 indent={1} showBudget={showBudget} />
-                      <FinTotalRow label="Total current liabilities" c={totalCL.c} b={totalCL.b} pr={totalCL.pr} showBudget={showBudget} />
-                      <FinSectionRow label="Long-term liabilities" />
-                      <FinEditRow id="ltl-loan" label="Loans payable"               indent={1} showBudget={showBudget} />
-                      <FinEditRow id="ltl-fut"  label="Future income taxes payable" indent={1} showBudget={showBudget} />
-                      <FinEditRow id="ltl-ltd"  label="Long-term debt"              indent={1} showBudget={showBudget} />
-                      <FinEditRow id="ltl-oth1" label="Other long-term liabilities" indent={1} showBudget={showBudget} />
-                      <FinEditRow id="ltl-oth2" label="Other long-term liabilities" indent={1} showBudget={showBudget} />
-                      <FinTotalRow label="Total long-term liabilities" c={totalLTL.c} b={totalLTL.b} pr={totalLTL.pr} showBudget={showBudget} />
-                      <FinTotalRow label="Total liabilities" c={totalL.c} b={totalL.b} pr={totalL.pr} showBudget={showBudget} />
-                      <FinSectionRow label="Equity" />
-                      <FinEditRow id="eq-ret" label="Retained earnings"  indent={1} showBudget={showBudget} />
-                      <FinEditRow id="eq-con" label="Contributed surplus" indent={1} showBudget={showBudget} />
-                      <FinEditRow id="eq-shr" label="Share capital"       indent={1} showBudget={showBudget} />
-                      <FinEditRow id="eq-oth" label="Other equity"        indent={1} showBudget={showBudget} />
-                      <FinTotalRow label="Total equity" c={totalEQ.c} b={totalEQ.b} pr={totalEQ.pr} showBudget={showBudget} />
-                      <FinTotalRow label="Total liabilities and equity" c={totalLE.c} b={totalLE.b} pr={totalLE.pr} showBudget={showBudget} />
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-
-              <div className="bg-card text-card-foreground border border-border shadow-[0_2px_8px_hsl(213_40%_20%/0.06)] rounded-md overflow-hidden">
-                <div className="px-6 py-3.5 bg-card border-b border-border"><span className="text-sm font-semibold text-foreground">Ratios</span></div>
-                <div className="overflow-x-auto">
-                  <table className="w-full">
-                    <FinColHeaders showBudget={showBudget} />
-                    <tbody>
-                      <FinTotalRow label="Working capital (current assets − current liabilities)" c={totalCA.c-totalCL.c} b={totalCA.b-totalCL.b} pr={totalCA.pr-totalCL.pr} showBudget={showBudget} />
-                      <FinEditRow id="rat-drecv" label="Number of days in receivables"               indent={0} showBudget={showBudget} />
-                      <FinEditRow id="rat-dinv"  label="Number of days' sales in inventory"          indent={0} showBudget={showBudget} />
-                      <FinEditRow id="rat-iturn" label="Inventory turnover"                          indent={0} showBudget={showBudget} />
-                      <FinEditRow id="rat-dpay"  label="Number of days' purchases in trade payables" indent={0} showBudget={showBudget} />
-                      <FinEditRow id="rat-dte"   label="Debt-to-equity ratio"                        indent={0} showBudget={showBudget} />
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-            </>)}
-
-            {/* ── PART C sheet ── */}
-            {activeSheet === 'partC' && (<>
-              <div className="flex items-center gap-3 pt-1">
-                <span className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Part C — Management discussion</span>
-                <div className="flex-1 h-px bg-border" />
-              </div>
-
-              <div className="bg-card text-card-foreground border border-border shadow-[0_2px_8px_hsl(213_40%_20%/0.06)] rounded-md overflow-hidden">
-                <div className="px-6 py-3.5 bg-card border-b border-border">
-                  <span className="text-sm font-semibold text-foreground">Matters identified in Part B — Management discussion</span>
-                </div>
-                <div className="overflow-x-auto">
-                  <table className="w-full">
-                    <thead>
-                      <tr className="bg-muted border-b border-border text-xs font-semibold text-foreground uppercase tracking-wider">
-                        <th className="px-4 py-3 text-center" style={{width:100,minWidth:100}}>Part B ref. #</th>
-                        <th className="px-4 py-3 text-left border-l border-border" style={{minWidth:200}}>Summary of matter(s) identified</th>
-                        <th className="px-4 py-3 text-left border-l border-border" style={{minWidth:200}}>Management's response</th>
-                        <th className="px-4 py-3 text-left border-l border-border" style={{minWidth:200}}>Audit implications and possible responses</th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-border">
-                      {data.matters.map((m, idx) => (
-                        <tr key={idx} className="hover:bg-muted/30 transition-colors">
-                          <td className="px-4 py-2 align-top text-center">
-                            <Input value={m.partBRef} onChange={e => setMatter(idx,{partBRef:e.target.value})} placeholder={`${idx+1}`} className="h-8 text-sm text-center" disabled={locked} />
-                          </td>
-                          <td className="px-4 py-2 align-top border-l border-border">
-                            <Textarea value={m.summary} onChange={e => setMatter(idx,{summary:e.target.value})} placeholder="Describe matter…" className="min-h-[52px] text-sm resize-none border-0 shadow-none p-0 focus-visible:ring-0 bg-transparent" disabled={locked} />
-                          </td>
-                          <td className="px-4 py-2 align-top border-l border-border">
-                            <Textarea value={m.mgmtResponse} onChange={e => setMatter(idx,{mgmtResponse:e.target.value})} placeholder="Management's response…" className="min-h-[52px] text-sm resize-none border-0 shadow-none p-0 focus-visible:ring-0 bg-transparent" disabled={locked} />
-                          </td>
-                          <td className="px-4 py-2 align-top border-l border-border">
-                            <Textarea value={m.auditImplications} onChange={e => setMatter(idx,{auditImplications:e.target.value})} placeholder="Audit implications / Form 520 ref…" className="min-h-[52px] text-sm resize-none border-0 shadow-none p-0 focus-visible:ring-0 bg-transparent" disabled={locked} />
-                          </td>
+          {xlsxLoading ? (
+            <div className="flex items-center justify-center h-40 gap-2 text-sm text-muted-foreground">
+              <Loader2 className="h-4 w-4 animate-spin" /><span>Loading worksheet…</span>
+            </div>
+          ) : (() => {
+            const sheet = xlsxSheets.find(s => s.name === xlsxActiveSheet);
+            if (!sheet) return null;
+            const mergeMap: Record<string, { rowspan: number; colspan: number } | 'skip'> = {};
+            sheet.merges.forEach(m => {
+              mergeMap[`${m.sr},${m.sc}`] = { rowspan: m.er - m.sr + 1, colspan: m.ec - m.sc + 1 };
+              for (let r = m.sr; r <= m.er; r++)
+                for (let c = m.sc; c <= m.ec; c++)
+                  if (r !== m.sr || c !== m.sc) mergeMap[`${r},${c}`] = 'skip';
+            });
+            return (
+              <div className="overflow-x-auto">
+                <table className="border-collapse text-[11px]" style={{ fontFamily: "'Calibri','Segoe UI',Arial,sans-serif", minWidth: '100%' }}>
+                  <tbody>
+                    {sheet.rows.map((row, ri) => {
+                      const cells = row as (string | number)[];
+                      const hasContent = cells.some(c => String(c).trim() !== '');
+                      if (!hasContent && ri > 5) return null;
+                      return (
+                        <tr key={ri}>
+                          <td className="text-right text-[9px] text-muted-foreground/40 pl-1 pr-2 py-0.5 select-none bg-muted/20 border-r border-border/40 w-7 shrink-0">{ri + 1}</td>
+                          {cells.map((cell, ci) => {
+                            const cellKey = `${ri},${ci}`;
+                            const merge = mergeMap[cellKey];
+                            if (merge === 'skip') return null;
+                            const span = typeof merge === 'object' ? merge : null;
+                            const val = String(cell ?? '');
+                            return (
+                              <td
+                                key={ci}
+                                rowSpan={span?.rowspan}
+                                colSpan={span?.colspan}
+                                className={`border border-border/30 px-2 py-0.5 align-top text-foreground ${ci === 0 ? 'min-w-[180px] max-w-[380px] whitespace-pre-wrap' : 'whitespace-nowrap min-w-[60px]'}`}
+                              >
+                                {val}
+                              </td>
+                            );
+                          })}
                         </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
+                      );
+                    })}
+                  </tbody>
+                </table>
               </div>
-
-              <div className="bg-card border border-border shadow-[0_2px_8px_hsl(213_40%_20%/0.06)] rounded-md overflow-hidden">
-                <div className="px-6 py-3.5 border-b border-border">
-                  <p className="text-sm font-semibold text-foreground">Have any unusual/unexpected relationships been identified that may indicate risks of material misstatement due to fraud?</p>
-                </div>
-                <div className="px-6 py-4">
-                  <Textarea disabled={locked} value={data.fraudAnswer} onChange={e => set({fraudAnswer:e.target.value})} placeholder="Describe any unusual or unexpected relationships identified…" className="min-h-[80px] text-sm resize-none bg-background" />
-                </div>
-              </div>
-
-              <div className="bg-card border border-border shadow-[0_2px_8px_hsl(213_40%_20%/0.06)] rounded-md overflow-hidden">
-                <div className="px-6 py-3.5 border-b border-border"><span className="text-sm font-semibold text-foreground">Conclusion</span></div>
-                <div className="px-6 py-5 space-y-4">
-                  {data.concluded && (
-                    <div className="rounded-md bg-green-50 dark:bg-green-950/30 border border-green-200 dark:border-green-800 px-4 py-3 text-sm text-green-800 dark:text-green-300">
-                      Concluded on {data.concludedOn}
-                    </div>
-                  )}
-                  <Textarea disabled={locked} value={data.fraudAnswer} onChange={e => set({fraudAnswer:e.target.value})} placeholder="Document your overall conclusion and assessment…" className="min-h-[100px] text-sm resize-none bg-background" />
-                  <div className="flex justify-end">
-                    <Button disabled={locked} onClick={() => {
-                      const now = new Date().toISOString().slice(0,10);
-                      setData(d => { const next = {...d, concluded:true, concludedOn:now}; writeJsonToLocalStorage(storageKey, next); return next; });
-                    }}>
-                      Conclude worksheet
-                    </Button>
-                  </div>
-                </div>
-              </div>
-            </>)}
-
-          </div>
+            );
+          })()}
         </div>
 
       </>)}
