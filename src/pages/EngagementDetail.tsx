@@ -821,6 +821,19 @@ export default function EngagementDetail() {
     return () => window.removeEventListener('navigate-to-notes', handler);
   }, [engagementId, checklistKey, navigate]);
 
+  useEffect(() => {
+    const handler = (e: Event) => {
+      const ce = e as CustomEvent<{ engagementId: string; isUS: boolean; label: string; sources: string[] }>;
+      if (ce.detail?.engagementId !== engagementId) return;
+      const client = engagementId ? engagementsData[engagementId]?.client : undefined;
+      const engLabel = [client, engagementId].filter(Boolean).join(' · ');
+      setLukaAutoFillConfig({ label: ce.detail.label, sources: ce.detail.sources, engagementLabel: engLabel });
+      setLukaOpen(true);
+    };
+    window.addEventListener('pap501-generate', handler);
+    return () => window.removeEventListener('pap501-generate', handler);
+  }, [engagementId]);
+
   const toggleGlobalTimer = () => {
     if (globalActiveRef.current) {
       clearInterval(globalTimerRef.current!);
@@ -2370,7 +2383,20 @@ export default function EngagementDetail() {
     </Layout>
     <AskLukaOverlay
       open={lukaOpen}
-      onOpenChange={(o) => { setLukaOpen(o); if (!o) { setLukaAutoFillConfig(null); setLukaFillSummary(null); setLukaAllTemplateSummary(null); setLukaAutoFillProgress(null); setLukaEngagementOverviewMode(false); setLukaInitialTab("threads"); setLukaInitialWorkspaceEngagement(undefined); } }}
+      onOpenChange={(o) => {
+        setLukaOpen(o);
+        if (!o) {
+          // If Luka was opened for PAP 501 generation, signal acceptance back
+          ['ca','us'].forEach(variant => {
+            const pendingKey = `pap501-pending-${engagementId}-${variant}`;
+            if (localStorage.getItem(pendingKey)) {
+              localStorage.removeItem(pendingKey);
+              window.dispatchEvent(new CustomEvent('pap501-luka-accepted', { detail: { engagementId } }));
+            }
+          });
+          setLukaAutoFillConfig(null); setLukaFillSummary(null); setLukaAllTemplateSummary(null); setLukaAutoFillProgress(null); setLukaEngagementOverviewMode(false); setLukaInitialTab("threads"); setLukaInitialWorkspaceEngagement(undefined);
+        }
+      }}
       initialQuery={lukaQuery}
       autoFillMode={!!lukaAutoFillConfig}
       checklistLabel={lukaAutoFillConfig?.label}

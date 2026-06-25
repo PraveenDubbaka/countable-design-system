@@ -6,29 +6,14 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Info, Sparkles, FileSpreadsheet, CheckCircle2, RefreshCw, ArrowRight, AlertCircle, Loader2 } from "lucide-react";
+import { Info, FileSpreadsheet, CheckCircle2, RefreshCw, AlertCircle } from "lucide-react";
 import { RefButton, RefDoc } from "@/components/RefButton";
 import { readJsonFromLocalStorage, writeJsonToLocalStorage } from "@/lib/safeJson";
 import { loadEngagements } from "@/store/engagementsStore";
 
 // ── Flow state machine ─────────────────────────────────────────────────────────
 
-type FlowState = 'idle' | 'conversation' | 'generating' | 'artifact-ready' | 'worksheet';
-
-const PAP_QUESTIONS = [
-  { id: 'period_end',      label: 'Confirm or update the period end date for this engagement:', type: 'date' as const },
-  { id: 'revenue_streams', label: 'What are the primary revenue streams for this entity?', type: 'text' as const, placeholder: 'e.g. Shipping services, freight forwarding, port fees' },
-  { id: 'changes',         label: 'Any significant changes in the business this year?', type: 'select' as const, options: ['No significant changes', 'Change in business model', 'Major acquisition or disposal', 'Key management change', 'New financing arrangements', 'Other'] },
-  { id: 'focus',           label: 'Specific areas to focus the analysis on? (optional)', type: 'text' as const, placeholder: 'e.g. Cost of goods sold, payroll, related-party transactions' },
-] as const;
-
-const GEN_STEPS = [
-  'Connecting to Xero data source…',
-  'Fetching trial balance and financial data…',
-  'Comparing current year vs prior period…',
-  'Identifying unusual fluctuations…',
-  'Generating 501 worksheet…',
-];
+type FlowState = 'idle' | 'worksheet';
 
 // ── Types ──────────────────────────────────────────────────────────────────────
 
@@ -187,46 +172,18 @@ export function AuditPAP501Worksheet({ isUS = false }: { isUS?: boolean }) {
 
   // ── Flow state ───────────────────────────────────────────────────────────────
 
-  const flowKey = `pap501-flow-${engagementId}-${isUS ? 'us' : 'ca'}`;
+  const acceptedKey = `pap501-accepted-${engagementId}-${isUS ? 'us' : 'ca'}`;
 
-  const [flowState, setFlowState] = useState<FlowState>(() => {
-    return readJsonFromLocalStorage<{ s: FlowState } | null>(flowKey, null)?.s ?? 'idle';
-  });
-  const persistFlow = (s: FlowState) => {
-    setFlowState(s);
-    // Persist in-progress states only; 'worksheet' resets to 'idle' so next
-    // visit always shows the landing screen (data itself stays in storageKey).
-    writeJsonToLocalStorage(flowKey, { s: s === 'worksheet' ? 'idle' : s });
-  };
+  const [flowState, setFlowState] = useState<FlowState>(() =>
+    localStorage.getItem(`pap501-accepted-${engagementId}-${isUS ? 'us' : 'ca'}`) ? 'worksheet' : 'idle'
+  );
+  const [activeSheet, setActiveSheet] = useState<'partA' | 'partB' | 'partC'>('partA');
 
   const [connectedSource, setConnectedSource] = useState<string | null>(null);
   useEffect(() => {
     const connectors = readJsonFromLocalStorage<string[]>(`connectors-${engagementId}`, ['xero']);
     setConnectedSource(connectors[0] ?? null);
   }, [engagementId]);
-
-  const [convStep, setConvStep] = useState(0);
-  const [convAnswers, setConvAnswers] = useState<Record<string, string>>({
-    period_end: periodEnded !== '—' ? periodEnded : '',
-  });
-
-  const [genStep, setGenStep] = useState(0);
-  useEffect(() => {
-    if (flowState !== 'generating') return;
-    setGenStep(0);
-    let step = 0;
-    const iv = setInterval(() => {
-      step++;
-      setGenStep(step);
-      if (step >= GEN_STEPS.length) {
-        clearInterval(iv);
-        const t = setTimeout(() => persistFlow('artifact-ready'), 500);
-        return () => clearTimeout(t);
-      }
-    }, 650);
-    return () => clearInterval(iv);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [flowState]);
 
   const locked = data.concluded;
   const set = (patch: Partial<PAP501Data>) => setData(d => ({ ...d, ...patch }));
@@ -435,261 +392,176 @@ export function AuditPAP501Worksheet({ isUS = false }: { isUS?: boolean }) {
       ...Array(8).fill(null).map(emptyMatter),
     ];
     setData(d => ({ ...d, fin: { ...d.fin, ...mockFin }, partA: { ...d.partA, ...mockPartA }, matters: mockMatters }));
-    persistFlow('worksheet');
+    setFlowState('worksheet');
+    localStorage.setItem(acceptedKey, 'true');
   }
+
+  function handleGenerate() {
+    localStorage.setItem(`pap501-pending-${engagementId}-${isUS ? 'us' : 'ca'}`, 'true');
+    window.dispatchEvent(new CustomEvent('pap501-generate', {
+      detail: {
+        engagementId,
+        isUS,
+        label: 'PAP 501 — Preliminary Analytical Procedures',
+        sources: connectedSource
+          ? [`${connectedSource.charAt(0).toUpperCase() + connectedSource.slice(1)} connection`, 'Predecessor file']
+          : ['Trial balance', 'Predecessor file'],
+      },
+    }));
+  }
+
+  useEffect(() => {
+    const handler = (e: Event) => {
+      const ce = e as CustomEvent<{ engagementId?: string }>;
+      if (ce.detail?.engagementId && ce.detail.engagementId !== engagementId) return;
+      acceptArtifact();
+    };
+    window.addEventListener('pap501-luka-accepted', handler);
+    return () => window.removeEventListener('pap501-luka-accepted', handler);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [engagementId]);
 
   return (
     <div className="flex flex-col h-full">
 
-      {/* ── IDLE: Generate landing ──────────────────────────────────────────── */}
+      {/* ── IDLE: Luka-thread landing ───────────────────────────────────────── */}
       {flowState === 'idle' && (
-        <div className="flex-1 overflow-auto">
-          <div className="max-w-xl mx-auto p-8 flex flex-col gap-6 items-center text-center">
-            <div className="flex flex-col items-center gap-3">
-              <div className="w-14 h-14 rounded-2xl bg-primary/[0.08] flex items-center justify-center">
-                <Sparkles className="h-7 w-7 text-primary" />
-              </div>
-              <div>
-                <h2 className="text-lg font-semibold text-foreground">Preliminary Analytical Procedures</h2>
-                <p className="text-sm text-muted-foreground mt-1">Let Luka analyze your financial data and generate a completed 501 worksheet automatically.</p>
-              </div>
+        <div className="flex-1 flex flex-col items-center justify-center py-12 px-4 overflow-auto">
+          <div className="w-full max-w-md flex flex-col items-center gap-7 text-center">
+
+            {/* Luka bolt icon */}
+            <div
+              className="w-[72px] h-[72px] rounded-full flex items-center justify-center"
+              style={{
+                border: '2px solid hsla(270,65%,64%,0.3)',
+                background: 'linear-gradient(135deg,hsla(270,65%,64%,0.12),hsla(211,76%,33%,0.12))',
+              }}
+            >
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="none">
+                <defs>
+                  <linearGradient id="luka-bolt-pap501" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stopColor="#9747FF" />
+                    <stop offset="100%" stopColor="#115697" />
+                  </linearGradient>
+                </defs>
+                <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" fill="url(#luka-bolt-pap501)" />
+              </svg>
             </div>
 
-            <div className="w-full bg-card border border-border rounded-lg p-4 text-left flex items-start gap-3">
-              {connectedSource ? (
-                <>
-                  <CheckCircle2 className="h-4 w-4 text-green-500 mt-0.5 shrink-0" />
-                  <div>
-                    <p className="text-sm font-medium text-foreground">Connected to {connectedSource.charAt(0).toUpperCase() + connectedSource.slice(1)}</p>
-                    <p className="text-xs text-muted-foreground mt-0.5">Financial data is available for analysis</p>
-                  </div>
-                </>
-              ) : (
-                <>
-                  <AlertCircle className="h-4 w-4 text-amber-500 mt-0.5 shrink-0" />
-                  <div>
-                    <p className="text-sm font-medium text-foreground">No data source connected</p>
-                    <p className="text-xs text-muted-foreground mt-0.5">Upload a trial balance or connect an accounting data source to enable generation</p>
-                  </div>
-                </>
-              )}
+            <div>
+              <h3 className="text-xl font-semibold text-foreground">Preliminary Analytical Procedures</h3>
+              <p className="text-sm text-muted-foreground mt-1.5">{entityName} · Period ended {periodEnded}</p>
             </div>
 
-            <div className="w-full bg-card border border-border rounded-lg p-4 text-left space-y-2.5">
-              <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Luka will</p>
-              {[
-                'Compare current period vs prior year across income statement and balance sheet',
-                'Calculate variances and flag fluctuations above the materiality threshold',
-                'Complete Part A qualitative procedures with documented observations',
-                'Generate Part C matters with management discussion prompts',
-              ].map((item, i) => (
-                <div key={i} className="flex items-start gap-2 text-sm text-foreground">
-                  <CheckCircle2 className="h-3.5 w-3.5 text-primary shrink-0 mt-0.5" />
-                  <span>{item}</span>
-                </div>
+            {/* Quick prompt chips */}
+            <div className="flex flex-wrap items-center justify-center gap-2">
+              {['/PAP 501 Analysis', '/Import Trial Balance', '/Prior Year Comparison'].map(chip => (
+                <button key={chip} className="luka-prompt-chip" onClick={handleGenerate}>
+                  <span style={{ color: 'hsl(207 71% 38%)', fontWeight: 700 }}>/</span>
+                  {chip.slice(1)}
+                </button>
               ))}
             </div>
 
-            <div className="flex flex-col items-center gap-2">
-              <Button className="gap-2" disabled={!connectedSource} onClick={() => { setConvStep(0); persistFlow('conversation'); }}>
-                <Sparkles className="h-4 w-4" />
-                Generate with Luka
-              </Button>
-              {!connectedSource && (
-                <p className="text-xs text-muted-foreground">Upload a trial balance to the engagement to enable generation</p>
+            {/* Source status */}
+            <div className={`flex items-center gap-2 text-xs px-3.5 py-2 rounded-full border ${
+              connectedSource
+                ? 'border-green-300 bg-green-50 dark:border-green-800 dark:bg-green-950/30 text-green-700 dark:text-green-400'
+                : 'border-amber-300 bg-amber-50 dark:border-amber-800 dark:bg-amber-950/30 text-amber-700 dark:text-amber-400'
+            }`}>
+              {connectedSource ? (
+                <><CheckCircle2 className="h-3.5 w-3.5" /> Connected to {connectedSource.charAt(0).toUpperCase() + connectedSource.slice(1)}</>
+              ) : (
+                <><AlertCircle className="h-3.5 w-3.5" /> No data source — upload trial balance to auto-populate</>
               )}
             </div>
+
+            {/* Generate button */}
+            <button
+              onClick={handleGenerate}
+              className="flex items-center gap-2 px-6 py-3 rounded-xl text-sm font-semibold text-white transition-opacity hover:opacity-90"
+              style={{ background: 'linear-gradient(135deg,#9747FF,#115697)', boxShadow: '0 2px 8px hsla(270,60%,50%,0.3)' }}
+            >
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="white">
+                <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" />
+              </svg>
+              Generate with Luka
+            </button>
           </div>
         </div>
       )}
 
-      {/* ── CONVERSATION: Luka Q&A ──────────────────────────────────────────── */}
-      {flowState === 'conversation' && (() => {
-        const q = PAP_QUESTIONS[convStep];
-        const answer = convAnswers[q.id] ?? '';
-        const isLast = convStep === PAP_QUESTIONS.length - 1;
-        const canNext = q.id === 'focus' || answer.trim().length > 0;
-        return (
-          <div className="flex-1 overflow-auto">
-            <div className="max-w-lg mx-auto p-8 flex flex-col gap-5">
-              <div className="flex items-center gap-3">
-                <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center shrink-0">
-                  <Sparkles className="h-4 w-4 text-white" />
-                </div>
-                <div>
-                  <p className="text-sm font-semibold text-foreground">Luka</p>
-                  <p className="text-xs text-muted-foreground">Before I begin, I have a few quick questions.</p>
-                </div>
-                <span className="ml-auto text-xs text-muted-foreground">{convStep + 1} / {PAP_QUESTIONS.length}</span>
-              </div>
 
-              <div className="flex gap-1.5">
-                {PAP_QUESTIONS.map((_, i) => (
-                  <div key={i} className={`h-1 flex-1 rounded-full transition-colors duration-300 ${i <= convStep ? 'bg-primary' : 'bg-muted'}`} />
-                ))}
-              </div>
-
-              <div className="bg-card border border-border rounded-xl p-5 space-y-3">
-                <p className="text-sm font-medium text-foreground">{q.label}</p>
-                {q.type === 'date' && (
-                  <Input type="date" value={answer} onChange={e => setConvAnswers(a => ({ ...a, [q.id]: e.target.value }))} className="h-9" />
-                )}
-                {q.type === 'text' && (
-                  <Input value={answer} onChange={e => setConvAnswers(a => ({ ...a, [q.id]: e.target.value }))} placeholder={'placeholder' in q ? q.placeholder : ''} className="h-9" />
-                )}
-                {q.type === 'select' && (
-                  <Select value={answer} onValueChange={v => setConvAnswers(a => ({ ...a, [q.id]: v }))}>
-                    <SelectTrigger className="h-9"><SelectValue placeholder="Select an option" /></SelectTrigger>
-                    <SelectContent>{'options' in q && q.options.map(o => <SelectItem key={o} value={o}>{o}</SelectItem>)}</SelectContent>
-                  </Select>
-                )}
-              </div>
-
-              <div className="flex justify-between">
-                <Button variant="ghost" size="sm" onClick={() => convStep > 0 ? setConvStep(s => s - 1) : persistFlow('idle')}>← Back</Button>
-                <Button size="sm" disabled={!canNext} onClick={() => isLast ? persistFlow('generating') : setConvStep(s => s + 1)} className="gap-1.5">
-                  {isLast ? <><Sparkles className="h-3.5 w-3.5" />Generate</> : <>Next<ArrowRight className="h-3.5 w-3.5" /></>}
-                </Button>
-              </div>
-            </div>
-          </div>
-        );
-      })()}
-
-      {/* ── GENERATING ─────────────────────────────────────────────────────── */}
-      {flowState === 'generating' && (
-        <div className="flex-1 flex flex-col items-center justify-center p-8 gap-6">
-          <div className="w-14 h-14 rounded-2xl bg-primary/[0.08] flex items-center justify-center">
-            <Loader2 className="h-7 w-7 text-primary animate-spin" />
-          </div>
-          <div className="text-center">
-            <p className="text-sm font-semibold text-foreground">Generating your PAP worksheet…</p>
-            <p className="text-xs text-muted-foreground mt-1 h-4 transition-all">{GEN_STEPS[Math.min(genStep, GEN_STEPS.length - 1)]}</p>
-          </div>
-          <div className="w-64 bg-muted rounded-full h-1.5 overflow-hidden">
-            <div className="h-full bg-primary rounded-full transition-all duration-700" style={{ width: `${Math.min(100, ((genStep + 1) / GEN_STEPS.length) * 100)}%` }} />
-          </div>
-          <div className="flex flex-col gap-2 w-64">
-            {GEN_STEPS.map((step, i) => (
-              <div key={i} className={`flex items-center gap-2 text-xs transition-all duration-300 ${i < genStep ? 'text-green-600 dark:text-green-400' : i === genStep ? 'text-primary font-medium' : 'text-muted-foreground/40'}`}>
-                {i < genStep ? <CheckCircle2 className="h-3 w-3 shrink-0" /> : i === genStep ? <Loader2 className="h-3 w-3 shrink-0 animate-spin" /> : <div className="h-3 w-3 rounded-full border border-current shrink-0 opacity-30" />}
-                {step}
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
-
-      {/* ── ARTIFACT READY ─────────────────────────────────────────────────── */}
-      {flowState === 'artifact-ready' && (
-        <div className="flex-1 overflow-auto">
-          <div className="max-w-2xl mx-auto p-8 flex flex-col gap-6 items-center">
-            <div className="flex flex-col items-center gap-2 text-center">
-              <div className="w-12 h-12 rounded-full bg-green-100 dark:bg-green-950/30 flex items-center justify-center">
-                <CheckCircle2 className="h-6 w-6 text-green-600 dark:text-green-400" />
-              </div>
-              <p className="text-base font-semibold text-foreground">PAP Worksheet Generated</p>
-              <p className="text-sm text-muted-foreground">Luka has analyzed your financial data and completed the 501 worksheet. Review the summary below and accept to view the full form.</p>
-            </div>
-
-            <div className="w-full bg-card border-2 border-primary/20 rounded-xl overflow-hidden shadow-sm">
-              <div className="px-5 py-4 border-b border-border flex items-center gap-3">
-                <div className="w-10 h-10 rounded-lg bg-green-50 dark:bg-green-950/40 flex items-center justify-center shrink-0">
-                  <FileSpreadsheet className="h-5 w-5 text-green-700 dark:text-green-400" />
-                </div>
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm font-semibold text-foreground truncate">501 Worksheet — Preliminary Analytical Procedures.xlsx</p>
-                  <p className="text-xs text-muted-foreground">Generated by Luka · 3 parts · ~52 KB</p>
-                </div>
-                <Badge variant="outline" className="text-xs text-green-700 border-green-300 bg-green-50 dark:bg-green-950/30 dark:text-green-400 shrink-0">Ready</Badge>
-              </div>
-              <div className="overflow-x-auto">
-                <table className="w-full text-xs">
-                  <thead>
-                    <tr className="bg-muted/50 border-b border-border">
-                      <th className="px-4 py-2 text-left font-semibold text-muted-foreground">Line item</th>
-                      <th className="px-3 py-2 text-right font-semibold text-muted-foreground">Current period</th>
-                      <th className="px-3 py-2 text-right font-semibold text-muted-foreground">Prior period</th>
-                      <th className="px-3 py-2 text-right font-semibold text-muted-foreground">Variance %</th>
-                      <th className="px-3 py-2 text-center font-semibold text-muted-foreground">Matter?</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-border">
-                    {([
-                      { label: 'Total Revenue',      cur: '16,732,400', pri: '14,891,200', pct: '+12.4%', matter: false },
-                      { label: 'Cost of Services',   cur: '12,214,300', pri: '10,802,100', pct: '+13.1%', matter: true  },
-                      { label: 'Gross Margin',       cur:  '4,518,100', pri:  '4,089,100', pct: '+10.5%', matter: false },
-                      { label: 'Operating Expenses', cur:  '3,102,800', pri:  '2,841,900', pct:  '+9.2%', matter: false },
-                      { label: 'Net Income',         cur:  '1,415,300', pri:  '1,247,200', pct: '+13.5%', matter: true  },
-                    ] as { label: string; cur: string; pri: string; pct: string; matter: boolean }[]).map(row => (
-                      <tr key={row.label} className="hover:bg-muted/30">
-                        <td className="px-4 py-1.5 font-medium text-foreground">{row.label}</td>
-                        <td className="px-3 py-1.5 text-right font-mono text-foreground">${row.cur}</td>
-                        <td className="px-3 py-1.5 text-right font-mono text-muted-foreground">${row.pri}</td>
-                        <td className={`px-3 py-1.5 text-right font-medium ${row.pct.startsWith('+') ? 'text-green-600' : 'text-red-500'}`}>{row.pct}</td>
-                        <td className="px-3 py-1.5 text-center">
-                          {row.matter ? <span className="inline-block w-2 h-2 rounded-full bg-amber-400" /> : <span className="text-muted-foreground">—</span>}
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-                <div className="px-4 py-2 text-xs text-muted-foreground border-t border-border bg-muted/20">+ Part A procedures (5 items completed) · + Part C management discussion (2 flagged matters)</div>
-              </div>
-            </div>
-
-            <div className="flex gap-3">
-              <Button variant="outline" size="sm" className="gap-1.5" onClick={() => { setConvStep(0); persistFlow('conversation'); }}>
-                <RefreshCw className="h-3.5 w-3.5" />Regenerate
-              </Button>
-              <Button size="sm" className="gap-1.5" onClick={acceptArtifact}>
-                <CheckCircle2 className="h-3.5 w-3.5" />Accept &amp; Review
-              </Button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* ── WORKSHEET (existing content + Luka banner) ─────────────────────── */}
+      {/* ── WORKSHEET: Excel-chrome tabbed view ────────────────────────────── */}
       {flowState === 'worksheet' && (<>
 
-      {/* Luka generated banner */}
-      <div className="px-6 py-2 border-b border-border bg-primary/[0.04] flex items-center gap-2 shrink-0">
-        <Sparkles className="h-3.5 w-3.5 text-primary shrink-0" />
-        <span className="text-xs font-semibold text-primary">Generated by Luka</span>
-        <span className="text-xs text-muted-foreground flex-1">Review the pre-filled data below and make any adjustments before concluding.</span>
-        <Button variant="ghost" size="sm" className="h-7 px-2 text-xs gap-1.5 text-muted-foreground" onClick={() => { setConvStep(0); persistFlow('conversation'); }}>
-          <RefreshCw className="h-3 w-3" />Regenerate
-        </Button>
-      </div>
-
-      {/* Objective bar */}
-      <div className="px-6 py-2.5 border-b border-border bg-primary/[0.03] flex items-start gap-2 shrink-0">
-        <Info className="h-3.5 w-3.5 text-primary mt-0.5 shrink-0" />
-        <span className="text-xs font-semibold text-primary whitespace-nowrap">Objective:</span>
-        <p className="text-xs text-muted-foreground flex-1 leading-relaxed">
-          To identify relationships, risks, inconsistencies, unusual transactions, events, amounts, ratios or trends
-          that will likely require an audit response.{" "}
-          <span className="font-medium text-foreground">Note:</span> Use Parts A and B to identify matters requiring additional information/audit work. Use Part C to document preliminary discussions with management. Do NOT use this form for substantive analytical procedures — use Form 614 instead.
-        </p>
-      </div>
-
-      {/* Read-only meta strip */}
-      <div className="px-6 py-2.5 border-b border-border bg-card flex items-center gap-2 shrink-0">
-        <span className="text-xs font-medium text-muted-foreground">Performance materiality</span>
-        <span className="text-sm font-semibold text-foreground font-mono">{perfMateriality}</span>
-      </div>
-
-      {/* Scrollable body */}
-      <div className="flex-1 overflow-y-auto bg-muted/30">
-        <div className="p-6 space-y-4">
-
-          {/* ═══════════════════════════════════════════════════════════ PART A */}
-          <div className="flex items-center gap-3 pt-1">
-            <span className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Part A — Qualitative assessment</span>
-            <div className="flex-1 h-px bg-border" />
+        {/* Excel toolbar */}
+        <div className="flex items-center gap-3 px-4 py-2.5 border-b border-border bg-card shrink-0">
+          <FileSpreadsheet className="h-5 w-5 text-green-600 shrink-0" />
+          <div className="flex-1 min-w-0">
+            <span className="text-sm font-semibold text-foreground">501 Worksheet — Preliminary Analytical Procedures.xlsm</span>
+            <span className="ml-2 text-xs font-medium" style={{ color: '#9747FF' }}>Generated by Luka</span>
           </div>
-          <>
+          <Button
+            variant="ghost" size="sm"
+            className="h-7 px-2 text-xs gap-1.5 text-muted-foreground shrink-0"
+            onClick={() => {
+              setFlowState('idle');
+              localStorage.removeItem(acceptedKey);
+            }}
+          >
+            <RefreshCw className="h-3 w-3" />Regenerate
+          </Button>
+        </div>
+
+        {/* Sheet tabs */}
+        <div className="flex items-end gap-0 border-b border-border bg-muted/20 px-4 shrink-0">
+          {([
+            { id: 'partA', label: 'Part A — Qualitative' },
+            { id: 'partB', label: 'Part B — Quantitative' },
+            { id: 'partC', label: 'Part C — Matters' },
+          ] as { id: 'partA' | 'partB' | 'partC'; label: string }[]).map(tab => (
+            <button
+              key={tab.id}
+              onClick={() => setActiveSheet(tab.id)}
+              className={`px-4 py-2 text-xs font-medium border-b-2 transition-colors ${
+                activeSheet === tab.id
+                  ? 'border-primary text-primary'
+                  : 'border-transparent text-muted-foreground hover:text-foreground'
+              }`}
+            >
+              {tab.label}
+            </button>
+          ))}
+        </div>
+
+        {/* Objective bar */}
+        <div className="px-6 py-2.5 border-b border-border bg-primary/[0.03] flex items-start gap-2 shrink-0">
+          <Info className="h-3.5 w-3.5 text-primary mt-0.5 shrink-0" />
+          <span className="text-xs font-semibold text-primary whitespace-nowrap">Objective:</span>
+          <p className="text-xs text-muted-foreground flex-1 leading-relaxed">
+            To identify relationships, risks, inconsistencies, unusual transactions, events, amounts, ratios or trends
+            that will likely require an audit response.{" "}
+            <span className="font-medium text-foreground">Note:</span> Use Parts A and B to identify matters. Use Part C to document discussions with management. Do NOT use for substantive procedures — use Form 614.
+          </p>
+        </div>
+
+        {/* Meta strip */}
+        <div className="px-6 py-2.5 border-b border-border bg-card flex items-center gap-2 shrink-0">
+          <span className="text-xs font-medium text-muted-foreground">Performance materiality</span>
+          <span className="text-sm font-semibold text-foreground font-mono">{perfMateriality}</span>
+        </div>
+
+        {/* Sheet body */}
+        <div className="flex-1 overflow-y-auto bg-muted/30">
+          <div className="p-6 space-y-4">
+
+            {/* ── PART A sheet ── */}
+            {activeSheet === 'partA' && (<>
+              <div className="flex items-center gap-3 pt-1">
+                <span className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Part A — Qualitative assessment</span>
+                <div className="flex-1 h-px bg-border" />
+              </div>
               {PART_A_PROCS.map(proc => (
                 <div key={proc.id} className="bg-card text-card-foreground border border-border shadow-[0_2px_8px_hsl(213_40%_20%/0.06)] rounded-md overflow-hidden">
                   <div className="px-6 py-3.5 bg-card border-b border-border">
@@ -706,15 +578,23 @@ export function AuditPAP501Worksheet({ isUS = false }: { isUS?: boolean }) {
                   </div>
                 </div>
               ))}
-          </>
+              <div className="bg-card border border-border shadow-[0_2px_8px_hsl(213_40%_20%/0.06)] rounded-md overflow-hidden">
+                <div className="px-6 py-3.5 border-b border-border">
+                  <p className="text-sm font-semibold text-foreground">Management / fraud discussion summary</p>
+                </div>
+                <div className="px-6 py-4">
+                  <Textarea disabled={locked} value={data.fraudAnswer} onChange={e => set({fraudAnswer:e.target.value})} placeholder="Describe any unusual or unexpected relationships identified…" className="min-h-[80px] text-sm resize-none bg-background" />
+                </div>
+              </div>
+            </>)}
 
-          {/* ═══════════════════════════════════════════════════════════ PART B */}
-          <div className="flex items-center gap-3 pt-2">
-            <span className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Part B — Quantitative comparison</span>
-            <div className="flex-1 h-px bg-border" />
-          </div>
-          <>
-              {/* Settings */}
+            {/* ── PART B sheet ── */}
+            {activeSheet === 'partB' && (<>
+              <div className="flex items-center gap-3 pt-1">
+                <span className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Part B — Quantitative comparison</span>
+                <div className="flex-1 h-px bg-border" />
+              </div>
+
               <div className="bg-card border border-border shadow-[0_2px_8px_hsl(213_40%_20%/0.06)] rounded-md px-5 py-4 flex flex-wrap items-center gap-6">
                 <div className="flex items-center gap-2">
                   <span className="text-sm font-medium text-muted-foreground whitespace-nowrap">Number of sales streams</span>
@@ -726,7 +606,6 @@ export function AuditPAP501Worksheet({ isUS = false }: { isUS?: boolean }) {
                 <p className="text-xs text-muted-foreground">Customize stream labels below. Enter amounts in thousands (or as-is — consistent units throughout).</p>
               </div>
 
-              {/* Stream label editors */}
               {data.numStreams > 1 && (
                 <div className="bg-card border border-border shadow-[0_2px_8px_hsl(213_40%_20%/0.06)] rounded-md px-5 py-4">
                   <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-3">Sales stream labels</p>
@@ -734,22 +613,15 @@ export function AuditPAP501Worksheet({ isUS = false }: { isUS?: boolean }) {
                     {Array.from({length: data.numStreams}, (_, i) => (
                       <div key={i} className="flex items-center gap-2">
                         <span className="text-xs text-muted-foreground w-12">Stream {i+1}</span>
-                        <Input
-                          value={data.streamLabels[i]}
-                          onChange={e => { const sl = [...data.streamLabels]; sl[i] = e.target.value; set({streamLabels:sl}); }}
-                          className="h-7 text-sm w-40"
-                        />
+                        <Input value={data.streamLabels[i]} onChange={e => { const sl = [...data.streamLabels]; sl[i] = e.target.value; set({streamLabels:sl}); }} className="h-7 text-sm w-40" />
                       </div>
                     ))}
                   </div>
                 </div>
               )}
 
-              {/* Income Statement */}
               <div className="bg-card text-card-foreground border border-border shadow-[0_2px_8px_hsl(213_40%_20%/0.06)] rounded-md overflow-hidden">
-                <div className="px-6 py-3.5 bg-card border-b border-border">
-                  <span className="text-sm font-semibold text-foreground">Income Statement</span>
-                </div>
+                <div className="px-6 py-3.5 bg-card border-b border-border"><span className="text-sm font-semibold text-foreground">Income Statement</span></div>
                 <div className="overflow-x-auto">
                   <table className="w-full">
                     <FinColHeaders showBudget={showBudget} />
@@ -757,11 +629,9 @@ export function AuditPAP501Worksheet({ isUS = false }: { isUS?: boolean }) {
                       <FinSectionRow label="Sales" />
                       {salesIds.map((id, i) => <FinEditRow key={id} id={id} label={data.streamLabels[i] || `Stream ${i+1}`} indent={1} showBudget={showBudget} />)}
                       <FinTotalRow label="Total sales" c={totalSales.c} b={totalSales.b} pr={totalSales.pr} showBudget={showBudget} />
-
                       <FinSectionRow label="Cost of Sales" />
                       {cosIds.map((id, i) => <FinEditRow key={id} id={id} label={data.streamLabels[i] || `Stream ${i+1}`} indent={1} showBudget={showBudget} />)}
                       <FinTotalRow label="Total cost of sales" c={totalCos.c} b={totalCos.b} pr={totalCos.pr} showBudget={showBudget} />
-
                       <FinSectionRow label="Gross Margin $" />
                       {salesIds.map((id, i) => {
                         const cosId = cosIds[i];
@@ -771,7 +641,6 @@ export function AuditPAP501Worksheet({ isUS = false }: { isUS?: boolean }) {
                         return <FinTotalRow key={`gm-${i}`} label={data.streamLabels[i] || `Stream ${i+1}`} c={gc} b={gb} pr={gp} showBudget={showBudget} indent={1} />;
                       })}
                       <FinTotalRow label="Total gross margin $" c={totalGM.c} b={totalGM.b} pr={totalGM.pr} showBudget={showBudget} />
-
                       <FinSectionRow label="Gross Margin %" />
                       {salesIds.map((id, i) => {
                         const cosId = cosIds[i];
@@ -801,25 +670,22 @@ export function AuditPAP501Worksheet({ isUS = false }: { isUS?: boolean }) {
                         <td className="border-l border-border bg-purple-50/40" /><td className="border-l border-border bg-purple-50/40" />
                         <td className="border-l border-border" colSpan={3} />
                       </tr>
-
                       <FinSectionRow label="Other Revenue" />
                       <FinEditRow id="or1" label="Other revenue" indent={1} showBudget={showBudget} />
                       <FinEditRow id="or2" label="Other revenue" indent={1} showBudget={showBudget} />
                       <FinTotalRow label="Total other revenue" c={totalOR.c} b={totalOR.b} pr={totalOR.pr} showBudget={showBudget} />
-
                       <FinSectionRow label="Expenses" />
-                      <FinEditRow id="exp-sal"  label="Salaries / payroll"       indent={1} showBudget={showBudget} />
-                      <FinEditRow id="exp-occ"  label="Occupancy"                indent={1} showBudget={showBudget} />
-                      <FinEditRow id="exp-int"  label="Interest / bank charges"  indent={1} showBudget={showBudget} />
-                      <FinEditRow id="exp-bon"  label="Bonuses"                  indent={1} showBudget={showBudget} />
-                      <FinEditRow id="exp-rep"  label="Repairs and maintenance"  indent={1} showBudget={showBudget} />
-                      <FinEditRow id="exp-bad"  label="Bad debts"                indent={1} showBudget={showBudget} />
-                      <FinEditRow id="exp-non"  label="Non-recurring transactions" indent={1} showBudget={showBudget} />
-                      <FinEditRow id="exp-oth1" label="Other expenses"           indent={1} showBudget={showBudget} />
-                      <FinEditRow id="exp-oth2" label="Other expenses"           indent={1} showBudget={showBudget} />
-                      <FinEditRow id="exp-oth3" label="Other expenses"           indent={1} showBudget={showBudget} />
+                      <FinEditRow id="exp-sal"  label="Salaries / payroll"           indent={1} showBudget={showBudget} />
+                      <FinEditRow id="exp-occ"  label="Occupancy"                    indent={1} showBudget={showBudget} />
+                      <FinEditRow id="exp-int"  label="Interest / bank charges"      indent={1} showBudget={showBudget} />
+                      <FinEditRow id="exp-bon"  label="Bonuses"                      indent={1} showBudget={showBudget} />
+                      <FinEditRow id="exp-rep"  label="Repairs and maintenance"      indent={1} showBudget={showBudget} />
+                      <FinEditRow id="exp-bad"  label="Bad debts"                    indent={1} showBudget={showBudget} />
+                      <FinEditRow id="exp-non"  label="Non-recurring transactions"   indent={1} showBudget={showBudget} />
+                      <FinEditRow id="exp-oth1" label="Other expenses"               indent={1} showBudget={showBudget} />
+                      <FinEditRow id="exp-oth2" label="Other expenses"               indent={1} showBudget={showBudget} />
+                      <FinEditRow id="exp-oth3" label="Other expenses"               indent={1} showBudget={showBudget} />
                       <FinTotalRow label="Total expenses" c={totalExp.c} b={totalExp.b} pr={totalExp.pr} showBudget={showBudget} />
-
                       <FinTotalRow label="Net income before tax" c={netIncome.c} b={netIncome.b} pr={netIncome.pr} showBudget={showBudget} />
                       <tr className="border-b border-border bg-muted/20">
                         <td className="px-4 py-2 text-sm font-semibold text-muted-foreground">% of revenue</td>
@@ -835,59 +701,54 @@ export function AuditPAP501Worksheet({ isUS = false }: { isUS?: boolean }) {
                 </div>
               </div>
 
-              {/* Balance Sheet */}
               <div className="bg-card text-card-foreground border border-border shadow-[0_2px_8px_hsl(213_40%_20%/0.06)] rounded-md overflow-hidden">
-                <div className="px-6 py-3.5 bg-card border-b border-border">
-                  <span className="text-sm font-semibold text-foreground">Balance Sheet</span>
-                </div>
+                <div className="px-6 py-3.5 bg-card border-b border-border"><span className="text-sm font-semibold text-foreground">Balance Sheet</span></div>
                 <div className="overflow-x-auto">
                   <table className="w-full">
                     <FinColHeaders showBudget={showBudget} />
                     <tbody>
                       <FinSectionRow label="Assets" />
                       <FinSectionRow label="Current assets" />
-                      <FinEditRow id="ca-cash"      label="Cash"                indent={1} showBudget={showBudget} />
-                      <FinEditRow id="ca-inv"       label="Investments"         indent={1} showBudget={showBudget} />
-                      <FinEditRow id="ca-ar"        label="Accounts receivable" indent={1} showBudget={showBudget} />
-                      <FinEditRow id="ca-inventory" label="Inventory"           indent={1} showBudget={showBudget} />
-                      <FinEditRow id="ca-oth1"      label="Other assets"        indent={1} showBudget={showBudget} />
-                      <FinEditRow id="ca-oth2"      label="Other assets"        indent={1} showBudget={showBudget} />
+                      <FinEditRow id="ca-cash"      label="Cash"                               indent={1} showBudget={showBudget} />
+                      <FinEditRow id="ca-inv"       label="Investments"                        indent={1} showBudget={showBudget} />
+                      <FinEditRow id="ca-ar"        label="Accounts receivable"                indent={1} showBudget={showBudget} />
+                      <FinEditRow id="ca-inventory" label="Inventory"                          indent={1} showBudget={showBudget} />
+                      <FinEditRow id="ca-oth1"      label="Other assets"                       indent={1} showBudget={showBudget} />
+                      <FinEditRow id="ca-oth2"      label="Other assets"                       indent={1} showBudget={showBudget} />
                       <FinTotalRow label="Total current assets" c={totalCA.c} b={totalCA.b} pr={totalCA.pr} showBudget={showBudget} />
                       <FinSectionRow label="Long-term assets" />
-                      <FinEditRow id="lta-ppe"  label="Property, plant and equipment" indent={1} showBudget={showBudget} />
-                      <FinEditRow id="lta-oth1" label="Other assets"                  indent={1} showBudget={showBudget} />
-                      <FinEditRow id="lta-oth2" label="Other assets"                  indent={1} showBudget={showBudget} />
-                      <FinEditRow id="lta-oth3" label="Other assets"                  indent={1} showBudget={showBudget} />
+                      <FinEditRow id="lta-ppe"  label="Property, plant and equipment"          indent={1} showBudget={showBudget} />
+                      <FinEditRow id="lta-oth1" label="Other assets"                           indent={1} showBudget={showBudget} />
+                      <FinEditRow id="lta-oth2" label="Other assets"                           indent={1} showBudget={showBudget} />
+                      <FinEditRow id="lta-oth3" label="Other assets"                           indent={1} showBudget={showBudget} />
                       <FinTotalRow label="Total long-term assets" c={totalLTA.c} b={totalLTA.b} pr={totalLTA.pr} showBudget={showBudget} />
                       <FinTotalRow label="Total assets" c={totalA.c} b={totalA.b} pr={totalA.pr} showBudget={showBudget} />
-
                       <FinSectionRow label="Liabilities" />
                       <FinSectionRow label="Current liabilities" />
-                      <FinEditRow id="cl-bank"  label="Bank indebtedness"                    indent={1} showBudget={showBudget} />
-                      <FinEditRow id="cl-ap"    label="Accounts payable and accrued liabilities" indent={1} showBudget={showBudget} />
-                      <FinEditRow id="cl-tax"   label="Income taxes payable"                 indent={1} showBudget={showBudget} />
-                      <FinEditRow id="cl-fut"   label="Future income taxes payable"          indent={1} showBudget={showBudget} />
-                      <FinEditRow id="cl-def"   label="Deferred revenue"                     indent={1} showBudget={showBudget} />
-                      <FinEditRow id="cl-dep"   label="Customer deposits"                    indent={1} showBudget={showBudget} />
-                      <FinEditRow id="cl-std"   label="Short-term debt"                      indent={1} showBudget={showBudget} />
-                      <FinEditRow id="cl-cpltd" label="Current portion of long-term debt"    indent={1} showBudget={showBudget} />
-                      <FinEditRow id="cl-oth1"  label="Other current liabilities"            indent={1} showBudget={showBudget} />
-                      <FinEditRow id="cl-oth2"  label="Other current liabilities"            indent={1} showBudget={showBudget} />
+                      <FinEditRow id="cl-bank"  label="Bank indebtedness"                         indent={1} showBudget={showBudget} />
+                      <FinEditRow id="cl-ap"    label="Accounts payable and accrued liabilities"  indent={1} showBudget={showBudget} />
+                      <FinEditRow id="cl-tax"   label="Income taxes payable"                      indent={1} showBudget={showBudget} />
+                      <FinEditRow id="cl-fut"   label="Future income taxes payable"               indent={1} showBudget={showBudget} />
+                      <FinEditRow id="cl-def"   label="Deferred revenue"                          indent={1} showBudget={showBudget} />
+                      <FinEditRow id="cl-dep"   label="Customer deposits"                         indent={1} showBudget={showBudget} />
+                      <FinEditRow id="cl-std"   label="Short-term debt"                           indent={1} showBudget={showBudget} />
+                      <FinEditRow id="cl-cpltd" label="Current portion of long-term debt"         indent={1} showBudget={showBudget} />
+                      <FinEditRow id="cl-oth1"  label="Other current liabilities"                 indent={1} showBudget={showBudget} />
+                      <FinEditRow id="cl-oth2"  label="Other current liabilities"                 indent={1} showBudget={showBudget} />
                       <FinTotalRow label="Total current liabilities" c={totalCL.c} b={totalCL.b} pr={totalCL.pr} showBudget={showBudget} />
                       <FinSectionRow label="Long-term liabilities" />
-                      <FinEditRow id="ltl-loan" label="Loans payable"              indent={1} showBudget={showBudget} />
+                      <FinEditRow id="ltl-loan" label="Loans payable"               indent={1} showBudget={showBudget} />
                       <FinEditRow id="ltl-fut"  label="Future income taxes payable" indent={1} showBudget={showBudget} />
-                      <FinEditRow id="ltl-ltd"  label="Long-term debt"             indent={1} showBudget={showBudget} />
+                      <FinEditRow id="ltl-ltd"  label="Long-term debt"              indent={1} showBudget={showBudget} />
                       <FinEditRow id="ltl-oth1" label="Other long-term liabilities" indent={1} showBudget={showBudget} />
                       <FinEditRow id="ltl-oth2" label="Other long-term liabilities" indent={1} showBudget={showBudget} />
                       <FinTotalRow label="Total long-term liabilities" c={totalLTL.c} b={totalLTL.b} pr={totalLTL.pr} showBudget={showBudget} />
                       <FinTotalRow label="Total liabilities" c={totalL.c} b={totalL.b} pr={totalL.pr} showBudget={showBudget} />
-
                       <FinSectionRow label="Equity" />
-                      <FinEditRow id="eq-ret" label="Retained earnings"   indent={1} showBudget={showBudget} />
-                      <FinEditRow id="eq-con" label="Contributed surplus"  indent={1} showBudget={showBudget} />
-                      <FinEditRow id="eq-shr" label="Share capital"        indent={1} showBudget={showBudget} />
-                      <FinEditRow id="eq-oth" label="Other equity"         indent={1} showBudget={showBudget} />
+                      <FinEditRow id="eq-ret" label="Retained earnings"  indent={1} showBudget={showBudget} />
+                      <FinEditRow id="eq-con" label="Contributed surplus" indent={1} showBudget={showBudget} />
+                      <FinEditRow id="eq-shr" label="Share capital"       indent={1} showBudget={showBudget} />
+                      <FinEditRow id="eq-oth" label="Other equity"        indent={1} showBudget={showBudget} />
                       <FinTotalRow label="Total equity" c={totalEQ.c} b={totalEQ.b} pr={totalEQ.pr} showBudget={showBudget} />
                       <FinTotalRow label="Total liabilities and equity" c={totalLE.c} b={totalLE.b} pr={totalLE.pr} showBudget={showBudget} />
                     </tbody>
@@ -895,35 +756,31 @@ export function AuditPAP501Worksheet({ isUS = false }: { isUS?: boolean }) {
                 </div>
               </div>
 
-              {/* Ratios */}
               <div className="bg-card text-card-foreground border border-border shadow-[0_2px_8px_hsl(213_40%_20%/0.06)] rounded-md overflow-hidden">
-                <div className="px-6 py-3.5 bg-card border-b border-border">
-                  <span className="text-sm font-semibold text-foreground">Ratios</span>
-                </div>
+                <div className="px-6 py-3.5 bg-card border-b border-border"><span className="text-sm font-semibold text-foreground">Ratios</span></div>
                 <div className="overflow-x-auto">
                   <table className="w-full">
                     <FinColHeaders showBudget={showBudget} />
                     <tbody>
-                      {/* Working capital — auto-computed */}
                       <FinTotalRow label="Working capital (current assets − current liabilities)" c={totalCA.c-totalCL.c} b={totalCA.b-totalCL.b} pr={totalCA.pr-totalCL.pr} showBudget={showBudget} />
-                      <FinEditRow id="rat-drecv"  label="Number of days in receivables"                indent={0} showBudget={showBudget} />
-                      <FinEditRow id="rat-dinv"   label="Number of days' sales in inventory"           indent={0} showBudget={showBudget} />
-                      <FinEditRow id="rat-iturn"  label="Inventory turnover"                           indent={0} showBudget={showBudget} />
-                      <FinEditRow id="rat-dpay"   label="Number of days' purchases in trade payables"  indent={0} showBudget={showBudget} />
-                      <FinEditRow id="rat-dte"    label="Debt-to-equity ratio"                         indent={0} showBudget={showBudget} />
+                      <FinEditRow id="rat-drecv" label="Number of days in receivables"               indent={0} showBudget={showBudget} />
+                      <FinEditRow id="rat-dinv"  label="Number of days' sales in inventory"          indent={0} showBudget={showBudget} />
+                      <FinEditRow id="rat-iturn" label="Inventory turnover"                          indent={0} showBudget={showBudget} />
+                      <FinEditRow id="rat-dpay"  label="Number of days' purchases in trade payables" indent={0} showBudget={showBudget} />
+                      <FinEditRow id="rat-dte"   label="Debt-to-equity ratio"                        indent={0} showBudget={showBudget} />
                     </tbody>
                   </table>
                 </div>
               </div>
-          </>
+            </>)}
 
-          {/* ═══════════════════════════════════════════════════════════ PART C */}
-          <div className="flex items-center gap-3 pt-2">
-            <span className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Part C — Management discussion</span>
-            <div className="flex-1 h-px bg-border" />
-          </div>
-          <>
-              {/* Matter table */}
+            {/* ── PART C sheet ── */}
+            {activeSheet === 'partC' && (<>
+              <div className="flex items-center gap-3 pt-1">
+                <span className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Part C — Management discussion</span>
+                <div className="flex-1 h-px bg-border" />
+              </div>
+
               <div className="bg-card text-card-foreground border border-border shadow-[0_2px_8px_hsl(213_40%_20%/0.06)] rounded-md overflow-hidden">
                 <div className="px-6 py-3.5 bg-card border-b border-border">
                   <span className="text-sm font-semibold text-foreground">Matters identified in Part B — Management discussion</span>
@@ -942,7 +799,7 @@ export function AuditPAP501Worksheet({ isUS = false }: { isUS?: boolean }) {
                       {data.matters.map((m, idx) => (
                         <tr key={idx} className="hover:bg-muted/30 transition-colors">
                           <td className="px-4 py-2 align-top text-center">
-                            <Input value={m.partBRef} onChange={e => setMatter(idx, {partBRef:e.target.value})} placeholder={`${idx+1}`} className="h-8 text-sm text-center" disabled={locked} />
+                            <Input value={m.partBRef} onChange={e => setMatter(idx,{partBRef:e.target.value})} placeholder={`${idx+1}`} className="h-8 text-sm text-center" disabled={locked} />
                           </td>
                           <td className="px-4 py-2 align-top border-l border-border">
                             <Textarea value={m.summary} onChange={e => setMatter(idx,{summary:e.target.value})} placeholder="Describe matter…" className="min-h-[52px] text-sm resize-none border-0 shadow-none p-0 focus-visible:ring-0 bg-transparent" disabled={locked} />
@@ -960,58 +817,38 @@ export function AuditPAP501Worksheet({ isUS = false }: { isUS?: boolean }) {
                 </div>
               </div>
 
-              {/* Fraud question */}
               <div className="bg-card border border-border shadow-[0_2px_8px_hsl(213_40%_20%/0.06)] rounded-md overflow-hidden">
                 <div className="px-6 py-3.5 border-b border-border">
-                  <p className="text-sm font-semibold text-foreground">
-                    Have any unusual/unexpected relationships been identified that may indicate risks of material misstatement due to fraud? If so, describe below:
-                  </p>
+                  <p className="text-sm font-semibold text-foreground">Have any unusual/unexpected relationships been identified that may indicate risks of material misstatement due to fraud?</p>
                 </div>
                 <div className="px-6 py-4">
-                  <Textarea
-                    disabled={locked}
-                    value={data.fraudAnswer}
-                    onChange={e => set({fraudAnswer: e.target.value})}
-                    placeholder="Describe any unusual or unexpected relationships identified…"
-                    className="min-h-[80px] text-sm resize-none bg-background"
-                  />
+                  <Textarea disabled={locked} value={data.fraudAnswer} onChange={e => set({fraudAnswer:e.target.value})} placeholder="Describe any unusual or unexpected relationships identified…" className="min-h-[80px] text-sm resize-none bg-background" />
                 </div>
               </div>
 
-              {/* Sign-off + Conclude */}
               <div className="bg-card border border-border shadow-[0_2px_8px_hsl(213_40%_20%/0.06)] rounded-md overflow-hidden">
-                <div className="px-6 py-3.5 border-b border-border">
-                  <span className="text-sm font-semibold text-foreground">Conclusion</span>
-                </div>
+                <div className="px-6 py-3.5 border-b border-border"><span className="text-sm font-semibold text-foreground">Conclusion</span></div>
                 <div className="px-6 py-5 space-y-4">
                   {data.concluded && (
                     <div className="rounded-md bg-green-50 dark:bg-green-950/30 border border-green-200 dark:border-green-800 px-4 py-3 text-sm text-green-800 dark:text-green-300">
                       Concluded on {data.concludedOn}
                     </div>
                   )}
-                  <Textarea
-                    disabled={locked}
-                    value={data.fraudAnswer}
-                    onChange={e => set({fraudAnswer: e.target.value})}
-                    placeholder="Document your overall conclusion and assessment…"
-                    className="min-h-[100px] text-sm resize-none bg-background"
-                  />
+                  <Textarea disabled={locked} value={data.fraudAnswer} onChange={e => set({fraudAnswer:e.target.value})} placeholder="Document your overall conclusion and assessment…" className="min-h-[100px] text-sm resize-none bg-background" />
                   <div className="flex justify-end">
-                    <Button
-                      disabled={locked}
-                      onClick={() => {
-                        const now = new Date().toISOString().slice(0,10);
-                        setData(d => { const next = {...d, concluded: true, concludedOn: now}; writeJsonToLocalStorage(storageKey, next); return next; })
-                      }}>
+                    <Button disabled={locked} onClick={() => {
+                      const now = new Date().toISOString().slice(0,10);
+                      setData(d => { const next = {...d, concluded:true, concludedOn:now}; writeJsonToLocalStorage(storageKey, next); return next; });
+                    }}>
                       Conclude worksheet
                     </Button>
                   </div>
                 </div>
               </div>
-          </>
+            </>)}
 
+          </div>
         </div>
-      </div>
 
       </>)}
 
