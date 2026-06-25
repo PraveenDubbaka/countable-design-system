@@ -329,7 +329,6 @@ export function BulkRequestsWorksheet({ isUS = false }: BulkRequestsWorksheetPro
                       <th className={thCls}>Document Name{required}</th>
                       <th className={thCls}>Description</th>
                       <th className={cn(thCls, 'w-[160px]')}>Due Date{required}</th>
-                      <th className={cn(thCls, 'w-[140px]')}>W/P Ref</th>
                       <th className={cn(thCls, 'w-[90px] text-center sticky right-0 bg-muted')}>Actions</th>
                     </tr>
                   </thead>
@@ -376,13 +375,6 @@ export function BulkRequestsWorksheet({ isUS = false }: BulkRequestsWorksheetPro
                           </td>
                           <td className="px-4 py-2.5 align-top">
                             <Input type="date" value={row.dueDate} onChange={e => update(row.id, { dueDate: e.target.value })} className={cn('h-8 text-sm', !row.dueDate && 'border-destructive')} />
-                          </td>
-                          <td className="px-4 py-2.5 align-top">
-                            <RefButton
-                              reference={row.wpRef}
-                              onAttach={(doc) => update(row.id, { wpRef: [...row.wpRef, doc] })}
-                              onRemove={(rIdx) => update(row.id, { wpRef: row.wpRef.filter((_, i) => i !== (rIdx ?? -1)) })}
-                            />
                           </td>
                           <td className="px-4 py-2.5 align-top sticky right-0 bg-card">
                             <div className="flex items-center justify-center gap-1">
