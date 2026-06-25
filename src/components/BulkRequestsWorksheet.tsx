@@ -368,7 +368,7 @@ export function BulkRequestsWorksheet({ isUS = false }: BulkRequestsWorksheetPro
                               </SelectContent>
                             </Select>
                           </td>
-                          <td className="px-4 py-2.5 align-top min-w-[180px]">
+                          <td className="px-4 py-2.5 align-top min-w-[300px]">
                             <Input value={row.docName} onChange={e => update(row.id, { docName: e.target.value })} placeholder="Document name" className={cn('h-8 text-sm', !row.docName.trim() && 'border-destructive')} />
                           </td>
                           <td className="px-4 py-2.5 align-top min-w-[200px]">
