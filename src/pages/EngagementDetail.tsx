@@ -1733,7 +1733,7 @@ export default function EngagementDetail() {
                   variant="secondary"
                   size="sm"
                   icon={<ClipboardList className="h-4 w-4" />}
-                  label="Request"
+                  label="PBC List"
                   onClick={() => setShowRequestPanel(true)}
                 />
                 {inlineHeaderActions.map(action => (
