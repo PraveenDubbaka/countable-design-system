@@ -241,16 +241,6 @@ export function BulkRequestsWorksheet({ isUS = false }: BulkRequestsWorksheetPro
 
   return (
     <div className="flex flex-col h-full">
-      {/* Objective bar */}
-      <div className="px-6 py-2.5 border-b border-border bg-primary/[0.03] flex items-start gap-2 shrink-0">
-        <Info className="h-3.5 w-3.5 text-primary mt-0.5 shrink-0" />
-        <span className="text-xs font-semibold text-primary whitespace-nowrap">Objective:</span>
-        <p className="text-xs text-muted-foreground flex-1 leading-relaxed">
-          Generate, send and track multiple Provided-by-Client (PBC) requests for information or analysis required from
-          management, ensuring complete documentation under {isUS ? 'AU-C 580' : 'CAS 580'}.
-        </p>
-      </div>
-
       <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as typeof activeTab)} className="flex-1 flex flex-col min-h-0">
         {/* Tabs bar */}
         <div className="px-6 pt-4 bg-muted/30 shrink-0">
@@ -340,7 +330,7 @@ export function BulkRequestsWorksheet({ isUS = false }: BulkRequestsWorksheetPro
                       <th className={thCls}>Description</th>
                       <th className={cn(thCls, 'w-[160px]')}>Due Date{required}</th>
                       <th className={cn(thCls, 'w-[140px]')}>W/P Ref</th>
-                      <th className={cn(thCls, 'w-[90px] text-center')}>Actions</th>
+                      <th className={cn(thCls, 'w-[90px] text-center sticky right-0 bg-muted')}>Actions</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-border">
@@ -394,7 +384,7 @@ export function BulkRequestsWorksheet({ isUS = false }: BulkRequestsWorksheetPro
                               onRemove={(rIdx) => update(row.id, { wpRef: row.wpRef.filter((_, i) => i !== (rIdx ?? -1)) })}
                             />
                           </td>
-                          <td className="px-4 py-2.5 align-top">
+                          <td className="px-4 py-2.5 align-top sticky right-0 bg-card">
                             <div className="flex items-center justify-center gap-1">
                               <Button variant="ghost" size="icon" className="h-7 w-7 text-link hover:bg-link/10" onClick={() => duplicateRow(row.id)} title="Duplicate">
                                 <Copy className="h-3.5 w-3.5" />
@@ -466,7 +456,7 @@ export function BulkRequestsWorksheet({ isUS = false }: BulkRequestsWorksheetPro
                                   <th className={cn(thCls, 'w-[160px]')}>Sent</th>
                                   <th className={cn(thCls, 'w-[120px]')}>Status</th>
                                   <th className={cn(thCls, 'w-[100px] text-center')}>Activity</th>
-                                  <th className={cn(thCls, 'w-[90px] text-center')}>Actions</th>
+                                  <th className={cn(thCls, 'w-[90px] text-center sticky right-0 bg-card')}>Actions</th>
                                 </tr>
                               </thead>
                               <tbody className="divide-y divide-border">
@@ -501,7 +491,7 @@ export function BulkRequestsWorksheet({ isUS = false }: BulkRequestsWorksheetPro
                                           <span className="inline-flex items-center gap-0.5"><MessageSquare className="h-3 w-3" />{req.comments}</span>
                                         </div>
                                       </td>
-                                      <td className="px-4 py-2.5">
+                                      <td className="px-4 py-2.5 sticky right-0 bg-card">
                                         <div className="flex items-center justify-center gap-1">
                                           <Button variant="ghost" size="icon" className="h-7 w-7 text-link hover:bg-link/10" title="Edit">
                                             <Pencil className="h-3.5 w-3.5" />
@@ -553,7 +543,7 @@ export function BulkRequestsWorksheet({ isUS = false }: BulkRequestsWorksheetPro
                         <th className={cn(thCls, 'w-[220px]')}>Folder</th>
                         <th className={cn(thCls, 'w-[200px]')}>Received From</th>
                         <th className={cn(thCls, 'w-[160px]')}>Received On</th>
-                        <th className={cn(thCls, 'w-[90px] text-center')}>Actions</th>
+                        <th className={cn(thCls, 'w-[90px] text-center sticky right-0 bg-muted')}>Actions</th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-border">
@@ -564,7 +554,7 @@ export function BulkRequestsWorksheet({ isUS = false }: BulkRequestsWorksheetPro
                           <td className="px-4 py-2.5 text-xs text-muted-foreground">{req.folder} › {req.subFolder}</td>
                           <td className="px-4 py-2.5 text-xs text-foreground">{req.recipient}</td>
                           <td className="px-4 py-2.5 text-xs text-muted-foreground">{formatDateTime(req.sentAt)}</td>
-                          <td className="px-4 py-2.5">
+                          <td className="px-4 py-2.5 sticky right-0 bg-card">
                             <div className="flex items-center justify-center">
                               <Button variant="ghost" size="icon" className="h-7 w-7 text-link hover:bg-link/10" title="Download">
                                 <Download className="h-3.5 w-3.5" />
