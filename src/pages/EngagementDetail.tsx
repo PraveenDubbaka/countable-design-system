@@ -1930,7 +1930,7 @@ export default function EngagementDetail() {
                         </DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>
-                    <ExpandableIconButton variant="secondary" size="sm" icon={<Share2 className="h-4 w-4" />} label="Share" onClick={() => toast.info('Share coming soon')} />
+                    <ExpandableIconButton variant="secondary" size="sm" icon={<Share2 className="h-4 w-4" />} label="Share" onClick={handleShareButtonClick} />
                     <ExpandableIconButton
                       variant="secondary"
                       size="sm"
@@ -2241,7 +2241,13 @@ export default function EngagementDetail() {
 
 
         {/* Share with Client Dialog */}
-        <ShareWithClientDialog open={showShareDialog} onOpenChange={setShowShareDialog} checklistName={checklist?.title} onConfirm={handleShareConfirm} isLetter={!!(checklist?.sections?.length && checklist.sections[0]?.questions?.length && checklist.sections[0].questions[0]?.answerType === 'none' && !checklist.objective)} />
+        <ShareWithClientDialog
+          open={showShareDialog}
+          onOpenChange={setShowShareDialog}
+          checklistName={checklist?.title ?? (checklistKey?.startsWith('custom-') ? readJsonFromLocalStorage<CustomSection[]>(`engagement-custom-sections-${engagementId}`, []).find(s => s.id === checklistKey)?.name : undefined)}
+          onConfirm={handleShareConfirm}
+          isLetter={checklistKey?.startsWith('custom-') ? customLetterExists : !!(checklist?.sections?.length && checklist.sections[0]?.questions?.length && checklist.sections[0].questions[0]?.answerType === 'none' && !checklist.objective)}
+        />
 
         <ConnectorsModal
           open={connectorsOpen}
