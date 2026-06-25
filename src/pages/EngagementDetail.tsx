@@ -1955,7 +1955,7 @@ export default function EngagementDetail() {
                       <DropdownMenuTrigger asChild>
                         <Button size="sm" className="gap-1.5 h-7 px-2.5 text-xs">
                           <Plus className="h-3.5 w-3.5" />
-                          {sec?.name ?? 'Letter'}
+                          Letter
                           <ChevronDown className="h-3.5 w-3.5" />
                         </Button>
                       </DropdownMenuTrigger>
