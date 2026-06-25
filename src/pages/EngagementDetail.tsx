@@ -51,7 +51,7 @@ import { readJsonFromLocalStorage, writeJsonToLocalStorage } from "@/lib/safeJso
 import { subscribeToChecklistSync, dispatchChecklistSync } from "@/lib/checklistSync";
 import { toast } from "sonner";
 import { ShareWithClientDialog } from "@/components/ShareWithClientDialog";
-import { LetterSectionPage } from "@/components/LetterSectionPage";
+import { LetterSectionPage, type LetterSectionPageHandle } from "@/components/LetterSectionPage";
 import { CustomSection } from "@/components/Sidebar";
 import { NotesWorksheet } from "@/components/NotesWorksheet";
 import { ClientResponseDialog } from "@/components/ClientResponseDialog";
@@ -762,6 +762,7 @@ export default function EngagementDetail() {
   const [objectiveExpanded, setObjectiveExpanded] = useState(false);
   const [isLetterEditing, setIsLetterEditing] = useState(false);
   const letterSaveRef = useRef<(() => void) | null>(null);
+  const letterPageRef = useRef<LetterSectionPageHandle>(null);
   const [isFSEditing, setIsFSEditing] = useState(false);
   const fsSaveRef = useRef<(() => void) | null>(null);
   const [showShareDialog, setShowShareDialog] = useState(false);
@@ -1890,6 +1891,28 @@ export default function EngagementDetail() {
                   </DropdownMenu>
                 </>
               ) : null}
+              {checklistKey?.startsWith('custom-') && (() => {
+                const sec = readJsonFromLocalStorage<CustomSection[]>(`engagement-custom-sections-${engagementId}`, []).find(s => s.id === checklistKey);
+                return (
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button size="sm" className="gap-1.5 h-7 px-2.5 text-xs">
+                        <Plus className="h-3.5 w-3.5" />
+                        {sec?.name ?? 'Letter'}
+                        <ChevronDown className="h-3.5 w-3.5" />
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end" className="w-44">
+                      <DropdownMenuItem className="gap-2 cursor-pointer text-sm" onClick={() => letterPageRef.current?.openUpload()}>
+                        <Upload className="h-4 w-4 text-muted-foreground" /> Upload a letter
+                      </DropdownMenuItem>
+                      <DropdownMenuItem className="gap-2 cursor-pointer text-sm" onClick={() => letterPageRef.current?.openTemplatePanel()}>
+                        <FileText className="h-4 w-4 text-muted-foreground" /> Create from template
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                );
+              })()}
               {checklist && <>
                 {(() => {
                   const isLetter = checklist?.sections?.length > 0 && checklist.sections[0]?.questions?.length > 0 && checklist.sections[0].questions[0]?.answerType === 'none' && !checklist.objective;
@@ -1996,6 +2019,7 @@ export default function EngagementDetail() {
             return (
               <div className="relative flex flex-col flex-1 min-h-0">
                 <LetterSectionPage
+                  ref={letterPageRef}
                   sectionId={checklistKey}
                   sectionName={sec?.name ?? 'Letter'}
                   engagementId={engagementId ?? ''}
