@@ -139,16 +139,21 @@ function buildChecklist(sectionId: string, sectionName: string, html: string): C
 export interface LetterSectionPageHandle {
   openTemplatePanel: () => void;
   openUpload: () => void;
+  startEditing: () => void;
+  saveEdits: () => void;
+  cancelEdits: () => void;
 }
 
 interface LetterSectionPageProps {
   sectionName: string;
   sectionId: string;
   engagementId: string;
+  onLetterExistsChange?: (exists: boolean) => void;
+  onEditingChange?: (editing: boolean) => void;
 }
 
 export const LetterSectionPage = forwardRef<LetterSectionPageHandle, LetterSectionPageProps>(
-  ({ sectionName, sectionId, engagementId }, ref) => {
+  ({ sectionName, sectionId, engagementId, onLetterExistsChange, onEditingChange }, ref) => {
     const storageKey = LETTER_HTML_KEY(engagementId, sectionId);
     const [letterHtml, setLetterHtml] = useState<string | null>(() =>
       readJsonFromLocalStorage<string | null>(storageKey, null)
@@ -165,13 +170,20 @@ export const LetterSectionPage = forwardRef<LetterSectionPageHandle, LetterSecti
 
     // Re-read storage when sectionId changes (navigation)
     useEffect(() => {
-      setLetterHtml(readJsonFromLocalStorage<string | null>(storageKey, null));
+      const html = readJsonFromLocalStorage<string | null>(storageKey, null);
+      setLetterHtml(html);
       setIsEditing(false);
+      onLetterExistsChange?.(html !== null);
+      onEditingChange?.(false);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [storageKey]);
 
     useImperativeHandle(ref, () => ({
       openTemplatePanel: () => setShowTemplatePanel(true),
       openUpload: () => uploadRef.current?.click(),
+      startEditing: () => { setIsEditing(true); onEditingChange?.(true); },
+      saveEdits: () => { letterSaveRef.current?.(); },
+      cancelEdits: () => { setIsEditing(false); onEditingChange?.(false); },
     }));
 
     const handleToggle = (id: string) => {
@@ -187,6 +199,8 @@ export const LetterSectionPage = forwardRef<LetterSectionPageHandle, LetterSecti
       setLetterHtml(html);
       setShowTemplatePanel(false);
       setIsEditing(true);
+      onLetterExistsChange?.(true);
+      onEditingChange?.(true);
     };
 
     const handleSelectTemplate = (name: string) => {
@@ -228,9 +242,9 @@ export const LetterSectionPage = forwardRef<LetterSectionPageHandle, LetterSecti
             checklist={buildChecklist(sectionId, sectionName, letterHtml)}
             onUpdate={handleLetterUpdate}
             isEditing={isEditing}
-            onEditStart={() => setIsEditing(true)}
-            onSaveEdits={() => setIsEditing(false)}
-            onCancelEdits={() => setIsEditing(false)}
+            onEditStart={() => { setIsEditing(true); onEditingChange?.(true); }}
+            onSaveEdits={() => { setIsEditing(false); onEditingChange?.(false); }}
+            onCancelEdits={() => { setIsEditing(false); onEditingChange?.(false); }}
             saveRef={letterSaveRef}
           />
         ) : (

@@ -763,6 +763,8 @@ export default function EngagementDetail() {
   const [isLetterEditing, setIsLetterEditing] = useState(false);
   const letterSaveRef = useRef<(() => void) | null>(null);
   const letterPageRef = useRef<LetterSectionPageHandle>(null);
+  const [customLetterExists, setCustomLetterExists] = useState(false);
+  const [customLetterIsEditing, setCustomLetterIsEditing] = useState(false);
   const [isFSEditing, setIsFSEditing] = useState(false);
   const fsSaveRef = useRef<(() => void) | null>(null);
   const [showShareDialog, setShowShareDialog] = useState(false);
@@ -918,6 +920,17 @@ export default function EngagementDetail() {
     const nInfo = nId ? CHECKLIST_SIDEBAR_INFO[nId] : undefined;
     return { nextChecklistLabel: nInfo?.label ?? nKey, nextChecklistKey: nKey };
   }, [checklistKey]);
+
+  // Sync custom letter existence state when navigating to/from custom sections
+  useEffect(() => {
+    if (checklistKey?.startsWith('custom-') && engagementId) {
+      const html = readJsonFromLocalStorage<string | null>(`custom-letter-html-${engagementId}-${checklistKey}`, null);
+      setCustomLetterExists(html !== null);
+    } else {
+      setCustomLetterExists(false);
+    }
+    setCustomLetterIsEditing(false);
+  }, [checklistKey, engagementId]);
 
   // Redirect to first checklist when no key is in URL
   useEffect(() => {
@@ -1891,28 +1904,72 @@ export default function EngagementDetail() {
                   </DropdownMenu>
                 </>
               ) : null}
-              {checklistKey?.startsWith('custom-') && (() => {
-                const sec = readJsonFromLocalStorage<CustomSection[]>(`engagement-custom-sections-${engagementId}`, []).find(s => s.id === checklistKey);
-                return (
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <Button size="sm" className="gap-1.5 h-7 px-2.5 text-xs">
-                        <Plus className="h-3.5 w-3.5" />
-                        {sec?.name ?? 'Letter'}
-                        <ChevronDown className="h-3.5 w-3.5" />
-                      </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end" className="w-44">
-                      <DropdownMenuItem className="gap-2 cursor-pointer text-sm" onClick={() => letterPageRef.current?.openUpload()}>
-                        <Upload className="h-4 w-4 text-muted-foreground" /> Upload a letter
-                      </DropdownMenuItem>
-                      <DropdownMenuItem className="gap-2 cursor-pointer text-sm" onClick={() => letterPageRef.current?.openTemplatePanel()}>
-                        <FileText className="h-4 w-4 text-muted-foreground" /> Create from template
-                      </DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-                );
-              })()}
+              {checklistKey?.startsWith('custom-') && (
+                customLetterExists ? (
+                  <>
+                    {customLetterIsEditing ? (
+                      <>
+                        <ExpandableIconButton variant="secondary" icon={<X className="h-4 w-4" />} label="Cancel" size="sm" onClick={() => letterPageRef.current?.cancelEdits()} />
+                        <ExpandableIconButton variant="default" icon={<Check className="h-4 w-4" />} label="Save" size="sm" onClick={() => letterPageRef.current?.saveEdits()} />
+                      </>
+                    ) : (
+                      <ExpandableIconButton variant="secondary" icon={<Pencil className="h-4 w-4" />} label="Edit" size="sm" onClick={() => letterPageRef.current?.startEditing()} />
+                    )}
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <ExpandableIconButton variant="secondary" size="sm" icon={<Download className="h-4 w-4" />} label="Export" />
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end" className="bg-card border shadow-lg z-50 w-40">
+                        <DropdownMenuItem className="flex items-center gap-2 cursor-pointer group" onClick={() => toast.info('Exporting as PDF...')}>
+                          <FileText className="h-4 w-4 text-muted-foreground group-hover:text-foreground transition-colors" />
+                          <span>PDF</span>
+                        </DropdownMenuItem>
+                        <DropdownMenuItem className="flex items-center gap-2 cursor-pointer group" onClick={() => toast.info('Exporting as Word...')}>
+                          <FileType className="h-4 w-4 text-muted-foreground group-hover:text-foreground transition-colors" />
+                          <span>Word</span>
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                    <ExpandableIconButton variant="secondary" size="sm" icon={<Share2 className="h-4 w-4" />} label="Share" onClick={() => toast.info('Share coming soon')} />
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <ExpandableIconButton variant="default" size="sm" icon={<CheckCircle2 className="h-4 w-4" />} label="Signoff" />
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end" className="bg-card border shadow-lg z-50 w-44">
+                        <DropdownMenuItem className="flex items-center gap-2 cursor-pointer" onClick={() => toast.success('Signed off as Preparer')}>
+                          <Check className="h-4 w-4" />
+                          <span>Sign off as Preparer</span>
+                        </DropdownMenuItem>
+                        <DropdownMenuItem className="flex items-center gap-2 cursor-pointer" onClick={() => toast.success('Signed off as Reviewer')}>
+                          <Check className="h-4 w-4" />
+                          <span>Sign off as Reviewer</span>
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  </>
+                ) : (() => {
+                  const sec = readJsonFromLocalStorage<CustomSection[]>(`engagement-custom-sections-${engagementId}`, []).find(s => s.id === checklistKey);
+                  return (
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button size="sm" className="gap-1.5 h-7 px-2.5 text-xs">
+                          <Plus className="h-3.5 w-3.5" />
+                          {sec?.name ?? 'Letter'}
+                          <ChevronDown className="h-3.5 w-3.5" />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end" className="w-44">
+                        <DropdownMenuItem className="gap-2 cursor-pointer text-sm" onClick={() => letterPageRef.current?.openUpload()}>
+                          <Upload className="h-4 w-4 text-muted-foreground" /> Upload a letter
+                        </DropdownMenuItem>
+                        <DropdownMenuItem className="gap-2 cursor-pointer text-sm" onClick={() => letterPageRef.current?.openTemplatePanel()}>
+                          <FileText className="h-4 w-4 text-muted-foreground" /> Create from template
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  );
+                })()
+              )}
               {checklist && <>
                 {(() => {
                   const isLetter = checklist?.sections?.length > 0 && checklist.sections[0]?.questions?.length > 0 && checklist.sections[0].questions[0]?.answerType === 'none' && !checklist.objective;
@@ -2023,6 +2080,8 @@ export default function EngagementDetail() {
                   sectionId={checklistKey}
                   sectionName={sec?.name ?? 'Letter'}
                   engagementId={engagementId ?? ''}
+                  onLetterExistsChange={setCustomLetterExists}
+                  onEditingChange={setCustomLetterIsEditing}
                 />
               </div>
             );
