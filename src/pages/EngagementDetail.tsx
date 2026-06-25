@@ -1959,11 +1959,11 @@ export default function EngagementDetail() {
                           <ChevronDown className="h-3.5 w-3.5" />
                         </Button>
                       </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end" className="w-44">
-                        <DropdownMenuItem className="gap-2 cursor-pointer text-sm" onClick={() => letterPageRef.current?.openUpload()}>
+                      <DropdownMenuContent align="end" className="w-52">
+                        <DropdownMenuItem className="gap-2 cursor-pointer text-sm whitespace-nowrap" onClick={() => letterPageRef.current?.openUpload()}>
                           <Upload className="h-4 w-4 text-muted-foreground" /> Upload a letter
                         </DropdownMenuItem>
-                        <DropdownMenuItem className="gap-2 cursor-pointer text-sm" onClick={() => letterPageRef.current?.openTemplatePanel()}>
+                        <DropdownMenuItem className="gap-2 cursor-pointer text-sm whitespace-nowrap" onClick={() => letterPageRef.current?.openTemplatePanel()}>
                           <FileText className="h-4 w-4 text-muted-foreground" /> Create from template
                         </DropdownMenuItem>
                       </DropdownMenuContent>
