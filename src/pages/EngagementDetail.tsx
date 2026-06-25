@@ -629,6 +629,7 @@ const NAV_KEY_TO_CHECKLIST_ID: Record<string, string> = {
 };
 
 const CUSTOM_WORKSHEET_TITLES: Record<string, string> = {
+  'aud-plan': 'Team Planning Discussions', 'aud-us-plan': 'Team Planning Discussions',
   'aud-mat': 'Materiality', 'aud-us-mat': 'Materiality',
   'aud-tt': 'Time Tracker', 'aud-us-tt': 'Time Tracker',
   'aud-iar': 'Management Requests', 'aud-us-iar': 'Management Requests',
@@ -2235,7 +2236,7 @@ export default function EngagementDetail() {
           </div>
 
           {/* Floating Action Bar for Preview Mode - Inside content area */}
-          {checklist && !FS_PAGE_KEYS.has(checklistKey ?? '') && !checklistKey?.startsWith('notes-') && <FloatingActionBar checklist={checklist ?? undefined} onUpdate={handleChecklistUpdate} onCollapseSections={handleCollapseSections} onExpandSections={handleExpandSections} onCollapseQuestions={handleCollapseQuestions} onExpandQuestions={handleExpandQuestions} allSectionsCollapsed={allSectionsCollapsed} allQuestionsCollapsed={allQuestionsCollapsed} isCompactMode={isCompactMode} onToggleCompactMode={handleToggleCompactMode} selectedQuestions={selectedQuestions} onBulkDelete={handleBulkDelete} onAddCategory={handleAddCategory} isPreviewMode={true} isChecklist={!!checklist && !(checklist.sections?.length && checklist.sections[0]?.questions?.length && checklist.sections[0].questions[0]?.answerType === 'none' && !checklist.objective)} />}
+          {checklist && !FS_PAGE_KEYS.has(checklistKey ?? '') && !checklistKey?.startsWith('notes-') && !(checklistKey && checklistKey in CUSTOM_WORKSHEET_TITLES) && <FloatingActionBar checklist={checklist ?? undefined} onUpdate={handleChecklistUpdate} onCollapseSections={handleCollapseSections} onExpandSections={handleExpandSections} onCollapseQuestions={handleCollapseQuestions} onExpandQuestions={handleExpandQuestions} allSectionsCollapsed={allSectionsCollapsed} allQuestionsCollapsed={allQuestionsCollapsed} isCompactMode={isCompactMode} onToggleCompactMode={handleToggleCompactMode} selectedQuestions={selectedQuestions} onBulkDelete={handleBulkDelete} onAddCategory={handleAddCategory} isPreviewMode={true} isChecklist={!!checklist && !(checklist.sections?.length && checklist.sections[0]?.questions?.length && checklist.sections[0].questions[0]?.answerType === 'none' && !checklist.objective)} />}
         </div>
 
         {/* Right Panel or Add Checklist Sheet */}
