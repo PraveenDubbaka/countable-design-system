@@ -54,6 +54,7 @@ import {
   Circle,
   ArrowRight,
   Smartphone,
+  FileSpreadsheet,
 } from "lucide-react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { cn } from "@/lib/utils";
@@ -108,6 +109,9 @@ interface AskLukaOverlayProps {
   onStartSectionBySection?: () => void;
   initialTab?: "threads" | "workspace";
   initialWorkspaceEngagement?: { name: string; code: string; source?: "quickbooks" | "xero" };
+  pap501Mode?: boolean;
+  pap501Sources?: string[];
+  onPap501Accept?: () => void;
 }
 
 const quickPrompts = [
@@ -252,6 +256,9 @@ export function AskLukaOverlay({
   onStartSectionBySection,
   initialTab,
   initialWorkspaceEngagement,
+  pap501Mode,
+  pap501Sources,
+  onPap501Accept,
 }: AskLukaOverlayProps) {
   const [activeTab, setActiveTab] = useState<"threads" | "workspace">("threads");
   const [inputValue, setInputValue] = useState("");
@@ -263,6 +270,7 @@ export function AskLukaOverlay({
   const [recentThreads, setRecentThreads] = useState<ThreadItem[]>(initialRecentThreads);
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [analysisPhase, setAnalysisPhase] = useState<"idle" | "analyzing" | "ready">("idle");
+  const [pap501Phase, setPap501Phase] = useState<"analyzing" | "artifact">("analyzing");
 
   useEffect(() => {
     if (open && initialQuery) setInputValue(initialQuery);
@@ -277,6 +285,16 @@ export function AskLukaOverlay({
       setAnalysisPhase("idle");
     }
   }, [open, autoFillMode]);
+
+  useEffect(() => {
+    if (open && pap501Mode) {
+      setPap501Phase("analyzing");
+      const t = window.setTimeout(() => setPap501Phase("artifact"), 2500);
+      return () => window.clearTimeout(t);
+    } else {
+      setPap501Phase("analyzing");
+    }
+  }, [open, pap501Mode]);
 
   // Auto-select the current engagement when opening in autoFillMode
   useEffect(() => {
@@ -1435,6 +1453,99 @@ const [workspaceLoading, setWorkspaceLoading] = useState(false);
                       <button onClick={() => onStartSectionBySection?.()} className="w-full inline-flex items-center justify-center gap-2 h-10 px-5 rounded-[10px] text-sm font-semibold border border-primary/40 text-primary hover:bg-primary/5 transition-colors">Start section by section</button>
                     </div>
                   </div>
+                    ) : pap501Mode ? (
+                  /* ── PAP 501 threads generation view ── */
+                  <div className="flex-1 flex flex-col px-5 pt-5 pb-4 gap-4 overflow-y-auto">
+                    {/* User message bubble */}
+                    <div className="flex justify-end">
+                      <motion.div
+                        initial={{ opacity: 0, y: 8 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.25 }}
+                        className="max-w-[78%] rounded-2xl rounded-tr-sm px-4 py-2.5 text-sm text-white"
+                        style={{ background: 'linear-gradient(135deg, hsl(270 65% 55%), hsl(207 71% 38%))' }}
+                      >
+                        <p className="font-medium">Generate PAP 501 — Preliminary Analytical Procedures worksheet</p>
+                        {engagementLabel && <p className="text-[11px] opacity-70 mt-0.5">{engagementLabel}</p>}
+                      </motion.div>
+                    </div>
+
+                    {/* Luka response */}
+                    <div className="flex gap-3">
+                      <motion.div
+                        initial={{ scale: 0.8, opacity: 0 }}
+                        animate={{ scale: 1, opacity: 1 }}
+                        transition={{ delay: 0.3 }}
+                        className="w-8 h-8 rounded-full flex items-center justify-center shrink-0 mt-0.5"
+                        style={{ background: 'linear-gradient(135deg, #8649F1, #2355A4)' }}
+                      >
+                        <LukaIcon size={15} />
+                      </motion.div>
+
+                      <div className="flex-1 min-w-0">
+                        {pap501Phase === 'analyzing' ? (
+                          <motion.div
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            transition={{ delay: 0.4 }}
+                            className="flex items-center gap-1.5 mt-2"
+                          >
+                            <span className="w-2 h-2 rounded-full bg-primary/50 animate-bounce" style={{ animationDelay: '0ms' }} />
+                            <span className="w-2 h-2 rounded-full bg-primary/50 animate-bounce" style={{ animationDelay: '150ms' }} />
+                            <span className="w-2 h-2 rounded-full bg-primary/50 animate-bounce" style={{ animationDelay: '300ms' }} />
+                          </motion.div>
+                        ) : (
+                          <motion.div
+                            initial={{ opacity: 0, y: 8 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ duration: 0.3 }}
+                          >
+                            <p className="text-sm text-foreground mb-3 leading-relaxed">
+                              I've analyzed{' '}
+                              <span className="font-medium">{(pap501Sources ?? ['Xero connection', 'Predecessor file']).join(' and ')}</span>
+                              {engagementLabel ? ` for ${engagementLabel}` : ''}. Here's the PAP 501 worksheet ready for your review:
+                            </p>
+
+                            {/* XLSX Artifact card */}
+                            <div className="rounded-xl border border-border bg-card overflow-hidden shadow-sm">
+                              <div className="flex items-center gap-3 px-4 py-3 border-b border-border">
+                                <div className="w-10 h-10 rounded-lg bg-green-50 dark:bg-green-950/40 border border-green-200 dark:border-green-800 flex items-center justify-center shrink-0">
+                                  <FileSpreadsheet className="h-5 w-5 text-green-600" />
+                                </div>
+                                <div className="flex-1 min-w-0">
+                                  <p className="text-sm font-semibold text-foreground truncate">501 Worksheet — Preliminary Analytical Procedures.xlsm</p>
+                                  <p className="text-xs text-muted-foreground">XLSX Document · 3 sheets · Part A, Part B, Part C</p>
+                                </div>
+                              </div>
+                              <div className="px-4 py-2.5 bg-muted/20 border-b border-border">
+                                <p className="text-xs text-muted-foreground">
+                                  <span className="font-medium text-foreground">Sources:</span>{' '}
+                                  {(pap501Sources ?? ['Xero connection', 'Predecessor file']).join(', ')}
+                                </p>
+                                <p className="text-xs text-muted-foreground mt-0.5">5 analytical procedures · Income statement · Balance sheet · Ratios</p>
+                              </div>
+                              <div className="flex gap-2 px-4 py-3">
+                                <button
+                                  onClick={() => onPap501Accept?.()}
+                                  className="flex-1 inline-flex items-center justify-center gap-1.5 h-8 rounded-lg text-sm font-semibold text-white transition-opacity hover:opacity-90"
+                                  style={{ background: 'linear-gradient(135deg, #8649F1, #2355A4)' }}
+                                >
+                                  <Check size={14} />
+                                  Accept
+                                </button>
+                                <button
+                                  onClick={() => onOpenChange(false)}
+                                  className="flex-1 inline-flex items-center justify-center h-8 rounded-lg text-sm font-medium border border-border text-muted-foreground hover:bg-muted/50 transition-colors"
+                                >
+                                  Decline
+                                </button>
+                              </div>
+                            </div>
+                          </motion.div>
+                        )}
+                      </div>
+                    </div>
+                  </div>
                     ) : autoFillMode ? (
                   /* ── AutoFill analysis view ── */
                   <div className="flex-1 flex flex-col items-center justify-center px-8 min-h-[60vh]">
@@ -1529,8 +1640,8 @@ const [workspaceLoading, setWorkspaceLoading] = useState(false);
                   )}
                   </div>
 
-                  {/* Input area — hidden in autoFill/summary/overview modes */}
-                  {!autoFillMode && !summaryMode && !allTemplateSummary && !engagementOverviewMode && (
+                  {/* Input area — hidden in autoFill/summary/overview/pap501 modes */}
+                  {!autoFillMode && !summaryMode && !allTemplateSummary && !engagementOverviewMode && !pap501Mode && (
                   <div className="px-4 pb-4 pt-2 relative">
                     {/* Prompt Window */}
                     <AnimatePresence>

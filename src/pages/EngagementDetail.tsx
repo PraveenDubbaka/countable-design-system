@@ -790,6 +790,7 @@ export default function EngagementDetail() {
   );
   const [lukaQuery, setLukaQuery] = useState("");
   const [lukaAutoFillConfig, setLukaAutoFillConfig] = useState<{ label: string; sources: string[]; engagementLabel: string } | null>(null);
+  const [lukaPap501Config, setLukaPap501Config] = useState<{ engLabel: string; sources: string[] } | null>(null);
   const [isAutoFilling, setIsAutoFilling] = useState(false);
   const [liveApplyingId, setLiveApplyingId] = useState<string | null>(null);
   const [lukaFillSummary, setLukaFillSummary] = useState<{
@@ -827,7 +828,7 @@ export default function EngagementDetail() {
       if (ce.detail?.engagementId !== engagementId) return;
       const client = engagementId ? engagementsData[engagementId]?.client : undefined;
       const engLabel = [client, engagementId].filter(Boolean).join(' · ');
-      setLukaAutoFillConfig({ label: ce.detail.label, sources: ce.detail.sources, engagementLabel: engLabel });
+      setLukaPap501Config({ engLabel, sources: ce.detail.sources });
       setLukaOpen(true);
     };
     window.addEventListener('pap501-generate', handler);
@@ -2386,22 +2387,20 @@ export default function EngagementDetail() {
       onOpenChange={(o) => {
         setLukaOpen(o);
         if (!o) {
-          // If Luka was opened for PAP 501 generation, signal acceptance back
-          ['ca','us'].forEach(variant => {
-            const pendingKey = `pap501-pending-${engagementId}-${variant}`;
-            if (localStorage.getItem(pendingKey)) {
-              localStorage.removeItem(pendingKey);
-              window.dispatchEvent(new CustomEvent('pap501-luka-accepted', { detail: { engagementId } }));
-            }
-          });
-          setLukaAutoFillConfig(null); setLukaFillSummary(null); setLukaAllTemplateSummary(null); setLukaAutoFillProgress(null); setLukaEngagementOverviewMode(false); setLukaInitialTab("threads"); setLukaInitialWorkspaceEngagement(undefined);
+          setLukaAutoFillConfig(null); setLukaFillSummary(null); setLukaAllTemplateSummary(null); setLukaAutoFillProgress(null); setLukaEngagementOverviewMode(false); setLukaInitialTab("threads"); setLukaInitialWorkspaceEngagement(undefined); setLukaPap501Config(null);
         }
       }}
       initialQuery={lukaQuery}
       autoFillMode={!!lukaAutoFillConfig}
       checklistLabel={lukaAutoFillConfig?.label}
-      engagementLabel={lukaAutoFillConfig?.engagementLabel}
+      engagementLabel={lukaAutoFillConfig?.engagementLabel ?? lukaPap501Config?.engLabel}
       autoFillSources={lukaAutoFillConfig?.sources}
+      pap501Mode={!!lukaPap501Config}
+      pap501Sources={lukaPap501Config?.sources}
+      onPap501Accept={() => {
+        window.dispatchEvent(new CustomEvent('pap501-luka-accepted', { detail: { engagementId } }));
+        setLukaOpen(false);
+      }}
       onAutoFillConfirmed={handleAutoFillConfirmed}
       onAutoFillAll={handleAutoFillAll}
       summaryMode={!!lukaFillSummary}

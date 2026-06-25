@@ -397,7 +397,6 @@ export function AuditPAP501Worksheet({ isUS = false }: { isUS?: boolean }) {
   }
 
   function handleGenerate() {
-    localStorage.setItem(`pap501-pending-${engagementId}-${isUS ? 'us' : 'ca'}`, 'true');
     window.dispatchEvent(new CustomEvent('pap501-generate', {
       detail: {
         engagementId,
