@@ -337,7 +337,7 @@ export function BulkRequestsWorksheet({ isUS = false }: BulkRequestsWorksheetPro
                     {rows.map((row, idx) => {
                       const invalid = !row.recipient || !row.docName.trim() || !row.dueDate;
                       return (
-                        <tr key={row.id} className={cn('hover:bg-muted/50 transition-colors', invalid && 'bg-destructive/[0.02]')}>
+                        <tr key={row.id} className={cn('bg-background hover:bg-muted/50 transition-colors', invalid && '!bg-destructive/[0.02]')}>
                           <td className="px-4 py-2.5 align-top text-xs text-muted-foreground">{idx + 1}</td>
                           <td className="px-4 py-2.5 align-top">
                             <Select value={row.type} onValueChange={v => update(row.id, { type: v as RequestRow['type'] })}>
