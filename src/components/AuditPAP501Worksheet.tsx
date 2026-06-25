@@ -1,14 +1,34 @@
 import { useState, useEffect, useRef } from "react";
 import { useParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Info } from "lucide-react";
+import { Info, Sparkles, FileSpreadsheet, CheckCircle2, RefreshCw, ArrowRight, AlertCircle, Loader2 } from "lucide-react";
 import { RefButton, RefDoc } from "@/components/RefButton";
 import { readJsonFromLocalStorage, writeJsonToLocalStorage } from "@/lib/safeJson";
 import { loadEngagements } from "@/store/engagementsStore";
+
+// ── Flow state machine ─────────────────────────────────────────────────────────
+
+type FlowState = 'idle' | 'conversation' | 'generating' | 'artifact-ready' | 'worksheet';
+
+const PAP_QUESTIONS = [
+  { id: 'period_end',      label: 'Confirm or update the period end date for this engagement:', type: 'date' as const },
+  { id: 'revenue_streams', label: 'What are the primary revenue streams for this entity?', type: 'text' as const, placeholder: 'e.g. Shipping services, freight forwarding, port fees' },
+  { id: 'changes',         label: 'Any significant changes in the business this year?', type: 'select' as const, options: ['No significant changes', 'Change in business model', 'Major acquisition or disposal', 'Key management change', 'New financing arrangements', 'Other'] },
+  { id: 'focus',           label: 'Specific areas to focus the analysis on? (optional)', type: 'text' as const, placeholder: 'e.g. Cost of goods sold, payroll, related-party transactions' },
+] as const;
+
+const GEN_STEPS = [
+  'Connecting to Xero data source…',
+  'Fetching trial balance and financial data…',
+  'Comparing current year vs prior period…',
+  'Identifying unusual fluctuations…',
+  'Generating 501 worksheet…',
+];
 
 // ── Types ──────────────────────────────────────────────────────────────────────
 
@@ -164,6 +184,47 @@ export function AuditPAP501Worksheet({ isUS = false }: { isUS?: boolean }) {
     const t = setTimeout(() => writeJsonToLocalStorage(storageKey, data), 600);
     return () => clearTimeout(t);
   }, [data, storageKey]);
+
+  // ── Flow state ───────────────────────────────────────────────────────────────
+
+  const flowKey = `pap501-flow-${engagementId}-${isUS ? 'us' : 'ca'}`;
+
+  const [flowState, setFlowState] = useState<FlowState>(() => {
+    return readJsonFromLocalStorage<{ s: FlowState } | null>(flowKey, null)?.s ?? 'idle';
+  });
+  const persistFlow = (s: FlowState) => {
+    setFlowState(s);
+    writeJsonToLocalStorage(flowKey, { s });
+  };
+
+  const [connectedSource, setConnectedSource] = useState<string | null>(null);
+  useEffect(() => {
+    const connectors = readJsonFromLocalStorage<string[]>(`connectors-${engagementId}`, ['xero']);
+    setConnectedSource(connectors[0] ?? null);
+  }, [engagementId]);
+
+  const [convStep, setConvStep] = useState(0);
+  const [convAnswers, setConvAnswers] = useState<Record<string, string>>({
+    period_end: periodEnded !== '—' ? periodEnded : '',
+  });
+
+  const [genStep, setGenStep] = useState(0);
+  useEffect(() => {
+    if (flowState !== 'generating') return;
+    setGenStep(0);
+    let step = 0;
+    const iv = setInterval(() => {
+      step++;
+      setGenStep(step);
+      if (step >= GEN_STEPS.length) {
+        clearInterval(iv);
+        const t = setTimeout(() => persistFlow('artifact-ready'), 500);
+        return () => clearTimeout(t);
+      }
+    }, 650);
+    return () => clearInterval(iv);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [flowState]);
 
   const locked = data.concluded;
   const set = (patch: Partial<PAP501Data>) => setData(d => ({ ...d, ...patch }));
@@ -336,8 +397,269 @@ export function AuditPAP501Worksheet({ isUS = false }: { isUS?: boolean }) {
 
   const showBudget = true;
 
+  // ── Accept artifact — pre-fill mock generated data ───────────────────────────
+  function acceptArtifact() {
+    const mockFin: PAP501Data['fin'] = { ...buildDefault().fin };
+    mockFin['s1'] = { current: '16732400', budget: '', prior: '14891200', hasIssue: 'No', explanation: '', auditResponse: '' };
+    mockFin['cos1'] = { current: '12214300', budget: '', prior: '10802100', hasIssue: 'Yes', explanation: 'Increase of 13.1% driven by fuel surcharges and third-party port fees. Proportion of revenue consistent with prior year (73%).', auditResponse: 'Form 520 — Cost analysis' };
+    mockFin['exp-sal'] = { current: '1842100', budget: '', prior: '1698400', hasIssue: 'No', explanation: '', auditResponse: '' };
+    mockFin['exp-occ'] = { current: '621400', budget: '', prior: '598200', hasIssue: 'No', explanation: '', auditResponse: '' };
+    mockFin['exp-int'] = { current: '189300', budget: '', prior: '201800', hasIssue: 'No', explanation: '', auditResponse: '' };
+    mockFin['exp-oth1'] = { current: '450000', budget: '', prior: '343500', hasIssue: 'Yes', explanation: 'Other expenses increased 31% — includes one-time restructuring charge of $120K.', auditResponse: 'Form 505 — Management inquiry' };
+    mockFin['ca-cash'] = { current: '2140000', budget: '', prior: '1820000', hasIssue: 'No', explanation: '', auditResponse: '' };
+    mockFin['ca-ar'] = { current: '3280000', budget: '', prior: '2940000', hasIssue: 'No', explanation: '', auditResponse: '' };
+    mockFin['lta-ppe'] = { current: '8920000', budget: '', prior: '9100000', hasIssue: 'No', explanation: '', auditResponse: '' };
+    mockFin['cl-ap'] = { current: '2610000', budget: '', prior: '2340000', hasIssue: 'No', explanation: '', auditResponse: '' };
+    mockFin['ltl-ltd'] = { current: '4200000', budget: '', prior: '4800000', hasIssue: 'No', explanation: '', auditResponse: '' };
+    mockFin['eq-ret'] = { current: '5130000', budget: '', prior: '4820000', hasIssue: 'No', explanation: '', auditResponse: '' };
+    const mockPartA: PAP501Data['partA'] = { ...buildDefault().partA };
+    Object.assign(mockPartA, {
+      'pa-1': { checked: true, psc: 'Y', exceptions: 'Trial balance and GL obtained from Xero as at March 31, 2024. Agreed to management-prepared financial statements.', wpRef: [] },
+      'pa-2': { checked: true, psc: 'Y', exceptions: 'Information obtained is reliable and adequate. No unexplained differences noted.', wpRef: [] },
+      'pa-3': { checked: true, psc: 'Y', exceptions: '', wpRef: [] },
+      'pa-3a': { checked: true, psc: 'N/A', exceptions: 'No inconsistencies with our understanding of the entity.', wpRef: [] },
+      'pa-3b': { checked: true, psc: 'Y', exceptions: '31% increase in other expenses — investigated; attributable to one-time restructuring charge.', wpRef: [] },
+      'pa-3c': { checked: true, psc: 'N/A', exceptions: '', wpRef: [] },
+      'pa-4': { checked: true, psc: 'Y', exceptions: '', wpRef: [] },
+      'pa-4a': { checked: true, psc: 'Y', exceptions: 'Management confirmed all fluctuations are volume-driven or the one-time restructuring charge.', wpRef: [] },
+      'pa-4b': { checked: true, psc: 'N/A', exceptions: 'No unusual transactions or material misstatements identified.', wpRef: [] },
+      'pa-5': { checked: true, psc: 'Y', exceptions: '', wpRef: [] },
+      'pa-5a': { checked: true, psc: 'N/A', exceptions: '', wpRef: [] },
+      'pa-5b': { checked: true, psc: 'N/A', exceptions: '', wpRef: [] },
+    });
+    const mockMatters: MatterRow[] = [
+      { partBRef: 'IS-COS', summary: 'Cost of services increased 13.1% ($1.4M) — exceeds performance materiality. Driven by fuel surcharges and third-party port fees.', mgmtResponse: 'Increase is volume-driven. Port fees increased industry-wide in H2 2023.', auditImplications: 'Expand cost verification. Obtain breakdown of fuel surcharges. Reference Form 520.' },
+      { partBRef: 'IS-EXP', summary: 'Other operating expenses increased 31% ($106K) — one-time restructuring charge of $120K.', mgmtResponse: 'One-time office consolidation. Board resolution available.', auditImplications: 'Obtain supporting documentation for restructuring charge. Verify expense classification.' },
+      ...Array(8).fill(null).map(emptyMatter),
+    ];
+    setData(d => ({ ...d, fin: { ...d.fin, ...mockFin }, partA: { ...d.partA, ...mockPartA }, matters: mockMatters }));
+    persistFlow('worksheet');
+  }
+
   return (
     <div className="flex flex-col h-full">
+
+      {/* ── IDLE: Generate landing ──────────────────────────────────────────── */}
+      {flowState === 'idle' && (
+        <div className="flex-1 overflow-auto">
+          <div className="max-w-xl mx-auto p-8 flex flex-col gap-6 items-center text-center">
+            <div className="flex flex-col items-center gap-3">
+              <div className="w-14 h-14 rounded-2xl bg-primary/[0.08] flex items-center justify-center">
+                <Sparkles className="h-7 w-7 text-primary" />
+              </div>
+              <div>
+                <h2 className="text-lg font-semibold text-foreground">Preliminary Analytical Procedures</h2>
+                <p className="text-sm text-muted-foreground mt-1">Let Luka analyze your financial data and generate a completed 501 worksheet automatically.</p>
+              </div>
+            </div>
+
+            <div className="w-full bg-card border border-border rounded-lg p-4 text-left flex items-start gap-3">
+              {connectedSource ? (
+                <>
+                  <CheckCircle2 className="h-4 w-4 text-green-500 mt-0.5 shrink-0" />
+                  <div>
+                    <p className="text-sm font-medium text-foreground">Connected to {connectedSource.charAt(0).toUpperCase() + connectedSource.slice(1)}</p>
+                    <p className="text-xs text-muted-foreground mt-0.5">Financial data is available for analysis</p>
+                  </div>
+                </>
+              ) : (
+                <>
+                  <AlertCircle className="h-4 w-4 text-amber-500 mt-0.5 shrink-0" />
+                  <div>
+                    <p className="text-sm font-medium text-foreground">No data source connected</p>
+                    <p className="text-xs text-muted-foreground mt-0.5">Upload a trial balance or connect an accounting data source to enable generation</p>
+                  </div>
+                </>
+              )}
+            </div>
+
+            <div className="w-full bg-card border border-border rounded-lg p-4 text-left space-y-2.5">
+              <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Luka will</p>
+              {[
+                'Compare current period vs prior year across income statement and balance sheet',
+                'Calculate variances and flag fluctuations above the materiality threshold',
+                'Complete Part A qualitative procedures with documented observations',
+                'Generate Part C matters with management discussion prompts',
+              ].map((item, i) => (
+                <div key={i} className="flex items-start gap-2 text-sm text-foreground">
+                  <CheckCircle2 className="h-3.5 w-3.5 text-primary shrink-0 mt-0.5" />
+                  <span>{item}</span>
+                </div>
+              ))}
+            </div>
+
+            <div className="flex flex-col items-center gap-2">
+              <Button className="gap-2" disabled={!connectedSource} onClick={() => { setConvStep(0); persistFlow('conversation'); }}>
+                <Sparkles className="h-4 w-4" />
+                Generate with Luka
+              </Button>
+              {!connectedSource && (
+                <p className="text-xs text-muted-foreground">Upload a trial balance to the engagement to enable generation</p>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ── CONVERSATION: Luka Q&A ──────────────────────────────────────────── */}
+      {flowState === 'conversation' && (() => {
+        const q = PAP_QUESTIONS[convStep];
+        const answer = convAnswers[q.id] ?? '';
+        const isLast = convStep === PAP_QUESTIONS.length - 1;
+        const canNext = q.id === 'focus' || answer.trim().length > 0;
+        return (
+          <div className="flex-1 overflow-auto">
+            <div className="max-w-lg mx-auto p-8 flex flex-col gap-5">
+              <div className="flex items-center gap-3">
+                <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center shrink-0">
+                  <Sparkles className="h-4 w-4 text-white" />
+                </div>
+                <div>
+                  <p className="text-sm font-semibold text-foreground">Luka</p>
+                  <p className="text-xs text-muted-foreground">Before I begin, I have a few quick questions.</p>
+                </div>
+                <span className="ml-auto text-xs text-muted-foreground">{convStep + 1} / {PAP_QUESTIONS.length}</span>
+              </div>
+
+              <div className="flex gap-1.5">
+                {PAP_QUESTIONS.map((_, i) => (
+                  <div key={i} className={`h-1 flex-1 rounded-full transition-colors duration-300 ${i <= convStep ? 'bg-primary' : 'bg-muted'}`} />
+                ))}
+              </div>
+
+              <div className="bg-card border border-border rounded-xl p-5 space-y-3">
+                <p className="text-sm font-medium text-foreground">{q.label}</p>
+                {q.type === 'date' && (
+                  <Input type="date" value={answer} onChange={e => setConvAnswers(a => ({ ...a, [q.id]: e.target.value }))} className="h-9" />
+                )}
+                {q.type === 'text' && (
+                  <Input value={answer} onChange={e => setConvAnswers(a => ({ ...a, [q.id]: e.target.value }))} placeholder={'placeholder' in q ? q.placeholder : ''} className="h-9" />
+                )}
+                {q.type === 'select' && (
+                  <Select value={answer} onValueChange={v => setConvAnswers(a => ({ ...a, [q.id]: v }))}>
+                    <SelectTrigger className="h-9"><SelectValue placeholder="Select an option" /></SelectTrigger>
+                    <SelectContent>{'options' in q && q.options.map(o => <SelectItem key={o} value={o}>{o}</SelectItem>)}</SelectContent>
+                  </Select>
+                )}
+              </div>
+
+              <div className="flex justify-between">
+                <Button variant="ghost" size="sm" onClick={() => convStep > 0 ? setConvStep(s => s - 1) : persistFlow('idle')}>← Back</Button>
+                <Button size="sm" disabled={!canNext} onClick={() => isLast ? persistFlow('generating') : setConvStep(s => s + 1)} className="gap-1.5">
+                  {isLast ? <><Sparkles className="h-3.5 w-3.5" />Generate</> : <>Next<ArrowRight className="h-3.5 w-3.5" /></>}
+                </Button>
+              </div>
+            </div>
+          </div>
+        );
+      })()}
+
+      {/* ── GENERATING ─────────────────────────────────────────────────────── */}
+      {flowState === 'generating' && (
+        <div className="flex-1 flex flex-col items-center justify-center p-8 gap-6">
+          <div className="w-14 h-14 rounded-2xl bg-primary/[0.08] flex items-center justify-center">
+            <Loader2 className="h-7 w-7 text-primary animate-spin" />
+          </div>
+          <div className="text-center">
+            <p className="text-sm font-semibold text-foreground">Generating your PAP worksheet…</p>
+            <p className="text-xs text-muted-foreground mt-1 h-4 transition-all">{GEN_STEPS[Math.min(genStep, GEN_STEPS.length - 1)]}</p>
+          </div>
+          <div className="w-64 bg-muted rounded-full h-1.5 overflow-hidden">
+            <div className="h-full bg-primary rounded-full transition-all duration-700" style={{ width: `${Math.min(100, ((genStep + 1) / GEN_STEPS.length) * 100)}%` }} />
+          </div>
+          <div className="flex flex-col gap-2 w-64">
+            {GEN_STEPS.map((step, i) => (
+              <div key={i} className={`flex items-center gap-2 text-xs transition-all duration-300 ${i < genStep ? 'text-green-600 dark:text-green-400' : i === genStep ? 'text-primary font-medium' : 'text-muted-foreground/40'}`}>
+                {i < genStep ? <CheckCircle2 className="h-3 w-3 shrink-0" /> : i === genStep ? <Loader2 className="h-3 w-3 shrink-0 animate-spin" /> : <div className="h-3 w-3 rounded-full border border-current shrink-0 opacity-30" />}
+                {step}
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* ── ARTIFACT READY ─────────────────────────────────────────────────── */}
+      {flowState === 'artifact-ready' && (
+        <div className="flex-1 overflow-auto">
+          <div className="max-w-2xl mx-auto p-8 flex flex-col gap-6 items-center">
+            <div className="flex flex-col items-center gap-2 text-center">
+              <div className="w-12 h-12 rounded-full bg-green-100 dark:bg-green-950/30 flex items-center justify-center">
+                <CheckCircle2 className="h-6 w-6 text-green-600 dark:text-green-400" />
+              </div>
+              <p className="text-base font-semibold text-foreground">PAP Worksheet Generated</p>
+              <p className="text-sm text-muted-foreground">Luka has analyzed your financial data and completed the 501 worksheet. Review the summary below and accept to view the full form.</p>
+            </div>
+
+            <div className="w-full bg-card border-2 border-primary/20 rounded-xl overflow-hidden shadow-sm">
+              <div className="px-5 py-4 border-b border-border flex items-center gap-3">
+                <div className="w-10 h-10 rounded-lg bg-green-50 dark:bg-green-950/40 flex items-center justify-center shrink-0">
+                  <FileSpreadsheet className="h-5 w-5 text-green-700 dark:text-green-400" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-semibold text-foreground truncate">501 Worksheet — Preliminary Analytical Procedures.xlsx</p>
+                  <p className="text-xs text-muted-foreground">Generated by Luka · 3 parts · ~52 KB</p>
+                </div>
+                <Badge variant="outline" className="text-xs text-green-700 border-green-300 bg-green-50 dark:bg-green-950/30 dark:text-green-400 shrink-0">Ready</Badge>
+              </div>
+              <div className="overflow-x-auto">
+                <table className="w-full text-xs">
+                  <thead>
+                    <tr className="bg-muted/50 border-b border-border">
+                      <th className="px-4 py-2 text-left font-semibold text-muted-foreground">Line item</th>
+                      <th className="px-3 py-2 text-right font-semibold text-muted-foreground">Current period</th>
+                      <th className="px-3 py-2 text-right font-semibold text-muted-foreground">Prior period</th>
+                      <th className="px-3 py-2 text-right font-semibold text-muted-foreground">Variance %</th>
+                      <th className="px-3 py-2 text-center font-semibold text-muted-foreground">Matter?</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-border">
+                    {([
+                      { label: 'Total Revenue',      cur: '16,732,400', pri: '14,891,200', pct: '+12.4%', matter: false },
+                      { label: 'Cost of Services',   cur: '12,214,300', pri: '10,802,100', pct: '+13.1%', matter: true  },
+                      { label: 'Gross Margin',       cur:  '4,518,100', pri:  '4,089,100', pct: '+10.5%', matter: false },
+                      { label: 'Operating Expenses', cur:  '3,102,800', pri:  '2,841,900', pct:  '+9.2%', matter: false },
+                      { label: 'Net Income',         cur:  '1,415,300', pri:  '1,247,200', pct: '+13.5%', matter: true  },
+                    ] as { label: string; cur: string; pri: string; pct: string; matter: boolean }[]).map(row => (
+                      <tr key={row.label} className="hover:bg-muted/30">
+                        <td className="px-4 py-1.5 font-medium text-foreground">{row.label}</td>
+                        <td className="px-3 py-1.5 text-right font-mono text-foreground">${row.cur}</td>
+                        <td className="px-3 py-1.5 text-right font-mono text-muted-foreground">${row.pri}</td>
+                        <td className={`px-3 py-1.5 text-right font-medium ${row.pct.startsWith('+') ? 'text-green-600' : 'text-red-500'}`}>{row.pct}</td>
+                        <td className="px-3 py-1.5 text-center">
+                          {row.matter ? <span className="inline-block w-2 h-2 rounded-full bg-amber-400" /> : <span className="text-muted-foreground">—</span>}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+                <div className="px-4 py-2 text-xs text-muted-foreground border-t border-border bg-muted/20">+ Part A procedures (5 items completed) · + Part C management discussion (2 flagged matters)</div>
+              </div>
+            </div>
+
+            <div className="flex gap-3">
+              <Button variant="outline" size="sm" className="gap-1.5" onClick={() => { setConvStep(0); persistFlow('conversation'); }}>
+                <RefreshCw className="h-3.5 w-3.5" />Regenerate
+              </Button>
+              <Button size="sm" className="gap-1.5" onClick={acceptArtifact}>
+                <CheckCircle2 className="h-3.5 w-3.5" />Accept &amp; Review
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ── WORKSHEET (existing content + Luka banner) ─────────────────────── */}
+      {flowState === 'worksheet' && (<>
+
+      {/* Luka generated banner */}
+      <div className="px-6 py-2 border-b border-border bg-primary/[0.04] flex items-center gap-2 shrink-0">
+        <Sparkles className="h-3.5 w-3.5 text-primary shrink-0" />
+        <span className="text-xs font-semibold text-primary">Generated by Luka</span>
+        <span className="text-xs text-muted-foreground flex-1">Review the pre-filled data below and make any adjustments before concluding.</span>
+        <Button variant="ghost" size="sm" className="h-7 px-2 text-xs gap-1.5 text-muted-foreground" onClick={() => { setConvStep(0); persistFlow('conversation'); }}>
+          <RefreshCw className="h-3 w-3" />Regenerate
+        </Button>
+      </div>
 
       {/* Objective bar */}
       <div className="px-6 py-2.5 border-b border-border bg-primary/[0.03] flex items-start gap-2 shrink-0">
@@ -688,6 +1010,9 @@ export function AuditPAP501Worksheet({ isUS = false }: { isUS?: boolean }) {
 
         </div>
       </div>
+
+      </>)}
+
     </div>
   );
 }
