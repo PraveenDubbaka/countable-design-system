@@ -523,7 +523,7 @@ interface SidebarProps {
 function getFileTypeIcon(filename: string, sizeClass = 'h-4 w-4') {
   const ext = filename.split('.').pop()?.toLowerCase() ?? '';
   if (['xlsx', 'xls', 'csv', 'numbers'].includes(ext))
-    return <WorksheetIcon className={`${sizeClass} flex-shrink-0`} />;
+    return <Table className={`${sizeClass} flex-shrink-0 text-green-600`} />;
   if (['doc', 'docx', 'odt', 'rtf'].includes(ext))
     return <WordDocIcon className={`${sizeClass} flex-shrink-0`} />;
   if (ext === 'pdf')
