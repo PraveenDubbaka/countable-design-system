@@ -780,6 +780,18 @@ export function Audit511Worksheet({ isUS = false }: { isUS?: boolean }) {
           </SectionCard>
 
           {/* Conclusion */}
+          {/* Notes */}
+          <div className="bg-card border border-border rounded-md p-5 space-y-2">
+            <h3 className="text-sm font-semibold text-foreground">Notes</h3>
+            <Textarea
+              disabled={locked}
+              value={data.notes}
+              onChange={e => patch("notes", e.target.value)}
+              placeholder="Additional observations, IT scoping decisions, cross-references to Forms 535 / 551, follow-ups…"
+              className="min-h-[90px] text-sm resize-none rounded-[10px]"
+            />
+          </div>
+
           <SectionCard title="Conclusion">
             <div className="px-6 py-5 space-y-4">
               <p className="text-sm text-muted-foreground">
