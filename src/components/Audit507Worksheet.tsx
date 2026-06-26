@@ -230,24 +230,24 @@ export function Audit507Worksheet({ isUS = false }: { isUS?: boolean }) {
               <table className="w-full">
                 <thead className="sticky top-0 z-10">
                   <tr className="bg-muted border-b border-border">
-                    <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider" style={{width:120,minWidth:120}}>MT</th>
-                    <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider border-l border-border" style={{width:130,minWidth:130}}>Date</th>
-                    <th className="px-6 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider border-l border-border">Relevant extracts / matters noted</th>
-                    <th className="px-4 py-3 text-center text-xs font-semibold text-foreground uppercase tracking-wider border-l border-border" style={{width:110,minWidth:110}}>Form 520</th>
-                    <th className="px-4 py-3 text-center text-xs font-semibold text-foreground uppercase tracking-wider border-l border-border" style={{width:110,minWidth:110}}>W/P ref.</th>
+                    <th className="w-[120px] px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider" style={{minWidth:120}}>MT</th>
+                    <th className="w-[130px] px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider border-l border-border" style={{minWidth:130}}>Date</th>
+                    <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider border-l border-border">Relevant extracts / matters noted</th>
+                    <th className="w-[100px] px-4 py-3 text-center text-xs font-semibold text-foreground uppercase tracking-wider border-l border-border" style={{minWidth:100}}>Form 520</th>
+                    <th className="w-[100px] px-4 py-3 text-center text-xs font-semibold text-foreground uppercase tracking-wider border-l border-border" style={{minWidth:100}}>W/P ref.</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-border">
                   {data.partC.map((row, i) => (
                     <tr key={i} className="hover:bg-muted/50 transition-colors">
-                      <td className="px-4 py-2 align-top" style={{width:120}}>
-                        <Input disabled={locked} value={row.mt} onChange={e => setPC(i, {mt:e.target.value})} placeholder="Meeting type" className="h-8 text-sm border-border" />
+                      <td className="w-[120px] px-4 py-2 align-top" style={{minWidth:120}}>
+                        <Input disabled={locked} value={row.mt} onChange={e => setPC(i, {mt:e.target.value})} placeholder="Meeting type" className="h-8 text-sm bg-background" />
                       </td>
-                      <td className="px-4 py-2 align-top border-l border-border" style={{width:130}}>
-                        <Input disabled={locked} value={row.date} onChange={e => setPC(i, {date:e.target.value})} placeholder="YYYY-MM-DD" className="h-8 text-sm border-border" />
+                      <td className="w-[130px] px-4 py-2 align-top border-l border-border" style={{minWidth:130}}>
+                        <Input disabled={locked} value={row.date} onChange={e => setPC(i, {date:e.target.value})} placeholder="YYYY-MM-DD" className="h-8 text-sm bg-background" />
                       </td>
-                      <td className="px-6 py-2 align-top border-l border-border">
-                        <Textarea disabled={locked} value={row.extract} onChange={e => setPC(i, {extract:e.target.value})} placeholder="Enter extract or matter noted…" className="min-h-[52px] text-sm resize-none border-0 shadow-none p-0 focus-visible:ring-0 bg-transparent" />
+                      <td className="px-4 py-2 align-top border-l border-border">
+                        <Textarea disabled={locked} value={row.extract} onChange={e => setPC(i, {extract:e.target.value})} placeholder="Enter extract or matter noted…" className="min-h-[56px] text-sm bg-background resize-none" />
                       </td>
                       <td className="px-4 py-2 align-top text-center border-l border-border" style={{width:110}}>
                         <div className="flex items-center justify-center pt-1">
