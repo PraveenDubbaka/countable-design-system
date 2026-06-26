@@ -1814,7 +1814,7 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
                       { id: "aud-ra-520", code: "520", label: "Risk Register — Identifying and Assessing RMMs", icon: "worksheet", route: "checklist/aud-ra-520" },
                       { id: "aud-ra-525", code: "525", label: "Going Concern — Identifying Events and Conditions", icon: "checklist", route: "checklist/aud-ra-525" },
                       { id: "aud-ra-530", code: "530", label: "Pervasive (Financial Statement Level) Risks and Controls", icon: "checklist", route: "checklist/aud-ra-530" },
-                      { id: "aud-ra-535", code: "535", label: "Understanding the Information System and Communication", icon: "checklist", route: "checklist/aud-ra-535" },
+                      { id: "aud-ra-535", code: "535", label: "Understanding the Information System and Communication", icon: "worksheet", route: "checklist/aud-ra-535" },
                       { id: "aud-ra-540", code: "540", label: "Control Design / Implementation", icon: "worksheet", route: "checklist/aud-ra-540" },
                       { id: "aud-ra-550", code: "550", label: "Control Activities — Design, Implementation and Control Risk", icon: "checklist", route: "checklist/aud-ra-550" },
                       { id: "aud-ra-551", code: "551", label: "Understanding General IT Controls — Design and Implementation", icon: "checklist", route: "checklist/aud-ra-551" },
