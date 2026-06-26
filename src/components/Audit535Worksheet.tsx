@@ -45,9 +45,7 @@ interface Data535 {
   conclusionNotes: string;
   // Notes
   notes: string;
-  // Sign-off
-  preparedBy: string; preparedDate: string;
-  reviewedBy: string; reviewedDate: string;
+  // Conclusion lock
   concluded: boolean; concludedOn: string;
 }
 
