@@ -241,8 +241,13 @@ export function Audit520Worksheet() {
                 <tbody className="divide-y divide-border">
                   {data.partARows.map(row => (
                     <tr key={row.id} className="hover:bg-muted/50 transition-colors">
-                      <td className="px-4 py-2.5 align-top w-24">
-                        <Input disabled={locked} value={row.wpRefSource} onChange={e => updatePartA(row.id, "wpRefSource", e.target.value)} placeholder="—" className="h-8 text-sm" />
+                      <td className="px-4 py-2.5 align-top w-28">
+                        <RefButton
+                          reference={row.wpRefSource}
+                          onAttach={doc => setPartAWpRefSource(row.id, [...row.wpRefSource, doc])}
+                          onRemove={i => setPartAWpRefSource(row.id, row.wpRefSource.filter((_, idx) => idx !== i))}
+                          disabled={locked}
+                        />
                       </td>
                       <td className="px-4 py-2.5 align-top min-w-[240px]">
                         <Textarea disabled={locked} value={row.rmmIdentified} onChange={e => updatePartA(row.id, "rmmIdentified", e.target.value)} placeholder="Describe the risk of material misstatement…" className="min-h-[72px] text-sm resize-none bg-background" />
@@ -320,8 +325,13 @@ export function Audit520Worksheet() {
                 <tbody className="divide-y divide-border">
                   {data.partBRows.map(row => (
                     <tr key={row.id} className={cn("transition-colors", row.significantRisk === "Y" ? "bg-amber-50/40 dark:bg-amber-950/10 hover:bg-amber-50/60" : "hover:bg-muted/50")}>
-                      <td className="px-4 py-2.5 align-top w-20">
-                        <Input disabled={locked} value={row.wpRefSource} onChange={e => updatePartB(row.id, "wpRefSource", e.target.value)} placeholder="—" className="h-8 text-sm" />
+                      <td className="px-4 py-2.5 align-top w-28">
+                        <RefButton
+                          reference={row.wpRefSource}
+                          onAttach={doc => setPartBWpRefSource(row.id, [...row.wpRefSource, doc])}
+                          onRemove={i => setPartBWpRefSource(row.id, row.wpRefSource.filter((_, idx) => idx !== i))}
+                          disabled={locked}
+                        />
                       </td>
                       <td className="px-4 py-2.5 align-top min-w-[180px]">
                         <Textarea disabled={locked} value={row.rmmIdentified} onChange={e => updatePartB(row.id, "rmmIdentified", e.target.value)} placeholder="Describe the RMM…" className="min-h-[72px] text-sm resize-none bg-background" />
