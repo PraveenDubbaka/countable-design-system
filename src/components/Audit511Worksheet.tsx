@@ -104,23 +104,86 @@ const emptyChecks = (): TestingCheck => ({
   gitcRelevant: false,
 });
 
-function buildDefault(): Data511 {
+function buildDefault(isUS = false): Data511 {
+  const entity = isUS ? "Harbor Freight LLC" : "Shipping Line Inc.";
+  const itLead = isUS ? "M. Reyes (Director of IT)" : "D. Whitfield (IT Manager)";
+  const msp = isUS ? "NorthPoint Managed IT (MSP)" : "PacificEdge IT Services (MSP)";
+  const erpName = isUS ? "NetSuite (cloud ERP)" : "Microsoft Dynamics 365 Business Central (cloud ERP)";
+  const tmsName = "CargoWise One (cloud-based transport management system)";
+  const payrollName = isUS ? "ADP Workforce Now (cloud payroll)" : "Ceridian Dayforce (cloud payroll & HCM)";
+  const fleetName = "ShipNet Telematics (cloud SaaS — fleet & emissions)";
+  const m365 = "Microsoft 365 (Exchange Online, SharePoint, Teams)";
+
+  const apps: ITApplication[] = [
+    { id: uid(), num: 1, name: erpName, appType: "Commercial cloud (SaaS)", network: "Cloud-based — accessed via VPN over WLAN", database: "Vendor-managed (Azure SQL)", os: "Windows 11 (clients) / vendor-hosted (server)", purpose: "General ledger, AP, AR, fixed assets, financial close and reporting.", relevant: "Y" },
+    { id: uid(), num: 2, name: tmsName, appType: "Commercial cloud (SaaS)", network: "Cloud-based — accessed via VPN over WLAN", database: "Vendor-managed (Oracle)", os: "Windows 11 (clients)", purpose: "Voyage costing, freight billing, port operations and customs — source of revenue posting feeds to ERP.", relevant: "Y" },
+    { id: uid(), num: 3, name: payrollName, appType: "Commercial cloud (SaaS)", network: "Web-based — TLS over public internet", database: "Vendor-managed", os: "Web-based", purpose: "Payroll processing, statutory remittances and year-end reporting; posts a summarized journal feed to ERP.", relevant: "Y" },
+    { id: uid(), num: 4, name: fleetName, appType: "Commercial cloud (SaaS)", network: "Cellular/satellite + cloud", database: "Vendor-managed", os: "Embedded / Web-based", purpose: "Fuel consumption, voyage telematics and emissions data used in operational KPIs and capitalization decisions.", relevant: "N" },
+    { id: uid(), num: 5, name: m365, appType: "Commercial cloud (SaaS)", network: "Cloud-based", database: "Vendor-managed", os: "Windows 11 / Web", purpose: "Email, file storage, collaboration; supports financial reporting workflow and supporting documentation.", relevant: "N" },
+  ];
+
+  const appDetails: Record<string, AppDetail> = {};
+  const [erpApp, tmsApp, payrollApp] = apps;
+  appDetails[erpApp.id] = {
+    automation: "Heavy reliance on automated controls within the ERP — 3-way match (PO/receipt/invoice) with configured tolerances, automated FX revaluation, automated bank reconciliation matching and automated period-end close routines.",
+    systemReports: "AR ageing, trial balance, GL detail, accruals listing and bank reconciliation reports are standardized and reviewed monthly by the CFO; relied on for both management decision-making and audit substantive procedures.",
+    dataInputs: "AP/AR clerks input transactions through the application UI; bank feeds and the TMS revenue feed import nightly via API. No direct database access — all changes via screens with full audit trail.",
+    volumeComplexity: "Medium-high volume — ~45,000 GL postings/year, multi-currency, multi-entity consolidation. Greater automation reliance due to volume.",
+    emergingTech: "No use of blockchain, RPA or AI in the financial reporting process at this time.",
+  };
+  appDetails[tmsApp.id] = {
+    automation: "Relies on automated tariff/rate-card calculations to bill voyages, automated cost accruals based on voyage % complete, and an automated revenue/cost posting feed to the ERP at month-end.",
+    systemReports: "Voyage profitability, unbilled revenue ageing and weekly bunker-cost reports — source data for revenue cut-off testing and operational KPIs.",
+    dataInputs: "Operational data entered by port agents and operations team; nightly automated interface posts revenue and voyage cost summaries to ERP. No direct database access for any user.",
+    volumeComplexity: "High volume — ~12,000 freight movements / ~1,800 voyages per year. Complex due to multi-leg voyages, FX and bunker cost allocation.",
+    emergingTech: "Telematics-derived emissions data is consumed operationally but does not directly post to the GL.",
+  };
+  appDetails[payrollApp.id] = {
+    automation: "Relies on automated gross-to-net calculations, statutory tax tables and automated GL posting feed; Controller reviews summarized journal before posting.",
+    systemReports: "Payroll register and statutory remittance reports reviewed by Controller each pay period.",
+    dataInputs: "Time data imported from time-clock interface; manual one-off adjustments require Controller approval. No direct database access.",
+    volumeComplexity: "Medium volume — ~200 employees, weekly and monthly pay cycles.",
+    emergingTech: "None.",
+  };
+
   return {
-    aGovernance: "", aGovernanceWp: [],
-    aOrgStructure: "", aOrgStructureWp: [],
-    aLawsRegs: "", aLawsRegsWp: [],
-    apps: [emptyApp(1)],
-    appDetails: {},
-    cSecurity: emptyProcess(),
-    cSecurityBreaches: emptyProcess(),
-    cProgramChanges: emptyProcess(),
-    cDataConversion: emptyProcess(),
-    cItOperations: emptyProcess(),
-    dComplexity: emptyProcess(),
-    dFsRisks: emptyProcess(),
-    dTestingChecks: emptyChecks(),
-    dTestingResponse: emptyProcess(),
-    conclusion: "",
+    aGovernance: isUS
+      ? `Board-approved 3-year IT strategic plan (2024–2026) aligned with the post-acquisition integration roadmap. Director of IT (${itLead}) owns the plan and reports to the CFO; reviewed by the Audit Committee quarterly. IT risks tracked in a quarterly IT risk register covering cyber, vendor concentration and data privacy. Formal policies in place: Information Security, Acceptable Use, Change Management, Backup & Recovery, Incident Response and Data Privacy (CCPA-aligned).`
+      : `Board-approved 3-year IT strategic plan (2024–2026) aligned with the fleet modernization and ESG roadmap. IT Manager (${itLead}) owns the plan and reports to the CFO; reviewed by the Audit Committee semi-annually. IT risks tracked in a formal IT risk register refreshed quarterly. Policies in place: Information Security, Acceptable Use, Change Management, Backup & Recovery, Incident Response and PIPEDA Privacy Policy.`,
+    aGovernanceWp: [],
+
+    aOrgStructure: isUS
+      ? `Small in-house IT team (Director of IT + 2 analysts) responsible for end-user computing, application administration and vendor management. Infrastructure monitoring, network and helpdesk co-sourced to ${msp} (SOC 2 Type II). All key financial applications are cloud SaaS — application and database hosting is vendor-managed. ${itLead} reports to the CFO and is the key contact for ${msp}. Training: annual security-awareness mandatory for all staff; admins attend vendor and CISSP-level training.`
+      : `Lean in-house IT team (IT Manager + 1 analyst) responsible for end-user computing, application administration and vendor oversight. Infrastructure monitoring, network and helpdesk co-sourced to ${msp} (CSAE 3416 / SOC 2 Type II). All key financial applications are cloud SaaS managed by the vendor. ${itLead} reports to the CFO and is the key contact for ${msp}. Training: annual security-awareness for all staff; vendor product training for admins.`,
+    aOrgStructureWp: [],
+
+    aLawsRegs: isUS
+      ? "Subject to CCPA / CPRA (California) for employee and customer data and SOC obligations through commercial contracts. Federal maritime data and EPA reporting handled operationally. Director of IT and Compliance monitor regulatory change. No direct effect on F/S; indirect contingent-liability risk considered immaterial at this stage."
+      : "Subject to PIPEDA (federal) and BC PIPA for employee and customer data. IT Manager and external counsel monitor regulatory change; MSP advises on new requirements. Transport Canada and CBSA filings are operational. No direct effect on F/S; indirect contingent-liability risk from data-breach fines considered remote and immaterial.",
+    aLawsRegsWp: [],
+
+    apps,
+    appDetails,
+
+    cSecurity: { psc: "Y", wpRef: [], response: `Unique user IDs and complex passwords enforced through Azure AD / Entra ID SSO with MFA required for all cloud apps. Joiner-mover-leaver process driven by HR ticket — provisioning by IT, quarterly access reviews signed off by department heads. Privileged (sysadmin) access restricted to ${itLead} and one ${msp} engineer; reviewed monthly. Physical: head office uses keycard access and CCTV; servers are vendor-hosted in tier-3 data centres. Monitoring: managed firewall, EDR (CrowdStrike) and centralized log alerts via ${msp} 24/7 SOC. Anti-virus, anti-spam and DNS filtering in place.` },
+    cSecurityBreaches: { psc: "Y", wpRef: [], response: `${itLead} confirmed no material cyber incidents or breaches in the current fiscal year. One phishing attempt blocked by EDR; no data exfiltration. Logged and reported to the Audit Committee — no impact on the planned audit approach.` },
+    cProgramChanges: { psc: "Y", wpRef: [], response: "All key financial systems are vendor-managed SaaS — entity has no access to source code. Vendor patches and minor releases applied automatically on the vendor cadence. No major version upgrades or platform changes during the period. Internal configuration changes (chart of accounts, three-way-match tolerance limits, TMS tariffs) follow the Change Management Policy — change ticket, CFO approval and post-implementation review for any financially-relevant change." },
+    cDataConversion: { psc: "Y", wpRef: [], response: isUS
+      ? "CoastLine Drayage acquisition (Q4 2024) — payroll and AP master data migrated into ADP and NetSuite using vendor migration tooling. Reconciliation of opening balances signed off by Controller; no exceptions noted. No other data conversions in the year."
+      : "No major data conversions occurred during the year. The 2023 migration from on-premise QuickBooks to Dynamics 365 BC remains stable; no residual conversion issues identified." },
+    cItOperations: { psc: "Y", wpRef: [], response: `Cloud SaaS providers manage application backups (geo-redundant). ${msp} performs daily backup of M365 mailboxes and SharePoint via Veeam Cloud Connect with monthly restore tests. Job scheduling: ERP and TMS month-end close jobs monitored by ${itLead}; failures alert via PagerDuty. No significant operational incidents in the period.` },
+
+    dComplexity: { psc: "Y", wpRef: [], response: `${entity} operates a moderately complex IT environment relying on three cloud SaaS financial systems (ERP, TMS and Payroll) with automated interfaces. Reliance on automated controls is material for revenue recognition (voyage % complete from TMS) and bunker fuel inventory. An IT specialist is engaged to assist with reliance on system-generated reports and the TMS-to-ERP interface; otherwise complexity is manageable without a specialist.` },
+    dFsRisks: { psc: "Y", wpRef: [], response: "F/S-level risk identified: reliance on the automated revenue posting from TMS to ERP — risk of incomplete or inaccurate revenue. Documented on Form 520. No other F/S-level IT risks identified." },
+    dTestingChecks: {
+      automatedSignificant: true,
+      automatedPlanned: true,
+      systemReportsRelied: true,
+      substantiveInsufficient: false,
+      gitcRelevant: true,
+    },
+    dTestingResponse: { psc: "Y", wpRef: [], response: `Plan to test operating effectiveness of GITCs (access management, change management and IT operations) for the ERP and TMS — see Form 551. Substantive testing alone is not sufficient for the high-volume automated revenue posting; GITC reliance reduces substantive sample sizes. Payroll: substantive analytical procedures with corroboration of the summarized GL feed considered sufficient — GITCs not relied on.` },
+    conclusion: `Sufficient information has been obtained to understand the IT environment relevant to the preparation of the F/S of ${entity}. RAFUIT and planned GITC testing carried forward to Form 551; F/S-level IT risk carried forward to Form 520.`,
     notes: "",
     concluded: false,
     concludedOn: "",
