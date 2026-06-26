@@ -2170,22 +2170,10 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
                           }
                         }}
                       >
-                        {isLeaf ? (
-                          <>
-                            {renderIcon(node.icon)}
-                          </>
-                        ) : (
-                          <span className="relative flex-shrink-0 w-4 h-4 flex items-center justify-center">
-                            {isOpen
-                              ? <FolderMinusIcon className="h-4 w-4 text-primary" />
-                              : <FolderPlusIcon className="h-4 w-4 text-primary" />}
-                          </span>
-                        )}
-                        {node.code && <span className="font-semibold text-primary">{node.code}</span>}
-                        <span className={cn("truncate flex-1 text-black dark:text-white", isLeaf ? "font-medium" : "font-semibold")}>{node.label}</span>
+                        {/* +/- toggle: always visible, always first, only when node has attachments */}
                         {((nodeDocuments[node.id]?.length ?? 0) > 0 || notesPages.has(node.id)) && (
                           <button
-                            className="opacity-0 group-hover:opacity-100 flex-shrink-0 w-4 h-4 flex items-center justify-center rounded text-[10px] font-bold leading-none text-muted-foreground hover:text-foreground hover:bg-muted/60 transition-all"
+                            className="flex-shrink-0 w-4 h-4 flex items-center justify-center rounded text-[10px] font-bold leading-none text-muted-foreground hover:text-foreground hover:bg-muted/60 transition-all"
                             onClick={e => {
                               e.stopPropagation();
                               setCollapsedNodeDocs(prev => {
@@ -2195,11 +2183,22 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
                                 return next;
                               });
                             }}
-                            title={collapsedNodeDocs.has(node.id) ? 'Expand attachments' : 'Collapse attachments'}
                           >
                             {collapsedNodeDocs.has(node.id) ? '+' : '−'}
                           </button>
                         )}
+                        {/* Leaf/folder icon follows the toggle (or leads if no attachments) */}
+                        {isLeaf ? (
+                          <>{renderIcon(node.icon)}</>
+                        ) : (
+                          <span className="relative flex-shrink-0 w-4 h-4 flex items-center justify-center">
+                            {isOpen
+                              ? <FolderMinusIcon className="h-4 w-4 text-primary" />
+                              : <FolderPlusIcon className="h-4 w-4 text-primary" />}
+                          </span>
+                        )}
+                        {node.code && <span className="font-semibold text-primary">{node.code}</span>}
+                        <span className={cn("truncate flex-1 text-black dark:text-white", isLeaf ? "font-medium" : "font-semibold")}>{node.label}</span>
                         {!isLeaf && sectionFillStatus[node.code ?? ''] && (
                           <span className="w-2 h-2 rounded-full flex-shrink-0 ml-auto luka-dot-filled" title="Luka filled" />
                         )}
