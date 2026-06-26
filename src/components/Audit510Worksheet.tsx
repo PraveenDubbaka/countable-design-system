@@ -161,7 +161,7 @@ function buildDefault(): Data510 {
     derivatives: emptyField(), imposedTargets: emptyField(), financingChanges: emptyField(), conclusionF: "",
     budgetsForecasts: emptyField(), perfMeasures: emptyField(), externalTargets: emptyField(),
     perfComparisons: emptyField(), conclusionG: "",
-    overallConclusion: "", concluded: false, concludedOn: "",
+    overallConclusion: "", notes: "", concluded: false, concludedOn: "",
   };
 }
 
