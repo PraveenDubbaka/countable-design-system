@@ -442,11 +442,11 @@ function FieldRow({ label, sublabel, field, locked, onChange }: {
 }) {
   return (
     <tr className="group hover:bg-muted/30 transition-colors align-top">
-      <td className="border border-border px-5 py-3 text-sm text-foreground w-[38%]">
+      <td className="px-5 py-3 text-sm text-foreground w-[38%]">
         <span>{label}</span>
         {sublabel && <p className="text-xs text-muted-foreground mt-0.5 leading-relaxed">{sublabel}</p>}
       </td>
-      <td className="border border-border px-4 py-3">
+      <td className="px-4 py-3">
         <Textarea
           disabled={locked}
           value={field.response}
@@ -455,7 +455,7 @@ function FieldRow({ label, sublabel, field, locked, onChange }: {
           className="min-h-[56px] text-sm resize-none border-0 shadow-none p-0 focus-visible:ring-0 bg-transparent"
         />
       </td>
-      <td className="border border-border px-4 py-3 text-center w-[100px]">
+      <td className="px-4 py-3 text-center w-[100px]">
         <RefButton
           reference={field.wpRef}
           onAttach={doc => onChange({ ...field, wpRef: [...field.wpRef, doc] })}
@@ -485,7 +485,7 @@ function TableCard({ title, onAdd, children }: {
 
 function DeleteCell({ onDelete, locked }: { onDelete: () => void; locked: boolean }) {
   return (
-    <td className="border border-border px-2 py-2 text-center w-8">
+    <td className="px-2 py-2 text-center w-8">
       {!locked && (
         <button onClick={onDelete} className="opacity-0 group-hover:opacity-100 p-1 rounded hover:bg-destructive/10 transition-all">
           <Trash2 className="h-3 w-3 text-destructive" />
@@ -580,12 +580,12 @@ function SectionCard({ title, children }: { title: string; children: React.React
         <table className="w-full border-collapse">
           <thead>
             <tr className="bg-muted border-b border-border">
-              <th className="border border-border px-5 py-2.5 text-left text-xs font-semibold text-foreground uppercase tracking-wider w-[38%]">Document</th>
-              <th className="border border-border px-4 py-2.5 text-left text-xs font-semibold text-foreground uppercase tracking-wider">Responses / Comments</th>
-              <th className="border border-border px-4 py-2.5 text-center text-xs font-semibold text-foreground uppercase tracking-wider w-[100px]">W/P Ref.</th>
+              <th className="px-5 py-2.5 text-left text-xs font-semibold text-foreground uppercase tracking-wider w-[38%]">Document</th>
+              <th className="px-4 py-2.5 text-left text-xs font-semibold text-foreground uppercase tracking-wider">Responses / Comments</th>
+              <th className="px-4 py-2.5 text-center text-xs font-semibold text-foreground uppercase tracking-wider w-[100px]">W/P Ref.</th>
             </tr>
           </thead>
-          <tbody>{children}</tbody>
+          <tbody className="divide-y divide-border">{children}</tbody>
         </table>
       </div>
     </div>
@@ -661,19 +661,19 @@ export function Audit510Worksheet({ isUS = false }: { isUS?: boolean }) {
         <table className="w-full min-w-[700px] border-collapse">
           <thead>
             <tr className="bg-muted/60 border-b border-border text-xs font-semibold text-foreground uppercase tracking-wider">
-              <th className="border border-border px-4 py-2.5 text-left">Source of Revenue</th>
-              <th className="border border-border px-4 py-2.5 text-left border-l border-border">Nature of Products / Services</th>
-              <th className="border border-border px-4 py-2.5 text-left border-l border-border w-32">Approx. Revenue ($ or %)</th>
-              <th className="border border-border px-4 py-2.5 text-left border-l border-border">Geographical Market</th>
-              <th className="border border-border px-4 py-2.5 text-left border-l border-border">Areas of Complexity / Subjectivity</th>
+              <th className="px-4 py-2.5 text-left">Source of Revenue</th>
+              <th className="px-4 py-2.5 text-left border-l border-border">Nature of Products / Services</th>
+              <th className="px-4 py-2.5 text-left border-l border-border w-32">Approx. Revenue ($ or %)</th>
+              <th className="px-4 py-2.5 text-left border-l border-border">Geographical Market</th>
+              <th className="px-4 py-2.5 text-left border-l border-border">Areas of Complexity / Subjectivity</th>
               <th className="border border-border w-8" />
             </tr>
           </thead>
-          <tbody>
+          <tbody className="divide-y divide-border">
             {data.revenueRows.map((row, i) => (
               <tr key={row.id} className="group hover:bg-muted/30 transition-colors">
                 {(["source", "nature", "revenue", "geoMarket", "complexity"] as const).map((col, ci) => (
-                  <td key={col} className={cn("border border-border px-4 py-2 align-top", ci > 0 && "border-l border-border")}>
+                  <td key={col} className={cn("px-4 py-2 align-top", ci > 0 && "border-l border-border")}>
                     <Input disabled={locked} value={row[col]} onChange={e => updateRow<RevenueRow>("revenueRows", i, { [col]: e.target.value })}
                       className="h-7 text-sm border-0 shadow-none px-0 focus-visible:ring-0 bg-transparent" placeholder="—" />
                   </td>
@@ -694,26 +694,26 @@ export function Audit510Worksheet({ isUS = false }: { isUS?: boolean }) {
         <table className="w-full min-w-[600px] border-collapse">
           <thead>
             <tr className="bg-muted/60 border-b border-border text-xs font-semibold text-foreground uppercase tracking-wider">
-              <th className="border border-border px-4 py-2.5 text-left">Customer (C) / Supplier (S)</th>
-              <th className="border border-border px-4 py-2.5 text-left border-l border-border w-20">Type</th>
-              <th className="border border-border px-4 py-2.5 text-left border-l border-border">Areas of Possible Risk</th>
+              <th className="px-4 py-2.5 text-left">Customer (C) / Supplier (S)</th>
+              <th className="px-4 py-2.5 text-left border-l border-border w-20">Type</th>
+              <th className="px-4 py-2.5 text-left border-l border-border">Areas of Possible Risk</th>
               <th className="border border-border w-8" />
             </tr>
           </thead>
-          <tbody>
+          <tbody className="divide-y divide-border">
             {data.customerRows.map((row, i) => (
               <tr key={row.id} className="group hover:bg-muted/30 transition-colors">
-                <td className="border border-border px-4 py-2 align-top">
+                <td className="px-4 py-2 align-top">
                   <Input disabled={locked} value={row.name} onChange={e => updateRow<CustomerRow>("customerRows", i, { name: e.target.value })}
                     className="h-7 text-sm border-0 shadow-none px-0 focus-visible:ring-0 bg-transparent" placeholder="Name" />
                 </td>
-                <td className="border border-border px-4 py-2 align-top border-l border-border w-24">
+                <td className="px-4 py-2 align-top border-l border-border w-24">
                   <Select value={row.type} onValueChange={v => updateRow<CustomerRow>("customerRows", i, { type: v as "C" | "S" | "" })} disabled={locked}>
                     <SelectTrigger className="h-7 text-sm"><SelectValue placeholder="—" /></SelectTrigger>
                     <SelectContent><SelectItem value="C">C</SelectItem><SelectItem value="S">S</SelectItem></SelectContent>
                   </Select>
                 </td>
-                <td className="border border-border px-4 py-2 align-top border-l border-border">
+                <td className="px-4 py-2 align-top border-l border-border">
                   <Input disabled={locked} value={row.riskAreas} onChange={e => updateRow<CustomerRow>("customerRows", i, { riskAreas: e.target.value })}
                     className="h-7 text-sm border-0 shadow-none px-0 focus-visible:ring-0 bg-transparent" placeholder="Risk areas…" />
                 </td>
@@ -732,18 +732,18 @@ export function Audit510Worksheet({ isUS = false }: { isUS?: boolean }) {
         <table className="w-full min-w-[600px] border-collapse">
           <thead>
             <tr className="bg-muted/60 border-b border-border text-xs font-semibold text-foreground uppercase tracking-wider">
-              <th className="border border-border px-4 py-2.5 text-left">Address</th>
-              <th className="border border-border px-4 py-2.5 text-left border-l border-border">Principal Purpose</th>
-              <th className="border border-border px-4 py-2.5 text-left border-l border-border w-40">Approx. Inventory Value ($ or %)</th>
-              <th className="border border-border px-4 py-2.5 text-left border-l border-border w-32">Employees at Location</th>
+              <th className="px-4 py-2.5 text-left">Address</th>
+              <th className="px-4 py-2.5 text-left border-l border-border">Principal Purpose</th>
+              <th className="px-4 py-2.5 text-left border-l border-border w-40">Approx. Inventory Value ($ or %)</th>
+              <th className="px-4 py-2.5 text-left border-l border-border w-32">Employees at Location</th>
               <th className="border border-border w-8" />
             </tr>
           </thead>
-          <tbody>
+          <tbody className="divide-y divide-border">
             {data.facilityRows.map((row, i) => (
               <tr key={row.id} className="group hover:bg-muted/30 transition-colors">
                 {(["address", "purpose", "inventoryValue", "employees"] as const).map((col, ci) => (
-                  <td key={col} className={cn("border border-border px-4 py-2 align-top", ci > 0 && "border-l border-border")}>
+                  <td key={col} className={cn("px-4 py-2 align-top", ci > 0 && "border-l border-border")}>
                     <Input disabled={locked} value={row[col]} onChange={e => updateRow<FacilityRow>("facilityRows", i, { [col]: e.target.value })}
                       className="h-7 text-sm border-0 shadow-none px-0 focus-visible:ring-0 bg-transparent" placeholder="—" />
                   </td>
@@ -763,25 +763,25 @@ export function Audit510Worksheet({ isUS = false }: { isUS?: boolean }) {
         <table className="w-full min-w-[700px] border-collapse">
           <thead>
             <tr className="bg-muted/60 border-b border-border text-xs font-semibold text-foreground uppercase tracking-wider">
-              <th className="border border-border px-4 py-2.5 text-left">Name & Brief Description of Services</th>
-              <th className="border border-border px-4 py-2.5 text-left border-l border-border w-44">Contact Information</th>
-              <th className="border border-border px-4 py-2.5 text-center border-l border-border w-28">Service Org? (Y/N)</th>
-              <th className="border border-border px-4 py-2.5 text-left border-l border-border">Reasoning & Factors Considered</th>
+              <th className="px-4 py-2.5 text-left">Name & Brief Description of Services</th>
+              <th className="px-4 py-2.5 text-left border-l border-border w-44">Contact Information</th>
+              <th className="px-4 py-2.5 text-center border-l border-border w-28">Service Org? (Y/N)</th>
+              <th className="px-4 py-2.5 text-left border-l border-border">Reasoning & Factors Considered</th>
               <th className="border border-border w-8" />
             </tr>
           </thead>
-          <tbody>
+          <tbody className="divide-y divide-border">
             {data.thirdPartyRows.map((row, i) => (
               <tr key={row.id} className="group hover:bg-muted/30 transition-colors align-top">
-                <td className="border border-border px-4 py-2">
+                <td className="px-4 py-2">
                   <Textarea disabled={locked} value={row.nameDesc} onChange={e => updateRow<ThirdPartyRow>("thirdPartyRows", i, { nameDesc: e.target.value })}
                     className="min-h-[48px] text-sm border-0 shadow-none p-0 focus-visible:ring-0 bg-transparent resize-none" placeholder="Name and services…" />
                 </td>
-                <td className="border border-border px-4 py-2 border-l border-border w-44">
+                <td className="px-4 py-2 border-l border-border w-44">
                   <Input disabled={locked} value={row.contact} onChange={e => updateRow<ThirdPartyRow>("thirdPartyRows", i, { contact: e.target.value })}
                     className="h-7 text-sm border-0 shadow-none px-0 focus-visible:ring-0 bg-transparent" placeholder="Contact info" />
                 </td>
-                <td className="border border-border px-4 py-2 border-l border-border w-28">
+                <td className="px-4 py-2 border-l border-border w-28">
                   <Select value={row.isServiceOrg} onValueChange={v => updateRow<ThirdPartyRow>("thirdPartyRows", i, { isServiceOrg: v as YN })} disabled={locked}>
                     <SelectTrigger className="h-7 text-sm"><SelectValue placeholder="—" /></SelectTrigger>
                     <SelectContent>
@@ -793,7 +793,7 @@ export function Audit510Worksheet({ isUS = false }: { isUS?: boolean }) {
                     <p className="text-[10px] text-amber-600 dark:text-amber-400 mt-1 font-medium">Form 516 required</p>
                   )}
                 </td>
-                <td className="border border-border px-4 py-2 border-l border-border">
+                <td className="px-4 py-2 border-l border-border">
                   <Textarea disabled={locked} value={row.reasoning} onChange={e => updateRow<ThirdPartyRow>("thirdPartyRows", i, { reasoning: e.target.value })}
                     className="min-h-[48px] text-sm border-0 shadow-none p-0 focus-visible:ring-0 bg-transparent resize-none" placeholder="Reasoning…" />
                 </td>
@@ -824,17 +824,17 @@ export function Audit510Worksheet({ isUS = false }: { isUS?: boolean }) {
         <table className="w-full min-w-[500px] border-collapse">
           <thead>
             <tr className="bg-muted/60 border-b border-border text-xs font-semibold text-foreground uppercase tracking-wider">
-              <th className="border border-border px-4 py-2.5 text-left">Key Stakeholder (Individual / Company)</th>
-              <th className="border border-border px-4 py-2.5 text-left border-l border-border w-28">% Owned</th>
-              <th className="border border-border px-4 py-2.5 text-left border-l border-border">Direct Involvement, Influence or Agreements</th>
+              <th className="px-4 py-2.5 text-left">Key Stakeholder (Individual / Company)</th>
+              <th className="px-4 py-2.5 text-left border-l border-border w-28">% Owned</th>
+              <th className="px-4 py-2.5 text-left border-l border-border">Direct Involvement, Influence or Agreements</th>
               <th className="border border-border w-8" />
             </tr>
           </thead>
-          <tbody>
+          <tbody className="divide-y divide-border">
             {data.stakeholderRows.map((row, i) => (
               <tr key={row.id} className="group hover:bg-muted/30 transition-colors">
                 {(["name", "pctOwned", "involvement"] as const).map((col, ci) => (
-                  <td key={col} className={cn("border border-border px-4 py-2 align-top", ci > 0 && "border-l border-border", col === "pctOwned" && "w-28")}>
+                  <td key={col} className={cn("px-4 py-2 align-top", ci > 0 && "border-l border-border", col === "pctOwned" && "w-28")}>
                     <Input disabled={locked} value={row[col]} onChange={e => updateRow<StakeholderRow>("stakeholderRows", i, { [col]: e.target.value })}
                       className="h-7 text-sm border-0 shadow-none px-0 focus-visible:ring-0 bg-transparent" placeholder="—" />
                   </td>
@@ -856,31 +856,31 @@ export function Audit510Worksheet({ isUS = false }: { isUS?: boolean }) {
         <table className="w-full min-w-[600px] border-collapse">
           <thead>
             <tr className="bg-muted/60 border-b border-border text-xs font-semibold text-foreground uppercase tracking-wider">
-              <th className="border border-border px-4 py-2.5 text-left">Name</th>
-              <th className="border border-border px-4 py-2.5 text-left border-l border-border w-32">Member Since</th>
-              <th className="border border-border px-4 py-2.5 text-center border-l border-border w-36">Finance / Audit Committee?</th>
-              <th className="border border-border px-4 py-2.5 text-left border-l border-border">Comments (Skills, Background, Expertise, Family Links)</th>
+              <th className="px-4 py-2.5 text-left">Name</th>
+              <th className="px-4 py-2.5 text-left border-l border-border w-32">Member Since</th>
+              <th className="px-4 py-2.5 text-center border-l border-border w-36">Finance / Audit Committee?</th>
+              <th className="px-4 py-2.5 text-left border-l border-border">Comments (Skills, Background, Expertise, Family Links)</th>
               <th className="border border-border w-8" />
             </tr>
           </thead>
-          <tbody>
+          <tbody className="divide-y divide-border">
             {data.tcwgRows.map((row, i) => (
               <tr key={row.id} className="group hover:bg-muted/30 transition-colors">
-                <td className="border border-border px-4 py-2 align-top">
+                <td className="px-4 py-2 align-top">
                   <Input disabled={locked} value={row.name} onChange={e => updateRow<TcwgRow>("tcwgRows", i, { name: e.target.value })}
                     className="h-7 text-sm border-0 shadow-none px-0 focus-visible:ring-0 bg-transparent" placeholder="Name" />
                 </td>
-                <td className="border border-border px-4 py-2 align-top border-l border-border w-32">
+                <td className="px-4 py-2 align-top border-l border-border w-32">
                   <Input disabled={locked} value={row.memberSince} onChange={e => updateRow<TcwgRow>("tcwgRows", i, { memberSince: e.target.value })}
                     className="h-7 text-sm border-0 shadow-none px-0 focus-visible:ring-0 bg-transparent" placeholder="Year" />
                 </td>
-                <td className="border border-border px-4 py-2 align-top border-l border-border w-36">
+                <td className="px-4 py-2 align-top border-l border-border w-36">
                   <Select value={row.onFinance} onValueChange={v => updateRow<TcwgRow>("tcwgRows", i, { onFinance: v as YN })} disabled={locked}>
                     <SelectTrigger className="h-7 text-sm"><SelectValue placeholder="—" /></SelectTrigger>
                     <SelectContent><SelectItem value="Y">Y</SelectItem><SelectItem value="N">N</SelectItem></SelectContent>
                   </Select>
                 </td>
-                <td className="border border-border px-4 py-2 align-top border-l border-border">
+                <td className="px-4 py-2 align-top border-l border-border">
                   <Input disabled={locked} value={row.comments} onChange={e => updateRow<TcwgRow>("tcwgRows", i, { comments: e.target.value })}
                     className="h-7 text-sm border-0 shadow-none px-0 focus-visible:ring-0 bg-transparent" placeholder="Comments…" />
                 </td>
@@ -899,17 +899,17 @@ export function Audit510Worksheet({ isUS = false }: { isUS?: boolean }) {
         <table className="w-full min-w-[500px] border-collapse">
           <thead>
             <tr className="bg-muted/60 border-b border-border text-xs font-semibold text-foreground uppercase tracking-wider">
-              <th className="border border-border px-4 py-2.5 text-left">Name</th>
-              <th className="border border-border px-4 py-2.5 text-left border-l border-border">Position</th>
-              <th className="border border-border px-4 py-2.5 text-left border-l border-border">Qualifications / Experience / Comments</th>
+              <th className="px-4 py-2.5 text-left">Name</th>
+              <th className="px-4 py-2.5 text-left border-l border-border">Position</th>
+              <th className="px-4 py-2.5 text-left border-l border-border">Qualifications / Experience / Comments</th>
               <th className="border border-border w-8" />
             </tr>
           </thead>
-          <tbody>
+          <tbody className="divide-y divide-border">
             {data.managementRows.map((row, i) => (
               <tr key={row.id} className="group hover:bg-muted/30 transition-colors">
                 {(["name", "position", "qualifications"] as const).map((col, ci) => (
-                  <td key={col} className={cn("border border-border px-4 py-2 align-top", ci > 0 && "border-l border-border")}>
+                  <td key={col} className={cn("px-4 py-2 align-top", ci > 0 && "border-l border-border")}>
                     <Input disabled={locked} value={row[col]} onChange={e => updateRow<ManagementRow>("managementRows", i, { [col]: e.target.value })}
                       className="h-7 text-sm border-0 shadow-none px-0 focus-visible:ring-0 bg-transparent" placeholder="—" />
                   </td>
@@ -930,18 +930,18 @@ export function Audit510Worksheet({ isUS = false }: { isUS?: boolean }) {
         <table className="w-full min-w-[600px] border-collapse">
           <thead>
             <tr className="bg-muted/60 border-b border-border text-xs font-semibold text-foreground uppercase tracking-wider">
-              <th className="border border-border px-4 py-2.5 text-left">Contact Person</th>
-              <th className="border border-border px-4 py-2.5 text-left border-l border-border">Company</th>
-              <th className="border border-border px-4 py-2.5 text-left border-l border-border w-44">Email</th>
-              <th className="border border-border px-4 py-2.5 text-left border-l border-border">Type(s) of Direction / Advice Provided</th>
+              <th className="px-4 py-2.5 text-left">Contact Person</th>
+              <th className="px-4 py-2.5 text-left border-l border-border">Company</th>
+              <th className="px-4 py-2.5 text-left border-l border-border w-44">Email</th>
+              <th className="px-4 py-2.5 text-left border-l border-border">Type(s) of Direction / Advice Provided</th>
               <th className="border border-border w-8" />
             </tr>
           </thead>
-          <tbody>
+          <tbody className="divide-y divide-border">
             {data.advisorRows.map((row, i) => (
               <tr key={row.id} className="group hover:bg-muted/30 transition-colors">
                 {(["contactPerson", "company", "email", "adviceType"] as const).map((col, ci) => (
-                  <td key={col} className={cn("border border-border px-4 py-2 align-top", ci > 0 && "border-l border-border", col === "email" && "w-44")}>
+                  <td key={col} className={cn("px-4 py-2 align-top", ci > 0 && "border-l border-border", col === "email" && "w-44")}>
                     <Input disabled={locked} value={row[col]} onChange={e => updateRow<AdvisorRow>("advisorRows", i, { [col]: e.target.value })}
                       className="h-7 text-sm border-0 shadow-none px-0 focus-visible:ring-0 bg-transparent" placeholder="—" />
                   </td>
@@ -969,24 +969,24 @@ export function Audit510Worksheet({ isUS = false }: { isUS?: boolean }) {
         <table className="w-full min-w-[600px] border-collapse">
           <thead>
             <tr className="bg-muted/60 border-b border-border text-xs font-semibold text-foreground uppercase tracking-wider">
-              <th className="border border-border px-4 py-2.5 text-left">Significant Laws / Regulations (including environmental and tax)</th>
-              <th className="border border-border px-4 py-2.5 text-left border-l border-border">Instances of Non-Compliance, Alleged Non-Compliance or Investigations</th>
-              <th className="border border-border px-4 py-2.5 text-center border-l border-border w-40">Would Non-Compliance Result in Material Direct Effect on F/S? (Y/N)</th>
+              <th className="px-4 py-2.5 text-left">Significant Laws / Regulations (including environmental and tax)</th>
+              <th className="px-4 py-2.5 text-left border-l border-border">Instances of Non-Compliance, Alleged Non-Compliance or Investigations</th>
+              <th className="px-4 py-2.5 text-center border-l border-border w-40">Would Non-Compliance Result in Material Direct Effect on F/S? (Y/N)</th>
               <th className="border border-border w-8" />
             </tr>
           </thead>
-          <tbody>
+          <tbody className="divide-y divide-border">
             {data.lawRows.map((row, i) => (
               <tr key={row.id} className="group hover:bg-muted/30 transition-colors align-top">
-                <td className="border border-border px-4 py-2">
+                <td className="px-4 py-2">
                   <Textarea disabled={locked} value={row.law} onChange={e => updateRow<LawRow>("lawRows", i, { law: e.target.value })}
                     className="min-h-[48px] text-sm border-0 shadow-none p-0 focus-visible:ring-0 bg-transparent resize-none" placeholder="Law / regulation…" />
                 </td>
-                <td className="border border-border px-4 py-2 border-l border-border">
+                <td className="px-4 py-2 border-l border-border">
                   <Textarea disabled={locked} value={row.nonCompliance} onChange={e => updateRow<LawRow>("lawRows", i, { nonCompliance: e.target.value })}
                     className="min-h-[48px] text-sm border-0 shadow-none p-0 focus-visible:ring-0 bg-transparent resize-none" placeholder="Describe any instances…" />
                 </td>
-                <td className="border border-border px-4 py-2 border-l border-border w-40">
+                <td className="px-4 py-2 border-l border-border w-40">
                   <Select value={row.materialEffect} onValueChange={v => updateRow<LawRow>("lawRows", i, { materialEffect: v as YN })} disabled={locked}>
                     <SelectTrigger className="h-7 text-sm"><SelectValue placeholder="—" /></SelectTrigger>
                     <SelectContent><SelectItem value="Y">Y</SelectItem><SelectItem value="N">N</SelectItem></SelectContent>
@@ -1057,36 +1057,36 @@ export function Audit510Worksheet({ isUS = false }: { isUS?: boolean }) {
         <table className="w-full min-w-[700px] border-collapse">
           <thead>
             <tr className="bg-muted/60 border-b border-border text-xs font-semibold text-foreground uppercase tracking-wider">
-              <th className="border border-border px-4 py-2.5 text-left">Name of Entity / Capital Project</th>
-              <th className="border border-border px-4 py-2.5 text-left border-l border-border w-32">Approx. $ Amount</th>
-              <th className="border border-border px-4 py-2.5 text-center border-l border-border w-32">Consolidated in F/S? (Y/N)</th>
-              <th className="border border-border px-4 py-2.5 text-left border-l border-border">Purpose of Investment</th>
-              <th className="border border-border px-4 py-2.5 text-left border-l border-border">Significant Terms</th>
+              <th className="px-4 py-2.5 text-left">Name of Entity / Capital Project</th>
+              <th className="px-4 py-2.5 text-left border-l border-border w-32">Approx. $ Amount</th>
+              <th className="px-4 py-2.5 text-center border-l border-border w-32">Consolidated in F/S? (Y/N)</th>
+              <th className="px-4 py-2.5 text-left border-l border-border">Purpose of Investment</th>
+              <th className="px-4 py-2.5 text-left border-l border-border">Significant Terms</th>
               <th className="border border-border w-8" />
             </tr>
           </thead>
-          <tbody>
+          <tbody className="divide-y divide-border">
             {data.investmentRows.map((row, i) => (
               <tr key={row.id} className="group hover:bg-muted/30 transition-colors">
-                <td className="border border-border px-4 py-2 align-top">
+                <td className="px-4 py-2 align-top">
                   <Input disabled={locked} value={row.name} onChange={e => updateRow<InvestmentRow>("investmentRows", i, { name: e.target.value })}
                     className="h-7 text-sm border-0 shadow-none px-0 focus-visible:ring-0 bg-transparent" placeholder="Name" />
                 </td>
-                <td className="border border-border px-4 py-2 align-top border-l border-border w-32">
+                <td className="px-4 py-2 align-top border-l border-border w-32">
                   <Input disabled={locked} value={row.amount} onChange={e => updateRow<InvestmentRow>("investmentRows", i, { amount: e.target.value })}
                     className="h-7 text-sm border-0 shadow-none px-0 focus-visible:ring-0 bg-transparent" placeholder="$" />
                 </td>
-                <td className="border border-border px-4 py-2 align-top border-l border-border w-32">
+                <td className="px-4 py-2 align-top border-l border-border w-32">
                   <Select value={row.consolidated} onValueChange={v => updateRow<InvestmentRow>("investmentRows", i, { consolidated: v as YN })} disabled={locked}>
                     <SelectTrigger className="h-7 text-sm"><SelectValue placeholder="—" /></SelectTrigger>
                     <SelectContent><SelectItem value="Y">Y</SelectItem><SelectItem value="N">N</SelectItem></SelectContent>
                   </Select>
                 </td>
-                <td className="border border-border px-4 py-2 align-top border-l border-border">
+                <td className="px-4 py-2 align-top border-l border-border">
                   <Input disabled={locked} value={row.purpose} onChange={e => updateRow<InvestmentRow>("investmentRows", i, { purpose: e.target.value })}
                     className="h-7 text-sm border-0 shadow-none px-0 focus-visible:ring-0 bg-transparent" placeholder="Purpose…" />
                 </td>
-                <td className="border border-border px-4 py-2 align-top border-l border-border">
+                <td className="px-4 py-2 align-top border-l border-border">
                   <Input disabled={locked} value={row.terms} onChange={e => updateRow<InvestmentRow>("investmentRows", i, { terms: e.target.value })}
                     className="h-7 text-sm border-0 shadow-none px-0 focus-visible:ring-0 bg-transparent" placeholder="Terms…" />
                 </td>
@@ -1118,34 +1118,34 @@ export function Audit510Worksheet({ isUS = false }: { isUS?: boolean }) {
         <table className="w-full min-w-[700px] border-collapse">
           <thead>
             <tr className="bg-muted/60 border-b border-border text-xs font-semibold text-foreground uppercase tracking-wider">
-              <th className="border border-border px-4 py-2.5 text-left">Name of Creditor</th>
-              <th className="border border-border px-4 py-2.5 text-left border-l border-border w-32">Amount of Financing</th>
-              <th className="border border-border px-4 py-2.5 text-left border-l border-border w-28">Interest Rate</th>
-              <th className="border border-border px-4 py-2.5 text-left border-l border-border w-28">Maturity Date</th>
-              <th className="border border-border px-4 py-2.5 text-left border-l border-border">Terms, Loan Security and Covenants</th>
+              <th className="px-4 py-2.5 text-left">Name of Creditor</th>
+              <th className="px-4 py-2.5 text-left border-l border-border w-32">Amount of Financing</th>
+              <th className="px-4 py-2.5 text-left border-l border-border w-28">Interest Rate</th>
+              <th className="px-4 py-2.5 text-left border-l border-border w-28">Maturity Date</th>
+              <th className="px-4 py-2.5 text-left border-l border-border">Terms, Loan Security and Covenants</th>
               <th className="border border-border w-8" />
             </tr>
           </thead>
-          <tbody>
+          <tbody className="divide-y divide-border">
             {data.financingRows.map((row, i) => (
               <tr key={row.id} className="group hover:bg-muted/30 transition-colors align-top">
-                <td className="border border-border px-4 py-2">
+                <td className="px-4 py-2">
                   <Input disabled={locked} value={row.creditor} onChange={e => updateRow<FinancingRow>("financingRows", i, { creditor: e.target.value })}
                     className="h-7 text-sm border-0 shadow-none px-0 focus-visible:ring-0 bg-transparent" placeholder="Creditor" />
                 </td>
-                <td className="border border-border px-4 py-2 border-l border-border w-32">
+                <td className="px-4 py-2 border-l border-border w-32">
                   <Input disabled={locked} value={row.amount} onChange={e => updateRow<FinancingRow>("financingRows", i, { amount: e.target.value })}
                     className="h-7 text-sm border-0 shadow-none px-0 focus-visible:ring-0 bg-transparent" placeholder="$" />
                 </td>
-                <td className="border border-border px-4 py-2 border-l border-border w-28">
+                <td className="px-4 py-2 border-l border-border w-28">
                   <Input disabled={locked} value={row.rate} onChange={e => updateRow<FinancingRow>("financingRows", i, { rate: e.target.value })}
                     className="h-7 text-sm border-0 shadow-none px-0 focus-visible:ring-0 bg-transparent" placeholder="%" />
                 </td>
-                <td className="border border-border px-4 py-2 border-l border-border w-28">
+                <td className="px-4 py-2 border-l border-border w-28">
                   <Input disabled={locked} value={row.maturity} onChange={e => updateRow<FinancingRow>("financingRows", i, { maturity: e.target.value })}
                     className="h-7 text-sm border-0 shadow-none px-0 focus-visible:ring-0 bg-transparent" placeholder="YYYY-MM-DD" />
                 </td>
-                <td className="border border-border px-4 py-2 border-l border-border">
+                <td className="px-4 py-2 border-l border-border">
                   <Textarea disabled={locked} value={row.terms} onChange={e => updateRow<FinancingRow>("financingRows", i, { terms: e.target.value })}
                     className="min-h-[40px] text-sm border-0 shadow-none p-0 focus-visible:ring-0 bg-transparent resize-none" placeholder="Terms, security, covenants…" />
                 </td>
