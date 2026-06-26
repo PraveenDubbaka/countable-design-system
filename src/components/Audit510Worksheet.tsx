@@ -127,41 +127,309 @@ const emptyLawRow = (): LawRow => ({ id: uid(), law: "", nonCompliance: "", mate
 const emptyInvestmentRow = (): InvestmentRow => ({ id: uid(), name: "", amount: "", consolidated: "", purpose: "", terms: "" });
 const emptyFinancingRow = (): FinancingRow => ({ id: uid(), creditor: "", amount: "", rate: "", maturity: "", terms: "" });
 
-function buildDefault(): Data510 {
+const sf = (response: string): SimpleField => ({ response, wpRef: [] });
+
+function buildDefault(isUS = false): Data510 {
+  const today = new Date().toISOString().slice(0, 10);
+
+  // Entity-specific seeded content (auto-populated from Trial Balance + Planning 400/410/420)
+  const seedCA = {
+    entityType: "Private Canadian corporation incorporated under the CBCA. Not publicly listed; debt held privately by RBC.",
+    entityActivity: "Shipping Line Inc. operates a coastal and trans-Pacific freight shipping line serving the Port of Vancouver, Seattle and select Asia-Pacific ports. Industry: marine freight transportation (NAICS 483115).",
+    revenues: "Three primary revenue streams: container freight (≈68%), bulk cargo (≈22%) and chartered vessel services (≈10%). See revenue table below.",
+    marketConditions: "Soft trans-Pacific container rates following 2024 normalization. Bunker fuel volatility, IMO 2024 emissions surcharges, and CUSMA tariff updates are areas of pressure.",
+    relationships: "Material exposure to top-3 customers (~41% of revenue) and a single bunker fuel supplier under a 3-year fixed-margin contract.",
+    facilities: "Head office and operations centre in Vancouver; bonded warehouses in Seattle and Long Beach; rented terminal slots in Yokohama and Shanghai.",
+    thirdParties: "Outsources payroll (Ceridian Dayforce), IT hosting (AWS Canada), port-agent customs filings, and crew management to McQuilling Marine Services.",
+    rAndD: "No formal R&D program. Capitalized $0.6M in 2024 for fleet telematics and emissions-monitoring software pilot.",
+    keyStakeholders: "Founder-family holds 62% (Thompson family trust). Remaining 38% held by Westcoast Marine Holdings LP. Founder is active CEO.",
+    tcwgWho: "Five-member Board of Directors; standing Audit Committee of three independent directors meeting quarterly.",
+    financeCommittee: "Audit Committee chaired by D. Singh (former CFO, Seaspan). Meets quarterly and pre-clears all material accounting policies.",
+    tcwgMandate: "Charter approved 2022, revised 2024. Reviews quarterly MD&A, monitors covenants, oversees external audit. Independent of management.",
+    keyManagement: "Tight executive team: CEO (founder), CFO, COO, VP Operations, Controller.",
+    operatingStyle: "CEO is hands-on and risk-tolerant on commercial decisions; CFO is conservative on accounting matters. Documented tone-at-the-top is positive.",
+    keyAdvisors: "External legal counsel (BLG), tax advisor (KPMG tax), primary banker (RBC Commercial), insurance (Marsh Canada), classification society (Lloyd's Register).",
+    perfIncentives: "Executive STIP based on adjusted EBITDA and on-time vessel availability. Capped at 60% of base. Reviewed for fraud incentive — no significant motivator identified (cross-ref Form 506).",
+    correspondence: "Routine annual filings with Transport Canada and Canada Border Services Agency. No open enforcement matters. One historical (2022) WorkSafeBC inspection closed without finding.",
+    newLegislation: "Proposed federal Clean Fuel Regulations Phase 2 and IMO MEPC 83 amendments — potential impact on bunker costs and asset useful lives. Monitoring.",
+    afrf: "Canadian Accounting Standards for Private Enterprises (ASPE), Part II.",
+    sigPolicies: "Revenue recognition per Section 3400; vessel depreciation 25-year straight-line; component accounting for drydocking; ASPE 3856 for financial instruments. Prior-year policies attached as Appendix.",
+    revenueRecognition: "Freight revenue recognized on % of voyage completed at period end. Charter revenue recognized straight-line over charter period. CAS 240 presumption of fraud risk on revenue NOT refuted — addressed via Form 580.",
+    lackGuidance: "Treatment of emissions allowances under ASPE — no authoritative guidance; policy selected by analogy to inventory.",
+    policyChoice: "Component vs. composite depreciation; capitalization threshold for drydocking ($250k); FX translation election.",
+    unusualTransactions: "Sale-and-leaseback of two feeder vessels completed Q2 2024 ($18M gain deferred). Insurance settlement on 2023 hull damage ($2.1M).",
+    entityStructure: "Parent: Shipping Line Inc. Wholly-owned subsidiaries: SLI USA Inc. (Delaware), SLI Logistics Ltd. (BC). 40% equity-accounted JV in Pacific Crew Services Inc. Org chart on file. Related parties documented on Form 515.",
+    majorInvestments: "Two newbuild vessel deposits with Hyundai Mipo Dockyard ($14M total); telematics rollout ($0.9M); Pacific Crew JV equity ($3.2M).",
+    acquisitions: "No acquisitions completed in 2024. Letter of intent signed Jan 2025 for tuck-in of Coastal Cargo Express ($6M) — subsequent event watch list.",
+    offBalance: "Six time-charter agreements treated as operating per ASPE 3065 (entity has not elected ASPE 3065.A1). Total commitment $42M over 5 years.",
+    debtStructure: "Revolving facility, term loan, vessel mortgage with RBC; subordinated shareholder loan from Westcoast Marine Holdings.",
+    derivatives: "Two interest-rate swaps hedging term loan (notional $25M). No FX or fuel derivatives; fuel risk managed via contract pass-throughs.",
+    imposedTargets: "RBC covenants: DSCR ≥ 1.25x; Debt/EBITDA ≤ 4.0x; minimum tangible net worth $35M. All covenants met at period end with comfortable headroom.",
+    financingChanges: "Term loan refinanced March 2024 ($30M, 5-year, SOFR+275). No debt extinguishments. Westcoast shareholder loan extended one year.",
+    budgetsForecasts: "Board-approved annual budget; rolling 13-week cash forecast; monthly variance review by CFO. KPIs: revenue per TEU, vessel utilization %, on-time arrival %, fuel cost per TEU.",
+    perfMeasures: "Vessel-level performance bonuses tied to safety record and fuel efficiency. Reviewed — not material to misstatement risk.",
+    externalTargets: "Same RBC covenants noted above. Not near breach.",
+    perfComparisons: "Benchmarked quarterly against Seaspan, ZIM intra-Pacific and CMA-CGM short-sea routes using Drewry data.",
+  };
+
+  const seedUS = {
+    entityType: "Privately-held Delaware LLC, taxed as a C-corporation. Not SEC-registered.",
+    entityActivity: "Harbor Freight LLC operates a US Pacific-coast short-sea shipping and port-drayage business. NAICS 483113.",
+    revenues: "Container drayage (≈55%), short-sea voyages (≈30%), warehousing & 3PL (≈15%). See table.",
+    marketConditions: "ILWU labor environment, US Jones Act compliance, IMO 2024 sulphur cap, and softening West-Coast import volumes.",
+    relationships: "Two-customer concentration (~38% of revenue); single-source EPA-compliant low-sulphur fuel supplier.",
+    facilities: "HQ Long Beach CA; terminals in Oakland and Tacoma; bonded warehouse in Los Angeles.",
+    thirdParties: "ADP for payroll, AWS for hosting, FlexPort for customs brokerage, Crowley Marine for crew management.",
+    rAndD: "No formal R&D. $0.4M capitalized for emissions-monitoring telematics in 2024.",
+    keyStakeholders: "Sponsor PE fund Westbridge Capital holds 70%; management rollover 22%; ESOP 8%.",
+    tcwgWho: "Five-member Board including two Westbridge designees; Audit Committee of three.",
+    financeCommittee: "Audit Committee meets quarterly; chair is independent CPA.",
+    tcwgMandate: "Charter approved 2023 — quarterly oversight of financial reporting, ICFR and external audit.",
+    keyManagement: "CEO, CFO, COO, VP Compliance, Controller.",
+    operatingStyle: "CEO commercially aggressive; CFO conservative on accounting and disclosure.",
+    keyAdvisors: "Legal (Latham & Watkins), tax (PwC), banker (Wells Fargo Commercial), insurance (Aon), ABS classification.",
+    perfIncentives: "STIP tied to Adjusted EBITDA and safety metrics; LTIP equity units under sponsor plan. No significant fraud motivator (Form 506).",
+    correspondence: "Routine USCG, EPA and CBP filings. No open enforcement.",
+    newLegislation: "California CARB Advanced Clean Fleets rule and proposed federal port-electrification mandates — capex implications.",
+    afrf: "US GAAP — FASB ASC framework. ASC 606 revenue model applied.",
+    sigPolicies: "ASC 606 revenue, ASC 842 leases (right-of-use vessels), ASC 326 CECL for receivables, component depreciation on vessels.",
+    revenueRecognition: "Performance obligations recognized over time per ASC 606-10-25-27(a). CAS 240/AU-C 240 fraud presumption on revenue NOT refuted — Form 580 substantive procedures.",
+    lackGuidance: "Treatment of EPA emissions credits — no authoritative GAAP; accounting policy disclosed.",
+    policyChoice: "Lease ROU asset incremental borrowing rate; capitalization threshold for drydocking ($300k).",
+    unusualTransactions: "Sale-leaseback of one tugboat Q3 2024 ($6M); business interruption insurance recovery ($1.4M).",
+    entityStructure: "Parent Harbor Freight LLC; subs Harbor Freight Logistics Inc. (CA), Harbor Pacific Crew LLC (DE). Related parties on Form 515.",
+    majorInvestments: "Newbuild deposit $9M (Bollinger Shipyards); telematics rollout $0.6M.",
+    acquisitions: "Tuck-in of CoastLine Drayage Inc. completed Q4 2024 ($4.5M, goodwill $1.8M).",
+    offBalance: "All operating leases now on balance sheet under ASC 842. No off-balance sheet SPEs.",
+    debtStructure: "Senior secured term loan and ABL revolver with Wells Fargo; sponsor preferred equity.",
+    derivatives: "Interest-rate cap on term loan (notional $20M). No FX or fuel derivatives.",
+    imposedTargets: "Wells Fargo covenants: Fixed-Charge Coverage ≥ 1.10x; Total Leverage ≤ 4.25x. All met.",
+    financingChanges: "Term loan upsized March 2024 to fund CoastLine acquisition. Revolver maturity extended to 2028.",
+    budgetsForecasts: "Annual operating plan, monthly forecast, weekly 13-week cash flow. KPIs: revenue per move, on-time %, asset utilization, safety TRIR.",
+    perfMeasures: "Vessel and driver-level safety/fuel bonuses; not material to misstatement risk.",
+    externalTargets: "Same Wells Fargo covenants. Comfortable headroom.",
+    perfComparisons: "Benchmarked vs. Matson, SAAM Towage, Foss Maritime using public filings and Drewry.",
+  };
+
+  const s = isUS ? seedUS : seedCA;
+  const entity = isUS ? "Harbor Freight LLC" : "Shipping Line Inc.";
+
+  // Seeded table rows
+  const revenueRows: RevenueRow[] = isUS
+    ? [
+        { id: uid(), source: "Container drayage", nature: "Port-to-warehouse container trucking", revenue: "55%", geoMarket: "US West Coast", complexity: "Volume-based, ASC 606 over-time" },
+        { id: uid(), source: "Short-sea voyages", nature: "Coastal container & RoRo voyages", revenue: "30%", geoMarket: "National (Jones Act)", complexity: "Voyage % complete; bill-and-hold judgment" },
+        { id: uid(), source: "Warehousing / 3PL", nature: "Bonded warehousing and value-added services", revenue: "15%", geoMarket: "Local (LA / Oakland)", complexity: "Multi-element bundles" },
+      ]
+    : [
+        { id: uid(), source: "Container freight", nature: "Trans-Pacific and coastal container shipping", revenue: "68%", geoMarket: "International (Asia-Pacific)", complexity: "Voyage % complete; cut-off judgement" },
+        { id: uid(), source: "Bulk cargo", nature: "Project and bulk break-bulk shipments", revenue: "22%", geoMarket: "International", complexity: "Long-duration voyages; estimation" },
+        { id: uid(), source: "Chartered vessel services", nature: "Time and bareboat charters", revenue: "10%", geoMarket: "International", complexity: "Lease vs service judgement (ASPE 3065)" },
+      ];
+
+  const customerRows: CustomerRow[] = isUS
+    ? [
+        { id: uid(), name: "West Coast Distribution Co.", type: "C", riskAreas: "Customer concentration (~22% of revenue); contract auto-renewal risk." },
+        { id: uid(), name: "Pacific Imports LLC", type: "C", riskAreas: "Concentration (~16%); credit risk." },
+        { id: uid(), name: "Chevron Marine Lubricants", type: "S", riskAreas: "Sole-source fuel supplier; 3-year contract; pricing pass-through clause." },
+      ]
+    : [
+        { id: uid(), name: "Asia Pacific Trading Corp", type: "C", riskAreas: "Customer concentration (~18% of revenue); economic dependence." },
+        { id: uid(), name: "Westport Resources Ltd", type: "C", riskAreas: "Concentration (~13%); take-or-pay clause." },
+        { id: uid(), name: "Pacific Bunker Supply Co.", type: "S", riskAreas: "Sole-source bunker fuel supplier; 3-year fixed-margin contract." },
+      ];
+
+  const facilityRows: FacilityRow[] = isUS
+    ? [
+        { id: uid(), address: "1200 Pier J, Long Beach, CA", purpose: "Head office & terminal operations", inventoryValue: "$0.8M", employees: "120" },
+        { id: uid(), address: "Pier 80, Oakland, CA", purpose: "Container terminal slot", inventoryValue: "—", employees: "35" },
+        { id: uid(), address: "Tacoma Port, Tacoma, WA", purpose: "Bonded warehouse", inventoryValue: "$2.4M", employees: "22" },
+      ]
+    : [
+        { id: uid(), address: "350 Waterfront Way, Vancouver, BC", purpose: "Head office & operations centre", inventoryValue: "$1.1M (bunker)", employees: "140" },
+        { id: uid(), address: "Pier 91, Seattle, WA", purpose: "Bonded warehouse", inventoryValue: "$3.6M", employees: "28" },
+        { id: uid(), address: "Berth A12, Yokohama, Japan", purpose: "Rented terminal slot", inventoryValue: "—", employees: "8 (agent)" },
+      ];
+
+  const thirdPartyRows: ThirdPartyRow[] = isUS
+    ? [
+        { id: uid(), nameDesc: "ADP — payroll processing for ~180 US employees.", contact: "service@adp.com", isServiceOrg: "Y", reasoning: "Integrates with GL via journal feed; controls relevant to payroll completeness. Form 516 required (SOC 1)." },
+        { id: uid(), nameDesc: "AWS — cloud hosting for ERP and TMS systems.", contact: "AWS Enterprise Support", isServiceOrg: "Y", reasoning: "Hosts ERP; ITGCs relevant to financial reporting." },
+        { id: uid(), nameDesc: "FlexPort — US customs brokerage and entry filings.", contact: "ops@flexport.com", isServiceOrg: "N", reasoning: "Service is transactional and re-performed via documents; not integrated into accounting." },
+      ]
+    : [
+        { id: uid(), nameDesc: "Ceridian Dayforce — payroll and time management for ~200 employees.", contact: "support@ceridian.com", isServiceOrg: "Y", reasoning: "Integrated with GL via posting feed; controls over payroll completeness relevant. Form 516 required (CSAE 3416)." },
+        { id: uid(), nameDesc: "AWS Canada — cloud hosting for ERP and crew management.", contact: "AWS Enterprise Support", isServiceOrg: "Y", reasoning: "Hosts ERP and TMS; ITGCs relevant to financial reporting." },
+        { id: uid(), nameDesc: "McQuilling Marine Services — crew management and port-agent customs filings.", contact: "ops@mcquilling.com", isServiceOrg: "N", reasoning: "Service is operational; entity re-performs reconciliation of crew costs into GL." },
+      ];
+
+  const stakeholderRows: StakeholderRow[] = isUS
+    ? [
+        { id: uid(), name: "Westbridge Capital Partners IV LP", pctOwned: "70%", involvement: "PE sponsor — two board designees, monthly reporting, consent rights." },
+        { id: uid(), name: "Management rollover unit-holders", pctOwned: "22%", involvement: "Active management (CEO, CFO, COO)." },
+        { id: uid(), name: "ESOP — Harbor Freight Employee Trust", pctOwned: "8%", involvement: "Trustee voted by majority of employees." },
+      ]
+    : [
+        { id: uid(), name: "Thompson Family Trust", pctOwned: "62%", involvement: "Founder family — M. Thompson active as CEO and Chair." },
+        { id: uid(), name: "Westcoast Marine Holdings LP", pctOwned: "38%", involvement: "Passive financial investor; one board seat; subordinated shareholder loan." },
+      ];
+
+  const tcwgRows: TcwgRow[] = isUS
+    ? [
+        { id: uid(), name: "J. Patel", memberSince: "2020", onFinance: "Y", comments: "Audit Committee Chair; CPA; former CFO at SeaTac Logistics." },
+        { id: uid(), name: "R. Nguyen (Westbridge)", memberSince: "2021", onFinance: "Y", comments: "Sponsor designee; Operating Partner; MBA." },
+        { id: uid(), name: "M. O'Brien", memberSince: "2019", onFinance: "Y", comments: "Independent; ex-COO Matson; industry expertise." },
+        { id: uid(), name: "K. Ramirez", memberSince: "2022", onFinance: "N", comments: "Independent; ESG and HSE expertise." },
+        { id: uid(), name: "T. Lee (CEO)", memberSince: "2018", onFinance: "N", comments: "Founder & CEO; management representative." },
+      ]
+    : [
+        { id: uid(), name: "D. Singh", memberSince: "2018", onFinance: "Y", comments: "Audit Committee Chair; CPA, CA; former CFO Seaspan ULC. Independent." },
+        { id: uid(), name: "L. Pereira", memberSince: "2020", onFinance: "Y", comments: "Independent; tax partner (retired); financial-reporting expert." },
+        { id: uid(), name: "H. Westcott (Westcoast Marine)", memberSince: "2019", onFinance: "Y", comments: "Investor designee; non-independent." },
+        { id: uid(), name: "A. Thompson", memberSince: "2015", onFinance: "N", comments: "Founder family; non-executive." },
+        { id: uid(), name: "M. Thompson (CEO/Chair)", memberSince: "2015", onFinance: "N", comments: "Founder, CEO and Chair; management representative." },
+      ];
+
+  const managementRows: ManagementRow[] = isUS
+    ? [
+        { id: uid(), name: "T. Lee", position: "CEO", qualifications: "Founder; 25 yrs industry experience." },
+        { id: uid(), name: "S. Cho", position: "CFO", qualifications: "CPA; 18 yrs; previously controller at Matson." },
+        { id: uid(), name: "P. Alvarez", position: "COO", qualifications: "USMMA; 22 yrs port operations." },
+        { id: uid(), name: "R. Hudson", position: "VP Compliance", qualifications: "Maritime attorney; 15 yrs." },
+        { id: uid(), name: "M. Singh", position: "Controller", qualifications: "CPA; 12 yrs; ASC 606 and 842 lead." },
+      ]
+    : [
+        { id: uid(), name: "M. Thompson", position: "CEO & Chair", qualifications: "Founder; 30 yrs industry; B.Comm." },
+        { id: uid(), name: "J. Reyes", position: "CFO", qualifications: "CPA, CA; 20 yrs; previously CFO at Pacific Basin Logistics." },
+        { id: uid(), name: "K. Park", position: "Controller", qualifications: "CPA, CMA; 14 yrs; ASPE specialist." },
+        { id: uid(), name: "L. Garcia", position: "COO", qualifications: "Master Mariner; 25 yrs operations." },
+        { id: uid(), name: "N. Brar", position: "VP Operations", qualifications: "P.Eng (Marine); 16 yrs." },
+      ];
+
+  const advisorRows: AdvisorRow[] = isUS
+    ? [
+        { id: uid(), contactPerson: "J. Klein", company: "Latham & Watkins LLP", email: "j.klein@lw.com", adviceType: "Corporate, M&A, regulatory" },
+        { id: uid(), contactPerson: "S. Park", company: "PwC US — Tax", email: "s.park@pwc.com", adviceType: "Federal & state tax; transfer pricing" },
+        { id: uid(), contactPerson: "R. Diaz", company: "Wells Fargo Commercial Banking", email: "r.diaz@wellsfargo.com", adviceType: "Banking; covenant monitoring" },
+        { id: uid(), contactPerson: "M. Yu", company: "Aon Marine", email: "m.yu@aon.com", adviceType: "Hull, P&I, cargo and BI insurance" },
+      ]
+    : [
+        { id: uid(), contactPerson: "S. Chen", company: "Borden Ladner Gervais LLP", email: "schen@blg.com", adviceType: "Corporate, maritime, regulatory" },
+        { id: uid(), contactPerson: "R. Khan", company: "KPMG Canada — Tax", email: "rkhan@kpmg.ca", adviceType: "Income tax, GST/HST, transfer pricing" },
+        { id: uid(), contactPerson: "P. Lim", company: "RBC Commercial Banking", email: "p.lim@rbc.com", adviceType: "Banking; covenant monitoring" },
+        { id: uid(), contactPerson: "E. Murphy", company: "Marsh Canada Ltd.", email: "e.murphy@marsh.com", adviceType: "Hull, P&I, cargo insurance" },
+        { id: uid(), contactPerson: "—", company: "Lloyd's Register", email: "vancouver@lr.org", adviceType: "Vessel classification & statutory surveys" },
+      ];
+
+  const lawRows: LawRow[] = isUS
+    ? [
+        { id: uid(), law: "Merchant Marine Act (Jones Act) — cabotage compliance.", nonCompliance: "No instances. Annual self-certification.", materialEffect: "Y" },
+        { id: uid(), law: "EPA Clean Air Act / IMO MARPOL Annex VI emissions.", nonCompliance: "None.", materialEffect: "N" },
+        { id: uid(), law: "OSHA / USCG safety regulations.", nonCompliance: "One recordable incident in 2024 — closed.", materialEffect: "N" },
+        { id: uid(), law: "Federal and state income tax (IRC; CA, WA).", nonCompliance: "None.", materialEffect: "Y" },
+      ]
+    : [
+        { id: uid(), law: "Canada Shipping Act, 2001 and Transport Canada Marine Safety regulations.", nonCompliance: "No instances. Annual inspections passed.", materialEffect: "Y" },
+        { id: uid(), law: "IMO MARPOL Annex VI / Canadian Vessel Pollution and Dangerous Chemicals Regulations.", nonCompliance: "None.", materialEffect: "N" },
+        { id: uid(), law: "WorkSafeBC and Canada Labour Code, Part II.", nonCompliance: "2022 inspection closed without finding.", materialEffect: "N" },
+        { id: uid(), law: "Income Tax Act (Canada) and Excise Tax Act (GST).", nonCompliance: "None.", materialEffect: "Y" },
+      ];
+
+  const investmentRows: InvestmentRow[] = isUS
+    ? [
+        { id: uid(), name: "Bollinger Shipyards — newbuild tug deposit", amount: "$9.0M", consolidated: "N", purpose: "Fleet renewal — delivery 2026", terms: "Refundable advance; milestone payments." },
+        { id: uid(), name: "Harbor Pacific Crew LLC", amount: "$1.5M", consolidated: "Y", purpose: "Crew management subsidiary", terms: "100% owned; consolidated." },
+        { id: uid(), name: "Emissions-monitoring telematics rollout", amount: "$0.6M", consolidated: "Y", purpose: "Compliance & efficiency", terms: "Capitalized as intangible; 5-yr useful life." },
+      ]
+    : [
+        { id: uid(), name: "Hyundai Mipo Dockyard — 2 newbuild vessels", amount: "$14.0M deposits", consolidated: "N", purpose: "Fleet renewal — delivery 2026/27", terms: "Refundable shipbuilding advances; milestone payments." },
+        { id: uid(), name: "Pacific Crew Services Inc. (40% JV)", amount: "$3.2M", consolidated: "N", purpose: "Crew supply joint venture", terms: "Equity method; 40% ownership." },
+        { id: uid(), name: "Fleet telematics & emissions monitoring", amount: "$0.9M", consolidated: "Y", purpose: "Operational efficiency & compliance", terms: "Capitalized; 5-year amortization." },
+      ];
+
+  const financingRows: FinancingRow[] = isUS
+    ? [
+        { id: uid(), creditor: "Wells Fargo — Term Loan A", amount: "$25.0M", rate: "SOFR + 3.00%", maturity: "2029-03-15", terms: "First-lien on fleet; FCCR ≥ 1.10x; Total Leverage ≤ 4.25x." },
+        { id: uid(), creditor: "Wells Fargo — ABL Revolver", amount: "$15.0M (committed)", rate: "SOFR + 2.25%", maturity: "2028-03-15", terms: "Borrowing base on AR; springing FCCR." },
+        { id: uid(), creditor: "Westbridge Capital — Preferred Equity", amount: "$8.0M", rate: "8% PIK", maturity: "Perpetual", terms: "Subordinated; redemption on liquidity event." },
+      ]
+    : [
+        { id: uid(), creditor: "RBC — Term Loan", amount: "$30.0M", rate: "SOFR + 2.75%", maturity: "2029-03-31", terms: "First mortgage on 3 vessels; DSCR ≥ 1.25x; D/EBITDA ≤ 4.0x; min TNW $35M." },
+        { id: uid(), creditor: "RBC — Revolving Facility", amount: "$10.0M (committed)", rate: "Prime + 1.50%", maturity: "2027-03-31", terms: "AR-based borrowing base; usual operating covenants." },
+        { id: uid(), creditor: "Vessel Mortgage — RBC", amount: "$6.5M", rate: "Fixed 5.65%", maturity: "2030-06-30", terms: "Specific to MV Pacific Voyager." },
+        { id: uid(), creditor: "Westcoast Marine Holdings LP — Shareholder Loan", amount: "$4.0M", rate: "6%", maturity: "2026-12-31", terms: "Subordinated and postponed to RBC." },
+      ];
+
   return {
-    entityType: emptyField(), entityActivity: emptyField(), revenues: emptyField(),
-    revenueRows: [emptyRevenueRow()],
-    marketConditions: emptyField(), relationships: emptyField(),
-    customerRows: [emptyCustomerRow()],
-    facilities: emptyField(),
-    facilityRows: [emptyFacilityRow()],
-    thirdParties: emptyField(),
-    thirdPartyRows: [emptyThirdPartyRow()],
-    rAndD: emptyField(), conclusionA: "",
-    keyStakeholders: emptyField(),
-    stakeholderRows: [emptyStakeholderRow()],
-    tcwgWho: emptyField(), financeCommittee: emptyField(), tcwgMandate: emptyField(),
-    tcwgRows: [emptyTcwgRow()],
-    keyManagement: emptyField(),
-    managementRows: [emptyManagementRow()],
-    operatingStyle: emptyField(), keyAdvisors: emptyField(),
-    advisorRows: [emptyAdvisorRow()],
-    perfIncentives: emptyField(), conclusionB: "",
-    lawRows: [emptyLawRow()],
-    correspondence: emptyField(), newLegislation: emptyField(),
-    inquiryC: emptyInquiry(), conclusionC: "",
-    afrf: emptyField(), sigPolicies: emptyField(), revenueRecognition: emptyField(),
-    lackGuidance: emptyField(), policyChoice: emptyField(), unusualTransactions: emptyField(),
-    inquiryD: emptyInquiry(), conclusionD: "",
-    entityStructure: emptyField(), majorInvestments: emptyField(),
-    investmentRows: [emptyInvestmentRow()],
-    acquisitions: emptyField(), offBalance: emptyField(), conclusionE: "",
-    debtStructure: emptyField(),
-    financingRows: [emptyFinancingRow()],
-    derivatives: emptyField(), imposedTargets: emptyField(), financingChanges: emptyField(), conclusionF: "",
-    budgetsForecasts: emptyField(), perfMeasures: emptyField(), externalTargets: emptyField(),
-    perfComparisons: emptyField(), conclusionG: "",
-    overallConclusion: "", notes: "", concluded: false, concludedOn: "",
+    entityType: sf(s.entityType),
+    entityActivity: sf(s.entityActivity),
+    revenues: sf(s.revenues),
+    revenueRows,
+    marketConditions: sf(s.marketConditions),
+    relationships: sf(s.relationships),
+    customerRows,
+    facilities: sf(s.facilities),
+    facilityRows,
+    thirdParties: sf(s.thirdParties),
+    thirdPartyRows,
+    rAndD: sf(s.rAndD),
+    conclusionA: `Risk factors: customer concentration in top-${isUS ? "2" : "3"}; revenue cut-off on voyages in progress at ${entity}'s period end; reliance on outsourced payroll and hosting (Form 516 required). Carried forward to Form 520.`,
+
+    keyStakeholders: sf(s.keyStakeholders),
+    stakeholderRows,
+    tcwgWho: sf(s.tcwgWho),
+    financeCommittee: sf(s.financeCommittee),
+    tcwgMandate: sf(s.tcwgMandate),
+    tcwgRows,
+    keyManagement: sf(s.keyManagement),
+    managementRows,
+    operatingStyle: sf(s.operatingStyle),
+    keyAdvisors: sf(s.keyAdvisors),
+    advisorRows,
+    perfIncentives: sf(s.perfIncentives),
+    conclusionB: "Governance is well established; no override-of-controls risk indicators noted at this stage. Management incentive plan reviewed against Form 506 — no significant fraud motivator.",
+
+    lawRows,
+    correspondence: sf(s.correspondence),
+    newLegislation: sf(s.newLegislation),
+    inquiryC: { who: "CFO", byWhom: "Elena Sokolova — Partner", date: today },
+    conclusionC: "No instances of material non-compliance identified. Emissions and clean-fuel legislation monitored as forward-looking risk.",
+
+    afrf: sf(s.afrf),
+    sigPolicies: sf(s.sigPolicies),
+    revenueRecognition: sf(s.revenueRecognition),
+    lackGuidance: sf(s.lackGuidance),
+    policyChoice: sf(s.policyChoice),
+    unusualTransactions: sf(s.unusualTransactions),
+    inquiryD: { who: "Controller", byWhom: "Priya Raman — Staff", date: today },
+    conclusionD: "Revenue recognition risk (CAS 240 presumption) carried to Form 520 and addressed via Form 580. Sale-leaseback transaction flagged for substantive review.",
+
+    entityStructure: sf(s.entityStructure),
+    majorInvestments: sf(s.majorInvestments),
+    investmentRows,
+    acquisitions: sf(s.acquisitions),
+    offBalance: sf(s.offBalance),
+    conclusionE: isUS
+      ? "CoastLine Drayage acquisition — goodwill and PPA assumptions identified as a significant risk; carry to Form 520."
+      : "Newbuild deposits and sale-leaseback flagged as significant judgements; carried to Form 520.",
+
+    debtStructure: sf(s.debtStructure),
+    financingRows,
+    derivatives: sf(s.derivatives),
+    imposedTargets: sf(s.imposedTargets),
+    financingChanges: sf(s.financingChanges),
+    conclusionF: "Covenant compliance confirmed with comfortable headroom; refinancing fees and embedded derivatives flagged for testing.",
+
+    budgetsForecasts: sf(s.budgetsForecasts),
+    perfMeasures: sf(s.perfMeasures),
+    externalTargets: sf(s.externalTargets),
+    perfComparisons: sf(s.perfComparisons),
+    conclusionG: "Performance measurement processes appear robust; no incentive structures indicating heightened fraud risk.",
+
+    overallConclusion: `Risk assessment procedures performed to identify events, conditions and circumstances that may result in material misstatement in the F/S of ${entity}. Significant risk factors documented on Form 520. Form to be reviewed and updated each period.`,
+    notes: "",
+    concluded: false,
+    concludedOn: "",
   };
 }
 
@@ -331,12 +599,12 @@ function SectionCard({ title, children }: { title: string; children: React.React
 export function Audit510Worksheet({ isUS = false }: { isUS?: boolean }) {
   const { engagementId } = useParams<{ engagementId: string }>();
   const ctx = useEngagementContext();
-  const storageKey = `audit-510-data-${engagementId ?? (isUS ? "us" : "ca")}`;
+  const storageKey = `audit-510-data-v2-${engagementId ?? (isUS ? "us" : "ca")}`;
 
   const [data, setData] = useState<Data510>(() => {
     const saved = readJsonFromLocalStorage<Data510 | null>(storageKey, null);
-    if (!saved) return buildDefault();
-    const def = buildDefault();
+    if (!saved) return buildDefault(isUS);
+    const def = buildDefault(isUS);
     return { ...def, ...saved };
   });
 
