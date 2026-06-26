@@ -38,7 +38,6 @@ interface ProcedureRow {
   psa: string;                    // P&SA reference (e.g. CAS 240)
   wpRef: RefDoc[];
   psc: YN;
-  pscInitials: string;
   exceptions: string;
 }
 
@@ -75,7 +74,7 @@ const ratingBadge = (r: Rating): string => {
   }
 };
 
-const DEFAULT_PROCEDURES: Omit<ProcedureRow, "id" | "wpRef" | "psc" | "pscInitials" | "exceptions">[] = [
+const DEFAULT_PROCEDURES: Omit<ProcedureRow, "id" | "wpRef" | "psc" | "exceptions">[] = [
   {
     title: "1. Identify revenue streams",
     guidance: "Obtain an understanding of the types of revenue and revenue transactions for the entity.",
@@ -132,7 +131,7 @@ function streamFromSeed(s: RevenueStreamSeed): RevenueStream {
 
 function buildProcedures(): ProcedureRow[] {
   return DEFAULT_PROCEDURES.map(p => ({
-    ...p, id: uid(), wpRef: [], psc: "", pscInitials: "", exceptions: "",
+    ...p, id: uid(), wpRef: [], psc: "", exceptions: "",
   }));
 }
 
@@ -448,7 +447,7 @@ export function Audit580Worksheet() {
                   <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider" style={{ minWidth: 320 }}>Procedure</th>
                   <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap" style={{ width: 120 }}>P&amp;SA</th>
                   <th className="px-4 py-3 text-center text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap" style={{ width: 90 }}>W/P ref.</th>
-                  <th className="px-4 py-3 text-center text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap" style={{ width: 170 }}>PSC (Y/N + initials)</th>
+                  <th className="px-4 py-3 text-center text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap" style={{ width: 100 }}>PSC (Y/N)</th>
                   <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider" style={{ minWidth: 240 }}>Exceptions / difficulties</th>
                 </tr>
               </thead>
@@ -472,21 +471,15 @@ export function Audit580Worksheet() {
                       />
                     </td>
                     <td className="px-3 py-3">
-                      <div className="flex gap-1.5">
-                        <Select disabled={locked} value={p.psc}
-                          onValueChange={v => patchProcedure(p.id, { psc: v as YN })}>
-                          <SelectTrigger className="h-8 text-xs w-20"><SelectValue placeholder="—" /></SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="Y" className="text-xs">Y</SelectItem>
-                            <SelectItem value="N" className="text-xs">N</SelectItem>
-                            <SelectItem value="NA" className="text-xs">N/A</SelectItem>
-                          </SelectContent>
-                        </Select>
-                        <Input disabled={locked} value={p.pscInitials}
-                          onChange={e => patchProcedure(p.id, { pscInitials: e.target.value })}
-                          placeholder="Initials"
-                          className="h-8 text-xs uppercase" />
-                      </div>
+                      <Select disabled={locked} value={p.psc}
+                        onValueChange={v => patchProcedure(p.id, { psc: v as YN })}>
+                        <SelectTrigger className="h-8 text-xs w-20"><SelectValue placeholder="—" /></SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="Y" className="text-xs">Y</SelectItem>
+                          <SelectItem value="N" className="text-xs">N</SelectItem>
+                          <SelectItem value="NA" className="text-xs">N/A</SelectItem>
+                        </SelectContent>
+                      </Select>
                     </td>
                     <td className="px-3 py-3">
                       <Textarea disabled={locked} value={p.exceptions}
