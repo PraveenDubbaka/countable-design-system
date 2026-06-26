@@ -2194,7 +2194,8 @@ export default function EngagementDetail() {
             <Audit535Worksheet />
           ) : (checklistKey === 'aud-ra-575') ? (
             <Audit575Worksheet />
-          ) : (checklistKey === 'aud-ra-590') ? (
+          ) : (checklistKey === 'aud-ra-580') ? (
+            <Audit580Worksheet />
             <Audit590Worksheet />
           ) : (checklistKey === 'aud-rp-610') ? (
             <Audit610Worksheet />
