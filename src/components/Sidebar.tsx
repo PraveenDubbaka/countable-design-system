@@ -1817,7 +1817,7 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
                       { id: "aud-ra-535", code: "535", label: "Understanding the Information System and Communication", icon: "worksheet", route: "checklist/aud-ra-535" },
                       { id: "aud-ra-540", code: "540", label: "Control Design / Implementation", icon: "worksheet", route: "checklist/aud-ra-540" },
                       { id: "aud-ra-550", code: "550", label: "Control Activities — Design, Implementation and Control Risk", icon: "worksheet", route: "checklist/aud-ra-550" },
-                      { id: "aud-ra-551", code: "551", label: "Understanding General IT Controls — Design and Implementation", icon: "checklist", route: "checklist/aud-ra-551" },
+                      { id: "aud-ra-551", code: "551", label: "Understanding General IT Controls — Design and Implementation", icon: "worksheet", route: "checklist/aud-ra-551" },
                       { id: "aud-ra-575", code: "575", label: "Internal Control Deficiencies Identified", icon: "worksheet", route: "checklist/aud-ra-575" },
                       { id: "aud-ra-580", code: "580", label: "Communication of Significant Deficiencies in Internal Control", icon: "checklist", route: "checklist/aud-ra-580" },
                       { id: "aud-ra-590", code: "590", label: "Engagement Scoping — Classes of Transactions, Account Balances and Disclosures", icon: "worksheet", route: "checklist/aud-ra-590" },
