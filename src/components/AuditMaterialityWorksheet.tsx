@@ -1,4 +1,5 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
+import { writeJsonToLocalStorage } from "@/lib/safeJson";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -339,6 +340,16 @@ export function AuditMaterialityWorksheet({ isUS = false }: AuditMaterialityWork
     if (isNaN(m) || isNaN(p)) return "";
     return formatNum(m * p / 100);
   })();
+
+  // Persist key derived values for cross-worksheet auto-population (e.g., 513)
+  useEffect(() => {
+    const key = `audit-materiality-data-${isUS ? "us" : "ca"}`;
+    writeJsonToLocalStorage(key, {
+      overallMateriality,
+      performanceMateriality: pmAmount,
+      clearlyTrivial: ctAmount,
+    });
+  }, [isUS, overallMateriality, pmAmount, ctAmount]);
 
   const standardRef = isUS ? "AU-C 320" : "CAS 320";
   const title = isUS ? "Materiality — AU-C 320" : "Materiality — CAS 320";
