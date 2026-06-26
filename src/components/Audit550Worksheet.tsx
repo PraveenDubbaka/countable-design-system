@@ -271,27 +271,28 @@ export function Audit550Worksheet() {
                   {/* Controls table */}
                   <div className="overflow-x-auto rounded-md border border-border">
                     <table className="w-full text-xs">
-                      <thead>
-                        <tr className="bg-muted/30 border-b border-border">
-                          <th className="px-3 py-2 text-center font-semibold uppercase tracking-wider w-10">#</th>
-                          <th className="px-3 py-2 text-left font-semibold uppercase tracking-wider" style={{ minWidth: 240 }}>Control</th>
-                          <th className="px-3 py-2 text-center font-semibold uppercase tracking-wider" style={{ width: 90 }}>Inherent risk</th>
-                          <th className="px-3 py-2 text-center font-semibold uppercase tracking-wider" style={{ width: 170 }}>Assertions</th>
-                          <th className="px-3 py-2 text-left font-semibold uppercase tracking-wider" style={{ width: 150 }}>Auto / Manual<sup>(1)</sup></th>
-                          <th className="px-3 py-2 text-left font-semibold uppercase tracking-wider" style={{ width: 180 }}>Characteristics<sup>(2)</sup></th>
-                          <th className="px-3 py-2 text-center font-semibold uppercase tracking-wider" style={{ width: 110 }}>Design (Y/S/N)</th>
-                          <th className="px-3 py-2 text-center font-semibold uppercase tracking-wider" style={{ width: 110 }}>Implemented<sup>(3)</sup></th>
-                          <th className="px-3 py-2 text-center font-semibold uppercase tracking-wider" style={{ width: 90 }}>W/P ref.</th>
-                          <th className="px-3 py-2 text-center font-semibold uppercase tracking-wider" style={{ width: 90 }}>GITC supports</th>
-                          <th className="px-3 py-2 text-center font-semibold uppercase tracking-wider" style={{ width: 100 }}>OE test planned</th>
-                          <th className="px-3 py-2 text-center font-semibold uppercase tracking-wider" style={{ width: 90 }}>Control risk</th>
-                          <th className="px-3 py-2 text-center font-semibold uppercase tracking-wider" style={{ width: 90 }}>Tested at</th>
-                          {!locked && <th className="w-10"></th>}
+                      <thead className="sticky top-0 z-10">
+                        <tr className="bg-muted border-b border-border">
+                          <th className="px-3 py-3 text-center text-xs font-semibold text-foreground uppercase tracking-wider w-10">#</th>
+                          <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider" style={{ minWidth: 240 }}>Control</th>
+                          <th className="px-4 py-3 text-center text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap" style={{ width: 90 }}>Inherent risk</th>
+                          <th className="px-4 py-3 text-center text-xs font-semibold text-foreground uppercase tracking-wider" style={{ width: 170 }}>Assertions</th>
+                          <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap" style={{ width: 150 }}>Auto / Manual<sup>(1)</sup></th>
+                          <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider" style={{ width: 180 }}>Characteristics<sup>(2)</sup></th>
+                          <th className="px-4 py-3 text-center text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap" style={{ width: 110 }}>Design (Y/S/N)</th>
+                          <th className="px-4 py-3 text-center text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap" style={{ width: 110 }}>Implemented<sup>(3)</sup></th>
+                          <th className="px-4 py-3 text-center text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap" style={{ width: 90 }}>W/P ref.</th>
+                          <th className="px-4 py-3 text-center text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap" style={{ width: 90 }}>GITC supports</th>
+                          <th className="px-4 py-3 text-center text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap" style={{ width: 100 }}>OE test planned</th>
+                          <th className="px-4 py-3 text-center text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap" style={{ width: 90 }}>Control risk</th>
+                          <th className="px-4 py-3 text-center text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap" style={{ width: 90 }}>Tested at</th>
+                          {!locked && <th className="px-2 py-3 w-8" />}
                         </tr>
                       </thead>
-                      <tbody className="divide-y divide-border">
+                      <tbody>
                         {risk.controls.map((ct, i) => (
-                          <tr key={ct.id} className="hover:bg-muted/30 align-top">
+                          <tr key={ct.id} className="hover:bg-muted/50 transition-colors align-top border-b border-border last:border-b-0">
+
                             <td className="px-3 py-2 text-center font-mono">{i + 1}</td>
                             <td className="px-3 py-2">
                               <Textarea disabled={locked} value={ct.description}
