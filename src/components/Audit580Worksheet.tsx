@@ -176,7 +176,6 @@ export function Audit580Worksheet() {
       ...def, ...saved,
       accountBalance: saved.accountBalance || seededHeader.accountBalance,
       performanceMateriality: saved.performanceMateriality || seededHeader.performanceMateriality,
-      periodEnded: saved.periodEnded || seededHeader.periodEnded,
       streams: saved.streams?.length ? saved.streams : seededStreams,
       procedures: saved.procedures?.length ? saved.procedures : def.procedures,
     };
