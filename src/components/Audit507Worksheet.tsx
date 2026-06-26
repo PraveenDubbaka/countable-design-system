@@ -249,12 +249,12 @@ export function Audit507Worksheet({ isUS = false }: { isUS?: boolean }) {
                       <td className="px-4 py-2 align-top border-l border-border">
                         <Textarea disabled={locked} value={row.extract} onChange={e => setPC(i, {extract:e.target.value})} placeholder="Enter extract or matter noted…" className="min-h-[56px] text-sm bg-background resize-none" />
                       </td>
-                      <td className="px-4 py-2 align-top text-center border-l border-border" style={{width:110}}>
+                      <td className="w-[100px] px-4 py-2 align-top text-center border-l border-border" style={{minWidth:100}}>
                         <div className="flex items-center justify-center pt-1">
                           <Checkbox checked={row.riskForm520} onCheckedChange={v => setPC(i, {riskForm520:!!v})} disabled={locked} />
                         </div>
                       </td>
-                      <td className="px-4 py-2 align-top text-center border-l border-border" style={{width:110}}>
+                      <td className="w-[100px] px-4 py-2 align-top text-center border-l border-border" style={{minWidth:100}}>
                         <RefButton reference={row.wpRef} onAttach={doc => setPC(i, {wpRef:[...row.wpRef,doc]})} onRemove={j => setPC(i, {wpRef:row.wpRef.filter((_,idx)=>idx!==j)})} disabled={locked} />
                       </td>
                     </tr>
