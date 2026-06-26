@@ -623,7 +623,7 @@ export function Audit511Worksheet({ isUS = false }: { isUS?: boolean }) {
                         <Input disabled={locked} value={app.name} onChange={e => updateApp(i, { name: e.target.value })}
                           placeholder="E.g., QuickBooks, SAP…" className="h-8 text-sm bg-background" />
                         <Input disabled={locked} value={app.appType} onChange={e => updateApp(i, { appType: e.target.value })}
-                          placeholder="Type (COTS, cloud-based, in-house…)" className="h-7 text-xs border-0 shadow-none px-0 focus-visible:ring-0 bg-transparent text-muted-foreground mt-0.5" />
+                          placeholder="Type (COTS, cloud-based, in-house…)" className="h-7 text-xs bg-background text-muted-foreground mt-1" />
                       </td>
                       {(["network", "database", "os", "purpose"] as const).map(col => (
                         <td key={col} className="px-4 py-2.5">
