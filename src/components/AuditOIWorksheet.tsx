@@ -99,10 +99,10 @@ function ColHeaders() {
       <tr className="bg-muted border-b border-border">
         <th className="w-10 px-4 py-3 text-center text-xs font-semibold text-foreground uppercase tracking-wider" />
         <th className="w-10 px-4 py-3 text-center text-xs font-semibold text-foreground uppercase tracking-wider">#</th>
-        <th className="px-6 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider">Description</th>
+        <th className="w-[200px] px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider">Description</th>
         <th className="px-4 py-3 text-center text-xs font-semibold text-foreground uppercase tracking-wider" style={{ width: 200, minWidth: 200 }}>Procedure successfully completed</th>
-        <th className="px-6 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider">Responses and any difficulties encountered</th>
-        <th className="px-6 py-3 text-center text-xs font-semibold text-foreground uppercase tracking-wider" style={{ width: 110, minWidth: 110 }}>w/p reference</th>
+        <th className="w-[300px] px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider">Responses and any difficulties encountered</th>
+        <th className="px-4 py-3 text-center text-xs font-semibold text-foreground uppercase tracking-wider" style={{ width: 110, minWidth: 110 }}>w/p reference</th>
       </tr>
     </thead>
   );
