@@ -146,11 +146,21 @@ export function Audit520Worksheet() {
   const [data, setData] = useState<Data520>(() => {
     const saved = readJsonFromLocalStorage<Data520 | null>(storageKey, null);
     if (!saved) return buildDefault();
+    const toRefDocs = (v: unknown): RefDoc[] => {
+      if (Array.isArray(v)) return v as RefDoc[];
+      if (typeof v === "string" && v) return [{ name: v }];
+      return [];
+    };
     const migrated: Data520 = {
       ...saved,
       partARows: saved.partARows.map(r => ({
         ...r,
-        wpRef: Array.isArray(r.wpRef) ? r.wpRef : r.wpRef ? [{ name: String(r.wpRef) }] : [],
+        wpRefSource: toRefDocs(r.wpRefSource),
+        wpRef: toRefDocs(r.wpRef),
+      })),
+      partBRows: saved.partBRows.map(r => ({
+        ...r,
+        wpRefSource: toRefDocs(r.wpRefSource),
       })),
     };
     return { ...buildDefault(), ...migrated };
@@ -168,11 +178,17 @@ export function Audit520Worksheet() {
   function updatePartA(id: string, field: keyof PartARow, val: string) {
     setData(d => ({ ...d, partARows: d.partARows.map(r => r.id === id ? { ...r, [field]: val } : r) }));
   }
+  function setPartAWpRefSource(id: string, wpRefSource: RefDoc[]) {
+    setData(d => ({ ...d, partARows: d.partARows.map(r => r.id === id ? { ...r, wpRefSource } : r) }));
+  }
   function setPartAWpRef(id: string, wpRef: RefDoc[]) {
     setData(d => ({ ...d, partARows: d.partARows.map(r => r.id === id ? { ...r, wpRef } : r) }));
   }
   function updatePartB(id: string, field: keyof PartBRow, val: string) {
     setData(d => ({ ...d, partBRows: d.partBRows.map(r => r.id === id ? { ...r, [field]: val } : r) }));
+  }
+  function setPartBWpRefSource(id: string, wpRefSource: RefDoc[]) {
+    setData(d => ({ ...d, partBRows: d.partBRows.map(r => r.id === id ? { ...r, wpRefSource } : r) }));
   }
 
   return (
