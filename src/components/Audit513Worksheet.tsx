@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from "react";
+import { useParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
@@ -9,6 +10,8 @@ import { Plus, Trash2, Info, AlertTriangle } from "lucide-react";
 import { RefButton, RefDoc } from "@/components/RefButton";
 import { readJsonFromLocalStorage, writeJsonToLocalStorage } from "@/lib/safeJson";
 import { cn } from "@/lib/utils";
+import { useEngagementContext } from "@/hooks/useEngagementContext";
+import { AutoFillBanner } from "@/components/AutoFillBanner";
 
 // ── Types ──────────────────────────────────────────────────────────────────────
 
@@ -72,20 +75,93 @@ const PRESET_ESTIMATES = [
 
 const uid = () => Math.random().toString(36).slice(2, 9);
 
-function buildDefaultEstimates(): EstimateRow[] {
+/** Pre-seed estimates with realistic shipping-industry context (CA/US). */
+function buildDefaultEstimates(isUS: boolean): EstimateRow[] {
+  // Map preset name -> seed (selected, F/S area, SCOTABD, complex)
+  const seed: Record<string, Partial<EstimateRow>> = {
+    "Allowance for doubtful accounts": {
+      selected: true, scotabd: "Y", complex: "N",
+      fsArea: "Trade receivables — freight & demurrage",
+    },
+    "Inventory obsolescence": {
+      selected: true, scotabd: "Y", complex: "N",
+      fsArea: isUS ? "Bunker fuel & spare parts inventory" : "Bunker fuel & vessel spares inventory",
+    },
+    "Useful lives / depreciation rate of PP&E": {
+      selected: true, scotabd: "Y", complex: "N",
+      fsArea: isUS ? "Vessels, containers & terminal equipment" : "Vessels, containers & shore equipment",
+    },
+    "Impairment of long-lived assets": {
+      selected: true, scotabd: "Y", complex: "Y",
+      fsArea: isUS ? "Vessel CGU — long-lived asset group (ASC 360)" : "Vessel CGU (IAS 36 / ASPE 3063)",
+    },
+    "Revenue recognition": {
+      selected: true, scotabd: "Y", complex: "Y",
+      fsArea: isUS ? "Voyage revenue — performance obligation over time (ASC 606)" : "Voyage revenue — percentage-of-completion at period end",
+    },
+    "Fair value measurements": {
+      selected: isUS, scotabd: isUS ? "Y" : "", complex: isUS ? "Y" : "",
+      fsArea: isUS ? "Bunker fuel derivative hedges (ASC 815/820)" : "",
+    },
+    "Pension plans and other post-retirement benefits": {
+      selected: !isUS, scotabd: !isUS ? "Y" : "", complex: !isUS ? "Y" : "",
+      fsArea: !isUS ? "Defined-benefit pension obligation — seafarers' plan" : "",
+    },
+    "Accruals (warranty)": {
+      selected: false, scotabd: "N", complex: "N",
+    },
+    "Impairment in goodwill": {
+      selected: isUS, scotabd: isUS ? "Y" : "", complex: isUS ? "Y" : "",
+      fsArea: isUS ? "Goodwill — CoastLine Drayage acquisition (2024)" : "",
+    },
+  };
   return PRESET_ESTIMATES.map(name => ({
-    id: uid(), name, isPreset: true, selected: false, fsArea: "", scotabd: "", complex: "",
+    id: uid(), name, isPreset: true,
+    selected: false, fsArea: "", scotabd: "", complex: "",
+    ...seed[name],
   }));
 }
 
-function buildDefault(): Data513 {
+function buildDefault(isUS = false): Data513 {
+  const entity = isUS ? "Harbor Freight LLC" : "Shipping Line Inc.";
+  const framework = isUS ? "US GAAP (ASC)" : "ASPE";
   return {
-    partAPsc: "", partAWpRef: [], partAResponse: "",
-    estimates: buildDefaultEstimates(),
-    partBWpRef: [], partBPsc: "", partBDeficiencies: "",
-    controlEnvironment: "", riskAssessmentProcess: "", specializedSkills: "",
-    monitoringOutcomes: "", monitoringPolicies: "",
-    evaluation: "",
+    partAPsc: "Y",
+    partAWpRef: [],
+    partAResponse:
+      `Estimates were identified through (i) review of Form 510 understanding of ${entity}'s operations ` +
+      `(vessel-asset intensive, voyages crossing the period-end, ${isUS ? "USD-denominated bunker hedges, ASC 606 over-time recognition" : "ASPE measurement bases and CRA tax positions"}), ` +
+      `(ii) inquiries of the CFO and Controller about transactions, events and conditions giving rise to estimates ` +
+      `(impairment indicators on older tonnage, voyage cut-off, ${isUS ? "fuel-hedge MTM, goodwill from the CoastLine Drayage acquisition" : "seafarer pension actuarial assumptions"}), ` +
+      `and (iii) review of ${framework} disclosure requirements. All estimates expected in the F/S are tabled below.`,
+    estimates: buildDefaultEstimates(isUS),
+    partBWpRef: [],
+    partBPsc: "Y",
+    partBDeficiencies:
+      `Management's process is largely informal — estimates are prepared by the Controller and reviewed by the CFO at month-end ` +
+      `without a documented estimation policy. No periodic look-back of prior estimate outcomes is performed. ` +
+      `Audit implication: increased reliance on substantive procedures over key estimates (impairment, voyage cut-off${isUS ? ", fuel-hedge fair value, goodwill" : ", pension actuarial assumptions"}); consider Form 530 control deficiency report.`,
+    controlEnvironment:
+      `${isUS ? "The Audit Committee (3 independent directors)" : "TCWG (owner-managed board, 2 external advisors)"} reviews estimates quarterly. ` +
+      `Oversight is appropriate at the entity level but the CFO prepares and reviews most estimates — segregation of duties is limited.`,
+    riskAssessmentProcess:
+      `Risks relating to estimates are identified informally during the year-end close. No documented risk register for estimation uncertainty. ` +
+      `Significant estimates (vessel impairment, voyage revenue cut-off) are revisited each period but without a structured risk-assessment template.`,
+    specializedSkills:
+      isUS
+        ? "Management engaged an external valuation specialist (Duff & Phelps) for the 2024 goodwill impairment test on the CoastLine Drayage CGU, and uses the bunker broker's MTM reports for fuel-derivative valuation. We will evaluate competence and objectivity per AU-C 500."
+        : "Management uses an external actuary (Mercer) for the seafarers' defined-benefit plan and a marine surveyor for residual-value estimates on the older container fleet. We will evaluate competence and objectivity per CAS 500.",
+    monitoringOutcomes:
+      `Look-back: the FY${isUS ? "23" : "23"} allowance for doubtful accounts was over-stated by ~12% versus actual write-offs; useful-life review on two vessels was deferred. ` +
+      `Management has not formally documented these outcomes — recommend introducing an annual estimate look-back schedule.`,
+    monitoringPolicies:
+      `No written estimation policy. Monitoring is performed via month-end variance reviews by the CFO. ` +
+      `Estimates are recomputed each period from underlying schedules (AR aging, vessel register, voyage logs${isUS ? ", hedge ledger" : ", actuarial report"}) rather than rolled forward without challenge.`,
+    evaluation:
+      `Overall, ${entity}'s process for preparing accounting estimates is appropriate to the size and complexity of the entity, ` +
+      `but improvements are needed in (a) documented estimation policies, (b) formal look-back of prior outcomes, and (c) segregation between estimate preparation and review. ` +
+      `Significant estimates (impairment of vessel CGU, voyage revenue cut-off${isUS ? ", fuel-derivative fair value, goodwill impairment" : ", seafarer pension obligation"}) ` +
+      `will be addressed through targeted procedures on Forms 513-1 / 513-2. Control deficiencies will be communicated to TCWG via Form 575.`,
     concluded: false, concludedOn: "",
   };
 }
@@ -146,22 +222,23 @@ function ControlRow({ label, question, value, locked, onChange }: {
 
 // ── Main Component ─────────────────────────────────────────────────────────────
 
-export function Audit513Worksheet({ isUS = false }: { isUS?: boolean }) {
-  const storageKey = `audit-513-data-${isUS ? "us" : "ca"}`;
+export function Audit513Worksheet({ isUS: isUSProp }: { isUS?: boolean } = {}) {
+  const { engagementId } = useParams<{ engagementId: string }>();
+  const ctx = useEngagementContext();
+  const isUS = isUSProp ?? ctx.isUS;
+  const storageKey = `audit-513-data-v2-${engagementId ?? (isUS ? "us" : "ca")}`;
 
   const [data, setData] = useState<Data513>(() => {
     const saved = readJsonFromLocalStorage<Data513 | null>(storageKey, null);
-    if (!saved) return buildDefault();
-    const def = buildDefault();
+    const def = buildDefault(isUS);
+    if (!saved) return def;
     // Merge saved estimates with defaults (preserve preset order, add custom at end)
-    const presetIds = new Set(def.estimates.map(e => e.name));
     const savedCustom = (saved.estimates ?? []).filter(e => !e.isPreset);
     const mergedPresets = def.estimates.map(def_e => {
       const found = (saved.estimates ?? []).find(s => s.name === def_e.name && s.isPreset);
       return found ? { ...def_e, ...found } : def_e;
     });
     return { ...def, ...saved, estimates: [...mergedPresets, ...savedCustom] };
-    void presetIds;
   });
 
   const firstRender = useRef(true);
@@ -231,6 +308,13 @@ export function Audit513Worksheet({ isUS = false }: { isUS?: boolean }) {
       {/* Scrollable body */}
       <div className="flex-1 overflow-y-auto bg-muted/30">
         <div className="p-6 space-y-6 max-w-6xl">
+          <AutoFillBanner
+            entityName={ctx.entityName}
+            periodEndDisplay={ctx.periodEndDisplay}
+            framework={ctx.framework}
+            populated="performance materiality (Form PL1), risk-assessment narrative, applicable estimates with F/S areas & complexity, and control-component findings — all editable"
+          />
+
 
           {/* ── Header — Performance Materiality (auto-populated) ──────────── */}
           <div className="bg-card border border-border rounded-md px-4 py-3 flex items-center gap-3">
