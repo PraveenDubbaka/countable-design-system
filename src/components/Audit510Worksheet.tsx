@@ -104,6 +104,7 @@ interface Data510 {
 
   // Overall
   overallConclusion: string;
+  notes: string;
   concluded: boolean;
   concludedOn: string;
 }
