@@ -231,7 +231,7 @@ function NarrativeRow({ label, bullets, value, wpRef, locked, onChange, onWpChan
 }) {
   return (
     <tr className="group hover:bg-muted/30 transition-colors align-top">
-      <td className="border border-border px-5 py-3 text-sm text-foreground w-[38%]">
+      <td className="px-5 py-3 text-sm text-foreground w-[38%]">
         <span className="font-medium">{label}</span>
         {bullets && (
           <ul className="mt-1.5 space-y-0.5 list-disc list-inside">
@@ -239,7 +239,7 @@ function NarrativeRow({ label, bullets, value, wpRef, locked, onChange, onWpChan
           </ul>
         )}
       </td>
-      <td className="border border-border px-4 py-3">
+      <td className="px-4 py-3">
         <Textarea
           disabled={locked}
           value={value}
@@ -248,7 +248,7 @@ function NarrativeRow({ label, bullets, value, wpRef, locked, onChange, onWpChan
           className="min-h-[72px] text-sm resize-none border-0 shadow-none p-0 focus-visible:ring-0 bg-transparent"
         />
       </td>
-      <td className="border border-border px-4 py-3 text-center w-[100px]">
+      <td className="px-4 py-3 text-center w-[100px]">
         <RefButton
           reference={wpRef}
           onAttach={doc => onWpChange([...wpRef, doc])}
@@ -270,16 +270,16 @@ function ProcessTable({ rows, locked, onChange }: {
       <table className="w-full border-collapse">
         <thead>
           <tr className="bg-muted border-b border-border">
-            <th className="border border-border px-5 py-2.5 text-left text-xs font-semibold text-foreground uppercase tracking-wider w-[36%]">Procedure</th>
-            <th className="border border-border px-4 py-2.5 text-left text-xs font-semibold text-foreground uppercase tracking-wider">Response / Comments</th>
-            <th className="border border-border px-4 py-2.5 text-center text-xs font-semibold text-foreground uppercase tracking-wider w-28">PSC? (Y/N)</th>
-            <th className="border border-border px-4 py-2.5 text-center text-xs font-semibold text-foreground uppercase tracking-wider w-24">W/P Ref.</th>
+            <th className="px-5 py-2.5 text-left text-xs font-semibold text-foreground uppercase tracking-wider w-[36%]">Procedure</th>
+            <th className="px-4 py-2.5 text-left text-xs font-semibold text-foreground uppercase tracking-wider">Response / Comments</th>
+            <th className="px-4 py-2.5 text-center text-xs font-semibold text-foreground uppercase tracking-wider w-28">PSC? (Y/N)</th>
+            <th className="px-4 py-2.5 text-center text-xs font-semibold text-foreground uppercase tracking-wider w-24">W/P Ref.</th>
           </tr>
         </thead>
-        <tbody>
+        <tbody className="divide-y divide-border">
           {rows.map(({ id, label, bullets, row }) => (
             <tr key={id} className="group hover:bg-muted/30 transition-colors align-top">
-              <td className="border border-border px-5 py-3 text-sm text-foreground">
+              <td className="px-5 py-3 text-sm text-foreground">
                 <span className="font-medium">{label}</span>
                 {bullets && (
                   <ul className="mt-1.5 space-y-0.5 list-disc list-inside">
@@ -287,7 +287,7 @@ function ProcessTable({ rows, locked, onChange }: {
                   </ul>
                 )}
               </td>
-              <td className="border border-border px-4 py-3">
+              <td className="px-4 py-3">
                 <Textarea
                   disabled={locked}
                   value={row.response}
@@ -296,7 +296,7 @@ function ProcessTable({ rows, locked, onChange }: {
                   className="min-h-[64px] text-sm resize-none border-0 shadow-none p-0 focus-visible:ring-0 bg-transparent"
                 />
               </td>
-              <td className="border border-border px-4 py-3 w-28">
+              <td className="px-4 py-3 w-28">
                 <Select value={row.psc} onValueChange={v => onChange(id, { psc: v })} disabled={locked}>
                   <SelectTrigger className="h-8 text-sm"><SelectValue placeholder="—" /></SelectTrigger>
                   <SelectContent>
@@ -306,7 +306,7 @@ function ProcessTable({ rows, locked, onChange }: {
                   </SelectContent>
                 </Select>
               </td>
-              <td className="border border-border px-4 py-3 text-center w-24">
+              <td className="px-4 py-3 text-center w-24">
                 <RefButton
                   reference={row.wpRef}
                   onAttach={doc => onChange(id, { wpRef: [...row.wpRef, doc] })}
@@ -542,12 +542,12 @@ export function Audit511Worksheet({ isUS = false }: { isUS?: boolean }) {
               <table className="w-full border-collapse">
                 <thead>
                   <tr className="bg-muted border-b border-border">
-                    <th className="border border-border px-5 py-2.5 text-left text-xs font-semibold text-foreground uppercase tracking-wider w-[38%]">Document</th>
-                    <th className="border border-border px-4 py-2.5 text-left text-xs font-semibold text-foreground uppercase tracking-wider">Response / Comments</th>
-                    <th className="border border-border px-4 py-2.5 text-center text-xs font-semibold text-foreground uppercase tracking-wider w-[100px]">W/P Ref.</th>
+                    <th className="px-5 py-2.5 text-left text-xs font-semibold text-foreground uppercase tracking-wider w-[38%]">Document</th>
+                    <th className="px-4 py-2.5 text-left text-xs font-semibold text-foreground uppercase tracking-wider">Response / Comments</th>
+                    <th className="px-4 py-2.5 text-center text-xs font-semibold text-foreground uppercase tracking-wider w-[100px]">W/P Ref.</th>
                   </tr>
                 </thead>
-                <tbody>
+                <tbody className="divide-y divide-border">
                   <NarrativeRow
                     label="1. IT governance and strategy"
                     bullets={[
@@ -605,33 +605,33 @@ export function Audit511Worksheet({ isUS = false }: { isUS?: boolean }) {
               <table className="w-full min-w-[860px] border-collapse">
                 <thead>
                   <tr className="bg-muted border-b border-border text-xs font-semibold text-foreground uppercase tracking-wider">
-                    <th className="border border-border px-4 py-2.5 text-center w-10">#</th>
-                    <th className="border border-border px-4 py-2.5 text-left">Application Name & Type</th>
-                    <th className="border border-border px-4 py-2.5 text-left">Network</th>
-                    <th className="border border-border px-4 py-2.5 text-left">Database</th>
-                    <th className="border border-border px-4 py-2.5 text-left">Operating System</th>
-                    <th className="border border-border px-4 py-2.5 text-left">Nature & Purpose</th>
-                    <th className="border border-border px-4 py-2.5 text-center w-32">Relevant to Audit?</th>
-                    <th className="border border-border w-8" />
+                    <th className="px-4 py-2.5 text-center w-10">#</th>
+                    <th className="px-4 py-2.5 text-left">Application Name & Type</th>
+                    <th className="px-4 py-2.5 text-left">Network</th>
+                    <th className="px-4 py-2.5 text-left">Database</th>
+                    <th className="px-4 py-2.5 text-left">Operating System</th>
+                    <th className="px-4 py-2.5 text-left">Nature & Purpose</th>
+                    <th className="px-4 py-2.5 text-center w-32">Relevant to Audit?</th>
+                    <th className="w-8" />
                   </tr>
                 </thead>
-                <tbody>
+                <tbody className="divide-y divide-border">
                   {data.apps.map((app, i) => (
                     <tr key={app.id} className="group hover:bg-muted/30 transition-colors align-top">
-                      <td className="border border-border px-4 py-2.5 text-center text-xs font-semibold text-muted-foreground">{app.num}</td>
-                      <td className="border border-border px-4 py-2">
+                      <td className="px-4 py-2.5 text-center text-xs font-semibold text-muted-foreground">{app.num}</td>
+                      <td className="px-4 py-2">
                         <Input disabled={locked} value={app.name} onChange={e => updateApp(i, { name: e.target.value })}
                           placeholder="E.g., QuickBooks, SAP…" className="h-7 text-sm border-0 shadow-none px-0 focus-visible:ring-0 bg-transparent" />
                         <Input disabled={locked} value={app.appType} onChange={e => updateApp(i, { appType: e.target.value })}
                           placeholder="Type (COTS, cloud-based, in-house…)" className="h-7 text-xs border-0 shadow-none px-0 focus-visible:ring-0 bg-transparent text-muted-foreground mt-0.5" />
                       </td>
                       {(["network", "database", "os", "purpose"] as const).map(col => (
-                        <td key={col} className="border border-border px-4 py-2.5">
+                        <td key={col} className="px-4 py-2.5">
                           <Input disabled={locked} value={app[col]} onChange={e => updateApp(i, { [col]: e.target.value })}
                             placeholder="—" className="h-7 text-sm border-0 shadow-none px-0 focus-visible:ring-0 bg-transparent" />
                         </td>
                       ))}
-                      <td className="border border-border px-4 py-2.5 w-32">
+                      <td className="px-4 py-2.5 w-32">
                         <Select value={app.relevant} onValueChange={v => updateApp(i, { relevant: v as YN })} disabled={locked}>
                           <SelectTrigger className="h-7 text-sm"><SelectValue placeholder="—" /></SelectTrigger>
                           <SelectContent>
@@ -640,7 +640,7 @@ export function Audit511Worksheet({ isUS = false }: { isUS?: boolean }) {
                           </SelectContent>
                         </Select>
                       </td>
-                      <td className="border border-border px-2 py-2 text-center w-8">
+                      <td className="px-2 py-2 text-center w-8">
                         {!locked && (
                           <button onClick={() => deleteApp(i)} className="opacity-0 group-hover:opacity-100 p-1 rounded hover:bg-destructive/10 transition-all">
                             <Trash2 className="h-3 w-3 text-destructive" />
@@ -680,14 +680,14 @@ export function Audit511Worksheet({ isUS = false }: { isUS?: boolean }) {
                       <table className="w-full border-collapse">
                         <thead>
                           <tr className="bg-muted border-b border-border">
-                            <th className="border border-border px-5 py-2.5 text-left text-xs font-semibold text-foreground uppercase tracking-wider w-[32%]">Topic</th>
-                            <th className="border border-border px-4 py-2.5 text-left text-xs font-semibold text-foreground uppercase tracking-wider">Response / Comments</th>
+                            <th className="px-5 py-2.5 text-left text-xs font-semibold text-foreground uppercase tracking-wider w-[32%]">Topic</th>
+                            <th className="px-4 py-2.5 text-left text-xs font-semibold text-foreground uppercase tracking-wider">Response / Comments</th>
                           </tr>
                         </thead>
-                        <tbody>
+                        <tbody className="divide-y divide-border">
                           {APP_DETAIL_TOPICS.map(topic => (
                             <tr key={topic.key} className="group hover:bg-muted/30 transition-colors align-top">
-                              <td className="border border-border px-5 py-3 text-sm text-foreground">
+                              <td className="px-5 py-3 text-sm text-foreground">
                                 <span className="font-medium">{topic.label}</span>
                                 {topic.bullets && (
                                   <ul className="mt-1.5 space-y-0.5 list-disc list-inside">
@@ -697,7 +697,7 @@ export function Audit511Worksheet({ isUS = false }: { isUS?: boolean }) {
                                   </ul>
                                 )}
                               </td>
-                              <td className="border border-border px-4 py-3">
+                              <td className="px-4 py-3">
                                 <Textarea
                                   disabled={locked}
                                   value={detail[topic.key]}
