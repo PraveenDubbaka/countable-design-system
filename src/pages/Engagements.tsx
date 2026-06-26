@@ -2,13 +2,11 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useEngagements } from "@/store/EngagementsContext";
 import { toast } from "sonner";
-import { Search, ChevronDown, Pencil, Trash2, Download, Briefcase, Loader, CheckCircle2, Archive, Check, X } from "lucide-react";
+import { Search, ChevronDown, Pencil, Trash2, Download, Briefcase, Loader, CheckCircle2, Archive, X } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Layout } from "@/components/Layout";
@@ -88,7 +86,6 @@ export default function Engagements() {
   const [createModalOpen, setCreateModalOpen] = useState(false);
   const [selectedClient, setSelectedClient] = useState("");
   const [selectedEngType, setSelectedEngType] = useState("");
-  const [typePopoverOpen, setTypePopoverOpen] = useState(false);
 
   const uniqueClients = Array.from(new Set(engagementList.map(e => e.client))).sort();
 
@@ -265,7 +262,7 @@ export default function Engagements() {
         </div>
       </div>
       {/* Create Engagement modal */}
-      <Dialog open={createModalOpen} onOpenChange={(open) => { setCreateModalOpen(open); if (!open) setTypePopoverOpen(false); }}>
+      <Dialog open={createModalOpen} onOpenChange={setCreateModalOpen}>
         <DialogContent className="sm:max-w-[400px] p-0 gap-0 overflow-hidden rounded-2xl">
           {/* Custom close button */}
           <button
@@ -311,40 +308,16 @@ export default function Engagements() {
               <label className="text-sm font-medium text-foreground">
                 Select Engagement Type<span className="text-destructive">*</span>
               </label>
-              <Popover open={typePopoverOpen} onOpenChange={setTypePopoverOpen}>
-                <PopoverTrigger asChild>
-                  <button
-                    className="flex items-center justify-between w-full h-10 px-3 text-sm rounded-md border border-input bg-background hover:bg-accent hover:text-accent-foreground transition-colors"
-                    role="combobox"
-                    aria-expanded={typePopoverOpen}
-                  >
-                    <span className={selectedEngType ? "text-foreground" : "text-muted-foreground"}>
-                      {selectedEngType || "Select"}
-                    </span>
-                    <ChevronDown className="h-4 w-4 shrink-0 text-muted-foreground" />
-                  </button>
-                </PopoverTrigger>
-                <PopoverContent className="w-[352px] p-0" align="start">
-                  <Command>
-                    <CommandInput placeholder="Search..." className="h-9" />
-                    <CommandList>
-                      <CommandEmpty>No results found.</CommandEmpty>
-                      <CommandGroup>
-                        {ENGAGEMENT_TYPES.map(et => (
-                          <CommandItem
-                            key={et.value}
-                            value={et.value}
-                            onSelect={(val) => { setSelectedEngType(val); setTypePopoverOpen(false); }}
-                          >
-                            {et.label}
-                            {selectedEngType === et.value && <Check className="ml-auto h-4 w-4" />}
-                          </CommandItem>
-                        ))}
-                      </CommandGroup>
-                    </CommandList>
-                  </Command>
-                </PopoverContent>
-              </Popover>
+              <Select value={selectedEngType} onValueChange={setSelectedEngType}>
+                <SelectTrigger className="h-10 text-sm">
+                  <SelectValue placeholder="Select" />
+                </SelectTrigger>
+                <SelectContent>
+                  {ENGAGEMENT_TYPES.map(et => (
+                    <SelectItem key={et.value} value={et.value}>{et.label}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
 
             {/* Actions */}
