@@ -140,7 +140,6 @@ function buildDefault(): Data580 {
   return {
     accountBalance: "",
     performanceMateriality: "",
-    periodEnded: "",
     streams: [emptyStream()],
     procedures: buildProcedures(),
     fraudRiskIdentified: "",
