@@ -121,6 +121,7 @@ function buildDefault(): Data511 {
     dTestingChecks: emptyChecks(),
     dTestingResponse: emptyProcess(),
     conclusion: "",
+    notes: "",
     concluded: false,
     concludedOn: "",
   };
