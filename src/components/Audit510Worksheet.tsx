@@ -666,7 +666,7 @@ export function Audit510Worksheet({ isUS = false }: { isUS?: boolean }) {
               <th className="px-4 py-2.5 text-left border-l border-border w-32">Approx. Revenue ($ or %)</th>
               <th className="px-4 py-2.5 text-left border-l border-border">Geographical Market</th>
               <th className="px-4 py-2.5 text-left border-l border-border">Areas of Complexity / Subjectivity</th>
-              <th className="border border-border w-8" />
+              <th className="w-8" />
             </tr>
           </thead>
           <tbody className="divide-y divide-border">
@@ -697,7 +697,7 @@ export function Audit510Worksheet({ isUS = false }: { isUS?: boolean }) {
               <th className="px-4 py-2.5 text-left">Customer (C) / Supplier (S)</th>
               <th className="px-4 py-2.5 text-left border-l border-border w-20">Type</th>
               <th className="px-4 py-2.5 text-left border-l border-border">Areas of Possible Risk</th>
-              <th className="border border-border w-8" />
+              <th className="w-8" />
             </tr>
           </thead>
           <tbody className="divide-y divide-border">
@@ -736,7 +736,7 @@ export function Audit510Worksheet({ isUS = false }: { isUS?: boolean }) {
               <th className="px-4 py-2.5 text-left border-l border-border">Principal Purpose</th>
               <th className="px-4 py-2.5 text-left border-l border-border w-40">Approx. Inventory Value ($ or %)</th>
               <th className="px-4 py-2.5 text-left border-l border-border w-32">Employees at Location</th>
-              <th className="border border-border w-8" />
+              <th className="w-8" />
             </tr>
           </thead>
           <tbody className="divide-y divide-border">
@@ -767,7 +767,7 @@ export function Audit510Worksheet({ isUS = false }: { isUS?: boolean }) {
               <th className="px-4 py-2.5 text-left border-l border-border w-44">Contact Information</th>
               <th className="px-4 py-2.5 text-center border-l border-border w-28">Service Org? (Y/N)</th>
               <th className="px-4 py-2.5 text-left border-l border-border">Reasoning & Factors Considered</th>
-              <th className="border border-border w-8" />
+              <th className="w-8" />
             </tr>
           </thead>
           <tbody className="divide-y divide-border">
@@ -827,7 +827,7 @@ export function Audit510Worksheet({ isUS = false }: { isUS?: boolean }) {
               <th className="px-4 py-2.5 text-left">Key Stakeholder (Individual / Company)</th>
               <th className="px-4 py-2.5 text-left border-l border-border w-28">% Owned</th>
               <th className="px-4 py-2.5 text-left border-l border-border">Direct Involvement, Influence or Agreements</th>
-              <th className="border border-border w-8" />
+              <th className="w-8" />
             </tr>
           </thead>
           <tbody className="divide-y divide-border">
@@ -860,7 +860,7 @@ export function Audit510Worksheet({ isUS = false }: { isUS?: boolean }) {
               <th className="px-4 py-2.5 text-left border-l border-border w-32">Member Since</th>
               <th className="px-4 py-2.5 text-center border-l border-border w-36">Finance / Audit Committee?</th>
               <th className="px-4 py-2.5 text-left border-l border-border">Comments (Skills, Background, Expertise, Family Links)</th>
-              <th className="border border-border w-8" />
+              <th className="w-8" />
             </tr>
           </thead>
           <tbody className="divide-y divide-border">
@@ -902,7 +902,7 @@ export function Audit510Worksheet({ isUS = false }: { isUS?: boolean }) {
               <th className="px-4 py-2.5 text-left">Name</th>
               <th className="px-4 py-2.5 text-left border-l border-border">Position</th>
               <th className="px-4 py-2.5 text-left border-l border-border">Qualifications / Experience / Comments</th>
-              <th className="border border-border w-8" />
+              <th className="w-8" />
             </tr>
           </thead>
           <tbody className="divide-y divide-border">
@@ -934,7 +934,7 @@ export function Audit510Worksheet({ isUS = false }: { isUS?: boolean }) {
               <th className="px-4 py-2.5 text-left border-l border-border">Company</th>
               <th className="px-4 py-2.5 text-left border-l border-border w-44">Email</th>
               <th className="px-4 py-2.5 text-left border-l border-border">Type(s) of Direction / Advice Provided</th>
-              <th className="border border-border w-8" />
+              <th className="w-8" />
             </tr>
           </thead>
           <tbody className="divide-y divide-border">
@@ -972,7 +972,7 @@ export function Audit510Worksheet({ isUS = false }: { isUS?: boolean }) {
               <th className="px-4 py-2.5 text-left">Significant Laws / Regulations (including environmental and tax)</th>
               <th className="px-4 py-2.5 text-left border-l border-border">Instances of Non-Compliance, Alleged Non-Compliance or Investigations</th>
               <th className="px-4 py-2.5 text-center border-l border-border w-40">Would Non-Compliance Result in Material Direct Effect on F/S? (Y/N)</th>
-              <th className="border border-border w-8" />
+              <th className="w-8" />
             </tr>
           </thead>
           <tbody className="divide-y divide-border">
@@ -1062,7 +1062,7 @@ export function Audit510Worksheet({ isUS = false }: { isUS?: boolean }) {
               <th className="px-4 py-2.5 text-center border-l border-border w-32">Consolidated in F/S? (Y/N)</th>
               <th className="px-4 py-2.5 text-left border-l border-border">Purpose of Investment</th>
               <th className="px-4 py-2.5 text-left border-l border-border">Significant Terms</th>
-              <th className="border border-border w-8" />
+              <th className="w-8" />
             </tr>
           </thead>
           <tbody className="divide-y divide-border">
@@ -1123,7 +1123,7 @@ export function Audit510Worksheet({ isUS = false }: { isUS?: boolean }) {
               <th className="px-4 py-2.5 text-left border-l border-border w-28">Interest Rate</th>
               <th className="px-4 py-2.5 text-left border-l border-border w-28">Maturity Date</th>
               <th className="px-4 py-2.5 text-left border-l border-border">Terms, Loan Security and Covenants</th>
-              <th className="border border-border w-8" />
+              <th className="w-8" />
             </tr>
           </thead>
           <tbody className="divide-y divide-border">
