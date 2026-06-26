@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Plus, Trash2, Info } from "lucide-react";
+import { RefButton, RefDoc } from "@/components/RefButton";
 import { readJsonFromLocalStorage, writeJsonToLocalStorage } from "@/lib/safeJson";
 import { cn } from "@/lib/utils";
 
@@ -15,17 +16,17 @@ type HML = "H" | "M" | "L" | "";
 
 interface PartARow {
   id: string;
-  wpRefSource: string;
+  wpRefSource: RefDoc[];
   rmmIdentified: string;
   fraudRisk: YN;
   rmmAssessment: HML;
   auditResponse: string;
-  wpRef: string;
+  wpRef: RefDoc[];
 }
 
 interface PartBRow {
   id: string;
-  wpRefSource: string;
+  wpRefSource: RefDoc[];
   rmmIdentified: string;
   scotabd: string;
   assertions: string;
@@ -53,11 +54,11 @@ const HML_OPTIONS: HML[] = ["H", "M", "L"];
 const YN_OPTIONS: YN[] = ["Y", "N"];
 
 function newPartARow(): PartARow {
-  return { id: uid(), wpRefSource: "", rmmIdentified: "", fraudRisk: "", rmmAssessment: "", auditResponse: "", wpRef: "" };
+  return { id: uid(), wpRefSource: [], rmmIdentified: "", fraudRisk: "", rmmAssessment: "", auditResponse: "", wpRef: [] };
 }
 
 function newPartBRow(): PartBRow {
-  return { id: uid(), wpRefSource: "", rmmIdentified: "", scotabd: "", assertions: "", irFactors: "", fraudRisk: "", irLikelihood: "", irMagnitude: "", inherentRisk: "", significantRisk: "", substantiveSufficient: "" };
+  return { id: uid(), wpRefSource: [], rmmIdentified: "", scotabd: "", assertions: "", irFactors: "", fraudRisk: "", irLikelihood: "", irMagnitude: "", inherentRisk: "", significantRisk: "", substantiveSufficient: "" };
 }
 
 function buildDefault(): Data520 {
@@ -65,18 +66,18 @@ function buildDefault(): Data520 {
     partARows: [
       {
         id: uid(),
-        wpRefSource: "",
+        wpRefSource: [],
         rmmIdentified: "Management override of controls",
         fraudRisk: "Y",
         rmmAssessment: "H",
         auditResponse: "1. Test appropriateness of journal entries recorded in the general ledger and other adjustments (Form 670).\n2. Review accounting estimates for biases and evaluate whether any bias represents an RMM due to fraud (Form 513).\n3. Evaluate whether significant transactions outside the normal course of business suggest fraudulent financial reporting or concealment of misappropriation.",
-        wpRef: "670",
+        wpRef: [{ name: "670" }],
       },
     ],
     partBRows: [
       {
         id: uid(),
-        wpRefSource: "510-5",
+        wpRefSource: [{ name: "510-5" }],
         rmmIdentified: "Inventory value could be overstated due to inadequate obsolescence provision",
         scotabd: "Inventory",
         assertions: "AV",
@@ -90,7 +91,7 @@ function buildDefault(): Data520 {
       },
       {
         id: uid(),
-        wpRefSource: "510-3",
+        wpRefSource: [{ name: "510-3" }],
         rmmIdentified: "Revenue recognition may be misstated due to incorrect cut-off of vessel charter agreements at year-end",
         scotabd: "Revenue",
         assertions: "C, AV",
@@ -104,7 +105,7 @@ function buildDefault(): Data520 {
       },
       {
         id: uid(),
-        wpRefSource: "515-5",
+        wpRefSource: [{ name: "515-5" }],
         rmmIdentified: "Related-party transactions may be incomplete or not disclosed on arm's length terms",
         scotabd: "Related party disclosures",
         assertions: "C, AV",
@@ -145,7 +146,24 @@ export function Audit520Worksheet() {
   const [data, setData] = useState<Data520>(() => {
     const saved = readJsonFromLocalStorage<Data520 | null>(storageKey, null);
     if (!saved) return buildDefault();
-    return { ...buildDefault(), ...saved };
+    const toRefDocs = (v: unknown): RefDoc[] => {
+      if (Array.isArray(v)) return v as RefDoc[];
+      if (typeof v === "string" && v) return [{ name: v }];
+      return [];
+    };
+    const migrated: Data520 = {
+      ...saved,
+      partARows: saved.partARows.map(r => ({
+        ...r,
+        wpRefSource: toRefDocs(r.wpRefSource),
+        wpRef: toRefDocs(r.wpRef),
+      })),
+      partBRows: saved.partBRows.map(r => ({
+        ...r,
+        wpRefSource: toRefDocs(r.wpRefSource),
+      })),
+    };
+    return { ...buildDefault(), ...migrated };
   });
 
   const firstRender = useRef(true);
@@ -160,8 +178,17 @@ export function Audit520Worksheet() {
   function updatePartA(id: string, field: keyof PartARow, val: string) {
     setData(d => ({ ...d, partARows: d.partARows.map(r => r.id === id ? { ...r, [field]: val } : r) }));
   }
+  function setPartAWpRefSource(id: string, wpRefSource: RefDoc[]) {
+    setData(d => ({ ...d, partARows: d.partARows.map(r => r.id === id ? { ...r, wpRefSource } : r) }));
+  }
+  function setPartAWpRef(id: string, wpRef: RefDoc[]) {
+    setData(d => ({ ...d, partARows: d.partARows.map(r => r.id === id ? { ...r, wpRef } : r) }));
+  }
   function updatePartB(id: string, field: keyof PartBRow, val: string) {
     setData(d => ({ ...d, partBRows: d.partBRows.map(r => r.id === id ? { ...r, [field]: val } : r) }));
+  }
+  function setPartBWpRefSource(id: string, wpRefSource: RefDoc[]) {
+    setData(d => ({ ...d, partBRows: d.partBRows.map(r => r.id === id ? { ...r, wpRefSource } : r) }));
   }
 
   return (
@@ -214,8 +241,13 @@ export function Audit520Worksheet() {
                 <tbody className="divide-y divide-border">
                   {data.partARows.map(row => (
                     <tr key={row.id} className="hover:bg-muted/50 transition-colors">
-                      <td className="px-4 py-2.5 align-top w-24">
-                        <Input disabled={locked} value={row.wpRefSource} onChange={e => updatePartA(row.id, "wpRefSource", e.target.value)} placeholder="—" className="h-8 text-sm" />
+                      <td className="px-4 py-2.5 align-top w-28">
+                        <RefButton
+                          reference={row.wpRefSource}
+                          onAttach={doc => setPartAWpRefSource(row.id, [...row.wpRefSource, doc])}
+                          onRemove={i => setPartAWpRefSource(row.id, row.wpRefSource.filter((_, idx) => idx !== i))}
+                          disabled={locked}
+                        />
                       </td>
                       <td className="px-4 py-2.5 align-top min-w-[240px]">
                         <Textarea disabled={locked} value={row.rmmIdentified} onChange={e => updatePartA(row.id, "rmmIdentified", e.target.value)} placeholder="Describe the risk of material misstatement…" className="min-h-[72px] text-sm resize-none bg-background" />
@@ -235,8 +267,13 @@ export function Audit520Worksheet() {
                       <td className="px-4 py-2.5 align-top min-w-[260px]">
                         <Textarea disabled={locked} value={row.auditResponse} onChange={e => updatePartA(row.id, "auditResponse", e.target.value)} placeholder="Document overall audit response…" className="min-h-[72px] text-sm resize-none bg-background" />
                       </td>
-                      <td className="px-4 py-2.5 align-top w-20">
-                        <Input disabled={locked} value={row.wpRef} onChange={e => updatePartA(row.id, "wpRef", e.target.value)} placeholder="—" className="h-8 text-sm" />
+                      <td className="px-4 py-2.5 align-top w-28">
+                        <RefButton
+                          reference={row.wpRef}
+                          onAttach={doc => setPartAWpRef(row.id, [...row.wpRef, doc])}
+                          onRemove={i => setPartAWpRef(row.id, row.wpRef.filter((_, idx) => idx !== i))}
+                          disabled={locked}
+                        />
                       </td>
                       {!locked && (
                         <td className="px-2 py-2.5 align-middle text-center">
@@ -288,8 +325,13 @@ export function Audit520Worksheet() {
                 <tbody className="divide-y divide-border">
                   {data.partBRows.map(row => (
                     <tr key={row.id} className={cn("transition-colors", row.significantRisk === "Y" ? "bg-amber-50/40 dark:bg-amber-950/10 hover:bg-amber-50/60" : "hover:bg-muted/50")}>
-                      <td className="px-4 py-2.5 align-top w-20">
-                        <Input disabled={locked} value={row.wpRefSource} onChange={e => updatePartB(row.id, "wpRefSource", e.target.value)} placeholder="—" className="h-8 text-sm" />
+                      <td className="px-4 py-2.5 align-top w-28">
+                        <RefButton
+                          reference={row.wpRefSource}
+                          onAttach={doc => setPartBWpRefSource(row.id, [...row.wpRefSource, doc])}
+                          onRemove={i => setPartBWpRefSource(row.id, row.wpRefSource.filter((_, idx) => idx !== i))}
+                          disabled={locked}
+                        />
                       </td>
                       <td className="px-4 py-2.5 align-top min-w-[180px]">
                         <Textarea disabled={locked} value={row.rmmIdentified} onChange={e => updatePartB(row.id, "rmmIdentified", e.target.value)} placeholder="Describe the RMM…" className="min-h-[72px] text-sm resize-none bg-background" />
