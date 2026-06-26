@@ -620,37 +620,6 @@ export function Audit590Worksheet() {
           </div>
         </div>
 
-        {/* Sign-off */}
-        <div className="bg-card border border-border rounded-md p-5 space-y-3">
-          <h3 className="text-sm font-semibold text-foreground">Sign-off</h3>
-          <div className="grid grid-cols-4 gap-3">
-            <div className="space-y-1">
-              <label className="text-xs font-medium text-muted-foreground">Prepared by</label>
-              <Input disabled={locked} value={data.preparedBy}
-                onChange={e => setData(d => ({ ...d, preparedBy: e.target.value }))}
-                className="h-8 text-xs" />
-            </div>
-            <div className="space-y-1">
-              <label className="text-xs font-medium text-muted-foreground">Date</label>
-              <Input disabled={locked} type="date" value={data.preparedDate}
-                onChange={e => setData(d => ({ ...d, preparedDate: e.target.value }))}
-                className="h-8 text-xs" />
-            </div>
-            <div className="space-y-1">
-              <label className="text-xs font-medium text-muted-foreground">Reviewed by</label>
-              <Input disabled={locked} value={data.reviewedBy}
-                onChange={e => setData(d => ({ ...d, reviewedBy: e.target.value }))}
-                className="h-8 text-xs" />
-            </div>
-            <div className="space-y-1">
-              <label className="text-xs font-medium text-muted-foreground">Date</label>
-              <Input disabled={locked} type="date" value={data.reviewedDate}
-                onChange={e => setData(d => ({ ...d, reviewedDate: e.target.value }))}
-                className="h-8 text-xs" />
-            </div>
-          </div>
-        </div>
-
         {/* Notes */}
         <div className="bg-card border border-border rounded-md p-5 space-y-2">
           <h3 className="text-sm font-semibold text-foreground">Notes</h3>
