@@ -210,26 +210,41 @@ function normalize(saved: any): Data590 {
 
 export function Audit590Worksheet() {
   const { engagementId } = useParams<{ engagementId: string }>();
+  const ctx = useEngagementContext();
   const storageKey = `audit-590-data-${engagementId ?? "default"}`;
   const saveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const isFirstRender = useRef(true);
 
   const [data, setData] = useState<Data590>(() => {
     const saved = readJsonFromLocalStorage<any>(storageKey, null);
-    if (!saved) return buildDefault();
+    const seededRows = ctx.fsas.map(rowFromFsa);
+    const seededHeader = {
+      entityName: ctx.entityName,
+      periodEnd: ctx.periodEnd,
+      auditFramework: ctx.isUS ? "US GAAP" : "ASPE",
+      overallMateriality: formatCurrency(ctx.overallMateriality),
+      performanceMateriality: formatCurrency(ctx.performanceMateriality),
+    };
+    if (!saved) return { ...buildDefault(), ...seededHeader, rows: seededRows };
     // Migrate legacy schema if present
     if (Array.isArray(saved.rows) && saved.rows[0] && "class" in saved.rows[0]) {
-      // Old schema — discard rows and start fresh defaults but keep header fields.
       return {
         ...buildDefault(),
-        entityName: saved.entityName ?? "",
-        periodEnd: saved.periodEnd ?? "",
-        auditFramework: saved.auditFramework ?? "ASPE",
-        overallMateriality: saved.overallMateriality ?? "",
-        performanceMateriality: saved.performanceMateriality ?? "",
+        ...seededHeader,
+        rows: seededRows,
       };
     }
-    return normalize(saved);
+    const normalized = normalize(saved);
+    // Backfill any blank header fields from context (pre-fill, not override)
+    return {
+      ...normalized,
+      entityName: normalized.entityName || seededHeader.entityName,
+      periodEnd: normalized.periodEnd || seededHeader.periodEnd,
+      auditFramework: normalized.auditFramework || seededHeader.auditFramework,
+      overallMateriality: normalized.overallMateriality || seededHeader.overallMateriality,
+      performanceMateriality: normalized.performanceMateriality || seededHeader.performanceMateriality,
+      rows: normalized.rows.length ? normalized.rows : seededRows,
+    };
   });
 
   useEffect(() => {
