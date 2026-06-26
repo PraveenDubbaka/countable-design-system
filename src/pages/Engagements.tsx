@@ -311,40 +311,16 @@ export default function Engagements() {
               <label className="text-sm font-medium text-foreground">
                 Select Engagement Type<span className="text-destructive">*</span>
               </label>
-              <Popover open={typePopoverOpen} onOpenChange={setTypePopoverOpen}>
-                <PopoverTrigger asChild>
-                  <button
-                    className="flex items-center justify-between w-full h-10 px-3 text-sm rounded-md border border-input bg-background hover:bg-accent hover:text-accent-foreground transition-colors"
-                    role="combobox"
-                    aria-expanded={typePopoverOpen}
-                  >
-                    <span className={selectedEngType ? "text-foreground" : "text-muted-foreground"}>
-                      {selectedEngType || "Select"}
-                    </span>
-                    <ChevronDown className="h-4 w-4 shrink-0 text-muted-foreground" />
-                  </button>
-                </PopoverTrigger>
-                <PopoverContent className="w-[352px] p-0" align="start">
-                  <Command>
-                    <CommandInput placeholder="Search..." className="h-9" />
-                    <CommandList>
-                      <CommandEmpty>No results found.</CommandEmpty>
-                      <CommandGroup>
-                        {ENGAGEMENT_TYPES.map(et => (
-                          <CommandItem
-                            key={et.value}
-                            value={et.value}
-                            onSelect={(val) => { setSelectedEngType(val); setTypePopoverOpen(false); }}
-                          >
-                            {et.label}
-                            {selectedEngType === et.value && <Check className="ml-auto h-4 w-4" />}
-                          </CommandItem>
-                        ))}
-                      </CommandGroup>
-                    </CommandList>
-                  </Command>
-                </PopoverContent>
-              </Popover>
+              <Select value={selectedEngType} onValueChange={setSelectedEngType}>
+                <SelectTrigger className="h-10 text-sm">
+                  <SelectValue placeholder="Select" />
+                </SelectTrigger>
+                <SelectContent>
+                  {ENGAGEMENT_TYPES.map(et => (
+                    <SelectItem key={et.value} value={et.value}>{et.label}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
 
             {/* Actions */}
