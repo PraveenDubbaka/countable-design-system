@@ -404,22 +404,6 @@ export function Audit535Worksheet() {
           <Textarea disabled={locked} value={data.notes} onChange={e => setData(d => ({ ...d, notes: e.target.value }))} placeholder="Additional observations, follow-ups, or cross-references…" className="min-h-[90px] text-sm resize-none rounded-[10px]" />
         </div>
 
-        {/* Sign-off */}
-        <div className="bg-card border border-border rounded-md p-5">
-          <h3 className="text-sm font-semibold text-foreground mb-3">Sign-off</h3>
-          <div className="grid grid-cols-2 gap-3">
-            {([['Prepared by', 'preparedBy', 'preparedDate'], ['Reviewed by', 'reviewedBy', 'reviewedDate']] as const).map(([label, nk, dk]) => (
-              <div key={nk} className="space-y-1.5">
-                <p className="text-xs font-medium text-muted-foreground">{label}</p>
-                <div className="flex gap-2">
-                  <Input disabled={locked} value={(data as unknown as Record<string, string>)[nk]} onChange={e => setData(d => ({ ...d, [nk]: e.target.value }))} className="h-8 text-xs flex-1" placeholder="Name" />
-                  <Input disabled={locked} type="date" value={(data as unknown as Record<string, string>)[dk]} onChange={e => setData(d => ({ ...d, [dk]: e.target.value }))} className="h-8 text-xs w-36" />
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-
         {locked ? (
           <div className="rounded-lg border border-green-200 bg-green-50 px-4 py-2.5 text-xs text-green-800 font-medium">
             Concluded on {data.concludedOn}
