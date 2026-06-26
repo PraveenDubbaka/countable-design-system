@@ -108,15 +108,15 @@ export function Audit506Worksheet({ isUS = false }: { isUS?: boolean }) {
             <tr className="bg-muted text-xs font-semibold text-foreground uppercase tracking-wider border-b border-border">
               <th className="px-4 py-2 text-left">Who interviewed</th>
               <th className="px-4 py-2 text-left border-l border-border">By whom</th>
-              <th className="px-4 py-2 text-left border-l border-border" style={{width:160}}>Date</th>
+              <th className="w-[160px] px-4 py-2 text-left border-l border-border" style={{minWidth:160}}>Date</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-border">
             {interviews.map((iv, i) => (
               <tr key={i} className="hover:bg-muted/30">
-                <td className="px-2 py-1">
+                <td className="px-2 py-1.5">
                   <Select value={iv.who} onValueChange={v => setIv(i, {who: v})} disabled={locked}>
-                    <SelectTrigger className="h-7 text-sm border-0 shadow-none bg-transparent focus:ring-0 focus:ring-offset-0 px-2">
+                    <SelectTrigger className="h-8 text-sm bg-background">
                       <SelectValue placeholder="Select name / role" />
                     </SelectTrigger>
                     <SelectContent>
@@ -124,9 +124,9 @@ export function Audit506Worksheet({ isUS = false }: { isUS?: boolean }) {
                     </SelectContent>
                   </Select>
                 </td>
-                <td className="px-2 py-1 border-l border-border">
+                <td className="px-2 py-1.5 border-l border-border">
                   <Select value={iv.byWhom} onValueChange={v => setIv(i, {byWhom: v})} disabled={locked}>
-                    <SelectTrigger className="h-7 text-sm border-0 shadow-none bg-transparent focus:ring-0 focus:ring-offset-0 px-2">
+                    <SelectTrigger className="h-8 text-sm bg-background">
                       <SelectValue placeholder="Select auditor" />
                     </SelectTrigger>
                     <SelectContent>
@@ -134,8 +134,8 @@ export function Audit506Worksheet({ isUS = false }: { isUS?: boolean }) {
                     </SelectContent>
                   </Select>
                 </td>
-                <td className="px-2 py-1 border-l border-border" style={{width:160}}>
-                  <Input type="date" disabled={locked} value={iv.date} onChange={e => setIv(i, {date: e.target.value})} className="h-7 text-sm border-0 shadow-none px-2 focus-visible:ring-0 bg-transparent" />
+                <td className="w-[160px] px-2 py-1.5 border-l border-border" style={{minWidth:160}}>
+                  <Input type="date" disabled={locked} value={iv.date} onChange={e => setIv(i, {date: e.target.value})} className="h-8 text-sm bg-background" />
                 </td>
               </tr>
             ))}
