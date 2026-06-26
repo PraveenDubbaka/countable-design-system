@@ -131,6 +131,98 @@ function FinColHeaders({ showBudget }: { showBudget: boolean }) {
   );
 }
 
+// ── Luka AI fill data ──────────────────────────────────────────────────────────
+// Pre-populated values for Shipping Line Inc. AUD-SL-Mar312024, keyed by "ri,ci"
+
+const LUKA_PAP501_FILLS: Record<string, Record<string, string>> = {
+  '501 - Part A': {
+    '0,1': 'Shipping Line Inc.', '0,4': 'March 31, 2024',
+    // Procedure 1
+    '8,3': 'RA-501', '8,4': 'Y / AG',
+    '8,5': 'Financial statements obtained from Xero general ledger. Income statement and balance sheet for period ended March 31, 2024 reviewed and agreed to trial balance.',
+    // Procedure 2
+    '9,3': 'RA-501', '9,4': 'Y / AG',
+    '9,5': 'Data confirmed reliable — reviewed to signed management representation letter. Reconciled to Xero data; no significant discrepancies noted.',
+    // Procedure 3
+    '10,4': 'Y / AG', '10,5': 'See items a–c below.',
+    '11,4': 'Y / AG', '11,5': 'No significant inconsistencies. Revenue growth of 8.2% YoY; consistent with voyage logs. Working capital position stable. No material changes in accounting policies noted.',
+    '12,4': 'Y / AG', '12,5': 'Q3 revenue decline noted ($840K below budget). Management attributed to scheduled dry-docking of MV Kestrel (Oct–Nov 2023). Recovery in Q4 consistent with prior-year seasonal pattern.',
+    '13,4': 'Y / AG', '13,5': 'No fraud indicators identified. Segregation of duties appears adequate. No unusual journal entries noted. No red flags in analytical data.',
+    // Procedure 4
+    '14,4': 'Y / AG', '14,5': 'Discussed with James Hartley (CEO) and Priya Sharma (CFO) on April 8, 2024. Notes documented on W/P RA-502.',
+    '15,4': 'Y / AG', '15,5': 'Q3 dip attributed to dry-docking — consistent with prior year. Charter rates stable at $24,800/day avg. Explanation corroborated by voyage logs.',
+    '16,4': 'Y / AG', '16,5': 'No unusual transactions identified. All items >$50,000 reviewed and appear ordinary-course. No undisclosed related-party transactions noted.',
+    // Procedure 5
+    '17,4': 'Y / AG', '17,5': 'No indications of material misstatement arising from analytical procedures performed.',
+    '18,4': 'Y / AG', '18,5': 'No specific additional audit response required beyond planned substantive procedures in the risk assessment.',
+    '19,4': 'Y / AG', '19,5': 'No fraud risk indicators identified. All management explanations reasonable and consistent with Xero data and industry benchmarks.',
+  },
+  '501 - Part B': {
+    '0,1': 'Shipping Line Inc.', '0,6': 'March 31, 2024',
+    // Stream labels
+    '15,0': 'Charter income', '22,0': 'Vessel operating costs', '29,0': 'Charter income',
+    // Sales stream 1 (row 15)
+    '15,3': '16,420,000', '15,4': '15,800,000', '15,5': '15,200,000',
+    '15,6': '620,000', '15,7': '3.9%', '15,8': '1,220,000', '15,9': '8.0%',
+    // Total sales (row 20)
+    '20,3': '16,420,000', '20,4': '15,800,000', '20,5': '15,200,000',
+    '20,6': '620,000', '20,7': '3.9%', '20,8': '1,220,000', '20,9': '8.0%',
+    // COS stream 1 (row 22)
+    '22,3': '12,105,000', '22,4': '11,850,000', '22,5': '11,400,000',
+    '22,6': '255,000', '22,7': '2.2%', '22,8': '705,000', '22,9': '6.2%',
+    // Total COS (row 27)
+    '27,3': '12,105,000', '27,4': '11,850,000', '27,5': '11,400,000',
+    '27,6': '255,000', '27,7': '2.2%', '27,8': '705,000', '27,9': '6.2%',
+    // GM stream 1 (row 29)
+    '29,3': '4,315,000', '29,4': '3,950,000', '29,5': '3,800,000',
+    '29,6': '365,000', '29,7': '9.2%', '29,8': '515,000', '29,9': '13.6%',
+    // Total GM $ (row 34)
+    '34,3': '4,315,000', '34,4': '3,950,000', '34,5': '3,800,000',
+    '34,6': '365,000', '34,7': '9.2%', '34,8': '515,000', '34,9': '13.6%',
+    // GM % (rows 36, 41)
+    '36,3': '26.3%', '36,4': '25.0%', '36,5': '25.0%', '36,6': '1.3%', '36,8': '1.3%',
+    '41,3': '26.3%', '41,4': '25.0%', '41,5': '25.0%', '41,6': '1.3%', '41,8': '1.3%',
+    // Expenses (rows 47-51)
+    '47,3': '1,850,000', '47,4': '1,820,000', '47,5': '1,750,000', '47,6': '30,000',  '47,7': '1.6%',  '47,8': '100,000', '47,9': '5.7%',
+    '48,3': '425,000',   '48,4': '410,000',   '48,5': '395,000',   '48,6': '15,000',  '48,7': '3.7%',  '48,8': '30,000',  '48,9': '7.6%',
+    '49,3': '285,000',   '49,4': '290,000',   '49,5': '265,000',   '49,6': '-5,000',  '49,7': '-1.7%', '49,8': '20,000',  '49,9': '7.5%',
+    '51,3': '395,000',   '51,4': '380,000',   '51,5': '360,000',   '51,6': '15,000',  '51,7': '3.9%',  '51,8': '35,000',  '51,9': '9.7%',
+    // Total expenses (row 57)
+    '57,3': '2,955,000', '57,4': '2,900,000', '57,5': '2,770,000', '57,6': '55,000',  '57,7': '1.9%',  '57,8': '185,000', '57,9': '6.7%',
+    // Net income (row 58) and % (row 59)
+    '58,3': '1,360,000', '58,4': '1,050,000', '58,5': '1,030,000', '58,6': '310,000', '58,7': '29.5%', '58,8': '330,000', '58,9': '32.0%',
+    '59,3': '8.3%', '59,4': '6.6%', '59,5': '6.8%',
+    // Balance sheet (key rows)
+    '65,3': '1,850,000',  '65,4': '1,600,000',  '65,5': '1,420,000',  '65,6': '250,000', '65,7': '15.6%', '65,8': '430,000',   '65,9': '30.3%',
+    '67,3': '2,340,000',  '67,4': '2,100,000',  '67,5': '1,980,000',  '67,6': '240,000', '67,7': '11.4%', '67,8': '360,000',   '67,9': '18.2%',
+    '71,3': '4,280,000',  '71,4': '3,820,000',  '71,5': '3,510,000',  '71,6': '460,000', '71,7': '12.0%', '71,8': '770,000',   '71,9': '21.9%',
+    '78,3': '18,650,000', '78,4': '17,900,000', '78,5': '17,200,000', '78,6': '750,000', '78,7': '4.2%',  '78,8': '1,450,000', '78,9': '8.4%',
+    '82,3': '1,420,000',  '82,4': '1,350,000',  '82,5': '1,290,000',  '82,6': '70,000',  '82,7': '5.2%',  '82,8': '130,000',   '82,9': '10.1%',
+    '91,3': '2,210,000',  '91,4': '2,100,000',  '91,5': '2,015,000',  '91,6': '110,000', '91,7': '5.2%',  '91,8': '195,000',   '91,9': '9.7%',
+    '99,3': '9,830,000',  '99,4': '9,500,000',  '99,5': '9,200,000',  '99,6': '330,000', '99,7': '3.5%',  '99,8': '630,000',   '99,9': '6.8%',
+    '105,3': '8,820,000', '105,4': '8,400,000', '105,5': '8,000,000', '105,6': '420,000','105,7': '5.0%', '105,8': '820,000',  '105,9': '10.3%',
+    '106,3': '18,650,000','106,4': '17,900,000','106,5': '17,200,000','106,6': '750,000','106,7': '4.2%', '106,8': '1,450,000','106,9': '8.4%',
+  },
+  '501- Part C': {
+    '0,1': 'Shipping Line Inc.', '0,5': 'March 31, 2024',
+    // Matter 1: net income above budget (row 8)
+    '8,0': 'B-58',
+    '8,1': 'Net income significantly above budget (+$310K, +29.5%) and prior year (+$330K, +32.0%)',
+    '8,4': 'Higher average charter rates in H1 ($26,200/day vs $24,800 budget) and Q4 revenue recovery post dry-docking. Partial offset by higher salaries (+$30K) and occupancy (+$15K).',
+    '8,6': 'Flag for additional scrutiny: perform substantive testing of charter income; review all JEs >$25K related to revenue. Explanation corroborated by voyage logs and bank statements. No indicators of fraud.',
+    // Matter 2: Q3 dry-docking (row 9)
+    '9,0': 'B-15 / B-22',
+    '9,1': 'Q3 revenue below budget and prior year — scheduled dry-docking of MV Kestrel (Oct–Nov 2023)',
+    '9,4': 'Dry-docking program completed November 2023. MV Kestrel returned to service December 2023. Revenue recovered above budget in Q4, with full-year revenue $620K above budget.',
+    '9,6': 'No specific audit response required. Consistent with prior-year seasonal pattern and disclosed in management discussion. Documented in risk assessment W/P RA-502.',
+    // Fraud question answer (row 20)
+    '20,0': 'No unusual or unexpected relationships were identified that indicate risks of material misstatement due to fraud. Revenue fluctuations are attributable to the known MV Kestrel dry-docking schedule, consistent with prior-year patterns. All management explanations were reasonable and corroborated by independent charter rate market data and voyage documentation. No indicators of management override of controls or unusual journal entries were noted.',
+    // Sign-off (rows 23, 25)
+    '23,0': 'Atin Gupta',   '23,5': 'April 15, 2024',
+    '25,0': 'Sarah Chen',   '25,5': 'April 18, 2024',
+  },
+};
+
 // ── Main component ─────────────────────────────────────────────────────────────
 
 export function AuditPAP501Worksheet({ isUS = false }: { isUS?: boolean }) {
@@ -191,6 +283,7 @@ export function AuditPAP501Worksheet({ isUS = false }: { isUS?: boolean }) {
     name: string;
     rows: (string | number)[][];
     merges: Array<{ sr: number; sc: number; er: number; ec: number }>;
+    filled: Set<string>; // "ri,ci" keys for Luka-filled cells
   }
   const [xlsxSheets, setXlsxSheets] = useState<XlsxSheetData[]>([]);
   const [xlsxActiveSheet, setXlsxActiveSheet] = useState('');
@@ -229,7 +322,15 @@ export function AuditPAP501Worksheet({ isUS = false }: { isUS?: boolean }) {
                 sr: m.s.r, sc: m.s.c,
                 er: m.e.r, ec: Math.min(m.e.c, limit - 1),
               }));
-            return { name, rows, merges };
+            const sheetFills = LUKA_PAP501_FILLS[name] ?? {};
+            const filled = new Set<string>(Object.keys(sheetFills));
+            const filledRows = rows.map((row, ri) =>
+              row.map((cell, ci) => {
+                const key = `${ri},${ci}`;
+                return sheetFills[key] !== undefined ? sheetFills[key] : cell;
+              })
+            );
+            return { name, rows: filledRows, merges, filled };
           });
           setXlsxSheets(sheets);
           setXlsxActiveSheet(sheets[0]?.name ?? '');
@@ -449,6 +550,9 @@ export function AuditPAP501Worksheet({ isUS = false }: { isUS?: boolean }) {
     setData(d => ({ ...d, fin: { ...d.fin, ...mockFin }, partA: { ...d.partA, ...mockPartA }, matters: mockMatters }));
     setFlowState('worksheet');
     localStorage.setItem(acceptedKey, 'true');
+    // Force XLSX tabs to reload (clears existing sheets so the load effect re-fires)
+    setXlsxSheets([]);
+    setXlsxLoading(true);
   }
 
   function handleGenerate() {
@@ -514,33 +618,7 @@ export function AuditPAP501Worksheet({ isUS = false }: { isUS?: boolean }) {
               </svg>
             </div>
 
-            <div>
-              <h3 className="text-xl font-semibold text-foreground">Preliminary Analytical Procedures</h3>
-              <p className="text-sm text-muted-foreground mt-1.5">{entityName} · Period ended {periodEnded}</p>
-            </div>
-
-            {/* Quick prompt chips */}
-            <div className="flex flex-wrap items-center justify-center gap-2">
-              {['/PAP 501 Analysis', '/Import Trial Balance', '/Prior Year Comparison'].map(chip => (
-                <button key={chip} className="luka-prompt-chip" onClick={handleGenerate}>
-                  <span style={{ color: 'hsl(207 71% 38%)', fontWeight: 700 }}>/</span>
-                  {chip.slice(1)}
-                </button>
-              ))}
-            </div>
-
-            {/* Source status */}
-            <div className={`flex items-center gap-2 text-xs px-3.5 py-2 rounded-full border ${
-              connectedSource
-                ? 'border-green-300 bg-green-50 dark:border-green-800 dark:bg-green-950/30 text-green-700 dark:text-green-400'
-                : 'border-amber-300 bg-amber-50 dark:border-amber-800 dark:bg-amber-950/30 text-amber-700 dark:text-amber-400'
-            }`}>
-              {connectedSource ? (
-                <><CheckCircle2 className="h-3.5 w-3.5" /> Connected to {connectedSource.charAt(0).toUpperCase() + connectedSource.slice(1)}</>
-              ) : (
-                <><AlertCircle className="h-3.5 w-3.5" /> No data source — upload trial balance to auto-populate</>
-              )}
-            </div>
+            <h3 className="text-xl font-semibold text-foreground">Preliminary Analytical Procedures</h3>
 
             {/* Generate button */}
             <button
@@ -613,13 +691,20 @@ export function AuditPAP501Worksheet({ isUS = false }: { isUS?: boolean }) {
                             const merge = mergeMap[cellKey];
                             if (merge === 'skip') return null;
                             const span = typeof merge === 'object' ? merge : null;
-                            const val = String(cell ?? '');
+                            let val = String(cell ?? '');
+                            let isFilled = sheet.filled.has(cellKey);
+                            // PM row: inject from materiality worksheet
+                            if (ri === 2 && ci === 2 && perfMateriality !== '—') {
+                              val = perfMateriality;
+                              isFilled = true;
+                            }
+                            const isLong = val.length > 40;
                             return (
                               <td
                                 key={ci}
                                 rowSpan={span?.rowspan}
                                 colSpan={span?.colspan}
-                                className={`border border-border/30 px-2 py-0.5 align-top text-foreground ${ci === 0 ? 'min-w-[180px] max-w-[380px] whitespace-pre-wrap' : 'whitespace-nowrap min-w-[60px]'}`}
+                                className={`border border-border/30 px-2 py-0.5 align-top text-foreground ${isFilled ? 'bg-primary/5' : ''} ${ci === 0 || isLong ? 'min-w-[180px] max-w-[420px] whitespace-pre-wrap' : 'whitespace-nowrap min-w-[60px]'}`}
                               >
                                 {val}
                               </td>

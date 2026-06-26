@@ -790,7 +790,7 @@ export default function EngagementDetail() {
   );
   const [lukaQuery, setLukaQuery] = useState("");
   const [lukaAutoFillConfig, setLukaAutoFillConfig] = useState<{ label: string; sources: string[]; engagementLabel: string } | null>(null);
-  const [lukaPap501Config, setLukaPap501Config] = useState<{ engLabel: string; sources: string[] } | null>(null);
+  const [lukaPap501Config, setLukaPap501Config] = useState<{ engLabel: string; sources: string[]; isRegenerate?: boolean } | null>(null);
   const [pap501Accepted, setPap501Accepted] = useState(() =>
     !!localStorage.getItem(`pap501-accepted-${engagementId}-ca`) || !!localStorage.getItem(`pap501-accepted-${engagementId}-us`)
   );
@@ -1891,10 +1891,14 @@ export default function EngagementDetail() {
                 <>
                   <Button variant="secondary" size="sm" className="h-7 px-2.5 text-xs gap-1.5"
                     onClick={() => {
-                      localStorage.removeItem(`pap501-accepted-${engagementId}-ca`);
-                      localStorage.removeItem(`pap501-accepted-${engagementId}-us`);
-                      setPap501Accepted(false);
-                      window.dispatchEvent(new CustomEvent('pap501-regenerate', { detail: { engagementId } }));
+                      const client = engagementId ? engagementsData[engagementId]?.client : undefined;
+                      const engLabel = [client, engagementId].filter(Boolean).join(' · ');
+                      const connectedApp = engagementId ? engagementsData[engagementId]?.connectedApp : undefined;
+                      const sources = connectedApp
+                        ? [`${connectedApp.charAt(0).toUpperCase() + connectedApp.slice(1)} connection`, 'Predecessor file']
+                        : ['Trial balance', 'Predecessor file'];
+                      setLukaPap501Config({ engLabel, sources, isRegenerate: true });
+                      setLukaOpen(true);
                     }}>
                     <RefreshCw className="h-3 w-3" />Regenerate
                   </Button>
@@ -2424,6 +2428,7 @@ export default function EngagementDetail() {
       engagementLabel={lukaAutoFillConfig?.engagementLabel ?? lukaPap501Config?.engLabel}
       autoFillSources={lukaAutoFillConfig?.sources}
       pap501Mode={!!lukaPap501Config}
+      pap501IsRegenerate={!!lukaPap501Config?.isRegenerate}
       pap501Sources={lukaPap501Config?.sources}
       onPap501Accept={() => {
         window.dispatchEvent(new CustomEvent('pap501-luka-accepted', { detail: { engagementId } }));
