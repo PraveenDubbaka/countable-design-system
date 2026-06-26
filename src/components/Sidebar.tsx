@@ -2341,7 +2341,7 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
                             engId && location.pathname.endsWith(`/checklist/notes-${note.id}`) && "bg-primary/10 ring-1 ring-primary/25",
                           )}
                           style={{ paddingLeft: `${(depth + 1) * 16 + 8}px` }}
-                          onClick={e => { e.stopPropagation(); if (engId) navigate(`/engagements/${engId}/checklist/notes-${note.id}?t=${encodeURIComponent(note.name)}`); }}
+                          onClick={e => { e.stopPropagation(); if (engId) window.dispatchEvent(new CustomEvent('open-note-panel', { detail: { noteId: note.id, noteName: note.name, engId } })); }}
                         >
                           <NotebookPen className="h-4 w-4 text-amber-500 flex-shrink-0" />
                           <span className="truncate flex-1 text-black dark:text-white font-medium">{note.name}</span>

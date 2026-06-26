@@ -58,6 +58,7 @@ import { ShareWithClientDialog } from "@/components/ShareWithClientDialog";
 import { LetterSectionPage, type LetterSectionPageHandle } from "@/components/LetterSectionPage";
 import { CustomSection } from "@/components/Sidebar";
 import { NotesWorksheet } from "@/components/NotesWorksheet";
+import { NotesSlidePanel } from "@/components/NotesSlidePanel";
 import { ClientResponseDialog } from "@/components/ClientResponseDialog";
 import { useClientResponses } from "@/hooks/useClientResponses";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter, DialogClose } from "@/components/ui/dialog";
@@ -787,6 +788,7 @@ export default function EngagementDetail() {
   const [clipboardResponses, setClipboardResponses] = useState<{ checklistTitle: string; responses: Record<string, { answer: string; explanation?: string }> } | null>(null);
   const [showClipboardPrompt, setShowClipboardPrompt] = useState(false);
   const [lukaOpen, setLukaOpen] = useState(false);
+  const [notePanel, setNotePanel] = useState<{ noteId: string; noteName: string } | null>(null);
   const [lukaInitialTab, setLukaInitialTab] = useState<"threads" | "workspace">("threads");
   const [lukaInitialWorkspaceEngagement, setLukaInitialWorkspaceEngagement] = useState<{ name: string; code: string; source?: "quickbooks" | "xero" } | undefined>(undefined);
   const [lukaEngagementOverviewMode, setLukaEngagementOverviewMode] = useState(false);
@@ -841,6 +843,15 @@ export default function EngagementDetail() {
     };
     window.addEventListener('pap501-generate', handler);
     return () => window.removeEventListener('pap501-generate', handler);
+  }, [engagementId]);
+
+  useEffect(() => {
+    const handler = (e: Event) => {
+      const { noteId, noteName, engId } = (e as CustomEvent).detail as { noteId: string; noteName: string; engId: string };
+      if (engId === engagementId) setNotePanel({ noteId, noteName });
+    };
+    window.addEventListener('open-note-panel', handler);
+    return () => window.removeEventListener('open-note-panel', handler);
   }, [engagementId]);
 
   const toggleGlobalTimer = () => {
@@ -2465,6 +2476,13 @@ export default function EngagementDetail() {
       onStartSectionBySection={() => { setLukaOpen(false); navigate(`/engagements/${engagementId}/checklist/aud-form-410`); }}
       initialTab={lukaInitialTab}
       initialWorkspaceEngagement={lukaInitialWorkspaceEngagement}
+    />
+    <NotesSlidePanel
+      open={!!notePanel}
+      onOpenChange={open => { if (!open) setNotePanel(null); }}
+      noteId={notePanel?.noteId ?? null}
+      noteName={notePanel?.noteName ?? ''}
+      engId={engagementId ?? ''}
     />
   </>;
 }
