@@ -262,7 +262,9 @@ function ProcessTable({ rows, locked, onChange }: {
 // ── Main Component ─────────────────────────────────────────────────────────────
 
 export function Audit511Worksheet({ isUS = false }: { isUS?: boolean }) {
-  const storageKey = `audit-511-data-${isUS ? "us" : "ca"}`;
+  const { engagementId } = useParams<{ engagementId: string }>();
+  const ctx = useEngagementContext();
+  const storageKey = `audit-511-data-${engagementId ?? (isUS ? "us" : "ca")}`;
 
   const [data, setData] = useState<Data511>(() => {
     const saved = readJsonFromLocalStorage<Data511 | null>(storageKey, null);
