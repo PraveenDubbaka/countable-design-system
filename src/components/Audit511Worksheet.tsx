@@ -9,7 +9,6 @@ import { Plus, Trash2, Info, AlertTriangle } from "lucide-react";
 import { RefButton, RefDoc } from "@/components/RefButton";
 import { readJsonFromLocalStorage, writeJsonToLocalStorage } from "@/lib/safeJson";
 import { useEngagementContext } from "@/hooks/useEngagementContext";
-import { AutoFillBanner } from "@/components/AutoFillBanner";
 import { cn } from "@/lib/utils";
 
 // ── Types ──────────────────────────────────────────────────────────────────────
@@ -521,14 +520,6 @@ export function Audit511Worksheet({ isUS = false }: { isUS?: boolean }) {
       {/* Single scrollable page */}
       <div className="flex-1 overflow-y-auto bg-muted/30">
         <div className="p-6 space-y-6 max-w-6xl">
-          <AutoFillBanner
-            entityName={ctx.entityName}
-            periodEndDisplay={ctx.periodEndDisplay}
-            framework={ctx.framework}
-            populated="IT environment context, key applications and process owners inferred from Planning (400/410/420) and the engagement profile"
-          />
-
-
 
           {/* ── PART A ─────────────────────────────────────────────────────── */}
           <PartHeader

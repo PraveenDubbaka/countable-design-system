@@ -9,7 +9,6 @@ import { RefButton, RefDoc } from "@/components/RefButton";
 import { readJsonFromLocalStorage, writeJsonToLocalStorage } from "@/lib/safeJson";
 import { useEngagementContext } from "@/hooks/useEngagementContext";
 import { formatCurrency, type RevenueStreamSeed } from "@/lib/engagementContext";
-import { AutoFillBanner } from "@/components/AutoFillBanner";
 
 // ── Types ──────────────────────────────────────────────────────────────────────
 
@@ -239,13 +238,6 @@ export function Audit580Worksheet() {
       </div>
 
       <div className="flex-1 overflow-y-auto p-6 space-y-5">
-
-        <AutoFillBanner
-          entityName={ctx.entityName}
-          periodEndDisplay={ctx.periodEndDisplay}
-          framework={ctx.framework}
-          populated="performance materiality, revenue streams (with assertions, likelihood / magnitude and inherent-risk ratings)"
-        />
 
         {/* Engagement context */}
         <div className="bg-card border border-border rounded-md p-5 grid grid-cols-2 gap-4">
