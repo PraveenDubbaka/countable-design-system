@@ -144,12 +144,22 @@ export function Audit551Worksheet() {
     const saved = readJsonFromLocalStorage<Data551 | null>(storageKey, null);
     if (!saved) return buildDefault();
     const def = buildDefault();
+    const backfillSheet = (s: GitcSheet): GitcSheet => ({
+      ...s,
+      sections: s.sections.map(sec => {
+        const start = sec.key === "access" ? 1 : sec.key === "change" ? 6 : 11;
+        return {
+          ...sec,
+          rows: sec.rows.map((r, i) => r.ref?.trim() ? r : { ...r, ref: `C${start + i}` }),
+        };
+      }),
+    });
     return {
       ...def,
       ...saved,
       rafuit: saved.rafuit?.length ? saved.rafuit : def.rafuit,
-      commonGitc: saved.commonGitc ?? def.commonGitc,
-      appGitc: saved.appGitc ?? [],
+      commonGitc: saved.commonGitc ? backfillSheet(saved.commonGitc) : def.commonGitc,
+      appGitc: (saved.appGitc ?? []).map(backfillSheet),
     };
   });
 
