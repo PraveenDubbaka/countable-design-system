@@ -1688,7 +1688,7 @@ export default function EngagementDetail() {
             <ChevronDown className="h-3 w-3 text-sidebar-foreground/60 group-hover:text-sidebar-foreground transition-colors" />
           </button>
         </DropdownMenuTrigger>
-        <DropdownMenuContent align="start" className="w-auto min-w-[18rem] bg-card border shadow-lg z-50 whitespace-nowrap">
+        <DropdownMenuContent align="start" className="w-auto min-w-[18rem] whitespace-nowrap">
           <div className="px-2 py-1.5 text-xs font-medium text-muted-foreground">
             Engagements for {clientName}
           </div>
@@ -1786,7 +1786,7 @@ export default function EngagementDetail() {
                       label={<span className="inline-flex items-center gap-1">Tools<ChevronDown className="h-3 w-3" /></span>}
                     />
                   </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end" className="w-56 bg-card border shadow-lg z-50">
+                  <DropdownMenuContent align="end" className="w-56">
                     <DropdownMenuItem
                       className="flex items-center gap-2 cursor-pointer group"
                       onClick={() => setConnectorsOpen(true)}
@@ -1936,7 +1936,7 @@ export default function EngagementDetail() {
                     <DropdownMenuTrigger asChild>
                       <ExpandableIconButton variant="secondary" size="sm" icon={<Download className="h-4 w-4" />} label="Export" />
                     </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end" className="bg-card border shadow-lg z-50 w-40">
+                    <DropdownMenuContent align="end" className="w-40">
                       <DropdownMenuItem className="flex items-center gap-2 cursor-pointer group" onClick={() => toast.info('Exporting as PDF...')}>
                         <FileText className="h-4 w-4 text-muted-foreground group-hover:text-foreground transition-colors" />
                         <span>PDF</span>
@@ -1951,7 +1951,7 @@ export default function EngagementDetail() {
                     <DropdownMenuTrigger asChild>
                       <ExpandableIconButton variant="default" size="sm" icon={<CheckCircle2 className="h-4 w-4" />} label="Signoff" />
                     </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end" className="bg-card border shadow-lg z-50 w-44">
+                    <DropdownMenuContent align="end" className="w-44">
                       <DropdownMenuItem className="flex items-center gap-2 cursor-pointer" onClick={() => toast.success('Signed off as Preparer')}>
                         <Check className="h-4 w-4" />
                         <span>Sign off as Preparer</span>
@@ -1979,7 +1979,7 @@ export default function EngagementDetail() {
                       <DropdownMenuTrigger asChild>
                         <ExpandableIconButton variant="secondary" size="sm" icon={<Download className="h-4 w-4" />} label="Export" />
                       </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end" className="bg-card border shadow-lg z-50 w-40">
+                      <DropdownMenuContent align="end" className="w-40">
                         <DropdownMenuItem className="flex items-center gap-2 cursor-pointer group" onClick={() => toast.info('Exporting as PDF...')}>
                           <FileText className="h-4 w-4 text-muted-foreground group-hover:text-foreground transition-colors" />
                           <span>PDF</span>
@@ -2057,7 +2057,7 @@ export default function EngagementDetail() {
                       label="Export"
                     />
                   </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end" className="bg-card border shadow-lg z-50 w-40">
+                  <DropdownMenuContent align="end" className="w-40">
                     <DropdownMenuItem className="flex items-center gap-2 cursor-pointer group" onClick={() => toast.info('Exporting as PDF...')}>
                       <FileText className="h-4 w-4 text-muted-foreground group-hover:text-foreground transition-colors" />
                       <span>PDF</span>

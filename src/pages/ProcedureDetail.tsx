@@ -158,7 +158,7 @@ export default function ProcedureDetail() {
             <ChevronDown className="h-3 w-3 text-muted-foreground group-hover:text-primary transition-colors" />
           </button>
         </DropdownMenuTrigger>
-        <DropdownMenuContent align="start" className="w-72 bg-card border shadow-lg z-50">
+        <DropdownMenuContent align="start" className="w-72">
           <div className="px-2 py-1.5 text-xs font-medium text-muted-foreground">Engagements for {clientName}</div>
           <DropdownMenuSeparator />
           {clientEngagements.map(eng => (
@@ -222,7 +222,7 @@ export default function ProcedureDetail() {
                   label={<span className="inline-flex items-center gap-1">Tools<ChevronDown className="h-3 w-3" /></span>}
                 />
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-48 bg-card border shadow-lg z-50">
+              <DropdownMenuContent align="end" className="w-48">
                 {toolsMenuActions.map(action => (
                   <DropdownMenuItem key={action.id} className="flex items-center gap-2 cursor-pointer group">
                     <action.icon className="h-4 w-4 text-muted-foreground group-hover:text-foreground transition-colors" />

@@ -1261,7 +1261,7 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
                       <MoreVertical className="h-3.5 w-3.5 text-muted-foreground icon-more" />
                     </button>
                   </DropdownMenuTrigger>
-                  <DropdownMenuContent align="start" className="w-48 bg-card border shadow-sm">
+                  <DropdownMenuContent align="start" className="w-48">
                     <DropdownMenuItem onClick={e => {
                 e.stopPropagation();
                 handleDuplicate(checklist);
@@ -2250,7 +2250,7 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
                                 <MoreVertical className="h-3.5 w-3.5 text-muted-foreground" />
                               </button>
                             </DropdownMenuTrigger>
-                            <DropdownMenuContent align="end" className="w-48 bg-card border shadow-sm">
+                            <DropdownMenuContent align="end" className="w-48">
                               {isLeaf ? (
                                 <>
                                   <DropdownMenuItem className="text-xs gap-2 cursor-pointer" onClick={e => e.stopPropagation()}>

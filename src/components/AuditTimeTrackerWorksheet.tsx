@@ -637,7 +637,7 @@ export function AuditTimeTrackerWorksheet() {
                               <Filter className={`h-3 w-3 ${filterDate ? 'fill-primary/20' : ''}`} />
                             </button>
                           </DropdownMenuTrigger>
-                          <DropdownMenuContent align="start" className="w-52 bg-card p-2">
+                          <DropdownMenuContent align="start" className="w-52">
                             <p className="text-[10px] font-semibold text-muted-foreground uppercase mb-1.5 px-1">Filter by date</p>
                             <Input type="date" value={filterDate} onChange={e => setFilterDate(e.target.value)} className="h-7 text-xs" />
                             {filterDate && (
@@ -657,7 +657,7 @@ export function AuditTimeTrackerWorksheet() {
                               <Filter className={`h-3 w-3 ${filterRole !== 'all' ? 'fill-primary/20' : ''}`} />
                             </button>
                           </DropdownMenuTrigger>
-                          <DropdownMenuContent align="start" className="w-52 bg-card">
+                          <DropdownMenuContent align="start" className="w-52">
                             <DropdownMenuRadioGroup value={filterRole} onValueChange={setFilterRole}>
                               <DropdownMenuRadioItem value="all">All Roles</DropdownMenuRadioItem>
                               <DropdownMenuSeparator />
@@ -679,7 +679,7 @@ export function AuditTimeTrackerWorksheet() {
                               <Filter className={`h-3 w-3 ${filterSection !== 'all' ? 'fill-primary/20' : ''}`} />
                             </button>
                           </DropdownMenuTrigger>
-                          <DropdownMenuContent align="start" className="w-56 bg-card">
+                          <DropdownMenuContent align="start" className="w-56">
                             <DropdownMenuRadioGroup value={filterSection} onValueChange={setFilterSection}>
                               <DropdownMenuRadioItem value="all">All Sections</DropdownMenuRadioItem>
                               <DropdownMenuSeparator />
@@ -703,7 +703,7 @@ export function AuditTimeTrackerWorksheet() {
                               <Filter className={`h-3 w-3 ${filterDesc ? 'fill-primary/20' : ''}`} />
                             </button>
                           </DropdownMenuTrigger>
-                          <DropdownMenuContent align="start" className="w-56 bg-card p-2">
+                          <DropdownMenuContent align="start" className="w-56">
                             <p className="text-[10px] font-semibold text-muted-foreground uppercase mb-1.5 px-1">Search description</p>
                             <Input value={filterDesc} onChange={e => setFilterDesc(e.target.value)}
                               placeholder="Search…" className="h-7 text-xs" autoFocus />

@@ -203,7 +203,7 @@ export default function TrialBalance() {
             <ChevronDown className="h-3 w-3 text-sidebar-foreground/60 group-hover:text-sidebar-foreground transition-colors" />
           </button>
         </DropdownMenuTrigger>
-        <DropdownMenuContent align="start" className="w-72 bg-card border shadow-lg z-50">
+        <DropdownMenuContent align="start" className="w-72">
           <div className="px-2 py-1.5 text-xs font-medium text-muted-foreground">Engagements for {clientName}</div>
           {clientEngagements.map((eng) => (
             <DropdownMenuItem key={eng.id} onClick={() => navigate(`/engagements/${eng.id}/trial-balance`)} className="flex items-center gap-3 cursor-pointer group py-2">
@@ -278,7 +278,7 @@ export default function TrialBalance() {
                   label={<span className="inline-flex items-center gap-1">Tools<ChevronDown className="h-3 w-3" /></span>}
                 />
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-48 bg-card border shadow-lg z-50">
+              <DropdownMenuContent align="end" className="w-48">
                 {toolsMenuActions.map(action => (
                   <DropdownMenuItem key={action.id} className="flex items-center gap-2 cursor-pointer group">
                     <action.icon className="h-4 w-4 text-muted-foreground group-hover:text-foreground transition-colors" />
@@ -303,7 +303,7 @@ export default function TrialBalance() {
                     <ChevronDown className="h-3.5 w-3.5" />
                   </Button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent className="bg-card border shadow-lg z-50">
+                <DropdownMenuContent>
                   <DropdownMenuItem>Dec 31 2025</DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
@@ -320,7 +320,7 @@ export default function TrialBalance() {
                     label={<span className="inline-flex items-center gap-1">Actions<ChevronDown className="h-3 w-3" /></span>}
                   />
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-44 bg-card border shadow-lg z-50">
+                <DropdownMenuContent align="end" className="w-44">
                   <DropdownMenuItem className="flex items-center gap-2 cursor-pointer">
                     <Plus className="h-4 w-4 text-muted-foreground" />
                     <span>Add</span>
@@ -366,7 +366,7 @@ export default function TrialBalance() {
                       />
                     </DropdownMenuTrigger>
                   </TooltipTrigger>
-                  <DropdownMenuContent align="end" className="z-[100] bg-card border shadow-lg">
+                  <DropdownMenuContent align="end" className="z-[100]">
                     <DropdownMenuItem>All Years</DropdownMenuItem>
                     <DropdownMenuItem>Current Year</DropdownMenuItem>
                     <DropdownMenuItem>PY 1</DropdownMenuItem>
@@ -412,7 +412,7 @@ export default function TrialBalance() {
                           )}
                         </button>
                       </DropdownMenuTrigger>
-                      <DropdownMenuContent align="start" className="w-56 bg-card border shadow-lg z-50 p-2">
+                      <DropdownMenuContent align="start" className="w-56">
                         <div className="flex items-center justify-between px-2 py-1.5">
                           <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">Filter</span>
                           <button

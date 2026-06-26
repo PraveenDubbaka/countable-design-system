@@ -1859,7 +1859,7 @@ function SortableGroup({
                 <MoreHorizontal className="h-4 w-4 text-muted-foreground" />
               </button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="bg-popover border-border z-50">
+            <DropdownMenuContent align="end">
               {!section.formLayout && <DropdownMenuItem onClick={onAddItem} className="text-foreground focus:bg-muted focus:text-foreground">
                   <Plus className="h-4 w-4 mr-2" />
                   Add item
