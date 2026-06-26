@@ -99,10 +99,10 @@ function ColHeaders() {
       <tr className="bg-muted border-b border-border">
         <th className="w-10 px-4 py-3 text-center text-xs font-semibold text-foreground uppercase tracking-wider" />
         <th className="w-10 px-4 py-3 text-center text-xs font-semibold text-foreground uppercase tracking-wider">#</th>
-        <th className="px-6 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider">Description</th>
+        <th className="w-[200px] px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider">Description</th>
         <th className="px-4 py-3 text-center text-xs font-semibold text-foreground uppercase tracking-wider" style={{ width: 200, minWidth: 200 }}>Procedure successfully completed</th>
-        <th className="px-6 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider">Responses and any difficulties encountered</th>
-        <th className="px-6 py-3 text-center text-xs font-semibold text-foreground uppercase tracking-wider" style={{ width: 110, minWidth: 110 }}>w/p reference</th>
+        <th className="w-[350px] px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider">Responses and any difficulties encountered</th>
+        <th className="px-4 py-3 text-center text-xs font-semibold text-foreground uppercase tracking-wider" style={{ width: 110, minWidth: 110 }}>w/p reference</th>
       </tr>
     </thead>
   );
@@ -156,13 +156,13 @@ export function AuditOIWorksheet({ isUS = false }: { isUS?: boolean }) {
           <Checkbox checked={row.checked} onCheckedChange={(v) => setRow(proc.id, { checked: !!v })} disabled={locked} />
         </td>
         <td className="px-4 py-3 text-center align-top text-xs font-semibold text-foreground font-mono">{proc.num}</td>
-        <td className="px-6 py-3 align-top">
+        <td className="w-[200px] px-4 py-3 align-top">
           <p className="text-sm font-semibold text-foreground mb-1">{proc.description}</p>
           <p className="text-sm text-muted-foreground leading-relaxed">{proc.detail}</p>
         </td>
         <td className="px-4 py-3 align-top" style={{ width: 200 }}>
           <Select value={row.psc} onValueChange={(v) => setRow(proc.id, { psc: v })} disabled={locked}>
-            <SelectTrigger className="h-8 text-sm w-full">
+            <SelectTrigger className="h-8 text-xs bg-background w-full">
               <SelectValue placeholder="Select" />
             </SelectTrigger>
             <SelectContent>
@@ -172,11 +172,11 @@ export function AuditOIWorksheet({ isUS = false }: { isUS?: boolean }) {
             </SelectContent>
           </Select>
         </td>
-        <td className="px-6 py-3 align-top">
+        <td className="w-[350px] px-4 py-3 align-top">
           <Textarea
             disabled={locked}
             placeholder="Enter your response"
-            className="min-h-[52px] text-sm resize-none border-0 shadow-none p-0 focus-visible:ring-0 bg-transparent"
+            className="min-h-[88px] text-sm resize-y bg-background"
             value={row.response}
             onChange={(e) => setRow(proc.id, { response: e.target.value })}
           />
@@ -203,12 +203,12 @@ export function AuditOIWorksheet({ isUS = false }: { isUS?: boolean }) {
         <td className="px-4 py-2.5 text-center align-top text-xs text-muted-foreground font-mono">
           {String.fromCharCode(97 + letterIdx)}.
         </td>
-        <td className="py-2.5 pl-10 pr-6 align-top border-l-2 border-primary/20">
+        <td className="w-[200px] py-2.5 pl-10 pr-4 align-top border-l-2 border-primary/20">
           <span className="text-sm text-foreground">{item.label}</span>
         </td>
         <td className="px-4 py-2.5 align-top" style={{ width: 200 }}>
           <Select value={row.psc} onValueChange={(v) => setRow(item.id, { psc: v })} disabled={locked}>
-            <SelectTrigger className="h-8 text-sm w-full">
+            <SelectTrigger className="h-8 text-xs bg-background w-full">
               <SelectValue placeholder="Select" />
             </SelectTrigger>
             <SelectContent>
@@ -218,11 +218,11 @@ export function AuditOIWorksheet({ isUS = false }: { isUS?: boolean }) {
             </SelectContent>
           </Select>
         </td>
-        <td className="px-6 py-2.5 align-top">
+        <td className="w-[350px] px-4 py-2.5 align-top">
           <Textarea
             disabled={locked}
             placeholder="Enter your response"
-            className="min-h-[44px] text-sm resize-none border-0 shadow-none p-0 focus-visible:ring-0 bg-transparent"
+            className="min-h-[88px] text-sm resize-y bg-background"
             value={row.response}
             onChange={(e) => setRow(item.id, { response: e.target.value })}
           />
