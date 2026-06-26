@@ -2316,10 +2316,10 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
                       {(nodeDocuments[node.id]?.length ?? 0) > 0 && !collapsedNodeDocs.has(node.id) && nodeDocuments[node.id].map(doc => (
                         <div
                           key={doc.id}
-                          className="group/doc flex items-center gap-1.5 py-1.5 px-2 rounded-[8px] cursor-pointer hover:bg-primary/10 transition-colors text-xs mt-0.5"
+                          className="group/doc flex items-center gap-1.5 py-1.5 px-2 rounded-[8px] cursor-pointer hover:bg-primary/10 transition-colors text-sm mt-0.5"
                           style={{ paddingLeft: `${(depth + 1) * 16 + 8}px` }}
                         >
-                          {getFileTypeIcon(doc.name, 'h-3 w-3')}
+                          {getFileTypeIcon(doc.name, 'h-4 w-4')}
                           <span className="truncate flex-1 text-black dark:text-white font-medium">{doc.name}</span>
                           <button
                             className="opacity-0 group-hover/doc:opacity-100 p-0.5 hover:text-destructive transition-all flex-shrink-0"
@@ -2329,7 +2329,7 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
                               saveNodeDocs(updated);
                             }}
                           >
-                            <X className="h-3 w-3" />
+                            <X className="h-4 w-4" />
                           </button>
                         </div>
                       ))}
