@@ -61,7 +61,7 @@ interface ProcItem {
 }
 
 const PART_A: ProcItem[] = [
-  { id: 'a1', num: '1', title: 'Financial reporting process', intro: 'Document the financial reporting process used to prepare the entity\u2019s F/S in accordance with the applicable financial reporting framework. Consider:', items: [
+  { id: 'a1', num: '1', title: 'Financial reporting process', intro: 'Document the financial reporting process used to prepare the entity’s F/S in accordance with the applicable financial reporting framework. Consider:', items: [
     'Where the information is obtained from (general ledger, service providers, subsidiary ledgers, etc.).',
     'The personnel involved (management, others within the entity, TCWG) and their roles.',
   ], note: 'Fraudulent financial reporting often involves management override of controls. See Form 520 (Risk Register) and Form 670 (Use of Journal Entries) as a response to this risk.' },
@@ -94,7 +94,7 @@ const PART_B: ProcItem[] = [
 ];
 
 const PART_C: ProcItem[] = [
-  { id: 'c9', num: '9', title: 'Information flow for SCOTABDs', intro: 'For each significant class of transaction, account balance and disclosure (or business cycle), document how information flows through the entity\u2019s information system, including:', items: [
+  { id: 'c9', num: '9', title: 'Information flow for SCOTABDs', intro: 'For each significant class of transaction, account balance and disclosure (or business cycle), document how information flows through the entity’s information system, including:', items: [
     'How transactions are initiated, recorded, processed, corrected, incorporated into the general ledger and reported.',
     'How information about events and conditions other than transactions is captured, processed and disclosed.',
     'Resources (financial, human, intellectual, technological) and IT applications used.',
@@ -278,7 +278,7 @@ export function Audit535Worksheet() {
         <Info className="h-3.5 w-3.5 text-primary mt-0.5 shrink-0" />
         <span className="text-xs font-semibold text-primary whitespace-nowrap">Objective:</span>
         <p className="text-xs text-muted-foreground flex-1 leading-relaxed">
-          To obtain an understanding of the entity\u2019s information system and communication relevant to the preparation of the financial statements through performing risk assessment procedures (CAS 315).
+          To obtain an understanding of the entity’s information system and communication relevant to the preparation of the financial statements through performing risk assessment procedures (CAS 315).
         </p>
       </div>
 
@@ -396,7 +396,7 @@ export function Audit535Worksheet() {
         {/* Audit conclusion */}
         <div className="bg-card border border-border rounded-md p-5 space-y-3">
           <h3 className="text-sm font-semibold text-foreground">Audit conclusion</h3>
-          <p className="text-xs text-muted-foreground">A sufficient understanding of the entity\u2019s information system and communication process has been obtained to determine if it supports the preparation of the F/S in accordance with the applicable financial reporting framework.</p>
+          <p className="text-xs text-muted-foreground">A sufficient understanding of the entity’s information system and communication process has been obtained to determine if it supports the preparation of the F/S in accordance with the applicable financial reporting framework.</p>
           <div className="grid grid-cols-3 gap-3">
             <div className="space-y-1">
               <label className="text-xs font-medium text-muted-foreground">Conclusion</label>
