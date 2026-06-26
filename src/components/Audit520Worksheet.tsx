@@ -26,7 +26,7 @@ interface PartARow {
 
 interface PartBRow {
   id: string;
-  wpRefSource: string;
+  wpRefSource: RefDoc[];
   rmmIdentified: string;
   scotabd: string;
   assertions: string;
@@ -54,11 +54,11 @@ const HML_OPTIONS: HML[] = ["H", "M", "L"];
 const YN_OPTIONS: YN[] = ["Y", "N"];
 
 function newPartARow(): PartARow {
-  return { id: uid(), wpRefSource: "", rmmIdentified: "", fraudRisk: "", rmmAssessment: "", auditResponse: "", wpRef: [] };
+  return { id: uid(), wpRefSource: [], rmmIdentified: "", fraudRisk: "", rmmAssessment: "", auditResponse: "", wpRef: [] };
 }
 
 function newPartBRow(): PartBRow {
-  return { id: uid(), wpRefSource: "", rmmIdentified: "", scotabd: "", assertions: "", irFactors: "", fraudRisk: "", irLikelihood: "", irMagnitude: "", inherentRisk: "", significantRisk: "", substantiveSufficient: "" };
+  return { id: uid(), wpRefSource: [], rmmIdentified: "", scotabd: "", assertions: "", irFactors: "", fraudRisk: "", irLikelihood: "", irMagnitude: "", inherentRisk: "", significantRisk: "", substantiveSufficient: "" };
 }
 
 function buildDefault(): Data520 {
