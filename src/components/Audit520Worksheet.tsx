@@ -21,7 +21,7 @@ interface PartARow {
   fraudRisk: YN;
   rmmAssessment: HML;
   auditResponse: string;
-  wpRef: string;
+  wpRef: RefDoc[];
 }
 
 interface PartBRow {
