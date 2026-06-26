@@ -191,7 +191,7 @@ export function Audit505Worksheet({ isUS = false }: { isUS?: boolean }) {
                       <tr key={proc.id} className="hover:bg-muted/50 transition-colors">
                         <td className="px-4 py-3 text-center align-top"><Checkbox checked={row.checked} onCheckedChange={v => setPlan(proc.id, {checked:!!v})} disabled={locked} /></td>
                         <td className="px-4 py-3 text-center align-top text-xs font-semibold font-mono text-foreground">{proc.num}</td>
-                        <td className="px-6 py-3 align-top text-sm text-foreground">
+                        <td className="px-6 py-3 align-top text-sm text-foreground" style={{width:320,minWidth:320}}>
                           {proc.description}
                           {proc.items.length > 0 && (
                             <ul className="mt-1.5 space-y-0.5 list-disc list-inside">
@@ -199,14 +199,14 @@ export function Audit505Worksheet({ isUS = false }: { isUS?: boolean }) {
                             </ul>
                           )}
                         </td>
-                        <td className="px-4 py-3 align-top" style={{width:160}}>
+                        <td className="px-4 py-3 align-top" style={{width:140}}>
                           <Select value={row.psc} onValueChange={v => setPlan(proc.id, {psc:v})} disabled={locked}>
-                            <SelectTrigger className="h-8 text-sm"><SelectValue placeholder="Select" /></SelectTrigger>
+                            <SelectTrigger className="h-8 text-sm bg-background"><SelectValue placeholder="Select" /></SelectTrigger>
                             <SelectContent><SelectItem value="Y">Y</SelectItem><SelectItem value="N">N</SelectItem><SelectItem value="N/A">N/A</SelectItem></SelectContent>
                           </Select>
                         </td>
-                        <td className="px-6 py-3 align-top">
-                          <Textarea disabled={locked} value={row.response} onChange={e => setPlan(proc.id, {response:e.target.value})} placeholder="Enter response…" className="min-h-[52px] text-sm resize-none border-0 shadow-none p-0 focus-visible:ring-0 bg-transparent" />
+                        <td className="px-6 py-3 align-top" style={{minWidth:420}}>
+                          <Textarea disabled={locked} value={row.response} onChange={e => setPlan(proc.id, {response:e.target.value})} placeholder="Enter response…" className="min-h-[60px] text-sm resize-none bg-background" />
                         </td>
                         <td className="px-4 py-3 align-top text-center" style={{width:110}}>
                           <RefButton reference={row.wpRef} onAttach={doc => setPlan(proc.id, {wpRef:[...row.wpRef,doc]})} onRemove={i => setPlan(proc.id, {wpRef:row.wpRef.filter((_,idx)=>idx!==i)})} disabled={locked} />
