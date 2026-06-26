@@ -30,6 +30,7 @@ import { WordDocIcon } from "@/components/icons/WordDocIcon";
 import { BookIcon } from "@/components/icons/BookIcon";
 import { WorksheetIcon } from "@/components/icons/WorksheetIcon";
 import { XlsxIcon } from "@/components/icons/XlsxIcon";
+import { PdfIcon } from "@/components/icons/PdfIcon";
 import { ReportIcon } from "@/components/icons/ReportIcon";
 import { SignoffsOverlay } from "@/components/SignoffsOverlay";
 import signoffCheckAllIcon from "@/assets/signoff-check-all.png";
@@ -528,7 +529,7 @@ function getFileTypeIcon(filename: string, sizeClass = 'h-4 w-4') {
   if (['doc', 'docx', 'odt', 'rtf'].includes(ext))
     return <WordDocIcon className={`${sizeClass} flex-shrink-0`} />;
   if (ext === 'pdf')
-    return <FileText className={`${sizeClass} flex-shrink-0 text-red-500`} />;
+    return <PdfIcon className={`${sizeClass} flex-shrink-0`} />;
   if (['ppt', 'pptx', 'key'].includes(ext))
     return <FileBarChart className={`${sizeClass} flex-shrink-0 text-orange-500`} />;
   if (['png', 'jpg', 'jpeg', 'gif', 'webp', 'svg', 'bmp', 'tiff'].includes(ext))
