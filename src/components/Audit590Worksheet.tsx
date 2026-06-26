@@ -144,6 +144,23 @@ function emptyRow(fsa = ""): CotabdRow {
   };
 }
 
+function rowFromFsa(f: FsaBalance): CotabdRow {
+  const row = emptyRow(f.fsa);
+  row.amount = f.amount ? formatCurrency(f.amount) : "";
+  row.material = f.amount > 0 ? "Y" : "";
+  row.materialBasis = f.amount > 0 ? "Quantitative" : "";
+  row.risk520Ref = f.risk520Ref ?? "";
+  row.inherentRisk = f.inherentRisk;
+  row.significantRisk = f.significantRisk;
+  row.controlRisk = "H"; // not tested by default per CAS
+  if (f.assertionsX) {
+    for (const a of f.assertionsX) {
+      row.assertions[a] = { marker: "X", rmm: f.inherentRisk };
+    }
+  }
+  return row;
+}
+
 function buildDefault(): Data590 {
   return {
     entityName: "",
@@ -151,7 +168,7 @@ function buildDefault(): Data590 {
     auditFramework: "ASPE",
     overallMateriality: "",
     performanceMateriality: "",
-    rows: DEFAULT_FSAS.map(f => emptyRow(f)),
+    rows: [],
     standback: {
       a: { done: false, notes: "" },
       b: { done: false, notes: "" },
