@@ -365,7 +365,7 @@ export function Audit513Worksheet({ isUS: isUSProp }: { isUS?: boolean } = {}) {
                         value={data.partAResponse}
                         onChange={e => patch("partAResponse", e.target.value)}
                         placeholder="Document how estimates were identified…"
-                        className="min-h-[72px] text-sm resize-none border-0 shadow-none p-0 focus-visible:ring-0 bg-transparent"
+                        className="min-h-[72px] text-sm bg-background resize-none"
                       />
                     </td>
                     <td className="px-4 py-3 w-28">
@@ -435,7 +435,7 @@ export function Audit513Worksheet({ isUS: isUSProp }: { isUS?: boolean } = {}) {
                             value={est.name}
                             onChange={e => updateEstimate(est.id, { name: e.target.value })}
                             placeholder="Describe estimate…"
-                            className="h-7 text-sm border-0 shadow-none px-0 focus-visible:ring-0 bg-transparent font-medium"
+                            className="h-8 text-sm bg-background font-medium"
                           />
                         )}
                       </td>
@@ -445,7 +445,7 @@ export function Audit513Worksheet({ isUS: isUSProp }: { isUS?: boolean } = {}) {
                           value={est.fsArea}
                           onChange={e => updateEstimate(est.id, { fsArea: e.target.value })}
                           placeholder={est.selected ? "F/S line item…" : "—"}
-                          className="h-7 text-sm border-0 shadow-none px-0 focus-visible:ring-0 bg-transparent"
+                          className="h-8 text-sm bg-background"
                         />
                       </td>
                       <td className="px-4 py-2.5 w-28">
@@ -454,7 +454,7 @@ export function Audit513Worksheet({ isUS: isUSProp }: { isUS?: boolean } = {}) {
                           onValueChange={v => updateEstimate(est.id, { scotabd: v as "Y" | "N" })}
                           disabled={locked || !est.selected}
                         >
-                          <SelectTrigger className="h-7 text-sm"><SelectValue placeholder="—" /></SelectTrigger>
+                          <SelectTrigger className="h-8 text-sm"><SelectValue placeholder="—" /></SelectTrigger>
                           <SelectContent><SelectItem value="Y">Y</SelectItem><SelectItem value="N">N</SelectItem></SelectContent>
                         </Select>
                       </td>
@@ -464,7 +464,7 @@ export function Audit513Worksheet({ isUS: isUSProp }: { isUS?: boolean } = {}) {
                           onValueChange={v => updateEstimate(est.id, { complex: v as "Y" | "N" })}
                           disabled={locked || !est.selected}
                         >
-                          <SelectTrigger className="h-7 text-sm"><SelectValue placeholder="—" /></SelectTrigger>
+                          <SelectTrigger className="h-8 text-sm"><SelectValue placeholder="—" /></SelectTrigger>
                           <SelectContent><SelectItem value="Y">Y</SelectItem><SelectItem value="N">N</SelectItem></SelectContent>
                         </Select>
                       </td>
@@ -555,7 +555,7 @@ export function Audit513Worksheet({ isUS: isUSProp }: { isUS?: boolean } = {}) {
                         value={data.partBDeficiencies}
                         onChange={e => patch("partBDeficiencies", e.target.value)}
                         placeholder="Describe any control deficiencies and audit implications…"
-                        className="min-h-[72px] text-sm resize-none border-0 shadow-none p-0 focus-visible:ring-0 bg-transparent"
+                        className="min-h-[72px] text-sm bg-background resize-none"
                       />
                     </td>
                     <td className="px-4 py-3 w-28">

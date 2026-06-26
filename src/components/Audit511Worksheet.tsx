@@ -245,7 +245,7 @@ function NarrativeRow({ label, bullets, value, wpRef, locked, onChange, onWpChan
           value={value}
           onChange={e => onChange(e.target.value)}
           placeholder="Enter response…"
-          className="min-h-[72px] text-sm resize-none border-0 shadow-none p-0 focus-visible:ring-0 bg-transparent"
+          className="min-h-[72px] text-sm bg-background resize-none"
         />
       </td>
       <td className="px-4 py-3 text-center w-[100px]">
@@ -293,7 +293,7 @@ function ProcessTable({ rows, locked, onChange }: {
                   value={row.response}
                   onChange={e => onChange(id, { response: e.target.value })}
                   placeholder="Enter response…"
-                  className="min-h-[64px] text-sm resize-none border-0 shadow-none p-0 focus-visible:ring-0 bg-transparent"
+                  className="min-h-[64px] text-sm bg-background resize-none"
                 />
               </td>
               <td className="px-4 py-3 w-28">
@@ -621,19 +621,19 @@ export function Audit511Worksheet({ isUS = false }: { isUS?: boolean }) {
                       <td className="px-4 py-2.5 text-center text-xs font-semibold text-muted-foreground">{app.num}</td>
                       <td className="px-4 py-2">
                         <Input disabled={locked} value={app.name} onChange={e => updateApp(i, { name: e.target.value })}
-                          placeholder="E.g., QuickBooks, SAP…" className="h-7 text-sm border-0 shadow-none px-0 focus-visible:ring-0 bg-transparent" />
+                          placeholder="E.g., QuickBooks, SAP…" className="h-8 text-sm bg-background" />
                         <Input disabled={locked} value={app.appType} onChange={e => updateApp(i, { appType: e.target.value })}
                           placeholder="Type (COTS, cloud-based, in-house…)" className="h-7 text-xs border-0 shadow-none px-0 focus-visible:ring-0 bg-transparent text-muted-foreground mt-0.5" />
                       </td>
                       {(["network", "database", "os", "purpose"] as const).map(col => (
                         <td key={col} className="px-4 py-2.5">
                           <Input disabled={locked} value={app[col]} onChange={e => updateApp(i, { [col]: e.target.value })}
-                            placeholder="—" className="h-7 text-sm border-0 shadow-none px-0 focus-visible:ring-0 bg-transparent" />
+                            placeholder="—" className="h-8 text-sm bg-background" />
                         </td>
                       ))}
                       <td className="px-4 py-2.5 w-32">
                         <Select value={app.relevant} onValueChange={v => updateApp(i, { relevant: v as YN })} disabled={locked}>
-                          <SelectTrigger className="h-7 text-sm"><SelectValue placeholder="—" /></SelectTrigger>
+                          <SelectTrigger className="h-8 text-sm"><SelectValue placeholder="—" /></SelectTrigger>
                           <SelectContent>
                             <SelectItem value="Y">Y</SelectItem>
                             <SelectItem value="N">N</SelectItem>
@@ -703,7 +703,7 @@ export function Audit511Worksheet({ isUS = false }: { isUS?: boolean }) {
                                   value={detail[topic.key]}
                                   onChange={e => updateAppDetail(app.id, { [topic.key]: e.target.value })}
                                   placeholder="Enter response…"
-                                  className="min-h-[64px] text-sm resize-none border-0 shadow-none p-0 focus-visible:ring-0 bg-transparent"
+                                  className="min-h-[64px] text-sm bg-background resize-none"
                                 />
                               </td>
                             </tr>
