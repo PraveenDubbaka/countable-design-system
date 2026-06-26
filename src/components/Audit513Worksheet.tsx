@@ -534,22 +534,22 @@ export function Audit513Worksheet({ isUS: isUSProp }: { isUS?: boolean } = {}) {
           {/* Control deficiencies row */}
           <SectionCard title="B. Understand Management's Estimate Preparation Process">
             <div className="overflow-x-auto">
-              <table className="w-full border-collapse">
+              <table className="w-full text-sm">
                 <thead>
                   <tr className="bg-muted border-b border-border">
-                    <th className="border border-border px-5 py-2.5 text-left text-xs font-semibold text-foreground uppercase tracking-wider w-[40%]">Control Component</th>
-                    <th className="border border-border px-4 py-2.5 text-left text-xs font-semibold text-foreground uppercase tracking-wider">Control Deficiencies Identified & Audit Implications</th>
-                    <th className="border border-border px-4 py-2.5 text-center text-xs font-semibold text-foreground uppercase tracking-wider w-28">PSC? (Y/N)</th>
-                    <th className="border border-border px-4 py-2.5 text-center text-xs font-semibold text-foreground uppercase tracking-wider w-24">W/P Ref.</th>
+                    <th className="px-5 py-2.5 text-left text-xs font-semibold text-foreground uppercase tracking-wider w-[40%]">Control Component</th>
+                    <th className="px-4 py-2.5 text-left text-xs font-semibold text-foreground uppercase tracking-wider">Control Deficiencies Identified & Audit Implications</th>
+                    <th className="px-4 py-2.5 text-center text-xs font-semibold text-foreground uppercase tracking-wider w-28">PSC? (Y/N)</th>
+                    <th className="px-4 py-2.5 text-center text-xs font-semibold text-foreground uppercase tracking-wider w-24">W/P Ref.</th>
                   </tr>
                 </thead>
-                <tbody>
+                <tbody className="divide-y divide-border">
                   <tr className="hover:bg-muted/30 transition-colors align-top">
-                    <td className="border border-border px-5 py-3 text-sm text-foreground">
+                    <td className="px-5 py-3 text-sm text-foreground">
                       <p className="font-medium mb-1">Understand estimate preparation</p>
                       <p className="text-xs text-muted-foreground">Understand management's process for preparing estimates and making F/S disclosures. Consider responses to entity-level risks and controls on Form 530.</p>
                     </td>
-                    <td className="border border-border px-4 py-3">
+                    <td className="px-4 py-3">
                       <Textarea
                         disabled={locked}
                         value={data.partBDeficiencies}
@@ -558,7 +558,7 @@ export function Audit513Worksheet({ isUS: isUSProp }: { isUS?: boolean } = {}) {
                         className="min-h-[72px] text-sm resize-none border-0 shadow-none p-0 focus-visible:ring-0 bg-transparent"
                       />
                     </td>
-                    <td className="border border-border px-4 py-3 w-28">
+                    <td className="px-4 py-3 w-28">
                       <Select value={data.partBPsc} onValueChange={v => patch("partBPsc", v)} disabled={locked}>
                         <SelectTrigger className="h-8 text-sm"><SelectValue placeholder="—" /></SelectTrigger>
                         <SelectContent>
@@ -568,7 +568,7 @@ export function Audit513Worksheet({ isUS: isUSProp }: { isUS?: boolean } = {}) {
                         </SelectContent>
                       </Select>
                     </td>
-                    <td className="border border-border px-4 py-3 text-center w-24">
+                    <td className="px-4 py-3 text-center w-24">
                       <RefButton
                         reference={data.partBWpRef}
                         onAttach={doc => patch("partBWpRef", [...data.partBWpRef, doc])}
