@@ -45,7 +45,6 @@ interface ProcedureRow {
 interface Data580 {
   accountBalance: string;
   performanceMateriality: string;
-  periodEnded: string;
   streams: RevenueStream[];
   procedures: ProcedureRow[];
   fraudRiskIdentified: YN;        // overall presumption rebutted?
@@ -141,7 +140,6 @@ function buildDefault(): Data580 {
   return {
     accountBalance: "",
     performanceMateriality: "",
-    periodEnded: "",
     streams: [emptyStream()],
     procedures: buildProcedures(),
     fraudRiskIdentified: "",
@@ -168,7 +166,6 @@ export function Audit580Worksheet() {
     const seededHeader = {
       accountBalance: "Revenue — all streams (see breakdown below)",
       performanceMateriality: formatCurrency(ctx.performanceMateriality),
-      periodEnded: ctx.periodEnd,
     };
     const seededStreams = ctx.revenueStreams.map(streamFromSeed);
     if (!saved) {
@@ -178,7 +175,6 @@ export function Audit580Worksheet() {
       ...def, ...saved,
       accountBalance: saved.accountBalance || seededHeader.accountBalance,
       performanceMateriality: saved.performanceMateriality || seededHeader.performanceMateriality,
-      periodEnded: saved.periodEnded || seededHeader.periodEnded,
       streams: saved.streams?.length ? saved.streams : seededStreams,
       procedures: saved.procedures?.length ? saved.procedures : def.procedures,
     };
@@ -249,11 +245,11 @@ export function Audit580Worksheet() {
           entityName={ctx.entityName}
           periodEndDisplay={ctx.periodEndDisplay}
           framework={ctx.framework}
-          populated="performance materiality, period, revenue streams (with assertions, likelihood / magnitude and inherent-risk ratings)"
+          populated="performance materiality, revenue streams (with assertions, likelihood / magnitude and inherent-risk ratings)"
         />
 
         {/* Engagement context */}
-        <div className="bg-card border border-border rounded-md p-5 grid grid-cols-3 gap-4">
+        <div className="bg-card border border-border rounded-md p-5 grid grid-cols-2 gap-4">
           <div className="space-y-1">
             <label className="text-xs font-medium text-muted-foreground">Account balance / class of transactions / disclosure</label>
             <Input disabled={locked} value={data.accountBalance}
@@ -266,12 +262,6 @@ export function Audit580Worksheet() {
             <Input disabled={locked} value={data.performanceMateriality}
               onChange={e => setData(d => ({ ...d, performanceMateriality: e.target.value }))}
               placeholder="From Form 410"
-              className="h-8 text-xs" />
-          </div>
-          <div className="space-y-1">
-            <label className="text-xs font-medium text-muted-foreground">Period ended</label>
-            <Input disabled={locked} type="date" value={data.periodEnded}
-              onChange={e => setData(d => ({ ...d, periodEnded: e.target.value }))}
               className="h-8 text-xs" />
           </div>
         </div>
