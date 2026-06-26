@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { createPortal } from "react-dom";
 import { useNavigate, useLocation, useSearchParams } from "react-router-dom";
-import { ChevronDown, ChevronRight, ChevronLeft, Search, Plus, Expand, Trash2, Folder, Headphones, Check, FileText, FileBarChart, StickyNote, Table, Copy, Pencil, FolderInput, MoreVertical, GripVertical, X, Save, Files, Send, AlertCircle, MessageSquare, FilePlus2, FolderPlus, ArrowUpDown } from "lucide-react";
+import { ChevronDown, ChevronRight, ChevronLeft, Search, Plus, Expand, Trash2, Folder, Headphones, Check, FileText, FileBarChart, StickyNote, Table, Copy, Pencil, FolderInput, MoreVertical, GripVertical, X, Save, Files, Send, AlertCircle, MessageSquare, FilePlus2, FolderPlus, ArrowUpDown, Upload } from "lucide-react";
 import { templateTree, allTemplateViews, type TreeItem } from "@/lib/engagementTemplatesData";
 import { FolderSolidIcon, FolderPlusIcon, FolderMinusIcon } from "@/components/icons/FolderIcons";
 import { Input } from "@/components/ui/input";
@@ -1289,6 +1289,10 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
   const [hasDarkSecondary, setHasDarkSecondary] = useState(false);
   const [sectionFillStatus, setSectionFillStatus] = useState<Record<string, boolean>>({});
   const [notesPages, setNotesPages] = useState<Set<string>>(new Set());
+  const [nodeDocuments, setNodeDocuments] = useState<Record<string, { id: string; name: string }[]>>({});
+  const [collapsedNodeDocs, setCollapsedNodeDocs] = useState<Set<string>>(new Set());
+  const [addDocModal, setAddDocModal] = useState<{ nodeId: string; nodeCode?: string; nodeLabel: string } | null>(null);
+  const [pendingDocFiles, setPendingDocFiles] = useState<{ name: string }[]>([]);
 
   // Load notes index for the current engagement
   useEffect(() => {
@@ -1309,6 +1313,46 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
       window.removeEventListener('page-notes-updated', readNotesIndex);
     };
   }, [location.pathname]);
+
+  // Load attached documents per node for the current engagement
+  useEffect(() => {
+    const load = () => {
+      const engId = location.pathname.split("/engagements/")[1]?.split("/")[0];
+      if (!engId) return;
+      try {
+        const raw = localStorage.getItem(`engagement-node-docs-${engId}`);
+        setNodeDocuments(raw ? JSON.parse(raw) : {});
+      } catch { setNodeDocuments({}); }
+    };
+    load();
+    window.addEventListener('storage', load);
+    window.addEventListener('node-docs-updated', load);
+    return () => {
+      window.removeEventListener('storage', load);
+      window.removeEventListener('node-docs-updated', load);
+    };
+  }, [location.pathname]);
+
+  const saveNodeDocs = (docs: Record<string, { id: string; name: string }[]>) => {
+    const engId = location.pathname.split("/engagements/")[1]?.split("/")[0];
+    if (!engId) return;
+    localStorage.setItem(`engagement-node-docs-${engId}`, JSON.stringify(docs));
+    setNodeDocuments(docs);
+    window.dispatchEvent(new CustomEvent('node-docs-updated'));
+  };
+
+  const handleAddDocs = () => {
+    if (!addDocModal || pendingDocFiles.length === 0) return;
+    const existing = nodeDocuments[addDocModal.nodeId] ?? [];
+    const code = addDocModal.nodeCode ?? 'DOC';
+    const newDocs = pendingDocFiles.map((f, i) => ({
+      id: `${addDocModal.nodeId}-${Date.now()}-${i}`,
+      name: `${code}-${existing.length + i + 1}-${f.name}`,
+    }));
+    saveNodeDocs({ ...nodeDocuments, [addDocModal.nodeId]: [...existing, ...newDocs] });
+    setAddDocModal(null);
+    setPendingDocFiles([]);
+  };
 
   const [customSections, setCustomSections] = useState<CustomSection[]>([]);
   const [addSectionModal, setAddSectionModal] = useState<{ open: boolean; parentNodeId: string } | null>(null);
@@ -2139,6 +2183,23 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
                         )}
                         {node.code && <span className="font-semibold text-primary">{node.code}</span>}
                         <span className={cn("truncate flex-1 text-black dark:text-white", isLeaf ? "font-medium" : "font-semibold")}>{node.label}</span>
+                        {((nodeDocuments[node.id]?.length ?? 0) > 0 || notesPages.has(node.id)) && (
+                          <button
+                            className="opacity-0 group-hover:opacity-100 flex-shrink-0 w-4 h-4 flex items-center justify-center rounded text-[10px] font-bold leading-none text-muted-foreground hover:text-foreground hover:bg-muted/60 transition-all"
+                            onClick={e => {
+                              e.stopPropagation();
+                              setCollapsedNodeDocs(prev => {
+                                const next = new Set(prev);
+                                if (next.has(node.id)) next.delete(node.id);
+                                else next.add(node.id);
+                                return next;
+                              });
+                            }}
+                            title={collapsedNodeDocs.has(node.id) ? 'Expand attachments' : 'Collapse attachments'}
+                          >
+                            {collapsedNodeDocs.has(node.id) ? '+' : '−'}
+                          </button>
+                        )}
                         {!isLeaf && sectionFillStatus[node.code ?? ''] && (
                           <span className="w-2 h-2 rounded-full flex-shrink-0 ml-auto luka-dot-filled" title="Luka filled" />
                         )}
@@ -2197,7 +2258,14 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
                               </DropdownMenuItem>
                               <DropdownMenuSeparator />
                               {isLeaf ? (
-                                <DropdownMenuItem className="text-xs gap-2 cursor-pointer" onClick={e => e.stopPropagation()}>
+                                <DropdownMenuItem
+                                  className="text-xs gap-2 cursor-pointer"
+                                  onClick={e => {
+                                    e.stopPropagation();
+                                    setAddDocModal({ nodeId: node.id, nodeCode: node.code, nodeLabel: node.label });
+                                    setPendingDocFiles([]);
+                                  }}
+                                >
                                   <FilePlus2 className="h-3.5 w-3.5" /> Add document
                                 </DropdownMenuItem>
                               ) : (
@@ -2211,7 +2279,7 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
                       </div>
 
                       {/* Notes sub-item — shown when this page has notes */}
-                      {isLeaf && notesPages.has(node.id) && (
+                      {isLeaf && notesPages.has(node.id) && !collapsedNodeDocs.has(node.id) && (
                         <div
                           className={cn(
                             "group flex items-center gap-1.5 py-1.5 px-2 rounded-[8px] cursor-pointer hover:bg-primary/10 transition-colors text-xs mt-0.5",
@@ -2224,6 +2292,28 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
                           <span className="truncate flex-1 text-black dark:text-white font-medium">Notes</span>
                         </div>
                       )}
+
+                      {/* Document attachments — shown when files have been added to this node */}
+                      {(nodeDocuments[node.id]?.length ?? 0) > 0 && !collapsedNodeDocs.has(node.id) && nodeDocuments[node.id].map(doc => (
+                        <div
+                          key={doc.id}
+                          className="group/doc flex items-center gap-1.5 py-1.5 px-2 rounded-[8px] cursor-pointer hover:bg-primary/10 transition-colors text-xs mt-0.5"
+                          style={{ paddingLeft: `${(depth + 1) * 16 + 8}px` }}
+                        >
+                          <WorksheetIcon className="h-3 w-3 flex-shrink-0 text-green-600" />
+                          <span className="truncate flex-1 text-black dark:text-white font-medium">{doc.name}</span>
+                          <button
+                            className="opacity-0 group-hover/doc:opacity-100 p-0.5 hover:text-destructive transition-all flex-shrink-0"
+                            onClick={e => {
+                              e.stopPropagation();
+                              const updated = { ...nodeDocuments, [node.id]: nodeDocuments[node.id].filter(d => d.id !== doc.id) };
+                              saveNodeDocs(updated);
+                            }}
+                          >
+                            <X className="h-3 w-3" />
+                          </button>
+                        </div>
+                      ))}
 
                       {isOpen && hasChildren && (
                         <div>
@@ -2799,5 +2889,55 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
         onClose={() => setShowSignoffs(false)}
         anchorLeft={56}
       />
+
+      {/* Add Document Modal */}
+      <Dialog open={!!addDocModal} onOpenChange={open => { if (!open) { setAddDocModal(null); setPendingDocFiles([]); } }}>
+        <DialogContent className="sm:max-w-[420px]">
+          <DialogHeader>
+            <DialogTitle className="text-base font-semibold">Add a Document</DialogTitle>
+          </DialogHeader>
+          <div className="flex flex-col gap-3 py-2">
+            {/* Staged files list */}
+            {pendingDocFiles.length > 0 && (
+              <div className="flex flex-col gap-1">
+                {pendingDocFiles.map((f, i) => (
+                  <div key={i} className="flex items-center gap-2 px-3 py-2 rounded-lg border border-border bg-muted/30 text-sm">
+                    <WorksheetIcon className="h-4 w-4 flex-shrink-0 text-green-600" />
+                    <span className="truncate flex-1 text-foreground font-medium">{f.name}</span>
+                    <button
+                      className="text-muted-foreground hover:text-destructive transition-colors flex-shrink-0"
+                      onClick={() => setPendingDocFiles(prev => prev.filter((_, j) => j !== i))}
+                    >
+                      <Trash2 className="h-3.5 w-3.5" />
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
+            {/* Upload zone */}
+            <label className="flex flex-col items-center justify-center gap-2 border-2 border-dashed border-border rounded-xl py-8 px-4 cursor-pointer hover:border-primary/40 hover:bg-primary/5 transition-colors">
+              <Upload className="h-6 w-6 text-muted-foreground" />
+              <span className="text-sm text-muted-foreground">
+                <span className="text-primary font-medium cursor-pointer">Click to upload</span>
+                {' '}or drag and drop
+              </span>
+              <input
+                type="file"
+                multiple
+                className="hidden"
+                onChange={e => {
+                  const files = Array.from(e.target.files ?? []);
+                  setPendingDocFiles(prev => [...prev, ...files.map(f => ({ name: f.name }))]);
+                  e.target.value = '';
+                }}
+              />
+            </label>
+          </div>
+          <DialogFooter className="gap-2">
+            <Button variant="outline" size="sm" onClick={() => { setAddDocModal(null); setPendingDocFiles([]); }}>Cancel</Button>
+            <Button size="sm" disabled={pendingDocFiles.length === 0} onClick={handleAddDocs}>Add</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>;
 }
