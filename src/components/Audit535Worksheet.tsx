@@ -214,8 +214,7 @@ export function Audit535Worksheet() {
               <th className="w-10 px-4 py-3 text-center text-xs font-semibold text-foreground uppercase tracking-wider">#</th>
               <th className="px-6 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider" style={{ width: '38%', minWidth: 320 }}>Procedure</th>
               <th className="px-3 py-3 text-center text-xs font-semibold text-foreground uppercase tracking-wider" style={{ width: 90 }}>PSC?</th>
-              <th className="px-3 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider" style={{ width: 100 }}>Initials</th>
-              <th className="px-6 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider" style={{ width: '34%', minWidth: 280 }}>Comments</th>
+              <th className="px-6 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider" style={{ width: '44%', minWidth: 320 }}>Comments</th>
               <th className="px-4 py-3 text-center text-xs font-semibold text-foreground uppercase tracking-wider" style={{ width: 100 }}>W/P ref.</th>
             </tr>
           </thead>
@@ -249,9 +248,6 @@ export function Audit535Worksheet() {
                       </SelectContent>
                     </Select>
                   </td>
-                  <td className="px-3 py-3">
-                    <Input disabled={locked} value={row.initials} onChange={e => setRow(item.id, { initials: e.target.value })} className="h-8 text-xs" placeholder="ABC" />
-                  </td>
                   <td className="px-6 py-3">
                     <Textarea disabled={locked} value={row.comments} onChange={e => setRow(item.id, { comments: e.target.value })} placeholder="Document procedure performed and findings…" className="min-h-[72px] w-full text-sm resize-none rounded-[10px] border border-input bg-white px-3 py-2 focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2" />
                   </td>
@@ -279,23 +275,14 @@ export function Audit535Worksheet() {
         <span className="text-xs font-semibold text-primary whitespace-nowrap">Objective:</span>
         <p className="text-xs text-muted-foreground flex-1 leading-relaxed">
           To obtain an understanding of the entity’s information system and communication relevant to the preparation of the financial statements through performing risk assessment procedures (CAS 315).
+          <span className="block mt-1.5 text-[11px]">
+            <span className="font-semibold text-foreground">Legend: </span>
+            PSC = Procedure successfully completed.&nbsp;&nbsp;F/S = Financial statements.&nbsp;&nbsp;SCOTABD = Significant class of transactions, account balances and disclosures.
+          </span>
         </p>
       </div>
 
       <div className="flex-1 overflow-y-auto p-6 space-y-5">
-        {/* Period */}
-        <div className="bg-card border border-border rounded-md p-4">
-          <div className="grid grid-cols-2 gap-3 max-w-xl">
-            <div className="space-y-1">
-              <label className="text-xs font-medium text-muted-foreground">Period ended</label>
-              <Input disabled={locked} type="date" value={data.periodEnd} onChange={e => setData(d => ({ ...d, periodEnd: e.target.value }))} className="h-8 text-xs" />
-            </div>
-          </div>
-          <div className="mt-3 text-[11px] text-muted-foreground leading-relaxed">
-            <span className="font-semibold text-foreground">Legend: </span>
-            PSC = Procedure successfully completed.&nbsp;&nbsp;F/S = Financial statements.&nbsp;&nbsp;SCOTABD = Significant class of transactions, account balances and disclosures.
-          </div>
-        </div>
 
         {/* Procedure parts */}
         {ALL_PARTS.map(part => (
