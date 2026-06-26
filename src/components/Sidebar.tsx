@@ -2149,7 +2149,7 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
                     <div key={node.id}>
                       <div
                         className={cn(
-                          "group flex items-center gap-1.5 py-1.5 px-2 rounded-[8px] cursor-pointer hover:bg-primary/10 transition-colors text-sm",
+                          "group relative flex items-center gap-1.5 py-1.5 px-2 rounded-[8px] cursor-pointer hover:bg-primary/10 transition-colors text-sm",
                           isActive && "bg-primary/10 ring-1 ring-primary/25"
                         )}
                         style={{ paddingLeft: `${depth * 16 + 8}px` }}
@@ -2170,10 +2170,11 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
                           }
                         }}
                       >
-                        {/* +/- toggle: always visible, always first, only when node has attachments */}
+                        {/* +/- toggle: absolutely positioned in the indent space, zero flex impact */}
                         {((nodeDocuments[node.id]?.length ?? 0) > 0 || notesPages.has(node.id)) && (
                           <button
-                            className="flex-shrink-0 w-4 h-4 flex items-center justify-center rounded text-[10px] font-bold leading-none text-muted-foreground hover:text-foreground hover:bg-muted/60 transition-all"
+                            className="absolute flex items-center justify-center rounded text-[10px] font-bold leading-none text-muted-foreground hover:text-foreground hover:bg-muted/60 transition-all"
+                            style={{ left: `${depth * 16}px`, width: '14px', height: '14px', top: '50%', transform: 'translateY(-50%)' }}
                             onClick={e => {
                               e.stopPropagation();
                               setCollapsedNodeDocs(prev => {
