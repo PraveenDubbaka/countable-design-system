@@ -29,6 +29,7 @@ import { CompletionIcon } from "@/components/icons/CompletionIcon";
 import { WordDocIcon } from "@/components/icons/WordDocIcon";
 import { BookIcon } from "@/components/icons/BookIcon";
 import { WorksheetIcon } from "@/components/icons/WorksheetIcon";
+import { XlsxIcon } from "@/components/icons/XlsxIcon";
 import { ReportIcon } from "@/components/icons/ReportIcon";
 import { SignoffsOverlay } from "@/components/SignoffsOverlay";
 import signoffCheckAllIcon from "@/assets/signoff-check-all.png";
@@ -523,7 +524,7 @@ interface SidebarProps {
 function getFileTypeIcon(filename: string, sizeClass = 'h-4 w-4') {
   const ext = filename.split('.').pop()?.toLowerCase() ?? '';
   if (['xlsx', 'xls', 'csv', 'numbers'].includes(ext))
-    return <Table className={`${sizeClass} flex-shrink-0 text-green-600`} />;
+    return <XlsxIcon className={`${sizeClass} flex-shrink-0`} />;
   if (['doc', 'docx', 'odt', 'rtf'].includes(ext))
     return <WordDocIcon className={`${sizeClass} flex-shrink-0`} />;
   if (ext === 'pdf')
