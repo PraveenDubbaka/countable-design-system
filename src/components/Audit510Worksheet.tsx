@@ -452,7 +452,7 @@ function FieldRow({ label, sublabel, field, locked, onChange }: {
           value={field.response}
           onChange={e => onChange({ ...field, response: e.target.value })}
           placeholder="Enter response…"
-          className="min-h-[56px] text-sm resize-none border-0 shadow-none p-0 focus-visible:ring-0 bg-transparent"
+          className="min-h-[56px] text-sm bg-background resize-none"
         />
       </td>
       <td className="px-4 py-3 text-center w-[100px]">
@@ -681,7 +681,7 @@ export function Audit510Worksheet({ isUS = false }: { isUS?: boolean }) {
                 {(["source", "nature", "revenue", "geoMarket", "complexity"] as const).map((col, ci) => (
                   <td key={col} className={cn("px-4 py-2 align-top", "")}>
                     <Input disabled={locked} value={row[col]} onChange={e => updateRow<RevenueRow>("revenueRows", i, { [col]: e.target.value })}
-                      className="h-7 text-sm border-0 shadow-none px-0 focus-visible:ring-0 bg-transparent" placeholder="—" />
+                      className="h-8 text-sm bg-background" placeholder="—" />
                   </td>
                 ))}
                 <DeleteCell onDelete={() => deleteRow("revenueRows", i)} locked={locked} />
@@ -711,17 +711,17 @@ export function Audit510Worksheet({ isUS = false }: { isUS?: boolean }) {
               <tr key={row.id} className="group hover:bg-muted/30 transition-colors">
                 <td className="px-4 py-2 align-top">
                   <Input disabled={locked} value={row.name} onChange={e => updateRow<CustomerRow>("customerRows", i, { name: e.target.value })}
-                    className="h-7 text-sm border-0 shadow-none px-0 focus-visible:ring-0 bg-transparent" placeholder="Name" />
+                    className="h-8 text-sm bg-background" placeholder="Name" />
                 </td>
                 <td className="px-4 py-2 align-top w-24">
                   <Select value={row.type} onValueChange={v => updateRow<CustomerRow>("customerRows", i, { type: v as "C" | "S" | "" })} disabled={locked}>
-                    <SelectTrigger className="h-7 text-sm"><SelectValue placeholder="—" /></SelectTrigger>
+                    <SelectTrigger className="h-8 text-sm"><SelectValue placeholder="—" /></SelectTrigger>
                     <SelectContent><SelectItem value="C">C</SelectItem><SelectItem value="S">S</SelectItem></SelectContent>
                   </Select>
                 </td>
                 <td className="px-4 py-2 align-top">
                   <Input disabled={locked} value={row.riskAreas} onChange={e => updateRow<CustomerRow>("customerRows", i, { riskAreas: e.target.value })}
-                    className="h-7 text-sm border-0 shadow-none px-0 focus-visible:ring-0 bg-transparent" placeholder="Risk areas…" />
+                    className="h-8 text-sm bg-background" placeholder="Risk areas…" />
                 </td>
                 <DeleteCell onDelete={() => deleteRow("customerRows", i)} locked={locked} />
               </tr>
@@ -751,7 +751,7 @@ export function Audit510Worksheet({ isUS = false }: { isUS?: boolean }) {
                 {(["address", "purpose", "inventoryValue", "employees"] as const).map((col, ci) => (
                   <td key={col} className={cn("px-4 py-2 align-top", "")}>
                     <Input disabled={locked} value={row[col]} onChange={e => updateRow<FacilityRow>("facilityRows", i, { [col]: e.target.value })}
-                      className="h-7 text-sm border-0 shadow-none px-0 focus-visible:ring-0 bg-transparent" placeholder="—" />
+                      className="h-8 text-sm bg-background" placeholder="—" />
                   </td>
                 ))}
                 <DeleteCell onDelete={() => deleteRow("facilityRows", i)} locked={locked} />
@@ -781,15 +781,15 @@ export function Audit510Worksheet({ isUS = false }: { isUS?: boolean }) {
               <tr key={row.id} className="group hover:bg-muted/30 transition-colors align-top">
                 <td className="px-4 py-2">
                   <Textarea disabled={locked} value={row.nameDesc} onChange={e => updateRow<ThirdPartyRow>("thirdPartyRows", i, { nameDesc: e.target.value })}
-                    className="min-h-[48px] text-sm border-0 shadow-none p-0 focus-visible:ring-0 bg-transparent resize-none" placeholder="Name and services…" />
+                    className="min-h-[48px] text-sm bg-background resize-none" placeholder="Name and services…" />
                 </td>
                 <td className="px-4 py-2 w-44">
                   <Input disabled={locked} value={row.contact} onChange={e => updateRow<ThirdPartyRow>("thirdPartyRows", i, { contact: e.target.value })}
-                    className="h-7 text-sm border-0 shadow-none px-0 focus-visible:ring-0 bg-transparent" placeholder="Contact info" />
+                    className="h-8 text-sm bg-background" placeholder="Contact info" />
                 </td>
                 <td className="px-4 py-2 w-28">
                   <Select value={row.isServiceOrg} onValueChange={v => updateRow<ThirdPartyRow>("thirdPartyRows", i, { isServiceOrg: v as YN })} disabled={locked}>
-                    <SelectTrigger className="h-7 text-sm"><SelectValue placeholder="—" /></SelectTrigger>
+                    <SelectTrigger className="h-8 text-sm"><SelectValue placeholder="—" /></SelectTrigger>
                     <SelectContent>
                       <SelectItem value="Y">Y — Form 516 required</SelectItem>
                       <SelectItem value="N">N</SelectItem>
@@ -801,7 +801,7 @@ export function Audit510Worksheet({ isUS = false }: { isUS?: boolean }) {
                 </td>
                 <td className="px-4 py-2">
                   <Textarea disabled={locked} value={row.reasoning} onChange={e => updateRow<ThirdPartyRow>("thirdPartyRows", i, { reasoning: e.target.value })}
-                    className="min-h-[48px] text-sm border-0 shadow-none p-0 focus-visible:ring-0 bg-transparent resize-none" placeholder="Reasoning…" />
+                    className="min-h-[48px] text-sm bg-background resize-none" placeholder="Reasoning…" />
                 </td>
                 <DeleteCell onDelete={() => deleteRow("thirdPartyRows", i)} locked={locked} />
               </tr>
@@ -842,7 +842,7 @@ export function Audit510Worksheet({ isUS = false }: { isUS?: boolean }) {
                 {(["name", "pctOwned", "involvement"] as const).map((col, ci) => (
                   <td key={col} className={cn("px-4 py-2 align-top", "", col === "pctOwned" && "w-28")}>
                     <Input disabled={locked} value={row[col]} onChange={e => updateRow<StakeholderRow>("stakeholderRows", i, { [col]: e.target.value })}
-                      className="h-7 text-sm border-0 shadow-none px-0 focus-visible:ring-0 bg-transparent" placeholder="—" />
+                      className="h-8 text-sm bg-background" placeholder="—" />
                   </td>
                 ))}
                 <DeleteCell onDelete={() => deleteRow("stakeholderRows", i)} locked={locked} />
@@ -874,21 +874,21 @@ export function Audit510Worksheet({ isUS = false }: { isUS?: boolean }) {
               <tr key={row.id} className="group hover:bg-muted/30 transition-colors">
                 <td className="px-4 py-2 align-top">
                   <Input disabled={locked} value={row.name} onChange={e => updateRow<TcwgRow>("tcwgRows", i, { name: e.target.value })}
-                    className="h-7 text-sm border-0 shadow-none px-0 focus-visible:ring-0 bg-transparent" placeholder="Name" />
+                    className="h-8 text-sm bg-background" placeholder="Name" />
                 </td>
                 <td className="px-4 py-2 align-top w-32">
                   <Input disabled={locked} value={row.memberSince} onChange={e => updateRow<TcwgRow>("tcwgRows", i, { memberSince: e.target.value })}
-                    className="h-7 text-sm border-0 shadow-none px-0 focus-visible:ring-0 bg-transparent" placeholder="Year" />
+                    className="h-8 text-sm bg-background" placeholder="Year" />
                 </td>
                 <td className="px-4 py-2 align-top w-36">
                   <Select value={row.onFinance} onValueChange={v => updateRow<TcwgRow>("tcwgRows", i, { onFinance: v as YN })} disabled={locked}>
-                    <SelectTrigger className="h-7 text-sm"><SelectValue placeholder="—" /></SelectTrigger>
+                    <SelectTrigger className="h-8 text-sm"><SelectValue placeholder="—" /></SelectTrigger>
                     <SelectContent><SelectItem value="Y">Y</SelectItem><SelectItem value="N">N</SelectItem></SelectContent>
                   </Select>
                 </td>
                 <td className="px-4 py-2 align-top">
                   <Input disabled={locked} value={row.comments} onChange={e => updateRow<TcwgRow>("tcwgRows", i, { comments: e.target.value })}
-                    className="h-7 text-sm border-0 shadow-none px-0 focus-visible:ring-0 bg-transparent" placeholder="Comments…" />
+                    className="h-8 text-sm bg-background" placeholder="Comments…" />
                 </td>
                 <DeleteCell onDelete={() => deleteRow("tcwgRows", i)} locked={locked} />
               </tr>
@@ -917,7 +917,7 @@ export function Audit510Worksheet({ isUS = false }: { isUS?: boolean }) {
                 {(["name", "position", "qualifications"] as const).map((col, ci) => (
                   <td key={col} className={cn("px-4 py-2 align-top", "")}>
                     <Input disabled={locked} value={row[col]} onChange={e => updateRow<ManagementRow>("managementRows", i, { [col]: e.target.value })}
-                      className="h-7 text-sm border-0 shadow-none px-0 focus-visible:ring-0 bg-transparent" placeholder="—" />
+                      className="h-8 text-sm bg-background" placeholder="—" />
                   </td>
                 ))}
                 <DeleteCell onDelete={() => deleteRow("managementRows", i)} locked={locked} />
@@ -949,7 +949,7 @@ export function Audit510Worksheet({ isUS = false }: { isUS?: boolean }) {
                 {(["contactPerson", "company", "email", "adviceType"] as const).map((col, ci) => (
                   <td key={col} className={cn("px-4 py-2 align-top", "", col === "email" && "w-44")}>
                     <Input disabled={locked} value={row[col]} onChange={e => updateRow<AdvisorRow>("advisorRows", i, { [col]: e.target.value })}
-                      className="h-7 text-sm border-0 shadow-none px-0 focus-visible:ring-0 bg-transparent" placeholder="—" />
+                      className="h-8 text-sm bg-background" placeholder="—" />
                   </td>
                 ))}
                 <DeleteCell onDelete={() => deleteRow("advisorRows", i)} locked={locked} />
@@ -986,15 +986,15 @@ export function Audit510Worksheet({ isUS = false }: { isUS?: boolean }) {
               <tr key={row.id} className="group hover:bg-muted/30 transition-colors align-top">
                 <td className="px-4 py-2">
                   <Textarea disabled={locked} value={row.law} onChange={e => updateRow<LawRow>("lawRows", i, { law: e.target.value })}
-                    className="min-h-[48px] text-sm border-0 shadow-none p-0 focus-visible:ring-0 bg-transparent resize-none" placeholder="Law / regulation…" />
+                    className="min-h-[48px] text-sm bg-background resize-none" placeholder="Law / regulation…" />
                 </td>
                 <td className="px-4 py-2">
                   <Textarea disabled={locked} value={row.nonCompliance} onChange={e => updateRow<LawRow>("lawRows", i, { nonCompliance: e.target.value })}
-                    className="min-h-[48px] text-sm border-0 shadow-none p-0 focus-visible:ring-0 bg-transparent resize-none" placeholder="Describe any instances…" />
+                    className="min-h-[48px] text-sm bg-background resize-none" placeholder="Describe any instances…" />
                 </td>
                 <td className="px-4 py-2 w-40">
                   <Select value={row.materialEffect} onValueChange={v => updateRow<LawRow>("lawRows", i, { materialEffect: v as YN })} disabled={locked}>
-                    <SelectTrigger className="h-7 text-sm"><SelectValue placeholder="—" /></SelectTrigger>
+                    <SelectTrigger className="h-8 text-sm"><SelectValue placeholder="—" /></SelectTrigger>
                     <SelectContent><SelectItem value="Y">Y</SelectItem><SelectItem value="N">N</SelectItem></SelectContent>
                   </Select>
                 </td>
@@ -1076,25 +1076,25 @@ export function Audit510Worksheet({ isUS = false }: { isUS?: boolean }) {
               <tr key={row.id} className="group hover:bg-muted/30 transition-colors">
                 <td className="px-4 py-2 align-top">
                   <Input disabled={locked} value={row.name} onChange={e => updateRow<InvestmentRow>("investmentRows", i, { name: e.target.value })}
-                    className="h-7 text-sm border-0 shadow-none px-0 focus-visible:ring-0 bg-transparent" placeholder="Name" />
+                    className="h-8 text-sm bg-background" placeholder="Name" />
                 </td>
                 <td className="px-4 py-2 align-top w-32">
                   <Input disabled={locked} value={row.amount} onChange={e => updateRow<InvestmentRow>("investmentRows", i, { amount: e.target.value })}
-                    className="h-7 text-sm border-0 shadow-none px-0 focus-visible:ring-0 bg-transparent" placeholder="$" />
+                    className="h-8 text-sm bg-background" placeholder="$" />
                 </td>
                 <td className="px-4 py-2 align-top w-32">
                   <Select value={row.consolidated} onValueChange={v => updateRow<InvestmentRow>("investmentRows", i, { consolidated: v as YN })} disabled={locked}>
-                    <SelectTrigger className="h-7 text-sm"><SelectValue placeholder="—" /></SelectTrigger>
+                    <SelectTrigger className="h-8 text-sm"><SelectValue placeholder="—" /></SelectTrigger>
                     <SelectContent><SelectItem value="Y">Y</SelectItem><SelectItem value="N">N</SelectItem></SelectContent>
                   </Select>
                 </td>
                 <td className="px-4 py-2 align-top">
                   <Input disabled={locked} value={row.purpose} onChange={e => updateRow<InvestmentRow>("investmentRows", i, { purpose: e.target.value })}
-                    className="h-7 text-sm border-0 shadow-none px-0 focus-visible:ring-0 bg-transparent" placeholder="Purpose…" />
+                    className="h-8 text-sm bg-background" placeholder="Purpose…" />
                 </td>
                 <td className="px-4 py-2 align-top">
                   <Input disabled={locked} value={row.terms} onChange={e => updateRow<InvestmentRow>("investmentRows", i, { terms: e.target.value })}
-                    className="h-7 text-sm border-0 shadow-none px-0 focus-visible:ring-0 bg-transparent" placeholder="Terms…" />
+                    className="h-8 text-sm bg-background" placeholder="Terms…" />
                 </td>
                 <DeleteCell onDelete={() => deleteRow("investmentRows", i)} locked={locked} />
               </tr>
@@ -1137,23 +1137,23 @@ export function Audit510Worksheet({ isUS = false }: { isUS?: boolean }) {
               <tr key={row.id} className="group hover:bg-muted/30 transition-colors align-top">
                 <td className="px-4 py-2">
                   <Input disabled={locked} value={row.creditor} onChange={e => updateRow<FinancingRow>("financingRows", i, { creditor: e.target.value })}
-                    className="h-7 text-sm border-0 shadow-none px-0 focus-visible:ring-0 bg-transparent" placeholder="Creditor" />
+                    className="h-8 text-sm bg-background" placeholder="Creditor" />
                 </td>
                 <td className="px-4 py-2 w-32">
                   <Input disabled={locked} value={row.amount} onChange={e => updateRow<FinancingRow>("financingRows", i, { amount: e.target.value })}
-                    className="h-7 text-sm border-0 shadow-none px-0 focus-visible:ring-0 bg-transparent" placeholder="$" />
+                    className="h-8 text-sm bg-background" placeholder="$" />
                 </td>
                 <td className="px-4 py-2 w-28">
                   <Input disabled={locked} value={row.rate} onChange={e => updateRow<FinancingRow>("financingRows", i, { rate: e.target.value })}
-                    className="h-7 text-sm border-0 shadow-none px-0 focus-visible:ring-0 bg-transparent" placeholder="%" />
+                    className="h-8 text-sm bg-background" placeholder="%" />
                 </td>
                 <td className="px-4 py-2 w-28">
                   <Input disabled={locked} value={row.maturity} onChange={e => updateRow<FinancingRow>("financingRows", i, { maturity: e.target.value })}
-                    className="h-7 text-sm border-0 shadow-none px-0 focus-visible:ring-0 bg-transparent" placeholder="YYYY-MM-DD" />
+                    className="h-8 text-sm bg-background" placeholder="YYYY-MM-DD" />
                 </td>
                 <td className="px-4 py-2">
                   <Textarea disabled={locked} value={row.terms} onChange={e => updateRow<FinancingRow>("financingRows", i, { terms: e.target.value })}
-                    className="min-h-[40px] text-sm border-0 shadow-none p-0 focus-visible:ring-0 bg-transparent resize-none" placeholder="Terms, security, covenants…" />
+                    className="min-h-[40px] text-sm bg-background resize-none" placeholder="Terms, security, covenants…" />
                 </td>
                 <DeleteCell onDelete={() => deleteRow("financingRows", i)} locked={locked} />
               </tr>
