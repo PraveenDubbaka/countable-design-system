@@ -44,8 +44,6 @@ interface CycleBlock {
 }
 
 interface Data540 {
-  entityName: string;
-  periodEnd: string;
   cycles: CycleBlock[];
   overallConclusion: YSN;
   overallNotes: string;
@@ -116,8 +114,6 @@ function emptyCycle(): CycleBlock {
 
 function buildDefault(): Data540 {
   return {
-    entityName: "",
-    periodEnd: "",
     cycles: [emptyCycle()],
     overallConclusion: "",
     overallNotes: "",
@@ -248,24 +244,6 @@ export function Audit540Worksheet() {
       </div>
 
       <div className="flex-1 overflow-y-auto p-6 space-y-5">
-
-        {/* Header */}
-        <div className="bg-card border border-border rounded-md p-4">
-          <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-1">
-              <label className="text-xs font-medium text-muted-foreground">Entity name</label>
-              <Input disabled={locked} value={data.entityName}
-                onChange={e => setData(d => ({ ...d, entityName: e.target.value }))}
-                className="h-8 text-xs" placeholder="Entity name" />
-            </div>
-            <div className="space-y-1">
-              <label className="text-xs font-medium text-muted-foreground">Period end</label>
-              <Input disabled={locked} type="date" value={data.periodEnd}
-                onChange={e => setData(d => ({ ...d, periodEnd: e.target.value }))}
-                className="h-8 text-xs w-fit" />
-            </div>
-          </div>
-        </div>
 
         {/* Cycles */}
         {data.cycles.map((cycle, cIdx) => (
