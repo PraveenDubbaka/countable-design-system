@@ -2901,9 +2901,9 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
             {pendingDocFiles.length > 0 && (
               <div className="flex flex-col gap-1">
                 {pendingDocFiles.map((f, i) => (
-                  <div key={i} className="flex items-center gap-2 px-3 py-2 rounded-lg border border-border bg-muted/30 text-sm">
+                  <div key={i} className="flex items-center gap-2 px-3 py-2 rounded-lg border border-border bg-muted/30 text-sm min-w-0 overflow-hidden">
                     <WorksheetIcon className="h-4 w-4 flex-shrink-0 text-green-600" />
-                    <span className="truncate flex-1 text-foreground font-medium">{f.name}</span>
+                    <span className="truncate flex-1 min-w-0 text-foreground font-medium">{f.name}</span>
                     <button
                       className="text-muted-foreground hover:text-destructive transition-colors flex-shrink-0"
                       onClick={() => setPendingDocFiles(prev => prev.filter((_, j) => j !== i))}
