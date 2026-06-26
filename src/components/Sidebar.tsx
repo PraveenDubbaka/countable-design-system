@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { createPortal } from "react-dom";
 import { useNavigate, useLocation, useSearchParams } from "react-router-dom";
-import { ChevronDown, ChevronRight, ChevronLeft, Search, Plus, Expand, Trash2, Folder, Headphones, Check, FileText, FileBarChart, StickyNote, Table, Copy, Pencil, FolderInput, MoreVertical, GripVertical, X, Save, Files, Send, AlertCircle, MessageSquare, FilePlus2, FolderPlus, ArrowUpDown, Upload, Image } from "lucide-react";
+import { ChevronDown, ChevronRight, ChevronLeft, Search, Plus, Expand, Trash2, Folder, Headphones, Check, FileText, FileBarChart, StickyNote, Table, Copy, Pencil, FolderInput, MoreVertical, GripVertical, X, Save, Files, Send, AlertCircle, MessageSquare, FilePlus2, FolderPlus, ArrowUpDown, Upload, Image, Download, Move } from "lucide-react";
 import { templateTree, allTemplateViews, type TreeItem } from "@/lib/engagementTemplatesData";
 import { FolderSolidIcon, FolderPlusIcon, FolderMinusIcon } from "@/components/icons/FolderIcons";
 import { Input } from "@/components/ui/input";
@@ -22,6 +22,7 @@ import {
   generateManagementResponsibilityChecklist,
 } from "@/lib/globalTemplates";
 import { readJsonFromLocalStorage, removeLocalStorageKey, writeJsonToLocalStorage } from "@/lib/safeJson";
+import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
 import { LetterIcon } from "@/components/icons/LetterIcon";
 import { ChecklistIcon } from "@/components/icons/ChecklistIcon";
@@ -542,6 +543,7 @@ function getFileTypeIcon(filename: string, sizeClass = 'h-4 w-4') {
 export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
   const navigate = useNavigate();
   const location = useLocation();
+  const { toast } = useToast();
   const [searchParams, setSearchParams] = useSearchParams();
   const [templates, setTemplates] = useState<Template[]>(initialTemplates);
   const [globalTemplates, setGlobalTemplates] = useState<GlobalTemplate[]>(initialGlobalTemplates);
@@ -2321,16 +2323,39 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
                         >
                           {getFileTypeIcon(doc.name, 'h-4 w-4')}
                           <span className="truncate flex-1 text-black dark:text-white font-medium">{doc.name}</span>
-                          <button
-                            className="opacity-0 group-hover/doc:opacity-100 p-0.5 hover:text-destructive transition-all flex-shrink-0"
-                            onClick={e => {
-                              e.stopPropagation();
-                              const updated = { ...nodeDocuments, [node.id]: nodeDocuments[node.id].filter(d => d.id !== doc.id) };
-                              saveNodeDocs(updated);
-                            }}
-                          >
-                            <X className="h-4 w-4" />
-                          </button>
+                          <DropdownMenu>
+                            <DropdownMenuTrigger asChild onClick={e => e.stopPropagation()}>
+                              <button className="opacity-0 group-hover/doc:opacity-100 p-0.5 rounded hover:bg-muted transition-all flex-shrink-0 text-muted-foreground hover:text-foreground">
+                                <MoreVertical className="h-4 w-4" />
+                              </button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent side="right" align="start" className="min-w-[140px]">
+                              <DropdownMenuItem onClick={e => { e.stopPropagation(); toast({ title: 'Coming soon' }); }}>
+                                <Pencil className="h-3.5 w-3.5 mr-2" />
+                                Rename
+                              </DropdownMenuItem>
+                              <DropdownMenuItem onClick={e => { e.stopPropagation(); toast({ title: 'Coming soon' }); }}>
+                                <Move className="h-3.5 w-3.5 mr-2" />
+                                Move
+                              </DropdownMenuItem>
+                              <DropdownMenuItem onClick={e => { e.stopPropagation(); toast({ title: 'Coming soon' }); }}>
+                                <Download className="h-3.5 w-3.5 mr-2" />
+                                Download
+                              </DropdownMenuItem>
+                              <DropdownMenuSeparator />
+                              <DropdownMenuItem
+                                className="text-destructive focus:text-destructive"
+                                onClick={e => {
+                                  e.stopPropagation();
+                                  const updated = { ...nodeDocuments, [node.id]: nodeDocuments[node.id].filter(d => d.id !== doc.id) };
+                                  saveNodeDocs(updated);
+                                }}
+                              >
+                                <Trash2 className="h-3.5 w-3.5 mr-2" />
+                                Delete
+                              </DropdownMenuItem>
+                            </DropdownMenuContent>
+                          </DropdownMenu>
                         </div>
                       ))}
 
