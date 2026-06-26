@@ -214,8 +214,7 @@ export function Audit535Worksheet() {
               <th className="w-10 px-4 py-3 text-center text-xs font-semibold text-foreground uppercase tracking-wider">#</th>
               <th className="px-6 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider" style={{ width: '38%', minWidth: 320 }}>Procedure</th>
               <th className="px-3 py-3 text-center text-xs font-semibold text-foreground uppercase tracking-wider" style={{ width: 90 }}>PSC?</th>
-              <th className="px-3 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider" style={{ width: 100 }}>Initials</th>
-              <th className="px-6 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider" style={{ width: '34%', minWidth: 280 }}>Comments</th>
+              <th className="px-6 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider" style={{ width: '44%', minWidth: 320 }}>Comments</th>
               <th className="px-4 py-3 text-center text-xs font-semibold text-foreground uppercase tracking-wider" style={{ width: 100 }}>W/P ref.</th>
             </tr>
           </thead>
