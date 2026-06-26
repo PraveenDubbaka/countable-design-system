@@ -520,21 +520,21 @@ interface SidebarProps {
   onBack?: () => void;
 }
 
-function getFileTypeIcon(filename: string) {
+function getFileTypeIcon(filename: string, sizeClass = 'h-4 w-4') {
   const ext = filename.split('.').pop()?.toLowerCase() ?? '';
   if (['xlsx', 'xls', 'csv', 'numbers'].includes(ext))
-    return <WorksheetIcon className="h-4 w-4 flex-shrink-0" />;
+    return <WorksheetIcon className={`${sizeClass} flex-shrink-0`} />;
   if (['doc', 'docx', 'odt', 'rtf'].includes(ext))
-    return <WordDocIcon className="h-4 w-4 flex-shrink-0" />;
+    return <WordDocIcon className={`${sizeClass} flex-shrink-0`} />;
   if (ext === 'pdf')
-    return <FileText className="h-4 w-4 flex-shrink-0 text-red-500" />;
+    return <FileText className={`${sizeClass} flex-shrink-0 text-red-500`} />;
   if (['ppt', 'pptx', 'key'].includes(ext))
-    return <FileBarChart className="h-4 w-4 flex-shrink-0 text-orange-500" />;
+    return <FileBarChart className={`${sizeClass} flex-shrink-0 text-orange-500`} />;
   if (['png', 'jpg', 'jpeg', 'gif', 'webp', 'svg', 'bmp', 'tiff'].includes(ext))
-    return <Image className="h-4 w-4 flex-shrink-0 text-purple-500" />;
+    return <Image className={`${sizeClass} flex-shrink-0 text-purple-500`} />;
   if (['txt', 'md', 'log'].includes(ext))
-    return <FileText className="h-4 w-4 flex-shrink-0 text-muted-foreground" />;
-  return <Files className="h-4 w-4 flex-shrink-0 text-muted-foreground" />;
+    return <FileText className={`${sizeClass} flex-shrink-0 text-muted-foreground`} />;
+  return <Files className={`${sizeClass} flex-shrink-0 text-muted-foreground`} />;
 }
 
 export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
@@ -2317,7 +2317,7 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
                           className="group/doc flex items-center gap-1.5 py-1.5 px-2 rounded-[8px] cursor-pointer hover:bg-primary/10 transition-colors text-xs mt-0.5"
                           style={{ paddingLeft: `${(depth + 1) * 16 + 8}px` }}
                         >
-                          <WorksheetIcon className="h-3 w-3 flex-shrink-0 text-green-600" />
+                          {getFileTypeIcon(doc.name, 'h-3 w-3')}
                           <span className="truncate flex-1 text-black dark:text-white font-medium">{doc.name}</span>
                           <button
                             className="opacity-0 group-hover/doc:opacity-100 p-0.5 hover:text-destructive transition-all flex-shrink-0"
@@ -2909,7 +2909,7 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
 
       {/* Add Document Modal */}
       <Dialog open={!!addDocModal} onOpenChange={open => { if (!open) { setAddDocModal(null); setPendingDocFiles([]); } }}>
-        <DialogContent className="sm:max-w-[420px]">
+        <DialogContent className="sm:max-w-[420px] grid-cols-1">
           <DialogHeader>
             <DialogTitle className="text-base font-semibold">Add a Document</DialogTitle>
           </DialogHeader>
