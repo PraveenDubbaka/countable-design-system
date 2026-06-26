@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo, useCallback, useRef } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, useSearchParams } from "react-router-dom";
 import { ChevronRight, ChevronDown, Landmark, FileText, Triangle, FileSpreadsheet, PencilLine, Pencil, Settings2, Download, FileType, Share2, Save, RefreshCw, Trash2, Building2, Calendar, Check, AlertTriangle, Loader2, History, Upload, FileUp, Bell, Plus, X, LayoutGrid, CheckCircle2, PlugZap, Zap, Play, Square, ClipboardList } from "lucide-react";
 import { ExpandableIconButton } from "@/components/ui/expandable-icon-button";
 import { ChecklistIcon } from "@/components/icons/ChecklistIcon";
@@ -760,6 +760,7 @@ export default function EngagementDetail() {
     checklistKey?: string;
   }>();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const { isCollapsed: isPanelCollapsed, toggle: togglePanel } = useSecondaryPanel();
   const [checklist, setChecklist] = useState<Checklist | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -1745,7 +1746,7 @@ export default function EngagementDetail() {
                 <h1 className="font-semibold text-foreground truncate text-lg">
                   {checklist?.title
                     || (checklistKey && CUSTOM_WORKSHEET_TITLES[checklistKey])
-                    || (checklistKey?.startsWith('notes-') && `Notes — ${CUSTOM_WORKSHEET_TITLES[checklistKey.slice('notes-'.length)] || checklistKey.slice('notes-'.length)}`)
+                    || (checklistKey?.startsWith('notes-') && `Notes — ${searchParams.get('t') || CUSTOM_WORKSHEET_TITLES[checklistKey.slice('notes-'.length)] || checklistKey.slice('notes-'.length)}`)
                     || (checklistKey?.startsWith('custom-') && (() => { const s = readJsonFromLocalStorage<CustomSection[]>(`engagement-custom-sections-${engagementId}`, []).find(s => s.id === checklistKey); return s?.name; })())
                     || 'Client acceptance and continuance'}
                 </h1>
@@ -2129,7 +2130,7 @@ export default function EngagementDetail() {
           ) : checklistKey?.startsWith('notes-') ? (
             <NotesWorksheet
               parentKey={checklistKey.slice('notes-'.length)}
-              parentTitle={CUSTOM_WORKSHEET_TITLES[checklistKey.slice('notes-'.length)] || checklistKey.slice('notes-'.length)}
+              parentTitle={searchParams.get('t') || CUSTOM_WORKSHEET_TITLES[checklistKey.slice('notes-'.length)] || checklistKey.slice('notes-'.length)}
             />
           ) : checklistKey?.startsWith('custom-') ? (() => {
             const sections = readJsonFromLocalStorage<CustomSection[]>(`engagement-custom-sections-${engagementId}`, []);
