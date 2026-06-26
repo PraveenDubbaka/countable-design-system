@@ -928,6 +928,18 @@ export function Audit510Worksheet({ isUS = false }: { isUS?: boolean }) {
 
   const SectionZ = (
     <div className="space-y-5">
+      {/* Notes */}
+      <div className="bg-card border border-border rounded-md p-5 space-y-2">
+        <h3 className="text-sm font-semibold text-foreground">Notes</h3>
+        <Textarea
+          disabled={locked}
+          value={data.notes}
+          onChange={e => setField("notes", e.target.value)}
+          placeholder="Additional observations, cross-references to Forms 520 / 511 / 551, follow-ups…"
+          className="min-h-[90px] text-sm resize-none rounded-[10px]"
+        />
+      </div>
+
       <div className="bg-card border border-border shadow-[0_2px_8px_hsl(213_40%_20%/0.06)] rounded-md overflow-hidden">
         <div className="px-6 py-3.5 border-b border-border">
           <span className="text-sm font-semibold text-foreground">Overall Conclusion</span>
