@@ -7,8 +7,6 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Layout } from "@/components/Layout";
@@ -88,7 +86,6 @@ export default function Engagements() {
   const [createModalOpen, setCreateModalOpen] = useState(false);
   const [selectedClient, setSelectedClient] = useState("");
   const [selectedEngType, setSelectedEngType] = useState("");
-  const [typePopoverOpen, setTypePopoverOpen] = useState(false);
 
   const uniqueClients = Array.from(new Set(engagementList.map(e => e.client))).sort();
 
@@ -265,7 +262,7 @@ export default function Engagements() {
         </div>
       </div>
       {/* Create Engagement modal */}
-      <Dialog open={createModalOpen} onOpenChange={(open) => { setCreateModalOpen(open); if (!open) setTypePopoverOpen(false); }}>
+      <Dialog open={createModalOpen} onOpenChange={setCreateModalOpen}>
         <DialogContent className="sm:max-w-[400px] p-0 gap-0 overflow-hidden rounded-2xl">
           {/* Custom close button */}
           <button
