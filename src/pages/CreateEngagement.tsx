@@ -512,7 +512,7 @@ export default function CreateEngagement() {
   const [firstYearAudit, setFirstYearAudit] = useState(false);
   const [firstYearOnPlatform, setFirstYearOnPlatform] = useState("");
   const [isRollForward, setIsRollForward] = useState("");
-  const [priorEngagementType, setPriorEngagementType] = useState("");
+  
   const [firstYearTemplates, setFirstYearTemplates] = useState<Set<string>>(new Set());
   const toggleFirstYearTemplate = (key: string) =>
     setFirstYearTemplates(prev => { const n = new Set(prev); n.has(key) ? n.delete(key) : n.add(key); return n; });
@@ -643,7 +643,7 @@ export default function CreateEngagement() {
       firstYearAudit,
       firstYearOnPlatform: firstYearAudit ? firstYearOnPlatform : undefined,
       isRollForward: firstYearAudit ? isRollForward : undefined,
-      priorEngagementType: firstYearAudit ? priorEngagementType : undefined,
+      
       firstYearTemplates: firstYearAudit ? [...firstYearTemplates] : undefined,
       accountingFramework: isAudit ? accountingFramework : undefined,
       accountingStandards,
@@ -799,7 +799,7 @@ export default function CreateEngagement() {
                   <LabeledSelect
                     label="First-Year Audit?"
                     value={firstYearAudit ? "yes" : "no"}
-                    onChange={v => { setFirstYearAudit(v === "yes"); if (v !== "yes") { setFirstYearOnPlatform(""); setIsRollForward(""); setPriorEngagementType(""); setFirstYearTemplates(new Set()); } }}
+                    onChange={v => { setFirstYearAudit(v === "yes"); if (v !== "yes") { setFirstYearOnPlatform(""); setIsRollForward(""); setFirstYearTemplates(new Set()); } }}
                     options={[
                       { value: "no", label: "No" },
                       { value: "yes", label: "Yes" },
@@ -809,7 +809,7 @@ export default function CreateEngagement() {
                     <LabeledSelect
                       label="First audit on this platform?"
                       value={firstYearOnPlatform}
-                      onChange={v => { setFirstYearOnPlatform(v); setIsRollForward(""); setPriorEngagementType(""); }}
+                      onChange={v => { setFirstYearOnPlatform(v); setIsRollForward(""); }}
                       options={[
                         { value: "yes", label: "Yes — no prior files" },
                         { value: "no", label: "No — prior files exist" },
@@ -820,23 +820,10 @@ export default function CreateEngagement() {
                     <LabeledSelect
                       label="Is this a roll-forward?"
                       value={isRollForward}
-                      onChange={v => { setIsRollForward(v); setPriorEngagementType(""); }}
+                      onChange={v => { setIsRollForward(v); }}
                       options={[
                         { value: "yes", label: "Yes — roll forward" },
                         { value: "no", label: "No — new engagement" },
-                      ]}
-                    />
-                  )}
-                  {firstYearAudit && isRollForward !== "" && (
-                    <LabeledSelect
-                      label="Coming from?"
-                      value={priorEngagementType}
-                      onChange={setPriorEngagementType}
-                      options={[
-                        { value: "compilation", label: "Compilation" },
-                        { value: "review", label: "Review" },
-                        { value: "other-auditor", label: "Other auditor" },
-                        { value: "none", label: "New entity" },
                       ]}
                     />
                   )}

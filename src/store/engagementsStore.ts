@@ -47,7 +47,7 @@ export type EngagementMeta = {
   firstYearAudit: boolean;
   firstYearOnPlatform?: string;
   isRollForward?: string;
-  priorEngagementType?: string;
+  
   firstYearTemplates?: string[];
   accountingFramework?: string;
   industry?: string;
