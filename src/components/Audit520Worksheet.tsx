@@ -237,7 +237,7 @@ export function Audit520Worksheet() {
                   {data.partARows.map(row => (
                     <tr key={row.id} className="hover:bg-muted/50 transition-colors">
                       <td className="px-4 py-2.5 align-top w-28">
-                        <div className="h-8 flex items-center px-2 text-sm text-foreground bg-muted/40 rounded-md border border-border/60">
+                        <div className="h-8 flex items-center px-2 text-sm text-foreground bg-muted/40 rounded-md border border-border/60 whitespace-nowrap">
                           {formatRefList(row.wpRefSource)}
                         </div>
                       </td>
@@ -318,7 +318,7 @@ export function Audit520Worksheet() {
                   {data.partBRows.map(row => (
                     <tr key={row.id} className={cn("transition-colors", row.significantRisk === "Y" ? "bg-amber-50/40 dark:bg-amber-950/10 hover:bg-amber-50/60" : "hover:bg-muted/50")}>
                       <td className="px-4 py-2.5 align-top w-28">
-                        <div className="h-8 flex items-center px-2 text-sm text-foreground bg-muted/40 rounded-md border border-border/60">
+                        <div className="h-8 flex items-center px-2 text-sm text-foreground bg-muted/40 rounded-md border border-border/60 whitespace-nowrap">
                           {formatRefList(row.wpRefSource)}
                         </div>
                       </td>
