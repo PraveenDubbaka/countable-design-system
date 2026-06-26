@@ -245,7 +245,7 @@ export function Audit580Worksheet() {
           entityName={ctx.entityName}
           periodEndDisplay={ctx.periodEndDisplay}
           framework={ctx.framework}
-          populated="performance materiality, period, revenue streams (with assertions, likelihood / magnitude and inherent-risk ratings)"
+          populated="performance materiality, revenue streams (with assertions, likelihood / magnitude and inherent-risk ratings)"
         />
 
         {/* Engagement context */}
