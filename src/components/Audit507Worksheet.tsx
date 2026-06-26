@@ -133,10 +133,10 @@ export function Audit507Worksheet({ isUS = false }: { isUS?: boolean }) {
           <thead className="sticky top-0 z-10">
             <tr className="bg-muted border-b border-border">
               <th className="w-10 px-4 py-3 text-center text-xs font-semibold text-foreground uppercase tracking-wider">#</th>
-              <th className="px-6 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider">Procedure</th>
-              <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider" style={{width:160,minWidth:160}}>Done by</th>
-              <th className="px-6 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider">Comments</th>
-              <th className="px-4 py-3 text-center text-xs font-semibold text-foreground uppercase tracking-wider" style={{width:110,minWidth:110}}>W/P ref.</th>
+              <th className="w-[38%] px-6 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider">Procedure</th>
+              <th className="w-[140px] px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider" style={{minWidth:140}}>Done by</th>
+              <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider">Comments</th>
+              <th className="w-[100px] px-4 py-3 text-center text-xs font-semibold text-foreground uppercase tracking-wider" style={{minWidth:100}}>W/P ref.</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-border">
