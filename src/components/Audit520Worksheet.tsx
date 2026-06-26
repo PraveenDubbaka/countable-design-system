@@ -179,17 +179,11 @@ export function Audit520Worksheet() {
   function updatePartA(id: string, field: keyof PartARow, val: string) {
     setData(d => ({ ...d, partARows: d.partARows.map(r => r.id === id ? { ...r, [field]: val } : r) }));
   }
-  function setPartAWpRefSource(id: string, wpRefSource: RefDoc[]) {
-    setData(d => ({ ...d, partARows: d.partARows.map(r => r.id === id ? { ...r, wpRefSource } : r) }));
-  }
   function setPartAWpRef(id: string, wpRef: RefDoc[]) {
     setData(d => ({ ...d, partARows: d.partARows.map(r => r.id === id ? { ...r, wpRef } : r) }));
   }
   function updatePartB(id: string, field: keyof PartBRow, val: string) {
     setData(d => ({ ...d, partBRows: d.partBRows.map(r => r.id === id ? { ...r, [field]: val } : r) }));
-  }
-  function setPartBWpRefSource(id: string, wpRefSource: RefDoc[]) {
-    setData(d => ({ ...d, partBRows: d.partBRows.map(r => r.id === id ? { ...r, wpRefSource } : r) }));
   }
 
   return (
