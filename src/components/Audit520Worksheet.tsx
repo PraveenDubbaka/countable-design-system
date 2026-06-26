@@ -54,7 +54,7 @@ const HML_OPTIONS: HML[] = ["H", "M", "L"];
 const YN_OPTIONS: YN[] = ["Y", "N"];
 
 function newPartARow(): PartARow {
-  return { id: uid(), wpRefSource: "", rmmIdentified: "", fraudRisk: "", rmmAssessment: "", auditResponse: "", wpRef: "" };
+  return { id: uid(), wpRefSource: "", rmmIdentified: "", fraudRisk: "", rmmAssessment: "", auditResponse: "", wpRef: [] };
 }
 
 function newPartBRow(): PartBRow {
@@ -71,7 +71,7 @@ function buildDefault(): Data520 {
         fraudRisk: "Y",
         rmmAssessment: "H",
         auditResponse: "1. Test appropriateness of journal entries recorded in the general ledger and other adjustments (Form 670).\n2. Review accounting estimates for biases and evaluate whether any bias represents an RMM due to fraud (Form 513).\n3. Evaluate whether significant transactions outside the normal course of business suggest fraudulent financial reporting or concealment of misappropriation.",
-        wpRef: "670",
+        wpRef: [{ name: "670" }],
       },
     ],
     partBRows: [
