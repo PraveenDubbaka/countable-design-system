@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from "react";
+import { useParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
@@ -7,6 +8,8 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Plus, Trash2, Info, AlertTriangle } from "lucide-react";
 import { RefButton, RefDoc } from "@/components/RefButton";
 import { readJsonFromLocalStorage, writeJsonToLocalStorage } from "@/lib/safeJson";
+import { useEngagementContext } from "@/hooks/useEngagementContext";
+import { AutoFillBanner } from "@/components/AutoFillBanner";
 import { cn } from "@/lib/utils";
 
 // ── Types ──────────────────────────────────────────────────────────────────────
@@ -74,6 +77,7 @@ interface Data511 {
   dTestingChecks: TestingCheck;
   dTestingResponse: ProcessRow;
   conclusion: string;
+  notes: string;
   concluded: boolean;
   concludedOn: string;
 }
@@ -117,6 +121,7 @@ function buildDefault(): Data511 {
     dTestingChecks: emptyChecks(),
     dTestingResponse: emptyProcess(),
     conclusion: "",
+    notes: "",
     concluded: false,
     concludedOn: "",
   };
@@ -257,7 +262,9 @@ function ProcessTable({ rows, locked, onChange }: {
 // ── Main Component ─────────────────────────────────────────────────────────────
 
 export function Audit511Worksheet({ isUS = false }: { isUS?: boolean }) {
-  const storageKey = `audit-511-data-${isUS ? "us" : "ca"}`;
+  const { engagementId } = useParams<{ engagementId: string }>();
+  const ctx = useEngagementContext();
+  const storageKey = `audit-511-data-${engagementId ?? (isUS ? "us" : "ca")}`;
 
   const [data, setData] = useState<Data511>(() => {
     const saved = readJsonFromLocalStorage<Data511 | null>(storageKey, null);
@@ -451,6 +458,14 @@ export function Audit511Worksheet({ isUS = false }: { isUS?: boolean }) {
       {/* Single scrollable page */}
       <div className="flex-1 overflow-y-auto bg-muted/30">
         <div className="p-6 space-y-6 max-w-6xl">
+          <AutoFillBanner
+            entityName={ctx.entityName}
+            periodEndDisplay={ctx.periodEndDisplay}
+            framework={ctx.framework}
+            populated="IT environment context, key applications and process owners inferred from Planning (400/410/420) and the engagement profile"
+          />
+
+
 
           {/* ── PART A ─────────────────────────────────────────────────────── */}
           <PartHeader
@@ -765,6 +780,18 @@ export function Audit511Worksheet({ isUS = false }: { isUS?: boolean }) {
           </SectionCard>
 
           {/* Conclusion */}
+          {/* Notes */}
+          <div className="bg-card border border-border rounded-md p-5 space-y-2">
+            <h3 className="text-sm font-semibold text-foreground">Notes</h3>
+            <Textarea
+              disabled={locked}
+              value={data.notes}
+              onChange={e => patch("notes", e.target.value)}
+              placeholder="Additional observations, IT scoping decisions, cross-references to Forms 535 / 551, follow-ups…"
+              className="min-h-[90px] text-sm resize-none rounded-[10px]"
+            />
+          </div>
+
           <SectionCard title="Conclusion">
             <div className="px-6 py-5 space-y-4">
               <p className="text-sm text-muted-foreground">

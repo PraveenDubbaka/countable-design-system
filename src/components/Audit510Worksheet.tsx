@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from "react";
+import { useParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
@@ -6,6 +7,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Plus, Trash2, Info, AlertTriangle, ChevronRight } from "lucide-react";
 import { RefButton, RefDoc } from "@/components/RefButton";
 import { readJsonFromLocalStorage, writeJsonToLocalStorage } from "@/lib/safeJson";
+import { useEngagementContext } from "@/hooks/useEngagementContext";
+import { AutoFillBanner } from "@/components/AutoFillBanner";
 import { cn } from "@/lib/utils";
 
 // ── Types ──────────────────────────────────────────────────────────────────────
@@ -101,6 +104,7 @@ interface Data510 {
 
   // Overall
   overallConclusion: string;
+  notes: string;
   concluded: boolean;
   concludedOn: string;
 }
@@ -157,7 +161,7 @@ function buildDefault(): Data510 {
     derivatives: emptyField(), imposedTargets: emptyField(), financingChanges: emptyField(), conclusionF: "",
     budgetsForecasts: emptyField(), perfMeasures: emptyField(), externalTargets: emptyField(),
     perfComparisons: emptyField(), conclusionG: "",
-    overallConclusion: "", concluded: false, concludedOn: "",
+    overallConclusion: "", notes: "", concluded: false, concludedOn: "",
   };
 }
 
@@ -325,7 +329,9 @@ function SectionCard({ title, children }: { title: string; children: React.React
 // ── Main Component ─────────────────────────────────────────────────────────────
 
 export function Audit510Worksheet({ isUS = false }: { isUS?: boolean }) {
-  const storageKey = `audit-510-data-${isUS ? "us" : "ca"}`;
+  const { engagementId } = useParams<{ engagementId: string }>();
+  const ctx = useEngagementContext();
+  const storageKey = `audit-510-data-${engagementId ?? (isUS ? "us" : "ca")}`;
 
   const [data, setData] = useState<Data510>(() => {
     const saved = readJsonFromLocalStorage<Data510 | null>(storageKey, null);
@@ -922,6 +928,18 @@ export function Audit510Worksheet({ isUS = false }: { isUS?: boolean }) {
 
   const SectionZ = (
     <div className="space-y-5">
+      {/* Notes */}
+      <div className="bg-card border border-border rounded-md p-5 space-y-2">
+        <h3 className="text-sm font-semibold text-foreground">Notes</h3>
+        <Textarea
+          disabled={locked}
+          value={data.notes}
+          onChange={e => setField("notes", e.target.value)}
+          placeholder="Additional observations, cross-references to Forms 520 / 511 / 551, follow-ups…"
+          className="min-h-[90px] text-sm resize-none rounded-[10px]"
+        />
+      </div>
+
       <div className="bg-card border border-border shadow-[0_2px_8px_hsl(213_40%_20%/0.06)] rounded-md overflow-hidden">
         <div className="px-6 py-3.5 border-b border-border">
           <span className="text-sm font-semibold text-foreground">Overall Conclusion</span>
@@ -976,6 +994,12 @@ export function Audit510Worksheet({ isUS = false }: { isUS?: boolean }) {
       {/* Single scrollable page */}
       <div className="flex-1 overflow-y-auto bg-muted/30">
         <div className="p-6 space-y-5 max-w-6xl">
+          <AutoFillBanner
+            entityName={ctx.entityName}
+            periodEndDisplay={ctx.periodEndDisplay}
+            framework={ctx.framework}
+            populated="entity profile, governance, laws & regulations and financing context from Planning (400/410/420) and Trial Balance"
+          />
           {SectionA}
           {SectionB}
           {SectionC}
