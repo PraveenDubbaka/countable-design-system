@@ -66,7 +66,7 @@ function buildDefault(): Data520 {
     partARows: [
       {
         id: uid(),
-        wpRefSource: "",
+        wpRefSource: [],
         rmmIdentified: "Management override of controls",
         fraudRisk: "Y",
         rmmAssessment: "H",
@@ -77,7 +77,7 @@ function buildDefault(): Data520 {
     partBRows: [
       {
         id: uid(),
-        wpRefSource: "510-5",
+        wpRefSource: [{ name: "510-5" }],
         rmmIdentified: "Inventory value could be overstated due to inadequate obsolescence provision",
         scotabd: "Inventory",
         assertions: "AV",
@@ -91,7 +91,7 @@ function buildDefault(): Data520 {
       },
       {
         id: uid(),
-        wpRefSource: "510-3",
+        wpRefSource: [{ name: "510-3" }],
         rmmIdentified: "Revenue recognition may be misstated due to incorrect cut-off of vessel charter agreements at year-end",
         scotabd: "Revenue",
         assertions: "C, AV",
@@ -105,7 +105,7 @@ function buildDefault(): Data520 {
       },
       {
         id: uid(),
-        wpRefSource: "515-5",
+        wpRefSource: [{ name: "515-5" }],
         rmmIdentified: "Related-party transactions may be incomplete or not disclosed on arm's length terms",
         scotabd: "Related party disclosures",
         assertions: "C, AV",
