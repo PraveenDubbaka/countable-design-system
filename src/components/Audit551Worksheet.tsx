@@ -112,9 +112,9 @@ function buildGitcSheet(scope: "common" | "application", appName = ""): GitcShee
   return {
     scope, appName,
     sections: [
-      buildSection("access", "Access (Security)", 1, 3),
-      buildSection("change", "Program Change", 6, 3),
-      buildSection("operations", "IT Operations", 11, 3),
+      buildSection("access", "Access (Security)", 1, 5),
+      buildSection("change", "Program Change", 6, 5),
+      buildSection("operations", "IT Operations", 11, 5),
     ],
   };
 }
