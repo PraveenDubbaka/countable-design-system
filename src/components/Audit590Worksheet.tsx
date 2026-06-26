@@ -7,6 +7,9 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Info, Plus, Trash2 } from "lucide-react";
 import { RefButton, RefDoc } from "@/components/RefButton";
 import { readJsonFromLocalStorage, writeJsonToLocalStorage } from "@/lib/safeJson";
+import { useEngagementContext } from "@/hooks/useEngagementContext";
+import { formatCurrency, type FsaBalance } from "@/lib/engagementContext";
+import { AutoFillBanner } from "@/components/AutoFillBanner";
 
 // ── Types ──────────────────────────────────────────────────────────────────────
 
@@ -141,6 +144,23 @@ function emptyRow(fsa = ""): CotabdRow {
   };
 }
 
+function rowFromFsa(f: FsaBalance): CotabdRow {
+  const row = emptyRow(f.fsa);
+  row.amount = f.amount ? formatCurrency(f.amount) : "";
+  row.material = f.amount > 0 ? "Y" : "";
+  row.materialBasis = f.amount > 0 ? "Quantitative" : "";
+  row.risk520Ref = f.risk520Ref ?? "";
+  row.inherentRisk = f.inherentRisk;
+  row.significantRisk = f.significantRisk;
+  row.controlRisk = "H"; // not tested by default per CAS
+  if (f.assertionsX) {
+    for (const a of f.assertionsX) {
+      row.assertions[a] = { marker: "X", rmm: f.inherentRisk };
+    }
+  }
+  return row;
+}
+
 function buildDefault(): Data590 {
   return {
     entityName: "",
@@ -148,7 +168,7 @@ function buildDefault(): Data590 {
     auditFramework: "ASPE",
     overallMateriality: "",
     performanceMateriality: "",
-    rows: DEFAULT_FSAS.map(f => emptyRow(f)),
+    rows: [],
     standback: {
       a: { done: false, notes: "" },
       b: { done: false, notes: "" },
@@ -190,26 +210,41 @@ function normalize(saved: any): Data590 {
 
 export function Audit590Worksheet() {
   const { engagementId } = useParams<{ engagementId: string }>();
+  const ctx = useEngagementContext();
   const storageKey = `audit-590-data-${engagementId ?? "default"}`;
   const saveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const isFirstRender = useRef(true);
 
   const [data, setData] = useState<Data590>(() => {
     const saved = readJsonFromLocalStorage<any>(storageKey, null);
-    if (!saved) return buildDefault();
+    const seededRows = ctx.fsas.map(rowFromFsa);
+    const seededHeader = {
+      entityName: ctx.entityName,
+      periodEnd: ctx.periodEnd,
+      auditFramework: ctx.isUS ? "US GAAP" : "ASPE",
+      overallMateriality: formatCurrency(ctx.overallMateriality),
+      performanceMateriality: formatCurrency(ctx.performanceMateriality),
+    };
+    if (!saved) return { ...buildDefault(), ...seededHeader, rows: seededRows };
     // Migrate legacy schema if present
     if (Array.isArray(saved.rows) && saved.rows[0] && "class" in saved.rows[0]) {
-      // Old schema — discard rows and start fresh defaults but keep header fields.
       return {
         ...buildDefault(),
-        entityName: saved.entityName ?? "",
-        periodEnd: saved.periodEnd ?? "",
-        auditFramework: saved.auditFramework ?? "ASPE",
-        overallMateriality: saved.overallMateriality ?? "",
-        performanceMateriality: saved.performanceMateriality ?? "",
+        ...seededHeader,
+        rows: seededRows,
       };
     }
-    return normalize(saved);
+    const normalized = normalize(saved);
+    // Backfill any blank header fields from context (pre-fill, not override)
+    return {
+      ...normalized,
+      entityName: normalized.entityName || seededHeader.entityName,
+      periodEnd: normalized.periodEnd || seededHeader.periodEnd,
+      auditFramework: normalized.auditFramework || seededHeader.auditFramework,
+      overallMateriality: normalized.overallMateriality || seededHeader.overallMateriality,
+      performanceMateriality: normalized.performanceMateriality || seededHeader.performanceMateriality,
+      rows: normalized.rows.length ? normalized.rows : seededRows,
+    };
   });
 
   useEffect(() => {
@@ -285,6 +320,13 @@ export function Audit590Worksheet() {
       </div>
 
       <div className="flex-1 overflow-y-auto p-6 space-y-5">
+
+        <AutoFillBanner
+          entityName={ctx.entityName}
+          periodEndDisplay={ctx.periodEndDisplay}
+          framework={ctx.framework}
+          populated="overall &amp; performance materiality, FSA balances, inherent risk, significant-risk flags and relevant assertions"
+        />
 
         {/* Materiality */}
         <div className="bg-card border border-border rounded-md p-5 grid grid-cols-2 gap-4">

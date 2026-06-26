@@ -7,6 +7,9 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Info, Plus, Trash2, AlertTriangle } from "lucide-react";
 import { RefButton, RefDoc } from "@/components/RefButton";
 import { readJsonFromLocalStorage, writeJsonToLocalStorage } from "@/lib/safeJson";
+import { useEngagementContext } from "@/hooks/useEngagementContext";
+import { formatCurrency, type RevenueStreamSeed } from "@/lib/engagementContext";
+import { AutoFillBanner } from "@/components/AutoFillBanner";
 
 // ── Types ──────────────────────────────────────────────────────────────────────
 
@@ -113,6 +116,21 @@ function emptyStream(): RevenueStream {
   };
 }
 
+function streamFromSeed(s: RevenueStreamSeed): RevenueStream {
+  return {
+    id: uid(),
+    name: s.name,
+    description: s.description,
+    assertions: [...s.assertions],
+    likelihood: s.likelihood,
+    magnitude: s.magnitude,
+    inherentRisk: s.inherentRisk,
+    significantRisk: s.significantRisk,
+    rationale: s.rationale,
+    wpRef: [],
+  };
+}
+
 function buildProcedures(): ProcedureRow[] {
   return DEFAULT_PROCEDURES.map(p => ({
     ...p, id: uid(), wpRef: [], psc: "", pscInitials: "", exceptions: "",
@@ -139,17 +157,29 @@ function buildDefault(): Data580 {
 
 export function Audit580Worksheet() {
   const { engagementId } = useParams<{ engagementId: string }>();
+  const ctx = useEngagementContext();
   const storageKey = `audit-580-data-${engagementId ?? "default"}`;
   const saveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const isFirstRender = useRef(true);
 
   const [data, setData] = useState<Data580>(() => {
     const saved = readJsonFromLocalStorage<Data580 | null>(storageKey, null);
-    if (!saved) return buildDefault();
     const def = buildDefault();
+    const seededHeader = {
+      accountBalance: "Revenue — all streams (see breakdown below)",
+      performanceMateriality: formatCurrency(ctx.performanceMateriality),
+      periodEnded: ctx.periodEnd,
+    };
+    const seededStreams = ctx.revenueStreams.map(streamFromSeed);
+    if (!saved) {
+      return { ...def, ...seededHeader, streams: seededStreams };
+    }
     return {
       ...def, ...saved,
-      streams: saved.streams?.length ? saved.streams : def.streams,
+      accountBalance: saved.accountBalance || seededHeader.accountBalance,
+      performanceMateriality: saved.performanceMateriality || seededHeader.performanceMateriality,
+      periodEnded: saved.periodEnded || seededHeader.periodEnded,
+      streams: saved.streams?.length ? saved.streams : seededStreams,
       procedures: saved.procedures?.length ? saved.procedures : def.procedures,
     };
   });
@@ -214,6 +244,13 @@ export function Audit580Worksheet() {
       </div>
 
       <div className="flex-1 overflow-y-auto p-6 space-y-5">
+
+        <AutoFillBanner
+          entityName={ctx.entityName}
+          periodEndDisplay={ctx.periodEndDisplay}
+          framework={ctx.framework}
+          populated="performance materiality, period, revenue streams (with assertions, likelihood / magnitude and inherent-risk ratings)"
+        />
 
         {/* Engagement context */}
         <div className="bg-card border border-border rounded-md p-5 grid grid-cols-3 gap-4">
