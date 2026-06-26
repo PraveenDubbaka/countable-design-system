@@ -118,6 +118,26 @@ function buildGitcSheet(scope: "common" | "application", appName = ""): GitcShee
     ],
   };
 }
+
+function refStartForSection(key: GitcCategory): number {
+  if (key === "access") return 1;
+  if (key === "change") return 6;
+  return 11;
+}
+
+function backfillGitcRefs(sheet: GitcSheet): GitcSheet {
+  return {
+    ...sheet,
+    sections: sheet.sections.map(sec => ({
+      ...sec,
+      rows: sec.rows.map((row, index) => ({
+        ...row,
+        ref: row.ref?.trim() || `C${refStartForSection(sec.key) + index}`,
+      })),
+    })),
+  };
+}
+
 function buildDefault(): Data551 {
   return {
     rafuit: [emptyRafuit()],
@@ -144,22 +164,12 @@ export function Audit551Worksheet() {
     const saved = readJsonFromLocalStorage<Data551 | null>(storageKey, null);
     if (!saved) return buildDefault();
     const def = buildDefault();
-    const backfillSheet = (s: GitcSheet): GitcSheet => ({
-      ...s,
-      sections: s.sections.map(sec => {
-        const start = sec.key === "access" ? 1 : sec.key === "change" ? 6 : 11;
-        return {
-          ...sec,
-          rows: sec.rows.map((r, i) => r.ref?.trim() ? r : { ...r, ref: `C${start + i}` }),
-        };
-      }),
-    });
     return {
       ...def,
       ...saved,
       rafuit: saved.rafuit?.length ? saved.rafuit : def.rafuit,
-      commonGitc: saved.commonGitc ? backfillSheet(saved.commonGitc) : def.commonGitc,
-      appGitc: (saved.appGitc ?? []).map(backfillSheet),
+      commonGitc: saved.commonGitc ? backfillGitcRefs(saved.commonGitc) : def.commonGitc,
+      appGitc: (saved.appGitc ?? []).map(backfillGitcRefs),
     };
   });
 
@@ -276,7 +286,7 @@ export function Audit551Worksheet() {
               <table className="w-full text-xs">
                 <thead className="sticky top-0 z-10">
                   <tr className="bg-muted border-b border-border">
-                    <th className="px-3 py-3 text-center text-xs font-semibold text-foreground uppercase tracking-wider w-14">Ref</th>
+                    <th className="px-3 py-3 text-center text-xs font-semibold text-foreground uppercase tracking-wider" style={{ width: 72, minWidth: 72 }}>Ref</th>
                     <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider" style={{ minWidth: 280 }}>GITC description</th>
                     <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap" style={{ width: 130 }}>IT layer</th>
                     <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap" style={{ width: 120 }}>Frequency</th>
@@ -292,10 +302,10 @@ export function Audit551Worksheet() {
                 <tbody>
                   {sec.rows.map((r) => (
                     <tr key={r.id} className="hover:bg-muted/50 transition-colors align-top border-b border-border last:border-b-0">
-                      <td className="px-3 py-2 text-center">
+                      <td className="px-2 py-2 text-center" style={{ width: 72, minWidth: 72 }}>
                         <Input disabled={locked} value={r.ref}
                           onChange={e => patchGitcRow(target, sec.key, r.id, { ref: e.target.value })}
-                          className="h-8 text-xs text-center font-mono" />
+                          className="h-8 min-w-12 px-1 text-xs text-center font-mono" />
                       </td>
                       <td className="px-3 py-2">
                         <Textarea disabled={locked} value={r.description}
