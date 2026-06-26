@@ -275,23 +275,14 @@ export function Audit535Worksheet() {
         <span className="text-xs font-semibold text-primary whitespace-nowrap">Objective:</span>
         <p className="text-xs text-muted-foreground flex-1 leading-relaxed">
           To obtain an understanding of the entity’s information system and communication relevant to the preparation of the financial statements through performing risk assessment procedures (CAS 315).
+          <span className="block mt-1.5 text-[11px]">
+            <span className="font-semibold text-foreground">Legend: </span>
+            PSC = Procedure successfully completed.&nbsp;&nbsp;F/S = Financial statements.&nbsp;&nbsp;SCOTABD = Significant class of transactions, account balances and disclosures.
+          </span>
         </p>
       </div>
 
       <div className="flex-1 overflow-y-auto p-6 space-y-5">
-        {/* Period */}
-        <div className="bg-card border border-border rounded-md p-4">
-          <div className="grid grid-cols-2 gap-3 max-w-xl">
-            <div className="space-y-1">
-              <label className="text-xs font-medium text-muted-foreground">Period ended</label>
-              <Input disabled={locked} type="date" value={data.periodEnd} onChange={e => setData(d => ({ ...d, periodEnd: e.target.value }))} className="h-8 text-xs" />
-            </div>
-          </div>
-          <div className="mt-3 text-[11px] text-muted-foreground leading-relaxed">
-            <span className="font-semibold text-foreground">Legend: </span>
-            PSC = Procedure successfully completed.&nbsp;&nbsp;F/S = Financial statements.&nbsp;&nbsp;SCOTABD = Significant class of transactions, account balances and disclosures.
-          </div>
-        </div>
 
         {/* Procedure parts */}
         {ALL_PARTS.map(part => (
