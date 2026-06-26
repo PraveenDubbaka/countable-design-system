@@ -52,6 +52,8 @@ interface Data520 {
 const uid = () => Math.random().toString(36).slice(2, 9);
 const HML_OPTIONS: HML[] = ["H", "M", "L"];
 const YN_OPTIONS: YN[] = ["Y", "N"];
+const HML_OPTIONS: HML[] = ["H", "M", "L"];
+const formatRefList = (refs: RefDoc[]) => refs.map(r => r.name).join(", ") || "—";
 
 function newPartARow(): PartARow {
   return { id: uid(), wpRefSource: [], rmmIdentified: "", fraudRisk: "", rmmAssessment: "", auditResponse: "", wpRef: [] };
