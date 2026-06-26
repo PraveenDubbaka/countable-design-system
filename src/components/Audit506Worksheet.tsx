@@ -108,15 +108,15 @@ export function Audit506Worksheet({ isUS = false }: { isUS?: boolean }) {
             <tr className="bg-muted text-xs font-semibold text-foreground uppercase tracking-wider border-b border-border">
               <th className="px-4 py-2 text-left">Who interviewed</th>
               <th className="px-4 py-2 text-left border-l border-border">By whom</th>
-              <th className="px-4 py-2 text-left border-l border-border" style={{width:160}}>Date</th>
+              <th className="w-[160px] px-4 py-2 text-left border-l border-border" style={{minWidth:160}}>Date</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-border">
             {interviews.map((iv, i) => (
               <tr key={i} className="hover:bg-muted/30">
-                <td className="px-2 py-1">
+                <td className="px-2 py-1.5">
                   <Select value={iv.who} onValueChange={v => setIv(i, {who: v})} disabled={locked}>
-                    <SelectTrigger className="h-7 text-sm border-0 shadow-none bg-transparent focus:ring-0 focus:ring-offset-0 px-2">
+                    <SelectTrigger className="h-8 text-sm bg-background">
                       <SelectValue placeholder="Select name / role" />
                     </SelectTrigger>
                     <SelectContent>
@@ -124,9 +124,9 @@ export function Audit506Worksheet({ isUS = false }: { isUS?: boolean }) {
                     </SelectContent>
                   </Select>
                 </td>
-                <td className="px-2 py-1 border-l border-border">
+                <td className="px-2 py-1.5 border-l border-border">
                   <Select value={iv.byWhom} onValueChange={v => setIv(i, {byWhom: v})} disabled={locked}>
-                    <SelectTrigger className="h-7 text-sm border-0 shadow-none bg-transparent focus:ring-0 focus:ring-offset-0 px-2">
+                    <SelectTrigger className="h-8 text-sm bg-background">
                       <SelectValue placeholder="Select auditor" />
                     </SelectTrigger>
                     <SelectContent>
@@ -134,8 +134,8 @@ export function Audit506Worksheet({ isUS = false }: { isUS?: boolean }) {
                     </SelectContent>
                   </Select>
                 </td>
-                <td className="px-2 py-1 border-l border-border" style={{width:160}}>
-                  <Input type="date" disabled={locked} value={iv.date} onChange={e => setIv(i, {date: e.target.value})} className="h-7 text-sm border-0 shadow-none px-2 focus-visible:ring-0 bg-transparent" />
+                <td className="w-[160px] px-2 py-1.5 border-l border-border" style={{minWidth:160}}>
+                  <Input type="date" disabled={locked} value={iv.date} onChange={e => setIv(i, {date: e.target.value})} className="h-8 text-sm bg-background" />
                 </td>
               </tr>
             ))}
@@ -150,19 +150,19 @@ export function Audit506Worksheet({ isUS = false }: { isUS?: boolean }) {
       const row = data.procedures[proc.id];
       return (
         <tr key={proc.id} className="hover:bg-muted/50 transition-colors border-b border-border last:border-0">
-          <td className="px-4 py-3 text-center align-top text-xs font-semibold font-mono text-foreground">{proc.num}</td>
-          <td className="px-6 py-3 align-top text-sm text-foreground">{proc.description}</td>
-          <td className="px-4 py-3 align-top" style={{width:150}}>
+          <td className="w-10 px-4 py-3 text-center align-top text-xs font-semibold font-mono text-foreground">{proc.num}</td>
+          <td className="w-[38%] px-6 py-3 align-top text-sm text-foreground">{proc.description}</td>
+          <td className="w-[140px] px-4 py-3 align-top" style={{minWidth:140}}>
             <Select value={row.psc} onValueChange={v => setProc(proc.id, {psc:v})} disabled={locked}>
-              <SelectTrigger className="h-8 text-sm"><SelectValue placeholder="Select" /></SelectTrigger>
+              <SelectTrigger className="h-8 text-sm bg-background"><SelectValue placeholder="Select" /></SelectTrigger>
               <SelectContent><SelectItem value="Y">Y</SelectItem><SelectItem value="N">N</SelectItem><SelectItem value="N/A">N/A</SelectItem></SelectContent>
             </Select>
           </td>
-          <td className="px-4 py-3 align-top text-center" style={{width:110}}>
+          <td className="w-[100px] px-4 py-3 align-top text-center" style={{minWidth:100}}>
             <RefButton reference={row.wpRef} onAttach={doc => setProc(proc.id, {wpRef:[...row.wpRef,doc]})} onRemove={i => setProc(proc.id, {wpRef:row.wpRef.filter((_,idx)=>idx!==i)})} disabled={locked} />
           </td>
-          <td className="px-6 py-3 align-top">
-            <Textarea disabled={locked} value={row.response} onChange={e => setProc(proc.id, {response:e.target.value})} placeholder="Enter response…" className="min-h-[52px] text-sm resize-none border-0 shadow-none p-0 focus-visible:ring-0 bg-transparent" />
+          <td className="px-4 py-3 align-top">
+            <Textarea disabled={locked} value={row.response} onChange={e => setProc(proc.id, {response:e.target.value})} placeholder="Enter response…" className="min-h-[56px] text-sm bg-background resize-none" />
           </td>
         </tr>
       );
@@ -173,10 +173,10 @@ export function Audit506Worksheet({ isUS = false }: { isUS?: boolean }) {
     <thead className="sticky top-0 z-10">
       <tr className="bg-muted border-b border-border">
         <th className="w-10 px-4 py-3 text-center text-xs font-semibold text-foreground uppercase tracking-wider">#</th>
-        <th className="px-6 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider">Procedure</th>
-        <th className="px-4 py-3 text-center text-xs font-semibold text-foreground uppercase tracking-wider" style={{width:150,minWidth:150}}>PSC? (Y/N)</th>
-        <th className="px-4 py-3 text-center text-xs font-semibold text-foreground uppercase tracking-wider" style={{width:110,minWidth:110}}>W/P ref.</th>
-        <th className="px-6 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider">Response / comments</th>
+        <th className="w-[38%] px-6 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider">Procedure</th>
+        <th className="w-[140px] px-4 py-3 text-center text-xs font-semibold text-foreground uppercase tracking-wider" style={{minWidth:140}}>PSC? (Y/N)</th>
+        <th className="w-[100px] px-4 py-3 text-center text-xs font-semibold text-foreground uppercase tracking-wider" style={{minWidth:100}}>W/P ref.</th>
+        <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider">Response / comments</th>
       </tr>
     </thead>
   );
