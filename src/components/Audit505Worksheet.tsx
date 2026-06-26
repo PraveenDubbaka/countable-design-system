@@ -178,9 +178,9 @@ export function Audit505Worksheet({ isUS = false }: { isUS?: boolean }) {
                   <tr className="bg-muted border-b border-border">
                     <th className="w-10 px-4 py-3 text-center text-xs font-semibold text-foreground uppercase tracking-wider" />
                     <th className="w-10 px-4 py-3 text-center text-xs font-semibold text-foreground uppercase tracking-wider">#</th>
-                    <th className="px-6 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider">Procedure</th>
-                    <th className="px-4 py-3 text-center text-xs font-semibold text-foreground uppercase tracking-wider" style={{width:160,minWidth:160}}>PSC? (Y/N)</th>
-                    <th className="px-6 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider">Responses / comments</th>
+                    <th className="px-6 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider" style={{width:320,minWidth:320}}>Procedure</th>
+                    <th className="px-4 py-3 text-center text-xs font-semibold text-foreground uppercase tracking-wider" style={{width:140,minWidth:140}}>PSC? (Y/N)</th>
+                    <th className="px-6 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider" style={{minWidth:420}}>Responses / comments</th>
                     <th className="px-4 py-3 text-center text-xs font-semibold text-foreground uppercase tracking-wider" style={{width:110,minWidth:110}}>W/P ref.</th>
                   </tr>
                 </thead>
