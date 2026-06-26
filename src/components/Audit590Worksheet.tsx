@@ -84,7 +84,7 @@ const ASSERTION_LABELS: Record<Assertion, string> = {
   P: "Presentation",
 };
 
-const FRAMEWORK_OPTIONS = ["ASPE", "IFRS", "ASNPO", "PSAS", "Other"];
+
 
 const DEFAULT_FSAS = [
   "Revenue",
