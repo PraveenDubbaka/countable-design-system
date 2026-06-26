@@ -9,7 +9,7 @@ import { RefButton, RefDoc } from "@/components/RefButton";
 import { readJsonFromLocalStorage, writeJsonToLocalStorage } from "@/lib/safeJson";
 import { useEngagementContext } from "@/hooks/useEngagementContext";
 import { formatCurrency, type RevenueStreamSeed } from "@/lib/engagementContext";
-import { AutoFillBanner } from "@/components/AutoFillBanner";
+import { formatCurrency, type RevenueStreamSeed } from "@/lib/engagementContext";
 
 // ── Types ──────────────────────────────────────────────────────────────────────
 
