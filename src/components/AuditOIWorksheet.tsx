@@ -203,12 +203,12 @@ export function AuditOIWorksheet({ isUS = false }: { isUS?: boolean }) {
         <td className="px-4 py-2.5 text-center align-top text-xs text-muted-foreground font-mono">
           {String.fromCharCode(97 + letterIdx)}.
         </td>
-        <td className="py-2.5 pl-10 pr-6 align-top border-l-2 border-primary/20">
+        <td className="w-[200px] py-2.5 pl-10 pr-4 align-top border-l-2 border-primary/20">
           <span className="text-sm text-foreground">{item.label}</span>
         </td>
         <td className="px-4 py-2.5 align-top" style={{ width: 200 }}>
           <Select value={row.psc} onValueChange={(v) => setRow(item.id, { psc: v })} disabled={locked}>
-            <SelectTrigger className="h-8 text-sm w-full">
+            <SelectTrigger className="h-8 text-xs bg-background w-full">
               <SelectValue placeholder="Select" />
             </SelectTrigger>
             <SelectContent>
@@ -218,11 +218,11 @@ export function AuditOIWorksheet({ isUS = false }: { isUS?: boolean }) {
             </SelectContent>
           </Select>
         </td>
-        <td className="px-6 py-2.5 align-top">
+        <td className="w-[300px] px-4 py-2.5 align-top">
           <Textarea
             disabled={locked}
             placeholder="Enter your response"
-            className="min-h-[44px] text-sm resize-none border-0 shadow-none p-0 focus-visible:ring-0 bg-transparent"
+            className="min-h-[88px] text-sm resize-y bg-background"
             value={row.response}
             onChange={(e) => setRow(item.id, { response: e.target.value })}
           />
