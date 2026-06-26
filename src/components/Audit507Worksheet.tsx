@@ -146,7 +146,7 @@ export function Audit507Worksheet({ isUS = false }: { isUS?: boolean }) {
               return (
                 <tr key={proc.id} className="hover:bg-muted/50 transition-colors">
                   <td className="px-4 py-3 text-center align-top text-xs font-semibold font-mono text-foreground">{proc.num}</td>
-                  <td className="px-6 py-3 align-top text-sm text-foreground">
+                  <td className="w-[38%] px-6 py-3 align-top text-sm text-foreground">
                     {'showSection' in proc && proc.showSection && (
                       <p className="text-xs font-bold text-muted-foreground uppercase tracking-wide mb-2">{proc.section}</p>
                     )}
@@ -160,22 +160,22 @@ export function Audit507Worksheet({ isUS = false }: { isUS?: boolean }) {
                       <div className="mt-2 space-y-1.5">
                         <div className="flex items-center gap-2 text-xs">
                           <span className="text-muted-foreground shrink-0">Approval of prior period's audited F/S. Date:</span>
-                          <Input disabled={locked} value={data.dateAuditedFS} onChange={e => setData(d => ({...d, dateAuditedFS:e.target.value}))} placeholder="YYYY-MM-DD" className="h-6 w-32 text-xs border-border px-2" />
+                          <Input disabled={locked} value={data.dateAuditedFS} onChange={e => setData(d => ({...d, dateAuditedFS:e.target.value}))} placeholder="YYYY-MM-DD" className="h-8 text-xs bg-background" />
                         </div>
                         <div className="flex items-center gap-2 text-xs">
                           <span className="text-muted-foreground shrink-0">The firm's appointment as auditors. Date:</span>
-                          <Input disabled={locked} value={data.dateAuditorAppt} onChange={e => setData(d => ({...d, dateAuditorAppt:e.target.value}))} placeholder="YYYY-MM-DD" className="h-6 w-32 text-xs border-border px-2" />
+                          <Input disabled={locked} value={data.dateAuditorAppt} onChange={e => setData(d => ({...d, dateAuditorAppt:e.target.value}))} placeholder="YYYY-MM-DD" className="h-8 text-xs bg-background" />
                         </div>
                       </div>
                     )}
                   </td>
-                  <td className="px-4 py-3 align-top" style={{width:160}}>
-                    <Input disabled={locked} value={row.doneBy} onChange={e => setRow(proc.id, {doneBy:e.target.value})} placeholder="Initials" className="h-8 text-sm border-border" />
+                  <td className="w-[140px] px-4 py-3 align-top" style={{minWidth:140}}>
+                    <Input disabled={locked} value={row.doneBy} onChange={e => setRow(proc.id, {doneBy:e.target.value})} placeholder="Initials" className="h-8 text-sm bg-background" />
                   </td>
-                  <td className="px-6 py-3 align-top">
-                    <Textarea disabled={locked} value={row.comments} onChange={e => setRow(proc.id, {comments:e.target.value})} placeholder="Enter comments…" className="min-h-[52px] text-sm resize-none border-0 shadow-none p-0 focus-visible:ring-0 bg-transparent" />
+                  <td className="px-4 py-3 align-top">
+                    <Textarea disabled={locked} value={row.comments} onChange={e => setRow(proc.id, {comments:e.target.value})} placeholder="Enter comments…" className="min-h-[56px] text-sm bg-background resize-none" />
                   </td>
-                  <td className="px-4 py-3 align-top text-center" style={{width:110}}>
+                  <td className="w-[100px] px-4 py-3 align-top text-center" style={{minWidth:100}}>
                     <RefButton reference={row.wpRef} onAttach={doc => setRow(proc.id, {wpRef:[...row.wpRef,doc]})} onRemove={i => setRow(proc.id, {wpRef:row.wpRef.filter((_,idx)=>idx!==i)})} disabled={locked} />
                   </td>
                 </tr>
