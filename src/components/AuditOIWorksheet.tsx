@@ -101,7 +101,7 @@ function ColHeaders() {
         <th className="w-10 px-4 py-3 text-center text-xs font-semibold text-foreground uppercase tracking-wider">#</th>
         <th className="w-[200px] px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider">Description</th>
         <th className="px-4 py-3 text-center text-xs font-semibold text-foreground uppercase tracking-wider" style={{ width: 200, minWidth: 200 }}>Procedure successfully completed</th>
-        <th className="w-[300px] px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider">Responses and any difficulties encountered</th>
+        <th className="w-[350px] px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider">Responses and any difficulties encountered</th>
         <th className="px-4 py-3 text-center text-xs font-semibold text-foreground uppercase tracking-wider" style={{ width: 110, minWidth: 110 }}>w/p reference</th>
       </tr>
     </thead>
@@ -172,7 +172,7 @@ export function AuditOIWorksheet({ isUS = false }: { isUS?: boolean }) {
             </SelectContent>
           </Select>
         </td>
-        <td className="w-[300px] px-4 py-3 align-top">
+        <td className="w-[350px] px-4 py-3 align-top">
           <Textarea
             disabled={locked}
             placeholder="Enter your response"
@@ -218,7 +218,7 @@ export function AuditOIWorksheet({ isUS = false }: { isUS?: boolean }) {
             </SelectContent>
           </Select>
         </td>
-        <td className="w-[300px] px-4 py-2.5 align-top">
+        <td className="w-[350px] px-4 py-2.5 align-top">
           <Textarea
             disabled={locked}
             placeholder="Enter your response"
