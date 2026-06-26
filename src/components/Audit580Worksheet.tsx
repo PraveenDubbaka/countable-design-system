@@ -444,11 +444,11 @@ export function Audit580Worksheet() {
             <table className="w-full text-xs">
               <thead className="sticky top-0 z-10">
                 <tr className="bg-muted border-b border-border">
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider" style={{ minWidth: 320 }}>Procedure</th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider" style={{ minWidth: 220 }}>Procedure</th>
                   <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap" style={{ width: 120 }}>P&amp;SA</th>
                   <th className="px-4 py-3 text-center text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap" style={{ width: 90 }}>W/P ref.</th>
                   <th className="px-4 py-3 text-center text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap" style={{ width: 100 }}>PSC (Y/N)</th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider" style={{ minWidth: 240 }}>Exceptions / difficulties</th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider" style={{ minWidth: 360 }}>Exceptions / difficulties</th>
                 </tr>
               </thead>
               <tbody>
