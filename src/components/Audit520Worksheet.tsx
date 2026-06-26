@@ -16,7 +16,7 @@ type HML = "H" | "M" | "L" | "";
 
 interface PartARow {
   id: string;
-  wpRefSource: string;
+  wpRefSource: RefDoc[];
   rmmIdentified: string;
   fraudRisk: YN;
   rmmAssessment: HML;
