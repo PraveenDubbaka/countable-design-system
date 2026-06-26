@@ -340,7 +340,7 @@ export function Audit513Worksheet({ isUS: isUSProp }: { isUS?: boolean } = {}) {
                 <p className="text-sm text-muted-foreground italic">— Complete Form PL1 (Materiality) to auto-populate</p>
               )}
             </div>
-            <Badge variant="secondary" className="shrink-0 text-[10px]">From Form PL1</Badge>
+            
           </div>
 
           {/* ── PART A ─────────────────────────────────────────────────────── */}
