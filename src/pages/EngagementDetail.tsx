@@ -726,7 +726,7 @@ const CHECKLIST_SIDEBAR_INFO: Record<string, { section: string; code: string; la
   'default-audit-ra-535':       { section: 'RA', code: '535',  label: 'Understanding the Information System and Communication' },
   'default-audit-ra-550':       { section: 'RA', code: '550',  label: 'Control Activities — Design, Implementation and Control Risk' },
   'default-audit-ra-551':       { section: 'RA', code: '551',  label: 'General IT Controls — Design and Implementation' },
-  'default-audit-ra-580':       { section: 'RA', code: '580',  label: 'Communication of Significant Deficiencies in Internal Control' },
+  'default-audit-ra-580':       { section: 'RA', code: '580',  label: 'Revenue Recognition — Fraud Risk Assessment' },
   // CA Audit — RP
   'default-audit-rp-605': { section: 'RP', code: 'RFS', label: 'Responding to Risk at the Financial Statement Level' },
   'default-audit-rp-645': { section: 'RP', code: 'LCN', label: 'Litigation, Claims and Non-Compliance' },
