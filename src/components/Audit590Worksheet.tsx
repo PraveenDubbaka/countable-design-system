@@ -84,7 +84,7 @@ const ASSERTION_LABELS: Record<Assertion, string> = {
   P: "Presentation",
 };
 
-const FRAMEWORK_OPTIONS = ["ASPE", "IFRS", "ASNPO", "PSAS", "Other"];
+
 
 const DEFAULT_FSAS = [
   "Revenue",
@@ -285,44 +285,6 @@ export function Audit590Worksheet() {
       </div>
 
       <div className="flex-1 overflow-y-auto p-6 space-y-5">
-
-        {/* Engagement context */}
-        <div className="bg-card border border-border rounded-md p-5 grid grid-cols-3 gap-4">
-          <div className="space-y-1">
-            <label className="text-xs font-medium text-muted-foreground">Entity name</label>
-            <Input disabled={locked} value={data.entityName}
-              onChange={e => setData(d => ({ ...d, entityName: e.target.value }))}
-              placeholder="Entity name" className="h-8 text-xs" />
-          </div>
-          <div className="space-y-1">
-            <label className="text-xs font-medium text-muted-foreground">Period end date</label>
-            <Input disabled={locked} type="date" value={data.periodEnd}
-              onChange={e => setData(d => ({ ...d, periodEnd: e.target.value }))}
-              className="h-8 text-xs" />
-          </div>
-          <div className="space-y-1">
-            <label className="text-xs font-medium text-muted-foreground">Financial reporting framework</label>
-            <Select disabled={locked} value={data.auditFramework}
-              onValueChange={v => setData(d => ({ ...d, auditFramework: v }))}>
-              <SelectTrigger className="h-8 text-xs"><SelectValue /></SelectTrigger>
-              <SelectContent>
-                {FRAMEWORK_OPTIONS.map(f => <SelectItem key={f} value={f} className="text-xs">{f}</SelectItem>)}
-              </SelectContent>
-            </Select>
-          </div>
-          <div className="space-y-1">
-            <label className="text-xs font-medium text-muted-foreground">Overall materiality ($)</label>
-            <Input disabled={locked} value={data.overallMateriality}
-              onChange={e => setData(d => ({ ...d, overallMateriality: e.target.value }))}
-              placeholder="From Form 410" className="h-8 text-xs" />
-          </div>
-          <div className="space-y-1">
-            <label className="text-xs font-medium text-muted-foreground">Performance materiality ($)</label>
-            <Input disabled={locked} value={data.performanceMateriality}
-              onChange={e => setData(d => ({ ...d, performanceMateriality: e.target.value }))}
-              placeholder="From Form 410" className="h-8 text-xs" />
-          </div>
-        </div>
 
         {/* Legend */}
         <div className="bg-card border border-border rounded-md p-4 grid grid-cols-2 gap-4 text-xs">
