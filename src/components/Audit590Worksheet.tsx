@@ -7,6 +7,9 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Info, Plus, Trash2 } from "lucide-react";
 import { RefButton, RefDoc } from "@/components/RefButton";
 import { readJsonFromLocalStorage, writeJsonToLocalStorage } from "@/lib/safeJson";
+import { useEngagementContext } from "@/hooks/useEngagementContext";
+import { formatCurrency, type FsaBalance } from "@/lib/engagementContext";
+import { AutoFillBanner } from "@/components/AutoFillBanner";
 
 // ── Types ──────────────────────────────────────────────────────────────────────
 
