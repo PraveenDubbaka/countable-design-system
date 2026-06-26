@@ -329,7 +329,9 @@ function SectionCard({ title, children }: { title: string; children: React.React
 // ── Main Component ─────────────────────────────────────────────────────────────
 
 export function Audit510Worksheet({ isUS = false }: { isUS?: boolean }) {
-  const storageKey = `audit-510-data-${isUS ? "us" : "ca"}`;
+  const { engagementId } = useParams<{ engagementId: string }>();
+  const ctx = useEngagementContext();
+  const storageKey = `audit-510-data-${engagementId ?? (isUS ? "us" : "ca")}`;
 
   const [data, setData] = useState<Data510>(() => {
     const saved = readJsonFromLocalStorage<Data510 | null>(storageKey, null);
