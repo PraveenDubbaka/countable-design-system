@@ -251,13 +251,18 @@ export function Audit513Worksheet({ isUS: isUSProp }: { isUS?: boolean } = {}) {
   const locked = data.concluded;
 
   const matKey = `audit-materiality-data-${isUS ? "us" : "ca"}`;
-  const [pmFromMateriality, setPmFromMateriality] = useState<string | null>(
-    () => readJsonFromLocalStorage<{ performanceMateriality?: string }>(matKey, null)?.performanceMateriality ?? null
-  );
+  // Fallback default mirrors AuditMaterialityWorksheet defaults:
+  // profitBeforeTax × 5% (benchmark) × 70% (PM%) — used when Form PL1 hasn't been opened yet.
+  const defaultPm = (() => {
+    const pbt = isUS ? 1003000 : 460000;
+    const pm = pbt * 0.05 * 0.70;
+    return pm.toLocaleString("en-CA", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  })();
+  const readPm = () =>
+    readJsonFromLocalStorage<{ performanceMateriality?: string }>(matKey, null)?.performanceMateriality || defaultPm;
+  const [pmFromMateriality, setPmFromMateriality] = useState<string | null>(readPm);
   useEffect(() => {
-    const read = () => setPmFromMateriality(
-      readJsonFromLocalStorage<{ performanceMateriality?: string }>(matKey, null)?.performanceMateriality ?? null
-    );
+    const read = () => setPmFromMateriality(readPm());
     read();
     const onStorage = (e: StorageEvent) => { if (e.key === matKey) read(); };
     const onFocus = () => read();
@@ -269,7 +274,9 @@ export function Audit513Worksheet({ isUS: isUSProp }: { isUS?: boolean } = {}) {
       window.removeEventListener("focus", onFocus);
       window.clearInterval(id);
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [matKey]);
+
 
   function patch<K extends keyof Data513>(key: K, val: Data513[K]) {
     setData(d => ({ ...d, [key]: val }));
