@@ -1893,7 +1893,7 @@ export default function EngagementDetail() {
                     onClick={() => {
                       const client = engagementId ? engagementsData[engagementId]?.client : undefined;
                       const engLabel = [client, engagementId].filter(Boolean).join(' · ');
-                      const connectedApp = engagementId ? engagementsData[engagementId]?.connectedApp : undefined;
+                      const connectedApp = engagementId ? (engagementsData[engagementId] as { connectedApp?: string } | undefined)?.connectedApp : undefined;
                       const sources = connectedApp
                         ? [`${connectedApp.charAt(0).toUpperCase() + connectedApp.slice(1)} connection`, 'Predecessor file']
                         : ['Trial balance', 'Predecessor file'];

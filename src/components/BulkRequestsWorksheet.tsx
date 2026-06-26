@@ -27,7 +27,7 @@ interface RequestRow {
   attachments: File[];
 }
 
-interface SentRequest extends RequestRow {
+interface SentRequest extends Omit<RequestRow, 'attachments'> {
   reqId: string;
   folder: string;
   subFolder: string;
