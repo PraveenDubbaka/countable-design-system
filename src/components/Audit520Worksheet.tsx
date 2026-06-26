@@ -55,7 +55,7 @@ const YN_OPTIONS: YN[] = ["Y", "N"];
 const formatRefList = (refs: RefDoc[]) => refs.map(r => r.name).join(", ") || "—";
 
 function newPartARow(): PartARow {
-  return { id: uid(), wpRefSource: [], rmmIdentified: "", fraudRisk: "", rmmAssessment: "", auditResponse: "", wpRef: [] };
+  return { id: uid(), wpRefSource: [{ name: "510" }], rmmIdentified: "", fraudRisk: "", rmmAssessment: "", auditResponse: "", wpRef: [] };
 }
 
 function newPartBRow(): PartBRow {
