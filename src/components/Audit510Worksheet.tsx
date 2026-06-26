@@ -994,6 +994,12 @@ export function Audit510Worksheet({ isUS = false }: { isUS?: boolean }) {
       {/* Single scrollable page */}
       <div className="flex-1 overflow-y-auto bg-muted/30">
         <div className="p-6 space-y-5 max-w-6xl">
+          <AutoFillBanner
+            entityName={ctx.entityName}
+            periodEndDisplay={ctx.periodEndDisplay}
+            framework={ctx.framework}
+            populated="entity profile, governance, laws & regulations and financing context from Planning (400/410/420) and Trial Balance"
+          />
           {SectionA}
           {SectionB}
           {SectionC}
