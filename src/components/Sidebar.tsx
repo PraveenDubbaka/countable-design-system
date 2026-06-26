@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { createPortal } from "react-dom";
 import { useNavigate, useLocation, useSearchParams } from "react-router-dom";
-import { ChevronDown, ChevronRight, ChevronLeft, Search, Plus, Expand, Trash2, Folder, Headphones, Check, FileText, FileBarChart, StickyNote, Table, Copy, Pencil, FolderInput, MoreVertical, GripVertical, X, Save, Files, Send, AlertCircle, MessageSquare, FilePlus2, FolderPlus, ArrowUpDown, Upload } from "lucide-react";
+import { ChevronDown, ChevronRight, ChevronLeft, Search, Plus, Expand, Trash2, Folder, Headphones, Check, FileText, FileBarChart, StickyNote, Table, Copy, Pencil, FolderInput, MoreVertical, GripVertical, X, Save, Files, Send, AlertCircle, MessageSquare, FilePlus2, FolderPlus, ArrowUpDown, Upload, Image } from "lucide-react";
 import { templateTree, allTemplateViews, type TreeItem } from "@/lib/engagementTemplatesData";
 import { FolderSolidIcon, FolderPlusIcon, FolderMinusIcon } from "@/components/icons/FolderIcons";
 import { Input } from "@/components/ui/input";
@@ -518,6 +518,23 @@ interface SidebarProps {
   pageTitle?: string;
   showBackButton?: boolean;
   onBack?: () => void;
+}
+
+function getFileTypeIcon(filename: string) {
+  const ext = filename.split('.').pop()?.toLowerCase() ?? '';
+  if (['xlsx', 'xls', 'csv', 'numbers'].includes(ext))
+    return <WorksheetIcon className="h-4 w-4 flex-shrink-0" />;
+  if (['doc', 'docx', 'odt', 'rtf'].includes(ext))
+    return <WordDocIcon className="h-4 w-4 flex-shrink-0" />;
+  if (ext === 'pdf')
+    return <FileText className="h-4 w-4 flex-shrink-0 text-red-500" />;
+  if (['ppt', 'pptx', 'key'].includes(ext))
+    return <FileBarChart className="h-4 w-4 flex-shrink-0 text-orange-500" />;
+  if (['png', 'jpg', 'jpeg', 'gif', 'webp', 'svg', 'bmp', 'tiff'].includes(ext))
+    return <Image className="h-4 w-4 flex-shrink-0 text-purple-500" />;
+  if (['txt', 'md', 'log'].includes(ext))
+    return <FileText className="h-4 w-4 flex-shrink-0 text-muted-foreground" />;
+  return <Files className="h-4 w-4 flex-shrink-0 text-muted-foreground" />;
 }
 
 export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
@@ -2902,7 +2919,7 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
               <div className="flex flex-col gap-1">
                 {pendingDocFiles.map((f, i) => (
                   <div key={i} className="flex items-center gap-2 px-3 py-2 rounded-lg border border-border bg-muted/30 text-sm min-w-0 overflow-hidden">
-                    <WorksheetIcon className="h-4 w-4 flex-shrink-0 text-green-600" />
+                    {getFileTypeIcon(f.name)}
                     <span className="truncate flex-1 min-w-0 text-foreground font-medium">{f.name}</span>
                     <button
                       className="text-muted-foreground hover:text-destructive transition-colors flex-shrink-0"
