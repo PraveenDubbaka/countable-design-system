@@ -116,6 +116,21 @@ function emptyStream(): RevenueStream {
   };
 }
 
+function streamFromSeed(s: RevenueStreamSeed): RevenueStream {
+  return {
+    id: uid(),
+    name: s.name,
+    description: s.description,
+    assertions: [...s.assertions],
+    likelihood: s.likelihood,
+    magnitude: s.magnitude,
+    inherentRisk: s.inherentRisk,
+    significantRisk: s.significantRisk,
+    rationale: s.rationale,
+    wpRef: [],
+  };
+}
+
 function buildProcedures(): ProcedureRow[] {
   return DEFAULT_PROCEDURES.map(p => ({
     ...p, id: uid(), wpRef: [], psc: "", pscInitials: "", exceptions: "",
@@ -142,17 +157,29 @@ function buildDefault(): Data580 {
 
 export function Audit580Worksheet() {
   const { engagementId } = useParams<{ engagementId: string }>();
+  const ctx = useEngagementContext();
   const storageKey = `audit-580-data-${engagementId ?? "default"}`;
   const saveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const isFirstRender = useRef(true);
 
   const [data, setData] = useState<Data580>(() => {
     const saved = readJsonFromLocalStorage<Data580 | null>(storageKey, null);
-    if (!saved) return buildDefault();
     const def = buildDefault();
+    const seededHeader = {
+      accountBalance: "Revenue — all streams (see breakdown below)",
+      performanceMateriality: formatCurrency(ctx.performanceMateriality),
+      periodEnded: ctx.periodEnd,
+    };
+    const seededStreams = ctx.revenueStreams.map(streamFromSeed);
+    if (!saved) {
+      return { ...def, ...seededHeader, streams: seededStreams };
+    }
     return {
       ...def, ...saved,
-      streams: saved.streams?.length ? saved.streams : def.streams,
+      accountBalance: saved.accountBalance || seededHeader.accountBalance,
+      performanceMateriality: saved.performanceMateriality || seededHeader.performanceMateriality,
+      periodEnded: saved.periodEnded || seededHeader.periodEnded,
+      streams: saved.streams?.length ? saved.streams : seededStreams,
       procedures: saved.procedures?.length ? saved.procedures : def.procedures,
     };
   });
