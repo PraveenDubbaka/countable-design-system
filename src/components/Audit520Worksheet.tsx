@@ -52,7 +52,6 @@ interface Data520 {
 const uid = () => Math.random().toString(36).slice(2, 9);
 const HML_OPTIONS: HML[] = ["H", "M", "L"];
 const YN_OPTIONS: YN[] = ["Y", "N"];
-const HML_OPTIONS: HML[] = ["H", "M", "L"];
 const formatRefList = (refs: RefDoc[]) => refs.map(r => r.name).join(", ") || "—";
 
 function newPartARow(): PartARow {
@@ -244,12 +243,9 @@ export function Audit520Worksheet() {
                   {data.partARows.map(row => (
                     <tr key={row.id} className="hover:bg-muted/50 transition-colors">
                       <td className="px-4 py-2.5 align-top w-28">
-                        <RefButton
-                          reference={row.wpRefSource}
-                          onAttach={doc => setPartAWpRefSource(row.id, [...row.wpRefSource, doc])}
-                          onRemove={i => setPartAWpRefSource(row.id, row.wpRefSource.filter((_, idx) => idx !== i))}
-                          disabled={locked}
-                        />
+                        <div className="h-8 flex items-center px-2 text-sm text-foreground bg-muted/40 rounded-md border border-border/60">
+                          {formatRefList(row.wpRefSource)}
+                        </div>
                       </td>
                       <td className="px-4 py-2.5 align-top min-w-[240px]">
                         <Textarea disabled={locked} value={row.rmmIdentified} onChange={e => updatePartA(row.id, "rmmIdentified", e.target.value)} placeholder="Describe the risk of material misstatement…" className="min-h-[72px] text-sm resize-none bg-background" />
@@ -328,12 +324,9 @@ export function Audit520Worksheet() {
                   {data.partBRows.map(row => (
                     <tr key={row.id} className={cn("transition-colors", row.significantRisk === "Y" ? "bg-amber-50/40 dark:bg-amber-950/10 hover:bg-amber-50/60" : "hover:bg-muted/50")}>
                       <td className="px-4 py-2.5 align-top w-28">
-                        <RefButton
-                          reference={row.wpRefSource}
-                          onAttach={doc => setPartBWpRefSource(row.id, [...row.wpRefSource, doc])}
-                          onRemove={i => setPartBWpRefSource(row.id, row.wpRefSource.filter((_, idx) => idx !== i))}
-                          disabled={locked}
-                        />
+                        <div className="h-8 flex items-center px-2 text-sm text-foreground bg-muted/40 rounded-md border border-border/60">
+                          {formatRefList(row.wpRefSource)}
+                        </div>
                       </td>
                       <td className="px-4 py-2.5 align-top min-w-[180px]">
                         <Textarea disabled={locked} value={row.rmmIdentified} onChange={e => updatePartB(row.id, "rmmIdentified", e.target.value)} placeholder="Describe the RMM…" className="min-h-[72px] text-sm resize-none bg-background" />
