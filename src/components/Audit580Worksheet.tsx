@@ -166,7 +166,6 @@ export function Audit580Worksheet() {
     const seededHeader = {
       accountBalance: "Revenue — all streams (see breakdown below)",
       performanceMateriality: formatCurrency(ctx.performanceMateriality),
-      periodEnded: ctx.periodEnd,
     };
     const seededStreams = ctx.revenueStreams.map(streamFromSeed);
     if (!saved) {
