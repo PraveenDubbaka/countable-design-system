@@ -146,7 +146,14 @@ export function Audit520Worksheet() {
   const [data, setData] = useState<Data520>(() => {
     const saved = readJsonFromLocalStorage<Data520 | null>(storageKey, null);
     if (!saved) return buildDefault();
-    return { ...buildDefault(), ...saved };
+    const migrated: Data520 = {
+      ...saved,
+      partARows: saved.partARows.map(r => ({
+        ...r,
+        wpRef: Array.isArray(r.wpRef) ? r.wpRef : r.wpRef ? [{ name: String(r.wpRef) }] : [],
+      })),
+    };
+    return { ...buildDefault(), ...migrated };
   });
 
   const firstRender = useRef(true);
@@ -160,6 +167,9 @@ export function Audit520Worksheet() {
 
   function updatePartA(id: string, field: keyof PartARow, val: string) {
     setData(d => ({ ...d, partARows: d.partARows.map(r => r.id === id ? { ...r, [field]: val } : r) }));
+  }
+  function setPartAWpRef(id: string, wpRef: RefDoc[]) {
+    setData(d => ({ ...d, partARows: d.partARows.map(r => r.id === id ? { ...r, wpRef } : r) }));
   }
   function updatePartB(id: string, field: keyof PartBRow, val: string) {
     setData(d => ({ ...d, partBRows: d.partBRows.map(r => r.id === id ? { ...r, [field]: val } : r) }));
@@ -236,8 +246,13 @@ export function Audit520Worksheet() {
                       <td className="px-4 py-2.5 align-top min-w-[260px]">
                         <Textarea disabled={locked} value={row.auditResponse} onChange={e => updatePartA(row.id, "auditResponse", e.target.value)} placeholder="Document overall audit response…" className="min-h-[72px] text-sm resize-none bg-background" />
                       </td>
-                      <td className="px-4 py-2.5 align-top w-20">
-                        <Input disabled={locked} value={row.wpRef} onChange={e => updatePartA(row.id, "wpRef", e.target.value)} placeholder="—" className="h-8 text-sm" />
+                      <td className="px-4 py-2.5 align-top w-28">
+                        <RefButton
+                          reference={row.wpRef}
+                          onAttach={doc => setPartAWpRef(row.id, [...row.wpRef, doc])}
+                          onRemove={i => setPartAWpRef(row.id, row.wpRef.filter((_, idx) => idx !== i))}
+                          disabled={locked}
+                        />
                       </td>
                       {!locked && (
                         <td className="px-2 py-2.5 align-middle text-center">
