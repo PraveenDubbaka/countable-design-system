@@ -251,9 +251,25 @@ export function Audit513Worksheet({ isUS: isUSProp }: { isUS?: boolean } = {}) {
   const locked = data.concluded;
 
   const matKey = `audit-materiality-data-${isUS ? "us" : "ca"}`;
-  const pmFromMateriality: string | null =
-    readJsonFromLocalStorage<{ performanceMateriality?: string }>(matKey, null)
-      ?.performanceMateriality ?? null;
+  const [pmFromMateriality, setPmFromMateriality] = useState<string | null>(
+    () => readJsonFromLocalStorage<{ performanceMateriality?: string }>(matKey, null)?.performanceMateriality ?? null
+  );
+  useEffect(() => {
+    const read = () => setPmFromMateriality(
+      readJsonFromLocalStorage<{ performanceMateriality?: string }>(matKey, null)?.performanceMateriality ?? null
+    );
+    read();
+    const onStorage = (e: StorageEvent) => { if (e.key === matKey) read(); };
+    const onFocus = () => read();
+    window.addEventListener("storage", onStorage);
+    window.addEventListener("focus", onFocus);
+    const id = window.setInterval(read, 1500);
+    return () => {
+      window.removeEventListener("storage", onStorage);
+      window.removeEventListener("focus", onFocus);
+      window.clearInterval(id);
+    };
+  }, [matKey]);
 
   function patch<K extends keyof Data513>(key: K, val: Data513[K]) {
     setData(d => ({ ...d, [key]: val }));
