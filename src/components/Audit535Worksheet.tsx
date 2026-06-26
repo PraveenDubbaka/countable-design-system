@@ -248,7 +248,6 @@ export function Audit535Worksheet() {
                       </SelectContent>
                     </Select>
                   </td>
-                  </td>
                   <td className="px-6 py-3">
                     <Textarea disabled={locked} value={row.comments} onChange={e => setRow(item.id, { comments: e.target.value })} placeholder="Document procedure performed and findings…" className="min-h-[72px] w-full text-sm resize-none rounded-[10px] border border-input bg-white px-3 py-2 focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2" />
                   </td>
