@@ -157,8 +157,6 @@ function buildDefault(): Data535 {
     conclusion: '',
     conclusionNotes: '',
     notes: '',
-    preparedBy: '', preparedDate: '',
-    reviewedBy: '', reviewedDate: '',
     concluded: false, concludedOn: '',
   };
 }
