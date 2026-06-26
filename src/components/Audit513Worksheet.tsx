@@ -330,14 +330,6 @@ export function Audit513Worksheet({ isUS: isUSProp }: { isUS?: boolean } = {}) {
       {/* Scrollable body */}
       <div className="flex-1 overflow-y-auto bg-muted/30">
         <div className="p-6 space-y-6 max-w-6xl">
-          <AutoFillBanner
-            entityName={ctx.entityName}
-            periodEndDisplay={ctx.periodEndDisplay}
-            framework={ctx.framework}
-            populated="performance materiality (Form PL1), risk-assessment narrative, applicable estimates with F/S areas & complexity, and control-component findings — all editable"
-          />
-
-
           {/* ── Header — Performance Materiality (auto-populated) ──────────── */}
           <div className="bg-card border border-border rounded-md px-4 py-3 flex items-center gap-3">
             <div className="flex-1">
