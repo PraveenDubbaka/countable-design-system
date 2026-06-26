@@ -45,7 +45,6 @@ interface ProcedureRow {
 interface Data580 {
   accountBalance: string;
   performanceMateriality: string;
-  periodEnded: string;
   streams: RevenueStream[];
   procedures: ProcedureRow[];
   fraudRiskIdentified: YN;        // overall presumption rebutted?
