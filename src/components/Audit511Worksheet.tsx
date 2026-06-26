@@ -77,6 +77,7 @@ interface Data511 {
   dTestingChecks: TestingCheck;
   dTestingResponse: ProcessRow;
   conclusion: string;
+  notes: string;
   concluded: boolean;
   concludedOn: string;
 }
