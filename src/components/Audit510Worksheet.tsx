@@ -599,12 +599,12 @@ function SectionCard({ title, children }: { title: string; children: React.React
 export function Audit510Worksheet({ isUS = false }: { isUS?: boolean }) {
   const { engagementId } = useParams<{ engagementId: string }>();
   const ctx = useEngagementContext();
-  const storageKey = `audit-510-data-${engagementId ?? (isUS ? "us" : "ca")}`;
+  const storageKey = `audit-510-data-v2-${engagementId ?? (isUS ? "us" : "ca")}`;
 
   const [data, setData] = useState<Data510>(() => {
     const saved = readJsonFromLocalStorage<Data510 | null>(storageKey, null);
-    if (!saved) return buildDefault();
-    const def = buildDefault();
+    if (!saved) return buildDefault(isUS);
+    const def = buildDefault(isUS);
     return { ...def, ...saved };
   });
 
