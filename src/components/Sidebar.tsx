@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { createPortal } from "react-dom";
 import { useNavigate, useLocation, useSearchParams } from "react-router-dom";
-import { ChevronDown, ChevronRight, ChevronLeft, Search, Plus, Expand, Trash2, Folder, Headphones, Check, FileText, FileBarChart, StickyNote, Table, Copy, Pencil, FolderInput, MoreVertical, GripVertical, X, Save, Files, Send, AlertCircle, MessageSquare, FilePlus2, FolderPlus, ArrowUpDown, Upload, Image, Download, Move } from "lucide-react";
+import { ChevronDown, ChevronRight, ChevronLeft, Search, Plus, Expand, Trash2, Folder, Headphones, Check, FileText, FileBarChart, NotebookPen, Table, Copy, Pencil, FolderInput, MoreVertical, GripVertical, X, Save, Files, Send, AlertCircle, MessageSquare, FilePlus2, FolderPlus, ArrowUpDown, Upload, Image, Download, Move } from "lucide-react";
 import { templateTree, allTemplateViews, type TreeItem } from "@/lib/engagementTemplatesData";
 import { FolderSolidIcon, FolderPlusIcon, FolderMinusIcon } from "@/components/icons/FolderIcons";
 import { Input } from "@/components/ui/input";
@@ -505,7 +505,7 @@ const dropdownItems = [{
 }, {
   id: "notes",
   label: "Notes to Financial Statements",
-  icon: StickyNote,
+  icon: NotebookPen,
   color: "text-yellow-500",
   showCreator: true
 }, {
@@ -1310,10 +1310,12 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
   const [hasDarkSecondary, setHasDarkSecondary] = useState(false);
   const [sectionFillStatus, setSectionFillStatus] = useState<Record<string, boolean>>({});
   const [notesPages, setNotesPages] = useState<Set<string>>(new Set());
-  const [nodeDocuments, setNodeDocuments] = useState<Record<string, { id: string; name: string }[]>>({});
+  const [nodeDocuments, setNodeDocuments] = useState<Record<string, { id: string; name: string; type?: 'note' }[]>>({});
   const [collapsedNodeDocs, setCollapsedNodeDocs] = useState<Set<string>>(new Set());
   const [addDocModal, setAddDocModal] = useState<{ nodeId: string; nodeCode?: string; nodeLabel: string } | null>(null);
   const [pendingDocFiles, setPendingDocFiles] = useState<{ name: string }[]>([]);
+  const [addNoteModal, setAddNoteModal] = useState<{ nodeId: string; nodeCode?: string; nodeLabel: string } | null>(null);
+  const [addNoteName, setAddNoteName] = useState('');
 
   // Load notes index for the current engagement
   useEffect(() => {
@@ -1354,12 +1356,25 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
     };
   }, [location.pathname]);
 
-  const saveNodeDocs = (docs: Record<string, { id: string; name: string }[]>) => {
+  const saveNodeDocs = (docs: Record<string, { id: string; name: string; type?: 'note' }[]>) => {
     const engId = location.pathname.split("/engagements/")[1]?.split("/")[0];
     if (!engId) return;
     localStorage.setItem(`engagement-node-docs-${engId}`, JSON.stringify(docs));
     setNodeDocuments(docs);
     window.dispatchEvent(new CustomEvent('node-docs-updated'));
+  };
+
+  const handleAddNote = () => {
+    if (!addNoteModal) return;
+    const noteName = addNoteName.trim() || 'Notes';
+    const existingItems = nodeDocuments[addNoteModal.nodeId] ?? [];
+    const existingNoteCount = existingItems.filter(d => d.type === 'note').length;
+    const prefix = `${addNoteModal.nodeCode ?? 'N'}-${existingNoteCount + 1}-`;
+    const fullName = prefix + noteName;
+    const newNote = { id: `note-${addNoteModal.nodeId}-${Date.now()}`, name: fullName, type: 'note' as const };
+    saveNodeDocs({ ...nodeDocuments, [addNoteModal.nodeId]: [newNote, ...existingItems] });
+    setAddNoteModal(null);
+    setAddNoteName('');
   };
 
   const handleAddDocs = () => {
@@ -2268,15 +2283,6 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
                               <DropdownMenuItem className="text-xs gap-2 cursor-pointer" onClick={e => e.stopPropagation()}>
                                 <MessageSquare className="h-3.5 w-3.5" /> Add comment
                               </DropdownMenuItem>
-                              <DropdownMenuItem
-                                className="text-xs gap-2 cursor-pointer"
-                                onClick={e => {
-                                  e.stopPropagation();
-                                  if (engId) navigate(`/engagements/${engId}/checklist/notes-${node.id}`);
-                                }}
-                              >
-                                <StickyNote className="h-3.5 w-3.5" /> Add note
-                              </DropdownMenuItem>
                               <DropdownMenuSeparator />
                               {isLeaf ? (
                                 <DropdownMenuItem
@@ -2290,32 +2296,80 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
                                   <FilePlus2 className="h-3.5 w-3.5" /> Add document
                                 </DropdownMenuItem>
                               ) : (
-                                <DropdownMenuItem className="text-xs gap-2 cursor-pointer" onClick={e => { e.stopPropagation(); setAddSectionModal({ open: true, parentNodeId: node.id }); setAddSectionName(''); setAddSectionCategory('checklist'); }}>
-                                  <FolderPlus className="h-3.5 w-3.5" /> Add section
-                                </DropdownMenuItem>
+                                <>
+                                  <DropdownMenuItem
+                                    className="text-xs gap-2 cursor-pointer"
+                                    onClick={e => {
+                                      e.stopPropagation();
+                                      setAddNoteModal({ nodeId: node.id, nodeCode: node.code, nodeLabel: node.label });
+                                      setAddNoteName('');
+                                    }}
+                                  >
+                                    <NotebookPen className="h-3.5 w-3.5" /> Add note
+                                  </DropdownMenuItem>
+                                  <DropdownMenuItem className="text-xs gap-2 cursor-pointer" onClick={e => { e.stopPropagation(); setAddSectionModal({ open: true, parentNodeId: node.id }); setAddSectionName(''); setAddSectionCategory('checklist'); }}>
+                                    <FolderPlus className="h-3.5 w-3.5" /> Add section
+                                  </DropdownMenuItem>
+                                </>
                               )}
                             </DropdownMenuContent>
                           </DropdownMenu>
                         )}
                       </div>
 
-                      {/* Notes sub-item — shown when this page has notes */}
+                      {/* Legacy leaf notes sub-item (URL-based) */}
                       {isLeaf && notesPages.has(node.id) && !collapsedNodeDocs.has(node.id) && (
                         <div
                           className={cn(
-                            "group flex items-center gap-1.5 py-1.5 px-2 rounded-[8px] cursor-pointer hover:bg-primary/10 transition-colors text-xs mt-0.5",
+                            "group flex items-center gap-1.5 py-1.5 px-2 rounded-[8px] cursor-pointer hover:bg-primary/10 transition-colors text-sm mt-0.5",
                             engId && location.pathname.endsWith(`/checklist/notes-${node.id}`) && "bg-primary/10 ring-1 ring-primary/25",
                           )}
                           style={{ paddingLeft: `${(depth + 1) * 16 + 8}px` }}
                           onClick={e => { e.stopPropagation(); if (engId) navigate(`/engagements/${engId}/checklist/notes-${node.id}`); }}
                         >
-                          <StickyNote className="h-3 w-3 text-muted-foreground flex-shrink-0" />
+                          <NotebookPen className="h-4 w-4 text-amber-500 flex-shrink-0" />
                           <span className="truncate flex-1 text-black dark:text-white font-medium">Notes</span>
                         </div>
                       )}
 
-                      {/* Document attachments — shown when files have been added to this node */}
-                      {(nodeDocuments[node.id]?.length ?? 0) > 0 && !collapsedNodeDocs.has(node.id) && nodeDocuments[node.id].map(doc => (
+                      {/* Folder notes (type='note') — shown first, above documents */}
+                      {!collapsedNodeDocs.has(node.id) && (nodeDocuments[node.id] ?? []).filter(d => d.type === 'note').map(note => (
+                        <div
+                          key={note.id}
+                          className="group/doc flex items-center gap-1.5 py-1.5 px-2 rounded-[8px] cursor-pointer hover:bg-primary/10 transition-colors text-sm mt-0.5"
+                          style={{ paddingLeft: `${(depth + 1) * 16 + 8}px` }}
+                          onClick={e => { e.stopPropagation(); toast({ title: 'Coming soon' }); }}
+                        >
+                          <NotebookPen className="h-4 w-4 text-amber-500 flex-shrink-0" />
+                          <span className="truncate flex-1 text-black dark:text-white font-medium">{note.name}</span>
+                          <DropdownMenu>
+                            <DropdownMenuTrigger asChild onClick={e => e.stopPropagation()}>
+                              <button className="opacity-0 group-hover/doc:opacity-100 p-0.5 rounded hover:bg-muted transition-all flex-shrink-0 text-muted-foreground hover:text-foreground">
+                                <MoreVertical className="h-4 w-4" />
+                              </button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent side="right" align="start" className="min-w-[140px]">
+                              <DropdownMenuItem onClick={e => { e.stopPropagation(); toast({ title: 'Coming soon' }); }}>
+                                <Pencil className="h-3.5 w-3.5 mr-2" /> Rename
+                              </DropdownMenuItem>
+                              <DropdownMenuSeparator />
+                              <DropdownMenuItem
+                                className="text-destructive focus:text-destructive"
+                                onClick={e => {
+                                  e.stopPropagation();
+                                  const updated = { ...nodeDocuments, [node.id]: nodeDocuments[node.id].filter(d => d.id !== note.id) };
+                                  saveNodeDocs(updated);
+                                }}
+                              >
+                                <Trash2 className="h-3.5 w-3.5 mr-2" /> Delete
+                              </DropdownMenuItem>
+                            </DropdownMenuContent>
+                          </DropdownMenu>
+                        </div>
+                      ))}
+
+                      {/* Document attachments — shown below notes */}
+                      {(nodeDocuments[node.id]?.length ?? 0) > 0 && !collapsedNodeDocs.has(node.id) && (nodeDocuments[node.id] ?? []).filter(d => d.type !== 'note').map(doc => (
                         <div
                           key={doc.id}
                           className="group/doc flex items-center gap-1.5 py-1.5 px-2 rounded-[8px] cursor-pointer hover:bg-primary/10 transition-colors text-sm mt-0.5"
@@ -2870,6 +2924,40 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
           <DialogFooter>
             <Button variant="outline" onClick={() => setAddSectionModal(null)}>Cancel</Button>
             <Button onClick={handleAddSection} disabled={!addSectionName.trim()}>Add</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Add Note Dialog */}
+      <Dialog open={!!addNoteModal} onOpenChange={open => { if (!open) { setAddNoteModal(null); setAddNoteName(''); } }}>
+        <DialogContent className="sm:max-w-[380px] grid-cols-1">
+          <DialogHeader>
+            <div className="flex items-start gap-3 mb-1">
+              <div className="w-10 h-10 rounded-full bg-amber-100 dark:bg-amber-900/30 flex items-center justify-center flex-shrink-0">
+                <NotebookPen className="h-5 w-5 text-amber-600" />
+              </div>
+              <div>
+                <DialogTitle>Add Note</DialogTitle>
+                <p className="text-xs text-muted-foreground mt-0.5">Add a note to <span className="font-medium">{addNoteModal?.nodeLabel}</span></p>
+              </div>
+            </div>
+          </DialogHeader>
+          <div className="py-2">
+            <label className="text-sm font-medium mb-1.5 block">Note name</label>
+            <Input
+              value={addNoteName}
+              onChange={e => setAddNoteName(e.target.value)}
+              placeholder="Notes"
+              autoFocus
+              onKeyDown={e => e.key === 'Enter' && handleAddNote()}
+            />
+            <p className="text-xs text-muted-foreground mt-1.5">
+              Will be saved as <span className="font-mono font-medium">{addNoteModal?.nodeCode ?? 'N'}-{((nodeDocuments[addNoteModal?.nodeId ?? ''] ?? []).filter(d => d.type === 'note').length) + 1}-{addNoteName.trim() || 'Notes'}</span>
+            </p>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => { setAddNoteModal(null); setAddNoteName(''); }}>Cancel</Button>
+            <Button onClick={handleAddNote}>Add Note</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
