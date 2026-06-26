@@ -2332,8 +2332,8 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
                         </div>
                       )}
 
-                      {/* Folder notes (type='note') — shown first, above documents */}
-                      {!collapsedNodeDocs.has(node.id) && (nodeDocuments[node.id] ?? []).filter(d => d.type === 'note').map(note => (
+                      {/* Folder notes (type='note') — shown when folder is expanded */}
+                      {isOpen && !collapsedNodeDocs.has(node.id) && (nodeDocuments[node.id] ?? []).filter(d => d.type === 'note').map(note => (
                         <div
                           key={note.id}
                           className={cn(
