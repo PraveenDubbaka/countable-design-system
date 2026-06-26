@@ -250,7 +250,7 @@ export function Audit580Worksheet() {
         />
 
         {/* Engagement context */}
-        <div className="bg-card border border-border rounded-md p-5 grid grid-cols-3 gap-4">
+        <div className="bg-card border border-border rounded-md p-5 grid grid-cols-2 gap-4">
           <div className="space-y-1">
             <label className="text-xs font-medium text-muted-foreground">Account balance / class of transactions / disclosure</label>
             <Input disabled={locked} value={data.accountBalance}
@@ -263,12 +263,6 @@ export function Audit580Worksheet() {
             <Input disabled={locked} value={data.performanceMateriality}
               onChange={e => setData(d => ({ ...d, performanceMateriality: e.target.value }))}
               placeholder="From Form 410"
-              className="h-8 text-xs" />
-          </div>
-          <div className="space-y-1">
-            <label className="text-xs font-medium text-muted-foreground">Period ended</label>
-            <Input disabled={locked} type="date" value={data.periodEnded}
-              onChange={e => setData(d => ({ ...d, periodEnded: e.target.value }))}
               className="h-8 text-xs" />
           </div>
         </div>
