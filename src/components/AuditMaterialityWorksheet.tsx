@@ -341,6 +341,16 @@ export function AuditMaterialityWorksheet({ isUS = false }: AuditMaterialityWork
     return formatNum(m * p / 100);
   })();
 
+  // Persist key derived values for cross-worksheet auto-population (e.g., 513)
+  useEffect(() => {
+    const key = `audit-materiality-data-${isUS ? "us" : "ca"}`;
+    writeJsonToLocalStorage(key, {
+      overallMateriality,
+      performanceMateriality: pmAmount,
+      clearlyTrivial: ctAmount,
+    });
+  }, [isUS, overallMateriality, pmAmount, ctAmount]);
+
   const standardRef = isUS ? "AU-C 320" : "CAS 320";
   const title = isUS ? "Materiality — AU-C 320" : "Materiality — CAS 320";
 
