@@ -67,7 +67,7 @@ function buildDefault(): Data520 {
     partARows: [
       {
         id: uid(),
-        wpRefSource: [],
+        wpRefSource: [{ name: "510" }],
         rmmIdentified: "Management override of controls",
         fraudRisk: "Y",
         rmmAssessment: "H",
