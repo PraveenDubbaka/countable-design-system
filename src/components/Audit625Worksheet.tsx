@@ -139,7 +139,7 @@ export function Audit625Worksheet() {
       />
 
 
-      <LinkedRisksCard risks={gcRisks} emptyHint="No going-concern related risks tagged in Form 520." />
+      <LinkedRisksCard overallRisk={overall} risks={gcRisks} emptyHint="No going-concern related risks tagged in Form 520." />
 
       <Card title="1 · Management's plan of action">
         <Textarea disabled={locked} value={data.managementPlan} onChange={e => setData(d => ({ ...d, managementPlan: e.target.value }))}

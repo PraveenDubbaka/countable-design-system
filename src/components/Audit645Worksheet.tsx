@@ -120,7 +120,7 @@ export function Audit645Worksheet() {
         <div className="col-span-2 text-sm font-mono">{data.performanceMateriality || formatCurrency(ctx.performanceMateriality)}</div>
       </div>
 
-      <LinkedRisksCard risks={lcncRisks} emptyHint="No litigation, claims or non-compliance risks tagged in Form 520." />
+      <LinkedRisksCard overallRisk={overall} risks={lcncRisks} emptyHint="No litigation, claims or non-compliance risks tagged in Form 520." />
 
       <ProcedureTable sections={data.sections} locked={locked} onChange={updateProcRow} />
 

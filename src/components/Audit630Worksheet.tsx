@@ -98,7 +98,7 @@ export function Audit630Worksheet() {
       />
 
 
-      <LinkedRisksCard
+      <LinkedRisksCard overallRisk={overall}
         risks={risks.filter(r => /receiv|payab|bank|debt|loan|invent|legal|confirm/i.test(`${r.scotabd ?? ""} ${r.rmmIdentified}`))}
         emptyHint="No risks tagged for areas typically requiring confirmation."
       />

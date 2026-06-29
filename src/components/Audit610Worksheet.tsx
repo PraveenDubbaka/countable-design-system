@@ -162,7 +162,7 @@ export function Audit610Worksheet() {
       />
 
 
-      <LinkedRisksCard risks={risks.filter(r => r.source === "B")} emptyHint="Add assertion-level risks in Form 520 to scope this sample." />
+      <LinkedRisksCard overallRisk={overall} risks={risks.filter(r => r.source === "B")} emptyHint="Add assertion-level risks in Form 520 to scope this sample." />
 
       {/* ── Plan inputs ── */}
       <div className="rounded-lg border border-border bg-card overflow-hidden">
