@@ -219,7 +219,6 @@ export function Audit625Worksheet() {
     const stored = readJsonFromLocalStorage<Partial<Data625>>(storageKey, def) ?? def;
     const merged = { ...def, ...stored } as Data625;
     if (!Array.isArray(merged.communication)) merged.communication = def.communication;
-    if (!Array.isArray(merged.procedures)) merged.procedures = def.procedures;
     return merged;
   });
 
