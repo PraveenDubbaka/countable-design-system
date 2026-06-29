@@ -82,29 +82,30 @@ function strategyTitle(s: Exclude<Strategy, "">) {
 function strategyRows(s: Exclude<Strategy, "">): ProcRow[] {
   switch (s) {
     case "sale-of-assets": return [
-      makeProcRow("a. Assess the marketability of the assets management plans to sell.", "AV / E"),
-      makeProcRow("b. Review loan agreements, mortgages, credit facilities and liens for restrictions on disposing of the assets.", "C / P"),
-      makeProcRow("c. Assess the effect of the planned disposal on the entity's remaining operations.", "GC"),
+      makeProcRow("a. Assess the marketability of the assets management plans to sell."),
+      makeProcRow("b. Review loan agreements, mortgages, credit facilities and liens for restrictions on disposing of the assets."),
+      makeProcRow("c. Assess the effect of the planned disposal on the entity's remaining operations."),
     ];
     case "borrow-restructure": return [
-      makeProcRow("a. Assess availability of debt financing and the entity's capacity to borrow; review covenants restricting additional borrowing.", "C / P"),
-      makeProcRow("b. Assess whether the entity has sufficient collateral (AR, inventory, PP&E, third-party guarantees).", "AV"),
-      makeProcRow("c. Determine the feasibility of obtaining required guarantees from third parties.", "GC"),
-      makeProcRow("d. Assess the impact of new financing on operations and timing of cash flows.", "GC"),
+      makeProcRow("a. Assess availability of debt financing and the entity's capacity to borrow; review covenants restricting additional borrowing."),
+      makeProcRow("b. Assess whether the entity has sufficient collateral (AR, inventory, PP&E, third-party guarantees)."),
+      makeProcRow("c. Determine the feasibility of obtaining required guarantees from third parties."),
+      makeProcRow("d. Assess the impact of new financing on operations and timing of cash flows."),
     ];
     case "new-capital": return [
-      makeProcRow("a. Confirm the expected capital investment will be sufficient to address needs for the next 12 months.", "GC"),
-      makeProcRow("b. Consider terms associated with new capital (new management, operational changes, restructuring).", "GC"),
-      makeProcRow("c. Assess whether the planned sources have the financial resources and timing required.", "GC"),
-      makeProcRow("d. Assess the effect on existing shareholders and any approvals required.", "P"),
+      makeProcRow("a. Confirm the expected capital investment will be sufficient to address needs for the next 12 months."),
+      makeProcRow("b. Consider terms associated with new capital (new management, operational changes, restructuring)."),
+      makeProcRow("c. Assess whether the planned sources have the financial resources and timing required."),
+      makeProcRow("d. Assess the effect on existing shareholders and any approvals required."),
     ];
     case "operational": return [
-      makeProcRow("a. Assess feasibility of the operational changes (cost reductions, new markets, head-count actions).", "GC"),
-      makeProcRow("b. Corroborate planned actions with documented evidence (board minutes, contracts, communications).", "E"),
-      makeProcRow("c. Sensitivity-test the impact of the changes on the 12-month forecast.", "AV"),
+      makeProcRow("a. Assess feasibility of the operational changes (cost reductions, new markets, head-count actions)."),
+      makeProcRow("b. Corroborate planned actions with documented evidence (board minutes, contracts, communications)."),
+      makeProcRow("c. Sensitivity-test the impact of the changes on the 12-month forecast."),
     ];
   }
 }
+
 
 // ── Defaults (mirror the source document, §1-§12) ────────────────────────────
 
