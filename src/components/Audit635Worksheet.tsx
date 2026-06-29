@@ -1,119 +1,200 @@
-import { useState, useEffect, useRef } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
-import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Plus, Trash2 } from "lucide-react";
+import { Checkbox } from "@/components/ui/checkbox";
 import { readJsonFromLocalStorage, writeJsonToLocalStorage } from "@/lib/safeJson";
+import { useEngagementContext } from "@/hooks/useEngagementContext";
+import { loadRisks520, overallRisk520, filterRisks } from "@/lib/audit520Bridge";
+import {
+  WorksheetHeader, LinkedRisksCard, ProcedureTable, SignOffCard, ConcludeBar, makeProcRow,
+  type ProcRow, type SignOffData,
+} from "@/components/audit/WorksheetShell";
 
-interface EstimateRow {
-  id: string;
-  estimate: string;
-  amount: string;
-  approach: string;
-  proceduresPerformed: string;
-  auditorsEstimate: string;
-  difference: string;
-  withinRange: string;
-  conclusion: string;
-}
+type SectionKey = "A" | "B" | "C";
 
 interface Data635 {
-  rows: EstimateRow[];
+  estimateName: string;
+  estimateAmount: string;
+  managementMethod: string;
+  // approach selection
+  approachA: boolean; // Subsequent events
+  approachB: boolean; // Testing management's process
+  approachC: boolean; // Auditor's point estimate / range
+  sections: Record<SectionKey, { title: string; rows: ProcRow[] }>;
+  testsOfControlsApplicable: boolean;
+  testsOfControls: string;
+  pointEstimateRange: string;
+  managementBias: string;
+  presentationConclusion: string;
   overallConclusion: string;
-  preparedBy: string; preparedDate: string;
-  reviewedBy: string; reviewedDate: string;
+  signOff: SignOffData;
   concluded: boolean; concludedOn: string;
 }
 
-const APPROACH_OPTIONS = ['Review of events after the balance sheet date', 'Test management\'s process', 'Develop an independent estimate', 'All three approaches'];
-const YN_OPTIONS = ['Yes', 'No'];
-const CONC_OPTIONS = ['Reasonable', 'Reasonable — with disclosure', 'Potentially misstated — investigate further', 'Misstated — proposed adjustment'];
-
-function newRow(): EstimateRow {
-  return { id: Math.random().toString(36).slice(2), estimate: '', amount: '', approach: '', proceduresPerformed: '', auditorsEstimate: '', difference: '', withinRange: '', conclusion: '' };
-}
+const SECTION_A: ProcRow[] = [
+  makeProcRow("1. Actual outcomes — obtain evidence subsequent to the balance-sheet date for actual outcomes; investigate differences and propose adjustments where applicable.", "AV (C E)"),
+  makeProcRow("2. Changes in circumstances — inquire about any changes in conditions since the measurement date that may affect the estimate.", "AV (C E)"),
+];
+const SECTION_B: ProcRow[] = [
+  makeProcRow("1. Methods — evaluate whether management's method is appropriate under the AFRF and consistent with prior periods; assess any change in method.", "AV (C E)"),
+  makeProcRow("2. Management bias — evaluate whether judgments made in selecting the method indicate possible bias.", "AV (C E)"),
+  makeProcRow("3. Mathematical accuracy — recompute the estimate and verify accuracy of the calculations.", "AV"),
+  makeProcRow("4. Management's use of experts — assess competency / objectivity, obtain engagement letter, review report; review assumptions, methods and data.", "AV (C E)"),
+  makeProcRow("5. Complex modelling — where modelling is used, evaluate design, changes from prior model and reasonableness of adjustments to outputs.", "AV"),
+  makeProcRow("6. Management's point estimate — understand how estimation uncertainty was addressed and how related disclosures were developed.", "AV (C E)"),
+  makeProcRow("7. Assumptions — evaluate reasonableness of significant assumptions, including sensitivity to changes and bias indicators.", "AV"),
+];
+const SECTION_C: ProcRow[] = [
+  makeProcRow("1. Point estimate — develop the auditor's point estimate to evaluate management's estimate; record differences on Form 335.", "AV"),
+  makeProcRow("2. Range estimate — develop a range supported by audit evidence and reasonable under the AFRF; perform procedures over disclosure of estimation uncertainty.", "AV"),
+  makeProcRow("3. Use of auditor's expert — assess competency / objectivity, obtain engagement letter, review report.", "AV"),
+];
 
 function buildDefault(): Data635 {
-  return { rows: [newRow(), newRow()], overallConclusion: '', preparedBy: '', preparedDate: '', reviewedBy: '', reviewedDate: '', concluded: false, concludedOn: '' };
+  return {
+    estimateName: "", estimateAmount: "", managementMethod: "",
+    approachA: true, approachB: true, approachC: false,
+    sections: {
+      A: { title: "A · Evaluating subsequent events", rows: SECTION_A },
+      B: { title: "B · Testing management's accounting estimate", rows: SECTION_B },
+      C: { title: "C · Developing the auditor's point estimate or range", rows: SECTION_C },
+    },
+    testsOfControlsApplicable: false,
+    testsOfControls: "",
+    pointEstimateRange: "",
+    managementBias: "",
+    presentationConclusion: "",
+    overallConclusion: "",
+    signOff: { preparedBy: "", preparedDate: "", reviewedBy: "", reviewedDate: "" },
+    concluded: false, concludedOn: "",
+  };
 }
 
 export function Audit635Worksheet() {
   const { engagementId } = useParams<{ engagementId: string }>();
-  const storageKey = `audit-635-data-${engagementId ?? 'default'}`;
-  const saveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const isFirstRender = useRef(true);
+  const ctx = useEngagementContext();
+  const risks = useMemo(() => loadRisks520(engagementId), [engagementId]);
+  const overall = useMemo(() => overallRisk520(risks), [risks]);
+  const estimateRisks = useMemo(() => filterRisks(risks, ["estimate", "allowance", "provision", "valuation", "impairment", "obsolesc"]), [risks]);
+
+  const storageKey = `audit-635-data-${engagementId ?? "default"}`;
   const [data, setData] = useState<Data635>(() => readJsonFromLocalStorage<Data635>(storageKey, buildDefault()) ?? buildDefault());
 
+  const saveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const first = useRef(true);
   useEffect(() => {
-    if (isFirstRender.current) { isFirstRender.current = false; return; }
-    if (saveTimerRef.current) clearTimeout(saveTimerRef.current);
-    saveTimerRef.current = setTimeout(() => writeJsonToLocalStorage(storageKey, data), 450);
+    if (first.current) { first.current = false; return; }
+    if (saveTimer.current) clearTimeout(saveTimer.current);
+    saveTimer.current = setTimeout(() => writeJsonToLocalStorage(storageKey, data), 450);
   }, [data, storageKey]);
 
   const locked = data.concluded;
-  const upd = (id: string, field: keyof EstimateRow, value: string) =>
-    setData(d => ({ ...d, rows: d.rows.map(r => r.id === id ? { ...r, [field]: value } : r) }));
 
-  const td = "border border-border px-2 py-1.5 text-xs align-top";
-  const th = "border border-border bg-muted px-2 py-1.5 text-xs font-medium text-left align-middle whitespace-nowrap";
+  const sectionsToShow: { title: string; rows: ProcRow[] }[] = [];
+  if (data.approachA) sectionsToShow.push(data.sections.A);
+  if (data.approachB) sectionsToShow.push(data.sections.B);
+  if (data.approachC) sectionsToShow.push(data.sections.C);
+
+  const updateProcRow = (siVisible: number, rowId: string, field: keyof ProcRow, value: string) => {
+    // map visible index back to section key
+    const order: SectionKey[] = [];
+    if (data.approachA) order.push("A");
+    if (data.approachB) order.push("B");
+    if (data.approachC) order.push("C");
+    const key = order[siVisible];
+    setData(d => ({
+      ...d,
+      sections: {
+        ...d.sections,
+        [key]: { ...d.sections[key], rows: d.sections[key].rows.map(r => r.id === rowId ? { ...r, [field]: value } : r) },
+      },
+    }));
+  };
 
   return (
-    <div className="p-4 space-y-4 text-sm">
-      <div className="rounded-lg border border-border bg-card px-4 py-3">
-        <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-1">Objective</p>
-        <p className="text-sm">Document further audit procedures performed on significant accounting estimates, assess whether estimates are reasonable, and conclude on any differences between management's estimates and the auditor's point estimate or range (CAS 540).</p>
-      </div>
+    <div className="p-4 space-y-4">
+      <WorksheetHeader
+        ctx={ctx}
+        formNo="635"
+        title="Accounting Estimates — Further Audit Procedures"
+        standard={`${ctx.standardPrefix} 540`}
+        overallRisk={overall}
+        objective="Document further audit procedures to obtain evidence about the reasonableness of accounting estimates (including fair value) and whether financial-statement disclosures are adequate. Use this form for ONE estimate at a time."
+      />
+
+      <LinkedRisksCard risks={estimateRisks} emptyHint="No estimate-related risks tagged in Form 520." />
+
       <div className="rounded-lg border border-border bg-card overflow-hidden">
-        <div className="px-4 py-2.5 border-b border-border flex items-center justify-between">
-          <h3 className="text-sm font-semibold">Accounting Estimates — Further Audit Procedures</h3>
-          {!locked && <Button size="sm" variant="outline" className="h-7 text-xs gap-1" onClick={() => setData(d => ({ ...d, rows: [...d.rows, newRow()] }))}><Plus className="h-3 w-3" /> Add Estimate</Button>}
-        </div>
-        <div className="overflow-x-auto">
-          <table className="w-full border-collapse text-xs">
-            <thead><tr>
-              <th className={th} style={{ width: 130 }}>Estimate / Account</th>
-              <th className={th} style={{ width: 90 }}>Management's Amount $</th>
-              <th className={th} style={{ width: 140 }}>Audit Approach</th>
-              <th className={th}>Procedures Performed</th>
-              <th className={th} style={{ width: 100 }}>Auditor's Estimate $</th>
-              <th className={th} style={{ width: 90 }}>Difference $</th>
-              <th className={th} style={{ width: 80 }}>Within Acceptable Range?</th>
-              <th className={th} style={{ width: 130 }}>Conclusion</th>
-              {!locked && <th className={th} style={{ width: 32 }}></th>}
-            </tr></thead>
-            <tbody>{data.rows.map(row => (
-              <tr key={row.id} className="hover:bg-muted/30">
-                <td className={td}><Textarea disabled={locked} value={row.estimate} onChange={e => upd(row.id, 'estimate', e.target.value)} className="min-h-[56px] text-xs resize-none border-0 p-0 shadow-none focus-visible:ring-0 bg-transparent" placeholder="e.g. AR allowance" /></td>
-                <td className={td}><Input disabled={locked} value={row.amount} onChange={e => upd(row.id, 'amount', e.target.value)} className="h-7 text-xs border-0 p-0 shadow-none focus-visible:ring-0 bg-transparent" placeholder="0" /></td>
-                <td className={td}><Select disabled={locked} value={row.approach} onValueChange={v => upd(row.id, 'approach', v)}><SelectTrigger className="h-7 text-xs border-0 shadow-none focus:ring-0 px-0 bg-transparent"><SelectValue placeholder="Select…" /></SelectTrigger><SelectContent>{APPROACH_OPTIONS.map(o => <SelectItem key={o} value={o} className="text-xs">{o}</SelectItem>)}</SelectContent></Select></td>
-                <td className={td}><Textarea disabled={locked} value={row.proceduresPerformed} onChange={e => upd(row.id, 'proceduresPerformed', e.target.value)} className="min-h-[56px] text-xs resize-none border-0 p-0 shadow-none focus-visible:ring-0 bg-transparent" placeholder="Describe procedures" /></td>
-                <td className={td}><Input disabled={locked} value={row.auditorsEstimate} onChange={e => upd(row.id, 'auditorsEstimate', e.target.value)} className="h-7 text-xs border-0 p-0 shadow-none focus-visible:ring-0 bg-transparent" placeholder="0 or range" /></td>
-                <td className={td}><Input disabled={locked} value={row.difference} onChange={e => upd(row.id, 'difference', e.target.value)} className="h-7 text-xs border-0 p-0 shadow-none focus-visible:ring-0 bg-transparent" placeholder="0" /></td>
-                <td className={td}><Select disabled={locked} value={row.withinRange} onValueChange={v => upd(row.id, 'withinRange', v)}><SelectTrigger className="h-7 text-xs border-0 shadow-none focus:ring-0 px-0 bg-transparent"><SelectValue placeholder="Y/N" /></SelectTrigger><SelectContent>{YN_OPTIONS.map(o => <SelectItem key={o} value={o} className="text-xs">{o}</SelectItem>)}</SelectContent></Select></td>
-                <td className={td}><Select disabled={locked} value={row.conclusion} onValueChange={v => upd(row.id, 'conclusion', v)}><SelectTrigger className="h-7 text-xs border-0 shadow-none focus:ring-0 px-0 bg-transparent"><SelectValue placeholder="Select…" /></SelectTrigger><SelectContent>{CONC_OPTIONS.map(o => <SelectItem key={o} value={o} className="text-xs">{o}</SelectItem>)}</SelectContent></Select></td>
-                {!locked && <td className={td + " text-center"}><button onClick={() => setData(d => ({ ...d, rows: d.rows.filter(r => r.id !== row.id) }))} className="text-muted-foreground hover:text-destructive"><Trash2 className="h-3.5 w-3.5" /></button></td>}
-              </tr>
-            ))}</tbody>
-          </table>
+        <div className="px-4 py-2.5 border-b border-border"><h3 className="text-sm font-semibold">Estimate addressed by this worksheet</h3></div>
+        <div className="p-4 grid grid-cols-3 gap-3">
+          <div className="col-span-2">
+            <label className="text-[11px] font-medium text-muted-foreground">Estimate (from Form 520)</label>
+            <Input disabled={locked} value={data.estimateName} onChange={e => setData(d => ({ ...d, estimateName: e.target.value }))} className="h-8 text-xs" placeholder="e.g. Allowance for doubtful accounts" />
+          </div>
+          <div>
+            <label className="text-[11px] font-medium text-muted-foreground">Estimate amount $</label>
+            <Input disabled={locked} value={data.estimateAmount} onChange={e => setData(d => ({ ...d, estimateAmount: e.target.value }))} className="h-8 text-xs" placeholder="0" />
+          </div>
+          <div className="col-span-3">
+            <label className="text-[11px] font-medium text-muted-foreground">Method used by management to prepare the estimate</label>
+            <Textarea disabled={locked} value={data.managementMethod} onChange={e => setData(d => ({ ...d, managementMethod: e.target.value }))} className="text-xs min-h-[56px]" placeholder="Describe the method, key assumptions and any model / expert used." />
+          </div>
         </div>
       </div>
+
       <div className="rounded-lg border border-border bg-card px-4 py-3 space-y-2">
-        <h3 className="text-sm font-semibold">Overall Conclusion</h3>
-        <Textarea disabled={locked} value={data.overallConclusion} onChange={e => setData(d => ({ ...d, overallConclusion: e.target.value }))} className="text-xs min-h-[72px]" placeholder="Summarize conclusions on all significant estimates tested." />
-      </div>
-      <div className="rounded-lg border border-border bg-card px-4 py-3">
-        <h3 className="text-sm font-semibold mb-3">Sign-off</h3>
-        <div className="grid grid-cols-2 gap-3">
-          {[['Prepared by', 'preparedBy', 'preparedDate'], ['Reviewed by', 'reviewedBy', 'reviewedDate']].map(([label, nk, dk]) => (
-            <div key={nk} className="space-y-1.5"><p className="text-xs font-medium text-muted-foreground">{label}</p><div className="flex gap-2"><Input disabled={locked} value={(data as unknown as Record<string, string>)[nk]} onChange={e => setData(d => ({ ...d, [nk]: e.target.value }))} className="h-7 text-xs flex-1" placeholder="Name" /><Input disabled={locked} type="date" value={(data as unknown as Record<string, string>)[dk]} onChange={e => setData(d => ({ ...d, [dk]: e.target.value }))} className="h-7 text-xs w-32" /></div></div>
+        <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Testing approach (1 — select one or more)</p>
+        <div className="flex flex-wrap gap-4 text-xs">
+          {([
+            ["approachA", "A · Evaluating subsequent events"],
+            ["approachB", "B · Testing management's accounting estimate"],
+            ["approachC", "C · Developing a point estimate or range"],
+          ] as const).map(([k, label]) => (
+            <label key={k} className="flex items-center gap-2">
+              <Checkbox disabled={locked} checked={data[k] as boolean} onCheckedChange={v => setData(d => ({ ...d, [k]: !!v }))} />
+              <span>{label}</span>
+            </label>
           ))}
         </div>
       </div>
-      {locked ? <div className="rounded-lg border border-green-200 bg-green-50 px-4 py-2.5 text-xs text-green-800 font-medium">Concluded on {data.concludedOn}</div> : (
-        <div className="flex justify-end"><Button size="sm" onClick={() => { const u = { ...data, concluded: true, concludedOn: new Date().toISOString().slice(0, 10) }; setData(u); writeJsonToLocalStorage(storageKey, u); }}>Conclude Worksheet</Button></div>
-      )}
+
+      {sectionsToShow.length > 0 && <ProcedureTable sections={sectionsToShow} locked={locked} onChange={updateProcRow} />}
+
+      <div className="rounded-lg border border-border bg-card px-4 py-3 space-y-2">
+        <div className="flex items-center justify-between">
+          <h3 className="text-sm font-semibold">Performing tests of controls</h3>
+          <label className="flex items-center gap-2 text-xs"><Checkbox disabled={locked} checked={data.testsOfControlsApplicable} onCheckedChange={v => setData(d => ({ ...d, testsOfControlsApplicable: !!v }))} /> Applicable</label>
+        </div>
+        {data.testsOfControlsApplicable && (
+          <Textarea disabled={locked} value={data.testsOfControls} onChange={e => setData(d => ({ ...d, testsOfControls: e.target.value }))} className="text-xs min-h-[56px]" placeholder="Describe controls tested at the assertion level (where assessment of control risk is other than maximum, or substantive procedures alone are insufficient)." />
+        )}
+      </div>
+
+      <div className="rounded-lg border border-border bg-card px-4 py-3 space-y-3">
+        <h3 className="text-sm font-semibold">Overall evaluation</h3>
+        <div>
+          <label className="text-[11px] font-medium text-muted-foreground">Auditor's point estimate / range vs management's estimate</label>
+          <Textarea disabled={locked} value={data.pointEstimateRange} onChange={e => setData(d => ({ ...d, pointEstimateRange: e.target.value }))} className="text-xs min-h-[64px]" placeholder="Document the point estimate or range, the difference vs management's estimate, and whether the difference is within performance materiality." />
+        </div>
+        <div>
+          <label className="text-[11px] font-medium text-muted-foreground">Indicators of management bias</label>
+          <Textarea disabled={locked} value={data.managementBias} onChange={e => setData(d => ({ ...d, managementBias: e.target.value }))} className="text-xs min-h-[56px]" placeholder="Where identified, record the risk on Form 520 and evaluate the implications for the audit." />
+        </div>
+        <div>
+          <label className="text-[11px] font-medium text-muted-foreground">Presentation &amp; disclosure conclusion</label>
+          <Textarea disabled={locked} value={data.presentationConclusion} onChange={e => setData(d => ({ ...d, presentationConclusion: e.target.value }))} className="text-xs min-h-[56px]" placeholder="Conclude on whether classification, aggregation, terminology and disclosure about estimation uncertainty are appropriate under the AFRF." />
+        </div>
+        <div>
+          <label className="text-[11px] font-medium text-muted-foreground">Overall conclusion (CAS 540)</label>
+          <Textarea disabled={locked} value={data.overallConclusion} onChange={e => setData(d => ({ ...d, overallConclusion: e.target.value }))} className="text-xs min-h-[64px]" placeholder="The audit evidence obtained is sufficient and appropriate to reduce the risk of material misstatement due to this estimate to an acceptably low level." />
+        </div>
+      </div>
+
+      <SignOffCard data={data.signOff} locked={locked} onChange={(k, v) => setData(d => ({ ...d, signOff: { ...d.signOff, [k]: v } }))} />
+      <ConcludeBar concluded={data.concluded} concludedOn={data.concludedOn}
+        onConclude={() => { const u = { ...data, concluded: true, concludedOn: new Date().toISOString().slice(0, 10) }; setData(u); writeJsonToLocalStorage(storageKey, u); }} />
     </div>
   );
 }
