@@ -37,9 +37,11 @@ import { Audit575Worksheet } from "@/components/Audit575Worksheet";
 import { Audit580Worksheet } from "@/components/Audit580Worksheet";
 import { Audit590Worksheet } from "@/components/Audit590Worksheet";
 import { Audit610Worksheet } from "@/components/Audit610Worksheet";
+import { Audit605Worksheet } from "@/components/Audit605Worksheet";
 import { Audit625Worksheet } from "@/components/Audit625Worksheet";
 import { Audit630Worksheet } from "@/components/Audit630Worksheet";
 import { Audit635Worksheet } from "@/components/Audit635Worksheet";
+import { Audit645Worksheet } from "@/components/Audit645Worksheet";
 import { Audit655Worksheet } from "@/components/Audit655Worksheet";
 import { Audit666Worksheet } from "@/components/Audit666Worksheet";
 import { Audit680Worksheet } from "@/components/Audit680Worksheet";
@@ -2210,6 +2212,8 @@ export default function EngagementDetail() {
             <Audit580Worksheet />
           ) : (checklistKey === 'aud-ra-590') ? (
             <Audit590Worksheet />
+          ) : (checklistKey === 'aud-rp-605') ? (
+            <Audit605Worksheet />
           ) : (checklistKey === 'aud-rp-610') ? (
             <Audit610Worksheet />
           ) : (checklistKey === 'aud-rp-625') ? (
@@ -2218,6 +2222,8 @@ export default function EngagementDetail() {
             <Audit630Worksheet />
           ) : (checklistKey === 'aud-rp-635') ? (
             <Audit635Worksheet />
+          ) : (checklistKey === 'aud-rp-645') ? (
+            <Audit645Worksheet />
           ) : (checklistKey === 'aud-rp-655') ? (
             <Audit655Worksheet />
           ) : (checklistKey === 'aud-rp-666') ? (
