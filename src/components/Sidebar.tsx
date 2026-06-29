@@ -2224,7 +2224,13 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
                         )}
                         {/* Leaf/folder icon follows the toggle (or leads if no attachments) */}
                         {isLeaf ? (
-                          <>{renderIcon(node.icon)}</>
+                          node.icon === "folder" && (nodeDocuments[node.id]?.length ?? 0) > 0 ? (
+                            !collapsedNodeDocs.has(node.id)
+                              ? <FolderMinusIcon className="h-4 w-4 text-primary flex-shrink-0" />
+                              : <FolderPlusIcon className="h-4 w-4 text-primary flex-shrink-0" />
+                          ) : (
+                            <>{renderIcon(node.icon)}</>
+                          )
                         ) : (
                           <span className="relative flex-shrink-0 w-4 h-4 flex items-center justify-center">
                             {isOpen
