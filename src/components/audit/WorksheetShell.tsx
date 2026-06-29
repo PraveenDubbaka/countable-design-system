@@ -181,10 +181,10 @@ export function ProcedureTable({
           <thead>
             <tr className="bg-muted/40">
               <th className="text-left px-3 py-2.5 font-medium border-b border-border w-[40px]">#</th>
-              <th className="text-left px-3 py-2.5 font-medium border-b border-border">Procedure</th>
+              <th className="text-left px-3 py-2.5 font-medium border-b border-border w-[320px]">Procedure</th>
               <th className="text-left px-3 py-2.5 font-medium border-b border-border w-[80px]">P&amp;SA</th>
               <th className="text-left px-3 py-2.5 font-medium border-b border-border w-[70px]">PSC</th>
-              <th className="text-left px-3 py-2.5 font-medium border-b border-border">Comments / exceptions</th>
+              <th className="text-left px-3 py-2.5 font-medium border-b border-border w-[260px]">Comments / exceptions</th>
               <th className="text-center px-3 py-2.5 font-medium border-b border-border w-[90px]">W/P ref.</th>
             </tr>
           </thead>
