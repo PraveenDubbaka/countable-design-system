@@ -180,7 +180,7 @@ export function Audit655Worksheet() {
               <th className="text-right px-3 py-2.5 font-medium border-b border-border w-[110px]">Variance / %</th>
               <th className="text-left px-3 py-2.5 font-medium border-b border-border">Explanation</th>
               <th className="text-left px-3 py-2.5 font-medium border-b border-border w-[90px]">Consistent?</th>
-              <th className="text-left px-3 py-2.5 font-medium border-b border-border w-[90px]">W/P</th>
+              <th className="text-left px-3 py-2.5 font-medium border-b border-border w-[140px]">W/P ref.</th>
               <th className="px-3 py-2.5 border-b border-border w-[40px]" />
             </tr></thead>
             <tbody>
