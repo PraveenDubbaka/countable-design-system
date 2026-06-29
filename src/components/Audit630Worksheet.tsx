@@ -151,7 +151,7 @@ export function Audit630Worksheet() {
                       <SelectContent><SelectItem value="Y">Y</SelectItem><SelectItem value="N">N</SelectItem></SelectContent>
                     </Select>
                   </td>
-                  <td className={td}><Input disabled={locked} value={r.initials} onChange={e => upd(r.id, "initials", e.target.value)} className="h-8 text-sm" /></td>
+                  
                   {!locked && (
                     <td className={td + " text-center"}>
                       <button onClick={() => setData(d => ({ ...d, rows: d.rows.filter(x => x.id !== r.id) }))} className="text-muted-foreground hover:text-destructive">
