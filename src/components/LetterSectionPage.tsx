@@ -253,7 +253,7 @@ export const LetterSectionPage = forwardRef<LetterSectionPageHandle, LetterSecti
               <div className="absolute inset-0 rounded-full bg-primary/5" />
               <svg viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-16 h-16 relative z-10">
                 <circle cx="40" cy="40" r="38" fill="hsl(var(--primary)/0.08)" />
-                <rect x="20" y="22" width="40" height="36" rx="3" fill="white" stroke="hsl(var(--primary)/0.3)" strokeWidth="1.5" />
+                <rect x="20" y="22" width="40" height="36" rx="3" fill="hsl(var(--card))" stroke="hsl(var(--primary)/0.3)" strokeWidth="1.5" />
                 <line x1="27" y1="32" x2="53" y2="32" stroke="hsl(var(--primary)/0.25)" strokeWidth="1.5" strokeLinecap="round" />
                 <line x1="27" y1="38" x2="53" y2="38" stroke="hsl(var(--primary)/0.25)" strokeWidth="1.5" strokeLinecap="round" />
                 <line x1="27" y1="44" x2="44" y2="44" stroke="hsl(var(--primary)/0.25)" strokeWidth="1.5" strokeLinecap="round" />

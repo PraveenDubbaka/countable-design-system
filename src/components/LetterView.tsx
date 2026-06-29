@@ -113,11 +113,11 @@ export function LetterView({ checklist, onUpdate, variant = "letter", isEditing:
                 width={140}
                 height={56}
                 loading="lazy"
-                className="h-14 w-auto -ml-1"
+                className="h-14 w-auto -ml-1 dark:[mix-blend-mode:screen]"
               />
               <button
                 type="button"
-                className="mt-1 inline-flex items-center px-2.5 py-1 rounded-md bg-emerald-500 hover:bg-emerald-600 text-white text-xs font-medium transition-colors"
+                className="mt-1 inline-flex items-center px-2.5 py-1 rounded-md bg-emerald-600 dark:bg-emerald-700 hover:bg-emerald-700 dark:hover:bg-emerald-600 text-white text-xs font-medium transition-colors"
               >
                 Change signature
               </button>
@@ -165,7 +165,7 @@ export function LetterView({ checklist, onUpdate, variant = "letter", isEditing:
               width={160}
               height={80}
               loading="lazy"
-              className="absolute bottom-6 right-6 h-16 w-auto opacity-90 pointer-events-none select-none"
+              className="absolute bottom-6 right-6 h-16 w-auto opacity-90 dark:opacity-50 dark:[mix-blend-mode:screen] pointer-events-none select-none"
             />
           )
         )}
@@ -196,7 +196,7 @@ function FieldChip({
     "inline-flex items-center gap-1.5 px-3 py-1 rounded-md border text-xs font-medium w-fit";
   const styles =
     variant === "client"
-      ? "border-emerald-500/60 text-emerald-700 bg-emerald-50/40"
+      ? "border-emerald-500/60 dark:border-emerald-500/30 text-emerald-700 dark:text-emerald-400 bg-emerald-50/40 dark:bg-emerald-900/20"
       : "border-primary/40 text-primary bg-primary/5";
   return <span className={`${base} ${styles}`}>{children}</span>;
 }
@@ -213,8 +213,7 @@ function FirmLogoSVG() {
         <span className="block h-px w-10 bg-[#C2764B]" />
       </div>
       <h2
-        className="mt-3 text-2xl font-extrabold tracking-wide"
-        className="text-foreground"
+        className="mt-3 text-2xl font-extrabold tracking-wide text-foreground"
         style={{ letterSpacing: "0.02em" }}
       >
         WILDCAT ACCOUNTING

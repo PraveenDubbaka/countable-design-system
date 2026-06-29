@@ -1754,6 +1754,17 @@
 }
 .letter-body p { line-height: 1.55; }
 
+.letter-portal-banner {
+  background: #f0fdf4;
+  border: 1px solid #86efac;
+  color: #15803d;
+}
+.dark .letter-portal-banner {
+  background: rgba(6, 78, 59, 0.2);
+  border-color: rgba(52, 211, 153, 0.3);
+  color: rgb(110, 231, 183);
+}
+
 /* ============================================
    LUKA UI COMPONENT CLASSES
    ============================================ */

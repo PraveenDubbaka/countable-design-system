@@ -5624,7 +5624,7 @@ This worksheet addresses:
 // Audit Engagement Letter — CAS 210 (Letter format — rendered by LetterView)
 export const generateAuditEngagementLetterChecklist = (): Checklist =>
   makeLetterChecklist('global-template-audit-engagement-letter', 'Engagement Letter', 'Audit engagement letter — CAS 210 (Agreeing the Terms of Audit Engagements).', `
-    <div style="background:#f0fdf4;border:1px solid #86efac;border-radius:6px;padding:8px 12px;margin-bottom:16px;font-size:11px;color:#15803d;display:flex;align-items:center;gap:8px;"> <span style="font-weight:700;">✓ Sent to client portal</span> · April 5, 2024 · Acknowledged by Robert Morrison (CEO) · April 5, 2024 </div>
+    <div class="letter-portal-banner" style="border-radius:6px;padding:8px 12px;margin-bottom:16px;font-size:11px;display:flex;align-items:center;gap:8px;"> <span style="font-weight:700;">✓ Sent to client portal</span> · April 5, 2024 · Acknowledged by Robert Morrison (CEO) · April 5, 2024 </div>
     <p class="text-sm text-foreground">April 5, 2024</p>
     <p class="mt-6 text-sm text-foreground">Mr. Robert Morrison<br/>Chief Executive Officer<br/>Shipping Line Inc.<br/>123 Harbour Drive, Halifax, Nova Scotia, B3J 1A1</p>
     <p class="mt-6 text-sm text-foreground">Dear Mr. Morrison,</p>
@@ -7482,7 +7482,7 @@ export const generateLetterToManagementSignificantDeficienciesCA = (): Checklist
 
 export const generateAuditEngagementLetterGAASUSGAAP = (): Checklist =>
   makeLetterChecklist('glt-us-1', 'Audit Engagement Letter (GAAS/US GAAP)', 'GAAS Audit Engagement Letter — US GAAP Framework', `
-    <div style="background:#f0fdf4;border:1px solid #86efac;border-radius:6px;padding:8px 12px;margin-bottom:16px;font-size:11px;color:#15803d;display:flex;align-items:center;gap:8px;"> <span style="font-weight:700;">✓ Sent to client portal</span> · January 15, 2025 · Acknowledged by Robert Morrison (CEO) · January 16, 2025 </div>
+    <div class="letter-portal-banner" style="border-radius:6px;padding:8px 12px;margin-bottom:16px;font-size:11px;display:flex;align-items:center;gap:8px;"> <span style="font-weight:700;">✓ Sent to client portal</span> · January 15, 2025 · Acknowledged by Robert Morrison (CEO) · January 16, 2025 </div>
     <p class="text-sm text-foreground">January 14, 2025</p>
     <p class="mt-6 text-sm text-foreground">Robert Morrison<br/>Chief Executive Officer<br/>Harbor Freight Logistics LLC<br/>1200 Commerce Drive, Suite 400<br/>Wilmington, DE 19801</p>
     <p class="mt-6 text-sm text-foreground">Dear Mr. Morrison,</p>
