@@ -96,7 +96,7 @@ export function Audit645Worksheet() {
 
   const locked = data.concluded;
 
-  const updateProcRow = (si: number, rowId: string, field: keyof ProcRow, value: string) =>
+  const updateProcRow = (si: number, rowId: string, field: keyof ProcRow, value: string | import("@/components/RefButton").RefDoc[]) =>
     setData(d => ({
       ...d,
       sections: d.sections.map((s, i) => i === si ? { ...s, rows: s.rows.map(r => r.id === rowId ? { ...r, [field]: value } : r) } : s),
