@@ -187,6 +187,24 @@ function summariseRiskAsEstimate(r: Risk520Row): string {
 
 type SectionKey = "proceduresA" | "proceduresB" | "proceduresC" | "testsOfControls";
 
+function LabelImpl({ children }: { children: React.ReactNode }) {
+  return <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground block mb-1.5">{children}</label>;
+}
+
+function YNSelectImpl({ value, onChange, withNA = false, locked }: { value: string; onChange: (v: string) => void; withNA?: boolean; locked: boolean }) {
+  return (
+    <Select disabled={locked} value={value} onValueChange={onChange}>
+      <SelectTrigger className="h-8 text-sm"><SelectValue placeholder="Select" /></SelectTrigger>
+      <SelectContent>
+        <SelectItem value="Y">Yes</SelectItem>
+        <SelectItem value="N">No</SelectItem>
+        {withNA && <SelectItem value="N/A">N/A</SelectItem>}
+      </SelectContent>
+    </Select>
+  );
+}
+
+
 export function Audit635Worksheet() {
   const { engagementId } = useParams<{ engagementId: string }>();
   const ctx = useEngagementContext();
@@ -281,19 +299,11 @@ export function Audit635Worksheet() {
   // ── Local helpers ───────────────────────────────────────────────────────────
 
   const YNSelect = ({ value, onChange, withNA = false }: { value: string; onChange: (v: string) => void; withNA?: boolean }) => (
-    <Select disabled={locked} value={value} onValueChange={onChange}>
-      <SelectTrigger className="h-8 text-sm"><SelectValue placeholder="Select" /></SelectTrigger>
-      <SelectContent>
-        <SelectItem value="Y">Yes</SelectItem>
-        <SelectItem value="N">No</SelectItem>
-        {withNA && <SelectItem value="N/A">N/A</SelectItem>}
-      </SelectContent>
-    </Select>
+    <YNSelectImpl value={value} onChange={onChange} withNA={withNA} locked={locked} />
   );
 
-  const Label = ({ children }: { children: React.ReactNode }) => (
-    <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground block mb-1.5">{children}</label>
-  );
+  const Label = LabelImpl;
+
 
   return (
     <WorksheetLayout
