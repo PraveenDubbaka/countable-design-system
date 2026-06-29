@@ -1005,7 +1005,7 @@ function TableRow({
           <Button
             variant="ghost"
             size="sm"
-            className="text-muted-foreground hover:text-foreground hover:bg-[#1C63A6] hover:text-white transition-colors"
+            className="text-muted-foreground hover:text-primary-foreground hover:bg-primary transition-colors"
             disabled={isPreviewMode}
           >
             + Ref
@@ -1222,7 +1222,7 @@ export function ChecklistTableView({ checklist, onUpdate, isPreviewMode }: Check
                 variant="default"
                 size="sm"
                 onClick={() => handleAddRow(sectionIndex)}
-                className="bg-[#3379C9] hover:bg-[#1C63A6] text-white"
+                className="bg-primary hover:bg-primary/90 text-primary-foreground"
               >
                 <Plus className="h-4 w-4 mr-1" />
                 Add Row

@@ -76,7 +76,7 @@ export function LetterView({ checklist, onUpdate, variant = "letter", isEditing:
     <div className="flex-1 flex flex-col h-full overflow-hidden bg-background">
 
       {/* Scrollable body */}
-      <div className="flex-1 overflow-y-auto px-6 py-6 bg-white">
+      <div className="flex-1 overflow-y-auto px-6 py-6 bg-background">
 
       {/* Letter / Report sheet */}
       <div className="max-w-3xl mx-auto bg-card border border-border rounded-2xl shadow-sm relative overflow-hidden">
@@ -214,7 +214,8 @@ function FirmLogoSVG() {
       </div>
       <h2
         className="mt-3 text-2xl font-extrabold tracking-wide"
-        style={{ color: "#1B3A6B", letterSpacing: "0.02em" }}
+        className="text-foreground"
+        style={{ letterSpacing: "0.02em" }}
       >
         WILDCAT ACCOUNTING
       </h2>
