@@ -201,15 +201,16 @@ export function ProcedureTable({
 }
 
 
-function FragmentRows({ title, rows, sectionIdx, td, locked, onChange }: {
+function FragmentRows({ title, rows, sectionIdx, td, locked, onChange, showPsa, colCount }: {
   title: string; rows: ProcRow[]; sectionIdx: number; td: string; locked: boolean;
   onChange: (sectionIdx: number, rowId: string, field: keyof ProcRow, value: string | RefDoc[]) => void;
+  showPsa: boolean; colCount: number;
 }) {
   let n = 0;
   return (
     <>
       <tr className="bg-primary/[0.06]">
-        <td colSpan={6} className="px-3 py-2 text-[11px] font-semibold uppercase tracking-wide text-primary border-b border-border">{title}</td>
+        <td colSpan={colCount} className="px-3 py-2 text-[11px] font-semibold uppercase tracking-wide text-primary border-b border-border">{title}</td>
       </tr>
       {rows.map(r => {
         n += 1;
@@ -217,7 +218,7 @@ function FragmentRows({ title, rows, sectionIdx, td, locked, onChange }: {
           <tr key={r.id} className="hover:bg-muted/20">
             <td className={`${td} text-muted-foreground font-medium`}>{n}</td>
             <td className={td}><span className="block whitespace-pre-wrap leading-snug">{r.procedure}</span></td>
-            <td className={`${td} font-mono text-[11px] whitespace-nowrap`}>{r.psa || "—"}</td>
+            {showPsa && <td className={`${td} font-mono text-[11px] whitespace-nowrap`}>{r.psa || "—"}</td>}
             <td className={td}>
               <Select disabled={locked} value={r.psc} onValueChange={v => onChange(sectionIdx, r.id, "psc", v)}>
                 <SelectTrigger className="h-8 text-xs"><SelectValue placeholder="—" /></SelectTrigger>
@@ -246,6 +247,7 @@ function FragmentRows({ title, rows, sectionIdx, td, locked, onChange }: {
     </>
   );
 }
+
 
 // ─── Sign-off (kept for backward-compat type only; UI removed per requirements) ─
 export interface SignOffData {
