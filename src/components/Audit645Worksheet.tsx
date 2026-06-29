@@ -6,7 +6,7 @@ import { useEngagementContext } from "@/hooks/useEngagementContext";
 import { loadRisks520, overallRisk520, filterRisks } from "@/lib/audit520Bridge";
 import { formatCurrency } from "@/lib/engagementContext";
 import {
-  WorksheetHeader, LinkedRisksCard, ProcedureTable, SignOffCard, ConcludeBar, makeProcRow,
+  WorksheetLayout, WorksheetHeader, LinkedRisksCard, ProcedureTable, ConcludeBar, makeProcRow,
   type ProcRow, type SignOffData,
 } from "@/components/audit/WorksheetShell";
 
@@ -103,17 +103,19 @@ export function Audit645Worksheet() {
     }));
 
   return (
-    <div className="p-4 space-y-4">
+    <WorksheetLayout
+      objective="Identify and respond appropriately to litigation, claims and instances of non-compliance with laws and regulations that may be material to the financial statements."
+      standard={`${ctx.standardPrefix} 250 / ${ctx.standardPrefix} 501`}
+    >
       <WorksheetHeader
         ctx={ctx}
         formNo="645"
         title="Litigation, Claims and Non-Compliance"
         standard={`${ctx.standardPrefix} 250 / ${ctx.standardPrefix} 501`}
         overallRisk={overall}
-        objective="Identify and respond appropriately to litigation, claims and instances of non-compliance with laws and regulations that may be material to the financial statements."
       />
 
-      <div className="rounded-lg border border-border bg-card px-4 py-3 grid grid-cols-3 gap-3 items-center">
+      <div className="bg-card text-card-foreground border border-border shadow-[0_2px_8px_hsl(213_40%_20%/0.06)] rounded-md px-6 py-4 grid grid-cols-3 gap-3 items-center">
         <div className="col-span-1 text-[11px] font-medium text-muted-foreground uppercase tracking-wide">Performance materiality (Form 420)</div>
         <div className="col-span-2 text-sm font-mono">{data.performanceMateriality || formatCurrency(ctx.performanceMateriality)}</div>
       </div>
@@ -122,25 +124,24 @@ export function Audit645Worksheet() {
 
       <ProcedureTable sections={data.sections} locked={locked} onChange={updateProcRow} />
 
-      <div className="rounded-lg border border-border bg-card px-4 py-3 space-y-2">
-        <label className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Other procedures (specify)</label>
-        <Textarea disabled={locked} value={data.otherProcedures} onChange={e => setData(d => ({ ...d, otherProcedures: e.target.value }))} className="text-xs min-h-[56px]" />
+      <div className="bg-card text-card-foreground border border-border shadow-[0_2px_8px_hsl(213_40%_20%/0.06)] rounded-md overflow-hidden">
+        <div className="px-6 py-3.5 border-b border-border"><h3 className="text-sm font-semibold">Other procedures (specify)</h3></div>
+        <div className="p-6"><Textarea disabled={locked} value={data.otherProcedures} onChange={e => setData(d => ({ ...d, otherProcedures: e.target.value }))} className="text-sm min-h-[72px]" /></div>
       </div>
 
-      <div className="rounded-lg border border-border bg-card px-4 py-3 space-y-2">
-        <label className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Non-compliance — communications log</label>
-        <Textarea disabled={locked} value={data.nonComplianceCommunication} onChange={e => setData(d => ({ ...d, nonComplianceCommunication: e.target.value }))} className="text-xs min-h-[64px]" placeholder="Summarise what was communicated, to whom (management / TCWG / external authority), and on what date." />
+      <div className="bg-card text-card-foreground border border-border shadow-[0_2px_8px_hsl(213_40%_20%/0.06)] rounded-md overflow-hidden">
+        <div className="px-6 py-3.5 border-b border-border"><h3 className="text-sm font-semibold">Non-compliance — communications log</h3></div>
+        <div className="p-6"><Textarea disabled={locked} value={data.nonComplianceCommunication} onChange={e => setData(d => ({ ...d, nonComplianceCommunication: e.target.value }))} className="text-sm min-h-[80px]" placeholder="Summarise what was communicated, to whom (management / TCWG / external authority), and on what date." /></div>
       </div>
 
-      <div className="rounded-lg border border-border bg-card px-4 py-3 space-y-2">
-        <label className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Overall audit conclusion</label>
-        <Textarea disabled={locked} value={data.overallConclusion} onChange={e => setData(d => ({ ...d, overallConclusion: e.target.value }))} className="text-xs min-h-[72px]"
-          placeholder="The audit evidence obtained is sufficient and appropriate to reduce the risk of material misstatement from litigation, claims and non-compliance to an acceptably low level." />
+      <div className="bg-card text-card-foreground border border-border shadow-[0_2px_8px_hsl(213_40%_20%/0.06)] rounded-md overflow-hidden">
+        <div className="px-6 py-3.5 border-b border-border"><h3 className="text-sm font-semibold">Overall audit conclusion</h3></div>
+        <div className="p-6"><Textarea disabled={locked} value={data.overallConclusion} onChange={e => setData(d => ({ ...d, overallConclusion: e.target.value }))} className="text-sm min-h-[88px]"
+          placeholder="The audit evidence obtained is sufficient and appropriate to reduce the risk of material misstatement from litigation, claims and non-compliance to an acceptably low level." /></div>
       </div>
 
-      <SignOffCard data={data.signOff} locked={locked} onChange={(k, v) => setData(d => ({ ...d, signOff: { ...d.signOff, [k]: v } }))} />
       <ConcludeBar concluded={data.concluded} concludedOn={data.concludedOn}
         onConclude={() => { const u = { ...data, concluded: true, concludedOn: new Date().toISOString().slice(0, 10) }; setData(u); writeJsonToLocalStorage(storageKey, u); }} />
-    </div>
+    </WorksheetLayout>
   );
 }

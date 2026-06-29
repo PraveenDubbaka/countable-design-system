@@ -8,7 +8,7 @@ import { readJsonFromLocalStorage, writeJsonToLocalStorage } from "@/lib/safeJso
 import { useEngagementContext } from "@/hooks/useEngagementContext";
 import { loadRisks520, overallRisk520, filterRisks } from "@/lib/audit520Bridge";
 import {
-  WorksheetHeader, LinkedRisksCard, ProcedureTable, SignOffCard, ConcludeBar, makeProcRow,
+  WorksheetLayout, WorksheetHeader, LinkedRisksCard, ProcedureTable, ConcludeBar, makeProcRow,
   type ProcRow, type SignOffData,
 } from "@/components/audit/WorksheetShell";
 
@@ -114,15 +114,18 @@ export function Audit635Worksheet() {
   };
 
   return (
-    <div className="p-4 space-y-4">
+    <WorksheetLayout
+      objective="Document further audit procedures to obtain evidence about the reasonableness of accounting estimates (including fair value) and whether financial-statement disclosures are adequate. Use this form for ONE estimate at a time."
+      standard={`${ctx.standardPrefix} 540`}
+    >
       <WorksheetHeader
         ctx={ctx}
         formNo="635"
         title="Accounting Estimates — Further Audit Procedures"
         standard={`${ctx.standardPrefix} 540`}
         overallRisk={overall}
-        objective="Document further audit procedures to obtain evidence about the reasonableness of accounting estimates (including fair value) and whether financial-statement disclosures are adequate. Use this form for ONE estimate at a time."
       />
+
 
       <LinkedRisksCard risks={estimateRisks} emptyHint="No estimate-related risks tagged in Form 520." />
 
@@ -192,9 +195,8 @@ export function Audit635Worksheet() {
         </div>
       </div>
 
-      <SignOffCard data={data.signOff} locked={locked} onChange={(k, v) => setData(d => ({ ...d, signOff: { ...d.signOff, [k]: v } }))} />
       <ConcludeBar concluded={data.concluded} concludedOn={data.concludedOn}
         onConclude={() => { const u = { ...data, concluded: true, concludedOn: new Date().toISOString().slice(0, 10) }; setData(u); writeJsonToLocalStorage(storageKey, u); }} />
-    </div>
+    </WorksheetLayout>
   );
 }

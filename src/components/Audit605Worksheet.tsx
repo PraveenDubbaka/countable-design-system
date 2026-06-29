@@ -6,7 +6,7 @@ import { readJsonFromLocalStorage, writeJsonToLocalStorage } from "@/lib/safeJso
 import { useEngagementContext } from "@/hooks/useEngagementContext";
 import { loadRisks520, overallRisk520 } from "@/lib/audit520Bridge";
 import {
-  WorksheetHeader, LinkedRisksCard, ProcedureTable, SignOffCard, ConcludeBar, makeProcRow,
+  WorksheetLayout, WorksheetHeader, LinkedRisksCard, ProcedureTable, ConcludeBar, makeProcRow,
   type ProcRow, type SignOffData,
 } from "@/components/audit/WorksheetShell";
 
@@ -88,43 +88,47 @@ export function Audit605Worksheet() {
     }));
 
   return (
-    <div className="p-4 space-y-4">
+    <WorksheetLayout
+      objective="Design overall responses to address risks of material misstatement at the financial-statement level. Responses are based on the assessment of risk recorded on Form 520."
+      standard={`${ctx.standardPrefix} 330.5`}
+    >
       <WorksheetHeader
         ctx={ctx}
         formNo="605"
         title="Responding to Risk at the Financial-Statement Level"
         standard={`${ctx.standardPrefix} 330.5`}
         overallRisk={overall}
-        objective="Design overall responses to address risks of material misstatement at the financial-statement level. Responses are based on the assessment of risk recorded on Form 520."
       />
 
       <LinkedRisksCard risks={fsRisks} emptyHint="No FS-level or significant risks have been flagged in Form 520." />
 
-      <div className="rounded-lg border border-border bg-card px-4 py-3 space-y-2">
-        <label className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">A · Control weaknesses at the financial-statement level</label>
-        <Textarea disabled={locked} value={data.fsLevelControlWeaknesses}
-          onChange={e => setData(d => ({ ...d, fsLevelControlWeaknesses: e.target.value }))}
-          className="text-xs min-h-[72px]"
-          placeholder="Summarise FS-level control weaknesses identified during the audit (e.g. weak governance, lack of segregation of duties, management override exposure)…" />
+      <div className="bg-card text-card-foreground border border-border shadow-[0_2px_8px_hsl(213_40%_20%/0.06)] rounded-md overflow-hidden">
+        <div className="px-6 py-3.5 border-b border-border"><h3 className="text-sm font-semibold">A · Control weaknesses at the financial-statement level</h3></div>
+        <div className="p-6">
+          <Textarea disabled={locked} value={data.fsLevelControlWeaknesses}
+            onChange={e => setData(d => ({ ...d, fsLevelControlWeaknesses: e.target.value }))}
+            className="text-sm min-h-[88px]"
+            placeholder="Summarise FS-level control weaknesses identified during the audit (e.g. weak governance, lack of segregation of duties, management override exposure)…" />
+        </div>
       </div>
 
       <ProcedureTable sections={data.sections} locked={locked} onChange={updateRow} />
 
-      <div className="rounded-lg border border-border bg-card px-4 py-3 space-y-2">
-        <label className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Rationale / overall conclusion</label>
-        <Textarea disabled={locked} value={data.rationale}
-          onChange={e => setData(d => ({ ...d, rationale: e.target.value }))}
-          className="text-xs min-h-[80px]"
-          placeholder="Explain why the overall responses are appropriate given the assessed FS-level risk and the team composition / supervision approach…" />
+      <div className="bg-card text-card-foreground border border-border shadow-[0_2px_8px_hsl(213_40%_20%/0.06)] rounded-md overflow-hidden">
+        <div className="px-6 py-3.5 border-b border-border"><h3 className="text-sm font-semibold">Rationale / overall conclusion</h3></div>
+        <div className="p-6">
+          <Textarea disabled={locked} value={data.rationale}
+            onChange={e => setData(d => ({ ...d, rationale: e.target.value }))}
+            className="text-sm min-h-[96px]"
+            placeholder="Explain why the overall responses are appropriate given the assessed FS-level risk and the team composition / supervision approach…" />
+        </div>
       </div>
-
-      <SignOffCard data={data.signOff} locked={locked} onChange={(k, v) => setData(d => ({ ...d, signOff: { ...d.signOff, [k]: v } }))} />
 
       <ConcludeBar concluded={data.concluded} concludedOn={data.concludedOn}
         onConclude={() => {
           const u = { ...data, concluded: true, concludedOn: new Date().toISOString().slice(0, 10) };
           setData(u); writeJsonToLocalStorage(storageKey, u);
         }} />
-    </div>
+    </WorksheetLayout>
   );
 }
