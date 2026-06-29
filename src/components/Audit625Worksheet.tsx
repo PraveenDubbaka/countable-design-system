@@ -517,7 +517,7 @@ export function Audit625Worksheet() {
               </tr>
             </thead>
             <tbody className="divide-y divide-border">
-              {data.communication.map((c, i) => (
+              {(Array.isArray(data.communication) ? data.communication : []).map((c, i) => (
                 <tr key={c.id} className="hover:bg-muted/20">
                   <td className="px-4 py-3 text-muted-foreground font-mono text-xs align-top">{i + 1}</td>
                   <td className="px-4 py-3 text-sm align-top leading-snug">{c.topic}</td>
