@@ -98,13 +98,13 @@ export function templateViewToMyTemplate(
 }
 
 export const categoryConfig: Record<CategoryType, { icon: string; label: string; className: string }> = {
-  checklist: { icon: "☐", label: "Checklists", className: "bg-[#fef3ee] text-[#c4500a] border-[#e8843a]" },
-  worksheet: { icon: "⊞", label: "Worksheets", className: "bg-[#eef1fb] text-[#4553c4] border-[#7b8ad4]" },
-  letter: { icon: "✉", label: "Letters", className: "bg-[#eef1fb] text-[#4553c4] border-[#7b8ad4]" },
-  folder: { icon: "📁", label: "Folders", className: "bg-[#f3f4f6] text-[#475569] border-[#9ca3af]" },
-  module: { icon: "⊞", label: "Modules", className: "bg-[#fef9eb] text-[#b45309] border-[#e8a830]" },
-  "financial-statement": { icon: "📄", label: "Financial Statements", className: "bg-[#eff6ff] text-[#2563eb] border-[#60a5fa]" },
-  report: { icon: "📋", label: "Reports", className: "bg-[#fdf2f8] text-[#be185d] border-[#ec4899]" },
+  checklist: { icon: "☐", label: "Checklists", className: "bg-orange-50 dark:bg-orange-950/40 text-orange-700 dark:text-orange-400 border-orange-300 dark:border-orange-800/60" },
+  worksheet: { icon: "⊞", label: "Worksheets", className: "bg-indigo-50 dark:bg-indigo-950/40 text-indigo-700 dark:text-indigo-400 border-indigo-300 dark:border-indigo-800/60" },
+  letter: { icon: "✉", label: "Letters", className: "bg-indigo-50 dark:bg-indigo-950/40 text-indigo-700 dark:text-indigo-400 border-indigo-300 dark:border-indigo-800/60" },
+  folder: { icon: "📁", label: "Folders", className: "bg-slate-100 dark:bg-slate-800/50 text-slate-600 dark:text-slate-400 border-slate-300 dark:border-slate-700/60" },
+  module: { icon: "⊞", label: "Modules", className: "bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-400 border-amber-300 dark:border-amber-800/60" },
+  "financial-statement": { icon: "📄", label: "Financial Statements", className: "bg-blue-50 dark:bg-blue-950/40 text-blue-700 dark:text-blue-400 border-blue-300 dark:border-blue-800/60" },
+  report: { icon: "📋", label: "Reports", className: "bg-pink-50 dark:bg-pink-950/40 text-pink-700 dark:text-pink-400 border-pink-300 dark:border-pink-800/60" },
 };
 
 // ── Tree structure ──

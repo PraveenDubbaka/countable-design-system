@@ -97,14 +97,14 @@ function SectionBlock({ section }: { section: TemplateSection }) {
 // ── Standards Banner ──
 function StandardsBanner({ banner }: { banner: NonNullable<(typeof allTemplateViews)[string]["standardsBanner"]> }) {
   const colorMap = {
-    blue: "bg-blue-50 border-blue-200 text-blue-800",
-    green: "bg-green-50 border-green-200 text-green-800",
-    red: "bg-red-50 border-red-200 text-red-800",
+    blue: "bg-blue-50 dark:bg-blue-950/40 border-blue-200 dark:border-blue-800/50 text-blue-800 dark:text-blue-300",
+    green: "bg-green-50 dark:bg-green-950/40 border-green-200 dark:border-green-800/50 text-green-800 dark:text-green-300",
+    red: "bg-red-50 dark:bg-red-950/40 border-red-200 dark:border-red-800/50 text-red-800 dark:text-red-300",
   };
   const badgeMap = {
-    blue: "bg-blue-100 text-blue-800",
-    green: "bg-green-100 text-green-800",
-    red: "bg-red-100 text-red-800",
+    blue: "bg-blue-100 dark:bg-blue-900/50 text-blue-800 dark:text-blue-300",
+    green: "bg-green-100 dark:bg-green-900/50 text-green-800 dark:text-green-300",
+    red: "bg-red-100 dark:bg-red-900/50 text-red-800 dark:text-red-300",
   };
   return (
     <div className={cn("border-b px-7 py-2.5 flex items-center gap-2.5 flex-shrink-0 text-xs", colorMap[banner.color])}>
@@ -217,7 +217,7 @@ function EditableRow({
               autoFocus
             />
             {isIncomplete && (
-              <p className="text-[11px] text-amber-600 mt-1 flex items-center gap-1">
+              <p className="text-[11px] text-amber-600 dark:text-amber-400 mt-1 flex items-center gap-1">
                 <AlertTriangle className="h-3 w-3" />
                 All fields are mandatory to save this record
               </p>
@@ -524,12 +524,12 @@ function MyTemplateEditor({
                 onChange={e => { setTitleDraft(e.target.value); setIsDirty(true); }}
                 onBlur={() => { setEditingTitle(false); mutate(d => ({ ...d, name: titleDraft.trim() || d.name })); }}
                 onKeyDown={handleTitleKeyDown}
-                className="text-xl font-bold text-[#1a3d6f] border-none shadow-none p-0 h-auto focus-visible:ring-0 bg-transparent w-80"
+                className="text-xl font-bold text-foreground border-none shadow-none p-0 h-auto focus-visible:ring-0 bg-transparent w-80"
                 autoFocus
               />
             ) : (
               <h1
-                className="text-xl font-bold text-[#1a3d6f] cursor-text hover:bg-muted/30 px-1 rounded"
+                className="text-xl font-bold text-foreground cursor-text hover:bg-muted/30 px-1 rounded"
                 onClick={() => { setEditingTitle(true); setTimeout(() => titleInputRef.current?.select(), 0); }}
               >
                 {data.name}
@@ -657,9 +657,9 @@ export default function EngagementTemplates() {
               {/* Header */}
               <div className="flex items-center justify-between px-7 pt-4 pb-3.5 border-b border-border flex-shrink-0">
                 <div>
-                  <h1 className="text-xl font-bold text-[#1a3d6f]">{activeView.title}</h1>
+                  <h1 className="text-xl font-bold text-foreground">{activeView.title}</h1>
                 </div>
-                <Button size="sm" className="bg-[#1a3d6f] hover:bg-[#0f2d56] text-white text-[13px] font-semibold">
+                <Button size="sm" className="bg-primary hover:bg-primary/90 text-primary-foreground text-[13px] font-semibold">
                   <Plus className="h-4 w-4 mr-1" /> My Templates
                 </Button>
               </div>
