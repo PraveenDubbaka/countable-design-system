@@ -123,7 +123,7 @@ export function Audit630Worksheet() {
               <th className="text-left px-3 py-2.5 font-medium text-xs border-b border-border w-[120px]">Amount $</th>
               <th className="text-left px-3 py-2.5 font-medium text-xs border-b border-border">Exceptions / difficulties</th>
               <th className="text-left px-3 py-2.5 font-medium text-xs border-b border-border w-[80px]">PSC</th>
-              <th className="text-left px-3 py-2.5 font-medium text-xs border-b border-border w-[90px]">Initials</th>
+              
               {!locked && <th className="border-b border-border w-[44px]"></th>}
             </tr></thead>
             <tbody>
