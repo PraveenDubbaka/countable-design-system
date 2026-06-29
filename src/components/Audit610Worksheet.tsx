@@ -89,7 +89,17 @@ export function Audit610Worksheet() {
   const overall = useMemo(() => overallRisk520(risks), [risks]);
 
   const storageKey = `audit-610-data-${engagementId ?? "default"}`;
-  const [data, setData] = useState<Data610>(() => readJsonFromLocalStorage<Data610>(storageKey, buildDefault(ctx.performanceMateriality)) ?? buildDefault(ctx.performanceMateriality));
+  const [data, setData] = useState<Data610>(() => {
+    const def = buildDefault(ctx.performanceMateriality);
+    const stored = readJsonFromLocalStorage<Partial<Data610>>(storageKey, def) ?? def;
+    return {
+      ...def,
+      ...stored,
+      plan: { ...def.plan, ...(stored.plan ?? {}) },
+      results: stored.results?.length ? stored.results : def.results,
+      signOff: { ...def.signOff, ...(stored.signOff ?? {}) },
+    } as Data610;
+  });
 
   const saveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const first = useRef(true);
