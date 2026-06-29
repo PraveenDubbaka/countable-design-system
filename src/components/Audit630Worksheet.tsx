@@ -9,7 +9,7 @@ import { readJsonFromLocalStorage, writeJsonToLocalStorage } from "@/lib/safeJso
 import { useEngagementContext } from "@/hooks/useEngagementContext";
 import { loadRisks520, overallRisk520 } from "@/lib/audit520Bridge";
 import {
-  WorksheetHeader, LinkedRisksCard, SignOffCard, ConcludeBar, type SignOffData,
+  WorksheetLayout, WorksheetHeader, LinkedRisksCard, ConcludeBar, type SignOffData,
 } from "@/components/audit/WorksheetShell";
 
 interface ConfirmRow {
@@ -85,15 +85,18 @@ export function Audit630Worksheet() {
   const td = "border-b border-border px-2 py-1.5 text-xs align-top";
 
   return (
-    <div className="p-4 space-y-4">
+    <WorksheetLayout
+      objective="Summarise the use of external confirmation procedures, the nature and number of items confirmed, and any exceptions or difficulties encountered."
+      standard={`${ctx.standardPrefix} 505`}
+    >
       <WorksheetHeader
         ctx={ctx}
         formNo="630"
         title="Summary of External Confirmations"
         standard={`${ctx.standardPrefix} 505`}
         overallRisk={overall}
-        objective="Summarise the use of external confirmation procedures, the nature and number of items confirmed, and any exceptions or difficulties encountered."
       />
+
 
       <LinkedRisksCard
         risks={risks.filter(r => /receiv|payab|bank|debt|loan|invent|legal|confirm/i.test(`${r.scotabd ?? ""} ${r.rmmIdentified}`))}
@@ -167,9 +170,8 @@ export function Audit630Worksheet() {
         <Textarea disabled={locked} value={data.overallConclusion} onChange={e => setData(d => ({ ...d, overallConclusion: e.target.value }))} className="text-xs min-h-[72px]" placeholder="Conclude on the sufficiency of evidence obtained from external confirmations." />
       </div>
 
-      <SignOffCard data={data.signOff} locked={locked} onChange={(k, v) => setData(d => ({ ...d, signOff: { ...d.signOff, [k]: v } }))} />
       <ConcludeBar concluded={data.concluded} concludedOn={data.concludedOn}
         onConclude={() => { const u = { ...data, concluded: true, concludedOn: new Date().toISOString().slice(0, 10) }; setData(u); writeJsonToLocalStorage(storageKey, u); }} />
-    </div>
+    </WorksheetLayout>
   );
 }

@@ -7,7 +7,7 @@ import { readJsonFromLocalStorage, writeJsonToLocalStorage } from "@/lib/safeJso
 import { useEngagementContext } from "@/hooks/useEngagementContext";
 import { loadRisks520, overallRisk520, filterRisks } from "@/lib/audit520Bridge";
 import {
-  WorksheetHeader, LinkedRisksCard, ProcedureTable, SignOffCard, ConcludeBar, makeProcRow,
+  WorksheetLayout, WorksheetHeader, LinkedRisksCard, ProcedureTable, ConcludeBar, makeProcRow,
   type ProcRow, type SignOffData,
 } from "@/components/audit/WorksheetShell";
 
@@ -126,15 +126,18 @@ export function Audit625Worksheet() {
   );
 
   return (
-    <div className="p-4 space-y-4">
+    <WorksheetLayout
+      objective="Evaluate management's plan of action to address identified events or conditions that cast doubt on the entity's ability to continue as a going concern. Part 1 is on Form 525."
+      standard={`${ctx.standardPrefix} 570`}
+    >
       <WorksheetHeader
         ctx={ctx}
         formNo="625"
         title="Going-Concern Evaluation (Part 2)"
         standard={`${ctx.standardPrefix} 570`}
         overallRisk={overall}
-        objective="Evaluate management's plan of action to address identified events or conditions that cast doubt on the entity's ability to continue as a going concern. Part 1 is on Form 525."
       />
+
 
       <LinkedRisksCard risks={gcRisks} emptyHint="No going-concern related risks tagged in Form 520." />
 
@@ -204,10 +207,9 @@ export function Audit625Worksheet() {
           className="text-xs min-h-[64px]" placeholder="Describe what was communicated, to whom, and on what date." />
       </Card>
 
-      <SignOffCard data={data.signOff} locked={locked} onChange={(k, v) => setData(d => ({ ...d, signOff: { ...d.signOff, [k]: v } }))} />
       <ConcludeBar concluded={data.concluded} concludedOn={data.concludedOn}
         onConclude={() => { const u = { ...data, concluded: true, concludedOn: new Date().toISOString().slice(0, 10) }; setData(u); writeJsonToLocalStorage(storageKey, u); }} />
-    </div>
+    </WorksheetLayout>
   );
 }
 

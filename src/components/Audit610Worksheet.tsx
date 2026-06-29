@@ -10,7 +10,7 @@ import { useEngagementContext, } from "@/hooks/useEngagementContext";
 import { loadRisks520, overallRisk520 } from "@/lib/audit520Bridge";
 import { formatCurrency } from "@/lib/engagementContext";
 import {
-  WorksheetHeader, LinkedRisksCard, SignOffCard, ConcludeBar, type SignOffData,
+  WorksheetLayout, WorksheetHeader, LinkedRisksCard, ConcludeBar, type SignOffData,
 } from "@/components/audit/WorksheetShell";
 
 // ─── Sample-plan calculator (mirrors the spreadsheet on pages 1-3 of the source workbook) ──
@@ -149,15 +149,18 @@ export function Audit610Worksheet() {
   const td = "border-b border-border px-2 py-1.5 text-xs align-top";
 
   return (
-    <div className="p-4 space-y-4">
+    <WorksheetLayout
+      objective="Use statistical or non-statistical (judgmental) sampling to provide a reasonable basis for conclusions about the population from which the sample is selected."
+      standard={`${ctx.standardPrefix} 530`}
+    >
       <WorksheetHeader
         ctx={ctx}
         formNo="610"
         title="Sampling — Tests of Details"
         standard={`${ctx.standardPrefix} 530`}
         overallRisk={overall}
-        objective="Use statistical or non-statistical (judgmental) sampling to provide a reasonable basis for conclusions about the population from which the sample is selected."
       />
+
 
       <LinkedRisksCard risks={risks.filter(r => r.source === "B")} emptyHint="Add assertion-level risks in Form 520 to scope this sample." />
 
@@ -291,9 +294,8 @@ export function Audit610Worksheet() {
         </div>
       </div>
 
-      <SignOffCard data={data.signOff} locked={locked} onChange={(k, v) => setData(d => ({ ...d, signOff: { ...d.signOff, [k]: v } }))} />
       <ConcludeBar concluded={data.concluded} concludedOn={data.concludedOn}
         onConclude={() => { const u = { ...data, concluded: true, concludedOn: new Date().toISOString().slice(0, 10) }; setData(u); writeJsonToLocalStorage(storageKey, u); }} />
-    </div>
+    </WorksheetLayout>
   );
 }
