@@ -159,9 +159,8 @@ export interface ProcRow {
   id: string;
   procedure: string;
   psa?: string;
-  wpRef: string;
+  wpRef: RefDoc[];
   psc: "Y" | "N" | "N/A" | "";
-  initials: string;
   comments: string;
 }
 
@@ -172,7 +171,7 @@ export function ProcedureTable({
 }: {
   sections: { title: string; rows: ProcRow[] }[];
   locked: boolean;
-  onChange: (sectionIdx: number, rowId: string, field: keyof ProcRow, value: string) => void;
+  onChange: (sectionIdx: number, rowId: string, field: keyof ProcRow, value: string | RefDoc[]) => void;
 }) {
   const td = "border-b border-border px-3 py-2.5 text-xs align-top";
   return (
@@ -184,10 +183,9 @@ export function ProcedureTable({
               <th className="text-left px-3 py-2.5 font-medium border-b border-border w-[40px]">#</th>
               <th className="text-left px-3 py-2.5 font-medium border-b border-border">Procedure</th>
               <th className="text-left px-3 py-2.5 font-medium border-b border-border w-[80px]">P&amp;SA</th>
-              <th className="text-left px-3 py-2.5 font-medium border-b border-border w-[130px]">W/P ref.</th>
               <th className="text-left px-3 py-2.5 font-medium border-b border-border w-[70px]">PSC</th>
-              <th className="text-left px-3 py-2.5 font-medium border-b border-border w-[90px]">Initials</th>
-              <th className="text-left px-3 py-2.5 font-medium border-b border-border w-[280px]">Comments / exceptions</th>
+              <th className="text-left px-3 py-2.5 font-medium border-b border-border">Comments / exceptions</th>
+              <th className="text-center px-3 py-2.5 font-medium border-b border-border w-[90px]">W/P ref.</th>
             </tr>
           </thead>
           <tbody>
@@ -203,13 +201,13 @@ export function ProcedureTable({
 
 function FragmentRows({ title, rows, sectionIdx, td, locked, onChange }: {
   title: string; rows: ProcRow[]; sectionIdx: number; td: string; locked: boolean;
-  onChange: (sectionIdx: number, rowId: string, field: keyof ProcRow, value: string) => void;
+  onChange: (sectionIdx: number, rowId: string, field: keyof ProcRow, value: string | RefDoc[]) => void;
 }) {
   let n = 0;
   return (
     <>
       <tr className="bg-primary/[0.06]">
-        <td colSpan={7} className="px-3 py-2 text-[11px] font-semibold uppercase tracking-wide text-primary border-b border-border">{title}</td>
+        <td colSpan={6} className="px-3 py-2 text-[11px] font-semibold uppercase tracking-wide text-primary border-b border-border">{title}</td>
       </tr>
       {rows.map(r => {
         n += 1;
@@ -218,10 +216,6 @@ function FragmentRows({ title, rows, sectionIdx, td, locked, onChange }: {
             <td className={`${td} text-muted-foreground font-medium`}>{n}</td>
             <td className={td}><span className="block whitespace-pre-wrap leading-snug">{r.procedure}</span></td>
             <td className={`${td} font-mono text-[11px] whitespace-nowrap`}>{r.psa || "—"}</td>
-            <td className={td}>
-              <Input disabled={locked} value={r.wpRef} onChange={e => onChange(sectionIdx, r.id, "wpRef", e.target.value)}
-                className="h-8 text-xs" placeholder="—" />
-            </td>
             <td className={td}>
               <Select disabled={locked} value={r.psc} onValueChange={v => onChange(sectionIdx, r.id, "psc", v)}>
                 <SelectTrigger className="h-8 text-xs"><SelectValue placeholder="—" /></SelectTrigger>
@@ -233,12 +227,16 @@ function FragmentRows({ title, rows, sectionIdx, td, locked, onChange }: {
               </Select>
             </td>
             <td className={td}>
-              <Input disabled={locked} value={r.initials} onChange={e => onChange(sectionIdx, r.id, "initials", e.target.value)}
-                className="h-8 text-xs" placeholder="—" />
-            </td>
-            <td className={td}>
               <Textarea disabled={locked} value={r.comments} onChange={e => onChange(sectionIdx, r.id, "comments", e.target.value)}
                 className="min-h-[56px] text-xs resize-none" placeholder="—" />
+            </td>
+            <td className={`${td} text-center`}>
+              <RefButton
+                reference={r.wpRef}
+                disabled={locked}
+                onAttach={doc => onChange(sectionIdx, r.id, "wpRef", [...r.wpRef, doc])}
+                onRemove={idx => onChange(sectionIdx, r.id, "wpRef", r.wpRef.filter((_, j) => j !== (idx ?? -1)))}
+              />
             </td>
           </tr>
         );
