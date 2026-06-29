@@ -807,9 +807,9 @@ export function AuditFSViewer({ pageType, engagementId, isUS, isEditing, saveRef
   }, []);
 
   return (
-    <div style={{ minHeight: '100%', backgroundColor: 'hsl(var(--card))', padding: '32px 24px' }}>
+    <div style={{ minHeight: '100%', backgroundColor: 'hsl(var(--background))', padding: '32px 24px' }}>
       <div
-        className="max-w-3xl mx-auto shadow-[0_4px_32px_rgba(0,0,0,0.18)] rounded-sm relative overflow-hidden"
+        className="max-w-3xl mx-auto shadow-[0_4px_32px_rgba(0,0,0,0.18)] rounded-sm relative overflow-hidden border border-border"
         style={{ background: 'hsl(var(--card))', color: 'hsl(var(--card-foreground))', fontFamily: "'Times New Roman', Georgia, serif", minHeight: '960px' }}
       >
         {pageType === 'cover' ? (
