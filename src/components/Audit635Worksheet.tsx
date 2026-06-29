@@ -152,7 +152,7 @@ function buildDefault(): Data635 {
     managementMethod: "",
     approachA: true,
     approachB: true,
-    approachC: false,
+    approachC: true,
     proceduresA: defaultProceduresA(),
     proceduresB: defaultProceduresB(),
     proceduresC: defaultProceduresC(),
