@@ -23,7 +23,6 @@ interface ConfirmRow {
   amountConfirmed: string;
   exceptions: string;
   psc: "Y" | "N" | "" ;
-  initials: string;
 }
 
 interface Data630 {
