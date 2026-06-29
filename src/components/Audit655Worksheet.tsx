@@ -195,7 +195,7 @@ export function Audit655Worksheet() {
                     <td className={`border-b border-border p-2 text-right font-mono text-xs ${v.tone}`}>{v.abs}<div className="text-[10px]">{v.pct}</div></td>
                     <td className="border-b border-border p-2"><Textarea disabled={locked} value={r.varianceExplain} onChange={e => updRow(which, r.id, { varianceExplain: e.target.value })} className="min-h-[44px] text-xs resize-none" placeholder="Explain variance / unexpected relationship" /></td>
                     <td className="border-b border-border p-2"><YNSelect value={r.consistent} onChange={v => updRow(which, r.id, { consistent: v as YN })} locked={locked} /></td>
-                    <td className="border-b border-border p-2"><Input disabled={locked} value={r.wpRef} onChange={e => updRow(which, r.id, { wpRef: e.target.value })} className="h-8 text-xs" placeholder="—" /></td>
+                    <td className="border-b border-border p-2"><RefButton reference={r.wpRef} disabled={locked} onAttach={(doc) => updRow(which, r.id, { wpRef: [...r.wpRef, doc] })} onRemove={(idx) => updRow(which, r.id, { wpRef: typeof idx === "number" ? r.wpRef.filter((_, i) => i !== idx) : [] })} /></td>
                     <td className="border-b border-border p-2 text-center"><Button size="icon" variant="ghost" className="h-7 w-7" disabled={locked} onClick={() => delRow(which, r.id)}><Trash2 className="h-3.5 w-3.5 text-muted-foreground" /></Button></td>
                   </tr>
                 );
