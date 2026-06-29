@@ -82,7 +82,8 @@ export function Audit630Worksheet() {
   const upd = (id: string, field: keyof ConfirmRow, value: string) =>
     setData(d => ({ ...d, rows: d.rows.map(r => r.id === id ? { ...r, [field]: value } : r) }));
 
-  const td = "border-b border-border px-2 py-1.5 text-xs align-top";
+  const CARD = "bg-card text-card-foreground border border-border shadow-[0_2px_8px_hsl(213_40%_20%/0.06)] rounded-md overflow-hidden";
+  const td = "border-b border-border px-3 py-2.5 text-sm align-top";
 
   return (
     <WorksheetLayout
@@ -97,77 +98,90 @@ export function Audit630Worksheet() {
         overallRisk={overall}
       />
 
-
       <LinkedRisksCard overallRisk={overall}
         risks={risks.filter(r => /receiv|payab|bank|debt|loan|invent|legal|confirm/i.test(`${r.scotabd ?? ""} ${r.rmmIdentified}`))}
         emptyHint="No risks tagged for areas typically requiring confirmation."
       />
 
-      <div className="rounded-lg border border-border bg-card overflow-hidden">
-        <div className="px-4 py-2.5 border-b border-border flex items-center justify-between">
+      <div className={CARD}>
+        <div className="px-6 py-3.5 border-b border-border flex items-center justify-between">
           <h3 className="text-sm font-semibold">Confirmation register</h3>
-          {!locked && <Button size="sm" variant="outline" className="h-7 text-xs gap-1" onClick={() => setData(d => ({ ...d, rows: [...d.rows, blankRow()] }))}><Plus className="h-3 w-3" /> Add area</Button>}
+          {!locked && (
+            <Button size="sm" variant="outline" className="h-8 text-sm gap-1.5" onClick={() => setData(d => ({ ...d, rows: [...d.rows, blankRow()] }))}>
+              <Plus className="h-3.5 w-3.5" /> Add area
+            </Button>
+          )}
         </div>
         <div className="overflow-x-auto">
-          <table className="w-full text-xs border-collapse">
-            <thead><tr className="bg-muted/60">
-              <th className="text-left px-2 py-2 font-medium border-b border-border w-[160px]">Audit area</th>
-              <th className="text-left px-2 py-2 font-medium border-b border-border w-[80px]">W/P ref.</th>
-              <th className="text-left px-2 py-2 font-medium border-b border-border w-[90px]">Type</th>
-              <th className="text-left px-2 py-2 font-medium border-b border-border">Nature &amp; number of items confirmed</th>
-              <th className="text-left px-2 py-2 font-medium border-b border-border w-[70px]">Sent</th>
-              <th className="text-left px-2 py-2 font-medium border-b border-border w-[80px]">Received</th>
-              <th className="text-left px-2 py-2 font-medium border-b border-border w-[110px]">Amount confirmed $</th>
-              <th className="text-left px-2 py-2 font-medium border-b border-border">Exceptions / difficulties</th>
-              <th className="text-left px-2 py-2 font-medium border-b border-border w-[60px]">PSC</th>
-              <th className="text-left px-2 py-2 font-medium border-b border-border w-[70px]">Initials</th>
-              {!locked && <th className="border-b border-border w-[32px]"></th>}
+          <table className="w-full text-sm border-collapse">
+            <thead><tr className="bg-muted/40">
+              <th className="text-left px-3 py-2.5 font-medium text-xs border-b border-border w-[170px]">Audit area</th>
+              <th className="text-left px-3 py-2.5 font-medium text-xs border-b border-border w-[110px]">W/P ref.</th>
+              <th className="text-left px-3 py-2.5 font-medium text-xs border-b border-border w-[120px]">Type</th>
+              <th className="text-left px-3 py-2.5 font-medium text-xs border-b border-border">Nature &amp; number of items confirmed</th>
+              <th className="text-left px-3 py-2.5 font-medium text-xs border-b border-border w-[80px]">Sent</th>
+              <th className="text-left px-3 py-2.5 font-medium text-xs border-b border-border w-[80px]">Received</th>
+              <th className="text-left px-3 py-2.5 font-medium text-xs border-b border-border w-[120px]">Amount $</th>
+              <th className="text-left px-3 py-2.5 font-medium text-xs border-b border-border">Exceptions / difficulties</th>
+              <th className="text-left px-3 py-2.5 font-medium text-xs border-b border-border w-[80px]">PSC</th>
+              <th className="text-left px-3 py-2.5 font-medium text-xs border-b border-border w-[90px]">Initials</th>
+              {!locked && <th className="border-b border-border w-[44px]"></th>}
             </tr></thead>
             <tbody>
               {data.rows.map(r => (
-                <tr key={r.id} className="hover:bg-muted/30">
-                  <td className={td}><Input disabled={locked} value={r.area} onChange={e => upd(r.id, "area", e.target.value)} className="h-7 text-xs border-0 p-0 shadow-none focus-visible:ring-0 bg-transparent" /></td>
-                  <td className={`${td} font-mono`}><Input disabled={locked} value={r.wpRef} onChange={e => upd(r.id, "wpRef", e.target.value)} className="h-7 text-xs border-0 p-0 shadow-none focus-visible:ring-0 bg-transparent" placeholder="—" /></td>
+                <tr key={r.id} className="hover:bg-muted/20">
+                  <td className={td}><Input disabled={locked} value={r.area} onChange={e => upd(r.id, "area", e.target.value)} className="h-8 text-sm" /></td>
+                  <td className={td}><Input disabled={locked} value={r.wpRef} onChange={e => upd(r.id, "wpRef", e.target.value)} className="h-8 text-sm font-mono" placeholder="—" /></td>
                   <td className={td}>
                     <Select disabled={locked} value={r.type} onValueChange={(v: "Positive" | "Negative") => upd(r.id, "type", v)}>
-                      <SelectTrigger className="h-7 text-xs border-0 shadow-none focus:ring-0 px-0 bg-transparent"><SelectValue placeholder="—" /></SelectTrigger>
+                      <SelectTrigger className="h-8 text-sm"><SelectValue placeholder="—" /></SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="Positive" className="text-xs">Positive</SelectItem>
-                        <SelectItem value="Negative" className="text-xs">Negative</SelectItem>
+                        <SelectItem value="Positive">Positive</SelectItem>
+                        <SelectItem value="Negative">Negative</SelectItem>
                       </SelectContent>
                     </Select>
                   </td>
-                  <td className={td}><Textarea disabled={locked} value={r.nature} onChange={e => upd(r.id, "nature", e.target.value)} className="min-h-[48px] text-xs resize-none border-0 p-0 shadow-none focus-visible:ring-0 bg-transparent" placeholder="e.g. top 15 customers by balance" /></td>
-                  <td className={td}><Input disabled={locked} value={r.itemsSent} onChange={e => upd(r.id, "itemsSent", e.target.value)} className="h-7 text-xs border-0 p-0 shadow-none focus-visible:ring-0 bg-transparent" placeholder="0" /></td>
-                  <td className={td}><Input disabled={locked} value={r.itemsReceived} onChange={e => upd(r.id, "itemsReceived", e.target.value)} className="h-7 text-xs border-0 p-0 shadow-none focus-visible:ring-0 bg-transparent" placeholder="0" /></td>
-                  <td className={td}><Input disabled={locked} value={r.amountConfirmed} onChange={e => upd(r.id, "amountConfirmed", e.target.value)} className="h-7 text-xs border-0 p-0 shadow-none focus-visible:ring-0 bg-transparent" placeholder="0" /></td>
-                  <td className={td}><Textarea disabled={locked} value={r.exceptions} onChange={e => upd(r.id, "exceptions", e.target.value)} className="min-h-[48px] text-xs resize-none border-0 p-0 shadow-none focus-visible:ring-0 bg-transparent" placeholder="None / describe" /></td>
+                  <td className={td}><Textarea disabled={locked} value={r.nature} onChange={e => upd(r.id, "nature", e.target.value)} className="min-h-[56px] text-sm resize-none" placeholder="e.g. top 15 customers by balance" /></td>
+                  <td className={td}><Input disabled={locked} value={r.itemsSent} onChange={e => upd(r.id, "itemsSent", e.target.value)} className="h-8 text-sm" placeholder="0" /></td>
+                  <td className={td}><Input disabled={locked} value={r.itemsReceived} onChange={e => upd(r.id, "itemsReceived", e.target.value)} className="h-8 text-sm" placeholder="0" /></td>
+                  <td className={td}><Input disabled={locked} value={r.amountConfirmed} onChange={e => upd(r.id, "amountConfirmed", e.target.value)} className="h-8 text-sm" placeholder="0" /></td>
+                  <td className={td}><Textarea disabled={locked} value={r.exceptions} onChange={e => upd(r.id, "exceptions", e.target.value)} className="min-h-[56px] text-sm resize-none" placeholder="None / describe" /></td>
                   <td className={td}>
                     <Select disabled={locked} value={r.psc} onValueChange={(v: "Y" | "N") => upd(r.id, "psc", v)}>
-                      <SelectTrigger className="h-7 text-xs border-0 shadow-none focus:ring-0 px-0 bg-transparent"><SelectValue placeholder="—" /></SelectTrigger>
-                      <SelectContent><SelectItem value="Y" className="text-xs">Y</SelectItem><SelectItem value="N" className="text-xs">N</SelectItem></SelectContent>
+                      <SelectTrigger className="h-8 text-sm"><SelectValue placeholder="—" /></SelectTrigger>
+                      <SelectContent><SelectItem value="Y">Y</SelectItem><SelectItem value="N">N</SelectItem></SelectContent>
                     </Select>
                   </td>
-                  <td className={td}><Input disabled={locked} value={r.initials} onChange={e => upd(r.id, "initials", e.target.value)} className="h-7 text-xs border-0 p-0 shadow-none focus-visible:ring-0 bg-transparent" /></td>
-                  {!locked && <td className={td + " text-center"}><button onClick={() => setData(d => ({ ...d, rows: d.rows.filter(x => x.id !== r.id) }))} className="text-muted-foreground hover:text-destructive"><Trash2 className="h-3.5 w-3.5" /></button></td>}
+                  <td className={td}><Input disabled={locked} value={r.initials} onChange={e => upd(r.id, "initials", e.target.value)} className="h-8 text-sm" /></td>
+                  {!locked && (
+                    <td className={td + " text-center"}>
+                      <button onClick={() => setData(d => ({ ...d, rows: d.rows.filter(x => x.id !== r.id) }))} className="text-muted-foreground hover:text-destructive">
+                        <Trash2 className="h-4 w-4" />
+                      </button>
+                    </td>
+                  )}
                 </tr>
               ))}
             </tbody>
           </table>
         </div>
-        <div className="px-4 py-2 text-[11px] text-muted-foreground border-t border-border bg-muted/30">
+        <div className="px-6 py-2.5 text-xs text-muted-foreground border-t border-border bg-muted/30">
           Negative confirmations are appropriate only when: RMM is low; other substantive evidence exists; controls are reliable; population is large, small and homogeneous; and a low exception rate is expected.
         </div>
       </div>
 
-      <div className="rounded-lg border border-border bg-card px-4 py-3 space-y-2">
-        <label className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Control over the confirmation process</label>
-        <Textarea disabled={locked} value={data.controlSummary} onChange={e => setData(d => ({ ...d, controlSummary: e.target.value }))} className="text-xs min-h-[64px]" />
+      <div className={CARD}>
+        <div className="px-6 py-3.5 border-b border-border"><h3 className="text-sm font-semibold">Control over the confirmation process</h3></div>
+        <div className="p-6">
+          <Textarea disabled={locked} value={data.controlSummary} onChange={e => setData(d => ({ ...d, controlSummary: e.target.value }))} className="text-sm min-h-[80px]" />
+        </div>
       </div>
 
-      <div className="rounded-lg border border-border bg-card px-4 py-3 space-y-2">
-        <label className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Overall conclusion</label>
-        <Textarea disabled={locked} value={data.overallConclusion} onChange={e => setData(d => ({ ...d, overallConclusion: e.target.value }))} className="text-xs min-h-[72px]" placeholder="Conclude on the sufficiency of evidence obtained from external confirmations." />
+      <div className={CARD}>
+        <div className="px-6 py-3.5 border-b border-border"><h3 className="text-sm font-semibold">Overall conclusion</h3></div>
+        <div className="p-6">
+          <Textarea disabled={locked} value={data.overallConclusion} onChange={e => setData(d => ({ ...d, overallConclusion: e.target.value }))} className="text-sm min-h-[88px]" placeholder="Conclude on the sufficiency of evidence obtained from external confirmations." />
+        </div>
       </div>
 
       <ConcludeBar concluded={data.concluded} concludedOn={data.concludedOn}
