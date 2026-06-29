@@ -2225,7 +2225,7 @@ export default function EngagementDetail() {
           ) : (checklistKey === 'aud-rp-680') ? (
             <Audit680Worksheet />
           ) : checklist ? (
-            <div className="p-4">
+            <div className="p-4 bg-background">
               {/* ASM import banner */}
               {(checklistKey === 'aud-asm' || checklistKey === 'aud-us-asm') && checklist && (
                 <AuditASMImportBanner
