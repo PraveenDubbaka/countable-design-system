@@ -130,6 +130,10 @@ export function Audit655Worksheet() {
     const merged = { ...def, ...stored } as Data655;
     if (!Array.isArray(merged.rows) || merged.rows.length === 0) merged.rows = def.rows;
     if (!Array.isArray(merged.ratios) || merged.ratios.length === 0) merged.ratios = def.ratios;
+    // Migrate legacy string wpRef → RefDoc[]
+    const normalize = (r: AnalyticalRow): AnalyticalRow => ({ ...r, wpRef: Array.isArray(r.wpRef) ? r.wpRef : (r.wpRef ? [{ name: String(r.wpRef) }] : []) });
+    merged.rows = merged.rows.map(normalize);
+    merged.ratios = merged.ratios.map(normalize);
     return merged;
   });
 
