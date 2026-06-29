@@ -27,7 +27,7 @@ interface AnalyticalRow {
   varianceExplain: string;
   consistent: YN;
   followUp: string;
-  wpRef: string;
+  wpRef: RefDoc[];
 }
 
 interface Data655 {
