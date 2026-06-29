@@ -47,7 +47,7 @@ const DEFAULT_AREAS: { area: string; wpRef: string }[] = [
 ];
 
 function blankRow(area = "", wpRef = ""): ConfirmRow {
-  return { id: Math.random().toString(36).slice(2), area, wpRef, type: "", nature: "", itemsSent: "", itemsReceived: "", amountConfirmed: "", exceptions: "", psc: "", initials: "" };
+  return { id: Math.random().toString(36).slice(2), area, wpRef, type: "", nature: "", itemsSent: "", itemsReceived: "", amountConfirmed: "", exceptions: "", psc: "" };
 }
 
 function buildDefault(): Data630 {
