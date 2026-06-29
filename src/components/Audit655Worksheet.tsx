@@ -68,7 +68,7 @@ function newRow(caption = ""): AnalyticalRow {
     id: Math.random().toString(36).slice(2, 9),
     caption,
     preliminary: "", finalAmount: "", priorYear: "",
-    varianceExplain: "", consistent: "", followUp: "", wpRef: "",
+    varianceExplain: "", consistent: "", followUp: "", wpRef: [],
   };
 }
 
