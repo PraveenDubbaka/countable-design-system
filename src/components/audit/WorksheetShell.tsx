@@ -270,5 +270,5 @@ export function ConcludeBar({ concluded, concludedOn, onConclude }: {
 }
 
 export function makeProcRow(procedure: string, psa = ""): ProcRow {
-  return { id: Math.random().toString(36).slice(2, 9), procedure, psa, wpRef: "", psc: "", initials: "", comments: "" };
+  return { id: Math.random().toString(36).slice(2, 9), procedure, psa, wpRef: [], psc: "", comments: "" };
 }
