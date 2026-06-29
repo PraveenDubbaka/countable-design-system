@@ -97,7 +97,7 @@ export function Audit635Worksheet() {
   if (data.approachB) sectionsToShow.push(data.sections.B);
   if (data.approachC) sectionsToShow.push(data.sections.C);
 
-  const updateProcRow = (siVisible: number, rowId: string, field: keyof ProcRow, value: string) => {
+  const updateProcRow = (siVisible: number, rowId: string, field: keyof ProcRow, value: string | import("@/components/RefButton").RefDoc[]) => {
     // map visible index back to section key
     const order: SectionKey[] = [];
     if (data.approachA) order.push("A");
