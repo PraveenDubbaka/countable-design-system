@@ -331,6 +331,7 @@ export function Audit625Worksheet() {
           sections={[{ title: "Plan procurement", rows: data.planProcedures }]}
           locked={locked}
           onChange={makeProcChangeHandler(data.planProcedures, "planProcedures")}
+          showPsa={false}
         />
       </WorksheetSection>
 
@@ -340,6 +341,7 @@ export function Audit625Worksheet() {
           sections={[{ title: "Feasibility assessment", rows: data.feasibilityProcedures }]}
           locked={locked}
           onChange={makeProcChangeHandler(data.feasibilityProcedures, "feasibilityProcedures")}
+          showPsa={false}
         />
       </WorksheetSection>
 
@@ -349,6 +351,7 @@ export function Audit625Worksheet() {
           sections={[{ title: "Forecast review procedures (a–f)", rows: data.forecastProcedures }]}
           locked={locked}
           onChange={makeProcChangeHandler(data.forecastProcedures, "forecastProcedures")}
+          showPsa={false}
         />
       </WorksheetSection>
 
@@ -358,6 +361,7 @@ export function Audit625Worksheet() {
           sections={[{ title: "Strategy identification", rows: data.evaluateProcedures }]}
           locked={locked}
           onChange={makeProcChangeHandler(data.evaluateProcedures, "evaluateProcedures")}
+          showPsa={false}
         />
         <div className="px-6 py-4 grid grid-cols-1 md:grid-cols-2 gap-4 border-t border-border bg-muted/20">
           <div>
@@ -382,6 +386,7 @@ export function Audit625Worksheet() {
             sections={[{ title: "Strategy-specific procedures", rows: data.strategyProcedures }]}
             locked={locked}
             onChange={makeProcChangeHandler(data.strategyProcedures, "strategyProcedures")}
+            showPsa={false}
           />
         </WorksheetSection>
       )}
@@ -392,6 +397,7 @@ export function Audit625Worksheet() {
           sections={[{ title: "Events after management's assessment date", rows: data.subsequentProcedures }]}
           locked={locked}
           onChange={makeProcChangeHandler(data.subsequentProcedures, "subsequentProcedures")}
+          showPsa={false}
         />
       </WorksheetSection>
 
