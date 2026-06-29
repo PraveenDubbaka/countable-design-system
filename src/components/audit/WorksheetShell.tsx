@@ -168,12 +168,15 @@ export function ProcedureTable({
   sections,
   locked,
   onChange,
+  showPsa = true,
 }: {
   sections: { title: string; rows: ProcRow[] }[];
   locked: boolean;
   onChange: (sectionIdx: number, rowId: string, field: keyof ProcRow, value: string | RefDoc[]) => void;
+  showPsa?: boolean;
 }) {
   const td = "border-b border-border px-3 py-2.5 text-xs align-top";
+  const colCount = showPsa ? 6 : 5;
   return (
     <div className="overflow-x-auto">
       <table className="w-full text-xs border-collapse">
@@ -181,7 +184,7 @@ export function ProcedureTable({
           <tr className="bg-muted/40">
             <th className="text-left px-3 py-2.5 font-medium border-b border-border w-[40px]">#</th>
             <th className="text-left px-3 py-2.5 font-medium border-b border-border w-[320px]">Procedure</th>
-            <th className="text-left px-3 py-2.5 font-medium border-b border-border w-[80px]">P&amp;SA</th>
+            {showPsa && <th className="text-left px-3 py-2.5 font-medium border-b border-border w-[80px]">P&amp;SA</th>}
             <th className="text-left px-3 py-2.5 font-medium border-b border-border w-[70px]">PSC</th>
             <th className="text-left px-3 py-2.5 font-medium border-b border-border w-[260px]">Comments / exceptions</th>
             <th className="text-center px-3 py-2.5 font-medium border-b border-border w-[90px]">W/P ref.</th>
@@ -189,13 +192,14 @@ export function ProcedureTable({
         </thead>
         <tbody>
           {sections.map((s, si) => (
-            <FragmentRows key={si} title={s.title} rows={s.rows} sectionIdx={si} td={td} locked={locked} onChange={onChange} />
+            <FragmentRows key={si} title={s.title} rows={s.rows} sectionIdx={si} td={td} locked={locked} onChange={onChange} showPsa={showPsa} colCount={colCount} />
           ))}
         </tbody>
       </table>
     </div>
   );
 }
+
 
 function FragmentRows({ title, rows, sectionIdx, td, locked, onChange }: {
   title: string; rows: ProcRow[]; sectionIdx: number; td: string; locked: boolean;
