@@ -69,40 +69,17 @@ export function WorksheetSection({
 }
 
 // ─── Header card (entity / period / framework / FS-risk chip) ──────────────────
-export function WorksheetHeader({
-  ctx,
-  formNo,
-  title,
-  standard,
-  overallRisk,
-}: {
+/** @deprecated Header card removed — entity context lives in the page chrome,
+ *  and the FS-level risk badge now renders inside the Linked Risks card header. */
+export function WorksheetHeader(_props: {
   ctx: EngagementContext;
   formNo: string;
   title: string;
   standard: string;
   overallRisk?: "High" | "Moderate" | "Low";
-  objective?: string; // accepted for backward-compat; rendered by WorksheetLayout
+  objective?: string;
 }) {
-  return (
-    <div className={CARD}>
-      <div className="px-6 py-4 flex items-start justify-between gap-4 flex-wrap">
-        <div>
-          <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Form {formNo} · {standard}</p>
-          <h2 className="text-base font-semibold text-foreground mt-0.5">{title}</h2>
-        </div>
-        <div className="flex flex-wrap items-center gap-2 text-xs">
-          <Chip label="Entity" value={ctx.entityName} />
-          <Chip label="Period end" value={ctx.periodEndDisplay} />
-          <Chip label="Framework" value={ctx.framework.split(" — ")[0]} />
-          {overallRisk && (
-            <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full border text-[11px] font-medium ${RISK_TONE[overallRisk]}`}>
-              <span className="opacity-70">FS-level risk</span> · {overallRisk}
-            </span>
-          )}
-        </div>
-      </div>
-    </div>
-  );
+  return null;
 }
 
 function Chip({ label, value }: { label: string; value: string }) {
@@ -115,13 +92,31 @@ function Chip({ label, value }: { label: string; value: string }) {
 }
 
 // ─── Linked Risks card ─────────────────────────────────────────────────────────
-export function LinkedRisksCard({ risks, emptyHint }: { risks: Risk520Row[]; emptyHint?: string }) {
+export function LinkedRisksCard({
+  risks,
+  emptyHint,
+  overallRisk,
+}: {
+  risks: Risk520Row[];
+  emptyHint?: string;
+  overallRisk?: "High" | "Moderate" | "Low";
+}) {
   return (
     <WorksheetSection
       title="Linked risks from Form 520"
-      right={<span className="text-[11px] text-muted-foreground">Auto-populated · editable in Form 520</span>}
+      right={
+        <div className="flex items-center gap-2">
+          {overallRisk && (
+            <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full border text-[11px] font-medium ${RISK_TONE[overallRisk]}`}>
+              <span className="opacity-70">FS-level risk</span> · {overallRisk}
+            </span>
+          )}
+          <span className="text-[11px] text-muted-foreground">Auto-populated · editable in Form 520</span>
+        </div>
+      }
       bodyClassName="p-0"
     >
+
       {risks.length === 0 ? (
         <p className="px-6 py-4 text-xs text-muted-foreground">
           {emptyHint ?? "No matching risks identified in Form 520. Update Form 520 to flow risks through."}
