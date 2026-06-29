@@ -217,8 +217,12 @@ function computedCF(d: FSData['cf']) {
 
 // ─── Shared table styles ─────────────────────────────────────────────────────
 
-// Thin black rule used throughout — consistent single weight, pure black
-const RULE = '1px solid #000';
+const FG   = 'hsl(var(--foreground))';
+const MFG  = 'hsl(var(--muted-foreground))';
+const BDR  = 'hsl(var(--border))';
+
+// Thin rule used throughout — adapts to dark/light mode
+const RULE = `1px solid ${FG}`;
 
 const S = {
   // Column widths: label 55% | notes 6% | CY 19.5% | PY 19.5%
@@ -227,21 +231,21 @@ const S = {
   colNum:   { width: '19.5%' } as React.CSSProperties,
 
   // Text styles
-  sectionHead: { paddingTop: '14px', paddingBottom: '3px', fontSize: '11px', fontWeight: 700, textTransform: 'uppercase' as const, letterSpacing: '0.07em', color: '#222' } as React.CSSProperties,
-  groupLabel:  { fontSize: '12px', paddingTop: '6px', paddingBottom: '1px', fontStyle: 'italic' as const, color: '#444' } as React.CSSProperties,
-  rowLabel:    { fontSize: '12.5px', paddingTop: '2px', paddingBottom: '2px', color: '#111' } as React.CSSProperties,
-  noteRef:     { fontSize: '11px', color: '#555', textAlign: 'right' as const, paddingRight: '6px', verticalAlign: 'middle' as const } as React.CSSProperties,
+  sectionHead: { paddingTop: '14px', paddingBottom: '3px', fontSize: '11px', fontWeight: 700, textTransform: 'uppercase' as const, letterSpacing: '0.07em', color: FG } as React.CSSProperties,
+  groupLabel:  { fontSize: '12px', paddingTop: '6px', paddingBottom: '1px', fontStyle: 'italic' as const, color: MFG } as React.CSSProperties,
+  rowLabel:    { fontSize: '12.5px', paddingTop: '2px', paddingBottom: '2px', color: FG } as React.CSSProperties,
+  noteRef:     { fontSize: '11px', color: MFG, textAlign: 'right' as const, paddingRight: '6px', verticalAlign: 'middle' as const } as React.CSSProperties,
   // Subtotal label: single rule above + below matching the number cells
-  subtotalLabel: { fontWeight: 600, fontSize: '12.5px', paddingTop: '4px', paddingBottom: '4px', color: '#111', borderTop: RULE, borderBottom: RULE } as React.CSSProperties,
+  subtotalLabel: { fontWeight: 600, fontSize: '12.5px', paddingTop: '4px', paddingBottom: '4px', color: FG, borderTop: RULE, borderBottom: RULE } as React.CSSProperties,
   // Grand total label: same rules, bold uppercase
-  totalLabel:    { fontWeight: 700, fontSize: '12.5px', paddingTop: '5px', paddingBottom: '5px', textTransform: 'uppercase' as const, letterSpacing: '0.03em', color: '#000', borderTop: RULE, borderBottom: RULE } as React.CSSProperties,
+  totalLabel:    { fontWeight: 700, fontSize: '12.5px', paddingTop: '5px', paddingBottom: '5px', textTransform: 'uppercase' as const, letterSpacing: '0.03em', color: FG, borderTop: RULE, borderBottom: RULE } as React.CSSProperties,
 
   // Number cells — no border on plain rows
   numCell:    { fontFamily: "'Courier New', monospace", fontSize: '12.5px', textAlign: 'right' as const, paddingRight: '8px', paddingTop: '2px', paddingBottom: '2px', verticalAlign: 'middle' as const } as React.CSSProperties,
   // Subtotal number cells: single rule above + below
   subtotalNum:{ fontFamily: "'Courier New', monospace", fontSize: '12.5px', textAlign: 'right' as const, paddingRight: '8px', fontWeight: 600, borderTop: RULE, borderBottom: RULE, paddingTop: '4px', paddingBottom: '4px' } as React.CSSProperties,
   // Grand total number cells: single rule above, double rule below (box-shadow creates the second line cleanly)
-  grandTotalNum: { fontFamily: "'Courier New', monospace", fontSize: '12.5px', textAlign: 'right' as const, paddingRight: '8px', fontWeight: 700, borderTop: RULE, borderBottom: RULE, boxShadow: '0 3px 0 0 #000', paddingTop: '5px', paddingBottom: '8px' } as React.CSSProperties,
+  grandTotalNum: { fontFamily: "'Courier New', monospace", fontSize: '12.5px', textAlign: 'right' as const, paddingRight: '8px', fontWeight: 700, borderTop: RULE, borderBottom: RULE, boxShadow: `0 3px 0 0 ${FG}`, paddingTop: '5px', paddingBottom: '8px' } as React.CSSProperties,
 
   // Column header separator
   colHeaderDiv: { borderBottom: RULE } as React.CSSProperties,
@@ -269,7 +273,7 @@ function NumCell({ value, fieldKey, section, isEditing, onUpdate, style }: NumCe
           type="text" value={raw}
           onChange={e => setRaw(e.target.value)}
           onBlur={() => { const p = parseFloat(raw.replace(/,/g, '')) || 0; onUpdate(section, fieldKey, p); }}
-          className="w-full text-right bg-blue-50 border border-blue-200 rounded px-1 py-0 focus:outline-none focus:border-blue-400"
+          className="w-full text-right bg-blue-50 dark:bg-blue-950/40 border border-blue-200 dark:border-blue-700 rounded px-1 py-0 focus:outline-none focus:border-blue-400"
           style={{ fontFamily: "'Courier New', monospace", fontSize: '12px' }}
         />
       </td>
@@ -283,9 +287,9 @@ function NumCell({ value, fieldKey, section, isEditing, onUpdate, style }: NumCe
 function StmtHeader({ entityName, title, subTitle }: { entityName: string; title: string; subTitle: string }) {
   return (
     <div style={{ marginBottom: '20px' }}>
-      <p style={{ fontSize: '12px', color: '#333', marginBottom: '3px' }}>{entityName}</p>
-      <h2 style={{ fontSize: '15px', fontWeight: 700, marginBottom: '3px', color: '#000' }}>{title}</h2>
-      <p style={{ fontSize: '12px', color: '#555' }}>{subTitle}</p>
+      <p style={{ fontSize: '12px', color: FG, marginBottom: '3px' }}>{entityName}</p>
+      <h2 style={{ fontSize: '15px', fontWeight: 700, marginBottom: '3px', color: FG }}>{title}</h2>
+      <p style={{ fontSize: '12px', color: MFG }}>{subTitle}</p>
     </div>
   );
 }
@@ -297,9 +301,9 @@ function ColHeaders({ yearEnd, priorYearEnd }: { yearEnd: string; priorYearEnd: 
     <thead>
       <tr style={S.colHeaderDiv}>
         <th style={{ ...S.colLabel, textAlign: 'left', fontWeight: 'normal', paddingBottom: '8px' }} />
-        <th style={{ ...S.colNotes, fontWeight: 700, fontSize: '11px', paddingBottom: '8px', textTransform: 'uppercase', letterSpacing: '0.05em', color: '#555' }}>Notes</th>
-        <th style={{ ...S.colNum, textAlign: 'right', fontWeight: 700, fontSize: '12px', paddingBottom: '8px', paddingRight: '8px', whiteSpace: 'nowrap', color: '#111' }}>{yearEnd}</th>
-        <th style={{ ...S.colNum, textAlign: 'right', fontWeight: 700, fontSize: '12px', paddingBottom: '8px', paddingRight: '8px', whiteSpace: 'nowrap', color: '#111' }}>{priorYearEnd}</th>
+        <th style={{ ...S.colNotes, fontWeight: 700, fontSize: '11px', paddingBottom: '8px', textTransform: 'uppercase', letterSpacing: '0.05em', color: MFG }}>Notes</th>
+        <th style={{ ...S.colNum, textAlign: 'right', fontWeight: 700, fontSize: '12px', paddingBottom: '8px', paddingRight: '8px', whiteSpace: 'nowrap', color: FG }}>{yearEnd}</th>
+        <th style={{ ...S.colNum, textAlign: 'right', fontWeight: 700, fontSize: '12px', paddingBottom: '8px', paddingRight: '8px', whiteSpace: 'nowrap', color: FG }}>{priorYearEnd}</th>
       </tr>
     </thead>
   );
@@ -359,7 +363,7 @@ function TotalRow({ label, cy, py }: TotalRowProps) {
   return (
     <tr>
       <td style={{ ...S.totalLabel, paddingLeft: '12px' }}>{label}</td>
-      <td style={{ borderTop: RULE, borderBottom: RULE, boxShadow: '0 3px 0 0 #000' }} />
+      <td style={{ borderTop: RULE, borderBottom: RULE, boxShadow: `0 3px 0 0 ${FG}` }} />
       <td style={S.grandTotalNum}>{fmtN(cy)}</td>
       <td style={S.grandTotalNum}>{fmtN(py)}</td>
     </tr>
@@ -368,7 +372,7 @@ function TotalRow({ label, cy, py }: TotalRowProps) {
 
 function FooterNote() {
   return (
-    <p style={{ fontSize: '11px', color: '#555', marginTop: '28px', fontStyle: 'italic' }}>
+    <p style={{ fontSize: '11px', color: MFG, marginTop: '28px', fontStyle: 'italic' }}>
       See accompanying notes to the financial statements
     </p>
   );
@@ -379,8 +383,8 @@ function SignatureBlock({ yearEnd }: { yearEnd: string }) {
     <div style={{ marginTop: '32px', display: 'flex', gap: '64px' }}>
       {['Director', 'Director'].map((role, i) => (
         <div key={i}>
-          <div style={{ borderTop: '1px solid #444', width: '180px', marginBottom: '4px' }} />
-          <p style={{ fontSize: '11px', color: '#555' }}>{role}</p>
+          <div style={{ borderTop: `1px solid ${BDR}`, width: '180px', marginBottom: '4px' }} />
+          <p style={{ fontSize: '11px', color: MFG }}>{role}</p>
         </div>
       ))}
     </div>
@@ -399,19 +403,19 @@ function CoverPage({ data, isEditing, onUpdateText }: {
       </div>
       <div style={{ position: 'relative', zIndex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: '700px', textAlign: 'center', gap: '28px' }}>
         {isEditing ? (
-          <input className="text-3xl font-bold text-center border-b border-blue-300 bg-blue-50 focus:outline-none w-full max-w-md"
+          <input className="text-3xl font-bold text-center border-b border-blue-300 dark:border-blue-700 bg-blue-50 dark:bg-blue-950/40 focus:outline-none w-full max-w-md"
             value={data.entityName} onChange={e => onUpdateText('entityName', e.target.value)} />
         ) : (
           <h1 style={{ fontSize: '26px', fontWeight: 700 }}>{data.entityName}</h1>
         )}
-        <div style={{ width: '100px', borderTop: '2px solid #333' }} />
+        <div style={{ width: '100px', borderTop: `2px solid ${FG}` }} />
         <div>
           <p style={{ fontSize: '20px', fontWeight: 600, letterSpacing: '0.06em', textTransform: 'uppercase', marginBottom: '10px' }}>Financial Statements</p>
           {isEditing ? (
-            <input className="text-sm text-center border-b border-blue-300 bg-blue-50 focus:outline-none w-full"
+            <input className="text-sm text-center border-b border-blue-300 dark:border-blue-700 bg-blue-50 dark:bg-blue-950/40 focus:outline-none w-full"
               value={data.yearEnd} onChange={e => onUpdateText('yearEnd', e.target.value)} />
           ) : (
-            <p style={{ fontSize: '13px', color: '#444' }}>For the Year Ended {data.yearEnd}</p>
+            <p style={{ fontSize: '13px', color: MFG }}>For the Year Ended {data.yearEnd}</p>
           )}
         </div>
       </div>
@@ -435,14 +439,14 @@ function TocPage({ data }: { data: FSData }) {
       <StmtHeader entityName={data.entityName} title="Table of Contents" subTitle={data.yearEnd} />
       <table style={{ width: '100%', borderCollapse: 'collapse' }}>
         <thead>
-          <tr style={{ borderBottom: '1px solid #333' }}>
-            <th style={{ textAlign: 'left', fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em', paddingBottom: '6px', color: '#555' }}>Financial Statement</th>
-            <th style={{ textAlign: 'right', fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em', paddingBottom: '6px', color: '#555' }}>Page</th>
+          <tr style={{ borderBottom: `1px solid ${BDR}` }}>
+            <th style={{ textAlign: 'left', fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em', paddingBottom: '6px', color: MFG }}>Financial Statement</th>
+            <th style={{ textAlign: 'right', fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em', paddingBottom: '6px', color: MFG }}>Page</th>
           </tr>
         </thead>
         <tbody>
           {items.map((item, i) => (
-            <tr key={i} style={{ borderBottom: '1px solid #e5e5e5' }}>
+            <tr key={i} style={{ borderBottom: `1px solid ${BDR}` }}>
               <td style={{ fontSize: '12.5px', padding: '9px 0' }}>{item.label}</td>
               <td style={{ fontSize: '12.5px', padding: '9px 0', textAlign: 'right', fontFamily: "'Courier New', monospace" }}>{item.page}</td>
             </tr>
@@ -642,7 +646,7 @@ function EQPage({ data, isEditing, onUpdate }: {
   const totalEnd    = eq.scEnd + eq.reEnd;
   const totalEndPY  = eq.scEndPY + eq.reEndPY;
 
-  const colH: React.CSSProperties = { textAlign: 'right', fontSize: '11px', fontWeight: 700, paddingBottom: '8px', paddingRight: '8px', whiteSpace: 'nowrap', color: '#111', width: '17%' };
+  const colH: React.CSSProperties = { textAlign: 'right', fontSize: '11px', fontWeight: 700, paddingBottom: '8px', paddingRight: '8px', whiteSpace: 'nowrap', color: FG, width: '17%' };
 
   const numC = (v: number, key: string, sec: 'eq', st?: React.CSSProperties) => (
     <NumCell value={v} fieldKey={key} section={sec} isEditing={isEditing} onUpdate={onUpdate} style={st} />
@@ -658,8 +662,8 @@ function EQPage({ data, isEditing, onUpdate }: {
             <th style={{ textAlign: 'left', fontWeight: 'normal', paddingBottom: '8px', width: '32%' }} />
             <th style={colH}>{scLabel}</th>
             <th style={colH}>Retained Earnings</th>
-            <th style={{ ...colH, color: '#777' }}>{scLabel} (PY)</th>
-            <th style={{ ...colH, color: '#777' }}>RE (PY)</th>
+            <th style={{ ...colH, color: MFG }}>{scLabel} (PY)</th>
+            <th style={{ ...colH, color: MFG }}>RE (PY)</th>
           </tr>
         </thead>
         <tbody>
@@ -690,7 +694,7 @@ function EQPage({ data, isEditing, onUpdate }: {
           <SpacerRow />
           <tr>
             <td style={S.totalLabel}>Balance, end of year</td>
-            <td style={{ borderTop: RULE, borderBottom: RULE, boxShadow: '0 3px 0 0 #000' }} />
+            <td style={{ borderTop: RULE, borderBottom: RULE, boxShadow: `0 3px 0 0 ${FG}` }} />
             <td style={S.grandTotalNum}>{fmtN(eq.scEnd)}</td>
             <td style={S.grandTotalNum}>{fmtN(eq.reEnd)}</td>
             <td style={S.grandTotalNum}>{fmtN(eq.scEndPY)}</td>
@@ -700,7 +704,7 @@ function EQPage({ data, isEditing, onUpdate }: {
             <td style={{ ...S.subtotalLabel, paddingTop: '10px' }}>Total equity</td>
             <td style={{ borderTop: RULE, borderBottom: RULE }} />
             <td colSpan={2} style={{ ...S.subtotalNum, textAlign: 'right' }}>{fmtN(totalEnd)}</td>
-            <td colSpan={2} style={{ ...S.subtotalNum, textAlign: 'right', color: '#777' }}>{fmtN(totalEndPY)}</td>
+            <td colSpan={2} style={{ ...S.subtotalNum, textAlign: 'right', color: MFG }}>{fmtN(totalEndPY)}</td>
           </tr>
         </tbody>
       </table>
@@ -732,18 +736,18 @@ function NotesPage({ data, isEditing, onUpdateNote }: {
       <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
         {keys.map(k => (
           <div key={k}>
-            <p style={{ fontSize: '12px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: '6px', color: '#111' }}>
+            <p style={{ fontSize: '12px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: '6px', color: FG }}>
               {k}. {NOTE_TITLES[k] ?? 'Additional Disclosure'}
             </p>
             {isEditing ? (
               <textarea value={data.notes[k]} onChange={e => onUpdateNote(k, e.target.value)}
                 rows={Math.max(3, data.notes[k].split('\n').length + 1)}
-                className="w-full border border-blue-200 bg-blue-50 rounded p-2 focus:outline-none resize-y"
+                className="w-full border border-blue-200 dark:border-blue-700 bg-blue-50 dark:bg-blue-950/40 rounded p-2 focus:outline-none resize-y"
                 style={{ fontSize: '12.5px', lineHeight: '1.7', fontFamily: 'inherit' }} />
             ) : (
               <div>
                 {data.notes[k].split('\n').map((para, i) => (
-                  <p key={i} style={{ fontSize: '12.5px', lineHeight: '1.7', color: '#222', marginBottom: para ? '6px' : '0' }}>{para}</p>
+                  <p key={i} style={{ fontSize: '12.5px', lineHeight: '1.7', color: FG, marginBottom: para ? '6px' : '0' }}>{para}</p>
                 ))}
               </div>
             )}
@@ -806,7 +810,7 @@ export function AuditFSViewer({ pageType, engagementId, isUS, isEditing, saveRef
     <div style={{ minHeight: '100%', backgroundColor: 'hsl(var(--card))', padding: '32px 24px' }}>
       <div
         className="max-w-3xl mx-auto shadow-[0_4px_32px_rgba(0,0,0,0.18)] rounded-sm relative overflow-hidden"
-        style={{ background: '#ffffff', color: '#111111', fontFamily: "'Times New Roman', Georgia, serif", minHeight: '960px' }}
+        style={{ background: 'hsl(var(--card))', color: 'hsl(var(--card-foreground))', fontFamily: "'Times New Roman', Georgia, serif", minHeight: '960px' }}
       >
         {pageType === 'cover' ? (
           <CoverPage data={data} isEditing={isEditing} onUpdateText={onUpdateText} />
