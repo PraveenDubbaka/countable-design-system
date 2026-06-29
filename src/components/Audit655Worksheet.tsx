@@ -11,6 +11,7 @@ import { readJsonFromLocalStorage, writeJsonToLocalStorage } from "@/lib/safeJso
 import { useEngagementContext } from "@/hooks/useEngagementContext";
 import { formatCurrency } from "@/lib/engagementContext";
 import { loadRisks520, overallRisk520 } from "@/lib/audit520Bridge";
+import { RefButton, type RefDoc } from "@/components/RefButton";
 import {
   WorksheetLayout, WorksheetSection, LinkedRisksCard, ConcludeBar,
 } from "@/components/audit/WorksheetShell";
@@ -26,7 +27,7 @@ interface AnalyticalRow {
   varianceExplain: string;
   consistent: YN;
   followUp: string;
-  wpRef: string;
+  wpRef: RefDoc[];
 }
 
 interface Data655 {
@@ -67,7 +68,7 @@ function newRow(caption = ""): AnalyticalRow {
     id: Math.random().toString(36).slice(2, 9),
     caption,
     preliminary: "", finalAmount: "", priorYear: "",
-    varianceExplain: "", consistent: "", followUp: "", wpRef: "",
+    varianceExplain: "", consistent: "", followUp: "", wpRef: [],
   };
 }
 
@@ -129,6 +130,10 @@ export function Audit655Worksheet() {
     const merged = { ...def, ...stored } as Data655;
     if (!Array.isArray(merged.rows) || merged.rows.length === 0) merged.rows = def.rows;
     if (!Array.isArray(merged.ratios) || merged.ratios.length === 0) merged.ratios = def.ratios;
+    // Migrate legacy string wpRef → RefDoc[]
+    const normalize = (r: AnalyticalRow): AnalyticalRow => ({ ...r, wpRef: Array.isArray(r.wpRef) ? r.wpRef : (r.wpRef ? [{ name: String(r.wpRef) }] : []) });
+    merged.rows = merged.rows.map(normalize);
+    merged.ratios = merged.ratios.map(normalize);
     return merged;
   });
 
@@ -179,7 +184,7 @@ export function Audit655Worksheet() {
               <th className="text-right px-3 py-2.5 font-medium border-b border-border w-[110px]">Variance / %</th>
               <th className="text-left px-3 py-2.5 font-medium border-b border-border">Explanation</th>
               <th className="text-left px-3 py-2.5 font-medium border-b border-border w-[90px]">Consistent?</th>
-              <th className="text-left px-3 py-2.5 font-medium border-b border-border w-[90px]">W/P</th>
+              <th className="text-left px-3 py-2.5 font-medium border-b border-border w-[140px]">W/P ref.</th>
               <th className="px-3 py-2.5 border-b border-border w-[40px]" />
             </tr></thead>
             <tbody>
@@ -194,7 +199,7 @@ export function Audit655Worksheet() {
                     <td className={`border-b border-border p-2 text-right font-mono text-xs ${v.tone}`}>{v.abs}<div className="text-[10px]">{v.pct}</div></td>
                     <td className="border-b border-border p-2"><Textarea disabled={locked} value={r.varianceExplain} onChange={e => updRow(which, r.id, { varianceExplain: e.target.value })} className="min-h-[44px] text-xs resize-none" placeholder="Explain variance / unexpected relationship" /></td>
                     <td className="border-b border-border p-2"><YNSelect value={r.consistent} onChange={v => updRow(which, r.id, { consistent: v as YN })} locked={locked} /></td>
-                    <td className="border-b border-border p-2"><Input disabled={locked} value={r.wpRef} onChange={e => updRow(which, r.id, { wpRef: e.target.value })} className="h-8 text-xs" placeholder="—" /></td>
+                    <td className="border-b border-border p-2"><RefButton reference={r.wpRef} disabled={locked} onAttach={(doc) => updRow(which, r.id, { wpRef: [...r.wpRef, doc] })} onRemove={(idx) => updRow(which, r.id, { wpRef: typeof idx === "number" ? r.wpRef.filter((_, i) => i !== idx) : [] })} /></td>
                     <td className="border-b border-border p-2 text-center"><Button size="icon" variant="ghost" className="h-7 w-7" disabled={locked} onClick={() => delRow(which, r.id)}><Trash2 className="h-3.5 w-3.5 text-muted-foreground" /></Button></td>
                   </tr>
                 );
