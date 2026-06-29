@@ -2205,7 +2205,8 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
                         }}
                       >
                         {/* +/- toggle: absolutely positioned in the indent space, zero flex impact */}
-                        {((nodeDocuments[node.id]?.length ?? 0) > 0 || notesPages.has(node.id)) && (
+                        {/* Suppressed for leaf folder nodes with docs — the icon itself handles toggling */}
+                        {((nodeDocuments[node.id]?.length ?? 0) > 0 || notesPages.has(node.id)) && !(isLeaf && node.icon === "folder" && (nodeDocuments[node.id]?.length ?? 0) > 0) && (
                           <button
                             className="absolute flex items-center justify-center rounded text-[10px] font-bold leading-none text-muted-foreground hover:text-foreground hover:bg-muted/60 transition-all"
                             style={{ left: '10px', width: '14px', height: '14px', top: '50%', transform: 'translateY(-50%)' }}
@@ -2225,9 +2226,22 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
                         {/* Leaf/folder icon follows the toggle (or leads if no attachments) */}
                         {isLeaf ? (
                           node.icon === "folder" && (nodeDocuments[node.id]?.length ?? 0) > 0 ? (
-                            !collapsedNodeDocs.has(node.id)
-                              ? <FolderMinusIcon className="h-4 w-4 text-primary flex-shrink-0" />
-                              : <FolderPlusIcon className="h-4 w-4 text-primary flex-shrink-0" />
+                            <button
+                              className="flex-shrink-0 p-0 leading-none"
+                              onClick={e => {
+                                e.stopPropagation();
+                                setCollapsedNodeDocs(prev => {
+                                  const next = new Set(prev);
+                                  if (next.has(node.id)) next.delete(node.id);
+                                  else next.add(node.id);
+                                  return next;
+                                });
+                              }}
+                            >
+                              {!collapsedNodeDocs.has(node.id)
+                                ? <FolderMinusIcon className="h-4 w-4 text-primary" />
+                                : <FolderPlusIcon className="h-4 w-4 text-primary" />}
+                            </button>
                           ) : (
                             <>{renderIcon(node.icon)}</>
                           )
