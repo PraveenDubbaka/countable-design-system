@@ -1,120 +1,267 @@
-import { useState, useEffect, useRef } from "react";
+// Form 655 — Final Analytical Procedures (CAS 520 / AU-C 520)
+// Aligned with WorksheetShell design standards.
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
-import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Button } from "@/components/ui/button";
 import { Plus, Trash2 } from "lucide-react";
 import { readJsonFromLocalStorage, writeJsonToLocalStorage } from "@/lib/safeJson";
+import { useEngagementContext } from "@/hooks/useEngagementContext";
+import { formatCurrency } from "@/lib/engagementContext";
+import { loadRisks520, overallRisk520 } from "@/lib/audit520Bridge";
+import {
+  WorksheetLayout, WorksheetSection, LinkedRisksCard, ConcludeBar,
+} from "@/components/audit/WorksheetShell";
+
+type YN = "Y" | "N" | "";
 
 interface AnalyticalRow {
   id: string;
-  account: string;
-  currentYear: string;
+  caption: string;            // line caption (e.g. "Sales")
+  preliminary: string;        // from Form 501 if available (editable)
+  finalAmount: string;        // final F/S result
   priorYear: string;
-  budget: string;
-  variance: string;
-  variancePct: string;
-  expectation: string;
-  explanation: string;
-  conclusion: string;
+  varianceExplain: string;
+  consistent: YN;
+  followUp: string;
+  wpRef: string;
 }
 
 interface Data655 {
   rows: AnalyticalRow[];
-  overallConclusion: string;
-  preparedBy: string; preparedDate: string;
-  reviewedBy: string; reviewedDate: string;
-  concluded: boolean; concludedOn: string;
+  ratios: AnalyticalRow[];
+  unexpectedRelationships: YN;
+  unexpectedRelationshipsNotes: string;
+  newRisksIdentified: YN;
+  newRisksNotes: string;
+  rmmReassessmentNeeded: YN;
+  rmmReassessmentNotes: string;
+  evidenceSufficient: YN;
+  evidenceRationale: string;
+  concluded: boolean;
+  concludedOn: string;
 }
 
-const CONC_OPTIONS = ['Consistent with expectation', 'Explained — no further action', 'Unexplained — requires further investigation', 'Potential misstatement identified'];
+// Seeded captions from CPA Form 655 — preliminary auto-fills from FSA if available.
+const FS_CAPTIONS = [
+  "Total sales", "Cost of sales", "Gross margin ($)", "Gross margin (%)",
+  "Salaries / payroll", "Occupancy", "Interest / bank charges",
+  "Repairs and maintenance", "Bonuses", "Non-recurring transactions",
+  "Other expenses", "Net income before tax",
+  "Cash", "Investments", "Accounts receivable", "Inventory",
+  "Property, plant and equipment", "Other assets", "Total assets",
+  "Bank indebtedness", "Accounts payable and accrued liabilities",
+  "Deferred revenue", "Customer deposits", "Loans payable",
+  "Income taxes payable", "Long-term debt", "Other liabilities",
+  "Total equity", "Total liabilities and equity",
+];
+const RATIO_CAPTIONS = [
+  "Working capital", "Days in receivables", "Days sales in inventory",
+  "Inventory turnover", "Days purchases in trade payables", "Debt-to-equity ratio",
+];
 
-function newRow(): AnalyticalRow {
-  return { id: Math.random().toString(36).slice(2), account: '', currentYear: '', priorYear: '', budget: '', variance: '', variancePct: '', expectation: '', explanation: '', conclusion: '' };
+function newRow(caption = ""): AnalyticalRow {
+  return {
+    id: Math.random().toString(36).slice(2, 9),
+    caption,
+    preliminary: "", finalAmount: "", priorYear: "",
+    varianceExplain: "", consistent: "", followUp: "", wpRef: "",
+  };
 }
 
-function buildDefault(): Data655 {
-  return { rows: [newRow(), newRow(), newRow()], overallConclusion: '', preparedBy: '', preparedDate: '', reviewedBy: '', reviewedDate: '', concluded: false, concludedOn: '' };
+function buildDefault(prelimFromFsas: Record<string, number>): Data655 {
+  const matchPrelim = (caption: string) => {
+    const cap = caption.toLowerCase();
+    for (const k of Object.keys(prelimFromFsas)) {
+      if (cap.includes(k.toLowerCase())) return String(prelimFromFsas[k]);
+    }
+    return "";
+  };
+  return {
+    rows: FS_CAPTIONS.map(c => ({ ...newRow(c), preliminary: matchPrelim(c) })),
+    ratios: RATIO_CAPTIONS.map(c => newRow(c)),
+    unexpectedRelationships: "", unexpectedRelationshipsNotes: "",
+    newRisksIdentified: "", newRisksNotes: "",
+    rmmReassessmentNeeded: "", rmmReassessmentNotes: "",
+    evidenceSufficient: "", evidenceRationale: "",
+    concluded: false, concludedOn: "",
+  };
 }
+
+function Label({ children }: { children: React.ReactNode }) {
+  return <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground block mb-1.5">{children}</label>;
+}
+function YNSelect({ value, onChange, locked }: { value: string; onChange: (v: string) => void; locked: boolean }) {
+  return (
+    <Select disabled={locked} value={value} onValueChange={onChange}>
+      <SelectTrigger className="h-8 text-sm"><SelectValue placeholder="Select" /></SelectTrigger>
+      <SelectContent><SelectItem value="Y">Yes</SelectItem><SelectItem value="N">No</SelectItem></SelectContent>
+    </Select>
+  );
+}
+
+function num(v: string): number { const n = parseFloat((v || "").replace(/[^0-9.\-]/g, "")); return isFinite(n) ? n : 0; }
 
 export function Audit655Worksheet() {
   const { engagementId } = useParams<{ engagementId: string }>();
-  const storageKey = `audit-655-data-${engagementId ?? 'default'}`;
-  const saveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const isFirstRender = useRef(true);
-  const [data, setData] = useState<Data655>(() => readJsonFromLocalStorage<Data655>(storageKey, buildDefault()) ?? buildDefault());
+  const ctx = useEngagementContext();
 
+  const risks = useMemo(() => loadRisks520(engagementId), [engagementId]);
+  const overall = useMemo(() => overallRisk520(risks), [risks]);
+
+  // Build a caption→preliminary lookup from FSAs in engagement context
+  const prelimMap = useMemo(() => {
+    const m: Record<string, number> = {};
+    for (const f of ctx.fsas) m[f.fsa] = f.amount;
+    m["Total assets"] = ctx.tb.totalAssets;
+    m["Total equity"] = ctx.tb.netAssets;
+    m["Net income before tax"] = ctx.tb.profitBeforeTax;
+    m["Total sales"] = ctx.tb.grossRevenue;
+    return m;
+  }, [ctx]);
+
+  const storageKey = `audit-655-data-${engagementId ?? "default"}`;
+  const [data, setData] = useState<Data655>(() => {
+    const def = buildDefault(prelimMap);
+    const stored = readJsonFromLocalStorage<Partial<Data655>>(storageKey, def) ?? def;
+    const merged = { ...def, ...stored } as Data655;
+    if (!Array.isArray(merged.rows) || merged.rows.length === 0) merged.rows = def.rows;
+    if (!Array.isArray(merged.ratios) || merged.ratios.length === 0) merged.ratios = def.ratios;
+    return merged;
+  });
+
+  const saveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const first = useRef(true);
   useEffect(() => {
-    if (isFirstRender.current) { isFirstRender.current = false; return; }
-    if (saveTimerRef.current) clearTimeout(saveTimerRef.current);
-    saveTimerRef.current = setTimeout(() => writeJsonToLocalStorage(storageKey, data), 450);
+    if (first.current) { first.current = false; return; }
+    if (saveTimer.current) clearTimeout(saveTimer.current);
+    saveTimer.current = setTimeout(() => writeJsonToLocalStorage(storageKey, data), 450);
   }, [data, storageKey]);
 
   const locked = data.concluded;
-  const upd = (id: string, field: keyof AnalyticalRow, value: string) =>
-    setData(d => ({ ...d, rows: d.rows.map(r => r.id === id ? { ...r, [field]: value } : r) }));
 
-  const td = "border border-border px-2 py-1.5 text-xs align-top";
-  const th = "border border-border bg-muted px-2 py-1.5 text-xs font-medium text-left align-middle whitespace-nowrap";
+  const updRow = (which: "rows" | "ratios", id: string, patch: Partial<AnalyticalRow>) =>
+    setData(d => ({ ...d, [which]: d[which].map(r => r.id === id ? { ...r, ...patch } : r) }));
+  const addRow = (which: "rows" | "ratios") =>
+    setData(d => ({ ...d, [which]: [...d[which], newRow()] }));
+  const delRow = (which: "rows" | "ratios", id: string) =>
+    setData(d => ({ ...d, [which]: d[which].filter(r => r.id !== id) }));
 
-  return (
-    <div className="p-4 space-y-4 text-sm">
-      <div className="rounded-lg border border-border bg-card px-4 py-3">
-        <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-1">Objective</p>
-        <p className="text-sm">Perform final analytical review procedures as an overall review of the financial statements near the end of the audit to identify any unusual or unexpected relationships that may indicate a risk of material misstatement not previously identified (CAS 520).</p>
-      </div>
-      <div className="rounded-lg border border-border bg-card overflow-hidden">
-        <div className="px-4 py-2.5 border-b border-border flex items-center justify-between">
-          <h3 className="text-sm font-semibold">Final Analytical Procedures</h3>
-          {!locked && <Button size="sm" variant="outline" className="h-7 text-xs gap-1" onClick={() => setData(d => ({ ...d, rows: [...d.rows, newRow()] }))}><Plus className="h-3 w-3" /> Add Row</Button>}
-        </div>
+  function variance(r: AnalyticalRow): { abs: string; pct: string; tone: string } {
+    const a = num(r.finalAmount), b = num(r.priorYear);
+    if (!b) return { abs: "—", pct: "—", tone: "text-muted-foreground" };
+    const diff = a - b;
+    const pct = (diff / b) * 100;
+    const tone = Math.abs(pct) >= 10 ? "text-amber-700" : "text-muted-foreground";
+    return { abs: diff.toLocaleString(undefined, { maximumFractionDigits: 0 }), pct: pct.toFixed(1) + "%", tone };
+  }
+
+  const allAddressed = useMemo(() =>
+    [...data.rows, ...data.ratios].every(r => r.consistent !== "")
+    , [data]);
+
+  function RowsTable({ which, title, rows }: { which: "rows" | "ratios"; title: string; rows: AnalyticalRow[] }) {
+    return (
+      <WorksheetSection
+        title={title}
+        right={<Button size="sm" variant="outline" className="h-7 text-xs" disabled={locked} onClick={() => addRow(which)}><Plus className="h-3 w-3 mr-1" />Add line</Button>}
+        bodyClassName="p-0"
+      >
         <div className="overflow-x-auto">
-          <table className="w-full border-collapse text-xs">
-            <thead><tr>
-              <th className={th} style={{ width: 130 }}>Account / Area</th>
-              <th className={th} style={{ width: 90 }}>Current Year $</th>
-              <th className={th} style={{ width: 90 }}>Prior Year $</th>
-              <th className={th} style={{ width: 90 }}>Budget $</th>
-              <th className={th} style={{ width: 90 }}>Variance $</th>
-              <th className={th} style={{ width: 70 }}>Variance %</th>
-              <th className={th}>Expectation</th>
-              <th className={th}>Explanation of Variances</th>
-              <th className={th} style={{ width: 130 }}>Conclusion</th>
-              {!locked && <th className={th} style={{ width: 32 }}></th>}
+          <table className="w-full text-xs border-collapse">
+            <thead><tr className="bg-muted/40">
+              <th className="text-left px-3 py-2.5 font-medium border-b border-border w-[180px]">Caption</th>
+              <th className="text-right px-3 py-2.5 font-medium border-b border-border w-[110px]">Preliminary (501)</th>
+              <th className="text-right px-3 py-2.5 font-medium border-b border-border w-[110px]">Final</th>
+              <th className="text-right px-3 py-2.5 font-medium border-b border-border w-[110px]">Prior year</th>
+              <th className="text-right px-3 py-2.5 font-medium border-b border-border w-[110px]">Variance / %</th>
+              <th className="text-left px-3 py-2.5 font-medium border-b border-border">Explanation</th>
+              <th className="text-left px-3 py-2.5 font-medium border-b border-border w-[90px]">Consistent?</th>
+              <th className="text-left px-3 py-2.5 font-medium border-b border-border w-[90px]">W/P</th>
+              <th className="px-3 py-2.5 border-b border-border w-[40px]" />
             </tr></thead>
-            <tbody>{data.rows.map(row => (
-              <tr key={row.id} className="hover:bg-muted/30">
-                <td className={td}><Input disabled={locked} value={row.account} onChange={e => upd(row.id, 'account', e.target.value)} className="h-7 text-xs border-0 p-0 shadow-none focus-visible:ring-0 bg-transparent" placeholder="Account" /></td>
-                <td className={td}><Input disabled={locked} value={row.currentYear} onChange={e => upd(row.id, 'currentYear', e.target.value)} className="h-7 text-xs border-0 p-0 shadow-none focus-visible:ring-0 bg-transparent" placeholder="0" /></td>
-                <td className={td}><Input disabled={locked} value={row.priorYear} onChange={e => upd(row.id, 'priorYear', e.target.value)} className="h-7 text-xs border-0 p-0 shadow-none focus-visible:ring-0 bg-transparent" placeholder="0" /></td>
-                <td className={td}><Input disabled={locked} value={row.budget} onChange={e => upd(row.id, 'budget', e.target.value)} className="h-7 text-xs border-0 p-0 shadow-none focus-visible:ring-0 bg-transparent" placeholder="0" /></td>
-                <td className={td}><Input disabled={locked} value={row.variance} onChange={e => upd(row.id, 'variance', e.target.value)} className="h-7 text-xs border-0 p-0 shadow-none focus-visible:ring-0 bg-transparent" placeholder="0" /></td>
-                <td className={td}><Input disabled={locked} value={row.variancePct} onChange={e => upd(row.id, 'variancePct', e.target.value)} className="h-7 text-xs border-0 p-0 shadow-none focus-visible:ring-0 bg-transparent" placeholder="0%" /></td>
-                <td className={td}><Textarea disabled={locked} value={row.expectation} onChange={e => upd(row.id, 'expectation', e.target.value)} className="min-h-[56px] text-xs resize-none border-0 p-0 shadow-none focus-visible:ring-0 bg-transparent" placeholder="What did we expect?" /></td>
-                <td className={td}><Textarea disabled={locked} value={row.explanation} onChange={e => upd(row.id, 'explanation', e.target.value)} className="min-h-[56px] text-xs resize-none border-0 p-0 shadow-none focus-visible:ring-0 bg-transparent" placeholder="Explain variances" /></td>
-                <td className={td}><Select disabled={locked} value={row.conclusion} onValueChange={v => upd(row.id, 'conclusion', v)}><SelectTrigger className="h-7 text-xs border-0 shadow-none focus:ring-0 px-0 bg-transparent"><SelectValue placeholder="Select…" /></SelectTrigger><SelectContent>{CONC_OPTIONS.map(o => <SelectItem key={o} value={o} className="text-xs">{o}</SelectItem>)}</SelectContent></Select></td>
-                {!locked && <td className={td + " text-center"}><button onClick={() => setData(d => ({ ...d, rows: d.rows.filter(r => r.id !== row.id) }))} className="text-muted-foreground hover:text-destructive"><Trash2 className="h-3.5 w-3.5" /></button></td>}
-              </tr>
-            ))}</tbody>
+            <tbody>
+              {rows.map(r => {
+                const v = variance(r);
+                return (
+                  <tr key={r.id} className="hover:bg-muted/20 align-top">
+                    <td className="border-b border-border p-2"><Input disabled={locked} value={r.caption} onChange={e => updRow(which, r.id, { caption: e.target.value })} className="h-8 text-xs" /></td>
+                    <td className="border-b border-border p-2"><Input disabled={locked} value={r.preliminary} onChange={e => updRow(which, r.id, { preliminary: e.target.value })} className="h-8 text-xs font-mono text-right" inputMode="decimal" /></td>
+                    <td className="border-b border-border p-2"><Input disabled={locked} value={r.finalAmount} onChange={e => updRow(which, r.id, { finalAmount: e.target.value })} className="h-8 text-xs font-mono text-right" inputMode="decimal" /></td>
+                    <td className="border-b border-border p-2"><Input disabled={locked} value={r.priorYear} onChange={e => updRow(which, r.id, { priorYear: e.target.value })} className="h-8 text-xs font-mono text-right" inputMode="decimal" /></td>
+                    <td className={`border-b border-border p-2 text-right font-mono text-xs ${v.tone}`}>{v.abs}<div className="text-[10px]">{v.pct}</div></td>
+                    <td className="border-b border-border p-2"><Textarea disabled={locked} value={r.varianceExplain} onChange={e => updRow(which, r.id, { varianceExplain: e.target.value })} className="min-h-[44px] text-xs resize-none" placeholder="Explain variance / unexpected relationship" /></td>
+                    <td className="border-b border-border p-2"><YNSelect value={r.consistent} onChange={v => updRow(which, r.id, { consistent: v as YN })} locked={locked} /></td>
+                    <td className="border-b border-border p-2"><Input disabled={locked} value={r.wpRef} onChange={e => updRow(which, r.id, { wpRef: e.target.value })} className="h-8 text-xs" placeholder="—" /></td>
+                    <td className="border-b border-border p-2 text-center"><Button size="icon" variant="ghost" className="h-7 w-7" disabled={locked} onClick={() => delRow(which, r.id)}><Trash2 className="h-3.5 w-3.5 text-muted-foreground" /></Button></td>
+                  </tr>
+                );
+              })}
+            </tbody>
           </table>
         </div>
-      </div>
-      <div className="rounded-lg border border-border bg-card px-4 py-3 space-y-2">
-        <h3 className="text-sm font-semibold">Overall Conclusion</h3>
-        <Textarea disabled={locked} value={data.overallConclusion} onChange={e => setData(d => ({ ...d, overallConclusion: e.target.value }))} className="text-xs min-h-[72px]" placeholder="State whether the final analytical review raised any concerns or confirmed prior audit conclusions." />
-      </div>
-      <div className="rounded-lg border border-border bg-card px-4 py-3">
-        <h3 className="text-sm font-semibold mb-3">Sign-off</h3>
-        <div className="grid grid-cols-2 gap-3">
-          {[['Prepared by', 'preparedBy', 'preparedDate'], ['Reviewed by', 'reviewedBy', 'reviewedDate']].map(([label, nk, dk]) => (
-            <div key={nk} className="space-y-1.5"><p className="text-xs font-medium text-muted-foreground">{label}</p><div className="flex gap-2"><Input disabled={locked} value={(data as unknown as Record<string, string>)[nk]} onChange={e => setData(d => ({ ...d, [nk]: e.target.value }))} className="h-7 text-xs flex-1" placeholder="Name" /><Input disabled={locked} type="date" value={(data as unknown as Record<string, string>)[dk]} onChange={e => setData(d => ({ ...d, [dk]: e.target.value }))} className="h-7 text-xs w-32" /></div></div>
-          ))}
+      </WorksheetSection>
+    );
+  }
+
+  return (
+    <WorksheetLayout
+      objective="Assist in forming an overall conclusion on whether the F/S are consistent with our understanding of the entity, and corroborate the conclusions formed on individual components."
+      standard={`${ctx.standardPrefix} 520.6`}
+    >
+      <WorksheetSection title="Performance materiality" right={<span className="text-[11px] text-muted-foreground">From Form 420</span>}>
+        <div className="text-sm font-mono">{formatCurrency(ctx.performanceMateriality)}</div>
+      </WorksheetSection>
+
+      <LinkedRisksCard overallRisk={overall} risks={risks}
+        emptyHint="No risks loaded from Form 520. Identified risks help frame which variances warrant additional inquiry." />
+
+      <RowsTable which="rows" title="Statement of operations & financial position" rows={data.rows} />
+      <RowsTable which="ratios" title="Key ratios" rows={data.ratios} />
+
+      <WorksheetSection title="Overall evaluation (CAS 520.6)">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div><Label>Unexpected relationships identified?</Label><YNSelect value={data.unexpectedRelationships} onChange={v => setData(d => ({ ...d, unexpectedRelationships: v as YN }))} locked={locked} /></div>
+          <div><Label>New risk factors identified?</Label><YNSelect value={data.newRisksIdentified} onChange={v => setData(d => ({ ...d, newRisksIdentified: v as YN }))} locked={locked} /></div>
+          <div><Label>RMM reassessment needed (Form 520)?</Label><YNSelect value={data.rmmReassessmentNeeded} onChange={v => setData(d => ({ ...d, rmmReassessmentNeeded: v as YN }))} locked={locked} /></div>
+          {data.unexpectedRelationships === "Y" && (
+            <div className="md:col-span-3"><Label>Unexpected relationships — nature & response</Label>
+              <Textarea disabled={locked} value={data.unexpectedRelationshipsNotes} onChange={e => setData(d => ({ ...d, unexpectedRelationshipsNotes: e.target.value }))} className="text-sm min-h-[72px]" placeholder="Describe inconsistencies with our understanding of the entity and the additional procedures performed." />
+            </div>
+          )}
+          {data.newRisksIdentified === "Y" && (
+            <div className="md:col-span-3"><Label>New risks — nature & resolution</Label>
+              <Textarea disabled={locked} value={data.newRisksNotes} onChange={e => setData(d => ({ ...d, newRisksNotes: e.target.value }))} className="text-sm min-h-[72px]" placeholder="Document the risk and how it was resolved (update Forms 520 / 590)." />
+            </div>
+          )}
+          {data.rmmReassessmentNeeded === "Y" && (
+            <div className="md:col-span-3"><Label>RMM reassessment notes</Label>
+              <Textarea disabled={locked} value={data.rmmReassessmentNotes} onChange={e => setData(d => ({ ...d, rmmReassessmentNotes: e.target.value }))} className="text-sm min-h-[64px]" placeholder="Required updates to Form 520 / 590." />
+            </div>
+          )}
         </div>
-      </div>
-      {locked ? <div className="rounded-lg border border-green-200 bg-green-50 px-4 py-2.5 text-xs text-green-800 font-medium">Concluded on {data.concludedOn}</div> : (
-        <div className="flex justify-end"><Button size="sm" onClick={() => { const u = { ...data, concluded: true, concludedOn: new Date().toISOString().slice(0, 10) }; setData(u); writeJsonToLocalStorage(storageKey, u); }}>Conclude Worksheet</Button></div>
-      )}
-    </div>
+      </WorksheetSection>
+
+      <WorksheetSection title={`Audit conclusion (${ctx.standardPrefix} 520)`}
+        right={allAddressed && data.evidenceSufficient === "" ? (
+          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 text-[11px] font-medium">All lines addressed — ready to conclude</span>
+        ) : null}
+      >
+        <div className="grid grid-cols-1 md:grid-cols-[220px_1fr] gap-4">
+          <div><Label>Final analytics support audit conclusions?</Label><YNSelect value={data.evidenceSufficient} onChange={v => setData(d => ({ ...d, evidenceSufficient: v as YN }))} locked={locked} /></div>
+          <div><Label>Rationale</Label>
+            <Textarea disabled={locked} value={data.evidenceRationale} onChange={e => setData(d => ({ ...d, evidenceRationale: e.target.value }))} className="text-sm min-h-[72px]" placeholder="The final analytical procedures corroborate the conclusions formed during the audit and no unidentified RMM was identified." />
+          </div>
+        </div>
+      </WorksheetSection>
+
+      <ConcludeBar
+        concluded={data.concluded}
+        concludedOn={data.concludedOn}
+        onConclude={() => { const u = { ...data, concluded: true, concludedOn: new Date().toISOString().slice(0, 10) }; setData(u); writeJsonToLocalStorage(storageKey, u); }}
+      />
+    </WorksheetLayout>
   );
 }

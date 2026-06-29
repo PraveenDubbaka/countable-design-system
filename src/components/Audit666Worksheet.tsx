@@ -1,124 +1,311 @@
-import { useState, useEffect, useRef } from "react";
+// Form 666 — Related-Party Transactions (CAS 550 / AU-C 550)
+// Aligned with WorksheetShell design standards.
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
-import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Button } from "@/components/ui/button";
 import { Plus, Trash2 } from "lucide-react";
+import type { RefDoc } from "@/components/RefButton";
 import { readJsonFromLocalStorage, writeJsonToLocalStorage } from "@/lib/safeJson";
+import { useEngagementContext } from "@/hooks/useEngagementContext";
+import { formatCurrency } from "@/lib/engagementContext";
+import { loadRisks520, overallRisk520, filterRisks } from "@/lib/audit520Bridge";
+import {
+  WorksheetLayout, WorksheetSection, LinkedRisksCard, ProcedureTable, ConcludeBar, makeProcRow,
+  type ProcRow,
+} from "@/components/audit/WorksheetShell";
 
-interface RPTRow {
+type YN = "Y" | "N" | "";
+type YNNA = YN | "N/A";
+
+type RpRelationship = "Parent" | "Subsidiary" | "Affiliate" | "Owner / shareholder" | "KMP / family" | "Other" | "";
+
+interface RelatedParty {
   id: string;
-  relatedParty: string;
-  relationship: string;
-  transactionType: string;
+  name: string;
+  relationship: RpRelationship;
+  natureOfTxn: string;     // e.g. management fees, loans
   amount: string;
-  terms: string;
-  armLength: string;
-  authorized: string;
-  disclosed: string;
-  auditResponse: string;
+  armsLength: YNNA;
+  outsideNormal: YN;       // outside ordinary course of business
+  disclosureAdequate: YNNA;
   wpRef: string;
 }
 
 interface Data666 {
-  rows: RPTRow[];
-  overallConclusion: string;
-  preparedBy: string; preparedDate: string;
-  reviewedBy: string; reviewedDate: string;
-  concluded: boolean; concludedOn: string;
+  parties: RelatedParty[];
+  procPreparation: ProcRow[];
+  procCompleteness: ProcRow[];
+  procAccuracyValuation: ProcRow[];
+  procExistence: ProcRow[];
+  procPresentation: ProcRow[];
+
+  unidentifiedFound: YN;
+  unidentifiedNotes: string;
+  tcwgCommunicated: YN;
+  tcwgCommunicationLog: string;
+  disclosuresAdequate: YNNA;
+  disclosureNotes: string;
+  otherProcedures: string;
+  evidenceSufficient: YN;
+  evidenceRationale: string;
+  concluded: boolean;
+  concludedOn: string;
 }
 
-const ARM_OPTIONS = ['Yes — arm\'s length terms', 'No — non-arm\'s length', 'Unable to determine'];
-const YN_OPTIONS = ['Yes', 'No', 'NA'];
+const dPreparation = (): ProcRow[] => [
+  makeProcRow("Complete Form 515. Review the list of related parties provided by management and the assessed RMM (Forms 520 / 590)."),
+];
+const dCompleteness = (): ProcRow[] => [
+  makeProcRow("1a. Inquire and review documents (board minutes, unusual period-end invoices, legal correspondence, asset transactions, contracts, loans, guarantees, investments) to identify undisclosed related-party transactions.", "C"),
+  makeProcRow("1b. Examine purpose, documentation and authorization for material transactions with component entities.", "C"),
+  makeProcRow("2. Where previously undisclosed related-party transactions are identified: update RMM and assess need for further procedures (especially where non-disclosure appears intentional); inform other engagement team members; perform sufficient work to identify all RP transactions; obtain explanations for why they were not earlier identified.", "C (AV)"),
+];
+const dAccuracyValuation = (): ProcRow[] => [
+  makeProcRow("1. Accounting treatment — review nature/extent of RP transactions and determine accounting and presentation are in accordance with the AFRF.", "AV (C E)"),
+  makeProcRow("2. Communications — communicate significant matters relating to related parties (including previously undisclosed RP transactions) to TCWG (unless all TCWG are involved in management).", "AV"),
+];
+const dExistence = (): ProcRow[] => [
+  makeProcRow("1. Transactions outside normal course of business — review underlying contracts, terms and accounting to evaluate management's stated business rationale; consider whether the transaction may have been used for fraudulent reporting or to conceal misappropriation; obtain evidence of authorization/approval.", "E (AV)"),
+  makeProcRow("2. Arm's-length transactions — corroborate management's assertion (bargaining power of each party, similar market transactions, confirmation with counterparties).", "E (AV)"),
+];
+const dPresentation = (): ProcRow[] => [
+  makeProcRow("Classification — balances and classes of transactions appropriately classified, aggregated/disaggregated and characterized per AFRF.", "P"),
+  makeProcRow("Disclosures — notes include all disclosures required by the AFRF (see FRF 900 series).", "P"),
+  makeProcRow("Relevant information — overall presentation not undermined by irrelevant information that obscures the matters disclosed.", "P"),
+];
 
-function newRow(): RPTRow {
-  return { id: Math.random().toString(36).slice(2), relatedParty: '', relationship: '', transactionType: '', amount: '', terms: '', armLength: '', authorized: '', disclosed: '', auditResponse: '', wpRef: '' };
+function newParty(seed?: Partial<RelatedParty>): RelatedParty {
+  return {
+    id: Math.random().toString(36).slice(2, 9),
+    name: "", relationship: "", natureOfTxn: "", amount: "",
+    armsLength: "", outsideNormal: "", disclosureAdequate: "", wpRef: "",
+    ...seed,
+  };
 }
 
 function buildDefault(): Data666 {
-  return { rows: [newRow(), newRow()], overallConclusion: '', preparedBy: '', preparedDate: '', reviewedBy: '', reviewedDate: '', concluded: false, concludedOn: '' };
+  return {
+    parties: [],
+    procPreparation: dPreparation(), procCompleteness: dCompleteness(),
+    procAccuracyValuation: dAccuracyValuation(), procExistence: dExistence(), procPresentation: dPresentation(),
+    unidentifiedFound: "", unidentifiedNotes: "",
+    tcwgCommunicated: "", tcwgCommunicationLog: "",
+    disclosuresAdequate: "", disclosureNotes: "",
+    otherProcedures: "", evidenceSufficient: "", evidenceRationale: "",
+    concluded: false, concludedOn: "",
+  };
 }
+
+function Label({ children }: { children: React.ReactNode }) {
+  return <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground block mb-1.5">{children}</label>;
+}
+function YNSelect({ value, onChange, withNA = false, locked }: { value: string; onChange: (v: string) => void; withNA?: boolean; locked: boolean }) {
+  return (
+    <Select disabled={locked} value={value} onValueChange={onChange}>
+      <SelectTrigger className="h-8 text-sm"><SelectValue placeholder="Select" /></SelectTrigger>
+      <SelectContent>
+        <SelectItem value="Y">Yes</SelectItem>
+        <SelectItem value="N">No</SelectItem>
+        {withNA && <SelectItem value="N/A">N/A</SelectItem>}
+      </SelectContent>
+    </Select>
+  );
+}
+
+type SectionKey = "procPreparation" | "procCompleteness" | "procAccuracyValuation" | "procExistence" | "procPresentation";
+
+const RP_KEYWORDS = ["related part", "related-party", "shareholder", "management fee", "common control", "affiliate", "intercompany"];
 
 export function Audit666Worksheet() {
   const { engagementId } = useParams<{ engagementId: string }>();
-  const storageKey = `audit-666-data-${engagementId ?? 'default'}`;
-  const saveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const isFirstRender = useRef(true);
-  const [data, setData] = useState<Data666>(() => readJsonFromLocalStorage<Data666>(storageKey, buildDefault()) ?? buildDefault());
+  const ctx = useEngagementContext();
 
+  const risks = useMemo(() => loadRisks520(engagementId), [engagementId]);
+  const overall = useMemo(() => overallRisk520(risks), [risks]);
+  const rpRisks = useMemo(() => filterRisks(risks, RP_KEYWORDS), [risks]);
+
+  // FSA exposure (from engagement context)
+  const fsaRp = ctx.fsas.find(f => /related[- ]?part/i.test(f.fsa));
+
+  const storageKey = `audit-666-data-${engagementId ?? "default"}`;
+  const [data, setData] = useState<Data666>(() => {
+    const def = buildDefault();
+    const stored = readJsonFromLocalStorage<Partial<Data666>>(storageKey, def) ?? def;
+    const merged = { ...def, ...stored } as Data666;
+    if (!Array.isArray(merged.parties)) merged.parties = [];
+    (["procPreparation","procCompleteness","procAccuracyValuation","procExistence","procPresentation"] as SectionKey[])
+      .forEach(k => { if (!Array.isArray(merged[k])) (merged as unknown as Record<SectionKey, ProcRow[]>)[k] = (def as unknown as Record<SectionKey, ProcRow[]>)[k]; });
+    return merged;
+  });
+
+  const saveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const first = useRef(true);
   useEffect(() => {
-    if (isFirstRender.current) { isFirstRender.current = false; return; }
-    if (saveTimerRef.current) clearTimeout(saveTimerRef.current);
-    saveTimerRef.current = setTimeout(() => writeJsonToLocalStorage(storageKey, data), 450);
+    if (first.current) { first.current = false; return; }
+    if (saveTimer.current) clearTimeout(saveTimer.current);
+    saveTimer.current = setTimeout(() => writeJsonToLocalStorage(storageKey, data), 450);
   }, [data, storageKey]);
 
   const locked = data.concluded;
-  const upd = (id: string, field: keyof RPTRow, value: string) =>
-    setData(d => ({ ...d, rows: d.rows.map(r => r.id === id ? { ...r, [field]: value } : r) }));
 
-  const td = "border border-border px-2 py-1.5 text-xs align-top";
-  const th = "border border-border bg-muted px-2 py-1.5 text-xs font-medium text-left align-middle whitespace-nowrap";
+  function updProc(section: SectionKey, rowId: string, field: keyof ProcRow, value: string | RefDoc[]) {
+    setData(d => ({ ...d, [section]: (d[section] as ProcRow[]).map(r => r.id === rowId ? { ...r, [field]: value } : r) }));
+  }
+  const handler = (section: SectionKey) =>
+    (_si: number, rowId: string, field: keyof ProcRow, value: string | RefDoc[]) =>
+      updProc(section, rowId, field, value);
+
+  const addParty = () => setData(d => ({ ...d, parties: [...d.parties, newParty()] }));
+  const updParty = (id: string, patch: Partial<RelatedParty>) =>
+    setData(d => ({ ...d, parties: d.parties.map(p => p.id === id ? { ...p, ...patch } : p) }));
+  const removeParty = (id: string) =>
+    setData(d => ({ ...d, parties: d.parties.filter(p => p.id !== id) }));
+
+  const allProcsAddressed = useMemo(() => {
+    const all = [...data.procPreparation, ...data.procCompleteness, ...data.procAccuracyValuation, ...data.procExistence, ...data.procPresentation];
+    return all.length > 0 && all.every(p => p.psc !== "");
+  }, [data]);
 
   return (
-    <div className="p-4 space-y-4 text-sm">
-      <div className="rounded-lg border border-border bg-card px-4 py-3">
-        <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-1">Objective</p>
-        <p className="text-sm">Document all significant related party transactions, assess whether they are conducted on arm's length terms, verify authorization and appropriate disclosure in the financial statements (CAS 550).</p>
-      </div>
-      <div className="rounded-lg border border-border bg-card overflow-hidden">
-        <div className="px-4 py-2.5 border-b border-border flex items-center justify-between">
-          <h3 className="text-sm font-semibold">Related Party Transactions</h3>
-          {!locked && <Button size="sm" variant="outline" className="h-7 text-xs gap-1" onClick={() => setData(d => ({ ...d, rows: [...d.rows, newRow()] }))}><Plus className="h-3 w-3" /> Add Transaction</Button>}
+    <WorksheetLayout
+      objective="Obtain evidence that related-party relationships and transactions have been identified, accounted for, and disclosed in the F/S in accordance with the AFRF."
+      standard={`${ctx.standardPrefix} 550`}
+    >
+      <WorksheetSection title="Performance materiality" right={<span className="text-[11px] text-muted-foreground">From Form 420</span>}>
+        <div className="flex items-center gap-6">
+          <div className="text-sm font-mono">{formatCurrency(ctx.performanceMateriality)}</div>
+          {fsaRp && (
+            <div className="text-[11px] text-muted-foreground">
+              FSA classification flags related-party disclosures
+              {fsaRp.significantRisk === "Y" && <span className="ml-2 text-red-700 font-medium">· Significant risk</span>}
+            </div>
+          )}
         </div>
-        <div className="overflow-x-auto">
-          <table className="w-full border-collapse text-xs">
-            <thead><tr>
-              <th className={th} style={{ width: 120 }}>Related Party</th>
-              <th className={th} style={{ width: 110 }}>Relationship</th>
-              <th className={th} style={{ width: 110 }}>Transaction Type</th>
-              <th className={th} style={{ width: 90 }}>Amount $</th>
-              <th className={th}>Terms / Conditions</th>
-              <th className={th} style={{ width: 120 }}>Arm's Length?</th>
-              <th className={th} style={{ width: 80 }}>Authorized?</th>
-              <th className={th} style={{ width: 80 }}>Disclosed?</th>
-              <th className={th}>Audit Response</th>
-              <th className={th} style={{ width: 70 }}>WP Ref</th>
-              {!locked && <th className={th} style={{ width: 32 }}></th>}
-            </tr></thead>
-            <tbody>{data.rows.map(row => (
-              <tr key={row.id} className="hover:bg-muted/30">
-                <td className={td}><Textarea disabled={locked} value={row.relatedParty} onChange={e => upd(row.id, 'relatedParty', e.target.value)} className="min-h-[56px] text-xs resize-none border-0 p-0 shadow-none focus-visible:ring-0 bg-transparent" placeholder="Name" /></td>
-                <td className={td}><Textarea disabled={locked} value={row.relationship} onChange={e => upd(row.id, 'relationship', e.target.value)} className="min-h-[56px] text-xs resize-none border-0 p-0 shadow-none focus-visible:ring-0 bg-transparent" placeholder="Describe relationship" /></td>
-                <td className={td}><Input disabled={locked} value={row.transactionType} onChange={e => upd(row.id, 'transactionType', e.target.value)} className="h-7 text-xs border-0 p-0 shadow-none focus-visible:ring-0 bg-transparent" placeholder="e.g. Management fees" /></td>
-                <td className={td}><Input disabled={locked} value={row.amount} onChange={e => upd(row.id, 'amount', e.target.value)} className="h-7 text-xs border-0 p-0 shadow-none focus-visible:ring-0 bg-transparent" placeholder="0" /></td>
-                <td className={td}><Textarea disabled={locked} value={row.terms} onChange={e => upd(row.id, 'terms', e.target.value)} className="min-h-[56px] text-xs resize-none border-0 p-0 shadow-none focus-visible:ring-0 bg-transparent" placeholder="Terms and conditions" /></td>
-                <td className={td}><Select disabled={locked} value={row.armLength} onValueChange={v => upd(row.id, 'armLength', v)}><SelectTrigger className="h-7 text-xs border-0 shadow-none focus:ring-0 px-0 bg-transparent"><SelectValue placeholder="Select…" /></SelectTrigger><SelectContent>{ARM_OPTIONS.map(o => <SelectItem key={o} value={o} className="text-xs">{o}</SelectItem>)}</SelectContent></Select></td>
-                <td className={td}><Select disabled={locked} value={row.authorized} onValueChange={v => upd(row.id, 'authorized', v)}><SelectTrigger className="h-7 text-xs border-0 shadow-none focus:ring-0 px-0 bg-transparent"><SelectValue placeholder="Y/N" /></SelectTrigger><SelectContent>{YN_OPTIONS.map(o => <SelectItem key={o} value={o} className="text-xs">{o}</SelectItem>)}</SelectContent></Select></td>
-                <td className={td}><Select disabled={locked} value={row.disclosed} onValueChange={v => upd(row.id, 'disclosed', v)}><SelectTrigger className="h-7 text-xs border-0 shadow-none focus:ring-0 px-0 bg-transparent"><SelectValue placeholder="Y/N" /></SelectTrigger><SelectContent>{YN_OPTIONS.map(o => <SelectItem key={o} value={o} className="text-xs">{o}</SelectItem>)}</SelectContent></Select></td>
-                <td className={td}><Textarea disabled={locked} value={row.auditResponse} onChange={e => upd(row.id, 'auditResponse', e.target.value)} className="min-h-[56px] text-xs resize-none border-0 p-0 shadow-none focus-visible:ring-0 bg-transparent" placeholder="Procedures performed" /></td>
-                <td className={td}><Input disabled={locked} value={row.wpRef} onChange={e => upd(row.id, 'wpRef', e.target.value)} className="h-7 text-xs border-0 p-0 shadow-none focus-visible:ring-0 bg-transparent" placeholder="WP ref" /></td>
-                {!locked && <td className={td + " text-center"}><button onClick={() => setData(d => ({ ...d, rows: d.rows.filter(r => r.id !== row.id) }))} className="text-muted-foreground hover:text-destructive"><Trash2 className="h-3.5 w-3.5" /></button></td>}
-              </tr>
-            ))}</tbody>
-          </table>
+      </WorksheetSection>
+
+      <LinkedRisksCard overallRisk={overall} risks={rpRisks}
+        emptyHint="No related-party-tagged risks in Form 520. Tag risks containing keywords (related party, shareholder, affiliate, intercompany, management fee) to flow them through." />
+
+      <WorksheetSection
+        title="Related parties & transactions register"
+        right={<Button size="sm" variant="outline" className="h-7 text-xs" disabled={locked} onClick={addParty}><Plus className="h-3 w-3 mr-1" /> Add party / transaction</Button>}
+        bodyClassName="p-0"
+      >
+        {data.parties.length === 0 ? (
+          <p className="px-6 py-4 text-xs text-muted-foreground">
+            No related parties recorded. Each entry flows into Form 535 (TCWG), Form 580 (representations) and the 900-series disclosure forms.
+          </p>
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="w-full text-xs border-collapse">
+              <thead><tr className="bg-muted/40">
+                <th className="text-left px-3 py-2.5 font-medium border-b border-border w-[150px]">Name</th>
+                <th className="text-left px-3 py-2.5 font-medium border-b border-border w-[150px]">Relationship</th>
+                <th className="text-left px-3 py-2.5 font-medium border-b border-border">Nature of transaction</th>
+                <th className="text-left px-3 py-2.5 font-medium border-b border-border w-[110px]">Amount ($)</th>
+                <th className="text-left px-3 py-2.5 font-medium border-b border-border w-[110px]">Arm's-length?</th>
+                <th className="text-left px-3 py-2.5 font-medium border-b border-border w-[120px]">Outside normal?</th>
+                <th className="text-left px-3 py-2.5 font-medium border-b border-border w-[110px]">Disclosure</th>
+                <th className="text-left px-3 py-2.5 font-medium border-b border-border w-[80px]">W/P</th>
+                <th className="px-3 py-2.5 border-b border-border w-[40px]" />
+              </tr></thead>
+              <tbody>
+                {data.parties.map(p => (
+                  <tr key={p.id} className="hover:bg-muted/20 align-top">
+                    <td className="border-b border-border p-2"><Input disabled={locked} value={p.name} onChange={e => updParty(p.id, { name: e.target.value })} className="h-8 text-xs" placeholder="—" /></td>
+                    <td className="border-b border-border p-2">
+                      <Select disabled={locked} value={p.relationship} onValueChange={v => updParty(p.id, { relationship: v as RpRelationship })}>
+                        <SelectTrigger className="h-8 text-xs"><SelectValue placeholder="—" /></SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="Parent">Parent</SelectItem>
+                          <SelectItem value="Subsidiary">Subsidiary</SelectItem>
+                          <SelectItem value="Affiliate">Affiliate</SelectItem>
+                          <SelectItem value="Owner / shareholder">Owner / shareholder</SelectItem>
+                          <SelectItem value="KMP / family">KMP / family</SelectItem>
+                          <SelectItem value="Other">Other</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </td>
+                    <td className="border-b border-border p-2"><Textarea disabled={locked} value={p.natureOfTxn} onChange={e => updParty(p.id, { natureOfTxn: e.target.value })} className="min-h-[44px] text-xs resize-none" placeholder="Loans, mgmt fees, leases, sales…" /></td>
+                    <td className="border-b border-border p-2"><Input disabled={locked} value={p.amount} onChange={e => updParty(p.id, { amount: e.target.value })} className="h-8 text-xs font-mono text-right" inputMode="decimal" placeholder="0" /></td>
+                    <td className="border-b border-border p-2"><YNSelect value={p.armsLength} onChange={v => updParty(p.id, { armsLength: v as YNNA })} withNA locked={locked} /></td>
+                    <td className="border-b border-border p-2"><YNSelect value={p.outsideNormal} onChange={v => updParty(p.id, { outsideNormal: v as YN })} locked={locked} /></td>
+                    <td className="border-b border-border p-2"><YNSelect value={p.disclosureAdequate} onChange={v => updParty(p.id, { disclosureAdequate: v as YNNA })} withNA locked={locked} /></td>
+                    <td className="border-b border-border p-2"><Input disabled={locked} value={p.wpRef} onChange={e => updParty(p.id, { wpRef: e.target.value })} className="h-8 text-xs" placeholder="—" /></td>
+                    <td className="border-b border-border p-2 text-center"><Button size="icon" variant="ghost" className="h-7 w-7" disabled={locked} onClick={() => removeParty(p.id)}><Trash2 className="h-3.5 w-3.5 text-muted-foreground" /></Button></td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </WorksheetSection>
+
+      <WorksheetSection title="Preparation" bodyClassName="p-0">
+        <ProcedureTable sections={[{ title: "Form 515 & risk assessments", rows: data.procPreparation }]} locked={locked} onChange={handler("procPreparation")} />
+      </WorksheetSection>
+      <WorksheetSection title="Completeness — identify related parties & transactions" bodyClassName="p-0">
+        <ProcedureTable sections={[{ title: "Search & follow-up", rows: data.procCompleteness }]} locked={locked} onChange={handler("procCompleteness")} />
+      </WorksheetSection>
+      <WorksheetSection title="Accuracy / valuation" bodyClassName="p-0">
+        <ProcedureTable sections={[{ title: "Accounting treatment & TCWG communication", rows: data.procAccuracyValuation }]} locked={locked} onChange={handler("procAccuracyValuation")} />
+      </WorksheetSection>
+      <WorksheetSection title="Existence" bodyClassName="p-0">
+        <ProcedureTable sections={[{ title: "Outside-normal & arm's-length corroboration", rows: data.procExistence }]} locked={locked} onChange={handler("procExistence")} />
+      </WorksheetSection>
+      <WorksheetSection title="Presentation" bodyClassName="p-0">
+        <ProcedureTable sections={[{ title: "Classification, disclosures & relevant information", rows: data.procPresentation }]} locked={locked} onChange={handler("procPresentation")} />
+      </WorksheetSection>
+
+      <WorksheetSection title="Overall evaluation">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div><Label>Previously unidentified RP transactions found?</Label><YNSelect value={data.unidentifiedFound} onChange={v => setData(d => ({ ...d, unidentifiedFound: v as YN }))} locked={locked} /></div>
+          <div><Label>Communicated to TCWG (Form 535)?</Label><YNSelect value={data.tcwgCommunicated} onChange={v => setData(d => ({ ...d, tcwgCommunicated: v as YN }))} locked={locked} /></div>
+          {data.unidentifiedFound === "Y" && (
+            <div className="md:col-span-2"><Label>Unidentified RP transactions — nature & response</Label>
+              <Textarea disabled={locked} value={data.unidentifiedNotes} onChange={e => setData(d => ({ ...d, unidentifiedNotes: e.target.value }))} className="text-sm min-h-[72px]" placeholder="Describe the transactions, why not identified earlier, and updated RMM response." />
+            </div>
+          )}
+          <div className="md:col-span-2"><Label>TCWG communication log</Label>
+            <Textarea disabled={locked} value={data.tcwgCommunicationLog} onChange={e => setData(d => ({ ...d, tcwgCommunicationLog: e.target.value }))} className="text-sm min-h-[64px]" placeholder="Summarise communication, date, attendees, matters discussed." />
+          </div>
         </div>
-      </div>
-      <div className="rounded-lg border border-border bg-card px-4 py-3 space-y-2">
-        <h3 className="text-sm font-semibold">Overall Conclusion</h3>
-        <Textarea disabled={locked} value={data.overallConclusion} onChange={e => setData(d => ({ ...d, overallConclusion: e.target.value }))} className="text-xs min-h-[72px]" placeholder="Conclude on whether related party transactions are appropriately disclosed and there are no undisclosed transactions." />
-      </div>
-      <div className="rounded-lg border border-border bg-card px-4 py-3">
-        <h3 className="text-sm font-semibold mb-3">Sign-off</h3>
-        <div className="grid grid-cols-2 gap-3">
-          {[['Prepared by', 'preparedBy', 'preparedDate'], ['Reviewed by', 'reviewedBy', 'reviewedDate']].map(([label, nk, dk]) => (
-            <div key={nk} className="space-y-1.5"><p className="text-xs font-medium text-muted-foreground">{label}</p><div className="flex gap-2"><Input disabled={locked} value={(data as unknown as Record<string, string>)[nk]} onChange={e => setData(d => ({ ...d, [nk]: e.target.value }))} className="h-7 text-xs flex-1" placeholder="Name" /><Input disabled={locked} type="date" value={(data as unknown as Record<string, string>)[dk]} onChange={e => setData(d => ({ ...d, [dk]: e.target.value }))} className="h-7 text-xs w-32" /></div></div>
-          ))}
+      </WorksheetSection>
+
+      <WorksheetSection title="Disclosures">
+        <div className="grid grid-cols-1 md:grid-cols-[220px_1fr] gap-4">
+          <div><Label>Disclosures adequate (AFRF)?</Label><YNSelect value={data.disclosuresAdequate} onChange={v => setData(d => ({ ...d, disclosuresAdequate: v as YNNA }))} withNA locked={locked} /></div>
+          <div><Label>Disclosure notes</Label>
+            <Textarea disabled={locked} value={data.disclosureNotes} onChange={e => setData(d => ({ ...d, disclosureNotes: e.target.value }))} className="text-sm min-h-[72px]" placeholder="Confirm notes meet AFRF related-party disclosure requirements." />
+          </div>
         </div>
-      </div>
-      {locked ? <div className="rounded-lg border border-green-200 bg-green-50 px-4 py-2.5 text-xs text-green-800 font-medium">Concluded on {data.concludedOn}</div> : (
-        <div className="flex justify-end"><Button size="sm" onClick={() => { const u = { ...data, concluded: true, concludedOn: new Date().toISOString().slice(0, 10) }; setData(u); writeJsonToLocalStorage(storageKey, u); }}>Conclude Worksheet</Button></div>
-      )}
-    </div>
+      </WorksheetSection>
+
+      <WorksheetSection title="Other procedures (specify)">
+        <Textarea disabled={locked} value={data.otherProcedures} onChange={e => setData(d => ({ ...d, otherProcedures: e.target.value }))} className="text-sm min-h-[72px]" placeholder="Additional procedures performed in response to identified risks." />
+      </WorksheetSection>
+
+      <WorksheetSection title={`Audit conclusion (${ctx.standardPrefix} 550)`}
+        right={allProcsAddressed && data.evidenceSufficient === "" ? (
+          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 text-[11px] font-medium">All procedures addressed — ready to conclude</span>
+        ) : null}
+      >
+        <div className="grid grid-cols-1 md:grid-cols-[220px_1fr] gap-4">
+          <div><Label>Evidence sufficient & appropriate?</Label><YNSelect value={data.evidenceSufficient} onChange={v => setData(d => ({ ...d, evidenceSufficient: v as YN }))} locked={locked} /></div>
+          <div><Label>Rationale</Label>
+            <Textarea disabled={locked} value={data.evidenceRationale} onChange={e => setData(d => ({ ...d, evidenceRationale: e.target.value }))} className="text-sm min-h-[72px]" placeholder="The audit evidence obtained over related-party relationships and transactions is sufficient and appropriate to reduce RMM to an acceptably low level." />
+          </div>
+        </div>
+      </WorksheetSection>
+
+      <ConcludeBar
+        concluded={data.concluded}
+        concludedOn={data.concludedOn}
+        onConclude={() => { const u = { ...data, concluded: true, concludedOn: new Date().toISOString().slice(0, 10) }; setData(u); writeJsonToLocalStorage(storageKey, u); }}
+      />
+    </WorksheetLayout>
   );
 }

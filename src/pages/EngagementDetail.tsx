@@ -42,8 +42,10 @@ import { Audit625Worksheet } from "@/components/Audit625Worksheet";
 import { Audit630Worksheet } from "@/components/Audit630Worksheet";
 import { Audit635Worksheet } from "@/components/Audit635Worksheet";
 import { Audit645Worksheet } from "@/components/Audit645Worksheet";
+import { Audit650Worksheet } from "@/components/Audit650Worksheet";
 import { Audit655Worksheet } from "@/components/Audit655Worksheet";
 import { Audit666Worksheet } from "@/components/Audit666Worksheet";
+import { Audit670Worksheet } from "@/components/Audit670Worksheet";
 import { Audit680Worksheet } from "@/components/Audit680Worksheet";
 import { ConnectorsModal, CONNECTORS_BY_ID } from "@/components/ConnectorsModal";
 import { getEngagementMeta } from "@/store/engagementsStore";
@@ -2224,10 +2226,14 @@ export default function EngagementDetail() {
             <Audit635Worksheet />
           ) : (checklistKey === 'aud-rp-645') ? (
             <Audit645Worksheet />
+          ) : (checklistKey === 'aud-rp-650') ? (
+            <Audit650Worksheet />
           ) : (checklistKey === 'aud-rp-655') ? (
             <Audit655Worksheet />
           ) : (checklistKey === 'aud-rp-666') ? (
             <Audit666Worksheet />
+          ) : (checklistKey === 'aud-rp-670') ? (
+            <Audit670Worksheet />
           ) : (checklistKey === 'aud-rp-680') ? (
             <Audit680Worksheet />
           ) : checklist ? (
