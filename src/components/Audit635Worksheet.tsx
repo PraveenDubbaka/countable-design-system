@@ -127,7 +127,7 @@ export function Audit635Worksheet() {
       />
 
 
-      <LinkedRisksCard risks={estimateRisks} emptyHint="No estimate-related risks tagged in Form 520." />
+      <LinkedRisksCard overallRisk={overall} risks={estimateRisks} emptyHint="No estimate-related risks tagged in Form 520." />
 
       <div className="rounded-lg border border-border bg-card overflow-hidden">
         <div className="px-4 py-2.5 border-b border-border"><h3 className="text-sm font-semibold">Estimate addressed by this worksheet</h3></div>
