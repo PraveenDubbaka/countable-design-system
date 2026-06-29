@@ -23,7 +23,6 @@ interface ConfirmRow {
   amountConfirmed: string;
   exceptions: string;
   psc: "Y" | "N" | "" ;
-  initials: string;
 }
 
 interface Data630 {
@@ -48,7 +47,7 @@ const DEFAULT_AREAS: { area: string; wpRef: string }[] = [
 ];
 
 function blankRow(area = "", wpRef = ""): ConfirmRow {
-  return { id: Math.random().toString(36).slice(2), area, wpRef, type: "", nature: "", itemsSent: "", itemsReceived: "", amountConfirmed: "", exceptions: "", psc: "", initials: "" };
+  return { id: Math.random().toString(36).slice(2), area, wpRef, type: "", nature: "", itemsSent: "", itemsReceived: "", amountConfirmed: "", exceptions: "", psc: "" };
 }
 
 function buildDefault(): Data630 {
@@ -124,7 +123,7 @@ export function Audit630Worksheet() {
               <th className="text-left px-3 py-2.5 font-medium text-xs border-b border-border w-[120px]">Amount $</th>
               <th className="text-left px-3 py-2.5 font-medium text-xs border-b border-border">Exceptions / difficulties</th>
               <th className="text-left px-3 py-2.5 font-medium text-xs border-b border-border w-[80px]">PSC</th>
-              <th className="text-left px-3 py-2.5 font-medium text-xs border-b border-border w-[90px]">Initials</th>
+              
               {!locked && <th className="border-b border-border w-[44px]"></th>}
             </tr></thead>
             <tbody>
@@ -152,7 +151,7 @@ export function Audit630Worksheet() {
                       <SelectContent><SelectItem value="Y">Y</SelectItem><SelectItem value="N">N</SelectItem></SelectContent>
                     </Select>
                   </td>
-                  <td className={td}><Input disabled={locked} value={r.initials} onChange={e => upd(r.id, "initials", e.target.value)} className="h-8 text-sm" /></td>
+                  
                   {!locked && (
                     <td className={td + " text-center"}>
                       <button onClick={() => setData(d => ({ ...d, rows: d.rows.filter(x => x.id !== r.id) }))} className="text-muted-foreground hover:text-destructive">
