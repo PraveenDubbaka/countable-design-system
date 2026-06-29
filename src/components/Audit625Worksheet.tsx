@@ -217,7 +217,10 @@ export function Audit625Worksheet() {
   const [data, setData] = useState<Data625>(() => {
     const def = buildDefault();
     const stored = readJsonFromLocalStorage<Partial<Data625>>(storageKey, def) ?? def;
-    return { ...def, ...stored } as Data625;
+    const merged = { ...def, ...stored } as Data625;
+    if (!Array.isArray(merged.communication)) merged.communication = def.communication;
+    if (!Array.isArray(merged.procedures)) merged.procedures = def.procedures;
+    return merged;
   });
 
   // Auto-seed events summary the first time, from 520 going-concern risks
