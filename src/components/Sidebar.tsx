@@ -1904,16 +1904,16 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
                   {
                     id: "aud-rp-sec", code: "RP", label: "Response to Assessed Risks", icon: "folder",
                     children: [
-                      { id: "aud-rp-605", code: "605", label: "Responding to Risk at the Financial Statement Level", icon: "checklist", route: "checklist/aud-rp-605" },
+                      { id: "aud-rp-605", code: "605", label: "Responding to Risk at the Financial Statement Level", icon: "worksheet", route: "checklist/aud-rp-605" },
                       { id: "aud-rp-610", code: "610", label: "Sampling — Tests of Details", icon: "worksheet", route: "checklist/aud-rp-610" },
                       { id: "aud-rp-625", code: "625", label: "Going-Concern Evaluation", icon: "worksheet", route: "checklist/aud-rp-625" },
                       { id: "aud-rp-630", code: "630", label: "Summary of External Confirmations", icon: "worksheet", route: "checklist/aud-rp-630" },
                       { id: "aud-rp-635", code: "635", label: "Accounting Estimates — Further Audit Procedures", icon: "worksheet", route: "checklist/aud-rp-635" },
-                      { id: "aud-rp-645", code: "645", label: "Litigation, Claims and Non-Compliance", icon: "checklist", route: "checklist/aud-rp-645" },
-                      { id: "aud-rp-650", code: "650", label: "Subsequent Events", icon: "checklist", route: "checklist/aud-rp-650" },
+                      { id: "aud-rp-645", code: "645", label: "Litigation, Claims and Non-Compliance", icon: "worksheet", route: "checklist/aud-rp-645" },
+                      { id: "aud-rp-650", code: "650", label: "Subsequent Events", icon: "worksheet", route: "checklist/aud-rp-650" },
                       { id: "aud-rp-655", code: "655", label: "Final Analytical Procedures", icon: "worksheet", route: "checklist/aud-rp-655" },
                       { id: "aud-rp-666", code: "666", label: "Related-Party Transactions", icon: "worksheet", route: "checklist/aud-rp-666" },
-                      { id: "aud-rp-670", code: "670", label: "Use of Journal Entries", icon: "checklist", route: "checklist/aud-rp-670" },
+                      { id: "aud-rp-670", code: "670", label: "Use of Journal Entries", icon: "worksheet", route: "checklist/aud-rp-670" },
                       { id: "aud-rp-680", code: "680", label: "ASPE Supplementary Audit Procedures", icon: "worksheet", route: "checklist/aud-rp-680" },
                     ]
                   },
