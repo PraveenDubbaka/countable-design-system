@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo, useCallback, useRef } from "react";
 import { useParams, useNavigate, useSearchParams } from "react-router-dom";
-import { ChevronRight, ChevronDown, Landmark, FileText, Triangle, FileSpreadsheet, PencilLine, Pencil, Settings2, Download, FileType, Share2, Save, RefreshCw, Trash2, Building2, Calendar, Check, AlertTriangle, Loader2, History, Upload, FileUp, Bell, Plus, X, LayoutGrid, CheckCircle2, PlugZap, Zap, Play, Square, ClipboardList, UserPlus } from "lucide-react";
+import { ChevronRight, ChevronDown, Landmark, FileText, Triangle, FileSpreadsheet, PencilLine, Pencil, Settings2, Download, FileType, Share2, Save, RefreshCw, Trash2, Building2, Calendar, Check, AlertTriangle, Loader2, History, Upload, FileUp, Bell, Plus, X, LayoutGrid, CheckCircle2, PlugZap, Zap, Play, Square, ClipboardList, UserPlus, UploadCloud, FileCheck2 } from "lucide-react";
 import { ExpandableIconButton } from "@/components/ui/expandable-icon-button";
 import { ChecklistIcon } from "@/components/icons/ChecklistIcon";
 import { Button } from "@/components/ui/button";
@@ -782,6 +782,9 @@ export default function EngagementDetail() {
   const [isFSEditing, setIsFSEditing] = useState(false);
   const fsSaveRef = useRef<(() => void) | null>(null);
   const [showAssignDialog, setShowAssignDialog] = useState(false);
+  const [priorYearFile, setPriorYearFile] = useState<File | null>(null);
+  const [isDraggingOverPriorYear, setIsDraggingOverPriorYear] = useState(false);
+  const priorYearFileInputRef = useRef<HTMLInputElement>(null);
   const [showShareDialog, setShowShareDialog] = useState(false);
   const [showResponseDialog, setShowResponseDialog] = useState(false);
   const [pendingEngagementId, setPendingEngagementId] = useState<string | null>(null);
@@ -2161,6 +2164,78 @@ export default function EngagementDetail() {
               </div>
             </div>
           )}
+          {/* ── Prior Year File Upload Section ── */}
+          {(() => {
+            const meta = getEngagementMeta(engagementId ?? '');
+            if (meta.firstYearOnPlatform !== 'no') return null;
+            return (
+              <div className="mx-4 mt-4 rounded-lg border border-border bg-card overflow-hidden">
+                <div className="flex items-center justify-between px-4 py-3 border-b border-border bg-muted/30">
+                  <div className="flex items-center gap-2">
+                    <FileText className="h-4 w-4 text-muted-foreground" />
+                    <span className="text-sm font-semibold text-foreground">Prior Year Audit File</span>
+                  </div>
+                  {priorYearFile && (
+                    <button onClick={() => setPriorYearFile(null)} className="p-1 rounded hover:bg-muted transition-colors text-muted-foreground hover:text-foreground">
+                      <X className="h-3.5 w-3.5" />
+                    </button>
+                  )}
+                </div>
+                <div className="px-4 py-4">
+                  <p className="text-xs text-muted-foreground mb-3">
+                    Upload your prior year audit file (PDF). Luka will extract acceptance data, materiality figures, and risk register items to carry forward as reviewable starting points.
+                  </p>
+                  {priorYearFile ? (
+                    <div className="flex items-center gap-3 px-4 py-3 rounded-lg border border-border bg-muted/40">
+                      <FileCheck2 className="h-5 w-5 text-primary shrink-0" />
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-medium text-foreground truncate">{priorYearFile.name}</p>
+                        <p className="text-xs text-muted-foreground">{(priorYearFile.size / 1024).toFixed(0)} KB · Ready for Luka to process</p>
+                      </div>
+                      <button
+                        onClick={() => setPriorYearFile(null)}
+                        className="p-1 rounded hover:bg-muted transition-colors text-muted-foreground hover:text-foreground shrink-0"
+                      >
+                        <X className="h-4 w-4" />
+                      </button>
+                    </div>
+                  ) : (
+                    <div
+                      onClick={() => priorYearFileInputRef.current?.click()}
+                      onDragOver={(e) => { e.preventDefault(); setIsDraggingOverPriorYear(true); }}
+                      onDragLeave={() => setIsDraggingOverPriorYear(false)}
+                      onDrop={(e) => {
+                        e.preventDefault();
+                        setIsDraggingOverPriorYear(false);
+                        const file = e.dataTransfer.files[0];
+                        if (file?.type === 'application/pdf') setPriorYearFile(file);
+                        else toast.error('Please upload a PDF file');
+                      }}
+                      className={`flex flex-col items-center justify-center gap-2 px-6 py-6 rounded-lg border-2 border-dashed cursor-pointer transition-colors ${
+                        isDraggingOverPriorYear
+                          ? 'border-primary bg-primary/5'
+                          : 'border-border hover:border-primary/40 hover:bg-muted/20'
+                      }`}
+                    >
+                      <UploadCloud className={`h-6 w-6 ${isDraggingOverPriorYear ? 'text-primary' : 'text-muted-foreground'}`} />
+                      <div className="text-center">
+                        <p className="text-sm font-medium text-foreground">Drop your prior year PDF here</p>
+                        <p className="text-xs text-muted-foreground mt-0.5">or <span className="text-primary underline underline-offset-2">click to browse</span> · PDF only</p>
+                      </div>
+                    </div>
+                  )}
+                  <input
+                    ref={priorYearFileInputRef}
+                    type="file"
+                    accept=".pdf,application/pdf"
+                    className="hidden"
+                    onChange={(e) => { const f = e.target.files?.[0]; if (f) setPriorYearFile(f); }}
+                  />
+                </div>
+              </div>
+            );
+          })()}
+
           {/* ── Financial Statement pages ── */}
           {checklistKey && FS_PAGE_KEYS.has(checklistKey) && engagementId ? (
             <AuditFSViewer
