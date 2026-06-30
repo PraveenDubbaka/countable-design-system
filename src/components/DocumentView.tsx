@@ -1181,7 +1181,7 @@ function QuestionInlineColumns({
         {showNumbering && <>
           {/* Checkbox + Number: checkbox appears on hover in edit mode */}
           <div className="shrink-0 w-8 flex items-center justify-start">
-            {canEdit && onSelectionChange ? (
+            {onSelectionChange ? (
               <>
                 <span
                   className={`dv-number text-xs font-medium text-muted-foreground select-none w-8 text-left ${isSelected ? 'hidden' : 'group-hover/q:hidden'}`}
