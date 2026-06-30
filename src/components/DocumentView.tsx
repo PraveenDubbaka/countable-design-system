@@ -1251,24 +1251,6 @@ function QuestionInlineColumns({
             <div className="flex flex-nowrap items-center justify-start gap-2 min-w-0 overflow-visible px-2 relative group/resp self-center"
               style={{ flex: `0 0 ${widths[widthIdx] * 100}%` }}>
               <ResponseField question={question} onUpdate={onUpdate} isPreviewMode={isPreviewMode} isEngagementMode={isEngagementMode} />
-              {isEngagementMode && question.answeredBy && question.answer && (
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <span
-                      className={`inline-flex items-center rounded-full text-[10px] font-medium px-2 py-0.5 cursor-default shrink-0 ${
-                        question.answeredBy.type === 'client'
-                          ? 'bg-primary/10 text-primary'
-                          : 'bg-muted text-muted-foreground'
-                      }`}
-                    >
-                      {question.answeredBy.initials}
-                    </span>
-                  </TooltipTrigger>
-                  <TooltipContent side="top">
-                    <p className="text-xs">{question.answeredBy.name} · {question.answeredBy.role}</p>
-                  </TooltipContent>
-                </Tooltip>
-              )}
               {canEdit &&
                 <ResponseTypePicker
                   currentType={question.answerType}
@@ -1306,6 +1288,26 @@ function QuestionInlineColumns({
                   onChange={(val) => onUpdate({ ...question, explanation: val })}
                   placeholder="Explanation"
                   minHeight="40px" />
+                {isEngagementMode && question.answeredBy && question.answer && (
+                  <div className="mt-1 px-1.5">
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <span
+                          className={`inline-flex items-center rounded-full text-[10px] font-medium px-2 py-0.5 cursor-default ${
+                            question.answeredBy.type === 'client'
+                              ? 'bg-primary/10 text-primary'
+                              : 'bg-muted text-muted-foreground'
+                          }`}
+                        >
+                          {question.answeredBy.initials}
+                        </span>
+                      </TooltipTrigger>
+                      <TooltipContent side="top">
+                        <p className="text-xs">{question.answeredBy.name} · {question.answeredBy.role}</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </div>
+                )}
               </div>
               {canEdit &&
                 <button
