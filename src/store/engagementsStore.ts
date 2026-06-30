@@ -47,7 +47,6 @@ export type EngagementMeta = {
   firstYearAudit: boolean;
   firstYearOnPlatform?: string;
   isRollForward?: string;
-  
   firstYearTemplates?: string[];
   accountingFramework?: string;
   industry?: string;
@@ -55,6 +54,9 @@ export type EngagementMeta = {
   budget?: string;
   periodStart?: string;
   periodEnd?: string;
+  auditPeriodType?: string;      // "Full Year" | "Interim (6-month)" | "Stub Period" | "Other"
+  annualizeInterim?: boolean;    // true by default when auditPeriodType === "Interim (6-month)"
+  firstTimeAdoption?: boolean;   // first-time adoption of accounting standard
 };
 
 export function getEngagementMeta(id: string): EngagementMeta {

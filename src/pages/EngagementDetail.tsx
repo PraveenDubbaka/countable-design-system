@@ -1826,6 +1826,13 @@ export default function EngagementDetail() {
           <span className="text-xs font-medium text-foreground">Xero</span>
         </div>
       )}
+
+      {/* First-time adoption badge */}
+      {getEngagementMeta(engagementId ?? '').firstTimeAdoption && (
+        <div className="ml-1 inline-flex items-center gap-1 h-7 px-2 bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800 rounded-sm">
+          <span className="text-[10px] font-semibold text-amber-700 dark:text-amber-400 uppercase tracking-wide">First-time adoption</span>
+        </div>
+      )}
     </div>
   );
 
