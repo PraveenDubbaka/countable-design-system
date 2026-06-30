@@ -184,18 +184,6 @@ export function useClientResponses(
     }, 3000);
   }, [checklist, assignments]);
 
-  // Apply responses to checklist one by one
-  const applyResponses = useCallback((
-    onUpdateQuestion: (questionId: string, answer: string, explanation?: string, answeredBy?: Assignee) => void,
-    onComplete: () => void
-  ) => {
-    applyFilteredResponses(
-      state.responses.map(r => r.questionId),
-      onUpdateQuestion,
-      onComplete
-    );
-  }, [applyFilteredResponses]);
-
   // Apply only selected responses
   const applyFilteredResponses = useCallback((
     questionIds: string[],
@@ -204,10 +192,10 @@ export function useClientResponses(
   ) => {
     const filtered = state.responses.filter(r => questionIds.includes(r.questionId));
     if (filtered.length === 0) return;
-    
+
     setIsApplyingResponses(true);
     setCurrentApplyingIndex(0);
-    
+
     const applyNext = (index: number) => {
       if (index >= filtered.length) {
         setIsApplyingResponses(false);
@@ -236,11 +224,11 @@ export function useClientResponses(
         onComplete();
         return;
       }
-      
+
       const response = filtered[index];
       setApplyingQuestionId(response.questionId);
       setCurrentApplyingIndex(index);
-      
+
       setTimeout(() => {
         onUpdateQuestion(response.questionId, response.answer, response.explanation, response.answeredBy);
         setTimeout(() => {
@@ -248,9 +236,21 @@ export function useClientResponses(
         }, 400);
       }, 200);
     };
-    
+
     applyNext(0);
   }, [state.responses]);
+
+  // Apply responses to checklist one by one
+  const applyResponses = useCallback((
+    onUpdateQuestion: (questionId: string, answer: string, explanation?: string, answeredBy?: Assignee) => void,
+    onComplete: () => void
+  ) => {
+    applyFilteredResponses(
+      state.responses.map(r => r.questionId),
+      onUpdateQuestion,
+      onComplete
+    );
+  }, [applyFilteredResponses]);
 
   // Reset state
   const resetState = useCallback(() => {
