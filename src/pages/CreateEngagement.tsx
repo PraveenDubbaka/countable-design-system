@@ -816,7 +816,7 @@ export default function CreateEngagement() {
                       ]}
                     />
                   )}
-                  {firstYearAudit && firstYearOnPlatform !== "" && (
+                  {firstYearAudit && firstYearOnPlatform === "no" && (
                     <LabeledSelect
                       label="Is this a roll-forward?"
                       value={isRollForward}
