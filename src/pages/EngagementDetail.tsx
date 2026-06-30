@@ -785,6 +785,7 @@ export default function EngagementDetail() {
   const [priorYearFile, setPriorYearFile] = useState<File | null>(null);
   const [isDraggingOverPriorYear, setIsDraggingOverPriorYear] = useState(false);
   const priorYearFileInputRef = useRef<HTMLInputElement>(null);
+  const [priorYearState, setPriorYearState] = useState<'idle' | 'processing' | 'summary' | 'populating' | 'done'>('idle');
   const [showShareDialog, setShowShareDialog] = useState(false);
   const [showResponseDialog, setShowResponseDialog] = useState(false);
   const [pendingEngagementId, setPendingEngagementId] = useState<string | null>(null);
@@ -831,6 +832,13 @@ export default function EngagementDetail() {
   const globalTimerRef  = useRef<ReturnType<typeof setInterval> | null>(null);
   const globalActiveRef = useRef(false);
   const { addEntry: addTimeEntry } = useTimeEntries(engagementId ?? "default");
+
+  useEffect(() => {
+    if (!priorYearFile) return;
+    setPriorYearState('processing');
+    const timer = setTimeout(() => setPriorYearState('summary'), 3000);
+    return () => clearTimeout(timer);
+  }, [priorYearFile]);
 
   useEffect(() => {
     const handler = () => {
@@ -1573,6 +1581,64 @@ export default function EngagementDetail() {
     }
   };
 
+  const handleRemovePriorYearFile = () => {
+    setPriorYearFile(null);
+    setPriorYearState('idle');
+  };
+
+  const handlePriorYearPopulate = () => {
+    if (!checklist) { setPriorYearState('done'); return; }
+    setPriorYearState('populating');
+
+    type FlatQ = { sIdx: number; qIdx: number; q: Question };
+    const candidates: FlatQ[] = [];
+    checklist.sections.forEach((s, si) => {
+      s.questions.forEach((q, qi) => {
+        if (candidates.length < 8 && ['yes-no', 'yes-no-na', 'amount', 'answer'].includes(q.answerType)) {
+          candidates.push({ sIdx: si, qIdx: qi, q });
+        }
+      });
+    });
+
+    if (candidates.length === 0) {
+      setPriorYearState('done');
+      toast.success('Prior year data imported.', { duration: 2000 });
+      return;
+    }
+
+    let current: Checklist = {
+      ...checklist,
+      sections: checklist.sections.map(s => ({ ...s, questions: [...s.questions] })),
+    };
+    let i = 0;
+
+    const fillNext = () => {
+      if (i >= candidates.length) {
+        setChecklist(current);
+        setPriorYearState('done');
+        toast.success(`${candidates.length} questions populated from prior year file.`, { duration: 3000 });
+        return;
+      }
+      const { sIdx, qIdx } = candidates[i];
+      current = {
+        ...current,
+        sections: current.sections.map((s, si) =>
+          si !== sIdx ? s : {
+            ...s,
+            questions: s.questions.map((q, qi) =>
+              qi !== qIdx ? q : { ...q, answer: getMockAnswer(q, i), carriedForward: true }
+            ),
+          }
+        ),
+      };
+      setChecklist({ ...current });
+      i++;
+      setTimeout(fillNext, 250);
+    };
+
+    setTimeout(fillNext, 400);
+  };
+
   // Delete checklist - save responses to clipboard first
   const handleDeleteChecklist = () => {
     if (!checklist) return;
@@ -2168,6 +2234,17 @@ export default function EngagementDetail() {
           {(() => {
             const meta = getEngagementMeta(engagementId ?? '');
             if (meta.firstYearOnPlatform !== 'no') return null;
+
+            if (priorYearState === 'done') return (
+              <div className="mx-4 mt-4 flex items-center gap-2.5 px-4 py-2.5 rounded-lg border border-green-200 dark:border-green-900 bg-green-50 dark:bg-green-950/20">
+                <CheckCircle2 className="h-4 w-4 text-green-600 dark:text-green-400 shrink-0" />
+                <span className="text-sm text-green-700 dark:text-green-400 font-medium flex-1">Prior year data imported — carry-forward indicators applied to questions</span>
+                <button onClick={() => { setPriorYearState('idle'); setPriorYearFile(null); }} className="p-1 rounded hover:bg-green-100 dark:hover:bg-green-900/40 transition-colors">
+                  <X className="h-3.5 w-3.5 text-green-600 dark:text-green-500" />
+                </button>
+              </div>
+            );
+
             return (
               <div className="mx-4 mt-4 rounded-lg border border-border bg-card overflow-hidden">
                 <div className="flex items-center justify-between px-4 py-3 border-b border-border bg-muted/30">
@@ -2175,62 +2252,126 @@ export default function EngagementDetail() {
                     <FileText className="h-4 w-4 text-muted-foreground" />
                     <span className="text-sm font-semibold text-foreground">Prior Year Audit File</span>
                   </div>
-                  {priorYearFile && (
-                    <button onClick={() => setPriorYearFile(null)} className="p-1 rounded hover:bg-muted transition-colors text-muted-foreground hover:text-foreground">
+                  {priorYearState === 'idle' && priorYearFile && (
+                    <button onClick={handleRemovePriorYearFile} className="p-1 rounded hover:bg-muted transition-colors text-muted-foreground hover:text-foreground">
                       <X className="h-3.5 w-3.5" />
                     </button>
                   )}
                 </div>
                 <div className="px-4 py-4">
-                  <p className="text-xs text-muted-foreground mb-3">
-                    Upload your prior year audit file (PDF). Luka will extract acceptance data, materiality figures, and risk register items to carry forward as reviewable starting points.
-                  </p>
-                  {priorYearFile ? (
-                    <div className="flex items-center gap-3 px-4 py-3 rounded-lg border border-border bg-muted/40">
-                      <FileCheck2 className="h-5 w-5 text-primary shrink-0" />
-                      <div className="flex-1 min-w-0">
-                        <p className="text-sm font-medium text-foreground truncate">{priorYearFile.name}</p>
-                        <p className="text-xs text-muted-foreground">{(priorYearFile.size / 1024).toFixed(0)} KB · Ready for Luka to process</p>
-                      </div>
-                      <button
-                        onClick={() => setPriorYearFile(null)}
-                        className="p-1 rounded hover:bg-muted transition-colors text-muted-foreground hover:text-foreground shrink-0"
+
+                  {/* IDLE: drop zone */}
+                  {priorYearState === 'idle' && (
+                    <>
+                      <p className="text-xs text-muted-foreground mb-3">
+                        Upload your prior year audit file (PDF). Luka will extract acceptance data, materiality figures, and risk register items to carry forward as reviewable starting points.
+                      </p>
+                      <div
+                        onClick={() => priorYearFileInputRef.current?.click()}
+                        onDragOver={(e) => { e.preventDefault(); setIsDraggingOverPriorYear(true); }}
+                        onDragLeave={() => setIsDraggingOverPriorYear(false)}
+                        onDrop={(e) => {
+                          e.preventDefault();
+                          setIsDraggingOverPriorYear(false);
+                          const file = e.dataTransfer.files[0];
+                          if (file?.type === 'application/pdf') setPriorYearFile(file);
+                          else toast.error('Please upload a PDF file');
+                        }}
+                        className={`flex flex-col items-center justify-center gap-2 px-6 py-6 rounded-lg border-2 border-dashed cursor-pointer transition-colors ${
+                          isDraggingOverPriorYear
+                            ? 'border-primary bg-primary/5'
+                            : 'border-border hover:border-primary/40 hover:bg-muted/20'
+                        }`}
                       >
-                        <X className="h-4 w-4" />
-                      </button>
-                    </div>
-                  ) : (
-                    <div
-                      onClick={() => priorYearFileInputRef.current?.click()}
-                      onDragOver={(e) => { e.preventDefault(); setIsDraggingOverPriorYear(true); }}
-                      onDragLeave={() => setIsDraggingOverPriorYear(false)}
-                      onDrop={(e) => {
-                        e.preventDefault();
-                        setIsDraggingOverPriorYear(false);
-                        const file = e.dataTransfer.files[0];
-                        if (file?.type === 'application/pdf') setPriorYearFile(file);
-                        else toast.error('Please upload a PDF file');
-                      }}
-                      className={`flex flex-col items-center justify-center gap-2 px-6 py-6 rounded-lg border-2 border-dashed cursor-pointer transition-colors ${
-                        isDraggingOverPriorYear
-                          ? 'border-primary bg-primary/5'
-                          : 'border-border hover:border-primary/40 hover:bg-muted/20'
-                      }`}
-                    >
-                      <UploadCloud className={`h-6 w-6 ${isDraggingOverPriorYear ? 'text-primary' : 'text-muted-foreground'}`} />
+                        <UploadCloud className={`h-6 w-6 ${isDraggingOverPriorYear ? 'text-primary' : 'text-muted-foreground'}`} />
+                        <div className="text-center">
+                          <p className="text-sm font-medium text-foreground">Drop your prior year PDF here</p>
+                          <p className="text-xs text-muted-foreground mt-0.5">or <span className="text-primary underline underline-offset-2">click to browse</span> · PDF only</p>
+                        </div>
+                      </div>
+                      <input
+                        ref={priorYearFileInputRef}
+                        type="file"
+                        accept=".pdf,application/pdf"
+                        className="hidden"
+                        onChange={(e) => { const f = e.target.files?.[0]; if (f) setPriorYearFile(f); }}
+                      />
+                    </>
+                  )}
+
+                  {/* PROCESSING: Luka reading */}
+                  {priorYearState === 'processing' && (
+                    <div className="flex flex-col items-center gap-3 py-4">
+                      <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[#8649F1] to-[#2355A4] luka-thinking-spin shrink-0" />
                       <div className="text-center">
-                        <p className="text-sm font-medium text-foreground">Drop your prior year PDF here</p>
-                        <p className="text-xs text-muted-foreground mt-0.5">or <span className="text-primary underline underline-offset-2">click to browse</span> · PDF only</p>
+                        <p className="text-sm font-semibold text-foreground">Luka is reading your prior year file…</p>
+                        <p className="text-xs text-muted-foreground mt-1">Extracting acceptance data, materiality figures, and risk items</p>
+                      </div>
+                      <div className="w-full h-1.5 rounded-full bg-muted overflow-hidden">
+                        <div className="h-full rounded-full bg-gradient-to-r from-[#8649F1] to-[#2355A4] luka-thinking-text" style={{ width: '65%' }} />
+                      </div>
+                      {priorYearFile && (
+                        <p className="text-xs text-muted-foreground">{priorYearFile.name} · {(priorYearFile.size / 1024).toFixed(0)} KB</p>
+                      )}
+                    </div>
+                  )}
+
+                  {/* SUMMARY: found items + confirm */}
+                  {priorYearState === 'summary' && (
+                    <div className="flex flex-col gap-4">
+                      <div className="flex items-start gap-3 p-3 rounded-lg bg-primary/5 border border-primary/20">
+                        <div className="w-5 h-5 rounded-full bg-gradient-to-br from-[#8649F1] to-[#2355A4] shrink-0 mt-0.5" />
+                        <div className="flex-1">
+                          <p className="text-sm font-semibold text-foreground mb-2">Found in prior year file:</p>
+                          <ul className="space-y-1.5">
+                            {([
+                              { label: 'Client acceptance responses', detail: '8 questions' },
+                              { label: 'Materiality figures', detail: 'Overall: $185,000 · PM: $129,500' },
+                              { label: 'Risk register items', detail: '4 identified risks' },
+                              { label: 'Engagement team structure', detail: '3 members' },
+                            ] as const).map((item) => (
+                              <li key={item.label} className="flex items-center gap-2 text-xs">
+                                <Check className="h-3 w-3 text-primary shrink-0" />
+                                <span className="font-medium text-foreground">{item.label}</span>
+                                <span className="text-muted-foreground">— {item.detail}</span>
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      </div>
+                      <p className="text-sm text-muted-foreground">Would you like me to populate the current engagement from these? Each field will be tagged "Carried forward — please confirm or update" so you can review individually.</p>
+                      <div className="flex items-center gap-2 justify-end">
+                        <button
+                          onClick={handleRemovePriorYearFile}
+                          className="px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors rounded-md hover:bg-muted"
+                        >
+                          Not now
+                        </button>
+                        <button
+                          onClick={handlePriorYearPopulate}
+                          className="px-4 py-1.5 text-sm font-medium text-white rounded-md hover:opacity-90 transition-opacity flex items-center gap-2 bg-gradient-to-r from-[#8649F1] to-[#2355A4]"
+                        >
+                          <div className="w-3.5 h-3.5 rounded-full bg-white/25 shrink-0" />
+                          Populate engagement
+                        </button>
                       </div>
                     </div>
                   )}
-                  <input
-                    ref={priorYearFileInputRef}
-                    type="file"
-                    accept=".pdf,application/pdf"
-                    className="hidden"
-                    onChange={(e) => { const f = e.target.files?.[0]; if (f) setPriorYearFile(f); }}
-                  />
+
+                  {/* POPULATING: Luka filling */}
+                  {priorYearState === 'populating' && (
+                    <div className="flex flex-col items-center gap-3 py-4">
+                      <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[#8649F1] to-[#2355A4] luka-thinking-spin shrink-0" />
+                      <div className="text-center">
+                        <p className="text-sm font-semibold text-foreground">Luka is populating your engagement…</p>
+                        <p className="text-xs text-muted-foreground mt-1">Adding carry-forward indicators to each field</p>
+                      </div>
+                      <div className="w-full h-1.5 rounded-full bg-muted overflow-hidden">
+                        <div className="h-full rounded-full bg-gradient-to-r from-[#8649F1] to-[#2355A4] luka-thinking-text" style={{ width: '40%' }} />
+                      </div>
+                    </div>
+                  )}
+
                 </div>
               </div>
             );

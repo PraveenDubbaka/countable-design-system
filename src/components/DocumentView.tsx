@@ -1648,6 +1648,22 @@ function DocumentQuestionBlock({
         />
       </div> {/* end flex border wrapper */}
 
+      {/* Carry-forward indicator */}
+      {(question as any).carriedForward && (
+        <div className="flex items-center justify-between gap-2 px-4 py-1.5 bg-amber-50 dark:bg-amber-950/20 border-t border-amber-200/60 dark:border-amber-800/30">
+          <div className="flex items-center gap-1.5">
+            <Undo2 className="h-3 w-3 text-amber-500 shrink-0" />
+            <span className="text-[11px] text-amber-700 dark:text-amber-400 font-medium">Carried forward — please confirm or update</span>
+          </div>
+          <button
+            onClick={() => onUpdate({ ...question, carriedForward: undefined } as any)}
+            className="text-[11px] text-amber-600 dark:text-amber-500 hover:text-amber-900 dark:hover:text-amber-300 font-medium underline underline-offset-2 transition-colors shrink-0"
+          >
+            Confirm
+          </button>
+        </div>
+      )}
+
       {/* Sub-questions */}
       {question.subQuestions && question.subQuestions.length > 0 &&
       <div className="dv-sub-questions mt-0 mb-0 relative">

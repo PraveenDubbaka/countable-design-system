@@ -46,6 +46,7 @@ export interface Question {
   showExplanation?: boolean; // UI flag to show/hide explanation field
   showReference?: boolean; // UI flag to show/hide reference field
   columnLayout?: ColumnLayout; // If present, renders as a column block row
+  carriedForward?: boolean; // true when populated from prior year file via Luka
 }
 
 export interface FormElement {
