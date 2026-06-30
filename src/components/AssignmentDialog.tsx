@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Dialog,
   DialogContent,
@@ -47,6 +47,10 @@ export function AssignmentDialog({
     setScope("all");
     setSelectedMemberId(null);
   };
+
+  useEffect(() => {
+    if (!open) reset();
+  }, [open]);
 
   const handleConfirm = () => {
     const member = TEAM_MEMBERS.find((m) => m.id === selectedMemberId);
