@@ -19,6 +19,7 @@ import {
   ToggleLeft,
   Type,
 } from 'lucide-react';
+import { Checkbox } from '@/components/ui/checkbox';
 import { SmartLayoutIcon } from './icons/SmartLayoutIcon';
 import { Checklist, CellBlockType } from '@/types/checklist';
 import { ReorderModal } from './ReorderModal';
@@ -59,6 +60,8 @@ interface FloatingActionBarProps {
   onAddCategory: (position: 'top' | 'bottom', type: 'empty' | 'template' | 'form' | 'inquires-form') => void;
   isPreviewMode?: boolean;
   isChecklist?: boolean;
+  totalQuestions?: number;
+  onSelectAll?: (selectAll: boolean) => void;
 }
 
 const getStorageKey = (isPreviewMode: boolean) => 
@@ -80,6 +83,8 @@ export function FloatingActionBar({
   onAddCategory,
   isPreviewMode = false,
   isChecklist = true,
+  totalQuestions = 0,
+  onSelectAll,
 }: FloatingActionBarProps) {
   const [showReorderModal, setShowReorderModal] = useState(false);
   const [showAddCategoryPopover, setShowAddCategoryPopover] = useState(false);
@@ -303,6 +308,29 @@ export function FloatingActionBar({
           style={{ borderRadius: '9999px' }}
           title="Drag to reposition • Double-click to cycle positions"
         >
+          {/* Select All — checklists only, when onSelectAll handler provided */}
+          {isChecklist && onSelectAll && (
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                const allSelected = totalQuestions > 0 && selectedQuestions.size === totalQuestions;
+                onSelectAll(!allSelected);
+              }}
+              onMouseDown={(e) => e.stopPropagation()}
+              className="w-9 h-9 flex items-center justify-center rounded-lg hover:bg-muted transition-colors group"
+              title={selectedQuestions.size === totalQuestions && totalQuestions > 0 ? "Deselect all" : "Select all"}
+            >
+              <Checkbox
+                checked={
+                  selectedQuestions.size > 0 && selectedQuestions.size < totalQuestions
+                    ? 'indeterminate'
+                    : totalQuestions > 0 && selectedQuestions.size === totalQuestions
+                }
+                className="h-4 w-4 pointer-events-none"
+              />
+            </button>
+          )}
+
           {/* Smart Layout - Hidden in preview mode and non-checklists */}
           {isChecklist && !isPreviewMode && (
             <Popover 
