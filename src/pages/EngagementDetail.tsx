@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo, useCallback, useRef } from "react";
 import { useParams, useNavigate, useSearchParams } from "react-router-dom";
-import { ChevronRight, ChevronDown, Landmark, FileText, Triangle, FileSpreadsheet, PencilLine, Pencil, Settings2, Download, FileType, Share2, Save, RefreshCw, Trash2, Building2, Calendar, Check, AlertTriangle, Loader2, History, Upload, FileUp, Bell, Plus, X, LayoutGrid, CheckCircle2, PlugZap, Zap, Play, Square, ClipboardList } from "lucide-react";
+import { ChevronRight, ChevronDown, Landmark, FileText, Triangle, FileSpreadsheet, PencilLine, Pencil, Settings2, Download, FileType, Share2, Save, RefreshCw, Trash2, Building2, Calendar, Check, AlertTriangle, Loader2, History, Upload, FileUp, Bell, Plus, X, LayoutGrid, CheckCircle2, PlugZap, Zap, Play, Square, ClipboardList, UserPlus } from "lucide-react";
 import { ExpandableIconButton } from "@/components/ui/expandable-icon-button";
 import { ChecklistIcon } from "@/components/icons/ChecklistIcon";
 import { Button } from "@/components/ui/button";
@@ -54,7 +54,9 @@ import { AskLukaOverlay, AllTemplateSummary, AutoFillProgressItem } from "@/comp
 import { FloatingActionBar } from "@/components/FloatingActionBar";
 import { useTimeEntries, fmtElapsed, CURRENT_USER, TimeEntry } from "@/lib/useTimeEntries";
 import { EngagementRightPanel } from "@/components/EngagementRightPanel";
-import { Checklist, Question } from "@/types/checklist";
+import { Assignee, Checklist, Question } from "@/types/checklist";
+import { useChecklistAssignments } from "@/hooks/useChecklistAssignments";
+import { AssignmentDialog } from "@/components/AssignmentDialog";
 import { readJsonFromLocalStorage, writeJsonToLocalStorage } from "@/lib/safeJson";
 import { subscribeToChecklistSync, dispatchChecklistSync } from "@/lib/checklistSync";
 import { toast } from "sonner";
@@ -779,6 +781,7 @@ export default function EngagementDetail() {
   const [customLetterIsEditing, setCustomLetterIsEditing] = useState(false);
   const [isFSEditing, setIsFSEditing] = useState(false);
   const fsSaveRef = useRef<(() => void) | null>(null);
+  const [showAssignDialog, setShowAssignDialog] = useState(false);
   const [showShareDialog, setShowShareDialog] = useState(false);
   const [showResponseDialog, setShowResponseDialog] = useState(false);
   const [pendingEngagementId, setPendingEngagementId] = useState<string | null>(null);
@@ -919,7 +922,8 @@ export default function EngagementDetail() {
   }, []);
 
   // Client responses hook
-  const clientResponses = useClientResponses(checklist);
+  const checklistAssignments = useChecklistAssignments(engagementId ?? '', checklist?.id ?? checklistKey ?? '');
+  const clientResponses = useClientResponses(checklist, checklistAssignments.assignments);
   const engagement = engagementId ? engagementsData[engagementId] : null;
   const displayId = engagementId || "Unknown";
   const clientName = engagement?.client || "Unknown Client";
@@ -1621,6 +1625,10 @@ export default function EngagementDetail() {
     }
   };
 
+  const handleAssignConfirm = (scope: 'all' | 'selected', assignee: Assignee) => {
+    checklistAssignments.assign(scope, [...selectedQuestions], assignee);
+  };
+
   // Handle share confirmation - trigger client response simulation
   const handleShareConfirm = () => {
     clientResponses.shareWithClient();
@@ -1628,7 +1636,7 @@ export default function EngagementDetail() {
   };
 
   // Update a specific question's answer and optional explanation using functional state update
-  const updateQuestionAnswer = useCallback((questionId: string, answer: string, explanation?: string) => {
+  const updateQuestionAnswer = useCallback((questionId: string, answer: string, explanation?: string, answeredBy?: Assignee) => {
     setChecklist(prev => {
       if (!prev) return prev;
       const updateQuestion = (questions: Question[]): Question[] => {
@@ -1637,6 +1645,7 @@ export default function EngagementDetail() {
             return {
               ...q,
               answer,
+              ...(answeredBy !== undefined ? { answeredBy } : {}),
               ...(explanation ? {
                 explanation
               } : {})
@@ -1670,7 +1679,7 @@ export default function EngagementDetail() {
 
     clientResponses.applyFilteredResponses(
       questionIds,
-      (questionId, answer, explanation) => updateQuestionAnswer(questionId, answer, explanation),
+      (questionId, answer, explanation, answeredBy) => updateQuestionAnswer(questionId, answer, explanation, answeredBy),
       () => {
         toast.success(
           questionIds.length === clientResponses.responses.length
@@ -2006,6 +2015,13 @@ export default function EngagementDetail() {
                         </DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>
+                    <ExpandableIconButton
+                      variant="secondary"
+                      size="sm"
+                      icon={<UserPlus className="h-4 w-4" />}
+                      label="Assign"
+                      onClick={() => setShowAssignDialog(true)}
+                    />
                     <ExpandableIconButton variant="secondary" size="sm" icon={<Share2 className="h-4 w-4" />} label="Share" onClick={handleShareButtonClick} />
                     <ExpandableIconButton
                       variant="secondary"
@@ -2346,6 +2362,14 @@ export default function EngagementDetail() {
         {/* Delete Checklist Confirmation */}
         <DeleteChecklistDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog} onConfirm={handleDeleteChecklist} />
 
+
+        <AssignmentDialog
+          open={showAssignDialog}
+          onOpenChange={setShowAssignDialog}
+          checklistName={checklist?.title}
+          hasSelectedQuestions={selectedQuestions.size > 0}
+          onConfirm={handleAssignConfirm}
+        />
 
         {/* Share with Client Dialog */}
         <ShareWithClientDialog
