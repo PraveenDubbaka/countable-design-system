@@ -20,7 +20,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSepara
 import { FormLayoutEditor } from '@/components/FormLayoutEditor';
 import { AppendixBFaqDialog } from '@/components/AppendixBFaqDialog';
 import { EditOptionsPopover } from '@/components/EditOptionsPopover';
-import { Checklist, Question, Section, AnswerType, NumberingFormat, formatQuestionNumber, FormLayout, ColumnLayout, BorderStyle, CellBlockType } from '@/types/checklist';
+import { Checklist, Question, Section, AnswerType, NumberingFormat, formatQuestionNumber, FormLayout, ColumnLayout, BorderStyle, CellBlockType, Assignee } from '@/types/checklist';
 import {
   DndContext, DragEndEvent, DragStartEvent, DragOverlay, closestCenter,
   KeyboardSensor, PointerSensor, useSensor, useSensors } from
@@ -1251,6 +1251,24 @@ function QuestionInlineColumns({
             <div className="flex flex-nowrap items-center justify-start gap-2 min-w-0 overflow-visible px-2 relative group/resp self-center"
               style={{ flex: `0 0 ${widths[widthIdx] * 100}%` }}>
               <ResponseField question={question} onUpdate={onUpdate} isPreviewMode={isPreviewMode} isEngagementMode={isEngagementMode} />
+              {isEngagementMode && question.answeredBy && question.answer && (
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <span
+                      className={`inline-flex items-center rounded-full text-[10px] font-medium px-2 py-0.5 cursor-default shrink-0 ${
+                        question.answeredBy.type === 'client'
+                          ? 'bg-primary/10 text-primary'
+                          : 'bg-muted text-muted-foreground'
+                      }`}
+                    >
+                      {question.answeredBy.initials}
+                    </span>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p className="text-xs">{question.answeredBy.name} · {question.answeredBy.role}</p>
+                  </TooltipContent>
+                </Tooltip>
+              )}
               {canEdit &&
                 <ResponseTypePicker
                   currentType={question.answerType}
