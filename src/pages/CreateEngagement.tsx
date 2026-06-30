@@ -864,11 +864,26 @@ export default function CreateEngagement() {
                       </label>
                     </div>
                   </div>
+                  {periodType === "Interim (6-month)" && (
+                    <div className="flex flex-col gap-1">
+                      <label className="text-xs font-medium text-foreground">Annualize income statement data?</label>
+                      <div className="flex items-center gap-4 h-9">
+                        <label className="flex items-center gap-1.5 cursor-pointer text-sm text-foreground">
+                          <input type="radio" name="annualizeInterim" value="yes" checked={annualizeInterim} onChange={() => setAnnualizeInterim(true)} className="accent-primary" />
+                          Yes
+                        </label>
+                        <label className="flex items-center gap-1.5 cursor-pointer text-sm text-foreground">
+                          <input type="radio" name="annualizeInterim" value="no" checked={!annualizeInterim} onChange={() => setAnnualizeInterim(false)} className="accent-primary" />
+                          No
+                        </label>
+                      </div>
+                    </div>
+                  )}
                 </div>
                 {firstTimeAdoption && (
                   <div className="mt-3 flex items-start gap-2 px-3 py-2.5 rounded-md bg-amber-50 dark:bg-amber-950/20 border border-amber-200/60 dark:border-amber-800/30">
                     <span className="text-amber-500 text-xs mt-0.5">⚠</span>
-                    <p className="text-xs text-amber-700 dark:text-amber-400">Opening balance testing procedures will be added to this engagement. Checklist available once Eric shares documentation.</p>
+                    <p className="text-xs text-amber-700 dark:text-amber-400">Opening balance testing procedures will be added to this engagement.</p>
                   </div>
                 )}
 
@@ -890,24 +905,6 @@ export default function CreateEngagement() {
                     />
                   </div>
                 </div>
-
-                {/* Annualize interim toggle — audit only */}
-                {isAudit && periodType === "Interim (6-month)" && (
-                  <div className="flex items-center gap-8">
-                    <label className="text-sm text-muted-foreground w-24 whitespace-nowrap">Annualize data?</label>
-                    <div className="flex items-center gap-4 h-9">
-                      <label className="flex items-center gap-1.5 cursor-pointer text-sm text-foreground">
-                        <input type="radio" name="annualizeInterim" value="yes" checked={annualizeInterim} onChange={() => setAnnualizeInterim(true)} className="accent-primary" />
-                        Yes
-                      </label>
-                      <label className="flex items-center gap-1.5 cursor-pointer text-sm text-foreground">
-                        <input type="radio" name="annualizeInterim" value="no" checked={!annualizeInterim} onChange={() => setAnnualizeInterim(false)} className="accent-primary" />
-                        No
-                      </label>
-                    </div>
-                    <span className="text-xs text-muted-foreground">Annualizes income statement figures for PAP (520) and trial balance (501)</span>
-                  </div>
-                )}
 
                 {/* Current Year */}
                 <div className="flex items-start gap-8">
