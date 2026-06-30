@@ -1,6 +1,8 @@
 import { useState, useCallback, useEffect, useRef } from 'react';
 import { Assignee } from '@/types/checklist';
 
+const ALL_KEY = '__all__';
+
 const storageKey = (engagementId: string, checklistId: string) =>
   `checklist-assignments-${engagementId}-${checklistId}`;
 
@@ -29,23 +31,23 @@ export function useChecklistAssignments(engagementId: string, checklistId: strin
     }
   }, [key]);
 
-  const persist = (next: Record<string, Assignee>) => {
+  const persist = useCallback((next: Record<string, Assignee>) => {
     try { localStorage.setItem(key, JSON.stringify(next)); } catch {}
     setAssignments(next);
-  };
+  }, [key]);
 
   const assign = useCallback(
     (scope: 'all' | 'selected', selectedIds: string[], assignee: Assignee) => {
       if (scope === 'all') {
-        persist({ __all__: assignee });
+        persist({ [ALL_KEY]: assignee });
       } else {
         const next = { ...assignments };
-        delete next.__all__;
+        delete next[ALL_KEY];
         selectedIds.forEach(id => { next[id] = assignee; });
         persist(next);
       }
     },
-    [assignments, key]
+    [persist, assignments]
   );
 
   const clearAssignment = useCallback(
@@ -54,15 +56,15 @@ export function useChecklistAssignments(engagementId: string, checklistId: strin
       delete next[questionId];
       persist(next);
     },
-    [assignments, key]
+    [persist, assignments]
   );
 
-  const allAssignee: Assignee | undefined = assignments.__all__;
+  const allAssignee: Assignee | undefined = assignments[ALL_KEY];
 
   const getAssignee = useCallback(
     (questionId: string): Assignee | undefined =>
-      assignments[questionId] ?? allAssignee,
-    [assignments, allAssignee]
+      assignments[questionId] ?? assignments[ALL_KEY],
+    [assignments]
   );
 
   return { assignments, assign, clearAssignment, getAssignee, allAssignee };
