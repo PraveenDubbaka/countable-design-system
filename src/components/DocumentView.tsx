@@ -1264,7 +1264,7 @@ function QuestionInlineColumns({
                       {question.answeredBy.initials}
                     </span>
                   </TooltipTrigger>
-                  <TooltipContent>
+                  <TooltipContent side="top">
                     <p className="text-xs">{question.answeredBy.name} · {question.answeredBy.role}</p>
                   </TooltipContent>
                 </Tooltip>
