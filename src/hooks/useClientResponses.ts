@@ -1,11 +1,12 @@
 import { useState, useCallback, useEffect } from 'react';
-import { Checklist, Question } from '@/types/checklist';
+import { Assignee, Checklist, Question } from '@/types/checklist';
 
 export interface ClientResponse {
   questionId: string;
   questionText?: string;
   answer: string;
   explanation?: string;
+  answeredBy?: Assignee;
 }
 
 export interface ClientResponseState {
@@ -48,7 +49,7 @@ const EXPLANATIONS: Record<string, string[]> = {
 const pickRandom = <T,>(arr: T[]): T => arr[Math.floor(Math.random() * arr.length)];
 
 // Simulate client responses after sharing
-const generateMockResponses = (checklist: Checklist): ClientResponse[] => {
+const generateMockResponses = (checklist: Checklist, assignments: Record<string, Assignee>): ClientResponse[] => {
   const responses: ClientResponse[] = [];
   
   const processQuestion = (question: Question) => {
@@ -95,7 +96,14 @@ const generateMockResponses = (checklist: Checklist): ClientResponse[] => {
     }
     
     if (answer) {
-      responses.push({ questionId: question.id, questionText: question.text, answer, explanation });
+      const answeredBy: Assignee | undefined = assignments.__all__ ?? assignments[question.id];
+      responses.push({
+        questionId: question.id,
+        questionText: question.text,
+        answer,
+        explanation,
+        ...(answeredBy ? { answeredBy } : {}),
+      });
     }
     
     if (question.subQuestions) {
@@ -124,7 +132,10 @@ const countQuestions = (checklist: Checklist): number => {
   return count;
 };
 
-export function useClientResponses(checklist: Checklist | null) {
+export function useClientResponses(
+  checklist: Checklist | null,
+  assignments: Record<string, Assignee> = {}
+) {
   const [state, setState] = useState<ClientResponseState>({
     hasResponses: false,
     isShared: false,
@@ -163,7 +174,7 @@ export function useClientResponses(checklist: Checklist | null) {
     
     // Simulate client responding after 3 seconds
     setTimeout(() => {
-      const mockResponses = generateMockResponses(checklist);
+      const mockResponses = generateMockResponses(checklist, assignments);
       setState(prev => ({
         ...prev,
         hasResponses: true,
@@ -175,7 +186,7 @@ export function useClientResponses(checklist: Checklist | null) {
 
   // Apply responses to checklist one by one
   const applyResponses = useCallback((
-    onUpdateQuestion: (questionId: string, answer: string, explanation?: string) => void,
+    onUpdateQuestion: (questionId: string, answer: string, explanation?: string, answeredBy?: Assignee) => void,
     onComplete: () => void
   ) => {
     applyFilteredResponses(
@@ -188,7 +199,7 @@ export function useClientResponses(checklist: Checklist | null) {
   // Apply only selected responses
   const applyFilteredResponses = useCallback((
     questionIds: string[],
-    onUpdateQuestion: (questionId: string, answer: string, explanation?: string) => void,
+    onUpdateQuestion: (questionId: string, answer: string, explanation?: string, answeredBy?: Assignee) => void,
     onComplete: () => void
   ) => {
     const filtered = state.responses.filter(r => questionIds.includes(r.questionId));
@@ -230,7 +241,7 @@ export function useClientResponses(checklist: Checklist | null) {
       setCurrentApplyingIndex(index);
       
       setTimeout(() => {
-        onUpdateQuestion(response.questionId, response.answer, response.explanation);
+        onUpdateQuestion(response.questionId, response.answer, response.explanation, response.answeredBy);
         setTimeout(() => {
           applyNext(index + 1);
         }, 400);
