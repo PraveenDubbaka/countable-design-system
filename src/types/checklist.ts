@@ -19,6 +19,14 @@ export interface ColumnLayout {
   columnWidths?: number[]; // fractional widths, should sum to 1
 }
 
+export interface Assignee {
+  id: string;
+  name: string;
+  initials: string;
+  role: string;
+  type: 'client' | 'staff';
+}
+
 export interface Question {
   id: string;
   text: string;
@@ -30,6 +38,8 @@ export interface Question {
   note?: string;
   explanation?: string;
   reference?: string;
+  assignedTo?: Assignee;
+  answeredBy?: Assignee;
   isExpanded?: boolean;
   isUserAdded?: boolean; // Track if question was added by user in engagement mode
   showResponse?: boolean; // UI flag to show/hide response field
