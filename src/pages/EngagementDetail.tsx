@@ -2241,6 +2241,9 @@ export default function EngagementDetail() {
           {(() => {
             const meta = getEngagementMeta(engagementId ?? '');
             if (meta.firstYearOnPlatform !== 'no') return null;
+            const checklistCode = CHECKLIST_SIDEBAR_INFO[currentChecklistId ?? '']?.code
+              ?? CHECKLIST_SIDEBAR_INFO[checklist?.id ?? '']?.code;
+            if (checklistCode !== 'AC') return null;
 
             if (priorYearState === 'done') return (
               <div className="mx-4 mt-4 flex items-center gap-2.5 px-4 py-2.5 rounded-lg border border-green-200 dark:border-green-900 bg-green-50 dark:bg-green-950/20">

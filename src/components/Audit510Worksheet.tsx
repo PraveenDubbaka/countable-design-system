@@ -1266,7 +1266,7 @@ export function Audit510Worksheet({ isUS = false }: { isUS?: boolean }) {
 
       {/* Single scrollable page */}
       <div className="flex-1 overflow-y-auto bg-muted/30">
-        <div className="p-6 space-y-5 max-w-6xl">
+        <div className="p-6 space-y-5">
           {SectionA}
           {SectionB}
           {SectionC}

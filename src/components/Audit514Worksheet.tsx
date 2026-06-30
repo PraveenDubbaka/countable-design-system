@@ -180,7 +180,7 @@ export function Audit514Worksheet({ isUS = false }: { isUS?: boolean }) {
 
       {/* ── Scrollable body ────────────────────────────────────────────────── */}
       <div className="flex-1 overflow-y-auto bg-muted/30">
-        <div className="p-6 space-y-6 max-w-7xl">
+        <div className="p-6 space-y-6">
 
           {/* ── Management bias summary banner ─────────────────────────────── */}
           {biasYesCount > 0 && (

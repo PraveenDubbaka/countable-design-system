@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ArrowLeft } from "lucide-react";
 import { Layout } from "@/components/Layout";
@@ -28,6 +28,7 @@ const Field = ({
 
 export default function AddNewClient() {
   const navigate = useNavigate();
+  const [gstRegistered, setGstRegistered] = useState<string>("");
 
   const handleAdd = () => {
     toast.success("Client added");
@@ -142,6 +143,32 @@ export default function AddNewClient() {
               </Field>
               <Field label="Postal/Zip Code">
                 <Input placeholder="Postal/Zip Code" />
+              </Field>
+              <Field label="Business Number">
+                <Input placeholder="Business Number" />
+              </Field>
+              <Field label="GST/HST Registered">
+                <Select value={gstRegistered} onValueChange={setGstRegistered}>
+                  <SelectTrigger><SelectValue placeholder="Select" /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="yes">Yes</SelectItem>
+                    <SelectItem value="no">No</SelectItem>
+                  </SelectContent>
+                </Select>
+              </Field>
+              {gstRegistered === "yes" && (
+                <Field label="HST Number">
+                  <Input placeholder="HST Number" />
+                </Field>
+              )}
+              <Field label="Tax ID">
+                <Input placeholder="Tax ID" />
+              </Field>
+              <Field label="Payroll Number">
+                <Input placeholder="Payroll Number" />
+              </Field>
+              <Field label="Corporate Tax Number">
+                <Input placeholder="Corporate Tax Number" />
               </Field>
             </div>
           </StyledCard>

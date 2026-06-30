@@ -213,7 +213,7 @@ export function Audit520Worksheet() {
 
       {/* ── Scrollable body ────────────────────────────────────────────── */}
       <div className="flex-1 overflow-y-auto bg-muted/30">
-        <div className="p-6 space-y-6 max-w-[1400px]">
+        <div className="p-6 space-y-6">
 
           {/* ── Part A ────────────────────────────────────────────────── */}
           <SectionCard title="Part A — Identify and Assess RMMs at the Financial Statement Level">
