@@ -2302,7 +2302,9 @@ export default function EngagementDetail() {
                   {/* PROCESSING: Luka reading */}
                   {priorYearState === 'processing' && (
                     <div className="flex flex-col items-center gap-3 py-4">
-                      <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[#8649F1] to-[#2355A4] luka-thinking-spin shrink-0" />
+                      <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[#8649F1] to-[#2355A4] luka-thinking-spin shrink-0 flex items-center justify-center">
+                        <Zap className="h-4 w-4 text-white fill-white" strokeWidth={0} />
+                      </div>
                       <div className="text-center">
                         <p className="text-sm font-semibold text-foreground">Luka is reading your prior year file…</p>
                         <p className="text-xs text-muted-foreground mt-1">Extracting acceptance data, materiality figures, and risk items</p>
@@ -2320,7 +2322,9 @@ export default function EngagementDetail() {
                   {priorYearState === 'summary' && (
                     <div className="flex flex-col gap-4">
                       <div className="flex items-start gap-3 p-3 rounded-lg bg-primary/5 border border-primary/20">
-                        <div className="w-5 h-5 rounded-full bg-gradient-to-br from-[#8649F1] to-[#2355A4] shrink-0 mt-0.5" />
+                        <div className="w-5 h-5 rounded-full bg-gradient-to-br from-[#8649F1] to-[#2355A4] shrink-0 mt-0.5 flex items-center justify-center">
+                          <Zap className="h-3 w-3 text-white fill-white" strokeWidth={0} />
+                        </div>
                         <div className="flex-1">
                           <p className="text-sm font-semibold text-foreground mb-2">Found in prior year file:</p>
                           <ul className="space-y-1.5">
@@ -2343,15 +2347,15 @@ export default function EngagementDetail() {
                       <div className="flex items-center gap-2 justify-end">
                         <button
                           onClick={handleRemovePriorYearFile}
-                          className="px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors rounded-md hover:bg-muted"
+                          className="inline-flex items-center h-8 px-3 rounded-[8px] border border-border text-sm text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"
                         >
                           Not now
                         </button>
                         <button
                           onClick={handlePriorYearPopulate}
-                          className="px-4 py-1.5 text-sm font-medium text-white rounded-md hover:opacity-90 transition-opacity flex items-center gap-2 bg-gradient-to-r from-[#8649F1] to-[#2355A4]"
+                          className="inline-flex items-center gap-1.5 h-8 px-4 rounded-[8px] text-sm font-semibold text-white shadow-sm bg-gradient-to-br from-[#8649F1] to-[#2355A4] hover:opacity-90 transition-opacity"
                         >
-                          <div className="w-3.5 h-3.5 rounded-full bg-white/25 shrink-0" />
+                          <Zap className="h-3.5 w-3.5 text-white fill-white" strokeWidth={0} />
                           Populate engagement
                         </button>
                       </div>
@@ -2361,7 +2365,9 @@ export default function EngagementDetail() {
                   {/* POPULATING: Luka filling */}
                   {priorYearState === 'populating' && (
                     <div className="flex flex-col items-center gap-3 py-4">
-                      <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[#8649F1] to-[#2355A4] luka-thinking-spin shrink-0" />
+                      <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[#8649F1] to-[#2355A4] luka-thinking-spin shrink-0 flex items-center justify-center">
+                        <Zap className="h-4 w-4 text-white fill-white" strokeWidth={0} />
+                      </div>
                       <div className="text-center">
                         <p className="text-sm font-semibold text-foreground">Luka is populating your engagement…</p>
                         <p className="text-xs text-muted-foreground mt-1">Adding carry-forward indicators to each field</p>
