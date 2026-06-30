@@ -1889,6 +1889,7 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
                       { id: "aud-ra-513", code: "513", label: "Understanding Accounting Estimates and Related Disclosures", icon: "worksheet", route: "checklist/aud-ra-513" },
                       { id: "aud-ra-514", code: "514", label: "Outcome of Prior Period Accounting Estimates", icon: "worksheet", route: "checklist/aud-ra-514" },
                       { id: "aud-ra-515", code: "515", label: "Understanding Related Parties", icon: "checklist", route: "checklist/aud-ra-515" },
+                      { id: "aud-ra-580", code: "580", label: "Revenue Recognition — Fraud Risk Assessment", icon: "worksheet", route: "checklist/aud-ra-580" },
                       { id: "aud-ra-520", code: "520", label: "Risk Register — Identifying and Assessing RMMs", icon: "worksheet", route: "checklist/aud-ra-520" },
                       { id: "aud-ra-525", code: "525", label: "Going Concern — Identifying Events and Conditions", icon: "checklist", route: "checklist/aud-ra-525" },
                       { id: "aud-ra-530", code: "530", label: "Pervasive (Financial Statement Level) Risks and Controls", icon: "checklist", route: "checklist/aud-ra-530" },
@@ -1897,7 +1898,6 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
                       { id: "aud-ra-550", code: "550", label: "Control Activities — Design, Implementation and Control Risk", icon: "worksheet", route: "checklist/aud-ra-550" },
                       { id: "aud-ra-551", code: "551", label: "Understanding General IT Controls — Design and Implementation", icon: "worksheet", route: "checklist/aud-ra-551" },
                       { id: "aud-ra-575", code: "575", label: "Internal Control Deficiencies Identified", icon: "worksheet", route: "checklist/aud-ra-575" },
-                      { id: "aud-ra-580", code: "580", label: "Revenue Recognition — Fraud Risk Assessment", icon: "worksheet", route: "checklist/aud-ra-580" },
                       { id: "aud-ra-590", code: "590", label: "Engagement Scoping — Classes of Transactions, Account Balances and Disclosures", icon: "worksheet", route: "checklist/aud-ra-590" },
                     ]
                   },
