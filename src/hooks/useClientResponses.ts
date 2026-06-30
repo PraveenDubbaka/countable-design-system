@@ -162,7 +162,7 @@ export function useClientResponses(
   // Share with client - triggers response simulation after delay
   const shareWithClient = useCallback(() => {
     if (!checklist) return;
-    
+
     setState(prev => ({
       ...prev,
       isShared: true,
@@ -171,7 +171,7 @@ export function useClientResponses(
       responses: [],
       answeredQuestions: 0
     }));
-    
+
     // Simulate client responding after 3 seconds
     setTimeout(() => {
       const mockResponses = generateMockResponses(checklist, assignments);
@@ -182,7 +182,7 @@ export function useClientResponses(
         answeredQuestions: mockResponses.length
       }));
     }, 3000);
-  }, [checklist]);
+  }, [checklist, assignments]);
 
   // Apply responses to checklist one by one
   const applyResponses = useCallback((
