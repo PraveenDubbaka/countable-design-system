@@ -4,7 +4,7 @@ import { useEngagements } from "@/store/EngagementsContext";
 import { EngagementRecord, setEngagementMeta } from "@/store/engagementsStore";
 import { toast } from "sonner";
 import intuitQuickbooksLogo from "@/assets/intuit-quickbooks-logo.svg";
-import { ArrowLeft, Briefcase, Calendar, Users, ChevronDown, Plus, Pencil, Trash2, Search, ExternalLink, X, Building2, FileText, Settings2, Check } from "lucide-react";
+import { ArrowLeft, Briefcase, Calendar, Users, ChevronDown, Plus, Pencil, Trash2, Search, ExternalLink, X, Building2, FileText, Settings2, Check, UploadCloud, FileCheck2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Layout } from "@/components/Layout";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -512,6 +512,9 @@ export default function CreateEngagement() {
   const [firstYearAudit, setFirstYearAudit] = useState(false);
   const [firstYearOnPlatform, setFirstYearOnPlatform] = useState("");
   const [isRollForward, setIsRollForward] = useState("");
+  const [priorYearFile, setPriorYearFile] = useState<File | null>(null);
+  const [isDraggingOver, setIsDraggingOver] = useState(false);
+  const priorYearFileInputRef = useRef<HTMLInputElement>(null);
   
   const [firstYearTemplates, setFirstYearTemplates] = useState<Set<string>>(new Set());
   const toggleFirstYearTemplate = (key: string) =>
@@ -841,6 +844,72 @@ export default function CreateEngagement() {
                     </div>
                   </div>
                 </div>
+
+                {/* Prior Year File Upload — shown when prior files exist */}
+                {firstYearAudit && firstYearOnPlatform === "no" && (
+                  <div className="mt-5 pt-5 border-t border-border">
+                    <div className="flex items-start gap-3">
+                      <div className="flex-1">
+                        <p className="text-xs font-medium text-foreground mb-0.5">Prior year audit file</p>
+                        <p className="text-xs text-muted-foreground mb-3">
+                          Upload the prior year file (PDF). Luka will extract acceptance data, materiality figures, and risk register items to carry forward as reviewable starting points.
+                        </p>
+
+                        {priorYearFile ? (
+                          <div className="flex items-center gap-3 px-4 py-3 rounded-[10px] border border-border bg-muted/40">
+                            <FileCheck2 className="h-5 w-5 text-primary shrink-0" />
+                            <div className="flex-1 min-w-0">
+                              <p className="text-sm font-medium text-foreground truncate">{priorYearFile.name}</p>
+                              <p className="text-xs text-muted-foreground">{(priorYearFile.size / 1024).toFixed(0)} KB · Ready for Luka to process on engagement creation</p>
+                            </div>
+                            <button
+                              type="button"
+                              onClick={() => setPriorYearFile(null)}
+                              className="p-1 rounded hover:bg-muted transition-colors text-muted-foreground hover:text-foreground"
+                            >
+                              <X className="h-4 w-4" />
+                            </button>
+                          </div>
+                        ) : (
+                          <div
+                            onClick={() => priorYearFileInputRef.current?.click()}
+                            onDragOver={(e) => { e.preventDefault(); setIsDraggingOver(true); }}
+                            onDragLeave={() => setIsDraggingOver(false)}
+                            onDrop={(e) => {
+                              e.preventDefault();
+                              setIsDraggingOver(false);
+                              const file = e.dataTransfer.files[0];
+                              if (file?.type === 'application/pdf') setPriorYearFile(file);
+                              else toast.error('Please upload a PDF file');
+                            }}
+                            className={`flex flex-col items-center justify-center gap-2 px-6 py-8 rounded-[10px] border-2 border-dashed cursor-pointer transition-colors ${
+                              isDraggingOver
+                                ? 'border-primary bg-primary/5'
+                                : 'border-border hover:border-primary/50 hover:bg-muted/30'
+                            }`}
+                          >
+                            <UploadCloud className={`h-7 w-7 ${isDraggingOver ? 'text-primary' : 'text-muted-foreground'}`} />
+                            <div className="text-center">
+                              <p className="text-sm font-medium text-foreground">Drop your prior year PDF here</p>
+                              <p className="text-xs text-muted-foreground mt-0.5">or <span className="text-primary underline underline-offset-2">click to browse</span> · PDF only</p>
+                            </div>
+                          </div>
+                        )}
+
+                        <input
+                          ref={priorYearFileInputRef}
+                          type="file"
+                          accept=".pdf,application/pdf"
+                          className="hidden"
+                          onChange={(e) => {
+                            const file = e.target.files?.[0];
+                            if (file) setPriorYearFile(file);
+                          }}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                )}
               </SectionCard>
             )}
 
