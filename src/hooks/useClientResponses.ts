@@ -194,7 +194,7 @@ export function useClientResponses(
       onUpdateQuestion,
       onComplete
     );
-  }, [state.responses]);
+  }, [applyFilteredResponses]);
 
   // Apply only selected responses
   const applyFilteredResponses = useCallback((
@@ -215,23 +215,24 @@ export function useClientResponses(
         setApplyingQuestionId(null);
         // Remove accepted responses; if all accepted, reset fully
         const acceptedIds = new Set(questionIds);
-        const remaining = state.responses.filter(r => !acceptedIds.has(r.questionId));
-        if (remaining.length === 0) {
-          setState(prev => ({
-            ...prev,
-            hasResponses: false,
-            responses: [],
-            answeredQuestions: 0,
-            isShared: false,
-            sharedAt: null
-          }));
-        } else {
-          setState(prev => ({
+        setState(prev => {
+          const remaining = prev.responses.filter(r => !acceptedIds.has(r.questionId));
+          if (remaining.length === 0) {
+            return {
+              ...prev,
+              hasResponses: false,
+              responses: [],
+              answeredQuestions: 0,
+              isShared: false,
+              sharedAt: null
+            };
+          }
+          return {
             ...prev,
             responses: remaining,
             answeredQuestions: remaining.length
-          }));
-        }
+          };
+        });
         onComplete();
         return;
       }
