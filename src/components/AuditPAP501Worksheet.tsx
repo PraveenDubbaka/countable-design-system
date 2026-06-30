@@ -6,7 +6,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Info, FileSpreadsheet, CheckCircle2, AlertCircle, Loader2 } from "lucide-react";
+import { Info, FileSpreadsheet, CheckCircle2, AlertCircle, Loader2, Minus, Plus } from "lucide-react";
 import { RefButton, RefDoc } from "@/components/RefButton";
 import { readJsonFromLocalStorage, writeJsonToLocalStorage } from "@/lib/safeJson";
 import { loadEngagements } from "@/store/engagementsStore";
@@ -261,6 +261,12 @@ export function AuditPAP501Worksheet({ isUS = false }: { isUS?: boolean }) {
     const t = setTimeout(() => writeJsonToLocalStorage(storageKey, data), 600);
     return () => clearTimeout(t);
   }, [data, storageKey]);
+
+  // ── Zoom ─────────────────────────────────────────────────────────────────────
+
+  const [zoom, setZoom] = useState(100);
+  const zoomIn  = () => setZoom(z => Math.min(200, z + 10));
+  const zoomOut = () => setZoom(z => Math.max(50,  z - 10));
 
   // ── Flow state ───────────────────────────────────────────────────────────────
 
@@ -639,27 +645,63 @@ export function AuditPAP501Worksheet({ isUS = false }: { isUS?: boolean }) {
       {/* ── WORKSHEET: XLSX embed ─────────────────────────────────────────── */}
       {flowState === 'worksheet' && (<>
 
-        {/* Sheet tabs */}
-        <div className="flex items-end gap-0 border-b border-border bg-muted/20 px-4 shrink-0">
-          {xlsxSheets.length > 0 ? xlsxSheets.map(s => (
+        {/* Sheet tabs + zoom controls */}
+        <div className="flex items-center border-b border-border bg-muted/20 px-4 shrink-0">
+          <div className="flex items-end gap-0 flex-1">
+            {xlsxSheets.length > 0 ? xlsxSheets.map(s => (
+              <button
+                key={s.name}
+                onClick={() => setXlsxActiveSheet(s.name)}
+                className={`px-4 py-2 text-xs font-medium border-b-2 transition-colors whitespace-nowrap ${
+                  xlsxActiveSheet === s.name
+                    ? 'border-primary text-primary'
+                    : 'border-transparent text-muted-foreground hover:text-foreground'
+                }`}
+              >
+                {s.name}
+              </button>
+            )) : ['501 - Part A', '501 - Part B', '501- Part C'].map(n => (
+              <button key={n} className="px-4 py-2 text-xs font-medium border-b-2 border-transparent text-muted-foreground">{n}</button>
+            ))}
+          </div>
+          {/* Zoom controls — Excel-style */}
+          <div className="flex items-center gap-1 ml-4 shrink-0 py-1">
             <button
-              key={s.name}
-              onClick={() => setXlsxActiveSheet(s.name)}
-              className={`px-4 py-2 text-xs font-medium border-b-2 transition-colors whitespace-nowrap ${
-                xlsxActiveSheet === s.name
-                  ? 'border-primary text-primary'
-                  : 'border-transparent text-muted-foreground hover:text-foreground'
-              }`}
+              onClick={zoomOut}
+              disabled={zoom <= 50}
+              className="w-6 h-6 flex items-center justify-center rounded hover:bg-muted transition-colors text-muted-foreground hover:text-foreground disabled:opacity-30 disabled:cursor-not-allowed"
+              title="Zoom out"
             >
-              {s.name}
+              <Minus className="h-3 w-3" />
             </button>
-          )) : ['501 - Part A', '501 - Part B', '501- Part C'].map(n => (
-            <button key={n} className="px-4 py-2 text-xs font-medium border-b-2 border-transparent text-muted-foreground">{n}</button>
-          ))}
+            <input
+              type="range"
+              min={50} max={200} step={10}
+              value={zoom}
+              onChange={e => setZoom(Number(e.target.value))}
+              className="w-20 h-1 accent-primary cursor-pointer"
+              title={`${zoom}%`}
+            />
+            <button
+              onClick={zoomIn}
+              disabled={zoom >= 200}
+              className="w-6 h-6 flex items-center justify-center rounded hover:bg-muted transition-colors text-muted-foreground hover:text-foreground disabled:opacity-30 disabled:cursor-not-allowed"
+              title="Zoom in"
+            >
+              <Plus className="h-3 w-3" />
+            </button>
+            <button
+              onClick={() => setZoom(100)}
+              className="text-[11px] font-medium text-muted-foreground hover:text-foreground w-10 text-center tabular-nums"
+              title="Reset zoom"
+            >
+              {zoom}%
+            </button>
+          </div>
         </div>
 
         {/* ── WORKSHEET: XLSX embed ── */}
-        <div className="flex-1 overflow-auto bg-background">
+        <div className="flex-1 overflow-auto bg-background" style={{ zoom: zoom / 100 }}>
 
           {xlsxLoading ? (
             <div className="flex items-center justify-center h-40 gap-2 text-sm text-muted-foreground">
@@ -683,6 +725,7 @@ export function AuditPAP501Worksheet({ isUS = false }: { isUS?: boolean }) {
                       const cells = row as (string | number)[];
                       const hasContent = cells.some(c => String(c).trim() !== '');
                       if (!hasContent && ri > 5) return null;
+                      if (cells.some(c => String(c).trim().startsWith('Go to Part '))) return null;
                       return (
                         <tr key={ri}>
                           <td className="text-right text-[9px] text-muted-foreground/40 pl-1 pr-2 py-0.5 select-none bg-muted/20 border-r border-border/40 w-7 shrink-0">{ri + 1}</td>
