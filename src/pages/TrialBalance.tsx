@@ -289,15 +289,30 @@ export default function TrialBalance() {
     return (
       <Layout title="Engagements" headerContent={trialBalanceBreadcrumb}>
         <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
-          {/* Level-1 sticky header */}
+          {/* Level-1 sticky header — matches loaded TB */}
           <div className="sticky top-0 z-10 flex items-center justify-between px-4 py-1.5 border-b border-border bg-gradient-to-r from-card via-card to-secondary/20">
-            <h1 className="text-lg font-semibold text-foreground">Trial Balance</h1>
             <div className="flex items-center gap-2">
-              <ExpandableIconButton variant="secondary" size="sm" icon={<Download className="h-4 w-4" />} label="Export" disabled />
-              <ExpandableIconButton variant="secondary" icon={<RefreshCw className="h-4 w-4" />} label="Refresh" disabled />
+              <button disabled className="w-7 h-7 rounded-md flex items-center justify-center text-muted-foreground opacity-40 pointer-events-none flex-shrink-0">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true">
+                  <path fill="currentColor" d="M20.25 7c0-.69-.56-1.25-1.25-1.25H9.75v12.5H19c.69 0 1.25-.56 1.25-1.25zM3.75 17c0 .69.56 1.25 1.25 1.25h3.25V5.75H5c-.69 0-1.25.56-1.25 1.25zm18 0A2.75 2.75 0 0 1 19 19.75H5A2.75 2.75 0 0 1 2.25 17V7A2.75 2.75 0 0 1 5 4.25h14A2.75 2.75 0 0 1 21.75 7z" />
+                </svg>
+              </button>
+              <h1 className="text-lg font-semibold text-foreground truncate">Trial Balance</h1>
+            </div>
+            <div className="flex items-center gap-2">
+              {inlineHeaderActions.map(action => (
+                <ExpandableIconButton key={action.id} variant="secondary" size="sm" icon={<action.icon className="h-4 w-4" />} label={action.label} disabled />
+              ))}
+              <ExpandableIconButton
+                variant="secondary"
+                size="sm"
+                icon={<Settings2 className="h-4 w-4" />}
+                label={<span className="inline-flex items-center gap-1">Tools<ChevronDown className="h-3 w-3" /></span>}
+                disabled
+              />
             </div>
           </div>
-          {/* Level-2 sticky sub-toolbar */}
+          {/* Level-2 sticky sub-toolbar — matches loaded TB */}
           <div className="sticky top-[42px] z-10 bg-card px-4 py-2 border-b border-border/50">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
@@ -306,9 +321,36 @@ export default function TrialBalance() {
                 </Button>
               </div>
               <div className="flex items-center gap-2">
-                <ExpandableIconButton variant="secondary" size="sm" icon={<Wrench className="h-4 w-4" />} label={<span className="inline-flex items-center gap-1">Actions<ChevronDown className="h-3 w-3" /></span>} disabled className="opacity-40 pointer-events-none" />
-                <ExpandableIconButton variant="secondary" size="sm" icon={<Upload className="h-4 w-4" />} label="Import" onClick={() => setShowImport(true)} />
-                <ExpandableIconButton variant="secondary" icon={<EyeOff className="h-4 w-4" />} label="Hide $0 Acc. (0)" disabled className="opacity-40 pointer-events-none" />
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <ExpandableIconButton variant="secondary" icon={<Wrench className="h-4 w-4" />} label={<span className="inline-flex items-center gap-1">Actions<ChevronDown className="h-3 w-3" /></span>} />
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end" className="w-44">
+                    <DropdownMenuItem className="flex items-center gap-2 cursor-pointer" onClick={() => setShowImport(true)}>
+                      <Upload className="h-4 w-4 text-muted-foreground" /><span>Import</span>
+                    </DropdownMenuItem>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem disabled className="flex items-center gap-2 opacity-40">
+                      <Plus className="h-4 w-4 text-muted-foreground" /><span>Add</span>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem disabled className="flex items-center gap-2 opacity-40">
+                      <Trash2 className="h-4 w-4 text-destructive" /><span>Delete</span>
+                    </DropdownMenuItem>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem disabled className="flex items-center gap-2 opacity-40">
+                      <FileX2 className="h-4 w-4 text-muted-foreground" /><span>Unmap</span>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem disabled className="flex items-center gap-2 opacity-40">
+                      <Network className="h-4 w-4 text-muted-foreground" /><span>Auto Map</span>
+                    </DropdownMenuItem>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem disabled className="flex items-center gap-2 opacity-40">
+                      <Download className="h-4 w-4 text-muted-foreground" /><span>Export</span>
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+                <ExpandableIconButton variant="secondary" icon={<RefreshCw className="h-4 w-4" />} label={<span className="inline-flex items-center gap-1">Refresh<ChevronDown className="h-3 w-3" /></span>} disabled />
+                <ExpandableIconButton variant="secondary" icon={<EyeOff className="h-4 w-4" />} label="Hide $0 Acc. (0)" disabled />
                 <ExpandableSearch disabled />
               </div>
             </div>
