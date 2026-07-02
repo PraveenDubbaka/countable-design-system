@@ -1,5 +1,7 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import { useEngagements } from "@/store/EngagementsContext";
+import { toast } from "sonner";
 import { EngagementRightPanel } from "@/components/EngagementRightPanel";
 import { Layout } from "@/components/Layout";
 import { useSecondaryPanel } from "@/hooks/useSecondaryPanel";
@@ -51,6 +53,11 @@ import {
   EyeOff,
   Eye,
   ListFilter,
+  ArrowLeft,
+  X,
+  Info,
+  CloudUpload,
+  Plug,
 } from "lucide-react";
 
 // Filter categories with badge colors and short labels (matching screenshot)
@@ -154,6 +161,8 @@ const totals = { original: 0.00, adj: 0.00, final: 0.00, py1: 0.00, py2: 0.00 };
 const netIncome = { original: 847000, adj: 0.00, final: 847000, py1: 740000, py2: "589,000.00" };
 
 
+const TB_LOADED_KEY = (id: string) => `tb-loaded-${id}`;
+
 export default function TrialBalance() {
   const navigate = useNavigate();
   const { engagementId } = useParams();
@@ -164,6 +173,23 @@ export default function TrialBalance() {
   const [activeFilters, setActiveFilters] = useState<Set<FilterId>>(new Set());
   const { isCollapsed: isPanelCollapsed, toggle: togglePanel } = useSecondaryPanel();
 
+  // TB load state — persisted per engagement
+  const [tbLoaded, setTbLoaded] = useState(() =>
+    engagementId ? !!localStorage.getItem(TB_LOADED_KEY(engagementId)) : false
+  );
+  const [showImport, setShowImport] = useState(false);
+  const [cyFile, setCyFile] = useState<File | null>(null);
+  const [py1File, setPy1File] = useState<File | null>(null);
+  const [py2File, setPy2File] = useState<File | null>(null);
+  const [isUploading, setIsUploading] = useState(false);
+  const cyInputRef = useRef<HTMLInputElement>(null);
+  const py1InputRef = useRef<HTMLInputElement>(null);
+  const py2InputRef = useRef<HTMLInputElement>(null);
+
+  const { engagements, updateEngagement } = useEngagements();
+  const contextEng = engagements.find(e => e.id === engagementId);
+  const staticEng = engagementId ? engagementsData[engagementId] : null;
+
   const toggleFilter = (id: FilterId) => {
     setActiveFilters(prev => {
       const next = new Set(prev);
@@ -173,10 +199,30 @@ export default function TrialBalance() {
   };
   const clearFilters = () => setActiveFilters(new Set());
 
-  const engagement = engagementId ? engagementsData[engagementId] : null;
+  const handleUpload = () => {
+    if (!cyFile || !engagementId) return;
+    setIsUploading(true);
+    setTimeout(() => {
+      localStorage.setItem(TB_LOADED_KEY(engagementId), '1');
+      setTbLoaded(true);
+      setShowImport(false);
+      setIsUploading(false);
+      setCyFile(null); setPy1File(null); setPy2File(null);
+      updateEngagement(engagementId, { status: 'In Progress', statusVariant: 'inProgress' });
+      toast.success('Trial balance imported successfully');
+    }, 1200);
+  };
+
+  const cyYear = (() => {
+    const ye = contextEng?.yearEnd || staticEng?.yearEnd || '';
+    const m = ye.match(/\d{4}/);
+    return m ? parseInt(m[0]) : new Date().getFullYear();
+  })();
+
+  const engagement = staticEng;
   const displayId = engagementId || "Unknown";
-  const clientName = engagement?.client || "Unknown Client";
-  const status = engagement?.status || "In Progress";
+  const clientName = contextEng?.client || engagement?.client || "Unknown Client";
+  const status = contextEng?.status || engagement?.status || "In Progress";
   const uniqueClients = getUniqueClients();
   const clientEngagements = getEngagementsForClient(clientName);
 
@@ -237,6 +283,148 @@ export default function TrialBalance() {
       </div>
     </div>
   );
+
+  // ── Empty state ──────────────────────────────────────────────────────────
+  if (!tbLoaded && !showImport) {
+    return (
+      <Layout title="Engagements" headerContent={trialBalanceBreadcrumb}>
+        <div className="flex-1 flex flex-col min-w-0 overflow-auto p-6">
+          <div className="flex items-center justify-between mb-6">
+            <h1 className="text-lg font-semibold text-foreground">Trial Balance</h1>
+            <Button size="sm" variant="outline" onClick={() => setShowImport(true)} className="gap-1.5">
+              <Upload className="h-4 w-4" /> Import
+            </Button>
+          </div>
+          <div className="flex-1 flex items-center justify-center">
+            <div className="bg-card border border-border rounded-xl p-10 max-w-2xl w-full text-center shadow-sm">
+              <p className="text-base font-semibold text-foreground mb-1">No Trial Balance Data Found</p>
+              <p className="text-sm text-muted-foreground mb-8">Please Retrieve Data Using One of the Options</p>
+              <div className="flex items-stretch gap-6 justify-center">
+                {/* Import CSV/Excel/PDF */}
+                <div className="flex-1 max-w-xs flex flex-col items-center gap-3 bg-muted/40 border border-border rounded-xl p-6">
+                  <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center">
+                    <CloudUpload className="h-7 w-7 text-primary" />
+                  </div>
+                  <p className="text-sm font-semibold text-foreground">Import Data from CSV/Excel/PDF</p>
+                  <p className="text-xs text-muted-foreground text-center">Choose and import the respective file to effortlessly bring in all data with a single click</p>
+                  <Button size="sm" className="mt-auto gap-1.5" onClick={() => setShowImport(true)}>
+                    <Upload className="h-4 w-4" /> Import
+                  </Button>
+                </div>
+                <div className="flex items-center text-sm font-medium text-muted-foreground">OR</div>
+                {/* Accounting software */}
+                <div className="flex-1 max-w-xs flex flex-col items-center gap-3 bg-muted/40 border border-border rounded-xl p-6">
+                  <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center">
+                    <Plug className="h-7 w-7 text-primary" />
+                  </div>
+                  <p className="text-sm font-semibold text-foreground">Integrate with Accounting Software</p>
+                  <p className="text-xs text-muted-foreground text-center">Instantly import data by login and linking to the accounting source</p>
+                  <Button size="sm" variant="outline" className="mt-auto gap-1.5" onClick={() => toast.info('Accounting source integration coming soon')}>
+                    <Plug className="h-4 w-4" /> Select Account Source
+                  </Button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </Layout>
+    );
+  }
+
+  // ── Import view ───────────────────────────────────────────────────────────
+  if (showImport) {
+    const years = [cyYear, cyYear - 1, cyYear - 2];
+    const DropZone = ({ label, file, onFile, inputRef }: { label: string; file: File | null; onFile: (f: File | null) => void; inputRef: React.RefObject<HTMLInputElement> }) => (
+      <div className="flex items-start gap-6 py-4 border-b border-border last:border-b-0">
+        <span className="w-44 shrink-0 text-sm font-medium text-foreground pt-4">{label}</span>
+        <div className="flex-1">
+          {file ? (
+            <div className="flex items-center gap-3 border border-border rounded-lg px-4 py-3 bg-card">
+              <FileText className="h-4 w-4 text-muted-foreground shrink-0" />
+              <span className="text-sm text-foreground flex-1 truncate">{file.name}</span>
+              <button onClick={() => onFile(null)} className="text-destructive hover:text-destructive/80">
+                <X className="h-4 w-4" />
+              </button>
+            </div>
+          ) : (
+            <div
+              className="border-2 border-dashed border-border rounded-lg p-8 flex flex-col items-center gap-2 cursor-pointer hover:border-primary/50 hover:bg-muted/40 transition-colors"
+              onClick={() => inputRef.current?.click()}
+            >
+              <CloudUpload className="h-8 w-8 text-muted-foreground" />
+              <p className="text-sm text-muted-foreground">
+                <span className="text-link font-medium">Click to upload</span> or Drag and drop the file
+              </p>
+              <p className="text-xs text-muted-foreground">(CSV/Excel/PDF)</p>
+            </div>
+          )}
+          <input ref={inputRef} type="file" accept=".csv,.xlsx,.xls,.pdf" className="hidden"
+            onChange={e => { const f = e.target.files?.[0] ?? null; onFile(f); e.target.value = ''; }} />
+        </div>
+      </div>
+    );
+
+    return (
+      <Layout title="Engagements" headerContent={trialBalanceBreadcrumb}>
+        <div className="flex-1 flex flex-col min-w-0 overflow-auto">
+          <div className="p-6 max-w-4xl mx-auto w-full">
+            {/* Header */}
+            <div className="flex items-start justify-between mb-4">
+              <div>
+                <button onClick={() => setShowImport(false)} className="flex items-center gap-1.5 text-sm text-link hover:underline mb-3">
+                  <ArrowLeft className="h-4 w-4" /> Import Trial Balance
+                </button>
+                <p className="text-sm text-muted-foreground max-w-2xl">
+                  This feature allows you to upload trial balance data from desktop-based accounting software for one or multiple years. Ensure files follow the specified format in the upload section. The system will auto-generate groupings, and data can only be imported once all items are fully mapped.
+                </p>
+                <p className="text-sm text-link mt-2 flex items-start gap-1.5">
+                  <Info className="h-4 w-4 shrink-0 mt-0.5" />
+                  <em>Note: If results are not as expected, ensure your file has accurate headers with Acc No., Description, Debit, and Credit details and import again.</em>
+                </p>
+              </div>
+              <Button size="sm" variant="outline" className="shrink-0 ml-4 gap-1.5" onClick={() => setShowImport(false)}>
+                <FileSpreadsheet className="h-4 w-4" /> Import TB
+              </Button>
+            </div>
+
+            {/* Year tabs + actions */}
+            <div className="flex items-center justify-between mb-4">
+              <div>
+                <p className="text-xs font-medium text-muted-foreground mb-2">Year End</p>
+                <div className="flex gap-1">
+                  {years.map((y, i) => (
+                    <button key={y} className={`px-3 py-1.5 text-sm rounded-md border transition-colors ${i === 0 ? 'bg-primary text-white border-primary' : 'border-border text-muted-foreground hover:bg-muted'}`}>
+                      {y} (0)
+                    </button>
+                  ))}
+                </div>
+              </div>
+              <div className="flex items-center gap-2">
+                <Button size="sm" variant="outline" disabled={!cyFile && !py1File && !py2File}>Delete Draft</Button>
+                <Button size="sm" disabled={!cyFile} onClick={handleUpload} className="gap-1.5">
+                  {isUploading ? <RefreshCw className="h-4 w-4 animate-spin" /> : <Upload className="h-4 w-4" />}
+                  Upload
+                </Button>
+              </div>
+            </div>
+
+            {/* Upload zones */}
+            <div className="bg-card border border-border rounded-xl p-6">
+              <DropZone label="Current Year (CY) Trial Balance" file={cyFile} onFile={setCyFile} inputRef={cyInputRef} />
+              <DropZone label="Prior Year 1 (PY1) Trial Balance" file={py1File} onFile={setPy1File} inputRef={py1InputRef} />
+              <DropZone label="Prior Year 2 (PY2) Trial Balance" file={py2File} onFile={setPy2File} inputRef={py2InputRef} />
+              <div className="mt-4">
+                <Button className="w-full gap-1.5" disabled={!cyFile} onClick={handleUpload}>
+                  {isUploading ? <RefreshCw className="h-4 w-4 animate-spin" /> : <Upload className="h-4 w-4" />}
+                  Upload
+                </Button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </Layout>
+    );
+  }
 
   return (
     <Layout title="Engagements" headerContent={trialBalanceBreadcrumb}>

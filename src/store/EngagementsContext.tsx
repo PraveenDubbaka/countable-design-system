@@ -5,12 +5,14 @@ type CtxType = {
   engagements: EngagementRecord[];
   addEngagement: (e: EngagementRecord) => void;
   deleteEngagement: (id: string) => void;
+  updateEngagement: (id: string, updates: Partial<EngagementRecord>) => void;
 };
 
 const EngagementsContext = createContext<CtxType>({
   engagements: [],
   addEngagement: () => {},
   deleteEngagement: () => {},
+  updateEngagement: () => {},
 });
 
 export function EngagementsProvider({ children }: { children: React.ReactNode }) {
@@ -33,8 +35,16 @@ export function EngagementsProvider({ children }: { children: React.ReactNode })
     });
   };
 
+  const updateEngagement = (id: string, updates: Partial<EngagementRecord>) => {
+    setEngagements(prev => {
+      const next = prev.map(r => r.id === id ? { ...r, ...updates } : r);
+      saveEngagements(next);
+      return next;
+    });
+  };
+
   return (
-    <EngagementsContext.Provider value={{ engagements, addEngagement, deleteEngagement }}>
+    <EngagementsContext.Provider value={{ engagements, addEngagement, deleteEngagement, updateEngagement }}>
       {children}
     </EngagementsContext.Provider>
   );
