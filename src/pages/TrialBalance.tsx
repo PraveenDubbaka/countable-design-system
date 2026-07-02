@@ -288,14 +288,33 @@ export default function TrialBalance() {
   if (!tbLoaded && !showImport) {
     return (
       <Layout title="Engagements" headerContent={trialBalanceBreadcrumb}>
-        <div className="flex-1 flex flex-col min-w-0 overflow-auto p-6">
-          <div className="flex items-center justify-between mb-6">
+        <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
+          {/* Level-1 sticky header */}
+          <div className="sticky top-0 z-10 flex items-center justify-between px-4 py-1.5 border-b border-border bg-gradient-to-r from-card via-card to-secondary/20">
             <h1 className="text-lg font-semibold text-foreground">Trial Balance</h1>
-            <Button size="sm" variant="outline" onClick={() => setShowImport(true)} className="gap-1.5">
-              <Upload className="h-4 w-4" /> Import
-            </Button>
+            <div className="flex items-center gap-2">
+              <ExpandableIconButton variant="secondary" size="sm" icon={<Download className="h-4 w-4" />} label="Export" disabled />
+              <ExpandableIconButton variant="secondary" icon={<RefreshCw className="h-4 w-4" />} label="Refresh" disabled />
+            </div>
           </div>
-          <div className="flex-1 flex items-center justify-center">
+          {/* Level-2 sticky sub-toolbar */}
+          <div className="sticky top-[42px] z-10 bg-card px-4 py-2 border-b border-border/50">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <Button variant="secondary" size="sm" className="h-9 text-xs gap-1.5 opacity-40 pointer-events-none" disabled>
+                  {dateFilter} <ChevronDown className="h-3.5 w-3.5" />
+                </Button>
+              </div>
+              <div className="flex items-center gap-2">
+                <ExpandableIconButton variant="secondary" size="sm" icon={<Wrench className="h-4 w-4" />} label={<span className="inline-flex items-center gap-1">Actions<ChevronDown className="h-3 w-3" /></span>} disabled className="opacity-40 pointer-events-none" />
+                <ExpandableIconButton variant="secondary" size="sm" icon={<Upload className="h-4 w-4" />} label="Import" onClick={() => setShowImport(true)} />
+                <ExpandableIconButton variant="secondary" icon={<EyeOff className="h-4 w-4" />} label="Hide $0 Acc. (0)" disabled className="opacity-40 pointer-events-none" />
+                <ExpandableSearch disabled />
+              </div>
+            </div>
+          </div>
+          {/* Content */}
+          <div className="flex-1 overflow-auto flex items-center justify-center p-6">
             <div className="bg-card border border-border rounded-xl p-10 max-w-2xl w-full text-center shadow-sm">
               <p className="text-base font-semibold text-foreground mb-1">No Trial Balance Data Found</p>
               <p className="text-sm text-muted-foreground mb-8">Please Retrieve Data Using One of the Options</p>
@@ -383,20 +402,11 @@ export default function TrialBalance() {
             </Button>
           </div>
 
-          {/* Body — full width */}
-          <div className="flex-1 overflow-auto p-6">
-            <p className="text-sm text-muted-foreground mb-2">
-              This feature allows you to upload trial balance data from desktop-based accounting software for one or multiple years. Ensure files follow the specified format in the upload section. The system will auto-generate groupings, and data can only be imported once all items are fully mapped.
-            </p>
-            <p className="text-sm text-link mb-4 flex items-start gap-1.5">
-              <Info className="h-4 w-4 shrink-0 mt-0.5" />
-              <em>Note: If results are not as expected, ensure your file has accurate headers with Acc No., Description, Debit, and Credit details and import again.</em>
-            </p>
-
-            {/* Year tabs + actions */}
-            <div className="flex items-center justify-between mb-4">
+          {/* Level-2 sticky sub-toolbar — year tabs + upload actions */}
+          <div className="sticky top-[42px] z-10 bg-card px-4 py-2 border-b border-border/50">
+            <div className="flex items-center justify-between">
               <div>
-                <p className="text-xs font-medium text-muted-foreground mb-2">Year End</p>
+                <p className="text-xs font-medium text-muted-foreground mb-1.5">Year End</p>
                 <div className="flex">
                   {years.map((y, i) => (
                     <button key={y} className={`px-3 py-1.5 text-sm border transition-colors
@@ -416,6 +426,17 @@ export default function TrialBalance() {
                 </Button>
               </div>
             </div>
+          </div>
+
+          {/* Body — full width */}
+          <div className="flex-1 overflow-auto p-6">
+            <p className="text-sm text-muted-foreground mb-2">
+              This feature allows you to upload trial balance data from desktop-based accounting software for one or multiple years. Ensure files follow the specified format in the upload section. The system will auto-generate groupings, and data can only be imported once all items are fully mapped.
+            </p>
+            <p className="text-sm text-link mb-6 flex items-start gap-1.5">
+              <Info className="h-4 w-4 shrink-0 mt-0.5" />
+              <em>Note: If results are not as expected, ensure your file has accurate headers with Acc No., Description, Debit, and Credit details and import again.</em>
+            </p>
 
             {/* Upload zones */}
             <div className="bg-card border border-border rounded-xl p-6">
