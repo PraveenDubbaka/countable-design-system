@@ -1262,9 +1262,27 @@ function QuestionInlineColumns({
               onMouseDown={(e) => handleResizeStart(widthIdx - 1, e)}>
               <div className="absolute inset-y-0 -left-1.5 -right-1.5" />
             </div>
-            <div className="flex flex-nowrap items-center justify-start gap-2 min-w-0 overflow-visible px-2 relative group/resp self-center"
+            <div className="flex flex-nowrap items-start justify-start gap-2 min-w-0 overflow-visible px-2 relative group/resp"
               style={{ flex: `0 0 ${widths[widthIdx] * 100}%` }}>
-              <ResponseField question={question} onUpdate={onUpdate} isPreviewMode={isPreviewMode} isEngagementMode={isEngagementMode} />
+              <div className="w-full min-w-0">
+                <ResponseField question={question} onUpdate={onUpdate} isPreviewMode={isPreviewMode} isEngagementMode={isEngagementMode} />
+                {isEngagementMode && question.answeredBy && question.answer && !showExplanation && (
+                  <div className="mt-1 px-0.5">
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <span className={`inline-flex items-center rounded-full text-[10px] font-medium px-2 py-0.5 cursor-default ${
+                          question.answeredBy.type === 'client' ? 'bg-primary/10 text-primary' : 'bg-muted text-muted-foreground'
+                        }`}>
+                          {question.answeredBy.initials}
+                        </span>
+                      </TooltipTrigger>
+                      <TooltipContent side="top">
+                        <p className="text-xs">{question.answeredBy.name} · {question.answeredBy.role}</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </div>
+                )}
+              </div>
               {canEdit &&
                 <ResponseTypePicker
                   currentType={question.answerType}
@@ -1299,10 +1317,16 @@ function QuestionInlineColumns({
               <div className="w-full">
                 <AITextarea
                   value={question.explanation || ''}
-                  onChange={(val) => onUpdate({ ...question, explanation: val })}
+                  onChange={(val) => {
+                    const upd: Question = { ...question, explanation: val };
+                    if (isEngagementMode) {
+                      upd.answeredBy = val ? CURRENT_USER_ASSIGNEE : (question.answer ? question.answeredBy : undefined);
+                    }
+                    onUpdate(upd);
+                  }}
                   placeholder="Explanation"
                   minHeight="40px" />
-                {isEngagementMode && question.answeredBy && question.answer && (
+                {isEngagementMode && question.answeredBy && (question.answer || question.explanation) && (
                   <div className="mt-1 px-1.5">
                     <Tooltip>
                       <TooltipTrigger asChild>
