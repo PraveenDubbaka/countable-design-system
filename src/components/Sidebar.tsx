@@ -2450,12 +2450,48 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
                             <div
                               key={section.id}
                               style={{ paddingLeft: `${(depth + 1) * 16 + 8}px` }}
-                              className={cn("group flex items-center gap-1.5 py-1.5 px-2 rounded-[8px] cursor-pointer hover:bg-primary/10 transition-colors text-sm", isActive && "bg-primary/10 ring-1 ring-primary/25")}
+                              className={cn("group relative flex items-center gap-1.5 py-1.5 px-2 rounded-[8px] cursor-pointer hover:bg-primary/10 transition-colors text-sm", isActive && "bg-primary/10 ring-1 ring-primary/25")}
                               onClick={() => engId && navigate(`/engagements/${engId}/checklist/${section.id}`)}
                             >
                               {section.category === 'letter' ? <LetterIcon className="h-4 w-4 flex-shrink-0" /> : <ChecklistIcon className="h-4 w-4 flex-shrink-0" />}
                               <span className="font-semibold text-primary">{code}</span>
                               <span className="truncate flex-1 text-black dark:text-white font-medium">{section.name}</span>
+                              <DropdownMenu>
+                                <DropdownMenuTrigger asChild onClick={e => e.stopPropagation()}>
+                                  <button className="opacity-0 group-hover:opacity-100 p-0.5 hover:bg-muted-foreground/10 rounded transition-opacity flex-shrink-0">
+                                    <MoreVertical className="h-3.5 w-3.5 text-muted-foreground" />
+                                  </button>
+                                </DropdownMenuTrigger>
+                                <DropdownMenuContent align="end" className="w-48">
+                                  <DropdownMenuItem className="text-xs gap-2 cursor-pointer text-primary font-medium" onClick={e => { e.stopPropagation(); window.dispatchEvent(new CustomEvent('raise-doc-request', { detail: { folder: section.name, subFolder: '' } })); }}>
+                                    <Send className="h-3.5 w-3.5" /> Raise a request
+                                  </DropdownMenuItem>
+                                  <DropdownMenuItem className="text-xs gap-2 cursor-pointer" onClick={e => e.stopPropagation()}>
+                                    <AlertCircle className="h-3.5 w-3.5" /> Raise issue
+                                  </DropdownMenuItem>
+                                  <DropdownMenuItem className="text-xs gap-2 cursor-pointer" onClick={e => e.stopPropagation()}>
+                                    <MessageSquare className="h-3.5 w-3.5" /> Add comment
+                                  </DropdownMenuItem>
+                                  <DropdownMenuSeparator />
+                                  <DropdownMenuItem className="text-xs gap-2 cursor-pointer" onClick={e => { e.stopPropagation(); setAddDocModal({ nodeId: section.id, nodeCode: code, nodeLabel: section.name }); setPendingDocFiles([]); }}>
+                                    <FilePlus2 className="h-3.5 w-3.5" /> Add document
+                                  </DropdownMenuItem>
+                                  <DropdownMenuSeparator />
+                                  <DropdownMenuItem
+                                    className="text-xs gap-2 cursor-pointer text-destructive focus:text-destructive"
+                                    onClick={e => {
+                                      e.stopPropagation();
+                                      if (!engId) return;
+                                      const existing = readJsonFromLocalStorage<CustomSection[]>(`engagement-custom-sections-${engId}`, []);
+                                      writeJsonToLocalStorage(`engagement-custom-sections-${engId}`, existing.filter(s => s.id !== section.id));
+                                      window.dispatchEvent(new CustomEvent('custom-sections-updated'));
+                                      if (isActive) navigate(`/engagements/${engId}`);
+                                    }}
+                                  >
+                                    <Trash2 className="h-3.5 w-3.5" /> Delete
+                                  </DropdownMenuItem>
+                                </DropdownMenuContent>
+                              </DropdownMenu>
                             </div>
                           );
                         })
