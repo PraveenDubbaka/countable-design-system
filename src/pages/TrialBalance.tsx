@@ -366,26 +366,32 @@ export default function TrialBalance() {
 
     return (
       <Layout title="Engagements" headerContent={trialBalanceBreadcrumb}>
-        <div className="flex-1 flex flex-col min-w-0 overflow-auto">
-          <div className="p-6 max-w-4xl mx-auto w-full">
-            {/* Header */}
-            <div className="flex items-start justify-between mb-4">
-              <div>
-                <button onClick={() => setShowImport(false)} className="flex items-center gap-1.5 text-sm text-link hover:underline mb-3">
-                  <ArrowLeft className="h-4 w-4" /> Import Trial Balance
-                </button>
-                <p className="text-sm text-muted-foreground max-w-2xl">
-                  This feature allows you to upload trial balance data from desktop-based accounting software for one or multiple years. Ensure files follow the specified format in the upload section. The system will auto-generate groupings, and data can only be imported once all items are fully mapped.
-                </p>
-                <p className="text-sm text-link mt-2 flex items-start gap-1.5">
-                  <Info className="h-4 w-4 shrink-0 mt-0.5" />
-                  <em>Note: If results are not as expected, ensure your file has accurate headers with Acc No., Description, Debit, and Credit details and import again.</em>
-                </p>
-              </div>
-              <Button size="sm" variant="outline" className="shrink-0 ml-4 gap-1.5" onClick={() => setShowImport(false)}>
-                <FileSpreadsheet className="h-4 w-4" /> Import TB
-              </Button>
+        <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
+          {/* Level-1 sticky header — matches main TB page */}
+          <div className="sticky top-0 z-10 flex items-center justify-between px-4 py-1.5 border-b border-border bg-gradient-to-r from-card via-card to-secondary/20">
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => setShowImport(false)}
+                className="w-7 h-7 rounded-md flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
+              >
+                <ArrowLeft className="h-4 w-4" />
+              </button>
+              <h1 className="text-lg font-semibold text-foreground">Import Trial Balance</h1>
             </div>
+            <Button size="sm" variant="outline" className="gap-1.5" onClick={() => setShowImport(false)}>
+              <FileSpreadsheet className="h-4 w-4" /> Import TB
+            </Button>
+          </div>
+
+          {/* Body — full width */}
+          <div className="flex-1 overflow-auto p-6">
+            <p className="text-sm text-muted-foreground mb-2">
+              This feature allows you to upload trial balance data from desktop-based accounting software for one or multiple years. Ensure files follow the specified format in the upload section. The system will auto-generate groupings, and data can only be imported once all items are fully mapped.
+            </p>
+            <p className="text-sm text-link mb-4 flex items-start gap-1.5">
+              <Info className="h-4 w-4 shrink-0 mt-0.5" />
+              <em>Note: If results are not as expected, ensure your file has accurate headers with Acc No., Description, Debit, and Credit details and import again.</em>
+            </p>
 
             {/* Year tabs + actions */}
             <div className="flex items-center justify-between mb-4">
