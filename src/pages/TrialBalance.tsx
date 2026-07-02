@@ -391,9 +391,12 @@ export default function TrialBalance() {
             <div className="flex items-center justify-between mb-4">
               <div>
                 <p className="text-xs font-medium text-muted-foreground mb-2">Year End</p>
-                <div className="flex gap-1">
+                <div className="flex">
                   {years.map((y, i) => (
-                    <button key={y} className={`px-3 py-1.5 text-sm rounded-md border transition-colors ${i === 0 ? 'bg-primary text-white border-primary' : 'border-border text-muted-foreground hover:bg-muted'}`}>
+                    <button key={y} className={`px-3 py-1.5 text-sm border transition-colors
+                      ${i === 0 ? 'rounded-l-md' : '-ml-px'}
+                      ${i === years.length - 1 ? 'rounded-r-md' : ''}
+                      ${i === 0 ? 'bg-primary text-white border-primary z-10 relative' : 'border-border text-muted-foreground hover:bg-muted'}`}>
                       {y} (0)
                     </button>
                   ))}
