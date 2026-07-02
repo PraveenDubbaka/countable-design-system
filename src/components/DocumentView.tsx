@@ -1266,7 +1266,7 @@ function QuestionInlineColumns({
               style={{ flex: `0 0 ${widths[widthIdx] * 100}%` }}>
               <div className="w-full min-w-0">
                 <ResponseField question={question} onUpdate={onUpdate} isPreviewMode={isPreviewMode} isEngagementMode={isEngagementMode} />
-                {isEngagementMode && question.answeredBy && question.answer && !showExplanation && (
+                {isEngagementMode && question.answeredBy && question.answer && (
                   <div className="mt-1 px-0.5">
                     <Tooltip>
                       <TooltipTrigger asChild>
