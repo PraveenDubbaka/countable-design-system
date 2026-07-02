@@ -778,7 +778,7 @@ ${note.blocks.map(b => {
                           ? <><PhoneOff className="h-4 w-4" /> Stop &amp; capture notes</>
                           : callState !== 'idle'
                           ? <><Loader2 className="h-4 w-4 animate-spin" /> {callState === 'connecting' ? 'Connecting…' : 'Processing…'}</>
-                          : <><Phone className="h-4 w-4" /> Connect to call</>
+                          : <><Phone className="h-4 w-4" /> Live transcript / notes meeting</>
                         }
                       </DropdownMenuItem>
                       <DropdownMenuItem onClick={() => fileInputRef.current?.click()} className="flex items-center gap-2 text-sm cursor-pointer">

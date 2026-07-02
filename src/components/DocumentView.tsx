@@ -29,7 +29,15 @@ import {
   SortableContext, sortableKeyboardCoordinates, useSortable, verticalListSortingStrategy } from
 '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
+import { CURRENT_USER } from '@/lib/useTimeEntries';
 
+const CURRENT_USER_ASSIGNEE: Assignee = {
+  id: 'current-user',
+  name: CURRENT_USER.name,
+  initials: CURRENT_USER.initials,
+  role: 'Audit Staff',
+  type: 'staff',
+};
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
@@ -116,7 +124,13 @@ function ResponseField({ question, onUpdate, isPreviewMode, isEngagementMode = f
 
 }: {question: Question;onUpdate: (q: Question) => void;isPreviewMode: boolean;isEngagementMode?: boolean;}) {
   const hideEditOptions = isPreviewMode || (isEngagementMode && !question.isUserAdded);
-  const handleAnswer = (answer: string) => onUpdate({ ...question, answer });
+  const handleAnswer = (answer: string) => {
+    const updated: Question = { ...question, answer };
+    if (isEngagementMode) {
+      updated.answeredBy = answer ? CURRENT_USER_ASSIGNEE : undefined;
+    }
+    onUpdate(updated);
+  };
 
   switch (question.answerType) {
     case 'yes-no':

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { toast } from "sonner";
 import { Search, ChevronDown, Pencil, Trash2, Download, Mail, ClipboardPlus, UserPlus, RefreshCw, Users, UserX, UserCheck, Clock, UsersRound } from "lucide-react";
 import { ExpandableIconButton } from "@/components/ui/expandable-icon-button";
@@ -14,6 +14,7 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/comp
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import intuitQuickbooksLogo from "@/assets/intuit-quickbooks-logo.svg";
+import { clientsData } from "@/data/clientsData";
 
 // Sample partners data for the dropdown
 const partners = [
@@ -27,120 +28,14 @@ const partners = [
   { id: "jd-1", name: "Joey doem", email: "joey.team@yopmail.com", role: "", color: "bg-teal-500" },
 ];
 
+const acceptedCount  = clientsData.filter(c => c.status === 'Accepted').length;
+const pendingCount   = clientsData.filter(c => c.status === 'Invite Now' || c.status === 'Pending').length;
+
 // Sample stats data
 const stats = [
-  { label: "Active Clients", value: "29" },
-  { label: "Pending Clients", value: "92" },
-  { label: "Total Clients", value: "121" },
-];
-
-// Sample clients data matching the screenshot
-const clients = [
-  { 
-    id: "CR001", 
-    entityName: "CR tickets", 
-    entityType: "Corporation", 
-    status: "Accepted", 
-    statusVariant: "accepted" as const,
-    integration: "xero",
-    contactName: "Cr Tickets",
-    email: "crtick@yopmail.com",
-    repository: "Repository",
-    assignedPartner: "Cpt",
-    assignedTeam: null,
-    cellPhone: null,
-    engagements: 4
-  },
-  { 
-    id: "CR002", 
-    entityName: "CSV client 41", 
-    entityType: "Corporation", 
-    status: "Invite Now", 
-    statusVariant: "inviteNow" as const,
-    integration: "connect",
-    contactName: "Automation...",
-    email: "csvclient41@yopm...",
-    repository: "Repository",
-    assignedPartner: "Cpt",
-    assignedTeam: null,
-    cellPhone: null,
-    engagements: 2
-  },
-  { 
-    id: "CR003", 
-    entityName: "Source 41", 
-    entityType: "Corporation", 
-    status: "Invite Now", 
-    statusVariant: "inviteNow" as const,
-    integration: "xero",
-    contactName: "Automation...",
-    email: "source41@yopmail...",
-    repository: "Repository",
-    assignedPartner: "Cpt",
-    assignedTeam: null,
-    cellPhone: null,
-    engagements: 4
-  },
-  { 
-    id: "CR004", 
-    entityName: "Xero Vizhen", 
-    entityType: "Corporation", 
-    status: "Invite Now", 
-    statusVariant: "inviteNow" as const,
-    integration: "xero",
-    contactName: "Xero Vizhen",
-    email: "xerov@yopmail.com",
-    repository: "Repository",
-    assignedPartner: "Cpt",
-    assignedTeam: null,
-    cellPhone: null,
-    engagements: 7
-  },
-  { 
-    id: "CR005", 
-    entityName: "FST", 
-    entityType: "Corporation", 
-    status: "Accepted", 
-    statusVariant: "accepted" as const,
-    integration: "xero",
-    contactName: "Fs Temps",
-    email: "fst@yopmail.com",
-    repository: "Repository",
-    assignedPartner: "Cpt",
-    assignedTeam: null,
-    cellPhone: null,
-    engagements: 21
-  },
-  { 
-    id: "CR006", 
-    entityName: "Consolidated Shipping...", 
-    entityType: "Corporation", 
-    status: "Invite Now", 
-    statusVariant: "inviteNow" as const,
-    integration: "connect",
-    contactName: "Test Toc",
-    email: "toc@yopmail.com",
-    repository: "Repository",
-    assignedPartner: "Cpt",
-    assignedTeam: null,
-    cellPhone: null,
-    engagements: 1
-  },
-  { 
-    id: "CR007", 
-    entityName: "uat 41 test", 
-    entityType: "Corporation", 
-    status: "Accepted", 
-    statusVariant: "accepted" as const,
-    integration: "quickbooks",
-    contactName: "Uat Test",
-    email: "uat41test@yopmail...",
-    repository: "Repository",
-    assignedPartner: "Cpt",
-    assignedTeam: "Norbert",
-    cellPhone: "(123) 456-7876",
-    engagements: 2
-  },
+  { label: "Active Clients",   value: String(acceptedCount) },
+  { label: "Pending Clients",  value: String(pendingCount) },
+  { label: "Total Clients",    value: String(clientsData.length) },
 ];
 
 const StatusBadge = ({ status }: { status: string }) => {
@@ -199,7 +94,7 @@ export default function Clients() {
   const [partnerSearch, setPartnerSearch] = useState("");
   const [activeTab, setActiveTab] = useState("my-clients");
   const [selectedClient, setSelectedClient] = useState<string | null>(null);
-  const [clientList, setClientList] = useState(clients);
+  const [clientList, setClientList] = useState(clientsData);
 
   const filteredClients = clientList.filter(c =>
     c.entityName.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -231,7 +126,7 @@ export default function Clients() {
     { id: "archived", label: "Archived" },
   ];
 
-  const selectedClientData = clients.find(c => c.id === selectedClient);
+  const selectedClientData = clientsData.find(c => c.id === selectedClient);
 
   return (
     <Layout title="Clients">
@@ -427,9 +322,13 @@ export default function Clients() {
                         </td>
                         <td className="px-6 py-2 text-sm text-foreground whitespace-nowrap">{client.id}</td>
                         <td className="px-6 py-2 whitespace-nowrap">
-                          <a href="#" className="text-sm text-link font-medium cursor-pointer hover:underline">
+                          <Link
+                            to={`/clients/${client.id}`}
+                            className="text-sm text-link font-medium hover:underline"
+                            onClick={e => e.stopPropagation()}
+                          >
                             {client.entityName}
-                          </a>
+                          </Link>
                         </td>
                         <td className="px-6 py-2 text-sm text-foreground whitespace-nowrap">{client.entityType}</td>
                         <td className="px-6 py-2 whitespace-nowrap">
@@ -460,7 +359,7 @@ export default function Clients() {
                           )}
                         </td>
                         <td className="px-6 py-2 text-sm text-foreground whitespace-nowrap">{client.cellPhone || '-'}</td>
-                        <td className="px-6 py-2 text-sm text-primary font-medium text-center whitespace-nowrap">{client.engagements}</td>
+                        <td className="px-6 py-2 text-sm text-primary font-medium text-center whitespace-nowrap">{client.engagements.length}</td>
                         <td className="px-6 py-2 whitespace-nowrap">
                           <div className="flex items-center gap-2">
                             <button

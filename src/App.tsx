@@ -13,6 +13,7 @@ import EngagementDetail from "./pages/EngagementDetail";
 import CreateEngagement from "./pages/CreateEngagement";
 import Clients from "./pages/Clients";
 import AddNewClient from "./pages/AddNewClient";
+import ClientDetail from "./pages/ClientDetail";
 import TrialBalance from "./pages/TrialBalance";
 import Workbook from "./pages/Workbook";
 import ProcedureDetail from "./pages/ProcedureDetail";
@@ -38,6 +39,7 @@ const App = () => (
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/clients" element={<Clients />} />
             <Route path="/clients/new" element={<AddNewClient />} />
+            <Route path="/clients/:clientId" element={<ClientDetail />} />
             <Route path="/teams" element={<Teams />} />
             <Route path="/engagements" element={<Engagements />} />
             <Route path="/engagements/:engagementId" element={<EngagementDetail />} />
