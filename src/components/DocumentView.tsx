@@ -1262,7 +1262,7 @@ function QuestionInlineColumns({
               onMouseDown={(e) => handleResizeStart(widthIdx - 1, e)}>
               <div className="absolute inset-y-0 -left-1.5 -right-1.5" />
             </div>
-            <div className="flex flex-nowrap items-start justify-start gap-2 min-w-0 overflow-visible px-2 relative group/resp"
+            <div className="flex flex-nowrap items-center justify-start gap-2 min-w-0 overflow-visible px-2 relative group/resp"
               style={{ flex: `0 0 ${widths[widthIdx] * 100}%` }}>
               <div className="w-full min-w-0">
                 <ResponseField question={question} onUpdate={onUpdate} isPreviewMode={isPreviewMode} isEngagementMode={isEngagementMode} />
