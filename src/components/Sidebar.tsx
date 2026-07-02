@@ -2286,47 +2286,47 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
                             <DropdownMenuContent align="end" className="w-48">
                               {isLeaf ? (
                                 <>
-                                  <DropdownMenuItem className="text-xs gap-2 cursor-pointer" onClick={e => e.stopPropagation()}>
-                                    <ArrowUpDown className="h-3.5 w-3.5" /> Reorder
+                                  <DropdownMenuItem className="gap-2 cursor-pointer" onClick={e => e.stopPropagation()}>
+                                    <ArrowUpDown className="h-4 w-4" /> Reorder
                                   </DropdownMenuItem>
                                   <DropdownMenuSeparator />
                                 </>
                               ) : null}
-                              <DropdownMenuItem className="text-xs gap-2 cursor-pointer text-primary font-medium" onClick={handleRaiseRequest}>
-                                <Send className="h-3.5 w-3.5" /> Raise a request
+                              <DropdownMenuItem className="gap-2 cursor-pointer text-primary font-medium" onClick={handleRaiseRequest}>
+                                <Send className="h-4 w-4" /> Raise a request
                               </DropdownMenuItem>
-                              <DropdownMenuItem className="text-xs gap-2 cursor-pointer" onClick={e => e.stopPropagation()}>
-                                <AlertCircle className="h-3.5 w-3.5" /> Raise issue
+                              <DropdownMenuItem className="gap-2 cursor-pointer" onClick={e => e.stopPropagation()}>
+                                <AlertCircle className="h-4 w-4" /> Raise issue
                               </DropdownMenuItem>
-                              <DropdownMenuItem className="text-xs gap-2 cursor-pointer" onClick={e => e.stopPropagation()}>
-                                <MessageSquare className="h-3.5 w-3.5" /> Add comment
+                              <DropdownMenuItem className="gap-2 cursor-pointer" onClick={e => e.stopPropagation()}>
+                                <MessageSquare className="h-4 w-4" /> Add comment
                               </DropdownMenuItem>
                               <DropdownMenuSeparator />
                               {isLeaf ? (
                                 <DropdownMenuItem
-                                  className="text-xs gap-2 cursor-pointer"
+                                  className="gap-2 cursor-pointer"
                                   onClick={e => {
                                     e.stopPropagation();
                                     setAddDocModal({ nodeId: node.id, nodeCode: node.code, nodeLabel: node.label });
                                     setPendingDocFiles([]);
                                   }}
                                 >
-                                  <FilePlus2 className="h-3.5 w-3.5" /> Add document
+                                  <FilePlus2 className="h-4 w-4" /> Add document
                                 </DropdownMenuItem>
                               ) : (
                                 <>
                                   <DropdownMenuItem
-                                    className="text-xs gap-2 cursor-pointer"
+                                    className="gap-2 cursor-pointer"
                                     onClick={e => {
                                       e.stopPropagation();
                                       setAddNoteModal({ nodeId: node.id, nodeCode: node.code, nodeLabel: node.label });
                                       setAddNoteName('');
                                     }}
                                   >
-                                    <NotebookPen className="h-3.5 w-3.5" /> Add note
+                                    <NotebookPen className="h-4 w-4" /> Add note
                                   </DropdownMenuItem>
-                                  <DropdownMenuItem className="text-xs gap-2 cursor-pointer" onClick={e => { e.stopPropagation(); setAddSectionModal({ open: true, parentNodeId: node.id }); setAddSectionName(''); setAddSectionCategory('checklist'); }}>
-                                    <FolderPlus className="h-3.5 w-3.5" /> Add section
+                                  <DropdownMenuItem className="gap-2 cursor-pointer" onClick={e => { e.stopPropagation(); setAddSectionModal({ open: true, parentNodeId: node.id }); setAddSectionName(''); setAddSectionCategory('checklist'); }}>
+                                    <FolderPlus className="h-4 w-4" /> Add section
                                   </DropdownMenuItem>
                                 </>
                               )}
@@ -2463,22 +2463,22 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
                                   </button>
                                 </DropdownMenuTrigger>
                                 <DropdownMenuContent align="end" className="w-48">
-                                  <DropdownMenuItem className="text-xs gap-2 cursor-pointer text-primary font-medium" onClick={e => { e.stopPropagation(); window.dispatchEvent(new CustomEvent('raise-doc-request', { detail: { folder: section.name, subFolder: '' } })); }}>
-                                    <Send className="h-3.5 w-3.5" /> Raise a request
+                                  <DropdownMenuItem className="gap-2 cursor-pointer text-primary font-medium" onClick={e => { e.stopPropagation(); window.dispatchEvent(new CustomEvent('raise-doc-request', { detail: { folder: section.name, subFolder: '' } })); }}>
+                                    <Send className="h-4 w-4" /> Raise a request
                                   </DropdownMenuItem>
-                                  <DropdownMenuItem className="text-xs gap-2 cursor-pointer" onClick={e => e.stopPropagation()}>
-                                    <AlertCircle className="h-3.5 w-3.5" /> Raise issue
+                                  <DropdownMenuItem className="gap-2 cursor-pointer" onClick={e => e.stopPropagation()}>
+                                    <AlertCircle className="h-4 w-4" /> Raise issue
                                   </DropdownMenuItem>
-                                  <DropdownMenuItem className="text-xs gap-2 cursor-pointer" onClick={e => e.stopPropagation()}>
-                                    <MessageSquare className="h-3.5 w-3.5" /> Add comment
+                                  <DropdownMenuItem className="gap-2 cursor-pointer" onClick={e => e.stopPropagation()}>
+                                    <MessageSquare className="h-4 w-4" /> Add comment
                                   </DropdownMenuItem>
                                   <DropdownMenuSeparator />
-                                  <DropdownMenuItem className="text-xs gap-2 cursor-pointer" onClick={e => { e.stopPropagation(); setAddDocModal({ nodeId: section.id, nodeCode: code, nodeLabel: section.name }); setPendingDocFiles([]); }}>
-                                    <FilePlus2 className="h-3.5 w-3.5" /> Add document
+                                  <DropdownMenuItem className="gap-2 cursor-pointer" onClick={e => { e.stopPropagation(); setAddDocModal({ nodeId: section.id, nodeCode: code, nodeLabel: section.name }); setPendingDocFiles([]); }}>
+                                    <FilePlus2 className="h-4 w-4" /> Add document
                                   </DropdownMenuItem>
                                   <DropdownMenuSeparator />
                                   <DropdownMenuItem
-                                    className="text-xs gap-2 cursor-pointer text-destructive focus:text-destructive"
+                                    className="gap-2 cursor-pointer text-destructive focus:text-destructive"
                                     onClick={e => {
                                       e.stopPropagation();
                                       if (!engId) return;
@@ -2488,7 +2488,7 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
                                       if (isActive) navigate(`/engagements/${engId}`);
                                     }}
                                   >
-                                    <Trash2 className="h-3.5 w-3.5" /> Delete
+                                    <Trash2 className="h-4 w-4" /> Delete
                                   </DropdownMenuItem>
                                 </DropdownMenuContent>
                               </DropdownMenu>
