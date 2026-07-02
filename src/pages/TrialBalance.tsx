@@ -284,8 +284,8 @@ export default function TrialBalance() {
     </div>
   );
 
-  // ── Empty state ──────────────────────────────────────────────────────────
-  if (!tbLoaded && !showImport) {
+  // ── Empty state — only for New engagements without a loaded TB ──────────
+  if (!tbLoaded && !showImport && status === 'New') {
     return (
       <Layout title="Engagements" headerContent={trialBalanceBreadcrumb}>
         <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
