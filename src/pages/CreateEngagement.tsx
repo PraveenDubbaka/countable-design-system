@@ -872,10 +872,7 @@ export default function CreateEngagement() {
             )}
 
             {/* Two-column grid: forms (left) + audit config panel (right) */}
-            <div className={isAudit ? "grid grid-cols-[1fr_380px] gap-5 items-start" : "flex flex-col gap-5"}>
-              {/* LEFT COLUMN */}
-              <div className="flex flex-col gap-5 min-w-0">
-
+            <div className={isAudit ? "grid grid-cols-3 gap-5 items-stretch" : "grid grid-cols-2 gap-5 items-stretch"}>
               {/* Engagement Details — inline labels */}
               <SectionCard icon={<Briefcase className="h-5 w-5" />} title="Engagement Details">
                 <InlineRow label="Engagement ID" required>
@@ -978,12 +975,10 @@ export default function CreateEngagement() {
                   </div>
                 </div>
               </SectionCard>
-              </div>
 
-              {/* RIGHT COLUMN: Smart questionnaire (audit only, sticky) */}
+              {/* Audit Configuration (audit only) */}
               {isAudit && (
-              <div className="sticky top-6">
-                <div className="bg-card rounded-lg border border-border shadow-sm overflow-hidden">
+              <div className="bg-card rounded-lg border border-border shadow-sm overflow-hidden">
                   {/* Panel header */}
                   <div className="px-5 py-4 border-b border-border bg-muted/30">
                     <div className="flex items-center gap-2">
@@ -1089,7 +1084,6 @@ export default function CreateEngagement() {
                     </div>
                   )}
                 </div>
-              </div>
             )}
           </div>
 
