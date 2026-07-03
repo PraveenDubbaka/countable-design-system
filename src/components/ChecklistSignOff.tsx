@@ -147,7 +147,7 @@ export function ChecklistSignOff({
         onDelete={handleReset}
         onAddItem={handleAddItem}
         onAddCategoryAtPosition={() => { /* singleton */ }}
-        isPreviewMode={isPreviewMode}
+        isPreviewMode={isPreviewMode || isEngagementMode}
         isEngagementMode={isEngagementMode}
         numberingFormat={numberingFormat}
         showNumbering={showNumbering}

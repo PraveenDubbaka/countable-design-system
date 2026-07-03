@@ -681,11 +681,13 @@ function CellContentRenderer({
             });
           } catch { return iso; }
         };
+        // Signoff buttons are interactive in engagement mode even though the section is locked
+        const canInteract = !isPreviewMode || isEngagementMode;
         if (isSigned) {
           const { signedAt, name, role } = parseSignoff(cell.content);
           return (
             <div className="flex items-center gap-3 py-1">
-              {!isPreviewMode && (
+              {canInteract && (
                 <button
                   onClick={(e) => { e.stopPropagation(); onUpdateCell(cellIdx, ''); }}
                   className="inline-flex items-center justify-center whitespace-nowrap text-sm font-semibold rounded-[10px] bg-destructive text-destructive-foreground hover:bg-destructive/90 px-3 h-8 transition-colors shrink-0"
@@ -711,7 +713,7 @@ function CellContentRenderer({
                   role: ROLE_LABELS[CURRENT_USER.roleKey],
                 }));
               }}
-              disabled={isPreviewMode}
+              disabled={!canInteract}
               className="inline-flex items-center justify-center whitespace-nowrap text-sm font-semibold rounded-[10px] bg-primary text-primary-foreground hover:bg-primary/90 px-4 h-8 transition-colors disabled:opacity-50 disabled:pointer-events-none"
             >
               Sign Off
