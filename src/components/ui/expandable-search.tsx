@@ -80,6 +80,7 @@ export const ExpandableSearch = React.forwardRef<HTMLInputElement, ExpandableSea
               ref={inputRef}
               type="text"
               value={value}
+              disabled={disabled}
               onChange={(e) => setValue(e.target.value)}
               onKeyDown={(e) => {
                 if (e.key === "Enter") onSearch?.(value);
