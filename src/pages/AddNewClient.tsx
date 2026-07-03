@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, Building2, User, MapPin, FileText } from "lucide-react";
+import { ArrowLeft, Building2, User, MapPin, FileText, Receipt } from "lucide-react";
 import { Layout } from "@/components/Layout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -41,6 +41,8 @@ const SectionCard = ({
   </StyledCard>
 );
 
+// ── Entity type config ───────────────────────────────────────────────────────
+
 type EntityConfig = {
   hasIncorporation: boolean;
   hasYearEnd: boolean;
@@ -65,7 +67,7 @@ const ENTITY_CONFIG: Record<string, EntityConfig> = {
   "sole-proprietor": {
     hasIncorporation: false, hasYearEnd: true, hasCorporateTax: false, hasPayroll: false, hasTaxId: true,
     dbaLabel: "Business / Trading Name",
-    dbaHint: "The name under which the proprietor conducts business (e.g., Jane Doe Consulting).",
+    dbaHint: "The name under which the proprietor conducts business.",
   },
   trust: {
     hasIncorporation: true, hasYearEnd: true, hasCorporateTax: false, hasPayroll: false, hasTaxId: false,
@@ -79,14 +81,174 @@ const ENTITY_CONFIG: Record<string, EntityConfig> = {
   },
 };
 
+// ── Country-specific tax & field config ─────────────────────────────────────
+
+type CountryTaxConfig = {
+  businessNumberLabel: string;
+  businessNumberHint: string;
+  businessNumberPlaceholder: string;
+  corporateTaxLabel: string;
+  corporateTaxPlaceholder: string;
+  payrollLabel: string;
+  payrollPlaceholder: string;
+  taxIdLabel: string;
+  taxIdPlaceholder: string;
+  taxIdSoleProprietorLabel: string;
+  taxIdSoleProprietorPlaceholder: string;
+  salesTaxLabel: string;
+  salesTaxNumberLabel: string;
+  salesTaxNumberPlaceholder: string;
+  regionLabel: string;
+  postalLabel: string;
+  postalPlaceholder: string;
+};
+
+const COUNTRY_TAX_CONFIG: Record<string, CountryTaxConfig> = {
+  ca: {
+    businessNumberLabel: "Business Number (BN)",
+    businessNumberHint: "CRA-issued 9-digit Business Number.",
+    businessNumberPlaceholder: "e.g., 123456789",
+    corporateTaxLabel: "Corporate Tax Account",
+    corporateTaxPlaceholder: "e.g., 123456789 T0001",
+    payrollLabel: "Payroll Account (RP)",
+    payrollPlaceholder: "e.g., 123456789 RP0001",
+    taxIdLabel: "Tax ID",
+    taxIdPlaceholder: "Tax ID",
+    taxIdSoleProprietorLabel: "SIN",
+    taxIdSoleProprietorPlaceholder: "Social Insurance Number",
+    salesTaxLabel: "GST / HST Registered",
+    salesTaxNumberLabel: "GST / HST Number",
+    salesTaxNumberPlaceholder: "e.g., 123456789 RT0001",
+    regionLabel: "Province",
+    postalLabel: "Postal Code",
+    postalPlaceholder: "e.g., M5V 3A8",
+  },
+  us: {
+    businessNumberLabel: "EIN",
+    businessNumberHint: "Employer Identification Number (format XX-XXXXXXX).",
+    businessNumberPlaceholder: "e.g., 12-3456789",
+    corporateTaxLabel: "State Tax ID",
+    corporateTaxPlaceholder: "State Tax ID",
+    payrollLabel: "FEIN / Payroll Reference",
+    payrollPlaceholder: "e.g., 12-3456789",
+    taxIdLabel: "Tax ID",
+    taxIdPlaceholder: "Tax ID",
+    taxIdSoleProprietorLabel: "SSN / ITIN",
+    taxIdSoleProprietorPlaceholder: "e.g., XXX-XX-XXXX",
+    salesTaxLabel: "Sales Tax Registered",
+    salesTaxNumberLabel: "Sales Tax Registration No.",
+    salesTaxNumberPlaceholder: "State Sales Tax Number",
+    regionLabel: "State",
+    postalLabel: "ZIP Code",
+    postalPlaceholder: "e.g., 10001",
+  },
+  uk: {
+    businessNumberLabel: "Companies House Number",
+    businessNumberHint: "8-digit company registration number from Companies House.",
+    businessNumberPlaceholder: "e.g., 12345678",
+    corporateTaxLabel: "UTR (Unique Taxpayer Reference)",
+    corporateTaxPlaceholder: "e.g., 1234567890",
+    payrollLabel: "PAYE Reference",
+    payrollPlaceholder: "e.g., 123/AB456",
+    taxIdLabel: "UTR",
+    taxIdPlaceholder: "Unique Taxpayer Reference",
+    taxIdSoleProprietorLabel: "NI Number / UTR",
+    taxIdSoleProprietorPlaceholder: "e.g., AB 12 34 56 C",
+    salesTaxLabel: "VAT Registered",
+    salesTaxNumberLabel: "VAT Registration Number",
+    salesTaxNumberPlaceholder: "e.g., GB 123 4567 89",
+    regionLabel: "County / Region",
+    postalLabel: "Postcode",
+    postalPlaceholder: "e.g., EC1A 1BB",
+  },
+  au: {
+    businessNumberLabel: "ABN",
+    businessNumberHint: "11-digit Australian Business Number.",
+    businessNumberPlaceholder: "e.g., 51 824 753 556",
+    corporateTaxLabel: "ACN",
+    corporateTaxPlaceholder: "e.g., 123 456 789",
+    payrollLabel: "Payroll Tax Registration",
+    payrollPlaceholder: "Payroll Tax Registration Number",
+    taxIdLabel: "TFN",
+    taxIdPlaceholder: "Tax File Number",
+    taxIdSoleProprietorLabel: "TFN",
+    taxIdSoleProprietorPlaceholder: "Tax File Number",
+    salesTaxLabel: "GST Registered",
+    salesTaxNumberLabel: "ABN (for GST)",
+    salesTaxNumberPlaceholder: "e.g., 51 824 753 556",
+    regionLabel: "State / Territory",
+    postalLabel: "Postcode",
+    postalPlaceholder: "e.g., 2000",
+  },
+};
+
+// ── Region options per country ───────────────────────────────────────────────
+
+const REGION_OPTIONS: Record<string, Array<{ value: string; label: string }>> = {
+  ca: [
+    { value: "on", label: "Ontario" }, { value: "qc", label: "Quebec" },
+    { value: "bc", label: "British Columbia" }, { value: "ab", label: "Alberta" },
+    { value: "mb", label: "Manitoba" }, { value: "sk", label: "Saskatchewan" },
+    { value: "ns", label: "Nova Scotia" }, { value: "nb", label: "New Brunswick" },
+    { value: "pe", label: "Prince Edward Island" }, { value: "nl", label: "Newfoundland" },
+    { value: "nt", label: "Northwest Territories" }, { value: "nu", label: "Nunavut" },
+    { value: "yt", label: "Yukon" },
+  ],
+  us: [
+    { value: "al", label: "Alabama" }, { value: "ak", label: "Alaska" },
+    { value: "az", label: "Arizona" }, { value: "ar", label: "Arkansas" },
+    { value: "ca", label: "California" }, { value: "co", label: "Colorado" },
+    { value: "ct", label: "Connecticut" }, { value: "de", label: "Delaware" },
+    { value: "fl", label: "Florida" }, { value: "ga", label: "Georgia" },
+    { value: "hi", label: "Hawaii" }, { value: "id", label: "Idaho" },
+    { value: "il", label: "Illinois" }, { value: "in", label: "Indiana" },
+    { value: "ia", label: "Iowa" }, { value: "ks", label: "Kansas" },
+    { value: "ky", label: "Kentucky" }, { value: "la", label: "Louisiana" },
+    { value: "me", label: "Maine" }, { value: "md", label: "Maryland" },
+    { value: "ma", label: "Massachusetts" }, { value: "mi", label: "Michigan" },
+    { value: "mn", label: "Minnesota" }, { value: "ms", label: "Mississippi" },
+    { value: "mo", label: "Missouri" }, { value: "mt", label: "Montana" },
+    { value: "ne", label: "Nebraska" }, { value: "nv", label: "Nevada" },
+    { value: "nh", label: "New Hampshire" }, { value: "nj", label: "New Jersey" },
+    { value: "nm", label: "New Mexico" }, { value: "ny", label: "New York" },
+    { value: "nc", label: "North Carolina" }, { value: "nd", label: "North Dakota" },
+    { value: "oh", label: "Ohio" }, { value: "ok", label: "Oklahoma" },
+    { value: "or", label: "Oregon" }, { value: "pa", label: "Pennsylvania" },
+    { value: "ri", label: "Rhode Island" }, { value: "sc", label: "South Carolina" },
+    { value: "sd", label: "South Dakota" }, { value: "tn", label: "Tennessee" },
+    { value: "tx", label: "Texas" }, { value: "ut", label: "Utah" },
+    { value: "vt", label: "Vermont" }, { value: "va", label: "Virginia" },
+    { value: "wa", label: "Washington" }, { value: "wv", label: "West Virginia" },
+    { value: "wi", label: "Wisconsin" }, { value: "wy", label: "Wyoming" },
+  ],
+  uk: [
+    { value: "eng", label: "England" }, { value: "sco", label: "Scotland" },
+    { value: "wal", label: "Wales" }, { value: "nir", label: "Northern Ireland" },
+  ],
+  au: [
+    { value: "nsw", label: "New South Wales" }, { value: "vic", label: "Victoria" },
+    { value: "qld", label: "Queensland" }, { value: "sa", label: "South Australia" },
+    { value: "wa", label: "Western Australia" }, { value: "tas", label: "Tasmania" },
+    { value: "act", label: "Australian Capital Territory" },
+    { value: "nt", label: "Northern Territory" },
+  ],
+};
+
+// ── Component ────────────────────────────────────────────────────────────────
+
 export default function AddNewClient() {
   const navigate = useNavigate();
-  const [entityType, setEntityType]         = useState<string>("");
-  const [dbaOption, setDbaOption]           = useState<string>("");
-  const [gstRegistered, setGstRegistered]   = useState<string>("");
+  const [entityType, setEntityType]       = useState<string>("");
+  const [country, setCountry]             = useState<string>("ca");
+  const [dbaOption, setDbaOption]         = useState<string>("");
+  const [gstRegistered, setGstRegistered] = useState<string>("");
 
-  const cfg          = entityType ? ENTITY_CONFIG[entityType] : null;
+  const cfg     = entityType ? ENTITY_CONFIG[entityType] : null;
+  const taxCfg  = COUNTRY_TAX_CONFIG[country];
+  const regions = REGION_OPTIONS[country] ?? [];
   const showSections = !!entityType;
+
+  const isSoleProprietor = entityType === "sole-proprietor";
 
   const handleAdd = () => {
     toast.success("Client added");
@@ -123,9 +285,9 @@ export default function AddNewClient() {
 
           {/* ── Section 1: Entity Foundation — always visible ────────────── */}
           <SectionCard icon={Building2} title="Entity Foundation" subtitle="Start with the legal identity — this drives which other fields appear">
-            {/* Core identity fields */}
-            <div className="grid grid-cols-2 gap-5">
-              <Field label="Legal Entity Name" required>
+            {/* Core identity — 4-column: Legal Name (2) | Entity Type | Country */}
+            <div className="grid grid-cols-4 gap-5">
+              <Field label="Legal Entity Name" required className="col-span-2">
                 <Input placeholder="e.g., Acme Holdings Inc." />
               </Field>
               <Field label="Entity Type" required hint="Determines which fields and tax treatments apply.">
@@ -143,12 +305,26 @@ export default function AddNewClient() {
                   </SelectContent>
                 </Select>
               </Field>
+              <Field label="Country of Registration" hint="Determines applicable tax identifiers and field labels.">
+                <Select
+                  value={country}
+                  onValueChange={v => { setCountry(v); setGstRegistered(""); }}
+                >
+                  <SelectTrigger><SelectValue /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="ca">🇨🇦 Canada</SelectItem>
+                    <SelectItem value="us">🇺🇸 United States</SelectItem>
+                    <SelectItem value="uk">🇬🇧 United Kingdom</SelectItem>
+                    <SelectItem value="au">🇦🇺 Australia</SelectItem>
+                  </SelectContent>
+                </Select>
+              </Field>
             </div>
 
-            {/* DBA — only appears once entity type is known */}
+            {/* DBA + Group Name + Client ID — 4-column row after entity type selected */}
             {cfg && (
-              <div className="mt-5 pt-5 border-t border-border/50">
-                <div className="grid grid-cols-2 gap-5 items-start">
+              <div className="mt-5 pt-5 border-t border-border/50 grid grid-cols-4 gap-5">
+                <div className="col-span-2 space-y-3">
                   <Field label={cfg.dbaLabel} hint={cfg.dbaHint}>
                     <Select value={dbaOption} onValueChange={setDbaOption}>
                       <SelectTrigger><SelectValue placeholder="Same as legal entity name" /></SelectTrigger>
@@ -165,23 +341,14 @@ export default function AddNewClient() {
                     </Field>
                   )}
                 </div>
-              </div>
-            )}
-
-            {/* Optional identifiers — always at bottom of this card */}
-            <div className="mt-5 pt-5 border-t border-border/50">
-              <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider mb-3">
-                Optional identifiers
-              </p>
-              <div className="grid grid-cols-2 gap-5">
-                <Field label="Client ID" hint="Alphanumeric only — leave blank to auto-generate.">
-                  <Input placeholder="e.g., CLI-0042" />
-                </Field>
                 <Field label="Group Name" hint="Use to group related clients together.">
                   <Input placeholder="e.g., Smith Family Group" />
                 </Field>
+                <Field label="Client ID" hint="Leave blank to auto-generate.">
+                  <Input placeholder="e.g., CLI-0042" />
+                </Field>
               </div>
-            </div>
+            )}
           </SectionCard>
 
           {/* ── Prompt shown before entity type is selected ─────────────── */}
@@ -193,7 +360,7 @@ export default function AddNewClient() {
                 </div>
                 <p className="text-sm font-medium text-foreground mb-1">Select an entity type above to continue</p>
                 <p className="text-xs text-muted-foreground max-w-xs mx-auto">
-                  The form adapts to show only the fields relevant to the selected entity — no guesswork.
+                  The form adapts to show only the fields relevant to the selected entity and country — no guesswork.
                 </p>
               </div>
             </div>
@@ -202,10 +369,10 @@ export default function AddNewClient() {
           {/* ── Sections 2–4 appear after entity type is selected ────────── */}
           {showSections && (
             <>
-              {/* 2-column: Contact + Business Details */}
-              <div className="grid grid-cols-2 gap-4 items-start">
+              {/* 3-column: Contact | Business Details | Tax & Compliance */}
+              <div className="grid grid-cols-3 gap-4">
 
-                {/* ── Section 2: Primary Contact ──────────────────────────── */}
+                {/* ── Primary Contact ──────────────────────────────────────── */}
                 <SectionCard icon={User} title="Primary Contact" subtitle="The person responsible for this client relationship">
                   <div className="grid grid-cols-2 gap-5">
                     <Field label="First Name" required>
@@ -231,79 +398,80 @@ export default function AddNewClient() {
                       </Select>
                     </Field>
                   </div>
-                  <div className="mt-5 pt-5 border-t border-border/50 grid grid-cols-2 gap-5">
-                    <Field label="Business Phone">
-                      <Input placeholder="+1 (555) 000-0000" />
-                    </Field>
+                  <div className="mt-5 pt-5 border-t border-border/50">
                     <Field label="Cell Phone">
                       <Input placeholder="+1 (555) 000-0000" />
                     </Field>
                   </div>
                 </SectionCard>
 
-                {/* ── Section 3: Business & Tax Details (conditional) ──────── */}
-                <SectionCard icon={FileText} title="Business Details" subtitle="Fiscal dates and regulatory identifiers">
+                {/* ── Business Details ─────────────────────────────────────── */}
+                <SectionCard icon={FileText} title="Business Details" subtitle="Fiscal dates and registration numbers">
                   <div className="space-y-5">
-                    {cfg?.hasIncorporation && (
-                      <Field label="Date of Incorporation" hint="The date the entity was formally registered.">
-                        <Input type="date" />
-                      </Field>
+                    {(cfg?.hasIncorporation || cfg?.hasYearEnd) && (
+                      <div className="grid grid-cols-2 gap-5">
+                        {cfg?.hasIncorporation && (
+                          <Field label="Date of Incorporation" hint="The date the entity was formally registered.">
+                            <Input type="date" />
+                          </Field>
+                        )}
+                        {cfg?.hasYearEnd && (
+                          <Field label="Year End Date" hint="The month and day your fiscal year closes.">
+                            <Input type="date" />
+                          </Field>
+                        )}
+                      </div>
                     )}
-                    {cfg?.hasYearEnd && (
-                      <Field
-                        label="Year End Date"
-                        hint="The month and day your fiscal year closes. The year itself is not fixed."
-                      >
-                        <Input type="date" />
-                      </Field>
-                    )}
-                    <Field label="Business Number" hint="CRA Business Number (BN) or equivalent registration number.">
-                      <Input placeholder="e.g., 123456789" />
+                    <Field label={taxCfg.businessNumberLabel} hint={taxCfg.businessNumberHint}>
+                      <Input placeholder={taxCfg.businessNumberPlaceholder} />
                     </Field>
+                    <Field label="Business Phone">
+                      <Input placeholder="+1 (555) 000-0000" />
+                    </Field>
+                  </div>
+                </SectionCard>
+
+                {/* ── Tax & Compliance ─────────────────────────────────────── */}
+                <SectionCard icon={Receipt} title="Tax & Compliance" subtitle={`Tax identifiers for ${country === "ca" ? "Canada" : country === "us" ? "United States" : country === "uk" ? "United Kingdom" : "Australia"}`}>
+                  <div className="space-y-5">
                     {cfg?.hasCorporateTax && (
-                      <Field label="Corporate Tax Number">
-                        <Input placeholder="Corporate Tax Number" />
+                      <Field label={taxCfg.corporateTaxLabel}>
+                        <Input placeholder={taxCfg.corporateTaxPlaceholder} />
                       </Field>
                     )}
                     {cfg?.hasPayroll && (
-                      <Field label="Payroll Account Number">
-                        <Input placeholder="e.g., 123456789 RP0001" />
+                      <Field label={taxCfg.payrollLabel}>
+                        <Input placeholder={taxCfg.payrollPlaceholder} />
                       </Field>
                     )}
                     {cfg?.hasTaxId && (
-                      <Field label={entityType === "sole-proprietor" ? "SIN / Tax ID" : "Tax ID"}>
-                        <Input placeholder={entityType === "sole-proprietor" ? "Social Insurance Number" : "Tax ID"} />
+                      <Field label={isSoleProprietor ? taxCfg.taxIdSoleProprietorLabel : taxCfg.taxIdLabel}>
+                        <Input placeholder={isSoleProprietor ? taxCfg.taxIdSoleProprietorPlaceholder : taxCfg.taxIdPlaceholder} />
                       </Field>
                     )}
-
-                    {/* GST/HST — informational, always shown */}
-                    <div className="pt-5 border-t border-border/50">
-                      <Field
-                        label="GST / HST Registered"
-                        hint="Informational — helps with sales tax treatment in future engagements."
-                      >
-                        <Select value={gstRegistered} onValueChange={setGstRegistered}>
-                          <SelectTrigger><SelectValue placeholder="Select" /></SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="yes">Yes — registered</SelectItem>
-                            <SelectItem value="no">No</SelectItem>
-                            <SelectItem value="pending">Pending registration</SelectItem>
-                          </SelectContent>
-                        </Select>
+                    <Field
+                      label={taxCfg.salesTaxLabel}
+                      hint="Informational — helps with sales tax treatment in future engagements."
+                    >
+                      <Select value={gstRegistered} onValueChange={setGstRegistered}>
+                        <SelectTrigger><SelectValue placeholder="Select" /></SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="yes">Yes — registered</SelectItem>
+                          <SelectItem value="no">No</SelectItem>
+                          <SelectItem value="pending">Pending registration</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </Field>
+                    {gstRegistered === "yes" && (
+                      <Field label={taxCfg.salesTaxNumberLabel}>
+                        <Input placeholder={taxCfg.salesTaxNumberPlaceholder} />
                       </Field>
-                      {gstRegistered === "yes" && (
-                        <div className="mt-4">
-                          <Field label="GST / HST Number">
-                            <Input placeholder="e.g., 123456789 RT0001" />
-                          </Field>
-                        </div>
-                      )}
-                    </div>
+                    )}
                   </div>
                 </SectionCard>
               </div>
 
-              {/* ── Section 4: Address — full width ─────────────────────── */}
+              {/* ── Address — full width ─────────────────────────────────── */}
               <SectionCard icon={MapPin} title="Address" subtitle="Physical or mailing address for correspondence and filings">
                 <div className="grid grid-cols-4 gap-5">
                   <Field label="Street Address" className="col-span-2">
@@ -312,36 +480,18 @@ export default function AddNewClient() {
                   <Field label="City">
                     <Input placeholder="City" />
                   </Field>
-                  <Field label="Province / State">
+                  <Field label={taxCfg.regionLabel}>
                     <Select>
                       <SelectTrigger><SelectValue placeholder="Select" /></SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="on">Ontario</SelectItem>
-                        <SelectItem value="qc">Quebec</SelectItem>
-                        <SelectItem value="bc">British Columbia</SelectItem>
-                        <SelectItem value="ab">Alberta</SelectItem>
-                        <SelectItem value="mb">Manitoba</SelectItem>
-                        <SelectItem value="sk">Saskatchewan</SelectItem>
-                        <SelectItem value="ns">Nova Scotia</SelectItem>
-                        <SelectItem value="nb">New Brunswick</SelectItem>
-                        <SelectItem value="pe">Prince Edward Island</SelectItem>
-                        <SelectItem value="nl">Newfoundland</SelectItem>
+                        {regions.map(r => (
+                          <SelectItem key={r.value} value={r.value}>{r.label}</SelectItem>
+                        ))}
                       </SelectContent>
                     </Select>
                   </Field>
-                  <Field label="Country">
-                    <Select defaultValue="ca">
-                      <SelectTrigger><SelectValue placeholder="Select" /></SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="ca">Canada</SelectItem>
-                        <SelectItem value="us">United States</SelectItem>
-                        <SelectItem value="uk">United Kingdom</SelectItem>
-                        <SelectItem value="au">Australia</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </Field>
-                  <Field label="Postal / Zip Code">
-                    <Input placeholder="e.g., M5V 3A8" />
+                  <Field label={taxCfg.postalLabel}>
+                    <Input placeholder={taxCfg.postalPlaceholder} />
                   </Field>
                 </div>
               </SectionCard>

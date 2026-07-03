@@ -16,7 +16,9 @@ const Input = React.forwardRef<HTMLInputElement, React.ComponentProps<"input"> &
         type={type}
         className={cn(
           // Base styles - 10px border radius + double border focus class
-          "input-double-border flex w-full rounded-[10px] transition-all duration-200",
+          type === "date"
+            ? "input-double-border block w-full rounded-[10px] transition-all duration-200"
+            : "input-double-border flex w-full rounded-[10px] transition-all duration-200",
           sizeClasses[size],
           "file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground",
           // Default state: white background, #dcdfe4 border

@@ -9,6 +9,13 @@
   font-weight: 600 !important;
 }
 
+/* Pin date input calendar icon to the far right of the field */
+input[type="date"]::-webkit-calendar-picker-indicator {
+  margin-left: auto;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
 /* Double border focus effect for form inputs */
 .input-double-border:focus,
 .input-double-border:focus-visible {
