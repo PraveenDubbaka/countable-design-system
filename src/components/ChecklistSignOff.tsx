@@ -8,7 +8,7 @@ const storageKey = (id: string) => `checklist-signoff-section:${id}`;
 const stampKey = (id: string) => `checklist-signoff-stamp:${id}`;
 
 const DISCLAIMER =
-  "By signing off below, you are agreeing to this statement that you have reviewed all the relevant associated working papers and cleared all your queries and documented the matters appropriately that may cause the financial statements and note disclosures, if applicable, to be false and/or misleading.";
+  "By signing off below, you are confirming that you have reviewed this working paper, cleared all outstanding queries, and appropriately documented any matters that could otherwise cause the financial statements and note disclosures to be false and/or misleading.";
 
 type SignStamp = { preparerName: string; signedAt: string } | null;
 
@@ -78,7 +78,25 @@ export function ChecklistSignOff({
     if (!checklist.id) return;
     try {
       const raw = localStorage.getItem(key);
-      setSection(raw ? (JSON.parse(raw) as Section) : buildDefaultSignOffSection(checklist.id));
+      if (raw) {
+        const parsed = JSON.parse(raw) as Section;
+        // Migrate old disclaimer text to current wording
+        const updated = {
+          ...parsed,
+          questions: parsed.questions.map((q) => {
+            if (!q.columnLayout) return q;
+            const cells = q.columnLayout.cells.map((c) =>
+              c.blockType === 'text' && c.content !== DISCLAIMER && c.content.startsWith('By signing off below')
+                ? { ...c, content: DISCLAIMER }
+                : c
+            );
+            return { ...q, columnLayout: { ...q.columnLayout, cells } };
+          }),
+        };
+        setSection(updated);
+      } else {
+        setSection(buildDefaultSignOffSection(checklist.id));
+      }
     } catch {
       setSection(buildDefaultSignOffSection(checklist.id));
     }
