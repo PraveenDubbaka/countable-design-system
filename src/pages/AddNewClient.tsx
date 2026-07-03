@@ -256,7 +256,7 @@ export default function AddNewClient() {
   };
 
   return (
-    <Layout title="Add New Client" hideSidebar>
+    <Layout title="Add New Client">
       <div className="flex flex-col h-full overflow-hidden bg-background">
 
         {/* Sticky header bar */}
@@ -266,7 +266,7 @@ export default function AddNewClient() {
             className="flex items-center gap-2 text-link font-medium text-sm hover:underline"
           >
             <ArrowLeft className="h-4 w-4" />
-            Add New Client
+            Back to Clients
           </button>
           <div className="flex items-center gap-2">
             <Button variant="outline" className="h-9 px-4 text-sm" onClick={() => navigate("/clients")}>
@@ -360,7 +360,7 @@ export default function AddNewClient() {
                 </div>
                 <p className="text-sm font-medium text-foreground mb-1">Select an entity type above to continue</p>
                 <p className="text-xs text-muted-foreground max-w-xs mx-auto">
-                  The form adapts to show only the fields relevant to the selected entity and country — no guesswork.
+                  The form adapts to show only the fields relevant to the selected entity and country.
                 </p>
               </div>
             </div>
