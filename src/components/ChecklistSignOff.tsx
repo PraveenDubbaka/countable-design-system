@@ -140,8 +140,6 @@ export function ChecklistSignOff({ checklist }: { checklist: Checklist }) {
 
       {/* Signoff body */}
       <div className="px-[38px] py-4 space-y-3">
-        <h4 className="text-sm font-semibold text-foreground">Final Completion Signoff</h4>
-
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-2xl">
           <div className="space-y-1.5">
             <Label className="text-xs text-muted-foreground">Preparer Name</Label>
