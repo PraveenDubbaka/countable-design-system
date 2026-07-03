@@ -9,10 +9,11 @@ export interface ExpandableSearchProps {
   onChange?: (value: string) => void;
   onSearch?: (value: string) => void;
   className?: string;
+  disabled?: boolean;
 }
 
 export const ExpandableSearch = React.forwardRef<HTMLInputElement, ExpandableSearchProps>(
-  ({ placeholder = "Search...", value: controlledValue, onChange, onSearch, className }, ref) => {
+  ({ placeholder = "Search...", value: controlledValue, onChange, onSearch, className, disabled }, ref) => {
     const [expanded, setExpanded] = React.useState(false);
     const [internalValue, setInternalValue] = React.useState("");
     const inputRef = React.useRef<HTMLInputElement>(null);
