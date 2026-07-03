@@ -186,6 +186,93 @@ const SectionCard = ({
   </div>
 );
 
+const EngagementConfigSidePanel = ({
+  showFirstYearOnPlatform,
+  firstYearOnPlatform,
+  onFirstYearOnPlatformChange,
+  showRollForward,
+  isRollForward,
+  onRollForwardChange,
+  showAnnualize,
+  annualizeInterim,
+  onAnnualizeChange,
+  firstTimeAdoption,
+}: {
+  showFirstYearOnPlatform: boolean;
+  firstYearOnPlatform: string;
+  onFirstYearOnPlatformChange: (v: string) => void;
+  showRollForward: boolean;
+  isRollForward: string;
+  onRollForwardChange: (v: string) => void;
+  showAnnualize: boolean;
+  annualizeInterim: boolean;
+  onAnnualizeChange: (v: boolean) => void;
+  firstTimeAdoption: boolean;
+}) => {
+  const hasActiveFields = showFirstYearOnPlatform || showRollForward || showAnnualize;
+
+  return (
+    <div className="bg-card rounded-lg border border-border shadow-sm p-5">
+      <div className="flex items-center gap-2 mb-1">
+        <Settings2 className="h-4 w-4 text-primary" />
+        <h3 className="text-sm font-semibold text-foreground">Engagement Configuration</h3>
+      </div>
+      <p className="text-xs text-muted-foreground mb-4">Contextual settings that adapt based on your selections.</p>
+
+      {hasActiveFields ? (
+        <div className="flex flex-col gap-4">
+          {showFirstYearOnPlatform && (
+            <LabeledSelect
+              label="First audit on this platform?"
+              value={firstYearOnPlatform}
+              onChange={onFirstYearOnPlatformChange}
+              options={[
+                { value: "yes", label: "Yes — no prior files" },
+                { value: "no", label: "No — prior files exist" },
+              ]}
+            />
+          )}
+          {showRollForward && (
+            <LabeledSelect
+              label="Is this a roll-forward?"
+              value={isRollForward}
+              onChange={onRollForwardChange}
+              options={[
+                { value: "yes", label: "Yes — roll forward" },
+                { value: "no", label: "No — new engagement" },
+              ]}
+            />
+          )}
+          {showAnnualize && (
+            <div className="flex flex-col gap-1">
+              <label className="text-xs font-medium text-foreground">Annualize income statement data?</label>
+              <div className="flex items-center gap-4 h-9">
+                <label className="flex items-center gap-1.5 cursor-pointer text-sm text-foreground">
+                  <input type="radio" name="annualizeInterim" value="yes" checked={annualizeInterim} onChange={() => onAnnualizeChange(true)} className="accent-primary" />
+                  Yes
+                </label>
+                <label className="flex items-center gap-1.5 cursor-pointer text-sm text-foreground">
+                  <input type="radio" name="annualizeInterim" value="no" checked={!annualizeInterim} onChange={() => onAnnualizeChange(false)} className="accent-primary" />
+                  No
+                </label>
+              </div>
+            </div>
+          )}
+        </div>
+      ) : (
+        <p className="text-xs text-muted-foreground italic">Additional configuration options will appear here based on your selections above.</p>
+      )}
+
+      {firstTimeAdoption && (
+        <div className="mt-4 flex items-start gap-2 px-3 py-2.5 rounded-md bg-amber-50 dark:bg-amber-950/20 border border-amber-200/60 dark:border-amber-800/30">
+          <span className="text-amber-500 text-xs mt-0.5">⚠</span>
+          <p className="text-xs text-amber-700 dark:text-amber-400">Opening balance testing procedures will be added to this engagement.</p>
+        </div>
+      )}
+    </div>
+  );
+};
+
 const MultiSelectDropdown = ({
   label,
   options,
@@ -621,6 +708,12 @@ export default function CreateEngagement() {
         { value: "Monthly", label: "Monthly" },
       ];
 
+  const engagementDetailsValid =
+    engagementId.trim() !== "" &&
+    engagementTemplate.trim() !== "" &&
+    engagementType !== "" &&
+    accountingStandards !== "";
+
   const isFormValid =
     clientName.trim() !== "" &&
     engagementId.trim() !== "" &&
@@ -708,419 +801,330 @@ export default function CreateEngagement() {
             </button>
           </div>
 
-          <div className="flex flex-col gap-5">
-            {/* Client Info Section */}
-            {clientInfo && (
-              <div className="bg-card rounded-lg shadow-sm px-6 py-5 border border-border">
-                <h2 className="text-sm font-semibold text-foreground mb-4">Client Info</h2>
-                <div className="grid grid-cols-7 gap-4">
-                  {[
-                    { label: "Entity legal name", value: clientInfo.entityLegalName },
-                    { label: "Entity type", value: clientInfo.entityType },
-                    { label: "Contact person", value: clientInfo.contactPerson },
-                    { label: "Engagement partner", value: clientInfo.engagementPartner, isLink: true },
-                    { label: "Integrations", value: clientInfo.integrations },
-                    { label: "Business phone", value: clientInfo.businessPhone },
-                    { label: "Cell phone", value: clientInfo.cellPhone },
-                  ].map((col) => (
-                    <div key={col.label} className="flex flex-col gap-1">
-                      <span className="text-xs font-semibold text-primary">{col.label}</span>
-                      {Array.isArray(col.value) ? (
-                        <div className="flex items-center gap-1.5">
-                          {col.value.includes("quickbooks") && (
-                            <img
-                              src={intuitQuickbooksLogo}
-                              alt="QuickBooks"
-                              className="h-5 object-contain"
-                            />
-                          )}
-                        </div>
-                      ) : (col as any).isLink ? (
-                        <span className="text-sm text-link font-medium cursor-pointer hover:underline">{col.value as string}</span>
-                      ) : (
-                        <span className="text-sm text-foreground">{col.value as string}</span>
-                      )}
-                    </div>
-                  ))}
+          <div className={isAudit ? "grid grid-cols-[1fr_320px] gap-5 items-start" : "flex flex-col gap-5"}>
+            {/* Left column */}
+            <div className="flex flex-col gap-5">
+              {/* Client Info Section */}
+              {clientInfo && (
+                <div className="bg-card rounded-lg shadow-sm px-6 py-5 border border-border">
+                  <h2 className="text-sm font-semibold text-foreground mb-4">Client Info</h2>
+                  <div className="grid grid-cols-7 gap-4">
+                    {[
+                      { label: "Entity legal name", value: clientInfo.entityLegalName },
+                      { label: "Entity type", value: clientInfo.entityType },
+                      { label: "Contact person", value: clientInfo.contactPerson },
+                      { label: "Engagement partner", value: clientInfo.engagementPartner, isLink: true },
+                      { label: "Integrations", value: clientInfo.integrations },
+                      { label: "Business phone", value: clientInfo.businessPhone },
+                      { label: "Cell phone", value: clientInfo.cellPhone },
+                    ].map((col) => (
+                      <div key={col.label} className="flex flex-col gap-1">
+                        <span className="text-xs font-semibold text-primary">{col.label}</span>
+                        {Array.isArray(col.value) ? (
+                          <div className="flex items-center gap-1.5">
+                            {col.value.includes("quickbooks") && (
+                              <img src={intuitQuickbooksLogo} alt="QuickBooks" className="h-5 object-contain" />
+                            )}
+                          </div>
+                        ) : (col as any).isLink ? (
+                          <span className="text-sm text-link font-medium cursor-pointer hover:underline">{col.value as string}</span>
+                        ) : (
+                          <span className="text-sm text-foreground">{col.value as string}</span>
+                        )}
+                      </div>
+                    ))}
+                  </div>
                 </div>
-              </div>
-            )}
+              )}
 
-            {/* Engagement Details Section */}
-            <SectionCard icon={<Briefcase className="h-5 w-5" />} title="Engagement Details">
-              <div className="grid grid-cols-4 gap-4">
-                <LabeledInput
-                  label="Engagement ID"
-                  value={engagementId}
-                  onChange={setEngagementId}
-                  required
-                  icon={<Pencil className="h-4 w-4" />}
-                />
-                <LabeledInput
-                  label="Engagement Template"
-                  value={engagementTemplate}
-                  onChange={setEngagementTemplate}
-                  required
-                  icon={<ExternalLink className="h-4 w-4" />}
-                />
-                <LabeledSelect
-                  label="Engagement Type"
-                  value={engagementType}
-                  onChange={setEngagementType}
-                  options={engagementTypeOptions}
-                  required
-                />
-                <LabeledInput
-                  label="Budget($)"
-                  value={budget}
-                  onChange={setBudget}
-                  required
-                  type="text"
-                />
-                <LabeledSelect
-                  label="Accounting Standards"
-                  value={accountingStandards}
-                  onChange={setAccountingStandards}
-                  options={accountingStandardsOptions}
-                  required
-                />
-                <LabeledSelect
-                  label="Additional disclosures"
-                  value={additionalDisclosures}
-                  onChange={setAdditionalDisclosures}
-                  options={isAudit
-                    ? AUDIT_DISCLOSURE_OPTIONS.map(o => ({ value: o.label, label: o.label }))
-                    : disclosureOptions}
-                  required
-                />
-              </div>
-            </SectionCard>
-
-            {/* Audit Configuration — only for Audit (AUD) */}
-            {isAudit && (
-              <SectionCard icon={<Settings2 className="h-5 w-5" />} title="Audit Configuration">
-                <div className="grid grid-cols-4 gap-5 items-start">
+              {/* Engagement Details Section */}
+              <SectionCard icon={<Briefcase className="h-5 w-5" />} title="Engagement Details">
+                <div className="grid grid-cols-4 gap-4">
+                  <LabeledInput
+                    label="Engagement ID"
+                    value={engagementId}
+                    onChange={setEngagementId}
+                    required
+                    icon={<Pencil className="h-4 w-4" />}
+                  />
+                  <LabeledInput
+                    label="Engagement Template"
+                    value={engagementTemplate}
+                    onChange={setEngagementTemplate}
+                    required
+                    icon={<ExternalLink className="h-4 w-4" />}
+                  />
                   <LabeledSelect
-                    label="Accounting Framework"
-                    value={accountingFramework}
-                    onChange={setAccountingFramework}
-                    options={ACCOUNTING_FRAMEWORKS.map(fw => ({ value: fw, label: fw }))}
+                    label="Engagement Type"
+                    value={engagementType}
+                    onChange={setEngagementType}
+                    options={engagementTypeOptions}
+                    required
+                  />
+                  <LabeledInput
+                    label="Budget($)"
+                    value={budget}
+                    onChange={setBudget}
+                    required
+                    type="text"
+                  />
+                  <LabeledSelect
+                    label="Accounting Standards"
+                    value={accountingStandards}
+                    onChange={setAccountingStandards}
+                    options={accountingStandardsOptions}
                     required
                   />
                   <LabeledSelect
-                    label="First-Year Audit?"
-                    value={firstYearAudit ? "yes" : "no"}
-                    onChange={v => { setFirstYearAudit(v === "yes"); if (v !== "yes") { setFirstYearOnPlatform(""); setIsRollForward(""); setFirstYearTemplates(new Set()); } }}
-                    options={[
-                      { value: "no", label: "No" },
-                      { value: "yes", label: "Yes" },
-                    ]}
+                    label="Additional disclosures"
+                    value={additionalDisclosures}
+                    onChange={setAdditionalDisclosures}
+                    options={isAudit
+                      ? AUDIT_DISCLOSURE_OPTIONS.map(o => ({ value: o.label, label: o.label }))
+                      : disclosureOptions}
+                    required
                   />
-                  {firstYearAudit && (
-                    <LabeledSelect
-                      label="First audit on this platform?"
-                      value={firstYearOnPlatform}
-                      onChange={v => { setFirstYearOnPlatform(v); setIsRollForward(""); }}
-                      options={[
-                        { value: "yes", label: "Yes — no prior files" },
-                        { value: "no", label: "No — prior files exist" },
-                      ]}
-                    />
-                  )}
-                  {firstYearAudit && firstYearOnPlatform === "no" && (
-                    <LabeledSelect
-                      label="Is this a roll-forward?"
-                      value={isRollForward}
-                      onChange={v => { setIsRollForward(v); }}
-                      options={[
-                        { value: "yes", label: "Yes — roll forward" },
-                        { value: "no", label: "No — new engagement" },
-                      ]}
-                    />
-                  )}
-                  <div className="flex flex-col gap-1">
-                    <label className="text-xs font-medium text-foreground">Use condensed audit forms?</label>
-                    <div className="flex items-center gap-4 h-9">
-                      <label className="flex items-center gap-1.5 cursor-pointer text-sm text-foreground">
-                        <input type="radio" name="condensedForms" value="yes" checked={condensedForms} onChange={() => setCondensedForms(true)} className="accent-primary" />
-                        Yes
-                      </label>
-                      <label className="flex items-center gap-1.5 cursor-pointer text-sm text-foreground">
-                        <input type="radio" name="condensedForms" value="no" checked={!condensedForms} onChange={() => setCondensedForms(false)} className="accent-primary" />
-                        No
-                      </label>
-                    </div>
-                  </div>
-                  <div className="flex flex-col gap-1">
-                    <label className="text-xs font-medium text-foreground">First-time adoption of accounting standard?</label>
-                    <div className="flex items-center gap-4 h-9">
-                      <label className="flex items-center gap-1.5 cursor-pointer text-sm text-foreground">
-                        <input type="radio" name="firstTimeAdoption" value="yes" checked={firstTimeAdoption} onChange={() => setFirstTimeAdoption(true)} className="accent-primary" />
-                        Yes
-                      </label>
-                      <label className="flex items-center gap-1.5 cursor-pointer text-sm text-foreground">
-                        <input type="radio" name="firstTimeAdoption" value="no" checked={!firstTimeAdoption} onChange={() => setFirstTimeAdoption(false)} className="accent-primary" />
-                        No
-                      </label>
-                    </div>
-                  </div>
-                  {periodType === "Interim (6-month)" && (
-                    <div className="flex flex-col gap-1">
-                      <label className="text-xs font-medium text-foreground">Annualize income statement data?</label>
-                      <div className="flex items-center gap-4 h-9">
-                        <label className="flex items-center gap-1.5 cursor-pointer text-sm text-foreground">
-                          <input type="radio" name="annualizeInterim" value="yes" checked={annualizeInterim} onChange={() => setAnnualizeInterim(true)} className="accent-primary" />
-                          Yes
-                        </label>
-                        <label className="flex items-center gap-1.5 cursor-pointer text-sm text-foreground">
-                          <input type="radio" name="annualizeInterim" value="no" checked={!annualizeInterim} onChange={() => setAnnualizeInterim(false)} className="accent-primary" />
-                          No
-                        </label>
-                      </div>
-                    </div>
-                  )}
                 </div>
-                {firstTimeAdoption && (
-                  <div className="mt-3 flex items-start gap-2 px-3 py-2.5 rounded-md bg-amber-50 dark:bg-amber-950/20 border border-amber-200/60 dark:border-amber-800/30">
-                    <span className="text-amber-500 text-xs mt-0.5">⚠</span>
-                    <p className="text-xs text-amber-700 dark:text-amber-400">Opening balance testing procedures will be added to this engagement.</p>
-                  </div>
-                )}
-
               </SectionCard>
-            )}
 
-            {/* Engagement Period Section */}
-            <SectionCard icon={<Calendar className="h-5 w-5" />} title="Engagement Period">
-              <div className="space-y-5">
-                {/* Period Type */}
-                <div className="flex items-center gap-8">
-                  <label className="text-sm text-muted-foreground w-24 whitespace-nowrap">Period Type<span className="text-destructive">*</span></label>
-                  <div className="w-64">
-                    <LabeledSelect
-                      label=""
-                      value={periodType}
-                      onChange={setPeriodType}
-                      options={periodTypeOptions}
-                    />
-                  </div>
-                </div>
+              {engagementDetailsValid ? (
+                <>
+                  {/* Audit Configuration — only for Audit (AUD) */}
+                  {isAudit && (
+                    <SectionCard icon={<Settings2 className="h-5 w-5" />} title="Audit Configuration">
+                      <div className="grid grid-cols-4 gap-5 items-start">
+                        <LabeledSelect
+                          label="Accounting Framework"
+                          value={accountingFramework}
+                          onChange={setAccountingFramework}
+                          options={ACCOUNTING_FRAMEWORKS.map(fw => ({ value: fw, label: fw }))}
+                          required
+                        />
+                        <LabeledSelect
+                          label="First-Year Audit?"
+                          value={firstYearAudit ? "yes" : "no"}
+                          onChange={v => { setFirstYearAudit(v === "yes"); if (v !== "yes") { setFirstYearOnPlatform(""); setIsRollForward(""); setFirstYearTemplates(new Set()); } }}
+                          options={[
+                            { value: "no", label: "No" },
+                            { value: "yes", label: "Yes" },
+                          ]}
+                        />
+                        <div className="flex flex-col gap-1">
+                          <label className="text-xs font-medium text-foreground">Use condensed audit forms?</label>
+                          <div className="flex items-center gap-4 h-9">
+                            <label className="flex items-center gap-1.5 cursor-pointer text-sm text-foreground">
+                              <input type="radio" name="condensedForms" value="yes" checked={condensedForms} onChange={() => setCondensedForms(true)} className="accent-primary" />
+                              Yes
+                            </label>
+                            <label className="flex items-center gap-1.5 cursor-pointer text-sm text-foreground">
+                              <input type="radio" name="condensedForms" value="no" checked={!condensedForms} onChange={() => setCondensedForms(false)} className="accent-primary" />
+                              No
+                            </label>
+                          </div>
+                        </div>
+                        <div className="flex flex-col gap-1">
+                          <label className="text-xs font-medium text-foreground">First-time adoption of accounting standard?</label>
+                          <div className="flex items-center gap-4 h-9">
+                            <label className="flex items-center gap-1.5 cursor-pointer text-sm text-foreground">
+                              <input type="radio" name="firstTimeAdoption" value="yes" checked={firstTimeAdoption} onChange={() => setFirstTimeAdoption(true)} className="accent-primary" />
+                              Yes
+                            </label>
+                            <label className="flex items-center gap-1.5 cursor-pointer text-sm text-foreground">
+                              <input type="radio" name="firstTimeAdoption" value="no" checked={!firstTimeAdoption} onChange={() => setFirstTimeAdoption(false)} className="accent-primary" />
+                              No
+                            </label>
+                          </div>
+                        </div>
+                      </div>
+                    </SectionCard>
+                  )}
 
-                {/* Current Year */}
-                <div className="flex items-start gap-8">
-                  <label className="text-sm text-muted-foreground w-24 pt-6 whitespace-nowrap">Current Year<span className="text-destructive">*</span></label>
-                  <div className="flex gap-4">
-                    <div className="w-40">
-                      <LabeledInput
-                        label="Start Date"
-                        value={currentYearStart}
-                        onChange={setCurrentYearStart}
-                        required
-                        icon={<Calendar className="h-4 w-4" />}
-                      />
-                    </div>
-                    <div className="w-40">
-                      <LabeledInput
-                        label="End Date"
-                        value={currentYearEnd}
-                        onChange={setCurrentYearEnd}
-                        required
-                        icon={<Calendar className="h-4 w-4" />}
-                      />
-                    </div>
-                  </div>
-                </div>
-
-                {/* Prior Year 1 */}
-                <div className="flex items-start gap-8">
-                  <label className="text-sm text-muted-foreground w-24 pt-6 whitespace-nowrap">Prior Year 1<span className="text-destructive">*</span></label>
-                  <div className="flex gap-4">
-                    <div className="w-40">
-                      <LabeledInput
-                        label="Start Date"
-                        value={priorYear1Start}
-                        onChange={setPriorYear1Start}
-                        required
-                        icon={<Calendar className="h-4 w-4" />}
-                      />
-                    </div>
-                    <div className="w-40">
-                      <LabeledInput
-                        label="End Date"
-                        value={priorYear1End}
-                        onChange={setPriorYear1End}
-                        required
-                        icon={<Calendar className="h-4 w-4" />}
-                      />
-                    </div>
-                    <div className="flex items-end gap-2 pb-3">
-                      <Checkbox 
-                        checked={priorYear1NoData} 
-                        onCheckedChange={(checked) => setPriorYear1NoData(checked as boolean)} 
-                      />
-                      <div className="text-sm">
-                        <span className="text-muted-foreground">No Data Available</span>
-                        <p className="text-xs text-muted-foreground">Prior Year 1 data upload will be disabled</p>
+                  {/* Engagement Period Section */}
+                  <SectionCard icon={<Calendar className="h-5 w-5" />} title="Engagement Period">
+                    <div className="space-y-5">
+                      <div className="flex items-center gap-8">
+                        <label className="text-sm text-muted-foreground w-24 whitespace-nowrap">Period Type<span className="text-destructive">*</span></label>
+                        <div className="w-64">
+                          <LabeledSelect label="" value={periodType} onChange={setPeriodType} options={periodTypeOptions} />
+                        </div>
+                      </div>
+                      <div className="flex items-start gap-8">
+                        <label className="text-sm text-muted-foreground w-24 pt-6 whitespace-nowrap">Current Year<span className="text-destructive">*</span></label>
+                        <div className="flex gap-4">
+                          <div className="w-40">
+                            <LabeledInput label="Start Date" value={currentYearStart} onChange={setCurrentYearStart} required icon={<Calendar className="h-4 w-4" />} />
+                          </div>
+                          <div className="w-40">
+                            <LabeledInput label="End Date" value={currentYearEnd} onChange={setCurrentYearEnd} required icon={<Calendar className="h-4 w-4" />} />
+                          </div>
+                        </div>
+                      </div>
+                      <div className="flex items-start gap-8">
+                        <label className="text-sm text-muted-foreground w-24 pt-6 whitespace-nowrap">Prior Year 1<span className="text-destructive">*</span></label>
+                        <div className="flex gap-4">
+                          <div className="w-40">
+                            <LabeledInput label="Start Date" value={priorYear1Start} onChange={setPriorYear1Start} required icon={<Calendar className="h-4 w-4" />} />
+                          </div>
+                          <div className="w-40">
+                            <LabeledInput label="End Date" value={priorYear1End} onChange={setPriorYear1End} required icon={<Calendar className="h-4 w-4" />} />
+                          </div>
+                          <div className="flex items-end gap-2 pb-3">
+                            <Checkbox checked={priorYear1NoData} onCheckedChange={(checked) => setPriorYear1NoData(checked as boolean)} />
+                            <div className="text-sm">
+                              <span className="text-muted-foreground">No Data Available</span>
+                              <p className="text-xs text-muted-foreground">Prior Year 1 data upload will be disabled</p>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <div className="flex items-start gap-8">
+                        <label className="text-sm text-muted-foreground w-24 pt-6 whitespace-nowrap">Prior Year 2<span className="text-destructive">*</span></label>
+                        <div className="flex gap-4">
+                          <div className="w-40">
+                            <LabeledInput label="Start Date" value={priorYear2Start} onChange={setPriorYear2Start} required icon={<Calendar className="h-4 w-4" />} />
+                          </div>
+                          <div className="w-40">
+                            <LabeledInput label="End Date" value={priorYear2End} onChange={setPriorYear2End} required icon={<Calendar className="h-4 w-4" />} />
+                          </div>
+                          <div className="flex items-end gap-2 pb-3">
+                            <Checkbox checked={priorYear2NoData} onCheckedChange={(checked) => setPriorYear2NoData(checked as boolean)} />
+                            <div className="text-sm">
+                              <span className="text-muted-foreground">No Data Available</span>
+                              <p className="text-xs text-muted-foreground">Prior Year 2 data upload will be disabled</p>
+                            </div>
+                          </div>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                </div>
+                  </SectionCard>
 
-                {/* Prior Year 2 */}
-                <div className="flex items-start gap-8">
-                  <label className="text-sm text-muted-foreground w-24 pt-6 whitespace-nowrap">Prior Year 2<span className="text-destructive">*</span></label>
-                  <div className="flex gap-4">
-                    <div className="w-40">
-                      <LabeledInput
-                        label="Start Date"
-                        value={priorYear2Start}
-                        onChange={setPriorYear2Start}
-                        required
-                        icon={<Calendar className="h-4 w-4" />}
-                      />
-                    </div>
-                    <div className="w-40">
-                      <LabeledInput
-                        label="End Date"
-                        value={priorYear2End}
-                        onChange={setPriorYear2End}
-                        required
-                        icon={<Calendar className="h-4 w-4" />}
-                      />
-                    </div>
-                    <div className="flex items-end gap-2 pb-3">
-                      <Checkbox 
-                        checked={priorYear2NoData} 
-                        onCheckedChange={(checked) => setPriorYear2NoData(checked as boolean)} 
-                      />
-                      <div className="text-sm">
-                        <span className="text-muted-foreground">No Data Available</span>
-                        <p className="text-xs text-muted-foreground">Prior Year 2 data upload will be disabled</p>
+                  {/* Assigned Team Section */}
+                  <SectionCard
+                    icon={<Users className="h-5 w-5" />}
+                    title="Assigned team"
+                    badge={`${teamMembers.length} User`}
+                    headerRight={
+                      <div className="flex items-center gap-2">
+                        <div className="relative">
+                          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                          <input
+                            type="text"
+                            placeholder="Search"
+                            value={teamSearch}
+                            onChange={(e) => setTeamSearch(e.target.value)}
+                            className="input-double-border pl-9 pr-3 h-9 text-sm bg-card border border-border rounded-[10px] outline-none w-40 text-foreground placeholder:text-muted-foreground"
+                          />
+                        </div>
+                        <Button variant="outline" onClick={deleteSelected} disabled={selectedIds.size === 0} className="h-9 px-3 gap-1.5 text-sm">
+                          <Trash2 className="h-4 w-4" />
+                          Delete
+                        </Button>
                       </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </SectionCard>
-
-            {/* Assigned Team Section */}
-            <SectionCard
-              icon={<Users className="h-5 w-5" />}
-              title="Assigned team"
-              badge={`${teamMembers.length} User`}
-              headerRight={
-                <div className="flex items-center gap-2">
-                  <div className="relative">
-                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                    <input
-                      type="text"
-                      placeholder="Search"
-                      value={teamSearch}
-                      onChange={(e) => setTeamSearch(e.target.value)}
-                      className="input-double-border pl-9 pr-3 h-9 text-sm bg-card border border-border rounded-[10px] outline-none w-40 text-foreground placeholder:text-muted-foreground"
-                    />
-                  </div>
-                  <Button
-                    variant="outline"
-                    onClick={deleteSelected}
-                    disabled={selectedIds.size === 0}
-                    className="h-9 px-3 gap-1.5 text-sm"
+                    }
                   >
-                    <Trash2 className="h-4 w-4" />
-                    Delete
-                  </Button>
+                    <div className="overflow-x-auto rounded-lg border border-border">
+                      <table className="w-full text-sm">
+                        <thead>
+                          <tr className="bg-muted/60 border-b border-border">
+                            <th className="text-left px-4 py-3 w-10">
+                              <Checkbox
+                                checked={teamMembers.length > 0 && selectedIds.size === teamMembers.length}
+                                onCheckedChange={(v) => setSelectedIds(v ? new Set(teamMembers.map(m => m.id)) : new Set())}
+                              />
+                            </th>
+                            <th className="text-left px-4 py-3 text-sm font-semibold text-foreground whitespace-nowrap">Role<span className="text-destructive ml-0.5">*</span></th>
+                            <th className="text-left px-4 py-3 text-sm font-semibold text-foreground whitespace-nowrap">Team Member<span className="text-destructive ml-0.5">*</span></th>
+                            <th className="text-left px-4 py-3 text-sm font-semibold text-foreground">Email</th>
+                            <th className="text-left px-4 py-3 text-sm font-semibold text-foreground">Title</th>
+                            <th className="text-right px-4 py-3 text-sm font-semibold text-foreground whitespace-nowrap">Hourly Rate ($)<span className="text-destructive ml-0.5">*</span></th>
+                            <th className="text-right px-4 py-3 text-sm font-semibold text-foreground whitespace-nowrap">Time Allocation (%)<span className="text-destructive ml-0.5">*</span></th>
+                            <th className="text-right px-4 py-3 text-sm font-semibold text-foreground whitespace-nowrap">Budgeted Cost ($)</th>
+                            <th className="text-right px-4 py-3 text-sm font-semibold text-foreground whitespace-nowrap">Budgeted Hours (H)</th>
+                            <th className="text-left px-4 py-3 text-sm font-semibold text-foreground">Actions</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {filteredMembers.map(member =>
+                            pendingRow?.mode === 'edit' && pendingRow.originalId === member.id ? (
+                              <TeamMemberEditRow
+                                key={member.id}
+                                draft={pendingRow.draft}
+                                onChangeDraft={d => setPendingRow({ mode: 'edit', originalId: member.id, draft: d })}
+                                onConfirm={confirmPendingRow}
+                                onCancel={cancelPendingRow}
+                                roleOptions={roleOptions}
+                              />
+                            ) : (
+                              <TeamMemberViewRow
+                                key={member.id}
+                                member={member}
+                                checked={selectedIds.has(member.id)}
+                                onCheck={() => toggleSelect(member.id)}
+                                onEdit={() => startEditMember(member)}
+                                onDelete={() => deleteMember(member.id)}
+                              />
+                            )
+                          )}
+                          {pendingRow?.mode === 'add' && (
+                            <TeamMemberEditRow
+                              draft={pendingRow.draft}
+                              onChangeDraft={d => setPendingRow({ mode: 'add', draft: d })}
+                              onConfirm={confirmPendingRow}
+                              onCancel={cancelPendingRow}
+                              roleOptions={roleOptions}
+                            />
+                          )}
+                        </tbody>
+                        <tfoot>
+                          <tr className="bg-muted/30 border-t border-border/40">
+                            <td className="px-4 py-3" /><td className="px-4 py-3" /><td className="px-4 py-3" /><td className="px-4 py-3" />
+                            <td className="px-4 py-3 text-sm font-semibold text-foreground">Avg Engagement Rate</td>
+                            <td className="px-4 py-3 text-sm font-semibold text-foreground text-right">{avgRate}</td>
+                            <td className="px-4 py-3 text-sm font-semibold text-foreground text-right">{avgAlloc}</td>
+                            <td className="px-4 py-3 text-sm font-semibold text-foreground text-right">{avgCost}</td>
+                            <td className="px-4 py-3 text-sm font-semibold text-foreground text-right">{avgHours}</td>
+                            <td />
+                          </tr>
+                        </tfoot>
+                      </table>
+                    </div>
+                    <div className="mt-4">
+                      <button
+                        type="button"
+                        onClick={startAddMember}
+                        disabled={!!pendingRow}
+                        className="inline-flex items-center gap-1.5 h-9 px-4 text-sm font-semibold rounded-[10px] bg-[#0C2D55] text-white hover:bg-[#0a2447] disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+                      >
+                        <Plus className="h-4 w-4" />
+                        Add Member
+                      </button>
+                    </div>
+                  </SectionCard>
+                </>
+              ) : (
+                <div className="flex items-center gap-2.5 px-4 py-3 rounded-lg bg-muted/40 border border-border/50">
+                  <p className="text-sm text-muted-foreground">Complete the required engagement details above to continue.</p>
                 </div>
-              }
-            >
-              <div className="overflow-x-auto rounded-lg border border-border">
-                <table className="w-full text-sm">
-                  <thead>
-                    <tr className="bg-muted/60 border-b border-border">
-                      <th className="text-left px-4 py-3 w-10">
-                        <Checkbox
-                          checked={teamMembers.length > 0 && selectedIds.size === teamMembers.length}
-                          onCheckedChange={(v) => setSelectedIds(v ? new Set(teamMembers.map(m => m.id)) : new Set())}
-                        />
-                      </th>
-                      <th className="text-left px-4 py-3 text-sm font-semibold text-foreground whitespace-nowrap">
-                        Role<span className="text-destructive ml-0.5">*</span>
-                      </th>
-                      <th className="text-left px-4 py-3 text-sm font-semibold text-foreground whitespace-nowrap">
-                        Team Member<span className="text-destructive ml-0.5">*</span>
-                      </th>
-                      <th className="text-left px-4 py-3 text-sm font-semibold text-foreground">Email</th>
-                      <th className="text-left px-4 py-3 text-sm font-semibold text-foreground">Title</th>
-                      <th className="text-right px-4 py-3 text-sm font-semibold text-foreground whitespace-nowrap">
-                        Hourly Rate ($)<span className="text-destructive ml-0.5">*</span>
-                      </th>
-                      <th className="text-right px-4 py-3 text-sm font-semibold text-foreground whitespace-nowrap">
-                        Time Allocation (%)<span className="text-destructive ml-0.5">*</span>
-                      </th>
-                      <th className="text-right px-4 py-3 text-sm font-semibold text-foreground whitespace-nowrap">Budgeted Cost ($)</th>
-                      <th className="text-right px-4 py-3 text-sm font-semibold text-foreground whitespace-nowrap">Budgeted Hours (H)</th>
-                      <th className="text-left px-4 py-3 text-sm font-semibold text-foreground">Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {filteredMembers.map(member =>
-                      pendingRow?.mode === 'edit' && pendingRow.originalId === member.id ? (
-                        <TeamMemberEditRow
-                          key={member.id}
-                          draft={pendingRow.draft}
-                          onChangeDraft={d => setPendingRow({ mode: 'edit', originalId: member.id, draft: d })}
-                          onConfirm={confirmPendingRow}
-                          onCancel={cancelPendingRow}
-                          roleOptions={roleOptions}
-                        />
-                      ) : (
-                        <TeamMemberViewRow
-                          key={member.id}
-                          member={member}
-                          checked={selectedIds.has(member.id)}
-                          onCheck={() => toggleSelect(member.id)}
-                          onEdit={() => startEditMember(member)}
-                          onDelete={() => deleteMember(member.id)}
-                        />
-                      )
-                    )}
-                    {pendingRow?.mode === 'add' && (
-                      <TeamMemberEditRow
-                        draft={pendingRow.draft}
-                        onChangeDraft={d => setPendingRow({ mode: 'add', draft: d })}
-                        onConfirm={confirmPendingRow}
-                        onCancel={cancelPendingRow}
-                        roleOptions={roleOptions}
-                      />
-                    )}
-                  </tbody>
-                  <tfoot>
-                    <tr className="bg-muted/30 border-t border-border/40">
-                      <td className="px-4 py-3" />
-                      <td className="px-4 py-3" />
-                      <td className="px-4 py-3" />
-                      <td className="px-4 py-3" />
-                      <td className="px-4 py-3 text-sm font-semibold text-foreground">Avg Engagement Rate</td>
-                      <td className="px-4 py-3 text-sm font-semibold text-foreground text-right">{avgRate}</td>
-                      <td className="px-4 py-3 text-sm font-semibold text-foreground text-right">{avgAlloc}</td>
-                      <td className="px-4 py-3 text-sm font-semibold text-foreground text-right">{avgCost}</td>
-                      <td className="px-4 py-3 text-sm font-semibold text-foreground text-right">{avgHours}</td>
-                      <td />
-                    </tr>
-                  </tfoot>
-                </table>
+              )}
+            </div>
+
+            {/* Right column — adaptive configuration panel (audit only) */}
+            {isAudit && (
+              <div className="sticky top-6 flex flex-col gap-4">
+                <EngagementConfigSidePanel
+                  showFirstYearOnPlatform={firstYearAudit}
+                  firstYearOnPlatform={firstYearOnPlatform}
+                  onFirstYearOnPlatformChange={v => { setFirstYearOnPlatform(v); setIsRollForward(""); }}
+                  showRollForward={firstYearAudit && firstYearOnPlatform === "no"}
+                  isRollForward={isRollForward}
+                  onRollForwardChange={setIsRollForward}
+                  showAnnualize={periodType === "Interim (6-month)"}
+                  annualizeInterim={annualizeInterim}
+                  onAnnualizeChange={setAnnualizeInterim}
+                  firstTimeAdoption={firstTimeAdoption}
+                />
               </div>
-              <div className="mt-4">
-                <button
-                  type="button"
-                  onClick={startAddMember}
-                  disabled={!!pendingRow}
-                  className="inline-flex items-center gap-1.5 h-9 px-4 text-sm font-semibold rounded-[10px] bg-[#0C2D55] text-white hover:bg-[#0a2447] disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
-                >
-                  <Plus className="h-4 w-4" />
-                  Add Member
-                </button>
-              </div>
-            </SectionCard>
+            )}
           </div>
 
           {/* Footer Actions */}
