@@ -921,58 +921,24 @@ export default function CreateEngagement() {
               </SectionCard>
 
               <SectionCard icon={<Calendar className="h-5 w-5" />} title="Engagement Period">
-                <div className="space-y-5">
-                  {/* Period Type */}
-                  <div className="flex items-center gap-8">
-                    <label className="text-sm text-muted-foreground w-24 whitespace-nowrap">Period Type<span className="text-destructive">*</span></label>
-                    <div className="w-64">
-                      <LabeledSelect
-                        label=""
-                        value={periodType}
-                        onChange={setPeriodType}
-                        options={periodTypeOptions}
-                      />
-                    </div>
-                  </div>
+                <div className="space-y-4">
+                  <LabeledSelect label="Period Type" required value={periodType} onChange={setPeriodType} options={periodTypeOptions} />
 
-                  {/* Current Year */}
-                  <div className="flex items-start gap-8">
-                    <label className="text-sm text-muted-foreground w-24 pt-6 whitespace-nowrap">Current Year<span className="text-destructive">*</span></label>
-                    <div className="flex gap-4">
-                      <div className="w-40">
-                        <LabeledInput label="Start Date" value={currentYearStart} onChange={setCurrentYearStart} required icon={<Calendar className="h-4 w-4" />} />
-                      </div>
-                      <div className="w-40">
-                        <LabeledInput label="End Date" value={currentYearEnd} onChange={setCurrentYearEnd} required icon={<Calendar className="h-4 w-4" />} />
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Prior Year 1 */}
-                  <div className="flex items-start gap-8">
-                    <label className="text-sm text-muted-foreground w-24 pt-6 whitespace-nowrap">Prior Year 1</label>
-                    <div className="flex gap-4">
-                      <div className="w-40">
-                        <LabeledInput label="Start Date" value={priorYear1Start} onChange={setPriorYear1Start} icon={<Calendar className="h-4 w-4" />} />
-                      </div>
-                      <div className="w-40">
-                        <LabeledInput label="End Date" value={priorYear1End} onChange={setPriorYear1End} icon={<Calendar className="h-4 w-4" />} />
+                  {[
+                    { label: "Current Year", required: true, start: currentYearStart, setStart: setCurrentYearStart, end: currentYearEnd, setEnd: setCurrentYearEnd },
+                    { label: "Prior Year 1", required: false, start: priorYear1Start, setStart: setPriorYear1Start, end: priorYear1End, setEnd: setPriorYear1End },
+                    { label: "Prior Year 2", required: false, start: priorYear2Start, setStart: setPriorYear2Start, end: priorYear2End, setEnd: setPriorYear2End },
+                  ].map(row => (
+                    <div key={row.label} className="space-y-1">
+                      <p className="text-xs font-medium text-foreground">
+                        {row.label}{row.required && <span className="text-destructive ml-0.5">*</span>}
+                      </p>
+                      <div className="flex gap-3">
+                        <div className="flex-1"><LabeledInput label="Start Date" value={row.start} onChange={row.setStart} required={row.required} icon={<Calendar className="h-4 w-4" />} /></div>
+                        <div className="flex-1"><LabeledInput label="End Date" value={row.end} onChange={row.setEnd} required={row.required} icon={<Calendar className="h-4 w-4" />} /></div>
                       </div>
                     </div>
-                  </div>
-
-                  {/* Prior Year 2 */}
-                  <div className="flex items-start gap-8">
-                    <label className="text-sm text-muted-foreground w-24 pt-6 whitespace-nowrap">Prior Year 2</label>
-                    <div className="flex gap-4">
-                      <div className="w-40">
-                        <LabeledInput label="Start Date" value={priorYear2Start} onChange={setPriorYear2Start} icon={<Calendar className="h-4 w-4" />} />
-                      </div>
-                      <div className="w-40">
-                        <LabeledInput label="End Date" value={priorYear2End} onChange={setPriorYear2End} icon={<Calendar className="h-4 w-4" />} />
-                      </div>
-                    </div>
-                  </div>
+                  ))}
                 </div>
               </SectionCard>
 
