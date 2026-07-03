@@ -9,10 +9,11 @@ export interface ExpandableSearchProps {
   onChange?: (value: string) => void;
   onSearch?: (value: string) => void;
   className?: string;
+  disabled?: boolean;
 }
 
 export const ExpandableSearch = React.forwardRef<HTMLInputElement, ExpandableSearchProps>(
-  ({ placeholder = "Search...", value: controlledValue, onChange, onSearch, className }, ref) => {
+  ({ placeholder = "Search...", value: controlledValue, onChange, onSearch, className, disabled }, ref) => {
     const [expanded, setExpanded] = React.useState(false);
     const [internalValue, setInternalValue] = React.useState("");
     const inputRef = React.useRef<HTMLInputElement>(null);
@@ -66,7 +67,8 @@ export const ExpandableSearch = React.forwardRef<HTMLInputElement, ExpandableSea
             variant="secondary"
             size="sm"
             className="h-9 min-w-9 px-0"
-            onClick={() => setExpanded(true)}
+            onClick={() => !disabled && setExpanded(true)}
+            disabled={disabled}
             aria-label="Open search"
           >
             <Search className="h-4 w-4" />
@@ -78,6 +80,7 @@ export const ExpandableSearch = React.forwardRef<HTMLInputElement, ExpandableSea
               ref={inputRef}
               type="text"
               value={value}
+              disabled={disabled}
               onChange={(e) => setValue(e.target.value)}
               onKeyDown={(e) => {
                 if (e.key === "Enter") onSearch?.(value);
