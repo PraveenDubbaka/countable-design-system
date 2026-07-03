@@ -721,7 +721,7 @@ ${note.blocks.map(b => {
           <>
             <motion.div className="fixed inset-0 z-40 bg-black/10"
               initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-              transition={{ duration: 0.2 }} onClick={() => onOpenChange(false)} />
+              transition={{ duration: 0.2 }} onClick={handleClose} />
 
             <motion.div
               className={cn(
