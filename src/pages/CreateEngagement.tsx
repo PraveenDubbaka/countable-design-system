@@ -839,40 +839,42 @@ export default function CreateEngagement() {
             </button>
           </div>
 
-          <div className={isAudit ? "grid grid-cols-[1fr_380px] gap-5 items-start" : "flex flex-col gap-5"}>
-            {/* LEFT COLUMN: Core form data */}
-            <div className="flex flex-col gap-5 min-w-0">
-
-              {/* Client Info Banner */}
-              {clientInfo && (
-                <div className="bg-card rounded-lg shadow-sm px-6 py-5 border border-border">
-                  <h2 className="text-sm font-semibold text-foreground mb-4">Client Info</h2>
-                  <div className="grid grid-cols-7 gap-4">
-                    {[
-                      { label: "Entity legal name", value: clientInfo.entityLegalName },
-                      { label: "Entity type", value: clientInfo.entityType },
-                      { label: "Contact person", value: clientInfo.contactPerson },
-                      { label: "Engagement partner", value: clientInfo.engagementPartner, isLink: true },
-                      { label: "Integrations", value: clientInfo.integrations },
-                      { label: "Business phone", value: clientInfo.businessPhone },
-                      { label: "Cell phone", value: clientInfo.cellPhone },
-                    ].map((col) => (
-                      <div key={col.label} className="flex flex-col gap-1">
-                        <span className="text-xs font-semibold text-primary">{col.label}</span>
-                        {Array.isArray(col.value) ? (
-                          <div className="flex items-center gap-1.5">
-                            {col.value.includes("quickbooks") && <img src={intuitQuickbooksLogo} alt="QuickBooks" className="h-5 object-contain" />}
-                          </div>
-                        ) : (col as any).isLink ? (
-                          <span className="text-sm text-link font-medium cursor-pointer hover:underline">{col.value as string}</span>
-                        ) : (
-                          <span className="text-sm text-foreground">{col.value as string}</span>
-                        )}
-                      </div>
-                    ))}
-                  </div>
+          <div className="flex flex-col gap-5">
+            {/* Client Info Banner — full page width */}
+            {clientInfo && (
+              <div className="bg-card rounded-lg shadow-sm px-6 py-5 border border-border">
+                <h2 className="text-sm font-semibold text-foreground mb-4">Client Info</h2>
+                <div className="grid grid-cols-7 gap-4">
+                  {[
+                    { label: "Entity legal name", value: clientInfo.entityLegalName },
+                    { label: "Entity type", value: clientInfo.entityType },
+                    { label: "Contact person", value: clientInfo.contactPerson },
+                    { label: "Engagement partner", value: clientInfo.engagementPartner, isLink: true },
+                    { label: "Integrations", value: clientInfo.integrations },
+                    { label: "Business phone", value: clientInfo.businessPhone },
+                    { label: "Cell phone", value: clientInfo.cellPhone },
+                  ].map((col) => (
+                    <div key={col.label} className="flex flex-col gap-1">
+                      <span className="text-xs font-semibold text-primary">{col.label}</span>
+                      {Array.isArray(col.value) ? (
+                        <div className="flex items-center gap-1.5">
+                          {col.value.includes("quickbooks") && <img src={intuitQuickbooksLogo} alt="QuickBooks" className="h-5 object-contain" />}
+                        </div>
+                      ) : (col as any).isLink ? (
+                        <span className="text-sm text-link font-medium cursor-pointer hover:underline">{col.value as string}</span>
+                      ) : (
+                        <span className="text-sm text-foreground">{col.value as string}</span>
+                      )}
+                    </div>
+                  ))}
                 </div>
-              )}
+              </div>
+            )}
+
+            {/* Two-column grid: forms (left) + audit config panel (right) */}
+            <div className={isAudit ? "grid grid-cols-[1fr_380px] gap-5 items-start" : "flex flex-col gap-5"}>
+              {/* LEFT COLUMN */}
+              <div className="flex flex-col gap-5 min-w-0">
 
               {/* Engagement Details — inline labels */}
               <SectionCard icon={<Briefcase className="h-5 w-5" />} title="Engagement Details">
@@ -923,118 +925,46 @@ export default function CreateEngagement() {
 
               {/* Validation gate */}
               {engagementDetailsValid ? (
-                <>
-                  {/* Engagement Period — inline labels */}
-                  <SectionCard icon={<Calendar className="h-5 w-5" />} title="Engagement Period">
-                    <InlineRow label="Period Type" required>
-                      <div className="relative">
-                        <select value={periodType} onChange={e => setPeriodType(e.target.value)} className={sc}>
-                          {periodTypeOptions.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
-                        </select>
-                        <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 pointer-events-none text-muted-foreground" />
+                <SectionCard icon={<Calendar className="h-5 w-5" />} title="Engagement Period">
+                  <InlineRow label="Period Type" required>
+                    <div className="relative">
+                      <select value={periodType} onChange={e => setPeriodType(e.target.value)} className={sc}>
+                        {periodTypeOptions.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
+                      </select>
+                      <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 pointer-events-none text-muted-foreground" />
+                    </div>
+                  </InlineRow>
+                  {[
+                    { label: "Current Year", required: true, start: currentYearStart, setStart: setCurrentYearStart, end: currentYearEnd, setEnd: setCurrentYearEnd, noData: null as boolean | null, setNoData: null as ((v: boolean) => void) | null },
+                    { label: "Prior Year 1", required: false, start: priorYear1Start, setStart: setPriorYear1Start, end: priorYear1End, setEnd: setPriorYear1End, noData: priorYear1NoData, setNoData: setPriorYear1NoData },
+                    { label: "Prior Year 2", required: false, start: priorYear2Start, setStart: setPriorYear2Start, end: priorYear2End, setEnd: setPriorYear2End, noData: priorYear2NoData, setNoData: setPriorYear2NoData },
+                  ].map(row => (
+                    <InlineRow key={row.label} label={row.label} required={row.required}>
+                      <div className="flex items-center gap-2">
+                        <input type="text" value={row.start} onChange={e => row.setStart(e.target.value)} placeholder="MM/DD/YYYY"
+                          className="input-double-border w-32 h-9 px-3 py-2 text-sm text-foreground rounded-[10px] outline-none transition-all duration-200 bg-white border border-[#dcdfe4] dark:border-[hsl(220_15%_30%)] dark:bg-card hover:border-[hsl(210_25%_75%)] dark:hover:border-[hsl(220_15%_40%)]" />
+                        <span className="text-muted-foreground text-xs">→</span>
+                        <input type="text" value={row.end} onChange={e => row.setEnd(e.target.value)} placeholder="MM/DD/YYYY"
+                          className="input-double-border w-32 h-9 px-3 py-2 text-sm text-foreground rounded-[10px] outline-none transition-all duration-200 bg-white border border-[#dcdfe4] dark:border-[hsl(220_15%_30%)] dark:bg-card hover:border-[hsl(210_25%_75%)] dark:hover:border-[hsl(220_15%_40%)]" />
+                        {row.setNoData && (
+                          <label className="flex items-center gap-1.5 cursor-pointer ml-1 whitespace-nowrap">
+                            <Checkbox checked={row.noData as boolean} onCheckedChange={v => row.setNoData!(v as boolean)} />
+                            <span className="text-xs text-muted-foreground">No data</span>
+                          </label>
+                        )}
                       </div>
                     </InlineRow>
-                    {[
-                      { label: "Current Year", required: true, start: currentYearStart, setStart: setCurrentYearStart, end: currentYearEnd, setEnd: setCurrentYearEnd, noData: null as boolean | null, setNoData: null as ((v: boolean) => void) | null },
-                      { label: "Prior Year 1", required: false, start: priorYear1Start, setStart: setPriorYear1Start, end: priorYear1End, setEnd: setPriorYear1End, noData: priorYear1NoData, setNoData: setPriorYear1NoData },
-                      { label: "Prior Year 2", required: false, start: priorYear2Start, setStart: setPriorYear2Start, end: priorYear2End, setEnd: setPriorYear2End, noData: priorYear2NoData, setNoData: setPriorYear2NoData },
-                    ].map(row => (
-                      <InlineRow key={row.label} label={row.label} required={row.required}>
-                        <div className="flex items-center gap-2">
-                          <input type="text" value={row.start} onChange={e => row.setStart(e.target.value)} placeholder="MM/DD/YYYY"
-                            className="input-double-border w-32 h-9 px-3 py-2 text-sm text-foreground rounded-[10px] outline-none transition-all duration-200 bg-white border border-[#dcdfe4] dark:border-[hsl(220_15%_30%)] dark:bg-card hover:border-[hsl(210_25%_75%)] dark:hover:border-[hsl(220_15%_40%)]" />
-                          <span className="text-muted-foreground text-xs">→</span>
-                          <input type="text" value={row.end} onChange={e => row.setEnd(e.target.value)} placeholder="MM/DD/YYYY"
-                            className="input-double-border w-32 h-9 px-3 py-2 text-sm text-foreground rounded-[10px] outline-none transition-all duration-200 bg-white border border-[#dcdfe4] dark:border-[hsl(220_15%_30%)] dark:bg-card hover:border-[hsl(210_25%_75%)] dark:hover:border-[hsl(220_15%_40%)]" />
-                          {row.setNoData && (
-                            <label className="flex items-center gap-1.5 cursor-pointer ml-1 whitespace-nowrap">
-                              <Checkbox checked={row.noData as boolean} onCheckedChange={v => row.setNoData!(v as boolean)} />
-                              <span className="text-xs text-muted-foreground">No data</span>
-                            </label>
-                          )}
-                        </div>
-                      </InlineRow>
-                    ))}
-                  </SectionCard>
-
-                  {/* Assigned Team */}
-                  <SectionCard
-                    icon={<Users className="h-5 w-5" />}
-                    title="Assigned team"
-                    badge={`${teamMembers.length} User`}
-                    headerRight={
-                      <div className="flex items-center gap-2">
-                        <div className="relative">
-                          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                          <input type="text" placeholder="Search" value={teamSearch} onChange={e => setTeamSearch(e.target.value)}
-                            className="input-double-border pl-9 pr-3 h-9 text-sm bg-card border border-border rounded-[10px] outline-none w-40 text-foreground placeholder:text-muted-foreground" />
-                        </div>
-                        <Button variant="outline" onClick={deleteSelected} disabled={selectedIds.size === 0} className="h-9 px-3 gap-1.5 text-sm">
-                          <Trash2 className="h-4 w-4" />Delete
-                        </Button>
-                      </div>
-                    }
-                  >
-                    <div className="overflow-x-auto rounded-lg border border-border">
-                      <table className="w-full text-sm">
-                        <thead>
-                          <tr className="bg-muted/60 border-b border-border">
-                            <th className="text-left px-4 py-3 w-10">
-                              <Checkbox checked={teamMembers.length > 0 && selectedIds.size === teamMembers.length} onCheckedChange={v => setSelectedIds(v ? new Set(teamMembers.map(m => m.id)) : new Set())} />
-                            </th>
-                            <th className="text-left px-4 py-3 text-sm font-semibold text-foreground whitespace-nowrap">Role<span className="text-destructive ml-0.5">*</span></th>
-                            <th className="text-left px-4 py-3 text-sm font-semibold text-foreground whitespace-nowrap">Team Member<span className="text-destructive ml-0.5">*</span></th>
-                            <th className="text-left px-4 py-3 text-sm font-semibold text-foreground">Email</th>
-                            <th className="text-left px-4 py-3 text-sm font-semibold text-foreground">Title</th>
-                            <th className="text-right px-4 py-3 text-sm font-semibold text-foreground whitespace-nowrap">Hourly Rate ($)<span className="text-destructive ml-0.5">*</span></th>
-                            <th className="text-right px-4 py-3 text-sm font-semibold text-foreground whitespace-nowrap">Time Allocation (%)<span className="text-destructive ml-0.5">*</span></th>
-                            <th className="text-right px-4 py-3 text-sm font-semibold text-foreground whitespace-nowrap">Budgeted Cost ($)</th>
-                            <th className="text-right px-4 py-3 text-sm font-semibold text-foreground whitespace-nowrap">Budgeted Hours (H)</th>
-                            <th className="text-left px-4 py-3 text-sm font-semibold text-foreground">Actions</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {filteredMembers.map(member =>
-                            pendingRow?.mode === 'edit' && pendingRow.originalId === member.id ? (
-                              <TeamMemberEditRow key={member.id} draft={pendingRow.draft} onChangeDraft={d => setPendingRow({ mode: 'edit', originalId: member.id, draft: d })} onConfirm={confirmPendingRow} onCancel={cancelPendingRow} roleOptions={roleOptions} />
-                            ) : (
-                              <TeamMemberViewRow key={member.id} member={member} checked={selectedIds.has(member.id)} onCheck={() => toggleSelect(member.id)} onEdit={() => startEditMember(member)} onDelete={() => deleteMember(member.id)} />
-                            )
-                          )}
-                          {pendingRow?.mode === 'add' && (
-                            <TeamMemberEditRow draft={pendingRow.draft} onChangeDraft={d => setPendingRow({ mode: 'add', draft: d })} onConfirm={confirmPendingRow} onCancel={cancelPendingRow} roleOptions={roleOptions} />
-                          )}
-                        </tbody>
-                        <tfoot>
-                          <tr className="bg-muted/30 border-t border-border/40">
-                            <td className="px-4 py-3" /><td className="px-4 py-3" /><td className="px-4 py-3" /><td className="px-4 py-3" />
-                            <td className="px-4 py-3 text-sm font-semibold text-foreground">Avg Engagement Rate</td>
-                            <td className="px-4 py-3 text-sm font-semibold text-foreground text-right">{avgRate}</td>
-                            <td className="px-4 py-3 text-sm font-semibold text-foreground text-right">{avgAlloc}</td>
-                            <td className="px-4 py-3 text-sm font-semibold text-foreground text-right">{avgCost}</td>
-                            <td className="px-4 py-3 text-sm font-semibold text-foreground text-right">{avgHours}</td>
-                            <td />
-                          </tr>
-                        </tfoot>
-                      </table>
-                    </div>
-                    <div className="mt-4">
-                      <button type="button" onClick={startAddMember} disabled={!!pendingRow}
-                        className="inline-flex items-center gap-1.5 h-9 px-4 text-sm font-semibold rounded-[10px] bg-[#0C2D55] text-white hover:bg-[#0a2447] disabled:opacity-40 disabled:cursor-not-allowed transition-colors">
-                        <Plus className="h-4 w-4" />Add Member
-                      </button>
-                    </div>
-                  </SectionCard>
-                </>
+                  ))}
+                </SectionCard>
               ) : (
                 <div className="flex items-center gap-2.5 px-4 py-3 rounded-lg bg-muted/40 border border-border/50">
                   <p className="text-sm text-muted-foreground">Complete the required engagement details above to continue.</p>
                 </div>
               )}
-            </div>
+              </div>
 
-            {/* RIGHT COLUMN: Smart questionnaire (audit only, sticky) */}
-            {isAudit && (
+              {/* RIGHT COLUMN: Smart questionnaire (audit only, sticky) */}
+              {isAudit && (
               <div className="sticky top-6">
                 <div className="bg-card rounded-lg border border-border shadow-sm overflow-hidden">
                   {/* Panel header */}
@@ -1143,6 +1073,78 @@ export default function CreateEngagement() {
                   )}
                 </div>
               </div>
+            )}
+          </div>
+
+            {/* Assigned Team — full page width, gated */}
+            {engagementDetailsValid && (
+              <SectionCard
+                icon={<Users className="h-5 w-5" />}
+                title="Assigned team"
+                badge={`${teamMembers.length} User`}
+                headerRight={
+                  <div className="flex items-center gap-2">
+                    <div className="relative">
+                      <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                      <input type="text" placeholder="Search" value={teamSearch} onChange={e => setTeamSearch(e.target.value)}
+                        className="input-double-border pl-9 pr-3 h-9 text-sm bg-card border border-border rounded-[10px] outline-none w-40 text-foreground placeholder:text-muted-foreground" />
+                    </div>
+                    <Button variant="outline" onClick={deleteSelected} disabled={selectedIds.size === 0} className="h-9 px-3 gap-1.5 text-sm">
+                      <Trash2 className="h-4 w-4" />Delete
+                    </Button>
+                  </div>
+                }
+              >
+                <div className="overflow-x-auto rounded-lg border border-border">
+                  <table className="w-full text-sm">
+                    <thead>
+                      <tr className="bg-muted/60 border-b border-border">
+                        <th className="text-left px-4 py-3 w-10">
+                          <Checkbox checked={teamMembers.length > 0 && selectedIds.size === teamMembers.length} onCheckedChange={v => setSelectedIds(v ? new Set(teamMembers.map(m => m.id)) : new Set())} />
+                        </th>
+                        <th className="text-left px-4 py-3 text-sm font-semibold text-foreground whitespace-nowrap">Role<span className="text-destructive ml-0.5">*</span></th>
+                        <th className="text-left px-4 py-3 text-sm font-semibold text-foreground whitespace-nowrap">Team Member<span className="text-destructive ml-0.5">*</span></th>
+                        <th className="text-left px-4 py-3 text-sm font-semibold text-foreground">Email</th>
+                        <th className="text-left px-4 py-3 text-sm font-semibold text-foreground">Title</th>
+                        <th className="text-right px-4 py-3 text-sm font-semibold text-foreground whitespace-nowrap">Hourly Rate ($)<span className="text-destructive ml-0.5">*</span></th>
+                        <th className="text-right px-4 py-3 text-sm font-semibold text-foreground whitespace-nowrap">Time Allocation (%)<span className="text-destructive ml-0.5">*</span></th>
+                        <th className="text-right px-4 py-3 text-sm font-semibold text-foreground whitespace-nowrap">Budgeted Cost ($)</th>
+                        <th className="text-right px-4 py-3 text-sm font-semibold text-foreground whitespace-nowrap">Budgeted Hours (H)</th>
+                        <th className="text-left px-4 py-3 text-sm font-semibold text-foreground">Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {filteredMembers.map(member =>
+                        pendingRow?.mode === 'edit' && pendingRow.originalId === member.id ? (
+                          <TeamMemberEditRow key={member.id} draft={pendingRow.draft} onChangeDraft={d => setPendingRow({ mode: 'edit', originalId: member.id, draft: d })} onConfirm={confirmPendingRow} onCancel={cancelPendingRow} roleOptions={roleOptions} />
+                        ) : (
+                          <TeamMemberViewRow key={member.id} member={member} checked={selectedIds.has(member.id)} onCheck={() => toggleSelect(member.id)} onEdit={() => startEditMember(member)} onDelete={() => deleteMember(member.id)} />
+                        )
+                      )}
+                      {pendingRow?.mode === 'add' && (
+                        <TeamMemberEditRow draft={pendingRow.draft} onChangeDraft={d => setPendingRow({ mode: 'add', draft: d })} onConfirm={confirmPendingRow} onCancel={cancelPendingRow} roleOptions={roleOptions} />
+                      )}
+                    </tbody>
+                    <tfoot>
+                      <tr className="bg-muted/30 border-t border-border/40">
+                        <td className="px-4 py-3" /><td className="px-4 py-3" /><td className="px-4 py-3" /><td className="px-4 py-3" />
+                        <td className="px-4 py-3 text-sm font-semibold text-foreground">Avg Engagement Rate</td>
+                        <td className="px-4 py-3 text-sm font-semibold text-foreground text-right">{avgRate}</td>
+                        <td className="px-4 py-3 text-sm font-semibold text-foreground text-right">{avgAlloc}</td>
+                        <td className="px-4 py-3 text-sm font-semibold text-foreground text-right">{avgCost}</td>
+                        <td className="px-4 py-3 text-sm font-semibold text-foreground text-right">{avgHours}</td>
+                        <td />
+                      </tr>
+                    </tfoot>
+                  </table>
+                </div>
+                <div className="mt-4">
+                  <button type="button" onClick={startAddMember} disabled={!!pendingRow}
+                    className="inline-flex items-center gap-1.5 h-9 px-4 text-sm font-semibold rounded-[10px] bg-[#0C2D55] text-white hover:bg-[#0a2447] disabled:opacity-40 disabled:cursor-not-allowed transition-colors">
+                    <Plus className="h-4 w-4" />Add Member
+                  </button>
+                </div>
+              </SectionCard>
             )}
           </div>
 
