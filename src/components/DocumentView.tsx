@@ -29,7 +29,7 @@ import {
   SortableContext, sortableKeyboardCoordinates, useSortable, verticalListSortingStrategy } from
 '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import { CURRENT_USER } from '@/lib/useTimeEntries';
+import { CURRENT_USER, ROLE_LABELS } from '@/lib/useTimeEntries';
 import { ChecklistSignOff } from '@/components/ChecklistSignOff';
 
 const CURRENT_USER_ASSIGNEE: Assignee = {
@@ -666,6 +666,13 @@ function CellContentRenderer({
 
       case 'signoff': {
         const isSigned = cell.content.length > 0;
+        const parseSignoff = (raw: string) => {
+          try {
+            const parsed = JSON.parse(raw);
+            if (parsed.signedAt) return parsed as { signedAt: string; name: string; role: string };
+          } catch { /* legacy plain ISO string */ }
+          return { signedAt: raw, name: CURRENT_USER.name, role: ROLE_LABELS[CURRENT_USER.roleKey] };
+        };
         const formatSignDate = (iso: string) => {
           try {
             return new Date(iso).toLocaleString(undefined, {
@@ -675,6 +682,7 @@ function CellContentRenderer({
           } catch { return iso; }
         };
         if (isSigned) {
+          const { signedAt, name, role } = parseSignoff(cell.content);
           return (
             <div className="flex items-center gap-3 py-1">
               {!isPreviewMode && (
@@ -687,7 +695,7 @@ function CellContentRenderer({
               )}
               <div className="flex items-center gap-2 text-sm text-foreground">
                 <CheckCircle2 className="h-4 w-4 text-emerald-600 shrink-0" />
-                <span>Signed {formatSignDate(cell.content)} by <strong>Current User</strong></span>
+                <span>Signed {formatSignDate(signedAt)} by <strong>{name}</strong>{role ? <span className="text-muted-foreground"> · {role}</span> : null}</span>
               </div>
             </div>
           );
@@ -695,7 +703,14 @@ function CellContentRenderer({
         return (
           <div className="py-1">
             <button
-              onClick={(e) => { e.stopPropagation(); onUpdateCell(cellIdx, new Date().toISOString()); }}
+              onClick={(e) => {
+                e.stopPropagation();
+                onUpdateCell(cellIdx, JSON.stringify({
+                  signedAt: new Date().toISOString(),
+                  name: CURRENT_USER.name,
+                  role: ROLE_LABELS[CURRENT_USER.roleKey],
+                }));
+              }}
               disabled={isPreviewMode}
               className="inline-flex items-center justify-center whitespace-nowrap text-sm font-semibold rounded-[10px] bg-primary text-primary-foreground hover:bg-primary/90 px-4 h-8 transition-colors disabled:opacity-50 disabled:pointer-events-none"
             >
