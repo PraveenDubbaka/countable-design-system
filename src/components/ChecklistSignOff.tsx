@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { CheckCircle2, AlertTriangle } from "lucide-react";
+import { CheckCircle2, AlertTriangle, Pencil } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -61,6 +61,10 @@ function formatDate(iso: string): string {
 
 export function ChecklistSignOff({ checklist }: { checklist: Checklist }) {
   const [record, setRecord] = useState<SignOffRecord | null>(null);
+  const [draftName, setDraftName] = useState<string>(CURRENT_USER.name);
+  const [draftDate, setDraftDate] = useState<string>(() =>
+    new Date().toISOString().slice(0, 10)
+  );
   const currentHash = useMemo(() => hashChecklist(checklist), [checklist]);
 
   // Load persisted signoff for this checklist
@@ -68,7 +72,15 @@ export function ChecklistSignOff({ checklist }: { checklist: Checklist }) {
     if (!checklist.id) return;
     try {
       const raw = localStorage.getItem(storageKey(checklist.id));
-      setRecord(raw ? (JSON.parse(raw) as SignOffRecord) : null);
+      const parsed = raw ? (JSON.parse(raw) as SignOffRecord) : null;
+      setRecord(parsed);
+      if (parsed) {
+        setDraftName(parsed.preparerName);
+        setDraftDate(parsed.signedAt.slice(0, 10));
+      } else {
+        setDraftName(CURRENT_USER.name);
+        setDraftDate(new Date().toISOString().slice(0, 10));
+      }
     } catch {
       setRecord(null);
     }
@@ -85,10 +97,15 @@ export function ChecklistSignOff({ checklist }: { checklist: Checklist }) {
   };
 
   const handleSignOff = () => {
+    // Use draftDate at current time-of-day so display keeps time context
+    const chosen = new Date(draftDate);
+    if (isNaN(chosen.getTime())) return;
+    const now = new Date();
+    chosen.setHours(now.getHours(), now.getMinutes(), now.getSeconds(), 0);
     persist({
-      preparerName: CURRENT_USER.name,
+      preparerName: draftName.trim() || CURRENT_USER.name,
       preparerRole: "Preparer",
-      signedAt: new Date().toISOString(),
+      signedAt: chosen.toISOString(),
       contentHash: currentHash,
     });
   };
@@ -100,17 +117,32 @@ export function ChecklistSignOff({ checklist }: { checklist: Checklist }) {
   };
 
   const isStale = !!record && record.contentHash !== currentHash;
-  const preparerValue = record ? record.preparerName : "";
-  const dateValue = record ? formatDate(record.signedAt) : "";
+  const isSigned = !!record && !isStale;
 
   return (
     <div
       className="dv-section rounded-[8px] border-[0.5px] overflow-hidden bg-card"
       style={{ borderColor: "var(--dv-separator)" }}
     >
+      {/* Section header — matches checklist section header pattern */}
+      <div
+        className="dv-section-header flex items-center gap-2 pl-[38px] pr-4 py-0 relative border-b"
+        style={{ borderColor: "var(--dv-separator)", height: "48px", minHeight: "48px" }}
+      >
+        <span className="text-sm font-semibold text-foreground">Sign Off</span>
+        {isSigned && (
+          <span className="inline-flex items-center gap-1.5 text-xs text-muted-foreground ml-2">
+            <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600" />
+            Signed {formatDate(record!.signedAt)}
+          </span>
+        )}
+      </div>
+
       {/* Disclaimer */}
-      <div className="px-[38px] py-4 border-b" style={{ borderColor: "var(--dv-separator)" }}>
-        <h3 className="text-sm font-semibold text-foreground mb-1">Sign Off Disclaimer</h3>
+      <div
+        className="px-[38px] py-3 border-b"
+        style={{ borderColor: "var(--dv-separator)" }}
+      >
         <p className="text-xs text-muted-foreground leading-relaxed">
           By signing off below, you are agreeing to this statement that you have reviewed all the
           relevant associated working papers and cleared all your queries and documented the matters
@@ -121,7 +153,9 @@ export function ChecklistSignOff({ checklist }: { checklist: Checklist }) {
 
       {/* Stale warning */}
       {isStale && (
-        <div className="mx-[38px] mt-4 flex items-start gap-2 rounded-md border border-amber-200 bg-amber-50 px-3 py-2 text-xs text-amber-800">
+        <div
+          className="mx-[38px] mt-3 flex items-start gap-2 rounded-md border border-amber-200 bg-amber-50 px-3 py-2 text-xs text-amber-800"
+        >
           <AlertTriangle className="h-4 w-4 mt-0.5 shrink-0" />
           <div className="flex-1">
             <span className="font-medium">Checklist has been updated. </span>
@@ -142,34 +176,48 @@ export function ChecklistSignOff({ checklist }: { checklist: Checklist }) {
       <div className="px-[38px] py-4 space-y-3">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-2xl">
           <div className="space-y-1.5">
-            <Label className="text-xs text-muted-foreground">Preparer Name</Label>
+            <Label className="text-xs text-foreground">Preparer Name</Label>
             <Input
-              value={preparerValue}
-              disabled
-              readOnly
-              placeholder="—"
-              className="h-9 bg-muted/40"
+              value={isSigned ? record!.preparerName : draftName}
+              onChange={(e) => setDraftName(e.target.value)}
+              disabled={isSigned}
+              placeholder="Enter preparer name"
+              className="h-9 bg-background"
             />
           </div>
           <div className="space-y-1.5">
-            <Label className="text-xs text-muted-foreground">Date</Label>
+            <Label className="text-xs text-foreground">Date</Label>
             <Input
-              value={dateValue}
-              disabled
-              readOnly
-              placeholder="—"
-              className="h-9 bg-muted/40"
+              type="date"
+              value={isSigned ? record!.signedAt.slice(0, 10) : draftDate}
+              onChange={(e) => setDraftDate(e.target.value)}
+              disabled={isSigned}
+              className="h-9 bg-background w-fit"
             />
           </div>
         </div>
 
-        <div className="pt-1">
-          {!record || isStale ? (
-            <Button size="sm" onClick={handleSignOff} className="h-8">
+        <div className="pt-1 flex items-center gap-3">
+          {!isSigned ? (
+            <Button
+              size="sm"
+              onClick={handleSignOff}
+              className="h-8"
+              disabled={!draftName.trim() || !draftDate}
+            >
               Sign Off
             </Button>
           ) : (
-            <div className="flex items-center gap-3">
+            <>
+              <Button
+                size="sm"
+                variant="outline"
+                onClick={handleUnsign}
+                className="h-8 gap-1.5"
+              >
+                <Pencil className="h-3.5 w-3.5" />
+                Edit
+              </Button>
               <Button
                 size="sm"
                 variant="destructive"
@@ -178,11 +226,7 @@ export function ChecklistSignOff({ checklist }: { checklist: Checklist }) {
               >
                 Unsign
               </Button>
-              <span className="inline-flex items-center gap-1.5 text-xs text-muted-foreground">
-                <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600" />
-                Signed {formatDate(record.signedAt)}
-              </span>
-            </div>
+            </>
           )}
         </div>
       </div>
