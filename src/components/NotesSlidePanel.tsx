@@ -5,7 +5,7 @@ import {
   List, ListOrdered, CheckSquare, Minus, Sparkles,
   Mic, MicOff, Send, Wand2, Loader2, Check, Trash2, Table2,
   Heading1, Heading2, Heading3, AlignLeft, Phone, PhoneOff,
-  FileUp, Download, MoreHorizontal,
+  FileUp, Download, MoreHorizontal, ExternalLink, Maximize2, Minimize2,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import {
@@ -424,6 +424,7 @@ export function NotesSlidePanel({ open, onOpenChange, noteId, noteName, engId }:
   const [callState, setCallState] = useState<CallState>('idle');
   const [callSeconds, setCallSeconds] = useState(0);
   const [isDictating, setIsDictating] = useState(false);
+  const [isFullscreen, setIsFullscreen] = useState(false);
 
   const titleRef = useRef<HTMLDivElement>(null);
   const blockRefs = useRef<Map<string, HTMLDivElement>>(new Map());
@@ -437,6 +438,11 @@ export function NotesSlidePanel({ open, onOpenChange, noteId, noteName, engId }:
   const registerRef = useCallback((id: string, el: HTMLDivElement | null) => {
     if (el) blockRefs.current.set(id, el); else blockRefs.current.delete(id);
   }, []);
+
+  const handleClose = useCallback(() => {
+    setIsFullscreen(false);
+    onOpenChange(false);
+  }, [onOpenChange]);
 
   useEffect(() => {
     const el = textareaRef.current;
@@ -715,11 +721,14 @@ ${note.blocks.map(b => {
           <>
             <motion.div className="fixed inset-0 z-40 bg-black/10"
               initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-              transition={{ duration: 0.2 }} onClick={() => onOpenChange(false)} />
+              transition={{ duration: 0.2 }} onClick={handleClose} />
 
             <motion.div
-              className="fixed top-0 right-0 z-50 h-full bg-background border-l border-border flex flex-col shadow-2xl overflow-hidden"
-              style={{ width: 640, maxWidth: '98vw' }}
+              className={cn(
+                "fixed top-0 right-0 z-50 h-full bg-background border-l border-border flex flex-col shadow-2xl overflow-hidden",
+                isFullscreen ? "!w-screen !max-w-none rounded-none" : "rounded-l-2xl"
+              )}
+              style={isFullscreen ? undefined : { width: 640, maxWidth: '98vw' }}
               initial={{ x: '100%', opacity: 0.6 }} animate={{ x: 0, opacity: 1 }}
               exit={{ x: '100%', opacity: 0.6 }}
               transition={{ type: 'spring', damping: 32, stiffness: 280, mass: 0.85 }}
@@ -791,14 +800,41 @@ ${note.blocks.map(b => {
                     </DropdownMenuContent>
                   </DropdownMenu>
                 </div>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <button onClick={() => onOpenChange(false)} className="w-7 h-7 flex items-center justify-center rounded hover:bg-muted text-muted-foreground hover:text-foreground transition-colors flex-shrink-0 ml-1">
-                      <X className="h-4 w-4" />
-                    </button>
-                  </TooltipTrigger>
-                  <TooltipContent side="bottom" className="text-xs">Close</TooltipContent>
-                </Tooltip>
+                {/* ── Window controls ── */}
+                <div className="flex items-center gap-1 shrink-0">
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <button onClick={() => window.open(window.location.href, '_blank')} className="action-icon" aria-label="Open in new window">
+                        <ExternalLink size={16} />
+                      </button>
+                    </TooltipTrigger>
+                    <TooltipContent side="bottom" className="text-xs"><p>Open in new window</p></TooltipContent>
+                  </Tooltip>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <button onClick={() => setIsFullscreen(v => !v)} className={cn("action-icon", isFullscreen && "action-icon-active")} aria-label={isFullscreen ? "Exit fullscreen" : "Fullscreen"}>
+                        {isFullscreen ? <Minimize2 size={16} /> : <Maximize2 size={16} />}
+                      </button>
+                    </TooltipTrigger>
+                    <TooltipContent side="bottom" className="text-xs"><p>{isFullscreen ? "Exit fullscreen" : "Fullscreen"}</p></TooltipContent>
+                  </Tooltip>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <button onClick={handleClose} className="action-icon" aria-label="Minimize">
+                        <Minus size={16} />
+                      </button>
+                    </TooltipTrigger>
+                    <TooltipContent side="bottom" className="text-xs"><p>Minimize</p></TooltipContent>
+                  </Tooltip>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <button onClick={handleClose} className="action-icon" aria-label="Close">
+                        <X size={16} />
+                      </button>
+                    </TooltipTrigger>
+                    <TooltipContent side="bottom" className="text-xs"><p>Close</p></TooltipContent>
+                  </Tooltip>
+                </div>
               </div>
 
               {/* ── Call recording banner ── */}
