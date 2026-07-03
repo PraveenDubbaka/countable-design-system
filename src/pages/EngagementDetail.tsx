@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo, useCallback, useRef } from "react";
 import { useParams, useNavigate, useSearchParams } from "react-router-dom";
-import { ChevronRight, ChevronDown, Landmark, FileText, Triangle, FileSpreadsheet, PencilLine, Pencil, Settings2, Download, FileType, Share2, Save, RefreshCw, Trash2, Building2, Calendar, Check, AlertTriangle, Loader2, History, Upload, FileUp, Bell, Plus, X, LayoutGrid, CheckCircle2, PlugZap, Zap, Play, Square, ClipboardList, UserPlus, UploadCloud, FileCheck2 } from "lucide-react";
+import { ChevronRight, ChevronDown, Landmark, FileText, Triangle, FileSpreadsheet, PencilLine, Pencil, Settings2, Download, FileType, Share2, Save, RefreshCw, Trash2, Building2, Calendar, Check, AlertTriangle, Loader2, History, Upload, FileUp, Bell, Plus, X, LayoutGrid, CheckCircle2, PlugZap, Zap, Play, Square, ClipboardList, UserPlus, UploadCloud, FileCheck2, ExternalLink, Maximize2, Minimize2, Minus } from "lucide-react";
 import { ExpandableIconButton } from "@/components/ui/expandable-icon-button";
 import { ChecklistIcon } from "@/components/icons/ChecklistIcon";
 import { Button } from "@/components/ui/button";
@@ -807,6 +807,7 @@ export default function EngagementDetail() {
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [showAddChecklistSheet, setShowAddChecklistSheet] = useState(false);
   const [showRequestPanel, setShowRequestPanel] = useState(false);
+  const [requestPanelFullscreen, setRequestPanelFullscreen] = useState(false);
   const [clipboardResponses, setClipboardResponses] = useState<{ checklistTitle: string; responses: Record<string, { answer: string; explanation?: string }> } | null>(null);
   const [showClipboardPrompt, setShowClipboardPrompt] = useState(false);
   const [lukaOpen, setLukaOpen] = useState(false);
@@ -2600,13 +2601,70 @@ export default function EngagementDetail() {
         )}
 
         {/* Document Request Panel */}
-        <Sheet open={showRequestPanel} onOpenChange={setShowRequestPanel}>
-          <SheetContent side="right" className="!w-[900px] !max-w-[900px] p-0 flex flex-col">
-            <SheetHeader className="px-6 py-4 border-b border-border shrink-0">
+        <Sheet open={showRequestPanel} onOpenChange={(v) => { setShowRequestPanel(v); if (!v) setRequestPanelFullscreen(false); }}>
+          <SheetContent
+            side="right"
+            className={`p-0 flex flex-col overflow-hidden [&>button.absolute]:hidden ${
+              requestPanelFullscreen
+                ? "!w-screen !max-w-none rounded-none"
+                : "!w-[900px] !max-w-[900px] rounded-l-2xl"
+            }`}
+          >
+            <SheetHeader className="px-6 py-3 border-b border-border shrink-0 flex-row items-center justify-between space-y-0">
               <SheetTitle className="text-base font-semibold flex items-center gap-2">
                 <ClipboardList className="h-4 w-4 text-muted-foreground" />
                 Information / Analysis Requested from Management
               </SheetTitle>
+              <div className="flex items-center gap-1 shrink-0">
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <button
+                      onClick={() => window.open(window.location.href, '_blank')}
+                      className="action-icon"
+                      aria-label="Open in new window"
+                    >
+                      <ExternalLink size={16} />
+                    </button>
+                  </TooltipTrigger>
+                  <TooltipContent side="bottom"><p>Open in new window</p></TooltipContent>
+                </Tooltip>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <button
+                      onClick={() => setRequestPanelFullscreen(v => !v)}
+                      className={`action-icon ${requestPanelFullscreen ? "action-icon-active" : ""}`}
+                      aria-label={requestPanelFullscreen ? "Exit fullscreen" : "Fullscreen"}
+                    >
+                      {requestPanelFullscreen ? <Minimize2 size={16} /> : <Maximize2 size={16} />}
+                    </button>
+                  </TooltipTrigger>
+                  <TooltipContent side="bottom"><p>{requestPanelFullscreen ? "Exit fullscreen" : "Fullscreen"}</p></TooltipContent>
+                </Tooltip>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <button
+                      onClick={() => setShowRequestPanel(false)}
+                      className="action-icon"
+                      aria-label="Minimize"
+                    >
+                      <Minus size={16} />
+                    </button>
+                  </TooltipTrigger>
+                  <TooltipContent side="bottom"><p>Minimize</p></TooltipContent>
+                </Tooltip>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <button
+                      onClick={() => setShowRequestPanel(false)}
+                      className="action-icon"
+                      aria-label="Close"
+                    >
+                      <X size={16} />
+                    </button>
+                  </TooltipTrigger>
+                  <TooltipContent side="bottom"><p>Close</p></TooltipContent>
+                </Tooltip>
+              </div>
             </SheetHeader>
             <div className="flex-1 min-h-0 overflow-hidden">
               <BulkRequestsWorksheet />
