@@ -1,21 +1,18 @@
 import { useEffect, useMemo, useState } from "react";
-import { CheckCircle2, AlertTriangle } from "lucide-react";
+import { AlertTriangle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { CURRENT_USER } from "@/lib/useTimeEntries";
 import type { Checklist } from "@/types/checklist";
 
 interface SignOffRecord {
   preparerName: string;
-  preparerRole: string;
   signedAt: string; // ISO
   contentHash: string;
 }
 
 const storageKey = (id: string) => `checklist-signoff:${id}`;
 
-// Lightweight stable hash of the checklist content (sections + questions text/values).
 function hashChecklist(c: Checklist): string {
   try {
     const shape = c.sections.map((s) => ({
@@ -59,28 +56,18 @@ function formatDate(iso: string): string {
   }
 }
 
+const DISCLAIMER =
+  "By signing off below, you are agreeing to this statement that you have reviewed all the relevant associated working papers and cleared all your queries and documented the matters appropriately that may cause the financial statements and note disclosures, if applicable, to be false and/or misleading.";
+
 export function ChecklistSignOff({ checklist }: { checklist: Checklist }) {
   const [record, setRecord] = useState<SignOffRecord | null>(null);
-  const [draftName, setDraftName] = useState<string>(CURRENT_USER.name);
-  const [draftDate, setDraftDate] = useState<string>(() =>
-    new Date().toISOString().slice(0, 10)
-  );
   const currentHash = useMemo(() => hashChecklist(checklist), [checklist]);
 
-  // Load persisted signoff for this checklist
   useEffect(() => {
     if (!checklist.id) return;
     try {
       const raw = localStorage.getItem(storageKey(checklist.id));
-      const parsed = raw ? (JSON.parse(raw) as SignOffRecord) : null;
-      setRecord(parsed);
-      if (parsed) {
-        setDraftName(parsed.preparerName);
-        setDraftDate(parsed.signedAt.slice(0, 10));
-      } else {
-        setDraftName(CURRENT_USER.name);
-        setDraftDate(new Date().toISOString().slice(0, 10));
-      }
+      setRecord(raw ? (JSON.parse(raw) as SignOffRecord) : null);
     } catch {
       setRecord(null);
     }
@@ -97,15 +84,9 @@ export function ChecklistSignOff({ checklist }: { checklist: Checklist }) {
   };
 
   const handleSignOff = () => {
-    // Use draftDate at current time-of-day so display keeps time context
-    const chosen = new Date(draftDate);
-    if (isNaN(chosen.getTime())) return;
-    const now = new Date();
-    chosen.setHours(now.getHours(), now.getMinutes(), now.getSeconds(), 0);
     persist({
-      preparerName: draftName.trim() || CURRENT_USER.name,
-      preparerRole: "Preparer",
-      signedAt: chosen.toISOString(),
+      preparerName: CURRENT_USER.name,
+      signedAt: new Date().toISOString(),
       contentHash: currentHash,
     });
   };
@@ -119,42 +100,30 @@ export function ChecklistSignOff({ checklist }: { checklist: Checklist }) {
   const isStale = !!record && record.contentHash !== currentHash;
   const isSigned = !!record && !isStale;
 
+  const dateValue = isSigned ? formatDate(record!.signedAt) : "";
+  const nameValue = isSigned ? record!.preparerName : "";
+
+  // Column widths mirror standard checklist row proportions (question / response / explanation / reference)
+  const COL_Q = 45;
+  const COL_DATE = 18;
+  const COL_NAME = 22;
+  const COL_ACTION = 15;
+
+  const Separator = () => (
+    <div
+      className="shrink-0 w-px self-stretch pointer-events-none"
+      style={{ backgroundColor: "var(--dv-separator)" }}
+    />
+  );
+
   return (
     <div
       className="dv-section rounded-[8px] border-[0.5px] overflow-hidden bg-card"
       style={{ borderColor: "var(--dv-separator)" }}
     >
-      {/* Section header — matches checklist section header pattern */}
-      <div
-        className="dv-section-header flex items-center gap-2 pl-[38px] pr-4 py-0 relative border-b"
-        style={{ borderColor: "var(--dv-separator)", height: "48px", minHeight: "48px" }}
-      >
-        <span className="text-sm font-semibold text-foreground">Sign Off</span>
-        {isSigned && (
-          <span className="inline-flex items-center gap-1.5 text-xs text-muted-foreground ml-2">
-            <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600" />
-            Signed {formatDate(record!.signedAt)}
-          </span>
-        )}
-      </div>
-
-      {/* Disclaimer */}
-      <div
-        className="px-[38px] py-3 border-b"
-        style={{ borderColor: "var(--dv-separator)" }}
-      >
-        <p className="text-xs text-muted-foreground leading-relaxed">
-          By signing off below, you are agreeing to this statement that you have reviewed all the
-          relevant associated working papers and cleared all your queries and documented the matters
-          appropriately that may cause the financial statements and note disclosures, if applicable,
-          to be false and/or misleading.
-        </p>
-      </div>
-
-      {/* Stale warning */}
       {isStale && (
         <div
-          className="mx-[38px] mt-3 flex items-start gap-2 rounded-md border border-amber-200 bg-amber-50 px-3 py-2 text-xs text-amber-800"
+          className="flex items-start gap-2 border-b border-amber-200 bg-amber-50 px-[38px] py-2 text-xs text-amber-800"
         >
           <AlertTriangle className="h-4 w-4 mt-0.5 shrink-0" />
           <div className="flex-1">
@@ -172,51 +141,74 @@ export function ChecklistSignOff({ checklist }: { checklist: Checklist }) {
         </div>
       )}
 
-      {/* Signoff body */}
-      <div className="px-[38px] py-4 space-y-3">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-2xl">
-          <div className="space-y-1.5">
-            <Label className="text-xs text-foreground">Preparer Name</Label>
-            <Input
-              value={isSigned ? record!.preparerName : draftName}
-              onChange={(e) => setDraftName(e.target.value)}
-              disabled={isSigned}
-              placeholder="Enter preparer name"
-              className="h-9 bg-background"
-            />
-          </div>
-          <div className="space-y-1.5">
-            <Label className="text-xs text-foreground">Date</Label>
-            <Input
-              type="date"
-              value={isSigned ? record!.signedAt.slice(0, 10) : draftDate}
-              onChange={(e) => setDraftDate(e.target.value)}
-              disabled={isSigned}
-              className="h-9 bg-background w-fit"
-            />
-          </div>
-        </div>
+      <div className="dv-question relative">
+        <div className="relative flex items-stretch border border-transparent">
+          <div className="dv-question-content py-0 pl-[37px] pr-4 flex-1 min-w-0 flex items-stretch">
+            {/* Column 1 — Disclaimer (question column) */}
+            <div
+              className="flex items-center gap-2 min-w-0"
+              style={{ flex: `0 0 ${COL_Q}%` }}
+            >
+              <div className="text-sm text-foreground flex-1 p-1.5 leading-relaxed">
+                {DISCLAIMER}
+              </div>
+            </div>
 
-        <div className="pt-1 flex items-center gap-3">
-          {!isSigned ? (
-            <Button
-              size="sm"
-              onClick={handleSignOff}
-              className="h-8"
-              disabled={!draftName.trim() || !draftDate}
+            <Separator />
+
+            {/* Column 2 — Date */}
+            <div
+              className="flex items-center px-2 py-2"
+              style={{ flex: `0 0 ${COL_DATE}%` }}
             >
-              Sign Off
-            </Button>
-          ) : (
-            <Button
-              size="sm"
-              variant="destructive"
-              onClick={handleUnsign}
-              className="h-8"
+              <Input
+                value={dateValue}
+                disabled
+                readOnly
+                placeholder=""
+                className="h-8 bg-background text-sm w-full"
+              />
+            </div>
+
+            <Separator />
+
+            {/* Column 3 — Preparer Name */}
+            <div
+              className="flex items-center px-2 py-2"
+              style={{ flex: `0 0 ${COL_NAME}%` }}
             >
-              Unsign
-            </Button>
-          )}
+              <Input
+                value={nameValue}
+                disabled
+                readOnly
+                placeholder=""
+                className="h-8 bg-background text-sm w-full"
+              />
+            </div>
+
+            <Separator />
+
+            {/* Column 4 — Sign Off action */}
+            <div
+              className="flex items-center justify-center px-2 py-2"
+              style={{ flex: `0 0 ${COL_ACTION}%` }}
+            >
+              {!isSigned ? (
+                <Button size="sm" onClick={handleSignOff} className="h-8">
+                  Sign Off
+                </Button>
+              ) : (
+                <Button
+                  size="sm"
+                  variant="destructive"
+                  onClick={handleUnsign}
+                  className="h-8"
+                >
+                  Unsign
+                </Button>
+              )}
+            </div>
+          </div>
         </div>
       </div>
     </div>
