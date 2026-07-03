@@ -943,7 +943,7 @@ export default function CreateEngagement() {
                     </span>
                     <div className="flex gap-3 flex-1 min-w-0">
                       <div className="flex-1 min-w-0 max-w-44"><LabeledInput label="Start Date" value={row.start} onChange={row.setStart} required={row.required} icon={<Calendar className="h-4 w-4" />} /></div>
-                      <div className="flex-1 min-w-0 max-w-44"><LabeledInput label="End Date" value={row.end} onChange={row.setEnd} icon={<Calendar className="h-4 w-4" />} /></div>
+                      <div className="flex-1 min-w-0 max-w-44"><LabeledInput label="End Date" value={row.end} onChange={row.setEnd} required={row.required} icon={<Calendar className="h-4 w-4" />} /></div>
                     </div>
                   </div>
                 ))}
