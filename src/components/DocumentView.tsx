@@ -680,9 +680,9 @@ function CellContentRenderer({
               {!isPreviewMode && (
                 <button
                   onClick={(e) => { e.stopPropagation(); onUpdateCell(cellIdx, ''); }}
-                  className="inline-flex items-center justify-center whitespace-nowrap text-sm font-semibold rounded-[10px] border border-primary/70 bg-background text-primary hover:bg-primary/10 px-3 h-8 transition-colors shrink-0"
+                  className="inline-flex items-center justify-center whitespace-nowrap text-sm font-semibold rounded-[10px] bg-destructive text-destructive-foreground hover:bg-destructive/90 px-3 h-8 transition-colors shrink-0"
                 >
-                  Undo Sign Off
+                  Unsign
                 </button>
               )}
               <div className="flex items-center gap-2 text-sm text-foreground">
