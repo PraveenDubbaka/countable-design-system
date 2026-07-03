@@ -1,6 +1,6 @@
 export type AnswerType = 'none' | 'yes-no' | 'yes-no-na' | 'multiple-choice' | 'date' | 'long-answer' | 'answer' | 'reference' | 'amount' | 'follow-up' | 'dropdown' | 'file-upload' | 'toggle';
 
-export type CellBlockType = 'text' | 'heading' | 'small-text' | 'question-number' | 'response' | 'reference-number' | 'sub-items' | 'yes-no' | 'yes-no-na' | 'multiple-choice' | 'date' | 'long-answer' | 'answer' | 'amount' | 'dropdown' | 'toggle' | 'free-text' | 'explanation';
+export type CellBlockType = 'text' | 'heading' | 'small-text' | 'question-number' | 'response' | 'reference-number' | 'sub-items' | 'yes-no' | 'yes-no-na' | 'multiple-choice' | 'date' | 'long-answer' | 'answer' | 'amount' | 'dropdown' | 'toggle' | 'free-text' | 'explanation' | 'signoff';
 
 export interface ColumnCell {
   id: string;

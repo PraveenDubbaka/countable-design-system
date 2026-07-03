@@ -7,7 +7,7 @@ import {
   Paperclip, ToggleLeft, Menu, DollarSign, FileText, Upload, File, X,
   Check, Pencil, Asterisk, Loader2, Search, LayoutGrid, Columns2, Columns3,
   Hash, MessageSquare, BookOpen, List, Heading1, CaseSensitive, Undo2,
-  Eye, EyeOff } from
+  Eye, EyeOff, CheckCircle2, PenLine } from
 'lucide-react';
 import { AddItemAboveIcon, AddItemBelowIcon } from './icons/AddItemIcons';
 import { RefButton } from './RefButton';
@@ -326,7 +326,8 @@ const CELL_BLOCK_OPTIONS: {value: CellBlockType;label: string;icon: React.Elemen
 { value: 'explanation', label: 'Explanation', icon: FileText, bgColor: 'bg-orange-100', iconColor: 'text-orange-600' },
 
 // Structure types
-{ value: 'text', label: 'Text', icon: Type, bgColor: 'bg-slate-100', iconColor: 'text-slate-600' }];
+{ value: 'text', label: 'Text', icon: Type, bgColor: 'bg-slate-100', iconColor: 'text-slate-600' },
+{ value: 'signoff', label: 'Signoff', icon: PenLine, bgColor: 'bg-emerald-100', iconColor: 'text-emerald-600' }];
 
 
 
@@ -662,6 +663,47 @@ function CellContentRenderer({
               onPlaceholderChange={!isPreviewMode && onUpdateCellPlaceholder ? (val) => onUpdateCellPlaceholder(cellIdx, val) : undefined} />
           </div>);
 
+
+      case 'signoff': {
+        const isSigned = cell.content.length > 0;
+        const formatSignDate = (iso: string) => {
+          try {
+            return new Date(iso).toLocaleString(undefined, {
+              year: 'numeric', month: 'short', day: 'numeric',
+              hour: '2-digit', minute: '2-digit',
+            });
+          } catch { return iso; }
+        };
+        if (isSigned) {
+          return (
+            <div className="flex items-center gap-3 py-1">
+              <div className="flex items-center gap-2 text-sm text-foreground">
+                <CheckCircle2 className="h-4 w-4 text-emerald-600 shrink-0" />
+                <span>Signed {formatSignDate(cell.content)} by <strong>Current User</strong></span>
+              </div>
+              {!isPreviewMode && (
+                <button
+                  onClick={(e) => { e.stopPropagation(); onUpdateCell(cellIdx, ''); }}
+                  className="inline-flex items-center justify-center whitespace-nowrap text-sm font-semibold rounded-[10px] border border-primary/70 bg-background text-primary hover:bg-primary/10 px-3 h-8 transition-colors"
+                >
+                  Undo Sign Off
+                </button>
+              )}
+            </div>
+          );
+        }
+        return (
+          <div className="py-1">
+            <button
+              onClick={(e) => { e.stopPropagation(); onUpdateCell(cellIdx, new Date().toISOString()); }}
+              disabled={isPreviewMode}
+              className="inline-flex items-center justify-center whitespace-nowrap text-sm font-semibold rounded-[10px] bg-primary text-primary-foreground hover:bg-primary/90 px-4 h-8 transition-colors disabled:opacity-50 disabled:pointer-events-none"
+            >
+              Sign Off
+            </button>
+          </div>
+        );
+      }
 
       default: // empty / undefined
         if (isPreviewMode) {
