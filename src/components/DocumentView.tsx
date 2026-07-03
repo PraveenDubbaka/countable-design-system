@@ -1781,7 +1781,7 @@ function ObjectiveContent({ objective, isPreviewMode, isGlobalTemplate, onUpdate
 
 // ─── Document Section Block ──────────────────────────────────────────────────
 
-function DocumentSectionBlock({
+export function DocumentSectionBlock({
   section, sectionIndex, onUpdate, onDelete, onAddItem,
   onAddCategoryAtPosition, isPreviewMode, isEngagementMode,
   numberingFormat, applyingQuestionId,
