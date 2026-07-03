@@ -724,8 +724,11 @@ ${note.blocks.map(b => {
               transition={{ duration: 0.2 }} onClick={() => onOpenChange(false)} />
 
             <motion.div
-              className="fixed top-0 right-0 z-50 h-full bg-background border-l border-border flex flex-col shadow-2xl overflow-hidden"
-              style={{ width: 640, maxWidth: '98vw' }}
+              className={cn(
+                "fixed top-0 right-0 z-50 h-full bg-background border-l border-border flex flex-col shadow-2xl overflow-hidden",
+                isFullscreen ? "!w-screen !max-w-none rounded-none" : "rounded-l-2xl"
+              )}
+              style={isFullscreen ? undefined : { width: 640, maxWidth: '98vw' }}
               initial={{ x: '100%', opacity: 0.6 }} animate={{ x: 0, opacity: 1 }}
               exit={{ x: '100%', opacity: 0.6 }}
               transition={{ type: 'spring', damping: 32, stiffness: 280, mass: 0.85 }}
