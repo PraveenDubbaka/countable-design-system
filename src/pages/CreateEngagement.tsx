@@ -278,7 +278,7 @@ const sc = ic + " appearance-none cursor-pointer";
 
 const InlineRow = ({ label, required, children }: { label: string; required?: boolean; children: React.ReactNode }) => (
   <div className="flex items-center gap-4 py-2.5 border-b border-border/40 last:border-0">
-    <span className="text-sm text-foreground/70 w-44 shrink-0">
+    <span className="text-sm text-foreground w-44 shrink-0">
       {label}{required && <span className="text-destructive ml-0.5">*</span>}
     </span>
     <div className="flex-1 min-w-0">{children}</div>
@@ -923,44 +923,75 @@ export default function CreateEngagement() {
                 </InlineRow>
               </SectionCard>
 
-              {/* Validation gate */}
-              {engagementDetailsValid ? (
-                <SectionCard icon={<Calendar className="h-5 w-5" />} title="Engagement Period">
-                  <InlineRow label="Period Type" required>
-                    <div className="relative">
-                      <select value={periodType} onChange={e => setPeriodType(e.target.value)} className={sc}>
-                        {periodTypeOptions.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
-                      </select>
-                      <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 pointer-events-none text-muted-foreground" />
+              <SectionCard icon={<Calendar className="h-5 w-5" />} title="Engagement Period">
+                <div className="space-y-5">
+                  {/* Period Type */}
+                  <div className="flex items-center gap-8">
+                    <label className="text-sm text-muted-foreground w-24 whitespace-nowrap">Period Type<span className="text-destructive">*</span></label>
+                    <div className="w-64">
+                      <LabeledSelect
+                        label=""
+                        value={periodType}
+                        onChange={setPeriodType}
+                        options={periodTypeOptions}
+                      />
                     </div>
-                  </InlineRow>
-                  {[
-                    { label: "Current Year", required: true, start: currentYearStart, setStart: setCurrentYearStart, end: currentYearEnd, setEnd: setCurrentYearEnd, noData: null as boolean | null, setNoData: null as ((v: boolean) => void) | null },
-                    { label: "Prior Year 1", required: false, start: priorYear1Start, setStart: setPriorYear1Start, end: priorYear1End, setEnd: setPriorYear1End, noData: priorYear1NoData, setNoData: setPriorYear1NoData },
-                    { label: "Prior Year 2", required: false, start: priorYear2Start, setStart: setPriorYear2Start, end: priorYear2End, setEnd: setPriorYear2End, noData: priorYear2NoData, setNoData: setPriorYear2NoData },
-                  ].map(row => (
-                    <InlineRow key={row.label} label={row.label} required={row.required}>
-                      <div className="flex items-center gap-2">
-                        <input type="text" value={row.start} onChange={e => row.setStart(e.target.value)} placeholder="MM/DD/YYYY"
-                          className="input-double-border w-32 h-9 px-3 py-2 text-sm text-foreground rounded-[10px] outline-none transition-all duration-200 bg-white border border-[#dcdfe4] dark:border-[hsl(220_15%_30%)] dark:bg-card hover:border-[hsl(210_25%_75%)] dark:hover:border-[hsl(220_15%_40%)]" />
-                        <span className="text-muted-foreground text-xs">→</span>
-                        <input type="text" value={row.end} onChange={e => row.setEnd(e.target.value)} placeholder="MM/DD/YYYY"
-                          className="input-double-border w-32 h-9 px-3 py-2 text-sm text-foreground rounded-[10px] outline-none transition-all duration-200 bg-white border border-[#dcdfe4] dark:border-[hsl(220_15%_30%)] dark:bg-card hover:border-[hsl(210_25%_75%)] dark:hover:border-[hsl(220_15%_40%)]" />
-                        {row.setNoData && (
-                          <label className="flex items-center gap-1.5 cursor-pointer ml-1 whitespace-nowrap">
-                            <Checkbox checked={row.noData as boolean} onCheckedChange={v => row.setNoData!(v as boolean)} />
-                            <span className="text-xs text-muted-foreground">No data</span>
-                          </label>
-                        )}
+                  </div>
+
+                  {/* Current Year */}
+                  <div className="flex items-start gap-8">
+                    <label className="text-sm text-muted-foreground w-24 pt-6 whitespace-nowrap">Current Year<span className="text-destructive">*</span></label>
+                    <div className="flex gap-4">
+                      <div className="w-40">
+                        <LabeledInput label="Start Date" value={currentYearStart} onChange={setCurrentYearStart} required icon={<Calendar className="h-4 w-4" />} />
                       </div>
-                    </InlineRow>
-                  ))}
-                </SectionCard>
-              ) : (
-                <div className="flex items-center gap-2.5 px-4 py-3 rounded-lg bg-muted/40 border border-border/50">
-                  <p className="text-sm text-muted-foreground">Complete the required engagement details above to continue.</p>
+                      <div className="w-40">
+                        <LabeledInput label="End Date" value={currentYearEnd} onChange={setCurrentYearEnd} required icon={<Calendar className="h-4 w-4" />} />
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Prior Year 1 */}
+                  <div className="flex items-start gap-8">
+                    <label className="text-sm text-muted-foreground w-24 pt-6 whitespace-nowrap">Prior Year 1</label>
+                    <div className="flex gap-4">
+                      <div className="w-40">
+                        <LabeledInput label="Start Date" value={priorYear1Start} onChange={setPriorYear1Start} icon={<Calendar className="h-4 w-4" />} />
+                      </div>
+                      <div className="w-40">
+                        <LabeledInput label="End Date" value={priorYear1End} onChange={setPriorYear1End} icon={<Calendar className="h-4 w-4" />} />
+                      </div>
+                      <div className="flex items-end gap-2 pb-3">
+                        <Checkbox checked={priorYear1NoData} onCheckedChange={(checked) => setPriorYear1NoData(checked as boolean)} />
+                        <div className="text-sm">
+                          <span className="text-muted-foreground">No Data Available</span>
+                          <p className="text-xs text-muted-foreground">Prior Year 1 data upload will be disabled</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Prior Year 2 */}
+                  <div className="flex items-start gap-8">
+                    <label className="text-sm text-muted-foreground w-24 pt-6 whitespace-nowrap">Prior Year 2</label>
+                    <div className="flex gap-4">
+                      <div className="w-40">
+                        <LabeledInput label="Start Date" value={priorYear2Start} onChange={setPriorYear2Start} icon={<Calendar className="h-4 w-4" />} />
+                      </div>
+                      <div className="w-40">
+                        <LabeledInput label="End Date" value={priorYear2End} onChange={setPriorYear2End} icon={<Calendar className="h-4 w-4" />} />
+                      </div>
+                      <div className="flex items-end gap-2 pb-3">
+                        <Checkbox checked={priorYear2NoData} onCheckedChange={(checked) => setPriorYear2NoData(checked as boolean)} />
+                        <div className="text-sm">
+                          <span className="text-muted-foreground">No Data Available</span>
+                          <p className="text-xs text-muted-foreground">Prior Year 2 data upload will be disabled</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                 </div>
-              )}
+              </SectionCard>
               </div>
 
               {/* RIGHT COLUMN: Smart questionnaire (audit only, sticky) */}
