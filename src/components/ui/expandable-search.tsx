@@ -67,7 +67,8 @@ export const ExpandableSearch = React.forwardRef<HTMLInputElement, ExpandableSea
             variant="secondary"
             size="sm"
             className="h-9 min-w-9 px-0"
-            onClick={() => setExpanded(true)}
+            onClick={() => !disabled && setExpanded(true)}
+            disabled={disabled}
             aria-label="Open search"
           >
             <Search className="h-4 w-4" />
