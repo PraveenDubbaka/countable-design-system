@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { AlertTriangle } from "lucide-react";
+import { AlertTriangle, CheckCircle2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { CURRENT_USER } from "@/lib/useTimeEntries";
@@ -121,6 +121,20 @@ export function ChecklistSignOff({ checklist }: { checklist: Checklist }) {
       className="dv-section rounded-[8px] border-[0.5px] overflow-hidden bg-card"
       style={{ borderColor: "var(--dv-separator)" }}
     >
+      {/* Section header — matches checklist section header pattern */}
+      <div
+        className="dv-section-header flex items-center gap-3 pl-[38px] pr-4 py-0 relative border-b"
+        style={{ borderColor: "var(--dv-separator)", height: "48px", minHeight: "48px" }}
+      >
+        <span className="text-sm font-semibold text-foreground">Sign Off</span>
+        {isSigned && (
+          <span className="inline-flex items-center gap-1.5 text-xs text-muted-foreground">
+            <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600" />
+            Signed {formatDate(record!.signedAt)} by {record!.preparerName}
+          </span>
+        )}
+      </div>
+
       {isStale && (
         <div
           className="flex items-start gap-2 border-b border-amber-200 bg-amber-50 px-[38px] py-2 text-xs text-amber-800"
