@@ -5,7 +5,7 @@ import {
   List, ListOrdered, CheckSquare, Minus, Sparkles,
   Mic, MicOff, Send, Wand2, Loader2, Check, Trash2, Table2,
   Heading1, Heading2, Heading3, AlignLeft, Phone, PhoneOff,
-  FileUp, Download, MoreHorizontal,
+  FileUp, Download, MoreHorizontal, ExternalLink, Maximize2, Minimize2,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import {
