@@ -2494,6 +2494,9 @@ export function DocumentView({
           </Fragment>
           )}
         </SortableContext>
+
+        {/* Sign Off — appears at the bottom of every checklist */}
+        {isPreviewMode && <ChecklistSignOff checklist={checklist} />}
       </div>
 
       {/* Drag overlay */}
