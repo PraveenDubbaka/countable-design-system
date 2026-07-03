@@ -273,6 +273,44 @@ const EngagementConfigSidePanel = ({
   );
 };
 
+const ic = "input-double-border w-full h-9 px-3 py-2 text-sm text-foreground rounded-[10px] outline-none transition-all duration-200 bg-white border border-[#dcdfe4] dark:border-[hsl(220_15%_30%)] dark:bg-card hover:border-[hsl(210_25%_75%)] dark:hover:border-[hsl(220_15%_40%)]";
+const sc = ic + " appearance-none cursor-pointer";
+
+const InlineRow = ({ label, required, children }: { label: string; required?: boolean; children: React.ReactNode }) => (
+  <div className="flex items-center gap-4 py-2.5 border-b border-border/40 last:border-0">
+    <span className="text-sm text-foreground/70 w-44 shrink-0">
+      {label}{required && <span className="text-destructive ml-0.5">*</span>}
+    </span>
+    <div className="flex-1 min-w-0">{children}</div>
+  </div>
+);
+
+const BoolToggle = ({ value, onChange }: { value: boolean; onChange: (v: boolean) => void }) => (
+  <div className="inline-flex rounded-[8px] border border-border overflow-hidden text-xs font-medium shrink-0 select-none">
+    <button type="button" onClick={() => onChange(true)}
+      className={`px-3.5 py-1.5 transition-colors ${value ? 'bg-primary text-white' : 'text-muted-foreground hover:bg-muted'}`}>
+      Yes
+    </button>
+    <button type="button" onClick={() => onChange(false)}
+      className={`px-3.5 py-1.5 transition-colors border-l border-border ${!value ? 'bg-muted text-foreground font-semibold' : 'text-muted-foreground hover:bg-muted'}`}>
+      No
+    </button>
+  </div>
+);
+
+const StrToggle = ({ value, onChange }: { value: string; onChange: (v: string) => void }) => (
+  <div className="inline-flex rounded-[8px] border border-border overflow-hidden text-xs font-medium shrink-0 select-none">
+    <button type="button" onClick={() => onChange('yes')}
+      className={`px-3.5 py-1.5 transition-colors ${value === 'yes' ? 'bg-primary text-white' : 'text-muted-foreground hover:bg-muted'}`}>
+      Yes
+    </button>
+    <button type="button" onClick={() => onChange('no')}
+      className={`px-3.5 py-1.5 transition-colors border-l border-border ${value === 'no' ? 'bg-muted text-foreground font-semibold' : 'text-muted-foreground hover:bg-muted'}`}>
+      No
+    </button>
+  </div>
+);
+
 const MultiSelectDropdown = ({
   label,
   options,
@@ -801,10 +839,11 @@ export default function CreateEngagement() {
             </button>
           </div>
 
-          <div className={isAudit ? "grid grid-cols-[1fr_320px] gap-5 items-start" : "flex flex-col gap-5"}>
-            {/* Left column */}
-            <div className="flex flex-col gap-5">
-              {/* Client Info Section */}
+          <div className={isAudit ? "grid grid-cols-[1fr_380px] gap-5 items-start" : "flex flex-col gap-5"}>
+            {/* LEFT COLUMN: Core form data */}
+            <div className="flex flex-col gap-5 min-w-0">
+
+              {/* Client Info Banner */}
               {clientInfo && (
                 <div className="bg-card rounded-lg shadow-sm px-6 py-5 border border-border">
                   <h2 className="text-sm font-semibold text-foreground mb-4">Client Info</h2>
@@ -822,9 +861,7 @@ export default function CreateEngagement() {
                         <span className="text-xs font-semibold text-primary">{col.label}</span>
                         {Array.isArray(col.value) ? (
                           <div className="flex items-center gap-1.5">
-                            {col.value.includes("quickbooks") && (
-                              <img src={intuitQuickbooksLogo} alt="QuickBooks" className="h-5 object-contain" />
-                            )}
+                            {col.value.includes("quickbooks") && <img src={intuitQuickbooksLogo} alt="QuickBooks" className="h-5 object-contain" />}
                           </div>
                         ) : (col as any).isLink ? (
                           <span className="text-sm text-link font-medium cursor-pointer hover:underline">{col.value as string}</span>
@@ -837,168 +874,90 @@ export default function CreateEngagement() {
                 </div>
               )}
 
-              {/* Engagement Details Section */}
+              {/* Engagement Details — inline labels */}
               <SectionCard icon={<Briefcase className="h-5 w-5" />} title="Engagement Details">
-                <div className="grid grid-cols-4 gap-4">
-                  <LabeledInput
-                    label="Engagement ID"
-                    value={engagementId}
-                    onChange={setEngagementId}
-                    required
-                    icon={<Pencil className="h-4 w-4" />}
-                  />
-                  <LabeledInput
-                    label="Engagement Template"
-                    value={engagementTemplate}
-                    onChange={setEngagementTemplate}
-                    required
-                    icon={<ExternalLink className="h-4 w-4" />}
-                  />
-                  <LabeledSelect
-                    label="Engagement Type"
-                    value={engagementType}
-                    onChange={setEngagementType}
-                    options={engagementTypeOptions}
-                    required
-                  />
-                  <LabeledInput
-                    label="Budget($)"
-                    value={budget}
-                    onChange={setBudget}
-                    required
-                    type="text"
-                  />
-                  <LabeledSelect
-                    label="Accounting Standards"
-                    value={accountingStandards}
-                    onChange={setAccountingStandards}
-                    options={accountingStandardsOptions}
-                    required
-                  />
-                  <LabeledSelect
-                    label="Additional disclosures"
-                    value={additionalDisclosures}
-                    onChange={setAdditionalDisclosures}
-                    options={isAudit
-                      ? AUDIT_DISCLOSURE_OPTIONS.map(o => ({ value: o.label, label: o.label }))
-                      : disclosureOptions}
-                    required
-                  />
-                </div>
+                <InlineRow label="Engagement ID" required>
+                  <div className="relative">
+                    <input type="text" value={engagementId} onChange={e => setEngagementId(e.target.value)} className={ic + " pr-10"} />
+                    <Pencil className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                  </div>
+                </InlineRow>
+                <InlineRow label="Template" required>
+                  <div className="relative">
+                    <input type="text" value={engagementTemplate} onChange={e => setEngagementTemplate(e.target.value)} className={ic + " pr-10"} />
+                    <ExternalLink className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                  </div>
+                </InlineRow>
+                <InlineRow label="Engagement Type" required>
+                  <div className="relative">
+                    <select value={engagementType} onChange={e => setEngagementType(e.target.value)} className={sc}>
+                      {engagementTypeOptions.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
+                    </select>
+                    <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 pointer-events-none text-muted-foreground" />
+                  </div>
+                </InlineRow>
+                <InlineRow label="Budget ($)" required>
+                  <input type="text" value={budget} onChange={e => setBudget(e.target.value)} className={ic} />
+                </InlineRow>
+                <InlineRow label="Accounting Standards" required>
+                  <div className="relative">
+                    <select value={accountingStandards} onChange={e => setAccountingStandards(e.target.value)} className={sc}>
+                      <option value="">Select...</option>
+                      {accountingStandardsOptions.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
+                    </select>
+                    <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 pointer-events-none text-muted-foreground" />
+                  </div>
+                </InlineRow>
+                <InlineRow label="Additional Disclosures" required>
+                  <div className="relative">
+                    <select value={additionalDisclosures} onChange={e => setAdditionalDisclosures(e.target.value)} className={sc}>
+                      <option value="">Select...</option>
+                      {(isAudit ? AUDIT_DISCLOSURE_OPTIONS.map(o => ({ value: o.label, label: o.label })) : disclosureOptions).map(o =>
+                        <option key={o.value} value={o.value}>{o.label}</option>
+                      )}
+                    </select>
+                    <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 pointer-events-none text-muted-foreground" />
+                  </div>
+                </InlineRow>
               </SectionCard>
 
+              {/* Validation gate */}
               {engagementDetailsValid ? (
                 <>
-                  {/* Audit Configuration — only for Audit (AUD) */}
-                  {isAudit && (
-                    <SectionCard icon={<Settings2 className="h-5 w-5" />} title="Audit Configuration">
-                      <div className="grid grid-cols-4 gap-5 items-start">
-                        <LabeledSelect
-                          label="Accounting Framework"
-                          value={accountingFramework}
-                          onChange={setAccountingFramework}
-                          options={ACCOUNTING_FRAMEWORKS.map(fw => ({ value: fw, label: fw }))}
-                          required
-                        />
-                        <LabeledSelect
-                          label="First-Year Audit?"
-                          value={firstYearAudit ? "yes" : "no"}
-                          onChange={v => { setFirstYearAudit(v === "yes"); if (v !== "yes") { setFirstYearOnPlatform(""); setIsRollForward(""); setFirstYearTemplates(new Set()); } }}
-                          options={[
-                            { value: "no", label: "No" },
-                            { value: "yes", label: "Yes" },
-                          ]}
-                        />
-                        <div className="flex flex-col gap-1">
-                          <label className="text-xs font-medium text-foreground">Use condensed audit forms?</label>
-                          <div className="flex items-center gap-4 h-9">
-                            <label className="flex items-center gap-1.5 cursor-pointer text-sm text-foreground">
-                              <input type="radio" name="condensedForms" value="yes" checked={condensedForms} onChange={() => setCondensedForms(true)} className="accent-primary" />
-                              Yes
-                            </label>
-                            <label className="flex items-center gap-1.5 cursor-pointer text-sm text-foreground">
-                              <input type="radio" name="condensedForms" value="no" checked={!condensedForms} onChange={() => setCondensedForms(false)} className="accent-primary" />
-                              No
-                            </label>
-                          </div>
-                        </div>
-                        <div className="flex flex-col gap-1">
-                          <label className="text-xs font-medium text-foreground">First-time adoption of accounting standard?</label>
-                          <div className="flex items-center gap-4 h-9">
-                            <label className="flex items-center gap-1.5 cursor-pointer text-sm text-foreground">
-                              <input type="radio" name="firstTimeAdoption" value="yes" checked={firstTimeAdoption} onChange={() => setFirstTimeAdoption(true)} className="accent-primary" />
-                              Yes
-                            </label>
-                            <label className="flex items-center gap-1.5 cursor-pointer text-sm text-foreground">
-                              <input type="radio" name="firstTimeAdoption" value="no" checked={!firstTimeAdoption} onChange={() => setFirstTimeAdoption(false)} className="accent-primary" />
-                              No
-                            </label>
-                          </div>
-                        </div>
-                      </div>
-                    </SectionCard>
-                  )}
-
-                  {/* Engagement Period Section */}
+                  {/* Engagement Period — inline labels */}
                   <SectionCard icon={<Calendar className="h-5 w-5" />} title="Engagement Period">
-                    <div className="space-y-5">
-                      <div className="flex items-center gap-8">
-                        <label className="text-sm text-muted-foreground w-24 whitespace-nowrap">Period Type<span className="text-destructive">*</span></label>
-                        <div className="w-64">
-                          <LabeledSelect label="" value={periodType} onChange={setPeriodType} options={periodTypeOptions} />
-                        </div>
+                    <InlineRow label="Period Type" required>
+                      <div className="relative">
+                        <select value={periodType} onChange={e => setPeriodType(e.target.value)} className={sc}>
+                          {periodTypeOptions.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
+                        </select>
+                        <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 pointer-events-none text-muted-foreground" />
                       </div>
-                      <div className="flex items-start gap-8">
-                        <label className="text-sm text-muted-foreground w-24 pt-6 whitespace-nowrap">Current Year<span className="text-destructive">*</span></label>
-                        <div className="flex gap-4">
-                          <div className="w-40">
-                            <LabeledInput label="Start Date" value={currentYearStart} onChange={setCurrentYearStart} required icon={<Calendar className="h-4 w-4" />} />
-                          </div>
-                          <div className="w-40">
-                            <LabeledInput label="End Date" value={currentYearEnd} onChange={setCurrentYearEnd} required icon={<Calendar className="h-4 w-4" />} />
-                          </div>
+                    </InlineRow>
+                    {[
+                      { label: "Current Year", required: true, start: currentYearStart, setStart: setCurrentYearStart, end: currentYearEnd, setEnd: setCurrentYearEnd, noData: null as boolean | null, setNoData: null as ((v: boolean) => void) | null },
+                      { label: "Prior Year 1", required: false, start: priorYear1Start, setStart: setPriorYear1Start, end: priorYear1End, setEnd: setPriorYear1End, noData: priorYear1NoData, setNoData: setPriorYear1NoData },
+                      { label: "Prior Year 2", required: false, start: priorYear2Start, setStart: setPriorYear2Start, end: priorYear2End, setEnd: setPriorYear2End, noData: priorYear2NoData, setNoData: setPriorYear2NoData },
+                    ].map(row => (
+                      <InlineRow key={row.label} label={row.label} required={row.required}>
+                        <div className="flex items-center gap-2">
+                          <input type="text" value={row.start} onChange={e => row.setStart(e.target.value)} placeholder="MM/DD/YYYY"
+                            className="input-double-border w-32 h-9 px-3 py-2 text-sm text-foreground rounded-[10px] outline-none transition-all duration-200 bg-white border border-[#dcdfe4] dark:border-[hsl(220_15%_30%)] dark:bg-card hover:border-[hsl(210_25%_75%)] dark:hover:border-[hsl(220_15%_40%)]" />
+                          <span className="text-muted-foreground text-xs">→</span>
+                          <input type="text" value={row.end} onChange={e => row.setEnd(e.target.value)} placeholder="MM/DD/YYYY"
+                            className="input-double-border w-32 h-9 px-3 py-2 text-sm text-foreground rounded-[10px] outline-none transition-all duration-200 bg-white border border-[#dcdfe4] dark:border-[hsl(220_15%_30%)] dark:bg-card hover:border-[hsl(210_25%_75%)] dark:hover:border-[hsl(220_15%_40%)]" />
+                          {row.setNoData && (
+                            <label className="flex items-center gap-1.5 cursor-pointer ml-1 whitespace-nowrap">
+                              <Checkbox checked={row.noData as boolean} onCheckedChange={v => row.setNoData!(v as boolean)} />
+                              <span className="text-xs text-muted-foreground">No data</span>
+                            </label>
+                          )}
                         </div>
-                      </div>
-                      <div className="flex items-start gap-8">
-                        <label className="text-sm text-muted-foreground w-24 pt-6 whitespace-nowrap">Prior Year 1<span className="text-destructive">*</span></label>
-                        <div className="flex gap-4">
-                          <div className="w-40">
-                            <LabeledInput label="Start Date" value={priorYear1Start} onChange={setPriorYear1Start} required icon={<Calendar className="h-4 w-4" />} />
-                          </div>
-                          <div className="w-40">
-                            <LabeledInput label="End Date" value={priorYear1End} onChange={setPriorYear1End} required icon={<Calendar className="h-4 w-4" />} />
-                          </div>
-                          <div className="flex items-end gap-2 pb-3">
-                            <Checkbox checked={priorYear1NoData} onCheckedChange={(checked) => setPriorYear1NoData(checked as boolean)} />
-                            <div className="text-sm">
-                              <span className="text-muted-foreground">No Data Available</span>
-                              <p className="text-xs text-muted-foreground">Prior Year 1 data upload will be disabled</p>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                      <div className="flex items-start gap-8">
-                        <label className="text-sm text-muted-foreground w-24 pt-6 whitespace-nowrap">Prior Year 2<span className="text-destructive">*</span></label>
-                        <div className="flex gap-4">
-                          <div className="w-40">
-                            <LabeledInput label="Start Date" value={priorYear2Start} onChange={setPriorYear2Start} required icon={<Calendar className="h-4 w-4" />} />
-                          </div>
-                          <div className="w-40">
-                            <LabeledInput label="End Date" value={priorYear2End} onChange={setPriorYear2End} required icon={<Calendar className="h-4 w-4" />} />
-                          </div>
-                          <div className="flex items-end gap-2 pb-3">
-                            <Checkbox checked={priorYear2NoData} onCheckedChange={(checked) => setPriorYear2NoData(checked as boolean)} />
-                            <div className="text-sm">
-                              <span className="text-muted-foreground">No Data Available</span>
-                              <p className="text-xs text-muted-foreground">Prior Year 2 data upload will be disabled</p>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
+                      </InlineRow>
+                    ))}
                   </SectionCard>
 
-                  {/* Assigned Team Section */}
+                  {/* Assigned Team */}
                   <SectionCard
                     icon={<Users className="h-5 w-5" />}
                     title="Assigned team"
@@ -1007,17 +966,11 @@ export default function CreateEngagement() {
                       <div className="flex items-center gap-2">
                         <div className="relative">
                           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                          <input
-                            type="text"
-                            placeholder="Search"
-                            value={teamSearch}
-                            onChange={(e) => setTeamSearch(e.target.value)}
-                            className="input-double-border pl-9 pr-3 h-9 text-sm bg-card border border-border rounded-[10px] outline-none w-40 text-foreground placeholder:text-muted-foreground"
-                          />
+                          <input type="text" placeholder="Search" value={teamSearch} onChange={e => setTeamSearch(e.target.value)}
+                            className="input-double-border pl-9 pr-3 h-9 text-sm bg-card border border-border rounded-[10px] outline-none w-40 text-foreground placeholder:text-muted-foreground" />
                         </div>
                         <Button variant="outline" onClick={deleteSelected} disabled={selectedIds.size === 0} className="h-9 px-3 gap-1.5 text-sm">
-                          <Trash2 className="h-4 w-4" />
-                          Delete
+                          <Trash2 className="h-4 w-4" />Delete
                         </Button>
                       </div>
                     }
@@ -1027,10 +980,7 @@ export default function CreateEngagement() {
                         <thead>
                           <tr className="bg-muted/60 border-b border-border">
                             <th className="text-left px-4 py-3 w-10">
-                              <Checkbox
-                                checked={teamMembers.length > 0 && selectedIds.size === teamMembers.length}
-                                onCheckedChange={(v) => setSelectedIds(v ? new Set(teamMembers.map(m => m.id)) : new Set())}
-                              />
+                              <Checkbox checked={teamMembers.length > 0 && selectedIds.size === teamMembers.length} onCheckedChange={v => setSelectedIds(v ? new Set(teamMembers.map(m => m.id)) : new Set())} />
                             </th>
                             <th className="text-left px-4 py-3 text-sm font-semibold text-foreground whitespace-nowrap">Role<span className="text-destructive ml-0.5">*</span></th>
                             <th className="text-left px-4 py-3 text-sm font-semibold text-foreground whitespace-nowrap">Team Member<span className="text-destructive ml-0.5">*</span></th>
@@ -1046,33 +996,13 @@ export default function CreateEngagement() {
                         <tbody>
                           {filteredMembers.map(member =>
                             pendingRow?.mode === 'edit' && pendingRow.originalId === member.id ? (
-                              <TeamMemberEditRow
-                                key={member.id}
-                                draft={pendingRow.draft}
-                                onChangeDraft={d => setPendingRow({ mode: 'edit', originalId: member.id, draft: d })}
-                                onConfirm={confirmPendingRow}
-                                onCancel={cancelPendingRow}
-                                roleOptions={roleOptions}
-                              />
+                              <TeamMemberEditRow key={member.id} draft={pendingRow.draft} onChangeDraft={d => setPendingRow({ mode: 'edit', originalId: member.id, draft: d })} onConfirm={confirmPendingRow} onCancel={cancelPendingRow} roleOptions={roleOptions} />
                             ) : (
-                              <TeamMemberViewRow
-                                key={member.id}
-                                member={member}
-                                checked={selectedIds.has(member.id)}
-                                onCheck={() => toggleSelect(member.id)}
-                                onEdit={() => startEditMember(member)}
-                                onDelete={() => deleteMember(member.id)}
-                              />
+                              <TeamMemberViewRow key={member.id} member={member} checked={selectedIds.has(member.id)} onCheck={() => toggleSelect(member.id)} onEdit={() => startEditMember(member)} onDelete={() => deleteMember(member.id)} />
                             )
                           )}
                           {pendingRow?.mode === 'add' && (
-                            <TeamMemberEditRow
-                              draft={pendingRow.draft}
-                              onChangeDraft={d => setPendingRow({ mode: 'add', draft: d })}
-                              onConfirm={confirmPendingRow}
-                              onCancel={cancelPendingRow}
-                              roleOptions={roleOptions}
-                            />
+                            <TeamMemberEditRow draft={pendingRow.draft} onChangeDraft={d => setPendingRow({ mode: 'add', draft: d })} onConfirm={confirmPendingRow} onCancel={cancelPendingRow} roleOptions={roleOptions} />
                           )}
                         </tbody>
                         <tfoot>
@@ -1089,14 +1019,9 @@ export default function CreateEngagement() {
                       </table>
                     </div>
                     <div className="mt-4">
-                      <button
-                        type="button"
-                        onClick={startAddMember}
-                        disabled={!!pendingRow}
-                        className="inline-flex items-center gap-1.5 h-9 px-4 text-sm font-semibold rounded-[10px] bg-[#0C2D55] text-white hover:bg-[#0a2447] disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
-                      >
-                        <Plus className="h-4 w-4" />
-                        Add Member
+                      <button type="button" onClick={startAddMember} disabled={!!pendingRow}
+                        className="inline-flex items-center gap-1.5 h-9 px-4 text-sm font-semibold rounded-[10px] bg-[#0C2D55] text-white hover:bg-[#0a2447] disabled:opacity-40 disabled:cursor-not-allowed transition-colors">
+                        <Plus className="h-4 w-4" />Add Member
                       </button>
                     </div>
                   </SectionCard>
@@ -1108,21 +1033,115 @@ export default function CreateEngagement() {
               )}
             </div>
 
-            {/* Right column — adaptive configuration panel (audit only) */}
+            {/* RIGHT COLUMN: Smart questionnaire (audit only, sticky) */}
             {isAudit && (
-              <div className="sticky top-6 flex flex-col gap-4">
-                <EngagementConfigSidePanel
-                  showFirstYearOnPlatform={firstYearAudit}
-                  firstYearOnPlatform={firstYearOnPlatform}
-                  onFirstYearOnPlatformChange={v => { setFirstYearOnPlatform(v); setIsRollForward(""); }}
-                  showRollForward={firstYearAudit && firstYearOnPlatform === "no"}
-                  isRollForward={isRollForward}
-                  onRollForwardChange={setIsRollForward}
-                  showAnnualize={periodType === "Interim (6-month)"}
-                  annualizeInterim={annualizeInterim}
-                  onAnnualizeChange={setAnnualizeInterim}
-                  firstTimeAdoption={firstTimeAdoption}
-                />
+              <div className="sticky top-6">
+                <div className="bg-card rounded-lg border border-border shadow-sm overflow-hidden">
+                  {/* Panel header */}
+                  <div className="px-5 py-4 border-b border-border bg-muted/30">
+                    <div className="flex items-center gap-2">
+                      <Settings2 className="h-4 w-4 text-primary" />
+                      <h3 className="text-sm font-semibold text-foreground">Audit Configuration</h3>
+                    </div>
+                    <p className="text-xs text-muted-foreground mt-0.5">Answer each question to configure your engagement.</p>
+                  </div>
+
+                  {/* Accounting Framework — always visible */}
+                  <div className="px-5 py-4 border-b border-border/60">
+                    <label className="text-xs font-medium text-foreground block mb-1.5">
+                      Accounting Framework<span className="text-destructive ml-0.5">*</span>
+                    </label>
+                    <div className="relative">
+                      <select value={accountingFramework} onChange={e => setAccountingFramework(e.target.value)} className={sc}>
+                        <option value="">Select...</option>
+                        {ACCOUNTING_FRAMEWORKS.map(fw => <option key={fw} value={fw}>{fw}</option>)}
+                      </select>
+                      <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 pointer-events-none text-muted-foreground" />
+                    </div>
+                  </div>
+
+                  {/* Questions — unlocked after engagement details filled */}
+                  {engagementDetailsValid ? (
+                    <div>
+                      {/* FIRST-YEAR AUDIT */}
+                      <div className="px-5 pt-4 pb-3 border-b border-border/30 space-y-3">
+                        <p className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground/60">First-Year Audit</p>
+                        <div className="flex items-start justify-between gap-3">
+                          <div>
+                            <p className="text-sm text-foreground leading-snug">First year of audit?</p>
+                            <p className="text-xs text-muted-foreground mt-0.5">Adds IE checklist and predecessor letter.</p>
+                          </div>
+                          <BoolToggle value={firstYearAudit} onChange={v => { setFirstYearAudit(v); if (!v) { setFirstYearOnPlatform(""); setIsRollForward(""); setFirstYearTemplates(new Set()); }}} />
+                        </div>
+                        {firstYearAudit && (
+                          <div className="ml-3 pl-3 border-l-2 border-primary/30 space-y-3">
+                            <div className="flex items-start justify-between gap-3">
+                              <div>
+                                <p className="text-sm text-foreground leading-snug">First audit on this platform?</p>
+                                <p className="text-xs text-muted-foreground mt-0.5">No = prior files exist for carry-forward.</p>
+                              </div>
+                              <StrToggle value={firstYearOnPlatform} onChange={v => { setFirstYearOnPlatform(v); setIsRollForward(""); }} />
+                            </div>
+                            {firstYearOnPlatform === "no" && (
+                              <div className="ml-3 pl-3 border-l-2 border-amber-300/70 space-y-2">
+                                <div className="flex items-start justify-between gap-3">
+                                  <div>
+                                    <p className="text-sm text-foreground leading-snug">Is this a roll-forward?</p>
+                                    <p className="text-xs text-muted-foreground mt-0.5">Copies prior-year files into this engagement.</p>
+                                  </div>
+                                  <StrToggle value={isRollForward} onChange={setIsRollForward} />
+                                </div>
+                              </div>
+                            )}
+                          </div>
+                        )}
+                      </div>
+
+                      {/* FORM PREFERENCES */}
+                      <div className="px-5 pt-4 pb-3 border-b border-border/30 space-y-3">
+                        <p className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground/60">Form Preferences</p>
+                        <div className="flex items-start justify-between gap-3">
+                          <div>
+                            <p className="text-sm text-foreground leading-snug">Condensed audit forms?</p>
+                            <p className="text-xs text-muted-foreground mt-0.5">Shortened checklists for simpler engagements.</p>
+                          </div>
+                          <BoolToggle value={condensedForms} onChange={setCondensedForms} />
+                        </div>
+                        <div className="flex items-start justify-between gap-3">
+                          <div>
+                            <p className="text-sm text-foreground leading-snug">First-time adoption of standard?</p>
+                            <p className="text-xs text-muted-foreground mt-0.5">Adds opening balance testing procedures.</p>
+                          </div>
+                          <BoolToggle value={firstTimeAdoption} onChange={setFirstTimeAdoption} />
+                        </div>
+                        {firstTimeAdoption && (
+                          <div className="flex items-start gap-2 px-3 py-2.5 rounded-md bg-amber-50 dark:bg-amber-950/20 border border-amber-200/60 dark:border-amber-800/30">
+                            <span className="text-amber-500 text-xs mt-0.5">⚠</span>
+                            <p className="text-xs text-amber-700 dark:text-amber-400">Opening balance testing will be added to this engagement.</p>
+                          </div>
+                        )}
+                      </div>
+
+                      {/* PERIOD SETTINGS — only when interim period selected */}
+                      {periodType === "Interim (6-month)" && (
+                        <div className="px-5 pt-4 pb-3 space-y-3">
+                          <p className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground/60">Period Settings</p>
+                          <div className="flex items-start justify-between gap-3">
+                            <div>
+                              <p className="text-sm text-foreground leading-snug">Annualize income statement data?</p>
+                              <p className="text-xs text-muted-foreground mt-0.5">Extrapolates 6-month figures to full-year equivalent.</p>
+                            </div>
+                            <BoolToggle value={annualizeInterim} onChange={setAnnualizeInterim} />
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  ) : (
+                    <div className="px-5 py-8 text-center">
+                      <p className="text-xs text-muted-foreground italic">Complete the engagement details to unlock configuration options.</p>
+                    </div>
+                  )}
+                </div>
               </div>
             )}
           </div>
