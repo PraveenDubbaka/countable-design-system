@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { CheckCircle2, AlertTriangle, Pencil } from "lucide-react";
+import { CheckCircle2, AlertTriangle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -208,25 +208,14 @@ export function ChecklistSignOff({ checklist }: { checklist: Checklist }) {
               Sign Off
             </Button>
           ) : (
-            <>
-              <Button
-                size="sm"
-                variant="outline"
-                onClick={handleUnsign}
-                className="h-8 gap-1.5"
-              >
-                <Pencil className="h-3.5 w-3.5" />
-                Edit
-              </Button>
-              <Button
-                size="sm"
-                variant="destructive"
-                onClick={handleUnsign}
-                className="h-8"
-              >
-                Unsign
-              </Button>
-            </>
+            <Button
+              size="sm"
+              variant="destructive"
+              onClick={handleUnsign}
+              className="h-8"
+            >
+              Unsign
+            </Button>
           )}
         </div>
       </div>
