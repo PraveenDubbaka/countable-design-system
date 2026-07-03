@@ -37,10 +37,9 @@ function buildDefaultSignOffSection(checklistId: string): Section {
         answerType: "none",
         required: false,
         columnLayout: {
-          columns: 2,
+          columns: 1,
           cells: [
-            { id: `cell-name-${now}`, content: "", placeholder: "Preparer Name", blockType: "free-text" },
-            { id: `cell-date-${now}`, content: "", placeholder: "Date", blockType: "date" },
+            { id: `cell-signoff-${now}`, content: "", blockType: "signoff" },
           ],
         },
       },
