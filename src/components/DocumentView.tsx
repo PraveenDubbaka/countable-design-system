@@ -30,6 +30,7 @@ import {
 '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { CURRENT_USER } from '@/lib/useTimeEntries';
+import { ChecklistSignOff } from '@/components/ChecklistSignOff';
 
 const CURRENT_USER_ASSIGNEE: Assignee = {
   id: 'current-user',
