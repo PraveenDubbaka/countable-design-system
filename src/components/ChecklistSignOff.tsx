@@ -1,14 +1,17 @@
 import { useEffect, useMemo, useState } from "react";
 import { DocumentSectionBlock } from "@/components/DocumentView";
+import { Button } from "@/components/ui/button";
+import { CheckCircle2 } from "lucide-react";
 import type { Checklist, Section, NumberingFormat } from "@/types/checklist";
 
 const storageKey = (id: string) => `checklist-signoff-section:${id}`;
+const stampKey = (id: string) => `checklist-signoff-stamp:${id}`;
 
 const DISCLAIMER =
   "By signing off below, you are agreeing to this statement that you have reviewed all the relevant associated working papers and cleared all your queries and documented the matters appropriately that may cause the financial statements and note disclosures, if applicable, to be false and/or misleading.";
 
-/** Build the default sign-off section. Users can then edit it via the standard
- *  checklist builder (edit text, add/remove columns, add rows, etc). */
+type SignStamp = { preparerName: string; signedAt: string } | null;
+
 function buildDefaultSignOffSection(checklistId: string): Section {
   const now = Date.now();
   return {
@@ -16,7 +19,6 @@ function buildDefaultSignOffSection(checklistId: string): Section {
     title: "Sign Off",
     isExpanded: true,
     questions: [
-      // Disclaimer paragraph (single-column text block)
       {
         id: `signoff-disclaimer-${now}`,
         text: "",
@@ -25,32 +27,34 @@ function buildDefaultSignOffSection(checklistId: string): Section {
         columnLayout: {
           columns: 1,
           cells: [
-            {
-              id: `cell-disclaimer-${now}`,
-              content: DISCLAIMER,
-              blockType: "text",
-            },
+            { id: `cell-disclaimer-${now}`, content: DISCLAIMER, blockType: "text" },
           ],
         },
       },
-      // Signature row: Date · Preparer Name · Sign-off
       {
         id: `signoff-row-${now}`,
         text: "",
         answerType: "none",
         required: false,
         columnLayout: {
-          columns: 3,
+          columns: 2,
           cells: [
             { id: `cell-date-${now}`, content: "", placeholder: "Date", blockType: "date" },
             { id: `cell-name-${now}`, content: "", placeholder: "Preparer Name", blockType: "free-text" },
-            { id: `cell-signoff-${now}`, content: "", placeholder: "Sign Off", blockType: "free-text" },
           ],
         },
       },
     ],
   };
 }
+
+const formatDate = (iso: string) => {
+  try {
+    return new Date(iso).toLocaleString(undefined, {
+      year: "numeric", month: "short", day: "numeric", hour: "2-digit", minute: "2-digit",
+    });
+  } catch { return iso; }
+};
 
 export function ChecklistSignOff({
   checklist,
@@ -66,69 +70,112 @@ export function ChecklistSignOff({
   showNumbering?: boolean;
 }) {
   const key = useMemo(() => storageKey(checklist.id), [checklist.id]);
+  const skey = useMemo(() => stampKey(checklist.id), [checklist.id]);
   const [section, setSection] = useState<Section | null>(null);
+  const [stamp, setStamp] = useState<SignStamp>(null);
 
-  // Load or initialize on mount / checklist change
   useEffect(() => {
     if (!checklist.id) return;
     try {
       const raw = localStorage.getItem(key);
-      if (raw) {
-        setSection(JSON.parse(raw) as Section);
-        return;
-      }
+      setSection(raw ? (JSON.parse(raw) as Section) : buildDefaultSignOffSection(checklist.id));
     } catch {
-      /* fall through */
+      setSection(buildDefaultSignOffSection(checklist.id));
     }
-    setSection(buildDefaultSignOffSection(checklist.id));
-  }, [checklist.id, key]);
+    try {
+      const rawStamp = localStorage.getItem(skey);
+      setStamp(rawStamp ? (JSON.parse(rawStamp) as SignStamp) : null);
+    } catch { setStamp(null); }
+  }, [checklist.id, key, skey]);
 
-  // Persist edits
   useEffect(() => {
     if (!section) return;
-    try {
-      localStorage.setItem(key, JSON.stringify(section));
-    } catch {
-      /* noop */
-    }
+    try { localStorage.setItem(key, JSON.stringify(section)); } catch { /* noop */ }
   }, [section, key]);
 
   if (!section) return null;
 
   const handleAddItem = () => {
-    const newQ = {
-      id: `q-${Date.now()}`,
-      text: "",
-      answerType: "long-answer" as const,
-      required: false,
-    };
-    setSection({ ...section, questions: [...section.questions, newQ] });
+    setSection({
+      ...section,
+      questions: [
+        ...section.questions,
+        { id: `q-${Date.now()}`, text: "", answerType: "long-answer" as const, required: false },
+      ],
+    });
   };
 
-  // Reset the sign-off section back to defaults (delete = reset here)
   const handleReset = () => {
     if (window.confirm("Reset the Sign Off section to its default layout?")) {
-      const fresh = buildDefaultSignOffSection(checklist.id);
-      setSection(fresh);
+      setSection(buildDefaultSignOffSection(checklist.id));
+      localStorage.removeItem(skey);
+      setStamp(null);
     }
   };
 
+  const handleSignOff = () => {
+    // Auto-fill Date + Preparer Name into the last row's cells (positions 0 and 1)
+    const signedAt = new Date().toISOString();
+    const preparerName = "Current User"; // TODO: wire to auth context
+    const questions = [...section.questions];
+    const rowIdx = questions.length - 1;
+    const row = questions[rowIdx];
+    if (row?.columnLayout) {
+      const cells = [...row.columnLayout.cells];
+      if (cells[0]) cells[0] = { ...cells[0], content: signedAt.slice(0, 10) };
+      if (cells[1]) cells[1] = { ...cells[1], content: preparerName };
+      questions[rowIdx] = { ...row, columnLayout: { ...row.columnLayout, cells } };
+      setSection({ ...section, questions });
+    }
+    const newStamp = { preparerName, signedAt };
+    setStamp(newStamp);
+    try { localStorage.setItem(skey, JSON.stringify(newStamp)); } catch { /* noop */ }
+  };
+
+  const handleUnsign = () => {
+    localStorage.removeItem(skey);
+    setStamp(null);
+  };
+
   return (
-    <DocumentSectionBlock
-      section={section}
-      sectionIndex={0}
-      onUpdate={(s) => setSection(s)}
-      onDelete={handleReset}
-      onAddItem={handleAddItem}
-      onAddCategoryAtPosition={() => {
-        /* Sign-off is a singleton section; no-op */
-      }}
-      isPreviewMode={isPreviewMode}
-      isEngagementMode={isEngagementMode}
-      numberingFormat={numberingFormat}
-      showNumbering={showNumbering}
-      onNumberingFormatChange={() => {}}
-      onShowNumberingChange={() => {}}
-    />
+    <div className="space-y-3">
+      <DocumentSectionBlock
+        section={section}
+        sectionIndex={0}
+        onUpdate={(s) => setSection(s)}
+        onDelete={handleReset}
+        onAddItem={handleAddItem}
+        onAddCategoryAtPosition={() => { /* singleton */ }}
+        isPreviewMode={isPreviewMode}
+        isEngagementMode={isEngagementMode}
+        numberingFormat={numberingFormat}
+        showNumbering={showNumbering}
+        onNumberingFormatChange={() => {}}
+        onShowNumberingChange={() => {}}
+      />
+
+      {/* Sign Off action bar */}
+      <div className="flex items-center justify-end gap-3 pr-2">
+        {stamp ? (
+          <>
+            <div className="flex items-center gap-2 text-sm text-foreground">
+              <CheckCircle2 className="h-4 w-4 text-emerald-600" />
+              <span>
+                Signed {formatDate(stamp.signedAt)} by <strong>{stamp.preparerName}</strong>
+              </span>
+            </div>
+            {!isPreviewMode && (
+              <Button variant="outline" size="sm" onClick={handleUnsign}>
+                Undo Sign Off
+              </Button>
+            )}
+          </>
+        ) : (
+          <Button onClick={handleSignOff} disabled={isPreviewMode}>
+            Sign Off
+          </Button>
+        )}
+      </div>
+    </div>
   );
 }

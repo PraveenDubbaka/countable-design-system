@@ -659,9 +659,9 @@ function CellContentRenderer({
               onChange={(val) => onUpdateCell(cellIdx, val)}
               placeholder={cell.placeholder || "Start typing..."}
               minHeight="40px"
-              isCompactMode
               onPlaceholderChange={!isPreviewMode && onUpdateCellPlaceholder ? (val) => onUpdateCellPlaceholder(cellIdx, val) : undefined} />
           </div>);
+
 
       default: // empty / undefined
         if (isPreviewMode) {
