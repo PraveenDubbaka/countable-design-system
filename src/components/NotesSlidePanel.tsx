@@ -424,6 +424,7 @@ export function NotesSlidePanel({ open, onOpenChange, noteId, noteName, engId }:
   const [callState, setCallState] = useState<CallState>('idle');
   const [callSeconds, setCallSeconds] = useState(0);
   const [isDictating, setIsDictating] = useState(false);
+  const [isFullscreen, setIsFullscreen] = useState(false);
 
   const titleRef = useRef<HTMLDivElement>(null);
   const blockRefs = useRef<Map<string, HTMLDivElement>>(new Map());
