@@ -807,6 +807,7 @@ export default function EngagementDetail() {
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [showAddChecklistSheet, setShowAddChecklistSheet] = useState(false);
   const [showRequestPanel, setShowRequestPanel] = useState(false);
+  const [requestPanelFullscreen, setRequestPanelFullscreen] = useState(false);
   const [clipboardResponses, setClipboardResponses] = useState<{ checklistTitle: string; responses: Record<string, { answer: string; explanation?: string }> } | null>(null);
   const [showClipboardPrompt, setShowClipboardPrompt] = useState(false);
   const [lukaOpen, setLukaOpen] = useState(false);
