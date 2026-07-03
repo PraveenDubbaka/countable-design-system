@@ -123,8 +123,9 @@ export function ChecklistSignOff({
     const row = questions[rowIdx];
     if (row?.columnLayout) {
       const cells = [...row.columnLayout.cells];
-      if (cells[0]) cells[0] = { ...cells[0], content: signedAt.slice(0, 10) };
-      if (cells[1]) cells[1] = { ...cells[1], content: preparerName };
+      if (cells[0]) cells[0] = { ...cells[0], content: preparerName };
+      if (cells[1]) cells[1] = { ...cells[1], content: signedAt.slice(0, 10) };
+
       questions[rowIdx] = { ...row, columnLayout: { ...row.columnLayout, cells } };
       setSection({ ...section, questions });
     }
