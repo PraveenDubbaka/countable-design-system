@@ -39,11 +39,12 @@ function buildDefaultSignOffSection(checklistId: string): Section {
         columnLayout: {
           columns: 2,
           cells: [
-            { id: `cell-date-${now}`, content: "", placeholder: "Date", blockType: "date" },
             { id: `cell-name-${now}`, content: "", placeholder: "Preparer Name", blockType: "free-text" },
+            { id: `cell-date-${now}`, content: "", placeholder: "Date", blockType: "date" },
           ],
         },
       },
+
     ],
   };
 }
