@@ -961,13 +961,6 @@ export default function CreateEngagement() {
                       <div className="w-40">
                         <LabeledInput label="End Date" value={priorYear1End} onChange={setPriorYear1End} icon={<Calendar className="h-4 w-4" />} />
                       </div>
-                      <div className="flex items-end gap-2 pb-3">
-                        <Checkbox checked={priorYear1NoData} onCheckedChange={(checked) => setPriorYear1NoData(checked as boolean)} />
-                        <div className="text-sm">
-                          <span className="text-muted-foreground">No Data Available</span>
-                          <p className="text-xs text-muted-foreground">Prior Year 1 data upload will be disabled</p>
-                        </div>
-                      </div>
                     </div>
                   </div>
 
@@ -980,13 +973,6 @@ export default function CreateEngagement() {
                       </div>
                       <div className="w-40">
                         <LabeledInput label="End Date" value={priorYear2End} onChange={setPriorYear2End} icon={<Calendar className="h-4 w-4" />} />
-                      </div>
-                      <div className="flex items-end gap-2 pb-3">
-                        <Checkbox checked={priorYear2NoData} onCheckedChange={(checked) => setPriorYear2NoData(checked as boolean)} />
-                        <div className="text-sm">
-                          <span className="text-muted-foreground">No Data Available</span>
-                          <p className="text-xs text-muted-foreground">Prior Year 2 data upload will be disabled</p>
-                        </div>
                       </div>
                     </div>
                   </div>
