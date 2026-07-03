@@ -439,6 +439,11 @@ export function NotesSlidePanel({ open, onOpenChange, noteId, noteName, engId }:
     if (el) blockRefs.current.set(id, el); else blockRefs.current.delete(id);
   }, []);
 
+  const handleClose = useCallback(() => {
+    setIsFullscreen(false);
+    onOpenChange(false);
+  }, [onOpenChange]);
+
   useEffect(() => {
     const el = textareaRef.current;
     if (!el) return;
