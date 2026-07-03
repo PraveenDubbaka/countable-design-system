@@ -921,25 +921,32 @@ export default function CreateEngagement() {
               </SectionCard>
 
               <SectionCard icon={<Calendar className="h-5 w-5" />} title="Engagement Period">
-                <div className="space-y-4">
-                  <LabeledSelect label="Period Type" required value={periodType} onChange={setPeriodType} options={periodTypeOptions} />
-
-                  {[
-                    { label: "Current Year", required: true, start: currentYearStart, setStart: setCurrentYearStart, end: currentYearEnd, setEnd: setCurrentYearEnd },
-                    { label: "Prior Year 1", required: false, start: priorYear1Start, setStart: setPriorYear1Start, end: priorYear1End, setEnd: setPriorYear1End },
-                    { label: "Prior Year 2", required: false, start: priorYear2Start, setStart: setPriorYear2Start, end: priorYear2End, setEnd: setPriorYear2End },
-                  ].map(row => (
-                    <div key={row.label} className="space-y-1">
-                      <p className="text-xs font-medium text-foreground">
-                        {row.label}{row.required && <span className="text-destructive ml-0.5">*</span>}
-                      </p>
-                      <div className="flex gap-3">
-                        <div className="flex-1"><LabeledInput label="Start Date" value={row.start} onChange={row.setStart} required={row.required} icon={<Calendar className="h-4 w-4" />} /></div>
-                        <div className="flex-1"><LabeledInput label="End Date" value={row.end} onChange={row.setEnd} required={row.required} icon={<Calendar className="h-4 w-4" />} /></div>
-                      </div>
-                    </div>
-                  ))}
+                {/* Period Type */}
+                <div className="flex items-center gap-3 py-2.5 border-b border-border/40">
+                  <span className="text-sm text-foreground w-24 shrink-0 whitespace-nowrap">Period Type<span className="text-destructive ml-0.5">*</span></span>
+                  <div className="flex-1 min-w-0 relative">
+                    <select value={periodType} onChange={e => setPeriodType(e.target.value)} className={sc}>
+                      {periodTypeOptions.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
+                    </select>
+                    <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 pointer-events-none text-muted-foreground" />
+                  </div>
                 </div>
+                {/* Year rows */}
+                {[
+                  { label: "Current Year", required: true, start: currentYearStart, setStart: setCurrentYearStart, end: currentYearEnd, setEnd: setCurrentYearEnd },
+                  { label: "Prior Year 1", required: false, start: priorYear1Start, setStart: setPriorYear1Start, end: priorYear1End, setEnd: setPriorYear1End },
+                  { label: "Prior Year 2", required: false, start: priorYear2Start, setStart: setPriorYear2Start, end: priorYear2End, setEnd: setPriorYear2End },
+                ].map(row => (
+                  <div key={row.label} className="flex items-start gap-3 py-2.5 border-b border-border/40 last:border-0">
+                    <span className="text-sm text-foreground w-24 shrink-0 whitespace-nowrap pt-5">
+                      {row.label}{row.required && <span className="text-destructive ml-0.5">*</span>}
+                    </span>
+                    <div className="flex gap-2 flex-1 min-w-0">
+                      <div className="flex-1 min-w-0"><LabeledInput label="Start Date" value={row.start} onChange={row.setStart} required={row.required} icon={<Calendar className="h-4 w-4" />} /></div>
+                      <div className="flex-1 min-w-0"><LabeledInput label="End Date" value={row.end} onChange={row.setEnd} icon={<Calendar className="h-4 w-4" />} /></div>
+                    </div>
+                  </div>
+                ))}
               </SectionCard>
 
               {/* Audit Configuration (audit only) */}
