@@ -878,12 +878,13 @@ function CellContentRenderer({
 
 function ColumnBlockRow({
   question, onUpdate, onDelete, onAddColumn, onDeleteColumn, isPreviewMode,
+  isEngagementMode = false,
   isSelected, onSelectionChange
 
 
 
 
-}: {question: Question;onUpdate: (q: Question) => void;onDelete: () => void;onAddColumn: () => void;onDeleteColumn: (colIdx: number) => void;isPreviewMode: boolean;isSelected?: boolean;onSelectionChange?: (selected: boolean) => void;}) {
+}: {question: Question;onUpdate: (q: Question) => void;onDelete: () => void;onAddColumn: () => void;onDeleteColumn: (colIdx: number) => void;isPreviewMode: boolean;isEngagementMode?: boolean;isSelected?: boolean;onSelectionChange?: (selected: boolean) => void;}) {
   const layout = question.columnLayout!;
   const [isFocused, setIsFocused] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
@@ -1111,7 +1112,8 @@ function ColumnBlockRow({
                 onUpdateCellType={updateCellType}
                 onUpdateCellSubItems={updateCellSubItems}
                 onUpdateCellPlaceholder={updateCellPlaceholder}
-                isPreviewMode={isPreviewMode} />
+                isPreviewMode={isPreviewMode}
+                isEngagementMode={isEngagementMode} />
 
               </div>
               {/* Resize handle between columns */}
@@ -2131,6 +2133,7 @@ export function DocumentSectionBlock({
                 handleQuestionUpdate(qi, { ...q, columnLayout: { ...cl, columns: cl.columns - 1, cells: newCells, columnWidths: newWidths } });
               }}
               isPreviewMode={isPreviewMode}
+              isEngagementMode={isEngagementMode}
               isSelected={selectedQuestions?.has(q.id)}
               onSelectionChange={onSelectionChange ? (selected) => onSelectionChange(q.id, selected) : undefined} /> :
 
