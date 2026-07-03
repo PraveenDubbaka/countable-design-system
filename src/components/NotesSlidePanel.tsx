@@ -800,14 +800,41 @@ ${note.blocks.map(b => {
                     </DropdownMenuContent>
                   </DropdownMenu>
                 </div>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <button onClick={() => onOpenChange(false)} className="w-7 h-7 flex items-center justify-center rounded hover:bg-muted text-muted-foreground hover:text-foreground transition-colors flex-shrink-0 ml-1">
-                      <X className="h-4 w-4" />
-                    </button>
-                  </TooltipTrigger>
-                  <TooltipContent side="bottom" className="text-xs">Close</TooltipContent>
-                </Tooltip>
+                {/* ── Window controls ── */}
+                <div className="flex items-center gap-1 shrink-0">
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <button onClick={() => window.open(window.location.href, '_blank')} className="action-icon" aria-label="Open in new window">
+                        <ExternalLink size={16} />
+                      </button>
+                    </TooltipTrigger>
+                    <TooltipContent side="bottom" className="text-xs"><p>Open in new window</p></TooltipContent>
+                  </Tooltip>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <button onClick={() => setIsFullscreen(v => !v)} className={cn("action-icon", isFullscreen && "action-icon-active")} aria-label={isFullscreen ? "Exit fullscreen" : "Fullscreen"}>
+                        {isFullscreen ? <Minimize2 size={16} /> : <Maximize2 size={16} />}
+                      </button>
+                    </TooltipTrigger>
+                    <TooltipContent side="bottom" className="text-xs"><p>{isFullscreen ? "Exit fullscreen" : "Fullscreen"}</p></TooltipContent>
+                  </Tooltip>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <button onClick={handleClose} className="action-icon" aria-label="Minimize">
+                        <Minus size={16} />
+                      </button>
+                    </TooltipTrigger>
+                    <TooltipContent side="bottom" className="text-xs"><p>Minimize</p></TooltipContent>
+                  </Tooltip>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <button onClick={handleClose} className="action-icon" aria-label="Close">
+                        <X size={16} />
+                      </button>
+                    </TooltipTrigger>
+                    <TooltipContent side="bottom" className="text-xs"><p>Close</p></TooltipContent>
+                  </Tooltip>
+                </div>
               </div>
 
               {/* ── Call recording banner ── */}
