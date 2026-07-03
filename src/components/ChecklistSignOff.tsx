@@ -103,11 +103,12 @@ export function ChecklistSignOff({ checklist }: { checklist: Checklist }) {
   const dateValue = isSigned ? formatDate(record!.signedAt) : "";
   const nameValue = isSigned ? record!.preparerName : "";
 
-  // Column widths mirror standard checklist row proportions (question / response / explanation / reference)
-  const COL_Q = 45;
-  const COL_DATE = 18;
-  const COL_NAME = 22;
-  const COL_ACTION = 15;
+  // Column widths mirror standard 4-column checklist row proportions
+  // (question / response / explanation / reference)
+  const COL_Q = 34.65;
+  const COL_DATE = 15;
+  const COL_NAME = 42.35;
+  const COL_ACTION = 8;
 
   const Separator = () => (
     <div
