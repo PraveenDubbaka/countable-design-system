@@ -156,28 +156,6 @@ export function ChecklistSignOff({
         onShowNumberingChange={() => {}}
       />
 
-      {/* Sign Off action bar */}
-      <div className="flex items-center justify-end gap-3 pr-2">
-        {stamp ? (
-          <>
-            <div className="flex items-center gap-2 text-sm text-foreground">
-              <CheckCircle2 className="h-4 w-4 text-emerald-600" />
-              <span>
-                Signed {formatDate(stamp.signedAt)} by <strong>{stamp.preparerName}</strong>
-              </span>
-            </div>
-            {!isPreviewMode && (
-              <Button variant="outline" size="sm" onClick={handleUnsign}>
-                Undo Sign Off
-              </Button>
-            )}
-          </>
-        ) : (
-          <Button onClick={handleSignOff} disabled={isPreviewMode}>
-            Sign Off
-          </Button>
-        )}
-      </div>
     </div>
   );
 }
