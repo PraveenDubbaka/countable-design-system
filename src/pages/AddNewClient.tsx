@@ -347,7 +347,7 @@ export default function AddNewClient() {
             {cfg && (
               <div className="mt-5 pt-5 border-t border-border/50 grid grid-cols-4 gap-5">
                 <div className="col-span-2 space-y-3">
-                  <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
                     <label className="text-sm font-medium text-foreground">{cfg.dbaLabel}</label>
                     <Switch
                       checked={showDba}
