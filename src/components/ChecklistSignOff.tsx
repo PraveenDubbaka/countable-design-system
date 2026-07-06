@@ -182,12 +182,14 @@ export function ChecklistSignOff({
                 {isEngagementMode && !locked && (
                   <div className="ml-4 shrink-0">
                     {isSigned ? (
-                      <button
+                      <Button
+                        size="sm"
+                        variant="destructive"
+                        className="h-7 px-3 text-xs"
                         onClick={() => unsignRole(role.id)}
-                        className="text-xs text-muted-foreground hover:text-destructive transition-colors"
                       >
                         Unsign
-                      </button>
+                      </Button>
                     ) : name !== "—" ? (
                       <Button size="sm" className="h-7 px-3 text-xs" onClick={() => signRole(role.id)}>
                         Sign Off
