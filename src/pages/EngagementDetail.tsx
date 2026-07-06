@@ -19,7 +19,7 @@ import { BulkRequestsWorksheet } from "@/components/BulkRequestsWorksheet";
 import { AuditTeamPlanningWorksheet } from "@/components/AuditTeamPlanningWorksheet";
 import { AuditSAEWorksheet } from "@/components/AuditSAEWorksheet";
 import { AuditOASWorksheet } from "@/components/AuditOASWorksheet";
-import { AuditOIWorksheet } from "@/components/AuditOIWorksheet";
+
 import { AuditPAP501Worksheet } from "@/components/AuditPAP501Worksheet";
 import { Audit505Worksheet } from "@/components/Audit505Worksheet";
 import { Audit507Worksheet } from "@/components/Audit507Worksheet";
@@ -198,6 +198,7 @@ import {
   generate645LitigationClaimsChecklist,
   generate650SubsequentEventsChecklist2,
   generate670JournalEntryTestingChecklist,
+  generate500OIChecklist,
 } from "@/lib/globalTemplates";
 
 // Sample engagement data matching the engagements page
@@ -325,6 +326,7 @@ const buildDefaultAuditChecklists = () => {
     { generator: generateAuditStrategyMemorandumChecklist, id: "default-audit-asm" },
     { generator: generateStaffingTimeBudgetChecklist, id: "default-audit-stb" },
     // Risk Assessment
+    { generator: generate500OIChecklist, id: "default-audit-ra-oi" },
     { generator: generateRiskAssessmentProceduresChecklist, id: "default-audit-ra-rap" },
     { generator: generateUnderstandingInternalControlsChecklist, id: "default-audit-ra-ic" },
     { generator: generateITGeneralControlsChecklist, id: "default-audit-ra-itgc" },
@@ -542,6 +544,8 @@ const NAV_KEY_TO_CHECKLIST_ID: Record<string, string> = {
   "aud-asm": "default-audit-asm",
   "aud-stb": "default-audit-stb",
   // Audit — Risk Assessment
+  "aud-ra-oi": "default-audit-ra-oi",
+  "aud-us-ra-oi": "default-audit-ra-oi",
   "aud-ra-rap": "default-audit-ra-rap",
   "aud-ra-ic": "default-audit-ra-ic",
   "aud-ra-itgc": "default-audit-ra-itgc",
@@ -650,7 +654,7 @@ const CUSTOM_WORKSHEET_TITLES: Record<string, string> = {
   'aud-pap': 'Preliminary Analytical Procedures', 'aud-us-pap': 'Preliminary Analytical Procedures',
   'aud-sae': "Using the Work of an Auditor's Expert", 'aud-us-sae': "Using the Work of an Auditor's Expert",
   'aud-asm': 'Overall Audit Strategy', 'aud-us-asm': 'Overall Audit Strategy',
-  'aud-ra-oi': 'Observation & Inspection Procedures', 'aud-us-ra-oi': 'Observation & Inspection Procedures',
+
   'aud-ra-pap501': 'Preliminary Analytical Procedures',
   'aud-ra-505': 'Inquiries of Management and Others',
   'aud-ra-507': 'Minutes of Governance Meetings',
@@ -1084,7 +1088,7 @@ export default function EngagementDetail() {
     // One-time migration: clear stale sample checklists saved before the
     // global template library was pulled in, so the engagement reflects the
     // new global checklist content.
-    const TEMPLATE_LIBRARY_VERSION = 'v10-audit-specific-generators-2026-05';
+    const TEMPLATE_LIBRARY_VERSION = 'v11-500-oi-checklist-2026-07';
     const seenVersion = localStorage.getItem('savedChecklistsLibraryVersion');
     if (seenVersion !== TEMPLATE_LIBRARY_VERSION) {
       try {
@@ -2452,8 +2456,6 @@ export default function EngagementDetail() {
             <AuditSAEWorksheet isUS={checklistKey === 'aud-us-sae'} />
           ) : (checklistKey === 'aud-asm' || checklistKey === 'aud-us-asm') ? (
             <AuditOASWorksheet isUS={checklistKey === 'aud-us-asm'} />
-          ) : (checklistKey === 'aud-ra-oi' || checklistKey === 'aud-us-ra-oi') ? (
-            <AuditOIWorksheet isUS={checklistKey === 'aud-us-ra-oi'} />
           ) : (checklistKey === 'aud-ra-pap501') ? (
             <AuditPAP501Worksheet />
           ) : (checklistKey === 'aud-ra-505') ? (

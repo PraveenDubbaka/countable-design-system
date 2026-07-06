@@ -14593,3 +14593,61 @@ export const generate670JournalEntryTestingChecklist = (): Checklist => {
     createdAt: new Date(), updatedAt: new Date(),
   };
 };
+
+
+export const generate500OIChecklist = (): Checklist => {
+  const q = (id: string, text: string, answer = '', explanation = ''): Question => ({
+    id, text, answerType: 'yes-no-na' as const, options: ['Yes', 'No', 'N/A'],
+    required: false, answer, explanation, reference: '',
+  });
+
+  const sections: Section[] = [
+    {
+      id: 'oi-s1',
+      title: '1. Inspection of key documents',
+      isExpanded: true,
+      questions: [
+        q('oi-1a', '<p>Business plans, financial budgets and cash flow projections.</p>'),
+        q('oi-1b', '<p>Risk assessments.</p>'),
+        q('oi-1c', '<p>Terms of new financing arrangements.</p>'),
+        q('oi-1d', '<p>Significant contracts and agreements.</p>'),
+        q('oi-1e', '<p>Financial and other reports prepared by management.</p>'),
+        q('oi-1f', '<p>Minutes of directors\'/audit committee meetings (refer to Form 507).</p>'),
+        q('oi-1g', '<p>Reports/letters, etc., from regulators or government agencies.</p>'),
+        q('oi-1h', '<p>Tax assessments and correspondence.</p>'),
+        q('oi-1i', '<p>Details of actual/threatened litigation, including correspondence with external legal counsel.</p>'),
+        q('oi-1j', '<p>Policy and procedure manuals.</p>'),
+        q('oi-1k', '<p>Consultant reports on financial or organizational matters.</p>'),
+        q('oi-1l', '<p>Communications with staff or TCWG that address organizational changes, views on business practices/ethical behaviour, processes for identifying and responding to the risks of fraud, or other relevant matters.</p>'),
+        q('oi-1m', '<p>Media articles about the entity, its industry and direct competitors.</p>'),
+        q('oi-1n', '<p>Other key documents (possibly identified as a result of inquiries of management and others) (See Form 505).</p>'),
+      ],
+    },
+    {
+      id: 'oi-s2',
+      title: '2. Observation of entity operations, premises and plant facilities',
+      isExpanded: true,
+      questions: [
+        q('oi-2a', '<p>Nature of operations.</p>'),
+        q('oi-2b', '<p>How operations are organized and managed.</p>'),
+        q('oi-2c', '<p>Staff and management morale, knowledge and general competency.</p>'),
+        q('oi-2d', '<p>Poor security over fixed assets and inventories (storage and handling).</p>'),
+        q('oi-2e', '<p>Unorganized, obsolete or slow-moving inventory.</p>'),
+        q('oi-2f', '<p>Idle or unused plant and equipment.</p>'),
+        q('oi-2g', '<p>Deficiencies in financial control systems and IT support.</p>'),
+        q('oi-2h', '<p>Possible non-compliance with laws or regulations with a financial impact (such as handling of waste and toxic materials).</p>'),
+        q('oi-2i', '<p>Other (specify).</p>'),
+      ],
+    },
+  ];
+
+  return {
+    id: 'global-template-500-oi',
+    title: '500 — Observation & Inspection Procedures',
+    description: 'Listing of typical observation and inspection risk assessment procedures performed to support, corroborate or contradict other inquiries of management and others, and to provide information about the entity and its environment.',
+    objective: 'To provide a listing of typical observation and inspection risk assessment procedures that may support, corroborate or contradict other inquiries of management and others, and provide information about the entity and its environment. Use this form in conjunction with Form 510. PSC = Procedure successfully completed. TCWG = Those charged with governance.',
+    sections,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  };
+};
