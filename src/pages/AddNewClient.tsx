@@ -379,6 +379,17 @@ export default function AddNewClient() {
                 <Field label="Group Name" hint="Use to group related clients together.">
                   <Input placeholder="e.g., Smith Family Group" />
                 </Field>
+                <Field label="Engagement Partner" required>
+                  <Select>
+                    <SelectTrigger><SelectValue placeholder="Select partner" /></SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="cpt">Cpt Group</SelectItem>
+                      <SelectItem value="monte">Monte Heilig</SelectItem>
+                      <SelectItem value="jangaiah">Jangaiah Arige</SelectItem>
+                      <SelectItem value="jude">Jude Law</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </Field>
               </div>
             )}
 
@@ -440,17 +451,6 @@ export default function AddNewClient() {
                   <div className="mt-5 space-y-5">
                     <Field label="Email" required>
                       <Input type="email" placeholder="contact@company.com" />
-                    </Field>
-                    <Field label="Engagement Partner" required>
-                      <Select>
-                        <SelectTrigger><SelectValue placeholder="Select partner" /></SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="cpt">Cpt Group</SelectItem>
-                          <SelectItem value="monte">Monte Heilig</SelectItem>
-                          <SelectItem value="jangaiah">Jangaiah Arige</SelectItem>
-                          <SelectItem value="jude">Jude Law</SelectItem>
-                        </SelectContent>
-                      </Select>
                     </Field>
                   </div>
                   <div className="mt-5 pt-5 border-t border-border/50">
