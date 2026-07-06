@@ -15,7 +15,6 @@ import { useEngagementContext } from "@/hooks/useEngagementContext";
 const DISCLAIMER =
   "By signing off below, you are confirming that you have reviewed this working paper, cleared all outstanding queries, and appropriately documented any matters that could otherwise cause the financial statements and note disclosures to be false and/or misleading.";
 
-// Fixed four-role sequence — order is immutable
 const ROLES = [
   { id: "preparer",           label: "Preparer",             teamRoles: ["Staff Auditor", "Senior Auditor", "Junior Auditor"] },
   { id: "partner",            label: "Partner",              teamRoles: ["Engagement Partner", "Partner"] },
@@ -85,6 +84,30 @@ function loadData(id: string): SignOffData {
     }
   } catch { /* fallback */ }
   return { entries: [], extraRows: [] };
+}
+
+// ── Shared row shell ─────────────────────────────────────────────────────────
+
+function RowShell({
+  isSigned,
+  hasBorderBottom,
+  children,
+}: {
+  isSigned: boolean;
+  hasBorderBottom: boolean;
+  children: React.ReactNode;
+}) {
+  return (
+    <div
+      className={[
+        "flex items-center gap-4 px-4 py-3",
+        hasBorderBottom ? "border-b border-border" : "",
+        isSigned ? "bg-green-50/60 dark:bg-green-950/20" : "bg-card",
+      ].join(" ")}
+    >
+      {children}
+    </div>
+  );
 }
 
 // ── Component ────────────────────────────────────────────────────────────────
@@ -170,28 +193,25 @@ export function ChecklistSignOff({
   }
 
   const locked = isPreviewMode && !isEngagementMode;
+  const hasExtraRows = data.extraRows.length > 0;
+  const showAddRow = isEngagementMode && !locked;
 
   return (
     <div className="space-y-3 px-4 py-4">
 
-      {/* Disclaimer */}
       <p className="text-xs text-muted-foreground leading-relaxed">{DISCLAIMER}</p>
 
-      {/* Sign-off table */}
       <div className="rounded-lg border border-border overflow-hidden">
 
         {/* Fixed four-role rows */}
         {ROLES.map((role, idx) => {
           const entry = data.entries.find(e => e.roleId === role.id);
-          const name = assigned[role.id];
           const isSigned = !!entry;
-          const isLast = idx === ROLES.length - 1 && data.extraRows.length === 0;
+          const isLast = idx === ROLES.length - 1 && !hasExtraRows && !showAddRow;
 
           return (
-            <div
-              key={role.id}
-              className={`flex items-center gap-4 px-4 py-3 ${!isLast ? "border-b border-border" : ""} ${isSigned ? "bg-green-50/60 dark:bg-green-950/20" : "bg-card"}`}
-            >
+            <RowShell key={role.id} isSigned={isSigned} hasBorderBottom={!isLast}>
+              {/* Status icon */}
               <div className="w-5 shrink-0 flex items-center justify-center">
                 {isSigned
                   ? <CheckCircle2 className="h-4 w-4 text-green-600 dark:text-green-500" />
@@ -199,18 +219,14 @@ export function ChecklistSignOff({
                 }
               </div>
 
-              <div className="w-40 shrink-0">
+              {/* Role label */}
+              <div className="w-44 shrink-0">
                 <span className="text-xs font-semibold text-foreground uppercase tracking-wide">
                   {role.label}
                 </span>
               </div>
 
-              <div className="w-44 shrink-0">
-                <span className={`text-sm ${isSigned ? "text-muted-foreground" : "text-foreground"}`}>
-                  {name}
-                </span>
-              </div>
-
+              {/* Signed stamp OR pending */}
               <div className="flex-1 flex items-center justify-between min-w-0">
                 {isSigned ? (
                   <div className="flex items-center gap-3 min-w-0">
@@ -237,7 +253,7 @@ export function ChecklistSignOff({
                       >
                         Unsign
                       </Button>
-                    ) : name !== "—" ? (
+                    ) : assigned[role.id] !== "—" ? (
                       <Button size="sm" className="h-7 px-3 text-xs" onClick={() => signRole(role.id)}>
                         Sign Off
                       </Button>
@@ -245,22 +261,18 @@ export function ChecklistSignOff({
                   </div>
                 )}
               </div>
-            </div>
+            </RowShell>
           );
         })}
 
-        {/* Extra rows added via "+" */}
+        {/* Extra rows */}
         {data.extraRows.map((row, idx) => {
           const role = ROLES.find(r => r.id === row.roleId)!;
-          const name = assigned[row.roleId];
           const isSigned = !!row.signedAt;
-          const isLast = idx === data.extraRows.length - 1;
+          const isLast = idx === data.extraRows.length - 1 && !showAddRow;
 
           return (
-            <div
-              key={row.id}
-              className={`flex items-center gap-4 px-4 py-3 border-t border-border ${isSigned ? "bg-green-50/60 dark:bg-green-950/20" : "bg-card"}`}
-            >
+            <RowShell key={row.id} isSigned={isSigned} hasBorderBottom={!isLast}>
               <div className="w-5 shrink-0 flex items-center justify-center">
                 {isSigned
                   ? <CheckCircle2 className="h-4 w-4 text-green-600 dark:text-green-500" />
@@ -268,15 +280,9 @@ export function ChecklistSignOff({
                 }
               </div>
 
-              <div className="w-40 shrink-0">
+              <div className="w-44 shrink-0">
                 <span className="text-xs font-semibold text-foreground uppercase tracking-wide">
                   {role.label}
-                </span>
-              </div>
-
-              <div className="w-44 shrink-0">
-                <span className={`text-sm ${isSigned ? "text-muted-foreground" : "text-foreground"}`}>
-                  {name}
                 </span>
               </div>
 
@@ -306,7 +312,7 @@ export function ChecklistSignOff({
                       >
                         Unsign
                       </Button>
-                    ) : name !== "—" ? (
+                    ) : assigned[row.roleId] !== "—" ? (
                       <Button size="sm" className="h-7 px-3 text-xs" onClick={() => signExtraRow(row.id, row.roleId)}>
                         Sign Off
                       </Button>
@@ -320,33 +326,33 @@ export function ChecklistSignOff({
                   </div>
                 )}
               </div>
-            </div>
+            </RowShell>
           );
         })}
-      </div>
 
-      {/* Add sign-off row */}
-      {isEngagementMode && !locked && (
-        <div className="flex justify-center border-t border-border/40 pt-[14px]">
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <button
-                type="button"
-                className="h-7 w-7 p-0 rounded border border-border text-muted-foreground hover:text-primary hover:bg-primary/5 transition-colors flex items-center justify-center"
-              >
-                <Plus className="h-3.5 w-3.5" />
-              </button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="center">
-              {ROLES.map(role => (
-                <DropdownMenuItem key={role.id} onClick={() => addExtraRow(role.id)}>
-                  {role.label}
-                </DropdownMenuItem>
-              ))}
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </div>
-      )}
+        {/* Add row — lives inside the table border */}
+        {showAddRow && (
+          <div className="flex items-center justify-center border-t border-border px-4 py-2.5 bg-card">
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <button
+                  type="button"
+                  className="h-7 w-7 p-0 rounded border border-border text-muted-foreground hover:text-primary hover:bg-primary/5 transition-colors flex items-center justify-center"
+                >
+                  <Plus className="h-3.5 w-3.5" />
+                </button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="center">
+                {ROLES.map(role => (
+                  <DropdownMenuItem key={role.id} onClick={() => addExtraRow(role.id)}>
+                    {role.label}
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
+        )}
+      </div>
     </div>
   );
 }
