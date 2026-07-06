@@ -285,9 +285,26 @@ export default function AddNewClient() {
 
           {/* ── Section 1: Entity Foundation — always visible ────────────── */}
           <SectionCard icon={Building2} title="Entity Foundation" subtitle="Start with the legal identity — this drives which other fields appear">
-            {/* Core identity — 4-column: Legal Name (2) | Entity Type | Country */}
+            {/* Core identity — 4-column: Country | Client ID | Legal Name | Entity Type */}
             <div className="grid grid-cols-4 gap-5">
-              <Field label="Legal Entity Name" required className="col-span-2">
+              <Field label="Country of Registration" hint="Determines applicable tax identifiers and field labels.">
+                <Select
+                  value={country}
+                  onValueChange={v => { setCountry(v); setGstRegistered(""); }}
+                >
+                  <SelectTrigger><SelectValue /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="ca">🇨🇦 Canada</SelectItem>
+                    <SelectItem value="us">🇺🇸 United States</SelectItem>
+                    <SelectItem value="uk">🇬🇧 United Kingdom</SelectItem>
+                    <SelectItem value="au">🇦🇺 Australia</SelectItem>
+                  </SelectContent>
+                </Select>
+              </Field>
+              <Field label="Client ID" hint="Leave blank to auto-generate.">
+                <Input placeholder="e.g., CLI-0042" />
+              </Field>
+              <Field label="Legal Entity Name" required>
                 <Input placeholder="e.g., Acme Holdings Inc." />
               </Field>
               <Field label="Entity Type" required hint="Determines which fields and tax treatments apply.">
@@ -305,23 +322,9 @@ export default function AddNewClient() {
                   </SelectContent>
                 </Select>
               </Field>
-              <Field label="Country of Registration" hint="Determines applicable tax identifiers and field labels.">
-                <Select
-                  value={country}
-                  onValueChange={v => { setCountry(v); setGstRegistered(""); }}
-                >
-                  <SelectTrigger><SelectValue /></SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="ca">🇨🇦 Canada</SelectItem>
-                    <SelectItem value="us">🇺🇸 United States</SelectItem>
-                    <SelectItem value="uk">🇬🇧 United Kingdom</SelectItem>
-                    <SelectItem value="au">🇦🇺 Australia</SelectItem>
-                  </SelectContent>
-                </Select>
-              </Field>
             </div>
 
-            {/* DBA + Group Name + Client ID — 4-column row after entity type selected */}
+            {/* DBA + Group Name — 4-column row after entity type selected */}
             {cfg && (
               <div className="mt-5 pt-5 border-t border-border/50 grid grid-cols-4 gap-5">
                 <div className="col-span-2 space-y-3">
@@ -341,11 +344,8 @@ export default function AddNewClient() {
                     </Field>
                   )}
                 </div>
-                <Field label="Group Name" hint="Use to group related clients together.">
+                <Field label="Group Name" hint="Use to group related clients together." className="col-span-2">
                   <Input placeholder="e.g., Smith Family Group" />
-                </Field>
-                <Field label="Client ID" hint="Leave blank to auto-generate.">
-                  <Input placeholder="e.g., CLI-0042" />
                 </Field>
               </div>
             )}
