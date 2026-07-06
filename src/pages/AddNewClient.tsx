@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { StyledCard } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Switch } from "@/components/ui/switch";
 import { toast } from "sonner";
 
 const Field = ({
@@ -348,23 +349,10 @@ export default function AddNewClient() {
                 <div className="col-span-2 space-y-3">
                   <div className="flex items-center justify-between">
                     <label className="text-sm font-medium text-foreground">{cfg.dbaLabel}</label>
-                    {!showDba ? (
-                      <button
-                        type="button"
-                        onClick={() => setShowDba(true)}
-                        className="text-xs text-primary hover:underline font-medium"
-                      >
-                        + Add DBA
-                      </button>
-                    ) : (
-                      <button
-                        type="button"
-                        onClick={() => { setShowDba(false); setDbaName(""); setDbaDisplay("legal-only"); }}
-                        className="text-xs text-muted-foreground hover:text-destructive"
-                      >
-                        Remove
-                      </button>
-                    )}
+                    <Switch
+                      checked={showDba}
+                      onCheckedChange={(v) => { setShowDba(v); if (!v) { setDbaName(""); setDbaDisplay("legal-only"); } }}
+                    />
                   </div>
                   {!showDba && (
                     <p className="text-xs text-muted-foreground -mt-1">{cfg.dbaHint}</p>
