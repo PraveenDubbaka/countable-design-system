@@ -238,7 +238,7 @@ const REGION_OPTIONS: Record<string, Array<{ value: string; label: string }>> = 
 
 export default function AddNewClient() {
   const navigate = useNavigate();
-  const [entityType, setEntityType]       = useState<string>("");
+  const [entityType, setEntityType]       = useState<string>("corporation");
   const [country, setCountry]             = useState<string>("ca");
   const [dbaOption, setDbaOption]         = useState<string>("");
   const [gstRegistered, setGstRegistered] = useState<string>("");
