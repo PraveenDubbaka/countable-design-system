@@ -476,11 +476,7 @@ export default function AddNewClient() {
                         <Input placeholder={taxCfg.payrollPlaceholder} />
                       </Field>
                     )}
-                    {cfg?.hasTaxId && (
-                      <Field label={isSoleProprietor ? taxCfg.taxIdSoleProprietorLabel : taxCfg.taxIdLabel}>
-                        <Input placeholder={isSoleProprietor ? taxCfg.taxIdSoleProprietorPlaceholder : taxCfg.taxIdPlaceholder} />
-                      </Field>
-                    )}
+
                     <Field
                       label={taxCfg.salesTaxLabel}
                       hint="Informational — helps with sales tax treatment in future engagements."
