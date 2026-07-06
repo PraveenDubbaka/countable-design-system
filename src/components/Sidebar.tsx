@@ -1879,7 +1879,7 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
                   {
                     id: "aud-ra-sec", code: "RA", label: "Risk Assessment", icon: "folder",
                     children: [
-                      { id: "aud-ra-oi", code: "500", label: "Observation & Inspection Procedures", icon: "worksheet", route: "checklist/aud-ra-oi" },
+                      { id: "aud-ra-oi", code: "500", label: "Observation & Inspection Procedures", icon: "checklist", route: "checklist/aud-ra-oi" },
                       { id: "aud-ra-pap501", code: "501", label: "Preliminary Analytical Procedures", icon: "worksheet", route: "checklist/aud-ra-pap501" },
                       { id: "aud-ra-505", code: "505", label: "Inquiries of Management and Others", icon: "worksheet", route: "checklist/aud-ra-505" },
                       { id: "aud-ra-507", code: "507", label: "Minutes of Governance Meetings", icon: "worksheet", route: "checklist/aud-ra-507" },
