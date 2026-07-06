@@ -241,7 +241,9 @@ export default function AddNewClient() {
   const [entityType, setEntityType]       = useState<string>("corporation");
   const [country, setCountry]             = useState<string>("ca");
   const [subCorpType, setSubCorpType]     = useState<string>("");
-  const [dbaOption, setDbaOption]         = useState<string>("");
+  const [showDba, setShowDba]             = useState<boolean>(false);
+  const [dbaName, setDbaName]             = useState<string>("");
+  const [dbaDisplay, setDbaDisplay]       = useState<string>("legal-only");
   const [gstRegistered, setGstRegistered] = useState<string>("");
 
   const showSubEntity = entityType === "corporation" && country === "us";
@@ -311,7 +313,7 @@ export default function AddNewClient() {
               <Field label="Entity Type" required hint="Determines which fields and tax treatments apply.">
                 <Select
                   value={entityType}
-                  onValueChange={v => { setEntityType(v); setDbaOption(""); setGstRegistered(""); setSubCorpType(""); }}
+                  onValueChange={v => { setEntityType(v); setShowDba(false); setDbaName(""); setDbaDisplay("legal-only"); setGstRegistered(""); setSubCorpType(""); }}
                 >
                   <SelectTrigger><SelectValue placeholder="Select entity type" /></SelectTrigger>
                   <SelectContent>
@@ -344,20 +346,49 @@ export default function AddNewClient() {
             {cfg && (
               <div className="mt-5 pt-5 border-t border-border/50 grid grid-cols-4 gap-5">
                 <div className="col-span-2 space-y-3">
-                  <Field label={cfg.dbaLabel} hint={cfg.dbaHint}>
-                    <Select value={dbaOption} onValueChange={setDbaOption}>
-                      <SelectTrigger><SelectValue placeholder="Same as legal entity name" /></SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="same">Same as legal entity name</SelectItem>
-                        <SelectItem value="custom">Enter a different name…</SelectItem>
-                        <SelectItem value="none">Not applicable</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </Field>
-                  {dbaOption === "custom" && (
-                    <Field label="DBA / Operating Name" required>
-                      <Input placeholder="e.g., Acme Trading Co." />
-                    </Field>
+                  <div className="flex items-center justify-between">
+                    <label className="text-sm font-medium text-foreground">{cfg.dbaLabel}</label>
+                    {!showDba ? (
+                      <button
+                        type="button"
+                        onClick={() => setShowDba(true)}
+                        className="text-xs text-primary hover:underline font-medium"
+                      >
+                        + Add DBA
+                      </button>
+                    ) : (
+                      <button
+                        type="button"
+                        onClick={() => { setShowDba(false); setDbaName(""); setDbaDisplay("legal-only"); }}
+                        className="text-xs text-muted-foreground hover:text-destructive"
+                      >
+                        Remove
+                      </button>
+                    )}
+                  </div>
+                  {!showDba && (
+                    <p className="text-xs text-muted-foreground -mt-1">{cfg.dbaHint}</p>
+                  )}
+                  {showDba && (
+                    <div className="space-y-3">
+                      <Input
+                        value={dbaName}
+                        onChange={e => setDbaName(e.target.value)}
+                        placeholder="e.g., Acme Trading Co."
+                      />
+                      {dbaName && (
+                        <Field label="Display on balance sheet / cover page as" hint="Legal name is always retained in legal documents.">
+                          <Select value={dbaDisplay} onValueChange={setDbaDisplay}>
+                            <SelectTrigger><SelectValue /></SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="legal-only">Legal name only</SelectItem>
+                              <SelectItem value="dba-only">DBA only</SelectItem>
+                              <SelectItem value="both">Both — legal name and DBA</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </Field>
+                      )}
+                    </div>
                   )}
                 </div>
                 <Field label="Group Name" hint="Use to group related clients together." className="col-span-2">
