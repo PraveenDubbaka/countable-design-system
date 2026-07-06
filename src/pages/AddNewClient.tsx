@@ -287,7 +287,7 @@ export default function AddNewClient() {
           <SectionCard icon={Building2} title="Entity Foundation" subtitle="Start with the legal identity — this drives which other fields appear">
             {/* Core identity — 4-column: Country | Client ID | Legal Name | Entity Type */}
             <div className="grid grid-cols-4 gap-5">
-              <Field label="Country of Registration" hint="Determines applicable tax identifiers and field labels.">
+              <Field label="Country" hint="Determines applicable tax identifiers and field labels.">
                 <Select
                   value={country}
                   onValueChange={v => { setCountry(v); setGstRegistered(""); }}
@@ -296,8 +296,6 @@ export default function AddNewClient() {
                   <SelectContent>
                     <SelectItem value="ca">🇨🇦 Canada</SelectItem>
                     <SelectItem value="us">🇺🇸 United States</SelectItem>
-                    <SelectItem value="uk">🇬🇧 United Kingdom</SelectItem>
-                    <SelectItem value="au">🇦🇺 Australia</SelectItem>
                   </SelectContent>
                 </Select>
               </Field>
