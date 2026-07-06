@@ -346,39 +346,34 @@ export default function AddNewClient() {
             {/* DBA + Group Name — 4-column row after entity type selected */}
             {cfg && (
               <div className="mt-5 pt-5 border-t border-border/50 grid grid-cols-4 gap-5">
-                <div className="col-span-2 space-y-3">
-                  <div className="flex items-center gap-2">
+                <Field label="" hint={!showDba ? cfg.dbaHint : undefined}>
+                  <div className="flex items-center gap-2 mb-1.5">
                     <label className="text-sm font-medium text-foreground">{cfg.dbaLabel}</label>
                     <Switch
                       checked={showDba}
                       onCheckedChange={(v) => { setShowDba(v); if (!v) { setDbaName(""); setDbaDisplay("legal-only"); } }}
                     />
                   </div>
-                  {!showDba && (
-                    <p className="text-xs text-muted-foreground -mt-1">{cfg.dbaHint}</p>
-                  )}
                   {showDba && (
-                    <div className="space-y-3">
-                      <Input
-                        value={dbaName}
-                        onChange={e => setDbaName(e.target.value)}
-                        placeholder="e.g., Acme Trading Co."
-                      />
-                      {dbaName && (
-                        <Field label="Display on balance sheet / cover page as" hint="Legal name is always retained in legal documents.">
-                          <Select value={dbaDisplay} onValueChange={setDbaDisplay}>
-                            <SelectTrigger><SelectValue /></SelectTrigger>
-                            <SelectContent>
-                              <SelectItem value="legal-only">Legal name only</SelectItem>
-                              <SelectItem value="dba-only">DBA only</SelectItem>
-                              <SelectItem value="both">Both — legal name and DBA</SelectItem>
-                            </SelectContent>
-                          </Select>
-                        </Field>
-                      )}
-                    </div>
+                    <Input
+                      value={dbaName}
+                      onChange={e => setDbaName(e.target.value)}
+                      placeholder="e.g., Acme Trading Co."
+                    />
                   )}
-                </div>
+                </Field>
+                {showDba && dbaName ? (
+                  <Field label="Display on balance sheet / cover page as" hint="Legal name is always retained in legal documents.">
+                    <Select value={dbaDisplay} onValueChange={setDbaDisplay}>
+                      <SelectTrigger><SelectValue /></SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="legal-only">Legal name only</SelectItem>
+                        <SelectItem value="dba-only">DBA only</SelectItem>
+                        <SelectItem value="both">Both — legal name and DBA</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </Field>
+                ) : <div />}
                 <Field label="Group Name" hint="Use to group related clients together." className="col-span-2">
                   <Input placeholder="e.g., Smith Family Group" />
                 </Field>
