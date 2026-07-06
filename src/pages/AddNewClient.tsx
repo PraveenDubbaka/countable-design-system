@@ -346,23 +346,25 @@ export default function AddNewClient() {
             {/* DBA + Group Name — 4-column row after entity type selected */}
             {cfg && (
               <div className="mt-5 pt-5 border-t border-border/50 grid grid-cols-4 gap-5">
-                <Field label="" hint={!showDba ? cfg.dbaHint : undefined}>
-                  <div className="flex items-center gap-2 mb-1.5">
+                <div className="flex flex-col gap-1.5">
+                  <div className="flex items-center gap-2">
                     <label className="text-sm font-medium text-foreground">{cfg.dbaLabel}</label>
                     <Switch
                       checked={showDba}
                       onCheckedChange={(v) => { setShowDba(v); if (!v) { setDbaName(""); setDbaDisplay("legal-only"); } }}
                     />
                   </div>
-                  {showDba && (
+                  {showDba ? (
                     <Input
                       value={dbaName}
                       onChange={e => setDbaName(e.target.value)}
                       placeholder="e.g., Acme Trading Co."
                     />
+                  ) : (
+                    <p className="text-xs text-muted-foreground">{cfg.dbaHint}</p>
                   )}
-                </Field>
-                {showDba && dbaName ? (
+                </div>
+                {showDba && dbaName && (
                   <Field label="Display on balance sheet / cover page as" hint="Legal name is always retained in legal documents.">
                     <Select value={dbaDisplay} onValueChange={setDbaDisplay}>
                       <SelectTrigger><SelectValue /></SelectTrigger>
@@ -373,8 +375,8 @@ export default function AddNewClient() {
                       </SelectContent>
                     </Select>
                   </Field>
-                ) : <div />}
-                <Field label="Group Name" hint="Use to group related clients together." className="col-span-2">
+                )}
+                <Field label="Group Name" hint="Use to group related clients together." className={showDba && dbaName ? "col-span-2" : "col-span-3"}>
                   <Input placeholder="e.g., Smith Family Group" />
                 </Field>
               </div>
