@@ -384,7 +384,7 @@ export default function AddNewClient() {
 
             {/* Address — inside Entity Foundation */}
             <div className="mt-5 pt-5 border-t border-border/50 grid grid-cols-4 gap-5">
-              <Field label="Street Address" className="col-span-2">
+              <Field label="Street Address">
                 <Input placeholder="123 Main Street, Suite 400" />
               </Field>
               <Field label="City">
