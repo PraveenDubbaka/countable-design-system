@@ -376,7 +376,7 @@ export default function AddNewClient() {
                     </Select>
                   </Field>
                 )}
-                <Field label="Group Name" hint="Use to group related clients together." className={showDba && dbaName ? "col-span-2" : "col-span-3"}>
+                <Field label="Group Name" hint="Use to group related clients together.">
                   <Input placeholder="e.g., Smith Family Group" />
                 </Field>
               </div>
