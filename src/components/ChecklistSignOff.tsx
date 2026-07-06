@@ -1,178 +1,205 @@
 import { useEffect, useMemo, useState } from "react";
-import { DocumentSectionBlock } from "@/components/DocumentView";
+import { CheckCircle2, Clock } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { CheckCircle2 } from "lucide-react";
-import type { Checklist, Section, NumberingFormat } from "@/types/checklist";
+import type { Checklist } from "@/types/checklist";
+import { useEngagementContext } from "@/hooks/useEngagementContext";
 
-const storageKey = (id: string) => `checklist-signoff-section:${id}`;
-const stampKey = (id: string) => `checklist-signoff-stamp:${id}`;
+// ── Constants ────────────────────────────────────────────────────────────────
 
 const DISCLAIMER =
   "By signing off below, you are confirming that you have reviewed this working paper, cleared all outstanding queries, and appropriately documented any matters that could otherwise cause the financial statements and note disclosures to be false and/or misleading.";
 
-type SignStamp = { preparerName: string; signedAt: string } | null;
+// Fixed four-role sequence — order is immutable
+const ROLES = [
+  { id: "preparer",           label: "Preparer",             teamRoles: ["Staff Auditor", "Senior Auditor", "Junior Auditor"] },
+  { id: "partner",            label: "Partner",              teamRoles: ["Engagement Partner", "Partner"] },
+  { id: "quality-reviewer",   label: "Quality Reviewer",     teamRoles: ["EQCR (Quality Reviewer)", "Quality Reviewer", "EQCR"] },
+  { id: "admin-tax-reviewer", label: "Admin / Tax Reviewer", teamRoles: ["Manager", "Tax Manager", "Senior Manager", "Admin"] },
+] as const;
 
-function buildDefaultSignOffSection(checklistId: string): Section {
-  const now = Date.now();
-  return {
-    id: `signoff-section-${checklistId}`,
-    title: "Sign Off",
-    isExpanded: true,
-    questions: [
-      {
-        id: `signoff-disclaimer-${now}`,
-        text: "",
-        answerType: "none",
-        required: false,
-        columnLayout: {
-          columns: 1,
-          cells: [
-            { id: `cell-disclaimer-${now}`, content: DISCLAIMER, blockType: "text" },
-          ],
-        },
-      },
-      {
-        id: `signoff-row-${now}`,
-        text: "",
-        answerType: "none",
-        required: false,
-        columnLayout: {
-          columns: 1,
-          cells: [
-            { id: `cell-signoff-${now}`, content: "", blockType: "signoff" },
-          ],
-        },
-      },
+type RoleId = typeof ROLES[number]["id"];
 
-    ],
-  };
+// ── Types ────────────────────────────────────────────────────────────────────
+
+type SignEntry = {
+  roleId: RoleId;
+  signedBy: string;   // captured permanently at sign time
+  initials: string;
+  signedAt: string;   // ISO timestamp — never modified after creation
+};
+
+type SignOffData = {
+  entries: SignEntry[];
+};
+
+// ── Helpers ──────────────────────────────────────────────────────────────────
+
+const storageKey = (id: string) => `checklist-signoff-v2:${id}`;
+
+function getInitials(name: string): string {
+  return name
+    .replace(/,.*$/, "")        // strip ", CPA" etc.
+    .split(" ")
+    .filter(Boolean)
+    .map(w => w[0].toUpperCase())
+    .join("");
 }
 
-const formatDate = (iso: string) => {
+function formatDate(iso: string): string {
   try {
     return new Date(iso).toLocaleString(undefined, {
-      year: "numeric", month: "short", day: "numeric", hour: "2-digit", minute: "2-digit",
+      year: "numeric", month: "short", day: "numeric",
+      hour: "2-digit", minute: "2-digit",
     });
   } catch { return iso; }
-};
+}
+
+function loadData(id: string): SignOffData {
+  try {
+    const raw = localStorage.getItem(storageKey(id));
+    if (raw) return JSON.parse(raw) as SignOffData;
+  } catch { /* fallback */ }
+  return { entries: [] };
+}
+
+// ── Component ────────────────────────────────────────────────────────────────
 
 export function ChecklistSignOff({
   checklist,
   isPreviewMode = false,
   isEngagementMode = false,
-  numberingFormat = "number",
-  showNumbering = false,
 }: {
   checklist: Checklist;
   isPreviewMode?: boolean;
   isEngagementMode?: boolean;
-  numberingFormat?: NumberingFormat;
+  numberingFormat?: string;
   showNumbering?: boolean;
 }) {
+  const ctx = useEngagementContext();
   const key = useMemo(() => storageKey(checklist.id), [checklist.id]);
-  const skey = useMemo(() => stampKey(checklist.id), [checklist.id]);
-  const [section, setSection] = useState<Section | null>(null);
-  const [stamp, setStamp] = useState<SignStamp>(null);
 
+  const [data, setData] = useState<SignOffData>(() => loadData(checklist.id));
+
+  // Persist on change
   useEffect(() => {
-    if (!checklist.id) return;
-    try {
-      const raw = localStorage.getItem(key);
-      if (raw) {
-        const parsed = JSON.parse(raw) as Section;
-        // Migrate old disclaimer text to current wording
-        const updated = {
-          ...parsed,
-          questions: parsed.questions.map((q) => {
-            if (!q.columnLayout) return q;
-            const cells = q.columnLayout.cells.map((c) =>
-              c.blockType === 'text' && c.content !== DISCLAIMER && c.content.startsWith('By signing off below')
-                ? { ...c, content: DISCLAIMER }
-                : c
-            );
-            return { ...q, columnLayout: { ...q.columnLayout, cells } };
-          }),
-        };
-        setSection(updated);
-      } else {
-        setSection(buildDefaultSignOffSection(checklist.id));
-      }
-    } catch {
-      setSection(buildDefaultSignOffSection(checklist.id));
+    try { localStorage.setItem(key, JSON.stringify(data)); } catch { /* noop */ }
+  }, [data, key]);
+
+  // Derive assigned name from current engagement team for each role
+  const assigned = useMemo<Record<RoleId, string>>(() => {
+    const result = {} as Record<RoleId, string>;
+    for (const role of ROLES) {
+      const match = ctx.team?.find(m =>
+        role.teamRoles.some(tr => m.role.toLowerCase().includes(tr.toLowerCase()))
+      );
+      result[role.id] = match?.name ?? "—";
     }
-    try {
-      const rawStamp = localStorage.getItem(skey);
-      setStamp(rawStamp ? (JSON.parse(rawStamp) as SignStamp) : null);
-    } catch { setStamp(null); }
-  }, [checklist.id, key, skey]);
+    return result;
+  }, [ctx.team]);
 
-  useEffect(() => {
-    if (!section) return;
-    try { localStorage.setItem(key, JSON.stringify(section)); } catch { /* noop */ }
-  }, [section, key]);
-
-  if (!section) return null;
-
-  const handleAddItem = () => {
-    setSection({
-      ...section,
-      questions: [
-        ...section.questions,
-        { id: `q-${Date.now()}`, text: "", answerType: "long-answer" as const, required: false },
+  function signRole(roleId: RoleId) {
+    const name = assigned[roleId];
+    if (!name || name === "—") return;
+    const entry: SignEntry = {
+      roleId,
+      signedBy: name,
+      initials: getInitials(name),
+      signedAt: new Date().toISOString(),
+    };
+    // Retention: never remove existing entries — append/replace only this role
+    setData(d => ({
+      entries: [
+        ...d.entries.filter(e => e.roleId !== roleId),
+        entry,
       ],
-    });
-  };
+    }));
+  }
 
-  const handleReset = () => {
-    if (window.confirm("Reset the Sign Off section to its default layout?")) {
-      setSection(buildDefaultSignOffSection(checklist.id));
-      localStorage.removeItem(skey);
-      setStamp(null);
-    }
-  };
+  function unsignRole(roleId: RoleId) {
+    setData(d => ({ entries: d.entries.filter(e => e.roleId !== roleId) }));
+  }
 
-  const handleSignOff = () => {
-    // Auto-fill Date + Preparer Name into the last row's cells (positions 0 and 1)
-    const signedAt = new Date().toISOString();
-    const preparerName = "Current User"; // TODO: wire to auth context
-    const questions = [...section.questions];
-    const rowIdx = questions.length - 1;
-    const row = questions[rowIdx];
-    if (row?.columnLayout) {
-      const cells = [...row.columnLayout.cells];
-      if (cells[0]) cells[0] = { ...cells[0], content: preparerName };
-      if (cells[1]) cells[1] = { ...cells[1], content: signedAt.slice(0, 10) };
-
-      questions[rowIdx] = { ...row, columnLayout: { ...row.columnLayout, cells } };
-      setSection({ ...section, questions });
-    }
-    const newStamp = { preparerName, signedAt };
-    setStamp(newStamp);
-    try { localStorage.setItem(skey, JSON.stringify(newStamp)); } catch { /* noop */ }
-  };
-
-  const handleUnsign = () => {
-    localStorage.removeItem(skey);
-    setStamp(null);
-  };
+  const locked = isPreviewMode && !isEngagementMode;
 
   return (
-    <div className="space-y-3">
-      <DocumentSectionBlock
-        section={section}
-        sectionIndex={0}
-        onUpdate={(s) => setSection(s)}
-        onDelete={handleReset}
-        onAddItem={handleAddItem}
-        onAddCategoryAtPosition={() => { /* singleton */ }}
-        isPreviewMode={isPreviewMode || isEngagementMode}
-        isEngagementMode={isEngagementMode}
-        numberingFormat={numberingFormat}
-        showNumbering={showNumbering}
-        onNumberingFormatChange={() => {}}
-        onShowNumberingChange={() => {}}
-      />
+    <div className="space-y-3 px-4 py-4">
 
+      {/* Disclaimer */}
+      <p className="text-xs text-muted-foreground leading-relaxed">{DISCLAIMER}</p>
+
+      {/* Fixed-sequence sign-off rows */}
+      <div className="rounded-lg border border-border overflow-hidden">
+        {ROLES.map((role, idx) => {
+          const entry = data.entries.find(e => e.roleId === role.id);
+          const name = assigned[role.id];
+          const isSigned = !!entry;
+          const isLast = idx === ROLES.length - 1;
+
+          return (
+            <div
+              key={role.id}
+              className={`flex items-center gap-4 px-4 py-3 ${!isLast ? "border-b border-border" : ""} ${isSigned ? "bg-green-50/60 dark:bg-green-950/20" : "bg-card"}`}
+            >
+              {/* Status icon */}
+              <div className="w-5 shrink-0 flex items-center justify-center">
+                {isSigned
+                  ? <CheckCircle2 className="h-4 w-4 text-green-600 dark:text-green-500" />
+                  : <Clock className="h-4 w-4 text-muted-foreground/50" />
+                }
+              </div>
+
+              {/* Role label */}
+              <div className="w-40 shrink-0">
+                <span className="text-xs font-semibold text-foreground uppercase tracking-wide">
+                  {role.label}
+                </span>
+              </div>
+
+              {/* Assigned name */}
+              <div className="w-44 shrink-0">
+                <span className={`text-sm ${isSigned ? "text-muted-foreground" : "text-foreground"}`}>
+                  {name}
+                </span>
+              </div>
+
+              {/* Signed stamp OR action */}
+              <div className="flex-1 flex items-center justify-between min-w-0">
+                {isSigned ? (
+                  <div className="flex items-center gap-3 min-w-0">
+                    <span className="inline-flex items-center justify-center h-7 w-7 rounded-full bg-green-100 dark:bg-green-900/40 text-green-800 dark:text-green-300 text-xs font-bold shrink-0">
+                      {entry.initials}
+                    </span>
+                    <div className="min-w-0">
+                      <p className="text-sm font-medium text-foreground truncate">{entry.signedBy}</p>
+                      <p className="text-xs text-muted-foreground">{formatDate(entry.signedAt)}</p>
+                    </div>
+                  </div>
+                ) : (
+                  <span className="text-xs text-muted-foreground italic">Pending signature</span>
+                )}
+
+                {/* Action — only shown in engagement mode */}
+                {isEngagementMode && !locked && (
+                  <div className="ml-4 shrink-0">
+                    {isSigned ? (
+                      <button
+                        onClick={() => unsignRole(role.id)}
+                        className="text-xs text-muted-foreground hover:text-destructive transition-colors"
+                      >
+                        Unsign
+                      </button>
+                    ) : name !== "—" ? (
+                      <Button size="sm" className="h-7 px-3 text-xs" onClick={() => signRole(role.id)}>
+                        Sign Off
+                      </Button>
+                    ) : null}
+                  </div>
+                )}
+              </div>
+            </div>
+          );
+        })}
+      </div>
     </div>
   );
 }
