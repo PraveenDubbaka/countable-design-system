@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, Building2, User, MapPin, FileText, Receipt } from "lucide-react";
+import { ArrowLeft, Building2, User, FileText, Receipt } from "lucide-react";
 import { Layout } from "@/components/Layout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -381,6 +381,29 @@ export default function AddNewClient() {
                 </Field>
               </div>
             )}
+
+            {/* Address — inside Entity Foundation */}
+            <div className="mt-5 pt-5 border-t border-border/50 grid grid-cols-4 gap-5">
+              <Field label="Street Address" className="col-span-2">
+                <Input placeholder="123 Main Street, Suite 400" />
+              </Field>
+              <Field label="City">
+                <Input placeholder="City" />
+              </Field>
+              <Field label={taxCfg.regionLabel}>
+                <Select>
+                  <SelectTrigger><SelectValue placeholder="Select" /></SelectTrigger>
+                  <SelectContent>
+                    {regions.map(r => (
+                      <SelectItem key={r.value} value={r.value}>{r.label}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </Field>
+              <Field label={taxCfg.postalLabel}>
+                <Input placeholder={taxCfg.postalPlaceholder} />
+              </Field>
+            </div>
           </SectionCard>
 
           {/* ── Prompt shown before entity type is selected ─────────────── */}
@@ -498,30 +521,7 @@ export default function AddNewClient() {
                 </SectionCard>
               </div>
 
-              {/* ── Address — full width ─────────────────────────────────── */}
-              <SectionCard icon={MapPin} title="Address" subtitle="Physical or mailing address for correspondence and filings">
-                <div className="grid grid-cols-4 gap-5">
-                  <Field label="Street Address" className="col-span-2">
-                    <Input placeholder="123 Main Street, Suite 400" />
-                  </Field>
-                  <Field label="City">
-                    <Input placeholder="City" />
-                  </Field>
-                  <Field label={taxCfg.regionLabel}>
-                    <Select>
-                      <SelectTrigger><SelectValue placeholder="Select" /></SelectTrigger>
-                      <SelectContent>
-                        {regions.map(r => (
-                          <SelectItem key={r.value} value={r.value}>{r.label}</SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </Field>
-                  <Field label={taxCfg.postalLabel}>
-                    <Input placeholder={taxCfg.postalPlaceholder} />
-                  </Field>
-                </div>
-              </SectionCard>
+
             </>
           )}
         </div>
