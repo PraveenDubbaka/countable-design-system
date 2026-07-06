@@ -240,8 +240,11 @@ export default function AddNewClient() {
   const navigate = useNavigate();
   const [entityType, setEntityType]       = useState<string>("corporation");
   const [country, setCountry]             = useState<string>("ca");
+  const [subCorpType, setSubCorpType]     = useState<string>("");
   const [dbaOption, setDbaOption]         = useState<string>("");
   const [gstRegistered, setGstRegistered] = useState<string>("");
+
+  const showSubEntity = entityType === "corporation" && country === "us";
 
   const cfg     = entityType ? ENTITY_CONFIG[entityType] : null;
   const taxCfg  = COUNTRY_TAX_CONFIG[country];
@@ -290,7 +293,7 @@ export default function AddNewClient() {
               <Field label="Country" hint="Determines applicable tax identifiers and field labels.">
                 <Select
                   value={country}
-                  onValueChange={v => { setCountry(v); setGstRegistered(""); }}
+                  onValueChange={v => { setCountry(v); setGstRegistered(""); setSubCorpType(""); }}
                 >
                   <SelectTrigger><SelectValue /></SelectTrigger>
                   <SelectContent>
@@ -308,7 +311,7 @@ export default function AddNewClient() {
               <Field label="Entity Type" required hint="Determines which fields and tax treatments apply.">
                 <Select
                   value={entityType}
-                  onValueChange={v => { setEntityType(v); setDbaOption(""); setGstRegistered(""); }}
+                  onValueChange={v => { setEntityType(v); setDbaOption(""); setGstRegistered(""); setSubCorpType(""); }}
                 >
                   <SelectTrigger><SelectValue placeholder="Select entity type" /></SelectTrigger>
                   <SelectContent>
@@ -321,6 +324,21 @@ export default function AddNewClient() {
                 </Select>
               </Field>
             </div>
+
+            {/* US Corporation sub-type — C-Corp vs S-Corp */}
+            {showSubEntity && (
+              <div className="mt-5 pt-5 border-t border-border/50 grid grid-cols-4 gap-5">
+                <Field label="Corporation Type" required hint="C-Corp is taxed as a separate entity; S-Corp income passes through to shareholders." className="col-span-2">
+                  <Select value={subCorpType} onValueChange={setSubCorpType}>
+                    <SelectTrigger><SelectValue placeholder="Select corporation type" /></SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="c-corp">C-Corp (C Corporation)</SelectItem>
+                      <SelectItem value="s-corp">S-Corp (S Corporation)</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </Field>
+              </div>
+            )}
 
             {/* DBA + Group Name — 4-column row after entity type selected */}
             {cfg && (
