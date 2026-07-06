@@ -484,9 +484,8 @@ export default function AddNewClient() {
                       <Select value={gstRegistered} onValueChange={setGstRegistered}>
                         <SelectTrigger><SelectValue placeholder="Select" /></SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="yes">Yes — registered</SelectItem>
+                          <SelectItem value="yes">Yes</SelectItem>
                           <SelectItem value="no">No</SelectItem>
-                          <SelectItem value="pending">Pending registration</SelectItem>
                         </SelectContent>
                       </Select>
                     </Field>
