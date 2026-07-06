@@ -1088,7 +1088,7 @@ export default function EngagementDetail() {
     // One-time migration: clear stale sample checklists saved before the
     // global template library was pulled in, so the engagement reflects the
     // new global checklist content.
-    const TEMPLATE_LIBRARY_VERSION = 'v11-500-oi-checklist-2026-07';
+    const TEMPLATE_LIBRARY_VERSION = 'v12-500-oi-yes-no-2026-07';
     const seenVersion = localStorage.getItem('savedChecklistsLibraryVersion');
     if (seenVersion !== TEMPLATE_LIBRARY_VERSION) {
       try {

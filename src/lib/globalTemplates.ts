@@ -14597,7 +14597,7 @@ export const generate670JournalEntryTestingChecklist = (): Checklist => {
 
 export const generate500OIChecklist = (): Checklist => {
   const q = (id: string, text: string, answer = '', explanation = ''): Question => ({
-    id, text, answerType: 'yes-no-na' as const, options: ['Yes', 'No', 'N/A'],
+    id, text, answerType: 'yes-no' as const, options: ['Yes', 'No'],
     required: false, answer, explanation, reference: '',
   });
 
