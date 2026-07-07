@@ -14164,13 +14164,6 @@ export const generate525GoingConcernChecklist = (): Checklist => {
             ), answerType: 'none' as const, showResponse: false, showExplanation: false, showReference: false },
         ]
       },
-      {
-        id: 'ra525-s6', title: 'Overall Conclusion', isExpanded: true,
-        questions: [
-          q('525-conc-q', '<p>Based on the above, have events or conditions been identified that, individually or collectively, may cast significant doubt on the entity\'s ability to continue as a going concern?</p>', undefined, 'No', 'No indicators of going concern doubt identified. Entity is financially stable with positive operating results and adequate liquidity.'),
-          la('525-conc', '<p><strong>Going concern conclusion:</strong></p>', 'No events or conditions identified that cast significant doubt on Shipping Line Inc.\'s ability to continue as a going concern. Management\'s use of the going concern basis of accounting is appropriate. Form 625 is not required.'),
-        ]
-      },
     ],
     createdAt: new Date(), updatedAt: new Date(),
   };
