@@ -661,7 +661,7 @@ export function AuditPAP501Worksheet({ isUS = false }: { isUS?: boolean }) {
               >
                 {s.name}
               </button>
-            )) : ['501 - Part A', '501 - Part B', '501- Part C'].map(n => (
+            )) : ['501 - Part B', '501- Part C'].map(n => (
               <button key={n} className="px-4 py-2 text-xs font-medium border-b-2 border-transparent text-muted-foreground">{n}</button>
             ))}
           </div>
