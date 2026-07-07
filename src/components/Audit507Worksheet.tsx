@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from "react";
+import { useParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
@@ -6,19 +7,17 @@ import { Textarea } from "@/components/ui/textarea";
 import { Info, Plus } from "lucide-react";
 import { RefButton, RefDoc } from "@/components/RefButton";
 import { readJsonFromLocalStorage, writeJsonToLocalStorage } from "@/lib/safeJson";
+import { WorksheetSignOff } from "@/components/WorksheetSignOff";
 
 // ── Types ──────────────────────────────────────────────────────────────────────
 
 interface ProcRow { doneBy: string; comments: string; wpRef: RefDoc[] }
-interface SignOffRow { preparedBy: string; preparedDate: string; reviewedBy: string; reviewedDate: string }
 interface ExtractRow { mt: string; date: string; extract: string; riskForm520: boolean; wpRef: RefDoc[] }
 interface Data507 {
   partA: Record<string, ProcRow>;
   dateAuditedFS: string;
   dateAuditorAppt: string;
-  partASignOff: SignOffRow;
   partB: Record<string, ProcRow>;
-  partBSignOff: SignOffRow;
   partC: ExtractRow[];
   conclusion: string;
   concluded: boolean;
@@ -132,7 +131,6 @@ const PART_B: PartBItem[] = [
 const PART_C_INITIAL = 3;
 
 function emptyProc(): ProcRow { return { doneBy: '', comments: '', wpRef: [] }; }
-function emptySignOff(): SignOffRow { return { preparedBy: '', preparedDate: '', reviewedBy: '', reviewedDate: '' }; }
 function emptyExtract(): ExtractRow { return { mt: '', date: '', extract: '', riskForm520: false, wpRef: [] }; }
 
 function buildDefault(): Data507 {
@@ -143,9 +141,7 @@ function buildDefault(): Data507 {
   return {
     partA,
     dateAuditedFS: '', dateAuditorAppt: '',
-    partASignOff: emptySignOff(),
     partB,
-    partBSignOff: emptySignOff(),
     partC: Array.from({ length: PART_C_INITIAL }, emptyExtract),
     conclusion: '', concluded: false, concludedOn: '',
   };
@@ -161,65 +157,11 @@ function groupedPartA() {
   }));
 }
 
-// ── Sign-off row ───────────────────────────────────────────────────────────────
-
-function SignOff({ value, onChange, locked }: {
-  value: SignOffRow;
-  onChange: (patch: Partial<SignOffRow>) => void;
-  locked: boolean;
-}) {
-  return (
-    <div className="px-6 py-3.5 border-t border-border bg-muted/20">
-      <div className="grid grid-cols-4 gap-3">
-        <div>
-          <p className="text-xs text-muted-foreground mb-1">Prepared by</p>
-          <Input
-            disabled={locked}
-            value={value.preparedBy}
-            onChange={e => onChange({ preparedBy: e.target.value })}
-            placeholder="Initials"
-            className="h-8 text-sm bg-background"
-          />
-        </div>
-        <div>
-          <p className="text-xs text-muted-foreground mb-1">Date</p>
-          <Input
-            disabled={locked}
-            type="date"
-            value={value.preparedDate}
-            onChange={e => onChange({ preparedDate: e.target.value })}
-            className="h-8 text-sm bg-background"
-          />
-        </div>
-        <div>
-          <p className="text-xs text-muted-foreground mb-1">Reviewed by</p>
-          <Input
-            disabled={locked}
-            value={value.reviewedBy}
-            onChange={e => onChange({ reviewedBy: e.target.value })}
-            placeholder="Initials"
-            className="h-8 text-sm bg-background"
-          />
-        </div>
-        <div>
-          <p className="text-xs text-muted-foreground mb-1">Date</p>
-          <Input
-            disabled={locked}
-            type="date"
-            value={value.reviewedDate}
-            onChange={e => onChange({ reviewedDate: e.target.value })}
-            className="h-8 text-sm bg-background"
-          />
-        </div>
-      </div>
-    </div>
-  );
-}
-
 // ── Component ──────────────────────────────────────────────────────────────────
 
 export function Audit507Worksheet({ isUS = false }: { isUS?: boolean }) {
   const storageKey = `audit-507-data-${isUS ? 'us' : 'ca'}`;
+  const { engagementId = '' } = useParams<{ engagementId: string }>();
 
   const [data, setData] = useState<Data507>(() => {
     const saved = readJsonFromLocalStorage<Data507 | null>(storageKey, null);
@@ -229,9 +171,7 @@ export function Audit507Worksheet({ isUS = false }: { isUS?: boolean }) {
       ...def,
       ...saved,
       partA: { ...def.partA, ...(saved.partA ?? {}) },
-      partASignOff: { ...def.partASignOff, ...(saved.partASignOff ?? {}) },
       partB: { ...def.partB, ...(saved.partB ?? {}) },
-      partBSignOff: { ...def.partBSignOff, ...(saved.partBSignOff ?? {}) },
       partC: saved.partC?.length ? saved.partC : def.partC,
     };
   });
@@ -383,11 +323,6 @@ export function Audit507Worksheet({ isUS = false }: { isUS?: boolean }) {
               <p className="text-xs text-muted-foreground mt-0.5">Complete this part when minutes or governance documents are available.</p>
             </div>
             {renderProcTable(GROUPED_A, id => data.partA[id], setPA)}
-            <SignOff
-              value={data.partASignOff}
-              onChange={patch => setData(d => ({ ...d, partASignOff: { ...d.partASignOff, ...patch } }))}
-              locked={locked}
-            />
           </div>
 
           {/* Part B */}
@@ -397,11 +332,6 @@ export function Audit507Worksheet({ isUS = false }: { isUS?: boolean }) {
               <p className="text-xs text-muted-foreground mt-0.5">Complete this part when formal minutes are not available.</p>
             </div>
             {renderProcTable(PART_B, id => data.partB[id], setPB)}
-            <SignOff
-              value={data.partBSignOff}
-              onChange={patch => setData(d => ({ ...d, partBSignOff: { ...d.partBSignOff, ...patch } }))}
-              locked={locked}
-            />
           </div>
 
           {/* Part C */}
@@ -523,6 +453,9 @@ export function Audit507Worksheet({ isUS = false }: { isUS?: boolean }) {
               </div>
             </div>
           </div>
+
+          {/* Sign-off */}
+          <WorksheetSignOff worksheetKey="aud-507" engagementId={engagementId} />
 
         </div>
       </div>
