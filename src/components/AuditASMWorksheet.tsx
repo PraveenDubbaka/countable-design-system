@@ -1,9 +1,11 @@
 import { useState, useEffect } from "react";
+import { useParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Sparkles, X } from "lucide-react";
 import { toast } from "sonner";
+import { WorksheetSignOff } from "@/components/WorksheetSignOff";
 
 // ── Types ──────────────────────────────────────────────────────────────────────
 
@@ -127,6 +129,7 @@ export interface AuditASMWorksheetProps {
 }
 
 export function AuditASMWorksheet({ isUS = false }: AuditASMWorksheetProps) {
+  const { engagementId = "" } = useParams<{ engagementId: string }>();
   const seed = isUS ? US_DATA : CA_DATA;
   const standardRef = isUS ? "(AU-C 300)" : "(CAS 300.7-8)";
 
@@ -533,39 +536,10 @@ export function AuditASMWorksheet({ isUS = false }: AuditASMWorksheetProps) {
               </table>
             </div>
 
-            {/* ── Card footer ── */}
-            <div className="px-6 py-4 border-t border-border bg-muted/20">
-              <div className="grid grid-cols-2 gap-6">
-                <div className="flex items-center gap-3">
-                  <span className="text-xs font-semibold text-muted-foreground whitespace-nowrap">Prepared by:</span>
-                  <Input
-                    className="h-8 text-sm flex-1"
-                    value={preparedBy}
-                    onChange={(e) => setPreparedBy(e.target.value)}
-                  />
-                  <span className="text-xs font-semibold text-muted-foreground whitespace-nowrap">Date:</span>
-                  <Input
-                    className="h-8 text-sm w-36"
-                    value={preparedDate}
-                    onChange={(e) => setPreparedDate(e.target.value)}
-                  />
-                </div>
-                <div className="flex items-center gap-3">
-                  <span className="text-xs font-semibold text-muted-foreground whitespace-nowrap">Reviewed by:</span>
-                  <Input
-                    className="h-8 text-sm flex-1"
-                    value={reviewedBy}
-                    onChange={(e) => setReviewedBy(e.target.value)}
-                  />
-                  <span className="text-xs font-semibold text-muted-foreground whitespace-nowrap">Date:</span>
-                  <Input
-                    className="h-8 text-sm w-36"
-                    value={reviewedDate}
-                    onChange={(e) => setReviewedDate(e.target.value)}
-                  />
-                </div>
-              </div>
-              <div className="flex justify-between mt-3">
+            {/* ── Sign-off (standard checklist sign-off) ── */}
+            <div className="border-t border-border">
+              <WorksheetSignOff worksheetKey="asm" engagementId={engagementId} />
+              <div className="px-6 py-3 border-t border-border bg-muted/20 flex justify-between">
                 <span className="text-xs text-muted-foreground">Overall audit strategy — 430</span>
                 <span className="text-xs text-muted-foreground">©2022 CPA Canada PEG</span>
               </div>

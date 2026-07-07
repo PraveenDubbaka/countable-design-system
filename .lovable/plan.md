@@ -1,42 +1,32 @@
-# 501-B-C — Preliminary Analytical Procedures rebuild
+## Goal
 
-Align the worksheet with the source workbook while keeping the existing worksheet design language (same cards, colored variance lanes, muted headers, Info tooltips). Single page, no tabs.
+Replace the ad-hoc "Sign-off / Prepared by / Reviewed by" cards on every worksheet with the same `ChecklistSignOff` UI used at the bottom of checklists (Preparer / Partner / Quality Reviewer / Admin-Tax Reviewer rows with Sign Off + Unsign buttons, add-extra-row, disclaimer text).
 
-## What the reference workbook actually contains
+## Approach
 
-Part B — Financial Comparatives
-- Setup: "Compare to current budget/forecast?" (Yes/No), "Compare to prior period?" (Yes/No), "Number of sales streams" (1-5).
-- Income Statement, per-stream: Sales, Cost of Sales, Gross Margin $, Gross Margin %, plus totals.
-- Other Revenue (2 rows) + total.
-- Expenses (Salaries, Occupancy, Interest, Bonuses, Repairs, Bad debts, Non-recurring, 3 × Other) + total.
-- Net income before tax + "% of revenue" row.
-- Balance Sheet: Current Assets, Long-Term Assets, Totals; Current Liabilities, Long-Term Liabilities, Totals; Equity, Total L&E.
-- Ratios: Working capital, Days in receivables, Days sales in inventory, Inventory turnover, Days purchases in trade payables, Debt-to-equity.
+1. **New wrapper** `src/components/WorksheetSignOff.tsx`
+   - Props: `worksheetKey: string`, `engagementId: string`, `isEngagementMode?: boolean` (default `true`).
+   - Builds a synthetic checklist id like `worksheet:{engagementId}:{worksheetKey}` and renders `<ChecklistSignOff checklist={{ id } as Checklist} isEngagementMode />`.
+   - Storage keys stay isolated per worksheet so nothing collides with real checklist sign-offs.
 
-Part C — Matters & Conclusion
-- Matters table (Part B ref, Summary, Management response, Audit implications).
-- Fraud-risk conclusion narrative.
-- Prepared by / Reviewed by sign-off.
+2. **Replace inline Sign-off cards** in every worksheet with the wrapper. Files:
+   - `AuditPAP501Worksheet.tsx` (501-B-C)
+   - `AuditOASWorksheet.tsx` (430)
+   - `AuditASMWorksheet.tsx`
+   - `AuditSAEWorksheet.tsx`
+   - `Audit513Worksheet.tsx`
+   - `Audit590Worksheet.tsx`
+   - `Audit605Worksheet.tsx` (uses shared `ConcludeBar` from WorksheetLayout — swap the sign-off block inside `ConcludeBar` or render `WorksheetSignOff` above it)
+   - `Audit610Worksheet.tsx`, `Audit630Worksheet.tsx` (same shared bar pattern)
+   - `AuditMaterialityWorksheet.tsx`, `AuditPAP501AWorksheet.tsx`, `AuditTeamPlanningWorksheet.tsx`, `Audit580Worksheet.tsx` (audit remaining worksheets for a Sign-off card and standardize)
 
-## Changes in `src/components/AuditPAP501Worksheet.tsx`
+3. **Keep** the existing "Conclude worksheet" button / concluded-on badge behavior (that's separate from sign-off). Only the four-role sign-off block is swapped.
 
-1. **Top "Setup" card** (new, first card in body): Compare-to-Budget Yes/No, Compare-to-Prior Yes/No, Number of sales streams. `showBudget` and `showPrior` now derive from these toggles instead of the hardcoded `true`. Keeps the existing context bar (Entity, Period end, Performance materiality auto-populated from the Materiality worksheet).
-2. **Income Statement card**: add per-stream Gross Margin $ block (computed = sales − cos per stream) and per-stream Gross Margin % block (computed). Add "Net income before tax — % of revenue" computed row.
-3. **Balance Sheet card**: unchanged structure, just uses the new `showBudget`/`showPrior` toggles.
-4. **New Ratios card** with 6 user-entered rows and the same variance columns.
-5. **Part C** stays as-is (matters table, fraud conclusion, sign-off). Card headers unchanged.
-6. **State model** additions: `compareBudget: 'Yes'|'No'`, `comparePrior: 'Yes'|'No'`, `ratios: Record<string, FinRow>`; default `Yes` for both toggles. Backfill on load.
-7. **FinEditRow / FinTotalRow**: accept an optional `showPrior` prop so prior-period columns can be hidden when the toggle is No. Variance columns for prior remain purple, budget remain blue.
-8. **Computed-only row helper** for per-stream Gross Margin $ and Gross Margin % (read-only, styled like `FinEditRow` but numbers rendered instead of inputs).
-
-## Auto-population dependencies preserved
-
-- Entity + Period end: `loadEngagements()` by `engagementId` (already wired).
-- Performance materiality: `audit-materiality-data-{ca|us}` localStorage (already wired).
-- Sales-stream labels: kept editable, seeded from existing `streamLabels`.
-- Persistence key `audit-pap501-data-{ca|us}` unchanged; migration merges new fields with defaults.
+4. **Do not touch** the `preparedBy` / `reviewedBy` fields in each worksheet's data model — leave for back-compat, just stop rendering them. (No storage migration needed.)
 
 ## Out of scope
+- No visual redesign of the ChecklistSignOff component itself.
+- No changes to real checklist sign-off storage or behavior.
 
-- Part A stays untouched (already on the 501-A checklist page).
-- No new design tokens, no tabs, no new components outside this file.
+## Question
+Confirm: keep the separate "Conclude worksheet" button as-is (locks the worksheet, shows the green "Concluded on…" pill), and only replace the four-role Preparer/Reviewer card with the checklist-style sign-off. Correct?

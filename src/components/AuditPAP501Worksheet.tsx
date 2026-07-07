@@ -10,6 +10,7 @@ import { Info } from "lucide-react";
 import { RefButton, RefDoc } from "@/components/RefButton";
 import { readJsonFromLocalStorage, writeJsonToLocalStorage } from "@/lib/safeJson";
 import { loadEngagements } from "@/store/engagementsStore";
+import { WorksheetSignOff } from "@/components/WorksheetSignOff";
 
 // ── Flow state machine ─────────────────────────────────────────────────────────
 
@@ -924,23 +925,12 @@ export function AuditPAP501Worksheet({ isUS = false }: { isUS?: boolean }) {
                   </div>
                 </div>
 
-                {/* ── Sign-off card ── */}
+                {/* ── Sign-off (standard checklist sign-off) ── */}
                 <div className="bg-card text-card-foreground border border-border shadow-[0_2px_8px_hsl(213_40%_20%/0.06)] rounded-md overflow-hidden">
                   <div className="px-6 py-3.5 bg-card border-b border-border flex items-center gap-3">
                     <span className="text-sm font-semibold text-foreground">Sign-off</span>
                   </div>
-                  <div className="px-6 py-5 grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div className="space-y-3">
-                      <div className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Prepared by</div>
-                      <TdInput value={data.preparedBy}   onChange={v => set({ preparedBy: v })}   placeholder="Preparer name" />
-                      <Input   type="date" value={data.preparedDate} onChange={e => set({ preparedDate: e.target.value })} className="h-8 text-sm w-fit" disabled={locked} />
-                    </div>
-                    <div className="space-y-3">
-                      <div className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Reviewed by</div>
-                      <TdInput value={data.reviewedBy}   onChange={v => set({ reviewedBy: v })}   placeholder="Reviewer name" />
-                      <Input   type="date" value={data.reviewedDate} onChange={e => set({ reviewedDate: e.target.value })} className="h-8 text-sm w-fit" disabled={locked} />
-                    </div>
-                  </div>
+                  <WorksheetSignOff worksheetKey="pap501bc" engagementId={engagementId} />
                   <div className="border-t border-border px-6 py-4 flex items-center justify-end gap-3 bg-muted/20">
                     {locked ? (
                       <div className="rounded-md border border-green-200 bg-green-50 px-4 py-2 text-xs text-green-800 font-medium">
