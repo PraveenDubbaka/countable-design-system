@@ -9,6 +9,7 @@ import { RefButton, type RefDoc } from "@/components/RefButton";
 import type { ReactNode } from "react";
 import type { EngagementContext } from "@/lib/engagementContext";
 import type { Risk520Row } from "@/lib/audit520Bridge";
+import { WorksheetSignOff } from "@/components/WorksheetSignOff";
 
 const RISK_TONE: Record<string, string> = {
   High: "bg-red-50 text-red-700 border-red-200",
