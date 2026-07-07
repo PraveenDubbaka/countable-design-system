@@ -721,7 +721,7 @@ export function AuditPAP501Worksheet({ isUS = false }: { isUS?: boolean }) {
                     </span>
                   </div>
                   <div className="overflow-x-auto">
-                    <table className="w-full">
+                    <table className="w-full text-xs">
                       <FinColHeaders showBudget={showBudget} showPrior={showPrior} />
                       <tbody>
                         <FinSectionRow label="Sales / Revenue" />
@@ -782,7 +782,7 @@ export function AuditPAP501Worksheet({ isUS = false }: { isUS?: boolean }) {
                     </span>
                   </div>
                   <div className="overflow-x-auto">
-                    <table className="w-full">
+                    <table className="w-full text-xs">
                       <FinColHeaders showBudget={showBudget} showPrior={showPrior} />
                       <tbody>
                         <FinSectionRow label="Current Assets" />
@@ -845,7 +845,7 @@ export function AuditPAP501Worksheet({ isUS = false }: { isUS?: boolean }) {
                     </span>
                   </div>
                   <div className="overflow-x-auto">
-                    <table className="w-full">
+                    <table className="w-full text-xs">
                       <FinColHeaders showBudget={showBudget} showPrior={showPrior} />
                       <tbody>
                         <FinEditRow id="rat-wc"     label="Working capital"                              showBudget={showBudget} showPrior={showPrior} source="ratio" />
@@ -874,7 +874,7 @@ export function AuditPAP501Worksheet({ isUS = false }: { isUS?: boolean }) {
                     </span>
                   </div>
                   <div className="overflow-x-auto">
-                    <table className="w-full">
+                    <table className="w-full text-xs">
                       <thead className="sticky top-0 z-10">
                         <tr className="bg-muted border-b border-border">
                           <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider w-24">Part B ref.</th>
