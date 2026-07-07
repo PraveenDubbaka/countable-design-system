@@ -348,20 +348,22 @@ export function AuditPAP501Worksheet({ isUS = false }: { isUS?: boolean }) {
   function PATopRow({ proc }: { proc: typeof PART_A_PROCS[0] }) {
     const row = data.partA[proc.id];
     return (
-      <tr className="hover:bg-muted/50 transition-colors border-b border-border">
-        <td className="px-4 py-3 text-center align-top"><Checkbox checked={row.checked} onCheckedChange={v => setPA(proc.id, { checked: !!v })} disabled={locked} /></td>
-        <td className="px-4 py-3 text-center align-top text-xs font-semibold font-mono text-foreground">{proc.num}</td>
-        <td className="px-6 py-3 align-top text-sm text-foreground">{proc.description}</td>
-        <td className="px-4 py-3 align-top" style={{width:180}}>
+      <tr className="hover:bg-muted/50 transition-colors align-top border-b border-border">
+        <td className="px-4 py-3 text-center"><Checkbox checked={row.checked} onCheckedChange={v => setPA(proc.id, { checked: !!v })} disabled={locked} /></td>
+        <td className="px-4 py-3 text-center text-xs font-semibold font-mono text-foreground">{proc.num}</td>
+        <td className="px-4 py-3">
+          <p className="text-xs font-semibold text-foreground mb-0.5">{proc.description}</p>
+        </td>
+        <td className="px-3 py-3" style={{width:140}}>
           <Select value={row.psc} onValueChange={v => setPA(proc.id, { psc: v })} disabled={locked}>
-            <SelectTrigger className="h-8 text-sm"><SelectValue placeholder="Select" /></SelectTrigger>
-            <SelectContent><SelectItem value="Y">Y</SelectItem><SelectItem value="N">N</SelectItem><SelectItem value="N/A">N/A</SelectItem></SelectContent>
+            <SelectTrigger className="h-8 text-xs w-24"><SelectValue placeholder="—" /></SelectTrigger>
+            <SelectContent><SelectItem value="Y" className="text-xs">Y</SelectItem><SelectItem value="N" className="text-xs">N</SelectItem><SelectItem value="N/A" className="text-xs">N/A</SelectItem></SelectContent>
           </Select>
         </td>
-        <td className="px-6 py-3 align-top">
-          <Textarea disabled={locked} value={row.exceptions} onChange={e => setPA(proc.id, { exceptions: e.target.value })} placeholder="Enter exceptions or findings…" className="min-h-[52px] text-sm resize-none border-0 shadow-none p-0 focus-visible:ring-0 bg-transparent" />
+        <td className="px-3 py-3">
+          <Textarea disabled={locked} value={row.exceptions} onChange={e => setPA(proc.id, { exceptions: e.target.value })} placeholder="Summarize exceptions or findings…" className="min-h-[56px] text-xs resize-none rounded-[10px]" />
         </td>
-        <td className="px-4 py-3 align-top text-center" style={{width:110}}>
+        <td className="px-3 py-3 text-center" style={{width:90}}>
           <RefButton reference={row.wpRef} onAttach={doc => setPA(proc.id, { wpRef: [...row.wpRef, doc] })} onRemove={i => setPA(proc.id, { wpRef: row.wpRef.filter((_,idx)=>idx!==i) })} disabled={locked} />
         </td>
       </tr>
@@ -371,27 +373,29 @@ export function AuditPAP501Worksheet({ isUS = false }: { isUS?: boolean }) {
   function PASubRow({ item, letterIdx }: { item:{id:string;label:string}; letterIdx:number }) {
     const row = data.partA[item.id];
     return (
-      <tr className="bg-muted/[0.03] hover:bg-muted/40 transition-colors border-b border-border last:border-0">
-        <td className="px-4 py-2.5 text-center align-top"><Checkbox checked={row.checked} onCheckedChange={v => setPA(item.id, { checked: !!v })} disabled={locked} /></td>
-        <td className="px-4 py-2.5 text-center align-top text-xs text-muted-foreground font-mono">{String.fromCharCode(97 + letterIdx)}.</td>
-        <td className="py-2.5 pl-10 pr-6 align-top border-l-2 border-primary/20"><span className="text-sm text-foreground">{item.label}</span></td>
-        <td className="px-4 py-2.5 align-top" style={{width:180}}>
+      <tr className="hover:bg-muted/50 transition-colors align-top border-b border-border last:border-b-0">
+        <td className="px-4 py-2.5 text-center"><Checkbox checked={row.checked} onCheckedChange={v => setPA(item.id, { checked: !!v })} disabled={locked} /></td>
+        <td className="px-4 py-2.5 text-center text-xs text-muted-foreground font-mono">{String.fromCharCode(97 + letterIdx)}.</td>
+        <td className="px-4 py-2.5 pl-10">
+          <p className="text-xs text-foreground leading-relaxed">{item.label}</p>
+        </td>
+        <td className="px-3 py-2.5" style={{width:140}}>
           <Select value={row.psc} onValueChange={v => setPA(item.id, { psc: v })} disabled={locked}>
-            <SelectTrigger className="h-8 text-sm"><SelectValue placeholder="Select" /></SelectTrigger>
-            <SelectContent><SelectItem value="Y">Y</SelectItem><SelectItem value="N">N</SelectItem><SelectItem value="N/A">N/A</SelectItem></SelectContent>
+            <SelectTrigger className="h-8 text-xs w-24"><SelectValue placeholder="—" /></SelectTrigger>
+            <SelectContent><SelectItem value="Y" className="text-xs">Y</SelectItem><SelectItem value="N" className="text-xs">N</SelectItem><SelectItem value="N/A" className="text-xs">N/A</SelectItem></SelectContent>
           </Select>
         </td>
-        <td className="px-6 py-2.5 align-top">
-          <Textarea disabled={locked} value={row.exceptions} onChange={e => setPA(item.id, { exceptions: e.target.value })} placeholder="Enter exceptions or findings…" className="min-h-[44px] text-sm resize-none border-0 shadow-none p-0 focus-visible:ring-0 bg-transparent" />
+        <td className="px-3 py-2.5">
+          <Textarea disabled={locked} value={row.exceptions} onChange={e => setPA(item.id, { exceptions: e.target.value })} placeholder="Summarize exceptions or findings…" className="min-h-[48px] text-xs resize-none rounded-[10px]" />
         </td>
-        <td className="px-4 py-2.5 align-top text-center" style={{width:110}}>
+        <td className="px-3 py-2.5 text-center" style={{width:90}}>
           <RefButton reference={row.wpRef} onAttach={doc => setPA(item.id, { wpRef: [...row.wpRef, doc] })} onRemove={i => setPA(item.id, { wpRef: row.wpRef.filter((_,idx)=>idx!==i) })} disabled={locked} />
         </td>
       </tr>
     );
   }
 
-  // Part B — editable financial row (accepts optional setter for ratios/other buckets)
+  // Part B — editable financial row
   function FinEditRow({ id, label, indent = 0, bold = false, showBudget, showPrior = true, source = 'fin' }: { id:string; label:string; indent?:number; bold?:boolean; showBudget:boolean; showPrior?:boolean; source?: 'fin'|'ratio' }) {
     const bucket = source === 'ratio' ? data.ratios : f;
     const setter = source === 'ratio' ? setRatio : setFin;
@@ -400,35 +404,35 @@ export function AuditPAP501Worksheet({ isUS = false }: { isUS?: boolean }) {
     const vbAmt = c - b, vbPct = b !== 0 ? vbAmt/b : null;
     const vpAmt = c - pr, vpPct = pr !== 0 ? vpAmt/pr : null;
     return (
-      <tr className="border-b border-border hover:bg-muted/30 transition-colors">
-        <td className={`px-4 py-2 text-sm align-top ${bold ? 'font-semibold text-foreground' : 'text-foreground'}`} style={{paddingLeft: `${16 + indent * 12}px`}}>{label}</td>
-        <td className="px-2 py-2 align-top border-l border-border" style={{width:120}}>
+      <tr className="hover:bg-muted/50 transition-colors align-top border-b border-border last:border-b-0">
+        <td className={`px-4 py-2 text-xs ${bold ? 'font-semibold text-foreground' : 'text-foreground'}`} style={{paddingLeft: `${16 + indent * 12}px`}}>{label}</td>
+        <td className="px-2 py-2" style={{width:120}}>
           <TdInput value={row.current} onChange={v => setter(id,{current:v})} placeholder="0" className="text-right font-mono" />
         </td>
-        {showBudget && <td className="px-2 py-2 align-top border-l border-border" style={{width:120}}>
+        {showBudget && <td className="px-2 py-2" style={{width:120}}>
           <TdInput value={row.budget} onChange={v => setter(id,{budget:v})} placeholder="0" className="text-right font-mono" />
         </td>}
-        {showPrior && <td className="px-2 py-2 align-top border-l border-border" style={{width:120}}>
+        {showPrior && <td className="px-2 py-2" style={{width:120}}>
           <TdInput value={row.prior} onChange={v => setter(id,{prior:v})} placeholder="0" className="text-right font-mono" />
         </td>}
         {showBudget && <>
-          <td className="px-3 py-2 align-middle text-right text-xs font-mono border-l border-border bg-blue-50/30 dark:bg-blue-950/10" style={{width:90}}>{b!==0?fmtN(vbAmt):''}</td>
-          <td className="px-3 py-2 align-middle text-right text-xs border-l border-border bg-blue-50/30 dark:bg-blue-950/10" style={{width:70}}>{fmtP(vbPct)}</td>
+          <td className="px-3 py-2 text-right text-xs font-mono" style={{width:90}}>{b!==0?fmtN(vbAmt):''}</td>
+          <td className="px-3 py-2 text-right text-xs" style={{width:70}}>{fmtP(vbPct)}</td>
         </>}
         {showPrior && <>
-          <td className="px-3 py-2 align-middle text-right text-xs font-mono border-l border-border bg-purple-50/30 dark:bg-purple-950/10" style={{width:90}}>{pr!==0?fmtN(vpAmt):''}</td>
-          <td className="px-3 py-2 align-middle text-right text-xs border-l border-border bg-purple-50/30 dark:bg-purple-950/10" style={{width:70}}>{fmtP(vpPct)}</td>
+          <td className="px-3 py-2 text-right text-xs font-mono" style={{width:90}}>{pr!==0?fmtN(vpAmt):''}</td>
+          <td className="px-3 py-2 text-right text-xs" style={{width:70}}>{fmtP(vpPct)}</td>
         </>}
-        <td className="px-2 py-2 align-top border-l border-border" style={{width:90}}>
+        <td className="px-2 py-2" style={{width:90}}>
           <Select value={row.hasIssue} onValueChange={v => setter(id,{hasIssue:v})} disabled={locked}>
             <SelectTrigger className="h-8 text-xs"><SelectValue placeholder="—" /></SelectTrigger>
-            <SelectContent><SelectItem value="Yes">Yes</SelectItem><SelectItem value="No">No</SelectItem></SelectContent>
+            <SelectContent><SelectItem value="Yes" className="text-xs">Yes</SelectItem><SelectItem value="No" className="text-xs">No</SelectItem></SelectContent>
           </Select>
         </td>
-        <td className="px-2 py-2 align-top border-l border-border" style={{minWidth:180}}>
-          {row.hasIssue === 'Yes' && <Textarea disabled={locked} value={row.explanation} onChange={e => setter(id,{explanation:e.target.value})} placeholder="Describe…" className="min-h-[44px] text-xs resize-none border-0 shadow-none p-0 focus-visible:ring-0 bg-transparent" />}
+        <td className="px-2 py-2" style={{minWidth:180}}>
+          {row.hasIssue === 'Yes' && <Textarea disabled={locked} value={row.explanation} onChange={e => setter(id,{explanation:e.target.value})} placeholder="Describe…" className="min-h-[44px] text-xs resize-none rounded-[10px]" />}
         </td>
-        <td className="px-2 py-2 align-top border-l border-border" style={{width:140}}>
+        <td className="px-2 py-2" style={{width:140}}>
           {row.hasIssue === 'Yes' && <TdInput value={row.auditResponse} onChange={v => setter(id,{auditResponse:v})} placeholder="Form/ref." className="text-xs" />}
         </td>
       </tr>
@@ -440,44 +444,44 @@ export function AuditPAP501Worksheet({ isUS = false }: { isUS?: boolean }) {
     const vbAmt = c - b, vbPct = b !== 0 ? vbAmt/b : null;
     const vpAmt = c - pr, vpPct = pr !== 0 ? vpAmt/pr : null;
     return (
-      <tr className="border-b border-border bg-muted/40">
-        <td className="px-4 py-2 text-sm font-bold text-foreground" style={{paddingLeft: `${16 + indent * 12}px`}}>{label}</td>
-        <td className="px-3 py-2 text-right text-sm font-bold font-mono border-l border-border border-t border-foreground/20">{c!==0?Math.abs(c).toLocaleString('en-CA',{maximumFractionDigits:0}):''}</td>
-        {showBudget && <td className="px-3 py-2 text-right text-sm font-bold font-mono border-l border-border border-t border-foreground/20">{b!==0?Math.abs(b).toLocaleString('en-CA',{maximumFractionDigits:0}):''}</td>}
-        {showPrior && <td className="px-3 py-2 text-right text-sm font-bold font-mono border-l border-border border-t border-foreground/20">{pr!==0?Math.abs(pr).toLocaleString('en-CA',{maximumFractionDigits:0}):''}</td>}
+      <tr className="border-b border-border bg-muted/40 align-top">
+        <td className="px-4 py-2 text-xs font-semibold text-foreground" style={{paddingLeft: `${16 + indent * 12}px`}}>{label}</td>
+        <td className="px-3 py-2 text-right text-xs font-semibold font-mono">{c!==0?Math.abs(c).toLocaleString('en-CA',{maximumFractionDigits:0}):''}</td>
+        {showBudget && <td className="px-3 py-2 text-right text-xs font-semibold font-mono">{b!==0?Math.abs(b).toLocaleString('en-CA',{maximumFractionDigits:0}):''}</td>}
+        {showPrior && <td className="px-3 py-2 text-right text-xs font-semibold font-mono">{pr!==0?Math.abs(pr).toLocaleString('en-CA',{maximumFractionDigits:0}):''}</td>}
         {showBudget && <>
-          <td className="px-3 py-2 text-right text-xs font-mono border-l border-border border-t border-foreground/20 bg-blue-50/40 dark:bg-blue-950/10">{b!==0?fmtN(vbAmt):''}</td>
-          <td className="px-3 py-2 text-right text-xs border-l border-border border-t border-foreground/20 bg-blue-50/40 dark:bg-blue-950/10">{fmtP(vbPct)}</td>
+          <td className="px-3 py-2 text-right text-xs font-semibold font-mono">{b!==0?fmtN(vbAmt):''}</td>
+          <td className="px-3 py-2 text-right text-xs font-semibold">{fmtP(vbPct)}</td>
         </>}
         {showPrior && <>
-          <td className="px-3 py-2 text-right text-xs font-mono border-l border-border border-t border-foreground/20 bg-purple-50/40 dark:bg-purple-950/10">{pr!==0?fmtN(vpAmt):''}</td>
-          <td className="px-3 py-2 text-right text-xs border-l border-border border-t border-foreground/20 bg-purple-50/40 dark:bg-purple-950/10">{fmtP(vpPct)}</td>
+          <td className="px-3 py-2 text-right text-xs font-semibold font-mono">{pr!==0?fmtN(vpAmt):''}</td>
+          <td className="px-3 py-2 text-right text-xs font-semibold">{fmtP(vpPct)}</td>
         </>}
-        <td className="border-l border-border border-t border-foreground/20" colSpan={3} />
+        <td colSpan={3} />
       </tr>
     );
   }
 
-  // Per-stream computed (read-only) row — dollar amount
+  // Per-stream computed (read-only) row
   function FinComputedRow({ label, c, b, pr, showBudget, showPrior = true, indent = 0, isPercent = false }: { label:string; c:number; b:number; pr:number; showBudget:boolean; showPrior?:boolean; indent?:number; isPercent?:boolean }) {
     const vbAmt = c - b, vbPct = b !== 0 ? vbAmt/b : null;
     const vpAmt = c - pr, vpPct = pr !== 0 ? vpAmt/pr : null;
     const fmt = (n:number) => isPercent ? (n*100).toFixed(1)+'%' : (n!==0 ? Math.abs(n).toLocaleString('en-CA',{maximumFractionDigits:0}) : '');
     return (
-      <tr className="border-b border-border hover:bg-muted/30 bg-muted/10">
-        <td className="px-4 py-2 text-sm text-foreground italic" style={{paddingLeft: `${16 + indent * 12}px`}}>{label}</td>
-        <td className="px-3 py-2 text-right text-sm font-mono border-l border-border">{fmt(c)}</td>
-        {showBudget && <td className="px-3 py-2 text-right text-sm font-mono border-l border-border">{fmt(b)}</td>}
-        {showPrior && <td className="px-3 py-2 text-right text-sm font-mono border-l border-border">{fmt(pr)}</td>}
+      <tr className="hover:bg-muted/50 transition-colors align-top border-b border-border last:border-b-0">
+        <td className="px-4 py-2 text-xs text-foreground italic" style={{paddingLeft: `${16 + indent * 12}px`}}>{label}</td>
+        <td className="px-3 py-2 text-right text-xs font-mono">{fmt(c)}</td>
+        {showBudget && <td className="px-3 py-2 text-right text-xs font-mono">{fmt(b)}</td>}
+        {showPrior && <td className="px-3 py-2 text-right text-xs font-mono">{fmt(pr)}</td>}
         {showBudget && <>
-          <td className="px-3 py-2 text-right text-xs font-mono border-l border-border bg-blue-50/30 dark:bg-blue-950/10">{isPercent ? '' : (b!==0?fmtN(vbAmt):'')}</td>
-          <td className="px-3 py-2 text-right text-xs border-l border-border bg-blue-50/30 dark:bg-blue-950/10">{isPercent ? '' : fmtP(vbPct)}</td>
+          <td className="px-3 py-2 text-right text-xs font-mono">{isPercent ? '' : (b!==0?fmtN(vbAmt):'')}</td>
+          <td className="px-3 py-2 text-right text-xs">{isPercent ? '' : fmtP(vbPct)}</td>
         </>}
         {showPrior && <>
-          <td className="px-3 py-2 text-right text-xs font-mono border-l border-border bg-purple-50/30 dark:bg-purple-950/10">{isPercent ? '' : (pr!==0?fmtN(vpAmt):'')}</td>
-          <td className="px-3 py-2 text-right text-xs border-l border-border bg-purple-50/30 dark:bg-purple-950/10">{isPercent ? '' : fmtP(vpPct)}</td>
+          <td className="px-3 py-2 text-right text-xs font-mono">{isPercent ? '' : (pr!==0?fmtN(vpAmt):'')}</td>
+          <td className="px-3 py-2 text-right text-xs">{isPercent ? '' : fmtP(vpPct)}</td>
         </>}
-        <td className="border-l border-border" colSpan={3} />
+        <td colSpan={3} />
       </tr>
     );
   }
@@ -485,11 +489,12 @@ export function AuditPAP501Worksheet({ isUS = false }: { isUS?: boolean }) {
   // Part B — section header row
   function FinSectionRow({ label }: { label: string }) {
     return (
-      <tr className="bg-muted/60 border-b border-border">
-        <td colSpan={99} className="px-4 py-2 text-xs font-bold text-foreground uppercase tracking-wider">{label}</td>
+      <tr className="bg-muted border-b border-border">
+        <td colSpan={99} className="px-4 py-2 text-xs font-semibold text-foreground uppercase tracking-wider">{label}</td>
       </tr>
     );
   }
+
 
   // ── Render ───────────────────────────────────────────────────────────────────
 
