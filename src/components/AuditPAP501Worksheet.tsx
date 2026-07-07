@@ -488,9 +488,6 @@ export function AuditPAP501Worksheet({ isUS = false }: { isUS?: boolean }) {
     setData(d => ({ ...d, fin: { ...d.fin, ...mockFin }, partA: { ...d.partA, ...mockPartA }, matters: mockMatters }));
     setFlowState('worksheet');
     localStorage.setItem(acceptedKey, 'true');
-    // Force XLSX tabs to reload (clears existing sheets so the load effect re-fires)
-    setXlsxSheets([]);
-    setXlsxLoading(true);
   }
 
   function handleGenerate() {
