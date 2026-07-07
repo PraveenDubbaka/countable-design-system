@@ -14178,9 +14178,6 @@ export const generate530PervasiveRisksChecklist = (): Checklist => {
     id, text, answerType: 'yes-no' as const, options: ['Yes', 'No'],
     required: false, answer, explanation, reference, ...(sub ? { subQuestions: sub } : {})
   });
-  const la = (id: string, text: string, answer = ''): Question => ({
-    id, text, answerType: 'long-answer' as const, options: [], required: false, answer
-  });
   return {
     id: 'default-audit-ra-530',
     title: 'Entity Level — Risks and Controls',
@@ -14222,10 +14219,14 @@ export const generate530PervasiveRisksChecklist = (): Checklist => {
             yn('530-A6-2', '<p>Performance measures, incentives and rewards.</p>'),
             yn('530-A6-3', '<p>Disciplinary actions, as necessary.</p>'),
           ], 'Yes', 'KPIs tied to annual bonus pool. Quarterly one-on-ones with direct managers. Progressive discipline policy in employee handbook.'),
-          la('530-A7-eval', '<p><strong>Evaluation</strong> — Based on the understanding obtained, evaluate and explain whether:</p><ul><li>Any deficiencies in the control environment undermine the other components of internal control.</li><li>Management, with the oversight of TCWG, has created and maintained a culture of honesty and ethical behaviour.</li><li>The control environment provides an appropriate foundation for the other components of the system of internal control considering the nature and complexity of the entity.</li></ul>', 'Control environment is appropriate for the nature and complexity of the entity. Absence of independent TCWG oversight is a recognized limitation typical of owner-managed entities; mitigated by direct owner involvement, CFO review controls, and external accountant year-end procedures. No deficiencies that undermine other components.'),
-          la('530-A8-impl', '<p><strong>Audit implications</strong> — Identify risks (control deficiencies) that could result in the F/S being materially misstated. Record risks on Form 520.</p>', 'Pervasive risk: management override of controls (owner-managed) — recorded on Form 520 and addressed on Form 506 (fraud).'),
-          la('530-A9-impact', '<p>Consider the impact of identified risks on the other components of internal control.</p>', 'Management override risk affects the design and operating effectiveness of all control activities; addressed by mandatory JE testing and unpredictable substantive procedures.'),
-          la('530-A10-tcwg', '<p>Communicate significant control deficiencies in writing to TCWG on a timely basis. Consider using Form 575.</p>', 'No significant deficiencies in the control environment identified for separate communication. Routine observations summarized in management letter.'),
+          yn('530-A7-eval', '<p><strong>Evaluation</strong> — Based on the understanding obtained, evaluate and explain whether:</p>', [
+            yn('530-A7-1', '<p>Any deficiencies in the control environment undermine the other components of internal control.</p>'),
+            yn('530-A7-2', '<p>Management, with the oversight of TCWG, has created and maintained a culture of honesty and ethical behaviour.</p>'),
+            yn('530-A7-3', '<p>The control environment provides an appropriate foundation for the other components of the system of internal control considering the nature and complexity of the entity.</p>'),
+          ], 'Yes', 'Control environment is appropriate for the nature and complexity of the entity. Absence of independent TCWG oversight is a recognized limitation typical of owner-managed entities; mitigated by direct owner involvement, CFO review controls, and external accountant year-end procedures. No deficiencies that undermine other components.'),
+          yn('530-A8-impl', '<p><strong>Audit implications</strong> — Identify risks (control deficiencies) that could result in the F/S being materially misstated. Record risks on Form 520.</p>', undefined, 'Yes', 'Pervasive risk: management override of controls (owner-managed) — recorded on Form 520 and addressed on Form 506 (fraud).'),
+          yn('530-A9-impact', '<p>Consider the impact of identified risks on the other components of internal control.</p>', undefined, 'Yes', 'Management override risk affects the design and operating effectiveness of all control activities; addressed by mandatory JE testing and unpredictable substantive procedures.'),
+          yn('530-A10-tcwg', '<p>Communicate significant control deficiencies in writing to TCWG on a timely basis. Consider using Form 575.</p>', undefined, 'Yes', 'No significant deficiencies in the control environment identified for separate communication. Routine observations summarized in management letter.'),
         ]
       },
       {
@@ -14240,10 +14241,10 @@ export const generate530PervasiveRisksChecklist = (): Checklist => {
             yn('530-B3-1', '<p>Identifies/assesses the business/fraud risks involved.</p>'),
             yn('530-B3-2', '<p>Addresses the risks (i.e., internal controls).</p>'),
           ], '', 'No significant operational, personnel, system, or pronouncement changes in the period. Risk assessment process unchanged.'),
-          la('530-B4-eval', '<p><strong>Evaluation</strong> — Based on the understanding obtained, evaluate and explain whether the entity\'s risk assessment process is appropriate to the entity\'s circumstances considering the nature and complexity of the entity.</p>', 'Risk assessment process is informal but appropriate for the size and complexity of the entity. Quarterly cadence and owner involvement provide adequate coverage of business and fraud risks.'),
-          la('530-B5-impl', '<p><strong>Audit implications</strong> — Identify any risks (resulting from control deficiencies) that could result in the F/S being materially misstated. Record risks on Form 520.</p>', 'No additional pervasive risks identified beyond those already recorded on Form 520.'),
-          la('530-B6-failed', '<p>If management failed to identify a risk of material misstatement, obtain an understanding of why the entity\'s risk assessment process failed to identify such risk and the implications for the audit.</p>', 'Not applicable — no instances identified where management failed to recognize a risk subsequently identified by the auditor.'),
-          la('530-B7-tcwg', '<p>Communicate significant control deficiencies in writing to TCWG on a timely basis. Consider using Form 575.</p>', 'No significant deficiencies in the risk assessment process to communicate.'),
+          yn('530-B4-eval', '<p><strong>Evaluation</strong> — Based on the understanding obtained, evaluate and explain whether the entity\'s risk assessment process is appropriate to the entity\'s circumstances considering the nature and complexity of the entity.</p>', undefined, 'Yes', 'Risk assessment process is informal but appropriate for the size and complexity of the entity. Quarterly cadence and owner involvement provide adequate coverage of business and fraud risks.'),
+          yn('530-B5-impl', '<p><strong>Audit implications</strong> — Identify any risks (resulting from control deficiencies) that could result in the F/S being materially misstated. Record risks on Form 520.</p>', undefined, 'Yes', 'No additional pervasive risks identified beyond those already recorded on Form 520.'),
+          yn('530-B6-failed', '<p>If management failed to identify a risk of material misstatement, obtain an understanding of why the entity\'s risk assessment process failed to identify such risk and the implications for the audit.</p>', undefined, 'No', 'Not applicable — no instances identified where management failed to recognize a risk subsequently identified by the auditor.'),
+          yn('530-B7-tcwg', '<p>Communicate significant control deficiencies in writing to TCWG on a timely basis. Consider using Form 575.</p>', undefined, 'Yes', 'No significant deficiencies in the risk assessment process to communicate.'),
         ]
       },
       {
@@ -14256,9 +14257,9 @@ export const generate530PervasiveRisksChecklist = (): Checklist => {
             yn('530-C2-3', '<p>The internal audit function (if any), including its nature, responsibilities and activities.</p>'),
           ], 'Yes', 'Ongoing evaluation via monthly close checklist signed off by CFO. No internal audit function — not warranted given size of entity. Deficiencies tracked in CFO\'s remediation log and reviewed quarterly with owner.'),
           yn('530-C3', '<p><strong>Information sources</strong> — Describe how management ensures that the information sources used in the monitoring process are sufficiently reliable.</p>', undefined, 'Yes', 'Data sourced from QBO (system of record), reconciled monthly to bank and subledgers. Access controls in place; CFO independently verifies key reports.'),
-          la('530-C4-eval', '<p><strong>Evaluation</strong> — Based on the understanding obtained, evaluate and explain whether the entity\'s process for monitoring internal control is appropriate in the circumstances considering the nature and complexity of the entity.</p>', 'Monitoring process is appropriate for the entity\'s size and complexity. Owner-manager involvement combined with CFO month-end procedures provides adequate ongoing monitoring.'),
-          la('530-C5-impl', '<p><strong>Audit implications</strong> — Identify any risks (resulting from control deficiencies) that could result in the F/S being materially misstated. Record risks on Form 520.</p>', 'No additional pervasive risks identified from monitoring procedures.'),
-          la('530-C6-tcwg', '<p>Communicate significant deficiencies in writing to TCWG on a timely basis. Consider using Form 575.</p>', 'No significant monitoring deficiencies to communicate.'),
+          yn('530-C4-eval', '<p><strong>Evaluation</strong> — Based on the understanding obtained, evaluate and explain whether the entity\'s process for monitoring internal control is appropriate in the circumstances considering the nature and complexity of the entity.</p>', undefined, 'Yes', 'Monitoring process is appropriate for the entity\'s size and complexity. Owner-manager involvement combined with CFO month-end procedures provides adequate ongoing monitoring.'),
+          yn('530-C5-impl', '<p><strong>Audit implications</strong> — Identify any risks (resulting from control deficiencies) that could result in the F/S being materially misstated. Record risks on Form 520.</p>', undefined, 'Yes', 'No additional pervasive risks identified from monitoring procedures.'),
+          yn('530-C6-tcwg', '<p>Communicate significant deficiencies in writing to TCWG on a timely basis. Consider using Form 575.</p>', undefined, 'Yes', 'No significant monitoring deficiencies to communicate.'),
         ]
       },
     ],
