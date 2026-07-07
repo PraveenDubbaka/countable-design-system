@@ -1881,7 +1881,7 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
                     children: [
                       { id: "aud-ra-oi", code: "500", label: "Observation & Inspection Procedures", icon: "checklist", route: "checklist/aud-ra-oi" },
                       { id: "aud-ra-pap501a", code: "501-A", label: "Preliminary Analytical Procedures", icon: "checklist", route: "checklist/aud-ra-pap501a" },
-                      { id: "aud-ra-pap501bc", code: "501-B-C", label: "Preliminary Analytical Procedures", icon: "worksheet", route: "checklist/aud-ra-pap501bc" },
+                      { id: "aud-ra-pap501bc", code: "501-B", label: "Preliminary Analytical Procedures", icon: "worksheet", route: "checklist/aud-ra-pap501bc" },
                       { id: "aud-ra-505", code: "505", label: "Inquiries of Management and Others", icon: "worksheet", route: "checklist/aud-ra-505" },
                       { id: "aud-ra-507", code: "507", label: "Minutes of Governance Meetings", icon: "worksheet", route: "checklist/aud-ra-507" },
                       { id: "aud-ra-506", code: "506", label: "Identifying Fraud Risks", icon: "worksheet", route: "checklist/aud-ra-506" },
