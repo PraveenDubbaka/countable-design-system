@@ -2022,7 +2022,7 @@ export default function EngagementDetail() {
                   <div className="w-px h-4 bg-border mx-0.5" />
                 </>
               )}
-              {checklistKey === 'aud-ra-pap501' && pap501Accepted && (
+              {(checklistKey === 'aud-ra-pap501bc' || checklistKey === 'aud-ra-pap501') && pap501Accepted && (
                 <>
                   <Button variant="secondary" size="sm" className="h-7 px-2.5 text-xs gap-1.5"
                     onClick={() => {
