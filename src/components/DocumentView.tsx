@@ -223,7 +223,7 @@ function ResponseField({ question, onUpdate, isPreviewMode, isEngagementMode = f
         <AITextarea
           value={question.answer || ''}
           onChange={(val) => handleAnswer(val)}
-          placeholder="Answer..."
+          placeholder={question.placeholder || "Answer..."}
           minHeight="48px" />);
 
 

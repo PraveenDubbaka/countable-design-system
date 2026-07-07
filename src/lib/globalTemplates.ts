@@ -14718,9 +14718,10 @@ export const generate505MgmtInquiriesChecklist = (): Checklist => {
     id, text, answerType: 'yes-no' as const, options: ['Yes', 'No'],
     required: false, answer: '', explanation: '', reference: '',
   });
-  const la = (id: string, text: string): Question => ({
+  const la = (id: string, text: string, placeholder?: string): Question => ({
     id, text, answerType: 'long-answer' as const, options: [],
     required: false, answer: '', explanation: '', reference: '',
+    ...(placeholder ? { placeholder } : {}),
   });
 
   const sections: Section[] = [
@@ -14740,7 +14741,7 @@ export const generate505MgmtInquiriesChecklist = (): Checklist => {
       title: 'Management — Inquiries of Management & Financial Reporting Personnel',
       isExpanded: true,
       questions: [
-        la('505-mgmt-iv', '<p><strong>Interviewee(s):</strong> Record the name(s), role(s), and interview date(s).</p>'),
+        la('505-mgmt-iv', '', 'Who interviewed'),
         q('505-mgmt-1', '<p>Business plans and strategies.</p>'),
         q('505-mgmt-2', '<p>Financial targets (such as sales and profitability, planned acquisitions and divestitures), new/discontinued products and services, and new contracts.</p>'),
         q('505-mgmt-3', '<p>Key initiatives (such as personnel changes, location changes, new financing sources, new technologies and major research, or other planned expenditures).</p>'),
@@ -14752,7 +14753,7 @@ export const generate505MgmtInquiriesChecklist = (): Checklist => {
       title: 'Sales / Marketing Personnel — Inquiries of Others',
       isExpanded: true,
       questions: [
-        la('505-sales-iv', '<p><strong>Interviewee(s):</strong> Record the name(s), role(s), and interview date(s).</p>'),
+        la('505-sales-iv', '', 'Who interviewed'),
         q('505-sales-1', '<p>Composition of sales and sales trends.</p>'),
         q('505-sales-2', '<p>Products/services that are doing well and those that are not.</p>'),
         q('505-sales-3', '<p>The major competitors and their impact.</p>'),
@@ -14772,7 +14773,7 @@ export const generate505MgmtInquiriesChecklist = (): Checklist => {
       title: 'Operational / Purchasing Personnel — Inquiries of Others',
       isExpanded: true,
       questions: [
-        la('505-ops-iv', '<p><strong>Interviewee(s):</strong> Record the name(s), role(s), and interview date(s).</p>'),
+        la('505-ops-iv', '', 'Who interviewed'),
         q('505-ops-1', '<p>Major changes in production processes.</p>'),
         q('505-ops-2', '<p>New equipment or technologies.</p>'),
         q('505-ops-3', '<p>Changes in suppliers, price/availability of raw materials, costing methodology, personnel and other operational matters.</p>'),
@@ -14788,7 +14789,7 @@ export const generate505MgmtInquiriesChecklist = (): Checklist => {
       title: 'IT Support Personnel — Inquiries of Others',
       isExpanded: true,
       questions: [
-        la('505-it-iv', '<p><strong>Interviewee(s):</strong> Record the name(s), role(s), and interview date(s).</p>'),
+        la('505-it-iv', '', 'Who interviewed'),
         q('505-it-1', '<p>Changes (planned and actual) to IT infrastructure, personnel or support.</p>'),
         q('505-it-2', '<p>Access and control over data/programs by the IT staff or IT contractor.</p>'),
         q('505-it-3', '<p>Changes to IT applications that have an impact on accounting.</p>'),
@@ -14804,7 +14805,7 @@ export const generate505MgmtInquiriesChecklist = (): Checklist => {
       title: 'Accounting Personnel — Inquiries of Others',
       isExpanded: true,
       questions: [
-        la('505-acctg-iv', '<p><strong>Interviewee(s):</strong> Record the name(s), role(s), and interview date(s).</p>'),
+        la('505-acctg-iv', '', 'Who interviewed'),
         q('505-acctg-1', '<p>The process of preparing financial reports and statements and areas where misstatements could arise (such as use of Excel spreadsheets).</p>'),
         q('505-acctg-2', '<p>Significant or unusual transactions or journal entries in the period.</p>'),
         q('505-acctg-3', '<p>Any instances of alleged, suspected or actual fraud.</p>'),
@@ -14820,7 +14821,7 @@ export const generate505MgmtInquiriesChecklist = (): Checklist => {
       title: 'Other Inquiries — In-house Lawyers, Internal Auditors, etc.',
       isExpanded: true,
       questions: [
-        la('505-lawyers-iv', '<p><strong>Interviewee(s):</strong> Record the name(s), role(s), and interview date(s).</p>'),
+        la('505-lawyers-iv', '', 'Who interviewed'),
         q('505-lawyers-1', '<p>Any knowledge of management override, fraud or suspected fraud.</p>'),
         q('505-lawyers-2', '<p>Any actual or threatened litigation or non-compliance with laws and regulations.</p>'),
         q('505-lawyers-3', '<p>Internal audit reports to management on areas of concern.</p>'),

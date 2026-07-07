@@ -47,6 +47,7 @@ export interface Question {
   showReference?: boolean; // UI flag to show/hide reference field
   columnLayout?: ColumnLayout; // If present, renders as a column block row
   carriedForward?: boolean; // true when populated from prior year file via Luka
+  placeholder?: string; // Custom placeholder text for the answer field
 }
 
 export interface FormElement {
