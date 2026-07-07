@@ -493,7 +493,31 @@ export function AuditPAP501Worksheet({ isUS = false }: { isUS?: boolean }) {
 
   // ── Render ───────────────────────────────────────────────────────────────────
 
-  const showBudget = true;
+  const showBudget = data.compareBudget !== 'No';
+  const showPrior  = data.comparePrior  !== 'No';
+
+  // Per-stream gross margin ($ and %)
+  const gmPerStream = salesIds.map((sid, i) => {
+    const cid = cosIds[i];
+    const sc = p(f[sid]?.current ?? ''), sb = p(f[sid]?.budget ?? ''), sp = p(f[sid]?.prior ?? '');
+    const cc = p(f[cid]?.current ?? ''), cb = p(f[cid]?.budget ?? ''), cp = p(f[cid]?.prior ?? '');
+    return { c: sc - cc, b: sb - cb, pr: sp - cp, salesC: sc, salesB: sb, salesP: sp };
+  });
+  const gmPctPerStream = gmPerStream.map(g => ({
+    c: g.salesC ? g.c / g.salesC : 0,
+    b: g.salesB ? g.b / g.salesB : 0,
+    pr: g.salesP ? g.pr / g.salesP : 0,
+  }));
+  const totalGMPct = {
+    c:  totalSales.c  ? totalGM.c  / totalSales.c  : 0,
+    b:  totalSales.b  ? totalGM.b  / totalSales.b  : 0,
+    pr: totalSales.pr ? totalGM.pr / totalSales.pr : 0,
+  };
+  const niPct = {
+    c:  totalSales.c  ? netIncome.c  / totalSales.c  : 0,
+    b:  totalSales.b  ? netIncome.b  / totalSales.b  : 0,
+    pr: totalSales.pr ? netIncome.pr / totalSales.pr : 0,
+  };
 
   // ── Accept artifact — pre-fill mock generated data ───────────────────────────
   function acceptArtifact() {
