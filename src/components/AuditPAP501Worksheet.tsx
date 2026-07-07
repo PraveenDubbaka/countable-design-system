@@ -310,7 +310,8 @@ export function AuditPAP501Worksheet({ isUS = false }: { isUS?: boolean }) {
         .then(r => r.arrayBuffer())
         .then(buf => {
           const wb = XLSX.read(new Uint8Array(buf), { type: 'array' });
-          const visible = wb.SheetNames.filter((n: string) => n !== 'programming');
+            // Part A is rendered as its own checklist item (501-A). Only Parts B and C live here.
+            const visible = wb.SheetNames.filter((n: string) => n !== 'programming' && n !== '501 - Part A');
           const sheets: XlsxSheetData[] = visible.map((name: string) => {
             const ws = wb.Sheets[name];
             const limit = COL_LIMITS[name] ?? 10;
