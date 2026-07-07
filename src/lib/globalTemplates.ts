@@ -14062,6 +14062,10 @@ export const generate525GoingConcernChecklist = (): Checklist => {
     id, text, answerType: 'yes-no-na' as const, options: ['Yes', 'No', 'NA'],
     required: false, answer, explanation, reference, ...(sub ? { subQuestions: sub } : {})
   });
+  const yn = (id: string, text: string, answer = '', explanation = ''): Question => ({
+    id, text, answerType: 'yes-no' as const, options: ['Yes', 'No'],
+    required: false, answer, explanation, reference: ''
+  });
   const la = (id: string, text: string, answer = ''): Question => ({
     id, text, answerType: 'long-answer' as const, options: [], required: false, answer
   });
@@ -14128,33 +14132,33 @@ export const generate525GoingConcernChecklist = (): Checklist => {
         questions: [
           { ...q('525-A1-hdr', '<p><strong>Financing / Cash Flow Challenges</strong></p>',
               [
-                q('525-A1a', '<p>Insufficient equity or working capital (net liability or net current liability position)?</p>', undefined, 'No', 'Working capital positive: current assets $4.2M vs. current liabilities $2.3M. Current ratio 1.85:1.'),
-                q('525-A1b', '<p>Inability to obtain or refinance borrowings?</p>', undefined, 'No', 'Term loan due 2027. Operating LOC renewed annually — renewal confirmed by RBC.'),
-                q('525-A1c', '<p>Indications of withdrawal of financial support by creditors or owners?</p>', undefined, 'No', 'No indicators. Banking relationship is stable.'),
-                q('525-A1d', '<p>Negative operating cash flows indicated by historical or prospective F/S?</p>', undefined, 'No', 'Operating cash flow positive $1.1M for FY2024.'),
-                q('525-A1e', '<p>Inability to pay creditors on due dates?</p>', undefined, 'No', 'Payables aging review shows no significant overdue amounts.'),
-                q('525-A1f', '<p>Inability to comply with the terms of loan agreements?</p>', undefined, 'No', 'DSCR 2.1:1 (covenant 1.25:1 — complied). Debt/equity 0.57:1.'),
+                yn('525-A1a', '<p>Insufficient equity or working capital (net liability or net current liability position)?</p>', 'No', 'Working capital positive: current assets $4.2M vs. current liabilities $2.3M. Current ratio 1.85:1.'),
+                yn('525-A1b', '<p>Inability to obtain or refinance borrowings?</p>', 'No', 'Term loan due 2027. Operating LOC renewed annually — renewal confirmed by RBC.'),
+                yn('525-A1c', '<p>Indications of withdrawal of financial support by creditors or owners?</p>', 'No', 'No indicators. Banking relationship is stable.'),
+                yn('525-A1d', '<p>Negative operating cash flows indicated by historical or prospective F/S?</p>', 'No', 'Operating cash flow positive $1.1M for FY2024.'),
+                yn('525-A1e', '<p>Inability to pay creditors on due dates?</p>', 'No', 'Payables aging review shows no significant overdue amounts.'),
+                yn('525-A1f', '<p>Inability to comply with the terms of loan agreements?</p>', 'No', 'DSCR 2.1:1 (covenant 1.25:1 — complied). Debt/equity 0.57:1.'),
               ]
             ), answerType: 'none' as const, showResponse: false, showExplanation: false, showReference: false },
           { ...q('525-A2-hdr', '<p><strong>Adverse Market Conditions, Trends or Events</strong></p>',
               [
-                q('525-A2a', '<p>Management intentions to liquidate the entity or to cease operations?</p>', undefined, 'No'),
-                q('525-A2b', '<p>Loss of key management or employees without replacement?</p>', undefined, 'No', 'All key management in place. Succession plan documented.'),
-                q('525-A2c', '<p>Loss of a major market, key customer(s), franchise, licence, or principal supplier(s)?</p>', undefined, 'No', 'Top 5 customers account for 61% of revenue. All relationships renewed for FY2025.'),
-                q('525-A2d', '<p>Emergence of a highly successful competitor?</p>', undefined, 'No'),
-                q('525-A2e', '<p>Substantial operating losses or significant deterioration in the value of assets used to generate cash flows?</p>', undefined, 'No', 'Net income $624K. Total assets increased from $17.1M to $18.2M.'),
+                yn('525-A2a', '<p>Management intentions to liquidate the entity or to cease operations?</p>', 'No'),
+                yn('525-A2b', '<p>Loss of key management or employees without replacement?</p>', 'No', 'All key management in place. Succession plan documented.'),
+                yn('525-A2c', '<p>Loss of a major market, key customer(s), franchise, licence, or principal supplier(s)?</p>', 'No', 'Top 5 customers account for 61% of revenue. All relationships renewed for FY2025.'),
+                yn('525-A2d', '<p>Emergence of a highly successful competitor?</p>', 'No'),
+                yn('525-A2e', '<p>Substantial operating losses or significant deterioration in the value of assets used to generate cash flows?</p>', 'No', 'Net income $624K. Total assets increased from $17.1M to $18.2M.'),
               ]
             ), answerType: 'none' as const, showResponse: false, showExplanation: false, showReference: false },
           { ...q('525-A3-hdr', '<p><strong>Regulatory or Legal Challenges</strong></p>',
               [
-                q('525-A3a', '<p>Pending legal or regulatory proceedings against the entity?</p>', undefined, 'No', 'No pending litigation identified per legal inquiry.'),
-                q('525-A3b', '<p>Changes in law or regulation or government policy expected to adversely affect the entity?</p>', undefined, 'No'),
-                q('525-A3c', '<p>Non-compliance with capital or other statutory requirements?</p>', undefined, 'No', 'All regulatory filings current. Transport Canada certifications valid.'),
+                yn('525-A3a', '<p>Pending legal or regulatory proceedings against the entity?</p>', 'No', 'No pending litigation identified per legal inquiry.'),
+                yn('525-A3b', '<p>Changes in law or regulation or government policy expected to adversely affect the entity?</p>', 'No'),
+                yn('525-A3c', '<p>Non-compliance with capital or other statutory requirements?</p>', 'No', 'All regulatory filings current. Transport Canada certifications valid.'),
               ]
             ), answerType: 'none' as const, showResponse: false, showExplanation: false, showReference: false },
           { ...q('525-A4-hdr', '<p><strong>Other Events or Conditions Identified</strong></p>',
               [
-                q('525-A4a', '<p>Significant estimation uncertainty relating to an accounting estimate?</p>', undefined, 'No', 'Accounting estimates reviewed — no significant uncertainty that would impact going concern.'),
+                yn('525-A4a', '<p>Significant estimation uncertainty relating to an accounting estimate?</p>', 'No', 'Accounting estimates reviewed — no significant uncertainty that would impact going concern.'),
                 la('525-A4-other', '<p>Other events or conditions identified (describe):</p>', ''),
               ]
             ), answerType: 'none' as const, showResponse: false, showExplanation: false, showReference: false },
