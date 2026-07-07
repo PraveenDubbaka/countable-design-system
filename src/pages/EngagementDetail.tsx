@@ -1079,7 +1079,7 @@ export default function EngagementDetail() {
   // Load checklist from localStorage - use first saved checklist or fallback
   useEffect(() => {
     // FS pages, standalone custom worksheets, and notes pages render without a checklist
-    if (checklistKey && (FS_PAGE_KEYS.has(checklistKey) || checklistKey in CUSTOM_WORKSHEET_TITLES || checklistKey.startsWith('notes-') || checklistKey.startsWith('custom-'))) {
+    if (checklistKey && checklistKey !== 'aud-ra-pap501a' && (FS_PAGE_KEYS.has(checklistKey) || checklistKey in CUSTOM_WORKSHEET_TITLES || checklistKey.startsWith('notes-') || checklistKey.startsWith('custom-'))) {
       setIsLoading(false);
       setChecklist(null);
       return;
