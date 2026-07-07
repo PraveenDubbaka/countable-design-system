@@ -14062,9 +14062,13 @@ export const generate525GoingConcernChecklist = (): Checklist => {
     id, text, answerType: 'yes-no-na' as const, options: ['Yes', 'No', 'NA'],
     required: false, answer, explanation, reference, ...(sub ? { subQuestions: sub } : {})
   });
-  const yn = (id: string, text: string, answer = '', explanation = ''): Question => ({
+  const yn = (id: string, text: string, subOrAnswer?: Question[] | string, answer = '', explanation = ''): Question => ({
     id, text, answerType: 'yes-no' as const, options: ['Yes', 'No'],
-    required: false, answer, explanation, reference: ''
+    required: false,
+    answer: Array.isArray(subOrAnswer) ? answer : (subOrAnswer ?? ''),
+    explanation: Array.isArray(subOrAnswer) ? explanation : answer,
+    reference: '',
+    ...(Array.isArray(subOrAnswer) ? { subQuestions: subOrAnswer } : {})
   });
   const la = (id: string, text: string, answer = ''): Question => ({
     id, text, answerType: 'long-answer' as const, options: [], required: false, answer
@@ -14097,33 +14101,33 @@ export const generate525GoingConcernChecklist = (): Checklist => {
       {
         id: 'ra525-s1', title: 'Part 1 — Required Inquiries', isExpanded: true,
         questions: [
-          q('525-1a', '<p><strong>Management\'s preliminary assessment:</strong> Has management performed a preliminary assessment of the entity\'s ability to continue as a going concern?</p>',
+          yn('525-1a', '<p><strong>Management\'s preliminary assessment:</strong> Has management performed a preliminary assessment of the entity\'s ability to continue as a going concern?</p>',
             [
-              q('525-1a-i', '<p>Did management identify any events or conditions that cast significant doubt on the entity\'s ability to continue as a going concern? (See Appendix A)</p>', undefined, 'No', 'No adverse events or conditions identified by management.'),
-              q('525-1a-ii', '<p>Was management\'s assessment evaluated for completeness, including all relevant information?</p>', undefined, 'Yes', 'Assessment reviewed — management considered all financial covenants, cash flow projections, and credit facilities.'),
+              yn('525-1a-i', '<p>Did management identify any events or conditions that cast significant doubt on the entity\'s ability to continue as a going concern? (See Appendix A)</p>', 'No', 'No adverse events or conditions identified by management.'),
+              yn('525-1a-ii', '<p>Was management\'s assessment evaluated for completeness, including all relevant information?</p>', 'Yes', 'Assessment reviewed — management considered all financial covenants, cash flow projections, and credit facilities.'),
             ],
             'Yes', 'Management prepared a going concern assessment for FY2024 — no adverse conditions identified.'
           ),
-          q('525-1b', '<p><strong>Period beyond management\'s assessment:</strong> Does management have any knowledge of events or conditions beyond the period of their assessment that may cast significant doubt on the entity\'s ability to continue as a going concern?</p>',
-            undefined, 'No', 'Management confirmed no known events or conditions beyond the 12-month assessment period. The minimum period for management\'s assessment is 12 months from the date of the F/S.'
+          yn('525-1b', '<p><strong>Period beyond management\'s assessment:</strong> Does management have any knowledge of events or conditions beyond the period of their assessment that may cast significant doubt on the entity\'s ability to continue as a going concern?</p>',
+            'No', 'Management confirmed no known events or conditions beyond the 12-month assessment period. The minimum period for management\'s assessment is 12 months from the date of the F/S.'
           ),
-          q('525-1c', '<p><strong>No going-concern assessment:</strong> If no going-concern assessment has been made by management — was the intended use of the going-concern basis of accounting discussed with management?</p>',
+          yn('525-1c', '<p><strong>No going-concern assessment:</strong> If no going-concern assessment has been made by management — was the intended use of the going-concern basis of accounting discussed with management?</p>',
             [
-              q('525-1c-i', '<p>Was management inquired about whether events or conditions exist (see Appendix A) that, individually or collectively, may cast significant doubt on the entity\'s ability to continue as a going concern?</p>', undefined, 'NA'),
+              yn('525-1c-i', '<p>Was management inquired about whether events or conditions exist (see Appendix A) that, individually or collectively, may cast significant doubt on the entity\'s ability to continue as a going concern?</p>', ''),
             ],
-            'NA', 'Management performed a going concern assessment — this step is not applicable.'
+            '', 'Management performed a going concern assessment — this step is not applicable.'
           ),
-          q('525-1d', '<p><strong>Other risk assessment procedures:</strong> Have any adverse events/conditions been identified as a result of performing other risk assessment procedures? Consider the following:</p>',
+          yn('525-1d', '<p><strong>Other risk assessment procedures:</strong> Have any adverse events/conditions been identified as a result of performing other risk assessment procedures? Consider the following:</p>',
             [
-              q('525-1d-i',   '<p>Financing/cash flow challenges</p>', undefined, 'No'),
-              q('525-1d-ii',  '<p>Adverse market conditions, trends or events</p>', undefined, 'No'),
-              q('525-1d-iii', '<p>Regulatory or legal challenges</p>', undefined, 'No'),
-              q('525-1d-iv',  '<p>Other (including accounting estimates)</p>', undefined, 'No'),
+              yn('525-1d-i',   '<p>Financing/cash flow challenges</p>', 'No'),
+              yn('525-1d-ii',  '<p>Adverse market conditions, trends or events</p>', 'No'),
+              yn('525-1d-iii', '<p>Regulatory or legal challenges</p>', 'No'),
+              yn('525-1d-iv',  '<p>Other (including accounting estimates)</p>', 'No'),
             ],
             'No', 'No adverse events or conditions identified from other risk assessment procedures.'
           ),
-          q('525-1e', '<p><strong>Adverse events and conditions — documentation:</strong> When adverse events or conditions are present: have resulting risks of material misstatement been documented on Form 520, and has Form 625 been completed?</p>',
-            undefined, 'NA', 'No adverse events or conditions identified — Form 625 not required.'
+          yn('525-1e', '<p><strong>Adverse events and conditions — documentation:</strong> When adverse events or conditions are present: have resulting risks of material misstatement been documented on Form 520, and has Form 625 been completed?</p>',
+            '', 'No adverse events or conditions identified — Form 625 not required.'
           ),
         ]
       },
