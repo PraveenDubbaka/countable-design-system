@@ -659,14 +659,6 @@ export function AuditPAP501Worksheet({ isUS = false }: { isUS?: boolean }) {
           </p>
         </div>
 
-        {/* Context bar */}
-        <div className="flex items-center border-b border-border bg-muted/20 px-6 py-2.5 shrink-0">
-          <div className="ml-auto flex items-center gap-4 text-xs text-muted-foreground">
-            <span><strong className="text-foreground">Entity:</strong> {entityName}</span>
-            <span><strong className="text-foreground">Period end:</strong> {periodEnded}</span>
-            <span><strong className="text-foreground">Performance materiality:</strong> {perfMateriality}</span>
-          </div>
-        </div>
 
         {/* Body */}
         <div className="flex-1 overflow-y-auto bg-muted/30">
