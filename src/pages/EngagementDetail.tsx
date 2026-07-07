@@ -655,7 +655,8 @@ const CUSTOM_WORKSHEET_TITLES: Record<string, string> = {
   'aud-sae': "Using the Work of an Auditor's Expert", 'aud-us-sae': "Using the Work of an Auditor's Expert",
   'aud-asm': 'Overall Audit Strategy', 'aud-us-asm': 'Overall Audit Strategy',
 
-  'aud-ra-pap501': 'Preliminary Analytical Procedures',
+  'aud-ra-pap501a': '501-A — Preliminary Analytical Procedures',
+  'aud-ra-pap501bc': '501-B-C — Preliminary Analytical Procedures',
   'aud-ra-505': 'Inquiries of Management and Others',
   'aud-ra-507': 'Minutes of Governance Meetings',
   'aud-ra-506': 'Identifying Fraud Risks',
