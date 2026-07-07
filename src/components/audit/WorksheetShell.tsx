@@ -139,12 +139,6 @@ export function LinkedRisksCard({
     saveTimer.current = setTimeout(() => writeJsonToLocalStorage(storageKey, state), 450);
   }, [state, storageKey]);
 
-  const setRiskWpRef = (ref: string, docs: RefDoc[]) =>
-    setState(s => ({ ...s, riskWpRefs: { ...s.riskWpRefs, [ref]: docs } }));
-
-  const setManualWpRef = (id: string, docs: RefDoc[]) =>
-    setState(s => ({ ...s, manualRisks: s.manualRisks.map(r => r.id === id ? { ...r, wpRef: docs } : r) }));
-
   const commitDraft = () => {
     if (!draft.rmmIdentified.trim()) return;
     setState(s => ({
@@ -196,7 +190,6 @@ export function LinkedRisksCard({
                 <th className="text-left px-4 py-2.5 font-medium border-b border-border w-[70px]">Fraud</th>
                 <th className="text-left px-4 py-2.5 font-medium border-b border-border w-[50px]">IR</th>
                 <th className="text-left px-4 py-2.5 font-medium border-b border-border w-[70px]">Sig. risk</th>
-                <th className="text-center px-4 py-2.5 font-medium border-b border-border w-[90px]">W/P ref.</th>
                 {!locked && <th className="w-[40px] border-b border-border" />}
               </tr>
             </thead>
@@ -209,14 +202,6 @@ export function LinkedRisksCard({
                   <td className={td}>{r.fraudRisk === "Y" ? <span className="text-red-700 font-medium">Yes</span> : "—"}</td>
                   <td className={`${td} font-medium`}>{r.inherentRisk || "—"}</td>
                   <td className={td}>{r.significantRisk === "Y" ? <span className="text-red-700 font-medium">Yes</span> : "—"}</td>
-                  <td className={`${td} text-center`}>
-                    <RefButton
-                      disabled={locked}
-                      reference={state.riskWpRefs[r.ref] ?? []}
-                      onAttach={doc => setRiskWpRef(r.ref, [...(state.riskWpRefs[r.ref] ?? []), doc])}
-                      onRemove={idx => setRiskWpRef(r.ref, (state.riskWpRefs[r.ref] ?? []).filter((_, j) => j !== idx))}
-                    />
-                  </td>
                   {!locked && <td className={td} />}
                 </tr>
               ))}
@@ -228,14 +213,6 @@ export function LinkedRisksCard({
                   <td className={td}>—</td>
                   <td className={td}>—</td>
                   <td className={td}>—</td>
-                  <td className={`${td} text-center`}>
-                    <RefButton
-                      disabled={locked}
-                      reference={r.wpRef}
-                      onAttach={doc => setManualWpRef(r.id, [...r.wpRef, doc])}
-                      onRemove={idx => setManualWpRef(r.id, r.wpRef.filter((_, j) => j !== idx))}
-                    />
-                  </td>
                   {!locked && (
                     <td className={`${td} text-center`}>
                       <button onClick={() => removeManual(r.id)} className="p-1 hover:text-destructive text-muted-foreground transition-colors">
@@ -257,7 +234,7 @@ export function LinkedRisksCard({
                       className="h-7 text-xs"
                     />
                   </td>
-                  <td className={td} colSpan={4}>
+                  <td className={td} colSpan={3}>
                     <Input
                       value={draft.rmmIdentified}
                       onChange={e => setDraft(d => ({ ...d, rmmIdentified: e.target.value }))}
