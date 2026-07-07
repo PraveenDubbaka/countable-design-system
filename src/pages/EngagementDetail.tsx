@@ -21,6 +21,7 @@ import { AuditSAEWorksheet } from "@/components/AuditSAEWorksheet";
 import { AuditOASWorksheet } from "@/components/AuditOASWorksheet";
 
 import { AuditPAP501Worksheet } from "@/components/AuditPAP501Worksheet";
+import { AuditPAP501AChecklist } from "@/components/AuditPAP501AChecklist";
 import { Audit505Worksheet } from "@/components/Audit505Worksheet";
 import { Audit507Worksheet } from "@/components/Audit507Worksheet";
 import { Audit506Worksheet } from "@/components/Audit506Worksheet";
