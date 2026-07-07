@@ -1,9 +1,11 @@
 import { useState, useEffect } from "react";
+import { useParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Sparkles, X } from "lucide-react";
 import { toast } from "sonner";
+import { WorksheetSignOff } from "@/components/WorksheetSignOff";
 
 // ── Types ──────────────────────────────────────────────────────────────────────
 
