@@ -262,12 +262,6 @@ export function AuditPAP501Worksheet({ isUS = false }: { isUS?: boolean }) {
     return () => clearTimeout(t);
   }, [data, storageKey]);
 
-  // ── Zoom ─────────────────────────────────────────────────────────────────────
-
-  const [zoom, setZoom] = useState(100);
-  const zoomIn  = () => setZoom(z => Math.min(200, z + 10));
-  const zoomOut = () => setZoom(z => Math.max(50,  z - 10));
-
   // ── Flow state ───────────────────────────────────────────────────────────────
 
   const acceptedKey = `pap501-accepted-${engagementId}-${isUS ? 'us' : 'ca'}`;
@@ -275,7 +269,7 @@ export function AuditPAP501Worksheet({ isUS = false }: { isUS?: boolean }) {
   const [flowState, setFlowState] = useState<FlowState>(() =>
     localStorage.getItem(`pap501-accepted-${engagementId}-${isUS ? 'us' : 'ca'}`) ? 'worksheet' : 'idle'
   );
-  const [activeSheet, setActiveSheet] = useState<'partA' | 'partB' | 'partC'>('partA');
+  const [activeSheet, setActiveSheet] = useState<'partB' | 'partC'>('partB');
 
   const [connectedSource, setConnectedSource] = useState<string | null>(null);
   useEffect(() => {
@@ -283,70 +277,7 @@ export function AuditPAP501Worksheet({ isUS = false }: { isUS?: boolean }) {
     setConnectedSource(connectors[0] ?? null);
   }, [engagementId]);
 
-  // ── XLSX embed state ────────────────────────────────────────────────────────
 
-  interface XlsxSheetData {
-    name: string;
-    rows: (string | number)[][];
-    merges: Array<{ sr: number; sc: number; er: number; ec: number }>;
-    filled: Set<string>; // "ri,ci" keys for Luka-filled cells
-  }
-  const [xlsxSheets, setXlsxSheets] = useState<XlsxSheetData[]>([]);
-  const [xlsxActiveSheet, setXlsxActiveSheet] = useState('');
-  const [xlsxLoading, setXlsxLoading] = useState(false);
-
-  const COL_LIMITS: Record<string, number> = {
-    '501 - Part A': 7,
-    '501 - Part B': 10,
-    '501- Part C': 9,
-  };
-
-  useEffect(() => {
-    if (flowState !== 'worksheet') return;
-    if (xlsxSheets.length > 0) return;
-    setXlsxLoading(true);
-    import('xlsx').then(XLSX => {
-      fetch('/assets/pap501-worksheet.xlsm')
-        .then(r => r.arrayBuffer())
-        .then(buf => {
-          const wb = XLSX.read(new Uint8Array(buf), { type: 'array' });
-            // Part A is rendered as its own checklist item (501-A). Only Parts B and C live here.
-            const visible = wb.SheetNames.filter((n: string) => n !== 'programming' && n !== '501 - Part A');
-          const sheets: XlsxSheetData[] = visible.map((name: string) => {
-            const ws = wb.Sheets[name];
-            const limit = COL_LIMITS[name] ?? 10;
-            const raw = XLSX.utils.sheet_to_json<(string | number)[]>(ws, {
-              header: 1, defval: '', blankrows: true,
-            }) as (string | number)[][];
-            const rows = raw.map(row =>
-              (row as (string | number)[]).slice(0, limit).map(c =>
-                typeof c === 'string' ? c.replace(/\r\n/g, '\n').trim() : c
-              )
-            );
-            const merges = ((ws['!merges'] as Array<{ s: { r: number; c: number }; e: { r: number; c: number } }>) ?? [])
-              .filter((m) => m.s.c < limit)
-              .map((m) => ({
-                sr: m.s.r, sc: m.s.c,
-                er: m.e.r, ec: Math.min(m.e.c, limit - 1),
-              }));
-            const sheetFills = LUKA_PAP501_FILLS[name] ?? {};
-            const filled = new Set<string>(Object.keys(sheetFills));
-            const filledRows = rows.map((row, ri) =>
-              row.map((cell, ci) => {
-                const key = `${ri},${ci}`;
-                return sheetFills[key] !== undefined ? sheetFills[key] : cell;
-              })
-            );
-            return { name, rows: filledRows, merges, filled };
-          });
-          setXlsxSheets(sheets);
-          setXlsxActiveSheet(sheets[0]?.name ?? '');
-        })
-        .catch(console.error)
-        .finally(() => setXlsxLoading(false));
-    });
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [flowState, xlsxSheets.length]);
 
   const locked = data.concluded;
   const set = (patch: Partial<PAP501Data>) => setData(d => ({ ...d, ...patch }));
