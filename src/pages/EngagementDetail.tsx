@@ -200,6 +200,7 @@ import {
   generate650SubsequentEventsChecklist2,
   generate670JournalEntryTestingChecklist,
   generate500OIChecklist,
+  generate501APAPChecklist,
 } from "@/lib/globalTemplates";
 
 // Sample engagement data matching the engagements page
