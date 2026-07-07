@@ -4,10 +4,12 @@ import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Info, Plus } from "lucide-react";
+import { Info, Plus, Sparkles } from "lucide-react";
 import { RefButton, RefDoc } from "@/components/RefButton";
 import { readJsonFromLocalStorage, writeJsonToLocalStorage } from "@/lib/safeJson";
 import { WorksheetSignOff } from "@/components/WorksheetSignOff";
+import { ImportNotesDialog, ImportResult } from "@/components/ImportNotesDialog";
+import { toast } from "sonner";
 
 // ── Types ──────────────────────────────────────────────────────────────────────
 
@@ -198,6 +200,26 @@ export function Audit507Worksheet({ isUS = false }: { isUS?: boolean }) {
     setData(d => ({ ...d, partC: [...d.partC, emptyExtract()] }));
   }
 
+  const [importOpen, setImportOpen] = useState(false);
+
+  function applyImport(result: ImportResult) {
+    setData(d => {
+      const nextA = { ...d.partA };
+      const nextB = { ...d.partB };
+      if (result.agendaNotes) {
+        for (const [id, notes] of Object.entries(result.agendaNotes)) {
+          if (nextA[id]) nextA[id] = { ...nextA[id], comments: notes };
+          if (nextB[id]) nextB[id] = { ...nextB[id], comments: notes };
+        }
+      }
+      return { ...d, partA: nextA, partB: nextB };
+    });
+    const sourceLabel = result.source.charAt(0).toUpperCase() + result.source.slice(1);
+    toast.success(`Worksheet populated from ${sourceLabel}`, {
+      description: 'Review and refine the auto-filled content before sign-off.',
+    });
+  }
+
   const GROUPED_A = groupedPartA();
 
   function renderProcTable(
@@ -313,14 +335,22 @@ export function Audit507Worksheet({ isUS = false }: { isUS?: boolean }) {
         </p>
       </div>
 
+      <ImportNotesDialog open={importOpen} onOpenChange={setImportOpen} onImport={applyImport} />
+
       <div className="flex-1 overflow-y-auto bg-muted/30">
         <div className="p-6 space-y-4">
 
           {/* Part A */}
           <div className="bg-card text-card-foreground border border-border shadow-[0_2px_8px_hsl(213_40%_20%/0.06)] rounded-md overflow-hidden">
-            <div className="px-6 py-3.5 bg-card border-b border-border">
-              <span className="text-sm font-semibold text-foreground">Part A — Review of minutes prepared by entity</span>
-              <p className="text-xs text-muted-foreground mt-0.5">Complete this part when minutes or governance documents are available.</p>
+            <div className="px-6 py-3.5 bg-card border-b border-border flex items-center justify-between">
+              <div>
+                <span className="text-sm font-semibold text-foreground">Part A — Review of minutes prepared by entity</span>
+                <p className="text-xs text-muted-foreground mt-0.5">Complete this part when minutes or governance documents are available.</p>
+              </div>
+              <Button size="sm" onClick={() => setImportOpen(true)} className="h-8 shrink-0 whitespace-nowrap ml-4">
+                <Sparkles className="h-3.5 w-3.5 mr-1.5" />
+                Import
+              </Button>
             </div>
             {renderProcTable(GROUPED_A, id => data.partA[id], setPA)}
           </div>
@@ -418,44 +448,32 @@ export function Audit507Worksheet({ isUS = false }: { isUS?: boolean }) {
             )}
           </div>
 
-          {/* Conclusion */}
-          <div className="bg-card border border-border shadow-[0_2px_8px_hsl(213_40%_20%/0.06)] rounded-md overflow-hidden">
-            <div className="px-6 py-3.5 border-b border-border">
-              <span className="text-sm font-semibold text-foreground">Conclusion</span>
-            </div>
-            <div className="px-6 py-5 space-y-4">
-              {data.concluded && (
-                <div className="rounded-md bg-green-50 dark:bg-green-950/30 border border-green-200 dark:border-green-800 px-4 py-3 text-sm text-green-800 dark:text-green-300">
-                  Concluded on {data.concludedOn}
-                </div>
-              )}
-              <Textarea
-                disabled={locked}
-                value={data.conclusion}
-                onChange={e => setData(d => ({ ...d, conclusion: e.target.value }))}
-                placeholder="Document your overall conclusion and assessment…"
-                className="min-h-[100px] text-sm resize-none bg-background"
-              />
-              <div className="flex justify-end">
-                <Button
-                  disabled={locked}
-                  onClick={() => {
-                    const now = new Date().toISOString().slice(0, 10);
-                    setData(d => {
-                      const next = { ...d, concluded: true, concludedOn: now };
-                      writeJsonToLocalStorage(storageKey, next);
-                      return next;
-                    });
-                  }}
-                >
-                  Conclude worksheet
-                </Button>
-              </div>
-            </div>
-          </div>
-
           {/* Sign-off */}
           <WorksheetSignOff worksheetKey="aud-507" engagementId={engagementId} />
+
+          {/* Conclude */}
+          <div className="flex items-center justify-between gap-4 pb-2">
+            {data.concluded && (
+              <div className="rounded-md bg-green-50 dark:bg-green-950/30 border border-green-200 dark:border-green-800 px-4 py-2.5 text-sm text-green-800 dark:text-green-300 flex-1">
+                Concluded on {data.concludedOn}
+              </div>
+            )}
+            <div className="ml-auto">
+              <Button
+                disabled={locked}
+                onClick={() => {
+                  const now = new Date().toISOString().slice(0, 10);
+                  setData(d => {
+                    const next = { ...d, concluded: true, concludedOn: now };
+                    writeJsonToLocalStorage(storageKey, next);
+                    return next;
+                  });
+                }}
+              >
+                Conclude worksheet
+              </Button>
+            </div>
+          </div>
 
         </div>
       </div>
