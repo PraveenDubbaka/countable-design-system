@@ -118,7 +118,7 @@ function PartAColHeaders() {
 }
 
 // Part B financial table column headers
-function FinColHeaders({ showBudget, showPrior }: { showBudget: boolean; showPrior: boolean }) {
+function FinColHeaders({ showBudget, showPrior = true }: { showBudget: boolean; showPrior?: boolean }) {
   return (
     <thead className="sticky top-0 z-10">
       <tr className="bg-muted border-b border-border text-xs font-semibold text-foreground uppercase tracking-wider">
