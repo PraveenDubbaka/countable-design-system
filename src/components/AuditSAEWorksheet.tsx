@@ -424,25 +424,13 @@ export function AuditSAEWorksheet({ isUS }: { isUS?: boolean }) {
             </div>
           )}
 
-          {/* Sign-off */}
+          {/* Sign-off (standard checklist sign-off) */}
           {expertRequired !== "" && (
             <div className="bg-card border border-border shadow-[0_2px_8px_hsl(213_40%_20%/0.06)] rounded-md overflow-hidden">
-              <div className="px-6 py-4 bg-muted/20">
-                <div className="grid grid-cols-2 gap-6">
-                  <div className="flex items-center gap-3">
-                    <span className="text-xs font-semibold text-muted-foreground whitespace-nowrap">Prepared by:</span>
-                    <Input className="h-8 text-sm flex-1" value={preparedBy} onChange={e => { setPreparedBy(e.target.value); persist({ preparedBy: e.target.value }); }} placeholder="Name" disabled={concluded} />
-                    <span className="text-xs font-semibold text-muted-foreground whitespace-nowrap">Date:</span>
-                    <Input type="date" className="h-8 text-sm w-36" value={preparedDate} onChange={e => { setPreparedDate(e.target.value); persist({ preparedDate: e.target.value }); }} disabled={concluded} />
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <span className="text-xs font-semibold text-muted-foreground whitespace-nowrap">Reviewed by:</span>
-                    <Input className="h-8 text-sm flex-1" value={reviewedBy} onChange={e => { setReviewedBy(e.target.value); persist({ reviewedBy: e.target.value }); }} placeholder="Name" disabled={concluded} />
-                    <span className="text-xs font-semibold text-muted-foreground whitespace-nowrap">Date:</span>
-                    <Input type="date" className="h-8 text-sm w-36" value={reviewedDate} onChange={e => { setReviewedDate(e.target.value); persist({ reviewedDate: e.target.value }); }} disabled={concluded} />
-                  </div>
-                </div>
+              <div className="px-6 py-3.5 bg-card border-b border-border">
+                <span className="text-sm font-semibold text-foreground">Sign-off</span>
               </div>
+              <WorksheetSignOff worksheetKey="sae" engagementId={engagementId} />
             </div>
           )}
 
