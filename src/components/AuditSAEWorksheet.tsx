@@ -80,6 +80,7 @@ function saveState(s: SAEState) {
 // ── Main component ────────────────────────────────────────────────────────────
 
 export function AuditSAEWorksheet({ isUS }: { isUS?: boolean }) {
+  const { engagementId = "" } = useParams<{ engagementId: string }>();
   const saved = loadState();
 
   const [expertRequired, setExpertRequired] = useState<YesNo>(saved.expertRequired ?? "");
