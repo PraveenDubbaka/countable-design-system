@@ -570,128 +570,262 @@ export function AuditPAP501Worksheet({ isUS = false }: { isUS?: boolean }) {
       )}
 
 
-      {/* ── WORKSHEET: XLSX embed ─────────────────────────────────────────── */}
+      {/* ── WORKSHEET: Part B / Part C tabs ───────────────────────────────── */}
       {flowState === 'worksheet' && (<>
 
-        {/* Sheet tabs + zoom controls */}
+        {/* Objective bar — matches 420 Materiality standard */}
+        <div className="px-6 py-2.5 border-b border-border bg-primary/[0.03] flex items-start gap-2 shrink-0">
+          <Info className="h-3.5 w-3.5 text-primary mt-0.5 shrink-0" />
+          <span className="text-xs font-semibold text-primary whitespace-nowrap">Objective:</span>
+          <p className="text-xs text-muted-foreground flex-1 leading-relaxed">
+            Compare the entity&apos;s most recent financial results to expectations (budget, prior period, industry trends);
+            document matters requiring an audit response; conclude on fraud risk indicators.
+            ({isUS ? 'AU-C 315 / AU-C 520' : 'CAS 315 / CAS 520'})
+          </p>
+        </div>
+
+        {/* Tab bar */}
         <div className="flex items-center border-b border-border bg-muted/20 px-4 shrink-0">
-          <div className="flex items-end gap-0 flex-1">
-            {xlsxSheets.length > 0 ? xlsxSheets.map(s => (
-              <button
-                key={s.name}
-                onClick={() => setXlsxActiveSheet(s.name)}
-                className={`px-4 py-2 text-xs font-medium border-b-2 transition-colors whitespace-nowrap ${
-                  xlsxActiveSheet === s.name
-                    ? 'border-primary text-primary'
-                    : 'border-transparent text-muted-foreground hover:text-foreground'
-                }`}
-              >
-                {s.name}
-              </button>
-            )) : ['501 - Part B', '501- Part C'].map(n => (
-              <button key={n} className="px-4 py-2 text-xs font-medium border-b-2 border-transparent text-muted-foreground">{n}</button>
-            ))}
-          </div>
-          {/* Zoom controls — Excel-style */}
-          <div className="flex items-center gap-1 ml-4 shrink-0 py-1">
+          {(['partB', 'partC'] as const).map(k => (
             <button
-              onClick={zoomOut}
-              disabled={zoom <= 50}
-              className="w-6 h-6 flex items-center justify-center rounded hover:bg-muted transition-colors text-muted-foreground hover:text-foreground disabled:opacity-30 disabled:cursor-not-allowed"
-              title="Zoom out"
+              key={k}
+              onClick={() => setActiveSheet(k)}
+              className={`px-4 py-2.5 text-sm font-medium border-b-2 transition-colors ${
+                activeSheet === k
+                  ? 'border-primary text-primary'
+                  : 'border-transparent text-muted-foreground hover:text-foreground'
+              }`}
             >
-              <Minus className="h-3 w-3" />
+              {k === 'partB' ? 'Part B — Financial Comparatives' : 'Part C — Matters & Sign-off'}
             </button>
-            <input
-              type="range"
-              min={50} max={200} step={10}
-              value={zoom}
-              onChange={e => setZoom(Number(e.target.value))}
-              className="w-20 h-1 accent-primary cursor-pointer"
-              title={`${zoom}%`}
-            />
-            <button
-              onClick={zoomIn}
-              disabled={zoom >= 200}
-              className="w-6 h-6 flex items-center justify-center rounded hover:bg-muted transition-colors text-muted-foreground hover:text-foreground disabled:opacity-30 disabled:cursor-not-allowed"
-              title="Zoom in"
-            >
-              <Plus className="h-3 w-3" />
-            </button>
-            <button
-              onClick={() => setZoom(100)}
-              className="text-[11px] font-medium text-muted-foreground hover:text-foreground w-10 text-center tabular-nums"
-              title="Reset zoom"
-            >
-              {zoom}%
-            </button>
+          ))}
+          <div className="ml-auto flex items-center gap-4 text-xs text-muted-foreground py-2">
+            <span><strong className="text-foreground">Entity:</strong> {entityName}</span>
+            <span><strong className="text-foreground">Period end:</strong> {periodEnded}</span>
+            <span><strong className="text-foreground">Performance materiality:</strong> {perfMateriality}</span>
           </div>
         </div>
 
-        {/* ── WORKSHEET: XLSX embed ── */}
-        <div className="flex-1 overflow-auto bg-background" style={{ zoom: zoom / 100 }}>
+        {/* Body */}
+        <div className="flex-1 overflow-y-auto bg-muted/30">
+          <div className="p-6 space-y-4">
 
-          {xlsxLoading ? (
-            <div className="flex items-center justify-center h-40 gap-2 text-sm text-muted-foreground">
-              <Loader2 className="h-4 w-4 animate-spin" /><span>Loading worksheet…</span>
-            </div>
-          ) : (() => {
-            const sheet = xlsxSheets.find(s => s.name === xlsxActiveSheet);
-            if (!sheet) return null;
-            const mergeMap: Record<string, { rowspan: number; colspan: number } | 'skip'> = {};
-            sheet.merges.forEach(m => {
-              mergeMap[`${m.sr},${m.sc}`] = { rowspan: m.er - m.sr + 1, colspan: m.ec - m.sc + 1 };
-              for (let r = m.sr; r <= m.er; r++)
-                for (let c = m.sc; c <= m.ec; c++)
-                  if (r !== m.sr || c !== m.sc) mergeMap[`${r},${c}`] = 'skip';
-            });
-            return (
-              <div className="overflow-x-auto">
-                <table className="border-collapse text-[11px]" style={{ fontFamily: "'Calibri','Segoe UI',Arial,sans-serif", minWidth: '100%' }}>
-                  <tbody>
-                    {sheet.rows.map((row, ri) => {
-                      const cells = row as (string | number)[];
-                      const hasContent = cells.some(c => String(c).trim() !== '');
-                      if (!hasContent && ri > 5) return null;
-                      if (cells.some(c => String(c).trim().startsWith('Go to Part '))) return null;
-                      return (
-                        <tr key={ri}>
-                          <td className="text-right text-[9px] text-muted-foreground/40 pl-1 pr-2 py-0.5 select-none bg-muted/20 border-r border-border/40 w-7 shrink-0">{ri + 1}</td>
-                          {cells.map((cell, ci) => {
-                            const cellKey = `${ri},${ci}`;
-                            const merge = mergeMap[cellKey];
-                            if (merge === 'skip') return null;
-                            const span = typeof merge === 'object' ? merge : null;
-                            let val = String(cell ?? '');
-                            let isFilled = sheet.filled.has(cellKey);
-                            // PM row: inject from materiality worksheet
-                            if (ri === 2 && ci === 2 && perfMateriality !== '—') {
-                              val = perfMateriality;
-                              isFilled = true;
-                            }
-                            const isLong = val.length > 40;
-                            return (
-                              <td
-                                key={ci}
-                                rowSpan={span?.rowspan}
-                                colSpan={span?.colspan}
-                                className={`border border-border/30 px-2 py-0.5 align-top text-foreground ${isFilled ? 'bg-primary/5' : ''} ${ci === 0 || isLong ? 'min-w-[180px] max-w-[420px] whitespace-pre-wrap' : 'whitespace-nowrap min-w-[60px]'}`}
-                              >
-                                {val}
-                              </td>
-                            );
-                          })}
+            {activeSheet === 'partB' && (
+              <>
+                {/* ── Income Statement card ── */}
+                <div className="bg-card text-card-foreground border border-border shadow-[0_2px_8px_hsl(213_40%_20%/0.06)] rounded-md overflow-hidden">
+                  <div className="px-6 py-3.5 bg-card border-b border-border flex items-center gap-3">
+                    <span className="text-sm font-semibold text-foreground">Income Statement</span>
+                    <span title="Compare current period to budget/forecast and prior period. Flag material or unexpected variances.">
+                      <Info className="h-3.5 w-3.5 text-muted-foreground cursor-help" />
+                    </span>
+                    <div className="ml-auto flex items-center gap-2">
+                      <label className="text-xs text-muted-foreground">Number of sales streams</label>
+                      <Select value={String(data.numStreams)} onValueChange={v => set({ numStreams: Math.max(1, Math.min(5, Number(v))) })} disabled={locked}>
+                        <SelectTrigger className="h-8 w-16 text-sm"><SelectValue /></SelectTrigger>
+                        <SelectContent>{[1,2,3,4,5].map(n => <SelectItem key={n} value={String(n)}>{n}</SelectItem>)}</SelectContent>
+                      </Select>
+                    </div>
+                  </div>
+                  <div className="overflow-x-auto">
+                    <table className="w-full">
+                      <FinColHeaders showBudget={showBudget} />
+                      <tbody>
+                        <FinSectionRow label="Sales / Revenue" />
+                        {salesIds.map((id, i) => (
+                          <FinEditRow key={id} id={id} label={data.streamLabels[i] || `Stream ${i+1}`} showBudget={showBudget} />
+                        ))}
+                        <FinTotalRow label="Total Sales" c={totalSales.c} b={totalSales.b} pr={totalSales.pr} showBudget={showBudget} />
+
+                        <FinSectionRow label="Cost of Sales" />
+                        {cosIds.map((id, i) => (
+                          <FinEditRow key={id} id={id} label={`COS — ${data.streamLabels[i] || `Stream ${i+1}`}`} showBudget={showBudget} />
+                        ))}
+                        <FinTotalRow label="Total Cost of Sales" c={totalCos.c} b={totalCos.b} pr={totalCos.pr} showBudget={showBudget} />
+                        <FinTotalRow label="Gross Margin" c={totalGM.c} b={totalGM.b} pr={totalGM.pr} showBudget={showBudget} />
+
+                        <FinSectionRow label="Other Revenue" />
+                        <FinEditRow id="or1" label="Other revenue 1" showBudget={showBudget} />
+                        <FinEditRow id="or2" label="Other revenue 2" showBudget={showBudget} />
+                        <FinTotalRow label="Total Other Revenue" c={totalOR.c} b={totalOR.b} pr={totalOR.pr} showBudget={showBudget} />
+
+                        <FinSectionRow label="Expenses" />
+                        <FinEditRow id="exp-sal"  label="Salaries & wages" showBudget={showBudget} />
+                        <FinEditRow id="exp-occ"  label="Occupancy" showBudget={showBudget} />
+                        <FinEditRow id="exp-int"  label="Interest" showBudget={showBudget} />
+                        <FinEditRow id="exp-bon"  label="Bonuses" showBudget={showBudget} />
+                        <FinEditRow id="exp-rep"  label="Repairs & maintenance" showBudget={showBudget} />
+                        <FinEditRow id="exp-bad"  label="Bad debts" showBudget={showBudget} />
+                        <FinEditRow id="exp-non"  label="Non-recurring" showBudget={showBudget} />
+                        <FinEditRow id="exp-oth1" label="Other 1" showBudget={showBudget} />
+                        <FinEditRow id="exp-oth2" label="Other 2" showBudget={showBudget} />
+                        <FinEditRow id="exp-oth3" label="Other 3" showBudget={showBudget} />
+                        <FinTotalRow label="Total Expenses" c={totalExp.c} b={totalExp.b} pr={totalExp.pr} showBudget={showBudget} />
+
+                        <FinTotalRow label="Net Income" c={netIncome.c} b={netIncome.b} pr={netIncome.pr} showBudget={showBudget} />
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+
+                {/* ── Balance Sheet card ── */}
+                <div className="bg-card text-card-foreground border border-border shadow-[0_2px_8px_hsl(213_40%_20%/0.06)] rounded-md overflow-hidden">
+                  <div className="px-6 py-3.5 bg-card border-b border-border flex items-center gap-3">
+                    <span className="text-sm font-semibold text-foreground">Balance Sheet</span>
+                    <span title="Compare current period balances to budget/forecast and prior period. Flag material variances.">
+                      <Info className="h-3.5 w-3.5 text-muted-foreground cursor-help" />
+                    </span>
+                  </div>
+                  <div className="overflow-x-auto">
+                    <table className="w-full">
+                      <FinColHeaders showBudget={showBudget} />
+                      <tbody>
+                        <FinSectionRow label="Current Assets" />
+                        <FinEditRow id="ca-cash"      label="Cash" showBudget={showBudget} />
+                        <FinEditRow id="ca-inv"       label="Short-term investments" showBudget={showBudget} />
+                        <FinEditRow id="ca-ar"        label="Accounts receivable" showBudget={showBudget} />
+                        <FinEditRow id="ca-inventory" label="Inventory" showBudget={showBudget} />
+                        <FinEditRow id="ca-oth1"      label="Other 1" showBudget={showBudget} />
+                        <FinEditRow id="ca-oth2"      label="Other 2" showBudget={showBudget} />
+                        <FinTotalRow label="Total Current Assets" c={totalCA.c} b={totalCA.b} pr={totalCA.pr} showBudget={showBudget} />
+
+                        <FinSectionRow label="Long-Term Assets" />
+                        <FinEditRow id="lta-ppe"  label="Property, plant & equipment" showBudget={showBudget} />
+                        <FinEditRow id="lta-oth1" label="Other 1" showBudget={showBudget} />
+                        <FinEditRow id="lta-oth2" label="Other 2" showBudget={showBudget} />
+                        <FinEditRow id="lta-oth3" label="Other 3" showBudget={showBudget} />
+                        <FinTotalRow label="Total Long-Term Assets" c={totalLTA.c} b={totalLTA.b} pr={totalLTA.pr} showBudget={showBudget} />
+                        <FinTotalRow label="Total Assets" c={totalA.c} b={totalA.b} pr={totalA.pr} showBudget={showBudget} />
+
+                        <FinSectionRow label="Current Liabilities" />
+                        <FinEditRow id="cl-bank"  label="Bank indebtedness" showBudget={showBudget} />
+                        <FinEditRow id="cl-ap"    label="Accounts payable & accruals" showBudget={showBudget} />
+                        <FinEditRow id="cl-tax"   label="Income taxes payable" showBudget={showBudget} />
+                        <FinEditRow id="cl-fut"   label="Future income taxes" showBudget={showBudget} />
+                        <FinEditRow id="cl-def"   label="Deferred revenue" showBudget={showBudget} />
+                        <FinEditRow id="cl-dep"   label="Customer deposits" showBudget={showBudget} />
+                        <FinEditRow id="cl-std"   label="Short-term debt" showBudget={showBudget} />
+                        <FinEditRow id="cl-cpltd" label="Current portion of long-term debt" showBudget={showBudget} />
+                        <FinEditRow id="cl-oth1"  label="Other 1" showBudget={showBudget} />
+                        <FinEditRow id="cl-oth2"  label="Other 2" showBudget={showBudget} />
+                        <FinTotalRow label="Total Current Liabilities" c={totalCL.c} b={totalCL.b} pr={totalCL.pr} showBudget={showBudget} />
+
+                        <FinSectionRow label="Long-Term Liabilities" />
+                        <FinEditRow id="ltl-loan" label="Loan payable" showBudget={showBudget} />
+                        <FinEditRow id="ltl-fut"  label="Future income taxes" showBudget={showBudget} />
+                        <FinEditRow id="ltl-ltd"  label="Long-term debt" showBudget={showBudget} />
+                        <FinEditRow id="ltl-oth1" label="Other 1" showBudget={showBudget} />
+                        <FinEditRow id="ltl-oth2" label="Other 2" showBudget={showBudget} />
+                        <FinTotalRow label="Total Long-Term Liabilities" c={totalLTL.c} b={totalLTL.b} pr={totalLTL.pr} showBudget={showBudget} />
+                        <FinTotalRow label="Total Liabilities" c={totalL.c} b={totalL.b} pr={totalL.pr} showBudget={showBudget} />
+
+                        <FinSectionRow label="Equity" />
+                        <FinEditRow id="eq-ret" label="Retained earnings" showBudget={showBudget} />
+                        <FinEditRow id="eq-con" label="Contributed surplus" showBudget={showBudget} />
+                        <FinEditRow id="eq-shr" label="Share capital" showBudget={showBudget} />
+                        <FinEditRow id="eq-oth" label="Other equity" showBudget={showBudget} />
+                        <FinTotalRow label="Total Equity" c={totalEQ.c} b={totalEQ.b} pr={totalEQ.pr} showBudget={showBudget} />
+                        <FinTotalRow label="Total Liabilities & Equity" c={totalLE.c} b={totalLE.b} pr={totalLE.pr} showBudget={showBudget} />
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </>
+            )}
+
+            {activeSheet === 'partC' && (
+              <>
+                {/* ── Matters register card ── */}
+                <div className="bg-card text-card-foreground border border-border shadow-[0_2px_8px_hsl(213_40%_20%/0.06)] rounded-md overflow-hidden">
+                  <div className="px-6 py-3.5 bg-card border-b border-border flex items-center gap-3">
+                    <span className="text-sm font-semibold text-foreground">Matters Requiring Audit Response</span>
+                    <span title="Document each matter flagged in Part B: management response and audit implications.">
+                      <Info className="h-3.5 w-3.5 text-muted-foreground cursor-help" />
+                    </span>
+                  </div>
+                  <div className="overflow-x-auto">
+                    <table className="w-full">
+                      <thead className="sticky top-0 z-10">
+                        <tr className="bg-muted border-b border-border">
+                          <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider w-24">Part B ref.</th>
+                          <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider">Summary of matter</th>
+                          <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider">Management response</th>
+                          <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider">Audit implications</th>
                         </tr>
-                      );
-                    })}
-                  </tbody>
-                </table>
-              </div>
-            );
-          })()}
+                      </thead>
+                      <tbody className="divide-y divide-border">
+                        {data.matters.map((m, idx) => (
+                          <tr key={idx} className="hover:bg-muted/50 transition-colors">
+                            <td className="px-4 py-2.5 align-top w-24">
+                              <TdInput value={m.partBRef} onChange={v => setMatter(idx, { partBRef: v })} placeholder="—" />
+                            </td>
+                            <td className="px-4 py-2.5 align-top">
+                              <Textarea disabled={locked} value={m.summary} onChange={e => setMatter(idx, { summary: e.target.value })} placeholder="Describe the matter…" className="min-h-[52px] text-sm resize-none bg-background border-border" />
+                            </td>
+                            <td className="px-4 py-2.5 align-top">
+                              <Textarea disabled={locked} value={m.mgmtResponse} onChange={e => setMatter(idx, { mgmtResponse: e.target.value })} placeholder="Management response…" className="min-h-[52px] text-sm resize-none bg-background border-border" />
+                            </td>
+                            <td className="px-4 py-2.5 align-top">
+                              <Textarea disabled={locked} value={m.auditImplications} onChange={e => setMatter(idx, { auditImplications: e.target.value })} placeholder="Audit implications…" className="min-h-[52px] text-sm resize-none bg-background border-border" />
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+
+                {/* ── Fraud conclusion card ── */}
+                <div className="bg-card text-card-foreground border border-border shadow-[0_2px_8px_hsl(213_40%_20%/0.06)] rounded-md overflow-hidden">
+                  <div className="px-6 py-3.5 bg-card border-b border-border flex items-center gap-3">
+                    <span className="text-sm font-semibold text-foreground">Fraud Risk Conclusion</span>
+                    <span title={`Conclude on whether analytical procedures identified unusual or unexpected relationships indicating risks of material misstatement due to fraud. (${isUS ? 'AU-C 240' : 'CAS 240'}.22)`}>
+                      <Info className="h-3.5 w-3.5 text-muted-foreground cursor-help" />
+                    </span>
+                  </div>
+                  <div className="px-6 py-5">
+                    <Textarea
+                      disabled={locked}
+                      value={data.fraudAnswer}
+                      onChange={e => set({ fraudAnswer: e.target.value })}
+                      placeholder="Document conclusion on fraud risk indicators arising from the preliminary analytical procedures…"
+                      className="min-h-[100px] text-sm resize-none bg-background border-border"
+                    />
+                  </div>
+                </div>
+
+                {/* ── Sign-off card ── */}
+                <div className="bg-card text-card-foreground border border-border shadow-[0_2px_8px_hsl(213_40%_20%/0.06)] rounded-md overflow-hidden">
+                  <div className="px-6 py-3.5 bg-card border-b border-border flex items-center gap-3">
+                    <span className="text-sm font-semibold text-foreground">Sign-off</span>
+                  </div>
+                  <div className="px-6 py-5 grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="space-y-3">
+                      <div className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Prepared by</div>
+                      <TdInput value={data.preparedBy}   onChange={v => set({ preparedBy: v })}   placeholder="Preparer name" />
+                      <Input   type="date" value={data.preparedDate} onChange={e => set({ preparedDate: e.target.value })} className="h-8 text-sm w-fit" disabled={locked} />
+                    </div>
+                    <div className="space-y-3">
+                      <div className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Reviewed by</div>
+                      <TdInput value={data.reviewedBy}   onChange={v => set({ reviewedBy: v })}   placeholder="Reviewer name" />
+                      <Input   type="date" value={data.reviewedDate} onChange={e => set({ reviewedDate: e.target.value })} className="h-8 text-sm w-fit" disabled={locked} />
+                    </div>
+                  </div>
+                  <div className="border-t border-border px-6 py-4 flex items-center gap-3 bg-muted/20">
+                    <Checkbox id="pap501-concluded" checked={data.concluded} onCheckedChange={v => set({ concluded: !!v, concludedOn: v ? new Date().toISOString().slice(0,10) : '' })} />
+                    <label htmlFor="pap501-concluded" className="text-sm text-foreground cursor-pointer">
+                      Conclude and lock this worksheet {data.concludedOn && <span className="text-muted-foreground">— {data.concludedOn}</span>}
+                    </label>
+                  </div>
+                </div>
+              </>
+            )}
+
+          </div>
         </div>
 
       </>)}
+
 
     </div>
   );
