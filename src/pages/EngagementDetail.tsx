@@ -2461,10 +2461,9 @@ export default function EngagementDetail() {
             <AuditSAEWorksheet isUS={checklistKey === 'aud-us-sae'} />
           ) : (checklistKey === 'aud-asm' || checklistKey === 'aud-us-asm') ? (
             <AuditOASWorksheet isUS={checklistKey === 'aud-us-asm'} />
-          ) : (checklistKey === 'aud-ra-pap501a') ? (
-            <AuditPAP501AChecklist />
           ) : (checklistKey === 'aud-ra-pap501bc' || checklistKey === 'aud-ra-pap501') ? (
             <AuditPAP501Worksheet />
+
           ) : (checklistKey === 'aud-ra-505') ? (
             <Audit505Worksheet />
           ) : (checklistKey === 'aud-ra-507') ? (
