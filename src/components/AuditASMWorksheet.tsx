@@ -129,6 +129,7 @@ export interface AuditASMWorksheetProps {
 }
 
 export function AuditASMWorksheet({ isUS = false }: AuditASMWorksheetProps) {
+  const { engagementId = "" } = useParams<{ engagementId: string }>();
   const seed = isUS ? US_DATA : CA_DATA;
   const standardRef = isUS ? "(AU-C 300)" : "(CAS 300.7-8)";
 
