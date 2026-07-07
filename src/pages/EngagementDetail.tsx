@@ -21,6 +21,7 @@ import { AuditSAEWorksheet } from "@/components/AuditSAEWorksheet";
 import { AuditOASWorksheet } from "@/components/AuditOASWorksheet";
 
 import { AuditPAP501Worksheet } from "@/components/AuditPAP501Worksheet";
+import { AuditPAP501AChecklist } from "@/components/AuditPAP501AChecklist";
 import { Audit505Worksheet } from "@/components/Audit505Worksheet";
 import { Audit507Worksheet } from "@/components/Audit507Worksheet";
 import { Audit506Worksheet } from "@/components/Audit506Worksheet";
@@ -655,7 +656,8 @@ const CUSTOM_WORKSHEET_TITLES: Record<string, string> = {
   'aud-sae': "Using the Work of an Auditor's Expert", 'aud-us-sae': "Using the Work of an Auditor's Expert",
   'aud-asm': 'Overall Audit Strategy', 'aud-us-asm': 'Overall Audit Strategy',
 
-  'aud-ra-pap501': 'Preliminary Analytical Procedures',
+  'aud-ra-pap501a': '501-A — Preliminary Analytical Procedures',
+  'aud-ra-pap501bc': '501-B-C — Preliminary Analytical Procedures',
   'aud-ra-505': 'Inquiries of Management and Others',
   'aud-ra-507': 'Minutes of Governance Meetings',
   'aud-ra-506': 'Identifying Fraud Risks',
@@ -2020,7 +2022,7 @@ export default function EngagementDetail() {
                   <div className="w-px h-4 bg-border mx-0.5" />
                 </>
               )}
-              {checklistKey === 'aud-ra-pap501' && pap501Accepted && (
+              {(checklistKey === 'aud-ra-pap501bc' || checklistKey === 'aud-ra-pap501') && pap501Accepted && (
                 <>
                   <Button variant="secondary" size="sm" className="h-7 px-2.5 text-xs gap-1.5"
                     onClick={() => {
@@ -2456,7 +2458,9 @@ export default function EngagementDetail() {
             <AuditSAEWorksheet isUS={checklistKey === 'aud-us-sae'} />
           ) : (checklistKey === 'aud-asm' || checklistKey === 'aud-us-asm') ? (
             <AuditOASWorksheet isUS={checklistKey === 'aud-us-asm'} />
-          ) : (checklistKey === 'aud-ra-pap501') ? (
+          ) : (checklistKey === 'aud-ra-pap501a') ? (
+            <AuditPAP501AChecklist />
+          ) : (checklistKey === 'aud-ra-pap501bc' || checklistKey === 'aud-ra-pap501') ? (
             <AuditPAP501Worksheet />
           ) : (checklistKey === 'aud-ra-505') ? (
             <Audit505Worksheet />

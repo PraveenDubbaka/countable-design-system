@@ -310,7 +310,8 @@ export function AuditPAP501Worksheet({ isUS = false }: { isUS?: boolean }) {
         .then(r => r.arrayBuffer())
         .then(buf => {
           const wb = XLSX.read(new Uint8Array(buf), { type: 'array' });
-          const visible = wb.SheetNames.filter((n: string) => n !== 'programming');
+            // Part A is rendered as its own checklist item (501-A). Only Parts B and C live here.
+            const visible = wb.SheetNames.filter((n: string) => n !== 'programming' && n !== '501 - Part A');
           const sheets: XlsxSheetData[] = visible.map((name: string) => {
             const ws = wb.Sheets[name];
             const limit = COL_LIMITS[name] ?? 10;
@@ -624,7 +625,7 @@ export function AuditPAP501Worksheet({ isUS = false }: { isUS?: boolean }) {
               </svg>
             </div>
 
-            <h3 className="text-xl font-semibold text-foreground">Preliminary Analytical Procedures</h3>
+            <h3 className="text-xl font-semibold text-foreground">Preliminary Analytical Procedures — Parts B &amp; C</h3>
 
             {/* Generate button */}
             <button
@@ -660,7 +661,7 @@ export function AuditPAP501Worksheet({ isUS = false }: { isUS?: boolean }) {
               >
                 {s.name}
               </button>
-            )) : ['501 - Part A', '501 - Part B', '501- Part C'].map(n => (
+            )) : ['501 - Part B', '501- Part C'].map(n => (
               <button key={n} className="px-4 py-2 text-xs font-medium border-b-2 border-transparent text-muted-foreground">{n}</button>
             ))}
           </div>
