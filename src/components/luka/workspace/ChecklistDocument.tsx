@@ -338,7 +338,7 @@ const ChecklistDocument = ({ checklistName }: ChecklistDocumentProps) => {
             <span className="font-bold" style={{ background: "linear-gradient(135deg, #9747FF, #115697)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>
               Luka
             </span>
-            {" "}identified the checklist requirements and auto-populated{" "}
+            {" "}identified the checklist requirements and prepared{" "}
             <span className="font-bold" style={{ color: "hsl(207 71% 28%)" }}>
               {data.autoPopulated}/{data.total}
             </span>{" "}

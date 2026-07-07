@@ -106,7 +106,7 @@ const activityLog = [
   { id: 3, text: "Trial balance mapped to chart of accounts", type: "done" as const, time: "2m ago" },
   { id: 4, text: "Variance detected in capital asset schedule", type: "flag" as const, time: "3m ago" },
   { id: 5, text: "Financial statements structure verified", type: "done" as const, time: "4m ago" },
-  { id: 6, text: "Independence checklist auto-populated", type: "done" as const, time: "5m ago" },
+  { id: 6, text: "Independence checklist prepared", type: "done" as const, time: "5m ago" },
 ];
 
 /* ── Luka progressive message ── */

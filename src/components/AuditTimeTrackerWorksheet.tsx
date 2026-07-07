@@ -306,8 +306,8 @@ export function AuditTimeTrackerWorksheet() {
         <Info className="h-3.5 w-3.5 text-primary mt-0.5 shrink-0" />
         <span className="text-xs font-semibold text-primary whitespace-nowrap">Objective:</span>
         <p className="text-xs text-muted-foreground flex-1 leading-relaxed">
-          Track actual time against budgeted hours by role and section. Budget is auto-populated
-          from CAS industry standards and fully editable. Blended rate, cost variance, and fee
+          Track actual time against budgeted hours by role and section. Budget is based on
+          CAS industry standards and fully editable. Blended rate, cost variance, and fee
           position are computed automatically from engagement hourly rates.
         </p>
       </div>

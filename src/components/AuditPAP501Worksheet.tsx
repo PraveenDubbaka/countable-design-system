@@ -684,7 +684,7 @@ export function AuditPAP501Worksheet({ isUS = false }: { isUS?: boolean }) {
                 <div className="space-y-1.5">
                   <div className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Performance materiality</div>
                   <div className="text-sm font-semibold text-foreground">{perfMateriality}</div>
-                  <div className="text-[11px] text-muted-foreground">Auto-populated from 420 Materiality</div>
+                  
                 </div>
                 <div className="space-y-1.5">
                   <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider block">Compare to budget / forecast?</label>
