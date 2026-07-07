@@ -549,11 +549,6 @@ function WorksheetInner({ isUS }: { isUS: boolean }) {
             {/* Conclusion */}
             <div className="px-6 py-5 border-t border-border space-y-3">
               <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Conclusion</span>
-              {concluded && (
-                <div className="rounded-md bg-green-50 dark:bg-green-950/30 border border-green-200 dark:border-green-800 px-4 py-3 text-sm text-green-800 dark:text-green-300">
-                  Concluded on {concludedOn}
-                </div>
-              )}
               <Textarea
                 disabled={locked}
                 value={conclusion}
@@ -561,10 +556,24 @@ function WorksheetInner({ isUS }: { isUS: boolean }) {
                 placeholder="Document your overall conclusion and assessment…"
                 className="min-h-[100px] text-sm resize-none bg-background"
               />
-              <div className="flex justify-end">
-                <Button disabled={locked} onClick={handleConclude}>
-                  <Check className="h-4 w-4 mr-1.5" />Conclude Worksheet
-                </Button>
+            </div>
+
+            {/* Sign-off (standard checklist sign-off) */}
+            <div className="border-t border-border">
+              <div className="px-6 py-3.5 bg-card border-b border-border">
+                <span className="text-sm font-semibold text-foreground">Sign-off</span>
+              </div>
+              <WorksheetSignOff worksheetKey="oas" engagementId={engagementId} />
+              <div className="border-t border-border px-6 py-4 flex items-center justify-end gap-3 bg-muted/20">
+                {concluded ? (
+                  <div className="rounded-md border border-green-200 bg-green-50 px-4 py-2 text-xs text-green-800 font-medium">
+                    Concluded on {concludedOn}
+                  </div>
+                ) : (
+                  <Button disabled={locked} onClick={handleConclude}>
+                    <Check className="h-4 w-4 mr-1.5" />Conclude worksheet
+                  </Button>
+                )}
               </div>
             </div>
           </div>
