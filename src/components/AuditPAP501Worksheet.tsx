@@ -23,9 +23,12 @@ interface MatterRow { partBRef: string; summary: string; mgmtResponse: string; a
 
 interface PAP501Data {
   partA: Record<string, PartARow>;
+  compareBudget: string;   // 'Yes' | 'No'
+  comparePrior: string;    // 'Yes' | 'No'
   numStreams: number;
   streamLabels: string[];
   fin: Record<string, FinRow>;
+  ratios: Record<string, FinRow>;
   matters: MatterRow[];
   fraudAnswer: string;
   preparedBy: string; preparedDate: string; reviewedBy: string; reviewedDate: string;
@@ -57,7 +60,7 @@ const ALL_PA_IDS = PART_A_PROCS.flatMap(p => [p.id, ...p.items.map(i => i.id)]);
 const IS_IDS  = ['s1','s2','s3','s4','s5','cos1','cos2','cos3','cos4','cos5','or1','or2','exp-sal','exp-occ','exp-int','exp-bon','exp-rep','exp-bad','exp-non','exp-oth1','exp-oth2','exp-oth3'];
 const BS_IDS  = ['ca-cash','ca-inv','ca-ar','ca-inventory','ca-oth1','ca-oth2','lta-ppe','lta-oth1','lta-oth2','lta-oth3','cl-bank','cl-ap','cl-tax','cl-fut','cl-def','cl-dep','cl-std','cl-cpltd','cl-oth1','cl-oth2','ltl-loan','ltl-fut','ltl-ltd','ltl-oth1','ltl-oth2','eq-ret','eq-con','eq-shr','eq-oth'];
 const RAT_IDS = ['rat-wc','rat-drecv','rat-dinv','rat-iturn','rat-dpay','rat-dte'];
-const ALL_FIN_IDS = [...IS_IDS, ...BS_IDS, ...RAT_IDS];
+const ALL_FIN_IDS = [...IS_IDS, ...BS_IDS];
 
 function emptyPA(): PartARow { return { checked: false, psc: '', exceptions: '', wpRef: [] }; }
 function emptyFin(): FinRow  { return { current: '', budget: '', prior: '', hasIssue: '', explanation: '', auditResponse: '' }; }
@@ -68,10 +71,16 @@ function buildDefault(): PAP501Data {
   ALL_PA_IDS.forEach(id => { partA[id] = emptyPA(); });
   const fin: Record<string, FinRow> = {};
   ALL_FIN_IDS.forEach(id => { fin[id] = emptyFin(); });
+  const ratios: Record<string, FinRow> = {};
+  RAT_IDS.forEach(id => { ratios[id] = emptyFin(); });
   return {
-    partA, numStreams: 1,
+    partA,
+    compareBudget: 'Yes',
+    comparePrior: 'Yes',
+    numStreams: 1,
     streamLabels: ['Product category', 'Stream 2', 'Stream 3', 'Stream 4', 'Stream 5'],
-    fin, matters: Array(10).fill(null).map(emptyMatter),
+    fin, ratios,
+    matters: Array(10).fill(null).map(emptyMatter),
     fraudAnswer: '', preparedBy: '', preparedDate: '', reviewedBy: '', reviewedDate: '',
     concluded: false, concludedOn: '',
   };
@@ -109,20 +118,22 @@ function PartAColHeaders() {
 }
 
 // Part B financial table column headers
-function FinColHeaders({ showBudget }: { showBudget: boolean }) {
+function FinColHeaders({ showBudget, showPrior = true }: { showBudget: boolean; showPrior?: boolean }) {
   return (
     <thead className="sticky top-0 z-10">
       <tr className="bg-muted border-b border-border text-xs font-semibold text-foreground uppercase tracking-wider">
         <th className="px-4 py-2.5 text-left" style={{minWidth:200}}>Description</th>
         <th className="px-3 py-2.5 text-right border-l border-border" style={{width:120,minWidth:120}}>Current period</th>
         {showBudget && <th className="px-3 py-2.5 text-right border-l border-border" style={{width:120,minWidth:120}}>Budget / forecast</th>}
-        <th className="px-3 py-2.5 text-right border-l border-border" style={{width:120,minWidth:120}}>Prior period</th>
+        {showPrior && <th className="px-3 py-2.5 text-right border-l border-border" style={{width:120,minWidth:120}}>Prior period</th>}
         {showBudget && <>
           <th className="px-3 py-2.5 text-right border-l border-border bg-blue-50/50 dark:bg-blue-950/20" style={{width:90,minWidth:90}}>vs Budget $</th>
           <th className="px-3 py-2.5 text-right border-l border-border bg-blue-50/50 dark:bg-blue-950/20" style={{width:70,minWidth:70}}>vs Budget %</th>
         </>}
-        <th className="px-3 py-2.5 text-right border-l border-border bg-purple-50/50 dark:bg-purple-950/20" style={{width:90,minWidth:90}}>vs Prior $</th>
-        <th className="px-3 py-2.5 text-right border-l border-border bg-purple-50/50 dark:bg-purple-950/20" style={{width:70,minWidth:70}}>vs Prior %</th>
+        {showPrior && <>
+          <th className="px-3 py-2.5 text-right border-l border-border bg-purple-50/50 dark:bg-purple-950/20" style={{width:90,minWidth:90}}>vs Prior $</th>
+          <th className="px-3 py-2.5 text-right border-l border-border bg-purple-50/50 dark:bg-purple-950/20" style={{width:70,minWidth:70}}>vs Prior %</th>
+        </>}
         <th className="px-3 py-2.5 text-center border-l border-border" style={{width:90,minWidth:90}}>Matter?</th>
         <th className="px-3 py-2.5 text-left border-l border-border" style={{minWidth:180}}>If yes, describe matter</th>
         <th className="px-3 py-2.5 text-left border-l border-border" style={{width:140,minWidth:140}}>Audit response ref.</th>
@@ -251,6 +262,7 @@ export function AuditPAP501Worksheet({ isUS = false }: { isUS?: boolean }) {
       ...def, ...saved,
       partA: { ...def.partA, ...(saved.partA ?? {}) },
       fin:   { ...def.fin,   ...(saved.fin ?? {}) },
+      ratios: { ...def.ratios, ...(saved.ratios ?? {}) },
       matters: saved.matters?.length === 10 ? saved.matters : def.matters,
     };
   });
@@ -287,6 +299,9 @@ export function AuditPAP501Worksheet({ isUS = false }: { isUS?: boolean }) {
   }
   function setFin(id: string, patch: Partial<FinRow>) {
     setData(d => ({ ...d, fin: { ...d.fin, [id]: { ...d.fin[id], ...patch } } }));
+  }
+  function setRatio(id: string, patch: Partial<FinRow>) {
+    setData(d => ({ ...d, ratios: { ...d.ratios, [id]: { ...d.ratios[id], ...patch } } }));
   }
   function setMatter(idx: number, patch: Partial<MatterRow>) {
     setData(d => {
@@ -376,9 +391,11 @@ export function AuditPAP501Worksheet({ isUS = false }: { isUS?: boolean }) {
     );
   }
 
-  // Part B — editable financial row
-  function FinEditRow({ id, label, indent = 0, bold = false, showBudget }: { id:string; label:string; indent?:number; bold?:boolean; showBudget:boolean }) {
-    const row = f[id] ?? emptyFin();
+  // Part B — editable financial row (accepts optional setter for ratios/other buckets)
+  function FinEditRow({ id, label, indent = 0, bold = false, showBudget, showPrior = true, source = 'fin' }: { id:string; label:string; indent?:number; bold?:boolean; showBudget:boolean; showPrior?:boolean; source?: 'fin'|'ratio' }) {
+    const bucket = source === 'ratio' ? data.ratios : f;
+    const setter = source === 'ratio' ? setRatio : setFin;
+    const row = bucket[id] ?? emptyFin();
     const c = p(row.current), b = p(row.budget), pr = p(row.prior);
     const vbAmt = c - b, vbPct = b !== 0 ? vbAmt/b : null;
     const vpAmt = c - pr, vpPct = pr !== 0 ? vpAmt/pr : null;
@@ -386,38 +403,40 @@ export function AuditPAP501Worksheet({ isUS = false }: { isUS?: boolean }) {
       <tr className="border-b border-border hover:bg-muted/30 transition-colors">
         <td className={`px-4 py-2 text-sm align-top ${bold ? 'font-semibold text-foreground' : 'text-foreground'}`} style={{paddingLeft: `${16 + indent * 12}px`}}>{label}</td>
         <td className="px-2 py-2 align-top border-l border-border" style={{width:120}}>
-          <TdInput value={row.current} onChange={v => setFin(id,{current:v})} placeholder="0" className="text-right font-mono" />
+          <TdInput value={row.current} onChange={v => setter(id,{current:v})} placeholder="0" className="text-right font-mono" />
         </td>
         {showBudget && <td className="px-2 py-2 align-top border-l border-border" style={{width:120}}>
-          <TdInput value={row.budget} onChange={v => setFin(id,{budget:v})} placeholder="0" className="text-right font-mono" />
+          <TdInput value={row.budget} onChange={v => setter(id,{budget:v})} placeholder="0" className="text-right font-mono" />
         </td>}
-        <td className="px-2 py-2 align-top border-l border-border" style={{width:120}}>
-          <TdInput value={row.prior} onChange={v => setFin(id,{prior:v})} placeholder="0" className="text-right font-mono" />
-        </td>
+        {showPrior && <td className="px-2 py-2 align-top border-l border-border" style={{width:120}}>
+          <TdInput value={row.prior} onChange={v => setter(id,{prior:v})} placeholder="0" className="text-right font-mono" />
+        </td>}
         {showBudget && <>
           <td className="px-3 py-2 align-middle text-right text-xs font-mono border-l border-border bg-blue-50/30 dark:bg-blue-950/10" style={{width:90}}>{b!==0?fmtN(vbAmt):''}</td>
           <td className="px-3 py-2 align-middle text-right text-xs border-l border-border bg-blue-50/30 dark:bg-blue-950/10" style={{width:70}}>{fmtP(vbPct)}</td>
         </>}
-        <td className="px-3 py-2 align-middle text-right text-xs font-mono border-l border-border bg-purple-50/30 dark:bg-purple-950/10" style={{width:90}}>{pr!==0?fmtN(vpAmt):''}</td>
-        <td className="px-3 py-2 align-middle text-right text-xs border-l border-border bg-purple-50/30 dark:bg-purple-950/10" style={{width:70}}>{fmtP(vpPct)}</td>
+        {showPrior && <>
+          <td className="px-3 py-2 align-middle text-right text-xs font-mono border-l border-border bg-purple-50/30 dark:bg-purple-950/10" style={{width:90}}>{pr!==0?fmtN(vpAmt):''}</td>
+          <td className="px-3 py-2 align-middle text-right text-xs border-l border-border bg-purple-50/30 dark:bg-purple-950/10" style={{width:70}}>{fmtP(vpPct)}</td>
+        </>}
         <td className="px-2 py-2 align-top border-l border-border" style={{width:90}}>
-          <Select value={row.hasIssue} onValueChange={v => setFin(id,{hasIssue:v})} disabled={locked}>
+          <Select value={row.hasIssue} onValueChange={v => setter(id,{hasIssue:v})} disabled={locked}>
             <SelectTrigger className="h-8 text-xs"><SelectValue placeholder="—" /></SelectTrigger>
             <SelectContent><SelectItem value="Yes">Yes</SelectItem><SelectItem value="No">No</SelectItem></SelectContent>
           </Select>
         </td>
         <td className="px-2 py-2 align-top border-l border-border" style={{minWidth:180}}>
-          {row.hasIssue === 'Yes' && <Textarea disabled={locked} value={row.explanation} onChange={e => setFin(id,{explanation:e.target.value})} placeholder="Describe…" className="min-h-[44px] text-xs resize-none border-0 shadow-none p-0 focus-visible:ring-0 bg-transparent" />}
+          {row.hasIssue === 'Yes' && <Textarea disabled={locked} value={row.explanation} onChange={e => setter(id,{explanation:e.target.value})} placeholder="Describe…" className="min-h-[44px] text-xs resize-none border-0 shadow-none p-0 focus-visible:ring-0 bg-transparent" />}
         </td>
         <td className="px-2 py-2 align-top border-l border-border" style={{width:140}}>
-          {row.hasIssue === 'Yes' && <TdInput value={row.auditResponse} onChange={v => setFin(id,{auditResponse:v})} placeholder="Form/ref." className="text-xs" />}
+          {row.hasIssue === 'Yes' && <TdInput value={row.auditResponse} onChange={v => setter(id,{auditResponse:v})} placeholder="Form/ref." className="text-xs" />}
         </td>
       </tr>
     );
   }
 
   // Part B — computed total row (read-only)
-  function FinTotalRow({ label, c, b, pr, showBudget, indent = 0 }: { label:string; c:number; b:number; pr:number; showBudget:boolean; indent?:number }) {
+  function FinTotalRow({ label, c, b, pr, showBudget, showPrior = true, indent = 0 }: { label:string; c:number; b:number; pr:number; showBudget:boolean; showPrior?:boolean; indent?:number }) {
     const vbAmt = c - b, vbPct = b !== 0 ? vbAmt/b : null;
     const vpAmt = c - pr, vpPct = pr !== 0 ? vpAmt/pr : null;
     return (
@@ -425,14 +444,40 @@ export function AuditPAP501Worksheet({ isUS = false }: { isUS?: boolean }) {
         <td className="px-4 py-2 text-sm font-bold text-foreground" style={{paddingLeft: `${16 + indent * 12}px`}}>{label}</td>
         <td className="px-3 py-2 text-right text-sm font-bold font-mono border-l border-border border-t border-foreground/20">{c!==0?Math.abs(c).toLocaleString('en-CA',{maximumFractionDigits:0}):''}</td>
         {showBudget && <td className="px-3 py-2 text-right text-sm font-bold font-mono border-l border-border border-t border-foreground/20">{b!==0?Math.abs(b).toLocaleString('en-CA',{maximumFractionDigits:0}):''}</td>}
-        <td className="px-3 py-2 text-right text-sm font-bold font-mono border-l border-border border-t border-foreground/20">{pr!==0?Math.abs(pr).toLocaleString('en-CA',{maximumFractionDigits:0}):''}</td>
+        {showPrior && <td className="px-3 py-2 text-right text-sm font-bold font-mono border-l border-border border-t border-foreground/20">{pr!==0?Math.abs(pr).toLocaleString('en-CA',{maximumFractionDigits:0}):''}</td>}
         {showBudget && <>
           <td className="px-3 py-2 text-right text-xs font-mono border-l border-border border-t border-foreground/20 bg-blue-50/40 dark:bg-blue-950/10">{b!==0?fmtN(vbAmt):''}</td>
           <td className="px-3 py-2 text-right text-xs border-l border-border border-t border-foreground/20 bg-blue-50/40 dark:bg-blue-950/10">{fmtP(vbPct)}</td>
         </>}
-        <td className="px-3 py-2 text-right text-xs font-mono border-l border-border border-t border-foreground/20 bg-purple-50/40 dark:bg-purple-950/10">{pr!==0?fmtN(vpAmt):''}</td>
-        <td className="px-3 py-2 text-right text-xs border-l border-border border-t border-foreground/20 bg-purple-50/40 dark:bg-purple-950/10">{fmtP(vpPct)}</td>
+        {showPrior && <>
+          <td className="px-3 py-2 text-right text-xs font-mono border-l border-border border-t border-foreground/20 bg-purple-50/40 dark:bg-purple-950/10">{pr!==0?fmtN(vpAmt):''}</td>
+          <td className="px-3 py-2 text-right text-xs border-l border-border border-t border-foreground/20 bg-purple-50/40 dark:bg-purple-950/10">{fmtP(vpPct)}</td>
+        </>}
         <td className="border-l border-border border-t border-foreground/20" colSpan={3} />
+      </tr>
+    );
+  }
+
+  // Per-stream computed (read-only) row — dollar amount
+  function FinComputedRow({ label, c, b, pr, showBudget, showPrior = true, indent = 0, isPercent = false }: { label:string; c:number; b:number; pr:number; showBudget:boolean; showPrior?:boolean; indent?:number; isPercent?:boolean }) {
+    const vbAmt = c - b, vbPct = b !== 0 ? vbAmt/b : null;
+    const vpAmt = c - pr, vpPct = pr !== 0 ? vpAmt/pr : null;
+    const fmt = (n:number) => isPercent ? (n*100).toFixed(1)+'%' : (n!==0 ? Math.abs(n).toLocaleString('en-CA',{maximumFractionDigits:0}) : '');
+    return (
+      <tr className="border-b border-border hover:bg-muted/30 bg-muted/10">
+        <td className="px-4 py-2 text-sm text-foreground italic" style={{paddingLeft: `${16 + indent * 12}px`}}>{label}</td>
+        <td className="px-3 py-2 text-right text-sm font-mono border-l border-border">{fmt(c)}</td>
+        {showBudget && <td className="px-3 py-2 text-right text-sm font-mono border-l border-border">{fmt(b)}</td>}
+        {showPrior && <td className="px-3 py-2 text-right text-sm font-mono border-l border-border">{fmt(pr)}</td>}
+        {showBudget && <>
+          <td className="px-3 py-2 text-right text-xs font-mono border-l border-border bg-blue-50/30 dark:bg-blue-950/10">{isPercent ? '' : (b!==0?fmtN(vbAmt):'')}</td>
+          <td className="px-3 py-2 text-right text-xs border-l border-border bg-blue-50/30 dark:bg-blue-950/10">{isPercent ? '' : fmtP(vbPct)}</td>
+        </>}
+        {showPrior && <>
+          <td className="px-3 py-2 text-right text-xs font-mono border-l border-border bg-purple-50/30 dark:bg-purple-950/10">{isPercent ? '' : (pr!==0?fmtN(vpAmt):'')}</td>
+          <td className="px-3 py-2 text-right text-xs border-l border-border bg-purple-50/30 dark:bg-purple-950/10">{isPercent ? '' : fmtP(vpPct)}</td>
+        </>}
+        <td className="border-l border-border" colSpan={3} />
       </tr>
     );
   }
@@ -448,7 +493,31 @@ export function AuditPAP501Worksheet({ isUS = false }: { isUS?: boolean }) {
 
   // ── Render ───────────────────────────────────────────────────────────────────
 
-  const showBudget = true;
+  const showBudget = data.compareBudget !== 'No';
+  const showPrior  = data.comparePrior  !== 'No';
+
+  // Per-stream gross margin ($ and %)
+  const gmPerStream = salesIds.map((sid, i) => {
+    const cid = cosIds[i];
+    const sc = p(f[sid]?.current ?? ''), sb = p(f[sid]?.budget ?? ''), sp = p(f[sid]?.prior ?? '');
+    const cc = p(f[cid]?.current ?? ''), cb = p(f[cid]?.budget ?? ''), cp = p(f[cid]?.prior ?? '');
+    return { c: sc - cc, b: sb - cb, pr: sp - cp, salesC: sc, salesB: sb, salesP: sp };
+  });
+  const gmPctPerStream = gmPerStream.map(g => ({
+    c: g.salesC ? g.c / g.salesC : 0,
+    b: g.salesB ? g.b / g.salesB : 0,
+    pr: g.salesP ? g.pr / g.salesP : 0,
+  }));
+  const totalGMPct = {
+    c:  totalSales.c  ? totalGM.c  / totalSales.c  : 0,
+    b:  totalSales.b  ? totalGM.b  / totalSales.b  : 0,
+    pr: totalSales.pr ? totalGM.pr / totalSales.pr : 0,
+  };
+  const niPct = {
+    c:  totalSales.c  ? netIncome.c  / totalSales.c  : 0,
+    b:  totalSales.b  ? netIncome.b  / totalSales.b  : 0,
+    pr: totalSales.pr ? netIncome.pr / totalSales.pr : 0,
+  };
 
   // ── Accept artifact — pre-fill mock generated data ───────────────────────────
   function acceptArtifact() {
@@ -597,10 +666,47 @@ export function AuditPAP501Worksheet({ isUS = false }: { isUS?: boolean }) {
         <div className="flex-1 overflow-y-auto bg-muted/30">
           <div className="p-6 space-y-4">
 
+            {/* ── Comparatives Setup card (mirrors 420 Materiality standard header cards) ── */}
+            <div className="bg-card text-card-foreground border border-border shadow-[0_2px_8px_hsl(213_40%_20%/0.06)] rounded-md overflow-hidden">
+              <div className="px-6 py-3.5 bg-card border-b border-border flex items-center gap-3">
+                <span className="text-sm font-semibold text-foreground">Comparatives Setup</span>
+                <span title="Select which comparatives to include and the number of sales streams. Auto-populated data flows from engagement setup and the 420 Materiality worksheet.">
+                  <Info className="h-3.5 w-3.5 text-muted-foreground cursor-help" />
+                </span>
+              </div>
+              <div className="px-6 py-4 grid grid-cols-1 md:grid-cols-4 gap-6">
+                <div className="space-y-1.5">
+                  <div className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Performance materiality</div>
+                  <div className="text-sm font-semibold text-foreground">{perfMateriality}</div>
+                  <div className="text-[11px] text-muted-foreground">Auto-populated from 420 Materiality</div>
+                </div>
+                <div className="space-y-1.5">
+                  <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider block">Compare to budget / forecast?</label>
+                  <Select value={data.compareBudget} onValueChange={v => set({ compareBudget: v })} disabled={locked}>
+                    <SelectTrigger className="h-8 text-sm w-28"><SelectValue /></SelectTrigger>
+                    <SelectContent><SelectItem value="Yes">Yes</SelectItem><SelectItem value="No">No</SelectItem></SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-1.5">
+                  <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider block">Compare to prior period?</label>
+                  <Select value={data.comparePrior} onValueChange={v => set({ comparePrior: v })} disabled={locked}>
+                    <SelectTrigger className="h-8 text-sm w-28"><SelectValue /></SelectTrigger>
+                    <SelectContent><SelectItem value="Yes">Yes</SelectItem><SelectItem value="No">No</SelectItem></SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-1.5">
+                  <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider block">Number of sales streams</label>
+                  <Select value={String(data.numStreams)} onValueChange={v => set({ numStreams: Math.max(1, Math.min(5, Number(v))) })} disabled={locked}>
+                    <SelectTrigger className="h-8 text-sm w-20"><SelectValue /></SelectTrigger>
+                    <SelectContent>{[1,2,3,4,5].map(nn => <SelectItem key={nn} value={String(nn)}>{nn}</SelectItem>)}</SelectContent>
+                  </Select>
+                </div>
+              </div>
+            </div>
+
             {/* ── Part B — Financial Comparatives ── */}
-            <div className="text-xs font-semibold text-muted-foreground uppercase tracking-wider px-1">Part B — Financial Comparatives</div>
-            {true && (
-              <>
+            <div className="text-xs font-semibold text-muted-foreground uppercase tracking-wider px-1 pt-2">Part B — Financial Comparatives</div>
+            <>
                 {/* ── Income Statement card ── */}
                 <div className="bg-card text-card-foreground border border-border shadow-[0_2px_8px_hsl(213_40%_20%/0.06)] rounded-md overflow-hidden">
                   <div className="px-6 py-3.5 bg-card border-b border-border flex items-center gap-3">
@@ -608,50 +714,55 @@ export function AuditPAP501Worksheet({ isUS = false }: { isUS?: boolean }) {
                     <span title="Compare current period to budget/forecast and prior period. Flag material or unexpected variances.">
                       <Info className="h-3.5 w-3.5 text-muted-foreground cursor-help" />
                     </span>
-                    <div className="ml-auto flex items-center gap-2">
-                      <label className="text-xs text-muted-foreground">Number of sales streams</label>
-                      <Select value={String(data.numStreams)} onValueChange={v => set({ numStreams: Math.max(1, Math.min(5, Number(v))) })} disabled={locked}>
-                        <SelectTrigger className="h-8 w-16 text-sm"><SelectValue /></SelectTrigger>
-                        <SelectContent>{[1,2,3,4,5].map(n => <SelectItem key={n} value={String(n)}>{n}</SelectItem>)}</SelectContent>
-                      </Select>
-                    </div>
                   </div>
                   <div className="overflow-x-auto">
                     <table className="w-full">
-                      <FinColHeaders showBudget={showBudget} />
+                      <FinColHeaders showBudget={showBudget} showPrior={showPrior} />
                       <tbody>
                         <FinSectionRow label="Sales / Revenue" />
                         {salesIds.map((id, i) => (
-                          <FinEditRow key={id} id={id} label={data.streamLabels[i] || `Stream ${i+1}`} showBudget={showBudget} />
+                          <FinEditRow key={id} id={id} label={data.streamLabels[i] || `Stream ${i+1}`} showBudget={showBudget} showPrior={showPrior} />
                         ))}
-                        <FinTotalRow label="Total Sales" c={totalSales.c} b={totalSales.b} pr={totalSales.pr} showBudget={showBudget} />
+                        <FinTotalRow label="Total Sales" c={totalSales.c} b={totalSales.b} pr={totalSales.pr} showBudget={showBudget} showPrior={showPrior} />
 
                         <FinSectionRow label="Cost of Sales" />
                         {cosIds.map((id, i) => (
-                          <FinEditRow key={id} id={id} label={`COS — ${data.streamLabels[i] || `Stream ${i+1}`}`} showBudget={showBudget} />
+                          <FinEditRow key={id} id={id} label={`COS — ${data.streamLabels[i] || `Stream ${i+1}`}`} showBudget={showBudget} showPrior={showPrior} />
                         ))}
-                        <FinTotalRow label="Total Cost of Sales" c={totalCos.c} b={totalCos.b} pr={totalCos.pr} showBudget={showBudget} />
-                        <FinTotalRow label="Gross Margin" c={totalGM.c} b={totalGM.b} pr={totalGM.pr} showBudget={showBudget} />
+                        <FinTotalRow label="Total Cost of Sales" c={totalCos.c} b={totalCos.b} pr={totalCos.pr} showBudget={showBudget} showPrior={showPrior} />
+
+                        <FinSectionRow label="Gross Margin ($) — computed" />
+                        {salesIds.map((sid, i) => (
+                          <FinComputedRow key={`gm-${sid}`} label={`GM $ — ${data.streamLabels[i] || `Stream ${i+1}`}`} c={gmPerStream[i].c} b={gmPerStream[i].b} pr={gmPerStream[i].pr} showBudget={showBudget} showPrior={showPrior} />
+                        ))}
+                        <FinTotalRow label="Total Gross Margin ($)" c={totalGM.c} b={totalGM.b} pr={totalGM.pr} showBudget={showBudget} showPrior={showPrior} />
+
+                        <FinSectionRow label="Gross Margin (%) — computed" />
+                        {salesIds.map((sid, i) => (
+                          <FinComputedRow key={`gmp-${sid}`} label={`GM % — ${data.streamLabels[i] || `Stream ${i+1}`}`} c={gmPctPerStream[i].c} b={gmPctPerStream[i].b} pr={gmPctPerStream[i].pr} showBudget={showBudget} showPrior={showPrior} isPercent />
+                        ))}
+                        <FinComputedRow label="Total Gross Margin (%)" c={totalGMPct.c} b={totalGMPct.b} pr={totalGMPct.pr} showBudget={showBudget} showPrior={showPrior} isPercent />
 
                         <FinSectionRow label="Other Revenue" />
-                        <FinEditRow id="or1" label="Other revenue 1" showBudget={showBudget} />
-                        <FinEditRow id="or2" label="Other revenue 2" showBudget={showBudget} />
-                        <FinTotalRow label="Total Other Revenue" c={totalOR.c} b={totalOR.b} pr={totalOR.pr} showBudget={showBudget} />
+                        <FinEditRow id="or1" label="Other revenue 1" showBudget={showBudget} showPrior={showPrior} />
+                        <FinEditRow id="or2" label="Other revenue 2" showBudget={showBudget} showPrior={showPrior} />
+                        <FinTotalRow label="Total Other Revenue" c={totalOR.c} b={totalOR.b} pr={totalOR.pr} showBudget={showBudget} showPrior={showPrior} />
 
                         <FinSectionRow label="Expenses" />
-                        <FinEditRow id="exp-sal"  label="Salaries & wages" showBudget={showBudget} />
-                        <FinEditRow id="exp-occ"  label="Occupancy" showBudget={showBudget} />
-                        <FinEditRow id="exp-int"  label="Interest" showBudget={showBudget} />
-                        <FinEditRow id="exp-bon"  label="Bonuses" showBudget={showBudget} />
-                        <FinEditRow id="exp-rep"  label="Repairs & maintenance" showBudget={showBudget} />
-                        <FinEditRow id="exp-bad"  label="Bad debts" showBudget={showBudget} />
-                        <FinEditRow id="exp-non"  label="Non-recurring" showBudget={showBudget} />
-                        <FinEditRow id="exp-oth1" label="Other 1" showBudget={showBudget} />
-                        <FinEditRow id="exp-oth2" label="Other 2" showBudget={showBudget} />
-                        <FinEditRow id="exp-oth3" label="Other 3" showBudget={showBudget} />
-                        <FinTotalRow label="Total Expenses" c={totalExp.c} b={totalExp.b} pr={totalExp.pr} showBudget={showBudget} />
+                        <FinEditRow id="exp-sal"  label="Salaries / payroll" showBudget={showBudget} showPrior={showPrior} />
+                        <FinEditRow id="exp-occ"  label="Occupancy" showBudget={showBudget} showPrior={showPrior} />
+                        <FinEditRow id="exp-int"  label="Interest / bank charges" showBudget={showBudget} showPrior={showPrior} />
+                        <FinEditRow id="exp-bon"  label="Bonuses" showBudget={showBudget} showPrior={showPrior} />
+                        <FinEditRow id="exp-rep"  label="Repairs & maintenance" showBudget={showBudget} showPrior={showPrior} />
+                        <FinEditRow id="exp-bad"  label="Bad debts" showBudget={showBudget} showPrior={showPrior} />
+                        <FinEditRow id="exp-non"  label="Non-recurring transactions" showBudget={showBudget} showPrior={showPrior} />
+                        <FinEditRow id="exp-oth1" label="Other expenses 1" showBudget={showBudget} showPrior={showPrior} />
+                        <FinEditRow id="exp-oth2" label="Other expenses 2" showBudget={showBudget} showPrior={showPrior} />
+                        <FinEditRow id="exp-oth3" label="Other expenses 3" showBudget={showBudget} showPrior={showPrior} />
+                        <FinTotalRow label="Total Expenses" c={totalExp.c} b={totalExp.b} pr={totalExp.pr} showBudget={showBudget} showPrior={showPrior} />
 
-                        <FinTotalRow label="Net Income" c={netIncome.c} b={netIncome.b} pr={netIncome.pr} showBudget={showBudget} />
+                        <FinTotalRow label="Net income before tax" c={netIncome.c} b={netIncome.b} pr={netIncome.pr} showBudget={showBudget} showPrior={showPrior} />
+                        <FinComputedRow label="     % of revenue" c={niPct.c} b={niPct.b} pr={niPct.pr} showBudget={showBudget} showPrior={showPrior} isPercent />
                       </tbody>
                     </table>
                   </div>
@@ -667,60 +778,83 @@ export function AuditPAP501Worksheet({ isUS = false }: { isUS?: boolean }) {
                   </div>
                   <div className="overflow-x-auto">
                     <table className="w-full">
-                      <FinColHeaders showBudget={showBudget} />
+                      <FinColHeaders showBudget={showBudget} showPrior={showPrior} />
                       <tbody>
                         <FinSectionRow label="Current Assets" />
-                        <FinEditRow id="ca-cash"      label="Cash" showBudget={showBudget} />
-                        <FinEditRow id="ca-inv"       label="Short-term investments" showBudget={showBudget} />
-                        <FinEditRow id="ca-ar"        label="Accounts receivable" showBudget={showBudget} />
-                        <FinEditRow id="ca-inventory" label="Inventory" showBudget={showBudget} />
-                        <FinEditRow id="ca-oth1"      label="Other 1" showBudget={showBudget} />
-                        <FinEditRow id="ca-oth2"      label="Other 2" showBudget={showBudget} />
-                        <FinTotalRow label="Total Current Assets" c={totalCA.c} b={totalCA.b} pr={totalCA.pr} showBudget={showBudget} />
+                        <FinEditRow id="ca-cash"      label="Cash" showBudget={showBudget} showPrior={showPrior} />
+                        <FinEditRow id="ca-inv"       label="Short-term investments" showBudget={showBudget} showPrior={showPrior} />
+                        <FinEditRow id="ca-ar"        label="Accounts receivable" showBudget={showBudget} showPrior={showPrior} />
+                        <FinEditRow id="ca-inventory" label="Inventory" showBudget={showBudget} showPrior={showPrior} />
+                        <FinEditRow id="ca-oth1"      label="Other assets 1" showBudget={showBudget} showPrior={showPrior} />
+                        <FinEditRow id="ca-oth2"      label="Other assets 2" showBudget={showBudget} showPrior={showPrior} />
+                        <FinTotalRow label="Total Current Assets" c={totalCA.c} b={totalCA.b} pr={totalCA.pr} showBudget={showBudget} showPrior={showPrior} />
 
                         <FinSectionRow label="Long-Term Assets" />
-                        <FinEditRow id="lta-ppe"  label="Property, plant & equipment" showBudget={showBudget} />
-                        <FinEditRow id="lta-oth1" label="Other 1" showBudget={showBudget} />
-                        <FinEditRow id="lta-oth2" label="Other 2" showBudget={showBudget} />
-                        <FinEditRow id="lta-oth3" label="Other 3" showBudget={showBudget} />
-                        <FinTotalRow label="Total Long-Term Assets" c={totalLTA.c} b={totalLTA.b} pr={totalLTA.pr} showBudget={showBudget} />
-                        <FinTotalRow label="Total Assets" c={totalA.c} b={totalA.b} pr={totalA.pr} showBudget={showBudget} />
+                        <FinEditRow id="lta-ppe"  label="Property, plant & equipment" showBudget={showBudget} showPrior={showPrior} />
+                        <FinEditRow id="lta-oth1" label="Other assets 1" showBudget={showBudget} showPrior={showPrior} />
+                        <FinEditRow id="lta-oth2" label="Other assets 2" showBudget={showBudget} showPrior={showPrior} />
+                        <FinEditRow id="lta-oth3" label="Other assets 3" showBudget={showBudget} showPrior={showPrior} />
+                        <FinTotalRow label="Total Long-Term Assets" c={totalLTA.c} b={totalLTA.b} pr={totalLTA.pr} showBudget={showBudget} showPrior={showPrior} />
+                        <FinTotalRow label="Total Assets" c={totalA.c} b={totalA.b} pr={totalA.pr} showBudget={showBudget} showPrior={showPrior} />
 
                         <FinSectionRow label="Current Liabilities" />
-                        <FinEditRow id="cl-bank"  label="Bank indebtedness" showBudget={showBudget} />
-                        <FinEditRow id="cl-ap"    label="Accounts payable & accruals" showBudget={showBudget} />
-                        <FinEditRow id="cl-tax"   label="Income taxes payable" showBudget={showBudget} />
-                        <FinEditRow id="cl-fut"   label="Future income taxes" showBudget={showBudget} />
-                        <FinEditRow id="cl-def"   label="Deferred revenue" showBudget={showBudget} />
-                        <FinEditRow id="cl-dep"   label="Customer deposits" showBudget={showBudget} />
-                        <FinEditRow id="cl-std"   label="Short-term debt" showBudget={showBudget} />
-                        <FinEditRow id="cl-cpltd" label="Current portion of long-term debt" showBudget={showBudget} />
-                        <FinEditRow id="cl-oth1"  label="Other 1" showBudget={showBudget} />
-                        <FinEditRow id="cl-oth2"  label="Other 2" showBudget={showBudget} />
-                        <FinTotalRow label="Total Current Liabilities" c={totalCL.c} b={totalCL.b} pr={totalCL.pr} showBudget={showBudget} />
+                        <FinEditRow id="cl-bank"  label="Bank indebtedness" showBudget={showBudget} showPrior={showPrior} />
+                        <FinEditRow id="cl-ap"    label="Accounts payable & accrued liabilities" showBudget={showBudget} showPrior={showPrior} />
+                        <FinEditRow id="cl-tax"   label="Income taxes payable" showBudget={showBudget} showPrior={showPrior} />
+                        <FinEditRow id="cl-fut"   label="Future income taxes payable" showBudget={showBudget} showPrior={showPrior} />
+                        <FinEditRow id="cl-def"   label="Deferred revenue" showBudget={showBudget} showPrior={showPrior} />
+                        <FinEditRow id="cl-dep"   label="Customer deposits" showBudget={showBudget} showPrior={showPrior} />
+                        <FinEditRow id="cl-std"   label="Short-term debt" showBudget={showBudget} showPrior={showPrior} />
+                        <FinEditRow id="cl-cpltd" label="Current portion of long-term debt" showBudget={showBudget} showPrior={showPrior} />
+                        <FinEditRow id="cl-oth1"  label="Other current liabilities 1" showBudget={showBudget} showPrior={showPrior} />
+                        <FinEditRow id="cl-oth2"  label="Other current liabilities 2" showBudget={showBudget} showPrior={showPrior} />
+                        <FinTotalRow label="Total Current Liabilities" c={totalCL.c} b={totalCL.b} pr={totalCL.pr} showBudget={showBudget} showPrior={showPrior} />
 
                         <FinSectionRow label="Long-Term Liabilities" />
-                        <FinEditRow id="ltl-loan" label="Loan payable" showBudget={showBudget} />
-                        <FinEditRow id="ltl-fut"  label="Future income taxes" showBudget={showBudget} />
-                        <FinEditRow id="ltl-ltd"  label="Long-term debt" showBudget={showBudget} />
-                        <FinEditRow id="ltl-oth1" label="Other 1" showBudget={showBudget} />
-                        <FinEditRow id="ltl-oth2" label="Other 2" showBudget={showBudget} />
-                        <FinTotalRow label="Total Long-Term Liabilities" c={totalLTL.c} b={totalLTL.b} pr={totalLTL.pr} showBudget={showBudget} />
-                        <FinTotalRow label="Total Liabilities" c={totalL.c} b={totalL.b} pr={totalL.pr} showBudget={showBudget} />
+                        <FinEditRow id="ltl-loan" label="Loans payable" showBudget={showBudget} showPrior={showPrior} />
+                        <FinEditRow id="ltl-fut"  label="Future income taxes payable" showBudget={showBudget} showPrior={showPrior} />
+                        <FinEditRow id="ltl-ltd"  label="Long-term debt" showBudget={showBudget} showPrior={showPrior} />
+                        <FinEditRow id="ltl-oth1" label="Other long-term liabilities 1" showBudget={showBudget} showPrior={showPrior} />
+                        <FinEditRow id="ltl-oth2" label="Other long-term liabilities 2" showBudget={showBudget} showPrior={showPrior} />
+                        <FinTotalRow label="Total Long-Term Liabilities" c={totalLTL.c} b={totalLTL.b} pr={totalLTL.pr} showBudget={showBudget} showPrior={showPrior} />
+                        <FinTotalRow label="Total Liabilities" c={totalL.c} b={totalL.b} pr={totalL.pr} showBudget={showBudget} showPrior={showPrior} />
 
                         <FinSectionRow label="Equity" />
-                        <FinEditRow id="eq-ret" label="Retained earnings" showBudget={showBudget} />
-                        <FinEditRow id="eq-con" label="Contributed surplus" showBudget={showBudget} />
-                        <FinEditRow id="eq-shr" label="Share capital" showBudget={showBudget} />
-                        <FinEditRow id="eq-oth" label="Other equity" showBudget={showBudget} />
-                        <FinTotalRow label="Total Equity" c={totalEQ.c} b={totalEQ.b} pr={totalEQ.pr} showBudget={showBudget} />
-                        <FinTotalRow label="Total Liabilities & Equity" c={totalLE.c} b={totalLE.b} pr={totalLE.pr} showBudget={showBudget} />
+                        <FinEditRow id="eq-ret" label="Retained earnings" showBudget={showBudget} showPrior={showPrior} />
+                        <FinEditRow id="eq-con" label="Contributed surplus" showBudget={showBudget} showPrior={showPrior} />
+                        <FinEditRow id="eq-shr" label="Share capital" showBudget={showBudget} showPrior={showPrior} />
+                        <FinEditRow id="eq-oth" label="Other equity" showBudget={showBudget} showPrior={showPrior} />
+                        <FinTotalRow label="Total Equity" c={totalEQ.c} b={totalEQ.b} pr={totalEQ.pr} showBudget={showBudget} showPrior={showPrior} />
+                        <FinTotalRow label="Total Liabilities & Equity" c={totalLE.c} b={totalLE.b} pr={totalLE.pr} showBudget={showBudget} showPrior={showPrior} />
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+
+                {/* ── Ratios card ── */}
+                <div className="bg-card text-card-foreground border border-border shadow-[0_2px_8px_hsl(213_40%_20%/0.06)] rounded-md overflow-hidden">
+                  <div className="px-6 py-3.5 bg-card border-b border-border flex items-center gap-3">
+                    <span className="text-sm font-semibold text-foreground">Ratios</span>
+                    <span title="Enter key liquidity, activity and leverage ratios for the current period, budget/forecast and prior period.">
+                      <Info className="h-3.5 w-3.5 text-muted-foreground cursor-help" />
+                    </span>
+                  </div>
+                  <div className="overflow-x-auto">
+                    <table className="w-full">
+                      <FinColHeaders showBudget={showBudget} showPrior={showPrior} />
+                      <tbody>
+                        <FinEditRow id="rat-wc"     label="Working capital"                              showBudget={showBudget} showPrior={showPrior} source="ratio" />
+                        <FinEditRow id="rat-drecv"  label="Number of days in receivables"                showBudget={showBudget} showPrior={showPrior} source="ratio" />
+                        <FinEditRow id="rat-dinv"   label="Number of days' sales in inventory"           showBudget={showBudget} showPrior={showPrior} source="ratio" />
+                        <FinEditRow id="rat-iturn"  label="Inventory turnover"                           showBudget={showBudget} showPrior={showPrior} source="ratio" />
+                        <FinEditRow id="rat-dpay"   label="Number of days' purchases in trade payables"  showBudget={showBudget} showPrior={showPrior} source="ratio" />
+                        <FinEditRow id="rat-dte"    label="Debt-to-equity ratio"                         showBudget={showBudget} showPrior={showPrior} source="ratio" />
                       </tbody>
                     </table>
                   </div>
                 </div>
               </>
-            )}
+
 
             {/* ── Part C — Matters & Sign-off ── */}
             <div className="text-xs font-semibold text-muted-foreground uppercase tracking-wider px-1 pt-4">Part C — Matters &amp; Sign-off</div>

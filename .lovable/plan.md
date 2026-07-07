@@ -1,54 +1,42 @@
-# Split 501 — Preliminary Analytical Procedures into two items
+# 501-B-C — Preliminary Analytical Procedures rebuild
 
-Today the left-nav has a single node **501 — Preliminary Analytical Procedures** (`aud-ra-pap501`) that renders `AuditPAP501Worksheet`, which internally holds Part A (procedure checklist), Part B (financial comparatives table) and Part C (matters + fraud + sign-off). We will split it into two independently-navigable items that follow the correct design standards.
+Align the worksheet with the source workbook while keeping the existing worksheet design language (same cards, colored variance lanes, muted headers, Info tooltips). Single page, no tabs.
 
-## Left-nav
+## What the reference workbook actually contains
 
-Replace the single entry in `src/components/Sidebar.tsx` with:
+Part B — Financial Comparatives
+- Setup: "Compare to current budget/forecast?" (Yes/No), "Compare to prior period?" (Yes/No), "Number of sales streams" (1-5).
+- Income Statement, per-stream: Sales, Cost of Sales, Gross Margin $, Gross Margin %, plus totals.
+- Other Revenue (2 rows) + total.
+- Expenses (Salaries, Occupancy, Interest, Bonuses, Repairs, Bad debts, Non-recurring, 3 × Other) + total.
+- Net income before tax + "% of revenue" row.
+- Balance Sheet: Current Assets, Long-Term Assets, Totals; Current Liabilities, Long-Term Liabilities, Totals; Equity, Total L&E.
+- Ratios: Working capital, Days in receivables, Days sales in inventory, Inventory turnover, Days purchases in trade payables, Debt-to-equity.
 
-- `aud-ra-pap501a` — **501-A — Preliminary Analytical Procedures** · icon `checklist` · route `checklist/aud-ra-pap501a`
-- `aud-ra-pap501bc` — **501-B-C — Preliminary Analytical Procedures** · icon `worksheet` · route `checklist/aud-ra-pap501bc`
+Part C — Matters & Conclusion
+- Matters table (Part B ref, Summary, Management response, Audit implications).
+- Fraud-risk conclusion narrative.
+- Prepared by / Reviewed by sign-off.
 
-Update the `titleFor` map (~line 658 of `src/pages/EngagementDetail.tsx`) with the two labels and remove the old key.
+## Changes in `src/components/AuditPAP501Worksheet.tsx`
 
-## 501-A — Checklist (Part A only)
+1. **Top "Setup" card** (new, first card in body): Compare-to-Budget Yes/No, Compare-to-Prior Yes/No, Number of sales streams. `showBudget` and `showPrior` now derive from these toggles instead of the hardcoded `true`. Keeps the existing context bar (Entity, Period end, Performance materiality auto-populated from the Materiality worksheet).
+2. **Income Statement card**: add per-stream Gross Margin $ block (computed = sales − cos per stream) and per-stream Gross Margin % block (computed). Add "Net income before tax — % of revenue" computed row.
+3. **Balance Sheet card**: unchanged structure, just uses the new `showBudget`/`showPrior` toggles.
+4. **New Ratios card** with 6 user-entered rows and the same variance columns.
+5. **Part C** stays as-is (matters table, fraud conclusion, sign-off). Card headers unchanged.
+6. **State model** additions: `compareBudget: 'Yes'|'No'`, `comparePrior: 'Yes'|'No'`, `ratios: Record<string, FinRow>`; default `Yes` for both toggles. Backfill on load.
+7. **FinEditRow / FinTotalRow**: accept an optional `showPrior` prop so prior-period columns can be hidden when the toggle is No. Variance columns for prior remain purple, budget remain blue.
+8. **Computed-only row helper** for per-stream Gross Margin $ and Gross Margin % (read-only, styled like `FinEditRow` but numbers rendered instead of inputs).
 
-Follows the Monday-Board / Checklist design standard used by other `checklist` items (Yes/No/NA responses, explanation, W/P Ref pill), matching `src/components/luka/workspace/ChecklistView.tsx` conventions and the app's existing `ChecklistTableView`.
+## Auto-population dependencies preserved
 
-Content = the 8 Part-A procedure rows already defined in `PART_A_PROCS` (procedures 1, 2, 3a–c, 4a–b, 5a–b). Each row exposes:
-
-- Question text (procedure description / sub-item)
-- Response: Yes / No / N/A pill toggle
-- Explanation: free-text (summarize exceptions / findings)
-- Reference: W/P ref attach (RefButton)
-
-New file `src/components/AuditPAP501AChecklist.tsx`. Persists to its own key `audit-pap501a-data-${ca|us}`. Sign-off stamp handled by the shared checklist sign-off block already used elsewhere.
-
-## 501-B-C — Luka Worksheet (Parts B & C)
-
-Keeps today's worksheet chrome/design standards (WorksheetLayout / WorksheetSection cards) plus the existing Luka generation flow (`pap501-generate` event, Luka overlay `pap501Mode`, "Regenerate / Export / Share / Delete" action bar).
-
-New file `src/components/AuditPAP501BCWorksheet.tsx` extracted from the current component, containing only:
-
-- Part B financial comparatives table (income statement, balance sheet, ratios) with number-of-streams control and stream labels
-- Part C matters register (10 rows), fraud conclusion answer, and prepared-by / reviewed-by sign-off
-- Luka fill logic for the Part-B / Part-C keys in `LUKA_PAP501_FILLS`
-
-Persistence key `audit-pap501bc-data-${ca|us}`. The current `AuditPAP501Worksheet.tsx` file is deleted after extraction.
-
-## EngagementDetail wiring
-
-In `src/pages/EngagementDetail.tsx`:
-
-1. Import both new components; remove `AuditPAP501Worksheet` import.
-2. Router switch: replace the single `aud-ra-pap501` branch with two — one renders `<AuditPAP501AChecklist />`, the other `<AuditPAP501BCWorksheet />`.
-3. Update the Luka action-bar guard (`checklistKey === 'aud-ra-pap501' && pap501Accepted`) and the `pap501-generate` event handler so Luka generation, regenerate, and accepted-state now key off `aud-ra-pap501bc` only. Storage key `pap501-accepted-${engagementId}-*` stays but is only consulted on the B-C route.
-4. Add a small one-time migration: on mount, if legacy `audit-pap501-data-*` exists in `localStorage`, split it into the two new keys (Part A → checklist key; streams + fin + matters + fraud + sign-off → BC key) so users don't lose in-progress data.
-
-## Backwards-compatibility redirect
-
-In the checklist route resolver, if `checklistKey === 'aud-ra-pap501'` navigate to `aud-ra-pap501bc` (preserves any bookmark / open state such as your current `/checklist/aud-ra-pap501`).
+- Entity + Period end: `loadEngagements()` by `engagementId` (already wired).
+- Performance materiality: `audit-materiality-data-{ca|us}` localStorage (already wired).
+- Sales-stream labels: kept editable, seeded from existing `streamLabels`.
+- Persistence key `audit-pap501-data-{ca|us}` unchanged; migration merges new fields with defaults.
 
 ## Out of scope
 
-No changes to Luka overlay internals, no schema changes to the Luka fills, no Cloud/DB changes. Existing engagement templates (`ca-501` etc.) untouched — those refer to CAS 501, not Form 501.
+- Part A stays untouched (already on the 501-A checklist page).
+- No new design tokens, no tabs, no new components outside this file.
