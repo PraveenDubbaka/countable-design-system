@@ -722,7 +722,9 @@ export function AuditPAP501Worksheet({ isUS = false }: { isUS?: boolean }) {
               </>
             )}
 
-            {activeSheet === 'partC' && (
+            {/* ── Part C — Matters & Sign-off ── */}
+            <div className="text-xs font-semibold text-muted-foreground uppercase tracking-wider px-1 pt-4">Part C — Matters &amp; Sign-off</div>
+            {true && (
               <>
                 {/* ── Matters register card ── */}
                 <div className="bg-card text-card-foreground border border-border shadow-[0_2px_8px_hsl(213_40%_20%/0.06)] rounded-md overflow-hidden">
