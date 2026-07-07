@@ -113,7 +113,7 @@ export function LinkedRisksCard({
               <span className="opacity-70">FS-level risk</span> · {overallRisk}
             </span>
           )}
-          <span className="text-[11px] text-muted-foreground">Auto-populated · editable in Form 520</span>
+          <span className="text-[11px] text-muted-foreground">Editable in Form 520</span>
         </div>
       }
       bodyClassName="p-0"

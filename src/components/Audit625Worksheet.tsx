@@ -305,7 +305,7 @@ export function Audit625Worksheet() {
         title="Identified events & conditions"
         right={
           <div className="flex items-center gap-2">
-            <span className="text-[11px] text-muted-foreground">Auto-populated from Form 525 / Form 520</span>
+            
             <RefButton
               reference={data.eventsRefs}
               disabled={locked}

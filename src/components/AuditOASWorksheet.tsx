@@ -418,7 +418,7 @@ function WorksheetInner({ isUS }: { isUS: boolean }) {
           To document the scope, timing and direction of the audit as a guide for the development of the audit plan.{" "}
           <span className="text-foreground font-medium">Reference: {standardRef}</span>{" · "}
           <span className="font-medium text-foreground">Legend:</span> EQCR = Engagement quality control review. TCWG = Those charged with governance.
-          {(autoFramework || engMeta?.budget) && <span className="ml-2 text-primary/70">• Auto-populated from engagement setup</span>}
+          
         </p>
       </div>
 
