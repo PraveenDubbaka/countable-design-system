@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Info, Plus, Sparkles } from "lucide-react";
+import { Info, Plus, Sparkles, Trash2 } from "lucide-react";
 import { RefButton, RefDoc } from "@/components/RefButton";
 import { readJsonFromLocalStorage, writeJsonToLocalStorage } from "@/lib/safeJson";
 import { WorksheetSignOff } from "@/components/WorksheetSignOff";
@@ -15,7 +15,10 @@ import { toast } from "sonner";
 
 interface ProcRow { doneBy: string; comments: string; wpRef: RefDoc[] }
 interface ExtractRow { mt: string; date: string; extract: string; riskForm520: boolean; wpRef: RefDoc[] }
+interface Attendee { id: string; name: string; role: string }
 interface Data507 {
+  meetingDate: string;
+  attendeesList: Attendee[];
   partA: Record<string, ProcRow>;
   dateAuditedFS: string;
   dateAuditorAppt: string;
@@ -132,8 +135,10 @@ const PART_B: PartBItem[] = [
 
 const PART_C_INITIAL = 3;
 
+function uid(): string { return Math.random().toString(36).slice(2, 9); }
 function emptyProc(): ProcRow { return { doneBy: '', comments: '', wpRef: [] }; }
 function emptyExtract(): ExtractRow { return { mt: '', date: '', extract: '', riskForm520: false, wpRef: [] }; }
+function emptyAttendee(): Attendee { return { id: uid(), name: '', role: '' }; }
 
 function buildDefault(): Data507 {
   const partA: Record<string, ProcRow> = {};
@@ -141,6 +146,8 @@ function buildDefault(): Data507 {
   const partB: Record<string, ProcRow> = {};
   PART_B.forEach(p => { partB[p.id] = emptyProc(); });
   return {
+    meetingDate: '',
+    attendeesList: [emptyAttendee(), emptyAttendee()],
     partA,
     dateAuditedFS: '', dateAuditorAppt: '',
     partB,
@@ -172,6 +179,7 @@ export function Audit507Worksheet({ isUS = false }: { isUS?: boolean }) {
     return {
       ...def,
       ...saved,
+      attendeesList: saved.attendeesList?.length ? saved.attendeesList : def.attendeesList,
       partA: { ...def.partA, ...(saved.partA ?? {}) },
       partB: { ...def.partB, ...(saved.partB ?? {}) },
       partC: saved.partC?.length ? saved.partC : def.partC,
@@ -212,12 +220,28 @@ export function Audit507Worksheet({ isUS = false }: { isUS?: boolean }) {
           if (nextB[id]) nextB[id] = { ...nextB[id], comments: notes };
         }
       }
-      return { ...d, partA: nextA, partB: nextB };
+      return {
+        ...d,
+        partA: nextA,
+        partB: nextB,
+        ...(result.meetingDate ? { meetingDate: result.meetingDate.slice(0, 10) } : {}),
+        ...(result.attendees?.length ? {
+          attendeesList: result.attendees.map(a => ({ id: uid(), name: a.name, role: a.role })),
+        } : {}),
+      };
     });
     const sourceLabel = result.source.charAt(0).toUpperCase() + result.source.slice(1);
     toast.success(`Worksheet populated from ${sourceLabel}`, {
       description: 'Review and refine the auto-filled content before sign-off.',
     });
+  }
+
+  function setAttendee(idx: number, patch: Partial<Attendee>) {
+    setData(d => { const list = [...d.attendeesList]; list[idx] = { ...list[idx], ...patch }; return { ...d, attendeesList: list }; });
+  }
+  function addAttendee() { setData(d => ({ ...d, attendeesList: [...d.attendeesList, emptyAttendee()] })); }
+  function removeAttendee(idx: number) {
+    setData(d => ({ ...d, attendeesList: d.attendeesList.length > 1 ? d.attendeesList.filter((_, i) => i !== idx) : d.attendeesList }));
   }
 
   const GROUPED_A = groupedPartA();
@@ -340,17 +364,94 @@ export function Audit507Worksheet({ isUS = false }: { isUS?: boolean }) {
       <div className="flex-1 overflow-y-auto bg-muted/30">
         <div className="p-6 space-y-4">
 
-          {/* Part A */}
+          {/* Meeting Details */}
           <div className="bg-card text-card-foreground border border-border shadow-[0_2px_8px_hsl(213_40%_20%/0.06)] rounded-md overflow-hidden">
             <div className="px-6 py-3.5 bg-card border-b border-border flex items-center justify-between">
-              <div>
-                <span className="text-sm font-semibold text-foreground">Part A — Review of minutes prepared by entity</span>
-                <p className="text-xs text-muted-foreground mt-0.5">Complete this part when minutes or governance documents are available.</p>
-              </div>
-              <Button size="sm" onClick={() => setImportOpen(true)} className="h-8 shrink-0 whitespace-nowrap ml-4">
+              <span className="text-sm font-semibold text-foreground">Meeting Details</span>
+              <Button size="sm" onClick={() => setImportOpen(true)} className="h-8 shrink-0 whitespace-nowrap">
                 <Sparkles className="h-3.5 w-3.5 mr-1.5" />
                 Import
               </Button>
+            </div>
+            <div className="p-6 space-y-5">
+              <div>
+                <label className="block text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-1.5">Date of meeting</label>
+                <Input
+                  type="date"
+                  disabled={locked}
+                  value={data.meetingDate}
+                  onChange={e => setData(d => ({ ...d, meetingDate: e.target.value }))}
+                  className="h-9 text-sm w-fit"
+                />
+              </div>
+              <div>
+                <div className="flex items-center justify-between mb-2">
+                  <label className="block text-xs font-semibold text-muted-foreground uppercase tracking-wide">Attendees</label>
+                  {!locked && (
+                    <Button size="sm" variant="outline" onClick={addAttendee} className="h-8">
+                      <Plus className="h-3.5 w-3.5 mr-1.5" /> Add attendee
+                    </Button>
+                  )}
+                </div>
+                <div className="rounded-md border border-border overflow-hidden">
+                  <table className="w-full">
+                    <thead>
+                      <tr className="bg-muted text-xs font-semibold text-foreground uppercase tracking-wider border-b border-border">
+                        <th className="w-10 px-4 py-2 text-center">#</th>
+                        <th className="px-4 py-2 text-left">Name</th>
+                        <th className="px-4 py-2 text-left border-l border-border" style={{ width: 280 }}>Role / Entity</th>
+                        {!locked && <th className="w-12 px-2 py-2 border-l border-border" />}
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-border">
+                      {data.attendeesList.map((att, idx) => (
+                        <tr key={att.id} className="hover:bg-muted/30 align-middle">
+                          <td className="px-4 py-2 text-center text-xs font-semibold font-mono text-foreground">{idx + 1}</td>
+                          <td className="px-2 py-1">
+                            <Input
+                              disabled={locked}
+                              value={att.name}
+                              onChange={e => setAttendee(idx, { name: e.target.value })}
+                              placeholder="Attendee name"
+                              className="h-8 text-sm border-0 shadow-none bg-transparent focus-visible:ring-0 px-2"
+                            />
+                          </td>
+                          <td className="px-2 py-1 border-l border-border" style={{ width: 280 }}>
+                            <Input
+                              disabled={locked}
+                              value={att.role}
+                              onChange={e => setAttendee(idx, { role: e.target.value })}
+                              placeholder="Role / Entity"
+                              className="h-8 text-sm border-0 shadow-none bg-transparent focus-visible:ring-0 px-2"
+                            />
+                          </td>
+                          {!locked && (
+                            <td className="px-2 py-1 border-l border-border text-center">
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                className="h-8 w-8 text-destructive hover:bg-destructive/10 hover:text-destructive"
+                                onClick={() => removeAttendee(idx)}
+                                disabled={data.attendeesList.length <= 1}
+                              >
+                                <Trash2 className="h-3.5 w-3.5" />
+                              </Button>
+                            </td>
+                          )}
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Part A */}
+          <div className="bg-card text-card-foreground border border-border shadow-[0_2px_8px_hsl(213_40%_20%/0.06)] rounded-md overflow-hidden">
+            <div className="px-6 py-3.5 bg-card border-b border-border">
+              <span className="text-sm font-semibold text-foreground">Part A — Review of minutes prepared by entity</span>
+              <p className="text-xs text-muted-foreground mt-0.5">Complete this part when minutes or governance documents are available.</p>
             </div>
             {renderProcTable(GROUPED_A, id => data.partA[id], setPA)}
           </div>
