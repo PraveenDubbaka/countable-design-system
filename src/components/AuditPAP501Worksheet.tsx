@@ -298,6 +298,9 @@ export function AuditPAP501Worksheet({ isUS = false }: { isUS?: boolean }) {
   function setFin(id: string, patch: Partial<FinRow>) {
     setData(d => ({ ...d, fin: { ...d.fin, [id]: { ...d.fin[id], ...patch } } }));
   }
+  function setRatio(id: string, patch: Partial<FinRow>) {
+    setData(d => ({ ...d, ratios: { ...d.ratios, [id]: { ...d.ratios[id], ...patch } } }));
+  }
   function setMatter(idx: number, patch: Partial<MatterRow>) {
     setData(d => {
       const matters = [...d.matters];
