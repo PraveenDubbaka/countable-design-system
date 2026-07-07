@@ -10,6 +10,7 @@ import { Info } from "lucide-react";
 import { RefButton, RefDoc } from "@/components/RefButton";
 import { readJsonFromLocalStorage, writeJsonToLocalStorage } from "@/lib/safeJson";
 import { loadEngagements } from "@/store/engagementsStore";
+import { WorksheetSignOff } from "@/components/WorksheetSignOff";
 
 // ── Flow state machine ─────────────────────────────────────────────────────────
 
