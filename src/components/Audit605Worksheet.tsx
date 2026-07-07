@@ -1,7 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
 import { Textarea } from "@/components/ui/textarea";
-import { Checkbox } from "@/components/ui/checkbox";
 import { readJsonFromLocalStorage, writeJsonToLocalStorage } from "@/lib/safeJson";
 import { useEngagementContext } from "@/hooks/useEngagementContext";
 import { loadRisks520, overallRisk520 } from "@/lib/audit520Bridge";
@@ -12,7 +11,6 @@ import {
 
 interface Data605 {
   fsLevelControlWeaknesses: string;
-  rationale: string;
   sections: { title: string; rows: ProcRow[] }[];
   signOff: SignOffData;
   concluded: boolean; concludedOn: string;
@@ -21,39 +19,60 @@ interface Data605 {
 function buildDefault(overallRisk: "High" | "Moderate" | "Low"): Data605 {
   const sections = [
     {
-      title: "B · Overall responses that apply to all audits",
+      title: "B · Overall responses — 1. Composition of audit team",
       rows: [
-        makeProcRow("1a. Assign staff with specialized knowledge, experience and skills sufficient to address the identified risks. Document the rationale for the composition of the engagement team."),
-        makeProcRow("1b. Provide additional supervision of staff commensurate with the assessed risks. Set expectations for review depth and frequency."),
-        makeProcRow("2a. Reinforce professional skepticism across the engagement team in planning meetings and throughout fieldwork."),
-        makeProcRow("2b. Direct the team to stay alert for undisclosed related parties and unusual transactions outside the normal course of business."),
-        makeProcRow("2c. Revenue recognition presumed fraud risk — evaluate which revenue streams, transactions and accounting policies could give rise to fraud risk and design a responsive approach.", "C, AV"),
-        makeProcRow("2d. Design procedures addressing identified fraud risks: specific scenarios, management override, revenue cut-off, related parties, bias in estimates, and journal-entry testing."),
-        makeProcRow("2e. Introduce unpredictability — select procedures on accounts not previously tested, vary timing/sampling methods, perform unannounced procedures where appropriate."),
+        makeProcRow(
+          "1a. Is there a need to assign staff with specialized knowledge, experience, skills and ability to address the risks identified? If so, explain."
+        ),
+        makeProcRow(
+          "1b. Is there a need for additional supervision of staff to address the risks identified? If so, explain."
+        ),
+      ],
+    },
+    {
+      title: "B · Overall responses — 2. Responding to fraud risk",
+      rows: [
+        makeProcRow(
+          "2a. Has the need to maintain professional skepticism throughout the audit been communicated to staff?"
+        ),
+        makeProcRow(
+          "2b. Has the audit team been asked to stay alert for undisclosed related parties?"
+        ),
+        makeProcRow(
+          "2c. Revenue recognition is a presumed fraud risk. Have we evaluated which types of revenue, transactions and accounting policies could give rise to fraud risks?"
+        ),
+        makeProcRow(
+          "2d. Have audit procedures been designed to address the identified fraud risks?\n\nConsider:\n  • Specific fraud scenarios.\n  • Management override.\n  • Revenue recognition.\n  • Inappropriate use of related parties.\n  • Bias in estimates.\n  • Inappropriate journal entries."
+        ),
+        makeProcRow(
+          "2e. Has some element of unpredictability been considered to address fraud risks?\n\nConsider:\n  • Specific procedures on selected account balances/assertions.\n  • Adjusting timing of audit procedures.\n  • Using different sampling methods.\n  • Performing audit procedures at different locations or at locations on an unannounced basis."
+        ),
       ],
     },
   ];
+
   if (overallRisk !== "Low") {
     sections.push({
-      title: "C · Responses when overall risk is moderate or high",
+      title: "C · Additional responses for moderate / high risk — 3. Steps to address higher risk",
       rows: [
-        makeProcRow("3a. Retain an auditor's expert where specialised skills (valuation, IT, actuarial, tax) are required to address an assessed risk."),
-        makeProcRow("3b. Use data-analytics tools (CAATs) to extract / analyse 100 % of the population where relevant."),
-        makeProcRow("3c-i. Add more elements of unpredictability in procedure selection (e.g. rotating samples, new sub-populations)."),
-        makeProcRow("3c-ii. Perform more extensive procedures over cut-off, journal entries, related parties and estimates."),
-        makeProcRow("3c-iii. Increase the extent of substantive testing over revenues, expenses, inventories, receivables and other significant balances."),
-        makeProcRow("3c-iv. Verify title to assets pledged as collateral."),
-        makeProcRow("3c-v. Obtain additional written representations from management for sensitive areas."),
-        makeProcRow("3c-vi. Place less reliance on internal controls and perform substantive procedures."),
-        makeProcRow("3c-vii. Perform substantive procedures at period-end rather than at an interim date."),
-        makeProcRow("3c-viii. Extend coverage of entity locations included in the audit scope."),
-        makeProcRow("3d. Other responses (specify in the comments column)."),
+        makeProcRow(
+          "3a. Retain an auditor's expert where specialised knowledge, skills and experience are required to address an assessed risk."
+        ),
+        makeProcRow(
+          "3b. Use electronic data analysis tools to extract/analyze information."
+        ),
+        makeProcRow(
+          "3c. Perform additional procedures at the assertion level to address the higher risks involved.\n\nConsider:\n  • Adding more elements of unpredictability in the selection of procedures.\n  • Performing further, more extensive audit procedures in relation to cut-off, journal entries, related parties and estimates.\n  • Performing additional testing of revenues, expenses, inventories, receivables and other major assets/liabilities.\n  • Verifying title to assets used as collateral.\n  • Verifying more of management's representations.\n  • Relying less on relevant internal controls.\n  • Performing procedures at period end rather than at an interim date.\n  • Increasing the number of entity locations included in the audit scope."
+        ),
+        makeProcRow(
+          "3d. Other responses (specify in the comments column)."
+        ),
       ],
     });
   }
+
   return {
     fsLevelControlWeaknesses: "",
-    rationale: "",
     sections,
     signOff: { preparedBy: "", preparedDate: "", reviewedBy: "", reviewedDate: "" },
     concluded: false, concludedOn: "",
@@ -68,7 +87,10 @@ export function Audit605Worksheet() {
   const fsRisks = useMemo(() => risks.filter(r => r.source === "A" || r.fraudRisk === "Y" || r.significantRisk === "Y"), [risks]);
 
   const storageKey = `audit-605-data-${engagementId ?? "default"}`;
-  const [data, setData] = useState<Data605>(() => readJsonFromLocalStorage<Data605>(storageKey, buildDefault(overall)) ?? buildDefault(overall));
+  const [data, setData] = useState<Data605>(() => {
+    const saved = readJsonFromLocalStorage<Data605>(storageKey, buildDefault(overall));
+    return saved ?? buildDefault(overall);
+  });
 
   const saveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const first = useRef(true);
@@ -103,32 +125,32 @@ export function Audit605Worksheet() {
       <LinkedRisksCard overallRisk={overall} risks={fsRisks} emptyHint="No FS-level or significant risks have been flagged in Form 520." />
 
       <div className="bg-card text-card-foreground border border-border shadow-[0_2px_8px_hsl(213_40%_20%/0.06)] rounded-md overflow-hidden">
-        <div className="px-6 py-3.5 border-b border-border"><h3 className="text-sm font-semibold">A · Control weaknesses at the financial-statement level</h3></div>
+        <div className="px-6 py-3.5 border-b border-border">
+          <h3 className="text-sm font-semibold">A · Control weaknesses at the financial-statement level</h3>
+        </div>
         <div className="p-6">
-          <Textarea disabled={locked} value={data.fsLevelControlWeaknesses}
+          <Textarea
+            disabled={locked}
+            value={data.fsLevelControlWeaknesses}
             onChange={e => setData(d => ({ ...d, fsLevelControlWeaknesses: e.target.value }))}
             className="text-sm min-h-[88px]"
-            placeholder="Summarise FS-level control weaknesses identified during the audit (e.g. weak governance, lack of segregation of duties, management override exposure)…" />
+            placeholder="Summarise any control weaknesses at the financial-statement level identified during the audit (e.g. weak governance, lack of segregation of duties, management override exposure)…"
+          />
         </div>
       </div>
 
-      <ProcedureTable sections={data.sections} locked={locked} onChange={updateRow} />
+      <ProcedureTable sections={data.sections} locked={locked} onChange={updateRow} showPsa={false} />
 
-      <div className="bg-card text-card-foreground border border-border shadow-[0_2px_8px_hsl(213_40%_20%/0.06)] rounded-md overflow-hidden">
-        <div className="px-6 py-3.5 border-b border-border"><h3 className="text-sm font-semibold">Rationale / overall conclusion</h3></div>
-        <div className="p-6">
-          <Textarea disabled={locked} value={data.rationale}
-            onChange={e => setData(d => ({ ...d, rationale: e.target.value }))}
-            className="text-sm min-h-[96px]"
-            placeholder="Explain why the overall responses are appropriate given the assessed FS-level risk and the team composition / supervision approach…" />
-        </div>
-      </div>
-
-      <ConcludeBar worksheetKey="audit-605" engagementId={engagementId} concluded={data.concluded} concludedOn={data.concludedOn}
+      <ConcludeBar
+        worksheetKey="audit-605"
+        engagementId={engagementId}
+        concluded={data.concluded}
+        concludedOn={data.concludedOn}
         onConclude={() => {
           const u = { ...data, concluded: true, concludedOn: new Date().toISOString().slice(0, 10) };
           setData(u); writeJsonToLocalStorage(storageKey, u);
-        }} />
+        }}
+      />
     </WorksheetLayout>
   );
 }
