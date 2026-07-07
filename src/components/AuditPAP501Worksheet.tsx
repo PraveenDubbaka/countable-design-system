@@ -666,10 +666,47 @@ export function AuditPAP501Worksheet({ isUS = false }: { isUS?: boolean }) {
         <div className="flex-1 overflow-y-auto bg-muted/30">
           <div className="p-6 space-y-4">
 
+            {/* ── Comparatives Setup card (mirrors 420 Materiality standard header cards) ── */}
+            <div className="bg-card text-card-foreground border border-border shadow-[0_2px_8px_hsl(213_40%_20%/0.06)] rounded-md overflow-hidden">
+              <div className="px-6 py-3.5 bg-card border-b border-border flex items-center gap-3">
+                <span className="text-sm font-semibold text-foreground">Comparatives Setup</span>
+                <span title="Select which comparatives to include and the number of sales streams. Auto-populated data flows from engagement setup and the 420 Materiality worksheet.">
+                  <Info className="h-3.5 w-3.5 text-muted-foreground cursor-help" />
+                </span>
+              </div>
+              <div className="px-6 py-4 grid grid-cols-1 md:grid-cols-4 gap-6">
+                <div className="space-y-1.5">
+                  <div className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Performance materiality</div>
+                  <div className="text-sm font-semibold text-foreground">{perfMateriality}</div>
+                  <div className="text-[11px] text-muted-foreground">Auto-populated from 420 Materiality</div>
+                </div>
+                <div className="space-y-1.5">
+                  <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider block">Compare to budget / forecast?</label>
+                  <Select value={data.compareBudget} onValueChange={v => set({ compareBudget: v })} disabled={locked}>
+                    <SelectTrigger className="h-8 text-sm w-28"><SelectValue /></SelectTrigger>
+                    <SelectContent><SelectItem value="Yes">Yes</SelectItem><SelectItem value="No">No</SelectItem></SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-1.5">
+                  <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider block">Compare to prior period?</label>
+                  <Select value={data.comparePrior} onValueChange={v => set({ comparePrior: v })} disabled={locked}>
+                    <SelectTrigger className="h-8 text-sm w-28"><SelectValue /></SelectTrigger>
+                    <SelectContent><SelectItem value="Yes">Yes</SelectItem><SelectItem value="No">No</SelectItem></SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-1.5">
+                  <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider block">Number of sales streams</label>
+                  <Select value={String(data.numStreams)} onValueChange={v => set({ numStreams: Math.max(1, Math.min(5, Number(v))) })} disabled={locked}>
+                    <SelectTrigger className="h-8 text-sm w-20"><SelectValue /></SelectTrigger>
+                    <SelectContent>{[1,2,3,4,5].map(nn => <SelectItem key={nn} value={String(nn)}>{nn}</SelectItem>)}</SelectContent>
+                  </Select>
+                </div>
+              </div>
+            </div>
+
             {/* ── Part B — Financial Comparatives ── */}
-            <div className="text-xs font-semibold text-muted-foreground uppercase tracking-wider px-1">Part B — Financial Comparatives</div>
-            {true && (
-              <>
+            <div className="text-xs font-semibold text-muted-foreground uppercase tracking-wider px-1 pt-2">Part B — Financial Comparatives</div>
+            <>
                 {/* ── Income Statement card ── */}
                 <div className="bg-card text-card-foreground border border-border shadow-[0_2px_8px_hsl(213_40%_20%/0.06)] rounded-md overflow-hidden">
                   <div className="px-6 py-3.5 bg-card border-b border-border flex items-center gap-3">
@@ -677,50 +714,55 @@ export function AuditPAP501Worksheet({ isUS = false }: { isUS?: boolean }) {
                     <span title="Compare current period to budget/forecast and prior period. Flag material or unexpected variances.">
                       <Info className="h-3.5 w-3.5 text-muted-foreground cursor-help" />
                     </span>
-                    <div className="ml-auto flex items-center gap-2">
-                      <label className="text-xs text-muted-foreground">Number of sales streams</label>
-                      <Select value={String(data.numStreams)} onValueChange={v => set({ numStreams: Math.max(1, Math.min(5, Number(v))) })} disabled={locked}>
-                        <SelectTrigger className="h-8 w-16 text-sm"><SelectValue /></SelectTrigger>
-                        <SelectContent>{[1,2,3,4,5].map(n => <SelectItem key={n} value={String(n)}>{n}</SelectItem>)}</SelectContent>
-                      </Select>
-                    </div>
                   </div>
                   <div className="overflow-x-auto">
                     <table className="w-full">
-                      <FinColHeaders showBudget={showBudget} />
+                      <FinColHeaders showBudget={showBudget} showPrior={showPrior} />
                       <tbody>
                         <FinSectionRow label="Sales / Revenue" />
                         {salesIds.map((id, i) => (
-                          <FinEditRow key={id} id={id} label={data.streamLabels[i] || `Stream ${i+1}`} showBudget={showBudget} />
+                          <FinEditRow key={id} id={id} label={data.streamLabels[i] || `Stream ${i+1}`} showBudget={showBudget} showPrior={showPrior} />
                         ))}
-                        <FinTotalRow label="Total Sales" c={totalSales.c} b={totalSales.b} pr={totalSales.pr} showBudget={showBudget} />
+                        <FinTotalRow label="Total Sales" c={totalSales.c} b={totalSales.b} pr={totalSales.pr} showBudget={showBudget} showPrior={showPrior} />
 
                         <FinSectionRow label="Cost of Sales" />
                         {cosIds.map((id, i) => (
-                          <FinEditRow key={id} id={id} label={`COS — ${data.streamLabels[i] || `Stream ${i+1}`}`} showBudget={showBudget} />
+                          <FinEditRow key={id} id={id} label={`COS — ${data.streamLabels[i] || `Stream ${i+1}`}`} showBudget={showBudget} showPrior={showPrior} />
                         ))}
-                        <FinTotalRow label="Total Cost of Sales" c={totalCos.c} b={totalCos.b} pr={totalCos.pr} showBudget={showBudget} />
-                        <FinTotalRow label="Gross Margin" c={totalGM.c} b={totalGM.b} pr={totalGM.pr} showBudget={showBudget} />
+                        <FinTotalRow label="Total Cost of Sales" c={totalCos.c} b={totalCos.b} pr={totalCos.pr} showBudget={showBudget} showPrior={showPrior} />
+
+                        <FinSectionRow label="Gross Margin ($) — computed" />
+                        {salesIds.map((sid, i) => (
+                          <FinComputedRow key={`gm-${sid}`} label={`GM $ — ${data.streamLabels[i] || `Stream ${i+1}`}`} c={gmPerStream[i].c} b={gmPerStream[i].b} pr={gmPerStream[i].pr} showBudget={showBudget} showPrior={showPrior} />
+                        ))}
+                        <FinTotalRow label="Total Gross Margin ($)" c={totalGM.c} b={totalGM.b} pr={totalGM.pr} showBudget={showBudget} showPrior={showPrior} />
+
+                        <FinSectionRow label="Gross Margin (%) — computed" />
+                        {salesIds.map((sid, i) => (
+                          <FinComputedRow key={`gmp-${sid}`} label={`GM % — ${data.streamLabels[i] || `Stream ${i+1}`}`} c={gmPctPerStream[i].c} b={gmPctPerStream[i].b} pr={gmPctPerStream[i].pr} showBudget={showBudget} showPrior={showPrior} isPercent />
+                        ))}
+                        <FinComputedRow label="Total Gross Margin (%)" c={totalGMPct.c} b={totalGMPct.b} pr={totalGMPct.pr} showBudget={showBudget} showPrior={showPrior} isPercent />
 
                         <FinSectionRow label="Other Revenue" />
-                        <FinEditRow id="or1" label="Other revenue 1" showBudget={showBudget} />
-                        <FinEditRow id="or2" label="Other revenue 2" showBudget={showBudget} />
-                        <FinTotalRow label="Total Other Revenue" c={totalOR.c} b={totalOR.b} pr={totalOR.pr} showBudget={showBudget} />
+                        <FinEditRow id="or1" label="Other revenue 1" showBudget={showBudget} showPrior={showPrior} />
+                        <FinEditRow id="or2" label="Other revenue 2" showBudget={showBudget} showPrior={showPrior} />
+                        <FinTotalRow label="Total Other Revenue" c={totalOR.c} b={totalOR.b} pr={totalOR.pr} showBudget={showBudget} showPrior={showPrior} />
 
                         <FinSectionRow label="Expenses" />
-                        <FinEditRow id="exp-sal"  label="Salaries & wages" showBudget={showBudget} />
-                        <FinEditRow id="exp-occ"  label="Occupancy" showBudget={showBudget} />
-                        <FinEditRow id="exp-int"  label="Interest" showBudget={showBudget} />
-                        <FinEditRow id="exp-bon"  label="Bonuses" showBudget={showBudget} />
-                        <FinEditRow id="exp-rep"  label="Repairs & maintenance" showBudget={showBudget} />
-                        <FinEditRow id="exp-bad"  label="Bad debts" showBudget={showBudget} />
-                        <FinEditRow id="exp-non"  label="Non-recurring" showBudget={showBudget} />
-                        <FinEditRow id="exp-oth1" label="Other 1" showBudget={showBudget} />
-                        <FinEditRow id="exp-oth2" label="Other 2" showBudget={showBudget} />
-                        <FinEditRow id="exp-oth3" label="Other 3" showBudget={showBudget} />
-                        <FinTotalRow label="Total Expenses" c={totalExp.c} b={totalExp.b} pr={totalExp.pr} showBudget={showBudget} />
+                        <FinEditRow id="exp-sal"  label="Salaries / payroll" showBudget={showBudget} showPrior={showPrior} />
+                        <FinEditRow id="exp-occ"  label="Occupancy" showBudget={showBudget} showPrior={showPrior} />
+                        <FinEditRow id="exp-int"  label="Interest / bank charges" showBudget={showBudget} showPrior={showPrior} />
+                        <FinEditRow id="exp-bon"  label="Bonuses" showBudget={showBudget} showPrior={showPrior} />
+                        <FinEditRow id="exp-rep"  label="Repairs & maintenance" showBudget={showBudget} showPrior={showPrior} />
+                        <FinEditRow id="exp-bad"  label="Bad debts" showBudget={showBudget} showPrior={showPrior} />
+                        <FinEditRow id="exp-non"  label="Non-recurring transactions" showBudget={showBudget} showPrior={showPrior} />
+                        <FinEditRow id="exp-oth1" label="Other expenses 1" showBudget={showBudget} showPrior={showPrior} />
+                        <FinEditRow id="exp-oth2" label="Other expenses 2" showBudget={showBudget} showPrior={showPrior} />
+                        <FinEditRow id="exp-oth3" label="Other expenses 3" showBudget={showBudget} showPrior={showPrior} />
+                        <FinTotalRow label="Total Expenses" c={totalExp.c} b={totalExp.b} pr={totalExp.pr} showBudget={showBudget} showPrior={showPrior} />
 
-                        <FinTotalRow label="Net Income" c={netIncome.c} b={netIncome.b} pr={netIncome.pr} showBudget={showBudget} />
+                        <FinTotalRow label="Net income before tax" c={netIncome.c} b={netIncome.b} pr={netIncome.pr} showBudget={showBudget} showPrior={showPrior} />
+                        <FinComputedRow label="     % of revenue" c={niPct.c} b={niPct.b} pr={niPct.pr} showBudget={showBudget} showPrior={showPrior} isPercent />
                       </tbody>
                     </table>
                   </div>
@@ -736,60 +778,83 @@ export function AuditPAP501Worksheet({ isUS = false }: { isUS?: boolean }) {
                   </div>
                   <div className="overflow-x-auto">
                     <table className="w-full">
-                      <FinColHeaders showBudget={showBudget} />
+                      <FinColHeaders showBudget={showBudget} showPrior={showPrior} />
                       <tbody>
                         <FinSectionRow label="Current Assets" />
-                        <FinEditRow id="ca-cash"      label="Cash" showBudget={showBudget} />
-                        <FinEditRow id="ca-inv"       label="Short-term investments" showBudget={showBudget} />
-                        <FinEditRow id="ca-ar"        label="Accounts receivable" showBudget={showBudget} />
-                        <FinEditRow id="ca-inventory" label="Inventory" showBudget={showBudget} />
-                        <FinEditRow id="ca-oth1"      label="Other 1" showBudget={showBudget} />
-                        <FinEditRow id="ca-oth2"      label="Other 2" showBudget={showBudget} />
-                        <FinTotalRow label="Total Current Assets" c={totalCA.c} b={totalCA.b} pr={totalCA.pr} showBudget={showBudget} />
+                        <FinEditRow id="ca-cash"      label="Cash" showBudget={showBudget} showPrior={showPrior} />
+                        <FinEditRow id="ca-inv"       label="Short-term investments" showBudget={showBudget} showPrior={showPrior} />
+                        <FinEditRow id="ca-ar"        label="Accounts receivable" showBudget={showBudget} showPrior={showPrior} />
+                        <FinEditRow id="ca-inventory" label="Inventory" showBudget={showBudget} showPrior={showPrior} />
+                        <FinEditRow id="ca-oth1"      label="Other assets 1" showBudget={showBudget} showPrior={showPrior} />
+                        <FinEditRow id="ca-oth2"      label="Other assets 2" showBudget={showBudget} showPrior={showPrior} />
+                        <FinTotalRow label="Total Current Assets" c={totalCA.c} b={totalCA.b} pr={totalCA.pr} showBudget={showBudget} showPrior={showPrior} />
 
                         <FinSectionRow label="Long-Term Assets" />
-                        <FinEditRow id="lta-ppe"  label="Property, plant & equipment" showBudget={showBudget} />
-                        <FinEditRow id="lta-oth1" label="Other 1" showBudget={showBudget} />
-                        <FinEditRow id="lta-oth2" label="Other 2" showBudget={showBudget} />
-                        <FinEditRow id="lta-oth3" label="Other 3" showBudget={showBudget} />
-                        <FinTotalRow label="Total Long-Term Assets" c={totalLTA.c} b={totalLTA.b} pr={totalLTA.pr} showBudget={showBudget} />
-                        <FinTotalRow label="Total Assets" c={totalA.c} b={totalA.b} pr={totalA.pr} showBudget={showBudget} />
+                        <FinEditRow id="lta-ppe"  label="Property, plant & equipment" showBudget={showBudget} showPrior={showPrior} />
+                        <FinEditRow id="lta-oth1" label="Other assets 1" showBudget={showBudget} showPrior={showPrior} />
+                        <FinEditRow id="lta-oth2" label="Other assets 2" showBudget={showBudget} showPrior={showPrior} />
+                        <FinEditRow id="lta-oth3" label="Other assets 3" showBudget={showBudget} showPrior={showPrior} />
+                        <FinTotalRow label="Total Long-Term Assets" c={totalLTA.c} b={totalLTA.b} pr={totalLTA.pr} showBudget={showBudget} showPrior={showPrior} />
+                        <FinTotalRow label="Total Assets" c={totalA.c} b={totalA.b} pr={totalA.pr} showBudget={showBudget} showPrior={showPrior} />
 
                         <FinSectionRow label="Current Liabilities" />
-                        <FinEditRow id="cl-bank"  label="Bank indebtedness" showBudget={showBudget} />
-                        <FinEditRow id="cl-ap"    label="Accounts payable & accruals" showBudget={showBudget} />
-                        <FinEditRow id="cl-tax"   label="Income taxes payable" showBudget={showBudget} />
-                        <FinEditRow id="cl-fut"   label="Future income taxes" showBudget={showBudget} />
-                        <FinEditRow id="cl-def"   label="Deferred revenue" showBudget={showBudget} />
-                        <FinEditRow id="cl-dep"   label="Customer deposits" showBudget={showBudget} />
-                        <FinEditRow id="cl-std"   label="Short-term debt" showBudget={showBudget} />
-                        <FinEditRow id="cl-cpltd" label="Current portion of long-term debt" showBudget={showBudget} />
-                        <FinEditRow id="cl-oth1"  label="Other 1" showBudget={showBudget} />
-                        <FinEditRow id="cl-oth2"  label="Other 2" showBudget={showBudget} />
-                        <FinTotalRow label="Total Current Liabilities" c={totalCL.c} b={totalCL.b} pr={totalCL.pr} showBudget={showBudget} />
+                        <FinEditRow id="cl-bank"  label="Bank indebtedness" showBudget={showBudget} showPrior={showPrior} />
+                        <FinEditRow id="cl-ap"    label="Accounts payable & accrued liabilities" showBudget={showBudget} showPrior={showPrior} />
+                        <FinEditRow id="cl-tax"   label="Income taxes payable" showBudget={showBudget} showPrior={showPrior} />
+                        <FinEditRow id="cl-fut"   label="Future income taxes payable" showBudget={showBudget} showPrior={showPrior} />
+                        <FinEditRow id="cl-def"   label="Deferred revenue" showBudget={showBudget} showPrior={showPrior} />
+                        <FinEditRow id="cl-dep"   label="Customer deposits" showBudget={showBudget} showPrior={showPrior} />
+                        <FinEditRow id="cl-std"   label="Short-term debt" showBudget={showBudget} showPrior={showPrior} />
+                        <FinEditRow id="cl-cpltd" label="Current portion of long-term debt" showBudget={showBudget} showPrior={showPrior} />
+                        <FinEditRow id="cl-oth1"  label="Other current liabilities 1" showBudget={showBudget} showPrior={showPrior} />
+                        <FinEditRow id="cl-oth2"  label="Other current liabilities 2" showBudget={showBudget} showPrior={showPrior} />
+                        <FinTotalRow label="Total Current Liabilities" c={totalCL.c} b={totalCL.b} pr={totalCL.pr} showBudget={showBudget} showPrior={showPrior} />
 
                         <FinSectionRow label="Long-Term Liabilities" />
-                        <FinEditRow id="ltl-loan" label="Loan payable" showBudget={showBudget} />
-                        <FinEditRow id="ltl-fut"  label="Future income taxes" showBudget={showBudget} />
-                        <FinEditRow id="ltl-ltd"  label="Long-term debt" showBudget={showBudget} />
-                        <FinEditRow id="ltl-oth1" label="Other 1" showBudget={showBudget} />
-                        <FinEditRow id="ltl-oth2" label="Other 2" showBudget={showBudget} />
-                        <FinTotalRow label="Total Long-Term Liabilities" c={totalLTL.c} b={totalLTL.b} pr={totalLTL.pr} showBudget={showBudget} />
-                        <FinTotalRow label="Total Liabilities" c={totalL.c} b={totalL.b} pr={totalL.pr} showBudget={showBudget} />
+                        <FinEditRow id="ltl-loan" label="Loans payable" showBudget={showBudget} showPrior={showPrior} />
+                        <FinEditRow id="ltl-fut"  label="Future income taxes payable" showBudget={showBudget} showPrior={showPrior} />
+                        <FinEditRow id="ltl-ltd"  label="Long-term debt" showBudget={showBudget} showPrior={showPrior} />
+                        <FinEditRow id="ltl-oth1" label="Other long-term liabilities 1" showBudget={showBudget} showPrior={showPrior} />
+                        <FinEditRow id="ltl-oth2" label="Other long-term liabilities 2" showBudget={showBudget} showPrior={showPrior} />
+                        <FinTotalRow label="Total Long-Term Liabilities" c={totalLTL.c} b={totalLTL.b} pr={totalLTL.pr} showBudget={showBudget} showPrior={showPrior} />
+                        <FinTotalRow label="Total Liabilities" c={totalL.c} b={totalL.b} pr={totalL.pr} showBudget={showBudget} showPrior={showPrior} />
 
                         <FinSectionRow label="Equity" />
-                        <FinEditRow id="eq-ret" label="Retained earnings" showBudget={showBudget} />
-                        <FinEditRow id="eq-con" label="Contributed surplus" showBudget={showBudget} />
-                        <FinEditRow id="eq-shr" label="Share capital" showBudget={showBudget} />
-                        <FinEditRow id="eq-oth" label="Other equity" showBudget={showBudget} />
-                        <FinTotalRow label="Total Equity" c={totalEQ.c} b={totalEQ.b} pr={totalEQ.pr} showBudget={showBudget} />
-                        <FinTotalRow label="Total Liabilities & Equity" c={totalLE.c} b={totalLE.b} pr={totalLE.pr} showBudget={showBudget} />
+                        <FinEditRow id="eq-ret" label="Retained earnings" showBudget={showBudget} showPrior={showPrior} />
+                        <FinEditRow id="eq-con" label="Contributed surplus" showBudget={showBudget} showPrior={showPrior} />
+                        <FinEditRow id="eq-shr" label="Share capital" showBudget={showBudget} showPrior={showPrior} />
+                        <FinEditRow id="eq-oth" label="Other equity" showBudget={showBudget} showPrior={showPrior} />
+                        <FinTotalRow label="Total Equity" c={totalEQ.c} b={totalEQ.b} pr={totalEQ.pr} showBudget={showBudget} showPrior={showPrior} />
+                        <FinTotalRow label="Total Liabilities & Equity" c={totalLE.c} b={totalLE.b} pr={totalLE.pr} showBudget={showBudget} showPrior={showPrior} />
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+
+                {/* ── Ratios card ── */}
+                <div className="bg-card text-card-foreground border border-border shadow-[0_2px_8px_hsl(213_40%_20%/0.06)] rounded-md overflow-hidden">
+                  <div className="px-6 py-3.5 bg-card border-b border-border flex items-center gap-3">
+                    <span className="text-sm font-semibold text-foreground">Ratios</span>
+                    <span title="Enter key liquidity, activity and leverage ratios for the current period, budget/forecast and prior period.">
+                      <Info className="h-3.5 w-3.5 text-muted-foreground cursor-help" />
+                    </span>
+                  </div>
+                  <div className="overflow-x-auto">
+                    <table className="w-full">
+                      <FinColHeaders showBudget={showBudget} showPrior={showPrior} />
+                      <tbody>
+                        <FinEditRow id="rat-wc"     label="Working capital"                              showBudget={showBudget} showPrior={showPrior} source="ratio" />
+                        <FinEditRow id="rat-drecv"  label="Number of days in receivables"                showBudget={showBudget} showPrior={showPrior} source="ratio" />
+                        <FinEditRow id="rat-dinv"   label="Number of days' sales in inventory"           showBudget={showBudget} showPrior={showPrior} source="ratio" />
+                        <FinEditRow id="rat-iturn"  label="Inventory turnover"                           showBudget={showBudget} showPrior={showPrior} source="ratio" />
+                        <FinEditRow id="rat-dpay"   label="Number of days' purchases in trade payables"  showBudget={showBudget} showPrior={showPrior} source="ratio" />
+                        <FinEditRow id="rat-dte"    label="Debt-to-equity ratio"                         showBudget={showBudget} showPrior={showPrior} source="ratio" />
                       </tbody>
                     </table>
                   </div>
                 </div>
               </>
-            )}
+
 
             {/* ── Part C — Matters & Sign-off ── */}
             <div className="text-xs font-semibold text-muted-foreground uppercase tracking-wider px-1 pt-4">Part C — Matters &amp; Sign-off</div>
