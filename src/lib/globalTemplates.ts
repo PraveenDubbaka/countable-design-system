@@ -14834,14 +14834,6 @@ export const generate505MgmtInquiriesChecklist = (): Checklist => {
         q('505-lawyers-3', '<p>Internal audit reports to management on areas of concern.</p>'),
       ],
     },
-    {
-      id: '505-s7',
-      title: 'Notes',
-      isExpanded: true,
-      questions: [
-        la('505-notes-1', '<p>Document overall results and cross-reference to other relevant forms (e.g., Form 520 — Risk Register). Where responses are incomplete, unsatisfactory or inconsistent, perform additional risk assessment procedures.</p>'),
-      ],
-    },
   ];
 
   return {
