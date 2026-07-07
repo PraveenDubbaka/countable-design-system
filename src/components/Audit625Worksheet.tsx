@@ -332,6 +332,7 @@ export function Audit625Worksheet() {
           locked={locked}
           onChange={makeProcChangeHandler(data.planProcedures, "planProcedures")}
           showPsa={false}
+          showNumbers={false}
         />
       </WorksheetSection>
 
@@ -342,6 +343,7 @@ export function Audit625Worksheet() {
           locked={locked}
           onChange={makeProcChangeHandler(data.feasibilityProcedures, "feasibilityProcedures")}
           showPsa={false}
+          showNumbers={false}
         />
       </WorksheetSection>
 
@@ -352,6 +354,7 @@ export function Audit625Worksheet() {
           locked={locked}
           onChange={makeProcChangeHandler(data.forecastProcedures, "forecastProcedures")}
           showPsa={false}
+          showNumbers={false}
         />
       </WorksheetSection>
 
@@ -362,6 +365,7 @@ export function Audit625Worksheet() {
           locked={locked}
           onChange={makeProcChangeHandler(data.evaluateProcedures, "evaluateProcedures")}
           showPsa={false}
+          showNumbers={false}
         />
         <div className="px-6 py-4 grid grid-cols-1 md:grid-cols-2 gap-4 border-t border-border bg-muted/20">
           <div>
@@ -387,6 +391,7 @@ export function Audit625Worksheet() {
             locked={locked}
             onChange={makeProcChangeHandler(data.strategyProcedures, "strategyProcedures")}
             showPsa={false}
+          showNumbers={false}
           />
         </WorksheetSection>
       )}
@@ -398,6 +403,7 @@ export function Audit625Worksheet() {
           locked={locked}
           onChange={makeProcChangeHandler(data.subsequentProcedures, "subsequentProcedures")}
           showPsa={false}
+          showNumbers={false}
         />
       </WorksheetSection>
 

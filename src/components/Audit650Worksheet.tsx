@@ -229,16 +229,16 @@ export function Audit650Worksheet() {
 
       {/* Procedures */}
       <WorksheetSection title="1. Review work performed" bodyClassName="p-0">
-        <ProcedureTable showPsa={false} sections={[{ title: "Risk assessment & prior procedures", rows: data.procReview }]} locked={locked} onChange={handler("procReview")} />
+        <ProcedureTable showPsa={false} showNumbers={false} sections={[{ title: "Risk assessment & prior procedures", rows: data.procReview }]} locked={locked} onChange={handler("procReview")} />
       </WorksheetSection>
       <WorksheetSection title="2. Management & TCWG inquiries" bodyClassName="p-0">
-        <ProcedureTable showPsa={false} sections={[{ title: "Inquiries", rows: data.procInquiries }]} locked={locked} onChange={handler("procInquiries")} />
+        <ProcedureTable showPsa={false} showNumbers={false} sections={[{ title: "Inquiries", rows: data.procInquiries }]} locked={locked} onChange={handler("procInquiries")} />
       </WorksheetSection>
       <WorksheetSection title="3. Subsequent event procedures" bodyClassName="p-0">
-        <ProcedureTable showPsa={false} sections={[{ title: "Procedures to period of auditor's report", rows: data.procProcedures }]} locked={locked} onChange={handler("procProcedures")} />
+        <ProcedureTable showPsa={false} showNumbers={false} sections={[{ title: "Procedures to period of auditor's report", rows: data.procProcedures }]} locked={locked} onChange={handler("procProcedures")} />
       </WorksheetSection>
       <WorksheetSection title="4. Evaluation of identified events" bodyClassName="p-0">
-        <ProcedureTable showPsa={false} sections={[{ title: "Per event evaluation", rows: data.procIdentified }]} locked={locked} onChange={handler("procIdentified")} />
+        <ProcedureTable showPsa={false} showNumbers={false} sections={[{ title: "Per event evaluation", rows: data.procIdentified }]} locked={locked} onChange={handler("procIdentified")} />
       </WorksheetSection>
 
       {/* Identified events register */}
@@ -291,11 +291,11 @@ export function Audit650Worksheet() {
       </WorksheetSection>
 
       <WorksheetSection title="5. Written representations" bodyClassName="p-0">
-        <ProcedureTable showPsa={false} sections={[{ title: "Form 580 representation coverage", rows: data.procWrittenReps }]} locked={locked} onChange={handler("procWrittenReps")} />
+        <ProcedureTable showPsa={false} showNumbers={false} sections={[{ title: "Form 580 representation coverage", rows: data.procWrittenReps }]} locked={locked} onChange={handler("procWrittenReps")} />
       </WorksheetSection>
 
       <WorksheetSection title="6. Disclosures" bodyClassName="p-0">
-        <ProcedureTable showPsa={false} sections={[{ title: "Disclosure review", rows: data.procDisclosures }]} locked={locked} onChange={handler("procDisclosures")} />
+        <ProcedureTable showPsa={false} showNumbers={false} sections={[{ title: "Disclosure review", rows: data.procDisclosures }]} locked={locked} onChange={handler("procDisclosures")} />
       </WorksheetSection>
 
       {/* Post-report-date facts */}

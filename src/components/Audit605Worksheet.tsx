@@ -139,7 +139,7 @@ export function Audit605Worksheet() {
         </div>
       </div>
 
-      <ProcedureTable sections={data.sections} locked={locked} onChange={updateRow} showPsa={false} />
+      <ProcedureTable sections={data.sections} locked={locked} onChange={updateRow} showPsa={false} showNumbers={false} />
 
       <ConcludeBar
         worksheetKey="audit-605"

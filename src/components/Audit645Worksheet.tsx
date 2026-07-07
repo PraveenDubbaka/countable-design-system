@@ -377,27 +377,27 @@ export function Audit645Worksheet() {
 
       {/* Procedure sections (per CAS 250 / 501) */}
       <WorksheetSection title="Preparation" bodyClassName="p-0">
-        <ProcedureTable sections={[{ title: "Understand the assessed risk", rows: data.procPreparation }]} locked={locked} onChange={handler("procPreparation")} />
+        <ProcedureTable showNumbers={false} sections={[{ title: "Understand the assessed risk", rows: data.procPreparation }]} locked={locked} onChange={handler("procPreparation")} />
       </WorksheetSection>
 
       <WorksheetSection title="Completeness — identify litigation, claims and non-compliance" bodyClassName="p-0">
-        <ProcedureTable sections={[{ title: "Inquiries, minutes, accounts and correspondence", rows: data.procCompleteness }]} locked={locked} onChange={handler("procCompleteness")} />
+        <ProcedureTable showNumbers={false} sections={[{ title: "Inquiries, minutes, accounts and correspondence", rows: data.procCompleteness }]} locked={locked} onChange={handler("procCompleteness")} />
       </WorksheetSection>
 
       <WorksheetSection title="Completeness — communications with legal counsel" bodyClassName="p-0">
-        <ProcedureTable sections={[{ title: "Legal letters & meetings", rows: data.procLegalCounsel }]} locked={locked} onChange={handler("procLegalCounsel")} />
+        <ProcedureTable showNumbers={false} sections={[{ title: "Legal letters & meetings", rows: data.procLegalCounsel }]} locked={locked} onChange={handler("procLegalCounsel")} />
       </WorksheetSection>
 
       <WorksheetSection title="Accuracy / valuation" bodyClassName="p-0">
-        <ProcedureTable sections={[{ title: "Identified or suspected non-compliance & impact on estimates", rows: data.procAccuracyValuation }]} locked={locked} onChange={handler("procAccuracyValuation")} />
+        <ProcedureTable showNumbers={false} sections={[{ title: "Identified or suspected non-compliance & impact on estimates", rows: data.procAccuracyValuation }]} locked={locked} onChange={handler("procAccuracyValuation")} />
       </WorksheetSection>
 
       <WorksheetSection title="Existence — insurance coverage" bodyClassName="p-0">
-        <ProcedureTable sections={[{ title: "Insurance review and claim confirmations", rows: data.procExistence }]} locked={locked} onChange={handler("procExistence")} />
+        <ProcedureTable showNumbers={false} sections={[{ title: "Insurance review and claim confirmations", rows: data.procExistence }]} locked={locked} onChange={handler("procExistence")} />
       </WorksheetSection>
 
       <WorksheetSection title="Presentation" bodyClassName="p-0">
-        <ProcedureTable sections={[{ title: "Disclosures & overall presentation", rows: data.procPresentation }]} locked={locked} onChange={handler("procPresentation")} />
+        <ProcedureTable showNumbers={false} sections={[{ title: "Disclosures & overall presentation", rows: data.procPresentation }]} locked={locked} onChange={handler("procPresentation")} />
       </WorksheetSection>
 
       {/* Overall evaluation */}

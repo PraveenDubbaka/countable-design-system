@@ -245,19 +245,19 @@ export function Audit666Worksheet() {
       </WorksheetSection>
 
       <WorksheetSection title="Preparation" bodyClassName="p-0">
-        <ProcedureTable sections={[{ title: "Form 515 & risk assessments", rows: data.procPreparation }]} locked={locked} onChange={handler("procPreparation")} />
+        <ProcedureTable showNumbers={false} sections={[{ title: "Form 515 & risk assessments", rows: data.procPreparation }]} locked={locked} onChange={handler("procPreparation")} />
       </WorksheetSection>
       <WorksheetSection title="Completeness — identify related parties & transactions" bodyClassName="p-0">
-        <ProcedureTable sections={[{ title: "Search & follow-up", rows: data.procCompleteness }]} locked={locked} onChange={handler("procCompleteness")} />
+        <ProcedureTable showNumbers={false} sections={[{ title: "Search & follow-up", rows: data.procCompleteness }]} locked={locked} onChange={handler("procCompleteness")} />
       </WorksheetSection>
       <WorksheetSection title="Accuracy / valuation" bodyClassName="p-0">
-        <ProcedureTable sections={[{ title: "Accounting treatment & TCWG communication", rows: data.procAccuracyValuation }]} locked={locked} onChange={handler("procAccuracyValuation")} />
+        <ProcedureTable showNumbers={false} sections={[{ title: "Accounting treatment & TCWG communication", rows: data.procAccuracyValuation }]} locked={locked} onChange={handler("procAccuracyValuation")} />
       </WorksheetSection>
       <WorksheetSection title="Existence" bodyClassName="p-0">
-        <ProcedureTable sections={[{ title: "Outside-normal & arm's-length corroboration", rows: data.procExistence }]} locked={locked} onChange={handler("procExistence")} />
+        <ProcedureTable showNumbers={false} sections={[{ title: "Outside-normal & arm's-length corroboration", rows: data.procExistence }]} locked={locked} onChange={handler("procExistence")} />
       </WorksheetSection>
       <WorksheetSection title="Presentation" bodyClassName="p-0">
-        <ProcedureTable sections={[{ title: "Classification, disclosures & relevant information", rows: data.procPresentation }]} locked={locked} onChange={handler("procPresentation")} />
+        <ProcedureTable showNumbers={false} sections={[{ title: "Classification, disclosures & relevant information", rows: data.procPresentation }]} locked={locked} onChange={handler("procPresentation")} />
       </WorksheetSection>
 
       <WorksheetSection title="Overall evaluation">

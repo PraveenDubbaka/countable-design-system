@@ -411,6 +411,7 @@ export function Audit635Worksheet() {
           <ProcedureTable
             sections={[{ title: "Subsequent-event procedures", rows: data.proceduresA }]}
             locked={locked}
+            showNumbers={false}
             onChange={handler("proceduresA")}
           />
         </WorksheetSection>
@@ -422,6 +423,7 @@ export function Audit635Worksheet() {
           <ProcedureTable
             sections={[{ title: "Method, assumptions, data and bias", rows: data.proceduresB }]}
             locked={locked}
+            showNumbers={false}
             onChange={handler("proceduresB")}
           />
         </WorksheetSection>
@@ -433,6 +435,7 @@ export function Audit635Worksheet() {
           <ProcedureTable
             sections={[{ title: "Auditor's independent estimate", rows: data.proceduresC }]}
             locked={locked}
+            showNumbers={false}
             onChange={handler("proceduresC")}
           />
         </WorksheetSection>
@@ -457,6 +460,7 @@ export function Audit635Worksheet() {
           <ProcedureTable
             sections={[{ title: "Operating-effectiveness procedures", rows: data.testsOfControls }]}
             locked={locked}
+            showNumbers={false}
             onChange={handler("testsOfControls")}
           />
         ) : (

@@ -170,20 +170,22 @@ export function ProcedureTable({
   locked,
   onChange,
   showPsa = true,
+  showNumbers = true,
 }: {
   sections: { title: string; rows: ProcRow[] }[];
   locked: boolean;
   onChange: (sectionIdx: number, rowId: string, field: keyof ProcRow, value: string | RefDoc[]) => void;
   showPsa?: boolean;
+  showNumbers?: boolean;
 }) {
   const td = "border-b border-border px-3 py-2.5 text-xs align-top";
-  const colCount = showPsa ? 6 : 5;
+  const colCount = (showNumbers ? 1 : 0) + (showPsa ? 1 : 0) + 4;
   return (
     <div className="overflow-x-auto">
       <table className="w-full text-xs border-collapse">
         <thead>
           <tr className="bg-muted/40">
-            <th className="text-left px-3 py-2.5 font-medium border-b border-border w-[40px]">#</th>
+            {showNumbers && <th className="text-left px-3 py-2.5 font-medium border-b border-border w-[40px]">#</th>}
             <th className="text-left px-3 py-2.5 font-medium border-b border-border w-[320px]">Procedure</th>
             {showPsa && <th className="text-left px-3 py-2.5 font-medium border-b border-border w-[80px]">P&amp;SA</th>}
             <th className="text-left px-3 py-2.5 font-medium border-b border-border w-[70px]">PSC</th>
@@ -193,7 +195,7 @@ export function ProcedureTable({
         </thead>
         <tbody>
           {sections.map((s, si) => (
-            <FragmentRows key={si} title={s.title} rows={s.rows} sectionIdx={si} td={td} locked={locked} onChange={onChange} showPsa={showPsa} colCount={colCount} />
+            <FragmentRows key={si} title={s.title} rows={s.rows} sectionIdx={si} td={td} locked={locked} onChange={onChange} showPsa={showPsa} showNumbers={showNumbers} colCount={colCount} />
           ))}
         </tbody>
       </table>
@@ -202,10 +204,10 @@ export function ProcedureTable({
 }
 
 
-function FragmentRows({ title, rows, sectionIdx, td, locked, onChange, showPsa, colCount }: {
+function FragmentRows({ title, rows, sectionIdx, td, locked, onChange, showPsa, showNumbers, colCount }: {
   title: string; rows: ProcRow[]; sectionIdx: number; td: string; locked: boolean;
   onChange: (sectionIdx: number, rowId: string, field: keyof ProcRow, value: string | RefDoc[]) => void;
-  showPsa: boolean; colCount: number;
+  showPsa: boolean; showNumbers: boolean; colCount: number;
 }) {
   let n = 0;
   return (
@@ -217,7 +219,7 @@ function FragmentRows({ title, rows, sectionIdx, td, locked, onChange, showPsa, 
         n += 1;
         return (
           <tr key={r.id} className="hover:bg-muted/20">
-            <td className={`${td} text-muted-foreground font-medium`}>{n}</td>
+            {showNumbers && <td className={`${td} text-muted-foreground font-medium`}>{n}</td>}
             <td className={td}><span className="block whitespace-pre-wrap leading-snug">{r.procedure}</span></td>
             {showPsa && <td className={`${td} font-mono text-[11px] whitespace-nowrap`}>{r.psa || "—"}</td>}
             <td className={td}>

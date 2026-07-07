@@ -256,16 +256,16 @@ export function Audit670Worksheet() {
       </WorksheetSection>
 
       <WorksheetSection title="Basic — preparation" bodyClassName="p-0">
-        <ProcedureTable sections={[{ title: "Foundations", rows: data.procPreparation }]} locked={locked} onChange={handler("procPreparation")} />
+        <ProcedureTable showNumbers={false} sections={[{ title: "Foundations", rows: data.procPreparation }]} locked={locked} onChange={handler("procPreparation")} />
       </WorksheetSection>
       <WorksheetSection title="Completeness" bodyClassName="p-0">
-        <ProcedureTable sections={[{ title: "Prior and current period JEs", rows: data.procCompleteness }]} locked={locked} onChange={handler("procCompleteness")} />
+        <ProcedureTable showNumbers={false} sections={[{ title: "Prior and current period JEs", rows: data.procCompleteness }]} locked={locked} onChange={handler("procCompleteness")} />
       </WorksheetSection>
       <WorksheetSection title="Existence — testing of JEs" bodyClassName="p-0">
-        <ProcedureTable sections={[{ title: "Inquiry, selection, investigation", rows: data.procExistence }]} locked={locked} onChange={handler("procExistence")} />
+        <ProcedureTable showNumbers={false} sections={[{ title: "Inquiry, selection, investigation", rows: data.procExistence }]} locked={locked} onChange={handler("procExistence")} />
       </WorksheetSection>
       <WorksheetSection title="Other procedures" bodyClassName="p-0">
-        <ProcedureTable sections={[{ title: "Additional", rows: data.procOther }]} locked={locked} onChange={handler("procOther")} />
+        <ProcedureTable showNumbers={false} sections={[{ title: "Additional", rows: data.procOther }]} locked={locked} onChange={handler("procOther")} />
       </WorksheetSection>
 
       <WorksheetSection title="Evaluation & escalation">
