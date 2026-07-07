@@ -1284,7 +1284,13 @@ function QuestionInlineColumns({
           <div className="shrink-0 w-px self-stretch mx-0 pointer-events-none" style={{ backgroundColor: 'var(--dv-separator)' }} />
         </>}
 
-        {isEditing && canEdit ?
+        {question.labelPlaceholder ?
+          <AITextarea
+            value={question.labelAnswer || ''}
+            onChange={(val) => onUpdate({ ...question, labelAnswer: val })}
+            placeholder={question.labelPlaceholder}
+            minHeight="48px" /> :
+          isEditing && canEdit ?
           <RichTextQuestionEditor
             value={question.text}
             onChange={(v) => { draftRef.current = v; }}

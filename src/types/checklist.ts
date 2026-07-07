@@ -49,6 +49,8 @@ export interface Question {
   carriedForward?: boolean; // true when populated from prior year file via Luka
   placeholder?: string; // Custom placeholder text for the answer field
   explanationPlaceholder?: string; // Custom placeholder text for the explanation field
+  labelPlaceholder?: string; // When set, renders the first (question text) column as an answer input
+  labelAnswer?: string; // Stores the value typed when first column acts as answer input
 }
 
 export interface FormElement {
