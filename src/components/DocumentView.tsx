@@ -1386,7 +1386,7 @@ function QuestionInlineColumns({
                     }
                     onUpdate(upd);
                   }}
-                  placeholder="Explanation"
+                  placeholder={question.explanationPlaceholder || "Explanation"}
                   minHeight="40px" />
                 {isEngagementMode && question.answeredBy && (question.answer || question.explanation) && (
                   <div className="mt-1 px-1.5">

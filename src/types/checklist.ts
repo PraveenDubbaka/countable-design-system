@@ -48,6 +48,7 @@ export interface Question {
   columnLayout?: ColumnLayout; // If present, renders as a column block row
   carriedForward?: boolean; // true when populated from prior year file via Luka
   placeholder?: string; // Custom placeholder text for the answer field
+  explanationPlaceholder?: string; // Custom placeholder text for the explanation field
 }
 
 export interface FormElement {
