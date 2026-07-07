@@ -625,7 +625,7 @@ export function AuditPAP501Worksheet({ isUS = false }: { isUS?: boolean }) {
               </svg>
             </div>
 
-            <h3 className="text-xl font-semibold text-foreground">Preliminary Analytical Procedures</h3>
+            <h3 className="text-xl font-semibold text-foreground">Preliminary Analytical Procedures — Parts B &amp; C</h3>
 
             {/* Generate button */}
             <button
