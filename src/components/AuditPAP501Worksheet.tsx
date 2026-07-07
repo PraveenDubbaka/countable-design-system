@@ -269,7 +269,7 @@ export function AuditPAP501Worksheet({ isUS = false }: { isUS?: boolean }) {
   const [flowState, setFlowState] = useState<FlowState>(() =>
     localStorage.getItem(`pap501-accepted-${engagementId}-${isUS ? 'us' : 'ca'}`) ? 'worksheet' : 'idle'
   );
-  const [activeSheet, setActiveSheet] = useState<'partB' | 'partC'>('partB');
+  
 
   const [connectedSource, setConnectedSource] = useState<string | null>(null);
   useEffect(() => {
