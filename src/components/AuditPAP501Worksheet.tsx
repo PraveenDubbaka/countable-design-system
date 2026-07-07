@@ -392,7 +392,7 @@ export function AuditPAP501Worksheet({ isUS = false }: { isUS?: boolean }) {
   }
 
   // Part B — editable financial row (accepts optional setter for ratios/other buckets)
-  function FinEditRow({ id, label, indent = 0, bold = false, showBudget, showPrior, source = 'fin' }: { id:string; label:string; indent?:number; bold?:boolean; showBudget:boolean; showPrior?:boolean; source?: 'fin'|'ratio' }) {
+  function FinEditRow({ id, label, indent = 0, bold = false, showBudget, showPrior = true, source = 'fin' }: { id:string; label:string; indent?:number; bold?:boolean; showBudget:boolean; showPrior?:boolean; source?: 'fin'|'ratio' }) {
     const bucket = source === 'ratio' ? data.ratios : f;
     const setter = source === 'ratio' ? setRatio : setFin;
     const row = bucket[id] ?? emptyFin();
@@ -436,7 +436,7 @@ export function AuditPAP501Worksheet({ isUS = false }: { isUS?: boolean }) {
   }
 
   // Part B — computed total row (read-only)
-  function FinTotalRow({ label, c, b, pr, showBudget, showPrior, indent = 0 }: { label:string; c:number; b:number; pr:number; showBudget:boolean; showPrior?:boolean; indent?:number }) {
+  function FinTotalRow({ label, c, b, pr, showBudget, showPrior = true, indent = 0 }: { label:string; c:number; b:number; pr:number; showBudget:boolean; showPrior?:boolean; indent?:number }) {
     const vbAmt = c - b, vbPct = b !== 0 ? vbAmt/b : null;
     const vpAmt = c - pr, vpPct = pr !== 0 ? vpAmt/pr : null;
     return (
@@ -459,7 +459,7 @@ export function AuditPAP501Worksheet({ isUS = false }: { isUS?: boolean }) {
   }
 
   // Per-stream computed (read-only) row — dollar amount
-  function FinComputedRow({ label, c, b, pr, showBudget, showPrior, indent = 0, isPercent = false }: { label:string; c:number; b:number; pr:number; showBudget:boolean; showPrior?:boolean; indent?:number; isPercent?:boolean }) {
+  function FinComputedRow({ label, c, b, pr, showBudget, showPrior = true, indent = 0, isPercent = false }: { label:string; c:number; b:number; pr:number; showBudget:boolean; showPrior?:boolean; indent?:number; isPercent?:boolean }) {
     const vbAmt = c - b, vbPct = b !== 0 ? vbAmt/b : null;
     const vpAmt = c - pr, vpPct = pr !== 0 ? vpAmt/pr : null;
     const fmt = (n:number) => isPercent ? (n*100).toFixed(1)+'%' : (n!==0 ? Math.abs(n).toLocaleString('en-CA',{maximumFractionDigits:0}) : '');
