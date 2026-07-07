@@ -269,7 +269,7 @@ export function AuditPAP501Worksheet({ isUS = false }: { isUS?: boolean }) {
   const [flowState, setFlowState] = useState<FlowState>(() =>
     localStorage.getItem(`pap501-accepted-${engagementId}-${isUS ? 'us' : 'ca'}`) ? 'worksheet' : 'idle'
   );
-  const [activeSheet, setActiveSheet] = useState<'partB' | 'partC'>('partB');
+  
 
   const [connectedSource, setConnectedSource] = useState<string | null>(null);
   useEffect(() => {
@@ -584,22 +584,9 @@ export function AuditPAP501Worksheet({ isUS = false }: { isUS?: boolean }) {
           </p>
         </div>
 
-        {/* Tab bar */}
-        <div className="flex items-center border-b border-border bg-muted/20 px-4 shrink-0">
-          {(['partB', 'partC'] as const).map(k => (
-            <button
-              key={k}
-              onClick={() => setActiveSheet(k)}
-              className={`px-4 py-2.5 text-sm font-medium border-b-2 transition-colors ${
-                activeSheet === k
-                  ? 'border-primary text-primary'
-                  : 'border-transparent text-muted-foreground hover:text-foreground'
-              }`}
-            >
-              {k === 'partB' ? 'Part B — Financial Comparatives' : 'Part C — Matters & Sign-off'}
-            </button>
-          ))}
-          <div className="ml-auto flex items-center gap-4 text-xs text-muted-foreground py-2">
+        {/* Context bar */}
+        <div className="flex items-center border-b border-border bg-muted/20 px-6 py-2.5 shrink-0">
+          <div className="ml-auto flex items-center gap-4 text-xs text-muted-foreground">
             <span><strong className="text-foreground">Entity:</strong> {entityName}</span>
             <span><strong className="text-foreground">Period end:</strong> {periodEnded}</span>
             <span><strong className="text-foreground">Performance materiality:</strong> {perfMateriality}</span>
@@ -610,7 +597,9 @@ export function AuditPAP501Worksheet({ isUS = false }: { isUS?: boolean }) {
         <div className="flex-1 overflow-y-auto bg-muted/30">
           <div className="p-6 space-y-4">
 
-            {activeSheet === 'partB' && (
+            {/* ── Part B — Financial Comparatives ── */}
+            <div className="text-xs font-semibold text-muted-foreground uppercase tracking-wider px-1">Part B — Financial Comparatives</div>
+            {true && (
               <>
                 {/* ── Income Statement card ── */}
                 <div className="bg-card text-card-foreground border border-border shadow-[0_2px_8px_hsl(213_40%_20%/0.06)] rounded-md overflow-hidden">
@@ -733,7 +722,9 @@ export function AuditPAP501Worksheet({ isUS = false }: { isUS?: boolean }) {
               </>
             )}
 
-            {activeSheet === 'partC' && (
+            {/* ── Part C — Matters & Sign-off ── */}
+            <div className="text-xs font-semibold text-muted-foreground uppercase tracking-wider px-1 pt-4">Part C — Matters &amp; Sign-off</div>
+            {true && (
               <>
                 {/* ── Matters register card ── */}
                 <div className="bg-card text-card-foreground border border-border shadow-[0_2px_8px_hsl(213_40%_20%/0.06)] rounded-md overflow-hidden">
