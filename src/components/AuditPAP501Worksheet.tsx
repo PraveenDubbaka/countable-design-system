@@ -109,9 +109,9 @@ function PartAColHeaders() {
         <th className="w-10 px-4 py-3 text-center text-xs font-semibold text-foreground uppercase tracking-wider" />
         <th className="w-10 px-4 py-3 text-center text-xs font-semibold text-foreground uppercase tracking-wider">#</th>
         <th className="px-6 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider">Procedure</th>
-        <th className="px-4 py-3 text-center text-xs font-semibold text-foreground uppercase tracking-wider" style={{width:180,minWidth:180}}>PSC? (Y/N / Initials)</th>
-        <th className="px-6 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider">Summarize exceptions or findings</th>
-        <th className="px-6 py-3 text-center text-xs font-semibold text-foreground uppercase tracking-wider" style={{width:110,minWidth:110}}>W/P ref.</th>
+        <th className="px-4 py-3 text-center text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap" style={{width:140,minWidth:140}}>PSC (Y/N)</th>
+        <th className="px-6 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider">Exceptions / findings</th>
+        <th className="px-4 py-3 text-center text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap" style={{width:90,minWidth:90}}>W/P ref.</th>
       </tr>
     </thead>
   );
@@ -122,21 +122,21 @@ function FinColHeaders({ showBudget, showPrior = true }: { showBudget: boolean; 
   return (
     <thead className="sticky top-0 z-10">
       <tr className="bg-muted border-b border-border text-xs font-semibold text-foreground uppercase tracking-wider">
-        <th className="px-4 py-2.5 text-left" style={{minWidth:200}}>Description</th>
-        <th className="px-3 py-2.5 text-right border-l border-border" style={{width:120,minWidth:120}}>Current period</th>
-        {showBudget && <th className="px-3 py-2.5 text-right border-l border-border" style={{width:120,minWidth:120}}>Budget / forecast</th>}
-        {showPrior && <th className="px-3 py-2.5 text-right border-l border-border" style={{width:120,minWidth:120}}>Prior period</th>}
+        <th className="px-4 py-3 text-left" style={{minWidth:200}}>Description</th>
+        <th className="px-3 py-3 text-right whitespace-nowrap" style={{width:120,minWidth:120}}>Current period</th>
+        {showBudget && <th className="px-3 py-3 text-right whitespace-nowrap" style={{width:120,minWidth:120}}>Budget / forecast</th>}
+        {showPrior && <th className="px-3 py-3 text-right whitespace-nowrap" style={{width:120,minWidth:120}}>Prior period</th>}
         {showBudget && <>
-          <th className="px-3 py-2.5 text-right border-l border-border bg-blue-50/50 dark:bg-blue-950/20" style={{width:90,minWidth:90}}>vs Budget $</th>
-          <th className="px-3 py-2.5 text-right border-l border-border bg-blue-50/50 dark:bg-blue-950/20" style={{width:70,minWidth:70}}>vs Budget %</th>
+          <th className="px-3 py-3 text-right whitespace-nowrap" style={{width:90,minWidth:90}}>vs Budget $</th>
+          <th className="px-3 py-3 text-right whitespace-nowrap" style={{width:70,minWidth:70}}>vs Budget %</th>
         </>}
         {showPrior && <>
-          <th className="px-3 py-2.5 text-right border-l border-border bg-purple-50/50 dark:bg-purple-950/20" style={{width:90,minWidth:90}}>vs Prior $</th>
-          <th className="px-3 py-2.5 text-right border-l border-border bg-purple-50/50 dark:bg-purple-950/20" style={{width:70,minWidth:70}}>vs Prior %</th>
+          <th className="px-3 py-3 text-right whitespace-nowrap" style={{width:90,minWidth:90}}>vs Prior $</th>
+          <th className="px-3 py-3 text-right whitespace-nowrap" style={{width:70,minWidth:70}}>vs Prior %</th>
         </>}
-        <th className="px-3 py-2.5 text-center border-l border-border" style={{width:90,minWidth:90}}>Matter?</th>
-        <th className="px-3 py-2.5 text-left border-l border-border" style={{minWidth:180}}>If yes, describe matter</th>
-        <th className="px-3 py-2.5 text-left border-l border-border" style={{width:140,minWidth:140}}>Audit response ref.</th>
+        <th className="px-3 py-3 text-center whitespace-nowrap" style={{width:90,minWidth:90}}>Matter?</th>
+        <th className="px-3 py-3 text-left" style={{minWidth:180}}>If yes, describe matter</th>
+        <th className="px-3 py-3 text-left whitespace-nowrap" style={{width:140,minWidth:140}}>Audit response ref.</th>
       </tr>
     </thead>
   );
