@@ -187,7 +187,8 @@ export function Audit666Worksheet() {
       </WorksheetSection>
 
       <LinkedRisksCard overallRisk={overall} risks={rpRisks}
-        emptyHint="No related-party-tagged risks in Form 520. Tag risks containing keywords (related party, shareholder, affiliate, intercompany, management fee) to flow them through." />
+        emptyHint="No related-party-tagged risks in Form 520. Tag risks containing keywords (related party, shareholder, affiliate, intercompany, management fee) to flow them through."
+        storageKey={`audit-666-risks-${engagementId ?? "default"}`} locked={locked} />
 
       <WorksheetSection
         title="Related parties & transactions register"

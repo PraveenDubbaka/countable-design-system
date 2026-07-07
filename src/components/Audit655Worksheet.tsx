@@ -221,7 +221,8 @@ export function Audit655Worksheet() {
       </WorksheetSection>
 
       <LinkedRisksCard overallRisk={overall} risks={risks}
-        emptyHint="No risks loaded from Form 520. Identified risks help frame which variances warrant additional inquiry." />
+        emptyHint="No risks loaded from Form 520. Identified risks help frame which variances warrant additional inquiry."
+        storageKey={`audit-655-risks-${engagementId ?? "default"}`} locked={locked} />
 
       <RowsTable which="rows" title="Statement of operations & financial position" rows={data.rows} />
       <RowsTable which="ratios" title="Key ratios" rows={data.ratios} />

@@ -1,6 +1,7 @@
 // Shared UI building blocks for Response-to-Risk worksheets (605/610/625/630/635/645)
 // Design standards aligned with AuditMaterialityWorksheet (cards, objective bar, scroll body).
-import { Info } from "lucide-react";
+import { useState, useEffect, useRef } from "react";
+import { Info, Plus, Trash2 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -10,6 +11,21 @@ import type { ReactNode } from "react";
 import type { EngagementContext } from "@/lib/engagementContext";
 import type { Risk520Row } from "@/lib/audit520Bridge";
 import { WorksheetSignOff } from "@/components/WorksheetSignOff";
+import { readJsonFromLocalStorage, writeJsonToLocalStorage } from "@/lib/safeJson";
+
+export interface ManualRisk {
+  id: string;
+  fsArea: string;
+  rmmIdentified: string;
+  wpRef: RefDoc[];
+}
+
+interface LinkedRisksPersistedState {
+  manualRisks: ManualRisk[];
+  riskWpRefs: Record<string, RefDoc[]>;
+}
+
+function uid() { return Math.random().toString(36).slice(2, 10); }
 
 const RISK_TONE: Record<string, string> = {
   High: "bg-red-50 text-red-700 border-red-200",
@@ -98,11 +114,53 @@ export function LinkedRisksCard({
   risks,
   emptyHint,
   overallRisk,
+  storageKey,
+  locked = false,
 }: {
   risks: Risk520Row[];
   emptyHint?: string;
   overallRisk?: "High" | "Moderate" | "Low";
+  storageKey?: string;
+  locked?: boolean;
 }) {
+  const defaultState: LinkedRisksPersistedState = { manualRisks: [], riskWpRefs: {} };
+  const [state, setState] = useState<LinkedRisksPersistedState>(() =>
+    storageKey ? (readJsonFromLocalStorage<LinkedRisksPersistedState>(storageKey, defaultState) ?? defaultState) : defaultState
+  );
+  const [adding, setAdding] = useState(false);
+  const [draft, setDraft] = useState<{ fsArea: string; rmmIdentified: string }>({ fsArea: "", rmmIdentified: "" });
+  const saveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const first = useRef(true);
+
+  useEffect(() => {
+    if (first.current) { first.current = false; return; }
+    if (!storageKey) return;
+    if (saveTimer.current) clearTimeout(saveTimer.current);
+    saveTimer.current = setTimeout(() => writeJsonToLocalStorage(storageKey, state), 450);
+  }, [state, storageKey]);
+
+  const setRiskWpRef = (ref: string, docs: RefDoc[]) =>
+    setState(s => ({ ...s, riskWpRefs: { ...s.riskWpRefs, [ref]: docs } }));
+
+  const setManualWpRef = (id: string, docs: RefDoc[]) =>
+    setState(s => ({ ...s, manualRisks: s.manualRisks.map(r => r.id === id ? { ...r, wpRef: docs } : r) }));
+
+  const commitDraft = () => {
+    if (!draft.rmmIdentified.trim()) return;
+    setState(s => ({
+      ...s,
+      manualRisks: [...s.manualRisks, { id: uid(), fsArea: draft.fsArea, rmmIdentified: draft.rmmIdentified, wpRef: [] }],
+    }));
+    setDraft({ fsArea: "", rmmIdentified: "" });
+    setAdding(false);
+  };
+
+  const removeManual = (id: string) =>
+    setState(s => ({ ...s, manualRisks: s.manualRisks.filter(r => r.id !== id) }));
+
+  const hasRows = risks.length > 0 || state.manualRisks.length > 0;
+  const td = "px-4 py-2.5 text-xs align-top border-b border-border last:border-b-0";
+
   return (
     <WorksheetSection
       title="Linked risks from Form 520"
@@ -113,13 +171,17 @@ export function LinkedRisksCard({
               <span className="opacity-70">FS-level risk</span> · {overallRisk}
             </span>
           )}
-          <span className="text-[11px] text-muted-foreground">Editable in Form 520</span>
+          <span className="text-[11px] text-muted-foreground">Form 520</span>
+          {!locked && (
+            <Button size="sm" variant="outline" className="h-7 text-xs gap-1" onClick={() => { setAdding(true); setDraft({ fsArea: "", rmmIdentified: "" }); }}>
+              <Plus className="h-3 w-3" /> Add risk
+            </Button>
+          )}
         </div>
       }
       bodyClassName="p-0"
     >
-
-      {risks.length === 0 ? (
+      {!hasRows && !adding ? (
         <p className="px-6 py-4 text-xs text-muted-foreground">
           {emptyHint ?? "No matching risks identified in Form 520. Update Form 520 to flow risks through."}
         </p>
@@ -129,24 +191,90 @@ export function LinkedRisksCard({
             <thead>
               <tr className="bg-muted/40">
                 <th className="text-left px-4 py-2.5 font-medium border-b border-border w-[80px]">W/P</th>
-                <th className="text-left px-4 py-2.5 font-medium border-b border-border w-[140px]">FS area</th>
+                <th className="text-left px-4 py-2.5 font-medium border-b border-border w-[130px]">FS area</th>
                 <th className="text-left px-4 py-2.5 font-medium border-b border-border">RMM identified</th>
-                <th className="text-left px-4 py-2.5 font-medium border-b border-border w-[80px]">Fraud</th>
-                <th className="text-left px-4 py-2.5 font-medium border-b border-border w-[60px]">IR</th>
-                <th className="text-left px-4 py-2.5 font-medium border-b border-border w-[80px]">Sig. risk</th>
+                <th className="text-left px-4 py-2.5 font-medium border-b border-border w-[70px]">Fraud</th>
+                <th className="text-left px-4 py-2.5 font-medium border-b border-border w-[50px]">IR</th>
+                <th className="text-left px-4 py-2.5 font-medium border-b border-border w-[70px]">Sig. risk</th>
+                <th className="text-center px-4 py-2.5 font-medium border-b border-border w-[90px]">W/P ref.</th>
+                {!locked && <th className="w-[40px] border-b border-border" />}
               </tr>
             </thead>
             <tbody>
               {risks.map((r, i) => (
-                <tr key={i} className="border-b border-border last:border-b-0 hover:bg-muted/20">
-                  <td className="px-4 py-2.5 font-mono text-[11px] whitespace-nowrap text-foreground/70">{r.ref}</td>
-                  <td className="px-4 py-2.5">{r.scotabd ?? <span className="text-muted-foreground">FS-level</span>}</td>
-                  <td className="px-4 py-2.5 leading-snug">{r.rmmIdentified}</td>
-                  <td className="px-4 py-2.5">{r.fraudRisk === "Y" ? <span className="text-red-700 font-medium">Yes</span> : "—"}</td>
-                  <td className="px-4 py-2.5 font-medium">{r.inherentRisk || "—"}</td>
-                  <td className="px-4 py-2.5">{r.significantRisk === "Y" ? <span className="text-red-700 font-medium">Yes</span> : "—"}</td>
+                <tr key={i} className="hover:bg-muted/20">
+                  <td className={`${td} font-mono text-[11px] whitespace-nowrap text-foreground/70`}>{r.ref}</td>
+                  <td className={td}>{r.scotabd ?? <span className="text-muted-foreground">FS-level</span>}</td>
+                  <td className={`${td} leading-snug`}>{r.rmmIdentified}</td>
+                  <td className={td}>{r.fraudRisk === "Y" ? <span className="text-red-700 font-medium">Yes</span> : "—"}</td>
+                  <td className={`${td} font-medium`}>{r.inherentRisk || "—"}</td>
+                  <td className={td}>{r.significantRisk === "Y" ? <span className="text-red-700 font-medium">Yes</span> : "—"}</td>
+                  <td className={`${td} text-center`}>
+                    <RefButton
+                      disabled={locked}
+                      reference={state.riskWpRefs[r.ref] ?? []}
+                      onAttach={doc => setRiskWpRef(r.ref, [...(state.riskWpRefs[r.ref] ?? []), doc])}
+                      onRemove={idx => setRiskWpRef(r.ref, (state.riskWpRefs[r.ref] ?? []).filter((_, j) => j !== idx))}
+                    />
+                  </td>
+                  {!locked && <td className={td} />}
                 </tr>
               ))}
+              {state.manualRisks.map(r => (
+                <tr key={r.id} className="hover:bg-muted/20">
+                  <td className={`${td} font-mono text-[11px] text-muted-foreground`}>—</td>
+                  <td className={td}>{r.fsArea || <span className="text-muted-foreground">—</span>}</td>
+                  <td className={`${td} leading-snug`}>{r.rmmIdentified}</td>
+                  <td className={td}>—</td>
+                  <td className={td}>—</td>
+                  <td className={td}>—</td>
+                  <td className={`${td} text-center`}>
+                    <RefButton
+                      disabled={locked}
+                      reference={r.wpRef}
+                      onAttach={doc => setManualWpRef(r.id, [...r.wpRef, doc])}
+                      onRemove={idx => setManualWpRef(r.id, r.wpRef.filter((_, j) => j !== idx))}
+                    />
+                  </td>
+                  {!locked && (
+                    <td className={`${td} text-center`}>
+                      <button onClick={() => removeManual(r.id)} className="p-1 hover:text-destructive text-muted-foreground transition-colors">
+                        <Trash2 className="h-3.5 w-3.5" />
+                      </button>
+                    </td>
+                  )}
+                </tr>
+              ))}
+              {adding && (
+                <tr className="bg-primary/[0.03]">
+                  <td className={`${td} font-mono text-[11px] text-muted-foreground`}>—</td>
+                  <td className={td}>
+                    <Input
+                      autoFocus
+                      value={draft.fsArea}
+                      onChange={e => setDraft(d => ({ ...d, fsArea: e.target.value }))}
+                      placeholder="FS area"
+                      className="h-7 text-xs"
+                    />
+                  </td>
+                  <td className={td} colSpan={4}>
+                    <Input
+                      value={draft.rmmIdentified}
+                      onChange={e => setDraft(d => ({ ...d, rmmIdentified: e.target.value }))}
+                      onKeyDown={e => { if (e.key === "Enter") commitDraft(); if (e.key === "Escape") setAdding(false); }}
+                      placeholder="Risk of material misstatement identified…"
+                      className="h-7 text-xs"
+                    />
+                  </td>
+                  <td className={td} />
+                  <td className={`${td} whitespace-nowrap`}>
+                    <div className="flex items-center gap-1">
+                      <Button size="sm" className="h-6 text-xs px-2" onClick={commitDraft}>Add</Button>
+                      <Button size="sm" variant="ghost" className="h-6 text-xs px-2" onClick={() => setAdding(false)}>Cancel</Button>
+                    </div>
+                  </td>
+                </tr>
+              )}
             </tbody>
           </table>
         </div>

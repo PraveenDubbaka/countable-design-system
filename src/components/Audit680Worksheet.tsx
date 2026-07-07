@@ -305,7 +305,8 @@ export function Audit680Worksheet() {
       </WorksheetSection>
 
       <LinkedRisksCard overallRisk={overall} risks={aspeRisks}
-        emptyHint="No ASPE-specific risks tagged in Form 520. Tag risks (financial instruments, pension, ARO, RP transactions) to flow them through." />
+        emptyHint="No ASPE-specific risks tagged in Form 520. Tag risks (financial instruments, pension, ARO, RP transactions) to flow them through."
+        storageKey={`audit-680-risks-${engagementId ?? "default"}`} locked={locked} />
 
       {/* SECTION 1500 */}
       {data.apply1500 && (

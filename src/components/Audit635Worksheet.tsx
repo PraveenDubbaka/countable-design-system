@@ -315,6 +315,8 @@ export function Audit635Worksheet() {
         overallRisk={overall}
         risks={estimateRisks}
         emptyHint="No estimate-related risks tagged in Form 520. Tag risks (e.g. allowance, provision, valuation, impairment) to flow them through."
+        storageKey={`audit-635-risks-${engagementId ?? "default"}`}
+        locked={locked}
       />
 
       {/* Estimate context */}

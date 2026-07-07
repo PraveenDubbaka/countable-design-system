@@ -298,7 +298,7 @@ export function Audit625Worksheet() {
       standard={`${ctx.standardPrefix} 570`}
     >
       {/* Linked 520 going-concern risks (with FS-level chip) */}
-      <LinkedRisksCard overallRisk={overall} risks={gcRisks} emptyHint="No going-concern related risks tagged in Form 520. Add or tag risks in Form 520 to auto-populate this evaluation." />
+      <LinkedRisksCard overallRisk={overall} risks={gcRisks} storageKey={`audit-625-risks-${engagementId ?? "default"}`} locked={locked} emptyHint="No going-concern related risks tagged in Form 520. Add or tag risks in Form 520 to auto-populate this evaluation." />
 
       {/* A — Identified events & conditions (from Form 525) */}
       <WorksheetSection

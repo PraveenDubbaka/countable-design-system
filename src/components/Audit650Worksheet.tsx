@@ -225,7 +225,8 @@ export function Audit650Worksheet() {
       </WorksheetSection>
 
       <LinkedRisksCard overallRisk={overall} risks={linked}
-        emptyHint="No subsequent-event-sensitive risks tagged in Form 520 (going concern, contingencies, refinancing, litigation, commitments). Tag relevant risks to flow them through." />
+        emptyHint="No subsequent-event-sensitive risks tagged in Form 520 (going concern, contingencies, refinancing, litigation, commitments). Tag relevant risks to flow them through."
+        storageKey={`audit-650-risks-${engagementId ?? "default"}`} locked={locked} />
 
       {/* Procedures */}
       <WorksheetSection title="1. Review work performed" bodyClassName="p-0">

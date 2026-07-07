@@ -257,6 +257,8 @@ export function Audit645Worksheet() {
         overallRisk={overall}
         risks={lcncRisks}
         emptyHint="No litigation, claims or non-compliance risks tagged in Form 520. Tag risks (e.g. litigation, claim, regulator, fine) to flow them through."
+        storageKey={`audit-645-risks-${engagementId ?? "default"}`}
+        locked={locked}
       />
 
       {/* Matters register (drives downstream forms) */}

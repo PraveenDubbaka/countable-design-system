@@ -122,7 +122,7 @@ export function Audit605Worksheet() {
         overallRisk={overall}
       />
 
-      <LinkedRisksCard overallRisk={overall} risks={fsRisks} emptyHint="No FS-level or significant risks have been flagged in Form 520." />
+      <LinkedRisksCard overallRisk={overall} risks={fsRisks} storageKey={`audit-605-risks-${engagementId ?? "default"}`} locked={locked} emptyHint="No FS-level or significant risks have been flagged in Form 520." />
 
       <div className="bg-card text-card-foreground border border-border shadow-[0_2px_8px_hsl(213_40%_20%/0.06)] rounded-md overflow-hidden">
         <div className="px-6 py-3.5 border-b border-border">
