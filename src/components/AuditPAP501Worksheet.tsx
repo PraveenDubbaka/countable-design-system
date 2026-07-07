@@ -519,7 +519,6 @@ export function AuditPAP501Worksheet({ isUS = false }: { isUS?: boolean }) {
       const ce = e as CustomEvent<{ engagementId?: string }>;
       if (ce.detail?.engagementId && ce.detail.engagementId !== engagementId) return;
       setFlowState('idle');
-      setXlsxSheets([]);
     };
     window.addEventListener('pap501-regenerate', handler);
     return () => window.removeEventListener('pap501-regenerate', handler);
