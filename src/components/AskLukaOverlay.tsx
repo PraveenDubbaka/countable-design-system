@@ -1,5 +1,6 @@
-import { useState, useCallback, useRef, useEffect } from "react";
+import { useState, useCallback, useRef, useEffect, useMemo } from "react";
 import { setLukaOpen } from "@/lib/lukaOpenStore";
+import { loadEngagements } from "@/store/engagementsStore";
 
 import LukaActivityPanel, { type ActivityEntry } from "@/components/luka/LukaActivityPanel";
 import lukaLogo from "@/assets/luka-logo.png";
@@ -115,6 +116,8 @@ interface AskLukaOverlayProps {
   pap501IsRegenerate?: boolean;
   pap501Sources?: string[];
   onPap501Accept?: () => void;
+  currentEngagementId?: string;
+  currentChecklistKey?: string;
 }
 
 const quickPrompts = [
@@ -238,6 +241,152 @@ const RELATED_TEMPLATES = [
   "Audit Planning Memo",
 ];
 
+/* ── Form slash-command registry — add entries here to extend /NNN pattern ── */
+interface FormCommand {
+  code: string;
+  label: string;
+  formKey: string;
+  section: string;
+}
+const FORM_COMMANDS: FormCommand[] = [
+  { code: "501", label: "Observation & Inquiry",  formKey: "aud-ra-obs",        section: "RA" },
+  { code: "505", label: "Management Inquiries",   formKey: "aud-505",           section: "RA" },
+  { code: "507", label: "Governance Minutes",     formKey: "aud-507",           section: "RA" },
+  { code: "510", label: "Entity Understanding",   formKey: "aud-510",           section: "RA" },
+  { code: "511", label: "IT Environment",         formKey: "aud-511",           section: "RA" },
+  { code: "514", label: "Prior Period Errors",    formKey: "aud-514",           section: "RA" },
+];
+
+type PromptItem =
+  | { kind: "generic"; label: string }
+  | { kind: "form"; code: string; label: string; formKey: string; section: string };
+
+/* ── FormCommandFlow — connected vs disconnected mode ── */
+interface FormCommandFlowProps {
+  formCommand: FormCommand;
+  phase: "idle" | "analyzing" | "done" | "scraping" | "preview";
+  connectedSources: string[];
+  uploadedFile: string | null;
+  engagement: { client: string; id: string } | null;
+  onUpload: (fileName: string) => void;
+  onPopulate: () => void;
+  onBack: () => void;
+}
+
+function FormCommandFlow({ formCommand, phase, connectedSources, uploadedFile, engagement, onUpload, onPopulate, onBack }: FormCommandFlowProps) {
+  const isConnected = connectedSources.length > 0;
+  const sourceName = connectedSources[0] ?? "data source";
+  return (
+    <div className="flex flex-col items-center px-6 pt-8 pb-6 min-h-[60vh] overflow-y-auto">
+      <div className="mb-3 flex items-center justify-center w-[52px] h-[52px] rounded-full bg-gradient-to-br from-[#8649F1] to-[#2355A4]">
+        <Zap className="text-white" size={22} fill="white" strokeWidth={0} />
+      </div>
+      <div className="flex items-center gap-2 mb-1.5">
+        <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded font-mono ${SECTION_BADGE_COLORS[formCommand.section] ?? "bg-muted text-muted-foreground"}`}>
+          {formCommand.section}
+        </span>
+        <span className="text-xs font-mono text-muted-foreground">/{formCommand.code}</span>
+      </div>
+      <h2 className="text-lg font-semibold text-foreground mb-0.5 text-center">{formCommand.label}</h2>
+      {engagement && (
+        <p className="text-xs text-muted-foreground text-center mb-5">{engagement.client} · {engagement.id}</p>
+      )}
+
+      {isConnected ? (
+        phase === "analyzing" ? (
+          <div className="flex flex-col items-center gap-3 mt-2 w-full max-w-[280px]">
+            <p className="text-sm text-muted-foreground text-center">
+              Pulling from <span className="font-medium">{sourceName}</span>…
+            </p>
+            <div className="w-full h-1.5 rounded-full bg-muted overflow-hidden">
+              <motion.div
+                className="h-full rounded-full bg-gradient-to-r from-[#8649F1] to-[#2355A4]"
+                initial={{ width: "0%" }}
+                animate={{ width: "100%" }}
+                transition={{ duration: 2.5, ease: "linear" }}
+              />
+            </div>
+            <div className="flex items-center gap-2 text-xs text-muted-foreground">
+              <Loader2 className="h-3.5 w-3.5 animate-spin" />
+              Analyzing form fields…
+            </div>
+          </div>
+        ) : (
+          <div className="w-full max-w-[300px]">
+            <div className="rounded-[10px] border border-green-200 dark:border-green-800 bg-green-50 dark:bg-green-950/30 p-4 mb-4">
+              <div className="flex items-center gap-2 mb-2.5">
+                <CheckCircle2 className="h-4 w-4 text-green-600 dark:text-green-400 shrink-0" />
+                <span className="text-sm font-semibold text-green-700 dark:text-green-400">Ready to populate</span>
+              </div>
+              <div className="space-y-1.5 text-sm">
+                {[["Procedure comments", "8 fields"], ["Done-by fields", "4 fields"], ["WP references", "3 fields"]].map(([k, v]) => (
+                  <div key={k} className="flex justify-between text-foreground/70">
+                    <span>{k}</span><span className="font-mono text-xs font-semibold">{v}</span>
+                  </div>
+                ))}
+              </div>
+              <p className="text-[10px] text-muted-foreground mt-2.5 pt-2 border-t border-green-200 dark:border-green-800">Source: {sourceName}</p>
+            </div>
+            <button onClick={onPopulate} className="w-full h-10 rounded-[10px] text-sm font-semibold text-white bg-gradient-to-br from-[#8649F1] to-[#2355A4] hover:opacity-90 transition-opacity shadow-md mb-2.5 flex items-center justify-center gap-2">
+              <Check className="h-4 w-4" /> Populate {formCommand.label}
+            </button>
+            <button onClick={onBack} className="w-full text-xs text-muted-foreground hover:text-foreground transition-colors text-center py-1">← Back to chat</button>
+          </div>
+        )
+      ) : phase === "idle" ? (
+        <div className="w-full max-w-[300px]">
+          <p className="text-sm text-muted-foreground text-center mb-4 leading-relaxed">
+            No data source connected. Upload the minutes or governance document and Luka will extract and populate the form.
+          </p>
+          <label className="block w-full rounded-[12px] border-2 border-dashed border-border hover:border-primary/40 transition-colors cursor-pointer p-6 text-center mb-3">
+            <Upload className="h-6 w-6 mx-auto mb-2 text-muted-foreground" />
+            <p className="text-sm font-medium text-foreground mb-1">Drop file here</p>
+            <p className="text-xs text-muted-foreground">PDF, Word, or Excel</p>
+            <input type="file" className="hidden" accept=".pdf,.doc,.docx,.xls,.xlsx" onChange={(e) => { const f = e.target.files?.[0]; if (f) onUpload(f.name); }} />
+          </label>
+          <button onClick={onBack} className="w-full text-xs text-muted-foreground hover:text-foreground transition-colors text-center py-1">← Back to chat</button>
+        </div>
+      ) : phase === "scraping" ? (
+        <div className="flex flex-col items-center gap-3 mt-2 w-full max-w-[280px]">
+          {uploadedFile && (
+            <div className="flex items-center gap-1.5 text-xs text-muted-foreground bg-muted rounded-md px-3 py-1.5">
+              <FileSpreadsheet className="h-3.5 w-3.5 shrink-0" /><span className="truncate max-w-[200px]">{uploadedFile}</span>
+            </div>
+          )}
+          <div className="flex items-center gap-2 text-sm text-muted-foreground">
+            <Loader2 className="h-4 w-4 animate-spin" /> Scraping document…
+          </div>
+        </div>
+      ) : (
+        <div className="w-full max-w-[300px]">
+          {uploadedFile && (
+            <div className="flex items-center gap-1.5 text-xs text-muted-foreground bg-muted rounded-md px-3 py-1.5 mb-3 w-fit mx-auto">
+              <FileSpreadsheet className="h-3.5 w-3.5 shrink-0" /><span className="truncate max-w-[200px]">{uploadedFile}</span>
+            </div>
+          )}
+          <div className="rounded-[10px] border border-primary/20 bg-primary/5 p-4 mb-4">
+            <div className="flex items-center gap-2 mb-2.5">
+              <CheckCircle2 className="h-4 w-4 text-primary shrink-0" />
+              <span className="text-sm font-semibold text-foreground">Extraction complete</span>
+            </div>
+            <div className="space-y-1.5 text-sm">
+              {[["Agenda items found", "7 items"], ["Part A comments", "5 fields"], ["Part B comments", "2 fields"]].map(([k, v]) => (
+                <div key={k} className="flex justify-between text-foreground/70">
+                  <span>{k}</span><span className="font-mono text-xs font-semibold">{v}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+          <button onClick={onPopulate} className="w-full h-10 rounded-[10px] text-sm font-semibold text-white bg-gradient-to-br from-[#8649F1] to-[#2355A4] hover:opacity-90 transition-opacity shadow-md mb-2.5 flex items-center justify-center gap-2">
+            <Check className="h-4 w-4" /> Populate {formCommand.label}
+          </button>
+          <button onClick={onBack} className="w-full text-xs text-muted-foreground hover:text-foreground transition-colors text-center py-1">← Back to chat</button>
+        </div>
+      )}
+    </div>
+  );
+}
+
 export function AskLukaOverlay({
   open,
   onOpenChange,
@@ -263,6 +412,9 @@ export function AskLukaOverlay({
   pap501IsRegenerate,
   pap501Sources,
   onPap501Accept,
+  currentEngagementId,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  currentChecklistKey,
 }: AskLukaOverlayProps) {
   const [activeTab, setActiveTab] = useState<"threads" | "workspace">("threads");
   const [inputValue, setInputValue] = useState("");
@@ -300,9 +452,16 @@ export function AskLukaOverlay({
     }
   }, [open, pap501Mode]);
 
-  // Auto-select the current engagement when opening in autoFillMode or pap501Mode
+  // Auto-select the current engagement when opening
   useEffect(() => {
-    if (open && (autoFillMode || pap501Mode) && engagementLabel && !selectedEngagement) {
+    if (!open || selectedEngagement) return;
+    // Prefer direct ID match from currentEngagementId prop
+    if (currentEngagementId) {
+      const byId = ENGAGEMENTS.find(e => e.id === currentEngagementId);
+      if (byId) { setSelectedEngagement(byId); return; }
+    }
+    // Fall back to label matching in autoFill/pap501 modes
+    if ((autoFillMode || pap501Mode) && engagementLabel) {
       const match = ENGAGEMENTS.find(e =>
         e.id.toLowerCase().includes(engagementLabel.toLowerCase()) ||
         engagementLabel.toLowerCase().includes(e.id.toLowerCase()) ||
@@ -311,13 +470,12 @@ export function AskLukaOverlay({
       if (match) {
         setSelectedEngagement(match);
       } else {
-        // Synthesise from the label so the header always shows something
         const parts = engagementLabel.split(" · ");
         setSelectedEngagement({ client: parts[0] ?? engagementLabel, id: parts[1] ?? engagementLabel, yearEnd: "", status: "Active" });
       }
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [open, autoFillMode, pap501Mode, engagementLabel]);
+  }, [open, currentEngagementId, autoFillMode, pap501Mode, engagementLabel]);
 
   useEffect(() => {
     const openHandler = () => setSettingsOpen(true);
@@ -391,17 +549,17 @@ const [workspaceLoading, setWorkspaceLoading] = useState(false);
   const [engagementSearch, setEngagementSearch] = useState("");
   const [selectedEngagement, setSelectedEngagement] = useState<{ client: string; id: string; yearEnd: string; status: string } | null>(null);
   const engagementTrayRef = useRef<HTMLDivElement>(null);
-  const ENGAGEMENTS = [
-    { client: "Phoenix Marie", id: "COM-DEF-May312024", yearEnd: "22 Jan 2022", status: "Active" },
-    { client: "Circooles", id: "COM-DEF-Dec312024", yearEnd: "20 Jan 2022", status: "Active" },
-    { client: "Command+R", id: "COM-DEF-Dec312024", yearEnd: "24 Jan 2022", status: "Active" },
-    { client: "Hourglass", id: "REV-DEF-Dec312024", yearEnd: "26 Jan 2022", status: "Active" },
-    { client: "Layers", id: "REV-DEF-Dec312024", yearEnd: "18 Jan 2022", status: "Active" },
-    { client: "Quotient", id: "COM-DEF-Dec312024", yearEnd: "28 Jan 2022", status: "Active" },
-    { client: "Sisyphus", id: "REV-DEF-Dec312024", yearEnd: "16 Jan 2022", status: "Active" },
-    { client: "Catalog", id: "COM-DEF-Dec312024", yearEnd: "12 Jan 2022", status: "Active" },
-    { client: "Optimal", id: "REV-DEF-Dec312024", yearEnd: "08 Jan 2022", status: "Active" },
-  ];
+  const [activeFormCommand, setActiveFormCommand] = useState<FormCommand | null>(null);
+  const [formCommandPhase, setFormCommandPhase] = useState<"idle" | "analyzing" | "done" | "scraping" | "preview">("idle");
+  const [uploadedFile, setUploadedFile] = useState<string | null>(null);
+  const ENGAGEMENTS = useMemo(() =>
+    loadEngagements().map(e => ({
+      client: e.client,
+      id: e.id,
+      yearEnd: e.yearEnd,
+      status: e.status === "New" ? "New" : "Active",
+    })),
+  [open]);
   useEffect(() => {
     if (!showEngagementTray) return;
     const handler = (e: MouseEvent) => {
@@ -512,7 +670,7 @@ const [workspaceLoading, setWorkspaceLoading] = useState(false);
     return () => document.removeEventListener("mousedown", handleModelDropdownOutsideClick);
   }, [handleModelDropdownOutsideClick]);
 
-  const promptList = [
+  const GENERIC_PROMPTS = [
     "Variance Analysis",
     "General Ledger Analysis",
     "Account Reconciliation",
@@ -521,6 +679,25 @@ const [workspaceLoading, setWorkspaceLoading] = useState(false);
     "Loan Amortization",
     "Tax Payable",
   ];
+
+  // Slash-filter: text typed after the last '/'
+  const slashFilter = inputValue.includes("/")
+    ? inputValue.slice(inputValue.lastIndexOf("/") + 1).toLowerCase()
+    : "";
+
+  // Combined prompt list: form commands + generic prompts, filtered and ordered
+  const allPromptItems: PromptItem[] = (() => {
+    const formItems = FORM_COMMANDS
+      .filter(fc => !slashFilter || fc.code.startsWith(slashFilter) || fc.label.toLowerCase().includes(slashFilter))
+      .map(fc => ({ kind: "form" as const, code: fc.code, label: fc.label, formKey: fc.formKey, section: fc.section }));
+    const genericItems = GENERIC_PROMPTS
+      .filter(p => !slashFilter || p.toLowerCase().includes(slashFilter))
+      .map(label => ({ kind: "generic" as const, label }));
+    // When filter looks like a form code (starts with digit), show form commands first
+    return /^\d/.test(slashFilter)
+      ? [...formItems, ...genericItems]
+      : [...genericItems, ...formItems];
+  })();
 
   const autoResizeTextarea = useCallback(() => {
     const el = inputRef.current;
@@ -535,11 +712,10 @@ const [workspaceLoading, setWorkspaceLoading] = useState(false);
   const handleInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const val = e.target.value;
     setInputValue(val);
-    // Show prompt window when last character typed is /
-    if (val.endsWith("/")) {
+    if (val.includes("/")) {
       setShowPromptWindow(true);
       setSelectedPromptIndex(0);
-    } else if (!val.includes("/")) {
+    } else {
       setShowPromptWindow(false);
     }
     requestAnimationFrame(autoResizeTextarea);
@@ -575,8 +751,23 @@ const [workspaceLoading, setWorkspaceLoading] = useState(false);
     setIsActivityProcessing(status === "processing");
   }, []);
 
-  const handlePromptSelect = (prompt: string) => {
-    if (prompt === "Account Reconciliation") {
+  const handlePromptSelect = (item: PromptItem) => {
+    if (item.kind === "form") {
+      setShowPromptWindow(false);
+      setInputValue("");
+      setActiveFlow("form-command");
+      setActiveFormCommand({ code: item.code, label: item.label, formKey: item.formKey, section: item.section });
+      setIsFullscreen(true);
+      setThreadsSidebarCollapsed(true);
+      setActivityEntries([]);
+      const connected = connectors.filter(c => c.connected);
+      setFormCommandPhase(connected.length > 0 ? "analyzing" : "idle");
+      if (connected.length > 0) {
+        window.setTimeout(() => setFormCommandPhase("done"), 2500);
+      }
+      return;
+    }
+    if (item.label === "Account Reconciliation") {
       setShowPromptWindow(false);
       setInputValue("");
       setActiveFlow("account-reconciliation");
@@ -586,7 +777,7 @@ const [workspaceLoading, setWorkspaceLoading] = useState(false);
       setActivityMinimized(true);
       return;
     }
-    if (prompt === "Tax Payable") {
+    if (item.label === "Tax Payable") {
       setShowPromptWindow(false);
       setInputValue("");
       setActiveFlow("tax-payable");
@@ -596,7 +787,7 @@ const [workspaceLoading, setWorkspaceLoading] = useState(false);
       setActivityMinimized(false);
       return;
     }
-    setInputValue(inputValue.replace(/\/$/, "") + "/" + prompt + " ");
+    setInputValue(inputValue.replace(/\/$/, "") + "/" + item.label + " ");
     setShowPromptWindow(false);
     inputRef.current?.focus();
   };
@@ -605,13 +796,14 @@ const [workspaceLoading, setWorkspaceLoading] = useState(false);
     if (!showPromptWindow) return;
     if (e.key === "ArrowDown") {
       e.preventDefault();
-      setSelectedPromptIndex((prev) => Math.min(prev + 1, promptList.length - 1));
+      setSelectedPromptIndex((prev) => Math.min(prev + 1, allPromptItems.length - 1));
     } else if (e.key === "ArrowUp") {
       e.preventDefault();
       setSelectedPromptIndex((prev) => Math.max(prev - 1, 0));
     } else if (e.key === "Enter") {
       e.preventDefault();
-      handlePromptSelect(promptList[selectedPromptIndex]);
+      const item = allPromptItems[selectedPromptIndex];
+      if (item) handlePromptSelect(item);
     } else if (e.key === "Escape") {
       e.preventDefault();
       setShowPromptWindow(false);
@@ -1358,6 +1550,32 @@ const [workspaceLoading, setWorkspaceLoading] = useState(false);
                           />
                         )}
                       </>
+                    ) : activeFlow === "form-command" && activeFormCommand ? (
+                      <FormCommandFlow
+                        formCommand={activeFormCommand}
+                        phase={formCommandPhase}
+                        connectedSources={connectors.filter(c => c.connected).map(c => c.name)}
+                        uploadedFile={uploadedFile}
+                        engagement={selectedEngagement}
+                        onUpload={(fileName) => {
+                          setUploadedFile(fileName);
+                          setFormCommandPhase("scraping");
+                          window.setTimeout(() => setFormCommandPhase("preview"), 2500);
+                        }}
+                        onPopulate={() => {
+                          window.dispatchEvent(new CustomEvent("luka-populate-form", {
+                            detail: { formKey: activeFormCommand.formKey, engagementId: currentEngagementId },
+                          }));
+                          onOpenChange(false);
+                        }}
+                        onBack={() => {
+                          setActiveFlow(null);
+                          setActiveFormCommand(null);
+                          setFormCommandPhase("idle");
+                          setUploadedFile(null);
+                          setIsFullscreen(false);
+                        }}
+                      />
                     ) : allTemplateSummary ? (
                   /* ── All-templates post-fill summary ── */
                   <div className="flex flex-col items-center px-6 pt-6 pb-6 min-h-[60vh] overflow-y-auto">
@@ -1745,22 +1963,30 @@ const [workspaceLoading, setWorkspaceLoading] = useState(false);
                               }}
                             >
                               <div className="py-1">
-                                {promptList.map((prompt, i) => (
+                                {allPromptItems.length === 0 ? (
+                                  <div className="px-5 py-4 text-sm text-muted-foreground text-center">No commands found</div>
+                                ) : allPromptItems.map((item, i) => (
                                   <motion.button
-                                    key={prompt}
+                                    key={item.kind === "form" ? `form-${item.code}` : `generic-${item.label}`}
                                     initial={{ opacity: 0, x: -8 }}
                                     animate={{ opacity: 1, x: 0 }}
                                     transition={{ delay: i * 0.03, duration: 0.2 }}
-                                    onClick={() => handlePromptSelect(prompt)}
+                                    onClick={() => handlePromptSelect(item)}
                                     onMouseEnter={() => setSelectedPromptIndex(i)}
-                                    className="w-full text-left px-5 py-3 text-[15px] font-medium transition-colors duration-150 cursor-pointer flex items-center"
+                                    className="w-full text-left px-5 py-3 text-[15px] font-medium transition-colors duration-150 cursor-pointer flex items-center gap-2.5"
                                     style={{
                                       color: selectedPromptIndex === i ? "hsl(var(--foreground))" : "hsl(var(--foreground) / 0.8)",
                                       background: selectedPromptIndex === i ? "hsl(var(--muted) / 0.6)" : "transparent",
-                                      borderBottom: i < promptList.length - 1 ? "1px solid hsl(var(--border) / 0.4)" : "none",
+                                      borderBottom: i < allPromptItems.length - 1 ? "1px solid hsl(var(--border) / 0.4)" : "none",
                                     }}
                                   >
-                                    {prompt}
+                                    {item.kind === "form" ? (
+                                      <>
+                                        <span className={`inline-flex items-center justify-center text-[10px] font-bold px-1.5 py-0.5 rounded font-mono shrink-0 ${SECTION_BADGE_COLORS[item.section] ?? "bg-muted text-muted-foreground"}`}>{item.section}</span>
+                                        <span className="font-mono text-xs text-muted-foreground shrink-0">/{item.code}</span>
+                                        <span>{item.label}</span>
+                                      </>
+                                    ) : item.label}
                                   </motion.button>
                                 ))}
                               </div>
