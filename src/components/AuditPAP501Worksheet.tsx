@@ -260,6 +260,7 @@ export function AuditPAP501Worksheet({ isUS = false }: { isUS?: boolean }) {
       ...def, ...saved,
       partA: { ...def.partA, ...(saved.partA ?? {}) },
       fin:   { ...def.fin,   ...(saved.fin ?? {}) },
+      ratios: { ...def.ratios, ...(saved.ratios ?? {}) },
       matters: saved.matters?.length === 10 ? saved.matters : def.matters,
     };
   });
