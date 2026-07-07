@@ -14655,3 +14655,61 @@ export const generate500OIChecklist = (): Checklist => {
     updatedAt: new Date(),
   };
 };
+
+export const generate501APAPChecklist = (): Checklist => {
+  const q = (id: string, text: string, answer = '', explanation = ''): Question => ({
+    id, text, answerType: 'yes-no' as const, options: ['Yes', 'No'],
+    required: false, answer, explanation, reference: '',
+  });
+
+  const sections: Section[] = [
+    {
+      id: 'pap501a-s1',
+      title: '1. Obtain financial results and information',
+      isExpanded: true,
+      questions: [
+        q('pap501a-1', '<p>Obtain a copy of the most recent financial results/trial balance and relevant information (financial and non-financial) available from the entity.</p>'),
+        q('pap501a-2', '<p>Ensure that the information obtained is reliable and adequate for the purposes of performing analytical procedures.</p>'),
+      ],
+    },
+    {
+      id: 'pap501a-s2',
+      title: '2. Review the information and identify',
+      isExpanded: true,
+      questions: [
+        q('pap501a-3a', '<p>Inconsistencies with our understanding of the entity.</p>'),
+        q('pap501a-3b', '<p>Negative trends, or other unusual relationships, including those related to revenue accounts.</p>'),
+        q('pap501a-3c', '<p>Potential fraud.</p>'),
+      ],
+    },
+    {
+      id: 'pap501a-s3',
+      title: '3. Inquire of management about the reasons for any',
+      isExpanded: true,
+      questions: [
+        q('pap501a-4a', '<p>Inconsistencies, fluctuations and unexpected relationships.</p>'),
+        q('pap501a-4b', '<p>Unusual transactions/events or other material misstatements.</p>'),
+      ],
+    },
+    {
+      id: 'pap501a-s4',
+      title: '4. Assess whether management explanations indicate the possible existence of',
+      isExpanded: true,
+      questions: [
+        q('pap501a-5a', '<p>Unusual transactions/events or other material misstatements that require a specific audit response.</p>'),
+        q('pap501a-5b', '<p>Fraud.</p>'),
+      ],
+    },
+  ];
+
+  return {
+    id: 'global-template-501a-pap',
+    title: '501-A — Preliminary Analytical Procedures',
+    description: 'Preliminary analytical procedures — Part A. Identify relationships, risks, inconsistencies, unusual transactions and events, and other matters that may indicate risks of material misstatement. Use in conjunction with Form 510 and Form 501 — Parts B & C.',
+    objective: 'To identify relationships (for possible use in substantive analytical procedures), risks, inconsistencies, unusual transactions and events, and other matters that may indicate risks of material misstatement. Use this form to perform the analytical procedures noted on Form 510. PSC = Procedure successfully completed.',
+    sections,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  };
+};
+

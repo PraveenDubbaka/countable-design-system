@@ -21,7 +21,6 @@ import { AuditSAEWorksheet } from "@/components/AuditSAEWorksheet";
 import { AuditOASWorksheet } from "@/components/AuditOASWorksheet";
 
 import { AuditPAP501Worksheet } from "@/components/AuditPAP501Worksheet";
-import { AuditPAP501AChecklist } from "@/components/AuditPAP501AChecklist";
 import { Audit505Worksheet } from "@/components/Audit505Worksheet";
 import { Audit507Worksheet } from "@/components/Audit507Worksheet";
 import { Audit506Worksheet } from "@/components/Audit506Worksheet";
@@ -200,6 +199,7 @@ import {
   generate650SubsequentEventsChecklist2,
   generate670JournalEntryTestingChecklist,
   generate500OIChecklist,
+  generate501APAPChecklist,
 } from "@/lib/globalTemplates";
 
 // Sample engagement data matching the engagements page
@@ -328,6 +328,7 @@ const buildDefaultAuditChecklists = () => {
     { generator: generateStaffingTimeBudgetChecklist, id: "default-audit-stb" },
     // Risk Assessment
     { generator: generate500OIChecklist, id: "default-audit-ra-oi" },
+    { generator: generate501APAPChecklist, id: "default-audit-ra-pap501a" },
     { generator: generateRiskAssessmentProceduresChecklist, id: "default-audit-ra-rap" },
     { generator: generateUnderstandingInternalControlsChecklist, id: "default-audit-ra-ic" },
     { generator: generateITGeneralControlsChecklist, id: "default-audit-ra-itgc" },
@@ -547,6 +548,7 @@ const NAV_KEY_TO_CHECKLIST_ID: Record<string, string> = {
   // Audit — Risk Assessment
   "aud-ra-oi": "default-audit-ra-oi",
   "aud-us-ra-oi": "default-audit-ra-oi",
+  "aud-ra-pap501a": "default-audit-ra-pap501a",
   "aud-ra-rap": "default-audit-ra-rap",
   "aud-ra-ic": "default-audit-ra-ic",
   "aud-ra-itgc": "default-audit-ra-itgc",
@@ -2458,10 +2460,9 @@ export default function EngagementDetail() {
             <AuditSAEWorksheet isUS={checklistKey === 'aud-us-sae'} />
           ) : (checklistKey === 'aud-asm' || checklistKey === 'aud-us-asm') ? (
             <AuditOASWorksheet isUS={checklistKey === 'aud-us-asm'} />
-          ) : (checklistKey === 'aud-ra-pap501a') ? (
-            <AuditPAP501AChecklist />
           ) : (checklistKey === 'aud-ra-pap501bc' || checklistKey === 'aud-ra-pap501') ? (
             <AuditPAP501Worksheet />
+
           ) : (checklistKey === 'aud-ra-505') ? (
             <Audit505Worksheet />
           ) : (checklistKey === 'aud-ra-507') ? (
