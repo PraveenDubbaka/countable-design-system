@@ -23,9 +23,12 @@ interface MatterRow { partBRef: string; summary: string; mgmtResponse: string; a
 
 interface PAP501Data {
   partA: Record<string, PartARow>;
+  compareBudget: string;   // 'Yes' | 'No'
+  comparePrior: string;    // 'Yes' | 'No'
   numStreams: number;
   streamLabels: string[];
   fin: Record<string, FinRow>;
+  ratios: Record<string, FinRow>;
   matters: MatterRow[];
   fraudAnswer: string;
   preparedBy: string; preparedDate: string; reviewedBy: string; reviewedDate: string;
