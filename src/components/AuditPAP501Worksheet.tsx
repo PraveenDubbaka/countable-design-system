@@ -60,7 +60,7 @@ const ALL_PA_IDS = PART_A_PROCS.flatMap(p => [p.id, ...p.items.map(i => i.id)]);
 const IS_IDS  = ['s1','s2','s3','s4','s5','cos1','cos2','cos3','cos4','cos5','or1','or2','exp-sal','exp-occ','exp-int','exp-bon','exp-rep','exp-bad','exp-non','exp-oth1','exp-oth2','exp-oth3'];
 const BS_IDS  = ['ca-cash','ca-inv','ca-ar','ca-inventory','ca-oth1','ca-oth2','lta-ppe','lta-oth1','lta-oth2','lta-oth3','cl-bank','cl-ap','cl-tax','cl-fut','cl-def','cl-dep','cl-std','cl-cpltd','cl-oth1','cl-oth2','ltl-loan','ltl-fut','ltl-ltd','ltl-oth1','ltl-oth2','eq-ret','eq-con','eq-shr','eq-oth'];
 const RAT_IDS = ['rat-wc','rat-drecv','rat-dinv','rat-iturn','rat-dpay','rat-dte'];
-const ALL_FIN_IDS = [...IS_IDS, ...BS_IDS, ...RAT_IDS];
+const ALL_FIN_IDS = [...IS_IDS, ...BS_IDS];
 
 function emptyPA(): PartARow { return { checked: false, psc: '', exceptions: '', wpRef: [] }; }
 function emptyFin(): FinRow  { return { current: '', budget: '', prior: '', hasIssue: '', explanation: '', auditResponse: '' }; }
@@ -71,10 +71,16 @@ function buildDefault(): PAP501Data {
   ALL_PA_IDS.forEach(id => { partA[id] = emptyPA(); });
   const fin: Record<string, FinRow> = {};
   ALL_FIN_IDS.forEach(id => { fin[id] = emptyFin(); });
+  const ratios: Record<string, FinRow> = {};
+  RAT_IDS.forEach(id => { ratios[id] = emptyFin(); });
   return {
-    partA, numStreams: 1,
+    partA,
+    compareBudget: 'Yes',
+    comparePrior: 'Yes',
+    numStreams: 1,
     streamLabels: ['Product category', 'Stream 2', 'Stream 3', 'Stream 4', 'Stream 5'],
-    fin, matters: Array(10).fill(null).map(emptyMatter),
+    fin, ratios,
+    matters: Array(10).fill(null).map(emptyMatter),
     fraudAnswer: '', preparedBy: '', preparedDate: '', reviewedBy: '', reviewedDate: '',
     concluded: false, concludedOn: '',
   };
