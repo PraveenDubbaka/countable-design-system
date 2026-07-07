@@ -9,6 +9,7 @@ import { RefButton, RefDoc } from "@/components/RefButton";
 import { toast } from "sonner";
 import { readJsonFromLocalStorage, writeJsonToLocalStorage } from "@/lib/safeJson";
 import { loadEngagements, getEngagementMeta } from "@/store/engagementsStore";
+import { WorksheetSignOff } from "@/components/WorksheetSignOff";
 
 // ── Types ──────────────────────────────────────────────────────────────────────
 
