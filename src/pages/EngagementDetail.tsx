@@ -329,6 +329,7 @@ const buildDefaultAuditChecklists = () => {
     { generator: generateStaffingTimeBudgetChecklist, id: "default-audit-stb" },
     // Risk Assessment
     { generator: generate500OIChecklist, id: "default-audit-ra-oi" },
+    { generator: generate501APAPChecklist, id: "default-audit-ra-pap501a" },
     { generator: generateRiskAssessmentProceduresChecklist, id: "default-audit-ra-rap" },
     { generator: generateUnderstandingInternalControlsChecklist, id: "default-audit-ra-ic" },
     { generator: generateITGeneralControlsChecklist, id: "default-audit-ra-itgc" },
