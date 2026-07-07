@@ -549,6 +549,7 @@ const NAV_KEY_TO_CHECKLIST_ID: Record<string, string> = {
   // Audit — Risk Assessment
   "aud-ra-oi": "default-audit-ra-oi",
   "aud-us-ra-oi": "default-audit-ra-oi",
+  "aud-ra-pap501a": "default-audit-ra-pap501a",
   "aud-ra-rap": "default-audit-ra-rap",
   "aud-ra-ic": "default-audit-ra-ic",
   "aud-ra-itgc": "default-audit-ra-itgc",
