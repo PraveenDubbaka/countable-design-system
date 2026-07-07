@@ -1879,27 +1879,42 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
                   {
                     id: "aud-ra-sec", code: "RA", label: "Risk Assessment", icon: "folder",
                     children: [
-                      { id: "aud-ra-oi", code: "500", label: "Observation & Inspection Procedures", icon: "checklist", route: "checklist/aud-ra-oi" },
-                      { id: "aud-ra-pap501a", code: "501-A", label: "Preliminary Analytical Procedures", icon: "checklist", route: "checklist/aud-ra-pap501a" },
-                      { id: "aud-ra-pap501bc", code: "501-B", label: "Preliminary Analytical Procedures", icon: "worksheet", route: "checklist/aud-ra-pap501bc" },
-                      { id: "aud-ra-505", code: "505", label: "Mgmt Inquiries", icon: "worksheet", route: "checklist/aud-ra-505" },
-                      { id: "aud-ra-507", code: "507", label: "Governance Minutes", icon: "worksheet", route: "checklist/aud-ra-507" },
-                      { id: "aud-ra-506", code: "506", label: "Fraud", icon: "worksheet", route: "checklist/aud-ra-506" },
-                      { id: "aud-ra-510", code: "510", label: "Entity Understanding", icon: "worksheet", route: "checklist/aud-ra-510" },
-                      { id: "aud-ra-511", code: "511", label: "IT Environment", icon: "worksheet", route: "checklist/aud-ra-511" },
-                      { id: "aud-ra-513", code: "513", label: "Accounting Estimates", icon: "worksheet", route: "checklist/aud-ra-513" },
-                      { id: "aud-ra-514", code: "514", label: "Prior Period Estimates", icon: "worksheet", route: "checklist/aud-ra-514" },
-                      { id: "aud-ra-515", code: "515", label: "Related Parties", icon: "checklist", route: "checklist/aud-ra-515" },
-                      { id: "aud-ra-580", code: "580", label: "Revenue Recognition", icon: "worksheet", route: "checklist/aud-ra-580" },
-                      { id: "aud-ra-520", code: "520", label: "Risk Register", icon: "worksheet", route: "checklist/aud-ra-520" },
-                      { id: "aud-ra-590", code: "590", label: "Engagement Scoping", icon: "worksheet", route: "checklist/aud-ra-590" },
-                      { id: "aud-ra-525", code: "525", label: "Going Concern", icon: "checklist", route: "checklist/aud-ra-525" },
-                      { id: "aud-ra-530", code: "530", label: "Pervasive Risks", icon: "checklist", route: "checklist/aud-ra-530" },
-                      { id: "aud-ra-535", code: "535", label: "Info System", icon: "worksheet", route: "checklist/aud-ra-535" },
-                      { id: "aud-ra-540", code: "540", label: "Control Design", icon: "worksheet", route: "checklist/aud-ra-540" },
-                      { id: "aud-ra-550", code: "550", label: "Control Activities", icon: "worksheet", route: "checklist/aud-ra-550" },
-                      { id: "aud-ra-551", code: "551", label: "General IT Controls", icon: "worksheet", route: "checklist/aud-ra-551" },
-                      { id: "aud-ra-575", code: "575", label: "Control Deficiencies", icon: "worksheet", route: "checklist/aud-ra-575" },
+                      {
+                        id: "aud-ra-gather", code: "GI", label: "Gather Information", icon: "folder",
+                        children: [
+                          { id: "aud-ra-oi",      code: "500",   label: "Observation & Inspection", icon: "checklist", route: "checklist/aud-ra-oi" },
+                          { id: "aud-ra-pap501a", code: "501-A", label: "Preliminary Analytical",   icon: "checklist", route: "checklist/aud-ra-pap501a" },
+                          { id: "aud-ra-505",     code: "505",   label: "Mgmt Inquiries",                      icon: "checklist", route: "checklist/aud-ra-505" },
+                          { id: "aud-ra-507",     code: "507",   label: "Governance Minutes",                  icon: "worksheet", route: "checklist/aud-ra-507" },
+                          { id: "aud-ra-510",     code: "510",   label: "Entity Understanding",                icon: "worksheet", route: "checklist/aud-ra-510" },
+                          { id: "aud-ra-511",     code: "511",   label: "IT Environment",                      icon: "worksheet", route: "checklist/aud-ra-511" },
+                          { id: "aud-ra-514",     code: "514",   label: "Prior Period Estimates",              icon: "worksheet", route: "checklist/aud-ra-514" },
+                        ]
+                      },
+                      {
+                        id: "aud-ra-identify", code: "IR", label: "Identify Risk", icon: "folder",
+                        children: [
+                          { id: "aud-ra-pap501bc", code: "501-B", label: "Preliminary Analytical", icon: "worksheet", route: "checklist/aud-ra-pap501bc" },
+                          { id: "aud-ra-506",      code: "506",   label: "Fraud",                              icon: "worksheet", route: "checklist/aud-ra-506" },
+                          { id: "aud-ra-513",      code: "513",   label: "Accounting Estimates",               icon: "worksheet", route: "checklist/aud-ra-513" },
+                          { id: "aud-ra-515",      code: "515",   label: "Related Parties",                   icon: "checklist", route: "checklist/aud-ra-515" },
+                          { id: "aud-ra-525",      code: "525",   label: "Going Concern",                     icon: "checklist", route: "checklist/aud-ra-525" },
+                          { id: "aud-ra-530",      code: "530",   label: "Pervasive Risks",                   icon: "checklist", route: "checklist/aud-ra-530" },
+                          { id: "aud-ra-580",      code: "580",   label: "Revenue Recognition",               icon: "worksheet", route: "checklist/aud-ra-580" },
+                        ]
+                      },
+                      {
+                        id: "aud-ra-respond", code: "PR", label: "Populate Responses", icon: "folder",
+                        children: [
+                          { id: "aud-ra-520", code: "520", label: "Risk Register",       icon: "worksheet", route: "checklist/aud-ra-520" },
+                          { id: "aud-ra-535", code: "535", label: "Info System",          icon: "worksheet", route: "checklist/aud-ra-535" },
+                          { id: "aud-ra-540", code: "540", label: "Control Design",       icon: "worksheet", route: "checklist/aud-ra-540" },
+                          { id: "aud-ra-550", code: "550", label: "Control Activities",   icon: "worksheet", route: "checklist/aud-ra-550" },
+                          { id: "aud-ra-551", code: "551", label: "General IT Controls",  icon: "worksheet", route: "checklist/aud-ra-551" },
+                          { id: "aud-ra-575", code: "575", label: "Control Deficiencies", icon: "worksheet", route: "checklist/aud-ra-575" },
+                          { id: "aud-ra-590", code: "590", label: "Engagement Scoping",   icon: "worksheet", route: "checklist/aud-ra-590" },
+                        ]
+                      },
                     ]
                   },
                   {

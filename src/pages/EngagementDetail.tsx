@@ -21,7 +21,7 @@ import { AuditSAEWorksheet } from "@/components/AuditSAEWorksheet";
 import { AuditOASWorksheet } from "@/components/AuditOASWorksheet";
 
 import { AuditPAP501Worksheet } from "@/components/AuditPAP501Worksheet";
-import { Audit505Worksheet } from "@/components/Audit505Worksheet";
+
 import { Audit507Worksheet } from "@/components/Audit507Worksheet";
 import { Audit506Worksheet } from "@/components/Audit506Worksheet";
 import { Audit510Worksheet } from "@/components/Audit510Worksheet";
@@ -200,6 +200,7 @@ import {
   generate670JournalEntryTestingChecklist,
   generate500OIChecklist,
   generate501APAPChecklist,
+  generate505MgmtInquiriesChecklist,
 } from "@/lib/globalTemplates";
 
 // Sample engagement data matching the engagements page
@@ -329,6 +330,7 @@ const buildDefaultAuditChecklists = () => {
     // Risk Assessment
     { generator: generate500OIChecklist, id: "default-audit-ra-oi" },
     { generator: generate501APAPChecklist, id: "default-audit-ra-pap501a" },
+    { generator: generate505MgmtInquiriesChecklist, id: "default-audit-ra-505" },
     { generator: generateRiskAssessmentProceduresChecklist, id: "default-audit-ra-rap" },
     { generator: generateUnderstandingInternalControlsChecklist, id: "default-audit-ra-ic" },
     { generator: generateITGeneralControlsChecklist, id: "default-audit-ra-itgc" },
@@ -549,6 +551,7 @@ const NAV_KEY_TO_CHECKLIST_ID: Record<string, string> = {
   "aud-ra-oi": "default-audit-ra-oi",
   "aud-us-ra-oi": "default-audit-ra-oi",
   "aud-ra-pap501a": "default-audit-ra-pap501a",
+  "aud-ra-505": "default-audit-ra-505",
   "aud-ra-rap": "default-audit-ra-rap",
   "aud-ra-ic": "default-audit-ra-ic",
   "aud-ra-itgc": "default-audit-ra-itgc",
@@ -660,7 +663,6 @@ const CUSTOM_WORKSHEET_TITLES: Record<string, string> = {
 
   'aud-ra-pap501a': '501-A — Preliminary Analytical Procedures',
   'aud-ra-pap501bc': '501-B — Preliminary Analytical Procedures',
-  'aud-ra-505': 'Inquiries of Management and Others',
   'aud-ra-507': 'Minutes of Governance Meetings',
   'aud-ra-506': 'Identifying Fraud Risks',
   'aud-ra-510': 'Identifying Risks through Understanding the Entity',
@@ -2463,8 +2465,6 @@ export default function EngagementDetail() {
           ) : (checklistKey === 'aud-ra-pap501bc' || checklistKey === 'aud-ra-pap501') ? (
             <AuditPAP501Worksheet />
 
-          ) : (checklistKey === 'aud-ra-505') ? (
-            <Audit505Worksheet />
           ) : (checklistKey === 'aud-ra-507') ? (
             <Audit507Worksheet />
           ) : (checklistKey === 'aud-ra-506') ? (

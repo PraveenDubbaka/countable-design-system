@@ -14713,3 +14713,137 @@ export const generate501APAPChecklist = (): Checklist => {
   };
 };
 
+export const generate505MgmtInquiriesChecklist = (): Checklist => {
+  const q = (id: string, text: string): Question => ({
+    id, text, answerType: 'yes-no' as const, options: ['Yes', 'No'],
+    required: false, answer: '', explanation: '', reference: '',
+  });
+  const la = (id: string, text: string): Question => ({
+    id, text, answerType: 'long-answer' as const, options: [],
+    required: false, answer: '', explanation: '', reference: '',
+  });
+
+  const sections: Section[] = [
+    {
+      id: '505-s0',
+      title: 'Planning — Prepare for Interviews',
+      isExpanded: true,
+      questions: [
+        q('505-pl-1', '<p>Select members of management and TCWG who may help in identifying (or updating) the risks of material misstatements (error and fraud) in the F/S.</p>'),
+        q('505-pl-2', '<p>Select others in the entity (at various levels of authority) that may provide a different perspective in identifying risks of material misstatement. Consider:</p><ul><li>Sales/marketing personnel.</li><li>Operational and purchasing managers.</li><li>IT support personnel.</li><li>Accounting employees.</li><li>Others, such as internal auditors or risk managers (specify).</li></ul>'),
+        la('505-pl-3', '<p>Document the names of those selected for interview and schedule a convenient time to meet.</p>'),
+        q('505-pl-4', '<p>Ask open-ended questions and document information obtained. Record risk factors identified on Form 520.</p>'),
+      ],
+    },
+    {
+      id: '505-s1',
+      title: 'Management — Inquiries of Management & Financial Reporting Personnel',
+      isExpanded: true,
+      questions: [
+        la('505-mgmt-iv', '<p><strong>Interviewee(s):</strong> Record the name(s), role(s), and interview date(s).</p>'),
+        q('505-mgmt-1', '<p>Business plans and strategies.</p>'),
+        q('505-mgmt-2', '<p>Financial targets (such as sales and profitability, planned acquisitions and divestitures), new/discontinued products and services, and new contracts.</p>'),
+        q('505-mgmt-3', '<p>Key initiatives (such as personnel changes, location changes, new financing sources, new technologies and major research, or other planned expenditures).</p>'),
+        q('505-mgmt-4', '<p>The impact of any new accounting requirements and how they will be implemented.</p>'),
+      ],
+    },
+    {
+      id: '505-s2',
+      title: 'Sales / Marketing Personnel — Inquiries of Others',
+      isExpanded: true,
+      questions: [
+        la('505-sales-iv', '<p><strong>Interviewee(s):</strong> Record the name(s), role(s), and interview date(s).</p>'),
+        q('505-sales-1', '<p>Composition of sales and sales trends.</p>'),
+        q('505-sales-2', '<p>Products/services that are doing well and those that are not.</p>'),
+        q('505-sales-3', '<p>The major competitors and their impact.</p>'),
+        q('505-sales-4', '<p>Major new and lost customers.</p>'),
+        q('505-sales-5', '<p>Changes in contractual arrangements and terms of warranties.</p>'),
+        q('505-sales-6', '<p>Any customers having difficulty paying on time.</p>'),
+        q('505-sales-7', '<p>Any new or modified incentive programs for sales staff.</p>'),
+        q('505-sales-8', '<p>Any sales that have been made outside of the usual terms of business.</p>'),
+        q('505-sales-9', '<p>Any modifications to accounting policies for revenue recognition.</p>'),
+        q('505-sales-10', '<p>Any instances of alleged, suspected or actual fraud.</p>'),
+        q('505-sales-11', '<p>The risks and relevant internal controls over sales.</p>'),
+        la('505-sales-12', '<p>Other (specify).</p>'),
+      ],
+    },
+    {
+      id: '505-s3',
+      title: 'Operational / Purchasing Personnel — Inquiries of Others',
+      isExpanded: true,
+      questions: [
+        la('505-ops-iv', '<p><strong>Interviewee(s):</strong> Record the name(s), role(s), and interview date(s).</p>'),
+        q('505-ops-1', '<p>Major changes in production processes.</p>'),
+        q('505-ops-2', '<p>New equipment or technologies.</p>'),
+        q('505-ops-3', '<p>Changes in suppliers, price/availability of raw materials, costing methodology, personnel and other operational matters.</p>'),
+        q('505-ops-4', '<p>Condition of inventory. Consider obsolescence, slow-moving items, damage and any theft during the period.</p>'),
+        q('505-ops-5', '<p>Any instances of alleged, suspected or actual fraud.</p>'),
+        q('505-ops-6', '<p>Economic dependence on a major supplier.</p>'),
+        q('505-ops-7', '<p>Risks and relevant internal controls over purchasing.</p>'),
+        la('505-ops-8', '<p>Other (specify).</p>'),
+      ],
+    },
+    {
+      id: '505-s4',
+      title: 'IT Support Personnel — Inquiries of Others',
+      isExpanded: true,
+      questions: [
+        la('505-it-iv', '<p><strong>Interviewee(s):</strong> Record the name(s), role(s), and interview date(s).</p>'),
+        q('505-it-1', '<p>Changes (planned and actual) to IT infrastructure, personnel or support.</p>'),
+        q('505-it-2', '<p>Access and control over data/programs by the IT staff or IT contractor.</p>'),
+        q('505-it-3', '<p>Changes to IT applications that have an impact on accounting.</p>'),
+        q('505-it-4', '<p>Problems encountered during the period. Consider system crashes, virus/hacker attacks, security breaches, unauthorized access to data or user complaints, etc.</p>'),
+        q('505-it-5', '<p>Physical security of IT equipment (such as servers, laptops, desktops and other mobile devices, such as smartphones).</p>'),
+        q('505-it-6', '<p>Any instances of alleged, suspected or actual fraud.</p>'),
+        q('505-it-7', '<p>The risks and relevant internal controls that address IT security and financial applications, if applicable.</p>'),
+        la('505-it-8', '<p>Other (specify).</p>'),
+      ],
+    },
+    {
+      id: '505-s5',
+      title: 'Accounting Personnel — Inquiries of Others',
+      isExpanded: true,
+      questions: [
+        la('505-acctg-iv', '<p><strong>Interviewee(s):</strong> Record the name(s), role(s), and interview date(s).</p>'),
+        q('505-acctg-1', '<p>The process of preparing financial reports and statements and areas where misstatements could arise (such as use of Excel spreadsheets).</p>'),
+        q('505-acctg-2', '<p>Significant or unusual transactions or journal entries in the period.</p>'),
+        q('505-acctg-3', '<p>Any instances of alleged, suspected or actual fraud.</p>'),
+        q('505-acctg-4', '<p>Whether the entity\'s accounting policies have been consistently applied.</p>'),
+        q('505-acctg-5', '<p>Whether there is a service auditor\'s report available for review where payroll has been outsourced.</p>'),
+        q('505-acctg-6', '<p>Whether issues or concerns have been raised by external parties, such as bankers, regulators, investors or the press.</p>'),
+        q('505-acctg-7', '<p>The risks and relevant internal controls that address areas such as payroll and financial reporting.</p>'),
+        la('505-acctg-8', '<p>Other (specify).</p>'),
+      ],
+    },
+    {
+      id: '505-s6',
+      title: 'Other Inquiries — In-house Lawyers, Internal Auditors, etc.',
+      isExpanded: true,
+      questions: [
+        la('505-lawyers-iv', '<p><strong>Interviewee(s):</strong> Record the name(s), role(s), and interview date(s).</p>'),
+        q('505-lawyers-1', '<p>Any knowledge of management override, fraud or suspected fraud.</p>'),
+        q('505-lawyers-2', '<p>Any actual or threatened litigation or non-compliance with laws and regulations.</p>'),
+        q('505-lawyers-3', '<p>Internal audit reports to management on areas of concern.</p>'),
+      ],
+    },
+    {
+      id: '505-s7',
+      title: 'Notes',
+      isExpanded: true,
+      questions: [
+        la('505-notes-1', '<p>Document overall results and cross-reference to other relevant forms (e.g., Form 520 — Risk Register). Where responses are incomplete, unsatisfactory or inconsistent, perform additional risk assessment procedures.</p>'),
+      ],
+    },
+  ];
+
+  return {
+    id: 'global-template-505-mgmt',
+    title: '505 — Inquiries of Management and Others',
+    description: 'Inquiries of management, those responsible for financial reporting, and other appropriate individuals within the entity, covering business plans, financial targets, key initiatives, fraud risks, IT matters, and more.',
+    objective: 'To provide an additional listing of potential inquiries of management, those responsible for financial reporting and other appropriate individuals within the entity. Note: Where inquiries are made using this form, document the results here and provide a cross reference to the other relevant forms. Where responses to inquiries are incomplete, unsatisfactory or inconsistent, perform additional risk assessment procedures. PSC = Procedure successfully completed. TCWG = Those charged with governance.',
+    sections,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  };
+};
+
