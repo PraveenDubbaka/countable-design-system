@@ -658,6 +658,7 @@ const CUSTOM_WORKSHEET_TITLES: Record<string, string> = {
   'aud-sae': "Using the Work of an Auditor's Expert", 'aud-us-sae': "Using the Work of an Auditor's Expert",
   'aud-asm': 'Overall Audit Strategy', 'aud-us-asm': 'Overall Audit Strategy',
 
+  'aud-ra-pap501a': '501-A — Preliminary Analytical Procedures',
   'aud-ra-pap501bc': '501-B-C — Preliminary Analytical Procedures',
   'aud-ra-505': 'Inquiries of Management and Others',
   'aud-ra-507': 'Minutes of Governance Meetings',
@@ -1078,7 +1079,7 @@ export default function EngagementDetail() {
   // Load checklist from localStorage - use first saved checklist or fallback
   useEffect(() => {
     // FS pages, standalone custom worksheets, and notes pages render without a checklist
-    if (checklistKey && (FS_PAGE_KEYS.has(checklistKey) || checklistKey in CUSTOM_WORKSHEET_TITLES || checklistKey.startsWith('notes-') || checklistKey.startsWith('custom-'))) {
+    if (checklistKey && checklistKey !== 'aud-ra-pap501a' && (FS_PAGE_KEYS.has(checklistKey) || checklistKey in CUSTOM_WORKSHEET_TITLES || checklistKey.startsWith('notes-') || checklistKey.startsWith('custom-'))) {
       setIsLoading(false);
       setChecklist(null);
       return;
@@ -2596,7 +2597,7 @@ export default function EngagementDetail() {
           </div>
 
           {/* Floating Action Bar for Preview Mode - Inside content area */}
-          {checklist && !FS_PAGE_KEYS.has(checklistKey ?? '') && !checklistKey?.startsWith('notes-') && !(checklistKey && checklistKey in CUSTOM_WORKSHEET_TITLES) && <FloatingActionBar checklist={checklist ?? undefined} onUpdate={handleChecklistUpdate} onCollapseSections={handleCollapseSections} onExpandSections={handleExpandSections} onCollapseQuestions={handleCollapseQuestions} onExpandQuestions={handleExpandQuestions} allSectionsCollapsed={allSectionsCollapsed} allQuestionsCollapsed={allQuestionsCollapsed} isCompactMode={isCompactMode} onToggleCompactMode={handleToggleCompactMode} selectedQuestions={selectedQuestions} onBulkDelete={handleBulkDelete} onAddCategory={handleAddCategory} isPreviewMode={true} isChecklist={!!checklist && !(checklist.sections?.length && checklist.sections[0]?.questions?.length && checklist.sections[0].questions[0]?.answerType === 'none' && !checklist.objective)} totalQuestions={allTopLevelQuestionIds.length} onSelectAll={handleSelectAll} />}
+          {checklist && !FS_PAGE_KEYS.has(checklistKey ?? '') && !checklistKey?.startsWith('notes-') && !(checklistKey && checklistKey !== 'aud-ra-pap501a' && checklistKey in CUSTOM_WORKSHEET_TITLES) && <FloatingActionBar checklist={checklist ?? undefined} onUpdate={handleChecklistUpdate} onCollapseSections={handleCollapseSections} onExpandSections={handleExpandSections} onCollapseQuestions={handleCollapseQuestions} onExpandQuestions={handleExpandQuestions} allSectionsCollapsed={allSectionsCollapsed} allQuestionsCollapsed={allQuestionsCollapsed} isCompactMode={isCompactMode} onToggleCompactMode={handleToggleCompactMode} selectedQuestions={selectedQuestions} onBulkDelete={handleBulkDelete} onAddCategory={handleAddCategory} isPreviewMode={true} isChecklist={!!checklist && !(checklist.sections?.length && checklist.sections[0]?.questions?.length && checklist.sections[0].questions[0]?.answerType === 'none' && !checklist.objective)} totalQuestions={allTopLevelQuestionIds.length} onSelectAll={handleSelectAll} />}
         </div>
 
         {/* Right Panel or Add Checklist Sheet */}
