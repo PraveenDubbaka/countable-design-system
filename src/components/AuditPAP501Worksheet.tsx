@@ -238,13 +238,14 @@ const LUKA_PAP501_FILLS: Record<string, Record<string, string>> = {
 // ── Main component ─────────────────────────────────────────────────────────────
 
 export function AuditPAP501Worksheet({ isUS = false }: { isUS?: boolean }) {
-  const storageKey = `audit-pap501-data-${isUS ? 'us' : 'ca'}`;
   const { engagementId = '' } = useParams<{ engagementId: string }>();
+  const storageKey = `audit-pap501-data-${engagementId}-${isUS ? 'us' : 'ca'}`;
 
   // Engagement context
   const engRecord = loadEngagements().find(e => e.id === engagementId);
   const entityName = engRecord?.client ?? '—';
   const periodEnded = engRecord?.yearEnd ?? '—';
+  const isNewEngagement = engRecord?.status === 'New';
 
   // Performance materiality from materiality worksheet
   const matKey = `audit-materiality-data-${isUS ? 'us' : 'ca'}`;
@@ -256,6 +257,7 @@ export function AuditPAP501Worksheet({ isUS = false }: { isUS?: boolean }) {
       : '—';
 
   const [data, setData] = useState<PAP501Data>(() => {
+    if (isNewEngagement) return buildDefault();
     const saved = readJsonFromLocalStorage<PAP501Data | null>(storageKey, null);
     if (!saved) return buildDefault();
     const def = buildDefault();
@@ -279,9 +281,10 @@ export function AuditPAP501Worksheet({ isUS = false }: { isUS?: boolean }) {
 
   const acceptedKey = `pap501-accepted-${engagementId}-${isUS ? 'us' : 'ca'}`;
 
-  const [flowState, setFlowState] = useState<FlowState>(() =>
-    localStorage.getItem(`pap501-accepted-${engagementId}-${isUS ? 'us' : 'ca'}`) ? 'worksheet' : 'idle'
-  );
+  const [flowState, setFlowState] = useState<FlowState>(() => {
+    if (isNewEngagement) return 'idle';
+    return localStorage.getItem(`pap501-accepted-${engagementId}-${isUS ? 'us' : 'ca'}`) ? 'worksheet' : 'idle';
+  });
   
 
   const [connectedSource, setConnectedSource] = useState<string | null>(null);
