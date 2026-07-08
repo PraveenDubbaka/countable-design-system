@@ -2832,6 +2832,8 @@ export default function EngagementDetail() {
       onStartSectionBySection={() => { setLukaOpen(false); navigate(`/engagements/${engagementId}/checklist/aud-form-410`); }}
       initialTab={lukaInitialTab}
       initialWorkspaceEngagement={lukaInitialWorkspaceEngagement}
+      currentEngagementId={engagementId}
+      currentChecklistKey={checklistKey}
     />
     <NotesSlidePanel
       open={!!notePanel}

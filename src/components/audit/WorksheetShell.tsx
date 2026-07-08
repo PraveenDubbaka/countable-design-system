@@ -18,14 +18,43 @@ export interface ManualRisk {
   fsArea: string;
   rmmIdentified: string;
   wpRef: RefDoc[];
+  wpRefText?: string;
+  fraudRisk?: "Y" | "N" | "";
+  inherentRisk?: "H" | "M" | "L" | "";
+  significantRisk?: "Y" | "N" | "";
 }
+
+type RiskOverride = {
+  wpRef?: string;
+  fsArea?: string;
+  rmmIdentified?: string;
+  fraudRisk?: "Y" | "N" | "";
+  inherentRisk?: "H" | "M" | "L" | "";
+  significantRisk?: "Y" | "N" | "";
+};
 
 interface LinkedRisksPersistedState {
   manualRisks: ManualRisk[];
   riskWpRefs: Record<string, RefDoc[]>;
+  hiddenRefs?: string[];
+  riskOverrides?: Record<string, RiskOverride>;
 }
 
 function uid() { return Math.random().toString(36).slice(2, 10); }
+
+const FS_AREA_OPTIONS = [
+  "Cash & Bank", "Accounts Receivable", "Inventory", "Prepaid Expenses",
+  "Property, Plant & Equipment", "Intangible Assets", "Investments",
+  "Accounts Payable", "Accrued Liabilities", "Debt & Financing", "Equity",
+  "Revenue", "Cost of Sales", "Operating Expenses", "Payroll & Benefits",
+  "Related party transactions", "Financial statement level", "Other",
+];
+
+const HML_CLASS: Record<string, string> = {
+  H: "bg-red-50 text-red-700 border-red-200",
+  M: "bg-amber-50 text-amber-700 border-amber-200",
+  L: "bg-green-50 text-green-700 border-green-200",
+};
 
 const RISK_TONE: Record<string, string> = {
   High: "bg-red-50 text-red-700 border-red-200",
@@ -123,14 +152,14 @@ export function LinkedRisksCard({
   storageKey?: string;
   locked?: boolean;
 }) {
-  const defaultState: LinkedRisksPersistedState = { manualRisks: [], riskWpRefs: {} };
-  const [state, setState] = useState<LinkedRisksPersistedState>(() =>
-    storageKey ? (readJsonFromLocalStorage<LinkedRisksPersistedState>(storageKey, defaultState) ?? defaultState) : defaultState
-  );
-  const [adding, setAdding] = useState(false);
-  const [draft, setDraft] = useState<{ fsArea: string; rmmIdentified: string }>({ fsArea: "", rmmIdentified: "" });
+  const defaultState: LinkedRisksPersistedState = { manualRisks: [], riskWpRefs: {}, hiddenRefs: [], riskOverrides: {} };
+  const [state, setState] = useState<LinkedRisksPersistedState>(() => {
+    const stored = storageKey ? (readJsonFromLocalStorage<LinkedRisksPersistedState>(storageKey, defaultState) ?? defaultState) : defaultState;
+    return { ...defaultState, ...stored };
+  });
   const saveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const first = useRef(true);
+  const newRowIdRef = useRef<string | null>(null);
 
   useEffect(() => {
     if (first.current) { first.current = false; return; }
@@ -139,21 +168,32 @@ export function LinkedRisksCard({
     saveTimer.current = setTimeout(() => writeJsonToLocalStorage(storageKey, state), 450);
   }, [state, storageKey]);
 
-  const commitDraft = () => {
-    if (!draft.rmmIdentified.trim()) return;
+  const patchForm520 = (ref: string, patch: Partial<RiskOverride>) =>
     setState(s => ({
       ...s,
-      manualRisks: [...s.manualRisks, { id: uid(), fsArea: draft.fsArea, rmmIdentified: draft.rmmIdentified, wpRef: [] }],
+      riskOverrides: { ...(s.riskOverrides ?? {}), [ref]: { ...(s.riskOverrides?.[ref] ?? {}), ...patch } },
     }));
-    setDraft({ fsArea: "", rmmIdentified: "" });
-    setAdding(false);
+
+  const patchManual = (id: string, patch: Partial<Pick<ManualRisk, "fsArea" | "rmmIdentified" | "wpRefText" | "fraudRisk" | "inherentRisk" | "significantRisk">>) =>
+    setState(s => ({ ...s, manualRisks: s.manualRisks.map(r => r.id === id ? { ...r, ...patch } : r) }));
+
+  const addManual = () => {
+    const id = uid();
+    newRowIdRef.current = id;
+    setState(s => ({ ...s, manualRisks: [...s.manualRisks, { id, fsArea: "", rmmIdentified: "", wpRef: [] }] }));
   };
 
   const removeManual = (id: string) =>
     setState(s => ({ ...s, manualRisks: s.manualRisks.filter(r => r.id !== id) }));
 
-  const hasRows = risks.length > 0 || state.manualRisks.length > 0;
-  const td = "px-4 py-2.5 text-xs align-top border-b border-border last:border-b-0";
+  const hideForm520 = (ref: string) =>
+    setState(s => ({ ...s, hiddenRefs: [...(s.hiddenRefs ?? []), ref] }));
+
+  const visibleRisks = risks.filter(r => !(state.hiddenRefs ?? []).includes(r.ref));
+  const hasRows = visibleRisks.length > 0 || state.manualRisks.length > 0;
+
+  const th = "text-left px-3 py-2.5 font-medium text-xs border-b border-border";
+  const td = "px-3 py-2.5 text-xs align-top border-b border-border last:border-b-0";
 
   return (
     <WorksheetSection
@@ -165,9 +205,8 @@ export function LinkedRisksCard({
               <span className="opacity-70">FS-level risk</span> · {overallRisk}
             </span>
           )}
-          <span className="text-[11px] text-muted-foreground">Form 520</span>
           {!locked && (
-            <Button size="sm" variant="outline" className="h-7 text-xs gap-1" onClick={() => { setAdding(true); setDraft({ fsArea: "", rmmIdentified: "" }); }}>
+            <Button size="sm" variant="outline" className="h-7 text-xs gap-1" onClick={addManual}>
               <Plus className="h-3 w-3" /> Add risk
             </Button>
           )}
@@ -175,7 +214,7 @@ export function LinkedRisksCard({
       }
       bodyClassName="p-0"
     >
-      {!hasRows && !adding ? (
+      {!hasRows ? (
         <p className="px-6 py-4 text-xs text-muted-foreground">
           {emptyHint ?? "No matching risks identified in Form 520. Update Form 520 to flow risks through."}
         </p>
@@ -184,74 +223,144 @@ export function LinkedRisksCard({
           <table className="w-full text-xs border-collapse">
             <thead>
               <tr className="bg-muted/40">
-                <th className="text-left px-4 py-2.5 font-medium border-b border-border w-[80px]">W/P</th>
-                <th className="text-left px-4 py-2.5 font-medium border-b border-border w-[130px]">FS area</th>
-                <th className="text-left px-4 py-2.5 font-medium border-b border-border">RMM identified</th>
-                <th className="text-left px-4 py-2.5 font-medium border-b border-border w-[70px]">Fraud</th>
-                <th className="text-left px-4 py-2.5 font-medium border-b border-border w-[50px]">IR</th>
-                <th className="text-left px-4 py-2.5 font-medium border-b border-border w-[70px]">Sig. risk</th>
-                {!locked && <th className="w-[40px] border-b border-border" />}
+                <th className={`${th} text-center w-10`}>#</th>
+                <th className={`${th} w-[90px]`}>W/P</th>
+                <th className={`${th} w-[160px]`}>FS area</th>
+                <th className={th}>RMM identified</th>
+                <th className={`${th} text-center w-[90px]`}>Fraud risk</th>
+                <th className={`${th} text-center w-[80px]`}>IR</th>
+                <th className={`${th} text-center w-[90px]`}>Sig. risk</th>
+                {!locked && <th className="border-b border-border w-8" />}
               </tr>
             </thead>
             <tbody>
-              {risks.map((r, i) => (
-                <tr key={i} className="hover:bg-muted/20">
-                  <td className={`${td} font-mono text-[11px] whitespace-nowrap text-foreground/70`}>{r.ref}</td>
-                  <td className={td}>{r.scotabd ?? <span className="text-muted-foreground">FS-level</span>}</td>
-                  <td className={`${td} leading-snug`}>{r.rmmIdentified}</td>
-                  <td className={td}>{r.fraudRisk === "Y" ? <span className="text-red-700 font-medium">Yes</span> : "—"}</td>
-                  <td className={`${td} font-medium`}>{r.inherentRisk || "—"}</td>
-                  <td className={td}>{r.significantRisk === "Y" ? <span className="text-red-700 font-medium">Yes</span> : "—"}</td>
-                  {!locked && <td className={td} />}
-                </tr>
-              ))}
-              {state.manualRisks.map(r => (
-                <tr key={r.id} className="hover:bg-muted/20">
-                  <td className={`${td} font-mono text-[11px] text-muted-foreground`}>—</td>
-                  <td className={td}>{r.fsArea || <span className="text-muted-foreground">—</span>}</td>
-                  <td className={`${td} leading-snug`}>{r.rmmIdentified}</td>
-                  <td className={td}>—</td>
-                  <td className={td}>—</td>
-                  <td className={td}>—</td>
+              {visibleRisks.map((r, i) => {
+                const ov = state.riskOverrides?.[r.ref] ?? {};
+                const fsAreaVal = ov.fsArea !== undefined ? ov.fsArea : (r.scotabd ?? "");
+                const rmmVal = ov.rmmIdentified !== undefined ? ov.rmmIdentified : r.rmmIdentified;
+                const fraudVal = ov.fraudRisk !== undefined ? ov.fraudRisk : (r.fraudRisk ?? "");
+                const irVal = ov.inherentRisk !== undefined ? ov.inherentRisk : (r.inherentRisk ?? "");
+                const sigVal = ov.significantRisk !== undefined ? ov.significantRisk : (r.significantRisk === "Y" ? "Y" : r.significantRisk === "N" ? "N" : "");
+                return (
+                  <tr key={r.ref} className="hover:bg-muted/20 transition-colors">
+                    <td className={`${td} text-center font-mono text-foreground/60`}>{i + 1}</td>
+                    <td className={td}>
+                      <Input disabled={locked} value={ov.wpRef ?? r.ref}
+                        onChange={e => patchForm520(r.ref, { wpRef: e.target.value })}
+                        className="h-8 text-xs font-mono w-24" placeholder={r.ref} />
+                    </td>
+                    <td className={td}>
+                      <Select disabled={locked} value={fsAreaVal} onValueChange={v => patchForm520(r.ref, { fsArea: v })}>
+                        <SelectTrigger className="h-8 text-xs"><SelectValue placeholder="Select area…" /></SelectTrigger>
+                        <SelectContent>
+                          {FS_AREA_OPTIONS.map(o => <SelectItem key={o} value={o} className="text-xs">{o}</SelectItem>)}
+                        </SelectContent>
+                      </Select>
+                    </td>
+                    <td className={td}>
+                      <Textarea disabled={locked} value={rmmVal}
+                        onChange={e => patchForm520(r.ref, { rmmIdentified: e.target.value })}
+                        placeholder="Risk of material misstatement…"
+                        className="text-xs min-h-[56px] resize-none min-w-[200px]" />
+                    </td>
+                    <td className={`${td} text-center`}>
+                      <Select disabled={locked} value={fraudVal} onValueChange={v => patchForm520(r.ref, { fraudRisk: v as "Y" | "N" | "" })}>
+                        <SelectTrigger className="h-8 text-xs"><SelectValue placeholder="—" /></SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="Y" className="text-xs">Y — Yes</SelectItem>
+                          <SelectItem value="N" className="text-xs">N — No</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </td>
+                    <td className={`${td} text-center`}>
+                      <Select disabled={locked} value={irVal} onValueChange={v => patchForm520(r.ref, { inherentRisk: v as "H" | "M" | "L" | "" })}>
+                        <SelectTrigger className={`h-8 text-xs ${HML_CLASS[irVal] ?? ""}`}><SelectValue placeholder="—" /></SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="H" className="text-xs">H — High</SelectItem>
+                          <SelectItem value="M" className="text-xs">M — Moderate</SelectItem>
+                          <SelectItem value="L" className="text-xs">L — Low</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </td>
+                    <td className={`${td} text-center`}>
+                      <Select disabled={locked} value={sigVal} onValueChange={v => patchForm520(r.ref, { significantRisk: v as "Y" | "N" | "" })}>
+                        <SelectTrigger className="h-8 text-xs"><SelectValue placeholder="—" /></SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="Y" className="text-xs">Y — Yes</SelectItem>
+                          <SelectItem value="N" className="text-xs">N — No</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </td>
+                    {!locked && (
+                      <td className={`${td} text-center`}>
+                        <button onClick={() => hideForm520(r.ref)} className="p-1 hover:text-destructive text-muted-foreground transition-colors" title="Remove">
+                          <Trash2 className="h-3.5 w-3.5" />
+                        </button>
+                      </td>
+                    )}
+                  </tr>
+                );
+              })}
+              {state.manualRisks.map((r, i) => (
+                <tr key={r.id} className="hover:bg-muted/20 transition-colors">
+                  <td className={`${td} text-center font-mono text-foreground/60`}>{visibleRisks.length + i + 1}</td>
+                  <td className={td}>
+                    <Input disabled={locked} value={r.wpRefText ?? ""}
+                      onChange={e => patchManual(r.id, { wpRefText: e.target.value })}
+                      className="h-8 text-xs font-mono w-24" placeholder="W/P ref" />
+                  </td>
+                  <td className={td}>
+                    <Select disabled={locked} value={r.fsArea} onValueChange={v => patchManual(r.id, { fsArea: v })}>
+                      <SelectTrigger className="h-8 text-xs"><SelectValue placeholder="Select area…" /></SelectTrigger>
+                      <SelectContent>
+                        {FS_AREA_OPTIONS.map(o => <SelectItem key={o} value={o} className="text-xs">{o}</SelectItem>)}
+                      </SelectContent>
+                    </Select>
+                  </td>
+                  <td className={td}>
+                    <Textarea disabled={locked} value={r.rmmIdentified}
+                      autoFocus={r.id === newRowIdRef.current}
+                      onChange={e => patchManual(r.id, { rmmIdentified: e.target.value })}
+                      placeholder="Risk of material misstatement…"
+                      className="text-xs min-h-[56px] resize-none min-w-[200px]" />
+                  </td>
+                  <td className={`${td} text-center`}>
+                    <Select disabled={locked} value={r.fraudRisk ?? ""} onValueChange={v => patchManual(r.id, { fraudRisk: v as "Y" | "N" | "" })}>
+                      <SelectTrigger className="h-8 text-xs"><SelectValue placeholder="—" /></SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="Y" className="text-xs">Y — Yes</SelectItem>
+                        <SelectItem value="N" className="text-xs">N — No</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </td>
+                  <td className={`${td} text-center`}>
+                    <Select disabled={locked} value={r.inherentRisk ?? ""} onValueChange={v => patchManual(r.id, { inherentRisk: v as "H" | "M" | "L" | "" })}>
+                      <SelectTrigger className={`h-8 text-xs ${HML_CLASS[r.inherentRisk ?? ""] ?? ""}`}><SelectValue placeholder="—" /></SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="H" className="text-xs">H — High</SelectItem>
+                        <SelectItem value="M" className="text-xs">M — Moderate</SelectItem>
+                        <SelectItem value="L" className="text-xs">L — Low</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </td>
+                  <td className={`${td} text-center`}>
+                    <Select disabled={locked} value={r.significantRisk ?? ""} onValueChange={v => patchManual(r.id, { significantRisk: v as "Y" | "N" | "" })}>
+                      <SelectTrigger className="h-8 text-xs"><SelectValue placeholder="—" /></SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="Y" className="text-xs">Y — Yes</SelectItem>
+                        <SelectItem value="N" className="text-xs">N — No</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </td>
                   {!locked && (
                     <td className={`${td} text-center`}>
-                      <button onClick={() => removeManual(r.id)} className="p-1 hover:text-destructive text-muted-foreground transition-colors">
+                      <button onClick={() => removeManual(r.id)} className="p-1 hover:text-destructive text-muted-foreground transition-colors" title="Remove">
                         <Trash2 className="h-3.5 w-3.5" />
                       </button>
                     </td>
                   )}
                 </tr>
               ))}
-              {adding && (
-                <tr className="bg-primary/[0.03]">
-                  <td className={`${td} font-mono text-[11px] text-muted-foreground`}>—</td>
-                  <td className={td}>
-                    <Input
-                      autoFocus
-                      value={draft.fsArea}
-                      onChange={e => setDraft(d => ({ ...d, fsArea: e.target.value }))}
-                      placeholder="FS area"
-                      className="h-7 text-xs"
-                    />
-                  </td>
-                  <td className={td} colSpan={3}>
-                    <Input
-                      value={draft.rmmIdentified}
-                      onChange={e => setDraft(d => ({ ...d, rmmIdentified: e.target.value }))}
-                      onKeyDown={e => { if (e.key === "Enter") commitDraft(); if (e.key === "Escape") setAdding(false); }}
-                      placeholder="Risk of material misstatement identified…"
-                      className="h-7 text-xs"
-                    />
-                  </td>
-                  <td className={td} />
-                  <td className={`${td} whitespace-nowrap`}>
-                    <div className="flex items-center gap-1">
-                      <Button size="sm" className="h-6 text-xs px-2" onClick={commitDraft}>Add</Button>
-                      <Button size="sm" variant="ghost" className="h-6 text-xs px-2" onClick={() => setAdding(false)}>Cancel</Button>
-                    </div>
-                  </td>
-                </tr>
-              )}
             </tbody>
           </table>
         </div>
