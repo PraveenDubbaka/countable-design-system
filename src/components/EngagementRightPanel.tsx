@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
-import { ChevronLeft, ChevronRight, Send, Clock, MessageSquare, FolderOpen, Search, Plus, CalendarClock, ArrowLeft, Upload, X, Layers } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Send, Clock, MessageSquare, FolderOpen, Search, Plus, CalendarClock, ArrowLeft, Upload, X, Layers, ListTree, CheckCircle2 } from 'lucide-react';
 import { MultipleRequestModal } from './MultipleRequestModal';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
