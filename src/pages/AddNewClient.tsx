@@ -23,6 +23,22 @@ const Field = ({
   </div>
 );
 
+const InlineField = ({
+  label, required, hint, children, className,
+}: {
+  label: string; required?: boolean; hint?: string; children: React.ReactNode; className?: string;
+}) => (
+  <div className={`flex items-center gap-4 ${className ?? ""}`}>
+    <span className="text-sm font-medium text-foreground shrink-0 w-52">
+      {label}{required && <span className="text-destructive ml-0.5">*</span>}
+    </span>
+    <div className="flex-1">
+      {children}
+      {hint && <p className="text-xs text-muted-foreground mt-1">{hint}</p>}
+    </div>
+  </div>
+);
+
 const SectionCard = ({
   icon: Icon, title, subtitle, children, className,
 }: {
@@ -438,24 +454,24 @@ export default function AddNewClient() {
 
               {/* ── Primary Contact ──────────────────────────────────────── */}
               <SectionCard icon={User} title="Primary Contact" subtitle="The person responsible for this client relationship">
-                <div className="grid grid-cols-2 gap-5">
-                  <Field label="First Name" required>
+                <div className="grid grid-cols-2 gap-x-10 gap-y-4">
+                  <InlineField label="First Name" required>
                     <Input placeholder="First Name" />
-                  </Field>
-                  <Field label="Last Name" required>
+                  </InlineField>
+                  <InlineField label="Last Name" required>
                     <Input placeholder="Last Name" />
-                  </Field>
-                  <Field label="Email" required className="col-span-2">
+                  </InlineField>
+                  <InlineField label="Email" required className="col-span-2">
                     <Input type="email" placeholder="contact@company.com" />
-                  </Field>
+                  </InlineField>
                 </div>
-                <div className="mt-5 pt-5 border-t border-border/50 grid grid-cols-2 gap-5">
-                  <Field label="Cell Phone">
+                <div className="mt-5 pt-5 border-t border-border/50 grid grid-cols-2 gap-x-10 gap-y-4">
+                  <InlineField label="Cell Phone">
                     <Input placeholder="+1 (555) 000-0000" />
-                  </Field>
-                  <Field label="Business Phone">
+                  </InlineField>
+                  <InlineField label="Business Phone">
                     <Input placeholder="+1 (555) 000-0000" />
-                  </Field>
+                  </InlineField>
                 </div>
               </SectionCard>
 
@@ -464,48 +480,48 @@ export default function AddNewClient() {
 
                 {/* Fiscal dates */}
                 {(cfg?.hasIncorporation || cfg?.hasYearEnd) && (
-                  <div className="grid grid-cols-2 gap-5">
+                  <div className="grid grid-cols-2 gap-x-10 gap-y-4">
                     {cfg?.hasIncorporation && (
-                      <Field label="Date of Incorporation" hint="The date the entity was formally registered.">
+                      <InlineField label="Date of Incorporation" hint="The date the entity was formally registered.">
                         <Input type="date" />
-                      </Field>
+                      </InlineField>
                     )}
                     {cfg?.hasYearEnd && (
-                      <Field label="Year End Date" hint="The month and day your fiscal year closes.">
+                      <InlineField label="Year End Date" hint="The month and day your fiscal year closes.">
                         <Input type="date" />
-                      </Field>
+                      </InlineField>
                     )}
                   </div>
                 )}
 
                 {/* Business number + Corporate Tax (paired when both apply) */}
-                <div className={`grid grid-cols-2 gap-5${(cfg?.hasIncorporation || cfg?.hasYearEnd) ? " mt-5" : ""}`}>
-                  <Field label={taxCfg.businessNumberLabel} hint={taxCfg.businessNumberHint}>
+                <div className={`grid grid-cols-2 gap-x-10 gap-y-4${(cfg?.hasIncorporation || cfg?.hasYearEnd) ? " mt-4" : ""}`}>
+                  <InlineField label={taxCfg.businessNumberLabel} hint={taxCfg.businessNumberHint}>
                     <Input placeholder={taxCfg.businessNumberPlaceholder} />
-                  </Field>
+                  </InlineField>
                   {cfg?.hasCorporateTax ? (
-                    <Field label={taxCfg.corporateTaxLabel}>
+                    <InlineField label={taxCfg.corporateTaxLabel}>
                       <Input placeholder={taxCfg.corporateTaxPlaceholder} />
-                    </Field>
+                    </InlineField>
                   ) : cfg?.hasPayroll ? (
-                    <Field label={taxCfg.payrollLabel}>
+                    <InlineField label={taxCfg.payrollLabel}>
                       <Input placeholder={taxCfg.payrollPlaceholder} />
-                    </Field>
+                    </InlineField>
                   ) : null}
                 </div>
 
                 {/* Payroll row — only when corporate tax already occupies the second column */}
                 {cfg?.hasCorporateTax && cfg?.hasPayroll && (
-                  <div className="mt-5 grid grid-cols-2 gap-5">
-                    <Field label={taxCfg.payrollLabel}>
+                  <div className="mt-4 grid grid-cols-2 gap-x-10 gap-y-4">
+                    <InlineField label={taxCfg.payrollLabel}>
                       <Input placeholder={taxCfg.payrollPlaceholder} />
-                    </Field>
+                    </InlineField>
                   </div>
                 )}
 
                 {/* Sales tax registration */}
-                <div className="mt-5 pt-5 border-t border-border/50 grid grid-cols-2 gap-5">
-                  <Field label={taxCfg.salesTaxLabel} hint="Informational — helps with sales tax treatment in future engagements.">
+                <div className="mt-5 pt-5 border-t border-border/50 grid grid-cols-2 gap-x-10 gap-y-4">
+                  <InlineField label={taxCfg.salesTaxLabel} hint="Informational — helps with sales tax treatment in future engagements.">
                     <Select value={gstRegistered} onValueChange={setGstRegistered}>
                       <SelectTrigger><SelectValue placeholder="Select" /></SelectTrigger>
                       <SelectContent>
@@ -513,11 +529,11 @@ export default function AddNewClient() {
                         <SelectItem value="no">No</SelectItem>
                       </SelectContent>
                     </Select>
-                  </Field>
+                  </InlineField>
                   {gstRegistered === "yes" && (
-                    <Field label={taxCfg.salesTaxNumberLabel}>
+                    <InlineField label={taxCfg.salesTaxNumberLabel}>
                       <Input placeholder={taxCfg.salesTaxNumberPlaceholder} />
-                    </Field>
+                    </InlineField>
                   )}
                 </div>
 
