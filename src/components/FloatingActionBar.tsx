@@ -18,7 +18,6 @@ import {
   Menu,
   ToggleLeft,
   Type,
-  ListTree,
 } from 'lucide-react';
 import { Checkbox } from '@/components/ui/checkbox';
 import { SmartLayoutIcon } from './icons/SmartLayoutIcon';
@@ -90,8 +89,6 @@ export function FloatingActionBar({
   const [showReorderModal, setShowReorderModal] = useState(false);
   const [showAddCategoryPopover, setShowAddCategoryPopover] = useState(false);
   const [showSmartLayoutPopover, setShowSmartLayoutPopover] = useState(false);
-  const [showTOCPopover, setShowTOCPopover] = useState(false);
-  const [tocSearch, setTocSearch] = useState('');
   const [pendingCategoryType, setPendingCategoryType] = useState<'empty' | 'template' | 'form' | 'inquires-form' | null>(null);
   
   // Drag state
@@ -403,68 +400,6 @@ export function FloatingActionBar({
           >
             <Layers className={`h-4 w-4 text-muted-foreground group-hover:text-foreground group-hover:icon-layers transition-transform ${allSectionsCollapsed ? 'opacity-50' : ''}`} />
           </button>}
-
-          {/* Table of Contents — checklists only */}
-          {isChecklist && checklist && (
-            <Popover open={showTOCPopover} onOpenChange={setShowTOCPopover}>
-              <PopoverTrigger asChild>
-                <button
-                  onClick={(e) => e.stopPropagation()}
-                  onMouseDown={(e) => e.stopPropagation()}
-                  className="w-9 h-9 flex items-center justify-center rounded-lg hover:bg-muted transition-colors group"
-                  title="Table of contents"
-                >
-                  <ListTree className="h-4 w-4 text-muted-foreground group-hover:text-foreground" />
-                </button>
-              </PopoverTrigger>
-              <PopoverContent
-                side="left"
-                align="center"
-                className="w-80 p-0 bg-card border shadow-lg z-50"
-                onMouseDown={(e) => e.stopPropagation()}
-              >
-                <div className="px-3 py-2.5 border-b border-border">
-                  <p className="text-sm font-semibold text-foreground">Table of contents</p>
-                  <p className="text-xs text-muted-foreground truncate mt-0.5">{checklist.title}</p>
-                </div>
-                <div className="p-2 border-b border-border">
-                  <input
-                    type="text"
-                    value={tocSearch}
-                    onChange={(e) => setTocSearch(e.target.value)}
-                    placeholder="Search sections"
-                    className="w-full h-8 px-2.5 text-xs rounded-md border border-input bg-background focus:outline-none focus:ring-2 focus:ring-primary/30"
-                  />
-                </div>
-                <div className="max-h-80 overflow-y-auto py-1">
-                  {checklist.sections
-                    .filter(s => !tocSearch || s.title.toLowerCase().includes(tocSearch.toLowerCase()))
-                    .map((section, idx) => (
-                      <button
-                        key={section.id}
-                        onClick={() => {
-                          const el = document.getElementById(`checklist-section-${section.id}`);
-                          if (el) {
-                            el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                          }
-                          setShowTOCPopover(false);
-                        }}
-                        className="w-full flex items-start gap-2 px-3 py-2 text-left hover:bg-muted transition-colors"
-                      >
-                        <span className="text-[11px] font-mono text-muted-foreground mt-0.5 w-5 shrink-0">{idx + 1}.</span>
-                        <div className="flex-1 min-w-0">
-                          <p className="text-sm text-foreground truncate">{section.title || 'Untitled section'}</p>
-                          <p className="text-[11px] text-muted-foreground">{section.questions.length} {section.questions.length === 1 ? 'question' : 'questions'}</p>
-                        </div>
-                      </button>
-                    ))}
-                  {checklist.sections.length === 0 && (
-                    <div className="px-3 py-6 text-center text-xs text-muted-foreground">No sections yet</div>
-                  )}
-                </div>
-              </PopoverContent>
-            </Popover>
-          )}
 
           {/* Collapse/Expand Row Text — checklists only */}
           {isChecklist && <button

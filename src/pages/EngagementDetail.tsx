@@ -1,7 +1,6 @@
 import { useState, useEffect, useMemo, useCallback, useRef } from "react";
 import { useParams, useNavigate, useSearchParams } from "react-router-dom";
 import { ChevronRight, ChevronDown, Landmark, FileText, Triangle, FileSpreadsheet, PencilLine, Pencil, Settings2, Download, FileType, Share2, Save, RefreshCw, Trash2, Building2, Calendar, Check, AlertTriangle, Loader2, History, Upload, FileUp, Bell, Plus, X, LayoutGrid, CheckCircle2, PlugZap, Zap, Play, Square, ClipboardList, UserPlus, UploadCloud, FileCheck2, ExternalLink, Maximize2, Minimize2, Minus } from "lucide-react";
-import { publishChecklistTOC, clearChecklistTOC } from "@/lib/checklistTOCStore";
 import { ExpandableIconButton } from "@/components/ui/expandable-icon-button";
 import { ChecklistIcon } from "@/components/icons/ChecklistIcon";
 import { Button } from "@/components/ui/button";
@@ -793,10 +792,6 @@ export default function EngagementDetail() {
   const [searchParams] = useSearchParams();
   const { isCollapsed: isPanelCollapsed, toggle: togglePanel } = useSecondaryPanel();
   const [checklist, setChecklist] = useState<Checklist | null>(null);
-  useEffect(() => {
-    publishChecklistTOC(checklist);
-    return () => clearChecklistTOC();
-  }, [checklist]);
   const [isLoading, setIsLoading] = useState(true);
   const [isCompactMode, setIsCompactMode] = useState(false);
   const [selectedQuestions, setSelectedQuestions] = useState<Set<string>>(new Set());
