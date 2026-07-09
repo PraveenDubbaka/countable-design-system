@@ -1930,7 +1930,7 @@ const [workspaceLoading, setWorkspaceLoading] = useState(false);
                             whileHover={{ scale: 1.04, y: -1 }}
                             whileTap={{ scale: 0.97 }}
                             className="luka-prompt-chip"
-                            onClick={() => handlePromptSelect(prompt.replace(/^\//, ""))}
+                            onClick={() => handlePromptSelect({ kind: "generic", label: prompt.replace(/^\//, "") })}
                           >
                             <span style={{ color: "hsl(207 71% 38%)", fontWeight: 700 }}>/</span>{prompt.replace(/^\//, "")}
                           </motion.button>
