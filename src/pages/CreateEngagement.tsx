@@ -6,6 +6,7 @@ import { toast } from "sonner";
 import intuitQuickbooksLogo from "@/assets/intuit-quickbooks-logo.svg";
 import { ArrowLeft, Briefcase, Calendar, Users, ChevronDown, Plus, Pencil, Trash2, Search, ExternalLink, X, Building2, FileText, Settings2, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Layout } from "@/components/Layout";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Switch } from "@/components/ui/switch";
@@ -133,28 +134,14 @@ const LabeledSelect = ({
           {required && <span className="text-destructive ml-0.5">*</span>}
         </label>
       )}
-      <div className="relative">
-        <select
-          value={value}
-          onChange={(e) => onChange(e.target.value)}
-          disabled={disabled}
-          className={`
-            input-double-border w-full h-9 px-3 py-2 text-sm text-foreground rounded-[10px] outline-none transition-all duration-200 appearance-none cursor-pointer
-            ${disabled 
-              ? 'bg-muted border border-transparent text-muted-foreground opacity-60 cursor-not-allowed' 
-              : error
-                ? 'bg-white dark:bg-card border border-destructive'
-                : 'bg-white border border-[#dcdfe4] dark:border-[hsl(220_15%_30%)] dark:bg-card hover:border-[hsl(210_25%_75%)] dark:hover:border-[hsl(220_15%_40%)]'
-            }
-          `}
-        >
-          <option value="">Select...</option>
+      <Select value={value} onValueChange={onChange} disabled={disabled}>
+        <SelectTrigger className="h-9 text-sm"><SelectValue placeholder="Select..." /></SelectTrigger>
+        <SelectContent>
           {options.map((opt) => (
-            <option key={opt.value} value={opt.value}>{opt.label}</option>
+            <SelectItem key={opt.value} value={opt.value}>{opt.label}</SelectItem>
           ))}
-        </select>
-        <ChevronDown className={`absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 pointer-events-none ${disabled ? 'text-muted-foreground opacity-60' : 'text-muted-foreground'}`} />
-      </div>
+        </SelectContent>
+      </Select>
     </div>
   );
 };
@@ -479,23 +466,22 @@ const TeamMemberEditRow = ({
     <tr className="bg-primary/[0.03] dark:bg-primary/[0.05] border-b border-border/40">
       <td className="px-6 py-2 w-10"><Checkbox /></td>
       <td className="px-6 py-2 min-w-[160px]">
-        <div className="relative">
-          <select value={draft.role} onChange={e => onChangeDraft({ ...draft, role: e.target.value })} className={selectCls}>
-            {roleOptions.map(r => <option key={r} value={r}>{r}</option>)}
-          </select>
-          <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
-        </div>
+        <Select value={draft.role} onValueChange={role => onChangeDraft({ ...draft, role })}>
+          <SelectTrigger className="h-8 text-sm"><SelectValue /></SelectTrigger>
+          <SelectContent>
+            {roleOptions.map(r => <SelectItem key={r} value={r}>{r}</SelectItem>)}
+          </SelectContent>
+        </Select>
       </td>
       <td className="px-6 py-2 min-w-[200px]">
-        <div className="relative">
-          <select value={draft.name} onChange={e => handleMemberSelect(e.target.value)} className={selectCls}>
-            <option value="">Select an option</option>
+        <Select value={draft.name} onValueChange={handleMemberSelect}>
+          <SelectTrigger className="h-8 text-sm"><SelectValue placeholder="Select an option" /></SelectTrigger>
+          <SelectContent>
             {MOCK_TEAM_MEMBERS.map(m => (
-              <option key={m.name} value={m.name} title={m.email}>{m.name}</option>
+              <SelectItem key={m.name} value={m.name}>{m.name}</SelectItem>
             ))}
-          </select>
-          <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
-        </div>
+          </SelectContent>
+        </Select>
       </td>
       <td className="px-6 py-2 text-sm text-muted-foreground max-w-[160px] truncate">{draft.email}</td>
       <td className="px-6 py-2 text-sm text-muted-foreground whitespace-nowrap">{draft.title}</td>
@@ -888,35 +874,33 @@ export default function CreateEngagement() {
                   </div>
                 </InlineRow>
                 <InlineRow label="Engagement Type" required>
-                  <div className="relative">
-                    <select value={engagementType} onChange={e => setEngagementType(e.target.value)} className={sc}>
-                      {engagementTypeOptions.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
-                    </select>
-                    <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 pointer-events-none text-muted-foreground" />
-                  </div>
+                  <Select value={engagementType} onValueChange={setEngagementType}>
+                    <SelectTrigger className="h-9 text-sm"><SelectValue /></SelectTrigger>
+                    <SelectContent>
+                      {engagementTypeOptions.map(o => <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>)}
+                    </SelectContent>
+                  </Select>
                 </InlineRow>
                 <InlineRow label="Budget ($)" required>
                   <input type="text" value={budget} onChange={e => setBudget(e.target.value)} className={ic} />
                 </InlineRow>
                 <InlineRow label="Accounting Standards" required>
-                  <div className="relative">
-                    <select value={accountingStandards} onChange={e => setAccountingStandards(e.target.value)} className={sc}>
-                      <option value="">Select...</option>
-                      {accountingStandardsOptions.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
-                    </select>
-                    <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 pointer-events-none text-muted-foreground" />
-                  </div>
+                  <Select value={accountingStandards} onValueChange={setAccountingStandards}>
+                    <SelectTrigger className="h-9 text-sm"><SelectValue placeholder="Select..." /></SelectTrigger>
+                    <SelectContent>
+                      {accountingStandardsOptions.map(o => <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>)}
+                    </SelectContent>
+                  </Select>
                 </InlineRow>
                 <InlineRow label="Additional Disclosures" required>
-                  <div className="relative">
-                    <select value={additionalDisclosures} onChange={e => setAdditionalDisclosures(e.target.value)} className={sc}>
-                      <option value="">Select...</option>
+                  <Select value={additionalDisclosures} onValueChange={setAdditionalDisclosures}>
+                    <SelectTrigger className="h-9 text-sm"><SelectValue placeholder="Select..." /></SelectTrigger>
+                    <SelectContent>
                       {(isAudit ? AUDIT_DISCLOSURE_OPTIONS.map(o => ({ value: o.label, label: o.label })) : disclosureOptions).map(o =>
-                        <option key={o.value} value={o.value}>{o.label}</option>
+                        <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>
                       )}
-                    </select>
-                    <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 pointer-events-none text-muted-foreground" />
-                  </div>
+                    </SelectContent>
+                  </Select>
                 </InlineRow>
               </SectionCard>
 
@@ -924,11 +908,13 @@ export default function CreateEngagement() {
                 {/* Period Type */}
                 <div className="flex items-center gap-4 py-2.5 border-b border-border/40">
                   <span className="text-sm text-foreground w-32 shrink-0 whitespace-nowrap">Period Type<span className="text-destructive ml-0.5">*</span></span>
-                  <div className="flex-1 min-w-0 max-w-sm relative">
-                    <select value={periodType} onChange={e => setPeriodType(e.target.value)} className={sc}>
-                      {periodTypeOptions.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
-                    </select>
-                    <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 pointer-events-none text-muted-foreground" />
+                  <div className="flex-1 min-w-0 max-w-sm">
+                    <Select value={periodType} onValueChange={setPeriodType}>
+                      <SelectTrigger className="h-9 text-sm"><SelectValue /></SelectTrigger>
+                      <SelectContent>
+                        {periodTypeOptions.map(o => <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>)}
+                      </SelectContent>
+                    </Select>
                   </div>
                 </div>
                 {/* Year rows */}
@@ -966,13 +952,12 @@ export default function CreateEngagement() {
                     <label className="text-xs font-medium text-foreground block mb-1.5">
                       Accounting Framework<span className="text-destructive ml-0.5">*</span>
                     </label>
-                    <div className="relative">
-                      <select value={accountingFramework} onChange={e => setAccountingFramework(e.target.value)} className={sc}>
-                        <option value="">Select...</option>
-                        {ACCOUNTING_FRAMEWORKS.map(fw => <option key={fw} value={fw}>{fw}</option>)}
-                      </select>
-                      <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 pointer-events-none text-muted-foreground" />
-                    </div>
+                    <Select value={accountingFramework} onValueChange={setAccountingFramework}>
+                      <SelectTrigger className="h-9 text-sm"><SelectValue placeholder="Select..." /></SelectTrigger>
+                      <SelectContent>
+                        {ACCOUNTING_FRAMEWORKS.map(fw => <SelectItem key={fw} value={fw}>{fw}</SelectItem>)}
+                      </SelectContent>
+                    </Select>
                   </div>
 
                   {/* Questions — unlocked after engagement details filled */}

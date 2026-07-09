@@ -345,17 +345,15 @@ export default function AddNewClient() {
             {cfg && (
               <div className="mt-4 pt-4 border-t border-border/50">
                 <div className="space-y-4 max-w-[50%]">
-                  {/* DBA toggle — label + switch on left, input on right */}
+                  {/* DBA toggle — label on left, switch + hint/input on right */}
                   <div className="flex items-start gap-4">
-                    <div className="shrink-0 w-52 pt-2 flex items-center gap-2">
-                      <span className="text-sm font-medium text-foreground leading-snug">{cfg.dbaLabel}</span>
-                      <Switch checked={showDba} onCheckedChange={(v) => { setShowDba(v); if (!v) { setDbaName(""); setDbaDisplay("legal-only"); } }} />
-                    </div>
+                    <span className="text-sm font-medium text-foreground shrink-0 w-52 pt-2 leading-snug">{cfg.dbaLabel}</span>
                     <div className="flex-1">
-                      {showDba
-                        ? <Input value={dbaName} onChange={e => setDbaName(e.target.value)} placeholder="e.g., Acme Trading Co." />
-                        : <p className="text-xs text-muted-foreground pt-2">{cfg.dbaHint}</p>
-                      }
+                      <div className="flex items-center gap-3">
+                        <Switch checked={showDba} onCheckedChange={(v) => { setShowDba(v); if (!v) { setDbaName(""); setDbaDisplay("legal-only"); } }} />
+                        {!showDba && <p className="text-xs text-muted-foreground">{cfg.dbaHint}</p>}
+                      </div>
+                      {showDba && <Input className="mt-2" value={dbaName} onChange={e => setDbaName(e.target.value)} placeholder="e.g., Acme Trading Co." />}
                     </div>
                   </div>
                   <InlineField label="Group Name" hint="Use to group related clients together.">
@@ -466,12 +464,12 @@ export default function AddNewClient() {
                   <div className="space-y-4 max-w-[50%]">
                     {cfg?.hasIncorporation && (
                       <InlineField label="Date of Incorporation" hint="The date the entity was formally registered.">
-                        <Input type="date" />
+                        <Input type="date" className="w-44" />
                       </InlineField>
                     )}
                     {cfg?.hasYearEnd && (
                       <InlineField label="Year End Date" hint="The month and day your fiscal year closes.">
-                        <Input type="date" />
+                        <Input type="date" className="w-44" />
                       </InlineField>
                     )}
                   </div>
