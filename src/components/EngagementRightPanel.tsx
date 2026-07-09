@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
-import { ChevronLeft, ChevronRight, Send, Clock, MessageSquare, FolderOpen, Search, Plus, CalendarClock, ArrowLeft, Upload, X, Layers } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Send, Clock, MessageSquare, FolderOpen, Search, Plus, CalendarClock, ArrowLeft, Upload, X, Layers, ListTree, CheckCircle2 } from 'lucide-react';
 import { MultipleRequestModal } from './MultipleRequestModal';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -8,6 +8,12 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { cn } from '@/lib/utils';
+import {
+  getChecklistTOC,
+  subscribeChecklistTOC,
+  scrollToSection,
+  type TOCSnapshot,
+} from '@/lib/checklistTOCStore';
 
 interface EngagementRightPanelProps {
   className?: string;
@@ -21,6 +27,7 @@ interface DocRequestContext {
 }
 
 const menuItems = [
+  { icon: ListTree, label: 'Sections', id: 'sections' },
   { icon: Send, label: 'Send', id: 'send' },
   { icon: Clock, label: 'Timeline', id: 'timeline' },
   { icon: MessageSquare, label: 'Messages', id: 'messages' },
@@ -237,6 +244,120 @@ function DocRequestForm({ context, onBack }: { context: DocRequestContext; onBac
   );
 }
 
+function SectionsTOCView() {
+  const [toc, setToc] = useState<TOCSnapshot | null>(() => getChecklistTOC());
+  const [query, setQuery] = useState('');
+  useEffect(() => subscribeChecklistTOC(setToc), []);
+
+  const filtered = (toc?.sections ?? []).filter((s) =>
+    s.title.toLowerCase().includes(query.toLowerCase()),
+  );
+
+  const grandTotal = (toc?.sections ?? []).reduce((n, s) => n + s.total, 0);
+  const grandDone = (toc?.sections ?? []).reduce((n, s) => n + s.completed, 0);
+  const overall = grandTotal ? Math.round((grandDone / grandTotal) * 100) : 0;
+
+  return (
+    <div className="w-full h-full flex flex-col overflow-hidden">
+      <div className="px-4 py-3 border-b border-border/60 shrink-0">
+        <div className="flex items-center gap-2 mb-2">
+          <ListTree className="h-4 w-4 text-primary" />
+          <h3 className="font-semibold text-sm text-foreground flex-1 truncate">
+            {toc?.checklistTitle || 'Sections'}
+          </h3>
+        </div>
+        {toc && (
+          <>
+            <div className="flex items-center justify-between text-[11px] text-muted-foreground mb-1">
+              <span>Overall progress</span>
+              <span className="font-medium text-foreground">{grandDone}/{grandTotal} · {overall}%</span>
+            </div>
+            <div className="h-1.5 w-full rounded-full bg-muted overflow-hidden">
+              <div
+                className="h-full bg-primary transition-all"
+                style={{ width: `${overall}%` }}
+              />
+            </div>
+          </>
+        )}
+      </div>
+
+      {!toc ? (
+        <div className="flex-1 flex flex-col items-center justify-center text-center px-6">
+          <div className="w-16 h-16 rounded-full bg-gradient-to-br from-primary/10 to-primary/5 flex items-center justify-center mb-3">
+            <ListTree className="h-7 w-7 text-primary/50" />
+          </div>
+          <p className="text-xs text-muted-foreground">
+            Open a checklist to see its sections and jump to any of them.
+          </p>
+        </div>
+      ) : (
+        <>
+          <div className="px-4 pt-3 pb-2 shrink-0">
+            <div className="relative">
+              <Search className="h-3.5 w-3.5 text-muted-foreground absolute left-2.5 top-1/2 -translate-y-1/2" />
+              <Input
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                placeholder="Search sections"
+                className="h-8 pl-8 text-xs"
+              />
+            </div>
+          </div>
+          <div className="flex-1 overflow-y-auto px-2 pb-3 space-y-1">
+            {filtered.length === 0 ? (
+              <p className="px-3 py-6 text-xs text-muted-foreground text-center">No matching sections</p>
+            ) : (
+              filtered.map((s, i) => {
+                const pct = s.total ? Math.round((s.completed / s.total) * 100) : 0;
+                const done = s.total > 0 && s.completed === s.total;
+                return (
+                  <button
+                    key={s.id}
+                    type="button"
+                    onClick={() => scrollToSection(s.id)}
+                    className="w-full text-left px-3 py-2 rounded-md hover:bg-muted/70 transition-colors group"
+                  >
+                    <div className="flex items-start gap-2">
+                      <span className="text-[11px] font-semibold text-muted-foreground shrink-0 mt-0.5 w-5">
+                        {String(i + 1).padStart(2, '0')}
+                      </span>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-1.5">
+                          <p className="text-xs font-medium text-foreground truncate group-hover:text-primary">
+                            {s.title.replace(/^\s*\d+(?:\.\d+)*\.\s*/, '').trim() || s.title}
+                          </p>
+                          {done && <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600 shrink-0" />}
+                        </div>
+                        {s.total > 0 && (
+                          <div className="mt-1.5 flex items-center gap-2">
+                            <div className="h-1 flex-1 rounded-full bg-muted overflow-hidden">
+                              <div
+                                className={cn(
+                                  'h-full transition-all',
+                                  done ? 'bg-emerald-500' : 'bg-primary',
+                                )}
+                                style={{ width: `${pct}%` }}
+                              />
+                            </div>
+                            <span className="text-[10px] tabular-nums text-muted-foreground w-10 text-right">
+                              {s.completed}/{s.total}
+                            </span>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </button>
+                );
+              })
+            )}
+          </div>
+        </>
+      )}
+    </div>
+  );
+}
+
 export function EngagementRightPanel({ className }: EngagementRightPanelProps) {
   const [isExpanded, setIsExpanded] = useState(false);
   const [activeItem, setActiveItem] = useState('folders');
@@ -312,6 +433,8 @@ export function EngagementRightPanel({ className }: EngagementRightPanelProps) {
                 context={docRequestCtx}
                 onBack={() => { setMode('folders'); setActiveItem('folders'); }}
               />
+            ) : activeItem === 'sections' ? (
+              <SectionsTOCView />
             ) : (
               <>
                 {/* Header */}

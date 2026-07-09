@@ -119,8 +119,9 @@ export function SortableSection({
   return (
     <div 
       ref={setNodeRef}
+      id={`checklist-section-${section.id}`}
       style={style}
-      className={`mb-6 animate-slide-up w-full ${isDragging ? 'shadow-xl' : ''}`}
+      className={`mb-6 animate-slide-up w-full scroll-mt-24 rounded-md transition-shadow ${isDragging ? 'shadow-xl' : ''}`}
     >
       {/* Section Header */}
       <div className="flex items-center gap-2 mb-3 group/section">
