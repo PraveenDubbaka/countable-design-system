@@ -792,16 +792,6 @@ export default function EngagementDetail() {
   const [searchParams] = useSearchParams();
   const { isCollapsed: isPanelCollapsed, toggle: togglePanel } = useSecondaryPanel();
   const [checklist, setChecklist] = useState<Checklist | null>(null);
-  // Publish current checklist to the right-panel TOC (Sections) view
-  useEffect(() => {
-    import("@/lib/checklistTOCStore").then(({ publishChecklistTOC, clearChecklistTOC }) => {
-      publishChecklistTOC(checklist);
-      return () => clearChecklistTOC();
-    });
-    return () => {
-      import("@/lib/checklistTOCStore").then(({ clearChecklistTOC }) => clearChecklistTOC());
-    };
-  }, [checklist]);
   const [isLoading, setIsLoading] = useState(true);
   const [isCompactMode, setIsCompactMode] = useState(false);
   const [selectedQuestions, setSelectedQuestions] = useState<Set<string>>(new Set());
