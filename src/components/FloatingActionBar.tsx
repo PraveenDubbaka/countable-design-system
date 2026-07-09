@@ -18,10 +18,14 @@ import {
   Menu,
   ToggleLeft,
   Type,
+  ListTree,
+  Check,
+  Search,
 } from 'lucide-react';
 import { Checkbox } from '@/components/ui/checkbox';
+import { Input } from '@/components/ui/input';
 import { SmartLayoutIcon } from './icons/SmartLayoutIcon';
-import { Checklist, CellBlockType } from '@/types/checklist';
+import { Checklist, CellBlockType, Section, Question } from '@/types/checklist';
 import { ReorderModal } from './ReorderModal';
 import {
   Popover,
