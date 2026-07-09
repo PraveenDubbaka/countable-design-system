@@ -20,7 +20,6 @@ import {
   Type,
   ListTree,
   Check,
-  Search,
 } from 'lucide-react';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
@@ -94,7 +93,6 @@ export function FloatingActionBar({
   const [showAddCategoryPopover, setShowAddCategoryPopover] = useState(false);
   const [showSmartLayoutPopover, setShowSmartLayoutPopover] = useState(false);
   const [showSectionsPopover, setShowSectionsPopover] = useState(false);
-  const [sectionsQuery, setSectionsQuery] = useState('');
   const [pendingCategoryType, setPendingCategoryType] = useState<'empty' | 'template' | 'form' | 'inquires-form' | null>(null);
   
   // Drag state
@@ -170,9 +168,7 @@ export function FloatingActionBar({
     return c;
   })();
 
-  const filteredSections = (checklist?.sections || []).filter((s) =>
-    s.title.toLowerCase().includes(sectionsQuery.trim().toLowerCase()),
-  );
+  const sections = checklist?.sections || [];
 
   const jumpToSection = (sectionId: string) => {
     if (checklist) {
