@@ -453,8 +453,11 @@ export default function AddNewClient() {
                       <Input type="email" placeholder="contact@company.com" />
                     </Field>
                   </div>
-                  <div className="mt-5 pt-5 border-t border-border/50">
+                  <div className="mt-5 pt-5 border-t border-border/50 space-y-5">
                     <Field label="Cell Phone">
+                      <Input placeholder="+1 (555) 000-0000" />
+                    </Field>
+                    <Field label="Business Phone">
                       <Input placeholder="+1 (555) 000-0000" />
                     </Field>
                   </div>
@@ -479,9 +482,6 @@ export default function AddNewClient() {
                     )}
                     <Field label={taxCfg.businessNumberLabel} hint={taxCfg.businessNumberHint}>
                       <Input placeholder={taxCfg.businessNumberPlaceholder} />
-                    </Field>
-                    <Field label="Business Phone">
-                      <Input placeholder="+1 (555) 000-0000" />
                     </Field>
                   </div>
                 </SectionCard>
