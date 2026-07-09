@@ -494,23 +494,14 @@ export function FloatingActionBar({
                       {overallProgress.answered} of {overallProgress.total} answered
                     </p>
                   </div>
-                  <div className="mt-2 relative">
-                    <Search className="absolute left-2 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
-                    <Input
-                      value={sectionsQuery}
-                      onChange={(e) => setSectionsQuery(e.target.value)}
-                      placeholder="Search sections…"
-                      className="h-8 pl-7 text-xs"
-                    />
-                  </div>
                 </div>
                 <div className="max-h-[60vh] overflow-y-auto py-1">
-                  {filteredSections.length === 0 && (
+                  {sections.length === 0 && (
                     <div className="px-3 py-6 text-center text-xs text-muted-foreground">
-                      {checklist?.sections.length ? 'No sections match.' : 'No sections yet.'}
+                      No sections yet.
                     </div>
                   )}
-                  {filteredSections.map((section) => {
+                  {sections.map((section) => {
                     const originalIdx = checklist!.sections.findIndex((s) => s.id === section.id);
                     const { answered, total } = getSectionProgress(section);
                     const pct = total === 0 ? 0 : Math.round((answered / total) * 100);
