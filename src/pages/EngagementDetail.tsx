@@ -793,6 +793,10 @@ export default function EngagementDetail() {
   const [searchParams] = useSearchParams();
   const { isCollapsed: isPanelCollapsed, toggle: togglePanel } = useSecondaryPanel();
   const [checklist, setChecklist] = useState<Checklist | null>(null);
+  useEffect(() => {
+    publishChecklistTOC(checklist);
+    return () => clearChecklistTOC();
+  }, [checklist]);
   const [isLoading, setIsLoading] = useState(true);
   const [isCompactMode, setIsCompactMode] = useState(false);
   const [selectedQuestions, setSelectedQuestions] = useState<Set<string>>(new Set());
