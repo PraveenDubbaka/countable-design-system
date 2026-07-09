@@ -13,8 +13,29 @@ export interface TOCSnapshot {
   sections: TOCSection[];
 }
 
-let snapshot: TOCSnapshot | null = null;
-const listeners = new Set<(s: TOCSnapshot | null) => void>();
+type TOCListener = (s: TOCSnapshot | null) => void;
+
+interface TOCStoreState {
+  snapshot: TOCSnapshot | null;
+  listeners: Set<TOCListener>;
+}
+
+const getStore = () => {
+  const scope = globalThis as typeof globalThis & {
+    __countableChecklistTOCStore?: TOCStoreState;
+  };
+
+  if (!scope.__countableChecklistTOCStore) {
+    scope.__countableChecklistTOCStore = {
+      snapshot: null,
+      listeners: new Set<TOCListener>(),
+    };
+  }
+
+  return scope.__countableChecklistTOCStore;
+};
+
+const store = getStore();
 
 const isAnswered = (a?: string) => {
   if (a === undefined || a === null) return false;
@@ -47,21 +68,22 @@ export const computeTOCFromChecklist = (checklist: Checklist | null | undefined)
 };
 
 export const publishChecklistTOC = (checklist: Checklist | null | undefined) => {
-  snapshot = computeTOCFromChecklist(checklist);
-  listeners.forEach((fn) => fn(snapshot));
+  store.snapshot = computeTOCFromChecklist(checklist);
+  store.listeners.forEach((fn) => fn(store.snapshot));
 };
 
 export const clearChecklistTOC = () => {
-  snapshot = null;
-  listeners.forEach((fn) => fn(null));
+  store.snapshot = null;
+  store.listeners.forEach((fn) => fn(null));
 };
 
-export const getChecklistTOC = () => snapshot;
+export const getChecklistTOC = () => store.snapshot;
 
-export const subscribeChecklistTOC = (fn: (s: TOCSnapshot | null) => void) => {
-  listeners.add(fn);
+export const subscribeChecklistTOC = (fn: TOCListener) => {
+  store.listeners.add(fn);
+  fn(store.snapshot);
   return () => {
-    listeners.delete(fn);
+    store.listeners.delete(fn);
   };
 };
 
