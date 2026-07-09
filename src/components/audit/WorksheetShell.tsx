@@ -482,12 +482,14 @@ export function ConcludeBar({ concluded, concludedOn, onConclude, worksheetKey, 
   worksheetKey?: string; engagementId?: string;
 }) {
   const signOff = worksheetKey ? (
-    <div className="bg-card text-card-foreground border border-border shadow-[0_2px_8px_hsl(213_40%_20%/0.06)] rounded-md overflow-hidden">
-      <div className="px-6 py-3.5 bg-card border-b border-border flex items-center gap-3">
-        <span className="text-sm font-semibold text-foreground">Sign-off</span>
+    <>
+      <div className="bg-card text-card-foreground border border-border shadow-[0_2px_8px_hsl(213_40%_20%/0.06)] rounded-md overflow-hidden">
+        <div className="px-6 py-3.5 bg-card border-b border-border flex items-center gap-3">
+          <span className="text-sm font-semibold text-foreground">Sign-off</span>
+        </div>
+        <WorksheetSignOff worksheetKey={worksheetKey} engagementId={engagementId} />
       </div>
-      <WorksheetSignOff worksheetKey={worksheetKey} engagementId={engagementId} />
-      <div className="border-t border-border px-6 py-4 flex items-center justify-end gap-3 bg-muted/20">
+      <div className="flex justify-end pt-1">
         {concluded ? (
           <div className="rounded-md border border-green-200 bg-green-50 px-4 py-2 text-xs text-green-800 font-medium">
             Concluded on {concludedOn}
@@ -496,7 +498,7 @@ export function ConcludeBar({ concluded, concludedOn, onConclude, worksheetKey, 
           <Button size="sm" onClick={onConclude}>Conclude worksheet</Button>
         )}
       </div>
-    </div>
+    </>
   ) : concluded ? (
     <div className="rounded-md border border-emerald-200 bg-emerald-50 px-6 py-3 text-xs text-emerald-800 font-medium">Worksheet concluded on {concludedOn}.</div>
   ) : (
@@ -506,6 +508,7 @@ export function ConcludeBar({ concluded, concludedOn, onConclude, worksheetKey, 
   );
   return signOff;
 }
+
 
 export function makeProcRow(procedure: string, psa = ""): ProcRow {
   return { id: Math.random().toString(36).slice(2, 9), procedure, psa, wpRef: [], psc: "", comments: "" };

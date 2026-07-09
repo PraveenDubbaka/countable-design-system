@@ -670,23 +670,26 @@ export function Audit590Worksheet() {
             <span className="text-sm font-semibold text-foreground">Sign-off</span>
           </div>
           <WorksheetSignOff worksheetKey="audit-590" engagementId={engagementId} />
-          <div className="border-t border-border px-6 py-4 flex items-center justify-end gap-3 bg-muted/20">
-            {locked ? (
-              <div className="rounded-md border border-green-200 bg-green-50 px-4 py-2 text-xs text-green-800 font-medium">
-                Concluded on {data.concludedOn}
-              </div>
-            ) : (
-              <Button size="sm" onClick={() => {
-                const today = new Date().toISOString().slice(0, 10);
-                const updated = { ...data, concluded: true, concludedOn: today };
-                setData(updated);
-                writeJsonToLocalStorage(storageKey, updated);
-              }}>
-                Conclude worksheet
-              </Button>
-            )}
-          </div>
         </div>
+
+        {/* Conclude action */}
+        <div className="flex justify-end pt-1">
+          {locked ? (
+            <div className="rounded-md border border-green-200 bg-green-50 px-4 py-2 text-xs text-green-800 font-medium">
+              Concluded on {data.concludedOn}
+            </div>
+          ) : (
+            <Button size="sm" onClick={() => {
+              const today = new Date().toISOString().slice(0, 10);
+              const updated = { ...data, concluded: true, concludedOn: today };
+              setData(updated);
+              writeJsonToLocalStorage(storageKey, updated);
+            }}>
+              Conclude worksheet
+            </Button>
+          )}
+        </div>
+
       </div>
     </div>
   );
