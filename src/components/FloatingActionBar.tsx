@@ -189,8 +189,14 @@ export function FloatingActionBar({
       setActiveSectionId(currentId);
     };
     computeActive();
+    const scroller = document.querySelector('.app-main') as HTMLElement | null;
+    const target: (Window | HTMLElement) = scroller ?? window;
+    target.addEventListener('scroll', computeActive, { passive: true } as any);
     window.addEventListener('scroll', computeActive, { passive: true });
-    return () => window.removeEventListener('scroll', computeActive);
+    return () => {
+      target.removeEventListener('scroll', computeActive as any);
+      window.removeEventListener('scroll', computeActive);
+    };
   }, [isChecklist, sections]);
 
   const jumpToSection = (sectionId: string) => {
