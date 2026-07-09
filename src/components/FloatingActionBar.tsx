@@ -170,34 +170,34 @@ export function FloatingActionBar({
 
   const sections = checklist?.sections || [];
 
-  // Track which section is currently in view for TOC highlighting
+  // Track which section is currently in view (IntersectionObserver-based scrollspy)
   useEffect(() => {
     if (!isChecklist || sections.length === 0) return;
-    const computeActive = () => {
-      let currentId: string | null = null;
-      let bestTop = -Infinity;
-      for (const s of sections) {
-        const el = document.getElementById(`checklist-section-${s.id}`);
-        if (!el) continue;
-        const top = el.getBoundingClientRect().top - 180;
-        if (top <= 0 && top > bestTop) {
-          bestTop = top;
-          currentId = s.id;
+    const els = sections
+      .map((s) =>
+        document.getElementById(`checklist-section-${s.id}`) ||
+        document.querySelector(`[data-section-id="${CSS.escape(s.id)}"]`) as HTMLElement | null,
+      )
+      .filter((el): el is HTMLElement => !!el);
+    if (els.length === 0) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const visible = entries
+          .filter((e) => e.isIntersecting)
+          .sort((a, b) => (a.boundingClientRect.top || 0) - (b.boundingClientRect.top || 0));
+        if (visible[0]) {
+          const id =
+            (visible[0].target as HTMLElement).dataset.sectionId ||
+            visible[0].target.id.replace(/^checklist-section-/, '');
+          setActiveSectionId(id);
         }
-      }
-      if (!currentId && sections[0]) currentId = sections[0].id;
-      setActiveSectionId(currentId);
-    };
-    computeActive();
-    const scroller = document.querySelector('.app-main') as HTMLElement | null;
-    const target: (Window | HTMLElement) = scroller ?? window;
-    target.addEventListener('scroll', computeActive, { passive: true } as any);
-    window.addEventListener('scroll', computeActive, { passive: true });
-    return () => {
-      target.removeEventListener('scroll', computeActive as any);
-      window.removeEventListener('scroll', computeActive);
-    };
-  }, [isChecklist, sections]);
+      },
+      { rootMargin: '-20% 0px -60% 0px', threshold: 0 },
+    );
+    els.forEach((el) => observer.observe(el));
+    return () => observer.disconnect();
+  }, [isChecklist, checklist?.sections]);
 
   const jumpToSection = (sectionId: string) => {
     if (checklist) {
@@ -214,31 +214,17 @@ export function FloatingActionBar({
     // Delay so the DOM has time to render an expanded section
     requestAnimationFrame(() => {
       setTimeout(() => {
-        const el = document.getElementById(`checklist-section-${sectionId}`);
+        const el =
+          document.getElementById(`checklist-section-${sectionId}`) ||
+          (document.querySelector(`[data-section-id="${CSS.escape(sectionId)}"]`) as HTMLElement | null);
         if (!el) return;
-        // Find nearest scrollable ancestor (the app main region scrolls, not window)
-        let scroller: HTMLElement | null = el.parentElement;
-        while (scroller && scroller !== document.body) {
-          const style = window.getComputedStyle(scroller);
-          const canScroll = /(auto|scroll|overlay)/.test(style.overflowY);
-          if (canScroll && scroller.scrollHeight > scroller.clientHeight) break;
-          scroller = scroller.parentElement;
-        }
-        if (scroller && scroller !== document.body) {
-          const offset = 24;
-          const top =
-            el.getBoundingClientRect().top -
-            scroller.getBoundingClientRect().top +
-            scroller.scrollTop -
-            offset;
-          scroller.scrollTo({ top, behavior: 'smooth' });
-        } else {
-          el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        }
+        el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        setActiveSectionId(sectionId);
       }, 60);
     });
     setShowSectionsPopover(false);
   };
+
 
 
 
