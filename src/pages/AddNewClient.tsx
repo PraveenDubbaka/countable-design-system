@@ -9,27 +9,13 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Switch } from "@/components/ui/switch";
 import { toast } from "sonner";
 
-const Field = ({
-  label, required, hint, children, className,
-}: {
-  label: string; required?: boolean; hint?: string; children: React.ReactNode; className?: string;
-}) => (
-  <div className={`flex flex-col gap-1.5 ${className ?? ""}`}>
-    <label className="text-sm font-medium text-foreground">
-      {label}{required && <span className="text-destructive ml-0.5">*</span>}
-    </label>
-    {children}
-    {hint && <p className="text-xs text-muted-foreground mt-0.5">{hint}</p>}
-  </div>
-);
-
 const InlineField = ({
   label, required, hint, children, className,
 }: {
   label: string; required?: boolean; hint?: string; children: React.ReactNode; className?: string;
 }) => (
-  <div className={`flex items-center gap-4 ${className ?? ""}`}>
-    <span className="text-sm font-medium text-foreground shrink-0 w-52">
+  <div className={`flex items-start gap-4 ${className ?? ""}`}>
+    <span className="text-sm font-medium text-foreground shrink-0 w-52 pt-2 leading-snug">
       {label}{required && <span className="text-destructive ml-0.5">*</span>}
     </span>
     <div className="flex-1">
@@ -307,31 +293,25 @@ export default function AddNewClient() {
 
           {/* ── Section 1: Entity Foundation — always visible ────────────── */}
           <SectionCard icon={Building2} title="Entity Foundation" subtitle="Start with the legal identity — this drives which other fields appear">
-            {/* Core identity — 4-column: Country | Client ID | Legal Name | Entity Type */}
-            <div className="grid grid-cols-4 gap-5">
-              <Field label="Country" hint="Determines applicable tax identifiers and field labels.">
-                <Select
-                  value={country}
-                  onValueChange={v => { setCountry(v); setGstRegistered(""); setSubCorpType(""); }}
-                >
+            {/* Core identity */}
+            <div className="grid grid-cols-2 gap-x-10 gap-y-4">
+              <InlineField label="Country" hint="Determines applicable tax identifiers and field labels.">
+                <Select value={country} onValueChange={v => { setCountry(v); setGstRegistered(""); setSubCorpType(""); }}>
                   <SelectTrigger><SelectValue /></SelectTrigger>
                   <SelectContent>
                     <SelectItem value="ca">🇨🇦 Canada</SelectItem>
                     <SelectItem value="us">🇺🇸 United States</SelectItem>
                   </SelectContent>
                 </Select>
-              </Field>
-              <Field label="Client ID" hint="Leave blank to auto-generate.">
+              </InlineField>
+              <InlineField label="Client ID" hint="Leave blank to auto-generate.">
                 <Input placeholder="e.g., CLI-0042" />
-              </Field>
-              <Field label="Legal Entity Name" required>
+              </InlineField>
+              <InlineField label="Legal Entity Name" required>
                 <Input placeholder="e.g., Acme Holdings Inc." />
-              </Field>
-              <Field label="Entity Type" required hint="Determines which fields and tax treatments apply.">
-                <Select
-                  value={entityType}
-                  onValueChange={v => { setEntityType(v); setShowDba(false); setDbaName(""); setDbaDisplay("legal-only"); setGstRegistered(""); setSubCorpType(""); }}
-                >
+              </InlineField>
+              <InlineField label="Entity Type" required hint="Determines which fields and tax treatments apply.">
+                <Select value={entityType} onValueChange={v => { setEntityType(v); setShowDba(false); setDbaName(""); setDbaDisplay("legal-only"); setGstRegistered(""); setSubCorpType(""); }}>
                   <SelectTrigger><SelectValue placeholder="Select entity type" /></SelectTrigger>
                   <SelectContent>
                     <SelectItem value="corporation">Corporation</SelectItem>
@@ -341,13 +321,13 @@ export default function AddNewClient() {
                     <SelectItem value="non-profit">Non-Profit</SelectItem>
                   </SelectContent>
                 </Select>
-              </Field>
+              </InlineField>
             </div>
 
-            {/* US Corporation sub-type — C-Corp vs S-Corp */}
+            {/* US Corporation sub-type */}
             {showSubEntity && (
-              <div className="mt-5 pt-5 border-t border-border/50 grid grid-cols-4 gap-5">
-                <Field label="Corporation Type" required hint="C-Corp is taxed as a separate entity; S-Corp income passes through to shareholders." className="col-span-2">
+              <div className="mt-4 pt-4 border-t border-border/50 grid grid-cols-2 gap-x-10 gap-y-4">
+                <InlineField label="Corporation Type" required hint="C-Corp is taxed as a separate entity; S-Corp income passes through to shareholders.">
                   <Select value={subCorpType} onValueChange={setSubCorpType}>
                     <SelectTrigger><SelectValue placeholder="Select corporation type" /></SelectTrigger>
                     <SelectContent>
@@ -355,47 +335,30 @@ export default function AddNewClient() {
                       <SelectItem value="s-corp">S-Corp (S Corporation)</SelectItem>
                     </SelectContent>
                   </Select>
-                </Field>
+                </InlineField>
               </div>
             )}
 
-            {/* DBA + Group Name — 4-column row after entity type selected */}
+            {/* DBA / Group / Partner */}
             {cfg && (
-              <div className="mt-5 pt-5 border-t border-border/50 grid grid-cols-4 gap-5">
-                <div className="flex flex-col gap-1.5">
-                  <div className="flex items-center gap-2">
-                    <label className="text-sm font-medium text-foreground">{cfg.dbaLabel}</label>
-                    <Switch
-                      checked={showDba}
-                      onCheckedChange={(v) => { setShowDba(v); if (!v) { setDbaName(""); setDbaDisplay("legal-only"); } }}
-                    />
+              <div className="mt-4 pt-4 border-t border-border/50 grid grid-cols-2 gap-x-10 gap-y-4">
+                {/* DBA toggle — label + switch on left, input on right */}
+                <div className="flex items-start gap-4">
+                  <div className="shrink-0 w-52 pt-2 flex items-center gap-2">
+                    <span className="text-sm font-medium text-foreground leading-snug">{cfg.dbaLabel}</span>
+                    <Switch checked={showDba} onCheckedChange={(v) => { setShowDba(v); if (!v) { setDbaName(""); setDbaDisplay("legal-only"); } }} />
                   </div>
-                  {showDba ? (
-                    <Input
-                      value={dbaName}
-                      onChange={e => setDbaName(e.target.value)}
-                      placeholder="e.g., Acme Trading Co."
-                    />
-                  ) : (
-                    <p className="text-xs text-muted-foreground">{cfg.dbaHint}</p>
-                  )}
+                  <div className="flex-1">
+                    {showDba
+                      ? <Input value={dbaName} onChange={e => setDbaName(e.target.value)} placeholder="e.g., Acme Trading Co." />
+                      : <p className="text-xs text-muted-foreground pt-2">{cfg.dbaHint}</p>
+                    }
+                  </div>
                 </div>
-                {showDba && dbaName && (
-                  <Field label="Display on balance sheet / cover page as" hint="Legal name is always retained in legal documents.">
-                    <Select value={dbaDisplay} onValueChange={setDbaDisplay}>
-                      <SelectTrigger><SelectValue /></SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="legal-only">Legal name only</SelectItem>
-                        <SelectItem value="dba-only">DBA only</SelectItem>
-                        <SelectItem value="both">Both — legal name and DBA</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </Field>
-                )}
-                <Field label="Group Name" hint="Use to group related clients together.">
+                <InlineField label="Group Name" hint="Use to group related clients together.">
                   <Input placeholder="e.g., Smith Family Group" />
-                </Field>
-                <Field label="Engagement Partner" required>
+                </InlineField>
+                <InlineField label="Engagement Partner" required>
                   <Select>
                     <SelectTrigger><SelectValue placeholder="Select partner" /></SelectTrigger>
                     <SelectContent>
@@ -405,19 +368,31 @@ export default function AddNewClient() {
                       <SelectItem value="jude">Jude Law</SelectItem>
                     </SelectContent>
                   </Select>
-                </Field>
+                </InlineField>
+                {showDba && dbaName && (
+                  <InlineField label="Balance sheet display" hint="Legal name is always retained in legal documents.">
+                    <Select value={dbaDisplay} onValueChange={setDbaDisplay}>
+                      <SelectTrigger><SelectValue /></SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="legal-only">Legal name only</SelectItem>
+                        <SelectItem value="dba-only">DBA only</SelectItem>
+                        <SelectItem value="both">Both — legal name and DBA</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </InlineField>
+                )}
               </div>
             )}
 
-            {/* Address — inside Entity Foundation */}
-            <div className="mt-5 pt-5 border-t border-border/50 grid grid-cols-4 gap-5">
-              <Field label="Street Address">
+            {/* Address */}
+            <div className="mt-4 pt-4 border-t border-border/50 grid grid-cols-2 gap-x-10 gap-y-4">
+              <InlineField label="Street Address">
                 <Input placeholder="123 Main Street, Suite 400" />
-              </Field>
-              <Field label="City">
+              </InlineField>
+              <InlineField label="City">
                 <Input placeholder="City" />
-              </Field>
-              <Field label={taxCfg.regionLabel}>
+              </InlineField>
+              <InlineField label={taxCfg.regionLabel}>
                 <Select>
                   <SelectTrigger><SelectValue placeholder="Select" /></SelectTrigger>
                   <SelectContent>
@@ -426,10 +401,10 @@ export default function AddNewClient() {
                     ))}
                   </SelectContent>
                 </Select>
-              </Field>
-              <Field label={taxCfg.postalLabel}>
+              </InlineField>
+              <InlineField label={taxCfg.postalLabel}>
                 <Input placeholder={taxCfg.postalPlaceholder} />
-              </Field>
+              </InlineField>
             </div>
           </SectionCard>
 
