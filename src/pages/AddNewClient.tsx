@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, Building2, User, FileText, Receipt } from "lucide-react";
+import { ArrowLeft, Building2, User, FileText } from "lucide-react";
 import { Layout } from "@/components/Layout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -432,97 +432,98 @@ export default function AddNewClient() {
             </div>
           )}
 
-          {/* ── Sections 2–4 appear after entity type is selected ────────── */}
+          {/* ── Sections 2–3 appear after entity type is selected ────────── */}
           {showSections && (
-            <>
-              {/* 3-column: Contact | Business Details | Tax & Compliance */}
-              <div className="grid grid-cols-3 gap-4">
+            <div className="space-y-4">
 
-                {/* ── Primary Contact ──────────────────────────────────────── */}
-                <SectionCard icon={User} title="Primary Contact" subtitle="The person responsible for this client relationship">
+              {/* ── Primary Contact ──────────────────────────────────────── */}
+              <SectionCard icon={User} title="Primary Contact" subtitle="The person responsible for this client relationship">
+                <div className="grid grid-cols-2 gap-5">
+                  <Field label="First Name" required>
+                    <Input placeholder="First Name" />
+                  </Field>
+                  <Field label="Last Name" required>
+                    <Input placeholder="Last Name" />
+                  </Field>
+                  <Field label="Email" required className="col-span-2">
+                    <Input type="email" placeholder="contact@company.com" />
+                  </Field>
+                </div>
+                <div className="mt-5 pt-5 border-t border-border/50 grid grid-cols-2 gap-5">
+                  <Field label="Cell Phone">
+                    <Input placeholder="+1 (555) 000-0000" />
+                  </Field>
+                  <Field label="Business Phone">
+                    <Input placeholder="+1 (555) 000-0000" />
+                  </Field>
+                </div>
+              </SectionCard>
+
+              {/* ── Business & Tax Details — merged ──────────────────────── */}
+              <SectionCard icon={FileText} title="Business & Tax Details" subtitle={`Fiscal dates, registration numbers, and tax identifiers for ${country === "ca" ? "Canada" : country === "us" ? "United States" : country === "uk" ? "United Kingdom" : "Australia"}`}>
+
+                {/* Fiscal dates */}
+                {(cfg?.hasIncorporation || cfg?.hasYearEnd) && (
                   <div className="grid grid-cols-2 gap-5">
-                    <Field label="First Name" required>
-                      <Input placeholder="First Name" />
-                    </Field>
-                    <Field label="Last Name" required>
-                      <Input placeholder="Last Name" />
-                    </Field>
-                  </div>
-                  <div className="mt-5 space-y-5">
-                    <Field label="Email" required>
-                      <Input type="email" placeholder="contact@company.com" />
-                    </Field>
-                  </div>
-                  <div className="mt-5 pt-5 border-t border-border/50 space-y-5">
-                    <Field label="Cell Phone">
-                      <Input placeholder="+1 (555) 000-0000" />
-                    </Field>
-                    <Field label="Business Phone">
-                      <Input placeholder="+1 (555) 000-0000" />
-                    </Field>
-                  </div>
-                </SectionCard>
-
-                {/* ── Business Details ─────────────────────────────────────── */}
-                <SectionCard icon={FileText} title="Business Details" subtitle="Fiscal dates and registration numbers">
-                  <div className="space-y-5">
-                    {(cfg?.hasIncorporation || cfg?.hasYearEnd) && (
-                      <div className="grid grid-cols-2 gap-5">
-                        {cfg?.hasIncorporation && (
-                          <Field label="Date of Incorporation" hint="The date the entity was formally registered.">
-                            <Input type="date" />
-                          </Field>
-                        )}
-                        {cfg?.hasYearEnd && (
-                          <Field label="Year End Date" hint="The month and day your fiscal year closes.">
-                            <Input type="date" />
-                          </Field>
-                        )}
-                      </div>
-                    )}
-                    <Field label={taxCfg.businessNumberLabel} hint={taxCfg.businessNumberHint}>
-                      <Input placeholder={taxCfg.businessNumberPlaceholder} />
-                    </Field>
-                  </div>
-                </SectionCard>
-
-                {/* ── Tax & Compliance ─────────────────────────────────────── */}
-                <SectionCard icon={Receipt} title="Tax & Compliance" subtitle={`Tax identifiers for ${country === "ca" ? "Canada" : country === "us" ? "United States" : country === "uk" ? "United Kingdom" : "Australia"}`}>
-                  <div className="space-y-5">
-                    {cfg?.hasCorporateTax && (
-                      <Field label={taxCfg.corporateTaxLabel}>
-                        <Input placeholder={taxCfg.corporateTaxPlaceholder} />
+                    {cfg?.hasIncorporation && (
+                      <Field label="Date of Incorporation" hint="The date the entity was formally registered.">
+                        <Input type="date" />
                       </Field>
                     )}
-                    {cfg?.hasPayroll && (
-                      <Field label={taxCfg.payrollLabel}>
-                        <Input placeholder={taxCfg.payrollPlaceholder} />
-                      </Field>
-                    )}
-
-                    <Field
-                      label={taxCfg.salesTaxLabel}
-                      hint="Informational — helps with sales tax treatment in future engagements."
-                    >
-                      <Select value={gstRegistered} onValueChange={setGstRegistered}>
-                        <SelectTrigger><SelectValue placeholder="Select" /></SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="yes">Yes</SelectItem>
-                          <SelectItem value="no">No</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </Field>
-                    {gstRegistered === "yes" && (
-                      <Field label={taxCfg.salesTaxNumberLabel}>
-                        <Input placeholder={taxCfg.salesTaxNumberPlaceholder} />
+                    {cfg?.hasYearEnd && (
+                      <Field label="Year End Date" hint="The month and day your fiscal year closes.">
+                        <Input type="date" />
                       </Field>
                     )}
                   </div>
-                </SectionCard>
-              </div>
+                )}
 
+                {/* Business number + Corporate Tax (paired when both apply) */}
+                <div className={`grid grid-cols-2 gap-5${(cfg?.hasIncorporation || cfg?.hasYearEnd) ? " mt-5" : ""}`}>
+                  <Field label={taxCfg.businessNumberLabel} hint={taxCfg.businessNumberHint}>
+                    <Input placeholder={taxCfg.businessNumberPlaceholder} />
+                  </Field>
+                  {cfg?.hasCorporateTax ? (
+                    <Field label={taxCfg.corporateTaxLabel}>
+                      <Input placeholder={taxCfg.corporateTaxPlaceholder} />
+                    </Field>
+                  ) : cfg?.hasPayroll ? (
+                    <Field label={taxCfg.payrollLabel}>
+                      <Input placeholder={taxCfg.payrollPlaceholder} />
+                    </Field>
+                  ) : null}
+                </div>
 
-            </>
+                {/* Payroll row — only when corporate tax already occupies the second column */}
+                {cfg?.hasCorporateTax && cfg?.hasPayroll && (
+                  <div className="mt-5 grid grid-cols-2 gap-5">
+                    <Field label={taxCfg.payrollLabel}>
+                      <Input placeholder={taxCfg.payrollPlaceholder} />
+                    </Field>
+                  </div>
+                )}
+
+                {/* Sales tax registration */}
+                <div className="mt-5 pt-5 border-t border-border/50 grid grid-cols-2 gap-5">
+                  <Field label={taxCfg.salesTaxLabel} hint="Informational — helps with sales tax treatment in future engagements.">
+                    <Select value={gstRegistered} onValueChange={setGstRegistered}>
+                      <SelectTrigger><SelectValue placeholder="Select" /></SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="yes">Yes</SelectItem>
+                        <SelectItem value="no">No</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </Field>
+                  {gstRegistered === "yes" && (
+                    <Field label={taxCfg.salesTaxNumberLabel}>
+                      <Input placeholder={taxCfg.salesTaxNumberPlaceholder} />
+                    </Field>
+                  )}
+                </div>
+
+              </SectionCard>
+
+            </div>
           )}
         </div>
       </div>
