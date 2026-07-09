@@ -1897,7 +1897,7 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
                           { id: "aud-ra-pap501bc", code: "501-B", label: "Preliminary Analytical", icon: "worksheet", route: "checklist/aud-ra-pap501bc" },
                           { id: "aud-ra-506",      code: "506",   label: "Fraud",                              icon: "worksheet", route: "checklist/aud-ra-506" },
                           { id: "aud-ra-513",      code: "513",   label: "Accounting Estimates",               icon: "worksheet", route: "checklist/aud-ra-513" },
-                          { id: "aud-ra-515",      code: "515",   label: "Related Parties",                   icon: "checklist", route: "checklist/aud-ra-515" },
+                          { id: "aud-ra-515",      code: "515",   label: "Related Parties",                   icon: "worksheet", route: "checklist/aud-ra-515" },
                           { id: "aud-ra-525",      code: "525",   label: "Going Concern",                     icon: "checklist", route: "checklist/aud-ra-525" },
                           { id: "aud-ra-530",      code: "530",   label: "Pervasive Risks",                   icon: "checklist", route: "checklist/aud-ra-530" },
                           { id: "aud-ra-580",      code: "580",   label: "Revenue Recognition",               icon: "worksheet", route: "checklist/aud-ra-580" },

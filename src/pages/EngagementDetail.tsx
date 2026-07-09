@@ -670,6 +670,7 @@ const CUSTOM_WORKSHEET_TITLES: Record<string, string> = {
   'aud-ra-511': 'Understanding the IT Environment',
   'aud-ra-513': 'Understanding Accounting Estimates and Related Disclosures',
   'aud-ra-514': 'Outcome of Prior Period Accounting Estimates',
+  'aud-ra-515': 'Understanding Related Party Relationships and Transactions',
   'aud-ra-520': 'Risk Register — Identifying and Assessing Risks of Material Misstatement',
   'aud-ra-535': 'Understanding the Information System and Communication',
   'aud-ra-540': 'Control Design / Implementation Assessment',
