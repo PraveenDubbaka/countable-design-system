@@ -8,6 +8,12 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { cn } from '@/lib/utils';
+import {
+  getChecklistTOC,
+  subscribeChecklistTOC,
+  scrollToSection,
+  type TOCSnapshot,
+} from '@/lib/checklistTOCStore';
 
 interface EngagementRightPanelProps {
   className?: string;
