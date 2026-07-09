@@ -189,8 +189,14 @@ export function FloatingActionBar({
       setActiveSectionId(currentId);
     };
     computeActive();
+    const scroller = document.querySelector('.app-main') as HTMLElement | null;
+    const target: (Window | HTMLElement) = scroller ?? window;
+    target.addEventListener('scroll', computeActive, { passive: true } as any);
     window.addEventListener('scroll', computeActive, { passive: true });
-    return () => window.removeEventListener('scroll', computeActive);
+    return () => {
+      target.removeEventListener('scroll', computeActive as any);
+      window.removeEventListener('scroll', computeActive);
+    };
   }, [isChecklist, sections]);
 
   const jumpToSection = (sectionId: string) => {
@@ -209,7 +215,26 @@ export function FloatingActionBar({
     requestAnimationFrame(() => {
       setTimeout(() => {
         const el = document.getElementById(`checklist-section-${sectionId}`);
-        el?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        if (!el) return;
+        // Find nearest scrollable ancestor (the app main region scrolls, not window)
+        let scroller: HTMLElement | null = el.parentElement;
+        while (scroller && scroller !== document.body) {
+          const style = window.getComputedStyle(scroller);
+          const canScroll = /(auto|scroll|overlay)/.test(style.overflowY);
+          if (canScroll && scroller.scrollHeight > scroller.clientHeight) break;
+          scroller = scroller.parentElement;
+        }
+        if (scroller && scroller !== document.body) {
+          const offset = 24;
+          const top =
+            el.getBoundingClientRect().top -
+            scroller.getBoundingClientRect().top +
+            scroller.scrollTop -
+            offset;
+          scroller.scrollTo({ top, behavior: 'smooth' });
+        } else {
+          el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
       }, 60);
     });
     setShowSectionsPopover(false);
