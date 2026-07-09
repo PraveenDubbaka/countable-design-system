@@ -27,7 +27,7 @@ interface DocRequestContext {
 }
 
 const menuItems = [
-  { icon: ListTree, label: 'Sections', id: 'sections' },
+  { icon: ListTree, label: 'TOC', id: 'sections' },
   { icon: Send, label: 'Send', id: 'send' },
   { icon: Clock, label: 'Timeline', id: 'timeline' },
   { icon: MessageSquare, label: 'Messages', id: 'messages' },
@@ -260,11 +260,14 @@ function SectionsTOCView() {
   return (
     <div className="w-full h-full flex flex-col overflow-hidden">
       <div className="px-4 py-3 border-b border-border/60 shrink-0">
-        <div className="flex items-center gap-2 mb-2">
+        <div className="flex items-start gap-2 mb-2">
           <ListTree className="h-4 w-4 text-primary" />
-          <h3 className="font-semibold text-sm text-foreground flex-1 truncate">
-            {toc?.checklistTitle || 'Sections'}
-          </h3>
+          <div className="min-w-0 flex-1">
+            <h3 className="font-semibold text-sm text-foreground truncate">Table of contents</h3>
+            {toc?.checklistTitle && (
+              <p className="mt-0.5 text-[11px] text-muted-foreground truncate">{toc.checklistTitle}</p>
+            )}
+          </div>
         </div>
         {toc && (
           <>
@@ -299,7 +302,7 @@ function SectionsTOCView() {
               <Input
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
-                placeholder="Search sections"
+                placeholder="Search TOC sections"
                 className="h-8 pl-8 text-xs"
               />
             </div>
@@ -400,22 +403,34 @@ export function EngagementRightPanel({ className }: EngagementRightPanelProps) {
         </Button>
 
         {menuItems.map((item) => (
-          <Button
-            key={item.id}
-            variant="ghost"
-            size="icon"
-            className={cn(
-              "h-9 w-9 hover:bg-muted",
-              activeItem === item.id && "bg-muted text-primary"
-            )}
-            onClick={() => {
-              setActiveItem(item.id);
-              if (item.id === 'folders') setMode('folders');
-              if (!isExpanded) setIsExpanded(true);
-            }}
-          >
-            <item.icon className="h-4 w-4 text-primary" />
-          </Button>
+          <TooltipProvider key={item.id}>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  aria-label={item.label}
+                  title={item.label}
+                  className={cn(
+                    "h-10 w-9 hover:bg-muted relative",
+                    item.id === 'sections' && "flex-col gap-0.5",
+                    activeItem === item.id && "bg-muted text-primary"
+                  )}
+                  onClick={() => {
+                    setActiveItem(item.id);
+                    setMode('folders');
+                    if (!isExpanded) setIsExpanded(true);
+                  }}
+                >
+                  <item.icon className="h-4 w-4 text-primary" />
+                  {item.id === 'sections' && (
+                    <span className="text-[9px] leading-none font-semibold text-primary">TOC</span>
+                  )}
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent side="left">{item.label}</TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
         ))}
       </div>
 
