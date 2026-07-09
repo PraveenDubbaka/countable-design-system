@@ -18,6 +18,7 @@ import {
   Menu,
   ToggleLeft,
   Type,
+  ListTree,
 } from 'lucide-react';
 import { Checkbox } from '@/components/ui/checkbox';
 import { SmartLayoutIcon } from './icons/SmartLayoutIcon';
