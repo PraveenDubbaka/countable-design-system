@@ -507,56 +507,44 @@ export function FloatingActionBar({
               <PopoverContent
                 side="left"
                 align="center"
-                className="w-80 p-0 bg-card border shadow-lg z-50"
+                className="w-[340px] p-0 bg-card border shadow-lg z-50 rounded-2xl overflow-hidden"
                 onMouseDown={(e) => e.stopPropagation()}
               >
-                <div className="px-3 py-2.5 border-b border-border">
-                  <div className="flex items-center justify-between">
-                    <p className="text-sm font-semibold text-foreground">Sections</p>
-                    <p className="text-xs text-muted-foreground">
-                      {overallProgress.answered} of {overallProgress.total} answered
-                    </p>
-                  </div>
+                <div className="px-5 pt-4 pb-3">
+                  <p className="text-base font-semibold text-foreground leading-tight">Contents</p>
+                  <p className="text-xs text-muted-foreground mt-0.5">Jump to a section</p>
                 </div>
-                <div className="max-h-[60vh] overflow-y-auto py-1">
+                <div className="max-h-[60vh] overflow-y-auto pb-2">
                   {sections.length === 0 && (
-                    <div className="px-3 py-6 text-center text-xs text-muted-foreground">
+                    <div className="px-5 py-6 text-center text-xs text-muted-foreground">
                       No sections yet.
                     </div>
                   )}
-                  {sections.map((section) => {
-                    const originalIdx = checklist!.sections.findIndex((s) => s.id === section.id);
+                  {sections.map((section, idx) => {
                     const { answered, total } = getSectionProgress(section);
                     const pct = total === 0 ? 0 : Math.round((answered / total) * 100);
-                    const done = total > 0 && answered === total;
+                    const isActive = activeSectionId === section.id;
                     return (
                       <button
                         key={section.id}
                         onClick={() => jumpToSection(section.id)}
-                        className="w-full text-left px-3 py-2 hover:bg-muted transition-colors group/row"
+                        className={`relative w-full text-left px-5 py-3 transition-colors border-b border-border/60 last:border-b-0 ${isActive ? 'bg-muted/40' : 'hover:bg-muted/40'}`}
                       >
-                        <div className="flex items-center gap-2">
-                          <span className="text-[11px] font-medium text-muted-foreground w-5 shrink-0">
-                            {originalIdx + 1}.
+                        {isActive && (
+                          <span className="absolute left-0 top-2 bottom-2 w-[3px] rounded-r bg-primary" />
+                        )}
+                        <div className="flex items-start justify-between gap-3">
+                          <p className={`text-sm leading-snug flex-1 ${isActive ? 'font-semibold text-foreground' : 'font-medium text-foreground/90'}`}>
+                            {idx + 1}. {section.title || 'Untitled section'}
+                          </p>
+                          <span className="text-[11px] text-muted-foreground shrink-0 mt-0.5 tabular-nums">
+                            {answered}/{total}
                           </span>
-                          <span className="flex-1 text-xs font-medium text-foreground truncate">
-                            {section.title || 'Untitled section'}
-                          </span>
-                          {done ? (
-                            <span className="flex items-center gap-1 text-[11px] text-primary shrink-0">
-                              <Check className="h-3 w-3" />
-                              {answered}/{total}
-                            </span>
-                          ) : (
-                            <span className="text-[11px] text-muted-foreground shrink-0">
-                              {answered}/{total}
-                            </span>
-                          )}
                         </div>
                         {total > 0 && (
-                          <div className="mt-1.5 ml-7 h-1 rounded-full bg-muted overflow-hidden">
+                          <div className="mt-2 h-[3px] rounded-full bg-muted overflow-hidden">
                             <div
-                              className={`h-full transition-all ${done ? 'bg-primary' : 'bg-foreground/40'}`}
+                              className="h-full bg-primary transition-all"
                               style={{ width: `${pct}%` }}
                             />
                           </div>
