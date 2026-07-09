@@ -1925,9 +1925,10 @@ export function DocumentSectionBlock({
 
   return (
     <div
-      id={section.id}
+      id={`checklist-section-${section.id}`}
+      data-section-id={section.id}
       ref={setNodeRef}
-      style={{ ...style, borderColor: 'var(--dv-separator)' }}
+      style={{ ...style, borderColor: 'var(--dv-separator)', scrollMarginTop: '160px' }}
       className={`dv-section group/section relative rounded-[8px] border-[0.5px] transition-colors ${isGlobalTemplate ? '' : 'focus-within:border-primary'} ${isDragging ? 'z-10' : ''}`}>
 
       {/* Section header */}
