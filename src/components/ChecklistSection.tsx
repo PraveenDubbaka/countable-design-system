@@ -81,7 +81,12 @@ export function ChecklistSection({
   const displayTitle = section.title.replace(/^\s*\d+(?:\.\d+)*\.\s*/, '').trim();
 
   return (
-    <div className="mb-6 animate-slide-up" style={{ animationDelay: `${index * 100}ms` }}>
+    <div
+      id={`checklist-section-${section.id}`}
+      data-section-id={section.id}
+      className="mb-6 animate-slide-up scroll-mt-40"
+      style={{ animationDelay: `${index * 100}ms` }}
+    >
       {/* Section Header */}
       <div className="flex items-center gap-2 mb-3">
         <button

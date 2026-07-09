@@ -18,10 +18,14 @@ import {
   Menu,
   ToggleLeft,
   Type,
+  ListTree,
+  Check,
+  Search,
 } from 'lucide-react';
 import { Checkbox } from '@/components/ui/checkbox';
+import { Input } from '@/components/ui/input';
 import { SmartLayoutIcon } from './icons/SmartLayoutIcon';
-import { Checklist, CellBlockType } from '@/types/checklist';
+import { Checklist, CellBlockType, Section, Question } from '@/types/checklist';
 import { ReorderModal } from './ReorderModal';
 import {
   Popover,
@@ -89,6 +93,8 @@ export function FloatingActionBar({
   const [showReorderModal, setShowReorderModal] = useState(false);
   const [showAddCategoryPopover, setShowAddCategoryPopover] = useState(false);
   const [showSmartLayoutPopover, setShowSmartLayoutPopover] = useState(false);
+  const [showSectionsPopover, setShowSectionsPopover] = useState(false);
+  const [sectionsQuery, setSectionsQuery] = useState('');
   const [pendingCategoryType, setPendingCategoryType] = useState<'empty' | 'template' | 'form' | 'inquires-form' | null>(null);
   
   // Drag state
@@ -129,6 +135,68 @@ export function FloatingActionBar({
       onCollapseSections();
     }
   };
+
+  // ---- Section summary helpers (jump-to feature) -------------------------
+  const isQuestionAnswered = (q: Question): boolean => {
+    if (q.labelPlaceholder) return !!(q.labelAnswer && q.labelAnswer.trim());
+    return !!(q.answer && String(q.answer).trim());
+  };
+  const isQuestionCountable = (q: Question): boolean =>
+    q.answerType !== 'none' || !!q.labelPlaceholder;
+
+  const walkQuestions = (
+    qs: Question[] | undefined,
+    counters: { total: number; answered: number },
+  ) => {
+    if (!qs) return;
+    qs.forEach((q) => {
+      if (isQuestionCountable(q)) {
+        counters.total += 1;
+        if (isQuestionAnswered(q)) counters.answered += 1;
+      }
+      walkQuestions(q.subQuestions, counters);
+    });
+  };
+
+  const getSectionProgress = (section: Section) => {
+    const c = { total: 0, answered: 0 };
+    walkQuestions(section.questions, c);
+    return c;
+  };
+
+  const overallProgress = (() => {
+    const c = { total: 0, answered: 0 };
+    checklist?.sections.forEach((s) => walkQuestions(s.questions, c));
+    return c;
+  })();
+
+  const filteredSections = (checklist?.sections || []).filter((s) =>
+    s.title.toLowerCase().includes(sectionsQuery.trim().toLowerCase()),
+  );
+
+  const jumpToSection = (sectionId: string) => {
+    if (checklist) {
+      const target = checklist.sections.find((s) => s.id === sectionId);
+      if (target && !target.isExpanded) {
+        onUpdate({
+          ...checklist,
+          sections: checklist.sections.map((s) =>
+            s.id === sectionId ? { ...s, isExpanded: true } : s,
+          ),
+        });
+      }
+    }
+    // Delay so the DOM has time to render an expanded section
+    requestAnimationFrame(() => {
+      setTimeout(() => {
+        const el = document.getElementById(`checklist-section-${sectionId}`);
+        el?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 60);
+    });
+    setShowSectionsPopover(false);
+  };
+
+
 
   // Cycle through positions on double-click
   const handleDoubleClick = () => {
@@ -400,6 +468,98 @@ export function FloatingActionBar({
           >
             <Layers className={`h-4 w-4 text-muted-foreground group-hover:text-foreground group-hover:icon-layers transition-transform ${allSectionsCollapsed ? 'opacity-50' : ''}`} />
           </button>}
+
+          {/* Sections summary / jump-to — checklists only, both modes */}
+          {isChecklist && (
+            <Popover open={showSectionsPopover} onOpenChange={setShowSectionsPopover}>
+              <PopoverTrigger asChild>
+                <button
+                  onClick={(e) => e.stopPropagation()}
+                  onMouseDown={(e) => e.stopPropagation()}
+                  className="w-9 h-9 flex items-center justify-center rounded-lg hover:bg-muted transition-colors group relative"
+                  title="Sections — jump to a section"
+                >
+                  <ListTree className="h-4 w-4 text-muted-foreground group-hover:text-foreground" />
+                  {overallProgress.total > 0 && overallProgress.answered === overallProgress.total && (
+                    <span className="absolute -top-0.5 -right-0.5 h-2 w-2 rounded-full bg-primary" />
+                  )}
+                </button>
+              </PopoverTrigger>
+              <PopoverContent
+                side="left"
+                align="center"
+                className="w-80 p-0 bg-card border shadow-lg z-50"
+                onMouseDown={(e) => e.stopPropagation()}
+              >
+                <div className="px-3 py-2.5 border-b border-border">
+                  <div className="flex items-center justify-between">
+                    <p className="text-sm font-semibold text-foreground">Sections</p>
+                    <p className="text-xs text-muted-foreground">
+                      {overallProgress.answered} of {overallProgress.total} answered
+                    </p>
+                  </div>
+                  <div className="mt-2 relative">
+                    <Search className="absolute left-2 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
+                    <Input
+                      value={sectionsQuery}
+                      onChange={(e) => setSectionsQuery(e.target.value)}
+                      placeholder="Search sections…"
+                      className="h-8 pl-7 text-xs"
+                    />
+                  </div>
+                </div>
+                <div className="max-h-[60vh] overflow-y-auto py-1">
+                  {filteredSections.length === 0 && (
+                    <div className="px-3 py-6 text-center text-xs text-muted-foreground">
+                      {checklist?.sections.length ? 'No sections match.' : 'No sections yet.'}
+                    </div>
+                  )}
+                  {filteredSections.map((section) => {
+                    const originalIdx = checklist!.sections.findIndex((s) => s.id === section.id);
+                    const { answered, total } = getSectionProgress(section);
+                    const pct = total === 0 ? 0 : Math.round((answered / total) * 100);
+                    const done = total > 0 && answered === total;
+                    return (
+                      <button
+                        key={section.id}
+                        onClick={() => jumpToSection(section.id)}
+                        className="w-full text-left px-3 py-2 hover:bg-muted transition-colors group/row"
+                      >
+                        <div className="flex items-center gap-2">
+                          <span className="text-[11px] font-medium text-muted-foreground w-5 shrink-0">
+                            {originalIdx + 1}.
+                          </span>
+                          <span className="flex-1 text-xs font-medium text-foreground truncate">
+                            {section.title || 'Untitled section'}
+                          </span>
+                          {done ? (
+                            <span className="flex items-center gap-1 text-[11px] text-primary shrink-0">
+                              <Check className="h-3 w-3" />
+                              {answered}/{total}
+                            </span>
+                          ) : (
+                            <span className="text-[11px] text-muted-foreground shrink-0">
+                              {answered}/{total}
+                            </span>
+                          )}
+                        </div>
+                        {total > 0 && (
+                          <div className="mt-1.5 ml-7 h-1 rounded-full bg-muted overflow-hidden">
+                            <div
+                              className={`h-full transition-all ${done ? 'bg-primary' : 'bg-foreground/40'}`}
+                              style={{ width: `${pct}%` }}
+                            />
+                          </div>
+                        )}
+                      </button>
+                    );
+                  })}
+                </div>
+              </PopoverContent>
+            </Popover>
+          )}
+
+
 
           {/* Collapse/Expand Row Text — checklists only */}
           {isChecklist && <button
