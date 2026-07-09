@@ -551,40 +551,8 @@ export function Audit515Worksheet({ isUS: isUSProp }: { isUS?: boolean } = {}) {
             </div>
           </SectionCard>
 
-          {/* Notes */}
-          <SectionCard title="Notes" subtitle="Working notes, cross-references, and any matters to carry forward.">
-            <div className="px-6 py-5">
-              <Textarea
-                disabled={locked}
-                value={data.notes}
-                onChange={e => patch("notes", e.target.value)}
-                placeholder="Add cross-references, follow-ups, or context for reviewers…"
-                className="min-h-[110px] text-sm resize-none bg-background"
-              />
-            </div>
-          </SectionCard>
 
-          {/* Conclusion */}
-          <SectionCard title="Conclusion">
-            <div className="px-6 py-5 space-y-4">
-              <p className="text-sm text-foreground font-medium">
-                Based on the procedures performed, evaluate whether sufficient understanding of related-party relationships and transactions has been obtained to recognise fraud risk factors and assess RMM in the F/S.
-              </p>
-              <Textarea
-                disabled={locked}
-                value={data.conclusion}
-                onChange={e => patch("conclusion", e.target.value)}
-                placeholder="Document your overall conclusion…"
-                className="min-h-[100px] text-sm resize-none bg-background"
-              />
-              <div className="rounded-md border border-amber-200 dark:border-amber-800 bg-amber-50 dark:bg-amber-950/20 px-4 py-2.5 flex items-start gap-2">
-                <AlertTriangle className="h-3.5 w-3.5 text-amber-600 dark:text-amber-400 shrink-0 mt-0.5" />
-                <p className="text-xs text-amber-800 dark:text-amber-300">
-                  Consider obtaining written representations on the completeness of related parties and disclosures on <span className="font-semibold">Form 580</span>.
-                </p>
-              </div>
-            </div>
-          </SectionCard>
+
 
           {/* Sign-off */}
           <div className="bg-card border border-border shadow-[0_2px_8px_hsl(213_40%_20%/0.06)] rounded-md overflow-hidden">
