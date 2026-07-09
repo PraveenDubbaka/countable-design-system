@@ -592,28 +592,31 @@ export function Audit515Worksheet({ isUS: isUSProp }: { isUS?: boolean } = {}) {
               <span className="text-sm font-semibold text-foreground">Sign-off</span>
             </div>
             <WorksheetSignOff worksheetKey="audit-515" engagementId={engagementId} />
-            <div className="border-t border-border px-6 py-4 flex items-center justify-end gap-3 bg-muted/20">
-              {data.concluded ? (
-                <div className="rounded-md border border-green-200 bg-green-50 px-4 py-2 text-xs text-green-800 font-medium">
-                  Concluded on {data.concludedOn}
-                </div>
-              ) : (
-                <Button
-                  disabled={locked}
-                  onClick={() => {
-                    const now = new Date().toISOString().slice(0, 10);
-                    setData(d => {
-                      const next = { ...d, concluded: true, concludedOn: now };
-                      writeJsonToLocalStorage(storageKey, next);
-                      return next;
-                    });
-                  }}
-                >
-                  Conclude worksheet
-                </Button>
-              )}
-            </div>
           </div>
+
+          {/* Conclude action */}
+          <div className="flex justify-end pt-1">
+            {data.concluded ? (
+              <div className="rounded-md border border-green-200 bg-green-50 px-4 py-2 text-xs text-green-800 font-medium">
+                Concluded on {data.concludedOn}
+              </div>
+            ) : (
+              <Button
+                disabled={locked}
+                onClick={() => {
+                  const now = new Date().toISOString().slice(0, 10);
+                  setData(d => {
+                    const next = { ...d, concluded: true, concludedOn: now };
+                    writeJsonToLocalStorage(storageKey, next);
+                    return next;
+                  });
+                }}
+              >
+                Conclude worksheet
+              </Button>
+            )}
+          </div>
+
 
         </div>
       </div>
