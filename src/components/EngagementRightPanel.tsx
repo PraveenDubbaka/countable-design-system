@@ -27,6 +27,7 @@ interface DocRequestContext {
 }
 
 const menuItems = [
+  { icon: ListTree, label: 'Sections', id: 'sections' },
   { icon: Send, label: 'Send', id: 'send' },
   { icon: Clock, label: 'Timeline', id: 'timeline' },
   { icon: MessageSquare, label: 'Messages', id: 'messages' },
