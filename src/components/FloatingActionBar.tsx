@@ -136,6 +136,68 @@ export function FloatingActionBar({
     }
   };
 
+  // ---- Section summary helpers (jump-to feature) -------------------------
+  const isQuestionAnswered = (q: Question): boolean => {
+    if (q.labelPlaceholder) return !!(q.labelAnswer && q.labelAnswer.trim());
+    return !!(q.answer && String(q.answer).trim());
+  };
+  const isQuestionCountable = (q: Question): boolean =>
+    q.answerType !== 'none' || !!q.labelPlaceholder;
+
+  const walkQuestions = (
+    qs: Question[] | undefined,
+    counters: { total: number; answered: number },
+  ) => {
+    if (!qs) return;
+    qs.forEach((q) => {
+      if (isQuestionCountable(q)) {
+        counters.total += 1;
+        if (isQuestionAnswered(q)) counters.answered += 1;
+      }
+      walkQuestions(q.subQuestions, counters);
+    });
+  };
+
+  const getSectionProgress = (section: Section) => {
+    const c = { total: 0, answered: 0 };
+    walkQuestions(section.questions, c);
+    return c;
+  };
+
+  const overallProgress = (() => {
+    const c = { total: 0, answered: 0 };
+    checklist?.sections.forEach((s) => walkQuestions(s.questions, c));
+    return c;
+  })();
+
+  const filteredSections = (checklist?.sections || []).filter((s) =>
+    s.title.toLowerCase().includes(sectionsQuery.trim().toLowerCase()),
+  );
+
+  const jumpToSection = (sectionId: string) => {
+    if (checklist) {
+      const target = checklist.sections.find((s) => s.id === sectionId);
+      if (target && !target.isExpanded) {
+        onUpdate({
+          ...checklist,
+          sections: checklist.sections.map((s) =>
+            s.id === sectionId ? { ...s, isExpanded: true } : s,
+          ),
+        });
+      }
+    }
+    // Delay so the DOM has time to render an expanded section
+    requestAnimationFrame(() => {
+      setTimeout(() => {
+        const el = document.getElementById(`checklist-section-${sectionId}`);
+        el?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 60);
+    });
+    setShowSectionsPopover(false);
+  };
+
+
+
   // Cycle through positions on double-click
   const handleDoubleClick = () => {
     setIsSnapping(true);
