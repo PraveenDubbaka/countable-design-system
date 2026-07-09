@@ -294,7 +294,7 @@ export default function AddNewClient() {
           {/* ── Section 1: Entity Foundation — always visible ────────────── */}
           <SectionCard icon={Building2} title="Entity Foundation" subtitle="Start with the legal identity — this drives which other fields appear">
             {/* Core identity */}
-            <div className="grid grid-cols-2 gap-x-10 gap-y-4">
+            <div className="space-y-4 max-w-[50%]">
               <InlineField label="Country" hint="Determines applicable tax identifiers and field labels.">
                 <Select value={country} onValueChange={v => { setCountry(v); setGstRegistered(""); setSubCorpType(""); }}>
                   <SelectTrigger><SelectValue /></SelectTrigger>
@@ -326,7 +326,7 @@ export default function AddNewClient() {
 
             {/* US Corporation sub-type */}
             {showSubEntity && (
-              <div className="mt-4 pt-4 border-t border-border/50 grid grid-cols-2 gap-x-10 gap-y-4">
+              <div className="mt-4 pt-4 border-t border-border/50 space-y-4 max-w-[50%]">
                 <InlineField label="Corporation Type" required hint="C-Corp is taxed as a separate entity; S-Corp income passes through to shareholders.">
                   <Select value={subCorpType} onValueChange={setSubCorpType}>
                     <SelectTrigger><SelectValue placeholder="Select corporation type" /></SelectTrigger>
@@ -341,7 +341,7 @@ export default function AddNewClient() {
 
             {/* DBA / Group / Partner */}
             {cfg && (
-              <div className="mt-4 pt-4 border-t border-border/50 grid grid-cols-2 gap-x-10 gap-y-4">
+              <div className="mt-4 pt-4 border-t border-border/50 space-y-4 max-w-[50%]">
                 {/* DBA toggle — label + switch on left, input on right */}
                 <div className="flex items-start gap-4">
                   <div className="shrink-0 w-52 pt-2 flex items-center gap-2">
@@ -385,7 +385,7 @@ export default function AddNewClient() {
             )}
 
             {/* Address */}
-            <div className="mt-4 pt-4 border-t border-border/50 grid grid-cols-2 gap-x-10 gap-y-4">
+            <div className="mt-4 pt-4 border-t border-border/50 space-y-4 max-w-[50%]">
               <InlineField label="Street Address">
                 <Input placeholder="123 Main Street, Suite 400" />
               </InlineField>
@@ -429,18 +429,18 @@ export default function AddNewClient() {
 
               {/* ── Primary Contact ──────────────────────────────────────── */}
               <SectionCard icon={User} title="Primary Contact" subtitle="The person responsible for this client relationship">
-                <div className="grid grid-cols-2 gap-x-10 gap-y-4">
+                <div className="space-y-4 max-w-[50%]">
                   <InlineField label="First Name" required>
                     <Input placeholder="First Name" />
                   </InlineField>
                   <InlineField label="Last Name" required>
                     <Input placeholder="Last Name" />
                   </InlineField>
-                  <InlineField label="Email" required className="col-span-2">
+                  <InlineField label="Email" required>
                     <Input type="email" placeholder="contact@company.com" />
                   </InlineField>
                 </div>
-                <div className="mt-5 pt-5 border-t border-border/50 grid grid-cols-2 gap-x-10 gap-y-4">
+                <div className="mt-5 pt-5 border-t border-border/50 space-y-4 max-w-[50%]">
                   <InlineField label="Cell Phone">
                     <Input placeholder="+1 (555) 000-0000" />
                   </InlineField>
@@ -455,7 +455,7 @@ export default function AddNewClient() {
 
                 {/* Fiscal dates */}
                 {(cfg?.hasIncorporation || cfg?.hasYearEnd) && (
-                  <div className="grid grid-cols-2 gap-x-10 gap-y-4">
+                  <div className="space-y-4 max-w-[50%]">
                     {cfg?.hasIncorporation && (
                       <InlineField label="Date of Incorporation" hint="The date the entity was formally registered.">
                         <Input type="date" />
@@ -469,33 +469,25 @@ export default function AddNewClient() {
                   </div>
                 )}
 
-                {/* Business number + Corporate Tax (paired when both apply) */}
-                <div className={`grid grid-cols-2 gap-x-10 gap-y-4${(cfg?.hasIncorporation || cfg?.hasYearEnd) ? " mt-4" : ""}`}>
+                {/* Business number, Corporate Tax, Payroll */}
+                <div className={`space-y-4 max-w-[50%]${(cfg?.hasIncorporation || cfg?.hasYearEnd) ? " mt-4" : ""}`}>
                   <InlineField label={taxCfg.businessNumberLabel} hint={taxCfg.businessNumberHint}>
                     <Input placeholder={taxCfg.businessNumberPlaceholder} />
                   </InlineField>
-                  {cfg?.hasCorporateTax ? (
+                  {cfg?.hasCorporateTax && (
                     <InlineField label={taxCfg.corporateTaxLabel}>
                       <Input placeholder={taxCfg.corporateTaxPlaceholder} />
                     </InlineField>
-                  ) : cfg?.hasPayroll ? (
+                  )}
+                  {cfg?.hasPayroll && (
                     <InlineField label={taxCfg.payrollLabel}>
                       <Input placeholder={taxCfg.payrollPlaceholder} />
                     </InlineField>
-                  ) : null}
+                  )}
                 </div>
 
-                {/* Payroll row — only when corporate tax already occupies the second column */}
-                {cfg?.hasCorporateTax && cfg?.hasPayroll && (
-                  <div className="mt-4 grid grid-cols-2 gap-x-10 gap-y-4">
-                    <InlineField label={taxCfg.payrollLabel}>
-                      <Input placeholder={taxCfg.payrollPlaceholder} />
-                    </InlineField>
-                  </div>
-                )}
-
                 {/* Sales tax registration */}
-                <div className="mt-5 pt-5 border-t border-border/50 grid grid-cols-2 gap-x-10 gap-y-4">
+                <div className="mt-5 pt-5 border-t border-border/50 space-y-4 max-w-[50%]">
                   <InlineField label={taxCfg.salesTaxLabel} hint="Informational — helps with sales tax treatment in future engagements.">
                     <Select value={gstRegistered} onValueChange={setGstRegistered}>
                       <SelectTrigger><SelectValue placeholder="Select" /></SelectTrigger>
