@@ -90,6 +90,8 @@ export function FloatingActionBar({
   const [showReorderModal, setShowReorderModal] = useState(false);
   const [showAddCategoryPopover, setShowAddCategoryPopover] = useState(false);
   const [showSmartLayoutPopover, setShowSmartLayoutPopover] = useState(false);
+  const [showTOCPopover, setShowTOCPopover] = useState(false);
+  const [tocSearch, setTocSearch] = useState('');
   const [pendingCategoryType, setPendingCategoryType] = useState<'empty' | 'template' | 'form' | 'inquires-form' | null>(null);
   
   // Drag state
