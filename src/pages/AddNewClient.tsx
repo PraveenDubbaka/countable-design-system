@@ -326,85 +326,91 @@ export default function AddNewClient() {
 
             {/* US Corporation sub-type */}
             {showSubEntity && (
-              <div className="mt-4 pt-4 border-t border-border/50 space-y-4 max-w-[50%]">
-                <InlineField label="Corporation Type" required hint="C-Corp is taxed as a separate entity; S-Corp income passes through to shareholders.">
-                  <Select value={subCorpType} onValueChange={setSubCorpType}>
-                    <SelectTrigger><SelectValue placeholder="Select corporation type" /></SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="c-corp">C-Corp (C Corporation)</SelectItem>
-                      <SelectItem value="s-corp">S-Corp (S Corporation)</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </InlineField>
+              <div className="mt-4 pt-4 border-t border-border/50">
+                <div className="space-y-4 max-w-[50%]">
+                  <InlineField label="Corporation Type" required hint="C-Corp is taxed as a separate entity; S-Corp income passes through to shareholders.">
+                    <Select value={subCorpType} onValueChange={setSubCorpType}>
+                      <SelectTrigger><SelectValue placeholder="Select corporation type" /></SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="c-corp">C-Corp (C Corporation)</SelectItem>
+                        <SelectItem value="s-corp">S-Corp (S Corporation)</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </InlineField>
+                </div>
               </div>
             )}
 
             {/* DBA / Group / Partner */}
             {cfg && (
-              <div className="mt-4 pt-4 border-t border-border/50 space-y-4 max-w-[50%]">
-                {/* DBA toggle — label + switch on left, input on right */}
-                <div className="flex items-start gap-4">
-                  <div className="shrink-0 w-52 pt-2 flex items-center gap-2">
-                    <span className="text-sm font-medium text-foreground leading-snug">{cfg.dbaLabel}</span>
-                    <Switch checked={showDba} onCheckedChange={(v) => { setShowDba(v); if (!v) { setDbaName(""); setDbaDisplay("legal-only"); } }} />
+              <div className="mt-4 pt-4 border-t border-border/50">
+                <div className="space-y-4 max-w-[50%]">
+                  {/* DBA toggle — label + switch on left, input on right */}
+                  <div className="flex items-start gap-4">
+                    <div className="shrink-0 w-52 pt-2 flex items-center gap-2">
+                      <span className="text-sm font-medium text-foreground leading-snug">{cfg.dbaLabel}</span>
+                      <Switch checked={showDba} onCheckedChange={(v) => { setShowDba(v); if (!v) { setDbaName(""); setDbaDisplay("legal-only"); } }} />
+                    </div>
+                    <div className="flex-1">
+                      {showDba
+                        ? <Input value={dbaName} onChange={e => setDbaName(e.target.value)} placeholder="e.g., Acme Trading Co." />
+                        : <p className="text-xs text-muted-foreground pt-2">{cfg.dbaHint}</p>
+                      }
+                    </div>
                   </div>
-                  <div className="flex-1">
-                    {showDba
-                      ? <Input value={dbaName} onChange={e => setDbaName(e.target.value)} placeholder="e.g., Acme Trading Co." />
-                      : <p className="text-xs text-muted-foreground pt-2">{cfg.dbaHint}</p>
-                    }
-                  </div>
-                </div>
-                <InlineField label="Group Name" hint="Use to group related clients together.">
-                  <Input placeholder="e.g., Smith Family Group" />
-                </InlineField>
-                <InlineField label="Engagement Partner" required>
-                  <Select>
-                    <SelectTrigger><SelectValue placeholder="Select partner" /></SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="cpt">Cpt Group</SelectItem>
-                      <SelectItem value="monte">Monte Heilig</SelectItem>
-                      <SelectItem value="jangaiah">Jangaiah Arige</SelectItem>
-                      <SelectItem value="jude">Jude Law</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </InlineField>
-                {showDba && dbaName && (
-                  <InlineField label="Balance sheet display" hint="Legal name is always retained in legal documents.">
-                    <Select value={dbaDisplay} onValueChange={setDbaDisplay}>
-                      <SelectTrigger><SelectValue /></SelectTrigger>
+                  <InlineField label="Group Name" hint="Use to group related clients together.">
+                    <Input placeholder="e.g., Smith Family Group" />
+                  </InlineField>
+                  <InlineField label="Engagement Partner" required>
+                    <Select>
+                      <SelectTrigger><SelectValue placeholder="Select partner" /></SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="legal-only">Legal name only</SelectItem>
-                        <SelectItem value="dba-only">DBA only</SelectItem>
-                        <SelectItem value="both">Both — legal name and DBA</SelectItem>
+                        <SelectItem value="cpt">Cpt Group</SelectItem>
+                        <SelectItem value="monte">Monte Heilig</SelectItem>
+                        <SelectItem value="jangaiah">Jangaiah Arige</SelectItem>
+                        <SelectItem value="jude">Jude Law</SelectItem>
                       </SelectContent>
                     </Select>
                   </InlineField>
-                )}
+                  {showDba && dbaName && (
+                    <InlineField label="Balance sheet display" hint="Legal name is always retained in legal documents.">
+                      <Select value={dbaDisplay} onValueChange={setDbaDisplay}>
+                        <SelectTrigger><SelectValue /></SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="legal-only">Legal name only</SelectItem>
+                          <SelectItem value="dba-only">DBA only</SelectItem>
+                          <SelectItem value="both">Both — legal name and DBA</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </InlineField>
+                  )}
+                </div>
               </div>
             )}
 
             {/* Address */}
-            <div className="mt-4 pt-4 border-t border-border/50 space-y-4 max-w-[50%]">
-              <InlineField label="Street Address">
-                <Input placeholder="123 Main Street, Suite 400" />
-              </InlineField>
-              <InlineField label="City">
-                <Input placeholder="City" />
-              </InlineField>
-              <InlineField label={taxCfg.regionLabel}>
-                <Select>
-                  <SelectTrigger><SelectValue placeholder="Select" /></SelectTrigger>
-                  <SelectContent>
-                    {regions.map(r => (
-                      <SelectItem key={r.value} value={r.value}>{r.label}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </InlineField>
-              <InlineField label={taxCfg.postalLabel}>
-                <Input placeholder={taxCfg.postalPlaceholder} />
-              </InlineField>
+            <div className="mt-4 pt-4 border-t border-border/50">
+              <div className="space-y-4 max-w-[50%]">
+                <InlineField label="Street Address">
+                  <Input placeholder="123 Main Street, Suite 400" />
+                </InlineField>
+                <InlineField label="City">
+                  <Input placeholder="City" />
+                </InlineField>
+                <InlineField label={taxCfg.regionLabel}>
+                  <Select>
+                    <SelectTrigger><SelectValue placeholder="Select" /></SelectTrigger>
+                    <SelectContent>
+                      {regions.map(r => (
+                        <SelectItem key={r.value} value={r.value}>{r.label}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </InlineField>
+                <InlineField label={taxCfg.postalLabel}>
+                  <Input placeholder={taxCfg.postalPlaceholder} />
+                </InlineField>
+              </div>
             </div>
           </SectionCard>
 
@@ -440,13 +446,15 @@ export default function AddNewClient() {
                     <Input type="email" placeholder="contact@company.com" />
                   </InlineField>
                 </div>
-                <div className="mt-5 pt-5 border-t border-border/50 space-y-4 max-w-[50%]">
-                  <InlineField label="Cell Phone">
-                    <Input placeholder="+1 (555) 000-0000" />
-                  </InlineField>
-                  <InlineField label="Business Phone">
-                    <Input placeholder="+1 (555) 000-0000" />
-                  </InlineField>
+                <div className="mt-5 pt-5 border-t border-border/50">
+                  <div className="space-y-4 max-w-[50%]">
+                    <InlineField label="Cell Phone">
+                      <Input placeholder="+1 (555) 000-0000" />
+                    </InlineField>
+                    <InlineField label="Business Phone">
+                      <Input placeholder="+1 (555) 000-0000" />
+                    </InlineField>
+                  </div>
                 </div>
               </SectionCard>
 
@@ -487,7 +495,8 @@ export default function AddNewClient() {
                 </div>
 
                 {/* Sales tax registration */}
-                <div className="mt-5 pt-5 border-t border-border/50 space-y-4 max-w-[50%]">
+                <div className="mt-5 pt-5 border-t border-border/50">
+                  <div className="space-y-4 max-w-[50%]">
                   <InlineField label={taxCfg.salesTaxLabel} hint="Informational — helps with sales tax treatment in future engagements.">
                     <Select value={gstRegistered} onValueChange={setGstRegistered}>
                       <SelectTrigger><SelectValue placeholder="Select" /></SelectTrigger>
@@ -502,6 +511,7 @@ export default function AddNewClient() {
                       <Input placeholder={taxCfg.salesTaxNumberPlaceholder} />
                     </InlineField>
                   )}
+                  </div>
                 </div>
 
               </SectionCard>
