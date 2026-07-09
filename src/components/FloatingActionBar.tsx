@@ -170,6 +170,29 @@ export function FloatingActionBar({
 
   const sections = checklist?.sections || [];
 
+  // Track which section is currently in view for TOC highlighting
+  useEffect(() => {
+    if (!isChecklist || sections.length === 0) return;
+    const computeActive = () => {
+      let currentId: string | null = null;
+      let bestTop = -Infinity;
+      for (const s of sections) {
+        const el = document.getElementById(`checklist-section-${s.id}`);
+        if (!el) continue;
+        const top = el.getBoundingClientRect().top - 180;
+        if (top <= 0 && top > bestTop) {
+          bestTop = top;
+          currentId = s.id;
+        }
+      }
+      if (!currentId && sections[0]) currentId = sections[0].id;
+      setActiveSectionId(currentId);
+    };
+    computeActive();
+    window.addEventListener('scroll', computeActive, { passive: true });
+    return () => window.removeEventListener('scroll', computeActive);
+  }, [isChecklist, sections]);
+
   const jumpToSection = (sectionId: string) => {
     if (checklist) {
       const target = checklist.sections.find((s) => s.id === sectionId);
