@@ -892,16 +892,18 @@ export default function CreateEngagement() {
                     </SelectContent>
                   </Select>
                 </InlineRow>
-                <InlineRow label="Additional Disclosures" required>
-                  <Select value={additionalDisclosures} onValueChange={setAdditionalDisclosures}>
-                    <SelectTrigger className="h-9 text-sm"><SelectValue placeholder="Select..." /></SelectTrigger>
-                    <SelectContent>
-                      {(isAudit ? AUDIT_DISCLOSURE_OPTIONS.map(o => ({ value: o.label, label: o.label })) : disclosureOptions).map(o =>
-                        <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>
-                      )}
-                    </SelectContent>
-                  </Select>
-                </InlineRow>
+                {!isAudit && (
+                  <InlineRow label="Additional Disclosures" required>
+                    <Select value={additionalDisclosures} onValueChange={setAdditionalDisclosures}>
+                      <SelectTrigger className="h-9 text-sm"><SelectValue placeholder="Select..." /></SelectTrigger>
+                      <SelectContent>
+                        {disclosureOptions.map(o =>
+                          <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>
+                        )}
+                      </SelectContent>
+                    </Select>
+                  </InlineRow>
+                )}
               </SectionCard>
 
               <SectionCard icon={<Calendar className="h-5 w-5" />} title="Engagement Period">
@@ -1022,19 +1024,6 @@ export default function CreateEngagement() {
                         )}
                       </div>
 
-                      {/* PERIOD SETTINGS — only when interim period selected */}
-                      {periodType === "Interim (6-month)" && (
-                        <div className="px-5 pt-4 pb-3 space-y-3">
-                          <p className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground/60">Period Settings</p>
-                          <div className="flex items-start justify-between gap-3">
-                            <div>
-                              <p className="text-sm text-foreground leading-snug">Annualize income statement data?</p>
-                              <p className="text-xs text-muted-foreground mt-0.5">Extrapolates 6-month figures to full-year equivalent.</p>
-                            </div>
-                            <BoolToggle value={annualizeInterim} onChange={setAnnualizeInterim} />
-                          </div>
-                        </div>
-                      )}
                     </div>
                   ) : (
                     <div className="px-5 py-8 text-center">
