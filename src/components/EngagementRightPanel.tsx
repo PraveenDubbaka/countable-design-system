@@ -433,6 +433,8 @@ export function EngagementRightPanel({ className }: EngagementRightPanelProps) {
                 context={docRequestCtx}
                 onBack={() => { setMode('folders'); setActiveItem('folders'); }}
               />
+            ) : activeItem === 'sections' ? (
+              <SectionsTOCView />
             ) : (
               <>
                 {/* Header */}
