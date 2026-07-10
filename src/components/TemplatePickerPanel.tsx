@@ -19,6 +19,7 @@ function TreeNodes({
   expanded,
   toggle,
   onSelect,
+  suggestedTemplateId,
 }: {
   items: TreeItem[];
   depth: number;
@@ -26,6 +27,7 @@ function TreeNodes({
   expanded: Set<string>;
   toggle: (id: string) => void;
   onSelect: (id: string, name: string) => void;
+  suggestedTemplateId?: string;
 }) {
   return (
     <>
@@ -45,12 +47,13 @@ function TreeNodes({
                 <span className="truncate flex-1">{item.label}</span>
               </div>
               {isOpen && item.children && (
-                <TreeNodes items={item.children} depth={depth + 1} search={search} expanded={expanded} toggle={toggle} onSelect={onSelect} />
+                <TreeNodes items={item.children} depth={depth + 1} search={search} expanded={expanded} toggle={toggle} onSelect={onSelect} suggestedTemplateId={suggestedTemplateId} />
               )}
             </div>
           );
         }
         if (search && !item.label.toLowerCase().includes(search)) return null;
+        const isSuggested = suggestedTemplateId ? item.id === suggestedTemplateId : item.suggested;
         return (
           <div
             key={item.id}
@@ -59,7 +62,12 @@ function TreeNodes({
             onClick={() => onSelect(item.id, item.label)}
           >
             <ChecklistIcon className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
-            <span className="truncate">{item.label}</span>
+            <span className="truncate flex-1">{item.label}</span>
+            {isSuggested && (
+              <span className="shrink-0 rounded-full bg-primary/10 text-primary text-[10px] px-1.5 py-0.5 font-medium">
+                Suggested
+              </span>
+            )}
           </div>
         );
       })}
@@ -71,10 +79,12 @@ export function TemplatePickerPanel({
   open,
   onClose,
   onSelect,
+  suggestedTemplateId,
 }: {
   open: boolean;
   onClose: () => void;
   onSelect: (id: string, name: string) => void;
+  suggestedTemplateId?: string;
 }) {
   const [tab, setTab] = useState<"global" | "my">("global");
   const [search, setSearch] = useState("");
@@ -130,7 +140,7 @@ export function TemplatePickerPanel({
 
       <div className="flex-1 overflow-y-auto p-2">
         {tab === "global" ? (
-          <TreeNodes items={templateTree} depth={0} search={q} expanded={expanded} toggle={toggle} onSelect={(id, name) => { onSelect(id, name); onClose(); }} />
+          <TreeNodes items={templateTree} depth={0} search={q} expanded={expanded} toggle={toggle} onSelect={(id, name) => { onSelect(id, name); onClose(); }} suggestedTemplateId={suggestedTemplateId} />
         ) : myTemplates.length === 0 ? (
           <p className="text-sm text-muted-foreground text-center py-8">No custom templates yet</p>
         ) : (

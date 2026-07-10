@@ -1130,6 +1130,14 @@ export default function CreateEngagement() {
           <TemplatePickerPanel
             open={showTemplatePicker}
             onClose={() => setShowTemplatePicker(false)}
+            suggestedTemplateId={
+              isAudit && accountingStandards.includes("ASNPO") ? "audit5101" :
+              isAudit && accountingStandards.includes("US GAAP") ? "audit6100" :
+              isAudit ? "audit5100" :
+              engagementType.includes("Compilation") ? "comp4200" :
+              engagementType.includes("Review") ? "rev2400" :
+              undefined
+            }
             onSelect={(id, name) => {
               setTemplateId(id);
               setEngagementTemplate(name);
