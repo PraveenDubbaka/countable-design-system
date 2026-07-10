@@ -17,6 +17,14 @@ const INDUSTRIES = [
   "Hospitality & Tourism", "Manufacturing", "Mining & Resources", "Not-for-Profit",
   "Oil & Gas", "Professional Services", "Retail & Consumer", "Technology", "Transportation & Logistics",
 ];
+const SPECIAL_PURPOSE_FRAMEWORKS = [
+  "CAS 3853 — NTR / Compilation Engagement",
+  "CAS 805 — Single-Element, Account, or Item Audit",
+  "CAS 3856 — Financial Instruments (Special Purpose)",
+  "Compliance / Regulatory Basis",
+  "Contractual Basis of Accounting",
+  "Other Special Purpose Framework",
+];
 const ACCOUNTING_FRAMEWORKS = [
   "ASPE — Canadian Accounting Standards for Private Enterprises",
   "IFRS — International Financial Reporting Standards",
@@ -618,8 +626,10 @@ export default function CreateEngagement() {
       setPeriodType("Full year");
       setAdditionalDisclosures("Statement of cash flows");
       setAdditionalDisclosuresSet(new Set());
+      setSpecialPurposeFramework("");
     }
   }, [isAudit]);
+  const [specialPurposeFramework, setSpecialPurposeFramework] = useState("");
   const [condensedForms, setCondensedForms] = useState(false);
   const [firstYearAudit, setFirstYearAudit] = useState(false);
   const [firstYearOnPlatform, setFirstYearOnPlatform] = useState("");
@@ -882,6 +892,16 @@ export default function CreateEngagement() {
                     </SelectContent>
                   </Select>
                 </InlineRow>
+                {isAudit && (
+                  <InlineRow label="Special Purpose Framework">
+                    <Select value={specialPurposeFramework} onValueChange={setSpecialPurposeFramework}>
+                      <SelectTrigger className="h-9 text-sm"><SelectValue placeholder="Select if applicable..." /></SelectTrigger>
+                      <SelectContent>
+                        {SPECIAL_PURPOSE_FRAMEWORKS.map(fw => <SelectItem key={fw} value={fw}>{fw}</SelectItem>)}
+                      </SelectContent>
+                    </Select>
+                  </InlineRow>
+                )}
                 {!isAudit && (
                   <InlineRow label="Additional Disclosures" required>
                     <Select value={additionalDisclosures} onValueChange={setAdditionalDisclosures}>
