@@ -8,6 +8,7 @@ import { Plus, Trash2, Info } from "lucide-react";
 import { RefButton, RefDoc } from "@/components/RefButton";
 import { readJsonFromLocalStorage, writeJsonToLocalStorage } from "@/lib/safeJson";
 import { cn } from "@/lib/utils";
+import { buildAutoFillRows, mergeAutoFill } from "@/lib/audit520AutoFill";
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -146,25 +147,29 @@ export function Audit520Worksheet() {
 
   const [data, setData] = useState<Data520>(() => {
     const saved = readJsonFromLocalStorage<Data520 | null>(storageKey, null);
-    if (!saved) return buildDefault();
     const toRefDocs = (v: unknown): RefDoc[] => {
       if (Array.isArray(v)) return v as RefDoc[];
       if (typeof v === "string" && v) return [{ name: v }];
       return [];
     };
-    const migrated: Data520 = {
-      ...saved,
-      partARows: saved.partARows.map(r => ({
-        ...r,
-        wpRefSource: toRefDocs(r.wpRefSource),
-        wpRef: toRefDocs(r.wpRef),
-      })),
-      partBRows: saved.partBRows.map(r => ({
-        ...r,
-        wpRefSource: toRefDocs(r.wpRefSource),
-      })),
-    };
-    return { ...buildDefault(), ...migrated };
+    const base: Data520 = saved
+      ? {
+          ...buildDefault(),
+          ...saved,
+          partARows: saved.partARows.map(r => ({
+            ...r,
+            wpRefSource: toRefDocs(r.wpRefSource),
+            wpRef: toRefDocs(r.wpRef),
+          })),
+          partBRows: saved.partBRows.map(r => ({
+            ...r,
+            wpRefSource: toRefDocs(r.wpRefSource),
+          })),
+        }
+      : buildDefault();
+    const auto = buildAutoFillRows(engagementId ?? "default");
+    const merged = mergeAutoFill(base, auto);
+    return { ...base, ...merged } as Data520;
   });
 
   const firstRender = useRef(true);
