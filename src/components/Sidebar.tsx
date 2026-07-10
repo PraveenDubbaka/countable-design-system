@@ -1881,19 +1881,19 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
                       {
                         id: "aud-ra-gather", code: "GI", label: "Gather Information", icon: "folder",
                         children: [
-                          { id: "aud-ra-oi",      code: "500",   label: "Observation & Inspection", icon: "checklist", route: "checklist/aud-ra-oi" },
-                          { id: "aud-ra-pap501a", code: "501-A", label: "Preliminary Analytical",   icon: "checklist", route: "checklist/aud-ra-pap501a" },
-                          { id: "aud-ra-505",     code: "505",   label: "Mgmt Inquiries",                      icon: "checklist", route: "checklist/aud-ra-505" },
-                          { id: "aud-ra-507",     code: "507",   label: "Governance Minutes",                  icon: "worksheet", route: "checklist/aud-ra-507" },
-                          { id: "aud-ra-510",     code: "510",   label: "Entity Understanding",                icon: "worksheet", route: "checklist/aud-ra-510" },
-                          { id: "aud-ra-511",     code: "511",   label: "IT Environment",                      icon: "worksheet", route: "checklist/aud-ra-511" },
-                          { id: "aud-ra-514",     code: "514",   label: "Prior Period Estimates",              icon: "worksheet", route: "checklist/aud-ra-514" },
+                          { id: "aud-ra-oi",       code: "500",   label: "Observation & Inspection", icon: "checklist", route: "checklist/aud-ra-oi" },
+                          { id: "aud-ra-pap501a",  code: "501-A", label: "Preliminary Analytical",   icon: "checklist", route: "checklist/aud-ra-pap501a" },
+                          { id: "aud-ra-pap501bc", code: "501-B", label: "Preliminary Analytical",   icon: "worksheet", route: "checklist/aud-ra-pap501bc" },
+                          { id: "aud-ra-505",      code: "505",   label: "Mgmt Inquiries",           icon: "checklist", route: "checklist/aud-ra-505" },
+                          { id: "aud-ra-507",      code: "507",   label: "Governance Minutes",       icon: "worksheet", route: "checklist/aud-ra-507" },
+                          { id: "aud-ra-510",      code: "510",   label: "Entity Understanding",     icon: "worksheet", route: "checklist/aud-ra-510" },
+                          { id: "aud-ra-511",      code: "511",   label: "IT Environment",           icon: "worksheet", route: "checklist/aud-ra-511" },
+                          { id: "aud-ra-514",      code: "514",   label: "Prior Period Estimates",   icon: "worksheet", route: "checklist/aud-ra-514" },
                         ]
                       },
                       {
                         id: "aud-ra-identify", code: "IR", label: "Identify Risk", icon: "folder",
                         children: [
-                          { id: "aud-ra-pap501bc", code: "501-B", label: "Preliminary Analytical", icon: "worksheet", route: "checklist/aud-ra-pap501bc" },
                           { id: "aud-ra-506",      code: "506",   label: "Fraud",                              icon: "worksheet", route: "checklist/aud-ra-506" },
                           { id: "aud-ra-513",      code: "513",   label: "Accounting Estimates",               icon: "worksheet", route: "checklist/aud-ra-513" },
                           { id: "aud-ra-515",      code: "515",   label: "Related Parties",                   icon: "worksheet", route: "checklist/aud-ra-515" },
