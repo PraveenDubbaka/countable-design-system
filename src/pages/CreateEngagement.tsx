@@ -583,7 +583,7 @@ export default function CreateEngagement() {
   const [engagementId, setEngagementId] = useState(prefillIsAudit ? "AUD-HFL-Mar312024" : "REV-DEF-Nov302023");
   const [engagementTemplate, setEngagementTemplate] = useState(prefillIsAudit ? "CAS Audit" : "Review Section 2400");
   const [budget, setBudget] = useState("10000.00");
-  const [accountingStandards, setAccountingStandards] = useState(prefillIsAudit ? "CAS (Canadian Auditing Standards)" : "Section 2400 Review standards");
+  const [accountingStandards, setAccountingStandards] = useState(prefillIsAudit ? "" : "Section 2400 Review standards");
   const [additionalDisclosures, setAdditionalDisclosures] = useState(prefillIsAudit ? "Full financial statements" : "Statement of cash flows");
 
   // Engagement Period state
@@ -618,7 +618,6 @@ export default function CreateEngagement() {
       setAdditionalDisclosuresSet(new Set());
     }
   }, [isAudit]);
-  const [accountingFramework, setAccountingFramework] = useState("");
   const [condensedForms, setCondensedForms] = useState(false);
   const [firstYearAudit, setFirstYearAudit] = useState(false);
   const [firstYearOnPlatform, setFirstYearOnPlatform] = useState("");
@@ -692,17 +691,7 @@ export default function CreateEngagement() {
   ];
 
   const accountingStandardsOptions = isAudit
-    ? [
-        { value: "CAS (Canadian Auditing Standards)", label: "CAS (Canadian Auditing Standards)" },
-        { value: "ISA (International Standards on Auditing)", label: "ISA (International Standards on Auditing)" },
-        { value: "GAAS (US Generally Accepted Auditing Standards)", label: "GAAS (US Generally Accepted Auditing Standards)" },
-        { value: "PCAOB Standards", label: "PCAOB Standards" },
-        { value: "CPA Canada Handbook — Assurance", label: "CPA Canada Handbook — Assurance" },
-        { value: "CSAE 3000 — Attestation Engagements", label: "CSAE 3000 — Attestation Engagements" },
-        { value: "CSAE 3001 — Direct Engagements", label: "CSAE 3001 — Direct Engagements" },
-        { value: "CSAE 3410 — Greenhouse Gas Statements", label: "CSAE 3410 — Greenhouse Gas Statements" },
-        { value: "AICPA Statements on Auditing Standards (SAS)", label: "AICPA Statements on Auditing Standards (SAS)" },
-      ]
+    ? ACCOUNTING_FRAMEWORKS.map(fw => ({ value: fw, label: fw }))
     : [
         { value: "Section 2400 Review standards", label: "Section 2400 Review standards" },
         { value: "CSRE 2400 — Review of Historical Financial Statements", label: "CSRE 2400 — Review of Historical Financial Statements" },
@@ -746,7 +735,6 @@ export default function CreateEngagement() {
     budget.trim() !== "" &&
     accountingStandards !== "" &&
     additionalDisclosures !== "" &&
-    (!isAudit || accountingFramework !== "") &&
     currentYearStart.trim() !== "" &&
     currentYearEnd.trim() !== "" &&
     teamMembers.length > 0;
@@ -770,7 +758,7 @@ export default function CreateEngagement() {
       firstYearOnPlatform: firstYearAudit ? firstYearOnPlatform : undefined,
       isRollForward: firstYearAudit ? isRollForward : undefined,
       firstYearTemplates: firstYearAudit ? [...firstYearTemplates] : undefined,
-      accountingFramework: isAudit ? accountingFramework : undefined,
+      accountingFramework: isAudit ? accountingStandards : undefined,
       accountingStandards,
       budget,
       periodStart: currentYearStart,
@@ -947,19 +935,6 @@ export default function CreateEngagement() {
                       <h3 className="text-sm font-semibold text-foreground">Audit Configuration</h3>
                     </div>
                     <p className="text-xs text-muted-foreground mt-0.5">Answer each question to configure your engagement.</p>
-                  </div>
-
-                  {/* Accounting Framework — always visible */}
-                  <div className="px-5 py-4 border-b border-border/60">
-                    <label className="text-xs font-medium text-foreground block mb-1.5">
-                      Accounting Framework<span className="text-destructive ml-0.5">*</span>
-                    </label>
-                    <Select value={accountingFramework} onValueChange={setAccountingFramework}>
-                      <SelectTrigger className="h-9 text-sm"><SelectValue placeholder="Select..." /></SelectTrigger>
-                      <SelectContent>
-                        {ACCOUNTING_FRAMEWORKS.map(fw => <SelectItem key={fw} value={fw}>{fw}</SelectItem>)}
-                      </SelectContent>
-                    </Select>
                   </div>
 
                   {/* Questions — unlocked after engagement details filled */}
