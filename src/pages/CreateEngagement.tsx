@@ -897,7 +897,7 @@ export default function CreateEngagement() {
                 <InlineRow label="Budget ($)" required>
                   <input type="text" value={budget} onChange={e => setBudget(e.target.value)} className={ic} />
                 </InlineRow>
-                <InlineRow label="Reporting Framework" required>
+                <InlineRow label="Accounting Framework" required>
                   <Select value={accountingStandards} onValueChange={setAccountingStandards}>
                     <SelectTrigger className="h-9 text-sm"><SelectValue placeholder="Select..." /></SelectTrigger>
                     <SelectContent>
