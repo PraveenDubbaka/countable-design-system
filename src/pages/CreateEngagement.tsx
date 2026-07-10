@@ -583,11 +583,11 @@ export default function CreateEngagement() {
   const [engagementId, setEngagementId] = useState(prefillIsAudit ? "AUD-HFL-Mar312024" : "REV-DEF-Nov302023");
   const [engagementTemplate, setEngagementTemplate] = useState(prefillIsAudit ? "CAS Audit" : "Review Section 2400");
   const [budget, setBudget] = useState("10000.00");
-  const [accountingStandards, setAccountingStandards] = useState(prefillIsAudit ? "" : "Section 2400 Review standards");
+  const [accountingStandards, setAccountingStandards] = useState(prefillIsAudit ? "ASPE — Canadian Accounting Standards for Private Enterprises" : "Section 2400 Review standards");
   const [additionalDisclosures, setAdditionalDisclosures] = useState(prefillIsAudit ? "Full financial statements" : "Statement of cash flows");
 
   // Engagement Period state
-  const [periodType, setPeriodType] = useState("Full year");
+  const [periodType, setPeriodType] = useState(prefillIsAudit ? "Full Year" : "Full year");
   const [currentYearStart, setCurrentYearStart] = useState("12/01/2022");
   const [currentYearEnd, setCurrentYearEnd] = useState("11/30/2023");
   const [priorYear1Start, setPriorYear1Start] = useState("12/01/2021");
@@ -607,13 +607,15 @@ export default function CreateEngagement() {
     if (isAudit) {
       setEngagementId("AUD-HFL-Mar312024");
       setEngagementTemplate("CAS Audit");
-      setAccountingStandards("CAS (Canadian Auditing Standards)");
+      setAccountingStandards("ASPE — Canadian Accounting Standards for Private Enterprises");
+      setPeriodType("Full Year");
       setAdditionalDisclosures("");
       setAdditionalDisclosuresSet(new Set());
     } else {
       setEngagementId("REV-DEF-Nov302023");
       setEngagementTemplate("Review Section 2400");
       setAccountingStandards("Section 2400 Review standards");
+      setPeriodType("Full year");
       setAdditionalDisclosures("Statement of cash flows");
       setAdditionalDisclosuresSet(new Set());
     }
@@ -900,7 +902,7 @@ export default function CreateEngagement() {
                   <span className="text-sm text-foreground w-32 shrink-0 whitespace-nowrap">Period Type<span className="text-destructive ml-0.5">*</span></span>
                   <div className="flex-1 min-w-0 max-w-sm">
                     <Select value={periodType} onValueChange={setPeriodType}>
-                      <SelectTrigger className="h-9 text-sm"><SelectValue /></SelectTrigger>
+                      <SelectTrigger className="h-9 text-sm"><SelectValue placeholder="Select..." /></SelectTrigger>
                       <SelectContent>
                         {periodTypeOptions.map(o => <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>)}
                       </SelectContent>
