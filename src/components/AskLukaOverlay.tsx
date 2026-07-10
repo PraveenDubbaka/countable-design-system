@@ -1,5 +1,5 @@
 import { useState, useCallback, useRef, useEffect, useMemo } from "react";
-import { setLukaOpen } from "@/lib/lukaOpenStore";
+import { setLukaOpen, subscribeLukaConfig } from "@/lib/lukaOpenStore";
 import { loadEngagements } from "@/store/engagementsStore";
 
 import LukaActivityPanel, { type ActivityEntry } from "@/components/luka/LukaActivityPanel";
@@ -22,6 +22,7 @@ import EngagementWorkspaceShell from "@/components/luka/workspace/EngagementWork
 import LukaSettingsOverlay from "@/components/luka/LukaSettingsOverlay";
 import ReconciliationFlow from "@/components/luka/reconciliation/ReconciliationFlow";
 import TaxPayableFlow from "@/components/luka/TaxPayableFlow";
+import { PBCRequestFlow } from "@/components/luka/PBCRequestFlow";
 import {
   X,
   Menu,
@@ -58,6 +59,8 @@ import {
   ArrowRight,
   Smartphone,
   FileSpreadsheet,
+  Pencil,
+  FileText,
 } from "lucide-react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { cn } from "@/lib/utils";
@@ -552,6 +555,12 @@ const [workspaceLoading, setWorkspaceLoading] = useState(false);
   const [activeFormCommand, setActiveFormCommand] = useState<FormCommand | null>(null);
   const [formCommandPhase, setFormCommandPhase] = useState<"idle" | "analyzing" | "done" | "scraping" | "preview">("idle");
   const [uploadedFile, setUploadedFile] = useState<string | null>(null);
+
+  // PBC Request flow state
+  const [pbcThreadId, setPBCThreadId] = useState<string | null>(null);
+  const [pbcDocContent, setPBCDocContent] = useState<string>("");
+  const [pbcViewingDoc, setPBCViewingDoc] = useState<{ templateLabel: string } | null>(null);
+  const [pbcEditing, setPBCEditing] = useState(false);
   const ENGAGEMENTS = useMemo(() =>
     loadEngagements().map(e => ({
       client: e.client,
@@ -570,6 +579,30 @@ const [workspaceLoading, setWorkspaceLoading] = useState(false);
     document.addEventListener("mousedown", handler);
     return () => document.removeEventListener("mousedown", handler);
   }, [showEngagementTray]);
+
+  // React to openLukaWithConfig() calls via push subscription (works even when overlay is already open)
+  useEffect(() => {
+    return subscribeLukaConfig((config) => {
+      if (!config) return;
+      if (config.tab) setActiveTab(config.tab);
+      if (config.flow === "pbc-request") {
+        if (config.engagementId) {
+          const eng = ENGAGEMENTS.find(e => e.id === config.engagementId);
+          if (eng) setSelectedEngagement(eng);
+        }
+        const newThreadId = `pbc-${Date.now()}`;
+        const threadName = `PBC Request — ${new Date().toLocaleDateString()}`;
+        setRecentThreads(prev => [{ name: threadName, createdAt: new Date() }, ...prev]);
+        setPBCThreadId(newThreadId);
+        setPBCViewingDoc(null);
+        setPBCEditing(false);
+        setPBCDocContent("");
+        setActiveFlow("pbc-request");
+        setIsFullscreen(false);
+        setThreadsSidebarCollapsed(true);
+      }
+    });
+  }, []);
 
 
   // Connector definitions - stateful
@@ -1142,7 +1175,9 @@ const [workspaceLoading, setWorkspaceLoading] = useState(false);
             )}
 
             {/* Main area */}
-            <div className="flex-1 flex flex-col bg-card border-l relative" style={{ borderColor: "hsl(var(--border))" }}>
+            <div className={cn("bg-card border-l relative flex", pbcViewingDoc ? "flex-row flex-1" : "flex-1 flex-col")} style={{ borderColor: "hsl(var(--border))" }}>
+            {/* Chat column — shrinks to 40% when doc viewer is open */}
+            <div className={cn("flex flex-col", pbcViewingDoc ? "w-[40%] border-r border-border shrink-0" : "flex-1")} style={pbcViewingDoc ? { borderColor: "hsl(var(--border))" } : undefined}>
               {/* Header */}
               <div className="flex items-center gap-3 px-4 py-3 border-b" style={{ borderColor: "hsl(var(--border))" }}>
                 {/* Left controls — hamburger when threads sidebar collapsed, spacer otherwise for visual balance */}
@@ -1574,6 +1609,24 @@ const [workspaceLoading, setWorkspaceLoading] = useState(false);
                           setFormCommandPhase("idle");
                           setUploadedFile(null);
                           setIsFullscreen(false);
+                        }}
+                      />
+                    ) : activeFlow === "pbc-request" && pbcThreadId ? (
+                      <PBCRequestFlow
+                        engagementId={selectedEngagement?.id ?? "default"}
+                        clientName={selectedEngagement?.client ?? ""}
+                        yearEnd={selectedEngagement?.yearEnd ?? ""}
+                        threadId={pbcThreadId}
+                        onViewDoc={(content, templateLabel) => {
+                          setPBCDocContent(content);
+                          setPBCViewingDoc({ templateLabel });
+                          setIsFullscreen(true);
+                        }}
+                        onSentToPortal={() => {
+                          // notification dispatched inside PBCRequestFlow
+                        }}
+                        onApplyResponses={(responses) => {
+                          window.dispatchEvent(new CustomEvent("pbc-apply-responses", { detail: responses }));
                         }}
                       />
                     ) : allTemplateSummary ? (
@@ -2489,6 +2542,67 @@ const [workspaceLoading, setWorkspaceLoading] = useState(false);
                 isFullscreen={isFullscreen}
                 isMinimized={isMinimized}
               />
+            </div>
+            {/* Document viewer panel — rendered beside chat when user clicks "View Document" in PBC flow */}
+            {pbcViewingDoc && (
+              <div className="flex-1 flex flex-col overflow-hidden border-l" style={{ borderColor: "hsl(var(--border))" }}>
+                <div className="flex items-center justify-between px-4 py-2 border-b shrink-0" style={{ borderColor: "hsl(var(--border))" }}>
+                  <div className="flex items-center gap-2 min-w-0">
+                    <FileText className="h-4 w-4 text-primary shrink-0" />
+                    <span className="text-sm font-semibold truncate">{pbcViewingDoc.templateLabel}</span>
+                  </div>
+                  {!pbcEditing ? (
+                    <button
+                      onClick={() => setPBCEditing(true)}
+                      className="inline-flex items-center gap-1.5 text-xs px-2.5 py-1 rounded-md border border-border bg-background hover:bg-muted transition-colors"
+                    >
+                      <Pencil className="h-3 w-3" /> Edit
+                    </button>
+                  ) : (
+                    <div className="flex items-center gap-2">
+                      <button
+                        onClick={() => setPBCEditing(false)}
+                        className="text-xs px-2.5 py-1 rounded-md border border-border bg-background hover:bg-muted transition-colors"
+                      >
+                        Cancel
+                      </button>
+                      <button
+                        onClick={() => setPBCEditing(false)}
+                        className="text-xs px-2.5 py-1 rounded-md bg-primary text-white hover:bg-primary/90 transition-colors"
+                      >
+                        Save
+                      </button>
+                    </div>
+                  )}
+                </div>
+                <div className="flex-1 overflow-auto p-4">
+                  {pbcEditing ? (
+                    <textarea
+                      className="w-full h-full min-h-[400px] font-mono text-sm p-2 border border-border rounded resize-none bg-background focus:outline-none"
+                      value={pbcDocContent}
+                      onChange={(e) => setPBCDocContent(e.target.value)}
+                    />
+                  ) : (
+                    <pre className="whitespace-pre-wrap text-sm font-mono leading-relaxed">{pbcDocContent}</pre>
+                  )}
+                </div>
+                {pbcEditing && (
+                  <div className="border-t px-4 py-3 flex gap-2 shrink-0" style={{ borderColor: "hsl(var(--border))" }}>
+                    <button
+                      onClick={() => setPBCEditing(false)}
+                      className="text-xs px-3 py-1.5 rounded-md bg-primary text-white hover:bg-primary/90 transition-colors"
+                    >
+                      Save Changes
+                    </button>
+                    <button
+                      className="text-xs px-3 py-1.5 rounded-md border border-border bg-background hover:bg-muted transition-colors"
+                    >
+                      Send to Portal
+                    </button>
+                  </div>
+                )}
+              </div>
+            )}
             </div>
           </motion.div>
         </>

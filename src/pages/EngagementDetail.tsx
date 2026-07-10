@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo, useCallback, useRef } from "react";
 import { useParams, useNavigate, useSearchParams } from "react-router-dom";
-import { ChevronRight, ChevronDown, Landmark, FileText, Triangle, FileSpreadsheet, PencilLine, Pencil, Settings2, Download, FileType, Share2, Save, RefreshCw, Trash2, Building2, Calendar, Check, AlertTriangle, Loader2, History, Upload, FileUp, Bell, Plus, X, LayoutGrid, CheckCircle2, PlugZap, Zap, Play, Square, ClipboardList, UserPlus, UploadCloud, FileCheck2, ExternalLink, Maximize2, Minimize2, Minus } from "lucide-react";
+import { ChevronRight, ChevronDown, Landmark, FileText, Triangle, FileSpreadsheet, PencilLine, Pencil, Settings2, Download, FileType, Share2, Save, RefreshCw, Trash2, Building2, Calendar, Check, AlertTriangle, Loader2, History, Upload, FileUp, Bell, Plus, X, LayoutGrid, CheckCircle2, PlugZap, Zap, Play, Square, ClipboardList, UserPlus, UploadCloud, FileCheck2, ExternalLink, Maximize2, Minimize2, Minus, SendHorizontal } from "lucide-react";
 import { ExpandableIconButton } from "@/components/ui/expandable-icon-button";
 import { ChecklistIcon } from "@/components/icons/ChecklistIcon";
 import { Button } from "@/components/ui/button";
@@ -59,6 +59,8 @@ import { Assignee, Checklist, Question } from "@/types/checklist";
 import { useChecklistAssignments } from "@/hooks/useChecklistAssignments";
 import { AssignmentDialog } from "@/components/AssignmentDialog";
 import { readJsonFromLocalStorage, writeJsonToLocalStorage } from "@/lib/safeJson";
+import { openLukaWithConfig } from "@/lib/lukaOpenStore";
+import { clearPBCNotifications, getPBCNotificationCount } from "@/lib/pbcRequestStore";
 import { subscribeToChecklistSync, dispatchChecklistSync } from "@/lib/checklistSync";
 import { toast } from "sonner";
 import { ShareWithClientDialog } from "@/components/ShareWithClientDialog";
@@ -850,6 +852,9 @@ export default function EngagementDetail() {
     engagementLabel?: string;
   } | null>(null);
   const [lukaAutoFillProgress, setLukaAutoFillProgress] = useState<AutoFillProgressItem[] | null>(null);
+  const [pbcNotificationCount, setPBCNotificationCount] = useState(() =>
+    engagementId ? getPBCNotificationCount(engagementId) : 0
+  );
   // ── Global timer ────────────────────────────────────────────────────────────
   const [globalTimerSec, setGlobalTimerSec]         = useState(0);
   const [globalTimerRunning, setGlobalTimerRunning] = useState(false);
@@ -873,6 +878,17 @@ export default function EngagementDetail() {
     window.addEventListener('navigate-to-notes', handler);
     return () => window.removeEventListener('navigate-to-notes', handler);
   }, [engagementId, checklistKey, navigate]);
+
+  useEffect(() => {
+    const handler = (e: Event) => {
+      const detail = (e as CustomEvent).detail as { engagementId: string };
+      if (detail.engagementId === engagementId) {
+        setPBCNotificationCount(getPBCNotificationCount(engagementId!));
+      }
+    };
+    window.addEventListener('pbc-notification-update', handler);
+    return () => window.removeEventListener('pbc-notification-update', handler);
+  }, [engagementId]);
 
   useEffect(() => {
     const handler = (e: Event) => {
@@ -1888,6 +1904,28 @@ export default function EngagementDetail() {
                 </h1>
               </div>
               <div className="flex items-center gap-1">
+                <div className="relative">
+                  <ExpandableIconButton
+                    variant="secondary"
+                    size="sm"
+                    icon={<SendHorizontal className="h-4 w-4" />}
+                    label="Request"
+                    onClick={() => {
+                      if (pbcNotificationCount > 0 && engagementId) {
+                        clearPBCNotifications(engagementId);
+                        setPBCNotificationCount(0);
+                      }
+                      if (engagementId) {
+                        openLukaWithConfig({ tab: 'threads', flow: 'pbc-request', engagementId });
+                      }
+                    }}
+                  />
+                  {pbcNotificationCount > 0 && (
+                    <span className="absolute -top-1 -right-1 h-4 w-4 rounded-full bg-red-500 text-white text-[10px] font-bold flex items-center justify-center pointer-events-none z-10">
+                      {pbcNotificationCount}
+                    </span>
+                  )}
+                </div>
                 <ExpandableIconButton
                   variant="secondary"
                   size="sm"

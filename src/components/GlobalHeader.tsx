@@ -12,12 +12,13 @@ import { Input as SearchInput } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { SettingsPanel } from "@/components/SettingsPanel";
 import { AskLukaOverlay } from "@/components/AskLukaOverlay";
+import { subscribeLukaOpen, getLukaOpen, setLukaOpen } from "@/lib/lukaOpenStore";
 
 export function GlobalHeader({ title, headerContent }: { title?: string; headerContent?: React.ReactNode }) {
   const { isDarkMode, toggleTheme } = useThemeContext();
   const [askLukaQuery, setAskLukaQuery] = useState("");
   const [settingsOpen, setSettingsOpen] = useState(false);
-  const [askLukaOpen, setAskLukaOpen] = useState(false);
+  const [askLukaOpen, setAskLukaOpen] = useState(() => getLukaOpen());
   const [notificationsEnabled, setNotificationsEnabled] = useState(true);
   const [notifSearch, setNotifSearch] = useState("");
   const [notifOpen, setNotifOpen] = useState(false);
@@ -38,6 +39,10 @@ export function GlobalHeader({ title, headerContent }: { title?: string; headerC
     root.classList.add(`font-size-${fontSize.toLowerCase()}`);
     localStorage.setItem('luka-font-size', fontSize);
   }, [fontSize]);
+
+  useEffect(() => {
+    return subscribeLukaOpen((open) => setAskLukaOpen(open));
+  }, []);
 
   const cycleFontSize = () => {
     setFontSize(prev => {
@@ -286,7 +291,7 @@ export function GlobalHeader({ title, headerContent }: { title?: string; headerC
       <SettingsPanel open={settingsOpen} onOpenChange={setSettingsOpen} />
 
       {/* Ask Luka Overlay */}
-      <AskLukaOverlay open={askLukaOpen} onOpenChange={setAskLukaOpen} />
+      <AskLukaOverlay open={askLukaOpen} onOpenChange={(o) => { setAskLukaOpen(o); setLukaOpen(o); }} />
     </>
   );
 }
