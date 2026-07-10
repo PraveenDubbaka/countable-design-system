@@ -892,7 +892,7 @@ export default function CreateEngagement() {
                     </SelectContent>
                   </Select>
                 </InlineRow>
-                {isAudit && (
+                {isAudit && accountingStandards === "IFRS for SMEs" && (
                   <InlineRow label="Special Purpose Framework">
                     <Select value={specialPurposeFramework} onValueChange={setSpecialPurposeFramework}>
                       <SelectTrigger className="h-9 text-sm"><SelectValue placeholder="Select if applicable..." /></SelectTrigger>
