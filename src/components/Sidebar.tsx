@@ -2,7 +2,7 @@ import { useState, useEffect, useRef, useCallback } from "react";
 import { createPortal } from "react-dom";
 import { useNavigate, useLocation, useSearchParams } from "react-router-dom";
 import { ChevronDown, ChevronRight, ChevronLeft, Search, Plus, Expand, Trash2, Folder, Headphones, Check, FileText, FileBarChart, NotebookPen, Table, Copy, Pencil, FolderInput, MoreVertical, GripVertical, X, Save, Files, Send, AlertCircle, MessageSquare, FilePlus2, FolderPlus, ArrowUpDown, Upload, Image, Download, Move } from "lucide-react";
-import { templateTree, allTemplateViews, type TreeItem } from "@/lib/engagementTemplatesData";
+import { templateTree, allTemplateViews, type TreeItem, TEMPLATE_CONFIG } from "@/lib/engagementTemplatesData";
 import { FolderSolidIcon, FolderPlusIcon, FolderMinusIcon } from "@/components/icons/FolderIcons";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -1688,14 +1688,13 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
                 };
 
                 const engId = location.pathname.split("/engagements/")[1]?.split("/")[0];
-                const isUSAuditEngagement = engId === "AUD-US-Dec312024" || (engId?.startsWith("AUD-") && engId?.includes("-US-"));
-                const isAuditEngagement = engId?.startsWith("AUD-");
-                const engFirstYear = (() => {
-                  try {
-                    const raw = engId ? localStorage.getItem(`engagement-meta-${engId}`) : null;
-                    return raw ? JSON.parse(raw).firstYearAudit === true : false;
-                  } catch { return false; }
-                })();
+                const engMeta = (() => { try { const r = engId ? localStorage.getItem(`engagement-meta-${engId}`) : null; return r ? JSON.parse(r) : null; } catch { return null; } })();
+                const sidebarType = engMeta?.templateId && TEMPLATE_CONFIG[engMeta.templateId]
+                  ? TEMPLATE_CONFIG[engMeta.templateId].sidebarType
+                  : engId?.includes('-US-') ? 'audit-us' : engId?.startsWith('AUD-') ? 'audit-ca' : 'review-comp';
+                const isUSAuditEngagement = sidebarType === 'audit-us';
+                const isAuditEngagement = sidebarType === 'audit-ca' || sidebarType === 'audit-us';
+                const engFirstYear = engMeta?.firstYearAudit === true;
 
                 const usAuditEngagementTree: SectionNode[] = [
                   {

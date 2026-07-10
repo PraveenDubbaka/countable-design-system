@@ -11,6 +11,8 @@ import { Layout } from "@/components/Layout";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
+import { TemplatePickerPanel } from "@/components/TemplatePickerPanel";
+import { TEMPLATE_CONFIG } from "@/lib/engagementTemplatesData";
 
 const INDUSTRIES = [
   "Construction & Real Estate", "Financial Services", "Healthcare & Life Sciences",
@@ -596,6 +598,8 @@ export default function CreateEngagement() {
   const prefillIsAudit = (prefill.engagementType || "Review (REV)") === "Audit (AUD)";
   const [engagementId, setEngagementId] = useState(prefillIsAudit ? "AUD-HFL-Mar312024" : "REV-DEF-Nov302023");
   const [engagementTemplate, setEngagementTemplate] = useState(prefillIsAudit ? "CAS Audit" : "Review Section 2400");
+  const [templateId, setTemplateId] = useState(prefillIsAudit ? "audit5100" : "");
+  const [showTemplatePicker, setShowTemplatePicker] = useState(false);
   const [budget, setBudget] = useState("10000.00");
   const [accountingStandards, setAccountingStandards] = useState(prefillIsAudit ? "ASPE — Canadian Accounting Standards for Private Enterprises" : "Section 2400 Review standards");
   const [additionalDisclosures, setAdditionalDisclosures] = useState(prefillIsAudit ? "Full financial statements" : "Statement of cash flows");
@@ -620,21 +624,25 @@ export default function CreateEngagement() {
     if (isFirstMount.current) { isFirstMount.current = false; return; }
     if (isAudit) {
       setEngagementId("AUD-HFL-Mar312024");
-      setEngagementTemplate("CAS Audit");
-      setAccountingStandards("ASPE — Canadian Accounting Standards for Private Enterprises");
+      if (!templateId) {
+        setEngagementTemplate("CAS Audit");
+        setAccountingStandards("ASPE — Canadian Accounting Standards for Private Enterprises");
+      }
       setPeriodType("Full Year");
       setAdditionalDisclosures("");
       setAdditionalDisclosuresSet(new Set());
     } else {
       setEngagementId("REV-DEF-Nov302023");
-      setEngagementTemplate("Review Section 2400");
-      setAccountingStandards("Section 2400 Review standards");
+      if (!templateId) {
+        setEngagementTemplate("Review Section 2400");
+        setAccountingStandards("Section 2400 Review standards");
+      }
       setPeriodType("Full year");
       setAdditionalDisclosures("Statement of cash flows");
       setAdditionalDisclosuresSet(new Set());
       setSpecialPurposeFramework("");
     }
-  }, [isAudit]);
+  }, [isAudit]); // eslint-disable-line react-hooks/exhaustive-deps
   const [specialPurposeFramework, setSpecialPurposeFramework] = useState("");
 
   useEffect(() => {
@@ -783,6 +791,7 @@ export default function CreateEngagement() {
       firstYearOnPlatform: firstYearAudit ? firstYearOnPlatform : undefined,
       isRollForward: firstYearAudit ? isRollForward : undefined,
       firstYearTemplates: firstYearAudit ? [...firstYearTemplates] : undefined,
+      templateId: templateId || undefined,
       accountingFramework: isAudit ? accountingStandards : undefined,
       accountingStandards,
       budget,
@@ -883,7 +892,9 @@ export default function CreateEngagement() {
                 <InlineRow label="Template" required>
                   <div className="relative">
                     <input type="text" value={engagementTemplate} onChange={e => setEngagementTemplate(e.target.value)} className={ic + " pr-10"} />
-                    <ExternalLink className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                    <button type="button" onClick={() => setShowTemplatePicker(true)} className="absolute right-3 top-1/2 -translate-y-1/2 p-0.5 rounded hover:text-primary">
+                      <ExternalLink className="h-4 w-4 text-muted-foreground" />
+                    </button>
                   </div>
                 </InlineRow>
                 <InlineRow label="Engagement Type" required>
@@ -1115,6 +1126,20 @@ export default function CreateEngagement() {
               </SectionCard>
             )}
           </div>
+
+          <TemplatePickerPanel
+            open={showTemplatePicker}
+            onClose={() => setShowTemplatePicker(false)}
+            onSelect={(id, name) => {
+              setTemplateId(id);
+              setEngagementTemplate(name);
+              if (id && TEMPLATE_CONFIG[id]) {
+                const cfg = TEMPLATE_CONFIG[id];
+                setEngagementType(cfg.engagementTypeLabel);
+                setAccountingStandards(cfg.defaultFramework);
+              }
+            }}
+          />
 
           {/* Footer Actions */}
           <div className="flex items-center justify-end gap-3 mt-6 pb-6">

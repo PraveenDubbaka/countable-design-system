@@ -2150,3 +2150,18 @@ export const allTemplateViews: Record<string, TemplateView> = {
   "tax-t1": taxT1,
   "tax-t2": taxT2,
 };
+
+export type TemplateSidebarType = 'audit-ca' | 'audit-us' | 'review-comp';
+
+export const TEMPLATE_CONFIG: Record<string, {
+  sidebarType: TemplateSidebarType;
+  defaultFramework: string;
+  engagementTypeLabel: string;
+}> = {
+  'audit5100': { sidebarType: 'audit-ca',    defaultFramework: 'ASPE — Canadian Accounting Standards for Private Enterprises',       engagementTypeLabel: 'Audit (AUD)' },
+  'audit5101': { sidebarType: 'audit-ca',    defaultFramework: 'ASNPO — Canadian Accounting Standards for Not-for-Profit Organizations', engagementTypeLabel: 'Audit (AUD)' },
+  'audit6100': { sidebarType: 'audit-us',    defaultFramework: 'US GAAP — Generally Accepted Accounting Principles (United States)', engagementTypeLabel: 'Audit (AUD)' },
+  'audit6200': { sidebarType: 'audit-us',    defaultFramework: 'US GAAP — Generally Accepted Accounting Principles (United States)', engagementTypeLabel: 'Audit (AUD)' },
+  'rev2400':   { sidebarType: 'review-comp', defaultFramework: 'Section 2400 Review standards',                                      engagementTypeLabel: 'Review (REV)' },
+  'comp4200':  { sidebarType: 'review-comp', defaultFramework: 'CSRS 4200 - Current Compilation standards',                          engagementTypeLabel: 'Compilation (COM)' },
+};

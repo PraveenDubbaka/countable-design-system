@@ -48,6 +48,7 @@ export type EngagementMeta = {
   firstYearOnPlatform?: string;
   isRollForward?: string;
   firstYearTemplates?: string[];
+  templateId?: string;
   accountingFramework?: string;
   industry?: string;
   accountingStandards?: string;
