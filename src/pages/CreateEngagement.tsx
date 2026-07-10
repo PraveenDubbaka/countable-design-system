@@ -17,25 +17,31 @@ const INDUSTRIES = [
   "Hospitality & Tourism", "Manufacturing", "Mining & Resources", "Not-for-Profit",
   "Oil & Gas", "Professional Services", "Retail & Consumer", "Technology", "Transportation & Logistics",
 ];
-const SPECIAL_PURPOSE_FRAMEWORKS = [
-  "CAS 3853 — NTR / Compilation Engagement",
-  "CAS 805 — Single-Element, Account, or Item Audit",
-  "CAS 3856 — Financial Instruments (Special Purpose)",
-  "Compliance / Regulatory Basis",
-  "Contractual Basis of Accounting",
+const SPECIAL_ENGAGEMENT_TYPES = [
+  "CAS 800 — Special Purpose Framework Audit",
+  "CAS 805 — Single Financial Statement or Specific Element Audit",
+  "CAS 810 — Summary Financial Statements Engagement",
+  "Compliance / Regulatory Engagement",
+  "Contractual Basis Engagement",
   "Other Special Purpose Framework",
+];
+const SPF_VALUES = [
+  "Income Tax Basis",
+  "Compliance / Regulatory Basis",
+  "Contractual Basis",
+  "Other Comprehensive Basis of Accounting (OCBOA)",
 ];
 const ACCOUNTING_FRAMEWORKS = [
   "ASPE — Canadian Accounting Standards for Private Enterprises",
   "IFRS — International Financial Reporting Standards",
   "IFRS for SMEs",
-  "PE GAAP / PEM — Canadian Generally Accepted Accounting Principles",
   "ASNPO — Canadian Accounting Standards for Not-for-Profit Organizations",
   "PSAB — Public Sector Accounting Standards",
   "Pension Plans — Canadian Accounting Standards for Pension Plans",
   "US GAAP — Generally Accepted Accounting Principles (United States)",
   "Income Tax Basis",
   "Compliance / Regulatory Basis",
+  "Contractual Basis",
   "Other Comprehensive Basis of Accounting (OCBOA)",
 ];
 const ENTITY_CLASSIFICATIONS = ["Private", "Public", "Manufacturing"];
@@ -630,6 +636,13 @@ export default function CreateEngagement() {
     }
   }, [isAudit]);
   const [specialPurposeFramework, setSpecialPurposeFramework] = useState("");
+
+  useEffect(() => {
+    if (!SPF_VALUES.includes(accountingStandards)) {
+      setSpecialPurposeFramework("");
+    }
+  }, [accountingStandards]);
+
   const [condensedForms, setCondensedForms] = useState(false);
   const [firstYearAudit, setFirstYearAudit] = useState(false);
   const [firstYearOnPlatform, setFirstYearOnPlatform] = useState("");
@@ -884,7 +897,7 @@ export default function CreateEngagement() {
                 <InlineRow label="Budget ($)" required>
                   <input type="text" value={budget} onChange={e => setBudget(e.target.value)} className={ic} />
                 </InlineRow>
-                <InlineRow label="Accounting Standards" required>
+                <InlineRow label="Reporting Framework" required>
                   <Select value={accountingStandards} onValueChange={setAccountingStandards}>
                     <SelectTrigger className="h-9 text-sm"><SelectValue placeholder="Select..." /></SelectTrigger>
                     <SelectContent>
@@ -892,12 +905,12 @@ export default function CreateEngagement() {
                     </SelectContent>
                   </Select>
                 </InlineRow>
-                {isAudit && accountingStandards !== "" && !["ASPE — Canadian Accounting Standards for Private Enterprises", "IFRS — International Financial Reporting Standards", "IFRS for SMEs"].includes(accountingStandards) && (
-                  <InlineRow label="Framework">
+                {isAudit && SPF_VALUES.includes(accountingStandards) && (
+                  <InlineRow label="Engagement Standard">
                     <Select value={specialPurposeFramework} onValueChange={setSpecialPurposeFramework}>
                       <SelectTrigger className="h-9 text-sm"><SelectValue placeholder="Select if applicable..." /></SelectTrigger>
                       <SelectContent>
-                        {SPECIAL_PURPOSE_FRAMEWORKS.map(fw => <SelectItem key={fw} value={fw}>{fw}</SelectItem>)}
+                        {SPECIAL_ENGAGEMENT_TYPES.map(fw => <SelectItem key={fw} value={fw}>{fw}</SelectItem>)}
                       </SelectContent>
                     </Select>
                   </InlineRow>
