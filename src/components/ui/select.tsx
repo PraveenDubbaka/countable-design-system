@@ -29,7 +29,7 @@ const SelectTrigger = React.forwardRef<
     ref={ref}
     className={cn(
       // Base styles - 10px border radius + double border focus class
-      "input-double-border flex h-9 w-full items-center justify-between rounded-[10px] px-3 py-2 text-sm transition-all duration-200 [&>span]:line-clamp-1",
+      "input-double-border flex h-9 w-full items-center justify-between rounded-[10px] px-3 py-2 text-sm transition-all duration-200 [&>span]:truncate [&>span]:min-w-0",
       // Default state: white background, #dcdfe4 border
       "bg-white text-foreground placeholder:text-muted-foreground",
       "border border-[#dcdfe4]",
