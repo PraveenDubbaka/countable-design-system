@@ -892,8 +892,8 @@ export default function CreateEngagement() {
                     </SelectContent>
                   </Select>
                 </InlineRow>
-                {isAudit && accountingStandards === "IFRS for SMEs" && (
-                  <InlineRow label="Special Purpose Framework">
+                {isAudit && accountingStandards !== "" && !["ASPE — Canadian Accounting Standards for Private Enterprises", "IFRS — International Financial Reporting Standards", "IFRS for SMEs"].includes(accountingStandards) && (
+                  <InlineRow label="Framework">
                     <Select value={specialPurposeFramework} onValueChange={setSpecialPurposeFramework}>
                       <SelectTrigger className="h-9 text-sm"><SelectValue placeholder="Select if applicable..." /></SelectTrigger>
                       <SelectContent>
