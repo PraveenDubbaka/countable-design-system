@@ -23,6 +23,7 @@ import LukaSettingsOverlay from "@/components/luka/LukaSettingsOverlay";
 import ReconciliationFlow from "@/components/luka/reconciliation/ReconciliationFlow";
 import TaxPayableFlow from "@/components/luka/TaxPayableFlow";
 import { PBCRequestFlow } from "@/components/luka/PBCRequestFlow";
+import { RichTextToolbar } from "@/components/RichTextToolbar";
 import {
   X,
   Menu,
@@ -492,14 +493,39 @@ function PBCEditableContent({
     if (editRef.current) editRef.current.innerHTML = html;
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  const handleFormatAction = (action: string, formatValue?: string) => {
+    if (!editRef.current) return;
+    editRef.current.focus();
+    switch (action) {
+      case 'bold': document.execCommand('bold', false); break;
+      case 'italic': document.execCommand('italic', false); break;
+      case 'underline': document.execCommand('underline', false); break;
+      case 'superscript': document.execCommand('superscript', false); break;
+      case 'bulletList': document.execCommand('insertUnorderedList', false); break;
+      case 'numberedList': document.execCommand('insertOrderedList', false); break;
+      case 'alignLeft': document.execCommand('justifyLeft', false); break;
+      case 'alignCenter': document.execCommand('justifyCenter', false); break;
+      case 'alignRight': document.execCommand('justifyRight', false); break;
+      case 'textStyle': document.execCommand('formatBlock', false, formatValue); break;
+      case 'textColor': document.execCommand('foreColor', false, formatValue); break;
+      case 'undo': document.execCommand('undo', false); break;
+      case 'redo': document.execCommand('redo', false); break;
+    }
+    onDirty();
+  };
+
   return (
-    <div
-      ref={editRef}
-      contentEditable
-      suppressContentEditableWarning
-      onInput={onDirty}
-      style={{ outline: "none", cursor: "text", minHeight: 600 }}
-    />
+    <div>
+      <RichTextToolbar inline onFormatAction={handleFormatAction} />
+      <div
+        ref={editRef}
+        contentEditable
+        suppressContentEditableWarning
+        onInput={onDirty}
+        style={{ outline: "none", cursor: "text", minHeight: 600 }}
+      />
+    </div>
   );
 }
 
