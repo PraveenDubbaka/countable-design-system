@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { FileText, Send, Loader2, CheckCircle2, Globe, Eye, Pencil, ChevronRight } from "lucide-react";
+import { FileText, Send, Loader2, CheckCircle2, Globe, Eye } from "lucide-react";
 import { PBC_TEMPLATES, type PBCTemplate } from "@/lib/pbcTemplates";
 import { savePBCRequest, addPBCNotification } from "@/lib/pbcRequestStore";
 import lukaLogo from "@/assets/luka-logo.png";
@@ -33,12 +33,34 @@ interface PBCRequestFlowProps {
   onApplyResponses: (responses: Array<{ questionId: string; answer: string }>) => void;
 }
 
+// ── Helpers ──────────────────────────────────────────────────────────────────
+
+function parseMarkdown(text: string): React.ReactNode[] {
+  return text.split(/(\*\*[^*]+\*\*)/g).map((part, i) =>
+    part.startsWith("**") && part.endsWith("**")
+      ? <strong key={i}>{part.slice(2, -2)}</strong>
+      : part
+  );
+}
+
+const LUKA_AVATAR_STYLE: React.CSSProperties = { fontFamily: "'DM Sans', system-ui, sans-serif" };
+const STEP_TEXT_STYLE: React.CSSProperties = { fontFamily: "'DM Sans', system-ui, sans-serif", color: "hsl(222 25% 30%)" };
+const CHECK_GREEN: React.CSSProperties = { color: "hsl(145 63% 42%)" };
+
+// ── Sub-components ────────────────────────────────────────────────────────────
+
+function LukaAvatar() {
+  return (
+    <div className="w-7 h-7 rounded-full bg-gradient-to-br from-[#8649F1] to-[#2355A4] flex items-center justify-center shrink-0 mt-0.5">
+      <img src={lukaLogo} alt="Luka" className="w-4 h-4 object-contain invert" />
+    </div>
+  );
+}
+
 function LukaBubble({ children }: { children: React.ReactNode }) {
   return (
     <div className="flex items-start gap-2.5">
-      <div className="w-7 h-7 rounded-full bg-gradient-to-br from-[#8649F1] to-[#2355A4] flex items-center justify-center shrink-0 mt-0.5">
-        <img src={lukaLogo} alt="Luka" className="w-4 h-4 object-contain invert" />
-      </div>
+      <LukaAvatar />
       <div className="flex-1 min-w-0">{children}</div>
     </div>
   );
@@ -56,8 +78,11 @@ function UserBubble({ text }: { text: string }) {
 
 function LukaText({ text }: { text: string }) {
   return (
-    <div className="rounded-2xl rounded-tl-sm bg-muted px-3.5 py-2 text-sm text-foreground leading-relaxed whitespace-pre-wrap">
-      {text}
+    <div
+      className="rounded-2xl rounded-tl-sm bg-muted px-3.5 py-2.5 text-[14px] text-foreground leading-relaxed whitespace-pre-wrap"
+      style={LUKA_AVATAR_STYLE}
+    >
+      {parseMarkdown(text)}
     </div>
   );
 }
@@ -66,14 +91,62 @@ function ChipRow({ chips, onSelect }: { chips: string[]; onSelect: (c: string) =
   return (
     <div className="flex flex-wrap gap-2 mt-2 pl-9">
       {chips.map(c => (
-        <button
-          key={c}
-          onClick={() => onSelect(c)}
-          className="inline-flex items-center gap-1 px-3 py-1.5 rounded-full border border-primary/40 bg-primary/5 text-primary text-xs font-medium hover:bg-primary/10 transition-colors"
-        >
-          {c} <ChevronRight className="h-3 w-3" />
+        <button key={c} onClick={() => onSelect(c)} className="luka-prompt-chip">
+          {c}
         </button>
       ))}
+    </div>
+  );
+}
+
+const GEN_STEP_LABELS = [
+  "Reading working paper references",
+  "Selecting appropriate template",
+  "Generating document structure and content",
+  "Finalising your PBC request",
+];
+
+function GeneratingSteps({ wpNumbers }: { wpNumbers: string[] }) {
+  const [visible, setVisible] = useState(0);
+
+  useEffect(() => {
+    const timers = [200, 800, 1400, 2000].map((delay, i) =>
+      setTimeout(() => setVisible(i + 1), delay)
+    );
+    return () => timers.forEach(clearTimeout);
+  }, []);
+
+  const steps = [
+    `Reading working paper references${wpNumbers.length ? ` for form ${wpNumbers.join(", ")}` : ""}`,
+    ...GEN_STEP_LABELS.slice(1),
+  ];
+
+  return (
+    <div className="flex items-start gap-2.5">
+      <LukaAvatar />
+      <div className="flex-1 min-w-0 rounded-2xl rounded-tl-sm bg-muted px-3.5 py-2 overflow-hidden">
+        {steps.map((s, i) => (
+          <div
+            key={i}
+            style={{
+              borderTop: i > 0 ? "1px solid hsl(220 20% 92%)" : undefined,
+              opacity: visible > i ? 1 : 0,
+              transform: visible > i ? "translateY(0)" : "translateY(6px)",
+              transition: "opacity 0.35s ease, transform 0.35s ease",
+            }}
+            className="flex items-center gap-3 py-2"
+          >
+            <span className="flex-1 text-[14px]" style={STEP_TEXT_STYLE}>{s}</span>
+            {visible > i + 1 ? (
+              <CheckCircle2 className="h-4 w-4 shrink-0" style={CHECK_GREEN} />
+            ) : visible === i + 1 ? (
+              <Loader2 className="h-4 w-4 animate-spin text-primary shrink-0" />
+            ) : (
+              <div className="h-4 w-4 shrink-0" />
+            )}
+          </div>
+        ))}
+      </div>
     </div>
   );
 }
@@ -168,6 +241,8 @@ function ResponsesCard({ onAccept }: { onAccept: () => void }) {
   );
 }
 
+// ── Main component ────────────────────────────────────────────────────────────
+
 export function PBCRequestFlow({
   engagementId,
   clientName,
@@ -206,7 +281,7 @@ export function PBCRequestFlow({
   // Scroll to bottom on new messages
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages]);
+  }, [messages, phase]);
 
   const handleChipSelect = (chip: string) => {
     if (phase === "greeting") {
@@ -226,7 +301,6 @@ export function PBCRequestFlow({
     }
 
     if (phase === "wp-selected") {
-      // Template selection via chip number
       const idx = parseInt(chip) - 1;
       const template = PBC_TEMPLATES[idx] ?? PBC_TEMPLATES.find(t => chip.includes(t.wpRef));
       if (template) handleTemplateSelect(template, chip);
@@ -270,18 +344,11 @@ export function PBCRequestFlow({
     setSelectedTemplate(template);
     addMsg({ role: "user", text: userLabel });
     setPhase("generating");
-    addMsg({ role: "luka", text: "Generating your PBC request document…" });
 
     setTimeout(() => {
-      const content = template.generate({
-        clientName,
-        engagementId,
-        yearEnd,
-        wpNumbers,
-      });
+      const content = template.generate({ clientName, engagementId, yearEnd, wpNumbers });
       setDocContent(content);
 
-      // Save draft
       savePBCRequest({
         threadId,
         engagementId,
@@ -293,21 +360,10 @@ export function PBCRequestFlow({
         status: "draft",
       });
 
-      setMessages(prev => {
-        const next = [...prev];
-        const lastLuka = [...next].reverse().find(m => m.role === "luka");
-        if (lastLuka) lastLuka.text = "Here's your PBC request document:";
-        return next;
-      });
-
-      addMsg({
-        role: "luka",
-        text: "",
-        isArtifact: true,
-      });
-
+      addMsg({ role: "luka", text: "Here's your PBC request document:" });
+      addMsg({ role: "luka", text: "", isArtifact: true });
       setPhase("artifact");
-    }, 1800);
+    }, 2600);
   };
 
   const handleSend = () => {
@@ -394,18 +450,9 @@ export function PBCRequestFlow({
       );
     }
 
-    const isGenerating = phase === "generating" && msg.text === "Generating your PBC request document…";
-
     return (
       <LukaBubble key={i}>
-        {isGenerating ? (
-          <div className="rounded-2xl rounded-tl-sm bg-muted px-3.5 py-2 flex items-center gap-2">
-            <Loader2 className="h-3.5 w-3.5 animate-spin text-primary" />
-            <span className="text-sm text-muted-foreground">Generating your PBC request document…</span>
-          </div>
-        ) : (
-          <LukaText text={msg.text} />
-        )}
+        <LukaText text={msg.text} />
         {msg.chips && phase !== "artifact" && phase !== "sent" && phase !== "responding" && phase !== "applied" && (
           <ChipRow chips={msg.chips} onSelect={handleChipSelect} />
         )}
@@ -416,33 +463,40 @@ export function PBCRequestFlow({
   return (
     <div className="flex flex-col h-full">
       {/* Message area */}
-      <div className="flex-1 overflow-y-auto px-4 py-4 space-y-4">
+      <div className="flex-1 overflow-y-auto px-4 py-4 space-y-3">
         {messages.map(renderMessage)}
+        {phase === "generating" && (
+          <GeneratingSteps wpNumbers={wpNumbers} />
+        )}
         <div ref={bottomRef} />
       </div>
 
-      {/* Input area — only shown during wp-selected phase */}
+      {/* Input area — only shown during type-selected phase */}
       {phase === "type-selected" && (
-        <div className="border-t border-border px-4 py-3 flex gap-2">
-          <input
-            autoFocus
-            value={wpInput}
-            onChange={e => setWpInput(e.target.value)}
-            onKeyDown={e => e.key === "Enter" && handleWPSubmit()}
-            placeholder="Type form number(s), e.g. 510, 540…"
-            className="flex-1 h-9 px-3 rounded-lg border border-border bg-background text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"
-          />
-          <button
-            onClick={handleWPSubmit}
-            disabled={!wpInput.trim()}
-            className="h-9 w-9 rounded-lg bg-primary text-primary-foreground flex items-center justify-center disabled:opacity-40 hover:bg-primary/90 transition-colors"
-          >
-            <Send className="h-4 w-4" />
-          </button>
+        <div className="px-4 pb-4 pt-2">
+          <div className="luka-input-wrapper">
+            <input
+              autoFocus
+              value={wpInput}
+              onChange={e => setWpInput(e.target.value)}
+              onKeyDown={e => e.key === "Enter" && handleWPSubmit()}
+              placeholder="Type form number(s), e.g. 510, 540…"
+              className="luka-input"
+            />
+            <div className="flex items-center justify-end mt-2">
+              <button
+                onClick={handleWPSubmit}
+                disabled={!wpInput.trim()}
+                className={cn("luka-send-btn", wpInput.trim() && "enabled")}
+              >
+                <Send className="h-3.5 w-3.5" />
+              </button>
+            </div>
+          </div>
         </div>
       )}
 
-      {/* Sent confirmation bar */}
+      {/* Applied confirmation bar */}
       {phase === "applied" && (
         <div className="border-t border-border px-4 py-3 flex items-center gap-2 bg-green-50 dark:bg-green-900/20">
           <CheckCircle2 className="h-4 w-4 text-green-600 dark:text-green-400 shrink-0" />
