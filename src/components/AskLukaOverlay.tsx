@@ -1177,7 +1177,7 @@ const [workspaceLoading, setWorkspaceLoading] = useState(false);
             {/* Main area */}
             <div className={cn("bg-card border-l relative flex", pbcViewingDoc ? "flex-row flex-1" : "flex-1 flex-col")} style={{ borderColor: "hsl(var(--border))" }}>
             {/* Chat column — shrinks to 40% when doc viewer is open */}
-            <div className={cn("flex flex-col", pbcViewingDoc ? "w-[40%] border-r border-border shrink-0" : "flex-1")} style={pbcViewingDoc ? { borderColor: "hsl(var(--border))" } : undefined}>
+            <div className={cn("flex flex-col min-h-0", pbcViewingDoc ? "w-[40%] border-r border-border shrink-0" : "flex-1")} style={pbcViewingDoc ? { borderColor: "hsl(var(--border))" } : undefined}>
               {/* Header */}
               <div className="flex items-center gap-3 px-4 py-3 border-b" style={{ borderColor: "hsl(var(--border))" }}>
                 {/* Left controls — hamburger when threads sidebar collapsed, spacer otherwise for visual balance */}
