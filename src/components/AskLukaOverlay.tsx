@@ -479,6 +479,30 @@ function PBCDocContent({ content }: { content: string }) {
   return <>{elements}</>;
 }
 
+function PBCEditableContent({
+  html,
+  editRef,
+  onDirty,
+}: {
+  html: string;
+  editRef: React.RefObject<HTMLDivElement>;
+  onDirty: () => void;
+}) {
+  useEffect(() => {
+    if (editRef.current) editRef.current.innerHTML = html;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+  return (
+    <div
+      ref={editRef}
+      contentEditable
+      suppressContentEditableWarning
+      onInput={onDirty}
+      style={{ outline: "none", cursor: "text", minHeight: 600 }}
+    />
+  );
+}
+
 export function AskLukaOverlay({
   open,
   onOpenChange,
@@ -650,6 +674,10 @@ const [workspaceLoading, setWorkspaceLoading] = useState(false);
   const [pbcDocContent, setPBCDocContent] = useState<string>("");
   const [pbcViewingDoc, setPBCViewingDoc] = useState<{ templateLabel: string } | null>(null);
   const [pbcEditing, setPBCEditing] = useState(false);
+  const [pbcDocHtml, setPBCDocHtml] = useState<string | null>(null);
+  const [pbcEditDirty, setPBCEditDirty] = useState(false);
+  const pbcPreviewRef = useRef<HTMLDivElement>(null);
+  const pbcEditRef = useRef<HTMLDivElement>(null);
   const ENGAGEMENTS = useMemo(() =>
     loadEngagements().map(e => ({
       client: e.client,
@@ -1708,6 +1736,9 @@ const [workspaceLoading, setWorkspaceLoading] = useState(false);
                         threadId={pbcThreadId}
                         onViewDoc={(content, templateLabel) => {
                           setPBCDocContent(content);
+                          setPBCDocHtml(null);
+                          setPBCEditing(false);
+                          setPBCEditDirty(false);
                           setPBCViewingDoc({ templateLabel });
                           setIsFullscreen(true);
                         }}
@@ -2642,7 +2673,7 @@ const [workspaceLoading, setWorkspaceLoading] = useState(false);
                 >
                   <div className="flex items-center gap-2.5 min-w-0">
                     <button
-                      onClick={() => { setPBCViewingDoc(null); setPBCEditing(false); }}
+                      onClick={() => { setPBCViewingDoc(null); setPBCEditing(false); setPBCEditDirty(false); }}
                       className="shrink-0 p-1 rounded hover:bg-muted transition-colors"
                       style={{ color: PBC_SUBTLE }}
                     >
@@ -2658,21 +2689,39 @@ const [workspaceLoading, setWorkspaceLoading] = useState(false);
                   {pbcEditing ? (
                     <div className="flex items-center gap-2 shrink-0">
                       <button
-                        onClick={() => setPBCEditing(false)}
-                        className="text-xs px-3 py-1.5 rounded-md border border-border bg-background hover:bg-muted transition-colors"
+                        onClick={() => { setPBCEditing(false); setPBCEditDirty(false); }}
+                        className="px-4 py-2 rounded-[10px] text-[13px] font-semibold transition-colors hover:bg-[hsl(220_20%_96%)]"
+                        style={{ border: "1px solid hsl(220 20% 60%)", background: "white", color: PBC_BODY, fontFamily: PBC_FONT }}
                       >
                         Cancel
                       </button>
                       <button
-                        onClick={() => setPBCEditing(false)}
-                        className="text-xs px-3 py-1.5 rounded-md bg-primary text-primary-foreground hover:bg-primary/90 transition-colors font-semibold"
+                        onClick={() => {
+                          if (pbcEditRef.current) setPBCDocHtml(pbcEditRef.current.innerHTML);
+                          setPBCEditing(false);
+                          setPBCEditDirty(false);
+                        }}
+                        disabled={!pbcEditDirty}
+                        className="px-4 py-2 rounded-[10px] text-[13px] font-semibold transition-colors"
+                        style={{
+                          border: `1px solid ${pbcEditDirty ? PBC_HEAD : "hsl(220 20% 85%)"}`,
+                          background: pbcEditDirty ? PBC_HEAD : "hsl(220 20% 92%)",
+                          color: pbcEditDirty ? "white" : "hsl(220 15% 60%)",
+                          cursor: pbcEditDirty ? "pointer" : "not-allowed",
+                          fontFamily: PBC_FONT,
+                        }}
                       >
                         Save
                       </button>
                     </div>
                   ) : (
                     <EditMenuDropdown
-                      onEditManually={() => setPBCEditing(true)}
+                      onEditManually={() => {
+                        const html = pbcPreviewRef.current?.innerHTML ?? "";
+                        setPBCDocHtml(html);
+                        setPBCEditDirty(false);
+                        setPBCEditing(true);
+                      }}
                       onTellLuka={() => {}}
                     />
                   )}
@@ -2686,22 +2735,28 @@ const [workspaceLoading, setWorkspaceLoading] = useState(false);
                       background: "white",
                       borderRadius: 14,
                       boxShadow: "0 8px 32px hsl(220 30% 30% / 0.08), 0 1px 8px hsl(220 20% 40% / 0.06)",
-                      border: "1px solid hsl(220 20% 90%)",
+                      border: pbcEditing ? "2px solid hsl(265 75% 60% / 0.35)" : "1px solid hsl(220 20% 90%)",
                       overflow: "hidden",
                       fontFamily: PBC_FONT,
+                      transition: "border-color 0.15s",
                     }}
                   >
                     <div style={{ height: 6, background: PBC_HEAD }} />
                     <div style={{ padding: "32px 48px", minHeight: 600 }}>
                       {pbcEditing ? (
-                        <textarea
-                          className="w-full resize-none outline-none bg-transparent"
-                          style={{ fontFamily: PBC_FONT, fontSize: 13, lineHeight: 1.7, color: PBC_BODY, minHeight: 540, border: "none" }}
-                          value={pbcDocContent}
-                          onChange={(e) => setPBCDocContent(e.target.value)}
+                        <PBCEditableContent
+                          html={pbcDocHtml ?? ""}
+                          editRef={pbcEditRef}
+                          onDirty={() => setPBCEditDirty(true)}
                         />
                       ) : (
-                        <PBCDocContent content={pbcDocContent} />
+                        <div ref={pbcPreviewRef}>
+                          {pbcDocHtml !== null ? (
+                            <div dangerouslySetInnerHTML={{ __html: pbcDocHtml }} />
+                          ) : (
+                            <PBCDocContent content={pbcDocContent} />
+                          )}
+                        </div>
                       )}
                     </div>
                     <div style={{ height: 6, background: PBC_HEAD }} />
