@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { motion } from "framer-motion";
-import { FileText, Send, Loader2, CheckCircle2, Globe, Eye, Circle, ChevronDown } from "lucide-react";
+import { FileText, Send, Loader2, CheckCircle2, Globe, Eye, Circle, ChevronDown, Upload } from "lucide-react";
 import { PBC_TEMPLATES, type PBCTemplate } from "@/lib/pbcTemplates";
 import { savePBCRequest, addPBCNotification } from "@/lib/pbcRequestStore";
 import lukaResponding from "@/assets/luka-responding.gif";
@@ -11,6 +11,7 @@ type Phase =
   | "greeting"
   | "type-selected"
   | "wp-selected"
+  | "upload-template"
   | "generating"
   | "artifact"
   | "sent"
@@ -36,6 +37,27 @@ interface PBCRequestFlowProps {
 }
 
 // ── Helpers ──────────────────────────────────────────────────────────────────
+
+async function parseDocxText(file: File): Promise<string> {
+  const JSZip = (await import("jszip")).default;
+  const zip = await JSZip.loadAsync(file);
+  const xmlContent = await zip.file("word/document.xml")?.async("text") ?? "";
+  const parser = new DOMParser();
+  const doc = parser.parseFromString(xmlContent, "text/xml");
+  const ns = "http://schemas.openxmlformats.org/wordprocessingml/2006/main";
+  const paras = doc.getElementsByTagNameNS(ns, "p");
+  const lines: string[] = [];
+  for (const para of Array.from(paras)) {
+    const texts: string[] = [];
+    const runs = para.getElementsByTagNameNS(ns, "t");
+    for (const t of Array.from(runs)) {
+      if (t.textContent) texts.push(t.textContent);
+    }
+    const line = texts.join("").trim();
+    if (line) lines.push(line);
+  }
+  return lines.join("\n\n");
+}
 
 function parseMarkdown(text: string): React.ReactNode[] {
   return text.split(/(\*\*[^*]+\*\*)/g).map((part, i) =>
@@ -354,6 +376,17 @@ export function PBCRequestFlow({
     }
 
     if (phase === "wp-selected") {
+      if (chip === "Upload my own") {
+        addMsg({ role: "user", text: "Upload my own template" });
+        setPhase("upload-template");
+        setTimeout(() => {
+          addMsg({
+            role: "luka",
+            text: "Please upload your template file (.docx or .txt). I'll use it to generate the PBC request document.",
+          });
+        }, 400);
+        return;
+      }
       const idx = parseInt(chip) - 1;
       const template = PBC_TEMPLATES[idx] ?? PBC_TEMPLATES.find(t => chip.includes(t.wpRef));
       if (template) handleTemplateSelect(template, chip);
@@ -382,13 +415,13 @@ export function PBCRequestFlow({
 
     const templateList = PBC_TEMPLATES.map((t, i) =>
       `**${i + 1}.** ${t.label} (WP ${t.wpRef})`
-    ).join("\n");
+    ).join("\n") + "\n**4.** Upload your own template";
 
     setTimeout(() => {
       addMsg({
         role: "luka",
         text: `Here are the available templates${wps.length ? ` for Form **${wps.join(", ")}**` : ""}:\n\n${templateList}\n\nWhich template would you like to use?`,
-        chips: PBC_TEMPLATES.map((_, i) => `${i + 1}`),
+        chips: [...PBC_TEMPLATES.map((_, i) => `${i + 1}`), "Upload my own"],
       });
     }, 400);
   };
@@ -478,6 +511,56 @@ export function PBCRequestFlow({
     }, 500);
   };
 
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    addMsg({ role: "user", text: file.name });
+    setPhase("generating");
+
+    const processFile = async () => {
+      let content = "";
+      try {
+        if (file.name.toLowerCase().endsWith(".docx")) {
+          content = await parseDocxText(file);
+        } else {
+          content = await file.text();
+        }
+      } catch {
+        content = `[Unable to read file: ${file.name}]`;
+      }
+
+      const customTemplate: PBCTemplate = {
+        id: "custom-upload",
+        label: file.name.replace(/\.(docx|txt)$/i, ""),
+        wpRef: "CUSTOM",
+        generate: () => content,
+      };
+
+      setTimeout(() => {
+        setSelectedTemplate(customTemplate);
+        setDocContent(content);
+
+        savePBCRequest({
+          threadId,
+          engagementId,
+          createdAt: new Date().toISOString(),
+          requestType: requestType ?? "single",
+          wpNumbers,
+          templateId: "custom-upload",
+          documentContent: content,
+          status: "draft",
+        });
+
+        addMsg({ role: "luka", text: "Here's your PBC request document:" });
+        addMsg({ role: "luka", text: "", isArtifact: true });
+        setPhase("artifact");
+      }, 3100);
+    };
+
+    processFile();
+  };
+
   const isDone = phase === "artifact" || phase === "sent" || phase === "responding" || phase === "applied";
 
   const renderMessage = (msg: ChatMsg, i: number) => {
@@ -549,6 +632,32 @@ export function PBCRequestFlow({
               </button>
             </div>
           </div>
+        </div>
+      )}
+
+      {/* Upload template area */}
+      {phase === "upload-template" && (
+        <div className="px-4 pb-4 pt-2">
+          <label
+            className="flex flex-col items-center gap-3 py-8 rounded-xl border-2 border-dashed cursor-pointer transition-colors hover:bg-muted/30"
+            style={{ borderColor: "hsl(220 20% 80%)" }}
+          >
+            <Upload className="h-8 w-8" style={{ color: "hsl(222 20% 55%)" }} />
+            <div className="text-center">
+              <p className="text-sm font-semibold" style={{ color: "hsl(222 35% 16%)", fontFamily: "'DM Sans', system-ui, sans-serif" }}>
+                Click to upload your template
+              </p>
+              <p className="text-xs mt-1" style={{ color: "hsl(222 15% 55%)" }}>
+                Supports .docx and .txt files
+              </p>
+            </div>
+            <input
+              type="file"
+              accept=".docx,.txt"
+              className="hidden"
+              onChange={handleFileUpload}
+            />
+          </label>
         </div>
       )}
 
