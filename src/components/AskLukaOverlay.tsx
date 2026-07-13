@@ -1994,8 +1994,8 @@ const [workspaceLoading, setWorkspaceLoading] = useState(false);
                   )}
                   </div>
 
-                  {/* Input area — hidden in autoFill/summary/overview/pap501 modes */}
-                  {!autoFillMode && !summaryMode && !allTemplateSummary && !engagementOverviewMode && !pap501Mode && (
+                  {/* Input area — hidden in autoFill/summary/overview/pap501/pbc-request modes */}
+                  {!autoFillMode && !summaryMode && !allTemplateSummary && !engagementOverviewMode && !pap501Mode && activeFlow !== "pbc-request" && (
                   <div className="px-4 pb-4 pt-2 relative">
                     {/* Prompt Window */}
                     <AnimatePresence>
