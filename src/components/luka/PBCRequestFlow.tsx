@@ -1,6 +1,9 @@
 import { useState, useEffect, useRef } from "react";
 import { motion } from "framer-motion";
-import { FileText, Send, Loader2, CheckCircle2, Globe, Eye, Circle, ChevronDown, Upload } from "lucide-react";
+import {
+  FileText, Send, Loader2, CheckCircle2, Globe, Eye,
+  Circle, ChevronDown, Upload, Shield, Monitor, Sparkles, ArrowRight,
+} from "lucide-react";
 import { PBC_TEMPLATES, type PBCTemplate } from "@/lib/pbcTemplates";
 import { savePBCRequest, addPBCNotification } from "@/lib/pbcRequestStore";
 import lukaResponding from "@/assets/luka-responding.gif";
@@ -12,6 +15,7 @@ type Phase =
   | "type-selected"
   | "wp-selected"
   | "upload-template"
+  | "create-with-luka"
   | "generating"
   | "artifact"
   | "sent"
@@ -24,6 +28,7 @@ interface ChatMsg {
   chips?: string[];
   isArtifact?: boolean;
   isResponses?: boolean;
+  isTemplateGrid?: boolean;
 }
 
 interface PBCRequestFlowProps {
@@ -36,7 +41,33 @@ interface PBCRequestFlowProps {
   onApplyResponses: (responses: Array<{ questionId: string; answer: string }>) => void;
 }
 
-// ── Helpers ──────────────────────────────────────────────────────────────────
+// ── Module-level constants ────────────────────────────────────────────────────
+
+const STEP_INTERVAL = 900;
+
+const TEMPLATE_META: Record<string, { description: string; sections: string[] }> = {
+  "memo-540": {
+    description: "FOR CLIENT TO COMPLETE — narrative memo with fill-in blanks covering all key control areas.",
+    sections: ["Entity Level Controls", "IT General Controls", "Financial Reporting", "Revenue", "Expenses / A/P", "Treasury"],
+  },
+  "it-questionnaire": {
+    description: "16 open-ended questions across 7 sections for the client's IT team to answer in detail.",
+    sections: ["Software & Apps", "Third-Party Providers", "Access Controls", "Physical / Backup", "Information Flow", "Cybersecurity", "Communication"],
+  },
+  "memo-510": {
+    description: "34-question MEMO covering company operations, fraud risk, related parties, and corporate-level controls.",
+    sections: ["Company Operations", "Fraud Assessment", "Related Parties", "Internal Controls"],
+  },
+};
+
+const LUKA_PROMPT_HINTS = [
+  "Draft a control questionnaire",
+  "IT security checklist",
+  "Fraud risk assessment memo",
+  "Document request for payroll",
+];
+
+// ── Helpers ───────────────────────────────────────────────────────────────────
 
 async function parseDocxText(file: File): Promise<string> {
   const JSZip = (await import("jszip")).default;
@@ -66,8 +97,6 @@ function parseMarkdown(text: string): React.ReactNode[] {
       : part
   );
 }
-
-const STEP_INTERVAL = 900; // matches EngagementAutomationView
 
 // ── Sub-components ────────────────────────────────────────────────────────────
 
@@ -125,6 +154,196 @@ function ChipRow({ chips, onSelect }: { chips: string[]; onSelect: (c: string) =
   );
 }
 
+function TemplateCardGrid({
+  onSelectTemplate,
+  onUpload,
+  onCreateWithLuka,
+}: {
+  onSelectTemplate: (template: PBCTemplate, label: string) => void;
+  onUpload: () => void;
+  onCreateWithLuka: () => void;
+}) {
+  const [hoveredId, setHoveredId] = useState<string | null>(null);
+
+  const iconConfig: Record<string, { Icon: React.ElementType; color: string; bg: string }> = {
+    "memo-540":       { Icon: Shield,   color: "hsl(213 80% 48%)", bg: "hsl(213 80% 48% / 0.09)" },
+    "it-questionnaire": { Icon: Monitor, color: "hsl(160 55% 38%)", bg: "hsl(160 55% 38% / 0.09)" },
+    "memo-510":       { Icon: FileText, color: "hsl(265 65% 55%)", bg: "hsl(265 65% 55% / 0.09)" },
+  };
+
+  return (
+    <div className="mt-2 space-y-2 pl-12 pr-1">
+      {/* Template cards */}
+      {PBC_TEMPLATES.map((template) => {
+        const meta = TEMPLATE_META[template.id];
+        const ic = iconConfig[template.id] ?? { Icon: FileText, color: "hsl(222 20% 50%)", bg: "hsl(220 20% 96%)" };
+        const isHov = hoveredId === template.id;
+
+        return (
+          <motion.button
+            key={template.id}
+            onClick={() => onSelectTemplate(template, template.label)}
+            onHoverStart={() => setHoveredId(template.id)}
+            onHoverEnd={() => setHoveredId(null)}
+            className="w-full text-left rounded-xl border bg-card p-4 block"
+            animate={{
+              borderColor: isHov ? "hsl(var(--primary) / 0.45)" : "hsl(var(--border))",
+              boxShadow: isHov
+                ? "0 0 0 3px hsl(var(--primary) / 0.07), 0 4px 18px hsl(var(--primary) / 0.09)"
+                : "0 1px 3px rgba(0,0,0,0.04)",
+            }}
+            transition={{ duration: 0.18 }}
+          >
+            <div className="flex items-start gap-3">
+              {/* Icon box */}
+              <div
+                className="shrink-0 w-9 h-9 rounded-lg flex items-center justify-center mt-0.5"
+                style={{ background: ic.bg }}
+              >
+                <ic.Icon size={17} style={{ color: ic.color }} />
+              </div>
+
+              {/* Content */}
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-2 mb-1">
+                  <span
+                    className="text-[13.5px] font-semibold leading-tight"
+                    style={{ color: "hsl(222 35% 16%)", fontFamily: "'DM Sans', system-ui, sans-serif" }}
+                  >
+                    {template.label}
+                  </span>
+                  <span
+                    className="shrink-0 rounded-full text-[10px] px-2 py-0.5 font-semibold"
+                    style={{ background: "hsl(var(--primary) / 0.09)", color: "hsl(var(--primary))" }}
+                  >
+                    WP {template.wpRef}
+                  </span>
+                </div>
+                {meta && (
+                  <>
+                    <p
+                      className="text-[11.5px] leading-relaxed mb-2"
+                      style={{ color: "hsl(222 18% 52%)" }}
+                    >
+                      {meta.description}
+                    </p>
+                    <div className="flex flex-wrap gap-1">
+                      {meta.sections.map((s) => (
+                        <span
+                          key={s}
+                          className="text-[10px] rounded-full px-2 py-0.5 font-medium"
+                          style={{ background: "hsl(220 18% 94%)", color: "hsl(222 22% 42%)" }}
+                        >
+                          {s}
+                        </span>
+                      ))}
+                    </div>
+                  </>
+                )}
+              </div>
+
+              {/* Arrow */}
+              <motion.span
+                className="shrink-0 mt-1"
+                animate={{ opacity: isHov ? 1 : 0, x: isHov ? 0 : -5 }}
+                transition={{ duration: 0.16 }}
+              >
+                <ArrowRight size={15} style={{ color: "hsl(var(--primary))" }} />
+              </motion.span>
+            </div>
+          </motion.button>
+        );
+      })}
+
+      {/* Upload my own card */}
+      <motion.button
+        onClick={onUpload}
+        onHoverStart={() => setHoveredId("upload")}
+        onHoverEnd={() => setHoveredId(null)}
+        className="w-full text-left rounded-xl border-2 border-dashed p-3.5 block"
+        animate={{
+          borderColor: hoveredId === "upload" ? "hsl(220 20% 60%)" : "hsl(220 20% 82%)",
+          backgroundColor: hoveredId === "upload" ? "hsl(220 20% 98%)" : "transparent",
+        }}
+        transition={{ duration: 0.16 }}
+      >
+        <div className="flex items-center gap-3">
+          <div
+            className="shrink-0 w-9 h-9 rounded-lg border-2 border-dashed flex items-center justify-center"
+            style={{ borderColor: "hsl(220 20% 76%)" }}
+          >
+            <Upload size={15} style={{ color: "hsl(222 18% 55%)" }} />
+          </div>
+          <div className="flex-1">
+            <p
+              className="text-[13px] font-semibold"
+              style={{ color: "hsl(222 25% 30%)", fontFamily: "'DM Sans', system-ui, sans-serif" }}
+            >
+              Upload your own template
+            </p>
+            <p className="text-[11px] mt-0.5" style={{ color: "hsl(222 15% 55%)" }}>
+              Use your existing .docx or .txt file
+            </p>
+          </div>
+          <motion.span
+            animate={{ opacity: hoveredId === "upload" ? 1 : 0 }}
+            transition={{ duration: 0.16 }}
+          >
+            <ArrowRight size={15} style={{ color: "hsl(222 20% 55%)" }} />
+          </motion.span>
+        </div>
+      </motion.button>
+
+      {/* Create with Luka card */}
+      <motion.button
+        onClick={onCreateWithLuka}
+        onHoverStart={() => setHoveredId("luka")}
+        onHoverEnd={() => setHoveredId(null)}
+        className="w-full text-left rounded-xl border p-3.5 block relative overflow-hidden"
+        animate={{
+          borderColor: hoveredId === "luka" ? "hsl(265 65% 60% / 0.55)" : "hsl(265 65% 60% / 0.28)",
+          boxShadow: hoveredId === "luka"
+            ? "0 0 0 3px hsl(265 65% 60% / 0.09), 0 4px 20px hsl(265 65% 60% / 0.13)"
+            : "none",
+        }}
+        transition={{ duration: 0.18 }}
+        style={{ background: "linear-gradient(135deg, hsl(265 75% 99%), hsl(213 80% 99%))" }}
+      >
+        {/* Purple left accent bar */}
+        <div
+          className="absolute left-0 top-0 bottom-0 w-[3px] rounded-l-xl"
+          style={{ background: "linear-gradient(to bottom, hsl(265 75% 58%), hsl(213 80% 52%))" }}
+        />
+        <div className="flex items-center gap-3 pl-2">
+          <div
+            className="shrink-0 w-9 h-9 rounded-lg flex items-center justify-center"
+            style={{ background: "linear-gradient(135deg, hsl(265 75% 60% / 0.13), hsl(213 80% 55% / 0.13))" }}
+          >
+            <Sparkles size={17} style={{ color: "hsl(265 65% 52%)" }} />
+          </div>
+          <div className="flex-1">
+            <p
+              className="text-[13px] font-semibold"
+              style={{ color: "hsl(265 45% 28%)", fontFamily: "'DM Sans', system-ui, sans-serif" }}
+            >
+              Create with Luka
+            </p>
+            <p className="text-[11px] mt-0.5" style={{ color: "hsl(265 25% 50%)" }}>
+              Describe exactly what you need and I'll build it
+            </p>
+          </div>
+          <motion.span
+            animate={{ opacity: hoveredId === "luka" ? 1 : 0, x: hoveredId === "luka" ? 0 : -5 }}
+            transition={{ duration: 0.16 }}
+          >
+            <ArrowRight size={15} style={{ color: "hsl(265 65% 52%)" }} />
+          </motion.span>
+        </div>
+      </motion.button>
+    </div>
+  );
+}
+
 function GeneratingSteps({ wpNumbers }: { wpNumbers: string[] }) {
   const [visible, setVisible] = useState(0);
   const [expanded, setExpanded] = useState<number | null>(null);
@@ -155,7 +374,6 @@ function GeneratingSteps({ wpNumbers }: { wpNumbers: string[] }) {
           Generating your PBC request document
         </p>
 
-        {/* italic status + pulsing dots — matches EngagementAutomationView */}
         <div className="mt-4 flex items-center gap-2">
           <span className="text-[14px] font-semibold italic" style={{ color: "hsl(222 30% 22%)" }}>
             Preparing your document
@@ -173,7 +391,6 @@ function GeneratingSteps({ wpNumbers }: { wpNumbers: string[] }) {
           </span>
         </div>
 
-        {/* step rows with chevron + framer-motion reveal */}
         <div className="mt-3">
           {steps.map((s, i) => (
             <motion.div
@@ -335,6 +552,7 @@ export function PBCRequestFlow({
   const [selectedTemplate, setSelectedTemplate] = useState<PBCTemplate | null>(null);
   const [docContent, setDocContent] = useState("");
   const [sent, setSent] = useState(false);
+  const [lukaPromptInput, setLukaPromptInput] = useState("");
   const bottomRef = useRef<HTMLDivElement>(null);
 
   const addMsg = (msg: ChatMsg) => setMessages(prev => [...prev, msg]);
@@ -375,24 +593,6 @@ export function PBCRequestFlow({
       return;
     }
 
-    if (phase === "wp-selected") {
-      if (chip === "Upload my own") {
-        addMsg({ role: "user", text: "Upload my own template" });
-        setPhase("upload-template");
-        setTimeout(() => {
-          addMsg({
-            role: "luka",
-            text: "Please upload your template file (.docx or .txt). I'll use it to generate the PBC request document.",
-          });
-        }, 400);
-        return;
-      }
-      const idx = parseInt(chip) - 1;
-      const template = PBC_TEMPLATES[idx] ?? PBC_TEMPLATES.find(t => chip.includes(t.wpRef));
-      if (template) handleTemplateSelect(template, chip);
-      return;
-    }
-
     if (phase === "artifact" && chip === "Send to Client Portal") {
       handleSend();
       return;
@@ -413,15 +613,11 @@ export function PBCRequestFlow({
     addMsg({ role: "user", text: raw });
     setPhase("wp-selected");
 
-    const templateList = PBC_TEMPLATES.map((t, i) =>
-      `**${i + 1}.** ${t.label} (WP ${t.wpRef})`
-    ).join("\n") + "\n**4.** Upload your own template";
-
     setTimeout(() => {
       addMsg({
         role: "luka",
-        text: `Here are the available templates${wps.length ? ` for Form **${wps.join(", ")}**` : ""}:\n\n${templateList}\n\nWhich template would you like to use?`,
-        chips: [...PBC_TEMPLATES.map((_, i) => `${i + 1}`), "Upload my own"],
+        text: `Here are the available templates${wps.length ? ` for Form **${wps.join(", ")}**` : ""}. Select one or describe what you need:`,
+        isTemplateGrid: true,
       });
     }, 400);
   };
@@ -431,7 +627,6 @@ export function PBCRequestFlow({
     addMsg({ role: "user", text: userLabel });
     setPhase("generating");
 
-    // 400ms initial + 3 × 900ms steps = 3100ms total
     setTimeout(() => {
       const content = template.generate({ clientName, engagementId, yearEnd, wpNumbers });
       setDocContent(content);
@@ -451,6 +646,31 @@ export function PBCRequestFlow({
       addMsg({ role: "luka", text: "", isArtifact: true });
       setPhase("artifact");
     }, 3100);
+  };
+
+  const handleCreateWithLuka = () => {
+    addMsg({ role: "user", text: "Create with Luka" });
+    setPhase("create-with-luka");
+    setTimeout(() => {
+      addMsg({
+        role: "luka",
+        text: "Describe the PBC request document you need and I'll build it for you:",
+      });
+    }, 400);
+  };
+
+  const handleLukaPromptSubmit = () => {
+    const prompt = lukaPromptInput.trim();
+    if (!prompt) return;
+    setLukaPromptInput("");
+    const customTemplate: PBCTemplate = {
+      id: "luka-generated",
+      label: prompt.length > 50 ? prompt.slice(0, 50) + "…" : prompt,
+      wpRef: "AI",
+      generate: () =>
+        `# ${prompt}\n\n**Generated by Luka AI**\n\n---\n\nThis document has been drafted based on your request. Please review and customise as needed.\n\n## Section 1 — Overview\n\nPlease provide information relevant to: ${prompt}\n\n________________________________________________________________________________\n\n________________________________________________________________________________\n\n## Section 2 — Details\n\nAdditional context and supporting documentation:\n\n________________________________________________________________________________\n\n________________________________________________________________________________\n\n## Section 3 — Confirmation\n\nPlease confirm the following before submission:\n\n- [ ] All information provided is accurate and complete\n- [ ] Supporting documents have been attached where indicated\n- [ ] Authorised signatory has reviewed this document`,
+    };
+    handleTemplateSelect(customTemplate, prompt);
   };
 
   const handleSend = () => {
@@ -475,7 +695,6 @@ export function PBCRequestFlow({
       setPhase("sent");
       onSentToPortal(engagementId, threadId);
 
-      // Simulate client response after 5s
       setTimeout(() => {
         savePBCRequest({
           threadId,
@@ -589,6 +808,32 @@ export function PBCRequestFlow({
       );
     }
 
+    if (msg.isTemplateGrid) {
+      return (
+        <div key={i} className="space-y-0">
+          <LukaBubble done={isDone}>
+            <LukaText text={msg.text} />
+          </LukaBubble>
+          {phase === "wp-selected" && (
+            <TemplateCardGrid
+              onSelectTemplate={handleTemplateSelect}
+              onUpload={() => {
+                addMsg({ role: "user", text: "Upload my own template" });
+                setPhase("upload-template");
+                setTimeout(() => {
+                  addMsg({
+                    role: "luka",
+                    text: "Please upload your template file (.docx or .txt). I'll use it to generate the PBC request document.",
+                  });
+                }, 400);
+              }}
+              onCreateWithLuka={handleCreateWithLuka}
+            />
+          )}
+        </div>
+      );
+    }
+
     return (
       <LukaBubble key={i} done={isDone}>
         <LukaText text={msg.text} />
@@ -610,7 +855,7 @@ export function PBCRequestFlow({
         <div ref={bottomRef} />
       </div>
 
-      {/* Input area — only shown during type-selected phase */}
+      {/* WP number input */}
       {phase === "type-selected" && (
         <div className="px-4 pb-4 pt-2">
           <div className="luka-input-wrapper">
@@ -658,6 +903,53 @@ export function PBCRequestFlow({
               onChange={handleFileUpload}
             />
           </label>
+        </div>
+      )}
+
+      {/* Create with Luka prompt */}
+      {phase === "create-with-luka" && (
+        <div className="px-4 pb-4 pt-2">
+          <div className="luka-input-wrapper">
+            <textarea
+              autoFocus
+              value={lukaPromptInput}
+              onChange={e => setLukaPromptInput(e.target.value)}
+              onKeyDown={e => {
+                if (e.key === "Enter" && !e.shiftKey) {
+                  e.preventDefault();
+                  handleLukaPromptSubmit();
+                }
+              }}
+              placeholder="e.g. Create an IT controls questionnaire covering password policies and user access management…"
+              className="luka-input resize-none"
+              rows={3}
+            />
+            <div className="flex items-end justify-between mt-2 gap-2">
+              <div className="flex flex-wrap gap-1.5 flex-1">
+                {LUKA_PROMPT_HINTS.map(hint => (
+                  <button
+                    key={hint}
+                    onClick={() => setLukaPromptInput(hint)}
+                    className="text-[11px] rounded-full px-2.5 py-1 border transition-colors hover:bg-primary/5 hover:border-primary/30"
+                    style={{
+                      borderColor: "hsl(220 20% 82%)",
+                      color: "hsl(222 25% 40%)",
+                      fontFamily: "'DM Sans', system-ui, sans-serif",
+                    }}
+                  >
+                    {hint}
+                  </button>
+                ))}
+              </div>
+              <button
+                onClick={handleLukaPromptSubmit}
+                disabled={!lukaPromptInput.trim()}
+                className={cn("luka-send-btn shrink-0", lukaPromptInput.trim() && "enabled")}
+              >
+                <Send className="h-3.5 w-3.5" />
+              </button>
+            </div>
+          </div>
         </div>
       )}
 
