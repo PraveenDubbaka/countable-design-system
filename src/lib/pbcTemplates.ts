@@ -13,7 +13,7 @@ export interface PBCTemplate {
 export const PBC_TEMPLATES: PBCTemplate[] = [
   {
     id: "memo-540",
-    label: "540 Memo — Control Assessment and Documentation",
+    label: "Control Assessment and Documentation",
     wpRef: "540",
     generate: ({ clientName, engagementId, yearEnd, wpNumbers }) => `# Control Assessment and Documentation — PBC Request
 **Client:** ${clientName}  |  **Engagement:** ${engagementId}  |  **Period:** ${yearEnd}${wpNumbers.length ? `  |  **Working Papers:** ${wpNumbers.join(", ")}` : ""}
@@ -66,7 +66,7 @@ Contact us if you have any questions regarding the scope or format of the docume
   },
   {
     id: "it-questionnaire",
-    label: "IT Information Questionnaire (PBC)",
+    label: "IT Information Questionnaire",
     wpRef: "IT",
     generate: ({ clientName, engagementId, yearEnd }) => `# IT Information Questionnaire — Prepared by Client
 **Client:** ${clientName}  |  **Engagement:** ${engagementId}  |  **Period:** ${yearEnd}
@@ -151,9 +151,9 @@ Please complete the following questionnaire. Where applicable, attach supporting
   },
   {
     id: "memo-510",
-    label: "510 — Prepared by Client Memo",
+    label: "Client Document Request",
     wpRef: "510",
-    generate: ({ clientName, engagementId, yearEnd, wpNumbers }) => `# Prepared by Client — Document Request Memo
+    generate: ({ clientName, engagementId, yearEnd, wpNumbers }) => `# Client Document Request
 **Client:** ${clientName}  |  **Engagement:** ${engagementId}  |  **Period:** ${yearEnd}${wpNumbers.length ? `  |  **Working Papers:** ${wpNumbers.join(", ")}` : ""}
 
 ---

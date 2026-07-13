@@ -61,7 +61,9 @@ import {
   FileSpreadsheet,
   Pencil,
   FileText,
+  PanelLeftClose,
 } from "lucide-react";
+import EditMenuDropdown from "@/components/luka/workspace/EditMenuDropdown";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { cn } from "@/lib/utils";
 import {
@@ -388,6 +390,93 @@ function FormCommandFlow({ formCommand, phase, connectedSources, uploadedFile, e
       )}
     </div>
   );
+}
+
+// ── PBC Document Viewer helpers ─────────────────────────────────────────────
+
+const PBC_HEAD = "hsl(215 75% 22%)";
+const PBC_BODY = "hsl(222 35% 16%)";
+const PBC_SUBTLE = "hsl(222 15% 55%)";
+const PBC_FONT = "'DM Sans', system-ui, sans-serif";
+
+function renderPBCInline(text: string): React.ReactNode[] {
+  return text.split(/(\*\*[^*]+\*\*)/g).map((part, i) =>
+    part.startsWith("**") && part.endsWith("**")
+      ? <strong key={i}>{part.slice(2, -2)}</strong>
+      : part
+  );
+}
+
+function PBCDocContent({ content }: { content: string }) {
+  const lines = content.split("\n");
+  const elements: React.ReactNode[] = [];
+  const tableBuffer: string[] = [];
+  let k = 0;
+
+  const flushTable = () => {
+    if (!tableBuffer.length) return;
+    const rows = tableBuffer.splice(0);
+    const dataRows = rows.filter(r => /[a-zA-Z0-9#*☐]/.test(r));
+    const parsedRows = dataRows.map(r =>
+      r.split("|").filter((_, j, a) => j > 0 && j < a.length - 1).map(c => c.trim())
+    );
+    if (!parsedRows.length) return;
+    elements.push(
+      <div key={k++} style={{ overflowX: "auto", marginBottom: 16 }}>
+        <table style={{ width: "100%", borderCollapse: "collapse", fontFamily: PBC_FONT }}>
+          <thead>
+            <tr>
+              {parsedRows[0].map((cell, j) => (
+                <th key={j} style={{ padding: "8px 12px", textAlign: "left", fontSize: 12, fontWeight: 700, color: PBC_HEAD, borderBottom: "2px solid hsl(220 20% 90%)", background: "hsl(220 30% 97%)" }}>
+                  {renderPBCInline(cell)}
+                </th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {parsedRows.slice(1).map((row, j) => (
+              <tr key={j} style={{ borderBottom: "1px solid hsl(220 20% 94%)" }}>
+                {row.map((cell, m) => (
+                  <td key={m} style={{ padding: "8px 12px", fontSize: 13, color: PBC_BODY, verticalAlign: "top", lineHeight: 1.6 }}>
+                    {renderPBCInline(cell)}
+                  </td>
+                ))}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    );
+  };
+
+  for (const line of lines) {
+    if (line.startsWith("|")) { tableBuffer.push(line); continue; }
+    if (tableBuffer.length) flushTable();
+
+    if (/^---+$/.test(line)) {
+      elements.push(<hr key={k++} style={{ border: "none", borderTop: "1px solid hsl(220 20% 90%)", margin: "16px 0" }} />);
+    } else if (line.startsWith("# ")) {
+      elements.push(<h1 key={k++} style={{ fontSize: 20, fontWeight: 700, color: PBC_HEAD, fontFamily: PBC_FONT, margin: "0 0 8px 0", lineHeight: 1.3 }}>{renderPBCInline(line.slice(2))}</h1>);
+    } else if (line.startsWith("## ")) {
+      elements.push(<h2 key={k++} style={{ fontSize: 15, fontWeight: 700, color: PBC_HEAD, fontFamily: PBC_FONT, margin: "24px 0 8px 0", paddingBottom: 6, borderBottom: "2px solid hsl(215 75% 22% / 0.15)" }}>{renderPBCInline(line.slice(3))}</h2>);
+    } else if (line.startsWith("### ")) {
+      elements.push(<h3 key={k++} style={{ fontSize: 12, fontWeight: 700, color: PBC_HEAD, fontFamily: PBC_FONT, margin: "16px 0 6px 0", textTransform: "uppercase" as const, letterSpacing: "0.05em" }}>{renderPBCInline(line.slice(4))}</h3>);
+    } else if (/^[-*] /.test(line)) {
+      elements.push(
+        <div key={k++} style={{ display: "flex", gap: 8, alignItems: "flex-start", marginBottom: 4 }}>
+          <span style={{ color: PBC_SUBTLE, flexShrink: 0, marginTop: 2 }}>•</span>
+          <span style={{ fontSize: 13, color: PBC_BODY, fontFamily: PBC_FONT, lineHeight: 1.7 }}>{renderPBCInline(line.slice(2))}</span>
+        </div>
+      );
+    } else if (line.trim() === "") {
+      elements.push(<div key={k++} style={{ height: 8 }} />);
+    } else {
+      elements.push(<p key={k++} style={{ fontSize: 13, color: PBC_BODY, fontFamily: PBC_FONT, lineHeight: 1.7, margin: "0 0 6px 0" }}>{renderPBCInline(line)}</p>);
+    }
+  }
+  if (tableBuffer.length) flushTable();
+
+  return <>{elements}</>;
 }
 
 export function AskLukaOverlay({
@@ -2543,64 +2632,81 @@ const [workspaceLoading, setWorkspaceLoading] = useState(false);
                 isMinimized={isMinimized}
               />
             </div>
-            {/* Document viewer panel — rendered beside chat when user clicks "View Document" in PBC flow */}
+            {/* Document viewer panel — workspace FinancialStatementPreview style */}
             {pbcViewingDoc && (
-              <div className="flex-1 flex flex-col overflow-hidden border-l" style={{ borderColor: "hsl(var(--border))" }}>
-                <div className="flex items-center justify-between px-4 py-2 border-b shrink-0" style={{ borderColor: "hsl(var(--border))" }}>
-                  <div className="flex items-center gap-2 min-w-0">
-                    <FileText className="h-4 w-4 text-primary shrink-0" />
-                    <span className="text-sm font-semibold truncate">{pbcViewingDoc.templateLabel}</span>
-                  </div>
-                  {!pbcEditing ? (
+              <div className="flex-1 flex flex-col overflow-hidden" style={{ background: "hsl(220 30% 97%)", borderLeft: "1px solid hsl(220 20% 90%)" }}>
+                {/* Header */}
+                <div
+                  className="flex items-center justify-between px-4 py-2.5 shrink-0"
+                  style={{ background: "white", borderBottom: "1px solid hsl(220 20% 90%)" }}
+                >
+                  <div className="flex items-center gap-2.5 min-w-0">
                     <button
-                      onClick={() => setPBCEditing(true)}
-                      className="inline-flex items-center gap-1.5 text-xs px-2.5 py-1 rounded-md border border-border bg-background hover:bg-muted transition-colors"
+                      onClick={() => { setPBCViewingDoc(null); setPBCEditing(false); }}
+                      className="shrink-0 p-1 rounded hover:bg-muted transition-colors"
+                      style={{ color: PBC_SUBTLE }}
                     >
-                      <Pencil className="h-3 w-3" /> Edit
+                      <PanelLeftClose className="h-4 w-4" />
                     </button>
-                  ) : (
-                    <div className="flex items-center gap-2">
+                    <span
+                      className="text-sm font-semibold truncate"
+                      style={{ color: PBC_HEAD, fontFamily: PBC_FONT }}
+                    >
+                      {pbcViewingDoc.templateLabel}
+                    </span>
+                  </div>
+                  {pbcEditing ? (
+                    <div className="flex items-center gap-2 shrink-0">
                       <button
                         onClick={() => setPBCEditing(false)}
-                        className="text-xs px-2.5 py-1 rounded-md border border-border bg-background hover:bg-muted transition-colors"
+                        className="text-xs px-3 py-1.5 rounded-md border border-border bg-background hover:bg-muted transition-colors"
                       >
                         Cancel
                       </button>
                       <button
                         onClick={() => setPBCEditing(false)}
-                        className="text-xs px-2.5 py-1 rounded-md bg-primary text-white hover:bg-primary/90 transition-colors"
+                        className="text-xs px-3 py-1.5 rounded-md bg-primary text-primary-foreground hover:bg-primary/90 transition-colors font-semibold"
                       >
                         Save
                       </button>
                     </div>
-                  )}
-                </div>
-                <div className="flex-1 overflow-auto p-4">
-                  {pbcEditing ? (
-                    <textarea
-                      className="w-full h-full min-h-[400px] font-mono text-sm p-2 border border-border rounded resize-none bg-background focus:outline-none"
-                      value={pbcDocContent}
-                      onChange={(e) => setPBCDocContent(e.target.value)}
-                    />
                   ) : (
-                    <pre className="whitespace-pre-wrap text-sm font-mono leading-relaxed">{pbcDocContent}</pre>
+                    <EditMenuDropdown
+                      onEditManually={() => setPBCEditing(true)}
+                      onTellLuka={() => {}}
+                    />
                   )}
                 </div>
-                {pbcEditing && (
-                  <div className="border-t px-4 py-3 flex gap-2 shrink-0" style={{ borderColor: "hsl(var(--border))" }}>
-                    <button
-                      onClick={() => setPBCEditing(false)}
-                      className="text-xs px-3 py-1.5 rounded-md bg-primary text-white hover:bg-primary/90 transition-colors"
-                    >
-                      Save Changes
-                    </button>
-                    <button
-                      className="text-xs px-3 py-1.5 rounded-md border border-border bg-background hover:bg-muted transition-colors"
-                    >
-                      Send to Portal
-                    </button>
+                {/* Scrollable document body */}
+                <div className="flex-1 overflow-auto px-6 py-8">
+                  <div
+                    className="mx-auto"
+                    style={{
+                      width: "min(820px, 100%)",
+                      background: "white",
+                      borderRadius: 14,
+                      boxShadow: "0 8px 32px hsl(220 30% 30% / 0.08), 0 1px 8px hsl(220 20% 40% / 0.06)",
+                      border: "1px solid hsl(220 20% 90%)",
+                      overflow: "hidden",
+                      fontFamily: PBC_FONT,
+                    }}
+                  >
+                    <div style={{ height: 6, background: PBC_HEAD }} />
+                    <div style={{ padding: "32px 48px", minHeight: 600 }}>
+                      {pbcEditing ? (
+                        <textarea
+                          className="w-full resize-none outline-none bg-transparent"
+                          style={{ fontFamily: PBC_FONT, fontSize: 13, lineHeight: 1.7, color: PBC_BODY, minHeight: 540, border: "none" }}
+                          value={pbcDocContent}
+                          onChange={(e) => setPBCDocContent(e.target.value)}
+                        />
+                      ) : (
+                        <PBCDocContent content={pbcDocContent} />
+                      )}
+                    </div>
+                    <div style={{ height: 6, background: PBC_HEAD }} />
                   </div>
-                )}
+                </div>
               </div>
             )}
             </div>

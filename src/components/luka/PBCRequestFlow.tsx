@@ -211,7 +211,13 @@ function ArtifactCard({
   onSend: () => void;
   sent: boolean;
 }) {
-  const preview = content.split("\n").filter(Boolean).slice(0, 4).join("\n");
+  const preview = content.split("\n")
+    .filter(Boolean)
+    .filter(l => !/^---+$/.test(l) && !l.startsWith("|"))
+    .map(l => l.replace(/^#+\s+/, "").replace(/\*\*/g, "").trim())
+    .filter(Boolean)
+    .slice(0, 3)
+    .join("  ·  ");
   return (
     <div className="rounded-xl border border-border bg-background shadow-sm overflow-hidden mt-1">
       <div className="flex items-center gap-2 px-4 py-2.5 border-b border-border bg-muted/40">
@@ -222,9 +228,9 @@ function ArtifactCard({
         </span>
       </div>
       <div className="px-4 py-3">
-        <pre className="text-xs text-muted-foreground font-mono whitespace-pre-wrap line-clamp-4 leading-relaxed">
+        <p className="text-xs text-muted-foreground leading-relaxed line-clamp-2" style={{ fontFamily: "'DM Sans', system-ui, sans-serif" }}>
           {preview}
-        </pre>
+        </p>
       </div>
       <div className="flex gap-2 px-4 py-3 border-t border-border bg-muted/20">
         <button
