@@ -185,7 +185,7 @@ function SectionCard({ title, subtitle, children }: {
 function PartHeader({ letter, title, description }: { letter: string; title: string; description: string }) {
   return (
     <div className="flex items-start gap-3 pb-1">
-      <span className="inline-flex items-center justify-center w-6 h-6 rounded bg-primary text-white text-xs font-bold shrink-0 mt-0.5">
+      <span className="inline-flex items-center justify-center w-6 h-6 rounded bg-[#1C63A6] text-white text-xs font-bold shrink-0 mt-0.5">
         {letter}
       </span>
       <div>

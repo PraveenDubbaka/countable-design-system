@@ -281,7 +281,7 @@ export default function AddNewClient() {
               Cancel
             </Button>
             <Button
-              className="h-9 px-4 text-sm bg-primary hover:bg-primary/90 text-white"
+              className="h-9 px-4 text-sm bg-[#1C63A6] hover:bg-[#1a5a9e] text-white"
               onClick={handleAdd}
             >
               Add

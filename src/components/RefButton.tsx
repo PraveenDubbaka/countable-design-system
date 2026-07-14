@@ -104,7 +104,7 @@ export function RefButton({ reference, onAttach, onRemove, disabled }: RefButton
           </div>
           {refs.length > 0 && (
             <div className="p-2 border-t border-border">
-              <button onClick={() => { setIsOpen(false); setSearchTerm(''); }} className="w-full flex items-center justify-center gap-1 px-3 py-1.5 text-xs font-medium text-primary-foreground bg-primary hover:bg-primary/90 rounded-md transition-colors">
+              <button onClick={() => { setIsOpen(false); setSearchTerm(''); }} className="w-full flex items-center justify-center gap-1 px-3 py-1.5 text-xs font-medium text-primary-foreground bg-[#1C63A6] hover:bg-[#1a5a9e] rounded-md transition-colors">
                 <Check className="h-3.5 w-3.5" />
                 <span>Done</span>
               </button>

@@ -2779,7 +2779,7 @@ export default function EngagementDetail() {
                 <Button variant="outline" onClick={cancelEngagementSwitch} className="flex-1 h-10">
                   No
                 </Button>
-                <Button onClick={confirmEngagementSwitch} className="flex-1 h-10 bg-primary hover:bg-primary/90">
+                <Button onClick={confirmEngagementSwitch} className="flex-1 h-10 bg-[#1C63A6] hover:bg-[#1a5a9e]">
                   Yes
                 </Button>
               </DialogFooter>
@@ -2828,7 +2828,7 @@ export default function EngagementDetail() {
                 <Button variant="outline" onClick={cancelClientSwitch} className="flex-1 h-10">
                   No
                 </Button>
-                <Button onClick={confirmClientSwitch} disabled={!selectedClientEngagement} className="flex-1 h-10 bg-primary hover:bg-primary/90">
+                <Button onClick={confirmClientSwitch} disabled={!selectedClientEngagement} className="flex-1 h-10 bg-[#1C63A6] hover:bg-[#1a5a9e]">
                   Yes
                 </Button>
               </DialogFooter>

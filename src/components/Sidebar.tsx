@@ -2635,7 +2635,7 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
                           <TooltipTrigger asChild>
                             <Button
                               size="icon"
-                              className="h-8 w-8 bg-primary hover:bg-primary/90 shadow-sm flex-shrink-0"
+                              className="h-8 w-8 bg-[#1C63A6] hover:bg-[#1a5a9e] shadow-sm flex-shrink-0"
                               disabled={selectedEngTemplates.size === 0}
                               onClick={() => setEngBulkAddDialogOpen(true)}
                             >
@@ -2736,7 +2736,7 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
                      </button>
                     {activeTab === "firm" && (
                       <>
-                        <Button size="icon" className="h-9 w-9 bg-primary hover:bg-primary/90 shadow-sm">
+                        <Button size="icon" className="h-9 w-9 bg-[#1C63A6] hover:bg-[#1a5a9e] shadow-sm">
                           <Plus className="h-4 w-4 text-primary-foreground icon-plus" />
                         </Button>
                         <Button size="icon" variant="secondary" className="h-9 w-9 text-destructive hover:text-destructive focus-visible:text-destructive">
@@ -2749,7 +2749,7 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
                         <TooltipTrigger asChild>
                           <Button
                             size="icon"
-                            className="h-9 w-9 bg-primary hover:bg-primary/90 shadow-sm"
+                            className="h-9 w-9 bg-[#1C63A6] hover:bg-[#1a5a9e] shadow-sm"
                             disabled={selectedTemplates.size === 0}
                             onClick={() => setBulkAddDialogOpen(true)}
                           >
@@ -2795,7 +2795,7 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
                     </div>
                     {activeTab === "firm" && (
                       <>
-                        <Button size="icon" className="h-9 w-9 bg-primary hover:bg-primary/90 shadow-sm">
+                        <Button size="icon" className="h-9 w-9 bg-[#1C63A6] hover:bg-[#1a5a9e] shadow-sm">
                           <Plus className="h-4 w-4 text-primary-foreground icon-plus" />
                         </Button>
                         <Button size="icon" variant="secondary" className="h-9 w-9 text-destructive hover:text-destructive focus-visible:text-destructive">
@@ -2886,7 +2886,7 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
                     </div>
                     <Button
                       size="sm"
-                      className="mt-1 h-8 px-3 text-xs bg-primary hover:bg-primary/90 text-white"
+                      className="mt-1 h-8 px-3 text-xs bg-[#1C63A6] hover:bg-[#1a5a9e] text-white"
                       onClick={() => navigate("/create", { state: { contentType: selectedDropdown } })}
                     >
                       <Plus className="h-3.5 w-3.5 mr-1" />

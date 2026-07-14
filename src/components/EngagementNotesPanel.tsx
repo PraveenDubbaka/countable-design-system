@@ -166,7 +166,7 @@ export function EngagementNotesPanel({ linkedSection, sectionFolder, onLinkedSec
             <p className="text-xs text-muted-foreground leading-snug">No notes yet.<br />Click + to create one.</p>
             <button
               onClick={addNote}
-              className="inline-flex items-center gap-1.5 h-7 px-3 rounded-lg text-xs font-medium bg-primary text-white hover:bg-primary/90 transition-colors"
+              className="inline-flex items-center gap-1.5 h-7 px-3 rounded-lg text-xs font-medium bg-[#1C63A6] text-white hover:bg-primary/90 transition-colors"
             >
               <Plus className="h-3 w-3" /> New Note
             </button>

@@ -908,7 +908,7 @@ export default function AuditDependencyRegister() {
                   href={DRIVE_FOLDER_URL}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-primary text-white text-sm font-medium hover:bg-primary/90 transition-colors shadow-sm"
+                  className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-[#1C63A6] text-white text-sm font-medium hover:bg-primary/90 transition-colors shadow-sm"
                 >
                   <ExternalLink className="h-3.5 w-3.5" />
                   Open Google Drive folder

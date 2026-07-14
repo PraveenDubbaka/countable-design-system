@@ -171,7 +171,7 @@ export default function Clients() {
                     onClick={() => setActiveTab(tab.id)}
                     className={`px-4 py-1.5 text-sm font-medium transition-colors rounded-sm ${
                       activeTab === tab.id
-                        ? "bg-primary text-white"
+                        ? "bg-[#1C63A6] text-white"
                         : "text-muted-foreground hover:bg-muted"
                     }`}
                   >
@@ -260,7 +260,7 @@ export default function Clients() {
                 </div>
                 <Popover>
                   <PopoverTrigger asChild>
-                    <Button className="bg-primary hover:bg-primary/90 text-white h-9 px-4 text-sm font-medium">
+                    <Button className="bg-[#1C63A6] hover:bg-[#1a5a9e] text-white h-9 px-4 text-sm font-medium">
                       Add Client
                       <ChevronDown className="h-4 w-4 ml-1.5" />
                     </Button>

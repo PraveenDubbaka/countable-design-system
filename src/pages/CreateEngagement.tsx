@@ -291,7 +291,7 @@ const InlineRow = ({ label, required, children }: { label: string; required?: bo
 const BoolToggle = ({ value, onChange }: { value: boolean; onChange: (v: boolean) => void }) => (
   <div className="inline-flex rounded-[8px] border border-border overflow-hidden text-xs font-medium shrink-0 select-none">
     <button type="button" onClick={() => onChange(true)}
-      className={`px-3.5 py-1.5 transition-colors ${value ? 'bg-primary text-white' : 'text-muted-foreground hover:bg-muted'}`}>
+      className={`px-3.5 py-1.5 transition-colors ${value ? 'bg-[#1C63A6] text-white' : 'text-muted-foreground hover:bg-muted'}`}>
       Yes
     </button>
     <button type="button" onClick={() => onChange(false)}
@@ -304,7 +304,7 @@ const BoolToggle = ({ value, onChange }: { value: boolean; onChange: (v: boolean
 const StrToggle = ({ value, onChange }: { value: string; onChange: (v: string) => void }) => (
   <div className="inline-flex rounded-[8px] border border-border overflow-hidden text-xs font-medium shrink-0 select-none">
     <button type="button" onClick={() => onChange('yes')}
-      className={`px-3.5 py-1.5 transition-colors ${value === 'yes' ? 'bg-primary text-white' : 'text-muted-foreground hover:bg-muted'}`}>
+      className={`px-3.5 py-1.5 transition-colors ${value === 'yes' ? 'bg-[#1C63A6] text-white' : 'text-muted-foreground hover:bg-muted'}`}>
       Yes
     </button>
     <button type="button" onClick={() => onChange('no')}

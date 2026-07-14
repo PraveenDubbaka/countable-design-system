@@ -154,7 +154,7 @@ export default function ClientDetail() {
               key={tab}
               onClick={() => setActiveTab(tab)}
               className={`px-4 py-1.5 text-sm font-medium transition-colors rounded-sm capitalize ${
-                activeTab === tab ? 'bg-primary text-white' : 'text-muted-foreground hover:bg-muted'
+                activeTab === tab ? 'bg-[#1C63A6] text-white' : 'text-muted-foreground hover:bg-muted'
               }`}
             >
               {tab.charAt(0).toUpperCase() + tab.slice(1)}
@@ -209,7 +209,7 @@ export default function ClientDetail() {
               </div>
               <Button
                 size="sm"
-                className="h-8 text-xs bg-primary hover:bg-primary/90 text-white"
+                className="h-8 text-xs bg-[#1C63A6] hover:bg-[#1a5a9e] text-white"
                 onClick={() => navigate('/engagements/create', { state: { clientName: client.legalEntityName } })}
               >
                 Create Engagement

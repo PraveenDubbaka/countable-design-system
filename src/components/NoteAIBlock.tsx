@@ -168,7 +168,7 @@ export function NoteAIBlock({ command, onAccept, onDiscard }: NoteAIBlockProps) 
             <>
               <button
                 onClick={handleEditSave}
-                className="inline-flex items-center gap-1 h-6 px-2.5 rounded-md text-[11px] font-semibold bg-primary text-white hover:bg-primary/90 transition-colors"
+                className="inline-flex items-center gap-1 h-6 px-2.5 rounded-md text-[11px] font-semibold bg-[#1C63A6] text-white hover:bg-primary/90 transition-colors"
               >
                 <Check className="h-3 w-3" /> Save
               </button>
@@ -183,7 +183,7 @@ export function NoteAIBlock({ command, onAccept, onDiscard }: NoteAIBlockProps) 
             <>
               <button
                 onClick={() => onAccept(displayed)}
-                className="inline-flex items-center gap-1 h-6 px-2.5 rounded-md text-[11px] font-semibold bg-primary text-white hover:bg-primary/90 transition-colors"
+                className="inline-flex items-center gap-1 h-6 px-2.5 rounded-md text-[11px] font-semibold bg-[#1C63A6] text-white hover:bg-primary/90 transition-colors"
               >
                 <Check className="h-3 w-3" /> Accept
               </button>

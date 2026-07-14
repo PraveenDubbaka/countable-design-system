@@ -187,7 +187,7 @@ export default function Engagements() {
               </Button>
               <Button
                 onClick={() => { setSelectedClient(""); setSelectedEngType(""); setCreateModalOpen(true); }}
-                className="bg-primary hover:bg-primary/90 text-white h-9 px-4 text-sm font-medium"
+                className="bg-[#1C63A6] hover:bg-[#1a5a9e] text-white h-9 px-4 text-sm font-medium"
               >
                 Create Engagement
               </Button>

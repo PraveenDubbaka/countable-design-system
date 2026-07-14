@@ -175,7 +175,7 @@ function EditableSectionBlock({ section, onUpdateRow, onDeleteRow, onAddRow, onO
             <Button
               size="sm"
               onClick={onAddRow}
-              className="h-8 text-xs bg-primary hover:bg-primary/90 text-white"
+              className="h-8 text-xs bg-[#1C63A6] hover:bg-[#1a5a9e] text-white"
             >
               <Plus className="h-3.5 w-3.5 mr-1" /> Add Section
             </Button>
@@ -541,7 +541,7 @@ function MyTemplateEditor({
               <Button
                 size="sm"
                 onClick={handleSave}
-                className="bg-primary hover:bg-primary/90 text-white text-[13px] font-semibold"
+                className="bg-[#1C63A6] hover:bg-[#1a5a9e] text-white text-[13px] font-semibold"
               >
                 Save changes
               </Button>
@@ -665,7 +665,7 @@ export default function EngagementTemplates() {
                     <StandardsBanner banner={activeView.standardsBanner} />
                   )}
                 </div>
-                <Button size="sm" className="bg-primary hover:bg-primary/90 text-primary-foreground text-[13px] font-semibold">
+                <Button size="sm" className="bg-[#1C63A6] hover:bg-[#1a5a9e] text-primary-foreground text-[13px] font-semibold">
                   <Plus className="h-4 w-4 mr-1" /> My Templates
                 </Button>
               </div>

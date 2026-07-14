@@ -97,7 +97,7 @@ export default function Teams() {
                     onClick={() => setActiveTab(tab.id)}
                     className={`px-4 py-1.5 text-sm font-medium transition-colors rounded-sm ${
                       activeTab === tab.id
-                        ? "bg-primary text-white"
+                        ? "bg-[#1C63A6] text-white"
                         : "text-muted-foreground hover:bg-muted"
                     }`}
                     style={{ fontWeight: 600 }}
@@ -133,7 +133,7 @@ export default function Teams() {
                     className="pl-9 w-44 h-9 text-sm"
                   />
                 </div>
-                <Button className="bg-primary hover:bg-primary/90 text-white h-9 px-4 text-sm font-medium">
+                <Button className="bg-[#1C63A6] hover:bg-[#1a5a9e] text-white h-9 px-4 text-sm font-medium">
                   Add Team
                   <ChevronDown className="h-4 w-4 ml-1.5" />
                 </Button>

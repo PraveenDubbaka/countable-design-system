@@ -454,7 +454,7 @@ export default function TrialBalance() {
                     <button key={y} className={`px-3 py-1.5 text-sm border transition-colors
                       ${i === 0 ? 'rounded-l-md' : '-ml-px'}
                       ${i === years.length - 1 ? 'rounded-r-md' : ''}
-                      ${i === 0 ? 'bg-primary text-white border-primary z-10 relative' : 'border-border text-muted-foreground hover:bg-muted'}`}>
+                      ${i === 0 ? 'bg-[#1C63A6] text-white border-primary z-10 relative' : 'border-border text-muted-foreground hover:bg-muted'}`}>
                       {y} (0)
                     </button>
                   ))}
