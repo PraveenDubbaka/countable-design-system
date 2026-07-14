@@ -1593,7 +1593,7 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
                     onBlur={() => setIsSearchFocused(false)}
                   />
                 </div>
-                <Button size="icon" variant="ghost" className="h-9 w-9 shrink-0 bg-primary/10 hover:bg-primary/20"
+                <Button size="icon" variant="secondary" className="h-9 w-9 shrink-0"
                   onClick={() => {
                     // All parent node IDs that have children
                     const allParentIds = [
@@ -1620,14 +1620,14 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
                 </Button>
                 <Button
                   size="sm"
-                  variant="ghost"
+                  variant="secondary"
                   onClick={() => (signoffsMode ? exitSignoffsMode() : enterSignoffsMode())}
                   aria-label={signoffsMode ? "Close Signoffs" : "Open Signoffs"}
                   title="Signoffs"
                   className={cn(
-                    "h-9 shrink-0 gap-1 text-xs font-medium text-foreground transition-all duration-300 ease-in-out overflow-hidden",
+                    "h-9 shrink-0 gap-1 text-xs font-medium transition-all duration-300 ease-in-out overflow-hidden",
                     isSearchFocused ? "w-9 px-0 justify-center" : "px-2",
-                    signoffsMode ? "bg-primary/30 hover:bg-primary/40" : "bg-primary/10 hover:bg-primary/20"
+                    signoffsMode ? "bg-secondary-button-active border-secondary-button-border-active" : ""
                   )}
                 >
                   <svg className="h-3.5 w-3.5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
