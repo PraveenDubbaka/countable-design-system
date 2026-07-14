@@ -55,8 +55,8 @@ export function SettingsPanel({ open, onOpenChange }: SettingsPanelProps) {
                 className={cn(
                   "w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-colors text-left",
                   activeSection === item.id
-                    ? "bg-primary/10 text-primary font-medium"
-                    : "text-muted-foreground hover:bg-muted hover:text-foreground"
+                    ? "bg-primary/10 text-primary font-medium ring-1 ring-primary/25"
+                    : "text-muted-foreground hover:bg-primary/10 hover:text-foreground"
                 )}
               >
                 <item.icon className="h-4 w-4" />
