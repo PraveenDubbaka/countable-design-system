@@ -653,6 +653,19 @@ export default function DesignSystem() {
                     <Button size="lg">Large</Button>
                     <Button size="icon"><Plus className="h-4 w-4" /></Button>
                   </div>
+                  <p className="text-label-xs text-muted-foreground">Disabled states</p>
+                  <div className="flex flex-wrap gap-2">
+                    <Button variant="default" disabled>Primary</Button>
+                    <Button variant="secondary" disabled>Secondary</Button>
+                    <Button variant="outline" disabled>Outline</Button>
+                    <Button variant="ghost" disabled>Ghost</Button>
+                    <Button variant="destructive" disabled>Destructive</Button>
+                  </div>
+                  <div className="flex flex-wrap gap-2">
+                    <Button variant="elevated" disabled>Elevated</Button>
+                    <Button variant="tonal" disabled>Tonal</Button>
+                    <Button variant="link" disabled>Link</Button>
+                  </div>
                 </div>
                 <p className="text-label-sm text-muted-foreground mt-2">h-9 · 10px radius · transition opacity hover</p>
               </SampleCard>
