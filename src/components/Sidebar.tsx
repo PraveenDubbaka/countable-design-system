@@ -1625,12 +1625,12 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
                   aria-label={signoffsMode ? "Close Signoffs" : "Open Signoffs"}
                   title="Signoffs"
                   className={cn(
-                    "h-9 shrink-0 gap-1 text-xs font-medium transition-all duration-300 ease-in-out overflow-hidden",
+                    "h-9 shrink-0 gap-1 transition-all duration-300 ease-in-out overflow-hidden",
                     isSearchFocused ? "w-9 px-0 justify-center" : "px-2",
                     signoffsMode ? "bg-secondary-button-active border-secondary-button-border-active" : ""
                   )}
                 >
-                  <svg className="h-3.5 w-3.5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                     <circle cx="12" cy="12" r="10" />
                     <path d="M9 12l2 2 4-4" />
                   </svg>
