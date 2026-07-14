@@ -360,7 +360,7 @@ export function EngagementRightPanel({ className }: EngagementRightPanelProps) {
                   </div>
 
                   <Button
-                    className="w-full justify-center gap-2 h-10 text-xs font-medium bg-[#0C2D55] hover:bg-[#0a2447] text-white border-0"
+                    className="w-full justify-center gap-2 h-10 text-xs font-medium bg-[#1C63A6] hover:bg-[#1a5a9e] text-white border-0"
                   >
                     <CalendarClock className="h-3.5 w-3.5" />
                     Schedule Document Request

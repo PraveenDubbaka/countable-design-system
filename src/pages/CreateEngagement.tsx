@@ -1119,7 +1119,7 @@ export default function CreateEngagement() {
                 </div>
                 <div className="mt-4">
                   <button type="button" onClick={startAddMember} disabled={!!pendingRow}
-                    className="inline-flex items-center gap-1.5 h-9 px-4 text-sm font-semibold rounded-[10px] bg-[#0C2D55] text-white hover:bg-[#0a2447] disabled:opacity-40 disabled:cursor-not-allowed transition-colors">
+                    className="inline-flex items-center gap-1.5 h-9 px-4 text-sm font-semibold rounded-[10px] bg-[#1C63A6] text-white hover:bg-[#1a5a9e] disabled:opacity-40 disabled:cursor-not-allowed transition-colors">
                     <Plus className="h-4 w-4" />Add Member
                   </button>
                 </div>
