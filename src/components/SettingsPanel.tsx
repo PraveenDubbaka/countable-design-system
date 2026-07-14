@@ -160,14 +160,14 @@ function LukaContent() {
   return (
     <div className="flex flex-col h-full">
       <Tabs defaultValue="automation" className="w-full flex-1 flex flex-col">
-        <TabsList className="h-11 bg-[#f0f1f3] dark:bg-muted rounded-full p-1 gap-1 w-fit">
-          <TabsTrigger value="automation" className="rounded-full px-5 text-muted-foreground data-[state=active]:bg-white dark:data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm gap-2">
+        <TabsList>
+          <TabsTrigger value="automation" className="gap-2">
             <Zap className="h-4 w-4" />
             Automation
           </TabsTrigger>
-          <TabsTrigger value="feedback" className="rounded-full px-5 text-muted-foreground data-[state=active]:bg-white dark:data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm">Feedback</TabsTrigger>
-          <TabsTrigger value="terms" className="rounded-full px-5 text-muted-foreground data-[state=active]:bg-white dark:data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm">Terms of use</TabsTrigger>
-          <TabsTrigger value="privacy" className="rounded-full px-5 text-muted-foreground data-[state=active]:bg-white dark:data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm">Privacy policy</TabsTrigger>
+          <TabsTrigger value="feedback">Feedback</TabsTrigger>
+          <TabsTrigger value="terms">Terms of use</TabsTrigger>
+          <TabsTrigger value="privacy">Privacy policy</TabsTrigger>
         </TabsList>
 
         <TabsContent value="automation" className="mt-6 flex-1 flex flex-col">
@@ -338,10 +338,10 @@ function MyAccountContent() {
   return (
     <div className="space-y-6">
       <Tabs defaultValue="profile" className="w-full">
-        <TabsList className="h-11 bg-[#f0f1f3] dark:bg-muted rounded-full p-1 gap-1">
-          <TabsTrigger value="profile" className="rounded-full px-5 text-muted-foreground data-[state=active]:bg-white dark:data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm">Profile</TabsTrigger>
-          <TabsTrigger value="firm-info" className="rounded-full px-5 text-muted-foreground data-[state=active]:bg-white dark:data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm">Firm Info</TabsTrigger>
-          <TabsTrigger value="timezone" className="rounded-full px-5 text-muted-foreground data-[state=active]:bg-white dark:data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm">Time Zone</TabsTrigger>
+        <TabsList>
+          <TabsTrigger value="profile">Profile</TabsTrigger>
+          <TabsTrigger value="firm-info">Firm Info</TabsTrigger>
+          <TabsTrigger value="timezone">Time Zone</TabsTrigger>
         </TabsList>
 
         <TabsContent value="profile" className="mt-6 space-y-8">
