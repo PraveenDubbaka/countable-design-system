@@ -30,9 +30,9 @@ const SelectTrigger = React.forwardRef<
     className={cn(
       // Base styles - 10px border radius + double border focus class
       "input-double-border flex h-9 w-full items-center justify-between rounded-[10px] px-3 py-2 text-sm transition-all duration-200 [&>span]:truncate [&>span]:min-w-0",
-      // Default state: white background, #dcdfe4 border
+      // Default state: white background, #C3CBD6 border
       "bg-white text-foreground placeholder:text-muted-foreground",
-      "border border-[#dcdfe4]",
+      "border border-[#C3CBD6]",
       // Dark mode
       "dark:border-[hsl(220_15%_30%)] dark:bg-card",
       // Hover state

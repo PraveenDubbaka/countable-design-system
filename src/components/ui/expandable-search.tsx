@@ -90,7 +90,7 @@ export const ExpandableSearch = React.forwardRef<HTMLInputElement, ExpandableSea
               className={cn(
                 "input-double-border flex w-full rounded-[10px] h-9 pl-9 pr-9 text-sm",
                 "bg-white text-foreground placeholder:text-muted-foreground/70",
-                "border border-[#dcdfe4] dark:border-[hsl(220_15%_30%)] dark:bg-card",
+                "border border-[#C3CBD6] dark:border-[hsl(220_15%_30%)] dark:bg-card",
                 "transition-all duration-200",
               )}
             />

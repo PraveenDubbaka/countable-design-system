@@ -21,9 +21,9 @@ const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(({ classNa
         // Base styles - 10px border radius + double border focus class
         "input-double-border flex w-full rounded-[10px] transition-all duration-200",
         sizeClasses[size],
-        // Default state: white background, #dcdfe4 border
+        // Default state: white background, #C3CBD6 border
         "bg-white text-foreground placeholder:text-muted-foreground/70",
-        "border border-[#dcdfe4]",
+        "border border-[#C3CBD6]",
         // Dark mode
         "dark:border-[hsl(220_15%_30%)] dark:bg-card",
         // Hover state

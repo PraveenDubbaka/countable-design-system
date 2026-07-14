@@ -88,7 +88,7 @@ const LabeledInput = ({
           input-double-border w-full h-9 px-3 py-2 text-sm text-foreground rounded-[10px] outline-none transition-all duration-200
           ${disabled 
             ? 'bg-muted border border-transparent text-muted-foreground opacity-60 cursor-not-allowed' 
-            : 'bg-white border border-[#dcdfe4] hover:border-[hsl(210_25%_75%)]'
+            : 'bg-white border border-[#C3CBD6] hover:border-[hsl(210_25%_75%)]'
           }
         `}
       />
@@ -130,7 +130,7 @@ const LabeledTextarea = ({
           input-double-border w-full px-3 py-2 text-sm text-foreground rounded-[10px] outline-none transition-all duration-200 resize-none
           ${disabled 
             ? 'bg-muted border border-transparent text-muted-foreground opacity-60 cursor-not-allowed' 
-            : 'bg-white border border-[#dcdfe4] hover:border-[hsl(210_25%_75%)]'
+            : 'bg-white border border-[#C3CBD6] hover:border-[hsl(210_25%_75%)]'
           }
         `}
       />
@@ -171,7 +171,7 @@ const LabeledSelect = ({
             input-double-border w-full h-9 px-3 py-2 text-sm text-foreground rounded-[10px] outline-none transition-all duration-200 appearance-none cursor-pointer
             ${disabled 
               ? 'bg-muted border border-transparent text-muted-foreground opacity-60 cursor-not-allowed' 
-              : 'bg-white border border-[#dcdfe4] hover:border-[hsl(210_25%_75%)]'
+              : 'bg-white border border-[#C3CBD6] hover:border-[hsl(210_25%_75%)]'
             }
           `}
         >
@@ -208,7 +208,7 @@ const LabeledDatePicker = ({
         <PopoverTrigger asChild>
           <button
             className={cn(
-              "input-double-border w-full h-9 px-3 py-2 text-sm text-left rounded-[10px] outline-none transition-all duration-200 flex items-center justify-between bg-white border border-[#dcdfe4] hover:border-[hsl(210_25%_75%)]",
+              "input-double-border w-full h-9 px-3 py-2 text-sm text-left rounded-[10px] outline-none transition-all duration-200 flex items-center justify-between bg-white border border-[#C3CBD6] hover:border-[hsl(210_25%_75%)]",
               !date && "text-muted-foreground"
             )}
           >

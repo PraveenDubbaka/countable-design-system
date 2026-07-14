@@ -21,9 +21,9 @@ const Input = React.forwardRef<HTMLInputElement, React.ComponentProps<"input"> &
             : "input-double-border flex w-full rounded-[10px] transition-all duration-200",
           sizeClasses[size],
           "file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground",
-          // Default state: white background, #dcdfe4 border
+          // Default state: white background, #C3CBD6 border
           "bg-white text-foreground placeholder:text-muted-foreground/70",
-          "border border-[#dcdfe4]",
+          "border border-[#C3CBD6]",
           // Dark mode
           "dark:border-[hsl(220_15%_30%)] dark:bg-card",
           // Hover state
