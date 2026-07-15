@@ -467,10 +467,6 @@ const navItems = [{
   icon: FileIcon,
   label: "Templates",
   route: "/create"
-}, {
-  icon: ({ className }: { className?: string }) => <svg className={className} width="20" height="20" viewBox="0 0 20 20" fill="none"><rect x="2" y="2" width="7" height="7" rx="1.5" stroke="currentColor" strokeWidth="1.5"/><rect x="11" y="2" width="7" height="7" rx="1.5" stroke="currentColor" strokeWidth="1.5"/><rect x="2" y="11" width="7" height="7" rx="1.5" stroke="currentColor" strokeWidth="1.5"/><circle cx="14.5" cy="14.5" r="3.5" stroke="currentColor" strokeWidth="1.5"/></svg>,
-  label: "Design System",
-  route: "/design-system"
 }];
 
 // Luka Logo Component

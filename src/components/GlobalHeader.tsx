@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import userAvatar from "@/assets/user-avatar.png";
-import { Bell, User, Sparkles, Moon, Sun, Zap, UserCircle, Building2, Settings, CreditCard, Monitor, Gift, LogOut, Check, Trash2, Search, MoreVertical, Type, ChevronDown } from "lucide-react";
+import { Bell, User, Sparkles, Moon, Sun, Zap, UserCircle, Building2, Settings, CreditCard, Monitor, Gift, LogOut, Check, Trash2, Search, MoreVertical, Type, ChevronDown, LayoutGrid } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
@@ -15,6 +16,7 @@ import { AskLukaOverlay } from "@/components/AskLukaOverlay";
 import { subscribeLukaOpen, getLukaOpen, setLukaOpen } from "@/lib/lukaOpenStore";
 
 export function GlobalHeader({ title, headerContent }: { title?: string; headerContent?: React.ReactNode }) {
+  const navigate = useNavigate();
   const { isDarkMode, toggleTheme } = useThemeContext();
   const [askLukaQuery, setAskLukaQuery] = useState("");
   const [settingsOpen, setSettingsOpen] = useState(false);
@@ -272,6 +274,10 @@ export function GlobalHeader({ title, headerContent }: { title?: string; headerC
               <DropdownMenuItem className="gap-3 py-3 cursor-pointer">
                 <Monitor className="h-5 w-5 text-muted-foreground" />
                 <span>Apps & Integrations</span>
+              </DropdownMenuItem>
+              <DropdownMenuItem className="gap-3 py-3 cursor-pointer" onClick={() => navigate('/design-system')}>
+                <LayoutGrid className="h-5 w-5 text-muted-foreground" />
+                <span>Design System</span>
               </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem className="gap-3 py-3 cursor-pointer">
