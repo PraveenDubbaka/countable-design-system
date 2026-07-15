@@ -704,6 +704,7 @@ export default function CreateEngagement() {
 
   // Team members
   const [teamMembers, setTeamMembers] = useState<TeamMember[]>([]);
+  const [recommendedPending, setRecommendedPending] = useState<TeamMember[]>([]);
   const [pendingRow, setPendingRow] = useState<PendingRow | null>(null);
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [teamSearch, setTeamSearch] = useState("");
@@ -723,10 +724,21 @@ export default function CreateEngagement() {
 
   const addRecommendedTeam = () => {
     const recs = RECOMMENDED_TEAM[getRecommendedCategory()] ?? RECOMMENDED_TEAM.review;
-    setTeamMembers(prev => [
+    setRecommendedPending(prev => [
       ...prev,
       ...recs.map(r => ({ id: uid(), role: r.role, name: "", email: "", title: "", hourlyRate: r.hourlyRate, timeAllocation: r.timeAllocation })),
     ]);
+  };
+
+  const confirmRecommendedRow = (id: string) => {
+    const row = recommendedPending.find(r => r.id === id);
+    if (!row) return;
+    setTeamMembers(prev => [...prev, row]);
+    setRecommendedPending(prev => prev.filter(r => r.id !== id));
+  };
+
+  const cancelRecommendedRow = (id: string) => {
+    setRecommendedPending(prev => prev.filter(r => r.id !== id));
   };
 
   const startAddMember = () => {
@@ -1073,7 +1085,7 @@ export default function CreateEngagement() {
               <SectionCard
                 icon={<Users className="h-5 w-5" />}
                 title="Assigned team"
-                badge={`${teamMembers.length} User`}
+                badge={`${teamMembers.length + recommendedPending.length} User`}
                 headerRight={
                   <div className="flex items-center gap-2">
                     <Button variant="outline" onClick={addRecommendedTeam} className="h-9 px-3 gap-1.5 text-sm">
@@ -1116,6 +1128,17 @@ export default function CreateEngagement() {
                           <TeamMemberViewRow key={member.id} member={member} checked={selectedIds.has(member.id)} onCheck={() => toggleSelect(member.id)} onEdit={() => startEditMember(member)} onDelete={() => deleteMember(member.id)} />
                         )
                       )}
+                      {recommendedPending.map(rec => (
+                        <TeamMemberEditRow
+                          key={rec.id}
+                          draft={rec}
+                          onChangeDraft={d => setRecommendedPending(prev => prev.map(r => r.id === d.id ? d : r))}
+                          onConfirm={() => confirmRecommendedRow(rec.id)}
+                          onCancel={() => cancelRecommendedRow(rec.id)}
+                          roleOptions={roleOptions}
+                          onAddRole={() => { setNewRoleName(""); setShowAddRoleModal(true); }}
+                        />
+                      ))}
                       {pendingRow?.mode === 'add' && (
                         <TeamMemberEditRow draft={pendingRow.draft} onChangeDraft={d => setPendingRow({ mode: 'add', draft: d })} onConfirm={confirmPendingRow} onCancel={cancelPendingRow} roleOptions={roleOptions} onAddRole={() => { setNewRoleName(""); setShowAddRoleModal(true); }} />
                       )}
