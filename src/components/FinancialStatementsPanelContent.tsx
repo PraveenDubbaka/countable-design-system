@@ -66,6 +66,10 @@ export function FinancialStatementsPanelContent({ isCollapsed, hasDarkSecondary 
   const [countryOpen, setCountryOpen] = useState(false);
   const [entityOpen, setEntityOpen] = useState(false);
 
+  // Inline rename state
+  const [editingLabel, setEditingLabel] = useState<string | null>(null);
+  const [editValue, setEditValue] = useState("");
+
   // Checked items (leaf labels)
   const [checkedMy, setCheckedMy] = useState<Set<string>>(new Set());
   const [checkedGlobal, setCheckedGlobal] = useState<Set<string>>(new Set());
@@ -227,6 +231,33 @@ export function FinancialStatementsPanelContent({ isCollapsed, hasDarkSecondary 
     setCheckedMy(prev => { const n = new Set(prev); n.delete(label); return n; });
   };
 
+  // Rename a leaf item in My Templates
+  const handleStartRename = (label: string) => {
+    setEditingLabel(label);
+    setEditValue(label);
+  };
+
+  const handleCommitRename = (oldLabel: string) => {
+    const newLabel = editValue.trim();
+    if (!newLabel || newLabel === oldLabel) {
+      setEditingLabel(null);
+      return;
+    }
+    const renameIn = (items: MenuItem[]): MenuItem[] =>
+      items.map(item => {
+        if (item.type === "folder") return { ...item, children: renameIn(item.children ?? []) };
+        return item.label === oldLabel ? { ...item, label: newLabel } : item;
+      });
+    setMyState(prev => ({ ...prev, [selectedEntityType]: renameIn(prev[selectedEntityType] ?? []) }));
+    if (selectedItem === oldLabel) setSelectedItem(newLabel);
+    setCheckedMy(prev => {
+      const n = new Set(prev);
+      if (n.has(oldLabel)) { n.delete(oldLabel); n.add(newLabel); }
+      return n;
+    });
+    setEditingLabel(null);
+  };
+
   if (isCollapsed) return null;
 
   const tabClass = (tab: "my" | "global") =>
@@ -301,8 +332,26 @@ export function FinancialStatementsPanelContent({ isCollapsed, hasDarkSecondary 
             <FinancialStatementsIcon className="h-4 w-4 flex-shrink-0 text-emerald-500" />
           )}
 
-          {/* Label */}
-          <span className="truncate flex-1 font-semibold">{item.label}</span>
+          {/* Label — inline rename input when editing */}
+          {tab === "my" && !isFolder && editingLabel === item.label ? (
+            <input
+              autoFocus
+              value={editValue}
+              onChange={e => setEditValue(e.target.value)}
+              onBlur={() => handleCommitRename(item.label)}
+              onKeyDown={e => {
+                if (e.key === "Enter") handleCommitRename(item.label);
+                if (e.key === "Escape") setEditingLabel(null);
+              }}
+              onClick={e => e.stopPropagation()}
+              className={cn(
+                "flex-1 min-w-0 text-sm font-semibold bg-transparent border-b outline-none px-0",
+                hasDarkSecondary ? "text-white border-white/40" : "text-foreground border-primary"
+              )}
+            />
+          ) : (
+            <span className="truncate flex-1 font-semibold">{item.label}</span>
+          )}
 
           {/* Folder child count */}
           {isFolder && hasChildren && (
@@ -320,6 +369,10 @@ export function FinancialStatementsPanelContent({ isCollapsed, hasDarkSecondary 
                 </button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="start" className="w-48">
+                <DropdownMenuItem onClick={e => { e.stopPropagation(); handleStartRename(item.label); }} className="gap-2 cursor-pointer">
+                  <Pencil className="h-4 w-4 text-primary" />
+                  Rename
+                </DropdownMenuItem>
                 <DropdownMenuItem onClick={e => { e.stopPropagation(); handleDuplicate(item.label); }} className="gap-2 cursor-pointer">
                   <Copy className="h-4 w-4 text-primary icon-copy" />
                   Duplicate
