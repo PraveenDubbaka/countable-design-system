@@ -310,6 +310,22 @@ export default function AddNewClient() {
               <InlineField label="Legal Entity Name" required>
                 <Input placeholder="e.g., Acme Holdings Inc." />
               </InlineField>
+              {/* DBA toggle — after Legal Entity Name */}
+              <div className="flex items-start gap-4">
+                <span className="text-sm font-medium text-foreground shrink-0 w-52 pt-2 leading-snug">
+                  {cfg ? cfg.dbaLabel : "Operating Name / DBA"}
+                </span>
+                <div className="flex-1">
+                  <div className="flex items-center gap-3">
+                    <Switch checked={showDba} onCheckedChange={(v) => { setShowDba(v); if (!v) { setDbaName(""); setDbaDisplay("legal-only"); } }} />
+                    {!showDba && <p className="text-xs text-muted-foreground">{cfg ? cfg.dbaHint : "The branded name used in public-facing materials, if different from the registered legal name."}</p>}
+                  </div>
+                  {showDba && <Input className="mt-2" value={dbaName} onChange={e => setDbaName(e.target.value)} placeholder="e.g., Acme Trading Co." />}
+                </div>
+              </div>
+              <InlineField label="Group Name" hint="Use to group related clients together.">
+                <Input placeholder="e.g., Smith Family Group" />
+              </InlineField>
               <InlineField label="Entity Type" required hint="Determines which fields and tax treatments apply.">
                 <Select value={entityType} onValueChange={v => { setEntityType(v); setShowDba(false); setDbaName(""); setDbaDisplay("legal-only"); setGstRegistered(""); setSubCorpType(""); }}>
                   <SelectTrigger><SelectValue placeholder="Select entity type" /></SelectTrigger>
@@ -322,6 +338,20 @@ export default function AddNewClient() {
                   </SelectContent>
                 </Select>
               </InlineField>
+              {/* Engagement Partner — after Entity Type */}
+              {cfg && (
+                <InlineField label="Engagement Partner" required>
+                  <Select>
+                    <SelectTrigger><SelectValue placeholder="Select partner" /></SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="cpt">Cpt Group</SelectItem>
+                      <SelectItem value="monte">Monte Heilig</SelectItem>
+                      <SelectItem value="jangaiah">Jangaiah Arige</SelectItem>
+                      <SelectItem value="jude">Jude Law</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </InlineField>
+              )}
             </div>
 
             {/* US Corporation sub-type */}
@@ -341,47 +371,20 @@ export default function AddNewClient() {
               </div>
             )}
 
-            {/* DBA / Group / Partner */}
-            {cfg && (
+            {/* Balance sheet display */}
+            {cfg && showDba && dbaName && (
               <div className="mt-4 pt-4 border-t border-border/50">
                 <div className="space-y-4 max-w-[50%]">
-                  {/* DBA toggle — label on left, switch + hint/input on right */}
-                  <div className="flex items-start gap-4">
-                    <span className="text-sm font-medium text-foreground shrink-0 w-52 pt-2 leading-snug">{cfg.dbaLabel}</span>
-                    <div className="flex-1">
-                      <div className="flex items-center gap-3">
-                        <Switch checked={showDba} onCheckedChange={(v) => { setShowDba(v); if (!v) { setDbaName(""); setDbaDisplay("legal-only"); } }} />
-                        {!showDba && <p className="text-xs text-muted-foreground">{cfg.dbaHint}</p>}
-                      </div>
-                      {showDba && <Input className="mt-2" value={dbaName} onChange={e => setDbaName(e.target.value)} placeholder="e.g., Acme Trading Co." />}
-                    </div>
-                  </div>
-                  <InlineField label="Group Name" hint="Use to group related clients together.">
-                    <Input placeholder="e.g., Smith Family Group" />
-                  </InlineField>
-                  <InlineField label="Engagement Partner" required>
-                    <Select>
-                      <SelectTrigger><SelectValue placeholder="Select partner" /></SelectTrigger>
+                  <InlineField label="Balance sheet display" hint="Legal name is always retained in legal documents.">
+                    <Select value={dbaDisplay} onValueChange={setDbaDisplay}>
+                      <SelectTrigger><SelectValue /></SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="cpt">Cpt Group</SelectItem>
-                        <SelectItem value="monte">Monte Heilig</SelectItem>
-                        <SelectItem value="jangaiah">Jangaiah Arige</SelectItem>
-                        <SelectItem value="jude">Jude Law</SelectItem>
+                        <SelectItem value="legal-only">Legal name only</SelectItem>
+                        <SelectItem value="dba-only">DBA only</SelectItem>
+                        <SelectItem value="both">Both — legal name and DBA</SelectItem>
                       </SelectContent>
                     </Select>
                   </InlineField>
-                  {showDba && dbaName && (
-                    <InlineField label="Balance sheet display" hint="Legal name is always retained in legal documents.">
-                      <Select value={dbaDisplay} onValueChange={setDbaDisplay}>
-                        <SelectTrigger><SelectValue /></SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="legal-only">Legal name only</SelectItem>
-                          <SelectItem value="dba-only">DBA only</SelectItem>
-                          <SelectItem value="both">Both — legal name and DBA</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </InlineField>
-                  )}
                 </div>
               </div>
             )}
