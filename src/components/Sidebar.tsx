@@ -770,10 +770,9 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
     return () => window.removeEventListener("fs-template-panel-toggle", handler);
   }, []);
 
-  // On financial-statement-templates route: ensure panel shows with FS selected
+  // On templates pages: ensure panel is expanded (not stuck collapsed from edit mode)
   useEffect(() => {
-    if (location.pathname.startsWith("/financial-statement-templates")) {
-      setSelectedDropdown("financial-statements");
+    if (location.pathname.startsWith("/financial-statement-templates") || location.pathname.startsWith("/templates") || location.pathname.startsWith("/engagement-templates")) {
       setIsTemplatesPanelCollapsed(false);
     }
   }, [location.pathname]);

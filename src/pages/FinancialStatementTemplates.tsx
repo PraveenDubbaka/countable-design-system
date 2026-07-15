@@ -11,7 +11,7 @@ export default function FinancialStatementTemplates() {
   const isMyTemplates = searchParams.get("source") === "my";
 
   return (
-    <Layout>
+    <Layout title="Templates">
       <TemplatePreview
         selectedTemplate={template ? decodeURIComponent(template) : null}
         isMyTemplates={isMyTemplates}
