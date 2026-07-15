@@ -2544,7 +2544,7 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
         </>, portalTarget)}
 
       {/* Templates panel - portalled below the global header */}
-      {portalTarget && location.pathname !== "/dashboard" && location.pathname !== "/clients" && location.pathname !== "/teams" && location.pathname !== "/engagements" && !location.pathname.startsWith("/engagements/") && !location.pathname.startsWith("/clients/") && createPortal(<>
+      {portalTarget && location.pathname !== "/dashboard" && location.pathname !== "/clients" && location.pathname !== "/teams" && location.pathname !== "/engagements" && location.pathname !== "/design-system" && !location.pathname.startsWith("/engagements/") && !location.pathname.startsWith("/clients/") && createPortal(<>
           <div 
             ref={panelRef}
             style={{ width: isTemplatesPanelCollapsed ? 0 : panelWidth }}
