@@ -339,6 +339,17 @@ export default function AddNewClient() {
                   </SelectContent>
                 </Select>
               </InlineField>
+              {showSubEntity && (
+                <InlineField label="Corporation Type" required hint="C-Corp is taxed as a separate entity; S-Corp income passes through to shareholders.">
+                  <Select value={subCorpType} onValueChange={setSubCorpType}>
+                    <SelectTrigger><SelectValue placeholder="Select corporation type" /></SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="c-corp">C-Corp (C Corporation)</SelectItem>
+                      <SelectItem value="s-corp">S-Corp (S Corporation)</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </InlineField>
+              )}
               {/* Engagement Partner — after Entity Type */}
               {cfg && (
                 <InlineField label="Engagement Partner" required>
@@ -354,23 +365,6 @@ export default function AddNewClient() {
                 </InlineField>
               )}
             </div>
-
-            {/* US Corporation sub-type */}
-            {showSubEntity && (
-              <div className="mt-4 pt-4 border-t border-border/50">
-                <div className="space-y-4 max-w-[50%]">
-                  <InlineField label="Corporation Type" required hint="C-Corp is taxed as a separate entity; S-Corp income passes through to shareholders.">
-                    <Select value={subCorpType} onValueChange={setSubCorpType}>
-                      <SelectTrigger><SelectValue placeholder="Select corporation type" /></SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="c-corp">C-Corp (C Corporation)</SelectItem>
-                        <SelectItem value="s-corp">S-Corp (S Corporation)</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </InlineField>
-                </div>
-              </div>
-            )}
 
             {/* Balance sheet display */}
             {cfg && showDba && dbaName && (
