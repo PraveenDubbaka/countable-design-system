@@ -749,14 +749,14 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
 
   // Collapse/restore secondary panel when FS template edit mode changes
   useEffect(() => {
-    let savedDropdown = selectedDropdown;
+    let wasCollapsed = false;
     const handler = (e: Event) => {
       const { active } = (e as CustomEvent<{ active: boolean }>).detail;
       if (active) {
-        savedDropdown = selectedDropdown;
-        setSelectedDropdown("");
+        wasCollapsed = isTemplatesPanelCollapsed;
+        setIsTemplatesPanelCollapsed(true);
       } else {
-        setSelectedDropdown(savedDropdown);
+        setIsTemplatesPanelCollapsed(wasCollapsed);
       }
     };
     window.addEventListener("fs-template-edit-mode", handler);
