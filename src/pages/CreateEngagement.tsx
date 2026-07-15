@@ -552,8 +552,8 @@ const TeamMemberEditRow = ({
       </td>
       <td className="px-6 py-2">
         <div className="flex items-center gap-0.5">
-          <button type="button" onClick={onConfirm}
-            className="p-1.5 hover:bg-muted rounded-lg transition-colors text-green-600 dark:text-green-400">
+          <button type="button" onClick={onConfirm} disabled={!draft.name}
+            className="p-1.5 hover:bg-muted rounded-lg transition-colors text-green-600 dark:text-green-400 disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:bg-transparent">
             <Check className="h-4 w-4" />
           </button>
           <button type="button" onClick={onCancel}
