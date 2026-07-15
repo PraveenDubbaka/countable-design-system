@@ -739,14 +739,9 @@ export default function CreateEngagement() {
   const periodTypeOptions = isAudit
     ? [
         { value: "Full Year", label: "Full Year" },
-        { value: "Interim (6-month)", label: "Interim (6-month)" },
-        { value: "Stub Period", label: "Stub Period" },
-        { value: "Other", label: "Other" },
       ]
     : [
         { value: "Full year", label: "Full year" },
-        { value: "Quarterly", label: "Quarterly" },
-        { value: "Monthly", label: "Monthly" },
       ];
 
   const engagementDetailsValid =
