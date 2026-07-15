@@ -237,6 +237,86 @@ const REGION_OPTIONS: Record<string, Array<{ value: string; label: string }>> = 
   ],
 };
 
+// ── Entity sub-type options (country × entity-type) ─────────────────────────
+
+type SubTypeOption = { value: string; label: string };
+type SubTypeConfig = { label: string; hint: string; options: SubTypeOption[] };
+
+const SUB_TYPE_CONFIG: Record<string, SubTypeConfig> = {
+  "ca-corporation": {
+    label: "Corporation Type",
+    hint: "Determines applicable tax rules under the Income Tax Act.",
+    options: [
+      { value: "ccpc",              label: "CCPC — Canadian-Controlled Private Corporation" },
+      { value: "non-ccpc",          label: "Non-CCPC / Public Corporation" },
+      { value: "professional-corp", label: "Professional Corporation" },
+    ],
+  },
+  "us-corporation": {
+    label: "Corporation Type",
+    hint: "C-Corp is taxed as a separate entity; S-Corp income passes through to shareholders.",
+    options: [
+      { value: "c-corp", label: "C-Corp (C Corporation)" },
+      { value: "s-corp", label: "S-Corp (S Corporation)" },
+    ],
+  },
+  "ca-partnership": {
+    label: "Partnership Type",
+    hint: "Determines liability exposure and T5013 filing requirements.",
+    options: [
+      { value: "gp",  label: "General Partnership (GP)" },
+      { value: "lp",  label: "Limited Partnership (LP)" },
+      { value: "llp", label: "Limited Liability Partnership (LLP)" },
+    ],
+  },
+  "us-partnership": {
+    label: "Partnership Type",
+    hint: "Determines liability exposure and Form 1065 filing requirements.",
+    options: [
+      { value: "gp",  label: "General Partnership (GP)" },
+      { value: "lp",  label: "Limited Partnership (LP)" },
+      { value: "llp", label: "Limited Liability Partnership (LLP)" },
+      { value: "llc", label: "Limited Liability Company (LLC)" },
+    ],
+  },
+  "ca-trust": {
+    label: "Trust Type",
+    hint: "Determines trust taxation rules and T3 filing obligations.",
+    options: [
+      { value: "family",        label: "Family / Discretionary Trust" },
+      { value: "alter-ego",     label: "Alter Ego Trust" },
+      { value: "spousal",       label: "Spousal / Joint Spousal Trust" },
+      { value: "testamentary",  label: "Testamentary Trust / Estate" },
+    ],
+  },
+  "us-trust": {
+    label: "Trust Type",
+    hint: "Determines revocability, Form 1041 filing, and tax treatment.",
+    options: [
+      { value: "revocable",      label: "Revocable Living Trust" },
+      { value: "irrevocable",    label: "Irrevocable Trust" },
+      { value: "testamentary",   label: "Testamentary Trust" },
+      { value: "special-needs",  label: "Special Needs Trust" },
+    ],
+  },
+  "ca-sole-proprietor": {
+    label: "Structure",
+    hint: "Determines applicable deductions and T1 reporting schedule.",
+    options: [
+      { value: "individual",   label: "Individual / Sole Proprietor" },
+      { value: "professional", label: "Professional Practice" },
+    ],
+  },
+  "us-sole-proprietor": {
+    label: "Structure",
+    hint: "Determines Schedule C filing and self-employment tax treatment.",
+    options: [
+      { value: "individual", label: "Individual / Sole Proprietor" },
+      { value: "smllc",      label: "Single-Member LLC (SMLLC)" },
+    ],
+  },
+};
+
 // ── Component ────────────────────────────────────────────────────────────────
 
 export default function AddNewClient() {
@@ -249,7 +329,7 @@ export default function AddNewClient() {
   const [dbaDisplay, setDbaDisplay]       = useState<string>("legal-only");
   const [gstRegistered, setGstRegistered] = useState<string>("");
 
-  const showSubEntity = entityType === "corporation" && country === "us";
+  const subTypeCfg = SUB_TYPE_CONFIG[`${country}-${entityType}`] ?? null;
 
   const cfg     = entityType ? ENTITY_CONFIG[entityType] : null;
   const taxCfg  = COUNTRY_TAX_CONFIG[country];
@@ -339,13 +419,14 @@ export default function AddNewClient() {
                   </SelectContent>
                 </Select>
               </InlineField>
-              {showSubEntity && (
-                <InlineField label="Corporation Type" required hint="C-Corp is taxed as a separate entity; S-Corp income passes through to shareholders.">
+              {subTypeCfg && (
+                <InlineField label={subTypeCfg.label} required hint={subTypeCfg.hint}>
                   <Select value={subCorpType} onValueChange={setSubCorpType}>
-                    <SelectTrigger><SelectValue placeholder="Select corporation type" /></SelectTrigger>
+                    <SelectTrigger><SelectValue placeholder={`Select ${subTypeCfg.label.toLowerCase()}`} /></SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="c-corp">C-Corp (C Corporation)</SelectItem>
-                      <SelectItem value="s-corp">S-Corp (S Corporation)</SelectItem>
+                      {subTypeCfg.options.map(o => (
+                        <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>
+                      ))}
                     </SelectContent>
                   </Select>
                 </InlineField>
