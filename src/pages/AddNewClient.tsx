@@ -449,7 +449,7 @@ export default function AddNewClient() {
 
             {/* Balance sheet display */}
             {cfg && showDba && dbaName && (
-              <div className="mt-4 pt-4 border-t border-border/50">
+              <div className="mt-4 pt-4 border-t border-border">
                 <div className="space-y-4 max-w-[50%]">
                   <InlineField label="Balance sheet display" hint="Legal name is always retained in legal documents.">
                     <Select value={dbaDisplay} onValueChange={setDbaDisplay}>
@@ -466,7 +466,7 @@ export default function AddNewClient() {
             )}
 
             {/* Address */}
-            <div className="mt-4 pt-4 border-t border-border/50">
+            <div className="mt-4 pt-4 border-t border-border">
               <div className="space-y-4 max-w-[50%]">
                 <InlineField label="Street Address">
                   <Input placeholder="123 Main Street, Suite 400" />
@@ -523,7 +523,7 @@ export default function AddNewClient() {
                     <Input type="email" placeholder="contact@company.com" />
                   </InlineField>
                 </div>
-                <div className="mt-5 pt-5 border-t border-border/50">
+                <div className="mt-5 pt-5 border-t border-border">
                   <div className="space-y-4 max-w-[50%]">
                     <InlineField label="Cell Phone">
                       <Input placeholder="+1 (555) 000-0000" />
@@ -572,7 +572,7 @@ export default function AddNewClient() {
                 </div>
 
                 {/* Sales tax registration */}
-                <div className="mt-5 pt-5 border-t border-border/50">
+                <div className="mt-5 pt-5 border-t border-border">
                   <div className="space-y-4 max-w-[50%]">
                   <InlineField label={taxCfg.salesTaxLabel} hint="Informational — helps with sales tax treatment in future engagements.">
                     <Select value={gstRegistered} onValueChange={setGstRegistered}>
