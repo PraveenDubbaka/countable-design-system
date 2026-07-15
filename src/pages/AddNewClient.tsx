@@ -25,21 +25,27 @@ const InlineField = ({
   </div>
 );
 
-const PhoneInput = ({ placeholder = "(555) 000-0000" }: { placeholder?: string }) => (
-  <div className="flex gap-2">
-    <Select defaultValue="ca">
-      <SelectTrigger className="w-28 shrink-0 [&>span]:truncate"><SelectValue /></SelectTrigger>
-      <SelectContent className="max-h-72">
-        {DIAL_CODES.map(d => (
-          <SelectItem key={d.value} value={d.value}>
-            {d.flag} {d.code} · {d.label}
-          </SelectItem>
-        ))}
-      </SelectContent>
-    </Select>
-    <Input className="flex-1" placeholder={placeholder} />
-  </div>
-);
+const PhoneInput = ({ placeholder = "(555) 000-0000" }: { placeholder?: string }) => {
+  const [dialCode, setDialCode] = React.useState("ca");
+  const sel = DIAL_CODES.find(d => d.value === dialCode) ?? DIAL_CODES[31]; // fallback: Canada
+  return (
+    <div className="flex gap-2">
+      <Select value={dialCode} onValueChange={setDialCode}>
+        <SelectTrigger className="w-20 shrink-0">
+          <span className="flex items-center gap-1 text-sm">{sel.flag} {sel.code}</span>
+        </SelectTrigger>
+        <SelectContent className="max-h-72">
+          {DIAL_CODES.map(d => (
+            <SelectItem key={d.value} value={d.value}>
+              {d.flag} {d.code} · {d.label}
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
+      <Input className="flex-1" placeholder={placeholder} />
+    </div>
+  );
+};
 
 const SectionCard = ({
   icon: Icon, title, subtitle, children, className,
