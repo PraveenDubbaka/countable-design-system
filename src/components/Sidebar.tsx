@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { createPortal } from "react-dom";
 import { useNavigate, useLocation, useSearchParams } from "react-router-dom";
-import { ChevronDown, ChevronRight, ChevronLeft, Search, Plus, Expand, Trash2, Folder, Headphones, Check, FileText, FileBarChart, NotebookPen, Table, Copy, Pencil, FolderInput, MoreVertical, GripVertical, X, Save, Files, Send, AlertCircle, MessageSquare, FilePlus2, FolderPlus, ArrowUpDown, Upload, Image, Download, Move, BarChart3 } from "lucide-react";
+import { ChevronDown, ChevronRight, ChevronLeft, Search, Plus, Expand, Trash2, Folder, Headphones, Check, FileText, FileBarChart, NotebookPen, Table, Copy, Pencil, FolderInput, MoreVertical, GripVertical, X, Save, Files, Send, AlertCircle, MessageSquare, FilePlus2, FolderPlus, ArrowUpDown, Upload, Image, Download, Move } from "lucide-react";
 import { templateTree, allTemplateViews, type TreeItem, TEMPLATE_CONFIG } from "@/lib/engagementTemplatesData";
 import { FolderSolidIcon, FolderPlusIcon, FolderMinusIcon } from "@/components/icons/FolderIcons";
 import { Input } from "@/components/ui/input";
@@ -38,6 +38,7 @@ import signoffCheckAllIcon from "@/assets/signoff-check-all.png";
 import signoffUncheckAllIcon from "@/assets/signoff-uncheck-all.png";
 import { useSecondaryPanel } from "@/hooks/useSecondaryPanel";
 import { FinancialStatementsPanelContent } from "@/components/FinancialStatementsPanelContent";
+import { FinancialStatementsIcon } from "@/components/icons/FinancialStatementsIcon";
 interface Template {
   id: string;
   name: string;
@@ -484,7 +485,7 @@ const dropdownItems = [{
 }, {
   id: "financial-statements",
   label: "Financial Statements",
-  icon: BarChart3,
+  icon: FinancialStatementsIcon,
   color: "text-emerald-500",
   showCreator: false
 }, {
