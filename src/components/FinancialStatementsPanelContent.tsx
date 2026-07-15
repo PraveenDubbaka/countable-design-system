@@ -1,11 +1,19 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Search, Plus, Trash2, Files, ChevronDown } from "lucide-react";
+import { Search, Plus, Trash2, Files, ChevronDown, MoreVertical, Copy, Pencil } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import {
-  RecursiveMenuItem,
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { FolderPlusIcon, FolderMinusIcon } from "@/components/icons/FolderIcons";
+import {
   myTemplatesByEntity,
   myCanadaTemplatesByEntity,
   globalTemplatesByEntity,
@@ -22,14 +30,36 @@ interface Props {
 
 const COUNTRIES = ["US", "Canada"];
 
-function getAllFolderCodes(items: MenuItem[]): string[] {
+function collectAllFolderCodes(items: MenuItem[]): string[] {
   const codes: string[] = [];
   for (const item of items) {
-    if (item.type === "folder" && item.children && item.children.length > 0) {
+    if (item.type === "folder") {
       codes.push(item.code || item.label);
+      if (item.children) codes.push(...collectAllFolderCodes(item.children));
     }
   }
   return codes;
+}
+
+function collectAllLeafLabels(items: MenuItem[]): string[] {
+  const labels: string[] = [];
+  for (const item of items) {
+    if (item.type !== "folder") {
+      labels.push(item.label);
+    } else if (item.children) {
+      labels.push(...collectAllLeafLabels(item.children));
+    }
+  }
+  return labels;
+}
+
+// Custom FS doc icon — matches engagements global panel
+function FsDocIcon() {
+  return (
+    <svg className="w-4 h-4 flex-shrink-0" viewBox="0 0 20 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M2.08317 8.00016H4.90148C5.47248 8.00016 5.99448 8.32277 6.24984 8.8335C6.5052 9.34422 7.02719 9.66683 7.5982 9.66683H12.4015C12.9725 9.66683 13.4945 9.34422 13.7498 8.8335C14.0052 8.32277 14.5272 8.00016 15.0982 8.00016H17.9165M7.47197 1.3335H12.5277C13.4251 1.3335 13.8738 1.3335 14.2699 1.47013C14.6202 1.59096 14.9393 1.78816 15.204 2.04745C15.5034 2.34066 15.7041 2.742 16.1054 3.54464L17.9109 7.15558C18.0684 7.47057 18.1471 7.62806 18.2027 7.79312C18.252 7.9397 18.2876 8.09055 18.309 8.24372C18.3332 8.41618 18.3332 8.59227 18.3332 8.94443V10.6668C18.3332 12.067 18.3332 12.767 18.0607 13.3018C17.821 13.7722 17.4386 14.1547 16.9681 14.3943C16.4334 14.6668 15.7333 14.6668 14.3332 14.6668H5.6665C4.26637 14.6668 3.56631 14.6668 3.03153 14.3943C2.56112 14.1547 2.17867 13.7722 1.93899 13.3018C1.6665 12.767 1.6665 12.067 1.6665 10.6668V8.94443C1.6665 8.59227 1.6665 8.41618 1.69065 8.24372C1.71209 8.09055 1.7477 7.9397 1.79702 7.79312C1.85255 7.62806 1.9313 7.47057 2.0888 7.15558L3.89426 3.54464C4.29559 2.74199 4.49626 2.34066 4.79562 2.04745C5.06036 1.78816 5.37943 1.59096 5.72974 1.47013C6.12588 1.3335 6.57458 1.3335 7.47197 1.3335Z" stroke="#5599D8" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+    </svg>
+  );
 }
 
 export function FinancialStatementsPanelContent({ isCollapsed, hasDarkSecondary }: Props) {
@@ -37,17 +67,21 @@ export function FinancialStatementsPanelContent({ isCollapsed, hasDarkSecondary 
   const [activeTab, setActiveTab] = useState<"my" | "global">("my");
   const [selectedCountry, setSelectedCountry] = useState("US");
   const [selectedEntityType, setSelectedEntityType] = useState("C-Corp");
-  const [expandedFolders, setExpandedFolders] = useState<string[]>(["COMP", "GCOMP"]);
+  const [expandedFolders, setExpandedFolders] = useState<Set<string>>(new Set(["COMP", "GCOMP"]));
   const [selectedItem, setSelectedItem] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [countryOpen, setCountryOpen] = useState(false);
   const [entityOpen, setEntityOpen] = useState(false);
-  const [selectedGlobal, setSelectedGlobal] = useState<Set<string>>(new Set());
+
+  // Checked items (leaf labels)
+  const [checkedMy, setCheckedMy] = useState<Set<string>>(new Set());
+  const [checkedGlobal, setCheckedGlobal] = useState<Set<string>>(new Set());
+
+  // My Templates — mutable local state initialized from static defaults
+  const initialMy = { ...myTemplatesByEntity, ...myCanadaTemplatesByEntity };
+  const [myState, setMyState] = useState<Record<string, MenuItem[]>>(initialMy);
 
   const entityTypes = selectedCountry === "US" ? US_ENTITY_TYPES : CA_ENTITY_TYPES;
-
-  const currentMyTemplates =
-    selectedCountry === "US" ? myTemplatesByEntity : myCanadaTemplatesByEntity;
 
   const entityKey =
     selectedEntityType === "Trust"
@@ -56,30 +90,148 @@ export function FinancialStatementsPanelContent({ isCollapsed, hasDarkSecondary 
       ? "Partnerships"
       : selectedEntityType;
 
-  const myData = currentMyTemplates[selectedEntityType] ?? [];
-  const globalData = globalTemplatesByEntity[entityKey] ?? globalTemplatesByEntity["C-Corp"] ?? [];
+  const myData: MenuItem[] = myState[selectedEntityType] ?? [];
+  const globalData: MenuItem[] = globalTemplatesByEntity[entityKey] ?? globalTemplatesByEntity["C-Corp"] ?? [];
   const activeData = activeTab === "my" ? myData : globalData;
+  const activeChecked = activeTab === "my" ? checkedMy : checkedGlobal;
 
-  const allFolderCodes = getAllFolderCodes(activeData);
-  const allExpanded = allFolderCodes.length > 0 && allFolderCodes.every(c => expandedFolders.includes(c));
+  const allFolderCodes = collectAllFolderCodes(activeData);
+  const allExpanded = allFolderCodes.length > 0 && allFolderCodes.every(c => expandedFolders.has(c));
 
   const handleExpandCollapseAll = () => {
     if (allExpanded) {
-      setExpandedFolders(prev => prev.filter(c => !allFolderCodes.includes(c)));
+      setExpandedFolders(prev => {
+        const next = new Set(prev);
+        allFolderCodes.forEach(c => next.delete(c));
+        return next;
+      });
     } else {
-      setExpandedFolders(prev => [...new Set([...prev, ...allFolderCodes])]);
+      setExpandedFolders(prev => new Set([...prev, ...allFolderCodes]));
     }
   };
 
   const toggleFolder = (code: string) => {
-    setExpandedFolders(prev =>
-      prev.includes(code) ? prev.filter(c => c !== code) : [...prev, code]
-    );
+    setExpandedFolders(prev => {
+      const next = new Set(prev);
+      next.has(code) ? next.delete(code) : next.add(code);
+      return next;
+    });
+  };
+
+  // Folder checkbox: checked if all leaf descendants checked, indeterminate if some
+  const isFolderChecked = (folder: MenuItem, checked: Set<string>) => {
+    const leaves = collectAllLeafLabels([folder]);
+    if (leaves.length === 0) return false;
+    return leaves.every(l => checked.has(l));
+  };
+  const isFolderIndeterminate = (folder: MenuItem, checked: Set<string>) => {
+    const leaves = collectAllLeafLabels([folder]);
+    const count = leaves.filter(l => checked.has(l)).length;
+    return count > 0 && count < leaves.length;
+  };
+
+  const handleFolderCheckbox = (folder: MenuItem, value: boolean, tab: "my" | "global") => {
+    const leaves = collectAllLeafLabels([folder]);
+    const setFn = tab === "my" ? setCheckedMy : setCheckedGlobal;
+    setFn(prev => {
+      const next = new Set(prev);
+      leaves.forEach(l => value ? next.add(l) : next.delete(l));
+      return next;
+    });
+  };
+
+  const handleLeafCheckbox = (label: string, value: boolean, tab: "my" | "global") => {
+    const setFn = tab === "my" ? setCheckedMy : setCheckedGlobal;
+    setFn(prev => {
+      const next = new Set(prev);
+      value ? next.add(label) : next.delete(label);
+      return next;
+    });
+  };
+
+  // Delete selected My Templates items
+  const handleDeleteSelected = () => {
+    if (checkedMy.size === 0) return;
+    const pruneItems = (items: MenuItem[]): MenuItem[] =>
+      items
+        .map(item => {
+          if (item.type === "folder") {
+            return { ...item, children: pruneItems(item.children ?? []) };
+          }
+          return checkedMy.has(item.label) ? null : item;
+        })
+        .filter(Boolean) as MenuItem[];
+
+    setMyState(prev => ({
+      ...prev,
+      [selectedEntityType]: pruneItems(prev[selectedEntityType] ?? []),
+    }));
+    setCheckedMy(new Set());
+  };
+
+  // Copy selected global items to My Templates
+  const handleCopyToMy = () => {
+    if (checkedGlobal.size === 0) return;
+    const collectChecked = (items: MenuItem[]): MenuItem[] => {
+      const result: MenuItem[] = [];
+      for (const item of items) {
+        if (item.type !== "folder" && checkedGlobal.has(item.label)) {
+          result.push({ ...item });
+        } else if (item.type === "folder" && item.children) {
+          result.push(...collectChecked(item.children));
+        }
+      }
+      return result;
+    };
+    const newItems = collectChecked(globalData);
+    if (newItems.length === 0) return;
+
+    setMyState(prev => {
+      const current = prev[selectedEntityType] ?? [];
+      const addFolder = current.find(f => f.code === "COMP") ?? {
+        code: "MY",
+        label: "My Templates",
+        type: "folder" as const,
+        children: [],
+      };
+      const updatedFolder: MenuItem = {
+        ...addFolder,
+        children: [...(addFolder.children ?? []), ...newItems],
+      };
+      const rest = current.filter(f => f.code !== addFolder.code);
+      return { ...prev, [selectedEntityType]: [updatedFolder, ...rest] };
+    });
+    setCheckedGlobal(new Set());
+    setActiveTab("my");
   };
 
   const handleSelectItem = (label: string) => {
     setSelectedItem(label);
     navigate(`/financial-statement-templates?template=${encodeURIComponent(label)}`);
+  };
+
+  // Duplicate a leaf item in My Templates
+  const handleDuplicate = (label: string) => {
+    const dupeItem = (items: MenuItem[]): MenuItem[] =>
+      items.flatMap(item => {
+        if (item.type === "folder") return [{ ...item, children: dupeItem(item.children ?? []) }];
+        if (item.label === label) return [item, { ...item, label: `${item.label} (Copy)`, code: `${item.code}_copy` }];
+        return [item];
+      });
+    setMyState(prev => ({ ...prev, [selectedEntityType]: dupeItem(prev[selectedEntityType] ?? []) }));
+  };
+
+  // Delete a single leaf by label
+  const handleDeleteOne = (label: string) => {
+    const pruneOne = (items: MenuItem[]): MenuItem[] =>
+      items
+        .map(item => {
+          if (item.type === "folder") return { ...item, children: pruneOne(item.children ?? []) };
+          return item.label === label ? null : item;
+        })
+        .filter(Boolean) as MenuItem[];
+    setMyState(prev => ({ ...prev, [selectedEntityType]: pruneOne(prev[selectedEntityType] ?? []) }));
+    setCheckedMy(prev => { const n = new Set(prev); n.delete(label); return n; });
   };
 
   if (isCollapsed) return null;
@@ -95,17 +247,109 @@ export function FinancialStatementsPanelContent({ isCollapsed, hasDarkSecondary 
             : "text-muted-foreground hover:text-foreground") + " border-transparent"
     }`;
 
-  const expandIcon = (
+  const expandIcon = allExpanded ? (
     <svg width="15" height="15" viewBox="0 0 17 17" fill="none" xmlns="http://www.w3.org/2000/svg">
-      {allExpanded ? (
-        <path d="M9.72214 6.94412L14.5833 2.08301M14.5833 2.08301H10.4166M14.5833 2.08301V6.24967M6.94436 9.7219L2.08325 14.583M2.08325 14.583H6.24992M2.08325 14.583L2.08325 10.4163"
-          stroke={hasDarkSecondary ? "white" : "#074075"} strokeWidth="1.38889" strokeLinecap="round" strokeLinejoin="round" />
-      ) : (
-        <path d="M2.08325 6.94412L2.08325 2.08301M2.08325 2.08301L6.24992 2.08301M2.08325 2.08301L6.94436 6.94412M14.5833 9.7219L14.5833 14.583M14.5833 14.583L10.4166 14.583M14.5833 14.583L9.72214 9.7219"
-          stroke={hasDarkSecondary ? "white" : "#074075"} strokeWidth="1.38889" strokeLinecap="round" strokeLinejoin="round" />
-      )}
+      <path d="M9.72214 6.94412L14.5833 2.08301M14.5833 2.08301H10.4166M14.5833 2.08301V6.24967M6.94436 9.7219L2.08325 14.583M2.08325 14.583H6.24992M2.08325 14.583L2.08325 10.4163"
+        stroke={hasDarkSecondary ? "white" : "#074075"} strokeWidth="1.38889" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  ) : (
+    <svg width="15" height="15" viewBox="0 0 17 17" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M2.08325 6.94412L2.08325 2.08301M2.08325 2.08301L6.24992 2.08301M2.08325 2.08301L6.94436 6.94412M14.5833 9.7219L14.5833 14.583M14.5833 14.583L10.4166 14.583M14.5833 14.583L9.72214 9.7219"
+        stroke={hasDarkSecondary ? "white" : "#074075"} strokeWidth="1.38889" strokeLinecap="round" strokeLinejoin="round" />
     </svg>
   );
+
+  // Render tree item with checkbox — matches renderTemplate/renderGlobalTemplate styles exactly
+  const renderItem = (item: MenuItem, depth = 0, tab: "my" | "global"): React.ReactNode => {
+    const folderKey = item.code || item.label;
+    const isExpanded = expandedFolders.has(folderKey);
+    const isFolder = item.type === "folder";
+    const hasChildren = (item.children?.length ?? 0) > 0;
+    const isSelected = selectedItem === item.label;
+    const folderChecked = isFolder ? isFolderChecked(item, activeChecked) : false;
+    const folderIndet = isFolder ? isFolderIndeterminate(item, activeChecked) : false;
+    const leafChecked = !isFolder && activeChecked.has(item.label);
+
+    if (searchQuery) {
+      const matchesSelf = item.label.toLowerCase().includes(searchQuery.toLowerCase());
+      const childrenMatch = hasChildren && item.children!.some(c => c.label.toLowerCase().includes(searchQuery.toLowerCase()));
+      if (!matchesSelf && !childrenMatch) return null;
+    }
+
+    return (
+      <div key={folderKey + depth}>
+        <div
+          className={cn(
+            "group flex items-center gap-2 py-1.5 px-2 rounded-md cursor-pointer transition-colors text-sm",
+            isSelected && !isFolder
+              ? "bg-primary/10 text-primary ring-1 ring-primary/25"
+              : hasDarkSecondary ? "hover:bg-white/10 text-white" : "hover:bg-muted text-foreground"
+          )}
+          style={{ paddingLeft: depth > 0 ? `${depth * 16 + 8}px` : undefined }}
+          onClick={() => isFolder ? toggleFolder(folderKey) : handleSelectItem(item.label)}
+        >
+          {/* Checkbox */}
+          <Checkbox
+            checked={isFolder ? (folderIndet ? "indeterminate" : folderChecked) : leafChecked}
+            onCheckedChange={val => {
+              if (isFolder) handleFolderCheckbox(item, !!val, tab);
+              else handleLeafCheckbox(item.label, !!val, tab);
+            }}
+            onClick={e => e.stopPropagation()}
+            className="h-4 w-4 flex-shrink-0"
+          />
+
+          {/* Icon */}
+          {isFolder ? (
+            hasChildren && isExpanded
+              ? <FolderMinusIcon className="h-4 w-4 text-primary flex-shrink-0" />
+              : <FolderPlusIcon className="h-4 w-4 text-primary flex-shrink-0" />
+          ) : (
+            <FsDocIcon />
+          )}
+
+          {/* Label */}
+          <span className="truncate flex-1 font-semibold">{item.label}</span>
+
+          {/* Folder child count */}
+          {isFolder && hasChildren && (
+            <span className={cn("text-xs shrink-0", hasDarkSecondary ? "text-white/40" : "text-muted-foreground")}>
+              {item.children!.length}
+            </span>
+          )}
+
+          {/* Context menu for My Templates file items */}
+          {tab === "my" && !isFolder && (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild onClick={e => e.stopPropagation()}>
+                <button className="opacity-0 group-hover:opacity-100 p-0.5 hover:bg-muted-foreground/10 rounded transition-opacity shrink-0">
+                  <MoreVertical className="h-3.5 w-3.5 text-muted-foreground" />
+                </button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="start" className="w-48">
+                <DropdownMenuItem onClick={e => { e.stopPropagation(); handleDuplicate(item.label); }} className="gap-2 cursor-pointer">
+                  <Copy className="h-4 w-4 text-primary icon-copy" />
+                  Duplicate
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onClick={e => { e.stopPropagation(); handleDeleteOne(item.label); }} className="gap-2 cursor-pointer text-destructive focus:text-destructive">
+                  <Trash2 className="h-4 w-4 icon-trash" />
+                  Delete
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          )}
+        </div>
+
+        {/* Children */}
+        {isFolder && isExpanded && hasChildren && (
+          <div>
+            {item.children!.map((child, i) => renderItem(child, depth + 1, tab))}
+          </div>
+        )}
+      </div>
+    );
+  };
 
   return (
     <>
@@ -128,15 +372,12 @@ export function FinancialStatementsPanelContent({ isCollapsed, hasDarkSecondary 
 
       {/* Country + entity compact pickers */}
       <div className="px-3 pb-2 flex gap-2 relative">
-        {/* Country */}
         <div className="relative flex-1">
           <button
             onClick={() => { setCountryOpen(v => !v); setEntityOpen(false); }}
             className={cn(
               "w-full px-2.5 py-1.5 rounded-lg text-sm flex items-center justify-between border shadow-sm",
-              hasDarkSecondary
-                ? "bg-white/10 border-white/20 text-white"
-                : "bg-card/80 border-border text-foreground"
+              hasDarkSecondary ? "bg-white/10 border-white/20 text-white" : "bg-card/80 border-border text-foreground"
             )}
           >
             <span className="truncate">{selectedCountry}</span>
@@ -159,7 +400,7 @@ export function FinancialStatementsPanelContent({ isCollapsed, hasDarkSecondary 
                     setSelectedCountry(c);
                     setSelectedEntityType(c === "US" ? "C-Corp" : "Corporations");
                     setCountryOpen(false);
-                    setExpandedFolders(["COMP", "GCOMP"]);
+                    setExpandedFolders(new Set(["COMP", "GCOMP"]));
                   }}
                 >
                   {c}
@@ -169,15 +410,12 @@ export function FinancialStatementsPanelContent({ isCollapsed, hasDarkSecondary 
           )}
         </div>
 
-        {/* Entity type */}
         <div className="relative flex-[2]">
           <button
             onClick={() => { setEntityOpen(v => !v); setCountryOpen(false); }}
             className={cn(
               "w-full px-2.5 py-1.5 rounded-lg text-sm flex items-center justify-between border shadow-sm",
-              hasDarkSecondary
-                ? "bg-white/10 border-white/20 text-white"
-                : "bg-card/80 border-border text-foreground"
+              hasDarkSecondary ? "bg-white/10 border-white/20 text-white" : "bg-card/80 border-border text-foreground"
             )}
           >
             <span className="truncate">{selectedEntityType}</span>
@@ -199,7 +437,7 @@ export function FinancialStatementsPanelContent({ isCollapsed, hasDarkSecondary 
                   onClick={() => {
                     setSelectedEntityType(e);
                     setEntityOpen(false);
-                    setExpandedFolders(["COMP", "GCOMP"]);
+                    setExpandedFolders(new Set(["COMP", "GCOMP"]));
                   }}
                 >
                   {e}
@@ -210,7 +448,7 @@ export function FinancialStatementsPanelContent({ isCollapsed, hasDarkSecondary 
         </div>
       </div>
 
-      {/* Toolbar: search + expand/collapse + action buttons */}
+      {/* Toolbar */}
       <div className="p-3 pt-0 pb-2">
         <div className="flex gap-2">
           <div className="relative flex-1">
@@ -223,7 +461,6 @@ export function FinancialStatementsPanelContent({ isCollapsed, hasDarkSecondary 
             />
           </div>
 
-          {/* Expand / Collapse All */}
           <Tooltip>
             <TooltipTrigger asChild>
               <button
@@ -241,9 +478,22 @@ export function FinancialStatementsPanelContent({ isCollapsed, hasDarkSecondary 
               <Button size="icon" className="h-8 w-8 bg-[#1C63A6] hover:bg-[#1a5a9e] shadow-sm flex-shrink-0">
                 <Plus className="h-4 w-4 text-primary-foreground icon-plus" />
               </Button>
-              <Button size="icon" variant="secondary" className="h-8 w-8 text-destructive hover:text-destructive focus-visible:text-destructive flex-shrink-0">
-                <Trash2 className="h-4 w-4" />
-              </Button>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    size="icon"
+                    variant="secondary"
+                    className="h-8 w-8 text-destructive hover:text-destructive focus-visible:text-destructive flex-shrink-0"
+                    disabled={checkedMy.size === 0}
+                    onClick={handleDeleteSelected}
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  {checkedMy.size > 0 ? `Delete ${checkedMy.size} selected` : "Select items to delete"}
+                </TooltipContent>
+              </Tooltip>
             </>
           )}
 
@@ -253,18 +503,14 @@ export function FinancialStatementsPanelContent({ isCollapsed, hasDarkSecondary 
                 <Button
                   size="icon"
                   className="h-8 w-8 bg-[#1C63A6] hover:bg-[#1a5a9e] shadow-sm flex-shrink-0"
-                  disabled={selectedGlobal.size === 0}
-                  onClick={() => {
-                    setSelectedGlobal(new Set());
-                  }}
+                  disabled={checkedGlobal.size === 0}
+                  onClick={handleCopyToMy}
                 >
                   <Files className="h-4 w-4 text-primary-foreground" />
                 </Button>
               </TooltipTrigger>
               <TooltipContent>
-                {selectedGlobal.size > 0
-                  ? `Add ${selectedGlobal.size} selected to My Templates`
-                  : "Select templates to add"}
+                {checkedGlobal.size > 0 ? `Add ${checkedGlobal.size} selected to My Templates` : "Select templates to add"}
               </TooltipContent>
             </Tooltip>
           )}
@@ -280,18 +526,7 @@ export function FinancialStatementsPanelContent({ isCollapsed, hasDarkSecondary 
             </p>
           </div>
         ) : (
-          activeData.map((item, idx) => (
-            <RecursiveMenuItem
-              key={(item.code || item.label) + idx}
-              item={item}
-              expandedFolders={expandedFolders}
-              toggleFolder={toggleFolder}
-              selectedItem={selectedItem}
-              onSelectItem={handleSelectItem}
-              depth={0}
-              searchQuery={searchQuery}
-            />
-          ))
+          activeData.map((item, idx) => renderItem(item, 0, activeTab))
         )}
       </div>
     </>
