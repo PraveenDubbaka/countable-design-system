@@ -777,13 +777,14 @@ export default function AddNewClient() {
                         <InlineField
                           label={incLabel[entityType] ?? "Date of Incorporation"}
                           hint={incHint[entityType] ?? "The date the entity was formally registered."}
+                          required
                         >
                           <Input type="date" className="w-44" />
                         </InlineField>
                       );
                     })()}
                     {cfg?.hasYearEnd && (
-                      <InlineField label="Year End Date" hint="The month and day your fiscal year closes.">
+                      <InlineField label="Year End Date" hint="The month and day your fiscal year closes." required>
                         <Input type="date" className="w-44" />
                       </InlineField>
                     )}
