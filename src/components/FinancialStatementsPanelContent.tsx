@@ -29,7 +29,10 @@ interface Props {
   hasDarkSecondary?: boolean;
 }
 
-const COUNTRIES = ["US", "Canada"];
+const COUNTRIES = [
+  { code: "US", flag: "🇺🇸", label: "United States" },
+  { code: "Canada", flag: "🇨🇦", label: "Canada" },
+];
 
 function collectAllFolderCodes(items: MenuItem[]): string[] {
   const codes: string[] = [];
@@ -398,66 +401,55 @@ export function FinancialStatementsPanelContent({ isCollapsed, hasDarkSecondary 
     );
   };
 
+  const selectedCountryObj = COUNTRIES.find(c => c.code === selectedCountry) ?? COUNTRIES[0];
+
   return (
     <>
-      {/* Tabs */}
-      <div
-        className="flex mb-2"
-        style={{
-          borderBottom: hasDarkSecondary
-            ? "1px solid rgba(255,255,255,0.15)"
-            : "1px solid hsl(var(--border))",
-        }}
-      >
-        <button onClick={() => setActiveTab("my")} className={tabClass("my")}>
-          My Templates
-        </button>
-        <button onClick={() => setActiveTab("global")} className={tabClass("global")}>
-          Global Templates
-        </button>
-      </div>
-
-      {/* Country + entity compact pickers */}
+      {/* Country + entity compact pickers — sits directly below the Financial Statements dropdown */}
       <div className="px-3 pb-2 flex gap-2 relative">
-        <div className="relative flex-1">
+        {/* Flag-only country picker */}
+        <div className="relative shrink-0">
           <button
             onClick={() => { setCountryOpen(v => !v); setEntityOpen(false); }}
             className={cn(
-              "w-full px-2.5 py-1.5 rounded-lg text-sm flex items-center justify-between border shadow-sm",
-              hasDarkSecondary ? "bg-white/10 border-white/20 text-white" : "bg-card/80 border-border text-foreground"
+              "px-2 py-1.5 rounded-lg text-base flex items-center justify-center border shadow-sm",
+              hasDarkSecondary ? "bg-white/10 border-white/20" : "bg-card/80 border-border"
             )}
+            style={{ minWidth: 36 }}
+            title={selectedCountryObj.label}
           >
-            <span className="truncate">{selectedCountry}</span>
-            <ChevronDown className="h-3.5 w-3.5 shrink-0 ml-1 text-muted-foreground" />
+            <span>{selectedCountryObj.flag}</span>
           </button>
           {countryOpen && (
             <div className={cn(
-              "absolute left-0 right-0 z-50 mt-1 rounded-lg border shadow-lg overflow-hidden",
+              "absolute left-0 z-50 mt-1 rounded-lg border shadow-lg overflow-hidden",
               hasDarkSecondary ? "bg-[#1a2a3a] border-white/20" : "bg-card border-border"
-            )}>
+            )} style={{ minWidth: 150 }}>
               {COUNTRIES.map(c => (
                 <button
-                  key={c}
+                  key={c.code}
                   className={cn(
-                    "w-full px-3 py-2 text-sm text-left transition-colors",
+                    "w-full px-3 py-2 text-sm text-left flex items-center gap-2 transition-colors",
                     hasDarkSecondary ? "hover:bg-white/10 text-white" : "hover:bg-muted text-foreground",
-                    c === selectedCountry && (hasDarkSecondary ? "bg-white/15" : "bg-primary/5 text-primary")
+                    c.code === selectedCountry && (hasDarkSecondary ? "bg-white/15" : "bg-primary/5 text-primary")
                   )}
                   onClick={() => {
-                    setSelectedCountry(c);
-                    setSelectedEntityType(c === "US" ? "C-Corp" : "Corporations");
+                    setSelectedCountry(c.code);
+                    setSelectedEntityType(c.code === "US" ? "C-Corp" : "Corporations");
                     setCountryOpen(false);
                     setExpandedFolders(new Set(["COMP", "GCOMP"]));
                   }}
                 >
-                  {c}
+                  <span>{c.flag}</span>
+                  <span>{c.label}</span>
                 </button>
               ))}
             </div>
           )}
         </div>
 
-        <div className="relative flex-[2]">
+        {/* Entity type picker */}
+        <div className="relative flex-1">
           <button
             onClick={() => { setEntityOpen(v => !v); setCountryOpen(false); }}
             className={cn(
@@ -493,6 +485,23 @@ export function FinancialStatementsPanelContent({ isCollapsed, hasDarkSecondary 
             </div>
           )}
         </div>
+      </div>
+
+      {/* Tabs */}
+      <div
+        className="flex mb-2"
+        style={{
+          borderBottom: hasDarkSecondary
+            ? "1px solid rgba(255,255,255,0.15)"
+            : "1px solid hsl(var(--border))",
+        }}
+      >
+        <button onClick={() => setActiveTab("my")} className={tabClass("my")}>
+          My Templates
+        </button>
+        <button onClick={() => setActiveTab("global")} className={tabClass("global")}>
+          Global Templates
+        </button>
       </div>
 
       {/* Toolbar */}
