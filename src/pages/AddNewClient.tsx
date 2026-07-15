@@ -336,7 +336,6 @@ export default function AddNewClient() {
                     <SelectItem value="partnership">Partnership</SelectItem>
                     <SelectItem value="sole-proprietor">Sole Proprietor</SelectItem>
                     <SelectItem value="trust">Trust</SelectItem>
-                    <SelectItem value="non-profit">Non-Profit</SelectItem>
                   </SelectContent>
                 </Select>
               </InlineField>
