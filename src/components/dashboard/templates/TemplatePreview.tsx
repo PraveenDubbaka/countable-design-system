@@ -2053,7 +2053,7 @@ const TemplatePreview = ({ selectedTemplate, isMyTemplates = false, onCollapseSi
 
   return (
     <LayoutSettingsProvider>
-      <div className="flex-1 flex flex-col min-h-0 overflow-hidden bg-muted/30">
+      <div className="h-full flex flex-col overflow-hidden bg-muted/30">
         {/* Top header bar */}
         <div className="flex items-center justify-between px-6 py-3.5 border-b border-border bg-background">
           {isEditMode ? (
