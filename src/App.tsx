@@ -20,6 +20,7 @@ import ProcedureDetail from "./pages/ProcedureDetail";
 import Teams from "./pages/Teams";
 import DesignSystem from "./pages/DesignSystem";
 import EngagementTemplates from "./pages/EngagementTemplates";
+import FinancialStatementTemplates from "./pages/FinancialStatementTemplates";
 import AuditDependencyRegister from "./pages/AuditDependencyRegister";
 import NotFound from "./pages/NotFound";
 import { EngagementsProvider } from "./store/EngagementsContext";
@@ -53,6 +54,7 @@ const App = () => (
             <Route path="/builder" element={<Index />} />
             <Route path="/generate" element={<Generate />} />
             <Route path="/engagement-templates" element={<EngagementTemplates />} />
+            <Route path="/financial-statement-templates" element={<FinancialStatementTemplates />} />
             <Route path="/design-system" element={<DesignSystem />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />

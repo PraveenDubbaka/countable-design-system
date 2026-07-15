@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { createPortal } from "react-dom";
 import { useNavigate, useLocation, useSearchParams } from "react-router-dom";
-import { ChevronDown, ChevronRight, ChevronLeft, Search, Plus, Expand, Trash2, Folder, Headphones, Check, FileText, FileBarChart, NotebookPen, Table, Copy, Pencil, FolderInput, MoreVertical, GripVertical, X, Save, Files, Send, AlertCircle, MessageSquare, FilePlus2, FolderPlus, ArrowUpDown, Upload, Image, Download, Move } from "lucide-react";
+import { ChevronDown, ChevronRight, ChevronLeft, Search, Plus, Expand, Trash2, Folder, Headphones, Check, FileText, FileBarChart, NotebookPen, Table, Copy, Pencil, FolderInput, MoreVertical, GripVertical, X, Save, Files, Send, AlertCircle, MessageSquare, FilePlus2, FolderPlus, ArrowUpDown, Upload, Image, Download, Move, BarChart3 } from "lucide-react";
 import { templateTree, allTemplateViews, type TreeItem, TEMPLATE_CONFIG } from "@/lib/engagementTemplatesData";
 import { FolderSolidIcon, FolderPlusIcon, FolderMinusIcon } from "@/components/icons/FolderIcons";
 import { Input } from "@/components/ui/input";
@@ -37,6 +37,7 @@ import { SignoffsOverlay } from "@/components/SignoffsOverlay";
 import signoffCheckAllIcon from "@/assets/signoff-check-all.png";
 import signoffUncheckAllIcon from "@/assets/signoff-uncheck-all.png";
 import { useSecondaryPanel } from "@/hooks/useSecondaryPanel";
+import { FinancialStatementsPanelContent } from "@/components/FinancialStatementsPanelContent";
 interface Template {
   id: string;
   name: string;
@@ -479,6 +480,12 @@ const dropdownItems = [{
   label: "Engagements",
   icon: EngagementDropdownIcon,
   color: "text-blue-500",
+  showCreator: false
+}, {
+  id: "financial-statements",
+  label: "Financial Statements",
+  icon: BarChart3,
+  color: "text-emerald-500",
   showCreator: false
 }, {
   id: "letters",
@@ -2544,7 +2551,7 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
         </>, portalTarget)}
 
       {/* Templates panel - portalled below the global header */}
-      {portalTarget && location.pathname !== "/dashboard" && location.pathname !== "/clients" && location.pathname !== "/teams" && location.pathname !== "/engagements" && location.pathname !== "/design-system" && !location.pathname.startsWith("/engagements/") && !location.pathname.startsWith("/clients/") && createPortal(<>
+      {portalTarget && location.pathname !== "/dashboard" && location.pathname !== "/clients" && location.pathname !== "/teams" && location.pathname !== "/engagements" && location.pathname !== "/design-system" && location.pathname !== "/financial-statement-templates" && !location.pathname.startsWith("/engagements/") && !location.pathname.startsWith("/clients/") && createPortal(<>
           <div 
             ref={panelRef}
             style={{ width: isTemplatesPanelCollapsed ? 0 : panelWidth }}
@@ -2861,6 +2868,10 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
                   )}
                 </div>
               </>
+            ) : selectedDropdown === "financial-statements" ? (
+              <div className={`flex-1 flex flex-col overflow-hidden ${isTemplatesPanelCollapsed ? "hidden" : ""}`}>
+                <FinancialStatementsPanelContent hasDarkSecondary={hasDarkSecondary} />
+              </div>
             ) : (
               /* Empty state for Notes */
               <div className={`flex-1 flex flex-col items-center justify-center gap-3 px-4 py-8 text-center ${isTemplatesPanelCollapsed ? "hidden" : ""}`}>
