@@ -955,53 +955,6 @@ export default function CreateEngagement() {
                           </div>
                           <BoolToggle value={firstYearAudit} onChange={v => { setFirstYearAudit(v); if (!v) { setFirstYearOnPlatform(""); setIsRollForward(""); setFirstYearTemplates(new Set()); }}} />
                         </div>
-                        {firstYearAudit && (
-                          <div className="ml-3 pl-3 border-l-2 border-primary/30 space-y-3">
-                            <div className="flex items-start justify-between gap-3">
-                              <div>
-                                <p className="text-sm text-foreground leading-snug">First audit on this platform?</p>
-                                <p className="text-xs text-muted-foreground mt-0.5">No = prior files exist for carry-forward.</p>
-                              </div>
-                              <StrToggle value={firstYearOnPlatform} onChange={v => { setFirstYearOnPlatform(v); setIsRollForward(""); }} />
-                            </div>
-                            {firstYearOnPlatform === "no" && (
-                              <div className="ml-3 pl-3 border-l-2 border-amber-300/70 space-y-2">
-                                <div className="flex items-start justify-between gap-3">
-                                  <div>
-                                    <p className="text-sm text-foreground leading-snug">Is this a roll-forward?</p>
-                                    <p className="text-xs text-muted-foreground mt-0.5">Copies prior-year files into this engagement.</p>
-                                  </div>
-                                  <StrToggle value={isRollForward} onChange={setIsRollForward} />
-                                </div>
-                              </div>
-                            )}
-                          </div>
-                        )}
-                      </div>
-
-                      {/* FORM PREFERENCES */}
-                      <div className="px-5 pt-4 pb-3 border-b border-border/30 space-y-3">
-                        <p className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground/60">Form Preferences</p>
-                        <div className="flex items-start justify-between gap-3">
-                          <div>
-                            <p className="text-sm text-foreground leading-snug">Condensed audit forms?</p>
-                            <p className="text-xs text-muted-foreground mt-0.5">Shortened checklists for simpler engagements.</p>
-                          </div>
-                          <BoolToggle value={condensedForms} onChange={setCondensedForms} />
-                        </div>
-                        <div className="flex items-start justify-between gap-3">
-                          <div>
-                            <p className="text-sm text-foreground leading-snug">First-time adoption of standard?</p>
-                            <p className="text-xs text-muted-foreground mt-0.5">Adds opening balance testing procedures.</p>
-                          </div>
-                          <BoolToggle value={firstTimeAdoption} onChange={setFirstTimeAdoption} />
-                        </div>
-                        {firstTimeAdoption && (
-                          <div className="flex items-start gap-2 px-3 py-2.5 rounded-md bg-amber-50 dark:bg-amber-950/20 border border-amber-200/60 dark:border-amber-800/30">
-                            <span className="text-amber-500 text-xs mt-0.5">⚠</span>
-                            <p className="text-xs text-amber-700 dark:text-amber-400">Opening balance testing will be added to this engagement.</p>
-                          </div>
-                        )}
                       </div>
 
                     </div>
