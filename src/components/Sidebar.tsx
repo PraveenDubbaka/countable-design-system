@@ -763,6 +763,13 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
     return () => window.removeEventListener("fs-template-edit-mode", handler);
   }, []);
 
+  // Toggle secondary panel from FS template edit mode header button
+  useEffect(() => {
+    const handler = () => setIsTemplatesPanelCollapsed(prev => !prev);
+    window.addEventListener("fs-template-panel-toggle", handler);
+    return () => window.removeEventListener("fs-template-panel-toggle", handler);
+  }, []);
+
   // Restore selection from navigation state if contentType is passed
   useEffect(() => {
     const navState = location.state as {
