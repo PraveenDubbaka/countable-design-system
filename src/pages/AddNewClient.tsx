@@ -715,6 +715,9 @@ export default function AddNewClient() {
                   <InlineField label="Email" required>
                     <Input type="email" placeholder="contact@company.com" />
                   </InlineField>
+                  <InlineField label="Website">
+                    <Input type="url" placeholder="https://www.example.com" />
+                  </InlineField>
                 </div>
                 <div className="mt-5 pt-5 border-t border-border">
                   <div className="space-y-4 max-w-[50%]">
