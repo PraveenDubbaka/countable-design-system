@@ -465,30 +465,6 @@ export default function AddNewClient() {
               </div>
             )}
 
-            {/* Address */}
-            <div className="mt-4 pt-4 border-t border-border">
-              <div className="space-y-4 max-w-[50%]">
-                <InlineField label="Street Address">
-                  <Input placeholder="123 Main Street, Suite 400" />
-                </InlineField>
-                <InlineField label="City">
-                  <Input placeholder="City" />
-                </InlineField>
-                <InlineField label={taxCfg.regionLabel}>
-                  <Select>
-                    <SelectTrigger><SelectValue placeholder="Select" /></SelectTrigger>
-                    <SelectContent>
-                      {regions.map(r => (
-                        <SelectItem key={r.value} value={r.value}>{r.label}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </InlineField>
-                <InlineField label={taxCfg.postalLabel}>
-                  <Input placeholder={taxCfg.postalPlaceholder} />
-                </InlineField>
-              </div>
-            </div>
           </SectionCard>
 
           {/* ── Prompt shown before entity type is selected ─────────────── */}
@@ -511,7 +487,7 @@ export default function AddNewClient() {
             <div className="space-y-4">
 
               {/* ── Primary Contact ──────────────────────────────────────── */}
-              <SectionCard icon={User} title="Primary Contact" subtitle="The person responsible for this client relationship">
+              <SectionCard icon={User} title="Primary Contact & Business Address" subtitle="The person responsible for this client relationship">
                 <div className="space-y-4 max-w-[50%]">
                   <InlineField label="First Name" required>
                     <Input placeholder="First Name" />
@@ -522,6 +498,29 @@ export default function AddNewClient() {
                   <InlineField label="Email" required>
                     <Input type="email" placeholder="contact@company.com" />
                   </InlineField>
+                </div>
+                <div className="mt-5 pt-5 border-t border-border">
+                  <div className="space-y-4 max-w-[50%]">
+                    <InlineField label="Street Address">
+                      <Input placeholder="123 Main Street, Suite 400" />
+                    </InlineField>
+                    <InlineField label="City">
+                      <Input placeholder="City" />
+                    </InlineField>
+                    <InlineField label={taxCfg.regionLabel}>
+                      <Select>
+                        <SelectTrigger><SelectValue placeholder="Select" /></SelectTrigger>
+                        <SelectContent>
+                          {regions.map(r => (
+                            <SelectItem key={r.value} value={r.value}>{r.label}</SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </InlineField>
+                    <InlineField label={taxCfg.postalLabel}>
+                      <Input placeholder={taxCfg.postalPlaceholder} />
+                    </InlineField>
+                  </div>
                 </div>
                 <div className="mt-5 pt-5 border-t border-border">
                   <div className="space-y-4 max-w-[50%]">
