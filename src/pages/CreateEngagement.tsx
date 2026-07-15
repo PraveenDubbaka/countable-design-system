@@ -37,7 +37,7 @@ const ACCOUNTING_FRAMEWORKS = [
   "ASPE — Canadian Accounting Standards for Private Enterprises",
   "IFRS — International Financial Reporting Standards",
   "US GAAP — Generally Accepted Accounting Principles (United States)",
-  "Income Tax Basis",
+  "Tax Basis",
   "Cash Basis",
   "Modified Cash Basis",
 ];
