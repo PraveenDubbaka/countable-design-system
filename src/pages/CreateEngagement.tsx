@@ -956,6 +956,31 @@ export default function CreateEngagement() {
                         </div>
                       </div>
 
+                      {/* FORM PREFERENCES */}
+                      <div className="px-5 pt-4 pb-3 border-b border-border/30 space-y-3">
+                        <p className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground/60">Form Preferences</p>
+                        <div className="flex items-start justify-between gap-3">
+                          <div>
+                            <p className="text-sm text-foreground leading-snug">Condensed audit forms?</p>
+                            <p className="text-xs text-muted-foreground mt-0.5">Shortened checklists for simpler engagements.</p>
+                          </div>
+                          <BoolToggle value={condensedForms} onChange={setCondensedForms} />
+                        </div>
+                        <div className="flex items-start justify-between gap-3">
+                          <div>
+                            <p className="text-sm text-foreground leading-snug">First-time adoption of standard?</p>
+                            <p className="text-xs text-muted-foreground mt-0.5">Adds opening balance testing procedures.</p>
+                          </div>
+                          <BoolToggle value={firstTimeAdoption} onChange={setFirstTimeAdoption} />
+                        </div>
+                        {firstTimeAdoption && (
+                          <div className="flex items-start gap-2 px-3 py-2.5 rounded-md bg-amber-50 dark:bg-amber-950/20 border border-amber-200/60 dark:border-amber-800/30">
+                            <span className="text-amber-500 text-xs mt-0.5">⚠</span>
+                            <p className="text-xs text-amber-700 dark:text-amber-400">Opening balance testing will be added to this engagement.</p>
+                          </div>
+                        )}
+                      </div>
+
                     </div>
                   ) : (
                     <div className="px-5 py-8 text-center">
