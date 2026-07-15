@@ -408,11 +408,11 @@ export function FinancialStatementsPanelContent({ isCollapsed, hasDarkSecondary 
       {/* Country + entity compact pickers — sits directly below the Financial Statements dropdown */}
       <div className="px-3 pb-2 flex gap-2 relative">
         {/* Flag-only country picker */}
-        <div className="relative shrink-0">
+        <div className="relative shrink-0 self-stretch flex">
           <button
             onClick={() => { setCountryOpen(v => !v); setEntityOpen(false); }}
             className={cn(
-              "px-2 py-1.5 rounded-lg text-base flex items-center justify-center border shadow-sm",
+              "px-2 rounded-lg text-sm flex items-center justify-center border shadow-sm w-full",
               hasDarkSecondary ? "bg-white/10 border-white/20" : "bg-card/80 border-border"
             )}
             style={{ minWidth: 36 }}
