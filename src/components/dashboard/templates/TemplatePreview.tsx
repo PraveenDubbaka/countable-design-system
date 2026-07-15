@@ -2025,6 +2025,15 @@ const TemplatePreview = ({ selectedTemplate, isMyTemplates = false, onCollapseSi
     }
   }, [isEditMode]);
 
+  // Restore sidebar panel if user navigates away while still in edit mode
+  useEffect(() => {
+    return () => {
+      if (prevEditMode.current) {
+        onCollapseSidebar?.(false);
+      }
+    };
+  }, []);
+
   const toggleHidden = useCallback((id: number) => {
     setDocs((prev) =>
       prev.map((d) => (d.id === id ? { ...d, hidden: !d.hidden } : d))
