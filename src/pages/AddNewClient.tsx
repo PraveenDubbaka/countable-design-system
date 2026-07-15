@@ -525,10 +525,38 @@ export default function AddNewClient() {
                 <div className="mt-5 pt-5 border-t border-border">
                   <div className="space-y-4 max-w-[50%]">
                     <InlineField label="Cell Phone">
-                      <Input placeholder="+1 (555) 000-0000" />
+                      <div className="flex gap-2">
+                        <Select defaultValue="+1">
+                          <SelectTrigger className="w-24 shrink-0"><SelectValue /></SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="+1">🇨🇦 +1</SelectItem>
+                            <SelectItem value="+1us">🇺🇸 +1</SelectItem>
+                            <SelectItem value="+44">🇬🇧 +44</SelectItem>
+                            <SelectItem value="+61">🇦🇺 +61</SelectItem>
+                            <SelectItem value="+33">🇫🇷 +33</SelectItem>
+                            <SelectItem value="+49">🇩🇪 +49</SelectItem>
+                            <SelectItem value="+91">🇮🇳 +91</SelectItem>
+                          </SelectContent>
+                        </Select>
+                        <Input className="flex-1" placeholder="(555) 000-0000" />
+                      </div>
                     </InlineField>
                     <InlineField label="Business Phone">
-                      <Input placeholder="+1 (555) 000-0000" />
+                      <div className="flex gap-2">
+                        <Select defaultValue="+1">
+                          <SelectTrigger className="w-24 shrink-0"><SelectValue /></SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="+1">🇨🇦 +1</SelectItem>
+                            <SelectItem value="+1us">🇺🇸 +1</SelectItem>
+                            <SelectItem value="+44">🇬🇧 +44</SelectItem>
+                            <SelectItem value="+61">🇦🇺 +61</SelectItem>
+                            <SelectItem value="+33">🇫🇷 +33</SelectItem>
+                            <SelectItem value="+49">🇩🇪 +49</SelectItem>
+                            <SelectItem value="+91">🇮🇳 +91</SelectItem>
+                          </SelectContent>
+                        </Select>
+                        <Input className="flex-1" placeholder="(555) 000-0000" />
+                      </div>
                     </InlineField>
                   </div>
                 </div>
