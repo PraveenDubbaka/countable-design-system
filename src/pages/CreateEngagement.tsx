@@ -870,7 +870,7 @@ export default function CreateEngagement() {
             )}
 
             {/* Two-column grid: forms (left) + audit config panel (right) */}
-            <div className={isAudit ? "grid grid-cols-3 gap-5 items-stretch" : "grid grid-cols-2 gap-5 items-stretch"}>
+            <div className="flex flex-col gap-5 w-full">
               {/* Engagement Details — inline labels */}
               <SectionCard icon={<Briefcase className="h-5 w-5" />} title="Engagement Details">
                 <InlineRow label="Engagement ID" required>
