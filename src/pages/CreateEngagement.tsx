@@ -945,17 +945,6 @@ export default function CreateEngagement() {
                   {/* Questions — unlocked after engagement details filled */}
                   {engagementDetailsValid ? (
                     <div>
-                      {/* FIRST-YEAR AUDIT */}
-                      <div className="px-5 pt-4 pb-3 border-b border-border/30 space-y-3">
-                        <p className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground/60">First-Year Audit</p>
-                        <div className="flex items-start justify-between gap-3 max-w-sm">
-                          <div>
-                            <p className="text-sm text-foreground leading-snug">First year of audit?</p>
-                          </div>
-                          <BoolToggle value={firstYearAudit} onChange={v => { setFirstYearAudit(v); if (!v) { setFirstYearOnPlatform(""); setIsRollForward(""); setFirstYearTemplates(new Set()); }}} />
-                        </div>
-                      </div>
-
                       {/* FORM PREFERENCES */}
                       <div className="px-5 pt-4 pb-3 border-b border-border/30 space-y-3">
                         <p className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground/60">Form Preferences</p>
