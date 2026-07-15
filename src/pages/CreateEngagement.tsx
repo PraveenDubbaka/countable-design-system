@@ -773,10 +773,13 @@ export default function CreateEngagement() {
   const filteredMembers = teamMembers.filter(m =>
     !teamSearch || m.name.toLowerCase().includes(teamSearch.toLowerCase()) || m.role.toLowerCase().includes(teamSearch.toLowerCase())
   );
-  const avgRate = teamMembers.length ? (teamMembers.reduce((s, m) => s + (parseFloat(m.hourlyRate) || 0), 0) / teamMembers.length).toFixed(2) : "0.00";
-  const avgAlloc = teamMembers.length ? (teamMembers.reduce((s, m) => s + (parseFloat(m.timeAllocation) || 0), 0) / teamMembers.length).toFixed(0) : "0";
-  const avgCost = teamMembers.length ? (teamMembers.reduce((s, m) => s + parseFloat(calcBudgetedCost(m.hourlyRate, m.timeAllocation)), 0) / teamMembers.length).toFixed(2) : "0.00";
-  const avgHours = teamMembers.length ? (teamMembers.reduce((s, m) => s + parseFloat(calcBudgetedHours(m.timeAllocation)), 0) / teamMembers.length).toFixed(2) : "0.00";
+  const totalAlloc = teamMembers.reduce((s, m) => s + (parseFloat(m.timeAllocation) || 0), 0);
+  const avgRate = teamMembers.length && totalAlloc > 0
+    ? (teamMembers.reduce((s, m) => s + (parseFloat(m.hourlyRate) || 0) * (parseFloat(m.timeAllocation) || 0), 0) / totalAlloc).toFixed(2)
+    : "0.00";
+  const avgAlloc = totalAlloc.toFixed(0);
+  const avgCost = teamMembers.reduce((s, m) => s + parseFloat(calcBudgetedCost(m.hourlyRate, m.timeAllocation)), 0).toFixed(2);
+  const avgHours = teamMembers.reduce((s, m) => s + parseFloat(calcBudgetedHours(m.timeAllocation)), 0).toFixed(2);
 
   const engagementTypeOptions = [
     { value: "Audit (AUD)", label: "Audit (AUD)" },
