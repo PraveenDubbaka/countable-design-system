@@ -4,8 +4,9 @@ import { useEngagements } from "@/store/EngagementsContext";
 import { EngagementRecord, setEngagementMeta } from "@/store/engagementsStore";
 import { toast } from "sonner";
 import intuitQuickbooksLogo from "@/assets/intuit-quickbooks-logo.svg";
-import { ArrowLeft, Briefcase, Calendar, Users, ChevronDown, Plus, Pencil, Trash2, Search, ExternalLink, X, Building2, FileText, Settings2, Check } from "lucide-react";
+import { ArrowLeft, Briefcase, Calendar, Users, ChevronDown, Plus, Pencil, Trash2, Search, ExternalLink, X, Building2, FileText, Settings2, Check, UserPlus } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Layout } from "@/components/Layout";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -44,7 +45,7 @@ const ACCOUNTING_FRAMEWORKS = [
 const ENTITY_CLASSIFICATIONS = ["Private", "Public", "Manufacturing"];
 const AUDIT_ROLES = [
   "Engagement Partner", "Manager", "Senior Auditor", "Staff Auditor / Assistant",
-  "EQCR (Quality Reviewer)", "Tax Reviewer", "Subject Matter Expert", "Preparer", "Other",
+  "EQCR (Quality Reviewer)", "Tax Reviewer", "Subject Matter Expert", "Preparer",
 ];
 const AUDIT_DISCLOSURE_OPTIONS = [
   { key: "fullFinancials",         label: "Full financial statements" },
@@ -460,12 +461,14 @@ const TeamMemberEditRow = ({
   onConfirm,
   onCancel,
   roleOptions,
+  onAddRole,
 }: {
   draft: TeamMember;
   onChangeDraft: (d: TeamMember) => void;
   onConfirm: () => void;
   onCancel: () => void;
   roleOptions: string[];
+  onAddRole?: () => void;
 }) => {
   const handleMemberSelect = (name: string) => {
     const found = MOCK_TEAM_MEMBERS.find(m => m.name === name);
@@ -477,10 +480,19 @@ const TeamMemberEditRow = ({
     <tr className="bg-primary/[0.03] dark:bg-primary/[0.05] border-b border-border/40">
       <td className="px-6 py-2 w-10"><Checkbox /></td>
       <td className="px-6 py-2 min-w-[160px]">
-        <Select value={draft.role} onValueChange={role => onChangeDraft({ ...draft, role })}>
+        <Select
+          value={draft.role}
+          onValueChange={role => {
+            if (role === "__add_new_role__") { onAddRole?.(); return; }
+            onChangeDraft({ ...draft, role });
+          }}
+        >
           <SelectTrigger className="h-8 text-sm"><SelectValue /></SelectTrigger>
           <SelectContent>
             {roleOptions.map(r => <SelectItem key={r} value={r}>{r}</SelectItem>)}
+            <SelectItem value="__add_new_role__" className="text-primary font-medium">
+              <span className="flex items-center gap-1.5"><UserPlus className="h-3.5 w-3.5" />Add new role</span>
+            </SelectItem>
           </SelectContent>
         </Select>
       </td>
@@ -669,8 +681,12 @@ export default function CreateEngagement() {
   const [pendingRow, setPendingRow] = useState<PendingRow | null>(null);
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [teamSearch, setTeamSearch] = useState("");
+  const [customRoles, setCustomRoles] = useState<string[]>([]);
+  const [showAddRoleModal, setShowAddRoleModal] = useState(false);
+  const [newRoleName, setNewRoleName] = useState("");
 
-  const roleOptions = isAudit ? AUDIT_ROLES : ["Partner", "Manager", "Senior", "Staff / Assistant", "Preparer"];
+  const baseRoles = isAudit ? AUDIT_ROLES : ["Partner", "Manager", "Senior", "Staff / Assistant", "Preparer"];
+  const roleOptions = [...baseRoles, ...customRoles];
 
   const startAddMember = () => {
     if (pendingRow) return;
@@ -1051,13 +1067,13 @@ export default function CreateEngagement() {
                     <tbody>
                       {filteredMembers.map(member =>
                         pendingRow?.mode === 'edit' && pendingRow.originalId === member.id ? (
-                          <TeamMemberEditRow key={member.id} draft={pendingRow.draft} onChangeDraft={d => setPendingRow({ mode: 'edit', originalId: member.id, draft: d })} onConfirm={confirmPendingRow} onCancel={cancelPendingRow} roleOptions={roleOptions} />
+                          <TeamMemberEditRow key={member.id} draft={pendingRow.draft} onChangeDraft={d => setPendingRow({ mode: 'edit', originalId: member.id, draft: d })} onConfirm={confirmPendingRow} onCancel={cancelPendingRow} roleOptions={roleOptions} onAddRole={() => { setNewRoleName(""); setShowAddRoleModal(true); }} />
                         ) : (
                           <TeamMemberViewRow key={member.id} member={member} checked={selectedIds.has(member.id)} onCheck={() => toggleSelect(member.id)} onEdit={() => startEditMember(member)} onDelete={() => deleteMember(member.id)} />
                         )
                       )}
                       {pendingRow?.mode === 'add' && (
-                        <TeamMemberEditRow draft={pendingRow.draft} onChangeDraft={d => setPendingRow({ mode: 'add', draft: d })} onConfirm={confirmPendingRow} onCancel={cancelPendingRow} roleOptions={roleOptions} />
+                        <TeamMemberEditRow draft={pendingRow.draft} onChangeDraft={d => setPendingRow({ mode: 'add', draft: d })} onConfirm={confirmPendingRow} onCancel={cancelPendingRow} roleOptions={roleOptions} onAddRole={() => { setNewRoleName(""); setShowAddRoleModal(true); }} />
                       )}
                     </tbody>
                     <tfoot>
@@ -1121,6 +1137,45 @@ export default function CreateEngagement() {
           </div>
         </div>
       </div>
+      <Dialog open={showAddRoleModal} onOpenChange={setShowAddRoleModal}>
+        <DialogContent className="max-w-sm">
+          <DialogHeader>
+            <DialogTitle>Add new role</DialogTitle>
+          </DialogHeader>
+          <div className="py-2">
+            <input
+              autoFocus
+              value={newRoleName}
+              onChange={e => setNewRoleName(e.target.value)}
+              onKeyDown={e => {
+                if (e.key === "Enter" && newRoleName.trim()) {
+                  const role = newRoleName.trim();
+                  setCustomRoles(prev => prev.includes(role) ? prev : [...prev, role]);
+                  setPendingRow(prev => prev ? { ...prev, draft: { ...prev.draft, role } } : prev);
+                  setShowAddRoleModal(false);
+                }
+              }}
+              placeholder="e.g. IT Specialist"
+              className="w-full h-9 px-3 text-sm rounded-md border border-input bg-background outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
+            />
+          </div>
+          <DialogFooter>
+            <Button variant="outline" size="sm" onClick={() => setShowAddRoleModal(false)}>Cancel</Button>
+            <Button
+              size="sm"
+              disabled={!newRoleName.trim()}
+              onClick={() => {
+                const role = newRoleName.trim();
+                setCustomRoles(prev => prev.includes(role) ? prev : [...prev, role]);
+                setPendingRow(prev => prev ? { ...prev, draft: { ...prev.draft, role } } : prev);
+                setShowAddRoleModal(false);
+              }}
+            >
+              Add role
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </Layout>
   );
 }
