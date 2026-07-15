@@ -4,7 +4,7 @@ import { useEngagements } from "@/store/EngagementsContext";
 import { EngagementRecord, setEngagementMeta } from "@/store/engagementsStore";
 import { toast } from "sonner";
 import intuitQuickbooksLogo from "@/assets/intuit-quickbooks-logo.svg";
-import { ArrowLeft, Briefcase, Calendar, Users, ChevronDown, Plus, Pencil, Trash2, Search, ExternalLink, X, Building2, FileText, Settings2, Check, UserPlus } from "lucide-react";
+import { ArrowLeft, Briefcase, Calendar, Users, ChevronDown, Plus, Pencil, Trash2, Search, ExternalLink, X, Building2, FileText, Settings2, Check, UserPlus, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -47,6 +47,32 @@ const AUDIT_ROLES = [
   "Engagement Partner", "Manager", "Senior Auditor", "Staff Auditor / Assistant",
   "EQCR (Quality Reviewer)", "Tax Reviewer", "Subject Matter Expert", "Preparer",
 ];
+type RecommendedRole = { role: string; hourlyRate: string; timeAllocation: string };
+const RECOMMENDED_TEAM: Record<string, RecommendedRole[]> = {
+  audit: [
+    { role: "Engagement Partner",       hourlyRate: "400.00", timeAllocation: "15" },
+    { role: "Manager",                  hourlyRate: "275.00", timeAllocation: "25" },
+    { role: "Senior Auditor",           hourlyRate: "200.00", timeAllocation: "35" },
+    { role: "Staff Auditor / Assistant",hourlyRate: "150.00", timeAllocation: "25" },
+  ],
+  review: [
+    { role: "Partner",           hourlyRate: "400.00", timeAllocation: "20" },
+    { role: "Manager",           hourlyRate: "275.00", timeAllocation: "30" },
+    { role: "Senior",            hourlyRate: "200.00", timeAllocation: "35" },
+    { role: "Staff / Assistant", hourlyRate: "150.00", timeAllocation: "15" },
+  ],
+  compilation: [
+    { role: "Partner",  hourlyRate: "400.00", timeAllocation: "15" },
+    { role: "Senior",   hourlyRate: "200.00", timeAllocation: "45" },
+    { role: "Preparer", hourlyRate: "125.00", timeAllocation: "40" },
+  ],
+  tax: [
+    { role: "Partner",       hourlyRate: "400.00", timeAllocation: "20" },
+    { role: "Manager",       hourlyRate: "275.00", timeAllocation: "30" },
+    { role: "Tax Reviewer",  hourlyRate: "300.00", timeAllocation: "35" },
+    { role: "Preparer",      hourlyRate: "125.00", timeAllocation: "15" },
+  ],
+};
 const AUDIT_DISCLOSURE_OPTIONS = [
   { key: "fullFinancials",         label: "Full financial statements" },
   { key: "cashFlow",               label: "Cash Flow Statement" },
@@ -688,6 +714,21 @@ export default function CreateEngagement() {
   const baseRoles = isAudit ? AUDIT_ROLES : ["Partner", "Manager", "Senior", "Staff / Assistant", "Preparer"];
   const roleOptions = [...baseRoles, ...customRoles];
 
+  const getRecommendedCategory = () => {
+    if (isAudit) return "audit";
+    if (accountingStandards.toLowerCase().includes("tax")) return "tax";
+    if (engagementType.includes("COM") || engagementType.toLowerCase().includes("compilation")) return "compilation";
+    return "review";
+  };
+
+  const addRecommendedTeam = () => {
+    const recs = RECOMMENDED_TEAM[getRecommendedCategory()] ?? RECOMMENDED_TEAM.review;
+    setTeamMembers(prev => [
+      ...prev,
+      ...recs.map(r => ({ id: uid(), role: r.role, name: "", email: "", title: "", hourlyRate: r.hourlyRate, timeAllocation: r.timeAllocation })),
+    ]);
+  };
+
   const startAddMember = () => {
     if (pendingRow) return;
     setPendingRow({ mode: 'add', draft: { id: uid(), role: roleOptions[0] ?? "", name: "", email: "", title: "", hourlyRate: "0.00", timeAllocation: "" } });
@@ -1035,6 +1076,9 @@ export default function CreateEngagement() {
                 badge={`${teamMembers.length} User`}
                 headerRight={
                   <div className="flex items-center gap-2">
+                    <Button variant="outline" onClick={addRecommendedTeam} className="h-9 px-3 gap-1.5 text-sm">
+                      <Sparkles className="h-4 w-4" />Add Recommended
+                    </Button>
                     <div className="relative">
                       <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                       <input type="text" placeholder="Search" value={teamSearch} onChange={e => setTeamSearch(e.target.value)}
@@ -1079,7 +1123,7 @@ export default function CreateEngagement() {
                     <tfoot>
                       <tr className="bg-muted/30 border-t border-border/40">
                         <td className="px-4 py-3" /><td className="px-4 py-3" /><td className="px-4 py-3" /><td className="px-4 py-3" />
-                        <td className="px-4 py-3 text-sm font-semibold text-foreground">Avg Engagement Rate</td>
+                        <td className="px-4 py-3 text-sm font-semibold text-foreground whitespace-nowrap">Avg Engagement Rate</td>
                         <td className="px-4 py-3 text-sm font-semibold text-foreground text-right">{avgRate}</td>
                         <td className="px-4 py-3 text-sm font-semibold text-foreground text-right">{avgAlloc}</td>
                         <td className="px-4 py-3 text-sm font-semibold text-foreground text-right">{avgCost}</td>
