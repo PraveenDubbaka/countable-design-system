@@ -951,7 +951,6 @@ export default function CreateEngagement() {
                         <div className="flex items-start justify-between gap-3">
                           <div>
                             <p className="text-sm text-foreground leading-snug">First year of audit?</p>
-                            <p className="text-xs text-muted-foreground mt-0.5">Adds IE checklist and predecessor letter.</p>
                           </div>
                           <BoolToggle value={firstYearAudit} onChange={v => { setFirstYearAudit(v); if (!v) { setFirstYearOnPlatform(""); setIsRollForward(""); setFirstYearTemplates(new Set()); }}} />
                         </div>
