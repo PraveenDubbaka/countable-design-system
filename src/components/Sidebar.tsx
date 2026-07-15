@@ -1572,8 +1572,17 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
 
         {/* Nav items */}
         {navItems.map((item, index) => {
-        const isActive = item.route ? location.pathname === item.route : false;
-        return <div key={index} className={`sidebar-item ${isActive ? "active" : ""} ${isNavExpanded ? "w-full justify-start gap-3 px-3" : ""} ${item.route ? "cursor-pointer" : ""}`} title={!isNavExpanded ? item.label : undefined} onClick={() => item.route && navigate(item.route)}>
+        const isTemplatesItem = item.label === "Templates";
+        const isActive = isTemplatesItem
+          ? (location.pathname === "/engagement-templates" || location.pathname === "/create" || location.pathname.startsWith("/financial-statement-templates"))
+          : (item.route ? location.pathname === item.route : false);
+        return <div key={index} className={`sidebar-item ${isActive ? "active" : ""} ${isNavExpanded ? "w-full justify-start gap-3 px-3" : ""} ${item.route ? "cursor-pointer" : ""}`} title={!isNavExpanded ? item.label : undefined} onClick={() => {
+          if (isTemplatesItem) {
+            handleDropdownSelect("engagements");
+          } else {
+            item.route && navigate(item.route);
+          }
+        }}>
               <item.icon />
               {isNavExpanded && <span className="text-sm font-medium whitespace-nowrap">{item.label}</span>}
             </div>;

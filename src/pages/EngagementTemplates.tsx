@@ -637,7 +637,7 @@ export default function EngagementTemplates() {
   };
 
   return (
-    <Layout>
+    <Layout title="Templates">
       <div className="flex h-full overflow-hidden bg-background">
         {/* Right Panel */}
         <div className="flex-1 bg-background flex flex-col overflow-hidden">
