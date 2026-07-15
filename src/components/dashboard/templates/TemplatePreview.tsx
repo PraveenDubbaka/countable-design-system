@@ -2010,16 +2010,11 @@ const TemplatePreview = ({ selectedTemplate, isMyTemplates = false, onCollapseSi
   const isFS = activeDocItem ? !nonEditableKeys.includes(activeDocItem.componentKey) && !activeDocItem.disabled : false;
   const isEditMode = fsEditMode && isFS;
 
-  // When entering edit mode, collapse main LHS sidebar, keep FS docs open, open layout settings
   if (isEditMode && !prevEditMode.current) {
     prevEditMode.current = true;
-    setNavCollapsed(false); // Keep FS Docs panel open
-    setLayoutSettingsOpen(true);
-    onCollapseSidebar?.(true); // Collapse main LHS sidebar
   }
   if (!isEditMode && prevEditMode.current) {
     prevEditMode.current = false;
-    onCollapseSidebar?.(false); // Restore main LHS sidebar
   }
 
   const toggleHidden = useCallback((id: number) => {
