@@ -898,7 +898,7 @@ export default function CreateEngagement() {
                   </div>
                 </InlineRow>
                 <InlineRow label="Engagement Type" required>
-                  <Select value={engagementType} onValueChange={setEngagementType}>
+                  <Select value={engagementType} onValueChange={setEngagementType} disabled>
                     <SelectTrigger className="h-9 text-sm"><SelectValue /></SelectTrigger>
                     <SelectContent>
                       {engagementTypeOptions.map(o => <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>)}
