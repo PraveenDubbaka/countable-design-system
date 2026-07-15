@@ -279,7 +279,7 @@ const InlineRow = ({ label, required, children }: { label: string; required?: bo
     <span className="text-sm text-foreground w-44 shrink-0">
       {label}{required && <span className="text-destructive ml-0.5">*</span>}
     </span>
-    <div className="flex-1 min-w-0">{children}</div>
+    <div className="flex-1 min-w-0 max-w-sm">{children}</div>
   </div>
 );
 
