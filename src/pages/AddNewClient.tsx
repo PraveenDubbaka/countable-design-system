@@ -318,9 +318,11 @@ export default function AddNewClient() {
                 <div className="flex-1">
                   <div className="flex items-center gap-3">
                     <Switch checked={showDba} onCheckedChange={(v) => { setShowDba(v); if (!v) { setDbaName(""); setDbaDisplay("legal-only"); } }} />
-                    {!showDba && <p className="text-xs text-muted-foreground">{cfg ? cfg.dbaHint : "The branded name used in public-facing materials, if different from the registered legal name."}</p>}
+                    {showDba
+                      ? <Input className="flex-1" value={dbaName} onChange={e => setDbaName(e.target.value)} placeholder="e.g., Acme Trading Co." />
+                      : <p className="text-xs text-muted-foreground">{cfg ? cfg.dbaHint : "The branded name used in public-facing materials, if different from the registered legal name."}</p>
+                    }
                   </div>
-                  {showDba && <Input className="mt-2" value={dbaName} onChange={e => setDbaName(e.target.value)} placeholder="e.g., Acme Trading Co." />}
                 </div>
               </div>
               <InlineField label="Group Name" hint="Use to group related clients together.">
