@@ -4,6 +4,8 @@ import TemplateEditableWrapper from "./TemplateEditableWrapper";
 import { Plus, ChevronLeft, ChevronRight, ChevronDown, Eye, EyeOff, GripVertical, Pencil, Check, X, Copy, Trash2, ArrowLeft, Save, SlidersHorizontal, FileText, AlignLeft, Info, Upload, BadgeCheck, History, RotateCcw, User, Columns3, Settings2, Users, LayoutGrid, ListChecks, Table2, Minus } from "lucide-react";
 import { toast } from "sonner";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -2057,72 +2059,54 @@ const TemplatePreview = ({ selectedTemplate, isMyTemplates = false, onCollapseSi
           {isEditMode ? (
             <>
               <div className="flex items-center gap-2">
-                <motion.button
+                <button
                   onClick={() => { setFsEditMode(false); setFsHasChanges(false); setFsSaved(false); setLayoutSettingsOpen(false); }}
-                  className="p-1 rounded-[8px] hover:bg-accent transition-colors cursor-pointer"
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
+                  className="w-7 h-7 rounded-md flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
+                  title="Exit edit mode"
                 >
-                  <ArrowLeft size={18} className="text-foreground" />
-                </motion.button>
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24" width="16" height="16" className="shrink-0" aria-hidden="true">
+                    <path fill="currentColor" d="M20.25 7c0-.69-.56-1.25-1.25-1.25H9.75v12.5H19c.69 0 1.25-.56 1.25-1.25zM3.75 17c0 .69.56 1.25 1.25 1.25h3.25V5.75H5c-.69 0-1.25.56-1.25 1.25zm18 0A2.75 2.75 0 0 1 19 19.75H5A2.75 2.75 0 0 1 2.25 17V7A2.75 2.75 0 0 1 5 4.25h14A2.75 2.75 0 0 1 21.75 7z" />
+                  </svg>
+                </button>
                 <h2 className="text-base font-bold text-foreground">Edit {activeDocItem?.label || "Document"}</h2>
                 {isPublished ? (
-                  <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold"
-                    style={{ background: "hsl(142 60% 92%)", color: "hsl(142 60% 30%)", border: "1px solid hsl(142 60% 80%)" }}>
-                    <BadgeCheck size={13} />
-                    Published
-                  </span>
+                  <Badge variant="success" icon={<BadgeCheck size={13} />}>Published</Badge>
                 ) : (
-                  <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold"
-                    style={{ background: "hsl(220 20% 93%)", color: "hsl(220 15% 45%)", border: "1px solid hsl(220 20% 85%)" }}>
-                    <FileText size={13} />
-                    Draft
-                  </span>
+                  <Badge variant="notStarted" icon={<FileText size={13} />}>Draft</Badge>
                 )}
               </div>
               <div className="flex items-center gap-2">
-                <motion.button
+                <Button
+                  variant="secondary"
+                  size="sm"
+                  className="text-destructive hover:text-destructive border-destructive/30 hover:border-destructive/50 hover:bg-destructive/10"
                   onClick={() => { setFsEditMode(false); setFsHasChanges(false); setFsSaved(false); setLayoutSettingsOpen(false); }}
-                  className="h-9 px-3 rounded-[8px] flex items-center gap-1.5 text-sm font-medium cursor-pointer"
-                  style={{ color: "hsl(0 72% 51%)", border: "1px solid hsl(0 72% 51% / 0.3)", background: "hsl(0 72% 51% / 0.06)" }}
-                  whileHover={{ background: "hsl(0 72% 51% / 0.12)", scale: 1.02 }}
-                  whileTap={{ scale: 0.97 }}
                 >
                   <X size={16} />
                   Cancel
-                </motion.button>
+                </Button>
                 <PartnersCapitalSaveButton
                   enabled={fsHasChanges}
                   activeDocKey={activeDocItem?.componentKey}
                   onRequestSave={() => setShowSaveDialog(true)}
                 />
-                <motion.button
-                  className="h-9 px-3 rounded-[8px] flex items-center gap-1.5 text-sm font-medium overflow-hidden"
-                  style={{
-                    background: fsSaved && !fsHasChanges ? "hsl(142 60% 40%)" : "hsl(220 20% 85%)",
-                    color: fsSaved && !fsHasChanges ? "#fff" : "hsl(220 15% 60%)",
-                    border: "1px solid transparent",
-                    cursor: fsSaved && !fsHasChanges ? "pointer" : "not-allowed",
-                    opacity: fsSaved && !fsHasChanges ? 1 : 0.7,
-                    transition: "background 0.2s ease, color 0.2s ease, opacity 0.2s ease",
-                  }}
-                  whileHover={fsSaved && !fsHasChanges ? { background: "hsl(142 60% 34%)", scale: 1.02 } : {}}
-                  whileTap={fsSaved && !fsHasChanges ? { scale: 0.97 } : {}}
+                <Button
+                  size="sm"
+                  disabled={!(fsSaved && !fsHasChanges)}
                   onClick={() => { if (fsSaved && !fsHasChanges) { setShowPublishDialog(true); } }}
                 >
                   <Upload size={16} />
                   Publish
-                </motion.button>
-                <motion.button
+                </Button>
+                <Button
+                  variant="secondary"
+                  size="sm"
                   onClick={() => setLayoutSettingsOpen(prev => !prev)}
-                  className="h-9 px-3 rounded-[8px] flex items-center gap-1.5 text-sm font-medium cursor-pointer border border-border hover:bg-accent transition-colors"
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.97 }}
                   title="Layout Settings"
                 >
                   <SlidersHorizontal size={16} />
                   Layout
-                </motion.button>
+                </Button>
               </div>
             </>
           ) : (
