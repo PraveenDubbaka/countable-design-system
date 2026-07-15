@@ -784,7 +784,7 @@ export default function AddNewClient() {
                       );
                     })()}
                     {cfg?.hasYearEnd && (
-                      <InlineField label="Year End Date" hint="The month and day your fiscal year closes." required>
+                      <InlineField label="Year End Date" hint="The month and day your fiscal year closes.">
                         <Input type="date" className="w-44" />
                       </InlineField>
                     )}
