@@ -36,15 +36,10 @@ const SPF_VALUES = [
 const ACCOUNTING_FRAMEWORKS = [
   "ASPE — Canadian Accounting Standards for Private Enterprises",
   "IFRS — International Financial Reporting Standards",
-  "IFRS for SMEs",
-  "ASNPO — Canadian Accounting Standards for Not-for-Profit Organizations",
-  "PSAB — Public Sector Accounting Standards",
-  "Pension Plans — Canadian Accounting Standards for Pension Plans",
   "US GAAP — Generally Accepted Accounting Principles (United States)",
   "Income Tax Basis",
-  "Compliance / Regulatory Basis",
-  "Contractual Basis",
-  "Other Comprehensive Basis of Accounting (OCBOA)",
+  "Cash Basis",
+  "Modified Cash Basis",
 ];
 const ENTITY_CLASSIFICATIONS = ["Private", "Public", "Manufacturing"];
 const AUDIT_ROLES = [
