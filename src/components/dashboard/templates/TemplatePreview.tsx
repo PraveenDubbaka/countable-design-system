@@ -2116,37 +2116,22 @@ const TemplatePreview = ({ selectedTemplate, isMyTemplates = false, onCollapseSi
                   {title}
                 </h2>
                 {isPublished ? (
-                  <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold"
-                    style={{ background: "hsl(142 60% 92%)", color: "hsl(142 60% 30%)", border: "1px solid hsl(142 60% 80%)" }}>
-                    <BadgeCheck size={13} />
-                    Published
-                  </span>
+                  <Badge variant="success" icon={<BadgeCheck size={13} />}>Published</Badge>
                 ) : isMyTemplates ? (
-                  <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold"
-                    style={{ background: "hsl(220 20% 93%)", color: "hsl(220 15% 45%)", border: "1px solid hsl(220 20% 85%)" }}>
-                    <FileText size={13} />
-                    Draft
-                  </span>
+                  <Badge variant="notStarted" icon={<FileText size={13} />}>Draft</Badge>
                 ) : null}
               </div>
               {isMyTemplates ? (
                 <div className="flex items-center gap-2">
                   {isPublished && (
-                    <motion.button
-                      whileHover={{ scale: 1.03 }}
-                      whileTap={{ scale: 0.97 }}
-                      className="flex items-center gap-1.5 px-3.5 py-2 text-sm font-medium text-foreground border border-border rounded-[12px] hover:bg-accent transition-colors"
-                      onClick={() => setHistoryOpen(true)}
-                      title="Version history"
-                    >
+                    <Button variant="outline" size="sm" onClick={() => setHistoryOpen(true)} title="Version history">
                       <History size={14} />
                       History
-                    </motion.button>
+                    </Button>
                   )}
-                  <motion.button
-                    whileHover={{ scale: 1.03 }}
-                    whileTap={{ scale: 0.97 }}
-                    className="flex items-center gap-1.5 px-3.5 py-2 text-sm font-medium text-foreground border border-border rounded-[12px] hover:bg-accent transition-colors"
+                  <Button
+                    variant="outline"
+                    size="sm"
                     onClick={() => {
                       if (isPublished) {
                         setShowPublishedEditWarning(true);
@@ -2166,21 +2151,15 @@ const TemplatePreview = ({ selectedTemplate, isMyTemplates = false, onCollapseSi
                   >
                     <Pencil size={14} />
                     Edit
-                  </motion.button>
-                  <motion.button
-                    whileHover={{ scale: 1.03 }}
-                    whileTap={{ scale: 0.97 }}
-                    className="flex items-center gap-1.5 px-3.5 py-2 text-sm font-medium text-foreground border border-border rounded-[12px] hover:bg-accent transition-colors"
-                    onClick={() => {}}
-                    title="Duplicate template"
-                  >
+                  </Button>
+                  <Button variant="outline" size="sm" onClick={() => {}} title="Duplicate template">
                     <Copy size={14} />
                     Duplicate
-                  </motion.button>
-                  <motion.button
-                    whileHover={{ scale: 1.03 }}
-                    whileTap={{ scale: 0.97 }}
-                    className="flex items-center gap-1.5 px-3.5 py-2 text-sm font-medium text-destructive border border-destructive/30 rounded-[12px] hover:bg-destructive/10 transition-colors"
+                  </Button>
+                  <Button
+                    variant="secondary"
+                    size="sm"
+                    className="text-destructive hover:text-destructive border-destructive/30 hover:border-destructive/50 hover:bg-destructive/10"
                     onClick={() => {
                       if (isPublished) {
                         setDeleteReplacement("");
@@ -2193,19 +2172,13 @@ const TemplatePreview = ({ selectedTemplate, isMyTemplates = false, onCollapseSi
                   >
                     <Trash2 size={14} />
                     Delete
-                  </motion.button>
+                  </Button>
                 </div>
               ) : (
-                <motion.button
-                  whileHover={{ scale: 1.03 }}
-                  whileTap={{ scale: 0.97 }}
-                  className="flex items-center gap-1.5 px-4 py-2 text-sm font-semibold text-white"
-                  style={{ borderRadius: 12, backgroundColor: "#1C63A6" }}
-                  onClick={() => setCopyModalOpen(true)}
-                >
+                <Button size="sm" onClick={() => setCopyModalOpen(true)}>
                   <Plus size={16} />
                   My Templates
-                </motion.button>
+                </Button>
               )}
             </>
           )}
