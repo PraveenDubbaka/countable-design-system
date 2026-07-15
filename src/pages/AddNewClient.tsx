@@ -760,11 +760,28 @@ export default function AddNewClient() {
                 {/* Fiscal dates */}
                 {(cfg?.hasIncorporation || cfg?.hasYearEnd) && (
                   <div className="space-y-4 max-w-[50%]">
-                    {cfg?.hasIncorporation && (
-                      <InlineField label="Date of Incorporation" hint="The date the entity was formally registered.">
-                        <Input type="date" className="w-44" />
-                      </InlineField>
-                    )}
+                    {cfg?.hasIncorporation && (() => {
+                      const incLabel: Record<string, string> = {
+                        corporation:      "Date of Incorporation",
+                        partnership:      "Date of Partnership",
+                        trust:            "Date of Trust Formation",
+                        "sole-proprietor":"Date of Registration",
+                      };
+                      const incHint: Record<string, string> = {
+                        corporation:      "The date the entity was formally incorporated.",
+                        partnership:      "The date the partnership was formed.",
+                        trust:            "The date the trust was established.",
+                        "sole-proprietor":"The date the business was registered.",
+                      };
+                      return (
+                        <InlineField
+                          label={incLabel[entityType] ?? "Date of Incorporation"}
+                          hint={incHint[entityType] ?? "The date the entity was formally registered."}
+                        >
+                          <Input type="date" className="w-44" />
+                        </InlineField>
+                      );
+                    })()}
                     {cfg?.hasYearEnd && (
                       <InlineField label="Year End Date" hint="The month and day your fiscal year closes.">
                         <Input type="date" className="w-44" />
