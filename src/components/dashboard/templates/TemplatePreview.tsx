@@ -2010,12 +2010,18 @@ const TemplatePreview = ({ selectedTemplate, isMyTemplates = false, onCollapseSi
   const isFS = activeDocItem ? !nonEditableKeys.includes(activeDocItem.componentKey) && !activeDocItem.disabled : false;
   const isEditMode = fsEditMode && isFS;
 
-  if (isEditMode && !prevEditMode.current) {
-    prevEditMode.current = true;
-  }
-  if (!isEditMode && prevEditMode.current) {
-    prevEditMode.current = false;
-  }
+  useEffect(() => {
+    if (isEditMode && !prevEditMode.current) {
+      prevEditMode.current = true;
+      setNavCollapsed(false);
+      setLayoutSettingsOpen(true);
+      onCollapseSidebar?.(true);
+    }
+    if (!isEditMode && prevEditMode.current) {
+      prevEditMode.current = false;
+      onCollapseSidebar?.(false);
+    }
+  }, [isEditMode]);
 
   const toggleHidden = useCallback((id: number) => {
     setDocs((prev) =>

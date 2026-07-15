@@ -747,6 +747,22 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
     localStorage.setItem("selectedDropdown", selectedDropdown);
   }, [selectedDropdown]);
 
+  // Collapse/restore secondary panel when FS template edit mode changes
+  useEffect(() => {
+    let savedDropdown = selectedDropdown;
+    const handler = (e: Event) => {
+      const { active } = (e as CustomEvent<{ active: boolean }>).detail;
+      if (active) {
+        savedDropdown = selectedDropdown;
+        setSelectedDropdown("");
+      } else {
+        setSelectedDropdown(savedDropdown);
+      }
+    };
+    window.addEventListener("fs-template-edit-mode", handler);
+    return () => window.removeEventListener("fs-template-edit-mode", handler);
+  }, []);
+
   // Restore selection from navigation state if contentType is passed
   useEffect(() => {
     const navState = location.state as {
