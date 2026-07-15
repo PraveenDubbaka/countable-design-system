@@ -275,7 +275,7 @@ const ic = "input-double-border w-full h-9 px-3 py-2 text-sm text-foreground rou
 const sc = ic + " appearance-none cursor-pointer";
 
 const InlineRow = ({ label, required, children }: { label: string; required?: boolean; children: React.ReactNode }) => (
-  <div className="flex items-center gap-4 py-2.5 border-b border-border/40 last:border-0">
+  <div className="flex items-center gap-4 py-2.5">
     <span className="text-sm text-foreground w-44 shrink-0">
       {label}{required && <span className="text-destructive ml-0.5">*</span>}
     </span>
@@ -992,7 +992,7 @@ export default function CreateEngagement() {
 
               <SectionCard icon={<Calendar className="h-5 w-5" />} title="Engagement Period">
                 {/* Period Type */}
-                <div className="flex items-center gap-4 py-2.5 border-b border-border/40">
+                <div className="flex items-center gap-4 py-2.5">
                   <span className="text-sm text-foreground w-32 shrink-0 whitespace-nowrap">Period Type<span className="text-destructive ml-0.5">*</span></span>
                   <div className="flex-1 min-w-0 max-w-sm">
                     <Select value={periodType} onValueChange={setPeriodType}>
@@ -1009,7 +1009,7 @@ export default function CreateEngagement() {
                   { label: "Prior Year 1", required: false, start: priorYear1Start, setStart: setPriorYear1Start, end: priorYear1End, setEnd: setPriorYear1End },
                   { label: "Prior Year 2", required: false, start: priorYear2Start, setStart: setPriorYear2Start, end: priorYear2End, setEnd: setPriorYear2End },
                 ].map(row => (
-                  <div key={row.label} className="flex items-start gap-4 py-2.5 border-b border-border/40 last:border-0">
+                  <div key={row.label} className="flex items-start gap-4 py-2.5">
                     <span className="text-sm text-foreground w-32 shrink-0 whitespace-nowrap pt-5">
                       {row.label}{row.required && <span className="text-destructive ml-0.5">*</span>}
                     </span>
