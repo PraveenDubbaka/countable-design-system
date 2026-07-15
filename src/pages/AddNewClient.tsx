@@ -31,7 +31,7 @@ const PhoneInput = ({ placeholder = "(555) 000-0000" }: { placeholder?: string }
   return (
     <div className="flex gap-2">
       <Select value={dialCode} onValueChange={setDialCode}>
-        <SelectTrigger className="w-20 shrink-0">
+        <SelectTrigger className="w-24 shrink-0 [&>span]:shrink-0">
           <span className="flex items-center gap-1 text-sm">{sel.flag} {sel.code}</span>
         </SelectTrigger>
         <SelectContent className="max-h-72">
