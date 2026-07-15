@@ -2243,13 +2243,6 @@ export default function EngagementDetail() {
                     </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>
-                <ExpandableIconButton
-                  variant="secondary"
-                  size="sm"
-                  icon={<UserPlus className="h-4 w-4" />}
-                  label="Assign"
-                  onClick={() => setShowAssignDialog(true)}
-                />
                 <div className="relative">
                   <ExpandableIconButton
                     variant="secondary"
