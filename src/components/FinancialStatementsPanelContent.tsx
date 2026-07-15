@@ -204,7 +204,8 @@ export function FinancialStatementsPanelContent({ isCollapsed, hasDarkSecondary 
 
   const handleSelectItem = (label: string) => {
     setSelectedItem(label);
-    navigate(`/financial-statement-templates?template=${encodeURIComponent(label)}`);
+    const source = activeTab === "my" ? "&source=my" : "";
+    navigate(`/financial-statement-templates?template=${encodeURIComponent(label)}${source}`);
   };
 
   // Duplicate a leaf item in My Templates
