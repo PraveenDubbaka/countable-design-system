@@ -1,13 +1,13 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { createPortal } from "react-dom";
 import { useNavigate, useLocation, useSearchParams } from "react-router-dom";
-import { ChevronDown, ChevronRight, ChevronLeft, Search, Plus, Expand, Trash2, Folder, Headphones, Check, FileText, FileBarChart, NotebookPen, Table, Copy, Pencil, FolderInput, MoreVertical, GripVertical, X, Save, Files, Send, AlertCircle, MessageSquare, FilePlus2, FolderPlus, ArrowUpDown, Upload, Image, Download, Move } from "lucide-react";
+import { ChevronDown, ChevronRight, ChevronLeft, Search, Plus, Expand, Trash2, Folder, Headphones, Check, FileText, FileBarChart, NotebookPen, Table, Copy, Pencil, FolderInput, MoreVertical, GripVertical, X, Save, Files, Send, AlertCircle, MessageSquare, FilePlus2, FolderPlus, ArrowUpDown, Upload, Image, Download, Move, Eye } from "lucide-react";
 import { templateTree, allTemplateViews, type TreeItem, TEMPLATE_CONFIG } from "@/lib/engagementTemplatesData";
 import { FolderSolidIcon, FolderPlusIcon, FolderMinusIcon } from "@/components/icons/FolderIcons";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuSeparator } from "@/components/ui/dropdown-menu";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuSeparator, DropdownMenuSub, DropdownMenuSubTrigger, DropdownMenuSubContent, DropdownMenuCheckboxItem } from "@/components/ui/dropdown-menu";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { LukaIcon } from "@/components/LukaIcon";
@@ -1355,6 +1355,14 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
   const [pendingDocFiles, setPendingDocFiles] = useState<{ name: string }[]>([]);
   const [addNoteModal, setAddNoteModal] = useState<{ nodeId: string; nodeCode?: string; nodeLabel: string } | null>(null);
   const [addNoteName, setAddNoteName] = useState('');
+  const [hiddenChildren, setHiddenChildren] = useState<Record<string, string[]>>({});
+
+  // Load hidden-children state per engagement
+  useEffect(() => {
+    const engId = location.pathname.split("/engagements/")[1]?.split("/")[0];
+    if (!engId) { setHiddenChildren({}); return; }
+    setHiddenChildren(readJsonFromLocalStorage<Record<string, string[]>>(`sidebar-hidden-${engId}`, {}));
+  }, [location.pathname.split("/engagements/")[1]?.split("/")[0]]);
 
   // Load notes index for the current engagement
   useEffect(() => {
@@ -2391,6 +2399,44 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
                                   <DropdownMenuItem className="gap-2 cursor-pointer" onClick={e => { e.stopPropagation(); setAddSectionModal({ open: true, parentNodeId: node.id }); setAddSectionName(''); setAddSectionCategory('checklist'); }}>
                                     <FolderPlus className="h-4 w-4" /> Add section
                                   </DropdownMenuItem>
+                                  {node.children && node.children.length > 0 && (
+                                    <>
+                                      <DropdownMenuSeparator />
+                                      <DropdownMenuSub>
+                                        <DropdownMenuSubTrigger className="gap-2 cursor-pointer">
+                                          <Eye className="h-4 w-4" /> Show / Hide
+                                        </DropdownMenuSubTrigger>
+                                        <DropdownMenuSubContent className="w-56">
+                                          {node.children.map(child => {
+                                            const isHidden = (hiddenChildren[node.id] ?? []).includes(child.id);
+                                            return (
+                                              <DropdownMenuCheckboxItem
+                                                key={child.id}
+                                                checked={!isHidden}
+                                                onCheckedChange={checked => {
+                                                  setHiddenChildren(prev => {
+                                                    const current = prev[node.id] ?? [];
+                                                    const updated = checked
+                                                      ? current.filter(id => id !== child.id)
+                                                      : [...current, child.id];
+                                                    const next = { ...prev, [node.id]: updated };
+                                                    const engId = location.pathname.split("/engagements/")[1]?.split("/")[0];
+                                                    if (engId) writeJsonToLocalStorage(`sidebar-hidden-${engId}`, next);
+                                                    return next;
+                                                  });
+                                                }}
+                                              >
+                                                <span className="flex items-center gap-1.5 min-w-0">
+                                                  {child.code && <span className="text-[10px] font-semibold text-muted-foreground shrink-0">{child.code}</span>}
+                                                  <span className="truncate">{child.label}</span>
+                                                </span>
+                                              </DropdownMenuCheckboxItem>
+                                            );
+                                          })}
+                                        </DropdownMenuSubContent>
+                                      </DropdownMenuSub>
+                                    </>
+                                  )}
                                 </>
                               )}
                             </DropdownMenuContent>
@@ -2499,7 +2545,9 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
 
                       {isOpen && hasChildren && (
                         <div>
-                          {node.children!.map(child => renderNode(child, depth + 1, node.label))}
+                          {node.children!
+                            .filter(child => !(hiddenChildren[node.id] ?? []).includes(child.id))
+                            .map(child => renderNode(child, depth + 1, node.label))}
                         </div>
                       )}
 
