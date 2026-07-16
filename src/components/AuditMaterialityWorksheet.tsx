@@ -599,8 +599,12 @@ export function AuditMaterialityWorksheet({ isUS = false }: AuditMaterialityWork
                   </tr>
                   <tr className="hover:bg-muted/10 transition-colors">
                     <td className="py-2 text-sm text-muted-foreground">Performance Materiality ($)</td>
-                    <td className="py-2 text-sm font-semibold tabular-nums text-foreground text-right w-36">
-                      {pmAmount ? pmAmount : "—"}
+                    <td className="px-1 py-1">
+                      <TdInput
+                        value={pmAmount ? pmAmount : "—"}
+                        readOnly
+                        className="tabular-nums text-right font-semibold w-28"
+                      />
                     </td>
                   </tr>
                   <tr className="hover:bg-muted/10 transition-colors">
