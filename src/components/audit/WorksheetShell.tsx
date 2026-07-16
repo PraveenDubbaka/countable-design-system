@@ -483,12 +483,7 @@ export function ConcludeBar({ concluded, concludedOn, onConclude, worksheetKey, 
 }) {
   const signOff = worksheetKey ? (
     <>
-      <div className="bg-card text-card-foreground border border-border shadow-[0_2px_8px_hsl(213_40%_20%/0.06)] rounded-md overflow-hidden">
-        <div className="px-6 py-3.5 bg-card border-b border-border flex items-center gap-3">
-          <span className="text-sm font-semibold text-foreground">Sign-off</span>
-        </div>
-        <WorksheetSignOff worksheetKey={worksheetKey} engagementId={engagementId} />
-      </div>
+      <WorksheetSignOff worksheetKey={worksheetKey} engagementId={engagementId} />
       <div className="flex justify-end pt-1">
         {concluded ? (
           <div className="rounded-md border border-green-200 bg-green-50 px-4 py-2 text-xs text-green-800 font-medium">
