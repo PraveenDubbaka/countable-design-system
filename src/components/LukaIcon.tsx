@@ -7,6 +7,8 @@ interface LukaIconProps {
   animated?: boolean;
   /** When true, renders just the SVG stars with no wrapper div — for use inside already-styled containers */
   bare?: boolean;
+  /** When true, inverts colors: white background with gradient-colored stars */
+  inverted?: boolean;
   className?: string;
 }
 
@@ -26,18 +28,32 @@ function starPath(cx: number, cy: number, R: number, r: number): string {
   ].join(" ");
 }
 
-export function LukaIcon({ size = 28, animated = false, bare = false, className = "" }: LukaIconProps) {
+let _gradientId = 0;
+
+export function LukaIcon({ size = 28, animated = false, bare = false, inverted = false, className = "" }: LukaIconProps) {
   const svgSize = bare ? size : size * 0.78;
   const dur = animated ? "1.3s" : "2.6s";
+  const gradId = React.useRef(`luka-grad-${++_gradientId}`).current;
+
+  const starFill = inverted ? `url(#${gradId})` : "white";
+  const shadowColor = inverted ? "rgba(134,73,241," : "rgba(255,255,255,";
 
   const stars = (
     <svg
       viewBox="0 0 20 20"
       width={svgSize}
       height={svgSize}
-      fill="white"
+      fill={starFill}
       aria-hidden="true"
     >
+      {inverted && (
+        <defs>
+          <linearGradient id={gradId} x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stopColor="#8649F1" />
+            <stop offset="100%" stopColor="#2355A4" />
+          </linearGradient>
+        </defs>
+      )}
       {/* Large star — lower-right */}
       <path
         d={starPath(13, 12, 5.5, 1.4)}
@@ -46,8 +62,8 @@ export function LukaIcon({ size = 28, animated = false, bare = false, className 
           animation: `luka-sparkle-${animated ? "active" : "idle"} ${dur} ease-in-out infinite`,
           animationDelay: "0s",
           filter: animated
-            ? "drop-shadow(0 0 4px rgba(255,255,255,1)) drop-shadow(0 0 2px rgba(255,255,255,.9))"
-            : "drop-shadow(0 0 2px rgba(255,255,255,.8))",
+            ? `drop-shadow(0 0 4px ${shadowColor}1)) drop-shadow(0 0 2px ${shadowColor}.9))`
+            : `drop-shadow(0 0 2px ${shadowColor}.8))`,
         }}
       />
       {/* Medium star — upper-left */}
@@ -58,8 +74,8 @@ export function LukaIcon({ size = 28, animated = false, bare = false, className 
           animation: `luka-sparkle-${animated ? "active" : "idle"} ${dur} ease-in-out infinite`,
           animationDelay: `calc(${dur} * 0.38)`,
           filter: animated
-            ? "drop-shadow(0 0 3px rgba(255,255,255,.95))"
-            : "drop-shadow(0 0 1.5px rgba(255,255,255,.7))",
+            ? `drop-shadow(0 0 3px ${shadowColor}.95))`
+            : `drop-shadow(0 0 1.5px ${shadowColor}.7))`,
         }}
       />
       {/* Small star — lower-left */}
@@ -70,8 +86,8 @@ export function LukaIcon({ size = 28, animated = false, bare = false, className 
           animation: `luka-sparkle-${animated ? "active" : "idle"} ${dur} ease-in-out infinite`,
           animationDelay: `calc(${dur} * 0.70)`,
           filter: animated
-            ? "drop-shadow(0 0 2px rgba(255,255,255,.85))"
-            : "drop-shadow(0 0 1px rgba(255,255,255,.5))",
+            ? `drop-shadow(0 0 2px ${shadowColor}.85))`
+            : `drop-shadow(0 0 1px ${shadowColor}.5))`,
         }}
       />
     </svg>
@@ -79,13 +95,22 @@ export function LukaIcon({ size = 28, animated = false, bare = false, className 
 
   if (bare) return stars;
 
+  const wrapperBg = inverted
+    ? "white"
+    : "linear-gradient(135deg, #8649F1 0%, #2355A4 100%)";
+
+  const wrapperBorder = inverted
+    ? "1.5px solid rgba(134,73,241,0.25)"
+    : undefined;
+
   return (
     <div
       className={`inline-flex items-center justify-center rounded-full shrink-0 overflow-hidden ${className}`}
       style={{
         width: size,
         height: size,
-        background: "linear-gradient(135deg, #8649F1 0%, #2355A4 100%)",
+        background: wrapperBg,
+        border: wrapperBorder,
       }}
     >
       {stars}

@@ -613,7 +613,7 @@ export function AuditPAP501Worksheet({ isUS = false }: { isUS?: boolean }) {
           <div className="w-full max-w-md flex flex-col items-center gap-7 text-center">
 
             {/* Luka icon */}
-            <LukaIcon size={72} animated />
+            <LukaIcon size={72} animated inverted />
 
             <h3 className="text-xl font-semibold text-foreground">Preliminary Analytical Procedures — Parts B &amp; C</h3>
 
