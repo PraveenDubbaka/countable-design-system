@@ -2207,6 +2207,7 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
                           { id: "fs-bs", label: "Balance Sheet", icon: "doc", route: "checklist/fs-bs" },
                           { id: "fs-is", label: "Statement of Income and Retained Earnings", icon: "doc", route: "checklist/fs-is" },
                           { id: "fs-cf", label: "Statement of Cash Flows", icon: "doc", route: "checklist/fs-cf" },
+                          { id: "fs-notes", label: "Notes to Financial Information", icon: "doc", route: "checklist/fs-notes" },
                         ]
                       },
                     ]

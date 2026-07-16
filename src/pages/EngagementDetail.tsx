@@ -706,7 +706,7 @@ const FS_PAGE_KEYS = new Set([
   'aud-fs-cover', 'aud-fs-toc', 'aud-fs-bs', 'aud-fs-is', 'aud-fs-cf', 'aud-fs-eq', 'aud-fs-notes',
   'aud-us-fs-cover', 'aud-us-fs-toc', 'aud-us-fs-bs', 'aud-us-fs-is', 'aud-us-fs-cf', 'aud-us-fs-eq', 'aud-us-fs-notes',
   // Compilation / Review FS
-  'fs-cover', 'fs-toc', 'fs-comp', 'fs-bs', 'fs-is', 'fs-cf',
+  'fs-cover', 'fs-toc', 'fs-comp', 'fs-bs', 'fs-is', 'fs-cf', 'fs-notes',
 ]);
 const FS_PAGE_TYPE_MAP: Record<string, FSPageType> = {
   'aud-fs-cover': 'cover', 'aud-fs-toc': 'toc', 'aud-fs-bs': 'bs',
@@ -715,7 +715,7 @@ const FS_PAGE_TYPE_MAP: Record<string, FSPageType> = {
   'aud-us-fs-is': 'is', 'aud-us-fs-cf': 'cf', 'aud-us-fs-eq': 'eq', 'aud-us-fs-notes': 'notes',
   // Compilation / Review FS
   'fs-cover': 'cover', 'fs-toc': 'toc', 'fs-comp': 'comp-report',
-  'fs-bs': 'bs', 'fs-is': 'is', 'fs-cf': 'cf',
+  'fs-bs': 'bs', 'fs-is': 'is', 'fs-cf': 'cf', 'fs-notes': 'notes',
 };
 const FS_SCREEN_NAMES: Record<FSPageType, string> = {
   'cover': 'Cover Page', 'toc': 'Table of Contents',
