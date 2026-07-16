@@ -804,9 +804,9 @@ export function AuditMaterialityWorksheet({ isUS = false }: AuditMaterialityWork
                 <thead className="sticky top-0 z-10">
                   <tr className="bg-muted border-b border-border">
                     <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider">F/S Area or Disclosure</th>
-                    <th className="px-4 py-3 text-right text-xs font-semibold text-foreground uppercase tracking-wider w-32">Amount ($)</th>
+                    <th className="px-4 py-3 text-right text-xs font-semibold text-foreground uppercase tracking-wider min-w-[130px]">Amount ($)</th>
                     <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider">Reasoning</th>
-                    <th className="px-4 py-3 text-right text-xs font-semibold text-foreground uppercase tracking-wider w-28">PY Amount ($)</th>
+                    <th className="px-4 py-3 text-right text-xs font-semibold text-foreground uppercase tracking-wider min-w-[120px]">PY Amount ($)</th>
                     <th className="px-4 py-3 w-10" />
                   </tr>
                 </thead>
@@ -814,9 +814,9 @@ export function AuditMaterialityWorksheet({ isUS = false }: AuditMaterialityWork
                   {adjPMRows.map((row) => (
                     <tr key={row.id} className="hover:bg-muted/50 transition-colors">
                       <td className="px-4 py-2.5 align-top"><TdInput value={row.area} onChange={(v) => setAdjPMRows(p => p.map(r => r.id === row.id ? {...r, area: v} : r))} placeholder="F/S area or disclosure" /></td>
-                      <td className="px-4 py-2.5 align-top"><TdInput value={row.amount ? formatDisplay(row.amount) : ""} onChange={(v) => setAdjPMRows(p => p.map(r => r.id === row.id ? {...r, amount: v.replace(/[^0-9.]/g,"")} : r))} placeholder="0.00" className="text-right tabular-nums" /></td>
+                      <td className="px-4 py-2.5 align-top min-w-[130px]"><TdInput value={row.amount ? formatDisplay(row.amount) : ""} onChange={(v) => setAdjPMRows(p => p.map(r => r.id === row.id ? {...r, amount: v.replace(/[^0-9.]/g,"")} : r))} placeholder="0.00" className="text-right tabular-nums" /></td>
                       <td className="px-4 py-2.5 align-top"><TdInput value={row.reasoning} onChange={(v) => setAdjPMRows(p => p.map(r => r.id === row.id ? {...r, reasoning: v} : r))} placeholder="Reasoning…" /></td>
-                      <td className="px-4 py-2.5 align-top"><TdInput value={row.pyAmount ? formatDisplay(row.pyAmount) : ""} onChange={(v) => setAdjPMRows(p => p.map(r => r.id === row.id ? {...r, pyAmount: v.replace(/[^0-9.]/g,"")} : r))} placeholder="—" className="text-right tabular-nums" /></td>
+                      <td className="px-4 py-2.5 align-top min-w-[120px]"><TdInput value={row.pyAmount ? formatDisplay(row.pyAmount) : ""} onChange={(v) => setAdjPMRows(p => p.map(r => r.id === row.id ? {...r, pyAmount: v.replace(/[^0-9.]/g,"")} : r))} placeholder="—" className="text-right tabular-nums" /></td>
                       <td className="px-2 py-2.5 align-top text-center"><button onClick={() => setAdjPMRows(p => p.filter(r => r.id !== row.id))} className="text-muted-foreground hover:text-destructive transition-colors" disabled={adjPMRows.length === 1}><Trash2 className="h-3.5 w-3.5" /></button></td>
                     </tr>
                   ))}
@@ -848,7 +848,7 @@ export function AuditMaterialityWorksheet({ isUS = false }: AuditMaterialityWork
                 <thead className="sticky top-0 z-10">
                   <tr className="bg-muted border-b border-border">
                     <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider">Description / User Expectation</th>
-                    <th className="px-4 py-3 text-right text-xs font-semibold text-foreground uppercase tracking-wider w-28">Amount ($)</th>
+                    <th className="px-4 py-3 text-right text-xs font-semibold text-foreground uppercase tracking-wider min-w-[130px]">Amount ($)</th>
                     <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider">Reasoning</th>
                     <th className="px-4 py-3 text-center text-xs font-semibold text-foreground uppercase tracking-wider w-24">W/P Ref.</th>
                     <th className="px-4 py-3 text-right text-xs font-semibold text-foreground uppercase tracking-wider w-24">PY ($)</th>
@@ -859,7 +859,7 @@ export function AuditMaterialityWorksheet({ isUS = false }: AuditMaterialityWork
                   {specMatRows.map((row) => (
                     <tr key={row.id} className="hover:bg-muted/50 transition-colors">
                       <td className="px-4 py-2.5 align-top"><TdInput value={row.description} onChange={(v) => setSpecMatRows(p => p.map(r => r.id === row.id ? {...r, description: v} : r))} placeholder="Describe specific circumstances…" /></td>
-                      <td className="px-4 py-2.5 align-top"><TdInput value={row.amount ? formatDisplay(row.amount) : ""} onChange={(v) => setSpecMatRows(p => p.map(r => r.id === row.id ? {...r, amount: v.replace(/[^0-9.]/g,"")} : r))} placeholder="0.00" className="text-right tabular-nums" /></td>
+                      <td className="px-4 py-2.5 align-top min-w-[130px]"><TdInput value={row.amount ? formatDisplay(row.amount) : ""} onChange={(v) => setSpecMatRows(p => p.map(r => r.id === row.id ? {...r, amount: v.replace(/[^0-9.]/g,"")} : r))} placeholder="0.00" className="text-right tabular-nums" /></td>
                       <td className="px-4 py-2.5 align-top"><TdInput value={row.reasoning} onChange={(v) => setSpecMatRows(p => p.map(r => r.id === row.id ? {...r, reasoning: v} : r))} placeholder="Reasoning…" /></td>
                       <td className="px-4 py-2.5 align-top"><RefButton reference={row.wpRef} onAttach={(doc) => setSpecMatRows(p => p.map(r => r.id === row.id ? {...r, wpRef: [...r.wpRef, doc]} : r))} onRemove={(idx) => setSpecMatRows(p => p.map(r => r.id === row.id ? {...r, wpRef: r.wpRef.filter((_,j) => j !== idx)} : r))} /></td>
                       <td className="px-4 py-2.5 align-top"><TdInput value={row.pyAmount ? formatDisplay(row.pyAmount) : ""} onChange={(v) => setSpecMatRows(p => p.map(r => r.id === row.id ? {...r, pyAmount: v.replace(/[^0-9.]/g,"")} : r))} placeholder="—" className="text-right tabular-nums" /></td>
@@ -889,18 +889,18 @@ export function AuditMaterialityWorksheet({ isUS = false }: AuditMaterialityWork
               <table className="w-full">
                 <thead className="sticky top-0 z-10">
                   <tr className="bg-muted border-b border-border">
-                    <th className="px-4 py-3 text-right text-xs font-semibold text-foreground uppercase tracking-wider w-32">Amount ($)</th>
+                    <th className="px-4 py-3 text-right text-xs font-semibold text-foreground uppercase tracking-wider min-w-[130px]">Amount ($)</th>
                     <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider">Reasoning</th>
                     <th className="px-4 py-3 text-center text-xs font-semibold text-foreground uppercase tracking-wider w-24">W/P Ref.</th>
-                    <th className="px-4 py-3 text-right text-xs font-semibold text-foreground uppercase tracking-wider w-28">PY Amount ($)</th>
+                    <th className="px-4 py-3 text-right text-xs font-semibold text-foreground uppercase tracking-wider min-w-[120px]">PY Amount ($)</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-border">
                   <tr className="hover:bg-muted/50 transition-colors">
-                    <td className="px-4 py-2.5 align-top"><TdInput value={specPMAmount ? formatDisplay(specPMAmount) : ""} onChange={(v) => setSpecPMAmount(v.replace(/[^0-9.]/g, ""))} placeholder="0.00" className="text-right tabular-nums" /></td>
+                    <td className="px-4 py-2.5 align-top min-w-[130px]"><TdInput value={specPMAmount ? formatDisplay(specPMAmount) : ""} onChange={(v) => setSpecPMAmount(v.replace(/[^0-9.]/g, ""))} placeholder="0.00" className="text-right tabular-nums" /></td>
                     <td className="px-4 py-2.5 align-top"><TdInput value={specPMReasoning} onChange={setSpecPMReasoning} placeholder="Reasoning…" /></td>
                     <td className="px-4 py-2.5 align-top"><RefButton reference={specPMWPRef} onAttach={(doc) => setSpecPMWPRef(p => [...p, doc])} onRemove={(idx) => setSpecPMWPRef(p => p.filter((_,j) => j !== idx))} /></td>
-                    <td className="px-4 py-2.5 align-top"><TdInput value={specPMPY ? formatDisplay(specPMPY) : ""} onChange={(v) => setSpecPMPY(v.replace(/[^0-9.]/g, ""))} placeholder="—" className="text-right tabular-nums" /></td>
+                    <td className="px-4 py-2.5 align-top min-w-[120px]"><TdInput value={specPMPY ? formatDisplay(specPMPY) : ""} onChange={(v) => setSpecPMPY(v.replace(/[^0-9.]/g, ""))} placeholder="—" className="text-right tabular-nums" /></td>
                   </tr>
                 </tbody>
               </table>
