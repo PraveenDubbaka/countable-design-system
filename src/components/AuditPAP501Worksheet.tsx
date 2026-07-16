@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Info } from "lucide-react";
+import { LukaIcon } from "@/components/LukaIcon";
 import { RefButton, RefDoc } from "@/components/RefButton";
 import { readJsonFromLocalStorage, writeJsonToLocalStorage } from "@/lib/safeJson";
 import { loadEngagements } from "@/store/engagementsStore";
@@ -611,24 +612,8 @@ export function AuditPAP501Worksheet({ isUS = false }: { isUS?: boolean }) {
         <div className="flex-1 flex flex-col items-center justify-center py-12 px-4 overflow-auto">
           <div className="w-full max-w-md flex flex-col items-center gap-7 text-center">
 
-            {/* Luka bolt icon */}
-            <div
-              className="w-[72px] h-[72px] rounded-full flex items-center justify-center"
-              style={{
-                border: '2px solid hsla(270,65%,64%,0.3)',
-                background: 'linear-gradient(135deg,hsla(270,65%,64%,0.12),hsla(211,76%,33%,0.12))',
-              }}
-            >
-              <svg width="32" height="32" viewBox="0 0 24 24" fill="none">
-                <defs>
-                  <linearGradient id="luka-bolt-pap501" x1="0%" y1="0%" x2="100%" y2="100%">
-                    <stop offset="0%" stopColor="#9747FF" />
-                    <stop offset="100%" stopColor="#115697" />
-                  </linearGradient>
-                </defs>
-                <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" fill="url(#luka-bolt-pap501)" />
-              </svg>
-            </div>
+            {/* Luka icon */}
+            <LukaIcon size={72} animated />
 
             <h3 className="text-xl font-semibold text-foreground">Preliminary Analytical Procedures — Parts B &amp; C</h3>
 
@@ -638,9 +623,7 @@ export function AuditPAP501Worksheet({ isUS = false }: { isUS?: boolean }) {
               className="flex items-center gap-2 px-6 py-3 rounded-xl text-sm font-semibold text-white transition-opacity hover:opacity-90"
               style={{ background: 'linear-gradient(135deg,#9747FF,#115697)', boxShadow: '0 2px 8px hsla(270,60%,50%,0.3)' }}
             >
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="white">
-                <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" />
-              </svg>
+              <LukaIcon size={20} bare animated />
               Generate with Luka
             </button>
           </div>
