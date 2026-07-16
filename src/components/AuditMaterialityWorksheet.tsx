@@ -408,6 +408,15 @@ export function AuditMaterialityWorksheet({ isUS = false }: AuditMaterialityWork
               <Button
                 variant="outline"
                 size="sm"
+                onClick={addEntityRow}
+                className="h-8 text-sm"
+              >
+                <Plus className="h-3.5 w-3.5 mr-1.5" />
+                Add Row
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
                 onClick={handleRefresh}
                 className="h-8 text-sm"
               >
@@ -526,12 +535,6 @@ export function AuditMaterialityWorksheet({ isUS = false }: AuditMaterialityWork
                   </tr>
                 </tbody>
               </table>
-            </div>
-            <div className="px-6 py-3 border-t border-border">
-              <Button size="sm" variant="outline" className="h-7 text-xs gap-1" onClick={addEntityRow}>
-                <Plus className="h-3.5 w-3.5" />
-                Add Benchmark
-              </Button>
             </div>
             {/* Clearly Trivial Misstatements footer — inside the same card */}
             <div className="border-t border-border px-4 py-3">
