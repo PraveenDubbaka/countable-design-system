@@ -1988,6 +1988,7 @@ export default function EngagementDetail() {
                     || (checklistKey && CUSTOM_WORKSHEET_TITLES[checklistKey])
                     || (checklistKey?.startsWith('notes-') && `Notes — ${searchParams.get('t') || CUSTOM_WORKSHEET_TITLES[checklistKey.slice('notes-'.length)] || checklistKey.slice('notes-'.length)}`)
                     || (checklistKey?.startsWith('custom-') && (() => { const s = readJsonFromLocalStorage<CustomSection[]>(`engagement-custom-sections-${engagementId}`, []).find(s => s.id === checklistKey); return s?.name; })())
+                    || (checklistKey && FS_PAGE_KEYS.has(checklistKey) && FS_SCREEN_NAMES[FS_PAGE_TYPE_MAP[checklistKey]])
                     || 'Client acceptance and continuance'}
                 </h1>
               </div>
