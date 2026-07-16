@@ -382,6 +382,7 @@ export function AuditTimeTrackerWorksheet() {
                     <th className="px-3 py-2 text-right w-28">Budget $</th>
                     <th className="px-3 py-2 text-right w-24">Actual Hrs</th>
                     <th className="px-3 py-2 text-right w-24">Var Hrs</th>
+                    <th className="px-3 py-2 text-right w-24">Var $</th>
                     <th className="px-3 py-2 text-right w-24">Actual $</th>
                   </tr>
                 </thead>
@@ -428,6 +429,9 @@ export function AuditTimeTrackerWorksheet() {
                         <td className="px-3 py-2.5 text-right text-sm font-semibold text-foreground align-top">
                           {bh > 0 ? (varH >= 0 ? "+" : "") + fmtH(varH) : "—"}
                         </td>
+                        <td className="px-3 py-2.5 text-right text-sm font-semibold text-foreground align-top">
+                          {bh > 0 && rate > 0 ? (varH >= 0 ? "+" : "") + fmt$(varH * rate) : "—"}
+                        </td>
                         <td className="px-3 py-2.5 text-right text-sm text-foreground align-top">
                           {ah > 0 && rate > 0 ? fmt$(ah * rate) : "—"}
                         </td>
@@ -448,6 +452,9 @@ export function AuditTimeTrackerWorksheet() {
                     <td className="px-3 py-2 text-right text-foreground">{totalActualHrs > 0 ? fmtH(totalActualHrs) : "—"}</td>
                     <td className="px-3 py-2 text-right text-foreground">
                       {totalBudgetHrs > 0 ? (varHrs >= 0 ? "+" : "") + fmtH(varHrs) : "—"}
+                    </td>
+                    <td className="px-3 py-2 text-right text-base text-foreground">
+                      {totalBudgetCost > 0 ? ((totalBudgetCost - totalActualCost) >= 0 ? "+" : "") + fmt$(totalBudgetCost - totalActualCost) : "—"}
                     </td>
                     <td className="px-3 py-2 text-right text-base text-foreground">{totalActualCost > 0 ? fmt$(totalActualCost) : "—"}</td>
                   </tr>
