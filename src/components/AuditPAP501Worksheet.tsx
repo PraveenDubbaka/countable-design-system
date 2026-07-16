@@ -477,7 +477,7 @@ export function AuditPAP501Worksheet({ isUS = false }: { isUS?: boolean }) {
 
   // ── Render ───────────────────────────────────────────────────────────────────
 
-  const showPrior  = data.comparePrior  !== 'No';
+  const showPrior  = true;
 
   // Per-stream gross margin ($ and %)
   const gmPerStream = salesIds.map((sid, i) => {
@@ -630,25 +630,10 @@ export function AuditPAP501Worksheet({ isUS = false }: { isUS?: boolean }) {
                   <TooltipContent>Select which comparatives to include and the number of sales streams. Auto-populated data flows from engagement setup and the 420 Materiality worksheet.</TooltipContent>
                 </Tooltip>
               </div>
-              <div className="px-6 py-4 grid grid-cols-1 md:grid-cols-4 gap-6">
+              <div className="px-6 py-4">
                 <div className="space-y-1.5">
                   <div className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Performance materiality</div>
                   <div className="text-sm font-semibold text-foreground">{perfMateriality}</div>
-                  
-                </div>
-                <div className="space-y-1.5">
-                  <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider block">Compare to prior period?</label>
-                  <Select value={data.comparePrior} onValueChange={v => set({ comparePrior: v })} disabled={locked}>
-                    <SelectTrigger className="h-8 text-sm w-28"><SelectValue /></SelectTrigger>
-                    <SelectContent><SelectItem value="Yes">Yes</SelectItem><SelectItem value="No">No</SelectItem></SelectContent>
-                  </Select>
-                </div>
-                <div className="space-y-1.5">
-                  <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider block">Number of sales streams</label>
-                  <Select value={String(data.numStreams)} onValueChange={v => set({ numStreams: Math.max(1, Math.min(5, Number(v))) })} disabled={locked}>
-                    <SelectTrigger className="h-8 text-sm w-20"><SelectValue /></SelectTrigger>
-                    <SelectContent>{[1,2,3,4,5].map(nn => <SelectItem key={nn} value={String(nn)}>{nn}</SelectItem>)}</SelectContent>
-                  </Select>
                 </div>
               </div>
             </div>
