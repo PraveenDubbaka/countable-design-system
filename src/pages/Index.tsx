@@ -489,7 +489,11 @@ export default function Index() {
             isGlobalTemplate={isGlobalTemplatePreview}
             isSavedTemplate={isSavedTemplate}
           />
-        ) : null}
+        ) : (
+          <div className="flex-1 flex items-center justify-center h-full">
+            <p className="text-sm text-muted-foreground">Select a template from the sidebar</p>
+          </div>
+        )}
 
         {/* Unsaved Changes Dialog - shown when clicking Back */}
         <UnsavedChangesDialog

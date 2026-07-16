@@ -876,9 +876,13 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
       }
       // Expand the compilation folder so the selected item is visible in the tree.
       setEngTemplateExpandedFolders(prev => new Set([...prev, "compilation"]));
+    } else if (itemId === "checklists") {
+      navigate("/create", { state: { contentType: "checklists" } });
+    } else {
+      // financial-statements, letters, reports, notes, worksheets
+      // Navigate to the builder with a clear flag so the placeholder is shown.
+      navigate("/builder", { state: { clearContent: true } });
     }
-    // All other options (checklists, worksheets, letters, reports, notes)
-    // just update the dropdown state — the sidebar panel reacts automatically.
   };
   const toggleFolder = (id: string) => {
     setTemplates(prev => prev.map(t => t.id === id ? {
