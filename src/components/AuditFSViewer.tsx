@@ -216,11 +216,62 @@ function computedCF(d: FSData['cf']) {
   return { operating, operatingPY, investing, investingPY, financing, financingPY, netChange, netChangePY, cashEnd, cashEndPY };
 }
 
-// ─── Shared table styles ─────────────────────────────────────────────────────
+// ─── Design tokens (match countablexlukaconcept FinancialStatementPreview) ──────
 
+const FONT      = "'DM Sans', system-ui, sans-serif";
+const HEAD_NAVY = 'hsl(215 75% 22%)';
+const SUBTLE    = 'hsl(222 15% 55%)';
+const BODY_COL  = 'hsl(222 35% 16%)';
+
+// Legacy tokens — kept for table rows (dark-mode aware)
 const FG   = 'hsl(var(--foreground))';
 const MFG  = 'hsl(var(--muted-foreground))';
 const BDR  = 'hsl(var(--border))';
+
+// ─── Brand chrome (matches source repo exactly) ───────────────────────────────
+
+const BrandHeader = () => (
+  <div
+    className="rounded-md mx-auto"
+    style={{
+      width: '92%',
+      padding: '26px 24px',
+      background: 'linear-gradient(180deg, hsl(220 18% 96%) 0%, hsl(220 18% 92%) 100%)',
+      border: '1px solid hsl(220 20% 88%)',
+      textAlign: 'center',
+    }}
+  >
+    <div style={{ fontFamily: FONT, fontSize: '22px', fontWeight: 800, color: HEAD_NAVY, letterSpacing: '0.02em' }}>
+      COUNTABLE PROFESSIONAL CORPORATION
+    </div>
+    <div style={{ fontFamily: FONT, fontSize: '11px', fontWeight: 700, color: BODY_COL, marginTop: '4px', letterSpacing: '0.08em' }}>
+      PROFESSIONAL CORPORATION
+    </div>
+    <div style={{ fontFamily: FONT, fontSize: '10px', fontWeight: 600, color: SUBTLE, marginTop: '2px', letterSpacing: '0.1em' }}>
+      CHARTERED PROFESSIONAL ACCOUNTANT
+    </div>
+  </div>
+);
+
+const BrandFooter = () => (
+  <div
+    className="rounded-md mx-auto"
+    style={{
+      width: '92%',
+      padding: '18px 24px',
+      background: 'linear-gradient(180deg, hsl(220 18% 95%) 0%, hsl(220 18% 90%) 100%)',
+      border: '1px solid hsl(220 20% 88%)',
+      textAlign: 'center',
+    }}
+  >
+    <div style={{ fontFamily: FONT, fontSize: '16px', fontWeight: 800, color: HEAD_NAVY, letterSpacing: '0.02em' }}>
+      COUNTABLE PROFESSIONAL CORPORATION
+    </div>
+    <div style={{ fontFamily: FONT, fontSize: '10px', fontWeight: 600, color: SUBTLE, marginTop: '4px', letterSpacing: '0.12em' }}>
+      PROFESSIONAL CORPORATION · CHARTERED PROFESSIONAL ACCOUNTANT
+    </div>
+  </div>
+);
 
 // Thin rule used throughout — adapts to dark/light mode
 const RULE = `1px solid ${FG}`;
@@ -287,10 +338,10 @@ function NumCell({ value, fieldKey, section, isEditing, onUpdate, style }: NumCe
 
 function StmtHeader({ entityName, title, subTitle }: { entityName: string; title: string; subTitle: string }) {
   return (
-    <div style={{ marginBottom: '20px' }}>
-      <p style={{ fontSize: '12px', color: FG, marginBottom: '3px' }}>{entityName}</p>
-      <h2 style={{ fontSize: '15px', fontWeight: 700, marginBottom: '3px', color: FG }}>{title}</h2>
-      <p style={{ fontSize: '12px', color: MFG }}>{subTitle}</p>
+    <div style={{ marginBottom: '24px', textAlign: 'center' }}>
+      <div style={{ fontSize: '18px', fontWeight: 800, color: HEAD_NAVY, letterSpacing: '0.04em', textTransform: 'uppercase', fontFamily: FONT }}>{entityName}</div>
+      <div style={{ fontSize: '12px', color: SUBTLE, marginTop: '4px', fontFamily: FONT }}>{title}</div>
+      <div style={{ fontSize: '12px', color: SUBTLE, marginTop: '2px', fontFamily: FONT }}>{subTitle}</div>
     </div>
   );
 }
@@ -820,36 +871,25 @@ export function AuditFSViewer({ pageType, engagementId, isUS, isCompilation, isE
   const watermarkText = isCompilation ? 'DRAFT — COMPILATION' : 'DRAFT';
   const coverTitle = isCompilation ? 'Compiled Financial Information' : 'Financial Statements';
 
-  const HEAD_NAVY = 'hsl(215 75% 22%)';
-  const SUBTLE = 'hsl(222 15% 55%)';
-
-  const BrandHeader = () => (
-    <div style={{ padding: '20px 40px 16px', borderBottom: `1px solid hsl(var(--border))`, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-      <div>
-        <div style={{ fontSize: '13px', fontWeight: 700, color: HEAD_NAVY, letterSpacing: '0.02em' }}>Countable Professional Corporation</div>
-        <div style={{ fontSize: '11px', color: SUBTLE, marginTop: '2px', letterSpacing: '0.01em' }}>Chartered Professional Accountants</div>
-      </div>
-      <div style={{ fontSize: '11px', color: SUBTLE, textAlign: 'right' }}>
-        <div>Toronto, Ontario</div>
-        <div style={{ marginTop: '1px' }}>countable.co</div>
-      </div>
-    </div>
-  );
-
-  const BrandFooter = () => (
-    <div style={{ padding: '14px 40px', borderTop: `1px solid hsl(var(--border))`, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-      <div style={{ fontSize: '10px', color: SUBTLE }}>Countable Professional Corporation · Chartered Professional Accountants</div>
-      <div style={{ fontSize: '10px', color: SUBTLE }}>{data.yearEnd}</div>
-    </div>
-  );
-
   return (
-    <div id="fs-print-target" style={{ minHeight: '100%', backgroundColor: 'hsl(var(--background))', padding: '32px 24px' }}>
+    <div id="fs-print-target" style={{ minHeight: '100%', backgroundColor: 'hsl(220 30% 97%)', padding: '32px 24px' }}>
       <div
-        className="max-w-3xl mx-auto relative overflow-hidden border border-border"
-        style={{ background: 'hsl(var(--card))', color: 'hsl(var(--card-foreground))', fontFamily: "'DM Sans', system-ui, sans-serif", minHeight: '1080px', borderRadius: '14px', boxShadow: '0 8px 32px hsl(220 30% 30% / 0.08), 0 2px 8px hsl(220 30% 30% / 0.04)' }}
+        className="mx-auto relative"
+        style={{
+          background: 'white',
+          width: 'min(820px, 100%)',
+          minHeight: 1080,
+          borderRadius: '14px',
+          boxShadow: '0 8px 32px hsl(220 30% 30% / 0.08), 0 2px 8px hsl(220 30% 30% / 0.04)',
+          border: '1px solid hsl(220 20% 90%)',
+          padding: '24px 0',
+          display: 'flex',
+          flexDirection: 'column',
+          fontFamily: FONT,
+        }}
       >
         <BrandHeader />
+        <div style={{ flex: 1, color: BODY_COL }}>
         {pageType === 'cover' ? (
           <div style={{ position: 'relative', zIndex: 1, padding: '64px' }}>
             <div style={{ fontSize: '72px', fontWeight: 900, color: '#ccc', opacity: 0.18, position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%,-50%) rotate(-35deg)', letterSpacing: '0.12em', whiteSpace: 'nowrap', userSelect: 'none', pointerEvents: 'none', zIndex: 0 }}>
@@ -893,6 +933,7 @@ export function AuditFSViewer({ pageType, engagementId, isUS, isCompilation, isE
             </div>
           </>
         )}
+        </div>
         <BrandFooter />
       </div>
       <WorksheetSignOff worksheetKey={`fs-${pageType}`} engagementId={engagementId} />
