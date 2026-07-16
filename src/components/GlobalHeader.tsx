@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import userAvatar from "@/assets/user-avatar.png";
-import { Bell, User, Sparkles, Moon, Sun, Zap, UserCircle, Building2, Settings, CreditCard, Monitor, Gift, LogOut, Check, Trash2, Search, MoreVertical, Type, ChevronDown, LayoutGrid } from "lucide-react";
+import { Bell, User, Moon, Sun, Zap, UserCircle, Building2, Settings, CreditCard, Monitor, Gift, LogOut, Check, Trash2, Search, MoreVertical, Type, ChevronDown, LayoutGrid } from "lucide-react";
+import { LukaIcon } from "@/components/LukaIcon";
 import { useNavigate } from "react-router-dom";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -96,7 +97,7 @@ export function GlobalHeader({ title, headerContent }: { title?: string; headerC
             className="h-8 px-3 rounded-full bg-gradient-to-r from-[#1C63A6] to-[#7A31D8] hover:from-[#1a5a96] hover:to-[#6a2bc2] text-white text-xs font-medium gap-1.5 shadow-md"
             onClick={() => setAskLukaOpen(true)}
           >
-            <Sparkles className="h-3.5 w-3.5 animate-[spin_3s_linear_infinite]" />
+            <LukaIcon size={20} bare animated />
             Luka
           </Button>
 
