@@ -525,11 +525,11 @@ export function AuditMaterialityWorksheet({ isUS = false }: AuditMaterialityWork
                     <td className="px-4 py-2 text-xs font-semibold text-primary">
                       Overall Materiality — {BASIS_OPTIONS.find(o => o.value === selectedRow?.basis)?.label ?? "Select a primary benchmark ↑"}
                     </td>
-                    <td className="px-4 py-2 text-sm tabular-nums text-foreground text-right">{selectedRow?.periodAmount ? formatDisplay(selectedRow.periodAmount) : "—"}</td>
-                    <td className="px-4 py-2 text-sm tabular-nums text-foreground text-right">{selectedRow?.extrapolatedPeriod ? formatDisplay(selectedRow.extrapolatedPeriod) : "—"}</td>
-                    <td className="px-4 py-2 text-sm tabular-nums text-foreground text-right">{selectedRow?.benchmarkPct || "—"}</td>
-                    <td className="px-4 py-2 text-sm tabular-nums font-bold text-primary text-right">{overallMateriality ? formatDisplay(overallMateriality) : "—"}</td>
-                    <td className="px-4 py-2 text-sm tabular-nums text-foreground text-right">{selectedRow?.materialityPY || "—"}</td>
+                    <td className="pl-4 pr-7 py-2 text-sm tabular-nums text-foreground text-right">{selectedRow?.periodAmount ? formatDisplay(selectedRow.periodAmount) : "—"}</td>
+                    <td className="pl-4 pr-7 py-2 text-sm tabular-nums text-foreground text-right">{selectedRow?.extrapolatedPeriod ? formatDisplay(selectedRow.extrapolatedPeriod) : "—"}</td>
+                    <td className="pl-4 pr-7 py-2 text-sm tabular-nums text-foreground text-right">{selectedRow?.benchmarkPct || "—"}</td>
+                    <td className="pl-4 pr-7 py-2 text-sm tabular-nums font-bold text-primary text-right">{overallMateriality ? formatDisplay(overallMateriality) : "—"}</td>
+                    <td className="pl-4 pr-7 py-2 text-sm tabular-nums text-foreground text-right">{selectedRow?.materialityPY || "—"}</td>
                     <td className="px-4 py-2" />
                     <td className="px-4 py-2" />
                   </tr>
