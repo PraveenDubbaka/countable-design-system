@@ -104,7 +104,6 @@ interface BudgetPlan {
   totalHrs: string;
   proposedFee: string;
   byRole: Partial<Record<RoleKey, string>>;
-  priorByRole: Partial<Record<RoleKey, string>>;
   bySection: Partial<Record<string, string>>;
   teamByRole: Partial<Record<RoleKey, string>>;
 }
@@ -158,7 +157,6 @@ export function AuditTimeTrackerWorksheet() {
   const emptyBudget = (): BudgetPlan => ({
     totalHrs: "", proposedFee: "",
     byRole: Object.fromEntries(ROLE_KEYS.map(r => [r, ""])),
-    priorByRole: Object.fromEntries(ROLE_KEYS.map(r => [r, ""])),
     bySection: Object.fromEntries(SECTIONS.map(s => [s.key, ""])),
     teamByRole: Object.fromEntries(ROLE_KEYS.map(r => [r, ""])),
   });
@@ -271,18 +269,6 @@ export function AuditTimeTrackerWorksheet() {
     setBudget(b => ({ ...b, byRole, bySection }));
   };
 
-  const loadPriorYear = () => {
-    const byRole: Partial<Record<RoleKey, string>> = {};
-    ROLE_KEYS.forEach(r => { byRole[r] = budget.priorByRole[r] ?? ""; });
-    setBudget(b => ({ ...b, byRole }));
-  };
-
-  const saveAsPriorYear = () => {
-    const priorByRole: Partial<Record<RoleKey, string>> = {};
-    ROLE_KEYS.forEach(r => { priorByRole[r] = budget.byRole[r] ?? ""; });
-    setBudget(b => ({ ...b, priorByRole }));
-  };
-
   const logTime = () => {
     const hrs = parseFloat(logHours);
     if (!hrs || hrs <= 0) return;
@@ -342,15 +328,8 @@ export function AuditTimeTrackerWorksheet() {
 
           {/* ── Rates + Budget Planning */}
           <div className="bg-card border border-border rounded-lg overflow-hidden shadow-[0_2px_8px_hsl(213_40%_20%/0.06)]">
-            <div className="px-5 py-3 border-b border-border flex flex-wrap items-center gap-3">
+            <div className="px-5 py-3 border-b border-border">
               <span className="text-sm font-semibold text-foreground">Rates &amp; Budget Planning</span>
-              <div className="ml-auto flex flex-wrap gap-2">
-                <Button variant="secondary" size="sm" onClick={loadPriorYear}
-                  title="Load prior year hours as starting budget"
-                  disabled={!ROLE_KEYS.some(r => budget.priorByRole[r])}>
-                  ↩ Load Prior Year
-                </Button>
-              </div>
             </div>
 
             {ratesMissing && (
@@ -401,7 +380,6 @@ export function AuditTimeTrackerWorksheet() {
                     <th className="px-3 py-2 text-right w-28">Rate ($/hr)</th>
                     <th className="px-3 py-2 text-right w-28">Budget Hrs</th>
                     <th className="px-3 py-2 text-right w-28">Budget $</th>
-                    <th className="px-3 py-2 text-right w-24">Prior Hrs</th>
                     <th className="px-3 py-2 text-right w-24">Actual Hrs</th>
                     <th className="px-3 py-2 text-right w-24">Var Hrs</th>
                     <th className="px-3 py-2 text-right w-24">Actual $</th>
@@ -446,12 +424,6 @@ export function AuditTimeTrackerWorksheet() {
                         <td className="px-3 py-2.5 text-right text-sm text-foreground align-top">
                           {bh > 0 && rate > 0 ? fmt$(bh * rate) : "—"}
                         </td>
-                        <td className="px-3 py-2.5 align-top">
-                          <Input value={budget.priorByRole[rk] ?? ""}
-                            onChange={e => setBudget(b => ({ ...b, priorByRole: { ...b.priorByRole, [rk]: e.target.value } }))}
-                            className="h-8 text-sm text-right"
-                            placeholder="—" />
-                        </td>
                         <td className="px-3 py-2.5 text-right text-sm font-medium text-foreground align-top">{ah > 0 ? fmtH(ah) : "—"}</td>
                         <td className="px-3 py-2.5 text-right text-sm font-semibold text-foreground align-top">
                           {bh > 0 ? (varH >= 0 ? "+" : "") + fmtH(varH) : "—"}
@@ -473,7 +445,6 @@ export function AuditTimeTrackerWorksheet() {
                     </td>
                     <td className="px-3 py-2 text-right text-foreground">{totalBudgetHrs > 0 ? fmtH(totalBudgetHrs) : "—"}</td>
                     <td className="px-3 py-2 text-right text-base text-foreground">{totalBudgetCost > 0 ? fmt$(totalBudgetCost) : "—"}</td>
-                    <td className="px-3 py-2" />
                     <td className="px-3 py-2 text-right text-foreground">{totalActualHrs > 0 ? fmtH(totalActualHrs) : "—"}</td>
                     <td className="px-3 py-2 text-right text-foreground">
                       {totalBudgetHrs > 0 ? (varHrs >= 0 ? "+" : "") + fmtH(varHrs) : "—"}
