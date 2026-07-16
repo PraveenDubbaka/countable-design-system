@@ -2562,12 +2562,6 @@ export default function EngagementDetail() {
               {/* 501A — Luka variance analysis CTA */}
               {checklistKey === 'aud-ra-pap501a' && (
                 <div className="mb-4 rounded-lg border border-border bg-card px-4 py-3.5 flex items-center gap-4">
-                  <div
-                    className="w-8 h-8 rounded-full flex items-center justify-center shrink-0"
-                    style={{ background: 'linear-gradient(135deg,#9747FF,#115697)' }}
-                  >
-                    <LukaIcon size={14} bare />
-                  </div>
                   <div className="flex-1 min-w-0">
                     <p className="text-sm font-semibold text-foreground">Variance Analysis for 501-B</p>
                     <p className="text-xs text-muted-foreground mt-0.5">
