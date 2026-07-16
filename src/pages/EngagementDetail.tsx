@@ -51,7 +51,7 @@ import { Audit670Worksheet } from "@/components/Audit670Worksheet";
 import { Audit680Worksheet } from "@/components/Audit680Worksheet";
 import { ConnectorsModal, CONNECTORS_BY_ID } from "@/components/ConnectorsModal";
 import { getEngagementMeta } from "@/store/engagementsStore";
-import { AuditFSViewer, FSPageType } from "@/components/AuditFSViewer";
+import FSPageViewer, { FSPageType } from "@/components/FSPageViewer";
 import FSSettingsPanel from "@/components/luka/workspace/FSSettingsPanel";
 import LayoutSettingsPanel from "@/components/luka/workspace/LayoutSettingsPanel";
 import { LayoutSettingsProvider } from "@/components/luka/workspace/LayoutSettingsContext";
@@ -2476,13 +2476,12 @@ export default function EngagementDetail() {
                 <FSCommentsBridge open={isFSCommentsOpen} />
                 <div className="flex h-full overflow-hidden">
                   <div className="flex-1 overflow-auto">
-                    <AuditFSViewer
+                    <FSPageViewer
                       pageType={FS_PAGE_TYPE_MAP[checklistKey]}
                       engagementId={engagementId}
                       isUS={checklistKey.startsWith('aud-us-fs-')}
                       isCompilation={checklistKey.startsWith('fs-')}
                       isEditing={isFSEditing}
-                      saveRef={fsSaveRef}
                     />
                   </div>
                   <CommentsPanel />

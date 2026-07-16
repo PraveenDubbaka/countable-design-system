@@ -77,6 +77,18 @@ const LayoutSettingsPanel = ({ open, onClose }: LayoutSettingsPanelProps) => {
   const [figureRepresentation, setFigureRepresentation] = useState(settings.figureRepresentation);
   const [compressionValue, setCompressionValue] = useState([settings.compressionValue]);
   const [compressionPages, setCompressionPages] = useState("all");
+  const COMPRESSION_STATEMENTS = [
+    { key: "coverPage", label: "Cover Page" },
+    { key: "tableOfContents", label: "Table of Contents" },
+    { key: "balanceSheet", label: "Balance Sheet" },
+    { key: "incomeStatement", label: "Income & Loss" },
+    { key: "cashFlows", label: "Cash Flows" },
+    { key: "retainedEarnings", label: "Retained Earnings" },
+    { key: "notes", label: "Notes" },
+    { key: "schedules", label: "Schedules" },
+  ] as const;
+  const [customCompressionStatements, setCustomCompressionStatements] = useState<Record<string, boolean>>({});
+  const customSelectedCount = Object.values(customCompressionStatements).filter(Boolean).length;
   const [manualColumns, setManualColumns] = useState(settings.manualColumns);
   const [hasChanges, setHasChanges] = useState(false);
 
@@ -304,6 +316,74 @@ const LayoutSettingsPanel = ({ open, onClose }: LayoutSettingsPanelProps) => {
                     </SelectContent>
                   </Select>
                 </SettingRow>
+
+                <AnimatePresence initial={false}>
+                  {compressionPages === "custom" && (
+                    <motion.div
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{ height: "auto", opacity: 1 }}
+                      exit={{ height: 0, opacity: 0 }}
+                      transition={{ duration: 0.2, ease: "easeInOut" }}
+                      className="overflow-hidden"
+                    >
+                      <div
+                        className="mt-1 rounded-[10px] border border-border bg-accent/30 p-3"
+                      >
+                        <div className="flex items-center justify-between mb-2">
+                          <span className="text-[13px] font-semibold text-foreground">
+                            Apply compression to
+                          </span>
+                          <span className="text-[11px] text-muted-foreground">
+                            {customSelectedCount} selected
+                          </span>
+                        </div>
+                        <div className="grid grid-cols-2 gap-x-3 gap-y-2">
+                          {COMPRESSION_STATEMENTS.map(({ key, label }) => {
+                            const checked = !!customCompressionStatements[key];
+                            return (
+                              <label
+                                key={key}
+                                className="flex items-center gap-2 cursor-pointer select-none py-1 px-1.5 rounded-md hover:bg-accent/60 transition-colors"
+                              >
+                                <input
+                                  type="checkbox"
+                                  checked={checked}
+                                  onChange={(e) => {
+                                    setCustomCompressionStatements(prev => ({ ...prev, [key]: e.target.checked }));
+                                    markChanged();
+                                  }}
+                                  className="w-4 h-4 rounded border-border accent-[#1c63a6] cursor-pointer"
+                                />
+                                <span className="text-[13px] text-foreground">{label}</span>
+                              </label>
+                            );
+                          })}
+                        </div>
+                        <div className="flex items-center gap-3 mt-3 pt-2 border-t border-border/60">
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setCustomCompressionStatements(
+                                Object.fromEntries(COMPRESSION_STATEMENTS.map(s => [s.key, true]))
+                              );
+                              markChanged();
+                            }}
+                            className="text-[12px] font-medium text-[#1c63a6] hover:underline cursor-pointer"
+                          >
+                            Select all
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => { setCustomCompressionStatements({}); markChanged(); }}
+                            className="text-[12px] font-medium text-muted-foreground hover:underline cursor-pointer"
+                          >
+                            Clear
+                          </button>
+                        </div>
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
               </AccordionSection>
 
               {/* Manual Columns */}
