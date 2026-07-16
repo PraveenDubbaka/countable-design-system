@@ -102,7 +102,7 @@ function parseMarkdown(text: string): React.ReactNode[] {
 function LukaAvatar({ done }: { done?: boolean }) {
   return (
     <div className="shrink-0 mt-0.5 w-8 h-8 flex items-center justify-center">
-      <LukaIcon size={32} animated={!done} />
+      <LukaIcon size={32} animated={!done} bare inverted />
     </div>
   );
 }
