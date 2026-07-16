@@ -1,6 +1,9 @@
 import { useEffect, useMemo, useState } from "react";
-import { CheckCircle2, ChevronDown, Clock, PenLine, Plus, Trash2 } from "lucide-react";
+import {
+  CheckCircle2, ChevronDown, ChevronRight, Clock, PenLine, Plus, Trash2,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -12,6 +15,8 @@ import type { Checklist } from "@/types/checklist";
 import { useEngagementContext } from "@/hooks/useEngagementContext";
 
 // ── Constants ────────────────────────────────────────────────────────────────
+
+const DEFAULT_TITLE = "Conclusion";
 
 const ROLES = [
   { id: "preparer",           label: "Preparer",             teamRoles: ["Staff Auditor", "Senior Auditor", "Junior Auditor"] },
@@ -42,6 +47,7 @@ type ExtraRow = {
 type SignOffData = {
   entries: SignEntry[];
   extraRows: ExtraRow[];
+  title?: string;
 };
 
 // ── Helpers ──────────────────────────────────────────────────────────────────
@@ -78,6 +84,7 @@ function loadData(id: string): SignOffData {
       return {
         entries: parsed.entries ?? [],
         extraRows: parsed.extraRows ?? [],
+        title: parsed.title,
       };
     }
   } catch { /* fallback */ }
@@ -117,7 +124,9 @@ export function ChecklistSignOff({
   const key = useMemo(() => storageKey(checklist.id), [checklist.id]);
 
   const [data, setData] = useState<SignOffData>(() => loadData(checklist.id));
-  const [collapsed, setCollapsed] = useState(false);
+  const [isExpanded, setIsExpanded] = useState(true);
+  const [isEditingTitle, setIsEditingTitle] = useState(false);
+  const [draftTitle, setDraftTitle] = useState(data.title ?? DEFAULT_TITLE);
 
   useEffect(() => {
     try { localStorage.setItem(key, JSON.stringify(data)); } catch { /* noop */ }
@@ -133,6 +142,13 @@ export function ChecklistSignOff({
     }
     return result;
   }, [ctx.team]);
+
+  function commitTitle() {
+    const t = draftTitle.trim() || DEFAULT_TITLE;
+    setDraftTitle(t);
+    setData(d => ({ ...d, title: t === DEFAULT_TITLE ? undefined : t }));
+    setIsEditingTitle(false);
+  }
 
   function signRole(roleId: RoleId) {
     const name = assigned[roleId];
@@ -184,33 +200,63 @@ export function ChecklistSignOff({
   }
 
   const locked = isPreviewMode && !isEngagementMode;
+  const canEditTitle = !locked;
   const hasExtraRows = data.extraRows.length > 0;
   const showAddRow = isEngagementMode && !locked;
+  const currentTitle = data.title ?? DEFAULT_TITLE;
 
   return (
-    <div className="px-4 py-4">
-
-      {/* CONCLUSION section header */}
-      <button
-        type="button"
-        onClick={() => setCollapsed(c => !c)}
-        className="w-full flex items-center justify-between py-1.5 mb-3 text-left group"
+    <div
+      className="dv-section group/section relative rounded-[8px] border-[0.5px] transition-colors mt-2"
+      style={{ borderColor: "var(--dv-separator)" }}
+    >
+      {/* Section header — matches dv-section-header exactly */}
+      <div
+        className="dv-section-header flex items-center gap-2 pl-[38px] pr-4 py-0 relative border-b"
+        style={{ borderColor: "var(--dv-separator)", height: "48px", minHeight: "48px" }}
       >
-        <span className="text-[11px] font-bold tracking-widest uppercase text-muted-foreground">
-          Conclusion
-        </span>
-        <ChevronDown
-          className={cn(
-            "h-3.5 w-3.5 text-muted-foreground transition-transform duration-200",
-            collapsed ? "-rotate-90" : ""
-          )}
-        />
-      </button>
+        {/* Collapse toggle */}
+        <button
+          onClick={() => setIsExpanded(v => !v)}
+          className="dv-collapse-btn absolute left-4 top-1/2 -translate-y-1/2 p-0.5 rounded hover:bg-muted transition-colors z-10"
+        >
+          {isExpanded
+            ? <ChevronDown className="h-4 w-4 text-muted-foreground" />
+            : <ChevronRight className="h-4 w-4 text-muted-foreground" />
+          }
+        </button>
 
-      {!collapsed && (
-        <div className="rounded-lg border border-border overflow-hidden">
+        {/* Editable title */}
+        {isEditingTitle && canEditTitle ? (
+          <Input
+            value={draftTitle}
+            onChange={e => setDraftTitle(e.target.value)}
+            onBlur={commitTitle}
+            onKeyDown={e => {
+              if (e.key === "Enter") commitTitle();
+              if (e.key === "Escape") { setDraftTitle(currentTitle); setIsEditingTitle(false); }
+            }}
+            autoFocus
+            onClick={e => e.stopPropagation()}
+            className="h-7 text-sm font-semibold bg-transparent border-none shadow-none text-category-title flex-1 px-1 focus-visible:ring-1"
+          />
+        ) : (
+          <h3
+            onClick={() => { if (canEditTitle) setIsEditingTitle(true); }}
+            className={cn(
+              "dv-section-title text-sm font-semibold text-category-title flex-1 pl-[6px]",
+              canEditTitle ? "cursor-text" : ""
+            )}
+          >
+            {currentTitle}
+          </h3>
+        )}
+      </div>
 
-          {/* Fixed four-role rows */}
+      {/* Body — sign-off rows */}
+      {isExpanded && (
+        <div>
+
           {ROLES.map((role, idx) => {
             const entry = data.entries.find(e => e.roleId === role.id);
             const isSigned = !!entry;
@@ -227,12 +273,13 @@ export function ChecklistSignOff({
                 key={role.id}
                 className={cn(
                   "flex items-center gap-3 px-4 py-3",
-                  !isLast && "border-b border-border",
-                  isSigned ? "bg-green-50/60 dark:bg-green-950/20" : "bg-card"
+                  !isLast && "border-b",
+                  isSigned ? "bg-green-50/60 dark:bg-green-950/20" : ""
                 )}
+                style={{ borderColor: "var(--dv-separator)" }}
               >
                 {/* Status icon */}
-                <div className="shrink-0 flex items-center justify-center w-4">
+                <div className="shrink-0 w-4 flex items-center justify-center">
                   {isSigned
                     ? <CheckCircle2 className="h-4 w-4 text-green-600 dark:text-green-500" />
                     : <Clock className="h-4 w-4 text-muted-foreground/40" />
@@ -262,24 +309,17 @@ export function ChecklistSignOff({
                   </div>
                 </div>
 
-                {/* Action button */}
+                {/* Action */}
                 {isEngagementMode && !locked && (
                   <div className="shrink-0">
                     {isSigned ? (
-                      <Button
-                        size="sm"
-                        variant="destructive"
-                        className="h-7 px-3 text-xs"
-                        onClick={() => unsignRole(role.id)}
-                      >
+                      <Button size="sm" variant="destructive" className="h-7 px-3 text-xs"
+                        onClick={() => unsignRole(role.id)}>
                         Unsign
                       </Button>
                     ) : assigned[role.id] !== "—" ? (
-                      <Button
-                        size="sm"
-                        className="h-7 px-3 text-xs gap-1.5"
-                        onClick={() => signRole(role.id)}
-                      >
+                      <Button size="sm" className="h-7 px-3 text-xs gap-1.5"
+                        onClick={() => signRole(role.id)}>
                         <PenLine className="h-3 w-3" />
                         Sign Off
                       </Button>
@@ -300,17 +340,17 @@ export function ChecklistSignOff({
             const avatarColorClass = hasAssignee
               ? getAvatarColor(displayName)
               : "bg-muted text-muted-foreground";
-            const isLast = idx === data.extraRows.length - 1 && !showAddRow;
 
             return (
               <div
                 key={row.id}
                 className={cn(
-                  "flex items-center gap-3 px-4 py-3 border-t border-border",
-                  isSigned ? "bg-green-50/60 dark:bg-green-950/20" : "bg-card"
+                  "flex items-center gap-3 px-4 py-3 border-t",
+                  isSigned ? "bg-green-50/60 dark:bg-green-950/20" : ""
                 )}
+                style={{ borderColor: "var(--dv-separator)" }}
               >
-                <div className="shrink-0 flex items-center justify-center w-4">
+                <div className="shrink-0 w-4 flex items-center justify-center">
                   {isSigned
                     ? <CheckCircle2 className="h-4 w-4 text-green-600 dark:text-green-500" />
                     : <Clock className="h-4 w-4 text-muted-foreground/40" />
@@ -341,20 +381,13 @@ export function ChecklistSignOff({
                 {isEngagementMode && !locked && (
                   <div className="shrink-0 flex items-center gap-2">
                     {isSigned ? (
-                      <Button
-                        size="sm"
-                        variant="destructive"
-                        className="h-7 px-3 text-xs"
-                        onClick={() => unsignExtraRow(row.id)}
-                      >
+                      <Button size="sm" variant="destructive" className="h-7 px-3 text-xs"
+                        onClick={() => unsignExtraRow(row.id)}>
                         Unsign
                       </Button>
                     ) : assigned[row.roleId] !== "—" ? (
-                      <Button
-                        size="sm"
-                        className="h-7 px-3 text-xs gap-1.5"
-                        onClick={() => signExtraRow(row.id, row.roleId)}
-                      >
+                      <Button size="sm" className="h-7 px-3 text-xs gap-1.5"
+                        onClick={() => signExtraRow(row.id, row.roleId)}>
                         <PenLine className="h-3 w-3" />
                         Sign Off
                       </Button>
@@ -373,7 +406,10 @@ export function ChecklistSignOff({
 
           {/* Add row */}
           {showAddRow && (
-            <div className="flex items-center justify-center border-t border-border px-4 py-2.5 bg-card">
+            <div
+              className="flex items-center justify-center border-t px-4 py-2.5"
+              style={{ borderColor: "var(--dv-separator)" }}
+            >
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <button
