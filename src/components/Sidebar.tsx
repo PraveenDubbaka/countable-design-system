@@ -2201,12 +2201,12 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
                       {
                         id: "fs-docs", code: "FS", label: "Financial Statements Docs", icon: "folder",
                         children: [
-                          { id: "fs-cover", label: "Cover Page", icon: "doc" },
-                          { id: "fs-toc", label: "Table of Contents", icon: "doc" },
-                          { id: "fs-comp", label: "Compilation report", icon: "doc" },
-                          { id: "fs-bs", label: "Balance Sheet", icon: "doc" },
-                          { id: "fs-is", label: "Statement of Income and Retained Earnings", icon: "doc" },
-                          { id: "fs-cf", label: "Statement of Cash Flows", icon: "doc" },
+                          { id: "fs-cover", label: "Cover Page", icon: "doc", route: "checklist/fs-cover" },
+                          { id: "fs-toc", label: "Table of Contents", icon: "doc", route: "checklist/fs-toc" },
+                          { id: "fs-comp", label: "Compilation report", icon: "doc", route: "checklist/fs-comp" },
+                          { id: "fs-bs", label: "Balance Sheet", icon: "doc", route: "checklist/fs-bs" },
+                          { id: "fs-is", label: "Statement of Income and Retained Earnings", icon: "doc", route: "checklist/fs-is" },
+                          { id: "fs-cf", label: "Statement of Cash Flows", icon: "doc", route: "checklist/fs-cf" },
                         ]
                       },
                     ]

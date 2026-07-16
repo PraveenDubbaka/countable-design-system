@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo, useCallback, useRef } from "react";
 import { useParams, useNavigate, useSearchParams } from "react-router-dom";
-import { ChevronRight, ChevronDown, Landmark, FileText, Triangle, FileSpreadsheet, PencilLine, Pencil, Settings2, Download, FileType, Share2, Save, RefreshCw, Trash2, Building2, Calendar, Check, AlertTriangle, Loader2, History, Upload, FileUp, Bell, Plus, X, LayoutGrid, CheckCircle2, PlugZap, Zap, Play, Square, ClipboardList, UserPlus, UploadCloud, FileCheck2, ExternalLink, Maximize2, Minimize2, Minus, SendHorizontal } from "lucide-react";
+import { ChevronRight, ChevronDown, Landmark, FileText, Triangle, FileSpreadsheet, PencilLine, Pencil, Settings2, Download, FileType, Share2, Save, RefreshCw, Trash2, Building2, Calendar, Check, AlertTriangle, Loader2, History, Upload, FileUp, Bell, Plus, X, LayoutGrid, CheckCircle2, PlugZap, Zap, Play, Square, ClipboardList, UserPlus, UploadCloud, FileCheck2, ExternalLink, Maximize2, Minimize2, Minus, SendHorizontal, MessageSquare } from "lucide-react";
 import { ExpandableIconButton } from "@/components/ui/expandable-icon-button";
 import { ChecklistIcon } from "@/components/icons/ChecklistIcon";
 import { Button } from "@/components/ui/button";
@@ -52,6 +52,12 @@ import { Audit680Worksheet } from "@/components/Audit680Worksheet";
 import { ConnectorsModal, CONNECTORS_BY_ID } from "@/components/ConnectorsModal";
 import { getEngagementMeta } from "@/store/engagementsStore";
 import { AuditFSViewer, FSPageType } from "@/components/AuditFSViewer";
+import FSSettingsPanel from "@/components/luka/workspace/FSSettingsPanel";
+import LayoutSettingsPanel from "@/components/luka/workspace/LayoutSettingsPanel";
+import { LayoutSettingsProvider } from "@/components/luka/workspace/LayoutSettingsContext";
+import CommentsPanel from "@/components/luka/comments/CommentsPanel";
+import { CommentProvider, useComments } from "@/components/luka/comments/CommentContext";
+import { WorksheetSignOff } from "@/components/WorksheetSignOff";
 import { AskLukaOverlay, AllTemplateSummary, AutoFillProgressItem } from "@/components/AskLukaOverlay";
 import { FloatingActionBar } from "@/components/FloatingActionBar";
 import { useTimeEntries, fmtElapsed, CURRENT_USER, TimeEntry } from "@/lib/useTimeEntries";
@@ -698,12 +704,17 @@ const CUSTOM_WORKSHEET_TITLES: Record<string, string> = {
 const FS_PAGE_KEYS = new Set([
   'aud-fs-cover', 'aud-fs-toc', 'aud-fs-bs', 'aud-fs-is', 'aud-fs-cf', 'aud-fs-eq', 'aud-fs-notes',
   'aud-us-fs-cover', 'aud-us-fs-toc', 'aud-us-fs-bs', 'aud-us-fs-is', 'aud-us-fs-cf', 'aud-us-fs-eq', 'aud-us-fs-notes',
+  // Compilation / Review FS
+  'fs-cover', 'fs-toc', 'fs-comp', 'fs-bs', 'fs-is', 'fs-cf',
 ]);
 const FS_PAGE_TYPE_MAP: Record<string, FSPageType> = {
   'aud-fs-cover': 'cover', 'aud-fs-toc': 'toc', 'aud-fs-bs': 'bs',
   'aud-fs-is': 'is', 'aud-fs-cf': 'cf', 'aud-fs-eq': 'eq', 'aud-fs-notes': 'notes',
   'aud-us-fs-cover': 'cover', 'aud-us-fs-toc': 'toc', 'aud-us-fs-bs': 'bs',
   'aud-us-fs-is': 'is', 'aud-us-fs-cf': 'cf', 'aud-us-fs-eq': 'eq', 'aud-us-fs-notes': 'notes',
+  // Compilation / Review FS
+  'fs-cover': 'cover', 'fs-toc': 'toc', 'fs-comp': 'comp-report',
+  'fs-bs': 'bs', 'fs-is': 'is', 'fs-cf': 'cf',
 };
 
 // Maps savedChecklist.id → sidebar nav item (section, code, label) matching the engagement menu exactly.
@@ -784,6 +795,12 @@ const LEGACY_COMPILATION_CHECKLIST_IDS = new Set([
   "default-compilation-mgmt-responsibility",
 ]);
 
+function FSCommentsBridge({ open }: { open: boolean }) {
+  const { setPanelOpen } = useComments();
+  useEffect(() => { setPanelOpen(open); }, [open, setPanelOpen]);
+  return null;
+}
+
 export default function EngagementDetail() {
   const {
     engagementId,
@@ -807,6 +824,9 @@ export default function EngagementDetail() {
   const [customLetterIsEditing, setCustomLetterIsEditing] = useState(false);
   const [isFSEditing, setIsFSEditing] = useState(false);
   const fsSaveRef = useRef<(() => void) | null>(null);
+  const [isFSSettingsOpen, setIsFSSettingsOpen] = useState(false);
+  const [isLayoutOpen, setIsLayoutOpen] = useState(false);
+  const [isFSCommentsOpen, setIsFSCommentsOpen] = useState(false);
   const [showAssignDialog, setShowAssignDialog] = useState(false);
   const [priorYearFile, setPriorYearFile] = useState<File | null>(null);
   const [isDraggingOverPriorYear, setIsDraggingOverPriorYear] = useState(false);
@@ -2111,35 +2131,21 @@ export default function EngagementDetail() {
                   ) : (
                     <ExpandableIconButton variant="secondary" icon={<Pencil className="h-4 w-4" />} label="Edit" size="sm" onClick={() => setIsFSEditing(true)} />
                   )}
-                  <ExpandableIconButton variant="secondary" icon={<Settings2 className="h-4 w-4" />} label="FS Settings" size="sm" onClick={() => toast.info('FS Settings — coming soon')} />
-                  <ExpandableIconButton variant="secondary" icon={<LayoutGrid className="h-4 w-4" />} label="Layout" size="sm" onClick={() => toast.info('Layout options — coming soon')} />
+                  <ExpandableIconButton variant="secondary" icon={<Settings2 className="h-4 w-4" />} label="FS Settings" size="sm" onClick={() => setIsFSSettingsOpen(true)} />
+                  <ExpandableIconButton variant="secondary" icon={<LayoutGrid className="h-4 w-4" />} label="Layout" size="sm" onClick={() => setIsLayoutOpen(true)} />
+                  <ExpandableIconButton variant="secondary" icon={<MessageSquare className="h-4 w-4" />} label="Comments" size="sm" onClick={() => setIsFSCommentsOpen(v => !v)} />
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                       <ExpandableIconButton variant="secondary" size="sm" icon={<Download className="h-4 w-4" />} label="Export" />
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end" className="w-40">
-                      <DropdownMenuItem className="flex items-center gap-2 cursor-pointer group" onClick={() => toast.info('Exporting as PDF...')}>
+                      <DropdownMenuItem className="flex items-center gap-2 cursor-pointer group" onClick={() => window.print()}>
                         <FileText className="h-4 w-4 text-muted-foreground group-hover:text-foreground transition-colors" />
                         <span>PDF</span>
                       </DropdownMenuItem>
-                      <DropdownMenuItem className="flex items-center gap-2 cursor-pointer group" onClick={() => toast.info('Exporting as Word...')}>
+                      <DropdownMenuItem className="flex items-center gap-2 cursor-pointer group" onClick={() => toast.info('Word export coming soon')}>
                         <FileType className="h-4 w-4 text-muted-foreground group-hover:text-foreground transition-colors" />
                         <span>Word</span>
-                      </DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <ExpandableIconButton variant="default" size="sm" icon={<CheckCircle2 className="h-4 w-4" />} label="Signoff" />
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end" className="w-44">
-                      <DropdownMenuItem className="flex items-center gap-2 cursor-pointer" onClick={() => toast.success('Signed off as Preparer')}>
-                        <Check className="h-4 w-4" />
-                        <span>Sign off as Preparer</span>
-                      </DropdownMenuItem>
-                      <DropdownMenuItem className="flex items-center gap-2 cursor-pointer" onClick={() => toast.success('Signed off as Reviewer')}>
-                        <Check className="h-4 w-4" />
-                        <span>Sign off as Reviewer</span>
                       </DropdownMenuItem>
                     </DropdownMenuContent>
                   </DropdownMenu>
@@ -2456,13 +2462,26 @@ export default function EngagementDetail() {
 
           {/* ── Financial Statement pages ── */}
           {checklistKey && FS_PAGE_KEYS.has(checklistKey) && engagementId ? (
-            <AuditFSViewer
-              pageType={FS_PAGE_TYPE_MAP[checklistKey]}
-              engagementId={engagementId}
-              isUS={checklistKey.startsWith('aud-us-fs-')}
-              isEditing={isFSEditing}
-              saveRef={fsSaveRef}
-            />
+            <LayoutSettingsProvider>
+              <CommentProvider>
+                <FSCommentsBridge open={isFSCommentsOpen} />
+                <div className="flex h-full overflow-hidden">
+                  <div className="flex-1 overflow-auto">
+                    <AuditFSViewer
+                      pageType={FS_PAGE_TYPE_MAP[checklistKey]}
+                      engagementId={engagementId}
+                      isUS={checklistKey.startsWith('aud-us-fs-')}
+                      isCompilation={checklistKey.startsWith('fs-')}
+                      isEditing={isFSEditing}
+                      saveRef={fsSaveRef}
+                    />
+                  </div>
+                  <CommentsPanel />
+                </div>
+                <FSSettingsPanel open={isFSSettingsOpen} onClose={() => setIsFSSettingsOpen(false)} />
+                <LayoutSettingsPanel open={isLayoutOpen} onClose={() => setIsLayoutOpen(false)} />
+              </CommentProvider>
+            </LayoutSettingsProvider>
           ) : checklistKey?.startsWith('notes-') ? (
             <NotesWorksheet
               parentKey={checklistKey.slice('notes-'.length)}

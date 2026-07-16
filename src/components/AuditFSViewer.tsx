@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { readJsonFromLocalStorage, writeJsonToLocalStorage } from '@/lib/safeJson';
+import { WorksheetSignOff } from '@/components/WorksheetSignOff';
 
-export type FSPageType = 'cover' | 'toc' | 'bs' | 'is' | 'cf' | 'eq' | 'notes';
+export type FSPageType = 'cover' | 'toc' | 'bs' | 'is' | 'cf' | 'eq' | 'notes' | 'comp-report';
 
 // ─── Data types ────────────────────────────────────────────────────────────
 
@@ -393,36 +394,6 @@ function SignatureBlock({ yearEnd }: { yearEnd: string }) {
 
 // ─── Page: Cover ──────────────────────────────────────────────────────────────
 
-function CoverPage({ data, isEditing, onUpdateText }: {
-  data: FSData; isEditing: boolean; onUpdateText: (field: keyof FSData, val: string) => void;
-}) {
-  return (
-    <div style={{ position: 'relative', zIndex: 1, padding: '64px' }}>
-      <div style={{ fontSize: '72px', fontWeight: 900, color: '#ccc', opacity: 0.18, position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%,-50%) rotate(-35deg)', letterSpacing: '0.12em', whiteSpace: 'nowrap', userSelect: 'none', pointerEvents: 'none', zIndex: 0 }}>
-        DRAFT UNDER DISCUSSION
-      </div>
-      <div style={{ position: 'relative', zIndex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: '700px', textAlign: 'center', gap: '28px' }}>
-        {isEditing ? (
-          <input className="text-3xl font-bold text-center border-b border-blue-300 dark:border-blue-700 bg-blue-50 dark:bg-blue-950/40 focus:outline-none w-full max-w-md"
-            value={data.entityName} onChange={e => onUpdateText('entityName', e.target.value)} />
-        ) : (
-          <h1 style={{ fontSize: '26px', fontWeight: 700 }}>{data.entityName}</h1>
-        )}
-        <div style={{ width: '100px', borderTop: `2px solid ${FG}` }} />
-        <div>
-          <p style={{ fontSize: '20px', fontWeight: 600, letterSpacing: '0.06em', textTransform: 'uppercase', marginBottom: '10px' }}>Financial Statements</p>
-          {isEditing ? (
-            <input className="text-sm text-center border-b border-blue-300 dark:border-blue-700 bg-blue-50 dark:bg-blue-950/40 focus:outline-none w-full"
-              value={data.yearEnd} onChange={e => onUpdateText('yearEnd', e.target.value)} />
-          ) : (
-            <p style={{ fontSize: '13px', color: MFG }}>For the Year Ended {data.yearEnd}</p>
-          )}
-        </div>
-      </div>
-    </div>
-  );
-}
-
 // ─── Page: Table of Contents ──────────────────────────────────────────────────
 
 function TocPage({ data }: { data: FSData }) {
@@ -758,17 +729,57 @@ function NotesPage({ data, isEditing, onUpdateNote }: {
   );
 }
 
+// ─── Page: Compilation Report ─────────────────────────────────────────────────
+
+function CompReportPage({ data, isCompilation }: { data: FSData; isCompilation?: boolean }) {
+  const firmName = 'Countable Professional Corporation';
+  const city = isCompilation ? 'Toronto, Ontario' : 'Toronto, Ontario';
+  return (
+    <div style={{ padding: '64px' }}>
+      <StmtHeader
+        entityName={data.entityName}
+        title={isCompilation ? 'Compilation Report of External Accountant' : "Independent Accountant's Review Report"}
+        subTitle={data.yearEnd}
+      />
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '18px', fontSize: '12.5px', lineHeight: '1.7', color: FG }}>
+        <p><strong>To the Management of {data.entityName}:</strong></p>
+        <p>
+          On the basis of information provided by management, we have compiled the balance sheet of{' '}
+          <strong>{data.entityName}</strong> as at {data.yearEnd}, and the statements of income and retained earnings
+          and cash flows for the year then ended (together referred to as the "financial statements").
+        </p>
+        <p style={{ fontWeight: 600 }}>Notice to Reader</p>
+        <p>
+          We have compiled these financial statements from information provided by management.
+          We have not audited, reviewed or otherwise attempted to verify the accuracy or completeness of such
+          information. Readers are cautioned that these statements may not be appropriate for their purposes.
+        </p>
+        <p>
+          Readers are advised that the financial statements may not be suitable for general-purpose use because
+          they have been compiled without audit or review. Management is responsible for the accuracy and
+          completeness of the information used to compile the financial statements and for ensuring that the
+          financial statements are presented in accordance with the applicable basis of accounting.
+        </p>
+        <p style={{ marginTop: '32px' }}>{firmName}</p>
+        <p style={{ color: MFG }}>{city}</p>
+        <p style={{ color: MFG }}>{data.yearEnd}</p>
+      </div>
+    </div>
+  );
+}
+
 // ─── Main component ───────────────────────────────────────────────────────────
 
 interface AuditFSViewerProps {
   pageType: FSPageType;
   engagementId: string;
   isUS?: boolean;
+  isCompilation?: boolean;
   isEditing: boolean;
   saveRef?: React.MutableRefObject<(() => void) | null>;
 }
 
-export function AuditFSViewer({ pageType, engagementId, isUS, isEditing, saveRef }: AuditFSViewerProps) {
+export function AuditFSViewer({ pageType, engagementId, isUS, isCompilation, isEditing, saveRef }: AuditFSViewerProps) {
   const storageKey = `audit-fs-data-${engagementId}${isUS ? '-us' : ''}`;
   const defaultData = isUS ? US_DEFAULT : CA_DEFAULT;
 
@@ -806,33 +817,60 @@ export function AuditFSViewer({ pageType, engagementId, isUS, isEditing, saveRef
     setData(prev => ({ ...prev, [field]: val }));
   }, []);
 
+  const watermarkText = isCompilation ? 'DRAFT — COMPILATION' : 'DRAFT';
+  const coverTitle = isCompilation ? 'Compiled Financial Information' : 'Financial Statements';
+
   return (
-    <div style={{ minHeight: '100%', backgroundColor: 'hsl(var(--background))', padding: '32px 24px' }}>
+    <div id="fs-print-target" style={{ minHeight: '100%', backgroundColor: 'hsl(var(--background))', padding: '32px 24px' }}>
       <div
         className="max-w-3xl mx-auto shadow-[0_4px_32px_rgba(0,0,0,0.18)] rounded-sm relative overflow-hidden border border-border"
         style={{ background: 'hsl(var(--card))', color: 'hsl(var(--card-foreground))', fontFamily: "'Times New Roman', Georgia, serif", minHeight: '960px' }}
       >
         {pageType === 'cover' ? (
-          <CoverPage data={data} isEditing={isEditing} onUpdateText={onUpdateText} />
+          <div style={{ position: 'relative', zIndex: 1, padding: '64px' }}>
+            <div style={{ fontSize: '72px', fontWeight: 900, color: '#ccc', opacity: 0.18, position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%,-50%) rotate(-35deg)', letterSpacing: '0.12em', whiteSpace: 'nowrap', userSelect: 'none', pointerEvents: 'none', zIndex: 0 }}>
+              DRAFT UNDER DISCUSSION
+            </div>
+            <div style={{ position: 'relative', zIndex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: '700px', textAlign: 'center', gap: '28px' }}>
+              {isEditing ? (
+                <input className="text-3xl font-bold text-center border-b border-blue-300 dark:border-blue-700 bg-blue-50 dark:bg-blue-950/40 focus:outline-none w-full max-w-md"
+                  value={data.entityName} onChange={e => onUpdateText('entityName', e.target.value)} />
+              ) : (
+                <h1 style={{ fontSize: '26px', fontWeight: 700 }}>{data.entityName}</h1>
+              )}
+              <div style={{ width: '100px', borderTop: `2px solid ${FG}` }} />
+              <div>
+                <p style={{ fontSize: '20px', fontWeight: 600, letterSpacing: '0.06em', textTransform: 'uppercase', marginBottom: '10px' }}>{coverTitle}</p>
+                {isEditing ? (
+                  <input className="text-sm text-center border-b border-blue-300 dark:border-blue-700 bg-blue-50 dark:bg-blue-950/40 focus:outline-none w-full"
+                    value={data.yearEnd} onChange={e => onUpdateText('yearEnd', e.target.value)} />
+                ) : (
+                  <p style={{ fontSize: '13px', color: MFG }}>For the Year Ended {data.yearEnd}</p>
+                )}
+              </div>
+            </div>
+          </div>
         ) : (
           <>
-            {/* Subtle DRAFT watermark on non-cover pages */}
+            {/* DRAFT watermark on non-cover pages */}
             <div className="absolute inset-0 flex items-center justify-center pointer-events-none" aria-hidden="true" style={{ zIndex: 0, overflow: 'hidden' }}>
               <span style={{ fontSize: '64px', fontWeight: 900, color: '#ccc', opacity: 0.12, transform: 'rotate(-35deg)', letterSpacing: '0.12em', whiteSpace: 'nowrap', userSelect: 'none' }}>
-                DRAFT
+                {watermarkText}
               </span>
             </div>
             <div style={{ position: 'relative', zIndex: 1 }}>
-              {pageType === 'toc'   && <TocPage data={data} />}
-              {pageType === 'bs'    && <BSPage data={data} isEditing={isEditing} onUpdate={onUpdate} />}
-              {pageType === 'is'    && <ISPage data={data} isEditing={isEditing} onUpdate={onUpdate} />}
-              {pageType === 'cf'    && <CFPage data={data} isEditing={isEditing} onUpdate={onUpdate} />}
-              {pageType === 'eq'    && <EQPage data={data} isEditing={isEditing} onUpdate={onUpdate} />}
-              {pageType === 'notes' && <NotesPage data={data} isEditing={isEditing} onUpdateNote={onUpdateNote} />}
+              {pageType === 'toc'         && <TocPage data={data} />}
+              {pageType === 'comp-report' && <CompReportPage data={data} isCompilation={isCompilation} />}
+              {pageType === 'bs'          && <BSPage data={data} isEditing={isEditing} onUpdate={onUpdate} />}
+              {pageType === 'is'          && <ISPage data={data} isEditing={isEditing} onUpdate={onUpdate} />}
+              {pageType === 'cf'          && <CFPage data={data} isEditing={isEditing} onUpdate={onUpdate} />}
+              {pageType === 'eq'          && <EQPage data={data} isEditing={isEditing} onUpdate={onUpdate} />}
+              {pageType === 'notes'       && <NotesPage data={data} isEditing={isEditing} onUpdateNote={onUpdateNote} />}
             </div>
           </>
         )}
       </div>
+      <WorksheetSignOff worksheetKey={`fs-${pageType}`} engagementId={engagementId} />
     </div>
   );
 }

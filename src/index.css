@@ -1984,3 +1984,9 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 .prompt-window-shimmer-border > div {
   border-radius: 15px;
 }
+
+@media print {
+  body > *:not(#fs-print-target) { display: none !important; }
+  #fs-print-target { display: block !important; }
+  #fs-print-target * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+}
