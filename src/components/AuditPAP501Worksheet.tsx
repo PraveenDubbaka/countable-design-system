@@ -612,9 +612,6 @@ export function AuditPAP501Worksheet({ isUS = false }: { isUS?: boolean }) {
         <div className="flex-1 flex flex-col items-center justify-center py-12 px-4 overflow-auto">
           <div className="w-full max-w-md flex flex-col items-center gap-7 text-center">
 
-            {/* Luka icon */}
-            <LukaIcon size={72} animated inverted />
-
             <h3 className="text-xl font-semibold text-foreground">Preliminary Analytical Procedures — Parts B &amp; C</h3>
 
             {/* Generate button */}

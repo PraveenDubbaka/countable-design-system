@@ -381,14 +381,15 @@ export function Audit505Worksheet({ isUS = false }: { isUS?: boolean }) {
                       <div className="flex items-center justify-between mb-2">
                         <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">Interviewees</p>
                         {!locked && (
-                          <button
-                            type="button"
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            className="h-7 text-xs gap-1"
                             onClick={() => addIv(sec.id)}
-                            className="flex items-center gap-1 text-xs text-primary hover:text-primary/80 transition-colors"
                           >
-                            <Plus className="h-3 w-3" />
+                            <Plus className="h-3.5 w-3.5" />
                             Add row
-                          </button>
+                          </Button>
                         )}
                       </div>
                       <div className="rounded border border-border overflow-hidden">

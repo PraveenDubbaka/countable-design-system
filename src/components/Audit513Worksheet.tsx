@@ -508,9 +508,9 @@ export function Audit513Worksheet({ isUS: isUSProp }: { isUS?: boolean } = {}) {
               </table>
               {!locked && (
                 <div className="px-6 py-3 border-t border-border">
-                  <button onClick={addCustomEstimate} className="flex items-center gap-1.5 text-sm font-medium text-primary hover:text-primary/80 transition-colors">
-                    <Plus className="h-4 w-4" /> Add custom estimate
-                  </button>
+                  <Button size="sm" variant="outline" className="h-7 text-xs gap-1" onClick={addCustomEstimate}>
+                    <Plus className="h-3.5 w-3.5" /> Add custom estimate
+                  </Button>
                 </div>
               )}
             </div>

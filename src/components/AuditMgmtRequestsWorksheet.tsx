@@ -160,9 +160,9 @@ export function AuditMgmtRequestsWorksheet({ isUS = false }: AuditMgmtRequestsWo
               </table>
             </div>
             <div className="px-6 py-3 border-t border-border">
-              <button onClick={addRow} className="flex items-center gap-1.5 text-sm font-medium text-primary hover:text-primary/80 transition-colors">
-                <Plus className="h-4 w-4" />Add Request
-              </button>
+              <Button size="sm" variant="outline" className="h-7 text-xs gap-1" onClick={addRow}>
+                <Plus className="h-3.5 w-3.5" />Add Request
+              </Button>
             </div>
           </div>
 

@@ -543,9 +543,9 @@ export function Audit515Worksheet({ isUS: isUSProp }: { isUS?: boolean } = {}) {
               </table>
               {!locked && (
                 <div className="px-6 py-3 border-t border-border">
-                  <button onClick={addParty} className="flex items-center gap-1.5 text-sm font-medium text-primary hover:text-primary/80 transition-colors">
-                    <Plus className="h-4 w-4" /> Add related party
-                  </button>
+                  <Button size="sm" variant="outline" className="h-7 text-xs gap-1" onClick={addParty}>
+                    <Plus className="h-3.5 w-3.5" /> Add related party
+                  </Button>
                 </div>
               )}
             </div>

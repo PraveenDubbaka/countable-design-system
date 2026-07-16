@@ -437,7 +437,10 @@ export function AuditScopeWorksheet({
                 </table>
             </div>
             <div className="px-6 py-3 border-t border-border">
-              <button
+              <Button
+                size="sm"
+                variant="outline"
+                className="h-7 text-xs gap-1"
                 onClick={() =>
                   setFsaRows((prev) => [
                     ...prev,
@@ -453,11 +456,10 @@ export function AuditScopeWorksheet({
                     },
                   ])
                 }
-                className="flex items-center gap-1.5 text-sm font-medium text-primary hover:text-primary/80 transition-colors"
               >
-                <Plus className="h-4 w-4" />
+                <Plus className="h-3.5 w-3.5" />
                 Add Row
-              </button>
+              </Button>
             </div>
           </div>
 
@@ -540,18 +542,20 @@ export function AuditScopeWorksheet({
               </table>
             </div>
             <div className="px-6 py-3 border-t border-border">
-              <button
+              <Button
+                size="sm"
+                variant="outline"
+                className="h-7 text-xs gap-1"
                 onClick={() =>
                   setPervasiveRows((prev) => [
                     ...prev,
                     { id: uid(), misstatement: "", response: "", wpRef: "" },
                   ])
                 }
-                className="flex items-center gap-1.5 text-sm font-medium text-primary hover:text-primary/80 transition-colors"
               >
-                <Plus className="h-4 w-4" />
+                <Plus className="h-3.5 w-3.5" />
                 Add Row
-              </button>
+              </Button>
             </div>
           </div>
 
@@ -634,18 +638,20 @@ export function AuditScopeWorksheet({
               </table>
             </div>
             <div className="px-6 py-3 border-t border-border">
-              <button
+              <Button
+                size="sm"
+                variant="outline"
+                className="h-7 text-xs gap-1"
                 onClick={() =>
                   setDisclosureRows((prev) => [
                     ...prev,
                     { id: uid(), misstatement: "", procedures: "", wpRef: "" },
                   ])
                 }
-                className="flex items-center gap-1.5 text-sm font-medium text-primary hover:text-primary/80 transition-colors"
               >
-                <Plus className="h-4 w-4" />
+                <Plus className="h-3.5 w-3.5" />
                 Add Row
-              </button>
+              </Button>
             </div>
           </div>
 

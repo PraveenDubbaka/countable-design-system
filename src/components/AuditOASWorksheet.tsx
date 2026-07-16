@@ -518,9 +518,9 @@ function WorksheetInner({ isUS }: { isUS: boolean }) {
                   {!locked && (
                     <tr>
                       <td colSpan={4} className="px-4 py-2.5">
-                        <button onClick={addTeamRow} className="inline-flex items-center gap-1.5 text-xs text-primary hover:underline">
+                        <Button size="sm" variant="outline" className="h-7 text-xs gap-1" onClick={addTeamRow}>
                           <Plus className="h-3.5 w-3.5" />Add team member
-                        </button>
+                        </Button>
                       </td>
                     </tr>
                   )}
