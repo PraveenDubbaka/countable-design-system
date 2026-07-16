@@ -820,12 +820,36 @@ export function AuditFSViewer({ pageType, engagementId, isUS, isCompilation, isE
   const watermarkText = isCompilation ? 'DRAFT — COMPILATION' : 'DRAFT';
   const coverTitle = isCompilation ? 'Compiled Financial Information' : 'Financial Statements';
 
+  const HEAD_NAVY = 'hsl(215 75% 22%)';
+  const SUBTLE = 'hsl(222 15% 55%)';
+
+  const BrandHeader = () => (
+    <div style={{ padding: '20px 40px 16px', borderBottom: `1px solid hsl(var(--border))`, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+      <div>
+        <div style={{ fontSize: '13px', fontWeight: 700, color: HEAD_NAVY, letterSpacing: '0.02em' }}>Countable Professional Corporation</div>
+        <div style={{ fontSize: '11px', color: SUBTLE, marginTop: '2px', letterSpacing: '0.01em' }}>Chartered Professional Accountants</div>
+      </div>
+      <div style={{ fontSize: '11px', color: SUBTLE, textAlign: 'right' }}>
+        <div>Toronto, Ontario</div>
+        <div style={{ marginTop: '1px' }}>countable.co</div>
+      </div>
+    </div>
+  );
+
+  const BrandFooter = () => (
+    <div style={{ padding: '14px 40px', borderTop: `1px solid hsl(var(--border))`, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+      <div style={{ fontSize: '10px', color: SUBTLE }}>Countable Professional Corporation · Chartered Professional Accountants</div>
+      <div style={{ fontSize: '10px', color: SUBTLE }}>{data.yearEnd}</div>
+    </div>
+  );
+
   return (
     <div id="fs-print-target" style={{ minHeight: '100%', backgroundColor: 'hsl(var(--background))', padding: '32px 24px' }}>
       <div
-        className="max-w-3xl mx-auto shadow-[0_4px_32px_rgba(0,0,0,0.18)] rounded-sm relative overflow-hidden border border-border"
-        style={{ background: 'hsl(var(--card))', color: 'hsl(var(--card-foreground))', fontFamily: "'Times New Roman', Georgia, serif", minHeight: '960px' }}
+        className="max-w-3xl mx-auto relative overflow-hidden border border-border"
+        style={{ background: 'hsl(var(--card))', color: 'hsl(var(--card-foreground))', fontFamily: "'DM Sans', system-ui, sans-serif", minHeight: '1080px', borderRadius: '14px', boxShadow: '0 8px 32px hsl(220 30% 30% / 0.08), 0 2px 8px hsl(220 30% 30% / 0.04)' }}
       >
+        <BrandHeader />
         {pageType === 'cover' ? (
           <div style={{ position: 'relative', zIndex: 1, padding: '64px' }}>
             <div style={{ fontSize: '72px', fontWeight: 900, color: '#ccc', opacity: 0.18, position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%,-50%) rotate(-35deg)', letterSpacing: '0.12em', whiteSpace: 'nowrap', userSelect: 'none', pointerEvents: 'none', zIndex: 0 }}>
@@ -869,6 +893,7 @@ export function AuditFSViewer({ pageType, engagementId, isUS, isCompilation, isE
             </div>
           </>
         )}
+        <BrandFooter />
       </div>
       <WorksheetSignOff worksheetKey={`fs-${pageType}`} engagementId={engagementId} />
     </div>

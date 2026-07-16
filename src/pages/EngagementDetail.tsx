@@ -58,6 +58,7 @@ import { LayoutSettingsProvider } from "@/components/luka/workspace/LayoutSettin
 import CommentsPanel from "@/components/luka/comments/CommentsPanel";
 import { CommentProvider, useComments } from "@/components/luka/comments/CommentContext";
 import { WorksheetSignOff } from "@/components/WorksheetSignOff";
+import VersionHistoryPanel from "@/components/luka/workspace/versionControl/VersionHistoryPanel";
 import { AskLukaOverlay, AllTemplateSummary, AutoFillProgressItem } from "@/components/AskLukaOverlay";
 import { FloatingActionBar } from "@/components/FloatingActionBar";
 import { useTimeEntries, fmtElapsed, CURRENT_USER, TimeEntry } from "@/lib/useTimeEntries";
@@ -716,6 +717,12 @@ const FS_PAGE_TYPE_MAP: Record<string, FSPageType> = {
   'fs-cover': 'cover', 'fs-toc': 'toc', 'fs-comp': 'comp-report',
   'fs-bs': 'bs', 'fs-is': 'is', 'fs-cf': 'cf',
 };
+const FS_SCREEN_NAMES: Record<FSPageType, string> = {
+  'cover': 'Cover Page', 'toc': 'Table of Contents',
+  'bs': 'Balance Sheet', 'is': 'Statement of Income Loss',
+  'cf': 'Statement of Cash Flows', 'eq': 'Statement of Equity',
+  'notes': 'Notes to Financial Information', 'comp-report': 'Compilation Report',
+};
 
 // Maps savedChecklist.id → sidebar nav item (section, code, label) matching the engagement menu exactly.
 // Sub-forms that share a parent sidebar nav item use that item's code+label so they aggregate in the summary.
@@ -827,6 +834,7 @@ export default function EngagementDetail() {
   const [isFSSettingsOpen, setIsFSSettingsOpen] = useState(false);
   const [isLayoutOpen, setIsLayoutOpen] = useState(false);
   const [isFSCommentsOpen, setIsFSCommentsOpen] = useState(false);
+  const [isVersionsOpen, setIsVersionsOpen] = useState(false);
   const [showAssignDialog, setShowAssignDialog] = useState(false);
   const [priorYearFile, setPriorYearFile] = useState<File | null>(null);
   const [isDraggingOverPriorYear, setIsDraggingOverPriorYear] = useState(false);
@@ -2134,6 +2142,7 @@ export default function EngagementDetail() {
                   <ExpandableIconButton variant="secondary" icon={<Settings2 className="h-4 w-4" />} label="FS Settings" size="sm" onClick={() => setIsFSSettingsOpen(true)} />
                   <ExpandableIconButton variant="secondary" icon={<LayoutGrid className="h-4 w-4" />} label="Layout" size="sm" onClick={() => setIsLayoutOpen(true)} />
                   <ExpandableIconButton variant="secondary" icon={<MessageSquare className="h-4 w-4" />} label="Comments" size="sm" onClick={() => setIsFSCommentsOpen(v => !v)} />
+                  <ExpandableIconButton variant="secondary" icon={<History className="h-4 w-4" />} label="Versions" size="sm" onClick={() => setIsVersionsOpen(v => !v)} />
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                       <ExpandableIconButton variant="secondary" size="sm" icon={<Download className="h-4 w-4" />} label="Export" />
@@ -2477,6 +2486,11 @@ export default function EngagementDetail() {
                     />
                   </div>
                   <CommentsPanel />
+                  <VersionHistoryPanel
+                    open={isVersionsOpen}
+                    onClose={() => setIsVersionsOpen(false)}
+                    currentScreen={FS_SCREEN_NAMES[FS_PAGE_TYPE_MAP[checklistKey]] ?? 'Balance Sheet'}
+                  />
                 </div>
                 <FSSettingsPanel open={isFSSettingsOpen} onClose={() => setIsFSSettingsOpen(false)} />
                 <LayoutSettingsPanel open={isLayoutOpen} onClose={() => setIsLayoutOpen(false)} />

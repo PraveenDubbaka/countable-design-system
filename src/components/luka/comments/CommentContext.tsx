@@ -9,7 +9,7 @@ const simulatedIncoming: Array<{
   comment: Omit<Comment, "id" | "pinNumber" | "createdAt">;
 }> = [
   {
-    delay: 12000,
+    delay: 5000,
     comment: {
       author: engagementMembers[1], // James Wilson
       body: "I've reconciled the trade payables — there's a $4,200 variance from the October accrual. @Sarah Chen can you verify?",
@@ -197,6 +197,7 @@ export const CommentProvider: React.FC<{ children: React.ReactNode }> = ({ child
                 setTimeout(() => setScrollToPinId(null), 100);
               },
             },
+            position: 'bottom-right',
           }
         );
       }, sim.delay)
