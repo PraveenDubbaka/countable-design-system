@@ -744,7 +744,7 @@ const CHECKLIST_SIDEBAR_INFO: Record<string, { section: string; code: string; la
   'default-audit-ra-rap':       { section: 'RA', code: 'RAP',  label: 'Risk Assessment Procedures' },
   'default-audit-ra-ic':        { section: 'RA', code: 'IC',   label: 'Understanding Internal Controls' },
   'default-audit-ra-itgc':      { section: 'RA', code: 'ITGC', label: 'IT General Controls (ITGC)' },
-  'default-audit-ra-fraud':     { section: 'RA', code: 'FRA',  label: 'Fraud Risk Assessment (CAS 240)' },
+  'default-audit-ra-fraud':     { section: 'RA', code: 'FRA',  label: 'Fraud Risk Assessment' },
   'default-audit-ra-srr':       { section: 'RA', code: 'SRR',  label: 'Significant Risks Register' },
   'default-audit-ra-rmm':       { section: 'RA', code: 'RMM',  label: 'Risk of Material Misstatement (RMM)' },
   'default-audit-ra-scot-rev':  { section: 'RA', code: 'S1',   label: 'SCOT — Revenue Cycle' },

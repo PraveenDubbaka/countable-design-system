@@ -372,7 +372,7 @@ export function AuditMaterialityWorksheet({ isUS = false }: AuditMaterialityWork
         <span className="text-xs font-semibold text-primary whitespace-nowrap">Objective:</span>
         <p className="text-xs text-muted-foreground flex-1 leading-relaxed">
           Establish overall materiality, performance materiality, and the clearly trivial threshold for the audit
-          and document the rationale for each determination. ({isUS ? "AU-C 320 / AU-C 450" : "CAS 320 / CAS 450"})
+          and document the rationale for each determination.
         </p>
       </div>
 
@@ -536,7 +536,7 @@ export function AuditMaterialityWorksheet({ isUS = false }: AuditMaterialityWork
             {/* Clearly Trivial Misstatements footer — inside the same card */}
             <div className="border-t border-border px-4 py-3">
               <div className="flex items-center">
-                <span className="text-sm text-foreground flex-1">Clearly trivial misstatements <span className="text-xs text-muted-foreground font-normal">({isUS ? "AU-C 450.A2" : "CAS 450.A2"})</span></span>
+                <span className="text-sm text-foreground flex-1">Clearly trivial misstatements</span>
                 <div className="flex items-center gap-8 mr-8">
                   <div className="flex flex-col items-center gap-1">
                     <span className="text-xs text-muted-foreground">Threshold (%)</span>
@@ -758,7 +758,7 @@ export function AuditMaterialityWorksheet({ isUS = false }: AuditMaterialityWork
               <span title="Identify any possible misstatements in qualitative F/S disclosures that could be material to intended users. Consider significant transactions, applicable framework, and nature of entity."><Info className="h-3.5 w-3.5 text-muted-foreground cursor-help" /></span>
             </div>
             <div className="px-6 py-5">
-              <p className="text-xs text-muted-foreground mb-2">Describe the nature of any qualitative disclosures that could be material to F/S users. ({isUS ? "AU-C 320 / ASC disclosures" : "CAS 320.A8"})</p>
+              <p className="text-xs text-muted-foreground mb-2">Describe the nature of any qualitative disclosures that could be material to F/S users.</p>
               <Textarea value={qualDisclosures} onChange={(e) => setQualDisclosures(e.target.value)} className="min-h-[80px] text-sm resize-none" placeholder="Describe qualitative disclosures that could be material…" />
             </div>
           </div>

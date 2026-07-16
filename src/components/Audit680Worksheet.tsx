@@ -44,7 +44,7 @@ const d1500_Exemptions = (): ProcRow[] => [
 ];
 const d1500_Reporting = (): ProcRow[] => [
   makeProcRow("5. Corresponding figures — revised engagement letter; additional auditor's-report paragraph; impact of transition adjustments; disclosure that comparatives and opening balances are unaudited.", "P"),
-  makeProcRow("6. Comparative F/S — revised engagement & representation letters covering two-year opinion; CAS 560 subsequent events impact across the comparative period; consistent note detail; additional audit procedures on comparatives as applicable.", "P"),
+  makeProcRow("6. Comparative F/S — revised engagement & representation letters covering two-year opinion; subsequent events impact across the comparative period; consistent note detail; additional audit procedures on comparatives as applicable.", "P"),
 ];
 
 // Financial instruments (Section 3856)

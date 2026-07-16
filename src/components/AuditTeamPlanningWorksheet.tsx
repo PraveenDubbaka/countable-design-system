@@ -113,7 +113,7 @@ const PART_B: AgendaItem[] = [
   { id: 'b9', num: '9', title: 'Fraud risks and scenarios', items: [
     'Review Form 506 (or equivalent).',
     'Discuss how fraud might occur in the entity, notwithstanding past experience of the honesty and integrity of management and TCWG.',
-    'Identify any pressures, attitudes or rationalizations that exist among senior management / accounting personnel that could lead to fraud. Refer to Appendix 1 of CAS 240.',
+    'Identify any pressures, attitudes or rationalizations that exist among senior management / accounting personnel that could lead to fraud.',
   ]},
   { id: 'b10', num: '10', title: 'Design an appropriate audit response', intro: 'Design F/S-level and assertion-level responses. Review and discuss:', items: [
     'Specific procedures to address significant risks assessed on Form 520.',

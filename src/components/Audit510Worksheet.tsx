@@ -153,7 +153,7 @@ function buildDefault(isUS = false): Data510 {
     newLegislation: "Proposed federal Clean Fuel Regulations Phase 2 and IMO MEPC 83 amendments — potential impact on bunker costs and asset useful lives. Monitoring.",
     afrf: "Canadian Accounting Standards for Private Enterprises (ASPE), Part II.",
     sigPolicies: "Revenue recognition per Section 3400; vessel depreciation 25-year straight-line; component accounting for drydocking; ASPE 3856 for financial instruments. Prior-year policies attached as Appendix.",
-    revenueRecognition: "Freight revenue recognized on % of voyage completed at period end. Charter revenue recognized straight-line over charter period. CAS 240 presumption of fraud risk on revenue NOT refuted — addressed via Form 580.",
+    revenueRecognition: "Freight revenue recognized on % of voyage completed at period end. Charter revenue recognized straight-line over charter period. Fraud risk presumption on revenue NOT refuted — addressed via Form 580.",
     lackGuidance: "Treatment of emissions allowances under ASPE — no authoritative guidance; policy selected by analogy to inventory.",
     policyChoice: "Component vs. composite depreciation; capitalization threshold for drydocking ($250k); FX translation election.",
     unusualTransactions: "Sale-and-leaseback of two feeder vessels completed Q2 2024 ($18M gain deferred). Insurance settlement on 2023 hull damage ($2.1M).",
@@ -192,7 +192,7 @@ function buildDefault(isUS = false): Data510 {
     newLegislation: "California CARB Advanced Clean Fleets rule and proposed federal port-electrification mandates — capex implications.",
     afrf: "US GAAP — FASB ASC framework. ASC 606 revenue model applied.",
     sigPolicies: "ASC 606 revenue, ASC 842 leases (right-of-use vessels), ASC 326 CECL for receivables, component depreciation on vessels.",
-    revenueRecognition: "Performance obligations recognized over time per ASC 606-10-25-27(a). CAS 240/AU-C 240 fraud presumption on revenue NOT refuted — Form 580 substantive procedures.",
+    revenueRecognition: "Performance obligations recognized over time per ASC 606-10-25-27(a). Fraud presumption on revenue NOT refuted — Form 580 substantive procedures.",
     lackGuidance: "Treatment of EPA emissions credits — no authoritative GAAP; accounting policy disclosed.",
     policyChoice: "Lease ROU asset incremental borrowing rate; capitalization threshold for drydocking ($300k).",
     unusualTransactions: "Sale-leaseback of one tugboat Q3 2024 ($6M); business interruption insurance recovery ($1.4M).",
@@ -1024,7 +1024,7 @@ export function Audit510Worksheet({ isUS = false }: { isUS?: boolean }) {
         <FieldRow label="Significant accounting policies" sublabel="Consider attaching significant policies from prior year F/S." {...sf("sigPolicies")} />
         <FieldRow
           label="Revenue recognition for each revenue stream."
-          sublabel="See Section A for revenue streams. Consider using Form 580. Note: CAS 240 presumes a risk of fraud on revenue recognition unless specifically refuted."
+          sublabel="See Section A for revenue streams. Consider using Form 580. Note: A risk of fraud is presumed on revenue recognition unless specifically refuted."
           {...sf("revenueRecognition")}
         />
         <FieldRow label="Areas with lack of authoritative guidance or consensus." sublabel="Controversial or emerging accounting areas." {...sf("lackGuidance")} />

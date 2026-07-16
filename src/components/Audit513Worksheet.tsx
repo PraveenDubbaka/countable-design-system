@@ -149,8 +149,8 @@ function buildDefault(isUS = false): Data513 {
       `Significant estimates (vessel impairment, voyage revenue cut-off) are revisited each period but without a structured risk-assessment template.`,
     specializedSkills:
       isUS
-        ? "Management engaged an external valuation specialist (Duff & Phelps) for the 2024 goodwill impairment test on the CoastLine Drayage CGU, and uses the bunker broker's MTM reports for fuel-derivative valuation. We will evaluate competence and objectivity per AU-C 500."
-        : "Management uses an external actuary (Mercer) for the seafarers' defined-benefit plan and a marine surveyor for residual-value estimates on the older container fleet. We will evaluate competence and objectivity per CAS 500.",
+        ? "Management engaged an external valuation specialist (Duff & Phelps) for the 2024 goodwill impairment test on the CoastLine Drayage CGU, and uses the bunker broker's MTM reports for fuel-derivative valuation. We will evaluate competence and objectivity."
+        : "Management uses an external actuary (Mercer) for the seafarers' defined-benefit plan and a marine surveyor for residual-value estimates on the older container fleet. We will evaluate competence and objectivity.",
     monitoringOutcomes:
       `Look-back: the FY${isUS ? "23" : "23"} allowance for doubtful accounts was over-stated by ~12% versus actual write-offs; useful-life review on two vessels was deferred. ` +
       `Management has not formally documented these outcomes — recommend introducing an annual estimate look-back schedule.`,

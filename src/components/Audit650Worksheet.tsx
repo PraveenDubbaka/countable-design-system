@@ -195,7 +195,7 @@ export function Audit650Worksheet() {
   // Date integrity warning — auditor's report must be ≥ FS approval
   const dateWarning =
     data.fsApprovalDate && data.auditorReportDate && data.auditorReportDate < data.fsApprovalDate
-      ? "Auditor's report date is earlier than the date of F/S approval — CAS 560 requires this to be on or after."
+      ? "Auditor's report date is earlier than the date of F/S approval — the report date must be on or after the F/S approval date."
       : "";
 
   return (

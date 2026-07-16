@@ -86,7 +86,7 @@ const CATEGORY_DEFS: { key: CategoryKey; title: string; hint: string }[] = [
   {
     key: "journalEntries",
     title: "Controls over journal entries",
-    hint: "Required by CAS 315. Includes non-standard, non-recurring entries and adjustments.",
+    hint: "Includes non-standard, non-recurring entries and adjustments.",
   },
   {
     key: "significantRisks",

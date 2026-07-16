@@ -77,27 +77,27 @@ const DEFAULT_PROCEDURES: Omit<ProcedureRow, "id" | "wpRef" | "psc" | "exception
   {
     title: "1. Identify revenue streams",
     guidance: "Obtain an understanding of the types of revenue and revenue transactions for the entity.",
-    psa: "CAS 315",
+    psa: "",
   },
   {
     title: "2. Evaluate fraud risk in revenue recognition",
     guidance: "For each revenue stream identified, assess the likelihood and magnitude (inherent risk) that fraud may exist in revenue recognition. Record your results on Form 520.",
-    psa: "CAS 240.26",
+    psa: "",
   },
   {
     title: "3. Conclude on inherent risk",
     guidance: "(a) If a risk of material misstatement due to fraud in revenue recognition has not been identified, document the reasons for that conclusion. (b) If a risk has been identified, document the reasons for the assessment and ensure the risk is treated as a significant risk (Form 520).",
-    psa: "CAS 240.27 / .28",
+    psa: "",
   },
   {
     title: "4. Understand internal controls relevant to the audit",
     guidance: "When a fraud risk in revenue recognition is identified, obtain an understanding of the entity's controls (including control activities) relevant to the identified risk.",
-    psa: "CAS 315.21",
+    psa: "",
   },
   {
     title: "5. Design further audit procedures",
     guidance: "Design and perform further audit procedures to respond to the identified risk. Record risk-specific audit procedures on Form 705.",
-    psa: "CAS 330",
+    psa: "",
   },
 ];
 
