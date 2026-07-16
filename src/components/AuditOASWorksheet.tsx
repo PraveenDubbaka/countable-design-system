@@ -556,22 +556,22 @@ function WorksheetInner({ isUS }: { isUS: boolean }) {
               />
             </div>
 
-            {/* Sign-off */}
-            <WorksheetSignOff worksheetKey="oas" engagementId={engagementId} />
+          </div>
 
-            {/* Conclude action */}
-            <div className="flex justify-end pt-1">
-              {concluded ? (
-                <div className="rounded-md border border-green-200 bg-green-50 px-4 py-2 text-xs text-green-800 font-medium">
-                  Concluded on {concludedOn}
-                </div>
-              ) : (
-                <Button disabled={locked} onClick={handleConclude}>
-                  <Check className="h-4 w-4 mr-1.5" />Conclude worksheet
-                </Button>
-              )}
-            </div>
+          {/* Sign-off */}
+          <WorksheetSignOff worksheetKey="oas" engagementId={engagementId} />
 
+          {/* Conclude action */}
+          <div className="flex justify-end pt-1">
+            {concluded ? (
+              <div className="rounded-md border border-green-200 bg-green-50 px-4 py-2 text-xs text-green-800 font-medium">
+                Concluded on {concludedOn}
+              </div>
+            ) : (
+              <Button disabled={locked} onClick={handleConclude}>
+                <Check className="h-4 w-4 mr-1.5" />Conclude worksheet
+              </Button>
+            )}
           </div>
         </div>
       </div>
