@@ -2559,6 +2559,71 @@ export default function EngagementDetail() {
             <Audit680Worksheet />
           ) : checklist ? (
             <div className="p-4 bg-background">
+              {/* 501A — Luka variance analysis CTA */}
+              {checklistKey === 'aud-ra-pap501a' && (
+                <div className="mb-4 rounded-lg border border-border bg-card px-4 py-3.5 flex items-center gap-4">
+                  <div
+                    className="w-8 h-8 rounded-full flex items-center justify-center shrink-0"
+                    style={{ background: 'linear-gradient(135deg,#9747FF,#115697)' }}
+                  >
+                    <LukaIcon size={14} bare />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-semibold text-foreground">Variance Analysis for 501-B</p>
+                    <p className="text-xs text-muted-foreground mt-0.5">
+                      {pap501Accepted
+                        ? 'Luka has already populated Part B & C. Update numbers or navigate there to review.'
+                        : 'Run Luka to pull financial data, compute variances, and auto-populate Part B & C.'}
+                    </p>
+                  </div>
+                  {pap501Accepted ? (
+                    <div className="flex items-center gap-2 shrink-0">
+                      <Button
+                        size="sm"
+                        variant="secondary"
+                        className="h-8 px-3 text-xs gap-1.5"
+                        onClick={() => {
+                          const client = engagementId ? engagementsData[engagementId]?.client : undefined;
+                          const engLabel = [client, engagementId].filter(Boolean).join(' · ');
+                          const connectedApp = engagementId ? (engagementsData[engagementId] as { connectedApp?: string } | undefined)?.connectedApp : undefined;
+                          const sources = connectedApp
+                            ? [`${connectedApp.charAt(0).toUpperCase() + connectedApp.slice(1)} connection`, 'Predecessor file']
+                            : ['Trial balance', 'Predecessor file'];
+                          setLukaPap501Config({ engLabel, sources, isRegenerate: true });
+                          setLukaOpen(true);
+                        }}
+                      >
+                        <RefreshCw className="h-3 w-3" />Update
+                      </Button>
+                      <Button
+                        size="sm"
+                        className="h-8 px-3 text-xs"
+                        onClick={() => navigate(`/engagements/${engagementId}/checklist/aud-ra-pap501bc`)}
+                      >
+                        Go to 501-B →
+                      </Button>
+                    </div>
+                  ) : (
+                    <button
+                      onClick={() => {
+                        const client = engagementId ? engagementsData[engagementId]?.client : undefined;
+                        const engLabel = [client, engagementId].filter(Boolean).join(' · ');
+                        const connectedApp = engagementId ? (engagementsData[engagementId] as { connectedApp?: string } | undefined)?.connectedApp : undefined;
+                        const sources = connectedApp
+                          ? [`${connectedApp.charAt(0).toUpperCase() + connectedApp.slice(1)} connection`, 'Predecessor file']
+                          : ['Trial balance', 'Predecessor file'];
+                        setLukaPap501Config({ engLabel, sources });
+                        setLukaOpen(true);
+                      }}
+                      className="flex items-center gap-2 h-8 px-4 rounded-lg text-xs font-semibold text-white transition-opacity hover:opacity-90 shrink-0"
+                      style={{ background: 'linear-gradient(135deg,#9747FF,#115697)', boxShadow: '0 2px 8px hsla(270,60%,50%,0.3)' }}
+                    >
+                      <LukaIcon size={14} bare />
+                      Run Luka for Variance Analysis
+                    </button>
+                  )}
+                </div>
+              )}
               {/* ASM import banner */}
               {(checklistKey === 'aud-asm' || checklistKey === 'aud-us-asm') && checklist && (
                 <AuditASMImportBanner
@@ -2856,6 +2921,9 @@ export default function EngagementDetail() {
         window.dispatchEvent(new CustomEvent('pap501-luka-accepted', { detail: { engagementId } }));
         setPap501Accepted(true);
         setLukaOpen(false);
+        if (checklistKey === 'aud-ra-pap501a') {
+          navigate(`/engagements/${engagementId}/checklist/aud-ra-pap501bc`);
+        }
       }}
       onAutoFillConfirmed={handleAutoFillConfirmed}
       onAutoFillAll={handleAutoFillAll}
