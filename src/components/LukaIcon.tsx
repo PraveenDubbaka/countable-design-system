@@ -27,7 +27,7 @@ function starPath(cx: number, cy: number, R: number, r: number): string {
 }
 
 export function LukaIcon({ size = 28, animated = false, bare = false, className = "" }: LukaIconProps) {
-  const svgSize = size * 0.78;
+  const svgSize = bare ? size : size * 0.78;
   const dur = animated ? "1.3s" : "2.6s";
 
   const stars = (
