@@ -12,6 +12,7 @@ import {
 import { Info, RefreshCw, Trash2, Plus, FileText } from "lucide-react";
 import { AddToMyTemplatesDialog } from "@/components/AddToMyTemplatesDialog";
 import { toast } from "sonner";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 
 // ── Types ──────────────────────────────────────────────────────────────────────
 
@@ -466,9 +467,12 @@ export function AuditScopeWorksheet({
           <div className="bg-card text-card-foreground border border-border shadow-[0_2px_8px_hsl(213_40%_20%/0.06)] rounded-md overflow-hidden">
             <div className="px-6 py-3.5 bg-card border-b border-border flex items-center gap-3">
               <span className="text-sm font-semibold text-foreground">Pervasive Material Misstatements</span>
-              <span title="Identify any misstatements that could have a pervasive effect across multiple financial statement areas.">
-                <Info className="h-3.5 w-3.5 text-muted-foreground cursor-help" />
-              </span>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Info className="h-3.5 w-3.5 text-muted-foreground cursor-help" />
+                </TooltipTrigger>
+                <TooltipContent>Identify any misstatements that could have a pervasive effect across multiple financial statement areas.</TooltipContent>
+              </Tooltip>
             </div>
             <div className="overflow-x-auto">
               <table className="w-full">
@@ -562,9 +566,12 @@ export function AuditScopeWorksheet({
           <div className="bg-card text-card-foreground border border-border shadow-[0_2px_8px_hsl(213_40%_20%/0.06)] rounded-md overflow-hidden">
             <div className="px-6 py-3.5 bg-card border-b border-border flex items-center gap-3">
               <span className="text-sm font-semibold text-foreground">Financial Statement Disclosures</span>
-              <span title="Identify significant disclosures and document planned audit procedures.">
-                <Info className="h-3.5 w-3.5 text-muted-foreground cursor-help" />
-              </span>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Info className="h-3.5 w-3.5 text-muted-foreground cursor-help" />
+                </TooltipTrigger>
+                <TooltipContent>Identify significant disclosures and document planned audit procedures.</TooltipContent>
+              </Tooltip>
             </div>
             <div className="overflow-x-auto">
               <table className="w-full">

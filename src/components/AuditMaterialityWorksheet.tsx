@@ -14,6 +14,7 @@ import { Info, RefreshCw, Trash2, Plus, Calendar } from "lucide-react";
 import { RefButton, RefDoc } from "@/components/RefButton";
 import { AddToMyTemplatesDialog } from "@/components/AddToMyTemplatesDialog";
 import { toast } from "sonner";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 
 // ── Types ──────────────────────────────────────────────────────────────────────
 
@@ -384,9 +385,12 @@ export function AuditMaterialityWorksheet({ isUS = false }: AuditMaterialityWork
           <div className="bg-card text-card-foreground border border-border shadow-[0_2px_8px_hsl(213_40%_20%/0.06)] rounded-md overflow-hidden">
             <div className="px-6 py-3.5 bg-card border-b border-border flex items-center gap-3">
               <span className="text-sm font-semibold text-foreground">Preliminary Materiality</span>
-              <span title="Set the period dates and populate the table below to calculate overall materiality.">
-                <Info className="h-3.5 w-3.5 text-muted-foreground cursor-help" />
-              </span>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Info className="h-3.5 w-3.5 text-muted-foreground cursor-help" />
+                </TooltipTrigger>
+                <TooltipContent>Set the period dates and populate the table below to calculate overall materiality.</TooltipContent>
+              </Tooltip>
               <Input
                 type="date"
                 value={periodStart}
@@ -572,9 +576,12 @@ export function AuditMaterialityWorksheet({ isUS = false }: AuditMaterialityWork
           <div className="bg-card text-card-foreground border border-border shadow-[0_2px_8px_hsl(213_40%_20%/0.06)] rounded-md overflow-hidden">
             <div className="px-6 py-3.5 bg-card border-b border-border flex items-center gap-3">
               <span className="text-sm font-semibold text-foreground">Performance Materiality</span>
-              <span title="Reduces the risk that aggregate uncorrected and undetected misstatements exceed overall materiality.">
-                <Info className="h-3.5 w-3.5 text-muted-foreground cursor-help" />
-              </span>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Info className="h-3.5 w-3.5 text-muted-foreground cursor-help" />
+                </TooltipTrigger>
+                <TooltipContent>Reduces the risk that aggregate uncorrected and undetected misstatements exceed overall materiality.</TooltipContent>
+              </Tooltip>
             </div>
             <div className="px-6 py-5">
               <table className="w-full text-sm">
@@ -616,9 +623,12 @@ export function AuditMaterialityWorksheet({ isUS = false }: AuditMaterialityWork
           <div className="bg-card text-card-foreground border border-border shadow-[0_2px_8px_hsl(213_40%_20%/0.06)] rounded-md overflow-hidden">
             <div className="px-6 py-3.5 bg-card border-b border-border flex items-center gap-3">
               <span className="text-sm font-semibold text-foreground">Intended Users</span>
-              <span title="Identify the primary users of the financial statements and the factors affecting their decision making.">
-                <Info className="h-3.5 w-3.5 text-muted-foreground cursor-help" />
-              </span>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Info className="h-3.5 w-3.5 text-muted-foreground cursor-help" />
+                </TooltipTrigger>
+                <TooltipContent>Identify the primary users of the financial statements and the factors affecting their decision making.</TooltipContent>
+              </Tooltip>
             </div>
             <div className="overflow-x-auto">
               <table className="w-full">
@@ -687,9 +697,12 @@ export function AuditMaterialityWorksheet({ isUS = false }: AuditMaterialityWork
           <div className="bg-card text-card-foreground border border-border shadow-[0_2px_8px_hsl(213_40%_20%/0.06)] rounded-md overflow-hidden">
             <div className="px-6 py-3.5 bg-card border-b border-border flex items-center gap-3">
               <span className="text-sm font-semibold text-foreground">Qualitative Considerations</span>
-              <span title="Document any qualitative factors that influenced the materiality determination.">
-                <Info className="h-3.5 w-3.5 text-muted-foreground cursor-help" />
-              </span>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Info className="h-3.5 w-3.5 text-muted-foreground cursor-help" />
+                </TooltipTrigger>
+                <TooltipContent>Document any qualitative factors that influenced the materiality determination.</TooltipContent>
+              </Tooltip>
             </div>
             <div className="overflow-x-auto">
               <table className="w-full">
@@ -758,7 +771,12 @@ export function AuditMaterialityWorksheet({ isUS = false }: AuditMaterialityWork
           <div className="bg-card text-card-foreground border border-border shadow-[0_2px_8px_hsl(213_40%_20%/0.06)] rounded-md overflow-hidden">
             <div className="px-6 py-3.5 bg-card border-b border-border flex items-center gap-3">
               <span className="text-sm font-semibold text-foreground">B. Possible Misstatements in Qualitative Disclosures</span>
-              <span title="Identify any possible misstatements in qualitative F/S disclosures that could be material to intended users. Consider significant transactions, applicable framework, and nature of entity."><Info className="h-3.5 w-3.5 text-muted-foreground cursor-help" /></span>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Info className="h-3.5 w-3.5 text-muted-foreground cursor-help" />
+                </TooltipTrigger>
+                <TooltipContent>Identify any possible misstatements in qualitative F/S disclosures that could be material to intended users. Consider significant transactions, applicable framework, and nature of entity.</TooltipContent>
+              </Tooltip>
             </div>
             <div className="px-6 py-5">
               <p className="text-xs text-muted-foreground mb-2">Describe the nature of any qualitative disclosures that could be material to F/S users.</p>
@@ -770,7 +788,12 @@ export function AuditMaterialityWorksheet({ isUS = false }: AuditMaterialityWork
           <div className="bg-card text-card-foreground border border-border shadow-[0_2px_8px_hsl(213_40%_20%/0.06)] rounded-md overflow-hidden">
             <div className="px-6 py-3.5 bg-card border-b border-border flex items-center gap-3">
               <span className="text-sm font-semibold text-foreground">C. Adjusted Performance Materiality Levels</span>
-              <span title="Set adjusted performance materiality for specific F/S areas with higher risk. Set at an amount lower than overall performance materiality."><Info className="h-3.5 w-3.5 text-muted-foreground cursor-help" /></span>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Info className="h-3.5 w-3.5 text-muted-foreground cursor-help" />
+                </TooltipTrigger>
+                <TooltipContent>Set adjusted performance materiality for specific F/S areas with higher risk. Set at an amount lower than overall performance materiality.</TooltipContent>
+              </Tooltip>
             </div>
             <div className="overflow-x-auto">
               <table className="w-full">
@@ -809,7 +832,12 @@ export function AuditMaterialityWorksheet({ isUS = false }: AuditMaterialityWork
           <div className="bg-card text-card-foreground border border-border shadow-[0_2px_8px_hsl(213_40%_20%/0.06)] rounded-md overflow-hidden">
             <div className="px-6 py-3.5 bg-card border-b border-border flex items-center gap-3">
               <span className="text-sm font-semibold text-foreground">D. Materiality for Specific Circumstances</span>
-              <span title="Set lower materiality for specific classes of transactions, balances or disclosures where users are particularly sensitive."><Info className="h-3.5 w-3.5 text-muted-foreground cursor-help" /></span>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Info className="h-3.5 w-3.5 text-muted-foreground cursor-help" />
+                </TooltipTrigger>
+                <TooltipContent>Set lower materiality for specific classes of transactions, balances or disclosures where users are particularly sensitive.</TooltipContent>
+              </Tooltip>
             </div>
             <div className="overflow-x-auto">
               <table className="w-full">
@@ -846,7 +874,12 @@ export function AuditMaterialityWorksheet({ isUS = false }: AuditMaterialityWork
           <div className="bg-card text-card-foreground border border-border shadow-[0_2px_8px_hsl(213_40%_20%/0.06)] rounded-md overflow-hidden">
             <div className="px-6 py-3.5 bg-card border-b border-border flex items-center gap-3">
               <span className="text-sm font-semibold text-foreground">E. Performance Materiality for Specific Circumstances</span>
-              <span title="Performance materiality applied to the specific circumstances identified in Step D."><Info className="h-3.5 w-3.5 text-muted-foreground cursor-help" /></span>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Info className="h-3.5 w-3.5 text-muted-foreground cursor-help" />
+                </TooltipTrigger>
+                <TooltipContent>Performance materiality applied to the specific circumstances identified in Step D.</TooltipContent>
+              </Tooltip>
             </div>
             <div className="overflow-x-auto">
               <table className="w-full">

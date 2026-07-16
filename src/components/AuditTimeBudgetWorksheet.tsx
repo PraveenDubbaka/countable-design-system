@@ -6,6 +6,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 import {
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
   useTimeEntries, ROLE_TO_TB_ROW, ROLE_LABELS,
   type RoleKey, type TimeEntry,
 } from '@/lib/useTimeEntries';
@@ -92,7 +93,12 @@ export function AuditTimeBudgetWorksheet({ isUS = false }: { isUS?: boolean }) {
           <div className="bg-card border border-border shadow-[0_2px_8px_hsl(213_40%_20%/0.06)] rounded-md overflow-hidden">
             <div className="px-6 py-3.5 border-b border-border flex items-center gap-3">
               <span className="text-sm font-semibold text-foreground">Average Charge-Out Rate</span>
-              <span title="Actual $ = tracked hours × Actual rate."><Info className="h-3.5 w-3.5 text-muted-foreground cursor-help" /></span>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Info className="h-3.5 w-3.5 text-muted-foreground cursor-help" />
+                </TooltipTrigger>
+                <TooltipContent>Actual $ = tracked hours × Actual rate.</TooltipContent>
+              </Tooltip>
             </div>
             <div className="px-6 py-5">
               <div className="flex items-center gap-8">

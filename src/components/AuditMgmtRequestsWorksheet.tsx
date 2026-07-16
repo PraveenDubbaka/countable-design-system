@@ -7,6 +7,7 @@ import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from '@/components/ui/select';
 import { toast } from 'sonner';
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 
 interface AuditMgmtRequestsWorksheetProps {
   isUS?: boolean;
@@ -84,9 +85,12 @@ export function AuditMgmtRequestsWorksheet({ isUS = false }: AuditMgmtRequestsWo
           <div className="bg-card text-card-foreground border border-border shadow-[0_2px_8px_hsl(213_40%_20%/0.06)] rounded-md overflow-hidden">
             <div className="px-6 py-3.5 bg-card border-b border-border flex items-center gap-3">
               <span className="text-sm font-semibold text-foreground">Information &amp; Analysis Requested from Management</span>
-              <span title="Track all requests made to management — documents, schedules, analyses — and monitor receipt status.">
-                <Info className="h-3.5 w-3.5 text-muted-foreground cursor-help" />
-              </span>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Info className="h-3.5 w-3.5 text-muted-foreground cursor-help" />
+                </TooltipTrigger>
+                <TooltipContent>Track all requests made to management — documents, schedules, analyses — and monitor receipt status.</TooltipContent>
+              </Tooltip>
             </div>
             <div className="overflow-x-auto">
               <table className="w-full">

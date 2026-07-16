@@ -5,6 +5,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Info, Plus } from "lucide-react";
 import { AddToMyTemplatesDialog } from "@/components/AddToMyTemplatesDialog";
 import { toast } from "sonner";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
@@ -314,9 +315,12 @@ export function AuditPAPWorksheet({ isUS = false }: AuditPAPWorksheetProps) {
       <div className="px-6 py-3.5 bg-card border-b border-border flex items-center gap-3">
         <span className="text-sm font-semibold text-foreground">{sTitle}</span>
         {tooltip && (
-          <span title={tooltip}>
-            <Info className="h-3.5 w-3.5 text-muted-foreground cursor-help" />
-          </span>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Info className="h-3.5 w-3.5 text-muted-foreground cursor-help" />
+            </TooltipTrigger>
+            <TooltipContent>{tooltip}</TooltipContent>
+          </Tooltip>
         )}
       </div>
       {children}

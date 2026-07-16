@@ -6,6 +6,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 import {
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
   useTimeEntries, ROLE_LABELS,
   type RoleKey,
 } from '@/lib/useTimeEntries';
@@ -235,9 +236,12 @@ export function AuditDetailedBudgetWorksheet({ isUS = false }: AuditDetailedBudg
           <div className="bg-card text-card-foreground border border-border shadow-[0_2px_8px_hsl(213_40%_20%/0.06)] rounded-md overflow-hidden">
             <div className="px-6 py-3.5 bg-card border-b border-border flex items-center gap-3">
               <span className="text-sm font-semibold text-foreground">Staff Resources</span>
-              <span title="Enter hours and charge-out rate per role. Amount = Hours × Rate.">
-                <Info className="h-3.5 w-3.5 text-muted-foreground cursor-help" />
-              </span>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Info className="h-3.5 w-3.5 text-muted-foreground cursor-help" />
+                </TooltipTrigger>
+                <TooltipContent>Enter hours and charge-out rate per role. Amount = Hours × Rate.</TooltipContent>
+              </Tooltip>
             </div>
             <div className="overflow-x-auto">
               <table className="w-full">
@@ -289,9 +293,12 @@ export function AuditDetailedBudgetWorksheet({ isUS = false }: AuditDetailedBudg
           <div className="bg-card text-card-foreground border border-border shadow-[0_2px_8px_hsl(213_40%_20%/0.06)] rounded-md overflow-hidden">
             <div className="px-6 py-3.5 bg-card border-b border-border flex items-center gap-3">
               <span className="text-sm font-semibold text-foreground">Detailed Time Budget</span>
-              <span title="Estimate hours by task area across all phases of the engagement.">
-                <Info className="h-3.5 w-3.5 text-muted-foreground cursor-help" />
-              </span>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Info className="h-3.5 w-3.5 text-muted-foreground cursor-help" />
+                </TooltipTrigger>
+                <TooltipContent>Estimate hours by task area across all phases of the engagement.</TooltipContent>
+              </Tooltip>
             </div>
             <div className="overflow-x-auto">
               <table className="w-full">

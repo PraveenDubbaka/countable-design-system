@@ -12,6 +12,7 @@ import { RefButton, RefDoc } from "@/components/RefButton";
 import { readJsonFromLocalStorage, writeJsonToLocalStorage } from "@/lib/safeJson";
 import { loadEngagements } from "@/store/engagementsStore";
 import { WorksheetSignOff } from "@/components/WorksheetSignOff";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 
 // ── Flow state machine ─────────────────────────────────────────────────────────
 
@@ -650,9 +651,12 @@ export function AuditPAP501Worksheet({ isUS = false }: { isUS?: boolean }) {
             <div className="bg-card text-card-foreground border border-border shadow-[0_2px_8px_hsl(213_40%_20%/0.06)] rounded-md overflow-hidden">
               <div className="px-6 py-3.5 bg-card border-b border-border flex items-center gap-3">
                 <span className="text-sm font-semibold text-foreground">Comparatives Setup</span>
-                <span title="Select which comparatives to include and the number of sales streams. Auto-populated data flows from engagement setup and the 420 Materiality worksheet.">
-                  <Info className="h-3.5 w-3.5 text-muted-foreground cursor-help" />
-                </span>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Info className="h-3.5 w-3.5 text-muted-foreground cursor-help" />
+                  </TooltipTrigger>
+                  <TooltipContent>Select which comparatives to include and the number of sales streams. Auto-populated data flows from engagement setup and the 420 Materiality worksheet.</TooltipContent>
+                </Tooltip>
               </div>
               <div className="px-6 py-4 grid grid-cols-1 md:grid-cols-4 gap-6">
                 <div className="space-y-1.5">
@@ -691,9 +695,12 @@ export function AuditPAP501Worksheet({ isUS = false }: { isUS?: boolean }) {
                 <div className="bg-card text-card-foreground border border-border shadow-[0_2px_8px_hsl(213_40%_20%/0.06)] rounded-md overflow-hidden">
                   <div className="px-6 py-3.5 bg-card border-b border-border flex items-center gap-3">
                     <span className="text-sm font-semibold text-foreground">Income Statement</span>
-                    <span title="Compare current period to budget/forecast and prior period. Flag material or unexpected variances.">
-                      <Info className="h-3.5 w-3.5 text-muted-foreground cursor-help" />
-                    </span>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Info className="h-3.5 w-3.5 text-muted-foreground cursor-help" />
+                      </TooltipTrigger>
+                      <TooltipContent>Compare current period to budget/forecast and prior period. Flag material or unexpected variances.</TooltipContent>
+                    </Tooltip>
                   </div>
                   <div className="overflow-x-auto">
                     <table className="w-full text-xs">
@@ -752,9 +759,12 @@ export function AuditPAP501Worksheet({ isUS = false }: { isUS?: boolean }) {
                 <div className="bg-card text-card-foreground border border-border shadow-[0_2px_8px_hsl(213_40%_20%/0.06)] rounded-md overflow-hidden">
                   <div className="px-6 py-3.5 bg-card border-b border-border flex items-center gap-3">
                     <span className="text-sm font-semibold text-foreground">Balance Sheet</span>
-                    <span title="Compare current period balances to budget/forecast and prior period. Flag material variances.">
-                      <Info className="h-3.5 w-3.5 text-muted-foreground cursor-help" />
-                    </span>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Info className="h-3.5 w-3.5 text-muted-foreground cursor-help" />
+                      </TooltipTrigger>
+                      <TooltipContent>Compare current period balances to budget/forecast and prior period. Flag material variances.</TooltipContent>
+                    </Tooltip>
                   </div>
                   <div className="overflow-x-auto">
                     <table className="w-full text-xs">
@@ -815,9 +825,12 @@ export function AuditPAP501Worksheet({ isUS = false }: { isUS?: boolean }) {
                 <div className="bg-card text-card-foreground border border-border shadow-[0_2px_8px_hsl(213_40%_20%/0.06)] rounded-md overflow-hidden">
                   <div className="px-6 py-3.5 bg-card border-b border-border flex items-center gap-3">
                     <span className="text-sm font-semibold text-foreground">Ratios</span>
-                    <span title="Enter key liquidity, activity and leverage ratios for the current period, budget/forecast and prior period.">
-                      <Info className="h-3.5 w-3.5 text-muted-foreground cursor-help" />
-                    </span>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Info className="h-3.5 w-3.5 text-muted-foreground cursor-help" />
+                      </TooltipTrigger>
+                      <TooltipContent>Enter key liquidity, activity and leverage ratios for the current period, budget/forecast and prior period.</TooltipContent>
+                    </Tooltip>
                   </div>
                   <div className="overflow-x-auto">
                     <table className="w-full text-xs">
@@ -844,9 +857,12 @@ export function AuditPAP501Worksheet({ isUS = false }: { isUS?: boolean }) {
                 <div className="bg-card text-card-foreground border border-border shadow-[0_2px_8px_hsl(213_40%_20%/0.06)] rounded-md overflow-hidden">
                   <div className="px-6 py-3.5 bg-card border-b border-border flex items-center gap-3">
                     <span className="text-sm font-semibold text-foreground">Matters Requiring Audit Response</span>
-                    <span title="Document each matter flagged in Part B: management response and audit implications.">
-                      <Info className="h-3.5 w-3.5 text-muted-foreground cursor-help" />
-                    </span>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Info className="h-3.5 w-3.5 text-muted-foreground cursor-help" />
+                      </TooltipTrigger>
+                      <TooltipContent>Document each matter flagged in Part B: management response and audit implications.</TooltipContent>
+                    </Tooltip>
                   </div>
                   <div className="overflow-x-auto">
                     <table className="w-full text-xs">
@@ -884,9 +900,12 @@ export function AuditPAP501Worksheet({ isUS = false }: { isUS?: boolean }) {
                 <div className="bg-card text-card-foreground border border-border shadow-[0_2px_8px_hsl(213_40%_20%/0.06)] rounded-md overflow-hidden">
                   <div className="px-6 py-3.5 bg-card border-b border-border flex items-center gap-3">
                     <span className="text-sm font-semibold text-foreground">Fraud Risk Conclusion</span>
-                    <span title="Conclude on whether analytical procedures identified unusual or unexpected relationships indicating risks of material misstatement due to fraud.">
-                      <Info className="h-3.5 w-3.5 text-muted-foreground cursor-help" />
-                    </span>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Info className="h-3.5 w-3.5 text-muted-foreground cursor-help" />
+                      </TooltipTrigger>
+                      <TooltipContent>Conclude on whether analytical procedures identified unusual or unexpected relationships indicating risks of material misstatement due to fraud.</TooltipContent>
+                    </Tooltip>
                   </div>
                   <div className="px-6 py-5">
                     <Textarea
