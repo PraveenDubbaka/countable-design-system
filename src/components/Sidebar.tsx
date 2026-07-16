@@ -2409,28 +2409,34 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
                                         <DropdownMenuSubContent className="w-56">
                                           {node.children.map(child => {
                                             const isHidden = (hiddenChildren[node.id] ?? []).includes(child.id);
+                                            const toggle = () => {
+                                              setHiddenChildren(prev => {
+                                                const current = prev[node.id] ?? [];
+                                                const updated = isHidden
+                                                  ? current.filter(id => id !== child.id)
+                                                  : [...current, child.id];
+                                                const next = { ...prev, [node.id]: updated };
+                                                const engId = location.pathname.split("/engagements/")[1]?.split("/")[0];
+                                                if (engId) writeJsonToLocalStorage(`sidebar-hidden-${engId}`, next);
+                                                return next;
+                                              });
+                                            };
                                             return (
-                                              <DropdownMenuCheckboxItem
+                                              <DropdownMenuItem
                                                 key={child.id}
-                                                checked={!isHidden}
-                                                onCheckedChange={checked => {
-                                                  setHiddenChildren(prev => {
-                                                    const current = prev[node.id] ?? [];
-                                                    const updated = checked
-                                                      ? current.filter(id => id !== child.id)
-                                                      : [...current, child.id];
-                                                    const next = { ...prev, [node.id]: updated };
-                                                    const engId = location.pathname.split("/engagements/")[1]?.split("/")[0];
-                                                    if (engId) writeJsonToLocalStorage(`sidebar-hidden-${engId}`, next);
-                                                    return next;
-                                                  });
-                                                }}
+                                                className="gap-2 cursor-pointer"
+                                                onSelect={e => e.preventDefault()}
+                                                onClick={e => { e.stopPropagation(); toggle(); }}
                                               >
+                                                <Checkbox
+                                                  checked={!isHidden}
+                                                  className="pointer-events-none h-4 w-4 shrink-0"
+                                                />
                                                 <span className="flex items-center gap-1.5 min-w-0">
                                                   {child.code && <span className="text-[10px] font-semibold text-muted-foreground shrink-0">{child.code}</span>}
                                                   <span className="truncate">{child.label}</span>
                                                 </span>
-                                              </DropdownMenuCheckboxItem>
+                                              </DropdownMenuItem>
                                             );
                                           })}
                                         </DropdownMenuSubContent>
