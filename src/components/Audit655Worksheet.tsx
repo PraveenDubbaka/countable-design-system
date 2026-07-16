@@ -227,7 +227,7 @@ export function Audit655Worksheet() {
       <RowsTable which="rows" title="Statement of operations & financial position" rows={data.rows} />
       <RowsTable which="ratios" title="Key ratios" rows={data.ratios} />
 
-      <WorksheetSection title="Overall evaluation (CAS 520.6)">
+      <WorksheetSection title="Overall evaluation">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div><Label>Unexpected relationships identified?</Label><YNSelect value={data.unexpectedRelationships} onChange={v => setData(d => ({ ...d, unexpectedRelationships: v as YN }))} locked={locked} /></div>
           <div><Label>New risk factors identified?</Label><YNSelect value={data.newRisksIdentified} onChange={v => setData(d => ({ ...d, newRisksIdentified: v as YN }))} locked={locked} /></div>

@@ -63,8 +63,6 @@ export function AuditMgmtRequestsWorksheet({ isUS = false }: AuditMgmtRequestsWo
     return <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-amber-100 text-amber-700 whitespace-nowrap">Outstanding</span>;
   };
 
-  const standard = isUS ? 'AU-C 300' : 'CAS 300';
-
   return (
     <div className="flex flex-col h-full">
 
@@ -73,7 +71,7 @@ export function AuditMgmtRequestsWorksheet({ isUS = false }: AuditMgmtRequestsWo
         <Info className="h-3.5 w-3.5 text-primary mt-0.5 shrink-0" />
         <span className="text-xs font-semibold text-primary whitespace-nowrap">Objective:</span>
         <p className="text-xs text-muted-foreground flex-1 leading-relaxed">
-          Document requests made to management for preparing analysis or obtaining documents that will assist in the audit. ({standard})
+          Document requests made to management for preparing analysis or obtaining documents that will assist in the audit.
           &nbsp;<span className="font-medium">Com:</span> V = Verbal &nbsp;|&nbsp; L = Letter &nbsp;|&nbsp; Em = Email
         </p>
       </div>

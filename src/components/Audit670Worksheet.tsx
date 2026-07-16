@@ -182,7 +182,7 @@ export function Audit670Worksheet() {
       </WorksheetSection>
 
       <LinkedRisksCard overallRisk={overall} risks={jeRisks}
-        emptyHint="No JE / management-override risks tagged in Form 520. Management-override is presumed (CAS 240.32); document attributes selected."
+        emptyHint="No JE / management-override risks tagged in Form 520. Management-override is presumed; document attributes selected."
         storageKey={`audit-670-risks-${engagementId ?? "default"}`} locked={locked} />
 
       <WorksheetSection title="Selection scope">

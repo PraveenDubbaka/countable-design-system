@@ -81,7 +81,7 @@ const CA_SEED = {
     areaRow(true,  "New vessel charter agreement ($2.1M), refinanced credit facility, fleet expansion (2 vessels added)."),
     areaRow(true,  "No new ASPE standards effective for this period. Review ASPE 3065 for new lease terms."),
     areaRow(true,  "Prior year: minor AR cut-off adjustment ($42K). Management addressed through improved invoicing."),
-    areaRow(true,  "Revenue recognition (ASPE 3400) — significant risk. Management override — presumed risk (CAS 240). Going concern — monitor leverage. See Form 540."),
+    areaRow(true,  "Revenue recognition (ASPE 3400) — significant risk. Management override — presumed risk. Going concern — monitor leverage. See Form 540."),
     areaRow(false, "N/A"),
     areaRow(false, "N/A"),
     areaRow(false, "N/A — single entity"),
@@ -166,7 +166,6 @@ function WorksheetInner({ isUS }: { isUS: boolean }) {
   const engMeta  = engagementId ? getEngagementMeta(engagementId) : null;
   const engRecord = loadEngagements().find(e => e.id === engagementId);
   const seed = isUS ? US_SEED : CA_SEED;
-  const standardRef = isUS ? "(AU-C 300)" : "(CAS 300.7-8)";
 
   const saved = readJsonFromLocalStorage<Record<string, unknown>>(storageKey, {});
   function get<T>(key: string, fallback: T): T {
@@ -416,7 +415,6 @@ function WorksheetInner({ isUS }: { isUS: boolean }) {
         <span className="text-xs font-semibold text-primary whitespace-nowrap">Objective:</span>
         <p className="text-xs text-muted-foreground flex-1 leading-relaxed">
           To document the scope, timing and direction of the audit as a guide for the development of the audit plan.{" "}
-          <span className="text-foreground font-medium">Reference: {standardRef}</span>{" · "}
           <span className="font-medium text-foreground">Legend:</span> EQCR = Engagement quality control review. TCWG = Those charged with governance.
           
         </p>

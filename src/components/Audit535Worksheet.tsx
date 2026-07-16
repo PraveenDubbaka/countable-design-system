@@ -270,7 +270,7 @@ export function Audit535Worksheet() {
         <Info className="h-3.5 w-3.5 text-primary mt-0.5 shrink-0" />
         <span className="text-xs font-semibold text-primary whitespace-nowrap">Objective:</span>
         <p className="text-xs text-muted-foreground flex-1 leading-relaxed">
-          To obtain an understanding of the entity’s information system and communication relevant to the preparation of the financial statements through performing risk assessment procedures (CAS 315).
+          To obtain an understanding of the entity’s information system and communication relevant to the preparation of the financial statements through performing risk assessment procedures.
           <span className="block mt-1.5 text-[11px]">
             <span className="font-semibold text-foreground">Legend: </span>
             PSC = Procedure successfully completed.&nbsp;&nbsp;F/S = Financial statements.&nbsp;&nbsp;SCOTABD = Significant class of transactions, account balances and disclosures.

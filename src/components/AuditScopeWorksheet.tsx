@@ -240,7 +240,6 @@ export function AuditScopeWorksheet({
   void propPM;
 
   const title = isUS ? "Engagement Scope — US GAAS" : "Engagement Scope — CAS";
-  const standardRef = isUS ? "AU-C 300 / AU-C 315" : "CAS 300 / CAS 315";
 
   return (
     <div className="flex flex-col h-full">
@@ -252,7 +251,7 @@ export function AuditScopeWorksheet({
         <p className="text-xs text-muted-foreground flex-1 leading-relaxed">
           Define and document the scope of the audit engagement: entity coverage, reporting period,
           applicable framework, financial statement areas in scope, significant risks, and agreed
-          reporting requirements. ({standardRef})
+          reporting requirements.
         </p>
       </div>
 

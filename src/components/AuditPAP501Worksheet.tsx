@@ -612,7 +612,7 @@ export function AuditPAP501Worksheet({ isUS = false }: { isUS?: boolean }) {
         <div className="flex-1 flex flex-col items-center justify-center py-12 px-4 overflow-auto">
           <div className="w-full max-w-md flex flex-col items-center gap-7 text-center">
 
-            <h3 className="text-xl font-semibold text-foreground">Preliminary Analytical Procedures — Parts B &amp; C</h3>
+            <h3 className="text-xl font-semibold text-foreground whitespace-nowrap">Preliminary Analytical Procedures — Parts B &amp; C</h3>
 
             {/* Generate button */}
             <button
@@ -638,7 +638,6 @@ export function AuditPAP501Worksheet({ isUS = false }: { isUS?: boolean }) {
           <p className="text-xs text-muted-foreground flex-1 leading-relaxed">
             Compare the entity&apos;s most recent financial results to expectations (budget, prior period, industry trends);
             document matters requiring an audit response; conclude on fraud risk indicators.
-            ({isUS ? 'AU-C 315 / AU-C 520' : 'CAS 315 / CAS 520'})
           </p>
         </div>
 
@@ -885,7 +884,7 @@ export function AuditPAP501Worksheet({ isUS = false }: { isUS?: boolean }) {
                 <div className="bg-card text-card-foreground border border-border shadow-[0_2px_8px_hsl(213_40%_20%/0.06)] rounded-md overflow-hidden">
                   <div className="px-6 py-3.5 bg-card border-b border-border flex items-center gap-3">
                     <span className="text-sm font-semibold text-foreground">Fraud Risk Conclusion</span>
-                    <span title={`Conclude on whether analytical procedures identified unusual or unexpected relationships indicating risks of material misstatement due to fraud. (${isUS ? 'AU-C 240' : 'CAS 240'}.22)`}>
+                    <span title="Conclude on whether analytical procedures identified unusual or unexpected relationships indicating risks of material misstatement due to fraud.">
                       <Info className="h-3.5 w-3.5 text-muted-foreground cursor-help" />
                     </span>
                   </div>

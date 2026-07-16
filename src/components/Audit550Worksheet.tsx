@@ -218,7 +218,7 @@ export function Audit550Worksheet() {
         <p className="text-xs text-muted-foreground flex-1 leading-relaxed">
           To identify controls that address risks of material misstatement at the assertion level, evaluate whether
           those controls have been designed effectively and implemented, and assess control risk where operating
-          effectiveness is to be tested (CAS 315).
+          effectiveness is to be tested.
           <span className="block mt-1.5 text-[11px]">
             <span className="font-semibold text-foreground">Legend: </span>
             Assertions: <b>C</b> = Completeness, <b>E</b> = Existence/Occurrence, <b>AV</b> = Accuracy/Valuation, <b>P</b> = Presentation. &nbsp;

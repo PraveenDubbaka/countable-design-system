@@ -72,8 +72,6 @@ export function AuditTimeBudgetWorksheet({ isUS = false }: { isUS?: boolean }) {
   const grandActualDollar = sections.reduce((a, s) => a + s.rows.reduce((b, r) => b + getActualDollar(s.id, r.id), 0), 0);
   const totalLogged       = entries.reduce((a, e) => a + e.hours, 0);
 
-  const standard = isUS ? 'AU-C 300' : 'CAS 300';
-
   return (
     <div className="flex flex-col h-full">
 
@@ -82,7 +80,7 @@ export function AuditTimeBudgetWorksheet({ isUS = false }: { isUS?: boolean }) {
         <Info className="h-3.5 w-3.5 text-primary mt-0.5 shrink-0" />
         <span className="text-xs font-semibold text-primary whitespace-nowrap">Objective:</span>
         <p className="text-xs text-muted-foreground flex-1 leading-relaxed">
-          Compare estimated time and costs to the prior period and track actuals to complete the audit. ({standard})
+          Compare estimated time and costs to the prior period and track actuals to complete the audit.
           {' '}<span className="text-primary font-medium">Actual columns auto-update from logged time entries below.</span>
         </p>
       </div>

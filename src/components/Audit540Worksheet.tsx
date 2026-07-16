@@ -233,7 +233,7 @@ export function Audit540Worksheet() {
         <span className="text-xs font-semibold text-primary whitespace-nowrap">Objective:</span>
         <p className="text-xs text-muted-foreground flex-1 leading-relaxed">
           To identify controls that address the risk of material misstatement at the assertion level and evaluate whether
-          the controls have been designed effectively and have been implemented (CAS 315).
+          the controls have been designed effectively and have been implemented.
           <span className="block mt-1.5 text-[11px]">
             <span className="font-semibold text-foreground">Legend: </span>
             Assertions: <b>C</b> = Completeness, <b>E</b> = Existence/Occurrence, <b>AV</b> = Accuracy/Valuation, <b>P</b> = Presentation. &nbsp;
@@ -522,7 +522,7 @@ export function Audit540Worksheet() {
 
         {/* Required-controls reminder (Note 1) */}
         <div className="bg-primary/[0.03] border border-primary/15 rounded-md p-4 text-xs text-foreground/85 space-y-1.5">
-          <p className="font-semibold text-foreground">Required controls to identify and test (CAS 315 — Note 1):</p>
+          <p className="font-semibold text-foreground">Required controls to identify and test:</p>
           <ol className="list-decimal list-inside space-y-1 text-muted-foreground">
             <li>Controls that address a risk determined to be a significant risk.</li>
             <li>Controls over journal entries, including non-standard entries used to record non-recurring, unusual transactions or adjustments.</li>

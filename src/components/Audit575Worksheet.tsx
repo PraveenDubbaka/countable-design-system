@@ -138,7 +138,7 @@ export function Audit575Worksheet() {
           Document internal control deficiencies identified during the audit (from Forms 520, 522, 530, 540, 550 and
           audit procedures), classify them by severity, assess potential impact on the financial statements, and
           record management's response. Significant deficiencies and material weaknesses must be communicated in
-          writing to those charged with governance (CAS 265).
+          writing to those charged with governance.
         </p>
       </div>
 
@@ -328,7 +328,7 @@ export function Audit575Worksheet() {
 
         {/* CAS 265 reminder */}
         <div className="bg-primary/[0.03] border border-primary/15 rounded-md p-4 text-xs text-foreground/85 space-y-1.5">
-          <p className="font-semibold text-foreground">Reminders (CAS 265):</p>
+          <p className="font-semibold text-foreground">Reminders:</p>
           <ul className="list-disc list-inside space-y-1 text-muted-foreground">
             <li>Communicate significant deficiencies in writing to management and TCWG on a timely basis.</li>
             <li>Consider the need for additional audit procedures to respond to the related risks of material misstatement (Form 590).</li>

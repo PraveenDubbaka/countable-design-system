@@ -73,7 +73,6 @@ function emptyProcedure(): ProcedureRow {
 
 function buildDefault(isUS = false): Data515 {
   const entity = isUS ? "Harbor Freight LLC" : "Shipping Line Inc.";
-  const rel = isUS ? "AU-C 550" : "CAS 550";
 
   return {
     s1a: {
@@ -100,7 +99,7 @@ function buildDefault(isUS = false): Data515 {
     s2b: {
       id: uid(), psc: "N/A",
       response:
-        `No controls meeting ${isUS ? "AU-C 315" : "CAS 315.26(a)"} threshold identified at the related-party level — reliance on substantive procedures only. Form 550 not required.`,
+        `No controls identified at the related-party level that require testing — reliance on substantive procedures only. Form 550 not required.`,
       wpRef: [],
     },
     s3a: {
@@ -144,7 +143,7 @@ function buildDefault(isUS = false): Data515 {
       id: uid(), psc: "Y",
       response:
         `Related-party register circulated to the audit team at planning kickoff. ` +
-        `Team briefed on ${rel} requirements and instructed to apply professional scepticism when reviewing significant transactions.`,
+        `Team briefed on related-party requirements and instructed to apply professional scepticism when reviewing significant transactions.`,
       wpRef: [],
     },
     s4a: {
@@ -391,7 +390,7 @@ export function Audit515Worksheet({ isUS: isUSProp }: { isUS?: boolean } = {}) {
               },
               {
                 label: "b",
-                procedure: <>Where controls that meet the requirements of {isUS ? "AU-C 315" : "CAS 315.26(a)"} are identified, assess the control design and implementation on <span className="font-semibold">Form 550</span>.</>,
+                procedure: <>Where controls are identified, assess the control design and implementation on <span className="font-semibold">Form 550</span>.</>,
                 row: data.s2b,
                 onPatch: p => patchRow("s2b", p),
               },

@@ -138,7 +138,6 @@ export function AuditSAEWorksheet({ isUS }: { isUS?: boolean }) {
   const step6Done = expertNeeded ? (termsChecked.length === TERMS_CHECKLIST.length && writtenAgreement !== "") : true;
   const allDone = step1Done && step2Done && step3Done && step4Done && step5Done && step6Done;
 
-  const standardRef = isUS ? "AU-C 620" : "CAS 620";
 
 // Card shell — same as Materiality / PAP worksheets
   function Card({ title, subtitle, done, children }: {
@@ -170,7 +169,7 @@ export function AuditSAEWorksheet({ isUS }: { isUS?: boolean }) {
         <p className="text-xs text-muted-foreground flex-1 leading-relaxed">
           Assist in the selection of an auditor's expert, plan the work to be performed, and agree on
           the terms of engagement. Using the work of an auditor's expert does not reduce the auditor's
-          responsibility for the audit opinion. ({standardRef})
+          responsibility for the audit opinion.
         </p>
       </div>
 

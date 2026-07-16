@@ -215,8 +215,6 @@ export function AuditDetailedBudgetWorksheet({ isUS = false }: AuditDetailedBudg
     </>
   );
 
-  const standard = isUS ? 'AU-C 300' : 'CAS 300';
-
   return (
     <div className="flex flex-col h-full">
 
@@ -225,7 +223,7 @@ export function AuditDetailedBudgetWorksheet({ isUS = false }: AuditDetailedBudg
         <Info className="h-3.5 w-3.5 text-primary mt-0.5 shrink-0" />
         <span className="text-xs font-semibold text-primary whitespace-nowrap">Objective:</span>
         <p className="text-xs text-muted-foreground flex-1 leading-relaxed">
-          Document the detailed staff resources and time budget for the engagement, and compare against the proposed fee. ({standard})
+          Document the detailed staff resources and time budget for the engagement, and compare against the proposed fee.
         </p>
       </div>
 

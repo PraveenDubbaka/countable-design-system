@@ -293,11 +293,10 @@ export function AuditPAPWorksheet({ isUS = false }: AuditPAPWorksheetProps) {
   // Derived
   const perfMatNum = parseFloat(String(perfMateriality).replace(/[^0-9.]/g, "")) || 0;
 
-  const title = isUS ? "Preliminary Analytical Procedures — AU-C 315 / AU-C 520" : "Preliminary Analytical Procedures — CAS 315 / CAS 520";
+  const title = "Preliminary Analytical Procedures";
   const entityName = isUS ? "Harbor Freight Logistics LLC" : "Shipping Line Inc.";
   const period = isUS ? "January 1, 2024 – December 31, 2024" : "April 1, 2023 – March 31, 2024";
   const framework = isUS ? "US GAAP / ASC" : "IFRS / ASPE";
-  const standard = isUS ? "AU-C 315, AU-C 520" : "CAS 315, CAS 520";
 
   const bsRows = isUS ? US_BS_ROWS : [];
 
@@ -334,7 +333,6 @@ export function AuditPAPWorksheet({ isUS = false }: AuditPAPWorksheetProps) {
         <p className="text-xs text-muted-foreground flex-1 leading-relaxed">
           Perform preliminary analytical procedures to understand the entity and its environment, identify
           unusual fluctuations, and highlight areas requiring additional audit attention.
-          ({isUS ? "AU-C 315.06, AU-C 520" : "CAS 315.06, CAS 520"})
         </p>
       </div>
 
@@ -357,10 +355,6 @@ export function AuditPAPWorksheet({ isUS = false }: AuditPAPWorksheetProps) {
                 <div className="flex items-center gap-3">
                   <span className="text-muted-foreground w-44 shrink-0">Period</span>
                   <span className="font-medium text-foreground">{period}</span>
-                </div>
-                <div className="flex items-center gap-3">
-                  <span className="text-muted-foreground w-44 shrink-0">Standard</span>
-                  <span className="font-medium text-foreground">{standard}</span>
                 </div>
                 <div className="flex items-center gap-3">
                   <span className="text-muted-foreground w-44 shrink-0">Preparer</span>

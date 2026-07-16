@@ -401,7 +401,7 @@ function buildDefault(isUS = false): Data510 {
     policyChoice: sf(s.policyChoice),
     unusualTransactions: sf(s.unusualTransactions),
     inquiryD: { who: "Controller", byWhom: "Priya Raman — Staff", date: today },
-    conclusionD: "Revenue recognition risk (CAS 240 presumption) carried to Form 520 and addressed via Form 580. Sale-leaseback transaction flagged for substantive review.",
+    conclusionD: "Revenue recognition risk (presumption of fraud risk) carried to Form 520 and addressed via Form 580. Sale-leaseback transaction flagged for substantive review.",
 
     entityStructure: sf(s.entityStructure),
     majorInvestments: sf(s.majorInvestments),

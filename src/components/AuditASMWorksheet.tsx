@@ -96,7 +96,7 @@ const CA_DATA = {
     { wpRef: "", response: "New vessel charter agreement ($2.1M), refinanced credit facility, fleet expansion (2 vessels added).", initials: "", date: "" },
     { wpRef: "", response: "No new ASPE standards effective for this period. Review ASPE 3065 for new lease terms.", initials: "", date: "" },
     { wpRef: "", response: "Prior year: minor AR cut-off adjustment ($42K). Management has addressed through improved invoicing process.", initials: "", date: "" },
-    { wpRef: "", response: "Revenue recognition (ASPE 3400) — significant risk. Management override — presumed risk (CAS 240). Going concern — monitor leverage. See Form 540.", initials: "", date: "" },
+    { wpRef: "", response: "Revenue recognition (ASPE 3400) — significant risk. Management override — presumed risk. Going concern — monitor leverage. See Form 540.", initials: "", date: "" },
     { wpRef: "", response: "N/A", initials: "", date: "" },
     { wpRef: "", response: "N/A", initials: "", date: "" },
     { wpRef: "", response: "N/A — single entity", initials: "", date: "" },
@@ -131,7 +131,6 @@ export interface AuditASMWorksheetProps {
 export function AuditASMWorksheet({ isUS = false }: AuditASMWorksheetProps) {
   const { engagementId = "" } = useParams<{ engagementId: string }>();
   const seed = isUS ? US_DATA : CA_DATA;
-  const standardRef = isUS ? "(AU-C 300)" : "(CAS 300.7-8)";
 
   // ── Header fields ────────────────────────────────────────────────────────────
   const [entity, setEntity] = useState(seed.entity);
@@ -368,7 +367,6 @@ export function AuditASMWorksheet({ isUS = false }: AuditASMWorksheetProps) {
                   <p className="text-xs text-muted-foreground leading-relaxed flex-1">
                     To document the scope, timing and direction of the audit as a guide for the development of the audit plan.
                   </p>
-                  <span className="text-xs text-muted-foreground whitespace-nowrap shrink-0">Reference: {standardRef}</span>
                 </div>
               </div>
               <div className="mt-2 px-3 py-1.5 bg-muted/50 rounded text-xs text-muted-foreground">
@@ -512,7 +510,7 @@ export function AuditASMWorksheet({ isUS = false }: AuditASMWorksheetProps) {
                     num="6.1"
                     description={
                       <>
-                        Provide a cross-reference to documents that outline the planned scope and timing of the audit, such as the communication with management and to TCWG (CAS 260.15). For an example of a written planning letter, refer to Sample Letter AL3.1.
+                        Provide a cross-reference to documents that outline the planned scope and timing of the audit, such as the communication with management and to TCWG. For an example of a written planning letter, refer to Sample Letter AL3.1.
                       </>
                     }
                     row={s6}

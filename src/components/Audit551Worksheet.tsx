@@ -420,7 +420,7 @@ export function Audit551Worksheet() {
         <span className="text-xs font-semibold text-primary whitespace-nowrap">Objective:</span>
         <p className="text-xs text-muted-foreground flex-1 leading-relaxed">
           To identify and evaluate risks arising from the use of IT (RAFUITs) and the general IT controls (GITCs)
-          implemented by the entity that address those risks — including design and implementation (CAS 315).
+          implemented by the entity that address those risks — including design and implementation.
           <span className="block mt-1.5 text-[11px]">
             <span className="font-semibold text-foreground">Legend: </span>
             IT layers: Application / Database / Operating system / Network. &nbsp;

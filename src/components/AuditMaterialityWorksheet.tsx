@@ -210,7 +210,7 @@ export function AuditMaterialityWorksheet({ isUS = false }: AuditMaterialityWork
   const [qualDisclosures, setQualDisclosures] = useState(
     isUS
       ? "ASC 842 first-year lease adoption — nature and extent of leases, ROU asset measurement, discount rate policy, and transition adjustments require complete disclosure. Goodwill impairment testing methodology and assumptions also require qualitative disclosure per ASC 350."
-      : "Vessel impairment indicators (CAS 36) — nature of impairment assessment and key assumptions (charter rate forecasts, useful lives) require qualitative disclosure. Foreign currency risk management policy disclosure under ASPE s.3856."
+      : "Vessel impairment indicators — nature of impairment assessment and key assumptions (charter rate forecasts, useful lives) require qualitative disclosure. Foreign currency risk management policy disclosure under ASPE s.3856."
   );
 
   // Section C adjusted — Performance materiality for specific F/S areas
@@ -219,7 +219,7 @@ export function AuditMaterialityWorksheet({ isUS = false }: AuditMaterialityWork
     { id: uid(), area: "Revenue (ASC 606 — contract estimates)", amount: "92000", reasoning: "Higher risk of misstatement due to percentage-of-completion estimates. PM set at 50% of overall.", pyAmount: "" },
     { id: uid(), area: "ROU Assets & Lease Liabilities (ASC 842)", amount: "64000", reasoning: "First-year adoption — increased inherent risk. PM set at 35% of overall.", pyAmount: "" },
   ] : [
-    { id: uid(), area: "Vessel PP&E (CAS 36 impairment)", amount: "62000", reasoning: "Significant judgment in impairment assessment. PM set at 50% of performance materiality.", pyAmount: "" },
+    { id: uid(), area: "Vessel PP&E (impairment)", amount: "62000", reasoning: "Significant judgment in impairment assessment. PM set at 50% of performance materiality.", pyAmount: "" },
   ];
   const [adjPMRows, setAdjPMRows] = useState<AdjPMRow[]>(initAdjPM);
 
@@ -351,8 +351,7 @@ export function AuditMaterialityWorksheet({ isUS = false }: AuditMaterialityWork
     });
   }, [isUS, overallMateriality, pmAmount, ctAmount]);
 
-  const standardRef = isUS ? "AU-C 320" : "CAS 320";
-  const title = isUS ? "Materiality — AU-C 320" : "Materiality — CAS 320";
+  const title = "Materiality";
 
   const periodLabel = periodStart && periodEnd
     ? (() => {
@@ -570,7 +569,7 @@ export function AuditMaterialityWorksheet({ isUS = false }: AuditMaterialityWork
           <div className="bg-card text-card-foreground border border-border shadow-[0_2px_8px_hsl(213_40%_20%/0.06)] rounded-md overflow-hidden">
             <div className="px-6 py-3.5 bg-card border-b border-border flex items-center gap-3">
               <span className="text-sm font-semibold text-foreground">Performance Materiality</span>
-              <span title={`Reduces the risk that aggregate uncorrected and undetected misstatements exceed overall materiality. (${standardRef}.11)`}>
+              <span title="Reduces the risk that aggregate uncorrected and undetected misstatements exceed overall materiality.">
                 <Info className="h-3.5 w-3.5 text-muted-foreground cursor-help" />
               </span>
             </div>
@@ -807,7 +806,7 @@ export function AuditMaterialityWorksheet({ isUS = false }: AuditMaterialityWork
           <div className="bg-card text-card-foreground border border-border shadow-[0_2px_8px_hsl(213_40%_20%/0.06)] rounded-md overflow-hidden">
             <div className="px-6 py-3.5 bg-card border-b border-border flex items-center gap-3">
               <span className="text-sm font-semibold text-foreground">D. Materiality for Specific Circumstances</span>
-              <span title="Set lower materiality for specific classes of transactions, balances or disclosures where users are particularly sensitive. (CAS 320.10 and .A11-A12)"><Info className="h-3.5 w-3.5 text-muted-foreground cursor-help" /></span>
+              <span title="Set lower materiality for specific classes of transactions, balances or disclosures where users are particularly sensitive."><Info className="h-3.5 w-3.5 text-muted-foreground cursor-help" /></span>
             </div>
             <div className="overflow-x-auto">
               <table className="w-full">
@@ -844,7 +843,7 @@ export function AuditMaterialityWorksheet({ isUS = false }: AuditMaterialityWork
           <div className="bg-card text-card-foreground border border-border shadow-[0_2px_8px_hsl(213_40%_20%/0.06)] rounded-md overflow-hidden">
             <div className="px-6 py-3.5 bg-card border-b border-border flex items-center gap-3">
               <span className="text-sm font-semibold text-foreground">E. Performance Materiality for Specific Circumstances</span>
-              <span title="Performance materiality applied to the specific circumstances identified in Step D. (CAS 320.10-11 and .A13)"><Info className="h-3.5 w-3.5 text-muted-foreground cursor-help" /></span>
+              <span title="Performance materiality applied to the specific circumstances identified in Step D."><Info className="h-3.5 w-3.5 text-muted-foreground cursor-help" /></span>
             </div>
             <div className="overflow-x-auto">
               <table className="w-full">

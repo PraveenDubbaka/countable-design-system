@@ -232,7 +232,7 @@ export function Audit580Worksheet() {
         <span className="text-xs font-semibold text-primary whitespace-nowrap">Objective:</span>
         <p className="text-xs text-muted-foreground flex-1 leading-relaxed">
           Identify, assess and respond to the presumed risk of material misstatement due to fraud in revenue
-          recognition (CAS 240.26). Document each revenue stream, the related fraud risk and inherent risk
+          recognition. Document each revenue stream, the related fraud risk and inherent risk
           assessment, and the planned audit response.
         </p>
       </div>
@@ -490,11 +490,11 @@ export function Audit580Worksheet() {
         <div className="bg-primary/[0.03] border border-primary/15 rounded-md p-4 text-xs text-foreground/85 space-y-1.5">
           <div className="flex items-center gap-2">
             <AlertTriangle className="h-3.5 w-3.5 text-primary" />
-            <p className="font-semibold text-foreground">CAS 240 — Rebuttable presumption</p>
+            <p className="font-semibold text-foreground">Rebuttable presumption</p>
           </div>
           <ul className="list-disc list-inside space-y-1 text-muted-foreground">
             <li>The auditor shall, based on the presumption that there are risks of fraud in revenue recognition, evaluate which types of revenue, revenue transactions or assertions give rise to such risks.</li>
-            <li>If the presumption is rebutted, document the reasons (CAS 240.47).</li>
+            <li>If the presumption is rebutted, document the reasons.</li>
             <li>If a risk is identified, treat it as a significant risk and apply additional procedures on Form 705.</li>
           </ul>
         </div>

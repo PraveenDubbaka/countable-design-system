@@ -68,11 +68,11 @@ const SECTION_HEADER = "px-6 py-3.5 bg-card border-b border-border flex items-ce
 // ─── Page layout ───────────────────────────────────────────────────────────────
 export function WorksheetLayout({
   objective,
-  standard,
+  standard: _standard,
   children,
 }: {
   objective: string;
-  standard: string;
+  standard?: string;
   children: ReactNode;
 }) {
   return (
@@ -81,7 +81,7 @@ export function WorksheetLayout({
         <Info className="h-3.5 w-3.5 text-primary mt-0.5 shrink-0" />
         <span className="text-xs font-semibold text-primary whitespace-nowrap">Objective:</span>
         <p className="text-xs text-muted-foreground flex-1 leading-relaxed">
-          {objective} <span className="text-muted-foreground/70">({standard})</span>
+          {objective}
         </p>
       </div>
       <div className="flex-1 overflow-y-auto bg-muted/30">
