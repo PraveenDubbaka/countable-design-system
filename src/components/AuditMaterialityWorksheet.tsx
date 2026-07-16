@@ -541,7 +541,7 @@ export function AuditMaterialityWorksheet({ isUS = false }: AuditMaterialityWork
               <div className="flex items-center">
                 <span className="text-sm text-foreground flex-1">Clearly trivial misstatements</span>
                 <div className="flex items-center gap-8 mr-8">
-                  <div className="flex flex-col items-center gap-1">
+                  <div className="flex flex-col items-end gap-1">
                     <span className="text-xs text-muted-foreground">Threshold (%)</span>
                     <TdInput
                       value={ctThresholdPct}
@@ -550,7 +550,7 @@ export function AuditMaterialityWorksheet({ isUS = false }: AuditMaterialityWork
                       className="w-24 tabular-nums text-right"
                     />
                   </div>
-                  <div className="flex flex-col items-center gap-1">
+                  <div className="flex flex-col items-end gap-1">
                     <span className="text-xs text-muted-foreground">Amount ($)</span>
                     <TdInput
                       value={ctAmount ? formatDisplay(ctAmount) : ""}
