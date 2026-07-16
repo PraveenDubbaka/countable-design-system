@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { CheckCircle2, Clock, Plus, Trash2 } from "lucide-react";
+import { CheckCircle2, ChevronDown, Clock, PenLine, Plus, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -7,13 +7,11 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { cn } from "@/lib/utils";
 import type { Checklist } from "@/types/checklist";
 import { useEngagementContext } from "@/hooks/useEngagementContext";
 
 // ── Constants ────────────────────────────────────────────────────────────────
-
-const DISCLAIMER =
-  "By signing off below, you are confirming that you have reviewed this working paper, cleared all outstanding queries, and appropriately documented any matters that could otherwise cause the financial statements and note disclosures to be false and/or misleading.";
 
 const ROLES = [
   { id: "preparer",           label: "Preparer",             teamRoles: ["Staff Auditor", "Senior Auditor", "Junior Auditor"] },
@@ -86,28 +84,20 @@ function loadData(id: string): SignOffData {
   return { entries: [], extraRows: [] };
 }
 
-// ── Shared row shell ─────────────────────────────────────────────────────────
+const AVATAR_COLORS = [
+  "bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300",
+  "bg-purple-100 text-purple-700 dark:bg-purple-900/40 dark:text-purple-300",
+  "bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-300",
+  "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-300",
+  "bg-rose-100 text-rose-700 dark:bg-rose-900/40 dark:text-rose-300",
+  "bg-cyan-100 text-cyan-700 dark:bg-cyan-900/40 dark:text-cyan-300",
+  "bg-orange-100 text-orange-700 dark:bg-orange-900/40 dark:text-orange-300",
+];
 
-function RowShell({
-  isSigned,
-  hasBorderBottom,
-  children,
-}: {
-  isSigned: boolean;
-  hasBorderBottom: boolean;
-  children: React.ReactNode;
-}) {
-  return (
-    <div
-      className={[
-        "flex items-center gap-4 px-4 py-3",
-        hasBorderBottom ? "border-b border-border" : "",
-        isSigned ? "bg-green-50/60 dark:bg-green-950/20" : "bg-card",
-      ].join(" ")}
-    >
-      {children}
-    </div>
-  );
+function getAvatarColor(name: string): string {
+  let hash = 0;
+  for (let i = 0; i < name.length; i++) hash = (hash * 31 + name.charCodeAt(i)) & 0xfffffff;
+  return AVATAR_COLORS[hash % AVATAR_COLORS.length];
 }
 
 // ── Component ────────────────────────────────────────────────────────────────
@@ -127,6 +117,7 @@ export function ChecklistSignOff({
   const key = useMemo(() => storageKey(checklist.id), [checklist.id]);
 
   const [data, setData] = useState<SignOffData>(() => loadData(checklist.id));
+  const [collapsed, setCollapsed] = useState(false);
 
   useEffect(() => {
     try { localStorage.setItem(key, JSON.stringify(data)); } catch { /* noop */ }
@@ -197,53 +188,83 @@ export function ChecklistSignOff({
   const showAddRow = isEngagementMode && !locked;
 
   return (
-    <div className="space-y-3 px-4 py-4">
+    <div className="px-4 py-4">
 
-      <p className="text-xs text-muted-foreground leading-relaxed">{DISCLAIMER}</p>
+      {/* CONCLUSION section header */}
+      <button
+        type="button"
+        onClick={() => setCollapsed(c => !c)}
+        className="w-full flex items-center justify-between py-1.5 mb-3 text-left group"
+      >
+        <span className="text-[11px] font-bold tracking-widest uppercase text-muted-foreground">
+          Conclusion
+        </span>
+        <ChevronDown
+          className={cn(
+            "h-3.5 w-3.5 text-muted-foreground transition-transform duration-200",
+            collapsed ? "-rotate-90" : ""
+          )}
+        />
+      </button>
 
-      <div className="rounded-lg border border-border overflow-hidden">
+      {!collapsed && (
+        <div className="rounded-lg border border-border overflow-hidden">
 
-        {/* Fixed four-role rows */}
-        {ROLES.map((role, idx) => {
-          const entry = data.entries.find(e => e.roleId === role.id);
-          const isSigned = !!entry;
-          const isLast = idx === ROLES.length - 1 && !hasExtraRows && !showAddRow;
+          {/* Fixed four-role rows */}
+          {ROLES.map((role, idx) => {
+            const entry = data.entries.find(e => e.roleId === role.id);
+            const isSigned = !!entry;
+            const displayName = isSigned ? entry.signedBy : assigned[role.id];
+            const hasAssignee = displayName && displayName !== "—";
+            const initials = hasAssignee ? getInitials(displayName) : "?";
+            const avatarColorClass = hasAssignee
+              ? getAvatarColor(displayName)
+              : "bg-muted text-muted-foreground";
+            const isLast = idx === ROLES.length - 1 && !hasExtraRows && !showAddRow;
 
-          return (
-            <RowShell key={role.id} isSigned={isSigned} hasBorderBottom={!isLast}>
-              {/* Status icon */}
-              <div className="w-5 shrink-0 flex items-center justify-center">
-                {isSigned
-                  ? <CheckCircle2 className="h-4 w-4 text-green-600 dark:text-green-500" />
-                  : <Clock className="h-4 w-4 text-muted-foreground/50" />
-                }
-              </div>
+            return (
+              <div
+                key={role.id}
+                className={cn(
+                  "flex items-center gap-3 px-4 py-3",
+                  !isLast && "border-b border-border",
+                  isSigned ? "bg-green-50/60 dark:bg-green-950/20" : "bg-card"
+                )}
+              >
+                {/* Status icon */}
+                <div className="shrink-0 flex items-center justify-center w-4">
+                  {isSigned
+                    ? <CheckCircle2 className="h-4 w-4 text-green-600 dark:text-green-500" />
+                    : <Clock className="h-4 w-4 text-muted-foreground/40" />
+                  }
+                </div>
 
-              {/* Role label */}
-              <div className="w-44 shrink-0">
-                <span className="text-xs font-semibold text-foreground uppercase tracking-wide">
+                {/* Role label */}
+                <span className="w-36 shrink-0 text-xs text-muted-foreground">
                   {role.label}
                 </span>
-              </div>
 
-              {/* Signed stamp OR pending */}
-              <div className="flex-1 flex items-center justify-between min-w-0">
-                {isSigned ? (
-                  <div className="flex items-center gap-3 min-w-0">
-                    <span className="inline-flex items-center justify-center h-7 w-7 rounded-full bg-green-100 dark:bg-green-900/40 text-green-800 dark:text-green-300 text-xs font-bold shrink-0">
-                      {entry.initials}
-                    </span>
-                    <div className="min-w-0">
-                      <p className="text-sm font-medium text-foreground truncate">{entry.signedBy}</p>
+                {/* Avatar + name */}
+                <div className="flex-1 flex items-center gap-2.5 min-w-0">
+                  <span className={cn(
+                    "inline-flex items-center justify-center h-7 w-7 rounded-full text-xs font-semibold shrink-0",
+                    avatarColorClass
+                  )}>
+                    {initials}
+                  </span>
+                  <div className="min-w-0">
+                    <p className="text-sm font-medium text-foreground truncate">
+                      {hasAssignee ? displayName : "Unassigned"}
+                    </p>
+                    {isSigned && (
                       <p className="text-xs text-muted-foreground">{formatDate(entry.signedAt)}</p>
-                    </div>
+                    )}
                   </div>
-                ) : (
-                  <span className="text-xs text-muted-foreground italic">Pending signature</span>
-                )}
+                </div>
 
+                {/* Action button */}
                 {isEngagementMode && !locked && (
-                  <div className="ml-4 shrink-0">
+                  <div className="shrink-0">
                     {isSigned ? (
                       <Button
                         size="sm"
@@ -254,55 +275,71 @@ export function ChecklistSignOff({
                         Unsign
                       </Button>
                     ) : assigned[role.id] !== "—" ? (
-                      <Button size="sm" className="h-7 px-3 text-xs" onClick={() => signRole(role.id)}>
+                      <Button
+                        size="sm"
+                        className="h-7 px-3 text-xs gap-1.5"
+                        onClick={() => signRole(role.id)}
+                      >
+                        <PenLine className="h-3 w-3" />
                         Sign Off
                       </Button>
                     ) : null}
                   </div>
                 )}
               </div>
-            </RowShell>
-          );
-        })}
+            );
+          })}
 
-        {/* Extra rows */}
-        {data.extraRows.map((row, idx) => {
-          const role = ROLES.find(r => r.id === row.roleId)!;
-          const isSigned = !!row.signedAt;
-          const isLast = idx === data.extraRows.length - 1 && !showAddRow;
+          {/* Extra rows */}
+          {data.extraRows.map((row, idx) => {
+            const role = ROLES.find(r => r.id === row.roleId)!;
+            const isSigned = !!row.signedAt;
+            const displayName = isSigned ? (row.signedBy ?? "") : assigned[row.roleId];
+            const hasAssignee = displayName && displayName !== "—";
+            const initials = hasAssignee ? getInitials(displayName) : "?";
+            const avatarColorClass = hasAssignee
+              ? getAvatarColor(displayName)
+              : "bg-muted text-muted-foreground";
+            const isLast = idx === data.extraRows.length - 1 && !showAddRow;
 
-          return (
-            <RowShell key={row.id} isSigned={isSigned} hasBorderBottom={!isLast}>
-              <div className="w-5 shrink-0 flex items-center justify-center">
-                {isSigned
-                  ? <CheckCircle2 className="h-4 w-4 text-green-600 dark:text-green-500" />
-                  : <Clock className="h-4 w-4 text-muted-foreground/50" />
-                }
-              </div>
+            return (
+              <div
+                key={row.id}
+                className={cn(
+                  "flex items-center gap-3 px-4 py-3 border-t border-border",
+                  isSigned ? "bg-green-50/60 dark:bg-green-950/20" : "bg-card"
+                )}
+              >
+                <div className="shrink-0 flex items-center justify-center w-4">
+                  {isSigned
+                    ? <CheckCircle2 className="h-4 w-4 text-green-600 dark:text-green-500" />
+                    : <Clock className="h-4 w-4 text-muted-foreground/40" />
+                  }
+                </div>
 
-              <div className="w-44 shrink-0">
-                <span className="text-xs font-semibold text-foreground uppercase tracking-wide">
+                <span className="w-36 shrink-0 text-xs text-muted-foreground">
                   {role.label}
                 </span>
-              </div>
 
-              <div className="flex-1 flex items-center justify-between min-w-0">
-                {isSigned ? (
-                  <div className="flex items-center gap-3 min-w-0">
-                    <span className="inline-flex items-center justify-center h-7 w-7 rounded-full bg-green-100 dark:bg-green-900/40 text-green-800 dark:text-green-300 text-xs font-bold shrink-0">
-                      {row.initials}
-                    </span>
-                    <div className="min-w-0">
-                      <p className="text-sm font-medium text-foreground truncate">{row.signedBy}</p>
-                      <p className="text-xs text-muted-foreground">{formatDate(row.signedAt!)}</p>
-                    </div>
+                <div className="flex-1 flex items-center gap-2.5 min-w-0">
+                  <span className={cn(
+                    "inline-flex items-center justify-center h-7 w-7 rounded-full text-xs font-semibold shrink-0",
+                    avatarColorClass
+                  )}>
+                    {initials}
+                  </span>
+                  <div className="min-w-0">
+                    <p className="text-sm font-medium text-foreground truncate">
+                      {hasAssignee ? displayName : "Unassigned"}
+                    </p>
+                    {isSigned && row.signedAt && (
+                      <p className="text-xs text-muted-foreground">{formatDate(row.signedAt)}</p>
+                    )}
                   </div>
-                ) : (
-                  <span className="text-xs text-muted-foreground italic">Pending signature</span>
-                )}
+                </div>
 
                 {isEngagementMode && !locked && (
-                  <div className="ml-4 shrink-0 flex items-center gap-2">
+                  <div className="shrink-0 flex items-center gap-2">
                     {isSigned ? (
                       <Button
                         size="sm"
@@ -313,7 +350,12 @@ export function ChecklistSignOff({
                         Unsign
                       </Button>
                     ) : assigned[row.roleId] !== "—" ? (
-                      <Button size="sm" className="h-7 px-3 text-xs" onClick={() => signExtraRow(row.id, row.roleId)}>
+                      <Button
+                        size="sm"
+                        className="h-7 px-3 text-xs gap-1.5"
+                        onClick={() => signExtraRow(row.id, row.roleId)}
+                      >
+                        <PenLine className="h-3 w-3" />
                         Sign Off
                       </Button>
                     ) : null}
@@ -326,33 +368,34 @@ export function ChecklistSignOff({
                   </div>
                 )}
               </div>
-            </RowShell>
-          );
-        })}
+            );
+          })}
 
-        {/* Add row — lives inside the table border */}
-        {showAddRow && (
-          <div className="flex items-center justify-center border-t border-border px-4 py-2.5 bg-card">
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <button
-                  type="button"
-                  className="h-7 w-7 p-0 rounded border border-border text-muted-foreground hover:text-primary hover:bg-primary/5 transition-colors flex items-center justify-center"
-                >
-                  <Plus className="h-3.5 w-3.5" />
-                </button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="center">
-                {ROLES.map(role => (
-                  <DropdownMenuItem key={role.id} onClick={() => addExtraRow(role.id)}>
-                    {role.label}
-                  </DropdownMenuItem>
-                ))}
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </div>
-        )}
-      </div>
+          {/* Add row */}
+          {showAddRow && (
+            <div className="flex items-center justify-center border-t border-border px-4 py-2.5 bg-card">
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <button
+                    type="button"
+                    className="h-7 w-7 p-0 rounded border border-border text-muted-foreground hover:text-primary hover:bg-primary/5 transition-colors flex items-center justify-center"
+                  >
+                    <Plus className="h-3.5 w-3.5" />
+                  </button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="center">
+                  {ROLES.map(role => (
+                    <DropdownMenuItem key={role.id} onClick={() => addExtraRow(role.id)}>
+                      {role.label}
+                    </DropdownMenuItem>
+                  ))}
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </div>
+          )}
+
+        </div>
+      )}
     </div>
   );
 }
