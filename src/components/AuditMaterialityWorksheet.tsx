@@ -434,11 +434,11 @@ export function AuditMaterialityWorksheet({ isUS = false }: AuditMaterialityWork
                   <tr className="bg-muted border-b border-border">
                     <th className="px-3 py-3 text-center text-xs font-semibold text-foreground uppercase tracking-wider w-10">Primary</th>
                     <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider">Basis for Calculations</th>
-                    <th className="px-4 py-3 text-right text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap">{periodLabel}</th>
-                    <th className="px-4 py-3 text-right text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap">Extrapolated ($)</th>
-                    <th className="px-4 py-3 text-right text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap">Benchmark (%)</th>
-                    <th className="px-4 py-3 text-right text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap">Materiality CY ($)</th>
-                    <th className="px-4 py-3 text-right text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap">Materiality PY ($)</th>
+                    <th className="px-4 py-3 text-right text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap min-w-[185px]">{periodLabel}</th>
+                    <th className="px-4 py-3 text-right text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap min-w-[185px]">Extrapolated ($)</th>
+                    <th className="px-4 py-3 text-right text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap w-28">Benchmark (%)</th>
+                    <th className="px-4 py-3 text-right text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap min-w-[185px]">Materiality CY ($)</th>
+                    <th className="px-4 py-3 text-right text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap min-w-[165px]">Materiality PY ($)</th>
                     <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider">Comments</th>
                     <th className="px-2 py-3 w-8" />
                   </tr>
@@ -465,7 +465,7 @@ export function AuditMaterialityWorksheet({ isUS = false }: AuditMaterialityWork
                             placeholder="Select basis…"
                           />
                         </td>
-                        <td className="px-4 py-2.5 align-top text-right">
+                        <td className="px-4 py-2.5 align-top min-w-[185px] text-right">
                           <TdInput
                             value={row.periodAmount ? formatDisplay(row.periodAmount) : ""}
                             onChange={(v) => updateEntityRow(row.id, "periodAmount", v.replace(/[^0-9.]/g, ""))}
@@ -473,7 +473,7 @@ export function AuditMaterialityWorksheet({ isUS = false }: AuditMaterialityWork
                             className="tabular-nums text-right"
                           />
                         </td>
-                        <td className="px-4 py-2.5 align-top text-right">
+                        <td className="px-4 py-2.5 align-top min-w-[185px] text-right">
                           <TdInput
                             value={row.extrapolatedPeriod ? formatDisplay(row.extrapolatedPeriod) : ""}
                             onChange={(v) => updateEntityRow(row.id, "extrapolatedPeriod", v.replace(/[^0-9.]/g, ""))}
@@ -489,14 +489,14 @@ export function AuditMaterialityWorksheet({ isUS = false }: AuditMaterialityWork
                             className="tabular-nums text-right"
                           />
                         </td>
-                        <td className="px-4 py-2.5 align-top w-40 text-right">
+                        <td className="px-4 py-2.5 align-top min-w-[185px] text-right">
                           <TdInput
                             value={formatDisplay(row.materialityCY)}
                             readOnly
                             className={`tabular-nums text-right${isSelected ? " font-semibold" : ""}`}
                           />
                         </td>
-                        <td className="px-4 py-2.5 align-top w-36 text-right">
+                        <td className="px-4 py-2.5 align-top min-w-[165px] text-right">
                           <TdInput
                             value={row.materialityPY ? formatDisplay(row.materialityPY) : ""}
                             onChange={(v) => updateEntityRow(row.id, "materialityPY", v.replace(/[^0-9.]/g, ""))}
