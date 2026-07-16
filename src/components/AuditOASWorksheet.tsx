@@ -556,13 +556,8 @@ function WorksheetInner({ isUS }: { isUS: boolean }) {
               />
             </div>
 
-            {/* Sign-off (standard checklist sign-off) */}
-            <div className="border-t border-border">
-              <div className="px-6 py-3.5 bg-card border-b border-border">
-                <span className="text-sm font-semibold text-foreground">Sign-off</span>
-              </div>
-              <WorksheetSignOff worksheetKey="oas" engagementId={engagementId} />
-            </div>
+            {/* Sign-off */}
+            <WorksheetSignOff worksheetKey="oas" engagementId={engagementId} />
 
             {/* Conclude action */}
             <div className="flex justify-end pt-1">

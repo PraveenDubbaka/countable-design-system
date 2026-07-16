@@ -423,14 +423,9 @@ export function AuditSAEWorksheet({ isUS }: { isUS?: boolean }) {
             </div>
           )}
 
-          {/* Sign-off (standard checklist sign-off) */}
+          {/* Sign-off */}
           {expertRequired !== "" && (
-            <div className="bg-card border border-border shadow-[0_2px_8px_hsl(213_40%_20%/0.06)] rounded-md overflow-hidden">
-              <div className="px-6 py-3.5 bg-card border-b border-border">
-                <span className="text-sm font-semibold text-foreground">Sign-off</span>
-              </div>
-              <WorksheetSignOff worksheetKey="sae" engagementId={engagementId} />
-            </div>
+            <WorksheetSignOff worksheetKey="sae" engagementId={engagementId} />
           )}
 
           {/* Conclude */}

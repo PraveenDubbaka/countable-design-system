@@ -534,13 +534,11 @@ export function AuditASMWorksheet({ isUS = false }: AuditASMWorksheetProps) {
               </table>
             </div>
 
-            {/* ── Sign-off (standard checklist sign-off) ── */}
-            <div className="border-t border-border">
-              <WorksheetSignOff worksheetKey="asm" engagementId={engagementId} />
-              <div className="px-6 py-3 border-t border-border bg-muted/20 flex justify-between">
-                <span className="text-xs text-muted-foreground">Overall audit strategy — 430</span>
-                <span className="text-xs text-muted-foreground">©2022 CPA Canada PEG</span>
-              </div>
+            {/* ── Sign-off ── */}
+            <WorksheetSignOff worksheetKey="asm" engagementId={engagementId} />
+            <div className="px-6 py-3 border-t border-border bg-muted/20 flex justify-between">
+              <span className="text-xs text-muted-foreground">Overall audit strategy — 430</span>
+              <span className="text-xs text-muted-foreground">©2022 CPA Canada PEG</span>
             </div>
 
           </div>
