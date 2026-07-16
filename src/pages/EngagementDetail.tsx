@@ -57,6 +57,8 @@ import LayoutSettingsPanel from "@/components/luka/workspace/LayoutSettingsPanel
 import { LayoutSettingsProvider } from "@/components/luka/workspace/LayoutSettingsContext";
 import CommentsPanel from "@/components/luka/comments/CommentsPanel";
 import { CommentProvider, useComments } from "@/components/luka/comments/CommentContext";
+import CommentPinsOverlay from "@/components/luka/comments/CommentPinsOverlay";
+import CommentMinimap from "@/components/luka/comments/CommentMinimap";
 import { WorksheetSignOff } from "@/components/WorksheetSignOff";
 import VersionHistoryPanel from "@/components/luka/workspace/versionControl/VersionHistoryPanel";
 import { AskLukaOverlay, AllTemplateSummary, AutoFillProgressItem } from "@/components/AskLukaOverlay";
@@ -802,10 +804,67 @@ const LEGACY_COMPILATION_CHECKLIST_IDS = new Set([
   "default-compilation-mgmt-responsibility",
 ]);
 
-function FSCommentsBridge({ open }: { open: boolean }) {
-  const { setPanelOpen } = useComments();
+function FSCommentsBridge({ open, currentScreen }: { open: boolean; currentScreen: string }) {
+  const { setPanelOpen, setCommentMode, setCurrentScreen } = useComments();
   useEffect(() => { setPanelOpen(open); }, [open, setPanelOpen]);
+  useEffect(() => { setCommentMode(open); }, [open, setCommentMode]);
+  useEffect(() => { setCurrentScreen(currentScreen); }, [currentScreen, setCurrentScreen]);
   return null;
+}
+
+function FSScrollCanvas({ children, onCommentsToggle }: { children: React.ReactNode; onCommentsToggle: (v: boolean) => void }) {
+  const { commentMode, addComment, currentScreen, setActiveComposerPinId, setOpenCommentId } = useComments();
+
+  const handleCanvasClick = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (!commentMode) return;
+    const target = e.target as HTMLElement;
+    if (target.closest("[data-comment-pin]") || target.closest("[data-comment-popover]")) return;
+    const pageEl = e.currentTarget.querySelector<HTMLElement>("[data-fs-page]");
+    if (!pageEl) return;
+    const pageRect = pageEl.getBoundingClientRect();
+    if (e.clientX < pageRect.left || e.clientX > pageRect.right ||
+        e.clientY < pageRect.top  || e.clientY > pageRect.bottom) return;
+    const xPercent = ((e.clientX - pageRect.left) / pageRect.width) * 100;
+    const yPercent = ((e.clientY - pageRect.top)  / pageRect.height) * 100;
+    const row = target.closest("[data-comment-row]") as HTMLElement | null;
+    const lineItem = row?.getAttribute("data-comment-row") || undefined;
+    const section = row?.getAttribute("data-comment-section") || undefined;
+    const rowIndex = row ? parseInt(row.getAttribute("data-comment-index") || "0", 10) : undefined;
+    const newId = addComment(
+      { screen: currentScreen, section, lineItem, row: rowIndex, yPosition: yPercent, xPosition: xPercent },
+      "", [], "draft"
+    );
+    setActiveComposerPinId(newId);
+    setOpenCommentId(newId);
+  };
+
+  return (
+    <div
+      data-fs-scroll
+      className={`relative flex-1 overflow-y-auto ${commentMode ? "comment-mode-active" : ""}`}
+      style={{ cursor: commentMode ? "crosshair" : "default" }}
+      onClick={handleCanvasClick}
+    >
+      <CommentPinsOverlay containerHeight={1191} />
+      <CommentMinimap />
+      {children}
+      {commentMode && (
+        <div
+          className="sticky bottom-4 left-1/2 -translate-x-1/2 z-40 mx-auto flex items-center gap-2 px-4 py-2.5 rounded-full pointer-events-none"
+          style={{
+            width: "fit-content",
+            background: "linear-gradient(135deg, hsl(270 70% 55% / 0.95), hsl(220 80% 55% / 0.95))",
+            backdropFilter: "blur(12px)",
+            boxShadow: "0 6px 24px hsl(270 60% 55% / 0.25)",
+            color: "white",
+          }}
+        >
+          <MessageSquare className="h-3.5 w-3.5" />
+          <span className="text-[12px] font-medium">Click anywhere on the page to drop a pin</span>
+        </div>
+      )}
+    </div>
+  );
 }
 
 export default function EngagementDetail() {
@@ -2473,9 +2532,9 @@ export default function EngagementDetail() {
           {checklistKey && FS_PAGE_KEYS.has(checklistKey) && engagementId ? (
             <LayoutSettingsProvider>
               <CommentProvider>
-                <FSCommentsBridge open={isFSCommentsOpen} />
+                <FSCommentsBridge open={isFSCommentsOpen} currentScreen={FS_SCREEN_NAMES[FS_PAGE_TYPE_MAP[checklistKey]] ?? 'Balance Sheet'} />
                 <div className="flex h-full overflow-hidden">
-                  <div className="flex-1 overflow-auto">
+                  <FSScrollCanvas onCommentsToggle={setIsFSCommentsOpen}>
                     <FSPageViewer
                       pageType={FS_PAGE_TYPE_MAP[checklistKey]}
                       engagementId={engagementId}
@@ -2483,7 +2542,7 @@ export default function EngagementDetail() {
                       isCompilation={checklistKey.startsWith('fs-')}
                       isEditing={isFSEditing}
                     />
-                  </div>
+                  </FSScrollCanvas>
                   <CommentsPanel />
                   <VersionHistoryPanel
                     open={isVersionsOpen}
