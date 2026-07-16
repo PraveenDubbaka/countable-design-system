@@ -2031,25 +2031,30 @@ export default function EngagementDetail() {
               <div className="flex items-center gap-1">
               {checklistKey && engagementId && !FS_PAGE_KEYS.has(checklistKey) && (
                 <>
-                  <button
-                    onClick={() => {
-                      if (!hasUsedLuka) {
-                        setHasUsedLuka(true);
-                        localStorage.setItem(`luka-used-${engagementId}`, '1');
-                      }
-                      setLukaInitialTab("workspace");
-                      setLukaInitialWorkspaceEngagement({
-                        name: engagement?.client || engagementId,
-                        code: engagementId,
-                        source: "xero",
-                      });
-                      setLukaOpen(true);
-                    }}
-                    className="inline-flex items-center gap-1.5 h-7 px-3 rounded-[8px] text-xs font-semibold text-white shadow-sm bg-gradient-to-br from-[#8649F1] to-[#2355A4] hover:opacity-90 transition-opacity"
-                  >
-                    <LukaIcon size={16} bare />
-                    Run on workspace
-                  </button>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <button
+                        onClick={() => {
+                          if (!hasUsedLuka) {
+                            setHasUsedLuka(true);
+                            localStorage.setItem(`luka-used-${engagementId}`, '1');
+                          }
+                          setLukaInitialTab("workspace");
+                          setLukaInitialWorkspaceEngagement({
+                            name: engagement?.client || engagementId,
+                            code: engagementId,
+                            source: "xero",
+                          });
+                          setLukaOpen(true);
+                        }}
+                        className="inline-flex items-center gap-1.5 h-7 px-3 rounded-[8px] text-xs font-semibold text-white shadow-sm bg-gradient-to-br from-[#8649F1] to-[#2355A4] hover:opacity-90 transition-opacity"
+                      >
+                        <LukaIcon size={18} bare />
+                        Workspace
+                      </button>
+                    </TooltipTrigger>
+                    <TooltipContent side="bottom"><p>Run on workspace</p></TooltipContent>
+                  </Tooltip>
                   {hasUsedLuka && (
                     <button
                       onClick={() => {
