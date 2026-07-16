@@ -106,6 +106,7 @@ interface BudgetPlan {
   byRole: Partial<Record<RoleKey, string>>;
   priorByRole: Partial<Record<RoleKey, string>>;
   bySection: Partial<Record<string, string>>;
+  teamByRole: Partial<Record<RoleKey, string>>;
 }
 
 // ── Component ────────────────────────────────────────────────────────────────
@@ -159,11 +160,13 @@ export function AuditTimeTrackerWorksheet() {
     byRole: Object.fromEntries(ROLE_KEYS.map(r => [r, ""])),
     priorByRole: Object.fromEntries(ROLE_KEYS.map(r => [r, ""])),
     bySection: Object.fromEntries(SECTIONS.map(s => [s.key, ""])),
+    teamByRole: Object.fromEntries(ROLE_KEYS.map(r => [r, ""])),
   });
 
-  const [budget, setBudget] = useState<BudgetPlan>(() =>
-    readJsonFromLocalStorage<BudgetPlan | null>(budgetKey, null) ?? emptyBudget()
-  );
+  const [budget, setBudget] = useState<BudgetPlan>(() => ({
+    ...emptyBudget(),
+    ...(readJsonFromLocalStorage<BudgetPlan | null>(budgetKey, null) ?? {}),
+  }));
 
   // ── Time Log filters ─────────────────────────────────────────────────────
   const [filterDate,    setFilterDate]    = useState('');
@@ -393,6 +396,7 @@ export function AuditTimeTrackerWorksheet() {
                 <thead>
                   <tr className="bg-muted text-xs font-semibold uppercase tracking-wider text-foreground border-b border-border [&>th]:whitespace-nowrap">
                     <th className="px-5 py-2 text-left">Role</th>
+                    <th className="px-3 py-2 text-left w-36">Team Member</th>
                     <th className="px-3 py-2 text-center w-14">Std %</th>
                     <th className="px-3 py-2 text-right w-28">Rate ($/hr)</th>
                     <th className="px-3 py-2 text-right w-28">Budget Hrs</th>
@@ -412,6 +416,20 @@ export function AuditTimeTrackerWorksheet() {
                     return (
                       <tr key={rk} className="hover:bg-muted/30 transition-colors">
                         <td className="px-5 py-2.5 font-medium text-foreground align-top">{ROLE_LABELS[rk]}</td>
+                        <td className="px-3 py-2 align-top">
+                          <Select
+                            value={budget.teamByRole[rk] || "none"}
+                            onValueChange={v => setBudget(b => ({ ...b, teamByRole: { ...b.teamByRole, [rk]: v === "none" ? "" : v } }))}
+                          >
+                            <SelectTrigger className="h-8 text-sm min-w-[120px]"><SelectValue placeholder="—" /></SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="none">—</SelectItem>
+                              {(TEAM_MEMBERS[rk] ?? []).map(name => (
+                                <SelectItem key={name} value={name}>{name}</SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </td>
                         <td className="px-3 py-2.5 text-center text-sm text-foreground align-top">{INDUSTRY_ROLE_PCT[rk]}%</td>
                         <td className="px-3 py-2.5 align-top">
                           <Input value={rates[rk] ?? ""}
@@ -448,6 +466,7 @@ export function AuditTimeTrackerWorksheet() {
                 <tfoot>
                   <tr className="bg-muted/50 border-t-2 border-border font-semibold text-base [&>td]:whitespace-nowrap">
                     <td className="px-5 py-2 text-foreground">Total</td>
+                    <td className="px-3 py-2" />
                     <td className="px-3 py-2 text-center text-base text-foreground">100%</td>
                     <td className="px-3 py-2 text-right text-base text-foreground">
                       {blendedRate > 0 ? fmt$(blendedRate) : "—"}
