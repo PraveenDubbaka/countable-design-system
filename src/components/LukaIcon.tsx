@@ -40,38 +40,38 @@ export function LukaIcon({ size = 28, animated = false, bare = false, className 
     >
       {/* Large star — lower-right */}
       <path
-        d={starPath(13, 12, 5.5, 0.82)}
+        d={starPath(13, 12, 5.5, 1.4)}
         style={{
           transformOrigin: "13px 12px",
           animation: `luka-sparkle-${animated ? "active" : "idle"} ${dur} ease-in-out infinite`,
           animationDelay: "0s",
           filter: animated
-            ? "drop-shadow(0 0 2.5px rgba(255,255,255,.95))"
-            : "drop-shadow(0 0 1.5px rgba(255,255,255,.65))",
+            ? "drop-shadow(0 0 4px rgba(255,255,255,1)) drop-shadow(0 0 2px rgba(255,255,255,.9))"
+            : "drop-shadow(0 0 2px rgba(255,255,255,.8))",
         }}
       />
       {/* Medium star — upper-left */}
       <path
-        d={starPath(5.5, 5.5, 3.4, 0.52)}
+        d={starPath(5.5, 5.5, 3.4, 0.85)}
         style={{
           transformOrigin: "5.5px 5.5px",
           animation: `luka-sparkle-${animated ? "active" : "idle"} ${dur} ease-in-out infinite`,
           animationDelay: `calc(${dur} * 0.38)`,
           filter: animated
-            ? "drop-shadow(0 0 1.8px rgba(255,255,255,.85))"
-            : "drop-shadow(0 0 1px rgba(255,255,255,.5))",
+            ? "drop-shadow(0 0 3px rgba(255,255,255,.95))"
+            : "drop-shadow(0 0 1.5px rgba(255,255,255,.7))",
         }}
       />
       {/* Small star — lower-left */}
       <path
-        d={starPath(5, 15.5, 1.9, 0.28)}
+        d={starPath(5, 15.5, 1.9, 0.48)}
         style={{
           transformOrigin: "5px 15.5px",
           animation: `luka-sparkle-${animated ? "active" : "idle"} ${dur} ease-in-out infinite`,
           animationDelay: `calc(${dur} * 0.70)`,
           filter: animated
-            ? "drop-shadow(0 0 1.2px rgba(255,255,255,.75))"
-            : "none",
+            ? "drop-shadow(0 0 2px rgba(255,255,255,.85))"
+            : "drop-shadow(0 0 1px rgba(255,255,255,.5))",
         }}
       />
     </svg>
